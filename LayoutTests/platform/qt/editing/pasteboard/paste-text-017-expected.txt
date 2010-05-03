@@ -6,7 +6,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 5 of #text > DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -14,41 +14,41 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x270 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x161
-          RenderText {#text} at (0,0) size 77x33
+      RenderBlock {DIV} at (0,0) size 784x256 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x151
+          RenderText {#text} at (0,0) size 77x31
             text run at (0,0) width 77: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,33) size 746x63
-            text run at (0,33) width 746: "Copying and pasting a whole line followed by a blank line could remove"
-            text run at (0,65) width 549: "the blank line incorrectly, as in the case described in"
-          RenderInline {A} at (0,0) size 274x31 [color=#0000EE]
-            RenderText {#text} at (0,97) size 274x31
-              text run at (0,97) width 274: "<rdar://problem/3951178>"
-          RenderText {#text} at (274,97) size 719x63
-            text run at (274,97) width 445: " REGRESSION (Mail): blank line lost after"
-            text run at (0,129) width 219: "pasting as quotation."
-        RenderBlock {DIV} at (14,191) size 756x65
-          RenderText {#text} at (0,0) size 214x33
+          RenderText {#text} at (0,31) size 746x59
+            text run at (0,31) width 746: "Copying and pasting a whole line followed by a blank line could remove"
+            text run at (0,61) width 549: "the blank line incorrectly, as in the case described in"
+          RenderInline {A} at (0,0) size 274x29 [color=#0000EE]
+            RenderText {#text} at (0,91) size 274x29
+              text run at (0,91) width 274: "<rdar://problem/3951178>"
+          RenderText {#text} at (274,91) size 719x59
+            text run at (274,91) width 445: " REGRESSION (Mail): blank line lost after"
+            text run at (0,121) width 219: "pasting as quotation."
+        RenderBlock {DIV} at (14,181) size 756x61
+          RenderText {#text} at (0,0) size 214x31
             text run at (0,0) width 214: "Expected Results: "
           RenderBR {BR} at (214,24) size 0x0
-          RenderText {#text} at (0,33) size 527x31
-            text run at (0,33) width 527: "Should see a blank line between \"two\" and \"three\""
-      RenderBlock {DIV} at (0,294) size 784x164
-        RenderBlock {DIV} at (0,0) size 784x164 [border: (2px solid #FF0000)]
-          RenderBlock {DIV} at (2,2) size 780x32
-            RenderText {#text} at (0,0) size 39x31
+          RenderText {#text} at (0,31) size 527x29
+            text run at (0,31) width 527: "Should see a blank line between \"two\" and \"three\""
+      RenderBlock {DIV} at (0,280) size 784x154
+        RenderBlock {DIV} at (0,0) size 784x154 [border: (2px solid #FF0000)]
+          RenderBlock {DIV} at (2,2) size 780x30
+            RenderText {#text} at (0,0) size 39x29
               text run at (0,0) width 39: "one"
-          RenderBlock {DIV} at (2,34) size 780x32
-            RenderBR {BR} at (0,0) size 0x31
-          RenderBlock {DIV} at (2,66) size 780x64
-            RenderBlock {DIV} at (0,0) size 780x32
-              RenderText {#text} at (0,0) size 37x31
+          RenderBlock {DIV} at (2,32) size 780x30
+            RenderBR {BR} at (0,0) size 0x29
+          RenderBlock {DIV} at (2,62) size 780x30
+            RenderBlock {DIV} at (0,0) size 780x30
+              RenderText {#text} at (0,0) size 37x29
                 text run at (0,0) width 37: "two"
-            RenderBlock (anonymous) at (0,32) size 780x0
-            RenderBlock {DIV} at (0,32) size 780x32
-              RenderBR {BR} at (0,0) size 0x31
-          RenderBlock {DIV} at (2,130) size 780x32
-            RenderText {#text} at (0,0) size 54x31
+            RenderBlock (anonymous) at (0,30) size 780x0
+          RenderBlock {DIV} at (2,92) size 780x30
+            RenderBR {BR} at (0,0) size 0x29
+          RenderBlock {DIV} at (2,122) size 780x30
+            RenderText {#text} at (0,0) size 54x29
               text run at (0,0) width 54: "three"
-caret: position 0 of child 0 {BR} of child 1 {DIV} of child 5 {DIV} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {BR} of child 6 {DIV} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

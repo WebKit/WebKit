@@ -2,8 +2,6 @@
 #      Failing tests introduced by changing the default font sizes to         #
 #      conform other platforms. Probably caused by previously hidden bugs.    #
 # =========================================================================== #
-editing/pasteboard/5761530-1.html
-editing/pasteboard/5780697-2.html
 fast/css/getComputedStyle/computed-style-without-renderer.html
 fast/css/getComputedStyle/computed-style.html
 fast/history/history_reload.html
@@ -435,42 +433,6 @@ editing/selection/triple-click-in-pre.html
 editing/selection/word-granularity.html
 editing/style/style-3681552-fix-002.html
 
-editing/pasteboard/4076267-2.html
-editing/pasteboard/4076267.html
-editing/pasteboard/4861080.html
-editing/pasteboard/4944770-2.html
-editing/pasteboard/4947130.html
-editing/pasteboard/5028447.html
-editing/pasteboard/block-wrappers-necessary.html
-editing/pasteboard/copy-standalone-image.html
-editing/pasteboard/drag-drop-dead-frame.html
-editing/pasteboard/drag-drop-input-textarea.html
-editing/pasteboard/drag-drop-iframe-refresh-crash.html
-editing/pasteboard/drag-drop-modifies-page.html
-editing/pasteboard/drag-image-to-contenteditable-in-iframe.html
-editing/pasteboard/drag-selected-image-to-contenteditable.html
-editing/pasteboard/drop-link.html
-editing/pasteboard/drop-text-without-selection.html
-editing/pasteboard/emacs-ctrl-a-k-y.html
-editing/pasteboard/emacs-ctrl-k-y-001.html
-editing/pasteboard/input-field-1.html
-editing/pasteboard/interchange-newline-2.html
-editing/pasteboard/paste-RTFD.html
-editing/pasteboard/paste-TIFF.html
-editing/pasteboard/paste-text-001.html
-editing/pasteboard/paste-text-008.html
-editing/pasteboard/paste-text-013.html
-editing/pasteboard/paste-xml.xhtml
-editing/pasteboard/select-element-1.html
-editing/pasteboard/smart-drag-drop.html
-editing/pasteboard/subframe-dragndrop-1.html
-editing/pasteboard/testcase-9507.html
-editing/pasteboard/undoable-fragment-removes.html
-editing/pasteboard/unrendered-br.html
-
-#Extra trailing space in pasted content
-editing/pasteboard/smart-paste-008.html
-
 # ------- failures due to missing support for particular XSLT features
 # xsl:output
 fast/xsl/xslt-doc-enc.xml
@@ -520,6 +482,8 @@ plugins/jsobjc-simple.html
 plugins/root-object-premature-delete-crash.html
 plugins/throw-on-dealloc.html
 plugins/undefined-property-crash.html
+editing/pasteboard/paste-RTFD.html
+editing/pasteboard/paste-TIFF.html
 
 # ------- all other failures (not looked at)
 fast/box-sizing/percentage-height.html
@@ -1199,24 +1163,6 @@ editing/inserting/4278698.html
 editing/inserting/editable-html-element.html
 editing/inserting/editing-empty-divs.html
 editing/inserting/insert-div-023.html
-editing/pasteboard/4840662.html
-editing/pasteboard/5245519.html
-editing/pasteboard/5478250.html
-editing/pasteboard/drag-image-in-about-blank-frame.html
-editing/pasteboard/emacs-cntl-y-001.html
-editing/pasteboard/interchange-newline-1.html
-editing/pasteboard/interchange-newline-3.html
-editing/pasteboard/interchange-newline-4.html
-editing/pasteboard/merge-after-delete-1.html
-editing/pasteboard/merge-after-delete-2.html
-editing/pasteboard/merge-after-delete.html
-editing/pasteboard/merge-end-blockquote.html
-editing/pasteboard/nested-blocks-with-text-area.html
-editing/pasteboard/nested-blocks-with-text-field.html
-editing/pasteboard/paste-list-001.html
-editing/pasteboard/paste-table-001.html
-editing/pasteboard/paste-text-003.html
-editing/pasteboard/quirks-mode-br-1.html
 editing/selection/4983858.html
 editing/selection/5136696.html
 editing/selection/after-line-wrap.html
@@ -1956,104 +1902,65 @@ editing/inserting/typing-002.html
 editing/inserting/typing-003.html
 editing/inserting/typing-around-br-001.html
 editing/inserting/typing-around-image-001.html
-editing/pasteboard/3976872.html
-editing/pasteboard/4076267-3.html
+
+
+# =========================================================================== #
+#       Failing pasteboard tests.                                             #
+# =========================================================================== #
+#------ Not selecting all of text.
+#------ sel.modify("move", "forward", "word"); does not select the last character in the word
 editing/pasteboard/4242293-1.html
-editing/pasteboard/4242293.html
-editing/pasteboard/4631972.html
-editing/pasteboard/4641033.html
-editing/pasteboard/4700297.html
-editing/pasteboard/4806874.html
-editing/pasteboard/4944770-1.html
-editing/pasteboard/4989774.html
-editing/pasteboard/5006779.html
-editing/pasteboard/5027857.html
-editing/pasteboard/5032095.html
-editing/pasteboard/5065605.html
-editing/pasteboard/5071074-2.html
-editing/pasteboard/5071074.html
-editing/pasteboard/5075944-2.html
-editing/pasteboard/5075944-3.html
-editing/pasteboard/5075944.html
-editing/pasteboard/5089327.html
-editing/pasteboard/5134759.html
-editing/pasteboard/5156401-1.html
-editing/pasteboard/5247341.html
-editing/pasteboard/5368833.html
-editing/pasteboard/5387578.html
-editing/pasteboard/5483567.html
-editing/pasteboard/5601583-1.html
-editing/pasteboard/7955.html
-editing/pasteboard/8145-1.html
-editing/pasteboard/8145-2.html
-editing/pasteboard/8145-3.html
-editing/pasteboard/bad-placeholder.html
-editing/pasteboard/copy-paste-bidi.html
-editing/pasteboard/cut-text-001.html
-editing/pasteboard/displaced-generic-placeholder.html
-editing/pasteboard/displaced-placeholder.html
-editing/pasteboard/display-block-on-spans.html
-editing/pasteboard/innerText-inline-table.html
-editing/pasteboard/merge-end-1.html
-editing/pasteboard/merge-end-2.html
-editing/pasteboard/merge-end-3.html
-editing/pasteboard/merge-end-4.html
-editing/pasteboard/merge-end-5.html
-editing/pasteboard/merge-end-borders.html
-editing/pasteboard/merge-end-list.html
-editing/pasteboard/merge-end-table.html
-editing/pasteboard/merge-start-blockquote.html
-editing/pasteboard/merge-start-list.html
-editing/pasteboard/paste-4035648-fix.html
-editing/pasteboard/paste-4038267-fix.html
-editing/pasteboard/paste-4039777-fix.html
-editing/pasteboard/paste-blockquote-1.html
-editing/pasteboard/paste-blockquote-2.html
-editing/pasteboard/paste-blockquote-3.html
-editing/pasteboard/paste-blockquote-after-blockquote.html
-editing/pasteboard/paste-blockquote-into-blockquote-2.html
-editing/pasteboard/paste-blockquote-into-blockquote-3.html
-editing/pasteboard/paste-blockquote-into-blockquote-4.html
-editing/pasteboard/paste-blockquote-into-blockquote.html
-editing/pasteboard/paste-line-endings-001.html
-editing/pasteboard/paste-line-endings-002.html
-editing/pasteboard/paste-line-endings-003.html
-editing/pasteboard/paste-line-endings-004.html
-editing/pasteboard/paste-line-endings-005.html
-editing/pasteboard/paste-line-endings-006.html
-editing/pasteboard/paste-line-endings-007.html
-editing/pasteboard/paste-line-endings-008.html
-editing/pasteboard/paste-line-endings-009.html
-editing/pasteboard/paste-line-endings-010.html
-editing/pasteboard/paste-match-style-001.html
-editing/pasteboard/paste-match-style-002.html
-editing/pasteboard/paste-pre-001.html
-editing/pasteboard/paste-pre-002.html
-editing/pasteboard/paste-table-003.html
-editing/pasteboard/paste-table-cells.html
-editing/pasteboard/paste-text-002.html
-editing/pasteboard/paste-text-004.html
-editing/pasteboard/paste-text-005.html
-editing/pasteboard/paste-text-006.html
-editing/pasteboard/paste-text-007.html
-editing/pasteboard/paste-text-009.html
-editing/pasteboard/paste-text-010.html
-editing/pasteboard/paste-text-011.html
-editing/pasteboard/paste-text-012.html
-editing/pasteboard/paste-text-014.html
-editing/pasteboard/paste-text-015.html
-editing/pasteboard/paste-text-016.html
-editing/pasteboard/paste-text-017.html
-editing/pasteboard/paste-text-018.html
-editing/pasteboard/paste-text-019.html
-editing/pasteboard/paste-text-at-tabspan-001.html
-editing/pasteboard/paste-text-at-tabspan-002.html
-editing/pasteboard/paste-text-at-tabspan-003.html
-editing/pasteboard/paste-unrendered-select.html
-editing/pasteboard/pasting-object.html
+editing/pasteboard/smart-paste-008.html
+#------ safe to skip. Qt results same as chromium's. Mac drops the 'b' in the final bar,
+#------ that looks like a bug.
+editing/pasteboard/interchange-newline-2.html
+# ----- Whitespace instead of tab?
+# ----- https://bugs.webkit.org/show_bug.cgi?id=38437
+editing/pasteboard/5761530-1.html
+# ----- Results appear correct but have suspicious rendertree differences.
 editing/pasteboard/pasting-tabs.html
-editing/pasteboard/prevent-block-nesting-01.html
-editing/pasteboard/styled-element-markup.html
+editing/pasteboard/nested-blocks-with-text-area.html
+editing/pasteboard/nested-blocks-with-text-field.html
+editing/pasteboard/input-field-1.html
+editing/pasteboard/4806874.html
+# ----- These are actually safe to unskip. x/y differences only.
+editing/pasteboard/5387578.html
+editing/pasteboard/bad-placeholder.html
+# ----- Rendertree results OK but differences in message from editing delegate.
+editing/pasteboard/4076267-2.html
+editing/pasteboard/4076267.html
+editing/pasteboard/block-wrappers-necessary.html
+editing/pasteboard/paste-text-001.html
+editing/pasteboard/paste-text-008.html
+# ----- Rendertree results OK but differences in editing delegate message due to rendering.
+# ----- This looks safe to unskip.
+editing/pasteboard/paste-xml.xhtml
+# ----- Rendertree results match but width of tabs field is suspicious.
+editing/pasteboard/paste-text-at-tabspan-001.html
+# ----- Drag and drop support.
+editing/pasteboard/drag-image-in-about-blank-frame.html
+editing/pasteboard/files-during-page-drags.html
+editing/pasteboard/4861080.html
+editing/pasteboard/4947130.html
+editing/pasteboard/copy-standalone-image.html
+editing/pasteboard/drag-drop-dead-frame.html
+editing/pasteboard/drag-drop-input-textarea.html
+editing/pasteboard/drag-drop-iframe-refresh-crash.html
+editing/pasteboard/drag-drop-modifies-page.html
+editing/pasteboard/drag-image-to-contenteditable-in-iframe.html
+editing/pasteboard/drag-selected-image-to-contenteditable.html
+editing/pasteboard/drop-link.html
+editing/pasteboard/drop-text-without-selection.html
+editing/pasteboard/emacs-ctrl-a-k-y.html
+editing/pasteboard/emacs-ctrl-k-y-001.html
+editing/pasteboard/smart-drag-drop.html
+editing/pasteboard/subframe-dragndrop-1.html
+editing/pasteboard/get-data-text-plain-drop.html
+
+
+# =========================================================================== #
+#       Failing editing/selection tests.                                      #
+# =========================================================================== #
 editing/selection/13804.html
 editing/selection/3690703-2.html
 editing/selection/3690703.html
@@ -2170,6 +2077,8 @@ editing/selection/unrendered-005.html
 editing/selection/unrendered-space.html
 editing/selection/wrapped-line-caret-1.html
 editing/selection/wrapped-line-caret-2.html
+
+
 editing/spelling/inline_spelling_markers.html
 editing/spelling/spellcheck-attribute.html
 editing/spelling/spelling.html
@@ -4835,8 +4744,6 @@ editing/deleting/delete-ligature-002.html
 editing/deleting/delete-ligature-003.html
 editing/inserting/5803706-1.html
 editing/inserting/5994480-2.html
-editing/pasteboard/files-during-page-drags.html
-editing/pasteboard/get-data-text-plain-drop.html
 editing/selection/drag-start-event-client-x-y.html
 editing/selection/extend-selection-bidi.html
 editing/selection/hit-test-anonymous.html

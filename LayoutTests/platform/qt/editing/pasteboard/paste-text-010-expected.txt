@@ -43,6 +43,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 38 of #text > DIV > BODY > HTML > #document to 38 of #text > DIV > BODY > HTML > #document toDOMRange:range from 2 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 3 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -58,14 +59,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x124 [border: (2px solid #FF0000)]
-        RenderText {#text} at (14,14) size 375x31
+      RenderBlock {DIV} at (0,0) size 784x118 [border: (2px solid #FF0000)]
+        RenderText {#text} at (14,14) size 375x29
           text run at (14,14) width 375: "There is a tide in the affairs of men."
         RenderBR {BR} at (389,37) size 0x0
-        RenderBR {BR} at (14,46) size 0x31
-        RenderText {#text} at (14,78) size 80x31
-          text run at (14,78) width 80: "of men."
-        RenderText {#text} at (94,78) size 80x31
-          text run at (94,78) width 80: "of men."
-      RenderBlock (anonymous) at (0,124) size 784x0
+        RenderBR {BR} at (14,44) size 0x29
+        RenderText {#text} at (14,74) size 80x29
+          text run at (14,74) width 80: "of men."
+        RenderText {#text} at (94,74) size 80x29
+          text run at (94,74) width 80: "of men."
+      RenderBlock (anonymous) at (0,118) size 784x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
 caret: position 7 of child 4 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

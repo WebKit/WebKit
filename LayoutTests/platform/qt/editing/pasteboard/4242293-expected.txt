@@ -17,35 +17,35 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 712x38
-          text run at (0,0) width 712: "This tests for a bug in createMarkup (markup for ancestors of the start of the selection wasn't being added to the"
-          text run at (0,19) width 85: "pasteboard). "
-          text run at (85,19) width 339: "You should see the same thing in both regions below."
-      RenderBlock {P} at (0,52) size 784x20
-        RenderInline {B} at (0,0) size 450x20
-          RenderText {#text} at (0,0) size 450x20
-            text run at (0,0) width 450: "This demonstrates a bug: 'foo' is pulled out of its bordered block."
-      RenderBlock {DIV} at (0,86) size 784x76
-        RenderBlock {DIV} at (5,0) size 774x52 [border: (1px solid #FF0000)]
-          RenderBlock (anonymous) at (1,1) size 772x19
-            RenderText {#text} at (0,0) size 20x19
-              text run at (0,0) width 20: "foo"
-          RenderBlock {DIV} at (6,25) size 762x21 [border: (1px solid #0000FF)]
-            RenderText {#text} at (1,1) size 21x19
-              text run at (1,1) width 21: "bar"
-        RenderBlock (anonymous) at (0,57) size 784x19
-          RenderText {#text} at (0,0) size 23x19
-            text run at (0,0) width 23: "baz"
-      RenderBlock {DIV} at (0,167) size 784x76
-        RenderBlock {DIV} at (5,0) size 774x52 [border: (1px solid #FF0000)]
-          RenderBlock (anonymous) at (1,1) size 772x19
-            RenderText {#text} at (0,0) size 20x19
-              text run at (0,0) width 20: "foo"
-          RenderBlock {DIV} at (6,25) size 762x21 [border: (1px solid #0000FF)]
-            RenderText {#text} at (1,1) size 21x19
-              text run at (1,1) width 21: "bar"
-        RenderBlock (anonymous) at (0,57) size 784x19
-          RenderText {#text} at (0,0) size 23x19
-            text run at (0,0) width 23: "baz"
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 782x40
+          text run at (0,0) width 782: "This tests for a bug in createMarkup (markup for ancestors of the start of the selection wasn't being added to the"
+          text run at (0,20) width 93: "pasteboard). "
+          text run at (93,20) width 379: "You should see the same thing in both regions below."
+      RenderBlock {P} at (0,56) size 784x21
+        RenderInline {B} at (0,0) size 493x20
+          RenderText {#text} at (0,0) size 493x20
+            text run at (0,0) width 493: "This demonstrates a bug: 'foo' is pulled out of its bordered block."
+      RenderBlock {DIV} at (0,93) size 784x79
+        RenderBlock {DIV} at (5,0) size 774x54 [border: (1px solid #FF0000)]
+          RenderBlock (anonymous) at (1,1) size 772x20
+            RenderText {#text} at (0,0) size 22x20
+              text run at (0,0) width 22: "foo"
+          RenderBlock {DIV} at (6,26) size 762x22 [border: (1px solid #0000FF)]
+            RenderText {#text} at (1,1) size 23x20
+              text run at (1,1) width 23: "bar"
+        RenderBlock (anonymous) at (0,59) size 784x20
+          RenderText {#text} at (0,0) size 26x20
+            text run at (0,0) width 26: "baz"
+      RenderBlock {DIV} at (0,177) size 784x79
+        RenderBlock {DIV} at (5,0) size 774x54 [border: (1px solid #FF0000)]
+          RenderBlock (anonymous) at (1,1) size 772x20
+            RenderText {#text} at (0,0) size 22x20
+              text run at (0,0) width 22: "foo"
+          RenderBlock {DIV} at (6,26) size 762x22 [border: (1px solid #0000FF)]
+            RenderText {#text} at (1,1) size 23x20
+              text run at (1,1) width 23: "bar"
+        RenderBlock (anonymous) at (0,59) size 784x20
+          RenderText {#text} at (0,0) size 26x20
+            text run at (0,0) width 26: "baz"
 caret: position 3 of child 1 {#text} of child 6 {DIV} of child 1 {BODY} of child 0 {HTML} of document

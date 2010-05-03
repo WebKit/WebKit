@@ -1,0 +1,26 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of div > body > html > #document to 3 of div > body > html > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertText:bar replacingDOMRange:range from 7 of #text > span > div > body > html > #document to 7 of #text > span > div > body > html > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > span > div > body > html > #document to 7 of #text > span > div > body > html > #document toDOMRange:range from 10 of #text > span > div > body > html > #document to 10 of #text > span > div > body > html > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x72
+  RenderBlock {html} at (0,0) size 800x72
+    RenderBody {body} at (8,8) size 784x56
+      RenderBlock {div} at (0,0) size 784x56 [border: (2px solid #FF0000)]
+        RenderInline {span} at (0,0) size 140x28
+          RenderText {#text} at (14,14) size 140x28
+            text run at (14,14) width 140: "foo barbar baz"
+        RenderText {#text} at (0,0) size 0x0
+caret: position 10 of child 0 {#text} of child 1 {span} of child 1 {div} of child 3 {body} of child 1 {html} of document

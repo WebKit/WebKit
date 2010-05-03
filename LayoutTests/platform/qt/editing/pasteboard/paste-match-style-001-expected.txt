@@ -12,7 +12,7 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldInsertText:b replacingDOMRange:range from 1 of #text > B > DIV > DIV > BODY > HTML > #document to 1 of #text > B > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > B > DIV > DIV > BODY > HTML > #document to 1 of #text > B > DIV > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > B > DIV > DIV > BODY > HTML > #document to 1 of #text > B > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > B > DIV > DIV > BODY > HTML > #document to 1 of #text > B > DIV > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > B > DIV > DIV > BODY > HTML > #document to 2 of #text > B > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -20,31 +20,28 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x239 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x65
-          RenderText {#text} at (0,0) size 77x33
+      RenderBlock {DIV} at (0,0) size 784x227 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x61
+          RenderText {#text} at (0,0) size 77x31
             text run at (0,0) width 77: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,33) size 291x31
-            text run at (0,33) width 291: "Pasting and matching style."
-        RenderBlock {DIV} at (14,95) size 756x130
-          RenderText {#text} at (0,0) size 214x33
+          RenderText {#text} at (0,31) size 291x29
+            text run at (0,31) width 291: "Pasting and matching style."
+        RenderBlock {DIV} at (14,91) size 756x122
+          RenderText {#text} at (0,0) size 214x31
             text run at (0,0) width 214: "Expected Results: "
           RenderBR {BR} at (214,24) size 0x0
-          RenderText {#text} at (0,33) size 729x63
-            text run at (0,33) width 729: "The pasted letter should match the style of the preexisting bold letter."
-            text run at (0,65) width 480: "Should see this content in the red box below: "
-          RenderBR {BR} at (480,88) size 0x0
-          RenderInline {B} at (0,0) size 28x33
-            RenderText {#text} at (0,97) size 28x33
-              text run at (0,97) width 28: "ab"
+          RenderText {#text} at (0,31) size 729x59
+            text run at (0,31) width 729: "The pasted letter should match the style of the preexisting bold letter."
+            text run at (0,61) width 480: "Should see this content in the red box below: "
+          RenderBR {BR} at (480,84) size 0x0
+          RenderInline {B} at (0,0) size 28x31
+            RenderText {#text} at (0,91) size 28x31
+              text run at (0,91) width 28: "ab"
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,263) size 784x37
-        RenderBlock {DIV} at (0,0) size 784x37 [border: (2px solid #FF0000)]
-          RenderInline {B} at (0,0) size 28x33
-            RenderText {#text} at (2,2) size 13x33
-              text run at (2,2) width 13: "a"
-            RenderText {#text} at (15,2) size 15x33
-              text run at (15,2) width 15: "b"
-        RenderBlock (anonymous) at (0,37) size 784x0
-caret: position 1 of child 1 {#text} of child 0 {B} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+      RenderBlock {DIV} at (0,251) size 784x35
+        RenderBlock {DIV} at (0,0) size 784x35 [border: (2px solid #FF0000)]
+          RenderInline {B} at (0,0) size 28x31
+            RenderText {#text} at (2,2) size 28x31
+              text run at (2,2) width 28: "ab"
+caret: position 2 of child 0 {#text} of child 0 {B} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

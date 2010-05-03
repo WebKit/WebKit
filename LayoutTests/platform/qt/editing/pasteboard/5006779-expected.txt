@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 609x19
-          text run at (0,0) width 430: "This tests copying/pasting less than a paragraph of quoted content. "
-          text run at (430,0) width 179: "It should not appear quoted."
-      RenderBlock {DIV} at (0,33) size 784x95
-        RenderBlock (anonymous) at (0,0) size 784x38
-          RenderText {#text} at (0,0) size 19x19
-            text run at (0,0) width 19: "On"
-          RenderBR {BR} at (19,14) size 0x0
-          RenderBR {BR} at (0,19) size 0x19
-        RenderBlock {BLOCKQUOTE} at (0,38) size 784x19 [color=#0000FF] [border: (2px solid #0000FF)]
-          RenderText {#text} at (12,0) size 162x19
-            text run at (12,0) width 162: "On Tuesday, Dave wrote:"
-        RenderBlock {BLOCKQUOTE} at (0,57) size 784x19 [color=#0000FF] [border: (2px solid #0000FF)]
-          RenderBR {BR} at (12,0) size 0x19
-        RenderBlock {BLOCKQUOTE} at (0,76) size 784x19 [color=#0000FF] [border: (2px solid #0000FF)]
-          RenderText {#text} at (12,0) size 77x19
-            text run at (12,0) width 77: "Hello World."
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 673x20
+          text run at (0,0) width 476: "This tests copying/pasting less than a paragraph of quoted content. "
+          text run at (476,0) width 197: "It should not appear quoted."
+      RenderBlock {DIV} at (0,36) size 784x100
+        RenderBlock (anonymous) at (0,0) size 784x40
+          RenderText {#text} at (0,0) size 21x20
+            text run at (0,0) width 21: "On"
+          RenderBR {BR} at (21,16) size 0x0
+          RenderBR {BR} at (0,20) size 0x20
+        RenderBlock {BLOCKQUOTE} at (0,40) size 784x20 [color=#0000FF] [border: (2px solid #0000FF)]
+          RenderText {#text} at (12,0) size 180x20
+            text run at (12,0) width 180: "On Tuesday, Dave wrote:"
+        RenderBlock {BLOCKQUOTE} at (0,60) size 784x20 [color=#0000FF] [border: (2px solid #0000FF)]
+          RenderBR {BR} at (12,0) size 0x20
+        RenderBlock {BLOCKQUOTE} at (0,80) size 784x20 [color=#0000FF] [border: (2px solid #0000FF)]
+          RenderText {#text} at (12,0) size 88x20
+            text run at (12,0) width 88: "Hello World."
 caret: position 2 of child 1 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

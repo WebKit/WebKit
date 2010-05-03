@@ -3,21 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 453x19
-          text run at (0,0) width 453: "This tests for a crash when pasting content into a link inside a table cell."
-      RenderBlock {DIV} at (0,33) size 784x29
-        RenderTable {TABLE} at (0,0) size 144x29 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 142x27
-            RenderTableRow {TR} at (0,2) size 142x23
-              RenderTableCell {TD} at (2,2) size 138x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 134x19 [color=#0000EE]
-                  RenderText {#text} at (2,2) size 9x19
-                    text run at (2,2) width 9: "T"
-                  RenderText {#text} at (11,2) size 121x19
-                    text run at (11,2) width 121: "his should be a link"
-                  RenderInline {SPAN} at (0,0) size 4x19 [color=#000000]
-                    RenderInline {A} at (0,0) size 4x19 [color=#0000EE]
-                      RenderText {#text} at (132,2) size 4x19
-                        text run at (132,2) width 4: "."
-caret: position 20 of child 1 {#text} of child 0 {A} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 1 {TABLE} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 505x20
+          text run at (0,0) width 505: "This tests for a crash when pasting content into a link inside a table cell."
+      RenderBlock {DIV} at (0,36) size 784x30
+        RenderTable {TABLE} at (0,0) size 161x30 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 159x28
+            RenderTableRow {TR} at (0,2) size 159x24
+              RenderTableCell {TD} at (2,2) size 155x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderInline {A} at (0,0) size 151x20 [color=#0000EE]
+                  RenderText {#text} at (2,2) size 151x20
+                    text run at (2,2) width 151: "This should be a link."
+caret: position 21 of child 0 {#text} of child 0 {A} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 1 {TABLE} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

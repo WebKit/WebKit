@@ -17,19 +17,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 783x38
-          text run at (0,0) width 340: "This tests copy/paste of styled elements, like images. "
-          text run at (340,0) width 443: "The image in the region below should be centered after its copied and"
-          text run at (0,19) width 47: "pasted."
-      RenderBlock {P} at (0,52) size 784x40
-        RenderInline {B} at (0,0) size 768x40
-          RenderText {#text} at (0,0) size 768x40
-            text run at (0,0) width 768: "This demonstrates a bug: createMarkup puts the text-align property on the image, which doesn't center it, so its"
-            text run at (0,20) width 145: "left aligned on paste."
-      RenderBlock {DIV} at (0,106) size 784x103
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 768x40
+          text run at (0,0) width 378: "This tests copy/paste of styled elements, like images. "
+          text run at (378,0) width 390: "The image in the region below should be centered after"
+          text run at (0,20) width 155: "its copied and pasted."
+      RenderBlock {P} at (0,56) size 784x42
+        RenderInline {B} at (0,0) size 779x41
+          RenderText {#text} at (0,0) size 779x41
+            text run at (0,0) width 779: "This demonstrates a bug: createMarkup puts the text-align property on the image, which doesn't center"
+            text run at (0,21) width 219: "it, so its left aligned on paste."
+      RenderBlock {DIV} at (0,114) size 784x103
         RenderBlock {CENTER} at (0,0) size 784x103
           RenderImage {IMG} at (354,0) size 76x103
-      RenderBlock {DIV} at (0,209) size 784x103
+      RenderBlock {DIV} at (0,217) size 784x103
         RenderImage {IMG} at (0,0) size 76x103
 caret: position 1 of child 0 {IMG} of child 6 {DIV} of child 1 {BODY} of child 0 {HTML} of document

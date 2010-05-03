@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 581x19
-          text run at (0,0) width 297: "This tests copy/paste of an unrendered select. "
-          text run at (297,0) width 284: "The options inside of it should not be pasted."
-      RenderBlock {DIV} at (0,33) size 784x19
-        RenderText {#text} at (0,0) size 36x19
-          text run at (0,0) width 36: "Hello "
-        RenderText {#text} at (36,0) size 37x19
-          text run at (36,0) width 37: "World"
-      RenderBlock {DIV} at (0,52) size 784x19
-        RenderText {#text} at (0,0) size 32x19
-          text run at (0,0) width 32: "Hello"
-        RenderText {#text} at (32,0) size 4x19
-          text run at (32,0) width 4: " "
-        RenderText {#text} at (36,0) size 37x19
-          text run at (36,0) width 37: "World"
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 644x20
+          text run at (0,0) width 328: "This tests copy/paste of an unrendered select. "
+          text run at (328,0) width 316: "The options inside of it should not be pasted."
+      RenderBlock {DIV} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 42x20
+          text run at (0,0) width 42: "Hello "
+        RenderText {#text} at (42,0) size 42x20
+          text run at (42,0) width 42: "World"
+      RenderBlock {DIV} at (0,56) size 784x20
+        RenderText {#text} at (0,0) size 38x20
+          text run at (0,0) width 38: "Hello"
+        RenderText {#text} at (38,0) size 4x20
+          text run at (38,0) width 4: " "
+        RenderText {#text} at (42,0) size 42x20
+          text run at (42,0) width 42: "World"
 caret: position 5 of child 2 {#text} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -13,68 +13,68 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x374 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x97
-          RenderText {#text} at (0,0) size 77x33
+      RenderBlock {DIV} at (0,0) size 784x358 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x91
+          RenderText {#text} at (0,0) size 77x31
             text run at (0,0) width 77: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,33) size 115x31
-            text run at (0,33) width 115: "Bug fix for "
-          RenderInline {A} at (0,0) size 274x31 [color=#0000EE]
-            RenderText {#text} at (115,33) size 274x31
-              text run at (115,33) width 274: "<rdar://problem/4039777>"
-          RenderText {#text} at (389,33) size 689x63
-            text run at (389,33) width 300: " Pasting particular snippet of"
-            text run at (0,65) width 677: "HTML containing list items and a link creates too many list items"
-        RenderBlock {DIV} at (14,127) size 756x209
-          RenderBlock (anonymous) at (0,0) size 756x65
-            RenderText {#text} at (0,0) size 214x33
+          RenderText {#text} at (0,31) size 115x29
+            text run at (0,31) width 115: "Bug fix for "
+          RenderInline {A} at (0,0) size 274x29 [color=#0000EE]
+            RenderText {#text} at (115,31) size 274x29
+              text run at (115,31) width 274: "<rdar://problem/4039777>"
+          RenderText {#text} at (389,31) size 689x59
+            text run at (389,31) width 300: " Pasting particular snippet of"
+            text run at (0,61) width 677: "HTML containing list items and a link creates too many list items"
+        RenderBlock {DIV} at (14,121) size 756x199
+          RenderBlock (anonymous) at (0,0) size 756x61
+            RenderText {#text} at (0,0) size 214x31
               text run at (0,0) width 214: "Expected Results: "
             RenderBR {BR} at (214,24) size 0x0
-            RenderText {#text} at (0,33) size 159x31
-              text run at (0,33) width 159: "Should match: "
-            RenderBR {BR} at (159,56) size 0x0
-          RenderBlock {UL} at (0,89) size 756x32
-            RenderListItem {LI} at (40,0) size 716x32
-              RenderListMarker at (-23,0) size 10x31: bullet
-              RenderText {#text} at (700,0) size 16x31
+            RenderText {#text} at (0,31) size 159x29
+              text run at (0,31) width 159: "Should match: "
+            RenderBR {BR} at (159,54) size 0x0
+          RenderBlock {UL} at (0,85) size 756x30
+            RenderListItem {LI} at (40,0) size 716x30
+              RenderListMarker at (-23,0) size 10x29: bullet
+              RenderText {#text} at (700,0) size 16x29
                 text run at (700,0) width 16: "A"
-          RenderBlock {DIV} at (0,145) size 756x64
-            RenderBlock {UL} at (0,0) size 756x64
-              RenderListItem {LI} at (40,0) size 716x64
-                RenderListMarker at (-23,0) size 10x31: bullet
-                RenderInline {A} at (0,0) size 16x31 [color=#0000EE]
-                  RenderText {#text} at (0,0) size 16x31
+          RenderBlock {DIV} at (0,139) size 756x60
+            RenderBlock {UL} at (0,0) size 756x60
+              RenderListItem {LI} at (40,0) size 716x60
+                RenderListMarker at (-23,0) size 10x29: bullet
+                RenderInline {A} at (0,0) size 16x29 [color=#0000EE]
+                  RenderText {#text} at (0,0) size 16x29
                     text run at (0,0) width 16: "B"
-                RenderText {#text} at (16,0) size 7x31
+                RenderText {#text} at (16,0) size 7x29
                   text run at (16,0) width 7: " "
                 RenderBR {BR} at (0,0) size 0x0
-                RenderText {#text} at (0,32) size 17x31
-                  text run at (0,32) width 17: "C"
-      RenderBlock {DIV} at (0,398) size 784x180
-        RenderBlock {DIV} at (0,0) size 784x180 [border: (2px solid #FF0000)]
-          RenderBlock {UL} at (2,26) size 780x128
-            RenderListItem {LI} at (40,0) size 740x128
-              RenderBlock (anonymous) at (0,0) size 740x32
-                RenderListMarker at (-23,0) size 10x31: bullet
-              RenderBlock {UL} at (0,32) size 740x32
-                RenderListItem {LI} at (40,0) size 700x32
-                  RenderListMarker at (-23,0) size 10x31: white bullet
-                  RenderText {#text} at (684,0) size 16x31
+                RenderText {#text} at (0,30) size 17x29
+                  text run at (0,30) width 17: "C"
+      RenderBlock {DIV} at (0,382) size 784x172
+        RenderBlock {DIV} at (0,0) size 784x172 [border: (2px solid #FF0000)]
+          RenderBlock {UL} at (2,26) size 780x120
+            RenderListItem {LI} at (40,0) size 740x120
+              RenderBlock (anonymous) at (0,0) size 740x30
+                RenderListMarker at (-23,0) size 10x29: bullet
+              RenderBlock {UL} at (0,30) size 740x30
+                RenderListItem {LI} at (40,0) size 700x30
+                  RenderListMarker at (-23,0) size 10x29: white bullet
+                  RenderText {#text} at (684,0) size 16x29
                     text run at (684,0) width 16: "A"
-              RenderBlock {DIV} at (0,64) size 740x64
-                RenderBlock {UL} at (0,0) size 740x64
-                  RenderListItem {LI} at (40,0) size 700x64
-                    RenderListMarker at (-23,0) size 10x31: white bullet
-                    RenderInline {A} at (0,0) size 16x31 [color=#0000EE]
-                      RenderText {#text} at (677,0) size 16x31
+              RenderBlock {DIV} at (0,60) size 740x60
+                RenderBlock {UL} at (0,0) size 740x60
+                  RenderListItem {LI} at (40,0) size 700x60
+                    RenderListMarker at (-23,0) size 10x29: white bullet
+                    RenderInline {A} at (0,0) size 16x29 [color=#0000EE]
+                      RenderText {#text} at (677,0) size 16x29
                         text run at (677,0) width 16: "B"
-                    RenderText {#text} at (693,0) size 7x31
+                    RenderText {#text} at (693,0) size 7x29
                       text run at (693,0) width 7: " "
                     RenderBR {BR} at (700,23) size 0x0
-                    RenderText {#text} at (683,32) size 17x31
-                      text run at (683,32) width 17: "C"
-              RenderBlock (anonymous) at (0,128) size 740x0
-          RenderBlock {DIV} at (2,178) size 780x0
+                    RenderText {#text} at (683,30) size 17x29
+                      text run at (683,30) width 17: "C"
+              RenderBlock (anonymous) at (0,120) size 740x0
+          RenderBlock {DIV} at (2,170) size 780x0
             RenderBlock {UL} at (0,0) size 780x0
 caret: position 1 of child 3 {#text} of child 0 {LI} of child 0 {UL} of child 1 {DIV} of child 0 {LI} of child 1 {UL} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

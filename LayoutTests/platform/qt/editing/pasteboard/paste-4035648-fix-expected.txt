@@ -19,39 +19,39 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x271 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x97
-          RenderText {#text} at (0,0) size 77x33
+      RenderBlock {DIV} at (0,0) size 784x257 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x91
+          RenderText {#text} at (0,0) size 77x31
             text run at (0,0) width 77: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,33) size 115x31
-            text run at (0,33) width 115: "Bug fix for "
-          RenderInline {A} at (0,0) size 274x31 [color=#0000EE]
-            RenderText {#text} at (115,33) size 274x31
-              text run at (115,33) width 274: "<rdar://problem/4035648>"
-          RenderText {#text} at (389,33) size 750x63
-            text run at (389,33) width 361: " REGRESSION (Mail): line feed in"
-            text run at (0,65) width 527: "source HTML file causes bad copy/paste behavior"
-        RenderBlock {DIV} at (14,127) size 756x130
-          RenderText {#text} at (0,0) size 214x33
+          RenderText {#text} at (0,31) size 115x29
+            text run at (0,31) width 115: "Bug fix for "
+          RenderInline {A} at (0,0) size 274x29 [color=#0000EE]
+            RenderText {#text} at (115,31) size 274x29
+              text run at (115,31) width 274: "<rdar://problem/4035648>"
+          RenderText {#text} at (389,31) size 750x59
+            text run at (389,31) width 361: " REGRESSION (Mail): line feed in"
+            text run at (0,61) width 527: "source HTML file causes bad copy/paste behavior"
+        RenderBlock {DIV} at (14,121) size 756x122
+          RenderText {#text} at (0,0) size 214x31
             text run at (0,0) width 214: "Expected Results: "
           RenderBR {BR} at (214,24) size 0x0
-          RenderText {#text} at (0,33) size 558x31
-            text run at (0,33) width 558: "Should see the text self-documenting itself correctly: "
-          RenderBR {BR} at (558,56) size 0x0
-          RenderInline {B} at (0,0) size 52x33
-            RenderText {#text} at (0,65) size 52x33
-              text run at (0,65) width 52: "bold"
-            RenderBR {BR} at (52,89) size 0x0
-          RenderText {#text} at (0,98) size 49x31
-            text run at (0,98) width 49: "plain"
-      RenderBlock {DIV} at (0,295) size 784x101
-        RenderBlock {DIV} at (0,0) size 784x101 [border: (2px solid #FF0000)]
-          RenderBR {BR} at (2,2) size 0x31
-          RenderInline {B} at (0,0) size 52x33
-            RenderText {#text} at (2,34) size 52x33
-              text run at (2,34) width 52: "bold"
-            RenderBR {BR} at (54,58) size 0x0
-          RenderText {#text} at (2,67) size 49x31
-            text run at (2,67) width 49: "plain"
+          RenderText {#text} at (0,31) size 558x29
+            text run at (0,31) width 558: "Should see the text self-documenting itself correctly: "
+          RenderBR {BR} at (558,54) size 0x0
+          RenderInline {B} at (0,0) size 52x31
+            RenderText {#text} at (0,61) size 52x31
+              text run at (0,61) width 52: "bold"
+            RenderBR {BR} at (52,85) size 0x0
+          RenderText {#text} at (0,92) size 49x29
+            text run at (0,92) width 49: "plain"
+      RenderBlock {DIV} at (0,281) size 784x95
+        RenderBlock {DIV} at (0,0) size 784x95 [border: (2px solid #FF0000)]
+          RenderBR {BR} at (2,2) size 0x29
+          RenderInline {B} at (0,0) size 52x31
+            RenderText {#text} at (2,32) size 52x31
+              text run at (2,32) width 52: "bold"
+            RenderBR {BR} at (54,56) size 0x0
+          RenderText {#text} at (2,63) size 49x29
+            text run at (2,63) width 49: "plain"
 caret: position 5 of child 2 {#text} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
