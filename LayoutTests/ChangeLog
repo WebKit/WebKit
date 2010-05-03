@@ -5,7 +5,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=38285
         <rdar://problem/7903453> REGRESSION: Javascript command window.open does not work in empty tab
 
-        These tests don't verify that this bug is fixed (that cannpt be tested automatically),
+        These tests don't verify that this bug is fixed (that cannot be tested automatically),
         but test closely related behavior that hasn't been covered before.
 
         * http/tests/security/resources/iframe-no-src.html: Added.
