@@ -13,7 +13,8 @@
 
         Reviewed by Kevin Ollivier.
 
-        Provide access to GrantUniversalAccess to allow enabling of XSS support. 
+        Provide access to GrantUniversalAccess to allow enabling of XSS support.
+        https://bugs.webkit.org/show_bug.cgi?id=38481
 
         * WebFrame.cpp:
         (wxWebFrame::GrantUniversalAccess):
