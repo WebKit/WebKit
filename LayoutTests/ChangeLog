@@ -15,6 +15,14 @@
 
         Unreviewed, expectations change.
 
+        Fix duplicate expectation, remove the SVG tests added in r58700.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-05-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
         Mark a sandbox test as SLOW and change one of the fast/forms tests I
         just changed from IMAGE+TEXT->IMAGE back to IMAGE.
 
