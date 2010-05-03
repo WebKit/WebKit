@@ -1,3 +1,14 @@
+2010-05-03  Philippe Normand  <pnormand@igalia.com>
+
+        Rubber-stamped by Csaba Osztrogonac.
+
+        media/video-duration-known-after-eos.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=38466
+
+        * platform/qt/Skipped: Skipping failing test. A lot of media tests
+        are already skipped on this platform. Tor Arne said he'd look at
+        them, at some point.
+
 2010-04-30  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Seidel.
