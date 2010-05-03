@@ -1,3 +1,12 @@
+2010-05-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
+        Mark more editing/* tests from r58703 as failing. Also, (re-?) add the SVG tests again
+        as they do fail on some platforms.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-05-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] fast/frames/flattening/frameset-flattening-subframesets.html fails intermittently on Qt bot
