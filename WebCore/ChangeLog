@@ -1,3 +1,18 @@
+2010-05-03  Stephan Aßmus  <superstippi@gmx.de>
+
+        Reviewed by Holger Freyther.
+
+        [Gtk] Fix leaking the FontPlatformData instance used to create the the
+        small caps font data.
+        https://bugs.webkit.org/show_bug.cgi?id=37500
+
+        No new tests needed.
+
+        * platform/graphics/gtk/SimpleFontDataPango.cpp:
+        (WebCore::SimpleFontData::smallCapsFontData):
+            - Use a stack allocated FontPlatformData instead of a heap allocated
+              one that is never freed.
+
 2010-05-03  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
 
         Reviewed by Simon Hausmann.

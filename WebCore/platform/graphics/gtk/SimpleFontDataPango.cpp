@@ -84,9 +84,9 @@ SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDes
 {
     if (!m_smallCapsFontData) {
         FontDescription desc = FontDescription(fontDescription);
-        desc.setSpecifiedSize(0.70f*fontDescription.computedSize());
-        const FontPlatformData* pdata = new FontPlatformData(desc, desc.family().family());
-        m_smallCapsFontData = new SimpleFontData(*pdata);
+        desc.setSpecifiedSize(0.70f * fontDescription.computedSize());
+        FontPlatformData platformData(desc, desc.family().family());
+        m_smallCapsFontData = new SimpleFontData(platformData);
     }
     return m_smallCapsFontData;
 }
