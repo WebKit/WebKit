@@ -1892,11 +1892,11 @@ BUG10472 MAC DEBUG : svg/css/glyph-orientation-rounding-test.xhtml = FAIL PASS
 
 // <input type="search">; various failures, some tests may simply need new
 // baselines, others have more problems.
-BUG10473 LINUX : fast/forms/placeholder-pseudo-style.html = FAIL
+// BUG10473 LINUX : fast/forms/placeholder-pseudo-style.html = FAIL
 BUG10473 LINUX : fast/forms/placeholder-set-value.html = FAIL
-BUG10473 LINUX : fast/forms/search-display-none-cancel-button.html = FAIL
-BUG10473 LINUX : fast/forms/search-placeholder-value-changed.html = FAIL
-BUG10473 LINUX : fast/forms/searchfield-heights.html = FAIL
+// BUG10473 LINUX : fast/forms/search-display-none-cancel-button.html = FAIL
+// BUG10473 LINUX : fast/forms/search-placeholder-value-changed.html = FAIL
+// BUG10473 LINUX : fast/forms/searchfield-heights.html = FAIL
 BUG10473 LINUX : fast/replaced/width100percent-searchfield.html = FAIL
 
 // This test isn't just slow -- sometimes it times out indefinitely.
@@ -2787,14 +2787,17 @@ BUGYAAR MAC : svg/custom/dominant-baseline-hanging.svg = MISSING
 BUGYAAR : fast/css/input-search-padding.html = IMAGE+TEXT
 BUGYAAR : fast/css/text-input-with-webkit-border-radius.html = IMAGE
 BUGYAAR : fast/forms/control-restrict-line-height.html = IMAGE
+BUGYAAR : fast/forms/placeholder-pseudo-style.html = IMAGE
 BUGYAAR : fast/forms/search-cancel-button-style-sharing.html = IMAGE
 BUGYAAR : fast/forms/search-rtl.html = IMAGE
+BUGYAAR : fast/forms/search-display-none-cancel-button.html = IMAGE
 BUGYAAR WIN LINUX : fast/forms/search-vertical-alignment.html = IMAGE
+BUGYAAR : fast/forms/searchfield-heights.html = IMAGE
 
 // GStreamer - disabled in Chromium
 WONTFIX : media/video-duration-known-after-eos.html = TEXT TIMEOUT
 
-BUGDPRANKE SLOW : http/tests/security/sandbox-inherit-to-initial-document-2.html = PASS
+BUGDPRANKE : http/tests/security/sandbox-inherit-to-initial-document-2.html = PASS TIMEOUT
 
 BUGDPRANKE : svg/W3C-SVG-1.1/fonts-kern-01-t.svg = IMAGE
 BUGDPRANKE : svg/W3C-SVG-1.1/render-groups-01-b.svg = IMAGE
