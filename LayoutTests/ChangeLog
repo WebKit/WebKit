@@ -1,3 +1,12 @@
+2010-05-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
+        Mark the editing/* tests from r58703 as temporarily expected to fail
+        until the other half of the two-sided patch can land.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-05-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
