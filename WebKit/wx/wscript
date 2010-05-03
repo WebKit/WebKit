@@ -81,6 +81,13 @@ def pre_build(bld):
     bld.env.CXXDEPS_WEBCORE = Utils.h_file(libwebcore)
     
 def build(bld):
+
+    import TaskGen
+
+    if sys.platform.startswith('darwin'):
+        TaskGen.task_gen.mappings['.mm'] = TaskGen.task_gen.mappings['.cxx']
+        TaskGen.task_gen.mappings['.m'] = TaskGen.task_gen.mappings['.cxx']
+
     bld.add_pre_fun(pre_build)
 
     bld.env.LIBDIR = output_dir
@@ -95,6 +102,11 @@ def build(bld):
         uselib_local = '',
         install_path = output_dir)
         
+    exts = ['.c', '.cpp']
+    if sys.platform.startswith('darwin'):
+        exts.append('.mm')
+        obj.includes += '../mac/WebCoreSupport ../../WebCore/platform/mac'
+        obj.source = "../mac/WebCoreSupport/WebSystemInterface.m"
     obj.find_sources_in_dirs(webkit_dirs)
 
     if building_on_win32:

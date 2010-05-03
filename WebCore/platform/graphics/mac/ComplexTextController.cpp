@@ -25,7 +25,9 @@
 #include "config.h"
 #include "ComplexTextController.h"
 
+#include <ApplicationServices/ApplicationServices.h>
 #include "CharacterNames.h"
+#include "FloatSize.h"
 #include "Font.h"
 #include "TextBreakIterator.h"
 

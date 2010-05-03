@@ -25,6 +25,7 @@
 #ifndef ComplexTextController_h
 #define ComplexTextController_h
 
+#include <ApplicationServices/ApplicationServices.h>
 #include "GlyphBuffer.h"
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>

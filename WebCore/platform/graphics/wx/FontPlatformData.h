@@ -37,6 +37,22 @@
 
 #include <wx/defs.h>
 #include <wx/font.h>
+#include <wx/gdicmn.h>
+
+#if OS(DARWIN)
+#include <ApplicationServices/ApplicationServices.h>
+
+#if __OBJC__
+@class NSFont;
+#else
+class NSFont;
+#endif
+
+#ifndef BUILDING_ON_TIGER
+inline CTFontRef toCTFontRef(NSFont *nsFont) { return reinterpret_cast<CTFontRef>(nsFont); }
+#endif
+
+#endif
 
 namespace WebCore {
 
@@ -64,9 +80,12 @@ public:
     enum FontState { UNINITIALIZED, DELETED, VALID };
 
     FontPlatformData(WTF::HashTableDeletedValueType)
-    : m_fontState(DELETED),
-      m_font(0),
-      m_size(0)
+    : m_fontState(DELETED)
+    , m_font(0)
+    , m_size(0)
+#if OS(DARWIN)
+    , m_atsuFontID(0)
+#endif
     { }
 
     ~FontPlatformData();
@@ -77,6 +96,9 @@ public:
     : m_fontState(UNINITIALIZED)
     , m_font(0)
     , m_size(size)
+#if OS(DARWIN)
+    , m_atsuFontID(0)
+#endif
     {
     }
     
@@ -84,6 +106,9 @@ public:
     : m_fontState(UNINITIALIZED)
     , m_font(0)
     , m_size(0)
+#if OS(DARWIN)
+    , m_atsuFontID(0)
+#endif
     {
     }
     
@@ -121,10 +146,22 @@ public:
     
     bool roundsGlyphAdvances() const { return false; }
     
+    bool allowsLigatures() const { return false; }
+    
 #if OS(WINDOWS)
     bool useGDI() const;
     HFONT hfont() const;
 #endif
+
+#if OS(DARWIN)
+    ATSUFontID m_atsuFontID;
+    CGFontRef cgFont() const;
+    NSFont* nsFont() const;
+    void cacheNSFont();
+    
+#endif
+
+    float m_size;
 
 #ifndef NDEBUG
     String description() const;
@@ -133,7 +170,9 @@ public:
 private:
     WTF::RefPtr<FontHolder> m_font;
     FontState m_fontState;
-    float m_size;
+#if OS(DARWIN)
+    NSFont* m_nsFont;
+#endif
 };
 
 }

@@ -31,7 +31,7 @@
 #include "IntSize.h"
 #include <wtf/MathExtras.h>
 
-#if PLATFORM(CG)
+#if PLATFORM(CG) || (PLATFORM(WX) && OS(DARWIN))
 typedef struct CGSize CGSize;
 #endif
 
@@ -75,7 +75,7 @@ public:
            m_height < other.m_height ? m_height : other.m_height);
     }
 
-#if PLATFORM(CG)
+#if PLATFORM(CG) || (PLATFORM(WX) && OS(DARWIN))
     explicit FloatSize(const CGSize&); // don't do this implicitly since it's lossy
     operator CGSize() const;
 #endif

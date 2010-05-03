@@ -36,6 +36,11 @@
 typedef struct OpaqueATSUStyle* ATSUStyle;
 #endif
 
+#if USE(CORE_TEXT)
+#include <ApplicationServices/ApplicationServices.h>
+#include <wtf/RetainPtr.h>
+#endif
+
 #if (PLATFORM(WIN) && !OS(WINCE)) \
     || (OS(WINDOWS) && PLATFORM(WX))
 #include <usp10.h>
@@ -89,7 +94,7 @@ public:
     float spaceWidth() const { return m_spaceWidth; }
     float adjustedSpaceWidth() const { return m_adjustedSpaceWidth; }
 
-#if PLATFORM(CG) || PLATFORM(CAIRO) || (OS(WINDOWS) && PLATFORM(WX))
+#if PLATFORM(CG) || PLATFORM(CAIRO) || PLATFORM(WX)
     float syntheticBoldOffset() const { return m_syntheticBoldOffset; }
 #endif
 
@@ -120,6 +125,8 @@ public:
 
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
     NSFont* getNSFont() const { return m_platformData.font(); }
+#elif (PLATFORM(WX) && OS(DARWIN)) 
+    NSFont* getNSFont() const { return m_platformData.nsFont(); }
 #endif
 
 #if USE(CORE_TEXT)
@@ -206,7 +213,7 @@ private:
 
     mutable SimpleFontData* m_smallCapsFontData;
 
-#if PLATFORM(CG) || PLATFORM(CAIRO) || (OS(WINDOWS) && PLATFORM(WX))
+#if PLATFORM(CG) || PLATFORM(CAIRO) || PLATFORM(WX)
     float m_syntheticBoldOffset;
 #endif
 

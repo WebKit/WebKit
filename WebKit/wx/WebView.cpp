@@ -254,6 +254,13 @@ wxWebViewCachePolicy wxWebView::GetCachePolicy()
     return gs_cachePolicy;
 }
 
+#if OS(DARWIN)
+// prototype - function is in WebKitSystemInterface.mm
+extern "C" {
+void InitWebCoreSystemInterface(void);
+}
+#endif
+
 BEGIN_EVENT_TABLE(wxWebView, wxWindow)
     EVT_PAINT(wxWebView::OnPaint)
     EVT_SIZE(wxWebView::OnSize)
@@ -295,6 +302,10 @@ wxWebView::wxWebView(wxWindow* parent, int id, const wxPoint& position,
 bool wxWebView::Create(wxWindow* parent, int id, const wxPoint& position, 
                        const wxSize& size, long style, const wxString& name)
 {
+#if OS(DARWIN)
+    InitWebCoreSystemInterface();
+#endif
+
     if ( (style & wxBORDER_MASK) == 0)
         style |= wxBORDER_NONE;
     

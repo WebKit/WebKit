@@ -232,7 +232,11 @@ def common_configure(conf):
     global msvc_version
     global msvclibs_dir
     
+    libprefix = ''
+
     if building_on_win32:
+        libprefix = 'lib'
+
         found_versions = conf.get_msvc_versions()
         if found_versions[0][0] == 'msvc 9.0':
             msvc_version = 'msvc2008'
@@ -268,6 +272,9 @@ def common_configure(conf):
     
         conf.env.append_value('CXXDEFINES', ['BUILDING_WX__=1', 'JS_NO_EXPORT'])
 
+        conf.env['LIB_WXWEBKIT'] = ['wxwebkit']
+        conf.env['CXXDEFINES_WXWEBKIT'] = ['WXUSINGDLL_WEBKIT']
+
         if building_on_win32:
             conf.env.append_value('LIBPATH', os.path.join(msvclibs_dir, 'lib'))
             # wx settings
@@ -278,6 +285,9 @@ def common_configure(conf):
             conf.env['CPPPATH_WX'] = wxincludes
             conf.env['LIB_WX'] = wxlibs
             conf.env['LIBPATH_WX'] = wxlibpaths
+
+    conf.env['LIB_JSCORE'] = [libprefix + 'jscore']
+    conf.env['LIB_WEBCORE'] = [libprefix + 'webcore']
 
     if sys.platform.startswith('darwin'):
         conf.env['LIB_ICU'] = ['icucore']
@@ -306,7 +316,12 @@ def common_configure(conf):
         sdk_version = min_version
         if min_version == "10.4":
             sdk_version += "u"
-            conf.env.append_value('LIB', ['WebKitSystemInterfaceTiger'])
+            conf.env.append_value('LIB_WEBCORE', ['WebKitSystemInterfaceTiger'])
+        else:
+            # NOTE: There is a WebKitSystemInterfaceSnowLeopard, but when we use that
+            # on 10.6, we get a strange missing symbol error, and this library seems to
+            # work fine for wx's purposes.
+            conf.env.append_value('LIB_WEBCORE', ['WebKitSystemInterfaceLeopard'])
         
         sdkroot = '/Developer/SDKs/MacOSX%s.sdk' % sdk_version
         sdkflags = ['-arch', 'i386', '-isysroot', sdkroot]
@@ -316,15 +331,6 @@ def common_configure(conf):
         
         conf.env.append_value('CPPPATH_SQLITE3', [os.path.join(wklibs_dir, 'WebCoreSQLite3')])
         conf.env.append_value('LIB_SQLITE3', ['WebCoreSQLite3'])
-    
-    libprefix = ''
-    if building_on_win32:
-        libprefix = 'lib'
-    
-    conf.env['LIB_JSCORE'] = [libprefix + 'jscore']
-    conf.env['LIB_WEBCORE'] = [libprefix + 'webcore']
-    conf.env['LIB_WXWEBKIT'] = ['wxwebkit']
-    conf.env['CXXDEFINES_WXWEBKIT'] = ['WXUSINGDLL_WEBKIT']
     
     conf.env.append_value('CXXDEFINES', feature_defines)
     if config == 'Release':

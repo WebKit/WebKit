@@ -28,16 +28,13 @@
 #include <wtf/unicode/Unicode.h>
 
 #include "fontprops.h"
+#include "WebCoreSystemInterface.h"
 
 #include <ApplicationServices/ApplicationServices.h>
 
 #include <wx/defs.h>
 #include <wx/gdicmn.h>
 #include <wx/graphics.h>
-
-#ifdef BUILDING_ON_TIGER
-void (*wkGetFontMetrics)(CGFontRef, int* ascent, int* descent, int* lineGap, unsigned* unitsPerEm);
-#endif
 
 const float smallCapsFontSizeMultiplier = 0.7f;
 const float contextDPI = 72.0f;
@@ -92,23 +89,20 @@ m_ascent(0), m_descent(0), m_lineGap(0), m_lineSpacing(0), m_xHeight(0)
 
 }
 
-bool wxFontContainsCharacters(const wxFont& font, const UChar* characters, int length)
+bool wxFontContainsCharacters(void* font, const UChar* characters, int length)
 {
-#if wxOSX_USE_COCOA
     NSString* string = [[NSString alloc] initWithCharactersNoCopy:const_cast<unichar*>(characters) length:length freeWhenDone:NO];
-    NSCharacterSet* set = [[font.OSXGetNSFont() coveredCharacterSet] invertedSet];
+    NSCharacterSet* set = [[(NSFont*)font coveredCharacterSet] invertedSet];
     bool result = set && [string rangeOfCharacterFromSet:set].location == NSNotFound;
     [string release];
     return result;
-#else
-    return true;
-#endif
 }
 
 void GetTextExtent( const wxFont& font, const wxString& str, wxCoord *width, wxCoord *height,
                             wxCoord *descent, wxCoord *externalLeading )
 {
     wxGraphicsContext * const gc = wxGraphicsContext::Create();
+    
     gc->SetFont(font, *wxBLACK); // colour doesn't matter but must be specified
     struct GCTextExtent
     {

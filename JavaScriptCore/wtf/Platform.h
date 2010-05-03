@@ -650,6 +650,11 @@
 #define ENABLE_GLOBAL_FASTMALLOC_NEW 0
 #if OS(DARWIN)
 #define WTF_PLATFORM_CF 1
+#ifndef BUILDING_ON_TIGER
+#define WTF_USE_CORE_TEXT 1
+#else
+#define WTF_USE_ATSUI 1
+#endif
 #endif
 #endif
 

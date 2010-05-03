@@ -50,9 +50,20 @@ if build_port == "wx":
         webcore_dirs.append('plugins/mac')
         webcore_dirs.append('platform/wx/wxcode/mac/carbon')
         webcore_dirs.append('platform/mac')
+        webcore_dirs.append('platform/text/mac')
         webcore_sources['wx-mac'] = [
-               'platform/mac/WebCoreNSStringExtras.mm',
                'platform/mac/PurgeableBufferMac.cpp',
+               'platform/mac/WebCoreNSStringExtras.mm',
+               'platform/mac/WebCoreSystemInterface.mm',
+               'platform/graphics/cg/FloatSizeCG.cpp',
+               'platform/graphics/mac/ComplexTextController.cpp',
+               'platform/graphics/mac/ComplexTextControllerCoreText.cpp',
+               'platform/graphics/mac/ComplexTextControllerATSUI.cpp',
+               'platform/graphics/mac/GlyphPageTreeNodeMac.cpp',
+               'platform/graphics/mac/SimpleFontDataATSUI.mm',
+               'platform/graphics/mac/SimpleFontDataCoreText.cpp',
+               'platform/graphics/wx/FontPlatformDataWxMac.mm',
+               'platform/text/mac/ShapeArabic.c',
                'platform/wx/wxcode/mac/carbon/fontprops.mm',
                'plugins/wx/PluginDataWx.cpp',
                'plugins/mac/PluginPackageMac.cpp',
@@ -101,8 +112,12 @@ def configure(conf):
 
 def build(bld):
     import Options
+    
+    import TaskGen
+
     if sys.platform.startswith('darwin'):
         TaskGen.task_gen.mappings['.mm'] = TaskGen.task_gen.mappings['.cxx']
+        TaskGen.task_gen.mappings['.m'] = TaskGen.task_gen.mappings['.cxx']
     
     wk_includes = ['.', '..', 'DerivedSources',
                 wk_root, 
@@ -124,6 +139,7 @@ def build(bld):
         
     if sys.platform.startswith('darwin'):
         features.append('cf')
+        bld.install_files(os.path.join(output_dir, 'WebCore'), 'platform/mac/WebCoreSystemInterface.h')
     else:
         exclude_patterns.append('*CF.cpp')
 
@@ -201,11 +217,13 @@ def build(bld):
         
         if building_on_win32:
             excludes.append('SharedTimerWx.cpp')
-            excludes.append('GlyphMapWx.cpp')
             excludes.append('RenderThemeWin.cpp')
             excludes.append('KeyEventWin.cpp')
             
+        if building_on_win32 or sys.platform.startswith('darwin'):
+            excludes.append('GlyphMapWx.cpp')
         excludes.append('AuthenticationCF.cpp')
         excludes.append('LoaderRunLoopCF.cpp')
+        excludes.append('ResourceErrorCF.cpp')
         
     webcore.find_sources_in_dirs(full_dirs, excludes = excludes, exts=['.c', '.cpp'])

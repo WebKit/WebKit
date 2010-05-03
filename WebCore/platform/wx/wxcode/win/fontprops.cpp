@@ -66,7 +66,7 @@ m_ascent(0), m_descent(0), m_lineGap(0), m_lineSpacing(0), m_xHeight(0)
     ReleaseDC(0, dc);
 }
 
-bool wxFontContainsCharacters(const wxFont& font, const UChar* characters, int length)
+bool wxFontContainsCharacters(void* font, const UChar* characters, int length)
 {
     // FIXME: Microsoft documentation seems to imply that characters can be output using a given font and DC
     // merely by testing code page intersection.  This seems suspect though.  Can't a font only partially
@@ -89,7 +89,7 @@ bool wxFontContainsCharacters(const wxFont& font, const UChar* characters, int l
     langFontLink->CodePageToCodePages(CP_ACP, &acpCodePages);
 
     DWORD fontCodePages;
-    langFontLink->GetFontCodePages(dc, static_cast<HFONT>(font.GetHFONT()), &fontCodePages);
+    langFontLink->GetFontCodePages(dc, (HFONT)font, &fontCodePages);
 
     DWORD actualCodePages;
     long numCharactersProcessed;

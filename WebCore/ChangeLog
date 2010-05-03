@@ -1,3 +1,51 @@
+2010-05-03  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        [wx] Build and use Mac's ComplexTextController to support complex text in wx.
+        https://bugs.webkit.org/show_bug.cgi?id=38482
+
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::advanceAt):
+        (WebCore::GlyphBuffer::add):
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::getNSFont):
+        * platform/graphics/mac/ComplexTextController.cpp:
+        * platform/graphics/mac/ComplexTextController.h:
+        * platform/graphics/wx/FontCacheWx.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+        (WebCore::FontCache::getLastResortFallbackFont):
+        * platform/graphics/wx/FontPlatformData.h:
+        (toCTFontRef):
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::allowsLigatures):
+        * platform/graphics/wx/FontPlatformDataWx.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::cgFont):
+        * platform/graphics/wx/FontPlatformDataWxMac.mm: Added.
+        (WebCore::FontPlatformData::nsFont):
+        (WebCore::FontPlatformData::cacheNSFont):
+        * platform/graphics/wx/FontWx.cpp:
+        (WebCore::Font::canReturnFallbackFontsForComplexText):
+        (WebCore::Font::selectionRectForComplexText):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+        * platform/graphics/wx/SimpleFontDataWx.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::containsCharacters):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        * platform/wx/wxcode/fontprops.h:
+        * platform/wx/wxcode/mac/carbon/fontprops.mm:
+        (wxFontContainsCharacters):
+        (GetTextExtent):
+        * platform/wx/wxcode/mac/carbon/non-kerned-drawing.cpp:
+        (WebCore::drawTextWithSpacing):
+        * platform/wx/wxcode/win/fontprops.cpp:
+        (wxFontContainsCharacters):
+        * wscript:
+
 2010-05-03  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Adam Barth.
