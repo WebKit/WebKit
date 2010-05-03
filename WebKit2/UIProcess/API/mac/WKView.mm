@@ -214,6 +214,22 @@ using namespace WebCore;
     }
 }
 
+static bool isViewVisible(NSView *view)
+{
+    if (![view window])
+        return false;
+    
+    if ([view isHiddenOrHasHiddenAncestor])
+        return false;
+    
+    return true;
+}
+
+- (void)_updateVisibility
+{
+    _data->_page->drawingArea()->setPageIsVisible(isViewVisible(self));
+}
+
 - (void)viewWillMoveToWindow:(NSWindow *)window
 {
     if (window != [self window]) {
@@ -224,8 +240,7 @@ using namespace WebCore;
 
 - (void)viewDidMoveToWindow
 {
-    _data->_page->drawingArea()->didChangeVisibility();
-
+    [self _updateVisibility];
     [self _updateActiveState];
 }
 
@@ -262,12 +277,12 @@ using namespace WebCore;
 
 - (void)viewDidHide
 {
-    _data->_page->drawingArea()->didChangeVisibility();
+    [self _updateVisibility];
 }
 
 - (void)viewDidUnhide
 {
-    _data->_page->drawingArea()->didChangeVisibility();
+    [self _updateVisibility];
 }
 
 @end

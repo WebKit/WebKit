@@ -143,8 +143,6 @@ public:
 
     void getStatistics(WKContextStatistics*);
 
-    bool isVisible();
-
 private:
     WebPageProxy(WebPageNamespace*, uint64_t pageID);
 

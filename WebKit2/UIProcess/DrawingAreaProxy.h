@@ -60,9 +60,7 @@ public:
     virtual void paint(const WebCore::IntRect&, PlatformDrawingContext) = 0;
     virtual void setSize(const WebCore::IntSize&) = 0;
 
-    // Called whenever the view visibility changes, this can happen for a number of reasons, such as
-    // the view being hidden, the window minimized, etc.
-    virtual void didChangeVisibility() = 0;
+    virtual void setPageIsVisible(bool isVisible) = 0;
     
     // The DrawingAreaProxy should never be decoded itself. Instead, the DrawingArea should be decoded.
     virtual void encode(CoreIPC::ArgumentEncoder& encoder) const

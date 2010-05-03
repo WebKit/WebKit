@@ -41,8 +41,6 @@ public:
 
     virtual void takeFocus(bool direction) = 0;
     virtual void toolTipChanged(const WebCore::String&, const WebCore::String&) = 0;
-
-    virtual bool isPageVisible() = 0;
 };
 
 } // namespace WebKit

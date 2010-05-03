@@ -61,15 +61,4 @@ void PageClientImpl::toolTipChanged(const String& oldToolTip, const String& newT
     [m_wkView _toolTipChangedFrom:(NSString *)oldToolTip to:(NSString *)newToolTip];
 }
 
-bool PageClientImpl::isPageVisible()
-{
-    if (![m_wkView window])
-        return false;
-
-    if ([m_wkView isHiddenOrHasHiddenAncestor])
-        return false;
-
-    return true;
-}
-
 } // namespace WebKit

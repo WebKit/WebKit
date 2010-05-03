@@ -84,11 +84,10 @@ void DrawingAreaProxyUpdateChunk::setSize(const IntSize& viewSize)
     page->process()->connection()->send(DrawingAreaMessage::SetSize, page->pageID(), CoreIPC::In(viewSize));
 }
 
-void DrawingAreaProxyUpdateChunk::didChangeVisibility()
+void DrawingAreaProxyUpdateChunk::setPageIsVisible(bool isVisible)
 {
     WebPageProxy* page = this->page();
-    bool isVisible = page->isVisible();
-    
+
     if (isVisible == m_isVisible)
         return;
     

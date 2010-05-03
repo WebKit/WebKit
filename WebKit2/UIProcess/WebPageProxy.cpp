@@ -322,11 +322,6 @@ void WebPageProxy::getStatistics(WKContextStatistics* statistics)
     statistics->numberOfWKFrames += m_frameMap.size();
 }
 
-bool WebPageProxy::isVisible()
-{
-    return m_pageClient->isPageVisible();
-}
-
 WebFrameProxy* WebPageProxy::webFrame(uint64_t frameID) const
 {
     return m_frameMap.get(frameID).get();
