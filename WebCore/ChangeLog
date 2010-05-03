@@ -1,3 +1,34 @@
+2010-05-03  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] GraphicsLayer: support webGL
+        https://bugs.webkit.org/show_bug.cgi?id=35388
+
+        Added support GraphicsContext3D to GraphicsLayer.
+        Added paint method to GraphicsContext3D for Qt platform that
+        uses drawTexture() when QGLWidget is used as viewport of
+        QGraphicsWebView.
+        Fine-tuned texture and handling and image to texture conversion to
+        work also when drawTexture() blitting is used.
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DInternal::GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3D::beginPaint):
+        (WebCore::GraphicsContext3D::paint):
+        (WebCore::GraphicsContext3D::texImage2D):
+        (WebCore::GraphicsContext3D::texSubImage2D):
+        (WebCore::GraphicsContext3D::getImageData):
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQtImpl::):
+        (WebCore::GraphicsLayerQtImpl::GraphicsLayerQtImpl):
+        (WebCore::GraphicsLayerQtImpl::paint):
+        (WebCore::GraphicsLayerQtImpl::flushChanges):
+        (WebCore::GraphicsLayerQt::setContentsToGraphicsContext3D):
+        (WebCore::GraphicsLayerQt::setGraphicsContext3DNeedsDisplay):
+        * platform/graphics/qt/GraphicsLayerQt.h:
+
 2010-05-03  Janne Koskinen  <janne.p.koskinen@digia.com>
 
         Reviewed by Simon Hausmann.
