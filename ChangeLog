@@ -1,3 +1,17 @@
+2010-05-02  Geoff Levand  <geoff.levand@am.sony.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] Fix out of source build failure
+        https://bugs.webkit.org/show_bug.cgi?id=38051
+
+        Add a preprocessor include path for generated GTK header files.
+        Fixes build errors like these when building GTK out of source:
+
+          webkit.h: error: webkit/webkitversion.h: No such file or directory
+
+        * GNUmakefile.am:
+
 2010-05-02  Kartikaya Gupta  <kagupta@rim.com>
 
         Reviewed by George Staikos.

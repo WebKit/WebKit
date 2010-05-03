@@ -397,6 +397,7 @@ webkitgtk_cppflags += \
 	-I$(srcdir)/WebKit/gtk \
 	-I$(srcdir)/WebKit/gtk/WebCoreSupport \
 	-I$(srcdir)/WebKit/gtk/webkit \
+	-I$(top_builddir)/WebKit/gtk \
 	-I$(top_builddir)/WebKit/gtk/webkit \
 	-I$(GENSOURCESWEBKITDOM)
 
