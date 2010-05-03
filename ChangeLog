@@ -1,3 +1,15 @@
+2010-05-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add some more Chromium-specific files to gitignore
+        https://bugs.webkit.org/show_bug.cgi?id=38469
+
+        These files are generated as part of the update-webkit --chromium
+        script.
+
+        * .gitignore:
+
 2010-05-02  Geoff Levand  <geoff.levand@am.sony.com>
 
         Reviewed by Eric Seidel.

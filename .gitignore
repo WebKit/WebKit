@@ -11,6 +11,11 @@ WebKitTools/Scripts/webkitpy/thirdparty/autoinstalled
 JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.xcodeproj
 WebCore/WebCore.gyp/WebCore.xcodeproj
 WebKit/chromium/WebKit.xcodeproj
+WebKitTools/DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.xcodeproj
+
+# Ignore status files that manage Chromium dependencies.
+WebKit/chromium/.gclient
+WebKit/chromium/.gclient_entries
 
 # Ignore compiled java tests:
 LayoutTests/java/*.class
