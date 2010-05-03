@@ -2,6 +2,15 @@
 
         Unreviewed, expectations change.
 
+        Mark a sandbox test as SLOW and change one of the fast/forms tests I
+        just changed from IMAGE+TEXT->IMAGE back to IMAGE.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-05-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
         Change expectations for some of the fast/forms tests that just started
         failing from IMAGE+TEXT to just IMAGE, and add some failing SVG tests
         so that we can get the bots to green up.
