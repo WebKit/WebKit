@@ -1,3 +1,13 @@
+2010-04-30  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GStreamer] endless loop after playback ended
+        https://bugs.webkit.org/show_bug.cgi?id=38384
+
+        * media/video-duration-known-after-eos-expected.txt: Added.
+        * media/video-duration-known-after-eos.html: Added.
+
 2010-05-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

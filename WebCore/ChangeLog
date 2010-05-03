@@ -1,3 +1,18 @@
+2010-04-30  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GStreamer] endless loop after playback ended
+        https://bugs.webkit.org/show_bug.cgi?id=38384
+
+        At playback end ensure duration() will return a valid duration if
+        we managed to calculate it based on current position.
+
+        Test: media/video-duration-known-after-eos.html
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::didEnd):
+
 2010-05-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Fix build break on Mac OS X
