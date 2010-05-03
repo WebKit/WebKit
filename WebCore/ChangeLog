@@ -1,3 +1,14 @@
+2010-05-03  Janne Koskinen  <janne.p.koskinen@digia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix qtlibraryinfix not to contain space
+
+        List catenation with += adds whitespace cutting the infix
+        from the final target.
+
+        * WebCore.pro:
+
 2010-05-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

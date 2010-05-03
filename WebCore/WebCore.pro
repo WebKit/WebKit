@@ -72,7 +72,7 @@ CONFIG(QTDIR_build) {
 } else {
     DESTDIR = $$OUTPUT_DIR/lib
     !static: DEFINES += QT_MAKEDLL
-    symbian: TARGET += $${QT_LIBINFIX}
+    symbian: TARGET =$$TARGET$${QT_LIBINFIX}
 }
 include($$PWD/../WebKit/qt/qtwebkit_version.pri)
 VERSION = $${QT_WEBKIT_MAJOR_VERSION}.$${QT_WEBKIT_MINOR_VERSION}.$${QT_WEBKIT_PATCH_VERSION}
