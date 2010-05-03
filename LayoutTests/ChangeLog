@@ -1,3 +1,16 @@
+2010-05-03  Yaar Schnitman  <yaar@chromium.org>
+
+        Not Reviewed.
+
+        Preparing for chromium webkit roll 58626:TBD: Rebaselines
+        https://bugs.webkit.org/show_bug.cgi?id=38485
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/masking-mask-01-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/masking-mask-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/masking-mask-01-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/masking-mask-01-b-expected.png:
+        * platform/chromium/test_expectations.txt: 
+
 2010-05-03  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adam Barth.

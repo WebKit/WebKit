@@ -2792,7 +2792,5 @@ BUGYAAR WIN LINUX : fast/forms/search-vertical-alignment.html = IMAGE+TEXT
 BUGYAAR : fast/forms/search-cancel-button-style-sharing.html = IMAGE+TEXT
 BUGYAAR : fast/forms/search-rtl.html = IMAGE+TEXT
 
-// Needs new baselines
-
 // GStreamer - disabled in Chromium
-WONTFIX : media/video-duration-known-after-eos.html = TEXT
+WONTFIX : media/video-duration-known-after-eos.html = TEXT TIMEOUT
