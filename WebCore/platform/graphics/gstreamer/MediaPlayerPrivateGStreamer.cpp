@@ -887,10 +887,8 @@ void MediaPlayerPrivateGStreamer::updateStates()
             if (!m_mediaDuration) {
                 float newDuration = duration();
                 m_mediaDurationKnown = !isinf(newDuration);
-                if (m_mediaDurationKnown) {
+                if (m_mediaDurationKnown)
                     m_mediaDuration = newDuration;
-                    durationChanged();
-                }
             }
 
             if (m_buffering) {
