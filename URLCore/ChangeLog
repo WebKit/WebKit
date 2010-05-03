@@ -1,8 +1,0 @@
-2010-05-03  Adam Barth  <abarth@webkit.org>
-
-        Reviewed by Darin Adler.
-
-        Add empty folder to house URL parser
-        https://bugs.webkit.org/show_bug.cgi?id=38470
-
-        Add URLCore directory.
