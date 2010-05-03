@@ -54,6 +54,7 @@ namespace WebCore {
     class FrameLoader;
     class HistoryItem;
     class HTMLAppletElement;
+    class HTMLFormElement;
     class HTMLFrameOwnerElement;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     class HTMLMediaElement;
@@ -149,6 +150,7 @@ namespace WebCore {
 
         virtual void dispatchUnableToImplementPolicy(const ResourceError&) = 0;
 
+        virtual void dispatchWillSendSubmitEvent(HTMLFormElement*) = 0;
         virtual void dispatchWillSubmitForm(FramePolicyFunction, PassRefPtr<FormState>) = 0;
 
         virtual void dispatchDidLoadMainResource(DocumentLoader*) = 0;

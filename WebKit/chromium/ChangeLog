@@ -1,3 +1,18 @@
+2010-05-03  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Add "willSendSubmitEvent" hook to WebFrameClient and FrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=38397
+
+        No tests (functionality is exposed only through native WebKit API.)
+
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::willSendSubmitEvent): New empty method
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::dispatchWillSendSubmitEvent): Delegate to client
+        * src/FrameLoaderClientImpl.h:
+
 2010-05-02  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Dmitry Titov.

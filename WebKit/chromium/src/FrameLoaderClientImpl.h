@@ -117,6 +117,7 @@ public:
     virtual void dispatchDecidePolicyForNavigationAction(WebCore::FramePolicyFunction function, const WebCore::NavigationAction& action, const WebCore::ResourceRequest& request, PassRefPtr<WebCore::FormState> form_state);
     virtual void cancelPolicyCheck();
     virtual void dispatchUnableToImplementPolicy(const WebCore::ResourceError&);
+    virtual void dispatchWillSendSubmitEvent(WebCore::HTMLFormElement*);
     virtual void dispatchWillSubmitForm(WebCore::FramePolicyFunction, PassRefPtr<WebCore::FormState>);
     virtual void dispatchDidLoadMainResource(WebCore::DocumentLoader*);
     virtual void revertToProvisionalState(WebCore::DocumentLoader*);

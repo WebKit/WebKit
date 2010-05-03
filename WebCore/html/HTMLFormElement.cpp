@@ -38,6 +38,7 @@
 #include "FormState.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "HTMLDocument.h"
 #include "HTMLFormCollection.h"
 #include "HTMLImageElement.h"
@@ -291,6 +292,8 @@ bool HTMLFormElement::prepareSubmit(Event* event)
     // Interactive validation must be done before dispatching the submit event.
     if (!validateInteractively(event))
         return false;
+
+    frame->loader()->client()->dispatchWillSendSubmitEvent(this);
 
     if (dispatchEvent(Event::create(eventNames().submitEvent, true, true)) && !m_doingsubmit)
         m_doingsubmit = true;

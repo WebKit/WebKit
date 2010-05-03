@@ -138,6 +138,10 @@ public:
 
     // Navigational notifications ------------------------------------------
 
+    // A form submission has been requested, but the page's submit event handler
+    // hasn't yet had a chance to run (and possibly alter/interrupt the submit.)
+    virtual void willSendSubmitEvent(WebFrame*, const WebFormElement&) { }
+
     // A form submission is about to occur.
     virtual void willSubmitForm(WebFrame*, const WebFormElement&) { }
 

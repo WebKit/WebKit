@@ -128,6 +128,7 @@ namespace WebCore {
 
         virtual void dispatchUnableToImplementPolicy(const WebCore::ResourceError&);
 
+        virtual void dispatchWillSendSubmitEvent(HTMLFormElement*) { }
         virtual void dispatchWillSubmitForm(FramePolicyFunction, PassRefPtr<FormState>);
 
         virtual void dispatchDidLoadMainResource(DocumentLoader*);

@@ -112,6 +112,7 @@ namespace WebCore {
         virtual void dispatchShow();
         virtual void cancelPolicyCheck();
 
+        virtual void dispatchWillSendSubmitEvent(HTMLFormElement*) { }
         virtual void dispatchWillSubmitForm(FramePolicyFunction, PassRefPtr<FormState>);
 
         virtual void dispatchDidLoadMainResource(DocumentLoader*);
