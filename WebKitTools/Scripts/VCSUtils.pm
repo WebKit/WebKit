@@ -439,6 +439,7 @@ sub gitdiff2svndiff($)
 #     copiedFromPath: if a file copy, the path from which the file was
 #                     copied. Otherwise, undefined.
 #     indexPath: the path in the "Index:" line.
+#     scmFormat: The string "git" or "svn" depending on the format.
 #     sourceRevision: the revision number of the source. This is the same
 #                     as the revision number the file was copied from, in
 #                     the case of a file copy.
@@ -465,6 +466,7 @@ sub parseDiffHeader($$)
 
     my %header;
 
+    my $copiedFromPath;
     my $foundHeaderEnding;
     my $lastReadLine; 
     my $sourceRevision;
@@ -486,7 +488,7 @@ sub parseDiffHeader($$)
                 if (/\(from (\S+):(\d+)\)$/) {
                     # The "from" clause is created by svn-create-patch, in
                     # which case there is always also a "revision" clause.
-                    $header{copiedFromPath} = $1;
+                    $copiedFromPath = $1;
                     die("Revision number \"$2\" in \"from\" clause does not match " .
                         "source revision number \"$sourceRevision\".") if ($2 != $sourceRevision);
                 }
@@ -509,7 +511,9 @@ sub parseDiffHeader($$)
         die("Did not find end of header block corresponding to index path \"$indexPath\".");
     }
 
+    $header{copiedFromPath} = $copiedFromPath;
     $header{indexPath} = $indexPath;
+    $header{scmFormat} = $filter ? "git" : "svn";
     $header{sourceRevision} = $sourceRevision;
     $header{svnConvertedText} = $svnConvertedText;
 
@@ -586,6 +590,7 @@ sub parseDiff($$)
     my %diffHashRef;
     $diffHashRef{copiedFromPath} = $headerHashRef->{copiedFromPath};
     $diffHashRef{indexPath} = $headerHashRef->{indexPath};
+    # FIXME: Also add scmFormat from the $headerHashRef.
     $diffHashRef{sourceRevision} = $headerHashRef->{sourceRevision};
     $diffHashRef{svnConvertedText} = $svnText;
 

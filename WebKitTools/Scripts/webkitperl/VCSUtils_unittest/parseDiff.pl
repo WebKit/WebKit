@@ -30,6 +30,9 @@ use warnings;
 use Test::More;
 use VCSUtils;
 
+# FIXME: Refactor the unit tests in this file to use is_deeply().
+#        See the unit tests for parseDiffHeader() as an example.
+
 my @diffHashRefKeys = ( # The $diffHashRef keys to check.
     "copiedFromPath",
     "indexPath",

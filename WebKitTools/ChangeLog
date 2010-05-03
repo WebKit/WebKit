@@ -1,3 +1,24 @@
+2010-05-02  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38319
+
+        * Scripts/VCSUtils.pm:
+          - In parseDiffHeader()--
+            - Added an "scmFormat" hash key to the return value to represent
+              whether the diff is Git or SVN formatted.
+            - Adjusted the code so the value of "copiedFromPath" will
+              be undef rather than "does not exist" if the file was not
+              copied.
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl:
+          - Added a FIXME to refactor these unit tests to use is_deeply().
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl:
+          - Updated the unit tests to test the "scmFormat" value.
+          - Simplified the unit tests by refactoring them to use is_deeply().
+
 2010-05-01  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Chris Jerdonek.
