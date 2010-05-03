@@ -26,7 +26,6 @@
 
 #include "config.h"
 #include "WTFThreadData.h"
-#include <wtf/text/AtomicStringTable.h>
 
 namespace WTF {
 
@@ -37,7 +36,8 @@ WTFThreadData* WTFThreadData::staticData;
 #endif
 
 WTFThreadData::WTFThreadData()
-    : m_atomicStringTable(new WebCore::AtomicStringTable())
+    : m_atomicStringTable(0)
+    , m_atomicStringTableDestructor(0)
 #if USE(JSC)
     , m_defaultIdentifierTable(new JSC::IdentifierTable())
     , m_currentIdentifierTable(m_defaultIdentifierTable)
@@ -47,7 +47,8 @@ WTFThreadData::WTFThreadData()
 
 WTFThreadData::~WTFThreadData()
 {
-    delete m_atomicStringTable;
+    if (m_atomicStringTableDestructor)
+        m_atomicStringTableDestructor(m_atomicStringTable);
 #if USE(JSC)
     delete m_defaultIdentifierTable;
 #endif

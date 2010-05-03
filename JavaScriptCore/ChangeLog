@@ -1,3 +1,68 @@
+2010-05-03  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (reverting previous commit).
+
+        Rolling out r58114 - this introduced memory leaks of
+        AtomicStrings then workers terminated.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/ThunkGenerators.cpp:
+        (JSC::ThunkHelpers::stringImplDataOffset):
+        * runtime/Identifier.cpp:
+        (JSC::IdentifierTable::~IdentifierTable):
+        (JSC::IdentifierTable::add):
+        (JSC::IdentifierCStringTranslator::hash):
+        (JSC::IdentifierCStringTranslator::equal):
+        (JSC::IdentifierCStringTranslator::translate):
+        (JSC::Identifier::add):
+        (JSC::IdentifierUCharBufferTranslator::hash):
+        (JSC::IdentifierUCharBufferTranslator::equal):
+        (JSC::IdentifierUCharBufferTranslator::translate):
+        (JSC::Identifier::addSlowCase):
+        * runtime/Identifier.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::~JSGlobalData):
+        * runtime/JSGlobalData.h:
+        * wtf/WTFThreadData.cpp:
+        (WTF::WTFThreadData::WTFThreadData):
+        (WTF::WTFThreadData::~WTFThreadData):
+        * wtf/WTFThreadData.h:
+        (JSC::IdentifierTable::remove):
+        (JSC::IdentifierTable::literalTable):
+        (WTF::WTFThreadData::atomicStringTable):
+        * wtf/text/AtomicString.cpp:
+        (WebCore::AtomicStringTable::create):
+        (WebCore::AtomicStringTable::table):
+        (WebCore::AtomicStringTable::destroy):
+        (WebCore::stringTable):
+        (WebCore::CStringTranslator::hash):
+        (WebCore::CStringTranslator::equal):
+        (WebCore::CStringTranslator::translate):
+        (WebCore::operator==):
+        (WebCore::AtomicString::add):
+        (WebCore::equal):
+        (WebCore::UCharBufferTranslator::hash):
+        (WebCore::UCharBufferTranslator::equal):
+        (WebCore::UCharBufferTranslator::translate):
+        (WebCore::HashAndCharactersTranslator::hash):
+        (WebCore::HashAndCharactersTranslator::equal):
+        (WebCore::HashAndCharactersTranslator::translate):
+        (WebCore::AtomicString::find):
+        (WebCore::AtomicString::remove):
+        * wtf/text/AtomicStringTable.h: Removed.
+        * wtf/text/StringImpl.cpp:
+        (WebCore::StringImpl::~StringImpl):
+        * wtf/text/StringImpl.h:
+        (WebCore::StringImpl::inTable):
+        (WebCore::StringImpl::setInTable):
+        (WebCore::equal):
+        * wtf/text/StringImplBase.h:
+        (WTF::StringImplBase::StringImplBase):
+
 2010-05-03  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

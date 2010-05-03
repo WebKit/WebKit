@@ -29,23 +29,30 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/HashSet.h>
 #include <wtf/WTFThreadData.h>
-#include <wtf/text/AtomicStringTable.h>
 #include <wtf/text/StringHash.h>
 
 using WTF::ThreadSpecific;
 
 namespace JSC {
 
-class LiteralTable : public HashMap<const char*, RefPtr<StringImpl>, PtrHash<const char*> > {};
-
-LiteralTable* createLiteralTable()
+IdentifierTable::~IdentifierTable()
 {
-    return new LiteralTable;
+    HashSet<StringImpl*>::iterator end = m_table.end();
+    for (HashSet<StringImpl*>::iterator iter = m_table.begin(); iter != end; ++iter)
+        (*iter)->setIsIdentifier(false);
 }
-
-void deleteLiteralTable(LiteralTable* table)
+std::pair<HashSet<StringImpl*>::iterator, bool> IdentifierTable::add(StringImpl* value)
 {
-    delete table;
+    std::pair<HashSet<StringImpl*>::iterator, bool> result = m_table.add(value);
+    (*result.first)->setIsIdentifier(true);
+    return result;
+}
+template<typename U, typename V>
+std::pair<HashSet<StringImpl*>::iterator, bool> IdentifierTable::add(U value)
+{
+    std::pair<HashSet<StringImpl*>::iterator, bool> result = m_table.add<U, V>(value);
+    (*result.first)->setIsIdentifier(true);
+    return result;
 }
 
 IdentifierTable* createIdentifierTable()
@@ -79,6 +86,29 @@ bool Identifier::equal(const UString::Rep* r, const UChar* s, unsigned length)
     return true;
 }
 
+struct IdentifierCStringTranslator {
+    static unsigned hash(const char* c)
+    {
+        return UString::Rep::computeHash(c);
+    }
+
+    static bool equal(UString::Rep* r, const char* s)
+    {
+        return Identifier::equal(r, s);
+    }
+
+    static void translate(UString::Rep*& location, const char* c, unsigned hash)
+    {
+        size_t length = strlen(c);
+        UChar* d;
+        UString::Rep* r = UString::Rep::createUninitialized(length, d).releaseRef();
+        for (size_t i = 0; i != length; i++)
+            d[i] = static_cast<unsigned char>(c[i]); // use unsigned char to zero-extend instead of sign-extend
+        r->setHash(hash);
+        location = r;
+    }
+};
+
 PassRefPtr<UString::Rep> Identifier::add(JSGlobalData* globalData, const char* c)
 {
     if (!c)
@@ -88,13 +118,20 @@ PassRefPtr<UString::Rep> Identifier::add(JSGlobalData* globalData, const char* c
     if (!c[1])
         return add(globalData, globalData->smallStrings.singleCharacterStringRep(static_cast<unsigned char>(c[0])));
 
-    LiteralTable* literalTable = globalData->literalTable;
-    pair<LiteralTable::iterator, bool> result = literalTable->add(c, 0);
-    if (!result.second) // pre-existing entry
-        return result.first->second;
+    IdentifierTable& identifierTable = *globalData->identifierTable;
+    LiteralIdentifierTable& literalIdentifierTable = identifierTable.literalTable();
 
-    RefPtr<StringImpl> addedString = globalData->identifierTable->add(c);
-    result.first->second = addedString.get();
+    const LiteralIdentifierTable::iterator& iter = literalIdentifierTable.find(c);
+    if (iter != literalIdentifierTable.end())
+        return iter->second;
+
+    pair<HashSet<UString::Rep*>::iterator, bool> addResult = identifierTable.add<const char*, IdentifierCStringTranslator>(c);
+
+    // If the string is newly-translated, then we need to adopt it.
+    // The boolean in the pair tells us if that is so.
+    RefPtr<UString::Rep> addedString = addResult.second ? adoptRef(*addResult.first) : *addResult.first;
+
+    literalIdentifierTable.add(c, addedString.get());
 
     return addedString.release();
 }
@@ -103,6 +140,33 @@ PassRefPtr<UString::Rep> Identifier::add(ExecState* exec, const char* c)
 {
     return add(&exec->globalData(), c);
 }
+
+struct UCharBuffer {
+    const UChar* s;
+    unsigned int length;
+};
+
+struct IdentifierUCharBufferTranslator {
+    static unsigned hash(const UCharBuffer& buf)
+    {
+        return UString::Rep::computeHash(buf.s, buf.length);
+    }
+
+    static bool equal(UString::Rep* str, const UCharBuffer& buf)
+    {
+        return Identifier::equal(str, buf.s, buf.length);
+    }
+
+    static void translate(UString::Rep*& location, const UCharBuffer& buf, unsigned hash)
+    {
+        UChar* d;
+        UString::Rep* r = UString::Rep::createUninitialized(buf.length, d).releaseRef();
+        for (unsigned i = 0; i != buf.length; i++)
+            d[i] = buf.s[i];
+        r->setHash(hash);
+        location = r; 
+    }
+};
 
 PassRefPtr<UString::Rep> Identifier::add(JSGlobalData* globalData, const UChar* s, int length)
 {
@@ -113,8 +177,12 @@ PassRefPtr<UString::Rep> Identifier::add(JSGlobalData* globalData, const UChar* 
     }
     if (!length)
         return UString::Rep::empty();
+    UCharBuffer buf = {s, length}; 
+    pair<HashSet<UString::Rep*>::iterator, bool> addResult = globalData->identifierTable->add<UCharBuffer, IdentifierUCharBufferTranslator>(buf);
 
-    return globalData->identifierTable->add(s, length);
+    // If the string is newly-translated, then we need to adopt it.
+    // The boolean in the pair tells us if that is so.
+    return addResult.second ? adoptRef(*addResult.first) : *addResult.first;
 }
 
 PassRefPtr<UString::Rep> Identifier::add(ExecState* exec, const UChar* s, int length)
@@ -137,7 +205,7 @@ PassRefPtr<UString::Rep> Identifier::addSlowCase(JSGlobalData* globalData, UStri
                 return r;
     }
 
-    return globalData->identifierTable->add(r);
+    return *globalData->identifierTable->add(r).first;
 }
 
 PassRefPtr<UString::Rep> Identifier::addSlowCase(ExecState* exec, UString::Rep* r)

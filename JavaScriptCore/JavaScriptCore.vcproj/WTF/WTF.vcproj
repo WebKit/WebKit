@@ -568,10 +568,6 @@
  			RelativePath="..\..\wtf\text\AtomicStringImpl.h"
  			>
  		</File>
- 		<File
- 			RelativePath="..\..\wtf\text\AtomicStringTable.h"
- 			>
- 		</File>
 		<File
  			RelativePath="..\..\wtf\text\CString.cpp"
  			>

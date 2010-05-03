@@ -30,7 +30,6 @@
 #include "StringHash.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/WTFThreadData.h>
-#include <wtf/text/AtomicStringTable.h>
 
 using namespace WTF;
 using namespace Unicode;
@@ -43,7 +42,7 @@ StringImpl::~StringImpl()
 {
     ASSERT(!isStatic());
 
-    if (isAtomic())
+    if (inTable())
         AtomicString::remove(this);
 #if USE(JSC)
     if (isIdentifier())
