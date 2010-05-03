@@ -26,6 +26,7 @@
 #include "FormDataList.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
+#include "HTMLParser.h"
 #include "MappedAttribute.h"
 #include "RenderProgress.h"
 #include <wtf/StdLibExtras.h>
@@ -71,29 +72,37 @@ void HTMLProgressElement::parseMappedAttribute(MappedAttribute* attribute)
 double HTMLProgressElement::value() const
 {
     const AtomicString& valueString = getAttribute(valueAttr);
-    bool ok;
-    double value = valueString.toDouble(&ok);
+    double value;
+    bool ok = parseToDoubleForNumberType(valueString, &value);
     if (!ok || value < 0)
         return valueString.isNull() ? 1 : 0;
     return (value > max()) ? max() : value;
 }
 
-void HTMLProgressElement::setValue(double value)
+void HTMLProgressElement::setValue(double value, ExceptionCode& ec)
 {
+    if (!isfinite(value)) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
     setAttribute(valueAttr, String::number(value >= 0 ? value : 0));
 }
 
 double HTMLProgressElement::max() const
 {
-    bool ok;
-    double max = getAttribute(maxAttr).toDouble(&ok);
+    double max;
+    bool ok = parseToDoubleForNumberType(getAttribute(maxAttr), &max);
     if (!ok || max <= 0)
         return 1;
     return max;
 }
 
-void HTMLProgressElement::setMax(double max)
+void HTMLProgressElement::setMax(double max, ExceptionCode& ec)
 {
+    if (!isfinite(max)) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
     setAttribute(maxAttr, String::number(max > 0 ? max : 1));
 }
 

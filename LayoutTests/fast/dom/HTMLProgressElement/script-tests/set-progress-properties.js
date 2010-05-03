@@ -21,19 +21,17 @@ shouldBe("p.value", "100");
 shouldBe("p.max", "100");
 shouldBe("p.position", "1");
 
-debug("Set invalid value");
-p.value = "200A";
-p.max = 100;
-shouldBe("p.value", "0");
-shouldBe("p.max", "100");
-shouldBe("p.position", "0");
+debug("Set invalid value, should throw");
+shouldThrow('p.value = "200A";', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
 
-debug("Set invalid max");
-p.value = "20";
-p.max = "max";
-shouldBe("p.value", "1");
-shouldBe("p.max", "1");
-shouldBe("p.position", "1");
+debug("Set invalid max, should throw");
+shouldThrow('p.max = "max";', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
+
+debug("Set max to Infinity, should throw");
+shouldThrow('p.max = Infinity;', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
+
+debug("Set value to NaN, should throw");
+shouldThrow('p.value = NaN;', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
 
 debug("Set value to null and max to 0");
 p.value = null;
@@ -57,5 +55,12 @@ shouldBe("p.value", "0");
 shouldBe("p.max", "1");
 shouldBe("p.getAttribute('value')", "'ABC'");
 shouldBe("p.getAttribute('max')", "'#'");
+
+debug("Set value and max to numbers with leading spaces");
+p.setAttribute("value", " 5");
+p.setAttribute("max", " 10");
+shouldBe("p.value", "0");
+shouldBe("p.max", "1");
+shouldBe("p.position", "0");
 
 var successfullyParsed = true;

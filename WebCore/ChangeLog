@@ -1,3 +1,21 @@
+2010-05-03  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Use HTML5 number parsing in HTMLProgressElement
+        https://bugs.webkit.org/show_bug.cgi?id=38434
+
+        Use parseToDoubleForNumberType instead of toDouble.
+        Throw an exception when the number is NaN or Infinity.
+
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::value):
+        (WebCore::HTMLProgressElement::setValue):
+        (WebCore::HTMLProgressElement::max):
+        (WebCore::HTMLProgressElement::setMax):
+        * html/HTMLProgressElement.h:
+        * html/HTMLProgressElement.idl:
+
 2010-05-03  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Darin Fisher.

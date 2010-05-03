@@ -31,10 +31,10 @@ public:
     static PassRefPtr<HTMLProgressElement> create(const QualifiedName&, Document*, HTMLFormElement* = 0);
 
     double value() const;
-    void setValue(double);
+    void setValue(double, ExceptionCode&);
 
     double max() const;
-    void setMax(double);
+    void setMax(double, ExceptionCode&);
 
     double position() const;
 

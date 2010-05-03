@@ -1,3 +1,13 @@
+2010-05-03  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Use HTML5 number parsing in HTMLProgressElement
+        https://bugs.webkit.org/show_bug.cgi?id=38434
+
+        * fast/dom/HTMLProgressElement/script-tests/set-progress-properties.js:
+        * fast/dom/HTMLProgressElement/set-progress-properties-expected.txt:
+
 2010-05-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed. Qt specific expected files added after r58675.
