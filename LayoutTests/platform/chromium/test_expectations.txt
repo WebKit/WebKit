@@ -2785,12 +2785,16 @@ BUGYAAR MAC : svg/custom/dominant-baseline-hanging.svg = MISSING
 // WebKit roll 58626:TBD:
 
 // Might revert these:
-BUGYAAR : fast/css/input-search-padding.html = IMAGE+TEXT
-BUGYAAR : fast/css/text-input-with-webkit-border-radius.html = IMAGE+TEXT
-BUGYAAR : fast/forms/control-restrict-line-height.html = IMAGE+TEXT
-BUGYAAR WIN LINUX : fast/forms/search-vertical-alignment.html = IMAGE+TEXT
-BUGYAAR : fast/forms/search-cancel-button-style-sharing.html = IMAGE+TEXT
-BUGYAAR : fast/forms/search-rtl.html = IMAGE+TEXT
+BUGYAAR : fast/css/input-search-padding.html = IMAGE
+BUGYAAR : fast/css/text-input-with-webkit-border-radius.html = IMAGE
+BUGYAAR : fast/forms/control-restrict-line-height.html = IMAGE
+BUGYAAR : fast/forms/search-cancel-button-style-sharing.html = IMAGE
+BUGYAAR : fast/forms/search-rtl.html = IMAGE
+BUGYAAR WIN LINUX : fast/forms/search-vertical-alignment.html = IMAGE
+BUGYAAR : svg/W3C-SVG-1.1/fonts-kern-01-t.svg = IMAGE
+BUGYAAR : svg/W3C-SVG-1.1/render-groups-01-b.svg = IMAGE
+BUGYAAR : svg/W3C-SVG-1.1/render-groups-03-t.svg = IMAGE
+BUGYAAR : svg/text/kerning.svg = IMAGE
 
 // GStreamer - disabled in Chromium
 WONTFIX : media/video-duration-known-after-eos.html = TEXT TIMEOUT

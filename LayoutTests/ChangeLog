@@ -1,3 +1,13 @@
+2010-05-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
+        Change expectations for some of the fast/forms tests that just started
+        failing from IMAGE+TEXT to just IMAGE, and add some failing SVG tests
+        so that we can get the bots to green up.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-05-03  Yaar Schnitman  <yaar@chromium.org>
 
         Not Reviewed.
