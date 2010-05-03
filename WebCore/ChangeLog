@@ -1,3 +1,22 @@
+2010-05-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Another case of <rdar://problem/7552959> REGRESSION: Infinite recursion in Position::getInlineBoxAndOffset()
+        https://bugs.webkit.org/show_bug.cgi?id=38445
+
+        Test: editing/selection/mixed-editability-11.html
+
+        * dom/Position.cpp:
+        (WebCore::downstreamIgnoringEditingBoundaries): Added. Returns the furthest visually equivalent
+        position downstream, crossing any editability boundaries.
+        (WebCore::upstreamIgnoringEditingBoundaries): Similarly for upstream.
+        (WebCore::Position::getInlineBoxAndOffset): Changed the logic for finding an inline box for positions
+        whose node is a block flow. Instead of traversing the DOM, advance downstream or upstream as far as
+        possible, crossing any editability boudaries. Infinite recursion is avoided by advancing all the way
+        and checking that the new position is different from the starting position. Also replaced the specific
+        test for buttons with the generic and more comprehensive canHaveChildrenForEditing().
+
 2010-05-02  Tasuku Suzuki  <tasuku.suzuki@nokia.com>
 
         Reviewed by Simon Hausmann.

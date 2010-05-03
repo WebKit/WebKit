@@ -986,27 +986,46 @@ static InlineTextBox* searchAheadForBetterMatch(RenderObject* renderer)
     return 0;
 }
 
+static Position downstreamIgnoringEditingBoundaries(Position position)
+{
+    Position lastPosition;
+    while (position != lastPosition) {
+        lastPosition = position;
+        position = position.downstream(Position::CanCrossEditingBoundary);
+    }
+    return position;
+}
+
+static Position upstreamIgnoringEditingBoundaries(Position position)
+{
+    Position lastPosition;
+    while (position != lastPosition) {
+        lastPosition = position;
+        position = position.upstream(Position::CanCrossEditingBoundary);
+    }
+    return position;
+}
+
 void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDirection, InlineBox*& inlineBox, int& caretOffset) const
 {
     caretOffset = m_offset;
     RenderObject* renderer = node()->renderer();
-          
+
     if (!renderer->isText()) {
-        if (!renderer->isRenderButton() && renderer->isBlockFlow() && hasRenderedNonAnonymousDescendantsWithHeight(renderer)) {
-            bool lastPosition = caretOffset == lastOffsetInNode(node());
-            Node* startNode = lastPosition ? node()->childNode(caretOffset - 1) : node()->childNode(caretOffset);
-            while (startNode && (!startNode->renderer() || (startNode->isTextNode() && toRenderText(startNode->renderer())->isAllCollapsibleWhitespace())))
-                startNode = (lastPosition)? startNode->previousSibling(): startNode->nextSibling();
-            if (startNode) {
-                Position pos(startNode, 0);
-                pos = pos.downstream(CanCrossEditingBoundary);
-                pos.getInlineBoxAndOffset(UPSTREAM, primaryDirection, inlineBox, caretOffset);
-                if (lastPosition && inlineBox)
-                    caretOffset = inlineBox->caretMaxOffset();
-                return;
-            }
-        }
         inlineBox = 0;
+        if (canHaveChildrenForEditing(node()) && renderer->isBlockFlow() && hasRenderedNonAnonymousDescendantsWithHeight(renderer)) {
+            // Try a visually equivalent position with possibly opposite editability. This helps in case |this| is in
+            // an editable block but surrounded by non-editable positions. It acts to negate the logic at the beginning
+            // of RenderObject::createVisiblePosition().
+            Position equivalent = downstreamIgnoringEditingBoundaries(*this);
+            if (equivalent == *this)
+                equivalent = upstreamIgnoringEditingBoundaries(*this);
+            if (equivalent == *this)
+                return;
+
+            equivalent.getInlineBoxAndOffset(UPSTREAM, primaryDirection, inlineBox, caretOffset);
+            return;
+        }
         if (renderer->isBox()) {
             inlineBox = toRenderBox(renderer)->inlineBoxWrapper();
             if (!inlineBox || (caretOffset > inlineBox->caretMinOffset() && caretOffset < inlineBox->caretMaxOffset()))
