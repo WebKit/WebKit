@@ -1,5 +1,11 @@
 2010-05-02  Chris Jerdonek  <cjerdonek@webkit.org>
 
+        Unreviewed.
+
+        Corrected a file path in the ChangeLog entry for r58663 (bug 38319) below.
+
+2010-05-02  Chris Jerdonek  <cjerdonek@webkit.org>
+
         Reviewed by Eric Seidel.
 
         https://bugs.webkit.org/show_bug.cgi?id=38319
@@ -12,7 +18,7 @@
               be undef rather than "does not exist" if the file was not
               copied.
 
-        * Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl:
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiff.pl:
           - Added a FIXME to refactor these unit tests to use is_deeply().
 
         * Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl:
