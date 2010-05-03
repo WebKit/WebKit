@@ -1,3 +1,8 @@
+2010-05-03  Darin Adler  <darin@apple.com>
+
+        * English.lproj/Localizable.strings: Regenerated.
+        * StringsNotToBeLocalized.txt: Updated for recent changes.
+
 2010-05-03  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Darin Fisher.
