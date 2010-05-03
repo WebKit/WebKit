@@ -1,3 +1,14 @@
+2010-05-03  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Chris Jerdonek.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38447
+
+        Refactor the unit tests in VCSUtils_unittest/parseDiff.pl to use
+        Test::More::is_deeply like we do in VCSUtils_unittest/parseDiffHeader.pl.
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiff.pl:
+
 2010-05-02  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Unreviewed.
