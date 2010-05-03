@@ -39,7 +39,7 @@ void DrawingAreaUpdateChunk::paintIntoUpdateChunk(UpdateChunk* updateChunk)
     OwnPtr<HDC> hdc(::CreateCompatibleDC(0));
 
     void* bits;
-    BitmapInfo bmp = BitmapInfo::createBottomUp(updateChunk->frame().size());
+    BitmapInfo bmp = BitmapInfo::createBottomUp(updateChunk->rect().size());
     OwnPtr<HBITMAP> hbmp(::CreateDIBSection(0, &bmp, DIB_RGB_COLORS, &bits, updateChunk->memory(), 0));
 
     HBITMAP hbmpOld = static_cast<HBITMAP>(::SelectObject(hdc.get(), hbmp.get()));
@@ -48,11 +48,11 @@ void DrawingAreaUpdateChunk::paintIntoUpdateChunk(UpdateChunk* updateChunk)
     gc.save();
 
     // FIXME: Is this white fill needed?
-    RECT rect = updateChunk->frame();
+    RECT rect = updateChunk->rect();
     ::FillRect(hdc.get(), &rect, (HBRUSH)::GetStockObject(WHITE_BRUSH));
-    gc.translate(-updateChunk->frame().x(), -updateChunk->frame().y());
+    gc.translate(-updateChunk->rect().x(), -updateChunk->rect().y());
 
-    m_webPage->drawRect(gc, updateChunk->frame());
+    m_webPage->drawRect(gc, updateChunk->rect());
 
     gc.restore();
 

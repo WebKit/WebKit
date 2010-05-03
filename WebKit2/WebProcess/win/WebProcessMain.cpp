@@ -28,7 +28,7 @@
 #include "RunLoop.h"
 #include "WebProcess.h"
 #include <runtime/InitializeThreading.h>
-#import <wtf/Threading.h>
+#include <wtf/Threading.h>
 
 namespace WebKit {
 

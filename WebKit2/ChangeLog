@@ -1,3 +1,23 @@
+2010-05-03  Anders Carlsson  <andersca@apple.com>
+
+        Fix Windows build.
+
+        * Platform/CoreIPC/win/ConnectionWin.cpp:
+        (CoreIPC::Connection::sendOutgoingMessage):
+        * Shared/win/UpdateChunk.cpp:
+        (WebKit::UpdateChunk::UpdateChunk):
+        (WebKit::UpdateChunk::encode):
+        (WebKit::UpdateChunk::decode):
+        * Shared/win/UpdateChunk.h:
+        (WebKit::UpdateChunk::rect):
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxyUpdateChunk.h:
+        * UIProcess/win/DrawingAreaProxyUpdateChunkWin.cpp:
+        (WebKit::DrawingAreaProxyUpdateChunk::drawUpdateChunkIntoBackingStore):
+        * WebProcess/WebPage/win/DrawingAreaUpdateChunkWin.cpp:
+        (WebKit::DrawingAreaUpdateChunk::paintIntoUpdateChunk):
+        * WebProcess/win/WebProcessMain.cpp:
+
 2010-04-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

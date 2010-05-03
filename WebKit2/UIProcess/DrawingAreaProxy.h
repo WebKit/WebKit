@@ -41,6 +41,12 @@ namespace WebCore {
 
 namespace WebKit {
 
+#if PLATFORM(MAC)
+typedef CGContextRef PlatformDrawingContext;
+#elif PLATFORM(WIN)
+typedef HDC PlatformDrawingContext;
+#endif
+
 class DrawingAreaProxy {
 public:
     enum Type {
@@ -51,7 +57,7 @@ public:
 
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&) = 0;
 
-    virtual void paint(const WebCore::IntRect&, CGContextRef) = 0;
+    virtual void paint(const WebCore::IntRect&, PlatformDrawingContext) = 0;
     virtual void setSize(const WebCore::IntSize&) = 0;
 
     // Called whenever the view visibility changes, this can happen for a number of reasons, such as

@@ -38,32 +38,32 @@ UpdateChunk::UpdateChunk()
 {
 }
 
-UpdateChunk::UpdateChunk(const IntRect& frame)
-    : m_frame(frame)
+UpdateChunk::UpdateChunk(const IntRect& rect)
+    : m_rect(rect)
 {
     // Create our shared memory mapping.
-    unsigned memorySize = frame.height() * frame.width() * 4;
+    unsigned memorySize = rect.height() * rect.width() * 4;
     m_bitmapSharedMemory = ::CreateFileMapping(INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, memorySize, 0);
 }
 
-UpdateChunk::UpdateChunk(const IntRect& frame, HANDLE bitmapSharedMemory)
-    : m_frame(frame)
+UpdateChunk::UpdateChunk(const IntRect& rect, HANDLE bitmapSharedMemory)
+    : m_rect(rect)
     , m_bitmapSharedMemory(bitmapSharedMemory)
 {
 }
 
 void UpdateChunk::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder.encode(m_frame);
+    encoder.encode(m_rect);
     encoder.encode(reinterpret_cast<uintptr_t>(m_bitmapSharedMemory));
 }
 
 bool UpdateChunk::decode(CoreIPC::ArgumentDecoder& decoder, UpdateChunk& updateChunk)
 {
-    IntRect frame;
-    if (!decoder.decode(frame))
+    IntRect rect;
+    if (!decoder.decode(rect))
         return false;
-    updateChunk.m_frame = frame;
+    updateChunk.m_rect = rect;
 
     uintptr_t bitmapSharedMmemory;
     if (!decoder.decode(bitmapSharedMmemory))

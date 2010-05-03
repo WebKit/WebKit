@@ -172,14 +172,14 @@ bool Connection::open()
     return true;
 }
 
-void Connection::sendOutgoingMessage(unsigned messageID, auto_ptr<ArgumentEncoder> arguments)
+void Connection::sendOutgoingMessage(MessageID messageID, auto_ptr<ArgumentEncoder> arguments)
 {
     // Just bail if the handle has been closed.
     if (m_connectionPipe == INVALID_HANDLE_VALUE)
         return;
 
     // We put the message ID last.
-    arguments->encodeUInt32(messageID);
+    arguments->encodeUInt32(messageID.toInt());
 
     // Write the outgoing message.
     OVERLAPPED overlapped = { 0 };

@@ -45,11 +45,9 @@ class WebPageProxy;
 
 #if PLATFORM(MAC)
 typedef WKView PlatformWebView;
-typedef CGContextRef PlatformDrawingContext;
 #elif PLATFORM(WIN)
 class WebView;
 typedef WebView PlatformWebView;
-typedef HDC PlatformDrawingContext;
 #endif
 
 class DrawingAreaProxyUpdateChunk : public DrawingAreaProxy {

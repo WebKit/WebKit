@@ -41,14 +41,14 @@ public:
     UpdateChunk(const WebCore::IntRect&);
     UpdateChunk(const WebCore::IntRect&, HANDLE);
 
-    const WebCore::IntRect& frame() const { return m_frame; }
+    const WebCore::IntRect& rect() const { return m_rect; }
     HANDLE memory() const { return m_bitmapSharedMemory; }
 
     void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder&, UpdateChunk&);
 
 private:
-    WebCore::IntRect m_frame;
+    WebCore::IntRect m_rect;
     HANDLE m_bitmapSharedMemory;
 };
 
