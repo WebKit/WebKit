@@ -2792,11 +2792,6 @@ BUGYAAR : fast/forms/search-cancel-button-style-sharing.html = IMAGE+TEXT
 BUGYAAR : fast/forms/search-rtl.html = IMAGE+TEXT
 
 // Needs new baselines
-BUGYAAR WIN LINUX : svg/W3C-SVG-1.1/fonts-kern-01-t.svg = IMAGE
-BUGYAAR WIN LINUX : svg/W3C-SVG-1.1/render-groups-01-b.svg = IMAGE
-BUGYAAR WIN LINUX : svg/W3C-SVG-1.1/render-groups-03-t.svg = IMAGE
-BUGYAAR WIN LINUX : svg/text/kerning.svg = IMAGE
-BUGYAAR WIN LINUX : svg/text/text-hkern.svg = IMAGE
 
 // GStreamer - disabled in Chromium
 WONTFIX : media/video-duration-known-after-eos.html = TEXT

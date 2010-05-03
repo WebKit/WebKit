@@ -2,6 +2,26 @@
 
         Not Reviewed.
 
+        Added missing chromium baselines for svg text kerning
+        https://bugs.webkit.org/show_bug.cgi?id=38476
+
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/render-groups-01-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/render-groups-01-b-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1/render-groups-03-t-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/render-groups-03-t-expected.png: Added.
+        * platform/chromium-win/svg/text/kerning-expected.checksum:
+        * platform/chromium-win/svg/text/kerning-expected.png:
+        * platform/chromium-win/svg/text/text-hkern-expected.checksum: Added.
+        * platform/chromium-win/svg/text/text-hkern-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2010-05-03  Yaar Schnitman  <yaar@chromium.org>
+
+        Not Reviewed.
+
         Preparing for chromium webkit roll 58626:TBD
         https://bugs.webkit.org/show_bug.cgi?id=38474
 
