@@ -99,8 +99,13 @@ sub GenerateInterface
     my $defines = shift;
 
     # Start actual generation
-    $object->GenerateHeader($dataNode);
-    $object->GenerateImplementation($dataNode);
+    if ($dataNode->extendedAttributes->{"Callback"}) {
+        $object->GenerateCallbackHeader($dataNode);
+        $object->GenerateCallbackImplementation($dataNode);
+    } else {
+        $object->GenerateHeader($dataNode);
+        $object->GenerateImplementation($dataNode);
+    }
 
     my $name = $dataNode->name;
 
@@ -232,14 +237,9 @@ sub GenerateHeader
     $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode, \@allParents, 1);
 
     my $hasLegacyParent = $dataNode->extendedAttributes->{"LegacyParent"};
-    my $conditionalString = GenerateConditionalString($dataNode);
 
     # - Add default header template
-    @headerContent = split("\r", $headerTemplate);
-
-    push(@headerContent, "\n#if ${conditionalString}\n\n") if $conditionalString;
-    push(@headerContent, "\n#ifndef $className" . "_h");
-    push(@headerContent, "\n#define $className" . "_h\n\n");
+    push(@headerContent, GenerateHeaderContentHeader($dataNode));
 
     # Get correct pass/store types respecting PODType flag
     my $podType = $dataNode->extendedAttributes->{"PODType"};
@@ -357,6 +357,7 @@ END
     push(@headerContent, "}\n\n");
     push(@headerContent, "#endif // $className" . "_h\n");
 
+    my $conditionalString = GenerateConditionalString($dataNode);
     push(@headerContent, "#endif // ${conditionalString}\n\n") if $conditionalString;
 }
 
@@ -1577,16 +1578,9 @@ sub GenerateImplementation
     my $implClassName = $interfaceName;
 
     my $hasLegacyParent = $dataNode->extendedAttributes->{"LegacyParent"};
-    my $conditionalString = GenerateConditionalString($dataNode);
 
     # - Add default header template
-    @implContentHeader = split("\r", $headerTemplate);
-
-    push(@implFixedHeader,
-         "\n#include \"config.h\"\n" .
-         "#include \"${className}.h\"\n\n");
-
-    push(@implFixedHeader, "\n#if ${conditionalString}\n\n") if $conditionalString;
+    push(@implFixedHeader, GenerateImplementationContentHeader($dataNode));
          
     $implIncludes{"RuntimeEnabledFeatures.h"} = 1;
     $implIncludes{"V8Proxy.h"} = 1;
@@ -2094,11 +2088,196 @@ END
 } // namespace WebCore
 END
 
+    my $conditionalString = GenerateConditionalString($dataNode);
     push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
     
     # We've already added the header for this file in implFixedHeader, so remove
     # it from implIncludes to ensure we don't #include it twice.
     delete $implIncludes{"${className}.h"};
+}
+
+sub GenerateHeaderContentHeader
+{
+    my $dataNode = shift;
+    my $className = "V8" . $dataNode->name;
+    my $conditionalString = GenerateConditionalString($dataNode);
+
+    my @headerContentHeader = split("\r", $headerTemplate);
+
+    push(@headerContentHeader, "\n#if ${conditionalString}\n") if $conditionalString;
+    push(@headerContentHeader, "\n#ifndef ${className}" . "_h");
+    push(@headerContentHeader, "\n#define ${className}" . "_h\n\n");
+    return @headerContentHeader;
+}
+
+sub GenerateImplementationContentHeader
+{
+    my $dataNode = shift;
+    my $className = "V8" . $dataNode->name;
+    my $conditionalString = GenerateConditionalString($dataNode);
+
+    my @implContentHeader = split("\r", $headerTemplate);
+
+    push(@implContentHeader, "\n#include \"config.h\"\n");
+    push(@implContentHeader, "#include \"${className}.h\"\n\n");
+    push(@implContentHeader, "#if ${conditionalString}\n\n") if $conditionalString;
+    return @implContentHeader;
+}
+
+sub GenerateCallbackHeader
+{
+    my $object = shift;
+    my $dataNode = shift;
+
+    my $interfaceName = $dataNode->name;
+    my $className = "V8$interfaceName";
+
+
+    # - Add default header template
+    push(@headerContent, GenerateHeaderContentHeader($dataNode));
+
+    if ("$interfaceName.h" lt "WorldContextHandle.h") {
+        push(@headerContent, "#include \"$interfaceName.h\"\n");
+        push(@headerContent, "#include \"WorldContextHandle.h\"\n");
+    } else {
+        push(@headerContent, "#include \"WorldContextHandle.h\"\n");
+        push(@headerContent, "#include \"$interfaceName.h\"\n");
+    }
+    push(@headerContent, "#include <v8.h>\n");
+    push(@headerContent, "#include <wtf/Forward.h>\n");
+    
+    push(@headerContent, "\nnamespace WebCore {\n\n");
+    push(@headerContent, "class Frame;\n\n");
+    push(@headerContent, "class $className : public $interfaceName {\n");
+
+    push(@headerContent, <<END);
+public:
+    static PassRefPtr<${className}> create(v8::Local<v8::Value> value, Frame* frame)
+    {
+        ASSERT(value->IsObject());
+        return adoptRef(new ${className}(value->ToObject(), frame));
+    }
+
+    virtual ~${className}();
+
+END
+
+    # Functions
+    my $numFunctions = @{$dataNode->functions};
+    if ($numFunctions > 0) {
+        push(@headerContent, "    // Functions\n");
+        foreach my $function (@{$dataNode->functions}) {
+            my @params = @{$function->parameters};
+            if (!$function->signature->extendedAttributes->{"Custom"} &&
+                !(GetNativeType($function->signature->type) eq "bool")) {
+                    push(@headerContent, "    COMPILE_ASSERT(false)");
+            }
+
+            push(@headerContent, "    virtual " . GetNativeTypeForCallbacks($function->signature->type) . " " . $function->signature->name . "(ScriptExecutionContext*");
+            foreach my $param (@params) {
+                push(@headerContent, ", " . GetNativeTypeForCallbacks($param->type) . " " . $param->name);
+            }
+
+            push(@headerContent, ");\n");
+        }
+    }
+
+    push(@headerContent, <<END);
+
+private:
+    ${className}(v8::Local<v8::Object>, Frame*);
+
+    v8::Persistent<v8::Object> m_callback;
+    RefPtr<Frame> m_frame;
+    WorldContextHandle m_worldContext;
+};
+
+END
+
+    push(@headerContent, "}\n\n");
+    push(@headerContent, "#endif // $className" . "_h\n\n");
+
+    my $conditionalString = GenerateConditionalString($dataNode);
+    push(@headerContent, "#endif // ${conditionalString}\n") if $conditionalString;
+}
+
+sub GenerateCallbackImplementation
+{
+    my $object = shift;
+    my $dataNode = shift;
+    my $interfaceName = $dataNode->name;
+    my $className = "V8$interfaceName";
+
+    # - Add default header template
+    push(@implFixedHeader, GenerateImplementationContentHeader($dataNode));
+         
+    $implIncludes{"Frame.h"} = 1;
+    $implIncludes{"ScriptExecutionContext.h"} = 1;
+    $implIncludes{"V8CustomVoidCallback.h"} = 1;
+
+    push(@implContent, "namespace WebCore {\n\n");
+    push(@implContent, <<END);
+${className}::${className}(v8::Local<v8::Object> callback, Frame* frame)
+    : m_callback(v8::Persistent<v8::Object>::New(callback))
+    , m_frame(frame)
+    , m_worldContext(UseCurrentWorld)
+{
+}
+
+${className}::~${className}()
+{
+    m_callback.Dispose();
+}
+
+END
+
+    # Functions
+    my $numFunctions = @{$dataNode->functions};
+    if ($numFunctions > 0) {
+        push(@implContent, "// Functions\n");
+        foreach my $function (@{$dataNode->functions}) {
+            my @params = @{$function->parameters};
+            if ($function->signature->extendedAttributes->{"Custom"} ||
+                !(GetNativeTypeForCallbacks($function->signature->type) eq "bool")) {
+                next;
+            }
+
+            AddIncludesForType($function->signature->type);
+            push(@implContent, "\n" . GetNativeTypeForCallbacks($function->signature->type) . " ${className}::" . $function->signature->name . "(ScriptExecutionContext* context");
+
+            foreach my $param (@params) {
+                AddIncludesForType($param->type);
+                push(@implContent, ", " . GetNativeTypeForCallbacks($param->type) . " " . $param->name);
+            }
+
+            push(@implContent, ")\n");
+            push(@implContent, "{\n");
+            push(@implContent, "    v8::HandleScope handleScope;\n\n");
+            push(@implContent, "    v8::Handle<v8::Context> v8Context = toV8Context(context, m_worldContext);\n");
+            push(@implContent, "    if (v8Context.IsEmpty())\n");
+            push(@implContent, "        return true;\n\n");
+            push(@implContent, "    v8::Context::Scope scope(v8Context);\n\n");
+            push(@implContent, "    v8::Handle<v8::Value> argv[] = {\n");
+
+            my @argvs = ();
+            foreach my $param (@params) {
+                my $paramName = $param->name;
+                push(@argvs, "        toV8(${paramName})");
+            }
+            push(@implContent, join(",\n", @argvs));
+
+            push(@implContent, "\n    };\n\n");
+            push(@implContent, "    RefPtr<Frame> protect(m_frame);\n\n");
+            push(@implContent, "    bool callbackReturnValue = false;\n");
+            push(@implContent, "    return !invokeCallback(m_callback, " . scalar(@params). ", argv, callbackReturnValue);\n");
+            push(@implContent, "}\n");
+        }
+    }
+
+    push(@implContent, "\n} // namespace WebCore\n\n");
+
+    my $conditionalString = GenerateConditionalString($dataNode);
+    push(@implContent, "#endif // ${conditionalString}\n") if $conditionalString;
 }
 
 sub GenerateToV8Converters
@@ -2578,6 +2757,15 @@ sub GetNativeType
 
     # Default, assume native type is a pointer with same type name as idl type
     return "${type}*";
+}
+
+sub GetNativeTypeForCallbacks
+{
+    my $type = shift;
+    return "const String&" if $type eq "DOMString";
+
+    # Callbacks use raw pointers, so pass isParameter = 1
+    return GetNativeType($type, 1);
 }
 
 sub TranslateParameter

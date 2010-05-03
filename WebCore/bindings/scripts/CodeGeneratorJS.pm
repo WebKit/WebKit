@@ -101,8 +101,13 @@ sub GenerateInterface
     my $defines = shift;
 
     # Start actual generation
-    $object->GenerateHeader($dataNode);
-    $object->GenerateImplementation($dataNode);
+    if ($dataNode->extendedAttributes->{"Callback"}) {
+        $object->GenerateCallbackHeader($dataNode);
+        $object->GenerateCallbackImplementation($dataNode);
+    } else {
+        $object->GenerateHeader($dataNode);
+        $object->GenerateImplementation($dataNode);
+    }
 
     my $name = $dataNode->name;
 
@@ -517,6 +522,36 @@ sub GenerateGetOwnPropertyDescriptorBody
     return @getOwnPropertyDescriptorImpl;
 }
 
+sub GenerateHeaderContentHeader
+{
+    my $dataNode = shift;
+    my $className = "JS" . $dataNode->name;
+
+    my @headerContentHeader = split("\r", $headerTemplate);
+
+    # - Add header protection
+    push(@headerContentHeader, "\n#ifndef $className" . "_h");
+    push(@headerContentHeader, "\n#define $className" . "_h\n\n");
+
+    my $conditionalString = GenerateConditionalString($dataNode);
+    push(@headerContentHeader, "#if ${conditionalString}\n\n") if $conditionalString;
+    return @headerContentHeader;
+}
+
+sub GenerateImplementationContentHeader
+{
+    my $dataNode = shift;
+    my $className = "JS" . $dataNode->name;
+
+    my @implContentHeader = split("\r", $headerTemplate);
+
+    push(@implContentHeader, "\n#include \"config.h\"\n");
+    my $conditionalString = GenerateConditionalString($dataNode);
+    push(@implContentHeader, "\n#if ${conditionalString}\n\n") if $conditionalString;
+    push(@implContentHeader, "#include \"$className.h\"\n\n");
+    return @implContentHeader;
+}
+
 sub GenerateHeader
 {
     my $object = shift;
@@ -541,15 +576,8 @@ sub GenerateHeader
     my $eventTarget = $dataNode->extendedAttributes->{"EventTarget"};
     my $needsMarkChildren = $dataNode->extendedAttributes->{"CustomMarkFunction"} || $dataNode->extendedAttributes->{"EventTarget"};
     
-    # - Add default header template
-    @headerContentHeader = split("\r", $headerTemplate);
-
-    # - Add header protection
-    push(@headerContentHeader, "\n#ifndef $className" . "_h");
-    push(@headerContentHeader, "\n#define $className" . "_h\n\n");
-
-    my $conditionalString = GenerateConditionalString($dataNode);
-    push(@headerContentHeader, "#if ${conditionalString}\n\n") if $conditionalString;
+    # - Add default header template and header protection
+    push(@headerContentHeader, GenerateHeaderContentHeader($dataNode));
 
     if ($hasParent) {
         $headerIncludes{"$parentClassName.h"} = 1;
@@ -943,6 +971,7 @@ sub GenerateHeader
         }
     }
 
+    my $conditionalString = GenerateConditionalString($dataNode);
     push(@headerContent, "\n} // namespace WebCore\n\n");
     push(@headerContent, "#endif // ${conditionalString}\n\n") if $conditionalString;
     push(@headerContent, "#endif\n");
@@ -1038,12 +1067,7 @@ sub GenerateImplementation
     my $needsMarkChildren = $dataNode->extendedAttributes->{"CustomMarkFunction"} || $dataNode->extendedAttributes->{"EventTarget"};
 
     # - Add default header template
-    @implContentHeader = split("\r", $headerTemplate);
-
-    push(@implContentHeader, "\n#include \"config.h\"\n");
-    my $conditionalString = GenerateConditionalString($dataNode);
-    push(@implContentHeader, "\n#if ${conditionalString}\n\n") if $conditionalString;
-    push(@implContentHeader, "#include \"$className.h\"\n\n");
+    push(@implContentHeader, GenerateImplementationContentHeader($dataNode));
 
     AddIncludesForSVGAnimatedType($interfaceName) if $className =~ /^JSSVGAnimated/;
 
@@ -1885,6 +1909,155 @@ sub GenerateImplementation
 
     push(@implContent, "\n}\n");
 
+    my $conditionalString = GenerateConditionalString($dataNode);
+    push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
+}
+
+sub GenerateCallbackHeader
+{
+    my $object = shift;
+    my $dataNode = shift;
+
+    my $interfaceName = $dataNode->name;
+    my $className = "JS$interfaceName";
+
+    # - Add default header template and header protection
+    push(@headerContentHeader, GenerateHeaderContentHeader($dataNode));
+
+    $headerIncludes{"$interfaceName.h"} = 1;
+    $headerIncludes{"JSCallbackData.h"} = 1;
+    $headerIncludes{"<wtf/Forward.h>"} = 1;
+
+    push(@headerContent, "\nnamespace WebCore {\n\n");
+    push(@headerContent, "class $className : public $interfaceName {\n");
+    push(@headerContent, "public:\n");
+
+    # The static create() method.
+    push(@headerContent, "    static PassRefPtr<$className> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)\n");
+    push(@headerContent, "    {\n");
+    push(@headerContent, "        return adoptRef(new $className(callback, globalObject));\n");
+    push(@headerContent, "    }\n\n");
+
+    # Destructor
+    push(@headerContent, "    virtual ~$className();\n");
+
+    # Functions
+    my $numFunctions = @{$dataNode->functions};
+    if ($numFunctions > 0) {
+        push(@headerContent, "\n    // Functions\n");
+        foreach my $function (@{$dataNode->functions}) {
+            my @params = @{$function->parameters};
+            if (!$function->signature->extendedAttributes->{"Custom"} &&
+                !(GetNativeType($function->signature->type) eq "bool")) {
+                push(@headerContent, "    COMPILE_ASSERT(false)");
+            }
+
+            push(@headerContent, "    virtual " . GetNativeType($function->signature->type) . " " . $function->signature->name . "(ScriptExecutionContext*");
+            foreach my $param (@params) {
+                push(@headerContent, ", " . GetNativeType($param->type) . " " . $param->name);
+            }
+
+            push(@headerContent, ");\n");
+        }
+    }
+
+    push(@headerContent, "\nprivate:\n");
+
+    # Constructor
+    push(@headerContent, "    $className(JSC::JSObject* callback, JSDOMGlobalObject*);\n\n");
+
+    # Private members
+    push(@headerContent, "    JSCallbackData* m_data;\n");
+    push(@headerContent, "    RefPtr<DOMWrapperWorld> m_isolatedWorld;\n");
+    push(@headerContent, "};\n\n");
+
+    push(@headerContent, "} // namespace WebCore\n\n");
+    my $conditionalString = GenerateConditionalString($dataNode);
+    push(@headerContent, "#endif // ${conditionalString}\n\n") if $conditionalString;
+    push(@headerContent, "#endif\n");
+}
+
+sub GenerateCallbackImplementation
+{
+    my ($object, $dataNode) = @_;
+
+    my $interfaceName = $dataNode->name;
+    my $className = "JS$interfaceName";
+
+    # - Add default header template
+    push(@implContentHeader, GenerateImplementationContentHeader($dataNode));
+
+    $implIncludes{"ScriptExecutionContext.h"} = 1;
+    $implIncludes{"<runtime/JSLock.h>"} = 1;
+    $implIncludes{"<wtf/MainThread.h>"} = 1;
+
+    @implContent = ();
+
+    push(@implContent, "\nusing namespace JSC;\n\n");
+    push(@implContent, "namespace WebCore {\n\n");
+
+    # Constructor
+    push(@implContent, "${className}::${className}(JSObject* callback, JSDOMGlobalObject* globalObject)\n");
+    push(@implContent, "    : m_data(new JSCallbackData(callback, globalObject))\n");
+    push(@implContent, "    , m_isolatedWorld(globalObject->world())\n");
+    push(@implContent, "{\n");
+    push(@implContent, "}\n\n");
+
+    # Destructor
+    push(@implContent, "${className}::~${className}()\n");
+    push(@implContent, "{\n");
+    push(@implContent, "    callOnMainThread(JSCallbackData::deleteData, m_data);\n");
+    push(@implContent, "#ifndef NDEBUG\n");
+    push(@implContent, "    m_data = 0;\n");
+    push(@implContent, "#endif\n");
+    push(@implContent, "}\n");
+
+    # Functions
+    my $numFunctions = @{$dataNode->functions};
+    if ($numFunctions > 0) {
+        push(@implContent, "\n// Functions\n");
+        foreach my $function (@{$dataNode->functions}) {
+            my @params = @{$function->parameters};
+            if ($function->signature->extendedAttributes->{"Custom"} ||
+                !(GetNativeType($function->signature->type) eq "bool")) {
+                next;
+            }
+
+            AddIncludesForType($function->signature->type);
+            push(@implContent, "\n" . GetNativeType($function->signature->type) . " ${className}::" . $function->signature->name . "(ScriptExecutionContext* context");
+
+            foreach my $param (@params) {
+                AddIncludesForType($param->type);
+                push(@implContent, ", " . GetNativeType($param->type) . " " . $param->name);
+            }
+
+            push(@implContent, ")\n");
+
+            push(@implContent, "{\n");
+            push(@implContent, "    ASSERT(m_data);\n");
+            push(@implContent, "    ASSERT(context);\n\n");
+            push(@implContent, "    RefPtr<$className> protect(this);\n\n");
+            push(@implContent, "    JSLock lock(SilenceAssertionsOnly);\n\n");
+            push(@implContent, "    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(context, m_isolatedWorld.get());\n");
+            push(@implContent, "    if (!globalObject)\n");
+            push(@implContent, "        return true;\n\n");
+            push(@implContent, "    ExecState* exec = globalObject->globalExec();\n");
+            push(@implContent, "    MarkedArgumentBuffer args;\n");
+
+            foreach my $param (@params) {
+                my $paramName = $param->name;
+                push(@implContent, "    args.append(toJS(exec, ${paramName}));\n");
+            }
+
+            push(@implContent, "\n    bool raisedException = false;\n");
+            push(@implContent, "    m_data->invokeCallback(args, &raisedException);\n");
+            push(@implContent, "    return !raisedException;\n");
+            push(@implContent, "}\n");
+        }
+    }
+
+    push(@implContent, "\n}\n");
+    my $conditionalString = GenerateConditionalString($dataNode);
     push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
 }
 
