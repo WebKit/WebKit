@@ -214,6 +214,12 @@ public:
 
     wxWebSettings GetWebSettings();
     wxWebKitParseMode GetParseMode() const;
+    
+    /*
+        This method allows cross site-scripting (XSS) in the WebView. 
+        Use with caution!
+    */
+    void GrantUniversalAccess();
 
 protected:
 

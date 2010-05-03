@@ -1,3 +1,17 @@
+2010-05-03  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Provide access to GrantUniversalAccess to allow enabling of XSS support. 
+
+        * WebFrame.cpp:
+        (wxWebFrame::GrantUniversalAccess):
+        * WebFrame.h:
+        * WebView.cpp:
+        (wxWebView::GetParseMode):
+        (wxWebView::GrantUniversalAccess):
+        * WebView.h:
+
 2010-05-03  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Darin Fisher.

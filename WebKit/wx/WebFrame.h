@@ -146,6 +146,8 @@ public:
     
     wxWebKitParseMode GetParseMode() const;
     
+    void GrantUniversalAccess();
+    
 private:
     float m_textMagnifier;
     bool m_isEditable;
