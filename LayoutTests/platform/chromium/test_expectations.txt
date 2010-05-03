@@ -427,7 +427,7 @@ WONTFIX : storage/domstorage/sessionstorage/private-browsing-affects-storage.htm
 
 // These tests propagate auth credentials back to the renderer, which we
 // don't want to do.
-WONTFIX BUG21840 DEBUG : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL
+WONTFIX BUG21840 MAC LINUX DEBUG : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL
 WONTFIX BUG21840 LINUX RELEASE : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL
 WONTFIX BUG21840 SLOW WIN RELEASE : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL
 WONTFIX BUG21840 WIN DEBUG : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL CRASH
@@ -2781,3 +2781,22 @@ BUGWK38360 SKIP : traversal/node-iterator-prototype.html = TEXT
 BUG42895 : media/audio-only-video-intrinsic-size.html = TIMEOUT
 BUG42895 : media/media-document-audio-size.html = TIMEOUT
 BUGYAAR MAC : svg/custom/dominant-baseline-hanging.svg = MISSING
+
+// WebKit roll 58626:TBD:
+
+// Might revert these:
+BUGYAAR : fast/css/text-input-with-webkit-border-radius.html = IMAGE+TEXT
+BUGYAAR : fast/forms/control-restrict-line-height.html = IMAGE+TEXT
+BUGYAAR WIN LINUX : fast/forms/search-vertical-alignment.html = IMAGE+TEXT
+BUGYAAR : fast/forms/search-cancel-button-style-sharing.html = IMAGE+TEXT
+BUGYAAR : fast/forms/search-rtl.html = IMAGE+TEXT
+
+// Needs new baselines
+BUGYAAR WIN LINUX : svg/W3C-SVG-1.1/fonts-kern-01-t.svg = IMAGE
+BUGYAAR WIN LINUX : svg/W3C-SVG-1.1/render-groups-01-b.svg = IMAGE
+BUGYAAR WIN LINUX : svg/W3C-SVG-1.1/render-groups-03-t.svg = IMAGE
+BUGYAAR WIN LINUX : svg/text/kerning.svg = IMAGE
+BUGYAAR WIN LINUX : svg/text/text-hkern.svg = IMAGE
+
+// GStreamer - disabled in Chromium
+WONTFIX : media/video-duration-known-after-eos.html = TEXT
