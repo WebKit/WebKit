@@ -1,3 +1,16 @@
+2010-05-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38285
+        <rdar://problem/7903453> REGRESSION: Javascript command window.open does not work in empty tab
+
+        Cannot be tested, because new windows created in DRT always have an opener, and thus inherit
+        its security origin. Only new windows and tabs created by browser chrome had this problem.
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::init): Moved updateSandboxFlags() call to
+        the beginning, so that an initial document would get correct flags.
+
 2010-05-03  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Darin Adler.
