@@ -938,10 +938,6 @@ void QWebPagePrivate::keyPressEvent(QKeyEvent *ev)
         handled = frame->eventHandler()->keyEvent(ev);
     if (!handled) {
         handled = true;
-        QFont defaultFont;
-        if (client)
-            defaultFont = client->ownerWidget()->font();
-        QFontMetrics fm(defaultFont);
         if (!handleScrolling(ev, frame)) {
             switch (ev->key()) {
             case Qt::Key_Back:
