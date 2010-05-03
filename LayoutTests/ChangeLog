@@ -1,3 +1,14 @@
+2010-05-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Interpreter crashes due to incorrect refcounting of cached structures.
+        https://bugs.webkit.org/show_bug.cgi?id=38491
+
+        Add test for cached structure chains used for custom getters.
+
+        * fast/js/pic/cached-named-property-getter.html:
+
 2010-05-03  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Adam Barth.

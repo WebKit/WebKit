@@ -1,3 +1,17 @@
+2010-05-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Interpreter crashes due to incorrect refcounting of cached structures.
+        https://bugs.webkit.org/show_bug.cgi?id=38491
+        rdar://problem/7926160
+
+        Make sure we ref/deref structures used for cached custom property getters
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::derefStructures):
+        (JSC::CodeBlock::refStructures):
+
 2010-05-02  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Eric Seidel.
