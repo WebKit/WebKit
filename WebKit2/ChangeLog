@@ -1,3 +1,27 @@
+2010-04-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38415
+        Have the WKView notify the DrawingAreaProxy when its visibility changes.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::isPageVisible):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewDidMoveToWindow]):
+        (-[WKView viewDidHide]):
+        (-[WKView viewDidUnhide]):
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxyUpdateChunk.cpp:
+        (WebKit::DrawingAreaProxyUpdateChunk::DrawingAreaProxyUpdateChunk):
+        (WebKit::DrawingAreaProxyUpdateChunk::didChangeVisibility):
+        * UIProcess/DrawingAreaProxyUpdateChunk.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::isVisible):
+        * UIProcess/WebPageProxy.h:
+
 2010-05-03  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Darin Fisher.

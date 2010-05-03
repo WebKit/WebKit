@@ -37,12 +37,13 @@ public:
     PageClientImpl(WKView*);
     virtual ~PageClientImpl();
 
+private:
     virtual void processDidExit();
     virtual void processDidRevive();
     virtual void takeFocus(bool direction);
     virtual void toolTipChanged(const WebCore::String& oldToolTip, const WebCore::String& newToolTip);
-
-private:
+    virtual bool isPageVisible();
+    
     WKView* m_wkView;
 };
 

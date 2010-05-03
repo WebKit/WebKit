@@ -57,11 +57,6 @@ public:
     DrawingAreaProxyUpdateChunk(PlatformWebView*);
     virtual ~DrawingAreaProxyUpdateChunk();
 
-    virtual void paint(const WebCore::IntRect&, PlatformDrawingContext);
-    virtual void setSize(const WebCore::IntSize&);
-
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&);
-
     // The DrawingAreaProxy should never be decoded itself. Instead, the DrawingArea should be decoded.
     virtual void encode(CoreIPC::ArgumentEncoder& encoder) const
     {
@@ -71,6 +66,12 @@ public:
 private:
     WebPageProxy* page();
 
+    // DrawingAreaProxy
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&);
+    virtual void paint(const WebCore::IntRect&, PlatformDrawingContext);
+    virtual void setSize(const WebCore::IntSize&);
+    virtual void didChangeVisibility();
+    
     void ensureBackingStore();
     void invalidateBackingStore();
     void platformPaint(const WebCore::IntRect&, PlatformDrawingContext);
@@ -79,6 +80,8 @@ private:
     void update(UpdateChunk*);
 
     bool m_isWaitingForDidSetFrameNotification;
+    bool m_isVisible;
+
     WebCore::IntSize m_viewSize; // Size of the BackingStore as well.
     WebCore::IntSize m_lastSetViewSize;
 

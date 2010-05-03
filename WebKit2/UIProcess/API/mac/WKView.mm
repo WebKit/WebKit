@@ -224,6 +224,8 @@ using namespace WebCore;
 
 - (void)viewDidMoveToWindow
 {
+    _data->_page->drawingArea()->didChangeVisibility();
+
     [self _updateActiveState];
 }
 
@@ -256,6 +258,16 @@ using namespace WebCore;
 {
     // FIXME: Return NO if we have a transparent background.
     return YES;
+}
+
+- (void)viewDidHide
+{
+    _data->_page->drawingArea()->didChangeVisibility();
+}
+
+- (void)viewDidUnhide
+{
+    _data->_page->drawingArea()->didChangeVisibility();
 }
 
 @end
