@@ -1,3 +1,18 @@
+2010-05-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix rendering of <button> elements on Mac OS X
+
+        The <button> element has ButtonPart appearance, not PushButton part,
+        so we have to include ButtonPart when we decide if we should draw the
+        button as raised on Mac OS X.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38458
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::initializeCommonQStyleOptions):
+
 2010-04-30  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Seidel.
