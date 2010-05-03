@@ -29,6 +29,29 @@
 #include "config.h"
 #include "MainThread.h"
 
+#include <wx/defs.h>
+#include <wx/app.h>
+#include <wx/event.h>
+
+const wxEventType wxEVT_CALL_AFTER = wxNewEventType();
+
+class wxCallAfter : public wxEvtHandler
+{
+public:
+    wxCallAfter() 
+        : wxEvtHandler()
+        {
+            wxTheApp->Connect(-1, -1, wxEVT_CALL_AFTER, wxCommandEventHandler(wxCallAfter::OnCallback));
+            wxCommandEvent event(wxEVT_CALL_AFTER);
+            wxPostEvent(wxTheApp, event);
+        }
+        
+    void OnCallback(wxCommandEvent& event)
+    {
+        WTF::dispatchFunctionsFromMainThread();
+    }
+};
+
 namespace WTF {
 
 void initializeMainThreadPlatform()
@@ -37,6 +60,7 @@ void initializeMainThreadPlatform()
 
 void scheduleDispatchFunctionsOnMainThread()
 {
+    wxCallAfter();
 }
 
 } // namespace WTF

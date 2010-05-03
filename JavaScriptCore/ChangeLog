@@ -2,6 +2,18 @@
 
         Reviewed by Kevin Ollivier.
 
+        [wx] Implement scheduleDispatchFunctionsOnMainThread for wx port.
+        https://bugs.webkit.org/show_bug.cgi?id=38480
+
+        * wtf/wx/MainThreadWx.cpp:
+        (wxCallAfter::wxCallAfter):
+        (wxCallAfter::OnCallback):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+
+2010-05-03  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
         [wx] Build and use Mac's ComplexTextController to support complex text in wx.
         https://bugs.webkit.org/show_bug.cgi?id=38482
 
