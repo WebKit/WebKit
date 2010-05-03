@@ -1,5 +1,17 @@
 2010-05-03  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Adam Roben.
+
+        Implement PageClient::isPageVisible on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=38483
+
+        * UIProcess/PageClient.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::isPageVisible):
+        * UIProcess/win/WebView.h:
+
+2010-05-03  Anders Carlsson  <andersca@apple.com>
+
         Fix Windows build.
 
         * Platform/CoreIPC/win/ConnectionWin.cpp:

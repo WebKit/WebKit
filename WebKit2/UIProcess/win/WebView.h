@@ -92,6 +92,7 @@ private:
     virtual void processDidRevive();
     virtual void takeFocus(bool direction);
     virtual void toolTipChanged(const WebCore::String&, const WebCore::String&);
+    virtual bool isPageVisible();
 
     // WebCore::WindowMessageListener
     virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM);

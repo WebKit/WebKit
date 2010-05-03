@@ -481,6 +481,12 @@ void WebView::toolTipChanged(const String&, const String& newToolTip)
     ::SendMessage(m_toolTipWindow, TTM_ACTIVATE, !newToolTip.isEmpty(), 0);
 }
 
+bool WebView::isPageVisible()
+{
+    // FIXME: We should probably check if the window has a parent/ancestor too.
+    return ::IsWindowVisible(m_window);
+}
+
 // WebCore::WindowMessageListener
 
 void WebView::windowReceivedMessage(HWND, UINT message, WPARAM wParam, LPARAM)
