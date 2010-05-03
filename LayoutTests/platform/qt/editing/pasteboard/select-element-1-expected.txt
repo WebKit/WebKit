@@ -1,0 +1,56 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document toDOMRange:range from 1 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldDeleteDOMRange:range from 1 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 1 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 533x20
+          text run at (0,0) width 289: "This tests copy/paste of select elements. "
+          text run at (289,0) width 244: "All the options should be included."
+      RenderBlock {DIV} at (0,36) size 784x20
+        RenderInline {SPAN} at (0,0) size 0x20
+          RenderBR {BR} at (0,0) size 0x20
+      RenderBlock {DIV} at (0,56) size 784x30
+        RenderMenuList {SELECT} at (2,2) size 74x26 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (8,4) size 42x20
+            RenderText at (0,0) size 30x20
+              text run at (0,0) width 30: "One"
+      RenderBlock {UL} at (0,102) size 784x80
+        RenderListItem {LI} at (40,0) size 744x20
+          RenderListMarker at (-18,0) size 7x20: bullet
+          RenderText {#text} at (0,0) size 54x20
+            text run at (0,0) width 54: "Passed"
+        RenderListItem {LI} at (40,20) size 744x20
+          RenderListMarker at (-18,0) size 7x20: bullet
+          RenderText {#text} at (0,0) size 54x20
+            text run at (0,0) width 54: "Passed"
+        RenderListItem {LI} at (40,40) size 744x20
+          RenderListMarker at (-18,0) size 7x20: bullet
+          RenderText {#text} at (0,0) size 54x20
+            text run at (0,0) width 54: "Passed"
+        RenderListItem {LI} at (40,60) size 744x20
+          RenderListMarker at (-18,0) size 7x20: bullet
+          RenderText {#text} at (0,0) size 54x20
+            text run at (0,0) width 54: "Passed"
+caret: position 35 of child 0 {SELECT} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document

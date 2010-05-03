@@ -1,5 +1,24 @@
 2010-05-03  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Unreviewed. Qt specific expected files added after r58675.
+
+        * platform/qt/editing/pasteboard/4944770-2-expected.txt: Added.
+        * platform/qt/editing/pasteboard/5028447-expected.txt: Added.
+        * platform/qt/editing/pasteboard/5089327-expected.txt: Added.
+        * platform/qt/editing/pasteboard/5601583-1-expected.txt: Added.
+        * platform/qt/editing/pasteboard/paste-blockquote-after-blockquote-expected.txt: Added.
+        * platform/qt/editing/pasteboard/paste-blockquote-into-blockquote-2-expected.txt: Added.
+        * platform/qt/editing/pasteboard/paste-blockquote-into-blockquote-3-expected.txt: Added.
+        * platform/qt/editing/pasteboard/paste-blockquote-into-blockquote-4-expected.txt: Added.
+        * platform/qt/editing/pasteboard/paste-blockquote-into-blockquote-expected.txt: Added.
+        * platform/qt/editing/pasteboard/paste-text-013-expected.txt: Added.
+        * platform/qt/editing/pasteboard/select-element-1-expected.txt: Added.
+        * platform/qt/editing/pasteboard/testcase-9507-expected.txt: Added.
+        * platform/qt/editing/pasteboard/undoable-fragment-removes-expected.txt: Added.
+        * platform/qt/editing/pasteboard/unrendered-br-expected.txt: Added.
+
+2010-05-03  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed. Qt specific expected files added and updated.
 
         [Qt] Unskip editing/pasteboard tests that fail due to 'x,y' differences
