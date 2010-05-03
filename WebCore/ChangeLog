@@ -1,3 +1,15 @@
+2010-05-03  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        WebGL compile issue.
+        Added ExceptionCode.h to JSWebGLArrayBufferConstructor.cpp, for some reason it was missing.
+        https://bugs.webkit.org/show_bug.cgi?id=38453
+
+        No new tests: compile fix.
+
+        * bindings/js/JSWebGLArrayBufferConstructor.cpp:
+
 2010-05-03  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, rolling out r58685.

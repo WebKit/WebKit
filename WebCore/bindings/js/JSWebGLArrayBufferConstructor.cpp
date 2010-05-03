@@ -30,6 +30,7 @@
 #include "JSWebGLArrayBufferConstructor.h"
 
 #include "Document.h"
+#include "ExceptionCode.h"
 #include "JSWebGLArrayBuffer.h"
 
 namespace WebCore {
