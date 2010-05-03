@@ -397,6 +397,99 @@ sub svnStatus($)
     return $svnStatus;
 }
 
+# Return whether the given file mode is executable in the source control
+# sense.  We make this determination based on whether the executable bit
+# is set for "others" rather than the stronger condition that it be set
+# for the user, group, and others.  This is sufficient for distinguishing
+# the default behavior in Git and SVN.
+#
+# Args:
+#   $fileMode: A number or string representing a file mode in octal notation.
+sub isExecutable($)
+{
+    my $fileMode = shift;
+
+    return $fileMode % 2;
+}
+
+# Parse the next Git diff header from the given file handle, and advance
+# the handle so the last line read is the first line after the header.
+#
+# This subroutine dies if given leading junk.
+#
+# Args:
+#   $fileHandle: advanced so the last line read from the handle is the first
+#                line of the header to parse.  This should be a line
+#                beginning with "diff --git".
+#   $line: the line last read from $fileHandle
+#
+# Returns ($headerHashRef, $lastReadLine):
+#   $headerHashRef: a hash reference representing a diff header, as follows--
+#     executableBitDelta: an integer -1, 0, or 1, depending on whether the
+#                         executable bit was added, remained the same, or was
+#                         removed.  For new and deleted files, the value is 0
+#                         only if the new or deleted file is not executable.
+#     indexPath: the path in the "Index:" line.
+#     svnConvertedText: the header text with some lines converted to SVN
+#                       format.  Git-specific lines are preserved.
+#   $lastReadLine: the line last read from $fileHandle.
+sub parseGitDiffHeader($$)
+{
+    my ($fileHandle, $line) = @_;
+
+    $_ = $line;
+
+    my $headerStartRegEx = qr/^diff --git /;
+
+    if (!/$headerStartRegEx/) {
+        die("First line of Git diff does not begin with \"diff --git \": \"$_\"");
+    }
+
+    my $foundHeaderEnding;
+    my $indexPath;
+    my $newExecutableBit = 0;
+    my $oldExecutableBit = 0;
+    my $svnConvertedText;
+    while (1) {
+        # Temporarily strip off any end-of-line characters to simplify
+        # regex matching below.
+        s/([\n\r]+)$//;
+        my $eol = $1;
+
+        if (m#^diff --git \w/(.+) \w/([^\r\n]+)#) {
+            $indexPath = $1;
+            $_ = "Index: $indexPath"; # Convert to SVN format.
+        } elsif (/^(deleted file|old) mode ([0-9]{6})/) {
+            $oldExecutableBit = (isExecutable($2) ? 1 : 0);
+        } elsif (/^new( file)? mode ([0-9]{6})/) {
+            $newExecutableBit = (isExecutable($2) ? 1 : 0);
+        } elsif (/^--- \S+/) {
+            $_ = "--- $indexPath"; # Convert to SVN format.
+        } elsif (/^\+\+\+ \S+/) {
+            $_ = "+++ $indexPath"; # Convert to SVN format.
+            $foundHeaderEnding = 1;
+        } elsif (/^GIT binary patch$/ ) {
+            $foundHeaderEnding = 1;
+        }
+
+        $svnConvertedText .= "$_$eol"; # Also restore end-of-line characters.
+
+        $_ = <$fileHandle>; # Not defined if end-of-file reached.
+
+        last if (!defined($_) || /$headerStartRegEx/ || $foundHeaderEnding);
+    }
+
+    my $executableBitDelta = $newExecutableBit - $oldExecutableBit;
+
+    my %header;
+
+    $header{executableBitDelta} = $executableBitDelta;
+    $header{indexPath} = $indexPath;
+    $header{svnConvertedText} = $svnConvertedText;
+
+    return (\%header, $_);
+}
+
 # Convert some lines of a git-formatted patch to SVN format, while
 # preserving any end-of-line characters.
 #
@@ -453,6 +546,8 @@ sub parseDiffHeader($$)
 
     my $filter;
     if ($line =~ m#^diff --git #) {
+        # FIXME: Delete the gitdiff2svndiff() subroutine and call
+        #        parseGitDiffHeader() instead.
         $filter = \&gitdiff2svndiff;
     }
     $line = &$filter($line) if $filter;
@@ -520,6 +615,12 @@ sub parseDiffHeader($$)
     return (\%header, $lastReadLine);
 }
 
+# FIXME: The %diffHash "object" should not have an svnConvertedText property.
+#        Instead, the hash object should store its information in a
+#        structured way as properties.  This should be done in a way so
+#        that, if necessary, the text of an SVN or Git patch can be
+#        reconstructed from the information in those hash properties.
+#
 # A %diffHash is a hash representing a source control diff of a single
 # file operation (e.g. a file modification, copy, or delete).
 #
@@ -589,9 +690,12 @@ sub parseDiff($$)
 
     my %diffHashRef;
     $diffHashRef{copiedFromPath} = $headerHashRef->{copiedFromPath};
+    # FIXME: Add executableBitDelta as a key.
     $diffHashRef{indexPath} = $headerHashRef->{indexPath};
     # FIXME: Also add scmFormat from the $headerHashRef.
     $diffHashRef{sourceRevision} = $headerHashRef->{sourceRevision};
+    # FIXME: Remove the need for svnConvertedText.  See the %diffHash
+    #        code comments above for more information.
     $diffHashRef{svnConvertedText} = $svnText;
 
     return (\%diffHashRef, $line);
