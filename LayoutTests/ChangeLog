@@ -2,6 +2,15 @@
 
         Not Reviewed.
 
+        Preparing for Chromium WebKit roll 58626:TBD
+        https://bugs.webkit.org/show_bug.cgi?id=38479
+
+        * platform/chromium/test_expectations.txt: added missing expectation
+
+2010-05-03  Yaar Schnitman  <yaar@chromium.org>
+
+        Not Reviewed.
+
         Added missing chromium baselines for svg text kerning
         https://bugs.webkit.org/show_bug.cgi?id=38476
 

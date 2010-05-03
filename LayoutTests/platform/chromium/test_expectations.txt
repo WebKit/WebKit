@@ -2785,6 +2785,7 @@ BUGYAAR MAC : svg/custom/dominant-baseline-hanging.svg = MISSING
 // WebKit roll 58626:TBD:
 
 // Might revert these:
+BUGYAAR : fast/css/input-search-padding.html = IMAGE+TEXT
 BUGYAAR : fast/css/text-input-with-webkit-border-radius.html = IMAGE+TEXT
 BUGYAAR : fast/forms/control-restrict-line-height.html = IMAGE+TEXT
 BUGYAAR WIN LINUX : fast/forms/search-vertical-alignment.html = IMAGE+TEXT
