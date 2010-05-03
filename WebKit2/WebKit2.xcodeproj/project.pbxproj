@@ -90,8 +90,7 @@
 		BC111B65112F638300337BAB /* WebProcessMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BC111B62112F638300337BAB /* WebProcessMessageKinds.h */; };
 		BC131BC911726C2800B69727 /* CoreIPCMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BC131BC811726C2800B69727 /* CoreIPCMessageKinds.h */; };
 		BC177465118B9FF4007D9E9A /* WKPagePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC177464118B9FF4007D9E9A /* WKPagePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC177468118BA086007D9E9A /* RenderTreeExternalRepresentationCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC177466118BA086007D9E9A /* RenderTreeExternalRepresentationCallback.cpp */; };
-		BC177469118BA086007D9E9A /* RenderTreeExternalRepresentationCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = BC177467118BA086007D9E9A /* RenderTreeExternalRepresentationCallback.h */; };
+		BC17753F118BABF0007D9E9A /* GenericCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = BC17753E118BABF0007D9E9A /* GenericCallback.h */; };
 		BC1A7C581136E19C00FB7167 /* WebProcessLauncher.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A7C571136E19C00FB7167 /* WebProcessLauncher.h */; };
 		BC1DD7B2114DC396005ADAF3 /* WebCoreTypeArgumentMarshalling.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1DD7B1114DC396005ADAF3 /* WebCoreTypeArgumentMarshalling.h */; };
 		BC20EBB0116EEB0800094A50 /* WKString.h in Headers */ = {isa = PBXBuildFile; fileRef = BC20EBAE116EEB0800094A50 /* WKString.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -154,8 +153,6 @@
 		BCD0042D110C1E27003B8A67 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCD0042C110C1E27003B8A67 /* CoreServices.framework */; };
 		BCD0139B110FA420003B8A67 /* WKFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD01397110FA420003B8A67 /* WKFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCD0139C110FA420003B8A67 /* WKFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD01398110FA420003B8A67 /* WKFrame.cpp */; };
-		BCD590F41129F55B00EC8C23 /* ScriptReturnValueCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD590F21129F55B00EC8C23 /* ScriptReturnValueCallback.h */; };
-		BCD590F51129F55B00EC8C23 /* ScriptReturnValueCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD590F31129F55B00EC8C23 /* ScriptReturnValueCallback.cpp */; };
 		BCD597D0112B56AC00EC8C23 /* WKPreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD597CE112B56AC00EC8C23 /* WKPreferences.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCD597D1112B56AC00EC8C23 /* WKPreferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD597CF112B56AC00EC8C23 /* WKPreferences.cpp */; };
 		BCD597D6112B56DC00EC8C23 /* WKPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD597D4112B56DC00EC8C23 /* WKPage.cpp */; };
@@ -292,8 +289,7 @@
 		BC111B62112F638300337BAB /* WebProcessMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessMessageKinds.h; sourceTree = "<group>"; };
 		BC131BC811726C2800B69727 /* CoreIPCMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreIPCMessageKinds.h; sourceTree = "<group>"; };
 		BC177464118B9FF4007D9E9A /* WKPagePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPagePrivate.h; sourceTree = "<group>"; };
-		BC177466118BA086007D9E9A /* RenderTreeExternalRepresentationCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeExternalRepresentationCallback.cpp; sourceTree = "<group>"; };
-		BC177467118BA086007D9E9A /* RenderTreeExternalRepresentationCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeExternalRepresentationCallback.h; sourceTree = "<group>"; };
+		BC17753E118BABF0007D9E9A /* GenericCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericCallback.h; sourceTree = "<group>"; };
 		BC1A7C571136E19C00FB7167 /* WebProcessLauncher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessLauncher.h; sourceTree = "<group>"; };
 		BC1DD7B1114DC396005ADAF3 /* WebCoreTypeArgumentMarshalling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreTypeArgumentMarshalling.h; sourceTree = "<group>"; };
 		BC20EBAE116EEB0800094A50 /* WKString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKString.h; sourceTree = "<group>"; };
@@ -357,8 +353,6 @@
 		BCD0042C110C1E27003B8A67 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
 		BCD01397110FA420003B8A67 /* WKFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFrame.h; sourceTree = "<group>"; };
 		BCD01398110FA420003B8A67 /* WKFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKFrame.cpp; sourceTree = "<group>"; };
-		BCD590F21129F55B00EC8C23 /* ScriptReturnValueCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptReturnValueCallback.h; sourceTree = "<group>"; };
-		BCD590F31129F55B00EC8C23 /* ScriptReturnValueCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptReturnValueCallback.cpp; sourceTree = "<group>"; };
 		BCD597CE112B56AC00EC8C23 /* WKPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreferences.h; sourceTree = "<group>"; };
 		BCD597CF112B56AC00EC8C23 /* WKPreferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPreferences.cpp; sourceTree = "<group>"; };
 		BCD597D4112B56DC00EC8C23 /* WKPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPage.cpp; sourceTree = "<group>"; };
@@ -604,14 +598,11 @@
 				BC2652131182608100243E12 /* DrawingAreaProxy.h */,
 				BC2652141182608100243E12 /* DrawingAreaProxyUpdateChunk.cpp */,
 				BC2652151182608100243E12 /* DrawingAreaProxyUpdateChunk.h */,
+				BC17753E118BABF0007D9E9A /* GenericCallback.h */,
 				BC6EDAA5111271C600E7678B /* PageClient.h */,
 				BC597074116591D000551FCA /* ProcessModel.h */,
-				BC177466118BA086007D9E9A /* RenderTreeExternalRepresentationCallback.cpp */,
-				BC177467118BA086007D9E9A /* RenderTreeExternalRepresentationCallback.h */,
 				BC111B08112F5E3C00337BAB /* ResponsivenessTimer.cpp */,
 				1A30066C1110F4F70031937C /* ResponsivenessTimer.h */,
-				BCD590F31129F55B00EC8C23 /* ScriptReturnValueCallback.cpp */,
-				BCD590F21129F55B00EC8C23 /* ScriptReturnValueCallback.h */,
 				BCB9E2421120DACA00A137E0 /* WebContext.cpp */,
 				BCB9E2411120DACA00A137E0 /* WebContext.h */,
 				BCB9F69F1123A84B00A137E0 /* WebFramePolicyListenerProxy.cpp */,
@@ -876,7 +867,6 @@
 				BCB9F6A51123DD0D00A137E0 /* WKFramePolicyListener.h in Headers */,
 				BCB9F8B01124E07700A137E0 /* WebPolicyClient.h in Headers */,
 				1A594ABB112A1FB6009DE7C7 /* WebUIClient.h in Headers */,
-				BCD590F41129F55B00EC8C23 /* ScriptReturnValueCallback.h in Headers */,
 				BCD597D0112B56AC00EC8C23 /* WKPreferences.h in Headers */,
 				BCD597D7112B56DC00EC8C23 /* WKPage.h in Headers */,
 				BCD597FF112B57BE00EC8C23 /* WebPreferences.h in Headers */,
@@ -922,7 +912,7 @@
 				BC2652171182608100243E12 /* DrawingAreaProxy.h in Headers */,
 				BC2652191182608100243E12 /* DrawingAreaProxyUpdateChunk.h in Headers */,
 				BC177465118B9FF4007D9E9A /* WKPagePrivate.h in Headers */,
-				BC177469118BA086007D9E9A /* RenderTreeExternalRepresentationCallback.h in Headers */,
+				BC17753F118BABF0007D9E9A /* GenericCallback.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1029,7 +1019,6 @@
 				BCB9F6A61123DD0D00A137E0 /* WKFramePolicyListener.cpp in Sources */,
 				BCB9F8AF1124E07700A137E0 /* WebPolicyClient.cpp in Sources */,
 				1A594ABA112A1FB6009DE7C7 /* WebUIClient.cpp in Sources */,
-				BCD590F51129F55B00EC8C23 /* ScriptReturnValueCallback.cpp in Sources */,
 				BCD597D1112B56AC00EC8C23 /* WKPreferences.cpp in Sources */,
 				BCD597D6112B56DC00EC8C23 /* WKPage.cpp in Sources */,
 				BCD59800112B57BE00EC8C23 /* WebPreferences.cpp in Sources */,
@@ -1077,7 +1066,6 @@
 				BC2651F611825EF800243E12 /* DrawingAreaProxyUpdateChunkMac.mm in Sources */,
 				BC2652161182608100243E12 /* DrawingAreaProxy.cpp in Sources */,
 				BC2652181182608100243E12 /* DrawingAreaProxyUpdateChunk.cpp in Sources */,
-				BC177468118BA086007D9E9A /* RenderTreeExternalRepresentationCallback.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -37,106 +37,57 @@ namespace WebCore {
 }
 
 namespace WebKit {
-    class KURLWrapper;
-    class WebContext;
-    class WebFramePolicyListenerProxy;
-    class WebFrameProxy;
-    class WebNavigationData;
-    class WebPageNamespace;
-    class WebPageProxy;
-    class WebPreferences;
-}
+
+class WebContext;
+class WebFramePolicyListenerProxy;
+class WebFrameProxy;
+class WebNavigationData;
+class WebPageNamespace;
+class WebPageProxy;
+class WebPreferences;
+
+template<typename APIType> struct APITypeInfo { };
+template<> struct APITypeInfo<WKFrameRef>                       { typedef WebFrameProxy* ImplType; };
+template<> struct APITypeInfo<WKPageRef>                        { typedef WebPageProxy* ImplType; };
+template<> struct APITypeInfo<WKContextRef>                     { typedef WebContext* ImplType; };
+template<> struct APITypeInfo<WKPageNamespaceRef>               { typedef WebPageNamespace* ImplType; };
+template<> struct APITypeInfo<WKFramePolicyListenerRef>         { typedef WebFramePolicyListenerProxy* ImplType; };
+template<> struct APITypeInfo<WKPreferencesRef>                 { typedef WebPreferences* ImplType; };
+template<> struct APITypeInfo<WKStringRef>                      { typedef WebCore::StringImpl* ImplType; };
+template<> struct APITypeInfo<WKURLRef>                         { typedef WebCore::StringImpl* ImplType; };
+template<> struct APITypeInfo<WKNavigationDataRef>              { typedef WebNavigationData* ImplType; };
+
+template<typename ImplType> struct ImplTypeInfo { };
+template<> struct ImplTypeInfo<WebFrameProxy*>                  { typedef WKFrameRef APIType; };
+template<> struct ImplTypeInfo<WebPageProxy*>                   { typedef WKPageRef APIType; };
+template<> struct ImplTypeInfo<WebContext*>                     { typedef WKContextRef APIType; };
+template<> struct ImplTypeInfo<WebPageNamespace*>               { typedef WKPageNamespaceRef APIType; };
+template<> struct ImplTypeInfo<WebFramePolicyListenerProxy*>    { typedef WKFramePolicyListenerRef APIType; };
+template<> struct ImplTypeInfo<WebPreferences*>                 { typedef WKPreferencesRef APIType; };
+template<> struct ImplTypeInfo<WebCore::StringImpl*>            { typedef WKStringRef APIType; };
+template<> struct ImplTypeInfo<WebNavigationData*>              { typedef WKNavigationDataRef APIType; };
+
+} // namespace WebKit
 
 /* Opaque typing convenience methods */
 
-inline WebKit::WebFrameProxy* toWK(WKFrameRef f)
+template<typename T>
+inline typename WebKit::APITypeInfo<T>::ImplType toWK(T t)
 {
-    return reinterpret_cast<WebKit::WebFrameProxy*>(f);
+    return reinterpret_cast<typename WebKit::APITypeInfo<T>::ImplType>(t);
 }
 
-inline WKFrameRef toRef(WebKit::WebFrameProxy* f)
+template<typename T>
+inline typename WebKit::ImplTypeInfo<T>::APIType toRef(T t)
 {
-    return reinterpret_cast<WKFrameRef>(f);
+    return reinterpret_cast<typename WebKit::ImplTypeInfo<T>::APIType>(t);
 }
 
-inline WebKit::WebPageProxy* toWK(WKPageRef p)
-{
-    return reinterpret_cast<WebKit::WebPageProxy*>(p);
-}
-
-inline WKPageRef toRef(WebKit::WebPageProxy* p)
-{
-    return reinterpret_cast<WKPageRef>(p);
-}
-
-inline WebKit::WebContext* toWK(WKContextRef c)
-{
-    return reinterpret_cast<WebKit::WebContext*>(c);
-}
-
-inline WKContextRef toRef(WebKit::WebContext* c)
-{
-    return reinterpret_cast<WKContextRef>(c);
-}
-
-inline WebKit::WebPageNamespace* toWK(WKPageNamespaceRef p)
-{
-    return reinterpret_cast<WebKit::WebPageNamespace*>(p);
-}
-
-inline WKPageNamespaceRef toRef(WebKit::WebPageNamespace* p)
-{
-    return reinterpret_cast<WKPageNamespaceRef>(p);
-}
-
-inline WebKit::WebFramePolicyListenerProxy* toWK(WKFramePolicyListenerRef l)
-{
-    return reinterpret_cast<WebKit::WebFramePolicyListenerProxy*>(l);
-}
-
-inline WKFramePolicyListenerRef toRef(WebKit::WebFramePolicyListenerProxy* l)
-{
-    return reinterpret_cast<WKFramePolicyListenerRef>(l);
-}
-
-inline WebKit::WebPreferences* toWK(WKPreferencesRef p)
-{
-    return reinterpret_cast<WebKit::WebPreferences*>(p);
-}
-
-inline WKPreferencesRef toRef(WebKit::WebPreferences* p)
-{
-    return reinterpret_cast<WKPreferencesRef>(p);
-}
-
-inline WebCore::StringImpl* toWK(WKStringRef s)
-{
-    return reinterpret_cast<WebCore::StringImpl*>(s);
-}
-
-inline WKStringRef toRef(WebCore::StringImpl* s)
-{
-    return reinterpret_cast<WKStringRef>(s);
-}
-
-inline WebCore::StringImpl* toWK(WKURLRef u)
-{
-    return reinterpret_cast<WebCore::StringImpl*>(u);
-}
+/* Special case for WKURLRef which also uses StringImpl as an implementation. */
 
 inline WKURLRef toURLRef(WebCore::StringImpl* s)
 {
     return reinterpret_cast<WKURLRef>(s);
-}
-
-inline WebKit::WebNavigationData* toWK(WKNavigationDataRef n)
-{
-    return reinterpret_cast<WebKit::WebNavigationData*>(n);
-}
-
-inline WKNavigationDataRef toRef(WebKit::WebNavigationData* n)
-{
-    return reinterpret_cast<WKNavigationDataRef>(n);
 }
 
 #endif // WKAPICast_h

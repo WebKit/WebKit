@@ -27,8 +27,8 @@
 #define WebPageProxy_h
 
 #include "DrawingAreaProxy.h"
-#include "RenderTreeExternalRepresentationCallback.h"
-#include "ScriptReturnValueCallback.h"
+#include "GenericCallback.h"
+#include "WKBase.h"
 #include "WebEvent.h"
 #include "WebFrameProxy.h"
 #include "WebHistoryClient.h"
@@ -66,6 +66,9 @@ class WebPageNamespace;
 class WebProcessProxy;
 class WebWheelEvent;
 class WebNavigationDataStore;
+
+typedef GenericCallback<WKStringRef> RenderTreeExternalRepresentationCallback;
+typedef GenericCallback<WKStringRef> ScriptReturnValueCallback;
 
 class WebPageProxy : public RefCounted<WebPageProxy> {
 public:

@@ -1,3 +1,49 @@
+2010-05-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=38471
+        Add generic callback mechanism
+
+        Added GenericCallback class replacing RenderTreeExternalRepresentationCallback
+        and ScriptReturnValueCallback.
+        
+        Also,
+        - Standardize C API callbacks to take the context last.
+        - Standardize C API callbacks to not have the _f suffix (now the block
+          variants have a _b suffix).
+        - Re-write toWK and toRef methods as a set of template functions using
+          the generic API->implementation mapping information.
+
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageRunJavaScriptInMainFrame):
+        (callRunJavaScriptBlockAndRelease):
+        (disposeRunJavaScriptBlock):
+        (WKPageRunJavaScriptInMainFrame_b):
+        (WKPageRenderTreeExternalRepresentation):
+        (WKPageRenderTreeExternalRepresentation_b):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/GenericCallback.h: Added.
+        (WebKit::GenericCallback::create):
+        (WebKit::GenericCallback::~GenericCallback):
+        (WebKit::GenericCallback::performCallbackWithReturnValue):
+        (WebKit::GenericCallback::invalidate):
+        (WebKit::GenericCallback::callbackID):
+        (WebKit::GenericCallback::generateCallbackID):
+        (WebKit::GenericCallback::GenericCallback):
+        * UIProcess/RenderTreeExternalRepresentationCallback.cpp: Removed.
+        * UIProcess/RenderTreeExternalRepresentationCallback.h: Removed.
+        * UIProcess/ScriptReturnValueCallback.cpp: Removed.
+        * UIProcess/ScriptReturnValueCallback.h: Removed.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didRunJavaScriptInMainFrame):
+        (WebKit::WebPageProxy::didGetRenderTreeExternalRepresentation):
+        * UIProcess/WebPageProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
 2010-04-30  Sam Weinig  <sam@webkit.org>
 
         Fix the build.

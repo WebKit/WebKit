@@ -155,10 +155,14 @@ WK_EXPORT void WKPageSetPagePolicyClient(WKPageRef page, WKPagePolicyClient * cl
 WK_EXPORT void WKPageSetPageUIClient(WKPageRef page, WKPageUIClient * client);
 WK_EXPORT void WKPageSetPageHistoryClient(WKPageRef page, WKPageHistoryClient * client);
 
+typedef void (*WKPageRunJavaScriptFunction)(WKStringRef, void*);
+typedef void (*WKPageRunJavaScriptDisposeFunction)(void*);
+WK_EXPORT void WKPageRunJavaScriptInMainFrame(WKPageRef page, WKStringRef script, void *context, WKPageRunJavaScriptFunction function, WKPageRunJavaScriptDisposeFunction disposeFunction);
 #if __BLOCKS__
-WK_EXPORT void WKPageRunJavaScriptInMainFrame(WKPageRef page, WKStringRef script, void (^returnValueBlock)(WKStringRef));
+typedef void (^WKPageRunJavaScriptBlock)(WKStringRef);
+WK_EXPORT void WKPageRunJavaScriptInMainFrame_b(WKPageRef page, WKStringRef script, WKPageRunJavaScriptBlock block);
 #endif
-WK_EXPORT void WKPageRunJavaScriptInMainFrame_f(WKPageRef page, WKStringRef script, void *context, void (*returnValueCallback)(void*, WKStringRef), void (*disposeContextCallback)(void*));
+
 
 WK_EXPORT WKPageRef WKPageRetain(WKPageRef page);
 WK_EXPORT void WKPageRelease(WKPageRef page);

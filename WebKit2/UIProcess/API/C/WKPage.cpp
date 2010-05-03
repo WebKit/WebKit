@@ -129,32 +129,32 @@ void WKPageSetPageHistoryClient(WKPageRef pageRef, WKPageHistoryClient * wkClien
         toWK(pageRef)->initializeHistoryClient(wkClient);
 }
 
-void WKPageRunJavaScriptInMainFrame_f(WKPageRef pageRef, WKStringRef scriptRef, void* context, void (*returnValueCallback)(void*, WKStringRef), void (*disposeContextCallback)(void*))
+void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, void* context, WKPageRunJavaScriptFunction callback, WKPageRunJavaScriptDisposeFunction disposeFunction)
 {
-    toWK(pageRef)->runJavaScriptInMainFrame(toWK(scriptRef), ScriptReturnValueCallback::create(context, returnValueCallback, disposeContextCallback));
+    toWK(pageRef)->runJavaScriptInMainFrame(toWK(scriptRef), ScriptReturnValueCallback::create(context, callback, disposeFunction));
 }
 
 #if __BLOCKS__
-static void callBlockAndRelease(void* context, WKStringRef resultValue)
+static void callRunJavaScriptBlockAndRelease(WKStringRef resultValue, void* context)
 {
-    void (^block)(WKStringRef) = (void (^ReturnValueBlockType)(WKStringRef))context;
+    WKPageRunJavaScriptBlock block = (WKPageRunJavaScriptBlock)context;
     block(resultValue);
     Block_release(block);
 }
 
-static void disposeBlock(void* context)
+static void disposeRunJavaScriptBlock(void* context)
 {
-    void (^block)(WKStringRef) = (void (^ReturnValueBlockType)(WKStringRef))context;
+    WKPageRunJavaScriptBlock block = (WKPageRunJavaScriptBlock)context;
     Block_release(block);
 }
 
-void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, void (^returnValueBlock)(WKStringRef))
+void WKPageRunJavaScriptInMainFrame_b(WKPageRef pageRef, WKStringRef scriptRef, WKPageRunJavaScriptBlock block)
 {
-    WKPageRunJavaScriptInMainFrame_f(pageRef, scriptRef, Block_copy(returnValueBlock), callBlockAndRelease, disposeBlock);
+    WKPageRunJavaScriptInMainFrame(pageRef, scriptRef, Block_copy(block), callRunJavaScriptBlockAndRelease, disposeRunJavaScriptBlock);
 }
 #endif
 
-void WKPageRenderTreeExternalRepresentation_f(WKPageRef pageRef, void *context, WKPageRenderTreeExternalRepresentationFunction callback, WKPageRenderTreeExternalRepresentationDisposeFunction disposeFunction)
+void WKPageRenderTreeExternalRepresentation(WKPageRef pageRef, void *context, WKPageRenderTreeExternalRepresentationFunction callback, WKPageRenderTreeExternalRepresentationDisposeFunction disposeFunction)
 {
     toWK(pageRef)->getRenderTreeExternalRepresentation(RenderTreeExternalRepresentationCallback::create(context, callback, disposeFunction));
 }
@@ -173,9 +173,9 @@ static void disposeRenderTreeExternalRepresentationBlock(void* context)
     Block_release(block);
 }
 
-void WKPageRenderTreeExternalRepresentation(WKPageRef pageRef, WKPageRenderTreeExternalRepresentationBlock block)
+void WKPageRenderTreeExternalRepresentation_b(WKPageRef pageRef, WKPageRenderTreeExternalRepresentationBlock block)
 {
-    WKPageRenderTreeExternalRepresentation_f(pageRef, Block_copy(block), callRenderTreeExternalRepresentationBlockAndDispose, disposeRenderTreeExternalRepresentationBlock);
+    WKPageRenderTreeExternalRepresentation(pageRef, Block_copy(block), callRenderTreeExternalRepresentationBlockAndDispose, disposeRenderTreeExternalRepresentationBlock);
 }
 #endif
 
