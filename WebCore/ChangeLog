@@ -1,3 +1,14 @@
+2010-05-03  Thomas Zander <t.zander@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix library infix usage when compiling inside of Qt
+
+        Don't apply the infix when building inside Qt, as that's done through the
+        inclusion of qbase.pri.
+
+        * WebCore.pro:
+
 2010-05-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
