@@ -1,3 +1,16 @@
+2010-05-04  Ada Chan  <adachan@apple.com>
+
+        Reviewed by David Kilzer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38555
+        
+        Small code refactoring: move the logic to figure out the path to the 
+        databases directory to another method.
+
+        * Storage/WebDatabaseManager.mm:
+        (databasesDirectoryPath):
+        (WebKitInitializeDatabasesIfNecessary):
+
 2010-05-04  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Mike Thole.

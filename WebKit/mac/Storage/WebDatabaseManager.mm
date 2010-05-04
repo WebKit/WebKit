@@ -49,6 +49,8 @@ NSString *WebDatabaseDidModifyOriginNotification = @"WebDatabaseDidModifyOriginN
 NSString *WebDatabaseDidModifyDatabaseNotification = @"WebDatabaseDidModifyDatabaseNotification";
 NSString *WebDatabaseIdentifierKey = @"WebDatabaseIdentifierKey";
 
+static NSString *databasesDirectoryPath();
+
 @implementation WebDatabaseManager
 
 + (WebDatabaseManager *) sharedWebDatabaseManager
@@ -119,6 +121,16 @@ NSString *WebDatabaseIdentifierKey = @"WebDatabaseIdentifierKey";
 
 @end
 
+static NSString *databasesDirectoryPath()
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *databasesDirectory = [defaults objectForKey:WebDatabaseDirectoryDefaultsKey];
+    if (!databasesDirectory || ![databasesDirectory isKindOfClass:[NSString class]])
+        databasesDirectory = @"~/Library/WebKit/Databases";
+    
+    return [databasesDirectory stringByStandardizingPath];
+}
+
 void WebKitInitializeDatabasesIfNecessary()
 {
     static BOOL initialized = NO;
@@ -126,13 +138,7 @@ void WebKitInitializeDatabasesIfNecessary()
         return;
 
     // Set the database root path in WebCore
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-
-    NSString *databasesDirectory = [defaults objectForKey:WebDatabaseDirectoryDefaultsKey];
-    if (!databasesDirectory || ![databasesDirectory isKindOfClass:[NSString class]])
-        databasesDirectory = @"~/Library/WebKit/Databases";
-
-    DatabaseTracker::tracker().setDatabaseDirectoryPath([databasesDirectory stringByStandardizingPath]);
+    DatabaseTracker::tracker().setDatabaseDirectoryPath(databasesDirectoryPath());
 
     // Set the DatabaseTrackerClient
     DatabaseTracker::tracker().setClient(WebDatabaseTrackerClient::sharedWebDatabaseTrackerClient());
