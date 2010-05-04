@@ -1,3 +1,17 @@
+2010-05-04  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit crashes at DebuggerCallFrame::functionName() if m_callFrame is the top global callframe.
+        https://bugs.webkit.org/show_bug.cgi?id=38535
+
+        Don't call asFunction if callee is not a FunctionType to prevent assertion failure
+        in JSCell::isObject().
+
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::functionName):
+        (JSC::DebuggerCallFrame::calculatedFunctionName):
+
 2010-05-04  Steve Falkenburg  <sfalken@apple.com>
 
         Remove redundant exports to fix Windows build warnings.
