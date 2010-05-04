@@ -1,3 +1,23 @@
+2010-05-04  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by David Levin (and unofficially by Enrica Casucci).
+
+        REGRESSION(r54368): Text drag-and-drop from input/textarea doesn't work
+        if the text is like a URL
+        https://bugs.webkit.org/show_bug.cgi?id=38374
+
+        Since r54368, documentFragmentFromDragData() creates an <a> element
+        with no anchor text for URL-like text dragged from input/textarea
+        element. If such text is dropped to input/textarea element, the text
+        is not inserted.
+        To fix this problem, use the original text or the URL as an anchor
+        text.
+
+        Test: editing/pasteboard/drag-drop-url-text.html
+
+        * page/DragController.cpp:
+        (WebCore::documentFragmentFromDragData):
+
 2010-05-04  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.

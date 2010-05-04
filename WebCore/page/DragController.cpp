@@ -115,8 +115,15 @@ static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData* dragD
             if (!url.isEmpty()) {
                 RefPtr<HTMLAnchorElement> anchor = HTMLAnchorElement::create(document);
                 anchor->setHref(url);
-                ExceptionCode ec;
+                if (title.isEmpty()) {
+                    // Try the plain text first because the url might be normalized or escaped.
+                    if (dragData->containsPlainText())
+                        title = dragData->asPlainText();
+                    if (title.isEmpty())
+                        title = url;
+                }
                 RefPtr<Node> anchorText = document->createTextNode(title);
+                ExceptionCode ec;
                 anchor->appendChild(anchorText, ec);
                 RefPtr<DocumentFragment> fragment = document->createDocumentFragment();
                 fragment->appendChild(anchor, ec);
