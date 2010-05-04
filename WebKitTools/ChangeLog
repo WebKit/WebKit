@@ -1,3 +1,15 @@
+2010-05-04  Jesus Sanchez-Palencia  <jesus@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Wrong documentation on 'webkit-patch help land'.
+        https://bugs.webkit.org/show_bug.cgi?id=37871
+
+        Small fix on the help documentation for webkit-patch
+        land.
+
+        * Scripts/webkitpy/tool/commands/download.py:
+
 2010-05-04  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
