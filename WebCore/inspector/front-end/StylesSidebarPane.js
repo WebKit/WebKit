@@ -1280,7 +1280,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (WebInspector.isBeingEdited(this.listItemElement) || (this.treeOutline.section && !this.treeOutline.section.editable))
             return;
 
-        var context = { expanded: this.expanded, hasChildren: this.hasChildren };
+        var context = { expanded: this.expanded, hasChildren: this.hasChildren, keyDownListener: this.editingKeyDown.bind(this) };
 
         // Lie about our children to prevent expanding on double click and to collapse shorthands.
         this.hasChildren = false;
@@ -1288,7 +1288,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (!selectElement)
             selectElement = this.listItemElement;
 
-        this.listItemElement.handleKeyEvent = this.editingKeyDown.bind(this);
+        this.listItemElement.addEventListener("keydown", context.keyDownListener, false);
 
         WebInspector.startEditing(this.listItemElement, this.editingCommitted.bind(this), this.editingCancelled.bind(this), context);
         window.getSelection().setBaseAndExtent(selectElement, 0, selectElement, 1);
@@ -1369,7 +1369,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         selection.removeAllRanges();
         selection.addRange(finalSelectionRange);
 
-        event.handled = true;
+        event.preventDefault();
 
         if (!this.originalCSSText) {
             // Remember the rule's original CSS text, so it can be restored
@@ -1389,7 +1389,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         this.hasChildren = context.hasChildren;
         if (context.expanded)
             this.expand();
-        delete this.listItemElement.handleKeyEvent;
+        this.listItemElement.removeEventListener("keydown", context.keyDownListener, false);
         delete this.originalCSSText;
     },
 
