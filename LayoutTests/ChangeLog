@@ -1,3 +1,12 @@
+2010-05-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] http/tests/security/cross-frame-access-name-getter.html timed out
+        https://bugs.webkit.org/show_bug.cgi?id=38540
+
+        * platform/qt/Skipped: http/tests/security/cross-frame-access-name-getter.html skipped until bug fixed.
+
 2010-05-04  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.

@@ -5147,3 +5147,7 @@ media/media-document-audio-size.html
 # skipping worker-event-listener.html solve the problem until we find a real fix.
 # https://bugs.webkit.org/show_bug.cgi?id=38502
 fast/workers/worker-event-listener.html
+
+# [Qt] http/tests/security/cross-frame-access-name-getter.html timed out
+# https://bugs.webkit.org/show_bug.cgi?id=38540
+http/tests/security/cross-frame-access-name-getter.html
