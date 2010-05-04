@@ -311,14 +311,37 @@ WebInspector.ProfilesPanel.prototype = {
         profile._profilesTreeElement = profileTreeElement;
 
         sidebarParent.appendChild(profileTreeElement);
-        this.welcomeView.hide();
-        if (!this.visibleView)
-            this.showProfile(profile);
+        if (!profile.isTemporary) {
+            this.welcomeView.hide();
+            if (!this.visibleView)
+                this.showProfile(profile);
+        }
+    },
+
+    removeProfileHeader: function(profile)
+    {
+        var typeId = profile.typeId;
+        var profileType = this.getProfileType(typeId);
+        var sidebarParent = profileType.treeElement;
+
+        for (var i = 0; i < this._profiles.length; ++i) {
+            if (this._profiles[i].uid === profile.uid) {
+                profile = this._profiles[i];
+                this._profiles.splice(i, 1);
+                break;
+            }
+        }
+        delete this._profilesIdMap[this._makeKey(profile.uid, typeId)];
+
+        var profileTitleKey = this._makeKey(profile.title, typeId);
+        delete this._profileGroups[profileTitleKey];
+
+        sidebarParent.removeChild(profile._profilesTreeElement);
     },
 
     showProfile: function(profile)
     {
-        if (!profile)
+        if (!profile || profile.isTemporary)
             return;
 
         this.closeVisibleView();
