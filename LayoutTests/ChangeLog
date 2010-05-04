@@ -1,3 +1,13 @@
+2010-05-03  Steven Lai  <steven_lai@asia.apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Test hashchange() event is fired in asynchronous manner.
+        https://bugs.webkit.org/show_bug.cgi?id=36201
+
+        * fast/loader/hashchange-event-async-expected.txt: Added.
+        * fast/loader/hashchange-event-async.html: Added.
+
 2010-05-03  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.

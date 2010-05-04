@@ -4850,10 +4850,9 @@ void Document::enqueuePageshowEvent(PageshowEventPersistence persisted)
 
 void Document::enqueueHashchangeEvent(const String& /*oldURL*/, const String& /*newURL*/)
 {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=36201 Hashchange event needs to fire asynchronously.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=36335 Hashchange event is now its own interface and takes two
     //   URL arguments which we need to pass in here.
-    dispatchWindowEvent(Event::create(eventNames().hashchangeEvent, false, false));
+    enqueueEvent(Event::create(eventNames().hashchangeEvent, false, false));
 }
 
 void Document::enqueuePopstateEvent(PassRefPtr<SerializedScriptValue> stateObject)

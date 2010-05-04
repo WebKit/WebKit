@@ -1,3 +1,18 @@
+2010-05-03  Steven Lai  <steven_lai@asia.apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Reverted hashchange() event back to async.
+        (This change does not update HashChangeEvent to its new proposed interface)
+        https://bugs.webkit.org/show_bug.cgi?id=36201
+        rdar://problem/7780794
+        rdar://problem/7761278 (partial fix)
+
+        Tests: fast/loader/hashchange-event-async.html
+
+        * dom/Document.cpp: reverted hashchange() event back to async
+        (WebCore::Document::enqueueHashchangeEvent):
+
 2010-05-03  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Rubber-stamped by Xan Lopez.
