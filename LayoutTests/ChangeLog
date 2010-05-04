@@ -1,3 +1,11 @@
+2010-05-04  John Gregg  <johnnyg@google.com>
+
+        Unreviewed, build fix.
+
+        Add new notifications tests to the qt skipped file, since they are not supported there.
+
+        * platform/qt/Skipped:
+
 2010-05-04  Steven Lai  <steven_lai@asia.apple.com>
 
         Reviewed by Darin Adler.

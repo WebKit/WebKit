@@ -4808,6 +4808,8 @@ fast/notifications/notifications-check-permission.html
 fast/notifications/notifications-display-close-events.html
 fast/notifications/notifications-request-permission.html
 fast/notifications/notifications-without-permission.html
+fast/notifications/notifications-rtl.html
+fast/notifications/notifications-replace.html
 
 # Missing DRT ability to set accept cookie policy
 http/tests/xmlhttprequest/cross-origin-cookie-storage.html
