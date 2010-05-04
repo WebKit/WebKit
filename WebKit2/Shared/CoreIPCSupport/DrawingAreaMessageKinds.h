@@ -33,9 +33,15 @@
 namespace DrawingAreaMessage {
 
 enum Kind {
-    Initialize,
+    // Called whenever the size of the drawing area needs to be updated.
     SetSize,
-    
+
+    // Called when the drawing area should stop painting.
+    SuspendPainting,
+
+    // Called when the drawing area should start painting again.
+    ResumePainting,
+
     // Called when an update chunk sent to the drawing area has been
     // incorporated into the backing store.
     DidUpdate,

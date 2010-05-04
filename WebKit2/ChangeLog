@@ -1,3 +1,42 @@
+2010-05-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        [WebKit2] The web process doesn't need to paint when the web view is hidden.
+        https://bugs.webkit.org/show_bug.cgi?id=38549
+
+        * Shared/CoreIPCSupport/DrawingAreaMessageKinds.h:
+        (DrawingAreaMessage::):
+        Add SuspendPainting/ResumePainting messages.
+        
+        * UIProcess/DrawingAreaProxyUpdateChunk.cpp:
+        (WebKit::DrawingAreaProxyUpdateChunk::setPageIsVisible):
+        Suspend and resume painting accordingly.
+        
+        * WebProcess/WebPage/DrawingAreaUpdateChunk.cpp:
+        (WebKit::DrawingAreaUpdateChunk::DrawingAreaUpdateChunk):
+        Initialize m_shouldPaint to true.
+        
+        (WebKit::DrawingAreaUpdateChunk::display):
+        Return if m_shouldPaint is false.
+        
+        (WebKit::DrawingAreaUpdateChunk::scheduleDisplay):
+        Ditto.
+        
+        (WebKit::DrawingAreaUpdateChunk::setSize):
+        Assert that we should paint here.
+
+        (WebKit::DrawingAreaUpdateChunk::suspendPainting):
+        Set m_shouldPaint to false and stop the timer.
+        
+        (WebKit::DrawingAreaUpdateChunk::resumePainting):
+        Set m_shouldPaint to true and paint if needed.
+
+        (WebKit::DrawingAreaUpdateChunk::didReceiveMessage):
+        handle SuspendPainting/ResumePainting messages.
+
+        * WebProcess/WebPage/DrawingAreaUpdateChunk.h:
+
 2010-05-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Jon Honeycutt.

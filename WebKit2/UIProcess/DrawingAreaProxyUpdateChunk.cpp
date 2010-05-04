@@ -94,8 +94,17 @@ void DrawingAreaProxyUpdateChunk::setPageIsVisible(bool isVisible)
     m_isVisible = isVisible;
     if (!page->isValid())
         return;
+
+    if (!m_isVisible) {
+        // Tell the web process that it doesn't need to paint anything for now.
+        page->process()->connection()->send(DrawingAreaMessage::SuspendPainting, page->pageID(), CoreIPC::In());
+        return;
+    }
     
-    // FIXME: Actually notify the web process that the visibility has changed.
+    // The page is now visible.
+    page->process()->connection()->send(DrawingAreaMessage::ResumePainting, page->pageID(), CoreIPC::In());
+    
+    // FIXME: We should request a full repaint here if needed.
 }
     
 void DrawingAreaProxyUpdateChunk::didSetSize(UpdateChunk* updateChunk)
