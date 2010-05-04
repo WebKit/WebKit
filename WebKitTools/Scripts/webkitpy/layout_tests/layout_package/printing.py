@@ -459,7 +459,7 @@ class Printer(object):
             self._buildbot_stream.write("\n")
 
         if len(unexpected_results['tests']) and self._options.verbose:
-            self._buildbot_stream.write("%s\n" % "-" * 78)
+            self._buildbot_stream.write("%s\n" % ("-" * 78))
 
     def print_update(self, msg):
         if self.disabled('updates'):
