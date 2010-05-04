@@ -1,12 +1,23 @@
 2010-05-03  Chris Jerdonek  <cjerdonek@webkit.org>
 
+        Unreviewed.
+
+        Adjusted the ChangeLog entry below for r58732 (bug 35804) to reflect
+        the fact that the change will not become active until the patch
+        for bug 38454 lands.
+
+2010-05-03  Chris Jerdonek  <cjerdonek@webkit.org>
+
         Reviewed by Eric Seidel.
 
-        The svn-apply and svn-unapply scripts now display an instructive
-        error message if the --binary flag is left off the "git diff" command
+        Added code for svn-apply and -unapply to display an instructive error
+        message if the --binary flag is left off the "git diff" command
         for diffs containing binary file differences.
 
         https://bugs.webkit.org/show_bug.cgi?id=35804
+
+        This change will become active when parseDiffHeader() is modified
+        to call parseGitDiffHeader (see bug 38454).
 
         * Scripts/VCSUtils.pm:
           - Adjusted parseDiffHeader() to exit with an appropriate error message
