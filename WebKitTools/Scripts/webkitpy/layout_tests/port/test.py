@@ -66,6 +66,13 @@ class TestPort(base.Port):
                   expected_filename, actual_filename):
         return ''
 
+    def relative_test_filename(self, filename):
+        return filename
+
+    def expected_filename(self, filename, suffix):
+        (basename, ext) = os.path.splitext(filename)
+        return basename + '.' + suffix
+
     def name(self):
         return self._name
 

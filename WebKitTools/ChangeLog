@@ -1,3 +1,58 @@
+2010-05-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        new-run-webkit-tests: refactor a large chunk of the printing/logging
+        code out of run-webkit-tests py (almost 300 lines out of 1900).
+
+        This change also renames --log to --print (to be slightly more
+        descriptive). I've also added better help messages for printing.
+
+        The new code has unit tests!
+
+        There is still more code to be moved, but this patch is big enough as
+        it is. Namely, still to move are the printing of the actual results
+        and the timing statistics, which should move another 300-400 lines
+        out of the file.
+
+        Notable changes to run_webkit_tests.py beyond code simply moving:
+        * MeteredStream is now hidden under the new printing.Printer class.
+          All the references to self._meter now point to self._printer.
+        * All logging configuration is done in printing.configure_logging()
+        * Instead of using write() lambdas to control what is and isn't
+          printed, we use separate methods on the printer object. This will
+          make it easier to grep which print statements are printed
+          under protection of each flag.
+        * The print_results flag I added a few revs back to suppress printing
+          in the unit tests has been replaced with --print nothing.
+        * The ResultSummary class now stores the entire TestResult for each
+          test, not just the actual result type.
+        * summarize_unexpected_results() got moved from a method on TestRunner
+          to a standalone function. This should move into a separate file
+          along with the ResultSummary class and the TestResult class
+        * The --trace option added recently has been replaced by
+          '--print trace-everything' and '--print trace-unexpected'
+
+        https://bugs.webkit.org/show_bug.cgi?id=38018
+
+        * Scripts/new-run-webkit-tests:
+          - update to new entry points in run_webkit_tests.py
+        * Scripts/webkitpy/layout_tests/layout_package/metered_stream.py:
+          - fix a minor nit where we were printing an empty string where
+            we didn't need to
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py: Added.
+        * Scripts/webkitpy/layout_tests/layout_package/printing_unittest.py: Added
+        * Scripts/webkitpy/layout_tests/port/test.py:
+          - implement relative_test_filename() and expected_filename() so
+            we can test printing unexpected results in a platform-neutral
+            way
+        * Scripts/webkitpy/run_webkit_test.py:
+          - move a lot of the printing code into printing.py
+          - change the signatures of the exported entry points for easier
+            unit testing
+        * Scripts/webkitpy/run_webkit_tests_unittest.py:
+          - update w/ changes to run_webkit_tests entry points.
+
 2010-05-03  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

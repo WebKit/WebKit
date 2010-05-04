@@ -111,7 +111,8 @@ class MeteredStream:
 
         # Print the necessary number of backspaces to erase the previous
         # message.
-        self._stream.write("\b" * len(self._last_update))
+        if len(self._last_update):
+            self._stream.write("\b" * len(self._last_update))
         self._stream.write(str)
         num_remaining = len(self._last_update) - len(str)
         if num_remaining > 0:

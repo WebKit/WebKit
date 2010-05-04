@@ -33,14 +33,19 @@ import os
 import sys
 import unittest
 
-import webkitpy.layout_tests.run_webkit_tests as run_webkit_tests
+from webkitpy.layout_tests import port
+from webkitpy.layout_tests import run_webkit_tests
 
 from webkitpy.thirdparty.mock import Mock
 
 
-def passing_run(args):
+def passing_run(args, port_obj=None, logging_included=False):
+    if not logging_included:
+        args.extend(['--print', 'nothing'])
     options, args = run_webkit_tests.parse_args(args)
-    res = run_webkit_tests.main(options, args, False)
+    if port_obj is None:
+        port_obj = port.get(options.platform, options)
+    res = run_webkit_tests.run(port_obj, options, args)
     return res == 0
 
 
@@ -55,7 +60,7 @@ class MainTest(unittest.TestCase):
                                      'fast/html/article-element.html']))
         self.assertTrue(passing_run(['--platform', 'test',
                                     '--child-processes', '1',
-                                     '--log', 'unexpected',
+                                     '--print', 'unexpected',
                                      'fast/html']))
 
 
@@ -65,7 +70,7 @@ class TestRunnerTest(unittest.TestCase):
         mock_port.relative_test_filename = lambda name: name
         mock_port.filename_to_uri = lambda name: name
 
-        runner = run_webkit_tests.TestRunner(port=mock_port, options=Mock(), meter=Mock())
+        runner = run_webkit_tests.TestRunner(port=mock_port, options=Mock(), printer=Mock())
         expected_html = u"""<html>
   <head>
     <title>Layout Test Results (time)</title>

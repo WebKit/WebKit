@@ -33,5 +33,4 @@ import sys
 import webkitpy.layout_tests.run_webkit_tests as run_webkit_tests
 
 if __name__ == '__main__':
-    options, args = run_webkit_tests.parse_args()
-    sys.exit(run_webkit_tests.main(options, args))
+    sys.exit(run_webkit_tests.main())
