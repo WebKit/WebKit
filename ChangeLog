@@ -1,3 +1,15 @@
+2010-05-04  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed, build fix for Symbian.
+
+        [Symbian] Symbian builds does not support shadow builds
+
+        Revision r54715 broke the Symbian build. For Symbian
+        the include directory is generated in the root of the source tree.
+        This patch sets the INCLUDEPATH accordingly for Symbian.
+
+        * WebKit.pri:
+
 2010-05-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.
