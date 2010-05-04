@@ -1,3 +1,15 @@
+2010-05-04  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        [Qt] Preserve binary compatibility with qtwebkit-2.0 branch
+
+        Moved the WebGL attribute in QWebSettings to the end of the enum,
+        to ensure that the numeric values of the enum values following it
+        are the same as in the release branch.
+
+        * Api/qwebsettings.h:
+
 2010-05-03  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Simon Hausmann.
