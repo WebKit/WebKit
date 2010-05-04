@@ -174,7 +174,7 @@ void PluginPackage::unload()
     m_pluginLoader = 0;
 }
 
-uint16 PluginPackage::NPVersion() const
+uint16_t PluginPackage::NPVersion() const
 {
     return NP_VERSION_MINOR;
 }
