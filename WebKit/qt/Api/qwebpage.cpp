@@ -1205,8 +1205,8 @@ void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
 
 void QWebPagePrivate::dynamicPropertyChangeEvent(QDynamicPropertyChangeEvent* event)
 {
-    if (event->propertyName() == "wrt_viewMode") {
-        QString mode = q->property("wrt_viewMode").toString();
+    if (event->propertyName() == "_q_viewMode") {
+        QString mode = q->property("_q_viewMode").toString();
         if (mode != viewMode) {
             viewMode = mode;
             WebCore::Frame* frame = QWebFramePrivate::core(q->mainFrame());

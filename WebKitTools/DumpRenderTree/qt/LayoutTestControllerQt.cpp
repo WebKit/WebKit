@@ -140,7 +140,7 @@ QString LayoutTestController::counterValueForElementById(const QString& id)
 
 void LayoutTestController::setViewModeMediaFeature(const QString& mode)
 {
-    m_drt->webPage()->setProperty("wrt_viewMode", mode);
+    m_drt->webPage()->setProperty("_q_viewMode", mode);
 }
 
 int LayoutTestController::webHistoryItemCount()
