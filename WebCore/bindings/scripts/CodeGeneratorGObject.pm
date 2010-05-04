@@ -478,8 +478,8 @@ EOF
 
 my %param_spec_options = ("int", "G_MININT, /* min */\nG_MAXINT, /* max */\n0, /* default */",
                           "boolean", "FALSE, /* default */",
-                          "float", "G_MINFLOAT, /* min */\nG_MAXFLOAT, /* max */\n0.0, /* default */",
-                          "double", "G_MINDOUBLE, /* min */\nG_MAXDOUBLE, /* max */\n0.0, /* default */",
+                          "float", "-G_MAXFLOAT, /* min */\nG_MAXFLOAT, /* max */\n0.0, /* default */",
+                          "double", "-G_MAXDOUBLE, /* min */\nG_MAXDOUBLE, /* max */\n0.0, /* default */",
                           "uint64", "0, /* min */\nG_MAXUINT64, /* min */\n0, /* default */",
                           "long", "G_MINLONG, /* min */\nG_MAXLONG, /* max */\n0, /* default */",
                           "int64", "G_MININT64, /* min */\nG_MAXINT64, /* max */\n0, /* default */",
