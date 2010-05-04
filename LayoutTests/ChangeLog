@@ -1,3 +1,11 @@
+2010-05-04  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
+        Remove a bunch of test failures that are no longer failing (likely fixed in r58762).
+
+        * platform/chromium/test_expectations.txt:
+
 2010-05-04  John Gregg  <johnnyg@google.com>
 
         Unreviewed, build fix.
