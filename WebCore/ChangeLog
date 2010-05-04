@@ -1,3 +1,15 @@
+2010-05-04  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        New FileSystemPOSIX functions cause linker errors on Android
+        https://bugs.webkit.org/show_bug.cgi?id=38521
+
+        No new tests, build fix only.
+
+        * platform/android/FileSystemAndroid.cpp: Remove closeFile, which is provided in FileSystemPOSIX.cpp
+        * platform/posix/FileSystemPOSIX.cpp: Guard writeToFile with !PLATFORM(ANDROID)
+
 2010-05-04  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

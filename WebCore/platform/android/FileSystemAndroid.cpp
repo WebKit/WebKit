@@ -75,14 +75,6 @@ bool unloadModule(PlatformModule module)
     return !dlclose(module);
 }
 
-void closeFile(PlatformFileHandle& handle)
-{
-    if (isHandleValid(handle)) {
-        close(handle);
-        handle = invalidPlatformFileHandle;
-    }
-}
-
 int writeToFile(PlatformFileHandle handle, const char* data, int length)
 {
     int totalBytesWritten = 0;
