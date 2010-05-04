@@ -329,9 +329,12 @@ void WebViewImpl::mouseDown(const WebMouseEvent& event)
     // If there is a select popup open, close it as the user is clicking on
     // the page (outside of the popup).  We also save it so we can prevent a
     // click on the select element from immediately reopening the popup.
-    RefPtr<WebCore::PopupContainer> selectPopup = m_selectPopup;
-    hideSelectPopup();
-    ASSERT(!m_selectPopup);
+    RefPtr<WebCore::PopupContainer> selectPopup;
+    if (event.button == WebMouseEvent::ButtonLeft) {
+        selectPopup = m_selectPopup;
+        hideSelectPopup();
+        ASSERT(!m_selectPopup);
+    }
 
     m_lastMouseDownPoint = WebPoint(event.x, event.y);
     m_haveMouseCapture = true;
