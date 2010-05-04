@@ -1,3 +1,21 @@
+2010-05-04  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Simon Hausmann.
+
+        Crash in handleTouchEvent: using dangling node ptrs in hashmap
+        https://bugs.webkit.org/show_bug.cgi?id=38514
+
+        When navigating away from a page, if you have your finger still
+        pressed and then lift it on the new page we see a crash if the
+        node got deleted as we still have a dangling pointer in the
+        m_originatingTouchPointTargets hashmap and try to use it as the
+        receiver to dispatch a touchend event.
+
+        Test: fast/events/touch/touch-stale-node-crash.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::clear): Clear the hashmap of touch targets.
+
 2010-05-04  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Pavel Feldman.

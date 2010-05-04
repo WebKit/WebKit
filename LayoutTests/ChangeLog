@@ -1,3 +1,15 @@
+2010-05-04  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Simon Hausmann.
+
+        Crash in handleTouchEvent: using dangling node ptrs in hashmap
+        https://bugs.webkit.org/show_bug.cgi?id=38514
+
+        * fast/events/touch/resources/touch-stale-node-crash.js: Added.
+        * fast/events/touch/resources/send-touch-up.html: Added.
+        * fast/events/touch/touch-stale-node-crash-expected.txt: Added.
+        * fast/events/touch/touch-stale-node-crash.html: Added.
+
 2010-05-04  Jeremy Moskovich  <jeremy@chromium.org>
 
         Unreviewed, expectations change.

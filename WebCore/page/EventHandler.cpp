@@ -231,6 +231,9 @@ void EventHandler::clear()
     m_capturingMouseEventsNode = 0;
     m_latchedWheelEventNode = 0;
     m_previousWheelScrolledNode = 0;
+#if ENABLE(TOUCH_EVENTS)
+    m_originatingTouchPointTargets.clear();
+#endif
 }
 
 void EventHandler::selectClosestWordFromMouseEvent(const MouseEventWithHitTestResults& result)
