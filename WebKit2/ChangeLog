@@ -1,5 +1,21 @@
 2010-05-03  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Jon Honeycutt.
+
+        [WebKit2] WKView should respond to WM_SHOWWINDOW messages
+        https://bugs.webkit.org/show_bug.cgi?id=38496
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::wndProc):
+        Add case for WM_SHOWWINDOW.
+
+        (WebKit::WebView::onShowWindowEvent):
+        Update the page visibility accordingly.
+
+        * UIProcess/win/WebView.h:
+
+2010-05-03  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Get rid of PageClient::isPageVisible and pass visibility directly in setPageIsVisible
