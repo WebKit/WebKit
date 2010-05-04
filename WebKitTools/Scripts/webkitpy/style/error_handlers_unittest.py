@@ -25,7 +25,7 @@
 
 import unittest
 
-from checker import StyleCheckerConfiguration
+from checker import StyleProcessorConfiguration
 from error_handlers import DefaultStyleErrorHandler
 from filter import FilterConfiguration
 
@@ -51,11 +51,11 @@ class DefaultStyleErrorHandlerTest(unittest.TestCase):
         self._error_messages.append(message)
 
     def _style_checker_configuration(self):
-        """Return a StyleCheckerConfiguration instance for testing."""
+        """Return a StyleProcessorConfiguration instance for testing."""
         base_rules = ["-whitespace", "+whitespace/tab"]
         filter_configuration = FilterConfiguration(base_rules=base_rules)
 
-        return StyleCheckerConfiguration(
+        return StyleProcessorConfiguration(
                    filter_configuration=filter_configuration,
                    max_reports_per_category={"whitespace/tab": 2},
                    min_confidence=3,

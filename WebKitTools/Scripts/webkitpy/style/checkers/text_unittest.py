@@ -32,7 +32,7 @@
 import unittest
 
 import text as text_style
-from text import TextProcessor
+from text import TextChecker
 
 class TextStyleTestCase(unittest.TestCase):
     """TestCase for text_style.py"""
@@ -76,18 +76,18 @@ class TextStyleTestCase(unittest.TestCase):
                           '\tReviewed by NOBODY.'], 3)
 
 
-class TextProcessorTest(unittest.TestCase):
+class TextCheckerTest(unittest.TestCase):
 
-    """Tests TextProcessor class."""
+    """Tests TextChecker class."""
 
     def mock_handle_style_error(self):
         pass
 
     def test_init(self):
         """Test __init__ constructor."""
-        processor = TextProcessor("foo.txt", self.mock_handle_style_error)
-        self.assertEquals(processor.file_path, "foo.txt")
-        self.assertEquals(processor.handle_style_error, self.mock_handle_style_error)
+        checker = TextChecker("foo.txt", self.mock_handle_style_error)
+        self.assertEquals(checker.file_path, "foo.txt")
+        self.assertEquals(checker.handle_style_error, self.mock_handle_style_error)
 
 
 if __name__ == '__main__':

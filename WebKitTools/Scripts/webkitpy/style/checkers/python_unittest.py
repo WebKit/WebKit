@@ -25,25 +25,25 @@
 import os
 import unittest
 
-from python import PythonProcessor
+from python import PythonChecker
 
 
-class PythonProcessorTest(unittest.TestCase):
+class PythonCheckerTest(unittest.TestCase):
 
-    """Tests the PythonProcessor class."""
+    """Tests the PythonChecker class."""
 
     def test_init(self):
         """Test __init__() method."""
         def _mock_handle_style_error(self):
             pass
 
-        processor = PythonProcessor("foo.txt", _mock_handle_style_error)
-        self.assertEquals(processor._file_path, "foo.txt")
-        self.assertEquals(processor._handle_style_error,
+        checker = PythonChecker("foo.txt", _mock_handle_style_error)
+        self.assertEquals(checker._file_path, "foo.txt")
+        self.assertEquals(checker._handle_style_error,
                           _mock_handle_style_error)
 
-    def test_process(self):
-        """Test process() method."""
+    def test_check(self):
+        """Test check() method."""
         errors = []
 
         def _mock_handle_style_error(line_number, category, confidence,
@@ -54,8 +54,8 @@ class PythonProcessorTest(unittest.TestCase):
         current_dir = os.path.dirname(__file__)
         file_path = os.path.join(current_dir, "python_unittest_input.py")
 
-        processor = PythonProcessor(file_path, _mock_handle_style_error)
-        processor.process(lines=[])
+        checker = PythonChecker(file_path, _mock_handle_style_error)
+        checker.check(lines=[])
 
         self.assertEquals(len(errors), 1)
         self.assertEquals(errors[0],

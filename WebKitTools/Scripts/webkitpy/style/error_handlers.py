@@ -63,7 +63,7 @@ class DefaultStyleErrorHandler(object):
         Args:
           file_path: The path to the file containing the error. This
                      is used for reporting to the user.
-          configuration: A StyleCheckerConfiguration instance.
+          configuration: A StyleProcessorConfiguration instance.
           increment_error_count: A function that takes no arguments and
                                  increments the total count of reportable
                                  errors.

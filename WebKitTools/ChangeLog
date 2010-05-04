@@ -2,6 +2,71 @@
 
         Reviewed by Eric Seidel.
 
+        This revision completes the terminology change from "processor" to
+        "checker" for the CarriageReturnProcessor, CppProcessor,
+        PythonProcessor, and TextProcessor classes, etc.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38262
+
+        The word "processor" currently has two uses in our code.  This
+        revision renames the lower-level use to "checker" and preserves the
+        word "processor" for higher-level, more general uses.  This
+        revision also makes whatever other name changes that logically
+        followed from this change.
+
+        * Scripts/check-webkit-style:
+          - Updated references to PatchChecker.
+
+        * Scripts/webkitpy/style/checker.py:
+          - Renamed the StyleCheckerConfiguration class to
+            StyleProcessorConfiguration.
+          - Renamed the ProcessorDispatcher class to CheckerDispatcher, and
+            made similar changes for the class's method names.
+          - Renamed the PatchChecker class to PatchReader.
+          - Updated the file as necessary to accommodate the other class
+            renames in this patch.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Updated the unit test code as necessary.
+
+        * Scripts/webkitpy/style/checkers/common.py:
+          - Renamed the CarriageReturnProcessor class to CarriageReturnChecker,
+            and changed its process() method to check().
+
+        * Scripts/webkitpy/style/checkers/common_unittest.py:
+          - Updated the unit test code as necessary.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+          - Renamed the CppProcessor class to CppChecker, and renamed its
+            process() method to check().
+
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+          - Updated the unit test code as necessary.
+
+        * Scripts/webkitpy/style/checkers/python.py:
+          - Renamed the PythonProcessor class to PythonChecker, and renamed
+            its process() method to check().
+
+        * Scripts/webkitpy/style/checkers/python_unittest.py:
+          - Updated the unit test code as necessary.
+
+        * Scripts/webkitpy/style/checkers/text.py:
+          - Renamed the TextProcessor class to TextChecker, and renamed
+            its process() method to check().
+
+        * Scripts/webkitpy/style/checkers/text_unittest.py:
+          - Updated the unit test code as necessary.
+
+        * Scripts/webkitpy/style/error_handlers.py:
+          - Updated the code as necessary.
+
+        * Scripts/webkitpy/style/error_handlers_unittest.py:
+          - Updated the unit test code as necessary.
+
+2010-05-04  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Adjusted svn-apply and -unapply to accept git diffs generated
         using the --no-prefix flag.
 

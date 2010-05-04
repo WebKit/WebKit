@@ -2877,7 +2877,7 @@ def _process_lines(filename, file_extension, lines, error, min_confidence):
     check_for_new_line_at_eof(lines, error)
 
 
-class CppProcessor(object):
+class CppChecker(object):
 
     """Processes C++ lines for checking style."""
 
@@ -2952,7 +2952,7 @@ class CppProcessor(object):
 
     def __init__(self, file_path, file_extension, handle_style_error,
                  min_confidence):
-        """Create a CppProcessor instance.
+        """Create a CppChecker instance.
 
         Args:
           file_extension: A string that is the file extension, without
@@ -2966,7 +2966,7 @@ class CppProcessor(object):
 
     # Useful for unit testing.
     def __eq__(self, other):
-        """Return whether this CppProcessor instance is equal to another."""
+        """Return whether this CppChecker instance is equal to another."""
         if self.file_extension != other.file_extension:
             return False
         if self.file_path != other.file_path:
@@ -2983,12 +2983,12 @@ class CppProcessor(object):
         # Python does not automatically deduce __ne__() from __eq__().
         return not self.__eq__(other)
 
-    def process(self, lines):
+    def check(self, lines):
         _process_lines(self.file_path, self.file_extension, lines,
                        self.handle_style_error, self.min_confidence)
 
 
 # FIXME: Remove this function (requires refactoring unit tests).
 def process_file_data(filename, file_extension, lines, error, min_confidence):
-    processor = CppProcessor(filename, file_extension, error, min_confidence)
-    processor.process(lines)
+    checker = CppChecker(filename, file_extension, error, min_confidence)
+    checker.check(lines)

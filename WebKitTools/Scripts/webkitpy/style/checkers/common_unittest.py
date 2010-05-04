@@ -24,16 +24,16 @@
 
 import unittest
 
-from common import CarriageReturnProcessor
+from common import CarriageReturnChecker
 
 
-# FIXME: The unit tests for the cpp, text, and common processors should
+# FIXME: The unit tests for the cpp, text, and common checkers should
 #        share supporting test code. This can include, for example, the
 #        mock style error handling code and the code to check that all
-#        of a processor's categories are covered by the unit tests.
+#        of a checker's categories are covered by the unit tests.
 #        Such shared code can be located in a shared test file, perhaps
 #        even this file.
-class CarriageReturnProcessorTest(unittest.TestCase):
+class CarriageReturnCheckerTest(unittest.TestCase):
 
     """Tests check_no_carriage_return()."""
 
@@ -55,8 +55,8 @@ class CarriageReturnProcessorTest(unittest.TestCase):
         """Process the given line and assert that the result is correct."""
         handle_style_error = self._mock_style_error_handler
 
-        processor = CarriageReturnProcessor(handle_style_error)
-        output_lines = processor.process(input_lines)
+        checker = CarriageReturnChecker(handle_style_error)
+        output_lines = checker.check(input_lines)
 
         # Check both the return value and error messages.
         self.assertEquals(output_lines, expected_lines)
@@ -82,7 +82,7 @@ class CarriageReturnProcessorTest(unittest.TestCase):
                                     [])
 
     def test_carriage_in_middle(self):
-        # The CarriageReturnProcessor checks only the final character
+        # The CarriageReturnChecker checks only the final character
         # of each line.
         self.assert_carriage_return(["carriage\r in a string"],
                                     ["carriage\r in a string"],

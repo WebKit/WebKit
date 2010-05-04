@@ -23,7 +23,7 @@
 """Supports style checking not specific to any one file type."""
 
 
-# FIXME: Test this list in the same way that the list of CppProcessor
+# FIXME: Test this list in the same way that the list of CppChecker
 #        categories is tested, for example by checking that all of its
 #        elements appear in the unit tests. This should probably be done
 #        after moving the relevant cpp_unittest.ErrorCollector code
@@ -33,14 +33,14 @@ categories = set([
 ])
 
 
-class CarriageReturnProcessor(object):
+class CarriageReturnChecker(object):
 
     """Supports checking for and handling carriage returns."""
 
     def __init__(self, handle_style_error):
         self._handle_style_error = handle_style_error
 
-    def process(self, lines):
+    def check(self, lines):
         """Check for and strip trailing carriage returns from lines."""
         for line_number in range(len(lines)):
             if not lines[line_number].endswith("\r"):

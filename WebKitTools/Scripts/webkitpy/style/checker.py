@@ -35,10 +35,10 @@ import os.path
 import sys
 
 from checkers.common import categories as CommonCategories
-from checkers.common import CarriageReturnProcessor
-from checkers.cpp import CppProcessor
-from checkers.python import PythonProcessor
-from checkers.text import TextProcessor
+from checkers.common import CarriageReturnChecker
+from checkers.cpp import CppChecker
+from checkers.python import PythonChecker
+from checkers.text import TextChecker
 from error_handlers import DefaultStyleErrorHandler
 from filter import FilterConfiguration
 from optparser import ArgumentParser
@@ -233,7 +233,7 @@ _MAX_REPORTS_PER_CATEGORY = {
 def _all_categories():
     """Return the set of all categories used by check-webkit-style."""
     # Take the union across all checkers.
-    categories = CommonCategories.union(CppProcessor.categories)
+    categories = CommonCategories.union(CppChecker.categories)
 
     # FIXME: Consider adding all of the pep8 categories.  Since they
     #        are not too meaningful for documentation purposes, for
@@ -261,7 +261,7 @@ def check_webkit_style_parser():
 
 
 def check_webkit_style_configuration(options):
-    """Return a StyleCheckerConfiguration instance for check-webkit-style.
+    """Return a StyleProcessorConfiguration instance for check-webkit-style.
 
     Args:
       options: A CommandOptionValues instance.
@@ -272,7 +272,7 @@ def check_webkit_style_configuration(options):
                                path_specific=_PATH_RULES_SPECIFIER,
                                user_rules=options.filter_rules)
 
-    return StyleCheckerConfiguration(filter_configuration=filter_configuration,
+    return StyleProcessorConfiguration(filter_configuration=filter_configuration,
                max_reports_per_category=_MAX_REPORTS_PER_CATEGORY,
                min_confidence=options.min_confidence,
                output_format=options.output_format,
@@ -377,14 +377,7 @@ class FileType:
     TEXT = 3
 
 
-# FIXME: Rename this class to CheckerDispatcher, rename the style/processors/
-#        folder to style/checkers, and rename all of the code checker
-#        classes to end in "Checker" (e.g. "CppProcessor" should become
-#        "CppChecker").  This will address the current issue whereby the
-#        word "processor" is being used to refer to both a general lines
-#        processor used to instantiate a TextFileReader, and a class used
-#        to check style for a particular file format.
-class ProcessorDispatcher(object):
+class CheckerDispatcher(object):
 
     """Supports determining whether and how to check style, based on path."""
 
@@ -437,19 +430,19 @@ class ProcessorDispatcher(object):
         else:
             return FileType.NONE
 
-    def _create_processor(self, file_type, file_path, handle_style_error,
-                          min_confidence):
-        """Instantiate and return a style processor based on file type."""
+    def _create_checker(self, file_type, file_path, handle_style_error,
+                        min_confidence):
+        """Instantiate and return a style checker based on file type."""
         if file_type == FileType.NONE:
-            processor = None
+            checker = None
         elif file_type == FileType.CPP:
             file_extension = self._file_extension(file_path)
-            processor = CppProcessor(file_path, file_extension,
-                                     handle_style_error, min_confidence)
+            checker = CppChecker(file_path, file_extension,
+                                 handle_style_error, min_confidence)
         elif file_type == FileType.PYTHON:
-            processor = PythonProcessor(file_path, handle_style_error)
+            checker = PythonChecker(file_path, handle_style_error)
         elif file_type == FileType.TEXT:
-            processor = TextProcessor(file_path, handle_style_error)
+            checker = TextChecker(file_path, handle_style_error)
         else:
             raise ValueError('Invalid file type "%(file_type)s": the only valid file types '
                              "are %(NONE)s, %(CPP)s, and %(TEXT)s."
@@ -458,24 +451,24 @@ class ProcessorDispatcher(object):
                                 "CPP": FileType.CPP,
                                 "TEXT": FileType.TEXT})
 
-        return processor
+        return checker
 
-    def dispatch_processor(self, file_path, handle_style_error, min_confidence):
-        """Instantiate and return a style processor based on file path."""
+    def dispatch(self, file_path, handle_style_error, min_confidence):
+        """Instantiate and return a style checker based on file path."""
         file_type = self._file_type(file_path)
 
-        processor = self._create_processor(file_type,
-                                           file_path,
-                                           handle_style_error,
-                                           min_confidence)
-        return processor
+        checker = self._create_checker(file_type,
+                                       file_path,
+                                       handle_style_error,
+                                       min_confidence)
+        return checker
 
 
 # FIXME: Remove the stderr_write attribute from this class and replace
 #        its use with calls to a logging module logger.
-class StyleCheckerConfiguration(object):
+class StyleProcessorConfiguration(object):
 
-    """Stores configuration values for the StyleChecker class.
+    """Stores configuration values for the StyleProcessor class.
 
     Attributes:
       min_confidence: An integer between 1 and 5 inclusive that is the
@@ -495,7 +488,7 @@ class StyleCheckerConfiguration(object):
                  min_confidence,
                  output_format,
                  stderr_write):
-        """Create a StyleCheckerConfiguration instance.
+        """Create a StyleProcessorConfiguration instance.
 
         Args:
           filter_configuration: A FilterConfiguration instance.  The default
@@ -586,7 +579,7 @@ class ProcessorBase(object):
           **kwargs: This argument signifies that the process() method of
                     subclasses of ProcessorBase may support additional
                     keyword arguments.
-                        For example, a style processor's process() method
+                        For example, a style checker's check() method
                     may support a "reportable_lines" parameter that represents
                     the line numbers of the lines for which style errors
                     should be reported.
@@ -611,19 +604,19 @@ class StyleProcessor(ProcessorBase):
         """Create an instance.
 
         Args:
-          configuration: A StyleCheckerConfiguration instance.
-          mock_dispatcher: A mock ProcessorDispatcher instance.  This
+          configuration: A StyleProcessorConfiguration instance.
+          mock_dispatcher: A mock CheckerDispatcher instance.  This
                            parameter is for unit testing.  Defaults to a
-                           ProcessorDispatcher instance.
+                           CheckerDispatcher instance.
           mock_increment_error_count: A mock error-count incrementer.
           mock_carriage_checker_class: A mock class for checking and
                                        transforming carriage returns.
                                        This parameter is for unit testing.
-                                       Defaults to CarriageReturnProcessor.
+                                       Defaults to CarriageReturnChecker.
 
         """
         if mock_dispatcher is None:
-            dispatcher = ProcessorDispatcher()
+            dispatcher = CheckerDispatcher()
         else:
             dispatcher = mock_dispatcher
 
@@ -639,7 +632,7 @@ class StyleProcessor(ProcessorBase):
         if mock_carriage_checker_class is None:
             # This needs to be a class rather than an instance since the
             # process() method instantiates one using parameters.
-            carriage_checker_class = CarriageReturnProcessor
+            carriage_checker_class = CarriageReturnChecker
         else:
             carriage_checker_class = mock_carriage_checker_class
 
@@ -691,10 +684,10 @@ class StyleProcessor(ProcessorBase):
         #        check only if (os.linesep != '\r\n').
         #
         # Check for and remove trailing carriage returns ("\r").
-        lines = carriage_checker.process(lines)
+        lines = carriage_checker.check(lines)
 
         min_confidence = self._configuration.min_confidence
-        checker = self._dispatcher.dispatch_processor(file_path,
+        checker = self._dispatcher.dispatch(file_path,
                                                       style_error_handler,
                                                       min_confidence)
 
@@ -703,18 +696,15 @@ class StyleProcessor(ProcessorBase):
 
         _log.debug("Using class: " + checker.__class__.__name__)
 
-        checker.process(lines)
+        checker.check(lines)
 
 
-# FIXME: Rename this class to PatchReader to parallel TextFileReader
-#        (and to distinguish it from CarriageReturnChecker, CppChecker,
-#        etc. which are responsible only for processing lines).
-class PatchChecker(object):
+class PatchReader(object):
 
     """Supports checking style in patches."""
 
     def __init__(self, text_file_reader):
-        """Create a PatchChecker instance.
+        """Create a PatchReader instance.
 
         Args:
           text_file_reader: A TextFileReader instance.

@@ -25,7 +25,7 @@
 from ...style_references import pep8
 
 
-class PythonProcessor(object):
+class PythonChecker(object):
 
     """Processes text lines for checking style."""
 
@@ -33,7 +33,7 @@ class PythonProcessor(object):
         self._file_path = file_path
         self._handle_style_error = handle_style_error
 
-    def process(self, lines):
+    def check(self, lines):
         # Initialize pep8.options, which is necessary for
         # Checker.check_all() to execute.
         pep8.process_options(arglist=[self._file_path])

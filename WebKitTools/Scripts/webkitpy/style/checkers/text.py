@@ -30,7 +30,7 @@
 """Checks WebKit style for text files."""
 
 
-class TextProcessor(object):
+class TextChecker(object):
 
     """Processes text lines for checking style."""
 
@@ -38,7 +38,7 @@ class TextProcessor(object):
         self.file_path = file_path
         self.handle_style_error = handle_style_error
 
-    def process(self, lines):
+    def check(self, lines):
         lines = (["// adjust line numbers to make the first line 1."] + lines)
 
         # FIXME: share with cpp_style.
@@ -51,6 +51,6 @@ class TextProcessor(object):
 
 # FIXME: Remove this function (requires refactoring unit tests).
 def process_file_data(filename, lines, error):
-    processor = TextProcessor(filename, error)
-    processor.process(lines)
+    checker = TextChecker(filename, error)
+    checker.check(lines)
 

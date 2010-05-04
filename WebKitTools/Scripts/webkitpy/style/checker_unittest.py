@@ -49,14 +49,14 @@ from checker import _all_categories
 from checker import check_webkit_style_configuration
 from checker import check_webkit_style_parser
 from checker import configure_logging
-from checker import ProcessorDispatcher
-from checker import PatchChecker
+from checker import CheckerDispatcher
+from checker import PatchReader
 from checker import ProcessorBase
 from checker import StyleProcessor
-from checker import StyleCheckerConfiguration
-from checkers.cpp import CppProcessor
-from checkers.python import PythonProcessor
-from checkers.text import TextProcessor
+from checker import StyleProcessorConfiguration
+from checkers.cpp import CppChecker
+from checkers.python import PythonChecker
+from checkers.text import TextChecker
 from error_handlers import DefaultStyleErrorHandler
 from filter import validate_filter_rules
 from filter import FilterConfiguration
@@ -268,12 +268,12 @@ class CheckWebKitStyleFunctionTest(unittest.TestCase):
         parser = check_webkit_style_parser()
 
 
-class ProcessorDispatcherSkipTest(unittest.TestCase):
+class CheckerDispatcherSkipTest(unittest.TestCase):
 
-    """Tests the "should skip" methods of the ProcessorDispatcher class."""
+    """Tests the "should skip" methods of the CheckerDispatcher class."""
 
     def setUp(self):
-        self._dispatcher = ProcessorDispatcher()
+        self._dispatcher = CheckerDispatcher()
 
     def test_should_skip_with_warning(self):
         """Test should_skip_with_warning()."""
@@ -299,9 +299,9 @@ class ProcessorDispatcherSkipTest(unittest.TestCase):
     def _assert_should_skip_without_warning(self, path, is_checker_none,
                                             expected):
         # Check the file type before asserting the return value.
-        checker = self._dispatcher.dispatch_processor(file_path=path,
-                                                      handle_style_error=None,
-                                                      min_confidence=3)
+        checker = self._dispatcher.dispatch(file_path=path,
+                                            handle_style_error=None,
+                                            min_confidence=3)
         message = 'while checking: %s' % path
         self.assertEquals(checker is None, is_checker_none, message)
         self.assertEquals(self._dispatcher.should_skip_without_warning(path),
@@ -335,30 +335,30 @@ class ProcessorDispatcherSkipTest(unittest.TestCase):
                                                      expected=False)
 
 
-class ProcessorDispatcherDispatchTest(unittest.TestCase):
+class CheckerDispatcherDispatchTest(unittest.TestCase):
 
-    """Tests dispatch_processor() method of ProcessorDispatcher class."""
+    """Tests dispatch() method of CheckerDispatcher class."""
 
     def mock_handle_style_error(self):
         pass
 
-    def dispatch_processor(self, file_path):
-        """Call dispatch_processor() with the given file path."""
-        dispatcher = ProcessorDispatcher()
-        processor = dispatcher.dispatch_processor(file_path,
-                                                  self.mock_handle_style_error,
-                                                  min_confidence=3)
-        return processor
+    def dispatch(self, file_path):
+        """Call dispatch() with the given file path."""
+        dispatcher = CheckerDispatcher()
+        checker = dispatcher.dispatch(file_path,
+                                      self.mock_handle_style_error,
+                                      min_confidence=3)
+        return checker
 
-    def assert_processor_none(self, file_path):
-        """Assert that the dispatched processor is None."""
-        processor = self.dispatch_processor(file_path)
-        self.assertTrue(processor is None, 'Checking: "%s"' % file_path)
+    def assert_checker_none(self, file_path):
+        """Assert that the dispatched checker is None."""
+        checker = self.dispatch(file_path)
+        self.assertTrue(checker is None, 'Checking: "%s"' % file_path)
 
-    def assert_processor(self, file_path, expected_class):
-        """Assert the type of the dispatched processor."""
-        processor = self.dispatch_processor(file_path)
-        got_class = processor.__class__
+    def assert_checker(self, file_path, expected_class):
+        """Assert the type of the dispatched checker."""
+        checker = self.dispatch(file_path)
+        got_class = checker.__class__
         self.assertEquals(got_class, expected_class,
                           'For path "%(file_path)s" got %(got_class)s when '
                           "expecting %(expected_class)s."
@@ -366,17 +366,17 @@ class ProcessorDispatcherDispatchTest(unittest.TestCase):
                              "got_class": got_class,
                              "expected_class": expected_class})
 
-    def assert_processor_cpp(self, file_path):
-        """Assert that the dispatched processor is a CppProcessor."""
-        self.assert_processor(file_path, CppProcessor)
+    def assert_checker_cpp(self, file_path):
+        """Assert that the dispatched checker is a CppChecker."""
+        self.assert_checker(file_path, CppChecker)
 
-    def assert_processor_python(self, file_path):
-        """Assert that the dispatched processor is a PythonProcessor."""
-        self.assert_processor(file_path, PythonProcessor)
+    def assert_checker_python(self, file_path):
+        """Assert that the dispatched checker is a PythonChecker."""
+        self.assert_checker(file_path, PythonChecker)
 
-    def assert_processor_text(self, file_path):
-        """Assert that the dispatched processor is a TextProcessor."""
-        self.assert_processor(file_path, TextProcessor)
+    def assert_checker_text(self, file_path):
+        """Assert that the dispatched checker is a TextChecker."""
+        self.assert_checker(file_path, TextChecker)
 
     def test_cpp_paths(self):
         """Test paths that should be checked as C++."""
@@ -388,26 +388,26 @@ class ProcessorDispatcherDispatchTest(unittest.TestCase):
             ]
 
         for path in paths:
-            self.assert_processor_cpp(path)
+            self.assert_checker_cpp(path)
 
-        # Check processor attributes on a typical input.
+        # Check checker attributes on a typical input.
         file_base = "foo"
         file_extension = "c"
         file_path = file_base + "." + file_extension
-        self.assert_processor_cpp(file_path)
-        processor = self.dispatch_processor(file_path)
-        self.assertEquals(processor.file_extension, file_extension)
-        self.assertEquals(processor.file_path, file_path)
-        self.assertEquals(processor.handle_style_error, self.mock_handle_style_error)
-        self.assertEquals(processor.min_confidence, 3)
+        self.assert_checker_cpp(file_path)
+        checker = self.dispatch(file_path)
+        self.assertEquals(checker.file_extension, file_extension)
+        self.assertEquals(checker.file_path, file_path)
+        self.assertEquals(checker.handle_style_error, self.mock_handle_style_error)
+        self.assertEquals(checker.min_confidence, 3)
         # Check "-" for good measure.
         file_base = "-"
         file_extension = ""
         file_path = file_base
-        self.assert_processor_cpp(file_path)
-        processor = self.dispatch_processor(file_path)
-        self.assertEquals(processor.file_extension, file_extension)
-        self.assertEquals(processor.file_path, file_path)
+        self.assert_checker_cpp(file_path)
+        checker = self.dispatch(file_path)
+        self.assertEquals(checker.file_extension, file_extension)
+        self.assertEquals(checker.file_path, file_path)
 
     def test_python_paths(self):
         """Test paths that should be checked as Python."""
@@ -417,16 +417,16 @@ class ProcessorDispatcherDispatchTest(unittest.TestCase):
         ]
 
         for path in paths:
-            self.assert_processor_python(path)
+            self.assert_checker_python(path)
 
-        # Check processor attributes on a typical input.
+        # Check checker attributes on a typical input.
         file_base = "foo"
         file_extension = "css"
         file_path = file_base + "." + file_extension
-        self.assert_processor_text(file_path)
-        processor = self.dispatch_processor(file_path)
-        self.assertEquals(processor.file_path, file_path)
-        self.assertEquals(processor.handle_style_error,
+        self.assert_checker_text(file_path)
+        checker = self.dispatch(file_path)
+        self.assertEquals(checker.file_path, file_path)
+        self.assertEquals(checker.handle_style_error,
                           self.mock_handle_style_error)
 
     def test_text_paths(self):
@@ -464,16 +464,16 @@ class ProcessorDispatcherDispatchTest(unittest.TestCase):
         ]
 
         for path in paths:
-            self.assert_processor_text(path)
+            self.assert_checker_text(path)
 
-        # Check processor attributes on a typical input.
+        # Check checker attributes on a typical input.
         file_base = "foo"
         file_extension = "css"
         file_path = file_base + "." + file_extension
-        self.assert_processor_text(file_path)
-        processor = self.dispatch_processor(file_path)
-        self.assertEquals(processor.file_path, file_path)
-        self.assertEquals(processor.handle_style_error, self.mock_handle_style_error)
+        self.assert_checker_text(file_path)
+        checker = self.dispatch(file_path)
+        self.assertEquals(checker.file_path, file_path)
+        self.assertEquals(checker.handle_style_error, self.mock_handle_style_error)
 
     def test_none_paths(self):
         """Test paths that have no file type.."""
@@ -486,12 +486,12 @@ class ProcessorDispatcherDispatchTest(unittest.TestCase):
             ]
 
         for path in paths:
-            self.assert_processor_none(path)
+            self.assert_checker_none(path)
 
 
-class StyleCheckerConfigurationTest(unittest.TestCase):
+class StyleProcessorConfigurationTest(unittest.TestCase):
 
-    """Tests the StyleCheckerConfiguration class."""
+    """Tests the StyleProcessorConfiguration class."""
 
     def setUp(self):
         self._error_messages = []
@@ -501,11 +501,11 @@ class StyleCheckerConfigurationTest(unittest.TestCase):
         self._error_messages.append(message)
 
     def _style_checker_configuration(self, output_format="vs7"):
-        """Return a StyleCheckerConfiguration instance for testing."""
+        """Return a StyleProcessorConfiguration instance for testing."""
         base_rules = ["-whitespace", "+whitespace/tab"]
         filter_configuration = FilterConfiguration(base_rules=base_rules)
 
-        return StyleCheckerConfiguration(
+        return StyleProcessorConfiguration(
                    filter_configuration=filter_configuration,
                    max_reports_per_category={"whitespace/newline": 1},
                    min_confidence=3,
@@ -569,7 +569,7 @@ class StyleProcessor_EndToEndTest(LoggingTestCase):
 
     def test_init(self):
         """Test __init__ constructor."""
-        configuration = StyleCheckerConfiguration(
+        configuration = StyleProcessorConfiguration(
                             filter_configuration=FilterConfiguration(),
                             max_reports_per_category={},
                             min_confidence=3,
@@ -581,7 +581,7 @@ class StyleProcessor_EndToEndTest(LoggingTestCase):
         self.assertEquals(self._messages, [])
 
     def test_process(self):
-        configuration = StyleCheckerConfiguration(
+        configuration = StyleProcessorConfiguration(
                             filter_configuration=FilterConfiguration(),
                             max_reports_per_category={},
                             min_confidence=3,
@@ -614,12 +614,12 @@ class StyleProcessor_CodeCoverageTest(LoggingTestCase):
             self.min_confidence = min_confidence
             self.style_error_handler = style_error_handler
 
-        def process(self, lines):
+        def check(self, lines):
             self.lines = lines
 
     class MockDispatcher(object):
 
-        """A mock ProcessorDispatcher class."""
+        """A mock CheckerDispatcher class."""
 
         def __init__(self):
             self.dispatched_checker = None
@@ -630,8 +630,7 @@ class StyleProcessor_CodeCoverageTest(LoggingTestCase):
         def should_skip_without_warning(self, file_path):
             return file_path.endswith('skip_without_warning.txt')
 
-        def dispatch_processor(self, file_path, style_error_handler,
-                               min_confidence):
+        def dispatch(self, file_path, style_error_handler, min_confidence):
             if file_path.endswith('do_not_process.txt'):
                 return None
 
@@ -650,7 +649,7 @@ class StyleProcessor_CodeCoverageTest(LoggingTestCase):
         LoggingTestCase.setUp(self)
         # We can pass an error-message swallower here because error message
         # output is tested instead in the end-to-end test case above.
-        configuration = StyleCheckerConfiguration(
+        configuration = StyleProcessorConfiguration(
                             filter_configuration=FilterConfiguration(),
                             max_reports_per_category={"whitespace/newline": 1},
                             min_confidence=3,
@@ -682,7 +681,7 @@ class StyleProcessor_CodeCoverageTest(LoggingTestCase):
     def _swallow_stderr_message(self, message):
         """Swallow a message passed to stderr.write()."""
         # This is a mock stderr.write() for passing to the constructor
-        # of the StyleCheckerConfiguration class.
+        # of the StyleProcessorConfiguration class.
         pass
 
     def _create_carriage_checker_class(self):
@@ -702,7 +701,7 @@ class StyleProcessor_CodeCoverageTest(LoggingTestCase):
                 # instantiated carriage checker.
                 test_case.carriage_checker = self
 
-            def process(self, lines):
+            def check(self, lines):
                 # Save the lines so the current test case has a way to access
                 # and check them.
                 self.lines = lines
@@ -772,9 +771,9 @@ class StyleProcessor_CodeCoverageTest(LoggingTestCase):
                           line_numbers=[100])
 
 
-class PatchCheckerTest(unittest.TestCase):
+class PatchReaderTest(unittest.TestCase):
 
-    """Test the PatchChecker class."""
+    """Test the PatchReader class."""
 
     class MockTextFileReader(object):
 
@@ -788,7 +787,7 @@ class PatchCheckerTest(unittest.TestCase):
     def setUp(self):
         file_reader = self.MockTextFileReader()
         self._file_reader = file_reader
-        self._patch_checker = PatchChecker(file_reader)
+        self._patch_checker = PatchReader(file_reader)
 
     def _call_check_patch(self, patch_string):
         self._patch_checker.check(patch_string)

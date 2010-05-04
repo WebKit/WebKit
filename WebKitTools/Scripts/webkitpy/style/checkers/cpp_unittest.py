@@ -42,13 +42,13 @@ import random
 import re
 import unittest
 import cpp as cpp_style
-from cpp import CppProcessor
+from cpp import CppChecker
 
 # This class works as an error collector and replaces cpp_style.Error
 # function for the unit tests.  We also verify each category we see
 # is in STYLE_CATEGORIES, to help keep that list up to date.
 class ErrorCollector:
-    _all_style_categories = CppProcessor.categories
+    _all_style_categories = CppChecker.categories
     # This is a list including all categories seen in any unit test.
     _seen_style_categories = {}
 
@@ -3673,52 +3673,52 @@ class WebKitStyleTest(CppStyleTestBase):
         pass
 
 
-class CppProcessorTest(unittest.TestCase):
+class CppCheckerTest(unittest.TestCase):
 
-    """Tests CppProcessor class."""
+    """Tests CppChecker class."""
 
     def mock_handle_style_error(self):
         pass
 
-    def _processor(self):
-        return CppProcessor("foo", "h", self.mock_handle_style_error, 3)
+    def _checker(self):
+        return CppChecker("foo", "h", self.mock_handle_style_error, 3)
 
     def test_init(self):
         """Test __init__ constructor."""
-        processor = self._processor()
-        self.assertEquals(processor.file_extension, "h")
-        self.assertEquals(processor.file_path, "foo")
-        self.assertEquals(processor.handle_style_error, self.mock_handle_style_error)
-        self.assertEquals(processor.min_confidence, 3)
+        checker = self._checker()
+        self.assertEquals(checker.file_extension, "h")
+        self.assertEquals(checker.file_path, "foo")
+        self.assertEquals(checker.handle_style_error, self.mock_handle_style_error)
+        self.assertEquals(checker.min_confidence, 3)
 
     def test_eq(self):
         """Test __eq__ equality function."""
-        processor1 = self._processor()
-        processor2 = self._processor()
+        checker1 = self._checker()
+        checker2 = self._checker()
 
         # == calls __eq__.
-        self.assertTrue(processor1 == processor2)
+        self.assertTrue(checker1 == checker2)
 
         def mock_handle_style_error2(self):
             pass
 
         # Verify that a difference in any argument cause equality to fail.
-        processor = CppProcessor("foo", "h", self.mock_handle_style_error, 3)
-        self.assertFalse(processor == CppProcessor("bar", "h", self.mock_handle_style_error, 3))
-        self.assertFalse(processor == CppProcessor("foo", "c", self.mock_handle_style_error, 3))
-        self.assertFalse(processor == CppProcessor("foo", "h", mock_handle_style_error2, 3))
-        self.assertFalse(processor == CppProcessor("foo", "h", self.mock_handle_style_error, 4))
+        checker = CppChecker("foo", "h", self.mock_handle_style_error, 3)
+        self.assertFalse(checker == CppChecker("bar", "h", self.mock_handle_style_error, 3))
+        self.assertFalse(checker == CppChecker("foo", "c", self.mock_handle_style_error, 3))
+        self.assertFalse(checker == CppChecker("foo", "h", mock_handle_style_error2, 3))
+        self.assertFalse(checker == CppChecker("foo", "h", self.mock_handle_style_error, 4))
 
     def test_ne(self):
         """Test __ne__ inequality function."""
-        processor1 = self._processor()
-        processor2 = self._processor()
+        checker1 = self._checker()
+        checker2 = self._checker()
 
         # != calls __ne__.
         # By default, __ne__ always returns true on different objects.
         # Thus, just check the distinguishing case to verify that the
         # code defines __ne__.
-        self.assertFalse(processor1 != processor2)
+        self.assertFalse(checker1 != checker2)
 
 
 def tearDown():

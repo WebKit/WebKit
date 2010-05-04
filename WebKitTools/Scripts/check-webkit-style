@@ -50,7 +50,7 @@ import sys
 
 from webkitpy.style_references import detect_checkout
 import webkitpy.style.checker as checker
-from webkitpy.style.checker import PatchChecker
+from webkitpy.style.checker import PatchReader
 from webkitpy.style.checker import StyleProcessor
 from webkitpy.style.filereader import TextFileReader
 from webkitpy.style.main import change_directory
@@ -116,7 +116,7 @@ def main():
         file_reader.process_paths(paths)
     else:
         patch = checkout.create_patch(options.git_commit, options.squash)
-        patch_checker = PatchChecker(file_reader)
+        patch_checker = PatchReader(file_reader)
         patch_checker.check(patch)
 
     error_count = style_processor.error_count
