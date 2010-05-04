@@ -2789,12 +2789,13 @@ BUGYAAR : fast/css/text-input-with-webkit-border-radius.html = IMAGE
 BUGYAAR : fast/forms/control-restrict-line-height.html = IMAGE
 BUGYAAR : fast/forms/placeholder-pseudo-style.html = IMAGE
 BUGYAAR : fast/forms/search-cancel-button-style-sharing.html = IMAGE
+BUGYAAR : fast/forms/search-display-none-cancel-button.html = IMAGE
+BUGYAAR LINUX : fast/forms/search-placeholder-value-changed.html = IMAGE
 BUGYAAR : fast/forms/search-rtl.html = IMAGE
 BUGYAAR MAC : fast/forms/search-styled.html = IMAGE
 BUGYAAR MAC : fast/forms/search-transformed.html = IMAGE
-BUGYAAR MAC : fast/forms/search-zoomed.html = IMAGE
-BUGYAAR : fast/forms/search-display-none-cancel-button.html = IMAGE
 BUGYAAR WIN LINUX : fast/forms/search-vertical-alignment.html = IMAGE
+BUGYAAR MAC : fast/forms/search-zoomed.html = IMAGE
 BUGYAAR : fast/forms/searchfield-heights.html = IMAGE
 BUGYAAR MAC : fast/replaced/width100percent-searchfield.html = IMAGE
 

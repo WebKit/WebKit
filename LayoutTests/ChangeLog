@@ -2,6 +2,15 @@
 
         Unreviewed, expectations change.
 
+        And add one more Linux test (fast/forms/search-placeholder-value-changed.html)
+        from r58700. Plus, fix sorting of tests from that rev.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-05-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
         Mark yet more mac-specific tests as failling from r58700.
 
         * platform/chromium/test_expectations.txt:
