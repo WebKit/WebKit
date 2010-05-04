@@ -2338,7 +2338,7 @@ static TCMalloc_Central_FreeListPadded central_cache[kNumClasses];
 
 // Page-level allocator
 static SpinLock pageheap_lock = SPINLOCK_INITIALIZER;
-static void* pageheap_memory[(sizeof(TCMalloc_PageHeap) + sizeof(void*) - 1) / sizeof(void*)];
+static AllocAlignmentInteger pageheap_memory[(sizeof(TCMalloc_PageHeap) + sizeof(AllocAlignmentInteger) - 1) / sizeof(AllocAlignmentInteger)];
 static bool phinited = false;
 
 // Avoid extra level of indirection by making "pageheap" be just an alias

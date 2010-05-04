@@ -1,3 +1,16 @@
+2010-05-04  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Darin Adler.
+
+        Does not work on SPARC because of alignment issues
+        https://bugs.webkit.org/show_bug.cgi?id=38455
+
+        Use AllocAlignmentInteger instead of void* on pageheap_memory to
+        avoid crashing at runtime in some architectures. Investigated by
+        Mike Hommey <mh@glandium.org>, change suggested by Darin Adler.
+
+        * wtf/FastMalloc.cpp:
+
 2010-05-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Maciej Stachowiak.
