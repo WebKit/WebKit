@@ -94,7 +94,6 @@ EXPORTS
     ?className@JSObject@JSC@@UBE?AVUString@2@XZ
     ?collate@Collator@WTF@@QBE?AW4Result@12@PB_WI0I@Z
     ?collectAllGarbage@Heap@JSC@@QAEXXZ
-    ?commentAtom@WebCore@@3VAtomicString@1@B
     ?configurable@PropertyDescriptor@JSC@@QBE_NXZ
     ?construct@JSC@@YAPAVJSObject@1@PAVExecState@1@VJSValue@1@W4ConstructType@1@ABTConstructData@1@ABVArgList@1@@Z
     ?constructArray@JSC@@YAPAVJSArray@1@PAVExecState@1@ABVArgList@1@@Z
@@ -160,7 +159,6 @@ EXPORTS
     ?doubleToStringInJavaScriptFormat@WTF@@YAXNQADPAI@Z
     ?dumpSampleData@JSGlobalData@JSC@@QAEXPAVExecState@2@@Z
     ?empty@StringImpl@WebCore@@SAPAV12@XZ
-    ?emptyAtom@WebCore@@3VAtomicString@1@B
     ?endsWith@StringImpl@WebCore@@QAE_NPAV12@_N@Z
     ?enumerable@PropertyDescriptor@JSC@@QBE_NXZ
     ?equal@Identifier@JSC@@SA_NPBVStringImpl@WebCore@@PBD@Z
@@ -277,7 +275,6 @@ EXPORTS
     ?name@InternalFunction@JSC@@QAEABVUString@2@PAVExecState@2@@Z
     ?newUninitialized@CString@WTF@@SA?AV12@IAAPAD@Z
     ?nonInlineNaN@JSC@@YANXZ
-    ?nullAtom@WebCore@@3VAtomicString@1@B
     ?number@String@WebCore@@SA?AV12@G@Z
     ?number@String@WebCore@@SA?AV12@H@Z
     ?number@String@WebCore@@SA?AV12@I@Z
@@ -350,11 +347,9 @@ EXPORTS
     ?split@String@WebCore@@QBEXABV12@_NAAV?$Vector@VString@WebCore@@$0A@@WTF@@@Z
     ?split@String@WebCore@@QBEX_WAAV?$Vector@VString@WebCore@@$0A@@WTF@@@Z
     ?split@String@WebCore@@QBEX_W_NAAV?$Vector@VString@WebCore@@$0A@@WTF@@@Z
-    ?starAtom@WebCore@@3VAtomicString@1@B
     ?startIgnoringLeaks@Structure@JSC@@SAXXZ
     ?startProfiling@Profiler@JSC@@QAEXPAVExecState@2@ABVUString@2@@Z
     ?startSampling@JSGlobalData@JSC@@QAEXXZ
-    ?staticData@WTFThreadData@WTF@@0PAV?$ThreadSpecific@VWTFThreadData@WTF@@@2@A
     ?stopIgnoringLeaks@Structure@JSC@@SAXXZ
     ?stopProfiling@Profiler@JSC@@QAE?AV?$PassRefPtr@VProfile@JSC@@@WTF@@PAVExecState@2@ABVUString@2@@Z
     ?stopSampling@JSGlobalData@JSC@@QAEXXZ
@@ -365,7 +360,6 @@ EXPORTS
     ?substring@StringImpl@WebCore@@QAE?AV?$PassRefPtr@VStringImpl@WebCore@@@WTF@@II@Z
     ?symbolTableGet@JSVariableObject@JSC@@IAE_NABVIdentifier@2@AAVPropertyDescriptor@2@@Z
     ?synthesizePrototype@JSValue@JSC@@ABEPAVJSObject@2@PAVExecState@2@@Z
-    ?textAtom@WebCore@@3VAtomicString@1@B
     ?thisObject@DebuggerCallFrame@JSC@@QBEPAVJSObject@2@XZ
     ?threadsafeCopy@String@WebCore@@QBE?AV12@XZ
     ?throwError@JSC@@YAPAVJSObject@1@PAVExecState@1@W4ErrorType@1@@Z
@@ -424,8 +418,6 @@ EXPORTS
     ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
     ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
     ?writable@PropertyDescriptor@JSC@@QBE_NXZ
-    ?xmlAtom@WebCore@@3VAtomicString@1@B
-    ?xmlnsAtom@WebCore@@3VAtomicString@1@B
     WTFLog
     WTFLogVerbose
     WTFReportArgumentAssertionFailure

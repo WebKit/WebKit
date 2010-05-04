@@ -1,3 +1,9 @@
+2010-05-04  Steve Falkenburg  <sfalken@apple.com>
+
+        Remove redundant exports to fix Windows build warnings.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2010-05-04  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Holger Freyther.
