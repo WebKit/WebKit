@@ -399,7 +399,7 @@ class TestRunner:
 
             tests_run_msg = 'Running: %d tests (chunk slice [%d:%d] of %d)' % (
                 (slice_end - slice_start), slice_start, slice_end, num_tests)
-            self._print.print_expected(tests_run_msg)
+            self._printer.print_expected(tests_run_msg)
 
             # If we reached the end and we don't have enough tests, we run some
             # from the beginning.
