@@ -2,6 +2,19 @@
 
         Reviewed by Darin Adler.
 
+        JavaInstanceJSC.cpp and JNIUtilityPrivate.cpp need to include jni_jsobject.h for jlong_to_pt() and ptr_to_jlong()
+        https://bugs.webkit.org/show_bug.cgi?id=38525
+
+        No new tests, build fix only.
+
+        * bridge/jni/jni_jsobject.h: Guard Mac-specific code with PLATFORM(MAC)
+        * bridge/jni/jsc/JNIUtilityPrivate.cpp: Include jni_jsobject.h
+        * bridge/jni/jsc/JavaInstanceJSC.cpp: Include jni_jsobject.h
+
+2010-05-04  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
         New FileSystemPOSIX functions cause linker errors on Android
         https://bugs.webkit.org/show_bug.cgi?id=38521
 

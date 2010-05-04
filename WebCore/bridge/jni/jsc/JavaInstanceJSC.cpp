@@ -34,6 +34,7 @@
 #include "JNIUtilityPrivate.h"
 #include "JavaClassJSC.h"
 #include "Logging.h"
+#include "jni_jsobject.h"
 #include "runtime_method.h"
 #include "runtime_object.h"
 #include "runtime_root.h"

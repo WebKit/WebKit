@@ -28,7 +28,6 @@
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 
-#include <CoreFoundation/CoreFoundation.h>
 #include <JavaVM/jni.h>
 #include <runtime/JSValue.h>
 #include <wtf/RefPtr.h>
@@ -36,6 +35,8 @@
 #define jlong_to_ptr(a) ((void*)(uintptr_t)(a))
 #define jlong_to_impptr(a) (static_cast<JSC::JSObject*>(((void*)(uintptr_t)(a))))
 #define ptr_to_jlong(a) ((jlong)(uintptr_t)(a))
+
+#if PLATFORM(MAC)
 
 namespace JSC {
 
@@ -124,6 +125,8 @@ void KJS_JSObject_JSObjectSetSlot(JNIEnv*, jclass, jlong nativeJSObject, jstring
 jstring KJS_JSObject_JSObjectToString(JNIEnv*, jclass, jlong nativeJSObject);
 
 }
+
+#endif // PLATFORM(MAC)
 
 #endif // ENABLE(MAC_JAVA_BRIDGE)
 

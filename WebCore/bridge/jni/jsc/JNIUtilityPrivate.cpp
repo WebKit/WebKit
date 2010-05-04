@@ -31,6 +31,7 @@
 
 #include "JavaRuntimeObject.h"
 #include "JNIBridgeJSC.h"
+#include "jni_jsobject.h"
 #include "runtime_array.h"
 #include "runtime_object.h"
 #include <runtime/JSArray.h>
