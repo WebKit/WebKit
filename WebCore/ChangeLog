@@ -1,3 +1,16 @@
+2010-05-04  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Holger Freyther.
+
+        [GTK] GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=33590
+
+        Use helper functions from CodeGenerator.pm to figure out whether a
+        type is "fundamental" or not (basically whether it's anything
+        other than a string or a non-pointer type).
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+
 2010-04-30  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
