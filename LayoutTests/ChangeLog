@@ -2,6 +2,14 @@
 
         Unreviewed, expectations change.
 
+        Mark yet more mac-specific tests as failling from r58700.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-05-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
         Mark more tests as failing from r58700 and change the sandbox test from SLOW to a
         flaky PASS TIMEOUT.
 
