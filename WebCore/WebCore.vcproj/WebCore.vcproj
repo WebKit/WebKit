@@ -28289,6 +28289,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\SVGCharacterData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\SVGCharacterData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\SVGCharacterLayoutInfo.cpp"
 				>
 			</File>
@@ -28354,6 +28362,10 @@
 			</File>
 			<File
 				RelativePath="..\rendering\SVGShadowTreeElements.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\SVGTextChunkLayoutInfo.h"
 				>
 			</File>
 			<File

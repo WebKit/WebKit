@@ -3161,6 +3161,8 @@ webcore_sources += \
 	WebCore/rendering/RenderSVGTransformableContainer.h \
 	WebCore/rendering/RenderSVGViewportContainer.cpp \
 	WebCore/rendering/RenderSVGViewportContainer.h \
+	WebCore/rendering/SVGCharacterData.cpp \
+	WebCore/rendering/SVGCharacterData.h \
 	WebCore/rendering/SVGCharacterLayoutInfo.cpp \
 	WebCore/rendering/SVGCharacterLayoutInfo.h \
 	WebCore/rendering/SVGInlineFlowBox.cpp \
@@ -3178,6 +3180,7 @@ webcore_sources += \
 	WebCore/rendering/SVGRootInlineBox.h \
 	WebCore/rendering/SVGShadowTreeElements.cpp \
 	WebCore/rendering/SVGShadowTreeElements.h \
+	WebCore/rendering/SVGTextChunkLayoutInfo.h \
 	WebCore/rendering/style/SVGRenderStyle.cpp \
 	WebCore/rendering/style/SVGRenderStyle.h \
 	WebCore/rendering/style/SVGRenderStyleDefs.cpp \

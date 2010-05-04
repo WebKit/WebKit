@@ -1,3 +1,30 @@
+2010-05-04  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Split SVGCharacterLayoutInfo in smaller pieces
+        https://bugs.webkit.org/show_bug.cgi?id=38513
+
+        Split SVGCharacterLayoutInfo into SVGCharacterLayoutInfo/SVGCharacterData and SVGTextChunkLayoutInfo.
+        This is a preparation for more work in the text area.
+
+        * Android.mk: Add SVGCharacterData.(cpp|h) and SVGTextChunkLayoutInfo.h to build.
+        * GNUmakefile.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * rendering/SVGCharacterData.cpp: Copied from rendering/SVGCharacterLayoutInfo.cpp.
+        * rendering/SVGCharacterData.h: Copied from rendering/SVGCharacterLayoutInfo.h.
+        (WebCore::SVGChar::SVGChar):
+        * rendering/SVGCharacterLayoutInfo.cpp:
+        (WebCore::SVGCharacterLayoutInfo::isInitialLayout): Introduced new helper function to share code between addLayoutInformation/addStackContent.
+        (WebCore::SVGCharacterLayoutInfo::addLayoutInformation): Use new helper function.
+        (WebCore::SVGCharacterLayoutInfo::addStackContent): Ditto
+        * rendering/SVGCharacterLayoutInfo.h:
+        * rendering/SVGRootInlineBox.h: Include new files.
+        * rendering/SVGTextChunkLayoutInfo.h: Copied from rendering/SVGCharacterLayoutInfo.h.
+
 2010-05-04  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Holger Freyther.

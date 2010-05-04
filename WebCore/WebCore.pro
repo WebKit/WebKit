@@ -1802,6 +1802,7 @@ HEADERS += \
     rendering/style/StyleVisualData.h \
     rendering/style/SVGRenderStyleDefs.h \
     rendering/style/SVGRenderStyle.h \
+    rendering/SVGCharacterData.h \
     rendering/SVGCharacterLayoutInfo.h \
     rendering/SVGInlineFlowBox.h \
     rendering/SVGInlineTextBox.h \
@@ -1811,6 +1812,7 @@ HEADERS += \
     rendering/SVGRenderTreeAsText.h \
     rendering/SVGRootInlineBox.h \
     rendering/SVGShadowTreeElements.h \
+    rendering/SVGTextChunkLayoutInfo.h \
     rendering/TextControlInnerElements.h \
     rendering/TransformState.h \
     svg/animation/SMILTimeContainer.h \
@@ -2743,6 +2745,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/RenderSVGTransformableContainer.cpp \
         rendering/RenderSVGTSpan.cpp \
         rendering/RenderSVGViewportContainer.cpp \
+        rendering/SVGCharacterData.cpp \
         rendering/SVGCharacterLayoutInfo.cpp \
         rendering/SVGInlineFlowBox.cpp \
         rendering/SVGInlineTextBox.cpp \

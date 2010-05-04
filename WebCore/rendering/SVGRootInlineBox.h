@@ -27,7 +27,9 @@
 
 #if ENABLE(SVG)
 #include "RootInlineBox.h"
+#include "SVGCharacterData.h"
 #include "SVGCharacterLayoutInfo.h"
+#include "SVGTextChunkLayoutInfo.h"
 #include "SVGRenderSupport.h"
 
 namespace WebCore {

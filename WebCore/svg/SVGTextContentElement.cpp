@@ -32,7 +32,7 @@
 #include "MappedAttribute.h"
 #include "Position.h"
 #include "RenderSVGText.h"
-#include "SVGCharacterLayoutInfo.h"
+#include "SVGCharacterData.h"
 #include "SVGInlineTextBox.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
