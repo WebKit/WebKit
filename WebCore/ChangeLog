@@ -1,3 +1,25 @@
+2010-05-04  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: restore main and sidebar scroller positions
+        when switching between panels.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38522
+
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.elementsToRestoreScrollPositionsFor):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.show):
+        (WebInspector.Panel.prototype.hide):
+        (WebInspector.Panel.prototype.elementsToRestoreScrollPositionsFor):
+        (WebInspector.Panel.prototype._storeScrollPositions):
+        (WebInspector.Panel.prototype._restoreScrollPositions):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.elementsToRestoreScrollPositionsFor):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.elementsToRestoreScrollPositionsFor):
+
 2010-05-04  Steven Lai  <steven_lai@asia.apple.com>
 
         Reviewed by Darin Adler.

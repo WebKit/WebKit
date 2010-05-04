@@ -998,6 +998,11 @@ WebInspector.ScriptsPanel.prototype = {
             this.toggleBreakpointsButton.title = WebInspector.UIString("Activate all breakpoints.");
             document.getElementById("main-panels").addStyleClass("breakpoints-deactivated");
         }
+    },
+
+    elementsToRestoreScrollPositionsFor: function()
+    {
+        return [ this.sidebarElement ];
     }
 }
 

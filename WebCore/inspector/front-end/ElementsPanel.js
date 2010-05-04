@@ -1125,6 +1125,11 @@ WebInspector.ElementsPanel.prototype = {
             InspectorBackend.enableSearchingForNode();
         else
             InspectorBackend.disableSearchingForNode();
+    },
+
+    elementsToRestoreScrollPositionsFor: function()
+    {
+        return [ this.contentElement, this.sidebarElement ];
     }
 }
 
