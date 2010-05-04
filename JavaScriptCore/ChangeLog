@@ -1,3 +1,16 @@
+2010-05-03  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38368
+        <rdar://problem/7834433> REGRESSSION: 1.5% PLT regression due to 56028 
+        (return memory quicker).
+        Instead of returning everything but the smallest spans spread out 
+        the spans kept over several size lists.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::scavenge):
+
 2010-05-03  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Eric Seidel.
