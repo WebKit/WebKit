@@ -2823,3 +2823,10 @@ BUGDPRANKE LINUX : svg/W3C-SVG-1.1/render-groups-03-t.svg = IMAGE
 BUGDPRANKE LINUX MAC : svg/text/kerning.svg = IMAGE
 
 BUGDPRANKE MAC : editing/selection/caret-rtl-2.html = IMAGE
+
+// Temporary failures for two-sided commit.
+// These tests will be fixed when the handlers for the new interfaces
+// are checked in to test_shell.
+BUGJOHNNYG DEFER : fast/notifications/notifications-replace.html = TEXT
+BUGJOHNNYG DEFER : fast/notifications/notifications-rtl.html = TEXT
+

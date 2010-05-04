@@ -1,3 +1,22 @@
+2010-04-29  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Dmitry Titov.
+
+        notifications should have dir and replaceId attributes.
+        Note that tests are only enabled in Chromium, skipped elsewhere
+        since notifications aren't implemented.
+        https://bugs.webkit.org/show_bug.cgi?id=38336
+
+        Tests: fast/notifications/notifications-replace.html
+               fast/notifications/notifications-rtl.html
+
+        * notifications/Notification.h:
+        (WebCore::Notification::dir):
+        (WebCore::Notification::setDir):
+        (WebCore::Notification::replaceId):
+        (WebCore::Notification::setReplaceId):
+        * notifications/Notification.idl:
+
 2010-05-04  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.

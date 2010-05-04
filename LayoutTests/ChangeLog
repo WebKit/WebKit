@@ -1,3 +1,18 @@
+2010-04-29  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Dmitry Titov.
+
+        notifications should have dir and replaceId attributes
+        Tests are disabled until the attributes are correctly handled
+        in Chromium test_shell.
+        https://bugs.webkit.org/show_bug.cgi?id=38336
+
+        * fast/notifications/notifications-replace-expected.txt: Added.
+        * fast/notifications/notifications-replace.html: Added.
+        * fast/notifications/notifications-rtl-expected.txt: Added.
+        * fast/notifications/notifications-rtl.html: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-05-03  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Dan Bernstein.

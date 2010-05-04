@@ -1,3 +1,15 @@
+2010-04-29  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Dmitry Titov.
+
+        notifications should have dir and replaceId attributes
+        https://bugs.webkit.org/show_bug.cgi?id=38336
+
+        * public/WebNotification.h:
+        * src/WebNotification.cpp:
+        (WebKit::WebNotification::dir):
+        (WebKit::WebNotification::replaceId):
+
 2010-05-04  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by David Levin.
