@@ -468,6 +468,12 @@ sub parseGitDiffHeader($$)
         } elsif (/^\+\+\+ \S+/) {
             $_ = "+++ $indexPath"; # Convert to SVN format.
             $foundHeaderEnding = 1;
+        # The "git diff" command includes a line of the form "Binary files
+        # <path1> and <path2> differ" if the --binary flag is not used.
+        } elsif (/^Binary files / ) {
+            die("Error: the Git diff contains a binary file without the binary data in ".
+                "line: \"$_\".  Be sure to use the --binary flag when invoking \"git diff\" ".
+                "with diffs containing binary files.");
         } elsif (/^GIT binary patch$/ ) {
             $foundHeaderEnding = 1;
         }
