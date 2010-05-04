@@ -123,12 +123,14 @@ int ImageDecoderQt::repetitionCount() const
         //  Qt   |   WebCore          | description
         //  -1   |     0              | infinite animation
         //   0   | cAnimationLoopOnce | show every frame once
-        //   n   |     n              | no idea if that is supported
+        //   n   |     n+1            | Qt returns the # of iterations - 1
         //  n/a  | cAnimationNone     | show only the first frame
         if (m_repetitionCount == -1)
             m_repetitionCount = 0;
         else if (m_repetitionCount == 0)
             m_repetitionCount = cAnimationLoopOnce;
+        else
+            ++m_repetitionCount;
     }
 
     return m_repetitionCount;

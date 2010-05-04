@@ -1,3 +1,18 @@
+2010-05-04  Tucker Jay  <jay.tucker@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        Animated GIF images does not animate 10x as expected by default.
+        https://bugs.webkit.org/show_bug.cgi?id=36818
+
+        Added test case to existing manual test to test the
+        fixed functionality.
+
+        * manual-tests/qt/qt-10loop-anim.gif: Added.
+        * manual-tests/qt/qt-gif-test.html:
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::repetitionCount):
+
 2010-05-04  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed sort of XCodes project file.
