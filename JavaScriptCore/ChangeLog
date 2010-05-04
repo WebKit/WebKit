@@ -1,3 +1,41 @@
+2010-05-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add first WTFURL file
+        https://bugs.webkit.org/show_bug.cgi?id=38470
+
+        This class represents a component of a URL, such as the scheme or path.
+        Essentially, the class is an index into a string buffer.
+
+        * wtf/url: Added.
+            - There was some discussion about where to put the URL library.
+              There are a number of reasonable options, but putting the library
+              in the WTF directory seems like a reasonable alternative.  This
+              location will make more sense once WTF is moved out of
+              JavaScriptCore and into a top-level directory.
+        * wtf/url/src: Added.
+            - I've added this extra directory to the usual structure because we
+              eventually want a "public" folder that defines the public
+              interface to this library that clients outside of svn.webkit.org
+              can rely upon, much like the various subfolders of the WebKit
+              directory often define a public API.
+        * wtf/url/src/URLComponent.h: Added.
+            - I've added this somewhat trivial class to get the ball rolling.
+        (WTF::URLComponent::URLComponent):
+        (WTF::URLComponent::isValid):
+        (WTF::URLComponent::isNonempty):
+        (WTF::URLComponent::reset):
+        (WTF::URLComponent::operator==):
+        (WTF::URLComponent::begin):
+        (WTF::URLComponent::setBegin):
+        (WTF::URLComponent::length):
+        (WTF::URLComponent::setLength):
+        (WTF::URLComponent::end):
+        * wtf/url/wtfurl.gyp: Added.
+            - WTFURL will be an independently buildable library, hence the
+              beginnings of a wtfurl.gyp file.
+
 2010-05-03  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Geoff Garen.
