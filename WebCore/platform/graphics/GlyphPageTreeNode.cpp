@@ -124,6 +124,18 @@ GlyphPageTreeNode::~GlyphPageTreeNode()
     delete m_systemFallbackChild;
 }
 
+static bool fill(GlyphPage* pageToFill, unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
+{
+    if (!fontData->isSVGFont())
+        return pageToFill->fill(offset, length, buffer, bufferLength, fontData);
+
+    // SVG Fonts do not use the glyph page cache. Zero fill the glyph
+    // positions and return false to indicate the glyphs were not found.
+    for (unsigned i = 0; i < length; ++i)
+        pageToFill->setGlyphDataForIndex(offset + i, 0, 0);
+    return false;
+}
+
 void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNumber)
 {
     ASSERT(!m_page);
@@ -223,7 +235,7 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                             }
                             zeroFilled = true;
                         }
-                        haveGlyphs |= pageToFill->fill(from, to - from, buffer + from * (start < 0x10000 ? 1 : 2), (to - from) * (start < 0x10000 ? 1 : 2), range.fontData());
+                        haveGlyphs |= fill(pageToFill, from, to - from, buffer + from * (start < 0x10000 ? 1 : 2), (to - from) * (start < 0x10000 ? 1 : 2), range.fontData());
                         if (scratchPage) {
                             ASSERT(to <=  static_cast<int>(GlyphPage::size));
                             for (int j = from; j < to; j++) {
@@ -234,7 +246,7 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                     }
                 }
             } else
-                haveGlyphs = m_page->fill(0, GlyphPage::size, buffer, bufferLength, static_cast<const SimpleFontData*>(fontData));
+                haveGlyphs = fill(m_page.get(), 0, GlyphPage::size, buffer, bufferLength, static_cast<const SimpleFontData*>(fontData));
 
             if (!haveGlyphs)
                 m_page = 0;

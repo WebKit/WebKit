@@ -1,3 +1,18 @@
+2010-05-04  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        SVG fonts trigger GlyphPage::fill with null font
+        https://bugs.webkit.org/show_bug.cgi?id=38530
+
+        SVG fonts do not use the glyph page cache. This change detects when
+        attempting to fill a GlyphPage with an SVG font and indicates that
+        the glyphs were not available.
+
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::fill): helper method which handles attempts to fill a GlyphPage with SVG or non-SVG fonts
+        (WebCore::GlyphPageTreeNode::initializePage): use the helper where appropriate
+
 2010-05-04  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by David Levin (and unofficially by Enrica Casucci).
