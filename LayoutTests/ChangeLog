@@ -1,3 +1,15 @@
+2010-05-04  David Levin  <levin@chromium.org>
+
+        Unreviewed tests skips for qt/gtk.
+
+        Add the recently added drag and drop tests to the
+        skipped lists for both gtk and qt to go along with
+        the other drag and drop tests that are skipped on
+        those platforms.
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2010-05-04  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by David Levin (and unofficially by Enrica Casucci).
