@@ -1,3 +1,18 @@
+2010-05-03  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION: Text clipped in absolutely positioned search inputs
+        https://bugs.webkit.org/show_bug.cgi?id=38468
+
+        Previously I incorrectly added x() and y() to the tx and ty positioning.
+        This clips a search input like a text input, respecting the vertically
+        centered text.
+
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::layout): only the Y changes, so change setLocation to setY
+        (WebCore::RenderTextControlSingleLine::controlClipRect):
+
 2010-05-04  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Timothy Hatcher.

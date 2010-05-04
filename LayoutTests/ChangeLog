@@ -1,3 +1,18 @@
+2010-05-03  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION: Text clipped in absolutely positioned search inputs
+        https://bugs.webkit.org/show_bug.cgi?id=38468
+
+        Update the test to include a second search field and show
+        the clipping of a search input is like a text input.
+
+        * fast/css/input-search-padding.html:
+        * platform/mac/fast/css/input-search-padding-expected.checksum:
+        * platform/mac/fast/css/input-search-padding-expected.png:
+        * platform/mac/fast/css/input-search-padding-expected.txt:
+
 2010-05-04  Ben Murdoch  <benm@google.com>
 
         Reviewed by Simon Hausmann.
