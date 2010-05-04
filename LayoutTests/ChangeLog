@@ -1,5 +1,16 @@
 2010-05-04  Jeremy Moskovich  <jeremy@chromium.org>
 
+        Unreviewed, expectations change.
+
+        Revert r58747 - postponing Skia roll, at which time
+        we'll need to add these expected failures back.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38512
+
+        * platform/chromium/test_expectations.txt:
+
+2010-05-04  Jeremy Moskovich  <jeremy@chromium.org>
+
         Reviewed by Pavel Feldman.
 
         Preparing for chromium skia roll incorporating changes up to r561.
