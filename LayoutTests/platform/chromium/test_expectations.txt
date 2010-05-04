@@ -2781,7 +2781,19 @@ BUG42895 : media/audio-only-video-intrinsic-size.html = TIMEOUT
 BUG42895 : media/media-document-audio-size.html = TIMEOUT
 BUGYAAR MAC : svg/custom/dominant-baseline-hanging.svg = MISSING
 
-// WebKit roll 58626:TBD:
+BUG39855 SLOW DEBUG : editing/selection/extend-selection.html = PASS
+
+// Failing a few times, flak dashboard seems to agree.
+BUG41973 MAC : svg/text/text-text-05-t.svg = IMAGE
+
+// Rolling Skia forward in Chrome tree to get new baselines to check
+// in upstream.
+BUGEVAN : svg/clip-path/clip-path-child-clipped.svg = PASS FAIL
+
+// webkit roll 58541:58626
+BUG43084 MAC DEBUG : media/video-empty-source.html = IMAGE
+
+// WebKit roll 58626:58719
 
 // Might revert these:
 BUGYAAR : fast/css/input-search-padding.html = IMAGE+TEXT
@@ -2936,4 +2948,3 @@ BUGWK27751 : editing/pasteboard/paste-visible-script.html = TEXT
 BUGWK27751 : editing/pasteboard/undoable-fragment-removes.html = TEXT
 BUGWK27751 : fast/forms/plaintext-mode-1.html = TEXT
 BUGWK27751 : fast/forms/textarea-paste-newline.html = TEXT
-

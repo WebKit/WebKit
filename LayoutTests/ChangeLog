@@ -2,6 +2,14 @@
 
         Unreviewed, expectations change.
 
+        Roll in Chromium expectations from overrides file.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-05-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
         Mark the SVG test failures as linux-only.
         Mark fast/forms/searchfield-heights.html as IMAGE+TEXT, not IMAGE.
 
