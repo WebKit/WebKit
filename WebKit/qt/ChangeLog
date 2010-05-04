@@ -1,3 +1,16 @@
+2010-05-03  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Expose HTMLTokenizer yielding parameters
+        https://bugs.webkit.org/show_bug.cgi?id=37023
+
+        Enables to set TimeDelay and ChunkSize for 
+        HTMLTokenizer.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::dynamicPropertyChangeEvent):
+
 2010-05-03  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Adam Barth.
