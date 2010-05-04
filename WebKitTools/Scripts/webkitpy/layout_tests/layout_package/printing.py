@@ -94,6 +94,10 @@ Notes:
     - If both 'detailed-progress' and 'one-line-progress' are specified (and
       both are possible), 'detailed-progress' will be used.
     - If 'nothing' is specified, it overrides all of the other options.
+    - Specifying --verbose is equivalent to --print everything plus it
+      changes the format of the log messages to add timestamps and other
+      information. If you specify --verbose and --print X, then X overrides
+      the --print everything implied by --verbose.
 
 --print 'everything' is equivalent to --print '%(everything)s'.
 
@@ -107,7 +111,6 @@ def print_options():
         # Note: we use print_options rather than just 'print' because print
         # is a reserved word.
         optparse.make_option("--print", dest="print_options",
-            default=PRINT_DEFAULT,
             help=("controls print output of test run. "
                   "Use --help-printing for more.")),
         optparse.make_option("--help-printing", action="store_true",
@@ -137,14 +140,20 @@ def configure_logging(options, meter):
                         datefmt=log_datefmt, stream=meter)
 
 
-def parse_print_options(print_options, child_processes, is_fully_parallel):
+def parse_print_options(print_options, verbose, child_processes,
+                        is_fully_parallel):
     """Parse the options provided to --print and dedup and rank them.
 
     Returns
         a set() of switches that govern how logging is done
 
     """
-    switches = set(print_options.split(','))
+    if print_options:
+        switches = set(print_options.split(','))
+    elif verbose:
+        switches = set(PRINT_EVERYTHING.split(','))
+    else:
+        switches = set(PRINT_DEFAULT.split(','))
 
     if 'nothing' in switches:
         return set()
@@ -227,7 +236,7 @@ class Printer(object):
         configure_logging(self._options, self._meter)
 
         self.switches = parse_print_options(options.print_options,
-            child_processes, is_fully_parallel)
+            options.verbose, child_processes, is_fully_parallel)
 
     # These two routines just hide the implmentation of the switches.
     def disabled(self, option):

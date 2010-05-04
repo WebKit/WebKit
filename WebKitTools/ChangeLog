@@ -2,6 +2,22 @@
 
         Unreviewed, build fix.
 
+        new-run-webkit-tests: r58728 broke the buildbot logic for parsing the
+        output of the log; specifying --verbose should basically be equivalent
+        to --print everything, but instead it was equivalent to not specifying
+        --print and getting the default set. Now, --verbose acts as if
+        --print everything was implicitly specified as the default (you can
+        still override it if you specify both; this is a somewhat debatable
+        call).
+
+        https://bugs.webkit.org/show_bug.cgi?id=38504
+
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py:
+
+2010-05-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, build fix.
+
         new-run-webkit-tests: Fix minor precedence bug introduced in r58728 where we printed
         "-\n" 78 times instead of "-" 78 times followed by a single "\n".
 
