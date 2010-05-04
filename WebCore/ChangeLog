@@ -1,3 +1,21 @@
+2010-05-03  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Rubber-stamped by Xan Lopez.
+
+        [Cairo,WX] Stop leaking a FontPlatformData.
+        https://bugs.webkit.org/show_bug.cgi?id=37500
+
+        Stephan Aßmus pointed out that the pango font backend
+        is leaking memory and fixed it. The WX font backend
+        and the Cairo/Fontconfig backend have the same snippet
+        of code and are leaking memory as well. This commit is
+        fixing that.
+
+        * platform/graphics/cairo/SimpleFontDataCairo.cpp:
+        (WebCore::SimpleFontData::smallCapsFontData):
+        * platform/graphics/wx/SimpleFontDataWx.cpp:
+        (WebCore::SimpleFontData::smallCapsFontData):
+
 2010-05-03  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Eric Seidel.
