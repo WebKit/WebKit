@@ -439,14 +439,17 @@ sub parseGitDiffHeader($$)
 
     $_ = $line;
 
-    my $headerStartRegEx = qr/^diff --git /;
-
-    if (!/$headerStartRegEx/) {
-        die("First line of Git diff does not begin with \"diff --git \": \"$_\"");
+    my $headerStartRegEx = qr#^diff --git (\w/)?(.+) (\w/)?([^\r\n]+)#;
+    my $indexPath;
+    if (/$headerStartRegEx/) {
+        $indexPath = $2;
+        # Use $POSTMATCH to preserve the end-of-line character.
+        $_ = "Index: $indexPath$POSTMATCH"; # Convert to SVN format.
+    } else {
+        die("Could not parse leading \"diff --git\" line: \"$line\".");
     }
 
     my $foundHeaderEnding;
-    my $indexPath;
     my $newExecutableBit = 0;
     my $oldExecutableBit = 0;
     my $svnConvertedText;
@@ -456,10 +459,7 @@ sub parseGitDiffHeader($$)
         s/([\n\r]+)$//;
         my $eol = $1;
 
-        if (m#^diff --git \w/(.+) \w/([^\r\n]+)#) {
-            $indexPath = $1;
-            $_ = "Index: $indexPath"; # Convert to SVN format.
-        } elsif (/^(deleted file|old) mode ([0-9]{6})/) {
+        if (/^(deleted file|old) mode ([0-9]{6})/) {
             $oldExecutableBit = (isExecutable($2) ? 1 : 0);
         } elsif (/^new( file)? mode ([0-9]{6})/) {
             $newExecutableBit = (isExecutable($2) ? 1 : 0);

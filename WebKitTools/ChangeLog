@@ -1,5 +1,23 @@
 2010-05-04  Chris Jerdonek  <cjerdonek@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Adjusted svn-apply and -unapply to accept git diffs generated
+        using the --no-prefix flag.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32438
+
+        * Scripts/VCSUtils.pm:
+          - Loosened the regular expression for the "diff --git" line to
+            match when the --no-prefix flag is used with "git diff".
+          - Also refactored the code parsing the first line so that the
+            script exits with an error message if the first line cannot
+            be parsed.
+        * Scripts/webkitperl/VCSUtils_unittest/parseGitDiffHeader.pl:
+          - Added a unit test case for the --no-prefix case.
+
+2010-05-04  Chris Jerdonek  <cjerdonek@webkit.org>
+
         Reviewed by Daniel Bates.
 
         Changed VCSUtils.pm's parseDiffHeader() to call the new

@@ -83,6 +83,30 @@ END
 "@@ -0,0 +1,34 @@\n"],
     expectedNextLine => "+<html>\n",
 },
+{   # New test
+    diffName => "using --no-prefix",
+    inputText => <<'END',
+diff --git foo.h foo.h
+index c925780..9e65c43 100644
+--- foo.h
++++ foo.h
+@@ -1,3 +1,17 @@
++contents
+END
+    expectedReturn => [
+{
+    svnConvertedText => <<'END',
+Index: foo.h
+index c925780..9e65c43 100644
+--- foo.h
++++ foo.h
+END
+    executableBitDelta => 0,
+    indexPath => "foo.h",
+},
+"@@ -1,3 +1,17 @@\n"],
+    expectedNextLine => "+contents\n",
+},
 ####
 #    Binary file test cases
 ##
