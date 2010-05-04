@@ -1013,6 +1013,7 @@ static bool fastDocumentTeardownEnabled()
         return;
 
     _private->closed = YES;
+    [self _removeFromAllWebViewsSet];
 
     [self _closingEventHandling];
 
@@ -1034,7 +1035,6 @@ static bool fastDocumentTeardownEnabled()
     if (Frame* mainFrame = [self _mainCoreFrame])
         mainFrame->loader()->detachFromParent();
 
-    [self _removeFromAllWebViewsSet];
     [self setHostWindow:nil];
 
     [self setDownloadDelegate:nil];

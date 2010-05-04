@@ -1,3 +1,15 @@
+2010-05-04  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Mike Thole.
+
+        Fix for <rdar://problem/7818509> Crash occurs when exiting Safari
+
+        We can avoid this crash if we call [self _removeFromAllWebViewsSet] 
+        even in the case when we are doing a fastDocumentTeardown. This is 
+        a much safer approach.
+        * WebView/WebView.mm:
+        (-[WebView _close]):
+
 2010-05-03  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Adam Barth.
