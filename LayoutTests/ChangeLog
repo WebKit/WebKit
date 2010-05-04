@@ -1,3 +1,17 @@
+2010-05-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
+        Restore editing/pasteboard/paste-xml.xhtml as failing w/ a TEXT
+        failure (was failing prior to landing fix for 27751).
+
+        Mark editiing/selection/caret-rtl-2.html as failing w/ IMAGE; need
+        to investigate further.
+
+        Mark svg/text/kerning.svg as failing on mac w/ IMAGE as well as Linux.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-05-03  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dirk Pranke.

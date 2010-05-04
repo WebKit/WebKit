@@ -2291,7 +2291,7 @@ BUG29018 : plugins/reloadplugins-and-pages.html = TIMEOUT
 BUG28646 : editing/selection/transformed-selection-rects.html = FAIL
 
 // New failures from merge 51412:51455.
-// BUG28916 MAC : editing/pasteboard/paste-xml.xhtml = TEXT
+BUG28916 MAC : editing/pasteboard/paste-xml.xhtml = TEXT
 
 // New failures from WebKit r51534:r51576
 BUG29157 WIN LINUX MAC :  svg/animations/animVal-basics.html = TIMEOUT
@@ -2819,4 +2819,6 @@ BUGDPRANKE : http/tests/security/sandbox-inherit-to-initial-document-2.html = PA
 BUGDPRANKE LINUX : svg/W3C-SVG-1.1/fonts-kern-01-t.svg = IMAGE
 BUGDPRANKE LINUX : svg/W3C-SVG-1.1/render-groups-01-b.svg = IMAGE
 BUGDPRANKE LINUX : svg/W3C-SVG-1.1/render-groups-03-t.svg = IMAGE
-BUGDPRANKE LINUX : svg/text/kerning.svg = IMAGE
+BUGDPRANKE LINUX MAC : svg/text/kerning.svg = IMAGE
+
+BUGDPRANKE MAC : editing/selection/caret-rtl-2.html = IMAGE
