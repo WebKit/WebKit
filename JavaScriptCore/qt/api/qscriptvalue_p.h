@@ -24,6 +24,7 @@
 #include "qscriptengine_p.h"
 #include "qscriptvalue.h"
 #include <JavaScriptCore/JavaScript.h>
+#include <JavaScriptCore/JSRetainPtr.h>
 #include <QtCore/qmath.h>
 #include <QtCore/qnumeric.h>
 #include <QtCore/qshareddata.h>
@@ -424,7 +425,8 @@ QString QScriptValuePrivate::toString() const
     case JSValue:
     case JSPrimitive:
     case JSObject:
-        return QScriptConverter::toString(JSValueToStringCopy(context(), value(), /* exception */ 0));
+        JSRetainPtr<JSStringRef> ptr(Adopt, JSValueToStringCopy(context(), value(), /* exception */ 0));
+        return QScriptConverter::toString(ptr.get());
     }
 
     Q_ASSERT_X(false, "toString()", "Not all states are included in the previous switch statement.");
