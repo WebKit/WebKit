@@ -2,6 +2,15 @@
 
         Unreviewed, expectations change.
 
+        Mark the SVG test failures as linux-only.
+        Mark fast/forms/searchfield-heights.html as IMAGE+TEXT, not IMAGE.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-05-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
         And add one more Linux test (fast/forms/search-placeholder-value-changed.html)
         from r58700. Plus, fix sorting of tests from that rev.
 

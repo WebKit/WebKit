@@ -2796,7 +2796,7 @@ BUGYAAR MAC : fast/forms/search-styled.html = IMAGE
 BUGYAAR MAC : fast/forms/search-transformed.html = IMAGE
 BUGYAAR WIN LINUX : fast/forms/search-vertical-alignment.html = IMAGE
 BUGYAAR MAC : fast/forms/search-zoomed.html = IMAGE
-BUGYAAR : fast/forms/searchfield-heights.html = IMAGE
+BUGYAAR : fast/forms/searchfield-heights.html = IMAGE+TEXT
 BUGYAAR MAC : fast/replaced/width100percent-searchfield.html = IMAGE
 
 // GStreamer - disabled in Chromium
@@ -2804,10 +2804,10 @@ WONTFIX : media/video-duration-known-after-eos.html = TEXT TIMEOUT
 
 BUGDPRANKE : http/tests/security/sandbox-inherit-to-initial-document-2.html = PASS TIMEOUT
 
-BUGDPRANKE : svg/W3C-SVG-1.1/fonts-kern-01-t.svg = IMAGE
-BUGDPRANKE : svg/W3C-SVG-1.1/render-groups-01-b.svg = IMAGE
-BUGDPRANKE : svg/W3C-SVG-1.1/render-groups-03-t.svg = IMAGE
-BUGDPRANKE : svg/text/kerning.svg = IMAGE
+BUGDPRANKE LINUX : svg/W3C-SVG-1.1/fonts-kern-01-t.svg = IMAGE
+BUGDPRANKE LINUX : svg/W3C-SVG-1.1/render-groups-01-b.svg = IMAGE
+BUGDPRANKE LINUX : svg/W3C-SVG-1.1/render-groups-03-t.svg = IMAGE
+BUGDPRANKE LINUX : svg/text/kerning.svg = IMAGE
 
 BUGWK27751 : editing/execCommand/find-after-replace.html = IMAGE+TEXT
 BUGWK27751 : editing/execCommand/paste-1.html = IMAGE+TEXT
