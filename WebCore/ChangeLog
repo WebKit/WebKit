@@ -1,3 +1,21 @@
+2010-05-04  Steven Lai  <steven_lai@asia.apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37900
+        <rdar://problem/7806164> cloneNode() does not preserve z-index with more than six digits 
+
+        Tests: fast/dom/HTMLInputElement/clone-input-checked.html
+               fast/dom/clone-node-z-index.html
+
+        * dom/Element.cpp: undid the order change of calling copyNonAttributeProperties() before setAttributes()
+        (WebCore::Element::cloneElementWithoutChildren): uncheck the previous radio button in the same radio button group only when the checked radio box is appended to the dom tree
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateCheckedRadioButtons):
+        (WebCore::HTMLInputElement::attach):
+        (WebCore::HTMLInputElement::setChecked):
+        * html/HTMLInputElement.h:
+
 2010-04-29  John Gregg  <johnnyg@google.com>
 
         Reviewed by Dmitry Titov.

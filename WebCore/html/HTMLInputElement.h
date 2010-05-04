@@ -291,6 +291,8 @@ private:
     virtual bool isRequiredFormControl() const;
     virtual bool recalcWillValidate() const;
 
+    void updateCheckedRadioButtons();
+    
     PassRefPtr<HTMLFormElement> createTemporaryFormForIsIndex();
     // Helper for getAllowedValueStep();
     bool getStepParameters(double* defaultStep, double* stepScaleFactor) const;
