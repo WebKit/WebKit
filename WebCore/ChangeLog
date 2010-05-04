@@ -1,3 +1,9 @@
+2010-05-04  Dirk Schulze  <krit@webkit.org>
+
+        Unreviewed sort of XCodes project file.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2010-05-03  Steven Lai  <steven_lai@asia.apple.com>
 
         Reviewed by Brady Eidson.
