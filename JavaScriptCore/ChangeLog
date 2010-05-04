@@ -1,3 +1,13 @@
+2010-05-03  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Clean up a few compiler warnings
+        https://bugs.webkit.org/show_bug.cgi?id=38073
+
+        * wtf/text/StringImpl.cpp:
+        (WebCore::StringImpl::ascii):
+
 2010-05-03  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (reverting previous commit).
