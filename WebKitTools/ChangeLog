@@ -1,3 +1,21 @@
+2010-05-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Builders should run the perl and python unit tests on every commit
+        https://bugs.webkit.org/show_bug.cgi?id=37976
+
+        The unit tests take a few seconds to run, so they should not
+        have any noticable effect on builder speed.
+
+        We're running the tests everywhere but Tiger as Tiger's
+        Python version is ancient.
+        I would have rather have detected the python version of the
+        slave but I couldn't find any API to do that, and I didn't want
+        to hack version detection into test-webkitpy (at least not yet).
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
 2010-05-03  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Adam Barth.
