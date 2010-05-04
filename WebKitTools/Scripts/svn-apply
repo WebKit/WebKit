@@ -304,14 +304,7 @@ sub patch($)
     my ($diffHashRef) = @_;
 
     my $patch = $diffHashRef->{svnConvertedText};
-
-    unless ($patch =~ m|^Index: ([^\r\n]+)|) {
-        my $separator = '-' x 67;
-        warn "Failed to find 'Index:' in:\n$separator\n$patch\n$separator\n";
-        die unless $force;
-        return;
-    }
-    my $fullPath = $1;
+    my $fullPath = $diffHashRef->{indexPath};
 
     my $deletion = 0;
     my $addition = 0;

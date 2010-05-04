@@ -1,5 +1,27 @@
 2010-05-03  Chris Jerdonek  <cjerdonek@webkit.org>
 
+        Reviewed by Adam Barth.
+
+        Fixed a recent REGRESSION that caused svn-apply and -unapply to
+        skip over changes to the first file in a diff if leading junk was
+        present (like in an e-mail diff) and if the --force option was used.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38507
+
+        * Scripts/svn-apply:
+          - Removed the bit of code at the beginning of the patch()
+            subroutine that checks for the "Index:" line at the beginning
+            of a file diff (since the parsePatch() subroutine already
+            checks this).
+
+        * Scripts/svn-unapply:
+          - Removed the bit of code at the beginning of the patch()
+            subroutine that checks for the "Index:" line at the beginning
+            of a file diff (since the parsePatch() subroutine already
+            checks this).
+
+2010-05-03  Chris Jerdonek  <cjerdonek@webkit.org>
+
         Unreviewed.
 
         Adjusted the ChangeLog entry below for r58732 (bug 35804) to reflect

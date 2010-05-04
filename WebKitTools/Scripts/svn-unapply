@@ -140,13 +140,8 @@ sub patch($)
     my ($diffHashRef) = @_;
 
     my $patch = $diffHashRef->{svnConvertedText};
+    my $fullPath = $diffHashRef->{indexPath};
 
-    unless ($patch =~ m|^Index: ([^\r\n]+)|) {
-        my $separator = '-' x 67;
-        warn "Failed to find 'Index:' in:\n$separator\n$patch\n$separator\n";
-        return;
-    }
-    my $fullPath = $1;
     $directoriesToCheck{dirname($fullPath)} = 1;
 
     my $deletion = 0;
