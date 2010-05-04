@@ -2,6 +2,15 @@
 
         Unreviewed, expectations change.
 
+        Fix expectation for fast/forms/searchfield-heights.html - IMAGE+TEXT
+        on Linux, IMAGE on win and mac.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-05-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
         Restore editing/pasteboard/paste-xml.xhtml as failing w/ a TEXT
         failure (was failing prior to landing fix for 27751).
 

@@ -2808,7 +2808,8 @@ BUGYAAR MAC : fast/forms/search-styled.html = IMAGE
 BUGYAAR MAC : fast/forms/search-transformed.html = IMAGE
 BUGYAAR WIN LINUX : fast/forms/search-vertical-alignment.html = IMAGE
 BUGYAAR MAC : fast/forms/search-zoomed.html = IMAGE
-BUGYAAR : fast/forms/searchfield-heights.html = IMAGE+TEXT
+BUGYAAR LINUX : fast/forms/searchfield-heights.html = IMAGE+TEXT
+BUGYAAR WIN MAC : fast/forms/searchfield-heights.html = IMAGE
 BUGYAAR MAC : fast/replaced/width100percent-searchfield.html = IMAGE
 
 // GStreamer - disabled in Chromium
