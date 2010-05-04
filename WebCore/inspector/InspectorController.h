@@ -65,6 +65,7 @@ class InjectedScript;
 class InjectedScriptHost;
 class InspectorBackend;
 class InspectorClient;
+struct InspectorCSSStore;
 class InspectorFrontend;
 class InspectorFrontendClient;
 class InspectorTimelineAgent;
@@ -318,6 +319,7 @@ private:
     bool m_openingFrontend;
     OwnPtr<InspectorFrontend> m_frontend;
     RefPtr<InspectorDOMAgent> m_domAgent;
+    OwnPtr<InspectorCSSStore> m_cssStore;
     OwnPtr<InspectorTimelineAgent> m_timelineAgent;
     RefPtr<Node> m_nodeToFocus;
     RefPtr<InspectorResource> m_mainResource;

@@ -1,3 +1,46 @@
+2010-04-30  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: REGRESSION: Disabled style properties are absent in Styles sidebar after WebInspector is re-opened
+        https://bugs.webkit.org/show_bug.cgi?id=38255
+
+        Moved stylesheet-related mappings into a separate object stored
+        in InspectorController rather than InspectorDOMAgent (which gets reset
+        on every frontend [dis]connect).
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorCSSStore.cpp: Added.
+        (WebCore::InspectorCSSStore::InspectorCSSStore):
+        (WebCore::InspectorCSSStore::~InspectorCSSStore):
+        (WebCore::InspectorCSSStore::reset):
+        * inspector/InspectorCSSStore.h: Added.
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::setFrontend):
+        (WebCore::InspectorController::didCommitLoad):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::discardBindings):
+        (WebCore::InspectorDOMAgent::applyStyleText):
+        (WebCore::InspectorDOMAgent::setStyleText):
+        (WebCore::InspectorDOMAgent::setStyleProperty):
+        (WebCore::InspectorDOMAgent::toggleStyleEnabled):
+        (WebCore::InspectorDOMAgent::setRuleSelector):
+        (WebCore::InspectorDOMAgent::addRule):
+        (WebCore::InspectorDOMAgent::bindStyle):
+        (WebCore::InspectorDOMAgent::bindRule):
+        (WebCore::InspectorDOMAgent::buildObjectForStyle):
+        (WebCore::InspectorDOMAgent::buildObjectForRule):
+        * inspector/InspectorDOMAgent.h:
+        (WebCore::InspectorDOMAgent::create):
+        (WebCore::InspectorDOMAgent::cssStore):
+
 2010-05-04  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

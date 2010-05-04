@@ -1649,6 +1649,8 @@
             'inspector/InspectorBackend.h',
             'inspector/InspectorController.cpp',
             'inspector/InspectorController.h',
+            'inspector/InspectorCSSStore.cpp',
+            'inspector/InspectorCSSStore.h',
             'inspector/InspectorDatabaseResource.cpp',
             'inspector/InspectorDatabaseResource.h',
             'inspector/InspectorDOMAgent.cpp',

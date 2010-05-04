@@ -55,6 +55,7 @@
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
 #include "InspectorBackend.h"
+#include "InspectorCSSStore.h"
 #include "InspectorClient.h"
 #include "InspectorFrontendClient.h"
 #include "InspectorDOMStorageResource.h"
@@ -144,6 +145,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     : m_inspectedPage(page)
     , m_client(client)
     , m_openingFrontend(false)
+    , m_cssStore(new InspectorCSSStore())
     , m_expiredConsoleMessageCount(0)
     , m_showAfterVisible(CurrentPanel)
     , m_groupLevel(0)
@@ -427,7 +429,7 @@ void InspectorController::setFrontend(PassOwnPtr<InspectorFrontend> frontend)
     m_openingFrontend = false;
     m_frontend = frontend;
     releaseDOMAgent();
-    m_domAgent = InspectorDOMAgent::create(m_frontend.get());
+    m_domAgent = InspectorDOMAgent::create(m_cssStore.get(), m_frontend.get());
     if (m_timelineAgent)
         m_timelineAgent->resetFrontendProxyObject(m_frontend.get());
 #if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
@@ -667,6 +669,7 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
         // resources are cleared so that it has a chance to unbind them.
         unbindAllResources();
         
+        m_cssStore->reset();
         if (m_frontend) {
             m_frontend->reset();
             m_domAgent->reset();

@@ -33,6 +33,7 @@
 #include "AtomicString.h"
 #include "EventListener.h"
 #include "EventTarget.h"
+#include "InspectorCSSStore.h"
 #include "ScriptArray.h"
 #include "ScriptObject.h"
 #include "ScriptState.h"
@@ -73,9 +74,9 @@ namespace WebCore {
 
     class InspectorDOMAgent : public EventListener {
     public:
-        static PassRefPtr<InspectorDOMAgent> create(InspectorFrontend* frontend)
+        static PassRefPtr<InspectorDOMAgent> create(InspectorCSSStore* cssStore, InspectorFrontend* frontend)
         {
-            return adoptRef(new InspectorDOMAgent(frontend));
+            return adoptRef(new InspectorDOMAgent(cssStore, frontend));
         }
 
         static const InspectorDOMAgent* cast(const EventListener* listener)
@@ -85,7 +86,7 @@ namespace WebCore {
                 : 0;
         }
 
-        InspectorDOMAgent(InspectorFrontend* frontend);
+        InspectorDOMAgent(InspectorCSSStore* cssStore, InspectorFrontend* frontend);
         ~InspectorDOMAgent();
 
         void reset();
@@ -127,9 +128,6 @@ namespace WebCore {
         void pushChildNodesToFrontend(long nodeId);
 
     private:
-        typedef std::pair<String, String> PropertyValueAndPriority;
-        typedef HashMap<String, PropertyValueAndPriority> DisabledStyleDeclaration;
-
         void startListening(Document* document);
         void stopListening(Document* document);
 
@@ -162,6 +160,7 @@ namespace WebCore {
 
         Document* mainFrameDocument() const;
         String documentURLString(Document* document) const;
+        InspectorCSSStore* cssStore() { return m_cssStore; }
 
         long bindStyle(CSSStyleDeclaration*);
         long bindRule(CSSStyleRule*);
@@ -178,6 +177,7 @@ namespace WebCore {
 
         void discardBindings();
 
+        InspectorCSSStore* m_cssStore;
         InspectorFrontend* m_frontend;
         NodeToIdMap m_documentNodeToIdMap;
         // Owns node mappings for dangling nodes.
@@ -186,19 +186,6 @@ namespace WebCore {
         HashMap<long, NodeToIdMap*> m_idToNodesMap;
         HashSet<long> m_childrenRequested;
         long m_lastNodeId;
-
-        typedef HashMap<CSSStyleDeclaration*, long> StyleToIdMap;
-        typedef HashMap<long, RefPtr<CSSStyleDeclaration> > IdToStyleMap;
-        StyleToIdMap m_styleToId;
-        IdToStyleMap m_idToStyle;
-        typedef HashMap<CSSStyleRule*, long> RuleToIdMap;
-        typedef HashMap<long, RefPtr<CSSStyleRule> > IdToRuleMap;
-        RuleToIdMap m_ruleToId;
-        IdToRuleMap m_idToRule;
-        typedef HashMap<long, DisabledStyleDeclaration>  IdToDisabledStyleMap;
-        IdToDisabledStyleMap m_idToDisabledStyle;
-        RefPtr<CSSStyleSheet> m_inspectorStyleSheet;
-
         long m_lastStyleId;
         long m_lastRuleId;
         ListHashSet<RefPtr<Document> > m_documents;
