@@ -1,3 +1,13 @@
+2010-05-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed fix to make Qt bot happier.
+
+        r58712 made fast/workers/worker-gc2.html crash. It seems to be a DRT sideeffect,
+        skipping worker-event-listener.html solve the problem until we find a real fix.
+        https://bugs.webkit.org/show_bug.cgi?id=38502
+
+        * platform/qt/Skipped: fast/workers/worker-event-listener.html skipped.
+
 2010-05-04  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, skip test.
