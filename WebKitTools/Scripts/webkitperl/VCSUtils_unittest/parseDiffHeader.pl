@@ -36,65 +36,21 @@ use warnings;
 use Test::More;
 use VCSUtils;
 
-# The array of test cases.
+# The unit tests for parseGitDiffHeader() and parseSvnDiffHeader()
+# already thoroughly test parsing each format.
+#
+# For parseDiffHeader(), it should suffice to verify that -- (1) for each
+# format, the method can return non-trivial values back for each key
+# supported by that format (e.g. "sourceRevision" for SVN), (2) the method
+# correctly sets default values when specific key-values are not set
+# (e.g. undef for "sourceRevision" for Git), and (3) key-values unique to
+# this method are set correctly (e.g. "scmFormat").
 my @testCaseHashRefs = (
-{
-    # New test
-    diffName => "SVN: simple",
-    inputText => <<'END',
-Index: WebKitTools/Scripts/VCSUtils.pm
-===================================================================
---- WebKitTools/Scripts/VCSUtils.pm	(revision 53004)
-+++ WebKitTools/Scripts/VCSUtils.pm	(working copy)
-@@ -32,6 +32,7 @@ use strict;
- use warnings;
-END
-    expectedReturn => [
-{
-    svnConvertedText => <<'END',
-Index: WebKitTools/Scripts/VCSUtils.pm
-===================================================================
---- WebKitTools/Scripts/VCSUtils.pm	(revision 53004)
-+++ WebKitTools/Scripts/VCSUtils.pm	(working copy)
-END
-    copiedFromPath => undef,
-    indexPath => "WebKitTools/Scripts/VCSUtils.pm",
-    scmFormat => "svn",
-    sourceRevision => "53004",
-},
-"@@ -32,6 +32,7 @@ use strict;\n"],
-    expectedNextLine => " use warnings;\n",
-},
-{
-    # New test
-    diffName => "SVN: new file",
-    inputText => <<'END',
-Index: WebKitTools/Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl
-===================================================================
---- WebKitTools/Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl	(revision 0)
-+++ WebKitTools/Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl	(revision 0)
-@@ -0,0 +1,262 @@
-+#!/usr/bin/perl -w
-END
-    expectedReturn => [
-{
-    svnConvertedText => <<'END',
-Index: WebKitTools/Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl
-===================================================================
---- WebKitTools/Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl	(revision 0)
-+++ WebKitTools/Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl	(revision 0)
-END
-    copiedFromPath => undef,
-    indexPath => "WebKitTools/Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl",
-    scmFormat => "svn",
-    sourceRevision => undef,
-},
-"@@ -0,0 +1,262 @@\n"],
-    expectedNextLine => "+#!/usr/bin/perl -w\n",
-},
-{
-    # New test
-    diffName => "SVN: copy",
+####
+#    SVN test cases
+##
+{   # New test
+    diffName => "SVN: non-trivial copiedFromPath and sourceRevision values",
     inputText => <<'END',
 Index: index_path.py
 ===================================================================
@@ -112,60 +68,7 @@ Index: index_path.py
 +++ index_path.py	(working copy)
 END
     copiedFromPath => "copied_from_path.py",
-    indexPath => "index_path.py",
-    scmFormat => "svn",
-    sourceRevision => 53048,
-},
-"@@ -0,0 +1,7 @@\n"],
-    expectedNextLine => "+# Python file...\n",
-},
-{
-    # New test
-    diffName => "SVN: \\r\\n lines",
-    inputText => <<END, # No single quotes to allow interpolation of "\r"
-Index: index_path.py\r
-===================================================================\r
---- index_path.py	(revision 53048)	(from copied_from_path.py:53048)\r
-+++ index_path.py	(working copy)\r
-@@ -0,0 +1,7 @@\r
-+# Python file...\r
-END
-    expectedReturn => [
-{
-    svnConvertedText => <<END, # No single quotes to allow interpolation of "\r"
-Index: index_path.py\r
-===================================================================\r
---- index_path.py	(revision 53048)	(from copied_from_path.py:53048)\r
-+++ index_path.py	(working copy)\r
-END
-    copiedFromPath => "copied_from_path.py",
-    indexPath => "index_path.py",
-    scmFormat => "svn",
-    sourceRevision => 53048,
-},
-"@@ -0,0 +1,7 @@\r\n"],
-    expectedNextLine => "+# Python file...\r\n",
-},
-{
-    # New test
-    diffName => "SVN: path corrections",
-    inputText => <<'END',
-Index: index_path.py
-===================================================================
---- bad_path	(revision 53048)	(from copied_from_path.py:53048)
-+++ bad_path	(working copy)
-@@ -0,0 +1,7 @@
-+# Python file...
-END
-    expectedReturn => [
-{
-    svnConvertedText => <<'END',
-Index: index_path.py
-===================================================================
---- index_path.py	(revision 53048)	(from copied_from_path.py:53048)
-+++ index_path.py	(working copy)
-END
-    copiedFromPath => "copied_from_path.py",
+    executableBitDelta => 0,
     indexPath => "index_path.py",
     scmFormat => "svn",
     sourceRevision => 53048,
@@ -176,157 +79,28 @@ END
 ####
 #    Git test cases
 ##
-{
-    # New test
-    diffName => "Git: simple",
+{   # New test case
+    diffName => "Git: Non-zero executable bit",
     inputText => <<'END',
-diff --git a/WebCore/rendering/style/StyleFlexibleBoxData.h b/WebCore/rendering/style/StyleFlexibleBoxData.h
-index f5d5e74..3b6aa92 100644
---- a/WebCore/rendering/style/StyleFlexibleBoxData.h
-+++ b/WebCore/rendering/style/StyleFlexibleBoxData.h
-@@ -47,7 +47,6 @@ public:
+diff --git a/foo.exe b/foo.exe
+old mode 100644
+new mode 100755
 END
     expectedReturn => [
 {
     svnConvertedText => <<'END',
-Index: WebCore/rendering/style/StyleFlexibleBoxData.h
-index f5d5e74..3b6aa92 100644
---- WebCore/rendering/style/StyleFlexibleBoxData.h
-+++ WebCore/rendering/style/StyleFlexibleBoxData.h
+Index: foo.exe
+old mode 100644
+new mode 100755
 END
     copiedFromPath => undef,
-    indexPath => "WebCore/rendering/style/StyleFlexibleBoxData.h",
+    executableBitDelta => 1,
+    indexPath => "foo.exe",
     scmFormat => "git",
     sourceRevision => undef,
 },
-"@@ -47,7 +47,6 @@ public:\n"],
+undef],
     expectedNextLine => undef,
-},
-{
-    # New test
-    diffName => "Git: new file",
-    inputText => <<'END',
-diff --git a/LayoutTests/http/tests/security/listener/xss-inactive-closure.html b/LayoutTests/http/tests/security/listener/xss-inactive-closure.html
-new file mode 100644
-index 0000000..3c9f114
---- /dev/null
-+++ b/LayoutTests/http/tests/security/listener/xss-inactive-closure.html
-@@ -0,0 +1,34 @@
-+<html>
-END
-    expectedReturn => [
-{
-    svnConvertedText => <<'END',
-Index: LayoutTests/http/tests/security/listener/xss-inactive-closure.html
-new file mode 100644
-index 0000000..3c9f114
---- LayoutTests/http/tests/security/listener/xss-inactive-closure.html
-+++ LayoutTests/http/tests/security/listener/xss-inactive-closure.html
-END
-    copiedFromPath => undef,
-    indexPath => "LayoutTests/http/tests/security/listener/xss-inactive-closure.html",
-    scmFormat => "git",
-    sourceRevision => undef,
-},
-"@@ -0,0 +1,34 @@\n"],
-    expectedNextLine => "+<html>\n",
-},
-####
-#    Binary test cases
-##
-{
-    # New test
-    diffName => "SVN: binary file",
-    inputText => <<'END',
-Index: test_file.swf
-===================================================================
-Cannot display: file marked as a binary type.
-svn:mime-type = application/octet-stream
-
-Property changes on: test_file.swf
-___________________________________________________________________
-Name: svn:mime-type
-   + application/octet-stream
-
-
-Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
-END
-    expectedReturn => [
-{
-    svnConvertedText => <<'END',
-Index: test_file.swf
-===================================================================
-Cannot display: file marked as a binary type.
-END
-    copiedFromPath => undef,
-    indexPath => "test_file.swf",
-    scmFormat => "svn",
-    sourceRevision => undef,
-},
-"svn:mime-type = application/octet-stream\n"],
-    expectedNextLine => "\n",
-},
-{
-    # New test
-    diffName => "Git: binary addition",
-    inputText => <<'END',
-diff --git a/foo.gif b/foo.gif
-new file mode 100644
-index 0000000000000000000000000000000000000000..64a9532e7794fcd791f6f12157406d9060151690
-GIT binary patch
-literal 7
-OcmYex&reDa;sO8*F9L)B
-
-literal 0
-HcmV?d00001
-
-END
-    expectedReturn => [
-{
-    svnConvertedText => <<'END',
-Index: foo.gif
-new file mode 100644
-index 0000000000000000000000000000000000000000..64a9532e7794fcd791f6f12157406d9060151690
-GIT binary patch
-END
-    copiedFromPath => undef,
-    indexPath => "foo.gif",
-    scmFormat => "git",
-    sourceRevision => undef,
-},
-"literal 7\n"],
-    expectedNextLine => "OcmYex&reDa;sO8*F9L)B\n",
-},
-{
-    # New test
-    diffName => "Git: binary deletion",
-    inputText => <<'END',
-diff --git a/foo.gif b/foo.gif
-deleted file mode 100644
-index 323fae0..0000000
-GIT binary patch
-literal 0
-HcmV?d00001
-
-literal 7
-OcmYex&reD$;sO8*F9L)B
-
-END
-    expectedReturn => [
-{
-    svnConvertedText => <<'END',
-Index: foo.gif
-deleted file mode 100644
-index 323fae0..0000000
-GIT binary patch
-END
-    copiedFromPath => undef,
-    indexPath => "foo.gif",
-    scmFormat => "git",
-    sourceRevision => undef,
-},
-"literal 0\n"],
-    expectedNextLine => "HcmV?d00001\n",
 },
 );
 

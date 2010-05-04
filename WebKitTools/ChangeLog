@@ -1,3 +1,34 @@
+2010-05-04  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        Changed VCSUtils.pm's parseDiffHeader() to call the new
+        parseGitDiffHeader() method.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38454
+
+        This revision makes more progress towards adding executable-bit
+        support to svn-apply and svn-unapply.  It also makes more progress
+        towards refactoring the code into a more maintainable form.
+
+        * Scripts/VCSUtils.pm:
+          - Removed gitdiff2svndiff().
+          - Removed the Git-specific logic from parseDiffHeader() and
+            renamed it parseSvnDiffHeader().
+          - Added a new parseDiffHeader() subroutine which calls
+            parseSvnDiffHeader() or parseGitDiffHeader() depending on
+            the format of the first header line.
+
+        * Scripts/webkitperl/VCSUtils_unittest/gitdiff2svndiff.pl: Removed.
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl:
+          - Removed most of the test cases since these cases are now
+            covered by the unit tests for parseSvnDiffHeader() and
+            parseGitDiffHeader().
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseSvnDiffHeader.pl: Added.
+          - Copied the SVN unit tests from parseDiffHeader.pl and updated
+            them as necessary.
+
 2010-05-03  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
