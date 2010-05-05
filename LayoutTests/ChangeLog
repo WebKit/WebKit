@@ -1,3 +1,11 @@
+2010-05-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Not reviewed.
+
+        Updated test results - the test still passes.
+
+        * http/tests/security/postMessage/invalid-origin-throws-exception-expected.txt:
+
 2010-05-04  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
