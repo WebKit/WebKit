@@ -43,7 +43,7 @@ class ScriptExecutionContext;
 class DatabaseCallback : public ThreadSafeShared<DatabaseCallback> {
 public:
     virtual ~DatabaseCallback() { }
-    virtual void handleEvent(ScriptExecutionContext*, Database*) = 0;
+    virtual bool handleEvent(ScriptExecutionContext*, Database*) = 0;
 };
 
 }

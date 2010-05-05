@@ -2304,25 +2304,21 @@ FEATURE_DEFINES += ENABLE_DATABASE=1
 
 IDL_BINDINGS += \
 	WebCore/storage/Database.idl \
+	WebCore/storage/DatabaseCallback.idl \
 	WebCore/storage/SQLError.idl \
 	WebCore/storage/SQLResultSet.idl \
 	WebCore/storage/SQLResultSetRowList.idl \
-	WebCore/storage/SQLTransaction.idl
+	WebCore/storage/SQLStatementCallback.idl \
+	WebCore/storage/SQLStatementErrorCallback.idl \
+	WebCore/storage/SQLTransaction.idl \
+	WebCore/storage/SQLTransactionCallback.idl \
+	WebCore/storage/SQLTransactionErrorCallback.idl
 
 webcore_cppflags += \
 	-DENABLE_DATABASE=1
 
 webcore_sources += \
-	WebCore/bindings/js/JSCustomSQLStatementCallback.cpp \
-	WebCore/bindings/js/JSCustomSQLStatementCallback.h \
 	WebCore/bindings/js/JSCustomSQLStatementErrorCallback.cpp \
-	WebCore/bindings/js/JSCustomSQLStatementErrorCallback.h \
-	WebCore/bindings/js/JSCustomSQLTransactionCallback.cpp \
-	WebCore/bindings/js/JSCustomSQLTransactionCallback.h \
-	WebCore/bindings/js/JSCustomSQLTransactionErrorCallback.cpp \
-	WebCore/bindings/js/JSCustomSQLTransactionErrorCallback.h \
-	WebCore/bindings/js/JSDatabaseCallback.cpp \
-	WebCore/bindings/js/JSDatabaseCallback.h \
 	WebCore/bindings/js/JSDatabaseCustom.cpp \
 	WebCore/bindings/js/JSSQLResultSetRowListCustom.cpp \
 	WebCore/bindings/js/JSSQLTransactionCustom.cpp \

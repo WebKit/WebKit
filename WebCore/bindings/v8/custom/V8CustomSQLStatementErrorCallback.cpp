@@ -32,7 +32,7 @@
 
 #if ENABLE(DATABASE)
 
-#include "V8CustomSQLStatementErrorCallback.h"
+#include "V8SQLStatementErrorCallback.h"
 
 #include "Frame.h"
 #include "ScriptExecutionContext.h"
@@ -42,19 +42,7 @@
 
 namespace WebCore {
 
-V8CustomSQLStatementErrorCallback::V8CustomSQLStatementErrorCallback(v8::Local<v8::Object> callback, Frame* frame)
-    : m_callback(v8::Persistent<v8::Object>::New(callback))
-    , m_frame(frame)
-    , m_worldContext(UseCurrentWorld)
-{
-}
-
-V8CustomSQLStatementErrorCallback::~V8CustomSQLStatementErrorCallback()
-{
-    m_callback.Dispose();
-}
-
-bool V8CustomSQLStatementErrorCallback::handleEvent(ScriptExecutionContext* context, SQLTransaction* transaction, SQLError* error)
+bool V8SQLStatementErrorCallback::handleEvent(ScriptExecutionContext* context, SQLTransaction* transaction, SQLError* error)
 {
     v8::HandleScope handleScope;
 

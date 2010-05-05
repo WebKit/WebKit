@@ -24,8 +24,8 @@
 
 #include "JSTestCallback.h"
 
-#include "Class1.h"
-#include "Class2.h"
+#include "JSClass1.h"
+#include "JSClass2.h"
 #include "ScriptExecutionContext.h"
 #include <runtime/JSLock.h>
 #include <wtf/MainThread.h>

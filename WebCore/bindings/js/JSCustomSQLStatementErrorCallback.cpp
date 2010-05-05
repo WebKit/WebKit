@@ -27,42 +27,26 @@
  */
 
 #include "config.h"
-#include "JSCustomSQLStatementErrorCallback.h"
+#include "JSSQLStatementErrorCallback.h"
 
 #if ENABLE(DATABASE)
 
 #include "Frame.h"
-#include "JSCallbackData.h"
 #include "JSSQLError.h"
 #include "JSSQLTransaction.h"
 #include "ScriptExecutionContext.h"
 #include <runtime/JSLock.h>
-#include <wtf/MainThread.h>
 
 namespace WebCore {
 
 using namespace JSC;
 
-JSCustomSQLStatementErrorCallback::JSCustomSQLStatementErrorCallback(JSObject* callback, JSDOMGlobalObject* globalObject)
-    : m_data(new JSCallbackData(callback, globalObject))
-    , m_isolatedWorld(globalObject->world())
-{
-}
-
-JSCustomSQLStatementErrorCallback::~JSCustomSQLStatementErrorCallback()
-{
-    callOnMainThread(JSCallbackData::deleteData, m_data);
-#ifndef NDEBUG
-    m_data = 0;
-#endif
-}
-
-bool JSCustomSQLStatementErrorCallback::handleEvent(ScriptExecutionContext* context, SQLTransaction* transaction, SQLError* error)
+bool JSSQLStatementErrorCallback::handleEvent(ScriptExecutionContext* context, SQLTransaction* transaction, SQLError* error)
 {
     ASSERT(m_data);
     ASSERT(context);
 
-    RefPtr<JSCustomSQLStatementErrorCallback> protect(this);
+    RefPtr<JSSQLStatementErrorCallback> protect(this);
 
     JSC::JSLock lock(SilenceAssertionsOnly);
     JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(context, m_isolatedWorld.get());

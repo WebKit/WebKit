@@ -1029,13 +1029,8 @@ HEADERS += \
     bindings/js/JSCSSStyleDeclarationCustom.h \
     bindings/js/JSCustomPositionCallback.h \
     bindings/js/JSCustomPositionErrorCallback.h \
-    bindings/js/JSCustomSQLStatementCallback.h \
-    bindings/js/JSCustomSQLStatementErrorCallback.h \
-    bindings/js/JSCustomSQLTransactionCallback.h \
-    bindings/js/JSCustomSQLTransactionErrorCallback.h \
     bindings/js/JSCustomVoidCallback.h \
     bindings/js/JSCustomXPathNSResolver.h \
-    bindings/js/JSDatabaseCallback.h \
     bindings/js/JSDataGridDataSource.h \
     bindings/js/JSDebugWrapperSet.h \
     bindings/js/JSDOMBinding.h \
@@ -2303,11 +2298,7 @@ contains(DEFINES, ENABLE_DATABASE=1) {
         storage/SQLTransactionClient.cpp \
         storage/SQLTransactionCoordinator.cpp \
         storage/SQLTransactionSync.cpp \
-        bindings/js/JSCustomSQLStatementCallback.cpp \
         bindings/js/JSCustomSQLStatementErrorCallback.cpp \
-        bindings/js/JSCustomSQLTransactionCallback.cpp \
-        bindings/js/JSCustomSQLTransactionErrorCallback.cpp \
-        bindings/js/JSDatabaseCallback.cpp \
         bindings/js/JSDatabaseCustom.cpp \
         bindings/js/JSSQLResultSetRowListCustom.cpp \
         bindings/js/JSSQLTransactionCustom.cpp

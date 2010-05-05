@@ -37,12 +37,11 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 class SQLTransaction;
-class SQLError;
 
 class SQLTransactionCallback : public ThreadSafeShared<SQLTransactionCallback> {
 public:
     virtual ~SQLTransactionCallback() { }
-    virtual void handleEvent(ScriptExecutionContext*, SQLTransaction*, bool& raisedException) = 0;
+    virtual bool handleEvent(ScriptExecutionContext*, SQLTransaction*) = 0;
 };
 
 }

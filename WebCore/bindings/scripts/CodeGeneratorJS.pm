@@ -192,6 +192,7 @@ sub IndexGetterReturnsStrings
 sub AddIncludesForType
 {
     my $type = $codeGenerator->StripModule(shift);
+    my $isCallback = @_ ? shift : 0;
 
     # When we're finished with the one-file-per-class
     # reorganization, we won't need these special cases.
@@ -204,6 +205,8 @@ sub AddIncludesForType
     } elsif ($type eq "XPathNSResolver") {
         $implIncludes{"JSXPathNSResolver.h"} = 1;
         $implIncludes{"JSCustomXPathNSResolver.h"} = 1;
+    } elsif ($isCallback) {
+        $implIncludes{"JS${type}.h"} = 1;
     } else {
         # default, include the same named file
         $implIncludes{"${type}.h"} = 1;
@@ -2027,7 +2030,7 @@ sub GenerateCallbackImplementation
             push(@implContent, "\n" . GetNativeType($function->signature->type) . " ${className}::" . $function->signature->name . "(ScriptExecutionContext* context");
 
             foreach my $param (@params) {
-                AddIncludesForType($param->type);
+                AddIncludesForType($param->type, 1);
                 push(@implContent, ", " . GetNativeType($param->type) . " " . $param->name);
             }
 

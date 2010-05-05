@@ -35,8 +35,8 @@
 #include "Database.h"
 #include "Document.h"
 #include "ExceptionCode.h"
-#include "JSCustomSQLTransactionCallback.h"
-#include "JSCustomSQLTransactionErrorCallback.h"
+#include "JSSQLTransactionCallback.h"
+#include "JSSQLTransactionErrorCallback.h"
 #include "JSCustomVoidCallback.h"
 #include "JSDOMWindowCustom.h"
 #include "PlatformString.h"
@@ -58,7 +58,7 @@ JSValue JSDatabase::changeVersion(ExecState* exec, const ArgList& args)
         return jsUndefined();
     }
     
-    RefPtr<SQLTransactionCallback> callback(JSCustomSQLTransactionCallback::create(object, static_cast<JSDOMGlobalObject*>(exec->dynamicGlobalObject())));
+    RefPtr<SQLTransactionCallback> callback(JSSQLTransactionCallback::create(object, static_cast<JSDOMGlobalObject*>(exec->dynamicGlobalObject())));
     
     RefPtr<SQLTransactionErrorCallback> errorCallback;
     if (!args.at(3).isNull()) {
@@ -67,7 +67,7 @@ JSValue JSDatabase::changeVersion(ExecState* exec, const ArgList& args)
             return jsUndefined();
         }
         
-        errorCallback = JSCustomSQLTransactionErrorCallback::create(object, static_cast<JSDOMGlobalObject*>(exec->dynamicGlobalObject()));
+        errorCallback = JSSQLTransactionErrorCallback::create(object, static_cast<JSDOMGlobalObject*>(exec->dynamicGlobalObject()));
     }
     
     RefPtr<VoidCallback> successCallback;
@@ -94,16 +94,15 @@ static JSValue createTransaction(ExecState* exec, const ArgList& args, Database*
         return jsUndefined();
     }        
      
-    RefPtr<SQLTransactionCallback> callback(JSCustomSQLTransactionCallback::create(object, globalObject));
+    RefPtr<SQLTransactionCallback> callback(JSSQLTransactionCallback::create(object, globalObject));
     RefPtr<SQLTransactionErrorCallback> errorCallback;
-    
     if (args.size() > 1 && !args.at(1).isNull()) {
         if (!(object = args.at(1).getObject())) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();
         }
 
-        errorCallback = JSCustomSQLTransactionErrorCallback::create(object, globalObject);
+        errorCallback = JSSQLTransactionErrorCallback::create(object, globalObject);
     }
 
     RefPtr<VoidCallback> successCallback;

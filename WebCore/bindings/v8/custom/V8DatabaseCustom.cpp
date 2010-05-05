@@ -35,8 +35,8 @@
 
 #include "Database.h"
 #include "V8Binding.h"
-#include "V8CustomSQLTransactionCallback.h"
-#include "V8CustomSQLTransactionErrorCallback.h"
+#include "V8SQLTransactionCallback.h"
+#include "V8SQLTransactionErrorCallback.h"
 #include "V8CustomVoidCallback.h"
 #include "V8Proxy.h"
 
@@ -58,20 +58,20 @@ v8::Handle<v8::Value> V8Database::changeVersionCallback(const v8::Arguments& arg
     if (!frame)
         return v8::Undefined();
 
-    RefPtr<V8CustomSQLTransactionCallback> callback;
+    RefPtr<V8SQLTransactionCallback> callback;
     if (args.Length() > 2) {
         if (!args[2]->IsObject())
             return throwError("changeVersion transaction callback must be of valid type.");
 
-        callback = V8CustomSQLTransactionCallback::create(args[2], frame);
+        callback = V8SQLTransactionCallback::create(args[2], frame);
     }
 
-    RefPtr<V8CustomSQLTransactionErrorCallback> errorCallback;
+    RefPtr<V8SQLTransactionErrorCallback> errorCallback;
     if (args.Length() > 3) {
         if (!args[3]->IsObject())
             return throwError("changeVersion error callback must be of valid type.");
 
-        errorCallback = V8CustomSQLTransactionErrorCallback::create(args[3], frame);
+        errorCallback = V8SQLTransactionErrorCallback::create(args[3], frame);
     }
 
     RefPtr<V8CustomVoidCallback> successCallback;
@@ -101,14 +101,14 @@ static v8::Handle<v8::Value> createTransaction(const v8::Arguments& args, bool r
     if (!frame)
         return v8::Undefined();
 
-    RefPtr<V8CustomSQLTransactionCallback> callback = V8CustomSQLTransactionCallback::create(args[0], frame);
+    RefPtr<V8SQLTransactionCallback> callback = V8SQLTransactionCallback::create(args[0], frame);
 
-    RefPtr<V8CustomSQLTransactionErrorCallback> errorCallback;
+    RefPtr<V8SQLTransactionErrorCallback> errorCallback;
     if (args.Length() > 1 && !isUndefinedOrNull(args[1])) {
         if (!args[1]->IsObject())
             return throwError("Transaction error callback must be of valid type.");
 
-        errorCallback = V8CustomSQLTransactionErrorCallback::create(args[1], frame);
+        errorCallback = V8SQLTransactionErrorCallback::create(args[1], frame);
     }
 
     RefPtr<V8CustomVoidCallback> successCallback;

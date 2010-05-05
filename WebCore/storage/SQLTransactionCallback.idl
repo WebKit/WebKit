@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,41 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSCustomSQLTransactionCallback_h
-#define JSCustomSQLTransactionCallback_h
-
-#if ENABLE(DATABASE)
-
-#include "JSDOMGlobalObject.h"
-#include "SQLTransactionCallback.h"
-#include <wtf/Forward.h>
-
-namespace WebCore {
-
-class Frame;
-class JSCallbackData;
-class JSDOMGlobalObject;
-
-class JSCustomSQLTransactionCallback : public SQLTransactionCallback {
-public:
-    static PassRefPtr<JSCustomSQLTransactionCallback> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
-    {
-        return adoptRef(new JSCustomSQLTransactionCallback(callback, globalObject));
-    }
-
-    virtual ~JSCustomSQLTransactionCallback();
-
-    virtual void handleEvent(ScriptExecutionContext*, SQLTransaction*, bool& raisedException);
-
-private:
-    JSCustomSQLTransactionCallback(JSC::JSObject* callback, JSDOMGlobalObject*);
-
-    JSCallbackData* m_data;
-    RefPtr<DOMWrapperWorld> m_isolatedWorld;
-};
-
+module storage {
+    interface [
+        Conditional=DATABASE,
+        Callback
+    ] SQLTransactionCallback {
+        boolean handleEvent(in SQLTransaction transaction);
+    };
 }
-
-#endif // ENABLE(DATABASE)
-
-#endif // JSCustomSQLTransactionCallback_h

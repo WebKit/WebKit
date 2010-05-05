@@ -37,8 +37,8 @@
 #include "Database.h"
 #include "SQLValue.h"
 #include "V8Binding.h"
-#include "V8CustomSQLStatementCallback.h"
-#include "V8CustomSQLStatementErrorCallback.h"
+#include "V8SQLStatementCallback.h"
+#include "V8SQLStatementErrorCallback.h"
 #include "V8Proxy.h"
 #include <wtf/Vector.h>
 
@@ -105,7 +105,7 @@ v8::Handle<v8::Value> V8SQLTransaction::executeSqlCallback(const v8::Arguments& 
             return throwError("Statement callback must be of valid type.", V8Proxy::TypeError);
 
         if (frame)
-            callback = V8CustomSQLStatementCallback::create(args[2], frame);
+            callback = V8SQLStatementCallback::create(args[2], frame);
     }
 
     RefPtr<SQLStatementErrorCallback> errorCallback;
@@ -114,7 +114,7 @@ v8::Handle<v8::Value> V8SQLTransaction::executeSqlCallback(const v8::Arguments& 
             return throwError("Statement error callback must be of valid type.", V8Proxy::TypeError);
 
         if (frame)
-            errorCallback = V8CustomSQLStatementErrorCallback::create(args[3], frame);
+            errorCallback = V8SQLStatementErrorCallback::create(args[3], frame);
     }
 
     ExceptionCode ec = 0;
@@ -127,4 +127,3 @@ v8::Handle<v8::Value> V8SQLTransaction::executeSqlCallback(const v8::Arguments& 
 } // namespace WebCore
 
 #endif
-

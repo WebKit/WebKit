@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,54 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSCustomSQLTransactionErrorCallback.h"
-
-#if ENABLE(DATABASE)
-
-#include "Frame.h"
-#include "JSCallbackData.h"
-#include "JSSQLError.h"
-#include "ScriptExecutionContext.h"
-#include <runtime/JSLock.h>
-#include <wtf/MainThread.h>
-
-namespace WebCore {
-
-using namespace JSC;
-
-JSCustomSQLTransactionErrorCallback::JSCustomSQLTransactionErrorCallback(JSObject* callback, JSDOMGlobalObject* globalObject)
-    : m_data(new JSCallbackData(callback, globalObject))
-    , m_isolatedWorld(globalObject->world())
-{
+module storage {
+    interface [
+        Conditional=DATABASE,
+        Callback
+    ] SQLStatementErrorCallback {
+        [Custom] boolean handleEvent(in SQLTransaction transaction, in SQLError error);
+    };
 }
-
-JSCustomSQLTransactionErrorCallback::~JSCustomSQLTransactionErrorCallback()
-{
-    callOnMainThread(JSCallbackData::deleteData, m_data);
-#ifndef NDEBUG
-    m_data = 0;
-#endif
-}
-
-void JSCustomSQLTransactionErrorCallback::handleEvent(ScriptExecutionContext* context, SQLError* error)
-{
-    ASSERT(m_data);
-    ASSERT(context);
-
-    RefPtr<JSCustomSQLTransactionErrorCallback> protect(this);
-
-    JSC::JSLock lock(SilenceAssertionsOnly);
-    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(context, m_isolatedWorld.get());
-    if (!globalObject)
-        return;
-
-    ExecState* exec = globalObject->globalExec();
-    MarkedArgumentBuffer args;
-    args.append(toJS(exec, deprecatedGlobalObjectForPrototype(exec), error));
-    m_data->invokeCallback(args);
-}
-
-}
-
-#endif // ENABLE(DATABASE)

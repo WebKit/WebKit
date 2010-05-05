@@ -115,6 +115,7 @@ DOM_CLASSES = \
     DOMSelection \
     DOMWindow \
     Database \
+    DatabaseCallback \
     Document \
     DocumentFragment \
     DocumentType \
@@ -248,7 +249,11 @@ DOM_CLASSES = \
     SQLError \
     SQLResultSet \
     SQLResultSetRowList \
+    SQLStatementCallback \
+    SQLStatementErrorCallback \
     SQLTransaction \
+    SQLTransactionCallback \
+    SQLTransactionErrorCallback \
     Storage \
     StorageEvent \
     SVGAElement \

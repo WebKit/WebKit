@@ -174,7 +174,7 @@ bool SQLStatement::performCallback(SQLTransaction* transaction)
         ASSERT(m_statementErrorCallback);
         callbackError = m_statementErrorCallback->handleEvent(transaction->database()->scriptExecutionContext(), transaction, m_error.get());
     } else if (m_statementCallback)
-        m_statementCallback->handleEvent(transaction->database()->scriptExecutionContext(), transaction, m_resultSet.get(), callbackError);
+        callbackError = !m_statementCallback->handleEvent(transaction->database()->scriptExecutionContext(), transaction, m_resultSet.get());
 
     // Now release our callbacks, to break reference cycles.
     m_statementCallback = 0;

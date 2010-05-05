@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,40 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSCustomSQLStatementErrorCallback_h
-#define JSCustomSQLStatementErrorCallback_h
-
-#if ENABLE(DATABASE)
-
-#include "JSCallbackData.h"
-#include "SQLStatementErrorCallback.h"
-#include <wtf/Forward.h>
-
-namespace WebCore {
-
-class JSCallbackData;
-class SQLError;
-
-class JSCustomSQLStatementErrorCallback : public SQLStatementErrorCallback {
-public:
-    static PassRefPtr<JSCustomSQLStatementErrorCallback> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
-    {
-        return adoptRef(new JSCustomSQLStatementErrorCallback(callback, globalObject));
-    }
-
-    virtual ~JSCustomSQLStatementErrorCallback();
-
-    virtual bool handleEvent(ScriptExecutionContext*, SQLTransaction*, SQLError*);
-
-private:
-    JSCustomSQLStatementErrorCallback(JSC::JSObject* callback, JSDOMGlobalObject*);
-
-    JSCallbackData* m_data;
-    RefPtr<DOMWrapperWorld> m_isolatedWorld;
-};
-
+module storage {
+    interface [
+        Conditional=DATABASE,
+        Callback
+    ] DatabaseCallback {
+        boolean handleEvent(in Database database);
+    };
 }
-
-#endif // ENABLE(DATABASE)
-
-#endif // JSCustomSQLStatementErrorCallback_h

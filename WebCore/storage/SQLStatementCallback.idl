@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,39 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSCustomSQLTransactionErrorCallback_h
-#define JSCustomSQLTransactionErrorCallback_h
-
-#if ENABLE(DATABASE)
-
-#include "JSCallbackData.h"
-#include "SQLTransactionErrorCallback.h"
-#include <wtf/Forward.h>
-
-namespace WebCore {
-
-class JSCallbackData;
-class SQLError;
-
-class JSCustomSQLTransactionErrorCallback : public SQLTransactionErrorCallback {
-public:
-    static PassRefPtr<JSCustomSQLTransactionErrorCallback> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
-    {
-        return adoptRef(new JSCustomSQLTransactionErrorCallback(callback, globalObject));
-    }
-
-    virtual ~JSCustomSQLTransactionErrorCallback();
-
-    virtual void handleEvent(ScriptExecutionContext*, SQLError*);
-
-private:
-    JSCustomSQLTransactionErrorCallback(JSC::JSObject* callback, JSDOMGlobalObject* globalObject);
-
-    JSCallbackData* m_data;
-    RefPtr<DOMWrapperWorld> m_isolatedWorld;
-};
-
+module storage {
+    interface [
+        Conditional=DATABASE,
+        Callback
+    ] SQLStatementCallback {
+        boolean handleEvent(in SQLTransaction transaction, in SQLResultSet resultSet);
+    };
 }
-#endif // ENABLE(DATABASE)
-
-#endif // JSCustomSQLTransactionErrorCallback_h

@@ -290,7 +290,7 @@ void SQLTransaction::deliverTransactionCallback()
 
     if (m_callback) {
         m_executeSqlAllowed = true;
-        m_callback->handleEvent(m_database->scriptExecutionContext(), this, shouldDeliverErrorCallback);
+        shouldDeliverErrorCallback = !m_callback->handleEvent(m_database->scriptExecutionContext(), this);
         m_executeSqlAllowed = false;
     } else
         shouldDeliverErrorCallback = true;

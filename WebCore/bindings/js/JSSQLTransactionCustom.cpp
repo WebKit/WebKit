@@ -33,8 +33,8 @@
 
 #include "DOMWindow.h"
 #include "ExceptionCode.h"
-#include "JSCustomSQLStatementCallback.h"
-#include "JSCustomSQLStatementErrorCallback.h"
+#include "JSSQLStatementCallback.h"
+#include "JSSQLStatementErrorCallback.h"
 #include "JSDOMWindowCustom.h"
 #include "SQLTransaction.h"
 
@@ -95,7 +95,7 @@ JSValue JSSQLTransaction::executeSql(ExecState* exec, const ArgList& args)
             return jsUndefined();
         }
         
-        callback = JSCustomSQLStatementCallback::create(object, static_cast<JSDOMGlobalObject*>(exec->dynamicGlobalObject()));
+        callback = JSSQLStatementCallback::create(object, static_cast<JSDOMGlobalObject*>(exec->dynamicGlobalObject()));
     }
     
     RefPtr<SQLStatementErrorCallback> errorCallback;
@@ -106,7 +106,7 @@ JSValue JSSQLTransaction::executeSql(ExecState* exec, const ArgList& args)
             return jsUndefined();
         }
         
-        errorCallback = JSCustomSQLStatementErrorCallback::create(object, static_cast<JSDOMGlobalObject*>(exec->dynamicGlobalObject()));
+        errorCallback = JSSQLStatementErrorCallback::create(object, static_cast<JSDOMGlobalObject*>(exec->dynamicGlobalObject()));
     }
     
     ExceptionCode ec = 0;

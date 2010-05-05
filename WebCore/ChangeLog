@@ -1,3 +1,67 @@
+2010-05-04  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Auto-generate all Database callbacks.
+        https://bugs.webkit.org/show_bug.cgi?id=38503
+
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSCustomSQLStatementCallback.cpp: Removed.
+        * bindings/js/JSCustomSQLStatementCallback.h: Removed.
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        (WebCore::JSSQLStatementErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLStatementErrorCallback.h: Removed.
+        * bindings/js/JSCustomSQLTransactionCallback.cpp: Removed.
+        * bindings/js/JSCustomSQLTransactionCallback.h: Removed.
+        * bindings/js/JSCustomSQLTransactionErrorCallback.cpp: Removed.
+        * bindings/js/JSCustomSQLTransactionErrorCallback.h: Removed.
+        * bindings/js/JSDatabaseCallback.cpp: Removed.
+        * bindings/js/JSDatabaseCallback.h: Removed.
+        * bindings/js/JSDatabaseCustom.cpp:
+        (WebCore::JSDatabase::changeVersion):
+        (WebCore::createTransaction):
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        (WebCore::JSSQLTransaction::executeSql):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        * bindings/v8/custom/V8CustomSQLStatementCallback.cpp: Removed.
+        * bindings/v8/custom/V8CustomSQLStatementCallback.h: Removed.
+        * bindings/v8/custom/V8CustomSQLStatementErrorCallback.cpp:
+        (WebCore::V8SQLStatementErrorCallback::handleEvent):
+        * bindings/v8/custom/V8CustomSQLStatementErrorCallback.h: Removed.
+        * bindings/v8/custom/V8CustomSQLTransactionCallback.cpp: Removed.
+        * bindings/v8/custom/V8CustomSQLTransactionCallback.h: Removed.
+        * bindings/v8/custom/V8CustomSQLTransactionErrorCallback.cpp: Removed.
+        * bindings/v8/custom/V8CustomSQLTransactionErrorCallback.h: Removed.
+        * bindings/v8/custom/V8DatabaseCallback.cpp: Removed.
+        * bindings/v8/custom/V8DatabaseCallback.h: Removed.
+        * bindings/v8/custom/V8DatabaseCustom.cpp:
+        (WebCore::V8Database::changeVersionCallback):
+        (WebCore::createTransaction):
+        * bindings/v8/custom/V8SQLTransactionCustom.cpp:
+        (WebCore::V8SQLTransaction::executeSqlCallback):
+        * storage/DatabaseCallback.h:
+        * storage/DatabaseCallback.idl: Added.
+        * storage/SQLStatement.cpp:
+        (WebCore::SQLStatement::performCallback):
+        * storage/SQLStatementCallback.h:
+        * storage/SQLStatementCallback.idl: Added.
+        * storage/SQLStatementErrorCallback.idl: Added.
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::deliverTransactionCallback):
+        * storage/SQLTransactionCallback.h:
+        * storage/SQLTransactionCallback.idl: Added.
+        * storage/SQLTransactionErrorCallback.h:
+        * storage/SQLTransactionErrorCallback.idl: Added.
+
 2010-05-04  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.
