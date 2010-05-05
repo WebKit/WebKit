@@ -1,3 +1,15 @@
+2010-05-05  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        [chromium] Add quota parameter to  WebStorageNamespace::createSessionStorageNamespace
+        https://bugs.webkit.org/show_bug.cgi?id=38589
+
+        * public/WebStorageNamespace.h:
+        (WebKit::WebStorageNamespace::createSessionStorageNamespace):
+        * src/WebStorageNamespaceImpl.cpp:
+        (WebKit::WebStorageNamespace::createSessionStorageNamespace):
+
 2010-05-05  Stuart Morgan  <stuartmorgan@chromium.org>
 
         Reviewed by Darin Fisher.
