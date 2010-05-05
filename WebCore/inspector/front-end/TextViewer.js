@@ -251,9 +251,14 @@ WebInspector.TextViewer.prototype = {
         if (!this._editCallback)
             return;
 
-        var lineRow = e.target.enclosingNodeOrSelfWithNodeName("TR");
-        if (!lineRow)
+        var cell = e.target.enclosingNodeOrSelfWithNodeName("TD");
+        if (!cell)
             return;
+
+        var lineRow = cell.parentElement;
+        if (lineRow.firstChild === cell)
+            return;  // Do not trigger editing from line numbers.
+
         var oldContent = lineRow.lastChild.innerHTML;
         this._editingLine = WebInspector.startEditing(lineRow.lastChild, this._commitEditingLine.bind(this, lineRow.lineNumber, lineRow.lastChild), this._cancelEditingLine.bind(this, lineRow.lastChild, oldContent), null, true);
     },
