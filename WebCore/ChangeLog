@@ -1,3 +1,17 @@
+2010-05-05  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Many AXUnknown showing up in the hierarchy
+        https://bugs.webkit.org/show_bug.cgi?id=38607
+
+        The RenderTableSection should not be an accessible element.
+
+        Test: platform/mac/accessibility/parent-of-table-row-is-table.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+
 2010-05-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Simon Hausmann.
