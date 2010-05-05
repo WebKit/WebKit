@@ -1,3 +1,16 @@
+2010-05-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Make Array.join specialised for actual arrays
+        https://bugs.webkit.org/show_bug.cgi?id=38592
+
+        Bring Array.join in line with the other array methods by specialising for
+        this === an array.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncJoin):
+
 2010-05-04  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Reviewed by Darin Adler.

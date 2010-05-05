@@ -268,7 +268,24 @@ JSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec, JSObject*, JSValue thi
         separator = args.at(0).toString(exec);
 
     unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
-    for (unsigned k = 0; k < length; k++) {
+    unsigned k = 0;
+    if (isJSArray(&exec->globalData(), thisObj)) {
+        JSArray* array = asArray(thisObj);
+        for (; k < length; k++) {
+            if (!array->canGetIndex(k))
+                break;
+            if (k >= 1) {
+                if (separator.isNull())
+                    strBuffer.append(',');
+                else
+                    strBuffer.append(separator);
+            }
+            JSValue element = array->getIndex(k);
+            if (!element.isUndefinedOrNull())
+                strBuffer.append(element.toString(exec));
+        }
+    }
+    for (; k < length; k++) {
         if (k >= 1) {
             if (separator.isNull())
                 strBuffer.append(',');
