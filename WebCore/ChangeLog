@@ -1,3 +1,21 @@
+2010-05-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26824
+        <rdar://problem/7018610> EventHandler can operate on a wrong frame if focus changes during
+        keyboard event dispatch.
+
+        EventHandler object is tied to a frame, so it's wrong for it to continue processing a keyboard
+        event if focused frame changes between keydown and keypress.
+
+        * manual-tests/focus-change-between-key-events.html: Added.
+
+        * page/EventHandler.cpp: (WebCore::EventHandler::keyEvent): Bail out early if focused frame
+        changes while dispatching keydown. Also made similar changes for Windows to maintain matching
+        behavior, even though EventHandler was re-entered anyway due to WM_KEYDOWN and WM_CHAR being
+        separate events.
+
 2010-05-05  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.
