@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Martin Robinson <mrobinson@webkit.org>
+ * Copyright (C) Igalia S.L.
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -165,7 +166,9 @@ void PasteboardHelper::fillSelectionData(GtkSelectionData* selectionData, guint 
         GOwnPtr<gchar> resultData(g_strdup(result.utf8().data()));
         gtk_selection_data_set(selectionData, selectionData->target, 8,
             reinterpret_cast<const guchar*>(resultData.get()), strlen(resultData.get()));
-    }
+
+    } else if (info == getIdForTargetType(TargetTypeImage))
+        gtk_selection_data_set_pixbuf(selectionData, dataObject->image());
 }
 
 GtkTargetList* PasteboardHelper::targetListForDataObject(DataObjectGtk* dataObject)
@@ -182,6 +185,9 @@ GtkTargetList* PasteboardHelper::targetListForDataObject(DataObjectGtk* dataObje
         gtk_target_list_add_uri_targets(list, getIdForTargetType(TargetTypeURIList));
         gtk_target_list_add(list, netscapeURLAtom, 0, getIdForTargetType(TargetTypeNetscapeURL));
     }
+
+    if (dataObject->hasImage())
+        gtk_target_list_add_image_targets(list, getIdForTargetType(TargetTypeImage), TRUE);
 
     return list;
 }
