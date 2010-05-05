@@ -1,3 +1,11 @@
+2010-05-05  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations fix.
+
+        Mark svg/custom/mask-changes.svg and http/tests/loading/bad-scheme-subframe.html as failing on Chromium Linux until they can be triaged.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-05-05  Alexey Proskuryakov  <ap@apple.com>
 
         Roll out r58830 for breaking tests.

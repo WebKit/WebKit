@@ -2839,3 +2839,7 @@ BUG43319 WIN : svg/batik/text/textFeatures.svg = IMAGE
 BUG43319 WIN : svg/batik/text/verticalText.svg = IMAGE
 BUG43319 WIN : svg/custom/foreign-object-skew.svg = IMAGE
 BUG43319 WIN : svg/text/text-fonts-01-t.svg = IMAGE
+
+BUGDPRANKE LINUX : svg/custom/mask-changes.svg = IMAGE
+BUGDPRANKE LINUX : http/tests/loading/bad-scheme-subframe.html = TEXT
+
