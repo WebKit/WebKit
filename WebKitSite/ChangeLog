@@ -1,3 +1,17 @@
+2010-05-04  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix the sticky-notes demo.
+        https://bugs.webkit.org/show_bug.cgi?id=38550
+
+        1. Exceptions thrown by openDatabase() should be treated as
+        failures.
+        2. Do not allow users to create new notes when openDatabase()
+        failed.
+
+        * demos/sticky-notes/index.html:
+
 2010-05-02  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

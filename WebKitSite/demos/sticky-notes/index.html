@@ -18,7 +18,7 @@ body {
 
 .note:hover .closebutton {
     display: block;
-} 
+}
 
 .closebutton {
     display: none;
@@ -52,7 +52,7 @@ body {
 }
 </style>
 <script>
-var db;
+var db = null;
 
 try {
     if (window.openDatabase) {
@@ -61,7 +61,10 @@ try {
             alert("Failed to open the database on disk.  This is probably because the version was bad or there is not enough space left in this domain's quota");
     } else
         alert("Couldn't open the database.  Please try with a WebKit nightly with this feature enabled");
-} catch(err) { }
+} catch(err) {
+    db = null;
+    alert("Couldn't open the database.  Please try with a WebKit nightly with this feature enabled");
+}
 
 var captured = null;
 var highestZ = 0;
@@ -342,11 +345,15 @@ function newNote()
     note.saveAsNew();
 }
 
-addEventListener('load', loaded, false);
+if (db != null)
+    addEventListener('load', loaded, false);
 </script>
 </head>
 <body>
 <p>This page demonstrates the use of the <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/section-sql.html">HTML 5 Client-side Database Storage API</a>. Any notes you create will be saved in a database on your local hard drive, and will be reloaded from that database the next time you visit this page. To try it out, use a <a href="http://nightly.webkit.org/">WebKit Nightly Build</a>.</p>
-<button onclick="newNote()">New Note</button>
+<button id="newNoteButton" onclick="newNote()">New Note</button>
+<script>
+document.getElementById("newNoteButton").disabled = !db;
+</script>
 </body>
 </html>
