@@ -49,6 +49,7 @@ http/tests/local/send-dragged-file.html
 http/tests/local/send-sliced-dragged-file.html
 http/tests/local/formdata/send-form-data.html
 http/tests/local/formdata/send-form-data-with-sliced-file.html
+http/tests/local/formdata/upload-events.html
 
 # Failing navigation tests
 http/tests/navigation/anchor-frames.html

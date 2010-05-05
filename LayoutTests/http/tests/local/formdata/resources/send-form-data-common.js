@@ -19,15 +19,8 @@ function getFileName(filePath)
     return filePath.substr(index + 1);
 }
 
-function sendFormData(formDataList, fileSliced)
+function dumpResponse(xhr, fileSliced)
 {
-    var formData = new FormData();
-    for (var i = 0; i < formDataList.length; i++)
-        formData.append(formDataList[i]['name'], formDataList[i]['value']);
-
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://127.0.0.1:8000/xmlhttprequest/resources/multipart-post-echo.php", false);
-    xhr.send(formData);
     var responseText = xhr.responseText;
 
     // If we're sending a sliced file among the FormData, a uniquely generated name prefixed with "Blob" is used.
@@ -38,7 +31,24 @@ function sendFormData(formDataList, fileSliced)
     debug(responseText);
 }
 
-function testSendingFormData(dataList)
+function sendFormData(formDataList, fileSliced, sendAsAsync, addEventHandlers)
+{
+    var formData = new FormData();
+    for (var i = 0; i < formDataList.length; i++)
+        formData.append(formDataList[i]['name'], formDataList[i]['value']);
+
+    var xhr = new XMLHttpRequest();
+    if (addEventHandlers)
+        addEventHandlers(xhr, fileSliced);
+
+    xhr.open("POST", "http://127.0.0.1:8000/xmlhttprequest/resources/multipart-post-echo.php", sendAsAsync);
+    xhr.send(formData);
+
+    if (!sendAsAsync)
+        dumpResponse(xhr, fileSliced);
+}
+
+function testSendingFormData(dataList, sendAsAsync, addEventHandlers)
 {
     var filesToDrag = [];
     for (var i = 0; i < dataList.length; i++) {
@@ -74,5 +84,11 @@ function testSendingFormData(dataList)
         }
     }
 
-    sendFormData(formDataList, fileSliced);
+    sendFormData(formDataList, fileSliced, sendAsAsync, addEventHandlers);
+}
+
+function formDataTestingCleanup()
+{
+    // Clean up after ourselves
+    fileInput.parentNode.removeChild(fileInput);
 }

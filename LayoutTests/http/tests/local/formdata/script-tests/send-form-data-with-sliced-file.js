@@ -29,8 +29,7 @@ function runTest()
 
 if (window.eventSender) {
     runTest();
-    // Clean up after ourselves
-    fileInput.parentNode.removeChild(fileInput);
+    formDataTestingCleanup();
 } else {
     testFailed("This test is not interactive, please run using DumpRenderTree");
 }
