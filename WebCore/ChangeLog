@@ -1,3 +1,14 @@
+2010-05-05  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        MediaError.h is missing PassRefPtr.h include
+        https://bugs.webkit.org/show_bug.cgi?id=38575
+
+        No new tests, build fix only.
+
+        * html/MediaError.h:
+
 2010-05-05  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
