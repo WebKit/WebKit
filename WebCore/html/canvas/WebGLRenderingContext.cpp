@@ -979,18 +979,11 @@ WebGLGetInfo WebGLRenderingContext::getFramebufferAttachmentParameter(unsigned l
         m_context->getFramebufferAttachmentParameteriv(target, attachment, GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, &type);
         int value = 0;
         m_context->getFramebufferAttachmentParameteriv(target, attachment, GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &value);
-        // FIXME: should consider canonicalizing these objects
         switch (type) {
-        case GraphicsContext3D::RENDERBUFFER: {
-            RefPtr<WebGLRenderbuffer> tmp = WebGLRenderbuffer::create(this, value);
-            addObject(tmp.get());
-            return WebGLGetInfo(PassRefPtr<WebGLRenderbuffer>(tmp));
-        }
-        case GraphicsContext3D::TEXTURE: {
-            RefPtr<WebGLTexture> tmp = WebGLTexture::create(this, value);
-            addObject(tmp.get());
-            return WebGLGetInfo(PassRefPtr<WebGLTexture>(tmp));
-        }
+        case GraphicsContext3D::RENDERBUFFER:
+            return WebGLGetInfo(findRenderbuffer(static_cast<Platform3DObject>(value)));
+        case GraphicsContext3D::TEXTURE:
+            return WebGLGetInfo(findTexture(static_cast<Platform3DObject>(value)));
         default:
             // FIXME: raise exception?
             return WebGLGetInfo();
@@ -2841,6 +2834,30 @@ void WebGLRenderingContext::detachAndRemoveAllObjects()
         (*it)->detachContext();
         
     m_canvasObjects.clear();
+}
+
+PassRefPtr<WebGLTexture> WebGLRenderingContext::findTexture(Platform3DObject obj)
+{
+    HashSet<RefPtr<CanvasObject> >::iterator pend = m_canvasObjects.end();
+    for (HashSet<RefPtr<CanvasObject> >::iterator it = m_canvasObjects.begin(); it != pend; ++it) {
+        if ((*it)->isTexture() && (*it)->object() == obj) {
+            RefPtr<WebGLTexture> tex = reinterpret_cast<WebGLTexture*>((*it).get());
+            return tex.release();
+        }
+    }
+    return 0;
+}
+
+PassRefPtr<WebGLRenderbuffer> WebGLRenderingContext::findRenderbuffer(Platform3DObject obj)
+{
+    HashSet<RefPtr<CanvasObject> >::iterator pend = m_canvasObjects.end();
+    for (HashSet<RefPtr<CanvasObject> >::iterator it = m_canvasObjects.begin(); it != pend; ++it) {
+        if ((*it)->isRenderbuffer() && (*it)->object() == obj) {
+            RefPtr<WebGLRenderbuffer> buffer = reinterpret_cast<WebGLRenderbuffer*>((*it).get());
+            return buffer.release();
+        }
+    }
+    return 0;
 }
 
 WebGLGetInfo WebGLRenderingContext::getBooleanParameter(unsigned long pname)

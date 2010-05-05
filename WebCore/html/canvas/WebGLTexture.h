@@ -38,10 +38,6 @@ namespace WebCore {
         virtual ~WebGLTexture() { deleteObject(); }
         
         static PassRefPtr<WebGLTexture> create(WebGLRenderingContext*);
-    
-        // For querying previously created objects via e.g. getFramebufferAttachmentParameter
-        // FIXME: should consider canonicalizing these objects
-        static PassRefPtr<WebGLTexture> create(WebGLRenderingContext*, Platform3DObject);
 
         bool isCubeMapRWrapModeInitialized() {
             return cubeMapRWrapModeInitialized;
@@ -53,11 +49,12 @@ namespace WebCore {
 
     protected:
         WebGLTexture(WebGLRenderingContext*);
-        WebGLTexture(WebGLRenderingContext*, Platform3DObject);
 
         virtual void _deleteObject(Platform3DObject);
 
     private:
+        virtual bool isTexture() const { return true; }
+
         bool cubeMapRWrapModeInitialized;
     };
     

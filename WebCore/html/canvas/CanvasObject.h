@@ -51,6 +51,13 @@ namespace WebCore {
 
         WebGLRenderingContext* context() const { return m_context; }
 
+        virtual bool isBuffer() const { return false; }
+        virtual bool isFramebuffer() const { return false; }
+        virtual bool isProgram() const { return false; }
+        virtual bool isRenderbuffer() const { return false; }
+        virtual bool isShader() const { return false; }
+        virtual bool isTexture() const { return false; }
+
     protected:
         CanvasObject(WebGLRenderingContext*);
         virtual void _deleteObject(Platform3DObject) = 0;

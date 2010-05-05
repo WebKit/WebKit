@@ -1,3 +1,37 @@
+2010-05-04  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        getFramebufferAttachmentParameter should return the original WebGLTexture/WebGLRenderbuffer instead of creating new ones sharing names.
+        https://bugs.webkit.org/show_bug.cgi?id=38236
+
+        * html/canvas/CanvasObject.h: Add type check functions.
+        (WebCore::CanvasObject::isBuffer):
+        (WebCore::CanvasObject::isFramebuffer):
+        (WebCore::CanvasObject::isProgram):
+        (WebCore::CanvasObject::isRenderbuffer):
+        (WebCore::CanvasObject::isShader):
+        (WebCore::CanvasObject::isTexture):
+        * html/canvas/WebGLBuffer.h: Add type check functions.
+        (WebCore::WebGLBuffer::isBuffer):
+        * html/canvas/WebGLFramebuffer.h: Add type check functions.
+        (WebCore::WebGLFramebuffer::isFramebuffer):
+        * html/canvas/WebGLProgram.h: Add type check functions.
+        (WebCore::WebGLProgram::isProgram):
+        * html/canvas/WebGLRenderbuffer.cpp: remove constructor using existing name.
+        * html/canvas/WebGLRenderbuffer.h: Add type check functions; remove constructor using existing name.
+        (WebCore::WebGLRenderbuffer::isRenderbuffer):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getFramebufferAttachmentParameter): Return original Texture/Renderbuffer instead of creating new ones.
+        (WebCore::WebGLRenderingContext::findTexture): Find a WebGLTexture using a name.
+        (WebCore::WebGLRenderingContext::findRenderbuffer): Find a WebGLRenderbuffer using a name.
+        * html/canvas/WebGLRenderingContext.h: Add find* functions.
+        * html/canvas/WebGLShader.h: Add type check functions.
+        (WebCore::WebGLShader::isShader):
+        * html/canvas/WebGLTexture.cpp: remove constructor using existing name.
+        * html/canvas/WebGLTexture.h: Add type check functions; remove constructor using existing name.
+        (WebCore::WebGLTexture::isTexture):
+
 2010-05-04  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Simon Hausmann.

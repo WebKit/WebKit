@@ -1,3 +1,13 @@
+2010-05-04  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        getFramebufferAttachmentParameter should return the original WebGLTexture/WebGLRenderbuffer instead of creating new ones sharing names.
+        https://bugs.webkit.org/show_bug.cgi?id=38236
+
+        * fast/canvas/webgl/gl-object-get-calls-expected.txt: Check if getFramebufferAttachmentParameter return a texture/renderbuffer that matches the original one.
+        * fast/canvas/webgl/script-tests/gl-object-get-calls.js: Ditto.
+
 2010-05-04  David Levin  <levin@chromium.org>
 
         Unreviewed tests skips for qt/gtk.

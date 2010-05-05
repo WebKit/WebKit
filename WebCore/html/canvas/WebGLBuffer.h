@@ -64,6 +64,8 @@ namespace WebCore {
         virtual void _deleteObject(Platform3DObject o);
     
     private:
+        virtual bool isBuffer() const { return true; }
+
         RefPtr<WebGLArrayBuffer> m_elementArrayBuffer;
         unsigned m_elementArrayBufferByteLength;
         unsigned m_arrayBufferByteLength;
