@@ -470,8 +470,8 @@ WONTFIX SKIP : fast/dom/Element/id-in-deletebutton.html = TEXT
 // Tests for FAST_MOBILE_SCROLLING. We don't use it.
 WONTFIX BUG32663 WIN LINUX : fast/fast-mobile-scrolling/fixed-position-element.html = IMAGE+TEXT
 WONTFIX BUG32663 WIN LINUX : fast/fast-mobile-scrolling/no-fixed-position-elements.html = IMAGE+TEXT
-WONTFIX BUG32663 MAC : fast/fast-mobile-scrolling/fixed-position-element.html = IMAGE
-WONTFIX BUG32663 MAC : fast/fast-mobile-scrolling/no-fixed-position-elements.html = IMAGE
+WONTFIX BUG32663 MAC : fast/fast-mobile-scrolling/fixed-position-element.html = IMAGE PASS
+WONTFIX BUG32663 MAC : fast/fast-mobile-scrolling/no-fixed-position-elements.html = IMAGE PASS
 
 // Tests for frameset flattening. Relevant only on mobile browsers.
 WONTFIX SKIP : fast/frames/flattening = TIMEOUT
@@ -1744,6 +1744,7 @@ BUG23473 MAC : fast/repaint/shadow-multiple-vertical.html = PASS
 BUG23473 MAC : fast/repaint/table-cell-vertical-overflow.html = PASS
 BUG23473 MAC : fast/repaint/text-shadow.html = PASS
 BUG23473 MAC : fast/repaint/text-shadow-horizontal.html = PASS
+BUG23473 MAC : fast/repaint/fixed-move-after-keyboard-scroll.html = PASS
 
 // Thicker shadow than expected
 BUG23471 MAC : fast/text/stroking.html = IMAGE
@@ -2780,7 +2781,7 @@ BUGYAAR MAC : svg/custom/dominant-baseline-hanging.svg = MISSING
 BUG39855 SLOW DEBUG : editing/selection/extend-selection.html = PASS
 
 // Failing a few times, flak dashboard seems to agree.
-BUG41973 MAC : svg/text/text-text-05-t.svg = IMAGE
+BUG41973 MAC : svg/text/text-text-05-t.svg = IMAGE PASS
 
 // Rolling Skia forward in Chrome tree to get new baselines to check
 // in upstream.
@@ -2840,6 +2841,6 @@ BUG43319 WIN : svg/batik/text/verticalText.svg = IMAGE
 BUG43319 WIN : svg/custom/foreign-object-skew.svg = IMAGE
 BUG43319 WIN : svg/text/text-fonts-01-t.svg = IMAGE
 
-BUGDPRANKE LINUX : svg/custom/mask-changes.svg = IMAGE
+BUGDPRANKE LINUX : svg/custom/mask-changes.svg = IMAGE PASS
 BUGDPRANKE LINUX : http/tests/loading/bad-scheme-subframe.html = TEXT
 
