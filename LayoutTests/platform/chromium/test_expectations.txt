@@ -2503,7 +2503,6 @@ BUG32149 WIN RELEASE : fast/dom/Document/early-document-access.html = TIMEOUT PA
 BUG32195 : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE+TEXT PASS
 
 // Expectations from roll to 53171:53194
-BUG32235 LINUX DEBUG : svg/W3C-SVG-1.1/filters-diffuse-01-f.svg = PASS TEXT
 
 BUG32308 DEBUG : fast/frames/cached-frame-counter.html = TIMEOUT
 
@@ -2660,7 +2659,7 @@ BUG40680 SKIP : fast/media/media-feature-wgt-view-mode.html = FAIL
 
 // Unknown flakiness.
 BUG38704 WIN RELEASE: svg/text/text-text-06-t.svg = CRASH PASS
-BUG38706 : svg/custom/deep-dynamic-updates.svg = IMAGE+TEXT PASS
+BUG38706 : svg/custom/deep-dynamic-updates.svg = IMAGE+TEXT IMAGE PASS
 
 // Caused by http://trac.webkit.org/changeset/56288/
 BUG_JSCHUH WIN LINUX : svg/filters/filterRes.svg = IMAGE+TEXT
