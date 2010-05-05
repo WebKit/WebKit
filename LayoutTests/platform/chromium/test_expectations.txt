@@ -2500,7 +2500,7 @@ BUG32155 : fast/js/Object-getOwnPropertyNames.html = TEXT
 BUG32145 WIN : animations/3d/transform-origin-vs-functions.html = TEXT PASS
 BUG32149 WIN RELEASE : fast/dom/Document/early-document-access.html = TIMEOUT PASS
 
-BUG32195 : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE+TEXT PASS
+BUG32195 : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE+TEXT IMAGE PASS
 
 // Expectations from roll to 53171:53194
 
@@ -2513,7 +2513,7 @@ BUG32675 LINUX : fast/repaint/trailing-floats-root-line-box-overflow.html = IMAG
 
 // Flaky tests found during the roll.
 BUG32679 LINUX DEBUG : http/tests/navigation/lockedhistory-iframe.html = TEXT PASS
-BUG32682 LINUX : svg/W3C-SVG-1.1/filters-conv-01-f.svg = TEXT PASS
+BUG32682 LINUX : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT TEXT PASS
 BUG32684 WIN : inspector/timeline-layout.html = TEXT PASS
 BUG35519 WIN SKIP : http/tests/inspector/inspect-iframe-from-different-domain.html = PASS
 BUG32688 MAC DEBUG : fast/lists/inlineBoxWrapperNullCheck.html = TEXT PASS
@@ -2553,8 +2553,8 @@ BUG33538 : fast/dom/Window/anonymous-slot-with-changes.html = TEXT
 BUG35064 WIN DEBUG : fast/forms/restore-selection-after-layout.html = TEXT PASS
 
 // WebKit roll 54482 to 54493.
-BUG35242 WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = TEXT
-BUG35242 WIN : svg/W3C-SVG-1.1/text-intro-05-t.svg = TEXT
+BUG35242 WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT TEXT
+BUG35242 WIN : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT TEXT
 BUG35240 MAC : svg/custom/use-clipped-hit.svg = IMAGE
 
 // WebKit roll 54493 to 54530: new tests.
@@ -2822,3 +2822,20 @@ BUGDPRANKE WIN : fast/dom/clone-node-z-index.html = TEXT
 BUG43319 WIN : svg/text/text-text-05-t.svg = CRASH
 BUG43319 MAC : transforms/2d/zoom-menulist.html = IMAGE PASS
 BUG43319 MAC : fast/forms/select-empty-option-height.html = TIMEOUT PASS
+BUG43319 WIN LINUX : http/tests/loading/307-after-303-after-post.html = TEXT PASS
+BUG43319 WIN LINUX : http/tests/loading/bad-server-subframe.html = TEXT PASS
+
+// Failures due to Skia roll 560-561
+// The following tests are flaky on the buildbots, but the rebaseline tool pulls down
+// the same exact images from the buildbots.  dglazkov said he'd investigate.
+BUG43319 WIN : editing/pasteboard/block-wrappers-necessary.html = IMAGE
+BUG43319 WIN : fast/backgrounds/repeat/negative-offset-repeat-transformed.html = IMAGE
+BUG43319 WIN : fast/backgrounds/repeat/negative-offset-repeat.html = IMAGE
+BUG43319 WIN : fast/css/css2-system-fonts.html = IMAGE
+BUG43319 WIN : svg/W3C-SVG-1.1/animate-elem-52-t.svg = IMAGE
+BUG43319 WIN : svg/W3C-SVG-1.1/masking-intro-01-f.svg = IMAGE
+BUG43319 WIN : svg/W3C-SVG-1.1/text-fonts-01-t.svg = IMAGE
+BUG43319 WIN : svg/batik/text/textFeatures.svg = IMAGE
+BUG43319 WIN : svg/batik/text/verticalText.svg = IMAGE
+BUG43319 WIN : svg/custom/foreign-object-skew.svg = IMAGE
+BUG43319 WIN : svg/text/text-fonts-01-t.svg = IMAGE
