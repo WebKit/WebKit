@@ -1,3 +1,18 @@
+2010-05-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38497
+        <rdar://problem/7759438> Make sure that http URLs always have a host in SecurityOrigin
+
+        This is a hardening fix, and behavior really depends on what an underlying networking layer
+        does. So, no test.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::schemeRequiresAuthority): List schemes that need an authority for successful loading.
+        (WebCore::SecurityOrigin::SecurityOrigin): Never let e.g. http origins with empty authorities
+        have the same security origin.
+
 2010-05-04  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.

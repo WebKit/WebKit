@@ -89,6 +89,20 @@ static URLSchemesMap& schemesWithUniqueOrigins()
     return schemesWithUniqueOrigins;
 }
 
+static bool schemeRequiresAuthority(const String& scheme)
+{
+    DEFINE_STATIC_LOCAL(URLSchemesMap, schemes, ());
+
+    if (schemes.isEmpty()) {
+        schemes.add("http");
+        schemes.add("https");
+        schemes.add("ftp");
+    }
+
+    return schemes.contains(scheme);
+}
+
+
 SecurityOrigin::SecurityOrigin(const KURL& url, SandboxFlags sandboxFlags)
     : m_sandboxFlags(sandboxFlags)
     , m_protocol(url.protocol().isNull() ? "" : url.protocol().lower())
@@ -102,6 +116,10 @@ SecurityOrigin::SecurityOrigin(const KURL& url, SandboxFlags sandboxFlags)
     // These protocols do not create security origins; the owner frame provides the origin
     if (m_protocol == "about" || m_protocol == "javascript")
         m_protocol = "";
+
+    // For edge case URLs that were probably misparsed, make sure that the origin is unique.
+    if (schemeRequiresAuthority(m_protocol) && m_host.isEmpty())
+        m_isUnique = true;
 
     // document.domain starts as m_host, but can be set by the DOM.
     m_domain = m_host;
