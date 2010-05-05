@@ -1,3 +1,13 @@
+2010-05-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Qt port should use its own QUuid class to create UUID string.
+        https://bugs.webkit.org/show_bug.cgi?id=38581
+
+        * platform/UUID.cpp:
+        (WebCore::createCanonicalUUIDString): Added PLATFORM(QT) case.
+
 2010-05-05  Alexey Proskuryakov  <ap@apple.com>
 
         Roll out r58830 for breaking tests.

@@ -33,6 +33,10 @@
 
 #include "NotImplemented.h"
 
+#if PLATFORM(QT)
+#include <QUuid>
+#endif
+
 #if OS(WINDOWS)
 #include <objbase.h>
 #ifndef ARRAYSIZE
@@ -51,7 +55,12 @@ static const int uuidVersionIdentifierIndex = 14;
 
 String createCanonicalUUIDString()
 {
-#if OS(WINDOWS)
+#if PLATFORM(QT)
+    QUuid uuid = QUuid::createUuid();
+    String canonicalUuidStr = uuid.toString().mid(1, 36).toLower(); // remove opening and closing bracket and make it lower.
+    ASSERT(canonicalUuidStr[uuidVersionIdentifierIndex] == uuidVersionRequired);
+    return canonicalUuidStr;
+#elif OS(WINDOWS)
     GUID uuid = { 0 };
     HRESULT hr = CoCreateGuid(&uuid);
     if (FAILED(hr))
