@@ -78,7 +78,7 @@ public:
 
     virtual double caretBlinkInterval() const;
 
-#ifdef Q_WS_MAEMO_5
+#if USE(QT_MOBILE_THEME)
     virtual bool isControlStyled(const RenderStyle*, const BorderData&, const FillLayer&, const Color& backgroundColor) const;
     virtual int popupInternalPaddingBottom(RenderStyle*) const;
 #endif

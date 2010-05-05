@@ -123,6 +123,10 @@ maemo5|symbian|embedded {
 }
 
 maemo5 {
+    DEFINES += WTF_USE_QT_MOBILE_THEME=1
+}
+
+contains(DEFINES, WTF_USE_QT_MOBILE_THEME=1) {
     DEFINES += ENABLE_NO_LISTBOX_RENDERING=1
 }
 
@@ -2149,13 +2153,15 @@ SOURCES += \
     ../WebKit/qt/Api/qwebinspector.cpp \
     ../WebKit/qt/Api/qwebkitversion.cpp
 
+
+contains(DEFINES, WTF_USE_QT_MOBILE_THEME=1) {
+    HEADERS += platform/qt/Maemo5Webstyle.h
+    SOURCES += platform/qt/Maemo5Webstyle.cpp
+}
+
 maemo5 {
-    HEADERS += \
-        ../WebKit/qt/WebCoreSupport/QtMaemoWebPopup.h \
-        platform/qt/Maemo5Webstyle.h
-    SOURCES += \
-        ../WebKit/qt/WebCoreSupport/QtMaemoWebPopup.cpp \
-        platform/qt/Maemo5Webstyle.cpp
+    HEADERS += ../WebKit/qt/WebCoreSupport/QtMaemoWebPopup.h
+    SOURCES += ../WebKit/qt/WebCoreSupport/QtMaemoWebPopup.cpp
 }
 
 

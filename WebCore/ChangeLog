@@ -1,3 +1,22 @@
+2010-05-04  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] QT_MOBILE_THEME compile time flag
+        https://bugs.webkit.org/show_bug.cgi?id=38439
+
+        Replacing preprocessor conditional used in RenderThemeQt from Q_WS_MAEMO_5 to
+        USE(QT_MOBILE_THEME).
+
+        * WebCore.pro:
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::RenderThemeQt):
+        (WebCore::RenderThemeQt::qStyle):
+        (WebCore::RenderThemeQt::extraDefaultStyleSheet):
+        (WebCore::RenderThemeQt::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeQt::setPaletteFromPageClientIfExists):
+        * platform/qt/RenderThemeQt.h:
+
 2010-05-04  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Dan Bernstein.
