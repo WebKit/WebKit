@@ -1,3 +1,23 @@
+2010-05-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        PrettyPatch.pretty_diff("") should not hang
+        https://bugs.webkit.org/show_bug.cgi?id=38552
+
+        Also found a bug in PrettyPatch.pretty_diff where it would
+        hang when passed "" as input.
+
+        I suspect there may be bugs in prettify.rb (or our use there-of)
+        where it can hang, which would then cause the testing thread to hang.
+
+        * Scripts/webkitpy/common/prettypatch.py:
+         - Don't hang when passed ""
+        * Scripts/webkitpy/common/prettypatch_unittest.py:
+         - Test that we don't hang when passed ""
+        * Scripts/webkitpy/layout_tests/port/base.py:
+         - Add a FIXME that we should share code with prettypatch.rb
+
 2010-05-04  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.

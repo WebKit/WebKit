@@ -50,16 +50,21 @@ Index: latin1_test
 +latin1 test: \xa0
 """
 
-    def test_pretty_diff_encodings(self):
-        # This is slightly lame that PrettyPatch requires
-        # checkout_root to be passed to it.
+    def _webkit_root(self):
         webkitpy_common = os.path.dirname(__file__)
         webkitpy = os.path.dirname(webkitpy_common)
         scripts = os.path.dirname(webkitpy)
         webkit_tools = os.path.dirname(scripts)
         webkit_root = os.path.dirname(webkit_tools)
+        return webkit_root
 
-        pretty_patch = PrettyPatch(Executive(), webkit_root)
+    def test_pretty_diff_encodings(self):
+        pretty_patch = PrettyPatch(Executive(), self._webkit_root())
         pretty = pretty_patch.pretty_diff(self._diff_with_multiple_encodings)
         self.assertTrue(pretty)  # We got some output
         self.assertTrue(isinstance(pretty, str))  # It's a byte array, not unicode
+
+    def test_pretty_print_empty_string(self):
+        # Make sure that an empty diff does not hang the process.
+        pretty_patch = PrettyPatch(Executive(), self._webkit_root())
+        self.assertEqual(pretty_patch.pretty_diff(""), "")

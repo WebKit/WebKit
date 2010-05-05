@@ -591,6 +591,7 @@ class Port(object):
     _pretty_patch_error_html = "Failed to run PrettyPatch, see error console."
 
     def pretty_patch_text(self, diff_path):
+        # FIXME: Much of this function could move to prettypatch.rb
         global _pretty_patch_available
         if not _pretty_patch_available:
             return self._pretty_patch_error_html

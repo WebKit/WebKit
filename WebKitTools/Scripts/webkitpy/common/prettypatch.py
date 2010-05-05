@@ -31,6 +31,7 @@ import tempfile
 
 
 class PrettyPatch(object):
+    # FIXME: PrettyPatch should not require checkout_root.
     def __init__(self, executive, checkout_root):
         self._executive = executive
         self._checkout_root = checkout_root
@@ -46,6 +47,11 @@ class PrettyPatch(object):
         return diff_file
 
     def pretty_diff(self, diff):
+        # pretify.rb will hang forever if given no input.
+        # Avoid the hang by returning an empty string.
+        if not diff:
+            return ""
+
         pretty_patch_path = os.path.join(self._checkout_root,
                                          "BugsSite", "PrettyPatch")
         prettify_path = os.path.join(pretty_patch_path, "prettify.rb")
