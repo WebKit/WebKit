@@ -135,17 +135,12 @@ addJavaScriptCoreLib(../JavaScriptCore)
 
 
 # HTML5 Media Support
-# We require phonon for versions of Qt < 4.7
-# We require QtMultimedia for versions of Qt >= 4.7
+# We require phonon. QtMultimedia support is disabled currently.
 !contains(DEFINES, ENABLE_VIDEO=.) {
     DEFINES -= ENABLE_VIDEO=1
     DEFINES += ENABLE_VIDEO=0
 
-    lessThan(QT_MINOR_VERSION, 7):contains(QT_CONFIG, phonon) {
-        DEFINES -= ENABLE_VIDEO=0
-        DEFINES += ENABLE_VIDEO=1
-    }
-    !lessThan(QT_MINOR_VERSION, 7):contains(QT_CONFIG, mediaservices) {
+    contains(QT_CONFIG, phonon) {
         DEFINES -= ENABLE_VIDEO=0
         DEFINES += ENABLE_VIDEO=1
     }
@@ -2406,8 +2401,8 @@ contains(DEFINES, ENABLE_VIDEO=1) {
         rendering/RenderMedia.cpp \
         bindings/js/JSAudioConstructor.cpp
 
-        # QtMultimedia since 4.7
-        greaterThan(QT_MINOR_VERSION, 6) {
+        # QtMultimedia disabled currently
+        false:greaterThan(QT_MINOR_VERSION, 6) {
             HEADERS += platform/graphics/qt/MediaPlayerPrivateQt.h
             SOURCES += platform/graphics/qt/MediaPlayerPrivateQt.cpp
 

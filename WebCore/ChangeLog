@@ -1,3 +1,13 @@
+2010-05-05  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Disable Qt Multimedia backend for HTML 5 Audio and Video elements
+
+        Fall back to the Phonon backend until the release situation has been cleared up.
+
+        * WebCore.pro:
+
 2010-05-05  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
