@@ -130,10 +130,12 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
     if (!m_decoder) {
         m_decoder = CGImageSourceCreateIncremental(0);
     } else if (allDataReceived) {
+#if !PLATFORM(WIN)
         // 10.6 bug workaround: image sources with final=false fail to draw into PDF contexts, so re-create image source
         // when data is complete. <rdar://problem/7874035> (<http://openradar.appspot.com/7874035>)
         CFRelease(m_decoder);
         m_decoder = CGImageSourceCreateIncremental(0);
+#endif
     }
     // Create a CGDataProvider to wrap the SharedBuffer.
     data->ref();

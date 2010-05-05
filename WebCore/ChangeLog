@@ -1,3 +1,13 @@
+2010-05-05  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        REGRESSION(r57969) Image decoder is repeatedly destroyed/created in CoreGraphics-based Windows WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=38595
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::setData):
+
 2010-05-05  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adele Peterson.
