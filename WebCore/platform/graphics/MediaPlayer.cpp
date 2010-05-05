@@ -50,7 +50,8 @@
 #elif PLATFORM(GTK)
 #include "MediaPlayerPrivateGStreamer.h"
 #elif PLATFORM(QT)
-#if QT_VERSION < 0x040700
+// QtMultimedia support is disabled currently.
+#if true || (QT_VERSION < 0x040700)
 #include "MediaPlayerPrivatePhonon.h"
 #else
 #include "MediaPlayerPrivateQt.h"
