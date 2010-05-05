@@ -1,3 +1,12 @@
+2010-05-04  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations fix.
+
+        Re-add the two expectations lines that got mistakenly deleted in
+        r58798.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-05-04  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.
