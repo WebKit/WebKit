@@ -90,12 +90,6 @@ namespace WebKit {
         WEBKIT_API void setAutofilled(bool);
         WEBKIT_API void dispatchFormControlChangeEvent();
         WEBKIT_API void setSelectionRange(int, int);
-        // DEPRECATED: The following two methods have been moved to WebFormControlElement.
-        WEBKIT_API WebString name() const;
-        // Returns the name that should be used for the specified |element| when
-        // storing AutoFill data.  This is either the field name or its id, an
-        // empty string if it has no name and no id.
-        WEBKIT_API WebString nameForAutofill() const;
 
 #if WEBKIT_IMPLEMENTATION
         WebInputElement(const WTF::PassRefPtr<WebCore::HTMLInputElement>&);

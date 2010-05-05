@@ -78,18 +78,6 @@ void WebFormElement::getNamedElements(const WebString& name,
     result.assign(tempVector);
 }
     
-void WebFormElement::getInputElements(WebVector<WebInputElement>& result) const
-{
-    const HTMLFormElement* form = constUnwrap<HTMLFormElement>();
-    Vector<RefPtr<HTMLInputElement> > tempVector;
-    for (size_t i = 0; i < form->formElements.size(); i++) {
-        if (form->formElements[i]->hasLocalName(HTMLNames::inputTag))
-            tempVector.append(static_cast<HTMLInputElement*>(
-                form->formElements[i]));
-    }
-    result.assign(tempVector);
-}
-
 void WebFormElement::getFormControlElements(WebVector<WebFormControlElement>& result) const
 {
     const HTMLFormElement* form = constUnwrap<HTMLFormElement>();

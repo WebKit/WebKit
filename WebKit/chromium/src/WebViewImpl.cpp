@@ -862,6 +862,14 @@ void  WebViewImpl::popupClosed(WebCore::PopupContainer* popupContainer)
     }
 }
 
+void WebViewImpl::hideSuggestionsPopup()
+{
+    if (m_suggestionsPopupShowing) {
+        m_suggestionsPopup->hidePopup();
+        m_suggestionsPopupShowing = false;
+    }
+}
+
 Frame* WebViewImpl::focusedWebCoreFrame()
 {
     return m_page.get() ? m_page->focusController()->focusedOrMainFrame() : 0;
@@ -1689,14 +1697,6 @@ WebAccessibilityObject WebViewImpl::accessibilityObject()
         document->axObjectCache()->getOrCreate(document->renderer()));
 }
 
-void WebViewImpl::applyAutofillSuggestions(
-    const WebNode& node,
-    const WebVector<WebString>& suggestions,
-    int defaultSuggestionIndex)
-{
-    applyAutocompleteSuggestions(node, suggestions, defaultSuggestionIndex);
-}
-
 void WebViewImpl::applyAutoFillSuggestions(
     const WebNode& node,
     const WebVector<WebString>& names,
@@ -1815,19 +1815,6 @@ void WebViewImpl::hidePopups()
 {
     hideSelectPopup();
     hideSuggestionsPopup();
-}
-
-void WebViewImpl::hideAutofillPopup()
-{
-    hideSuggestionsPopup();
-}
-
-void WebViewImpl::hideSuggestionsPopup()
-{
-    if (m_suggestionsPopupShowing) {
-        m_suggestionsPopup->hidePopup();
-        m_suggestionsPopupShowing = false;
-    }
 }
 
 void WebViewImpl::performCustomContextMenuAction(unsigned action)

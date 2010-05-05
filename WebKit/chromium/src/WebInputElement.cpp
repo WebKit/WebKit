@@ -94,24 +94,6 @@ void WebInputElement::setSelectionRange(int start, int end)
 {
     unwrap<HTMLInputElement>()->setSelectionRange(start, end);
 }
-    
-WebString WebInputElement::name() const
-{
-    return constUnwrap<HTMLInputElement>()->name();
-}
-    
-WebString WebInputElement::nameForAutofill() const
-{
-    String name = constUnwrap<HTMLInputElement>()->name();
-    String trimmedName = name.stripWhiteSpace();
-    if (!trimmedName.isEmpty())
-        return trimmedName;
-    name = constUnwrap<HTMLInputElement>()->getAttribute(HTMLNames::idAttr);
-    trimmedName = name.stripWhiteSpace();
-    if (!trimmedName.isEmpty())
-        return trimmedName;
-    return String();
-}
 
 WebInputElement::WebInputElement(const PassRefPtr<HTMLInputElement>& elem)
     : WebFormControlElement(elem)

@@ -66,8 +66,6 @@ namespace WebKit {
         WEBKIT_API void submit();
         // FIXME: Deprecate and replace with WebVector<WebElement>.
         WEBKIT_API void getNamedElements(const WebString&, WebVector<WebNode>&);
-        // DEPRECATED: Replaced by getFormControlElements.
-        WEBKIT_API void getInputElements(WebVector<WebInputElement>&) const;
         WEBKIT_API void getFormControlElements(WebVector<WebFormControlElement>&) const;
 
 #if WEBKIT_IMPLEMENTATION
