@@ -1,3 +1,19 @@
+2010-05-05  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: FontView needs Cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=38567
+
+        FontView was missing some of the newer practices for initialization
+        that other Resource Views had. Also its width calculations could
+        result in a single character wrapping. This is general cleanup.
+
+        * inspector/front-end/FontView.js:
+        (WebInspector.FontView): move initialization into contentTabSelected
+        (WebInspector.FontView.prototype.contentTabSelected): handle initialization like other Resource Views
+        (WebInspector.FontView.prototype.updateFontPreviewSize): use a narrower width to prevent text from widowing
+
 2010-05-05  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
