@@ -2171,7 +2171,10 @@ maemo5 {
         LIBS += -lOle32
         LIBS += -luser32
     }
-    wince*: LIBS += -lmmtimer
+    wince* {
+        LIBS += -lmmtimer
+        LIBS += -lOle32
+    }
 
 contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
 
