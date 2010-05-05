@@ -55,7 +55,7 @@ IntRect Widget::frameRect() const
     return platformWidget()->getBounds();
 }
 
-void Widget::setFocus()
+void Widget::setFocus(bool focused)
 {
     notImplemented();
 }

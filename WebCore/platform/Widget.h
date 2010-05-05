@@ -161,7 +161,7 @@ public:
     void invalidate() { invalidateRect(boundsRect()); }
     virtual void invalidateRect(const IntRect&) = 0;
 
-    virtual void setFocus();
+    virtual void setFocus(bool);
 
     void setCursor(const Cursor&);
 

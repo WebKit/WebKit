@@ -128,10 +128,10 @@ void WebPluginContainerImpl::invalidateRect(const IntRect& rect)
     parent()->hostWindow()->invalidateContentsAndWindow(damageRect, false /*immediate*/);
 }
 
-void WebPluginContainerImpl::setFocus()
+void WebPluginContainerImpl::setFocus(bool focused)
 {
-    Widget::setFocus();
-    m_webPlugin->updateFocus(true);
+    Widget::setFocus(focused);
+    m_webPlugin->updateFocus(focused);
 }
 
 void WebPluginContainerImpl::show()

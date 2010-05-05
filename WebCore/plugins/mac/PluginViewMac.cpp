@@ -332,9 +332,13 @@ void PluginView::hide()
     Widget::hide();
 }
 
-void PluginView::setFocus()
+void PluginView::setFocus(bool focused)
 {
-    LOG(Plugins, "PluginView::setFocus()");
+    LOG(Plugins, "PluginView::setFocus(%d)", focused);
+    if (!focused) {
+        Widget::setFocus(focused);
+        return;
+    }
 
     if (platformPluginWidget())
 #if PLATFORM(QT)
@@ -343,7 +347,7 @@ void PluginView::setFocus()
         platformPluginWidget()->SetFocus();
 #endif
    else
-       Widget::setFocus();
+       Widget::setFocus(focused);
 
     // TODO: Also handle and pass on blur events (focus lost)
 
@@ -356,7 +360,7 @@ void PluginView::setFocus()
     record.modifiers = GetCurrentKeyModifiers();
 
     if (!dispatchNPEvent(record))
-        LOG(Events, "PluginView::setFocus(): Get-focus event not accepted");
+        LOG(Events, "PluginView::setFocus(%d): Focus event not accepted", focused);
 #endif
 }
 

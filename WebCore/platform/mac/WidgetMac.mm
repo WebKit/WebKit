@@ -105,8 +105,11 @@ Widget::~Widget()
 }
 
 // FIXME: Should move this to Chrome; bad layering that this knows about Frame.
-void Widget::setFocus()
+void Widget::setFocus(bool focused)
 {
+    if (!focused)
+        return;
+
     Frame* frame = Frame::frameForWidget(this);
     if (!frame)
         return;

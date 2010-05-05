@@ -199,7 +199,7 @@ void Widget::frameRectsChanged()
     evas_object_resize(o, rect.width(), rect.height());
 }
 
-void Widget::setFocus()
+void Widget::setFocus(bool focused)
 {
 }
 

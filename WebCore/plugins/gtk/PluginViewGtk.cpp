@@ -148,10 +148,10 @@ void PluginView::updatePluginWidget()
     setNPWindowIfNeeded();
 }
 
-void PluginView::setFocus()
+void PluginView::setFocus(bool focused)
 {
     ASSERT(platformPluginWidget() == platformWidget());
-    Widget::setFocus();
+    Widget::setFocus(focused);
 }
 
 void PluginView::show()

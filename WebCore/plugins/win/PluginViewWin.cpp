@@ -463,12 +463,12 @@ void PluginView::updatePluginWidget()
     }
 }
 
-void PluginView::setFocus()
+void PluginView::setFocus(bool focused)
 {
-    if (platformPluginWidget())
+    if (focused && platformPluginWidget())
         SetFocus(platformPluginWidget());
 
-    Widget::setFocus();
+    Widget::setFocus(focused);
 }
 
 void PluginView::show()

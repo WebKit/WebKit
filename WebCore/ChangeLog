@@ -1,3 +1,50 @@
+2010-05-05  Stuart Morgan  <stuartmorgan@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add a "focused" parameter to Widget::setFocus, and updates Document
+        so that Widget is informed of focus loss as well as focus gain.
+        Changes all existing setFocus implementations so that they ignore
+        the 'false' case, so no behavior is changed until individual
+        platforms are updated to handle the new case (if they want to).
+
+        https://bugs.webkit.org/show_bug.cgi?id=37961
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode):
+        * platform/Widget.h:
+        * platform/android/WidgetAndroid.cpp:
+        (WebCore::Widget::setFocus):
+        * platform/chromium/WidgetChromium.cpp:
+        (WebCore::Widget::setFocus):
+        * platform/efl/WidgetEfl.cpp:
+        (WebCore::Widget::setFocus):
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::setFocus):
+        * platform/haiku/WidgetHaiku.cpp:
+        (WebCore::Widget::setFocus):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::setFocus):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::setFocus):
+        * platform/win/WidgetWin.cpp:
+        (WebCore::Widget::setFocus):
+        * platform/wx/WidgetWx.cpp:
+        (WebCore::Widget::setFocus):
+        * plugins/PluginView.h:
+        * plugins/PluginViewNone.cpp:
+        (WebCore::PluginView::setFocus):
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::setFocus):
+        * plugins/mac/PluginViewMac.cpp:
+        (WebCore::PluginView::setFocus):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::setFocus):
+        * plugins/symbian/PluginViewSymbian.cpp:
+        (WebCore::PluginView::setFocus):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::setFocus):
+
 2010-05-05  Steve Block  <steveblock@google.com>
 
         Reviewed by Pavel Feldman.

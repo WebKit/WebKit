@@ -1,3 +1,16 @@
+2010-05-05  Stuart Morgan  <stuartmorgan@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Update the plugin container's setFocus implementation to pass the new
+        boolean argument to the next layer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37961
+
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::setFocus):
+        * src/WebPluginContainerImpl.h:
+
 2010-05-04  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Darin Fisher.

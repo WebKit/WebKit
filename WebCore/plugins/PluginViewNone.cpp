@@ -30,7 +30,7 @@ using namespace WTF;
 
 namespace WebCore {
 
-void PluginView::setFocus()
+void PluginView::setFocus(bool)
 {
 }
 

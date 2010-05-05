@@ -1,3 +1,15 @@
+2010-05-05  Stuart Morgan  <stuartmorgan@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Update setFocus for the new boolean argument; no behavioral change.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37961
+
+        * WebCoreSupport/EmbeddedWidget.cpp:
+        (EmbeddedWidget::setFocus):
+        * WebCoreSupport/EmbeddedWidget.h:
+
 2010-05-03  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Adam Barth.

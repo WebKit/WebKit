@@ -101,7 +101,7 @@ void Widget::paint(GraphicsContext*, const IntRect&)
 {
 }
 
-void Widget::setFocus()
+void Widget::setFocus(bool focused)
 {
 }
 

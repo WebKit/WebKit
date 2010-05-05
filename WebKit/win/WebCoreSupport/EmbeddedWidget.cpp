@@ -133,12 +133,12 @@ void EmbeddedWidget::frameRectsChanged()
     }
 }
 
-void EmbeddedWidget::setFocus()
+void EmbeddedWidget::setFocus(bool focused)
 {
-    if (m_window)
+    if (m_window && focused)
         SetFocus(m_window);
 
-    Widget::setFocus();
+    Widget::setFocus(focused);
 }
 
 void EmbeddedWidget::show()
