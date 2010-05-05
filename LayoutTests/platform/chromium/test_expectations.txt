@@ -2763,9 +2763,6 @@ BUGWK38099 WIN LINUX : svg/custom/broken-internal-references.svg = IMAGE+TEXT
 BUGWK38108 MAC : fast/backgrounds/size/contain-and-cover.html = IMAGE
 
 // WebKit roll 58304:58400
-// We're reverting the patch that fixed this test on Linux due to
-// the perf regression described in the bug.
-BUG42760 LINUX : fast/text/international/bold-bengali.html = FAIL
 // Skip since not relevant
 BUGUKAI WIN MAC SKIP : fast/text/international/bold-bengali.html = FAIL
 
@@ -2798,7 +2795,6 @@ BUG43084 MAC DEBUG : media/video-empty-source.html = IMAGE
 // Might revert these:
 BUGYAAR : fast/css/input-search-padding.html = IMAGE+TEXT
 BUGYAAR WIN LINUX : fast/forms/search-vertical-alignment.html = IMAGE
-BUGYAAR LINUX : fast/forms/placeholder-pseudo-style.html = IMAGE
 BUGYAAR MAC : fast/forms/search-zoomed.html = IMAGE
 BUGYAAR WIN : fast/forms/searchfield-heights.html = IMAGE
 
@@ -2820,4 +2816,3 @@ BUGDPRANKE MAC : editing/selection/caret-rtl-2.html = IMAGE
 BUGJOHNNYG DEFER : fast/notifications/notifications-replace.html = TEXT
 BUGJOHNNYG DEFER : fast/notifications/notifications-rtl.html = TEXT
 
-BUGDPRANKE WIN : fast/dom/clone-node-z-index.html = TEXT
