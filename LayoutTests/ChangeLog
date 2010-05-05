@@ -1,5 +1,14 @@
 2010-05-05  Jeremy Moskovich  <jeremy@chromium.org>
 
+        Unreviewed, updated baselines - 1st batch.
+
+        skia r561 broke a bunch of chromium image baselines.
+        <long list of new image baselines redacted>
+
+        * platform/chromium/test_expectations.txt:
+
+2010-05-05  Jeremy Moskovich  <jeremy@chromium.org>
+
         Unreviewed, expectations change.
 
         recommit r58747 - Preparing for chromium skia roll incorporating changes up to r561.
