@@ -1,3 +1,17 @@
+2010-05-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Improve check for drawing into the window that was added in r58623
+        https://bugs.webkit.org/show_bug.cgi?id=38562
+        
+        Rather than assuming that any non-bitmap context is the window's context,
+        compare the current graphics context with -[NSWindow graphicsContext] to
+        determine that we're drawing into the window.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView drawRect:]):
+
 2010-05-04  Ada Chan  <adachan@apple.com>
 
         Reviewed by David Kilzer.

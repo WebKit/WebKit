@@ -3313,9 +3313,9 @@ WEBCORE_COMMAND(yankAndSelect)
         [self _setAsideSubviews];
 
 #if USE(ACCELERATED_COMPOSITING)
-    // If we're not drawing to the window, we don't want to perturb the delicate synchronization dance.
-    if (!WKCGContextIsBitmapContext(static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]))
-        && [webView _needsOneShotDrawingSynchronization]) {
+    // Only do the synchronization dance if we're drawing into the window, otherwise
+    // we risk disabling screen updates when no flush is pending.
+    if ([NSGraphicsContext currentContext] == [[self window] graphicsContext] && [webView _needsOneShotDrawingSynchronization]) {
         // Disable screen updates to minimize the chances of the race between the CA
         // display link and AppKit drawing causing flashes.
         [[self window] disableScreenUpdatesUntilFlush];
