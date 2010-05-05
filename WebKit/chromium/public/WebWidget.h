@@ -90,6 +90,10 @@ public:
     // Changes the text direction of the selected input node.
     virtual void setTextDirection(WebTextDirection) = 0;
 
+    // Returns true if the WebWidget uses GPU accelerated compositing
+    // to render its contents.
+    virtual bool isAcceleratedCompositingActive() const = 0;
+
 protected:
     ~WebWidget() { }
 };

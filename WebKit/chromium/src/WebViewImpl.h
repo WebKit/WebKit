@@ -100,6 +100,7 @@ public:
     virtual bool queryCompositionStatus(bool* enabled,
                                         WebRect* caretRect);
     virtual void setTextDirection(WebTextDirection direction);
+    virtual bool isAcceleratedCompositingActive() const;
 
     // WebView methods:
     virtual void initializeMainFrame(WebFrameClient*);
@@ -359,8 +360,7 @@ private:
                                                DragAction);
 
 #if USE(ACCELERATED_COMPOSITING)
-    void setAcceleratedCompositing(bool);
-    bool isAcceleratedCompositing() const { return m_isAcceleratedCompositing; }
+    void setIsAcceleratedCompositingActive(bool);
     void updateRootLayerContents(const WebRect&);
 #endif
 
@@ -496,7 +496,7 @@ private:
 
 #if USE(ACCELERATED_COMPOSITING)
     OwnPtr<WebCore::LayerRendererChromium> m_layerRenderer;
-    bool m_isAcceleratedCompositing;
+    bool m_isAcceleratedCompositingActive;
 #endif
     static const WebInputEvent* m_currentInputEvent;
 };

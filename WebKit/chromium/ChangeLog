@@ -1,3 +1,23 @@
+2010-05-04  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Provide an API for querying whether a WebWidget is using gpu accelerated compositing.
+        Also changed: isAcceleratedCompositing to: isAcceleratedCompositingActive.
+        https://bugs.webkit.org/show_bug.cgi?id=38220
+
+        * public/WebWidget.h:
+        * src/WebPopupMenuImpl.h:
+        (WebKit::WebPopupMenuImpl::isAcceleratedCompositingActive):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::paint):
+        (WebKit::WebViewImpl::isAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::setRootGraphicsLayer):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::updateRootLayerContents):
+        * src/WebViewImpl.h:
+
 2010-04-29  John Gregg  <johnnyg@google.com>
 
         Reviewed by Dmitry Titov.

@@ -242,7 +242,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_haveMouseCapture(false)
 #if USE(ACCELERATED_COMPOSITING)
     , m_layerRenderer(0)
-    , m_isAcceleratedCompositing(false)
+    , m_isAcceleratedCompositingActive(false)
 #endif
 {
     // WebKit/win/WebView.cpp does the same thing, except they call the
@@ -944,7 +944,7 @@ void WebViewImpl::paint(WebCanvas* canvas, const WebRect& rect)
 {
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (!isAcceleratedCompositing()) {
+    if (!isAcceleratedCompositingActive()) {
 #endif
         WebFrameImpl* webframe = mainFrameImpl();
         if (webframe)
@@ -1278,6 +1278,15 @@ void WebViewImpl::setTextDirection(WebTextDirection direction)
         notImplemented();
         break;
     }
+}
+
+bool WebViewImpl::isAcceleratedCompositingActive() const
+{
+#if USE(ACCELERATED_COMPOSITING)
+    return m_isAcceleratedCompositingActive;
+#else
+    return false;
+#endif
 }
 
 // WebView --------------------------------------------------------------------
@@ -2057,29 +2066,29 @@ bool WebViewImpl::tabsToLinks() const
 #if USE(ACCELERATED_COMPOSITING)
 void WebViewImpl::setRootGraphicsLayer(WebCore::PlatformLayer* layer)
 {
-    setAcceleratedCompositing(layer ? true : false);
+    setIsAcceleratedCompositingActive(layer ? true : false);
     if (m_layerRenderer)
         m_layerRenderer->setRootLayer(layer);
 }
 
-void WebViewImpl::setAcceleratedCompositing(bool accelerated)
+void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 {
-    if (m_isAcceleratedCompositing == accelerated)
+    if (m_isAcceleratedCompositingActive == active)
         return;
 
-    if (accelerated) {
+    if (active) {
         m_layerRenderer = LayerRendererChromium::create();
         if (m_layerRenderer)
-            m_isAcceleratedCompositing = true;
+            m_isAcceleratedCompositingActive = true;
     } else {
         m_layerRenderer = 0;
-        m_isAcceleratedCompositing = false;
+        m_isAcceleratedCompositingActive = false;
     }
 }
 
 void WebViewImpl::updateRootLayerContents(const WebRect& rect)
 {
-    if (!isAcceleratedCompositing())
+    if (!isAcceleratedCompositingActive())
         return;
 
     WebFrameImpl* webframe = mainFrameImpl();
