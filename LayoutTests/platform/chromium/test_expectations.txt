@@ -2798,6 +2798,7 @@ BUG43084 MAC DEBUG : media/video-empty-source.html = IMAGE
 // Might revert these:
 BUGYAAR : fast/css/input-search-padding.html = IMAGE+TEXT
 BUGYAAR WIN LINUX : fast/forms/search-vertical-alignment.html = IMAGE
+BUGYAAR LINUX : fast/forms/placeholder-pseudo-style.html = IMAGE
 BUGYAAR MAC : fast/forms/search-zoomed.html = IMAGE
 BUGYAAR WIN : fast/forms/searchfield-heights.html = IMAGE
 
@@ -2819,3 +2820,4 @@ BUGDPRANKE MAC : editing/selection/caret-rtl-2.html = IMAGE
 BUGJOHNNYG DEFER : fast/notifications/notifications-replace.html = TEXT
 BUGJOHNNYG DEFER : fast/notifications/notifications-rtl.html = TEXT
 
+BUGDPRANKE WIN : fast/dom/clone-node-z-index.html = TEXT

@@ -1,3 +1,16 @@
+2010-05-04  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
+        Mark fast/forms/placeholder-pseudo-style.html as an IMAGE diff on 
+        chromium-linux . This was mistaken deleted earlier today. Mark
+        fast/dom/clone-node-z-index.html as a TEXT diff on chromium-win; I 
+        haven't looked at this yet but I need to roll past this to get the
+        new-run-webkit-tests change I checked in in r58789 downstream to
+        the Chromium bots.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-05-04  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.
