@@ -1,32 +1,32 @@
 <html>
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+var successfullyParsed = false;
 </script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
 <body id="body">
 
-    <!-- This test makes sure that an input image returns its alt tag as the description -->
- 
     <input type="image" alt="Submit" src="resources/cake.png" width=100 height=100 id="image1">
     
-    <div id="result"></div>
+    <p id="description"></p>
+    <div id="console"></div>
      
     <script>
         if (window.accessibilityController) {
-            var result = document.getElementById("result");
+            description("This test makes sure that an input image returns its alt tag as the description");
 
-            var image1 = document.getElementById("image1");
-            image1.focus();
+            var image1 = document.getElementById("image1").focus();
             var img = accessibilityController.focusedElement;
 
-            var pattern = "Description: Submit";
-            if (img.allAttributes().indexOf(pattern) != -1) {
-                result.innerText += "Test passed\n";
-            }
-            else {
-                 result.innerText += "Test failed\n";
-            }
+            shouldBe("img.description", "'AXDescription: Submit'");
         }
+        successfullyParsed = true;
     </script>
-</body>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+
+</body> 
 </html>

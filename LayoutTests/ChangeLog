@@ -1,3 +1,22 @@
+2010-05-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        AX: layout tests need to be updated to reflect what is being tested
+        https://bugs.webkit.org/show_bug.cgi?id=38556
+
+        Many of the initial AX layout tests just dumped a lot of attributes and did not
+        have a focused test. This updates some of those tests (more to follow in the future).
+
+        * accessibility/image-map1.html:
+        * accessibility/img-aria-button-alt-tag-expected.txt:
+        * accessibility/img-aria-button-alt-tag.html:
+        * accessibility/input-image-alt-expected.txt:
+        * accessibility/input-image-alt.html:
+        * accessibility/placeholder-expected.txt:
+        * accessibility/placeholder.html:
+        * platform/mac/accessibility/image-map1-expected.txt:
+
 2010-05-04  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.

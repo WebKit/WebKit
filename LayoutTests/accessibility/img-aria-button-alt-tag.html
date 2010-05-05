@@ -1,32 +1,35 @@
 <html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
 <script>
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
 </script>
 <body id="body">
  
-    <!-- This test makes sure that a img acting as an aria button still returns its alt tag as the description -->
- 
     <img id='image' src="resources/cake.png" role="button" alt="alternate" title="title">
     
-    <div id="result"></div>
-
+    <p id="description"></p>
+    <div id="console"></div>
      
     <script>
+        description("This test makes sure that a img acting as an aria button still returns its alt tag as the description");
+ 
         if (window.accessibilityController) {
             var result = document.getElementById("result");
 
-            var body = document.getElementById("body");
-            body.focus();
+            var body = document.getElementById("body").focus();
             var imgUIElement = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0);
-            var pattern = "AXDescription: alternate";
-            if (imgUIElement.allAttributes().indexOf(pattern) != -1) {
-                result.innerText += "Test passed\n";
-            }
-            else {
-                 result.innerText += "Test failed\n";
-            }
+            shouldBe("imgUIElement.description", "'AXDescription: alternate'");
         }
+        successfullyParsed = true;
     </script>
+    
+<script src="../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

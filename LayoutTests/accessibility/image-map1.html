@@ -1,11 +1,16 @@
 <html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
 <script>
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
 </script>
 <body id="body">
-    
-    <div id="result"></div>
     
     <!-- Test image map -->
     <map id="apple" name="imagemap1">
@@ -17,17 +22,28 @@
 
     <img src="resources/cake.png"  border="0" align="left" usemap="#imagemap1" vspace="1">
 
+<p id="description"></p>
+<div id="console"></div>
      
     <script>
-        if (window.accessibilityController) {
-            var result = document.getElementById("result");
+        description("This tests that you can reach the links within an image map.");
 
-            var body = document.getElementById("body");
-            body.focus();
-            result.innerText += "Image map - test 1 - 3 Links\n";
-            result.innerText += "----------------------\n";
-            result.innerText += accessibilityController.focusedElement.attributesOfChildren() + "\n\n"; 
+        if (window.accessibilityController) {
+            document.getElementById("body").focus();
+
+            var body = accessibilityController.focusedElement;
+            shouldBe("body.childAtIndex(0).role", "'AXRole: AXLink'");
+            shouldBe("body.childAtIndex(0).title", "'AXTitle: Link1'");
+
+            shouldBe("body.childAtIndex(1).role", "'AXRole: AXLink'");
+            shouldBe("body.childAtIndex(1).title", "'AXTitle: Link2'");
+
+            shouldBe("body.childAtIndex(2).role", "'AXRole: AXLink'");
+            shouldBe("body.childAtIndex(2).title", "'AXTitle: Link3'");
         }
-    </script>
+   successfullyParsed = true;
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
