@@ -1053,6 +1053,8 @@ webcore_sources += \
 	WebCore/html/FileError.h \
 	WebCore/html/FileList.cpp \
 	WebCore/html/FileList.h \
+	WebCore/html/FileReader.cpp \
+	WebCore/html/FileReader.h \
 	WebCore/html/FileStream.cpp \
 	WebCore/html/FileStream.h \
 	WebCore/html/FileStreamClient.h \

@@ -42,6 +42,8 @@ namespace WebCore {
 FileStream::FileStream(FileStreamClient* client)
     : m_client(client)
     , m_handle(invalidPlatformFileHandle)
+    , m_bytesProcessed(0)
+    , m_totalBytesToRead(0)
 {
 }
 
@@ -63,10 +65,56 @@ void FileStream::stop()
     m_client->didStop();
 }
 
-void FileStream::openForRead(Blob*)
+void FileStream::openForRead(Blob* blob)
 {
     ASSERT(!isMainThread());
-    // FIXME: to be implemented.
+
+    if (isHandleValid(m_handle))
+        return;
+
+    // Check if the file exists by querying its modification time. We choose not to call fileExists() in order to save an
+    // extra file system call when the modification time is needed to check the validity of the sliced file blob.
+    // Per the spec, we need to return different error codes to differentiate between non-existent file and permission error.
+    // openFile() could not tell use the failure reason.
+    time_t currentModificationTime;
+    if (!getFileModificationTime(blob->path(), currentModificationTime)) {
+        m_client->didFail(NOT_FOUND_ERR);
+        return;
+    }
+
+    // Open the file blob.
+    m_handle = openFile(blob->path(), OpenForRead);
+    if (!isHandleValid(m_handle)) {
+        m_client->didFail(NOT_READABLE_ERR);
+        return;
+    }
+
+#if ENABLE(BLOB_SLICE)
+    // Check the modificationt time for the possible file change.
+    if (blob->modificationTime() != Blob::doNotCheckFileChange && static_cast<time_t>(blob->modificationTime()) != currentModificationTime) {
+        m_client->didFail(NOT_READABLE_ERR);
+        return;
+    }
+
+    // Jump to the beginning position if the file has been sliced.
+    if (blob->start() > 0) {
+        if (!seekFile(m_handle, blob->start(), SeekFromBeginning)) {
+            m_client->didFail(NOT_READABLE_ERR);
+            return;
+        }
+    }
+#endif
+
+    // Get the size.
+#if ENABLE(BLOB_SLICE)
+    m_totalBytesToRead = blob->length();
+    if (m_totalBytesToRead == Blob::toEndOfFile)
+        m_totalBytesToRead = blob->size() - blob->start();
+#else
+    m_total = blob->size();
+#endif
+
+    m_client->didGetSize(m_totalBytesToRead);
 }
 
 void FileStream::openForWrite(const String&)
@@ -78,14 +126,41 @@ void FileStream::openForWrite(const String&)
 void FileStream::close()
 {
     ASSERT(!isMainThread());
-    if (isHandleValid(m_handle))
+    if (isHandleValid(m_handle)) {
         closeFile(m_handle);
+        m_handle = invalidPlatformFileHandle;
+    }
 }
 
-void FileStream::read(char*, int)
+void FileStream::read(char* buffer, int length)
 {
     ASSERT(!isMainThread());
-    // FIXME: to be implemented.
+
+    if (!isHandleValid(m_handle)) {
+        m_client->didFail(NOT_READABLE_ERR);
+        return;
+    }
+
+    if (m_bytesProcessed >= m_totalBytesToRead) {
+        m_client->didFinish();
+        return;
+    }
+
+    long long remaining = m_totalBytesToRead - m_bytesProcessed;
+    int bytesToRead = (remaining < length) ? static_cast<int>(remaining) : length;
+    int bytesRead = readFromFile(m_handle, buffer, bytesToRead);
+    if (bytesRead < 0) {
+        m_client->didFail(NOT_READABLE_ERR);
+        return;
+    }
+
+    if (!bytesRead) {
+        m_client->didFinish();
+        return;
+    }
+
+    m_bytesProcessed += bytesRead;
+    m_client->didRead(buffer, bytesRead);
 }
 
 void FileStream::write(Blob*, long long, int)
@@ -102,4 +177,4 @@ void FileStream::truncate(long long)
 
 } // namespace WebCore
 
-#endif // ENABLE(FILE_WRITER) || ENABLE_FILE_READER)
+#endif // ENABLE(FILE_READER) || ENABLE(FILE_WRITER)

@@ -155,6 +155,8 @@ namespace WebCore {
     \
     macro(success) \
     \
+    macro(loadend) \
+    \
 // end of DOM_EVENT_NAMES_FOR_EACH
 
     class EventNames : public Noncopyable {

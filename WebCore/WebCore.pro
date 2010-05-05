@@ -599,6 +599,7 @@ SOURCES += \
     html/DOMFormData.cpp \
     html/File.cpp \
     html/FileList.cpp \
+    html/FileReader.cpp \
     html/FileStream.cpp \
     html/FileStreamProxy.cpp \
     html/FileThread.cpp \
@@ -1316,6 +1317,7 @@ HEADERS += \
     html/File.h \
     html/FileError.h \
     html/FileList.h \
+    html/FileReader.h \
     html/FileStream.h \
     html/FileStreamClient.h \
     html/FileStreamProxy.h \

@@ -1432,6 +1432,8 @@
             'html/FileError.h',
             'html/FileList.cpp',
             'html/FileList.h',
+            'html/FileReader.cpp',
+            'html/FileReader.h',
             'html/FileStream.cpp',
             'html/FileStream.h',
             'html/FileStreamClient.h',

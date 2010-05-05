@@ -30387,6 +30387,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\FileReader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\FileReader.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\FileStream.cpp"
 				>
 			</File>

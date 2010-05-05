@@ -156,6 +156,13 @@ Notification* EventTarget::toNotification()
 }
 #endif
 
+#if ENABLE(FILE_READER)
+FileReader* EventTarget::toFileReader()
+{
+    return 0;
+}
+#endif
+
 bool EventTarget::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
     EventTargetData* d = ensureEventTargetData();

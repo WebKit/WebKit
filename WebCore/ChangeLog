@@ -1,3 +1,36 @@
+2010-05-05  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Implement FileReader class.
+        https://bugs.webkit.org/show_bug.cgi?id=38157
+
+        This patch only contains the implementation of FileReader class as defined
+        in the File API spec: http://www.w3.org/TR/file-upload/#dfn-filereader.
+
+        New test will be added when a IDL is exposed and the FILE_READER is turned
+        on.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventNames.h:
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::toFileReader):
+        * dom/EventTarget.h:
+        * html/FileError.h:
+        (WebCore::FileError::FileError):
+        * html/FileReader.cpp: Added.
+        * html/FileReader.h: Added.
+        * html/FileStream.cpp:
+        (WebCore::FileStream::FileStream):
+        (WebCore::FileStream::openForRead):
+        (WebCore::FileStream::close):
+        (WebCore::FileStream::read):
+        * html/FileStream.h:
+
 2010-05-05  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Maciej Stachowiak.
