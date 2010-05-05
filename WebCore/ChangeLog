@@ -1,3 +1,25 @@
+2010-05-05  Steve Block  <steveblock@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Move V8 ScriptDebugServer::topStackFrame() to ScriptCallStack
+        https://bugs.webkit.org/show_bug.cgi?id=38531
+
+        ScriptCallStack::create() uses ScriptDebugServer::topStackFrame(), but ScriptDebugServer
+        is guarded with ENABLE(JAVASCRIPT_DEBUGGER). This prevents ScriptCallStack from being
+        built on platforms that do not define ENABLE(JAVASCRIPT_DEBUGGER).
+
+        No new tests, build fix only.
+
+        * bindings/v8/ScriptCallStack.cpp:
+        (WebCore::ScriptCallStack::callLocation):
+        (WebCore::ScriptCallStack::createUtilityContext): Helper for topStackFrame, moved from ScriptDebugServer
+        (WebCore::ScriptCallStack::topStackFrame): Moved from ScriptDebugServer
+        * bindings/v8/ScriptCallStack.h:
+        (WebCore::ScriptCallStack::utilityContext): Helper for topStackFrame, moved from ScriptDebugServer
+        * bindings/v8/ScriptDebugServer.cpp:
+        * bindings/v8/ScriptDebugServer.h:
+
 2010-05-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Simon Hausmann.
