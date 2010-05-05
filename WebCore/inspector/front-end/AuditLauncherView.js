@@ -70,13 +70,12 @@ WebInspector.AuditLauncherView.prototype = {
         if (!this._auditPresentStateLabelElement)
             return;
 
-        this._resetResourceCount();
-
         if (isTracking) {
             this._auditPresentStateLabelElement.nodeValue = WebInspector.UIString("Audit Present State");
             this._auditPresentStateElement.disabled = false;
             this._auditPresentStateElement.parentElement.removeStyleClass("disabled");
         } else {
+            this._resetResourceCount();
             this._auditPresentStateLabelElement.nodeValue = WebInspector.UIString("Audit Present State (Resource Tracking must be enabled)");
             this._auditPresentStateElement.disabled = true;
             this._auditPresentStateElement.parentElement.addStyleClass("disabled");
@@ -268,12 +267,12 @@ WebInspector.AuditLauncherView.prototype = {
         if (!this._resourceProgressContainer)
             return;
 
-        if (!this._auditRunning)
+        if (!this._auditRunning) {
+            this._resetResourceCount();
             this._resourceProgressContainer.addStyleClass("hidden");
-        else {
+        } else
             this._resourceProgressContainer.removeStyleClass("hidden");
-            this._resourceProgressTextElement.textContent = WebInspector.UIString("Loading (%d of %d)", this.loadedResources, this.totalResources);
-        }
+        this._resourceProgressTextElement.textContent = WebInspector.UIString("Loading (%d of %d)", this.loadedResources, this.totalResources);
     },
 
     _updateButton: function()

@@ -1,3 +1,14 @@
+2010-05-05  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Audits panel: Resource counters get reset when switching panels while reloading page
+        https://bugs.webkit.org/show_bug.cgi?id=38579
+
+        * inspector/front-end/AuditLauncherView.js:
+        (WebInspector.AuditLauncherView.prototype.updateResourceTrackingState):
+        (WebInspector.AuditLauncherView.prototype._updateResourceProgress):
+
 2010-05-05  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Joseph Pecoraro.
