@@ -2,6 +2,19 @@
 
         Reviewed by Adele Peterson.
 
+        https://bugs.webkit.org/show_bug.cgi?id=38546
+        Node.focus() fails to move focus from subframe properly
+
+        Test: fast/frames/take-focus-from-iframe.html
+
+        * html/HTMLFrameElementBase.cpp: (WebCore::HTMLFrameElementBase::setFocus): Don't clear
+        focus if this frame doesn't have it. This can happen if page's and HTMLFrameElement's ideas
+        of focused frame get out of sync temporarily.
+
+2010-05-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adele Peterson.
+
         https://bugs.webkit.org/show_bug.cgi?id=26824
         <rdar://problem/7018610> EventHandler can operate on a wrong frame if focus changes during
         keyboard event dispatch.
