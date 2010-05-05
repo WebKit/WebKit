@@ -1232,15 +1232,18 @@ def read_test_files(files):
     return tests
 
 
-def run(port_obj, options, args):
+def run(port_obj, options, args, regular_output=sys.stderr,
+        buildbot_output=sys.stdout):
     """Run the tests.
 
     Args:
       port_obj: Port object for port-specific behavior
       options: a dictionary of command line options
       args: a list of sub directories or files to test
-      print_results: whether or not to log anything to stdout.
-          Set to false by the unit tests
+      regular_output: a stream-like object that we can send logging/debug
+          output to
+      buildbot_output: a stream-like object that we can write all output that
+          is intended to be parsed by the buildbot to
     Returns:
       the number of unexpected results that occurred, or -1 if there is an
           error.
@@ -1253,8 +1256,8 @@ def run(port_obj, options, args):
         # FIXME: Investigate perf/flakiness impact of using cpu_count + 1.
         options.child_processes = port_obj.default_child_processes()
 
-    printer = printing.Printer(port_obj, options, regular_output=sys.stderr,
-        buildbot_output=sys.stdout,
+    printer = printing.Printer(port_obj, options, regular_output=regular_output,
+        buildbot_output=buildbot_output,
         child_processes=int(options.child_processes),
         is_fully_parallel=options.experimental_fully_parallel)
     if options.help_printing:
@@ -1316,7 +1319,7 @@ def run(port_obj, options, args):
                    (options.time_out_ms, options.slow_time_out_ms))
 
     if int(options.child_processes) == 1:
-        printer.print_config("Running one %s" % port_obj.driver_name)
+        printer.print_config("Running one %s" % port_obj.driver_name())
     else:
         printer.print_config("Running %s %ss in parallel" % (
                        options.child_processes, port_obj.driver_name()))

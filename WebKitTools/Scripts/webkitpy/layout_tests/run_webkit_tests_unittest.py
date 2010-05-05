@@ -39,6 +39,29 @@ from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.thirdparty.mock import Mock
 
 
+class ArrayStream(object):
+    def __init__(self):
+        self._contents = []
+
+    def write(self, msg):
+        self._contents.append(msg)
+
+    def get(self):
+        return self._contents
+
+    def reset(self):
+        self._contents = []
+
+    def empty(self):
+        return (len(self._contents) == 0)
+
+    def flush(self):
+        pass
+
+    def __repr__(self):
+        return '<ArrayStream: ' + str(self._contents) + '>'
+
+
 def passing_run(args, port_obj=None, logging_included=False):
     if not logging_included:
         args.extend(['--print', 'nothing'])
@@ -47,6 +70,16 @@ def passing_run(args, port_obj=None, logging_included=False):
         port_obj = port.get(options.platform, options)
     res = run_webkit_tests.run(port_obj, options, args)
     return res == 0
+
+def logging_run(args):
+    options, args = run_webkit_tests.parse_args(args)
+    port_obj = port.get(options.platform, options)
+    buildbot_output = ArrayStream()
+    regular_output = ArrayStream()
+    res = run_webkit_tests.run(port_obj, options, args,
+                               buildbot_output=buildbot_output,
+                               regular_output=regular_output)
+    return (res, buildbot_output, regular_output)
 
 
 class MainTest(unittest.TestCase):
@@ -62,6 +95,20 @@ class MainTest(unittest.TestCase):
                                     '--child-processes', '1',
                                      '--print', 'unexpected',
                                      'fast/html']))
+
+    def test_child_processes(self):
+        (res, buildbot_output, regular_output) = logging_run(
+             ['--platform', 'test', '--print', 'config', '--child-processes',
+              '1', 'fast/html'])
+        self.assertTrue('Running one DumpRenderTree\n'
+                        in regular_output.get())
+
+        (res, buildbot_output, regular_output) = logging_run(
+             ['--platform', 'test', '--print', 'config', '--child-processes',
+              '2', 'fast/html'])
+        self.assertTrue('Running 2 DumpRenderTrees in parallel\n'
+                        in regular_output.get())
+
 
 
 class TestRunnerTest(unittest.TestCase):

@@ -67,6 +67,15 @@ class ChromiumMacPort(chromium.ChromiumPort):
                        'MacBuildInstructions')
         return result
 
+    def default_child_processes(self):
+        # FIXME: we need to run single-threaded for now. See
+        # https://bugs.webkit.org/show_bug.cgi?id=38553. Unfortunately this
+        # routine is called right before the logger is configured, so if we
+        # try to _log.warning(), it gets thrown away.
+        import sys
+        sys.stderr.write("Defaulting to one child - see https://bugs.webkit.org/show_bug.cgi?id=38553\n")
+        return 1
+
     def driver_name(self):
         """name for this port's equivalent of DumpRenderTree."""
         if self._options.use_drt:

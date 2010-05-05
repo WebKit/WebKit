@@ -1,3 +1,23 @@
+2010-05-04  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        new-run-webkit-tests: turn off threading on the Chromium Mac port until
+        we can stabilize the port more and figure out why it is hanging so
+        frequently.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38553
+
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+          - override default_child_processes() and log a warning
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+          - fix a typo that caused us to print a method object instead of the
+            value the method object returns in the case where there is only
+            one child process.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+          - Add unit tests for the output of run_webkit_tests - in this case,
+            the handling of --child-processes and --print config
+
 2010-05-04  Timothy Hatcher  <timothy@apple.com>
 
         Fix the find command in extract-localizable-strings so skip
