@@ -1,3 +1,12 @@
+2010-05-05  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Commit and Review policy should encourage unofficial reviews
+        https://bugs.webkit.org/show_bug.cgi?id=38517
+
+        * coding/commit-review-policy.html:
+
 2010-05-04  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Darin Adler.
