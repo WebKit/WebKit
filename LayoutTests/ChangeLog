@@ -1,5 +1,17 @@
 2010-05-05  Alexey Proskuryakov  <ap@apple.com>
 
+        Roll out r58830 for breaking tests.
+
+        Was: https://bugs.webkit.org/show_bug.cgi?id=38546
+        Node.focus() fails to move focus from subframe properly
+
+        * fast/frames/take-focus-from-iframe.html: Removed.
+        * platform/mac/fast/frames/take-focus-from-iframe-expected.checksum: Removed.
+        * platform/mac/fast/frames/take-focus-from-iframe-expected.png: Removed.
+        * platform/mac/fast/frames/take-focus-from-iframe-expected.txt: Removed.
+
+2010-05-05  Alexey Proskuryakov  <ap@apple.com>
+
         Reviewed by Adele Peterson.
 
         https://bugs.webkit.org/show_bug.cgi?id=38546

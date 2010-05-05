@@ -242,10 +242,8 @@ bool HTMLFrameElementBase::supportsFocus() const
 void HTMLFrameElementBase::setFocus(bool received)
 {
     HTMLFrameOwnerElement::setFocus(received);
-    if (Page* page = document()->page()) {
-        if (page->focusController()->focusedFrame() == contentFrame()) // Focus may have already been given to another frame, don't take it away.
-            page->focusController()->setFocusedFrame(received ? contentFrame() : 0);
-    }
+    if (Page* page = document()->page())
+        page->focusController()->setFocusedFrame(received ? contentFrame() : 0);
 }
 
 bool HTMLFrameElementBase::isURLAttribute(Attribute *attr) const
