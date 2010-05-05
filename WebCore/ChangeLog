@@ -1,3 +1,19 @@
+2010-05-05  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG hit testing is *way* too slow
+        https://bugs.webkit.org/show_bug.cgi?id=19312
+
+        Use the cached stroke and fill boundaries in RenderPath as a heuristik to
+        speed up SVG's hit testing.
+
+        No new tests added.
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::fillContains):
+        (WebCore::RenderPath::strokeContains):
+
 2010-05-04  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.
