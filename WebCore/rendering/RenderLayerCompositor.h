@@ -141,6 +141,8 @@ public:
     // their parent document.
     static bool shouldPropagateCompositingToIFrameParent();
 
+    void setRootPlatformLayerClippingBox(const IntRect& contentsBox);
+
 private:
     // Whether the given RL needs a compositing layer.
     bool needsToBeComposited(const RenderLayer*) const;
@@ -172,8 +174,6 @@ private:
     void setCompositingParent(RenderLayer* childLayer, RenderLayer* parentLayer);
     void removeCompositedChildren(RenderLayer*);
 
-    void parentInRootLayer(RenderLayer*);
-
     bool layerHas3DContent(const RenderLayer*) const;
 
     void ensureRootPlatformLayer();
@@ -198,6 +198,9 @@ private:
     bool m_compositing;
     bool m_rootLayerAttached;
     bool m_compositingLayersNeedRebuild;
+
+    // Enclosing clipping layer for iframe content
+    OwnPtr<GraphicsLayer> m_clippingLayer;
     
 #if PROFILE_LAYER_REBUILD
     int m_rootLayerUpdateCount;

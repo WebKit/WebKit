@@ -28,7 +28,7 @@
         (GraphicsLayer
           (position 0.00 -12.00)
           (anchor 0.50 0.50)
-          (bounds 707.00 440.00)
+          (bounds 370.00 220.00)
           (opacity 1.00)
           (usingTiledLayer 0)
           (preserves3D 0)
@@ -39,9 +39,9 @@
           (childrenTransform identity)
           (children 1
             (GraphicsLayer
-              (position 40.00 40.00)
+              (position 35.00 35.00)
               (anchor 0.00 0.00)
-              (bounds 627.00 360.00)
+              (bounds 300.00 150.00)
               (opacity 1.00)
               (usingTiledLayer 0)
               (preserves3D 0)
@@ -52,9 +52,9 @@
               (childrenTransform identity)
               (children 1
                 (GraphicsLayer
-                  (position 0.00 0.00)
+                  (position 0.00 -80.00)
                   (anchor 0.50 0.50)
-                  (bounds 627.00 360.00)
+                  (bounds 285.00 230.00)
                   (opacity 1.00)
                   (usingTiledLayer 0)
                   (preserves3D 0)
@@ -67,7 +67,7 @@
                     (GraphicsLayer
                       (position 0.00 0.00)
                       (anchor 0.50 0.50)
-                      (bounds 627.00 360.00)
+                      (bounds 285.00 230.00)
                       (opacity 1.00)
                       (usingTiledLayer 0)
                       (preserves3D 0)

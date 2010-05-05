@@ -37,6 +37,7 @@
 #include "GraphicsLayer.h"
 #include "HitTestResult.h"
 #include "HTMLCanvasElement.h"
+#include "HTMLIFrameElement.h"
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
@@ -664,19 +665,6 @@ void RenderLayerCompositor::removeCompositedChildren(RenderLayer* layer)
     hostingLayer->removeAllChildren();
 }
 
-void RenderLayerCompositor::parentInRootLayer(RenderLayer* layer)
-{
-    ASSERT(layer->isComposited());
-
-    GraphicsLayer* layerAnchor = layer->backing()->childForSuperlayers();
-
-    if (layerAnchor->parent() != m_rootPlatformLayer) {
-        layerAnchor->removeFromParent();
-        if (m_rootPlatformLayer)
-            m_rootPlatformLayer->addChild(layerAnchor);
-    }
-}
-
 #if ENABLE(VIDEO)
 bool RenderLayerCompositor::canAccelerateVideoRendering(RenderVideo* o) const
 {
@@ -764,8 +752,27 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, cons
     }
     
     if (layerBacking) {
-        layerBacking->parentForSublayers()->setChildren(layerChildren);
+        if (layer->renderer()->isRenderIFrame()) {
+            // This is an iframe parent. Make it the parent of the iframe document's root
+            layerBacking->parentForSublayers()->removeAllChildren();
+
+            RenderLayerCompositor* innerCompositor = layerBacking->innerRenderLayerCompositor();
+            if (innerCompositor) {
+                GraphicsLayer* innerRootLayer = innerCompositor->rootPlatformLayer();
+                if (innerRootLayer)
+                    layerBacking->parentForSublayers()->addChild(innerRootLayer);
+            }
+        } else
+            layerBacking->parentForSublayers()->setChildren(layerChildren);
         childLayersOfEnclosingLayer.append(layerBacking->childForSuperlayers());
+    }
+}
+
+void RenderLayerCompositor::setRootPlatformLayerClippingBox(const IntRect& contentsBox)
+{
+    if (m_clippingLayer) {
+        m_clippingLayer->setPosition(FloatPoint(contentsBox.x(), contentsBox.y()));
+        m_clippingLayer->setSize(FloatSize(contentsBox.width(), contentsBox.height()));
     }
 }
 
@@ -922,7 +929,7 @@ RenderLayer* RenderLayerCompositor::rootRenderLayer() const
 
 GraphicsLayer* RenderLayerCompositor::rootPlatformLayer() const
 {
-    return m_rootPlatformLayer.get();
+    return m_clippingLayer ? m_clippingLayer.get() : m_rootPlatformLayer.get();
 }
 
 void RenderLayerCompositor::didMoveOnscreen()
@@ -930,13 +937,27 @@ void RenderLayerCompositor::didMoveOnscreen()
     if (!m_rootPlatformLayer)
         return;
 
-    Frame* frame = m_renderView->frameView()->frame();
-    Page* page = frame ? frame->page() : 0;
-    if (!page)
-        return;
+    bool attached = false;
+    Element* ownerElement = m_renderView->document()->ownerElement();
+    if (ownerElement) {
+        RenderObject* renderer = ownerElement->renderer();
+        if (renderer && renderer->isRenderIFrame()) {
+            // The layer will get hooked up via RenderLayerBacking::updateGraphicsLayerConfiguration()
+            // for the iframe's renderer in the parent document.
+            ownerElement->setNeedsStyleRecalc(SyntheticStyleChange);
+            attached = true;
+        }
+    }
 
-    page->chrome()->client()->attachRootGraphicsLayer(frame, m_rootPlatformLayer.get());
-    m_rootLayerAttached = true;
+    if (!attached) {
+        Frame* frame = m_renderView->frameView()->frame();
+        Page* page = frame ? frame->page() : 0;
+        if (!page)
+            return;
+
+        page->chrome()->client()->attachRootGraphicsLayer(frame, m_rootPlatformLayer.get());
+    }
+    m_rootLayerAttached = true;    
 }
 
 void RenderLayerCompositor::willMoveOffscreen()
@@ -944,19 +965,44 @@ void RenderLayerCompositor::willMoveOffscreen()
     if (!m_rootPlatformLayer || !m_rootLayerAttached)
         return;
 
-    Frame* frame = m_renderView->frameView()->frame();
-    Page* page = frame ? frame->page() : 0;
-    if (!page)
-        return;
+    bool detached = false;
+    Element* ownerElement = m_renderView->document()->ownerElement();
+    if (ownerElement) {
+        RenderObject* renderer = ownerElement->renderer();
+        if (renderer->isRenderIFrame()) {
+            // The layer will get hooked up via RenderLayerBacking::updateGraphicsLayerConfiguration()
+            // for the iframe's renderer in the parent document.
+            ownerElement->setNeedsStyleRecalc(SyntheticStyleChange);
+            detached = true;
+        }
+    }
 
-    page->chrome()->client()->attachRootGraphicsLayer(frame, 0);
+    if (!detached) {
+        Frame* frame = m_renderView->frameView()->frame();
+        Page* page = frame ? frame->page() : 0;
+        if (!page)
+            return;
+
+        page->chrome()->client()->attachRootGraphicsLayer(frame, 0);
+    }
     m_rootLayerAttached = false;
 }
 
 void RenderLayerCompositor::updateRootLayerPosition()
 {
-    if (m_rootPlatformLayer)
-        m_rootPlatformLayer->setSize(FloatSize(m_renderView->rightLayoutOverflow(), m_renderView->bottomLayoutOverflow()));
+    if (m_rootPlatformLayer) {
+        // FIXME: Adjust the y position of the m_rootPlatformLayer if we are clipping by its top edge
+        // Eventually this will be taken care of by scrolling logic
+        // https://bugs.webkit.org/show_bug.cgi?id=38518
+        float height = m_renderView->bottomLayoutOverflow();
+        float yOffset = 0;
+
+        if (m_clippingLayer && height > m_clippingLayer->size().height())
+            yOffset = m_clippingLayer->size().height() - height;
+
+        m_rootPlatformLayer->setPosition(FloatPoint(0, yOffset));
+        m_rootPlatformLayer->setSize(FloatSize(m_renderView->rightLayoutOverflow(), height));
+    }
 }
 
 void RenderLayerCompositor::didStartAcceleratedAnimation()
@@ -1152,13 +1198,30 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
 
     m_rootPlatformLayer = GraphicsLayer::create(0);
     m_rootPlatformLayer->setSize(FloatSize(m_renderView->rightLayoutOverflow(), m_renderView->bottomLayoutOverflow()));
-    m_rootPlatformLayer->setPosition(FloatPoint(0, 0));
+    m_rootPlatformLayer->setPosition(FloatPoint());
+
     // The root layer does flipping if we need it on this platform.
     m_rootPlatformLayer->setGeometryOrientation(GraphicsLayer::compositingCoordinatesOrientation());
 
     // Need to clip to prevent transformed content showing outside this frame
     m_rootPlatformLayer->setMasksToBounds(true);
     
+    // Create a clipping layer if this is an iframe
+    Element* ownerElement = m_renderView->document()->ownerElement();
+    if (ownerElement) {
+        RenderObject* renderer = ownerElement->renderer();
+        if (renderer && renderer->isRenderIFrame()) {
+            m_clippingLayer = GraphicsLayer::create(0);
+            m_clippingLayer->setGeometryOrientation(GraphicsLayer::compositingCoordinatesOrientation());
+#ifndef NDEBUG
+            m_clippingLayer->setName("iframe Clipping");
+#endif
+            m_clippingLayer->setMasksToBounds(true);
+            m_clippingLayer->setAnchorPoint(FloatPoint());
+            m_clippingLayer->addChild(m_rootPlatformLayer.get());
+        }
+    }
+
     didMoveOnscreen();
 }
 

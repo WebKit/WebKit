@@ -124,6 +124,8 @@ public:
 
     IntRect contentsBox() const;
     
+    RenderLayerCompositor* innerRenderLayerCompositor() const;
+
 private:
     void createGraphicsLayer();
     void destroyGraphicsLayer();

@@ -38,6 +38,7 @@
 #include "GraphicsLayer.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLElement.h"
+#include "HTMLIFrameElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "InspectorTimelineAgent.h"
@@ -384,6 +385,24 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
 
     m_graphicsLayer->setContentsRect(contentsBox());
     m_graphicsLayer->setDrawsContent(containsPaintedContent());
+
+    // If this is an iframe parent, update the iframe content's box
+    RenderLayerCompositor* innerCompositor = innerRenderLayerCompositor();
+    if (innerCompositor)
+        innerCompositor->setRootPlatformLayerClippingBox(contentsBox());
+}
+
+RenderLayerCompositor* RenderLayerBacking::innerRenderLayerCompositor() const
+{
+    if (renderer()->isRenderIFrame()) {
+        HTMLIFrameElement* element = static_cast<HTMLIFrameElement*>(renderer()->node());
+        if (Document* contentDocument = element->contentDocument()) {
+            if (RenderView* view = contentDocument->renderView())
+                return view->compositor();
+        }
+    }
+
+    return 0;
 }
 
 void RenderLayerBacking::updateInternalHierarchy()
@@ -823,7 +842,11 @@ FloatPoint RenderLayerBacking::contentsToGraphicsLayerCoordinates(const Graphics
 
 bool RenderLayerBacking::paintingGoesToWindow() const
 {
-    return m_owningLayer->isRootLayer();
+    if (!m_owningLayer->isRootLayer())
+        return false;
+
+    // Iframe root layers paint into backing store.
+    return !toRenderView(renderer())->document()->ownerElement();
 }
 
 void RenderLayerBacking::setContentsNeedDisplay()

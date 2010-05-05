@@ -1,3 +1,30 @@
+2010-05-04  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Made composited iframes work on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=32446
+        
+        This completes the work in http://trac.webkit.org/changeset/57919
+        to create compositing layers in the parent document when an iframe has 
+        a compositing layer. The parent document has a layer for the iframe 
+        element and builds a layer tree to the page root. The layer tree for the
+        iframe document is then parented to the iframe element's GraphicsLayer.
+        
+        The RenderLayerCompositor for the iframe document (which owns the
+        root of the layer tree) now has a clippingLayer which is the 
+        parent of the layer tree root so it can be clipped to the parent
+        iframe's bounds, taking into account borders, padding, etc. in
+        the parent iframe element.
+        
+        I also got rid of a no longer used function: RenderLayerCompositor::parentInRootLayer
+
+        Test: compositing/iframes/composited-parent-iframe.html
+
+        * rendering/RenderLayerBacking.cpp:Make calls to RenderLayerCompositor to set the clipping bounds for iframe content
+        * rendering/RenderLayerCompositor.cpp:Hook the iframe content to the parent iframe element
+        * rendering/RenderLayerCompositor.h:
+
 2010-05-03  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adam Barth.
