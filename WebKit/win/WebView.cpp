@@ -945,8 +945,6 @@ void WebView::paint(HDC dc, LPARAM options)
         return;
     FrameView* frameView = coreFrame->view();
 
-    m_paintCount++;
-
     RECT rcPaint;
     HDC hdc;
     OwnPtr<HRGN> region;
@@ -970,6 +968,14 @@ void WebView::paint(HDC dc, LPARAM options)
         // children into the HDC.
         windowsToPaint = PaintWebViewAndChildren;
     }
+
+    if (::IsRectEmpty(&rcPaint)) {
+        if (!dc)
+            EndPaint(m_viewWindow, &ps);
+        return;
+    }
+
+    m_paintCount++;
 
     HDC bitmapDC = ::CreateCompatibleDC(hdc);
     bool backingStoreCompletelyDirty = ensureBackingStore();

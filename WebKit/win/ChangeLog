@@ -1,3 +1,23 @@
+2010-05-06  Adam Roben  <aroben@apple.com>
+
+        Bail out of WebView::paint when there's nothing to paint
+
+        Fixes <http://webkit.org/b/38670> <rdar://problem/7947105> REGRESSION
+        (r58067): Crash in WebView::paint when Web Inspector is docked and
+        window is resized so small that WebView disappears
+
+        When the WebView is 0-sized, ensureBackingStore() bails out without
+        creating a bitmap, leaving m_backingStoreBitmap null. Before r58067,
+        m_backingStoreBitmap was an HBITMAP, so we were happily passing along
+        a null HBITMAP to various Windows APIs. These calls would fail but not
+        crash. r58067 changed m_backingStoreBitmap to a RefCountedHBITMAP, and
+        dereferencing a null RefCountedHBITMAP* of course crashes.
+
+        Reviewed by Steve Falkenburg.
+
+        * WebView.cpp:
+        (WebView::paint): Bail if the rect to paint is empty.
+
 2010-05-06  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.
