@@ -454,6 +454,16 @@ void HTMLFormControlElementWithState::finishParsingChildren()
     }
 }
 
+void HTMLFormControlElementWithState::defaultEventHandler(Event* event)
+{
+    if (event->type() == eventNames().webkitEditableContentChangedEvent && renderer() && renderer()->isTextControl()) {
+        toRenderTextControl(renderer())->subtreeHasChanged();
+        return;
+    }
+
+    HTMLFormControlElement::defaultEventHandler(event);
+}
+
 HTMLTextFormControlElement::HTMLTextFormControlElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* form)
     : HTMLFormControlElementWithState(tagName, doc, form)
 {

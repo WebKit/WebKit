@@ -116,16 +116,9 @@ void TextControlInnerTextElement::defaultEventHandler(Event* evt)
 {
     // FIXME: In the future, we should add a way to have default event listeners.  Then we would add one to the text field's inner div, and we wouldn't need this subclass.
     Node* shadowAncestor = shadowAncestorNode();
-    if (shadowAncestor && shadowAncestor->renderer()) {
-        ASSERT(shadowAncestor->renderer()->isTextControl());
-        if (evt->isBeforeTextInsertedEvent()) {
-            if (shadowAncestor->renderer()->isTextField())
-                static_cast<HTMLInputElement*>(shadowAncestor)->defaultEventHandler(evt);
-            else
-                static_cast<HTMLTextAreaElement*>(shadowAncestor)->defaultEventHandler(evt);
-        }
-        if (evt->type() == eventNames().webkitEditableContentChangedEvent)
-            toRenderTextControl(shadowAncestor->renderer())->subtreeHasChanged();
+    if (shadowAncestor) {
+        if (evt->isBeforeTextInsertedEvent() || evt->type() == eventNames().webkitEditableContentChangedEvent)
+            shadowAncestor->defaultEventHandler(evt);
     }
     if (!evt->defaultHandled())
         HTMLDivElement::defaultEventHandler(evt);

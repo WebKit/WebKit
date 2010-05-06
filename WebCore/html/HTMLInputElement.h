@@ -202,7 +202,6 @@ public:
 
     virtual void* preDispatchEventHandler(Event*);
     virtual void postDispatchEventHandler(Event*, void* dataFromPreDispatch);
-    virtual void defaultEventHandler(Event*);
 
     String altText() const;
     
@@ -272,6 +271,7 @@ public:
 protected:
     virtual void willMoveToNewOwnerDocument();
     virtual void didMoveToNewOwnerDocument();
+    virtual void defaultEventHandler(Event*);
 
 private:
     bool storesValueSeparateFromAttribute() const;

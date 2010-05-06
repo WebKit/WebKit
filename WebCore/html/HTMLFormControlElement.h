@@ -160,6 +160,7 @@ public:
 protected:
     virtual void willMoveToNewOwnerDocument();
     virtual void didMoveToNewOwnerDocument();
+    virtual void defaultEventHandler(Event*);
 };
 
 class HTMLTextFormControlElement : public HTMLFormControlElementWithState {
