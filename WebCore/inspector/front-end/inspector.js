@@ -190,8 +190,10 @@ var WebInspector = {
         }
 
         for (var panelName in WebInspector.panels) {
-            if (WebInspector.panels[panelName] == x)
+            if (WebInspector.panels[panelName] === x) {
                 InspectorBackend.storeLastActivePanel(panelName);
+                this._panelHistory.setPanel(panelName);
+            }
         }
     },
 
@@ -460,6 +462,7 @@ WebInspector.loaded = function()
 
     this.panels = {};
     this._createPanels();
+    this._panelHistory = new WebInspector.PanelHistory();
 
     var toolbarElement = document.getElementById("toolbar");
     var previousToolbarItem = toolbarElement.children[0];
@@ -699,8 +702,31 @@ WebInspector.documentKeyDown = function(event)
     }
 
     var isMac = WebInspector.isMac();
-
     switch (event.keyIdentifier) {
+        case "Left":
+            if (isMac)
+                var isBackKey = event.metaKey;
+            else
+                var isBackKey = event.ctrlKey;
+
+            if (isBackKey && this._panelHistory.canGoBack()) {
+                this._panelHistory.goBack();
+                event.preventDefault();
+            }
+            break;
+
+        case "Right":
+            if (isMac)
+                var isForwardKey = event.metaKey;
+            else
+                var isForwardKey = event.ctrlKey;
+
+            if (isForwardKey && this._panelHistory.canGoForward()) {
+                this._panelHistory.goForward();
+                event.preventDefault();
+            }
+            break;
+
         case "U+001B": // Escape key
             event.preventDefault();
             if (this.drawer.fullPanel)
@@ -1966,4 +1992,47 @@ WebInspector.MIMETypes = {
     "text/javascript1.3":          {4: true},
     "text/jscript":                {4: true},
     "text/livescript":             {4: true},
+}
+
+WebInspector.PanelHistory = function()
+{
+    this._history = [];
+    this._historyIterator = -1;
+}
+
+WebInspector.PanelHistory.prototype = {
+    canGoBack: function()
+    {
+        return this._historyIterator > 0;
+    },
+
+    goBack: function()
+    {
+        this._inHistory = true;
+        WebInspector.currentPanel = WebInspector.panels[this._history[--this._historyIterator]];
+        delete this._inHistory;
+    },
+
+    canGoForward: function()
+    {
+        return this._historyIterator < this._history.length - 1;
+    },
+
+    goForward: function()
+    {
+        this._inHistory = true;
+        WebInspector.currentPanel = WebInspector.panels[this._history[++this._historyIterator]];
+        delete this._inHistory;
+    },
+
+    setPanel: function(panelName)
+    {
+        if (this._inHistory)
+            return;
+
+        this._history.splice(this._historyIterator + 1, this._history.length - this._historyIterator - 1);
+        if (!this._history.length || this._history[this._history.length - 1] !== panelName)
+            this._history.push(panelName);
+        this._historyIterator = this._history.length - 1;
+    }
 }

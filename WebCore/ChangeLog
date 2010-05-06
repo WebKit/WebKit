@@ -1,3 +1,22 @@
+2010-05-06  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: implement panels history traversal on Cmd+Left/Right.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38649
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.set currentPanel):
+        (WebInspector.loaded):
+        (WebInspector.documentKeyDown):
+        (WebInspector.PanelHistory):
+        (WebInspector.PanelHistory.prototype.canGoBack):
+        (WebInspector.PanelHistory.prototype.goBack):
+        (WebInspector.PanelHistory.prototype.canGoForward):
+        (WebInspector.PanelHistory.prototype.goForward):
+        (WebInspector.PanelHistory.prototype.setPanel):
+
 2010-05-03  Evan Martin  <evan@chromium.org>
 
         Reviewed by Eric Seidel.
