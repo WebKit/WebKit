@@ -5996,10 +5996,6 @@ inspector/timeline-paint.html
 # https://bugs.webkit.org/show_bug.cgi?id=37753
 media/audio-constructor-preload.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=36419
-# The copied secure text is somehow broken.
-editing/pasteboard/copy-backslash-with-euc.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=37914
 fast/frames/frame-crash-with-page-cache.html
 
