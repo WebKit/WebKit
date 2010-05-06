@@ -37,7 +37,7 @@ namespace WebCore {
 using namespace MathMLNames;
     
 MathMLElement::MathMLElement(const QualifiedName& tagName, Document* document)
-    : StyledElement(tagName, document, CreateElementZeroRefCount)
+    : StyledElement(tagName, document, CreateStyledElementZeroRefCount)
 {
 }
     

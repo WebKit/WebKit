@@ -49,7 +49,7 @@ SVGShadowTreeRootElement::SVGShadowTreeRootElement(Document* document, Node* sha
     : SVGShadowTreeContainerElement(document)
     , m_shadowParent(shadowParent)
 {
-    setInDocument(true);
+    setInDocument();
 }
 
 SVGShadowTreeRootElement::~SVGShadowTreeRootElement()

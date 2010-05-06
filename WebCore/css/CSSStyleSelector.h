@@ -179,7 +179,8 @@ public:
         void matchRulesForList(CSSRuleDataList*, int& firstRuleIndex, int& lastRuleIndex);
         void sortMatchedRules(unsigned start, unsigned end);
 
-        void applyDeclarations(bool firstPass, bool important, int startIndex, int endIndex);
+        template <bool firstPass>
+        void applyDeclarations(bool important, int startIndex, int endIndex);
         
         CSSRuleSet* m_authorStyle;
         CSSRuleSet* m_userStyle;

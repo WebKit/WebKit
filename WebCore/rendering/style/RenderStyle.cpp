@@ -58,7 +58,7 @@ PassRefPtr<RenderStyle> RenderStyle::clone(const RenderStyle* other)
     return adoptRef(new RenderStyle(*other));
 }
 
-RenderStyle::RenderStyle()
+ALWAYS_INLINE RenderStyle::RenderStyle()
     : m_affectedByAttributeSelectors(false)
     , m_unique(false)
     , m_affectedByEmpty(false)
@@ -85,7 +85,7 @@ RenderStyle::RenderStyle()
     setBitDefaults(); // Would it be faster to copy this from the default style?
 }
 
-RenderStyle::RenderStyle(bool)
+ALWAYS_INLINE RenderStyle::RenderStyle(bool)
     : m_affectedByAttributeSelectors(false)
     , m_unique(false)
     , m_affectedByEmpty(false)
@@ -118,7 +118,7 @@ RenderStyle::RenderStyle(bool)
 #endif
 }
 
-RenderStyle::RenderStyle(const RenderStyle& o)
+ALWAYS_INLINE RenderStyle::RenderStyle(const RenderStyle& o)
     : RefCounted<RenderStyle>()
     , m_affectedByAttributeSelectors(false)
     , m_unique(false)

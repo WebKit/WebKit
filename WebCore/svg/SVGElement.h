@@ -72,7 +72,7 @@ namespace WebCore {
         
         virtual AffineTransform* supplementalTransform() { return 0; }
 
-        void setSynchronizedSVGAttributes(bool value) { m_areSVGAttributesValid = value; }
+        void invalidateSVGAttributes() { clearAreSVGAttributesValid(); }
 
         const HashSet<SVGElementInstance*>& instancesForElement() const;
 
@@ -94,7 +94,6 @@ namespace WebCore {
     private:
         friend class SVGElementInstance;
 
-        virtual bool isSVGElement() const { return true; }
         virtual bool isSupported(StringImpl* feature, StringImpl* version) const;
 
         virtual ContainerNode* eventParentNode();

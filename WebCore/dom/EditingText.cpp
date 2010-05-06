@@ -20,6 +20,8 @@
 #include "config.h"
 #include "EditingText.h"
 
+#include "Document.h"
+
 // FIXME: Does this really require a class? Perhaps instead any text node
 // inside an editable element could have the "always create a renderer" behavior.
 

@@ -88,7 +88,7 @@ void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
 
     // The points property is not a regular SVGAnimatedProperty, still we use the same SVG<->XML DOM synchronization framework.
     if (attrName == SVGNames::pointsAttr)
-        setSynchronizedSVGAttributes(false);
+        invalidateSVGAttributes();
 
     RenderPath* renderer = static_cast<RenderPath*>(this->renderer());
     if (!renderer)

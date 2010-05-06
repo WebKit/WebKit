@@ -42,7 +42,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLAnchorElement::HTMLAnchorElement(const QualifiedName& tagName, Document* document)
-    : HTMLElement(tagName, document, CreateElement)
+    : HTMLElement(tagName, document, CreateHTMLElement)
     , m_wasShiftKeyDownOnMouseDown(false)
     , m_linkRelations(0)
 {
@@ -265,7 +265,7 @@ void HTMLAnchorElement::parseMappedAttribute(MappedAttribute *attr)
                     ResourceHandle::prepareForURL(document()->completeURL(parsedURL));
             }
             if (document()->page() && !document()->page()->javaScriptURLsAreAllowed() && protocolIsJavaScript(parsedURL)) {
-                setIsLink(false);
+                clearIsLink();
                 attr->setValue(nullAtom);
             }
         }

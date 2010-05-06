@@ -36,7 +36,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLProgressElement::HTMLProgressElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
-    : HTMLFormControlElement(tagName, document, form, CreateElement)
+    : HTMLFormControlElement(tagName, document, form, CreateHTMLElement)
 {
     ASSERT(hasTagName(progressTag));
 }

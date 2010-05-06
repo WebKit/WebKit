@@ -1,3 +1,210 @@
+2010-05-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        further fixes towards REGRESSION (r57292): 1% PLT regression from visited link information leak fix
+        https://bugs.webkit.org/show_bug.cgi?id=38682
+        <rdar://problem/7859794>
+
+        Looks like a 1-2% speedup on PLT.
+
+        - Reorder CSS properties.
+        - Remove short circuit tag check in matchRulesForList which costs more than it saves.
+        - Inline initForStyleResolve.
+        - Optimize applyDeclarations to avoid switch and take fewer branches in the inner loop.
+        
+        - Change the way Node handles flags - replace bitfield with a uint32_t and explicit masking, 
+        to make it cheaper to initialize the bits and give faster access.
+        - Added new Node flags to check for isStyledElement, isHTMLElement, isSVGElement, isComment, 
+        and devirtualize those methods.
+        - Inline constructors for Node, Element, Text, CharacterData, StyledElement, etc since
+        they are very simple and lots of nodes get constructed.
+        
+        * css/CSSPropertyNames.in: Move a few of the properties up front so we can check for them
+        with < instead of switch statements
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchRulesForList): Remove unnecessary preflight check
+        for tag match before checking selector. This check very rarely short circuits anything,
+        since most rules with a tag end up in the appropriate tag bucket. So doing the check
+        cost more time than the time saved.
+        (WebCore::CSSStyleSelector::initForStyleResolve): Inline. Create RenderStyle in a better way.
+        (WebCore::CSSStyleSelector::applyDeclarations): Get rid of switch statement and use <= to
+        check for the high priority properties. Convert to template to avoid checking "applyFirst"
+        each time through the loop.
+        (WebCore::CSSStyleSelector::styleForElement): Adjust for new applyDeclarations() signature.
+        (WebCore::CSSStyleSelector::keyframeStylesForAnimation): ditto
+        (WebCore::CSSStyleSelector::pseudoStyleForElement): ditto
+        * css/CSSStyleSelector.h: Adjust for new applyDeclarations() signature.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle): Inline constructor.
+        * rendering/style/RenderStyle.h: Make constructor private so it can be inline.
+        * dom/Node.h:
+        (WebCore::): See high-level description of changes above. Redid the
+        way boolean flags work.
+        (WebCore::Node::isElementNode):
+        (WebCore::Node::isContainerNode):
+        (WebCore::Node::isTextNode):
+        (WebCore::Node::isHTMLElement):
+        (WebCore::Node::isSVGElement):
+        (WebCore::Node::isStyledElement):
+        (WebCore::Node::isCommentNode):
+        (WebCore::Node::hasID):
+        (WebCore::Node::hasClass):
+        (WebCore::Node::active):
+        (WebCore::Node::inActiveChain):
+        (WebCore::Node::inDetach):
+        (WebCore::Node::hovered):
+        (WebCore::Node::attached):
+        (WebCore::Node::setAttached):
+        (WebCore::Node::needsStyleRecalc):
+        (WebCore::Node::styleChangeType):
+        (WebCore::Node::childNeedsStyleRecalc):
+        (WebCore::Node::isLink):
+        (WebCore::Node::setHasID):
+        (WebCore::Node::setHasClass):
+        (WebCore::Node::setChildNeedsStyleRecalc):
+        (WebCore::Node::clearChildNeedsStyleRecalc):
+        (WebCore::Node::setInDocument):
+        (WebCore::Node::clearInDocument):
+        (WebCore::Node::setInActiveChain):
+        (WebCore::Node::clearInActiveChain):
+        (WebCore::Node::setIsLink):
+        (WebCore::Node::clearIsLink):
+        (WebCore::Node::setActive):
+        (WebCore::Node::setHovered):
+        (WebCore::Node::inDocument):
+        (WebCore::Node::):
+        (WebCore::Node::getFlag):
+        (WebCore::Node::setFlag):
+        (WebCore::Node::clearFlag):
+        (WebCore::Node::hasRareData):
+        (WebCore::Node::isParsingChildrenFinished):
+        (WebCore::Node::setIsParsingChildrenFinished):
+        (WebCore::Node::clearIsParsingChildrenFinished):
+        (WebCore::Node::isStyleAttributeValid):
+        (WebCore::Node::setIsStyleAttributeValid):
+        (WebCore::Node::clearIsStyleAttributeValid):
+        (WebCore::Node::isSynchronizingStyleAttribute):
+        (WebCore::Node::setIsSynchronizingStyleAttribute):
+        (WebCore::Node::clearIsSynchronizingStyleAttribute):
+        (WebCore::Node::areSVGAttributesValid):
+        (WebCore::Node::setAreSVGAttributesValid):
+        (WebCore::Node::clearAreSVGAttributesValid):
+        (WebCore::Node::isSynchronizingSVGAttributes):
+        (WebCore::Node::setIsSynchronizingSVGAttributes):
+        (WebCore::Node::clearIsSynchronizingSVGAttributes):
+        (WebCore::Node::hasRareSVGData):
+        (WebCore::Node::setHasRareSVGData):
+        (WebCore::Node::clearHasRareSVGData):
+        (WebCore::Node::initialRefCount):
+        * dom/Node.cpp:
+        (WebCore::Node::trackForDebugging): Adjusted for changes in
+        flag handling.
+        (WebCore::Node::ensureRareData): ditto
+        (WebCore::Node::setStyleChange): ditto
+        (WebCore::Node::setNeedsStyleRecalc): ditto
+        (WebCore::Node::lazyAttach): ditto
+        (WebCore::Node::attach): ditto
+        (WebCore::Node::detach): ditto
+        (WebCore::Node::insertedIntoDocument): ditto
+        (WebCore::Node::removedFromDocument): ditto
+        * dom/CharacterData.cpp:
+        * dom/CharacterData.h:
+        (WebCore::CharacterData::CharacterData): Inline the constructor (moved from .cpp)
+        * dom/Comment.cpp:
+        (WebCore::Comment::Comment): Tell the base class that we're a comment.
+        * dom/Comment.h: Remove isCommentNode override.
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::detach): Adjusted for changes in flag
+        handling.
+        (WebCore::ContainerNode::removedFromDocument): ditto
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Adjusted for changes in flag handling.
+        (WebCore::Document::recalcStyle): ditto
+        (WebCore::Document::setFocusedNode): ditto
+        * dom/Document.h:
+        (WebCore::Node::Node): Inline the Node constructor - goes here
+        because it uses Document.
+        * dom/DocumentFragment.cpp: include Document.h due to above change
+        * dom/EditingText.cpp: ditto
+        * dom/EntityReference.cpp: ditto
+        * dom/Element.cpp:
+        (WebCore::Element::getAttribute): Adjusted for changes in flag
+        handling.
+        (WebCore::Element::setAttribute): ditto
+        (WebCore::Element::hasAttributes): ditto
+        (WebCore::Element::recalcStyle): ditto
+        (WebCore::Element::finishParsingChildren): ditto
+        * dom/Element.h:
+        (WebCore::Element::Element): Inline (moved from .cpp)
+        (WebCore::Element::isFinishedParsingChildren):
+        (WebCore::Element::beginParsingChildren):
+        (WebCore::Element::attributes): Adjusted for changes in flag
+        handling.
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::updateStyleAttribute): Adjust for
+        changes to flag handling.
+        (WebCore::StyledElement::mapToEntry): ditto
+        (WebCore::StyledElement::parseMappedAttribute): ditto
+        (WebCore::StyledElement::copyNonAttributeProperties): ditto
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::StyledElement): Inline (moved from.cpp)
+        (WebCore::StyledElement::invalidateStyleAttribute): Adjust for
+        changes in flag handling.
+        * dom/Text.h:
+        (WebCore::Text::Text): Inline (moved from .cpp)
+        * dom/Text.cpp:
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::HTMLAnchorElement): Adjust for changes in
+        flag handling.
+        (WebCore::HTMLAnchorElement::parseMappedAttribute): ditto
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::create): Tell base class we're an HTML element.
+        * html/HTMLElement.h: ditto above; remove isHTMLElement override.
+        * html/HTMLFormControlElement.h: Tell base class we're an HTML element.
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::HTMLFrameOwnerElement): ditto
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::HTMLProgressElement): ditto
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::MathMLElement): Tell base class we're a styled
+        element.
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlShadowRootElement::MediaControlShadowRootElement):
+        Adjust for changes in flag handling.
+        (WebCore::MediaControlElement::MediaControlElement): ditto
+        (WebCore::MediaControlInputElement::MediaControlInputElement): ditto
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::updateFromElement): ditto
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateHoverActiveState): ditto
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::updateValuePartState): ditto
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::updateFromElement): ditto
+        * rendering/SVGShadowTreeElements.cpp:
+        (WebCore::SVGShadowTreeRootElement::SVGShadowTreeRootElement): ditto
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::attachInnerElement): ditto
+        * svg/SVGAnimatedProperty.h:
+        (WebCore::SVGAnimatedPropertyTearOff::setBaseVal): ditto
+        (WebCore::SVGAnimatedPropertyTearOff::setAnimVal): ditto
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::SVGElement): Tell base class we're
+        an svg element.
+        (WebCore::SVGElement::ensureRareSVGData): Adjust for flag handling
+        changes.
+        (WebCore::SVGElement::updateAnimatedSVGAttribute): ditto
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::invalidateSVGAttributes): ditto
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::svgAttributeChanged): ditto
+        * wml/WMLAnchorElement.cpp:
+        (WebCore::WMLAnchorElement::WMLAnchorElement): ditto
+        * wml/WMLElement.cpp:
+        (WebCore::WMLElement::WMLElement): Tell base class we're a styled
+        element.
+
 2010-05-06  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Fix indent.  Sorry, my OCD was acting up.

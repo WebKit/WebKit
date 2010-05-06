@@ -422,7 +422,7 @@ Document::Document(Frame* frame, bool isXHTML, bool isHTML)
 
     m_textColor = Color::black;
     m_listenerTypes = 0;
-    m_inDocument = true;
+    setInDocument();
     m_inStyleRecalc = false;
     m_closeAfterStyleRecalc = false;
 
@@ -1386,7 +1386,7 @@ void Document::recalcStyle(StyleChange change)
 
 bail_out:
     setNeedsStyleRecalc(NoStyleChange);
-    setChildNeedsStyleRecalc(false);
+    clearChildNeedsStyleRecalc();
     unscheduleStyleRecalc();
 
     if (view())
@@ -2835,7 +2835,7 @@ bool Document::setFocusedNode(PassRefPtr<Node> newFocusedNode)
     m_focusedNode = 0;
 
     // Remove focus from the existing focus node (if any)
-    if (oldFocusedNode && !oldFocusedNode->m_inDetach) { 
+    if (oldFocusedNode && !oldFocusedNode->inDetach()) { 
         if (oldFocusedNode->active())
             oldFocusedNode->setActive(false);
 

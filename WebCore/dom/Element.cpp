@@ -64,12 +64,6 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace XMLNames;
     
-Element::Element(const QualifiedName& tagName, Document* document, ConstructionType type)
-    : ContainerNode(document, type)
-    , m_tagName(tagName)
-{
-}
-
 PassRefPtr<Element> Element::create(const QualifiedName& tagName, Document* document)
 {
     return adoptRef(new Element(tagName, document, CreateElement));
@@ -225,11 +219,11 @@ bool Element::hasAttribute(const QualifiedName& name) const
 
 const AtomicString& Element::getAttribute(const QualifiedName& name) const
 {
-    if (name == styleAttr && !m_isStyleAttributeValid)
+    if (name == styleAttr && !isStyleAttributeValid())
         updateStyleAttribute();
 
 #if ENABLE(SVG)
-    if (!m_areSVGAttributesValid)
+    if (!areSVGAttributesValid())
         updateAnimatedSVGAttribute(name);
 #endif
 
@@ -532,11 +526,11 @@ const AtomicString& Element::getAttribute(const String& name) const
     bool ignoreCase = shouldIgnoreAttributeCase(this);
     
     // Update the 'style' attribute if it's invalid and being requested:
-    if (!m_isStyleAttributeValid && equalPossiblyIgnoringCase(name, styleAttr.localName(), ignoreCase))
+    if (!isStyleAttributeValid() && equalPossiblyIgnoringCase(name, styleAttr.localName(), ignoreCase))
         updateStyleAttribute();
 
 #if ENABLE(SVG)
-    if (!m_areSVGAttributesValid) {
+    if (!areSVGAttributesValid()) {
         // We're not passing a namespace argument on purpose. SVGNames::*Attr are defined w/o namespaces as well.
         updateAnimatedSVGAttribute(QualifiedName(nullAtom, name, nullAtom));
     }
@@ -583,7 +577,7 @@ void Element::setAttribute(const AtomicString& name, const AtomicString& value, 
 #if ENABLE(INSPECTOR)
     if (Page* page = document()->page()) {
         if (InspectorController* inspectorController = page->inspectorController()) {
-            if (!m_synchronizingStyleAttribute)
+            if (!isSynchronizingStyleAttribute())
                 inspectorController->didModifyDOMAttr(this);
         }
     }
@@ -612,7 +606,7 @@ void Element::setAttribute(const QualifiedName& name, const AtomicString& value,
 #if ENABLE(INSPECTOR)
     if (Page* page = document()->page()) {
         if (InspectorController* inspectorController = page->inspectorController()) {
-            if (!m_synchronizingStyleAttribute)
+            if (!isSynchronizingStyleAttribute())
                 inspectorController->didModifyDOMAttr(this);
         }
     }
@@ -718,11 +712,11 @@ void Element::setAttributeMap(PassRefPtr<NamedNodeMap> list, FragmentScriptingPe
 
 bool Element::hasAttributes() const
 {
-    if (!m_isStyleAttributeValid)
+    if (!isStyleAttributeValid())
         updateStyleAttribute();
 
 #if ENABLE(SVG)
-    if (!m_areSVGAttributesValid)
+    if (!areSVGAttributesValid())
         updateAnimatedSVGAttribute(anyQName());
 #endif
 
@@ -916,7 +910,7 @@ void Element::recalcStyle(StyleChange change)
             attach(); // FIXME: The style gets computed twice by calling attach. We could do better if we passed the style along.
             // attach recalulates the style for all children. No need to do it twice.
             setNeedsStyleRecalc(NoStyleChange);
-            setChildNeedsStyleRecalc(false);
+            clearChildNeedsStyleRecalc();
             return;
         }
 
@@ -982,7 +976,7 @@ void Element::recalcStyle(StyleChange change)
     }
 
     setNeedsStyleRecalc(NoStyleChange);
-    setChildNeedsStyleRecalc(false);
+    clearChildNeedsStyleRecalc();
 }
 
 bool Element::childTypeAllowed(NodeType type)
@@ -1091,7 +1085,7 @@ void Element::childrenChanged(bool changedByParser, Node* beforeChange, Node* af
 void Element::finishParsingChildren()
 {
     ContainerNode::finishParsingChildren();
-    m_parsingChildrenFinished = true;
+    setIsParsingChildrenFinished();
     checkForSiblingStyleChanges(this, renderStyle(), true, lastChild(), 0, 0);
 }
 

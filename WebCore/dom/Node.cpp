@@ -334,99 +334,8 @@ Node::StyleChange Node::diff(const RenderStyle* s1, const RenderStyle* s2)
     return ch;
 }
 
-inline bool Node::initialRefCount(ConstructionType type)
+void Node::trackForDebugging()
 {
-    switch (type) {
-        case CreateContainer:
-        case CreateElement:
-        case CreateOther:
-        case CreateText:
-            return 1;
-        case CreateElementZeroRefCount:
-            return 0;
-    }
-    ASSERT_NOT_REACHED();
-    return 1;
-}
-
-inline bool Node::isContainer(ConstructionType type)
-{
-    switch (type) {
-        case CreateContainer:
-        case CreateElement:
-        case CreateElementZeroRefCount:
-            return true;
-        case CreateOther:
-        case CreateText:
-            return false;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-inline bool Node::isElement(ConstructionType type)
-{
-    switch (type) {
-        case CreateContainer:
-        case CreateOther:
-        case CreateText:
-            return false;
-        case CreateElement:
-        case CreateElementZeroRefCount:
-            return true;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-inline bool Node::isText(ConstructionType type)
-{
-    switch (type) {
-        case CreateContainer:
-        case CreateElement:
-        case CreateElementZeroRefCount:
-        case CreateOther:
-            return false;
-        case CreateText:
-            return true;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-Node::Node(Document* document, ConstructionType type)
-    : TreeShared<Node>(initialRefCount(type))
-    , m_document(document)
-    , m_previous(0)
-    , m_next(0)
-    , m_renderer(0)
-    , m_styleChange(NoStyleChange)
-    , m_hasId(false)
-    , m_hasClass(false)
-    , m_attached(false)
-    , m_childNeedsStyleRecalc(false)
-    , m_inDocument(false)
-    , m_isLink(false)
-    , m_active(false)
-    , m_hovered(false)
-    , m_inActiveChain(false)
-    , m_inDetach(false)
-    , m_hasRareData(false)
-    , m_isElement(isElement(type))
-    , m_isContainer(isContainer(type))
-    , m_isText(isText(type))
-    , m_parsingChildrenFinished(true)
-    , m_isStyleAttributeValid(true)
-    , m_synchronizingStyleAttribute(false)
-#if ENABLE(SVG)
-    , m_areSVGAttributesValid(true)
-    , m_synchronizingSVGAttributes(false)
-    , m_hasRareSVGData(false)
-#endif
-{
-    if (m_document)
-        m_document->selfOnlyRef();
-
 #ifndef NDEBUG
     if (shouldIgnoreLeaks)
         ignoreSet.add(this);
@@ -550,7 +459,7 @@ NodeRareData* Node::ensureRareData()
     ASSERT(!NodeRareData::rareDataMap().contains(this));
     NodeRareData* data = createRareData();
     NodeRareData::rareDataMap().set(this, data);
-    m_hasRareData = true;
+    setFlag(HasRareDataFlag);
     return data;
 }
     
@@ -787,17 +696,22 @@ bool Node::hasNonEmptyBoundingBox() const
     return false;
 }
 
+inline void Node::setStyleChange(StyleChangeType changeType)
+{
+    m_nodeFlags = (m_nodeFlags & ~StyleChangeMask) | changeType;
+}
+
 void Node::setNeedsStyleRecalc(StyleChangeType changeType)
 {
     if ((changeType != NoStyleChange) && !attached()) // changed compared to what?
         return;
 
-    if (!(changeType == InlineStyleChange && (m_styleChange == FullStyleChange || m_styleChange == SyntheticStyleChange)))
-        m_styleChange = changeType;
+    if (!(changeType == InlineStyleChange && (styleChangeType() == FullStyleChange || styleChangeType() == SyntheticStyleChange)))
+        setStyleChange(changeType);
 
-    if (m_styleChange != NoStyleChange) {
+    if (styleChangeType() != NoStyleChange) {
         for (Node* p = parentNode(); p && !p->childNeedsStyleRecalc(); p = p->parentNode())
-            p->setChildNeedsStyleRecalc(true);
+            p->setChildNeedsStyleRecalc();
         if (document()->childNeedsStyleRecalc())
             document()->scheduleStyleRecalc();
     }
@@ -821,9 +735,9 @@ void Node::lazyAttach()
         }
 
         if (n->firstChild())
-            n->setChildNeedsStyleRecalc(true);
-        n->m_styleChange = FullStyleChange;
-        n->m_attached = true;
+            n->setChildNeedsStyleRecalc();
+        n->setStyleChange(FullStyleChange);
+        n->setAttached();
     }
 
     if (mustDoFullAttach) {
@@ -833,7 +747,7 @@ void Node::lazyAttach()
         lazyAttachedAncestor->attach();
     } else {
         for (Node* p = parentNode(); p && !p->childNeedsStyleRecalc(); p = p->parentNode())
-            p->setChildNeedsStyleRecalc(true);
+            p->setChildNeedsStyleRecalc();
         if (document()->childNeedsStyleRecalc())
             document()->scheduleStyleRecalc();
     }
@@ -1296,7 +1210,7 @@ void Node::attach()
         }
     }
 
-    m_attached = true;
+    setAttached();
 }
 
 void Node::willRemove()
@@ -1305,23 +1219,24 @@ void Node::willRemove()
 
 void Node::detach()
 {
-    m_inDetach = true;
+    setFlag(InDetachFlag);
 
     if (renderer())
         renderer()->destroy();
     setRenderer(0);
 
     Document* doc = document();
-    if (m_hovered)
+    if (hovered())
         doc->hoveredNodeDetached(this);
-    if (m_inActiveChain)
+    if (inActiveChain())
         doc->activeChainNodeDetached(this);
 
-    m_active = false;
-    m_hovered = false;
-    m_inActiveChain = false;
-    m_attached = false;
-    m_inDetach = false;
+    clearFlag(IsActiveFlag);
+    clearFlag(IsHoveredFlag);
+    clearFlag(InActiveChainFlag);
+    clearFlag(IsAttachedFlag);
+
+    clearFlag(InDetachFlag);
 }
 
 Node *Node::previousEditable() const
@@ -2370,12 +2285,12 @@ ScriptExecutionContext* Node::scriptExecutionContext() const
 
 void Node::insertedIntoDocument()
 {
-    setInDocument(true);
+    setInDocument();
 }
 
 void Node::removedFromDocument()
 {
-    setInDocument(false);
+    clearInDocument();
 }
 
 void Node::willMoveToNewOwnerDocument()

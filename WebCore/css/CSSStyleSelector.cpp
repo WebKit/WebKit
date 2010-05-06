@@ -700,11 +700,9 @@ void CSSStyleSelector::matchRulesForList(CSSRuleDataList* rules, int& firstRuleI
     if (!rules)
         return;
 
-    const AtomicString& localName = m_element->localName();
     for (CSSRuleData* d = rules->first(); d; d = d->next()) {
         CSSStyleRule* rule = d->rule();
-        const AtomicString& selectorLocalName = d->selector()->m_tag.localName();
-        if ((localName == selectorLocalName || selectorLocalName == starAtom) && checkSelector(d->selector())) {
+        if (checkSelector(d->selector())) {
             // If the rule has no properties to apply, then ignore it.
             CSSMutableStyleDeclaration* decl = rule->declaration();
             if (!decl || !decl->length())
@@ -815,7 +813,7 @@ inline void CSSStyleSelector::initElement(Element* e, bool helperCallForVisitedS
     m_styledElement = m_element && m_element->isStyledElement() ? static_cast<StyledElement*>(m_element) : 0;
 }
 
-void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* parentStyle, PseudoId pseudoID)
+inline void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* parentStyle, PseudoId pseudoID)
 {
     m_checker.m_pseudoStyle = pseudoID;
 
@@ -1140,7 +1138,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     // will vanish if a style recalc happens during loading.
     if (allowSharing && !e->document()->haveStylesheetsLoaded() && !e->renderer()) {
         if (!s_styleNotYetAvailable) {
-            s_styleNotYetAvailable = ::new RenderStyle;
+            s_styleNotYetAvailable = RenderStyle::create().releaseRef();
             s_styleNotYetAvailable->ref();
             s_styleNotYetAvailable->setDisplay(NONE);
             s_styleNotYetAvailable->font().update(m_fontSelector);
@@ -1307,12 +1305,12 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     // The order is (1) high-priority not important, (2) high-priority important, (3) normal not important
     // and (4) normal important.
     m_lineHeightValue = 0;
-    applyDeclarations(true, false, 0, m_matchedDecls.size() - 1);
+    applyDeclarations<true>(false, 0, m_matchedDecls.size() - 1);
     if (!resolveForRootDefault) {
-        applyDeclarations(true, true, firstAuthorRule, lastAuthorRule);
-        applyDeclarations(true, true, firstUserRule, lastUserRule);
+        applyDeclarations<true>(true, firstAuthorRule, lastAuthorRule);
+        applyDeclarations<true>(true, firstUserRule, lastUserRule);
     }
-    applyDeclarations(true, true, firstUARule, lastUARule);
+    applyDeclarations<true>(true, firstUARule, lastUARule);
     
     // If our font got dirtied, go ahead and update it now.
     if (m_fontDirty)
@@ -1323,18 +1321,18 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
         applyProperty(CSSPropertyLineHeight, m_lineHeightValue);
 
     // Now do the normal priority UA properties.
-    applyDeclarations(false, false, firstUARule, lastUARule);
+    applyDeclarations<false>(false, firstUARule, lastUARule);
     
     // Cache our border and background so that we can examine them later.
     cacheBorderAndBackground();
     
     // Now do the author and user normal priority properties and all the !important properties.
     if (!resolveForRootDefault) {
-        applyDeclarations(false, false, lastUARule + 1, m_matchedDecls.size() - 1);
-        applyDeclarations(false, true, firstAuthorRule, lastAuthorRule);
-        applyDeclarations(false, true, firstUserRule, lastUserRule);
+        applyDeclarations<false>(false, lastUARule + 1, m_matchedDecls.size() - 1);
+        applyDeclarations<false>(true, firstAuthorRule, lastAuthorRule);
+        applyDeclarations<false>(true, firstUserRule, lastUserRule);
     }
-    applyDeclarations(false, true, firstUARule, lastUARule);
+    applyDeclarations<false>(true, firstUARule, lastUARule);
     
     // If our font got dirtied by one of the non-essential font props, 
     // go ahead and update it a second time.
@@ -1398,7 +1396,7 @@ void CSSStyleSelector::keyframeStylesForAnimation(Element* e, const RenderStyle*
         
         // We don't need to bother with !important. Since there is only ever one
         // decl, there's nothing to override. So just add the first properties.
-        applyDeclarations(true, false, 0, m_matchedDecls.size() - 1);
+        applyDeclarations<true>(false, 0, m_matchedDecls.size() - 1);
         
         // If our font got dirtied, go ahead and update it now.
         if (m_fontDirty)
@@ -1409,7 +1407,7 @@ void CSSStyleSelector::keyframeStylesForAnimation(Element* e, const RenderStyle*
             applyProperty(CSSPropertyLineHeight, m_lineHeightValue);
         
         // Now do rest of the properties.
-        applyDeclarations(false, false, 0, m_matchedDecls.size() - 1);
+        applyDeclarations<false>(false, 0, m_matchedDecls.size() - 1);
         
         // If our font got dirtied by one of the non-essential font props, 
         // go ahead and update it a second time.
@@ -1496,10 +1494,10 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
     m_checker.m_matchVisitedPseudoClass = helperCallForVisitedStyle;
 
     // High-priority properties.
-    applyDeclarations(true, false, 0, m_matchedDecls.size() - 1);
-    applyDeclarations(true, true, firstAuthorRule, lastAuthorRule);
-    applyDeclarations(true, true, firstUserRule, lastUserRule);
-    applyDeclarations(true, true, firstUARule, lastUARule);
+    applyDeclarations<true>(false, 0, m_matchedDecls.size() - 1);
+    applyDeclarations<true>(true, firstAuthorRule, lastAuthorRule);
+    applyDeclarations<true>(true, firstUserRule, lastUserRule);
+    applyDeclarations<true>(true, firstUARule, lastUARule);
     
     // If our font got dirtied, go ahead and update it now.
     if (m_fontDirty)
@@ -1510,15 +1508,15 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
         applyProperty(CSSPropertyLineHeight, m_lineHeightValue);
     
     // Now do the normal priority properties.
-    applyDeclarations(false, false, firstUARule, lastUARule);
+    applyDeclarations<false>(false, firstUARule, lastUARule);
     
     // Cache our border and background so that we can examine them later.
     cacheBorderAndBackground();
     
-    applyDeclarations(false, false, lastUARule + 1, m_matchedDecls.size() - 1);
-    applyDeclarations(false, true, firstAuthorRule, lastAuthorRule);
-    applyDeclarations(false, true, firstUserRule, lastUserRule);
-    applyDeclarations(false, true, firstUARule, lastUARule);
+    applyDeclarations<false>(false, lastUARule + 1, m_matchedDecls.size() - 1);
+    applyDeclarations<false>(true, firstAuthorRule, lastAuthorRule);
+    applyDeclarations<false>(true, firstUserRule, lastUserRule);
+    applyDeclarations<false>(true, firstUARule, lastUARule);
     
     // If our font got dirtied by one of the non-essential font props, 
     // go ahead and update it a second time.
@@ -2843,8 +2841,8 @@ static Length convertToLength(CSSPrimitiveValue* primitiveValue, RenderStyle* st
     return l;
 }
 
-void CSSStyleSelector::applyDeclarations(bool applyFirst, bool isImportant,
-                                         int startIndex, int endIndex)
+template <bool applyFirst>
+void CSSStyleSelector::applyDeclarations(bool isImportant, int startIndex, int endIndex)
 {
     if (startIndex == -1)
         return;
@@ -2854,35 +2852,26 @@ void CSSStyleSelector::applyDeclarations(bool applyFirst, bool isImportant,
         CSSMutableStyleDeclaration::const_iterator end = decl->end();
         for (CSSMutableStyleDeclaration::const_iterator it = decl->begin(); it != end; ++it) {
             const CSSProperty& current = *it;
-            // give special priority to font-xxx, color properties
             if (isImportant == current.isImportant()) {
-                bool first;
-                switch (current.id()) {
-                    case CSSPropertyLineHeight:
-                        m_lineHeightValue = current.value();
-                        first = !applyFirst; // we apply line-height later
-                        break;
-                    case CSSPropertyColor:
-                    case CSSPropertyDirection:
-                    case CSSPropertyDisplay:
-                    case CSSPropertyFont:
-                    case CSSPropertyFontSize:
-                    case CSSPropertyFontStyle:
-                    case CSSPropertyFontFamily:
-                    case CSSPropertyFontWeight:
-                    case CSSPropertyWebkitTextSizeAdjust:
-                    case CSSPropertyFontVariant:
-                    case CSSPropertyZoom:
-                        // these have to be applied first, because other properties use the computed
-                        // values of these properties.
-                        first = true;
-                        break;
-                    default:
-                        first = false;
-                        break;
+                int property = current.id();
+
+                if (applyFirst) {
+                    COMPILE_ASSERT(firstCSSProperty == CSSPropertyColor, CSS_color_is_first_property);
+                    COMPILE_ASSERT(CSSPropertyZoom == CSSPropertyColor + 10, CSS_zoom_is_end_of_first_prop_range);
+                    COMPILE_ASSERT(CSSPropertyLineHeight == CSSPropertyZoom + 1, CSS_line_height_is_after_zoom);
+
+                    // give special priority to font-xxx, color properties, etc
+                    if (property <= CSSPropertyLineHeight) {
+                        // we apply line-height later
+                        if (property == CSSPropertyLineHeight)
+                            m_lineHeightValue = current.value(); 
+                        else 
+                            applyProperty(current.id(), current.value());
+                    }
+                } else {
+                    if (property > CSSPropertyLineHeight)
+                        applyProperty(current.id(), current.value());
                 }
-                if (first == applyFirst)
-                    applyProperty(current.id(), current.value());
             }
         }
     }

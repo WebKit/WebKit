@@ -23,6 +23,8 @@
 #include "config.h"
 #include "DocumentFragment.h"
 
+#include "Document.h"
+
 namespace WebCore {
 
 inline DocumentFragment::DocumentFragment(Document* document)

@@ -8,6 +8,24 @@
 # http://msdn.microsoft.com/workshop/author/css/reference/attributes.asp
 #
 
+# high-priority property names have to be listed first, to simplify the check
+# for applying them first.
+color
+direction
+display
+font
+font-family
+font-size
+font-style
+font-variant
+font-weight
+-webkit-text-size-adjust
+zoom
+
+# line height needs to be right after the above high-priority properties
+line-height
+
+# The remaining properties are listed in alphabetical order
 background
 background-attachment
 background-clip
@@ -52,26 +70,16 @@ bottom
 caption-side
 clear
 clip
-color
 content
 counter-increment
 counter-reset
 cursor
-direction
-display
 empty-cells
 float
-font
-font-family
-font-size
 font-stretch
-font-style
-font-variant
-font-weight
 height
 left
 letter-spacing
-line-height
 list-style
 list-style-image
 list-style-position
@@ -146,7 +154,6 @@ word-break
 word-spacing
 word-wrap
 z-index
-zoom
 -webkit-animation
 -webkit-animation-delay
 -webkit-animation-direction
@@ -238,7 +245,6 @@ zoom
 -webkit-text-decorations-in-effect
 -webkit-text-fill-color
 -webkit-text-security
--webkit-text-size-adjust
 -webkit-text-stroke
 -webkit-text-stroke-color
 -webkit-text-stroke-width

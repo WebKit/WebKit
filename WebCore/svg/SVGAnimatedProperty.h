@@ -48,13 +48,13 @@ public:
     virtual void setBaseVal(PassType type)
     {
         m_creator.setBaseValue(type);
-        m_contextElement->setSynchronizedSVGAttributes(false);
+        m_contextElement->invalidateSVGAttributes();
     }
 
     virtual void setAnimVal(PassType type)
     {
         m_creator.setValue(type);
-        m_contextElement->setSynchronizedSVGAttributes(false);
+        m_contextElement->invalidateSVGAttributes();
     }
 
     virtual ReturnType baseVal() const { return m_creator.baseValue(); }
@@ -181,14 +181,14 @@ public: \
     { \
         m_##LowerProperty.setValue(type); \
         SVGElement* contextElement = GetOwnerElementForType<OwnerType, IsDerivedFromSVGElement<OwnerType>::value>::ownerElement(this); \
-        contextElement->setSynchronizedSVGAttributes(false); \
+        contextElement->invalidateSVGAttributes(); \
     } \
     \
     void set##UpperProperty##BaseValue(SVGAnimatedPropertyTraits<AnimatedType>::PassType type) \
     { \
         m_##LowerProperty.setBaseValue(type); \
         SVGElement* contextElement = GetOwnerElementForType<OwnerType, IsDerivedFromSVGElement<OwnerType>::value>::ownerElement(this); \
-        contextElement->setSynchronizedSVGAttributes(false); \
+        contextElement->invalidateSVGAttributes(); \
     } \
     \
     void synchronize##UpperProperty() \

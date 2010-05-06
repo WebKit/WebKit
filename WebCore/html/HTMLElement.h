@@ -82,7 +82,7 @@ public:
     static void addHTMLAlignmentToStyledElement(StyledElement*, MappedAttribute*);
 
 protected:
-    HTMLElement(const QualifiedName& tagName, Document*, ConstructionType = CreateElementZeroRefCount);
+    HTMLElement(const QualifiedName& tagName, Document*, ConstructionType = CreateHTMLElementZeroRefCount);
 
     void addHTMLAlignment(MappedAttribute*);
 
@@ -102,8 +102,6 @@ protected:
     HTMLFormElement* findFormAncestor() const;
 
 private:
-    virtual bool isHTMLElement() const { return true; }
-
     virtual String nodeName() const;
 
     void setContentEditable(MappedAttribute*);

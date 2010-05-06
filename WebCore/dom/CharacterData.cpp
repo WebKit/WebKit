@@ -29,13 +29,6 @@
 
 namespace WebCore {
 
-CharacterData::CharacterData(Document* document, const String& text, ConstructionType type)
-    : Node(document, type)
-    , m_data(text.impl() ? text.impl() : StringImpl::empty())
-{
-    ASSERT(type == CreateOther || type == CreateText);
-}
-
 void CharacterData::setData(const String& data, ExceptionCode&)
 {
     StringImpl* dataImpl = data.impl() ? data.impl() : StringImpl::empty();

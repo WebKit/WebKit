@@ -96,7 +96,7 @@ void TextControlInnerElement::attachInnerElement(Node* parent, PassRefPtr<Render
     
     // Set these explicitly since this normally happens during an attach()
     setAttached();
-    setInDocument(true);
+    setInDocument();
     
     // For elements without a shadow parent, add the node to the DOM normally.
     if (!m_shadowParent)

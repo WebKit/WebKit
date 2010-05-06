@@ -33,7 +33,7 @@
 namespace WebCore {
 
 HTMLFrameOwnerElement::HTMLFrameOwnerElement(const QualifiedName& tagName, Document* document)
-    : HTMLElement(tagName, document, CreateElement)
+    : HTMLElement(tagName, document, CreateHTMLElement)
     , m_contentFrame(0)
     , m_sandboxFlags(SandboxNone)
 {

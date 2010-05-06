@@ -152,7 +152,7 @@ void RenderFileUploadControl::updateFromElement()
         renderer->setStyle(buttonStyle.release());
         renderer->updateFromElement();
         m_button->setAttached();
-        m_button->setInDocument(true);
+        m_button->setInDocument();
 
         addChild(renderer);
     }

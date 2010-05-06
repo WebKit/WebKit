@@ -43,7 +43,12 @@ public:
     StringImpl* dataImpl() { return m_data.get(); }
 
 protected:
-    CharacterData(Document*, const String&, ConstructionType);
+    CharacterData(Document* document, const String& text, ConstructionType type)
+        : Node(document, type)
+        , m_data(text.impl() ? text.impl() : StringImpl::empty())
+    {
+        ASSERT(type == CreateOther || type == CreateText);
+    }
 
     virtual bool rendererIsNeeded(RenderStyle*);
 

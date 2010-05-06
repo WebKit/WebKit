@@ -141,7 +141,7 @@ void RenderProgress::updateValuePartState()
         m_valuePart->setRenderer(m_valuePart->createRenderer(renderArena(), styleForValuePart.get()));
         m_valuePart->renderer()->setStyle(styleForValuePart.release());
         m_valuePart->setAttached();
-        m_valuePart->setInDocument(true);
+        m_valuePart->setInDocument();
         addChild(m_valuePart->renderer());
     } else if (style()->hasAppearance() && m_valuePart) {
         m_valuePart->detach();

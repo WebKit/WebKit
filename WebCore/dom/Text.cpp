@@ -41,11 +41,6 @@ using namespace std;
 
 namespace WebCore {
 
-Text::Text(Document* document, const String& data)
-    : CharacterData(document, data, CreateText)
-{
-}
-
 PassRefPtr<Text> Text::create(Document* document, const String& data)
 {
     return adoptRef(new Text(document, data));

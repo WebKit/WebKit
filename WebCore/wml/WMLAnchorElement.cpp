@@ -34,10 +34,10 @@ WMLAnchorElement::WMLAnchorElement(const QualifiedName& tagName, Document* doc)
     : WMLAElement(tagName, doc)
     , m_task(0)
 {
-    // Calling setIsLink(true), and returning a non-null value on CSSStyleSelectors' linkAttribute
+    // Calling setIsLink(), and returning a non-null value on CSSStyleSelectors' linkAttribute
     // method, makes it possible to 'appear as link' (just like <a href="..">) without the need to
     // actually set the href value to an empty value in the DOM tree.
-    setIsLink(true);
+    setIsLink();
 }
 
 WMLAnchorElement::~WMLAnchorElement()

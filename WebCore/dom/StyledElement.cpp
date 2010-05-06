@@ -103,17 +103,12 @@ void StyledElement::removeMappedAttributeDecl(MappedAttributeEntry entryType, co
 
 void StyledElement::updateStyleAttribute() const
 {
-    ASSERT(!m_isStyleAttributeValid);
-    m_isStyleAttributeValid = true;
-    m_synchronizingStyleAttribute = true;
+    ASSERT(!isStyleAttributeValid());
+    setIsStyleAttributeValid();
+    setIsSynchronizingStyleAttribute();
     if (m_inlineStyleDecl)
         const_cast<StyledElement*>(this)->setAttribute(styleAttr, m_inlineStyleDecl->cssText());
-    m_synchronizingStyleAttribute = false;
-}
-
-StyledElement::StyledElement(const QualifiedName& name, Document* document, ConstructionType type)
-    : Element(name, document, type)
-{
+    clearIsSynchronizingStyleAttribute();
 }
 
 StyledElement::~StyledElement()
@@ -208,7 +203,7 @@ bool StyledElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEnt
 {
     result = eNone;
     if (attrName == styleAttr)
-        return !m_synchronizingStyleAttribute;
+        return !isSynchronizingStyleAttribute();
     return true;
 }
 
@@ -253,7 +248,7 @@ void StyledElement::parseMappedAttribute(MappedAttribute *attr)
             destroyInlineStyleDecl();
         else
             getInlineStyleDecl()->parseDeclaration(attr->value());
-        m_isStyleAttributeValid = true;
+        setIsStyleAttributeValid();
         setNeedsStyleRecalc();
     }
 }
@@ -476,8 +471,8 @@ void StyledElement::copyNonAttributeProperties(const Element *sourceElement)
         return;
 
     *getInlineStyleDecl() = *source->m_inlineStyleDecl;
-    m_isStyleAttributeValid = source->m_isStyleAttributeValid;
-    m_synchronizingStyleAttribute = source->m_synchronizingStyleAttribute;
+    setIsStyleAttributeValid(source->isStyleAttributeValid());
+    setIsSynchronizingStyleAttribute(source->isSynchronizingStyleAttribute());
     
     Element::copyNonAttributeProperties(sourceElement);
 }

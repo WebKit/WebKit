@@ -3183,7 +3183,7 @@ void RenderLayer::updateHoverActiveState(const HitTestRequest& request, HitTestR
         // We are clearing the :active chain because the mouse has been released.
         for (RenderObject* curr = activeNode->renderer(); curr; curr = curr->parent()) {
             if (curr->node() && !curr->isText())
-                curr->node()->setInActiveChain(false);
+                curr->node()->clearInActiveChain();
         }
         doc->setActiveNode(0);
     } else {
@@ -3193,7 +3193,7 @@ void RenderLayer::updateHoverActiveState(const HitTestRequest& request, HitTestR
             // will need to reference this chain.
             for (RenderObject* curr = newActiveNode->renderer(); curr; curr = curr->parent()) {
                 if (curr->node() && !curr->isText()) {
-                    curr->node()->setInActiveChain(true);
+                    curr->node()->setInActiveChain();
                 }
             }
             doc->setActiveNode(newActiveNode);

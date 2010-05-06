@@ -21,6 +21,8 @@
 #include "config.h"
 #include "EntityReference.h"
 
+#include "Document.h"
+
 namespace WebCore {
 
 inline EntityReference::EntityReference(Document* document, const String& entityName)

@@ -1254,6 +1254,22 @@ inline bool Node::isDocumentNode() const
     return this == m_document;
 }
 
+// here because it uses a Document method but we really want to inline it
+inline Node::Node(Document* document, ConstructionType type)
+    : TreeShared<Node>(initialRefCount(type))
+    , m_document(document)
+    , m_previous(0)
+    , m_next(0)
+    , m_renderer(0)
+    , m_nodeFlags(type)
+{
+    if (m_document)
+        m_document->selfOnlyRef();
+#if !defined(NDEBUG) || (defined(DUMP_NODE_STATISTICS) && DUMP_NODE_STATISTICS)
+    trackForDebugging();
+#endif
+}
+
 } // namespace WebCore
 
 #endif // Document_h

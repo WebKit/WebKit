@@ -39,7 +39,7 @@ namespace WebCore {
 using namespace WMLNames;
 
 WMLElement::WMLElement(const QualifiedName& tagName, Document* document)
-    : StyledElement(tagName, document, CreateElementZeroRefCount)
+    : StyledElement(tagName, document, CreateStyledElementZeroRefCount)
 {
 }
 

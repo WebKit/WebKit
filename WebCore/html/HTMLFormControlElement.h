@@ -36,7 +36,7 @@ class VisibleSelection;
 
 class HTMLFormControlElement : public HTMLElement {
 public:
-    HTMLFormControlElement(const QualifiedName& tagName, Document*, HTMLFormElement*, ConstructionType = CreateElementZeroRefCount);
+    HTMLFormControlElement(const QualifiedName& tagName, Document*, HTMLFormElement*, ConstructionType = CreateHTMLElementZeroRefCount);
     virtual ~HTMLFormControlElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }

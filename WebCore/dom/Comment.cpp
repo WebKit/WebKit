@@ -22,10 +22,12 @@
 #include "config.h"
 #include "Comment.h"
 
+#include "Document.h"
+
 namespace WebCore {
 
 inline Comment::Comment(Document* document, const String& text)
-    : CharacterData(document, text, CreateOther)
+    : CharacterData(document, text, CreateComment)
 {
 }
 

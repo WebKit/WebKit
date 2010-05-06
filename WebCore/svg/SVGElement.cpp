@@ -52,7 +52,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 SVGElement::SVGElement(const QualifiedName& tagName, Document* document)
-    : StyledElement(tagName, document, CreateElementZeroRefCount)
+    : StyledElement(tagName, document, CreateSVGElementZeroRefCount)
 {
 }
 
@@ -95,7 +95,7 @@ SVGElementRareData* SVGElement::ensureRareSVGData()
     ASSERT(!SVGElementRareData::rareDataMap().contains(this));
     SVGElementRareData* data = new SVGElementRareData;
     SVGElementRareData::rareDataMap().set(this, data);
-    m_hasRareSVGData = true;
+    setHasRareSVGData();
     return data;
 }
 
@@ -306,16 +306,16 @@ void SVGElement::attributeChanged(Attribute* attr, bool preserveDecls)
 
 void SVGElement::updateAnimatedSVGAttribute(const QualifiedName& name) const
 {
-    if (m_synchronizingSVGAttributes || m_areSVGAttributesValid)
+    if (isSynchronizingSVGAttributes() || areSVGAttributesValid())
         return;
 
-    m_synchronizingSVGAttributes = true;
+    setIsSynchronizingSVGAttributes();
 
     const_cast<SVGElement*>(this)->synchronizeProperty(name);
     if (name == anyQName())
-        m_areSVGAttributesValid = true;
+        setAreSVGAttributesValid();
 
-    m_synchronizingSVGAttributes = false;
+    clearIsSynchronizingSVGAttributes();
 }
 
 ContainerNode* SVGElement::eventParentNode()

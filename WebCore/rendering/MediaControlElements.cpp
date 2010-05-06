@@ -74,7 +74,7 @@ MediaControlShadowRootElement::MediaControlShadowRootElement(Document* document,
     renderer->setStyle(rootStyle.release());
     setRenderer(renderer);
     setAttached();
-    setInDocument(true);
+    setInDocument();
 }
 
 void MediaControlShadowRootElement::updateStyle()
@@ -92,7 +92,7 @@ MediaControlElement::MediaControlElement(Document* document, PseudoId pseudo, HT
     , m_mediaElement(mediaElement)
     , m_pseudoStyleId(pseudo)
 {
-    setInDocument(true);
+    setInDocument();
     switch (pseudo) {
     case MEDIA_CONTROLS_CURRENT_TIME_DISPLAY:
         m_displayType = MediaCurrentTimeDisplay;
@@ -318,7 +318,7 @@ MediaControlInputElement::MediaControlInputElement(Document* document, PseudoId 
     , m_pseudoStyleId(pseudo)
 {
     setInputType(type);
-    setInDocument(true);
+    setInDocument();
 
     switch (pseudo) {
     case MEDIA_CONTROLS_MUTE_BUTTON:
