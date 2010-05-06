@@ -64,7 +64,7 @@ static bool isCanvasMultiLayered(SkCanvas* canvas)
     return !layerIterator.done();
 }
 
-static bool adjustTextRenderMode(SkPaint* paint, bool isCanvasMultiLayered)
+static void adjustTextRenderMode(SkPaint* paint, bool isCanvasMultiLayered)
 {
     // Our layers only have a single alpha channel. This means that subpixel
     // rendered text cannot be compositied correctly when the layer is
@@ -605,7 +605,7 @@ int Font::offsetForPositionForComplexText(const TextRun& run, int x,
         if (walker.rtl())
             basePosition -= walker.numCodePoints();
 
-        if (x < walker.width()) {
+        if (x >= 0 && x < walker.width()) {
             // The x value in question is within this script run. We consider
             // each glyph in presentation order and stop when we find the one
             // covering this position.

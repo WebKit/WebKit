@@ -85,7 +85,8 @@ String createCanonicalUUIDString()
     if (!fptr)
         return String();
     char uuidStr[37] = {0};
-    fgets(uuidStr, sizeof(uuidStr) - 1, fptr);
+    if (!fgets(uuidStr, sizeof(uuidStr) - 1, fptr))
+        return String();
     fclose(fptr);
     String canonicalUuidStr = String(uuidStr).lower(); // make it lower.
     ASSERT(canonicalUuidStr[uuidVersionIdentifierIndex] == uuidVersionRequired);

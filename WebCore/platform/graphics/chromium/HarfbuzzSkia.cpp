@@ -139,7 +139,7 @@ static HB_Error getOutlinePoint(HB_Font hbFont, HB_Glyph glyph, int flags, hb_ui
     uint16_t glyph16 = glyph;
     SkPath path;
     paint.getTextPath(&glyph16, sizeof(glyph16), 0, 0, &path);
-    int numPoints = path.getPoints(NULL, 0);
+    int numPoints = path.getPoints(0, 0);
     if (point >= numPoints)
         return HB_Err_Invalid_SubTable;
     SkPoint* points = reinterpret_cast<SkPoint*>(fastMalloc(sizeof(SkPoint) * (point + 1)));

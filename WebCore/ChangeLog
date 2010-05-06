@@ -1,3 +1,43 @@
+2010-05-06  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix warnings emitted by gcc 4.4.1 on linux in chromium-specific platform graphics files.
+        https://bugs.webkit.org/show_bug.cgi?id=38158
+
+        Fixes:
+        - replace NULL with 0
+        - remove unusued locals
+        - add parens around ambiguous looking compound predicates like (a || b && c)
+
+        This also adds a check for x >= 0 to FontLinux.cpp's in this statement:
+          if (x < walker.width())
+        This is more documentation than anything else since walker.width() returns
+        an unsigned the current behavior is that x is promoted to unsigned and as
+        long as x + walker.width() is less than 2^31 all negative values of x
+        end up wrapping around and not being < walker.width().  This behavior is
+        tested by fast/text/international/khmer-selection.html
+
+        * platform/graphics/chromium/FontLinux.cpp:
+        (WebCore::adjustTextRenderMode):
+        (WebCore::TextRunWalker::TextRunWalker):
+        (WebCore::TextRunWalker::length):
+        (WebCore::TextRunWalker::width):
+        (WebCore::TextRunWalker::getTextRun):
+        (WebCore::TextRunWalker::getNormalizedTextRun):
+        (WebCore::Font::offsetForPositionForComplexText):
+        * platform/graphics/chromium/FontPlatformDataLinux.cpp:
+        (WebCore::FontPlatformData::setupPaint):
+        * platform/graphics/chromium/HarfbuzzSkia.cpp:
+        (WebCore::getOutlinePoint):
+        * platform/graphics/skia/GraphicsContext3DSkia.cpp:
+        (WebCore::GraphicsContext3D::getImageData):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::isCoordinateSkiaSafe):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::strokeRect):
+
 2010-05-06  Ada Chan  <adachan@apple.com>
 
         Reviewed by David Kilzer.

@@ -131,7 +131,7 @@ void SQLiteDatabase::setMaximumSize(int64_t size)
     SQLiteStatement statement(*this, "PRAGMA max_page_count = " + String::number(newMaxPageCount));
     statement.prepare();
     if (statement.step() != SQLResultRow)
-        LOG_ERROR("Failed to set maximum size of database to %lli bytes", size);
+        LOG_ERROR("Failed to set maximum size of database to %lli bytes", static_cast<long long>(size));
 
     enableAuthorizer(true);
 
