@@ -1,3 +1,15 @@
+2010-05-06  Ada Chan  <adachan@apple.com>
+
+        Reviewed by David Kilzer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38695
+        
+        Check the result from widget() for NULL before accessing it.
+
+        * rendering/RenderIFrame.cpp:
+        (WebCore::RenderIFrame::calcHeight):
+        (WebCore::RenderIFrame::calcWidth):
+
 2010-05-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler.
