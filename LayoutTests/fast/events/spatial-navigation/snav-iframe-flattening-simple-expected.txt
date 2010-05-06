@@ -1,0 +1,10 @@
+a
+
+e
+PASS document.defaultView.frames[0].document.activeElement.getAttribute("id") is "1"
+PASS document.defaultView.frames[0].document.activeElement.getAttribute("id") is "2"
+PASS document.activeElement.getAttribute("id") is "end"
+PASS document.defaultView.frames[0].document.activeElement.getAttribute("id") is "2"
+PASS document.defaultView.frames[0].document.activeElement.getAttribute("id") is "1"
+PASS document.activeElement.getAttribute("id") is "start"
+

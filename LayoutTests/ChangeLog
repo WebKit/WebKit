@@ -1,3 +1,13 @@
+2010-05-05  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Kenneth Christiansen.
+
+        Spatial Navigation: Add LayoutTest with frame flattening feature on.
+        https://bugs.webkit.org/show_bug.cgi?id=38585
+
+        * fast/events/spatial-navigation/snav-iframe-flattening-simple-expected.txt: Added.
+        * fast/events/spatial-navigation/snav-iframe-flattening-simple.html: Added.
+
 2010-05-06  Vitaly Repeshko  <vitalyr@chromium.org>
 
         [chromium] Unreviewed. Updating expectations.
