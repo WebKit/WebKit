@@ -100,17 +100,21 @@ void ScrollView::setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj, boo
         // set in the normal case), we make sure they are up-to-date
         // here. This is needed for the parent scrolling widget to be
         // able to report correct values.
-        m_horizontalAdjustment->lower = 0;
-        m_horizontalAdjustment->upper = resetValues ? 0 : frameRect().width();
-        m_horizontalAdjustment->value = resetValues ? 0 : scrollOffset().width();
-        gtk_adjustment_changed(m_horizontalAdjustment);
-        gtk_adjustment_value_changed(m_horizontalAdjustment);
+        bool resetHorizontal = resetValues || !hScrollbar;
+        gtk_adjustment_configure(m_horizontalAdjustment,
+                                 resetHorizontal ? 0 : scrollOffset().width(), 0,
+                                 resetHorizontal ? 0 : contentsSize().width(),
+                                 resetHorizontal ? 0 : hScrollbar->lineStep(),
+                                 resetHorizontal ? 0 : hScrollbar->pageStep(),
+                                 resetHorizontal ? 0 : frameRect().width());
 
-        m_verticalAdjustment->lower = 0;
-        m_verticalAdjustment->upper = resetValues ? 0 : frameRect().height();
-        m_verticalAdjustment->value = resetValues ? 0 : scrollOffset().height();
-        gtk_adjustment_changed(m_verticalAdjustment);
-        gtk_adjustment_value_changed(m_verticalAdjustment);
+        bool resetVertical = resetValues || !vScrollbar;
+        gtk_adjustment_configure(m_verticalAdjustment,
+                                 resetVertical ? 0 : scrollOffset().width(), 0,
+                                 resetVertical ? 0 : contentsSize().width(),
+                                 resetVertical ? 0 : vScrollbar->lineStep(),
+                                 resetVertical ? 0 : vScrollbar->pageStep(),
+                                 resetVertical ? 0 : frameRect().width());
     } else {
         ScrollbarGtk* hScrollbar = reinterpret_cast<ScrollbarGtk*>(horizontalScrollbar());
         if (hScrollbar)

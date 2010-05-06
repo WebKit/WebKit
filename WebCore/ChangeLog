@@ -1,3 +1,17 @@
+2010-05-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Adjustment resetting uses wrong values, and misses page_size and steps
+        https://bugs.webkit.org/show_bug.cgi?id=38657
+
+        Fix resetting adjustment values. In the page cache case, we were
+        confusing page_size and upper, leading to stray scrollbars
+        sometimes.
+
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::setGtkAdjustments):
+
 2010-05-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Beth Dakin.
