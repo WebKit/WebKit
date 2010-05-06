@@ -49,9 +49,26 @@
   </head>
   <body id="some-content" xmlns="http://www.w3.org/1999/xhtml">
     <div><a id="start" href="a">a</a></div>
-    <iframe src="resources/iframe4.html" width="80" height="80" scrolling="auto"></iframe><br>
-    <iframe src="resources/iframe4.html" scrolling="auto"></iframe><br>
-    <div><a id="end" href="a">e</a></div>
+
+    <iframe width="80" height="80" scrolling="auto" src="data:text/html,
+      <body>
+        <div style='margin-top:120px'>
+          <p>This frame has some text and no focusable element ...</a>
+        </div>
+        <p>... and some more text ...</a>
+      </body>
+    "></iframe><br>
+
+    <iframe scrolling="auto" src="data:text/html,
+      <body>
+        <div style='margin-top:120px'>
+          <p>This frame has some text and no focusable element ...</a>
+        </div>
+        <p>... and some more text ...</a>
+      </body>
+    "></iframe><br>
+
+    <a id="end" href="a">e</a>
     <div id="console"></div>
   </body>
 </html>

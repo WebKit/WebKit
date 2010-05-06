@@ -1,5 +1,26 @@
 2010-05-05  Antonio Gomes  <tonikitoo@webkit.org>
 
+        Rubber-stamped Kenneth Christiansen.
+
+        Spatial Navigation: use data url in layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=38584
+
+        In order to make Spatial Navigation layout tests more readable, patch
+        changes the use or src=resources/iframeXXX.html by inlined sources via
+        data uri schema.
+
+        It is a polishment.
+
+        * fast/events/spatial-navigation/resources/iframe.html: Removed.
+        * fast/events/spatial-navigation/resources/iframe2.html: Removed.
+        * fast/events/spatial-navigation/resources/iframe3.html: Removed.
+        * fast/events/spatial-navigation/resources/iframe4.html: Removed.
+        * fast/events/spatial-navigation/snav-iframe-no-focusable-content.html:
+        * fast/events/spatial-navigation/snav-iframe-no-scrollable-content.html:
+        * fast/events/spatial-navigation/snav-iframe-with-offscreen-focusable-element.html:
+
+2010-05-05  Antonio Gomes  <tonikitoo@webkit.org>
+
         Reviewed by Kenneth Christiansen.
 
         Spatial Navigation: Add LayoutTest with frame flattening feature on.
