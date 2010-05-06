@@ -1,3 +1,9 @@
+2010-05-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed buildfix after r58917.
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.h: Missing function declaration added.
+
 2010-05-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler and Dan Bernstein..
