@@ -2499,6 +2499,10 @@ def check_identifier_name_in_declaration(filename, line_number, line, error):
                 and not modified_identifier == "const_iterator"):
                 error(line_number, 'readability/naming', 4, identifier + " is incorrectly named. Don't use underscores in your identifier names.")
 
+        # Check for variables named 'l', these are too easy to confuse with '1' in some fonts
+        if modified_identifier == 'l':
+            error(line_number, 'readability/naming', 4, identifier + " is incorrectly named. Don't use the single letter 'l' as an identifier name.")
+
         # There can be only one declaration in non-for-control statements.
         if control_statement:
             return
@@ -2510,7 +2514,6 @@ def check_identifier_name_in_declaration(filename, line_number, line, error):
 
         number_of_identifiers += 1
         line = line[matched.end():]
-
 
 def check_c_style_cast(line_number, line, raw_line, cast_type, pattern,
                        error):
