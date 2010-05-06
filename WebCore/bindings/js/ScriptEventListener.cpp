@@ -118,6 +118,7 @@ String eventListenerHandlerBody(ScriptExecutionContext* context, ScriptState* sc
 
 bool eventListenerHandlerLocation(ScriptExecutionContext*, ScriptState*, EventListener*, String&, int&)
 {
+    // FIXME: Add support for getting function location.
     return false;
 }
 

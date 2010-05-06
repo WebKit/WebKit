@@ -133,8 +133,6 @@ bool eventListenerHandlerLocation(ScriptExecutionContext* context, ScriptState* 
 
     v8::Handle<v8::Function> function = v8::Handle<v8::Function>::Cast(object);
     v8::ScriptOrigin origin = function->GetScriptOrigin();
-    sourceName = "";
-    lineNumber = 1;
     if (!origin.ResourceName().IsEmpty()) {
         sourceName = toWebCoreString(origin.ResourceName());
         lineNumber = function->GetScriptLineNumber() + 1;

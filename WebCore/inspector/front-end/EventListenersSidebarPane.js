@@ -225,8 +225,6 @@ WebInspector.EventListenerBar.prototype = {
     _setFunctionSubtitle: function()
     {
         // Requires that Function.toString() return at least the function's signature.
-        var subtitle = "";
-        var payload = this.eventListener;
         if (this.eventListener.sourceName) {
             this.subtitleElement.removeChildren();
             this.subtitleElement.appendChild(WebInspector.linkifyResourceAsNode(this.eventListener.sourceName, "scripts", this.eventListener.lineNumber));
