@@ -1,5 +1,14 @@
 2010-05-05  Dan Bernstein  <mitz@apple.com>
 
+        Rubber-stamped by Mark Rowe.
+
+        Fixed test crashes after r58847.
+
+        * WebView/WebHTMLView.mm:
+        (setNeedsDisplayInRect): Null-check the frame.
+
+2010-05-05  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Simon Fraser.
 
         <rdar://problem/7932072> Iframes in composited layers don’t repaint correctly (affects Yahoo! Mail with Flash Player 10.1)

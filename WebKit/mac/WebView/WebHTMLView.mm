@@ -250,7 +250,8 @@ static void setNeedsDisplayInRect(NSView *self, SEL cmd, NSRect invalidRect)
         return;
     }
 
-    FrameView* frameView = core([enclosingWebFrameView webFrame])->view();
+    Frame* coreFrame = core([enclosingWebFrameView webFrame]);
+    FrameView* frameView = coreFrame ? coreFrame->view() : 0;
     if (!frameView || !frameView->isEnclosedInCompositingLayer()) {
         oldSetNeedsDisplayInRectIMP(self, cmd, invalidRect);
         return;
