@@ -1098,7 +1098,7 @@ sub copyInspectorFrontendFiles
         print "*************************************************************\n";
         die;
     }
-    return system "rsync", "-aut", "--exclude=/.DS_Store", "--exclude=.svn/", !isQt() ? "--exclude=/WebKit.qrc" : "", $sourceInspectorPath, $inspectorResourcesDirPath;
+    return system "rsync", "-aut", "--exclude=/.DS_Store", "--exclude=*.re2js", "--exclude=.svn/", !isQt() ? "--exclude=/WebKit.qrc" : "", $sourceInspectorPath, $inspectorResourcesDirPath;
 }
 
 sub buildXCodeProject($$@)
