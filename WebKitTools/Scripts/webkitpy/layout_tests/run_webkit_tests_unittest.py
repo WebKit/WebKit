@@ -33,33 +33,11 @@ import os
 import sys
 import unittest
 
+from webkitpy.common import array_stream
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests import run_webkit_tests
 
 from webkitpy.thirdparty.mock import Mock
-
-
-class ArrayStream(object):
-    def __init__(self):
-        self._contents = []
-
-    def write(self, msg):
-        self._contents.append(msg)
-
-    def get(self):
-        return self._contents
-
-    def reset(self):
-        self._contents = []
-
-    def empty(self):
-        return (len(self._contents) == 0)
-
-    def flush(self):
-        pass
-
-    def __repr__(self):
-        return '<ArrayStream: ' + str(self._contents) + '>'
 
 
 def passing_run(args, port_obj=None, logging_included=False):
@@ -74,8 +52,8 @@ def passing_run(args, port_obj=None, logging_included=False):
 def logging_run(args):
     options, args = run_webkit_tests.parse_args(args)
     port_obj = port.get(options.platform, options)
-    buildbot_output = ArrayStream()
-    regular_output = ArrayStream()
+    buildbot_output = array_stream.ArrayStream()
+    regular_output = array_stream.ArrayStream()
     res = run_webkit_tests.run(port_obj, options, args,
                                buildbot_output=buildbot_output,
                                regular_output=regular_output)
@@ -100,13 +78,13 @@ class MainTest(unittest.TestCase):
         (res, buildbot_output, regular_output) = logging_run(
              ['--platform', 'test', '--print', 'config', '--child-processes',
               '1', 'fast/html'])
-        self.assertTrue('Running one DumpRenderTree\n'
+        self.assertTrue('Running one DumpRenderTree'
                         in regular_output.get())
 
         (res, buildbot_output, regular_output) = logging_run(
              ['--platform', 'test', '--print', 'config', '--child-processes',
               '2', 'fast/html'])
-        self.assertTrue('Running 2 DumpRenderTrees in parallel\n'
+        self.assertTrue('Running 2 DumpRenderTrees in parallel'
                         in regular_output.get())
 
 

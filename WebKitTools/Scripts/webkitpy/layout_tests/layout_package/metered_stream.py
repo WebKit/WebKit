@@ -32,6 +32,9 @@ Package that implements a stream wrapper that has 'meters' as well as
 regular output. A 'meter' is a single line of text that can be erased
 and rewritten repeatedly, without producing multiple lines of output. It
 can be used to produce effects like progress bars.
+
+This package should only be called by the printing module in the layout_tests
+package.
 """
 
 import logging
@@ -41,18 +44,38 @@ _log = logging.getLogger("webkitpy.layout_tests.metered_stream")
 
 class MeteredStream:
     """This class is a wrapper around a stream that allows you to implement
-    meters.
+    meters (progress bars, etc.).
 
-    It can be used like a stream, but calling update() will print
-    the string followed by only a carriage return (instead of a carriage
-    return and a line feed). This can be used to implement progress bars and
-    other sorts of meters. Note that anything written by update() will be
-    erased by a subsequent update(), write(), or flush()."""
+    It can be used directly as a stream, by calling write(), but provides
+    two other methods for output, update(), and progress().
+
+    In normal usage, update() will overwrite the output of the immediately
+    preceding update() (write() also will overwrite update()). So, calling
+    multiple update()s in a row can provide an updating status bar (note that
+    if an update string contains newlines, only the text following the last
+    newline will be overwritten/erased).
+
+    If the MeteredStream is constructed in "verbose" mode (i.e., by passing
+    verbose=true), then update() no longer overwrite a previous update(), and
+    instead the call is equivalent to write(), although the text is
+    actually sent to the logger rather than to the stream passed
+    to the constructor.
+
+    progress() is just like update(), except that if you are in verbose mode,
+    progress messages are not output at all (they are dropped). This is
+    used for things like progress bars which are presumed to be unwanted in
+    verbose mode.
+
+    Note that the usual usage for this class is as a destination for
+    a logger that can also be written to directly (i.e., some messages go
+    through the logger, some don't). We thus have to dance around a
+    layering inversion in update() for things to work correctly.
+    """
 
     def __init__(self, verbose, stream):
         """
         Args:
-          verbose: whether update is a no-op
+          verbose: whether progress is a no-op and updates() aren't overwritten
           stream: output stream to write to
         """
         self._dirty = False
@@ -63,9 +86,11 @@ class MeteredStream:
     def write(self, txt):
         """Write to the stream, overwriting and resetting the meter."""
         if self._dirty:
-            self.update("")
+            self._write(txt)
             self._dirty = False
-        self._stream.write(txt)
+            self._last_update = ''
+        else:
+            self._stream.write(txt)
 
     def flush(self):
         """Flush any buffered output."""
@@ -113,9 +138,11 @@ class MeteredStream:
         # message.
         if len(self._last_update):
             self._stream.write("\b" * len(self._last_update))
-        self._stream.write(str)
+        if len(str):
+            self._stream.write(str)
         num_remaining = len(self._last_update) - len(str)
         if num_remaining > 0:
             self._stream.write(" " * num_remaining + "\b" * num_remaining)
-        self._last_update = str
+        last_newline = str.rfind("\n")
+        self._last_update = str[(last_newline + 1):]
         self._dirty = True

@@ -274,13 +274,13 @@ class Printer(object):
 
         unexpected = total - expected
         if unexpected == 0:
-            self._meter.write("All %d tests ran as expected.\n" % expected)
+            self._write("All %d tests ran as expected." % expected)
         elif expected == 1:
-            self._meter.write("\n1 test ran as expected, %d didn't:\n\n" %
-                              unexpected)
+            self._write("1 test ran as expected, %d didn't:" % unexpected)
         else:
-            self._meter.write("\n%d tests ran as expected, %d didn't:\n\n" %
-                              (expected, unexpected))
+            self._write("%d tests ran as expected, %d didn't:" %
+                        (expected, unexpected))
+        self._write("")
 
     def print_test_result(self, result, expected, exp_str, got_str):
         """Print the result of the test as determined by --print."""
@@ -303,20 +303,20 @@ class Printer(object):
         """
         filename = result.filename
         test_name = self._port.relative_test_filename(filename)
-        self._write('trace: %s\n' % test_name)
-        self._write('  txt: %s\n' %
+        self._write('trace: %s' % test_name)
+        self._write('  txt: %s' %
                   self._port.relative_test_filename(
                        self._port.expected_filename(filename, '.txt')))
         png_file = self._port.expected_filename(filename, '.png')
         if os.path.exists(png_file):
-            self._write('  png: %s\n' %
+            self._write('  png: %s' %
                         self._port.relative_test_filename(filename))
         else:
-            self._write('  png: <none>\n')
-        self._write('  exp: %s\n' % exp_str)
-        self._write('  got: %s\n' % got_str)
-        self._write(' took: %-.3f\n' % result.test_run_time)
-        self._write('\n')
+            self._write('  png: <none>')
+        self._write('  exp: %s' % exp_str)
+        self._write('  got: %s' % got_str)
+        self._write(' took: %-.3f' % result.test_run_time)
+        self._write('')
 
     def _print_unexpected_test_result(self, result):
         """Prints one unexpected test result line."""
@@ -449,7 +449,7 @@ class Printer(object):
                     expected = result['expected'].split(" ")
                     result = TestExpectationsFile.EXPECTATIONS[key.lower()]
                     new_expectations_list = list(set(actual) | set(expected))
-                    self._buildbot_stream.write("  %s = %s" %
+                    self._buildbot_stream.write("  %s = %s\n" %
                         (test, " ".join(new_expectations_list)))
                 self._buildbot_stream.write("\n")
             self._buildbot_stream.write("\n")
@@ -478,10 +478,18 @@ class Printer(object):
     def write(self, msg, option="misc"):
         if self.disabled(option):
             return
-        self._write("%s\n" % msg)
+        self._write(msg)
 
     def _write(self, msg):
-        self._meter.update(msg)
+        # FIXME: we could probably get away with calling _log.info() all of
+        # the time, but there doesn't seem to be a good way to test the output
+        # from the logger :(.
+        if self._options.verbose:
+            _log.info(msg)
+        elif msg == "":
+            self._meter.write("\n")
+        else:
+            self._meter.write(msg)
 
 #
 # Utility routines used by the Controller class

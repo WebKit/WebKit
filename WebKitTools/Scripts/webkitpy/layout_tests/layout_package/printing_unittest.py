@@ -36,35 +36,13 @@ import sys
 import unittest
 import logging
 
+from webkitpy.common import array_stream
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests.layout_package import printing
 from webkitpy.layout_tests.layout_package import dump_render_tree_thread
 from webkitpy.layout_tests.layout_package import test_expectations
 from webkitpy.layout_tests.layout_package import test_failures
 from webkitpy.layout_tests import run_webkit_tests
-
-
-class ArrayStream(object):
-    def __init__(self):
-        self._contents = []
-
-    def write(self, msg):
-        self._contents.append(msg)
-
-    def get(self):
-        return self._contents
-
-    def reset(self):
-        self._contents = []
-
-    def empty(self):
-        return (len(self._contents) == 0)
-
-    def flush(self):
-        pass
-
-    def __repr__(self):
-        return '<ArrayStream: ' + str(self._contents) + '>'
 
 
 def get_options(args):
@@ -101,7 +79,7 @@ class TestUtilityFunctions(unittest.TestCase):
         # FIXME: these calls become no-ops and we can't control the
         # FIXME: configuration to test things properly.
         options, args = get_options([])
-        stream = ArrayStream()
+        stream = array_stream.ArrayStream()
         printing.configure_logging(options, stream)
         logging.info("this should be logged")
         # self.assertFalse(stream.empty())
@@ -132,8 +110,8 @@ class  Testprinter(unittest.TestCase):
         if single_threaded:
             nproc = 1
 
-        regular_output = ArrayStream()
-        buildbot_output = ArrayStream()
+        regular_output = array_stream.ArrayStream()
+        buildbot_output = array_stream.ArrayStream()
         printer = printing.Printer(self._port, options, regular_output,
                                    buildbot_output, single_threaded,
                                    is_fully_parallel)
@@ -163,10 +141,10 @@ class  Testprinter(unittest.TestCase):
             if exp_err is None:
                 exp_err = []
             if exp_bot is None:
-                exp_bot = [message + '\n']
+                exp_bot = [message + "\n"]
         else:
             if exp_err is None:
-                exp_err = [message + '\n']
+                exp_err = [message]
             if exp_bot is None:
                 exp_bot = []
         do_helper(method_name, 'nothing', 'hello', [], [])
@@ -204,21 +182,21 @@ class  Testprinter(unittest.TestCase):
 
         printer, err, out = self.get_printer(['--print', 'one-line-summary'])
         printer.print_one_line_summary(1, 1)
-        self.assertEquals(err.get(), ["All 1 tests ran as expected.\n"])
+        self.assertEquals(err.get(), ["All 1 tests ran as expected.", "\n"])
 
         printer, err, out = self.get_printer(['--print', 'everything'])
         printer.print_one_line_summary(1, 1)
-        self.assertEquals(err.get(), ["All 1 tests ran as expected.\n"])
+        self.assertEquals(err.get(), ["All 1 tests ran as expected.", "\n"])
 
         err.reset()
         printer.print_one_line_summary(2, 1)
         self.assertEquals(err.get(),
-                          ["\n1 test ran as expected, 1 didn't:\n\n"])
+                          ["1 test ran as expected, 1 didn't:", "\n"])
 
         err.reset()
         printer.print_one_line_summary(3, 2)
         self.assertEquals(err.get(),
-                          ["\n2 tests ran as expected, 1 didn't:\n\n"])
+                          ["2 tests ran as expected, 1 didn't:", "\n"])
 
     def test_print_test_result(self):
         result = get_result('foo.html')
@@ -234,7 +212,7 @@ class  Testprinter(unittest.TestCase):
         printer.print_test_result(result, expected=False, exp_str='',
                                   got_str='')
         self.assertEquals(err.get(),
-                          ['  foo.html -> unexpected pass\n'])
+                          ['  foo.html -> unexpected pass'])
 
         printer, err, out = self.get_printer(['--print', 'everything'])
         printer.print_test_result(result, expected=True, exp_str='',
@@ -244,7 +222,7 @@ class  Testprinter(unittest.TestCase):
         printer.print_test_result(result, expected=False, exp_str='',
                                   got_str='')
         self.assertEquals(err.get(),
-                          ['  foo.html -> unexpected pass\n'])
+                          ['  foo.html -> unexpected pass'])
 
         printer, err, out = self.get_printer(['--print', 'nothing'])
         printer.print_test_result(result, expected=False, exp_str='',
@@ -340,7 +318,7 @@ class  Testprinter(unittest.TestCase):
         err.reset()
         out.reset()
         printer.print_progress(rs, True, test_files)
-        self.assertEqual(err.get(), [''])
+        self.assertEqual(err.get(), [])
         self.assertTrue(out.empty())
 
         printer, err, out = self.get_printer(
@@ -369,7 +347,7 @@ class  Testprinter(unittest.TestCase):
         err.reset()
         out.reset()
         printer.print_progress(rs, True, test_files)
-        self.assertEqual(err.get(), [''])
+        self.assertEqual(err.get(), [])
         self.assertTrue(out.empty())
 
     def test_write(self):

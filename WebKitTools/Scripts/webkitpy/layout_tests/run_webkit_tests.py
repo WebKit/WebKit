@@ -1131,6 +1131,7 @@ class TestRunner:
         self._print_result_summary_entry(result_summary,
             test_expectations.WONTFIX,
             "Tests that will only be fixed if they crash (WONTFIX)")
+        self._printer.print_actual("")
 
     def _print_result_summary_entry(self, result_summary, timeline,
                                     heading):
