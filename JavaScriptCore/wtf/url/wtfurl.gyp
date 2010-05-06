@@ -39,6 +39,8 @@
       ],
       'sources': [
         'src/URLComponent.h',
+        'src/URLSegments.cpp',
+        'src/URLSegments.h',
       ],
       'direct_dependent_settings': {
         'include_dirs': [
