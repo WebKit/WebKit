@@ -1631,8 +1631,13 @@ void BytecodeGenerator::emitPopScope()
 
 void BytecodeGenerator::emitDebugHook(DebugHookID debugHookID, int firstLine, int lastLine)
 {
+#if ENABLE(DEBUG_WITH_BREAKPOINT)
+    if (debugHookID != DidReachBreakpoint)
+        return;
+#else
     if (!m_shouldEmitDebugHooks)
         return;
+#endif
     emitOpcode(op_debug);
     instructions().append(debugHookID);
     instructions().append(firstLine);

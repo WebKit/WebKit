@@ -1,3 +1,15 @@
+2010-05-06  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Add compile switch to make debugger keyword plant breakpoint instructions.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitDebugHook):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_debug):
+        * wtf/Platform.h:
+
 2010-05-06  Oliver Hunt  <oliver@apple.com>
 
         Build fix
