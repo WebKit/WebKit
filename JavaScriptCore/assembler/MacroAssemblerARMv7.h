@@ -456,6 +456,11 @@ public:
     {
         m_assembler.ldrh(dest, makeBaseIndexBase(address), address.index, address.scale);
     }
+    
+    void load16(ImplicitAddress address, RegisterID dest)
+    {
+        m_assembler.ldrh(dest, address.base, address.offset);
+    }
 
     DataLabel32 store32WithAddressOffsetPatch(RegisterID src, Address address)
     {

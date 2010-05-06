@@ -1,5 +1,16 @@
 2010-05-06  Oliver Hunt  <oliver@apple.com>
 
+        Build fix
+
+        Fix ARM builds
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::load16):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::load16):
+
+2010-05-06  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         Improve performance of single character string compares

@@ -273,6 +273,14 @@ public:
         else
             m_assembler.ldrh_d(dest, ARMRegisters::S0, ARMAssembler::getOp2Byte(-address.offset));
     }
+    
+    void load16(ImplicitAddress address, RegisterID dest)
+    {
+        if (address.offset >= 0)
+            m_assembler.ldrh_u(dest, address.base, ARMAssembler::getOp2Byte(address.offset));
+        else
+            m_assembler.ldrh_d(dest, address.base, ARMAssembler::getOp2Byte(-address.offset));   
+    }
 
     DataLabel32 store32WithAddressOffsetPatch(RegisterID src, Address address)
     {
