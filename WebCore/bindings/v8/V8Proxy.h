@@ -39,6 +39,7 @@
 #include "V8DOMWindowShell.h"
 #include "V8DOMWrapper.h"
 #include "V8GCController.h"
+#include "V8Utilities.h"
 #include "WrapperTypeInfo.h"
 #include <v8.h>
 #include <wtf/PassRefPtr.h> // so generated bindings don't have to
@@ -296,6 +297,9 @@ namespace WebCore {
         template <typename T>
         static v8::Handle<v8::Value> constructDOMObject(const v8::Arguments&, WrapperTypeInfo*);
 
+        template <typename T>
+        static v8::Handle<v8::Value> constructDOMObjectWithScriptExecutionContext(const v8::Arguments&, WrapperTypeInfo*);
+
         // Process any pending JavaScript console messages.
         static void processConsoleMessages();
 
@@ -395,6 +399,25 @@ namespace WebCore {
         // Note: it's OK to let this RefPtr go out of scope because we also call
         // SetDOMWrapper(), which effectively holds a reference to obj.
         RefPtr<T> obj = T::create();
+        V8DOMWrapper::setDOMWrapper(args.Holder(), type, obj.get());
+        obj->ref();
+        V8DOMWrapper::setJSWrapperForDOMObject(obj.get(), v8::Persistent<v8::Object>::New(args.Holder()));
+        return args.Holder();
+    }
+
+    template <typename T>
+    v8::Handle<v8::Value> V8Proxy::constructDOMObjectWithScriptExecutionContext(const v8::Arguments& args, WrapperTypeInfo* type)
+    {
+        if (!args.IsConstructCall())
+            return throwError(V8Proxy::TypeError, "");
+
+        ScriptExecutionContext* context = getScriptExecutionContext();
+        if (!context)
+            return throwError(V8Proxy::ReferenceError, "");
+
+        // Note: it's OK to let this RefPtr go out of scope because we also call
+        // SetDOMWrapper(), which effectively holds a reference to obj.
+        RefPtr<T> obj = T::create(context);
         V8DOMWrapper::setDOMWrapper(args.Holder(), type, obj.get());
         obj->ref();
         V8DOMWrapper::setJSWrapperForDOMObject(obj.get(), v8::Persistent<v8::Object>::New(args.Holder()));

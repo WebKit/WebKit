@@ -1781,11 +1781,18 @@ END
 
     # In namespace WebCore, add generated implementation for 'CanBeConstructed'.
     if ($dataNode->extendedAttributes->{"CanBeConstructed"} && !$dataNode->extendedAttributes->{"CustomConstructor"}) {
+        my $v8ConstructFunction;
+        my $callWith = $dataNode->extendedAttributes->{"CallWith"};
+        if ($callWith and $callWith eq "ScriptExecutionContext") {
+            $v8ConstructFunction = "constructDOMObjectWithScriptExecutionContext";
+        } else {
+            $v8ConstructFunction = "constructDOMObject";
+        }
         push(@implContent, <<END);
 v8::Handle<v8::Value> ${className}::constructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.${interfaceName}.Contructor");
-    return V8Proxy::constructDOMObject<$interfaceName>(args, &info);
+    return V8Proxy::${v8ConstructFunction}<$interfaceName>(args, &info);
 }
 END
    }

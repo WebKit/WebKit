@@ -1117,7 +1117,7 @@ sub GenerateImplementation
         my $protoClassName;
         $protoClassName = "${className}Prototype";
 
-        push(@implContent, constructorFor($className, $protoClassName, $interfaceName, $visibleClassName, $dataNode->extendedAttributes->{"CanBeConstructed"}));
+        push(@implContent, constructorFor($className, $protoClassName, $interfaceName, $visibleClassName, $dataNode));
     }
 
     # - Add functions and constants to a hashtable definition
@@ -2597,8 +2597,10 @@ sub constructorFor
     my $protoClassName = shift;
     my $interfaceName = shift;
     my $visibleClassName = shift;
-    my $canConstruct = shift;
+    my $dataNode = shift;
     my $constructorClassName = "${className}Constructor";
+    my $canConstruct = $dataNode->extendedAttributes->{"CanBeConstructed"};
+    my $callWith = $dataNode->extendedAttributes->{"CallWith"};
 
 my $implContent = << "EOF";
 class ${constructorClassName} : public DOMConstructorObject {
@@ -2626,7 +2628,20 @@ EOF
 $implContent .= << "EOF";
     static JSObject* construct${interfaceName}(ExecState* exec, JSObject* constructor, const ArgList&)
     {
-        return asObject(toJS(exec, static_cast<${constructorClassName}*>(constructor)->globalObject(), ${interfaceName}::create()));
+EOF
+
+    my $constructorArg = "";
+    if ($callWith and $callWith eq "ScriptExecutionContext") {
+        $constructorArg = "context";
+$implContent .= << "EOF";
+        ScriptExecutionContext* context = static_cast<${constructorClassName}*>(constructor)->scriptExecutionContext();
+        if (!context)
+            return throwError(exec, ReferenceError);
+EOF
+    }
+
+$implContent .= << "EOF";
+        return asObject(toJS(exec, static_cast<${constructorClassName}*>(constructor)->globalObject(), ${interfaceName}::create(${constructorArg})));
     }
     virtual ConstructType getConstructData(ConstructData& constructData)
     {
