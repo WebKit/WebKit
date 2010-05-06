@@ -1,3 +1,12 @@
+2010-05-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        [Qt] Enable Sputnik tests.
+        https://bugs.webkit.org/show_bug.cgi?id=38457
+
+        * platform/qt/Skipped: Only skip tests that fail.
+
 2010-05-05  Steven Lai  <steven_lai@asia.apple.com>
 
         Reviewed by Alexey Proskuryakov.

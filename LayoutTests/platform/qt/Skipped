@@ -5139,9 +5139,6 @@ svg/custom/marker-overflow-clip.svg
 # Doesn't support WOFF yet.
 fast/css/font-face-woff.html
 
-# multiple tests fail on different platforms, need to find the cause(s)
-fast/js/sputnik
-
 # https://bugs.webkit.org/show_bug.cgi?id=38376
 media/media-document-audio-size.html
 
@@ -5153,3 +5150,48 @@ fast/workers/worker-event-listener.html
 # [Qt] http/tests/security/cross-frame-access-name-getter.html timed out
 # https://bugs.webkit.org/show_bug.cgi?id=38540
 http/tests/security/cross-frame-access-name-getter.html
+
+# Failing Sputnik tests
+fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code
+fast/js/sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.12_Array_prototype_splice/S15.4.4.12_A2.1_T3.html
+fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T1.html
+fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T2.html
+fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T3.html
+fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T4.html
+fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T5.html
+fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T6.html
+fast/js/sputnik/Unicode/Unicode_500/S7.6_A3.1.html
+fast/js/sputnik/Unicode/Unicode_500/S7.6_A3.2.html
+fast/js/sputnik/Unicode/Unicode_500/S7.6_A5.3_T1.html
+fast/js/sputnik/Unicode/Unicode_500/S7.6_A5.3_T2.html
+fast/js/sputnik/Unicode/Unicode_510/S15.5.4.16_A1.html
+fast/js/sputnik/Unicode/Unicode_510/S15.5.4.18_A1.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A1.1_T1.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A1.1_T2.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A1.1_T4.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A2.2_T1.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A2.2_T2.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A2.3.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A3.1.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A3.2.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T1.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T2.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T4.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T7.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T8.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T9.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
+
+# Failing Sputnik tests on 32 bit
+fast/js/sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html
+fast/js/sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html
+
+# Failing Sputnik test on 64 bit
+fast/js/sputnik/Conformance/11_Expressions/11.5_Multiplicative_Operators/11.5.3_Applying_the_percent_Operator/S11.5.3_A4_T2.html
+
+# Timed out Sputnik tests on ARM
+fast/js/sputnik/Unicode/Unicode_218/S7.6_A3.1.html
+fast/js/sputnik/Unicode/Unicode_218/S7.6_A3.2.html
+fast/js/sputnik/Unicode/Unicode_218/S7.6_A5.3_T1.html
+fast/js/sputnik/Unicode/Unicode_218/S7.6_A5.3_T2.html
