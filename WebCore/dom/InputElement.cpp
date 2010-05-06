@@ -22,6 +22,15 @@
 #include "InputElement.h"
 
 #include "BeforeTextInsertedEvent.h"
+
+#if ENABLE(WCSS)
+#include "CSSPropertyNames.h"
+#include "CSSRule.h"
+#include "CSSRuleList.h"
+#include "CSSStyleRule.h"
+#include "CSSStyleSelector.h"
+#endif
+
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
@@ -138,6 +147,14 @@ void InputElement::setValueFromRenderer(InputElementData& data, InputElement* in
 
 String InputElement::sanitizeValue(const InputElement* inputElement, const String& proposedValue)
 {
+#if ENABLE(WCSS)
+    InputElementData data = const_cast<InputElement*>(inputElement)->data();
+    if (!isConformToInputMask(data, proposedValue)) {
+        if (isConformToInputMask(data, data.value()))
+            return data.value();
+        return String();
+    }
+#endif
     return InputElement::sanitizeUserInputValue(inputElement, proposedValue, s_maximumLength);
 }
 
@@ -187,6 +204,18 @@ void InputElement::handleBeforeTextInsertedEvent(InputElementData& data, InputEl
 
     // Truncate the inserted text to avoid violating the maxLength and other constraints.
     BeforeTextInsertedEvent* textEvent = static_cast<BeforeTextInsertedEvent*>(event);
+#if ENABLE(WCSS)
+    RefPtr<Range> range = element->document()->frame()->selection()->selection().toNormalizedRange();
+    String candidateString = toRenderTextControlSingleLine(element->renderer())->text();
+    if (selectionLength)
+        candidateString.replace(range->startOffset(), range->endOffset(), textEvent->text());
+    else
+        candidateString.insert(textEvent->text(), range->startOffset());
+    if (!isConformToInputMask(inputElement->data(), candidateString)) {
+        textEvent->setText("");
+        return;
+      }
+#endif
     textEvent->setText(sanitizeUserInputValue(inputElement, textEvent->text(), appendableLength));
 }
 
@@ -238,6 +267,10 @@ InputElementData::InputElementData()
     , m_maxLength(InputElement::s_maximumLength)
     , m_cachedSelectionStart(-1)
     , m_cachedSelectionEnd(-1)
+#if ENABLE(WCSS)
+    , m_inputFormatMask("*m")
+    , m_maxInputCharsAllowed(InputElement::s_maximumLength)
+#endif
 {
 }
 
@@ -258,5 +291,138 @@ InputElement* toInputElement(Element* element)
 
     return 0;
 }
+
+#if ENABLE(WCSS)
+static inline const AtomicString& formatCodes()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, codes, ("AaNnXxMm"));
+    return codes;
+}
+
+static unsigned cursorPositionToMaskIndex(const String& inputFormatMask, unsigned cursorPosition)
+{
+    UChar mask;
+    int index = -1;
+    do {
+        mask = inputFormatMask[++index];
+        if (mask == '\\')
+            ++index;
+        else if (mask == '*' || (isASCIIDigit(mask) && mask != '0')) {
+            index = inputFormatMask.length() - 1;
+            break;
+        }
+    } while (cursorPosition--);
+
+    return index;
+}
+
+bool InputElement::isConformToInputMask(const InputElementData& data, const String& inputChars)
+{
+    for (unsigned i = 0; i < inputChars.length(); ++i)
+        if (!isConformToInputMask(data, inputChars[i], i))
+            return false;
+    return true;
+}
+
+bool InputElement::isConformToInputMask(const InputElementData& data, UChar inChar, unsigned cursorPosition)
+{
+    String inputFormatMask = data.inputFormatMask();
+
+    if (inputFormatMask.isEmpty() || inputFormatMask == "*M" || inputFormatMask == "*m")
+        return true;
+
+    if (cursorPosition >= data.maxInputCharsAllowed())
+        return false;
+
+    unsigned maskIndex = cursorPositionToMaskIndex(inputFormatMask, cursorPosition);
+    bool ok = true;
+    UChar mask = inputFormatMask[maskIndex];
+    // Match the inputed character with input mask
+    switch (mask) {
+    case 'A':
+        ok = !isASCIIDigit(inChar) && !isASCIILower(inChar) && isASCIIPrintable(inChar);
+        break;
+    case 'a':
+        ok = !isASCIIDigit(inChar) && !isASCIIUpper(inChar) && isASCIIPrintable(inChar);
+        break;
+    case 'N':
+        ok = isASCIIDigit(inChar);
+        break;
+    case 'n':
+        ok = !isASCIIAlpha(inChar) && isASCIIPrintable(inChar);
+        break;
+    case 'X':
+        ok = !isASCIILower(inChar) && isASCIIPrintable(inChar);
+        break;
+    case 'x':
+        ok = !isASCIIUpper(inChar) && isASCIIPrintable(inChar);
+        break;
+    case 'M':
+    case 'm':
+        ok = isASCIIPrintable(inChar);
+        break;
+    default:
+        ok = (mask == inChar);
+        break;
+    }
+
+    return ok;
+}
+
+String InputElement::validateInputMask(InputElementData& data, String& inputMask)
+{
+    inputMask.replace("\\\\", "\\");
+
+    bool isValid = true;
+    bool hasWildcard = false;
+    unsigned escapeCharCount = 0;
+    unsigned maskLength = inputMask.length();
+    UChar formatCode;
+    for (unsigned i = 0; i < maskLength; ++i) {
+        formatCode = inputMask[i];
+        if (formatCodes().find(formatCode) == -1) {
+            if (formatCode == '*' || (isASCIIDigit(formatCode) && formatCode != '0')) {
+                // Validate codes which ends with '*f' or 'nf'
+                formatCode = inputMask[++i];
+                if ((i + 1 != maskLength) || formatCodes().find(formatCode) == -1) {
+                    isValid = false;
+                    break;
+                }
+                hasWildcard = true;
+            } else if (formatCode == '\\') {
+                // skip over the next mask character
+                ++i;
+                ++escapeCharCount;
+            } else {
+                isValid = false;
+                break;
+            }
+        }
+    }
+
+    if (!isValid)
+        return String();
+    // calculate the number of characters allowed to be entered by input mask
+    unsigned allowedLength = maskLength;
+    if (escapeCharCount)
+        allowedLength -= escapeCharCount;
+
+    if (hasWildcard) {
+        formatCode = inputMask[maskLength - 2];
+        if (formatCode == '*')
+            allowedLength = data.maxInputCharsAllowed();
+        else {
+            unsigned leftLen = String(&formatCode).toInt();
+            allowedLength = leftLen + allowedLength - 2;
+        }
+    }
+
+    if (allowedLength < data.maxInputCharsAllowed())
+        data.setMaxInputCharsAllowed(allowedLength);
+
+    return inputMask;
+}
+
+#endif
 
 }

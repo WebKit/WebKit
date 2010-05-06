@@ -5331,6 +5331,23 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitTextStroke:
     case CSSPropertyWebkitVariableDeclarationBlock:
         return;
+#if ENABLE(WCSS)
+    case CSSPropertyWapInputFormat:
+        if (primitiveValue && m_element->hasTagName(WebCore::inputTag)) {
+            String mask = primitiveValue->getStringValue();
+            static_cast<HTMLInputElement*>(m_element)->setWapInputFormat(mask);
+        }
+        return;
+
+    case CSSPropertyWapInputRequired:
+        if (primitiveValue && m_element->isFormControlElement()) {
+            HTMLFormControlElement* element = static_cast<HTMLFormControlElement*>(m_element);
+            bool required = primitiveValue->getStringValue() == "true";
+            element->setRequired(required);
+        }
+        return;
+#endif 
+
 #if ENABLE(SVG)
     default:
         // Try the SVG properties

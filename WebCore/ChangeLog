@@ -1,3 +1,40 @@
+2010-05-05  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        Reviewed by George Staikos
+
+        https://bugs.webkit.org/show_bug.cgi?id=37848
+        This patch adds WCSS -wap-input-format and -wap-input-required support to WebKit
+
+        Tests: fast/wcss/wap-input-format.xhtml
+               fast/wcss/wap-input-required.xhtml
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseWCSSInputProperty):
+        * css/CSSParser.h:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/WCSSPropertyNames.in:
+        * dom/InputElement.cpp:
+        (WebCore::InputElement::sanitizeValue):
+        (WebCore::InputElement::handleBeforeTextInsertedEvent):
+        (WebCore::InputElementData::InputElementData):
+        (WebCore::formatCodes):
+        (WebCore::cursorPositionToMaskIndex):
+        (WebCore::InputElement::isConformToInputMask):
+        (WebCore::InputElement::validateInputMask):
+        * dom/InputElement.h:
+        (WebCore::InputElementData::inputFormatMask):
+        (WebCore::InputElementData::setInputFormatMask):
+        (WebCore::InputElementData::maxInputCharsAllowed):
+        (WebCore::InputElementData::setMaxInputCharsAllowed):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setWapInputFormat):
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::data):
+        * wml/WMLInputElement.h:
+        (WebCore::WMLInputElement::data):
+
 2010-05-05  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Darin Adler.

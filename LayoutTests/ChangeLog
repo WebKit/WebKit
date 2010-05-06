@@ -1,3 +1,15 @@
+2010-05-05  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        Reviewed by George Staikos
+
+        https://bugs.webkit.org/show_bug.cgi?id=37848
+        Add test cases for -wap-input-format and -wap-input-required of WCSS
+
+        * fast/wcss/wap-input-format-expected.txt: Added.
+        * fast/wcss/wap-input-format.xhtml: Added.
+        * fast/wcss/wap-input-required-expected.txt: Added.
+        * fast/wcss/wap-input-required.xhtml: Added.
+
 2010-05-05  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.

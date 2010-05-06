@@ -1702,6 +1702,15 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyTextUnderline:
     case CSSPropertyWebkitVariableDeclarationBlock:
         return false;
+#if ENABLE(WCSS)
+    case CSSPropertyWapInputFormat:
+        validPrimitive = true;
+        break;
+    case CSSPropertyWapInputRequired:
+        parsedValue = parseWCSSInputProperty();
+        break;
+#endif
+
 #if ENABLE(SVG)
     default:
         return parseSVGValue(propId, important);
@@ -1729,6 +1738,27 @@ bool CSSParser::parseValue(int propId, bool important)
     }
     return false;
 }
+
+#if ENABLE(WCSS)
+PassRefPtr<CSSValue> CSSParser::parseWCSSInputProperty()
+{
+    RefPtr<CSSValue> parsedValue = 0;
+    CSSParserValue* value = m_valueList->current();
+    String inputProperty;
+    if (value->unit == CSSPrimitiveValue::CSS_STRING || value->unit == CSSPrimitiveValue::CSS_IDENT)
+        inputProperty = String(value->string);
+
+    if (!inputProperty.isEmpty())
+       parsedValue = CSSPrimitiveValue::create(inputProperty, CSSPrimitiveValue::CSS_STRING);
+
+    while (m_valueList->next()) {
+    // pass all other values, if any. If we don't do this, 
+    // the parser will think that it's not done and won't process this property  
+    }
+
+    return parsedValue;
+}
+#endif
 
 void CSSParser::addFillValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> rval)
 {

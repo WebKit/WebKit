@@ -267,6 +267,11 @@ public:
     // An instance pointed by the DateComponents* parameter will have parsed values and be
     // modified even if the parsing fails.  The DateComponents* parameter may be 0.
     static bool parseToDateComponents(InputType, const String&, DateComponents*);
+
+#if ENABLE(WCSS)
+    void setWapInputFormat(String& mask);
+    virtual InputElementData data() const { return m_data; }
+#endif
     
 protected:
     virtual void willMoveToNewOwnerDocument();

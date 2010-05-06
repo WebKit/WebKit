@@ -72,6 +72,7 @@ sub hasFeature($$)
         "3D Rendering" => "WebCoreHas3DRendering",
         "3D Canvas" => "WebGLShader",
         "WML" => "WMLElement",
+        "WCSS" => "parseWCSSInputProperty",
         "XHTMLMP" => "isXHTMLMPDocument",
     );
     my $symbolName = $symbolForFeature{$featureName};

@@ -2758,4 +2758,15 @@ void HTMLInputElement::stepUpFromRenderer(int n)
     stepUp(n, ec);
 }
 
+#if ENABLE(WCSS)
+void HTMLInputElement::setWapInputFormat(String& mask)
+{
+    String validateMask = validateInputMask(m_data, mask);
+    if (!validateMask.isEmpty())
+        m_data.setInputFormatMask(validateMask);
+}
+#endif
+
+
+
 } // namespace
