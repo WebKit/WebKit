@@ -2810,12 +2810,6 @@ BUGDPRANKE LINUX MAC : svg/text/kerning.svg = IMAGE
 
 BUGDPRANKE MAC : editing/selection/caret-rtl-2.html = IMAGE
 
-// Temporary failures for two-sided commit.
-// These tests will be fixed when the handlers for the new interfaces
-// are checked in to test_shell.
-BUGJOHNNYG DEFER : fast/notifications/notifications-replace.html = TEXT
-BUGJOHNNYG DEFER : fast/notifications/notifications-rtl.html = TEXT
-
 BUGDPRANKE LINUX : fast/dom/clone-node-z-index.html = TEXT
 
 // WebKit roll 58791:58807

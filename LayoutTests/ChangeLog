@@ -1,3 +1,11 @@
+2010-05-06  John Gregg  <johnnyg@google.com>
+
+        Unreviewed.  Updating test expectations.
+
+        [chromium] enabling notifications tests after test_shell change.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-05-06  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.
