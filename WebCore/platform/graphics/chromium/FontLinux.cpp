@@ -238,6 +238,23 @@ public:
         } else {
             if (!hb_utf16_script_run_next(&m_numCodePoints, &m_item.item, m_run.characters(), m_run.length(), &m_indexOfNextScriptRun))
                 return false;
+
+            // It is actually wrong to consider script runs at all in this code.
+            // Other WebKit code (e.g. Mac) segments complex text just by finding
+            // the longest span of text covered by a single font.
+            // But we currently need to call hb_utf16_script_run_next anyway to fill
+            // in the harfbuzz data structures to e.g. pick the correct script's shaper.
+            // So we allow that to run first, then do a second pass over the range it
+            // found and take the largest subregion that stays within a single font.
+            const FontData* glyphData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos], false, false).fontData;
+            int endOfRun;
+            for (endOfRun = 1; endOfRun < m_item.item.length; ++endOfRun) {
+                const FontData* nextGlyphData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos + endOfRun], false, false).fontData;
+                if (nextGlyphData != glyphData)
+                    break;
+            }
+            m_item.item.length = endOfRun;
+            m_indexOfNextScriptRun = m_item.item.pos + endOfRun;
         }
 
         setupFontForScriptRun();
@@ -358,9 +375,7 @@ private:
 
     void setupFontForScriptRun()
     {
-        const FontData* fontData = m_font->fontDataAt(0);
-        if (!fontData->containsCharacters(m_item.string + m_item.item.pos, m_item.item.length))
-            fontData = m_font->fontDataForCharacters(m_item.string + m_item.item.pos, m_item.item.length);
+        const FontData* fontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos], false, false).fontData;
         const FontPlatformData& platformData = fontData->fontDataForCharacter(' ')->platformData();
         m_item.face = platformData.harfbuzzFace();
         void* opaquePlatformData = const_cast<FontPlatformData*>(&platformData);
