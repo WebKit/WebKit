@@ -2844,3 +2844,8 @@ BUGDPRANKE LINUX : svg/custom/mask-changes.svg = IMAGE PASS
 BUGDPRANKE LINUX : http/tests/loading/bad-scheme-subframe.html = TEXT
 
 BUGDPRANKE : svg/custom/repaint-stroke-width-changes.svg = IMAGE PASS
+
+// WebKit roll 58855:58878
+BUG43419: fast/wcss/wap-input-format.xhtml = TEXT
+BUG43419: fast/wcss/wap-input-required.xhtml = TEXT
+BUG43420: fast/events/popup-allowed-from-gesture-initiated-form-submit.html = TIMEOUT

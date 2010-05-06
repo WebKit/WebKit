@@ -1,3 +1,15 @@
+2010-05-06  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        [chromium] Unreviewed. Updating expectations.
+
+        * platform/chromium-linux/fast/url/segments-expected.txt: Added.
+        * platform/chromium-linux/fast/url/segments-from-data-url-expected.txt: Added.
+        * platform/chromium-mac/fast/url/segments-expected.txt: Added.
+        * platform/chromium-mac/fast/url/segments-from-data-url-expected.txt: Added.
+        * platform/chromium-win/fast/url/segments-expected.txt: Added.
+        * platform/chromium-win/fast/url/segments-from-data-url-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-05-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
