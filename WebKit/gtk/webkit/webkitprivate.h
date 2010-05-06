@@ -381,11 +381,4 @@ extern "C" {
     webkit_web_frame_layout(WebKitWebFrame* frame);
 }
 
-namespace WTF {
-    template <> void freeOwnedGPtr<SoupMessage>(SoupMessage*);
-    template <> void freeOwnedGPtr<WebKitNetworkRequest>(WebKitNetworkRequest*);
-    template <> void freeOwnedGPtr<WebKitNetworkResponse>(WebKitNetworkResponse*);
-    template <> void freeOwnedGPtr<WebKitWebResource>(WebKitWebResource*);
-}
-
 #endif

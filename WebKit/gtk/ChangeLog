@@ -1,5 +1,24 @@
 2010-05-06  Martin Robinson  <mrobinson@webkit.org>
 
+        Reviewed by Xan Lopez.
+
+        Remove use of GOwnPtr to hold GObject types.
+        https://bugs.webkit.org/show_bug.cgi?id=38669
+
+        Change use of GOwnPtr to GRefPtr to types which are natively reference-counted.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchWillSendRequest): Change GOwnPtr to GRefPtr in some places.
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForMIMEType): Ditto.
+        * webkit/webkitnetworkrequest.cpp:
+        (webkit_network_request_new_with_core_request): Ditto.
+        * webkit/webkitnetworkresponse.cpp:
+        (webkit_network_response_new_with_core_response): Ditto.
+        * webkit/webkitprivate.cpp: Remove GOwnPtr reference counting template specialization.
+        * webkit/webkitprivate.h: Ditto.
+
+2010-05-06  Martin Robinson  <mrobinson@webkit.org>
+
         Reviewed by Gustavo Noronha Silva.
 
         [GTK] Enable DOM clipboard and drag-and-drop access

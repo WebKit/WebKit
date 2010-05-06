@@ -178,34 +178,6 @@ PasteboardHelperGtk* pasteboardHelperInstance()
 
 } /** end namespace WebKit */
 
-namespace WTF {
-
-template <> void freeOwnedGPtr<SoupMessage>(SoupMessage* soupMessage)
-{
-    if (soupMessage)
-        g_object_unref(soupMessage);
-}
-
-template <> void freeOwnedGPtr<WebKitNetworkRequest>(WebKitNetworkRequest* request)
-{
-    if (request)
-        g_object_unref(request);
-}
-
-template <> void freeOwnedGPtr<WebKitNetworkResponse>(WebKitNetworkResponse* response)
-{
-    if (response)
-        g_object_unref(response);
-}
-
-template <> void freeOwnedGPtr<WebKitWebResource>(WebKitWebResource* resource)
-{
-    if (resource)
-        g_object_unref(resource);
-}
-
-}
-
 static GtkWidget* currentToplevelCallback(WebKitSoupAuthDialog* feature, SoupMessage* message, gpointer userData)
 {
     gpointer messageData = g_object_get_data(G_OBJECT(message), "resourceHandle");

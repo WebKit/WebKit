@@ -22,7 +22,7 @@
 #include "config.h"
 #include "webkitnetworkresponse.h"
 
-#include "GOwnPtr.h"
+#include "GRefPtr.h"
 #include "ResourceResponse.h"
 #include "webkitprivate.h"
 
@@ -161,7 +161,7 @@ static void webkit_network_response_init(WebKitNetworkResponse* response)
 // for internal use only
 WebKitNetworkResponse* webkit_network_response_new_with_core_response(const WebCore::ResourceResponse& resourceResponse)
 {
-    GOwnPtr<SoupMessage> soupMessage(resourceResponse.toSoupMessage());
+    GRefPtr<SoupMessage> soupMessage(adoptGRef(resourceResponse.toSoupMessage()));
     if (soupMessage)
         return WEBKIT_NETWORK_RESPONSE(g_object_new(WEBKIT_TYPE_NETWORK_RESPONSE, "message", soupMessage.get(), NULL));
 
