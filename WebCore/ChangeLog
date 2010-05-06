@@ -1,3 +1,13 @@
+2010-05-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Build fix, not reviewed.
+        
+        Speculative Windows and Debug build fixes for the last change.
+
+        * dom/Node.h:
+        (WebCore::Node::inDocument):
+        (WebCore::Node::setFlag):
+
 2010-05-06  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Eric Seidel.

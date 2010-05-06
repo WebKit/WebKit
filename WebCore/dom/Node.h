@@ -360,7 +360,7 @@ public:
     // node tree, false otherwise.
     bool inDocument() const 
     { 
-        ASSERT(m_document || !m_inDocument);
+        ASSERT(m_document || !getFlag(InDocumentFlag));
         return getFlag(InDocumentFlag);
     }
 
@@ -644,7 +644,7 @@ private:
     // 5 bits remaining
 
     bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
-    void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-f & mask); } 
+    void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 
     void setFlag(NodeFlags mask) const { m_nodeFlags |= mask; } 
     void clearFlag(NodeFlags mask) const { m_nodeFlags &= ~mask; } 
 
