@@ -1,3 +1,13 @@
+2010-05-05  John Sullivan  <sullivan@apple.com>
+
+        <rdar://problem/7942606> Output appears in Console when exiting Safari with multiple windows opened
+
+        Reviewed by Mark Rowe.
+
+        * WebView/WebView.mm:
+        (+[WebView closeAllWebViews]):
+        Make copy of allWebViewsSet to avoid mutating it while iterating through it.
+
 2010-05-04  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

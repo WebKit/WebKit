@@ -935,7 +935,9 @@ static bool shouldEnableLoadDeferring()
     DOMWindow::dispatchAllPendingUnloadEvents();
 
     // This will close the WebViews in a random order. Change this if close order is important.
-    NSEnumerator *enumerator = [(NSMutableSet *)allWebViewsSet objectEnumerator];
+    // Make a new set to avoid mutating the set we are enumerating.
+    NSSet *webViewsToClose = [NSSet setWithSet:(NSSet *)allWebViewsSet]; 
+    NSEnumerator *enumerator = [webViewsToClose objectEnumerator];
     while (WebView *webView = [enumerator nextObject])
         [webView close];
 }
