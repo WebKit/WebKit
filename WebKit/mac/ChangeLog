@@ -1,5 +1,14 @@
 2010-05-05  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        Fixed a crash when closing Top Sites after r58847.
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView webFrame]): Null-check _private.
+
+2010-05-05  Dan Bernstein  <mitz@apple.com>
+
         Rubber-stamped by Mark Rowe.
 
         Fixed test crashes after r58847.

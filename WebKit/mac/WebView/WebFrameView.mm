@@ -372,7 +372,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (WebFrame *)webFrame
 {
-    return _private->webFrame;
+    // This method can be called beneath -[NSView dealloc] after _private has been cleared.
+    return _private ? _private->webFrame : nil;
 }
 
 - (void)setAllowsScrolling:(BOOL)flag
