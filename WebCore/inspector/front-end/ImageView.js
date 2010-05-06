@@ -34,6 +34,11 @@ WebInspector.ImageView = function(resource)
 }
 
 WebInspector.ImageView.prototype = {
+    hasContentTab: function()
+    {
+        return true;
+    },
+
     contentTabSelected: function()
     {
         if (this._container)

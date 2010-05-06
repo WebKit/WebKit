@@ -34,6 +34,11 @@ WebInspector.FontView = function(resource)
 }
 
 WebInspector.FontView.prototype = {
+    hasContentTab: function()
+    {
+        return true;
+    },
+
     contentTabSelected: function()
     {
         if (this.fontPreviewElement)

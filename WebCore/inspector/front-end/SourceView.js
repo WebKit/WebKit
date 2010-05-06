@@ -78,6 +78,11 @@ WebInspector.SourceView.prototype = {
         WebInspector.getResourceContent(this.resource.identifier, this._contentLoaded.bind(this));
     },
 
+    hasContentTab: function()
+    {
+        return true;
+    },
+
     contentTabSelected: function()
     {
         this.setupSourceFrameIfNeeded();

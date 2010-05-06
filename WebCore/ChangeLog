@@ -1,3 +1,24 @@
+2010-05-06  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Do not show content tab for resources
+        not supporting content preview.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38635
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/FontView.js:
+        (WebInspector.FontView.prototype.hasContentTab):
+        * inspector/front-end/ImageView.js:
+        (WebInspector.ImageView.prototype.hasContentTab):
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView):
+        (WebInspector.ResourceView.prototype._selectTab):
+        (WebInspector.ResourceView.prototype.hasContentTab):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView.prototype.hasContentTab):
+
 2010-05-06  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Kenneth Christiansen.
