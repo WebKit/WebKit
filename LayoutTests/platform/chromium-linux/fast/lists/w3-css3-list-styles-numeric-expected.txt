@@ -971,14 +971,14 @@ layer at (0,0) size 785x6861
               text run at (0,0) width 12: "\x{1811}"
         RenderBlock (floating) {OL} at (156,294) size 446x40
           RenderListItem {LI} at (300,0) size 126x20
-            RenderListMarker at (-138,0) size 133x19: "-\x{1812}\x{1811}\x{1814}\x{1817}\x{1814}\x{1818}\x{1813}\x{1816}\x{1814}\x{1818}"
+            RenderListMarker at (-139,0) size 134x19: "-\x{1812}\x{1811}\x{1814}\x{1817}\x{1814}\x{1818}\x{1813}\x{1816}\x{1814}\x{1818}"
             RenderInline (generated) at (0,0) size 6x19
               RenderText at (0,0) size 6x19
                 text run at (0,0) width 6: "-"
             RenderText {#text} at (6,0) size 120x19
               text run at (6,0) width 120: "\x{1812}\x{1811}\x{1814}\x{1817}\x{1814}\x{1818}\x{1813}\x{1816}\x{1814}\x{1818}"
           RenderListItem {LI} at (300,20) size 126x20
-            RenderListMarker at (-138,0) size 133x19: "-\x{1812}\x{1811}\x{1814}\x{1817}\x{1814}\x{1818}\x{1813}\x{1816}\x{1814}\x{1817}"
+            RenderListMarker at (-139,0) size 134x19: "-\x{1812}\x{1811}\x{1814}\x{1817}\x{1814}\x{1818}\x{1813}\x{1816}\x{1814}\x{1817}"
             RenderInline (generated) at (0,0) size 6x19
               RenderText at (0,0) size 6x19
                 text run at (0,0) width 6: "-"

@@ -1,3 +1,19 @@
+2010-05-06  Evan Martin  <evan@chromium.org>
+
+        Unreviewed.  Updating test expectations.
+
+        [chromium] new baselines for r58886
+        https://bugs.webkit.org/show_bug.cgi?id=38652
+
+        * platform/chromium-linux/fast/lists/w3-css3-list-styles-numeric-expected.txt:
+        * platform/chromium-linux/fast/text/international/danda-space-expected.checksum:
+        * platform/chromium-linux/fast/text/international/danda-space-expected.png:
+        * platform/chromium-linux/fast/text/international/danda-space-expected.txt:
+        * platform/chromium-linux/fast/text/international/thai-baht-space-expected.checksum:
+        * platform/chromium-linux/fast/text/international/thai-baht-space-expected.png:
+        * platform/chromium-linux/fast/text/international/thai-baht-space-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-05-05  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Darin Adler.

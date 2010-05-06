@@ -2544,7 +2544,6 @@ BUG33358 WIN LINUX : fast/dom/Window/window-postmessage-clone-frames.html = TEXT
 
 // WebKit roll 54016 -> 54045
 BUG33486 WIN LINUX : fast/text/international/hebrew-vowels.html = IMAGE+TEXT
-BUG33486 LINUX : fast/text/international/thai-baht-space.html = IMAGE
 BUG33486 LINUX : fast/text/international/thai-line-breaks.html = IMAGE
 
 // WebKit roll 54059 -> 54075
