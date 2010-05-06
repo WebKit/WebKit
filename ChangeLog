@@ -1,3 +1,12 @@
+2010-05-05  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Fixed the gobject introspection compilation with the new DOM
+        bindings, we needed to add DOM objects.
+
+        * GNUmakefile.am:
+
 2010-05-04  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed, build fix for Symbian.

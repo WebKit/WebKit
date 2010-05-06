@@ -69,6 +69,13 @@ webcore_built_nosources :=
 webcore_dist :=
 webcoregtk_cppflags :=
 webcoregtk_sources :=
+IDL_BINDINGS_GDOM :=
+GDOM_AUTO_CLASSES :=
+GDOM_FIXED_CLASSES :=
+GDOM_CLASSES :=
+GDOM_HEADERS_BUILT :=
+GDOM_HEADERS_FIXED :=
+libgdom_h_api :=
 webkitgtk_h_api :=
 webkitgtk_sources :=
 webkitgtk_cppflags :=
@@ -338,7 +345,8 @@ webkitgtk_h_api += \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebview.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebdatabase.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitsecurityorigin.h \
-	$(top_builddir)/WebKit/gtk/webkit/webkitversion.h
+	$(top_builddir)/WebKit/gtk/webkit/webkitversion.h \
+	$(libgdom_h_api)
 
 webkitgtk_built_sources += \
 	DerivedSources/webkitenumtypes.cpp \
@@ -440,6 +448,7 @@ $(WEBKIT_GIRSOURCES): $(JSCORE_GIRSOURCES) $(G_IR_SCANNER) libwebkit-1.0.la
 	     --add-include-path $(top_srcdir)/WebKit/gtk \
 	     -I$(top_srcdir)/WebKit/gtk \
 	     -I$(top_builddir)/WebKit/gtk \
+	     -I$(top_builddir)/DerivedSources \
 	     -I$(top_srcdir)/JavaScriptCore/ForwardingHeaders \
 	     -I$(top_srcdir) \
 	     $(webkitgtk_h_api)
