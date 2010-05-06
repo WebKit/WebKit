@@ -1519,7 +1519,7 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
     if (mouseEvent.button() == MiddleButton)
         m_panScrollButtonPressed = false;
     if (m_springLoadedPanScrollInProgress)
-       stopAutoscrollTimer();
+        stopAutoscrollTimer();
 #endif
 
     m_mousePressed = false;

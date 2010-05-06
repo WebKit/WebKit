@@ -1,3 +1,10 @@
+2010-05-06  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Fix indent.  Sorry, my OCD was acting up.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+
 2010-05-06  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Joseph Pecoraro.
