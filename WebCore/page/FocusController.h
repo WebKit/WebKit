@@ -63,9 +63,10 @@ private:
     bool advanceFocusDirectionally(FocusDirection, KeyboardEvent*);
     bool advanceFocusInDocumentOrder(FocusDirection, KeyboardEvent*, bool initialFocus);
 
-    void findFocusableNodeInDirection(Document*, Node*, FocusDirection, KeyboardEvent*, FocusCandidate& closestFocusCandidate,
+    void findFocusableNodeInDirection(Node* outter, Node*, FocusDirection, KeyboardEvent*,
+                                      FocusCandidate& closestFocusCandidate,
                                       const FocusCandidate& parentCandidate = FocusCandidate());
-    void deepFindFocusableNodeInDirection(Node*, Node*, FocusDirection, KeyboardEvent*, FocusCandidate&);
+    void deepFindFocusableNodeInDirection(Node* container, Node* focused, FocusDirection, KeyboardEvent*, FocusCandidate&);
 
     Page* m_page;
     RefPtr<Frame> m_focusedFrame;

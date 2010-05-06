@@ -1,3 +1,29 @@
+2010-05-06  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Kenneth Christiansen.
+
+        Spatial Navigation: adapt the logic of {deep}findFocusableNodeInDirection to do traversal starting from Node* not Document*
+        https://bugs.webkit.org/show_bug.cgi?id=37803
+
+        Instead of receiving a Document pointer as incoming parameter, patch modifies
+        findFocusableNodeInDirection and deepFindFocusableNodeInDirection methods to
+        receive a Node pointer as start for content traversal.
+        This way we can make good use of deepFindFocusableNodeInDirection to traverse
+        other scrollable container like scrollable div's, and not only frames or iframes.
+
+        Patch also makes use of 'while' instead of 'for' to loop control, that gives move
+        flexibility to the incremental step: e.g. if a scrollable div was processed, the incremental
+        step in the loop does not have to do node->traverseNextNode() but node->traverseNextSibling().
+
+        No behavior change. It is a preparation for supporting scrollable containers in Spatial
+        Navigation.
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::advanceFocusDirectionally):
+        (WebCore::FocusController::findFocusableNodeInDirection):
+        (WebCore::FocusController::deepFindFocusableNodeInDirection):
+        * page/FocusController.h:
+
 2010-05-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed WinCE buildfix after r58842.

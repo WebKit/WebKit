@@ -304,7 +304,7 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
     frame = frame->tree()->top();
 
     FocusCandidate focusCandidate;
-    findFocusableNodeInDirection(frame->document(), focusedNode, direction, event, focusCandidate);
+    findFocusableNodeInDirection(frame->document()->firstChild(), focusedNode, direction, event, focusCandidate);
 
     Node* node = focusCandidate.node;
     if (!node || !node->isElementNode()) {
@@ -389,20 +389,23 @@ static void updateFocusCandidateIfCloser(Node* focusedNode, const FocusCandidate
     }
 }
 
-void FocusController::findFocusableNodeInDirection(Document* document, Node* focusedNode,
+void FocusController::findFocusableNodeInDirection(Node* outer, Node* focusedNode,
                                                    FocusDirection direction, KeyboardEvent* event,
                                                    FocusCandidate& closestFocusCandidate,
                                                    const FocusCandidate& candidateParent)
 {
-    ASSERT(document);
-    ASSERT(candidateParent.isNull() || static_cast<HTMLFrameOwnerElement*>(candidateParent.node));
+    ASSERT(outer);
+    ASSERT(candidateParent.isNull()
+        || candidateParent.node->hasTagName(frameTag)
+        || candidateParent.node->hasTagName(iframeTag));
 
     // Walk all the child nodes and update closestFocusCandidate if we find a nearer node.
-    for (Node* candidate = document->firstChild(); candidate; candidate = candidate->traverseNextNode()) {
+    Node* candidate = outer;
+    while (candidate) {
         // Inner documents case.
 
         if (candidate->isFrameOwnerElement())
-            deepFindFocusableNodeInDirection(focusedNode, candidate, direction, event, closestFocusCandidate);
+            deepFindFocusableNodeInDirection(candidate, focusedNode, direction, event, closestFocusCandidate);
         else if (candidate != focusedNode && candidate->isKeyboardFocusable(event)) {
             FocusCandidate currentFocusCandidate(candidate);
 
@@ -410,8 +413,10 @@ void FocusController::findFocusableNodeInDirection(Document* document, Node* foc
             distanceDataForNode(direction, focusedNode, currentFocusCandidate);
 
             // Bail out if distance is maximum.
-            if (currentFocusCandidate.distance == maxDistance())
+            if (currentFocusCandidate.distance == maxDistance()) {
+                candidate = candidate->traverseNextNode(outer->parent());
                 continue;
+            }
 
             // If candidateParent is not null, it means that we are in a recursive call
             // from deepFineFocusableNodeInDirection (i.e. processing an element in an iframe),
@@ -423,33 +428,54 @@ void FocusController::findFocusableNodeInDirection(Document* document, Node* foc
 
             updateFocusCandidateIfCloser(focusedNode, currentFocusCandidate, closestFocusCandidate);
         }
+
+        candidate = candidate->traverseNextNode(outer->parent());
     }
 }
 
-void FocusController::deepFindFocusableNodeInDirection(Node* focusedNode, Node* candidate,
+void FocusController::deepFindFocusableNodeInDirection(Node* container, Node* focusedNode,
                                                        FocusDirection direction, KeyboardEvent* event,
                                                        FocusCandidate& closestFocusCandidate)
 {
-    HTMLFrameOwnerElement* owner = static_cast<HTMLFrameOwnerElement*>(candidate);
-    if (!owner->contentFrame())
-        return;
+    ASSERT(container->hasTagName(frameTag) || container->hasTagName(iframeTag));
 
-    Document* innerDocument = owner->contentFrame()->document();
-    if (!innerDocument)
-        return;
+    // Track if focusedNode is a descendant of the current container node being processed.
+    bool descendantOfContainer = false;
+    Node* firstChild = 0;
 
-    if (innerDocument == focusedNode->document())
-        findFocusableNodeInDirection(innerDocument, focusedNode, direction, event, closestFocusCandidate);
-    else {
-        // Check if the current {i}frame element itself is a good candidate
-        // to move focus to. If it is, then we traverse its inner nodes.
-        FocusCandidate candidateParent = FocusCandidate(candidate);
-        distanceDataForNode(direction, focusedNode, candidateParent);
+    // Iframe or Frame.
+    if (container->hasTagName(frameTag) || container->hasTagName(iframeTag)) {
 
-        // FIXME: Consider alignment?
-        if (candidateParent.distance < closestFocusCandidate.distance)
-            findFocusableNodeInDirection(innerDocument, focusedNode, direction, event, closestFocusCandidate, candidateParent);
+        HTMLFrameOwnerElement* owner = static_cast<HTMLFrameOwnerElement*>(container);
+        if (!owner->contentFrame())
+            return;
+
+        Document* innerDocument = owner->contentFrame()->document();
+        if (!innerDocument)
+            return;
+
+        descendantOfContainer = innerDocument == focusedNode->document();
+        firstChild = innerDocument->firstChild();
+
     }
+
+    if (descendantOfContainer) {
+        findFocusableNodeInDirection(firstChild, focusedNode, direction, event, closestFocusCandidate);
+        return;
+    }
+
+    // Check if the current container element itself is a good candidate
+    // to move focus to. If it is, then we traverse its inner nodes.
+    FocusCandidate candidateParent = FocusCandidate(container);
+    distanceDataForNode(direction, focusedNode, candidateParent);
+
+    // Bail out if distance is maximum.
+    if (candidateParent.distance == maxDistance())
+        return;
+
+    // FIXME: Consider alignment?
+    if (candidateParent.distance < closestFocusCandidate.distance)
+        findFocusableNodeInDirection(firstChild, focusedNode, direction, event, closestFocusCandidate, candidateParent);
 }
 
 static bool relinquishesEditingFocus(Node *node)
