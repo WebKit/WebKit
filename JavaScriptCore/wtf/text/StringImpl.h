@@ -223,8 +223,15 @@ public:
 
     bool hasTerminatingNullCharacter() const { return m_refCountAndFlags & s_refCountFlagHasTerminatingNullCharacter; }
 
-    bool inTable() const { return m_refCountAndFlags & s_refCountFlagInTable; }
-    void setInTable() { m_refCountAndFlags |= s_refCountFlagInTable; }
+    bool isAtomic() const { return m_refCountAndFlags & s_refCountFlagIsAtomic; }
+    void setIsAtomic(bool isIdentifier)
+    {
+        ASSERT(!isStatic());
+        if (isIdentifier)
+            m_refCountAndFlags |= s_refCountFlagIsAtomic;
+        else
+            m_refCountAndFlags &= ~s_refCountFlagIsAtomic;
+    }
 
     unsigned hash() const { if (!m_hash) m_hash = computeHash(m_data, m_length); return m_hash; }
     unsigned existingHash() const { ASSERT(m_hash); return m_hash; }

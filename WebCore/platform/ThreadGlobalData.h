@@ -49,6 +49,7 @@ namespace WebCore {
     public:
         ThreadGlobalData();
         ~ThreadGlobalData();
+        void destroy(); // called on workers to clean up the ThreadGlobalData before the thread exits.
 
         EventNames& eventNames() { return *m_eventNames; }
         ThreadTimers& threadTimers() { return *m_threadTimers; }

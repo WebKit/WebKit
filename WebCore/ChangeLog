@@ -1,3 +1,30 @@
+2010-05-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 38604 - workers-gc2 crashing on Qt
+
+        This appears to be due to a couple of issues.
+        (1) When the atomic string table is deleted it does not clear the 'inTable' bit
+        on AtomicStrings - it implicitly assumes that all AtomicStrings have already
+        been deleted at this point (otherwise they will crash in their destructor when
+        they try to remove themselves from the atomic string table).
+        (2) We don't fix the ordering in which WTF::WTFThreadData and
+        WebCore::ThreadGlobalData are destructed.
+
+        We should make sure that ThreadGlobalData is cleaned up before worker threads
+        terminate and WTF::WTFThreadData is destroyed, and we should clear the inTable
+        bit of members on atomic string table destruction.
+
+        WTF changes (fix issue 2, above) - clean up the thread data on worker termination.
+
+        * platform/ThreadGlobalData.cpp:
+        (WebCore::ThreadGlobalData::~ThreadGlobalData):
+        (WebCore::ThreadGlobalData::destroy):
+        * platform/ThreadGlobalData.h:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::workerThread):
+
 2010-05-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
@@ -7493,8 +7520,8 @@
         declaration ( e.g. every "namespace WebCore { class String; }" much change to
         "namespace WTF { class String; }").
 
-        Moving the files, but leaving the classes logically in the WebCore namespace –
-        which is technically a layering violation – I'll come back and fix this up in a
+        Moving the files, but leaving the classes logically in the WebCore namespace -
+        which is technically a layering violation - I'll come back and fix this up in a
         subsequent patch.
 
         * Android.mk:
@@ -36529,7 +36556,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=34728 addressed the symptoms of this
         problem, and it is probably cleaner to make the client data's normal world no
         longer be a member (since it is a ref-counted object), however they should be
-        no requirement to 'detatch' – it makes no sense for anyone to be referencing
+        no requirement to 'detatch' - it makes no sense for anyone to be referencing
         the world after the JSGlobalData has gone away (the world's purpose is to hold
         wrapper objects in the JSGlobalData's heap).  Keep the restructuring that makes
         the normal world no longer be a member, but remove the detach mechanism this

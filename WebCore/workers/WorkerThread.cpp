@@ -36,6 +36,7 @@
 #include "PlatformString.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
+#include "ThreadGlobalData.h"
 
 #include <utility>
 #include <wtf/Noncopyable.h>
@@ -141,7 +142,10 @@ void* WorkerThread::workerThread()
     // The below assignment will destroy the context, which will in turn notify messaging proxy.
     // We cannot let any objects survive past thread exit, because no other thread will run GC or otherwise destroy them.
     m_workerContext = 0;
-    
+
+    // Clean up WebCore::ThreadGlobalData before WTF::WTFThreadData goes away!
+    threadGlobalData().destroy();
+
     // The thread object may be already destroyed from notification now, don't try to access "this".
     detachThread(threadID);
 

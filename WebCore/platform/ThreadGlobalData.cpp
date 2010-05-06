@@ -78,14 +78,25 @@ ThreadGlobalData::ThreadGlobalData()
 
 ThreadGlobalData::~ThreadGlobalData()
 {
+    destroy();
+}
+
+void ThreadGlobalData::destroy()
+{
 #if PLATFORM(MAC)
     delete m_cachedConverterTEC;
+    m_cachedConverterTEC = 0;
 #endif
+
 #if USE(ICU_UNICODE)
     delete m_cachedConverterICU;
+    m_cachedConverterICU = 0;
 #endif
+
     delete m_eventNames;
+    m_eventNames = 0;
     delete m_threadTimers;
+    m_threadTimers = 0;
 }
 
 } // namespace WebCore

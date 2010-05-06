@@ -1,3 +1,38 @@
+2010-05-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 38604 - workers-gc2 crashing on Qt
+
+        This appears to be due to a couple of issues.
+        (1) When the atomic string table is deleted it does not clear the 'inTable' bit
+        on AtomicStrings - it implicitly assumes that all AtomicStrings have already
+        been deleted at this point (otherwise they will crash in their destructor when
+        they try to remove themselves from the atomic string table).
+        (2) We don't fix the ordering in which WTF::WTFThreadData and
+        WebCore::ThreadGlobalData are destructed.
+
+        We should make sure that ThreadGlobalData is cleaned up before worker threads
+        terminate and WTF::WTFThreadData is destroyed, and we should clear the inTable
+        bit of members on atomic string table destruction.
+
+        WTF changes (fix issue 1, above) - ensure inTable property is cleared when the
+        atomic string table is destroyed (also, rename InTable to IsAtomic, to make it
+        clear which table we are refering to!)
+
+        * wtf/text/AtomicString.cpp:
+        (WebCore::AtomicStringTable::destroy):
+        (WebCore::CStringTranslator::translate):
+        (WebCore::UCharBufferTranslator::translate):
+        (WebCore::HashAndCharactersTranslator::translate):
+        (WebCore::AtomicString::add):
+        * wtf/text/StringImpl.cpp:
+        (WebCore::StringImpl::~StringImpl):
+        * wtf/text/StringImpl.h:
+        (WebCore::StringImpl::isAtomic):
+        (WebCore::StringImpl::setIsAtomic):
+        * wtf/text/StringImplBase.h:
+
 2010-05-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
