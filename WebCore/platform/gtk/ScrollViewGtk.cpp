@@ -100,21 +100,22 @@ void ScrollView::setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj, boo
         // set in the normal case), we make sure they are up-to-date
         // here. This is needed for the parent scrolling widget to be
         // able to report correct values.
-        bool resetHorizontal = resetValues || !hScrollbar;
-        gtk_adjustment_configure(m_horizontalAdjustment,
-                                 resetHorizontal ? 0 : scrollOffset().width(), 0,
-                                 resetHorizontal ? 0 : contentsSize().width(),
-                                 resetHorizontal ? 0 : hScrollbar->lineStep(),
-                                 resetHorizontal ? 0 : hScrollbar->pageStep(),
-                                 resetHorizontal ? 0 : frameRect().width());
 
-        bool resetVertical = resetValues || !vScrollbar;
+        int horizontalPageStep = max(max<int>(frameRect().width() * Scrollbar::minFractionToStepWhenPaging(), frameRect().width() - Scrollbar::maxOverlapBetweenPages()), 1);
+        gtk_adjustment_configure(m_horizontalAdjustment,
+                                 resetValues ? 0 : scrollOffset().width(), 0,
+                                 resetValues ? 0 : contentsSize().width(),
+                                 resetValues ? 0 : Scrollbar::pixelsPerLineStep(),
+                                 resetValues ? 0 : horizontalPageStep,
+                                 resetValues ? 0 : frameRect().width());
+
+        int verticalPageStep = max(max<int>(frameRect().height() * Scrollbar::minFractionToStepWhenPaging(), frameRect().height() - Scrollbar::maxOverlapBetweenPages()), 1);
         gtk_adjustment_configure(m_verticalAdjustment,
-                                 resetVertical ? 0 : scrollOffset().width(), 0,
-                                 resetVertical ? 0 : contentsSize().width(),
-                                 resetVertical ? 0 : vScrollbar->lineStep(),
-                                 resetVertical ? 0 : vScrollbar->pageStep(),
-                                 resetVertical ? 0 : frameRect().width());
+                                 resetValues ? 0 : scrollOffset().height(), 0,
+                                 resetValues ? 0 : contentsSize().height(),
+                                 resetValues ? 0 : Scrollbar::pixelsPerLineStep(),
+                                 resetValues ? 0 : verticalPageStep,
+                                 resetValues ? 0 : frameRect().height());
     } else {
         ScrollbarGtk* hScrollbar = reinterpret_cast<ScrollbarGtk*>(horizontalScrollbar());
         if (hScrollbar)
