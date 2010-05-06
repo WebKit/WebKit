@@ -63,6 +63,7 @@
     background-color: rgb(240, 240, 240);
     border-right: 1px solid rgb(187, 187, 187);
     text-align: right;
+    vertical-align: top;
     word-break: normal;
     -webkit-user-select: none;
 	padding-right: 4px;

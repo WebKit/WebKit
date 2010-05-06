@@ -1,3 +1,17 @@
+2010-05-05  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Line Numbers should be Aligned with the Source Code Line
+        https://bugs.webkit.org/show_bug.cgi?id=38593
+
+        If there is a message bubble, such as an error message, in a source view
+        the line number should be in line with the source code line, not centered
+        between the source and bubble.
+
+        * inspector/front-end/textViewer.css:
+        (.webkit-line-number): added vertical-align: top
+
 2010-05-05  Dan Bernstein  <mitz@apple.com>
 
         Fix the decelerated compositing build.
