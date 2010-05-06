@@ -1,3 +1,16 @@
+2010-05-06  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add a test to ensure popups are allowed when the user submits a form with target="_blank".
+
+        https://bugs.webkit.org/show_bug.cgi?id=37335
+        <rdar://problem/7884980>
+
+        * fast/events/popup-allowed-from-gesture-initiated-form-submit-expected.txt: Added.
+        * fast/events/popup-allowed-from-gesture-initiated-form-submit.html: Added.
+        * fast/events/resources/popup-allowed-from-gesture-initiated-form-submit-target.html: Added.
+
 2010-05-05  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         Reviewed by George Staikos

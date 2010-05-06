@@ -172,7 +172,6 @@ private:
 
     void disconnectPlatformScriptObjects();
 
-    bool processingUserGestureEvent(DOMWrapperWorld*) const;
     bool isJavaScriptAnchorNavigation() const;
 
     ShellMap m_windowShells;

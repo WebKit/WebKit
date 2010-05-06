@@ -36,6 +36,7 @@
 #include "ScriptValue.h"
 #include "Settings.h"
 #include "StorageNamespace.h"
+#include "UserGestureIndicator.h"
 #include "WebCoreJSClientData.h"
 #include "XSSAuditor.h"
 #include "npruntime_impl.h"
@@ -228,19 +229,16 @@ JSDOMWindowShell* ScriptController::initScript(DOMWrapperWorld* world)
 
 bool ScriptController::processingUserGesture(DOMWrapperWorld* world) const
 {
-    return m_allowPopupsFromPlugin || processingUserGestureEvent(world) || isJavaScriptAnchorNavigation();
-}
+    if (m_allowPopupsFromPlugin || isJavaScriptAnchorNavigation())
+        return true;
 
-bool ScriptController::processingUserGestureEvent(DOMWrapperWorld* world) const
-{
-    JSDOMWindowShell* shell = existingWindowShell(world);
-    if (!shell)
-        return false;
+    // If a DOM event is being processed, check that it was initiated by the user
+    // and that it is in the whitelist of event types allowed to generate pop-ups.
+    if (JSDOMWindowShell* shell = existingWindowShell(world))
+        if (Event* event = shell->window()->currentEvent())
+            return event->fromUserGesture();
 
-    if (Event* event = shell->window()->currentEvent())
-        return event->fromUserGesture();
-    
-    return false;
+    return UserGestureIndicator::processingUserGesture();
 }
 
 // FIXME: This seems like an insufficient check to verify a click on a javascript: anchor.

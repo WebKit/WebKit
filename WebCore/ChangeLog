@@ -1,3 +1,21 @@
+2010-05-06  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Allow forms submitting to target="_blank" to open popups if the submission
+        originated from a user gesture.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37335
+        <rdar://problem/7884980>
+
+        Test: fast/events/popup-allowed-from-gesture-initiated-form-submit.html
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::processingUserGesture): If no DOM event is
+        being processed, consult UserGestureIndicator to determine return value.
+        * bindings/js/ScriptController.h: Moved the logic of processingUserGestureEvent()
+        into processingUserGesture().
+
 2010-05-06  Xan Lopez  <xlopez@igalia.com>
 
         Rubber-stamped by Eric Seidel.
