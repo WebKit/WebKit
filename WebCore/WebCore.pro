@@ -122,7 +122,7 @@ maemo5|symbian|embedded {
     DEFINES += ENABLE_FAST_MOBILE_SCROLLING=1
 }
 
-maemo5 {
+maemo5|symbian {
     DEFINES += WTF_USE_QT_MOBILE_THEME=1
 }
 
