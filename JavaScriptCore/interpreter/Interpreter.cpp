@@ -3211,6 +3211,29 @@ skip_id_custom_self:
         vPC += OPCODE_LENGTH(op_jnlesseq);
         NEXT_INSTRUCTION();
     }
+    DEFINE_OPCODE(op_jlesseq) {
+        /* jlesseq src1(r) src2(r) target(offset)
+         
+         Checks whether register src1 is less than or equal to
+         register src2, as with the ECMAScript '<=' operator,
+         and then jumps to offset target from the current instruction,
+         if and only if the result of the comparison is true.
+         */
+        JSValue src1 = callFrame->r(vPC[1].u.operand).jsValue();
+        JSValue src2 = callFrame->r(vPC[2].u.operand).jsValue();
+        int target = vPC[3].u.operand;
+        
+        bool result = jsLessEq(callFrame, src1, src2);
+        CHECK_FOR_EXCEPTION();
+        
+        if (result) {
+            vPC += target;
+            NEXT_INSTRUCTION();
+        }
+        
+        vPC += OPCODE_LENGTH(op_jlesseq);
+        NEXT_INSTRUCTION();
+    }
     DEFINE_OPCODE(op_switch_imm) {
         /* switch_imm tableIndex(n) defaultOffset(offset) scrutinee(r)
 

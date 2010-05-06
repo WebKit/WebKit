@@ -175,6 +175,12 @@ namespace JSC {
         inline Address addressFor(unsigned index, RegisterID base = callFrameRegister);
     };
 
+    struct ThunkHelpers {
+        static unsigned stringImplDataOffset() { return WebCore::StringImpl::dataOffset(); }
+        static unsigned jsStringLengthOffset() { return OBJECT_OFFSETOF(JSString, m_length); }
+        static unsigned jsStringValueOffset() { return OBJECT_OFFSETOF(JSString, m_value); }
+    };
+
 #if USE(JSVALUE32_64)
     inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadJSCell(unsigned virtualRegisterIndex, RegisterID payload)
     {

@@ -94,8 +94,27 @@ void JIT::emit_op_jnless(Instruction* currentInstruction)
     JumpList notInt32Op1;
     JumpList notInt32Op2;
 
-    // Int32 less.
+    // Character less.
+    if (isOperandConstantImmediateChar(op1)) {
+        emitLoad(op2, regT1, regT0);
+        addSlowCase(branch32(NotEqual, regT1, Imm32(JSValue::CellTag)));
+        JumpList failures;
+        emitLoadCharacterString(regT0, regT0, failures);
+        addSlowCase(failures);
+        addJump(branch32(LessThanOrEqual, regT0, Imm32(asString(getConstantOperand(op1))->tryGetValue()[0])), target);
+        return;
+    }
+    if (isOperandConstantImmediateChar(op2)) {
+        emitLoad(op1, regT1, regT0);
+        addSlowCase(branch32(NotEqual, regT1, Imm32(JSValue::CellTag)));
+        JumpList failures;
+        emitLoadCharacterString(regT0, regT0, failures);
+        addSlowCase(failures);
+        addJump(branch32(GreaterThanOrEqual, regT0, Imm32(asString(getConstantOperand(op2))->tryGetValue()[0])), target);
+        return;
+    }
     if (isOperandConstantImmediateInt(op1)) {
+        // Int32 less.
         emitLoad(op2, regT3, regT2);
         notInt32Op2.append(branch32(NotEqual, regT3, Imm32(JSValue::Int32Tag)));
         addJump(branch32(LessThanOrEqual, regT2, Imm32(getConstantOperand(op1).asInt32())), target);
@@ -128,17 +147,24 @@ void JIT::emitSlow_op_jnless(Instruction* currentInstruction, Vector<SlowCaseEnt
     unsigned op2 = currentInstruction[2].u.operand;
     unsigned target = currentInstruction[3].u.operand;
 
-    if (!supportsFloatingPoint()) {
-        if (!isOperandConstantImmediateInt(op1) && !isOperandConstantImmediateInt(op2))
-            linkSlowCase(iter); // int32 check
-        linkSlowCase(iter); // int32 check
+    if (isOperandConstantImmediateChar(op1) || isOperandConstantImmediateChar(op2)) {
+        linkSlowCase(iter);
+        linkSlowCase(iter);
+        linkSlowCase(iter);
+        linkSlowCase(iter);
     } else {
-        if (!isOperandConstantImmediateInt(op1)) {
-            linkSlowCase(iter); // double check
+        if (!supportsFloatingPoint()) {
+            if (!isOperandConstantImmediateInt(op1) && !isOperandConstantImmediateInt(op2))
+                linkSlowCase(iter); // int32 check
             linkSlowCase(iter); // int32 check
+        } else {
+            if (!isOperandConstantImmediateInt(op1)) {
+                linkSlowCase(iter); // double check
+                linkSlowCase(iter); // int32 check
+            }
+            if (isOperandConstantImmediateInt(op1) || !isOperandConstantImmediateInt(op2))
+                linkSlowCase(iter); // double check
         }
-        if (isOperandConstantImmediateInt(op1) || !isOperandConstantImmediateInt(op2))
-            linkSlowCase(iter); // double check
     }
 
     JITStubCall stubCall(this, cti_op_jless);
@@ -157,7 +183,25 @@ void JIT::emit_op_jless(Instruction* currentInstruction)
     JumpList notInt32Op1;
     JumpList notInt32Op2;
 
-    // Int32 less.
+    // Character less.
+    if (isOperandConstantImmediateChar(op1)) {
+        emitLoad(op2, regT1, regT0);
+        addSlowCase(branch32(NotEqual, regT1, Imm32(JSValue::CellTag)));
+        JumpList failures;
+        emitLoadCharacterString(regT0, regT0, failures);
+        addSlowCase(failures);
+        addJump(branch32(GreaterThan, regT0, Imm32(asString(getConstantOperand(op1))->tryGetValue()[0])), target);
+        return;
+    }
+    if (isOperandConstantImmediateChar(op2)) {
+        emitLoad(op1, regT1, regT0);
+        addSlowCase(branch32(NotEqual, regT1, Imm32(JSValue::CellTag)));
+        JumpList failures;
+        emitLoadCharacterString(regT0, regT0, failures);
+        addSlowCase(failures);
+        addJump(branch32(LessThan, regT0, Imm32(asString(getConstantOperand(op2))->tryGetValue()[0])), target);
+        return;
+    } 
     if (isOperandConstantImmediateInt(op1)) {
         emitLoad(op2, regT3, regT2);
         notInt32Op2.append(branch32(NotEqual, regT3, Imm32(JSValue::Int32Tag)));
@@ -190,20 +234,26 @@ void JIT::emitSlow_op_jless(Instruction* currentInstruction, Vector<SlowCaseEntr
     unsigned op1 = currentInstruction[1].u.operand;
     unsigned op2 = currentInstruction[2].u.operand;
     unsigned target = currentInstruction[3].u.operand;
-
-    if (!supportsFloatingPoint()) {
-        if (!isOperandConstantImmediateInt(op1) && !isOperandConstantImmediateInt(op2))
-            linkSlowCase(iter); // int32 check
-        linkSlowCase(iter); // int32 check
+    
+    if (isOperandConstantImmediateChar(op1) || isOperandConstantImmediateChar(op2)) {
+        linkSlowCase(iter);
+        linkSlowCase(iter);
+        linkSlowCase(iter);
+        linkSlowCase(iter);
     } else {
-        if (!isOperandConstantImmediateInt(op1)) {
-            linkSlowCase(iter); // double check
+        if (!supportsFloatingPoint()) {
+            if (!isOperandConstantImmediateInt(op1) && !isOperandConstantImmediateInt(op2))
+                linkSlowCase(iter); // int32 check
             linkSlowCase(iter); // int32 check
+        } else {
+            if (!isOperandConstantImmediateInt(op1)) {
+                linkSlowCase(iter); // double check
+                linkSlowCase(iter); // int32 check
+            }
+            if (isOperandConstantImmediateInt(op1) || !isOperandConstantImmediateInt(op2))
+                linkSlowCase(iter); // double check
         }
-        if (isOperandConstantImmediateInt(op1) || !isOperandConstantImmediateInt(op2))
-            linkSlowCase(iter); // double check
     }
-
     JITStubCall stubCall(this, cti_op_jless);
     stubCall.addArgument(op1);
     stubCall.addArgument(op2);
@@ -211,7 +261,7 @@ void JIT::emitSlow_op_jless(Instruction* currentInstruction, Vector<SlowCaseEntr
     emitJumpSlowToHot(branchTest32(NonZero, regT0), target);
 }
 
-void JIT::emit_op_jnlesseq(Instruction* currentInstruction)
+void JIT::emit_op_jlesseq(Instruction* currentInstruction, bool invert)
 {
     unsigned op1 = currentInstruction[1].u.operand;
     unsigned op2 = currentInstruction[2].u.operand;
@@ -220,20 +270,38 @@ void JIT::emit_op_jnlesseq(Instruction* currentInstruction)
     JumpList notInt32Op1;
     JumpList notInt32Op2;
 
-    // Int32 less.
+    // Character less.
+    if (isOperandConstantImmediateChar(op1)) {
+        emitLoad(op2, regT1, regT0);
+        addSlowCase(branch32(NotEqual, regT1, Imm32(JSValue::CellTag)));
+        JumpList failures;
+        emitLoadCharacterString(regT0, regT0, failures);
+        addSlowCase(failures);
+        addJump(branch32(invert ? LessThan : GreaterThanOrEqual, regT0, Imm32(asString(getConstantOperand(op1))->tryGetValue()[0])), target);
+        return;
+    }
+    if (isOperandConstantImmediateChar(op2)) {
+        emitLoad(op1, regT1, regT0);
+        addSlowCase(branch32(NotEqual, regT1, Imm32(JSValue::CellTag)));
+        JumpList failures;
+        emitLoadCharacterString(regT0, regT0, failures);
+        addSlowCase(failures);
+        addJump(branch32(invert ? GreaterThan : LessThanOrEqual, regT0, Imm32(asString(getConstantOperand(op2))->tryGetValue()[0])), target);
+        return;
+    }
     if (isOperandConstantImmediateInt(op1)) {
         emitLoad(op2, regT3, regT2);
         notInt32Op2.append(branch32(NotEqual, regT3, Imm32(JSValue::Int32Tag)));
-        addJump(branch32(LessThan, regT2, Imm32(getConstantOperand(op1).asInt32())), target);
+        addJump(branch32(invert ? LessThan : GreaterThan, regT2, Imm32(getConstantOperand(op1).asInt32())), target);
     } else if (isOperandConstantImmediateInt(op2)) {
         emitLoad(op1, regT1, regT0);
         notInt32Op1.append(branch32(NotEqual, regT1, Imm32(JSValue::Int32Tag)));
-        addJump(branch32(GreaterThan, regT0, Imm32(getConstantOperand(op2).asInt32())), target);
+        addJump(branch32(invert ? GreaterThan : LessThanOrEqual, regT0, Imm32(getConstantOperand(op2).asInt32())), target);
     } else {
         emitLoad2(op1, regT1, regT0, op2, regT3, regT2);
         notInt32Op1.append(branch32(NotEqual, regT1, Imm32(JSValue::Int32Tag)));
         notInt32Op2.append(branch32(NotEqual, regT3, Imm32(JSValue::Int32Tag)));
-        addJump(branch32(GreaterThan, regT0, regT2), target);
+        addJump(branch32(invert ? GreaterThan : LessThanOrEqual, regT0, regT2), target);
     }
 
     if (!supportsFloatingPoint()) {
@@ -244,34 +312,51 @@ void JIT::emit_op_jnlesseq(Instruction* currentInstruction)
     Jump end = jump();
 
     // Double less.
-    emitBinaryDoubleOp(op_jnlesseq, target, op1, op2, OperandTypes(), notInt32Op1, notInt32Op2, !isOperandConstantImmediateInt(op1), isOperandConstantImmediateInt(op1) || !isOperandConstantImmediateInt(op2));
+    emitBinaryDoubleOp(invert ? op_jnlesseq : op_jlesseq, target, op1, op2, OperandTypes(), notInt32Op1, notInt32Op2, !isOperandConstantImmediateInt(op1), isOperandConstantImmediateInt(op1) || !isOperandConstantImmediateInt(op2));
     end.link(this);
 }
 
-void JIT::emitSlow_op_jnlesseq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_jlesseq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter, bool invert)
 {
     unsigned op1 = currentInstruction[1].u.operand;
     unsigned op2 = currentInstruction[2].u.operand;
     unsigned target = currentInstruction[3].u.operand;
 
-    if (!supportsFloatingPoint()) {
-        if (!isOperandConstantImmediateInt(op1) && !isOperandConstantImmediateInt(op2))
-            linkSlowCase(iter); // int32 check
-        linkSlowCase(iter); // int32 check
+    if (isOperandConstantImmediateChar(op1) || isOperandConstantImmediateChar(op2)) {
+        linkSlowCase(iter);
+        linkSlowCase(iter);
+        linkSlowCase(iter);
+        linkSlowCase(iter);
     } else {
-        if (!isOperandConstantImmediateInt(op1)) {
-            linkSlowCase(iter); // double check
+        if (!supportsFloatingPoint()) {
+            if (!isOperandConstantImmediateInt(op1) && !isOperandConstantImmediateInt(op2))
+                linkSlowCase(iter); // int32 check
             linkSlowCase(iter); // int32 check
+        } else {
+            if (!isOperandConstantImmediateInt(op1)) {
+                linkSlowCase(iter); // double check
+                linkSlowCase(iter); // int32 check
+            }
+            if (isOperandConstantImmediateInt(op1) || !isOperandConstantImmediateInt(op2))
+                linkSlowCase(iter); // double check
         }
-        if (isOperandConstantImmediateInt(op1) || !isOperandConstantImmediateInt(op2))
-            linkSlowCase(iter); // double check
     }
 
     JITStubCall stubCall(this, cti_op_jlesseq);
     stubCall.addArgument(op1);
     stubCall.addArgument(op2);
     stubCall.call();
-    emitJumpSlowToHot(branchTest32(Zero, regT0), target);
+    emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, regT0), target);
+}
+
+void JIT::emit_op_jnlesseq(Instruction* currentInstruction)
+{
+    emit_op_jlesseq(currentInstruction, true);
+}
+
+void JIT::emitSlow_op_jnlesseq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    emitSlow_op_jlesseq(currentInstruction, iter, true);
 }
 
 // LeftShift (<<)
@@ -983,6 +1068,10 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, unsigned dst, unsigned op1, unsi
                 emitLoadDouble(op1, fpRegT2);
                 addJump(branchDouble(DoubleLessThan, fpRegT2, fpRegT0), dst);
                 break;
+            case op_jlesseq:
+                emitLoadDouble(op1, fpRegT2);
+                addJump(branchDouble(DoubleLessThanOrEqual, fpRegT2, fpRegT0), dst);
+                break;
             case op_jnlesseq:
                 emitLoadDouble(op1, fpRegT2);
                 addJump(branchDouble(DoubleLessThanOrUnordered, fpRegT0, fpRegT2), dst);
@@ -1043,6 +1132,10 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, unsigned dst, unsigned op1, unsi
             case op_jnlesseq:
                 emitLoadDouble(op2, fpRegT1);
                 addJump(branchDouble(DoubleLessThanOrUnordered, fpRegT1, fpRegT0), dst);
+                break;
+            case op_jlesseq:
+                emitLoadDouble(op2, fpRegT1);
+                addJump(branchDouble(DoubleLessThanOrEqual, fpRegT1, fpRegT0), dst);
                 break;
             default:
                 ASSERT_NOT_REACHED();

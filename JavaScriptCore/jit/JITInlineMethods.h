@@ -93,6 +93,16 @@ ALWAYS_INLINE void JIT::emitGetFromCallFrameHeaderPtr(RegisterFile::CallFrameHea
 #endif
 }
 
+ALWAYS_INLINE void JIT::emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures)
+{
+    failures.append(branchPtr(NotEqual, Address(src), ImmPtr(m_globalData->jsStringVPtr)));
+    failures.append(branchTest32(NonZero, Address(src, OBJECT_OFFSETOF(JSString, m_fiberCount))));
+    failures.append(branch32(NotEqual, MacroAssembler::Address(src, ThunkHelpers::jsStringLengthOffset()), Imm32(1)));
+    loadPtr(MacroAssembler::Address(src, ThunkHelpers::jsStringValueOffset()), dst);
+    loadPtr(MacroAssembler::Address(dst, ThunkHelpers::stringImplDataOffset()), dst);
+    load16(MacroAssembler::Address(dst, 0), dst);
+}
+
 ALWAYS_INLINE void JIT::emitGetFromCallFrameHeader32(RegisterFile::CallFrameHeaderEntry entry, RegisterID to, RegisterID from)
 {
     load32(Address(from, entry * sizeof(Register)), to);
@@ -322,6 +332,11 @@ ALWAYS_INLINE void JIT::sampleCodeBlock(CodeBlock* codeBlock)
 }
 #endif
 #endif
+
+ALWAYS_INLINE bool JIT::isOperandConstantImmediateChar(unsigned src)
+{
+    return m_codeBlock->isConstantRegisterIndex(src) && getConstantOperand(src).isString() && asString(getConstantOperand(src).asCell())->length() == 1;
+}
 
 #if USE(JSVALUE32_64)
 

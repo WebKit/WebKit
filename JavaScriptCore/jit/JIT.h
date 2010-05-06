@@ -672,6 +672,7 @@ namespace JSC {
         void emit_op_jneq_ptr(Instruction*);
         void emit_op_jnless(Instruction*);
         void emit_op_jless(Instruction*);
+        void emit_op_jlesseq(Instruction*, bool invert = false);
         void emit_op_jnlesseq(Instruction*);
         void emit_op_jsr(Instruction*);
         void emit_op_jtrue(Instruction*);
@@ -759,6 +760,7 @@ namespace JSC {
         void emitSlow_op_jfalse(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jnless(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jless(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_jlesseq(Instruction*, Vector<SlowCaseEntry>::iterator&, bool invert = false);
         void emitSlow_op_jnlesseq(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jtrue(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_loop_if_less(Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -812,6 +814,7 @@ namespace JSC {
 
         JSValue getConstantOperand(unsigned src);
         bool isOperandConstantImmediateInt(unsigned src);
+        bool isOperandConstantImmediateChar(unsigned src);
 
         Jump getSlowCase(Vector<SlowCaseEntry>::iterator& iter)
         {
@@ -835,6 +838,9 @@ namespace JSC {
         void restoreReturnAddressBeforeReturn(RegisterID);
         void restoreReturnAddressBeforeReturn(Address);
 
+        // Loads the character value of a single character string into dst.
+        void emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures);
+        
         void emitTimeoutCheck();
 #ifndef NDEBUG
         void printBytecodeOperandTypes(unsigned src1, unsigned src2);

@@ -310,6 +310,24 @@ void JIT::emit_op_jnless(Instruction* currentInstruction)
     // - constant int immediate to int immediate
     // - int immediate to int immediate
 
+    if (isOperandConstantImmediateChar(op1)) {
+        emitGetVirtualRegister(op2, regT0);
+        addSlowCase(emitJumpIfNotJSCell(regT0));
+        JumpList failures;
+        emitLoadCharacterString(regT0, regT0, failures);
+        addSlowCase(failures);
+        addJump(branch32(LessThanOrEqual, regT0, Imm32(asString(getConstantOperand(op1))->tryGetValue()[0])), target);
+        return;
+    }
+    if (isOperandConstantImmediateChar(op2)) {
+        emitGetVirtualRegister(op1, regT0);
+        addSlowCase(emitJumpIfNotJSCell(regT0));
+        JumpList failures;
+        emitLoadCharacterString(regT0, regT0, failures);
+        addSlowCase(failures);
+        addJump(branch32(GreaterThanOrEqual, regT0, Imm32(asString(getConstantOperand(op2))->tryGetValue()[0])), target);
+        return;
+    }
     if (isOperandConstantImmediateInt(op2)) {
         emitGetVirtualRegister(op1, regT0);
         emitJumpSlowCaseIfNotImmediateInteger(regT0);
@@ -347,6 +365,18 @@ void JIT::emitSlow_op_jnless(Instruction* currentInstruction, Vector<SlowCaseEnt
     // - floating-point number to constant int immediate
     // - constant int immediate to floating-point number
     // - floating-point number to floating-point number.
+    if (isOperandConstantImmediateChar(op1) || isOperandConstantImmediateChar(op2)) {
+        linkSlowCase(iter);
+        linkSlowCase(iter);
+        linkSlowCase(iter);
+        linkSlowCase(iter);
+        JITStubCall stubCall(this, cti_op_jlesseq);
+        stubCall.addArgument(op1, regT0);
+        stubCall.addArgument(op2, regT1);
+        stubCall.call();
+        emitJumpSlowToHot(branchTest32(Zero, regT0), target);
+        return;
+    }
 
     if (isOperandConstantImmediateInt(op2)) {
         linkSlowCase(iter);
@@ -495,6 +525,24 @@ void JIT::emit_op_jless(Instruction* currentInstruction)
     // - constant int immediate to int immediate
     // - int immediate to int immediate
 
+    if (isOperandConstantImmediateChar(op1)) {
+        emitGetVirtualRegister(op2, regT0);
+        addSlowCase(emitJumpIfNotJSCell(regT0));
+        JumpList failures;
+        emitLoadCharacterString(regT0, regT0, failures);
+        addSlowCase(failures);
+        addJump(branch32(GreaterThan, regT0, Imm32(asString(getConstantOperand(op1))->tryGetValue()[0])), target);
+        return;
+    }
+    if (isOperandConstantImmediateChar(op2)) {
+        emitGetVirtualRegister(op1, regT0);
+        addSlowCase(emitJumpIfNotJSCell(regT0));
+        JumpList failures;
+        emitLoadCharacterString(regT0, regT0, failures);
+        addSlowCase(failures);
+        addJump(branch32(LessThan, regT0, Imm32(asString(getConstantOperand(op2))->tryGetValue()[0])), target);
+        return;
+    }
     if (isOperandConstantImmediateInt(op2)) {
         emitGetVirtualRegister(op1, regT0);
         emitJumpSlowCaseIfNotImmediateInteger(regT0);
@@ -532,6 +580,18 @@ void JIT::emitSlow_op_jless(Instruction* currentInstruction, Vector<SlowCaseEntr
     // - floating-point number to constant int immediate
     // - constant int immediate to floating-point number
     // - floating-point number to floating-point number.
+    if (isOperandConstantImmediateChar(op1) || isOperandConstantImmediateChar(op2)) {
+        linkSlowCase(iter);
+        linkSlowCase(iter);
+        linkSlowCase(iter);
+        linkSlowCase(iter);
+        JITStubCall stubCall(this, cti_op_jlesseq);
+        stubCall.addArgument(op1, regT0);
+        stubCall.addArgument(op2, regT1);
+        stubCall.call();
+        emitJumpSlowToHot(branchTest32(NonZero, regT0), target);
+        return;
+    }
 
     if (isOperandConstantImmediateInt(op2)) {
         linkSlowCase(iter);
@@ -669,7 +729,7 @@ void JIT::emitSlow_op_jless(Instruction* currentInstruction, Vector<SlowCaseEntr
     }
 }
 
-void JIT::emit_op_jnlesseq(Instruction* currentInstruction)
+void JIT::emit_op_jlesseq(Instruction* currentInstruction, bool invert)
 {
     unsigned op1 = currentInstruction[1].u.operand;
     unsigned op2 = currentInstruction[2].u.operand;
@@ -680,6 +740,24 @@ void JIT::emit_op_jnlesseq(Instruction* currentInstruction)
     // - constant int immediate to int immediate
     // - int immediate to int immediate
 
+    if (isOperandConstantImmediateChar(op1)) {
+        emitGetVirtualRegister(op2, regT0);
+        addSlowCase(emitJumpIfNotJSCell(regT0));
+        JumpList failures;
+        emitLoadCharacterString(regT0, regT0, failures);
+        addSlowCase(failures);
+        addJump(branch32(invert ? LessThan : GreaterThanOrEqual, regT0, Imm32(asString(getConstantOperand(op1))->tryGetValue()[0])), target);
+        return;
+    }
+    if (isOperandConstantImmediateChar(op2)) {
+        emitGetVirtualRegister(op1, regT0);
+        addSlowCase(emitJumpIfNotJSCell(regT0));
+        JumpList failures;
+        emitLoadCharacterString(regT0, regT0, failures);
+        addSlowCase(failures);
+        addJump(branch32(invert ? GreaterThan : LessThanOrEqual, regT0, Imm32(asString(getConstantOperand(op2))->tryGetValue()[0])), target);
+        return;
+    }
     if (isOperandConstantImmediateInt(op2)) {
         emitGetVirtualRegister(op1, regT0);
         emitJumpSlowCaseIfNotImmediateInteger(regT0);
@@ -688,7 +766,7 @@ void JIT::emit_op_jnlesseq(Instruction* currentInstruction)
 #else
         int32_t op2imm = static_cast<int32_t>(JSImmediate::rawValue(getConstantOperand(op2)));
 #endif
-        addJump(branch32(GreaterThan, regT0, Imm32(op2imm)), target);
+        addJump(branch32(invert ? GreaterThan : LessThanOrEqual, regT0, Imm32(op2imm)), target);
     } else if (isOperandConstantImmediateInt(op1)) {
         emitGetVirtualRegister(op2, regT1);
         emitJumpSlowCaseIfNotImmediateInteger(regT1);
@@ -697,17 +775,17 @@ void JIT::emit_op_jnlesseq(Instruction* currentInstruction)
 #else
         int32_t op1imm = static_cast<int32_t>(JSImmediate::rawValue(getConstantOperand(op1)));
 #endif
-        addJump(branch32(LessThan, regT1, Imm32(op1imm)), target);
+        addJump(branch32(invert ? LessThan : GreaterThanOrEqual, regT1, Imm32(op1imm)), target);
     } else {
         emitGetVirtualRegisters(op1, regT0, op2, regT1);
         emitJumpSlowCaseIfNotImmediateInteger(regT0);
         emitJumpSlowCaseIfNotImmediateInteger(regT1);
 
-        addJump(branch32(GreaterThan, regT0, regT1), target);
+        addJump(branch32(invert ? GreaterThan : LessThanOrEqual, regT0, regT1), target);
     }
 }
 
-void JIT::emitSlow_op_jnlesseq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_jlesseq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter, bool invert)
 {
     unsigned op1 = currentInstruction[1].u.operand;
     unsigned op2 = currentInstruction[2].u.operand;
@@ -717,6 +795,19 @@ void JIT::emitSlow_op_jnlesseq(Instruction* currentInstruction, Vector<SlowCaseE
     // - floating-point number to constant int immediate
     // - constant int immediate to floating-point number
     // - floating-point number to floating-point number.
+
+    if (isOperandConstantImmediateChar(op1) || isOperandConstantImmediateChar(op2)) {
+        linkSlowCase(iter);
+        linkSlowCase(iter);
+        linkSlowCase(iter);
+        linkSlowCase(iter);
+        JITStubCall stubCall(this, cti_op_jlesseq);
+        stubCall.addArgument(op1, regT0);
+        stubCall.addArgument(op2, regT1);
+        stubCall.call();
+        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, regT0), target);
+        return;
+    }
 
     if (isOperandConstantImmediateInt(op2)) {
         linkSlowCase(iter);
@@ -740,7 +831,7 @@ void JIT::emitSlow_op_jnlesseq(Instruction* currentInstruction, Vector<SlowCaseE
             move(Imm32(op2imm), regT1);
             convertInt32ToDouble(regT1, fpRegT1);
 
-            emitJumpSlowToHot(branchDouble(DoubleLessThanOrUnordered, fpRegT1, fpRegT0), target);
+            emitJumpSlowToHot(branchDouble(invert ? DoubleLessThanOrUnordered : DoubleGreaterThanOrEqual, fpRegT1, fpRegT0), target);
 
             emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jnlesseq));
 
@@ -757,7 +848,7 @@ void JIT::emitSlow_op_jnlesseq(Instruction* currentInstruction, Vector<SlowCaseE
         stubCall.addArgument(regT0);
         stubCall.addArgument(op2, regT2);
         stubCall.call();
-        emitJumpSlowToHot(branchTest32(Zero, regT0), target);
+        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, regT0), target);
 
     } else if (isOperandConstantImmediateInt(op1)) {
         linkSlowCase(iter);
@@ -781,7 +872,7 @@ void JIT::emitSlow_op_jnlesseq(Instruction* currentInstruction, Vector<SlowCaseE
             move(Imm32(op1imm), regT0);
             convertInt32ToDouble(regT0, fpRegT0);
 
-            emitJumpSlowToHot(branchDouble(DoubleLessThanOrUnordered, fpRegT1, fpRegT0), target);
+            emitJumpSlowToHot(branchDouble(invert ? DoubleLessThanOrUnordered : DoubleGreaterThanOrEqual, fpRegT1, fpRegT0), target);
 
             emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jnlesseq));
 
@@ -798,7 +889,7 @@ void JIT::emitSlow_op_jnlesseq(Instruction* currentInstruction, Vector<SlowCaseE
         stubCall.addArgument(op1, regT2);
         stubCall.addArgument(regT1);
         stubCall.call();
-        emitJumpSlowToHot(branchTest32(Zero, regT0), target);
+        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, regT0), target);
 
     } else {
         linkSlowCase(iter);
@@ -827,7 +918,7 @@ void JIT::emitSlow_op_jnlesseq(Instruction* currentInstruction, Vector<SlowCaseE
             loadDouble(Address(regT1, OBJECT_OFFSETOF(JSNumberCell, m_value)), fpRegT1);
 #endif
 
-            emitJumpSlowToHot(branchDouble(DoubleLessThanOrUnordered, fpRegT1, fpRegT0), target);
+            emitJumpSlowToHot(branchDouble(invert ? DoubleLessThanOrUnordered : DoubleGreaterThanOrEqual, fpRegT1, fpRegT0), target);
 
             emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jnlesseq));
 
@@ -850,8 +941,18 @@ void JIT::emitSlow_op_jnlesseq(Instruction* currentInstruction, Vector<SlowCaseE
         stubCall.addArgument(regT0);
         stubCall.addArgument(regT1);
         stubCall.call();
-        emitJumpSlowToHot(branchTest32(Zero, regT0), target);
+        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, regT0), target);
     }
+}
+
+void JIT::emit_op_jnlesseq(Instruction* currentInstruction)
+{
+    emit_op_jlesseq(currentInstruction, true);
+}
+
+void JIT::emitSlow_op_jnlesseq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    emitSlow_op_jlesseq(currentInstruction, iter, true);
 }
 
 void JIT::emit_op_bitand(Instruction* currentInstruction)

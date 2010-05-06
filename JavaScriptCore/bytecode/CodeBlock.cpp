@@ -931,6 +931,13 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printf("[%4d] jless\t\t %s, %s, %d(->%d)\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
             break;
         }
+        case op_jlesseq: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int offset = (++it)->u.operand;
+            printf("[%4d] jlesseq\t\t %s, %s, %d(->%d)\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
+            break;
+        }
         case op_loop_if_lesseq: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;

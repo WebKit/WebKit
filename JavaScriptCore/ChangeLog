@@ -1,3 +1,60 @@
+2010-05-06  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Improve performance of single character string compares
+        https://bugs.webkit.org/show_bug.cgi?id=38659
+
+        Add logic to the jit to identify comparisons to single character string literals
+        and then just perform the comparison inline, rather than ignoring the evidence
+        and attempting to perform an integer comparison.
+
+        Multiple changes required -- add jnlesseq opcode, add helper function to identify
+        single character string constants, add a helper to load single character strings.
+        Then add the 32_64 and normal codepaths to the JIT.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::load16):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitJumpIfTrue):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_jnless):
+        (JSC::JIT::emitSlow_op_jnless):
+        (JSC::JIT::emit_op_jless):
+        (JSC::JIT::emitSlow_op_jless):
+        (JSC::JIT::emit_op_jlesseq):
+        (JSC::JIT::emit_op_jnlesseq):
+        (JSC::JIT::emitSlow_op_jlesseq):
+        (JSC::JIT::emitSlow_op_jnlesseq):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_jnless):
+        (JSC::JIT::emitSlow_op_jnless):
+        (JSC::JIT::emit_op_jless):
+        (JSC::JIT::emitSlow_op_jless):
+        (JSC::JIT::emit_op_jlesseq):
+        (JSC::JIT::emit_op_jnlesseq):
+        (JSC::JIT::emitSlow_op_jlesseq):
+        (JSC::JIT::emitSlow_op_jnlesseq):
+        (JSC::JIT::emitBinaryDoubleOp):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitLoadCharacterString):
+        (JSC::JIT::isOperandConstantImmediateChar):
+        * jit/JSInterfaceJIT.h:
+        (JSC::ThunkHelpers::stringImplDataOffset):
+        (JSC::ThunkHelpers::jsStringLengthOffset):
+        (JSC::ThunkHelpers::jsStringValueOffset):
+         Moved from ThunkGenerators to make it possible to share.
+        * jit/ThunkGenerators.cpp:
+
 2010-05-06  Martin Robinson  <mrobinson@webkit.org>
 
         Reviewed by Gustavo Noronha Silva.

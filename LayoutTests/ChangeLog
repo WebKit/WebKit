@@ -1,3 +1,32 @@
+2010-05-06  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Improve performance of single character string compares
+        https://bugs.webkit.org/show_bug.cgi?id=38659
+
+        Add many tests of <, >, <=, >=, ==, ===, !=, !== as the existing
+        tests were woefully inadequate.
+
+        * fast/js/comparison-operators-expected.txt: Added.
+        * fast/js/comparison-operators-greater-expected.txt: Added.
+        * fast/js/comparison-operators-greater.html: Added.
+        * fast/js/comparison-operators-less-expected.txt: Added.
+        * fast/js/comparison-operators-less.html: Added.
+        * fast/js/comparison-operators.html: Added.
+        * fast/js/script-tests/comparison-operators-greater.js: Added.
+        (description.makeTest.func.f.toString):
+        (description.makeTest):
+        (doTest):
+        * fast/js/script-tests/comparison-operators-less.js: Added.
+        (description.makeTest.func.f.toString):
+        (description.makeTest):
+        (doTest):
+        * fast/js/script-tests/comparison-operators.js: Added.
+        (description.makeTest.func.f.toString):
+        (description.makeTest):
+        (doTest):
+
 2010-05-06  John Gregg  <johnnyg@google.com>
 
         Unreviewed.  Updating test expectations.

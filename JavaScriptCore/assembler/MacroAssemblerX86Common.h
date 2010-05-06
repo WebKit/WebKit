@@ -365,6 +365,11 @@ public:
     {
         m_assembler.movzwl_mr(address.offset, address.base, address.index, address.scale, dest);
     }
+    
+    void load16(Address address, RegisterID dest)
+    {
+        m_assembler.movzwl_mr(address.offset, address.base, dest);
+    }
 
     DataLabel32 store32WithAddressOffsetPatch(RegisterID src, Address address)
     {
