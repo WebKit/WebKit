@@ -5195,3 +5195,6 @@ fast/js/sputnik/Unicode/Unicode_218/S7.6_A3.1.html
 fast/js/sputnik/Unicode/Unicode_218/S7.6_A3.2.html
 fast/js/sputnik/Unicode/Unicode_218/S7.6_A5.3_T1.html
 fast/js/sputnik/Unicode/Unicode_218/S7.6_A5.3_T2.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=38656
+editing/selection/shift-click.html

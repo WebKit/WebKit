@@ -1,3 +1,16 @@
+2010-05-06  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        editing/selection/shift-click.html fails on GTK and QT
+        https://bugs.webkit.org/show_bug.cgi?id=38656
+
+        r58892 added this test. It's the first test for shift+click behavior,
+        so it exposed bugs in GTK/QT. Skipping to green the bots.
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2010-05-06  Evan Martin  <evan@chromium.org>
 
         Unreviewed.  Updating test expectations.
