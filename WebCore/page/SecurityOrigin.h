@@ -120,6 +120,11 @@ public:
     bool canAccessLocalStorage() const { return !isUnique(); }
     bool canAccessCookies() const { return !isUnique(); }
 
+    // Technically, we should always allow access to sessionStorage, but we
+    // currently don't handle creating a sessionStorage area for unique
+    // origins.
+    bool canAccessSessionStorage() const { return !isUnique(); }
+
     bool isSecureTransitionTo(const KURL&) const;
 
     // The local SecurityOrigin is the most privileged SecurityOrigin.

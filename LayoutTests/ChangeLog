@@ -1,3 +1,18 @@
+2010-05-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        drop support for sessionStorage in sandbox iframes
+        https://bugs.webkit.org/show_bug.cgi?id=38151
+
+        Update test expectation.  This test was originally created to show that
+        we complied with the letter of the spec, but our behavior is insecure.
+        In the future, we might revert this change and implement a separate
+        storage area for each unique origin.
+
+        * fast/frames/resources/sandboxed-iframe-storage-disallowed.html:
+        * fast/frames/sandboxed-iframe-storage-expected.txt:
+
 2010-05-06  Andy Estes  <aestes@apple.com>
 
         Reviewed by Maciej Stachowiak.

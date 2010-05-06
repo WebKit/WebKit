@@ -1,3 +1,26 @@
+2010-05-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        drop support for sessionStorage in sandbox iframes
+        https://bugs.webkit.org/show_bug.cgi?id=38151
+
+        This patch causes us to throw a security exception when a sandboxed
+        iframe attempts to access sessionStorage, matching our behavior for
+        localStorage.  The letter of the spec asks us to create a separate
+        storage area for each unique origin.  We might want to do that in a
+        future patch, but throwing a security error seems like a safe move now.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::sessionStorage):
+        (WebCore::DOMWindow::localStorage):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::canAccessSessionStorage):
+        * storage/StorageEventDispatcher.cpp:
+        (WebCore::StorageEventDispatcher::dispatch):
+
 2010-05-06  Andy Estes  <aestes@apple.com>
 
         Reviewed by Maciej Stachowiak.

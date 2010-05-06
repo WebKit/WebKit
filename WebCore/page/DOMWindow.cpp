@@ -575,7 +575,7 @@ Location* DOMWindow::location() const
 }
 
 #if ENABLE(DOM_STORAGE)
-Storage* DOMWindow::sessionStorage() const
+Storage* DOMWindow::sessionStorage(ExceptionCode& ec) const
 {
     if (m_sessionStorage)
         return m_sessionStorage.get();
@@ -583,6 +583,11 @@ Storage* DOMWindow::sessionStorage() const
     Document* document = this->document();
     if (!document)
         return 0;
+
+    if (!document->securityOrigin()->canAccessLocalStorage()) {
+        ec = SECURITY_ERR;
+        return 0;
+    }
 
     Page* page = document->page();
     if (!page)
@@ -601,16 +606,16 @@ Storage* DOMWindow::localStorage(ExceptionCode& ec) const
 {
     if (m_localStorage)
         return m_localStorage.get();
-    
+
     Document* document = this->document();
     if (!document)
         return 0;
-    
+
     if (!document->securityOrigin()->canAccessLocalStorage()) {
         ec = SECURITY_ERR;
         return 0;
     }
-        
+
     Page* page = document->page();
     if (!page)
         return 0;
