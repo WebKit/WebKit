@@ -1,3 +1,19 @@
+2010-05-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Page::setCanStartMedia does not properly handle the case where a media listener is removed
+        https://bugs.webkit.org/show_bug.cgi?id=38602
+
+        We can't find any real case where this causes a crash at this time, but
+        we want to harden the code anyway. Thus there are no new regression tests.
+
+        * page/Page.cpp:
+        (WebCore::Page::removeMediaCanStartListener): Removed incorrect assertion.
+        (WebCore::Page::setCanStartMedia): Change algorithm so we notify listeners
+        one at a time and don't notify any listener that has already been removed
+        from the set.
+
 2010-05-05  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Darin Adler.

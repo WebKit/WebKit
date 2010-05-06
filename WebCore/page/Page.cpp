@@ -402,7 +402,6 @@ void Page::addMediaCanStartListener(MediaCanStartListener* listener)
 
 void Page::removeMediaCanStartListener(MediaCanStartListener* listener)
 {
-    ASSERT(!m_canStartMedia);
     ASSERT(m_mediaCanStartListeners.contains(listener));
     m_mediaCanStartListeners.remove(listener);
 }
@@ -414,16 +413,14 @@ void Page::setCanStartMedia(bool canStartMedia)
 
     m_canStartMedia = canStartMedia;
 
-    if (!m_canStartMedia || m_mediaCanStartListeners.isEmpty())
-        return;
-
-    Vector<MediaCanStartListener*> listeners;
-    copyToVector(m_mediaCanStartListeners, listeners);
-    m_mediaCanStartListeners.clear();
-
-    size_t size = listeners.size();
-    for (size_t i = 0; i < size; ++i)
-        listeners[i]->mediaCanStart();
+    while (m_canStartMedia) {
+        HashSet<MediaCanStartListener*>::iterator slot = m_mediaCanStartListeners.begin();
+        if (slot == m_mediaCanStartListeners.end())
+            break;
+        MediaCanStartListener* listener = *slot;
+        m_mediaCanStartListeners.remove(slot);
+        listener->mediaCanStart();
+    }
 }
 
 static Frame* incrementFrame(Frame* curr, bool forward, bool wrapFlag)
