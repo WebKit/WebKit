@@ -26,7 +26,7 @@
 #ifndef JAVASCRIPTCORE_BINDINGS_JNI_JSOBJECT_H
 #define JAVASCRIPTCORE_BINDINGS_JNI_JSOBJECT_H
 
-#if ENABLE(MAC_JAVA_BRIDGE)
+#if ENABLE(JAVA_BRIDGE)
 
 #include <JavaVM/jni.h>
 #include <runtime/JSValue.h>
@@ -128,6 +128,6 @@ jstring KJS_JSObject_JSObjectToString(JNIEnv*, jclass, jlong nativeJSObject);
 
 #endif // PLATFORM(MAC)
 
-#endif // ENABLE(MAC_JAVA_BRIDGE)
+#endif // ENABLE(JAVA_BRIDGE)
 
 #endif // JAVASCRIPTCORE_BINDINGS_JNI_JSOBJECT_H

@@ -1,3 +1,12 @@
+2010-05-06  Steve Block  <steveblock@google.com>
+
+        Reviewed by Eric Seidel.
+
+        MAC_JAVA_BRIDGE should be renamed JAVA_BRIDGE
+        https://bugs.webkit.org/show_bug.cgi?id=38544
+
+        * wtf/Platform.h:
+
 2010-05-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Maciej Stachowiak.

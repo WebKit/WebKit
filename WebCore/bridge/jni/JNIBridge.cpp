@@ -27,7 +27,7 @@
 #include "config.h"
 #include "JNIBridge.h"
 
-#if ENABLE(MAC_JAVA_BRIDGE)
+#if ENABLE(JAVA_BRIDGE)
 
 #include "StringBuilder.h"
 #include <wtf/text/CString.h>
@@ -178,4 +178,4 @@ jmethodID JavaMethod::methodID(jobject obj) const
     return m_methodID;
 }
 
-#endif // ENABLE(MAC_JAVA_BRIDGE)
+#endif // ENABLE(JAVA_BRIDGE)

@@ -26,7 +26,7 @@
 #ifndef JavaInstanceJSC_h
 #define JavaInstanceJSC_h
 
-#if ENABLE(MAC_JAVA_BRIDGE)
+#if ENABLE(JAVA_BRIDGE)
 
 #include "Bridge.h"
 #include "runtime_root.h"
@@ -107,6 +107,6 @@ protected:
 
 } // namespace JSC
 
-#endif // ENABLE(MAC_JAVA_BRIDGE)
+#endif // ENABLE(JAVA_BRIDGE)
 
 #endif // JavaInstanceJSC_h

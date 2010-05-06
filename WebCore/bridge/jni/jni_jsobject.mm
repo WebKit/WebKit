@@ -26,7 +26,7 @@
 #include "config.h"
 #include "jni_jsobject.h"
 
-#if ENABLE(MAC_JAVA_BRIDGE)
+#if ENABLE(JAVA_BRIDGE)
 
 #include "Frame.h"
 #include "JavaRuntimeObject.h"
@@ -702,4 +702,4 @@ jstring KJS_JSObject_JSObjectToString (JNIEnv*, jclass, jlong nativeHandle)
 
 }
 
-#endif // ENABLE(MAC_JAVA_BRIDGE)
+#endif // ENABLE(JAVA_BRIDGE)

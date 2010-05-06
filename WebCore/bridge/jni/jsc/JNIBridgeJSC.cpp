@@ -27,7 +27,7 @@
 #include "config.h"
 #include "JNIBridgeJSC.h"
 
-#if ENABLE(MAC_JAVA_BRIDGE)
+#if ENABLE(JAVA_BRIDGE)
 
 #include "JNIUtilityPrivate.h"
 #include "Logging.h"
@@ -442,4 +442,4 @@ unsigned int JavaArray::getLength() const
     return m_length;
 }
 
-#endif // ENABLE(MAC_JAVA_BRIDGE)
+#endif // ENABLE(JAVA_BRIDGE)

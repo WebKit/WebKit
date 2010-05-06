@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JavaClassJSC.h"
 
-#if ENABLE(MAC_JAVA_BRIDGE)
+#if ENABLE(JAVA_BRIDGE)
 
 #include "JNIUtility.h"
 #include "JSDOMWindow.h"
@@ -147,4 +147,4 @@ bool JavaClass::isStringClass() const
     return !strcmp(m_name, "java.lang.String");
 }
 
-#endif // ENABLE(MAC_JAVA_BRIDGE)
+#endif // ENABLE(JAVA_BRIDGE)

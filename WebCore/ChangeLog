@@ -1,3 +1,35 @@
+2010-05-06  Steve Block  <steveblock@google.com>
+
+        Reviewed by Eric Seidel.
+
+        MAC_JAVA_BRIDGE should be renamed JAVA_BRIDGE
+        https://bugs.webkit.org/show_bug.cgi?id=38544
+
+        No new tests, build fix only.
+
+        * DerivedSources.make:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::ScriptController):
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptControllerMac.mm:
+        (WebCore::ScriptController::createScriptInstanceForWidget):
+        * bridge/jni/JNIBridge.cpp:
+        * bridge/jni/JNIBridge.h:
+        * bridge/jni/JNIUtility.cpp:
+        * bridge/jni/JNIUtility.h:
+        * bridge/jni/jni_jsobject.h:
+        * bridge/jni/jni_jsobject.mm:
+        * bridge/jni/jni_objc.mm:
+        * bridge/jni/jsc/JNIBridgeJSC.cpp:
+        * bridge/jni/jsc/JNIBridgeJSC.h:
+        * bridge/jni/jsc/JNIUtilityPrivate.cpp:
+        * bridge/jni/jsc/JNIUtilityPrivate.h:
+        * bridge/jni/jsc/JavaClassJSC.cpp:
+        * bridge/jni/jsc/JavaClassJSC.h:
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        * bridge/jni/jsc/JavaInstanceJSC.h:
+        * loader/FrameLoaderClient.h:
+
 2010-05-05  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.

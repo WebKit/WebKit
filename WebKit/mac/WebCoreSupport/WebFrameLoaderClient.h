@@ -210,7 +210,7 @@ private:
 
     virtual void registerForIconNotification(bool listen);
 
-#if ENABLE(MAC_JAVA_BRIDGE)
+#if ENABLE(JAVA_BRIDGE)
     virtual jobject javaApplet(NSView*);
 #endif
 

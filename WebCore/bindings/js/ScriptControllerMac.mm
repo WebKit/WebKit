@@ -49,7 +49,7 @@
 #import "npruntime_impl.h"
 #endif
 
-#if ENABLE(MAC_JAVA_BRIDGE)
+#if ENABLE(JAVA_BRIDGE)
 #import "JavaInstanceJSC.h"
 #endif
 
@@ -95,7 +95,7 @@ PassScriptInstance ScriptController::createScriptInstanceForWidget(Widget* widge
 #endif
     }
 
-#if ENABLE(MAC_JAVA_BRIDGE)
+#if ENABLE(JAVA_BRIDGE)
     jobject applet = m_frame->loader()->client()->javaApplet(widgetView);
     if (!applet)
         return 0;
@@ -136,7 +136,7 @@ void ScriptController::disconnectPlatformScriptObjects()
     }
 }
 
-#if ENABLE(MAC_JAVA_BRIDGE)
+#if ENABLE(JAVA_BRIDGE)
 
 static pthread_t mainThread;
 

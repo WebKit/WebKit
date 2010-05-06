@@ -73,7 +73,7 @@ ScriptController::ScriptController(Frame* frame)
 #endif
     , m_XSSAuditor(new XSSAuditor(frame))
 {
-#if PLATFORM(MAC) && ENABLE(MAC_JAVA_BRIDGE)
+#if PLATFORM(MAC) && ENABLE(JAVA_BRIDGE)
     static bool initializedJavaJSBindings;
     if (!initializedJavaJSBindings) {
         initializedJavaJSBindings = true;

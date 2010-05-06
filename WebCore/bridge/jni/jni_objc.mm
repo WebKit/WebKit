@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(MAC_JAVA_BRIDGE)
+#if ENABLE(JAVA_BRIDGE)
 
 #import <Foundation/Foundation.h>
 #import "JNIUtility.h"
@@ -81,4 +81,4 @@ bool JSC::Bindings::dispatchJNICall(ExecState* exec, const void* targetAppletVie
     return false;
 }
 
-#endif // ENABLE(MAC_JAVA_BRIDGE)
+#endif // ENABLE(JAVA_BRIDGE)

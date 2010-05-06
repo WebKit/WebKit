@@ -152,7 +152,7 @@ public:
     PassRefPtr<JSC::Bindings::RootObject> createRootObject(void* nativeHandle);
 
 #if PLATFORM(MAC)
-#if ENABLE(MAC_JAVA_BRIDGE)
+#if ENABLE(JAVA_BRIDGE)
     static void initJavaJSBindings();
 #endif
     WebScriptObject* windowScriptObject();

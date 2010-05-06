@@ -27,7 +27,7 @@
 #ifndef JNIBridgeJSC_h
 #define JNIBridgeJSC_h
 
-#if ENABLE(MAC_JAVA_BRIDGE)
+#if ENABLE(JAVA_BRIDGE)
 
 #include "Bridge.h"
 #include "JNIBridge.h"
@@ -84,6 +84,6 @@ private:
 
 } // namespace JSC
 
-#endif // ENABLE(MAC_JAVA_BRIDGE)
+#endif // ENABLE(JAVA_BRIDGE)
 
 #endif // JNIBridge_h

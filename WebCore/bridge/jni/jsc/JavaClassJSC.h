@@ -26,7 +26,7 @@
 #ifndef JavaClassJSC_h
 #define JavaClassJSC_h
 
-#if ENABLE(MAC_JAVA_BRIDGE)
+#if ENABLE(JAVA_BRIDGE)
 
 #include "JNIBridgeJSC.h"
 #include <wtf/HashMap.h>
@@ -57,6 +57,6 @@ private:
 
 } // namespace JSC
 
-#endif // ENABLE(MAC_JAVA_BRIDGE)
+#endif // ENABLE(JAVA_BRIDGE)
 
 #endif // JavaClassJSC_h

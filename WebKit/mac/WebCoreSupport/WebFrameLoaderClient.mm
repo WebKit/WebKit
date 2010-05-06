@@ -119,7 +119,7 @@
 #import <wtf/PassRefPtr.h>
 #import <wtf/Threading.h>
 
-#if ENABLE(MAC_JAVA_BRIDGE)
+#if ENABLE(JAVA_BRIDGE)
 #import "WebJavaPlugIn.h"
 #endif
 
@@ -132,7 +132,7 @@ using namespace WebCore;
 using namespace HTMLNames;
 using namespace std;
 
-#if ENABLE(MAC_JAVA_BRIDGE)
+#if ENABLE(JAVA_BRIDGE)
 @interface NSView (WebJavaPluginDetails)
 - (jobject)pollForAppletInWindow:(NSWindow *)window;
 @end
@@ -1675,7 +1675,7 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& size, HTMLAppletElement* element, const KURL& baseURL, 
     const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
-#if ENABLE(MAC_JAVA_BRIDGE)
+#if ENABLE(JAVA_BRIDGE)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSView *view = nil;
@@ -1736,7 +1736,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& s
     return adoptRef(new PluginWidget);
 #else
     return 0;
-#endif // ENABLE(MAC_JAVA_BRIDGE)
+#endif // ENABLE(JAVA_BRIDGE)
 }
 
 String WebFrameLoaderClient::overrideMediaType() const
@@ -1795,7 +1795,7 @@ void WebFrameLoaderClient::didPerformFirstNavigation() const
         [preferences setCacheModel:WebCacheModelDocumentBrowser];
 }
 
-#if ENABLE(MAC_JAVA_BRIDGE)
+#if ENABLE(JAVA_BRIDGE)
 jobject WebFrameLoaderClient::javaApplet(NSView* view)
 {
     if ([view respondsToSelector:@selector(webPlugInGetApplet)])

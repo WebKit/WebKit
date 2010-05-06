@@ -587,8 +587,8 @@
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_TIGER) && CPU(X86_64)
 #define WTF_USE_PLUGIN_HOST_PROCESS 1
 #endif
-#if !defined(ENABLE_MAC_JAVA_BRIDGE)
-#define ENABLE_MAC_JAVA_BRIDGE 1
+#if !defined(ENABLE_JAVA_BRIDGE)
+#define ENABLE_JAVA_BRIDGE 1
 #endif
 #if !defined(ENABLE_DASHBOARD_SUPPORT)
 #define ENABLE_DASHBOARD_SUPPORT 1
@@ -619,7 +619,7 @@
 #define ENABLE_GEOLOCATION 1
 #define ENABLE_ICONDATABASE 0
 #define ENABLE_INSPECTOR 0
-#define ENABLE_MAC_JAVA_BRIDGE 0
+#define ENABLE_JAVA_BRIDGE 0
 #define ENABLE_NETSCAPE_PLUGIN_API 0
 #define ENABLE_ORIENTATION_EVENTS 1
 #define ENABLE_REPAINT_THROTTLING 1
@@ -633,7 +633,7 @@
 #define WTF_USE_PTHREADS 1
 #define WTF_PLATFORM_SGL 1
 #define USE_SYSTEM_MALLOC 1
-#define ENABLE_MAC_JAVA_BRIDGE 1
+#define ENABLE_JAVA_BRIDGE 1
 #define LOG_DISABLED 1
 /* Prevents Webkit from drawing the caret in textfields and textareas
    This prevents unnecessary invals. */
@@ -835,8 +835,8 @@
 #define ENABLE_INSPECTOR 1
 #endif
 
-#if !defined(ENABLE_MAC_JAVA_BRIDGE)
-#define ENABLE_MAC_JAVA_BRIDGE 0
+#if !defined(ENABLE_JAVA_BRIDGE)
+#define ENABLE_JAVA_BRIDGE 0
 #endif
 
 #if !defined(ENABLE_NETSCAPE_PLUGIN_API)
