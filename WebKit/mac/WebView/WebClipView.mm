@@ -47,6 +47,10 @@ using namespace WebCore;
 - (WebView *)_webView;
 @end
 
+@interface NSClipView (WebNSClipViewDetails)
+- (void)_immediateScrollToPoint:(NSPoint)newOrigin;
+@end
+
 @implementation WebClipView
 
 - (id)initWithFrame:(NSRect)frame
@@ -72,6 +76,9 @@ using namespace WebCore;
 #if USE(ACCELERATED_COMPOSITING)
 - (NSRect)visibleRect
 {
+    if (!_isScrolling)
+        return [super visibleRect];
+
     WebFrameView *webFrameView = (WebFrameView *)[[self superview] superview];
     if (![webFrameView isKindOfClass:[WebFrameView class]])
         return [super visibleRect];
@@ -84,6 +91,13 @@ using namespace WebCore;
     }
 
     return [super visibleRect];
+}
+
+- (void)_immediateScrollToPoint:(NSPoint)newOrigin
+{
+    _isScrolling = YES;
+    [super _immediateScrollToPoint:newOrigin];
+    _isScrolling = NO;
 }
 #endif
 

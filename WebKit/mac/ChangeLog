@@ -1,3 +1,27 @@
+2010-05-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7951285> REGRESSION (r58847): Composited iframe content obscures Safari's application chrome
+
+        Fixed this other regression from r58847. The regression was caused by overriding -visibleRect to
+        return the WebClipView’s full bounds. AppKit uses -visibleRect to determine the geometry
+        of the surface for the child WebFrameView. The fix is to restrict the special behavior of
+        -[WebClipView visibleRect] to when AppKit is consulting it for the purpose of invalidating
+        areas while scrolling.
+
+        * WebView/WebClipView.h:
+        * WebView/WebClipView.mm:
+        (-[WebClipView visibleRect]): If the WebClipView is not scrolling, always return
+        [super visibleRect]. 
+        (-[WebClipView _immediateScrollToPoint:]): Override this internal NSClipView method
+        to set a flag telling -visibleRect that the view is scrolling.
+        * WebView/WebView.mm:
+        (layerSyncRunLoopObserverCallBack): Ensure that screen updates, disabled by AppKit
+        when it thinks an upcoming window flush will re-enable them, are enabled here in
+        case the -setNeedsDisplayInRect: override has prevented the window from needing to be
+        flushed.
+
 2010-05-06  Steve Block  <steveblock@google.com>
 
         Reviewed by Eric Seidel.

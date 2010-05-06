@@ -31,6 +31,7 @@
 @interface WebClipView : NSClipView
 {
     BOOL _haveAdditionalClip;
+    BOOL _isScrolling;
     NSRect _additionalClip;
 }
 

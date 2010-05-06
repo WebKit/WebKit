@@ -189,6 +189,7 @@
 
 @interface NSWindow (WebNSWindowDetails) 
 - (id)_oldFirstResponderBeforeBecoming;
+- (void)_enableScreenUpdatesIfNeeded;
 @end
 
 using namespace WebCore;
@@ -5612,17 +5613,23 @@ static WebFrameView *containingFrameView(NSView *view)
 
 static void layerSyncRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActivity, void* info)
 {
-    WebView* webView = reinterpret_cast<WebView*>(info);
+    WebView *webView = reinterpret_cast<WebView*>(info);
+    NSWindow *window = [webView window];
 
     // An NSWindow may not display in the next runloop cycle after dirtying due to delayed window display logic,
     // in which case this observer can fire first. So if the window is due for a display, don't commit
     // layer changes, otherwise they'll show on screen before the view drawing.
-    if ([[webView window] viewsNeedDisplay])
+    if ([window viewsNeedDisplay])
         return;
 
-    if ([webView _syncCompositingChanges])
+    if ([webView _syncCompositingChanges]) {
         [webView _clearLayerSyncLoopObserver];
-    else {
+        // AppKit may have disabled screen updates, thinking an upcoming window flush will re-enable them.
+        // In case setNeedsDisplayInRect() has prevented the window from needing to be flushed, re-enable screen
+        // updates here.
+        if (![window isFlushWindowDisabled])
+            [window _enableScreenUpdatesIfNeeded];
+    } else {
         // Since the WebView does not need display, -viewWillDraw will not be called. Perform pending layout now,
         // so that the layers draw with up-to-date layout. 
         [webView _viewWillDrawInternal];
