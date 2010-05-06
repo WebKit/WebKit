@@ -147,6 +147,7 @@
             'target_name': 'ImageDiff',
             'type': 'executable',
             'dependencies': [
+                '<(webkit_api_dir)/WebKit.gyp:webkit',
                 '<(webkit_top)/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
                 '<(chromium_src_dir)/gfx/gfx.gyp:gfx',
             ],

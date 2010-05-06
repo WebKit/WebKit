@@ -1,3 +1,12 @@
+2010-05-06  Jochen Eisinger  <jochen@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Make ImageDiff depend on WebKit. When compiled from within Chromium, WTF is not a standalone dynamic library but depends on WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=38632
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2010-05-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
