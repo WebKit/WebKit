@@ -328,6 +328,7 @@ sub GenerateProperty {
     my $gparamflag = "WEBKIT_PARAM_READABLE";
     my $writeable = $attribute->type !~ /^readonly/;
     my $const = "read-only ";
+    my $custom = $attribute->signature->extendedAttributes->{"Custom"};
     if ($writeable && $custom) {
         $const = "read-only (due to custom functions needed in webkitdom)";
         return;
