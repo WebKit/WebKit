@@ -26,6 +26,10 @@ package CodeGeneratorGObject;
 my %implIncludes = ();
 my %hdrIncludes = ();
 
+my @txtInstallProps = ();
+my @txtSetProps = ();
+my @txtGetProps = ();
+
 my $className = "";
 
 # Default constructor
@@ -298,6 +302,149 @@ sub GetWriteableProperties {
     return @result;
 }
 
+sub GenerateProperty {
+    my $attribute = shift;
+    my $interfaceName = shift;
+    my @writeableProperties = @{shift @_};
+
+    my $camelPropName = $attribute->signature->name;
+    my $setPropNameFunction = $codeGenerator->WK_ucfirst($camelPropName);
+    my $getPropNameFunction = $codeGenerator->WK_lcfirst($camelPropName);
+
+    my $propName = decamelize($camelPropName);
+    my $propNameCaps = uc($propName);
+    $propName =~ s/_/-/g;
+    my ${propEnum} = "PROP_${propNameCaps}";
+    push(@cBodyPriv, "    ${propEnum},\n");
+
+    my $propType = $attribute->signature->type;
+    my ${propGType} = decamelize($propType);
+    if ($propGType eq "event_target") {
+        $propGType = "event_target_node";
+    }
+    my ${ucPropGType} = uc($propGType);
+
+    my $gtype = GetGValueTypeName($propType);
+    my $gparamflag = "WEBKIT_PARAM_READABLE";
+    my $writeable = $attribute->type !~ /^readonly/;
+    my $const = "read-only ";
+    if ($writeable && $custom) {
+        $const = "read-only (due to custom functions needed in webkitdom)";
+        return;
+    }
+    if ($writeable && !$custom) {
+        $gparamflag = "WEBKIT_PARAM_READWRITE";
+        $const = "read-write ";
+    }
+
+    my $type = GetGlibTypeName($propType);
+    $nick = decamelize("${interfaceName}_${propName}");
+    $long = "${const} ${type} ${interfaceName}.${propName}";
+
+    my $convertFunction = "";
+    if ($gtype eq "string") {
+        $convertFunction = "WebCore::String::fromUTF8";
+    } elsif ($attribute->signature->extendedAttributes->{"ConvertFromString"}) {
+        $convertFunction = "WebCore::String::number";
+    }
+
+    my $setterContentHead;
+    my $getterContentHead;
+    my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
+    my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
+    if ($reflect || $reflectURL) {
+        my $contentAttributeName = (($reflect || $reflectURL) eq "1") ? $camelPropName : ($reflect || $reflectURL);
+        my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
+        $implIncludes{"${namespace}.h"} = 1;
+        my $getAttributeFunctionName = $reflectURL ? "getURLAttribute" : "getAttribute";
+        $setterContentHead = "coreSelf->setAttribute(WebCore::${namespace}::${contentAttributeName}Attr, ${convertFunction}(g_value_get_$gtype(value))";
+        $getterContentHead = "coreSelf->${getAttributeFunctionName}(WebCore::${namespace}::${contentAttributeName}Attr";
+    } else {
+        $setterContentHead = "coreSelf->set${setPropNameFunction}(${convertFunction}(g_value_get_$gtype(value))";
+        $getterContentHead = "coreSelf->${getPropNameFunction}(";
+    }
+
+    if (grep {$_ eq $attribute} @writeableProperties) {
+        push(@txtSetProps, "   case ${propEnum}:\n    {\n");
+        push(@txtSetProps, "        WebCore::ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
+        push(@txtSetProps, "        ${setterContentHead}");
+        push(@txtSetProps, ", ec") if @{$attribute->setterExceptions};
+        push(@txtSetProps, ");\n");
+        push(@txtSetProps, "        break;\n    }\n");
+    }
+
+    push(@txtGetProps, "   case ${propEnum}:\n    {\n");
+
+    my $exception = "";
+    if (@{$attribute->getterExceptions}) {
+        $exception = "ec";
+        push(@txtGetProps, "        WebCore::ExceptionCode ec = 0;\n");
+    }
+
+    my $postConvertFunction = "";
+    my $done = 0;
+    if ($gtype eq "string") {
+        push(@txtGetProps, "        g_value_take_string(value, convertToUTF8String(${getterContentHead}${exception})));\n");
+        $done = 1;
+    } elsif ($gtype eq "object") {
+        $txtGetProp = << "EOF";
+        RefPtr<WebCore::${propType}> ptr = coreSelf->${getPropNameFunction}(${exception});
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+EOF
+        push(@txtGetProps, $txtGetProp);
+        $done = 1;
+    }
+
+    if($attribute->signature->extendedAttributes->{"ConvertFromString"}) {
+        # TODO: Add other conversion functions for different types.  Current
+        # IDLs only list longs.
+        if($gtype eq "long") {
+            $convertFunction = "";
+            $postConvertFunction = ".toInt()";
+        } else {
+            die "Can't convert to type ${gtype}.";
+        }
+    }
+
+    # FIXME: get rid of this glitch?
+    my $_gtype = $gtype;
+    if ($gtype eq "ushort") {
+        $_gtype = "uint";
+    }
+
+    if (!$done) {
+        push(@txtGetProps, "        g_value_set_$_gtype(value, ${convertFunction}coreSelf->${getPropNameFunction}(${exception})${postConvertFunction});\n");
+    }
+
+    push(@txtGetProps, "        break;\n    }\n");
+
+    my %param_spec_options = ("int", "G_MININT, /* min */\nG_MAXINT, /* max */\n0, /* default */",
+                              "boolean", "FALSE, /* default */",
+                              "float", "-G_MAXFLOAT, /* min */\nG_MAXFLOAT, /* max */\n0.0, /* default */",
+                              "double", "-G_MAXDOUBLE, /* min */\nG_MAXDOUBLE, /* max */\n0.0, /* default */",
+                              "uint64", "0, /* min */\nG_MAXUINT64, /* min */\n0, /* default */",
+                              "long", "G_MINLONG, /* min */\nG_MAXLONG, /* max */\n0, /* default */",
+                              "int64", "G_MININT64, /* min */\nG_MAXINT64, /* max */\n0, /* default */",
+                              "ulong", "0, /* min */\nG_MAXULONG, /* max */\n0, /* default */",
+                              "uint", "0, /* min */\nG_MAXUINT, /* max */\n0, /* default */",
+                              "ushort", "0, /* min */\nG_MAXUINT16, /* max */\n0, /* default */",
+                              "uchar", "G_MININT8, /* min */\nG_MAXINT8, /* max */\n0, /* default */",
+                              "char", "0, /* min */\nG_MAXUINT8, /* max */\n0, /* default */",
+                              "string", "\"\", /* default */",
+                              "object", "WEBKIT_TYPE_DOM_${ucPropGType}, /* gobject type */");
+
+    my $txtInstallProp = << "EOF";
+    g_object_class_install_property(gobjectClass,
+                                    ${propEnum},
+                                    g_param_spec_${_gtype}("${propName}", /* name */
+                                                           "$nick", /* short description */
+                                                           "$long", /* longer - could do with some extra doc stuff here */
+                                                           $param_spec_options{$gtype}
+                                                           ${gparamflag}));
+EOF
+    push(@txtInstallProps, $txtInstallProp);
+}
+
 sub GenerateProperties {
     my ($object, $interfaceName, $dataNode) = @_;
 
@@ -313,10 +460,6 @@ enum {
     PROP_0,
 EOF
     push(@cBodyPriv, $implContent);
-
-    my @txtInstallProps = ();
-    my @txtSetProps = ();
-    my @txtGetProps = ();
 
     my @readableProperties = GetReadableProperties($dataNode->attributes);
 
@@ -361,147 +504,8 @@ EOF
 EOF
     push(@txtSetProps, $txtSetProps);
 
-    # Iterate over the interface attributes and generate a property for
-    # each one of them.
-  SKIPENUM:
     foreach my $attribute (@readableProperties) {
-        my $camelPropName = $attribute->signature->name;
-        my $setPropNameFunction = $codeGenerator->WK_ucfirst($camelPropName);
-        my $getPropNameFunction = $codeGenerator->WK_lcfirst($camelPropName);
-
-        my $propName = decamelize($camelPropName);
-        my $propNameCaps = uc($propName);
-        $propName =~ s/_/-/g;
-        my ${propEnum} = "PROP_${propNameCaps}";
-        push(@cBodyPriv, "    ${propEnum},\n");
-
-        my $propType = $attribute->signature->type;
-        my ${propGType} = decamelize($propType);
-        if ($propGType eq "event_target") {
-            $propGType = "event_target_node";
-        }
-        my ${ucPropGType} = uc($propGType);
-
-        my $gtype = GetGValueTypeName($propType);
-        my $gparamflag = "WEBKIT_PARAM_READABLE";
-        my $writeable = $attribute->type !~ /^readonly/;
-        my $const = "read-only ";
-        if ($writeable && $custom) {
-            $const = "read-only (due to custom functions needed in webkitdom)";
-            next SKIPENUM;
-        }
-        if ($writeable && !$custom) {
-            $gparamflag = "WEBKIT_PARAM_READWRITE";
-            $const = "read-write ";
-        }
-
-        my $type = GetGlibTypeName($propType);
-        $nick = decamelize("${interfaceName}_${propName}");
-        $long = "${const} ${type} ${interfaceName}.${propName}";
-
-        my $convertFunction = "";
-        if ($gtype eq "string") {
-            $convertFunction = "WebCore::String::fromUTF8";
-        } elsif ($attribute->signature->extendedAttributes->{"ConvertFromString"}) {
-            $convertFunction = "WebCore::String::number";
-        }
-
-        my $setterContentHead;
-        my $getterContentHead;
-        my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
-        my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
-        if ($reflect || $reflectURL) {
-            my $contentAttributeName = (($reflect || $reflectURL) eq "1") ? $camelPropName : ($reflect || $reflectURL);
-            my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
-            $implIncludes{"${namespace}.h"} = 1;
-            my $getAttributeFunctionName = $reflectURL ? "getURLAttribute" : "getAttribute";
-            $setterContentHead = "coreSelf->setAttribute(WebCore::${namespace}::${contentAttributeName}Attr, ${convertFunction}(g_value_get_$gtype(value))";
-            $getterContentHead = "coreSelf->${getAttributeFunctionName}(WebCore::${namespace}::${contentAttributeName}Attr";
-        } else {
-            $setterContentHead = "coreSelf->set${setPropNameFunction}(${convertFunction}(g_value_get_$gtype(value))";
-            $getterContentHead = "coreSelf->${getPropNameFunction}(";
-        }
-
-        if (grep {$_ eq $attribute} @writeableProperties) {
-            push(@txtSetProps, "   case ${propEnum}:\n    {\n");
-            push(@txtSetProps, "        WebCore::ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
-            push(@txtSetProps, "        ${setterContentHead}");
-            push(@txtSetProps, ", ec") if @{$attribute->setterExceptions};
-            push(@txtSetProps, ");\n");
-            push(@txtSetProps, "        break;\n    }\n");
-        }
-
-        push(@txtGetProps, "   case ${propEnum}:\n    {\n");
-
-        my $exception = "";
-        if (@{$attribute->getterExceptions}) {
-            $exception = "ec";
-            push(@txtGetProps, "        WebCore::ExceptionCode ec = 0;\n");
-        }
-
-        my $postConvertFunction = "";
-        my $done = 0;
-        if ($gtype eq "string") {
-            push(@txtGetProps, "        g_value_take_string(value, convertToUTF8String(${getterContentHead}${exception})));\n");
-            $done = 1;
-        } elsif ($gtype eq "object") {
-            $txtGetProp = << "EOF";
-        RefPtr<WebCore::${propType}> ptr = coreSelf->${getPropNameFunction}(${exception});
-        g_value_set_object(value, WebKit::kit(ptr.get()));
-EOF
-            push(@txtGetProps, $txtGetProp);
-            $done = 1;
-        }
-
-        if($attribute->signature->extendedAttributes->{"ConvertFromString"}) {
-            # TODO: Add other conversion functions for different types.  Current
-            # IDLs only list longs.
-            if($gtype eq "long") {
-                $convertFunction = "";
-                $postConvertFunction = ".toInt()";
-            } else {
-                die "Can't convert to type ${gtype}.";
-            }
-        }
-
-        # FIXME: get rid of this glitch?
-        my $_gtype = $gtype;
-        if ($gtype eq "ushort") {
-            $_gtype = "uint";
-        }
-
-        if (!$done) {
-            push(@txtGetProps, "        g_value_set_$_gtype(value, ${convertFunction}coreSelf->${getPropNameFunction}(${exception})${postConvertFunction});\n");
-        }
-
-        push(@txtGetProps, "        break;\n    }\n");
-
-my %param_spec_options = ("int", "G_MININT, /* min */\nG_MAXINT, /* max */\n0, /* default */",
-                          "boolean", "FALSE, /* default */",
-                          "float", "-G_MAXFLOAT, /* min */\nG_MAXFLOAT, /* max */\n0.0, /* default */",
-                          "double", "-G_MAXDOUBLE, /* min */\nG_MAXDOUBLE, /* max */\n0.0, /* default */",
-                          "uint64", "0, /* min */\nG_MAXUINT64, /* min */\n0, /* default */",
-                          "long", "G_MINLONG, /* min */\nG_MAXLONG, /* max */\n0, /* default */",
-                          "int64", "G_MININT64, /* min */\nG_MAXINT64, /* max */\n0, /* default */",
-                          "ulong", "0, /* min */\nG_MAXULONG, /* max */\n0, /* default */",
-                          "uint", "0, /* min */\nG_MAXUINT, /* max */\n0, /* default */",
-                          "ushort", "0, /* min */\nG_MAXUINT16, /* max */\n0, /* default */",
-                          "uchar", "G_MININT8, /* min */\nG_MAXINT8, /* max */\n0, /* default */",
-                          "char", "0, /* min */\nG_MAXUINT8, /* max */\n0, /* default */",
-                          "string", "\"\", /* default */",
-                          "object", "WEBKIT_TYPE_DOM_${ucPropGType}, /* gobject type */");
-
-        my $txtInstallProp = << "EOF";
-    g_object_class_install_property(gobjectClass,
-                                    ${propEnum},
-                                    g_param_spec_${_gtype}("${propName}", /* name */
-                                                           "$nick", /* short description */
-                                                           "$long", /* longer - could do with some extra doc stuff here */
-                                                           $param_spec_options{$gtype}
-                                                           ${gparamflag}));
-EOF
-        push(@txtInstallProps, $txtInstallProp);
-        $txtInstallProp = "/* TODO! $gtype */\n";
+        GenerateProperty($attribute, $interfaceName, \@writeableProperties);
     }
 
     push(@cBodyPriv, "};\n\n");

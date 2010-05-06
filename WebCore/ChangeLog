@@ -1,3 +1,16 @@
+2010-05-06  Xan Lopez  <xlopez@igalia.com>
+
+        Rubber-stamped by Eric Seidel.
+
+        [GTK] Refactor GenerateProperties in CodeGenerationGObject.pm
+        https://bugs.webkit.org/show_bug.cgi?id=38577
+
+        Refactor GenerateProperty out of GenerateProperties. This is in
+        preparation for EventListeren attributes, which won't generate
+        normal GObject properties.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+
 2010-05-06  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Joseph Pecoraro.
