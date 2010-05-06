@@ -2,6 +2,21 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        Add a test of URL segmentation from a data URL base
+        https://bugs.webkit.org/show_bug.cgi?id=38606
+
+        As requested by Alexey.  These tests find some interesting behavior in
+        both KURL and GURL.  We'll need to go through them in more detail later
+        to understand what the right behavior is.
+
+        * fast/url/script-tests/segments-from-data-url.js: Added.
+        * fast/url/segments-from-data-url-expected.txt: Added.
+        * fast/url/segments-from-data-url.html: Added.
+
+2010-05-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
         Add a test of URL segmentation
         https://bugs.webkit.org/show_bug.cgi?id=38600
 
