@@ -30,7 +30,6 @@ container.removeChild(oldEl);
 container.appendChild(newEl);
 
 var msgs = [];
-msgs.push('zIndex = "' + newEl.style.zIndex + '"');
 msgs.push(newEl.style.zIndex == 20002000 ? "PASS" : "FAIL");
 document.getElementById('msgs').innerHTML = msgs.join('<br/>');
 

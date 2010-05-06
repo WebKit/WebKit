@@ -1,3 +1,16 @@
+2010-05-05  Steven Lai  <steven_lai@asia.apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove platform specific test result
+        Don't print the formatted string of the z-index in the test case
+        since there's a risk that the output on different c stdlib implementations/platforms/locale could be different
+        https://bugs.webkit.org/show_bug.cgi?id=38617.
+
+        * fast/dom/clone-node-z-index-expected.txt:
+        * fast/dom/clone-node-z-index.html:
+        * platform/win/fast/dom/clone-node-z-index-expected.txt: Removed.
+
 2010-05-05  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
