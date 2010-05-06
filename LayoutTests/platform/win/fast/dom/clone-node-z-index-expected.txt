@@ -1,0 +1,4 @@
+Test for bug 37900: cloneNode() does not preserve z-index with more than six digit
+
+zIndex = "2.0002e+007"
+PASS

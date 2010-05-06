@@ -1,3 +1,12 @@
+2010-05-05  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Add Windows-specific results for clone-node-z-index.html. The difference in results is harmless (the number is the same),
+        but the difference is being tracked by https://bugs.webkit.org/show_bug.cgi?id=38617.
+
+        * platform/win/fast/dom/clone-node-z-index-expected.txt: Added.
+
 2010-05-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
