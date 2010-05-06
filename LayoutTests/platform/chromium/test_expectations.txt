@@ -2810,8 +2810,6 @@ BUGDPRANKE LINUX MAC : svg/text/kerning.svg = IMAGE
 
 BUGDPRANKE MAC : editing/selection/caret-rtl-2.html = IMAGE
 
-BUGDPRANKE LINUX : fast/dom/clone-node-z-index.html = TEXT
-
 // WebKit roll 58791:58807
 BUG43319 MAC : transforms/2d/zoom-menulist.html = IMAGE PASS
 BUG43319 MAC : fast/forms/select-empty-option-height.html = TIMEOUT PASS

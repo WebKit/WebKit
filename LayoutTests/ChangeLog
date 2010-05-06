@@ -1,3 +1,11 @@
+2010-05-06  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations fix.
+
+        Delete a line for a test that is no longer failing on chromium linux.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-05-06  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
