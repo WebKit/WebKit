@@ -1,3 +1,13 @@
+2010-05-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Windows build fix.
+
+        * bytecode/SamplingTool.cpp:
+        (JSC::SamplingFlags::sample): Use a cast, so Windows will be happy when
+        this code is enabled.
+        * wtf/Platform.h: Reverted last change to this file, which seems to have
+        been accidental.
+
 2010-05-06  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

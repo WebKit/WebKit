@@ -43,7 +43,7 @@ namespace JSC {
 
 void SamplingFlags::sample()
 {
-    uint32_t mask = 1 << 31;
+    uint32_t mask = static_cast<uint32_t>(1 << 31);
     unsigned index;
 
     for (index = 0; index < 32; ++index) {
