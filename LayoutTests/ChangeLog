@@ -1,3 +1,17 @@
+2010-05-05  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Got composited iframes showing up on Mac again
+        https://bugs.webkit.org/show_bug.cgi?id=38565
+
+        This is a pixel test to verify that the iframe is rendering correctly
+
+        * compositing/iframes/composited-iframe-alignment.html: Added.
+        * platform/mac/compositing/iframes/composited-iframe-alignment-expected.checksum: Added.
+        * platform/mac/compositing/iframes/composited-iframe-alignment-expected.png: Added.
+        * platform/mac/compositing/iframes/composited-iframe-alignment-expected.txt: Added.
+
 2010-05-05  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

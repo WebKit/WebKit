@@ -752,7 +752,7 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, cons
     }
     
     if (layerBacking) {
-        if (layer->renderer()->isRenderIFrame()) {
+        if (shouldPropagateCompositingToIFrameParent() && layer->renderer()->isRenderIFrame()) {
             // This is an iframe parent. Make it the parent of the iframe document's root
             layerBacking->parentForSublayers()->removeAllChildren();
 
@@ -938,14 +938,15 @@ void RenderLayerCompositor::didMoveOnscreen()
         return;
 
     bool attached = false;
-    Element* ownerElement = m_renderView->document()->ownerElement();
-    if (ownerElement) {
-        RenderObject* renderer = ownerElement->renderer();
-        if (renderer && renderer->isRenderIFrame()) {
-            // The layer will get hooked up via RenderLayerBacking::updateGraphicsLayerConfiguration()
-            // for the iframe's renderer in the parent document.
-            ownerElement->setNeedsStyleRecalc(SyntheticStyleChange);
-            attached = true;
+    if (shouldPropagateCompositingToIFrameParent()) {
+        if (Element* ownerElement = m_renderView->document()->ownerElement()) {
+            RenderObject* renderer = ownerElement->renderer();
+            if (renderer && renderer->isRenderIFrame()) {
+                // The layer will get hooked up via RenderLayerBacking::updateGraphicsLayerConfiguration()
+                // for the iframe's renderer in the parent document.
+                ownerElement->setNeedsStyleRecalc(SyntheticStyleChange);
+                attached = true;
+            }
         }
     }
 
@@ -966,14 +967,15 @@ void RenderLayerCompositor::willMoveOffscreen()
         return;
 
     bool detached = false;
-    Element* ownerElement = m_renderView->document()->ownerElement();
-    if (ownerElement) {
-        RenderObject* renderer = ownerElement->renderer();
-        if (renderer->isRenderIFrame()) {
-            // The layer will get hooked up via RenderLayerBacking::updateGraphicsLayerConfiguration()
-            // for the iframe's renderer in the parent document.
-            ownerElement->setNeedsStyleRecalc(SyntheticStyleChange);
-            detached = true;
+    if (shouldPropagateCompositingToIFrameParent()) {
+        if (Element* ownerElement = m_renderView->document()->ownerElement()) {
+            RenderObject* renderer = ownerElement->renderer();
+            if (renderer->isRenderIFrame()) {
+                // The layer will get hooked up via RenderLayerBacking::updateGraphicsLayerConfiguration()
+                // for the iframe's renderer in the parent document.
+                ownerElement->setNeedsStyleRecalc(SyntheticStyleChange);
+                detached = true;
+            }
         }
     }
 
@@ -1206,19 +1208,20 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
     // Need to clip to prevent transformed content showing outside this frame
     m_rootPlatformLayer->setMasksToBounds(true);
     
+    if (shouldPropagateCompositingToIFrameParent()) {
     // Create a clipping layer if this is an iframe
-    Element* ownerElement = m_renderView->document()->ownerElement();
-    if (ownerElement) {
-        RenderObject* renderer = ownerElement->renderer();
-        if (renderer && renderer->isRenderIFrame()) {
-            m_clippingLayer = GraphicsLayer::create(0);
-            m_clippingLayer->setGeometryOrientation(GraphicsLayer::compositingCoordinatesOrientation());
+        if (Element* ownerElement = m_renderView->document()->ownerElement()) {
+            RenderObject* renderer = ownerElement->renderer();
+            if (renderer && renderer->isRenderIFrame()) {
+                m_clippingLayer = GraphicsLayer::create(0);
+                m_clippingLayer->setGeometryOrientation(GraphicsLayer::compositingCoordinatesOrientation());
 #ifndef NDEBUG
-            m_clippingLayer->setName("iframe Clipping");
+                m_clippingLayer->setName("iframe Clipping");
 #endif
-            m_clippingLayer->setMasksToBounds(true);
-            m_clippingLayer->setAnchorPoint(FloatPoint());
-            m_clippingLayer->addChild(m_rootPlatformLayer.get());
+                m_clippingLayer->setMasksToBounds(true);
+                m_clippingLayer->setAnchorPoint(FloatPoint());
+                m_clippingLayer->addChild(m_rootPlatformLayer.get());
+            }
         }
     }
 

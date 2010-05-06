@@ -1,3 +1,25 @@
+2010-05-05  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Got composited iframes showing up on Mac again
+        https://bugs.webkit.org/show_bug.cgi?id=38565
+
+        This was broken by http://trac.webkit.org/changeset/58798. That
+        change connected iframes through the parent document to the root
+        of the layer tree. That is correct for Windows, but not for Mac.
+        So the places where the linkage is made were wrapped in 
+        shouldPropagateCompositingToIFrameParent() calls, which is 
+        always false for Mac.
+
+        Test: compositing/iframes/composited-iframe-alignment.html
+
+        * rendering/RenderLayerCompositor.cpp:Avoid doing composited iframe linkage on Mac
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::didMoveOnscreen):
+        (WebCore::RenderLayerCompositor::willMoveOffscreen):
+        (WebCore::RenderLayerCompositor::ensureRootPlatformLayer):
+
 2010-05-05  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
