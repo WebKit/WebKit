@@ -1,3 +1,27 @@
+2010-05-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7932072> Iframes in composited layers don’t repaint correctly (affects Yahoo! Mail with Flash Player 10.1)
+        https://bugs.webkit.org/show_bug.cgi?id=38427
+
+        * WebView/WebClipView.m: Renamed to WebClipView.mm.
+        * WebView/WebClipView.mm:
+        (-[WebClipView visibleRect]): Added this override, which for instances used for WebFrameViews in
+        composited layers, returns the clip view’s entire bounds. This prevents drawing from being clipped to
+        AppKit’s idea of what part of the view would be visible if it was drawn as part of the view hierarchy.
+        Since it is drawn into a compositing layer, that’s irrelevant, and we should not be clipping.
+        * WebView/WebHTMLView.mm:
+        (setCursor): Style tweak.
+        (setNeedsDisplayInRect): Added. Replaces the default implementation of -[NSView setNeedsDisplayInRect:],
+        so that if the receiver is a descendant of a WebFrameView that draws into a composited layer, the invalidation
+        is routed back through the WebCore FrameView, which propagates it to the layer.
+        (+[WebHTMLViewPrivate initialize]): Swizzle the setNeedsDisplayInRect: override in.
+        (-[WebHTMLView visibleRect]): Removed whitespace.
+        * WebView/WebView.mm:
+        (layerSyncRunLoopObserverCallBack): If we bailed out on syncing, due to pending layout, do an eager layout
+        in preparation for the displaying of compositing layers.
+
 2010-05-05  John Sullivan  <sullivan@apple.com>
 
         <rdar://problem/7942606> Output appears in Console when exiting Safari with multiple windows opened

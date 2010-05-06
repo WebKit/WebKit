@@ -103,6 +103,8 @@ public:
     // Called when changes to the GraphicsLayer hierarchy have to be synchronized with
     // content rendered via the normal painting path.
     void setNeedsOneShotDrawingSynchronization();
+
+    bool isEnclosedInCompositingLayer() const;
 #endif
     // Only used with accelerated compositing, but outside the #ifdef to make linkage easier.
     // Returns true if the sync was completed.

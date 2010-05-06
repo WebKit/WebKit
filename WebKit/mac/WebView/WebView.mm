@@ -5622,6 +5622,11 @@ static void layerSyncRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActi
 
     if ([webView _syncCompositingChanges])
         [webView _clearLayerSyncLoopObserver];
+    else {
+        // Since the WebView does not need display, -viewWillDraw will not be called. Perform pending layout now,
+        // so that the layers draw with up-to-date layout. 
+        [webView _viewWillDrawInternal];
+    }
 }
 
 - (void)_scheduleCompositingLayerSync

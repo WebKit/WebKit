@@ -269,7 +269,7 @@
 		939810E30824BF01008DF038 /* WebImageRendererFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CE1F8A302A5C6F30ECA2ACD /* WebImageRendererFactory.m */; };
 		939810E40824BF01008DF038 /* WebJavaScriptTextInputPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9345D4EB0365C5B2008635CE /* WebJavaScriptTextInputPanel.m */; };
 		939810E80824BF01008DF038 /* WebViewFactory.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5F7174D02885C5B018635CA /* WebViewFactory.mm */; };
-		939810EB0824BF01008DF038 /* WebClipView.m in Sources */ = {isa = PBXBuildFile; fileRef = 933D659A03413FF2008635CE /* WebClipView.m */; };
+		939810EB0824BF01008DF038 /* WebClipView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 933D659A03413FF2008635CE /* WebClipView.mm */; };
 		939810ED0824BF01008DF038 /* WebDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = 39446071020F50ED0ECA1767 /* WebDataSource.mm */; };
 		939810EF0824BF01008DF038 /* WebDefaultContextMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5152FADE033FC50400CA2ACD /* WebDefaultContextMenuDelegate.mm */; };
 		939810F00824BF01008DF038 /* WebDefaultPolicyDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5152FAE0033FC50400CA2ACD /* WebDefaultPolicyDelegate.m */; };
@@ -576,7 +576,7 @@
 		93185DB506679F42005D5E7E /* WebHTMLViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHTMLViewInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9325FBDC07D829AE00159862 /* IDNScriptWhiteList.txt */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = IDNScriptWhiteList.txt; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		933D659903413FF2008635CE /* WebClipView.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebClipView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		933D659A03413FF2008635CE /* WebClipView.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebClipView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		933D659A03413FF2008635CE /* WebClipView.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; indentWidth = 4; path = WebClipView.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9345D17C0365BF35008635CE /* English */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = wrapper.nib; name = English; path = Panels/English.lproj/WebAuthenticationPanel.nib; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9345D4EA0365C5B2008635CE /* WebJavaScriptTextInputPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebJavaScriptTextInputPanel.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9345D4EB0365C5B2008635CE /* WebJavaScriptTextInputPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebJavaScriptTextInputPanel.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1101,7 +1101,7 @@
 				8373435A0624EE0D00F3B289 /* WebArchive.h */,
 				8373435B0624EE0D00F3B289 /* WebArchive.mm */,
 				933D659903413FF2008635CE /* WebClipView.h */,
-				933D659A03413FF2008635CE /* WebClipView.m */,
+				933D659A03413FF2008635CE /* WebClipView.mm */,
 				39446070020F50ED0ECA1767 /* WebDataSource.h */,
 				39446071020F50ED0ECA1767 /* WebDataSource.mm */,
 				658A40950A14853B005E6987 /* WebDataSourceInternal.h */,
@@ -1790,7 +1790,7 @@
 				939810D30824BF01008DF038 /* WebBasePluginPackage.mm in Sources */,
 				5241ADF60B1BC48A004012BD /* WebCache.mm in Sources */,
 				14D825300AF955090004F057 /* WebChromeClient.mm in Sources */,
-				939810EB0824BF01008DF038 /* WebClipView.m in Sources */,
+				939810EB0824BF01008DF038 /* WebClipView.mm in Sources */,
 				065AD5A40B0C32C7005A2B1D /* WebContextMenuClient.mm in Sources */,
 				939810BF0824BF01008DF038 /* WebCoreStatistics.mm in Sources */,
 				511F3FD50CECC88F00852565 /* WebDatabaseManager.mm in Sources */,

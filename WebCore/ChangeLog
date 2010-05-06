@@ -1,3 +1,17 @@
+2010-05-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7932072> Iframes in composited layers don’t repaint correctly (affects Yahoo! Mail with Flash Player 10.1)
+        https://bugs.webkit.org/show_bug.cgi?id=38427
+
+        Test: compositing/iframes/iframe-in-composited-layer.html
+
+        * WebCore.base.exp: Export FrameView::isEnclosedInCompositingLayer().
+        * page/FrameView.cpp:
+        (WebCore::FrameView::isEnclosedInCompositingLayer): Added this predicate.
+        * page/FrameView.h:
+
 2010-05-05  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

@@ -28,10 +28,10 @@
 
 #import "WebClipView.h"
 
-#import <WebKit/WebHTMLView.h>
-#import <WebKit/WebNSViewExtras.h>
-#import <WebKit/WebViewPrivate.h>
-#import <wtf/Assertions.h>
+#import "WebFrameInternal.h"
+#import "WebFrameView.h"
+#import "WebViewPrivate.h"
+#import <WebCore/FrameView.h>
 
 // WebClipView's entire reason for existing is to set the clip used by focus ring redrawing.
 // There's no easy way to prevent the focus ring from drawing outside the passed-in clip rectangle
@@ -40,6 +40,8 @@
 // The "additional clip" is a clip for focus ring redrawing.
 
 // FIXME: Change terminology from "additional clip" to "focus ring clip".
+
+using namespace WebCore;
 
 @interface NSView (WebViewMethod)
 - (WebView *)_webView;
@@ -66,6 +68,24 @@
     
     return self;
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+- (NSRect)visibleRect
+{
+    WebFrameView *webFrameView = (WebFrameView *)[[self superview] superview];
+    if (![webFrameView isKindOfClass:[WebFrameView class]])
+        return [super visibleRect];
+
+    if (Frame* coreFrame = core([webFrameView webFrame])) {
+        if (FrameView* frameView = coreFrame->view()) {
+            if (frameView->isEnclosedInCompositingLayer())
+                return [self bounds];
+        }
+    }
+
+    return [super visibleRect];
+}
+#endif
 
 - (void)resetAdditionalClip
 {

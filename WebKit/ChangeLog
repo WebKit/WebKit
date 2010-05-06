@@ -1,3 +1,13 @@
+2010-05-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7932072> Iframes in composited layers don’t repaint correctly (affects Yahoo! Mail with Flash Player 10.1)
+        https://bugs.webkit.org/show_bug.cgi?id=38427
+
+        * WebKit.xcodeproj/project.pbxproj: Renamed WebClipView.m to WebClipView.mm and changed it to
+        Objective-C++.
+
 2010-05-03  Darin Adler  <darin@apple.com>
 
         * English.lproj/Localizable.strings: Regenerated.

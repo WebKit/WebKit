@@ -475,6 +475,13 @@ void FrameView::setNeedsOneShotDrawingSynchronization()
     if (page)
         page->chrome()->client()->setNeedsOneShotDrawingSynchronization();
 }
+
+bool FrameView::isEnclosedInCompositingLayer() const
+{
+    RenderObject* frameOwnerRenderer = m_frame->ownerRenderer();
+    return frameOwnerRenderer && frameOwnerRenderer->containerForRepaint();
+}
+
 #endif // USE(ACCELERATED_COMPOSITING)
 
 bool FrameView::syncCompositingStateRecursive()

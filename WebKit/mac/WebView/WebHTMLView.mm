@@ -180,7 +180,7 @@ static bool needsCursorRectsSupportAtPoint(NSWindow* window, NSPoint point)
 static IMP oldSetCursorForMouseLocationIMP;
 
 // Overriding an internal method is a hack; <rdar://problem/7662987> tracks finding a better solution.
-static void setCursor(NSWindow* self, SEL cmd, NSPoint point)
+static void setCursor(NSWindow *self, SEL cmd, NSPoint point)
 {
     if (needsCursorRectsSupportAtPoint(self, point))
         oldSetCursorForMouseLocationIMP(self, cmd, point);
@@ -222,12 +222,48 @@ extern NSString *NSTextInputReplacementRangeAttributeName;
 - (void)_recursive:(BOOL)recurse displayRectIgnoringOpacity:(NSRect)displayRect inContext:(NSGraphicsContext *)context topView:(BOOL)topView;
 - (NSRect)_dirtyRect;
 - (void)_setDrawsOwnDescendants:(BOOL)drawsOwnDescendants;
+- (BOOL)_drawnByAncestor;
 - (void)_propagateDirtyRectsToOpaqueAncestors;
 - (void)_windowChangedKeyState;
 #if USE(ACCELERATED_COMPOSITING) && defined(BUILDING_ON_LEOPARD)
 - (void)_updateLayerGeometryFromView;
 #endif
 @end
+
+#if USE(ACCELERATED_COMPOSITING)
+static IMP oldSetNeedsDisplayInRectIMP;
+
+static void setNeedsDisplayInRect(NSView *self, SEL cmd, NSRect invalidRect)
+{
+    if (![self _drawnByAncestor]) {
+        oldSetNeedsDisplayInRectIMP(self, cmd, invalidRect);
+        return;
+    }
+
+    static Class webFrameViewClass = [WebFrameView class];
+    WebFrameView *enclosingWebFrameView = (WebFrameView *)self;
+    while (enclosingWebFrameView && ![enclosingWebFrameView isKindOfClass:webFrameViewClass])
+        enclosingWebFrameView = (WebFrameView *)[enclosingWebFrameView superview];
+
+    if (!enclosingWebFrameView) {
+        oldSetNeedsDisplayInRectIMP(self, cmd, invalidRect);
+        return;
+    }
+
+    FrameView* frameView = core([enclosingWebFrameView webFrame])->view();
+    if (!frameView || !frameView->isEnclosedInCompositingLayer()) {
+        oldSetNeedsDisplayInRectIMP(self, cmd, invalidRect);
+        return;
+    }
+
+    NSRect invalidRectInWebFrameViewCoordinates = [enclosingWebFrameView convertRect:invalidRect fromView:self];
+    IntRect invalidRectInFrameViewCoordinates(invalidRectInWebFrameViewCoordinates);
+    if (![enclosingWebFrameView isFlipped])
+        invalidRectInFrameViewCoordinates.setY(frameView->frameRect().size().height() - invalidRectInFrameViewCoordinates.bottom());
+
+    frameView->invalidateRect(invalidRectInFrameViewCoordinates);
+}
+#endif // USE(ACCELERATED_COMPOSITING)
 
 @interface NSApplication (WebNSApplicationDetails)
 - (void)speakString:(NSString *)string;
@@ -503,7 +539,17 @@ static NSCellStateValue kit(TriState state)
         oldSetCursorForMouseLocationIMP = method_setImplementation(setCursorMethod, (IMP)setCursor);
         ASSERT(oldSetCursorForMouseLocationIMP);
     }
-#else
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (!oldSetNeedsDisplayInRectIMP) {
+        Method setNeedsDisplayInRectMethod = class_getInstanceMethod([NSView class], @selector(setNeedsDisplayInRect:));
+        ASSERT(setNeedsDisplayInRectMethod);
+        oldSetNeedsDisplayInRectIMP = method_setImplementation(setNeedsDisplayInRectMethod, (IMP)setNeedsDisplayInRect);
+        ASSERT(oldSetNeedsDisplayInRectIMP);
+    }
+#endif // USE(ACCELERATED_COMPOSITING)
+
+#else // defined(BUILDING_ON_TIGER)
     if (!oldSetCursorIMP) {
         Method setCursorMethod = class_getInstanceMethod([NSCursor class], @selector(set));
         ASSERT(setCursorMethod);
@@ -3333,7 +3379,7 @@ WEBCORE_COMMAND(yankAndSelect)
 {
     if (!([[self superview] isKindOfClass:[WebClipView class]]))
         return [super visibleRect];
-        
+
     WebClipView *clipView = (WebClipView *)[self superview];
 
     BOOL hasAdditionalClip = [clipView hasAdditionalClip];
