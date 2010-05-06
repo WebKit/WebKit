@@ -237,10 +237,9 @@ void LauncherWindow::init(bool useGraphicsView)
             this, SLOT(showLinkHover(const QString&, const QString&)));
     connect(this, SIGNAL(enteredFullScreenMode(bool)), this, SLOT(toggleFullScreenMode(bool)));
 
-    if (!gInspectorUrl.isEmpty())
-      page()->settings()->setInspectorUrl(gInspectorUrl);
-
     m_inspector = new WebInspector(splitter);
+    if (!gInspectorUrl.isEmpty())
+        m_inspector->setProperty("_q_inspectorUrl", gInspectorUrl);
     m_inspector->setPage(page());
     m_inspector->hide();
     connect(this, SIGNAL(destroyed()), m_inspector, SLOT(deleteLater()));

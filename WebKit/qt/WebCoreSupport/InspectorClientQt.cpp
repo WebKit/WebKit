@@ -88,12 +88,13 @@ void InspectorClientQt::openInspectorFrontend(WebCore::InspectorController*)
     InspectorClientWebPage* inspectorPage = new InspectorClientWebPage(inspectorView);
     inspectorView->setPage(inspectorPage);
 
-    QUrl inspectorUrl = m_inspectedWebPage->settings()->inspectorUrl();
+    QWebInspector* inspector = m_inspectedWebPage->d->getOrCreateInspector();
+    QUrl inspectorUrl = inspector->property("_q_inspectorUrl").toUrl();
     if (!inspectorUrl.isValid())
         inspectorUrl = QUrl("qrc:/webkit/inspector/inspector.html");
     inspectorView->page()->mainFrame()->load(inspectorUrl);
     m_inspectedWebPage->d->inspectorFrontend = inspectorView;
-    m_inspectedWebPage->d->getOrCreateInspector()->d->setFrontend(inspectorView);
+    inspector->d->setFrontend(inspectorView);
 
     inspectorView->page()->d->page->inspectorController()->setInspectorFrontendClient(new InspectorFrontendClientQt(m_inspectedWebPage, inspectorView));
 }

@@ -625,7 +625,7 @@ EXPORTS
 	?qt_suspendActiveDOMObjects@@YAXPAVQWebFrame@@@Z @ 624 NONAME ; void qt_suspendActiveDOMObjects(class QWebFrame *)
 	?qtwebkit_webframe_scrollRecursively@@YA_NPAVQWebFrame@@HH@Z @ 625 NONAME ABSENT ; bool qtwebkit_webframe_scrollRecursively(class QWebFrame *, int, int)
 	?closeEvent@QWebInspector@@MAEXPAVQCloseEvent@@@Z @ 626 NONAME ; void QWebInspector::closeEvent(class QCloseEvent *)
-	?inspectorUrl@QWebSettings@@QBE?AVQUrl@@XZ @ 627 NONAME ; class QUrl QWebSettings::inspectorUrl(void) const
+	?inspectorUrl@QWebSettings@@QBE?AVQUrl@@XZ @ 627 NONAME ABSENT ; class QUrl QWebSettings::inspectorUrl(void) const
 	?isTiledBackingStoreFrozen@QGraphicsWebView@@QBE_NXZ @ 628 NONAME ; bool QGraphicsWebView::isTiledBackingStoreFrozen(void) const
 	?pageChanged@QWebFrame@@IAEXXZ @ 629 NONAME ; void QWebFrame::pageChanged(void)
 	?qt_drt_enableCaretBrowsing@@YAXPAVQWebPage@@_N@Z @ 630 NONAME ; void qt_drt_enableCaretBrowsing(class QWebPage *, bool)
@@ -646,7 +646,7 @@ EXPORTS
 	?qtwebkit_webframe_scrollRecursively@@YAXPAVQWebFrame@@HHABVQPoint@@@Z @ 645 NONAME ; void qtwebkit_webframe_scrollRecursively(class QWebFrame *, int, int, class QPoint const &)
 	?resizesToContents@QGraphicsWebView@@QBE_NXZ @ 646 NONAME ; bool QGraphicsWebView::resizesToContents(void) const
 	?scrollToAnchor@QWebFrame@@QAEXABVQString@@@Z @ 647 NONAME ; void QWebFrame::scrollToAnchor(class QString const &)
-	?setInspectorUrl@QWebSettings@@QAEXABVQUrl@@@Z @ 648 NONAME ; void QWebSettings::setInspectorUrl(class QUrl const &)
+	?setInspectorUrl@QWebSettings@@QAEXABVQUrl@@@Z @ 648 NONAME ABSENT ; void QWebSettings::setInspectorUrl(class QUrl const &)
 	?setResizesToContents@QGraphicsWebView@@QAEX_N@Z @ 649 NONAME ; void QGraphicsWebView::setResizesToContents(bool)
 	?setTiledBackingStoreFrozen@QGraphicsWebView@@QAEX_N@Z @ 650 NONAME ; void QGraphicsWebView::setTiledBackingStoreFrozen(bool)
 
