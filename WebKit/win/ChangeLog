@@ -1,3 +1,13 @@
+2010-05-06  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebFrame::paintDocumentRectToContext paints content at the wrong location
+        https://bugs.webkit.org/show_bug.cgi?id=38651
+
+        * WebFrame.cpp:
+        (WebFrame::paintDocumentRectToContext):
+
 2010-05-05  Stuart Morgan  <stuartmorgan@chromium.org>
 
         Reviewed by Darin Fisher.

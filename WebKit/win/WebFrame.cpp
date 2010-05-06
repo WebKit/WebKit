@@ -346,13 +346,8 @@ HRESULT STDMETHODCALLTYPE WebFrame::paintDocumentRectToContext(
     GraphicsContext gc(dc);
     gc.setShouldIncludeChildWindows(true);
     gc.save();
-    LONG width = rect.right - rect.left;
-    LONG height = rect.bottom - rect.top;
-    FloatRect dirtyRect;
-    dirtyRect.setWidth(width);
-    dirtyRect.setHeight(height);
+    IntRect dirtyRect(rect);
     gc.clip(dirtyRect);
-    gc.translate(-rect.left, -rect.top);
     view->paintContents(&gc, rect);
     gc.restore();
 
