@@ -47,8 +47,8 @@ WebInspector.ResourceView = function(resource)
     this.tabsElement.appendChild(this.headersTabElement);
     this.tabsElement.appendChild(this.contentTabElement);
 
-    this.headersTabElement.addEventListener("click", this._selectHeadersTab.bind(this), false);
-    this.contentTabElement.addEventListener("click", this.selectContentTab.bind(this), false);
+    this.headersTabElement.addEventListener("click", this._selectHeadersTab.bind(this, true), false);
+    this.contentTabElement.addEventListener("click", this.selectContentTab.bind(this, true), false);
 
     this.headersElement = document.createElement("div");
     this.headersElement.className = "resource-view-headers";
@@ -163,18 +163,20 @@ WebInspector.ResourceView.prototype = {
             this._innerSelectContentTab();
     },
 
-    _selectHeadersTab: function()
+    _selectHeadersTab: function(updatePrefs)
     {
-        WebInspector.settings.resourceViewTab = "headers";
+        if (updatePrefs)
+            WebInspector.settings.resourceViewTab = "headers";
         this.headersTabElement.addStyleClass("selected");
         this.contentTabElement.removeStyleClass("selected");
         this.headersElement.removeStyleClass("hidden");
         this.contentElement.addStyleClass("hidden");
     },
 
-    selectContentTab: function()
+    selectContentTab: function(updatePrefs)
     {
-        WebInspector.settings.resourceViewTab = "content";
+        if (updatePrefs)
+            WebInspector.settings.resourceViewTab = "content";
         this._innerSelectContentTab();
     },
 

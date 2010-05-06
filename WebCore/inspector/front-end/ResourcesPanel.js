@@ -487,7 +487,7 @@ WebInspector.ResourcesPanel.prototype = {
         view.show(this.viewsContainerElement);
 
         if (line) {
-            view.selectContentTab();
+            view.selectContentTab(true);
             if (view.revealLine)
                 view.revealLine(line);
             if (view.highlightLine)
