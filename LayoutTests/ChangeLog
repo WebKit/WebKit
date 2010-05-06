@@ -1,3 +1,38 @@
+2010-05-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a test of URL segmentation
+        https://bugs.webkit.org/show_bug.cgi?id=38600
+
+        These tests are based on URLParser.Standard from
+        http://code.google.com/p/google-url/source/browse/trunk/src/url_parse_unittest.cc
+
+        * fast/url/resources/utilities.js:
+        (canonicalize):
+            - I changed this to use deterministic IDs because (theoretically)
+              the old way was flaky in case the IDs collided.
+        (segments):
+            - Here we're using HTMLAnchorElement's attributes to infer the
+              internal segmentation.  Unforunately, there don't seem to be
+              accessors for usernames and passwords of URLs.
+        * fast/url/script-tests/segments.js: Added.
+            - I'm not 100% sure all the test cases here represent the intent of
+              the original test author.  The tricky bit is we don't have a good
+              way to test absolute URL parsing from the web platform, which
+              means a bunch of these become tests of how we handle relative
+              URLs.  However, I'm not one to turn down more test cases.
+        * fast/url/script-tests/trivial-segments.js: Added.
+            - This is more of a test of the testing harness to make sure its
+              working properly when running on other browsers.
+        * fast/url/segments-expected.txt: Added.
+        * fast/url/trivial-segments-expected.txt: Added.
+            - As usual, these have their "PASS" expectations set to the
+              Chromium behavior but have their -expected.txt set to the normal
+              WebKit behavior, letting us track differences between the two.
+        * fast/url/segments.html: Added.
+        * fast/url/trivial-segments.html: Added.
+
 2010-05-05  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.
