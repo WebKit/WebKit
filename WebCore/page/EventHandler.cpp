@@ -66,6 +66,7 @@
 #include "SelectionController.h"
 #include "Settings.h"
 #include "TextEvent.h"
+#include "TextIterator.h"
 #include "UserGestureIndicator.h"
 #include "WheelEvent.h"
 #include "htmlediting.h" // for comparePositions()
@@ -332,6 +333,12 @@ bool EventHandler::handleMousePressEventTripleClick(const MouseEventWithHitTestR
     return true;
 }
 
+static int textDistance(const Position& start, const Position& end)
+{
+     RefPtr<Range> range = Range::create(start.node()->document(), start, end);
+     return TextIterator::rangeLength(range.get(), true);
+}
+
 bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestResults& event)
 {
     Node* innerNode = event.targetNode();
@@ -362,14 +369,21 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
     if (extendSelection && newSelection.isCaretOrRange()) {
         m_frame->selection()->setIsDirectional(false);
         
-        // See <rdar://problem/3668157> REGRESSION (Mail): shift-click deselects when selection 
-        // was created right-to-left
-        Position start = newSelection.start();
-        Position end = newSelection.end();
-        if (comparePositions(pos, start) <= 0)
-            newSelection = VisibleSelection(pos, end);
-        else
-            newSelection = VisibleSelection(start, pos);
+        ASSERT(m_frame->settings());
+        if (m_frame->settings()->editingBehavior() == EditingMacBehavior) {
+            // See <rdar://problem/3668157> REGRESSION (Mail): shift-click deselects when selection
+            // was created right-to-left
+            Position start = newSelection.start();
+            Position end = newSelection.end();
+            int distanceToStart = textDistance(start, pos);
+            int distanceToEnd = textDistance(pos, end);
+            if (distanceToStart <= distanceToEnd)
+                newSelection = VisibleSelection(end, pos);
+            else
+                newSelection = VisibleSelection(start, pos);
+        } else {
+            newSelection.setExtent(pos);
+        }
 
         if (m_frame->selectionGranularity() != CharacterGranularity) {
             granularity = m_frame->selectionGranularity();

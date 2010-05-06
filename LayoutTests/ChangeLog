@@ -1,3 +1,21 @@
+2010-05-05  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        shift+click on an existing selection doesn't work right
+        https://bugs.webkit.org/show_bug.cgi?id=36542
+
+        NSTextView behavior is to move the end of the selection
+        closest to the shift-click. Win/Linux behavior is to always
+        move the focus end of the selection.
+
+        * editing/selection/script-tests/shift-click.js: Added.
+        (shiftClick):
+        (assertSelectionString):
+        * editing/selection/shift-click-expected.txt: Added.
+        * editing/selection/shift-click.html: Added.
+        * platform/win/editing/selection/shift-click-expected.txt: Added.
+
 2010-05-05  Antonio Gomes  <tonikitoo@webkit.org>
 
         Rubber-stamped Kenneth Christiansen.

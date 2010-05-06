@@ -1,3 +1,20 @@
+2010-05-05  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        shift+click on an existing selection doesn't work right
+        https://bugs.webkit.org/show_bug.cgi?id=36542
+
+        NSTextView behavior is to move the end of the selection
+        closest to the shift-click. Win/Linux behavior is to always
+        move the focus end of the selection.
+
+        Test: editing/selection/shift-click.html
+
+        * page/EventHandler.cpp:
+        (WebCore::textDistance):
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+
 2010-05-06  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
