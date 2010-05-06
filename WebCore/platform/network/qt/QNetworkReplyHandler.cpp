@@ -41,8 +41,9 @@
 
 // What type of connection should be used for the signals of the
 // QNetworkReply? This depends on if Qt has a bugfix for this or not.
-// It is fixed in Qt 4.6.1. See https://bugs.webkit.org/show_bug.cgi?id=32113
-#if QT_VERSION > QT_VERSION_CHECK(4, 6, 0)
+// It is fixed in Qt 4.6.3. See https://bugs.webkit.org/show_bug.cgi?id=32113
+// and https://bugs.webkit.org/show_bug.cgi?id=36755
+#if QT_VERSION > QT_VERSION_CHECK(4, 6, 2)
 #define SIGNAL_CONN Qt::DirectConnection
 #else
 #define SIGNAL_CONN Qt::QueuedConnection

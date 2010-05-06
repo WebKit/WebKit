@@ -1,3 +1,15 @@
+2010-05-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] REGRESSION: Loading of external CSS and JS files over network fails in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=36755
+
+        Enable the direct connection between QtNetwork and QtWebKit only for Qt versions
+        greater than 4.6.2, due to a bug in Qt that's been fixed after 4.6.2.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+
 2010-05-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.
