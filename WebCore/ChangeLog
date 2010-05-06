@@ -1,3 +1,10 @@
+2010-05-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed WinCE buildfix after r58842.
+        Preprocessor doesn't understand "true", changed to "1"
+
+        * platform/graphics/MediaPlayer.cpp:
+
 2010-05-06  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.
