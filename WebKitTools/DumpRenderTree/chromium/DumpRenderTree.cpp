@@ -33,9 +33,6 @@
 #include "TestShell.h"
 #include "webkit/support/webkit_support.h"
 #include <wtf/Vector.h>
-#if OS(MAC_OS_X)
-#include "WebSystemInterface.h"
-#endif
 
 using namespace std;
 
@@ -61,10 +58,6 @@ static void runTest(TestShell& shell, TestParams& params, const string& testName
 
 int main(int argc, char* argv[])
 {
-#if OS(MAC_OS_X)
-    // Need to call before instantiate WebKitClient.
-     InitWebCoreSystemInterface();
-#endif
     webkit_support::SetUpTestEnvironment();
 
     TestParams params;

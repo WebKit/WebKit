@@ -1,3 +1,18 @@
+2010-05-05  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [DRT/Chromium] Remove InitWebCoreSystemInterface() call
+        https://bugs.webkit.org/show_bug.cgi?id=38624
+
+        Chromium r45167 <http://src.chromium.org/viewvc/chrome?view=rev&revision=45167>
+        added InitWebCoreSystemInterface() to webkit/support/platform_support_mac.mm.
+        So we don't need to call it from DumpRenderTree.cpp anymore.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main): Remove InitWebCoreSystemInterface().
+
 2010-05-05  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.

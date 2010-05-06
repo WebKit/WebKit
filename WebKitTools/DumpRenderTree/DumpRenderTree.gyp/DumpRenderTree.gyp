@@ -87,7 +87,6 @@
                 '.',
                 '<(webkit_api_dir)',
                 '<(webkit_top)/JavaScriptCore',
-                '<(webkit_top)/WebKit/mac/WebCoreSupport', # For WebSystemInterface.h
                 '<(chromium_src_dir)',
             ],
             'defines': [
