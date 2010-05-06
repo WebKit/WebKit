@@ -51,9 +51,9 @@ namespace WebKit {
 
         virtual void dragControllerDestroyed();
 
-        private:
-            WebKitWebView* m_webView;
-            WebCore::IntPoint m_startPos;
+    private:
+        WebKitWebView* m_webView;
+        WebCore::IntPoint m_startPos;
     };
 }
 

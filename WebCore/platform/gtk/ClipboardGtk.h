@@ -45,9 +45,9 @@ namespace WebCore {
             return adoptRef(new ClipboardGtk(policy, clipboard));
         }
 
-        static PassRefPtr<ClipboardGtk> create(ClipboardAccessPolicy policy, bool isForDragging)
+        static PassRefPtr<ClipboardGtk> create(ClipboardAccessPolicy policy, PassRefPtr<DataObjectGtk> dataObject, bool isForDragging)
         {
-            return adoptRef(new ClipboardGtk(policy, DataObjectGtk::create(), isForDragging));
+            return adoptRef(new ClipboardGtk(policy, dataObject, isForDragging));
         }
         virtual ~ClipboardGtk();
 
@@ -72,6 +72,9 @@ namespace WebCore {
         virtual void writePlainText(const String&);
 
         virtual bool hasData();
+
+        PasteboardHelper* helper() { return m_helper; }
+        PassRefPtr<DataObjectGtk> dataObject() { return m_dataObject; }
 
     private:
         ClipboardGtk(ClipboardAccessPolicy, GtkClipboard*);

@@ -2,6 +2,7 @@
  * Copyright (C) 2007, 2008, 2009 Holger Hans Peter Freyther
  * Copyright (C) 2008 Jan Michael C. Alonzo
  * Copyright (C) 2008 Collabora Ltd.
+ * Copyright (C) 2010 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -46,6 +47,7 @@
 
 #include "ArchiveResource.h"
 #include "BackForwardList.h"
+#include "DataObjectGtk.h"
 #include <enchant.h>
 #include "GOwnPtr.h"
 #include "Geolocation.h"
@@ -149,6 +151,8 @@ extern "C" {
         char* mainResourceIdentifier;
         GHashTable* subResources;
         char* tooltipText;
+
+        HashMap<GdkDragContext*, RefPtr<WebCore::DataObjectGtk> > draggingDataObjects;
     };
 
     #define WEBKIT_WEB_FRAME_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_FRAME, WebKitWebFramePrivate))
