@@ -1,3 +1,11 @@
+2010-05-05  Dan Bernstein  <mitz@apple.com>
+
+        Fix the decelerated compositing build.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::isEnclosedInCompositingLayer):
+        * page/FrameView.h:
+
 2010-05-05  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Darin Adler.
