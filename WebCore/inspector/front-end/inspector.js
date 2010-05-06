@@ -244,8 +244,8 @@ var WebInspector = {
             body.addStyleClass("detached");
             dockToggleButton.title = WebInspector.UIString("Dock to main window.");
         }
-
-        this.drawer.resize();
+        if (this.drawer)
+            this.drawer.resize();
     },
 
     get errors()

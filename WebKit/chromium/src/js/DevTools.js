@@ -190,6 +190,23 @@ WebInspector.loaded = function()
     InspectorFrontendHost.loaded();
 };
 
+devtools.domContentLoaded = function()
+{
+    var queryParams = window.location.search;
+    if (queryParams) {
+        var params = queryParams.substring(1).split("&");
+        var paramsObject = {};
+        for (var i = 0; i < params.length; ++i) {
+            var pair = params[i].split("=");
+            paramsObject[pair[0]] = pair[1];
+        }
+        WebInspector.setAttachedWindow(paramsObject.docked);
+        if (paramsObject.toolbar_color && paramsObject.text_color)
+            WebInspector.setToolbarColors(paramsObject.toolbar_color, paramsObject.text_color);
+    }
+}
+document.addEventListener("DOMContentLoaded", devtools.domContentLoaded, false);
+
 
 if (!window.v8ScriptDebugServerEnabled) {
 

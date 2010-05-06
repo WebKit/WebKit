@@ -1,3 +1,15 @@
+2010-05-06  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Chromium Dev Tools: Large toolbar icons flash when dev
+        tools is opened in docked mode.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38631
+
+        * src/js/DevTools.js:
+        (devtools.domContentLoaded):
+
 2010-05-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

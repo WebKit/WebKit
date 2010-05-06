@@ -180,7 +180,7 @@ WebInspector.ResourceView.prototype = {
 
     hasContentTab: function()
     {
-        // Ancestors should override this method and define this.contentTabSelected for content rendering.
+        // Derived classes should override this method and define this.contentTabSelected for content rendering.
         return false;
     },
 
