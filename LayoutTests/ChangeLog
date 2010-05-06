@@ -1,3 +1,12 @@
+2010-05-06  John Gregg  <johnnyg@google.com>
+
+        Unreviewed, rebaseline for chromium test.
+
+        [chromium] Deal with different local path structure on windows.
+
+        * platform/chromium-win/fast/notifications: Added.
+        * platform/chromium-win/fast/notifications/notifications-replace-expected.txt: Added.
+
 2010-05-06  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations fix.
