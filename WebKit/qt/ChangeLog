@@ -1,3 +1,15 @@
+2010-05-06  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Patch to fix compilation warnings for QGraphicsWebView
+        https://bugs.webkit.org/show_bug.cgi?id=37428
+
+        Patch by Alexis Menard <alexis.menard@nokia.com>
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::itemChange):
+
 2010-05-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
