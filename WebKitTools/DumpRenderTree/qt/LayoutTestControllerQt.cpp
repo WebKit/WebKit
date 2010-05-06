@@ -393,6 +393,11 @@ void LayoutTestController::setPopupBlockingEnabled(bool enable)
     m_drt->webPage()->settings()->setAttribute(QWebSettings::JavascriptCanOpenWindows, !enable);
 }
 
+void LayoutTestController::setPluginsEnabled(bool flag)
+{
+    // FIXME: Implement
+}
+
 void LayoutTestController::setPOSIXLocale(const QString& locale)
 {
     QLocale qlocale(locale);

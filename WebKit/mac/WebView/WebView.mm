@@ -861,6 +861,25 @@ static bool shouldEnableLoadDeferring()
     return uniqueExtensions;
 }
 
+static NSMutableSet *knownPluginMIMETypes()
+{
+    static NSMutableSet *mimeTypes = [[NSMutableSet alloc] init];
+    
+    return mimeTypes;
+}
+
++ (void)_registerPluginMIMEType:(NSString *)MIMEType
+{
+    [WebView registerViewClass:[WebHTMLView class] representationClass:[WebHTMLRepresentation class] forMIMEType:MIMEType];
+    [knownPluginMIMETypes() addObject:MIMEType];
+}
+
++ (void)_unregisterPluginMIMEType:(NSString *)MIMEType
+{
+    [self _unregisterViewClassAndRepresentationClassForMIMEType:MIMEType];
+    [knownPluginMIMETypes() removeObject:MIMEType];
+}
+
 + (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType allowingPlugins:(BOOL)allowPlugins
 {
     MIMEType = [MIMEType lowercaseString];
@@ -881,11 +900,20 @@ static bool shouldEnableLoadDeferring()
     }
     
     if (viewClass && repClass) {
-        // Special-case WebHTMLView for text types that shouldn't be shown.
-        if (viewClass == [WebHTMLView class] &&
-            repClass == [WebHTMLRepresentation class] &&
-            [[WebHTMLView unsupportedTextMIMETypes] containsObject:MIMEType]) {
-            return NO;
+        if (viewClass == [WebHTMLView class] && repClass == [WebHTMLRepresentation class]) {
+            // Special-case WebHTMLView for text types that shouldn't be shown.
+            if ([[WebHTMLView unsupportedTextMIMETypes] containsObject:MIMEType])
+                return NO;
+
+            // If the MIME type is a known plug-in we might not want to load it.
+            if (!allowPlugins && [knownPluginMIMETypes() containsObject:MIMEType]) {
+                BOOL isSupportedByWebKit = [[WebHTMLView supportedNonImageMIMETypes] containsObject:MIMEType] ||
+                    [[WebHTMLView supportedMIMETypes] containsObject:MIMEType];
+                
+                // If this is a known plug-in MIME type and WebKit can't show it natively, we don't want to show it.
+                if (!isSupportedByWebKit)
+                    return NO;
+            }
         }
         if (vClass)
             *vClass = viewClass;

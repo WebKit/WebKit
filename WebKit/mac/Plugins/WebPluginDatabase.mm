@@ -35,13 +35,13 @@
 #import "WebFrameViewInternal.h"
 #import "WebHTMLRepresentation.h"
 #import "WebHTMLView.h"
-#import "WebHTMLView.h"
 #import "WebKitLogging.h"
 #import "WebNSFileManagerExtras.h"
 #import "WebNetscapePluginPackage.h"
 #import "WebPluginController.h"
 #import "WebPluginPackage.h"
 #import "WebViewPrivate.h"
+#import "WebViewInternal.h"
 #import <WebKitSystemInterface.h>
 #import <wtf/Assertions.h>
 
@@ -296,7 +296,7 @@ static NSArray *additionalWebPlugInPaths;
             continue;
         
         if (self == sharedDatabase)
-            [WebView registerViewClass:[WebHTMLView class] representationClass:[WebHTMLRepresentation class] forMIMEType:MIMEType];
+            [WebView _registerPluginMIMEType:MIMEType];
     }
     [MIMETypes release];
     
@@ -415,7 +415,7 @@ static NSArray *additionalWebPlugInPaths;
     while ((MIMEType = [MIMETypeEnumerator nextObject])) {
         if ([registeredMIMETypes containsObject:MIMEType]) {
             if (self == sharedDatabase)
-                [WebView _unregisterViewClassAndRepresentationClassForMIMEType:MIMEType];
+                [WebView _unregisterPluginMIMEType:MIMEType];
             [registeredMIMETypes removeObject:MIMEType];
         }
     }

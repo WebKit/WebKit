@@ -427,6 +427,7 @@ static void resetDefaultsToConsistentValues()
     [preferences setXSSAuditorEnabled:NO];
     [preferences setExperimentalNotificationsEnabled:NO];
     [preferences setPluginAllowedRunTime:1];
+    [preferences setPlugInsEnabled:YES];
 
     [preferences setPrivateBrowsingEnabled:NO];
     [preferences setAuthorAndUserStylesEnabled:YES];

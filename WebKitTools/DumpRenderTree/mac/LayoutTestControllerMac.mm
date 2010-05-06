@@ -371,6 +371,11 @@ void LayoutTestController::setPopupBlockingEnabled(bool popupBlockingEnabled)
     [[[mainFrame webView] preferences] setJavaScriptCanOpenWindowsAutomatically:!popupBlockingEnabled];
 }
 
+void LayoutTestController::setPluginsEnabled(bool pluginsEnabled)
+{
+    [[[mainFrame webView] preferences] setPlugInsEnabled:pluginsEnabled];
+}
+
 void LayoutTestController::setJavaScriptCanAccessClipboard(bool enabled)
 {
     [[[mainFrame webView] preferences] setJavaScriptCanAccessClipboard:enabled];

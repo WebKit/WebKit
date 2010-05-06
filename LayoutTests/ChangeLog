@@ -1,3 +1,16 @@
+2010-05-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler and Dan Bernstein..
+
+        REGRESSION (r51617): when plugins are disabled, plugins show up as garbage characters
+        https://bugs.webkit.org/show_bug.cgi?id=38698
+        <rdar://problem/7942075>
+
+        Add tests.
+
+        * platform/mac/plugins/disable-plugins-expected.txt: Added.
+        * platform/mac/plugins/disable-plugins.html: Added.
+
 2010-05-06  John Gregg  <johnnyg@google.com>
 
         Unreviewed, rebaseline for chromium test.
