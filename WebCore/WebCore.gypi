@@ -2654,7 +2654,7 @@
             'platform/qt/SharedBufferQt.cpp',
             'platform/qt/SharedTimerQt.cpp',
             'platform/qt/SoundQt.cpp',
-            'platform/qt/TemporaryLinkStubs.cpp',
+            'platform/qt/TemporaryLinkStubsQt.cpp',
             'platform/qt/WheelEventQt.cpp',
             'platform/qt/WidgetQt.cpp',
             'platform/sql/SQLValue.cpp',
