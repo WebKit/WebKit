@@ -1,0 +1,6 @@
+Install this package by:
+$ python setup.py build
+$ sudo python setup.py install
+
+Then read document by:
+$ pydoc mod_pywebsocket

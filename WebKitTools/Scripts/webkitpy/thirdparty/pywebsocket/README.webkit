@@ -1,0 +1,14 @@
+This directory contains a copy of the pywebsocket Python module obtained
+from the following location:
+
+http://code.google.com/p/pywebsocket/
+
+This directory currently contains the following version:
+0.4.9.2
+
+The following modifications have been made to this local version:
+minor updates in WebSocketRequestHandler.is_cgi
+
+More information on these local modifications can be found here:
+
+http://trac.webkit.org/browser/trunk/WebKitTools/Scripts/webkitpy/thirdparty/pywebsocket
