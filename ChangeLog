@@ -1,3 +1,9 @@
+2010-05-07  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Add a few more files with Windows linefeeds to the .gitattributes file.
+
+        * .gitattributes:
+
 2010-05-05  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.

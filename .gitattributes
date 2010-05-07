@@ -285,3 +285,7 @@ WebKitTools/WinLauncher/WinLauncher.vcproj -crlf
 WebKitTools/record-memory-win/main.cpp -crlf
 WebKitTools/record-memory-win/record-memory-win.vcproj -crlf
 WebKitTools/TestResultServer/index.yaml -crlf
+WebKitTools/BuildSlaveSupport/win/kill-old-processes -crlf
+WebKitTools/MiniBrowser/MiniBrowser.vcproj -crlf
+WebKitTools/MiniBrowser/win/MiniBrowser.rc -crlf
+
