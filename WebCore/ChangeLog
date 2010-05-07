@@ -1,3 +1,29 @@
+2010-05-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix rendering of -webkit-user-select: none
+
+        -webkit-user-select: none is implemented by filling
+        the area with an invalid default-constructed Color.
+        In most ports passing an invalid color down to the
+        graphics backend seems to produce transparent fills.
+
+        In Qt the behavior of painting with an invalid QColor
+        is undefined, and in practice it results in painting
+        black opaque areas.
+
+        One way to fix this would be to use Qt::transparent
+        when converting an undefined Color to a QColor, but
+        Qt does not have short circuits for fully transparent
+        painting, and we actually end up in slow code paths
+        due to the transparency. So, we're better of doing the
+        short circuit in WebKit.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38523
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+
 2010-05-07  Ben Murdoch  <benm@google.com>
 
         Reviewed by Darin Adler.
