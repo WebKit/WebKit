@@ -1,3 +1,24 @@
+2010-05-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Compositing layers that are clipped out by an overflow:scroll parent fail to get created on reveal
+        https://bugs.webkit.org/show_bug.cgi?id=38712
+        
+        When compositing layer creation is testing layer overlap, we need to re-run the
+        algorithm when an overflow:scroll element scrolls, to create new layers for revealed
+        elements.
+        
+        Test: compositing/layer-creation/overflow-scroll-overlap.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollToOffset): First, move the compositing updates
+        until after the call to updateWidgetPositions(), so that this order is similar
+        to what we done when a FrameView scrolls. This change has no known side effects.
+        Second, if compositingConsultsOverlap() is true, we need to actually do a 
+        compositing layer update to compute whether revealed/hidden layers should
+        be created/destroyed.
+
 2010-05-06  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed, build fix.

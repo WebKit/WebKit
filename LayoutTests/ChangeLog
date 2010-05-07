@@ -1,3 +1,16 @@
+2010-05-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Compositing layers that are clipped out by an overflow:scroll parent fail to get created on reveal
+        https://bugs.webkit.org/show_bug.cgi?id=38712
+        
+        Test that scrolls an overflow:scroll div containing compositing layers, and checks that
+        revealed layers correctly become composited.
+
+        * compositing/layer-creation/overflow-scroll-overlap.html: Added.
+        * compositing/layer-creation/overflow-scroll-overlap-expected.txt: Added.
+
 2010-05-06  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, rebaseline and expectation changes from WK roll from a
