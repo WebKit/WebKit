@@ -1,3 +1,13 @@
+2010-05-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix debug-only render tree output to show object addresses in hex.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeRenderObject):
+        (WebCore::write):
+
 2010-05-07  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adele Peterson.
