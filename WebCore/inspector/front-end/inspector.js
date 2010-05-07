@@ -685,6 +685,7 @@ WebInspector.documentKeyDown = function(event)
     if (WebInspector.isEditingAnyField())
         return;
 
+    var isInTextPrompt = event.target.enclosingNodeOrSelfWithClass("text-prompt");
     if (this.currentFocusElement && this.currentFocusElement.handleKeyEvent) {
         this.currentFocusElement.handleKeyEvent(event);
         if (event.handled) {
@@ -704,11 +705,7 @@ WebInspector.documentKeyDown = function(event)
     var isMac = WebInspector.isMac();
     switch (event.keyIdentifier) {
         case "Left":
-            if (isMac)
-                var isBackKey = event.metaKey;
-            else
-                var isBackKey = event.ctrlKey;
-
+            var isBackKey = !isInTextPrompt && (isMac ? event.metaKey : event.ctrlKey);
             if (isBackKey && this._panelHistory.canGoBack()) {
                 this._panelHistory.goBack();
                 event.preventDefault();
@@ -716,11 +713,7 @@ WebInspector.documentKeyDown = function(event)
             break;
 
         case "Right":
-            if (isMac)
-                var isForwardKey = event.metaKey;
-            else
-                var isForwardKey = event.ctrlKey;
-
+            var isForwardKey = !isInTextPrompt && (isMac ? event.metaKey : event.ctrlKey);
             if (isForwardKey && this._panelHistory.canGoForward()) {
                 this._panelHistory.goForward();
                 event.preventDefault();

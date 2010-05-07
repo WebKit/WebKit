@@ -1,5 +1,19 @@
 2010-05-07  Pavel Feldman  <pfeldman@chromium.org>
 
+        Reviewed by Joseph Pecoraro.
+
+        Web Inspector: On Linux/Windows panel history is
+        traversed while iterating over words in text prompt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38740
+
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt):
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentKeyDown):
+
+2010-05-07  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Timothy Hatcher.
 
         Web Inspector: come up with InjectedScript._className that works for both JSC and V8.
