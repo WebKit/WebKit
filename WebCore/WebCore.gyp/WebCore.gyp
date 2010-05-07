@@ -999,6 +999,7 @@
             # Cherry-pick some files that can't be included by broader regexps.
             # Some of these are used instead of Chromium platform files, see
             # the specific exclusions in the "sources!" list below.
+            ['include', 'rendering/RenderThemeMac\\.mm$'],
             ['include', 'loader/archive/cf/LegacyWebArchive\\.cpp$'],
             ['include', 'platform/graphics/mac/ColorMac\\.mm$'],
             ['include', 'platform/graphics/mac/FloatPointMac\\.mm$'],

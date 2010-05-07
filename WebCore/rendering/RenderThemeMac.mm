@@ -115,11 +115,13 @@ enum {
     leftPadding
 };
 
+#if PLATFORM(MAC)
 PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page*)
 {
     static RenderTheme* rt = RenderThemeMac::create().releaseRef();
     return rt;
 }
+#endif
 
 PassRefPtr<RenderTheme> RenderThemeMac::create()
 {
@@ -458,6 +460,21 @@ Color RenderThemeMac::systemColor(int cssValueId) const
     return color;
 }
 
+bool RenderThemeMac::usesTestModeFocusRingColor() const
+{
+    return WebCore::usesTestModeFocusRingColor();
+}
+
+NSView* RenderThemeMac::documentViewFor(RenderObject* o) const
+{
+#if PLATFORM(MAC)
+    return ThemeMac::ensuredView(o->view()->frameView());
+#else
+    ASSERT_NOT_REACHED();
+    return 0;
+#endif
+}
+
 bool RenderThemeMac::isControlStyled(const RenderStyle* style, const BorderData& border,
                                      const FillLayer& background, const Color& backgroundColor) const
 {
@@ -777,7 +794,7 @@ bool RenderThemeMac::paintMenuList(RenderObject* o, const RenderObject::PaintInf
         paintInfo.context->translate(-inflatedRect.x(), -inflatedRect.y());
     }
 
-    [popupButton drawWithFrame:inflatedRect inView:ThemeMac::ensuredView(o->view()->frameView())];
+    [popupButton drawWithFrame:inflatedRect inView:documentViewFor(o)];
     [popupButton setControlView:nil];
 
     paintInfo.context->restore();
@@ -1112,6 +1129,7 @@ void RenderThemeMac::setPopupButtonCellState(const RenderObject* o, const IntRec
     setControlSize(popupButton, popupButtonSizes(), r.size(), o->style()->effectiveZoom());
 
     // Update the various states we respond to.
+    updateActiveState(popupButton, o);
     updateCheckedState(popupButton, o);
     updateEnabledState(popupButton, o);
     updatePressedState(popupButton, o);
@@ -1194,6 +1212,7 @@ bool RenderThemeMac::paintSliderThumb(RenderObject* o, const RenderObject::Paint
     LocalCurrentGraphicsContext localContext(paintInfo.context);
 
     // Update the various states we respond to.
+    updateActiveState(sliderThumbCell, o->parent());
     updateEnabledState(sliderThumbCell, o->parent());
     updateFocusedState(sliderThumbCell, o->parent());
 
@@ -1235,7 +1254,7 @@ bool RenderThemeMac::paintSliderThumb(RenderObject* o, const RenderObject::Paint
         paintInfo.context->translate(-unzoomedRect.x(), -unzoomedRect.y());
     }
 
-    [sliderThumbCell drawWithFrame:unzoomedRect inView:ThemeMac::ensuredView(o->view()->frameView())];
+    [sliderThumbCell drawWithFrame:unzoomedRect inView:documentViewFor(o)];
     [sliderThumbCell setControlView:nil];
 
     paintInfo.context->restore();
@@ -1267,7 +1286,7 @@ bool RenderThemeMac::paintSearchField(RenderObject* o, const RenderObject::Paint
     // Set the search button to nil before drawing.  Then reset it so we can draw it later.
     [search setSearchButtonCell:nil];
 
-    [search drawWithFrame:NSRect(unzoomedRect) inView:ThemeMac::ensuredView(o->view()->frameView())];
+    [search drawWithFrame:NSRect(unzoomedRect) inView:documentViewFor(o)];
 #ifdef BUILDING_ON_TIGER
     if ([search showsFirstResponder])
         wkDrawTextFieldCellFocusRing(search, NSRect(unzoomedRect));
@@ -1288,6 +1307,7 @@ void RenderThemeMac::setSearchCellState(RenderObject* o, const IntRect&)
     [search setControlSize:controlSizeForFont(o->style())];
 
     // Update the various states we respond to.
+    updateActiveState(search, o);
     updateEnabledState(search, o);
     updateFocusedState(search, o);
 }
@@ -1349,6 +1369,7 @@ bool RenderThemeMac::paintSearchFieldCancelButton(RenderObject* o, const RenderO
 
     NSSearchFieldCell* search = this->search();
 
+    updateActiveState([search cancelButtonCell], o);
     updatePressedState([search cancelButtonCell], o);
 
     paintInfo.context->save();
@@ -1367,7 +1388,7 @@ bool RenderThemeMac::paintSearchFieldCancelButton(RenderObject* o, const RenderO
         paintInfo.context->translate(-unzoomedRect.x(), -unzoomedRect.y());
     }
 
-    [[search cancelButtonCell] drawWithFrame:unzoomedRect inView:ThemeMac::ensuredView(o->view()->frameView())];
+    [[search cancelButtonCell] drawWithFrame:unzoomedRect inView:documentViewFor(o)];
     [[search cancelButtonCell] setControlView:nil];
 
     paintInfo.context->restore();
@@ -1429,10 +1450,12 @@ bool RenderThemeMac::paintSearchFieldResultsDecoration(RenderObject* o, const Re
     if ([search searchMenuTemplate] != nil)
         [search setSearchMenuTemplate:nil];
 
+    updateActiveState([search searchButtonCell], o);
+
     FloatRect localBounds = [search searchButtonRectForBounds:NSRect(input->renderBox()->borderBoxRect())];
     localBounds = convertToPaintingRect(input->renderer(), o, localBounds, r);
 
-    [[search searchButtonCell] drawWithFrame:localBounds inView:ThemeMac::ensuredView(o->view()->frameView())];
+    [[search searchButtonCell] drawWithFrame:localBounds inView:documentViewFor(o)];
     [[search searchButtonCell] setControlView:nil];
     return false;
 }
@@ -1456,6 +1479,8 @@ bool RenderThemeMac::paintSearchFieldResultsButton(RenderObject* o, const Render
 
     NSSearchFieldCell* search = this->search();
 
+    updateActiveState([search searchButtonCell], o);
+
     if (![search searchMenuTemplate])
         [search setSearchMenuTemplate:searchMenuTemplate()];
 
@@ -1475,7 +1500,7 @@ bool RenderThemeMac::paintSearchFieldResultsButton(RenderObject* o, const Render
         paintInfo.context->translate(-unzoomedRect.x(), -unzoomedRect.y());
     }
 
-    [[search searchButtonCell] drawWithFrame:unzoomedRect inView:ThemeMac::ensuredView(o->view()->frameView())];
+    [[search searchButtonCell] drawWithFrame:unzoomedRect inView:documentViewFor(o)];
     [[search searchButtonCell] setControlView:nil];
     
     paintInfo.context->restore();
@@ -1528,7 +1553,15 @@ void RenderThemeMac::adjustSliderThumbSize(RenderObject* o) const
     } 
 
 #if ENABLE(VIDEO)
-    else if (o->style()->appearance() == MediaSliderThumbPart) {
+    adjustMediaSliderThumbSize(o);
+#endif
+}
+
+#if ENABLE(VIDEO)
+
+void RenderThemeMac::adjustMediaSliderThumbSize(RenderObject* o) const
+{
+    if (o->style()->appearance() == MediaSliderThumbPart) {
         int width = mediaSliderThumbWidth;
         int height = mediaSliderThumbHeight;
         
@@ -1540,14 +1573,11 @@ void RenderThemeMac::adjustSliderThumbSize(RenderObject* o) const
             height = size.height;
         }
 
+        float zoomLevel = o->style()->effectiveZoom();
         o->style()->setWidth(Length(static_cast<int>(width * zoomLevel), Fixed));
         o->style()->setHeight(Length(static_cast<int>(height * zoomLevel), Fixed));
     }
-#endif
 }
-
-
-#if ENABLE(VIDEO)
 
 enum WKMediaControllerThemeState { 
     MediaUIPartDisabledFlag = 1 << 0,
@@ -1760,10 +1790,15 @@ bool RenderThemeMac::paintMediaTimeRemaining(RenderObject* o, const RenderObject
 
 String RenderThemeMac::extraMediaControlsStyleSheet()
 {
+#if PLATFORM(MAC)
     if (mediaControllerTheme() == MediaControllerThemeQuickTime)
         return String(mediaControlsQuickTimeUserAgentStyleSheet, sizeof(mediaControlsQuickTimeUserAgentStyleSheet));
     else
         return String();
+#else
+    ASSERT_NOT_REACHED();
+    return String();
+#endif
 }
 
 bool RenderThemeMac::shouldRenderMediaControlPart(ControlPart part, Element* element)

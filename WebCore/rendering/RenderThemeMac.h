@@ -88,8 +88,14 @@ public:
 #endif
 
     virtual Color systemColor(int cssValueId) const;
-
+    // Controls color values returned from platformFocusRingColor(). systemColor() will be used when false.
+    virtual bool usesTestModeFocusRingColor() const;
+    // A view associated to the contained document. Subclasses may not have such a view and return a fake.
+    virtual NSView* documentViewFor(RenderObject*) const;
 protected:
+    RenderThemeMac();
+    virtual ~RenderThemeMac();
+
     virtual bool supportsSelectionForegroundColors() const { return false; }
 
     virtual bool paintTextField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
@@ -149,11 +155,10 @@ protected:
     virtual String extraMediaControlsStyleSheet();
 
     virtual bool shouldRenderMediaControlPart(ControlPart, Element*);
+    virtual void adjustMediaSliderThumbSize(RenderObject*) const;
 #endif
 
 private:
-    RenderThemeMac();
-    virtual ~RenderThemeMac();
 
     IntRect inflateRect(const IntRect&, const IntSize&, const int* margins, float zoomLevel = 1.0f) const;
 
@@ -172,6 +177,8 @@ private:
     void updateEnabledState(NSCell*, const RenderObject*);
     void updateFocusedState(NSCell*, const RenderObject*);
     void updatePressedState(NSCell*, const RenderObject*);
+    // An optional hook for subclasses to update the control tint of NSCell.
+    virtual void updateActiveState(NSCell*, const RenderObject*) {}
 
     // Helpers for adjusting appearance and for painting
 

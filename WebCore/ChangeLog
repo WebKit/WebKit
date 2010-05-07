@@ -1,3 +1,40 @@
+2010-05-07  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] RenderThemeChromiumMac.mm should share the code with RenderThemeMac.mm
+        https://bugs.webkit.org/show_bug.cgi?id=37204
+
+        Made RenderThemeChromiumMac subclass of RenderThemeMac, instead of RenderTheme.
+        Added some method to RenderThemeMac for overriding on RenderThemeChromiumMac.
+        
+        No new tests; Should have no behavioural change.
+
+        * WebCore.gyp/WebCore.gyp:
+        * rendering/RenderThemeChromiumMac.h:
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::usesTestModeFocusRingColor):
+        (WebCore::RenderThemeChromiumMac::documentViewFor):
+        (WebCore::RenderThemeChromiumMac::adjustMediaSliderThumbSize):
+        (WebCore::RenderThemeChromiumMac::paintMediaVolumeSliderTrack):
+        (WebCore::RenderThemeChromiumMac::paintMediaVolumeSliderThumb):
+        * rendering/RenderThemeMac.h:
+        (WebCore::RenderThemeMac::updateActiveState): Added for overriding
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::usesTestModeFocusRingColor): Added for overriding
+        (WebCore::RenderThemeMac::documentViewFor): Added for overriding
+        (WebCore::RenderThemeMac::paintMenuList):
+        (WebCore::RenderThemeMac::setPopupButtonCellState):
+        (WebCore::RenderThemeMac::paintSliderThumb):
+        (WebCore::RenderThemeMac::paintSearchField):
+        (WebCore::RenderThemeMac::setSearchCellState):
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeMac::adjustSliderThumbSize):
+        (WebCore::RenderThemeMac::adjustMediaSliderThumbSize): Added for overriding
+        (WebCore::RenderThemeMac::extraMediaControlsStyleSheet):        
+
 2010-05-06  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
