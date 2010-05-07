@@ -650,7 +650,7 @@ EXPORTS
 	_ZlsR11QDataStreamRK11QWebHistory @ 649 NONAME
 	_ZrsR11QDataStreamR11QWebHistory @ 650 NONAME
 	_Z32qt_drt_whiteListAccessFromOriginRK7QStringS1_S1_b @ 651 NONAME
-	_Z33qt_drt_counterValueForElementByIdP9QWebFrameRK7QString @ 652 NONAME
+	_Z33qt_drt_counterValueForElementByIdP9QWebFrameRK7QString @ 652 NONAME ABSENT
 	_Z34qt_drt_resetOriginAccessWhiteListsv @ 653 NONAME
 	_ZN11QWebElement17removeAllChildrenEv @ 654 NONAME
 	_ZN11QWebElement6renderEP8QPainter @ 655 NONAME
@@ -698,25 +698,25 @@ EXPORTS
 	_ZN9QWebFrame17scrollRecursivelyEii @ 697 NONAME ABSENT
 	_ZN16QGraphicsWebView20setResizesToContentsEb @ 698 NONAME
 	_ZNK16QGraphicsWebView17resizesToContentsEv @ 699 NONAME
-	_Z20qt_drt_numberOfPagesP9QWebFrameff @ 700 NONAME
-	_Z24qt_drt_pauseSVGAnimationP9QWebFrameRK7QStringdS3_ @ 701 NONAME
-	_Z24qt_drt_webinspector_showP8QWebPage @ 702 NONAME
-	_Z24qt_drt_workerThreadCountv @ 703 NONAME
-	_Z25qt_drt_hasDocumentElementP9QWebFrame @ 704 NONAME
-	_Z25qt_drt_webinspector_closeP8QWebPage @ 705 NONAME
-	_Z31qt_drt_pageNumberForElementByIdP9QWebFrameRK7QStringff @ 706 NONAME
-	_Z33qt_drt_webinspector_executeScriptP8QWebPagelRK7QString @ 707 NONAME
-	_Z34qt_drt_setTimelineProfilingEnabledP8QWebPageb @ 708 NONAME
-	_Z32qt_drt_setFrameFlatteningEnabledP8QWebPageb @ 709 NONAME
-	_Z36qt_drt_evaluateScriptInIsolatedWorldP9QWebFrameiRK7QString @ 710 NONAME
-	_Z47qt_drt_setDomainRelaxationForbiddenForURLSchemebRK7QString @ 711 NONAME
+	_Z20qt_drt_numberOfPagesP9QWebFrameff @ 700 NONAME ABSENT
+	_Z24qt_drt_pauseSVGAnimationP9QWebFrameRK7QStringdS3_ @ 701 NONAME ABSENT
+	_Z24qt_drt_webinspector_showP8QWebPage @ 702 NONAME ABSENT
+	_Z24qt_drt_workerThreadCountv @ 703 NONAME ABSENT
+	_Z25qt_drt_hasDocumentElementP9QWebFrame @ 704 NONAME ABSENT
+	_Z25qt_drt_webinspector_closeP8QWebPage @ 705 NONAME ABSENT
+	_Z31qt_drt_pageNumberForElementByIdP9QWebFrameRK7QStringff @ 706 NONAME ABSENT
+	_Z33qt_drt_webinspector_executeScriptP8QWebPagelRK7QString @ 707 NONAME ABSENT
+	_Z34qt_drt_setTimelineProfilingEnabledP8QWebPageb @ 708 NONAME ABSENT
+	_Z32qt_drt_setFrameFlatteningEnabledP8QWebPageb @ 709 NONAME ABSENT
+	_Z36qt_drt_evaluateScriptInIsolatedWorldP9QWebFrameiRK7QString @ 710 NONAME ABSENT
+	_Z47qt_drt_setDomainRelaxationForbiddenForURLSchemebRK7QString @ 711 NONAME ABSENT
 	_ZN9QWebFrame11pageChangedEv @ 712 NONAME
 	_ZN9QWebFrame14scrollToAnchorERK7QString @ 713 NONAME
 	_ZN12QWebSettings15setInspectorUrlERK4QUrl @ 714 NONAME ABSENT
 	_ZN13QWebInspector10closeEventEP11QCloseEvent @ 715 NONAME
 	_ZN16QGraphicsWebView26setTiledBackingStoreFrozenEb @ 716 NONAME
 	_ZNK16QGraphicsWebView25isTiledBackingStoreFrozenEv @ 717 NONAME
-	_Z18qt_wrt_setViewModeP8QWebPageRK7QString @ 718 NONAME
-	_Z19qt_drt_setMediaTypeP9QWebFrameRK7QString @ 719 NONAME
-	_Z26qt_drt_enableCaretBrowsingP8QWebPageb @ 720 NONAME
+	_Z18qt_wrt_setViewModeP8QWebPageRK7QString @ 718 NONAME ABSENT
+	_Z19qt_drt_setMediaTypeP9QWebFrameRK7QString @ 719 NONAME ABSENT
+	_Z26qt_drt_enableCaretBrowsingP8QWebPageb @ 720 NONAME ABSENT
 	_ZNK12QWebSettings12inspectorUrlEv @ 721 NONAME ABSENT

@@ -1,3 +1,11 @@
+2010-05-07  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Symbian build fix.
+
+        [Qt] Updated the def file with absent exports.
+
+        * symbian/eabi/QtWebKitu.def:
+
 2010-05-06  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Simon Hausmann.
