@@ -1,3 +1,12 @@
+2010-05-06  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Add support for resources on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=38637
+
+        * DEPS: Check out tools/data_pack.
+
 2010-05-06  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

@@ -1,3 +1,16 @@
+2010-05-06  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Add support for resources on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=38637
+
+        Repack webkit_chromium_resources.pak, webkit_strings_en-US.pak,
+        and webkit_resources.pak, and put them as Mac bundle resource.
+        The 'actions' section is almost same as a part of test_shell.gypi.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2010-05-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed buildfix after r58917.

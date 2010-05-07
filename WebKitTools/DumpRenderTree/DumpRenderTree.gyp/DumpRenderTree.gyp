@@ -124,23 +124,44 @@
                 '../chromium/WebViewHost.cpp',
                 '../chromium/WebViewHost.h',
             ],
-            'mac_bundle_resources': [
-                '../qt/fonts/AHEM____.TTF',
-                '../fonts/WebKitWeightWatcher100.ttf',
-                '../fonts/WebKitWeightWatcher200.ttf',
-                '../fonts/WebKitWeightWatcher300.ttf',
-                '../fonts/WebKitWeightWatcher400.ttf',
-                '../fonts/WebKitWeightWatcher500.ttf',
-                '../fonts/WebKitWeightWatcher600.ttf',
-                '../fonts/WebKitWeightWatcher700.ttf',
-                '../fonts/WebKitWeightWatcher800.ttf',
-                '../fonts/WebKitWeightWatcher900.ttf',
-            ],
             'conditions': [
                 ['OS=="mac"', {
                     'dependencies': ['LayoutTestHelper'],
-                }],
-            ],
+                    'mac_bundle_resources': [
+                        '../qt/fonts/AHEM____.TTF',
+                        '../fonts/WebKitWeightWatcher100.ttf',
+                        '../fonts/WebKitWeightWatcher200.ttf',
+                        '../fonts/WebKitWeightWatcher300.ttf',
+                        '../fonts/WebKitWeightWatcher400.ttf',
+                        '../fonts/WebKitWeightWatcher500.ttf',
+                        '../fonts/WebKitWeightWatcher600.ttf',
+                        '../fonts/WebKitWeightWatcher700.ttf',
+                        '../fonts/WebKitWeightWatcher800.ttf',
+                        '../fonts/WebKitWeightWatcher900.ttf',
+                    ],
+                    'actions': [
+                        {
+                            'action_name': 'repack_locale',
+                            'variables': {
+                                'repack_path': '<(chromium_src_dir)/tools/data_pack/repack.py',
+                                'pak_inputs': [
+                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_chromium_resources.pak',
+                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_strings_en-US.pak',
+                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_resources.pak',
+                            ]},
+                            'inputs': [
+                                '<(repack_path)',
+                                '<@(pak_inputs)',
+                            ],
+                            'outputs': [
+                                '<(INTERMEDIATE_DIR)/repack/DumpRenderTree.pak',
+                            ],
+                            'action': ['python', '<(repack_path)', '<@(_outputs)', '<@(pak_inputs)'],
+                            'process_outputs_as_mac_bundle_resources': 1,
+                        },
+                    ], # actions
+                }], # mac
+            ], # conditions
         },
 
         {
