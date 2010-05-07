@@ -68,7 +68,6 @@ Index: index_path.py
 +++ index_path.py	(working copy)
 END
     copiedFromPath => "copied_from_path.py",
-    executableBitDelta => 0,
     indexPath => "index_path.py",
     isSvn => 1,
     sourceRevision => 53048,
@@ -93,11 +92,9 @@ Index: foo.exe
 old mode 100644
 new mode 100755
 END
-    copiedFromPath => undef,
     executableBitDelta => 1,
     indexPath => "foo.exe",
     isGit => 1,
-    sourceRevision => undef,
 },
 undef],
     expectedNextLine => undef,

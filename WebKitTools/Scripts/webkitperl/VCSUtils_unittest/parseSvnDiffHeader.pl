@@ -57,7 +57,6 @@ Index: WebKitTools/Scripts/VCSUtils.pm
 --- WebKitTools/Scripts/VCSUtils.pm	(revision 53004)
 +++ WebKitTools/Scripts/VCSUtils.pm	(working copy)
 END
-    copiedFromPath => undef,
     indexPath => "WebKitTools/Scripts/VCSUtils.pm",
     sourceRevision => "53004",
 },
@@ -83,9 +82,7 @@ Index: WebKitTools/Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl
 --- WebKitTools/Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl	(revision 0)
 +++ WebKitTools/Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl	(revision 0)
 END
-    copiedFromPath => undef,
     indexPath => "WebKitTools/Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl",
-    sourceRevision => undef,
 },
 "@@ -0,0 +1,262 @@\n"],
     expectedNextLine => "+#!/usr/bin/perl -w\n",
@@ -195,10 +192,8 @@ Index: test_file.swf
 ===================================================================
 Cannot display: file marked as a binary type.
 END
-    copiedFromPath => undef,
     indexPath => "test_file.swf",
     isBinary => 1,
-    sourceRevision => undef,
 },
 "svn:mime-type = application/octet-stream\n"],
     expectedNextLine => "\n",

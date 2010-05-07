@@ -59,7 +59,6 @@ Index: Makefile
  
  all:
 END
-    copiedFromPath => undef,
     indexPath => "Makefile",
     isSvn => 1,
     sourceRevision => "53052",
@@ -100,11 +99,9 @@ Name: svn:mime-type
 
 Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
 END
-    copiedFromPath => undef,
     indexPath => "test_file.swf",
     isBinary => 1,
     isSvn => 1,
-    sourceRevision => undef,
 },
 undef],
     expectedNextLine => undef,
@@ -142,7 +139,6 @@ Index: Makefile
  
  all:
 END
-    copiedFromPath => undef,
     indexPath => "Makefile",
     isSvn => 1,
     sourceRevision => "53052",
@@ -203,7 +199,6 @@ Index: Makefile
 @@ -1,1 +0,0 @@
 -MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKitTools
 END
-    copiedFromPath => undef,
     indexPath => "Makefile",
     isSvn => 1,
     sourceRevision => "53131",
@@ -242,7 +237,6 @@ index f5d5e74..3b6aa92 100644
 +++ b/Makefile
 @@ -1,1 1,1 @@ public:
 END
-    copiedFromPath => undef,
     indexPath => "Makefile",
     isSvn => 1,
     sourceRevision => "53131",
@@ -272,10 +266,8 @@ index f5d5e74..3b6aa92 100644
 +++ Makefile
 @@ -1,1 1,1 @@ public:
 END
-    copiedFromPath => undef,
     indexPath => "Makefile",
     isGit => 1,
-    sourceRevision => undef,
 },
 undef],
     expectedNextLine => undef,
@@ -305,10 +297,8 @@ Index: Makefile_new
 ===================================================================
 --- Makefile_new	(revision 53131)	(from Makefile:53131)
 END
-    copiedFromPath => undef,
     indexPath => "Makefile",
     isGit => 1,
-    sourceRevision => undef,
 },
 undef],
     expectedNextLine => undef,

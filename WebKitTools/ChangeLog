@@ -1,3 +1,39 @@
+2010-05-07  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        Refactored VCSUtils.pm's parse-related methods to leave inapplicable
+        hash values unset instead of setting them to "undef".
+
+        https://bugs.webkit.org/show_bug.cgi?id=38724
+
+        Preferring "not set" over "undef" keeps the unit tests smaller and
+        easier to maintain.  Otherwise, we would have to update every unit
+        test case each time we add support for a new key-value pair --
+        instead of just the relevant ones.
+
+        * Scripts/VCSUtils.pm:
+          - In parseGitDiffHeader(), adjusted the handling of these key-values:
+            executableBitDelta and isBinary.
+          - In parseSvnDiffHeader(), adjusted the handling of these key-values:
+            copiedFromPath, isBinary, and sourceRevision.
+          - In parseDiffHeader(), adjusted the handling of these key-values:
+            isGit and isSvn.
+          - In parseDiff(), adjusted the handling of these key-values:
+            isBinary, isGit, isSvn, and sourceRevision.
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiff.pl:
+          - Updated the unit tests as necessary.
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl:
+          - Updated the unit tests as necessary.
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseGitDiffHeader.pl:
+          - Updated the unit tests as necessary.
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseSvnDiffHeader.pl:
+          - Updated the unit tests as necessary.
+
 2010-05-06  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Dan Bernstein.

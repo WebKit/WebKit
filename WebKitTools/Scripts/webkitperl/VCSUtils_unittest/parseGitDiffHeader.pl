@@ -51,7 +51,6 @@ index f5d5e74..3b6aa92 100644
 --- foo.h
 +++ foo.h
 END
-    executableBitDelta => 0,
     indexPath => "foo.h",
 },
 "@@ -1 +1 @@\n"],
@@ -77,7 +76,6 @@ index 0000000..3c9f114
 --- foo.h
 +++ foo.h
 END
-    executableBitDelta => 0,
     indexPath => "foo.h",
 },
 "@@ -0,0 +1,34 @@\n"],
@@ -101,7 +99,6 @@ index c925780..9e65c43 100644
 --- foo.h
 +++ foo.h
 END
-    executableBitDelta => 0,
     indexPath => "foo.h",
 },
 "@@ -1,3 +1,17 @@\n"],
@@ -129,7 +126,6 @@ copy from foo
 copy to foo_new
 END
     copiedFromPath => "foo",
-    executableBitDelta => 0,
     indexPath => "foo_new",
 },
 "diff --git a/bar b/bar\n"],
@@ -153,7 +149,6 @@ similarity index 99%
 copy from foo
 copy to foo_new
 END
-    executableBitDelta => 0,
     indexPath => "foo_new",
 },
 "diff --git a/bar b/bar\n"],
@@ -185,7 +180,6 @@ new file mode 100644
 index 0000000000000000000000000000000000000000..64a9532e7794fcd791f6f12157406d9060151690
 GIT binary patch
 END
-    executableBitDelta => 0,
     indexPath => "foo.gif",
     isBinary => 1,
 },
@@ -215,7 +209,6 @@ deleted file mode 100644
 index 323fae0..0000000
 GIT binary patch
 END
-    executableBitDelta => 0,
     indexPath => "foo.gif",
     isBinary => 1,
 },
@@ -246,7 +239,6 @@ index d03e242..435ad3a 100755
 --- foo
 +++ foo
 END
-    executableBitDelta => 0,
     indexPath => "foo",
 },
 "@@ -1 +1 @@\n"],
