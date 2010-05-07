@@ -1,5 +1,12 @@
 2010-05-07  Darin Fisher  <darin@chromium.org>
 
+        Fix build bustage.  Update to Chromium code that avoids a bad
+        dependency from net/ on chrome/.
+
+        * DEPS:
+
+2010-05-07  Darin Fisher  <darin@chromium.org>
+
         Fix build bustage.  Update to Chromium code that no longer uses
         deprecated methods.
 
