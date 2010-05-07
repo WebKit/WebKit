@@ -1023,7 +1023,7 @@ InjectedScript._className = function(obj)
         return str.replace(/^\[object (.*)\]$/i, "$1");
     }
     // V8
-    if (obj === null)
+    if (typeof obj !== "object")
         return "null";
     return obj.constructor.name;
 }

@@ -1,5 +1,14 @@
 2010-05-07  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: chromium dev tools tests fix.
+        Add a more strict check prior to accessing constructor property in
+        Web Inspector frontend.
+
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor):
+
+2010-05-07  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Joseph Pecoraro.
 
         Web Inspector: On Linux/Windows panel history is
