@@ -155,7 +155,7 @@ JSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec, JSObject*, JSValu
     if (radix == 10)
         return jsString(exec, v.toString(exec));
 
-    static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+    static const char* const digits = "0123456789abcdefghijklmnopqrstuvwxyz";
 
     // Fast path for number to character conversion.
     if (radix == 36) {

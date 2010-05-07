@@ -1,3 +1,14 @@
+2010-05-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+        
+        Slightly more effective way to guarantee a compile-time constant, at
+        least on gcc.
+
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToString): Use pointer notation instead of array
+        notation, so the compiler treats the string and its contents as constant.
+
 2010-05-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
