@@ -1013,8 +1013,19 @@ InjectedScript._toString = function(obj)
 
 InjectedScript._className = function(obj)
 {
-    var str = inspectedWindow.Object ? inspectedWindow.Object.prototype.toString.call(obj) : InjectedScript._toString(obj);
-    return str.replace(/^\[object (.*)\]$/i, "$1");
+    // We can't use the same code for fetching class names of the dom bindings prototype chain.
+    // Both of the methods below result in "Object" names on the foreign engine bindings.
+    // I gave up and am using a check below to distinguish between the egine bingings.
+
+    if (typeof Document === "object") {
+        // JSC
+        var str = inspectedWindow.Object ? inspectedWindow.Object.prototype.toString.call(obj) : InjectedScript._toString(obj);
+        return str.replace(/^\[object (.*)\]$/i, "$1");
+    }
+    // V8
+    if (obj === null)
+        return "null";
+    return obj.constructor.name;
 }
 
 InjectedScript._escapeCharacters = function(str, chars)
