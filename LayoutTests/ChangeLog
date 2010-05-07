@@ -1,3 +1,20 @@
+2010-05-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        RenderSVGResourceClipper assigns a temporary mutated RenderStyle but does not correctly preserve the old style
+        https://bugs.webkit.org/show_bug.cgi?id=38767
+
+        Update baseline after fixing a logic error in RenderSVGResourceClipper.
+
+        * platform/mac/svg/clip-path/clip-path-child-clipped-expected.txt:
+        * platform/mac/svg/clip-path/clip-path-childs-clipped-expected.txt:
+        * platform/mac/svg/clip-path/clip-path-clipped-expected.txt:
+        * platform/mac/svg/clip-path/clip-path-evenodd-expected.txt:
+        * platform/mac/svg/clip-path/clip-path-evenodd-nonzero-expected.txt:
+        * platform/mac/svg/clip-path/clip-path-nonzero-evenodd-expected.txt:
+        * platform/mac/svg/clip-path/clip-path-text-and-shape-expected.txt:
+
 2010-05-07  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adele Peterson.

@@ -1,3 +1,16 @@
+2010-05-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        RenderSVGResourceClipper assigns a temporary mutated RenderStyle but does not correctly preserve the old style
+        https://bugs.webkit.org/show_bug.cgi?id=38767
+
+        Fix small logic error leading to a problem in RenderSVGResourceClipper. It assigns a new temporary RenderStyle
+        to the target object, but fails to reset it correctly to the old style. Fixes all svg/clip-path errors on the windows bots.
+
+        * rendering/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::createClipData):
+
 2010-05-07  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Jian Li.
