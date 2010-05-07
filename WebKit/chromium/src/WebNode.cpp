@@ -94,11 +94,6 @@ bool WebNode::setNodeValue(const WebString& value)
     return !exceptionCode;
 }
 
-WebFrame* WebNode::frame() const
-{
-    return WebFrameImpl::fromFrame(m_private->document()->frame());
-}
-
 WebDocument WebNode::document() const
 {
     return WebDocument(m_private->document());

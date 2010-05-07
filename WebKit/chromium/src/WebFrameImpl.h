@@ -163,7 +163,6 @@ public:
     virtual void registerPasswordListener(
         WebInputElement, WebPasswordAutocompleteListener*);
 
-    virtual WebURL completeURL(const WebString& url) const;
     virtual WebString contentAsText(size_t maxChars) const;
     virtual WebString contentAsMarkup() const;
     virtual WebString renderTreeAsText() const;

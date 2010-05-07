@@ -470,13 +470,6 @@ public:
 
     // Utility -------------------------------------------------------------
 
-    // Given a relative URL, returns an absolute URL by resolving the URL
-    // relative to the base URL of the frame's document.  This uses the
-    // same algorithm that WebKit uses to resolve hyperlinks found in a
-    // HTML document.
-    // Deprecated. Use document().completeURL() instead.
-    virtual WebURL completeURL(const WebString&) const = 0;
-
     // Returns the contents of this frame as a string.  If the text is
     // longer than maxChars, it will be clipped to that length.  WARNING:
     // This function may be slow depending on the number of characters

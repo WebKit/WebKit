@@ -84,8 +84,6 @@ public:
     WEBKIT_API WebString nodeName() const;
     WEBKIT_API WebString nodeValue() const;
     WEBKIT_API bool setNodeValue(const WebString&);
-    // Deprecated. Use document().frame() instead.
-    WEBKIT_API WebFrame* frame() const;
     WEBKIT_API WebDocument document() const;
     WEBKIT_API WebNode firstChild() const;
     WEBKIT_API WebNode lastChild() const;
@@ -105,22 +103,6 @@ public:
     // This does not 100% guarantee the user can see it, but is pretty close.
     // Note: This method only works properly after layout has occurred.
     WEBKIT_API bool hasNonEmptyBoundingBox() const;
-
-    // Deprecated. Use to() instead.
-    template<typename T> T toElement()
-    {
-        T res;
-        res.WebNode::assign(*this);
-        return res;
-    }
-
-    // Deprecated. Use toConst() instead.
-    template<typename T> const T toConstElement() const
-    {
-        T res;
-        res.WebNode::assign(*this);
-        return res;
-    }
 
     template<typename T> T to()
     {

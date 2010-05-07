@@ -1608,14 +1608,6 @@ void WebFrameImpl::resetMatchCount()
     m_framesScopingCount = 0;
 }
 
-WebURL WebFrameImpl::completeURL(const WebString& url) const
-{
-    if (!m_frame || !m_frame->document())
-        return WebURL();
-
-    return m_frame->document()->completeURL(url);
-}
-
 WebString WebFrameImpl::contentAsText(size_t maxChars) const
 {
     if (!m_frame)
