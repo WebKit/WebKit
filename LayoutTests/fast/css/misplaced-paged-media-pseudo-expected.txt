@@ -1,0 +1,3 @@
+Test for bug 38697: Replying on reddit.com no longer works.
+
+PASS

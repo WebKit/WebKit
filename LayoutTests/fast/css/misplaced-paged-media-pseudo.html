@@ -1,0 +1,15 @@
+<body>
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=38697">bug 38697<a/>:
+Replying on reddit.com no longer works.</p>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+try {
+    document.querySelectorAll(".login-popup:first");
+    document.write("FAIL");
+} catch (EX) {
+    document.write("PASS");
+}
+</script>
+</body>

@@ -525,10 +525,13 @@ void CSSSelector::extractPseudoType() const
     case PseudoSingleButton:
     case PseudoNoButton:
     case PseudoNotParsed:
+        break;
     case PseudoFirstPage:
     case PseudoLeftPage:
     case PseudoRightPage:
-        break;
+        // FIXME: These should only be allowed in @page rules. Disabled them altogether until that's implemented correctly.
+        m_pseudoType = PseudoUnknown;
+        return;
     }
 
     if (m_match == PseudoClass && element) {
