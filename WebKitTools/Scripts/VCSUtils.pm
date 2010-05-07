@@ -425,6 +425,7 @@ sub isExecutable($)
 #
 # Returns ($headerHashRef, $lastReadLine):
 #   $headerHashRef: a hash reference representing a diff header, as follows--
+#     copiedFromPath: if a file copy, the path from which the file was copied.
 #     executableBitDelta: an integer -1, 0, or 1, depending on whether the
 #                         executable bit was added, remained the same, or was
 #                         removed.  For new and deleted files, the value is 0
@@ -443,17 +444,22 @@ sub parseGitDiffHeader($$)
     my $headerStartRegEx = qr#^diff --git (\w/)?(.+) (\w/)?([^\r\n]+)#;
     my $indexPath;
     if (/$headerStartRegEx/) {
-        $indexPath = $2;
+        # The first and second paths can differ in the case of copies
+        # and renames.  We use the second file path because it is the
+        # destination path.
+        $indexPath = $4;
         # Use $POSTMATCH to preserve the end-of-line character.
         $_ = "Index: $indexPath$POSTMATCH"; # Convert to SVN format.
     } else {
         die("Could not parse leading \"diff --git\" line: \"$line\".");
     }
 
+    my $copiedFromPath;
     my $foundHeaderEnding;
     my $isBinary;
     my $newExecutableBit = 0;
     my $oldExecutableBit = 0;
+    my $similarityIndex;
     my $svnConvertedText;
     while (1) {
         # Temporarily strip off any end-of-line characters to simplify
@@ -470,6 +476,10 @@ sub parseGitDiffHeader($$)
         } elsif (/^\+\+\+ \S+/) {
             $_ = "+++ $indexPath"; # Convert to SVN format.
             $foundHeaderEnding = 1;
+        } elsif (/^similarity index (\d+)%/) {
+            $similarityIndex = $1;
+        } elsif (/^copy from (\S+)/) {
+            $copiedFromPath = $1;
         # The "git diff" command includes a line of the form "Binary files
         # <path1> and <path2> differ" if the --binary flag is not used.
         } elsif (/^Binary files / ) {
@@ -492,6 +502,7 @@ sub parseGitDiffHeader($$)
 
     my %header;
 
+    $header{copiedFromPath} = $copiedFromPath if ($copiedFromPath && $similarityIndex == 100);
     $header{executableBitDelta} = $executableBitDelta;
     $header{indexPath} = $indexPath;
     $header{isBinary} = $isBinary if defined($isBinary);

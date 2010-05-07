@@ -2,6 +2,27 @@
 
         Reviewed by Daniel Bates.
 
+        svn-apply now understands the Git diff "copy from" syntax when the
+        similarity index is 100%.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38628
+
+        * Scripts/VCSUtils.pm:
+          - Adjusted parseGitDiffHeader() to parse the "copy from" and
+            "similarity index" lines.
+
+        * Scripts/svn-unapply:
+          - Adjusted the patch() subroutine so that copies are recognized
+            as file additions.
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseGitDiffHeader.pl:
+          - Added unit tests for the cases of a copy with similarity index
+            100% and less than 100%.
+
+2010-05-06  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Daniel Bates.
+
         Removed the need for svn-apply and -unapply to re-parse whether
         a diff is binary or not.
 

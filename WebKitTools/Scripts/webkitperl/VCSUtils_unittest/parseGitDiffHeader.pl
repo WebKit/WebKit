@@ -108,6 +108,58 @@ END
     expectedNextLine => "+contents\n",
 },
 ####
+#    Copy operations
+##
+{   # New test
+    diffName => "copy (with similarity index 100%)",
+    inputText => <<'END',
+diff --git a/foo b/foo_new
+similarity index 100%
+copy from foo
+copy to foo_new
+diff --git a/bar b/bar
+index d45dd40..3494526 100644
+END
+    expectedReturn => [
+{
+    svnConvertedText => <<'END',
+Index: foo_new
+similarity index 100%
+copy from foo
+copy to foo_new
+END
+    copiedFromPath => "foo",
+    executableBitDelta => 0,
+    indexPath => "foo_new",
+},
+"diff --git a/bar b/bar\n"],
+    expectedNextLine => "index d45dd40..3494526 100644\n",
+},
+{   # New test
+    diffName => "copy (with similarity index < 100%)",
+    inputText => <<'END',
+diff --git a/foo b/foo_new
+similarity index 99%
+copy from foo
+copy to foo_new
+diff --git a/bar b/bar
+index d45dd40..3494526 100644
+END
+    expectedReturn => [
+{
+    svnConvertedText => <<'END',
+Index: foo_new
+similarity index 99%
+copy from foo
+copy to foo_new
+END
+    executableBitDelta => 0,
+    indexPath => "foo_new",
+},
+"diff --git a/bar b/bar\n"],
+    expectedNextLine => "index d45dd40..3494526 100644\n",
+},
+####
 #    Binary file test cases
 ##
 {

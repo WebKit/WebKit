@@ -151,7 +151,7 @@ sub patch($)
 
     # FIXME: This information should be extracted from the diff file as
     #        part of the parsing stage, i.e. the call to parsePatch().
-    $addition = 1 if ($patch =~ /\n--- .+\(revision 0\)\n/ || $patch =~ /\n@@ -0,0 .* @@/);
+    $addition = 1 if ($diffHashRef->{copiedFromPath} || $patch =~ /\n--- .+\(revision 0\)\n/ || $patch =~ /\n@@ -0,0 .* @@/);
     $deletion = 1 if $patch =~ /\n@@ .* \+0,0 @@/;
 
     if (!$addition && !$deletion && !$isSvnBinary) {
@@ -199,6 +199,10 @@ sub patch($)
             system "svn", "stat", $fullPath;
         } else {
             # Reverse addition
+            #
+            # FIXME: This should use the same logic as svn-apply's deletion
+            #        code.  In particular, svn-apply's scmRemove() subroutine
+            #        should be used here.
             unapplyPatch($patch, $fullPath, ["--force"]);
             unlink($fullPath) if -z $fullPath;
             system "svn", "revert", $fullPath;
