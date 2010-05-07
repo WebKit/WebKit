@@ -175,3 +175,6 @@ fast/js/sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15
 # Many of these tests are slow and/or fail, and they aren't that useful, since we aleady know that
 # Tiger has an old version of ICU and thus supports an old version of Unicode.
 fast/js/sputnik/Unicode
+
+# https://bugs.webkit.org/show_bug.cgi?id=38743
+webarchive/test-link-rel-icon.html
