@@ -1,3 +1,19 @@
+2010-05-07  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Jian Li.
+
+        [chromium] DragDataChromium::asURL() shouldn't do file validity checks
+        https://bugs.webkit.org/show_bug.cgi?id=38711
+
+        The renderer is sandboxed in Chromium, so these calls will give us no
+        meaningful information. The loader will do the right thing if we pass
+        it a file URL that points to an invalid file.
+
+        No new tests.
+
+        * platform/chromium/DragDataChromium.cpp:
+        (WebCore::DragData::asURL):
+
 2010-05-07  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
