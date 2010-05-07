@@ -1,5 +1,12 @@
 2010-05-07  Darin Fisher  <darin@chromium.org>
 
+        Fix build bustage.  Update to Chromium code that no longer uses
+        deprecated methods.
+
+        * DEPS:
+
+2010-05-07  Darin Fisher  <darin@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         [chromium] clear out more deprecated methods that are no longer used
