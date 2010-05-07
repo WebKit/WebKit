@@ -1153,6 +1153,7 @@ sub countAndPrintLeaks($$$)
             "QTKitMovieControllerView completeUISetup", # <rdar://problem/7155156> leak in QTKit
             "getVMInitArgs", # <rdar://problem/7714444> leak in Java
             "Java_java_lang_System_initProperties", # <rdar://problem/7714465> leak in Java
+            "glrCompExecuteKernel", # <rdar://problem/7815391> leak in graphics driver while using OpenGL
         );
     }
 
