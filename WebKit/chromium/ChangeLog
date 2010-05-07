@@ -1,3 +1,17 @@
+2010-05-07  Finnur Thorarinsson  <finnur.webkit@gmail.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium]: Fixing Find in page crash on sites.google.com
+        https://bugs.webkit.org/show_bug.cgi?id=38591
+        
+        setMarkerActive should not try to set a collapsed marker as
+        active. This can happen when you Edit a Sites page after doing
+        a Find operation and then you press FindNext.
+        
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::setMarkerActive):
+
 2010-05-06  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -2030,7 +2030,8 @@ void WebFrameImpl::addMarker(Range* range, bool activeMatch)
 
 void WebFrameImpl::setMarkerActive(Range* range, bool active)
 {
-    if (!range)
+    WebCore::ExceptionCode ec;
+    if (!range || range->collapsed(ec))
         return;
 
     frame()->document()->setMarkersActive(range, active);
