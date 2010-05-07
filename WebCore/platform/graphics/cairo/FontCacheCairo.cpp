@@ -39,6 +39,11 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
     FcResult fresult;
     FontPlatformData* prim = const_cast<FontPlatformData*>(&font.primaryFont()->platformData());
 
+    // FIXME: This should not happen, apparently. We are null-checking
+    // for now just to avoid crashing.
+    if (!prim || !prim->m_pattern)
+        return 0;
+
     if (!prim->m_fallbacks)
         prim->m_fallbacks = FcFontSort(NULL, prim->m_pattern, FcTrue, NULL, &fresult);
 
