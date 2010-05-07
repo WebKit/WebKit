@@ -1,3 +1,50 @@
+2010-05-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        [WTFURL] Add core URL parser
+        https://bugs.webkit.org/show_bug.cgi?id=38572
+
+        This patch adds the core of the URL parser.  The URL parser uses a
+        templated notion of a code unit to support different string types.
+        Later we'll add some non-templated APIs with concrete types that
+        clients can use more conveniently.
+
+        The URLParser has a couple calls to ASSERT(), which I've commented out
+        for now.  I'm not 100% sure how to handle the dependency issues there
+        yet, so I've punted on the issue for now.
+
+        Also, there are a number of methods that are declared public in this
+        patch that are only used by the canonicalizer.  My plan is to make
+        those private or protected and make the canonicalizer a friend of the
+        parser.  The details will be in a later patch.
+
+        * wtf/url/src/URLComponent.h:
+        (WTF::URLComponent::fromRange):
+        (WTF::URLComponent::isNonEmpty):
+        (WTF::URLComponent::isEmptyOrInvalid):
+        * wtf/url/src/URLParser.h: Added.
+        (WTF::URLParser::):
+        (WTF::URLParser::isPossibleAuthorityTerminator):
+        (WTF::URLParser::parseAuthority):
+        (WTF::URLParser::extractScheme):
+        (WTF::URLParser::parseAfterScheme):
+        (WTF::URLParser::parseStandardURL):
+        (WTF::URLParser::parsePath):
+        (WTF::URLParser::parsePathURL):
+        (WTF::URLParser::parseMailtoURL):
+        (WTF::URLParser::parsePort):
+        (WTF::URLParser::extractFileName):
+        (WTF::URLParser::extractQueryKeyValue):
+        (WTF::URLParser::isURLSlash):
+        (WTF::URLParser::shouldTrimFromURL):
+        (WTF::URLParser::trimURL):
+        (WTF::URLParser::consecutiveSlashes):
+        (WTF::URLParser::isPortDigit):
+        (WTF::URLParser::nextAuthorityTerminator):
+        (WTF::URLParser::parseUserInfo):
+        (WTF::URLParser::parseServerInfo):
+
 2010-05-07  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
