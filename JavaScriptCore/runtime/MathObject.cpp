@@ -223,7 +223,7 @@ JSValue JSC_HOST_CALL mathProtoFuncRound(ExecState* exec, JSObject*, JSValue, co
 
 JSValue JSC_HOST_CALL mathProtoFuncSin(ExecState* exec, JSObject*, JSValue, const ArgList& args)
 {
-    return jsDoubleNumber(exec, sin(args.at(0).toNumber(exec)));
+    return exec->globalData().cachedSin(exec, args.at(0).toNumber(exec));
 }
 
 JSValue JSC_HOST_CALL mathProtoFuncSqrt(ExecState* exec, JSObject*, JSValue, const ArgList& args)

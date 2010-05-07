@@ -1,3 +1,30 @@
+2010-05-06  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 38714 - Add result caching for Math.sin
+
+        Math.sin is frequently called with the same operand, caching the result should
+        improve performance.  CachedTranscendentalFunction adds a generic mechanism to
+        cache results for pure functions with the signature "double func(double)", and
+        where NaN maps to NaN.
+
+        CachedTranscendentalFunction uses a very simple hash function designed to be
+        fast to execute since we cannot cache the result, and trivial to JIT generate,
+        should we wish to do so.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/CachedTranscendentalFunction.h: Added.
+        (JSC::CachedTranscendentalFunction::CachedTranscendentalFunction):
+        (JSC::CachedTranscendentalFunction::~CachedTranscendentalFunction):
+        (JSC::CachedTranscendentalFunction::operator()):
+        (JSC::CachedTranscendentalFunction::initialize):
+        (JSC::CachedTranscendentalFunction::hash):
+        * runtime/JSGlobalData.h:
+        * runtime/MathObject.cpp:
+        (JSC::mathProtoFuncSin):
+        * wtf/Platform.h:
+
 2010-05-06  Geoffrey Garen  <ggaren@apple.com>
 
         Windows build fix.
