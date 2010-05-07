@@ -1,5 +1,12 @@
 2010-05-07  John Gregg  <johnnyg@google.com>
 
+        Unreviewed, rebaseline for chromium. 
+
+        * platform/chromium-mac/fast/layers/video-layer-expected.checksum:
+        * platform/chromium-mac/fast/layers/video-layer-expected.png:
+
+2010-05-07  John Gregg  <johnnyg@google.com>
+
         Unreviewed, rebaseline for chromium.
 
         * platform/chromium-mac/media/audio-controls-rendering-expected.checksum:
