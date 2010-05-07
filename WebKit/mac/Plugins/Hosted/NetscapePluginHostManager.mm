@@ -272,7 +272,7 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
     }
     
     instance->setRenderContextID(reply->m_renderContextID);
-    instance->setUseSoftwareRenderer(reply->m_useSoftwareRenderer);
+    instance->setRendererType(reply->m_rendererType);
 
     return instance.release();
 }

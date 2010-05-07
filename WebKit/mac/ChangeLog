@@ -1,3 +1,33 @@
+2010-05-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig and Simon Fraser.
+
+        <rdar://problem/7947356>
+        QT Plug-in in hardware-accelerated WebKit is missing the controller
+
+        Replace the useSoftwareRenderer boolean with an enum that lets the plug-in host opt into using a layer
+        backed NSView instead of inserting the layer into the WebCore layer hierarchy.
+
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCInstantiatePluginReply):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        (WebKit::NetscapePluginInstanceProxy::rendererType):
+        (WebKit::NetscapePluginInstanceProxy::setRendererType):
+        (WebKit::NetscapePluginInstanceProxy::InstantiatePluginReply::InstantiatePluginReply):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::NetscapePluginInstanceProxy):
+        Replace the useSoftwareRenderer boolean everywhere with the RendererType enum.
+        
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView createPlugin]):
+        Only go into full compositing mode when the renderer type returned is UseAcceleratedCompositing.
+        Otherwise, use a layer backed NSView.
+
+        * Plugins/Hosted/WebKitPluginHostTypes.h:
+        Add a RendererType enum.
+
 2010-05-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler and Dan Bernstein..

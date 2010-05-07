@@ -216,7 +216,7 @@ NetscapePluginInstanceProxy::NetscapePluginInstanceProxy(NetscapePluginHostProxy
     , m_requestTimer(this, &NetscapePluginInstanceProxy::requestTimerFired)
     , m_currentURLRequestID(0)
     , m_renderContextID(0)
-    , m_useSoftwareRenderer(false)
+    , m_rendererType(UseSoftwareRenderer)
     , m_waitingForReply(false)
     , m_urlCheckCounter(0)
     , m_pluginFunctionCallDepth(0)
