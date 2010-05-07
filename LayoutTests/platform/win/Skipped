@@ -865,3 +865,6 @@ fast/js/sputnik
 
 # https://bugs.webkit.org/show_bug.cgi?id=38376
 media/media-document-audio-size.html
+
+# Needs special handling of mousePress in subframes. See https://bugs.webkit.org/show_bug.cgi?id=20236
+fast/events/mousedown-in-subframe-scrollbar.html

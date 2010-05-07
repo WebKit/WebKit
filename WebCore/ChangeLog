@@ -1,3 +1,17 @@
+2010-04-27  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] clicking a scrollbar in an iframe shouldn't lose the selection
+        https://bugs.webkit.org/show_bug.cgi?id=38189
+
+        Test: fast/events/mousedown-in-subframe-scrollbar.html
+
+        * page/chromium/EventHandlerChromium.cpp:
+        (WebCore::EventHandler::passMousePressEventToSubframe): If clicking on
+            a scrollbar, pass the event directly to the scrollbar.  This matches
+            mac which passes the event to the NSScroller.
+
 2010-05-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
