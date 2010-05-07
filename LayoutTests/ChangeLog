@@ -1,3 +1,12 @@
+2010-05-07  Dirk Schulze  <krit@webkit.org>
+
+        Unreviewed fix of Windows test.
+
+        Windows need an platform dependent DRT result for clip-path-referencing-use2.svg,
+        Win doesn't have console output during DRT.
+
+        * platform/win/svg/custom/clip-path-referencing-use2-expected.txt: Added.
+
 2010-05-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
