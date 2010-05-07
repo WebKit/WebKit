@@ -2801,14 +2801,11 @@ BUGYAAR WIN : fast/forms/searchfield-heights.html = IMAGE
 // GStreamer - disabled in Chromium
 WONTFIX : media/video-duration-known-after-eos.html = TEXT TIMEOUT
 
-BUGDPRANKE : http/tests/security/sandbox-inherit-to-initial-document-2.html = PASS TIMEOUT
+BUGWK38705 : http/tests/security/sandbox-inherit-to-initial-document-2.html = PASS TIMEOUT
 
-BUGDPRANKE LINUX : svg/W3C-SVG-1.1/fonts-kern-01-t.svg = IMAGE
-BUGDPRANKE LINUX : svg/W3C-SVG-1.1/render-groups-01-b.svg = IMAGE
-BUGDPRANKE LINUX : svg/W3C-SVG-1.1/render-groups-03-t.svg = IMAGE
-BUGDPRANKE LINUX MAC : svg/text/kerning.svg = IMAGE
+BUG43495 LINUX : svg/W3C-SVG-1.1/render-groups-01-b.svg = IMAGE
+BUG43495 LINUX : svg/W3C-SVG-1.1/render-groups-03-t.svg = IMAGE
 
-BUGDPRANKE MAC : editing/selection/caret-rtl-2.html = IMAGE
 
 // WebKit roll 58791:58807
 BUG43319 MAC : transforms/2d/zoom-menulist.html = IMAGE PASS
@@ -2831,10 +2828,10 @@ BUG43319 WIN : svg/batik/text/verticalText.svg = IMAGE
 BUG43319 WIN : svg/custom/foreign-object-skew.svg = IMAGE
 BUG43319 WIN : svg/text/text-fonts-01-t.svg = IMAGE
 
-BUGDPRANKE LINUX : svg/custom/mask-changes.svg = IMAGE PASS
-BUGDPRANKE LINUX : http/tests/loading/bad-scheme-subframe.html = TEXT
+BUG43496 LINUX : svg/custom/mask-changes.svg = IMAGE PASS
 
-BUGDPRANKE : svg/custom/repaint-stroke-width-changes.svg = IMAGE PASS
+BUG43496 LINUX : svg/custom/repaint-stroke-width-changes.svg = IMAGE PASS
+BUG43497 MAC WIN : svg/custom/repaint-stroke-width-changes.svg = IMAGE PASS
 
 // WebKit roll 58855:58878
 BUG43419: fast/wcss/wap-input-format.xhtml = TEXT
