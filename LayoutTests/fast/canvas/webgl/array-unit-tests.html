@@ -78,22 +78,6 @@ function testSetAndGet10To1(type, name) {
   }
 }
 
-function testSetAndGetMethods10To1(type, name) {
-  running('test ' + name + ' SetAndGetMethods10To1');
-  try {
-    var array = new type(10);
-    for (var i = 0; i < 10; i++) {
-      array.set(i, 10 - i);
-    }
-    for (var i = 0; i < 10; i++) {
-      assertEq('Element ' + i, 10 - i, array.get(i));
-    }
-    pass();
-  } catch (e) {
-    fail(e);
-  }
-}
-
 function testConstructWithArrayOfUnsignedValues(type, name) {
   running('test ' + name + ' ConstructWithArrayOfUnsignedValues');
   try {
@@ -143,22 +127,6 @@ function testSetAndGetPos10ToNeg10(type, name) {
   }
 }
 
-function testSetAndGetMethodsPos10ToNeg10(type, name) {
-  running('test ' + name + ' SetAndGetMethodsPos10ToNeg10');
-  try {
-    var array = new type(21);
-    for (var i = 0; i < 21; i++) {
-      array.set(i, 10 - i);
-    }
-    for (var i = 0; i < 21; i++) {
-      assertEq('Element ' + i, 10 - i, array.get(i));
-    }
-    pass();
-  } catch (e) {
-    fail(e);
-  }
-}
-
 function testConstructWithArrayOfSignedValues(type, name) {
   running('test ' + name + ' ConstructWithArrayOfSignedValues');
   try {
@@ -191,6 +159,15 @@ function testConstructWithWebGLArrayOfSignedValues(type, name) {
 //
 // Test cases for both signed and unsigned types
 //
+
+function testGetWithOutOfRangeIndices(type, name) {
+    debug('Testing ' + name + ' GetWithOutOfRangeIndices');
+    // See below for declaration of this global variable
+    array = new type([2, 3]);
+    shouldBeUndefined("array[2]");
+    shouldBeUndefined("array[-1]");
+    shouldBeUndefined("array[0x20000000]");
+}
 
 function testOffsetsAndSizes(type, name, elementSizeInBytes) {
   running('test ' + name + ' OffsetsAndSizes');
@@ -357,11 +334,6 @@ function testBoundaryConditions(type, name, lowValue, expectedLowValue, highValu
     assertEq('Element 0', expectedLowValue, array[0]);
     array[0] = highValue;
     assertEq('Element 0', expectedHighValue, array[0]);
-    // Test the get and set methods with these values
-    array.set(0, lowValue);
-    assertEq('Element 0 set / get', expectedLowValue, array.get(0));
-    array.set(0, highValue);
-    assertEq('Element 0 set / get', expectedHighValue, array.get(0));
     pass();
   } catch (e) {
     fail(e);
@@ -506,6 +478,26 @@ function testSettingFromWebGLArrayWithOutOfRangeOffset(type, name) {
     }
 }
 
+function negativeTestGetAndSetMethods(type, name) {
+    array = new type([2, 3]);
+    shouldBeUndefined("array.get");
+    var exceptionThrown = false;
+    // We deliberately check for an exception here rather than using
+    // shouldThrow here because the precise contents of the syntax
+    // error are not specified.
+    try {
+        webGLArray.set(0, 1);
+    } catch (e) {
+        exceptionThrown = true;
+    }
+    var output = "array.set(0, 1) ";
+    if (exceptionThrown) {
+        testPassed(output + "threw exception.");
+    } else {
+        testFailed(output + "did not throw exception.");
+    }
+}
+
 //
 // Test driver
 //
@@ -577,15 +569,14 @@ function runTests() {
     var name = testCase.name;
     if (testCase.unsigned) {
       testSetAndGet10To1(type, name);
-      testSetAndGetMethods10To1(type, name);
       testConstructWithArrayOfUnsignedValues(type, name);
       testConstructWithWebGLArrayOfUnsignedValues(type, name);
     } else {
       testSetAndGetPos10ToNeg10(type, name);
-      testSetAndGetMethodsPos10ToNeg10(type, name);
       testConstructWithArrayOfSignedValues(type, name);
       testConstructWithWebGLArrayOfSignedValues(type, name);
     }
+    testGetWithOutOfRangeIndices(type, name);
     testOffsetsAndSizes(type, name, testCase.elementSizeInBytes);
     testSetFromWebGLArray(type, name);
     negativeTestSetFromWebGLArray(type, name);
@@ -608,6 +599,7 @@ function runTests() {
     testSettingFromArrayWithOutOfRangeOffset(type, name);
     testSettingFromFakeArrayWithOutOfRangeLength(type, name);
     testSettingFromWebGLArrayWithOutOfRangeOffset(type, name);
+    negativeTestGetAndSetMethods(type, name);
   }
 
   printSummary();

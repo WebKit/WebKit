@@ -1,0 +1,55 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+
+description("Verifies that the get method, and the set method for individual elements, on the WebGLArray types no longer exist.");
+
+debug('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=38039">https://bugs.webkit.org/show_bug.cgi?id=38039</a>');
+
+// Global scope so shouldThrow can see it
+var webGLArray;
+
+function negativeTestGetAndSetMethods(typeName) {
+    var type = window[typeName];
+    webGLArray = new type([2, 3]);
+    shouldBeUndefined("webGLArray.get");
+    var exceptionThrown = false;
+    // We deliberately check for an exception here rather than using
+    // shouldThrow here because the precise contents of the syntax
+    // error are not specified.
+    try {
+        webGLArray.set(0, 1);
+    } catch (e) {
+        exceptionThrown = true;
+    }
+    var output = "webGLArray.set(0, 1) ";
+    if (exceptionThrown) {
+        testPassed(output + "threw exception.");
+    } else {
+        testFailed(output + "did not throw exception.");
+    }
+}
+
+negativeTestGetAndSetMethods("WebGLByteArray");
+negativeTestGetAndSetMethods("WebGLUnsignedByteArray");
+negativeTestGetAndSetMethods("WebGLShortArray");
+negativeTestGetAndSetMethods("WebGLUnsignedShortArray");
+negativeTestGetAndSetMethods("WebGLIntArray");
+negativeTestGetAndSetMethods("WebGLUnsignedIntArray");
+negativeTestGetAndSetMethods("WebGLFloatArray");
+
+successfullyParsed = true;
+
+</script>
+
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

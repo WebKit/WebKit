@@ -3,9 +3,12 @@ Verifies the functionality of the new array-like objects in the WebGL spec
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 PASS test WebGLByteArray SetAndGetPos10ToNeg10
-PASS test WebGLByteArray SetAndGetMethodsPos10ToNeg10
 PASS test WebGLByteArray ConstructWithArrayOfSignedValues
 PASS test WebGLByteArray ConstructWithWebGLArrayOfSignedValues
+Testing WebGLByteArray GetWithOutOfRangeIndices
+PASS array[2] is undefined.
+PASS array[-1] is undefined.
+PASS array[0x20000000] is undefined.
 PASS test WebGLByteArray OffsetsAndSizes
 PASS test WebGLByteArray SetFromWebGLArray
 PASS negativeTest WebGLByteArray SetFromWebGLArray
@@ -30,10 +33,15 @@ PASS array.slice(-2147483648).length is (32 / typeSize)
 PASS Setting WebGLByteArray from array with out-of-range offset was caught
 PASS Setting WebGLByteArray from fake array with invalid length was caught
 PASS Setting WebGLByteArray from WebGLByteArray with out-of-range offset was caught
+PASS array.get is undefined.
+PASS array.set(0, 1) threw exception.
 PASS test WebGLFloatArray SetAndGetPos10ToNeg10
-PASS test WebGLFloatArray SetAndGetMethodsPos10ToNeg10
 PASS test WebGLFloatArray ConstructWithArrayOfSignedValues
 PASS test WebGLFloatArray ConstructWithWebGLArrayOfSignedValues
+Testing WebGLFloatArray GetWithOutOfRangeIndices
+PASS array[2] is undefined.
+PASS array[-1] is undefined.
+PASS array[0x20000000] is undefined.
 PASS test WebGLFloatArray OffsetsAndSizes
 PASS test WebGLFloatArray SetFromWebGLArray
 PASS negativeTest WebGLFloatArray SetFromWebGLArray
@@ -60,10 +68,15 @@ PASS array.slice(-2147483648).length is (32 / typeSize)
 PASS Setting WebGLFloatArray from array with out-of-range offset was caught
 PASS Setting WebGLFloatArray from fake array with invalid length was caught
 PASS Setting WebGLFloatArray from WebGLFloatArray with out-of-range offset was caught
+PASS array.get is undefined.
+PASS array.set(0, 1) threw exception.
 PASS test WebGLIntArray SetAndGetPos10ToNeg10
-PASS test WebGLIntArray SetAndGetMethodsPos10ToNeg10
 PASS test WebGLIntArray ConstructWithArrayOfSignedValues
 PASS test WebGLIntArray ConstructWithWebGLArrayOfSignedValues
+Testing WebGLIntArray GetWithOutOfRangeIndices
+PASS array[2] is undefined.
+PASS array[-1] is undefined.
+PASS array[0x20000000] is undefined.
 PASS test WebGLIntArray OffsetsAndSizes
 PASS test WebGLIntArray SetFromWebGLArray
 PASS negativeTest WebGLIntArray SetFromWebGLArray
@@ -90,10 +103,15 @@ PASS array.slice(-2147483648).length is (32 / typeSize)
 PASS Setting WebGLIntArray from array with out-of-range offset was caught
 PASS Setting WebGLIntArray from fake array with invalid length was caught
 PASS Setting WebGLIntArray from WebGLIntArray with out-of-range offset was caught
+PASS array.get is undefined.
+PASS array.set(0, 1) threw exception.
 PASS test WebGLShortArray SetAndGetPos10ToNeg10
-PASS test WebGLShortArray SetAndGetMethodsPos10ToNeg10
 PASS test WebGLShortArray ConstructWithArrayOfSignedValues
 PASS test WebGLShortArray ConstructWithWebGLArrayOfSignedValues
+Testing WebGLShortArray GetWithOutOfRangeIndices
+PASS array[2] is undefined.
+PASS array[-1] is undefined.
+PASS array[0x20000000] is undefined.
 PASS test WebGLShortArray OffsetsAndSizes
 PASS test WebGLShortArray SetFromWebGLArray
 PASS negativeTest WebGLShortArray SetFromWebGLArray
@@ -120,10 +138,15 @@ PASS array.slice(-2147483648).length is (32 / typeSize)
 PASS Setting WebGLShortArray from array with out-of-range offset was caught
 PASS Setting WebGLShortArray from fake array with invalid length was caught
 PASS Setting WebGLShortArray from WebGLShortArray with out-of-range offset was caught
+PASS array.get is undefined.
+PASS array.set(0, 1) threw exception.
 PASS test WebGLUnsignedByteArray SetAndGet10To1
-PASS test WebGLUnsignedByteArray SetAndGetMethods10To1
 PASS test WebGLUnsignedByteArray ConstructWithArrayOfUnsignedValues
 PASS test WebGLUnsignedByteArray ConstructWithWebGLArrayOfUnsignedValues
+Testing WebGLUnsignedByteArray GetWithOutOfRangeIndices
+PASS array[2] is undefined.
+PASS array[-1] is undefined.
+PASS array[0x20000000] is undefined.
 PASS test WebGLUnsignedByteArray OffsetsAndSizes
 PASS test WebGLUnsignedByteArray SetFromWebGLArray
 PASS negativeTest WebGLUnsignedByteArray SetFromWebGLArray
@@ -148,10 +171,15 @@ PASS array.slice(-2147483648).length is (32 / typeSize)
 PASS Setting WebGLUnsignedByteArray from array with out-of-range offset was caught
 PASS Setting WebGLUnsignedByteArray from fake array with invalid length was caught
 PASS Setting WebGLUnsignedByteArray from WebGLUnsignedByteArray with out-of-range offset was caught
+PASS array.get is undefined.
+PASS array.set(0, 1) threw exception.
 PASS test WebGLUnsignedIntArray SetAndGet10To1
-PASS test WebGLUnsignedIntArray SetAndGetMethods10To1
 PASS test WebGLUnsignedIntArray ConstructWithArrayOfUnsignedValues
 PASS test WebGLUnsignedIntArray ConstructWithWebGLArrayOfUnsignedValues
+Testing WebGLUnsignedIntArray GetWithOutOfRangeIndices
+PASS array[2] is undefined.
+PASS array[-1] is undefined.
+PASS array[0x20000000] is undefined.
 PASS test WebGLUnsignedIntArray OffsetsAndSizes
 PASS test WebGLUnsignedIntArray SetFromWebGLArray
 PASS negativeTest WebGLUnsignedIntArray SetFromWebGLArray
@@ -178,10 +206,15 @@ PASS array.slice(-2147483648).length is (32 / typeSize)
 PASS Setting WebGLUnsignedIntArray from array with out-of-range offset was caught
 PASS Setting WebGLUnsignedIntArray from fake array with invalid length was caught
 PASS Setting WebGLUnsignedIntArray from WebGLUnsignedIntArray with out-of-range offset was caught
+PASS array.get is undefined.
+PASS array.set(0, 1) threw exception.
 PASS test WebGLUnsignedShortArray SetAndGet10To1
-PASS test WebGLUnsignedShortArray SetAndGetMethods10To1
 PASS test WebGLUnsignedShortArray ConstructWithArrayOfUnsignedValues
 PASS test WebGLUnsignedShortArray ConstructWithWebGLArrayOfUnsignedValues
+Testing WebGLUnsignedShortArray GetWithOutOfRangeIndices
+PASS array[2] is undefined.
+PASS array[-1] is undefined.
+PASS array[0x20000000] is undefined.
 PASS test WebGLUnsignedShortArray OffsetsAndSizes
 PASS test WebGLUnsignedShortArray SetFromWebGLArray
 PASS negativeTest WebGLUnsignedShortArray SetFromWebGLArray
@@ -208,6 +241,8 @@ PASS array.slice(-2147483648).length is (32 / typeSize)
 PASS Setting WebGLUnsignedShortArray from array with out-of-range offset was caught
 PASS Setting WebGLUnsignedShortArray from fake array with invalid length was caught
 PASS Setting WebGLUnsignedShortArray from WebGLUnsignedShortArray with out-of-range offset was caught
+PASS array.get is undefined.
+PASS array.set(0, 1) threw exception.
 Test passed.
 PASS successfullyParsed is true
 

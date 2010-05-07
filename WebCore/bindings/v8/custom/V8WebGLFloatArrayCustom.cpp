@@ -53,7 +53,7 @@ v8::Handle<v8::Value> V8WebGLFloatArray::constructorCallback(const v8::Arguments
 v8::Handle<v8::Value> V8WebGLFloatArray::setCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLFloatArray.set()");
-    return setWebGLArray<WebGLFloatArray, V8WebGLFloatArray>(args);
+    return setWebGLArrayHelper<WebGLFloatArray, V8WebGLFloatArray>(args);
 }
 
 v8::Handle<v8::Value> toV8(WebGLFloatArray* impl)

@@ -65,20 +65,8 @@ class WebGLByteArray : public WebGLArray {
         storage[index] = static_cast<signed char>(value);
     }
 
-    bool get(unsigned index, signed char& result) const
-    {
-        if (index >= m_size)
-            return false;
-        signed char* storage = static_cast<signed char*>(m_baseAddress);
-        result = storage[index];
-        return true;
-    }
-
-    signed char get(unsigned index) const
-    {
-        return item(index);
-    }
-
+    // Invoked by the indexed getter. Does not perform range checks; caller
+    // is responsible for doing so and returning undefined as necessary.
     signed char item(unsigned index) const
     {
         ASSERT(index < m_size);

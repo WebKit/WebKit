@@ -32,8 +32,6 @@ module html {
         CustomConstructor,
         CustomToJS
     ] WebGLShortArray : WebGLArray {
-        long get(in unsigned long index);
-        // void set(in unsigned long index, in long value);
         // void set(in WebGLShortArray array, [Optional] in unsigned long offset);
         // void set(in sequence<long> array, [Optional] in unsigned long offset);
         [Custom] void set();

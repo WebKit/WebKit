@@ -38,8 +38,23 @@
 namespace WebCore {
 
 template <class T>
-JSC::JSValue setWebGLArrayFromArray(JSC::ExecState* exec, T* webGLArray, JSC::ArgList const& args)
+JSC::JSValue setWebGLArrayHelper(JSC::ExecState* exec, T* impl, JSC::ArgList const& args, T* (*conversionFunc)(JSC::JSValue))
 {
+    if (args.size() < 1)
+        return throwError(exec, JSC::SyntaxError);
+
+    T* array = (*conversionFunc)(args.at(0));
+    if (array) {
+        // void set(in WebGL<T>Array array, [Optional] in unsigned long offset);
+        unsigned offset = 0;
+        if (args.size() == 2)
+            offset = args.at(1).toInt32(exec);
+        ExceptionCode ec = 0;
+        impl->set(array, offset, ec);
+        setDOMException(exec, ec);
+        return JSC::jsUndefined();
+    }
+
     if (args.at(0).isObject()) {
         // void set(in sequence<long> array, [Optional] in unsigned long offset);
         JSC::JSObject* array = JSC::asObject(args.at(0));
@@ -47,16 +62,16 @@ JSC::JSValue setWebGLArrayFromArray(JSC::ExecState* exec, T* webGLArray, JSC::Ar
         if (args.size() == 2)
             offset = args.at(1).toInt32(exec);
         uint32_t length = array->get(exec, JSC::Identifier(exec, "length")).toInt32(exec);
-        if (offset > webGLArray->length() ||
-            offset + length > webGLArray->length() ||
-            offset + length < offset)
+        if (offset > impl->length()
+            || offset + length > impl->length()
+            || offset + length < offset)
             setDOMException(exec, INDEX_SIZE_ERR);
         else {
             for (uint32_t i = 0; i < length; i++) {
                 JSC::JSValue v = array->get(exec, i);
                 if (exec->hadException())
                     return JSC::jsUndefined();
-                webGLArray->set(i + offset, v.toNumber(exec));
+                impl->set(i + offset, v.toNumber(exec));
             }
         }
 

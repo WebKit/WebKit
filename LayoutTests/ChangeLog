@@ -1,3 +1,30 @@
+2010-05-06  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        WebCore::WebGLUnsignedIntArrayInternal::getCallback ReadAV@Arbitrary (deef89ee3d0345edebeaf13cf974c47c)
+        https://bugs.webkit.org/show_bug.cgi?id=38039
+
+        Web IDL now allows indexed getters and setters to be unnamed. Per
+        discussion in WebGL working group and recent update to spec,
+        removed the buggy get() and single-element set() methods from the
+        JavaScript bindings to the WebGL array types. Refactored set()
+        implementation in JSC bindings to share more code and modified V8
+        binding to look more like it. Added unit tests for indexed getter
+        with out-of-range indices and verifying removal of get and
+        single-element set methods. Updated existing WebGL array tests.
+
+        * fast/canvas/webgl/array-get-and-set-method-removal-expected.txt: Added.
+        * fast/canvas/webgl/array-get-and-set-method-removal.html: Added.
+        * fast/canvas/webgl/array-get-out-of-bounds-expected.txt: Added.
+        * fast/canvas/webgl/array-get-out-of-bounds.html: Added.
+        * fast/canvas/webgl/array-setters-expected.txt:
+        * fast/canvas/webgl/array-setters.html:
+        * fast/canvas/webgl/array-unit-tests-expected.txt:
+        * fast/canvas/webgl/array-unit-tests.html:
+        * fast/canvas/webgl/bug-32456-expected.txt:
+        * fast/canvas/webgl/bug-32456.html:
+
 2010-05-07  John Gregg  <johnnyg@google.com>
 
         Unreviewed, rebaseline for chromium. 

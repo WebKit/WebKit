@@ -128,46 +128,15 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     return toV8(array.release(), args.Holder());
 }
 
-template <class T>
-v8::Handle<v8::Value> setWebGLArrayFromArray(T* webGLArray, const v8::Arguments& args)
-{
-    if (args[0]->IsObject()) {
-        // void set(in sequence<long> array, [Optional] in unsigned long offset);
-        v8::Local<v8::Object> array = args[0]->ToObject();
-        uint32_t offset = 0;
-        if (args.Length() == 2)
-            offset = toUInt32(args[1]);
-        uint32_t length = toUInt32(array->Get(v8::String::New("length")));
-        if (offset > webGLArray->length() ||
-            offset + length > webGLArray->length() ||
-            offset + length < offset)
-            // Out of range offset or overflow
-            V8Proxy::setDOMException(INDEX_SIZE_ERR);
-        else
-            for (uint32_t i = 0; i < length; i++)
-                webGLArray->set(offset + i, array->Get(v8::Integer::NewFromUnsigned(i))->NumberValue());
-    }
-
-    return v8::Undefined();
-}
-
 template <class CPlusPlusArrayType, class JavaScriptWrapperArrayType>
-v8::Handle<v8::Value> setWebGLArray(const v8::Arguments& args)
+v8::Handle<v8::Value> setWebGLArrayHelper(const v8::Arguments& args)
 {
-    if (args.Length() < 1 || args.Length() > 2) {
+    if (args.Length() < 1) {
         V8Proxy::setDOMException(SYNTAX_ERR);
         return notHandledByInterceptor();
     }
 
-    CPlusPlusArrayType* array = JavaScriptWrapperArrayType::toNative(args.Holder());
-
-    // FIXME: change to IsUInt32() when available
-    if (args.Length() == 2 && args[0]->IsInt32()) {
-        // void set(in unsigned long index, in {long|float} value);
-        uint32_t index = toUInt32(args[0]);
-        array->set(index, args[1]->NumberValue());
-        return v8::Undefined();
-    }
+    CPlusPlusArrayType* impl = JavaScriptWrapperArrayType::toNative(args.Holder());
 
     if (JavaScriptWrapperArrayType::HasInstance(args[0])) {
         // void set(in WebGL<T>Array array, [Optional] in unsigned long offset);
@@ -176,12 +145,32 @@ v8::Handle<v8::Value> setWebGLArray(const v8::Arguments& args)
         if (args.Length() == 2)
             offset = toUInt32(args[1]);
         ExceptionCode ec = 0;
-        array->set(src, offset, ec);
+        impl->set(src, offset, ec);
         V8Proxy::setDOMException(ec);
         return v8::Undefined();
     }
 
-    return setWebGLArrayFromArray(array, args);
+    if (args[0]->IsObject()) {
+        // void set(in sequence<long> array, [Optional] in unsigned long offset);
+        v8::Local<v8::Object> array = args[0]->ToObject();
+        uint32_t offset = 0;
+        if (args.Length() == 2)
+            offset = toUInt32(args[1]);
+        uint32_t length = toUInt32(array->Get(v8::String::New("length")));
+        if (offset > impl->length()
+            || offset + length > impl->length()
+            || offset + length < offset)
+            // Out of range offset or overflow
+            V8Proxy::setDOMException(INDEX_SIZE_ERR);
+        else
+            for (uint32_t i = 0; i < length; i++)
+                impl->set(offset + i, array->Get(v8::Integer::NewFromUnsigned(i))->NumberValue());
+
+        return v8::Undefined();
+    }
+
+    V8Proxy::setDOMException(SYNTAX_ERR);
+    return notHandledByInterceptor();
 }
 
 }

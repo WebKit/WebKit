@@ -53,7 +53,7 @@ v8::Handle<v8::Value> V8WebGLByteArray::constructorCallback(const v8::Arguments&
 v8::Handle<v8::Value> V8WebGLByteArray::setCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLByteArray.set()");
-    return setWebGLArray<WebGLByteArray, V8WebGLByteArray>(args);
+    return setWebGLArrayHelper<WebGLByteArray, V8WebGLByteArray>(args);
 }
 
 v8::Handle<v8::Value> toV8(WebGLByteArray* impl)

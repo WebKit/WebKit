@@ -62,19 +62,8 @@ class WebGLShortArray : public WebGLArray {
         storage[index] = static_cast<short>(value);
     }
 
-    bool get(unsigned index, short& result) const
-    {
-        if (index >= m_size)
-            return false;
-        result = item(index);
-        return true;
-    }
-
-    short get(unsigned index) const
-    {
-        return item(index);
-    }
-
+    // Invoked by the indexed getter. Does not perform range checks; caller
+    // is responsible for doing so and returning undefined as necessary.
     short item(unsigned index) const
     {
         ASSERT(index < m_size);

@@ -6,17 +6,11 @@ Regression test for https://bugs.webkit.org/show_bug.cgi?id=33350 : WebGLArray s
 Testing WebGLByteArray
 PASS webGLArray is array
 PASS webGLArray[0] is array[0]
-PASS webGLArray.get(0) is array[0]
 PASS webGLArray[1] is array[1]
-PASS webGLArray.get(1) is array[1]
 PASS webGLArray[0] is 0
-PASS webGLArray.get(0) is 0
 PASS webGLArray[1] is 0
-PASS webGLArray.get(1) is 0
 PASS webGLArray[0] is array[0]
-PASS webGLArray.get(0) is array[0]
 PASS webGLArray[1] is array[1]
-PASS webGLArray.get(1) is array[1]
 PASS webGLArray[2] is 88
 PASS webGLArray[3] is 99
 PASS webGLArray[1] is 88
@@ -30,17 +24,11 @@ PASS array[1] is 99
 Testing WebGLUnsignedByteArray
 PASS webGLArray is array
 PASS webGLArray[0] is array[0]
-PASS webGLArray.get(0) is array[0]
 PASS webGLArray[1] is array[1]
-PASS webGLArray.get(1) is array[1]
 PASS webGLArray[0] is 0
-PASS webGLArray.get(0) is 0
 PASS webGLArray[1] is 0
-PASS webGLArray.get(1) is 0
 PASS webGLArray[0] is array[0]
-PASS webGLArray.get(0) is array[0]
 PASS webGLArray[1] is array[1]
-PASS webGLArray.get(1) is array[1]
 PASS webGLArray[2] is 88
 PASS webGLArray[3] is 99
 PASS webGLArray[1] is 88
@@ -54,17 +42,11 @@ PASS array[1] is 99
 Testing WebGLShortArray
 PASS webGLArray is array
 PASS webGLArray[0] is array[0]
-PASS webGLArray.get(0) is array[0]
 PASS webGLArray[1] is array[1]
-PASS webGLArray.get(1) is array[1]
 PASS webGLArray[0] is 0
-PASS webGLArray.get(0) is 0
 PASS webGLArray[1] is 0
-PASS webGLArray.get(1) is 0
 PASS webGLArray[0] is array[0]
-PASS webGLArray.get(0) is array[0]
 PASS webGLArray[1] is array[1]
-PASS webGLArray.get(1) is array[1]
 PASS webGLArray[2] is 88
 PASS webGLArray[3] is 99
 PASS webGLArray[1] is 88
@@ -78,17 +60,11 @@ PASS array[1] is 99
 Testing WebGLUnsignedShortArray
 PASS webGLArray is array
 PASS webGLArray[0] is array[0]
-PASS webGLArray.get(0) is array[0]
 PASS webGLArray[1] is array[1]
-PASS webGLArray.get(1) is array[1]
 PASS webGLArray[0] is 0
-PASS webGLArray.get(0) is 0
 PASS webGLArray[1] is 0
-PASS webGLArray.get(1) is 0
 PASS webGLArray[0] is array[0]
-PASS webGLArray.get(0) is array[0]
 PASS webGLArray[1] is array[1]
-PASS webGLArray.get(1) is array[1]
 PASS webGLArray[2] is 88
 PASS webGLArray[3] is 99
 PASS webGLArray[1] is 88
@@ -102,17 +78,11 @@ PASS array[1] is 99
 Testing WebGLIntArray
 PASS webGLArray is array
 PASS webGLArray[0] is array[0]
-PASS webGLArray.get(0) is array[0]
 PASS webGLArray[1] is array[1]
-PASS webGLArray.get(1) is array[1]
 PASS webGLArray[0] is 0
-PASS webGLArray.get(0) is 0
 PASS webGLArray[1] is 0
-PASS webGLArray.get(1) is 0
 PASS webGLArray[0] is array[0]
-PASS webGLArray.get(0) is array[0]
 PASS webGLArray[1] is array[1]
-PASS webGLArray.get(1) is array[1]
 PASS webGLArray[2] is 88
 PASS webGLArray[3] is 99
 PASS webGLArray[1] is 88
@@ -126,17 +96,11 @@ PASS array[1] is 99
 Testing WebGLUnsignedIntArray
 PASS webGLArray is array
 PASS webGLArray[0] is array[0]
-PASS webGLArray.get(0) is array[0]
 PASS webGLArray[1] is array[1]
-PASS webGLArray.get(1) is array[1]
 PASS webGLArray[0] is 0
-PASS webGLArray.get(0) is 0
 PASS webGLArray[1] is 0
-PASS webGLArray.get(1) is 0
 PASS webGLArray[0] is array[0]
-PASS webGLArray.get(0) is array[0]
 PASS webGLArray[1] is array[1]
-PASS webGLArray.get(1) is array[1]
 PASS webGLArray[2] is 88
 PASS webGLArray[3] is 99
 PASS webGLArray[1] is 88
@@ -150,17 +114,11 @@ PASS array[1] is 99
 Testing WebGLFloatArray
 PASS webGLArray is array
 PASS webGLArray[0] is array[0]
-PASS webGLArray.get(0) is array[0]
 PASS webGLArray[1] is array[1]
-PASS webGLArray.get(1) is array[1]
 PASS webGLArray[0] is 0
-PASS webGLArray.get(0) is 0
 PASS webGLArray[1] is 0
-PASS webGLArray.get(1) is 0
 PASS webGLArray[0] is array[0]
-PASS webGLArray.get(0) is array[0]
 PASS webGLArray[1] is array[1]
-PASS webGLArray.get(1) is array[1]
 PASS webGLArray[2] is 88
 PASS webGLArray[3] is 99
 PASS webGLArray[1] is 88

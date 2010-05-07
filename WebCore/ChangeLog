@@ -1,3 +1,69 @@
+2010-05-06  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        WebCore::WebGLUnsignedIntArrayInternal::getCallback ReadAV@Arbitrary (deef89ee3d0345edebeaf13cf974c47c)
+        https://bugs.webkit.org/show_bug.cgi?id=38039
+
+        Web IDL now allows indexed getters and setters to be unnamed. Per
+        discussion in WebGL working group and recent update to spec,
+        removed the buggy get() and single-element set() methods from the
+        JavaScript bindings to the WebGL array types. Refactored set()
+        implementation in JSC bindings to share more code and modified V8
+        binding to look more like it. Added unit tests for indexed getter
+        with out-of-range indices and verifying removal of get and
+        single-element set methods. Updated existing WebGL array tests.
+
+        Tests: fast/canvas/webgl/array-get-and-set-method-removal.html
+               fast/canvas/webgl/array-get-out-of-bounds.html
+
+        * bindings/js/JSWebGLArrayHelper.h:
+        (WebCore::setWebGLArrayHelper):
+        * bindings/js/JSWebGLByteArrayCustom.cpp:
+        (WebCore::JSWebGLByteArray::set):
+        * bindings/js/JSWebGLFloatArrayCustom.cpp:
+        (WebCore::JSWebGLFloatArray::set):
+        * bindings/js/JSWebGLIntArrayCustom.cpp:
+        (WebCore::JSWebGLIntArray::set):
+        * bindings/js/JSWebGLShortArrayCustom.cpp:
+        (WebCore::JSWebGLShortArray::set):
+        * bindings/js/JSWebGLUnsignedByteArrayCustom.cpp:
+        (WebCore::JSWebGLUnsignedByteArray::set):
+        * bindings/js/JSWebGLUnsignedIntArrayCustom.cpp:
+        (WebCore::JSWebGLUnsignedIntArray::set):
+        * bindings/js/JSWebGLUnsignedShortArrayCustom.cpp:
+        (WebCore::JSWebGLUnsignedShortArray::set):
+        * bindings/v8/custom/V8WebGLArrayCustom.h:
+        (WebCore::setWebGLArrayHelper):
+        * bindings/v8/custom/V8WebGLByteArrayCustom.cpp:
+        (WebCore::V8WebGLByteArray::setCallback):
+        * bindings/v8/custom/V8WebGLFloatArrayCustom.cpp:
+        (WebCore::V8WebGLFloatArray::setCallback):
+        * bindings/v8/custom/V8WebGLIntArrayCustom.cpp:
+        (WebCore::V8WebGLIntArray::setCallback):
+        * bindings/v8/custom/V8WebGLShortArrayCustom.cpp:
+        (WebCore::V8WebGLShortArray::setCallback):
+        * bindings/v8/custom/V8WebGLUnsignedByteArrayCustom.cpp:
+        (WebCore::V8WebGLUnsignedByteArray::setCallback):
+        * bindings/v8/custom/V8WebGLUnsignedIntArrayCustom.cpp:
+        (WebCore::V8WebGLUnsignedIntArray::setCallback):
+        * bindings/v8/custom/V8WebGLUnsignedShortArrayCustom.cpp:
+        (WebCore::V8WebGLUnsignedShortArray::setCallback):
+        * html/canvas/WebGLByteArray.h:
+        * html/canvas/WebGLByteArray.idl:
+        * html/canvas/WebGLFloatArray.h:
+        * html/canvas/WebGLFloatArray.idl:
+        * html/canvas/WebGLIntArray.h:
+        * html/canvas/WebGLIntArray.idl:
+        * html/canvas/WebGLShortArray.h:
+        * html/canvas/WebGLShortArray.idl:
+        * html/canvas/WebGLUnsignedByteArray.h:
+        * html/canvas/WebGLUnsignedByteArray.idl:
+        * html/canvas/WebGLUnsignedIntArray.h:
+        * html/canvas/WebGLUnsignedIntArray.idl:
+        * html/canvas/WebGLUnsignedShortArray.h:
+        * html/canvas/WebGLUnsignedShortArray.idl:
+
 2010-05-07  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: chromium dev tools tests fix.

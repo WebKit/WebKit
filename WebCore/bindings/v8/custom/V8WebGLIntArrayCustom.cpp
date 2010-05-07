@@ -53,7 +53,7 @@ v8::Handle<v8::Value> V8WebGLIntArray::constructorCallback(const v8::Arguments& 
 v8::Handle<v8::Value> V8WebGLIntArray::setCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLIntArray.set()");
-    return setWebGLArray<WebGLIntArray, V8WebGLIntArray>(args);
+    return setWebGLArrayHelper<WebGLIntArray, V8WebGLIntArray>(args);
 }
 
 v8::Handle<v8::Value> toV8(WebGLIntArray* impl)

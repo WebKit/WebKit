@@ -24,21 +24,15 @@ function testSetters(typeName, low, high) {
     webGLArray.set(array);
     shouldBe("webGLArray", "array");
     shouldBe("webGLArray[0]", "array[0]");
-    shouldBe("webGLArray.get(0)", "array[0]");
     shouldBe("webGLArray[1]", "array[1]");
-    shouldBe("webGLArray.get(1)", "array[1]");
     webGLArray[0] = 0;
     webGLArray[1] = 0;
     shouldBe("webGLArray[0]", "0");
-    shouldBe("webGLArray.get(0)", "0");
     shouldBe("webGLArray[1]", "0");
-    shouldBe("webGLArray.get(1)", "0");
     webGLArray[0] = array[0];
     shouldBe("webGLArray[0]", "array[0]");
-    shouldBe("webGLArray.get(0)", "array[0]");
-    webGLArray.set(1, array[1]);
+    webGLArray[1] = array[1];
     shouldBe("webGLArray[1]", "array[1]");
-    shouldBe("webGLArray.get(1)", "array[1]");
 
     // Verify set() behaves correctly with shared underlying buffer. 
     array = [0, 1, 2, 3, 4, 5];
