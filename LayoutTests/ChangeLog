@@ -1,3 +1,15 @@
+2010-05-07  John Gregg  <johnnyg@google.com>
+
+        Unreviewed [re-]baseline of chromium tests.
+
+        * platform/chromium-linux/fast/frames/take-focus-from-iframe-expected.checksum: Added.
+        * platform/chromium-linux/fast/frames/take-focus-from-iframe-expected.png: Added.
+        * platform/chromium-mac/fast/frames/take-focus-from-iframe-expected.checksum: Added.
+        * platform/chromium-win/fast/frames/take-focus-from-iframe-expected.checksum: Added.
+        * platform/chromium-win/fast/frames/take-focus-from-iframe-expected.png: Added.
+        * platform/chromium-win/fast/frames/take-focus-from-iframe-expected.txt: Added.
+        * platform/chromium-win/svg/hixie/error/017-expected.txt:
+
 2010-05-07  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
