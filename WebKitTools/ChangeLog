@@ -1,3 +1,10 @@
+2010-05-07  Darin Fisher  <darin@chromium.org>
+
+        Fix build bustage: toElement<T> should be to<T>.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::elementDoesAutoCompleteForElementWithId):
+
 2010-05-07  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Daniel Bates.
