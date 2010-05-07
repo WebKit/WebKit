@@ -1,3 +1,36 @@
+2010-05-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        svg/custom/use-instanceRoot-as-event-target.xhtml crashes randomly
+        https://bugs.webkit.org/show_bug.cgi?id=37798
+
+        When creating JSEventListeners through attributes (onclick, etc..) or add/removeEventListener
+        calls on a SVGElementInstance, do NOT pass the element instance itself as JS wrapper object
+        but the correspondingElement(). SVGElementInstance redirects all event listener registrations
+        to the correspondingElement(), as they share an event listener list, per SVG spec. The old
+        code was very dangerous, leading to random assertions, when garbage collection teared down
+        the JSSVGElementInstance and event listeners fired, whose listeners were registered with
+        it, but residing in the correspondingElement() event listener list.
+
+        Removes the need for CustomToJS code for JSSVGElementInstance, which was wrong anyways. We hoped
+        to keep the event listeers alive by just creating a js wrapper of the correspondingElement(), that
+        could only work as long as garbage collection didn't tear it down, just luck. Also remove the
+        CustomPushEventHandlerScope marker, as it is only used for JSLazyEventListeners and only works
+        for JSNode derived objects, it was a no-op for SVGElementInstance, thus removed it.
+
+        Should fix all random crashes/assertions seen with svg/custom/use-instanceRoot-as-event-target.xhtml
+        See bug report for a detailed crash analysis.
+
+        * bindings/js/JSSVGElementInstanceCustom.cpp: Remove custom toJS()/pushEventHandlerScope() handling, not necessary anymore.
+        (WebCore::JSSVGElementInstance::markChildren):
+        * bindings/scripts/CodeGeneratorJS.pm: For JSSVGElementInstance pass the correspondingElement() as JS wrapper object, not itself.
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::invalidateAllInstancesOfElement): Be sure to trigger a style update here, so dirty shadow trees for <use> get rebuild. Otherwhise DOM may be out-of-sync.
+        (WebCore::SVGElementInstance::eventTargetData): Add ASSERT_NOT_REACHED(), all event listener calls are forwarded to the correspondingElement().
+        (WebCore::SVGElementInstance::ensureEventTargetData): Ditto.
+        * svg/SVGElementInstance.idl: Remove CustomToJS, CustomPushEventHandlerScope markers.
+
 2010-05-06  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.

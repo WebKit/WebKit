@@ -25,40 +25,19 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "JSSVGElementInstance.h"
 
-#include "JSDOMWindow.h"
-#include "JSEventListener.h"
-#include "JSSVGElement.h"
+#if ENABLE(SVG)
 #include "SVGElementInstance.h"
-
-using namespace JSC;
 
 namespace WebCore {
 
-void JSSVGElementInstance::markChildren(MarkStack& markStack)
+void JSSVGElementInstance::markChildren(JSC::MarkStack& markStack)
 {
     Base::markChildren(markStack);
 
     // Mark the wrapper for our corresponding element, so it can mark its event handlers.
     markDOMNodeWrapper(markStack, impl()->correspondingElement()->document(), impl()->correspondingElement());
-}
-
-void JSSVGElementInstance::pushEventHandlerScope(ExecState*, ScopeChain&) const
-{
-}
-
-JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, SVGElementInstance* object)
-{
-    JSValue result = getDOMObjectWrapper<JSSVGElementInstance>(exec, globalObject, object);
-
-    // Ensure that our corresponding element has a JavaScript wrapper to keep its event handlers alive.
-    if (object)
-        toJS(exec, object->correspondingElement());
-
-    return result;
 }
 
 } // namespace WebCore

@@ -28,10 +28,7 @@ module svg {
 
     interface [
         Conditional=SVG,
-        CustomListeners,
         CustomMarkFunction,
-        CustomPushEventHandlerScope,
-        CustomToJS,
         GenerateNativeConverter
     ] SVGElementInstance
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C

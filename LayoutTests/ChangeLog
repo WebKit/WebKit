@@ -1,3 +1,17 @@
+2010-05-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        svg/custom/use-instanceRoot-as-event-target.xhtml crashes randomly
+        https://bugs.webkit.org/show_bug.cgi?id=37798
+
+        Make use-instanceRoot-as-event-target.xhtml behave more correctly. Due a copy & paste problem test #7 was not executed. Fixed.
+        Make destruction more reliable, by using the standard js-test-post.js injection through <script> before calling notifyDone(), and "TEST COMPLETE" magically appears.
+
+        * platform/mac/svg/hixie/error/017-expected.txt: Update result, now that invalidateAllInstancesOfElement(), correctly triggers <use> shadow tree rebuilds.
+        * svg/custom/use-instanceRoot-as-event-target-expected.txt: Update result, was missing a "TEST COMPLETE" marker, and Test #7 was not executed before.
+        * svg/custom/use-instanceRoot-as-event-target.xhtml: Fix typo, test #7 is now executed, it also had a bug which has been corrected. 
+
 2010-05-06  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.

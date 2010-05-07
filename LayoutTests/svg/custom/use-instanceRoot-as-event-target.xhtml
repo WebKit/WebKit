@@ -259,16 +259,16 @@ function eventTestSix()
 function eventTestSeven()
 {
     debug("");
-    debug("Test #7: Verify that the recreating the original click event listener dynamically worked and the event is now dispatched to the regular DOM");
+    debug("Test #7: Verify that the recreating the original click event listener dynamically worked and the event is still dispatched to the instance tree");
     debug("");
 
-    verifyClickEventOnReferenced();
+    verifyClickEvent();
 
     // Prepare for next tests
     fireSimulatedMouseClickEvent("eventTestEight()", useElement.instanceRoot);
 }
 
-function eventTestSeven()
+function eventTestEight()
 {
     debug("");
     debug("Test #8: Verify that the simulated click event got dispatched to the right target");
@@ -281,17 +281,19 @@ function eventTestSeven()
     fireSimulatedMouseClickEvent("checkEventListenerNotReachable()", useElement.instanceRoot);
     fireSimulatedMouseClickEvent("checkEventListenerNotReachable()", rectElement);
 
-    finishTests();
+    // Indicate finish
+    rectElement.setAttribute("fill", "green");
+
+    // Load test finishing script
+    var script = document.createElement('script');
+    script.onload = completeTest;
+    script.src = "../../fast/js/resources/js-test-post.js";
+    successfullyParsed = true;
+    document.body.appendChild(script);
 }
 
-function finishTests()
+function completeTest()
 {
-    successfullyParsed = true;
-
-    rectElement.setAttribute("fill", "green");
-    shouldBeTrue("successfullyParsed");
-    debug('<br /><span class="pass">TEST COMPLETE</span>');
-
     if (window.layoutTestController)
         layoutTestController.notifyDone();
 }

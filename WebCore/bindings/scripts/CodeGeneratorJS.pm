@@ -5,6 +5,7 @@
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
 # Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
+# Copyright (C) Research In Motion Limited 2010. All rights reserved.
 # 
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -126,6 +127,32 @@ sub GenerateInterface
     }
 }
 
+sub GenerateAttributeEventListenerCall
+{
+    my $className = shift;
+    my $implSetterFunctionName = shift;
+    my $windowEventListener = shift;
+
+    my $wrapperObject = $windowEventListener ? "globalObject" : "thisObject";
+    my @GenerateEventListenerImpl = ();
+
+    if ($className eq "JSSVGElementInstance") {
+        # SVGElementInstances have to create JSEventListeners with the wrapper equal to the correspondingElement
+        $wrapperObject = "asObject(correspondingElementWrapper)";
+
+        push(@GenerateEventListenerImpl, <<END);
+    JSValue correspondingElementWrapper = toJS(exec, imp->correspondingElement());
+    if (correspondingElementWrapper.isObject())
+END
+
+        # Add leading whitespace to format the imp->set... line correctly
+        push(@GenerateEventListenerImpl, "    ");
+    }
+
+    push(@GenerateEventListenerImpl, "    imp->set$implSetterFunctionName(createJSAttributeEventListener(exec, value, $wrapperObject));\n");
+    return @GenerateEventListenerImpl;
+}
+
 sub GenerateEventListenerCall
 {
     my $className = shift;
@@ -135,11 +162,23 @@ sub GenerateEventListenerCall
     $implIncludes{"JSEventListener.h"} = 1;
 
     my @GenerateEventListenerImpl = ();
+    my $wrapperObject = "castedThis";
+    if ($className eq "JSSVGElementInstance") {
+        # SVGElementInstances have to create JSEventListeners with the wrapper equal to the correspondingElement
+        $wrapperObject = "asObject(correspondingElementWrapper)";
+
+        push(@GenerateEventListenerImpl, <<END);
+    JSValue correspondingElementWrapper = toJS(exec, imp->correspondingElement());
+    if (!correspondingElementWrapper.isObject())
+        return jsUndefined();
+END
+    }
+
     push(@GenerateEventListenerImpl, <<END);
     JSValue listener = args.at(1);
     if (!listener.isObject())
         return jsUndefined();
-    imp->${functionName}EventListener(ustringToAtomicString(args.at(0).toString(exec)), JSEventListener::create(asObject(listener), castedThis, false, currentWorld(exec))$passRefPtrHandling, args.at(2).toBoolean(exec));
+    imp->${functionName}EventListener(ustringToAtomicString(args.at(0).toString(exec)), JSEventListener::create(asObject(listener), $wrapperObject, false, currentWorld(exec))$passRefPtrHandling, args.at(2).toBoolean(exec));
     return jsUndefined();
 END
     return @GenerateEventListenerImpl;
@@ -1584,11 +1623,7 @@ sub GenerateImplementation
                                 $implIncludes{"JSWorkerContextErrorHandler.h"} = 1;
                                 push(@implContent, "    imp->set$implSetterFunctionName(createJSWorkerContextErrorHandler(exec, value, thisObject));\n");
                             } else {
-                                if ($windowEventListener) {
-                                    push(@implContent, "    imp->set$implSetterFunctionName(createJSAttributeEventListener(exec, value, globalObject));\n");
-                                } else {
-                                    push(@implContent, "    imp->set$implSetterFunctionName(createJSAttributeEventListener(exec, value, thisObject));\n");
-                                }
+                                push(@implContent, GenerateAttributeEventListenerCall($className, $implSetterFunctionName, $windowEventListener));
                             }
                         } elsif ($attribute->signature->type =~ /Constructor$/) {
                             my $constructorType = $attribute->signature->type;
