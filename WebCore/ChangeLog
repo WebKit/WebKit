@@ -2,6 +2,14 @@
 
         Not reviewed, build fix.
 
+        Try again - with quotes this time. *facepalm*
+
+        * dom/Notation.cpp:
+
+2010-05-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, build fix.
+
         Speculative fix for Qt and Gtk.
 
         * dom/Notation.cpp:
