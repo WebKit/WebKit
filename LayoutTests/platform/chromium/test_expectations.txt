@@ -2801,7 +2801,7 @@ BUGYAAR WIN : fast/forms/searchfield-heights.html = IMAGE
 // GStreamer - disabled in Chromium
 WONTFIX : media/video-duration-known-after-eos.html = TEXT TIMEOUT
 
-BUGWK38705 : http/tests/security/sandbox-inherit-to-initial-document-2.html = PASS TIMEOUT
+BUGWK38705 : http/tests/security/sandbox-inherit-to-initial-document-2.html = TEXT
 
 BUG43495 LINUX : svg/W3C-SVG-1.1/render-groups-01-b.svg = IMAGE
 BUG43495 LINUX : svg/W3C-SVG-1.1/render-groups-03-t.svg = IMAGE

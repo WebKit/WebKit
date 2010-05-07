@@ -27,13 +27,16 @@ function timedOut()
 
 function test()
 {
-    var doc = frames[0].frames[0].document;
-    var scr = doc.createElement("script");
-    scr.appendChild(doc.createTextNode("top.scriptWorked()"));
-
-    timeoutId = setTimeout(timedOut, 10);
-
-    doc.body.appendChild(scr);
+    if (frames[0]) {
+        var doc = frames[0].frames[0].document;
+        var scr = doc.createElement("script");
+        scr.appendChild(doc.createTextNode("top.scriptWorked()"));
+        timeoutId = setTimeout(timedOut, 10);
+        doc.body.appendChild(scr);
+    } else {
+        document.getElementById("result").innerHTML = "FAIL: no inner frame";
+        layoutTestController.notifyDone();
+    }
 }
 </script>
 </body>

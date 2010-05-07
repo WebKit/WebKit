@@ -1,3 +1,16 @@
+2010-05-06  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Rewrite test to fail faster if the inner frame doesn't load at all
+        for some reason (previous version would raise a TypeError before
+        the timeout was set).
+
+        https://bugs.webkit.org/show_bug.cgi?id=38705
+
+        * http/tests/security/sandbox-inherit-to-initial-document-2.html:
+        * platform/chromium/test_expectations.txt:
+
 2010-05-07  John Gregg  <johnnyg@google.com>
 
         Unreviewed [re-]baseline of chromium tests.
