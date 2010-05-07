@@ -21,6 +21,8 @@
 #include "config.h"
 #include "Notation.h"
 
+#include Document.h
+
 namespace WebCore {
 
 Notation::Notation(Document* document, const String& name, const String& publicId, const String& systemId)
