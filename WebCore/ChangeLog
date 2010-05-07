@@ -1,3 +1,33 @@
+2010-05-07  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        document.write is not synchronous after page load
+        https://bugs.webkit.org/show_bug.cgi?id=38146
+
+        If there are no pending scripts, a document.write call should be
+        synchronous. This matches other browsers and the HTML5 spec. Forcing
+        the tokenizer to be synchronous in Document::write does not affect
+        external scripts written by the write call. This should only change
+        behavior of document.write after the page is done loading.
+
+        Difficult to test reliably due to HTMLTokenizing relying on processing time.
+        I made a manual test because the test requires processing very large strings
+        synchronously and therefore can take some time.
+
+        Test: WebCore/manual-tests/dom/document-write-synchronous-after-page-load.html
+
+        * dom/Document.cpp:
+        (WebCore::SynchronousHTMLTokenizerGuard::SynchronousHTMLTokenizerGuard): if the provided tokenizer is an HTMLTokenizer make it synchronous
+        (WebCore::SynchronousHTMLTokenizerGuard::~SynchronousHTMLTokenizerGuard): if the provided tokenizer was an HTMLTokenizer return its synchronous state
+        (WebCore::Document::write): temporarily set the tokenizer to synchronous during document.write
+        * dom/Tokenizer.h:
+        (WebCore::Tokenizer::asHTMLTokenizer): default implementation returns 0, to be overridden by HTMLTokenizer
+        * html/HTMLTokenizer.h: allow access to to the force synchronous state
+        (WebCore::HTMLTokenizer::forceSynchronous): accessor
+        (WebCore::HTMLTokenizer::asHTMLTokenizer): override the default to return itself
+        * manual-tests/dom/document-write-synchronous-after-page-load.html: Added.
+
 2010-05-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

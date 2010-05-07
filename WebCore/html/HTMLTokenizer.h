@@ -141,6 +141,7 @@ public:
 
     virtual void write(const SegmentedString&, bool appendData);
     virtual void finish();
+    virtual bool forceSynchronous() const { return m_state.forceSynchronous(); }
     virtual void setForceSynchronous(bool force);
     virtual bool isWaitingForScripts() const;
     virtual void stopParsing();
@@ -155,6 +156,7 @@ public:
     virtual void executeScriptsWaitingForStylesheets();
     
     virtual bool isHTMLTokenizer() const { return true; }
+    virtual HTMLTokenizer* asHTMLTokenizer() { return this; }
     HTMLParser* htmlParser() const { return m_parser.get(); }
 
 private:
