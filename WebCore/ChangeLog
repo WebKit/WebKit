@@ -1,3 +1,12 @@
+2010-05-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, build fix.
+
+        Fix an assert that I failed to update in my earlier change.
+
+        * dom/CharacterData.h:
+        (WebCore::CharacterData::CharacterData):
+
 2010-05-06  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Geoff Garen.
