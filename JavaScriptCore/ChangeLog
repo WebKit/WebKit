@@ -1,3 +1,18 @@
+2010-05-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Added a fast path for number-to-character conversion via
+        Number.prototype.toString base 36.
+        
+        0.7% speedup on SunSpider.
+
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToString): Made radix interpretation a little more
+        efficient by keeping it in int space. Turned "const char" into
+        "static const char" just in case. Added a fast path for base 36
+        conversion of something that will turn into a character.
+
 2010-05-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Fisher.
