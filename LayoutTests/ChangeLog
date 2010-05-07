@@ -1,3 +1,13 @@
+2010-05-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Adjust the position of the comment on the WOFF test and
+        link to the bug report. This should fix a spurious error
+        while running layout tests.
+
+        * platform/gtk/Skipped:
+
 2010-05-07  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed fix of Windows test.
