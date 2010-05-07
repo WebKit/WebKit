@@ -1,5 +1,16 @@
 2010-05-07  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Gavin Barraclough.
+
+        Fixed Sputnik failure seen on buildbot.
+
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToString): Cast to unsigned before checking magnitude,
+        to efficiently exclude negative numbers, which require two characters
+        instead of one.
+
+2010-05-07  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Alexey Proskuryakov.
         
         Slightly more effective way to guarantee a compile-time constant, at
