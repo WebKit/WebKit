@@ -72,6 +72,29 @@ PassRefPtr<Scrollbar> ScrollView::createScrollbar(ScrollbarOrientation orientati
         return Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
 }
 
+#if !GTK_CHECK_VERSION(2, 14, 0)
+#define gtk_adjustment_configure AdjustmentConfigure
+
+static void AdjustmentConfigure(GtkAdjustment* adjustment, gdouble value, gdouble lower, gdouble upper,
+                                gdouble stepIncrement, gdouble pageIncrement, gdouble pageSize)
+{
+    g_object_freeze_notify(G_OBJECT(adjustment));
+
+    g_object_set(adjustment,
+                 "lower", lower,
+                 "upper", upper,
+                 "step-increment", stepIncrement,
+                 "page-increment", pageIncrement,
+                 "page-size", pageSize,
+                 NULL);
+
+    g_object_thaw_notify(G_OBJECT(adjustment));
+
+    gtk_adjustment_changed(adjustment);
+    gtk_adjustment_value_changed(adjustment);
+}
+#endif
+
 /*
  * The following is assumed:
  *   (hadj && vadj) || (!hadj && !vadj)
