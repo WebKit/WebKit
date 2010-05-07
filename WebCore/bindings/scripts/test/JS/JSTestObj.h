@@ -133,6 +133,7 @@ JSC::JSValue jsTestObjAttrWithGetterException(JSC::ExecState*, JSC::JSValue, con
 void setJSTestObjAttrWithGetterException(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestObjCustomAttr(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 void setJSTestObjCustomAttr(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+JSC::JSValue jsTestObjScriptStringAttr(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 JSC::JSValue jsTestObjConstructor(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 
 } // namespace WebCore

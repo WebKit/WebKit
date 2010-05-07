@@ -55,6 +55,7 @@
 - (void)setAttrWithGetterException:(int)newAttrWithGetterException;
 - (int)customAttr;
 - (void)setCustomAttr:(int)newCustomAttr;
+- (NSString *)scriptStringAttr;
 - (void)voidMethod;
 - (void)voidMethodWithArgs:(int)intArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
 - (int)intMethod;

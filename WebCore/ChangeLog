@@ -2,6 +2,39 @@
 
         Reviewed by Adam Barth.
 
+        Improve code generator scripts to support converting ScriptString.
+        https://bugs.webkit.org/show_bug.cgi?id=38699
+
+        Change both JSC and V8 generators to introduce "ConvertScriptString"
+        attribute to allow converting from ScriptString. Also updated the
+        bindings test result.
+
+        These changes are necessary in order to avoid adding custom binding codes
+        when we add the FileReader interface.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_get_script_string_attr):
+        (webkit_dom_test_obj_get_property):
+        (webkit_dom_test_obj_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::):
+        (WebCore::jsTestObjScriptStringAttr):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj scriptStringAttr]):
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::scriptStringAttrAttrGetter):
+        (WebCore::):
+
+2010-05-06  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Adam Barth.
+
         Improve code generator scripts to pass additional ScriptExecutionContext
         argument to the constructor.
         https://bugs.webkit.org/show_bug.cgi?id=38687

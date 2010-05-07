@@ -469,6 +469,16 @@ webkit_dom_test_obj_set_attr_with_getter_exception (WebKitDOMTestObj *self, glon
 
 }
 
+gchar* 
+webkit_dom_test_obj_get_script_string_attr (WebKitDOMTestObj *self)
+{
+    g_return_val_if_fail (self, 0);
+    WebCore::TestObj * item = WebKit::core(self);
+    gchar*  res = convertToUTF8String(item->scriptStringAttr());
+    return res;
+
+}
+
 
 G_DEFINE_TYPE(WebKitDOMTestObj, webkit_dom_test_obj, WEBKIT_TYPE_DOM_OBJECT)
 
@@ -517,6 +527,7 @@ enum {
     PROP_ATTR_WITH_SETTER_EXCEPTION,
     PROP_ATTR_WITH_GETTER_EXCEPTION,
     PROP_CUSTOM_ATTR,
+    PROP_SCRIPT_STRING_ATTR,
 };
 
 
@@ -640,6 +651,11 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint prop_id, GVa
          g_value_set_long(value, coreSelf->attrWithGetterException());
          break;
     }
+    case PROP_SCRIPT_STRING_ATTR:
+    {
+         g_value_take_string(value, convertToUTF8String(coreSelf->scriptStringAttr()));
+         break;
+    }
      default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -745,6 +761,13 @@ G_MAXLONG, /* max */
 G_MAXLONG, /* max */
 0, /* default */
                                                            WEBKIT_PARAM_READWRITE));
+     g_object_class_install_property(gobjectClass,
+                                    PROP_SCRIPT_STRING_ATTR,
+                                    g_param_spec_string("script-string-attr", /* name */
+                                                           "test_obj_script-string-attr", /* short description */
+                                                           "read-only  gchar*  TestObj.script-string-attr", /* longer - could do with some extra doc stuff here */
+                                                           "", /* default */
+                                                           WEBKIT_PARAM_READABLE));
 
 
 

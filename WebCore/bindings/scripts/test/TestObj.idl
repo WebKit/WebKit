@@ -89,6 +89,9 @@ module test {
         void    methodWithNonOptionalArgAndOptionalArg(in long nonOpt, in [Optional] long opt);
         void    methodWithNonOptionalArgAndTwoOptionalArgs(in long nonOpt, in [Optional] long opt1, in long opt2);
 
+        // 'ConvertScriptString' extended attribute
+        readonly attribute [ConvertScriptString] DOMString scriptStringAttr;
+
 #ifdef TESTING_V8
         // Overloads
         void    overloadedMethod(in TestObj objArg, in DOMString strArg);

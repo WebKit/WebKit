@@ -177,6 +177,11 @@
     IMPL->setCustomAttr(newCustomAttr);
 }
 
+- (NSString *)scriptStringAttr
+{
+    return IMPL->scriptStringAttr();
+}
+
 - (void)voidMethod
 {
     IMPL->voidMethod();

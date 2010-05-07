@@ -169,6 +169,9 @@ webkit_dom_test_obj_get_attr_with_getter_exception (WebKitDOMTestObj *self);
 WEBKIT_API void
 webkit_dom_test_obj_set_attr_with_getter_exception (WebKitDOMTestObj *self, glong value);
 
+WEBKIT_API gchar* 
+webkit_dom_test_obj_get_script_string_attr (WebKitDOMTestObj *self);
+
 G_END_DECLS
 
 #endif /* WebKitDOMTestObj_h */

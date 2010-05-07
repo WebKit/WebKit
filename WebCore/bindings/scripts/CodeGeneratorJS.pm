@@ -2233,6 +2233,8 @@ sub NativeToJSValue
 
             die "Unknown value for ConvertNullStringTo extended attribute";
         }
+        $conv = $signature->extendedAttributes->{"ConvertScriptString"};
+        return "jsOwnedStringOrNull(exec, $value)" if $conv;
         $implIncludes{"<runtime/JSString.h>"} = 1;
         return "jsString(exec, $value)";
     }
