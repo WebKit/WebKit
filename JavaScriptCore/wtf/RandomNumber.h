@@ -39,4 +39,7 @@ namespace WTF {
 
 }
 
+using WTF::randomNumber;
+using WTF::weakRandomNumber;
+
 #endif

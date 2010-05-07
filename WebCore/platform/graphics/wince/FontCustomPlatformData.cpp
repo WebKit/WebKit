@@ -63,7 +63,7 @@ static String createUniqueFontName()
 
     unsigned int* ptr = reinterpret_cast<unsigned int*>(fontUuid.data());
     for (int i = 0; i < sizeof(GUID) / sizeof(int) ; ++i)
-        *(ptr + i) = static_cast<unsigned int>(WTF::randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0));
+        *(ptr + i) = static_cast<unsigned int>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0));
 
     Vector<char> fontNameVector;
     base64Encode(fontUuid, fontNameVector);
