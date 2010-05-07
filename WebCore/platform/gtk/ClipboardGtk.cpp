@@ -334,8 +334,7 @@ void ClipboardGtk::writeURL(const KURL& url, const String& label, Frame*)
     String actualLabel(label);
     if (actualLabel.isEmpty())
         actualLabel = url;
-
-    m_dataObject->setText(url.string());
+    m_dataObject->setText(actualLabel);
 
     Vector<UChar> markup;
     append(markup, "<a href=\"");

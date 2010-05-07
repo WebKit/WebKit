@@ -1,3 +1,15 @@
+2010-05-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38769
+        ClipboardGtk should write the URL label in the text portion of the DataObject
+
+        No tests as this code path is currently unused in the GTK+ port.
+
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::ClipboardGtk::writeURL): Write the label to the text portion of the DataObject, instead of the URL.
+
 2010-05-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
