@@ -135,6 +135,7 @@ GIT binary patch
 END
     executableBitDelta => 0,
     indexPath => "foo.gif",
+    isBinary => 1,
 },
 "literal 7\n"],
     expectedNextLine => "OcmYex&reDa;sO8*F9L)B\n",
@@ -164,6 +165,7 @@ GIT binary patch
 END
     executableBitDelta => 0,
     indexPath => "foo.gif",
+    isBinary => 1,
 },
 "literal 0\n"],
     expectedNextLine => "HcmV?d00001\n",

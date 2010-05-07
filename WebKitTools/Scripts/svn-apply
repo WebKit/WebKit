@@ -304,21 +304,20 @@ sub patch($)
     my ($diffHashRef) = @_;
 
     my $patch = $diffHashRef->{svnConvertedText};
+
     my $fullPath = $diffHashRef->{indexPath};
+    my $isBinary = $diffHashRef->{isBinary};
+    my $isGit = $diffHashRef->{isGit};
 
     my $deletion = 0;
     my $addition = 0;
-    my $isBinary = 0;
-    my $isGitBinary = 0;
 
     # FIXME: This information should be extracted from the diff file as
     #        part of the parsing stage, i.e. the call to parsePatch().
     $addition = 1 if ($patch =~ /\n--- .+\(revision 0\)\r?\n/ || $patch =~ /\n@@ -0,0 .* @@/) && !exists($copiedFiles{$fullPath});
     $deletion = 1 if $patch =~ /\n@@ .* \+0,0 @@/;
-    $isBinary = 1 if $patch =~ /\nCannot display: file marked as a binary type\./;
-    $isGitBinary = 1 if $patch =~ /\nGIT binary patch\n/;
 
-    if (!$addition && !$deletion && !$isBinary && !$isGitBinary) {
+    if (!$addition && !$deletion && !$isBinary) {
         # Standard patch, patch tool can handle this.
         if (basename($fullPath) eq "ChangeLog") {
             my $changeLogDotOrigExisted = -f "${fullPath}.orig";
@@ -333,11 +332,11 @@ sub patch($)
         addDirectoriesIfNeeded(dirname($fullPath));
 
         if ($isBinary) {
-            # Binary change
-            handleBinaryChange($fullPath, $patch);
-        } elsif ($isGitBinary) {
-            # Git binary change
-            handleGitBinaryChange($fullPath, $patch);
+            if ($isGit) {
+                handleGitBinaryChange($fullPath, $patch);
+            } else {
+                handleBinaryChange($fullPath, $patch);
+            }
         } elsif ($deletion) {
             # Deletion
             applyPatch($patch, $fullPath, ["--force"]);

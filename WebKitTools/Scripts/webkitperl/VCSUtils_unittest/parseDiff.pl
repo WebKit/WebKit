@@ -61,7 +61,50 @@ Index: Makefile
 END
     copiedFromPath => undef,
     indexPath => "Makefile",
+    isSvn => 1,
     sourceRevision => "53052",
+},
+undef],
+    expectedNextLine => undef,
+},
+{
+    # New test
+    diffName => "SVN: binary file (isBinary true)",
+    inputText => <<'END',
+Index: test_file.swf
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+
+Property changes on: test_file.swf
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+
+
+Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
+END
+    expectedReturn => [
+{
+    svnConvertedText =>  <<'END', # Same as input text
+Index: test_file.swf
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+
+Property changes on: test_file.swf
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+
+
+Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
+END
+    copiedFromPath => undef,
+    indexPath => "test_file.swf",
+    isBinary => 1,
+    isSvn => 1,
+    sourceRevision => undef,
 },
 undef],
     expectedNextLine => undef,
@@ -101,6 +144,7 @@ Index: Makefile
 END
     copiedFromPath => undef,
     indexPath => "Makefile",
+    isSvn => 1,
     sourceRevision => "53052",
 },
 undef],
@@ -129,6 +173,7 @@ Index: Makefile_new
 END
     copiedFromPath => "Makefile",
     indexPath => "Makefile_new",
+    isSvn => 1,
     sourceRevision => "53131",
 },
 undef],
@@ -160,6 +205,7 @@ Index: Makefile
 END
     copiedFromPath => undef,
     indexPath => "Makefile",
+    isSvn => 1,
     sourceRevision => "53131",
 },
 "Index: Makefile_new\n"],
@@ -198,11 +244,15 @@ index f5d5e74..3b6aa92 100644
 END
     copiedFromPath => undef,
     indexPath => "Makefile",
+    isSvn => 1,
     sourceRevision => "53131",
 },
 undef],
     expectedNextLine => undef,
 },
+####
+#    Git test cases
+##
 {
     # New test
     diffName => "Git: simple",
@@ -224,6 +274,7 @@ index f5d5e74..3b6aa92 100644
 END
     copiedFromPath => undef,
     indexPath => "Makefile",
+    isGit => 1,
     sourceRevision => undef,
 },
 undef],
@@ -256,6 +307,7 @@ Index: Makefile_new
 END
     copiedFromPath => undef,
     indexPath => "Makefile",
+    isGit => 1,
     sourceRevision => undef,
 },
 undef],

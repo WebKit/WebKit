@@ -1,3 +1,40 @@
+2010-05-06  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        Removed the need for svn-apply and -unapply to re-parse whether
+        a diff is binary or not.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38320
+
+        * Scripts/VCSUtils.pm:
+          - Adjusted parseGitDiffHeader() to set the isBinary key.
+          - Adjusted parseSvnDiffHeader() to set the isBinary key.
+          - Adjusted parseDiffHeader() to set the isBinary key.
+          - Changed the scmFormat key set by parseDiffHeader() to
+            isGit and isSvn keys.
+          - Adjusted parseDiff() to set the isBinary, isGit, and isSvn keys.
+
+        * Scripts/svn-apply:
+          - Updated the patch() method to use the isBinary, isGit, and
+            isSvn keys.
+
+        * Scripts/svn-unapply:
+          - Updated the patch() method to use the isBinary and isSvn keys.
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiff.pl:
+          - Updated the unit tests as necessary.
+          - Added a test case to test that the isBinary key is getting set properly.
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl:
+          - Updated the unit tests as necessary.
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseGitDiffHeader.pl:
+          - Updated the unit tests as necessary.
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseSvnDiffHeader.pl:
+          - Updated the unit tests as necessary.
+
 2010-05-06  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

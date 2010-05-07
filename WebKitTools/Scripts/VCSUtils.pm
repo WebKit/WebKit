@@ -430,6 +430,7 @@ sub isExecutable($)
 #                         removed.  For new and deleted files, the value is 0
 #                         only if the new or deleted file is not executable.
 #     indexPath: the path in the "Index:" line.
+#     isBinary: whether the diff is for a binary file.
 #     svnConvertedText: the header text with some lines converted to SVN
 #                       format.  Git-specific lines are preserved.
 #   $lastReadLine: the line last read from $fileHandle.
@@ -450,6 +451,7 @@ sub parseGitDiffHeader($$)
     }
 
     my $foundHeaderEnding;
+    my $isBinary;
     my $newExecutableBit = 0;
     my $oldExecutableBit = 0;
     my $svnConvertedText;
@@ -475,6 +477,7 @@ sub parseGitDiffHeader($$)
                 "line: \"$_\".  Be sure to use the --binary flag when invoking \"git diff\" ".
                 "with diffs containing binary files.");
         } elsif (/^GIT binary patch$/ ) {
+            $isBinary = 1;
             $foundHeaderEnding = 1;
         }
 
@@ -491,6 +494,7 @@ sub parseGitDiffHeader($$)
 
     $header{executableBitDelta} = $executableBitDelta;
     $header{indexPath} = $indexPath;
+    $header{isBinary} = $isBinary if defined($isBinary);
     $header{svnConvertedText} = $svnConvertedText;
 
     return (\%header, $_);
@@ -513,6 +517,7 @@ sub parseGitDiffHeader($$)
 #     copiedFromPath: if a file copy, the path from which the file was
 #                     copied. Otherwise, undefined.
 #     indexPath: the path in the "Index:" line.
+#     isBinary: whether the diff is for a binary file.
 #     sourceRevision: the revision number of the source. This is the same
 #                     as the revision number the file was copied from, in
 #                     the case of a file copy.
@@ -534,6 +539,7 @@ sub parseSvnDiffHeader($$)
     my $copiedFromPath;
     my $foundHeaderEnding;
     my $indexPath;
+    my $isBinary;
     my $sourceRevision;
     my $svnConvertedText;
     while (1) {
@@ -558,9 +564,10 @@ sub parseSvnDiffHeader($$)
                         "source revision number \"$sourceRevision\".") if ($2 != $sourceRevision);
                 }
             }
-        } elsif (s/^\+\+\+ \S+/+++ $indexPath/ ||
-                 /^Cannot display: file marked as a binary type.$/) {
-            # +++
+        } elsif (s/^\+\+\+ \S+/+++ $indexPath/) {
+            $foundHeaderEnding = 1;
+        } elsif (/^Cannot display: file marked as a binary type.$/) {
+            $isBinary = 1;
             $foundHeaderEnding = 1;
         }
 
@@ -579,6 +586,7 @@ sub parseSvnDiffHeader($$)
 
     $header{copiedFromPath} = $copiedFromPath;
     $header{indexPath} = $indexPath;
+    $header{isBinary} = $isBinary if defined($isBinary);
     $header{sourceRevision} = $sourceRevision;
     $header{svnConvertedText} = $svnConvertedText;
 
@@ -607,7 +615,9 @@ sub parseSvnDiffHeader($$)
 #                         removed.  For new and deleted files, the value is 0
 #                         only if the new or deleted file is not executable.
 #     indexPath: the path to the file.
-#     scmFormat: the string "git" or "svn" depending on the format.
+#     isBinary: whether the diff is for a binary file.
+#     isGit: whether the diff is Git-formatted.
+#     isSvn: whether the diff is SVN-formatted.
 #     sourceRevision: the revision number of the source. This is the same
 #                     as the revision number the file was copied from, in
 #                     the case of a file copy.
@@ -619,28 +629,30 @@ sub parseDiffHeader($$)
     my ($fileHandle, $line) = @_;
 
     my $header;  # This is a hash ref.
+    my $isGit;
+    my $isSvn;
     my $lastReadLine;
-    my $scmFormat;
 
     if ($line =~ /^Index:/) {
-        $scmFormat = "svn";
+        $isSvn = 1;
         ($header, $lastReadLine) = parseSvnDiffHeader($fileHandle, $line);
     } elsif ($line =~ /^diff --git/) {
-        $scmFormat = "git";
+        $isGit = 1;
         ($header, $lastReadLine) = parseGitDiffHeader($fileHandle, $line);
     } else {
         die("First line of diff does not begin with \"Index:\" or \"diff --git\": \"$line\"");
     }
 
-    # Initialize non-existent values to their defaults.  We need to do this
-    # even when undef is expected since the unit tests can distinguish
-    # between the value undef and a key not existing.
+    # FIXME: Do not set key-values for values that are not defined.
+    #        Rely instead on the fact that Perl evaluates non-existent
+    #        key-values to false.  This keeps the unit tests smaller
+    #        and easier to maintain since adding support for new keys
+    #        will not require updating every unit test case.
     $header->{copiedFromPath} = undef if !defined($header->{copiedFromPath});
     $header->{executableBitDelta} = 0 if !defined($header->{executableBitDelta});
-    # indexPath: already set by both parse implementations.
-    $header->{scmFormat} = $scmFormat;
+    $header->{isGit} = $isGit if defined($isGit);
+    $header->{isSvn} = $isSvn if defined($isSvn);
     $header->{sourceRevision} = undef if !defined($header->{sourceRevision});
-    # svnConvertedText: already set by both parse implementations.
 
     return ($header, $lastReadLine);
 }
@@ -663,6 +675,9 @@ sub parseDiffHeader($$)
 #                   copied. Otherwise, undefined.
 #   indexPath: the path of the file. For SVN-formatted diffs, this is
 #              the same as the path in the "Index:" line.
+#   isBinary: whether the diff is for a binary file.
+#   isGit: whether the diff is Git-formatted.
+#   isSvn: whether the diff is SVN-formatted.
 #   sourceRevision: the revision number of the source. This is the same
 #                   as the revision number the file was copied from, in
 #                   the case of a file copy.
@@ -722,7 +737,9 @@ sub parseDiff($$)
     $diffHashRef{copiedFromPath} = $headerHashRef->{copiedFromPath};
     # FIXME: Add executableBitDelta as a key.
     $diffHashRef{indexPath} = $headerHashRef->{indexPath};
-    # FIXME: Also add scmFormat from the $headerHashRef.
+    $diffHashRef{isBinary} = $headerHashRef->{isBinary} if defined($headerHashRef->{isBinary});
+    $diffHashRef{isGit} = $headerHashRef->{isGit} if defined($headerHashRef->{isGit});
+    $diffHashRef{isSvn} = $headerHashRef->{isSvn} if defined($headerHashRef->{isSvn});
     $diffHashRef{sourceRevision} = $headerHashRef->{sourceRevision};
     # FIXME: Remove the need for svnConvertedText.  See the %diffHash
     #        code comments above for more information.

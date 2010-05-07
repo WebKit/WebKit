@@ -197,6 +197,7 @@ Cannot display: file marked as a binary type.
 END
     copiedFromPath => undef,
     indexPath => "test_file.swf",
+    isBinary => 1,
     sourceRevision => undef,
 },
 "svn:mime-type = application/octet-stream\n"],

@@ -140,21 +140,21 @@ sub patch($)
     my ($diffHashRef) = @_;
 
     my $patch = $diffHashRef->{svnConvertedText};
+
     my $fullPath = $diffHashRef->{indexPath};
+    my $isSvnBinary = $diffHashRef->{isBinary} && $diffHashRef->{isSvn};
 
     $directoriesToCheck{dirname($fullPath)} = 1;
 
     my $deletion = 0;
     my $addition = 0;
-    my $isBinary = 0;
 
     # FIXME: This information should be extracted from the diff file as
     #        part of the parsing stage, i.e. the call to parsePatch().
     $addition = 1 if ($patch =~ /\n--- .+\(revision 0\)\n/ || $patch =~ /\n@@ -0,0 .* @@/);
     $deletion = 1 if $patch =~ /\n@@ .* \+0,0 @@/;
-    $isBinary = 1 if $patch =~ /\nCannot display: file marked as a binary type\./;
 
-    if (!$addition && !$deletion && !$isBinary) {
+    if (!$addition && !$deletion && !$isSvnBinary) {
         # Standard patch, patch tool can handle this.
         if (basename($fullPath) eq "ChangeLog") {
             my $changeLogDotOrigExisted = -f "${fullPath}.orig";
@@ -166,7 +166,8 @@ sub patch($)
     } else {
         # Either a deletion, an addition or a binary change.
 
-        if ($isBinary) {
+        # FIXME: Add support for Git binary files.
+        if ($isSvnBinary) {
             # Reverse binary change
             unlink($fullPath) if (-e $fullPath);
             system "svn", "revert", $fullPath;
