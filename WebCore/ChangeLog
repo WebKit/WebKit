@@ -1,3 +1,17 @@
+2010-05-07  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fix for <rdar://problem/7956972> REGRESSION: Can't focus and type 
+        in GMail due to bad repainting
+        -and corresponding-
+        https://bugs.webkit.org/show_bug.cgi?id=38782
+
+        This patch reverts back to pre-r58797 behavior when 
+        shouldPropagateCompositingToIFrameParent() is false.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintingGoesToWindow):
+
 2010-05-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r58963.
