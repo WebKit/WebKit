@@ -3495,6 +3495,9 @@ quint64 QWebPage::bytesReceived() const
 
     By default no links are delegated and are handled by QWebPage instead.
 
+    \note This signal possibly won't be emitted for clicked links which use
+    JavaScript to trigger navigation.
+
     \sa linkHovered()
 */
 
