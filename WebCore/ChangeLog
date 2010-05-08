@@ -1,3 +1,13 @@
+2010-05-08  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        ResourceHandleSoup should depend only on GLib, not on GTK+.
+        http://webkit.org/b/38763
+
+        * platform/network/soup/ResourceHandleSoup.cpp: Include glib.h
+        instead of gtk/gtk.h.
+
 2010-05-08  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, rolling out r59023.

@@ -28,6 +28,7 @@
 #include "ResourceHandle.h"
 
 #include "Base64.h"
+#include "CString.h"
 #include "ChromeClient.h"
 #include "CookieJarSoup.h"
 #include "DocLoader.h"
@@ -45,15 +46,14 @@
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
-#include <wtf/text/CString.h>
 
 #include <errno.h>
 #include <fcntl.h>
 #include <gio/gio.h>
-#include <gtk/gtk.h>
+#include <glib.h>
 #include <libsoup/soup.h>
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 namespace WebCore {
@@ -233,7 +233,7 @@ static void gotHeadersCallback(SoupMessage* msg, gpointer data)
 
     // The content-sniffed callback will handle the response if WebCore
     // require us to sniff.
-    if(!handle || statusWillBeHandledBySoup(msg->status_code) || handle->shouldContentSniff())
+    if (!handle || statusWillBeHandledBySoup(msg->status_code) || handle->shouldContentSniff())
         return;
 
     ResourceHandleInternal* d = handle->getInternal();
@@ -337,9 +337,9 @@ static void finishedCallback(SoupSession *session, SoupMessage* msg, gpointer da
 }
 
 // parseDataUrl() is taken from the CURL http backend.
-static gboolean parseDataUrl(gpointer callback_data)
+static gboolean parseDataUrl(gpointer callbackData)
 {
-    ResourceHandle* handle = static_cast<ResourceHandle*>(callback_data);
+    ResourceHandle* handle = static_cast<ResourceHandle*>(callbackData);
     ResourceHandleClient* client = handle->client();
     ResourceHandleInternal* d = handle->getInternal();
     if (d->m_cancelled)
@@ -484,7 +484,7 @@ static bool startHttp(ResourceHandle* handle)
     if (!d->m_msg)
         return false;
 
-    if(!handle->shouldContentSniff())
+    if (!handle->shouldContentSniff())
         soup_message_disable_feature(d->m_msg, SOUP_TYPE_CONTENT_SNIFFER);
 
     g_signal_connect(d->m_msg, "restarted", G_CALLBACK(restartedCallback), handle);
@@ -731,7 +731,7 @@ static void readCallback(GObject* source, GAsyncResult* res, gpointer)
         return;
     }
 
-    GError *error = 0;
+    GError* error = 0;
 
     gssize bytesRead = g_input_stream_read_finish(d->m_inputStream, res, &error);
     if (error) {
@@ -781,7 +781,7 @@ static void openCallback(GObject* source, GAsyncResult* res, gpointer)
         return;
     }
 
-    GError *error = 0;
+    GError* error = 0;
     GFileInputStream* in = g_file_read_finish(G_FILE(source), res, &error);
     if (error) {
         char* uri = g_file_get_uri(d->m_gfile);
@@ -827,7 +827,7 @@ static void queryInfoCallback(GObject* source, GAsyncResult* res, gpointer)
     response.setURL(KURL(KURL(), uri));
     g_free(uri);
 
-    GError *error = 0;
+    GError* error = 0;
     GFileInfo* info = g_file_query_info_finish(d->m_gfile, res, &error);
 
     if (error) {
@@ -923,7 +923,7 @@ static bool startGio(ResourceHandle* handle, KURL url)
 
 SoupSession* ResourceHandle::defaultSession()
 {
-    static SoupSession* session = createSoupSession();;
+    static SoupSession* session = createSoupSession();
 
     return session;
 }
