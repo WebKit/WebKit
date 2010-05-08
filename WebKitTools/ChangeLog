@@ -1,3 +1,19 @@
+2010-05-04  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] unskip http/tests/plugins/npapi-response-headers.html
+
+        Turns out this failed because run-webkit-tests was eating the first occurrence
+        of 'Content-Type: text/plain' in the test output as a header. Strange but true.
+        So do as Chromium does and preface all text dumps with the
+        'Content-Type: text/plain' header.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38541
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::dump):
+
 2010-05-08  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Daniel Bates.

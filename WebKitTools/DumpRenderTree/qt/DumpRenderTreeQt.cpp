@@ -751,6 +751,7 @@ void DumpRenderTree::dump()
         resultString = mainFrame->renderTreeDump();
 
     if (!resultString.isEmpty()) {
+        fprintf(stdout, "Content-Type: text/plain\n");
         fprintf(stdout, "%s", resultString.toUtf8().constData());
 
         if (m_controller->shouldDumpBackForwardList())
