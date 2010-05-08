@@ -1,3 +1,11 @@
+2010-05-08  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed, just fixing windows build.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.h: Add #if USE(ACCELERATED_COMPOSITING) guards around GraphicsLayer areas of the code.  Include GraphicsLayer.h directly.
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp: As above.
+        * platform/graphics/win/QTMovieVisualContext.cpp: Remove the #include of d3d9types.h.
+
 2010-05-08  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, just reverting commit.

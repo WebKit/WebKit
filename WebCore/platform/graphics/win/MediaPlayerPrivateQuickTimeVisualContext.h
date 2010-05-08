@@ -120,8 +120,10 @@ private:
     static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs);
     static bool isAvailable();
 
+#if USE(ACCELERATED_COMPOSITING)
     virtual bool supportsAcceleratedRendering() const;
     virtual void acceleratedRenderingStateChanged();
+#endif
 
     enum MediaRenderingMode { MediaRenderingNone, MediaRenderingSoftwareRenderer, MediaRenderingMovieLayer };
     MediaRenderingMode currentRenderingMode() const;
