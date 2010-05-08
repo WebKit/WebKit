@@ -49,16 +49,13 @@ class ChromiumWinPort(chromium.ChromiumPort):
         chromium.ChromiumPort.__init__(self, port_name, options)
 
     def baseline_search_path(self):
-        dirs = []
+        port_names = []
         if self._name == 'chromium-win-xp':
-            dirs.append(self._webkit_baseline_path('chromium-win-xp'))
+            port_names.append("chromium-win-xp")
         if self._name in ('chromium-win-xp', 'chromium-win-vista'):
-            dirs.append(self._webkit_baseline_path('chromium-win-vista'))
-        dirs.append(self._webkit_baseline_path('chromium-win'))
-        dirs.append(self._webkit_baseline_path('chromium'))
-        dirs.append(self._webkit_baseline_path('win'))
-        dirs.append(self._webkit_baseline_path('mac'))
-        return dirs
+            port_names.append("chromium-win-vista")
+        port_names.extend(["chromium-win", "chromium", "win", "mac"])
+        return map(self._webkit_baseline_path, port_names)
 
     def check_build(self, needs_http):
         result = chromium.ChromiumPort.check_build(self, needs_http)

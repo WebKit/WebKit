@@ -2,6 +2,21 @@
 
         Reviewed by Daniel Bates.
 
+        Clean up baseline_search_path to use map to reduce copy/paste code
+        https://bugs.webkit.org/show_bug.cgi?id=38792
+
+        Reading which portnames a port falls back to is easier if
+        we convert port names to paths with map instead of using copy/paste code.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+
+2010-05-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Daniel Bates.
+
         rollout commands fail when commit is missing bug number
         https://bugs.webkit.org/show_bug.cgi?id=38791
 
