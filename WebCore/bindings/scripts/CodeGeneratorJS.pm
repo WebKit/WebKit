@@ -1058,7 +1058,7 @@ sub GenerateAttributesHashTable($$)
         push(@specials, "DontDelete") unless $attribute->signature->extendedAttributes->{"Deletable"};
         push(@specials, "DontEnum") if $attribute->signature->extendedAttributes->{"DontEnum"};
         push(@specials, "ReadOnly") if $attribute->type =~ /readonly/;
-        my $special = (@specials > 0) ? join("|", @specials) : "0";
+        my $special = (@specials > 0) ? join(" | ", @specials) : "0";
         push(@hashSpecials, $special);
 
         my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($attribute->signature->name) . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "");
@@ -1082,7 +1082,7 @@ sub GenerateAttributesHashTable($$)
         my $getter = "js" . $interfaceName . "Constructor";
         push(@hashValue1, $getter);
         push(@hashValue2, "0");
-        push(@hashSpecials, "DontEnum|ReadOnly"); # FIXME: Setting the constructor should be possible.
+        push(@hashSpecials, "DontEnum | ReadOnly"); # FIXME: Setting the constructor should be possible.
     }
 
     $object->GenerateHashTable($hashName, $hashSize,
@@ -1146,7 +1146,7 @@ sub GenerateImplementation
             my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($constant->name);
             push(@hashValue1, $getter);
             push(@hashValue2, "0");
-            push(@hashSpecials, "DontDelete|ReadOnly");
+            push(@hashSpecials, "DontDelete | ReadOnly");
         }
 
         $object->GenerateHashTable($hashName, $hashSize,
@@ -1174,7 +1174,7 @@ sub GenerateImplementation
         my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($constant->name);
         push(@hashValue1, $getter);
         push(@hashValue2, "0");
-        push(@hashSpecials, "DontDelete|ReadOnly");
+        push(@hashSpecials, "DontDelete | ReadOnly");
     }
 
     foreach my $function (@{$dataNode->functions}) {
@@ -1191,7 +1191,7 @@ sub GenerateImplementation
         push(@specials, "DontDelete") unless $function->signature->extendedAttributes->{"Deletable"};
         push(@specials, "DontEnum") if $function->signature->extendedAttributes->{"DontEnum"};
         push(@specials, "Function");
-        my $special = (@specials > 0) ? join("|", @specials) : "0";
+        my $special = (@specials > 0) ? join(" | ", @specials) : "0";
         push(@hashSpecials, $special);
     }
 

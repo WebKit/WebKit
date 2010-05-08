@@ -1,3 +1,15 @@
+2010-05-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Fix JSC binding generation to match webkit style
+        https://bugs.webkit.org/show_bug.cgi?id=38173
+
+        Add spaces around "|" to match webkit style.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+
 2010-05-07  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Brady Eidson.
