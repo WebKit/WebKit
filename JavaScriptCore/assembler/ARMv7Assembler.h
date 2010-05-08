@@ -1754,7 +1754,20 @@ private:
             || (isNOP_T1(instruction - 5) && isNOP_T2(instruction - 4) && isB(instruction - 2)) );
 
         intptr_t relative = reinterpret_cast<intptr_t>(target) - (reinterpret_cast<intptr_t>(instruction));
-        if (((relative << 7) >> 7) == relative) {
+
+        // From Cortex-A8 errata:
+        // If the 32-bit Thumb-2 branch instruction spans two 4KiB regions and
+        // the target of the branch falls within the first region it is
+        // possible for the processor to incorrectly determine the branch
+        // instruction, and it is also possible in some cases for the processor
+        // to enter a deadlock state.
+        // The instruction is spanning two pages if it ends at an address ending 0x002
+        bool spansTwo4K = ((reinterpret_cast<intptr_t>(instruction) & 0xfff) == 0x002);
+        // The target is in the first page if the jump branch back by [3..0x1002] bytes
+        bool targetInFirstPage = (relative >= -0x1002) && (relative < -2);
+        bool wouldTriggerA8Errata = spansTwo4K && targetInFirstPage;
+
+        if (((relative << 7) >> 7) == relative && !wouldTriggerA8Errata) {
             // ARM encoding for the top two bits below the sign bit is 'peculiar'.
             if (relative >= 0)
                 relative ^= 0xC00000;
