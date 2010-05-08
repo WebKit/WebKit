@@ -2,6 +2,33 @@
 
         Reviewed by Gustavo Noronha Silva.
 
+        [EFL] It does not make sense to use RenderThemeEfl::RenderThemeEfl, so
+        use RenderThemeEfl (GCC 4.5 seems to be pickier about this).
+        http://webkit.org/b/38770
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::renderThemeEflColorClassSelectionActive):
+        (WebCore::renderThemeEflColorClassSelectionInactive):
+        (WebCore::renderThemeEflColorClassFocusRing):
+        (WebCore::renderThemeEflColorClassButtonText):
+        (WebCore::renderThemeEflColorClassComboText):
+        (WebCore::renderThemeEflColorClassEntryText):
+        (WebCore::renderThemeEflColorClassSearchText):
+        (WebCore::RenderThemeEfl::adjustCheckboxStyle):
+        (WebCore::RenderThemeEfl::adjustRadioStyle):
+        (WebCore::RenderThemeEfl::adjustButtonStyle):
+        (WebCore::RenderThemeEfl::adjustMenuListStyle):
+        (WebCore::RenderThemeEfl::adjustTextFieldStyle):
+        (WebCore::RenderThemeEfl::adjustSearchFieldDecorationStyle):
+        (WebCore::RenderThemeEfl::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeEfl::adjustSearchFieldResultsDecorationStyle):
+        (WebCore::RenderThemeEfl::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeEfl::adjustSearchFieldStyle):
+
+2010-05-08  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
         ResourceHandleSoup should depend only on GLib, not on GTK+.
         http://webkit.org/b/38763
 

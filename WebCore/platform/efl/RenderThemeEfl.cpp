@@ -301,7 +301,7 @@ PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
 
 static void renderThemeEflColorClassSelectionActive(void* data, Evas_Object* o, const char* signal, const char* source)
 {
-    RenderThemeEfl::RenderThemeEfl* that = static_cast<RenderThemeEfl::RenderThemeEfl *>(data);
+    RenderThemeEfl* that = static_cast<RenderThemeEfl *>(data);
     int fr, fg, fb, fa, br, bg, bb, ba;
 
     if (!edje_object_color_class_get(o, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
@@ -312,7 +312,7 @@ static void renderThemeEflColorClassSelectionActive(void* data, Evas_Object* o, 
 
 static void renderThemeEflColorClassSelectionInactive(void* data, Evas_Object* o, const char* signal, const char* source)
 {
-    RenderThemeEfl::RenderThemeEfl* that = static_cast<RenderThemeEfl::RenderThemeEfl *>(data);
+    RenderThemeEfl* that = static_cast<RenderThemeEfl *>(data);
     int fr, fg, fb, fa, br, bg, bb, ba;
 
     if (!edje_object_color_class_get(o, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
@@ -323,7 +323,7 @@ static void renderThemeEflColorClassSelectionInactive(void* data, Evas_Object* o
 
 static void renderThemeEflColorClassFocusRing(void* data, Evas_Object* o, const char* signal, const char* source)
 {
-    RenderThemeEfl::RenderThemeEfl* that = static_cast<RenderThemeEfl::RenderThemeEfl *>(data);
+    RenderThemeEfl* that = static_cast<RenderThemeEfl *>(data);
     int fr, fg, fb, fa;
 
     if (!edje_object_color_class_get(o, source, &fr, &fg, &fb, &fa, 0, 0, 0, 0, 0, 0, 0, 0))
@@ -334,7 +334,7 @@ static void renderThemeEflColorClassFocusRing(void* data, Evas_Object* o, const 
 
 static void renderThemeEflColorClassButtonText(void* data, Evas_Object* o, const char* signal, const char* source)
 {
-    RenderThemeEfl::RenderThemeEfl* that = static_cast<RenderThemeEfl::RenderThemeEfl *>(data);
+    RenderThemeEfl* that = static_cast<RenderThemeEfl *>(data);
     int fr, fg, fb, fa, br, bg, bb, ba;
 
     if (!edje_object_color_class_get(o, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
@@ -345,7 +345,7 @@ static void renderThemeEflColorClassButtonText(void* data, Evas_Object* o, const
 
 static void renderThemeEflColorClassComboText(void* data, Evas_Object* o, const char* signal, const char* source)
 {
-    RenderThemeEfl::RenderThemeEfl* that = static_cast<RenderThemeEfl::RenderThemeEfl *>(data);
+    RenderThemeEfl* that = static_cast<RenderThemeEfl *>(data);
     int fr, fg, fb, fa, br, bg, bb, ba;
 
     if (!edje_object_color_class_get(o, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
@@ -356,7 +356,7 @@ static void renderThemeEflColorClassComboText(void* data, Evas_Object* o, const 
 
 static void renderThemeEflColorClassEntryText(void* data, Evas_Object* o, const char* signal, const char* source)
 {
-    RenderThemeEfl::RenderThemeEfl* that = static_cast<RenderThemeEfl::RenderThemeEfl *>(data);
+    RenderThemeEfl* that = static_cast<RenderThemeEfl *>(data);
     int fr, fg, fb, fa, br, bg, bb, ba;
 
     if (!edje_object_color_class_get(o, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
@@ -367,7 +367,7 @@ static void renderThemeEflColorClassEntryText(void* data, Evas_Object* o, const 
 
 static void renderThemeEflColorClassSearchText(void* data, Evas_Object* o, const char* signal, const char* source)
 {
-    RenderThemeEfl::RenderThemeEfl* that = static_cast<RenderThemeEfl::RenderThemeEfl *>(data);
+    RenderThemeEfl* that = static_cast<RenderThemeEfl *>(data);
     int fr, fg, fb, fa, br, bg, bb, ba;
     if (!edje_object_color_class_get(o, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
         return;
@@ -732,7 +732,7 @@ int RenderThemeEfl::baselinePosition(const RenderObject* o) const
 void RenderThemeEfl::adjustCheckboxStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
     if (!m_page && e && e->document()->page()) {
-        static_cast<RenderThemeEfl::RenderThemeEfl*>(e->document()->page()->theme())->adjustCheckboxStyle(selector, style, e);
+        static_cast<RenderThemeEfl*>(e->document()->page()->theme())->adjustCheckboxStyle(selector, style, e);
         return;
     }
     adjustSizeConstraints(style, CheckBox);
@@ -753,7 +753,7 @@ bool RenderThemeEfl::paintCheckbox(RenderObject* o, const RenderObject::PaintInf
 void RenderThemeEfl::adjustRadioStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
     if (!m_page && e && e->document()->page()) {
-        static_cast<RenderThemeEfl::RenderThemeEfl*>(e->document()->page()->theme())->adjustRadioStyle(selector, style, e);
+        static_cast<RenderThemeEfl*>(e->document()->page()->theme())->adjustRadioStyle(selector, style, e);
         return;
     }
     adjustSizeConstraints(style, RadioButton);
@@ -774,7 +774,7 @@ bool RenderThemeEfl::paintRadio(RenderObject* o, const RenderObject::PaintInfo& 
 void RenderThemeEfl::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
     if (!m_page && e && e->document()->page()) {
-        static_cast<RenderThemeEfl::RenderThemeEfl*>(e->document()->page()->theme())->adjustButtonStyle(selector, style, e);
+        static_cast<RenderThemeEfl*>(e->document()->page()->theme())->adjustButtonStyle(selector, style, e);
         return;
     }
 
@@ -797,7 +797,7 @@ bool RenderThemeEfl::paintButton(RenderObject* o, const RenderObject::PaintInfo&
 void RenderThemeEfl::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
     if (!m_page && e && e->document()->page()) {
-        static_cast<RenderThemeEfl::RenderThemeEfl*>(e->document()->page()->theme())->adjustMenuListStyle(selector, style, e);
+        static_cast<RenderThemeEfl*>(e->document()->page()->theme())->adjustMenuListStyle(selector, style, e);
         return;
     }
     adjustSizeConstraints(style, ComboBox);
@@ -815,7 +815,7 @@ bool RenderThemeEfl::paintMenuList(RenderObject* o, const RenderObject::PaintInf
 void RenderThemeEfl::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
     if (!m_page && e && e->document()->page()) {
-        static_cast<RenderThemeEfl::RenderThemeEfl*>(e->document()->page()->theme())->adjustTextFieldStyle(selector, style, e);
+        static_cast<RenderThemeEfl*>(e->document()->page()->theme())->adjustTextFieldStyle(selector, style, e);
         return;
     }
     adjustSizeConstraints(style, TextField);
@@ -843,7 +843,7 @@ bool RenderThemeEfl::paintTextArea(RenderObject* o, const RenderObject::PaintInf
 void RenderThemeEfl::adjustSearchFieldDecorationStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
     if (!m_page && e && e->document()->page()) {
-        static_cast<RenderThemeEfl::RenderThemeEfl*>(e->document()->page()->theme())->adjustSearchFieldDecorationStyle(selector, style, e);
+        static_cast<RenderThemeEfl*>(e->document()->page()->theme())->adjustSearchFieldDecorationStyle(selector, style, e);
         return;
     }
     adjustSizeConstraints(style, SearchFieldDecoration);
@@ -859,7 +859,7 @@ bool RenderThemeEfl::paintSearchFieldDecoration(RenderObject* o, const RenderObj
 void RenderThemeEfl::adjustSearchFieldResultsButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
     if (!m_page && e && e->document()->page()) {
-        static_cast<RenderThemeEfl::RenderThemeEfl*>(e->document()->page()->theme())->adjustSearchFieldResultsButtonStyle(selector, style, e);
+        static_cast<RenderThemeEfl*>(e->document()->page()->theme())->adjustSearchFieldResultsButtonStyle(selector, style, e);
         return;
     }
     adjustSizeConstraints(style, SearchFieldResultsButton);
@@ -875,7 +875,7 @@ bool RenderThemeEfl::paintSearchFieldResultsButton(RenderObject* o, const Render
 void RenderThemeEfl::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
     if (!m_page && e && e->document()->page()) {
-        static_cast<RenderThemeEfl::RenderThemeEfl*>(e->document()->page()->theme())->adjustSearchFieldResultsDecorationStyle(selector, style, e);
+        static_cast<RenderThemeEfl*>(e->document()->page()->theme())->adjustSearchFieldResultsDecorationStyle(selector, style, e);
         return;
     }
     adjustSizeConstraints(style, SearchFieldResultsDecoration);
@@ -891,7 +891,7 @@ bool RenderThemeEfl::paintSearchFieldResultsDecoration(RenderObject* o, const Re
 void RenderThemeEfl::adjustSearchFieldCancelButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
     if (!m_page && e && e->document()->page()) {
-        static_cast<RenderThemeEfl::RenderThemeEfl*>(e->document()->page()->theme())->adjustSearchFieldCancelButtonStyle(selector, style, e);
+        static_cast<RenderThemeEfl*>(e->document()->page()->theme())->adjustSearchFieldCancelButtonStyle(selector, style, e);
         return;
     }
     adjustSizeConstraints(style, SearchFieldCancelButton);
@@ -907,7 +907,7 @@ bool RenderThemeEfl::paintSearchFieldCancelButton(RenderObject* o, const RenderO
 void RenderThemeEfl::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
     if (!m_page && e && e->document()->page()) {
-        static_cast<RenderThemeEfl::RenderThemeEfl*>(e->document()->page()->theme())->adjustSearchFieldStyle(selector, style, e);
+        static_cast<RenderThemeEfl*>(e->document()->page()->theme())->adjustSearchFieldStyle(selector, style, e);
         return;
     }
     adjustSizeConstraints(style, SearchField);
