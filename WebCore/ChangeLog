@@ -1,5 +1,13 @@
 2010-05-08  Dirk Schulze  <krit@webkit.org>
 
+        Uneviewed fix of Win bot
+
+        Added JS bindings to Win build system.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
+2010-05-08  Dirk Schulze  <krit@webkit.org>
+
         Unreviewed try to fix Win bot.
 
         SVGFont's VKern implementation missing
