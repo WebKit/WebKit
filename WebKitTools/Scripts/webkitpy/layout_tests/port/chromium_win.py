@@ -49,13 +49,17 @@ class ChromiumWinPort(chromium.ChromiumPort):
         chromium.ChromiumPort.__init__(self, port_name, options)
 
     def baseline_search_path(self):
-        port_names = []
+        dirs = []
         if self._name == 'chromium-win-xp':
-            port_names.append("chromium-win-xp")
+            dirs.append(self._webkit_baseline_path('chromium-win-xp'))
         if self._name in ('chromium-win-xp', 'chromium-win-vista'):
-            port_names.append("chromium-win-vista")
-        port_names.extend(["chromium-win", "chromium", "win", "mac"])
-        return map(self._webkit_baseline_path, port_names)
+            dirs.append(self._webkit_baseline_path('chromium-win-vista'))
+        dirs.append(self._webkit_baseline_path('chromium-win'))
+        dirs.append(self._webkit_baseline_path('chromium'))
+        dirs.append(self._webkit_baseline_path('win'))
+        # FIMXE: This should include mac-snowleopard like win.py does.
+        dirs.append(self._webkit_baseline_path('mac'))
+        return dirs
 
     def check_build(self, needs_http):
         result = chromium.ChromiumPort.check_build(self, needs_http)

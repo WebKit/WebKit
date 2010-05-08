@@ -1,44 +1,36 @@
-2010-05-07  Eric Seidel  <eric@webkit.org>
-
-        Reviewed by Nikolas Zimmermann.
-
-        DryrunTest fails on every platform other than mac
-        https://bugs.webkit.org/show_bug.cgi?id=38796
-
-        The test uses the port detection logic to find a suitable
-        port to use results from.  However that detection logic assumes
-        chromium on linux, which requires a chromium checkout which the
-        bots don't have.  The test is broken and we'll need to fix it.
-        For now I'm just going to disable the test on all platforms besides mac.
-
-        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
-
-2010-05-07  Eric Seidel  <eric@webkit.org>
+2010-05-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Daniel Bates.
 
-        Clean up baseline_search_path to use map to reduce copy/paste code
-        https://bugs.webkit.org/show_bug.cgi?id=38792
+        test-webkitpy fails under cygwin
+        https://bugs.webkit.org/show_bug.cgi?id=38718
 
-        Reading which portnames a port falls back to is easier if
-        we convert port names to paths with map instead of using copy/paste code.
-
-        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
-        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/common/system/executive.py:
+         - Add _KILL_PROCESS_KILLED_PROCESS_EXIT_CODE and
+           _KILL_ALL_KILLED_PROCESS_EXIT_CODE to store the expected
+           exit codes of processes killed by kill_process and kill_all.
+           These two constants are only used by the unit tests but are
+           stored in executive.py so they can be right next to the platform ifs.
+         - Remove unnecessary str() conversion, run_command does that for us.
+         - Make os.kill retry on cygwin on EAGAIN.  It's unclear why CYGWIN
+           throws EAGAIN, but it only does so sometimes.  3 may not be enough
+           retries, but we'll try it to start with.
+         - Add _windows_image_name to automatically convert "yes" to "yes.exe"
+           for use with taskkill.exe /im.  Various callers to kill_all could
+           be updated to remove the .exe, but that can be done in another patch.
+         - Use taskkill.exe for killall on cygwin.
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+         - Use the new *_KILLED_PROCESS_EXIT_CODE constants which are correctly
+           set to 0 on windows/cygwin systems where taskkill.exe is used.
+         - Test _windows_image_name
         * Scripts/webkitpy/layout_tests/port/chromium_win.py:
-        * Scripts/webkitpy/layout_tests/port/mac.py:
-
-2010-05-07  Eric Seidel  <eric@webkit.org>
-
-        Reviewed by Daniel Bates.
-
-        rollout commands fail when commit is missing bug number
-        https://bugs.webkit.org/show_bug.cgi?id=38791
-
-        * Scripts/webkitpy/tool/commands/download.py:
-         - _commit_info failed to actually return the CommitInfo in the no-bug-id case.
-        * Scripts/webkitpy/tool/commands/download_unittest.py:
-         - Test that the fix worked.
+         - Add FIXME about including mac-snowleopard in baseline_search_path.
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+         - Make default_configuration actually read from the Configuration file.
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py: Added.
+         - Test default_configuration
+        * Scripts/webkitpy/layout_tests/port/win.py:
+         - Need a basic baseline_search_path if --platform dryrun is to work.
 
 2010-05-07  Darin Fisher  <darin@chromium.org>
 

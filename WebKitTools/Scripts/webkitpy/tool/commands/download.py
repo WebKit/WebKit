@@ -260,9 +260,8 @@ class AbstractRolloutPrepCommand(AbstractSequencedCommand):
             #       of create-rollout for bug URLs.  It should do better
             #       parsing instead.
             log("Preparing rollout for bug %s." % commit_info.bug_id())
-        else:
-            log("Unable to parse bug number from diff.")
-        return commit_info
+            return commit_info
+        log("Unable to parse bug number from diff.")
 
     def _prepare_state(self, options, args, tool):
         revision = args[0]

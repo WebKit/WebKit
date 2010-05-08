@@ -58,15 +58,15 @@ class MacPort(WebKitPort):
         return child_processes
 
     def baseline_search_path(self):
-        port_names = []
+        dirs = []
         if self._name == 'mac-tiger':
-            port_names.append("mac-tiger")
+            dirs.append(self._webkit_baseline_path(self._name))
         if self._name in ('mac-tiger', 'mac-leopard'):
-            port_names.append("mac-leopard")
+            dirs.append(self._webkit_baseline_path('mac-leopard'))
         if self._name in ('mac-tiger', 'mac-leopard', 'mac-snowleopard'):
-            port_names.append("mac-snowleopard")
-        port_names.append("mac")
-        return map(self._webkit_baseline_path, port_names)
+            dirs.append(self._webkit_baseline_path('mac-snowleopard'))
+        dirs.append(self._webkit_baseline_path('mac'))
+        return dirs
 
     def path_to_test_expectations_file(self):
         return self.path_from_webkit_base('LayoutTests', 'platform',

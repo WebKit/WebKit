@@ -77,9 +77,23 @@ class ExecutiveTest(unittest.TestCase):
         process = subprocess.Popen(["yes"], stdout=subprocess.PIPE)
         self.assertEqual(process.poll(), None)  # Process is running
         executive.kill_process(process.pid)
-        self.assertEqual(process.wait(), -signal.SIGKILL)
+        self.assertEqual(process.wait(), executive._KILL_PROCESS_KILLED_PROCESS_EXIT_CODE)
         # Killing again should fail silently.
         executive.kill_process(process.pid)
+
+    def _assert_windows_image_name(self, name, expected_windows_name):
+        executive = Executive()
+        windows_name = executive._windows_image_name(name)
+        self.assertEqual(windows_name, expected_windows_name)
+
+    def test_windows_image_name(self):
+        self._assert_windows_image_name("foo", "foo.exe")
+        self._assert_windows_image_name("foo.exe", "foo.exe")
+        self._assert_windows_image_name("foo.com", "foo.com")
+        # If the name looks like an extension, even if it isn't
+        # supposed to, we have no choice but to return the original name.
+        self._assert_windows_image_name("foo.baz", "foo.baz")
+        self._assert_windows_image_name("foo.baz.exe", "foo.baz.exe")
 
     def test_kill_all(self):
         executive = Executive()
@@ -88,6 +102,6 @@ class ExecutiveTest(unittest.TestCase):
         process = subprocess.Popen(["yes"], stdout=subprocess.PIPE)
         self.assertEqual(process.poll(), None)  # Process is running
         executive.kill_all("yes")
-        self.assertEqual(process.wait(), -signal.SIGTERM)
+        self.assertEqual(process.wait(), executive._KILL_ALL_KILLED_PROCESS_EXIT_CODE)
         # Killing again should fail silently.
         executive.kill_all("yes")

@@ -49,8 +49,11 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         chromium.ChromiumPort.__init__(self, port_name, options)
 
     def baseline_search_path(self):
-        port_names = ["chromium-linux", "chromium-win", "chromium", "win", "mac"]
-        return map(self._webkit_baseline_path, port_names)
+        return [self._webkit_baseline_path('chromium-linux'),
+                self._webkit_baseline_path('chromium-win'),
+                self._webkit_baseline_path('chromium'),
+                self._webkit_baseline_path('win'),
+                self._webkit_baseline_path('mac')]
 
     def check_build(self, needs_http):
         result = chromium.ChromiumPort.check_build(self, needs_http)

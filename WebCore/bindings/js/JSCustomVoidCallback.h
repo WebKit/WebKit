@@ -53,7 +53,6 @@ private:
     JSCustomVoidCallback(JSC::JSObject* callback, JSDOMGlobalObject*);
 
     JSCallbackData* m_data;
-    ScriptExecutionContext* m_scriptExecutionContext;
 };
 
 } // namespace WebCore

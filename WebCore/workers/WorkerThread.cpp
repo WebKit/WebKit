@@ -169,8 +169,6 @@ public:
     {
         ASSERT(context->isWorkerContext());
         WorkerContext* workerContext = static_cast<WorkerContext*>(context);
-        // It's not safe to call clearScript until all the cleanup tasks posted by functions initiated by WorkerThreadShutdownStartTask have completed.
-        workerContext->clearScript();
         workerContext->thread()->runLoop().terminate();
     }
 
@@ -201,6 +199,7 @@ public:
         // Event listeners would keep DOMWrapperWorld objects alive for too long. Also, they have references to JS objects,
         // which become dangling once Heap is destroyed.
         workerContext->removeAllEventListeners();
+        workerContext->clearScript();
 
 #if ENABLE(DATABASE)
         // We wait for the database thread to clean up all its stuff so that we
