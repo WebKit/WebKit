@@ -1,5 +1,13 @@
 2010-05-08  Dirk Schulze  <krit@webkit.org>
 
+        Unreviewed win build fix.
+
+        JS bindings were missing in DerivedSources.cpp
+
+        * DerivedSources.cpp:
+
+2010-05-08  Dirk Schulze  <krit@webkit.org>
+
         Uneviewed fix of Win bot
 
         Added JS bindings to Win build system.
