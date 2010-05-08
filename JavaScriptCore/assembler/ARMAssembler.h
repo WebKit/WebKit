@@ -825,6 +825,15 @@ namespace JSC {
         void moveImm(ARMWord imm, int dest);
         ARMWord encodeComplexImm(ARMWord imm, int dest);
 
+        ARMWord getOffsetForHalfwordDataTransfer(ARMWord imm, int tmpReg)
+        {
+            // Encode immediate data in the instruction if it is possible
+            if (imm <= 0xff)
+                return getOp2Byte(imm);
+            // Otherwise, store the data in a temporary register
+            return encodeComplexImm(imm, tmpReg);
+        }
+
         // Memory load/store helpers
 
         void dataTransfer32(bool isLoad, RegisterID srcDst, RegisterID base, int32_t offset, bool bytes = false);

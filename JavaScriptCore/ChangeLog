@@ -2,6 +2,23 @@
 
         Reviewed by Gavin Barraclough.
 
+        Fix halfword loads on ARM
+        https://bugs.webkit.org/show_bug.cgi?id=38741
+
+        The BaseIndex and ImplicitAddress are contain 32bit wide offset, but
+        the load16 functions were working with 8 bit data (encoded in the
+        instruction). If the offset cannot be encoded in an instruction, it
+        should be stored in a temporary register.
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::getOffsetForHalfwordDataTransfer):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::load16):
+
+2010-05-08  Gabor Loki  <loki@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
         Fix spanning branch instruction on Cortex-A8 with Thumb-2 JIT
         https://bugs.webkit.org/show_bug.cgi?id=38280
 

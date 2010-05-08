@@ -267,19 +267,16 @@ public:
 
     void load16(BaseIndex address, RegisterID dest)
     {
-        m_assembler.add_r(ARMRegisters::S0, address.base, m_assembler.lsl(address.index, address.scale));
-        if (address.offset>=0)
-            m_assembler.ldrh_u(dest, ARMRegisters::S0, ARMAssembler::getOp2Byte(address.offset));
-        else
-            m_assembler.ldrh_d(dest, ARMRegisters::S0, ARMAssembler::getOp2Byte(-address.offset));
+        m_assembler.add_r(ARMRegisters::S1, address.base, m_assembler.lsl(address.index, address.scale));
+        load16(Address(ARMRegisters::S1, address.offset), dest);
     }
     
     void load16(ImplicitAddress address, RegisterID dest)
     {
         if (address.offset >= 0)
-            m_assembler.ldrh_u(dest, address.base, ARMAssembler::getOp2Byte(address.offset));
+            m_assembler.ldrh_u(dest, address.base, m_assembler.getOffsetForHalfwordDataTransfer(address.offset, ARMRegisters::S0));
         else
-            m_assembler.ldrh_d(dest, address.base, ARMAssembler::getOp2Byte(-address.offset));   
+            m_assembler.ldrh_d(dest, address.base, m_assembler.getOffsetForHalfwordDataTransfer(-address.offset, ARMRegisters::S0));
     }
 
     DataLabel32 store32WithAddressOffsetPatch(RegisterID src, Address address)
