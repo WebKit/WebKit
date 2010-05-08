@@ -1,3 +1,9 @@
+2010-05-08  Robert Hogan  <robert@webkit.org>
+
+        Unreviewed Qt bot fix: test unskipped accidentally in r59020.
+
+        * platform/qt/Skipped: Uncommented http/tests/xmlhttprequest/failed-auth.html again.
+
 2010-05-08  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Simon Hausmann.
