@@ -26,9 +26,32 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import unittest
+
+from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.download import *
+from webkitpy.tool.mocktool import MockTool
+
+
+class AbstractRolloutPrepCommandTest(unittest.TestCase):
+    def test_commit_info(self):
+        command = AbstractRolloutPrepCommand()
+        tool = MockTool()
+        command.bind_to_tool(tool)
+        output = OutputCapture()
+
+        expected_stderr = "Preparing rollout for bug 42.\n"
+        commit_info = output.assert_outputs(self, command._commit_info, [1234], expected_stderr=expected_stderr)
+        self.assertTrue(commit_info)
+
+        mock_commit_info = Mock()
+        mock_commit_info.bug_id = lambda: None
+        tool._checkout.commit_info_for_revision = lambda revision: mock_commit_info
+        expected_stderr = "Unable to parse bug number from diff.\n"
+        commit_info = output.assert_outputs(self, command._commit_info, [1234], expected_stderr=expected_stderr)
+        self.assertEqual(commit_info, mock_commit_info)
 
 
 class DownloadCommandsTest(CommandsTest):
