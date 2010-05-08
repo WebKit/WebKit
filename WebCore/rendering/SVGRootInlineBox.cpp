@@ -336,28 +336,35 @@ static float calculateCSSKerning(RenderObject* item)
     return kerning;
 }
 
-static bool applySVGKerning(SVGCharacterLayoutInfo& info, RenderObject* item, LastGlyphInfo& lastGlyph, const String& unicodeString, const String& glyphName)
+static bool applySVGKerning(SVGCharacterLayoutInfo& info, RenderObject* item, LastGlyphInfo& lastGlyph, const String& unicodeString, const String& glyphName, bool isVerticalText)
 {
 #if ENABLE(SVG_FONTS)
-    float kerning = 0.0f;
+    float horizontalKerning = 0.0f;
+    float verticalKerning = 0.0f;
     const RenderStyle* style = item->style();
     SVGFontElement* svgFont = 0;
     if (style->font().isSVGFont())
         svgFont = style->font().svgFont();
 
-    if (lastGlyph.isValid && style->font().isSVGFont())
-        kerning = svgFont->getHorizontalKerningPairForStringsAndGlyphs(lastGlyph.unicode, lastGlyph.glyphName, unicodeString, glyphName);
-
     if (style->font().isSVGFont()) {
+        if (lastGlyph.isValid) {
+            horizontalKerning = svgFont->horizontalKerningForPairOfStringsAndGlyphs(lastGlyph.unicode, lastGlyph.glyphName, unicodeString, glyphName);
+            if (isVerticalText)
+                verticalKerning = svgFont->verticalKerningForPairOfStringsAndGlyphs(lastGlyph.unicode, lastGlyph.glyphName, unicodeString, glyphName);
+        }
+
         lastGlyph.unicode = unicodeString;
         lastGlyph.glyphName = glyphName;
         lastGlyph.isValid = true;
-        kerning *= style->font().size() / style->font().primaryFont()->unitsPerEm();
+        float scaleToFontSpace = style->font().size() / style->font().primaryFont()->unitsPerEm();
+        horizontalKerning *= scaleToFontSpace;
+        verticalKerning *= scaleToFontSpace;
     } else
         lastGlyph.isValid = false;
 
-    if (kerning != 0.0f) {
-        info.curx -= kerning;
+    if (horizontalKerning != 0.0f || verticalKerning != 0.0f) {
+        info.curx -= horizontalKerning;
+        info.cury -= verticalKerning;
         return true;
     }
 #else
@@ -1342,7 +1349,7 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
         }
 
         // FIXME: SVG Kerning doesn't get applied on texts on path.
-        bool appliedSVGKerning = applySVGKerning(info, textBox->renderer()->node()->renderer(), lastGlyph, unicodeStr, glyphName);
+        bool appliedSVGKerning = applySVGKerning(info, textBox->renderer()->node()->renderer(), lastGlyph, unicodeStr, glyphName, isVerticalText);
         if (info.nextDrawnSeperated || spacing != 0.0f || appliedSVGKerning) {
             info.nextDrawnSeperated = false;
             svgChar.drawnSeperated = true;

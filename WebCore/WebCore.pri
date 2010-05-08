@@ -583,6 +583,7 @@ IDL_BINDINGS += \
     svg/SVGUnitTypes.idl \
     svg/SVGUseElement.idl \
     svg/SVGViewElement.idl \
+    svg/SVGVKernElement.idl \
     websockets/WebSocket.idl \
     workers/AbstractWorker.idl \
     workers/DedicatedWorkerContext.idl \

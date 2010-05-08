@@ -6595,6 +6595,7 @@
 					Name="Release_Cairo|Win32"
 					ExcludedFromBuild="true"
 					>
+
 					<Tool
 						Name="VCCLCompilerTool"
 					/>
@@ -16051,6 +16052,7 @@
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGPathSegLinetoVerticalRel.h"
 				>
+
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGPathSegList.cpp"
@@ -20378,6 +20380,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 					/>
+
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_Internal|Win32"
@@ -21578,6 +21581,7 @@
 			</File>
 			<File
 				RelativePath="..\loader\DocumentThreadableLoader.h"
+
 				>
 			</File>
 			<File
@@ -22773,6 +22777,7 @@
 				</File>
 				<File
 					RelativePath="..\platform\graphics\Color.h"
+
 					>
 				</File>
 				<File
@@ -28203,6 +28208,7 @@
 			<File
 				RelativePath="..\rendering\RenderTableCol.h"
 				>
+
 			</File>
 			<File
 				RelativePath="..\rendering\RenderTableRow.cpp"
@@ -38971,6 +38977,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
+
 						Name="Debug_Cairo|Win32"
 						ExcludedFromBuild="true"
 						>
@@ -40797,6 +40804,7 @@
 						<Tool
 							Name="VCCLCompilerTool"
 						/>
+
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug_Internal|Win32"
@@ -42230,6 +42238,63 @@
 			</File>
 			<File
 				RelativePath="..\svg\SVGViewSpec.h"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGVKernElement.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\svg\SVGVKernElement.h"
 				>
 			</File>
 			<File

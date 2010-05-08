@@ -1962,6 +1962,7 @@ HEADERS += \
     svg/SVGUseElement.h \
     svg/SVGViewElement.h \
     svg/SVGViewSpec.h \
+    svg/SVGVKernElement.h \
     svg/SVGZoomAndPan.h \
     svg/SVGZoomEvent.h \
     wml/WMLAccessElement.h \
@@ -2699,6 +2700,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGUseElement.cpp \
         svg/SVGViewElement.cpp \
         svg/SVGViewSpec.cpp \
+        svg/SVGVKernElement.cpp \
         svg/SVGZoomAndPan.cpp \
         svg/animation/SMILTime.cpp \
         svg/animation/SMILTimeContainer.cpp \

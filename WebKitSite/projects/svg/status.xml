@@ -545,7 +545,7 @@
             <element>
                 <name>vkern</name>
                 <url>http://www.w3.org/TR/SVG11/fonts.html#VKernElement</url>
-                <status>Unimplemented</status>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>font-face-src</name>

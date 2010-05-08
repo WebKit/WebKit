@@ -1363,6 +1363,16 @@
 		845E72FC0FD2623900A87D79 /* SVGFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 845E72FA0FD2623900A87D79 /* SVGFilter.h */; };
 		84801954108BAFB300CB2B1F /* FEGaussianBlur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84801952108BAFB300CB2B1F /* FEGaussianBlur.cpp */; };
 		84801955108BAFB300CB2B1F /* FEGaussianBlur.h in Headers */ = {isa = PBXBuildFile; fileRef = 84801953108BAFB300CB2B1F /* FEGaussianBlur.h */; };
+		8485227B1190162C006EDC7F /* JSSVGHKernElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 848522771190162C006EDC7F /* JSSVGHKernElement.cpp */; };
+		8485227C1190162C006EDC7F /* JSSVGHKernElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 848522781190162C006EDC7F /* JSSVGHKernElement.h */; };
+		8485227D1190162C006EDC7F /* JSSVGVKernElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 848522791190162C006EDC7F /* JSSVGVKernElement.cpp */; };
+		8485227E1190162C006EDC7F /* JSSVGVKernElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 8485227A1190162C006EDC7F /* JSSVGVKernElement.h */; };
+		84852283119016A7006EDC7F /* DOMSVGHKernElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 8485227F119016A7006EDC7F /* DOMSVGHKernElement.h */; };
+		84852284119016A7006EDC7F /* DOMSVGHKernElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84852280119016A7006EDC7F /* DOMSVGHKernElement.mm */; };
+		84852285119016A7006EDC7F /* DOMSVGVKernElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 84852281119016A7006EDC7F /* DOMSVGVKernElement.h */; };
+		84852286119016A7006EDC7F /* DOMSVGVKernElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84852282119016A7006EDC7F /* DOMSVGVKernElement.mm */; };
+		8485228A1190173C006EDC7F /* SVGVKernElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 848522871190173C006EDC7F /* SVGVKernElement.cpp */; };
+		8485228B1190173C006EDC7F /* SVGVKernElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 848522881190173C006EDC7F /* SVGVKernElement.h */; };
 		8499A514115FB33000F566E3 /* RenderSVGResourceMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8499A512115FB33000F566E3 /* RenderSVGResourceMarker.cpp */; };
 		8499A515115FB33000F566E3 /* RenderSVGResourceMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = 8499A513115FB33000F566E3 /* RenderSVGResourceMarker.h */; };
 		849F77760EFEC6200090849D /* StrokeStyleApplier.h in Headers */ = {isa = PBXBuildFile; fileRef = 849F77750EFEC6200090849D /* StrokeStyleApplier.h */; };
@@ -6910,6 +6920,17 @@
 		845E72FA0FD2623900A87D79 /* SVGFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFilter.h; sourceTree = "<group>"; };
 		84801952108BAFB300CB2B1F /* FEGaussianBlur.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FEGaussianBlur.cpp; path = filters/FEGaussianBlur.cpp; sourceTree = "<group>"; };
 		84801953108BAFB300CB2B1F /* FEGaussianBlur.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FEGaussianBlur.h; path = filters/FEGaussianBlur.h; sourceTree = "<group>"; };
+		848522771190162C006EDC7F /* JSSVGHKernElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGHKernElement.cpp; sourceTree = "<group>"; };
+		848522781190162C006EDC7F /* JSSVGHKernElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGHKernElement.h; sourceTree = "<group>"; };
+		848522791190162C006EDC7F /* JSSVGVKernElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGVKernElement.cpp; sourceTree = "<group>"; };
+		8485227A1190162C006EDC7F /* JSSVGVKernElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGVKernElement.h; sourceTree = "<group>"; };
+		8485227F119016A7006EDC7F /* DOMSVGHKernElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGHKernElement.h; sourceTree = "<group>"; };
+		84852280119016A7006EDC7F /* DOMSVGHKernElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGHKernElement.mm; sourceTree = "<group>"; };
+		84852281119016A7006EDC7F /* DOMSVGVKernElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGVKernElement.h; sourceTree = "<group>"; };
+		84852282119016A7006EDC7F /* DOMSVGVKernElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGVKernElement.mm; sourceTree = "<group>"; };
+		848522871190173C006EDC7F /* SVGVKernElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGVKernElement.cpp; sourceTree = "<group>"; };
+		848522881190173C006EDC7F /* SVGVKernElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGVKernElement.h; sourceTree = "<group>"; };
+		848522891190173C006EDC7F /* SVGVKernElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGVKernElement.idl; sourceTree = "<group>"; };
 		8499A512115FB33000F566E3 /* RenderSVGResourceMarker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceMarker.cpp; sourceTree = "<group>"; };
 		8499A513115FB33000F566E3 /* RenderSVGResourceMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceMarker.h; sourceTree = "<group>"; };
 		849F77750EFEC6200090849D /* StrokeStyleApplier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StrokeStyleApplier.h; sourceTree = "<group>"; };
@@ -12225,6 +12246,8 @@
 				85C9A2EC0AD7E90300FBFF1E /* DOMSVGGradientElement.h */,
 				85C9A2ED0AD7E90300FBFF1E /* DOMSVGGradientElement.mm */,
 				A8E5444B0CA9D1C10097D09B /* DOMSVGGradientElementInternal.h */,
+				8485227F119016A7006EDC7F /* DOMSVGHKernElement.h */,
+				84852280119016A7006EDC7F /* DOMSVGHKernElement.mm */,
 				85C9A2EE0AD7E90300FBFF1E /* DOMSVGImageElement.h */,
 				85C9A2EF0AD7E90300FBFF1E /* DOMSVGImageElement.mm */,
 				A8E544470CA9D1C10097D09B /* DOMSVGImageElementInternal.h */,
@@ -12452,6 +12475,8 @@
 				859D62970AD888EF00012995 /* DOMSVGViewElement.h */,
 				859D62980AD888EF00012995 /* DOMSVGViewElement.mm */,
 				A8E543C90CA9D1C10097D09B /* DOMSVGViewElementInternal.h */,
+				84852281119016A7006EDC7F /* DOMSVGVKernElement.h */,
+				84852282119016A7006EDC7F /* DOMSVGVKernElement.mm */,
 				859D62990AD888EF00012995 /* DOMSVGZoomAndPan.h */,
 				A8E543C70CA9D1C10097D09B /* DOMSVGZoomEvent.h */,
 				859D629A0AD888EF00012995 /* DOMSVGZoomEvent.h */,
@@ -13782,6 +13807,8 @@
 				B27B28220CEF0C0700D39D54 /* JSSVGGlyphElement.h */,
 				B2FA3CB40AB75A6E000E5AC4 /* JSSVGGradientElement.cpp */,
 				B2FA3CB50AB75A6E000E5AC4 /* JSSVGGradientElement.h */,
+				848522771190162C006EDC7F /* JSSVGHKernElement.cpp */,
+				848522781190162C006EDC7F /* JSSVGHKernElement.h */,
 				B2FA3CB60AB75A6E000E5AC4 /* JSSVGImageElement.cpp */,
 				B2FA3CB70AB75A6E000E5AC4 /* JSSVGImageElement.h */,
 				B2FA3CB80AB75A6E000E5AC4 /* JSSVGLength.cpp */,
@@ -13912,6 +13939,8 @@
 				B2FA3D2D0AB75A6F000E5AC4 /* JSSVGUseElement.h */,
 				B2FA3D2E0AB75A6F000E5AC4 /* JSSVGViewElement.cpp */,
 				B2FA3D2F0AB75A6F000E5AC4 /* JSSVGViewElement.h */,
+				848522791190162C006EDC7F /* JSSVGVKernElement.cpp */,
+				8485227A1190162C006EDC7F /* JSSVGVKernElement.h */,
 				B2FA3D300AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp */,
 				B2FA3D310AB75A6F000E5AC4 /* JSSVGZoomEvent.h */,
 			);
@@ -14599,6 +14628,9 @@
 				B222795C0D00BF210071B782 /* SVGViewSpec.cpp */,
 				B222795D0D00BF210071B782 /* SVGViewSpec.h */,
 				B222795E0D00BF210071B782 /* SVGViewSpec.idl */,
+				848522871190173C006EDC7F /* SVGVKernElement.cpp */,
+				848522881190173C006EDC7F /* SVGVKernElement.h */,
+				848522891190173C006EDC7F /* SVGVKernElement.idl */,
 				B222795F0D00BF210071B782 /* SVGZoomAndPan.cpp */,
 				B22279600D00BF210071B782 /* SVGZoomAndPan.h */,
 				B22279610D00BF210071B782 /* SVGZoomAndPan.idl */,
@@ -17178,6 +17210,7 @@
 				85C9A2F70AD7E90300FBFF1E /* DOMSVGGradientElement.h in Headers */,
 				85C9A31C0AD7E9A400FBFF1E /* DOMSVGGradientElementInternal.h in Headers */,
 				A8E545490CA9D1C20097D09B /* DOMSVGGradientElementInternal.h in Headers */,
+				84852283119016A7006EDC7F /* DOMSVGHKernElement.h in Headers */,
 				85C9A2F90AD7E90300FBFF1E /* DOMSVGImageElement.h in Headers */,
 				85C9A31D0AD7E9A400FBFF1E /* DOMSVGImageElementInternal.h in Headers */,
 				A8E545450CA9D1C20097D09B /* DOMSVGImageElementInternal.h in Headers */,
@@ -17407,6 +17440,7 @@
 				859D62C20AD888EF00012995 /* DOMSVGViewElement.h in Headers */,
 				859D62EF0AD8892700012995 /* DOMSVGViewElementInternal.h in Headers */,
 				A8E544C70CA9D1C20097D09B /* DOMSVGViewElementInternal.h in Headers */,
+				84852285119016A7006EDC7F /* DOMSVGVKernElement.h in Headers */,
 				859D62C40AD888EF00012995 /* DOMSVGZoomAndPan.h in Headers */,
 				859D62C50AD888EF00012995 /* DOMSVGZoomEvent.h in Headers */,
 				A8E544C50CA9D1C20097D09B /* DOMSVGZoomEvent.h in Headers */,
@@ -18006,6 +18040,7 @@
 				B2FA3D9B0AB75A6F000E5AC4 /* JSSVGGElement.h in Headers */,
 				B27B28280CEF0C0700D39D54 /* JSSVGGlyphElement.h in Headers */,
 				B2FA3D9D0AB75A6F000E5AC4 /* JSSVGGradientElement.h in Headers */,
+				8485227C1190162C006EDC7F /* JSSVGHKernElement.h in Headers */,
 				B2FA3D9F0AB75A6F000E5AC4 /* JSSVGImageElement.h in Headers */,
 				B2FA3DA10AB75A6F000E5AC4 /* JSSVGLength.h in Headers */,
 				B2FA3DA30AB75A6F000E5AC4 /* JSSVGLengthList.h in Headers */,
@@ -18073,6 +18108,7 @@
 				B2FA3E130AB75A6F000E5AC4 /* JSSVGUnitTypes.h in Headers */,
 				B2FA3E150AB75A6F000E5AC4 /* JSSVGUseElement.h in Headers */,
 				B2FA3E170AB75A6F000E5AC4 /* JSSVGViewElement.h in Headers */,
+				8485227E1190162C006EDC7F /* JSSVGVKernElement.h in Headers */,
 				B2FA3E190AB75A6F000E5AC4 /* JSSVGZoomEvent.h in Headers */,
 				65DF320409D1CC60000BE325 /* JSText.h in Headers */,
 				933A14B90B7D1D5200A53FFD /* JSTextEvent.h in Headers */,
@@ -18756,6 +18792,7 @@
 				B2227AED0D00BF220071B782 /* SVGUseElement.h in Headers */,
 				B2227AF00D00BF220071B782 /* SVGViewElement.h in Headers */,
 				B2227AF30D00BF220071B782 /* SVGViewSpec.h in Headers */,
+				8485228B1190173C006EDC7F /* SVGVKernElement.h in Headers */,
 				B2227AF60D00BF220071B782 /* SVGZoomAndPan.h in Headers */,
 				B2E4EC980D00C22B00432643 /* SVGZoomEvent.h in Headers */,
 				93E62D9B0985F41600E1B5E3 /* SystemTime.h in Headers */,
@@ -19642,6 +19679,7 @@
 				85C9A2F60AD7E90300FBFF1E /* DOMSVGGElement.mm in Sources */,
 				B27B283C0CEF0C3600D39D54 /* DOMSVGGlyphElement.mm in Sources */,
 				85C9A2F80AD7E90300FBFF1E /* DOMSVGGradientElement.mm in Sources */,
+				84852284119016A7006EDC7F /* DOMSVGHKernElement.mm in Sources */,
 				85C9A2FA0AD7E90300FBFF1E /* DOMSVGImageElement.mm in Sources */,
 				854163760AC7180B0001E01B /* DOMSVGLength.mm in Sources */,
 				854163740AC7180B0001E01B /* DOMSVGLengthList.mm in Sources */,
@@ -19708,6 +19746,7 @@
 				859D62BF0AD888EF00012995 /* DOMSVGUnitTypes.mm in Sources */,
 				859D62C10AD888EF00012995 /* DOMSVGUseElement.mm in Sources */,
 				859D62C30AD888EF00012995 /* DOMSVGViewElement.mm in Sources */,
+				84852286119016A7006EDC7F /* DOMSVGVKernElement.mm in Sources */,
 				859D62C60AD888EF00012995 /* DOMSVGZoomEvent.mm in Sources */,
 				85ACA99D0A9B575900671E90 /* DOMText.mm in Sources */,
 				933A14AA0B7D1D0900A53FFD /* DOMTextEvent.mm in Sources */,
@@ -20332,6 +20371,7 @@
 				B2FA3D9A0AB75A6F000E5AC4 /* JSSVGGElement.cpp in Sources */,
 				B27B28270CEF0C0700D39D54 /* JSSVGGlyphElement.cpp in Sources */,
 				B2FA3D9C0AB75A6F000E5AC4 /* JSSVGGradientElement.cpp in Sources */,
+				8485227B1190162C006EDC7F /* JSSVGHKernElement.cpp in Sources */,
 				B2FA3D9E0AB75A6F000E5AC4 /* JSSVGImageElement.cpp in Sources */,
 				B2FA3DA00AB75A6F000E5AC4 /* JSSVGLength.cpp in Sources */,
 				08E4FE460E2BD41400F4CAE0 /* JSSVGLengthCustom.cpp in Sources */,
@@ -20401,6 +20441,7 @@
 				B2FA3E120AB75A6F000E5AC4 /* JSSVGUnitTypes.cpp in Sources */,
 				B2FA3E140AB75A6F000E5AC4 /* JSSVGUseElement.cpp in Sources */,
 				B2FA3E160AB75A6F000E5AC4 /* JSSVGViewElement.cpp in Sources */,
+				8485227D1190162C006EDC7F /* JSSVGVKernElement.cpp in Sources */,
 				B2FA3E180AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp in Sources */,
 				65DF320309D1CC60000BE325 /* JSText.cpp in Sources */,
 				1A2C40AB0DEB55AA005AF19E /* JSTextCustom.cpp in Sources */,
@@ -21037,6 +21078,7 @@
 				B2227AEC0D00BF220071B782 /* SVGUseElement.cpp in Sources */,
 				B2227AEF0D00BF220071B782 /* SVGViewElement.cpp in Sources */,
 				B2227AF20D00BF220071B782 /* SVGViewSpec.cpp in Sources */,
+				8485228A1190173C006EDC7F /* SVGVKernElement.cpp in Sources */,
 				B2227AF50D00BF220071B782 /* SVGZoomAndPan.cpp in Sources */,
 				B2E4EC970D00C22B00432643 /* SVGZoomEvent.cpp in Sources */,
 				6582A16309999D6D00BEEB6D /* SystemTimeMac.cpp in Sources */,

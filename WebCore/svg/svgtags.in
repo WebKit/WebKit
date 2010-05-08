@@ -105,6 +105,4 @@ tref interfaceName=SVGTRefElement, createWithNew
 tspan interfaceName=SVGTSpanElement, createWithNew
 use createWithNew
 view createWithNew
-#if 0
 vkern interfaceName=SVGVKernElement, createWithNew
-#endif

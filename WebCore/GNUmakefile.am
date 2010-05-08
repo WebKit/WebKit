@@ -3090,6 +3090,7 @@ IDL_BINDINGS += \
 	WebCore/svg/SVGUseElement.idl \
 	WebCore/svg/SVGViewElement.idl \
 	WebCore/svg/SVGViewSpec.idl \
+	WebCore/svg/SVGVKernElement.idl \
 	WebCore/svg/SVGZoomAndPan.idl \
 	WebCore/svg/SVGZoomEvent.idl
 
@@ -3460,6 +3461,8 @@ webcore_sources += \
 	WebCore/svg/SVGUseElement.h \
 	WebCore/svg/SVGViewElement.cpp \
 	WebCore/svg/SVGViewElement.h \
+	WebCore/svg/SVGVKernElement.cpp \
+	WebCore/svg/SVGVKernElement.h \
 	WebCore/svg/SVGViewSpec.cpp \
 	WebCore/svg/SVGViewSpec.h \
 	WebCore/svg/SVGZoomAndPan.cpp \

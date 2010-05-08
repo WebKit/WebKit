@@ -190,7 +190,6 @@
       '../svg/SVGFilterPrimitiveStandardAttributes.idl',
       '../svg/SVGFitToViewBox.idl',
 
-      '../svg/SVGHKernElement.idl',
       '../svg/SVGLangSpace.idl',
       '../svg/SVGLocatable.idl',
       '../svg/SVGStylable.idl',

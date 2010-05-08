@@ -1,3 +1,60 @@
+2010-05-08  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGFont's VKern implementation missing
+        https://bugs.webkit.org/show_bug.cgi?id=38663
+
+        Implementation of vkern, needed by SVGFont. Also added DOM and JS bindings
+        for vkern and hkern. Made some clean-up in SVGParserUtilities and SVGFontElement.
+        SVGHKernElement and SVGVKernElement share most of the code now.
+
+        Test: svg/text/text-vkern.svg
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * Android.mk:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/DOMWindow.idl:
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::applySVGKerning):
+        (WebCore::SVGRootInlineBox::buildLayoutInformationForTextBox):
+        * svg/SVGAllInOne.cpp:
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::invalidateGlyphCache):
+        (WebCore::SVGFontElement::ensureGlyphCache):
+        (WebCore::matches):
+        (WebCore::kerningForPairOfStringsAndGlyphs):
+        (WebCore::SVGFontElement::horizontalKerningForPairOfStringsAndGlyphs):
+        (WebCore::SVGFontElement::verticalKerningForPairOfStringsAndGlyphs):
+        * svg/SVGFontElement.h:
+        (WebCore::SVGKerningPair::SVGKerningPair):
+        (WebCore::SVGFontElement::rendererIsNeeded):
+        * svg/SVGHKernElement.cpp:
+        (WebCore::SVGHKernElement::buildHorizontalKerningPair):
+        * svg/SVGHKernElement.h:
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::parseGlyphName):
+        (WebCore::parseKerningUnicodeString):
+        * svg/SVGParserUtilities.h:
+        * svg/SVGVKernElement.cpp: Added.
+        (WebCore::SVGVKernElement::SVGVKernElement):
+        (WebCore::SVGVKernElement::~SVGVKernElement):
+        (WebCore::SVGVKernElement::insertedIntoDocument):
+        (WebCore::SVGVKernElement::removedFromDocument):
+        (WebCore::SVGVKernElement::buildVerticalKerningPair):
+        * svg/SVGVKernElement.h: Added.
+        (WebCore::SVGVKernElement::rendererIsNeeded):
+        * svg/SVGVKernElement.idl: Added.
+        * svg/svgtags.in:
+
 2010-05-08  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed, just fixing windows build.

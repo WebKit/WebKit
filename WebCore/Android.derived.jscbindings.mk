@@ -488,6 +488,7 @@ GEN := \
     $(intermediates)/svg/JSSVGUnitTypes.h \
     $(intermediates)/svg/JSSVGUseElement.h \
     $(intermediates)/svg/JSSVGViewElement.h \
+    $(intermediates)/svg/JSSVGVKernElement.h \
     $(intermediates)/svg/JSSVGZoomEvent.h
 $(GEN): PRIVATE_PATH := $(LOCAL_PATH)
 $(GEN): PRIVATE_CUSTOM_TOOL = perl -I$(PRIVATE_PATH)/bindings/scripts $(PRIVATE_PATH)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --include external/webkit/WebCore/dom --include external/webkit/WebCore/html --include external/webkit/WebCore/svg --outputdir $(dir $@) $<

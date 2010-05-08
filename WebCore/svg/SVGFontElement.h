@@ -1,6 +1,7 @@
 /*
    Copyright (C) 2007 Eric Seidel <eric@webkit.org>
    Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+   Copyright (C) Research In Motion Limited 2010. All rights reserved.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -25,41 +26,59 @@
 #include "SVGExternalResourcesRequired.h"
 #include "SVGGlyphElement.h"
 #include "SVGGlyphMap.h"
-#include "SVGHKernElement.h"
+#include "SVGParserUtilities.h"
 #include "SVGStyledElement.h"
 
 namespace WebCore {
 
-    class SVGMissingGlyphElement;    
-    class SVGFontElement : public SVGStyledElement
-                         , public SVGExternalResourcesRequired {
-    public:
-        SVGFontElement(const QualifiedName&, Document*);
-        virtual ~SVGFontElement();
+// Describe an SVG <hkern>/<vkern> element
+struct SVGKerningPair {
+    float kerning;
+    UnicodeRanges unicodeRange1;
+    UnicodeRanges unicodeRange2;
+    HashSet<String> unicodeName1;
+    HashSet<String> unicodeName2;
+    HashSet<String> glyphName1;
+    HashSet<String> glyphName2;
+    
+    SVGKerningPair()
+        : kerning(0.0f)
+    {
+    }
+};
 
-        virtual void synchronizeProperty(const QualifiedName&);
-        virtual bool rendererIsNeeded(RenderStyle*) { return false; }    
+typedef Vector<SVGKerningPair> KerningPairVector;
 
-        void invalidateGlyphCache();
+class SVGMissingGlyphElement;    
+class SVGFontElement : public SVGStyledElement
+                     , public SVGExternalResourcesRequired {
+public:
+    SVGFontElement(const QualifiedName&, Document*);
+    virtual ~SVGFontElement();
 
-        void getGlyphIdentifiersForString(const String&, Vector<SVGGlyphIdentifier>&) const;
+    virtual void synchronizeProperty(const QualifiedName&);
+    virtual bool rendererIsNeeded(RenderStyle*) { return false; }    
 
-        float getHorizontalKerningPairForStringsAndGlyphs(const String& u1, const String& g1, const String& u2, const String& g2) const;
+    void invalidateGlyphCache();
 
-        SVGMissingGlyphElement* firstMissingGlyphElement() const;
+    void getGlyphIdentifiersForString(const String&, Vector<SVGGlyphIdentifier>&) const;
 
-    private:
-        // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_PROPERTY(SVGFontElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+    float horizontalKerningForPairOfStringsAndGlyphs(const String& u1, const String& g1, const String& u2, const String& g2) const;
+    float verticalKerningForPairOfStringsAndGlyphs(const String& u1, const String& g1, const String& u2, const String& g2) const;
+    
+    SVGMissingGlyphElement* firstMissingGlyphElement() const;
 
-        void ensureGlyphCache() const;
+private:
+    // SVGExternalResourcesRequired
+    DECLARE_ANIMATED_PROPERTY(SVGFontElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
 
-        typedef Vector<SVGHorizontalKerningPair> KerningPairVector;
+    void ensureGlyphCache() const;
 
-        mutable KerningPairVector m_kerningPairs;
-        mutable SVGGlyphMap m_glyphMap;
-        mutable bool m_isGlyphCacheValid;
-    };
+    mutable KerningPairVector m_horizontalKerningPairs;
+    mutable KerningPairVector m_verticalKerningPairs;
+    mutable SVGGlyphMap m_glyphMap;
+    mutable bool m_isGlyphCacheValid;
+};
 
 } // namespace WebCore
 

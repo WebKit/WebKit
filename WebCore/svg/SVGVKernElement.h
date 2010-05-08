@@ -1,7 +1,5 @@
 /*
-   Copyright (C) 2007 Eric Seidel <eric@webkit.org>
-   Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
-   Copyright (C) 2008 Apple, Inc
+   Copyright (C) Research In Motion Limited 2010. All rights reserved.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -19,8 +17,8 @@
    Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGHKernElement_h
-#define SVGHKernElement_h
+#ifndef SVGVKernElement_h
+#define SVGVKernElement_h
 
 #if ENABLE(SVG_FONTS)
 #include "SVGFontElement.h"
@@ -31,21 +29,21 @@
 
 namespace WebCore {
 
-    class AtomicString;
-    class SVGFontData;
+class AtomicString;
+class SVGFontData;
 
-    class SVGHKernElement : public SVGElement {
-    public:
-        SVGHKernElement(const QualifiedName&, Document*);
-        virtual ~SVGHKernElement();
+class SVGVKernElement : public SVGElement {
+public:
+    SVGVKernElement(const QualifiedName&, Document*);
+    virtual ~SVGVKernElement();
 
-        virtual void insertedIntoDocument();
-        virtual void removedFromDocument();
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
 
-        virtual bool rendererIsNeeded(RenderStyle*) { return false; }
+    virtual bool rendererIsNeeded(RenderStyle*) { return false; }
 
-        void buildHorizontalKerningPair(KerningPairVector&);
-    };
+    void buildVerticalKerningPair(KerningPairVector&);
+};
 
 } // namespace WebCore
 

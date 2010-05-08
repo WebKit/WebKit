@@ -407,6 +407,8 @@ PASS inner.SVGGlyphElement.isInner is true
 PASS inner.SVGGlyphElement.constructor.isInner is true
 PASS inner.SVGGradientElement.isInner is true
 PASS inner.SVGGradientElement.constructor.isInner is true
+PASS inner.SVGHKernElement.isInner is true
+PASS inner.SVGHKernElement.constructor.isInner is true
 PASS inner.SVGImageElement.isInner is true
 PASS inner.SVGImageElement.constructor.isInner is true
 PASS inner.SVGLength.isInner is true
@@ -535,6 +537,8 @@ PASS inner.SVGUnitTypes.isInner is true
 PASS inner.SVGUnitTypes.constructor.isInner is true
 PASS inner.SVGUseElement.isInner is true
 PASS inner.SVGUseElement.constructor.isInner is true
+PASS inner.SVGVKernElement.isInner is true
+PASS inner.SVGVKernElement.constructor.isInner is true
 PASS inner.SVGViewElement.isInner is true
 PASS inner.SVGViewElement.constructor.isInner is true
 PASS inner.SVGZoomEvent.isInner is true

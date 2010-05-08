@@ -853,6 +853,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	svg/SVGUseElement.cpp \
 	svg/SVGViewElement.cpp \
 	svg/SVGViewSpec.cpp \
+	svg/SVGVKernElement.cpp \
 	svg/SVGZoomAndPan.cpp \
 	svg/SVGZoomEvent.cpp \
 	\

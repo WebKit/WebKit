@@ -152,6 +152,7 @@
 #include "SVGTransformList.cpp"
 #include "SVGURIReference.cpp"
 #include "SVGUseElement.cpp"
+#include "SVGVKernElement.cpp"
 #include "SVGViewElement.cpp"
 #include "SVGViewSpec.cpp"
 #include "SVGZoomAndPan.cpp"

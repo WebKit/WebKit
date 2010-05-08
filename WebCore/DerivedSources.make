@@ -402,6 +402,7 @@ DOM_CLASSES = \
     SVGUnitTypes \
     SVGUseElement \
     SVGViewElement \
+    SVGVKernElement \
     SVGZoomAndPan \
     SVGZoomEvent \
     Screen \

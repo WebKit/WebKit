@@ -1,3 +1,25 @@
+2010-05-08  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGFont's VKern implementation missing
+        https://bugs.webkit.org/show_bug.cgi?id=38663
+
+        The changes in DOMWindow.idl and the implementation of the DOM
+        and JS bindings of VKern and HKern made some updates necessary.
+        Added new test case for SVGFont's VKern.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-property-descriptors-expected.txt:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+        * platform/mac/svg/text/text-vkern-expected.checksum: Added.
+        * platform/mac/svg/text/text-vkern-expected.png: Added.
+        * platform/mac/svg/text/text-vkern-expected.txt: Added.
+        * svg/custom/global-constructors-expected.txt:
+        * svg/text/text-vkern.svg: Added.
+
 2010-05-08  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, just reverting commit.

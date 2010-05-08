@@ -841,8 +841,9 @@ bool pathSegListFromSVGData(SVGPathSegList* path, const String& d, bool process)
     return builder.build(path, d, process);
 }
 
-void parseGlyphName(const String& input, HashSet<String>& values)
+bool parseGlyphName(const String& input, HashSet<String>& values)
 {
+    // FIXME: Parsing error detection is missing.
     values.clear();
 
     const UChar* ptr = input.characters();
@@ -866,6 +867,8 @@ void parseGlyphName(const String& input, HashSet<String>& values)
         values.add(String(inputStart, inputEnd - inputStart + 1));
         skipOptionalSpacesOrDelimiter(ptr, end, ',');
     }
+
+    return true;
 }
 
 static bool parseUnicodeRange(const UChar* characters, unsigned length, UnicodeRange& range)
@@ -937,8 +940,9 @@ static bool parseUnicodeRange(const UChar* characters, unsigned length, UnicodeR
     return true;
 }
 
-void parseKerningUnicodeString(const String& input, UnicodeRanges& rangeList, HashSet<String>& stringList)
+bool parseKerningUnicodeString(const String& input, UnicodeRanges& rangeList, HashSet<String>& stringList)
 {
+    // FIXME: Parsing error detection is missing.
     const UChar* ptr = input.characters();
     const UChar* end = ptr + input.length();
 
@@ -958,6 +962,8 @@ void parseKerningUnicodeString(const String& input, UnicodeRanges& rangeList, Ha
             stringList.add(String(inputStart, ptr - inputStart));
         ++ptr;
     }
+
+    return true;
 }
 
 Vector<String> parseDelimitedString(const String& input, const char seperator)

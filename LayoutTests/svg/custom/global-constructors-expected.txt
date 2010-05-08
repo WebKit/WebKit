@@ -150,8 +150,8 @@ PASS SVGAnimateTransformElement.toString() is '[object SVGAnimateTransformElemen
 PASS SVGFontElement.toString() is '[object SVGFontElementConstructor]'
 PASS SVGGlyphElement.toString() is '[object SVGGlyphElementConstructor]'
 PASS SVGMissingGlyphElement.toString() is '[object SVGMissingGlyphElementConstructor]'
-FAIL SVGHKernElement.toString() should be [object SVGHKernElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGHKernElement
-FAIL SVGVKernElement.toString() should be [object SVGVKernElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGVKernElement
+PASS SVGHKernElement.toString() is '[object SVGHKernElementConstructor]'
+PASS SVGVKernElement.toString() is '[object SVGVKernElementConstructor]'
 PASS SVGFontFaceElement.toString() is '[object SVGFontFaceElementConstructor]'
 PASS SVGFontFaceSrcElement.toString() is '[object SVGFontFaceSrcElementConstructor]'
 PASS SVGFontFaceUriElement.toString() is '[object SVGFontFaceUriElementConstructor]'

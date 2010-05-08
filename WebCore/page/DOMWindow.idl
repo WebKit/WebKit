@@ -672,9 +672,9 @@ module window {
         attribute SVGFontFaceUriElementConstructor SVGFontFaceUriElement;
         attribute SVGGlyphElementConstructor SVGGlyphElement;
 //      attribute SVGGlyphRefElementConstructor SVGGlyphRefElement;
-//      attribute SVGHKernElementConstructor SVGHKernElement;
+        attribute SVGHKernElementConstructor SVGHKernElement;
         attribute SVGMissingGlyphElementConstructor SVGMissingGlyphElement;
-//      attribute SVGVKernElementConstructor SVGVKernElement;
+        attribute SVGVKernElementConstructor SVGVKernElement;
 #endif
 
 #if defined(ENABLE_SVG_FOREIGN_OBJECT) && ENABLE_SVG_FOREIGN_OBJECT

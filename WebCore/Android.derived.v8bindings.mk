@@ -457,6 +457,7 @@ GEN += \
     $(intermediates)/bindings/V8SVGUnitTypes.h \
     $(intermediates)/bindings/V8SVGUseElement.h \
     $(intermediates)/bindings/V8SVGViewElement.h \
+    $(intermediates)/bindings/V8SVGVKernElement.h \
     \
     $(intermediates)/bindings/V8SVGAnimatedAngle.h \
     $(intermediates)/bindings/V8SVGAnimatedEnumeration.h \

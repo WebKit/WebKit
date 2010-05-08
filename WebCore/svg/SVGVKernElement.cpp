@@ -1,7 +1,5 @@
 /*
-   Copyright (C) 2007 Eric Seidel <eric@webkit.org>
-   Copyright (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
-   Copyright (C) 2008 Eric Seidel <eric@webkit.org>
+   Copyright (C) Research In Motion Limited 2010. All rights reserved.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -22,11 +20,11 @@
 #include "config.h"
 
 #if ENABLE(SVG_FONTS)
-#include "SVGHKernElement.h"
+#include "SVGVKernElement.h"
 
+#include "SVGFontData.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
-#include "SVGFontData.h"
 #include "SVGNames.h"
 #include "SimpleFontData.h"
 #include "XMLNames.h"
@@ -35,25 +33,16 @@ namespace WebCore {
 
 using namespace SVGNames;
 
-SVGHKernElement::SVGHKernElement(const QualifiedName& tagName, Document* doc)
+SVGVKernElement::SVGVKernElement(const QualifiedName& tagName, Document* doc)
     : SVGElement(tagName, doc)
 {
 }
 
-SVGHKernElement::~SVGHKernElement()
+SVGVKernElement::~SVGVKernElement()
 {
 }
 
-void SVGHKernElement::insertedIntoDocument()
-{
-    Node* fontNode = parentNode();
-    if (fontNode && fontNode->hasTagName(SVGNames::fontTag)) {
-        if (SVGFontElement* element = static_cast<SVGFontElement*>(fontNode))
-            element->invalidateGlyphCache();
-    }
-}
-
-void SVGHKernElement::removedFromDocument()
+void SVGVKernElement::insertedIntoDocument()
 {
     Node* fontNode = parentNode();
     if (fontNode && fontNode->hasTagName(SVGNames::fontTag)) {
@@ -62,7 +51,16 @@ void SVGHKernElement::removedFromDocument()
     }
 }
 
-void SVGHKernElement::buildHorizontalKerningPair(KerningPairVector& kerningPairs)
+void SVGVKernElement::removedFromDocument()
+{
+    Node* fontNode = parentNode();
+    if (fontNode && fontNode->hasTagName(SVGNames::fontTag)) {
+        if (SVGFontElement* element = static_cast<SVGFontElement*>(fontNode))
+            element->invalidateGlyphCache();
+    }
+}
+
+void SVGVKernElement::buildVerticalKerningPair(KerningPairVector& kerningPairs)
 {
     String u1 = getAttribute(u1Attr);
     String g1 = getAttribute(g1Attr);
