@@ -1,3 +1,18 @@
+2010-05-08  Stuart Morgan  <stuartmorgan@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Resolve most of the whitespace/comment/order differences in npapi.h
+        and npruntime.h relative to the npapi-headers repository versions.
+        No changes to the substance of the code.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38666
+
+        * bridge/npapi.h:
+        (_NPPrint::):
+        (_NPCocoaEvent::):
+        * bridge/npruntime.h:
+
 2010-05-08  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Darin Adler.
