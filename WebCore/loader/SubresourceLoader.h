@@ -51,6 +51,7 @@ namespace WebCore {
         virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
         virtual void didReceiveResponse(const ResourceResponse&);
         virtual void didReceiveData(const char*, int, long long lengthReceived, bool allAtOnce);
+        virtual void didReceiveCachedMetadata(const char*, int);
         virtual void didFinishLoading();
         virtual void didFail(const ResourceError&);
         virtual bool shouldUseCredentialStorage();

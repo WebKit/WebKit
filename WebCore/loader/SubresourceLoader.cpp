@@ -171,6 +171,16 @@ void SubresourceLoader::didReceiveData(const char* data, int length, long long l
         m_client->didReceiveData(this, data, length);
 }
 
+void SubresourceLoader::didReceiveCachedMetadata(const char* data, int length)
+{
+    // Reference the object in this method since the additional processing can do
+    // anything including removing the last reference to this object; one example of this is 3266216.
+    RefPtr<SubresourceLoader> protect(this);
+    
+    if (m_client)
+        m_client->didReceiveCachedMetadata(this, data, length);
+}
+
 void SubresourceLoader::didFinishLoading()
 {
     if (cancelled())

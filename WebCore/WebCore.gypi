@@ -1718,6 +1718,7 @@
             'loader/win/FrameLoaderWin.cpp',
             'loader/Cache.cpp',
             'loader/Cache.h',
+            'loader/CachedMetadata.h',
             'loader/CachePolicy.h',
             'loader/CachedCSSStyleSheet.cpp',
             'loader/CachedCSSStyleSheet.h',

@@ -1,3 +1,45 @@
+2010-05-08  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Provide mechanism to store cached metadata on a CachedResource.
+        https://bugs.webkit.org/show_bug.cgi?id=37874
+
+        No new tests because no new functionality.
+
+        * WebCore.gypi:
+        * loader/CachedMetadata.h: Added.
+        (WebCore::CachedMetadata::~CachedMetadata):
+        (WebCore::CachedMetadata::data):
+        (WebCore::CachedMetadata::size):
+        (WebCore::CachedMetadata::create):
+        (WebCore::CachedMetadata::deserialize):
+        (WebCore::CachedMetadata::serialize):
+        (WebCore::CachedMetadata::dataTypeID):
+        (WebCore::CachedMetadata::readUnsigned):
+        (WebCore::CachedMetadata::appendUnsigned):
+        (WebCore::CachedMetadata::CachedMetadata):
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::setSerializedCachedMetadata):
+        (WebCore::CachedResource::setCachedMetadata):
+        (WebCore::CachedResource::cachedMetadata):
+        * loader/CachedResource.h:
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::didReceiveCachedMetadata):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveCachedMetadata):
+        * loader/SubresourceLoader.h:
+        * loader/SubresourceLoaderClient.h:
+        (WebCore::SubresourceLoaderClient::didReceiveCachedMetadata):
+        * loader/loader.cpp:
+        (WebCore::Loader::Host::didReceiveCachedMetadata):
+        * loader/loader.h:
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::cacheMetadata):
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::didReceiveCachedMetadata):
+
 2010-05-08  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Dmitry Titov.

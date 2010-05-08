@@ -113,6 +113,7 @@ public:
     static void loadResourceSynchronously(const ResourceRequest&, StoredCredentials, ResourceError&, ResourceResponse&, Vector<char>& data, Frame* frame);
     static void prepareForURL(const KURL&);
     static bool willLoadFromCache(ResourceRequest&, Frame*);
+    static void cacheMetadata(const ResourceResponse&, const Vector<char>&);
 #if PLATFORM(MAC)
     static bool didSendBodyDataDelegateExists();
 #endif

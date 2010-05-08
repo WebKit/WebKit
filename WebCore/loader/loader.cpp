@@ -551,6 +551,20 @@ void Loader::Host::didReceiveData(SubresourceLoader* loader, const char* data, i
         resource->data(loader->resourceData(), false);
 }
     
+void Loader::Host::didReceiveCachedMetadata(SubresourceLoader* loader, const char* data, int size)
+{
+    RefPtr<Host> protector(this);
+
+    Request* request = m_requestsLoading.get(loader);
+    if (!request)
+        return;
+
+    CachedResource* resource = request->cachedResource();    
+    ASSERT(!resource->isCacheValidator());
+
+    resource->setSerializedCachedMetadata(data, size);
+}
+    
 void Loader::Host::cancelPendingRequests(RequestQueue& requestsPending, DocLoader* docLoader)
 {
     RequestQueue remaining;
