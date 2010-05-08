@@ -2007,6 +2007,7 @@ sub GenerateCallbackHeader
     # Private members
     push(@headerContent, "    JSCallbackData* m_data;\n");
     push(@headerContent, "    RefPtr<DOMWrapperWorld> m_isolatedWorld;\n");
+    push(@headerContent, "    ScriptExecutionContext* m_scriptExecutionContext;\n");
     push(@headerContent, "};\n\n");
 
     push(@headerContent, "} // namespace WebCore\n\n");
@@ -2038,13 +2039,14 @@ sub GenerateCallbackImplementation
     push(@implContent, "${className}::${className}(JSObject* callback, JSDOMGlobalObject* globalObject)\n");
     push(@implContent, "    : m_data(new JSCallbackData(callback, globalObject))\n");
     push(@implContent, "    , m_isolatedWorld(globalObject->world())\n");
+    push(@implContent, "    , m_scriptExecutionContext(globalObject->scriptExecutionContext())\n");
     push(@implContent, "{\n");
     push(@implContent, "}\n\n");
 
     # Destructor
     push(@implContent, "${className}::~${className}()\n");
     push(@implContent, "{\n");
-    push(@implContent, "    callOnMainThread(JSCallbackData::deleteData, m_data);\n");
+    push(@implContent, "    m_scriptExecutionContext->postTask(DeleteCallbackDataTask::create(m_data));\n");
     push(@implContent, "#ifndef NDEBUG\n");
     push(@implContent, "    m_data = 0;\n");
     push(@implContent, "#endif\n");

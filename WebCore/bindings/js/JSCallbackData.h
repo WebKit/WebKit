@@ -31,14 +31,15 @@
 
 #include "JSDOMBinding.h"
 #include "JSDOMGlobalObject.h"
+#include "ScriptExecutionContext.h"
 #include <runtime/JSObject.h>
 #include <runtime/Protect.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
 
-// We have to clean up this data on the main thread because unprotecting a
-// JSObject on a non-main thread without synchronization would corrupt the heap
+// We have to clean up this data on the context thread because unprotecting a
+// JSObject on the wrong thread without synchronization would corrupt the heap
 // (and synchronization would be slow).
 
 class JSCallbackData {
@@ -48,12 +49,15 @@ public:
     JSCallbackData(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
         : m_callback(callback)
         , m_globalObject(globalObject)
+#ifndef NDEBUG
+        , m_thread(currentThread())
+#endif
     {
     }
     
     ~JSCallbackData()
     {
-        ASSERT(isMainThread());
+        ASSERT(m_thread == currentThread());
     }
 
     JSC::JSObject* callback() { return m_callback.get(); }
@@ -64,6 +68,28 @@ public:
 private:
     JSC::ProtectedPtr<JSC::JSObject> m_callback;
     JSC::ProtectedPtr<JSDOMGlobalObject> m_globalObject;
+#ifndef NDEBUG
+    ThreadIdentifier m_thread;
+#endif
+};
+
+class DeleteCallbackDataTask : public ScriptExecutionContext::Task {
+public:
+    static PassOwnPtr<DeleteCallbackDataTask> create(JSCallbackData* data)
+    {
+        return new DeleteCallbackDataTask(data);
+    }
+
+    virtual void performTask(ScriptExecutionContext*)
+    {
+        delete m_data;
+    }
+    virtual bool isCleanupTask() const { return true; }
+private:
+
+    DeleteCallbackDataTask(JSCallbackData* data) : m_data(data) {}
+
+    JSCallbackData* m_data;
 };
 
 } // namespace WebCore
