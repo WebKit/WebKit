@@ -1,3 +1,11 @@
+2010-05-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Rebaseline GTK specific results after exposing JSSVGVKernElement/JSSVGHKernElement.
+
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/gtk/fast/dom/prototype-inheritance-expected.txt:
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+
 2010-05-08  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
