@@ -33,7 +33,9 @@
 #include "config.h"
 #include "ChromeClientEfl.h"
 
+#if ENABLE(DATABASE)
 #include "DatabaseTracker.h"
+#endif
 #include "EWebKit.h"
 #include "FloatRect.h"
 #include "FrameLoader.h"
@@ -340,6 +342,7 @@ void ChromeClientEfl::reachedMaxAppCacheSize(int64_t spaceNeeded)
 }
 #endif
 
+#if ENABLE(DATABASE)
 void ChromeClientEfl::exceededDatabaseQuota(Frame* frame, const String& databaseName)
 {
     uint64_t quota = ewk_settings_web_database_default_quota_get();
@@ -349,6 +352,7 @@ void ChromeClientEfl::exceededDatabaseQuota(Frame* frame, const String& database
 
     ewk_view_exceeded_database_quota(m_view, kit(frame), databaseName.utf8().data());
 }
+#endif
 
 void ChromeClientEfl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFileChooser)
 {

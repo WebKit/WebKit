@@ -1,3 +1,12 @@
+2010-05-08  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Laszlo Gombos.
+
+        [EFL] Only compile database stuff if ENABLE_DATABASE is set. 
+        http://webkit.org/b/38777
+
+        * efl/WebCoreSupport/ChromeClientEfl.cpp:
+
 2010-05-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
