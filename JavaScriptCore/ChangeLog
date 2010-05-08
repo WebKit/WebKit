@@ -1,3 +1,67 @@
+2010-05-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Optimize access to the global object from a function that uses eval
+        https://bugs.webkit.org/show_bug.cgi?id=38644
+
+        Add op_resolve_global_dynamic, a variant of op_resolve_global that
+        checks each node in the scope chain for dynamically inserted properties
+        and falls back to the normal resolve logic in that case.
+
+        * JavaScriptCore.exp:
+        * bytecode/CodeBlock.cpp:
+        (JSC::isGlobalResolve):
+        (JSC::CodeBlock::printStructures):
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::derefStructures):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::findScopedProperty):
+           Now take an additional reference parameter to used to indicate that
+           there were nodes that may gain dynamic properties
+        (JSC::BytecodeGenerator::emitResolve):
+        (JSC::BytecodeGenerator::emitResolveBase):
+        (JSC::BytecodeGenerator::emitResolveWithBase):
+           deal with additional argument to findScopedProperty
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::PostfixResolveNode::emitBytecode):
+        (JSC::PrefixResolveNode::emitBytecode):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode):
+           These functions use findScopedProperty directly in order to
+           optimise lookup.  They cannot trivially handle any degree of
+           dynamism in the lookup so we just give up in such case.
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::resolveGlobalDynamic):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::privateExecute):
+        * interpreter/Interpreter.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_resolve_global):
+        (JSC::JIT::emit_op_resolve_global_dynamic):
+        (JSC::JIT::emitSlow_op_resolve_global):
+        (JSC::JIT::emitSlow_op_resolve_global_dynamic):
+           Happily resolve_global_dynamic can share the slow case!
+        * jit/JITStubs.h:
+        (JSC::):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::isDynamicScope):
+        * runtime/JSActivation.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::isDynamicScope):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::isDynamicScope):
+        * runtime/JSStaticScopeObject.h:
+        * runtime/JSVariableObject.h:
+
 2010-05-07  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Gavin Barraclough.

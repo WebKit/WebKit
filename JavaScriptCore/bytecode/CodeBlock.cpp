@@ -161,7 +161,7 @@ void CodeBlock::printPutByIdOp(ExecState* exec, int location, Vector<Instruction
 #if ENABLE(JIT)
 static bool isGlobalResolve(OpcodeID opcodeID)
 {
-    return opcodeID == op_resolve_global;
+    return opcodeID == op_resolve_global || opcodeID == op_resolve_global_dynamic;
 }
 
 static bool isPropertyAccess(OpcodeID opcodeID)
@@ -296,6 +296,10 @@ void CodeBlock::printStructures(const Instruction* vPC) const
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_resolve_global)) {
         printStructure("resolve_global", vPC, 4);
+        return;
+    }
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_resolve_global_dynamic)) {
+        printStructure("resolve_global_dynamic", vPC, 4);
         return;
     }
 
@@ -664,6 +668,15 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int id0 = (++it)->u.operand;
             printf("[%4d] resolve_global\t %s, %s, %s\n", location, registerName(exec, r0).data(), valueToSourceString(exec, scope).ascii(), idName(id0, m_identifiers[id0]).data());
             it += 2;
+            break;
+        }
+        case op_resolve_global_dynamic: {
+            int r0 = (++it)->u.operand;
+            JSValue scope = JSValue((++it)->u.jsCell);
+            int id0 = (++it)->u.operand;
+            int depth = it[2].u.operand;
+            printf("[%4d] resolve_global_dynamic\t %s, %s, %s, %d\n", location, registerName(exec, r0).data(), valueToSourceString(exec, scope).ascii(), idName(id0, m_identifiers[id0]).data(), depth);
+            it += 3;
             break;
         }
         case op_get_scoped_var: {
@@ -1393,7 +1406,7 @@ void CodeBlock::derefStructures(Instruction* vPC) const
         vPC[4].u.structure->deref();
         return;
     }
-    if (vPC[0].u.opcode == interpreter->getOpcode(op_resolve_global)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_resolve_global) || vPC[0].u.opcode == interpreter->getOpcode(op_resolve_global_dynamic)) {
         if(vPC[4].u.structure)
             vPC[4].u.structure->deref();
         return;

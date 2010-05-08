@@ -91,6 +91,7 @@ namespace JSC {
         macro(op_resolve, 3) \
         macro(op_resolve_skip, 4) \
         macro(op_resolve_global, 6) \
+        macro(op_resolve_global_dynamic, 7) \
         macro(op_get_scoped_var, 4) \
         macro(op_put_scoped_var, 4) \
         macro(op_get_global_var, 4) \

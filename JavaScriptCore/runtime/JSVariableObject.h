@@ -52,7 +52,7 @@ namespace JSC {
         virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
         
         virtual bool isVariableObject() const;
-        virtual bool isDynamicScope() const = 0;
+        virtual bool isDynamicScope(bool& requiresDynamicChecks) const = 0;
 
         Register& registerAt(int index) const { return d->registers[index]; }
 

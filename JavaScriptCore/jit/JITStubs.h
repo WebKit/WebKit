@@ -337,6 +337,7 @@ extern "C" {
     EncodedJSValue JIT_STUB cti_op_resolve(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_resolve_base(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_resolve_global(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_resolve_global_dynamic(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_resolve_skip(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_resolve_with_base(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_rshift(STUB_ARGS_DECLARATION);

@@ -191,6 +191,76 @@ NEVER_INLINE bool Interpreter::resolveGlobal(CallFrame* callFrame, Instruction* 
     return false;
 }
 
+NEVER_INLINE bool Interpreter::resolveGlobalDynamic(CallFrame* callFrame, Instruction* vPC, JSValue& exceptionValue)
+{
+    int dst = vPC[1].u.operand;
+    JSGlobalObject* globalObject = static_cast<JSGlobalObject*>(vPC[2].u.jsCell);
+    ASSERT(globalObject->isGlobalObject());
+    int property = vPC[3].u.operand;
+    Structure* structure = vPC[4].u.structure;
+    int offset = vPC[5].u.operand;
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    int skip = vPC[6].u.operand + codeBlock->needsFullScopeChain();
+    
+    ScopeChainNode* scopeChain = callFrame->scopeChain();
+    ScopeChainIterator iter = scopeChain->begin();
+    ScopeChainIterator end = scopeChain->end();
+    ASSERT(iter != end);
+    while (skip--) {
+        JSObject* o = *iter;
+        if (o->hasCustomProperties()) {
+            Identifier& ident = codeBlock->identifier(property);
+            do {
+                PropertySlot slot(o);
+                if (o->getPropertySlot(callFrame, ident, slot)) {
+                    JSValue result = slot.getValue(callFrame, ident);
+                    exceptionValue = callFrame->globalData().exception;
+                    if (exceptionValue)
+                        return false;
+                    callFrame->r(dst) = JSValue(result);
+                    return true;
+                }
+                if (iter == end)
+                    break;
+                o = *iter;
+                ++iter;
+            } while (true);
+            exceptionValue = createUndefinedVariableError(callFrame, ident, vPC - codeBlock->instructions().begin(), codeBlock);
+            return false;
+        }
+        ++iter;
+    }
+    
+    if (structure == globalObject->structure()) {
+        callFrame->r(dst) = JSValue(globalObject->getDirectOffset(offset));
+        return true;
+    }
+
+    Identifier& ident = codeBlock->identifier(property);
+    PropertySlot slot(globalObject);
+    if (globalObject->getPropertySlot(callFrame, ident, slot)) {
+        JSValue result = slot.getValue(callFrame, ident);
+        if (slot.isCacheableValue() && !globalObject->structure()->isUncacheableDictionary() && slot.slotBase() == globalObject) {
+            if (vPC[4].u.structure)
+                vPC[4].u.structure->deref();
+            globalObject->structure()->ref();
+            vPC[4] = globalObject->structure();
+            vPC[5] = slot.cachedOffset();
+            callFrame->r(dst) = JSValue(result);
+            return true;
+        }
+        
+        exceptionValue = callFrame->globalData().exception;
+        if (exceptionValue)
+            return false;
+        callFrame->r(dst) = JSValue(result);
+        return true;
+    }
+    
+    exceptionValue = createUndefinedVariableError(callFrame, ident, vPC - codeBlock->instructions().begin(), codeBlock);
+    return false;
+}
+
 NEVER_INLINE void Interpreter::resolveBase(CallFrame* callFrame, Instruction* vPC)
 {
     int dst = vPC[1].u.operand;
@@ -799,11 +869,12 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
         }
     }
 
-    { // Scope for BatchedTransitionOptimizer
-
+    unsigned numVariables = codeBlock->numVariables();
+    int numFunctions = codeBlock->numberOfFunctionDecls();
+    if (numVariables || numFunctions) {
+        // Scope for BatchedTransitionOptimizer
         BatchedTransitionOptimizer optimizer(variableObject);
 
-        unsigned numVariables = codeBlock->numVariables();
         for (unsigned i = 0; i < numVariables; ++i) {
             const Identifier& ident = codeBlock->variable(i);
             if (!variableObject->hasProperty(callFrame, ident)) {
@@ -812,13 +883,11 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
             }
         }
 
-        int numFunctions = codeBlock->numberOfFunctionDecls();
         for (int i = 0; i < numFunctions; ++i) {
             FunctionExecutable* function = codeBlock->functionDecl(i);
             PutPropertySlot slot;
             variableObject->put(callFrame, function->name(), function->make(callFrame, scopeChain), slot);
         }
-
     }
 
     Register* oldEnd = m_registerFile.end();
@@ -1989,6 +2058,24 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         
         NEXT_INSTRUCTION();
     }
+    DEFINE_OPCODE(op_resolve_global_dynamic) {
+        /* resolve_skip dst(r) globalObject(c) property(id) structure(sID) offset(n), depth(n)
+         
+         Performs a dynamic property lookup for the given property, on the provided
+         global object.  If structure matches the Structure of the global then perform
+         a fast lookup using the case offset, otherwise fall back to a full resolve and
+         cache the new structure and offset.
+         
+         This walks through n levels of the scope chain to verify that none of those levels
+         in the scope chain include dynamically added properties.
+         */
+        if (UNLIKELY(!resolveGlobalDynamic(callFrame, vPC, exceptionValue)))
+            goto vm_throw;
+        
+        vPC += OPCODE_LENGTH(op_resolve_global_dynamic);
+        
+        NEXT_INSTRUCTION();
+    }
     DEFINE_OPCODE(op_get_global_var) {
         /* get_global_var dst(r) globalObject(c) index(n)
 
@@ -2016,7 +2103,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         scope->registerAt(index) = JSValue(callFrame->r(value).jsValue());
         vPC += OPCODE_LENGTH(op_put_global_var);
         NEXT_INSTRUCTION();
-    }            
+    }
     DEFINE_OPCODE(op_get_scoped_var) {
         /* get_scoped_var dst(r) index(n) skip(n)
 
@@ -2035,7 +2122,6 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
             ++iter;
             ASSERT(iter != end);
         }
-
         ASSERT((*iter)->isVariableObject());
         JSVariableObject* scope = static_cast<JSVariableObject*>(*iter);
         callFrame->r(dst) = scope->registerAt(index);
