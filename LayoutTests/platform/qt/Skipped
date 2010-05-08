@@ -4828,17 +4828,70 @@ fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 # This port doesn't have a global history delegate yet
 http/tests/globalhistory
 
+# ---
+# --- http/tests/xmlhttprequest
+# ---
+
 # Skip xmlhttprequest tests - NETWORK_ERR: XMLHttpRequest Exception 101: A network error occured in synchronous requests.
-http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache.html
-http/tests/xmlhttprequest/access-control-basic-get-fail-non-simple.html
-http/tests/xmlhttprequest/access-control-response-with-body.html
+http/tests/xmlhttprequest/logout.html
+http/tests/xmlhttprequest/methods-async.html
+http/tests/xmlhttprequest/workers/shared-worker-methods.html
+
+# --- Fixed in Qt 4.7. Unskip when buildbot is upgraded.
+# Many of these tests exercise preflighted requests, which are not supported with Qt older than 4.7.
 http/tests/xmlhttprequest/cross-origin-authorization.html
 http/tests/xmlhttprequest/cross-origin-no-authorization.html
 http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
-http/tests/xmlhttprequest/logout.html
-http/tests/xmlhttprequest/methods-async.html
 http/tests/xmlhttprequest/simple-cross-origin-denied-events-post.html
-http/tests/xmlhttprequest/workers/shared-worker-methods.html
+http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache.html
+http/tests/xmlhttprequest/access-control-basic-get-fail-non-simple.html
+http/tests/xmlhttprequest/access-control-response-with-body.html
+http/tests/xmlhttprequest/access-control-basic-denied-preflight-cache.html
+http/tests/xmlhttprequest/XMLHttpRequestException.html
+http/tests/xmlhttprequest/access-control-and-redirects.html
+http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-header.html
+http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-method.html
+http/tests/xmlhttprequest/access-control-basic-non-simple-allow-async.html
+http/tests/xmlhttprequest/access-control-basic-non-simple-allow.html
+http/tests/xmlhttprequest/access-control-basic-non-simple-deny-cached.html
+http/tests/xmlhttprequest/access-control-basic-post-fail-non-simple-content-type.html
+http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html
+http/tests/xmlhttprequest/access-control-preflight-async-header-denied.html
+http/tests/xmlhttprequest/access-control-preflight-async-method-denied.html
+http/tests/xmlhttprequest/access-control-preflight-credential-async.html
+http/tests/xmlhttprequest/access-control-preflight-credential-sync.html
+http/tests/xmlhttprequest/access-control-preflight-headers-async.html
+http/tests/xmlhttprequest/access-control-preflight-headers-sync.html
+http/tests/xmlhttprequest/access-control-preflight-sync-header-denied.html
+http/tests/xmlhttprequest/access-control-preflight-sync-method-denied.html
+http/tests/xmlhttprequest/access-control-response-with-body-sync.html
+http/tests/xmlhttprequest/cache-override.html
+# --- http://bugreports.qt.nokia.com/browse/QTBUG-9618
+http/tests/xmlhttprequest/cookies.html
+http/tests/xmlhttprequest/methods-lower-case.html
+http/tests/xmlhttprequest/methods.html
+http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
+http/tests/xmlhttprequest/state-after-network-error.html
+http/tests/xmlhttprequest/workers/methods-async.html
+http/tests/xmlhttprequest/workers/methods.html
+http/tests/xmlhttprequest/workers/shared-worker-methods-async.html
+
+# Caused by the way Qt caches network connections using user@hostname as the key
+# See https://bugs.webkit.org/show_bug.cgi?id=37084 and http://bugreports.qt.nokia.com/browse/QTBUG-9619
+http/tests/xmlhttprequest/re-login-async.html
+http/tests/xmlhttprequest/re-login.html
+
+# DRT sideeffect - this test make http/tests/xmlhttprequest/null-auth.php fail:
+# https://bugs.webkit.org/show_bug.cgi?id=32961
+#http/tests/xmlhttprequest/failed-auth.html
+
+# [Qt] fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html fails (DRT sideeffect)
+# https://bugs.webkit.org/show_bug.cgi?id=35086
+fast/xmlhttprequest/xmlhttprequest-no-file-access.html
+
+# ---
+# --- End http/tests/xmlhttprequest
+# ---
 
 # Skip failing http/tests/misc tests
 http/tests/misc/acid3.html
@@ -4873,41 +4926,6 @@ http/tests/security/originHeader/origin-header-for-empty.html
 
 # XSSAuditor test that times out. See https://bugs.webkit.org/show_bug.cgi?id=33460.
 http/tests/security/xssAuditor/malformed-HTML.html
-
-# Caused by the way Qt caches network connections using user@hostname as the key
-# See https://bugs.webkit.org/show_bug.cgi?id=37084
-http/tests/xmlhttprequest/re-login-async.html
-http/tests/xmlhttprequest/re-login.html
-
-# Skip xmlhttprequest tests
-# Many of these tests exercise preflighted requests, which are not supported with Qt older than 4.7.
-http/tests/xmlhttprequest/XMLHttpRequestException.html
-http/tests/xmlhttprequest/access-control-and-redirects.html
-http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-header.html
-http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-method.html
-http/tests/xmlhttprequest/access-control-basic-non-simple-allow-async.html
-http/tests/xmlhttprequest/access-control-basic-non-simple-allow.html
-http/tests/xmlhttprequest/access-control-basic-non-simple-deny-cached.html
-http/tests/xmlhttprequest/access-control-basic-post-fail-non-simple-content-type.html
-http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html
-http/tests/xmlhttprequest/access-control-preflight-async-header-denied.html
-http/tests/xmlhttprequest/access-control-preflight-async-method-denied.html
-http/tests/xmlhttprequest/access-control-preflight-credential-async.html
-http/tests/xmlhttprequest/access-control-preflight-credential-sync.html
-http/tests/xmlhttprequest/access-control-preflight-headers-async.html
-http/tests/xmlhttprequest/access-control-preflight-headers-sync.html
-http/tests/xmlhttprequest/access-control-preflight-sync-header-denied.html
-http/tests/xmlhttprequest/access-control-preflight-sync-method-denied.html
-http/tests/xmlhttprequest/access-control-response-with-body-sync.html
-http/tests/xmlhttprequest/cache-override.html
-http/tests/xmlhttprequest/cookies.html
-http/tests/xmlhttprequest/methods-lower-case.html
-http/tests/xmlhttprequest/methods.html
-http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
-http/tests/xmlhttprequest/state-after-network-error.html
-http/tests/xmlhttprequest/workers/methods-async.html
-http/tests/xmlhttprequest/workers/methods.html
-http/tests/xmlhttprequest/workers/shared-worker-methods-async.html
 
 # Need rebaseline: https://bugs.webkit.org/show_bug.cgi?id=26830
 fast/multicol/single-line.html
@@ -4983,22 +5001,12 @@ fast/loader/input-element-page-cache-crash.html
 http/tests/navigation/dynamic-iframe-dynamic-form-back-entry.html
 http/tests/navigation/parsed-iframe-dynamic-form-back-entry.html
 
-# This test actually fails in manual testing.
-# It only passed automatic testing due to a bug in Qt's DRT, filed
-# under https://bugs.webkit.org/show_bug.cgi?id=32437.
-# The bug with this test is tracked under https://bugs.webkit.org/show_bug.cgi?id=32521
-http/tests/xmlhttprequest/access-control-basic-denied-preflight-cache.html
-
 # Missing variables:
 # SVGAltGlyphElement, SVGAnimateElement, SVGAnimateColorElement, SVGAnimateTransformElement
 # SVGFontElement, SVGGlyphElement, SVGMissingGlyphElement, SVGFontFaceElement, SVGFontFaceSrcElement
 # SVGFontFaceUriElement, SVGFontFaceFormatElement, SVGFontFaceNameElement, SVGForeignObjectElement
 # https://bugs.webkit.org/show_bug.cgi?id=32941
 svg/custom/global-constructors.html
-
-# DRT sideeffect - this test make http/tests/xmlhttprequest/null-auth.php fail:
-# https://bugs.webkit.org/show_bug.cgi?id=32961
-http/tests/xmlhttprequest/failed-auth.html
 
 # Slider tests that need new results
 fast/forms/slider-padding.html
@@ -5048,10 +5056,6 @@ fast/events/onbeforeunload-focused-iframe.html
 # Qt may want to follow GTK+ in adding a default Accept header for
 # subresources. See https://bugs.webkit.org/show_bug.cgi?id=33242.
 http/tests/misc/image-checks-for-accept.html
-
-# [Qt] fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html fails (DRT sideeffect)
-# https://bugs.webkit.org/show_bug.cgi?id=35086
-fast/xmlhttprequest/xmlhttprequest-no-file-access.html
 
 # Needs platform specific API implemented in DRT, maybe not relevant for non-Mac and non-Windows ports
 fast/loader/api-test-new-window-data-load-base-url.html

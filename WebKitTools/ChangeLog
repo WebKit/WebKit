@@ -1,3 +1,35 @@
+2010-05-08  Robert Hogan  <robert@roberthogan.net>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix http/tests/xmlhttprequest/cross-origin-no-authorization.html
+             and http/tests/xmlhttprequest/cross-origin-authorization.html
+
+        QHttpNetworkRequest adds Authorization and Cookie headers to XHRs
+        without knowing if this is valid behaviour or not. In order to allow
+        Qt to decide whether Cookie/Authorization headers should be added
+        to an XHR QtWebKit needs to use an attribute added to QNetworkRequest.
+        These new attributes are: QNetworkRequest::CookieLoadControlAttribute,
+        QNetworkRequest::CookieSaveControlAttribute,and
+        QNetworkRequest::AuthenticationReuseControlAttribute.
+
+        In order to properly support the tests, Qt's DRT needs to use one
+        NetworkAccessManager for all pages. This allows it to use cached
+        credentials where appropriate.
+
+        The tests now pass when run individually but there seems to be a problem with
+        leaking the results of requests across tests when run with the others in
+        http/tests. This will be addressed in a separate patch.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32967
+
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::WebPage):
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+
+
 2010-05-04  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Eric Seidel.

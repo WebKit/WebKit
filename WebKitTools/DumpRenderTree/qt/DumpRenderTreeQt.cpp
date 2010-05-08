@@ -160,7 +160,7 @@ WebPage::WebPage(QObject* parent, DumpRenderTree* drt)
     connect(this, SIGNAL(geometryChangeRequested(const QRect &)),
             this, SLOT(setViewGeometry(const QRect & )));
 
-    setNetworkAccessManager(new NetworkAccessManager(this));
+    setNetworkAccessManager(m_drt->networkAccessManager());
     setPluginFactory(new TestPlugin(this));
 }
 
@@ -352,6 +352,7 @@ DumpRenderTree::DumpRenderTree()
     else
         QWebSettings::enablePersistentStorage();
 
+    m_networkAccessManager = new NetworkAccessManager(this);
     // create our primary testing page/view.
     m_mainView = new QWebView(0);
     m_mainView->resize(QSize(LayoutTestController::maxViewWidth, LayoutTestController::maxViewHeight));

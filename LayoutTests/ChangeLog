@@ -1,3 +1,33 @@
+2010-05-08  Robert Hogan  <robert@roberthogan.net>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix http/tests/xmlhttprequest/cross-origin-no-authorization.html
+             and http/tests/xmlhttprequest/cross-origin-authorization.html
+
+        QHttpNetworkRequest adds Authorization and Cookie headers to XHRs
+        without knowing if this is valid behaviour or not. In order to allow
+        Qt to decide whether Cookie/Authorization headers should be added
+        to an XHR QtWebKit needs to use an attribute added to QNetworkRequest.
+        These new attributes are: QNetworkRequest::CookieLoadControlAttribute,
+        QNetworkRequest::CookieSaveControlAttribute,and
+        QNetworkRequest::AuthenticationReuseControlAttribute.
+
+        There are platform-specific results for cross-origin-no-authorization.html:
+
+        1. Qt's DRT does not capture the final 'DONE'.
+        2. QNetworkReplyHandler.cpp's ignoreHttpError() means that async requests
+           do not execute didFail() when they receive a 401 HTTP response. This
+           results in async tests passing with '401 Authorisation required' rather
+           than 'received error event'.
+
+        The Qt part of these changes was merged at: http://gitorious.org/qt/qt/merge_requests/592
+
+        https://bugs.webkit.org/show_bug.cgi?id=32967
+
+        * platform/qt/Skipped: Group together the tests that are waiting for 4.7 to be unskipped.
+        * platform/qt/http/tests/xmlhttprequest/cross-origin-no-authorization-expected.txt: Added.
+
 2010-05-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Forgot to rebase fast/dom/prototype-inheritance-2.html after the <vkern> patches.
