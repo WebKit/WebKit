@@ -1,3 +1,30 @@
+2010-05-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
+        [WTFURL] Add a buffer for managing the output of the canonicalizer
+        https://bugs.webkit.org/show_bug.cgi?id=38671
+
+        The canonicalizer produces a stream of canonicalized characters, which
+        we will store in a URLBuffer.  URLBuffer is quite similar to Vector,
+        but serves as an abstraction to isolate us from the underlying
+        character storage.  In the case of WebKit, we'll probably implement a
+        subclass of URLBuffer with Vector.  In Chromium, the backing store is a
+        std::string, which avoids an unnecessary memcpy that would be caused by
+        using Vector instead.
+
+        * wtf/url/src/URLBuffer.h: Added.
+        (WTF::URLBuffer::URLBuffer):
+        (WTF::URLBuffer::~URLBuffer):
+        (WTF::URLBuffer::at):
+        (WTF::URLBuffer::set):
+        (WTF::URLBuffer::capacity):
+        (WTF::URLBuffer::length):
+        (WTF::URLBuffer::data):
+        (WTF::URLBuffer::setLength):
+        (WTF::URLBuffer::append):
+        (WTF::URLBuffer::grow):
+
 2010-05-08  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, just reverting commit.
