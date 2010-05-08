@@ -1,3 +1,90 @@
+2010-05-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Split JSVALUE32_64 code out of JITOpcodes.cpp and into JITOpcodes32_64.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=38808
+
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/JITOpcodes.cpp:
+        * jit/JITOpcodes32_64.cpp: Added.
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::emit_op_mov):
+        (JSC::JIT::emit_op_end):
+        (JSC::JIT::emit_op_jmp):
+        (JSC::JIT::emit_op_loop_if_lesseq):
+        (JSC::JIT::emitSlow_op_loop_if_lesseq):
+        (JSC::JIT::emit_op_new_object):
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof):
+        (JSC::JIT::emit_op_new_func):
+        (JSC::JIT::emit_op_get_global_var):
+        (JSC::JIT::emit_op_put_global_var):
+        (JSC::JIT::emit_op_get_scoped_var):
+        (JSC::JIT::emit_op_put_scoped_var):
+        (JSC::JIT::emit_op_tear_off_activation):
+        (JSC::JIT::emit_op_tear_off_arguments):
+        (JSC::JIT::emit_op_new_array):
+        (JSC::JIT::emit_op_resolve):
+        (JSC::JIT::emit_op_to_primitive):
+        (JSC::JIT::emitSlow_op_to_primitive):
+        (JSC::JIT::emit_op_strcat):
+        (JSC::JIT::emit_op_resolve_base):
+        (JSC::JIT::emit_op_resolve_skip):
+        (JSC::JIT::emit_op_resolve_global):
+        (JSC::JIT::emitSlow_op_resolve_global):
+        (JSC::JIT::emit_op_not):
+        (JSC::JIT::emitSlow_op_not):
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emitSlow_op_jfalse):
+        (JSC::JIT::emit_op_jtrue):
+        (JSC::JIT::emitSlow_op_jtrue):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_jneq_ptr):
+        (JSC::JIT::emit_op_jsr):
+        (JSC::JIT::emit_op_sret):
+        (JSC::JIT::emit_op_eq):
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emit_op_neq):
+        (JSC::JIT::emitSlow_op_neq):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emit_op_stricteq):
+        (JSC::JIT::emitSlow_op_stricteq):
+        (JSC::JIT::emit_op_nstricteq):
+        (JSC::JIT::emitSlow_op_nstricteq):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        (JSC::JIT::emit_op_resolve_with_base):
+        (JSC::JIT::emit_op_new_func_exp):
+        (JSC::JIT::emit_op_throw):
+        (JSC::JIT::emit_op_get_pnames):
+        (JSC::JIT::emit_op_next_pname):
+        (JSC::JIT::emit_op_push_scope):
+        (JSC::JIT::emit_op_pop_scope):
+        (JSC::JIT::emit_op_to_jsnumber):
+        (JSC::JIT::emitSlow_op_to_jsnumber):
+        (JSC::JIT::emit_op_push_new_scope):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_jmp_scopes):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        (JSC::JIT::emit_op_switch_string):
+        (JSC::JIT::emit_op_new_error):
+        (JSC::JIT::emit_op_debug):
+        (JSC::JIT::emit_op_enter):
+        (JSC::JIT::emit_op_enter_with_activation):
+        (JSC::JIT::emit_op_create_arguments):
+        (JSC::JIT::emit_op_init_arguments):
+        (JSC::JIT::emit_op_convert_this):
+        (JSC::JIT::emitSlow_op_convert_this):
+        (JSC::JIT::emit_op_profile_will_call):
+        (JSC::JIT::emit_op_profile_did_call):
+
 2010-05-08  Gabor Loki  <loki@webkit.org>
 
         Reviewed by Gavin Barraclough.

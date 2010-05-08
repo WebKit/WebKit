@@ -120,6 +120,7 @@
             'jit/JITCode.h',
             'jit/JITInlineMethods.h',
             'jit/JITOpcodes.cpp',
+            'jit/JITOpcodes32_64.cpp',
             'jit/JITPropertyAccess.cpp',
             'jit/JITPropertyAccess32_64.cpp',
             'jit/JITStubCall.h',

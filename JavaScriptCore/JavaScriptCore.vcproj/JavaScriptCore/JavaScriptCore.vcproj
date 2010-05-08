@@ -1689,6 +1689,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\jit\JITOpcodes32_64.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\jit\JITPropertyAccess.cpp"
 				>
 			</File>
