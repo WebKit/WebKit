@@ -1,3 +1,9 @@
+2010-05-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Forgot to rebase fast/dom/prototype-inheritance-2.html after the <vkern> patches.
+
+        * platform/win/fast/dom/prototype-inheritance-2-expected.txt:
+
 2010-05-04  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Eric Seidel.

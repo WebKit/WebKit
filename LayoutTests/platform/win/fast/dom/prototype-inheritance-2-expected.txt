@@ -340,6 +340,7 @@ Never found SVGForeignObjectElement
 Never found SVGGElement
 Never found SVGGlyphElement
 Never found SVGGradientElement
+Never found SVGHKernElement
 Never found SVGImageElement
 Never found SVGLength
 Never found SVGLengthList
@@ -403,6 +404,7 @@ Never found SVGTransform
 Never found SVGTransformList
 Never found SVGUnitTypes
 Never found SVGUseElement
+Never found SVGVKernElement
 Never found SVGViewElement
 Never found SharedWorker
 Never found StyleSheet
