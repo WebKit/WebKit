@@ -1,3 +1,17 @@
+2010-05-08  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [chromium]: Upload test results json files to app engine server
+        Add an option to run_webkit_tests.py to upload generated
+        JSON files to app engine server. These JSON files will be used
+        by chromium layout test falkiness dashboard.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36063
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_results_uploader.py: Added.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-05-08  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

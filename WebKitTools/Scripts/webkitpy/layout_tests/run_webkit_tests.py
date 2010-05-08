@@ -62,16 +62,17 @@ import sys
 import time
 import traceback
 
-from layout_package import test_expectations
+from layout_package import dump_render_tree_thread
 from layout_package import json_layout_results_generator
 from layout_package import printing
+from layout_package import test_expectations
 from layout_package import test_failures
-from layout_package import dump_render_tree_thread
 from layout_package import test_files
+from layout_package import test_results_uploader
 from test_types import fuzzy_image_diff
 from test_types import image_diff
-from test_types import test_type_base
 from test_types import text_diff
+from test_types import test_type_base
 
 from webkitpy.common.system.executive import Executive
 from webkitpy.thirdparty import simplejson
@@ -790,6 +791,9 @@ class TestRunner:
         self._write_json_files(unexpected_results, result_summary,
                              individual_test_timings)
 
+        # Upload generated JSON files to appengine server.
+        self._upload_json_files()
+
         # Write the summary to disk (results.html) and display it if requested.
         wrote_results = self._write_results_html_file(result_summary)
         if self._options.show_results and wrote_results:
@@ -877,6 +881,31 @@ class TestRunner:
             self._expectations, result_summary, self._test_files_list)
 
         _log.debug("Finished writing JSON files.")
+
+    def _upload_json_files(self):
+        if not self._options.test_results_server:
+            return
+
+        _log.info("Uploading JSON files for builder: %s",
+                   self._options.builder_name)
+
+        attrs = [('builder', self._options.builder_name)]
+        json_files = ["expectations.json", "results.json"]
+
+        files = [(file, os.path.join(self._options.results_directory, file))
+            for file in json_files]
+
+        uploader = test_results_uploader.TestResultsUploader(
+            self._options.test_results_server)
+        try:
+            # Set uploading timeout in case appengine server is having problem.
+            # 120 seconds are more than enough to upload test results.
+            uploader.upload(attrs, files, 120)
+        except Exception, err:
+            _log.error("Upload failed: %s" % err)
+            return
+
+        _log.info("JSON files uploaded.")
 
     def _print_expected_results_of_type(self, result_summary,
                                         result_type, result_type_str):
@@ -1608,6 +1637,9 @@ def parse_args(args=None):
                   "webkit-rel.")),
         optparse.make_option("--build-number", default="DUMMY_BUILD_NUMBER",
             help=("The build number of the builder running this script.")),
+        optparse.make_option("--test-results-server", default="",
+            help=("If specified, upload results json files to this appengine "
+                  "server.")),
     ]
 
     option_list = (configuration_options + print_options +
