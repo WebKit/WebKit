@@ -1,3 +1,17 @@
+2010-05-07  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Dirk Schulze
+
+        Fixed the inverse function of f(x) = ((x + 0.055) / 1.055) ^ 2.4
+        https://bugs.webkit.org/show_bug.cgi?id=38735
+
+        It is ((x ^ (1 / 2.4)) * 1.055) - 0.055
+
+        Chromium pixel tests cover the issue.
+
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::transformColorSpace):
+
 2010-05-04  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson

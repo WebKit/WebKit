@@ -42,7 +42,6 @@ void ImageBuffer::transformColorSpace(ImageColorSpace srcColorSpace, ImageColorS
         (dstColorSpace != LinearRGB && dstColorSpace != DeviceRGB))
         return;
 
-    Vector<int> lookUpTable;
     if (dstColorSpace == LinearRGB) {
         if (m_linearRgbLUT.isEmpty()) {
             for (unsigned i = 0; i < 256; i++) {
@@ -57,8 +56,8 @@ void ImageBuffer::transformColorSpace(ImageColorSpace srcColorSpace, ImageColorS
     } else if (dstColorSpace == DeviceRGB) {
         if (m_deviceRgbLUT.isEmpty()) {
             for (unsigned i = 0; i < 256; i++) {
-                float color = i  / 255.0f;
-                color = pow(1.055f * color, 1.0f / 2.4f) - 0.055f;
+                float color = i / 255.0f;
+                color = (powf(color, 1.0f / 2.4f) * 1.055f) - 0.055f;
                 color = std::max(0.0f, color);
                 color = std::min(1.0f, color);
                 m_deviceRgbLUT.append(static_cast<int>(color * 255));
