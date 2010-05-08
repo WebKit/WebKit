@@ -219,26 +219,49 @@ WebInspector.TextPrompt.prototype = {
         if (originalWordPrefixRange.toString() + selectionRange.toString() != fullWordRange.toString())
             return;
 
-        if (completions.length === 1 || selection.isCollapsed || auto) {
-            var completionText = completions[0];
-        } else {
-            var currentText = fullWordRange.toString();
-
-            var foundIndex = null;
-            for (var i = 0; i < completions.length; ++i)
-                if (completions[i] === currentText)
-                    foundIndex = i;
-
-            var nextIndex = foundIndex + (reverse ? -1 : 1);
-            if (foundIndex === null || nextIndex >= completions.length)
-                var completionText = completions[0];
-            else if (nextIndex < 0)
-                var completionText = completions[completions.length - 1];
-            else
-                var completionText = completions[nextIndex];
-        }
-
         var wordPrefixLength = originalWordPrefixRange.toString().length;
+
+        if (auto)
+            var completionText = completions[0];
+        else {
+            if (completions.length === 1) {
+                var completionText = completions[0];
+                wordPrefixLength = completionText.length;
+            } else {
+                var commonPrefix = completions[0];
+                for (var i = 0; i < completions.length; ++i) {
+                    var completion = completions[i];
+                    var lastIndex = Math.min(commonPrefix.length, completion.length);
+                    for (var j = wordPrefixLength; j < lastIndex; ++j) {
+                        if (commonPrefix[j] !== completion[j]) {
+                            commonPrefix = commonPrefix.substr(0, j);
+                            break;
+                        }
+                    }
+                }
+                wordPrefixLength = commonPrefix.length;
+
+                if (selection.isCollapsed)
+                    var completionText = completions[1];
+                else {
+                    var currentText = fullWordRange.toString();
+
+                    var foundIndex = null;
+                    for (var i = 0; i < completions.length; ++i) {
+                        if (completions[i] === currentText)
+                            foundIndex = i;
+                    }
+
+                    var nextIndex = foundIndex + (reverse ? -1 : 1);
+                    if (foundIndex === null || nextIndex >= completions.length)
+                        var completionText = completions[0];
+                    else if (nextIndex < 0)
+                        var completionText = completions[completions.length - 1];
+                    else
+                        var completionText = completions[nextIndex];
+                }
+            }
+        }
 
         this._userEnteredRange = fullWordRange;
         this._userEnteredText = fullWordRange.toString();

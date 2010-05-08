@@ -1,3 +1,17 @@
+2010-05-08  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        WebInspector: Autocompletion in console is not usable because it is not add to the entered text the common prefix of suggestions.
+        As example if you entered $0.getE then getElementByClassName will be suggested as gray text.
+        If you press tab then getElementByClassName be suggested again and lementByClassName becomes selected as black text with selection background.
+        Really after pressing the TAB the next suggestion should be selected (getElementByTagName) and only flexible part of suggestions should be selected.
+        In this case it should be TagName because getElementBy is the common part for all getE prefix suggestions.
+        https://bugs.webkit.org/show_bug.cgi?id=38753
+
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt.prototype._completionsReady):
+
 2010-05-08  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Darin Fisher.
