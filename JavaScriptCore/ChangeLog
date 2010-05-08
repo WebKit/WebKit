@@ -1,3 +1,22 @@
+2010-05-04  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak
+
+        Safari pegs CPU and drops tons of frames using HTML5 Vimeo player
+        <https://bugs.webkit.org/show_bug.cgi?id=34005>
+        <rdar://problem/7569713>
+        
+        Added cancelCallOnMainThread.  callOnMainThread should always now be paired
+        with cancelCallOnMainThread in situations where the refcon passed to callOnMainThread
+        may be dealloced before the main thread function can be dispatched.  
+        
+        * wtf/MainThread.cpp:
+        (WTF::FunctionWithContext::operator == ): Supports the FunctionWithContextFinder predicate functor.
+        (WTF::FunctionWithContextFinder::FunctionWithContextFinder):  Predicate functor for use with Dequeue::findIf
+        (WTF::FunctionWithContextFinder::operator()):
+        (WTF::cancelCallOnMainThread):
+        * wtf/MainThread.h:
+
 2010-05-07  Oliver Hunt  <oliver@apple.com>
 
         Windows build fix.

@@ -28,7 +28,7 @@
 
 #if ENABLE(VIDEO)
 
-#include "QTMovieWin.h"
+#include "QTMovieGWorld.h"
 
 #include <WebCore/HTMLMediaElement.h>
 #include <WebCore/Image.h>
@@ -99,7 +99,7 @@ private:
     int m_dragStartOffset;
 };
 
-class FullscreenVideoController : QTMovieWinFullscreenClient, public Noncopyable {
+class FullscreenVideoController : QTMovieGWorldFullscreenClient, public Noncopyable {
 public:
     FullscreenVideoController();
     virtual ~FullscreenVideoController();
@@ -111,11 +111,11 @@ public:
     void exitFullscreen();
 
 private:
-    // QTMovieWinFullscreenClient
+    // QTMovieGWorldFullscreenClient
     virtual LRESULT fullscreenClientWndProc(HWND, UINT message, WPARAM, LPARAM);
 
     void ensureWindow();
-    QTMovieWin* movie() const;
+    QTMovieGWorld* movie() const;
 
     bool canPlay() const;
     void play();

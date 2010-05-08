@@ -23,27 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MediaPlayerPrivateQuickTimeWin_h
-#define MediaPlayerPrivateQuickTimeWin_h
+#ifndef MediaPlayerPrivateQuickTimeVisualContext_h
+#define MediaPlayerPrivateQuickTimeVisualContext_h
 
 #if ENABLE(VIDEO)
 
+#include "GraphicsLayerClient.h"
 #include "MediaPlayerPrivate.h"
 #include "Timer.h"
-#include <QTMovie.h>
-#include <QTMovieGWorld.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RetainPtr.h>
-
-#if USE(ACCELERATED_COMPOSITING)
-#include "GraphicsLayerClient.h"
-#endif 
 
 #ifndef DRAW_FRAME_RATE
 #define DRAW_FRAME_RATE 0
 #endif
 
 typedef struct CGImage *CGImageRef;
+class QTMovie;
+class QTMovieVisualContext;
+class WKCAImageQueue;
 
 namespace WebCore {
 
@@ -52,34 +50,18 @@ class IntSize;
 class IntRect;
 class String;
 
-class MediaPlayerPrivate : public MediaPlayerPrivateInterface, public QTMovieClient, public QTMovieGWorldClient 
-#if USE(ACCELERATED_COMPOSITING)
-        , public GraphicsLayerClient
-#endif 
-{
+class MediaPlayerPrivateQuickTimeVisualContext : public MediaPlayerPrivateInterface {
 public:
     static void registerMediaEngine(MediaEngineRegistrar);
 
-    ~MediaPlayerPrivate();
+    ~MediaPlayerPrivateQuickTimeVisualContext();
 
 private:
-
-#if USE(ACCELERATED_COMPOSITING)
-    // GraphicsLayerClient methods
-    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& inClip);
-    virtual void notifyAnimationStarted(const GraphicsLayer*, double time) { }
-    virtual void notifySyncRequired(const GraphicsLayer*) { }
-    virtual bool showDebugBorders() const { return false; }
-    virtual bool showRepaintCounter() const { return false; }
-#endif 
-
-    MediaPlayerPrivate(MediaPlayer*);
+    MediaPlayerPrivateQuickTimeVisualContext(MediaPlayer*);
 
     virtual bool supportsFullscreen() const;
     virtual PlatformMedia platformMedia() const;
-#if USE(ACCELERATED_COMPOSITING)
     PlatformLayer* platformLayer() const;
-#endif
 
     IntSize naturalSize() const;
     bool hasVideo() const;
@@ -127,14 +109,9 @@ private:
     void updateStates();
     void doSeek();
     void cancelSeek();
-    void seekTimerFired(Timer<MediaPlayerPrivate>*);
+    void seekTimerFired(Timer<MediaPlayerPrivateQuickTimeVisualContext>*);
     float maxTimeLoaded() const;
     void sawUnsupportedTracks();
-
-    virtual void movieEnded(QTMovie*);
-    virtual void movieLoadStateChanged(QTMovie*);
-    virtual void movieTimeChanged(QTMovie*);
-    virtual void movieNewImageAvailable(QTMovieGWorld*);
 
     // engine support
     static MediaPlayerPrivateInterface* create(MediaPlayer*);
@@ -142,10 +119,8 @@ private:
     static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs);
     static bool isAvailable();
 
-#if USE(ACCELERATED_COMPOSITING)
     virtual bool supportsAcceleratedRendering() const;
     virtual void acceleratedRenderingStateChanged();
-#endif
 
     enum MediaRenderingMode { MediaRenderingNone, MediaRenderingSoftwareRenderer, MediaRenderingMovieLayer };
     MediaRenderingMode currentRenderingMode() const;
@@ -162,14 +137,28 @@ private:
     void setUpCookiesForQuickTime(const String& url);
     String rfc2616DateStringFromTime(CFAbsoluteTime);
 
+    void visualContextTimerFired(Timer<MediaPlayerPrivateQuickTimeVisualContext>*);
+    void retrieveCurrentImage();
+
+    class MovieClient;
+    friend class MovieClient;
+    OwnPtr<MovieClient> m_movieClient;
+
+    class LayerClient;
+    friend class LayerClient;
+    OwnPtr<LayerClient> m_layerClient;
+
+    class VisualContextClient;
+    friend class VisualContextClient;
+    OwnPtr<VisualContextClient> m_visualContextClient;
+
     MediaPlayer* m_player;
-    RefPtr<QTMovie> m_qtMovie;
-    RefPtr<QTMovieGWorld> m_qtGWorld;
-#if USE(ACCELERATED_COMPOSITING)
+    RefPtr<QTMovie> m_movie;
     OwnPtr<GraphicsLayer> m_qtVideoLayer;
-#endif
+    RefPtr<QTMovieVisualContext> m_visualContext;
     float m_seekTo;
-    Timer<MediaPlayerPrivate> m_seekTimer;
+    Timer<MediaPlayerPrivateQuickTimeVisualContext> m_seekTimer;
+    Timer<MediaPlayerPrivateQuickTimeVisualContext> m_visualContextTimer;
     IntSize m_size;
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;

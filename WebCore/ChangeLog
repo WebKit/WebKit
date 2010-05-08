@@ -1,3 +1,216 @@
+2010-05-04  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson
+
+        Safari pegs CPU and drops tons of frames using HTML5 Vimeo player
+        <https://bugs.webkit.org/show_bug.cgi?id=34005>
+        <rdar://problem/7569713>
+
+        The original functionality of QTMovieWin has been split between QTMovieGWorld, 
+        and a new class: QTMovie.  QTMovie contains all the "controller" parts (changing
+        the rate, seeking, etc) while QTMovieGWorld retains all the drawing code.  QTMovieGWorld
+        now takes a QTMovie, and as such QTMovie is now retainable.  QTMovieGWorld registers
+        itself as a client of QTMovie, so that it can receive load-state notifications,
+        and thus QTMovie must now support multiple clients.  Movie tasking timer support
+        has been moved into its own class (QTMovieTask) and will be addressed in a future 
+        patch.  Most of the functions listed below only changed so much as their class name changed.
+        
+        * platform/graphics/win/QTMovie.cpp: Copied from WebCore/platform/graphics/win/QTMovieWin.cpp.
+        (QTMoviePrivate::QTMoviePrivate):
+        (QTMoviePrivate::~QTMoviePrivate):
+        (QTMoviePrivate::startTask):
+        (QTMoviePrivate::endTask):
+        (QTMoviePrivate::task):
+        (QTMoviePrivate::createMovieController):
+        (QTMovie::QTMovie):
+        (QTMovie::~QTMovie):
+        (QTMovie::addClient):
+        (QTMovie::removeClient):
+        (QTMovie::play):
+        (QTMovie::pause):
+        (QTMovie::rate):
+        (QTMovie::setRate):
+        (QTMovie::duration):
+        (QTMovie::currentTime):
+        (QTMovie::setCurrentTime):
+        (QTMovie::setVolume):
+        (QTMovie::setPreservesPitch):
+        (QTMovie::dataSize):
+        (QTMovie::maxTimeLoaded):
+        (QTMovie::loadState):
+        (QTMovie::getNaturalSize):
+        (QTMovie::load):
+        (QTMovie::disableUnsupportedTracks):
+        (QTMovie::isDisabled):
+        (QTMovie::setDisabled):
+        (QTMovie::hasVideo):
+        (QTMovie::hasAudio):
+        (QTMovie::hasClosedCaptions):
+        (QTMovie::setClosedCaptionsVisible):
+        (QTMovie::countSupportedTypes):
+        (QTMovie::getSupportedType):
+        (QTMovie::initializeQuickTime):
+        (QTMovie::getMovieHandle):
+        * platform/graphics/win/QTMovie.h: Copied from WebCore/platform/graphics/win/QTMovieWin.h.
+        * platform/graphics/win/QTMovieGWorld.cpp: Copied from WebCore/platform/graphics/win/QTMovieWin.cpp.
+        (QTMovieGWorldPrivate::QTMovieGWorldPrivate):
+        (QTMovieGWorldPrivate::~QTMovieGWorldPrivate):
+        (QTMovieGWorldPrivate::cacheMovieScale):
+        (movieDrawingCompleteProc):
+        (QTMovieGWorldPrivate::registerDrawingCallback):
+        (QTMovieGWorldPrivate::unregisterDrawingCallback):
+        (QTMovieGWorldPrivate::drawingComplete):
+        (QTMovieGWorldPrivate::updateGWorld):
+        (QTMovieGWorldPrivate::createGWorld):
+        (QTMovieGWorldPrivate::clearGWorld):
+        (QTMovieGWorldPrivate::setSize):
+        (QTMovieGWorldPrivate::updateMovieSize):
+        (QTMovieGWorldPrivate::deleteGWorld):
+        (QTMovieGWorldPrivate::movieEnded):
+        (QTMovieGWorldPrivate::movieLoadStateChanged):
+        (QTMovieGWorldPrivate::movieTimeChanged):
+        (QTMovieGWorld::QTMovieGWorld):
+        (QTMovieGWorld::~QTMovieGWorld):
+        (QTMovieGWorld::setSize):
+        (QTMovieGWorld::setVisible):
+        (QTMovieGWorld::getCurrentFrameInfo):
+        (QTMovieGWorld::paint):
+        (QTMovieGWorld::setDisabled):
+        (QTMovieGWorld::isDisabled):
+        (QTMovieGWorld::fullscreenWndProc):
+        (QTMovieGWorld::enterFullscreen):
+        (QTMovieGWorld::exitFullscreen):
+        (QTMovieGWorld::setMovie):
+        (QTMovieGWorld::movie):
+        * platform/graphics/win/QTMovieGWorld.h: Copied from WebCore/platform/graphics/win/QTMovieWin.h.
+        * platform/graphics/win/QTMovieTask.cpp: Added.
+        (QTMovieTask::QTMovieTask):
+        (QTMovieTask::~QTMovieTask):
+        (QTMovieTask::sharedTask):
+        (QTMovieTask::updateTaskTimer):
+        (QTMovieTask::fireTaskClients):
+        (QTMovieTask::addTaskClient):
+        (QTMovieTask::removeTaskClient):
+        (QTMovieTask::setTaskTimerFuncs):
+        * platform/graphics/win/QTMovieTask.h: Added.
+
+2010-05-04  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson
+
+        Safari pegs CPU and drops tons of frames using HTML5 Vimeo player
+        <https://bugs.webkit.org/show_bug.cgi?id=34005>
+        <rdar://problem/7569713>
+
+        MediaPlayerPrivateQuickTimeVisualContext has been added as a 
+        supported MediaPlayer implementation.  MediaPlayerPrivateQuickTimeWin
+        has been left as a fallback MediaPlayer implementation for those media
+        types which do not support visual contexts (currently, none).
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::installedMediaEngines):
+
+2010-05-04  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak
+
+        Safari pegs CPU and drops tons of frames using HTML5 Vimeo player
+        <https://bugs.webkit.org/show_bug.cgi?id=34005>
+        <rdar://problem/7569713>
+
+        MediaPlayerPrivateTaskTimer has been broken out from MediaPlayerPrivateQuickTimeWin::TaskTimer
+        so that multiple clients can share its implementation.  It works with the new 
+        QTMovieTaskTimer to provide timer support to QTMovieTaskTimer clients.
+        
+        * platform/graphics/win/MediaPlayerPrivateTaskTimer.cpp: Added.
+        (WebCore::MediaPlayerPrivateTaskTimer::initialize):
+        (WebCore::MediaPlayerPrivateTaskTimer::setDelay):
+        (WebCore::MediaPlayerPrivateTaskTimer::stopTaskTimer):
+        (WebCore::MediaPlayerPrivateTaskTimer::fired):
+        * platform/graphics/win/MediaPlayerPrivateTaskTimer.h: Added.
+
+2010-05-04  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson
+
+        Safari pegs CPU and drops tons of frames using HTML5 Vimeo player
+        <https://bugs.webkit.org/show_bug.cgi?id=34005>
+        <rdar://problem/7569713>
+
+        MediaPlayerPrivateQuickTimeVisualContext is a new MediaPlayerPrivate implementation
+        which uses QTMovieVisualContext instead of QTMovieWin to render video frames. Much
+        like MediaPlayerPrivateQuickTimeWin, MPPQTVisualContext breaks out QTMovie and 
+        QTMovieVisualContext, and uses the newly shared MediaPlayerPrivateTaskTimer.  It also
+        uses aggregation (in the form of friend classes) instead of multiple inheritence 
+        to implement its various client callbacks, so as not to expose its own clients to
+        the QTMovie classes.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp: Copied from WebCore/platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp.
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.h: Copied from WebCore/platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h.
+
+2010-05-04  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak
+
+        Safari pegs CPU and drops tons of frames using HTML5 Vimeo player
+        <https://bugs.webkit.org/show_bug.cgi?id=34005>
+        <rdar://problem/7569713>
+        
+        MediaPlayerPrivateQuickTimeWin has been modified to support the new bifurcated 
+        QTMovie/QTMovieWin classes.  It's private TaskTimer class has been broken out
+        into a new top-level class (MediaPlayerPrivateTaskTimer) which will be addressed
+        in a future patch. 
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::~MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::load):
+        (WebCore::MediaPlayerPrivate::paused):
+        (WebCore::MediaPlayerPrivate::setSize):
+        (WebCore::MediaPlayerPrivate::setVisible):
+        (WebCore::MediaPlayerPrivate::paint):
+        (WebCore::mimeTypeCache):
+        (WebCore::MediaPlayerPrivate::isAvailable):
+        (WebCore::MediaPlayerPrivate::movieEnded):
+        (WebCore::MediaPlayerPrivate::movieLoadStateChanged):
+        (WebCore::MediaPlayerPrivate::movieTimeChanged):
+        (WebCore::MediaPlayerPrivate::movieNewImageAvailable):
+        (WebCore::MediaPlayerPrivate::paintContents):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h:
+
+2010-05-04  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Anders Carlsson
+
+        Safari pegs CPU and drops tons of frames using HTML5 Vimeo player
+        <https://bugs.webkit.org/show_bug.cgi?id=34005>
+        <rdar://problem/7569713>
+
+        QTCFDictionary defines functions which help serialize and unserialize
+        CFDictionaries.  This is necessary because QuickTime links against a 
+        non-debug CoreFoundation in our debug build, and passing non-debug 
+        CFDictionaries to a debug CF will cause a crash.
+        
+        QTMovieTask is a new class containing the tasking functionality broken
+        out from QTMovieWin.  This is necessary now that the tasking
+        functionality is needed in multiple files/classes.
+        
+        QTPixelBuffer is a C++ wrapper for CVPixelBuffers, necessary because
+        like the CF case above, QuickTime has its own implementation of CoreVideo
+        and its CV types cannot be used with the AAS version of CoreVideo.
+        
+        QTMovieVisualContext is the new drawing implementation, parallel to 
+        QTMovieWin.  It currently uses a software rendering path, but can be
+        extended in the future to support hardware rendering.
+        
+        * platform/graphics/win/QTCFDictionary.cpp: Added.
+        * platform/graphics/win/QTCFDictionary.h: Added.
+        * platform/graphics/win/QTMovieTask.cpp: Added.
+        * platform/graphics/win/QTMovieTask.h: Added.
+        * platform/graphics/win/QTMovieVisualContext.cpp: Added.
+        * platform/graphics/win/QTMovieVisualContext.h: Added.
+        * platform/graphics/win/QTPixelBuffer.cpp: Added.
+        * platform/graphics/win/QTPixelBuffer.h: Added.
+
 2010-05-07  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Brady Eidson.

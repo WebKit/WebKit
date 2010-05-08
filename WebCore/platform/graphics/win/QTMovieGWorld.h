@@ -23,10 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QTMovieWin_h
-#define QTMovieWin_h
+#ifndef QTMovieGWorld_h
+#define QTMovieGWorld_h
 
+
+#include "QTMovie.h"
 #include <Unicode.h>
+#include <WTF/RefCounted.h>
+#include <WTF/RefPtr.h>
 #include <windows.h>
 
 #ifdef QTMOVIEWIN_EXPORTS
@@ -35,62 +39,23 @@
 #define QTMOVIEWIN_API __declspec(dllimport)
 #endif
 
-class QTMovieWin;
-class QTMovieWinPrivate;
+class QTMovieGWorld;
+class QTMovieGWorldPrivate;
 
-class QTMovieWinClient {
+class QTMovieGWorldClient {
 public:
-    virtual void movieEnded(QTMovieWin*) = 0;
-    virtual void movieLoadStateChanged(QTMovieWin*) = 0;
-    virtual void movieTimeChanged(QTMovieWin*) = 0;
-    virtual void movieNewImageAvailable(QTMovieWin*) = 0;
+    virtual void movieNewImageAvailable(QTMovieGWorld*) = 0;
 };
 
-class QTMovieWinFullscreenClient {
+class QTMovieGWorldFullscreenClient {
 public:
     virtual LRESULT fullscreenClientWndProc(HWND, UINT message, WPARAM, LPARAM) = 0;
 };
 
-enum {
-    QTMovieLoadStateError = -1L,
-    QTMovieLoadStateLoaded  = 2000L,
-    QTMovieLoadStatePlayable = 10000L,
-    QTMovieLoadStatePlaythroughOK = 20000L,
-    QTMovieLoadStateComplete = 100000L
-};
-
-typedef const struct __CFURL * CFURLRef;
-
-class QTMOVIEWIN_API QTMovieWin {
+class QTMOVIEWIN_API QTMovieGWorld : public RefCounted<QTMovieGWorld> {
 public:
-    static bool initializeQuickTime();
-
-    typedef void (*SetTaskTimerDelayFunc)(double);
-    typedef void (*StopTaskTimerFunc)();
-    static void setTaskTimerFuncs(SetTaskTimerDelayFunc, StopTaskTimerFunc);
-    static void taskTimerFired();
-
-    QTMovieWin(QTMovieWinClient*);
-    ~QTMovieWin();
-
-    void load(const UChar* url, int len, bool preservesPitch);
-    long loadState() const;
-    float maxTimeLoaded() const;
-
-    void play();
-    void pause();
-
-    float rate() const;
-    void setRate(float);
-
-    float duration() const;
-    float currentTime() const;
-    void setCurrentTime(float) const;
-
-    void setVolume(float);
-    void setPreservesPitch(bool);
-
-    unsigned dataSize() const;
+    QTMovieGWorld(QTMovieGWorldClient*);
+    ~QTMovieGWorld();
 
     void getNaturalSize(int& width, int& height);
     void setSize(int width, int height);
@@ -99,29 +64,21 @@ public:
     void paint(HDC, int x, int y);
     void getCurrentFrameInfo(void*& buffer, unsigned& bitsPerPixel, unsigned& rowBytes, unsigned& width, unsigned& height);
 
-    void disableUnsupportedTracks(unsigned& enabledTrackCount, unsigned& totalTrackCount);
     void setDisabled(bool);
-
-    bool hasVideo() const;
-    bool hasAudio() const;
-
-    bool hasClosedCaptions() const;
-    void setClosedCaptionsVisible(bool);
-
-    static unsigned countSupportedTypes();
-    static void getSupportedType(unsigned index, const UChar*& str, unsigned& len);
+    bool isDisabled() const;
 
     // Returns the full-screen window created
-    HWND enterFullscreen(QTMovieWinFullscreenClient*);
+    HWND enterFullscreen(QTMovieGWorldFullscreenClient*);
     void exitFullscreen();
 
+    void setMovie(PassRefPtr<QTMovie>);
+    QTMovie* movie() const;
+
 private:
-    void load(CFURLRef, bool preservesPitch);
     static LRESULT fullscreenWndProc(HWND, UINT message, WPARAM, LPARAM);
 
-    QTMovieWinPrivate* m_private;
-    bool m_disabled;
-    friend class QTMovieWinPrivate;
+    QTMovieGWorldPrivate* m_private;
+    friend class QTMovieGWorldPrivate;
 };
 
 #endif

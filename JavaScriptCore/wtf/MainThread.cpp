@@ -51,7 +51,21 @@ struct FunctionWithContext {
         , syncFlag(syncFlag)
     { 
     }
+    bool operator == (const FunctionWithContext& o)
+    {
+        return function == o.function
+            && context == o.context
+            && syncFlag == o.syncFlag;
+    }
 };
+
+class FunctionWithContextFinder {
+public:
+    FunctionWithContextFinder(const FunctionWithContext& m) : m(m) {}
+    bool operator() (FunctionWithContext& o) { return o == m; }
+    FunctionWithContext m;
+};
+
 
 typedef Deque<FunctionWithContext> FunctionQueue;
 
@@ -183,6 +197,24 @@ void callOnMainThreadAndWait(MainThreadFunction* function, void* context)
     if (functionQueue().size() == 1)
         scheduleDispatchFunctionsOnMainThread();
     syncFlag.wait(functionQueueMutex);
+}
+
+void cancelCallOnMainThread(MainThreadFunction* function, void* context)
+{
+    ASSERT(function);
+
+    MutexLocker locker(mainThreadFunctionQueueMutex());
+
+    FunctionWithContextFinder pred(FunctionWithContext(function, context));
+
+    while (true) {
+        // We must redefine 'i' each pass, because the itererator's operator= 
+        // requires 'this' to be valid, and remove() invalidates all iterators
+        FunctionQueue::iterator i(functionQueue().findIf(pred));
+        if (i == functionQueue().end())
+            break;
+        functionQueue().remove(i);
+    }
 }
 
 void setMainThreadCallbacksPaused(bool paused)

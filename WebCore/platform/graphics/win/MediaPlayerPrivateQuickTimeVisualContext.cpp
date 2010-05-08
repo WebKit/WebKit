@@ -26,7 +26,7 @@
 #include "config.h"
 
 #if ENABLE(VIDEO)
-#include "MediaPlayerPrivateQuickTimeWin.h"
+#include "MediaPlayerPrivateQuickTimeVisualContext.h"
 
 #include "Cookie.h"
 #include "CookieJar.h"
@@ -35,7 +35,10 @@
 #include "GraphicsContext.h"
 #include "KURL.h"
 #include "MediaPlayerPrivateTaskTimer.h"
+#include "QTCFDictionary.h"
+#include "QTMovie.h"
 #include "QTMovieTask.h"
+#include "QTMovieVisualContext.h"
 #include "ScrollView.h"
 #include "SoftLinking.h"
 #include "StringBuilder.h"
@@ -45,6 +48,7 @@
 #include <Wininet.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>
+#include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 
@@ -53,36 +57,68 @@
 #include "WKCACFLayer.h"
 #endif
 
-#if DRAW_FRAME_RATE
-#include "Document.h"
-#include "Font.h"
-#include "RenderObject.h"
-#include "RenderStyle.h"
-#include "Windows.h"
-#endif
-
 using namespace std;
+
+const CFStringRef kMinQuartzCoreVersion = CFSTR("1.0.43.0");
+const CFStringRef kMinCoreVideoVersion = CFSTR("1.0.0.2");
 
 namespace WebCore {
 
 SOFT_LINK_LIBRARY(Wininet)
 SOFT_LINK(Wininet, InternetSetCookieExW, DWORD, WINAPI, (LPCWSTR lpszUrl, LPCWSTR lpszCookieName, LPCWSTR lpszCookieData, DWORD dwFlags, DWORD_PTR dwReserved), (lpszUrl, lpszCookieName, lpszCookieData, dwFlags, dwReserved))
 
-MediaPlayerPrivateInterface* MediaPlayerPrivate::create(MediaPlayer* player) 
+// Interface declaration for MediaPlayerPrivateQuickTimeVisualContext's QTMovieClient aggregate
+class MediaPlayerPrivateQuickTimeVisualContext::MovieClient : public QTMovieClient {
+public:
+    MovieClient(MediaPlayerPrivateQuickTimeVisualContext* parent) : m_parent(parent) {}
+    virtual ~MovieClient() { m_parent = 0; }
+    virtual void movieEnded(QTMovie*);
+    virtual void movieLoadStateChanged(QTMovie*);
+    virtual void movieTimeChanged(QTMovie*);
+private:
+    MediaPlayerPrivateQuickTimeVisualContext* m_parent;
+};
+
+// Interface declaration for MediaPlayerPrivateQuickTimeVisualContext's GraphicsLayerClient aggregate
+class MediaPlayerPrivateQuickTimeVisualContext::LayerClient : public GraphicsLayerClient {
+public:
+    LayerClient(MediaPlayerPrivateQuickTimeVisualContext* parent) : m_parent(parent) {}
+    virtual ~LayerClient() { m_parent = 0; }
+    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& inClip);
+    virtual void notifyAnimationStarted(const GraphicsLayer*, double time) { }
+    virtual void notifySyncRequired(const GraphicsLayer*) { }
+    virtual bool showDebugBorders() const { return false; }
+    virtual bool showRepaintCounter() const { return false; }
+private:
+    MediaPlayerPrivateQuickTimeVisualContext* m_parent;
+};
+
+class MediaPlayerPrivateQuickTimeVisualContext::VisualContextClient : public QTMovieVisualContextClient {
+public:
+    VisualContextClient(MediaPlayerPrivateQuickTimeVisualContext* parent) : m_parent(parent) {}
+    virtual ~VisualContextClient() { m_parent = 0; }
+    void imageAvailableForTime(const QTCVTimeStamp*);
+    static void retrieveCurrentImageProc(void*);
+private:
+    MediaPlayerPrivateQuickTimeVisualContext* m_parent;
+};
+
+MediaPlayerPrivateInterface* MediaPlayerPrivateQuickTimeVisualContext::create(MediaPlayer* player) 
 { 
-    return new MediaPlayerPrivate(player);
+    return new MediaPlayerPrivateQuickTimeVisualContext(player);
 }
 
-void MediaPlayerPrivate::registerMediaEngine(MediaEngineRegistrar registrar)
+void MediaPlayerPrivateQuickTimeVisualContext::registerMediaEngine(MediaEngineRegistrar registrar)
 {
     if (isAvailable())
         registrar(create, getSupportedTypes, supportsType);
 }
 
-MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
+MediaPlayerPrivateQuickTimeVisualContext::MediaPlayerPrivateQuickTimeVisualContext(MediaPlayer* player)
     : m_player(player)
     , m_seekTo(-1)
-    , m_seekTimer(this, &MediaPlayerPrivate::seekTimerFired)
+    , m_seekTimer(this, &MediaPlayerPrivateQuickTimeVisualContext::seekTimerFired)
+    , m_visualContextTimer(this, &MediaPlayerPrivateQuickTimeVisualContext::visualContextTimerFired)
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::HaveNothing)
     , m_enabledTrackCount(0)
@@ -92,40 +128,38 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_isStreaming(false)
     , m_visible(false)
     , m_newFrameAvailable(false)
-#if DRAW_FRAME_RATE
-    , m_frameCountWhilePlaying(0)
-    , m_timeStartedPlaying(0)
-    , m_timeStoppedPlaying(0)
-#endif
+    , m_movieClient(new MediaPlayerPrivateQuickTimeVisualContext::MovieClient(this))
+    , m_layerClient(new MediaPlayerPrivateQuickTimeVisualContext::LayerClient(this))
+    , m_visualContextClient(new MediaPlayerPrivateQuickTimeVisualContext::VisualContextClient(this))
 {
 }
 
-MediaPlayerPrivate::~MediaPlayerPrivate()
+MediaPlayerPrivateQuickTimeVisualContext::~MediaPlayerPrivateQuickTimeVisualContext()
 {
     tearDownVideoRendering();
-    m_qtGWorld->setMovie(0);
+    cancelCallOnMainThread(&VisualContextClient::retrieveCurrentImageProc, this);
 }
 
-bool MediaPlayerPrivate::supportsFullscreen() const
+bool MediaPlayerPrivateQuickTimeVisualContext::supportsFullscreen() const
 {
     return true;
 }
 
-PlatformMedia MediaPlayerPrivate::platformMedia() const
+PlatformMedia MediaPlayerPrivateQuickTimeVisualContext::platformMedia() const
 {
     PlatformMedia p;
-    p.qtMovie = reinterpret_cast<QTMovie*>(m_qtMovie.get());
+    p.qtMovie = reinterpret_cast<QTMovie*>(m_movie.get());
     return p;
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-PlatformLayer* MediaPlayerPrivate::platformLayer() const
+PlatformLayer* MediaPlayerPrivateQuickTimeVisualContext::platformLayer() const
 {
     return m_qtVideoLayer ? m_qtVideoLayer->platformLayer() : 0;
 }
 #endif
 
-String MediaPlayerPrivate::rfc2616DateStringFromTime(CFAbsoluteTime time)
+String MediaPlayerPrivateQuickTimeVisualContext::rfc2616DateStringFromTime(CFAbsoluteTime time)
 {
     static const char* const dayStrings[] = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
     static const char* const monthStrings[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
@@ -163,8 +197,7 @@ static void addCookieParam(StringBuilder& cookieBuilder, const String& name, con
     }
 }
 
-
-void MediaPlayerPrivate::setUpCookiesForQuickTime(const String& url)
+void MediaPlayerPrivateQuickTimeVisualContext::setUpCookiesForQuickTime(const String& url)
 {
     // WebCore loaded the page with the movie URL with CFNetwork but QuickTime will 
     // use WinINet to download the movie, so we need to copy any cookies needed to
@@ -216,7 +249,7 @@ void MediaPlayerPrivate::setUpCookiesForQuickTime(const String& url)
     }
 }
 
-void MediaPlayerPrivate::load(const String& url)
+void MediaPlayerPrivateQuickTimeVisualContext::load(const String& url)
 {
     if (!QTMovie::initializeQuickTime()) {
         // FIXME: is this the right error to return?
@@ -240,57 +273,53 @@ void MediaPlayerPrivate::load(const String& url)
 
     setUpCookiesForQuickTime(url);
 
-    m_qtMovie = adoptRef(new QTMovie(this));
-    m_qtMovie->load(url.characters(), url.length(), m_player->preservesPitch());
-    m_qtMovie->setVolume(m_player->volume());
+    m_movie = adoptRef(new QTMovie(m_movieClient.get()));
+    m_movie->load(url.characters(), url.length(), m_player->preservesPitch());
+    m_movie->setVolume(m_player->volume());
 
-    m_qtGWorld = adoptRef(new QTMovieGWorld(this));
-    m_qtGWorld->setMovie(m_qtMovie.get());
-    m_qtGWorld->setVisible(m_player->visible());
+    CFDictionaryRef options = QTMovieVisualContext::getCGImageOptions();
+    m_visualContext = adoptRef(new QTMovieVisualContext(m_visualContextClient.get(), options));
 }
 
-void MediaPlayerPrivate::play()
+void MediaPlayerPrivateQuickTimeVisualContext::play()
 {
-    if (!m_qtMovie)
+    if (!m_movie)
         return;
     m_startedPlaying = true;
-#if DRAW_FRAME_RATE
-    m_frameCountWhilePlaying = 0;
-#endif
 
-    m_qtMovie->play();
+    m_movie->play();
+    m_visualContextTimer.startRepeating(1.0 / 30);
 }
 
-void MediaPlayerPrivate::pause()
+void MediaPlayerPrivateQuickTimeVisualContext::pause()
 {
-    if (!m_qtMovie)
+    if (!m_movie)
         return;
     m_startedPlaying = false;
-#if DRAW_FRAME_RATE
-    m_timeStoppedPlaying = WTF::currentTime();
-#endif
-    m_qtMovie->pause();
+
+    m_movie->pause();
+    m_visualContextTimer.stop();
 }
 
-float MediaPlayerPrivate::duration() const
+float MediaPlayerPrivateQuickTimeVisualContext::duration() const
 {
-    if (!m_qtMovie)
+    if (!m_movie)
         return 0;
-    return m_qtMovie->duration();
+    return m_movie->duration();
 }
 
-float MediaPlayerPrivate::currentTime() const
+float MediaPlayerPrivateQuickTimeVisualContext::currentTime() const
 {
-    if (!m_qtMovie)
+    if (!m_movie)
         return 0;
-    return m_qtMovie->currentTime();
+    return m_movie->currentTime();
 }
 
-void MediaPlayerPrivate::seek(float time)
+void MediaPlayerPrivateQuickTimeVisualContext::seek(float time)
 {
     cancelSeek();
     
-    if (!m_qtMovie)
+    if (!m_movie)
         return;
     
     if (time > duration())
@@ -303,28 +332,28 @@ void MediaPlayerPrivate::seek(float time)
         m_seekTimer.start(0, 0.5f);
 }
     
-void MediaPlayerPrivate::doSeek() 
+void MediaPlayerPrivateQuickTimeVisualContext::doSeek() 
 {
-    float oldRate = m_qtMovie->rate();
+    float oldRate = m_movie->rate();
     if (oldRate)
-        m_qtMovie->setRate(0);
-    m_qtMovie->setCurrentTime(m_seekTo);
+        m_movie->setRate(0);
+    m_movie->setCurrentTime(m_seekTo);
     float timeAfterSeek = currentTime();
     // restore playback only if not at end, othewise QTMovie will loop
     if (oldRate && timeAfterSeek < duration())
-        m_qtMovie->setRate(oldRate);
+        m_movie->setRate(oldRate);
     cancelSeek();
 }
 
-void MediaPlayerPrivate::cancelSeek()
+void MediaPlayerPrivateQuickTimeVisualContext::cancelSeek()
 {
     m_seekTo = -1;
     m_seekTimer.stop();
 }
 
-void MediaPlayerPrivate::seekTimerFired(Timer<MediaPlayerPrivate>*)
+void MediaPlayerPrivateQuickTimeVisualContext::seekTimerFired(Timer<MediaPlayerPrivateQuickTimeVisualContext>*)
 {        
-    if (!m_qtMovie || !seeking() || currentTime() == m_seekTo) {
+    if (!m_movie || !seeking() || currentTime() == m_seekTo) {
         cancelSeek();
         updateStates();
         m_player->timeChanged(); 
@@ -343,80 +372,85 @@ void MediaPlayerPrivate::seekTimerFired(Timer<MediaPlayerPrivate>*)
     }
 }
 
-bool MediaPlayerPrivate::paused() const
+bool MediaPlayerPrivateQuickTimeVisualContext::paused() const
 {
-    if (!m_qtMovie)
+    if (!m_movie)
         return true;
-    return (!m_qtMovie->rate());
+    return (!m_movie->rate());
 }
 
-bool MediaPlayerPrivate::seeking() const
+bool MediaPlayerPrivateQuickTimeVisualContext::seeking() const
 {
-    if (!m_qtMovie)
+    if (!m_movie)
         return false;
     return m_seekTo >= 0;
 }
 
-IntSize MediaPlayerPrivate::naturalSize() const
+IntSize MediaPlayerPrivateQuickTimeVisualContext::naturalSize() const
 {
-    if (!m_qtMovie)
+    if (!m_movie)
         return IntSize();
     int width;
     int height;
-    m_qtMovie->getNaturalSize(width, height);
+    m_movie->getNaturalSize(width, height);
     return IntSize(width, height);
 }
 
-bool MediaPlayerPrivate::hasVideo() const
+bool MediaPlayerPrivateQuickTimeVisualContext::hasVideo() const
 {
-    if (!m_qtMovie)
+    if (!m_movie)
         return false;
-    return m_qtMovie->hasVideo();
+    return m_movie->hasVideo();
 }
 
-bool MediaPlayerPrivate::hasAudio() const
+bool MediaPlayerPrivateQuickTimeVisualContext::hasAudio() const
 {
-    if (!m_qtMovie)
+    if (!m_movie)
         return false;
-    return m_qtMovie->hasAudio();
+    return m_movie->hasAudio();
 }
 
-void MediaPlayerPrivate::setVolume(float volume)
+void MediaPlayerPrivateQuickTimeVisualContext::setVolume(float volume)
 {
-    if (!m_qtMovie)
+    if (!m_movie)
         return;
-    m_qtMovie->setVolume(volume);
+    m_movie->setVolume(volume);
 }
 
-void MediaPlayerPrivate::setRate(float rate)
+void MediaPlayerPrivateQuickTimeVisualContext::setRate(float rate)
 {
-    if (!m_qtMovie)
+    if (!m_movie)
         return;
-    m_qtMovie->setRate(rate);
+
+    // Do not call setRate(...) unless we have started playing; otherwise
+    // QuickTime's VisualContext can get wedged waiting for a rate change
+    // call which will never come.
+    if (m_startedPlaying)
+        m_movie->setRate(rate);
 }
 
-void MediaPlayerPrivate::setPreservesPitch(bool preservesPitch)
+void MediaPlayerPrivateQuickTimeVisualContext::setPreservesPitch(bool preservesPitch)
 {
-    if (!m_qtMovie)
+    if (!m_movie)
         return;
-    m_qtMovie->setPreservesPitch(preservesPitch);
+    m_movie->setPreservesPitch(preservesPitch);
 }
 
-bool MediaPlayerPrivate::hasClosedCaptions() const
+bool MediaPlayerPrivateQuickTimeVisualContext::hasClosedCaptions() const
 {
-    if (!m_qtMovie)
+    if (!m_movie)
         return false;
-    return m_qtMovie->hasClosedCaptions();
+    return m_movie->hasClosedCaptions();
 }
 
-void MediaPlayerPrivate::setClosedCaptionsVisible(bool visible)
+void MediaPlayerPrivateQuickTimeVisualContext::setClosedCaptionsVisible(bool visible)
 {
-    if (!m_qtMovie)
+    if (!m_movie)
         return;
-    m_qtMovie->setClosedCaptionsVisible(visible);
+    m_movie->setClosedCaptionsVisible(visible);
 }
 
-PassRefPtr<TimeRanges> MediaPlayerPrivate::buffered() const
+PassRefPtr<TimeRanges> MediaPlayerPrivateQuickTimeVisualContext::buffered() const
 {
     RefPtr<TimeRanges> timeRanges = TimeRanges::create();
     float loaded = maxTimeLoaded();
@@ -426,22 +460,22 @@ PassRefPtr<TimeRanges> MediaPlayerPrivate::buffered() const
     return timeRanges.release();
 }
 
-float MediaPlayerPrivate::maxTimeSeekable() const
+float MediaPlayerPrivateQuickTimeVisualContext::maxTimeSeekable() const
 {
     // infinite duration means live stream
     return !isfinite(duration()) ? 0 : maxTimeLoaded();
 }
 
-float MediaPlayerPrivate::maxTimeLoaded() const
+float MediaPlayerPrivateQuickTimeVisualContext::maxTimeLoaded() const
 {
-    if (!m_qtMovie)
+    if (!m_movie)
         return 0;
-    return m_qtMovie->maxTimeLoaded(); 
+    return m_movie->maxTimeLoaded(); 
 }
 
-unsigned MediaPlayerPrivate::bytesLoaded() const
+unsigned MediaPlayerPrivateQuickTimeVisualContext::bytesLoaded() const
 {
-    if (!m_qtMovie)
+    if (!m_movie)
         return 0;
     float dur = duration();
     float maxTime = maxTimeLoaded();
@@ -450,14 +484,14 @@ unsigned MediaPlayerPrivate::bytesLoaded() const
     return totalBytes() * maxTime / dur;
 }
 
-unsigned MediaPlayerPrivate::totalBytes() const
+unsigned MediaPlayerPrivateQuickTimeVisualContext::totalBytes() const
 {
-    if (!m_qtMovie)
+    if (!m_movie)
         return 0;
-    return m_qtMovie->dataSize();
+    return m_movie->dataSize();
 }
 
-void MediaPlayerPrivate::cancelLoad()
+void MediaPlayerPrivateQuickTimeVisualContext::cancelLoad()
 {
     if (m_networkState < MediaPlayer::Loading || m_networkState == MediaPlayer::Loaded)
         return;
@@ -465,20 +499,20 @@ void MediaPlayerPrivate::cancelLoad()
     tearDownVideoRendering();
 
     // Cancel the load by destroying the movie.
-    m_qtMovie.clear();
+    m_movie.clear();
 
     updateStates();
 }
 
-void MediaPlayerPrivate::updateStates()
+void MediaPlayerPrivateQuickTimeVisualContext::updateStates()
 {
     MediaPlayer::NetworkState oldNetworkState = m_networkState;
     MediaPlayer::ReadyState oldReadyState = m_readyState;
   
-    long loadState = m_qtMovie ? m_qtMovie->loadState() : QTMovieLoadStateError;
+    long loadState = m_movie ? m_movie->loadState() : QTMovieLoadStateError;
 
     if (loadState >= QTMovieLoadStateLoaded && m_readyState < MediaPlayer::HaveMetadata) {
-        m_qtMovie->disableUnsupportedTracks(m_enabledTrackCount, m_totalTrackCount);
+        m_movie->disableUnsupportedTracks(m_enabledTrackCount, m_totalTrackCount);
         if (m_player->inMediaDocument()) {
             if (!m_enabledTrackCount || m_enabledTrackCount != m_totalTrackCount) {
                 // This is a type of media that we do not handle directly with a <video> 
@@ -541,45 +575,41 @@ void MediaPlayerPrivate::updateStates()
         m_player->readyStateChanged();
 }
 
-bool MediaPlayerPrivate::isReadyForRendering() const
+bool MediaPlayerPrivateQuickTimeVisualContext::isReadyForRendering() const
 {
     return m_readyState >= MediaPlayer::HaveMetadata && m_player->visible();
 }
 
-void MediaPlayerPrivate::sawUnsupportedTracks()
+void MediaPlayerPrivateQuickTimeVisualContext::sawUnsupportedTracks()
 {
-    m_qtMovie->setDisabled(true);
+    m_movie->setDisabled(true);
     m_hasUnsupportedTracks = true;
     m_player->mediaPlayerClient()->mediaPlayerSawUnsupportedTracks(m_player);
 }
 
-void MediaPlayerPrivate::didEnd()
+void MediaPlayerPrivateQuickTimeVisualContext::didEnd()
 {
     if (m_hasUnsupportedTracks)
         return;
 
     m_startedPlaying = false;
-#if DRAW_FRAME_RATE
-    m_timeStoppedPlaying = WTF::currentTime();
-#endif
+
     updateStates();
     m_player->timeChanged();
 }
 
-void MediaPlayerPrivate::setSize(const IntSize& size) 
+void MediaPlayerPrivateQuickTimeVisualContext::setSize(const IntSize& size) 
 { 
-    if (m_hasUnsupportedTracks || !m_qtMovie || m_size == size)
+    if (m_hasUnsupportedTracks || !m_movie || m_size == size)
         return;
     m_size = size;
-    m_qtGWorld->setSize(size.width(), size.height());
 }
 
-void MediaPlayerPrivate::setVisible(bool visible)
+void MediaPlayerPrivateQuickTimeVisualContext::setVisible(bool visible)
 {
-    if (m_hasUnsupportedTracks || !m_qtMovie || m_visible == visible)
+    if (m_hasUnsupportedTracks || !m_movie || m_visible == visible)
         return;
 
-    m_qtGWorld->setVisible(visible);
     m_visible = visible;
     if (m_visible) {
         if (isReadyForRendering())
@@ -588,88 +618,138 @@ void MediaPlayerPrivate::setVisible(bool visible)
         tearDownVideoRendering();
 }
 
-void MediaPlayerPrivate::paint(GraphicsContext* p, const IntRect& r)
+void MediaPlayerPrivateQuickTimeVisualContext::paint(GraphicsContext* p, const IntRect& r)
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (m_qtVideoLayer)
         return;
 #endif
-    if (p->paintingDisabled() || !m_qtMovie || m_hasUnsupportedTracks)
-        return;
-
-    bool usingTempBitmap = false;
-    OwnPtr<GraphicsContext::WindowsBitmap> bitmap;
-    HDC hdc = p->getWindowsContext(r);
-    if (!hdc) {
-        // The graphics context doesn't have an associated HDC so create a temporary
-        // bitmap where QTMovieGWorld can draw the frame and we can copy it.
-        usingTempBitmap = true;
-        bitmap.set(p->createWindowsBitmap(r.size()));
-        hdc = bitmap->hdc();
-
-        // FIXME: is this necessary??
-        XFORM xform;
-        xform.eM11 = 1.0f;
-        xform.eM12 = 0.0f;
-        xform.eM21 = 0.0f;
-        xform.eM22 = 1.0f;
-        xform.eDx = -r.x();
-        xform.eDy = -r.y();
-        SetWorldTransform(hdc, &xform);
-    }
-
-    m_qtGWorld->paint(hdc, r.x(), r.y());
-    if (usingTempBitmap)
-        p->drawWindowsBitmap(bitmap.get(), r.topLeft());
-    else
-        p->releaseWindowsContext(hdc, r);
 
     paintCompleted(*p, r);
 }
 
-void MediaPlayerPrivate::paintCompleted(GraphicsContext& context, const IntRect& rect)
+void MediaPlayerPrivateQuickTimeVisualContext::paintCompleted(GraphicsContext& context, const IntRect& rect)
 {
     m_newFrameAvailable = false;
+}
 
-#if DRAW_FRAME_RATE
-    if (m_frameCountWhilePlaying > 10) {
-        double interval =  m_startedPlaying ? WTF::currentTime() - m_timeStartedPlaying : m_timeStoppedPlaying - m_timeStartedPlaying;
-        double frameRate = (m_frameCountWhilePlaying - 1) / interval;
-        CGContextRef cgContext = context.platformContext();
-        CGRect drawRect = rect;
+void MediaPlayerPrivateQuickTimeVisualContext::VisualContextClient::retrieveCurrentImageProc(void* refcon)
+{
+    static_cast<MediaPlayerPrivateQuickTimeVisualContext*>(refcon)->retrieveCurrentImage();
+}
 
-        char text[8];
-        _snprintf(text, sizeof(text), "%1.2f", frameRate);
+void MediaPlayerPrivateQuickTimeVisualContext::VisualContextClient::imageAvailableForTime(const QTCVTimeStamp* timeStamp)
+{
+    // This call may come in on another thread, so marshall to the main thread first:
+    callOnMainThread(&retrieveCurrentImageProc, m_parent);
 
-        static const int fontSize = 25;
-        static const int fontCharWidth = 12;
-        static const int boxHeight = 25;
-        static const int boxBorderWidth = 4;
-        drawRect.size.width = boxBorderWidth * 2 + fontCharWidth * strlen(text);
-        drawRect.size.height = boxHeight;
+    // callOnMainThread must be paired with cancelCallOnMainThread in the destructor,
+    // in case this object is deleted before the main thread request is handled.
+}
 
-        CGContextSaveGState(cgContext);
-#if USE(ACCELERATED_COMPOSITING)
-        if (m_qtVideoLayer)
-            CGContextScaleCTM(cgContext, 1, -1);
-        CGContextTranslateCTM(cgContext, rect.width() - drawRect.size.width, m_qtVideoLayer ? -rect.height() : 0);
-#else
-        CGContextTranslateCTM(cgContext, rect.width() - drawRect.size.width, 0);
-#endif
-        static const CGFloat backgroundColor[4] = { 0.98, 0.98, 0.82, 0.8 };
-        CGContextSetFillColor(cgContext, backgroundColor);
-        CGContextFillRect(cgContext, drawRect);
+void MediaPlayerPrivateQuickTimeVisualContext::visualContextTimerFired(Timer<MediaPlayerPrivateQuickTimeVisualContext>*)
+{
+    retrieveCurrentImage();
+}
 
-        static const CGFloat textColor[4] = { 0, 0, 0, 1 };
-        CGContextSetFillColor(cgContext, textColor);
-        CGContextSetTextMatrix(cgContext, CGAffineTransformMakeScale(1, -1));
-        CGContextSelectFont(cgContext, "Helvetica", fontSize, kCGEncodingMacRoman);
+static CFDictionaryRef QTCFDictionaryCreateWithDataCallback(CFAllocatorRef allocator, const UInt8* bytes, CFIndex length)
+{
+    CFDataRef data = CFDataCreateWithBytesNoCopy(allocator, bytes, length, 0);
+    if (!data)
+        return 0;
 
-        CGContextShowTextAtPoint(cgContext, drawRect.origin.x + boxBorderWidth, drawRect.origin.y + boxHeight - boxBorderWidth, text, strlen(text));
+    return reinterpret_cast<CFDictionaryRef>(CFPropertyListCreateFromXMLData(allocator, data, kCFPropertyListImmutable, 0));
+}
+
+static CGImageRef CreateCGImageFromPixelBuffer(QTPixelBuffer buffer)
+{
+    CGDataProviderRef provider = 0;
+    CGColorSpaceRef colorSpace = 0;
+    CGImageRef image = 0;
+
+    size_t bitsPerComponent = 0;
+    size_t bitsPerPixel = 0;
+    CGImageAlphaInfo alphaInfo = kCGImageAlphaNone;
         
-        CGContextRestoreGState(cgContext);        
+    if (buffer.pixelFormatIs32BGRA()) {
+        bitsPerComponent = 8;
+        bitsPerPixel = 32;
+        alphaInfo = (CGImageAlphaInfo)(kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Little);
+    } else if (buffer.pixelFormatIs32ARGB()) {
+        bitsPerComponent = 8;
+        bitsPerPixel = 32;
+        alphaInfo = (CGImageAlphaInfo)(kCGImageAlphaNoneSkipLast | kCGBitmapByteOrder32Big);
+    } else {
+        // All other pixel formats are currently unsupported:
+        ASSERT_NOT_REACHED();
     }
+
+    CGDataProviderDirectAccessCallbacks callbacks = {
+        &QTPixelBuffer::dataProviderGetBytePointerCallback,
+        &QTPixelBuffer::dataProviderReleaseBytePointerCallback,
+        &QTPixelBuffer::dataProviderGetBytesAtPositionCallback,
+        &QTPixelBuffer::dataProviderReleaseInfoCallback,
+    };
+    
+    // Colorspace should be device, so that Quartz does not have to do an extra render.
+    colorSpace = CGColorSpaceCreateDeviceRGB();
+    require(colorSpace, Bail);
+            
+    provider = CGDataProviderCreateDirectAccess(buffer.pixelBufferRef(), buffer.dataSize(), &callbacks);
+    require(provider, Bail);
+
+    // CGDataProvider does not retain the buffer, but it will release it later, so do an extra retain here:
+    QTPixelBuffer::retainCallback(buffer.pixelBufferRef());
+        
+    image = CGImageCreate(buffer.width(), buffer.height(), bitsPerComponent, bitsPerPixel, buffer.bytesPerRow(), colorSpace, alphaInfo, provider, 0, false, kCGRenderingIntentDefault);
+ 
+Bail:
+    // Once the image is created we can release our reference to the provider and the colorspace, they are retained by the image
+    if (provider)
+        CGDataProviderRelease(provider);
+    if (colorSpace)
+        CGColorSpaceRelease(colorSpace);
+ 
+    return image;
+}
+
+
+void MediaPlayerPrivateQuickTimeVisualContext::retrieveCurrentImage()
+{
+    if (!m_visualContext)
+        return;
+
+    if (!m_qtVideoLayer)
+        return;
+
+    QTPixelBuffer buffer = m_visualContext->imageForTime(0);
+    if (!buffer.pixelBufferRef())
+        return;
+
+    WKCACFLayer* layer = static_cast<WKCACFLayer*>(m_qtVideoLayer->platformLayer());
+
+    if (!buffer.lockBaseAddress()) {
+#ifndef NDEBUG
+        // Debug QuickTime links against a non-Debug version of CoreFoundation, so the CFDictionary attached to the CVPixelBuffer cannot be directly passed on into the CAImageQueue without being converted to a non-Debug CFDictionary:
+        CFDictionaryRef attachments = QTCFDictionaryCreateCopyWithDataCallback(kCFAllocatorDefault, buffer.attachments(), &QTCFDictionaryCreateWithDataCallback);
+#else
+        // However, this is unnecssesary in the non-Debug case:
+        CFDictionaryRef attachments = static_cast<CFDictionaryRef>(CFRetain(buffer.attachments()));
 #endif
+
+        CFTimeInterval imageTime = QTMovieVisualContext::currentHostTime();
+
+        CGImageRef image = CreateCGImageFromPixelBuffer(buffer);
+        layer->setContents(image);
+        CGImageRelease(image);
+
+        if (attachments)
+            CFRelease(attachments);
+
+        buffer.unlockBaseAddress();
+        layer->rootLayer()->setNeedsRender();
+    }
+    m_visualContext->task();
 }
 
 static HashSet<String> mimeTypeCache()
@@ -691,89 +771,65 @@ static HashSet<String> mimeTypeCache()
     }
     
     return typeCache;
-} 
+}
 
-void MediaPlayerPrivate::getSupportedTypes(HashSet<String>& types)
+void MediaPlayerPrivateQuickTimeVisualContext::getSupportedTypes(HashSet<String>& types)
 {
     types = mimeTypeCache();
 } 
 
-bool MediaPlayerPrivate::isAvailable()
+bool MediaPlayerPrivateQuickTimeVisualContext::isAvailable()
 {
     return QTMovie::initializeQuickTime();
 }
 
-MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const String& type, const String& codecs)
+MediaPlayer::SupportsType MediaPlayerPrivateQuickTimeVisualContext::supportsType(const String& type, const String& codecs)
 {
     // only return "IsSupported" if there is no codecs parameter for now as there is no way to ask QT if it supports an
     //  extended MIME type
     return mimeTypeCache().contains(type) ? (codecs.isEmpty() ? MediaPlayer::MayBeSupported : MediaPlayer::IsSupported) : MediaPlayer::IsNotSupported;
 }
 
-void MediaPlayerPrivate::movieEnded(QTMovie* movie)
+void MediaPlayerPrivateQuickTimeVisualContext::MovieClient::movieEnded(QTMovie* movie)
 {
-    if (m_hasUnsupportedTracks)
+    if (m_parent->m_hasUnsupportedTracks)
         return;
 
-    ASSERT(m_qtMovie.get() == movie);
-    didEnd();
+    m_parent->m_visualContextTimer.stop();
+
+    ASSERT(m_parent->m_movie.get() == movie);
+    m_parent->didEnd();
 }
 
-void MediaPlayerPrivate::movieLoadStateChanged(QTMovie* movie)
+void MediaPlayerPrivateQuickTimeVisualContext::MovieClient::movieLoadStateChanged(QTMovie* movie)
 {
-    if (m_hasUnsupportedTracks)
+    if (m_parent->m_hasUnsupportedTracks)
         return;
 
-    ASSERT(m_qtMovie.get() == movie);
-    updateStates();
+    ASSERT(m_parent->m_movie.get() == movie);
+    m_parent->updateStates();
 }
 
-void MediaPlayerPrivate::movieTimeChanged(QTMovie* movie)
+void MediaPlayerPrivateQuickTimeVisualContext::MovieClient::movieTimeChanged(QTMovie* movie)
 {
-    if (m_hasUnsupportedTracks)
+    if (m_parent->m_hasUnsupportedTracks)
         return;
 
-    ASSERT(m_qtMovie.get() == movie);
-    updateStates();
-    m_player->timeChanged();
+    ASSERT(m_parent->m_movie.get() == movie);
+    m_parent->updateStates();
+    m_parent->m_player->timeChanged();
 }
 
-void MediaPlayerPrivate::movieNewImageAvailable(QTMovieGWorld* movie)
-{
-    if (m_hasUnsupportedTracks)
-        return;
-
-    ASSERT(m_qtGWorld.get() == movie);
-#if DRAW_FRAME_RATE
-    if (m_startedPlaying) {
-        m_frameCountWhilePlaying++;
-        // To eliminate preroll costs from our calculation, our frame rate calculation excludes
-        // the first frame drawn after playback starts.
-        if (m_frameCountWhilePlaying == 1)
-            m_timeStartedPlaying = WTF::currentTime();
-    }
-#endif
-
-    m_newFrameAvailable = true;
-
-#if USE(ACCELERATED_COMPOSITING)
-    if (m_qtVideoLayer)
-        m_qtVideoLayer->platformLayer()->setNeedsDisplay();
-    else
-#endif
-        m_player->repaint();
-}
-
-bool MediaPlayerPrivate::hasSingleSecurityOrigin() const
+bool MediaPlayerPrivateQuickTimeVisualContext::hasSingleSecurityOrigin() const
 {
     // We tell quicktime to disallow resources that come from different origins
     // so we all media is single origin.
     return true;
 }
 
-MediaPlayerPrivate::MediaRenderingMode MediaPlayerPrivate::currentRenderingMode() const
+MediaPlayerPrivateQuickTimeVisualContext::MediaRenderingMode MediaPlayerPrivateQuickTimeVisualContext::currentRenderingMode() const
 {
-    if (!m_qtMovie)
+    if (!m_movie)
         return MediaRenderingNone;
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -784,9 +840,9 @@ MediaPlayerPrivate::MediaRenderingMode MediaPlayerPrivate::currentRenderingMode(
     return MediaRenderingSoftwareRenderer;
 }
 
-MediaPlayerPrivate::MediaRenderingMode MediaPlayerPrivate::preferredRenderingMode() const
+MediaPlayerPrivateQuickTimeVisualContext::MediaRenderingMode MediaPlayerPrivateQuickTimeVisualContext::preferredRenderingMode() const
 {
-    if (!m_player->frameView() || !m_qtMovie)
+    if (!m_player->frameView() || !m_movie)
         return MediaRenderingNone;
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -797,7 +853,7 @@ MediaPlayerPrivate::MediaRenderingMode MediaPlayerPrivate::preferredRenderingMod
     return MediaRenderingSoftwareRenderer;
 }
 
-void MediaPlayerPrivate::setUpVideoRendering()
+void MediaPlayerPrivateQuickTimeVisualContext::setUpVideoRendering()
 {
     MediaRenderingMode currentMode = currentRenderingMode();
     MediaRenderingMode preferredMode = preferredRenderingMode();
@@ -819,17 +875,21 @@ void MediaPlayerPrivate::setUpVideoRendering()
     if (currentMode == MediaRenderingMovieLayer || preferredMode == MediaRenderingMovieLayer)
         m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);
 #endif
+
+    m_visualContext->setMovie(m_movie.get());
 }
 
-void MediaPlayerPrivate::tearDownVideoRendering()
+void MediaPlayerPrivateQuickTimeVisualContext::tearDownVideoRendering()
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (m_qtVideoLayer)
         destroyLayerForMovie();
 #endif
+
+    m_visualContext->setMovie(0);
 }
 
-bool MediaPlayerPrivate::hasSetUpVideoRendering() const
+bool MediaPlayerPrivateQuickTimeVisualContext::hasSetUpVideoRendering() const
 {
 #if USE(ACCELERATED_COMPOSITING)
     return m_qtVideoLayer || currentRenderingMode() != MediaRenderingMovieLayer;
@@ -838,56 +898,18 @@ bool MediaPlayerPrivate::hasSetUpVideoRendering() const
 #endif
 }
 
-#if USE(ACCELERATED_COMPOSITING)
-
-// Up-call from compositing layer drawing callback.
-void MediaPlayerPrivate::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase, const IntRect&)
-{
-     if (m_hasUnsupportedTracks)
-         return;
-
-    ASSERT(supportsAcceleratedRendering());
-
-    // No reason to replace the current layer image unless we have something new to show.
-    if (!m_newFrameAvailable)
-        return;
-
-    static CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    void* buffer;
-    unsigned bitsPerPixel;
-    unsigned rowBytes;
-    unsigned width;
-    unsigned height;
-
-    m_qtGWorld->getCurrentFrameInfo(buffer, bitsPerPixel, rowBytes, width, height);
-    if (!buffer)
-        return;
-
-    RetainPtr<CFDataRef> data(AdoptCF, CFDataCreateWithBytesNoCopy(0, static_cast<UInt8*>(buffer), rowBytes * height, kCFAllocatorNull));
-    RetainPtr<CGDataProviderRef> provider(AdoptCF, CGDataProviderCreateWithCFData(data.get()));
-    RetainPtr<CGImageRef> frameImage(AdoptCF, CGImageCreate(width, height, 8, bitsPerPixel, rowBytes, colorSpace, 
-        kCGBitmapByteOrder32Little | kCGImageAlphaFirst, provider.get(), 0, false, kCGRenderingIntentDefault));
-    if (!frameImage)
-        return;
-
-    IntRect rect(0, 0, m_size.width(), m_size.height());
-    CGContextDrawImage(context.platformContext(), rect, frameImage.get()); 
-    paintCompleted(context, rect);
-}
-#endif
-
-void MediaPlayerPrivate::createLayerForMovie()
+void MediaPlayerPrivateQuickTimeVisualContext::createLayerForMovie()
 {
 #if USE(ACCELERATED_COMPOSITING)
     ASSERT(supportsAcceleratedRendering());
 
-    if (!m_qtMovie || m_qtVideoLayer)
+    if (!m_movie || m_qtVideoLayer)
         return;
 
     // Create a GraphicsLayer that won't be inserted directly into the render tree, but will used 
     // as a wrapper for a WKCACFLayer which gets inserted as the content layer of the video 
     // renderer's GraphicsLayer.
-    m_qtVideoLayer.set(new GraphicsLayerCACF(this));
+    m_qtVideoLayer.set(new GraphicsLayerCACF(m_layerClient.get()));
     if (!m_qtVideoLayer)
         return;
 
@@ -902,7 +924,7 @@ void MediaPlayerPrivate::createLayerForMovie()
 #endif
 }
 
-void MediaPlayerPrivate::destroyLayerForMovie()
+void MediaPlayerPrivateQuickTimeVisualContext::destroyLayerForMovie()
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (!m_qtVideoLayer)
@@ -911,13 +933,17 @@ void MediaPlayerPrivate::destroyLayerForMovie()
 #endif
 }
 
+void MediaPlayerPrivateQuickTimeVisualContext::LayerClient::paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& inClip)
+{
+}
+
 #if USE(ACCELERATED_COMPOSITING)
-bool MediaPlayerPrivate::supportsAcceleratedRendering() const
+bool MediaPlayerPrivateQuickTimeVisualContext::supportsAcceleratedRendering() const
 {
     return isReadyForRendering();
 }
 
-void MediaPlayerPrivate::acceleratedRenderingStateChanged()
+void MediaPlayerPrivateQuickTimeVisualContext::acceleratedRenderingStateChanged()
 {
     // Set up or change the rendering path if necessary.
     setUpVideoRendering();

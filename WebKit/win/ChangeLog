@@ -1,3 +1,15 @@
+2010-05-07  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Safari pegs CPU and drops tons of frames using HTML5 Vimeo player
+        https://bugs.webkit.org/show_bug.cgi?id=34005
+        
+        QTMovieWin is now QTMovieGWorld.  
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::movie):
+        * FullscreenVideoController.h:
+
 2010-05-06  Adam Roben  <aroben@apple.com>
 
         Bail out of WebView::paint when there's nothing to paint
