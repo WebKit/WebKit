@@ -54,6 +54,7 @@ class ChromiumWinPort(chromium.ChromiumPort):
             port_names.append("chromium-win-xp")
         if self._name in ('chromium-win-xp', 'chromium-win-vista'):
             port_names.append("chromium-win-vista")
+        # FIXME: This may need to include mac-snowleopard like win.py.
         port_names.extend(["chromium-win", "chromium", "win", "mac"])
         return map(self._webkit_baseline_path, port_names)
 

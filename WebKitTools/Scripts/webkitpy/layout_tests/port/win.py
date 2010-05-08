@@ -44,6 +44,11 @@ class WinPort(WebKitPort):
             port_name = 'win'
         WebKitPort.__init__(self, port_name, options)
 
+    def baseline_search_path(self):
+        # Based on code from old-run-webkit-tests expectedDirectoryForTest()
+        port_names = ["win", "mac-snowleopard", "mac"]
+        return map(self._webkit_baseline_path, port_names)
+
     def _tests_for_other_platforms(self):
         # FIXME: This list could be dynamic based on platform name and
         # pushed into base.Port.

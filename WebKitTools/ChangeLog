@@ -1,5 +1,39 @@
 2010-05-08  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Daniel Bates.
+
+        test-webkitpy fails under cygwin
+        https://bugs.webkit.org/show_bug.cgi?id=38718
+
+        * Scripts/webkitpy/common/system/executive.py:
+         - Add _KILL_PROCESS_KILLED_PROCESS_EXIT_CODE and
+           _KILL_ALL_KILLED_PROCESS_EXIT_CODE to store the expected
+           exit codes of processes killed by kill_process and kill_all.
+           These two constants are only used by the unit tests but are
+           stored in executive.py so they can be right next to the platform ifs.
+         - Remove unnecessary str() conversion, run_command does that for us.
+         - Make os.kill retry on cygwin on EAGAIN.  It's unclear why CYGWIN
+           throws EAGAIN, but it only does so sometimes.  3 may not be enough
+           retries, but we'll try it to start with.
+         - Add _windows_image_name to automatically convert "yes" to "yes.exe"
+           for use with taskkill.exe /im.  Various callers to kill_all could
+           be updated to remove the .exe, but that can be done in another patch.
+         - Use taskkill.exe for killall on cygwin.
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+         - Use the new *_KILLED_PROCESS_EXIT_CODE constants which are correctly
+           set to 0 on windows/cygwin systems where taskkill.exe is used.
+         - Test _windows_image_name
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+         - Add FIXME about including mac-snowleopard in baseline_search_path.
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+         - Make default_configuration actually read from the Configuration file.
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py: Added.
+         - Test default_configuration
+        * Scripts/webkitpy/layout_tests/port/win.py:
+         - Need a basic baseline_search_path if --platform dryrun is to work.
+
+2010-05-08  Eric Seidel  <eric@webkit.org>
+
         Unreviewed, just reverting commit.
 
         REGRESSION(59000): r59000 contained all sorts of changes it should not have, needs revert.

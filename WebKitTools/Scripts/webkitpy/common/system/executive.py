@@ -33,6 +33,8 @@ try:
 except ImportError:
     multiprocessing = None
 
+import errno
+import logging
 import os
 import platform
 import StringIO
@@ -41,6 +43,9 @@ import subprocess
 import sys
 
 from webkitpy.common.system.deprecated_logging import tee
+
+
+_log = logging.getLogger("webkitpy.common.system")
 
 
 class ScriptError(Exception):
@@ -162,31 +167,58 @@ class Executive(object):
         # machines.
         return 2
 
+    # Executive unit tests uses this information to validate that
+    # kill_process/kill_all work as expected an cause the expected exit codes.
+    # We store this information in this file to keep it next to the platform ifs.
+    # taskkill.exe causes processes to exit 0, otherwise processes exit -SIGNAL
+    _KILL_PROCESS_KILLED_PROCESS_EXIT_CODE = 0 if sys.platform == "windows" else -signal.SIGKILL
+    _KILL_ALL_KILLED_PROCESS_EXIT_CODE = 0 if sys.platform in ("windows", "cygwin") else -signal.SIGTERM
+
     def kill_process(self, pid):
         """Attempts to kill the given pid.
         Will fail silently if pid does not exist or insufficient permisssions."""
-        if platform.system() == "Windows":
-            # According to http://docs.python.org/library/os.html
-            # os.kill isn't available on Windows.  However, when I tried it
-            # using Cygwin, it worked fine.  We should investigate whether
-            # we need this platform specific code here.
-            command = ["taskkill.exe", "/f", "/pid", str(pid)]
-            # taskkill will exit 128 if the process is not found.
+        if sys.platform == "windows":
+            # We only use taskkill.exe on windows (not cygwin) because subprocess.pid
+            # is a CYGWIN pid and taskkill.exe expects a windows pid.
+            # Thankfully os.kill on CYGWIN handles either pid type.
+            command = ["taskkill.exe", "/f", "/pid", pid]
+            # taskkill will exit 128 if the process is not found.  We should log.
             self.run_command(command, error_handler=self.ignore_error)
             return
-        try:
-            os.kill(pid, signal.SIGKILL)
-        except OSError, e:
-            # FIXME: We should make non-silent failure an option.
-            pass
+
+        # According to http://docs.python.org/library/os.html
+        # os.kill isn't available on Windows. python 2.5.5 os.kill appears
+        # to work in cygwin, however it occasionally raises EAGAIN.
+        retries_left = 3 if sys.platform == "cygwin" else 1
+        while retries_left > 0:
+            try:
+                retries_left -= 1
+                os.kill(pid, signal.SIGKILL)
+            except OSError, e:
+                if e.errno == errno.EAGAIN:
+                    if retries_left <= 0:
+                        _log.warn("Failed to kill pid %s.  Too many EAGAIN errors." % pid)
+                    continue
+                if e.errno == errno.ESRCH:  # The process does not exist.
+                    _log.warn("Called kill_process with a non-existant pid %s" % pid)
+                    return
+                raise
+
+    def _windows_image_name(self, process_name):
+        name, extension = os.path.splitext(process_name)
+        if not extension:
+            # taskkill expects processes to end in .exe
+            # If necessary we could add a flag to disable appending .exe.
+            process_name = "%s.exe" % name
+        return process_name
 
     def kill_all(self, process_name):
         """Attempts to kill processes matching process_name.
         Will fail silently if no process are found."""
-        if platform.system() == "Windows":
-            # We might want to automatically append .exe?
-            command = ["taskkill.exe", "/f", "/im", process_name]
-            # taskkill will exit 128 if the process is not found.
+        if sys.platform in ("windows", "cygwin"):
+            image_name = self._windows_image_name(process_name)
+            command = ["taskkill.exe", "/f", "/im", image_name]
+            # taskkill will exit 128 if the process is not found.  We should log.
             self.run_command(command, error_handler=self.ignore_error)
             return
 
@@ -195,6 +227,9 @@ class Executive(object):
         # We should pick one mode, or add support for switching between them.
         # Note: Mac OS X 10.6 requires -SIGNALNAME before -u USER
         command = ["killall", "-TERM", "-u", os.getenv("USER"), process_name]
+        # killall returns 1 if no process can be found and 2 on command error.
+        # FIXME: We should pass a custom error_handler to allow only exit_code 1.
+        # We should log in exit_code == 1
         self.run_command(command, error_handler=self.ignore_error)
 
     # Error handlers do not need to be static methods once all callers are
