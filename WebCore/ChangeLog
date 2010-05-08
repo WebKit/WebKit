@@ -1,3 +1,19 @@
+2010-05-08  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInsector: Record expand UI element should be extracted from TimelineRecordGraphRow as separate class for future reuse.
+        https://bugs.webkit.org/show_bug.cgi?id=38726
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype._refreshRecords):
+        (WebInspector.TimelineRecordGraphRow):
+        (WebInspector.TimelineRecordGraphRow.prototype.update):
+        (WebInspector.TimelineExpandableElement):
+        (WebInspector.TimelineExpandableElement.prototype._update):
+        (WebInspector.TimelineExpandableElement.prototype._dispose):
+
 2010-05-05  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

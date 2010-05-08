@@ -99,6 +99,8 @@ WebInspector.TimelinePanel = function()
     this._expandOffset = 15;
 }
 
+// Define row height, should be in sync with styles for timeline graphs.
+WebInspector.TimelinePanel.rowHeight = 18;
 WebInspector.TimelinePanel.shortRecordThreshold = 0.015;
 
 WebInspector.TimelinePanel.prototype = {
@@ -491,8 +493,7 @@ WebInspector.TimelinePanel.prototype = {
         var visibleTop = this._scrollTop;
         var visibleBottom = visibleTop + this._containerElement.clientHeight;
 
-        // Define row height, should be in sync with styles for timeline graphs.
-        const rowHeight = 18;
+        const rowHeight = WebInspector.TimelinePanel.rowHeight;
 
         // Convert visible area to visible indexes. Always include top-level record for a visible nested record.
         var startIndex = Math.max(0, Math.min(Math.floor(visibleTop / rowHeight) - 1, recordsInWindow.length - 1));
@@ -708,7 +709,7 @@ WebInspector.TimelineRecordListRow.prototype = {
     }
 }
 
-WebInspector.TimelineRecordGraphRow = function(graphContainer, scheduleRefresh, rowHeight)
+WebInspector.TimelineRecordGraphRow = function(graphContainer, scheduleRefresh)
 {
     this.element = document.createElement("div");
     this.element.row = this;
@@ -732,16 +733,8 @@ WebInspector.TimelineRecordGraphRow = function(graphContainer, scheduleRefresh, 
     this._barElement.row = this;
     this._barAreaElement.appendChild(this._barElement);
 
-    this._expandElement = document.createElement("div");
-    this._expandElement.className = "timeline-expandable";
-    graphContainer.appendChild(this._expandElement);
-
-    var leftBorder = document.createElement("div");
-    leftBorder.className = "timeline-expandable-left";
-    this._expandElement.appendChild(leftBorder);
-
-    this._expandElement.addEventListener("click", this._onClick.bind(this));
-    this._rowHeight = rowHeight;
+    this._expandElement = new WebInspector.TimelineExpandableElement(graphContainer);
+    this._expandElement._element.addEventListener("click", this._onClick.bind(this));
 
     this._scheduleRefresh = scheduleRefresh;
 }
@@ -758,24 +751,7 @@ WebInspector.TimelineRecordGraphRow.prototype = {
         this._barElement.style.width =  barPosition.width + "px";
         this._barCpuElement.style.left = barPosition.left + expandOffset + "px";
         this._barCpuElement.style.width = barPosition.cpuWidth + "px";
-
-        if (record._visibleChildrenCount || record._invisibleChildrenCount) {
-            this._expandElement.style.top = index * this._rowHeight + "px";
-            this._expandElement.style.left = barPosition.left + "px";
-            this._expandElement.style.width = Math.max(12, barPosition.width + 25) + "px";
-            if (!record.collapsed) {
-                this._expandElement.style.height = (record._visibleChildrenCount + 1) * this._rowHeight + "px";
-                this._expandElement.addStyleClass("timeline-expandable-expanded");
-                this._expandElement.removeStyleClass("timeline-expandable-collapsed");
-            } else {
-                this._expandElement.style.height = this._rowHeight + "px";
-                this._expandElement.addStyleClass("timeline-expandable-collapsed");
-                this._expandElement.removeStyleClass("timeline-expandable-expanded");
-            }
-            this._expandElement.removeStyleClass("hidden");
-        } else {
-            this._expandElement.addStyleClass("hidden");
-        }
+        this._expandElement._update(record, index, barPosition);
     },
 
     _onClick: function(event)
@@ -787,7 +763,7 @@ WebInspector.TimelineRecordGraphRow.prototype = {
     dispose: function()
     {
         this.element.parentElement.removeChild(this.element);
-        this._expandElement.parentElement.removeChild(this._expandElement);
+        this._expandElement._dispose();
     }
 }
 
@@ -1046,5 +1022,45 @@ WebInspector.TimelinePanel.PopupContentHelper.prototype = {
     {
         var link = WebInspector.linkifyResourceAsNode(scriptName, "scripts", scriptLine, "timeline-details");
         this._appendElementRow(title, link);
+    }
+}
+
+WebInspector.TimelineExpandableElement = function(container)
+{
+    this._element = document.createElement("div");
+    this._element.className = "timeline-expandable";
+
+    var leftBorder = document.createElement("div");
+    leftBorder.className = "timeline-expandable-left";
+    this._element.appendChild(leftBorder);
+
+    container.appendChild(this._element);
+}
+
+WebInspector.TimelineExpandableElement.prototype = {
+    _update: function(record, index, barPosition)
+    {
+        const rowHeight = WebInspector.TimelinePanel.rowHeight;
+        if (record._visibleChildrenCount || record._invisibleChildrenCount) {
+            this._element.style.top = index * rowHeight + "px";
+            this._element.style.left = barPosition.left + "px";
+            this._element.style.width = Math.max(12, barPosition.width + 25) + "px";
+            if (!record.collapsed) {
+                this._element.style.height = (record._visibleChildrenCount + 1) * rowHeight + "px";
+                this._element.addStyleClass("timeline-expandable-expanded");
+                this._element.removeStyleClass("timeline-expandable-collapsed");
+            } else {
+                this._element.style.height = rowHeight + "px";
+                this._element.addStyleClass("timeline-expandable-collapsed");
+                this._element.removeStyleClass("timeline-expandable-expanded");
+            }
+            this._element.removeStyleClass("hidden");
+        } else
+            this._element.addStyleClass("hidden");
+    },
+
+    _dispose: function()
+    {
+        this._element.parentElement.removeChild(this._element);
     }
 }
