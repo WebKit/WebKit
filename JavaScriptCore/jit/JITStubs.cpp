@@ -2087,35 +2087,31 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_val)
     JSValue baseValue = stackFrame.args[0].jsValue();
     JSValue subscript = stackFrame.args[1].jsValue();
 
-    if (LIKELY(baseValue.isCell() && subscript.isString())) {
-        Identifier propertyName(callFrame, asString(subscript)->value(callFrame));
-        PropertySlot slot;
-        if (asCell(baseValue)->fastGetOwnPropertySlot(callFrame, propertyName, slot)) {
-            JSValue result = slot.getValue(callFrame, propertyName);
-            CHECK_FOR_EXCEPTION();
-            return JSValue::encode(result);
-        }
-    }
+    JSValue result;
 
-    if (subscript.isUInt32()) {
+    if (LIKELY(subscript.isUInt32())) {
         uint32_t i = subscript.asUInt32();
-        if (isJSString(globalData, baseValue) && asString(baseValue)->canGetIndex(i)) {
+        if (isJSArray(globalData, baseValue)) {
+            JSArray* jsArray = asArray(baseValue);
+            if (jsArray->canGetIndex(i))
+                result = jsArray->getIndex(i);
+            else
+                result = jsArray->JSArray::get(callFrame, i);
+        } else if (isJSString(globalData, baseValue) && asString(baseValue)->canGetIndex(i)) {
             // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
             ctiPatchCallByReturnAddress(callFrame->codeBlock(), STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_val_string));
-            JSValue result = asString(baseValue)->getIndex(callFrame, i);
-            CHECK_FOR_EXCEPTION();
-            return JSValue::encode(result);
-        }
-        if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
+            result = asString(baseValue)->getIndex(callFrame, i);
+        } else if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
             // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
             ctiPatchCallByReturnAddress(callFrame->codeBlock(), STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_val_byte_array));
             return JSValue::encode(asByteArray(baseValue)->getIndex(callFrame, i));
-        }
-        return JSValue::encode(baseValue.get(callFrame, i));
+        } else
+            result = baseValue.get(callFrame, i);
+    } else {
+        Identifier property(callFrame, subscript.toString(callFrame));
+        result = baseValue.get(callFrame, property);
     }
-    
-    Identifier property(callFrame, subscript.toString(callFrame));
-    JSValue result = baseValue.get(callFrame, property);
+
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }

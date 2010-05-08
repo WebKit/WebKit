@@ -1,3 +1,14 @@
+2010-05-07  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r58990.
+        http://trac.webkit.org/changeset/58990
+
+        Broke 4 tests on Snow Leopard and Qt.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/JSCell.h:
+
 2010-05-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
