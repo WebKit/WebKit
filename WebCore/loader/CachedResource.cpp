@@ -25,15 +25,13 @@
 #include "CachedResource.h"
 
 #include "Cache.h"
-#include "CachedMetadata.h"
 #include "CachedResourceHandle.h"
 #include "DocLoader.h"
 #include "Frame.h"
-#include "FrameLoaderClient.h"
+#include "FrameLoader.h"
 #include "KURL.h"
 #include "PurgeableBuffer.h"
 #include "Request.h"
-#include "ResourceHandle.h"
 #include "SharedBuffer.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
@@ -164,34 +162,6 @@ void CachedResource::setResponse(const ResourceResponse& response)
 {
     m_response = response;
     m_responseTimestamp = currentTime();
-}
-
-void CachedResource::setSerializedCachedMetadata(const char* data, size_t size)
-{
-    // We only expect to receive cached metadata from the platform once.
-    // If this triggers, it indicates an efficiency problem which is most
-    // likely unexpected in code designed to improve performance.
-    ASSERT(!m_cachedMetadata);
-
-    m_cachedMetadata = CachedMetadata::deserialize(data, size);
-}
-
-void CachedResource::setCachedMetadata(unsigned dataTypeID, const char* data, size_t size)
-{
-    // Currently, only one type of cached metadata per resource is supported.
-    // If the need arises for multiple types of metadata per resource this could
-    // be enhanced to store types of metadata in a map.
-    ASSERT(!m_cachedMetadata);
-
-    m_cachedMetadata = CachedMetadata::create(dataTypeID, data, size);
-    ResourceHandle::cacheMetadata(m_response, m_cachedMetadata->serialize());
-}
-
-CachedMetadata* CachedResource::cachedMetadata(unsigned dataTypeID) const
-{
-    if (!m_cachedMetadata || m_cachedMetadata->dataTypeID() != dataTypeID)
-        return 0;
-    return m_cachedMetadata.get();
 }
 
 void CachedResource::setRequest(Request* request)
@@ -414,7 +384,7 @@ void CachedResource::updateResponseAfterRevalidation(const ResourceResponse& val
         m_response.setHTTPHeaderField(it->first, it->second);
     }
 }
-
+    
 bool CachedResource::canUseCacheValidator() const
 {
     if (m_loading || m_errorOccurred)

@@ -145,9 +145,4 @@ void ResourceHandle::prepareForURL(const KURL& url)
 }
 #endif
 
-void ResourceHandle::cacheMetadata(const ResourceResponse&, const Vector<char>&)
-{
-    // Optionally implemented by platform.
-}
-
 } // namespace WebCore

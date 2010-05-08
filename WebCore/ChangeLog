@@ -1,3 +1,25 @@
+2010-05-08  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r59023.
+        http://trac.webkit.org/changeset/59023
+        https://bugs.webkit.org/show_bug.cgi?id=37874
+
+        Caused Chromium Windows build to fail to link.
+
+        * WebCore.gypi:
+        * loader/CachedMetadata.h: Removed.
+        * loader/CachedResource.cpp:
+        * loader/CachedResource.h:
+        * loader/ResourceLoader.h:
+        * loader/SubresourceLoader.cpp:
+        * loader/SubresourceLoader.h:
+        * loader/SubresourceLoaderClient.h:
+        * loader/loader.cpp:
+        * loader/loader.h:
+        * platform/network/ResourceHandle.cpp:
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.h:
+
 2010-05-08  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Timothy Hatcher.
