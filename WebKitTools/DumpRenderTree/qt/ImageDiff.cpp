@@ -17,13 +17,14 @@
     Boston, MA 02110-1301, USA.
 */
 
+#include <QtCore/qmath.h>
+
 #include <QApplication>
 #include <QBuffer>
 #include <QByteArray>
 #include <QImage>
 #include <QStringList>
 
-#include <math.h>
 #include <stdio.h>
 
 int main(int argc, char* argv[])
@@ -102,7 +103,7 @@ int main(int argc, char* argv[])
                         qreal green = (qGreen(pixel) - qGreen(basePixel)) / static_cast<float>(qMax(255 - qGreen(basePixel), qGreen(basePixel)));
                         qreal blue = (qBlue(pixel) - qBlue(basePixel)) / static_cast<float>(qMax(255 - qBlue(basePixel), qBlue(basePixel)));
                         qreal alpha = (qAlpha(pixel) - qAlpha(basePixel)) / static_cast<float>(qMax(255 - qAlpha(basePixel), qAlpha(basePixel)));
-                        qreal distance = sqrt(red * red + green * green + blue * blue + alpha * alpha) / 2.0f;
+                        qreal distance = qSqrt(red * red + green * green + blue * blue + alpha * alpha) / 2.0f;
                         int gray = distance * qreal(255);
                         diffImage.setPixel(x, y, qRgb(gray, gray, gray));
                         if (distance >= 1 / qreal(255)) {
@@ -118,7 +119,7 @@ int main(int argc, char* argv[])
                 if (difference <= tolerance) {
                     difference = 0;
                 } else {
-                    difference = round(difference * 100) / 100;
+                    difference = qRound(difference * 100) / 100;
                     difference = qMax(difference, qreal(0.01));
                 }
 

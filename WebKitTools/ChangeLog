@@ -1,3 +1,15 @@
+2010-05-08  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Build the ImageDiff tool for all platforms including Windows and Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=38706
+
+        Use qmath.h instead of math.h to make it portable.
+
+        * DumpRenderTree/qt/ImageDiff.cpp:
+        (main):
+
 2010-05-08  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Simon Hausmann.
