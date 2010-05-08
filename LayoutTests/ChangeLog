@@ -1,5 +1,13 @@
 2010-05-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Rebaseline Win specific results after exposing JSSVGVKernElement/JSSVGHKernElement.
+
+        * platform/win/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/win/fast/dom/prototype-inheritance-expected.txt:
+        * platform/win/fast/js/global-constructors-expected.txt:
+
+2010-05-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Rebaseline GTK specific results after exposing JSSVGVKernElement/JSSVGHKernElement.
 
         * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt:
