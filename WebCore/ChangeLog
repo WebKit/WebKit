@@ -1,3 +1,14 @@
+2010-05-08  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Fix guard around IndexedDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=38710
+
+        No new tests, there is no new functionality.
+
+        * page/PageGroup.h:
+
 2010-05-08  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Simon Hausmann.
