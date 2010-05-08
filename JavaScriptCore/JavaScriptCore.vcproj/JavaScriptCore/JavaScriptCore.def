@@ -243,7 +243,6 @@ EXPORTS
     ?isAccessorDescriptor@PropertyDescriptor@JSC@@QBE_NXZ
     ?isBusy@Heap@JSC@@QAE_NXZ
     ?isDataDescriptor@PropertyDescriptor@JSC@@QBE_NXZ
-    ?isDynamicScope@JSGlobalObject@JSC@@UBE_NXZ
     ?isEmpty@String@WebCore@@QBE_NXZ
     ?isGetterSetter@JSCell@JSC@@UBE_NXZ
     ?isHostFunctionNonInline@JSFunction@JSC@@ABE_NXZ

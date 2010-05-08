@@ -1,5 +1,11 @@
 2010-05-07  Oliver Hunt  <oliver@apple.com>
 
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-05-07  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         Optimize access to the global object from a function that uses eval
