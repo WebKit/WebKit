@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,17 +26,42 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
+#include "config.h"
+#include "JSDatabaseSync.h"
 
-    interface [
-        Conditional=DATABASE,
-        OmitConstructor,
-        NoStaticTables
-    ] SQLResultSet {
-        readonly attribute SQLResultSetRowList rows;
+#if ENABLE(DATABASE)
 
-        readonly attribute long insertId
-            getter raises(DOMException);
-        readonly attribute long rowsAffected;
-    };
+#include "DatabaseSync.h"
+#include "ExceptionCode.h"
+#include "JSSQLTransactionSyncCallback.h"
+#include "PlatformString.h"
+#include "SQLValue.h"
+#include <runtime/JSArray.h>
+
+namespace WebCore {
+
+using namespace JSC;
+
+JSValue JSDatabaseSync::changeVersion(ExecState*, const ArgList&)
+{
+    return jsUndefined();
 }
+
+static JSValue createTransaction(ExecState*, const ArgList&, DatabaseSync*, JSDOMGlobalObject*, bool)
+{
+    return jsUndefined();
+}
+
+JSValue JSDatabaseSync::transaction(ExecState* exec, const ArgList& args)
+{
+    return createTransaction(exec, args, m_impl.get(), static_cast<JSDOMGlobalObject*>(globalObject()), false);
+}
+
+JSValue JSDatabaseSync::readTransaction(ExecState* exec, const ArgList& args)
+{
+    return createTransaction(exec, args, m_impl.get(), static_cast<JSDOMGlobalObject*>(globalObject()), true);
+}
+
+}
+
+#endif // ENABLE(DATABASE)

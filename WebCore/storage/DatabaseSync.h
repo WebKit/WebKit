@@ -53,8 +53,8 @@ public:
     static PassRefPtr<DatabaseSync> openDatabaseSync(ScriptExecutionContext*, const String& name, const String& expectedVersion,
                                                      const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback>, ExceptionCode&);
     String version() const;
-    void changeVersion(const String& oldVersion, const String& newVersion, PassRefPtr<SQLTransactionSyncCallback>);
-    void transaction(PassRefPtr<SQLTransactionSyncCallback>, bool readOnly);
+    void changeVersion(const String& oldVersion, const String& newVersion, PassRefPtr<SQLTransactionSyncCallback>, ExceptionCode&);
+    void transaction(PassRefPtr<SQLTransactionSyncCallback>, bool readOnly, ExceptionCode&);
 
     // Internal engine support
     ScriptExecutionContext* scriptExecutionContext() const;

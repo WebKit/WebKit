@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,17 +26,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
+#include "config.h"
+#include "JSSQLTransactionSync.h"
 
-    interface [
-        Conditional=DATABASE,
-        OmitConstructor,
-        NoStaticTables
-    ] SQLResultSet {
-        readonly attribute SQLResultSetRowList rows;
+#if ENABLE(DATABASE)
 
-        readonly attribute long insertId
-            getter raises(DOMException);
-        readonly attribute long rowsAffected;
-    };
+#include "ExceptionCode.h"
+#include "JSSQLResultSet.h"
+#include "SQLResultSet.h"
+#include "SQLTransactionSync.h"
+#include "SQLValue.h"
+
+using namespace JSC;
+
+namespace WebCore {
+
+JSValue JSSQLTransactionSync::executeSql(ExecState*, const ArgList&)
+{
+    return jsUndefined();
 }
+
+}
+
+#endif // ENABLE(DATABASE)

@@ -32,5 +32,6 @@ module storage {
         Callback
     ] DatabaseCallback {
         boolean handleEvent(in Database database);
+        boolean handleEvent(in DatabaseSync database);
     };
 }

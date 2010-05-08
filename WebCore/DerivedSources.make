@@ -116,6 +116,7 @@ DOM_CLASSES = \
     DOMWindow \
     Database \
     DatabaseCallback \
+    DatabaseSync \
     Document \
     DocumentFragment \
     DocumentType \
@@ -254,6 +255,8 @@ DOM_CLASSES = \
     SQLTransaction \
     SQLTransactionCallback \
     SQLTransactionErrorCallback \
+    SQLTransactionSync \
+    SQLTransactionSyncCallback \
     Storage \
     StorageEvent \
     SVGAElement \

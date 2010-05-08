@@ -136,6 +136,14 @@ v8::Handle<v8::Value> toV8(WorkerContext* impl)
     return global;
 }
 
+#if ENABLE(DATABASE)
+v8::Handle<v8::Value> V8WorkerContext::openDatabaseSyncCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.V8WorkerContext.openDatabaseSync()");
+    return v8::Undefined();
+}
+#endif
+
 } // namespace WebCore
 
 #endif // ENABLE(WORKERS)

@@ -28,28 +28,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DatabaseCallback_h
-#define DatabaseCallback_h
+#include "config.h"
 
 #if ENABLE(DATABASE)
+#include "V8DatabaseSync.h"
 
-#include <wtf/Threading.h>
+#include "DatabaseSync.h"
+#include "V8Binding.h"
+#include "V8BindingMacros.h"
+#include "V8Proxy.h"
+#include "V8SQLTransactionSyncCallback.h"
 
 namespace WebCore {
 
-class Database;
-class DatabaseSync;
-class ScriptExecutionContext;
-
-class DatabaseCallback : public ThreadSafeShared<DatabaseCallback> {
-public:
-    virtual ~DatabaseCallback() { }
-    virtual bool handleEvent(ScriptExecutionContext*, Database*) = 0;
-    virtual bool handleEvent(ScriptExecutionContext*, DatabaseSync*) = 0;
-};
-
+v8::Handle<v8::Value> V8DatabaseSync::changeVersionCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.DatabaseSync.changeVersion()");
+    return v8::Undefined();
 }
 
-#endif
+static v8::Handle<v8::Value> createTransaction(const v8::Arguments& args, bool readOnly)
+{
+    return v8::Undefined();
+}
 
-#endif // DatabaseCallback_h
+v8::Handle<v8::Value> V8DatabaseSync::transactionCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.DatabaseSync.transaction()");
+    return createTransaction(args, false);
+}
+
+v8::Handle<v8::Value> V8DatabaseSync::readTransactionCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.DatabaseSync.readTransaction()");
+    return createTransaction(args, true);
+}
+
+} // namespace WebCore
+
+#endif

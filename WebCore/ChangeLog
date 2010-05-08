@@ -1,3 +1,58 @@
+2010-05-07  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        Adding the IDL files for the sync DB API and the stubs for the JS and V8 bindings.
+        https://bugs.webkit.org/show_bug.cgi?id=34994
+
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDatabaseSyncCustom.cpp: Added.
+        (WebCore::JSDatabaseSync::changeVersion):
+        (WebCore::createTransaction):
+        (WebCore::JSDatabaseSync::transaction):
+        (WebCore::JSDatabaseSync::readTransaction):
+        * bindings/js/JSSQLTransactionSyncCustom.cpp: Added.
+        (WebCore::JSSQLTransactionSync::executeSql):
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::openDatabaseSync):
+        * bindings/v8/custom/V8BindingMacros.h: Added.
+        * bindings/v8/custom/V8DatabaseSyncCustom.cpp: Added.
+        (WebCore::V8DatabaseSync::changeVersionCallback):
+        (WebCore::createTransaction):
+        (WebCore::V8DatabaseSync::transactionCallback):
+        (WebCore::V8DatabaseSync::readTransactionCallback):
+        * bindings/v8/custom/V8SQLTransactionSyncCustom.cpp: Added.
+        (WebCore::V8SQLTransactionSync::executeSqlCallback):
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        (WebCore::V8WorkerContext::openDatabaseSyncCallback):
+        * storage/Database.idl:
+        * storage/DatabaseCallback.h:
+        * storage/DatabaseCallback.idl:
+        * storage/DatabaseSync.cpp:
+        (WebCore::DatabaseSync::changeVersion):
+        (WebCore::DatabaseSync::transaction):
+        * storage/DatabaseSync.h:
+        * storage/DatabaseSync.idl: Added.
+        * storage/SQLError.idl:
+        * storage/SQLResultSet.idl:
+        * storage/SQLResultSetRowList.idl:
+        * storage/SQLTransaction.idl:
+        * storage/SQLTransactionSync.idl: Added.
+        * storage/SQLTransactionSyncCallback.h:
+        * storage/SQLTransactionSyncCallback.idl: Added.
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::openDatabaseSync):
+        * workers/WorkerContext.h:
+        * workers/WorkerContext.idl:
+
 2010-05-07  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Simon Fraser.

@@ -4168,6 +4168,14 @@
 		B523CF091182675400EBB29C /* SQLTransactionSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B523CF021182675400EBB29C /* SQLTransactionSync.cpp */; };
 		B523CF0A1182675400EBB29C /* DatabaseSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B523CF031182675400EBB29C /* DatabaseSync.cpp */; };
 		B523CF0B1182675400EBB29C /* DatabaseSync.h in Headers */ = {isa = PBXBuildFile; fileRef = B523CF041182675400EBB29C /* DatabaseSync.h */; };
+		B55D5AA4119131FC00BCC315 /* JSSQLTransactionSyncCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B55D5AA2119131FC00BCC315 /* JSSQLTransactionSyncCallback.h */; };
+		B55D5AA5119131FC00BCC315 /* JSSQLTransactionSyncCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B55D5AA3119131FC00BCC315 /* JSSQLTransactionSyncCallback.cpp */; };
+		B55D5AA81191325000BCC315 /* JSDatabaseSyncCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B55D5AA61191325000BCC315 /* JSDatabaseSyncCustom.cpp */; };
+		B55D5AA91191325000BCC315 /* JSSQLTransactionSyncCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B55D5AA71191325000BCC315 /* JSSQLTransactionSyncCustom.cpp */; };
+		B58CEB6911913607002A6790 /* JSDatabaseSync.h in Headers */ = {isa = PBXBuildFile; fileRef = B58CEB6711913607002A6790 /* JSDatabaseSync.h */; };
+		B58CEB6A11913607002A6790 /* JSDatabaseSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B58CEB6811913607002A6790 /* JSDatabaseSync.cpp */; };
+		B58CEB6D1191361C002A6790 /* JSSQLTransactionSync.h in Headers */ = {isa = PBXBuildFile; fileRef = B58CEB6B1191361C002A6790 /* JSSQLTransactionSync.h */; };
+		B58CEB6E1191361C002A6790 /* JSSQLTransactionSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B58CEB6C1191361C002A6790 /* JSSQLTransactionSync.cpp */; };
 		B59DD699119029E5007E9684 /* JSDatabaseCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B59DD697119029E5007E9684 /* JSDatabaseCallback.h */; };
 		B59DD69A119029E5007E9684 /* JSDatabaseCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B59DD698119029E5007E9684 /* JSDatabaseCallback.cpp */; };
 		B59DD69D11902A42007E9684 /* JSSQLTransactionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B59DD69B11902A42007E9684 /* JSSQLTransactionCallback.h */; };
@@ -9530,6 +9538,17 @@
 		B523CF021182675400EBB29C /* SQLTransactionSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLTransactionSync.cpp; sourceTree = "<group>"; };
 		B523CF031182675400EBB29C /* DatabaseSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseSync.cpp; sourceTree = "<group>"; };
 		B523CF041182675400EBB29C /* DatabaseSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseSync.h; sourceTree = "<group>"; };
+		B55D5AA2119131FC00BCC315 /* JSSQLTransactionSyncCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLTransactionSyncCallback.h; sourceTree = "<group>"; };
+		B55D5AA3119131FC00BCC315 /* JSSQLTransactionSyncCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLTransactionSyncCallback.cpp; sourceTree = "<group>"; };
+		B55D5AA61191325000BCC315 /* JSDatabaseSyncCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDatabaseSyncCustom.cpp; sourceTree = "<group>"; };
+		B55D5AA71191325000BCC315 /* JSSQLTransactionSyncCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLTransactionSyncCustom.cpp; sourceTree = "<group>"; };
+		B55D5ABB1191327200BCC315 /* DatabaseSync.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DatabaseSync.idl; sourceTree = "<group>"; };
+		B55D5ABC1191327200BCC315 /* SQLTransactionSync.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLTransactionSync.idl; sourceTree = "<group>"; };
+		B55D5ABD1191327200BCC315 /* SQLTransactionSyncCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLTransactionSyncCallback.idl; sourceTree = "<group>"; };
+		B58CEB6711913607002A6790 /* JSDatabaseSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDatabaseSync.h; sourceTree = "<group>"; };
+		B58CEB6811913607002A6790 /* JSDatabaseSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDatabaseSync.cpp; sourceTree = "<group>"; };
+		B58CEB6B1191361C002A6790 /* JSSQLTransactionSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLTransactionSync.h; sourceTree = "<group>"; };
+		B58CEB6C1191361C002A6790 /* JSSQLTransactionSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLTransactionSync.cpp; sourceTree = "<group>"; };
 		B59DD68D1190298E007E9684 /* DatabaseCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DatabaseCallback.idl; sourceTree = "<group>"; };
 		B59DD68E1190298E007E9684 /* SQLStatementCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLStatementCallback.idl; sourceTree = "<group>"; };
 		B59DD68F1190298E007E9684 /* SQLStatementErrorCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLStatementErrorCallback.idl; sourceTree = "<group>"; };
@@ -10776,6 +10795,7 @@
 				5116D9750CF177BD00C2B84D /* DatabaseDetails.h */,
 				B523CF031182675400EBB29C /* DatabaseSync.cpp */,
 				B523CF041182675400EBB29C /* DatabaseSync.h */,
+				B55D5ABB1191327200BCC315 /* DatabaseSync.idl */,
 				519611E90CAC749C0010A80C /* DatabaseTask.cpp */,
 				519611E80CAC749C0010A80C /* DatabaseTask.h */,
 				519611610CAC56570010A80C /* DatabaseThread.cpp */,
@@ -10818,7 +10838,9 @@
 				B59DD6911190298E007E9684 /* SQLTransactionErrorCallback.idl */,
 				B523CF021182675400EBB29C /* SQLTransactionSync.cpp */,
 				B523CF011182675400EBB29C /* SQLTransactionSync.h */,
+				B55D5ABC1191327200BCC315 /* SQLTransactionSync.idl */,
 				B523CEFF1182675400EBB29C /* SQLTransactionSyncCallback.h */,
+				B55D5ABD1191327200BCC315 /* SQLTransactionSyncCallback.idl */,
 				51E3F9C50DA059DC00250911 /* Storage.cpp */,
 				51E3F9C40DA059DC00250911 /* Storage.h */,
 				51E3F9D10DA05D7100250911 /* Storage.idl */,
@@ -14105,6 +14127,12 @@
 				B59DD6A411902A62007E9684 /* JSSQLStatementCallback.cpp */,
 				B59DD6A711902A71007E9684 /* JSSQLStatementErrorCallback.h */,
 				B59DD6A811902A71007E9684 /* JSSQLStatementErrorCallback.cpp */,
+				B55D5AA2119131FC00BCC315 /* JSSQLTransactionSyncCallback.h */,
+				B55D5AA3119131FC00BCC315 /* JSSQLTransactionSyncCallback.cpp */,
+				B58CEB6711913607002A6790 /* JSDatabaseSync.h */,
+				B58CEB6811913607002A6790 /* JSDatabaseSync.cpp */,
+				B58CEB6B1191361C002A6790 /* JSSQLTransactionSync.h */,
+				B58CEB6C1191361C002A6790 /* JSSQLTransactionSync.cpp */,
 			);
 			name = Storage;
 			sourceTree = "<group>";
@@ -15049,6 +15077,8 @@
 		BC4EDEF70C08F414007EDD49 /* Custom */ = {
 			isa = PBXGroup;
 			children = (
+				B55D5AA61191325000BCC315 /* JSDatabaseSyncCustom.cpp */,
+				B55D5AA71191325000BCC315 /* JSSQLTransactionSyncCustom.cpp */,
 				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
 				49EED14B1051971900099FAB /* JSCanvasRenderingContext2DCustom.cpp */,
 				49EED14D1051971A00099FAB /* JSCanvasRenderingContextCustom.cpp */,
@@ -18953,6 +18983,9 @@
 				B59DD6A111902A52007E9684 /* JSSQLTransactionErrorCallback.h in Headers */,
 				B59DD6A511902A62007E9684 /* JSSQLStatementCallback.h in Headers */,
 				B59DD6A911902A71007E9684 /* JSSQLStatementErrorCallback.h in Headers */,
+				B55D5AA4119131FC00BCC315 /* JSSQLTransactionSyncCallback.h in Headers */,
+				B58CEB6911913607002A6790 /* JSDatabaseSync.h in Headers */,
+				B58CEB6D1191361C002A6790 /* JSSQLTransactionSync.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21195,6 +21228,11 @@
 				B59DD6A211902A52007E9684 /* JSSQLTransactionErrorCallback.cpp in Sources */,
 				B59DD6A611902A62007E9684 /* JSSQLStatementCallback.cpp in Sources */,
 				B59DD6AA11902A71007E9684 /* JSSQLStatementErrorCallback.cpp in Sources */,
+				B55D5AA5119131FC00BCC315 /* JSSQLTransactionSyncCallback.cpp in Sources */,
+				B55D5AA81191325000BCC315 /* JSDatabaseSyncCustom.cpp in Sources */,
+				B55D5AA91191325000BCC315 /* JSSQLTransactionSyncCustom.cpp in Sources */,
+				B58CEB6A11913607002A6790 /* JSDatabaseSync.cpp in Sources */,
+				B58CEB6E1191361C002A6790 /* JSSQLTransactionSync.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

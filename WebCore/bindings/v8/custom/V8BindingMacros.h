@@ -28,28 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DatabaseCallback_h
-#define DatabaseCallback_h
-
-#if ENABLE(DATABASE)
-
-#include <wtf/Threading.h>
-
-namespace WebCore {
-
-class Database;
-class DatabaseSync;
-class ScriptExecutionContext;
-
-class DatabaseCallback : public ThreadSafeShared<DatabaseCallback> {
-public:
-    virtual ~DatabaseCallback() { }
-    virtual bool handleEvent(ScriptExecutionContext*, Database*) = 0;
-    virtual bool handleEvent(ScriptExecutionContext*, DatabaseSync*) = 0;
-};
-
-}
-
-#endif
-
-#endif // DatabaseCallback_h
+#define EXCEPTION_BLOCK(type, var, value)         \
+    type var;                                     \
+    {                                             \
+        v8::TryCatch block;                       \
+        var = value;                              \
+        if (block.HasCaught())                    \
+            return throwError(block.Exception()); \
+    }

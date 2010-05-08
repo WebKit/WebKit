@@ -281,6 +281,20 @@ PassRefPtr<Database> WorkerContext::openDatabase(const String& name, const Strin
 
     return Database::openDatabase(this, name, version, displayName, estimatedSize, creationCallback, ec);
 }
+
+PassRefPtr<DatabaseSync> WorkerContext::openDatabaseSync(const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
+{
+    if (!securityOrigin()->canAccessDatabase()) {
+        ec = SECURITY_ERR;
+        return 0;
+    }
+
+    ASSERT(DatabaseSync::isAvailable());
+    if (!DatabaseSync::isAvailable())
+        return 0;
+
+    return DatabaseSync::openDatabaseSync(this, name, version, displayName, estimatedSize, creationCallback, ec);
+}
 #endif
 
 bool WorkerContext::isContextThread() const

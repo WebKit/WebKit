@@ -2300,8 +2300,10 @@ contains(DEFINES, ENABLE_DATABASE=1) {
         storage/SQLTransactionSync.cpp \
         bindings/js/JSCustomSQLStatementErrorCallback.cpp \
         bindings/js/JSDatabaseCustom.cpp \
+        bindings/js/JSDatabaseSyncCustom.cpp \
         bindings/js/JSSQLResultSetRowListCustom.cpp \
-        bindings/js/JSSQLTransactionCustom.cpp
+        bindings/js/JSSQLTransactionCustom.cpp \
+        bindings/js/JSSQLTransactionSyncCustom.cpp
 }
 
 contains(DEFINES, ENABLE_DOM_STORAGE=1) {
@@ -2325,6 +2327,7 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
         storage/SQLTransactionClient.h \
         storage/SQLTransactionCoordinator.h \
         storage/SQLTransactionSync.h \
+        storage/SQLTransactionSyncCallback.h \
         storage/StorageArea.h \
         storage/StorageAreaImpl.h \
         storage/StorageAreaSync.h \

@@ -28,28 +28,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DatabaseCallback_h
-#define DatabaseCallback_h
+#include "config.h"
 
 #if ENABLE(DATABASE)
 
-#include <wtf/Threading.h>
+#include "V8SQLTransactionSync.h"
+
+#include "DatabaseSync.h"
+#include "SQLResultSet.h"
+#include "SQLValue.h"
+#include "V8Binding.h"
+#include "V8BindingMacros.h"
+#include "V8Proxy.h"
+#include <wtf/Vector.h>
+
+using namespace WTF;
 
 namespace WebCore {
 
-class Database;
-class DatabaseSync;
-class ScriptExecutionContext;
-
-class DatabaseCallback : public ThreadSafeShared<DatabaseCallback> {
-public:
-    virtual ~DatabaseCallback() { }
-    virtual bool handleEvent(ScriptExecutionContext*, Database*) = 0;
-    virtual bool handleEvent(ScriptExecutionContext*, DatabaseSync*) = 0;
-};
-
+v8::Handle<v8::Value> V8SQLTransactionSync::executeSqlCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.SQLTransactionSync.executeSql()");
+    return v8::Undefined();
 }
 
-#endif
+} // namespace WebCore
 
-#endif // DatabaseCallback_h
+#endif

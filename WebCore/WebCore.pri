@@ -437,6 +437,7 @@ IDL_BINDINGS += \
     plugins/MimeTypeArray.idl \
     storage/Database.idl \
     storage/DatabaseCallback.idl \
+    storage/DatabaseSync.idl \
     storage/Storage.idl \
     storage/StorageEvent.idl \
     storage/SQLError.idl \
@@ -447,6 +448,8 @@ IDL_BINDINGS += \
     storage/SQLTransaction.idl \
     storage/SQLTransactionCallback.idl \
     storage/SQLTransactionErrorCallback.idl \
+    storage/SQLTransactionSync.idl \
+    storage/SQLTransactionSyncCallback.idl \
     svg/SVGZoomEvent.idl \
     svg/SVGAElement.idl \
     svg/SVGAltGlyphElement.idl \

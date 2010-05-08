@@ -91,12 +91,12 @@ String DatabaseSync::version() const
     return String();
 }
 
-void DatabaseSync::changeVersion(const String&, const String&, PassRefPtr<SQLTransactionSyncCallback>)
+void DatabaseSync::changeVersion(const String&, const String&, PassRefPtr<SQLTransactionSyncCallback>, ExceptionCode&)
 {
     ASSERT(m_scriptExecutionContext->isContextThread());
 }
 
-void DatabaseSync::transaction(PassRefPtr<SQLTransactionSyncCallback>, bool)
+void DatabaseSync::transaction(PassRefPtr<SQLTransactionSyncCallback>, bool, ExceptionCode&)
 {
     ASSERT(m_scriptExecutionContext->isContextThread());
 }
