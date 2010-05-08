@@ -1,3 +1,16 @@
+2010-05-08  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Platform plugin
+        https://bugs.webkit.org/show_bug.cgi?id=38438
+
+        Select popups delegate private API. To provide select popup delegates
+        a plugin that implements QWebKitPlatformPlugin must be found
+        in QCoreApplication::libraryPaths.
+
+        * WebCore.pro:
+
 2010-05-08  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Gustavo Noronha Silva.

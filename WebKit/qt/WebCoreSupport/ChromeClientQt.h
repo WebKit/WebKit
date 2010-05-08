@@ -33,6 +33,7 @@
 #include "RefCounted.h"
 #include "KURL.h"
 #include "PlatformString.h"
+#include "QtPlatformPlugin.h"
 
 QT_BEGIN_NAMESPACE
 class QEventLoop;
@@ -181,6 +182,8 @@ namespace WebCore {
         bool statusBarVisible;
         bool menuBarVisible;
         QEventLoop* m_eventLoop;
+
+        QtPlatformPlugin m_platformPlugin;
     };
 }
 

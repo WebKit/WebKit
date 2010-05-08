@@ -570,6 +570,10 @@ bool ChromeClientQt::allowsAcceleratedCompositing() const
 
 QtAbstractWebPopup* ChromeClientQt::createSelectPopup()
 {
+    QtAbstractWebPopup* result = m_platformPlugin.createSelectInputMethod();
+    if (result)
+        return result;
+
 #if defined(Q_WS_MAEMO_5)
     return new QtMaemoWebPopup;
 #else

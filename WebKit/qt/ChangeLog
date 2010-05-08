@@ -1,3 +1,45 @@
+2010-05-08  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Platform plugin
+        https://bugs.webkit.org/show_bug.cgi?id=38438
+
+        Select popups delegate private API. To provide select popup delegates
+        a plugin that implements QWebKitPlatformPlugin must be found
+        in QCoreApplication::libraryPaths.
+
+        * Api/headers.pri:
+        * Api/qwebkitplatformplugin.h: Added.
+        (QWebSelectData::~QWebSelectData):
+        (QWebSelectData::):
+        (QWebSelectMethod::~QWebSelectMethod):
+        (QWebKitPlatformPlugin::~QWebKitPlatformPlugin):
+        (QWebKitPlatformPlugin::):
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::createSelectPopup):
+        * WebCoreSupport/ChromeClientQt.h:
+        * WebCoreSupport/QtPlatformPlugin.cpp: Added.
+        (WebCore::SelectData::SelectData):
+        (WebCore::SelectData::itemText):
+        (WebCore::SelectData::itemToolTip):
+        (WebCore::SelectData::itemIsEnabled):
+        (WebCore::SelectData::itemCount):
+        (WebCore::SelectData::itemIsSelected):
+        (WebCore::SelectData::multiple):
+        (WebCore::SelectData::itemType):
+        (WebCore::SelectInputMethodWrapper::SelectInputMethodWrapper):
+        (WebCore::SelectInputMethodWrapper::show):
+        (WebCore::SelectInputMethodWrapper::hide):
+        (WebCore::SelectInputMethodWrapper::selectItem):
+        (WebCore::SelectInputMethodWrapper::didHide):
+        (WebCore::getPluginObject):
+        (WebCore::QtPlatformPlugin::~QtPlatformPlugin):
+        (WebCore::QtPlatformPlugin::plugin):
+        (WebCore::QtPlatformPlugin::createSelectInputMethod):
+        * WebCoreSupport/QtPlatformPlugin.h: Added.
+        (WebCore::QtPlatformPlugin::QtPlatformPlugin):
+
 2010-05-08  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.
