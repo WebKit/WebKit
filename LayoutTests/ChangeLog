@@ -1,3 +1,19 @@
+2010-05-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Optimize access to the global object from a function that uses eval
+        https://bugs.webkit.org/show_bug.cgi?id=38644
+
+        Add test case to ensure we don't incorrectly allow dynamic scopes
+        to be skipped when doing direct var access.
+
+        * fast/js/global-resolve-through-eval-expected.txt: Added.
+        * fast/js/global-resolve-through-eval.html: Added.
+        * fast/js/script-tests/global-resolve-through-eval.js: Added.
+        (accessGlobal):
+        (accessLocal):
+
 2010-05-06  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

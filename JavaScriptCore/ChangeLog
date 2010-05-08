@@ -1,5 +1,18 @@
 2010-05-07  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Gavin Barraclough.
+
+        Optimize access to the global object from a function that uses eval
+        https://bugs.webkit.org/show_bug.cgi?id=38644
+
+        Fix bug where cross scope access to a global var (vs. property) would
+        be allowed without checking for intervening dynamic scopes.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitResolve):
+
+2010-05-07  Oliver Hunt  <oliver@apple.com>
+
         32-bit buildfix.
 
         Macro expansion I stab at thee!
