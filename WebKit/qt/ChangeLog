@@ -1,3 +1,11 @@
+2010-05-02  Simon Hausmann  <hausmann@webkit.org>
+
+        [Qt] Unreviewed, QtWebKit versioning for the trunk.
+
+        The next version is going to be 2.1, based off the trunk.
+
+        * Api/qwebkitglobal.h:
+
 2010-05-07  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Symbian build fix.
