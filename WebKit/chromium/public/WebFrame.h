@@ -462,8 +462,10 @@ public:
     // Registers a listener for the specified user name input element. The
     // listener will receive notifications for blur and when autocomplete
     // should be triggered.
-    // The WebFrame becomes the owner of the passed listener.
-    virtual void registerPasswordListener(
+    // An element can have only one listener. If a listener already exists,
+    // this method returns false and does not add the new one.
+    // Either way, the WebFrame becomes the owner of the passed listener.
+    virtual bool registerPasswordListener(
         WebInputElement,
         WebPasswordAutocompleteListener*) = 0;
 

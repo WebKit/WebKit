@@ -1,3 +1,17 @@
+2010-05-08  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] WebFrame::registerPasswordListener shouldn't assert on duplicate listener.
+        https://bugs.webkit.org/show_bug.cgi?id=38765
+
+        * public/WebFrame.h:
+        (WebKit::WebFrameImpl::registerPasswordListener): Changed return type to bool. Updated comment.
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::registerPasswordListener): Return false instead of asserting.
+        * src/WebFrameImpl.h:
+        (WebKit::WebFrameImpl::registerPasswordListener): Changed return type to bool.
+
 2010-05-08  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Dmitry Titov.

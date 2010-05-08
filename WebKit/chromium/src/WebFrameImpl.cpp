@@ -1934,13 +1934,16 @@ void WebFrameImpl::setCanHaveScrollbars(bool canHaveScrollbars)
     m_frame->view()->setCanHaveScrollbars(canHaveScrollbars);
 }
 
-void WebFrameImpl::registerPasswordListener(
+bool WebFrameImpl::registerPasswordListener(
     WebInputElement inputElement,
     WebPasswordAutocompleteListener* listener)
 {
     RefPtr<HTMLInputElement> element = inputElement.operator PassRefPtr<HTMLInputElement>();
-    ASSERT(m_passwordListeners.find(element) == m_passwordListeners.end());
-    m_passwordListeners.set(element, listener);
+    if (!m_passwordListeners.add(element, listener).second) {
+        delete listener;
+        return false;
+    }
+    return true;
 }
 
 WebPasswordAutocompleteListener* WebFrameImpl::getPasswordListener(
