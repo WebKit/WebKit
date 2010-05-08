@@ -35,8 +35,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef _NPAPI_H_
-#define _NPAPI_H_
+#ifndef npapi_h_
+#define npapi_h_
 
 #include "nptypes.h"
 
@@ -788,4 +788,4 @@ NPBool                NPN_ConvertPoint(NPP instance, double sourceX, double sour
 }  /* end extern "C" */
 #endif
 
-#endif /* _NPAPI_H_ */
+#endif /* npapi_h_ */

@@ -1,5 +1,16 @@
 2010-05-08  Stuart Morgan  <stuartmorgan@chromium.org>
 
+        Reviewed by Darin Adler.
+
+        Change the npapi.h header guards to match the npapi-headers repository
+        copy.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38666
+
+        * bridge/npapi.h:
+
+2010-05-08  Stuart Morgan  <stuartmorgan@chromium.org>
+
         Reviewed by Darin Fisher.
 
         Resolve most of the whitespace/comment/order differences in npapi.h
