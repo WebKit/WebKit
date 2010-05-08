@@ -1,3 +1,28 @@
+2010-05-08  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Dmitry Titov.
+
+        Add an additional parameter to the WebSharedWorker::startWorkerContext method
+        to indicate which appcache the shared worker script resource was loaded from,
+        and provide that value when calling out to chrome via this interface.
+        https://bugs.webkit.org/show_bug.cgi?id=38605
+
+        I'm keeping the old method around until patches can land in both repositories
+        that make the old method obsolete and unneeded. There's a FIXME for that.
+
+        Also somewhat related but independent change to propagate the runtime enabled 
+        flag thru to the page settings instance used by the 'shadow page'.
+ 
+        * public/WebSharedWorker.h: Add the new param (but keep the old interface around for now too)
+        (WebKit::WebSharedWorker::startWorkerContext):
+        * src/SharedWorkerRepository.cpp: Provide the value when calling out to chrome.
+        (WebCore::SharedWorkerScriptLoader::notifyFinished):
+        * src/WebSharedWorkerImpl.cpp:
+        (WebKit::WebSharedWorkerImpl::startWorkerContext):
+        * src/WebSharedWorkerImpl.h:
+        * src/WebWorkerBase.cpp: Propagate runtime enabled flag thru to the page settings.
+        (WebKit::WebWorkerBase::initializeLoader):
+
 2010-05-07  Darin Fisher  <darin@chromium.org>
 
         Fix build bustage.  Update to Chromium code that avoids a bad

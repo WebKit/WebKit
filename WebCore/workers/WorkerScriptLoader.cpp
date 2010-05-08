@@ -102,6 +102,8 @@ void WorkerScriptLoader::didReceiveResponse(const ResourceResponse& response)
         return;
     }
     m_responseEncoding = response.textEncodingName();
+    if (m_client)
+        m_client->didReceiveResponse(response);
 }
 
 void WorkerScriptLoader::didReceiveData(const char* data, int len)

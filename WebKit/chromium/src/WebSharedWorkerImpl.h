@@ -51,7 +51,7 @@ public:
 
     // WebSharedWorker methods:
     virtual bool isStarted();
-    virtual void startWorkerContext(const WebURL&, const WebString& name, const WebString& userAgent, const WebString& sourceCode);
+    virtual void startWorkerContext(const WebURL&, const WebString& name, const WebString& userAgent, const WebString& sourceCode, long long);
     virtual void connect(WebMessagePortChannel*, ConnectListener*);
     virtual void terminateWorkerContext();
     virtual void clientDestroyed();

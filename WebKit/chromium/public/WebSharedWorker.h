@@ -60,7 +60,18 @@ public:
     virtual void startWorkerContext(const WebURL& scriptURL,
                                     const WebString& name,
                                     const WebString& userAgent,
-                                    const WebString& sourceCode) = 0;
+                                    const WebString& sourceCode,
+                                    long long scriptResourceAppCacheID) = 0;
+
+    // FIXME(michaeln): Remove this after the roll and adjusting to it.
+    virtual void startWorkerContext(const WebURL& scriptURL,
+                                    const WebString& name,
+                                    const WebString& userAgent,
+                                    const WebString& sourceCode)
+    {
+        startWorkerContext(scriptURL, name, userAgent, sourceCode, 0);
+    }
+
     class ConnectListener {
     public:
         // Invoked once the connect event has been sent so the caller can free this object.

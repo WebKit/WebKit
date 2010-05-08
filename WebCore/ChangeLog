@@ -1,3 +1,18 @@
+2010-05-08  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Dmitry Titov.
+
+        Have WorkerScriptLoader provide access to the ResourceResponse for the loaded script
+        through the WorkerScriptLoaderClient interface.
+        https://bugs.webkit.org/show_bug.cgi?id=38605
+
+        No new tests. There are no script visible changes.
+
+        * workers/WorkerScriptLoader.cpp: Call the client with the response.
+        (WebCore::WorkerScriptLoader::didReceiveResponse):
+        * workers/WorkerScriptLoaderClient.h: Define a new method to receive the response.
+        (WebCore::WorkerScriptLoaderClient::didReceiveResponse):
+
 2010-05-08  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Simon Hausmann.

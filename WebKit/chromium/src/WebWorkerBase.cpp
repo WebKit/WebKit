@@ -39,6 +39,8 @@
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
 #include "WebMessagePortChannel.h"
+#include "WebRuntimeFeatures.h"
+#include "WebSettings.h"
 #include "WebView.h"
 #include "WebWorkerClient.h"
 
@@ -101,6 +103,7 @@ void WebWorkerBase::initializeLoader(const WebURL& url)
     // infrastructure.
     ASSERT(!m_webView);
     m_webView = WebView::create(0);
+    m_webView->settings()->setOfflineWebApplicationCacheEnabled(WebRuntimeFeatures::isApplicationCacheEnabled());
     m_webView->initializeMainFrame(this);
 
     WebFrameImpl* webFrame = static_cast<WebFrameImpl*>(m_webView->mainFrame());
