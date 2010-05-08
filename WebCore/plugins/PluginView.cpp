@@ -621,7 +621,7 @@ NPError PluginView::destroyStream(NPStream* stream, NPReason reason)
 void PluginView::status(const char* message)
 {
     if (Page* page = m_parentFrame->page())
-        page->chrome()->setStatusbarText(m_parentFrame.get(), String(message));
+        page->chrome()->setStatusbarText(m_parentFrame.get(), String::fromUTF8(message));
 }
 
 NPError PluginView::setValue(NPPVariable variable, void* value)

@@ -1,3 +1,16 @@
+2010-05-05  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        [Qt] Fix encoding of status message in Plugin API
+
+        https://bugs.webkit.org/show_bug.cgi?id=35144
+
+        Spotted by Alexey Proskuryakov.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::status):
+
 2010-05-08  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed win build fix.

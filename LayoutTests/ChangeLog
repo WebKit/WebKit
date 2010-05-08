@@ -1,3 +1,15 @@
+2010-05-05  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        [Qt] Fix encoding of status message in Plugin API
+
+        Spotted by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35144
+
+        * platform/qt/Skipped: Unskip plugins/set-status.html
+
 2010-05-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Rebaseline Win specific results after exposing JSSVGVKernElement/JSSVGHKernElement.
