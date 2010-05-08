@@ -1,3 +1,15 @@
+2010-05-08  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, just reverting commit.
+
+        REGRESSION(59000): r59000 contained all sorts of changes it should not have, needs revert.
+        https://bugs.webkit.org/show_bug.cgi?id=38798
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitResolve):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_resolve_global):
+
 2010-05-04  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Maciej Stachowiak

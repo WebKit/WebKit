@@ -1,3 +1,32 @@
+2010-05-08  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, just reverting commit.
+
+        REGRESSION(59000): r59000 contained all sorts of changes it should not have, needs revert.
+        https://bugs.webkit.org/show_bug.cgi?id=38798
+
+        Test: fast/js/global-resolve-through-eval.html
+
+        * bindings/js/JSCallbackData.h:
+        (WebCore::JSCallbackData::JSCallbackData):
+        (WebCore::JSCallbackData::~JSCallbackData):
+        (WebCore::DeleteCallbackDataTask::create):
+        (WebCore::DeleteCallbackDataTask::performTask):
+        (WebCore::DeleteCallbackDataTask::isCleanupTask):
+        (WebCore::DeleteCallbackDataTask::DeleteCallbackDataTask):
+        * bindings/js/JSCustomVoidCallback.cpp:
+        (WebCore::JSCustomVoidCallback::JSCustomVoidCallback):
+        (WebCore::JSCustomVoidCallback::~JSCustomVoidCallback):
+        * bindings/js/JSCustomVoidCallback.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadShutdownFinishTask::performTask):
+        (WebCore::WorkerThreadShutdownStartTask::performTask):
+
 2010-05-07  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Dirk Schulze

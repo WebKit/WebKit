@@ -1,3 +1,23 @@
+2010-05-08  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, just reverting commit.
+
+        REGRESSION(59000): r59000 contained all sorts of changes it should not have, needs revert.
+        https://bugs.webkit.org/show_bug.cgi?id=38798
+
+        * Scripts/webkitpy/common/system/executive.py:
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py: Removed.
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+
 2010-05-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Daniel Bates.

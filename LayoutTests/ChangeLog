@@ -1,3 +1,17 @@
+2010-05-08  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, just reverting commit.
+
+        REGRESSION(59000): r59000 contained all sorts of changes it should not have, needs revert.
+        https://bugs.webkit.org/show_bug.cgi?id=38798
+
+        * fast/js/global-resolve-through-eval-expected.txt: Added.
+        * fast/js/global-resolve-through-eval.html: Added.
+        * fast/js/script-tests/global-resolve-through-eval.js: Added.
+        (accessGlobal):
+        (accessLocal):
+        * platform/win/Skipped:
+
 2010-05-06  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

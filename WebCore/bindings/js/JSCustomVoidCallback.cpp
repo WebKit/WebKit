@@ -42,12 +42,13 @@ using namespace JSC;
     
 JSCustomVoidCallback::JSCustomVoidCallback(JSObject* callback, JSDOMGlobalObject* globalObject)
     : m_data(new JSCallbackData(callback, globalObject))
+    , m_scriptExecutionContext(globalObject->scriptExecutionContext())
 {
 }
 
 JSCustomVoidCallback::~JSCustomVoidCallback()
 {
-    callOnMainThread(JSCallbackData::deleteData, m_data);
+    m_scriptExecutionContext->postTask(DeleteCallbackDataTask::create(m_data));
 #ifndef NDEBUG
     m_data = 0;
 #endif

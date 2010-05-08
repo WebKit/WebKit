@@ -52,10 +52,8 @@ class ChromiumMacPort(chromium.ChromiumPort):
         chromium.ChromiumPort.__init__(self, port_name, options)
 
     def baseline_search_path(self):
-        return [self._webkit_baseline_path('chromium-mac'),
-                self._webkit_baseline_path('chromium'),
-                self._webkit_baseline_path('mac' + self.version()),
-                self._webkit_baseline_path('mac')]
+        port_names = ["chromium-mac", "chromium", "mac" + self.version(), "mac"]
+        return map(self._webkit_baseline_path, port_names)
 
     def check_build(self, needs_http):
         result = chromium.ChromiumPort.check_build(self, needs_http)
@@ -87,6 +85,7 @@ class ChromiumMacPort(chromium.ChromiumPort):
         return 'mac'
 
     def version(self):
+        # FIXME: It's strange that this string is -version, not just version.
         os_version_string = platform.mac_ver()[0]  # e.g. "10.5.6"
         if not os_version_string:
             return '-leopard'
