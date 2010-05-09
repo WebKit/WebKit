@@ -204,6 +204,52 @@
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
 
+2010-05-07  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r58990.
+        http://trac.webkit.org/changeset/58990
+
+        Broke 4 tests on Snow Leopard and Qt.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/JSCell.h:
+
+2010-05-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Optimize access to the global object from a function that uses eval
+        https://bugs.webkit.org/show_bug.cgi?id=38644
+
+        Fix bug where cross scope access to a global var (vs. property) would
+        be allowed without checking for intervening dynamic scopes.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitResolve):
+
+2010-05-07  Oliver Hunt  <oliver@apple.com>
+
+        32-bit buildfix.
+
+        Macro expansion I stab at thee!
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_resolve_global):
+
+2010-05-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Optimized o[s] where o is a cell and s is a string, removing some old
+        code that wasn't really tuned for the JIT.
+        
+        SunSpider says 0.8% faster.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/JSCell.h:
+
 2010-05-07  Oliver Hunt  <oliver@apple.com>
 
         Windows build fix.
