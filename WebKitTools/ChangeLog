@@ -247,6 +247,48 @@
         * Scripts/webkitpy/layout_tests/port/win.py:
          - Need a basic baseline_search_path if --platform dryrun is to work.
 
+ 2010-05-07  Eric Seidel  <eric@webkit.org>
+
+         Reviewed by Nikolas Zimmermann.
+
+         DryrunTest fails on every platform other than mac
+         https://bugs.webkit.org/show_bug.cgi?id=38796
+
+         The test uses the port detection logic to find a suitable
+         port to use results from.  However that detection logic assumes
+         chromium on linux, which requires a chromium checkout which the
+         bots don't have.  The test is broken and we'll need to fix it.
+         For now I'm just going to disable the test on all platforms besides mac.
+
+         * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
+ 2010-05-07  Eric Seidel  <eric@webkit.org>
+
+         Reviewed by Daniel Bates.
+
+         Clean up baseline_search_path to use map to reduce copy/paste code
+         https://bugs.webkit.org/show_bug.cgi?id=38792
+
+         Reading which portnames a port falls back to is easier if
+         we convert port names to paths with map instead of using copy/paste code.
+
+         * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+         * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+         * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+         * Scripts/webkitpy/layout_tests/port/mac.py:
+
+ 2010-05-07  Eric Seidel  <eric@webkit.org>
+
+         Reviewed by Daniel Bates.
+
+         rollout commands fail when commit is missing bug number
+         https://bugs.webkit.org/show_bug.cgi?id=38791
+
+         * Scripts/webkitpy/tool/commands/download.py:
+          - _commit_info failed to actually return the CommitInfo in the no-bug-id case.
+         * Scripts/webkitpy/tool/commands/download_unittest.py:
+          - Test that the fix worked.
+
 2010-05-07  Darin Fisher  <darin@chromium.org>
 
         Fix build bustage: toElement<T> should be to<T>.
