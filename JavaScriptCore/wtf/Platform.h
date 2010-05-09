@@ -789,7 +789,7 @@
 /* ENABLE macro defaults */
 
 #if PLATFORM(QT)
-// We musn't customize the global operator new and delete for the Qt port.
+// We must not customize the global operator new and delete for the Qt port.
 #define ENABLE_GLOBAL_FASTMALLOC_NEW 0
 #endif
 

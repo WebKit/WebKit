@@ -1,5 +1,15 @@
 2010-05-08  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
+        Unreviewed, build fix.
+
+        Fix missing terminating ' character warning
+
+        The warning has been only seen on the Gtk buildbots.
+
+        * wtf/Platform.h:
+
+2010-05-08  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
         Reviewed by Gavin Barraclough.
 
         Refactor YARR and YARR_JIT default rules in Platform.h
