@@ -1,3 +1,23 @@
+2010-05-03  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Kenneth Christiansen.
+
+        Spatial Navigation: create a getter for the "fudgeFactor"
+        https://bugs.webkit.org/show_bug.cgi?id=38488
+
+        A couple of places in the Spatial Navigation code make use of a "fudge factor"
+        to improve precision by working around outline focus metrics and such. Patch adds
+        a helper method for unify getter operations of this value, instead of having it
+        declared locally in the various methods it is used.
+
+        No behaviour change.
+
+        * page/SpatialNavigation.cpp:
+        (WebCore::scrollIntoView):
+        (WebCore::deflateIfOverlapped):
+        * page/SpatialNavigation.h:
+        (WebCore::fudgeFactor):
+
 2010-05-08  Stuart Morgan  <stuartmorgan@chromium.org>
 
         Reviewed by Darin Adler.

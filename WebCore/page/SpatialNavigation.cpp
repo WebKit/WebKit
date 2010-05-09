@@ -477,9 +477,8 @@ void scrollIntoView(Element* element)
     // it is preferable to inflate |element|'s bounding rect a bit before
     // scrolling it for accurate reason.
     // Element's scrollIntoView method does not provide this flexibility.
-    static const int fudgeFactor = 2;
     IntRect bounds = element->getRect();
-    bounds.inflate(fudgeFactor);
+    bounds.inflate(fudgeFactor());
     element->renderer()->enclosingLayer()->scrollRectToVisible(bounds);
 }
 
@@ -497,14 +496,14 @@ static void deflateIfOverlapped(IntRect& a, IntRect& b)
     if (!a.intersects(b) || a.contains(b) || b.contains(a))
         return;
 
-    static const int fudgeFactor = -2;
+    int deflateFactor = -fudgeFactor();
 
     // Avoid negative width or height values.
-    if ((a.width() + 2 * fudgeFactor > 0) && (a.height() + 2 * fudgeFactor > 0))
-        a.inflate(fudgeFactor);
+    if ((a.width() + 2 * deflateFactor > 0) && (a.height() + 2 * deflateFactor > 0))
+        a.inflate(deflateFactor);
 
-    if ((b.width() + 2 * fudgeFactor > 0) && (b.height() + 2 * fudgeFactor > 0))
-        b.inflate(fudgeFactor);
+    if ((b.width() + 2 * deflateFactor > 0) && (b.height() + 2 * deflateFactor > 0))
+        b.inflate(deflateFactor);
 }
 
 static bool checkNegativeCoordsForNode(Node* node, const IntRect& curRect)

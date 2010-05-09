@@ -40,6 +40,11 @@ inline long long maxDistance()
     return numeric_limits<long long>::max();
 }
 
+inline unsigned int fudgeFactor()
+{
+    return 2;
+}
+
 // Spatially speaking, two given elements in a web page can be:
 // 1) Fully aligned: There is a full intersection between the rects, either
 //    vertically or horizontally.
