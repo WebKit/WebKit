@@ -84,6 +84,9 @@ my $isGitBranchBuild;
 my $isSVN;
 my $svnVersion;
 
+my $gitDiffStartRegEx = qr#^diff --git (\w/)?(.+) (\w/)?([^\r\n]+)#;
+my $svnDiffStartRegEx = qr#^Index: ([^\r\n]+)#;
+
 # This method is for portability. Return the system-appropriate exit
 # status of a child process.
 #
@@ -471,9 +474,8 @@ sub parseGitDiffHeader($$)
 
     $_ = $line;
 
-    my $headerStartRegEx = qr#^diff --git (\w/)?(.+) (\w/)?([^\r\n]+)#;
     my $indexPath;
-    if (/$headerStartRegEx/) {
+    if (/$gitDiffStartRegEx/) {
         # The first and second paths can differ in the case of copies
         # and renames.  We use the second file path because it is the
         # destination path.
@@ -539,7 +541,7 @@ sub parseGitDiffHeader($$)
 
         $_ = <$fileHandle>; # Not defined if end-of-file reached.
 
-        last if (!defined($_) || /$headerStartRegEx/ || $foundHeaderEnding);
+        last if (!defined($_) || /$gitDiffStartRegEx/ || $foundHeaderEnding);
     }
 
     my $executableBitDelta = $newExecutableBit - $oldExecutableBit;
@@ -591,15 +593,15 @@ sub parseSvnDiffHeader($$)
 
     $_ = $line;
 
-    my $headerStartRegEx = qr/^Index: /;
-
-    if (!/$headerStartRegEx/) {
+    my $indexPath;
+    if (/$svnDiffStartRegEx/) {
+        $indexPath = $1;
+    } else {
         die("First line of SVN diff does not begin with \"Index \": \"$_\"");
     }
 
     my $copiedFromPath;
     my $foundHeaderEnding;
-    my $indexPath;
     my $isBinary;
     my $isNew;
     my $sourceRevision;
@@ -612,9 +614,7 @@ sub parseSvnDiffHeader($$)
 
         # Fix paths on ""---" and "+++" lines to match the leading
         # index line.
-        if (/^Index: ([^\r\n]+)/) {
-            $indexPath = $1;
-        } elsif (s/^--- \S+/--- $indexPath/) {
+        if (s/^--- \S+/--- $indexPath/) {
             # ---
             if (/^--- .+\(revision (\d+)\)/) {
                 $sourceRevision = $1;
@@ -638,7 +638,7 @@ sub parseSvnDiffHeader($$)
 
         $_ = <$fileHandle>; # Not defined if end-of-file reached.
 
-        last if (!defined($_) || /$headerStartRegEx/ || $foundHeaderEnding);
+        last if (!defined($_) || /$svnDiffStartRegEx/ || $foundHeaderEnding);
     }
 
     if (!$foundHeaderEnding) {
@@ -697,10 +697,10 @@ sub parseDiffHeader($$)
     my $isSvn;
     my $lastReadLine;
 
-    if ($line =~ /^Index:/) {
+    if ($line =~ $svnDiffStartRegEx) {
         $isSvn = 1;
         ($header, $lastReadLine) = parseSvnDiffHeader($fileHandle, $line);
-    } elsif ($line =~ /^diff --git/) {
+    } elsif ($line =~ $gitDiffStartRegEx) {
         $isGit = 1;
         ($header, $lastReadLine) = parseGitDiffHeader($fileHandle, $line);
     } else {
@@ -761,17 +761,16 @@ sub parseDiff($$)
 {
     my ($fileHandle, $line) = @_;
 
-    my $headerStartRegEx = qr#^Index: #; # SVN-style header for the default
-    my $gitHeaderStartRegEx = qr#^diff --git \w/#;
+    my $headerStartRegEx = $svnDiffStartRegEx; # SVN-style header for the default
 
     my $headerHashRef; # Last header found, as returned by parseDiffHeader().
     my $svnText;
     while (defined($line)) {
-        if (!$headerHashRef && ($line =~ $gitHeaderStartRegEx)) {
+        if (!$headerHashRef && ($line =~ $gitDiffStartRegEx)) {
             # Then assume all diffs in the patch are Git-formatted. This
             # block was made to be enterable at most once since we assume
             # all diffs in the patch are formatted the same (SVN or Git).
-            $headerStartRegEx = $gitHeaderStartRegEx;
+            $headerStartRegEx = $gitDiffStartRegEx;
         }
 
         if ($line !~ $headerStartRegEx) {

@@ -1,3 +1,15 @@
+2010-05-09  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Chris Jerdonek.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38812
+
+        Make the regular expressions for parsing the start of an SVN
+        and Git header global variables since they are used throughout
+        VCSUtils.pm.
+
+        * Scripts/VCSUtils.pm:
+
 2010-05-09  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Daniel Bates.
