@@ -11,25 +11,28 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x268 [border: (2px solid #FF0000)]
-        RenderBlock {DIV} at (14,14) size 756x240
-          RenderBlock (anonymous) at (0,0) size 756x32
-            RenderText {#text} at (0,0) size 47x31
+      RenderBlock {DIV} at (0,0) size 784x256 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (14,14) size 756x228
+          RenderBlock (anonymous) at (0,0) size 756x30
+            RenderText {#text} at (0,0) size 47x29
               text run at (0,0) width 47: "Test"
-          RenderBlock {BLOCKQUOTE} at (40,56) size 676x32
-            RenderText {#text} at (0,0) size 47x31
+          RenderBlock {BLOCKQUOTE} at (40,54) size 676x30
+            RenderText {#text} at (0,0) size 47x29
               text run at (0,0) width 47: "Test"
-          RenderBlock (anonymous) at (0,112) size 756x128
-            RenderBR {BR} at (0,0) size 0x31
-            RenderBR {BR} at (0,32) size 0x31
-            RenderBR {BR} at (0,64) size 0x31
-            RenderBR {BR} at (0,96) size 0x31
+          RenderBlock (anonymous) at (0,108) size 756x120
+            RenderBR {BR} at (0,0) size 0x29
+            RenderBR {BR} at (0,30) size 0x29
+            RenderBR {BR} at (0,60) size 0x29
+            RenderBR {BR} at (0,90) size 0x29
 caret: position 0 of child 5 {BR} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

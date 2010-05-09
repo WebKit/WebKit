@@ -16,24 +16,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x64
-        RenderText {#text} at (0,0) size 770x63
-          text run at (0,0) width 770: "Test inserting paragraphs: should see two blue boxes, where the second "
-          text run at (0,32) width 359: "blue box starts with an empty line."
-      RenderBlock {DIV} at (0,64) size 784x36
-      RenderBlock {DIV} at (0,100) size 784x120 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x60 [border: (2px solid #FF0000)]
-          RenderText {#text} at (14,14) size 38x31
+      RenderBlock (anonymous) at (0,0) size 784x60
+        RenderText {#text} at (0,0) size 770x59
+          text run at (0,0) width 763: "Test inserting paragraphs: should see two blue boxes, where the second"
+          text run at (763,0) width 7: " "
+          text run at (0,30) width 359: "blue box starts with an empty line."
+      RenderBlock {DIV} at (0,60) size 784x36
+      RenderBlock {DIV} at (0,96) size 784x116 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x58 [border: (2px solid #FF0000)]
+          RenderText {#text} at (14,14) size 38x29
             text run at (14,14) width 38: "baz"
-        RenderBlock (anonymous) at (14,74) size 756x32
-          RenderText {#text} at (0,0) size 34x31
+        RenderBlock (anonymous) at (14,72) size 756x30
+          RenderText {#text} at (0,0) size 34x29
             text run at (0,0) width 34: "bar"
-      RenderBlock {DIV} at (0,220) size 784x180 [border: (2px solid #0000FF)]
-        RenderBlock (anonymous) at (14,14) size 756x32
-          RenderBR {BR} at (0,0) size 0x31
-        RenderBlock {DIV} at (14,46) size 756x60 [border: (2px solid #FF0000)]
-          RenderText {#text} at (14,14) size 33x31
+      RenderBlock {DIV} at (0,212) size 784x174 [border: (2px solid #0000FF)]
+        RenderBlock (anonymous) at (14,14) size 756x30
+          RenderBR {BR} at (0,0) size 0x29
+        RenderBlock {DIV} at (14,44) size 756x58 [border: (2px solid #FF0000)]
+          RenderText {#text} at (14,14) size 33x29
             text run at (14,14) width 33: "foo"
-        RenderBlock {DIV} at (14,106) size 756x60 [border: (2px solid #FF0000)]
-          RenderBR {BR} at (14,14) size 0x31
+        RenderBlock {DIV} at (14,102) size 756x58 [border: (2px solid #FF0000)]
+          RenderBR {BR} at (14,14) size 0x29
 caret: position 0 of child 0 {BR} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document

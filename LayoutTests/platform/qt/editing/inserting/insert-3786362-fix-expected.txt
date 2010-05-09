@@ -14,25 +14,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x39
-        RenderInline {B} at (0,0) size 176x20
-          RenderText {#text} at (0,0) size 176x20
-            text run at (0,0) width 176: "This demonstrates a bug:"
-        RenderText {#text} at (176,0) size 769x39
-          text run at (176,0) width 593: " copying an empty line that's implemented with a br doesn't put an interchange newline on the"
-          text run at (0,20) width 80: "pasteboard. "
-          text run at (80,20) width 280: "There should be two blank lines after the 'a'."
-      RenderBlock {DIV} at (0,53) size 784x168
-        RenderBlock {DIV} at (0,0) size 784x100 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 13x31
+      RenderBlock {P} at (0,0) size 784x41
+        RenderInline {B} at (0,0) size 194x20
+          RenderText {#text} at (0,0) size 194x20
+            text run at (0,0) width 194: "This demonstrates a bug:"
+        RenderText {#text} at (194,0) size 745x41
+          text run at (194,0) width 551: " copying an empty line that's implemented with a br doesn't put an interchange"
+          text run at (0,21) width 196: "newline on the pasteboard. "
+          text run at (196,21) width 310: "There should be two blank lines after the 'a'."
+      RenderBlock {DIV} at (0,57) size 784x158
+        RenderBlock {DIV} at (0,0) size 784x94 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 13x29
             text run at (2,2) width 13: "a"
           RenderBR {BR} at (15,25) size 0x0
-          RenderBR {BR} at (2,34) size 0x31
-          RenderText {#text} at (2,66) size 13x31
-            text run at (2,66) width 13: "b"
-        RenderBlock {DIV} at (0,100) size 784x68 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 13x31
+          RenderBR {BR} at (2,32) size 0x29
+          RenderText {#text} at (2,62) size 13x29
+            text run at (2,62) width 13: "b"
+        RenderBlock {DIV} at (0,94) size 784x64 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 13x29
             text run at (2,2) width 13: "a"
           RenderBR {BR} at (15,25) size 0x0
-          RenderBR {BR} at (2,34) size 0x31
+          RenderBR {BR} at (2,32) size 0x29
 caret: position 0 of child 2 {BR} of child 3 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

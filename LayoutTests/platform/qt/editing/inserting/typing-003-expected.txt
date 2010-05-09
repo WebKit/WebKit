@@ -705,11 +705,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x156 [border: (2px solid #FF0000)]
-        RenderText {#text} at (14,14) size 749x127
-          text run at (14,14) width 717: "xxxx x xx xxxx xxxxxx xxxxx xxxxxx xxx xx xxxx xxx xxx xx x xxxxx "
-          text run at (14,46) width 749: "xxxxxxxxxxxx xxxxxxxx xxx xxxx xxxxx xx xxx xxxx xxxx xxxxx xxxxxx "
-          text run at (14,78) width 736: "xxx xx xxxx xxx xxx xx xxxxxx xxxxx xxxxxx xxx xx xxxx xxx xxx xx x "
-          text run at (14,110) width 364: "xxxxx xxxxxxxxxxxx xxxxxxxx xxx "
-        RenderInline {SPAN} at (0,0) size 0x31
+      RenderBlock {DIV} at (0,0) size 784x148 [border: (2px solid #FF0000)]
+        RenderText {#text} at (14,14) size 749x119
+          text run at (14,14) width 710: "xxxx x xx xxxx xxxxxx xxxxx xxxxxx xxx xx xxxx xxx xxx xx x xxxxx"
+          text run at (724,14) width 7: " "
+          text run at (14,44) width 742: "xxxxxxxxxxxx xxxxxxxx xxx xxxx xxxxx xx xxx xxxx xxxx xxxxx xxxxxx"
+          text run at (756,44) width 7: " "
+          text run at (14,74) width 729: "xxx xx xxxx xxx xxx xx xxxxxx xxxxx xxxxxx xxx xx xxxx xxx xxx xx x"
+          text run at (743,74) width 7: " "
+          text run at (14,104) width 364: "xxxxx xxxxxxxxxxxx xxxxxxxx xxx "
+        RenderInline {SPAN} at (0,0) size 0x29
 caret: position 233 of child 0 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

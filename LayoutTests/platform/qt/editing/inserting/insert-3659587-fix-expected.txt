@@ -44,12 +44,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x94 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 120x64
-          RenderInline {B} at (0,0) size 120x66
-            RenderText {#text} at (14,14) size 120x33
+      RenderBlock {DIV} at (0,0) size 784x90 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 120x60
+          RenderInline {B} at (0,0) size 120x62
+            RenderText {#text} at (14,14) size 120x31
               text run at (14,14) width 120: "xxxtestxxx"
             RenderBR {BR} at (134,38) size 0x0
-            RenderText {#text} at (14,47) size 39x33
-              text run at (14,47) width 39: "xxx"
+            RenderText {#text} at (14,45) size 39x31
+              text run at (14,45) width 39: "xxx"
 caret: position 3 of child 2 {#text} of child 0 {B} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
