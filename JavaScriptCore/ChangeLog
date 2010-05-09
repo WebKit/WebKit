@@ -1,3 +1,15 @@
+2010-05-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Remove YARR configuration rules from Qt make system
+        https://bugs.webkit.org/show_bug.cgi?id=38819
+
+        Setting YARR based on JIT seeting is now in Platform.h 
+        for all ports. This patch essentially reverses r49238.
+
+        * JavaScriptCore.pri:
+
 2010-05-09  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
