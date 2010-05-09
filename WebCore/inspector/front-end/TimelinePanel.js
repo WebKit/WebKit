@@ -76,6 +76,10 @@ WebInspector.TimelinePanel = function()
     this._bottomGapElement.className = "timeline-gap";
     this._itemsGraphsElement.appendChild(this._bottomGapElement);
 
+    this._expandElements = document.createElement("div");
+    this._expandElements.id = "orphan-expand-elements";
+    this._itemsGraphsElement.appendChild(this._expandElements);
+
     this._rootRecord = this._createRootRecord();
     this._sendRequestRecords = {};
     this._timerRecords = {};
@@ -512,25 +516,35 @@ WebInspector.TimelinePanel.prototype = {
         this._itemsGraphsElement.removeChild(this._graphRowsElement);
         var graphRowElement = this._graphRowsElement.firstChild;
         var scheduleRefreshCallback = this._scheduleRefresh.bind(this, true);
+        this._itemsGraphsElement.removeChild(this._expandElements);
+        this._expandElements.removeChildren();
 
-        for (var i = startIndex; i < endIndex; ++i) {
+        for (var i = 0; i < endIndex; ++i) {
             var record = recordsInWindow[i];
             var isEven = !(i % 2);
 
-            if (!listRowElement) {
-                listRowElement = new WebInspector.TimelineRecordListRow().element;
-                this._sidebarListElement.appendChild(listRowElement);
-            }
-            if (!graphRowElement) {
-                graphRowElement = new WebInspector.TimelineRecordGraphRow(this._itemsGraphsElement, scheduleRefreshCallback, rowHeight).element;
-                this._graphRowsElement.appendChild(graphRowElement);
-            }
+            if (i < startIndex) {
+                var lastChildIndex = i + record._visibleChildrenCount;
+                if (lastChildIndex >= startIndex && lastChildIndex < endIndex) {
+                    var expandElement = new WebInspector.TimelineExpandableElement(this._expandElements);
+                    expandElement._update(record, i, this._calculator.computeBarGraphWindowPosition(record, width - this._expandOffset));
+                }
+            } else {
+                if (!listRowElement) {
+                    listRowElement = new WebInspector.TimelineRecordListRow().element;
+                    this._sidebarListElement.appendChild(listRowElement);
+                }
+                if (!graphRowElement) {
+                    graphRowElement = new WebInspector.TimelineRecordGraphRow(this._itemsGraphsElement, scheduleRefreshCallback, rowHeight).element;
+                    this._graphRowsElement.appendChild(graphRowElement);
+                }
 
-            listRowElement.row.update(record, isEven, this._calculator, visibleTop);
-            graphRowElement.row.update(record, isEven, this._calculator, width, this._expandOffset, i);
+                listRowElement.row.update(record, isEven, this._calculator, visibleTop);
+                graphRowElement.row.update(record, isEven, this._calculator, width, this._expandOffset, i);
 
-            listRowElement = listRowElement.nextSibling;
-            graphRowElement = graphRowElement.nextSibling;
+                listRowElement = listRowElement.nextSibling;
+                graphRowElement = graphRowElement.nextSibling;
+            }
         }
 
         // Remove extra rows.
@@ -546,6 +560,7 @@ WebInspector.TimelinePanel.prototype = {
         }
 
         this._itemsGraphsElement.insertBefore(this._graphRowsElement, this._bottomGapElement);
+        this._itemsGraphsElement.appendChild(this._expandElements);
         this.sidebarResizeElement.style.height = this.sidebarElement.clientHeight + "px";
         // Reserve some room for expand / collapse controls to the left for records that start at 0ms.
         var timelinePaddingLeft = this._calculator.windowLeft === 0 ? this._expandOffset : 0;

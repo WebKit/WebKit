@@ -1,3 +1,15 @@
+2010-05-08  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: If some record is not in visible area then it's expand element also is not
+        visible even if it has children in visible area.
+        https://bugs.webkit.org/show_bug.cgi?id=38643
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype._refreshRecords):
+
 2010-05-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
