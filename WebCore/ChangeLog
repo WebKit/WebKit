@@ -1,3 +1,27 @@
+2010-05-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=38557
+        r58526 introduced a ~30% regression on Dromaeo JS lib
+
+        This fix does two things.
+        - Don't use QualifiedName as the key to a HashMap, use a
+          RefPtr<QualifiedNameImpl> instead.  We should remove the HashTraits for
+          QualifiedName and that will happen in a follow up patch.
+        - Only mark cached NodeLists on Documents instead of all Nodes. This is
+          okay since the marking of NodeLists is an optimization to keep NodeList
+          wrappers alive and is not mandated by any spec.
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::markChildren):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::markChildren):
+        * dom/Node.cpp:
+        (WebCore::Node::removeCachedTagNodeList):
+        (WebCore::Node::getElementsByTagNameNS):
+        * dom/NodeRareData.h:
+
 2010-05-08  Antonio Gomes  <tonikitoo@webkit.org>
 
         Unreviewed attempt to fix Windows build.
