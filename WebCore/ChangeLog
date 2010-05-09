@@ -1,5 +1,16 @@
 2010-05-10  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Not reviewed: rollback the commit r59062
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generatePopupContent):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._getRecordDetails):
+        * inspector/front-end/inspector.js:
+        (WebInspector.linkifyURLAsNode):
+
+2010-05-10  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Reviewed by Pavel Feldman.
 
         WebInspector: Cosmetic changes.

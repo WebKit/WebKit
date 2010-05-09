@@ -1645,10 +1645,7 @@ WebInspector.linkifyURLAsNode = function(url, linkText, classes, isExternal, too
     var a = document.createElement("a");
     a.href = url;
     a.className = classes;
-    if (typeof tooltipText === "undefined")
-        a.title = url;
-    else if (typeof tooltipText !== "string" || tooltipText.length != 0)
-        a.title = tooltipText;
+    a.title = tooltipText || url;
     a.target = "_blank";
     a.textContent = linkText;
 
