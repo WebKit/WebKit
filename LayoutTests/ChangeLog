@@ -2,6 +2,17 @@
 
         [Qt] Update expected results for unskipped editing/inserting tests
 
+        Unreviewed, remove platform-specific results for editing/inserting/6633727.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=38472
+
+
+        * platform/qt/editing/inserting/6633727-expected.txt: Removed.
+
+2010-05-09  Robert Hogan  <robert@webkit.org>
+
+        [Qt] Update expected results for unskipped editing/inserting tests
+
         Unreviewed, add expected results for unskipped tests. Results are taken
         from Qt bot.
 
