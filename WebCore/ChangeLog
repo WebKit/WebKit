@@ -1,3 +1,10 @@
+2010-05-08  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Unreviewed attempt to fix Windows build.
+
+        * page/SpatialNavigation.h:
+        (WebCore::fudgeFactor):
+
 2010-05-03  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Kenneth Christiansen.
