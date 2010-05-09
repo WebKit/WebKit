@@ -52,6 +52,42 @@ using namespace std;
 
 namespace JSC {
 
+PassRefPtr<NativeExecutable> JIT::stringGetByValStubGenerator(JSGlobalData* globalData, ExecutablePool* pool)
+{
+    JSInterfaceJIT jit;
+    JumpList failures;
+    failures.append(jit.branchPtr(NotEqual, Address(regT0), ImmPtr(globalData->jsStringVPtr)));
+    failures.append(jit.branchTest32(NonZero, Address(regT0, OBJECT_OFFSETOF(JSString, m_fiberCount))));
+#if USE(JSVALUE64)
+    jit.zeroExtend32ToPtr(regT1, regT1);
+#else
+    jit.emitFastArithImmToInt(regT1);
+#endif
+
+    // Load string length to regT1, and start the process of loading the data pointer into regT0
+    jit.load32(Address(regT0, ThunkHelpers::jsStringLengthOffset()), regT2);
+    jit.loadPtr(Address(regT0, ThunkHelpers::jsStringValueOffset()), regT0);
+    jit.loadPtr(Address(regT0, ThunkHelpers::stringImplDataOffset()), regT0);
+    
+    // Do an unsigned compare to simultaneously filter negative indices as well as indices that are too large
+    failures.append(jit.branch32(AboveOrEqual, regT1, regT2));
+    
+    // Load the character
+    jit.load16(BaseIndex(regT0, regT1, TimesTwo, 0), regT0);
+    
+    failures.append(jit.branch32(AboveOrEqual, regT0, Imm32(0x100)));
+    jit.move(ImmPtr(globalData->smallStrings.singleCharacterStrings()), regT1);
+    jit.loadPtr(BaseIndex(regT1, regT0, ScalePtr, 0), regT0);
+    jit.ret();
+    
+    failures.link(&jit);
+    jit.move(Imm32(0), regT0);
+    jit.ret();
+    
+    LinkBuffer patchBuffer(&jit, pool);
+    return adoptRef(new NativeExecutable(patchBuffer.finalizeCode()));
+}
+
 void JIT::emit_op_get_by_val(Instruction* currentInstruction)
 {
     unsigned dst = currentInstruction[1].u.operand;
@@ -81,6 +117,34 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     addSlowCase(branchTestPtr(Zero, regT0));
 
     emitPutVirtualRegister(dst);
+}
+
+void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    unsigned dst = currentInstruction[1].u.operand;
+    unsigned base = currentInstruction[2].u.operand;
+    unsigned property = currentInstruction[3].u.operand;
+    
+    linkSlowCase(iter); // property int32 check
+    linkSlowCaseIfNotJSCell(iter, base); // base cell check
+    Jump nonCell = jump();
+    linkSlowCase(iter); // base array check
+    Jump notString = branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsStringVPtr));
+    emitNakedCall(m_globalData->getThunk(stringGetByValStubGenerator)->generatedJITCode().addressForCall());
+    Jump failed = branchTestPtr(Zero, regT0);
+    emitPutVirtualRegister(dst, regT0);
+    emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_get_by_val));
+    failed.link(this);
+    notString.link(this);
+    nonCell.link(this);
+    
+    linkSlowCase(iter); // vector length check
+    linkSlowCase(iter); // empty value
+    
+    JITStubCall stubCall(this, cti_op_get_by_val);
+    stubCall.addArgument(base, regT2);
+    stubCall.addArgument(property, regT2);
+    stubCall.call(dst);
 }
 
 void JIT::compileGetDirectOffset(RegisterID base, RegisterID result, RegisterID structure, RegisterID offset, RegisterID scratch)

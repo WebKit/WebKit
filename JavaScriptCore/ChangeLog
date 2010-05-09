@@ -1,3 +1,30 @@
+2010-05-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Improve string indexing performance
+        https://bugs.webkit.org/show_bug.cgi?id=38814
+
+        Add an assembly stub to do indexed loads from strings much
+        more cheaply than the current stub dispatch logic.  We can
+        do this because we are able to make guarantees about the
+        register contents when entering the stub so the call overhead
+        is negligible.
+
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        * jit/JITOpcodes.cpp:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::emitSlow_op_get_by_val):
+           Moved from JITOpcodes.cpp to keep the slowcase next to
+           the normal case codegen as we do for everything else.
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        * jit/JSInterfaceJIT.h:
+        (JSC::JSInterfaceJIT::emitFastArithImmToInt):
+
 2010-05-09  Maciej Stachowiak  <mjs@apple.com>
 
         Fixed version of: "Optimized o[s] where o is a cell and s is a string"

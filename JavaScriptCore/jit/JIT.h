@@ -447,7 +447,6 @@ namespace JSC {
         Jump emitFastArithDeTagImmediateJumpIfZero(RegisterID);
 #endif
         void emitFastArithReTagImmediate(RegisterID src, RegisterID dest);
-        void emitFastArithImmToInt(RegisterID);
         void emitFastArithIntToImmNoCheck(RegisterID src, RegisterID dest);
 
         void emitTagAsBoolImmediate(RegisterID reg);
@@ -904,6 +903,7 @@ namespace JSC {
         int m_uninterruptedConstantSequenceBegin;
 #endif
 #endif
+        static PassRefPtr<NativeExecutable> stringGetByValStubGenerator(JSGlobalData* globalData, ExecutablePool* pool);
     } JIT_CLASS_ALIGNMENT;
 
     inline void JIT::emit_op_loop(Instruction* currentInstruction)

@@ -269,6 +269,38 @@ void JIT::emitSlow_op_method_check(Instruction*, Vector<SlowCaseEntry>::iterator
 
 #endif
 
+PassRefPtr<NativeExecutable> JIT::stringGetByValStubGenerator(JSGlobalData* globalData, ExecutablePool* pool)
+{
+    JSInterfaceJIT jit;
+    JumpList failures;
+    failures.append(jit.branchPtr(NotEqual, Address(regT0), ImmPtr(globalData->jsStringVPtr)));
+    failures.append(jit.branchTest32(NonZero, Address(regT0, OBJECT_OFFSETOF(JSString, m_fiberCount))));
+    
+    // Load string length to regT1, and start the process of loading the data pointer into regT0
+    jit.load32(Address(regT0, ThunkHelpers::jsStringLengthOffset()), regT1);
+    jit.loadPtr(Address(regT0, ThunkHelpers::jsStringValueOffset()), regT0);
+    jit.loadPtr(Address(regT0, ThunkHelpers::stringImplDataOffset()), regT0);
+    
+    // Do an unsigned compare to simultaneously filter negative indices as well as indices that are too large
+    failures.append(jit.branch32(AboveOrEqual, regT2, regT1));
+    
+    // Load the character
+    jit.load16(BaseIndex(regT0, regT2, TimesTwo, 0), regT0);
+    
+    failures.append(jit.branch32(AboveOrEqual, regT0, Imm32(0x100)));
+    jit.move(ImmPtr(globalData->smallStrings.singleCharacterStrings()), regT1);
+    jit.loadPtr(BaseIndex(regT1, regT0, ScalePtr, 0), regT0);
+    jit.move(Imm32(JSValue::CellTag), regT1); // We null check regT0 on return so this is safe
+    jit.ret();
+
+    failures.link(&jit);
+    jit.move(Imm32(0), regT0);
+    jit.ret();
+    
+    LinkBuffer patchBuffer(&jit, pool);
+    return adoptRef(new NativeExecutable(patchBuffer.finalizeCode()));
+}
+
 void JIT::emit_op_get_by_val(Instruction* currentInstruction)
 {
     unsigned dst = currentInstruction[1].u.operand;
@@ -300,7 +332,18 @@ void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCas
     
     linkSlowCase(iter); // property int32 check
     linkSlowCaseIfNotJSCell(iter, base); // base cell check
+
+    Jump nonCell = jump();
     linkSlowCase(iter); // base array check
+    Jump notString = branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsStringVPtr));
+    emitNakedCall(m_globalData->getThunk(stringGetByValStubGenerator)->generatedJITCode().addressForCall());
+    Jump failed = branchTestPtr(Zero, regT0);
+    emitStore(dst, regT1, regT0);
+    emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_get_by_val));
+    failed.link(this);
+    notString.link(this);
+    nonCell.link(this);
+
     linkSlowCase(iter); // vector length check
     linkSlowCase(iter); // empty value
     

@@ -1407,24 +1407,6 @@ void JIT::emitSlow_op_to_primitive(Instruction* currentInstruction, Vector<SlowC
     stubCall.call(currentInstruction[1].u.operand);
 }
 
-void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned base = currentInstruction[2].u.operand;
-    unsigned property = currentInstruction[3].u.operand;
-
-    linkSlowCase(iter); // property int32 check
-    linkSlowCaseIfNotJSCell(iter, base); // base cell check
-    linkSlowCase(iter); // base array check
-    linkSlowCase(iter); // vector length check
-    linkSlowCase(iter); // empty value
-
-    JITStubCall stubCall(this, cti_op_get_by_val);
-    stubCall.addArgument(base, regT2);
-    stubCall.addArgument(property, regT2);
-    stubCall.call(dst);
-}
-
 void JIT::emitSlow_op_loop_if_lesseq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     unsigned op2 = currentInstruction[2].u.operand;
