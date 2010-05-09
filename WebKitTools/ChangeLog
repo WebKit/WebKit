@@ -1,3 +1,33 @@
+2010-05-09  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        Finished moving the header-parsing logic from svn-apply and -unapply
+        to VCSUtils.pm's parsing methods.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38802
+
+        * Scripts/VCSUtils.pm:
+          - Added to parseGitDiffHeader() the ability to parse and store
+            whether a file is new or deleted.
+          - Also reordered in parseGitDiffHeader() some of the else statements
+            to a more readable ordering.
+          - Added to parseSvnDiffHeader() the ability to parse and store
+            whether a file is new.
+        * Scripts/svn-apply:
+          - Changed handleGitBinaryChange() to use the new "isNew" and "isDeletion"
+            diffHash key-values.
+          - Changed patch() to use the new "isNew" diffHash key-value.
+        * Scripts/svn-unapply:
+          - Changed patch() to use the new "isNew" and "isDeletion" diffHash key-values.
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiff.pl:
+          - Added unit tests for new and deleted files.
+        * Scripts/webkitperl/VCSUtils_unittest/parseGitDiffHeader.pl:
+          - Updated the unit tests as necessary.
+          - Added a unit test for a deleted file.
+        * Scripts/webkitperl/VCSUtils_unittest/parseSvnDiffHeader.pl:
+          - Updated the unit tests as necessary.
+
 2010-05-08  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Daniel Bates.

@@ -263,6 +263,68 @@ END
 undef],
     expectedNextLine => undef,
 },
+{   # New test
+    diffName => "Git: new file",
+    inputText => <<'END',
+diff --git a/foo.h b/foo.h
+new file mode 100644
+index 0000000..3c9f114
+--- /dev/null
++++ b/foo.h
+@@ -0,0 +1,34 @@
++<html>
+diff --git a/bar b/bar
+index d45dd40..3494526 100644
+END
+    expectedReturn => [
+[{
+    svnConvertedText => <<'END',
+Index: foo.h
+new file mode 100644
+index 0000000..3c9f114
+--- foo.h
++++ foo.h
+@@ -0,0 +1,34 @@
++<html>
+END
+    indexPath => "foo.h",
+    isGit => 1,
+    isNew => 1,
+}],
+"diff --git a/bar b/bar\n"],
+    expectedNextLine => "index d45dd40..3494526 100644\n",
+},
+{   # New test
+    diffName => "Git: file deletion",
+    inputText => <<'END',
+diff --git a/foo b/foo
+deleted file mode 100644
+index 1e50d1d..0000000
+--- a/foo
++++ /dev/null
+@@ -1,1 +0,0 @@
+-line1
+diff --git a/bar b/bar
+index d45dd40..3494526 100644
+END
+    expectedReturn => [
+[{
+    svnConvertedText => <<'END',
+Index: foo
+deleted file mode 100644
+index 1e50d1d..0000000
+--- foo
++++ foo
+@@ -1,1 +0,0 @@
+-line1
+END
+    indexPath => "foo",
+    isDeletion => 1,
+    isGit => 1,
+}],
+"diff --git a/bar b/bar\n"],
+    expectedNextLine => "index d45dd40..3494526 100644\n",
+},
 {
     # New test
     diffName => "Git: Git diff followed by SVN diff", # Should not recognize SVN start

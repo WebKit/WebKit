@@ -247,14 +247,16 @@ sub handleBinaryChange($$)
 
 sub handleGitBinaryChange($$)
 {
-    my ($fullPath, $contents) = @_;
+    my ($fullPath, $diffHashRef) = @_;
+
+    my $contents = $diffHashRef->{svnConvertedText};
 
     my ($binaryChunkType, $binaryChunk, $reverseBinaryChunkType, $reverseBinaryChunk) = decodeGitBinaryPatch($contents, $fullPath);
     # FIXME: support "delta" type.
     die "only literal type is supported now" if ($binaryChunkType ne "literal" || $reverseBinaryChunkType ne "literal");
 
-    my $isFileAddition = $contents =~ /\nnew file mode \d+\n/;
-    my $isFileDeletion = $contents =~ /\ndeleted file mode \d+\n/;
+    my $isFileAddition = $diffHashRef->{isNew};
+    my $isFileDeletion = $diffHashRef->{isDeletion};
 
     my $originalContents = "";
     if (open FILE, $fullPath) {
@@ -303,7 +305,10 @@ sub patch($)
 {
     my ($diffHashRef) = @_;
 
-    my $patch = $diffHashRef->{svnConvertedText} || ""; # Make sure $patch is initialized.
+    # Make sure $patch is initialized to some value.  A deletion can have no
+    # svnConvertedText property in the case of a deletion resulting from a
+    # Git rename.
+    my $patch = $diffHashRef->{svnConvertedText} || "";
 
     my $fullPath = $diffHashRef->{indexPath};
     my $isBinary = $diffHashRef->{isBinary};
@@ -312,11 +317,11 @@ sub patch($)
     my $deletion = 0;
     my $addition = 0;
 
-    # FIXME: This information should be extracted from the diff file as
-    #        part of the parsing stage, i.e. the call to parsePatch().
-    $addition = 1 if ($patch =~ /\n--- .+\(revision 0\)\r?\n/ || $patch =~ /\n@@ -0,0 .* @@/) && !exists($copiedFiles{$fullPath});
-    # A deletion can have no $patch value in the case of a deletion resulting
-    # from a Git rename.
+    # FIXME: Do we need the exists($copiedFiles...) check here?  It looks like
+    #        it can be removed since modifications to copies do not register
+    #        as new files.  If this is the case, we should be able to remove
+    #        the variable from this file entirely.
+    $addition = 1 if ($diffHashRef->{isNew} || $patch =~ /\n@@ -0,0 .* @@/) && !exists($copiedFiles{$fullPath});
     $deletion = 1 if ($diffHashRef->{isDeletion} || $patch =~ /\n@@ .* \+0,0 @@/);
 
     if (!$addition && !$deletion && !$isBinary) {
@@ -335,13 +340,11 @@ sub patch($)
 
         if ($isBinary) {
             if ($isGit) {
-                handleGitBinaryChange($fullPath, $patch) if $patch;
+                handleGitBinaryChange($fullPath, $diffHashRef);
             } else {
                 handleBinaryChange($fullPath, $patch) if $patch;
             }
         } elsif ($deletion) {
-            # A deletion can have no $patch value in the case of a deletion
-            # resulting from a Git rename.
             applyPatch($patch, $fullPath, ["--force"]) if $patch;
             scmRemove($fullPath);
         } else {

@@ -83,6 +83,7 @@ Index: WebKitTools/Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl
 +++ WebKitTools/Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl	(revision 0)
 END
     indexPath => "WebKitTools/Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl",
+    isNew => 1,
 },
 "@@ -0,0 +1,262 @@\n"],
     expectedNextLine => "+#!/usr/bin/perl -w\n",

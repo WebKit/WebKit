@@ -453,10 +453,12 @@ sub isExecutable($)
 #                         case the value is 1 and -1, respectively.
 #     indexPath: the path of the target file.
 #     isBinary: the value 1 if the diff is for a binary file.
+#     isDeletion: the value 1 if the diff is a file deletion.
 #     isCopyWithChanges: the value 1 if the file was copied or moved and
 #                        the target file was changed in some way after being
 #                        copied or moved (e.g. if its contents or executable
 #                        bit were changed).
+#     isNew: the value 1 if the diff is for a new file.
 #     shouldDeleteSource: the value 1 if the file was copied or moved and
 #                         the source file was deleted -- i.e. if the copy
 #                         was actually a move.
@@ -485,6 +487,8 @@ sub parseGitDiffHeader($$)
     my $copiedFromPath;
     my $foundHeaderEnding;
     my $isBinary;
+    my $isDeletion;
+    my $isNew;
     my $newExecutableBit = 0;
     my $oldExecutableBit = 0;
     my $shouldDeleteSource = 0;
@@ -496,15 +500,12 @@ sub parseGitDiffHeader($$)
         s/([\n\r]+)$//;
         my $eol = $1;
 
-        if (/^(deleted file|old) mode ([0-9]{6})/) {
+        if (/^(deleted file|old) mode (\d+)/) {
             $oldExecutableBit = (isExecutable($2) ? 1 : 0);
-        } elsif (/^new( file)? mode ([0-9]{6})/) {
+            $isDeletion = 1 if $1 eq "deleted file";
+        } elsif (/^new( file)? mode (\d+)/) {
             $newExecutableBit = (isExecutable($2) ? 1 : 0);
-        } elsif (/^--- \S+/) {
-            $_ = "--- $indexPath"; # Convert to SVN format.
-        } elsif (/^\+\+\+ \S+/) {
-            $_ = "+++ $indexPath"; # Convert to SVN format.
-            $foundHeaderEnding = 1;
+            $isNew = 1 if $1;
         } elsif (/^similarity index (\d+)%/) {
             $similarityIndex = $1;
         } elsif (/^copy from (\S+)/) {
@@ -518,15 +519,20 @@ sub parseGitDiffHeader($$)
             #        permit us to use "svn move" and "git move".
             $copiedFromPath = $1;
             $shouldDeleteSource = 1;
+        } elsif (/^--- \S+/) {
+            $_ = "--- $indexPath"; # Convert to SVN format.
+        } elsif (/^\+\+\+ \S+/) {
+            $_ = "+++ $indexPath"; # Convert to SVN format.
+            $foundHeaderEnding = 1;
+        } elsif (/^GIT binary patch$/ ) {
+            $isBinary = 1;
+            $foundHeaderEnding = 1;
         # The "git diff" command includes a line of the form "Binary files
         # <path1> and <path2> differ" if the --binary flag is not used.
         } elsif (/^Binary files / ) {
             die("Error: the Git diff contains a binary file without the binary data in ".
                 "line: \"$_\".  Be sure to use the --binary flag when invoking \"git diff\" ".
                 "with diffs containing binary files.");
-        } elsif (/^GIT binary patch$/ ) {
-            $isBinary = 1;
-            $foundHeaderEnding = 1;
         }
 
         $svnConvertedText .= "$_$eol"; # Also restore end-of-line characters.
@@ -545,6 +551,8 @@ sub parseGitDiffHeader($$)
     $header{indexPath} = $indexPath;
     $header{isBinary} = $isBinary if $isBinary;
     $header{isCopyWithChanges} = 1 if ($copiedFromPath && ($similarityIndex != 100 || $executableBitDelta));
+    $header{isDeletion} = $isDeletion if $isDeletion;
+    $header{isNew} = $isNew if $isNew;
     $header{shouldDeleteSource} = $shouldDeleteSource if $shouldDeleteSource;
     $header{svnConvertedText} = $svnConvertedText;
 
@@ -570,6 +578,7 @@ sub parseGitDiffHeader($$)
 #     indexPath: the path of the target file, which is the path found in
 #                the "Index:" line.
 #     isBinary: the value 1 if the diff is for a binary file.
+#     isNew: the value 1 if the diff is for a new file.
 #     sourceRevision: the revision number of the source, if it exists.  This
 #                     is the same as the revision number the file was copied
 #                     from, in the case of a file copy.
@@ -592,6 +601,7 @@ sub parseSvnDiffHeader($$)
     my $foundHeaderEnding;
     my $indexPath;
     my $isBinary;
+    my $isNew;
     my $sourceRevision;
     my $svnConvertedText;
     while (1) {
@@ -608,6 +618,7 @@ sub parseSvnDiffHeader($$)
             # ---
             if (/^--- .+\(revision (\d+)\)/) {
                 $sourceRevision = $1;
+                $isNew = 1 if !$sourceRevision; # if revision 0.
                 if (/\(from (\S+):(\d+)\)$/) {
                     # The "from" clause is created by svn-create-patch, in
                     # which case there is always also a "revision" clause.
@@ -639,6 +650,7 @@ sub parseSvnDiffHeader($$)
     $header{copiedFromPath} = $copiedFromPath if $copiedFromPath;
     $header{indexPath} = $indexPath;
     $header{isBinary} = $isBinary if $isBinary;
+    $header{isNew} = $isNew if $isNew;
     $header{sourceRevision} = $sourceRevision if $sourceRevision;
     $header{svnConvertedText} = $svnConvertedText;
 
@@ -720,7 +732,9 @@ sub parseDiffHeader($$)
 #   indexPath: the path of the target file.  For SVN-formatted diffs,
 #              this is the same as the path in the "Index:" line.
 #   isBinary: the value 1 if the diff is for a binary file.
+#   isDeletion: the value 1 if the diff is known from the header to be a deletion.
 #   isGit: the value 1 if the diff is Git-formatted.
+#   isNew: the value 1 if the dif is known from the header to be a new file.
 #   isSvn: the value 1 if the diff is SVN-formatted.
 #   sourceRevision: the revision number of the source, if it exists.  This
 #                   is the same as the revision number the file was copied
@@ -798,7 +812,9 @@ sub parseDiff($$)
         # FIXME: Add executableBitDelta as a key.
         $diffHash{indexPath} = $headerHashRef->{indexPath};
         $diffHash{isBinary} = $headerHashRef->{isBinary} if $headerHashRef->{isBinary};
+        $diffHash{isDeletion} = $headerHashRef->{isDeletion} if $headerHashRef->{isDeletion};
         $diffHash{isGit} = $headerHashRef->{isGit} if $headerHashRef->{isGit};
+        $diffHash{isNew} = $headerHashRef->{isNew} if $headerHashRef->{isNew};
         $diffHash{isSvn} = $headerHashRef->{isSvn} if $headerHashRef->{isSvn};
         if (!$headerHashRef->{copiedFromPath}) {
             # If the file was copied, then we have already incorporated the

@@ -57,7 +57,7 @@ END
     expectedNextLine => "-file contents\n",
 },
 {   # New test
-    diffName => "New file",
+    diffName => "new file",
     inputText => <<'END',
 diff --git a/foo.h b/foo.h
 new file mode 100644
@@ -77,9 +77,38 @@ index 0000000..3c9f114
 +++ foo.h
 END
     indexPath => "foo.h",
+    isNew => 1,
 },
 "@@ -0,0 +1,34 @@\n"],
     expectedNextLine => "+<html>\n",
+},
+{   # New test
+    diffName => "file deletion",
+    inputText => <<'END',
+diff --git a/foo b/foo
+deleted file mode 100644
+index 1e50d1d..0000000
+--- a/foo
++++ /dev/null
+@@ -1,1 +0,0 @@
+-line1
+diff --git a/configure.ac b/configure.ac
+index d45dd40..3494526 100644
+END
+    expectedReturn => [
+{
+    svnConvertedText => <<'END',
+Index: foo
+deleted file mode 100644
+index 1e50d1d..0000000
+--- foo
++++ foo
+END
+    indexPath => "foo",
+    isDeletion => 1,
+},
+"@@ -1,1 +0,0 @@\n"],
+    expectedNextLine => "-line1\n",
 },
 {   # New test
     diffName => "using --no-prefix",
@@ -277,6 +306,7 @@ GIT binary patch
 END
     indexPath => "foo.gif",
     isBinary => 1,
+    isNew => 1,
 },
 "literal 7\n"],
     expectedNextLine => "OcmYex&reDa;sO8*F9L)B\n",
@@ -306,6 +336,7 @@ GIT binary patch
 END
     indexPath => "foo.gif",
     isBinary => 1,
+    isDeletion => 1,
 },
 "literal 0\n"],
     expectedNextLine => "HcmV?d00001\n",
@@ -407,6 +438,7 @@ index 0000000..d03e242
 END
     executableBitDelta => 1,
     indexPath => "foo",
+    isNew => 1,
 },
 "@@ -0,0 +1 @@\n"],
     expectedNextLine => "+file contents\n",
@@ -435,6 +467,7 @@ index d03e242..0000000
 END
     executableBitDelta => -1,
     indexPath => "foo",
+    isDeletion => 1,
 },
 "@@ -1 +0,0 @@\n"],
     expectedNextLine => "-file contents\n",
