@@ -1,3 +1,25 @@
+2010-05-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Fixed version of: "Optimized o[s] where o is a cell and s is a string"
+        https://bugs.webkit.org/show_bug.cgi?id=38815
+        
+        Fixed the previous patch for this from Geoff Garen.
+        
+        The two problems were a missing exception check and a PropertySlot
+        initialized improperly, leading to crashes and failures in the case
+        of getters accessed with bracket syntax.
+
+    Previous patch:
+
+        Optimized o[s] where o is a cell and s is a string, removing some old
+        code that wasn't really tuned for the JIT.
+        
+        SunSpider says 0.8% faster.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/JSCell.h:
+
 2010-05-08  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed, build fix.
