@@ -125,6 +125,20 @@ span.bz_comment {
 	padding: 2px 0 2px 0;
 }
 
+.bz_comment_text {
+    /* Do not specify a hard width.  Otherwise, comment lines will "pre-wrap"
+       to the specified width rather than to the window width. */
+    width: auto;
+}
+
+.bz_comment_text > span.quote {
+    /* Prevent span.quote's "white-space: pre" from styling quoted lines
+       inside comments.  Otherwise, a single quoted line that extends
+       beyond the window width will cause all non-quoted long lines to
+       extend beyond the window width as well. */
+    white-space: inherit;
+}
+
 #footer form {
 	border-top: 1px dotted #aaa;
 	border-bottom: 1px dotted #aaa;

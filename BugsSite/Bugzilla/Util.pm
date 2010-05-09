@@ -358,8 +358,8 @@ sub wrap_comment {
     my $wrappedcomment = "";
 
     # Use 'local', as recommended by Text::Wrap's perldoc.
-    local $Text::Wrap::columns = $cols || COMMENT_COLS;
-    # Make words that are longer than COMMENT_COLS not wrap.
+    local $Text::Wrap::columns = $cols || COMMENT_COLS_WRAP;
+    # Make words that are longer than COMMENT_COLS_WRAP not wrap.
     local $Text::Wrap::huge    = 'overflow';
     # Don't mess with tabs.
     local $Text::Wrap::unexpand = 0;
@@ -837,7 +837,7 @@ Returns the string, wrapped.
 =item C<wrap_comment($comment)>
 
 Takes a bug comment, and wraps it to the appropriate length. The length is
-currently specified in C<Bugzilla::Constants::COMMENT_COLS>. Lines beginning
+currently specified in C<Bugzilla::Constants::COMMENT_COLS_WRAP>. Lines beginning
 with ">" are assumed to be quotes, and they will not be wrapped.
 
 The intended use of this function is to wrap comments that are about to be

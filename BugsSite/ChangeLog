@@ -1,3 +1,28 @@
+2010-05-08  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Allow long comment lines to wrap to the window width instead
+        of to 80 characters.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37792
+
+        * Bugzilla/Constants.pm:
+          - Introduced a new constant COMMENT_COLS_WRAP to replace COMMENT_COLS
+            inside the wrap_comment() subroutine.  The new constant effectively
+            disables text wrapping by increasing the value used in wrap_comment()
+            from 80 characters to a very large value (8000).
+        * Bugzilla/Util.pm:
+          - Replaced COMMENT_COLS with COMMENT_COLS_WRAP inside wrap_comment().
+        * skins/custom/global.css:
+        (.bz_comment_text):
+          - Eliminate the width styling on comments to allow long lines
+            to wrap at the window width.
+        (.bz_comment_text > span.quote):
+          - Inherit the "white-space" property.  This prevents long quoted
+            lines in comments from causing non-quoted lines to extend beyond
+            the window width.
+
 2010-04-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

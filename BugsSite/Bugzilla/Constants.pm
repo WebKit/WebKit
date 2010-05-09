@@ -84,6 +84,7 @@ use File::Basename;
     LIST_OF_BUGS
 
     COMMENT_COLS
+    COMMENT_COLS_WRAP
     MAX_COMMENT_LENGTH
 
     CMT_NORMAL
@@ -260,8 +261,18 @@ use constant DEFAULT_QUERY_NAME => '(Default query)';
 use constant QUERY_LIST => 0;
 use constant LIST_OF_BUGS => 1;
 
-# The column length for displayed (and wrapped) bug comments.
+# The column width (cols attribute) of HTML textareas for inputting comments.
 use constant COMMENT_COLS => 80;
+# The column width at which to wrap comments prior to display -- using
+# Perl's Text::Wrap::wrap().  Only Bugzilla/Util.pm's wrap_comment() method
+# uses this constant.
+#
+# Empirical testing showed that $Text::Wrap::columns must be a value
+# between 2 and 32766, inclusive.  We choose a large value to prevent
+# wrap() from inserting any hard line breaks at all.  This lets us use
+# "white-space: pre-wrap" in the CSS to do line-wrapping instead.  We
+# arbitrarily choose 8000, which is enough for a 100-line paragraph.
+use constant COMMENT_COLS_WRAP => 8000;
 # Used in _check_comment(). Gives the max length allowed for a comment.
 use constant MAX_COMMENT_LENGTH => 65535;
 
