@@ -2,6 +2,40 @@
 
         Reviewed by Daniel Bates.
 
+        Added to svn-apply support for git renames and copies with similarity
+        index less than 100%.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32834
+
+        * Scripts/VCSUtils.pm:
+          - Added to parseGitDiffHeader() support for renames and similarity
+            index less than 100%.
+          - Added to parseDiff() support for processing renames, renames with
+            changes, and copies with changes.
+          - Added to parsePatch() the ability to process multiple return
+            values from parseDiff().
+        * Scripts/svn-apply:
+          - Added to patch() the ability to process diff hashes with the
+            isDeletion key-value set.
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiff.pl:
+          - Updated the unit tests as necessary.
+          - Added unit tests for rename with similarity index 100%,
+            rename with similarity index < 100%, and rename with a change
+            to the executable bit.
+        * Scripts/webkitperl/VCSUtils_unittest/parseGitDiffHeader.pl:
+          - Added unit tests for rename with similarity index 100%,
+            rename with similarity index < 100%, and rename with a change
+            to the executable bit.
+        * Scripts/webkitperl/VCSUtils_unittest/parsePatch.pl:
+          - Updated the unit tests as necessary.
+        * Scripts/webkitperl/VCSUtils_unittest/parseSvnDiffHeader.pl:
+          - Simplified the carriage-return unit test to more narrowly test
+            only carriage returns.
+
+2010-05-08  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Daniel Bates.
+
         This revision suppresses the misleading "error: pathspec..." messages
         when using svn-apply to add a binary file from a Git diff.
 

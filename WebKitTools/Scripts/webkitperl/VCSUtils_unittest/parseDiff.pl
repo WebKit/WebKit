@@ -47,7 +47,7 @@ Index: Makefile
  all:
 END
     expectedReturn => [
-{
+[{
     svnConvertedText =>  <<'END', # Same as input text
 Index: Makefile
 ===================================================================
@@ -62,7 +62,7 @@ END
     indexPath => "Makefile",
     isSvn => 1,
     sourceRevision => "53052",
-},
+}],
 undef],
     expectedNextLine => undef,
 },
@@ -84,7 +84,7 @@ Name: svn:mime-type
 Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
 END
     expectedReturn => [
-{
+[{
     svnConvertedText =>  <<'END', # Same as input text
 Index: test_file.swf
 ===================================================================
@@ -102,7 +102,7 @@ END
     indexPath => "test_file.swf",
     isBinary => 1,
     isSvn => 1,
-},
+}],
 undef],
     expectedNextLine => undef,
 },
@@ -124,7 +124,7 @@ Index: Makefile
  all:
 END
     expectedReturn => [
-{
+[{
     svnConvertedText =>  <<'END', # Same as input text
 
 LEADING JUNK
@@ -142,7 +142,7 @@ END
     indexPath => "Makefile",
     isSvn => 1,
     sourceRevision => "53052",
-},
+}],
 undef],
     expectedNextLine => undef,
 },
@@ -158,20 +158,11 @@ Index: Makefile_new
 +MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKitTools
 END
     expectedReturn => [
-{
-    svnConvertedText =>  <<'END', # Same as input text
-Index: Makefile_new
-===================================================================
---- Makefile_new	(revision 53131)	(from Makefile:53131)
-+++ Makefile_new	(working copy)
-@@ -0,0 +1,1 @@
-+MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKitTools
-END
+[{
     copiedFromPath => "Makefile",
     indexPath => "Makefile_new",
-    isSvn => 1,
     sourceRevision => "53131",
-},
+}],
 undef],
     expectedNextLine => undef,
 },
@@ -190,7 +181,7 @@ Index: Makefile_new
 --- Makefile_new	(revision 53131)	(from Makefile:53131)
 END
     expectedReturn => [
-{
+[{
     svnConvertedText =>  <<'END',
 Index: Makefile
 ===================================================================
@@ -202,7 +193,7 @@ END
     indexPath => "Makefile",
     isSvn => 1,
     sourceRevision => "53131",
-},
+}],
 "Index: Makefile_new\n"],
     expectedNextLine => "===================================================================\n",
 },
@@ -223,7 +214,7 @@ index f5d5e74..3b6aa92 100644
 @@ -1,1 1,1 @@ public:
 END
     expectedReturn => [
-{
+[{
     svnConvertedText =>  <<'END', # Same as input text
 Index: Makefile
 ===================================================================
@@ -240,7 +231,7 @@ END
     indexPath => "Makefile",
     isSvn => 1,
     sourceRevision => "53131",
-},
+}],
 undef],
     expectedNextLine => undef,
 },
@@ -258,7 +249,7 @@ index f5d5e74..3b6aa92 100644
 @@ -1,1 1,1 @@ public:
 END
     expectedReturn => [
-{
+[{
     svnConvertedText =>  <<'END',
 Index: Makefile
 index f5d5e74..3b6aa92 100644
@@ -268,7 +259,7 @@ index f5d5e74..3b6aa92 100644
 END
     indexPath => "Makefile",
     isGit => 1,
-},
+}],
 undef],
     expectedNextLine => undef,
 },
@@ -286,7 +277,7 @@ Index: Makefile_new
 --- Makefile_new	(revision 53131)	(from Makefile:53131)
 END
     expectedReturn => [
-{
+[{
     svnConvertedText =>  <<'END',
 Index: Makefile
 index f5d5e74..3b6aa92 100644
@@ -299,9 +290,118 @@ Index: Makefile_new
 END
     indexPath => "Makefile",
     isGit => 1,
-},
+}],
 undef],
     expectedNextLine => undef,
+},
+####
+#    Git test cases: file moves (multiple return values)
+##
+{
+    diffName => "Git: rename (with similarity index 100%)",
+    inputText => <<'END',
+diff --git a/foo b/foo_new
+similarity index 100%
+rename from foo
+rename to foo_new
+diff --git a/bar b/bar
+index d45dd40..3494526 100644
+END
+    expectedReturn => [
+[{
+    indexPath => "foo",
+    isDeletion => 1,
+},
+{
+    copiedFromPath => "foo",
+    indexPath => "foo_new",
+}],
+"diff --git a/bar b/bar\n"],
+    expectedNextLine => "index d45dd40..3494526 100644\n",
+},
+{
+    diffName => "rename (with similarity index < 100%)",
+    inputText => <<'END',
+diff --git a/foo b/foo_new
+similarity index 99%
+rename from foo
+rename to foo_new
+index 1e50d1d..1459d21 100644
+--- a/foo
++++ b/foo_new
+@@ -15,3 +15,4 @@ release r deployment dep deploy:
+ line1
+ line2
+ line3
++line4
+diff --git a/bar b/bar
+index d45dd40..3494526 100644
+END
+    expectedReturn => [
+[{
+    indexPath => "foo",
+    isDeletion => 1,
+},
+{
+    copiedFromPath => "foo",
+    indexPath => "foo_new",
+},
+{
+    indexPath => "foo_new",
+    isGit => 1,
+    svnConvertedText => <<'END',
+Index: foo_new
+similarity index 99%
+rename from foo
+rename to foo_new
+index 1e50d1d..1459d21 100644
+--- foo_new
++++ foo_new
+@@ -15,3 +15,4 @@ release r deployment dep deploy:
+ line1
+ line2
+ line3
++line4
+END
+}],
+"diff --git a/bar b/bar\n"],
+    expectedNextLine => "index d45dd40..3494526 100644\n",
+},
+{
+    diffName => "rename (with executable bit change)",
+    inputText => <<'END',
+diff --git a/foo b/foo_new
+old mode 100644
+new mode 100755
+similarity index 100%
+rename from foo
+rename to foo_new
+diff --git a/bar b/bar
+index d45dd40..3494526 100644
+END
+    expectedReturn => [
+[{
+    indexPath => "foo",
+    isDeletion => 1,
+},
+{
+    copiedFromPath => "foo",
+    indexPath => "foo_new",
+},
+{
+    indexPath => "foo_new",
+    isGit => 1,
+    svnConvertedText => <<'END',
+Index: foo_new
+old mode 100644
+new mode 100755
+similarity index 100%
+rename from foo
+rename to foo_new
+END
+}],
+"diff --git a/bar b/bar\n"],
+    expectedNextLine => "index d45dd40..3494526 100644\n",
 },
 );
 

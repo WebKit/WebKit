@@ -69,14 +69,6 @@ END
     sourceRevision => "53131",
 },
 {
-    svnConvertedText => <<'END',
-Index: Makefile_new
-===================================================================
---- Makefile_new	(revision 53131)	(from Makefile:53131)
-+++ Makefile_new	(working copy)
-@@ -0,0 +1,1 @@
-+MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKitTools
-END
     copiedFromPath => "Makefile",
     indexPath => "Makefile_new",
     sourceRevision => "53131",

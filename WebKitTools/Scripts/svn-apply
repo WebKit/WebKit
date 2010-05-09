@@ -303,7 +303,7 @@ sub patch($)
 {
     my ($diffHashRef) = @_;
 
-    my $patch = $diffHashRef->{svnConvertedText};
+    my $patch = $diffHashRef->{svnConvertedText} || ""; # Make sure $patch is initialized.
 
     my $fullPath = $diffHashRef->{indexPath};
     my $isBinary = $diffHashRef->{isBinary};
@@ -315,7 +315,9 @@ sub patch($)
     # FIXME: This information should be extracted from the diff file as
     #        part of the parsing stage, i.e. the call to parsePatch().
     $addition = 1 if ($patch =~ /\n--- .+\(revision 0\)\r?\n/ || $patch =~ /\n@@ -0,0 .* @@/) && !exists($copiedFiles{$fullPath});
-    $deletion = 1 if $patch =~ /\n@@ .* \+0,0 @@/;
+    # A deletion can have no $patch value in the case of a deletion resulting
+    # from a Git rename.
+    $deletion = 1 if ($diffHashRef->{isDeletion} || $patch =~ /\n@@ .* \+0,0 @@/);
 
     if (!$addition && !$deletion && !$isBinary) {
         # Standard patch, patch tool can handle this.
@@ -324,7 +326,7 @@ sub patch($)
             applyPatch(setChangeLogDateAndReviewer(fixChangeLogPatch($patch), $reviewer), $fullPath, ["--fuzz=3"]);
             unlink("${fullPath}.orig") if (! $changeLogDotOrigExisted);
         } else {
-            applyPatch($patch, $fullPath);
+            applyPatch($patch, $fullPath) if $patch;
         }
     } else {
         # Either a deletion, an addition or a binary change.
@@ -333,18 +335,19 @@ sub patch($)
 
         if ($isBinary) {
             if ($isGit) {
-                handleGitBinaryChange($fullPath, $patch);
+                handleGitBinaryChange($fullPath, $patch) if $patch;
             } else {
-                handleBinaryChange($fullPath, $patch);
+                handleBinaryChange($fullPath, $patch) if $patch;
             }
         } elsif ($deletion) {
-            # Deletion
-            applyPatch($patch, $fullPath, ["--force"]);
+            # A deletion can have no $patch value in the case of a deletion
+            # resulting from a Git rename.
+            applyPatch($patch, $fullPath, ["--force"]) if $patch;
             scmRemove($fullPath);
         } else {
             # Addition
             rename($fullPath, "$fullPath.orig") if -e $fullPath;
-            applyPatch($patch, $fullPath);
+            applyPatch($patch, $fullPath) if $patch;
             unlink("$fullPath.orig") if -e "$fullPath.orig" && checksum($fullPath) eq checksum("$fullPath.orig");
             scmAdd($fullPath);
             # What is this for?

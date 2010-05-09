@@ -149,7 +149,102 @@ similarity index 99%
 copy from foo
 copy to foo_new
 END
+    copiedFromPath => "foo",
     indexPath => "foo_new",
+    isCopyWithChanges => 1,
+},
+"diff --git a/bar b/bar\n"],
+    expectedNextLine => "index d45dd40..3494526 100644\n",
+},
+{   # New test
+    diffName => "rename (with similarity index 100%)",
+    inputText => <<'END',
+diff --git a/foo b/foo_new
+similarity index 100%
+rename from foo
+rename to foo_new
+diff --git a/bar b/bar
+index d45dd40..3494526 100644
+END
+    expectedReturn => [
+{
+    svnConvertedText => <<'END',
+Index: foo_new
+similarity index 100%
+rename from foo
+rename to foo_new
+END
+    copiedFromPath => "foo",
+    indexPath => "foo_new",
+    shouldDeleteSource => 1,
+},
+"diff --git a/bar b/bar\n"],
+    expectedNextLine => "index d45dd40..3494526 100644\n",
+},
+{   # New test
+    diffName => "rename (with similarity index < 100%)",
+    inputText => <<'END',
+diff --git a/foo b/foo_new
+similarity index 99%
+rename from foo
+rename to foo_new
+index 1e50d1d..1459d21 100644
+--- a/foo
++++ b/foo_new
+@@ -15,3 +15,4 @@ release r deployment dep deploy:
+ line1
+ line2
+ line3
++line4
+diff --git a/bar b/bar
+index d45dd40..3494526 100644
+END
+    expectedReturn => [
+{
+    svnConvertedText => <<'END',
+Index: foo_new
+similarity index 99%
+rename from foo
+rename to foo_new
+index 1e50d1d..1459d21 100644
+--- foo_new
++++ foo_new
+END
+    copiedFromPath => "foo",
+    indexPath => "foo_new",
+    isCopyWithChanges => 1,
+    shouldDeleteSource => 1,
+},
+"@@ -15,3 +15,4 @@ release r deployment dep deploy:\n"],
+    expectedNextLine => " line1\n",
+},
+{   # New test
+    diffName => "rename (with executable bit change)",
+    inputText => <<'END',
+diff --git a/foo b/foo_new
+old mode 100644
+new mode 100755
+similarity index 100%
+rename from foo
+rename to foo_new
+diff --git a/bar b/bar
+index d45dd40..3494526 100644
+END
+    expectedReturn => [
+{
+    svnConvertedText => <<'END',
+Index: foo_new
+old mode 100644
+new mode 100755
+similarity index 100%
+rename from foo
+rename to foo_new
+END
+    copiedFromPath => "foo",
+    executableBitDelta => 1,
+    indexPath => "foo_new",
+    isCopyWithChanges => 1,
+    shouldDeleteSource => 1,
 },
 "diff --git a/bar b/bar\n"],
     expectedNextLine => "index d45dd40..3494526 100644\n",

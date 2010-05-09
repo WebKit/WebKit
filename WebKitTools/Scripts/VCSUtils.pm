@@ -445,14 +445,21 @@ sub isExecutable($)
 #
 # Returns ($headerHashRef, $lastReadLine):
 #   $headerHashRef: a hash reference representing a diff header, as follows--
-#     copiedFromPath: the path from which the file was copied if the diff
-#                     is a copy.
+#     copiedFromPath: the path from which the file was copied or moved if
+#                     the diff is a copy or move.
 #     executableBitDelta: the value 1 or -1 if the executable bit was added or
 #                         removed, respectively.  New and deleted files have
 #                         this value only if the file is executable, in which
 #                         case the value is 1 and -1, respectively.
 #     indexPath: the path of the target file.
 #     isBinary: the value 1 if the diff is for a binary file.
+#     isCopyWithChanges: the value 1 if the file was copied or moved and
+#                        the target file was changed in some way after being
+#                        copied or moved (e.g. if its contents or executable
+#                        bit were changed).
+#     shouldDeleteSource: the value 1 if the file was copied or moved and
+#                         the source file was deleted -- i.e. if the copy
+#                         was actually a move.
 #     svnConvertedText: the header text with some lines converted to SVN
 #                       format.  Git-specific lines are preserved.
 #   $lastReadLine: the line last read from $fileHandle.
@@ -480,7 +487,8 @@ sub parseGitDiffHeader($$)
     my $isBinary;
     my $newExecutableBit = 0;
     my $oldExecutableBit = 0;
-    my $similarityIndex;
+    my $shouldDeleteSource = 0;
+    my $similarityIndex = 0;
     my $svnConvertedText;
     while (1) {
         # Temporarily strip off any end-of-line characters to simplify
@@ -501,6 +509,15 @@ sub parseGitDiffHeader($$)
             $similarityIndex = $1;
         } elsif (/^copy from (\S+)/) {
             $copiedFromPath = $1;
+        } elsif (/^rename from (\S+)/) {
+            # FIXME: Record this as a move rather than as a copy-and-delete.
+            #        This will simplify adding rename support to svn-unapply.
+            #        Otherwise, the hash for a deletion would have to know
+            #        everything about the file being deleted in order to
+            #        support undoing itself.  Recording as a move will also
+            #        permit us to use "svn move" and "git move".
+            $copiedFromPath = $1;
+            $shouldDeleteSource = 1;
         # The "git diff" command includes a line of the form "Binary files
         # <path1> and <path2> differ" if the --binary flag is not used.
         } elsif (/^Binary files / ) {
@@ -523,10 +540,12 @@ sub parseGitDiffHeader($$)
 
     my %header;
 
-    $header{copiedFromPath} = $copiedFromPath if ($copiedFromPath && $similarityIndex == 100);
+    $header{copiedFromPath} = $copiedFromPath if $copiedFromPath;
     $header{executableBitDelta} = $executableBitDelta if $executableBitDelta;
     $header{indexPath} = $indexPath;
     $header{isBinary} = $isBinary if $isBinary;
+    $header{isCopyWithChanges} = 1 if ($copiedFromPath && ($similarityIndex != 100 || $executableBitDelta));
+    $header{shouldDeleteSource} = $shouldDeleteSource if $shouldDeleteSource;
     $header{svnConvertedText} = $svnConvertedText;
 
     return (\%header, $_);
@@ -720,9 +739,9 @@ sub parseDiffHeader($$)
 #                header block. Leading junk is okay.
 #   $line: the line last read from $fileHandle.
 #
-# Returns ($diffHashRef, $lastReadLine):
-#   $diffHashRef: A reference to a %diffHash.
-#                 See the %diffHash documentation above.
+# Returns ($diffHashRefs, $lastReadLine):
+#   $diffHashRefs: A reference to an array of references to %diffHash hashes.
+#                  See the %diffHash documentation above.
 #   $lastReadLine: the line last read from $fileHandle
 sub parseDiff($$)
 {
@@ -758,19 +777,41 @@ sub parseDiff($$)
         $svnText .= $headerHashRef->{svnConvertedText};
     }
 
-    my %diffHashRef;
-    $diffHashRef{copiedFromPath} = $headerHashRef->{copiedFromPath} if $headerHashRef->{copiedFromPath};
-    # FIXME: Add executableBitDelta as a key.
-    $diffHashRef{indexPath} = $headerHashRef->{indexPath};
-    $diffHashRef{isBinary} = $headerHashRef->{isBinary} if $headerHashRef->{isBinary};
-    $diffHashRef{isGit} = $headerHashRef->{isGit} if $headerHashRef->{isGit};
-    $diffHashRef{isSvn} = $headerHashRef->{isSvn} if $headerHashRef->{isSvn};
-    $diffHashRef{sourceRevision} = $headerHashRef->{sourceRevision} if $headerHashRef->{sourceRevision};
-    # FIXME: Remove the need for svnConvertedText.  See the %diffHash
-    #        code comments above for more information.
-    $diffHashRef{svnConvertedText} = $svnText;
+    my @diffHashRefs;
 
-    return (\%diffHashRef, $line);
+    if ($headerHashRef->{shouldDeleteSource}) {
+        my %deletionHash;
+        $deletionHash{indexPath} = $headerHashRef->{copiedFromPath};
+        $deletionHash{isDeletion} = 1;
+        push @diffHashRefs, \%deletionHash;
+    }
+    if ($headerHashRef->{copiedFromPath}) {
+        my %copyHash;
+        $copyHash{copiedFromPath} = $headerHashRef->{copiedFromPath};
+        $copyHash{indexPath} = $headerHashRef->{indexPath};
+        $copyHash{sourceRevision} = $headerHashRef->{sourceRevision} if $headerHashRef->{sourceRevision};
+        push @diffHashRefs, \%copyHash;
+    }
+    if (!$headerHashRef->{copiedFromPath} || $headerHashRef->{isCopyWithChanges}) {
+        # Then add the usual file modification.
+        my %diffHash;
+        # FIXME: Add executableBitDelta as a key.
+        $diffHash{indexPath} = $headerHashRef->{indexPath};
+        $diffHash{isBinary} = $headerHashRef->{isBinary} if $headerHashRef->{isBinary};
+        $diffHash{isGit} = $headerHashRef->{isGit} if $headerHashRef->{isGit};
+        $diffHash{isSvn} = $headerHashRef->{isSvn} if $headerHashRef->{isSvn};
+        if (!$headerHashRef->{copiedFromPath}) {
+            # If the file was copied, then we have already incorporated the
+            # sourceRevision information into the change.
+            $diffHash{sourceRevision} = $headerHashRef->{sourceRevision} if $headerHashRef->{sourceRevision};
+        }
+        # FIXME: Remove the need for svnConvertedText.  See the %diffHash
+        #        code comments above for more information.
+        $diffHash{svnConvertedText} = $svnText;
+        push @diffHashRefs, \%diffHash;
+    }
+
+    return (\@diffHashRefs, $line);
 }
 
 # Parse a patch file created by svn-create-patch.
@@ -786,16 +827,16 @@ sub parsePatch($)
 {
     my ($fileHandle) = @_;
 
+    my $newDiffHashRefs;
     my @diffHashRefs; # return value
 
     my $line = <$fileHandle>;
 
     while (defined($line)) { # Otherwise, at EOF.
 
-        my $diffHashRef;
-        ($diffHashRef, $line) = parseDiff($fileHandle, $line);
+        ($newDiffHashRefs, $line) = parseDiff($fileHandle, $line);
 
-        push @diffHashRefs, $diffHashRef;
+        push @diffHashRefs, @$newDiffHashRefs;
     }
 
     return @diffHashRefs;
