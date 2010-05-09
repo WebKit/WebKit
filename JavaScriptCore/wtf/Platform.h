@@ -1008,31 +1008,10 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 /* Yet Another Regex Runtime. */
 #if !defined(ENABLE_YARR_JIT)
 
-/* YARR supports x86 & x86-64, and has been tested on Mac and Windows. */
-#if (CPU(X86) && PLATFORM(MAC)) \
-    || (CPU(X86_64) && PLATFORM(MAC)) \
-    || (CPU(ARM_THUMB2) && PLATFORM(IPHONE)) \
-    || (CPU(ARM_THUMB2) && PLATFORM(ANDROID) && ENABLE(ANDROID_JSC_JIT)) \
-    || (CPU(X86) && PLATFORM(WIN)) \
-    || (CPU(X86) && PLATFORM(WX))
+/* YARR and YARR_JIT is usually turned on for JIT enabled ports */
+#if ENABLE(JIT)
 #define ENABLE_YARR 1
 #define ENABLE_YARR_JIT 1
-#endif
-
-#if PLATFORM(QT)
-#if (CPU(X86) && OS(WINDOWS) && COMPILER(MINGW) && GCC_VERSION >= 40100) \
-    || (CPU(X86_64) && OS(WINDOWS) && COMPILER(MINGW64) && GCC_VERSION >= 40100) \
-    || (CPU(X86) && OS(WINDOWS) && COMPILER(MSVC)) \
-    || (CPU(X86) && OS(LINUX) && GCC_VERSION >= 40100) \
-    || (CPU(X86_64) && OS(LINUX) && GCC_VERSION >= 40100) \
-    || (CPU(ARM_TRADITIONAL) && OS(LINUX)) \
-    || (CPU(ARM_TRADITIONAL) && OS(SYMBIAN) && COMPILER(RVCT)) \
-    || (CPU(MIPS) && OS(LINUX)) \
-    || (CPU(X86) && OS(DARWIN)) \
-    || (CPU(X86_64) && OS(DARWIN))
-#define ENABLE_YARR 1
-#define ENABLE_YARR_JIT 1
-#endif
 #endif
 
 #endif /* !defined(ENABLE_YARR_JIT) */
