@@ -1,3 +1,26 @@
+2010-05-08  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        This revision suppresses the misleading "error: pathspec..." messages
+        when using svn-apply to add a binary file from a Git diff.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38047
+
+        When adding a new binary file from a Git diff, svn-apply prints
+        a misleading error of the form -- "error: pathspec '<filename>' did
+        not match any file(s) known to git.  Did you forget to 'git add'?"
+        This patch suppresses these messages since they are normal.
+
+        * Scripts/VCSUtils.pm:
+          Added the callSilently() subroutine from runPatchCommand.pl, which
+          executes a Perl function while suppressing STDERR.
+        * Scripts/svn-apply:
+          Refactored the Git portion of scmKnowsOfFile() into a
+          gitKnowsOfFile(), and called this new subroutine using callSilently().
+        * Scripts/webkitperl/VCSUtils_unittest/runPatchCommand.pl:
+          Removed callSilently() since it was moved to VCSUtils.pm in this patch.
+
 2010-05-08  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Adam Barth.

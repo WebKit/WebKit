@@ -43,6 +43,7 @@ BEGIN {
     $VERSION     = 1.00;
     @ISA         = qw(Exporter);
     @EXPORT      = qw(
+        &callSilently
         &canonicalizePath
         &changeLogEmailAddress
         &changeLogName
@@ -95,6 +96,25 @@ sub exitStatus($)
         return $returnvalue >> 8;
     }
     return WEXITSTATUS($returnvalue);
+}
+
+# Call a function while suppressing STDERR, and return the return values
+# as an array.
+sub callSilently($@) {
+    my ($func, @args) = @_;
+
+    # The following pattern was taken from here:
+    #   http://www.sdsc.edu/~moreland/courses/IntroPerl/docs/manual/pod/perlfunc/open.html
+    #
+    # Also see this Perl documentation (search for "open OLDERR"):
+    #   http://perldoc.perl.org/functions/open.html
+    open(OLDERR, ">&STDERR");
+    close(STDERR);
+    my @returnValue = &$func(@args);
+    open(STDERR, ">&OLDERR");
+    close(OLDERR);
+
+    return @returnValue;
 }
 
 # Note, this method will not error if the file corresponding to the path does not exist.

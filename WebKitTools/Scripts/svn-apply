@@ -399,6 +399,23 @@ sub scmWillDeleteFile($)
     return 0;
 }
 
+# Return whether the file at the given path is known to Git.
+#
+# This method outputs a message like the following to STDERR when
+# returning false:
+#
+# "error: pathspec 'test.png' did not match any file(s) known to git.
+#  Did you forget to 'git add'?"
+sub gitKnowsOfFile($)
+{
+    my $path = shift;
+
+    `git ls-files --error-unmatch -- $path`;
+    # FIXME: Change this to use VCSUtils.pm's exitStatus().
+    my $exitCode = $? >> 8;
+    return $exitCode == 0;
+}
+
 sub scmKnowsOfFile($)
 {
     my ($path) = @_;
@@ -411,9 +428,8 @@ sub scmKnowsOfFile($)
         # This does not handle errors well.
         return 1;
     } elsif (isGit()) {
-        `git ls-files --error-unmatch -- $path`;
-        my $exitCode = $? >> 8;
-        return $exitCode == 0;
+        my @result = callSilently(\&gitKnowsOfFile, $path);
+        return $result[0];
     }
 }
 

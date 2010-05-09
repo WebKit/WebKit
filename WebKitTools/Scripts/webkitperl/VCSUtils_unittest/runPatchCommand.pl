@@ -33,19 +33,6 @@
 use Test::Simple tests => 4;
 use VCSUtils;
 
-# Call a function while suppressing STDERR.
-sub callSilently($@) {
-    my ($func, @args) = @_;
-
-    open(OLDERR, ">&STDERR");
-    close(STDERR);
-    my @returnValue = &$func(@args);
-    open(STDERR, ">&OLDERR");
-    close(OLDERR); # FIXME: Is this necessary?
-
-    return @returnValue;
-}
-
 # New test
 $title = "runPatchCommand: Unsuccessful patch, forcing.";
 
