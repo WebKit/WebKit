@@ -1,3 +1,12 @@
+2010-05-10  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build fix, not reviewed.
+
+        Correct post-build copy command for WinCairo port to make sure
+        cairo headers are available for WebKit.dll build.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2010-05-10  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
