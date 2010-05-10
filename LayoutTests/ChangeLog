@@ -1,3 +1,19 @@
+2010-05-10  Adam Langley  <agl@chromium.org>
+
+        Expectations change. Not reviewed.
+
+        Delete the current baselines for the WOFF test because they are
+        incomplete.
+
+        Remove the SKIP tag from test_expectations so that the builders
+        will run the test and then the rebaseline tool can be used to
+        checkin real baselines.
+
+        * platform/chromium-linux/fast/css/font-face-woff-expected.checksum: Removed.
+        * platform/chromium-win/fast/css/font-face-woff-expected.checksum: Removed.
+        * platform/chromium-win/fast/css/font-face-woff-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2010-05-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Simon Hausmann.

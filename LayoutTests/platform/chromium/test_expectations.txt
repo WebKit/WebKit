@@ -2762,7 +2762,9 @@ BUGWK38108 MAC : fast/backgrounds/size/contain-and-cover.html = IMAGE
 BUGUKAI WIN MAC SKIP : fast/text/international/bold-bengali.html = FAIL
 
 // WebKit roll 58400:58523
-BUGWK38349 SKIP : fast/css/font-face-woff.html = IMAGE+TEXT
+// Need to set the expectation to MISSING so that the builders will build it
+// and the rebaseline tool can work.
+BUGWK38349 : fast/css/font-face-woff.html = MISSING
 // We probably don't want to run these massive amount of new ECMA script conformance tests:
 BUG42875 SKIP DEFER : fast/js/sputnik = TEXT
 // Other failing layout test
