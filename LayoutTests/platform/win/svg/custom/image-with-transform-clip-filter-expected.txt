@@ -6,7 +6,8 @@ layer at (0,0) size 800x600
       RenderSVGResourceClipper {clipPath} [id="myclip"] [clipPathUnits=userSpaceOnUse]
         RenderPath {path} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
       RenderSVGResourceFilter {filter} [id="myfilter"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-        [last primitive ]
+        [feGaussianBlur stdDeviation="10.00, 10.00"]
+          [SourceGraphic]
     RenderSVGImage {image} at (0,0) size 100x75 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,-25.00)}]
       [clipPath="myclip"] RenderSVGResourceClipper {clipPath} at (0,0) size 100x100
       [filter="myfilter"] RenderSVGResourceFilter {filter} at (-50.30,9.00) size 603.60x492
