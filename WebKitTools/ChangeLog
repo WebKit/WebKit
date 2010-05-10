@@ -1,3 +1,13 @@
+2010-05-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        new-run-webkit-tests fails when run under sys.platform == "windows" due to undefined signal.SIGKILL
+        https://bugs.webkit.org/show_bug.cgi?id=38861
+
+        * Scripts/webkitpy/common/system/executive.py:
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+
 2010-05-10  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed.
