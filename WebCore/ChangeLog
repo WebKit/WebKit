@@ -1,3 +1,18 @@
+2010-05-10  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Clean up and fix the existing V8 DB bindings.
+        https://bugs.webkit.org/show_bug.cgi?id=34994
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::openDatabaseCallback):
+        * bindings/v8/custom/V8DatabaseCustom.cpp:
+        (WebCore::V8Database::changeVersionCallback):
+        (WebCore::createTransaction):
+        * bindings/v8/custom/V8SQLTransactionCustom.cpp:
+        (WebCore::V8SQLTransaction::executeSqlCallback):
+
 2010-05-10  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix for wx 2.8 after complex text changes.

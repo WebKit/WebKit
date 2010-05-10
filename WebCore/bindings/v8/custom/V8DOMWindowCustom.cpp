@@ -52,6 +52,7 @@
 #include "Storage.h"
 #include "V8Binding.h"
 #include "V8BindingDOMWindow.h"
+#include "V8BindingMacros.h"
 #include "V8BindingState.h"
 #include "V8CustomEventListener.h"
 #include "V8Database.h"
@@ -719,21 +720,26 @@ v8::Handle<v8::Value> V8DOMWindow::openDatabaseCallback(const v8::Arguments& arg
 {
     INC_STATS("DOM.DOMWindow.openDatabase");
     if (args.Length() < 4)
-        return v8::Undefined();
+        return throwError(SYNTAX_ERR);
+
+    EXCEPTION_BLOCK(String, name, toWebCoreString(args[0]));
+    EXCEPTION_BLOCK(String, version, toWebCoreString(args[1]));
+    EXCEPTION_BLOCK(String, displayName, toWebCoreString(args[2]));
+    EXCEPTION_BLOCK(unsigned long, estimatedSize, args[3]->Uint32Value());
 
     DOMWindow* imp = V8DOMWindow::toNative(args.Holder());
     if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), true))
         return v8::Undefined();
 
-    ExceptionCode ec = 0;
-    String name = toWebCoreString(args[0]);
-    String version = toWebCoreString(args[1]);
-    String displayName = toWebCoreString(args[2]);
-    unsigned long estimatedSize = args[3]->IntegerValue();
     RefPtr<DatabaseCallback> creationCallback;
-    if ((args.Length() >= 5) && args[4]->IsObject())
-        creationCallback = V8DatabaseCallback::create(args[4], imp->frame());
+    if (args.Length() >= 5) {
+        if (!args[4]->IsObject())
+            return throwError(TYPE_MISMATCH_ERR);
 
+        creationCallback = V8DatabaseCallback::create(args[4], imp->frame());
+    }
+
+    ExceptionCode ec = 0;
     v8::Handle<v8::Value> result = toV8(imp->openDatabase(name, version, displayName, estimatedSize, creationCallback.release(), ec));
 
     V8Proxy::setDOMException(ec);

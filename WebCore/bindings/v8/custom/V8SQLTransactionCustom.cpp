@@ -1,10 +1,10 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -37,6 +37,7 @@
 #include "Database.h"
 #include "SQLValue.h"
 #include "V8Binding.h"
+#include "V8BindingMacros.h"
 #include "V8SQLStatementCallback.h"
 #include "V8SQLStatementErrorCallback.h"
 #include "V8Proxy.h"
@@ -51,48 +52,39 @@ v8::Handle<v8::Value> V8SQLTransaction::executeSqlCallback(const v8::Arguments& 
     INC_STATS("DOM.SQLTransaction.executeSql()");
 
     if (args.Length() == 0)
-        return throwError("SQL statement is required.", V8Proxy::SyntaxError);
+        return throwError(SYNTAX_ERR);
 
-    String statement = toWebCoreString(args[0]);
+    EXCEPTION_BLOCK(String, statement, toWebCoreString(args[0]));
 
     Vector<SQLValue> sqlValues;
 
     if (args.Length() > 1 && !isUndefinedOrNull(args[1])) {
-        if (args[1]->IsObject()) {
-            uint32_t sqlArgsLength = 0;
-            v8::Local<v8::Object> sqlArgsObject = args[1]->ToObject();
-            v8::Local<v8::Value> lengthGetter;
-            {
-                v8::TryCatch block;
-                lengthGetter = sqlArgsObject->Get(v8::String::New("length"));
-                if (block.HasCaught())
-                    return throwError(block.Exception());
+        if (!args[1]->IsObject())
+            return throwError(TYPE_MISMATCH_ERR);
+
+        uint32_t sqlArgsLength = 0;
+        v8::Local<v8::Object> sqlArgsObject = args[1]->ToObject();
+        EXCEPTION_BLOCK(v8::Local<v8::Value>, length, sqlArgsObject->Get(v8::String::New("length")));
+
+        if (isUndefinedOrNull(length))
+            sqlArgsLength = sqlArgsObject->GetPropertyNames()->Length();
+        else
+            sqlArgsLength = length->Uint32Value();
+
+        for (unsigned int i = 0; i < sqlArgsLength; ++i) {
+            v8::Local<v8::Integer> key = v8::Integer::New(i);
+            EXCEPTION_BLOCK(v8::Local<v8::Value>, value, sqlArgsObject->Get(key));
+
+            if (value.IsEmpty() || value->IsNull())
+                sqlValues.append(SQLValue());
+            else if (value->IsNumber()) {
+                EXCEPTION_BLOCK(double, sqlValue, value->NumberValue());
+                sqlValues.append(SQLValue(sqlValue));
+            } else {
+                EXCEPTION_BLOCK(String, sqlValue, toWebCoreString(value));
+                sqlValues.append(SQLValue(sqlValue));
             }
-
-            if (isUndefinedOrNull(lengthGetter))
-                sqlArgsLength = sqlArgsObject->GetPropertyNames()->Length();
-            else
-                sqlArgsLength = lengthGetter->Uint32Value();
-
-            for (unsigned int i = 0; i < sqlArgsLength; ++i) {
-                v8::Local<v8::Integer> key = v8::Integer::New(i);
-                v8::Local<v8::Value> value;
-                {
-                    v8::TryCatch block;
-                    value = sqlArgsObject->Get(key);
-                    if (block.HasCaught())
-                        return throwError(block.Exception());
-                }
-
-                if (value.IsEmpty() || value->IsNull())
-                    sqlValues.append(SQLValue());
-                else if (value->IsNumber())
-                    sqlValues.append(SQLValue(value->NumberValue()));
-                else
-                    sqlValues.append(SQLValue(toWebCoreString(value)));
-            }
-        } else
-            return throwError("sqlArgs should be array or object!", V8Proxy::TypeError);
+        }
     }
 
     SQLTransaction* transaction = V8SQLTransaction::toNative(args.Holder());
@@ -102,7 +94,7 @@ v8::Handle<v8::Value> V8SQLTransaction::executeSqlCallback(const v8::Arguments& 
     RefPtr<SQLStatementCallback> callback;
     if (args.Length() > 2 && !isUndefinedOrNull(args[2])) {
         if (!args[2]->IsObject())
-            return throwError("Statement callback must be of valid type.", V8Proxy::TypeError);
+            return throwError(TYPE_MISMATCH_ERR);
 
         if (frame)
             callback = V8SQLStatementCallback::create(args[2], frame);
@@ -111,7 +103,7 @@ v8::Handle<v8::Value> V8SQLTransaction::executeSqlCallback(const v8::Arguments& 
     RefPtr<SQLStatementErrorCallback> errorCallback;
     if (args.Length() > 3 && !isUndefinedOrNull(args[3])) {
         if (!args[3]->IsObject())
-            return throwError("Statement error callback must be of valid type.", V8Proxy::TypeError);
+            return throwError(TYPE_MISMATCH_ERR);
 
         if (frame)
             errorCallback = V8SQLStatementErrorCallback::create(args[3], frame);
