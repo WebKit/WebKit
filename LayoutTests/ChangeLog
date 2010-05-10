@@ -1,3 +1,11 @@
+2010-05-10  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Add test to GTK skipped list.
+
+        Rubber-stamped by Mark Rowe.
+
+        * platform/gtk/Skipped:
+
 2010-05-07  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Crash closing window containing Flash plug-in
