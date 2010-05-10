@@ -39,6 +39,8 @@ NSFont* FontPlatformData::nsFont() const
 #if wxCHECK_VERSION(2,9,1) && wxOSX_USE_COCOA
     if (m_font && m_font->font())
         return (NSFont*)m_font->font()->OSXGetNSFont();
+#else
+    return 0;
 #endif
 }
 

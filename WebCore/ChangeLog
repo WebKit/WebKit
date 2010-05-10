@@ -1,3 +1,12 @@
+2010-05-10  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix for wx 2.8 after complex text changes.
+
+        * platform/graphics/wx/FontPlatformDataWxMac.mm:
+        (WebCore::FontPlatformData::nsFont):
+        * platform/graphics/wx/SimpleFontDataWx.cpp:
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+
 2010-05-10  John Gregg  <johnnyg@google.com>
 
         [chromium] Try to fix the chromium build after r59085 by
