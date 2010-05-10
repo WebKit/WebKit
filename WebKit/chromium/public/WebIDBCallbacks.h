@@ -33,22 +33,19 @@
 
 namespace WebKit {
 
+class WebIDBDatabase;
 class WebIDBDatabaseError;
+class WebSerializedScriptValue;
 
-// Every IndexedDB method takes in a pair of callbacks for error/success which
-// implement this class.  Either 0 or 1 of these methods will be called and the
-// callback class may be deleted any time after the callback is called.
-template <typename ResultType>
 class WebIDBCallbacks {
 public:
     virtual ~WebIDBCallbacks() { }
 
-    // If the method was a success, this method is called with the result.  The
-    // result is a pointer that the callback takes ownership of.
-    virtual void onSuccess(ResultType*) = 0;
-
-    // Called in the event of an error.
+    // For classes that follow the PImpl pattern, pass a const reference.
+    // For the rest, pass ownership to the callee via a pointer.
     virtual void onError(const WebIDBDatabaseError&) = 0;
+    virtual void onSuccess(WebIDBDatabase*) = 0;
+    virtual void onSuccess(const WebSerializedScriptValue&) = 0;
 };
 
 } // namespace WebKit

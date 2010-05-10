@@ -49,6 +49,7 @@ namespace WebCore {
     class EventListener;
     class EventSource;
     class FileReader;
+    class IDBRequest;
     class MessagePort;
     class Node;
     class Notification;
@@ -121,6 +122,10 @@ namespace WebCore {
 #endif
 #if ENABLE(FILE_READER)
         virtual FileReader* toFileReader();
+#endif
+
+#if ENABLE(INDEXED_DATABASE)
+        virtual IDBRequest* toIDBRequest();
 #endif
 
         virtual ScriptExecutionContext* scriptExecutionContext() const = 0;

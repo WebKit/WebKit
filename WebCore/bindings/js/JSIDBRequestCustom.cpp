@@ -29,31 +29,36 @@
  */
 
 #include "config.h"
-#include "WebIndexedDatabaseImpl.h"
-
-#include "WebIDBDatabaseError.h"
-#include <wtf/OwnPtr.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
-namespace WebKit {
+#include "JSIDBRequest.h"
 
-WebIndexedDatabase* WebIndexedDatabase::create()
+#include "IDBDatabaseRequest.h"
+#include "IDBRequest.h"
+#include "JSIDBDatabaseRequest.h"
+#include "SerializedScriptValue.h"
+
+using namespace JSC;
+
+namespace WebCore {
+
+JSValue JSIDBRequest::result(ExecState* exec) const
 {
-    return new WebIndexedDatabaseImpl();
+    IDBRequest* idbRequest = static_cast<IDBRequest*>(impl());
+    switch (idbRequest->resultType()) {
+    case IDBRequest::UNDEFINED:
+        return jsUndefined();
+    case IDBRequest::IDBDATABASE:
+        return toJS(exec, globalObject(), idbRequest->idbDatabaseResult());
+    case IDBRequest::SERIALIZEDSCRIPTVALUE:
+        return idbRequest->serializedScriptValueResult()->deserialize(exec, globalObject());
+    }
+
+    ASSERT_NOT_REACHED();
+    return jsUndefined();
 }
 
-WebIndexedDatabaseImpl::~WebIndexedDatabaseImpl()
-{
-}
-
-void WebIndexedDatabaseImpl::open(const WebString& name, const WebString& description, bool modifyDatabase, WebIDBCallbacks* callbacksPtr, WebFrame*, int& exceptionCode)
-{
-    OwnPtr<WebIDBCallbacks> callbacks(callbacksPtr);
-    callbacks->onError(WebIDBDatabaseError(0, "Not implemented"));
-    // FIXME: Implement for realz.
-}
-
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

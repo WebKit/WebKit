@@ -29,40 +29,33 @@
 #ifndef IDBCallbacksProxy_h
 #define IDBCallbacksProxy_h
 
-#include "IDBCallbacks.h"
-#include "IDBDatabaseError.h"
 #include "WebIDBCallbacks.h"
-#include "WebIDBDatabaseError.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
+namespace WebKit {
+class WebIDBDatabase;
+class WebIDBDatabaseError;
+class WebSerializedScriptValue;
+}
+
 namespace WebCore {
 
-template <typename WebKitClass, typename WebCoreClass, typename WebCoreProxy>
-class IDBCallbacksProxy : public WebKit::WebIDBCallbacks<WebKitClass> {
+class IDBCallbacks;
+
+class IDBCallbacksProxy : public WebKit::WebIDBCallbacks {
 public:
-    IDBCallbacksProxy(PassRefPtr<IDBCallbacks<WebCoreClass> > callbacks)
-        : m_callbacks(callbacks) { }
+    IDBCallbacksProxy(PassRefPtr<IDBCallbacks> callbacks);
+    virtual ~IDBCallbacksProxy();
 
-    virtual ~IDBCallbacksProxy() { }
-
-    virtual void onSuccess(WebKitClass* webKitInstance)
-    {
-        RefPtr<WebCoreClass> proxy = WebCoreProxy::create(webKitInstance);
-        m_callbacks->onSuccess(proxy);
-        m_callbacks.clear();
-    }
-
-    virtual void onError(const WebKit::WebIDBDatabaseError& error)
-    {
-        m_callbacks->onError(error);
-        m_callbacks.clear();
-    }
+    virtual void onError(const WebKit::WebIDBDatabaseError& error);
+    virtual void onSuccess(WebKit::WebIDBDatabase* webKitInstance);
+    virtual void onSuccess(const WebKit::WebSerializedScriptValue& serializedScriptValue);
 
 private:
-    PassRefPtr<IDBCallbacks<WebCoreClass> > m_callbacks;
+    RefPtr<IDBCallbacks> m_callbacks;
 };
 
 

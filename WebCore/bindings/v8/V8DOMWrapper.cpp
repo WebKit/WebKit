@@ -49,6 +49,7 @@
 #include "V8EventSource.h"
 #include "V8HTMLCollection.h"
 #include "V8HTMLDocument.h"
+#include "V8IDBRequest.h"
 #include "V8IsolatedContext.h"
 #include "V8Location.h"
 #include "V8MessageChannel.h"
@@ -375,6 +376,11 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* ta
 #if ENABLE(NOTIFICATIONS)
     if (Notification* notification = target->toNotification())
         return toV8(notification);
+#endif
+
+#if ENABLE(INDEXED_DATABASE)
+    if (IDBRequest* idbRequest = target->toIDBRequest())
+        return toV8(idbRequest);
 #endif
 
 #if ENABLE(WEB_SOCKETS)

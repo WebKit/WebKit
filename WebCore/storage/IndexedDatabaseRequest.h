@@ -50,7 +50,7 @@ public:
     }
     ~IndexedDatabaseRequest();
 
-    void open(const String& name, const String& description, bool modifyDatabase, PassRefPtr<IDBDatabaseCallbacks>, ExceptionCode&);
+    PassRefPtr<IDBRequest> open(const String& name, const String& description, bool modifyDatabase, ExceptionCode&);
 
     void disconnectFrame() { m_frame = 0; }
 

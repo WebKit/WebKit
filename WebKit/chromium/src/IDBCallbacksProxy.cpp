@@ -26,34 +26,49 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IndexedDatabaseProxy_h
-#define IndexedDatabaseProxy_h
+#include "config.h"
+#include "IDBCallbacksProxy.h"
 
-#include "IndexedDatabase.h"
+#include "IDBCallbacks.h"
+#include "IDBDatabaseError.h"
+#include "IDBDatabaseProxy.h"
+#include "WebIDBCallbacks.h"
+#include "WebIDBDatabase.h"
+#include "WebIDBDatabaseError.h"
+#include "WebSerializedScriptValue.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
-namespace WebKit { class WebIndexedDatabase; }
-
 namespace WebCore {
 
-class IndexedDatabaseProxy : public IndexedDatabase {
-public:
-    static PassRefPtr<IndexedDatabase> create();
-    virtual ~IndexedDatabaseProxy();
+IDBCallbacksProxy::IDBCallbacksProxy(PassRefPtr<IDBCallbacks> callbacks)
+    : m_callbacks(callbacks)
+{
+}
 
-    virtual void open(const String& name, const String& description, bool modifyDatabase, PassRefPtr<IDBCallbacks>, Frame*, ExceptionCode&);
+IDBCallbacksProxy::~IDBCallbacksProxy()
+{
+}
 
-private:
-    IndexedDatabaseProxy();
+void IDBCallbacksProxy::onError(const WebKit::WebIDBDatabaseError& error)
+{
+    m_callbacks->onError(error);
+    m_callbacks.clear();
+}
 
-    // We don't own this pointer (unlike all the other proxy classes which do).
-    WebKit::WebIndexedDatabase* m_webIndexedDatabase;
-};
+void IDBCallbacksProxy::onSuccess(WebKit::WebIDBDatabase* webKitInstance)
+{
+    m_callbacks->onSuccess(IDBDatabaseProxy::create(webKitInstance));
+    m_callbacks.clear();
+}
+
+void IDBCallbacksProxy::onSuccess(const WebKit::WebSerializedScriptValue& serializedScriptValue)
+{
+    m_callbacks->onSuccess(serializedScriptValue);
+    m_callbacks.clear();
+}
 
 } // namespace WebCore
 
-#endif
-
-#endif // IndexedDatabaseProxy_h
+#endif // ENABLE(INDEXED_DATABASE)
 

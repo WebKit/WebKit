@@ -33,6 +33,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/UnusedParam.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -47,7 +48,12 @@ public:
     ~IDBDatabaseRequest();
 
     // FIXME: Write.
-    void createObjectStore(const String& name, const String& keyPath, bool autoIncrement) { }
+    void createObjectStore(const String& name, const String& keyPath, bool autoIncrement)
+    {
+        UNUSED_PARAM(name);
+        UNUSED_PARAM(keyPath);
+        UNUSED_PARAM(autoIncrement);
+    }
 
 private:
     IDBDatabaseRequest(PassRefPtr<IDBDatabase>);

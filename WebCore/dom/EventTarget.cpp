@@ -163,6 +163,13 @@ FileReader* EventTarget::toFileReader()
 }
 #endif
 
+#if ENABLE(INDEXED_DATABASE)
+IDBRequest* EventTarget::toIDBRequest()
+{
+    return 0;
+}
+#endif
+
 bool EventTarget::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
     EventTargetData* d = ensureEventTargetData();

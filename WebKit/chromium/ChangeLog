@@ -1,3 +1,28 @@
+2010-05-10  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Change IndexedDB to use events instead of callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=38594
+
+        Change the glue here to match the changes I made in WebCore.
+
+        * WebKit.gyp:
+        * public/WebIDBCallbacks.h:
+        * public/WebIndexedDatabase.h:
+        * src/IDBCallbacksProxy.cpp: Added.
+        (WebCore::IDBCallbacksProxy::IDBCallbacksProxy):
+        (WebCore::IDBCallbacksProxy::~IDBCallbacksProxy):
+        (WebCore::IDBCallbacksProxy::onError):
+        (WebCore::IDBCallbacksProxy::onSuccess):
+        * src/IDBCallbacksProxy.h:
+        * src/IndexedDatabaseProxy.cpp:
+        (WebCore::IndexedDatabaseProxy::open):
+        * src/IndexedDatabaseProxy.h:
+        * src/WebIndexedDatabaseImpl.cpp:
+        (WebKit::WebIndexedDatabaseImpl::open):
+        * src/WebIndexedDatabaseImpl.h:
+
 2010-05-08  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -31,6 +31,7 @@
 #include "IDBDatabase.h"
 #include "IDBDatabaseError.h"
 #include <wtf/Threading.h>
+#include <wtf/UnusedParam.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -49,8 +50,11 @@ IndexedDatabaseImpl::~IndexedDatabaseImpl()
 {
 }
 
-void IndexedDatabaseImpl::open(const String& name, const String& description, bool modifyDatabase, PassRefPtr<IDBDatabaseCallbacks>, Frame*, ExceptionCode&)
+void IndexedDatabaseImpl::open(const String& name, const String& description, bool modifyDatabase, PassRefPtr<IDBCallbacks>, Frame*, ExceptionCode&)
 {
+    UNUSED_PARAM(name);
+    UNUSED_PARAM(description);
+    UNUSED_PARAM(modifyDatabase);
     // FIXME: Write.
     ASSERT_NOT_REACHED();
 }

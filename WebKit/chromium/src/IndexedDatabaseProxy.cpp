@@ -57,11 +57,10 @@ IndexedDatabaseProxy::~IndexedDatabaseProxy()
 {
 }
 
-void IndexedDatabaseProxy::open(const String& name, const String& description, bool modifyDatabase, PassRefPtr<IDBDatabaseCallbacks> callbacks, Frame* frame, ExceptionCode& ec)
+void IndexedDatabaseProxy::open(const String& name, const String& description, bool modifyDatabase, PassRefPtr<IDBCallbacks> callbacks, Frame* frame, ExceptionCode& ec)
 {
     WebKit::WebFrame* webFrame = WebKit::WebFrameImpl::fromFrame(frame);
-    typedef IDBCallbacksProxy<WebKit::WebIDBDatabase, IDBDatabase, IDBDatabaseProxy> CallbacksProxy;
-    m_webIndexedDatabase->open(name, description, modifyDatabase, new CallbacksProxy(callbacks), webFrame, ec);
+    m_webIndexedDatabase->open(name, description, modifyDatabase, new IDBCallbacksProxy(callbacks), webFrame, ec);
 }
 
 } // namespace WebCore

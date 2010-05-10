@@ -26,34 +26,36 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IndexedDatabaseProxy_h
-#define IndexedDatabaseProxy_h
+module storage {
 
-#include "IndexedDatabase.h"
+    interface [
+        Conditional=INDEXED_DATABASE,
+        EventTarget
+    ] IDBRequest {
+        void abort();
 
-#if ENABLE(INDEXED_DATABASE)
+        // States
+        const unsigned short INITIAL = 0;
+        const unsigned short LOADING = 1;
+        const unsigned short DONE = 2;
+        readonly attribute unsigned short readyState;
 
-namespace WebKit { class WebIndexedDatabase; }
+        // Possible results
+        readonly attribute IDBDatabaseError error;
+        readonly attribute [Custom] any result;
 
-namespace WebCore {
+        // Events
+        attribute EventListener onsuccess;
+        attribute EventListener onerror;
 
-class IndexedDatabaseProxy : public IndexedDatabase {
-public:
-    static PassRefPtr<IndexedDatabase> create();
-    virtual ~IndexedDatabaseProxy();
-
-    virtual void open(const String& name, const String& description, bool modifyDatabase, PassRefPtr<IDBCallbacks>, Frame*, ExceptionCode&);
-
-private:
-    IndexedDatabaseProxy();
-
-    // We don't own this pointer (unlike all the other proxy classes which do).
-    WebKit::WebIndexedDatabase* m_webIndexedDatabase;
-};
-
-} // namespace WebCore
-
-#endif
-
-#endif // IndexedDatabaseProxy_h
-
+        // EventTarget interface
+        void addEventListener(in DOMString type,
+                              in EventListener listener,
+                              in boolean useCapture);
+        void removeEventListener(in DOMString type,
+                                 in EventListener listener,
+                                 in boolean useCapture);
+        boolean dispatchEvent(in Event evt)
+            raises(EventException);
+    };
+}

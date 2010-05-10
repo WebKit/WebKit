@@ -261,6 +261,7 @@
                 'src/gtk/WebFontInfo.cpp',
                 'src/gtk/WebFontInfo.h',
                 'src/gtk/WebInputEventFactory.cpp',
+                'src/IDBCallbacksProxy.cpp',
                 'src/IDBCallbacksProxy.h',
                 'src/IDBDatabaseProxy.cpp',
                 'src/IDBDatabaseProxy.h',

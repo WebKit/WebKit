@@ -2309,6 +2309,28 @@ contains(DEFINES, ENABLE_DATABASE=1) {
         bindings/js/JSSQLTransactionSyncCustom.cpp
 }
 
+contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
+    HEADERS += \
+        storage/IDBCallbacks.h \
+        storage/IDBDatabase.h \
+        storage/IDBDatabaseError.h \
+        storage/IDBDatabaseException.h \
+        storage/IDBDatabaseRequest.h \
+        storage/IDBRequest.h \
+        storage/IndexedDatabase.h \
+        storage/IndexedDatabaseImpl.h \
+        storage/IndexedDatabaseRequest.h
+
+    SOURCES += \
+        bindings/js/JSIDBRequestCustom.cpp \
+        storage/IDBDatabase.cpp \
+        storage/IDBDatabaseRequest.cpp \
+        storage/IDBRequest.cpp \
+        storage/IndexedDatabase.cpp \
+        storage/IndexedDatabaseImpl.cpp \
+        storage/IndexedDatabaseRequest.cpp
+}
+
 contains(DEFINES, ENABLE_DOM_STORAGE=1) {
     HEADERS += \
         storage/ChangeVersionWrapper.h \

@@ -2413,6 +2413,42 @@ webcore_cppflags += \
 endif # ENABLE_EVENTSOURCE
 
 # ----
+# Indexed Database API support
+# ----
+if ENABLE_INDEXED_DATABASE
+FEATURE_DEFINES += ENABLE_INDEXED_DATABASE=1
+
+IDL_BINDINGS += \
+	WebCore/storage/IDBDatabaseError.idl \
+	WebCore/storage/IDBDatabaseException.idl \
+	WebCore/storage/IDBDatabaseRequest.idl \
+	WebCore/storage/IDBRequest.idl \
+	WebCore/storage/IndexedDatabaseRequest.idl
+
+webcore_cppflags += \
+	-DENABLE_INDEXED_DATABASE=1
+
+webcore_sources += \
+	WebCore/bindings/js/JSIDBRequestCustom.cpp \
+	WebCore/storage/IDBCallbacks.cpp \
+	WebCore/storage/IDBCallbacks.h \
+	WebCore/storage/IDBDatabase.cpp \
+	WebCore/storage/IDBDatabase.h \
+	WebCore/storage/IDBDatabaseError.h \
+	WebCore/storage/IDBDatabaseException.h \
+	WebCore/storage/IDBDatabaseRequest.cpp \
+	WebCore/storage/IDBDatabaseRequest.h \
+	WebCore/storage/IDBRequest.cpp \
+	WebCore/storage/IDBRequest.h \
+	WebCore/storage/IndexedDatabase.cpp \
+	WebCore/storage/IndexedDatabase.h \
+	WebCore/storage/IndexedDatabaseImpl.cpp \
+	WebCore/storage/IndexedDatabaseImpl.h \
+	WebCore/storage/IndexedDatabaseRequest.cpp \
+	WebCore/storage/IndexedDatabaseRequest.h
+endif # END ENABLE_INDEXED_DATABASE
+
+# ----
 # HTML5 client-side session and persistent storage
 # ----
 if ENABLE_DOM_STORAGE

@@ -207,7 +207,12 @@ DOM_CLASSES = \
     HTMLUListElement \
     HTMLVideoElement \
     History \
+    IDBDatabaseError \
+    IDBDatabaseException \
+    IDBDatabaseRequest \
+    IDBRequest \
     ImageData \
+    IndexedDatabaseRequest \
     InjectedScriptHost \
     InspectorBackend \
     InspectorFrontendHost \

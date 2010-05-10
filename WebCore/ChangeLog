@@ -1,3 +1,78 @@
+2010-05-10  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Change IndexedDB to use events instead of callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=38594
+
+        Switch IndexedDB over to an event based model to match what
+        Mozilla (and probably MS?) are doing.  This also gets rid of
+        a lot of template mess at the expense of a little extra boiler
+        plate code (for each type that IDBResult.result could be).
+
+        This change also introduces JSC bindings that match the level of
+        functionality the V8 bindings have.
+
+        Still not testable, but that shoudl change shortly.
+
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventCustom.cpp:
+        * bindings/js/JSIDBRequestCustom.cpp: Added.
+        (WebCore::JSIDBRequest::result):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertEventTargetToV8Object):
+        * bindings/v8/custom/V8CustomIDBCallbacks.h: Removed.
+        * bindings/v8/custom/V8IDBRequestCustom.cpp: Added.
+        (WebCore::V8IDBRequest::resultAccessorGetter):
+        * bindings/v8/custom/V8IndexedDatabaseRequestCustom.cpp: Removed.
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::toIDBRequest):
+        * dom/EventTarget.h:
+        * storage/IDBCallbacks.h:
+        * storage/IDBDatabaseRequest.h:
+        (WebCore::IDBDatabaseRequest::createObjectStore):
+        * storage/IDBRequest.cpp: Added.
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::~IDBRequest):
+        (WebCore::IDBRequest::idbDatabaseResult):
+        (WebCore::IDBRequest::serializedScriptValueResult):
+        (WebCore::IDBRequest::onError):
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::abort):
+        (WebCore::IDBRequest::scriptExecutionContext):
+        (WebCore::IDBRequest::stop):
+        (WebCore::IDBRequest::suspend):
+        (WebCore::IDBRequest::resume):
+        (WebCore::IDBRequest::eventTargetData):
+        (WebCore::IDBRequest::ensureEventTargetData):
+        (WebCore::IDBRequest::timerFired):
+        (WebCore::IDBRequest::onEventCommon):
+        * storage/IDBRequest.h: Added.
+        (WebCore::IDBRequest::create):
+        (WebCore::IDBRequest::):
+        (WebCore::IDBRequest::resultType):
+        (WebCore::IDBRequest::readyState):
+        (WebCore::IDBRequest::error):
+        (WebCore::IDBRequest::toIDBRequest):
+        (WebCore::IDBRequest::refEventTarget):
+        (WebCore::IDBRequest::derefEventTarget):
+        * storage/IDBRequest.idl: Added.
+        * storage/IndexedDatabase.h:
+        * storage/IndexedDatabaseImpl.cpp:
+        (WebCore::IndexedDatabaseImpl::open):
+        * storage/IndexedDatabaseImpl.h:
+        * storage/IndexedDatabaseRequest.cpp:
+        (WebCore::IndexedDatabaseRequest::open):
+        * storage/IndexedDatabaseRequest.h:
+        * storage/IndexedDatabaseRequest.idl:
+
 2010-05-10  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Not reviewed: rollback the commit r59062
