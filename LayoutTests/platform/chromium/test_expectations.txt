@@ -2679,10 +2679,6 @@ BUGWK36666 : storage/open-database-over-quota.html = TEXT
 BUG39904 : svg/animations/animate-points.html = TEXT TIMEOUT
 BUG39904 : svg/animations/animate-keySplines.html = TEXT TIMEOUT
 
-// Caused by http://trac.webkit.org/changeset/56824
-// This test generate strange result on Linux, the resulted image is too small.
-BUG40027 LINUX : fast/forms/input-file-re-render.html = TEXT IMAGE
-
 BUGWK37283 : fast/overflow/scrollbar-restored-and-then-locked.html = TEXT
 
 BUGWK37297 : fast/history/nested-visited-test.html = TEXT

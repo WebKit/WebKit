@@ -1,3 +1,14 @@
+2010-05-09  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        Update Chromium/Linux expectation for fast/forms/input-file-re-render.html.
+        http://crbug.com/40027
+
+        * platform/chromium-linux/fast/forms/input-file-re-render-expected.checksum:
+        * platform/chromium-linux/fast/forms/input-file-re-render-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2010-05-09  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
