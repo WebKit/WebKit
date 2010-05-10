@@ -354,6 +354,9 @@ public:
         ASSERT(m_document || (nodeType() == DOCUMENT_TYPE_NODE && !inDocument()));
         return m_document;
     }
+
+    // Do not use this method to change the document of a node until after the node has been
+    // removed from its previous document.
     void setDocument(Document*);
 
     // Returns true if this node is associated with a document and is in its associated document's

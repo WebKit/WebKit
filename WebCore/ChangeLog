@@ -1,3 +1,20 @@
+2010-05-10  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Asserted that Node::setDocument() is not being used to change
+        the document of a node.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38821
+
+        * dom/Node.cpp:
+        (WebCore::Node::setDocument):
+          Added an ASSERT at the beginning of the function.
+        * dom/Node.h:
+          Documented that Node::setDocument() should not be used to change the
+          document of a node until after the node has been removed from its
+          prior document.
+
 2010-05-10  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Darin Adler.
