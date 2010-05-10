@@ -1,3 +1,16 @@
+2010-05-10  Markus Goetz  <Markus.Goetz@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Qt after 4.6.3 has its integrated DNS cache. Therefore some
+        code is not necessary anymore.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38834
+
+        * platform/network/qt/DnsPrefetchHelper.h:
+        (WebCore::DnsPrefetchHelper::lookup):
+        (WebCore::DnsPrefetchHelper::lookedUp):
+
 2010-05-10  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Darin Adler.

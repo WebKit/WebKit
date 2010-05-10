@@ -42,6 +42,13 @@ namespace WebCore {
             if (currentLookups >= 10)
                 return; // do not launch more than 10 lookups at the same time
 
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 3)
+            currentLookups++;
+            QHostInfo::lookupHost(hostname, this, SLOT(lookedUp(QHostInfo)));
+#else
+            // This code is only needed for Qt versions that do not have
+            // the small Qt DNS cache yet.
+
             QTime* entryTime = lookupCache.object(hostname);
             if (entryTime && entryTime->elapsed() > 300*1000) {
                 // delete knowledge about lookup if it is already 300 seconds old
@@ -54,6 +61,7 @@ namespace WebCore {
                 currentLookups++;
                 QHostInfo::lookupHost(hostname, this, SLOT(lookedUp(QHostInfo)));
             }
+#endif
         }
 
         void lookedUp(const QHostInfo&)
@@ -61,11 +69,14 @@ namespace WebCore {
             // we do not cache the result, we throw it away.
             // we currently rely on the OS to cache the results. If it does not do that
             // then at least the ISP nameserver did it.
+            // Since Qt 4.6.3, Qt also has a small DNS cache.
             currentLookups--;
         }
 
     protected:
+#if QT_VERSION < QT_VERSION_CHECK(4, 6, 3)
         QCache<QString, QTime> lookupCache; // 100 entries
+#endif
         int currentLookups;
     };
 
