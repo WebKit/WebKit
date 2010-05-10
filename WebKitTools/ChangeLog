@@ -1,3 +1,17 @@
+2010-05-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] Roll-out r59020 and r59021, because the Qt part of these changes
+        haven't been landed in Qt trunk yet. Should be rolled-in again after the merge.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32967
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::WebPage):
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+
 2010-05-09  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Chris Jerdonek.
