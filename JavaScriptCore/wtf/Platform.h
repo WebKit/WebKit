@@ -940,8 +940,6 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #elif CPU(X86) && OS(WINDOWS) && COMPILER(MINGW) && GCC_VERSION >= 40100
     #define ENABLE_JIT 1
     #define WTF_USE_JIT_STUB_ARGUMENT_VA_LIST 1
-#elif CPU(X86_64) && OS(WINDOWS) && COMPILER(MINGW64) && GCC_VERSION >= 40100
-    #define ENABLE_JIT 1
 #elif CPU(X86) && OS(WINDOWS) && COMPILER(MSVC)
     #define ENABLE_JIT 1
     #define WTF_USE_JIT_STUB_ARGUMENT_REGISTER 1
