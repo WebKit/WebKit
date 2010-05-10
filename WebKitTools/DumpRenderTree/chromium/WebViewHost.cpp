@@ -267,9 +267,9 @@ WebWidget* WebViewHost::createPopupMenu(const WebPopupMenuInfo&)
     return 0;
 }
 
-WebStorageNamespace* WebViewHost::createSessionStorageNamespace()
+WebStorageNamespace* WebViewHost::createSessionStorageNamespace(unsigned quota)
 {
-    return WebKit::WebStorageNamespace::createSessionStorageNamespace();
+    return WebKit::WebStorageNamespace::createSessionStorageNamespace(quota);
 }
 
 void WebViewHost::didAddMessageToConsole(const WebConsoleMessage& message, const WebString& sourceName, unsigned sourceLine)

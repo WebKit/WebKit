@@ -49,10 +49,20 @@ public:
     // object when you're finished.
     WEBKIT_API static WebStorageNamespace* createLocalStorageNamespace(const WebString& backingDirectoryPath, unsigned quota);
     WEBKIT_API static WebStorageNamespace* createSessionStorageNamespace(unsigned quota);
+
+    // FIXME: Remove this when Chromium is rolled and all callers pass the quota argument.
     WEBKIT_API static WebStorageNamespace* createSessionStorageNamespace()
     {
         return createSessionStorageNamespace(noQuota);
     }
+
+    // The quota for each storage area.  Suggested by the spec.
+    static const unsigned m_localStorageQuota = 5 * 1024 * 1024;
+
+    // Since SessionStorage memory is allocated in the browser process, we place a
+    // per-origin quota on it.  Like LocalStorage there are known attacks against
+    // this, so it's more of a sanity check than a real security measure.
+    static const unsigned m_sessionStorageQuota = 5 * 1024 * 1024;
 
     static const unsigned noQuota = UINT_MAX;
 

@@ -86,7 +86,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual WebKit::WebView* createView(WebKit::WebFrame*);
     virtual WebKit::WebWidget* createPopupMenu(bool activatable);
     virtual WebKit::WebWidget* createPopupMenu(const WebKit::WebPopupMenuInfo&);
-    virtual WebKit::WebStorageNamespace* createSessionStorageNamespace();
+    virtual WebKit::WebStorageNamespace* createSessionStorageNamespace(unsigned quota);
     virtual void didAddMessageToConsole(const WebKit::WebConsoleMessage&, const WebKit::WebString& sourceName, unsigned sourceLine);
     virtual void didStartLoading();
     virtual void didStopLoading();
