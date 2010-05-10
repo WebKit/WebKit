@@ -311,4 +311,10 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest& request, Frame*)
     return true;
 }
 
+// static
+void ResourceHandle::cacheMetadata(const ResourceResponse& response, const Vector<char>& data)
+{
+    // FIXME
+}
+
 } // namespace WebCore
