@@ -40,6 +40,7 @@ typedef struct {
     NPObject* rememberedObject;
     NPStream* stream;
     NPBool testDocumentOpenInDestroyStream;
+    NPBool testGetURLOnDestroy;
     NPBool testWindowOpen;
     NPBool testKeyboardFocusForPlugins;
     char* onStreamLoad;

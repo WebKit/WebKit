@@ -1,3 +1,14 @@
+2010-05-07  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Crash closing window containing Flash plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=38797
+        <rdar://problem/7935266>
+
+        Reviewed by Eric Seidel.
+
+        * plugins/geturlnotify-during-document-teardown.html: Added.
+        * plugins/resources/geturlnotify-on-destroy.html: Added.
+
 2010-05-10  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

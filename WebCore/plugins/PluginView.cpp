@@ -526,7 +526,8 @@ NPError PluginView::load(const FrameLoadRequest& frameLoadRequest, bool sendNoti
         return NPERR_INVALID_URL;
 
     // Don't allow requests to be made when the document loader is stopping all loaders.
-    if (m_parentFrame->loader()->documentLoader()->isStopping())
+    DocumentLoader* loader = m_parentFrame->loader()->documentLoader();
+    if (!loader || loader->isStopping())
         return NPERR_GENERIC_ERROR;
 
     const String& targetFrameName = frameLoadRequest.frameName();

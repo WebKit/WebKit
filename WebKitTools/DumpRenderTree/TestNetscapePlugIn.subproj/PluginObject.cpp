@@ -971,6 +971,7 @@ static NPObject *pluginAllocate(NPP npp, NPClass *theClass)
     newInstance->lastUrl = NULL;
     newInstance->lastHeaders = NULL;
 
+    newInstance->testGetURLOnDestroy = FALSE;
     newInstance->testDocumentOpenInDestroyStream = FALSE;
     newInstance->testWindowOpen = FALSE;
     newInstance->testKeyboardFocusForPlugins = FALSE;

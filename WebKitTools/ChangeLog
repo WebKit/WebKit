@@ -1,3 +1,26 @@
+2010-05-07  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Crash closing window containing Flash plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=38797
+        <rdar://problem/7935266>
+
+        Reviewed by Eric Seidel.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
+        (pluginAllocate):
+        Initialize new member to false.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h:
+        Added a new member.
+
+        * DumpRenderTree/win/TestNetscapePlugin/main.cpp:
+        (NPP_New):
+        Check whether the element has the "testGetURLOnDestroy" attribute, and
+        record that.
+        (NPP_Destroy):
+        If "testGetURLOnDestroy" is set, perform a load while destroying the
+        plug-in.
+
 2010-05-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Levin.

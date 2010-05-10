@@ -1,3 +1,18 @@
+2010-05-07  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Crash closing window containing Flash plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=38797
+        <rdar://problem/7935266>
+
+        Reviewed by Eric Seidel.
+
+        Test: plugins/geturlnotify-during-document-teardown.html
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::load):
+        Null check the DocumentLoader; it's possible for this to be null while
+        the Document is being torn down and before the plug-in is destroyed.
+
 2010-05-10  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
