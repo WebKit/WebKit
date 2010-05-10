@@ -44,11 +44,46 @@ namespace WebCore {
 v8::Handle<v8::Value> V8DatabaseSync::changeVersionCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DatabaseSync.changeVersion()");
+
+    if (args.Length() < 2)
+        return throwError(SYNTAX_ERR);
+
+    EXCEPTION_BLOCK(String, oldVersion, toWebCoreString(args[0]));
+    EXCEPTION_BLOCK(String, newVersion, toWebCoreString(args[1]));
+
+    DatabaseSync* database = V8DatabaseSync::toNative(args.Holder());
+
+    RefPtr<V8SQLTransactionSyncCallback> callback;
+    if (args.Length() > 2) {
+        if (!args[2]->IsObject())
+            return throwError(TYPE_MISMATCH_ERR);
+
+        callback = V8SQLTransactionSyncCallback::create(args[2], 0);
+    }
+
+    ExceptionCode ec = 0;
+    database->changeVersion(oldVersion, newVersion, callback.release(), ec);
+    V8Proxy::setDOMException(ec);
+
     return v8::Undefined();
 }
 
 static v8::Handle<v8::Value> createTransaction(const v8::Arguments& args, bool readOnly)
 {
+    if (!args.Length())
+        return throwError(SYNTAX_ERR);
+
+    if (!args[0]->IsObject())
+        return throwError(TYPE_MISMATCH_ERR);
+
+    DatabaseSync* database = V8DatabaseSync::toNative(args.Holder());
+
+    RefPtr<V8SQLTransactionSyncCallback> callback = V8SQLTransactionSyncCallback::create(args[0], 0);
+
+    ExceptionCode ec = 0;
+    database->transaction(callback.release(), readOnly, ec);
+    V8Proxy::setDOMException(ec);
+
     return v8::Undefined();
 }
 

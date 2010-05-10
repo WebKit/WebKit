@@ -49,6 +49,49 @@ namespace WebCore {
 v8::Handle<v8::Value> V8SQLTransactionSync::executeSqlCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.SQLTransactionSync.executeSql()");
+
+    if (!args.Length())
+        return throwError(SYNTAX_ERR);
+
+    EXCEPTION_BLOCK(String, statement, toWebCoreString(args[0]));
+
+    Vector<SQLValue> sqlValues;
+
+    if (args.Length() > 1 && !isUndefinedOrNull(args[1])) {
+        if (!args[1]->IsObject())
+            return throwError(TYPE_MISMATCH_ERR);
+
+        uint32_t sqlArgsLength = 0;
+        v8::Local<v8::Object> sqlArgsObject = args[1]->ToObject();
+        EXCEPTION_BLOCK(v8::Local<v8::Value>, length, sqlArgsObject->Get(v8::String::New("length")));
+
+        if (isUndefinedOrNull(length))
+            sqlArgsLength = sqlArgsObject->GetPropertyNames()->Length();
+        else
+            sqlArgsLength = length->Uint32Value();
+
+        for (unsigned int i = 0; i < sqlArgsLength; ++i) {
+            v8::Local<v8::Integer> key = v8::Integer::New(i);
+            EXCEPTION_BLOCK(v8::Local<v8::Value>, value, sqlArgsObject->Get(key));
+
+            if (value.IsEmpty() || value->IsNull())
+                sqlValues.append(SQLValue());
+            else if (value->IsNumber()) {
+                EXCEPTION_BLOCK(double, sqlValue, value->NumberValue());
+                sqlValues.append(SQLValue(sqlValue));
+            } else {
+                EXCEPTION_BLOCK(String, sqlValue, toWebCoreString(value));
+                sqlValues.append(SQLValue(sqlValue));
+            }
+        }
+    }
+
+    SQLTransactionSync* transaction = V8SQLTransactionSync::toNative(args.Holder());
+
+    ExceptionCode ec = 0;
+    transaction->executeSQL(statement, sqlValues, ec);
+    V8Proxy::setDOMException(ec);
+
     return v8::Undefined();
 }
 
