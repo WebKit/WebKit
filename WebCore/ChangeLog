@@ -1,3 +1,11 @@
+2010-05-10  John Gregg  <johnnyg@google.com>
+
+        [chromium] Try to fix the chromium build after r59085 by
+        including MathExtras.h before using isnan().
+        https://bugs.webkit.org/show_bug.cgi?id=38860
+
+        * html/canvas/WebGLIntegralTypedArrayBase.h:
+
 2010-05-10  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix for wx trunk after complex text changes.

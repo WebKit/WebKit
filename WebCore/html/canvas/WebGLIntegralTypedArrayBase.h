@@ -29,6 +29,7 @@
 
 #include "WebGLTypedArrayBase.h"
 #include <limits>
+#include <wtf/MathExtras.h>
 
 // Base class for all WebGL<T>Array types holding integral
 // (non-floating-point) values.
