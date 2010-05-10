@@ -49,6 +49,7 @@ private:
 
     JSCallbackData* m_data;
     RefPtr<DOMWrapperWorld> m_isolatedWorld;
+    ScriptExecutionContext* m_scriptExecutionContext;
 };
 
 } // namespace WebCore

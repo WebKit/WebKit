@@ -37,12 +37,13 @@ namespace WebCore {
 JSTestCallback::JSTestCallback(JSObject* callback, JSDOMGlobalObject* globalObject)
     : m_data(new JSCallbackData(callback, globalObject))
     , m_isolatedWorld(globalObject->world())
+    , m_scriptExecutionContext(globalObject->scriptExecutionContext())
 {
 }
 
 JSTestCallback::~JSTestCallback()
 {
-    callOnMainThread(JSCallbackData::deleteData, m_data);
+    m_scriptExecutionContext->postTask(DeleteCallbackDataTask::create(m_data));
 #ifndef NDEBUG
     m_data = 0;
 #endif
