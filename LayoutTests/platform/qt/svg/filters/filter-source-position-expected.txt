@@ -4,13 +4,17 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceFilter {filter} [id="filter1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-        [last primitive [type=OFFSET]  [dx=0.00 dy=0.00]]
+        [feOffset dx="0.00" dy="0.00"]
+          [SourceGraphic]
       RenderSVGResourceFilter {filter} [id="filter2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-        [last primitive [type=OFFSET]  [dx=0.00 dy=0.00]]
+        [feOffset dx="0.00" dy="0.00"]
+          [SourceGraphic]
       RenderSVGResourceFilter {filter} [id="filter3"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-        [last primitive [type=OFFSET]  [dx=0.00 dy=0.00]]
+        [feOffset dx="0.00" dy="0.00"]
+          [SourceGraphic]
       RenderSVGResourceFilter {filter} [id="filter4"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-        [last primitive [type=OFFSET]  [dx=0.00 dy=0.00]]
+        [feOffset dx="0.00" dy="0.00"]
+          [SourceGraphic]
       RenderSVGImage {image} at (20,20) size 110x110
     RenderSVGContainer {use} at (42,42) size 88x88
       [filter="filter1"] RenderSVGResourceFilter {filter} at (42,42) size 88x88

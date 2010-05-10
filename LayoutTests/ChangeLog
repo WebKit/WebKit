@@ -1,5 +1,31 @@
 2010-05-10  Dirk Schulze  <krit@webkit.org>
 
+        Unreviewed.
+
+        SVG FilterEffects need more detailed DRT information
+        https://bugs.webkit.org/show_bug.cgi?id=38683
+        
+        New baseline for Qt.
+
+        * platform/qt/svg/custom/resource-invalidate-on-target-update-expected.txt:
+        * platform/qt/svg/filters/feColorMatrix-values-expected.txt:
+        * platform/qt/svg/filters/feComposite-expected.txt:
+        * platform/qt/svg/filters/feGaussianBlur-expected.txt:
+        * platform/qt/svg/filters/feMerge-expected.txt:
+        * platform/qt/svg/filters/feOffset-expected.txt:
+        * platform/qt/svg/filters/feTile-expected.txt:
+        * platform/qt/svg/filters/filter-clip-expected.txt:
+        * platform/qt/svg/filters/filter-on-tspan-expected.txt:
+        * platform/qt/svg/filters/filter-source-position-expected.txt:
+        * platform/qt/svg/filters/shadow-on-filter-expected.txt:
+        * platform/qt/svg/filters/shadow-on-rect-with-filter-expected.txt:
+        * platform/qt/svg/filters/sourceAlpha-expected.txt:
+        * platform/qt/svg/filters/subRegion-in-userSpace-expected.txt:
+        * platform/qt/svg/filters/subRegion-one-effect-expected.txt:
+        * platform/qt/svg/filters/subRegion-two-effects-expected.txt:
+
+2010-05-10  Dirk Schulze  <krit@webkit.org>
+
         Reviewed by Darin Adler.
 
         SVG FilterEffects need more detailed DRT information
