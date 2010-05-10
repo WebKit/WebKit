@@ -1,5 +1,21 @@
 2010-05-10  Dirk Schulze  <krit@webkit.org>
 
+        Unreviewed.
+
+        Further optimization for SVG's repaintRect calculation
+        https://bugs.webkit.org/show_bug.cgi?id=38820
+        
+        New baseline for Qt.
+
+        * platform/qt/svg/css/circle-in-mask-with-shadow-expected.txt:
+        * platform/qt/svg/css/mask-with-shadow-expected.txt:
+        * platform/qt/svg/custom/empty-mask-expected.txt:
+        * platform/qt/svg/custom/mask-invalidation-expected.txt:
+        * platform/qt/svg/custom/resource-invalidate-on-target-update-expected.txt:
+        * platform/qt/svg/custom/transformedMaskFails-expected.txt:
+
+2010-05-10  Dirk Schulze  <krit@webkit.org>
+
         Reviewed by Nikolas Zimmermann.
 
         Further optimization for SVG's repaintRect calculation
