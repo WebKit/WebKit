@@ -76,8 +76,8 @@ class ExecutiveTest(unittest.TestCase):
         process = subprocess.Popen(["yes"], stdout=subprocess.PIPE)
         self.assertEqual(process.poll(), None)  # Process is running
         executive.kill_process(process.pid)
-        # Note: Can't use a ternary since signal.SIGKILL is undefined for sys.platform == "windows"
-        if sys.platform == "windows":
+        # Note: Can't use a ternary since signal.SIGKILL is undefined for sys.platform == "win32"
+        if sys.platform == "win32":
             expected_exit_code = 0  # taskkill.exe results in exit(0)
         else:
             expected_exit_code = -signal.SIGKILL
@@ -105,8 +105,8 @@ class ExecutiveTest(unittest.TestCase):
         process = subprocess.Popen(["yes"], stdout=subprocess.PIPE)
         self.assertEqual(process.poll(), None)  # Process is running
         executive.kill_all("yes")
-        # Note: Can't use a ternary since signal.SIGTERM is undefined for sys.platform == "windows"
-        if sys.platform in ("windows", "cygwin"):
+        # Note: Can't use a ternary since signal.SIGTERM is undefined for sys.platform == "win32"
+        if sys.platform in ("win32", "cygwin"):
             expected_exit_code = 0  # taskkill.exe results in exit(0)
         else:
             expected_exit_code = -signal.SIGTERM

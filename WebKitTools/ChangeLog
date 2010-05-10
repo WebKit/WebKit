@@ -1,3 +1,25 @@
+2010-05-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Levin.
+
+        Executive.kill_* do not work with windows python
+        https://bugs.webkit.org/show_bug.cgi?id=38872
+
+        http://trac.webkit.org/changeset/57444 is where the original
+        breakage occurred.
+        http://trac.webkit.org/changeset/58314 is where the regression
+        started affecting chromium.
+
+        I have since learned that sys.platform has no "windows" value.
+        "win32" is always the value, under 32 or 64 bit windows
+
+        The tests for this code are not run anywhere because
+        test-webkitpy does not yet work on "win32".  Mostly due to
+        depending on unixisms like "cat" and "yes".
+
+        * Scripts/webkitpy/common/system/executive.py:
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+
 2010-05-10  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.
