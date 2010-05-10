@@ -1,3 +1,116 @@
+2010-05-10  John Gregg  <johnnyg@google.com>
+
+        [chromium] Unreviewed, svg test rebaselines after r59002 for linux.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-blend-01-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-blend-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-blend-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-color-01-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-color-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-composite-02-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-composite-02-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-composite-02-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-displace-01-f-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-displace-01-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-displace-01-f-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-example-01-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-example-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-example-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-felem-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-image-01-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-image-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-image-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-light-01-f-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-morph-01-f-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-morph-01-f-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-offset-01-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-offset-01-b-expected.png: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-offset-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-specular-01-f-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-tile-01-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-tile-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-tile-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-turb-01-f-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/masking-intro-01-f-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/filters/feTile-expected.checksum:
+        * platform/chromium-linux/svg/batik/filters/feTile-expected.png:
+        * platform/chromium-linux/svg/batik/filters/feTile-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/filters/filterRegions-expected.checksum:
+        * platform/chromium-linux/svg/batik/filters/filterRegions-expected.png:
+        * platform/chromium-linux/svg/batik/filters/filterRegions-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/masking/maskRegions-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/textEffect-expected.checksum:
+        * platform/chromium-linux/svg/batik/text/textEffect-expected.png: Added.
+        * platform/chromium-linux/svg/batik/text/textEffect-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/textEffect3-expected.checksum:
+        * platform/chromium-linux/svg/batik/text/textEffect3-expected.png: Added.
+        * platform/chromium-linux/svg/batik/text/textEffect3-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/textFeatures-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/textProperties-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/empty-mask-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/empty-merge-expected.checksum:
+        * platform/chromium-linux/svg/custom/empty-merge-expected.png:
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Discrete-expected.checksum:
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Discrete-expected.png:
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Discrete-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Gamma-expected.checksum:
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Gamma-expected.png:
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Gamma-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Linear-expected.checksum:
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Linear-expected.png:
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Linear-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Table-expected.checksum:
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Table-expected.png:
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Table-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/feDisplacementMap-01-expected.checksum:
+        * platform/chromium-linux/svg/custom/image-with-transform-clip-filter-expected.checksum:
+        * platform/chromium-linux/svg/custom/image-with-transform-clip-filter-expected.png: Removed.
+        * platform/chromium-linux/svg/custom/image-with-transform-clip-filter-expected.txt:
+        * platform/chromium-linux/svg/custom/invalid-css-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/mask-invalidation-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/non-opaque-filters-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/text-filter-expected.checksum:
+        * platform/chromium-linux/svg/custom/text-filter-expected.png: Removed.
+        * platform/chromium-linux/svg/custom/text-filter-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/visibility-override-filter-expected.checksum: Added.
+        * platform/chromium-linux/svg/filters/big-sized-filter-2-expected.checksum: Added.
+        * platform/chromium-linux/svg/filters/big-sized-filter-2-expected.png: Added.
+        * platform/chromium-linux/svg/filters/big-sized-filter-expected.checksum: Added.
+        * platform/chromium-linux/svg/filters/big-sized-filter-expected.png: Added.
+        * platform/chromium-linux/svg/filters/feColorMatrix-values-expected.checksum: Added.
+        * platform/chromium-linux/svg/filters/feColorMatrix-values-expected.png: Added.
+        * platform/chromium-linux/svg/filters/feColorMatrix-values-expected.txt: Added.
+        * platform/chromium-linux/svg/filters/feComposite-expected.checksum:
+        * platform/chromium-linux/svg/filters/feComposite-expected.png: Removed.
+        * platform/chromium-linux/svg/filters/feComposite-expected.txt: Added.
+        * platform/chromium-linux/svg/filters/feGaussianBlur-expected.checksum: Added.
+        * platform/chromium-linux/svg/filters/feMerge-expected.checksum: Added.
+        * platform/chromium-linux/svg/filters/feMerge-expected.png: Added.
+        * platform/chromium-linux/svg/filters/feOffset-expected.checksum: Added.
+        * platform/chromium-linux/svg/filters/feTile-expected.checksum: Added.
+        * platform/chromium-linux/svg/filters/feTile-expected.png: Added.
+        * platform/chromium-linux/svg/filters/filter-on-tspan-expected.checksum:
+        * platform/chromium-linux/svg/filters/filter-on-tspan-expected.png: Removed.
+        * platform/chromium-linux/svg/filters/filter-on-tspan-expected.txt: Added.
+        * platform/chromium-linux/svg/filters/sourceAlpha-expected.txt: Added.
+        * platform/chromium-linux/svg/filters/subRegion-in-userSpace-expected.checksum: Added.
+        * platform/chromium-linux/svg/filters/subRegion-in-userSpace-expected.png: Added.
+        * platform/chromium-linux/svg/filters/subRegion-one-effect-expected.checksum:
+        * platform/chromium-linux/svg/filters/subRegion-one-effect-expected.png: Removed.
+        * platform/chromium-linux/svg/filters/subRegion-two-effects-expected.checksum:
+        * platform/chromium-linux/svg/filters/subRegion-two-effects-expected.png: Removed.
+        * platform/chromium-linux/svg/text/text-vkern-expected.checksum: Added.
+        * platform/chromium-linux/svg/text/text-vkern-expected.png: Added.
+
 2010-05-10  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Add test to GTK skipped list.
