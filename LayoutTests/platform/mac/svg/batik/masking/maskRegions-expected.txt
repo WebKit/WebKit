@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 450x500
-    RenderSVGContainer {g} at (85,36) size 275x384
+    RenderSVGContainer {g} at (90,36) size 265x368
       RenderSVGText {text} at (174,50) size 102x17 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 102x17
           chunk 1 (middle anchor) text run 1 at (174.00,50.00) startOffset 0 endOffset 12 width 102.00: "Mask Regions"
@@ -38,9 +38,9 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (22,-3) size 56x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 56x17
             chunk 1 (middle anchor) text run 1 at (22.00,-3.00) startOffset 0 endOffset 6 width 56.00: "Masked"
-      RenderSVGContainer {g} at (85,203) size 100x97 [transform={m=((1.00,0.00)(0.00,1.00)) t=(85.00,220.00)}]
-        RenderSVGContainer {use} at (85,220) size 100x80
-          [masker="mask_1"] RenderSVGResourceMasker {mask} at (-10,-8) size 120x96
+      RenderSVGContainer {g} at (90,203) size 90x97 [transform={m=((1.00,0.00)(0.00,1.00)) t=(85.00,220.00)}]
+        RenderSVGContainer {use} at (90,220) size 90x80
+          [masker="mask_1"] RenderSVGResourceMasker {mask} at (5,0) size 90x80
           RenderSVGContainer {g} at (85,220) size 100x80
             RenderPath {rect} at (85,220) size 100x80 [fill={[type=LINEAR-GRADIENT] [id="maskedGradient"]}] [data="M0.00,0.00 L100.00,0.00 L100.00,80.00 L0.00,80.00 Z"]
         RenderSVGText {text} at (24,-3) size 52x17 contains 1 chunk(s)
@@ -56,15 +56,15 @@ layer at (0,0) size 450x500
             chunk 1 (middle anchor) text run 1 at (24.50,-3.00) startOffset 0 endOffset 6 width 51.00: "Mask 2"
       RenderSVGContainer {g} at (284,203) size 52x77 [transform={m=((1.00,0.00)(0.00,1.00)) t=(260.00,220.00)}]
         RenderSVGContainer {use} at (285,240) size 50x40
-          [masker="mask_3"] RenderSVGResourceMasker {mask} at (25,20) size 50.00x40
+          [masker="mask_3"] RenderSVGResourceMasker {mask} at (25,20) size 50x40
           RenderSVGContainer {g} at (260,220) size 100x80
             RenderPath {rect} at (260,220) size 100x80 [fill={[type=LINEAR-GRADIENT] [id="maskedGradient"]}] [data="M0.00,0.00 L100.00,0.00 L100.00,80.00 L0.00,80.00 Z"]
         RenderSVGText {text} at (24,-3) size 52x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 52x17
             chunk 1 (middle anchor) text run 1 at (24.50,-3.00) startOffset 0 endOffset 6 width 51.00: "Mask 3"
-      RenderSVGContainer {g} at (260,323) size 100x97 [transform={m=((1.00,0.00)(0.00,1.00)) t=(260.00,340.00)}]
-        RenderSVGContainer {use} at (260,340) size 100x80
-          [masker="mask_4"] RenderSVGResourceMasker {mask} at (0,0) size 100x80
+      RenderSVGContainer {g} at (264,323) size 91x81 [transform={m=((1.00,0.00)(0.00,1.00)) t=(260.00,340.00)}]
+        RenderSVGContainer {use} at (264,340) size 91x64
+          [masker="mask_4"] RenderSVGResourceMasker {mask} at (5.00,0) size 90x64
           RenderSVGContainer {g} at (260,340) size 100x80
             RenderPath {rect} at (260,340) size 100x80 [fill={[type=LINEAR-GRADIENT] [id="maskedGradient"]}] [data="M0.00,0.00 L100.00,0.00 L100.00,80.00 L0.00,80.00 Z"]
         RenderSVGText {text} at (24,-3) size 52x17 contains 1 chunk(s)

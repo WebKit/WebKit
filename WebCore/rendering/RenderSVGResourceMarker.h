@@ -58,7 +58,7 @@ public:
     AffineTransform markerTransformation(const FloatPoint& origin, float angle, float strokeWidth) const;
 
     virtual bool applyResource(RenderObject*, RenderStyle*, GraphicsContext*&, unsigned short) { return false; }
-    virtual FloatRect resourceBoundingBox(const FloatRect&) const { return FloatRect(); }
+    virtual FloatRect resourceBoundingBox(const FloatRect&) { return FloatRect(); }
 
     FloatPoint referencePoint() const;
     float angle() const;
