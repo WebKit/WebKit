@@ -1,38 +1,10 @@
-2010-05-09  Geoffrey Garen  <ggaren@apple.com>
+2010-05-09  Oliver Hunt  <oliver@apple.com>
 
-        Reviewed by Oliver Hunt.
+        Build fix.
 
-        Reserve a large-ish initial capacity for Lexer::m_buffer16.
-        
-        SunSpider says 0.3% faster.
-        
-        m_buffer16 is used when parsing complex strings -- for example, strings
-        with escape sequences in them. These kinds of strings can be really long,
-        and we want to avoid repeatedly copying as we grow m_buffer16.
-        
-        The net memory cost is quite low, since it's proporitional to source
-        code we already have in memory, and we throw away m_buffer16 right when
-        we're done parsing.
+        Fix accidental repeat addition of emit_op_new_regexp
 
-        * parser/Lexer.cpp:
-        (JSC::Lexer::Lexer): No need to reserve initial capacity in our constructor,
-        since setCode will be called before we're asked to lex anything.
-        (JSC::Lexer::setCode): Reserve enough space to lex half the source code
-        as a complex string without having to copy.
-        (JSC::Lexer::clear): No need to reserve initial capacity here either,
-        since setCode will be called before we're asked to lex anything.
-
-2010-05-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
-
-        Reviewed by Eric Seidel.
-
-        [Qt] Remove YARR configuration rules from Qt make system
-        https://bugs.webkit.org/show_bug.cgi?id=38819
-
-        Setting YARR based on JIT seeting is now in Platform.h 
-        for all ports. This patch essentially reverses r49238.
-
-        * JavaScriptCore.pri:
+        * jit/JITOpcodes.cpp:
 
 2010-05-09  Oliver Hunt  <oliver@apple.com>
 
@@ -70,6 +42,42 @@
         (JSC::DEFINE_STUB_FUNCTION):
         * jit/JITStubs.h:
         (JSC::):
+
+2010-05-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Reserve a large-ish initial capacity for Lexer::m_buffer16.
+        
+        SunSpider says 0.3% faster.
+        
+        m_buffer16 is used when parsing complex strings -- for example, strings
+        with escape sequences in them. These kinds of strings can be really long,
+        and we want to avoid repeatedly copying as we grow m_buffer16.
+        
+        The net memory cost is quite low, since it's proporitional to source
+        code we already have in memory, and we throw away m_buffer16 right when
+        we're done parsing.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::Lexer): No need to reserve initial capacity in our constructor,
+        since setCode will be called before we're asked to lex anything.
+        (JSC::Lexer::setCode): Reserve enough space to lex half the source code
+        as a complex string without having to copy.
+        (JSC::Lexer::clear): No need to reserve initial capacity here either,
+        since setCode will be called before we're asked to lex anything.
+
+2010-05-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Remove YARR configuration rules from Qt make system
+        https://bugs.webkit.org/show_bug.cgi?id=38819
+
+        Setting YARR based on JIT seeting is now in Platform.h 
+        for all ports. This patch essentially reverses r49238.
+
+        * JavaScriptCore.pri:
 
 2010-05-09  Oliver Hunt  <oliver@apple.com>
 
