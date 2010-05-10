@@ -1,3 +1,22 @@
+2010-05-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        REGRESSION(r57955): RegExp literals should not actually be cached, so r57955 should be rolled out.
+        https://bugs.webkit.org/show_bug.cgi?id=38828
+
+        Replace incorrect test for caching regexp literals with ones that tests that they are not cached.
+
+        * fast/js/regexp-literals-are-constants-expected.txt: Removed.
+        * fast/js/regexp-literals-are-constants.html: Removed.
+        * fast/js/regexp-literals-arent-constants-expected.txt: Added.
+        * fast/js/regexp-literals-arent-constants.html: Added.
+        * fast/js/script-tests/regexp-literals-are-constants.js: Removed.
+        * fast/js/script-tests/regexp-literals-arent-constants.js: Added.
+        (test1):
+        (returnRegExpLiteral):
+        (returnConditionalRegExpLiteral):
+
 2010-05-09  Robert Hogan  <robert@webkit.org>
 
         [Qt] Update expected results for unskipped editing/inserting tests
