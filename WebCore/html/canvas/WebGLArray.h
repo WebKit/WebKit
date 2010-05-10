@@ -46,21 +46,24 @@ class WebGLArray : public RefCounted<WebGLArray> {
     virtual bool isUnsignedIntArray() const { return false; }
     virtual bool isFloatArray() const { return false; }
 
-    PassRefPtr<WebGLArrayBuffer> buffer() {
+    PassRefPtr<WebGLArrayBuffer> buffer() const
+    {
         return m_buffer;
     }
 
-    void* baseAddress() {
+    void* baseAddress() const
+    {
         return m_baseAddress;
     }
 
-    unsigned byteOffset() const {
+    unsigned byteOffset() const
+    {
         return m_byteOffset;
     }
 
     virtual unsigned length() const = 0;
     virtual unsigned byteLength() const = 0;
-    virtual PassRefPtr<WebGLArray> slice(int start, int end) = 0;
+    virtual PassRefPtr<WebGLArray> slice(int start, int end) const = 0;
 
     virtual ~WebGLArray();
 
@@ -69,8 +72,8 @@ class WebGLArray : public RefCounted<WebGLArray> {
 
     void setImpl(WebGLArray* array, unsigned byteOffset, ExceptionCode& ec);
 
-    void calculateOffsetAndLength(int start, int end, unsigned arraySize,
-                                  unsigned* offset, unsigned* length);
+    static void calculateOffsetAndLength(int start, int end, unsigned arraySize,
+                                         unsigned* offset, unsigned* length);
 
     // Helper to verify that a given sub-range of an ArrayBuffer is
     // within range.

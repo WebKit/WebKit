@@ -1,3 +1,165 @@
+2010-05-09  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Refactor WebGLArray types to share more code
+        https://bugs.webkit.org/show_bug.cgi?id=37712
+
+        Refactored WebGLArray types for maximal code sharing. Added
+        WebGLTypedArrayBase and WebGLIntegralTypedArrayBase template
+        superclasses. Changed overridden virtuals to have minimal
+        visibility (private instead of public). Fixed const correctness of
+        a few methods. There are no changes to the public APIs of the
+        WebGLArray classes; the JavaScript bindings are unchanged.
+
+        No new tests; existing tests cover this functionality. Ran all
+        WebGL layout tests in Safari and Chromium on Mac OS X.
+
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/canvas/WebGLArray.h:
+        (WebCore::WebGLArray::buffer):
+        (WebCore::WebGLArray::baseAddress):
+        (WebCore::WebGLArray::byteOffset):
+        * html/canvas/WebGLByteArray.cpp:
+        (WebCore::WebGLByteArray::create):
+        (WebCore::WebGLByteArray::WebGLByteArray):
+        (WebCore::WebGLByteArray::slice):
+        * html/canvas/WebGLByteArray.h:
+        (WebCore::WebGLByteArray::isByteArray):
+        * html/canvas/WebGLFloatArray.cpp:
+        (WebCore::WebGLFloatArray::create):
+        (WebCore::WebGLFloatArray::WebGLFloatArray):
+        (WebCore::WebGLFloatArray::slice):
+        * html/canvas/WebGLFloatArray.h:
+        (WebCore::WebGLFloatArray::set):
+        (WebCore::WebGLFloatArray::item):
+        (WebCore::WebGLFloatArray::isFloatArray):
+        * html/canvas/WebGLIntArray.cpp:
+        (WebCore::WebGLIntArray::create):
+        (WebCore::WebGLIntArray::WebGLIntArray):
+        (WebCore::WebGLIntArray::slice):
+        * html/canvas/WebGLIntArray.h:
+        (WebCore::WebGLIntArray::isIntArray):
+        * html/canvas/WebGLIntegralTypedArrayBase.h: Added.
+        (WebCore::WebGLIntegralTypedArrayBase::set):
+        (WebCore::WebGLIntegralTypedArrayBase::item):
+        (WebCore::WebGLIntegralTypedArrayBase::WebGLIntegralTypedArrayBase):
+        * html/canvas/WebGLShortArray.cpp:
+        (WebCore::WebGLShortArray::create):
+        (WebCore::WebGLShortArray::WebGLShortArray):
+        (WebCore::WebGLShortArray::slice):
+        * html/canvas/WebGLShortArray.h:
+        (WebCore::WebGLShortArray::isShortArray):
+        * html/canvas/WebGLTypedArrayBase.h: Added.
+        (WebCore::WebGLTypedArrayBase::data):
+        (WebCore::WebGLTypedArrayBase::set):
+        (WebCore::WebGLTypedArrayBase::length):
+        (WebCore::WebGLTypedArrayBase::WebGLTypedArrayBase):
+        (WebCore::WebGLTypedArrayBase::create):
+        (WebCore::WebGLTypedArrayBase::sliceImpl):
+        (WebCore::WebGLTypedArrayBase::byteLength):
+        * html/canvas/WebGLUnsignedByteArray.cpp:
+        (WebCore::WebGLUnsignedByteArray::create):
+        (WebCore::WebGLUnsignedByteArray::WebGLUnsignedByteArray):
+        (WebCore::WebGLUnsignedByteArray::slice):
+        * html/canvas/WebGLUnsignedByteArray.h:
+        (WebCore::WebGLUnsignedByteArray::isUnsignedByteArray):
+        * html/canvas/WebGLUnsignedIntArray.cpp:
+        (WebCore::WebGLUnsignedIntArray::create):
+        (WebCore::WebGLUnsignedIntArray::WebGLUnsignedIntArray):
+        (WebCore::WebGLUnsignedIntArray::slice):
+        * html/canvas/WebGLUnsignedIntArray.h:
+        (WebCore::WebGLUnsignedIntArray::isUnsignedIntArray):
+        * html/canvas/WebGLUnsignedShortArray.cpp:
+        (WebCore::WebGLUnsignedShortArray::create):
+        (WebCore::WebGLUnsignedShortArray::WebGLUnsignedShortArray):
+        (WebCore::WebGLUnsignedShortArray::slice):
+        * html/canvas/WebGLUnsignedShortArray.h:
+        (WebCore::WebGLUnsignedShortArray::isUnsignedShortArray):
+
+<<<<<<< .mine
+2010-05-10  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Refactor WebGLArray types to share more code
+        https://bugs.webkit.org/show_bug.cgi?id=37712
+
+        Refactored WebGLArray types for maximal code sharing. Added
+        WebGLTypedArrayBase and WebGLIntegralTypedArrayBase template
+        superclasses. Changed overridden virtuals to have minimal
+        visibility (private instead of public). Fixed const correctness of
+        a few methods. There are no changes to the public APIs of the
+        WebGLArray classes; the JavaScript bindings are unchanged.
+
+        No new tests; existing tests cover this functionality. Ran all
+        WebGL layout tests in Safari and Chromium on Mac OS X.
+
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/canvas/WebGLArray.h:
+        (WebCore::WebGLArray::buffer):
+        (WebCore::WebGLArray::baseAddress):
+        (WebCore::WebGLArray::byteOffset):
+        * html/canvas/WebGLByteArray.cpp:
+        (WebCore::WebGLByteArray::create):
+        (WebCore::WebGLByteArray::WebGLByteArray):
+        (WebCore::WebGLByteArray::slice):
+        * html/canvas/WebGLByteArray.h:
+        (WebCore::WebGLByteArray::isByteArray):
+        * html/canvas/WebGLFloatArray.cpp:
+        (WebCore::WebGLFloatArray::create):
+        (WebCore::WebGLFloatArray::WebGLFloatArray):
+        (WebCore::WebGLFloatArray::slice):
+        * html/canvas/WebGLFloatArray.h:
+        (WebCore::WebGLFloatArray::set):
+        (WebCore::WebGLFloatArray::item):
+        (WebCore::WebGLFloatArray::isFloatArray):
+        * html/canvas/WebGLIntArray.cpp:
+        (WebCore::WebGLIntArray::create):
+        (WebCore::WebGLIntArray::WebGLIntArray):
+        (WebCore::WebGLIntArray::slice):
+        * html/canvas/WebGLIntArray.h:
+        (WebCore::WebGLIntArray::isIntArray):
+        * html/canvas/WebGLIntegralTypedArrayBase.h: Added.
+        (WebCore::WebGLIntegralTypedArrayBase::set):
+        (WebCore::WebGLIntegralTypedArrayBase::item):
+        (WebCore::WebGLIntegralTypedArrayBase::WebGLIntegralTypedArrayBase):
+        * html/canvas/WebGLShortArray.cpp:
+        (WebCore::WebGLShortArray::create):
+        (WebCore::WebGLShortArray::WebGLShortArray):
+        (WebCore::WebGLShortArray::slice):
+        * html/canvas/WebGLShortArray.h:
+        (WebCore::WebGLShortArray::isShortArray):
+        * html/canvas/WebGLTypedArrayBase.h: Added.
+        (WebCore::WebGLTypedArrayBase::data):
+        (WebCore::WebGLTypedArrayBase::set):
+        (WebCore::WebGLTypedArrayBase::length):
+        (WebCore::WebGLTypedArrayBase::WebGLTypedArrayBase):
+        (WebCore::WebGLTypedArrayBase::create):
+        (WebCore::WebGLTypedArrayBase::sliceImpl):
+        (WebCore::WebGLTypedArrayBase::byteLength):
+        * html/canvas/WebGLUnsignedByteArray.cpp:
+        (WebCore::WebGLUnsignedByteArray::create):
+        (WebCore::WebGLUnsignedByteArray::WebGLUnsignedByteArray):
+        (WebCore::WebGLUnsignedByteArray::slice):
+        * html/canvas/WebGLUnsignedByteArray.h:
+        (WebCore::WebGLUnsignedByteArray::isUnsignedByteArray):
+        * html/canvas/WebGLUnsignedIntArray.cpp:
+        (WebCore::WebGLUnsignedIntArray::create):
+        (WebCore::WebGLUnsignedIntArray::WebGLUnsignedIntArray):
+        (WebCore::WebGLUnsignedIntArray::slice):
+        * html/canvas/WebGLUnsignedIntArray.h:
+        (WebCore::WebGLUnsignedIntArray::isUnsignedIntArray):
+        * html/canvas/WebGLUnsignedShortArray.cpp:
+        (WebCore::WebGLUnsignedShortArray::create):
+        (WebCore::WebGLUnsignedShortArray::WebGLUnsignedShortArray):
+        (WebCore::WebGLUnsignedShortArray::slice):
+        * html/canvas/WebGLUnsignedShortArray.h:
+        (WebCore::WebGLUnsignedShortArray::isUnsignedShortArray):
+
+=======
 2010-05-10  Brent Fulgham  <bfulgham@webkit.org>
 
         Build fix, not reviewed.
@@ -7,6 +169,7 @@
 
         * WebCore.vcproj/WebCore.vcproj:
 
+>>>>>>> .r59084
 2010-05-10  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

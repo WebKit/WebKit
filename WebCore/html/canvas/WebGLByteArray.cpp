@@ -28,58 +28,33 @@
 
 #if ENABLE(3D_CANVAS)
 
-#include "WebGLArrayBuffer.h"
 #include "WebGLByteArray.h"
 
 namespace WebCore {
 
 PassRefPtr<WebGLByteArray> WebGLByteArray::create(unsigned length)
 {
-    RefPtr<WebGLArrayBuffer> buffer = WebGLArrayBuffer::create(length, sizeof(signed char));
-    return create(buffer, 0, length);
+    return WebGLTypedArrayBase<signed char>::create<WebGLByteArray>(length);
 }
 
 PassRefPtr<WebGLByteArray> WebGLByteArray::create(signed char* array, unsigned length)
 {
-    RefPtr<WebGLByteArray> a = WebGLByteArray::create(length);
-    for (unsigned i = 0; i < length; ++i)
-        a->set(i, array[i]);
-    return a;
+    return WebGLTypedArrayBase<signed char>::create<WebGLByteArray>(array, length);
 }
 
 PassRefPtr<WebGLByteArray> WebGLByteArray::create(PassRefPtr<WebGLArrayBuffer> buffer, unsigned byteOffset, unsigned length)
 {
-    RefPtr<WebGLArrayBuffer> buf(buffer);
-    if (!verifySubRange<signed char>(buf, byteOffset, length))
-        return 0;
-
-    return adoptRef(new WebGLByteArray(buf, byteOffset, length));
+    return WebGLTypedArrayBase<signed char>::create<WebGLByteArray>(buffer, byteOffset, length);
 }
 
-WebGLByteArray::WebGLByteArray(PassRefPtr<WebGLArrayBuffer> buffer, unsigned offset, unsigned length)
-    : WebGLArray(buffer, offset)
-    , m_size(length)
+WebGLByteArray::WebGLByteArray(PassRefPtr<WebGLArrayBuffer> buffer, unsigned byteOffset, unsigned length)
+    : WebGLIntegralTypedArrayBase<signed char>(buffer, byteOffset, length)
 {
 }
 
-unsigned WebGLByteArray::length() const {
-    return m_size;
-}
-
-unsigned WebGLByteArray::byteLength() const {
-    return m_size * sizeof(signed char);
-}
-
-PassRefPtr<WebGLArray> WebGLByteArray::slice(int start, int end)
+PassRefPtr<WebGLArray> WebGLByteArray::slice(int start, int end) const
 {
-    unsigned offset, length;
-    calculateOffsetAndLength(start, end, m_size, &offset, &length);
-    clampOffsetAndNumElements<signed char>(buffer().get(), m_byteOffset, &offset, &length);
-    return create(buffer(), offset, length);
-}
-
-void WebGLByteArray::set(WebGLByteArray* array, unsigned offset, ExceptionCode& ec) {
-    setImpl(array, offset * sizeof(signed char), ec);
+    return sliceImpl<WebGLByteArray>(start, end);
 }
 
 }

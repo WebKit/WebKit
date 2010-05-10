@@ -28,60 +28,33 @@
 
 #if ENABLE(3D_CANVAS)
 
-#include "WebGLArrayBuffer.h"
 #include "WebGLIntArray.h"
 
 namespace WebCore {
 
 PassRefPtr<WebGLIntArray> WebGLIntArray::create(unsigned length)
 {
-    RefPtr<WebGLArrayBuffer> buffer = WebGLArrayBuffer::create(length, sizeof(int));
-    return create(buffer, 0, length);
+    return WebGLTypedArrayBase<int>::create<WebGLIntArray>(length);
 }
 
 PassRefPtr<WebGLIntArray> WebGLIntArray::create(int* array, unsigned length)
 {
-    RefPtr<WebGLIntArray> a = WebGLIntArray::create(length);
-    for (unsigned i = 0; i < length; ++i)
-        a->set(i, array[i]);
-    return a;
+    return WebGLTypedArrayBase<int>::create<WebGLIntArray>(array, length);
 }
 
-PassRefPtr<WebGLIntArray> WebGLIntArray::create(PassRefPtr<WebGLArrayBuffer> buffer,
-                                                unsigned byteOffset,
-                                                unsigned length)
+PassRefPtr<WebGLIntArray> WebGLIntArray::create(PassRefPtr<WebGLArrayBuffer> buffer, unsigned byteOffset, unsigned length)
 {
-    RefPtr<WebGLArrayBuffer> buf(buffer);
-    if (!verifySubRange<int>(buf, byteOffset, length))
-        return 0;
-
-    return adoptRef(new WebGLIntArray(buf, byteOffset, length));
+    return WebGLTypedArrayBase<int>::create<WebGLIntArray>(buffer, byteOffset, length);
 }
 
 WebGLIntArray::WebGLIntArray(PassRefPtr<WebGLArrayBuffer> buffer, unsigned byteOffset, unsigned length)
-        : WebGLArray(buffer, byteOffset)
-        , m_size(length)
+    : WebGLIntegralTypedArrayBase<int>(buffer, byteOffset, length)
 {
 }
 
-unsigned WebGLIntArray::length() const {
-    return m_size;
-}
-
-unsigned WebGLIntArray::byteLength() const {
-    return m_size * sizeof(int);
-}
-
-PassRefPtr<WebGLArray> WebGLIntArray::slice(int start, int end)
+PassRefPtr<WebGLArray> WebGLIntArray::slice(int start, int end) const
 {
-    unsigned offset, length;
-    calculateOffsetAndLength(start, end, m_size, &offset, &length);
-    clampOffsetAndNumElements<int>(buffer(), m_byteOffset, &offset, &length);
-    return create(buffer(), offset, length);
-}
-
-void WebGLIntArray::set(WebGLIntArray* array, unsigned offset, ExceptionCode& ec) {
-    setImpl(array, offset * sizeof(int), ec);
+    return sliceImpl<WebGLIntArray>(start, end);
 }
 
 }

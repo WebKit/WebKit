@@ -34,51 +34,27 @@ namespace WebCore {
 
 PassRefPtr<WebGLFloatArray> WebGLFloatArray::create(unsigned length)
 {
-    RefPtr<WebGLArrayBuffer> buffer = WebGLArrayBuffer::create(length, sizeof(float));
-    return create(buffer, 0, length);
+    return WebGLTypedArrayBase<float>::create<WebGLFloatArray>(length);
 }
 
 PassRefPtr<WebGLFloatArray> WebGLFloatArray::create(float* array, unsigned length)
 {
-    RefPtr<WebGLFloatArray> a = WebGLFloatArray::create(length);
-    for (unsigned i = 0; i < length; ++i)
-        a->set(i, array[i]);
-    return a;
+    return WebGLTypedArrayBase<float>::create<WebGLFloatArray>(array, length);
 }
 
 PassRefPtr<WebGLFloatArray> WebGLFloatArray::create(PassRefPtr<WebGLArrayBuffer> buffer, unsigned byteOffset, unsigned length)
 {
-    RefPtr<WebGLArrayBuffer> buf(buffer);
-    if (!verifySubRange<float>(buf, byteOffset, length))
-        return 0;
-
-    return adoptRef(new WebGLFloatArray(buf, byteOffset, length));
+    return WebGLTypedArrayBase<float>::create<WebGLFloatArray>(buffer, byteOffset, length);
 }
 
 WebGLFloatArray::WebGLFloatArray(PassRefPtr<WebGLArrayBuffer> buffer, unsigned byteOffset, unsigned length)
-        : WebGLArray(buffer, byteOffset)
-        , m_size(length)
+    : WebGLTypedArrayBase<float>(buffer, byteOffset, length)
 {
 }
 
-unsigned WebGLFloatArray::length() const {
-    return m_size;
-}
-
-unsigned WebGLFloatArray::byteLength() const {
-    return m_size * sizeof(float);
-}
-
-PassRefPtr<WebGLArray> WebGLFloatArray::slice(int start, int end)
+PassRefPtr<WebGLArray> WebGLFloatArray::slice(int start, int end) const
 {
-    unsigned offset, length;
-    calculateOffsetAndLength(start, end, m_size, &offset, &length);
-    clampOffsetAndNumElements<float>(buffer(), m_byteOffset, &offset, &length);
-    return create(buffer(), offset, length);
-}
-
-void WebGLFloatArray::set(WebGLFloatArray* array, unsigned offset, ExceptionCode& ec) {
-    setImpl(array, offset * sizeof(float), ec);
+    return sliceImpl<WebGLFloatArray>(start, end);
 }
 
 }

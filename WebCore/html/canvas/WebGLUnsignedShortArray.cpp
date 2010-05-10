@@ -28,62 +28,33 @@
 
 #if ENABLE(3D_CANVAS)
 
-#include "WebGLArrayBuffer.h"
 #include "WebGLUnsignedShortArray.h"
 
 namespace WebCore {
 
 PassRefPtr<WebGLUnsignedShortArray> WebGLUnsignedShortArray::create(unsigned length)
 {
-    RefPtr<WebGLArrayBuffer> buffer = WebGLArrayBuffer::create(length, sizeof(unsigned short));
-    return create(buffer, 0, length);
+    return WebGLTypedArrayBase<unsigned short>::create<WebGLUnsignedShortArray>(length);
 }
 
 PassRefPtr<WebGLUnsignedShortArray> WebGLUnsignedShortArray::create(unsigned short* array, unsigned length)
 {
-    RefPtr<WebGLUnsignedShortArray> a = WebGLUnsignedShortArray::create(length);
-    for (unsigned i = 0; i < length; ++i)
-        a->set(i, array[i]);
-    return a;
+    return WebGLTypedArrayBase<unsigned short>::create<WebGLUnsignedShortArray>(array, length);
 }
 
-PassRefPtr<WebGLUnsignedShortArray> WebGLUnsignedShortArray::create(PassRefPtr<WebGLArrayBuffer> buffer,
-                                                                    unsigned byteOffset,
-                                                                    unsigned length)
+PassRefPtr<WebGLUnsignedShortArray> WebGLUnsignedShortArray::create(PassRefPtr<WebGLArrayBuffer> buffer, unsigned byteOffset, unsigned length)
 {
-    RefPtr<WebGLArrayBuffer> buf(buffer);
-    if (!verifySubRange<unsigned short>(buf, byteOffset, length))
-        return 0;
-
-    return adoptRef(new WebGLUnsignedShortArray(buf, byteOffset, length));
+    return WebGLTypedArrayBase<unsigned short>::create<WebGLUnsignedShortArray>(buffer, byteOffset, length);
 }
 
-WebGLUnsignedShortArray::WebGLUnsignedShortArray(PassRefPtr<WebGLArrayBuffer> buffer,
-                                                 unsigned byteOffset,
-                                                 unsigned length)
-        : WebGLArray(buffer, byteOffset)
-        , m_size(length)
+WebGLUnsignedShortArray::WebGLUnsignedShortArray(PassRefPtr<WebGLArrayBuffer> buffer, unsigned byteOffset, unsigned length)
+    : WebGLIntegralTypedArrayBase<unsigned short>(buffer, byteOffset, length)
 {
 }
 
-unsigned WebGLUnsignedShortArray::length() const {
-    return m_size;
-}
-
-unsigned WebGLUnsignedShortArray::byteLength() const {
-    return m_size * sizeof(unsigned short);
-}
-
-PassRefPtr<WebGLArray> WebGLUnsignedShortArray::slice(int start, int end)
+PassRefPtr<WebGLArray> WebGLUnsignedShortArray::slice(int start, int end) const
 {
-    unsigned offset, length;
-    calculateOffsetAndLength(start, end, m_size, &offset, &length);
-    clampOffsetAndNumElements<unsigned short>(buffer(), m_byteOffset, &offset, &length);
-    return create(buffer(), offset, length);
-}
-
-void WebGLUnsignedShortArray::set(WebGLUnsignedShortArray* array, unsigned offset, ExceptionCode& ec) {
-    setImpl(array, offset * sizeof(unsigned short), ec);
+    return sliceImpl<WebGLUnsignedShortArray>(start, end);
 }
 
 }

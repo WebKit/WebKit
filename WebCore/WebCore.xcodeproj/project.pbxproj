@@ -1293,6 +1293,8 @@
 		6E4E91AD10F7FB3100A2779C /* CanvasContextAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4E91A810F7FB3100A2779C /* CanvasContextAttributes.h */; };
 		6E4E91AE10F7FB3100A2779C /* WebGLContextAttributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E91A910F7FB3100A2779C /* WebGLContextAttributes.cpp */; };
 		6E4E91AF10F7FB3100A2779C /* WebGLContextAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4E91AA10F7FB3100A2779C /* WebGLContextAttributes.h */; };
+		6E96BB1C11986EE2007D94CD /* WebGLIntegralTypedArrayBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E96BB1A11986EE1007D94CD /* WebGLIntegralTypedArrayBase.h */; };
+		6E96BB1D11986EE2007D94CD /* WebGLTypedArrayBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E96BB1B11986EE1007D94CD /* WebGLTypedArrayBase.h */; };
 		6EE8A77210F803F3005A4A24 /* JSWebGLContextAttributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EE8A77010F803F3005A4A24 /* JSWebGLContextAttributes.cpp */; };
 		6EE8A77310F803F3005A4A24 /* JSWebGLContextAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */; };
 		72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72626E010EF022FE00A07E20 /* FontFastPath.cpp */; };
@@ -6870,6 +6872,8 @@
 		6E4E91A910F7FB3100A2779C /* WebGLContextAttributes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLContextAttributes.cpp; path = canvas/WebGLContextAttributes.cpp; sourceTree = "<group>"; };
 		6E4E91AA10F7FB3100A2779C /* WebGLContextAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLContextAttributes.h; path = canvas/WebGLContextAttributes.h; sourceTree = "<group>"; };
 		6E4E91AB10F7FB3100A2779C /* WebGLContextAttributes.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLContextAttributes.idl; path = canvas/WebGLContextAttributes.idl; sourceTree = "<group>"; };
+		6E96BB1A11986EE1007D94CD /* WebGLIntegralTypedArrayBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLIntegralTypedArrayBase.h; path = canvas/WebGLIntegralTypedArrayBase.h; sourceTree = "<group>"; };
+		6E96BB1B11986EE1007D94CD /* WebGLTypedArrayBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLTypedArrayBase.h; path = canvas/WebGLTypedArrayBase.h; sourceTree = "<group>"; };
 		6EE8A77010F803F3005A4A24 /* JSWebGLContextAttributes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLContextAttributes.cpp; sourceTree = "<group>"; };
 		6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLContextAttributes.h; sourceTree = "<group>"; };
 		72626E010EF022FE00A07E20 /* FontFastPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontFastPath.cpp; sourceTree = "<group>"; };
@@ -11286,6 +11290,7 @@
 				49EECDD010503C2300099FAB /* WebGLIntArray.cpp */,
 				49EECDD110503C2300099FAB /* WebGLIntArray.h */,
 				49EECDD210503C2300099FAB /* WebGLIntArray.idl */,
+				6E96BB1A11986EE1007D94CD /* WebGLIntegralTypedArrayBase.h */,
 				49C7B9B61042D32F0009D447 /* WebGLProgram.cpp */,
 				49C7B9B71042D32F0009D447 /* WebGLProgram.h */,
 				49C7B9B81042D32F0009D447 /* WebGLProgram.idl */,
@@ -11304,6 +11309,7 @@
 				49C7B9C51042D32F0009D447 /* WebGLTexture.cpp */,
 				49C7B9C61042D32F0009D447 /* WebGLTexture.h */,
 				49C7B9C71042D32F0009D447 /* WebGLTexture.idl */,
+				6E96BB1B11986EE1007D94CD /* WebGLTypedArrayBase.h */,
 				0C3F1F5710C8871200D72CE1 /* WebGLUniformLocation.cpp */,
 				0C3F1F5810C8871200D72CE1 /* WebGLUniformLocation.h */,
 				0C3F1F5910C8871200D72CE1 /* WebGLUniformLocation.idl */,
@@ -19125,6 +19131,8 @@
 				C5F4F40B119306AC00FDFADD /* JSIDBDatabaseRequest.h in Headers */,
 				C5F4F40D119306AC00FDFADD /* JSIDBRequest.h in Headers */,
 				C5F4F411119306C000FDFADD /* JSIndexedDatabaseRequest.h in Headers */,
+				6E96BB1C11986EE2007D94CD /* WebGLIntegralTypedArrayBase.h in Headers */,
+				6E96BB1D11986EE2007D94CD /* WebGLTypedArrayBase.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

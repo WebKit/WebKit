@@ -28,60 +28,33 @@
 
 #if ENABLE(3D_CANVAS)
 
-#include "WebGLArrayBuffer.h"
 #include "WebGLUnsignedIntArray.h"
 
 namespace WebCore {
 
 PassRefPtr<WebGLUnsignedIntArray> WebGLUnsignedIntArray::create(unsigned length)
 {
-    RefPtr<WebGLArrayBuffer> buffer = WebGLArrayBuffer::create(length, sizeof(unsigned int));
-    return create(buffer, 0, length);
+    return WebGLTypedArrayBase<unsigned int>::create<WebGLUnsignedIntArray>(length);
 }
 
 PassRefPtr<WebGLUnsignedIntArray> WebGLUnsignedIntArray::create(unsigned int* array, unsigned length)
 {
-    RefPtr<WebGLUnsignedIntArray> a = WebGLUnsignedIntArray::create(length);
-    for (unsigned i = 0; i < length; ++i)
-        a->set(i, array[i]);
-    return a;
+    return WebGLTypedArrayBase<unsigned int>::create<WebGLUnsignedIntArray>(array, length);
 }
 
-PassRefPtr<WebGLUnsignedIntArray> WebGLUnsignedIntArray::create(PassRefPtr<WebGLArrayBuffer> buffer,
-                                                                unsigned byteOffset,
-                                                                unsigned length)
+PassRefPtr<WebGLUnsignedIntArray> WebGLUnsignedIntArray::create(PassRefPtr<WebGLArrayBuffer> buffer, unsigned byteOffset, unsigned length)
 {
-    RefPtr<WebGLArrayBuffer> buf(buffer);
-    if (!verifySubRange<unsigned int>(buf, byteOffset, length))
-        return 0;
-
-    return adoptRef(new WebGLUnsignedIntArray(buf, byteOffset, length));
+    return WebGLTypedArrayBase<unsigned int>::create<WebGLUnsignedIntArray>(buffer, byteOffset, length);
 }
 
 WebGLUnsignedIntArray::WebGLUnsignedIntArray(PassRefPtr<WebGLArrayBuffer> buffer, unsigned byteOffset, unsigned length)
-        : WebGLArray(buffer, byteOffset)
-        , m_size(length)
+    : WebGLIntegralTypedArrayBase<unsigned int>(buffer, byteOffset, length)
 {
 }
 
-unsigned WebGLUnsignedIntArray::length() const {
-    return m_size;
-}
-
-unsigned WebGLUnsignedIntArray::byteLength() const {
-    return m_size * sizeof(unsigned int);
-}
-
-PassRefPtr<WebGLArray> WebGLUnsignedIntArray::slice(int start, int end)
+PassRefPtr<WebGLArray> WebGLUnsignedIntArray::slice(int start, int end) const
 {
-    unsigned offset, length;
-    calculateOffsetAndLength(start, end, m_size, &offset, &length);
-    clampOffsetAndNumElements<unsigned int>(buffer(), m_byteOffset, &offset, &length);
-    return create(buffer(), offset, length);
-}
-
-void WebGLUnsignedIntArray::set(WebGLUnsignedIntArray* array, unsigned offset, ExceptionCode& ec) {
-    setImpl(array, offset * sizeof(unsigned int), ec);
+    return sliceImpl<WebGLUnsignedIntArray>(start, end);
 }
 
 }

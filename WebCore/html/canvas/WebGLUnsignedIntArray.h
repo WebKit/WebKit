@@ -27,56 +27,31 @@
 #ifndef WebGLUnsignedIntArray_h
 #define WebGLUnsignedIntArray_h
 
-#include "WebGLArray.h"
-#include <limits>
-#include <wtf/MathExtras.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include "WebGLIntegralTypedArrayBase.h"
 
 namespace WebCore {
 
-class WebGLUnsignedIntArray : public WebGLArray {
-  public:
-    virtual bool isUnsignedIntArray() const { return true; }
+class WebGLArrayBuffer;
 
+class WebGLUnsignedIntArray : public WebGLIntegralTypedArrayBase<unsigned int> {
+  public:
     static PassRefPtr<WebGLUnsignedIntArray> create(unsigned length);
     static PassRefPtr<WebGLUnsignedIntArray> create(unsigned int* array, unsigned length);
     static PassRefPtr<WebGLUnsignedIntArray> create(PassRefPtr<WebGLArrayBuffer> buffer, unsigned byteOffset, unsigned length);
 
-    unsigned int* data() { return static_cast<unsigned int*>(baseAddress()); }
-
-    virtual unsigned length() const;
-    virtual unsigned byteLength() const;
-    virtual PassRefPtr<WebGLArray> slice(int start, int end);
-
-    void set(unsigned index, double value)
-    {
-        if (index >= m_size)
-            return;
-        if (isnan(value)) // Clamp NaN to 0
-            value = 0;
-        if (value < std::numeric_limits<unsigned int>::min())
-            value = std::numeric_limits<unsigned int>::min();
-        else if (value > std::numeric_limits<unsigned int>::max())
-            value = std::numeric_limits<unsigned int>::max();
-        unsigned int* storage = static_cast<unsigned int*>(m_baseAddress);
-        storage[index] = static_cast<unsigned int>(value);
-    }
-
-    // Invoked by the indexed getter. Does not perform range checks; caller
-    // is responsible for doing so and returning undefined as necessary.
-    unsigned int item(unsigned index) const
-    {
-        ASSERT(index < m_size);
-        unsigned int* storage = static_cast<unsigned int*>(m_baseAddress);
-        return storage[index];
-    }
-
-    void set(WebGLUnsignedIntArray* array, unsigned offset, ExceptionCode& ec);
+    using WebGLTypedArrayBase<unsigned int>::set;
+    using WebGLIntegralTypedArrayBase<unsigned int>::set;
 
   private:
-    WebGLUnsignedIntArray(PassRefPtr<WebGLArrayBuffer> buffer, unsigned byteOffset, unsigned length);
-    unsigned m_size;
+    WebGLUnsignedIntArray(PassRefPtr<WebGLArrayBuffer> buffer,
+                          unsigned byteOffset,
+                          unsigned length);
+    // Make constructor visible to superclass.
+    friend class WebGLTypedArrayBase<unsigned int>;
+
+    // Overridden from WebGLArray.
+    virtual bool isUnsignedIntArray() const { return true; }
+    virtual PassRefPtr<WebGLArray> slice(int start, int end) const;
 };
 
 } // namespace WebCore

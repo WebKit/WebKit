@@ -27,56 +27,31 @@
 #ifndef WebGLUnsignedShortArray_h
 #define WebGLUnsignedShortArray_h
 
-#include "WebGLArray.h"
-#include <limits>
-#include <wtf/MathExtras.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include "WebGLIntegralTypedArrayBase.h"
 
 namespace WebCore {
 
-class WebGLUnsignedShortArray : public WebGLArray {
-  public:
-    virtual bool isUnsignedShortArray() const { return true; }
+class WebGLArrayBuffer;
 
+class WebGLUnsignedShortArray : public WebGLIntegralTypedArrayBase<unsigned short> {
+  public:
     static PassRefPtr<WebGLUnsignedShortArray> create(unsigned length);
     static PassRefPtr<WebGLUnsignedShortArray> create(unsigned short* array, unsigned length);
     static PassRefPtr<WebGLUnsignedShortArray> create(PassRefPtr<WebGLArrayBuffer> buffer, unsigned byteOffset, unsigned length);
 
-    unsigned short* data() { return static_cast<unsigned short*>(baseAddress()); }
-
-    virtual unsigned length() const;
-    virtual unsigned byteLength() const;
-    virtual PassRefPtr<WebGLArray> slice(int start, int end);
-
-    void set(unsigned index, double value)
-    {
-        if (index >= m_size)
-            return;
-        if (isnan(value)) // Clamp NaN to 0
-            value = 0;
-        if (value < std::numeric_limits<unsigned short>::min())
-            value = std::numeric_limits<unsigned short>::min();
-        else if (value > std::numeric_limits<unsigned short>::max())
-            value = std::numeric_limits<unsigned short>::max();
-        unsigned short* storage = static_cast<unsigned short*>(m_baseAddress);
-        storage[index] = static_cast<unsigned short>(value);
-    }
-
-    // Invoked by the indexed getter. Does not perform range checks; caller
-    // is responsible for doing so and returning undefined as necessary.
-    unsigned short item(unsigned index) const
-    {
-        ASSERT(index < m_size);
-        unsigned short* storage = static_cast<unsigned short*>(m_baseAddress);
-        return storage[index];
-    }
-
-    void set(WebGLUnsignedShortArray* array, unsigned offset, ExceptionCode& ec);
+    using WebGLTypedArrayBase<unsigned short>::set;
+    using WebGLIntegralTypedArrayBase<unsigned short>::set;
 
   private:
-    WebGLUnsignedShortArray(PassRefPtr<WebGLArrayBuffer> buffer, unsigned byteOffset,unsigned length);
-    unsigned m_size;
+    WebGLUnsignedShortArray(PassRefPtr<WebGLArrayBuffer> buffer,
+                            unsigned byteOffset,
+                            unsigned length);
+    // Make constructor visible to superclass.
+    friend class WebGLTypedArrayBase<unsigned short>;
+
+    // Overridden from WebGLArray.
+    virtual bool isUnsignedShortArray() const { return true; }
+    virtual PassRefPtr<WebGLArray> slice(int start, int end) const;
 };
 
 } // namespace WebCore
