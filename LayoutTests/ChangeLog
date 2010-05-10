@@ -1,3 +1,18 @@
+2010-05-10  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Layout test for Session Storage quota should only expect to fit 39 objects.
+        https://bugs.webkit.org/show_bug.cgi?id=38843
+
+        The script should be ready for the exception when inserting the 40th
+        element, as that is where it will be thrown if a quota is enforced.
+        This is the same change as in http://trac.webkit.org/changeset/50979.
+
+        * storage/domstorage/quota-expected.txt:
+        * storage/domstorage/script-tests/quota.js:
+        (testNoQuota):
+
 2010-05-10  Adam Langley  <agl@chromium.org>
 
         Expectations change. Not reviewed.

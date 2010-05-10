@@ -8,7 +8,7 @@ storage.clear()
 PASS storage.length is 0
 Creating 'data' which contains 64K of data
 PASS data.length is 65536
-Putting 'data' into 40 sessionStorage buckets.
+Putting 'data' into 39 sessionStorage buckets.
 Putting 'data' into another bucket.h
 PASS Insertion worked.
 

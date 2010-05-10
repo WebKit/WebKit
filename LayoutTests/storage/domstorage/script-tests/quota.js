@@ -65,13 +65,13 @@ function testNoQuota(storageString)
         data += data;
     shouldBe("data.length", "65536");
 
-    debug("Putting 'data' into 40 " + storageString + " buckets.");
-    for (var i=0; i<40; i++)
+    debug("Putting 'data' into 39 " + storageString + " buckets.");
+    for (var i=0; i<39; i++)
         storage[i] = data;
 
     debug("Putting 'data' into another bucket.h");
     try {
-        storage[40] = data;
+        storage[39] = data;
         testPassed("Insertion worked.");
     } catch (e) {
         testFailed("Exception: " + e);
