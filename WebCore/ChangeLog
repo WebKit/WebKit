@@ -1,3 +1,10 @@
+2010-05-10  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix for wx trunk after complex text changes.
+
+        * platform/graphics/wx/FontPlatformDataWx.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+
 2010-05-10  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.
