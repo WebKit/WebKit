@@ -1,3 +1,89 @@
+2010-05-10  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        SVG FilterEffects need more detailed DRT information
+        https://bugs.webkit.org/show_bug.cgi?id=38683
+
+        All SVG Filter effects get dumped now. The structure of the DRT output
+        changed. The last effect is shown first, followed by the previous effects.
+
+        No changed behaior, so no new test added.
+
+        * platform/graphics/filters/FEBlend.cpp:
+        (WebCore::operator<<):
+        (WebCore::FEBlend::externalRepresentation):
+        * platform/graphics/filters/FEBlend.h:
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::operator<<):
+        (WebCore::FEColorMatrix::externalRepresentation):
+        * platform/graphics/filters/FEColorMatrix.h:
+        * platform/graphics/filters/FEComponentTransfer.cpp:
+        (WebCore::operator<<):
+        (WebCore::FEComponentTransfer::externalRepresentation):
+        * platform/graphics/filters/FEComponentTransfer.h:
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::operator<<):
+        (WebCore::FEComposite::externalRepresentation):
+        * platform/graphics/filters/FEComposite.h:
+        (WebCore::):
+        (WebCore::FEComposite::uniteChildEffectSubregions):
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::externalRepresentation):
+        * platform/graphics/filters/FEGaussianBlur.h:
+        (WebCore::FEGaussianBlur::uniteChildEffectSubregions):
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::externalRepresentation):
+        * platform/graphics/filters/FilterEffect.h:
+        * platform/graphics/filters/SourceAlpha.cpp:
+        (WebCore::SourceAlpha::externalRepresentation):
+        * platform/graphics/filters/SourceAlpha.h:
+        * platform/graphics/filters/SourceGraphic.cpp:
+        (WebCore::SourceGraphic::externalRepresentation):
+        * platform/graphics/filters/SourceGraphic.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeIndent):
+        * rendering/RenderTreeAsText.h:
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGResourceContainer):
+        * svg/graphics/filters/SVGFEConvolveMatrix.cpp:
+        (WebCore::operator<<):
+        (WebCore::FEConvolveMatrix::externalRepresentation):
+        * svg/graphics/filters/SVGFEConvolveMatrix.h:
+        * svg/graphics/filters/SVGFEDiffuseLighting.cpp:
+        (WebCore::FEDiffuseLighting::externalRepresentation):
+        * svg/graphics/filters/SVGFEDiffuseLighting.h:
+        * svg/graphics/filters/SVGFEDisplacementMap.cpp:
+        (WebCore::operator<<):
+        (WebCore::FEDisplacementMap::externalRepresentation):
+        * svg/graphics/filters/SVGFEDisplacementMap.h:
+        * svg/graphics/filters/SVGFEFlood.cpp:
+        (WebCore::FEFlood::externalRepresentation):
+        * svg/graphics/filters/SVGFEFlood.h:
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::externalRepresentation):
+        * svg/graphics/filters/SVGFEImage.h:
+        * svg/graphics/filters/SVGFEMerge.cpp:
+        (WebCore::FEMerge::externalRepresentation):
+        * svg/graphics/filters/SVGFEMerge.h:
+        * svg/graphics/filters/SVGFEMorphology.cpp:
+        (WebCore::operator<<):
+        (WebCore::FEMorphology::externalRepresentation):
+        * svg/graphics/filters/SVGFEMorphology.h:
+        * svg/graphics/filters/SVGFEOffset.cpp:
+        (WebCore::FEOffset::externalRepresentation):
+        * svg/graphics/filters/SVGFEOffset.h:
+        * svg/graphics/filters/SVGFESpecularLighting.cpp:
+        (WebCore::FESpecularLighting::externalRepresentation):
+        * svg/graphics/filters/SVGFESpecularLighting.h:
+        * svg/graphics/filters/SVGFETile.cpp:
+        (WebCore::FETile::externalRepresentation):
+        * svg/graphics/filters/SVGFETile.h:
+        * svg/graphics/filters/SVGFETurbulence.cpp:
+        (WebCore::operator<<):
+        (WebCore::FETurbulence::externalRepresentation):
+        * svg/graphics/filters/SVGFETurbulence.h:
+
 2010-05-10  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Nate Chapin.

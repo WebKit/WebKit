@@ -51,6 +51,7 @@ namespace WebCore {
         virtual FloatRect uniteChildEffectSubregions(Filter* filter) { return calculateUnionOfChildEffectSubregions(filter, m_in.get(), m_in2.get()); }
         void apply(Filter*);
         void dump();
+        TextStream& externalRepresentation(TextStream&, int indent) const;
 
     private:
         FEBlend(FilterEffect*, FilterEffect*, BlendModeType);

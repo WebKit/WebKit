@@ -145,6 +145,42 @@ void FEBlend::dump()
 {
 }
 
+static TextStream& operator<<(TextStream& ts, const BlendModeType& type)
+{
+    switch (type) {
+    case FEBLEND_MODE_UNKNOWN:
+        ts << "UNKNOWN";
+        break;
+    case FEBLEND_MODE_NORMAL:
+        ts << "NORMAL";
+        break;
+    case FEBLEND_MODE_MULTIPLY:
+        ts << "MULTIPLY";
+        break;
+    case FEBLEND_MODE_SCREEN:
+        ts << "SCREEN";
+        break;
+    case FEBLEND_MODE_DARKEN:
+        ts << "DARKEN";
+        break;
+    case FEBLEND_MODE_LIGHTEN:
+        ts << "LIGHTEN";
+        break;
+    }
+    return ts;
+}
+
+TextStream& FEBlend::externalRepresentation(TextStream& ts, int indent) const
+{
+    writeIndent(ts, indent);
+    ts << "[feBlend";
+    FilterEffect::externalRepresentation(ts);
+    ts << " mode=\"" << m_mode << "\"]\n";
+    m_in->externalRepresentation(ts, indent + 1);
+    m_in2->externalRepresentation(ts, indent + 1);
+    return ts;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(FILTERS)

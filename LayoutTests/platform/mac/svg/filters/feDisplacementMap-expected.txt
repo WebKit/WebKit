@@ -10,11 +10,12 @@ layer at (0,0) size 800x600
         RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#00FF00]
       RenderSVGResourceFilter {filter} [id="f1"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
-        [primitve="flood2" [type=FLOOD]  [color=#000000] [opacity=1.00]]
-        [primitve="flood1" [type=FLOOD]  [color=#000000] [opacity=1.00]]
-        [primitve="tile" [type=TILE]]
-        [primitve="pair" ]
-        [last primitive [type=DISPLACEMENT-MAP] [scale=64.00] [x channel selector=RED] [y channel selector=GREEN]]
+        [feDisplacementMap scale="64.00" xChannelSelector="RED" yChannelSelector="GREEN"]
+          [feTile]
+            [feComposite operation="OVER"]
+              [feFlood flood-color="#000000" flood-opacity="1.00"]
+              [feFlood flood-color="#000000" flood-opacity="1.00"]
+          [SourceGraphic]
     RenderSVGImage {image} at (10,10) size 100x100
       [filter="f1"] RenderSVGResourceFilter {filter} at (10,10) size 100x100
     RenderSVGImage {image} at (130,10) size 100x100

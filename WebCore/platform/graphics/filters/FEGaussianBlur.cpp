@@ -139,6 +139,16 @@ void FEGaussianBlur::dump()
 {
 }
 
+TextStream& FEGaussianBlur::externalRepresentation(TextStream& ts, int indent) const
+{
+    writeIndent(ts, indent);
+    ts << "[feGaussianBlur";
+    FilterEffect::externalRepresentation(ts);
+    ts << " stdDeviation=\"" << m_x << ", " << m_y << "\"]\n";
+    m_in->externalRepresentation(ts, indent + 1);
+    return ts;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(FILTERS)

@@ -87,10 +87,14 @@ void FETile::dump()
 {
 }
 
-TextStream& FETile::externalRepresentation(TextStream& ts) const
+TextStream& FETile::externalRepresentation(TextStream& ts, int indent) const
 {
-    ts << "[type=TILE]";
+    writeIndent(ts, indent);
+    ts << "[feTile";
     FilterEffect::externalRepresentation(ts);
+    ts << "]\n";
+    m_in->externalRepresentation(ts, indent + 1);
+
     return ts;
 }
 

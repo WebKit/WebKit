@@ -81,6 +81,7 @@ namespace WebCore {
         virtual FloatRect uniteChildEffectSubregions(Filter* filter) { return calculateUnionOfChildEffectSubregions(filter, m_in.get()); }
         void apply(Filter*);
         void dump();
+        TextStream& externalRepresentation(TextStream&, int indent) const;
 
     private:
         FEComponentTransfer(FilterEffect*,const ComponentTransferFunction&, const ComponentTransferFunction&,

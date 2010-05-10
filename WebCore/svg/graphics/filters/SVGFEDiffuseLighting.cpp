@@ -121,13 +121,15 @@ void FEDiffuseLighting::dump()
 {
 }
 
-TextStream& FEDiffuseLighting::externalRepresentation(TextStream& ts) const
+TextStream& FEDiffuseLighting::externalRepresentation(TextStream& ts, int indent) const
 {
-    ts << "[type=DIFFUSE-LIGHTING] ";
+    writeIndent(ts, indent);
+    ts << "[feDiffuseLighting";
     FilterEffect::externalRepresentation(ts);
-    ts << " [surface scale=" << m_surfaceScale << "]"
-        << " [diffuse constant=" << m_diffuseConstant << "]"
-        << " [kernel unit length " << m_kernelUnitLengthX << ", " << m_kernelUnitLengthY << "]";
+    ts << " surfaceScale=\"" << m_surfaceScale << "\" "
+       << "diffuseConstant=\"" << m_diffuseConstant << "\" "
+       << "kernelUnitLength=\"" << m_kernelUnitLengthX << ", " << m_kernelUnitLengthY << "\"]\n";
+    m_in->externalRepresentation(ts, indent + 1);
     return ts;
 }
 

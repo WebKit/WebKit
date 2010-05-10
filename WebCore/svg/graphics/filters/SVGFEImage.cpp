@@ -66,10 +66,14 @@ void FEImage::dump()
 {
 }
 
-TextStream& FEImage::externalRepresentation(TextStream& ts) const
+TextStream& FEImage::externalRepresentation(TextStream& ts, int indent) const
 {
-    ts << "[type=IMAGE] ";
+    ASSERT(m_image);
+    IntSize imageSize = m_image->size();
+    writeIndent(ts, indent);
+    ts << "[feImage";
     FilterEffect::externalRepresentation(ts);
+    ts << " image-size=\"" << imageSize.width() << "x" << imageSize.height() << "\"]\n";
     // FIXME: should this dump also object returned by SVGFEImage::image() ?
     return ts;
 }

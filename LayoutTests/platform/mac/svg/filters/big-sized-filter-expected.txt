@@ -7,7 +7,8 @@ layer at (0,0) size 800x600
         RenderSVGGradientStop {stop} [offset=0.00] [color=#008000]
         RenderSVGGradientStop {stop} [offset=0.10] [color=#FF0000]
       RenderSVGResourceFilter {filter} [id="filter"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-        [last primitive [type=OFFSET]  [dx=0.00 dy=0.00]]
+        [feOffset dx="0.00" dy="0.00"]
+          [SourceGraphic]
     RenderSVGContainer {g} at (0,0) size 800x600
       RenderPath {rect} at (0,0) size 800x600 [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [data="M0.00,0.00 L20000.00,0.00 L20000.00,20000.00 L0.00,20000.00 Z"]
         [filter="filter"] RenderSVGResourceFilter {filter} at (-2000,-2000) size 24000x24000

@@ -39,6 +39,7 @@ namespace WebCore {
         virtual FloatRect calculateEffectRect(Filter*);
         void apply(Filter*);
         void dump();
+        TextStream& externalRepresentation(TextStream&, int indent) const;
     
     private:
         SourceGraphic() { }

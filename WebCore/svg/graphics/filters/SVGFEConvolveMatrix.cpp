@@ -142,34 +142,41 @@ void FEConvolveMatrix::dump()
 {
 }
 
-static TextStream& operator<<(TextStream& ts, EdgeModeType t)
+static TextStream& operator<<(TextStream& ts, const EdgeModeType& type)
 {
-    switch (t)
+    switch (type)
     {
-        case EDGEMODE_UNKNOWN:
-            ts << "UNKNOWN";break;
-        case EDGEMODE_DUPLICATE:
-            ts << "DUPLICATE";break;
-        case EDGEMODE_WRAP:
-            ts << "WRAP"; break;
-        case EDGEMODE_NONE:
-            ts << "NONE"; break;
+    case EDGEMODE_UNKNOWN:
+        ts << "UNKNOWN";
+        break;
+    case EDGEMODE_DUPLICATE:
+        ts << "DUPLICATE";
+        break;
+    case EDGEMODE_WRAP:
+        ts << "WRAP";
+        break;
+    case EDGEMODE_NONE:
+        ts << "NONE";
+        break;
     }
     return ts;
 }
 
-TextStream& FEConvolveMatrix::externalRepresentation(TextStream& ts) const
+TextStream& FEConvolveMatrix::externalRepresentation(TextStream& ts, int indent) const
 {
-    ts << "[type=CONVOLVE-MATRIX] ";
+    writeIndent(ts, indent);
+    ts << "[feConvolveMatrix";
     FilterEffect::externalRepresentation(ts);
-    ts << " [order " << m_kernelSize << "]"
-       << " [kernel matrix=" << m_kernelMatrix  << "]"
-       << " [divisor=" << m_divisor << "]"
-       << " [bias=" << m_bias << "]"
-       << " [target " << m_targetOffset << "]"
-       << " [edge mode=" << m_edgeMode << "]"
-       << " [kernel unit length " << m_kernelUnitLength << "]"
-       << " [preserve alpha=" << m_preserveAlpha << "]";
+    ts << " order=\"" << m_kernelSize << "\" "
+       << "kernelMatrix=\"" << m_kernelMatrix  << "\" "
+       << "divisor=\"" << m_divisor << "\" "
+       << "bias=\"" << m_bias << "\" "
+       << "target=\"" << m_targetOffset << "\" "
+       << "edgeMode=\"" << m_edgeMode << "\" "
+       << "kernelUnitLength=\"" << m_kernelUnitLength << "\" "
+       << "preserveAlpha=\"" << m_preserveAlpha << "\"]\n";
+    m_in->externalRepresentation(ts, indent + 1);
+    m_in2->externalRepresentation(ts, indent + 1);
     return ts;
 }
 

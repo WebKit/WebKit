@@ -4,7 +4,8 @@ layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 450x500
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceFilter {filter} [id="blur"] [filterUnits=userSpaceOnUse] [primitiveUnits=userSpaceOnUse]
-        [last primitive ]
+        [feGaussianBlur stdDeviation="2.00, 2.00"]
+          [SourceGraphic]
     RenderSVGContainer {g} at (45,36) size 405x453
       RenderSVGText {text} at (151,50) size 148x17 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 148x17

@@ -49,7 +49,7 @@ namespace WebCore {
         virtual FloatRect uniteChildEffectSubregions(Filter* filter) { return calculateUnionOfChildEffectSubregions(filter, m_in.get()); }
         void apply(Filter*);
         void dump();
-        TextStream& externalRepresentation(TextStream& ts) const;
+        TextStream& externalRepresentation(TextStream&, int indent) const;
 
     private:
         FEMorphology(FilterEffect*, MorphologyOperatorType, float radiusX, float radiusY);

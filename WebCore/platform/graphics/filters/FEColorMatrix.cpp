@@ -195,6 +195,51 @@ void FEColorMatrix::dump()
 {
 }
 
+static TextStream& operator<<(TextStream& ts, const ColorMatrixType& type)
+{
+    switch (type) {
+    case FECOLORMATRIX_TYPE_UNKNOWN:
+        ts << "UNKNOWN";
+        break;
+    case FECOLORMATRIX_TYPE_MATRIX:
+        ts << "MATRIX";
+        break;
+    case FECOLORMATRIX_TYPE_SATURATE:
+        ts << "SATURATE";
+        break;
+    case FECOLORMATRIX_TYPE_HUEROTATE:
+        ts << "HUEROTATE";
+        break;
+    case FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
+        ts << "LUMINANCETOALPHA";
+        break;
+    }
+    return ts;
+}
+
+TextStream& FEColorMatrix::externalRepresentation(TextStream& ts, int indent) const
+{
+    writeIndent(ts, indent);
+    ts << "[feColorMatrix";
+    FilterEffect::externalRepresentation(ts);
+    ts << " type=\"" << m_type << "\"";
+    if (!m_values.isEmpty()) {
+        ts << " values=\"";
+        Vector<float>::const_iterator ptr = m_values.begin();
+        const Vector<float>::const_iterator end = m_values.end();
+        while (ptr < end) {
+            ts << *ptr;
+            ++ptr;
+            if (ptr < end) 
+                ts << " ";
+        }
+        ts << "\"";
+    }
+    ts << "]\n";
+    m_in->externalRepresentation(ts, indent + 1);
+    return ts;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(FILTERS)

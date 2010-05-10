@@ -8,7 +8,8 @@ layer at (0,0) size 800x600
       RenderSVGResourceLinearGradient {linearGradient} [id="grad"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#008000]
     RenderSVGResourceFilter {filter} [id="blurxy"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-      [last primitive ]
+      [feGaussianBlur stdDeviation="5.00, 1.00"]
+        [SourceGraphic]
     RenderSVGResourceMarker {marker} [id="marker1"] [markerUnits=strokeWidth] [ref at (5,5)] [angle=0.00]
       RenderPath {rect} at (0,0) size 4x4 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L10.00,0.00 L10.00,10.00 L0.00,10.00 Z"]
     RenderSVGText {text} at (0,13) size 294x18 contains 1 chunk(s)

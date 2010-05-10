@@ -157,26 +157,30 @@ void FEMorphology::dump()
 {
 }
 
-static TextStream& operator<<(TextStream& ts, MorphologyOperatorType t)
+static TextStream& operator<<(TextStream& ts, const MorphologyOperatorType& type)
 {
-    switch (t)
-    {
-        case FEMORPHOLOGY_OPERATOR_UNKNOWN:
-            ts << "UNKNOWN"; break;
-        case FEMORPHOLOGY_OPERATOR_ERODE:
-            ts << "ERODE"; break;
-        case FEMORPHOLOGY_OPERATOR_DILATE:
-            ts << "DILATE"; break;
+    switch (type) {
+    case FEMORPHOLOGY_OPERATOR_UNKNOWN:
+        ts << "UNKNOWN";
+        break;
+    case FEMORPHOLOGY_OPERATOR_ERODE:
+        ts << "ERODE";
+        break;
+    case FEMORPHOLOGY_OPERATOR_DILATE:
+        ts << "DILATE";
+        break;
     }
     return ts;
 }
 
-TextStream& FEMorphology::externalRepresentation(TextStream& ts) const
+TextStream& FEMorphology::externalRepresentation(TextStream& ts, int indent) const
 {
-    ts << "[type=MORPHOLOGY] ";
+    writeIndent(ts, indent);
+    ts << "[feMorphology";
     FilterEffect::externalRepresentation(ts);
-    ts << " [operator type=" << morphologyOperator() << "]"
-        << " [radius x=" << radiusX() << " y=" << radiusY() << "]";        
+    ts << " operator=\"" << morphologyOperator() << "\" "
+       << "radius=\"" << radiusX() << ", " << radiusY() << "\"]\n";     
+    m_in->externalRepresentation(ts, indent + 1);
     return ts;
 }
 

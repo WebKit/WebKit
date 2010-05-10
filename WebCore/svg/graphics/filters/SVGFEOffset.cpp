@@ -98,11 +98,13 @@ void FEOffset::dump()
 {
 }
 
-TextStream& FEOffset::externalRepresentation(TextStream& ts) const
+TextStream& FEOffset::externalRepresentation(TextStream& ts, int indent) const
 {
-    ts << "[type=OFFSET] "; 
+    writeIndent(ts, indent);
+    ts << "[feOffset"; 
     FilterEffect::externalRepresentation(ts);
-    ts << " [dx=" << dx() << " dy=" << dy() << "]";
+    ts << " dx=\"" << dx() << "\" dy=\"" << dy() << "\"]\n";
+    m_in->externalRepresentation(ts, indent + 1);
     return ts;
 }
 

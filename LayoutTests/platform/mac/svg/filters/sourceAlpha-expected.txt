@@ -4,7 +4,8 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceFilter {filter} [id="filter"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-        [last primitive [type=OFFSET]  [dx=0.00 dy=0.00]]
+        [feOffset dx="0.00" dy="0.00"]
+          [SourceAlpha]
     RenderSVGContainer {g} at (42,9) size 96x56
       [filter="filter"] RenderSVGResourceFilter {filter} at (42,9.40) size 96x55.20
       RenderSVGText {text} at (50,50) size 80x46 contains 1 chunk(s)

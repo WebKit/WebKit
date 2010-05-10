@@ -77,8 +77,10 @@ GraphicsContext* FilterEffect::getEffectContext()
     return m_effectBuffer->context();
 }
 
-TextStream& FilterEffect::externalRepresentation(TextStream& ts) const
+TextStream& FilterEffect::externalRepresentation(TextStream& ts, int) const
 {
+    // FIXME: We should dump the subRegions of the filter primitives here later. This isn't
+    // possible at the moment, because we need more detailed informations from the target object.
     return ts;
 }
 

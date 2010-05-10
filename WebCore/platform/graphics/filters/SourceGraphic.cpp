@@ -67,6 +67,13 @@ void SourceGraphic::dump()
 {
 }
 
+TextStream& SourceGraphic::externalRepresentation(TextStream& ts, int indent) const
+{
+    writeIndent(ts, indent);
+    ts << "[SourceGraphic]\n";
+    return ts;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(FILTERS)

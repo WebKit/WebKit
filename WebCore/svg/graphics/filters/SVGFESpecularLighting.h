@@ -60,7 +60,7 @@ namespace WebCore {
         virtual FloatRect uniteEffectRect(Filter* filter) { return calculateUnionOfChildEffectSubregions(filter, m_in.get()); }
         void apply(Filter*);
         void dump();
-        TextStream& externalRepresentation(TextStream& ts) const;
+        TextStream& externalRepresentation(TextStream&, int indent) const;
 
     private:
         FESpecularLighting(FilterEffect*, const Color&, const float&, const float&, const float&,

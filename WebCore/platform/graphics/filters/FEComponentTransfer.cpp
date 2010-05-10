@@ -185,6 +185,60 @@ void FEComponentTransfer::dump()
 {
 }
 
+static TextStream& operator<<(TextStream& ts, const ComponentTransferType& type)
+{
+    switch (type) {
+    case FECOMPONENTTRANSFER_TYPE_UNKNOWN:
+        ts << "UNKNOWN";
+        break;
+    case FECOMPONENTTRANSFER_TYPE_IDENTITY:
+        ts << "IDENTITY";
+        break;
+    case FECOMPONENTTRANSFER_TYPE_TABLE:
+        ts << "TABLE";
+        break;
+    case FECOMPONENTTRANSFER_TYPE_DISCRETE:
+        ts << "DISCRETE";
+        break;
+    case FECOMPONENTTRANSFER_TYPE_LINEAR:
+        ts << "LINEAR";
+        break;
+    case FECOMPONENTTRANSFER_TYPE_GAMMA:
+        ts << "GAMMA";
+        break;
+    }
+    return ts;
+}
+
+static TextStream& operator<<(TextStream& ts, const ComponentTransferFunction& function)
+{
+    ts << "type=\"" << function.type 
+       << "\" slope=\"" << function.slope
+       << "\" intercept=\"" << function.intercept
+       << "\" amplitude=\"" << function.amplitude
+       << "\" exponent=\"" << function.exponent
+       << "\" offset=\"" << function.offset << "\"";
+    return ts;
+}
+
+TextStream& FEComponentTransfer::externalRepresentation(TextStream& ts, int indent) const
+{
+    writeIndent(ts, indent);
+    ts << "[feComponentTransfer";
+    FilterEffect::externalRepresentation(ts);
+    ts << " \n";
+    writeIndent(ts, indent + 2);
+    ts << "{red: " << m_redFunc << "}\n";
+    writeIndent(ts, indent + 2);
+    ts << "{green: " << m_greenFunc << "}\n";
+    writeIndent(ts, indent + 2);
+    ts << "{blue: " << m_blueFunc << "}\n";    
+    writeIndent(ts, indent + 2);
+    ts << "{alpha: " << m_alphaFunc << "}]\n";
+    m_in->externalRepresentation(ts, indent + 1);
+    return ts;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(FILTERS)

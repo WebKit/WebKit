@@ -87,20 +87,17 @@ void FEMerge::dump()
 {
 }
 
-TextStream& FEMerge::externalRepresentation(TextStream& ts) const
+TextStream& FEMerge::externalRepresentation(TextStream& ts, int indent) const
 {
-    ts << "[type=MERGE] ";
+    writeIndent(ts, indent);
+    ts << "[feMerge";
     FilterEffect::externalRepresentation(ts);
-    ts << "[merge inputs=[";
-    unsigned x = 0;
-    unsigned size = m_mergeInputs.size();
-    while (x < size) {
-        ts << m_mergeInputs[x];
-        x++;
-        if (x < m_mergeInputs.size())
-            ts << ", ";
+    ts << " mergeNodes=\"" << m_mergeInputs.size() << "\"]\n";
+    if (!m_mergeInputs.isEmpty()) {
+        const Vector<RefPtr<FilterEffect> >::const_iterator end = m_mergeInputs.end();
+        for (Vector<RefPtr<FilterEffect> >::const_iterator it = m_mergeInputs.begin(); it != end; ++it)
+            (*it)->externalRepresentation(ts, indent + 1);
     }
-    ts << "]]";
     return ts;
 }
 

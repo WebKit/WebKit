@@ -81,7 +81,7 @@ static TextStream &operator<<(TextStream& ts, const IntRect& r)
 }
 #endif
 
-static void writeIndent(TextStream& ts, int indent)
+void writeIndent(TextStream& ts, int indent)
 {
     for (int i = 0; i != indent; ++i)
         ts << "  ";
