@@ -1,5 +1,11 @@
 2010-05-10  Anders Carlsson  <andersca@apple.com>
 
+        Unbreak the world. (Fix Mac builds).
+
+        * Plugins/Hosted/WebKitPluginHostTypes.h:
+
+2010-05-10  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Simon Fraser.
 
         Change the order of the RendererType enum values, so that old versions of WebKitPluginHost will
