@@ -67,7 +67,8 @@ static void expectMD5(CString input, CString expected)
 {
     MD5 md5;
     md5.addBytes(reinterpret_cast<const uint8_t*>(input.data()), input.length());
-    Vector<uint8_t, 16> digest = md5.checksum();
+    Vector<uint8_t, 16> digest;
+    md5.checksum(digest);
     char* buf = 0;
     CString actual = CString::newUninitialized(32, buf);
     for (size_t i = 0; i < 16; i++) {
@@ -256,7 +257,7 @@ void MD5::addBytes(const uint8_t* input, size_t length)
     memcpy(m_in, buf, length);
 }
 
-Vector<uint8_t, 16> MD5::checksum()
+void MD5::checksum(Vector<uint8_t, 16>& digest)
 {
     // Compute number of bytes mod 64
     unsigned count = (m_bits[0] >> 3) & 0x3F;
@@ -291,14 +292,16 @@ Vector<uint8_t, 16> MD5::checksum()
 
     MD5Transform(m_buf, reinterpret_cast<uint32_t*>(m_in));
     reverseBytes(reinterpret_cast<uint8_t*>(m_buf), 4);
-    Vector<uint8_t, 16> digest;
+
+    // Now, m_buf contains checksum result.
+    if (!digest.isEmpty())
+        digest.clear();
     digest.append(reinterpret_cast<uint8_t*>(m_buf), 16);
 
     // In case it's sensitive
     memset(m_buf, 0, sizeof(m_buf));
     memset(m_bits, 0, sizeof(m_bits));
     memset(m_in, 0, sizeof(m_in));
-    return digest;
 }
 
 } // namespace WTF

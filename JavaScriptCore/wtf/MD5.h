@@ -46,7 +46,7 @@ public:
     void addBytes(const uint8_t* input, size_t length);
 
     // checksum has a side effect of resetting the state of the object.
-    Vector<uint8_t, 16> checksum();
+    void checksum(Vector<uint8_t, 16>&);
 
 private:
     uint32_t m_buf[4];

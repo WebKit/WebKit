@@ -1,3 +1,19 @@
+2010-05-09  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        JavaScriptCore/wtf/MD5.h: checksum should take a reference to output.
+        https://bugs.webkit.org/show_bug.cgi?id=38723
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * wtf/MD5.cpp:
+        (WTF::expectMD5):
+          Fix for checksum change.
+        (WTF::MD5::checksum):
+          Take a reference to output, instead of returning the result by value, to reduce coping for performance.
+        * wtf/MD5.h:
+
 2010-05-09  Oliver Hunt  <oliver@apple.com>
 
         Build fix.
