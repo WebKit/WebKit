@@ -1,3 +1,9 @@
+2010-05-10  Mark Rowe  <mrowe@apple.com>
+
+        Fix the 32-bit WebKit2 build.
+
+        * WebCore.base.exp:
+
 2010-05-07  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Crash closing window containing Flash plug-in
