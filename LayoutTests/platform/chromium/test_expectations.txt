@@ -2811,21 +2811,6 @@ BUG43319 MAC : fast/forms/select-empty-option-height.html = TIMEOUT PASS
 BUG43319 WIN LINUX : http/tests/loading/307-after-303-after-post.html = TEXT PASS
 BUG43319 WIN LINUX : http/tests/loading/bad-server-subframe.html = TEXT PASS
 
-// Failures due to Skia roll 560-561
-// The following tests are flaky on the buildbots, but the rebaseline tool pulls down
-// the same exact images from the buildbots.  dglazkov said he'd investigate.
-BUG43319 WIN : editing/pasteboard/block-wrappers-necessary.html = IMAGE
-BUG43319 WIN : fast/backgrounds/repeat/negative-offset-repeat-transformed.html = IMAGE
-BUG43319 WIN : fast/backgrounds/repeat/negative-offset-repeat.html = IMAGE
-BUG43319 WIN : fast/css/css2-system-fonts.html = IMAGE
-BUG43319 WIN : svg/W3C-SVG-1.1/animate-elem-52-t.svg = IMAGE
-BUG43319 WIN : svg/W3C-SVG-1.1/masking-intro-01-f.svg = IMAGE
-BUG43319 WIN : svg/W3C-SVG-1.1/text-fonts-01-t.svg = IMAGE
-BUG43319 WIN : svg/batik/text/textFeatures.svg = IMAGE
-BUG43319 WIN : svg/batik/text/verticalText.svg = IMAGE
-BUG43319 WIN : svg/custom/foreign-object-skew.svg = IMAGE
-BUG43319 WIN : svg/text/text-fonts-01-t.svg = IMAGE
-
 BUG43496 LINUX : svg/custom/mask-changes.svg = IMAGE PASS
 
 BUG43496 LINUX : svg/custom/repaint-stroke-width-changes.svg = IMAGE PASS

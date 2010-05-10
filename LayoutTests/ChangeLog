@@ -1,3 +1,14 @@
+2010-05-07  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add a bunch of windows-specific chromium baselines for the different
+        versions of windows to update them from a skia change.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38784
+
+        * platform/chromium/test_expectations.txt:
+
 2010-05-10  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed.
