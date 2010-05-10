@@ -1,3 +1,16 @@
+2010-05-10  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix a bug in rebaseline-chromium-webkit-tests where we would crash
+        instead of logging an error and exiting if it couldn't find either a
+        debug or a release build of the image diff binary.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38692
+
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests_unittest.py: Added.
+
 2010-05-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

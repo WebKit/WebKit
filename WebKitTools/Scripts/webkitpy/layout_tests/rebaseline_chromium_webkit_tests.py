@@ -970,6 +970,28 @@ class HtmlGenerator(object):
             return 'Other'
 
 
+def get_host_port_object(options):
+    """Return a port object for the platform we're running on."""
+    # The only thing we really need on the host is a way to diff
+    # text files and image files, which means we need to check that some
+    # version of ImageDiff has been built. We will look for either Debug
+    # or Release versions of the default port on the platform.
+    options.configuration = "Release"
+    port_obj = port.get(None, options)
+    if not port_obj.check_image_diff(override_step=None, logging=False):
+        _log.debug('No release version of the image diff binary was found.')
+        options.configuration = "Debug"
+        port_obj = port.get(None, options)
+        if not port_obj.check_image_diff(override_step=None, logging=False):
+            _log.error('No version of image diff was found. Check your build.')
+            return None
+        else:
+            _log.debug('Found the debug version of the image diff binary.')
+    else:
+        _log.debug('Found the release version of the image diff binary.')
+    return port_obj
+
+
 def main():
     """Main function to produce new baselines."""
 
@@ -1034,19 +1056,11 @@ def main():
                                 '%(levelname)s %(message)s'),
                         datefmt='%y%m%d %H:%M:%S')
 
-    # options.configuration is used by port to locate image_diff binary.
-    # Check the imgage_diff release binary, if it does not exist,
-    # fallback to debug.
-    options.configuration = "Release"
-    port_obj = port.get(None, options)
-    if not port_obj.check_image_diff(override_step=None, logging=False):
-        _log.debug('No release version image diff binary found.')
-        options.configuration = "Debug"
-        port_obj = port.get(None, options)
-    else:
-        _log.debug('Found release version image diff binary.')
+    host_port_obj = get_host_port_object(options)
+    if not host_port_obj:
+        sys.exit(1)
 
-    # Verify 'platforms' option is valid
+    # Verify 'platforms' option is valid.
     if not options.platforms:
         _log.error('Invalid "platforms" option. --platforms must be '
                    'specified in order to rebaseline.')
@@ -1071,7 +1085,8 @@ def main():
     rebaselining_tests = set()
     backup = options.backup
     for platform in rebaseline_platforms:
-        rebaseliner = Rebaseliner(port_obj, target_port_obj, platform, options)
+        rebaseliner = Rebaseliner(host_port_obj, target_port_obj,
+                                  platform, options)
 
         _log.info('')
         log_dashed_string('Rebaseline started', platform)
