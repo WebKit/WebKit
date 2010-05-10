@@ -298,12 +298,13 @@ WebInspector.TimelinePanel.prototype = {
             }
         }
 
-        if (record.type == recordTypes.TimerFire && record.children && record.children.length === 1) {
+        if (record.type == recordTypes.TimerFire && record.children && record.children.length) {
             var childRecord = record.children[0];
-            if ( childRecord.type === recordTypes.FunctionCall) {
+            if (childRecord.type === recordTypes.FunctionCall) {
                 record.data.scriptName = childRecord.data.scriptName;
                 record.data.scriptLine = childRecord.data.scriptLine;
-                record.children = childRecord.children;
+                record.children.shift();
+                record.children = childRecord.children.concat(record.children);
             }
         }
 
@@ -919,6 +920,8 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
             case recordTypes.Paint:
                 contentHelper._appendTextRow("Location", this.data.x + "\u2009\u00d7\u2009" + this.data.y);
                 contentHelper._appendTextRow("Dimensions", this.data.width + "\u2009\u00d7\u2009" + this.data.height);
+            case recordTypes.RecalculateStyles: // We don't want to see default details.
+                break;
             default:
                 if (this.details)
                     contentHelper._appendTextRow("Details", this.details);
@@ -943,21 +946,21 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
             case WebInspector.TimelineAgent.RecordType.GCEvent:
                 return WebInspector.UIString("%s collected", Number.bytesToString(record.data.usedHeapSizeDelta));
             case WebInspector.TimelineAgent.RecordType.TimerFire:
-                return record.data.scriptName ? WebInspector.linkifyResourceAsNode(record.data.scriptName, "scripts", record.data.scriptLine) : record.data.timerId;
+                return record.data.scriptName ? WebInspector.linkifyResourceAsNode(record.data.scriptName, "scripts", record.data.scriptLine, "", "") : record.data.timerId;
             case WebInspector.TimelineAgent.RecordType.FunctionCall:
-                return record.data.scriptName ? WebInspector.linkifyResourceAsNode(record.data.scriptName, "scripts", record.data.scriptLine) : null;
+                return record.data.scriptName ? WebInspector.linkifyResourceAsNode(record.data.scriptName, "scripts", record.data.scriptLine, "", "") : null;
             case WebInspector.TimelineAgent.RecordType.EventDispatch:
                 return record.data ? record.data.type : null;
             case WebInspector.TimelineAgent.RecordType.Paint:
                 return record.data.width + "\u2009\u00d7\u2009" + record.data.height;
             case WebInspector.TimelineAgent.RecordType.TimerInstall:
             case WebInspector.TimelineAgent.RecordType.TimerRemove:
-                return this.callerScriptName ? WebInspector.linkifyResourceAsNode(this.callerScriptName, "scripts", this.callerScriptLine) : record.data.timerId;
+                return this.callerScriptName ? WebInspector.linkifyResourceAsNode(this.callerScriptName, "scripts", this.callerScriptLine, "", "") : record.data.timerId;
             case WebInspector.TimelineAgent.RecordType.ParseHTML:
             case WebInspector.TimelineAgent.RecordType.RecalculateStyles:
-                return this.callerScriptName ? WebInspector.linkifyResourceAsNode(this.callerScriptName, "scripts", this.callerScriptLine) : null;
+                return this.callerScriptName ? WebInspector.linkifyResourceAsNode(this.callerScriptName, "scripts", this.callerScriptLine, "", "") : null;
             case WebInspector.TimelineAgent.RecordType.EvaluateScript:
-                return record.data.url ? WebInspector.linkifyResourceAsNode(record.data.url, "scripts", record.data.lineNumber) : null;
+                return record.data.url ? WebInspector.linkifyResourceAsNode(record.data.url, "scripts", record.data.lineNumber, "", "") : null;
             case WebInspector.TimelineAgent.RecordType.XHRReadyStateChange:
             case WebInspector.TimelineAgent.RecordType.XHRLoad:
             case WebInspector.TimelineAgent.RecordType.ResourceSendRequest:
