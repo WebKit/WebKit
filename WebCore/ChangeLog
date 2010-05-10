@@ -1,3 +1,37 @@
+2010-05-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Based on a patch by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28697
+        <rdar://problem/7946578> WebKit crash on WebCore::Node::nodeIndex()
+
+        It's not OK to call ContainerNode::willRemoveChild() in a loop, because Range code assumes
+        that it can adjust start and end position to any node except for the one being removed -
+        so these notifications cannot be batched.
+
+        Test: fast/dom/Range/remove-all-children-crash.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::willRemoveChild): Removed unused ExceptionCode.
+        (WebCore::willRemoveChildren): New function, used in removeChildren() case.
+        (WebCore::ContainerNode::removeChild): ExceptionCode return was always 0, don't bother with it.
+        (WebCore::ContainerNode::removeChildren): Call willRemoveChildrenFromNode.
+        (WebCore::dispatchChildRemovalEvents): Moved some logic out into willRemoveChildrenFromNode
+        and willRemoveChild.
+
+        * dom/Document.cpp:
+        (WebCore::Document::nodeChildrenWillBeRemoved): New function, used in removeChildren() case.
+
+        * dom/Document.h: 
+        (WebCore::Document::nodeChildrenWillBeRemoved): New function, used in removeChildren() case.
+
+        * dom/Range.h:
+        * dom/Range.cpp:
+        (WebCore::boundaryNodeChildrenWillBeRemoved): New function, used in removeChildren() case.
+        (WebCore::Range::nodeChildrenWillBeRemoved): Ditto.
+
 2010-05-10  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.

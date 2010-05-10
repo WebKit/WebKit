@@ -299,19 +299,32 @@ void ContainerNode::willRemove()
     Node::willRemove();
 }
 
-static ExceptionCode willRemoveChild(Node *child)
+static void willRemoveChild(Node* child)
 {
-    ExceptionCode ec = 0;
+    // update auxiliary doc info (e.g. iterators) to note that node is being removed
+    child->document()->nodeWillBeRemoved(child);
+    child->document()->incDOMTreeVersion();
 
     // fire removed from document mutation events.
     dispatchChildRemovalEvents(child);
-    if (ec)
-        return ec;
 
     if (child->attached())
         child->willRemove();
-    
-    return 0;
+}
+
+static void willRemoveChildren(ContainerNode* container)
+{
+    container->document()->nodeChildrenWillBeRemoved(container);
+    container->document()->incDOMTreeVersion();
+
+    // FIXME: Adding new children from event handlers can cause an infinite loop here.
+    for (RefPtr<Node> child = container->firstChild(); child; child = child->nextSibling()) {
+        // fire removed from document mutation events.
+        dispatchChildRemovalEvents(child.get());
+
+        if (child->attached())
+            child->willRemove();
+    }
 }
 
 bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
@@ -335,10 +348,7 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
     }
 
     RefPtr<Node> child = oldChild;
-
-    ec = willRemoveChild(child.get());
-    if (ec)
-        return false;
+    willRemoveChild(child.get());
 
     // Mutation events might have moved this child into a different parent.
     if (child->parentNode() != this) {
@@ -406,14 +416,12 @@ bool ContainerNode::removeChildren()
         return false;
 
     // The container node can be removed from event handlers.
-    RefPtr<Node> protect(this);
-    
+    RefPtr<ContainerNode> protect(this);
+
     // Do any prep work needed before actually starting to detach
     // and remove... e.g. stop loading frames, fire unload events.
-    // FIXME: Adding new children from event handlers can cause an infinite loop here.
-    for (RefPtr<Node> n = m_firstChild; n; n = n->nextSibling())
-        willRemoveChild(n.get());
-    
+    willRemoveChildren(protect.get());
+
     // exclude this node when looking for removed focusedNode since only children will be removed
     document()->removeFocusedNodeOfSubtree(this, true);
 
@@ -936,6 +944,8 @@ static void dispatchChildInsertionEvents(Node* child)
 
 static void dispatchChildRemovalEvents(Node* child)
 {
+    ASSERT(!eventDispatchForbidden());
+
 #if ENABLE(INSPECTOR)    
     if (Page* page = child->document()->page()) {
         if (InspectorController* inspectorController = page->inspectorController())
@@ -945,11 +955,6 @@ static void dispatchChildRemovalEvents(Node* child)
 
     RefPtr<Node> c = child;
     RefPtr<Document> document = child->document();
-
-    // update auxiliary doc info (e.g. iterators) to note that node is being removed
-    document->nodeWillBeRemoved(child);
-
-    document->incDOMTreeVersion();
 
     // dispatch pre-removal mutation events
     if (c->parentNode() && document->hasListenerType(Document::DOMNODEREMOVED_LISTENER))
