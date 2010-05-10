@@ -1,3 +1,12 @@
+2010-05-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Change the order of the RendererType enum values, so that old versions of WebKitPluginHost will
+        use accelerated compositing and not layer backed views.
+
+        * Plugins/Hosted/WebKitPluginHostTypes.h:
+
 2010-05-07  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig and Simon Fraser.
