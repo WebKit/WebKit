@@ -85,6 +85,7 @@ namespace WebKit {
         WEBKIT_API int maxLength() const;
         WEBKIT_API bool isActivatedSubmit() const;
         WEBKIT_API void setActivatedSubmit(bool);
+        WEBKIT_API int size() const;
         WEBKIT_API void setValue(const WebString& value);
         WEBKIT_API WebString value() const;
         WEBKIT_API void setAutofilled(bool);
