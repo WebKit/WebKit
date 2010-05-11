@@ -9,13 +9,33 @@ layer at (0,0) size 800x600
             RenderSVGGradientStop {stop} [offset=0.00] [color=#00FF00]
             RenderSVGGradientStop {stop} [offset=1.00] [color=#000000]
           RenderSVGResourceFilter {filter} [id="Identity"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-            [last primitive ]
+            [feComponentTransfer 
+                {red: type="IDENTITY" slope="1.00" intercept="0.00" amplitude="1.00" exponent="1.00" offset="0.00"}
+                {green: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}
+                {blue: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}
+                {alpha: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}]
+              [SourceGraphic]
           RenderSVGResourceFilter {filter} [id="GammaBlank"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-            [last primitive ]
+            [feComponentTransfer 
+                {red: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}
+                {green: type="GAMMA" slope="1.00" intercept="0.00" amplitude="1.00" exponent="1.00" offset="0.00"}
+                {blue: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}
+                {alpha: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}]
+              [SourceGraphic]
           RenderSVGResourceFilter {filter} [id="GammaFull"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-            [last primitive ]
+            [feComponentTransfer 
+                {red: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}
+                {green: type="GAMMA" slope="1.00" intercept="0.00" amplitude="1.00" exponent="0.50" offset="0.00"}
+                {blue: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}
+                {alpha: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}]
+              [SourceGraphic]
           RenderSVGResourceFilter {filter} [id="GammaOrd"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-            [last primitive ]
+            [feComponentTransfer 
+                {red: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}
+                {green: type="GAMMA" slope="1.00" intercept="0.00" amplitude="1.00" exponent="2.00" offset="0.00"}
+                {blue: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}
+                {alpha: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}]
+              [SourceGraphic]
         RenderPath {rect} at (25,15) size 750x487 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00 L649.00,1.00 L649.00,419.00 L1.00,419.00 Z"]
         RenderSVGContainer {g} at (25,15) size 750x487
           RenderPath {rect} at (25,15) size 750x487 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00 L649.00,1.00 L649.00,419.00 L1.00,419.00 Z"]

@@ -11,9 +11,11 @@ layer at (0,0) size 480x360
           RenderPath {rect} at (0,0) size 136x136 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [data="M0.00,0.00 L135.00,0.00 L135.00,135.00 L0.00,135.00 Z"]
           RenderPath {rect} at (0,0) size 149x149 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [data="M-13.50,-13.50 L148.50,-13.50 L148.50,148.50 L-13.50,148.50 Z"]
         RenderSVGResourceFilter {filter} [id="blur"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [last primitive ]
+          [feGaussianBlur stdDeviation="10.00, 10.00"]
+            [SourceGraphic]
         RenderSVGResourceFilter {filter} [id="blurxy"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [last primitive ]
+          [feGaussianBlur stdDeviation="20.00, 1.00"]
+            [SourceGraphic]
       RenderSVGContainer {use} at (0,0) size 135x135
         RenderSVGContainer {g} at (0,0) size 135x135
           RenderSVGContainer {g} at (0,0) size 135x135

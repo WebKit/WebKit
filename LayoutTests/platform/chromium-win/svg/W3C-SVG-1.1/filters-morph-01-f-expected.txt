@@ -9,13 +9,17 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (38,22) size 394x272 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,-6.00)}]
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderSVGResourceFilter {filter} [id="erode1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-            [last primitive [type=MORPHOLOGY]  [operator type=ERODE] [radius x=1.00 y=1.00]]
+            [feMorphology operator="ERODE" radius="1.00, 1.00"]
+              [SourceGraphic]
           RenderSVGResourceFilter {filter} [id="erode2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-            [last primitive [type=MORPHOLOGY]  [operator type=ERODE] [radius x=2.00 y=2.00]]
+            [feMorphology operator="ERODE" radius="2.00, 2.00"]
+              [SourceGraphic]
           RenderSVGResourceFilter {filter} [id="dilate1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-            [last primitive [type=MORPHOLOGY]  [operator type=DILATE] [radius x=1.00 y=1.00]]
+            [feMorphology operator="DILATE" radius="1.00, 1.00"]
+              [SourceGraphic]
           RenderSVGResourceFilter {filter} [id="dilate2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-            [last primitive [type=MORPHOLOGY]  [operator type=DILATE] [radius x=3.00 y=3.00]]
+            [feMorphology operator="DILATE" radius="3.00, 3.00"]
+              [SourceGraphic]
           RenderSVGContainer {g} at (0,0) size 149x118
             RenderSVGContainer {g} at (0,0) size 149x118
               RenderSVGContainer {g} at (0,0) size 149x118

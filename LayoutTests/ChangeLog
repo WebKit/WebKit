@@ -1,3 +1,124 @@
+2010-05-10  John Gregg  <johnnyg@google.com>
+
+        [chromium] rebaseline SVG test for windows after recent changes.
+
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-blend-01-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-blend-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-blend-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-color-01-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-color-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-composite-02-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-composite-02-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-composite-02-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-displace-01-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-displace-01-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-displace-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-example-01-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-example-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-example-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-felem-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-image-01-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-image-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-image-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-light-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-morph-01-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-morph-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-offset-01-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-offset-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-offset-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-specular-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-tile-01-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-tile-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-tile-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-turb-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/masking-intro-01-f-expected.txt:
+        * platform/chromium-win/svg/batik/filters/feTile-expected.checksum:
+        * platform/chromium-win/svg/batik/filters/feTile-expected.png:
+        * platform/chromium-win/svg/batik/filters/feTile-expected.txt:
+        * platform/chromium-win/svg/batik/filters/filterRegions-expected.checksum:
+        * platform/chromium-win/svg/batik/filters/filterRegions-expected.png:
+        * platform/chromium-win/svg/batik/filters/filterRegions-expected.txt:
+        * platform/chromium-win/svg/batik/masking/maskRegions-expected.txt:
+        * platform/chromium-win/svg/batik/text/textEffect-expected.checksum:
+        * platform/chromium-win/svg/batik/text/textEffect-expected.png: Added.
+        * platform/chromium-win/svg/batik/text/textEffect-expected.txt:
+        * platform/chromium-win/svg/batik/text/textEffect3-expected.checksum:
+        * platform/chromium-win/svg/batik/text/textEffect3-expected.png: Added.
+        * platform/chromium-win/svg/batik/text/textEffect3-expected.txt:
+        * platform/chromium-win/svg/batik/text/textFeatures-expected.txt:
+        * platform/chromium-win/svg/batik/text/textProperties-expected.txt:
+        * platform/chromium-win/svg/custom/empty-mask-expected.txt:
+        * platform/chromium-win/svg/custom/empty-merge-expected.checksum:
+        * platform/chromium-win/svg/custom/empty-merge-expected.png:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Discrete-expected.checksum:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Discrete-expected.png:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Discrete-expected.txt:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Gamma-expected.checksum:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Gamma-expected.png:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Gamma-expected.txt:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Linear-expected.checksum:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Linear-expected.png:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Linear-expected.txt:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Table-expected.checksum:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Table-expected.png:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Table-expected.txt:
+        * platform/chromium-win/svg/custom/feDisplacementMap-01-expected.checksum:
+        * platform/chromium-win/svg/custom/feDisplacementMap-01-expected.png:
+        * platform/chromium-win/svg/custom/image-with-transform-clip-filter-expected.checksum:
+        * platform/chromium-win/svg/custom/image-with-transform-clip-filter-expected.png:
+        * platform/chromium-win/svg/custom/image-with-transform-clip-filter-expected.txt:
+        * platform/chromium-win/svg/custom/invalid-css-expected.txt:
+        * platform/chromium-win/svg/custom/mask-invalidation-expected.txt:
+        * platform/chromium-win/svg/custom/non-opaque-filters-expected.txt:
+        * platform/chromium-win/svg/custom/resource-invalidate-on-target-update-expected.checksum:
+        * platform/chromium-win/svg/custom/resource-invalidate-on-target-update-expected.png:
+        * platform/chromium-win/svg/custom/text-filter-expected.checksum:
+        * platform/chromium-win/svg/custom/text-filter-expected.png:
+        * platform/chromium-win/svg/custom/text-filter-expected.txt:
+        * platform/chromium-win/svg/custom/visibility-override-filter-expected.checksum:
+        * platform/chromium-win/svg/custom/visibility-override-filter-expected.png:
+        * platform/chromium-win/svg/filters/big-sized-filter-2-expected.checksum:
+        * platform/chromium-win/svg/filters/big-sized-filter-2-expected.png:
+        * platform/chromium-win/svg/filters/big-sized-filter-expected.checksum:
+        * platform/chromium-win/svg/filters/big-sized-filter-expected.png:
+        * platform/chromium-win/svg/filters/feColorMatrix-values-expected.checksum:
+        * platform/chromium-win/svg/filters/feColorMatrix-values-expected.png:
+        * platform/chromium-win/svg/filters/feColorMatrix-values-expected.txt:
+        * platform/chromium-win/svg/filters/feComposite-expected.checksum:
+        * platform/chromium-win/svg/filters/feComposite-expected.png:
+        * platform/chromium-win/svg/filters/feComposite-expected.txt:
+        * platform/chromium-win/svg/filters/feGaussianBlur-expected.checksum:
+        * platform/chromium-win/svg/filters/feGaussianBlur-expected.png:
+        * platform/chromium-win/svg/filters/feMerge-expected.checksum:
+        * platform/chromium-win/svg/filters/feMerge-expected.png:
+        * platform/chromium-win/svg/filters/feOffset-expected.checksum:
+        * platform/chromium-win/svg/filters/feOffset-expected.png:
+        * platform/chromium-win/svg/filters/feTile-expected.checksum:
+        * platform/chromium-win/svg/filters/feTile-expected.png:
+        * platform/chromium-win/svg/filters/filter-on-tspan-expected.checksum:
+        * platform/chromium-win/svg/filters/filter-on-tspan-expected.png:
+        * platform/chromium-win/svg/filters/filter-on-tspan-expected.txt:
+        * platform/chromium-win/svg/filters/shadow-on-filter-expected.checksum:
+        * platform/chromium-win/svg/filters/shadow-on-filter-expected.png:
+        * platform/chromium-win/svg/filters/sourceAlpha-expected.txt:
+        * platform/chromium-win/svg/filters/subRegion-in-userSpace-expected.checksum:
+        * platform/chromium-win/svg/filters/subRegion-in-userSpace-expected.png:
+        * platform/chromium-win/svg/filters/subRegion-one-effect-expected.checksum:
+        * platform/chromium-win/svg/filters/subRegion-one-effect-expected.png:
+        * platform/chromium-win/svg/filters/subRegion-two-effects-expected.checksum:
+        * platform/chromium-win/svg/filters/subRegion-two-effects-expected.png:
+        * platform/chromium-win/svg/text/text-vkern-expected.checksum: Added.
+        * platform/chromium-win/svg/text/text-vkern-expected.png: Added.
+
 2010-05-10  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, fixing the expectations for Chromium.

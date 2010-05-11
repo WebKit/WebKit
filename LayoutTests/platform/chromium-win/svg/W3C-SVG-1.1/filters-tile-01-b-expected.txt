@@ -8,8 +8,9 @@ layer at (0,0) size 480x360
           chunk 1 (middle anchor) text run 1 at (145.50,25.00) startOffset 0 endOffset 35 width 189.00: "feTile filter test: a tiled pattern"
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGResourceFilter {filter} [id="feTileFilter"] [filterUnits=userSpaceOnUse] [primitiveUnits=userSpaceOnUse]
-          [primitve="offset" [type=OFFSET]  [dx=6.00 dy=6.00]]
-          [last primitive [type=TILE]]
+          [feTile]
+            [feOffset dx="6.00" dy="6.00"]
+              [feFlood flood-color="#FF0000" flood-opacity="1.00"]
       RenderSVGContainer {g} at (115,40) size 250x250
         [filter="feTileFilter"] RenderSVGResourceFilter {filter} at (115,40) size 250x250
       RenderPath {rect} at (114,39) size 252x252 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [data="M115.00,40.00 L365.00,40.00 L365.00,290.00 L115.00,290.00 Z"]

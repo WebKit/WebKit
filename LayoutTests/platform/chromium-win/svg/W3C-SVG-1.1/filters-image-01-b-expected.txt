@@ -5,7 +5,7 @@ layer at (0,0) size 480x360
     RenderSVGContainer {g} at (0,0) size 480x360
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGResourceFilter {filter} [id="image"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [last primitive [type=IMAGE] ]
+          [feImage image-size="503x503"]
       RenderSVGText {text} at (145,20) size 190x15 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-12) size 190x15
           chunk 1 (middle anchor) text run 1 at (145.50,20.00) startOffset 0 endOffset 37 width 189.00: "Basic test of feImage filter support."
