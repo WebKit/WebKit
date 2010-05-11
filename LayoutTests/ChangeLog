@@ -1,3 +1,9 @@
+2010-05-11  John Gregg  <johnnyg@google.com>
+
+        [chromium] Update win-vista version of the baseline recently updated for win-xp.
+
+        * platform/chromium-win-vista/svg/batik/text/textFeatures-expected.txt:
+
 2010-05-10  Simon Fraser  <simon.fraser@apple.com>
 
         Skip two new flakey tests:
