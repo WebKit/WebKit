@@ -87,6 +87,124 @@ static void imContextPreeditChanged(GtkIMContext* context, EditorClient* client)
     frame->editor()->setComposition(preeditString, underlines, 0, 0);
 }
 
+static void backspaceCallback(GtkWidget* widget, EditorClient* client)
+{
+    g_signal_stop_emission_by_name(widget, "backspace");
+    client->addPendingEditorCommand("DeleteBackward");
+}
+
+static void selectAllCallback(GtkWidget* widget, gboolean select, EditorClient* client)
+{
+    g_signal_stop_emission_by_name(widget, "select-all");
+    client->addPendingEditorCommand(select ? "SelectAll" : "Unselect");
+}
+
+static void cutClipboardCallback(GtkWidget* widget, EditorClient* client)
+{
+    g_signal_stop_emission_by_name(widget, "cut-clipboard");
+    client->addPendingEditorCommand("Cut");
+}
+
+static void copyClipboardCallback(GtkWidget* widget, EditorClient* client)
+{
+    g_signal_stop_emission_by_name(widget, "copy-clipboard");
+    client->addPendingEditorCommand("Copy");
+}
+
+static void pasteClipboardCallback(GtkWidget* widget, EditorClient* client)
+{
+    g_signal_stop_emission_by_name(widget, "paste-clipboard");
+    client->addPendingEditorCommand("Paste");
+}
+
+static const char* const gtkDeleteCommands[][2] = {
+    { "DeleteBackward",               "DeleteForward"                        }, // Characters
+    { "DeleteWordBackward",           "DeleteWordForward"                    }, // Word ends
+    { "DeleteWordBackward",           "DeleteWordForward"                    }, // Words
+    { "DeleteToBeginningOfLine",      "DeleteToEndOfLine"                    }, // Lines
+    { "DeleteToBeginningOfLine",      "DeleteToEndOfLine"                    }, // Line ends
+    { "DeleteToBeginningOfParagraph", "DeleteToEndOfParagraph"               }, // Paragraph ends
+    { "DeleteToBeginningOfParagraph", "DeleteToEndOfParagraph"               }, // Paragraphs
+    { 0,                              0                                      } // Whitespace (M-\ in Emacs)
+};
+
+static void deleteFromCursorCallback(GtkWidget* widget, GtkDeleteType deleteType, gint count, EditorClient* client)
+{
+    g_signal_stop_emission_by_name(widget, "delete-from-cursor");
+    int direction = count > 0 ? 1 : 0;
+
+    // Ensuring that deleteType <= G_N_ELEMENTS here results in a compiler warning
+    // that the condition is always true.
+
+    if (deleteType == GTK_DELETE_WORDS) {
+        if (!direction) {
+            client->addPendingEditorCommand("MoveWordForward");
+            client->addPendingEditorCommand("MoveWordBackward");
+        } else {
+            client->addPendingEditorCommand("MoveWordBackward");
+            client->addPendingEditorCommand("MoveWordForward");
+        }
+    } else if (deleteType == GTK_DELETE_DISPLAY_LINES) {
+        if (!direction)
+            client->addPendingEditorCommand("MoveToBeginningOfLine");
+        else
+            client->addPendingEditorCommand("MoveToEndOfLine");
+    } else if (deleteType == GTK_DELETE_PARAGRAPHS) {
+        if (!direction)
+            client->addPendingEditorCommand("MoveToBeginningOfParagraph");
+        else
+            client->addPendingEditorCommand("MoveToEndOfParagraph");
+    }
+
+    const char* rawCommand = gtkDeleteCommands[deleteType][direction];
+    if (!rawCommand)
+      return;
+
+    for (int i = 0; i < abs(count); i++)
+        client->addPendingEditorCommand(rawCommand);
+}
+
+static const char* const gtkMoveCommands[][4] = {
+    { "MoveBackward",                                   "MoveForward",
+      "MoveBackwardAndModifySelection",                 "MoveForwardAndModifySelection"             }, // Forward/backward grapheme
+    { "MoveBackward",                                   "MoveForward",
+      "MoveBackwardAndModifySelection",                 "MoveForwardAndModifySelection"             }, // Left/right grapheme
+    { "MoveWordBackward",                               "MoveWordForward",
+      "MoveWordBackwardAndModifySelection",             "MoveWordForwardAndModifySelection"         }, // Forward/backward word
+    { "MoveUp",                                         "MoveDown",
+      "MoveUpAndModifySelection",                       "MoveDownAndModifySelection"                }, // Up/down line
+    { "MoveToBeginningOfLine",                          "MoveToEndOfLine",
+      "MoveToBeginningOfLineAndModifySelection",        "MoveToEndOfLineAndModifySelection"         }, // Up/down line ends
+    { "MoveParagraphForward",                           "MoveParagraphBackward",
+      "MoveParagraphForwardAndModifySelection",         "MoveParagraphBackwardAndModifySelection"   }, // Up/down paragraphs
+    { "MoveToBeginningOfParagraph",                     "MoveToEndOfParagraph",
+      "MoveToBeginningOfParagraphAndModifySelection",   "MoveToEndOfParagraphAndModifySelection"    }, // Up/down paragraph ends.
+    { "MovePageUp",                                     "MovePageDown",
+      "MovePageUpAndModifySelection",                   "MovePageDownAndModifySelection"            }, // Up/down page
+    { "MoveToBeginningOfDocument",                      "MoveToEndOfDocument",
+      "MoveToBeginningOfDocumentAndModifySelection",    "MoveToEndOfDocumentAndModifySelection"     }, // Begin/end of buffer
+    { 0,                                                0,
+      0,                                                0                                           } // Horizontal page movement
+};
+
+static void moveCursorCallback(GtkWidget* widget, GtkMovementStep step, gint count, gboolean extendSelection, EditorClient* client)
+{
+    g_signal_stop_emission_by_name(widget, "move-cursor");
+    int direction = count > 0 ? 1 : 0;
+    if (extendSelection)
+        direction += 2;
+
+    if (static_cast<unsigned>(step) >= G_N_ELEMENTS(gtkMoveCommands))
+        return;
+
+    const char* rawCommand = gtkMoveCommands[step][direction];
+    if (!rawCommand)
+        return;
+
+    for (int i = 0; i < abs(count); i++)
+        client->addPendingEditorCommand(rawCommand);
+}
+
 void EditorClient::updatePendingComposition(const gchar* newComposition)
 {
     // The IMContext may signal more than one completed composition in a row,
@@ -382,41 +500,8 @@ struct KeyPressEntry {
 };
 
 static const KeyDownEntry keyDownEntries[] = {
-    { VK_LEFT,   0,                  "MoveLeft"                                    },
-    { VK_LEFT,   ShiftKey,           "MoveLeftAndModifySelection"                  },
-    { VK_LEFT,   CtrlKey,            "MoveWordLeft"                                },
-    { VK_LEFT,   CtrlKey | ShiftKey, "MoveWordLeftAndModifySelection"              },
-    { VK_RIGHT,  0,                  "MoveRight"                                   },
-    { VK_RIGHT,  ShiftKey,           "MoveRightAndModifySelection"                 },
-    { VK_RIGHT,  CtrlKey,            "MoveWordRight"                               },
-    { VK_RIGHT,  CtrlKey | ShiftKey, "MoveWordRightAndModifySelection"             },
-    { VK_UP,     0,                  "MoveUp"                                      },
-    { VK_UP,     ShiftKey,           "MoveUpAndModifySelection"                    },
-    { VK_PRIOR,  ShiftKey,           "MovePageUpAndModifySelection"                },
-    { VK_DOWN,   0,                  "MoveDown"                                    },
-    { VK_DOWN,   ShiftKey,           "MoveDownAndModifySelection"                  },
-    { VK_NEXT,   ShiftKey,           "MovePageDownAndModifySelection"              },
-    { VK_PRIOR,  0,                  "MovePageUp"                                  },
-    { VK_NEXT,   0,                  "MovePageDown"                                },
-    { VK_HOME,   0,                  "MoveToBeginningOfLine"                       },
-    { VK_HOME,   ShiftKey,           "MoveToBeginningOfLineAndModifySelection"     },
-    { VK_HOME,   CtrlKey,            "MoveToBeginningOfDocument"                   },
-    { VK_HOME,   CtrlKey | ShiftKey, "MoveToBeginningOfDocumentAndModifySelection" },
-
-    { VK_END,    0,                  "MoveToEndOfLine"                             },
-    { VK_END,    ShiftKey,           "MoveToEndOfLineAndModifySelection"           },
-    { VK_END,    CtrlKey,            "MoveToEndOfDocument"                         },
-    { VK_END,    CtrlKey | ShiftKey, "MoveToEndOfDocumentAndModifySelection"       },
-
-    { VK_BACK,   0,                  "DeleteBackward"                              },
-    { VK_BACK,   ShiftKey,           "DeleteBackward"                              },
-    { VK_DELETE, 0,                  "DeleteForward"                               },
-    { VK_BACK,   CtrlKey,            "DeleteWordBackward"                          },
-    { VK_DELETE, CtrlKey,            "DeleteWordForward"                           },
-
     { 'B',       CtrlKey,            "ToggleBold"                                  },
     { 'I',       CtrlKey,            "ToggleItalic"                                },
-
     { VK_ESCAPE, 0,                  "Cancel"                                      },
     { VK_OEM_PERIOD, CtrlKey,        "Cancel"                                      },
     { VK_TAB,    0,                  "InsertTab"                                   },
@@ -436,39 +521,76 @@ static const KeyPressEntry keyPressEntries[] = {
     { '\r',   AltKey | ShiftKey,  "InsertNewline"                               },
 };
 
-static const char* interpretEditorCommandKeyEvent(const KeyboardEvent* evt)
+void EditorClient::generateEditorCommands(const KeyboardEvent* event)
 {
-    ASSERT(evt->type() == eventNames().keydownEvent || evt->type() == eventNames().keypressEvent);
+    ASSERT(event->type() == eventNames().keydownEvent || event->type() == eventNames().keypressEvent);
 
-    static HashMap<int, const char*>* keyDownCommandsMap = 0;
-    static HashMap<int, const char*>* keyPressCommandsMap = 0;
+    m_pendingEditorCommands.clear();
 
-    if (!keyDownCommandsMap) {
-        keyDownCommandsMap = new HashMap<int, const char*>;
-        keyPressCommandsMap = new HashMap<int, const char*>;
+    // First try to interpret the command as a native GTK+ key binding.
+    gtk_bindings_activate_event(GTK_OBJECT(m_nativeWidget.get()), event->keyEvent()->gdkEventKey());
+    if (m_pendingEditorCommands.size() > 0)
+        return;
 
+    static HashMap<int, const char*> keyDownCommandsMap;
+    static HashMap<int, const char*> keyPressCommandsMap;
+
+    if (keyDownCommandsMap.isEmpty()) {
         for (unsigned i = 0; i < G_N_ELEMENTS(keyDownEntries); i++)
-            keyDownCommandsMap->set(keyDownEntries[i].modifiers << 16 | keyDownEntries[i].virtualKey, keyDownEntries[i].name);
+            keyDownCommandsMap.set(keyDownEntries[i].modifiers << 16 | keyDownEntries[i].virtualKey, keyDownEntries[i].name);
 
         for (unsigned i = 0; i < G_N_ELEMENTS(keyPressEntries); i++)
-            keyPressCommandsMap->set(keyPressEntries[i].modifiers << 16 | keyPressEntries[i].charCode, keyPressEntries[i].name);
+            keyPressCommandsMap.set(keyPressEntries[i].modifiers << 16 | keyPressEntries[i].charCode, keyPressEntries[i].name);
     }
 
     unsigned modifiers = 0;
-    if (evt->shiftKey())
+    if (event->shiftKey())
         modifiers |= ShiftKey;
-    if (evt->altKey())
+    if (event->altKey())
         modifiers |= AltKey;
-    if (evt->ctrlKey())
+    if (event->ctrlKey())
         modifiers |= CtrlKey;
 
-    if (evt->type() == eventNames().keydownEvent) {
-        int mapKey = modifiers << 16 | evt->keyCode();
-        return mapKey ? keyDownCommandsMap->get(mapKey) : 0;
+
+    if (event->type() == eventNames().keydownEvent) {
+        int mapKey = modifiers << 16 | event->keyCode();
+        if (mapKey)
+            m_pendingEditorCommands.append(keyDownCommandsMap.get(mapKey));
+        return;
     }
 
-    int mapKey = modifiers << 16 | evt->charCode();
-    return mapKey ? keyPressCommandsMap->get(mapKey) : 0;
+    int mapKey = modifiers << 16 | event->charCode();
+    if (mapKey)
+        m_pendingEditorCommands.append(keyPressCommandsMap.get(mapKey));
+}
+
+bool EditorClient::executePendingEditorCommands(Frame* frame, bool allowTextInsertion)
+{
+    Vector<Editor::Command> commands;
+    for (size_t i = 0; i < m_pendingEditorCommands.size(); i++) {
+        Editor::Command command = frame->editor()->command(m_pendingEditorCommands.at(i));
+        if (command.isTextInsertion() && !allowTextInsertion)
+            return false;
+
+        commands.append(command);
+    }
+
+    bool success = true;
+    for (size_t i = 0; i < commands.size(); i++) {
+        if (!commands.at(i).execute()) {
+            success = false;
+            break;
+        }
+    }
+
+    m_pendingEditorCommands.clear();
+
+    // If we successfully completed all editor commands, then
+    // this signals a canceling of the composition.
+    if (success)
+        clearPendingComposition();
+
+    return success;
 }
 
 void EditorClient::handleKeyboardEvent(KeyboardEvent* event)
@@ -487,23 +609,20 @@ void EditorClient::handleKeyboardEvent(KeyboardEvent* event)
     if (!frame->editor()->canEdit() && !(frame->settings() && frame->settings()->caretBrowsingEnabled()))
         return;
 
-    const gchar* editorCommandString = interpretEditorCommandKeyEvent(event);
-    if (editorCommandString) {
-        Editor::Command command = frame->editor()->command(editorCommandString);
+    generateEditorCommands(event);
+    if (m_pendingEditorCommands.size() > 0) {
 
-        // On editor commands from key down events, we only want to let the event bubble up to
-        // the DOM if it inserts text. If it doesn't insert text (e.g. Tab that changes focus)
-        // we just want WebKit to handle it immediately without a DOM event.
+        // During RawKeyDown events if an editor command will insert text, defer
+        // the insertion until the keypress event. We want keydown to bubble up
+        // through the DOM first.
         if (platformEvent->type() == PlatformKeyboardEvent::RawKeyDown) {
-            if (!command.isTextInsertion() && command.execute(event))
+            if (executePendingEditorCommands(frame, false))
                 event->setDefaultHandled();
 
-            clearPendingComposition();
             return;
         }
 
-        if (command.execute(event)) {
-            clearPendingComposition();
+        if (executePendingEditorCommands(frame, true)) {
             event->setDefaultHandled();
             return;
         }
@@ -592,10 +711,19 @@ EditorClient::EditorClient(WebKitWebView* webView)
     : m_isInRedo(false)
     , m_webView(webView)
     , m_treatContextCommitAsKeyEvent(false)
+    , m_nativeWidget(gtk_text_view_new())
 {
     WebKitWebViewPrivate* priv = m_webView->priv;
     g_signal_connect(priv->imContext, "commit", G_CALLBACK(imContextCommitted), this);
     g_signal_connect(priv->imContext, "preedit-changed", G_CALLBACK(imContextPreeditChanged), this);
+
+    g_signal_connect(m_nativeWidget.get(), "backspace", G_CALLBACK(backspaceCallback), this);
+    g_signal_connect(m_nativeWidget.get(), "cut-clipboard", G_CALLBACK(cutClipboardCallback), this);
+    g_signal_connect(m_nativeWidget.get(), "copy-clipboard", G_CALLBACK(copyClipboardCallback), this);
+    g_signal_connect(m_nativeWidget.get(), "paste-clipboard", G_CALLBACK(pasteClipboardCallback), this);
+    g_signal_connect(m_nativeWidget.get(), "select-all", G_CALLBACK(selectAllCallback), this);
+    g_signal_connect(m_nativeWidget.get(), "move-cursor", G_CALLBACK(moveCursorCallback), this);
+    g_signal_connect(m_nativeWidget.get(), "delete-from-cursor", G_CALLBACK(deleteFromCursorCallback), this);
 }
 
 EditorClient::~EditorClient()

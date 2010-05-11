@@ -36,12 +36,15 @@
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GRefPtr.h>
 
 typedef struct _WebKitWebView WebKitWebView;
+typedef struct _GtkWidget GtkWidget;
 typedef char gchar;
 
 namespace WebCore {
-    class Page;
+class Frame;
+class KeyboardEvent;
 }
 
 namespace WebKit {
@@ -60,7 +63,10 @@ namespace WebKit {
         bool treatContextCommitAsKeyEvent() { return m_treatContextCommitAsKeyEvent; }
         void clearPendingComposition() { m_pendingComposition.set(0); }
         bool hasPendingComposition() { return m_pendingComposition; }
+        void addPendingEditorCommand(const char* command) { m_pendingEditorCommands.append(command); }
         void updatePendingComposition(const char*);
+        void generateEditorCommands(const WebCore::KeyboardEvent*);
+        bool executePendingEditorCommands(WebCore::Frame*, bool);
 
         // from EditorClient
         virtual void pageDestroyed();
@@ -130,6 +136,8 @@ namespace WebKit {
         WebKitWebView* m_webView;
         bool m_treatContextCommitAsKeyEvent;
         GOwnPtr<gchar> m_pendingComposition;
+        Vector<const char*> m_pendingEditorCommands;
+        GRefPtr<GtkWidget> m_nativeWidget;
     };
 }
 

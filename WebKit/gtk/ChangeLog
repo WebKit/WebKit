@@ -1,3 +1,27 @@
+2010-05-11  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Doesn't support gtk-key-themes
+        https://bugs.webkit.org/show_bug.cgi?id=28257
+
+        Add support for GTK+ key themes.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::backspaceCallback): Added.
+        (WebKit::cutClipboardCallback): Added.
+        (WebKit::copyClipboardCallback): Added.
+        (WebKit::pasteClipboardCallback): Added.
+        (WebKit::selectAllCallback): Added.
+        (WebKit::deleteFromCursorCallback): Added.
+        (WebKit::moveCursorCallback): Added.
+        (WebKit::EditorClient::generateEditorCommands): Added.
+        (WebKit::EditorClient::executePendingEditorCommands): Added.
+        (WebKit::EditorClient::handleKeyboardEvent): Derive editor commands both from internal text widget and a list of fallbacks.
+        (WebKit::EditorClient::EditorClient): Add m_nativeWidget initializer.
+        * WebCoreSupport/EditorClientGtk.h:
+        (WebKit::EditorClient::addPendingEditorCommand): Add m_nativeWidget member.
+
 2010-05-06  Martin Robinson  <mrobinson@webkit.org>
 
         Reviewed by Xan Lopez.
