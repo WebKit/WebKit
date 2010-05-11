@@ -71,7 +71,6 @@ public:
     void createGWorld();
     void deleteGWorld();
     void clearGWorld();
-    void cacheMovieScale();
     void updateMovieSize();
 
     void setSize(int, int);
@@ -139,26 +138,6 @@ QTMovieGWorldPrivate::~QTMovieGWorldPrivate()
 
     if (m_gWorld)
         deleteGWorld();
-}
-
-void QTMovieGWorldPrivate::cacheMovieScale()
-{
-    Rect naturalRect;
-    Rect initialRect;
-
-    GetMovieNaturalBoundsRect(m_movie, &naturalRect);
-    GetMovieBox(m_movie, &initialRect);
-
-    float naturalWidth = naturalRect.right - naturalRect.left;
-    float naturalHeight = naturalRect.bottom - naturalRect.top;
-
-    if (naturalWidth)
-        m_widthScaleFactor = (initialRect.right - initialRect.left) / naturalWidth;
-    if (naturalHeight)
-        m_heightScaleFactor = (initialRect.bottom - initialRect.top) / naturalHeight;
-#if !ASSERT_DISABLED
-    m_scaleCached = true;
-#endif
 }
 
 pascal OSErr movieDrawingCompleteProc(Movie movie, long data)
@@ -315,7 +294,6 @@ void QTMovieGWorldPrivate::movieLoadStateChanged(QTMovie* movie)
         m_loadState = loadState;
 
         if (movieNewlyPlayable) {
-            cacheMovieScale();
             updateMovieSize();
             if (m_visible)
                 clearGWorld();

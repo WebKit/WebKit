@@ -71,6 +71,7 @@ public:
     void endTask();
 
     void createMovieController();
+    void cacheMovieScale();
 
     QTMovie* m_movieWin;
     Movie m_movie;
@@ -174,8 +175,10 @@ void QTMoviePrivate::task()
             bool shouldRestorePlaybackState = false;
             bool movieNewlyPlayable = loadState >= QTMovieLoadStateLoaded && m_loadState < QTMovieLoadStateLoaded;
             m_loadState = loadState;
-            if (movieNewlyPlayable)
+            if (movieNewlyPlayable) {
+                cacheMovieScale();
                 shouldRestorePlaybackState = true;
+            }
 
             if (!m_movieController && m_loadState >= QTMovieLoadStateLoaded)
                 createMovieController();
@@ -237,6 +240,26 @@ void QTMoviePrivate::createMovieController()
     m_movieController = NewMovieController(m_movie, &bounds, flags);
     if (!m_movieController)
         return;
+}
+
+void QTMoviePrivate::cacheMovieScale()
+{
+    Rect naturalRect;
+    Rect initialRect;
+
+    GetMovieNaturalBoundsRect(m_movie, &naturalRect);
+    GetMovieBox(m_movie, &initialRect);
+
+    float naturalWidth = naturalRect.right - naturalRect.left;
+    float naturalHeight = naturalRect.bottom - naturalRect.top;
+
+    if (naturalWidth)
+        m_widthScaleFactor = (initialRect.right - initialRect.left) / naturalWidth;
+    if (naturalHeight)
+        m_heightScaleFactor = (initialRect.bottom - initialRect.top) / naturalHeight;
+#if !ASSERT_DISABLED
+    m_scaleCached = true;
+#endif
 }
 
 QTMovie::QTMovie(QTMovieClient* client)

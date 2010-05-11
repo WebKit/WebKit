@@ -1,3 +1,33 @@
+2010-05-11  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        REGRESSION (r59001): 11 media tests are failing on Windows (38847)
+        rdar://problem/7962997
+        https://bugs.webkit.org/show_bug.cgi?id=38847
+        
+        QTMovieWin was too much refactored; the cacheMovieScale() function should have
+        been left in QTMovie (instead of being moved into QTMovieGWorld).  This fixes the
+        video-size-intrinsic-scale test.
+        
+        QTMovieTask::updateTaskTimer() was ignoring the maxInterval parameter unless 
+        QTGetTimeUntilNextTask() returned an error, which caused the next timer to be
+        scheduled for extremely far in the future, breaking some of the layout tests.
+        
+        QTMovieTask::fireTaskClients() now makes a local copy of the task list before 
+        calling clients, in case one of them removes themselves from the task list and
+        invalidates our iterating pointer.
+        
+        * platform/graphics/win/QTMovie.cpp:
+        (QTMoviePrivate::task):
+        (QTMoviePrivate::createMovieController):
+        (QTMoviePrivate::cacheMovieScale):
+        * platform/graphics/win/QTMovieGWorld.cpp:
+        (QTMovieGWorldPrivate::movieLoadStateChanged):
+        * platform/graphics/win/QTMovieTask.cpp:
+        (QTMovieTask::updateTaskTimer):
+        (QTMovieTask::fireTaskClients):
+
 2010-05-11  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Adam Roben.
