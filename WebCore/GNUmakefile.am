@@ -196,6 +196,7 @@ IDL_BINDINGS += \
 	WebCore/html/File.idl \
 	WebCore/html/FileError.idl \
 	WebCore/html/FileList.idl \
+	WebCore/html/FileReader.idl \
 	WebCore/html/HTMLAllCollection.idl \
 	WebCore/html/HTMLAnchorElement.idl \
 	WebCore/html/HTMLAppletElement.idl \

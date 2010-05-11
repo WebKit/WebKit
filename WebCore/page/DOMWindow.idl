@@ -716,6 +716,7 @@ module window {
         attribute DOMFormDataConstructor FormData;
 
         attribute [Conditional=FILE_READER|FILE_WRITER] FileErrorConstructor FileError;
+        attribute [Conditional=FILE_READER] FileReaderConstructor FileReader;
 
 #endif // defined(LANGUAGE_JAVASCRIPT)
 

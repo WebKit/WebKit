@@ -659,6 +659,10 @@
 		2E4346550F546A8200B0F1BA /* WorkerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346430F546A8200B0F1BA /* WorkerThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2E4346580F546A9900B0F1BA /* CrossThreadCopier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E4346560F546A9900B0F1BA /* CrossThreadCopier.cpp */; };
 		2E4346590F546A9900B0F1BA /* CrossThreadCopier.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346570F546A9900B0F1BA /* CrossThreadCopier.h */; };
+		2E94F43B119207DA00B7F75D /* JSFileReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E94F439119207DA00B7F75D /* JSFileReader.cpp */; };
+		2E94F43C119207DA00B7F75D /* JSFileReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E94F43A119207DA00B7F75D /* JSFileReader.h */; };
+		2E94F4501192096400B7F75D /* FileReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E94F3CB118B908E00B7F75D /* FileReader.cpp */; };
+		2E94F4511192096A00B7F75D /* FileReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E94F3CC118B908E00B7F75D /* FileReader.h */; };
 		2EA768040FE7126400AB9C8A /* WorkerScriptLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EA768030FE7126400AB9C8A /* WorkerScriptLoaderClient.h */; };
 		2EAFAF0E10E2AF2D007ED3D6 /* Blob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EAFAF0B10E2AF2D007ED3D6 /* Blob.cpp */; };
 		2EAFAF0F10E2AF2D007ED3D6 /* Blob.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EAFAF0C10E2AF2D007ED3D6 /* Blob.h */; };
@@ -6148,6 +6152,9 @@
 		2E4346570F546A9900B0F1BA /* CrossThreadCopier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadCopier.h; sourceTree = "<group>"; };
 		2E94F3CB118B908E00B7F75D /* FileReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileReader.cpp; sourceTree = "<group>"; };
 		2E94F3CC118B908E00B7F75D /* FileReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileReader.h; sourceTree = "<group>"; };
+		2E94F427119205B300B7F75D /* FileReader.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FileReader.idl; sourceTree = "<group>"; };
+		2E94F439119207DA00B7F75D /* JSFileReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileReader.cpp; sourceTree = "<group>"; };
+		2E94F43A119207DA00B7F75D /* JSFileReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileReader.h; sourceTree = "<group>"; };
 		2EA768030FE7126400AB9C8A /* WorkerScriptLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkerScriptLoaderClient.h; path = workers/WorkerScriptLoaderClient.h; sourceTree = "<group>"; };
 		2EAFAF0B10E2AF2D007ED3D6 /* Blob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Blob.cpp; sourceTree = "<group>"; };
 		2EAFAF0C10E2AF2D007ED3D6 /* Blob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Blob.h; sourceTree = "<group>"; };
@@ -13215,6 +13222,7 @@
 				BC1881DC0E08C54300048C13 /* FileList.idl */,
 				2E94F3CB118B908E00B7F75D /* FileReader.cpp */,
 				2E94F3CC118B908E00B7F75D /* FileReader.h */,
+				2E94F427119205B300B7F75D /* FileReader.idl */,
 				895253D4116C4C6800CABF00 /* FileStream.cpp */,
 				895253D5116C4C6800CABF00 /* FileStream.h */,
 				895253D6116C4C6800CABF00 /* FileStreamClient.h */,
@@ -13565,6 +13573,8 @@
 				2E3BC0C9117D3E0800B9409A /* JSFileError.h */,
 				BC00F0120E0A189500FD04E3 /* JSFileList.cpp */,
 				BC00F0130E0A189500FD04E3 /* JSFileList.h */,
+				2E94F439119207DA00B7F75D /* JSFileReader.cpp */,
+				2E94F43A119207DA00B7F75D /* JSFileReader.h */,
 				BC97E410109154FA0010D361 /* JSHTMLAllCollection.cpp */,
 				BC97E411109154FA0010D361 /* JSHTMLAllCollection.h */,
 				1A4A2DEB0A1B852A00C807F8 /* JSHTMLAnchorElement.cpp */,
@@ -19140,6 +19150,8 @@
 				C5F4F411119306C000FDFADD /* JSIndexedDatabaseRequest.h in Headers */,
 				6E96BB1C11986EE2007D94CD /* WebGLIntegralTypedArrayBase.h in Headers */,
 				6E96BB1D11986EE2007D94CD /* WebGLTypedArrayBase.h in Headers */,
+				2E94F43C119207DA00B7F75D /* JSFileReader.h in Headers */,
+				2E94F4511192096A00B7F75D /* FileReader.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21405,6 +21417,8 @@
 				C5F4F40C119306AC00FDFADD /* JSIDBRequest.cpp in Sources */,
 				C5F4F410119306C000FDFADD /* JSIndexedDatabaseRequest.cpp in Sources */,
 				C5956678119324C600FDCE47 /* JSIDBRequestCustom.cpp in Sources */,
+				2E94F43B119207DA00B7F75D /* JSFileReader.cpp in Sources */,
+				2E94F4501192096400B7F75D /* FileReader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

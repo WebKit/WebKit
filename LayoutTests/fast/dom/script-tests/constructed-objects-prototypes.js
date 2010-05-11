@@ -35,7 +35,9 @@ function constructorPropertiesOnWindow(globalObject)
             type =="WebGLShortArrayConstructor" ||
             type =="WebGLUnsignedByteArrayConstructor" ||
             type =="WebGLUnsignedIntArrayConstructor" ||
-            type =="WebGLUnsignedShortArrayConstructor")
+            type =="WebGLUnsignedShortArrayConstructor" ||
+            type == "FileErrorConstructor" ||
+            type == "FileReaderConstructor")
             continue;
         if (!type.match('Constructor$'))
             continue;

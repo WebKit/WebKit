@@ -47,6 +47,7 @@
 #include "V8DOMWindow.h"
 #include "V8EventListenerList.h"
 #include "V8EventSource.h"
+#include "V8FileReader.h"
 #include "V8HTMLCollection.h"
 #include "V8HTMLDocument.h"
 #include "V8IDBRequest.h"
@@ -422,6 +423,11 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* ta
 #if ENABLE(EVENTSOURCE)
     if (EventSource* eventSource = target->toEventSource())
         return toV8(eventSource);
+#endif
+
+#if ENABLE(FILE_READER)
+    if (FileReader* fileReader = target->toFileReader())
+        return toV8(fileReader);
 #endif
 
     ASSERT(0);

@@ -133,6 +133,7 @@ DOM_CLASSES = \
     File \
     FileError \
     FileList \
+    FileReader \
     Geolocation \
     Geoposition \
     HTMLAllCollection \

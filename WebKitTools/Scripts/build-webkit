@@ -178,7 +178,7 @@ my @features = (
       define => "ENABLE_XSLT", default => 1, value => \$xsltSupport },
 
     { option => "file-reader", desc => "Toggle FileReader support",
-      define => "ENABLE_FILE_READER", default => 0, value => \$fileReaderSupport },
+      define => "ENABLE_FILE_READER", default => isAppleWebKit(), value => \$fileReaderSupport },
 
     { option => "file-writer", desc => "Toggle FileWriter support",
       define => "ENABLE_FILE_WRITER", default => 0, value => \$fileWriterSupport },

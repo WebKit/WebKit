@@ -111,6 +111,7 @@
             'html/File.idl',
             'html/FileError.idl',
             'html/FileList.idl',
+            'html/FileReader.idl',
             'html/HTMLAllCollection.idl',
             'html/HTMLAnchorElement.idl',
             'html/HTMLAppletElement.idl',

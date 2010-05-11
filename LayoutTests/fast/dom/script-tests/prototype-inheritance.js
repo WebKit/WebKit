@@ -16,6 +16,7 @@ var skippedProperties = [
     "webkitNotifications",
     "WebGLRenderingContext", "WebGLArrayBuffer", 
     "WebGLByteArray", "WebGLFloatArray", "WebGLIntArray", "WebGLShortArray", "WebGLUnsignedByteArray", "WebGLUnsignedIntArray", "WebGLUnsignedShortArray", 
+    "FileError", "FileReader"
 ];
 
 var skippedPropertiesSet = {};

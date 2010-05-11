@@ -25,7 +25,9 @@ for (var x in constructorNames) {
         name =="WebGLShortArray" ||
         name =="WebGLUnsignedByteArray" ||
         name =="WebGLUnsignedIntArray" ||
-        name =="WebGLUnsignedShortArray")
+        name =="WebGLUnsignedShortArray" ||
+        name == "FileError" ||
+        name == "FileReader")
         continue;
 
     if (name == "XMLDocument")

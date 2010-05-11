@@ -30,16 +30,35 @@
 
 module html {
     interface [
-        Conditional=FILE_READER|FILE_WRITER
-    ] FileError {
-#if !defined(LANGUAGE_OBJECTIVE_C)
-        const unsigned short NO_MODIFICATION_ALLOWED_ERR = 7;
-        const unsigned short NOT_FOUND_ERR = 8;
-#endif
-        const unsigned short SECURITY_ERR = 18;
-        const unsigned short ABORT_ERR = 20;
-        const unsigned short NOT_READABLE_ERR = 24;
-        const unsigned short ENCODING_ERR = 26;
-        readonly attribute unsigned short code;
+        Conditional=FILE_READER,
+        CanBeConstructed,
+        CallWith=ScriptExecutionContext,
+        EventTarget,
+        NoStaticTables
+    ] FileReader {
+        // ready states
+        const unsigned short EMPTY = 0;
+        const unsigned short LOADING = 1;
+        const unsigned short DONE = 2;
+        readonly attribute unsigned short readyState;
+
+        // async read methods
+        void readAsBinaryString(in Blob fileBlob);
+        void readAsText(in Blob fileBlob, in [Optional] DOMString encoding);
+        void readAsDataURL(in File file);
+
+        void abort();
+
+        // file data
+        readonly attribute [ConvertScriptString] DOMString result;
+
+        readonly attribute FileError error;
+
+        attribute EventListener onloadstart;
+        attribute EventListener onprogress;
+        attribute EventListener onload;
+        attribute EventListener onabort;
+        attribute EventListener onerror;
+        attribute EventListener onloadend;
     };
 }

@@ -343,6 +343,7 @@ fast/forms/get-file-upload.html
 fast/forms/input-file-re-render.html
 fast/events/drag-file-crash.html
 http/tests/security/clipboard/clipboard-file-access.html
+fast/files/file-reader.html
 
 # Missing drag & drop functionality in DRT
 editing/pasteboard/drop-inputtext-acquires-style.html

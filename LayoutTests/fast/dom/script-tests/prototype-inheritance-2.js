@@ -67,7 +67,9 @@ function constructorNamesForWindow(globalObject)
             type =="WebGLShortArrayConstructor" ||
             type =="WebGLUnsignedByteArrayConstructor" ||
             type =="WebGLUnsignedIntArrayConstructor" ||
-            type =="WebGLUnsignedShortArrayConstructor")
+            type =="WebGLUnsignedShortArrayConstructor" ||
+            type == "FileErrorConstructor" ||
+            type == "FileReaderConstructor")
             continue; // We ignore WebGLRenderingContext and test it elsewhere, since it is not in all builds
         if (!type.match('Constructor$'))
             continue;

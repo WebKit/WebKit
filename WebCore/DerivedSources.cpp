@@ -89,6 +89,7 @@
 #include "JSFile.cpp"
 #include "JSFileError.cpp"
 #include "JSFileList.cpp"
+#include "JSFileReader.cpp"
 #include "JSGeolocation.cpp"
 #include "JSGeoposition.cpp"
 #include "JSHistory.cpp"
