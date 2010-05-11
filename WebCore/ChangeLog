@@ -1,5 +1,12 @@
 2010-05-10  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix warning on Windows about unreachable code.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::shouldPropagateCompositingToEnclosingIFrame):
+
+2010-05-10  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Anders Carlsson
 
         Allow compositing layers to be connected across iframe boundaries on Mac
