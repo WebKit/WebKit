@@ -1,0 +1,26 @@
+<p>This test passes if it does not crash.</p>
+<div id="test1"></div>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var elem = document.getElementById("test1");
+
+function go()
+{
+    var str = "c";
+    for (var i = 0; i < 0x10000; i++)
+        var b = str + str;
+}
+
+function handler()
+{
+    elem.removeAttribute("b");
+    go();
+}
+
+elem.setAttribute("b", "a");
+elem.attributes[0].appendChild(document.createTextNode("hi"));
+elem.attributes[0].addEventListener("DOMSubtreeModified", handler,  false);
+elem.normalize();
+</script>

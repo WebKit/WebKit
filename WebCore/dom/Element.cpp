@@ -1425,9 +1425,15 @@ void Element::normalizeAttributes()
     NamedNodeMap* attrs = attributes(true);
     if (!attrs)
         return;
-    unsigned numAttrs = attrs->length();
-    for (unsigned i = 0; i < numAttrs; i++) {
-        if (Attr* attr = attrs->attributeItem(i)->attr())
+
+    if (attrs->isEmpty())
+        return;
+
+    Vector<RefPtr<Attribute> > attributeVector;
+    attrs->copyAttributesToVector(attributeVector);
+    size_t numAttrs = attributeVector.size();
+    for (size_t i = 0; i < numAttrs; ++i) {
+        if (Attr* attr = attributeVector[i]->attr())
             attr->normalize();
     }
 }

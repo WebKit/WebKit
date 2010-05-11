@@ -1,3 +1,13 @@
+2010-05-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=38583
+        <rdar://problem/7948784> Crash in Element::normalizeAttributes.
+
+        * fast/dom/Element/normalize-crash-expected.txt: Added.
+        * fast/dom/Element/normalize-crash.html: Added.
+
 2010-05-10  John Gregg  <johnnyg@google.com>
 
         [chromium] Unreviewed, svg test rebaselines after r59002 for linux.

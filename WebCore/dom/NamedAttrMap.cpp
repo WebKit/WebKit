@@ -172,6 +172,11 @@ PassRefPtr<Node> NamedNodeMap::item(unsigned index) const
     return m_attributes[index]->createAttrIfNeeded(m_element);
 }
 
+void NamedNodeMap::copyAttributesToVector(Vector<RefPtr<Attribute> >& copy)
+{
+    copy = m_attributes;
+}
+
 Attribute* NamedNodeMap::getAttributeItemSlowCase(const String& name, bool shouldIgnoreAttributeCase) const
 {
     unsigned len = length();
