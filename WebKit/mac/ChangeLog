@@ -1,3 +1,17 @@
+2010-05-10  Timothy Hatcher  <timothy@apple.com>
+
+        Fix a crash when closing a WebView while the Web Inspector is open.
+
+        <rdar://problem/7966830>
+
+        Reviewed by Mark Rowe.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController destroyInspectorView]): Null check Page since it can be null.
+        * WebView/WebView.mm:
+        (-[WebView _close]): Null out _private->page before deleting the page, so code called
+        during destruction don't access a half deleted Page object.
+
 2010-05-10  Anders Carlsson  <andersca@apple.com>
 
         Unbreak the world. (Fix Mac builds).
