@@ -4,6 +4,35 @@
 
         Allow compositing layers to be connected across iframe boundaries on Mac
         https://bugs.webkit.org/show_bug.cgi?id=38856
+
+        Rename the static shouldPropagateCompositingToIFrameParent() to shouldPropagateCompositingToEnclosingIFrame(),
+        to pave the way for runtime switches in the propagation behavior. We have to make sure we call it on
+        the correct RenderLayerCompositor (that belonging to the iframe's content document).
+        
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintingGoesToWindow): Now that we know the root layer attachment, we
+        can simplify this method.
+
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::enableCompositingMode): No need for the setNeedsStyleRecalc()
+        here, because the ensureRootPlatformLayer() or destroyRootPlatformLayer() will have already done it.
+
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree): Use the root layer attachment to determine
+        whether to parent the iframe's layers.
+        
+        (WebCore::RenderLayerCompositor::didMoveOnscreen): Method name change.
+        (WebCore::RenderLayerCompositor::shouldPropagateCompositingToEnclosingIFrame): Name change.
+        (WebCore::RenderLayerCompositor::requiresCompositingForIFrame): We need to consult the iframe contents
+        document's compositor to ask whether propagation is appropriate.
+        (WebCore::RenderLayerCompositor::ensureRootPlatformLayer): Name change.
+
+2010-05-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson
+
+        Allow compositing layers to be connected across iframe boundaries on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=38856
         
         Use an enum for the type of root layer attachment on a RenderLayerCompositor, so we can
         determine if the attachment is via the ChromeClient, via an enclosing iframe, or unattached.

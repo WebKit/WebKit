@@ -148,7 +148,7 @@ public:
     
     // Some platforms may wish to connect compositing layer trees between iframes and
     // their parent document.
-    static bool shouldPropagateCompositingToIFrameParent();
+    bool shouldPropagateCompositingToEnclosingIFrame() const;
 
     Element* enclosingIFrameElement() const;
     static RenderLayerCompositor* iframeContentsCompositor(RenderIFrame*);
