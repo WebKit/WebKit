@@ -1,3 +1,36 @@
+2010-05-11  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Steve Falkenburg.
+        Patch by Gavin Barraclough.
+        
+        REGRESSION (r57900-57919): 3% PLT Regression from moving strings into WTF.
+        https://bugs.webkit.org/show_bug.cgi?id=38930
+        <rdar://problem/7937188>
+        
+        When the String classes were moved from WebCore to WTF, it meant that on Windows, all operations
+        on Strings in WebCore had to cross a DLL boundary (from WebKit.dll to JavaScript.dll).
+        
+        We fix this by refactoring some of the WTF string code, so the code in AtomicString, StringImpl, and
+        WTFString can be built by both WebCore and WTF, and we don't need to talk across a DLL to do operations
+        on Strings.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Remove string exports, because these are now
+            handled in WebCore.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Remove the post-build step that was added
+            here (the post build step is in JavaScriptCoreCommon.vsprops).
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops: Copy the three cpp files that need to be compiled
+            by WebCore into the WebKitOutputDir directory.
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Add the StringStatics file.
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj: Add the three WTF string cpp files to this project.
+        * JavaScriptCore.vcproj/jsc/jscCommon.vsprops: Remove the need to link against WTF.lib (since jsc links against JavaScriptCore).
+        * JavaScriptCore.xcodeproj/project.pbxproj: Add the StringStatics file.
+        * wtf/text/AtomicString.cpp: Moved code to StringStatics.
+        * wtf/text/StringImpl.cpp: Ditto.
+        * wtf/text/StringStatics.cpp: Added. Move functions in WTF Strings that define static variables to here, so 
+            the rest of the files can be compiled in WebCore.
+        (WebCore::StringImpl::empty): Moved from StringImpl.cpp to here.
+        (WebCore::AtomicString::init): Moved from AtomicString.cpp to here.
+
 2010-05-11  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed test failures seen on SnowLeopard buildbot.

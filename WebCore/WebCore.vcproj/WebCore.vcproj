@@ -43501,6 +43501,22 @@
 				>
 			</File>
 		</Filter>
+        <Filter
+            Name="strings"
+            >
+            <File
+                RelativePath="$(WebKitOutputDir)\include\private\JavaScriptCore\AtomicString.cpp"
+                >
+            </File>
+            <File
+                RelativePath="$(WebKitOutputDir)\include\private\JavaScriptCore\StringImpl.cpp"
+                >
+            </File>
+            <File
+                RelativePath="$(WebKitOutputDir)\include\private\JavaScriptCore\WTFString.cpp"
+                >
+            </File>
+        </Filter>
 		<Filter
 			Name="bridge"
 			>

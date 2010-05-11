@@ -1,3 +1,18 @@
+2010-05-11  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Steve Falkenburg.
+        Patch by Gavin Barraclough.
+
+        REGRESSION (r57900-57919): 3% PLT Regression from moving strings into WTF.
+        https://bugs.webkit.org/show_bug.cgi?id=38930
+        <rdar://problem/7937188>
+        
+        Add the WTF strings into the WebCore vcproj, from their copied location in $(WebKitOutputDir).
+
+        No new tests because no change in behavior.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2010-05-11  Jian Li  <jianli@chromium.org>
 
         Unreviewed. Fix compiling erron on snow leopard.
