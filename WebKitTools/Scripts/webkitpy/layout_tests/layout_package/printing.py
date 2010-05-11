@@ -310,7 +310,7 @@ class Printer(object):
         png_file = self._port.expected_filename(filename, '.png')
         if os.path.exists(png_file):
             self._write('  png: %s' %
-                        self._port.relative_test_filename(filename))
+                        self._port.relative_test_filename(png_file))
         else:
             self._write('  png: <none>')
         self._write('  exp: %s' % exp_str)
@@ -486,10 +486,8 @@ class Printer(object):
         # from the logger :(.
         if self._options.verbose:
             _log.info(msg)
-        elif msg == "":
-            self._meter.write("\n")
         else:
-            self._meter.write(msg)
+            self._meter.write("%s\n" % msg)
 
 #
 # Utility routines used by the Controller class

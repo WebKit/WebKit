@@ -144,7 +144,7 @@ class  Testprinter(unittest.TestCase):
                 exp_bot = [message + "\n"]
         else:
             if exp_err is None:
-                exp_err = [message]
+                exp_err = [message + "\n"]
             if exp_bot is None:
                 exp_bot = []
         do_helper(method_name, 'nothing', 'hello', [], [])
@@ -182,21 +182,21 @@ class  Testprinter(unittest.TestCase):
 
         printer, err, out = self.get_printer(['--print', 'one-line-summary'])
         printer.print_one_line_summary(1, 1)
-        self.assertEquals(err.get(), ["All 1 tests ran as expected.", "\n"])
+        self.assertEquals(err.get(), ["All 1 tests ran as expected.\n", "\n"])
 
         printer, err, out = self.get_printer(['--print', 'everything'])
         printer.print_one_line_summary(1, 1)
-        self.assertEquals(err.get(), ["All 1 tests ran as expected.", "\n"])
+        self.assertEquals(err.get(), ["All 1 tests ran as expected.\n", "\n"])
 
         err.reset()
         printer.print_one_line_summary(2, 1)
         self.assertEquals(err.get(),
-                          ["1 test ran as expected, 1 didn't:", "\n"])
+                          ["1 test ran as expected, 1 didn't:\n", "\n"])
 
         err.reset()
         printer.print_one_line_summary(3, 2)
         self.assertEquals(err.get(),
-                          ["2 tests ran as expected, 1 didn't:", "\n"])
+                          ["2 tests ran as expected, 1 didn't:\n", "\n"])
 
     def test_print_test_result(self):
         result = get_result('foo.html')
@@ -212,7 +212,7 @@ class  Testprinter(unittest.TestCase):
         printer.print_test_result(result, expected=False, exp_str='',
                                   got_str='')
         self.assertEquals(err.get(),
-                          ['  foo.html -> unexpected pass'])
+                          ['  foo.html -> unexpected pass\n'])
 
         printer, err, out = self.get_printer(['--print', 'everything'])
         printer.print_test_result(result, expected=True, exp_str='',
@@ -222,7 +222,7 @@ class  Testprinter(unittest.TestCase):
         printer.print_test_result(result, expected=False, exp_str='',
                                   got_str='')
         self.assertEquals(err.get(),
-                          ['  foo.html -> unexpected pass'])
+                          ['  foo.html -> unexpected pass\n'])
 
         printer, err, out = self.get_printer(['--print', 'nothing'])
         printer.print_test_result(result, expected=False, exp_str='',
@@ -318,7 +318,7 @@ class  Testprinter(unittest.TestCase):
         err.reset()
         out.reset()
         printer.print_progress(rs, True, test_files)
-        self.assertEqual(err.get(), [])
+        self.assertEqual(err.get(), [''])
         self.assertTrue(out.empty())
 
         printer, err, out = self.get_printer(
@@ -347,7 +347,7 @@ class  Testprinter(unittest.TestCase):
         err.reset()
         out.reset()
         printer.print_progress(rs, True, test_files)
-        self.assertEqual(err.get(), [])
+        self.assertEqual(err.get(), [''])
         self.assertTrue(out.empty())
 
     def test_write(self):

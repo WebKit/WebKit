@@ -1,3 +1,21 @@
+2010-05-10  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by David Levin.
+
+        Re-attempt to fix 38616 - newline handling in new-run-webkit-tests.
+        I didn't handle some cases correctly before and the solution was
+        confusing. The new patch assumes all calls to the printing module
+        don't have newlines, and will append newlines where necessary, just
+        like logging does.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38790
+
+        * Scripts/webkitpy/layout_tests/layout_package/metered_stream.py:
+        * Scripts/webkitpy/layout_tests/layout_package/metered_stream_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py:
+        * Scripts/webkitpy/layout_tests/layout_package/printing_unittest.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2010-05-10  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Adam Barth.

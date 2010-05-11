@@ -78,13 +78,13 @@ class MainTest(unittest.TestCase):
         (res, buildbot_output, regular_output) = logging_run(
              ['--platform', 'test', '--print', 'config', '--child-processes',
               '1', 'fast/html'])
-        self.assertTrue('Running one DumpRenderTree'
+        self.assertTrue('Running one DumpRenderTree\n'
                         in regular_output.get())
 
         (res, buildbot_output, regular_output) = logging_run(
              ['--platform', 'test', '--print', 'config', '--child-processes',
               '2', 'fast/html'])
-        self.assertTrue('Running 2 DumpRenderTrees in parallel'
+        self.assertTrue('Running 2 DumpRenderTrees in parallel\n'
                         in regular_output.get())
 
 

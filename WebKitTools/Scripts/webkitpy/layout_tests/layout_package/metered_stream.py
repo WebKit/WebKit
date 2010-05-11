@@ -137,12 +137,10 @@ class MeteredStream:
         # Print the necessary number of backspaces to erase the previous
         # message.
         if len(self._last_update):
-            self._stream.write("\b" * len(self._last_update))
-        if len(str):
-            self._stream.write(str)
-        num_remaining = len(self._last_update) - len(str)
-        if num_remaining > 0:
-            self._stream.write(" " * num_remaining + "\b" * num_remaining)
+            self._stream.write("\b" * len(self._last_update) +
+                               " " * len(self._last_update) +
+                               "\b" * len(self._last_update))
+        self._stream.write(str)
         last_newline = str.rfind("\n")
         self._last_update = str[(last_newline + 1):]
         self._dirty = True

@@ -50,32 +50,36 @@ class TestMeteredStream(unittest.TestCase):
         # for coverage.
         m.write("foo")
         m.flush()
-        self.assertEquals(a.get(), ['foo'])
+        exp = ['foo']
+        self.assertEquals(a.get(), exp)
 
         # now check that a second write() does not overwrite the first.
         m.write("bar")
-        self.assertEquals(a.get(), ['foo', 'bar'])
+        exp.append('bar')
+        self.assertEquals(a.get(), exp)
 
         m.update("batter")
-        self.assertEquals(a.get(), ['foo', 'bar', 'batter'])
+        exp.append('batter')
+        self.assertEquals(a.get(), exp)
 
         # The next update() should overwrite the laste update() but not the
         # other text. Note that the cursor is effectively positioned at the
         # end of 'foo', even though we had to erase three more characters.
         m.update("foo")
-        self.assertEquals(a.get(), ['foo', 'bar', 'batter', '\b\b\b\b\b\b',
-                                    'foo', '   \b\b\b'])
+        exp.append('\b\b\b\b\b\b      \b\b\b\b\b\b')
+        exp.append('foo')
+        self.assertEquals(a.get(), exp)
 
         m.progress("progress")
-        self.assertEquals(a.get(), ['foo', 'bar', 'batter', '\b\b\b\b\b\b',
-                                    'foo', '   \b\b\b', '\b\b\b', 'progress'])
+        exp.append('\b\b\b   \b\b\b')
+        exp.append('progress')
+        self.assertEquals(a.get(), exp)
 
         # now check that a write() does overwrite the progress bar
         m.write("foo")
-        self.assertEquals(a.get(), ['foo', 'bar', 'batter', '\b\b\b\b\b\b',
-                                    'foo', '   \b\b\b', '\b\b\b', 'progress',
-                                    '\b\b\b\b\b\b\b\b',
-                                    'foo', '     \b\b\b\b\b'])
+        exp.append('\b\b\b\b\b\b\b\b        \b\b\b\b\b\b\b\b')
+        exp.append('foo')
+        self.assertEquals(a.get(), exp)
 
         # Now test that we only back up to the most recent newline.
 
@@ -84,7 +88,7 @@ class TestMeteredStream(unittest.TestCase):
         a.reset()
         m.update("foo\nbar")
         m.update("baz")
-        self.assertEquals(a.get(), ['foo\nbar', '\b\b\b', 'baz'])
+        self.assertEquals(a.get(), ['foo\nbar', '\b\b\b   \b\b\b', 'baz'])
 
     def test_verbose(self):
         a = ArrayStream()
