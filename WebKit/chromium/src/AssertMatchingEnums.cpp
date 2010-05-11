@@ -51,6 +51,7 @@
 #include "WebInputElement.h"
 #include "WebMediaPlayer.h"
 #include "WebNotificationPresenter.h"
+#include "WebScrollbar.h"
 #include "WebTextAffinity.h"
 #include "WebTextCaseSensitivity.h"
 #include <wtf/Assertions.h>
@@ -290,6 +291,14 @@ COMPILE_ASSERT_MATCHING_ENUM(WebNotificationPresenter::PermissionAllowed, Notifi
 COMPILE_ASSERT_MATCHING_ENUM(WebNotificationPresenter::PermissionNotAllowed, NotificationPresenter::PermissionNotAllowed);
 COMPILE_ASSERT_MATCHING_ENUM(WebNotificationPresenter::PermissionDenied, NotificationPresenter::PermissionDenied);
 #endif
+
+COMPILE_ASSERT_MATCHING_ENUM(WebScrollbar::Horizontal, HorizontalScrollbar);
+COMPILE_ASSERT_MATCHING_ENUM(WebScrollbar::Vertical, VerticalScrollbar);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebScrollbar::ScrollByLine, ScrollByLine);
+COMPILE_ASSERT_MATCHING_ENUM(WebScrollbar::ScrollByPage, ScrollByPage);
+COMPILE_ASSERT_MATCHING_ENUM(WebScrollbar::ScrollByDocument, ScrollByDocument);
+COMPILE_ASSERT_MATCHING_ENUM(WebScrollbar::ScrollByPixel, ScrollByPixel);
 
 COMPILE_ASSERT_MATCHING_ENUM(WebTextAffinityUpstream, UPSTREAM);
 COMPILE_ASSERT_MATCHING_ENUM(WebTextAffinityDownstream, DOWNSTREAM);

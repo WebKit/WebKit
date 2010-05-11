@@ -28,54 +28,69 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebThemeEngine_h
-#define WebThemeEngine_h
+#ifndef WebScrollbar_h
+#define WebScrollbar_h
 
 #include "WebCanvas.h"
-#include "WebColor.h"
+#include "WebCommon.h"
 
 namespace WebKit {
 
+class WebInputEvent;
+class WebScrollbarClient;
 struct WebRect;
-struct WebSize;
 
-class WebThemeEngine {
+class WebScrollbar {
 public:
-#ifdef WIN32
-// The part and state parameters correspond to values defined by the
-// Windows Theme API (see
-// http://msdn.microsoft.com/en-us/library/bb773187(VS.85).aspx ).
-// The classicState parameter corresponds to the uState
-// parameter of the Windows DrawFrameControl() function.
-// See the definitions in <vsstyle.h> and <winuser.h>.
-    virtual void paintButton(
-        WebCanvas*, int part, int state, int classicState,
-        const WebRect&) = 0;
+    enum Orientation {
+        Horizontal,
+        Vertical
+    };
 
-    virtual void paintMenuList(
-        WebCanvas*, int part, int state, int classicState,
-        const WebRect&) = 0;
+    enum ScrollDirection {
+        ScrollBackward,
+        ScrollForward
+    };
 
-    virtual void paintScrollbarArrow(
-        WebCanvas*, int state, int classicState,
-        const WebRect&) = 0;
+    enum ScrollGranularity {
+        ScrollByLine,
+        ScrollByPage,
+        ScrollByDocument,
+        ScrollByPixel
+    };
 
-    virtual void paintScrollbarThumb(
-        WebCanvas*, int part, int state, int classicState,
-        const WebRect&) = 0;
+    // Creates a WebScrollbar.
+    WEBKIT_API static WebScrollbar* create(WebScrollbarClient*, Orientation);
 
-    virtual void paintScrollbarTrack(
-        WebCanvas*, int part, int state, int classicState,
-        const WebRect&, const WebRect& alignRect) = 0;
+    virtual ~WebScrollbar() {}
 
-    virtual void paintTextField(
-        WebCanvas*, int part, int state, int classicState,
-        const WebRect&, WebColor, bool fillContentArea, bool drawEdges) = 0;
+    // Gets the thickness of the scrollbar in pixels.
+    WEBKIT_API static int defaultThickness();
 
-    virtual void paintTrackbar(
-        WebCanvas*, int part, int state, int classicState,
-        const WebRect&) = 0;
-#endif
+    // Sets the rectangle of the scrollbar.
+    virtual void setLocation(const WebRect&) = 0;
+
+    // Gets the current value (i.e. position inside the region).
+    virtual int value() const = 0;
+
+    // Sets the current value.
+    virtual void setValue(int position) = 0;
+
+    // Sets the size of the scrollable region in pixels.  i.e. if a document is
+    // 800x10000 pixels and the viewport is 1000x1000 pixels, then setLocation
+    // for the vertical scrollbar would have passed in a rectangle like:
+    //            (800 - defaultThickness(), 0) (defaultThickness() x 10000)
+    // and setDocumentSize(10000)
+    virtual void setDocumentSize(int size) = 0;
+
+    // Scroll back or forward with the given granularity.
+    virtual void scroll(ScrollDirection, ScrollGranularity, float multiplier) = 0;
+
+    // Paint the given rectangle.
+    virtual void paint(WebCanvas*, const WebRect&) = 0;
+
+    // Returns true iff the given event was used.
+    virtual bool handleInputEvent(const WebInputEvent&) = 0;
 };
 
 } // namespace WebKit

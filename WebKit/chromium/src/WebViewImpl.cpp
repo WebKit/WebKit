@@ -780,45 +780,53 @@ bool WebViewImpl::scrollViewWithKeyboard(int keyCode, int modifiers)
 {
     ScrollDirection scrollDirection;
     ScrollGranularity scrollGranularity;
+    if (!mapKeyCodeForScroll(keyCode, &scrollDirection, &scrollGranularity))
+        return false;
+    return propagateScroll(scrollDirection, scrollGranularity);
+}
 
+bool WebViewImpl::mapKeyCodeForScroll(int keyCode,
+                                      WebCore::ScrollDirection* scrollDirection,
+                                      WebCore::ScrollGranularity* scrollGranularity)
+{
     switch (keyCode) {
     case VKEY_LEFT:
-        scrollDirection = ScrollLeft;
-        scrollGranularity = ScrollByLine;
+        *scrollDirection = ScrollLeft;
+        *scrollGranularity = ScrollByLine;
         break;
     case VKEY_RIGHT:
-        scrollDirection = ScrollRight;
-        scrollGranularity = ScrollByLine;
+        *scrollDirection = ScrollRight;
+        *scrollGranularity = ScrollByLine;
         break;
     case VKEY_UP:
-        scrollDirection = ScrollUp;
-        scrollGranularity = ScrollByLine;
+        *scrollDirection = ScrollUp;
+        *scrollGranularity = ScrollByLine;
         break;
     case VKEY_DOWN:
-        scrollDirection = ScrollDown;
-        scrollGranularity = ScrollByLine;
+        *scrollDirection = ScrollDown;
+        *scrollGranularity = ScrollByLine;
         break;
     case VKEY_HOME:
-        scrollDirection = ScrollUp;
-        scrollGranularity = ScrollByDocument;
+        *scrollDirection = ScrollUp;
+        *scrollGranularity = ScrollByDocument;
         break;
     case VKEY_END:
-        scrollDirection = ScrollDown;
-        scrollGranularity = ScrollByDocument;
+        *scrollDirection = ScrollDown;
+        *scrollGranularity = ScrollByDocument;
         break;
     case VKEY_PRIOR:  // page up
-        scrollDirection = ScrollUp;
-        scrollGranularity = ScrollByPage;
+        *scrollDirection = ScrollUp;
+        *scrollGranularity = ScrollByPage;
         break;
     case VKEY_NEXT:  // page down
-        scrollDirection = ScrollDown;
-        scrollGranularity = ScrollByPage;
+        *scrollDirection = ScrollDown;
+        *scrollGranularity = ScrollByPage;
         break;
     default:
         return false;
     }
 
-    return propagateScroll(scrollDirection, scrollGranularity);
+    return true;
 }
 
 void WebViewImpl::hideSelectPopup()

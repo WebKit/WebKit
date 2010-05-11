@@ -1,3 +1,45 @@
+2010-05-10  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Add WebKitScrollbar interface to allow Chromium code to reuse the scrollbar code
+        https://bugs.webkit.org/show_bug.cgi?id=38854
+
+        * public/WebScrollbar.h: Added.
+        (WebKit::WebScrollbar::):
+        (WebKit::WebScrollbar::~WebScrollbar):
+        * public/WebScrollbarClient.h: Added.
+        * public/WebThemeEngine.h:
+        * src/AssertMatchingEnums.cpp:
+        * src/WebScrollbarImpl.cpp: Added.
+        (WebKit::WebScrollbar::create):
+        (WebKit::WebScrollbar::defaultThickness):
+        (WebKit::WebScrollbarImpl::WebScrollbarImpl):
+        (WebKit::WebScrollbarImpl::~WebScrollbarImpl):
+        (WebKit::WebScrollbarImpl::setLocation):
+        (WebKit::WebScrollbarImpl::value):
+        (WebKit::WebScrollbarImpl::setValue):
+        (WebKit::WebScrollbarImpl::setDocumentSize):
+        (WebKit::WebScrollbarImpl::scroll):
+        (WebKit::WebScrollbarImpl::paint):
+        (WebKit::WebScrollbarImpl::handleInputEvent):
+        (WebKit::WebScrollbarImpl::onMouseDown):
+        (WebKit::WebScrollbarImpl::onMouseUp):
+        (WebKit::WebScrollbarImpl::onMouseMove):
+        (WebKit::WebScrollbarImpl::onMouseLeave):
+        (WebKit::WebScrollbarImpl::onMouseWheel):
+        (WebKit::WebScrollbarImpl::onKeyDown):
+        (WebKit::WebScrollbarImpl::valueChanged):
+        (WebKit::WebScrollbarImpl::invalidateScrollbarRect):
+        (WebKit::WebScrollbarImpl::isActive):
+        (WebKit::WebScrollbarImpl::scrollbarCornerPresent):
+        (WebKit::WebScrollbarImpl::getTickmarks):
+        * src/WebScrollbarImpl.h: Added.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::scrollViewWithKeyboard):
+        (WebKit::WebViewImpl::mapKeyCodeForScroll):
+        * src/WebViewImpl.h:
+
 2010-05-10  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.
