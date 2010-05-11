@@ -576,10 +576,6 @@
  			RelativePath="..\..\wtf\text\CString.h"
  			>
  		</File>
-		<File
- 			RelativePath="..\..\wtf\text\StringStatics.cpp"
- 			>
- 		</File>
  		<File
  			RelativePath="..\..\wtf\text\StringHash.h"
  			>
