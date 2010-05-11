@@ -1,3 +1,19 @@
+2010-05-10  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36566
+        The animation-fill-mode property was missing from
+        a few places where the animation shorthand is set up.
+
+        Test: animations/animation-shorthand-removed.html
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::getPropertyValue): Make sure
+        animation-fill-mode is included in the animation shorthand
+        * css/CSSPropertyLonghand.cpp:
+        (WebCore::initShorthandMap):
+
 2010-05-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

@@ -188,7 +188,8 @@ static void initShorthandMap(ShorthandMap& shorthandMap)
         CSSPropertyWebkitAnimationTimingFunction,
         CSSPropertyWebkitAnimationDelay,
         CSSPropertyWebkitAnimationIterationCount,
-        CSSPropertyWebkitAnimationDirection
+        CSSPropertyWebkitAnimationDirection,
+        CSSPropertyWebkitAnimationFillMode
     };
     SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyWebkitAnimation, animationProperties);
 
