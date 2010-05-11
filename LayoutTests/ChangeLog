@@ -1,3 +1,22 @@
+2010-05-07  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        Adding a test that makes sure openDatabaseSync() deals correctly with invalid inputs.
+        https://bugs.webkit.org/show_bug.cgi?id=34994
+
+        * fast/workers/storage: Added.
+        * fast/workers/storage/open-database-sync-inputs-expected.txt: Added.
+        * fast/workers/storage/open-database-sync-inputs.html: Added.
+        * fast/workers/storage/resources: Added.
+        * fast/workers/storage/resources/open-database-sync-inputs.js: Added.
+        (notAString.toString):
+        * fast/workers/storage/resources/test-inputs-common.js: Added.
+        (log):
+        (finishTest):
+        (runTest.worker.onmessage):
+        (runTest):
+
 2010-05-10  Simon Fraser  <simon.fraser@apple.com>
 
         Fix up test results from last commit, which were generated with a build from before r59129.
