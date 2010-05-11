@@ -1,5 +1,14 @@
 2010-05-11  Geoffrey Garen  <ggaren@apple.com>
 
+        Fixed test failures seen on SnowLeopard buildbot.
+
+        * runtime/JSString.cpp:
+        (JSC::JSString::replaceCharacter): Don't use size_t and wtf::notFound.
+        Instead, use the individual types and notFound values of the string APIs
+        we're using, since they're not necessarily the same in 64bit.
+
+2010-05-11  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Oliver Hunt and Darin Adler.
 
         Start using ropes in String.prototype.replace.
