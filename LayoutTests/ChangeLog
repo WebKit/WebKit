@@ -1,3 +1,15 @@
+2010-05-10  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, just removing newline from -expected.txt file
+
+        REGRESSION(r59100): "Added test is broken on many platforms." (Requested by eseidel on #webkit).
+        https://bugs.webkit.org/show_bug.cgi?id=38881
+
+        Looks like http://trac.webkit.org/changeset/59119
+        added an extra newline by mistake.  Removing.
+
+        * plugins/geturlnotify-during-document-teardown-expected.txt:
+
 2010-05-10  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, fixing Qt's expectations.
