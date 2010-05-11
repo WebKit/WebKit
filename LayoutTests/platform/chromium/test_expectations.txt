@@ -2823,4 +2823,3 @@ BUG43420: fast/events/popup-allowed-from-gesture-initiated-form-submit.html = TI
 
 // WebKit r59064 changes the behavior of javascript regexp literals
 BUGJOHNNYG : fast/js/regexp-literals-arent-constants.html = TEXT
-

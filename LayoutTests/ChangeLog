@@ -1,3 +1,16 @@
+2010-05-11  John Gregg  <johnnyg@google.com>
+
+        [chromium] Unreviewed, test expectations.
+
+        * platform/chromium-mac/svg/filters/filteredImage-expected.checksum: Added.
+        * platform/chromium-win-xp/svg/batik/text/textFeatures-expected.txt:
+        * platform/chromium-win/svg/filters/filteredImage-expected.checksum: Added.
+        * platform/chromium-win/svg/filters/filteredImage-expected.png: Added.
+        * platform/chromium-win/svg/text/text-hkern-on-vertical-text-expected.checksum: Added.
+        * platform/chromium-win/svg/text/text-hkern-on-vertical-text-expected.png: Added.
+        * platform/chromium-win/svg/text/text-vkern-on-horizontal-text-expected.checksum: Added.
+        * platform/chromium-win/svg/text/text-vkern-on-horizontal-text-expected.png: Added.
+
 2010-05-11  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
