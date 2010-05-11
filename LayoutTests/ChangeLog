@@ -1,3 +1,16 @@
+2010-05-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Test result fixes for Leopard.
+
+        Leopard needs custom results for tests that dump the layer tree, because Leopard
+        CA does not have geometry flipping, so we do that ourselves by setting a transform.
+
+        * platform/mac-leopard/compositing/iframes/composited-parent-iframe-expected.txt: Added.
+        * platform/mac-leopard/compositing/iframes/connect-compositing-iframe-expected.txt: Added.
+        * platform/mac-leopard/compositing/iframes/connect-compositing-iframe2-expected.txt: Added.
+        * platform/mac-leopard/compositing/iframes/connect-compositing-iframe3-expected.txt: Added.
+        * platform/mac-leopard/compositing/iframes/enter-compositing-iframe-expected.txt: Added.
+
 2010-05-11  John Gregg  <johnnyg@google.com>
 
         [chromium] Update win-vista version of the baseline recently updated for win-xp.
