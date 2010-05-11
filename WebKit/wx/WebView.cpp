@@ -352,6 +352,10 @@ bool wxWebView::Create(wxWindow* parent, int id, const wxPoint& position,
     SetDatabasesEnabled(true);
 #endif
 
+    // we need to do this so that objects like the focusController are properly
+    // initialized so that the activate handler is run properly.
+    LoadURL(wxT("about:blank"));
+    
     wxWindow* tlw = wxGetTopLevelParent(this);
     tlw->Connect(-1, wxEVT_ACTIVATE, wxActivateEventHandler(wxWebView::OnTLWActivated));
 

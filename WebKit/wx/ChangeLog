@@ -1,3 +1,13 @@
+2010-05-11  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Load a blank page on creation to initialize WebCore objects properly.
+        https://bugs.webkit.org/show_bug.cgi?id=38932
+
+        * WebView.cpp:
+        (wxWebView::Create):
+
 2010-05-03  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.
