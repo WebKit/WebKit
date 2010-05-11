@@ -598,6 +598,7 @@ plugins/mouse-events.html
 plugins/mouse-events-fixedpos.html
 plugins/open-and-close-window-with-plugin.html
 plugins/keyboard-events.html
+plugins/geturlnotify-during-document-teardown.html
 http/tests/plugins/plugin-document-has-focus.html
 
 security/block-test.html

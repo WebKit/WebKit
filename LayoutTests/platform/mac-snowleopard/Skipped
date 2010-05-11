@@ -1,6 +1,7 @@
-# <rdar://problem/7091352> Two plug-in tests show missing NPP_Destroy call
+# <rdar://problem/7091352> Some plug-in tests show missing NPP_Destroy call
 plugins/netscape-destroy-plugin-script-objects.html
 plugins/open-and-close-window-with-plugin.html
+plugins/geturlnotify-during-document-teardown.html
 
 # These tests fail on the SnowLeopard bot from time to time (https://bugs.webkit.org/show_bug.cgi?id=32229)
 plugins/document-open.html

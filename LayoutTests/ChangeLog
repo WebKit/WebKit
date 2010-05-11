@@ -168,6 +168,20 @@
 
         Reviewed by Eric Seidel.
 
+        * platform/mac-snowleopard/Skipped:
+        Skipped, because we're not logging NPP_Destroy on Snow Leopard.
+
+        * platform/qt/Skipped:
+        Skipped due to lack of support for setCallCloseOnWebViews on
+        LayoutTestController.
+
+2010-05-10  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        REGRESSION(r59100): Added test is broken on many platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=38881
+
+        Reviewed by Eric Seidel.
+
         * plugins/geturlnotify-during-document-teardown-expected.txt:
         Update the expected result.
 
