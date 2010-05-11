@@ -1,3 +1,9 @@
+2010-05-10  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, fixing the expectations for Chromium.
+
+        * platform/chromium/http/tests/security/cross-frame-access-call-expected.txt:
+
 2010-05-10  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, just removing newline from -expected.txt file
