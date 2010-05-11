@@ -1,3 +1,59 @@
+2010-05-11  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Move buildLayoutInformationForTextBox() from SVGRootInlineBox in SVGInlineTextBox where it belongs
+        https://bugs.webkit.org/show_bug.cgi?id=38799
+
+        Cleanup SVGRootInlineBox/SVGInlineTextBox. Move buildLayoutInformationForTextBox to SVGInlineTextBox.
+        Move lots of helper methods into new SVGTextLayoutUtilities class. Adapted all callsites.
+
+        Fixed bug in kerning handling, hkern was applyable to vertical text as well. Covered by two new tests.
+
+        Tests: svg/text/text-hkern-on-vertical-text.svg
+               svg/text/text-vkern-on-horizontal-text.svg
+
+        * Android.mk: Add SVGTextLayoutUtilities.cpp/h to build.
+        * GNUmakefile.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::calculateGlyphWidth): Use textRenderer()->characters() instead of textRenderer()->text()->characters() as shortcut.
+        (WebCore::SVGInlineTextBox::svgCharacterHitsPosition): Fix style issue, no else if after a return branch.
+        (WebCore::SVGInlineTextBox::paintSelection): Use !color.alpha() instead of color.alpha() == 0.
+        (WebCore::SVGInlineTextBox::buildLayoutInformation): Moved from SVGRootInlineBox::buildLayoutInformationForTextBox.
+        * rendering/SVGInlineTextBox.h: Fix indention.
+        (WebCore::SVGInlineTextBox::selectionTop): Inlined.
+        (WebCore::SVGInlineTextBox::selectionHeight): Inlined.
+        * rendering/SVGRenderTreeAsText.cpp: Include SVGTextLayoutUtilities.h
+        * rendering/SVGRootInlineBox.cpp: Move almost all static text layout helper functions in SVGTextLayoutUtilities
+        (WebCore::calculateTextLengthCorrectionForTextChunk): Fixed style issue in long if conditions spanning multiple lines.
+        (WebCore::SVGRootInlineBox::computePerCharacterLayoutInformation): Use different topLeftPositionOfCharacterRange() taking start/end iterators.
+        (WebCore::SVGRootInlineBox::buildLayoutInformation): Use the moved SVGInlineTextBox::buildLayoutInformation() method.
+        (WebCore::SVGRootInlineBox::buildTextChunks): Fixed small style issue, remove unneeded parenthesis.
+        (WebCore::SVGRootInlineBox::layoutTextChunks): Fix style issue in debugging code.
+        * rendering/SVGRootInlineBox.h: Rename 'LastGlyphInfo' to 'SVGLastGlyphInfo' and move to SVGTextLayoutUtilities.
+        (WebCore::SVGRootInlineBox::svgTextChunks): Inlined for speed.
+        * rendering/SVGTextLayoutUtilities.cpp: Added.
+        (WebCore::isVerticalWritingMode):
+        (WebCore::dominantBaselineToShift):
+        (WebCore::alignmentBaselineToShift):
+        (WebCore::glyphOrientationToAngle):
+        (WebCore::glyphOrientationIsMultiplyOf180Degrees):
+        (WebCore::applyGlyphAdvanceAndShiftRespectingOrientation):
+        (WebCore::topLeftPositionOfCharacterRange):
+        (WebCore::cummulatedWidthOfInlineBoxCharacterRange):
+        (WebCore::cummulatedHeightOfInlineBoxCharacterRange):
+        (WebCore::svgTextRunForInlineTextBox):
+        (WebCore::calculateCSSKerning):
+        (WebCore::applySVGKerning):
+        * rendering/SVGTextLayoutUtilities.h: Added.
+        (WebCore::):
+        (WebCore::SVGTextPaintInfo::SVGTextPaintInfo):
+        (WebCore::SVGLastGlyphInfo::SVGLastGlyphInfo):
+
 2010-05-11  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Dirk Schulze.

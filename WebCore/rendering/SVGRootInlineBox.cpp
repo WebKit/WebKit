@@ -1,6 +1,4 @@
 /*
- * This file is part of the WebKit project.
- *
  * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
  *           (C) 2006 Apple Computer Inc.
  *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
@@ -28,242 +26,21 @@
 #if ENABLE(SVG)
 #include "SVGRootInlineBox.h"
 
-#include "Editor.h"
-#include "FloatConversion.h"
-#include "Frame.h"
 #include "GraphicsContext.h"
 #include "RenderBlock.h"
-#include "RenderSVGResource.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGRoot.h"
 #include "SVGInlineFlowBox.h"
 #include "SVGInlineTextBox.h"
-#include "SVGFontElement.h"
-#include "SVGRenderStyleDefs.h"
 #include "SVGRenderSupport.h"
+#include "SVGTextLayoutUtilities.h"
 #include "SVGTextPositioningElement.h"
-#include "SVGURIReference.h"
-#include "Text.h"
-#include "UnicodeRange.h"
-
-#include <float.h>
 
 // Text chunk creation is complex and the whole process
 // can easily be traced by setting this variable > 0.
 #define DEBUG_CHUNK_BUILDING 0
 
 namespace WebCore {
-
-static inline bool isVerticalWritingMode(const SVGRenderStyle* style)
-{
-    return style->writingMode() == WM_TBRL || style->writingMode() == WM_TB; 
-}
-
-static inline EAlignmentBaseline dominantBaselineToShift(bool isVerticalText, const RenderObject* text, const Font& font)
-{
-    ASSERT(text);
-
-    const SVGRenderStyle* style = text->style() ? text->style()->svgStyle() : 0;
-    ASSERT(style);
-
-    const SVGRenderStyle* parentStyle = text->parent() && text->parent()->style() ? text->parent()->style()->svgStyle() : 0;
-
-    EDominantBaseline baseline = style->dominantBaseline();
-    if (baseline == DB_AUTO) {
-        if (isVerticalText)
-            baseline = DB_CENTRAL;
-        else
-            baseline = DB_ALPHABETIC;
-    }
-
-    switch (baseline) {
-    case DB_USE_SCRIPT:
-        // TODO: The dominant-baseline and the baseline-table components are set by
-        //       determining the predominant script of the character data content.
-        return AB_ALPHABETIC;
-    case DB_NO_CHANGE:
-    {
-        if (parentStyle)
-            return dominantBaselineToShift(isVerticalText, text->parent(), font);
-
-        ASSERT_NOT_REACHED();
-        return AB_AUTO;
-    }
-    case DB_RESET_SIZE:
-    {
-        if (parentStyle)
-            return dominantBaselineToShift(isVerticalText, text->parent(), font);
-
-        ASSERT_NOT_REACHED();
-        return AB_AUTO;    
-    }
-    case DB_IDEOGRAPHIC:
-        return AB_IDEOGRAPHIC;
-    case DB_ALPHABETIC:
-        return AB_ALPHABETIC;
-    case DB_HANGING:
-        return AB_HANGING;
-    case DB_MATHEMATICAL:
-        return AB_MATHEMATICAL;
-    case DB_CENTRAL:
-        return AB_CENTRAL;
-    case DB_MIDDLE:
-        return AB_MIDDLE;
-    case DB_TEXT_AFTER_EDGE:
-        return AB_TEXT_AFTER_EDGE;
-    case DB_TEXT_BEFORE_EDGE:
-        return AB_TEXT_BEFORE_EDGE;
-    default:
-        ASSERT_NOT_REACHED();
-        return AB_AUTO;
-    }
-}
-
-static inline float alignmentBaselineToShift(bool isVerticalText, const RenderObject* text, const Font& font)
-{
-    ASSERT(text);
-
-    const SVGRenderStyle* style = text->style() ? text->style()->svgStyle() : 0;
-    ASSERT(style);
-
-    const SVGRenderStyle* parentStyle = text->parent() && text->parent()->style() ? text->parent()->style()->svgStyle() : 0;
-
-    EAlignmentBaseline baseline = style->alignmentBaseline();
-    if (baseline == AB_AUTO) {
-        if (parentStyle && style->dominantBaseline() == DB_AUTO)
-            baseline = dominantBaselineToShift(isVerticalText, text->parent(), font);
-        else
-            baseline = dominantBaselineToShift(isVerticalText, text, font);
-
-        ASSERT(baseline != AB_AUTO);    
-    }
-
-    // Note: http://wiki.apache.org/xmlgraphics-fop/LineLayout/AlignmentHandling
-    switch (baseline) {
-    case AB_BASELINE:
-    {
-        if (parentStyle)
-            return dominantBaselineToShift(isVerticalText, text->parent(), font);
-
-        return 0.0f;
-    }
-    case AB_BEFORE_EDGE:
-    case AB_TEXT_BEFORE_EDGE:
-        return font.ascent();
-    case AB_MIDDLE:
-        return font.xHeight() / 2.0f;
-    case AB_CENTRAL:
-        // Not needed, we're taking this into account already for vertical text!
-        // return (font.ascent() - font.descent()) / 2.0f;
-        return 0.0f;
-    case AB_AFTER_EDGE:
-    case AB_TEXT_AFTER_EDGE:
-    case AB_IDEOGRAPHIC:
-        return font.descent();
-    case AB_ALPHABETIC:
-        return 0.0f;
-    case AB_HANGING:
-        return font.ascent() * 8.0f / 10.0f;
-    case AB_MATHEMATICAL:
-        return font.ascent() / 2.0f;
-    default:
-        ASSERT_NOT_REACHED();
-        return 0.0f;
-    }
-}
-
-static inline float glyphOrientationToAngle(const SVGRenderStyle* svgStyle, bool isVerticalText, const UChar& character)
-{
-    switch (isVerticalText ? svgStyle->glyphOrientationVertical() : svgStyle->glyphOrientationHorizontal()) {
-    case GO_AUTO:
-    {
-        // Spec: Fullwidth ideographic and fullwidth Latin text will be set with a glyph-orientation of 0-degrees.
-        //       Text which is not fullwidth will be set with a glyph-orientation of 90-degrees.
-        unsigned int unicodeRange = findCharUnicodeRange(character);
-        if (unicodeRange == cRangeSetLatin || unicodeRange == cRangeArabic)
-            return 90.0f;
-
-        return 0.0f;
-    }
-    case GO_90DEG:
-        return 90.0f;
-    case GO_180DEG:
-        return 180.0f;
-    case GO_270DEG:
-        return 270.0f;
-    case GO_0DEG:
-    default:
-        return 0.0f;
-    }
-}
-
-static inline bool glyphOrientationIsMultiplyOf180Degrees(float orientationAngle)
-{
-    return fabsf(fmodf(orientationAngle, 180.0f)) == 0.0f;
-}
-
-static inline float calculateGlyphAdvanceAndShiftRespectingOrientation(bool isVerticalText, float orientationAngle, float glyphWidth, float glyphHeight, const Font& font, SVGChar& svgChar, float& xOrientationShift, float& yOrientationShift)
-{
-    bool orientationIsMultiplyOf180Degrees = glyphOrientationIsMultiplyOf180Degrees(orientationAngle);
-
-    // The function is based on spec requirements:
-    //
-    // Spec: If the 'glyph-orientation-horizontal' results in an orientation angle that is not a multiple of
-    // of 180 degrees, then the current text position is incremented according to the vertical metrics of the glyph.
-    //
-    // Spec: If if the 'glyph-orientation-vertical' results in an orientation angle that is not a multiple of
-    // 180 degrees,then the current text position is incremented according to the horizontal metrics of the glyph.
-
-    // vertical orientation handling
-    if (isVerticalText) {
-        if (orientationAngle == 0.0f) {
-            xOrientationShift = -glyphWidth / 2.0f;
-            yOrientationShift = font.ascent();
-        } else if (orientationAngle == 90.0f) {
-            xOrientationShift = -glyphHeight;
-            yOrientationShift = font.descent();
-            svgChar.orientationShiftY = -font.ascent();
-        } else if (orientationAngle == 270.0f) {
-            xOrientationShift = glyphHeight;
-            yOrientationShift = font.descent();
-            svgChar.orientationShiftX = -glyphWidth;
-            svgChar.orientationShiftY = -font.ascent();
-        } else if (orientationAngle == 180.0f) {
-            yOrientationShift = font.ascent();
-            svgChar.orientationShiftX = -glyphWidth / 2.0f;
-            svgChar.orientationShiftY = font.ascent() - font.descent();
-        }
-
-        // vertical advance calculation
-        if (orientationAngle != 0.0f && !orientationIsMultiplyOf180Degrees)
-            return glyphWidth;
-
-        return glyphHeight; 
-    }
-
-    // horizontal orientation handling
-    if (orientationAngle == 90.0f) {
-        xOrientationShift = glyphWidth / 2.0f;
-        yOrientationShift = -font.descent();
-        svgChar.orientationShiftX = -glyphWidth / 2.0f - font.descent(); 
-        svgChar.orientationShiftY = font.descent();
-    } else if (orientationAngle == 270.0f) {
-        xOrientationShift = -glyphWidth / 2.0f;
-        yOrientationShift = -font.descent();
-        svgChar.orientationShiftX = -glyphWidth / 2.0f + font.descent();
-        svgChar.orientationShiftY = glyphHeight;
-    } else if (orientationAngle == 180.0f) {
-        xOrientationShift = glyphWidth / 2.0f;
-        svgChar.orientationShiftX = -glyphWidth / 2.0f;
-        svgChar.orientationShiftY = font.ascent() - font.descent();
-    }
-
-    // horizontal advance calculation
-    if (orientationAngle != 0.0f && !orientationIsMultiplyOf180Degrees)
-        return glyphHeight;
-
-    return glyphWidth;
-}
 
 static inline void startTextChunk(SVGTextChunkLayoutInfo& info)
 {
@@ -292,89 +69,6 @@ RenderSVGRoot* findSVGRootObject(RenderObject* start)
         start = start->parent();
     ASSERT(start);
     return toRenderSVGRoot(start);
-}
-
-static inline FloatPoint topLeftPositionOfCharacterRange(Vector<SVGChar>& chars)
-{
-    return topLeftPositionOfCharacterRange(chars.begin(), chars.end());
-}
-
-FloatPoint topLeftPositionOfCharacterRange(Vector<SVGChar>::iterator it, Vector<SVGChar>::iterator end)
-{
-    float lowX = FLT_MAX, lowY = FLT_MAX;
-    for (; it != end; ++it) {
-        if (it->isHidden())
-            continue;
-
-        float x = (*it).x;
-        float y = (*it).y;
-
-        if (x < lowX)
-            lowX = x;
-
-        if (y < lowY)
-            lowY = y;
-    }
-
-    return FloatPoint(lowX, lowY);
-}
-
-// Helper function
-static float calculateCSSKerning(RenderObject* item)
-{
-    const Font& font = item->style()->font();
-    const SVGRenderStyle* svgStyle = item->style()->svgStyle();
-
-    float kerning = 0.0f;
-    if (CSSPrimitiveValue* primitive = static_cast<CSSPrimitiveValue*>(svgStyle->kerning())) {
-        kerning = primitive->getFloatValue();
-
-        if (primitive->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE && font.pixelSize() > 0)
-            kerning = kerning / 100.0f * font.pixelSize();
-    }
-
-    return kerning;
-}
-
-static bool applySVGKerning(SVGCharacterLayoutInfo& info, RenderObject* item, LastGlyphInfo& lastGlyph, const String& unicodeString, const String& glyphName, bool isVerticalText)
-{
-#if ENABLE(SVG_FONTS)
-    float horizontalKerning = 0.0f;
-    float verticalKerning = 0.0f;
-    const RenderStyle* style = item->style();
-    SVGFontElement* svgFont = 0;
-    if (style->font().isSVGFont())
-        svgFont = style->font().svgFont();
-
-    if (style->font().isSVGFont()) {
-        if (lastGlyph.isValid) {
-            horizontalKerning = svgFont->horizontalKerningForPairOfStringsAndGlyphs(lastGlyph.unicode, lastGlyph.glyphName, unicodeString, glyphName);
-            if (isVerticalText)
-                verticalKerning = svgFont->verticalKerningForPairOfStringsAndGlyphs(lastGlyph.unicode, lastGlyph.glyphName, unicodeString, glyphName);
-        }
-
-        lastGlyph.unicode = unicodeString;
-        lastGlyph.glyphName = glyphName;
-        lastGlyph.isValid = true;
-        float scaleToFontSpace = style->font().size() / style->font().primaryFont()->unitsPerEm();
-        horizontalKerning *= scaleToFontSpace;
-        verticalKerning *= scaleToFontSpace;
-    } else
-        lastGlyph.isValid = false;
-
-    if (horizontalKerning != 0.0f || verticalKerning != 0.0f) {
-        info.curx -= horizontalKerning;
-        info.cury -= verticalKerning;
-        return true;
-    }
-#else
-    UNUSED_PARAM(info);
-    UNUSED_PARAM(item);
-    UNUSED_PARAM(lastGlyph);
-    UNUSED_PARAM(unicodeString);
-    UNUSED_PARAM(glyphName);
-#endif
-    return false;
 }
 
 // Helper class for paint()
@@ -765,48 +459,6 @@ int SVGRootInlineBox::verticallyAlignBoxes(int)
     return height();
 }
 
-float cummulatedWidthOfInlineBoxCharacterRange(SVGInlineBoxCharacterRange& range)
-{
-    ASSERT(!range.isOpen());
-    ASSERT(range.isClosed());
-    ASSERT(range.box->isInlineTextBox());
-
-    InlineTextBox* textBox = static_cast<InlineTextBox*>(range.box);
-    RenderText* text = textBox->textRenderer();
-    RenderStyle* style = text->style();
-
-    return style->font().floatWidth(svgTextRunForInlineTextBox(text->characters() + textBox->start() + range.startOffset, range.endOffset - range.startOffset, style, textBox, 0));
-}
-
-float cummulatedHeightOfInlineBoxCharacterRange(SVGInlineBoxCharacterRange& range)
-{
-    ASSERT(!range.isOpen());
-    ASSERT(range.isClosed());
-    ASSERT(range.box->isInlineTextBox());
-
-    InlineTextBox* textBox = static_cast<InlineTextBox*>(range.box);
-    RenderText* text = textBox->textRenderer();
-    const Font& font = text->style()->font();
-
-    return (range.endOffset - range.startOffset) * (font.ascent() + font.descent());
-}
-
-TextRun svgTextRunForInlineTextBox(const UChar* c, int len, RenderStyle* style, const InlineTextBox* textBox, float xPos)
-{
-    ASSERT(textBox);
-    ASSERT(style);
-
-    TextRun run(c, len, false, static_cast<int>(xPos), textBox->toAdd(), textBox->direction() == RTL, textBox->m_dirOverride || style->visuallyOrdered());
-
-#if ENABLE(SVG_FONTS)
-    run.setReferencingRenderObject(textBox->textRenderer()->parent());
-#endif
-
-    // We handle letter & word spacing ourselves
-    run.disableSpacing();
-    return run;
-}
-
 static float cummulatedWidthOrHeightOfTextChunk(SVGTextChunk& chunk, bool calcWidthOnly)
 {
     float length = 0.0f;
@@ -955,8 +607,8 @@ static float calculateTextLengthCorrectionForTextChunk(SVGTextChunk& chunk, ELen
     float computedWidth = cummulatedWidthOfTextChunk(chunk);
     float computedHeight = cummulatedHeightOfTextChunk(chunk);
 
-    if ((computedWidth <= 0.0f && !chunk.isVerticalText) ||
-        (computedHeight <= 0.0f && chunk.isVerticalText))
+    if ((computedWidth <= 0.0f && !chunk.isVerticalText)
+        || (computedHeight <= 0.0f && chunk.isVerticalText))
         return 0.0f;
 
     if (chunk.isVerticalText)
@@ -1032,7 +684,7 @@ void SVGRootInlineBox::computePerCharacterLayoutInformation()
 
     // Finally the top left position of our box is known.
     // Propogate this knownledge to our RenderSVGText parent.
-    FloatPoint topLeft = topLeftPositionOfCharacterRange(m_svgChars);
+    FloatPoint topLeft = topLeftPositionOfCharacterRange(m_svgChars.begin(), m_svgChars.end());
     block()->setLocation((int) floorf(topLeft.x()), (int) floorf(topLeft.y()));
 
     // Layout all InlineText/Flow boxes
@@ -1052,11 +704,11 @@ void SVGRootInlineBox::buildLayoutInformation(InlineFlowBox* start, SVGCharacter
         info.addLayoutInformation(positioningElement);
     }
 
-    LastGlyphInfo lastGlyph;
+    SVGLastGlyphInfo lastGlyph;
     
     for (InlineBox* curr = start->firstChild(); curr; curr = curr->nextOnLine()) {
         if (curr->renderer()->isText())
-            buildLayoutInformationForTextBox(info, static_cast<InlineTextBox*>(curr), lastGlyph);
+            static_cast<SVGInlineTextBox*>(curr)->buildLayoutInformation(info, lastGlyph);
         else {
             ASSERT(curr->isInlineFlowBox());
             InlineFlowBox* flowBox = static_cast<InlineFlowBox*>(curr);
@@ -1248,230 +900,6 @@ void SVGRootInlineBox::layoutInlineBoxes(InlineFlowBox* start, Vector<SVGChar>::
     }
 }
 
-void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& info, InlineTextBox* textBox, LastGlyphInfo& lastGlyph)
-{
-    RenderText* text = textBox->textRenderer();
-    ASSERT(text);
-
-    RenderStyle* style = text->style(textBox->isFirstLineStyle());
-    ASSERT(style);
-
-    const Font& font = style->font();
-    SVGInlineTextBox* svgTextBox = static_cast<SVGInlineTextBox*>(textBox);
-
-    unsigned length = textBox->len();
-
-    const SVGRenderStyle* svgStyle = style->svgStyle();
-    bool isVerticalText = isVerticalWritingMode(svgStyle);
-
-    int charsConsumed = 0;
-    for (unsigned i = 0; i < length; i += charsConsumed) {
-        SVGChar svgChar;
-
-        if (info.inPathLayout())
-            svgChar.pathData = SVGCharOnPath::create();
-
-        float glyphWidth = 0.0f;
-        float glyphHeight = 0.0f;
-
-        int extraCharsAvailable = length - i - 1;
-
-        String unicodeStr;
-        String glyphName;
-        if (textBox->direction() == RTL) {
-            glyphWidth = svgTextBox->calculateGlyphWidth(style, textBox->end() - i, extraCharsAvailable, charsConsumed, glyphName);
-            glyphHeight = svgTextBox->calculateGlyphHeight(style, textBox->end() - i, extraCharsAvailable);
-            unicodeStr = String(textBox->textRenderer()->text()->characters() + textBox->end() - i, charsConsumed);
-        } else {
-            glyphWidth = svgTextBox->calculateGlyphWidth(style, textBox->start() + i, extraCharsAvailable, charsConsumed, glyphName);
-            glyphHeight = svgTextBox->calculateGlyphHeight(style, textBox->start() + i, extraCharsAvailable);
-            unicodeStr = String(textBox->textRenderer()->text()->characters() + textBox->start() + i, charsConsumed);
-        }
-
-        bool assignedX = false;
-        bool assignedY = false;
-
-        if (info.xValueAvailable() && (!info.inPathLayout() || (info.inPathLayout() && !isVerticalText))) {
-            if (!isVerticalText)
-                svgChar.newTextChunk = true;
-
-            assignedX = true;
-            svgChar.drawnSeperated = true;
-            info.curx = info.xValueNext();
-        }
-
-        if (info.yValueAvailable() && (!info.inPathLayout() || (info.inPathLayout() && isVerticalText))) {
-            if (isVerticalText)
-                svgChar.newTextChunk = true;
-
-            assignedY = true;
-            svgChar.drawnSeperated = true;
-            info.cury = info.yValueNext();
-        }
-
-        float dx = 0.0f;
-        float dy = 0.0f;
-
-        // Apply x-axis shift
-        if (info.dxValueAvailable()) {
-            svgChar.drawnSeperated = true;
-
-            dx = info.dxValueNext();
-            info.dx += dx;
-
-            if (!info.inPathLayout())
-                info.curx += dx;
-        }
-
-        // Apply y-axis shift
-        if (info.dyValueAvailable()) {
-            svgChar.drawnSeperated = true;
-
-            dy = info.dyValueNext();
-            info.dy += dy;
-
-            if (!info.inPathLayout())
-                info.cury += dy;
-        }
-
-        // Take letter & word spacing and kerning into account
-        float spacing = font.letterSpacing() + calculateCSSKerning(textBox->renderer()->node()->renderer());
-
-        const UChar* currentCharacter = text->characters() + (textBox->direction() == RTL ? textBox->end() - i : textBox->start() + i);
-        const UChar* lastCharacter = 0;
-
-        if (textBox->direction() == RTL) {
-            if (i < textBox->end())
-                lastCharacter = text->characters() + textBox->end() - i +  1;
-        } else {
-            if (i > 0)
-                lastCharacter = text->characters() + textBox->start() + i - 1;
-        }
-
-        // FIXME: SVG Kerning doesn't get applied on texts on path.
-        bool appliedSVGKerning = applySVGKerning(info, textBox->renderer()->node()->renderer(), lastGlyph, unicodeStr, glyphName, isVerticalText);
-        if (info.nextDrawnSeperated || spacing != 0.0f || appliedSVGKerning) {
-            info.nextDrawnSeperated = false;
-            svgChar.drawnSeperated = true;
-        }
-
-        if (currentCharacter && Font::treatAsSpace(*currentCharacter) && lastCharacter && !Font::treatAsSpace(*lastCharacter)) {
-            spacing += font.wordSpacing();
-
-            if (spacing != 0.0f && !info.inPathLayout())
-                info.nextDrawnSeperated = true;
-        }
-
-        float orientationAngle = glyphOrientationToAngle(svgStyle, isVerticalText, *currentCharacter);
-
-        float xOrientationShift = 0.0f;
-        float yOrientationShift = 0.0f;
-        float glyphAdvance = calculateGlyphAdvanceAndShiftRespectingOrientation(isVerticalText, orientationAngle, glyphWidth, glyphHeight,
-                                                                                font, svgChar, xOrientationShift, yOrientationShift);
-
-        // Handle textPath layout mode
-        if (info.inPathLayout()) {
-            float extraAdvance = isVerticalText ? dy : dx;
-            float newOffset = FLT_MIN;
-
-            if (assignedX && !isVerticalText)
-                newOffset = info.curx;
-            else if (assignedY && isVerticalText)
-                newOffset = info.cury;
-
-            float correctedGlyphAdvance = glyphAdvance;
-
-            // Handle lengthAdjust="spacingAndGlyphs" by specifying per-character scale operations
-            if (info.pathTextLength > 0.0f && info.pathChunkLength > 0.0f) { 
-                if (isVerticalText) {
-                    svgChar.pathData->yScale = info.pathChunkLength / info.pathTextLength;
-                    spacing *= svgChar.pathData->yScale;
-                    correctedGlyphAdvance *= svgChar.pathData->yScale;
-                } else {
-                    svgChar.pathData->xScale = info.pathChunkLength / info.pathTextLength;
-                    spacing *= svgChar.pathData->xScale;
-                    correctedGlyphAdvance *= svgChar.pathData->xScale;
-                }
-            }
-
-            // Handle letter & word spacing on text path
-            float pathExtraAdvance = info.pathExtraAdvance;
-            info.pathExtraAdvance += spacing;
-
-            svgChar.pathData->hidden = !info.nextPathLayoutPointAndAngle(correctedGlyphAdvance, extraAdvance, newOffset);
-            svgChar.drawnSeperated = true;
-
-            info.pathExtraAdvance = pathExtraAdvance;
-        }
-
-        // Apply rotation
-        if (info.angleValueAvailable())
-            info.angle = info.angleValueNext();
-
-        // Apply baseline-shift
-        if (info.baselineShiftValueAvailable()) {
-            svgChar.drawnSeperated = true;
-            float shift = info.baselineShiftValueNext();
-
-            if (isVerticalText)
-                info.shiftx += shift;
-            else
-                info.shifty -= shift;
-        }
-
-        // Take dominant-baseline / alignment-baseline into account
-        yOrientationShift += alignmentBaselineToShift(isVerticalText, text, font);
-
-        svgChar.x = info.curx;
-        svgChar.y = info.cury;
-        svgChar.angle = info.angle;
-
-        // For text paths any shift (dx/dy/baseline-shift) has to be applied after the rotation
-        if (!info.inPathLayout()) {
-            svgChar.x += info.shiftx + xOrientationShift;
-            svgChar.y += info.shifty + yOrientationShift;
-
-            if (orientationAngle != 0.0f)
-                svgChar.angle += orientationAngle;
-
-            if (svgChar.angle != 0.0f)
-                svgChar.drawnSeperated = true;
-        } else {
-            svgChar.pathData->orientationAngle = orientationAngle;
-
-            if (isVerticalText)
-                svgChar.angle -= 90.0f;
-
-            svgChar.pathData->xShift = info.shiftx + xOrientationShift;
-            svgChar.pathData->yShift = info.shifty + yOrientationShift;
-
-            // Translate to glyph midpoint
-            if (isVerticalText) {
-                svgChar.pathData->xShift += info.dx;
-                svgChar.pathData->yShift -= glyphAdvance / 2.0f;
-            } else {
-                svgChar.pathData->xShift -= glyphAdvance / 2.0f;
-                svgChar.pathData->yShift += info.dy;
-            }
-        }
-
-        // Advance to new position
-        if (isVerticalText) {
-            svgChar.drawnSeperated = true;
-            info.cury += glyphAdvance + spacing;
-        } else
-            info.curx += glyphAdvance + spacing;
-
-        // Advance to next character group
-        for (int k = 0; k < charsConsumed; ++k) {
-            info.svgChars.append(svgChar);
-            info.processedSingleCharacter();
-            svgChar.drawnSeperated = false;
-            svgChar.newTextChunk = false;
-        }
-    }
-}
-
 void SVGRootInlineBox::buildTextChunks(Vector<SVGChar>& svgChars, Vector<SVGTextChunk>& svgTextChunks, InlineFlowBox* start)
 {
     SVGTextChunkLayoutInfo info(svgTextChunks);
@@ -1531,7 +959,7 @@ void SVGRootInlineBox::buildTextChunks(Vector<SVGChar>& svgChars, InlineFlowBox*
                 SVGInlineBoxCharacterRange& range = info.chunk.boxes.last();
                 if (range.isOpen()) {
                     range.box = curr;
-                    range.startOffset = (i == 0 ? 0 : i - 1);
+                    range.startOffset = i == 0 ? 0 : i - 1;
 
 #if DEBUG_CHUNK_BUILDING > 1
                     fprintf(stderr, " | -> Range is open! box=%p, startOffset=%i\n", range.box, range.startOffset);
@@ -1669,11 +1097,6 @@ void SVGRootInlineBox::buildTextChunks(Vector<SVGChar>& svgChars, InlineFlowBox*
 #endif
 }
 
-const Vector<SVGTextChunk>& SVGRootInlineBox::svgTextChunks() const 
-{
-    return m_svgTextChunks;
-}
-
 void SVGRootInlineBox::layoutTextChunks()
 {
     Vector<SVGTextChunk>::iterator it = m_svgTextChunks.begin();
@@ -1693,7 +1116,8 @@ void SVGRootInlineBox::layoutTextChunks()
 
             unsigned int i = 0;
             for (; boxIt != boxEnd; ++boxIt) {
-                SVGInlineBoxCharacterRange& range = *boxIt; i++;
+                SVGInlineBoxCharacterRange& range = *boxIt;
+                ++i;
                 fprintf(stderr, " -> RANGE %i STARTOFFSET: %i, ENDOFFSET: %i, BOX: %p\n", i, range.startOffset, range.endOffset, range.box);
             }
         }

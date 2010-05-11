@@ -1,6 +1,7 @@
 /**
  * Copyright (C) 2007 Rob Buis <buis@kde.org>
  *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,14 +25,12 @@
 #if ENABLE(SVG)
 #include "SVGInlineTextBox.h"
 
-#include "Document.h"
-#include "Editor.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "InlineFlowBox.h"
-#include "Range.h"
 #include "RenderSVGResource.h"
 #include "SVGRootInlineBox.h"
+#include "SVGTextLayoutUtilities.h"
 #include "Text.h"
 
 #include <float.h>
@@ -42,16 +41,6 @@ SVGInlineTextBox::SVGInlineTextBox(RenderObject* obj)
     : InlineTextBox(obj)
     , m_height(0)
 {
-}
-
-int SVGInlineTextBox::selectionTop()
-{
-    return m_y;
-}
- 
-int SVGInlineTextBox::selectionHeight()
-{
-    return m_height;
 }
 
 SVGRootInlineBox* SVGInlineTextBox::svgRootInlineBox() const
@@ -74,7 +63,7 @@ SVGRootInlineBox* SVGInlineTextBox::svgRootInlineBox() const
 float SVGInlineTextBox::calculateGlyphWidth(RenderStyle* style, int offset, int extraCharsAvailable, int& charsConsumed, String& glyphName) const
 {
     ASSERT(style);
-    return style->font().floatWidth(svgTextRunForInlineTextBox(textRenderer()->text()->characters() + offset, 1, style, this, 0), extraCharsAvailable, charsConsumed, glyphName);
+    return style->font().floatWidth(svgTextRunForInlineTextBox(textRenderer()->characters() + offset, 1, style, this, 0), extraCharsAvailable, charsConsumed, glyphName);
 }
 
 float SVGInlineTextBox::calculateGlyphHeight(RenderStyle* style, int, int) const
@@ -260,7 +249,7 @@ bool SVGInlineTextBox::svgCharacterHitsPosition(int x, int y, int& closestOffset
     if (x < charAtPos.x) {
         if (closestOffsetInBox > 0 && direction() == LTR)
             return true;
-        else if (closestOffsetInBox < (int) end() && direction() == RTL)
+        if (closestOffsetInBox < static_cast<int>(end()) && direction() == RTL)
             return true;
 
         return false;
@@ -490,7 +479,7 @@ void SVGInlineTextBox::paintSelection(int boxStartOffset, const SVGChar& svgChar
 
     Color textColor = style->color();
     Color color = renderer()->selectionBackgroundColor();
-    if (!color.isValid() || color.alpha() == 0)
+    if (!color.isValid() || !color.alpha())
         return;
 
     // If the text color ends up being the same as the selection background, invert the selection
@@ -516,7 +505,7 @@ void SVGInlineTextBox::paintSelection(int boxStartOffset, const SVGChar& svgChar
     p->save();
 
     int adjust = startPos >= boxStartOffset ? boxStartOffset : 0;
-    p->drawHighlightForText(font, svgTextRunForInlineTextBox(textRenderer()->text()->characters() + start() + boxStartOffset, length, style, this, svgChar.x),
+    p->drawHighlightForText(font, svgTextRunForInlineTextBox(textRenderer()->characters() + start() + boxStartOffset, length, style, this, svgChar.x),
                             IntPoint((int) svgChar.x, (int) svgChar.y - font.ascent()),
                             font.ascent() + font.descent(), color, style->colorSpace(), startPos - adjust, endPos - adjust);
 
@@ -587,6 +576,233 @@ void SVGInlineTextBox::paintDecoration(ETextDecoration decoration, GraphicsConte
     }
 
     context->restore();
+}
+
+void SVGInlineTextBox::buildLayoutInformation(SVGCharacterLayoutInfo& info, SVGLastGlyphInfo& lastGlyph)
+{
+    RenderText* textRenderer = this->textRenderer();
+    ASSERT(textRenderer);
+
+    RenderStyle* style = textRenderer->style(isFirstLineStyle());
+    ASSERT(style);
+
+    const Font& font = style->font();
+    const UChar* characters = textRenderer->characters();
+
+    TextDirection textDirection = direction();
+    unsigned startPosition = start();
+    unsigned endPosition = end();
+    unsigned length = len();
+
+    const SVGRenderStyle* svgStyle = style->svgStyle();
+    bool isVerticalText = isVerticalWritingMode(svgStyle);
+
+    int charsConsumed = 0;
+    for (unsigned i = 0; i < length; i += charsConsumed) {
+        SVGChar svgChar;
+
+        if (info.inPathLayout())
+            svgChar.pathData = SVGCharOnPath::create();
+
+        float glyphWidth = 0.0f;
+        float glyphHeight = 0.0f;
+
+        int extraCharsAvailable = length - i - 1;
+
+        String unicodeStr;
+        String glyphName;
+        if (textDirection == RTL) {
+            glyphWidth = calculateGlyphWidth(style, endPosition - i, extraCharsAvailable, charsConsumed, glyphName);
+            glyphHeight = calculateGlyphHeight(style, endPosition - i, extraCharsAvailable);
+            unicodeStr = String(characters + endPosition - i, charsConsumed);
+        } else {
+            glyphWidth = calculateGlyphWidth(style, startPosition + i, extraCharsAvailable, charsConsumed, glyphName);
+            glyphHeight = calculateGlyphHeight(style, startPosition + i, extraCharsAvailable);
+            unicodeStr = String(characters + startPosition + i, charsConsumed);
+        }
+
+        bool assignedX = false;
+        bool assignedY = false;
+
+        if (info.xValueAvailable() && (!info.inPathLayout() || (info.inPathLayout() && !isVerticalText))) {
+            if (!isVerticalText)
+                svgChar.newTextChunk = true;
+
+            assignedX = true;
+            svgChar.drawnSeperated = true;
+            info.curx = info.xValueNext();
+        }
+
+        if (info.yValueAvailable() && (!info.inPathLayout() || (info.inPathLayout() && isVerticalText))) {
+            if (isVerticalText)
+                svgChar.newTextChunk = true;
+
+            assignedY = true;
+            svgChar.drawnSeperated = true;
+            info.cury = info.yValueNext();
+        }
+
+        float dx = 0.0f;
+        float dy = 0.0f;
+
+        // Apply x-axis shift
+        if (info.dxValueAvailable()) {
+            svgChar.drawnSeperated = true;
+
+            dx = info.dxValueNext();
+            info.dx += dx;
+
+            if (!info.inPathLayout())
+                info.curx += dx;
+        }
+
+        // Apply y-axis shift
+        if (info.dyValueAvailable()) {
+            svgChar.drawnSeperated = true;
+
+            dy = info.dyValueNext();
+            info.dy += dy;
+
+            if (!info.inPathLayout())
+                info.cury += dy;
+        }
+
+        // Take letter & word spacing and kerning into account
+        float spacing = font.letterSpacing() + calculateCSSKerning(style);
+
+        const UChar* currentCharacter = characters + (textDirection == RTL ? endPosition - i : startPosition + i);
+        const UChar* lastCharacter = 0;
+
+        if (textDirection == RTL) {
+            if (i < endPosition)
+                lastCharacter = characters + endPosition - i +  1;
+        } else {
+            if (i > 0)
+                lastCharacter = characters + startPosition + i - 1;
+        }
+
+        // FIXME: SVG Kerning doesn't get applied on texts on path.
+        bool appliedSVGKerning = applySVGKerning(info, style, lastGlyph, unicodeStr, glyphName, isVerticalText);
+        if (info.nextDrawnSeperated || spacing != 0.0f || appliedSVGKerning) {
+            info.nextDrawnSeperated = false;
+            svgChar.drawnSeperated = true;
+        }
+
+        if (currentCharacter && Font::treatAsSpace(*currentCharacter) && lastCharacter && !Font::treatAsSpace(*lastCharacter)) {
+            spacing += font.wordSpacing();
+
+            if (spacing != 0.0f && !info.inPathLayout())
+                info.nextDrawnSeperated = true;
+        }
+
+        float orientationAngle = glyphOrientationToAngle(svgStyle, isVerticalText, *currentCharacter);
+
+        float xOrientationShift = 0.0f;
+        float yOrientationShift = 0.0f;
+        float glyphAdvance = applyGlyphAdvanceAndShiftRespectingOrientation(isVerticalText, orientationAngle, glyphWidth, glyphHeight,
+                                                                            font, svgChar, xOrientationShift, yOrientationShift);
+
+        // Handle textPath layout mode
+        if (info.inPathLayout()) {
+            float extraAdvance = isVerticalText ? dy : dx;
+            float newOffset = FLT_MIN;
+
+            if (assignedX && !isVerticalText)
+                newOffset = info.curx;
+            else if (assignedY && isVerticalText)
+                newOffset = info.cury;
+
+            float correctedGlyphAdvance = glyphAdvance;
+
+            // Handle lengthAdjust="spacingAndGlyphs" by specifying per-character scale operations
+            if (info.pathTextLength && info.pathChunkLength) { 
+                if (isVerticalText) {
+                    svgChar.pathData->yScale = info.pathChunkLength / info.pathTextLength;
+                    spacing *= svgChar.pathData->yScale;
+                    correctedGlyphAdvance *= svgChar.pathData->yScale;
+                } else {
+                    svgChar.pathData->xScale = info.pathChunkLength / info.pathTextLength;
+                    spacing *= svgChar.pathData->xScale;
+                    correctedGlyphAdvance *= svgChar.pathData->xScale;
+                }
+            }
+
+            // Handle letter & word spacing on text path
+            float pathExtraAdvance = info.pathExtraAdvance;
+            info.pathExtraAdvance += spacing;
+
+            svgChar.pathData->hidden = !info.nextPathLayoutPointAndAngle(correctedGlyphAdvance, extraAdvance, newOffset);
+            svgChar.drawnSeperated = true;
+
+            info.pathExtraAdvance = pathExtraAdvance;
+        }
+
+        // Apply rotation
+        if (info.angleValueAvailable())
+            info.angle = info.angleValueNext();
+
+        // Apply baseline-shift
+        if (info.baselineShiftValueAvailable()) {
+            svgChar.drawnSeperated = true;
+            float shift = info.baselineShiftValueNext();
+
+            if (isVerticalText)
+                info.shiftx += shift;
+            else
+                info.shifty -= shift;
+        }
+
+        // Take dominant-baseline / alignment-baseline into account
+        yOrientationShift += alignmentBaselineToShift(isVerticalText, textRenderer, font);
+
+        svgChar.x = info.curx;
+        svgChar.y = info.cury;
+        svgChar.angle = info.angle;
+
+        // For text paths any shift (dx/dy/baseline-shift) has to be applied after the rotation
+        if (!info.inPathLayout()) {
+            svgChar.x += info.shiftx + xOrientationShift;
+            svgChar.y += info.shifty + yOrientationShift;
+
+            if (orientationAngle != 0.0f)
+                svgChar.angle += orientationAngle;
+
+            if (svgChar.angle != 0.0f)
+                svgChar.drawnSeperated = true;
+        } else {
+            svgChar.pathData->orientationAngle = orientationAngle;
+
+            if (isVerticalText)
+                svgChar.angle -= 90.0f;
+
+            svgChar.pathData->xShift = info.shiftx + xOrientationShift;
+            svgChar.pathData->yShift = info.shifty + yOrientationShift;
+
+            // Translate to glyph midpoint
+            if (isVerticalText) {
+                svgChar.pathData->xShift += info.dx;
+                svgChar.pathData->yShift -= glyphAdvance / 2.0f;
+            } else {
+                svgChar.pathData->xShift -= glyphAdvance / 2.0f;
+                svgChar.pathData->yShift += info.dy;
+            }
+        }
+
+        // Advance to new position
+        if (isVerticalText) {
+            svgChar.drawnSeperated = true;
+            info.cury += glyphAdvance + spacing;
+        } else
+            info.curx += glyphAdvance + spacing;
+
+        // Advance to next character group
+        for (int k = 0; k < charsConsumed; ++k) {
+            info.svgChars.append(svgChar);
+            info.processedSingleCharacter();
+            svgChar.drawnSeperated = false;
+            svgChar.newTextChunk = false;
+        }
+    }
 }
 
 } // namespace WebCore

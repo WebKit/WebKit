@@ -64,6 +64,7 @@
 #include "SVGRootInlineBox.h"
 #include "SVGStopElement.h"
 #include "SVGStyledElement.h"
+#include "SVGTextLayoutUtilities.h"
 
 #include <math.h>
 

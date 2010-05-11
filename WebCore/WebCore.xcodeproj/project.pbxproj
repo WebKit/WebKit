@@ -75,6 +75,8 @@
 		083DAEA70F01A7FB00342754 /* RenderTextControlMultiLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 083DAEA30F01A7FB00342754 /* RenderTextControlMultiLine.h */; };
 		083DAEA80F01A7FB00342754 /* RenderTextControlSingleLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 083DAEA40F01A7FB00342754 /* RenderTextControlSingleLine.cpp */; };
 		083DAEA90F01A7FB00342754 /* RenderTextControlSingleLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 083DAEA50F01A7FB00342754 /* RenderTextControlSingleLine.h */; };
+		083F529911957FBE00653EBE /* SVGTextLayoutUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 083F529711957FBE00653EBE /* SVGTextLayoutUtilities.cpp */; };
+		083F529A11957FBE00653EBE /* SVGTextLayoutUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 083F529811957FBE00653EBE /* SVGTextLayoutUtilities.h */; };
 		0842BC721190144000C7D08F /* SVGCharacterData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0842BC701190144000C7D08F /* SVGCharacterData.cpp */; };
 		0842BC731190144000C7D08F /* SVGCharacterData.h in Headers */ = {isa = PBXBuildFile; fileRef = 0842BC711190144000C7D08F /* SVGCharacterData.h */; };
 		0842BC811190147200C7D08F /* SVGTextChunkLayoutInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0842BC801190147200C7D08F /* SVGTextChunkLayoutInfo.h */; };
@@ -5522,6 +5524,8 @@
 		083DAEA30F01A7FB00342754 /* RenderTextControlMultiLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTextControlMultiLine.h; sourceTree = "<group>"; };
 		083DAEA40F01A7FB00342754 /* RenderTextControlSingleLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextControlSingleLine.cpp; sourceTree = "<group>"; };
 		083DAEA50F01A7FB00342754 /* RenderTextControlSingleLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTextControlSingleLine.h; sourceTree = "<group>"; };
+		083F529711957FBE00653EBE /* SVGTextLayoutUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTextLayoutUtilities.cpp; sourceTree = "<group>"; };
+		083F529811957FBE00653EBE /* SVGTextLayoutUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTextLayoutUtilities.h; sourceTree = "<group>"; };
 		0842BC701190144000C7D08F /* SVGCharacterData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGCharacterData.cpp; sourceTree = "<group>"; };
 		0842BC711190144000C7D08F /* SVGCharacterData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGCharacterData.h; sourceTree = "<group>"; };
 		0842BC801190147200C7D08F /* SVGTextChunkLayoutInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTextChunkLayoutInfo.h; sourceTree = "<group>"; };
@@ -16274,6 +16278,8 @@
 				08DAB9C01103D9C1003E7ABA /* SVGShadowTreeElements.cpp */,
 				08DAB9C11103D9C1003E7ABA /* SVGShadowTreeElements.h */,
 				0842BC801190147200C7D08F /* SVGTextChunkLayoutInfo.h */,
+				083F529711957FBE00653EBE /* SVGTextLayoutUtilities.cpp */,
+				083F529811957FBE00653EBE /* SVGTextLayoutUtilities.h */,
 				A8CFF04C0A154F09000A4234 /* TableLayout.h */,
 				AB014DE10E689A4300E10445 /* TextControlInnerElements.cpp */,
 				AB014DE20E689A4300E10445 /* TextControlInnerElements.h */,
@@ -19117,6 +19123,7 @@
 				B55D5AA4119131FC00BCC315 /* JSSQLTransactionSyncCallback.h in Headers */,
 				B58CEB6911913607002A6790 /* JSDatabaseSync.h in Headers */,
 				B58CEB6D1191361C002A6790 /* JSSQLTransactionSync.h in Headers */,
+				083F529A11957FBE00653EBE /* SVGTextLayoutUtilities.h in Headers */,
 				C5198F4C1192ECFD002B74A6 /* IDBCallbacks.h in Headers */,
 				C5198F4E1192ECFD002B74A6 /* IDBDatabase.h in Headers */,
 				C5198F4F1192ECFD002B74A6 /* IDBDatabaseError.h in Headers */,
@@ -21385,6 +21392,7 @@
 				B55D5AA91191325000BCC315 /* JSSQLTransactionSyncCustom.cpp in Sources */,
 				B58CEB6A11913607002A6790 /* JSDatabaseSync.cpp in Sources */,
 				B58CEB6E1191361C002A6790 /* JSSQLTransactionSync.cpp in Sources */,
+				083F529911957FBE00653EBE /* SVGTextLayoutUtilities.cpp in Sources */,
 				C5198F4D1192ECFD002B74A6 /* IDBDatabase.cpp in Sources */,
 				C5198F531192ECFD002B74A6 /* IDBDatabaseRequest.cpp in Sources */,
 				C5198F561192ECFD002B74A6 /* IDBRequest.cpp in Sources */,

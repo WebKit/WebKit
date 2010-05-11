@@ -3287,6 +3287,8 @@
             'rendering/SVGShadowTreeElements.cpp',
             'rendering/SVGShadowTreeElements.h',
             'rendering/SVGTextChunkLayoutInfo.h',
+            'rendering/SVGTextLayoutUtilities.cpp',
+            'rendering/SVGTextLayoutUtilities.h',
             'rendering/TableLayout.h',
             'rendering/TextControlInnerElements.cpp',
             'rendering/TextControlInnerElements.h',

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs>
+<font>
+    <font-face font-family="svgFont" units-per-em="1000"/>
+    <missing-glyph horiz-adv-x="800" d="M 0 0 L 750 0 L 750 1000 L 0 1000 Z"/>
+    <glyph unicode="1" glyph-name="gl_1" horiz-adv-x="250" d="M 0 0 L 250 0 L 250 250 L 0 250 Z"/>
+    <glyph unicode="2" glyph-name="gl_2" horiz-adv-x="500" d="M 0 0 L 500 0 L 500 500 L 0 500 Z"/>
+    <glyph unicode="3" glyph-name="gl_3" horiz-adv-x="750" d="M 0 0 L 750 0 L 750 750 L 0 750 Z"/>
+    <glyph unicode="4" glyph-name="gl_4" horiz-adv-x="1000" d="M 0 0 L 1000 0 L 1000 1000 L 0 1000 Z"/>
+	<!-- Should have no effect on vertical text -->
+    <hkern g1="gl_1,gl_2,gl_3" g2="gl_2,gl_3,gl_4" k="-5000"/>
+</font>
+</defs>
+<g writing-mode="tb" glyph-orientation-vertical="0">
+    <text font-family="svgFont" font-size="10" transform="translate(20, 90) scale(2)">1234</text>
+</g>
+</svg>

@@ -28607,6 +28607,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\SVGTextLayoutUtilities.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\SVGTextLayoutUtilities.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\TableLayout.h"
 				>
 			</File>

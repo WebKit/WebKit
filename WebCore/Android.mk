@@ -657,7 +657,8 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	rendering/SVGRenderSupport.cpp \
 	rendering/SVGRenderTreeAsText.cpp \
 	rendering/SVGRootInlineBox.cpp \
-	rendering/SVGShadowTreeElements.cpp
+	rendering/SVGShadowTreeElements.cpp \
+	rendering/SVGTextLayoutUtilities.cpp
 endif
 
 LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \

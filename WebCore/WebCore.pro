@@ -1809,6 +1809,7 @@ HEADERS += \
     rendering/SVGRootInlineBox.h \
     rendering/SVGShadowTreeElements.h \
     rendering/SVGTextChunkLayoutInfo.h \
+    rendering/SVGTextLayoutUtilities.h \
     rendering/TextControlInnerElements.h \
     rendering/TransformState.h \
     svg/animation/SMILTimeContainer.h \
@@ -2778,7 +2779,8 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/SVGMarkerLayoutInfo.cpp \
         rendering/SVGRenderSupport.cpp \
         rendering/SVGRootInlineBox.cpp \
-        rendering/SVGShadowTreeElements.cpp
+        rendering/SVGShadowTreeElements.cpp \
+        rendering/SVGTextLayoutUtilities.cpp
 }
 
 contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=1) {
