@@ -1,3 +1,17 @@
+2010-05-11  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [gtk] critical warning in soup_message_set_first_party() when cancelling a navigation
+        https://bugs.webkit.org/show_bug.cgi?id=38653
+
+        Check if willSendRequest cancelled the request before setting the
+        first party for the cookies in the message, otherwise we'll get a
+        critical warning.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::restartedCallback):
+
 2010-05-11  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Adele Peterson.

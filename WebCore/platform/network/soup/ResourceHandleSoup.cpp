@@ -205,6 +205,9 @@ static void restartedCallback(SoupMessage* msg, gpointer data)
     if (d->client())
         d->client()->willSendRequest(handle, request, response);
 
+    if (d->m_cancelled)
+        return;
+
 #ifdef HAVE_LIBSOUP_2_29_90
     // Update the first party in case the base URL changed with the redirect
     String firstPartyString = request.firstPartyForCookies().string();
