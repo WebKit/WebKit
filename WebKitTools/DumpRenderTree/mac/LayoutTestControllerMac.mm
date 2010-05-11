@@ -66,6 +66,10 @@
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#include <Foundation/NSPrivateDecls.h>
+#endif
+
 @interface CommandValidationTarget : NSObject <NSValidatedUserInterfaceItem>
 {
     SEL _action;
@@ -758,7 +762,12 @@ void LayoutTestController::setWebViewEditable(bool editable)
 #ifndef BUILDING_ON_TIGER
 static NSString *SynchronousLoaderRunLoopMode = @"DumpRenderTreeSynchronousLoaderRunLoopMode";
 
-@interface SynchronousLoader : NSObject
+#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD) || !defined(__COCOA_FORMAL_PROTOCOLS_2__)
+@protocol NSURLConnectionDelegate <NSObject>
+@end
+#endif
+
+@interface SynchronousLoader : NSObject <NSURLConnectionDelegate>
 {
     NSString *m_username;
     NSString *m_password;
