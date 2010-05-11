@@ -122,6 +122,14 @@ public:
     RenderLayer* rootRenderLayer() const;
     GraphicsLayer* rootPlatformLayer() const;
 
+    enum RootLayerAttachment {
+        RootLayerUnattached,
+        RootLayerAttachedViaChromeClient,
+        RootLayerAttachedViaEnclosingIframe
+    };
+
+    RootLayerAttachment rootLayerAttachment() const { return m_rootLayerAttachment; }
+
     void didMoveOnscreen();
     void willMoveOffscreen();
 
@@ -182,6 +190,9 @@ private:
 
     void ensureRootPlatformLayer();
     void destroyRootPlatformLayer();
+
+    void attachRootPlatformLayer(RootLayerAttachment);
+    void detachRootPlatformLayer();
     
     // Whether a running transition or animation enforces the need for a compositing layer.
     bool requiresCompositingForAnimation(RenderObject*) const;
@@ -200,8 +211,9 @@ private:
     bool m_showRepaintCounter;
     bool m_compositingConsultsOverlap;
     bool m_compositing;
-    bool m_rootLayerAttached;
     bool m_compositingLayersNeedRebuild;
+    
+    RootLayerAttachment m_rootLayerAttachment;
 
     // Enclosing clipping layer for iframe content
     OwnPtr<GraphicsLayer> m_clippingLayer;

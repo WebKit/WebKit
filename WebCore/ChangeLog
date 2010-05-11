@@ -4,6 +4,35 @@
 
         Allow compositing layers to be connected across iframe boundaries on Mac
         https://bugs.webkit.org/show_bug.cgi?id=38856
+        
+        Use an enum for the type of root layer attachment on a RenderLayerCompositor, so we can
+        determine if the attachment is via the ChromeClient, via an enclosing iframe, or unattached.
+
+        * rendering/RenderLayerCompositor.h: New RootLayerAttachment enum.
+        (WebCore::RenderLayerCompositor::rootLayerAttachment): getter for the current attachment.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::RenderLayerCompositor): Init m_rootLayerAttachment.
+        (WebCore::RenderLayerCompositor::~RenderLayerCompositor): Assert that is unattached.
+        (WebCore::RenderLayerCompositor::updateCompositingLayers): Call destroyRootPlatformLayer instead of willMoveOffscreen,
+        when there are no layers left. Also clear out the clipping layer.
+        (WebCore::RenderLayerCompositor::didMoveOnscreen): Call attachRootPlatformLayer.
+        (WebCore::RenderLayerCompositor::willMoveOffscreen): Call ensureRootPlatformLayer with the appropriate attachment.
+        (WebCore::RenderLayerCompositor::ensureRootPlatformLayer): Only create the m_rootPlatformLayer if we don't have one
+           already, but be sure to always set the root layer geometry orientation. Also only create the
+           m_clippingLayer if we need to.
+        (WebCore::RenderLayerCompositor::destroyRootPlatformLayer): Call detachRootPlatformLayer().
+        (WebCore::RenderLayerCompositor::attachRootPlatformLayer): Code moved from didMoveOnscreen, but switching on
+            attachment.
+        (WebCore::RenderLayerCompositor::detachRootPlatformLayer): Code moved from willMoveOffscreen, but switching on
+            attachment.
+
+2010-05-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson
+
+        Allow compositing layers to be connected across iframe boundaries on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=38856
 
         Clean up the geometry logic when propagating compositing out of iframes.
 
