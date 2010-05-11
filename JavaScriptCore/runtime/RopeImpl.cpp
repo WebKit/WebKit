@@ -30,9 +30,9 @@ namespace JSC {
 
 void RopeImpl::derefFibersNonRecursive(Vector<RopeImpl*, 32>& workQueue)
 {
-    unsigned length = fiberCount();
-    for (unsigned i = 0; i < length; ++i) {
-        Fiber& fiber = fibers(i);
+    unsigned fiberCount = this->fiberCount();
+    for (unsigned i = 0; i < fiberCount; ++i) {
+        Fiber& fiber = m_fibers[i];
         if (isRope(fiber)) {
             RopeImpl* nextRope = static_cast<RopeImpl*>(fiber);
             if (nextRope->hasOneRef())

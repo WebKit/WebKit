@@ -1,3 +1,56 @@
+2010-05-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt and Darin Adler.
+
+        Start using ropes in String.prototype.replace.
+        
+        1%-1.5% speedup on SunSpider.
+
+        * runtime/JSString.cpp:
+        (JSC::JSString::resolveRope): Updated for RopeImpl refactoring.
+
+        (JSC::JSString::replaceCharacter): Added a replaceCharacter function, which creates
+        a rope for the resulting replacement.
+
+        * runtime/JSString.h: A few changes here:
+        (JSC::):
+        (JSC::RopeBuilder::RopeIterator::RopeIterator):
+        (JSC::RopeBuilder::RopeIterator::operator++):
+        (JSC::RopeBuilder::RopeIterator::operator*):
+        (JSC::RopeBuilder::RopeIterator::operator!=):
+        (JSC::RopeBuilder::RopeIterator::WorkItem::WorkItem):
+        (JSC::RopeBuilder::RopeIterator::WorkItem::operator!=):
+        (JSC::RopeBuilder::RopeIterator::skipRopes): Created a RopeIterator abstraction.
+        We use this to do a substring find without having to resolve the rope.
+        (We could use this iterator when resolving ropes, too, but resolving
+        ropes backwards is usually more efficient.)
+
+        (JSC::RopeBuilder::JSString): Added constructors for 2 & 3 UStrings.
+
+        (JSC::RopeBuilder::appendValueInConstructAndIncrementLength):
+        (JSC::RopeBuilder::size): Updated for RopeImpl refactoring.
+
+        * runtime/Operations.h: Updated for RopeImpl refactoring.
+        (JSC::jsString): Added jsString functions for 2 & 3 UStrings.
+
+        * runtime/RopeImpl.cpp:
+        (JSC::RopeImpl::derefFibersNonRecursive):
+        * runtime/RopeImpl.h:
+        (JSC::RopeImpl::initializeFiber):
+        (JSC::RopeImpl::size):
+        (JSC::RopeImpl::fibers):
+        (JSC::RopeImpl::deref):
+        (JSC::RopeImpl::RopeImpl): A little refactoring to make this patch easier:
+        Moved statics to the top of the class; put multi-statement functions on
+        multiple lines; renamed "fiberCount" to "size" to match other collections;
+        changed the "fibers" accessor to return the fibers buffer, instead of an
+        item in the buffer, to make iteration easier.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace): Don't resolve a rope unless we need to. Do
+        use our new replaceCharacter function if possible. Do use a rope to
+        represent splicing three strings together.
+
 2010-05-10  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Darin Adler.
