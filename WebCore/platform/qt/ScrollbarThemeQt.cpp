@@ -114,7 +114,7 @@ static QStyleOptionSlider* styleOptionSlider(Scrollbar* scrollbar, QWidget* widg
         opt.state |= QStyle::State_Horizontal;
     opt.sliderValue = scrollbar->value();
     opt.sliderPosition = opt.sliderValue;
-    opt.pageStep = scrollbar->visibleSize();
+    opt.pageStep = scrollbar->pageStep();
     opt.singleStep = scrollbar->lineStep();
     opt.minimum = 0;
     opt.maximum = qMax(0, scrollbar->maximum());

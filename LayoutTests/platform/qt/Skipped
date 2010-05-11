@@ -133,9 +133,6 @@ fast/workers/shared-worker-frame-lifecycle.html
 svg/custom/path-getTotalLength.svg
 svg/custom/glyph-setting-d-attribute.svg
 
-# ------- crashes
-fast/text/find-hidden-text.html
-
 # failing media tests
 media/adopt-node-crash.html
 media/audio-constructor.html
