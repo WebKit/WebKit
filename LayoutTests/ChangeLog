@@ -1,5 +1,11 @@
 2010-05-10  Dumitru Daniliuc  <dumi@chromium.org>
 
+        Unreviewed, fixing Qt's expectations.
+
+        * platform/qt/http/tests/security/cross-frame-access-call-expected.txt:
+
+2010-05-10  Dumitru Daniliuc  <dumi@chromium.org>
+
         Reviewed by Brady Eidson.
 
         Fixing the expectations for openDatabase() in cross-frame-access-call.html.

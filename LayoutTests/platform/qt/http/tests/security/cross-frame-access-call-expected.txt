@@ -66,7 +66,7 @@ PASS: window.confirm.call(targetWindow, 'message') should be 'undefined' and is.
 PASS: window.prompt.call(targetWindow, 'message', 'defaultValue') should be 'undefined' and is.
 PASS: window.getComputedStyle.call(targetWindow, document.body, '') should be 'undefined' and is.
 PASS: window.getMatchedCSSRules.call(targetWindow, document.body, '', false) should be 'undefined' and is.
-PASS: window.openDatabase.call(targetWindow, 'name') should be 'undefined' and is.
+PASS: window.openDatabase.call(targetWindow, 'name', '1.0', 'description', 0) should be 'undefined' and is.
 PASS: window.atob.call(targetWindow, 'string') should be 'undefined' and is.
 PASS: window.btoa.call(targetWindow, 'string') should be 'undefined' and is.
 PASS: window.open.call(targetWindow, '') should be 'undefined' and is.
