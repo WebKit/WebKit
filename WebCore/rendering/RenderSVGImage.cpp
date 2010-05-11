@@ -33,6 +33,8 @@
 #include "GraphicsContext.h"
 #include "PointerEventsHitRules.h"
 #include "RenderLayer.h"
+#include "RenderSVGResourceContainer.h"
+#include "RenderSVGResourceFilter.h"
 #include "SVGImageElement.h"
 #include "SVGLength.h"
 #include "SVGPreserveAspectRatio.h"
@@ -174,6 +176,12 @@ FloatRect RenderSVGImage::repaintRectInLocalCoordinates() const
 void RenderSVGImage::imageChanged(WrappedImagePtr image, const IntRect* rect)
 {
     RenderImage::imageChanged(image, rect);
+#if ENABLE(FILTERS)
+    // The image resource defaults to nullImage until the resource arrives.
+    // This empty image may be cached by SVG filter effects which must be invalidated.
+    if (RenderSVGResourceFilter* filter = getRenderSVGResourceById<RenderSVGResourceFilter>(document(), style()->svgStyle()->filterResource()))
+        filter->invalidateClient(this);
+#endif
     repaint();
 }
 

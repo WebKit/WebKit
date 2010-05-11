@@ -1,3 +1,15 @@
+2010-05-11  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Dirk Schulze.
+
+        RenderSVGImage::imageChanged should invalidate the SVG filter cache
+        https://bugs.webkit.org/show_bug.cgi?id=38838
+
+        Test: svg/filters/filteredImage.svg
+
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::imageChanged):
+
 2010-05-10  Simon Fraser  <simon.fraser@apple.com>
 
         Fix asserting GTK build.
