@@ -110,4 +110,6 @@ interface IWebFramePrivate : IUnknown
     HRESULT numberOfPages([in] float pageWidthInPixels, [in] float pageHeightInPixels, [out, retval] int* pageNumber);
 
     HRESULT layerTreeAsText([out, retval] BSTR* result);
+
+    HRESULT paintDocumentRectToContextAtPoint([in] RECT rect, [in] POINT pt, [in] OLE_HANDLE deviceContext);
 }

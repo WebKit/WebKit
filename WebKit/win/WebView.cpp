@@ -5612,6 +5612,20 @@ HRESULT STDMETHODCALLTYPE WebView::paintDocumentRectToContext(
     return m_mainFrame->paintDocumentRectToContext(rect, deviceContext);
 }
 
+HRESULT STDMETHODCALLTYPE WebView::paintDocumentRectToContextAtPoint(
+    /* [in] */ RECT rect,
+    /* [in] */ POINT pt,
+    /* [in] */ OLE_HANDLE deviceContext)
+{
+    if (!deviceContext)
+        return E_POINTER;
+
+    if (!m_mainFrame)
+        return E_FAIL;
+
+    return m_mainFrame->paintDocumentRectToContextAtPoint(rect, pt, deviceContext);
+}
+
 HRESULT STDMETHODCALLTYPE WebView::setCustomHTMLTokenizerTimeDelay(
     /* [in] */ double timeDelay)
 {

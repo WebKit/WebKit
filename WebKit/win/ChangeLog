@@ -1,3 +1,22 @@
+2010-05-11  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38937        
+        W7 window preview paints content at the wrong location
+
+        * WebFrame.cpp:
+        (WebFrame::paintDocumentRectToContext): Revert r58895
+        (WebFrame::paintDocumentRectToContextAtPoint): Added
+
+        * Interfaces/IWebFramePrivate.idl: Added paintDocumentRectToContextAtPoint
+        * Interfaces/IWebViewPrivate.idl: ditto
+        * Interfaces/WebKit.idl: touch to rebuild
+        * WebFrame.h: ditto
+        * WebView.cpp: ditto
+        (WebView::paintDocumentRectToContextAtPoint): ditto
+        * WebView.h: ditto
+
 2010-05-07  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Adele Peterson.
