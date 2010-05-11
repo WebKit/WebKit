@@ -70,20 +70,9 @@ if (isAppleMacWebKit()) {
     $result = buildXCodeProject("DumpRenderTree", $clean, XcodeOptions(), @ARGV);
 } elsif (isAppleWinWebKit()) {
     $result = buildVisualStudioProject("DumpRenderTree.sln", $clean);
-} elsif (isQt() || isGtk() || isWx()) {
-    # Qt, Gtk and wxWindows build everything in one shot. No need to build anything here.
+} elsif (isQt() || isGtk() || isWx() || isChromium()) {
+    # Qt, Gtk wxWindows, and Chromium build everything in one shot. No need to build anything here.
     $result = 0;
-} elsif (isChromium()) {
-    if (isDarwin()) {
-        $result = buildXCodeProject("DumpRenderTree.gyp/DumpRenderTree", $clean, "-configuration", configuration(), @ARGV);
-    } elsif (isCygwin() || isWindows()) {
-        # Windows build - builds the root visual studio solution.
-        $result = buildChromiumVisualStudioProject("DumpRenderTree.gyp/DumpRenderTree.sln", $clean);
-    } elsif (isLinux()) {
-        $result = buildChromiumMakefile("../../WebKit/chromium/", "DumpRenderTree", $clean);
-    } else {
-        die "This platform is not supported by Chromium.\n";
-    }
 } else {
     die "Building not defined for this platform!\n";
 }

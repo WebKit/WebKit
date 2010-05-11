@@ -31,6 +31,7 @@
 {
     'includes': [
         'features.gypi',
+        '../../WebKitTools/DumpRenderTree/DumpRenderTree.gypi',
     ],
     'variables': {
         'webkit_target_type': 'static_library',
@@ -41,14 +42,11 @@
                 # Webkit is being built outside of the full chromium project.
                 # e.g. via build-webkit --chromium
                 'chromium_src_dir': '../../WebKit/chromium',
+                'webkit_support_gyp': '../../WebKit/chromium/webkit/support/webkit_support.gyp',
             },{
                 # WebKit is checked out in src/chromium/third_party/WebKit
                 'chromium_src_dir': '../../../..',
-            }],
-            # We can't turn on warnings on Windows and Linux until we upstream the
-            # WebKit API.
-            ['OS=="mac"', {
-                'chromium_code': 1,
+                'webkit_support_gyp': '../../../../webkit/webkit.gyp',
             }],
         ],
     },
@@ -444,6 +442,11 @@
                     'sources/': [
                         ['exclude', 'Skia\\.cpp$'],
                     ],
+                    'variables': {
+                        # FIXME: Turn on warnings on other platforms and for
+                        # other targets.
+                        'chromium_code': 1,
+                    }
                 }, { # else: OS!="mac"
                     'sources/': [
                         ['exclude', '/mac/'],
@@ -527,7 +530,117 @@
                 }],
             ],
         },
+        {
+            'target_name': 'DumpRenderTree',
+            'type': 'executable',
+            'mac_bundle': 1,
+            'dependencies': [
+                'webkit',
+                '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf_config',
+                '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
+                '<(webkit_support_gyp):webkit_support',
+            ],
+            'include_dirs': [
+                '.',
+                '../../JavaScriptCore',
+                '<(DEPTH)',
+            ],
+            'defines': [
+                # Technically not a unit test but require functions available only to
+                # unit tests.
+                'UNIT_TEST',
+            ],
+            'sources': [
+                '<@(drt_files)',
+            ],
+            'conditions': [
+                ['OS=="mac"', {
+                    'dependencies': ['LayoutTestHelper'],
+
+                    'mac_bundle_resources': [
+                        '../../WebKitTools/DumpRenderTree/qt/fonts/AHEM____.TTF',
+                        '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher100.ttf',
+                        '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher200.ttf',
+                        '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher300.ttf',
+                        '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher400.ttf',
+                        '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher500.ttf',
+                        '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher600.ttf',
+                        '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher700.ttf',
+                        '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher800.ttf',
+                        '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher900.ttf',
+                    ],
+                    'actions': [
+                        {
+                            'action_name': 'repack_locale',
+                            'variables': {
+                                'repack_path': '<(chromium_src_dir)/tools/data_pack/repack.py',
+                                'pak_inputs': [
+                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_chromium_resources.pak',
+                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_strings_en-US.pak',
+                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_resources.pak',
+                            ]},
+                            'inputs': [
+                                '<(repack_path)',
+                                '<@(pak_inputs)',
+                            ],
+                            'outputs': [
+                                '<(INTERMEDIATE_DIR)/repack/DumpRenderTree.pak',
+                            ],
+                            'action': ['python', '<(repack_path)', '<@(_outputs)', '<@(pak_inputs)'],
+                            'process_outputs_as_mac_bundle_resources': 1,
+                        },
+                    ], # actions
+                }],
+                ['OS!="linux" and OS!="freebsd" and OS!="openbsd"', {
+                    'sources/': [
+                        ['exclude', '(Gtk|Linux)\\.cpp$']
+                    ]
+                }],
+                ['OS!="win"', {
+                    'sources/': [
+                        ['exclude', 'Win\\.cpp$'],
+                    ]
+                }],
+                ['OS!="mac"', {
+                    'sources/': [
+                        # .mm is already excluded by common.gypi
+                        ['exclude', 'Mac\\.cpp$'],
+                    ]
+                }],
+            ],
+        },
+        {
+            'target_name': 'ImageDiff',
+            'type': 'executable',
+            'dependencies': [
+                '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+                '<(chromium_src_dir)/gfx/gfx.gyp:gfx',
+            ],
+            'include_dirs': [
+                '../../JavaScriptCore',
+                '<(DEPTH)',
+            ],
+            'sources': [
+                '../../WebKitTools/DumpRenderTree/chromium/ImageDiff.cpp',
+            ],
+        },
     ], # targets
+    'conditions': [
+        ['OS=="mac"', {
+            'targets': [
+                {
+                    'target_name': 'LayoutTestHelper',
+                    'type': 'executable',
+                    'sources': ['../../WebKitTools/DumpRenderTree/chromium/LayoutTestHelper.mm'],
+                    'link_settings': {
+                        'libraries': [
+                            '$(SDKROOT)/System/Library/Frameworks/AppKit.framework',
+                        ],
+                    },
+                },
+            ],
+        }],
+    ], # conditions
 }
 
 # Local Variables:
