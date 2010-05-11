@@ -120,7 +120,7 @@ void RenderLayerCompositor::enableCompositingMode(bool enable /* = true */)
             destroyRootPlatformLayer();
 
         if (shouldPropagateCompositingToIFrameParent()) {
-            if (Element* ownerElement = m_renderView->document()->ownerElement()) {
+            if (Element* ownerElement = enclosingIFrameElement()) {
                 // Trigger a recalcStyle in the parent document, to update compositing in that document.
                 ownerElement->setNeedsStyleRecalc(SyntheticStyleChange);
             }
@@ -752,18 +752,23 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, cons
     }
     
     if (layerBacking) {
+        bool parented = false;
         if (shouldPropagateCompositingToIFrameParent() && layer->renderer()->isRenderIFrame()) {
-            // This is an iframe parent. Make it the parent of the iframe document's root
-            layerBacking->parentForSublayers()->removeAllChildren();
-
-            RenderLayerCompositor* innerCompositor = layerBacking->innerRenderLayerCompositor();
-            if (innerCompositor) {
+            RenderLayerCompositor* innerCompositor = iframeContentsCompositor(toRenderIFrame(layer->renderer()));
+            if (innerCompositor->inCompositingMode()) {
+                // This is an iframe parent. Make it the parent of the iframe document's root
+                layerBacking->parentForSublayers()->removeAllChildren();
                 GraphicsLayer* innerRootLayer = innerCompositor->rootPlatformLayer();
-                if (innerRootLayer)
+                if (innerRootLayer) {
                     layerBacking->parentForSublayers()->addChild(innerRootLayer);
+                    parented = true;
+                }
             }
-        } else
+        }
+        
+        if (!parented)
             layerBacking->parentForSublayers()->setChildren(layerChildren);
+
         childLayersOfEnclosingLayer.append(layerBacking->childForSuperlayers());
     }
 }
@@ -774,6 +779,16 @@ void RenderLayerCompositor::setRootPlatformLayerClippingBox(const IntRect& conte
         m_clippingLayer->setPosition(FloatPoint(contentsBox.x(), contentsBox.y()));
         m_clippingLayer->setSize(FloatSize(contentsBox.width(), contentsBox.height()));
     }
+}
+
+RenderLayerCompositor* RenderLayerCompositor::iframeContentsCompositor(RenderIFrame* renderer)
+{
+    HTMLIFrameElement* element = static_cast<HTMLIFrameElement*>(renderer->node());
+    if (Document* contentDocument = element->contentDocument()) {
+        if (RenderView* view = contentDocument->renderView())
+            return view->compositor();
+    }
+    return 0;
 }
 
 // This just updates layer geometry without changing the hierarchy.
@@ -939,14 +954,11 @@ void RenderLayerCompositor::didMoveOnscreen()
 
     bool attached = false;
     if (shouldPropagateCompositingToIFrameParent()) {
-        if (Element* ownerElement = m_renderView->document()->ownerElement()) {
-            RenderObject* renderer = ownerElement->renderer();
-            if (renderer && renderer->isRenderIFrame()) {
-                // The layer will get hooked up via RenderLayerBacking::updateGraphicsLayerConfiguration()
-                // for the iframe's renderer in the parent document.
-                ownerElement->setNeedsStyleRecalc(SyntheticStyleChange);
-                attached = true;
-            }
+        if (Element* ownerElement = enclosingIFrameElement()) {
+            // The layer will get hooked up via RenderLayerBacking::updateGraphicsLayerConfiguration()
+            // for the iframe's renderer in the parent document.
+            ownerElement->setNeedsStyleRecalc(SyntheticStyleChange);
+            attached = true;
         }
     }
 
@@ -968,14 +980,11 @@ void RenderLayerCompositor::willMoveOffscreen()
 
     bool detached = false;
     if (shouldPropagateCompositingToIFrameParent()) {
-        if (Element* ownerElement = m_renderView->document()->ownerElement()) {
-            RenderObject* renderer = ownerElement->renderer();
-            if (renderer->isRenderIFrame()) {
-                // The layer will get hooked up via RenderLayerBacking::updateGraphicsLayerConfiguration()
-                // for the iframe's renderer in the parent document.
-                ownerElement->setNeedsStyleRecalc(SyntheticStyleChange);
-                detached = true;
-            }
+        if (Element* ownerElement = enclosingIFrameElement()) {
+            // The layer will get hooked up via RenderLayerBacking::updateGraphicsLayerConfiguration()
+            // for the iframe's renderer in the parent document.
+            ownerElement->setNeedsStyleRecalc(SyntheticStyleChange);
+            detached = true;
         }
     }
 
@@ -1030,6 +1039,14 @@ bool RenderLayerCompositor::shouldPropagateCompositingToIFrameParent()
 #else
     return false;
 #endif
+}
+
+Element* RenderLayerCompositor::enclosingIFrameElement() const
+{
+    if (Element* ownerElement = m_renderView->document()->ownerElement())
+        return ownerElement->hasTagName(iframeTag) ? ownerElement : 0;
+
+    return 0;
 }
 
 bool RenderLayerCompositor::needsToBeComposited(const RenderLayer* layer) const
@@ -1208,21 +1225,16 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
     // Need to clip to prevent transformed content showing outside this frame
     m_rootPlatformLayer->setMasksToBounds(true);
     
-    if (shouldPropagateCompositingToIFrameParent()) {
-    // Create a clipping layer if this is an iframe
-        if (Element* ownerElement = m_renderView->document()->ownerElement()) {
-            RenderObject* renderer = ownerElement->renderer();
-            if (renderer && renderer->isRenderIFrame()) {
-                m_clippingLayer = GraphicsLayer::create(0);
-                m_clippingLayer->setGeometryOrientation(GraphicsLayer::compositingCoordinatesOrientation());
+    if (shouldPropagateCompositingToIFrameParent() && enclosingIFrameElement()) {
+        // Create a clipping layer if this is an iframe
+        m_clippingLayer = GraphicsLayer::create(0);
+        m_clippingLayer->setGeometryOrientation(GraphicsLayer::compositingCoordinatesOrientation());
 #ifndef NDEBUG
-                m_clippingLayer->setName("iframe Clipping");
+        m_clippingLayer->setName("iframe Clipping");
 #endif
-                m_clippingLayer->setMasksToBounds(true);
-                m_clippingLayer->setAnchorPoint(FloatPoint());
-                m_clippingLayer->addChild(m_rootPlatformLayer.get());
-            }
-        }
+        m_clippingLayer->setMasksToBounds(true);
+        m_clippingLayer->setAnchorPoint(FloatPoint());
+        m_clippingLayer->addChild(m_rootPlatformLayer.get());
     }
 
     didMoveOnscreen();

@@ -1,3 +1,29 @@
+2010-05-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson
+
+        Allow compositing layers to be connected across iframe boundaries on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=38856
+
+        Clean up some methods related to composited iframes. No behavioral changes.
+
+        * rendering/RenderLayerBacking.h: Move innerRenderLayerCompositor() to be a static method:
+            RenderLayerCompositor::iframeContentsCompositor().
+        * rendering/RenderLayerBacking.cpp: Remove innerRenderLayerCompositor().
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry): Call iframeContentsCompositor().
+        
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::enableCompositingMode): Call enclosingIFrameElement()
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree): iframeContentsCompositor() is now a static method in this class.
+        Also check that the iframe contents are in compositing mode (slightly clearer than relying on rootPlatformLayer() returning
+        null).
+        (WebCore::RenderLayerCompositor::iframeContentsCompositor): Moved from RenderLayerBacking.
+        (WebCore::RenderLayerCompositor::didMoveOnscreen): Use enclosingIFrameElement() method.
+        (WebCore::RenderLayerCompositor::willMoveOffscreen): Ditto.
+        (WebCore::RenderLayerCompositor::enclosingIFrameElement): New method.
+        (WebCore::RenderLayerCompositor::ensureRootPlatformLayer): Call enclosingIFrameElement().
+        * rendering/RenderLayerCompositor.h: New method, iframeContentsCompositor().
+
 2010-05-10  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Brady Eidson.
