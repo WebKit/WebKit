@@ -1,3 +1,11 @@
+2010-05-11  Alice Liu  <alice.liu@apple.com>
+
+        Rubber-stamped by Gavin Barraclough.
+
+        Fix build error when enabling debugging block in WebKit win painting code
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2010-05-11  Mark Rowe  <mrowe@apple.com>
 
         Fix the world.
