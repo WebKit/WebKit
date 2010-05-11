@@ -1,3 +1,14 @@
+2010-05-11  Avi Drissman  <avi@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Pipe RTL info into WebPopupMenuInfo
+        https://bugs.webkit.org/show_bug.cgi?id=38749
+
+        * public/WebPopupMenuInfo.h:
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::getPopupMenuInfo):
+
 2010-05-11  David Holloway  <dhollowa@chromium.org>
 
         Reviewed by Darin Fisher.

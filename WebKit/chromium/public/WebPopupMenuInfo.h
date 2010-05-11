@@ -44,6 +44,7 @@ struct WebPopupMenuInfo {
     int itemFontSize;
     int selectedIndex;
     WebVector<WebMenuItemInfo> items;
+    bool rightAligned;
 };
 
 } // namespace WebKit

@@ -175,6 +175,9 @@ public:
     // The size of the font being used.
     int menuItemFontSize() const;
 
+    // The style of the menu being used.
+    PopupMenuStyle menuStyle() const;
+
     PopupType popupType() const { return m_popupType; }
 
 private:
