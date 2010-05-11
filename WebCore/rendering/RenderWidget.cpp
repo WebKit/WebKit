@@ -282,10 +282,15 @@ void RenderWidget::paint(PaintInfo& paintInfo, int tx, int ty)
             if (!paintOffset.isZero())
                 paintInfo.context->translate(-paintOffset);
         }
-        if (m_widget->isFrameView() && paintInfo.overlapTestRequests && !static_cast<FrameView*>(m_widget.get())->useSlowRepaintsIfNotOverlapped()) {
-            ASSERT(!paintInfo.overlapTestRequests->contains(this));
-            paintInfo.overlapTestRequests->set(this, m_widget->frameRect());
-        }
+
+        if (m_widget->isFrameView()) {
+            FrameView* frameView = static_cast<FrameView*>(m_widget.get());
+            bool runOverlapTests = !frameView->useSlowRepaintsIfNotOverlapped() || frameView->hasCompositedContent();
+            if (paintInfo.overlapTestRequests && runOverlapTests) {
+                ASSERT(!paintInfo.overlapTestRequests->contains(this));
+                paintInfo.overlapTestRequests->set(this, m_widget->frameRect());
+            }
+         }
     }
 
     if (style()->hasBorderRadius())

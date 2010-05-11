@@ -12,13 +12,8 @@
         -webkit-box-shadow: 0 0 20px black;
     }
     
-    .overlay {
-      position: absolute;
-      width: 50px;
-      height: 50px;
-      top: 5px;
-      left: 5px;
-      background-color: rgba(0, 0, 0, 0.2);
+    .composited {
+      -webkit-transform: translateZ(0);
     }
     
   </style>
@@ -28,9 +23,10 @@
         layoutTestController.waitUntilDone();
     }
 
-    // Called from subframe.
-    function testDone()
+    function doTest()
     {
+      document.getElementById('iframe').className = 'composited';
+
       // Wait for a layer update.
       window.setTimeout(function() {
         if (window.layoutTestController) {
@@ -39,16 +35,15 @@
         }
       }, 0);
     }
+    
+    window.addEventListener('load', doTest, false);
   </script>
 </head>
 <body>
 
-    <!-- The parent document may into compositing mode by the iframe. -->
-    <iframe id="parent-iframe" src="resources/leave-compositing-subframe.html"></iframe>
+    <!-- Test with already-composited iframe contents, and iframe itself composited. -->
+    <iframe id="iframe" src="resources/composited-subframe.html"></iframe>
     
-    <div class="overlay">
-    </div>
-
     <pre id="layers">Layer tree appears here in DRT.</pre>
 </body>
 </html>

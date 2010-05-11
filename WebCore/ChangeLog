@@ -5,6 +5,67 @@
         Allow compositing layers to be connected across iframe boundaries on Mac
         https://bugs.webkit.org/show_bug.cgi?id=38856
 
+        Changes to allow compositing layers for iframes to switch between being hosted
+        by the iframe's layer-backed NSView, and parented in the GraphicsLayer tree of the
+        enclosing document.
+
+        Tests: compositing/iframes/connect-compositing-iframe.html
+               compositing/iframes/connect-compositing-iframe2.html
+               compositing/iframes/connect-compositing-iframe3.html
+
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::hasCompositedContent): New convenience method.
+        (WebCore::FrameView::setIsOverlapped): If we're composited, poke the owner document in case it
+            wants to re-evaluate compositing decisions.
+        (WebCore::FrameView::isOverlapped): Just expose the existing flag.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::shouldBeNormalFlowOnly):
+        (WebCore::RenderLayer::isSelfPaintingLayer):
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration): If this is an iframe, we need
+            to ensure that the layers for the iframe content are hooked up.
+        (WebCore::RenderLayerBacking::updateDrawsContent): When an iframe toggles between different
+            attachments, the 'drawsContent' behavior of its root layer changes, so needs to be updated.
+
+        * rendering/RenderLayerCompositor.h:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers): Call destroyRootPlatformLayer()
+            instead of detachRootPlatformLayer() and manually zeroing out the OwnPtrs.
+        (WebCore::RenderLayerCompositor::updateBacking): If a RenderIFrame changes compositing mode,
+            we need to ensure that its content compositor attachment is updated.
+        (WebCore::RenderLayerCompositor::repaintOnCompositingChange): The existing code had a bug
+            that caused repaints for RenderViews (which have no parent) to bail. We only want to bail
+            for non-RenderViews that are not attached.
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree): Factored the iframe-connecting
+            code into a new method, parentIFrameContentLayers().
+        (WebCore::RenderLayerCompositor::parentIFrameContentLayers): New method to share the code that hooks
+            up the iframe's compositing layers to the parent.
+        (WebCore::RenderLayerCompositor::shouldPropagateCompositingToEnclosingIFrame): Add logic to propagate
+            compositing out of iframes on Mac in two situations: 1) when the FrameView is overlapped, and 2)
+            if the parent document is already composited.
+        (WebCore::RenderLayerCompositor::ensureRootPlatformLayer): Clean up the logic here to better deal
+            with dynamic changes of the attachment type.
+        (WebCore::RenderLayerCompositor::destroyRootPlatformLayer): Clean up and null out the clipping layer here.
+        (WebCore::RenderLayerCompositor::attachRootPlatformLayer): Call rootLayerAttachmentChanged().
+        (WebCore::RenderLayerCompositor::detachRootPlatformLayer): Ditto. Also unparent the clipping and platform layers.
+        (WebCore::RenderLayerCompositor::updateRootLayerAttachment): Call ensureRootPlatformLayer() to re-evaluate
+            the layer attachment.
+        (WebCore::RenderLayerCompositor::rootLayerAttachmentChanged): We need to update the drawsContent() status
+            of the RenderView's layer's backing, because it changes depending on the attachment.
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint): Do overlap testing if the frameView can do fast repaints (as before),
+            but also now when the frameView has composited content.
+
+2010-05-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson
+
+        Allow compositing layers to be connected across iframe boundaries on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=38856
+
         Rename the static shouldPropagateCompositingToIFrameParent() to shouldPropagateCompositingToEnclosingIFrame(),
         to pave the way for runtime switches in the propagation behavior. We have to make sure we call it on
         the correct RenderLayerCompositor (that belonging to the iframe's content document).

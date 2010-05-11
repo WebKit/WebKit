@@ -19,6 +19,33 @@
 
 2010-05-10  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38856
+        Allow compositing layers to be connected across iframe boundaries on Mac
+        
+        New expected results now that Mac propagates compositing out of iframes, if overlapped.
+        
+        Also add new tests to exercise the code that connects the compositing layers of
+        the iframe content with the parent document, for different compositing configurations.
+
+        * compositing/iframes/composited-parent-iframe-expected.txt: Added.
+        * compositing/iframes/composited-parent-iframe.html:
+        * compositing/iframes/connect-compositing-iframe-expected.txt: Added.
+        * compositing/iframes/connect-compositing-iframe.html: Added.
+        * compositing/iframes/connect-compositing-iframe2-expected.txt: Added.
+        * compositing/iframes/connect-compositing-iframe2.html: Added.
+        * compositing/iframes/connect-compositing-iframe3-expected.txt: Added.
+        * compositing/iframes/connect-compositing-iframe3.html: Added.
+        * compositing/iframes/enter-compositing-iframe-expected.txt:
+        * compositing/iframes/enter-compositing-iframe.html:
+        * compositing/iframes/iframe-resize-expected.txt:
+        * compositing/iframes/leave-compositing-iframe.html:
+        * compositing/iframes/overlapped-iframe-expected.txt:
+        * platform/mac/compositing/iframes/composited-parent-iframe-expected.txt: Removed.
+
+2010-05-10  Simon Fraser  <simon.fraser@apple.com>
+
         Fix up test results from last commit, which were generated with a build from before r59129.
 
         * platform/win/compositing/iframes/composited-parent-iframe-expected.txt:

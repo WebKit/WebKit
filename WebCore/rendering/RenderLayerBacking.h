@@ -62,6 +62,7 @@ public:
     void updateGraphicsLayerGeometry(); // make private
     // Update contents and clipping structure.
     void updateInternalHierarchy(); // make private
+    void updateDrawsContent();
     
     GraphicsLayer* graphicsLayer() const { return m_graphicsLayer.get(); }
 

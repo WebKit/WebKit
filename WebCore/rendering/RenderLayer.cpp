@@ -3429,16 +3429,16 @@ void RenderLayer::repaintIncludingNonCompositingDescendants(RenderBoxModelObject
 
 bool RenderLayer::shouldBeNormalFlowOnly() const
 {
-    return (renderer()->hasOverflowClip() || renderer()->hasReflection() || renderer()->hasMask() || renderer()->isVideo() || renderer()->isEmbeddedObject()) &&
-           !renderer()->isPositioned() &&
-           !renderer()->isRelPositioned() &&
-           !renderer()->hasTransform() &&
-           !isTransparent();
+    return (renderer()->hasOverflowClip() || renderer()->hasReflection() || renderer()->hasMask() || renderer()->isVideo() || renderer()->isEmbeddedObject() || renderer()->isRenderIFrame())
+            && !renderer()->isPositioned()
+            && !renderer()->isRelPositioned()
+            && !renderer()->hasTransform()
+            && !isTransparent();
 }
 
 bool RenderLayer::isSelfPaintingLayer() const
 {
-    return !isNormalFlowOnly() || renderer()->hasReflection() || renderer()->hasMask() || renderer()->isTableRow() || renderer()->isVideo() || renderer()->isEmbeddedObject();
+    return !isNormalFlowOnly() || renderer()->hasReflection() || renderer()->hasMask() || renderer()->isTableRow() || renderer()->isVideo() || renderer()->isEmbeddedObject() || renderer()->isRenderIFrame();
 }
 
 void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle*)
