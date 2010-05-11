@@ -1,3 +1,22 @@
+2010-05-11  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Kenneth Christiansen.
+
+        [Qt] emit initialLayoutCompleted signal from FrameLoaderClientQt::dispatchDidFirstVisuallyNonEmptyLayout
+        https://bugs.webkit.org/show_bug.cgi?id=38921
+
+        Emit initialLayoutCompleted signal from FrameLoaderClientQt::dispatchDidFirstVisuallyNonEmptyLayout
+        instead of FrameLoaderClientQt::dispatchDidFirstLayout , because the former ensures that a
+        visual content layed out on the frame.
+
+        It matches to QWebFrame::initialLayoutCompleted signal documentation at:
+
+        "... This is the first time you will see contents displayed on the frame ..."
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidFirstLayout):
+        (WebCore::FrameLoaderClientQt::dispatchDidFirstVisuallyNonEmptyLayout):
+
 2010-05-11  Jesus Sanchez-Palencia  <jesus@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
