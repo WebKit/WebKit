@@ -1,5 +1,15 @@
 2010-05-11  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Darin Adler.
+
+        <http://webkit.org/b/38941> build-webkit shouldn't always override ENABLE_FOO Xcode configuration settings
+
+        * Scripts/build-webkit: Don't pass the ENABLE setting to xcodebuild if the value matches the default.
+        This will lead to xcodebuild picking up the settings from FeatureDefines.xcconfig, and will aid in
+        revealing problems that are due to inconsistent values for settings across projects.
+
+2010-05-11  Mark Rowe  <mrowe@apple.com>
+
         Build fix.
 
         * DumpRenderTree/mac/LayoutTestControllerMac.mm:

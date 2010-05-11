@@ -280,9 +280,10 @@ if (isGtk()) {
 } elsif (isAppleMacWebKit()) {
     push @options, XcodeOptions();
 
-    sub option($$)
+    sub option($$$)
     {
-        my ($feature, $isEnabled) = @_;
+        my ($feature, $isEnabled, $defaultValue) = @_;
+        return "" if $defaultValue == $isEnabled;
         return $feature . "=" . ($isEnabled ? $feature : " ");
     }
 
@@ -290,7 +291,8 @@ if (isGtk()) {
         if ($_->{option} eq "coverage") {
             push @options, XcodeCoverageSupportOptions() if $coverageSupport;
         } else {
-            push @options, option($_->{define}, ${$_->{value}});
+            my $option = option($_->{define}, ${$_->{value}}, $_->{default});
+            push @options, $option unless $option eq "";
         }
     }
 
