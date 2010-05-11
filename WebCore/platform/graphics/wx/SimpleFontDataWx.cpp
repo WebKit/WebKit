@@ -133,7 +133,7 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 #if __WXMSW__
     // under Windows / wxMSW we currently always use GDI fonts.
     return widthForGDIGlyph(glyph);
-#elif OS(DARWIN) && wxCHECK_VERSION(2,9,1) && wxOSX_USE_COCOA
+#elif OS(DARWIN)
     float pointSize = m_platformData.size();
     CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
     CGSize advance;

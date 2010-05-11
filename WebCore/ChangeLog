@@ -1,3 +1,19 @@
+2010-05-11  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        [wx] Create an NSFont on Mac builds that do not have built-in methods to do so.
+        https://bugs.webkit.org/show_bug.cgi?id=38931
+
+        * platform/graphics/wx/FontPlatformData.h:
+        (WebCore::FontPlatformData::nsFont):
+        * platform/graphics/wx/FontPlatformDataWxMac.mm:
+        (DegToRad):
+        (OSXCreateNSFont):
+        (WebCore::FontPlatformData::cacheNSFont):
+        * platform/graphics/wx/SimpleFontDataWx.cpp:
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+
 2010-05-11  Avi Drissman  <avi@chromium.org>
 
         Reviewed by Darin Fisher.

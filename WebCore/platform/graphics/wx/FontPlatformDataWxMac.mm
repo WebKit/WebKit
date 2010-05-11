@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Kevin Ollivier  All rights reserved.
+ * Copyright (C) 2010 Kevin Ollivier, Stefan Csomor  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,22 +31,117 @@
 
 #include <wx/defs.h>
 #include <wx/font.h>
+#include <wx/fontutil.h>
+
+#if !wxCHECK_VERSION(2,9,0)
+#include <wx/mac/private.h>
+#else
+#include <wx/osx/private.h>
+#endif
+
+#if !wxCHECK_VERSION(2,9,0) || !wxOSX_USE_COCOA
+
+static inline double DegToRad(double deg)
+{
+    return (deg * M_PI) / 180.0;
+}
+
+static const NSAffineTransformStruct kSlantNSTransformStruct = { 1, 0, tan(DegToRad(11)), 1, 0, 0  };
+
+NSFont* OSXCreateNSFont(const wxNativeFontInfo* info)
+{
+    NSFont* nsFont;
+    int weight = 5;
+    NSFontTraitMask traits = 0;
+    if (info->GetWeight() == wxFONTWEIGHT_BOLD)
+    {
+        traits |= NSBoldFontMask;
+        weight = 9;
+    }
+    else if (info->GetWeight() == wxFONTWEIGHT_LIGHT)
+        weight = 3;
+
+    if (info->GetStyle() == wxFONTSTYLE_ITALIC || info->GetStyle() == wxFONTSTYLE_SLANT)
+        traits |= NSItalicFontMask;
+    
+    nsFont = [[NSFontManager sharedFontManager] fontWithFamily:(NSString*)(CFStringRef)wxMacCFStringHolder(info->GetFaceName()) 
+        traits:traits weight:weight size:info->GetPointSize()];
+    
+    if ( nsFont == nil )
+    {
+        NSFontTraitMask remainingTraits = traits;
+        nsFont = [[NSFontManager sharedFontManager] fontWithFamily:(NSString*)(CFStringRef)wxMacCFStringHolder(info->GetFaceName()) 
+                                                            traits:0 weight:5 size:info->GetPointSize()];
+        if ( nsFont == nil )
+        {
+            if ( info->GetWeight() == wxFONTWEIGHT_BOLD )
+            {
+                nsFont = [NSFont boldSystemFontOfSize:info->GetPointSize()];
+                remainingTraits &= ~NSBoldFontMask;
+            }
+            else
+                nsFont = [NSFont systemFontOfSize:info->GetPointSize()];
+        }
+        
+        // fallback - if in doubt, let go of the bold attribute
+        if ( nsFont && (remainingTraits & NSItalicFontMask) )
+        {
+            NSFont* nsFontWithTraits = nil;
+            if ( remainingTraits & NSBoldFontMask)
+            {
+                nsFontWithTraits = [[NSFontManager sharedFontManager] convertFont:nsFont toHaveTrait:NSBoldFontMask];
+                if ( nsFontWithTraits == nil )
+                {
+                    nsFontWithTraits = [[NSFontManager sharedFontManager] convertFont:nsFont toHaveTrait:NSItalicFontMask];
+                    if ( nsFontWithTraits != nil )
+                        remainingTraits &= ~NSItalicFontMask;
+                }
+                else
+                {
+                    remainingTraits &= ~NSBoldFontMask;
+                }
+            }
+            if ( remainingTraits & NSItalicFontMask)
+            {
+                if ( nsFontWithTraits == nil )
+                    nsFontWithTraits = nsFont;
+                
+                NSAffineTransform* transform = [NSAffineTransform transform];
+                [transform setTransformStruct:kSlantNSTransformStruct];
+                [transform scaleBy:info->GetPointSize()];
+                NSFontDescriptor* italicDesc = [[nsFontWithTraits fontDescriptor] fontDescriptorWithMatrix:transform];
+                if ( italicDesc != nil )
+                {
+                    NSFont* f = [NSFont fontWithDescriptor:italicDesc size:(CGFloat)(info->GetPointSize())];
+                    if ( f != nil )
+                        nsFontWithTraits = f;
+                }
+            }
+            if ( nsFontWithTraits != nil )
+                nsFont = nsFontWithTraits;
+        }
+    }
+            
+    wxASSERT_MSG(nsFont != nil,wxT("Couldn't create nsFont")) ;
+    wxMacCocoaRetain(nsFont);
+    return nsFont;
+}
+
+#endif
 
 namespace WebCore {
 
-NSFont* FontPlatformData::nsFont() const
-{
-#if wxCHECK_VERSION(2,9,1) && wxOSX_USE_COCOA
-    if (m_font && m_font->font())
-        return (NSFont*)m_font->font()->OSXGetNSFont();
-#else
-    return 0;
-#endif
-}
-
 void FontPlatformData::cacheNSFont()
 {
-
+    if (m_nsFont)
+        return;
+        
+#if wxCHECK_VERSION(2,9,1) && wxOSX_USE_COCOA
+    if (m_font && m_font->font())
+        m_nsFont = (NSFont*)m_font->font()->OSXGetNSFont();
+#else
+    m_nsFont = OSXCreateNSFont(m_font->font()->GetNativeFontInfo());
+#endif
 }
 
 }

@@ -156,9 +156,8 @@ public:
 #if OS(DARWIN)
     ATSUFontID m_atsuFontID;
     CGFontRef cgFont() const;
-    NSFont* nsFont() const;
+    NSFont* nsFont() const { return m_nsFont; }
     void cacheNSFont();
-    
 #endif
 
     float m_size;
