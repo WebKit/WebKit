@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +30,11 @@
 #include "config.h"
 #include "SharedBuffer.h"
 
+// INVALID_FILE_SIZE is not defined on WinCE.
+#ifndef INVALID_FILE_SIZE
+#define INVALID_FILE_SIZE 0xffffffff
+#endif
+
 namespace WebCore {
 
 PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& filePath)
@@ -37,34 +43,28 @@ PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& fi
         return 0;
 
     String nullifiedPath = filePath;
-    FILE* fileDescriptor = 0;
-    if (_wfopen_s(&fileDescriptor, nullifiedPath.charactersWithNullTermination(), TEXT("rb")) || !fileDescriptor) {
-        LOG_ERROR("Failed to open file %s to create shared buffer, errno(%i)", filePath.ascii().data(), errno);
+    HANDLE fileHandle = CreateFileW(nullifiedPath.charactersWithNullTermination(), GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+    if (fileHandle == INVALID_HANDLE_VALUE) {
+        LOG_ERROR("Failed to open file %s to create shared buffer, GetLastError() = %u", filePath.ascii().data(), GetLastError());
         return 0;
     }
 
     RefPtr<SharedBuffer> result;
+    DWORD bytesToRead = GetFileSize(fileHandle, 0);
+    DWORD lastError = GetLastError();
 
-    // Stat the file to get its size
-    struct _stat64 fileStat;
-    if (_fstat64(_fileno(fileDescriptor), &fileStat))
-        goto exit;
+    if (bytesToRead != INVALID_FILE_SIZE || lastError == NO_ERROR) {
+        Vector<char> buffer(bytesToRead);
+        DWORD bytesRead;
+        if (ReadFile(fileHandle, buffer.data(), bytesToRead, &bytesRead, 0) && bytesToRead == bytesRead)
+            result = SharedBuffer::adoptVector(buffer);
+        else
+            LOG_ERROR("Failed to fully read contents of file %s, GetLastError() = %u", filePath.ascii().data(), GetLastError());
+    } else
+        LOG_ERROR("Failed to get filesize of file %s, GetLastError() = %u", filePath.ascii().data(), lastError);
 
-    result = SharedBuffer::create();
-    result->m_buffer.resize(fileStat.st_size);
-    if (result->m_buffer.size() != fileStat.st_size) {
-        result = 0;
-        goto exit;
-    }
-
-    result->m_size = result->m_buffer.size();
-
-    if (fread(result->m_buffer.data(), 1, fileStat.st_size, fileDescriptor) != fileStat.st_size)
-        LOG_ERROR("Failed to fully read contents of file %s - errno(%i)", filePath.ascii().data(), errno);
-
-exit:
-    fclose(fileDescriptor);
+    CloseHandle(fileHandle);
     return result.release();
 }
 
-}; // namespace WebCore
+} // namespace WebCore

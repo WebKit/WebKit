@@ -1,3 +1,15 @@
+2010-05-11  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Adam Roben.
+
+        Port SharedBuffer to WinCE.
+        https://bugs.webkit.org/show_bug.cgi?id=37222
+
+        Use only functions which are available on Win32 and WinCE.
+
+        * platform/win/SharedBufferWin.cpp:
+        (WebCore::SharedBuffer::createWithContentsOfFile):
+
 2010-05-11  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
