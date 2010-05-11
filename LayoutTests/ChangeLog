@@ -1,3 +1,12 @@
+2010-05-10  Simon Fraser  <simon.fraser@apple.com>
+
+        No review.
+
+        Reduce timeouts from 500 to 50ms to make the tests run more quickly.
+
+        * compositing/iframes/resources/enter-compositing-subframe.html:
+        * compositing/iframes/resources/leave-compositing-subframe.html:
+
 2010-05-07  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Brady Eidson.
