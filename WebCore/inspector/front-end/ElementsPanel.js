@@ -70,7 +70,8 @@ WebInspector.ElementsPanel = function()
     this.crumbsElement.addEventListener("mouseout", this._mouseMovedOutOfCrumbs.bind(this), false);
 
     this.sidebarPanes = {};
-    this.sidebarPanes.styles = new WebInspector.StylesSidebarPane();
+    this.sidebarPanes.computedStyle = new WebInspector.ComputedStyleSidebarPane();
+    this.sidebarPanes.styles = new WebInspector.StylesSidebarPane(this.sidebarPanes.computedStyle);
     this.sidebarPanes.metrics = new WebInspector.MetricsSidebarPane();
     this.sidebarPanes.properties = new WebInspector.PropertiesSidebarPane();
     this.sidebarPanes.eventListeners = new WebInspector.EventListenersSidebarPane();
@@ -89,6 +90,7 @@ WebInspector.ElementsPanel = function()
     this.sidebarElement = document.createElement("div");
     this.sidebarElement.id = "elements-sidebar";
 
+    this.sidebarElement.appendChild(this.sidebarPanes.computedStyle.element);
     this.sidebarElement.appendChild(this.sidebarPanes.styles.element);
     this.sidebarElement.appendChild(this.sidebarPanes.metrics.element);
     this.sidebarElement.appendChild(this.sidebarPanes.properties.element);

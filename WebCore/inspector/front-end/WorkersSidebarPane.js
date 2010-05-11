@@ -36,12 +36,12 @@ WebInspector.WorkersSidebarPane = function()
 
     this._enableWorkersCheckbox = new WebInspector.Checkbox(
         WebInspector.UIString("Debug"),
-        this._onTriggerInstrument.bind(this),
-        false,
         "sidebar-pane-subtitle",
         WebInspector.UIString("Allow debugging workers. Enabling this option will replace native workers with the iframe-based JavaScript implementation"));
-
     this.titleElement.insertBefore(this._enableWorkersCheckbox.element, this.titleElement.firstChild);
+
+    this._enableWorkersCheckbox.addEventListener(this._onTriggerInstrument.bind(this));
+    this._enableWorkersCheckbox.checked = false;
 
     this._listElement = document.createElement("ol");
     this._listElement.className = "workers-list";
@@ -81,14 +81,14 @@ WebInspector.WorkersSidebarPane.prototype = {
     reset: function()
     {
         InspectorBackend.removeAllScriptsToEvaluateOnLoad();
-        this.setInstrumentation(this._enableWorkersCheckbox.checked());
+        this.setInstrumentation(this._enableWorkersCheckbox.checked);
         this._treeOutline.removeChildren();
         this._workers = {};
     },
 
     _onTriggerInstrument: function(event)
     {
-        this.setInstrumentation(this._enableWorkersCheckbox.checked());
+        this.setInstrumentation(this._enableWorkersCheckbox.checked);
     }
 };
 

@@ -1,3 +1,49 @@
+2010-05-11  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: make styles rendering more user-friendly.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36747
+
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._update):
+        (WebInspector.StylesSidebarPane.prototype._rebuildSectionsForStyleRules):
+        (WebInspector.ComputedStyleSidebarPane):
+        (WebInspector.StylePropertiesSection):
+        (WebInspector.StylePropertiesSection.prototype.collapse):
+        (WebInspector.StylePropertiesSection.prototype.startEditingSelector):
+        * inspector/front-end/inspector.css:
+        (#elements-content):
+        (#elements-sidebar):
+        (.styles-sidebar-separator):
+        (.styles-section):
+        (.styles-section .header):
+        (.styles-section .header .title):
+        (.styles-section .header .subtitle):
+        (.styles-section .header .subtitle a):
+        (.styles-section .properties):
+        (.styles-section.no-affect .properties li):
+        (.styles-section.no-affect .properties li.editing):
+        (.styles-section.expanded .properties):
+        (.styles-section .properties li):
+        (.styles-section .properties li.parent):
+        (.styles-section .properties ol):
+        (.styles-section .properties ol.expanded):
+        (.styles-section .properties li.parent::before):
+        (.styles-section .properties li.parent.expanded::before):
+        (.styles-section .properties li .info):
+        (.styles-section:hover .properties .enabled-button):
+        (.styles-section .properties li.disabled .enabled-button):
+        (.styles-section .properties .enabled-button):
+        (.styles-section .properties .overloaded, .styles-section .properties .disabled):
+        (.styles-section.computed-style .properties .disabled):
+        (.styles-section .properties .implicit, .styles-section .properties .inherited):
+        (.styles-section .properties .inherited):
+        (.styles-section.show-inherited .properties .inherited):
+
 2010-05-11  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

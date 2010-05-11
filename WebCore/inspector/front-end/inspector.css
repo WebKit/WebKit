@@ -979,7 +979,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     position: absolute;
     top: 0;
     left: 0;
-    right: 300px;
+    right: 325px;
     bottom: 0;
 }
 
@@ -988,7 +988,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     top: 0;
     right: 0;
     bottom: 0;
-    width: 300px;
+    width: 325px;
     background-color: rgb(245, 245, 245);
     border-left: 1px solid rgb(64%, 64%, 64%);
     cursor: default;
@@ -1293,10 +1293,6 @@ body.inactive .placard.selected {
     -webkit-background-clip: padding;
 }
 
-.section.no-affect .header {
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(167, 167, 167)), to(rgb(123, 123, 123)))
-}
-
 .section .header::before {
     position: absolute;
     top: 4px;
@@ -1304,10 +1300,6 @@ body.inactive .placard.selected {
     width: 8px;
     height: 8px;
     content: url(Images/treeRightTriangleWhite.png);
-}
-
-.section.blank-section .header::before {
-    display: none;
 }
 
 .section.expanded .header::before {
@@ -1534,33 +1526,6 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     text-overflow: clip;
 }
 
-.section .properties .overloaded, .section .properties .disabled {
-    text-decoration: line-through;
-}
-
-.section.computed-style .properties .disabled {
-    text-decoration: none;
-    opacity: 0.5;
-}
-
-.section .properties .implicit, .section .properties .inherited {
-    opacity: 0.5;
-}
-
-.section:not(.show-inherited) .properties .inherited {
-    display: none;
-}
-
-.section .properties .enabled-button {
-    display: none;
-    float: right;
-    font-size: 10px;
-    margin: 0 0 0 4px;
-    vertical-align: top;
-    position: relative;
-    z-index: 1;
-}
-
 /* FIXME: need a better icon (comment in bug 27514) */
 .section .properties .delete-button {
     width: 10px;
@@ -1570,14 +1535,6 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     background-color: transparent;
     background-repeat: no-repeat;
     border: 0 none transparent;
-}
-
-.section:hover .properties .enabled-button {
-    display: block;
-}
-
-.section .properties li.disabled .enabled-button {
-    display: block;
 }
 
 .section .properties .name, .event-properties .name {
@@ -3992,6 +3949,7 @@ ol.breakpoint-list {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    font-size: 11px;
 }
 
 .styles-selector {
@@ -4017,6 +3975,152 @@ a.worker-item {
     color: rgb(33%, 33%, 33%);
     cursor: pointer;
     text-decoration: none;
+}
+.styles-section {
+    padding: 2px 2px 4px 4px;
+    min-height: 18px;
+    white-space: nowrap;
+    -webkit-background-origin: padding;
+    -webkit-background-clip: padding;
+}
+
+.styles-section:not(.first-styles-section) {
+    border-top: 1px solid rgb(191, 191, 191);
+}
+
+.styles-section .header {
+    white-space: nowrap;
+    -webkit-background-origin: padding;
+    -webkit-background-clip: padding;
+}
+
+.styles-section .header .title {
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+.styles-section .header .subtitle {
+    color: rgb(85, 85, 85);
+    float: right;
+    margin-left: 5px;
+    max-width: 65%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.styles-section .header .subtitle a {
+    color: inherit;
+}
+
+.styles-section .properties {
+    display: none;
+    margin: 0;
+    padding: 2px 4px 0 8px;
+    list-style: none;
+}
+
+.styles-section.no-affect .properties li {
+    opacity: 0.5;
+}
+
+.styles-section.no-affect .properties li.editing {
+    opacity: 1.0;
+}
+
+.styles-section.expanded .properties {
+    display: block;
+}
+
+.styles-section .properties li {
+    margin-left: 12px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -webkit-user-select: text;
+    cursor: auto;
+}
+
+.styles-section .properties li.parent {
+    margin-left: 1px;
+}
+
+.styles-section .properties ol {
+    display: none;
+    margin: 0;
+    -webkit-padding-start: 12px;
+    list-style: none;
+}
+
+.styles-section .properties ol.expanded {
+    display: block;
+}
+
+.styles-section .properties li.parent::before {
+    content: url(Images/treeRightTriangleBlack.png);
+    opacity: 0.75;
+    float: left;
+    width: 8px;
+    height: 8px;
+    margin-top: 0;
+    padding-right: 3px;
+    -webkit-user-select: none;
+    cursor: default;
+}
+
+.styles-section .properties li.parent.expanded::before {
+    content: url(Images/treeDownTriangleBlack.png);
+    margin-top: 1px;
+}
+
+.styles-section .properties li .info {
+    padding-top: 4px;
+    padding-bottom: 3px;
+}
+
+.styles-section:hover .properties .enabled-button {
+    display: block;
+}
+
+.styles-section .properties li.disabled .enabled-button {
+    display: block;
+}
+
+.styles-section .properties .enabled-button {
+    display: none;
+    float: right;
+    font-size: 10px;
+    margin: 0 0 0 4px;
+    vertical-align: top;
+    position: relative;
+    z-index: 1;
+}
+
+.styles-section .properties .overloaded, .styles-section .properties .disabled {
+    text-decoration: line-through;
+}
+
+.styles-section.computed-style .properties .disabled {
+    text-decoration: none;
+    opacity: 0.5;
+}
+
+.styles-section .properties .implicit, .styles-section .properties .inherited {
+    opacity: 0.5;
+}
+
+
+.body .styles-section .properties .inherited {
+    display: none;
+}
+
+.body.show-inherited .styles-section .properties .inherited {
+    display: block;
+}
+
+.show-inherited-checkbox {
+    float: right;
+    font-size: 11px;
+    font-weight: normal;
 }
 
 a.worker-item:hover {

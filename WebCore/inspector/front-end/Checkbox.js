@@ -23,34 +23,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Checkbox = function(label, callback, checked, className, tooltip)
+WebInspector.Checkbox = function(label, className, tooltip)
 {
     this.element = document.createElement('label');
     this._inputElement = document.createElement('input');
-
-    function callbackWrapper(event)
-    {
-        if (callback)
-            callback(event);
-        event.stopPropagation();
-        return true;
-    }
     this._inputElement.type = "checkbox";
-    this._inputElement.checked = checked;
-    this._inputElement.addEventListener("click", callbackWrapper, false);
 
     this.element.className = className;
     this.element.appendChild(this._inputElement);
     this.element.appendChild(document.createTextNode(label));
     if (tooltip)
         this.element.title = tooltip;
-    this.element.addEventListener("click", callbackWrapper, false);
 }
 
 WebInspector.Checkbox.prototype = {
-    checked: function()
+    set checked(checked)
+    {
+        this._inputElement.checked = checked;
+    },
+
+    get checked()
     {
         return this._inputElement.checked;
+    },
+
+    addEventListener: function(listener)
+    {
+        function listenerWrapper(event)
+        {
+            if (listener)
+                listener(event);
+            event.stopPropagation();
+            return true;
+        }
+
+        this._inputElement.addEventListener("click", listenerWrapper, false);
+        this.element.addEventListener("click", listenerWrapper, false);
     }
 }
-

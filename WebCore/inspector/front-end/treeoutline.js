@@ -422,6 +422,11 @@ TreeOutline.prototype.reveal = function()
     // this is the root, do nothing
 }
 
+TreeOutline.prototype.select = function()
+{
+    // this is the root, do nothing
+}
+
 TreeOutline.prototype.appendChild = TreeOutline._appendChild;
 TreeOutline.prototype.insertChild = TreeOutline._insertChild;
 TreeOutline.prototype.removeChild = TreeOutline._removeChild;
