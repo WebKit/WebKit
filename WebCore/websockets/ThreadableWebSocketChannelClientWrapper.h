@@ -33,9 +33,11 @@
 
 #if ENABLE(WEB_SOCKETS)
 
+#include "PlatformString.h"
 #include "WebSocketChannelClient.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -89,20 +91,35 @@ public:
 
     void didConnect()
     {
-        if (m_client)
-            m_client->didConnect();
+        m_pendingConnected = true;
+        if (!m_suspended)
+            processPendingEvents();
     }
 
     void didReceiveMessage(const String& msg)
     {
-        if (m_client)
-            m_client->didReceiveMessage(msg);
+        m_pendingMessages.append(msg);
+        if (!m_suspended)
+            processPendingEvents();
     }
 
     void didClose(unsigned long unhandledBufferedAmount)
     {
-        if (m_client)
-            m_client->didClose(unhandledBufferedAmount);
+        m_pendingClosed = true;
+        m_bufferedAmount = unhandledBufferedAmount;
+        if (!m_suspended)
+            processPendingEvents();
+    }
+
+    void suspend()
+    {
+        m_suspended = true;
+    }
+
+    void resume()
+    {
+        m_suspended = false;
+        processPendingEvents();
     }
 
 protected:
@@ -111,13 +128,43 @@ protected:
         , m_syncMethodDone(false)
         , m_sent(false)
         , m_bufferedAmount(0)
+        , m_suspended(false)
+        , m_pendingConnected(false)
+        , m_pendingClosed(false)
     {
+    }
+
+    void processPendingEvents()
+    {
+        ASSERT(!m_suspended);
+        if (m_pendingConnected) {
+            m_pendingConnected = false;
+            if (m_client)
+                m_client->didConnect();
+        }
+
+        Vector<String> messages;
+        messages.swap(m_pendingMessages);
+        for (Vector<String>::const_iterator iter = messages.begin(); iter != messages.end(); ++iter) {
+            if (m_client)
+                m_client->didReceiveMessage(*iter);
+        }
+
+        if (m_pendingClosed) {
+            m_pendingClosed = false;
+            if (m_client)
+                m_client->didClose(m_bufferedAmount);
+        }
     }
 
     WebSocketChannelClient* m_client;
     bool m_syncMethodDone;
     bool m_sent;
     unsigned long m_bufferedAmount;
+    bool m_suspended;
+    bool m_pendingConnected;
+    Vector<String> m_pendingMessages;
+    bool m_pendingClosed;
 };
 
 } // namespace WebCore

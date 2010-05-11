@@ -1,3 +1,68 @@
+2010-05-10  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket needs to suspend/resume as Active DOM object.
+        https://bugs.webkit.org/show_bug.cgi?id=38171
+
+        Implement suspend()/resume() in WebSocket and WebSocketChannel.
+        While WebSocketChannel is suspended, it only adds received data in m_buffer
+        or record the handle was closed, and report no event to WebSocket.
+        When resumed, it will process buffer or handle closing.
+        Since suspend/resume would be called while processing JavaScript event handler (e.g. before/after alert()), WebSocketChannel method that would fire an event need to be reentrant.
+        So, WebSocketChannel::processBuffer() call WebSocket to fire an event at most once and skips buffer before the calling,
+        so that next call of processBuffer() would process the next frame.
+
+        * websockets/ThreadableWebSocketChannel.h:
+        * websockets/ThreadableWebSocketChannelClientWrapper.h:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didConnect):
+          Mark channel is opened, and process pending events if not suspended.
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessage):
+          Push message back in pending queue, and process pending events if not suspended.
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didClose):
+          Mark channel is closed, and process pending events if not suspended.
+        (WebCore::ThreadableWebSocketChannelClientWrapper::suspend):
+          Mark suspended.
+        (WebCore::ThreadableWebSocketChannelClientWrapper::resume):
+          Unmark suspended, and process pending events.
+        (WebCore::ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::processPendingEvents):
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::canSuspend):
+        (WebCore::WebSocket::suspend):
+        (WebCore::WebSocket::resume):
+        (WebCore::WebSocket::didClose):
+        * websockets/WebSocket.h:
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::WebSocketChannel):
+        (WebCore::WebSocketChannel::connect):
+        (WebCore::WebSocketChannel::send):
+        (WebCore::WebSocketChannel::bufferedAmount):
+        (WebCore::WebSocketChannel::close):
+        (WebCore::WebSocketChannel::suspend):
+        (WebCore::WebSocketChannel::resume):
+         When resumed, it will process buffer and
+         handle closing if handle was already closed while suspended.
+        (WebCore::WebSocketChannel::didClose):
+         If suspended, record unhandled bufferedAmount and set m_closed true, so that closing will be processed when resumed.
+        (WebCore::WebSocketChannel::didReceiveData):
+         Add received data in buffer and process buffer while it is not suspended.
+        (WebCore::WebSocketChannel::processBuffer):
+         Process handshake header or one frame message.
+         Return true if there are more data to be processed.
+         Return false otherwise (e.g. incomplete handshake header or incomplete frame).
+        * websockets/WebSocketChannel.h:
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::suspend):
+        (WebCore::WorkerThreadableWebSocketChannel::resume):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::suspend):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::resume):
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadSuspend):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::suspend):
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadResume):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::resume):
+        * websockets/WorkerThreadableWebSocketChannel.h:
+
 2010-05-07  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Brady Eidson.
