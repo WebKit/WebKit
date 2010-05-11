@@ -1,3 +1,21 @@
+2010-05-11  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Merge some pseudo-valid-*.html tests into one.
+        https://bugs.webkit.org/show_bug.cgi?id=38846
+
+        No additional test cases and no removed test cases.
+
+        * fast/css/pseudo-valid-003-expected.txt: Removed.
+        * fast/css/pseudo-valid-003.html: Removed.
+        * fast/css/pseudo-valid-005-expected.txt: Removed.
+        * fast/css/pseudo-valid-005.html: Removed.
+        * fast/css/pseudo-valid-006-expected.txt: Removed.
+        * fast/css/pseudo-valid-006.html: Removed.
+        * fast/css/pseudo-valid-unapplied-expected.txt: Added.
+        * fast/css/pseudo-valid-unapplied.html: Added.
+
 2010-05-11  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

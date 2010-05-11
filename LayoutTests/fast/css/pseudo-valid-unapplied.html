@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<style>
+ :valid { background: red; }
+ :invalid { background: red; }
+ input { background: lime; }
+ fieldset { background: lime; }
+ object { background: lime; }
+ button { background: lime; }
+</style>
+</head>
+<body>
+<p id="description"></p>
+<form method="get">
+<input name="input-text-readonly" type="text" value="Lorem ipsum" readonly/>
+<input name="input-text-disabled" type="text" value="Lorem ipsum" disabled/>
+<input name="input-button" type="button" value="Lorem ipsum">
+<input name="input-reset" type="reset" value="Lorem ipsum"/>
+<input name="input-hidden" type="hidden" value="Lorem ipsum"/>
+<fieldset name="fieldset"></fieldset>
+<object name="object"></object>
+<button name="button">Lorem ipsum</button>
+</form>
+<div id="console"></div>
+<script>
+description("This test performs a check for the :valid CSS selector on various input elements and other elements where it shouldn't be applied.");
+
+function getBackgroundColor(elementName) {
+    var element = document.getElementsByName(elementName)[0];
+    return document.defaultView.getComputedStyle(element, null).getPropertyValue('background-color')
+}
+
+var names = [
+    "input-text-readonly",
+    "input-text-disabled",
+    "input-button",
+    "input-reset",
+    "input-hidden",
+    "fieldset",
+    "object",
+    "button",
+];
+
+var normalColor = "rgb(0, 255, 0)";
+for (var i = 0; i < names.length; i++)
+    shouldBe("getBackgroundColor('" + names[i] + "')", "normalColor");
+
+document.forms[0].style.display = 'none';
+var successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
