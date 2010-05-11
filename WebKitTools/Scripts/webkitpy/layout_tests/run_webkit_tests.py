@@ -1318,11 +1318,11 @@ def run(port_obj, options, args, regular_output=sys.stderr,
     if options.print_last_failures or options.retest_last_failures:
         unexpected_results_filename = os.path.join(
            options.results_directory, "unexpected_results.json")
-        with open(unexpected_results_filename, "r", "utf-8") as file:
+        with codecs.open(unexpected_results_filename, "r", "utf-8") as file:
             results = simplejson.load(file)
         last_unexpected_results = results['tests'].keys()
         if options.print_last_failures:
-            print "\n".join(last_unexpected_results) + "\n"
+            printer.write("\n".join(last_unexpected_results) + "\n")
             return 0
 
     if options.clobber_old_results:

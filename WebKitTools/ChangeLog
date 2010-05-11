@@ -2,6 +2,16 @@
 
         Reviewed by David Levin.
 
+        new-run-webkit-tests: looks like the unicode conversion broke
+        --print-last-failures and --retest-last-failures. Fixing.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
+2010-05-10  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by David Levin.
+
         Re-attempt to fix 38616 - newline handling in new-run-webkit-tests.
         I didn't handle some cases correctly before and the solution was
         confusing. The new patch assumes all calls to the printing module

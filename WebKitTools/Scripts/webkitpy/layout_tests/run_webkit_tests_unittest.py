@@ -87,6 +87,12 @@ class MainTest(unittest.TestCase):
         self.assertTrue('Running 2 DumpRenderTrees in parallel\n'
                         in regular_output.get())
 
+    def test_last_results(self):
+        passing_run(['--platform', 'dryrun', 'fast/html'])
+        (res, buildbot_output, regular_output) = logging_run(
+            ['--print-last-failures'])
+        self.assertEqual(regular_output.get(), ['\n'])
+        self.assertEqual(buildbot_output.get(), [])
 
 
 class TestRunnerTest(unittest.TestCase):
