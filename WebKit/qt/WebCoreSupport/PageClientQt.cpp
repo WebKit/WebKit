@@ -103,4 +103,197 @@ QStyle* PageClientQWidget::style() const
     return view->style();
 }
 
+PageClientQGraphicsWidget::~PageClientQGraphicsWidget()
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (!rootGraphicsLayer)
+        return;
+    // we don't need to delete the root graphics layer. The lifecycle is managed in GraphicsLayerQt.cpp.
+    rootGraphicsLayer.data()->setParentItem(0);
+    view->scene()->removeItem(rootGraphicsLayer.data());
+#endif
+}
+
+void PageClientQGraphicsWidget::scroll(int dx, int dy, const QRect& rectToScroll)
+{
+#if USE(ACCELERATED_COMPOSITING)
+    updateCompositingScrollPosition();
+#endif
+}
+
+void PageClientQGraphicsWidget::update(const QRect & dirtyRect)
+{
+    createOrDeleteOverlay();
+    if (overlay)
+        overlay->update(QRectF(dirtyRect));
+#if USE(ACCELERATED_COMPOSITING)
+    syncLayers();
+#endif
+}
+
+void PageClientQGraphicsWidget::createOrDeleteOverlay()
+{
+    bool useOverlay = false;
+    if (!viewResizesToContents) {
+#if USE(ACCELERATED_COMPOSITING)
+        useOverlay = useOverlay || rootGraphicsLayer;
+#endif
+#if ENABLE(TILED_BACKING_STORE)
+        useOverlay = useOverlay || QWebFramePrivate::core(page->mainFrame())->tiledBackingStore();
+#endif
+    }
+    if (useOverlay == !!overlay)
+        return;
+    if (useOverlay) {
+        overlay = QSharedPointer<QGraphicsItemOverlay>(new QGraphicsItemOverlay(view, page));
+        overlay->setZValue(OverlayZValue);
+    } else
+        overlay.clear();
+}
+
+#if USE(ACCELERATED_COMPOSITING)
+void PageClientQGraphicsWidget::syncLayers()
+{
+    if (shouldSync) {
+        QWebFramePrivate::core(page->mainFrame())->view()->syncCompositingStateRecursive();
+        shouldSync = false;
+    }
+}
+
+void PageClientQGraphicsWidget::setRootGraphicsLayer(QGraphicsItem* layer)
+{
+    if (rootGraphicsLayer) {
+        rootGraphicsLayer.data()->setParentItem(0);
+        view->scene()->removeItem(rootGraphicsLayer.data());
+        QWebFramePrivate::core(page->mainFrame())->view()->syncCompositingStateRecursive();
+    }
+
+    rootGraphicsLayer = layer ? layer->toGraphicsObject() : 0;
+
+    if (layer) {
+        layer->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
+        layer->setParentItem(view);
+        layer->setZValue(RootGraphicsLayerZValue);
+        updateCompositingScrollPosition();
+    }
+    createOrDeleteOverlay();
+}
+
+void PageClientQGraphicsWidget::markForSync(bool scheduleSync)
+{
+    shouldSync = true;
+    if (scheduleSync)
+        syncMetaMethod.invoke(view, Qt::QueuedConnection);
+}
+
+void PageClientQGraphicsWidget::updateCompositingScrollPosition()
+{
+    if (rootGraphicsLayer && page && page->mainFrame()) {
+        const QPoint scrollPosition = page->mainFrame()->scrollPosition();
+        rootGraphicsLayer.data()->setPos(-scrollPosition);
+    }
+}
+#endif
+
+#if ENABLE(TILED_BACKING_STORE)
+void PageClientQGraphicsWidget::updateTiledBackingStoreScale()
+{
+    WebCore::TiledBackingStore* backingStore = QWebFramePrivate::core(page->mainFrame())->tiledBackingStore();
+    if (!backingStore)
+        return;
+    backingStore->setContentsScale(view->scale());
+}
+#endif
+
+void PageClientQGraphicsWidget::setInputMethodEnabled(bool enable)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    view->setFlag(QGraphicsItem::ItemAcceptsInputMethod, enable);
+#endif
+}
+
+bool PageClientQGraphicsWidget::inputMethodEnabled() const
+{
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    return view->flags() & QGraphicsItem::ItemAcceptsInputMethod;
+#else
+    return false;
+#endif
+}
+
+#if QT_VERSION >= 0x040600
+void PageClientQGraphicsWidget::setInputMethodHint(Qt::InputMethodHint hint, bool enable)
+{
+    if (enable)
+        view->setInputMethodHints(view->inputMethodHints() | hint);
+    else
+        view->setInputMethodHints(view->inputMethodHints() & ~hint);
+}
+#endif
+
+#ifndef QT_NO_CURSOR
+QCursor PageClientQGraphicsWidget::cursor() const
+{
+    return view->cursor();
+}
+
+void PageClientQGraphicsWidget::updateCursor(const QCursor& cursor)
+{
+    view->setCursor(cursor);
+}
+#endif
+
+QPalette PageClientQGraphicsWidget::palette() const
+{
+    return view->palette();
+}
+
+int PageClientQGraphicsWidget::screenNumber() const
+{
+#if defined(Q_WS_X11)
+    if (QGraphicsScene* scene = view->scene()) {
+        const QList<QGraphicsView*> views = scene->views();
+
+        if (!views.isEmpty())
+            return views.at(0)->x11Info().screen();
+    }
+#endif
+
+    return 0;
+}
+
+QWidget* PageClientQGraphicsWidget::ownerWidget() const
+{
+    if (QGraphicsScene* scene = view->scene()) {
+        const QList<QGraphicsView*> views = scene->views();
+        return views.value(0);
+    }
+    return 0;
+}
+
+QRect PageClientQGraphicsWidget::geometryRelativeToOwnerWidget() const
+{
+    if (!view->scene())
+        return QRect();
+
+    QList<QGraphicsView*> views = view->scene()->views();
+    if (views.isEmpty())
+        return QRect();
+
+    QGraphicsView* graphicsView = views.at(0);
+    return graphicsView->mapFromScene(view->boundingRect()).boundingRect();
+}
+
+QObject* PageClientQGraphicsWidget::pluginParent() const
+{
+    return view;
+}
+
+QStyle* PageClientQGraphicsWidget::style() const
+{
+    return view->style();
+}
+
+
+
 }

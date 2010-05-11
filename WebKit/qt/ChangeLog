@@ -1,3 +1,56 @@
+2010-05-11  Jesus Sanchez-Palencia  <jesus@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add PageClientQGraphicsWidget specific implementation.
+        QGraphicsWebViewPrivate doesn't inherit QWebPageClient anymore
+        and the needed functions were moved to this new PageClient class,
+        including Tiling and Accelerated Composite specific ones.
+
+        [Qt] PageClientQt specific implementation for QGraphicsWidget
+        https://bugs.webkit.org/show_bug.cgi?id=37866
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::QGraphicsWebViewPrivate):
+        (QGraphicsWebViewPrivate::~QGraphicsWebViewPrivate):
+        (QGraphicsWebViewPrivate::syncLayers):
+        (QGraphicsWebViewPrivate::_q_scaleChanged):
+        (QGraphicsWebView::event):
+        (QGraphicsWebView::setPage):
+        (QGraphicsWebView::updateGeometry):
+        (QGraphicsWebView::setGeometry):
+        (QGraphicsWebView::setResizesToContents):
+        * WebCoreSupport/PageClientQt.cpp:
+        (WebCore::PageClientQGraphicsWidget::~PageClientQGraphicsWidget):
+        (WebCore::PageClientQGraphicsWidget::scroll):
+        (WebCore::PageClientQGraphicsWidget::update):
+        (WebCore::PageClientQGraphicsWidget::createOrDeleteOverlay):
+        (WebCore::PageClientQGraphicsWidget::syncLayers):
+        (WebCore::PageClientQGraphicsWidget::setRootGraphicsLayer):
+        (WebCore::PageClientQGraphicsWidget::markForSync):
+        (WebCore::PageClientQGraphicsWidget::updateCompositingScrollPosition):
+        (WebCore::PageClientQGraphicsWidget::updateTiledBackingStoreScale):
+        (WebCore::PageClientQGraphicsWidget::setInputMethodEnabled):
+        (WebCore::PageClientQGraphicsWidget::inputMethodEnabled):
+        (WebCore::PageClientQGraphicsWidget::setInputMethodHint):
+        (WebCore::PageClientQGraphicsWidget::cursor):
+        (WebCore::PageClientQGraphicsWidget::updateCursor):
+        (WebCore::PageClientQGraphicsWidget::palette):
+        (WebCore::PageClientQGraphicsWidget::screenNumber):
+        (WebCore::PageClientQGraphicsWidget::ownerWidget):
+        (WebCore::PageClientQGraphicsWidget::geometryRelativeToOwnerWidget):
+        (WebCore::PageClientQGraphicsWidget::pluginParent):
+        (WebCore::PageClientQGraphicsWidget::style):
+        * WebCoreSupport/PageClientQt.h:
+        (WebCore::QGraphicsItemOverlay::page):
+        (WebCore::QGraphicsItemOverlay::boundingRect):
+        (WebCore::QGraphicsItemOverlay::paint):
+        (WebCore::QGraphicsItemOverlay::prepareGraphicsItemGeometryChange):
+        (WebCore::PageClientQGraphicsWidget::PageClientQGraphicsWidget):
+        (WebCore::PageClientQGraphicsWidget::isQWidgetClient):
+        (WebCore::PageClientQGraphicsWidget::allowsAcceleratedCompositing):
+        (WebCore::PageClientQGraphicsWidget::):
+
 2010-05-09  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
