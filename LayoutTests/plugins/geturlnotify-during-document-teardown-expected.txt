@@ -1,2 +1,3 @@
-PLUGIN: NPP_Destroy
+CONSOLE MESSAGE: line 0: PLUGIN: NPP_Destroy
+
 This tests that performing a load during document teardown does not cause a crash. Bug #38797

@@ -142,7 +142,7 @@ NPError NPP_Destroy(NPP instance, NPSavedData **save)
         }
 
         if (obj->logDestroy)
-            printf("PLUGIN: NPP_Destroy\n");
+            pluginLog(instance, "NPP_Destroy\n");
 
         if (obj->onSetWindow)
             free(obj->onSetWindow);
