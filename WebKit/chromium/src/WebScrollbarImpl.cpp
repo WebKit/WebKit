@@ -144,6 +144,17 @@ bool WebScrollbarImpl::handleInputEvent(const WebInputEvent& event)
         return onMouseWheel(event);
     case WebInputEvent::KeyDown:
         return onKeyDown(event);
+    case WebInputEvent::Undefined:
+    case WebInputEvent::MouseEnter:
+    case WebInputEvent::RawKeyDown:
+    case WebInputEvent::KeyUp:
+    case WebInputEvent::Char:
+    case WebInputEvent::TouchStart:
+    case WebInputEvent::TouchMove:
+    case WebInputEvent::TouchEnd:
+    case WebInputEvent::TouchCancel:
+    default:
+         break;
     }
     return false;
 }
