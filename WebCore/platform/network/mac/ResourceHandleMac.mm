@@ -543,6 +543,10 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
         Credential credential = CredentialStorage::get(challenge.protectionSpace());
         if (!credential.isEmpty() && credential != d->m_initialCredential) {
             ASSERT(credential.persistence() == CredentialPersistenceNone);
+            if (challenge.failureResponse().httpStatusCode() == 401) {
+                // Store the credential back, possibly adding it as a default for this directory.
+                CredentialStorage::set(credential, challenge.protectionSpace(), d->m_request.url());
+            }
             [challenge.sender() useCredential:mac(credential) forAuthenticationChallenge:mac(challenge)];
             return;
         }
@@ -1034,6 +1038,10 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
         Credential credential = CredentialStorage::get(core([challenge protectionSpace]));
         if (!credential.isEmpty() && credential != m_initialCredential) {
             ASSERT(credential.persistence() == CredentialPersistenceNone);
+            if ([[challenge failureResponse] isKindOfClass:[NSHTTPURLResponse class]] && [(NSHTTPURLResponse *)[challenge failureResponse] statusCode] == 401) {
+                // Store the credential back, possibly adding it as a default for this directory.
+                CredentialStorage::set(credential, core([challenge protectionSpace]), m_url);
+            }
             [[challenge sender] useCredential:mac(credential) forAuthenticationChallenge:challenge];
             return;
         }

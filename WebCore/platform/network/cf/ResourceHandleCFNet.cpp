@@ -514,6 +514,10 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
         Credential credential = CredentialStorage::get(challenge.protectionSpace());
         if (!credential.isEmpty() && credential != d->m_initialCredential) {
             ASSERT(credential.persistence() == CredentialPersistenceNone);
+            if (challenge.failureResponse().httpStatusCode() == 401) {
+                // Store the credential back, possibly adding it as a default for this directory.
+                CredentialStorage::set(credential, challenge.protectionSpace(), d->m_request.url());
+            }
             RetainPtr<CFURLCredentialRef> cfCredential(AdoptCF, createCF(credential));
             CFURLConnectionUseCredential(d->m_connection.get(), cfCredential.get(), challenge.cfURLAuthChallengeRef());
             return;
@@ -724,12 +728,13 @@ void WebCoreSynchronousLoader::didReceiveChallenge(CFURLConnectionRef conn, CFUR
 {
     WebCoreSynchronousLoader* loader = static_cast<WebCoreSynchronousLoader*>(const_cast<void*>(clientInfo));
 
+    CFURLResponseRef urlResponse = (CFURLResponseRef)CFURLAuthChallengeGetFailureResponse(challenge);
+    CFHTTPMessageRef httpResponse = urlResponse ? CFURLResponseGetHTTPResponse(urlResponse) : 0;
+
     if (loader->m_user && loader->m_pass) {
         Credential credential(loader->m_user.get(), loader->m_pass.get(), CredentialPersistenceNone);
         RetainPtr<CFURLCredentialRef> cfCredential(AdoptCF, createCF(credential));
         
-        CFURLResponseRef urlResponse = (CFURLResponseRef)CFURLAuthChallengeGetFailureResponse(challenge);
-        CFHTTPMessageRef httpResponse = urlResponse ? CFURLResponseGetHTTPResponse(urlResponse) : 0;
         KURL urlToStore;
         if (httpResponse && CFHTTPMessageGetResponseStatusCode(httpResponse) == 401)
             urlToStore = loader->m_url.get();
@@ -745,6 +750,10 @@ void WebCoreSynchronousLoader::didReceiveChallenge(CFURLConnectionRef conn, CFUR
         Credential credential = CredentialStorage::get(core(CFURLAuthChallengeGetProtectionSpace(challenge)));
         if (!credential.isEmpty() && credential != loader->m_initialCredential) {
             ASSERT(credential.persistence() == CredentialPersistenceNone);
+            if (httpResponse && CFHTTPMessageGetResponseStatusCode(httpResponse) == 401) {
+                // Store the credential back, possibly adding it as a default for this directory.
+                CredentialStorage::set(credential, core(CFURLAuthChallengeGetProtectionSpace(challenge)), loader->m_url.get());
+            }
             RetainPtr<CFURLCredentialRef> cfCredential(AdoptCF, createCF(credential));
             CFURLConnectionUseCredential(conn, cfCredential.get(), challenge);
             return;
