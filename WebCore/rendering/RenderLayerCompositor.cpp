@@ -1001,19 +1001,10 @@ void RenderLayerCompositor::willMoveOffscreen()
 
 void RenderLayerCompositor::updateRootLayerPosition()
 {
-    if (m_rootPlatformLayer) {
-        // FIXME: Adjust the y position of the m_rootPlatformLayer if we are clipping by its top edge
-        // Eventually this will be taken care of by scrolling logic
-        // https://bugs.webkit.org/show_bug.cgi?id=38518
-        float height = m_renderView->bottomLayoutOverflow();
-        float yOffset = 0;
-
-        if (m_clippingLayer && height > m_clippingLayer->size().height())
-            yOffset = m_clippingLayer->size().height() - height;
-
-        m_rootPlatformLayer->setPosition(FloatPoint(0, yOffset));
-        m_rootPlatformLayer->setSize(FloatSize(m_renderView->rightLayoutOverflow(), height));
-    }
+    // Eventually we will need to account for scrolling here.
+    // https://bugs.webkit.org/show_bug.cgi?id=38518
+    if (m_rootPlatformLayer)
+        m_rootPlatformLayer->setSize(FloatSize(m_renderView->rightLayoutOverflow(), m_renderView->bottomLayoutOverflow()));
 }
 
 void RenderLayerCompositor::didStartAcceleratedAnimation()
@@ -1215,25 +1206,28 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
     if (m_rootPlatformLayer)
         return;
 
+    bool isHostedInIFrame = shouldPropagateCompositingToIFrameParent() && enclosingIFrameElement();
+    
     m_rootPlatformLayer = GraphicsLayer::create(0);
+#ifndef NDEBUG
+    m_rootPlatformLayer->setName("Root platform");
+#endif
     m_rootPlatformLayer->setSize(FloatSize(m_renderView->rightLayoutOverflow(), m_renderView->bottomLayoutOverflow()));
     m_rootPlatformLayer->setPosition(FloatPoint());
 
     // The root layer does flipping if we need it on this platform.
-    m_rootPlatformLayer->setGeometryOrientation(GraphicsLayer::compositingCoordinatesOrientation());
+    m_rootPlatformLayer->setGeometryOrientation(isHostedInIFrame ? GraphicsLayer::CompositingCoordinatesTopDown : GraphicsLayer::compositingCoordinatesOrientation());
 
     // Need to clip to prevent transformed content showing outside this frame
     m_rootPlatformLayer->setMasksToBounds(true);
     
-    if (shouldPropagateCompositingToIFrameParent() && enclosingIFrameElement()) {
+    if (isHostedInIFrame) {
         // Create a clipping layer if this is an iframe
         m_clippingLayer = GraphicsLayer::create(0);
-        m_clippingLayer->setGeometryOrientation(GraphicsLayer::compositingCoordinatesOrientation());
 #ifndef NDEBUG
         m_clippingLayer->setName("iframe Clipping");
 #endif
         m_clippingLayer->setMasksToBounds(true);
-        m_clippingLayer->setAnchorPoint(FloatPoint());
         m_clippingLayer->addChild(m_rootPlatformLayer.get());
     }
 

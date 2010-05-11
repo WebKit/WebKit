@@ -5,6 +5,23 @@
         Allow compositing layers to be connected across iframe boundaries on Mac
         https://bugs.webkit.org/show_bug.cgi?id=38856
 
+        Clean up the geometry logic when propagating compositing out of iframes.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition): Geometry on m_rootPlatformLayer no longer
+        needs to be special when there's a clipping layer.
+        
+        (WebCore::RenderLayerCompositor::ensureRootPlatformLayer): Don't set the clipping layer to have
+        flipped geometry ever, and only set the root layer to have flipped geometry if it is not
+        being hosted in an iframe. Also no need to set a custom anchor point on the clipping layer.
+
+2010-05-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson
+
+        Allow compositing layers to be connected across iframe boundaries on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=38856
+
         Clean up some methods related to composited iframes. No behavioral changes.
 
         * rendering/RenderLayerBacking.h: Move innerRenderLayerCompositor() to be a static method:
