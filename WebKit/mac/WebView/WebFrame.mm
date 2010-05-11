@@ -541,7 +541,15 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
     FrameView* view = _private->coreFrame->view();
     
-    bool shouldFlatten = WKCGContextIsBitmapContext(ctx) && [getWebView(self) _includesFlattenedCompositingLayersWhenDrawingToBitmap];
+    bool shouldFlatten = false;
+    if (Frame* parentFrame = _private->coreFrame->tree()->parent()) {
+        // For subframes, we need to inherit the paint behavior from our parent
+        FrameView* parentView = parentFrame ? parentFrame->view() : 0;
+        if (parentView)
+            shouldFlatten = parentView->paintBehavior() & PaintBehaviorFlattenCompositingLayers;
+    } else
+        shouldFlatten = WKCGContextIsBitmapContext(ctx) && [getWebView(self) _includesFlattenedCompositingLayersWhenDrawingToBitmap];
+
     PaintBehavior oldBehavior = PaintBehaviorNormal;
     if (shouldFlatten) {
         oldBehavior = view->paintBehavior();

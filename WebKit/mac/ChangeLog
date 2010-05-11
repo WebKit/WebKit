@@ -1,3 +1,20 @@
+2010-05-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Allow compositing layers to be connected across iframe boundaries on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=38856
+        
+        When painting an iframe into a compositing layer, the "PaintBehaviorFlattenCompositingLayers"
+        flag was mistakenly set, because we'd detect that we were drawing into a bitmap. This caused
+        content to show up in both compositing layers, and the painted background inside the iframe.
+        
+        Fix by taking the flattening state from the parent frame, if there is one. For the root
+        frame, we continue to look to see if we're painting into a bitmap.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _drawRect:contentsOnly:]):
+
 2010-05-10  Timothy Hatcher  <timothy@apple.com>
 
         Fix a crash when closing a WebView while the Web Inspector is open.
