@@ -1,3 +1,16 @@
+2010-05-10  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        new-run-webkit-tests: fix a path-handling bug that was breaking the
+        dryrun ports on windows, and add a comment about why we don't run
+        the chromium dryrun tests by default on every port.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38796
+
+        * Scripts/webkitpy/layout_tests/port/dryrun.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2010-05-11  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.

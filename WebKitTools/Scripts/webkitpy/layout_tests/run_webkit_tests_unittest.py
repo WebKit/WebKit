@@ -118,21 +118,17 @@ class TestRunnerTest(unittest.TestCase):
 
 class DryrunTest(unittest.TestCase):
     def test_basics(self):
-        # FIXME: This test depends on being able to detect the correct
-        # port from the environment.  Thus it can't work for Gtk/Qt without
-        # modification or more information being passed into test-webkitpy.
-        if sys.platform not in "mac":
+        # FIXME: it's hard to know which platforms are safe to test; the
+        # chromium platforms require a chromium checkout, and the mac platform
+        # requires fcntl, so it can't be tested on win32, etc. There is
+        # probably a better way of handling this.
+        if sys.platform != "mac":
             return
         self.assertTrue(passing_run(['--platform', 'dryrun',
                                      'fast/html']))
-        #self.assertTrue(passing_run(['--platform', 'dryrun-mac',
-        #                             'fast/html']))
-        #self.assertTrue(passing_run(['--platform', 'dryrun-chromium-mac',
-        #                             'fast/html']))
-        #self.assertTrue(passing_run(['--platform', 'dryrun-chromium-win',
-        #                             'fast/html']))
-        #self.assertTrue(passing_run(['--platform', 'dryrun-chromium-linux',
-        #                             'fast/html']))
+        self.assertTrue(passing_run(['--platform', 'dryrun-mac',
+                                     'fast/html']))
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -46,6 +46,8 @@
 
 from __future__ import with_statement
 
+import sys
+
 import base
 import factory
 
@@ -172,7 +174,11 @@ class DryrunDriver(base.Driver):
         test = uri
 
         if uri.startswith("file:///"):
-            test = test.replace('file://', '')
+            if sys.platform == 'win32':
+                test = test.replace('file:///', '')
+                test = test.replace('/', '\\')
+            else:
+                test = test.replace('file://', '')
             return test
         elif uri.startswith("http://127.0.0.1:8880/"):
             # websocket tests
