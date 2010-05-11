@@ -48,16 +48,17 @@ class CheckStyle(AbstractStep):
         if not self._options.check_style:
             return
         os.chdir(self._tool.scm().checkout_root)
-        try:
-            args = []
-            if self._options.git_commit:
-                args.append("--git-commit")
-                args.append(self._options.git_commit)
-            if self._tool.scm().should_squash(self._options.squash):
-                args.append("--squash")
-            else:
-                args.append("--no-squash")
 
+        args = []
+        if self._options.git_commit:
+            args.append("--git-commit")
+            args.append(self._options.git_commit)
+        if self._tool.scm().should_squash(self._options.squash):
+            args.append("--squash")
+        else:
+            args.append("--no-squash")
+
+        try:
             self._run_script("check-webkit-style", args)
         except ScriptError, e:
             if self._options.non_interactive:
