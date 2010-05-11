@@ -1116,7 +1116,8 @@ void RenderObject::repaintUsingContainer(RenderBoxModelObject* repaintContainer,
         repaintContainer->layer()->setBackingNeedsRepaintInRect(r);
     }
 #else
-    ASSERT_NOT_REACHED();
+    if (repaintContainer->isRenderView())
+        toRenderView(repaintContainer)->repaintViewRectangle(r, immediate);
 #endif
 }
 

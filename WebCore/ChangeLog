@@ -1,5 +1,17 @@
 2010-05-10  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix asserting GTK build.
+
+        r59137 changed the behavior of RenderObject::repaintUsingContainer(). I mistakenly
+        thought that non-compositing builds would always pass a 0 repaintContainer, but
+        actually the RenderView is passed in this case. So use this to repaint if 
+        ACCELERATED_COMPOSITING is turned off.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintUsingContainer):
+
+2010-05-10  Simon Fraser  <simon.fraser@apple.com>
+
         Fix warning on Windows about unreachable code.
 
         * rendering/RenderLayerCompositor.cpp:
