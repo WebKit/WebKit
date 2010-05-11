@@ -510,7 +510,7 @@ bool WebPageSerializerImpl::serialize()
         const KURL& currentFrameURL = currentFrame->frame()->loader()->url();
 
         // Check whether we have done this document.
-        if (m_localLinks.contains(currentFrameURL.string())) {
+        if (currentFrameURL.isValid() && m_localLinks.contains(currentFrameURL.string())) {
             // A new document, we will serialize it.
             didSerialization = true;
             // Get target encoding for current document.
