@@ -1,5 +1,13 @@
 2010-05-10  John Gregg  <johnnyg@google.com>
 
+        [chromium] Final set of baselines and expectations to green up the build.
+
+        * platform/chromium-mac/plugins/geturlnotify-during-document-teardown-expected.txt: Added.
+        * platform/chromium-win/plugins/geturlnotify-during-document-teardown-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2010-05-10  John Gregg  <johnnyg@google.com>
+
         [chromium] rebaseline SVG test for windows after recent changes.
 
         * platform/chromium-win/svg/W3C-SVG-1.1/filters-blend-01-b-expected.checksum:
