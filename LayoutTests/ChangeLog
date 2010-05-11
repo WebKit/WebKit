@@ -1,3 +1,9 @@
+2010-05-11  Jian Li  <jianli@chromium.org>
+
+        Unreviewed. Remove unneeded rebaselined result for enter-clicks-buttons.html
+
+        * platform/chromium-win/fast/forms/enter-clicks-buttons-expected.txt: Removed.
+
 2010-05-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
