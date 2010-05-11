@@ -2829,4 +2829,4 @@ BUG43890 WIN : http/tests/loading/basic.html = TEXT PASS
 BUG43890 MAC : fast/forms/implicit-submission.html = TEXT PASS
 
 // To be enabled after turning on FILE_READER
-BUGJIANLI: fast/files/file-reader.html = TEXT
+BUGJIANLI SKIP : fast/files/file-reader.html = TEXT

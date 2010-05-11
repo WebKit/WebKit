@@ -1,5 +1,11 @@
 2010-05-11  Jian Li  <jianli@chromium.org>
 
+        Unreviewed. Skip file-reader.html that is not enabled in chromium yet.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-05-11  Jian Li  <jianli@chromium.org>
+
         Reviewed by Dmitry Titov.
 
         Expose FileReader interface.
