@@ -1,3 +1,20 @@
+2010-05-11  Mark Rowe  <mrowe@apple.com>
+
+        Fix the world.
+
+        In r59162 a change was made to WebCore's FeatureDefines.xcconfig that enabled FILE_READER and FILE_WRITER.
+        The author and reviewer of that patch ignored the carefully-worded warning at the top of that file asking
+        that changes to the file be kept in sync across JavaScriptCore, WebCore and WebKit, as well as being kept
+        in sync with build-webkit.  This led to WebCore and WebKit having different views of Document's vtable
+        and results in crashes in Safari shortly after launch when virtual function calls resulted in the wrong
+        function in WebCore being called.
+
+        We fix this by bringing the FeatureDefines.xcconfig files in to sync.  Based on the ChangeLog message and
+        other changes in r59162 it appears that enabling FILE_WRITER was unintentional so that particular change
+        has been reverted.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2010-05-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
