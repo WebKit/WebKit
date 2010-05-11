@@ -184,6 +184,10 @@ private:
 
 PassOwnPtr<FileThread::Task> createFileThreadTask(
     FileStream* const callee,
+    void (FileStream::*method)());
+
+PassOwnPtr<FileThread::Task> createFileThreadTask(
+    FileStream* const callee,
     void (FileStream::*method)())
 {
     return FileThreadTask0::create(
