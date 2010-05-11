@@ -1,5 +1,14 @@
 2010-05-10  Simon Fraser  <simon.fraser@apple.com>
 
+        No review; attempt to fix failing tests.
+
+        Increase the timeout to give compositing updates a chance to happen.
+
+        * compositing/iframes/iframe-resize.html:
+        * compositing/iframes/overlapped-iframe.html:
+
+2010-05-10  Simon Fraser  <simon.fraser@apple.com>
+
         No review.
 
         Reduce timeouts from 500 to 50ms to make the tests run more quickly.
