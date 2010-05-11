@@ -42,13 +42,45 @@ namespace WebCore {
 
 using namespace JSC;
 
-JSValue JSDatabaseSync::changeVersion(ExecState*, const ArgList&)
+JSValue JSDatabaseSync::changeVersion(ExecState* exec, const ArgList& args)
 {
+    String oldVersion = ustringToString(args.at(0).toString(exec));
+    if (exec->hadException())
+        return jsUndefined();
+
+    String newVersion = ustringToString(args.at(1).toString(exec));
+    if (exec->hadException())
+        return jsUndefined();
+
+    JSObject* object = args.at(2).getObject();
+    if (!object) {
+        setDOMException(exec, TYPE_MISMATCH_ERR);
+        return jsUndefined();
+    }
+
+    RefPtr<SQLTransactionSyncCallback> callback(JSSQLTransactionSyncCallback::create(object, static_cast<JSDOMGlobalObject*>(globalObject())));
+
+    ExceptionCode ec = 0;
+    m_impl->changeVersion(oldVersion, newVersion, callback.release(), ec);
+    setDOMException(exec, ec);
+
     return jsUndefined();
 }
 
-static JSValue createTransaction(ExecState*, const ArgList&, DatabaseSync*, JSDOMGlobalObject*, bool)
+static JSValue createTransaction(ExecState* exec, const ArgList& args, DatabaseSync* database, JSDOMGlobalObject* globalObject, bool readOnly)
 {
+    JSObject* object = args.at(0).getObject();
+    if (!object) {
+        setDOMException(exec, TYPE_MISMATCH_ERR);
+        return jsUndefined();
+    }
+
+    RefPtr<SQLTransactionSyncCallback> callback(JSSQLTransactionSyncCallback::create(object, globalObject));
+
+    ExceptionCode ec = 0;
+    database->transaction(callback.release(), readOnly, ec);
+    setDOMException(exec, ec);
+
     return jsUndefined();
 }
 

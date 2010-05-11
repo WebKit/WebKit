@@ -1,3 +1,16 @@
+2010-05-07  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        Implement the JSC bindings for the sync DB API.
+        https://bugs.webkit.org/show_bug.cgi?id=34994
+
+        * bindings/js/JSDatabaseSyncCustom.cpp:
+        (WebCore::JSDatabaseSync::changeVersion):
+        (WebCore::createTransaction):
+        * bindings/js/JSSQLTransactionSyncCustom.cpp:
+        (WebCore::JSSQLTransactionSync::executeSql):
+
 2010-05-10  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser.
