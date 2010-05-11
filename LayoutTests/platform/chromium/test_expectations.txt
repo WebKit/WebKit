@@ -2482,7 +2482,7 @@ BUG31642 LINUX DEBUG: svg/W3C-SVG-1.1/animate-elem-30-t.svg = IMAGE CRASH
 
 // WebKit roll 52852 -> 52867
 BUG32018 : websocket/tests/frame-lengths.html = PASS TIMEOUT
-BUG32018 DEBUG : websocket/tests/simple-stress.html = PASS TEXT
+BUG32018 DEBUG : websocket/tests/simple-stress.html = PASS TEXT TIMEOUT
 
 // Flaky
 BUG31803 MAC LINUX : editing/inserting/12882.html = IMAGE PASS
@@ -2823,3 +2823,7 @@ BUG43420: fast/events/popup-allowed-from-gesture-initiated-form-submit.html = TI
 
 // WebKit r59064 changes the behavior of javascript regexp literals
 BUGJOHNNYG : fast/js/regexp-literals-arent-constants.html = TEXT
+
+// Flaky tests
+BUG43890 WIN : http/tests/loading/basic.html = TEXT PASS
+BUG43890 MAC : fast/forms/implicit-submission.html = TEXT PASS

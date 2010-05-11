@@ -1,3 +1,11 @@
+2010-05-11  Jian Li  <jianli@chromium.org>
+
+        Unreviewed.
+
+        [chromium] Mark flaky layout tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-05-11  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Shinichiro Hamaji.
