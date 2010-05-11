@@ -1,5 +1,14 @@
 2010-05-10  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix up test results from last commit, which were generated with a build from before r59129.
+
+        * platform/win/compositing/iframes/composited-parent-iframe-expected.txt:
+        * platform/win/compositing/iframes/iframe-resize-expected.txt:
+        * platform/win/compositing/iframes/leave-compositing-iframe-expected.txt:
+        * platform/win/compositing/iframes/overlapped-iframe-expected.txt:
+
+2010-05-10  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Anders Carlsson.
 
         https://bugs.webkit.org/show_bug.cgi?id=38856
