@@ -1,3 +1,17 @@
+2010-05-11  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Rubber-stamped by Kenneth Christiansen.
+
+        [Qt] fast/frames/flattening/frameset-flattening-subframesets.html fails intermittently on Qt bot
+        https://bugs.webkit.org/show_bug.cgi?id=37334
+
+        Removing unneeded call to LayoutTestController.display(). It was originally intending
+        to force a layout, but a re-layout will happen regardless because document.body.offsetTop
+        is called afterwards
+
+        * fast/frames/flattening/frameset-flattening-subframe-resize.html:
+        * platform/qt/Skipped:
+
 2010-05-11  Jian Li  <jianli@chromium.org>
 
         Unreviewed. Skip file-reader.html that is not enabled in chromium yet.
