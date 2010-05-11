@@ -4,6 +4,25 @@
 
         Allow compositing layers to be connected across iframe boundaries on Mac
         https://bugs.webkit.org/show_bug.cgi?id=38856
+        
+        RenderObject::repaintUsingContainer() incorrectly did a view-based
+        repaint if the repaint container was the RenderView. Instead, we need
+        to check to see if the RenderView's layer is composited, and, if so,
+        whether it's painting into the window or not. This can occur when iframes
+        are composited.
+
+        The bug is timing-sensitive, involving compositing in iframes, and I was not able to
+        concoct a good testcase.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintUsingContainer):
+
+2010-05-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson
+
+        Allow compositing layers to be connected across iframe boundaries on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=38856
 
         Changes to allow compositing layers for iframes to switch between being hosted
         by the iframe's layer-backed NSView, and parented in the GraphicsLayer tree of the
