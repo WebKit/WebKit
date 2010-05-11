@@ -88,10 +88,10 @@ class MainTest(unittest.TestCase):
                         in regular_output.get())
 
     def test_last_results(self):
-        passing_run(['--platform', 'dryrun', 'fast/html'])
+        passing_run(['--platform', 'test', 'fast/html'])
         (res, buildbot_output, regular_output) = logging_run(
             ['--print-last-failures'])
-        self.assertEqual(regular_output.get(), ['\n'])
+        self.assertEqual(regular_output.get(), ['\n\n'])
         self.assertEqual(buildbot_output.get(), [])
 
 
