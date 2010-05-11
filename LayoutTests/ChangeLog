@@ -1,5 +1,11 @@
 2010-05-10  John Gregg  <johnnyg@google.com>
 
+        [chromium] Fix sort order for expectations after previous change.
+
+        * platform/chromium/fast/dom/prototype-inheritance-expected.txt:
+
+2010-05-10  John Gregg  <johnnyg@google.com>
+
         [chromium] Unreviewed, test expectation change for Chromium following r59010.
 
         * platform/chromium/fast/dom/prototype-inheritance-expected.txt:

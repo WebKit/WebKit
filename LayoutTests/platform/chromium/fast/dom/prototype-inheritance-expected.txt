@@ -529,10 +529,10 @@ PASS inner.SVGUnitTypes.isInner is true
 PASS inner.SVGUnitTypes.constructor.isInner is true
 PASS inner.SVGUseElement.isInner is true
 PASS inner.SVGUseElement.constructor.isInner is true
-PASS inner.SVGViewElement.isInner is true
-PASS inner.SVGViewElement.constructor.isInner is true
 PASS inner.SVGVKernElement.isInner is true
 PASS inner.SVGVKernElement.constructor.isInner is true
+PASS inner.SVGViewElement.isInner is true
+PASS inner.SVGViewElement.constructor.isInner is true
 PASS inner.SVGZoomEvent.isInner is true
 PASS inner.SVGZoomEvent.constructor.isInner is true
 PASS inner.Storage.isInner is true
