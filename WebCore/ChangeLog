@@ -375,7 +375,6 @@
         * html/canvas/WebGLUnsignedShortArray.h:
         (WebCore::WebGLUnsignedShortArray::isUnsignedShortArray):
 
-<<<<<<< .mine
 2010-05-10  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
@@ -456,7 +455,6 @@
         * html/canvas/WebGLUnsignedShortArray.h:
         (WebCore::WebGLUnsignedShortArray::isUnsignedShortArray):
 
-=======
 2010-05-10  Brent Fulgham  <bfulgham@webkit.org>
 
         Build fix, not reviewed.
@@ -466,7 +464,6 @@
 
         * WebCore.vcproj/WebCore.vcproj:
 
->>>>>>> .r59084
 2010-05-10  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
