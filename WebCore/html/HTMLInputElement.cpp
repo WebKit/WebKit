@@ -2341,7 +2341,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
 
         // Form may never have been present, or may have been destroyed by code responding to the change event.
         if (formForSubmission)
-            formForSubmission->submitImplicitly(evt, isTextField());
+            formForSubmission->submitImplicitly(evt, canTriggerImplicitSubmission());
 
         evt->setDefaultHandled();
         return;

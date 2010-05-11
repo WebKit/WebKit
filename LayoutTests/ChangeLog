@@ -1,3 +1,17 @@
+2010-05-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(r58520): Implicit submission on forms with button type="submit" no longer works
+        https://bugs.webkit.org/show_bug.cgi?id=38913
+
+        Updated the test to include coverage of button elements.
+
+        * fast/forms/enter-clicks-buttons-expected.txt: Updated expectations to account for implicit
+            submission which now correctly happens from the right element (button).
+        * fast/forms/implicit-submission-expected.txt: Updated expectations with new test results.
+        * fast/forms/implicit-submission.html: Added tests and code to cover button elements.
+
 2010-05-11  Antonio Gomes  <tonikitoo@webkit.org>
 
         Rubber-stamped by Kenneth Christiansen.

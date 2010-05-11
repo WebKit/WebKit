@@ -131,6 +131,7 @@ public:
     virtual bool isInputTypeHidden() const { return m_type == HIDDEN; }
     virtual bool isPasswordField() const { return m_type == PASSWORD; }
     virtual bool hasSpinButton() const { return m_type == NUMBER || m_type == DATE || m_type == DATETIME || m_type == DATETIMELOCAL || m_type == MONTH || m_type == TIME || m_type == WEEK; }
+    virtual bool canTriggerImplicitSubmission() const { return isTextField(); }
 
     bool checked() const { return m_checked; }
     void setChecked(bool, bool sendChangeEvent = false);

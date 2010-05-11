@@ -1,3 +1,29 @@
+2010-05-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(r58520): Implicit submission on forms with button type="submit" no longer works
+        https://bugs.webkit.org/show_bug.cgi?id=38913
+
+        * Widened the check for a successful submit button to include all HTMLFormControlElements.
+        * Clarified implicit submission code by:
+            - introducing HTMLFormControlElement::canTriggerImplicitSubmission flag,
+            - getting rid of static casting and checking for tag names.
+
+        * html/HTMLFormControlElement.h:
+        (WebCore::HTMLFormControlElement::canTriggerImplicitSubmission): Added.
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submitImplicitly): Renamed parameters for clarity, refactored code
+            to use canTriggerImplicitSubmission.
+        * html/HTMLFormElement.h: Renamed parameter for clarity.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):  Used canTriggerImplicitSubmission()
+            instead of isTextField() for clarity.
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::canTriggerImplicitSubmission): Added.
+        * html/HTMLIsIndexElement.h:
+        (WebCore::HTMLIsIndexElement::canTriggerImplicitSubmission): Added.
+
 2010-05-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r59171.

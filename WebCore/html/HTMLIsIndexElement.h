@@ -33,6 +33,7 @@ public:
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual int tagPriority() const { return 0; }
+    virtual bool canTriggerImplicitSubmission() const { return true; }
 
     virtual void parseMappedAttribute(MappedAttribute *attr);
 
