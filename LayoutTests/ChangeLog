@@ -1,5 +1,15 @@
 2010-05-10  Simon Fraser  <simon.fraser@apple.com>
 
+        Skip two new flakey tests:
+        
+        # Tests are flakey: https://bugs.webkit.org/show_bug.cgi?id=38888
+        compositing/iframes/iframe-resize.html
+        compositing/iframes/overlapped-iframe.html
+
+        * platform/mac/Skipped:
+
+2010-05-10  Simon Fraser  <simon.fraser@apple.com>
+
         No review; attempt to fix failing tests.
 
         Increase the timeout to give compositing updates a chance to happen.
