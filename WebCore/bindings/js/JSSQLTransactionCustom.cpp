@@ -41,7 +41,7 @@
 using namespace JSC;
 
 namespace WebCore {
-    
+
 JSValue JSSQLTransaction::executeSql(ExecState* exec, const ArgList& args)
 {
     if (args.isEmpty()) {
@@ -68,13 +68,13 @@ JSValue JSSQLTransaction::executeSql(ExecState* exec, const ArgList& args)
         unsigned length = lengthValue.toUInt32(exec);
         if (exec->hadException())
             return jsUndefined();
-        
+
         for (unsigned i = 0 ; i < length; ++i) {
             JSValue value = object->get(exec, i);
             if (exec->hadException())
                 return jsUndefined();
-            
-            if (value.isNull())
+
+            if (value.isUndefinedOrNull())
                 sqlValues.append(SQLValue());
             else if (value.isNumber())
                 sqlValues.append(value.uncheckedGetNumber());
@@ -94,10 +94,10 @@ JSValue JSSQLTransaction::executeSql(ExecState* exec, const ArgList& args)
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();
         }
-        
+
         callback = JSSQLStatementCallback::create(object, static_cast<JSDOMGlobalObject*>(exec->dynamicGlobalObject()));
     }
-    
+
     RefPtr<SQLStatementErrorCallback> errorCallback;
     if (!args.at(3).isUndefinedOrNull()) {
         JSObject* object = args.at(3).getObject();
@@ -105,14 +105,14 @@ JSValue JSSQLTransaction::executeSql(ExecState* exec, const ArgList& args)
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();
         }
-        
+
         errorCallback = JSSQLStatementErrorCallback::create(object, static_cast<JSDOMGlobalObject*>(exec->dynamicGlobalObject()));
     }
-    
+
     ExceptionCode ec = 0;
     m_impl->executeSQL(sqlStatement, sqlValues, callback.release(), errorCallback.release(), ec);
     setDOMException(exec, ec);
-    
+
     return jsUndefined();
 }
 

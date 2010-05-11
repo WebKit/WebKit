@@ -34,7 +34,7 @@ window.onload = function()
     shouldBe("window.prompt.call(targetWindow, 'message', 'defaultValue')", "undefined");
     shouldBe("window.getComputedStyle.call(targetWindow, document.body, '')", "undefined");
     shouldBe("window.getMatchedCSSRules.call(targetWindow, document.body, '', false)", "undefined");
-    shouldBe("window.openDatabase.call(targetWindow, 'name')", "undefined");
+    shouldBe("window.openDatabase.call(targetWindow, 'name', '1.0', 'description', 0)", "undefined");
     shouldBe("window.atob.call(targetWindow, 'string')", "undefined");
     shouldBe("window.btoa.call(targetWindow, 'string')", "undefined");
     shouldBe("window.open.call(targetWindow, '')", "undefined");

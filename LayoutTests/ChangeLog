@@ -1,3 +1,20 @@
+2010-05-10  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        Fixing the expectations for openDatabase() in cross-frame-access-call.html.
+        Related to changes in patches #6 and #7 at https://bugs.webkit.org/show_bug.cgi?id=34994.
+
+        * http/tests/security/cross-frame-access-call-expected.txt:
+        * http/tests/security/cross-frame-access-call.html:
+        * platform/chromium-linux/http/tests/security/cross-frame-access-call-expected.txt: Removed.
+        * platform/chromium-mac/http/tests/security/cross-frame-access-call-expected.txt: Removed.
+        * platform/chromium-win/http/tests/security/cross-frame-access-call-expected.txt: Removed.
+        * platform/chromium/http: Added.
+        * platform/chromium/http/tests: Added.
+        * platform/chromium/http/tests/security: Added.
+        * platform/chromium/http/tests/security/cross-frame-access-call-expected.txt: Copied from LayoutTests/platform/chromium-win/http/tests/security/cross-frame-access-call-expected.txt.
+
 2010-05-10  John Gregg  <johnnyg@google.com>
 
         [chromium] Fix sort order for expectations after previous change.

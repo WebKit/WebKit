@@ -1,3 +1,20 @@
+2010-05-10  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        Cleaning up and fixing the existing JSC DB bindings.
+        https://bugs.webkit.org/show_bug.cgi?id=34994
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::openDatabase):
+        * bindings/js/JSDatabaseCustom.cpp:
+        (WebCore::JSDatabase::changeVersion):
+        (WebCore::createTransaction):
+        (WebCore::JSDatabase::transaction):
+        (WebCore::JSDatabase::readTransaction):
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        (WebCore::JSSQLTransaction::executeSql):
+
 2010-05-10  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
