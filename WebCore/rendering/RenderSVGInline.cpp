@@ -41,9 +41,7 @@ RenderSVGInline::RenderSVGInline(Node* n)
 
 InlineFlowBox* RenderSVGInline::createInlineFlowBox()
 {
-    InlineFlowBox* box = new (renderArena()) SVGInlineFlowBox(this);
-    box->setHasVirtualHeight();
-    return box;
+    return new (renderArena()) SVGInlineFlowBox(this);
 }
 
 void RenderSVGInline::absoluteRects(Vector<IntRect>& rects, int, int)

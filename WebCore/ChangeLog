@@ -1,3 +1,113 @@
+2010-05-12  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make InlineBoxes use an IntRect for dimensions, and eliminate the dynamic computation of height() every time.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/visible_units.cpp:
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        (WebCore::EllipsisBox::selectionRect):
+        (WebCore::EllipsisBox::paintSelection):
+        (WebCore::EllipsisBox::nodeAtPoint):
+        * rendering/EllipsisBox.h:
+        (WebCore::EllipsisBox::EllipsisBox):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::adjustPosition):
+        (WebCore::InlineBox::canAccommodateEllipsis):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+        (WebCore::InlineBox::isSVGRootInlineBox):
+        (WebCore::InlineBox::x):
+        (WebCore::InlineBox::y):
+        (WebCore::InlineBox::width):
+        (WebCore::InlineBox::height):
+        (WebCore::InlineBox::bottom):
+        (WebCore::InlineBox::right):
+        (WebCore::InlineBox::setX):
+        (WebCore::InlineBox::setY):
+        (WebCore::InlineBox::setWidth):
+        (WebCore::InlineBox::setHeight):
+        (WebCore::InlineBox::location):
+        (WebCore::InlineBox::size):
+        (WebCore::InlineBox::setLocation):
+        (WebCore::InlineBox::setSize):
+        (WebCore::InlineBox::move):
+        (WebCore::InlineBox::frameRect):
+        (WebCore::InlineBox::setFrameRect):
+        (WebCore::InlineBox::baselinePosition):
+        (WebCore::InlineBox::lineHeight):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesVertically):
+        (WebCore::InlineFlowBox::computeVerticalOverflow):
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        (WebCore::InlineFlowBox::paintMask):
+        (WebCore::InlineFlowBox::paintTextDecorations):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::visibleOverflowRect):
+        (WebCore::InlineFlowBox::topLayoutOverflow):
+        (WebCore::InlineFlowBox::bottomLayoutOverflow):
+        (WebCore::InlineFlowBox::leftLayoutOverflow):
+        (WebCore::InlineFlowBox::rightLayoutOverflow):
+        (WebCore::InlineFlowBox::layoutOverflowRect):
+        (WebCore::InlineFlowBox::topVisualOverflow):
+        (WebCore::InlineFlowBox::bottomVisualOverflow):
+        (WebCore::InlineFlowBox::leftVisualOverflow):
+        (WebCore::InlineFlowBox::rightVisualOverflow):
+        (WebCore::InlineFlowBox::visualOverflowRect):
+        (WebCore::InlineFlowBox::setHorizontalOverflowPositions):
+        (WebCore::InlineFlowBox::setVerticalOverflowPositions):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionRect):
+        (WebCore::InlineTextBox::placeEllipsisBox):
+        (WebCore::InlineTextBox::nodeAtPoint):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintCompositionBackground):
+        (WebCore::InlineTextBox::paintDecoration):
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::computeRectForReplacementMarker):
+        (WebCore::InlineTextBox::paintCompositionUnderline):
+        (WebCore::InlineTextBox::offsetForPosition):
+        (WebCore::InlineTextBox::positionForOffset):
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::setSpaceAdd):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionForPointWithInlineChildren):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeVerticalPositionsForLine):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        * rendering/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::createInlineFlowBox):
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::createTextBox):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::createRootInlineBox):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionForPoint):
+        (WebCore::RenderText::firstRunX):
+        (WebCore::RenderText::firstRunY):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeTextRun):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::placeEllipsis):
+        (WebCore::RootInlineBox::addHighlightOverflow):
+        (WebCore::RootInlineBox::closestLeafChildForXPos):
+        * rendering/SVGInlineFlowBox.h:
+        (WebCore::SVGInlineFlowBox::SVGInlineFlowBox):
+        * rendering/SVGInlineTextBox.h:
+        (WebCore::SVGInlineTextBox::selectionTop):
+        (WebCore::SVGInlineTextBox::selectionHeight):
+        * rendering/SVGRootInlineBox.h:
+        (WebCore::SVGRootInlineBox::SVGRootInlineBox):
+        (WebCore::SVGRootInlineBox::isSVGRootInlineBox):
+        * rendering/TrailingFloatsRootInlineBox.h: Removed.
+
 2010-05-12  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.

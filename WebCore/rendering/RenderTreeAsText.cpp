@@ -377,10 +377,10 @@ static void writeRenderObject(TextStream& ts, const RenderObject& o, RenderAsTex
 static void writeTextRun(TextStream& ts, const RenderText& o, const InlineTextBox& run)
 {
     // FIXME: Table cell adjustment is temporary until results can be updated.
-    int y = run.m_y;
+    int y = run.y();
     if (o.containingBlock()->isTableCell())
         y -= toRenderTableCell(o.containingBlock())->intrinsicPaddingTop();
-    ts << "text run at (" << run.m_x << "," << y << ") width " << run.m_width;
+    ts << "text run at (" << run.x() << "," << y << ") width " << run.width();
     if (run.direction() == RTL || run.m_dirOverride) {
         ts << (run.direction() == RTL ? " RTL" : " LTR");
         if (run.m_dirOverride)

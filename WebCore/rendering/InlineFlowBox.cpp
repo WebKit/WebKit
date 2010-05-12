@@ -500,31 +500,37 @@ void InlineFlowBox::placeBoxesVertically(int yPos, int maxHeight, int maxAscent,
         }
         
         int newY = curr->y();
+        int newHeight = 0;
         if (curr->isText() || curr->isInlineFlowBox()) {
             const Font& font = curr->renderer()->style(m_firstLine)->font();
             newY += curr->baselinePosition(false) - font.ascent();
-            if (curr->isInlineFlowBox())
+            newHeight = font.height();
+            if (curr->isInlineFlowBox()) {
                 newY -= curr->boxModelObject()->borderTop() + curr->boxModelObject()->paddingTop();
+                newHeight += curr->boxModelObject()->borderAndPaddingHeight();
+            }
         } else if (!curr->renderer()->isBR()) {
             RenderBox* box = toRenderBox(curr->renderer());
             newY += box->marginTop();
+            newHeight = box->height();
         }
 
         curr->setY(newY);
+        curr->setHeight(newHeight);
 
         if (childAffectsTopBottomPos) {
-            int boxHeight = curr->height();
             selectionTop = min(selectionTop, newY);
-            selectionBottom = max(selectionBottom, newY + boxHeight);
+            selectionBottom = max(selectionBottom, newY + curr->height());
         }
     }
 
     if (isRootInlineBox()) {
         const Font& font = renderer()->style(m_firstLine)->font();
         setY(y() + baselinePosition(true) - font.ascent());
+        setHeight(font.height());
         if (hasTextChildren() || strictMode) {
             selectionTop = min(selectionTop, y());
-            selectionBottom = max(selectionBottom, y() + height());
+            selectionBottom = max(selectionBottom, bottom());
         }
     }
 }
@@ -600,28 +606,28 @@ void InlineFlowBox::computeVerticalOverflow(int lineTop, int lineBottom, bool st
         }
     }
     
-    setVerticalOverflowPositions(topLayoutOverflow, bottomLayoutOverflow, topVisualOverflow, bottomVisualOverflow, boxHeight);
+    setVerticalOverflowPositions(topLayoutOverflow, bottomLayoutOverflow, topVisualOverflow, bottomVisualOverflow);
 }
 
-bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty)
+bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int pointX, int pointY, int tx, int ty)
 {
     IntRect overflowRect(visibleOverflowRect());
     overflowRect.move(tx, ty);
-    if (!overflowRect.contains(x, y))
+    if (!overflowRect.contains(pointX, pointY))
         return false;
 
     // Check children first.
     for (InlineBox* curr = lastChild(); curr; curr = curr->prevOnLine()) {
-        if ((curr->renderer()->isText() || !curr->boxModelObject()->hasSelfPaintingLayer()) && curr->nodeAtPoint(request, result, x, y, tx, ty)) {
-            renderer()->updateHitTestResult(result, IntPoint(x - tx, y - ty));
+        if ((curr->renderer()->isText() || !curr->boxModelObject()->hasSelfPaintingLayer()) && curr->nodeAtPoint(request, result, pointX, pointY, tx, ty)) {
+            renderer()->updateHitTestResult(result, IntPoint(pointX - tx, pointY - ty));
             return true;
         }
     }
 
     // Now check ourselves.
-    IntRect rect(tx + m_x, ty + m_y, m_width, height());
-    if (visibleToHitTesting() && rect.contains(x, y)) {
-        renderer()->updateHitTestResult(result, IntPoint(x - tx, y - ty)); // Don't add in m_x or m_y here, we want coords in the containing block's space.
+    IntRect rect(tx + x(), ty + y(), width(), height());
+    if (visibleToHitTesting() && rect.contains(pointX, pointY)) {
+        renderer()->updateHitTestResult(result, IntPoint(pointX - tx, pointY - ty)); // Don't add in m_x or m_y here, we want coords in the containing block's space.
         return true;
     }
     
@@ -737,8 +743,7 @@ void InlineFlowBox::paintBoxDecorations(RenderObject::PaintInfo& paintInfo, int 
     if (!renderer()->shouldPaintWithinRoot(paintInfo) || renderer()->style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseForeground)
         return;
 
-    int x = m_x;
-    int y = m_y;
+    int yPos = y();
     int w = width();
     int h = height();
 
@@ -746,14 +751,14 @@ void InlineFlowBox::paintBoxDecorations(RenderObject::PaintInfo& paintInfo, int 
     bool strictMode = renderer()->document()->inStrictMode();
     if (!hasTextChildren() && !strictMode) {
         RootInlineBox* rootBox = root();
-        int bottom = min(rootBox->lineBottom(), y + h);
-        y = max(rootBox->lineTop(), y);
-        h = bottom - y;
+        int bottom = min(rootBox->lineBottom(), yPos + h);
+        yPos = max(rootBox->lineTop(), yPos);
+        h = bottom - yPos;
     }
     
     // Move x/y to our coordinates.
-    tx += x;
-    ty += y;
+    tx += x();
+    ty += yPos;
     
     GraphicsContext* context = paintInfo.context;
     
@@ -813,8 +818,7 @@ void InlineFlowBox::paintMask(RenderObject::PaintInfo& paintInfo, int tx, int ty
     if (!renderer()->shouldPaintWithinRoot(paintInfo) || renderer()->style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
         return;
 
-    int x = m_x;
-    int y = m_y;
+    int yPos = y();
     int w = width();
     int h = height();
 
@@ -822,14 +826,14 @@ void InlineFlowBox::paintMask(RenderObject::PaintInfo& paintInfo, int tx, int ty
     bool strictMode = renderer()->document()->inStrictMode();
     if (!hasTextChildren() && !strictMode) {
         RootInlineBox* rootBox = root();
-        int bottom = min(rootBox->lineBottom(), y + h);
-        y = max(rootBox->lineTop(), y);
-        h = bottom - y;
+        int bottom = min(rootBox->lineBottom(), yPos + h);
+        yPos = max(rootBox->lineTop(), yPos);
+        h = bottom - yPos;
     }
     
     // Move x/y to our coordinates.
-    tx += x;
-    ty += y;
+    tx += x();
+    ty += yPos;
 
     const NinePieceImage& maskNinePieceImage = renderer()->style()->maskBoxImage();
     StyleImage* maskBoxImage = renderer()->style()->maskBoxImage().image();
@@ -913,45 +917,45 @@ void InlineFlowBox::paintTextDecorations(RenderObject::PaintInfo& paintInfo, int
         return;
 
     GraphicsContext* context = paintInfo.context;
-    tx += m_x;
-    ty += m_y;
+    tx += x();
+    ty += y();
     RenderStyle* styleToUse = renderer()->style(m_firstLine);
     int deco = parent() ? styleToUse->textDecoration() : styleToUse->textDecorationsInEffect();
     if (deco != TDNONE && 
         ((!paintedChildren && ((deco & UNDERLINE) || (deco & OVERLINE))) || (paintedChildren && (deco & LINE_THROUGH))) &&
         shouldDrawTextDecoration(renderer())) {
-        int x = m_x + borderLeft() + paddingLeft();
-        int w = m_width - (borderLeft() + paddingLeft() + borderRight() + paddingRight());
+        int contentX = x() + borderLeft() + paddingLeft();
+        int w = width() - (borderLeft() + paddingLeft() + borderRight() + paddingRight());
         RootInlineBox* rootLine = root();
         if (rootLine->ellipsisBox()) {
-            int ellipsisX = m_x + rootLine->ellipsisBox()->x();
+            int ellipsisX = x() + rootLine->ellipsisBox()->x();
             int ellipsisWidth = rootLine->ellipsisBox()->width();
             bool ltr = renderer()->style()->direction() == LTR;
             if (rootLine == this) {
                 // Trim w and x so that the underline isn't drawn underneath the ellipsis.
                 // ltr: is our right edge farther right than the right edge of the ellipsis.
                 // rtl: is the left edge of our box farther left than the left edge of the ellipsis.
-                bool ltrTruncation = ltr && (x + w >= ellipsisX + ellipsisWidth);
-                bool rtlTruncation = !ltr && (x <= ellipsisX + ellipsisWidth);
+                bool ltrTruncation = ltr && (contentX + w >= ellipsisX + ellipsisWidth);
+                bool rtlTruncation = !ltr && (contentX <= ellipsisX + ellipsisWidth);
                 if (ltrTruncation)
-                    w -= (x + w) - (ellipsisX + ellipsisWidth);
+                    w -= (contentX + w) - (ellipsisX + ellipsisWidth);
                 else if (rtlTruncation) {
-                    int dx = m_x - ((ellipsisX - m_x) + ellipsisWidth);
+                    int dx = x() - ((ellipsisX - x()) + ellipsisWidth);
                     tx -= dx;
                     w += dx;
                 }
             } else {
-                bool ltrPastEllipsis = ltr && x >= ellipsisX;
-                bool rtlPastEllipsis = !ltr && (x + w) <= (ellipsisX + ellipsisWidth);
+                bool ltrPastEllipsis = ltr && contentX >= ellipsisX;
+                bool rtlPastEllipsis = !ltr && (contentX + w) <= (ellipsisX + ellipsisWidth);
                 if (ltrPastEllipsis || rtlPastEllipsis)
                     return;
 
-                bool ltrTruncation = ltr && x + w >= ellipsisX;
-                bool rtlTruncation = !ltr && x <= ellipsisX;
+                bool ltrTruncation = ltr && contentX + w >= ellipsisX;
+                bool rtlTruncation = !ltr && contentX <= ellipsisX;
                 if (ltrTruncation)
-                    w -= (x + w - ellipsisX);
+                    w -= (contentX + w - ellipsisX);
                 else if (rtlTruncation) {
-                    int dx = m_x - ((ellipsisX - m_x) + ellipsisWidth);
+                    int dx = x() - ((ellipsisX - x()) + ellipsisWidth);
                     tx -= dx;
                     w += dx;
                 }

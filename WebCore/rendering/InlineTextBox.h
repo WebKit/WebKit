@@ -108,7 +108,7 @@ private:
 public:
     virtual bool isLineBreak() const;
 
-    void setSpaceAdd(int add) { m_width -= m_toAdd; m_toAdd = add; m_width += m_toAdd; }
+    void setSpaceAdd(int add) { setWidth(width() - m_toAdd + add); m_toAdd = add; }
 
 private:
     virtual bool isInlineTextBox() { return true; }    

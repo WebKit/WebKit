@@ -91,9 +91,7 @@ void RenderSVGText::layout()
 
 RootInlineBox* RenderSVGText::createRootInlineBox() 
 {
-    RootInlineBox* box = new (renderArena()) SVGRootInlineBox(this);
-    box->setHasVirtualHeight();
-    return box;
+    return new (renderArena()) SVGRootInlineBox(this);
 }
 
 bool RenderSVGText::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)
