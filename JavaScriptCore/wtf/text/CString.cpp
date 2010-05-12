@@ -51,22 +51,12 @@ void CString::init(const char* str, unsigned length)
     m_buffer->mutableData()[length] = '\0';
 }
 
-const char* CString::data() const
-{
-    return m_buffer ? m_buffer->data() : 0;
-}
-
 char* CString::mutableData()
 {
     copyBufferIfNeeded();
     if (!m_buffer)
         return 0;
     return m_buffer->mutableData();
-}
-    
-unsigned CString::length() const
-{
-    return m_buffer ? m_buffer->length() - 1 : 0;
 }
     
 CString CString::newUninitialized(size_t length, char*& characterBuffer)
