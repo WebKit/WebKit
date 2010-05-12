@@ -10,5 +10,5 @@ layer at (0,0) size 800x600
           text run at (0,0) width 771: "This tests for a bug where the delete button wouldn't work because it had -webkit-user-select:none instead of -webkit-user-"
           text run at (0,18) width 87: "select:ignore. "
           text run at (87,18) width 450: "The list should be removed, the editable region below should be empty."
-      RenderBlock {DIV} at (0,52) size 784x32
+      RenderBlock {DIV} at (0,52) size 784x50
 caret: position 0 of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

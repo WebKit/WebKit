@@ -8,9 +8,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 766: "This tests to see if an editable selection containing a focusable node is draggable by content inside that focusable node. To"
           text run at (0,18) width 713: "achieve this we delay focus of such nodes until mouse up. Below, the table should be inside the red bordered div."
       RenderBlock {DIV} at (0,52) size 784x20 [border: (1px solid #0000FF)]
-        RenderBlock (anonymous) at (1,1) size 782x18
-          RenderInline {SPAN} at (0,0) size 0x18
-            RenderBR {BR} at (0,0) size 0x18
+        RenderInline {SPAN} at (0,0) size 0x18
+          RenderBR {BR} at (1,1) size 0x18
       RenderBlock {DIV} at (0,72) size 784x30 [border: (1px solid #FF0000)]
         RenderTable {TABLE} at (1,1) size 59x28 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 57x26
