@@ -117,7 +117,7 @@ private:
     static PassRefPtr<StringImpl> add(const UChar*, unsigned length);
     static PassRefPtr<StringImpl> add(const UChar*, unsigned length, unsigned existingHash);
     static PassRefPtr<StringImpl> add(const UChar*);
-    PassRefPtr<StringImpl> add(StringImpl* r)
+    ALWAYS_INLINE PassRefPtr<StringImpl> add(StringImpl* r)
     {
         if (!r || r->isAtomic())
             return r;
