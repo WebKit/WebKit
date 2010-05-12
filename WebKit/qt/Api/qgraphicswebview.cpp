@@ -446,13 +446,8 @@ void QGraphicsWebViewPrivate::detachCurrentPage()
     page->d->view = 0;
 #endif
 
-    // if the page client is the special client constructed for
-    // delegating the responsibilities to a QWidget, we need
-    // to destroy it.
-
-    if (page->d->client && page->d->client->isQWidgetClient())
-        delete page->d->client;
-
+    // The client has always to be deleted.
+    delete page->d->client;
     page->d->client = 0;
 
     // if the page was created by us, we own it and need to

@@ -1,3 +1,17 @@
+2010-05-12  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Kenneth Christiansen.
+
+        [Qt] Remove the unneeded check for QWidgetPageClient @QGraphicsWebView::detachCurrentPage
+        https://bugs.webkit.org/show_bug.cgi?id=38989
+
+        Reasons:
+        - There is no need to check for a QWidgetPageClient-based in QGraphicsWebView.
+        - The client has always to be deleted anyways.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::detachPage):
+
 2010-05-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Laszlo Gombos.
