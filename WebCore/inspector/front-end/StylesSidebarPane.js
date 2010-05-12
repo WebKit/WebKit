@@ -455,15 +455,21 @@ WebInspector.StylesSidebarPane.prototype = {
 
     _containsInherited: function(payload)
     {
-        var properties = [];
-        for (var i = 0; i < payload.properties.length; ++i) {
-            var property = payload.properties[i];
+        if (this._arrayContainsInheritedProperty(payload.properties))
+            return true;
+        if (payload.disabled && this._arrayContainsInheritedProperty(payload.disabled))
+            return true;
+        return false;
+    },
+
+    _arrayContainsInheritedProperty: function(properties)
+    {
+        for (var i = 0; i < properties.length; ++i) {
+            var property = properties[i];
             // Does this style contain non-overriden inherited property?
             if (property.name in WebInspector.StylesSidebarPane.InheritedProperties)
                 return true;
         }
-        if (payload.disabled && this._containsInherited(payload.disabled))
-            return true;
         return false;
     },
 

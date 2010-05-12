@@ -76,14 +76,16 @@ function doit()
 function frontend_dumpSourceLines(testController)
 {
     testController.waitUntilDone();
-    frontend_expandDOMSubtree(WebInspector.domAgent.document);
-    testController.runAfterPendingDispatches(function() {
-        function callback(styles)
-        {
-            testController.notifyDone(styles);
-        }
-        InspectorBackend.getStyles(WebInspector.Callback.wrap(callback), WebInspector.domAgent.document.body.id, true);
-    });
+    frontend_expandDOMSubtreeAndRun(testController, null, frontend_getRawStyles);
+}
+
+function frontend_getRawStyles(testController)
+{
+    function callback(styles)
+    {
+        testController.notifyDone(styles);
+    }
+    InspectorBackend.getStyles(WebInspector.Callback.wrap(callback), WebInspector.domAgent.document.body.id, true);
 }
 
 </script>

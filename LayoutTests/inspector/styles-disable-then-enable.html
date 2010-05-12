@@ -1,0 +1,71 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="elements-tests.js"></script>
+<script>
+
+function doit()
+{
+    function callback(result)
+    {
+        dumpArray(result);
+        notifyDone();
+    }
+    evaluateInWebInspector("frontend_runTest", callback);
+}
+
+// Frontend functions.
+
+function frontend_runTest(testController)
+{
+    testController.waitUntilDone();
+    frontend_expandDOMSubtreeAndRun(testController, null, frontend_selectContainerElementContinuation);
+}
+
+function frontend_selectContainerElementContinuation(testController)
+{
+    frontend_selectElementAndRun(testController, "container", frontend_disableContainerStyle);
+}
+
+function frontend_disableContainerStyle(testController)
+{
+    var treeItem = frontend_getElementStylePropertyTreeItem("font-weight");
+    window.__result = ["Before disable"];
+    frontend_dumpStyleTreeItem(treeItem, window.__result, "");
+
+    treeItem.toggleEnabled({ target: { checked: false } });
+    testController.runAfterPendingDispatches(frontend_enableContainerStyle.bind(this, testController));
+}
+
+function frontend_enableContainerStyle(testController)
+{
+    var treeItem = frontend_getElementStylePropertyTreeItem("font-weight");
+    window.__result.push("After disable");
+    frontend_dumpStyleTreeItem(treeItem, window.__result, "");
+
+    treeItem.toggleEnabled({ target: { checked: true } });
+    testController.runAfterPendingDispatches(frontend_dumpResults.bind(this, testController));
+
+    testController.notifyDone(result);
+}
+
+function frontend_dumpResults(testController)
+{
+    var treeItem = frontend_getElementStylePropertyTreeItem("font-weight");
+    window.__result.push("After enable");
+    frontend_dumpStyleTreeItem(treeItem, window.__result, "");
+    testController.notifyDone(window.__result);
+}
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests that disabling style property works.
+</p>
+
+<div id="container" style="font-weight:bold">
+</div>
+
+</body>
+</html>

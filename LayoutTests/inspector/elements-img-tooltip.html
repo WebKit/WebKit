@@ -25,11 +25,7 @@ function doit()
 function frontend_dumpTooltip(testController)
 {
     testController.waitUntilDone();
-    frontend_expandDOMSubtree(WebInspector.domAgent.document);
-
-    testController.runAfterPendingDispatches(function() {
-        frontend_dumpTooltipContinuation(testController);
-    });
+    frontend_expandDOMSubtreeAndRun(testController, null, frontend_dumpTooltipContinuation);
 }
 
 function frontend_dumpTooltipContinuation(testController)
