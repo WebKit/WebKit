@@ -1,3 +1,11 @@
+2010-05-11  Jer Noble  <jer.noble@apple.com>
+
+        No Review.
+
+        Fix build error: The QTMovieWin project is dependent on the JavaScriptCore project.
+
+        * WebKit.vcproj/WebKit.sln:
+
 2010-05-11  Alice Liu  <alice.liu@apple.com>
 
         Rubber-stamped by Gavin Barraclough.
