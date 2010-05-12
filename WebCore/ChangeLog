@@ -1,3 +1,17 @@
+2010-05-12  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Jeremy Orlow.
+
+        [EFL] It does not make sense to use ScrollbarEfl::ScrollbarEfl, so
+        use ScrollbarEfl (GCC 4.5 seems to be pickier about this). Revision 59030
+        fixed cases for RenderThemeEfl, but missed this for ScrollbarEfl.
+        http://webkit.org/b/38904
+
+        No new tests required.
+
+        * platform/efl/ScrollbarEfl.cpp:
+        (scrollbarEflEdjeMessage):
+
 2010-05-12  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.
