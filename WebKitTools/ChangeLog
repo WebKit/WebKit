@@ -1,5 +1,11 @@
 2010-05-12  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Unreviewed trivial fix after r59254.
+
+        * Scripts/old-run-webkit-tests:
+
+2010-05-12  Csaba Osztrogonác  <ossy@webkit.org>
+
         Reviewed by Eric Seidel.
 
         run-webkit-tests --exit-after-N-failures should not count new tests as failures

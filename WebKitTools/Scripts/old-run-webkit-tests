@@ -2277,7 +2277,7 @@ sub stopRunningTestsEarlyIfNeeded()
     return 0 if !$exitAfterNFailures || $resetResults;
 
     my $passCount = $counts{match} || 0; # $counts{match} will be undefined if we've not yet passed a test (e.g. the first test fails).
-    my $newCount = $counts(new) || 0;
+    my $newCount = $counts{new} || 0;
     my $failureCount = $count - $passCount - $newCount; # "Failure" here includes timeouts, crashes, etc.
     return 0 if $failureCount < $exitAfterNFailures;
 
