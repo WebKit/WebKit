@@ -1,3 +1,15 @@
+2010-05-10  Rodrigo Belem  <rodrigo.belem@openbossa.org>
+
+        Reviewed by Kenneth Christiansen , Simon Hausmann and Gustavo Noronha.
+
+        [Qt, Gtk] Allows build-webkit script to receive an install prefix as parameter
+        https://bugs.webkit.org/show_bug.cgi?id=26224
+
+        This patch adds the ability, in the QtWebkit build system, to change
+        the installation path.
+
+        * WebCore.pro:
+
 2010-05-12  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.

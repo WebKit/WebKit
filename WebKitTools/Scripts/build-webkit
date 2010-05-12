@@ -48,6 +48,9 @@ chdirWebKit();
 my $showHelp = 0;
 my $clean = 0;
 my $minimal = 0;
+my $installHeaders;
+my $installLibs;
+my $prefixPath;
 my $makeArgs;
 my $startTime = time();
 
@@ -225,6 +228,10 @@ Usage: $programName [options] [options to pass to build system]
   --qt                              Build the Qt port
   --inspector-frontend              Copy changes to the inspector front-end files to the build directory
 
+  --install-headers=<path>          Set installation path for the headers (Qt only)
+  --install-libs=<path>             Set installation path for the libraries (Qt only)
+
+  --prefix=<path>                   Set installation prefix to the given path (Gtk only)
   --makeargs=<arguments>            Optional Makefile flags
 
   --minimal                         No optional features, unless explicitly enabled.
@@ -234,6 +241,9 @@ EOF
 my %options = (
     'help' => \$showHelp,
     'clean' => \$clean,
+    'install-headers=s' => \$installHeaders,
+    'install-libs=s' => \$installLibs,
+    'prefix=s' => \$prefixPath,
     'makeargs=s' => \$makeArgs,
     'minimal' => \$minimal,
 );
@@ -276,6 +286,7 @@ if (isGtk()) {
         push @options, autotoolsFlag(${$_->{value}}, $_->{option});
     }
 
+    push @options, "--prefix=" . $prefixPath if defined($prefixPath);
     push @options, "--makeargs=" . $makeArgs if defined($makeArgs);
 } elsif (isAppleMacWebKit()) {
     push @options, XcodeOptions();
@@ -340,12 +351,14 @@ if (isGtk()) {
     (system("perl WebKitTools/Scripts/update-webkit-support-libs") == 0) or die;
 } elsif (isQt()) {
     @options = @ARGV;
+    push @options, "--install-headers=" . $installHeaders if defined($installHeaders);
+    push @options, "--install-libs=" . $installLibs if defined($installLibs);
     push @options, "--makeargs=" . $makeArgs if defined($makeArgs);
 
     foreach (@features) {
         push @options, "DEFINES+=$_->{define}=${$_->{value}}" if ${$_->{value}} != $_->{default};
     }
-    
+
     if ($minimal) {
         push @options, "CONFIG+=minimal";
     }

@@ -2933,15 +2933,22 @@ HEADERS += $$WEBKIT_API_HEADERS
 
     !symbian {
         headers.files = $$WEBKIT_INSTALL_HEADERS
-        headers.path = $$[QT_INSTALL_HEADERS]/QtWebKit
-        target.path = $$[QT_INSTALL_LIBS]
+
+        headers.path = $$INSTALL_HEADERS/QtWebKit
+        target.path = $$INSTALL_LIBS
+
+        isEmpty(INSTALL_HEADERS): headers.path = $$[QT_INSTALL_HEADERS]/QtWebKit
+        isEmpty(INSTALL_LIBS): target.path = $$[QT_INSTALL_LIBS]
 
         INSTALLS += target headers
     } else {
         # INSTALLS is not implemented in qmake's s60 generators, copy headers manually
         inst_headers.commands = $$QMAKE_COPY ${QMAKE_FILE_NAME} ${QMAKE_FILE_OUT}
         inst_headers.input = WEBKIT_INSTALL_HEADERS
-        inst_headers.output = $$[QT_INSTALL_HEADERS]/QtWebKit/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
+
+        isEmpty(INSTALL_HEADERS): inst_headers.output = $$[QT_INSTALL_HEADERS]/QtWebKit/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
+        inst_headers.output = $$INSTALL_HEADERS/QtWebKit/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
+
         QMAKE_EXTRA_COMPILERS += inst_headers
 
         install.depends += compiler_inst_headers_make_all

@@ -1239,7 +1239,7 @@ sub buildAutotoolsProject($@)
     my $make = 'make';
     my $dir = productDir();
     my $config = passedConfiguration() || configuration();
-    my $prefix = $ENV{"WebKitInstallationPrefix"};
+    my $prefix;
 
     my @buildArgs = ();
     my $makeArgs = $ENV{"WebKitMakeArguments"} || "";
@@ -1247,11 +1247,14 @@ sub buildAutotoolsProject($@)
         my $opt = $buildParams[$i];
         if ($opt =~ /^--makeargs=(.*)/i ) {
             $makeArgs = $makeArgs . " " . $1;
+        } elsif ($opt =~ /^--prefix=(.*)/i ) {
+            $prefix = $1;
         } else {
             push @buildArgs, $opt;
         }
     }
 
+    $prefix = $ENV{"WebKitInstallationPrefix"} if !defined($prefix);
     push @buildArgs, "--prefix=" . $prefix if defined($prefix);
 
     # check if configuration is Debug
@@ -1282,7 +1285,7 @@ sub buildAutotoolsProject($@)
     }
 
     print "Calling configure in " . $dir . "\n\n";
-    print "Installation directory: $prefix\n" if(defined($prefix));
+    print "Installation prefix directory: $prefix\n" if(defined($prefix));
 
     # Make the path relative since it will appear in all -I compiler flags.
     # Long argument lists cause bizarre slowdowns in libtool.
@@ -1311,6 +1314,8 @@ sub buildQMakeProject($@)
 
     my $qmakebin = "qmake"; # Allow override of the qmake binary from $PATH
     my $makeargs = "";
+    my $installHeaders;
+    my $installLibs;
     for my $i (0 .. $#buildParams) {
         my $opt = $buildParams[$i];
         if ($opt =~ /^--qmake=(.*)/i ) {
@@ -1319,6 +1324,10 @@ sub buildQMakeProject($@)
             push @buildArgs, $1;
         } elsif ($opt =~ /^--makeargs=(.*)/i ) {
             $makeargs = $1;
+        } elsif ($opt =~ /^--install-headers=(.*)/i ) {
+            $installHeaders = $1;
+        } elsif ($opt =~ /^--install-libs=(.*)/i ) {
+            $installLibs = $1;
         } else {
             push @buildArgs, $opt;
         }
@@ -1326,7 +1335,8 @@ sub buildQMakeProject($@)
 
     my $make = qtMakeCommand($qmakebin);
     my $config = configuration();
-    my $prefix = $ENV{"WebKitInstallationPrefix"};
+    push @buildArgs, "INSTALL_HEADERS=" . $installHeaders if defined($installHeaders);
+    push @buildArgs, "INSTALL_LIBS=" . $installLibs if defined($installLibs);
     my $dir = File::Spec->canonpath(baseProductDir());
     $dir = File::Spec->catfile($dir, $config) unless isSymbian();
     File::Path::mkpath($dir);
@@ -1378,7 +1388,8 @@ sub buildQMakeProject($@)
     }
 
     print "Calling '$qmakebin @buildArgs' in " . $dir . "\n\n";
-    print "Installation directory: $prefix\n" if(defined($prefix));
+    print "Installation headers directory: $installHeaders\n" if(defined($installHeaders));
+    print "Installation libraries directory: $installLibs\n" if(defined($installLibs));
 
     $result = system "$qmakebin @buildArgs";
     if ($result ne 0) {
