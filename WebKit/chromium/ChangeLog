@@ -1,3 +1,12 @@
+2010-05-12  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] add DRT back to the chromium build
+        https://bugs.webkit.org/show_bug.cgi?id=38978
+
+        * WebKit.gyp:
+
 2010-05-11  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
