@@ -1,3 +1,9 @@
+2010-05-12  Martin Robinson  <mrobinson@igalia.com>
+
+        No review. Updating the baseline for this test after r59270.
+
+        * platform/gtk/editing/deleting/delete-select-all-001-expected.txt:
+
 2010-05-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed fix after r59270. 
