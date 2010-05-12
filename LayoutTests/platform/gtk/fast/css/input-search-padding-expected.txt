@@ -1,15 +1,15 @@
-layer at (0,0) size 420x194
-  RenderView at (0,0) size 51x70
-layer at (0,0) size 420x194
-  RenderBlock {HTML} at (0,0) size 51x194
-    RenderBody {BODY} at (8,8) size 35x178
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
       RenderTextControl {INPUT} at (2,2) size 408x84 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderBlock {DIV} at (3,17) size 402x49
           RenderBlock {DIV} at (0,37) size 0x0
           RenderBlock {DIV} at (388,23) size 14x14
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (412,88) size 0x0
       RenderTextControl {INPUT} at (2,90) size 408x55 [bgcolor=#FFFFFF]
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (412,130) size 0x0
       RenderTextControl {INPUT} at (2,147) size 208x31 [bgcolor=#FFFFFF]
         RenderBlock {DIV} at (3,3) size 202x25
           RenderBlock {DIV} at (0,19) size 0x0
