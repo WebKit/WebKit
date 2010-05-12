@@ -1,3 +1,55 @@
+2010-05-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        A bunch of nice micro-optimizations for ~1% speedup on PLT.
+        - Add fastGetAttribute. The same as getAttribute except can only be
+          called when it is known not to be style attribute or one of the SVG
+          animatable attributes.
+        - Inline some functions from Font.
+        - Return the same string from deprecatedParseURL if there is nothing
+          to strip.
+        - Use a member variable instead of a virtual function to determine 
+          whether a ScheduledNavigation is a location change.
+
+        * WebCore.base.exp:
+        * css/CSSHelper.cpp:
+        (WebCore::deprecatedParseURL):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::linkAttribute):
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        * dom/Element.cpp:
+        (WebCore::Element::getAttribute):
+        * dom/Element.h:
+        (WebCore::Element::fastHasAttribute):
+        (WebCore::Element::fastGetAttribute):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::formControlName):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::value):
+        * loader/RedirectScheduler.cpp:
+        (WebCore::ScheduledNavigation::ScheduledNavigation):
+        (WebCore::ScheduledNavigation::isLocationChange):
+        (WebCore::ScheduledURLNavigation::ScheduledURLNavigation):
+        (WebCore::ScheduledRedirect::ScheduledRedirect):
+        (WebCore::ScheduledLocationChange::ScheduledLocationChange):
+        (WebCore::ScheduledRefresh::ScheduledRefresh):
+        (WebCore::ScheduledHistoryNavigation::ScheduledHistoryNavigation):
+        (WebCore::ScheduledFormSubmission::ScheduledFormSubmission):
+        (WebCore::RedirectScheduler::locationChangePending):
+        * platform/graphics/Font.cpp:
+        * platform/graphics/Font.h:
+        (WebCore::Font::~Font):
+        (WebCore::Font::primaryFont):
+        (WebCore::Font::fontDataAt):
+        (WebCore::Font::fontDataForCharacters):
+        (WebCore::Font::isFixedPitch):
+        (WebCore::Font::fontSelector):
+        * platform/graphics/FontFallbackList.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageMap):
+
 2010-05-12  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

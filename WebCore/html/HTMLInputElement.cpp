@@ -1488,7 +1488,7 @@ String HTMLInputElement::value() const
 
     String value = m_data.value();
     if (value.isNull()) {
-        value = sanitizeValue(getAttribute(valueAttr));
+        value = sanitizeValue(fastGetAttribute(valueAttr));
         
         // If no attribute exists, extra handling may be necessary.
         // For Checkbox Types just use "on" or "" based off the checked() state of the control.

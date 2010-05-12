@@ -1,8 +1,5 @@
 /*
- * This file is part of the internal font implementation.  It should not be included by anyone other than
- * FontMac.cpp, FontWin.cpp and Font.cpp.
- *
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,8 +18,8 @@
  *
  */
 
-// This file has no guards on purpose in order to detect redundant includes. This is a private header
-// and so this may catch someone trying to include this file in public cpp files.
+#ifndef FontFallbackList_h
+#define FontFallbackList_h
 
 #include "FontSelector.h"
 #include "SimpleFontData.h"
@@ -89,3 +86,4 @@ private:
 
 }
 
+#endif

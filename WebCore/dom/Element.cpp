@@ -44,7 +44,6 @@
 #include "HTMLNames.h"
 #include "HTMLTokenizer.h"
 #include "InspectorController.h"
-#include "NamedNodeMap.h"
 #include "NodeList.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
@@ -219,19 +218,15 @@ bool Element::hasAttribute(const QualifiedName& name) const
 
 const AtomicString& Element::getAttribute(const QualifiedName& name) const
 {
-    if (name == styleAttr && !isStyleAttributeValid())
+    if (UNLIKELY(name == styleAttr) && !isStyleAttributeValid())
         updateStyleAttribute();
 
 #if ENABLE(SVG)
-    if (!areSVGAttributesValid())
+    if (UNLIKELY(!areSVGAttributesValid()))
         updateAnimatedSVGAttribute(name);
 #endif
 
-    if (namedAttrMap)
-        if (Attribute* a = namedAttrMap->getAttributeItem(name))
-            return a->value();
-
-    return nullAtom;
+    return fastGetAttribute(name);
 }
 
 void Element::scrollIntoView(bool alignToTop) 

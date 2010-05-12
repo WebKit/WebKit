@@ -191,8 +191,8 @@ void HTMLFormControlElement::removedFromTree(bool deep)
 
 const AtomicString& HTMLFormControlElement::formControlName() const
 {
-    const AtomicString& n = getAttribute(nameAttr);
-    return n.isNull() ? emptyAtom : n;
+    const AtomicString& name = fastGetAttribute(nameAttr);
+    return name.isNull() ? emptyAtom : name;
 }
 
 void HTMLFormControlElement::setName(const AtomicString &value)
