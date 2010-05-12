@@ -465,31 +465,30 @@ JITCode JIT::privateCompile()
     preserveReturnAddressAfterCall(regT2);
     emitPutToCallFrameHeader(regT2, RegisterFile::ReturnPC);
 
-    Jump slowRegisterFileCheck;
-    Label afterRegisterFileCheck;
+    Jump registerFileCheck;
     if (m_codeBlock->codeType() == FunctionCode) {
         // In the case of a fast linked call, we do not set this up in the caller.
         emitPutImmediateToCallFrameHeader(m_codeBlock, RegisterFile::CodeBlock);
 
-        peek(regT0, OBJECT_OFFSETOF(JITStackFrame, registerFile) / sizeof (void*));
         addPtr(Imm32(m_codeBlock->m_numCalleeRegisters * sizeof(Register)), callFrameRegister, regT1);
-
-        slowRegisterFileCheck = branchPtr(Above, regT1, Address(regT0, OBJECT_OFFSETOF(RegisterFile, m_end)));
-        afterRegisterFileCheck = label();
+        registerFileCheck = branchPtr(Below, AbsoluteAddress(&m_globalData->interpreter->registerFile().
+        m_end), regT1);
     }
+
+    Label functionBody = label();
 
     privateCompileMainPass();
     privateCompileLinkPass();
     privateCompileSlowCases();
 
     if (m_codeBlock->codeType() == FunctionCode) {
-        slowRegisterFileCheck.link(this);
+        registerFileCheck.link(this);
         m_bytecodeIndex = 0;
         JITStubCall(this, cti_register_file_check).call();
 #ifndef NDEBUG
         m_bytecodeIndex = (unsigned)-1; // Reset this, in order to guard its use with ASSERTs.
 #endif
-        jump(afterRegisterFileCheck);
+        jump(functionBody);
     }
 
     ASSERT(m_jmpTable.isEmpty());

@@ -1,3 +1,18 @@
+2010-05-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Slight simplification to the calling convention: read RegisterFile::end()
+        from an absolute address, instead of from a pointer to the RegisterFile
+        on the stack.
+        
+        SunSpider reports no change.
+        
+        This should free us to remove the RegisterFile argument from the stack.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+
 2010-05-11  Brian Weinstein  <bweinstein@apple.com>
 
         Possible Gtk build fix - use ALWAYS_INLINE on functions that were inlined.
