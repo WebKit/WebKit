@@ -1,3 +1,11 @@
+2010-05-12  Ojan Vafai  <ojan@chromium.org>
+
+        No review needed.
+
+        Marking myself as a reviewer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-05-12  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.
