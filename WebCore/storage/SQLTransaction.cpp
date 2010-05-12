@@ -466,12 +466,12 @@ void SQLTransaction::postflightAndCommit()
         return;
     }
 
-    // The commit was successful, so vacuum the database if needed
-    m_database->incrementalVacuumIfNeeded();
-
-    // The commit was successful, notify the delegates if the transaction modified this database
-    if (m_modifiedDatabase)
+    // The commit was successful. If the transaction modified this database,
+    // vacuum the database if needed and notify the delegates.
+    if (m_modifiedDatabase) {
+        m_database->incrementalVacuumIfNeeded();
         m_database->transactionClient()->didCommitTransaction(this);
+    }
 
     // Now release our unneeded callbacks, to break reference cycles.
     m_callback = 0;

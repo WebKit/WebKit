@@ -1,3 +1,13 @@
+2010-05-11  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Do not check if a database needs to be vacuumed after a read-only transaction.
+        https://bugs.webkit.org/show_bug.cgi?id=38972
+
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::postflightAndCommit):
+
 2010-05-12  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
