@@ -54,12 +54,11 @@ const double EventHandler::TextDragDelay = 0.0;
 
 bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
 {
-    const PlatformMouseEvent& mouseEvent = mev.event();
     // If we're clicking into a frame that is selected, the frame will appear
     // greyed out even though we're clicking on the selection.  This looks
     // really strange (having the whole frame be greyed out), so we deselect the
     // selection.
-    IntPoint p = m_frame->view()->windowToContents(mouseEvent.pos());
+    IntPoint p = m_frame->view()->windowToContents(mev.event().pos());
     if (m_frame->selection()->contains(p)) {
         VisiblePosition visiblePos(
             mev.targetNode()->renderer()->positionForPoint(mev.localPoint()));
@@ -68,19 +67,7 @@ bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& m
             m_frame->selection()->setSelection(newSelection);
     }
 
-    // If the click hits a scrollbar, we pass the mouse press event to the
-    // scrollbar directly.  This prevents selected text from being unselected.
-    // This matches the WebKit mac code which passes the mouse press event
-    // to an NSScroller.
-    FrameView* view = subframe->view();
-    Scrollbar* scrollbar = view ? view->scrollbarAtPoint(mouseEvent.pos()) : 0;
-    if (scrollbar) {
-        HitTestRequest request(HitTestRequest::Active);
-        IntPoint documentPoint = view->windowToContents(mouseEvent.pos());
-        MouseEventWithHitTestResults subframeMouseEvent = subframe->document()->prepareMouseEvent(request, documentPoint, mouseEvent);
-        subframe->eventHandler()->passMousePressEventToScrollbar(subframeMouseEvent, scrollbar);
-    } else
-        subframe->eventHandler()->handleMousePressEvent(mouseEvent);
+    subframe->eventHandler()->handleMousePressEvent(mev.event());
     return true;
 }
 
