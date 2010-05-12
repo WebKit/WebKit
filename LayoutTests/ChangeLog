@@ -1,5 +1,15 @@
 2010-05-12  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, build fix.
+
+        Change expectation from IMAGE to IMAGE+TEXT for Chromium Linux; I'm
+        not sure if this is flaky or not but it seems to be consistent on the
+        bot.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-05-12  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Nate Chapin.
 
         Expectations fix and new chromium baselines resulting from the

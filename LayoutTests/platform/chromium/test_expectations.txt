@@ -2783,7 +2783,8 @@ BUGEVAN : svg/clip-path/clip-path-child-clipped.svg = PASS FAIL
 BUG43084 MAC DEBUG : media/video-empty-source.html = IMAGE
 
 // WebKit roll 58626:58719
-BUG43963 LINUX WIN : fast/forms/searchfield-heights.html = IMAGE
+BUG43963 WIN : fast/forms/searchfield-heights.html = IMAGE
+BUG43963 LINUX : fast/forms/searchfield-heights.html = IMAGE+TEXT
 BUG43960 : fast/css/input-search-padding.html = IMAGE+TEXT
 
 // GStreamer - disabled in Chromium
