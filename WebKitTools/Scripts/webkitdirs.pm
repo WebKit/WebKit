@@ -1427,7 +1427,8 @@ sub buildChromiumMakefile($$$)
         return system qw(rm -rf out);
     }
     my $config = configuration();
-    my @command = ("make", "-j4", "BUILDTYPE=$config", $target);
+    my $numCpus = (grep /processor/, `cat /proc/cpuinfo`) || 1;
+    my @command = ("make", "-j$numCpus", "BUILDTYPE=$config", $target);
     print join(" ", @command) . "\n";
     return system @command;
 }
