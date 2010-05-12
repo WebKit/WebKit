@@ -19,6 +19,7 @@
  */
 
 #include "config.h"
+#if ENABLE(SVG)
 #include "RenderSVGResourceMasker.h"
 
 #include "AffineTransform.h"
@@ -231,3 +232,5 @@ FloatRect RenderSVGResourceMasker::resourceBoundingBox(const FloatRect& objectBo
 }
 
 }
+
+#endif // ENABLE(SVG)
