@@ -142,7 +142,7 @@ class QueueEngine:
             self._output_tee.remove_log(self._work_log)
             self._work_log = None
 
-    def _now():
+    def _now(self):
         """Overriden by the unit tests to allow testing _sleep_message"""
         return datetime.now()
 

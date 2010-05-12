@@ -161,6 +161,11 @@ class QueueEngineTest(unittest.TestCase):
         expected_callbacks.append('should_continue_work_queue')
         self.assertEquals(delegate._callbacks, expected_callbacks)
 
+    def test_now(self):
+        """Make sure there are no typos in the QueueEngine.now() method."""
+        engine = QueueEngine("test", None, None)
+        self.assertTrue(isinstance(engine._now(), datetime.datetime))
+
     def test_sleep_message(self):
         engine = QueueEngine("test", None, None)
         engine._now = lambda: datetime.datetime(2010, 1, 1)
