@@ -2,6 +2,26 @@
 
         Reviewed by Nikolas Zimmermann.
 
+        Build fix for Windows and Chromium builds.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * svg/graphics/filters/SVGFELighting.cpp:
+        (WebCore::FELighting::LightingData::upLeftPixelValue):
+        (WebCore::FELighting::LightingData::upPixelValue):
+        (WebCore::FELighting::LightingData::upRightPixelValue):
+        (WebCore::FELighting::LightingData::leftPixelValue):
+        (WebCore::FELighting::LightingData::centerPixelValue):
+        (WebCore::FELighting::LightingData::rightPixelValue):
+        (WebCore::FELighting::LightingData::downLeftPixelValue):
+        (WebCore::FELighting::LightingData::downPixelValue):
+        (WebCore::FELighting::LightingData::downRightPixelValue):
+        (WebCore::FELighting::setPixel):
+
+2010-05-12  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
         Implementing SVG filters: feDiffuseLighting and feSpecularLighting
         https://bugs.webkit.org/show_bug.cgi?id=32197
         https://bugs.webkit.org/show_bug.cgi?id=32199

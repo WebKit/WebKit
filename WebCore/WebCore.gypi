@@ -3399,6 +3399,8 @@
             'svg/graphics/filters/SVGFEFlood.h',
             'svg/graphics/filters/SVGFEImage.cpp',
             'svg/graphics/filters/SVGFEImage.h',
+            'svg/graphics/filters/SVGFELighting.cpp',
+            'svg/graphics/filters/SVGFELighting.h',
             'svg/graphics/filters/SVGFEMerge.cpp',
             'svg/graphics/filters/SVGFEMerge.h',
             'svg/graphics/filters/SVGFEMorphology.cpp',

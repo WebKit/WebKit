@@ -42843,6 +42843,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\svg\graphics\filters\SVGFELighting.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\svg\graphics\filters\SVGFELighting.h"
+						>
+					</File>
+					<File
 						RelativePath="..\svg\graphics\filters\SVGFEMerge.cpp"
 						>
 					</File>

@@ -57,52 +57,52 @@ const static int cPixelSize = 4;
 const static int cAlphaChannelOffset = 3;
 const static unsigned char cOpaqueAlpha = static_cast<unsigned char>(0xff);
 
-inline int FELighting::LightingData::upLeftPixelValue()
+ALWAYS_INLINE int FELighting::LightingData::upLeftPixelValue()
 {
     return static_cast<int>(pixels->get(offset - widthMultipliedByPixelSize - cPixelSize + cAlphaChannelOffset));
 }
 
-inline int FELighting::LightingData::upPixelValue()
+ALWAYS_INLINE int FELighting::LightingData::upPixelValue()
 {
     return static_cast<int>(pixels->get(offset - widthMultipliedByPixelSize + cAlphaChannelOffset));
 }
 
-inline int FELighting::LightingData::upRightPixelValue()
+ALWAYS_INLINE int FELighting::LightingData::upRightPixelValue()
 {
     return static_cast<int>(pixels->get(offset - widthMultipliedByPixelSize + cPixelSize + cAlphaChannelOffset));
 }
 
-inline int FELighting::LightingData::leftPixelValue()
+ALWAYS_INLINE int FELighting::LightingData::leftPixelValue()
 {
     return static_cast<int>(pixels->get(offset - cPixelSize + cAlphaChannelOffset));
 }
 
-inline int FELighting::LightingData::centerPixelValue()
+ALWAYS_INLINE int FELighting::LightingData::centerPixelValue()
 {
     return static_cast<int>(pixels->get(offset + cAlphaChannelOffset));
 }
 
-inline int FELighting::LightingData::rightPixelValue()
+ALWAYS_INLINE int FELighting::LightingData::rightPixelValue()
 {
     return static_cast<int>(pixels->get(offset + cPixelSize + cAlphaChannelOffset));
 }
 
-inline int FELighting::LightingData::downLeftPixelValue()
+ALWAYS_INLINE int FELighting::LightingData::downLeftPixelValue()
 {
     return static_cast<int>(pixels->get(offset + widthMultipliedByPixelSize - cPixelSize + cAlphaChannelOffset));
 }
 
-inline int FELighting::LightingData::downPixelValue()
+ALWAYS_INLINE int FELighting::LightingData::downPixelValue()
 {
     return static_cast<int>(pixels->get(offset + widthMultipliedByPixelSize + cAlphaChannelOffset));
 }
 
-inline int FELighting::LightingData::downRightPixelValue()
+ALWAYS_INLINE int FELighting::LightingData::downRightPixelValue()
 {
     return static_cast<int>(pixels->get(offset + widthMultipliedByPixelSize + cPixelSize + cAlphaChannelOffset));
 }
 
-inline void FELighting::setPixel(LightingData& data, LightSource::PaintingData& paintingData,
+ALWAYS_INLINE void FELighting::setPixel(LightingData& data, LightSource::PaintingData& paintingData,
     int lightX, int lightY, float factorX, int normalX, float factorY, int normalY)
 {
     m_lightSource->updatePaintingData(paintingData, lightX, lightY, static_cast<float>(data.pixels->get(data.offset + 3)) * data.surfaceScale);
