@@ -1,3 +1,19 @@
+2010-05-12  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Adding block elements to a block and removing them changes the height of the element.
+        https://bugs.webkit.org/show_bug.cgi?id=38874
+
+        The initial height of an empty editable block is different from the height of the same block after we add block elements
+        and remove them.
+        
+        Test: editing/deleting/delete-block-contents-004.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeChild): m_childrenInline was set to true only when the Renderer is created
+        and never reset to true when all the block elements contained are removed.
+
 2010-05-11  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.
