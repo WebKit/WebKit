@@ -1,3 +1,25 @@
+2010-05-12  Jian Li  <jianli@chromium.org>
+
+        Unreviewed. Chromium: rebaseline layout tests.
+
+        * platform/chromium-linux/editing/deleting/5408255-expected.checksum:
+        * platform/chromium-linux/editing/deleting/5408255-expected.png:
+        * platform/chromium-linux/fast/css/pseudo-cache-stale-expected.checksum:
+        * platform/chromium-linux/fast/css/pseudo-cache-stale-expected.png:
+        * platform/chromium-mac/editing/deleting/5408255-expected.checksum: Added.
+        * platform/chromium-mac/editing/deleting/5408255-expected.png: Added.
+        * platform/chromium-mac/fast/css/pseudo-cache-stale-expected.checksum: Added.
+        * platform/chromium-win/editing/deleting/5408255-expected.checksum:
+        * platform/chromium-win/editing/deleting/5408255-expected.png:
+        * platform/chromium-win/editing/deleting/5408255-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-select-all-001-expected.txt:
+        * platform/chromium-win/editing/selection/4895428-1-expected.txt:
+        * platform/chromium-win/editing/selection/4895428-4-expected.txt:
+        * platform/chromium-win/fast/css/pseudo-cache-stale-expected.checksum:
+        * platform/chromium-win/fast/css/pseudo-cache-stale-expected.png:
+        * platform/chromium-win/fast/css/pseudo-cache-stale-expected.txt:
+        * platform/chromium-win/fast/events/mouseout-dead-node-expected.txt:
+
 2010-05-12  Martin Robinson  <mrobinson@igalia.com>
 
         No review. Updating the baseline for this test after r59270.
