@@ -1,3 +1,36 @@
+2010-05-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Another refactoring patch in preparation for a fix to
+        https://bugs.webkit.org/show_bug.cgi?id=38871
+        REGRESSION: Crash clicking background NPR tab after few minutes of sitting idle
+
+        * dom/Document.cpp:
+        (WebCore::Document::addMediaCanStartListener): Added.
+        (WebCore::Document::removeMediaCanStartListener): Added.
+
+        * dom/Document.h: Added add/removeMediaCanStartListener.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement): Call removeMediaCanStartListener
+        on the document instead of the page.
+        (WebCore::HTMLMediaElement::willMoveToNewOwnerDocument): Call
+        removeMediaCanStartListener on the current document.
+        (WebCore::HTMLMediaElement::didMoveToNewOwnerDocument): Call
+        addMediaCanStartListener on the new document.
+        (WebCore::HTMLMediaElement::loadInternal): Call addMediaCanStartListener
+        on the document instead of the page.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::startOrAddToUnstartedList): Call addMediaCanStartListener
+        on the document instead of the page.
+        (WebCore::PluginView::~PluginView): Call removeMediaCanStartListener
+        on the document instead of the page, and do it in line instead of calling
+        a function.
+
+        * plugins/PluginView.h: Removed unused removeFromUnstartedListIfNecessary.
+
 2010-05-11  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Steve Falkenburg and Jon Honeycutt.
