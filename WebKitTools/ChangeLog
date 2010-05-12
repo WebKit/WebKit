@@ -1,3 +1,18 @@
+2010-05-12  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Disable smooth scrolling on OS X when running tests
+        https://bugs.webkit.org/show_bug.cgi?id=38964
+
+        Some tests (like fast/repaint/fixed-move-after-keyboard-scroll.html)
+        depend on smooth scrolling behavior.  Since this is off by default
+        in Leopard and on by default in Snow Leopard, DRT should turn it
+        off always to ensure a consistent test environment.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+
 2010-05-10  Rodrigo Belem  <rodrigo.belem@openbossa.org>
 
         Reviewed by Kenneth Christiansen , Simon Hausmann and Gustavo Noronha.

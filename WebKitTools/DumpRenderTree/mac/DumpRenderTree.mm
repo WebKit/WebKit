@@ -397,6 +397,9 @@ static void resetDefaultsToConsistentValues()
     ThemeScrollBarArrowStyle style;
     GetThemeScrollBarArrowStyle(&style); // Force HIToolbox to read from CFPreferences
 #endif
+
+    [defaults setBool:NO forKey:@"AppleScrollAnimationEnabled"];
+
     if (initialValue)
         CFPreferencesSetValue(CFSTR("AppleScrollBarVariant"), initialValue.get(), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
 
