@@ -14,6 +14,30 @@
 
         Reviewed by Kenneth Christiansen.
 
+        [Qt] Implement a detachCurrentPage method for QGraphicsWebView and QWebView
+        https://bugs.webkit.org/show_bug.cgi?id=38939
+
+        unsetPageIfExists method was renamed to detachCurrentPage method and is now responsible
+        for doing all the unset logic of page and pageClient references previously done by
+        the Q{Graphics}WebView destructor(s).
+
+        It is a code clean up, no behaviour change.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::~QGraphicsWebViewPrivate):
+        (QGraphicsWebView::~QGraphicsWebView):
+        (QGraphicsWebViewPrivate::detachCurrentPage):
+        (QGraphicsWebView::setPage):
+        * Api/qwebview.cpp:
+        (QWebViewPrivate::~QWebViewPrivate):
+        (QWebView::~QWebView):
+        (QWebViewPrivate::detachCurrentPage):
+        (QWebView::setPage):
+
+2010-05-11  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Kenneth Christiansen.
+
         [Qt] emit initialLayoutCompleted signal from FrameLoaderClientQt::dispatchDidFirstVisuallyNonEmptyLayout
         https://bugs.webkit.org/show_bug.cgi?id=38921
 

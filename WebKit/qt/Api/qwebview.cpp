@@ -44,14 +44,21 @@ public:
         Q_ASSERT(view);
     }
 
+    virtual ~QWebViewPrivate();
+
     void _q_pageDestroyed();
-    void unsetPageIfExists();
+    void detachCurrentPage();
 
     QWebView *view;
     QWebPage *page;
 
     QPainter::RenderHints renderHints;
 };
+
+QWebViewPrivate::~QWebViewPrivate()
+{
+    detachCurrentPage();
+}
 
 void QWebViewPrivate::_q_pageDestroyed()
 {
@@ -319,18 +326,6 @@ QWebView::QWebView(QWidget *parent)
 */
 QWebView::~QWebView()
 {
-    if (d->page) {
-#if QT_VERSION >= 0x040600
-        d->page->d->view.clear();
-#else
-        d->page->d->view = 0;
-#endif
-        delete d->page->d->client;
-        d->page->d->client = 0;
-    }
-
-    if (d->page && d->page->parent() == this)
-        delete d->page;
     delete d;
 }
 
@@ -348,10 +343,18 @@ QWebPage *QWebView::page() const
     return d->page;
 }
 
-void QWebViewPrivate::unsetPageIfExists()
+void QWebViewPrivate::detachCurrentPage()
 {
     if (!page)
         return;
+
+    if (page) {
+#if QT_VERSION >= 0x040600
+        page->d->view.clear();
+#else
+        page->d->view = 0;
+#endif
+    }
 
     // if the page client is the special client constructed for
     // delegating the responsibilities to a QWidget, we need
@@ -369,6 +372,8 @@ void QWebViewPrivate::unsetPageIfExists()
         delete page;
     else
         page->disconnect(view);
+
+    page = 0;
 }
 
 /*!
@@ -385,7 +390,7 @@ void QWebView::setPage(QWebPage* page)
     if (d->page == page)
         return;
 
-    d->unsetPageIfExists();
+    d->detachCurrentPage();
     d->page = page;
 
     if (d->page) {

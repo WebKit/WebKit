@@ -55,7 +55,7 @@ public:
         , page(0)
         , resizesToContents(false) {}
 
-    virtual ~QGraphicsWebViewPrivate() {};
+    virtual ~QGraphicsWebViewPrivate();
 
 #if USE(ACCELERATED_COMPOSITING)
     void syncLayers();
@@ -64,7 +64,7 @@ public:
     void updateResizesToContentsForPage();
     QRectF graphicsItemVisibleRect() const;
 
-    void unsetPageIfExists();
+    void detachCurrentPage();
 
     void _q_doLoadFinished(bool success);
     void _q_contentsSizeChanged(const QSize&);
@@ -80,6 +80,11 @@ public:
     // Just a convenience to avoid using page->client->overlay always
     QSharedPointer<QGraphicsItemOverlay> overlay;
 };
+
+QGraphicsWebViewPrivate::~QGraphicsWebViewPrivate()
+{
+    detachCurrentPage();
+}
 
 #if USE(ACCELERATED_COMPOSITING)
 void QGraphicsWebViewPrivate::syncLayers()
@@ -275,18 +280,6 @@ QGraphicsWebView::QGraphicsWebView(QGraphicsItem* parent)
 */
 QGraphicsWebView::~QGraphicsWebView()
 {
-    if (d->page) {
-#if QT_VERSION >= 0x040600
-        d->page->d->view.clear();
-#else
-        d->page->d->view = 0;
-#endif
-        d->page->d->client = 0; // unset the page client
-    }
-
-    if (d->page && d->page->parent() == this)
-        delete d->page;
-
     delete d;
 }
 
@@ -442,10 +435,16 @@ bool QGraphicsWebView::event(QEvent* event)
     return QGraphicsWidget::event(event);
 }
 
-void QGraphicsWebViewPrivate::unsetPageIfExists()
+void QGraphicsWebViewPrivate::detachCurrentPage()
 {
     if (!page)
         return;
+
+#if QT_VERSION >= 0x040600
+    page->d->view.clear();
+#else
+    page->d->view = 0;
+#endif
 
     // if the page client is the special client constructed for
     // delegating the responsibilities to a QWidget, we need
@@ -463,6 +462,8 @@ void QGraphicsWebViewPrivate::unsetPageIfExists()
         delete page;
     else
         page->disconnect(q);
+
+    page = 0;
 }
 
 /*!
@@ -479,7 +480,7 @@ void QGraphicsWebView::setPage(QWebPage* page)
     if (d->page == page)
         return;
 
-    d->unsetPageIfExists();
+    d->detachCurrentPage();
     d->page = page;
 
     if (!d->page)
