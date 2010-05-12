@@ -135,6 +135,10 @@ elsif ($action eq "reviewform")
 {
     edit("reviewform");
 }
+elsif ($action eq "rietveldreview")
+{
+    edit("rietveldreview");
+}
 #endif // WEBKIT_CHANGES
 elsif ($action eq "update") 
 { 

@@ -1,3 +1,27 @@
+2010-05-12  Julie Parent  <jparent@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        Adds support for Rietveld reviews.  When there is an associated
+        Rietveld id for a patch, adds a link to do a Rietveld review instead.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38143
+
+        * attachment.cgi:
+            Added support for handling action=rietveldreview.
+        * template/en/custom/attachment/list.html.tmpl:
+            Adds a link to use rietveld review iff the in_rietveld flag is set.
+        * template/en/custom/attachment/reviewform.html.tmpl:
+            Detects if we are in rietveld review mode due to query string paramter,
+            and customizes the review form slightly:
+                - Changes text describing comment field.
+                - Comment field does not include quoted patch.
+                - Submit button fetches from Rietveld instead of just submitting.
+        * template/en/custom/attachment/rietveldreview.html.tmpl: Added.
+            New template for rietveldreview mode.  Hosts the rietveld frame in the
+            top and the regular comments form in the bottom.
+            Uses postMessage to communicate with Rietveld frame.
+
 2010-05-08  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Maciej Stachowiak.

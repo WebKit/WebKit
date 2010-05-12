@@ -19,6 +19,11 @@
   #%]
 
 [% PROCESS global/variables.none.tmpl %]
+[% USE CGI %]
+[%  
+    # We use a query string rietveldreview=true to indicate when in rietveld mode. 
+    rietveldReview = CGI.param('rietveldreview')
+%]
 
 <link href="skins/standard/global.css" rel="stylesheet" type="text/css">
 <link href="skins/custom/global.css" rel="stylesheet" type="text/css">
@@ -45,18 +50,33 @@
       top.document.getElementById('viewFrame').src = src;
       document.getElementById('viewPrettyPatchButton').innerHTML = buttonText;
     }
-    function omitUntouchedComment()
+    function onSubmitComments()
     {
-        // If someone just left the entire comment alone, then upload the form
-        // with no comment at all.
-        var textarea = document.getElementById("comment");
-        if (textarea.defaultValue === textarea.value)
-            textarea.value = "";
+[% IF rietveldReview %]
+         var submitBtn = document.getElementById('submitBtn');
+         submitBtn.innerHTML = 'Fetching comments from Rietveld...';
+         submitBtn.disabled = true; // Disable since this is asynch.
+         top.getComments();
+         // Handle the error case of Rietveld not responding by giving
+         // the user another chance.
+         setTimeout(function() {
+             submitBtn.innerHTML = 'Fetching comments timed out ... retry?';
+             submitBtn.disabled = false;
+         }, 30000);
+         return false;
+[% ELSE %]
+         // If someone just left the entire comment alone, then upload the form
+         // with no comment at all.
+         var textarea = document.getElementById("comment");
+         if (textarea.defaultValue === textarea.value)
+             textarea.value = "";
+         return true;
+[% END %]
     }
   //-->
 </script>
 
-<form method="post" action="attachment.cgi" target="_top" onsubmit="omitUntouchedComment(); return true;">
+<form method="post" action="attachment.cgi" target="_top" onsubmit="return onSubmitComments();">
   <input type="hidden" name="id" value="[% attachment.id %]">
   <input type="hidden" name="action" value="update">
   <input type="hidden" name="contenttypemethod" value="manual">
@@ -76,7 +96,7 @@
 <table style="width:100%; height:90%" cellpadding=0 cellspacing=0>
 <tr id="form-controls">
 <td>
-    <button type="submit">Submit</button>
+    <button id="submitBtn" type="submit">Submit</button>
 </td>
 <td>
     [% IF flag_types.size > 0 %]
@@ -114,8 +134,17 @@
 </tr>
 <tr>
 <td colspan="4">
+[% IF rietveldReview %]
+Enter high-level comments below.  Make detailed comments above.  Submit will submit both.<br>
+[% ELSE %]
 Enter comments below:<br>
-<textarea id=comment name="comment" wrap="soft">[% quotedpatch FILTER html %]</textarea><br>
+[% END %]
+<textarea id=comment name="comment" wrap="soft">
+[% IF !rietveldReview %]
+[% quotedpatch FILTER html %]
+[% END %]
+</textarea><br>
+
 </tr>
 </table>
 
