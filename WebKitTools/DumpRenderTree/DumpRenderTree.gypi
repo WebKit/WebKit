@@ -16,6 +16,8 @@
             'chromium/LayoutTestController.h',
             'chromium/MockSpellCheck.cpp',
             'chromium/MockSpellCheck.h',
+            'chromium/NotificationPresenter.h',
+            'chromium/NotificationPresenter.cpp',
             'chromium/PlainTextController.cpp',
             'chromium/PlainTextController.h',
             'chromium/TestNavigationController.cpp',

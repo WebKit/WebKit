@@ -127,6 +127,9 @@ public:
     // Changes the cookie policy from the default to allow all cookies.
     void setAlwaysAcceptCookies(const CppArgumentList&, CppVariant*);
 
+    // Shows DevTools window.
+    void showWebInspector(const CppArgumentList&, CppVariant*);
+
     // Gives focus to the window.
     void setWindowIsKey(const CppArgumentList&, CppVariant*);
 
@@ -139,10 +142,15 @@ public:
     void setUserStyleSheetEnabled(const CppArgumentList&, CppVariant*);
     void setUserStyleSheetLocation(const CppArgumentList&, CppVariant*);
 
+    // Passes this preference through to WebSettings.
+    void setAuthorAndUserStylesEnabled(const CppArgumentList&, CppVariant*);
+
     // Puts Webkit in "dashboard compatibility mode", which is used in obscure
     // Mac-only circumstances. It's not really necessary, and will most likely
     // never be used by Chrome, but some layout tests depend on its presence.
     void setUseDashboardCompatibilityMode(const CppArgumentList&, CppVariant*);
+
+    void setScrollbarPolicy(const CppArgumentList&, CppVariant*);
 
     // Causes navigation actions just printout the intended navigation instead
     // of taking you to the page. This is used for cases like mailto, where you
@@ -151,6 +159,9 @@ public:
 
     // Delays completion of the test until the policy delegate runs.
     void waitForPolicyDelegate(const CppArgumentList&, CppVariant*);
+
+    // Causes WillSendRequest to clear certain headers.
+    void setWillSendRequestClearHeader(const CppArgumentList&, CppVariant*);
 
     // Causes WillSendRequest to block redirects.
     void setWillSendRequestReturnsNullOnRedirect(const CppArgumentList&, CppVariant*);
@@ -195,6 +206,9 @@ public:
 
     void dumpSelectionRect(const CppArgumentList&, CppVariant*);
 
+    // Grants permission for desktop notifications to an origin
+    void grantDesktopNotificationPermission(const CppArgumentList&, CppVariant*);
+
     // The following are only stubs.  TODO(pamg): Implement any of these that
     // are needed to pass the layout tests.
     void dumpAsWebArchive(const CppArgumentList&, CppVariant*);
@@ -210,6 +224,7 @@ public:
     void accessStoredWebScriptObject(const CppArgumentList&, CppVariant*);
     void objCClassNameOf(const CppArgumentList&, CppVariant*);
     void addDisallowedURL(const CppArgumentList&, CppVariant*);
+    void callShouldCloseOnWebView(const CppArgumentList&, CppVariant*);
     void setCallCloseOnWebViews(const CppArgumentList&, CppVariant*);
     void setPrivateBrowsingEnabled(const CppArgumentList&, CppVariant*);
 
@@ -228,8 +243,9 @@ public:
     // that case (as the Mac does).
     void fallbackMethod(const CppArgumentList&, CppVariant*);
 
-    // Allows layout tests to call SecurityOrigin::addOriginAccessWhitelistEntry().
+    // Allows layout tests to manage origins' whitelisting.
     void addOriginAccessWhitelistEntry(const CppArgumentList&, CppVariant*);
+    void removeOriginAccessWhitelistEntry(const CppArgumentList&, CppVariant*);
 
     // Clears all databases.
     void clearAllDatabases(const CppArgumentList&, CppVariant*);
@@ -259,8 +275,9 @@ public:
     // Forces the selection colors for testing under Linux.
     void forceRedSelectionColors(const CppArgumentList&, CppVariant*);
 
-    // Adds a user script to be injected into new documents.
+    // Adds a user script or user style sheet to be injected into new documents.
     void addUserScript(const CppArgumentList&, CppVariant*);
+    void addUserStyleSheet(const CppArgumentList&, CppVariant*);
 
 public:
     // The following methods are not exposed to JavaScript.

@@ -580,6 +580,7 @@
                     'include_dirs': [
                         '.',
                         '../../JavaScriptCore',
+                        '../../JavaScriptCore/wtf', # wtf/text/*.h refers headers in wtf/ without wtf/.
                         '<(DEPTH)',
                     ],
                     'defines': [

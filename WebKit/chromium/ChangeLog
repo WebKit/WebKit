@@ -1,3 +1,16 @@
+2010-05-11  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Apply recent changes of test_shell to DRT
+        https://bugs.webkit.org/show_bug.cgi?id=38895
+
+        * DEPS: Update Chromium revision to use the recent webkit_support change.
+        * WebKit.gyp: Add JavaScriptCore/wtf to 'include' section.
+        * src/WebGraphicsContext3D.cpp:
+          Remove ENABLE(3D_CANVAS) to provide an empty implementation of
+          WebGraphicsContext3D::createDefault().
+
 2010-05-11  Avi Drissman  <avi@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -60,9 +60,7 @@ public:
     void reset();
 
     // Simulate drag&drop system call.
-    static void doDragDrop(const WebKit::WebPoint&,
-                           const WebKit::WebDragData&,
-                           WebKit::WebDragOperationsMask);
+    void doDragDrop(const WebKit::WebDragData&, WebKit::WebDragOperationsMask);
 
     // JS callback methods.
     void mouseDown(const CppArgumentList&, CppVariant*);
@@ -79,6 +77,17 @@ public:
     void scheduleAsynchronousClick(const CppArgumentList&, CppVariant*);
     void beginDragWithFiles(const CppArgumentList&, CppVariant*);
     CppVariant dragMode;
+
+    void addTouchPoint(const CppArgumentList&, CppVariant*);
+    void cancelTouchPoint(const CppArgumentList&, CppVariant*);
+    void clearTouchPoints(const CppArgumentList&, CppVariant*);
+    void releaseTouchPoint(const CppArgumentList&, CppVariant*);
+    void setTouchModifier(const CppArgumentList&, CppVariant*);
+    void touchCancel(const CppArgumentList&, CppVariant*);
+    void touchEnd(const CppArgumentList&, CppVariant*);
+    void touchMove(const CppArgumentList&, CppVariant*);
+    void touchStart(const CppArgumentList&, CppVariant*);
+    void updateTouchPoint(const CppArgumentList&, CppVariant*);
 
     // Unimplemented stubs
     void contextClick(const CppArgumentList&, CppVariant*);
@@ -100,17 +109,17 @@ public:
 
 private:
     // Returns the test shell's webview.
-    static WebKit::WebView* webview();
+    WebKit::WebView* webview();
 
     // Returns true if dragMode is true.
     bool isDragMode() { return dragMode.isBool() && dragMode.toBoolean(); }
 
     // Sometimes we queue up mouse move and mouse up events for drag drop
     // handling purposes.  These methods dispatch the event.
-    static void doMouseMove(const WebKit::WebMouseEvent&);
-    static void doMouseUp(const WebKit::WebMouseEvent&);
+    void doMouseMove(const WebKit::WebMouseEvent&);
+    void doMouseUp(const WebKit::WebMouseEvent&);
     static void doLeapForward(int milliseconds);
-    static void replaySavedEvents();
+    void replaySavedEvents();
 
     // Helper to return the button type given a button code
     static WebKit::WebMouseEvent::Button getButtonTypeFromButtonNumber(int);
@@ -125,10 +134,13 @@ private:
 
     void updateClickCountForButton(WebKit::WebMouseEvent::Button);
 
+    // Compose a touch event from the current touch points and send it.
+    void sendCurrentTouchEvent(const WebKit::WebInputEvent::Type);
+
     ScopedRunnableMethodFactory<EventSender> m_methodFactory;
 
     // Non-owning pointer.  The EventSender is owned by the TestShell.
-    static TestShell* testShell;
+    TestShell* m_shell;
 
     // Location of last mouseMoveTo event.
     static WebKit::WebPoint lastMousePos;

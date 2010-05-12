@@ -85,6 +85,7 @@ TestShell::TestShell()
     m_eventSender.set(new EventSender(this));
     m_plainTextController.set(new PlainTextController());
     m_textInputController.set(new TextInputController(this));
+    m_notificationPresenter.set(new NotificationPresenter(this));
 
     m_webViewHost = createWebView();
     m_webView = m_webViewHost->webView();
@@ -175,6 +176,7 @@ void TestShell::resetWebSettings(WebView& webView)
 
 void TestShell::runFileTest(const TestParams& params)
 {
+    ASSERT(params.testUrl.isValid());
     m_testIsPreparing = true;
     m_params = params;
     string testUrl = m_params.testUrl.spec();
@@ -212,6 +214,7 @@ void TestShell::resetTestController()
     m_layoutTestController->reset();
     m_eventSender->reset();
     m_webViewHost->reset();
+    m_notificationPresenter->reset();
 }
 
 void TestShell::loadURL(const WebURL& url)

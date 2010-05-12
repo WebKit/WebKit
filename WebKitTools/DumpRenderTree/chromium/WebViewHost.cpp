@@ -52,10 +52,12 @@
 #include "public/WebURLRequest.h"
 #include "public/WebURLResponse.h"
 #include "public/WebView.h"
+#include "public/WebWindowFeatures.h"
 #include "skia/ext/platform_canvas.h"
 #include "webkit/support/webkit_support.h"
 #include <wtf/Assertions.h>
 
+using namespace WebCore;
 using namespace WebKit;
 using namespace skia;
 using namespace std;
@@ -250,14 +252,19 @@ static string textAffinityDescription(WebTextAffinity affinity)
 
 // WebViewClient -------------------------------------------------------------
 
-WebView* WebViewHost::createView(WebFrame*)
+WebView* WebViewHost::createView(WebFrame* creator)
+{
+    return createView(creator, WebWindowFeatures());
+}
+
+WebView* WebViewHost::createView(WebFrame*, const WebWindowFeatures&)
 {
     if (!layoutTestController()->canOpenWindows())
         return 0;
     return m_shell->createWebView()->webView();
 }
 
-WebWidget* WebViewHost::createPopupMenu(bool)
+WebWidget* WebViewHost::createPopupMenu(WebPopupType)
 {
     return 0;
 }
@@ -481,7 +488,7 @@ void WebViewHost::setStatusText(const WebString& text)
     printf("UI DELEGATE STATUS CALLBACK: setStatusText:%s\n", text.utf8().data());
 }
 
-void WebViewHost::startDragging(const WebPoint& mouseCoords, const WebDragData& data, WebDragOperationsMask mask)
+void WebViewHost::startDragging(const WebDragData& data, WebDragOperationsMask mask, const WebImage&, const WebPoint&)
 {
     WebDragData mutableDragData = data;
     if (layoutTestController()->shouldAddFileToPasteboard()) {
@@ -491,7 +498,7 @@ void WebViewHost::startDragging(const WebPoint& mouseCoords, const WebDragData& 
 
     // When running a test, we need to fake a drag drop operation otherwise
     // Windows waits for real mouse events to know when the drag is over.
-    EventSender::doDragDrop(mouseCoords, mutableDragData, mask);
+    m_shell->eventSender()->doDragDrop(mutableDragData, mask);
 }
 
 void WebViewHost::navigateBackForwardSoon(int offset)
@@ -513,6 +520,11 @@ int WebViewHost::historyForwardListCount()
 void WebViewHost::focusAccessibilityObject(const WebAccessibilityObject& object)
 {
     m_shell->accessibilityController()->setFocusedElement(object);
+}
+
+WebNotificationPresenter* WebViewHost::notificationPresenter()
+{
+    return m_shell->notificationPresenter();
 }
 
 // WebWidgetClient -----------------------------------------------------------
@@ -627,6 +639,11 @@ WebWorker* WebViewHost::createWorker(WebFrame*, WebWorkerClient*)
 WebMediaPlayer* WebViewHost::createMediaPlayer(WebFrame* frame, WebMediaPlayerClient* client)
 {
     return webkit_support::CreateMediaPlayer(frame, client);
+}
+
+WebApplicationCacheHost* WebViewHost::createApplicationCacheHost(WebFrame* frame, WebApplicationCacheHostClient* client)
+{
+    return webkit_support::CreateApplicationCacheHost(frame, client);
 }
 
 bool WebViewHost::allowPlugins(WebFrame* frame, bool enabledPerSettings)
@@ -906,6 +923,10 @@ void WebViewHost::willSendRequest(WebFrame*, unsigned identifier, WebURLRequest&
         return;
     }
 
+    HashSet<String>::const_iterator end = m_clearHeaders.end();
+    for (HashSet<String>::const_iterator header = m_clearHeaders.begin(); header != end; ++header)
+        request.clearHTTPHeaderField(WebString(header->characters(), header->length()));
+
     // Set the new substituted URL.
     request.setURL(webkit_support::RewriteLayoutTestsURL(request.url().spec()));
 }
@@ -1115,7 +1136,7 @@ void WebViewHost::updateAddressBar(WebView* webView)
     if (!dataSource)
         return;
 
-    setAddressBarURL(dataSource->request().firstPartyForCookies());
+    setAddressBarURL(dataSource->request().url());
 }
 
 void WebViewHost::locationChangeDone(WebFrame* frame)
@@ -1168,6 +1189,7 @@ void WebViewHost::updateURL(WebFrame* frame)
         entry->setContentState(historyItem);
 
     navigationController()->didNavigateToEntry(entry.release());
+    updateAddressBar(frame->view());
     m_lastPageIdUpdated = max(m_lastPageIdUpdated, m_pageId);
 }
 

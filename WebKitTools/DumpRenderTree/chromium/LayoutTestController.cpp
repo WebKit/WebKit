@@ -41,6 +41,7 @@
 #include "public/WebFrame.h"
 #include "public/WebInputElement.h"
 #include "public/WebKit.h"
+#include "public/WebNotificationPresenter.h"
 #include "public/WebScriptSource.h"
 #include "public/WebSecurityPolicy.h"
 #include "public/WebSettings.h"
@@ -48,11 +49,13 @@
 #include "public/WebURL.h"
 #include "public/WebView.h"
 #include "webkit/support/webkit_support.h"
+#include <wtf/text/WTFString.h>
 
 #if OS(WINDOWS)
 #include <wtf/OwnArrayPtr.h>
 #endif
 
+using namespace WebCore;
 using namespace WebKit;
 using namespace std;
 
@@ -90,10 +93,12 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setCloseRemainingWindowsWhenComplete", &LayoutTestController::setCloseRemainingWindowsWhenComplete);
     bindMethod("objCIdentityIsEqual", &LayoutTestController::objCIdentityIsEqual);
     bindMethod("setAlwaysAcceptCookies", &LayoutTestController::setAlwaysAcceptCookies);
+    bindMethod("showWebInspector", &LayoutTestController::showWebInspector);
     bindMethod("setWindowIsKey", &LayoutTestController::setWindowIsKey);
     bindMethod("setTabKeyCyclesThroughElements", &LayoutTestController::setTabKeyCyclesThroughElements);
     bindMethod("setUserStyleSheetLocation", &LayoutTestController::setUserStyleSheetLocation);
     bindMethod("setUserStyleSheetEnabled", &LayoutTestController::setUserStyleSheetEnabled);
+    bindMethod("setAuthorAndUserStylesEnabled", &LayoutTestController::setAuthorAndUserStylesEnabled);
     bindMethod("pathToLocalResource", &LayoutTestController::pathToLocalResource);
     bindMethod("addFileToPasteboardOnDrag", &LayoutTestController::addFileToPasteboardOnDrag);
     bindMethod("execCommand", &LayoutTestController::execCommand);
@@ -109,18 +114,23 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("disableImageLoading", &LayoutTestController::disableImageLoading);
     bindMethod("setIconDatabaseEnabled", &LayoutTestController::setIconDatabaseEnabled);
     bindMethod("setCustomPolicyDelegate", &LayoutTestController::setCustomPolicyDelegate);
+    bindMethod("setScrollbarPolicy", &LayoutTestController::setScrollbarPolicy);
     bindMethod("waitForPolicyDelegate", &LayoutTestController::waitForPolicyDelegate);
+    bindMethod("setWillSendRequestClearHeader", &LayoutTestController::setWillSendRequestClearHeader);
     bindMethod("setWillSendRequestReturnsNullOnRedirect", &LayoutTestController::setWillSendRequestReturnsNullOnRedirect);
     bindMethod("setWillSendRequestReturnsNull", &LayoutTestController::setWillSendRequestReturnsNull);
     bindMethod("addOriginAccessWhitelistEntry", &LayoutTestController::addOriginAccessWhitelistEntry);
+    bindMethod("removeOriginAccessWhitelistEntry", &LayoutTestController::removeOriginAccessWhitelistEntry);
     bindMethod("clearAllDatabases", &LayoutTestController::clearAllDatabases);
     bindMethod("setDatabaseQuota", &LayoutTestController::setDatabaseQuota);
     bindMethod("setPOSIXLocale", &LayoutTestController::setPOSIXLocale);
     bindMethod("counterValueForElementById", &LayoutTestController::counterValueForElementById);
     bindMethod("addUserScript", &LayoutTestController::addUserScript);
+    bindMethod("addUserStyleSheet", &LayoutTestController::addUserStyleSheet);
     bindMethod("pageNumberForElementById", &LayoutTestController::pageNumberForElementById);
     bindMethod("numberOfPages", &LayoutTestController::numberOfPages);
     bindMethod("dumpSelectionRect", &LayoutTestController::dumpSelectionRect);
+    bindMethod("grantDesktopNotificationPermission", &LayoutTestController::grantDesktopNotificationPermission);
 
     // The following are stubs.
     bindMethod("dumpAsWebArchive", &LayoutTestController::dumpAsWebArchive);
@@ -135,6 +145,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("accessStoredWebScriptObject", &LayoutTestController::accessStoredWebScriptObject);
     bindMethod("objCClassNameOf", &LayoutTestController::objCClassNameOf);
     bindMethod("addDisallowedURL", &LayoutTestController::addDisallowedURL);
+    bindMethod("callShouldCloseOnWebView", &LayoutTestController::callShouldCloseOnWebView);
     bindMethod("setCallCloseOnWebViews", &LayoutTestController::setCallCloseOnWebViews);
     bindMethod("setPrivateBrowsingEnabled", &LayoutTestController::setPrivateBrowsingEnabled);
     bindMethod("setUseDashboardCompatibilityMode", &LayoutTestController::setUseDashboardCompatibilityMode);
@@ -440,11 +451,11 @@ void LayoutTestController::reset()
     if (m_shell) {
         m_shell->webView()->setZoomLevel(false, 0);
         m_shell->webView()->setTabKeyCyclesThroughElements(true);
-#if defined(OS_LINUX)
+#if !OS(DARWIN) && !OS(WINDOWS) // Actually, TOOLKIT_GTK
         // (Constants copied because we can't depend on the header that defined
         // them from this file.)
         m_shell->webView()->setSelectionColors(0xff1e90ff, 0xff000000, 0xffc8c8c8, 0xff323232);
-#endif // defined(OS_LINUX)
+#endif
         m_shell->webView()->removeAllUserContent();
     }
     m_dumpAsText = false;
@@ -468,7 +479,7 @@ void LayoutTestController::reset()
     m_webHistoryItemCount.set(0);
 
     webkit_support::SetAcceptAllCookies(false);
-    WebSecurityPolicy::resetOriginAccessWhiteLists();
+    WebSecurityPolicy::resetOriginAccessWhitelists();
 
     // Reset the default quota for each origin to 5MB
     webkit_support::SetDatabaseQuota(5 * 1024 * 1024);
@@ -532,6 +543,12 @@ void LayoutTestController::setAlwaysAcceptCookies(const CppArgumentList& argumen
     result->setNull();
 }
 
+void LayoutTestController::showWebInspector(const CppArgumentList&, CppVariant* result)
+{
+    m_shell->showDevTools();
+    result->setNull();
+}
+
 void LayoutTestController::setWindowIsKey(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool())
@@ -552,6 +569,13 @@ void LayoutTestController::setUserStyleSheetLocation(const CppArgumentList& argu
         m_userStyleSheetLocation = webkit_support::RewriteLayoutTestsURL(arguments[0].toString());
         m_shell->webView()->settings()->setUserStyleSheetLocation(m_userStyleSheetLocation);
     }
+    result->setNull();
+}
+
+void LayoutTestController::setAuthorAndUserStylesEnabled(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isBool())
+        m_shell->webView()->settings()->setAuthorAndUserStylesEnabled(arguments[0].value.boolValue);
     result->setNull();
 }
 
@@ -599,6 +623,13 @@ void LayoutTestController::setUseDashboardCompatibilityMode(const CppArgumentLis
     result->setNull();
 }
 
+void LayoutTestController::setScrollbarPolicy(const CppArgumentList&, CppVariant* result)
+{
+    // FIXME: implement.
+    // Currently only has a non-null implementation on QT.
+    result->setNull();
+}
+
 void LayoutTestController::setCustomPolicyDelegate(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool()) {
@@ -615,6 +646,16 @@ void LayoutTestController::waitForPolicyDelegate(const CppArgumentList&, CppVari
 {
     m_shell->webViewHost()->waitForPolicyDelegate();
     m_waitUntilDone = true;
+    result->setNull();
+}
+
+void LayoutTestController::setWillSendRequestClearHeader(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isString()) {
+        string header = arguments[0].toString();
+        if (!header.empty())
+            m_shell->webViewHost()->addClearHeader(String::fromUTF8(header.c_str()));
+    }
     result->setNull();
 }
 
@@ -798,6 +839,21 @@ void LayoutTestController::setIconDatabaseEnabled(const CppArgumentList&, CppVar
 {
     // We don't use the WebKit icon database.
     result->setNull();
+}
+
+void LayoutTestController::callShouldCloseOnWebView(const CppArgumentList&, CppVariant* result)
+{
+    result->set(m_shell->webView()->dispatchBeforeUnloadEvent());
+}
+
+void LayoutTestController::grantDesktopNotificationPermission(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() != 1 || !arguments[0].isString()) {
+        result->set(false);
+        return;
+    }
+    m_shell->notificationPresenter()->grantPermission(WebString::fromUTF8(arguments[0].toString()));
+    result->set(true);
 }
 
 //
@@ -1058,6 +1114,25 @@ void LayoutTestController::addOriginAccessWhitelistEntry(const CppArgumentList& 
                                                  arguments[3].toBoolean());
 }
 
+void LayoutTestController::removeOriginAccessWhitelistEntry(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+
+    if (arguments.size() != 4 || !arguments[0].isString() || !arguments[1].isString()
+        || !arguments[2].isString() || !arguments[3].isBool())
+        return;
+
+    WebKit::WebURL url(GURL(arguments[0].toString()));
+    if (!url.isValid())
+        return;
+
+    WebSecurityPolicy::removeOriginAccessWhitelistEntry(
+        url,
+        WebString::fromUTF8(arguments[1].toString()),
+        WebString::fromUTF8(arguments[2].toString()),
+        arguments[3].toBoolean());
+}
+
 void LayoutTestController::clearAllDatabases(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
@@ -1183,7 +1258,15 @@ void LayoutTestController::forceRedSelectionColors(const CppArgumentList& argume
 void LayoutTestController::addUserScript(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
-    if (arguments.size() < 1 || !arguments[0].isString() || !arguments[1].isBool())
+    if (arguments.size() < 2 || !arguments[0].isString() || !arguments[1].isBool())
         return;
     m_shell->webView()->addUserScript(WebString::fromUTF8(arguments[0].toString()), arguments[1].toBoolean());
+}
+
+void LayoutTestController::addUserStyleSheet(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() < 1 || !arguments[0].isString())
+        return;
+    m_shell->webView()->addUserStyleSheet(WebString::fromUTF8(arguments[0].toString()));
 }

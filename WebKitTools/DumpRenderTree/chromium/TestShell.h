@@ -31,6 +31,7 @@
 #include "AccessibilityController.h"
 #include "EventSender.h"
 #include "LayoutTestController.h"
+#include "NotificationPresenter.h"
 #include "PlainTextController.h"
 #include "TextInputController.h"
 #include "WebViewHost.h"
@@ -43,6 +44,7 @@
 
 namespace WebKit {
 class WebFrame;
+class WebNotificationPresenter;
 class WebPreferences;
 class WebView;
 class WebURL;
@@ -74,7 +76,9 @@ public:
     // Returns the host for the main WebView.
     WebViewHost* webViewHost() const { return m_webViewHost; }
     LayoutTestController* layoutTestController() const { return m_layoutTestController.get(); }
+    EventSender* eventSender() const { return m_eventSender.get(); }
     AccessibilityController* accessibilityController() const { return m_accessibilityController.get(); }
+    NotificationPresenter* notificationPresenter() const { return m_notificationPresenter.get(); }
 
     void bindJSObjectsToWindow(WebKit::WebFrame*);
     void runFileTest(const TestParams&);
@@ -115,6 +119,7 @@ public:
     void closeRemainingWindows();
     int windowCount();
     static void resizeWindowForTest(WebViewHost*, const WebKit::WebURL&);
+    void showDevTools() {} // FIXME: imeplement this.
 
     static const int virtualWindowBorder = 3;
 
@@ -135,6 +140,7 @@ private:
     OwnPtr<LayoutTestController*> m_layoutTestController;
     OwnPtr<PlainTextController*> m_plainTextController;
     OwnPtr<TextInputController*> m_textInputController;
+    OwnPtr<NotificationPresenter*> m_notificationPresenter;
     TestParams m_params;
 
     // List of all windows in this process.

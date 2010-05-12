@@ -1,3 +1,74 @@
+2010-05-11  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Apply recent changes of test_shell to DRT
+        https://bugs.webkit.org/show_bug.cgi?id=38895
+
+        Port the changes to test_shell during (r40492, r46810] of Chromium.
+        Highlights:
+        - Introduce NotificationPresenter
+        - Fix parameter mismatch of WebViewClient::startDragging()
+
+        This change fixes dozens of unexpected behaviors.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+          Add NotificationPresenter.{cpp,h}
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (applyKeyModifier):
+        (EventSender::EventSender):
+        (EventSender::reset):
+        (EventSender::webview):
+        (EventSender::doDragDrop):
+        (EventSender::keyDown):
+        (EventSender::addTouchPoint):
+        (EventSender::clearTouchPoints):
+        (EventSender::releaseTouchPoint):
+        (EventSender::setTouchModifier):
+        (EventSender::updateTouchPoint):
+        (EventSender::cancelTouchPoint):
+        (EventSender::sendCurrentTouchEvent):
+        (EventSender::touchEnd):
+        (EventSender::touchMove):
+        (EventSender::touchStart):
+        (EventSender::touchCancel):
+        * DumpRenderTree/chromium/EventSender.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::reset):
+        (LayoutTestController::showWebInspector):
+        (LayoutTestController::setAuthorAndUserStylesEnabled):
+        (LayoutTestController::setScrollbarPolicy):
+        (LayoutTestController::setWillSendRequestClearHeader):
+        (LayoutTestController::callShouldCloseOnWebView):
+        (LayoutTestController::grantDesktopNotificationPermission):
+        (LayoutTestController::removeOriginAccessWhitelistEntry):
+        (LayoutTestController::addUserScript):
+        (LayoutTestController::addUserStyleSheet):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/chromium/NotificationPresenter.cpp: Added.
+        * DumpRenderTree/chromium/NotificationPresenter.h: Added.
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::runFileTest):
+        (TestShell::resetTestController):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::eventSender):
+        (TestShell::notificationPresenter):
+        (TestShell::showDevTools):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createView):
+        (WebViewHost::createPopupMenu):
+        (WebViewHost::startDragging):
+        (WebViewHost::notificationPresenter):
+        (WebViewHost::createApplicationCacheHost):
+        (WebViewHost::willSendRequest):
+        (WebViewHost::updateAddressBar):
+        (WebViewHost::updateURL):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost::addClearHeader):
+        (WebViewHost::clearHeaders):
+
 2010-05-10  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.
