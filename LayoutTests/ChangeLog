@@ -1,3 +1,19 @@
+2010-05-12  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r59245.
+        http://trac.webkit.org/changeset/59245
+        https://bugs.webkit.org/show_bug.cgi?id=38874
+
+        Broke at least one test on multiple platforms
+
+        * editing/deleting/delete-block-contents-004-expected.txt: Removed.
+        * editing/deleting/delete-block-contents-004.html: Removed.
+        * editing/deleting/in-visibly-empty-root-expected.txt:
+        * platform/mac/editing/deleting/5408255-expected.txt:
+        * platform/mac/editing/deleting/delete-select-all-001-expected.txt:
+        * platform/mac/editing/selection/4895428-1-expected.txt:
+        * platform/mac/editing/selection/4895428-4-expected.txt:
+
 2010-05-12  Martin Robinson  <mrobinson@igalia.com>
 
         Not reviewed. Try number 3 to properly add new baselines and remove remaining

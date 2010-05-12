@@ -572,13 +572,9 @@ void RenderBlock::removeChild(RenderObject* oldChild)
         anonBlock->destroy();
     }
 
-    // If this was our last child be sure to clear out our line boxes or reset the childrenInline flag.
-    if (!firstChild()) {
-        if (childrenInline())
-            lineBoxes()->deleteLineBoxes(renderArena());
-        else if (isRenderBlock())
-            setChildrenInline(true);
-    }
+    // If this was our last child be sure to clear out our line boxes.
+    if (childrenInline() && !firstChild())
+        lineBoxes()->deleteLineBoxes(renderArena());
 }
 
 bool RenderBlock::isSelfCollapsingBlock() const

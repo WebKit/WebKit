@@ -1,3 +1,14 @@
+2010-05-12  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r59245.
+        http://trac.webkit.org/changeset/59245
+        https://bugs.webkit.org/show_bug.cgi?id=38874
+
+        Broke at least one test on multiple platforms
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeChild):
+
 2010-05-12  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
