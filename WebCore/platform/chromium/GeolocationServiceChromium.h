@@ -50,6 +50,7 @@ public:
 
     // Called by the embedder, to identify this bridge.
     virtual int getBridgeId() const = 0;
+    virtual void attachBridgeIfNeeded() = 0;
 };
 
 // This class extends GeolocationService, and uses GeolocationServiceBridge to

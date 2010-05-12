@@ -1,3 +1,20 @@
+2010-05-12  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Attaches the geolocation bridge later on startUpdating().
+        This prevents a page requesting permission when it has just accessed navigator.geolocation (without calling navigator.geolocation.getCurrentPosition/watchPosition).
+        Note: when Geolocation::haveSuitableCachedPosition(), WebGeolocationServiceBridgeImpl::startUpdating() is not called,
+        so we attach the bridge if needed at requestGeolocationPermissionForFrame().
+        https://bugs.webkit.org/show_bug.cgi?id=38323
+        http://crbug.com/42789
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::requestGeolocationPermissionForFrame):
+        * src/WebGeolocationServiceBridgeImpl.cpp:
+        (WebKit::WebGeolocationServiceBridgeImpl::attachBridgeIfNeeded):
+        (WebKit::WebGeolocationServiceBridgeImpl::setLastPosition):
+
 2010-05-12  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.

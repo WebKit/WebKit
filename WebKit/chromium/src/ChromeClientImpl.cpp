@@ -709,6 +709,7 @@ NotificationPresenter* ChromeClientImpl::notificationPresenter() const
 void ChromeClientImpl::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
 {
     GeolocationServiceChromium* geolocationService = static_cast<GeolocationServiceChromium*>(geolocation->getGeolocationService());
+    geolocationService->geolocationServiceBridge()->attachBridgeIfNeeded();
     m_webView->client()->geolocationService()->requestPermissionForFrame(geolocationService->geolocationServiceBridge()->getBridgeId(), frame->document()->url());
 }
 
