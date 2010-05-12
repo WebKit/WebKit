@@ -1,3 +1,25 @@
+2010-05-12  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38891
+
+        First-letter had a number of bugs that were exposed by my attempt to optimize the setting of styles when updating first-letter.
+        The code that drills down to find the first-letter child stopped if it hit an element that didn't need layout.  This means it could
+        return random incorrect results (and cause the first-letter object to not be found).
+
+        In addition when the first-letter was floated/positioned, the text child was not correctly returned, but the container itself was
+        returned instead.
+
+        Finally, the updating code was leaving the box that wrapped the first letter text with a stale style.  The old code happened to work because
+        it made new styles for the text elements instead of using the enclosing box style.  The regression was caused by my change to make the
+        text children simply share style with their parent (thus making the bug that the parent had the wrong style become more prominent).
+
+        No new tests, since there's a timing component to reproducing the issue.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter):
+
 2010-05-12  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Dave Hyatt.

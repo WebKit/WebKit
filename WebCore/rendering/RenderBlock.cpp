@@ -4649,10 +4649,12 @@ void RenderBlock::updateFirstLetter()
 
     // Drill into inlines looking for our first text child.
     RenderObject* currChild = firstLetterBlock->firstChild();
-    while (currChild && currChild->needsLayout() && ((!currChild->isReplaced() && !currChild->isRenderButton() && !currChild->isMenuList()) || currChild->isFloatingOrPositioned()) && !currChild->isText()) {
+    while (currChild && ((!currChild->isReplaced() && !currChild->isRenderButton() && !currChild->isMenuList()) || currChild->isFloatingOrPositioned()) && !currChild->isText()) {
         if (currChild->isFloatingOrPositioned()) {
-            if (currChild->style()->styleType() == FIRST_LETTER)
+            if (currChild->style()->styleType() == FIRST_LETTER) {
+                currChild = currChild->firstChild();
                 break;
+            } 
             currChild = currChild->nextSibling();
         } else
             currChild = currChild->firstChild();
@@ -4669,11 +4671,11 @@ void RenderBlock::updateFirstLetter()
 
     // If the child already has style, then it has already been created, so we just want
     // to update it.
-    if (currChild->style()->styleType() == FIRST_LETTER) {
+    if (firstLetterContainer->style()->styleType() == FIRST_LETTER) {
         RenderStyle* pseudo = firstLetterBlock->getCachedPseudoStyle(FIRST_LETTER,
-                                                                     firstLetterContainer->firstLineStyle());
-        currChild->setStyle(pseudo);
-        for (RenderObject* genChild = currChild->firstChild(); genChild; genChild = genChild->nextSibling()) {
+                                                                     firstLetterContainer->parent()->firstLineStyle());
+        firstLetterContainer->setStyle(pseudo);
+        for (RenderObject* genChild = firstLetterContainer->firstChild(); genChild; genChild = genChild->nextSibling()) {
             if (genChild->isText()) 
                 genChild->setStyle(pseudo);
         }
