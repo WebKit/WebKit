@@ -586,7 +586,7 @@ WebInspector.CSSStyleDeclaration.prototype = {
                 continue;
 
             if (shorthandProperty) {
-                var value = this.getPropertyValue(shorthandProperty);
+                var value = this.getShorthandValue(shorthandProperty);
                 var priority = this.getShorthandPriority(shorthandProperty);
             } else {
                 var value = this.getPropertyValue(individualProperty);
