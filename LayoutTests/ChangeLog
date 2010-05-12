@@ -1,3 +1,18 @@
+2010-05-12  Robin Qiu  <robin.qiu@torchmobile.com.cn>
+
+        Reviewed by Dirk Schulze.
+
+        Fix a bug in SVGPathSegList::getPathSegAtLength().
+        This bug is just a misktake: almost all of the code is OK, but the
+        parameter is not used at all, therefore, this function always returns
+        "1".
+        And make a modification to return the last path segment if the distance
+        exceeds the actual path length.
+        https://bugs.webkit.org/show_bug.cgi?id=37515
+
+        * svg/dom/svgpath-getPathSegAtLength-expected.txt: Added.
+        * svg/dom/svgpath-getPathSegAtLength.html: Added.
+
 2010-05-11  Tony Chang  <tony@chromium.org>
 
         Reviewed by Darin Fisher.
