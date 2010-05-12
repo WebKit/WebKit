@@ -1,3 +1,14 @@
+2010-05-11  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Fixed two FIXME's in svn-apply: eliminated the unnecessary %copiedFiles
+        variable and changed gitKnowsOfFile() to use exitStatus().
+
+        https://bugs.webkit.org/show_bug.cgi?id=38862
+
+        * Scripts/svn-apply:
+
 2010-05-11  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, just fixing python typo.

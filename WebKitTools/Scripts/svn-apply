@@ -122,7 +122,6 @@ my $globalExitStatus = 0;
 my $repositoryRootPath = determineVCSRoot();
 
 my %checkedDirectories;
-my %copiedFiles;
 
 # Need to use a typeglob to pass the file handle as a parameter,
 # otherwise get a bareword error.
@@ -154,8 +153,6 @@ for my $copyDiffHashRef (@copyDiffHashRefs) {
 
     addDirectoriesIfNeeded(dirname($indexPath));
     scmCopy($copiedFromPath, $indexPath);
-
-    $copiedFiles{$indexPath} = $copiedFromPath;
 }
 
 for my $diffHashRef (@nonCopyDiffHashRefs) {
@@ -317,11 +314,7 @@ sub patch($)
     my $deletion = 0;
     my $addition = 0;
 
-    # FIXME: Do we need the exists($copiedFiles...) check here?  It looks like
-    #        it can be removed since modifications to copies do not register
-    #        as new files.  If this is the case, we should be able to remove
-    #        the variable from this file entirely.
-    $addition = 1 if ($diffHashRef->{isNew} || $patch =~ /\n@@ -0,0 .* @@/) && !exists($copiedFiles{$fullPath});
+    $addition = 1 if ($diffHashRef->{isNew} || $patch =~ /\n@@ -0,0 .* @@/);
     $deletion = 1 if ($diffHashRef->{isDeletion} || $patch =~ /\n@@ .* \+0,0 @@/);
 
     if (!$addition && !$deletion && !$isBinary) {
@@ -417,9 +410,8 @@ sub gitKnowsOfFile($)
     my $path = shift;
 
     `git ls-files --error-unmatch -- $path`;
-    # FIXME: Change this to use VCSUtils.pm's exitStatus().
-    my $exitCode = $? >> 8;
-    return $exitCode == 0;
+    my $exitStatus = exitStatus($?);
+    return $exitStatus == 0;
 }
 
 sub scmKnowsOfFile($)
