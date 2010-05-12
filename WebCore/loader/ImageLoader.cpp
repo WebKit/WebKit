@@ -155,11 +155,13 @@ void ImageLoader::updateFromElement()
     CachedImage* newImage = 0;
     if (!(attr.isNull() || (attr.isEmpty() && document->baseURI().isLocalFile()))) {
         if (m_loadManually) {
+            bool autoLoadOtherImages = document->docLoader()->autoLoadImages();
             document->docLoader()->setAutoLoadImages(false);
             newImage = new CachedImage(sourceURI(attr));
             newImage->setLoading(true);
             newImage->setDocLoader(document->docLoader());
             document->docLoader()->m_documentResources.set(newImage->url(), newImage);
+            document->docLoader()->setAutoLoadImages(autoLoadOtherImages);
         } else
             newImage = document->docLoader()->requestImage(sourceURI(attr));
 

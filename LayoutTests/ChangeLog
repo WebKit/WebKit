@@ -1,3 +1,14 @@
+2010-05-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38752
+        Strange behaviour after js insertion into a page pointing directly to an object (image, swf, etc)
+
+        * fast/images/extra-image-in-image-document-expected.txt: Added.
+        * fast/images/extra-image-in-image-document.html: Added.
+        * fast/images/resources/green.jpg: Added.
+
 2010-05-12  Martin Robinson  <mrobinson@webkit.org>
 
         Not reviewed. Trying once more to generate baselines for GTK+.
