@@ -1,3 +1,15 @@
+2010-05-12  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        HTML Entity Escape the contents of a textarea node when accessed via the innerHTML and outerHTML node properties.
+        https://bugs.webkit.org/show_bug.cgi?id=38922
+
+        Test: fast/encoding/textnode-XSS.html
+
+        * editing/markup.cpp:
+        (WebCore::appendStartMarkup):
+
 2010-05-12  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

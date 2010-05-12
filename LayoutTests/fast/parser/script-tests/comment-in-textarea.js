@@ -6,6 +6,6 @@ document.body.appendChild(element);
 
 var textAreas = document.getElementsByTagName("textarea");
 shouldBe("textAreas.length", "1");
-shouldBeEqualToString("textAreas[0].innerHTML", "<!-- </textarea> --> This should be part of the textarea");
+shouldBeEqualToString("textAreas[0].innerHTML", "&lt;!-- &lt;/textarea&gt; --&gt; This should be part of the textarea");
 
 var successfullyParsed = true;
