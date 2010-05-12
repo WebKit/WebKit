@@ -1,3 +1,15 @@
+2010-05-11  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Adding a function needed by the V8 code generator to turn on/off
+        the binding for WorkerContext::openDatabaseSync().
+        https://bugs.webkit.org/show_bug.cgi?id=38960
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::openDatabaseSyncEnabled):
+        * bindings/generic/RuntimeEnabledFeatures.h:
+
 2010-05-11  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dirk Schulze.
