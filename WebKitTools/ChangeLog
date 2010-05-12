@@ -1,5 +1,14 @@
 2010-05-12  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Slave losts cause build break on bots
+        https://bugs.webkit.org/show_bug.cgi?id=38980
+
+        * Scripts/build-webkit: Remove 0 byte sized files from productDir before build.
+
+2010-05-12  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed trivial fix after r59254.
 
         * Scripts/old-run-webkit-tests:

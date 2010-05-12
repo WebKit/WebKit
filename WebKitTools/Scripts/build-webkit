@@ -31,6 +31,7 @@
 
 use strict;
 use File::Basename;
+use File::Find;
 use File::Spec;
 use FindBin;
 use Getopt::Long qw(:config pass_through);
@@ -266,6 +267,18 @@ checkRequiredSystemConfig();
 setConfiguration();
 
 my $productDir = productDir();
+
+# Remove 0 byte sized files from productDir after slave lost for Qt buildbots.
+File::Find::find(\&unlinkZeroFiles, $productDir) if isQt();
+
+sub unlinkZeroFiles ()
+{
+    my $file = $File::Find::name;
+    if (! -s $file) {
+        unlink $file;
+        print "0 byte sized file removed from build directory: $file\n";
+    }
+}
 
 # Check that all the project directories are there.
 my @projects = ("JavaScriptCore", "WebCore", "WebKit");
