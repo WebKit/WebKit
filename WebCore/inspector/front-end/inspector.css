@@ -1679,7 +1679,12 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
 
 .sidebar-pane-subtitle {
     float: right;
+    font-weight: normal;
     overflow: hidden;
+}
+
+body.platform-windows .sidebar-pane-subtitle {
+    padding-top: 1px;
 }
 
 .sidebar-pane-subtitle input, .section .header input[type=checkbox] {
@@ -4115,12 +4120,6 @@ a.worker-item {
 
 .body.show-inherited .styles-section .properties .inherited {
     display: block;
-}
-
-.show-inherited-checkbox {
-    float: right;
-    font-size: 11px;
-    font-weight: normal;
 }
 
 a.worker-item:hover {

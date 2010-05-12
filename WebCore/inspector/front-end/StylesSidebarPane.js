@@ -534,7 +534,7 @@ WebInspector.StylesSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.pr
 WebInspector.ComputedStyleSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Computed Style"));
-    var showInheritedCheckbox = new WebInspector.Checkbox(WebInspector.UIString("Show inherited"), "show-inherited-checkbox");
+    var showInheritedCheckbox = new WebInspector.Checkbox(WebInspector.UIString("Show inherited"), "sidebar-pane-subtitle");
     this.titleElement.appendChild(showInheritedCheckbox.element);
 
     function settingsLoaded()
