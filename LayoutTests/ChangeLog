@@ -1,3 +1,11 @@
+2010-05-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed fix.
+
+        [Qt] Platform specific expected result updated after r59211.
+
+        * platform/qt/fast/css/pseudo-cache-stale-expected.txt: updated.
+
 2010-05-12  Robin Qiu  <robin.qiu@torchmobile.com.cn>
 
         Reviewed by Dirk Schulze.
