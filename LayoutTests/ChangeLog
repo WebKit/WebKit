@@ -1,3 +1,16 @@
+2010-05-11  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dirk Schulze.
+
+        CSS SVG font doesn't recognize URL without element reference
+        https://bugs.webkit.org/show_bug.cgi?id=37144
+
+        * platform/mac/svg/custom/svg-fonts-with-no-element-reference-expected.checksum: Added.
+        * platform/mac/svg/custom/svg-fonts-with-no-element-reference-expected.png: Added.
+        * platform/mac/svg/custom/svg-fonts-with-no-element-reference-expected.txt: Added.
+        * svg/custom/resources/graffiti-with-empty-first-font.svg: Added.
+        * svg/custom/svg-fonts-with-no-element-reference.html: Added.
+
 2010-05-11  Alexey Proskuryakov  <ap@apple.com>
 
         Not reviewed.

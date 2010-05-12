@@ -161,15 +161,25 @@ SVGFontElement* CachedFont::getSVGFontById(const String& fontName) const
     if (!list)
         return 0;
 
-    unsigned fonts = list->length();
-    for (unsigned i = 0; i < fonts; ++i) {
-        Node* node = list->item(i);
-        ASSERT(node);
+    unsigned listLength = list->length();
+    if (!listLength)
+        return 0;
 
+#ifndef NDEBUG
+    for (unsigned i = 0; i < listLength; ++i) {
+        ASSERT(list->item(i));
+        ASSERT(list->item(i)->hasTagName(SVGNames::fontTag));
+    }
+#endif
+
+    if (fontName.isEmpty())
+        return static_cast<SVGFontElement*>(list->item(0));
+
+    for (unsigned i = 0; i < listLength; ++i) {
+        Node* node = list->item(i);
         if (static_cast<Element*>(node)->getAttribute(static_cast<Element*>(node)->idAttributeName()) != fontName)
             continue;
 
-        ASSERT(node->hasTagName(SVGNames::fontTag));
         return static_cast<SVGFontElement*>(node);
     }
 

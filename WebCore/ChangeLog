@@ -1,3 +1,19 @@
+2010-05-11  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dirk Schulze.
+
+        CSS SVG font doesn't recognize URL without element reference
+        https://bugs.webkit.org/show_bug.cgi?id=37144
+
+        CachedFont::getSVGFontById() did assume that element reference (ID) is given.
+        So fixed to handle an empty or missing element reference. In which case, 
+        the first font element is returned if available.
+        
+        Test: svg/custom/svg-fonts-with-no-element-reference.html
+
+        * loader/CachedFont.cpp:
+        (WebCore::CachedFont::getSVGFontById):
+
 2010-05-11  Jer Noble  <jer.noble@apple.com>
 
         No Review.
