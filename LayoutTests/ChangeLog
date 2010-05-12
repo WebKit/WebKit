@@ -1,3 +1,36 @@
+2010-05-12  Jian Li  <jianli@chromium.org>
+
+        Unreviewed. Chromium: rebaseline layout tests and mark one failed layout test.
+
+        * platform/chromium-linux/fast/forms/placeholder-stripped-expected.checksum: Added.
+        * platform/chromium-linux/fast/forms/placeholder-stripped-expected.png: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-light-01-f-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-light-01-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-specular-01-f-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-specular-01-f-expected.png:
+        * platform/chromium-linux/svg/custom/svg-fonts-with-no-element-reference-expected.checksum: Added.
+        * platform/chromium-mac/fast/forms/placeholder-stripped-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-light-01-f-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-light-01-f-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-specular-01-f-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-specular-01-f-expected.png: Added.
+        * platform/chromium-win/fast/forms/placeholder-stripped-expected.checksum: Added.
+        * platform/chromium-win/fast/forms/placeholder-stripped-expected.png: Added.
+        * platform/chromium-win/fast/forms/placeholder-stripped-expected.txt: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-light-01-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-light-01-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-specular-01-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-specular-01-f-expected.png:
+        * platform/chromium-win/svg/custom/svg-fonts-with-no-element-reference-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/svg-fonts-with-no-element-reference-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-05-12  Adam Langley  <agl@chromium.org>
 
         Expectations change. Unreviewed.

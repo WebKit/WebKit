@@ -2825,5 +2825,5 @@ BUGJOHNNYG : fast/js/regexp-literals-arent-constants.html = TEXT
 BUG43890 WIN : http/tests/loading/basic.html = TEXT PASS
 BUG43890 MAC : fast/forms/implicit-submission.html = TEXT PASS
 
-// To be enabled after turning on FILE_READER
-BUGJIANLI SKIP : fast/files/file-reader.html = TEXT
+// WebKit roll 59170:59267
+BUG44018 WIN : inspector/styles-disable-then-enable.html = TEXT
