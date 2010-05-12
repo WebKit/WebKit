@@ -20,7 +20,6 @@
 #ifndef _HAVE_WEBKIT_VIDEO_SINK_H
 #define _HAVE_WEBKIT_VIDEO_SINK_H
 
-#include <cairo.h>
 #include <glib-object.h>
 #include <gst/video/gstvideosink.h>
 

@@ -1,3 +1,15 @@
+2010-05-10  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Dirk Schulze.
+
+        [GStreamer] un-needed cairo.h include
+        https://bugs.webkit.org/show_bug.cgi?id=38837
+
+        Cairo not used in the sink anymore. So it's not needed to include
+        the header.
+
+        * platform/graphics/gstreamer/VideoSinkGStreamer.h:
+
 2010-05-12  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
