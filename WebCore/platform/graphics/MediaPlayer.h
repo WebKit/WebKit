@@ -49,6 +49,8 @@
 #else
 class QTMovie;
 #endif
+class QTMovieGWorld;
+class QTMovieVisualContext;
 
 namespace WebCore {
 
@@ -56,11 +58,22 @@ namespace WebCore {
 // types supported by the current media player.
 // We have to do that has multiple media players
 // backend can live at runtime.
-typedef struct PlatformMedia {
-    QTMovie* qtMovie;
-} PlatformMedia;
+struct PlatformMedia {
+    enum {
+        None,
+        QTMovieType,
+        QTMovieGWorldType,
+        QTMovieVisualContextType
+    } type;
 
-static const PlatformMedia NoPlatformMedia = { 0 };
+    union {
+        QTMovie* qtMovie;
+        QTMovieGWorld* qtMovieGWorld;
+        QTMovieVisualContext* qtMovieVisualContext;
+    } media;
+};
+
+extern const PlatformMedia NoPlatformMedia;
 
 class ContentType;
 class FrameView;

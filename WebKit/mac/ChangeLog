@@ -1,3 +1,16 @@
+2010-05-12  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 38689: #34005 will break fullscreen video playback
+        https://bugs.webkit.org/show_bug.cgi?id=38689
+
+        Use the new definition of PlatformMedia to check the actual type 
+        returned by MediaPlayer.
+        
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController windowDidLoad]):
+
 2010-05-11  Mark Rowe  <mrowe@apple.com>
 
         Fix the world.

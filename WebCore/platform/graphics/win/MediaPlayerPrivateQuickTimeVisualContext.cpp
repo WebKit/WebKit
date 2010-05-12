@@ -152,7 +152,8 @@ bool MediaPlayerPrivateQuickTimeVisualContext::supportsFullscreen() const
 PlatformMedia MediaPlayerPrivateQuickTimeVisualContext::platformMedia() const
 {
     PlatformMedia p;
-    p.qtMovie = reinterpret_cast<QTMovie*>(m_movie.get());
+    p.type = PlatformMedia::QTMovieVisualContextType;
+    p.media.qtMovieVisualContext = m_visualContext.get();
     return p;
 }
 

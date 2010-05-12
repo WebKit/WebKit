@@ -114,7 +114,8 @@ bool MediaPlayerPrivate::supportsFullscreen() const
 PlatformMedia MediaPlayerPrivate::platformMedia() const
 {
     PlatformMedia p;
-    p.qtMovie = reinterpret_cast<QTMovie*>(m_qtMovie.get());
+    p.type = PlatformMedia::QTMovieGWorldType;
+    p.media.qtMovieGWorld = m_qtGWorld.get();
     return p;
 }
 
