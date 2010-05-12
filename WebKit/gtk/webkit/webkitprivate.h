@@ -115,42 +115,42 @@ extern "C" {
     typedef struct _WebKitWebViewPrivate WebKitWebViewPrivate;
     struct _WebKitWebViewPrivate {
         WebCore::Page* corePage;
-        WebKitWebSettings* webSettings;
-        WebKitWebInspector* webInspector;
-        WebKitWebWindowFeatures* webWindowFeatures;
+        GRefPtr<WebKitWebSettings> webSettings;
+        GRefPtr<WebKitWebInspector> webInspector;
+        GRefPtr<WebKitWebWindowFeatures> webWindowFeatures;
 
         WebKitWebFrame* mainFrame;
-        WebKitWebBackForwardList* backForwardList;
+        GRefPtr<WebKitWebBackForwardList> backForwardList;
 
-        GtkMenu* currentMenu;
+        GRefPtr<GtkMenu> currentMenu;
         gint lastPopupXPosition;
         gint lastPopupYPosition;
 
         HashSet<GtkWidget*> children;
         bool editable;
-        GtkIMContext* imContext;
+        GRefPtr<GtkIMContext> imContext;
 
         gboolean transparent;
 
-        GtkAdjustment* horizontalAdjustment;
-        GtkAdjustment* verticalAdjustment;
+        GRefPtr<GtkAdjustment> horizontalAdjustment;
+        GRefPtr<GtkAdjustment> verticalAdjustment;
 
         gboolean zoomFullContent;
         WebKitLoadStatus loadStatus;
-        char* encoding;
-        char* customEncoding;
+        GOwnPtr<char> encoding;
+        GOwnPtr<char> customEncoding;
 
-        char* iconURI;
+        GOwnPtr<char> iconURI;
 
         gboolean disposing;
         gboolean usePrimaryForPaste;
 
         // These are hosted here because the DataSource object is
         // created too late in the frame loading process.
-        WebKitWebResource* mainResource;
-        char* mainResourceIdentifier;
-        GHashTable* subResources;
-        char* tooltipText;
+        GRefPtr<WebKitWebResource> mainResource;
+        GOwnPtr<char> mainResourceIdentifier;
+        GRefPtr<GHashTable> subResources;
+        GOwnPtr<char> tooltipText;
 
         HashMap<GdkDragContext*, RefPtr<WebCore::DataObjectGtk> > draggingDataObjects;
     };
