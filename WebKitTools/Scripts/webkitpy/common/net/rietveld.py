@@ -37,16 +37,6 @@ from webkitpy.common.system.executive import ScriptError
 import webkitpy.thirdparty.autoinstalled.rietveld.upload as upload
 
 
-def parse_codereview_issue(message):
-    if not message:
-        return None
-    match = re.search(config.codereview_server_regex +
-                      "(?P<codereview_issue>\d+)",
-                      message)
-    if match:
-        return int(match.group('codereview_issue'))
-
-
 class Rietveld(object):
     def __init__(self, executive, dryrun=False):
         self.dryrun = dryrun

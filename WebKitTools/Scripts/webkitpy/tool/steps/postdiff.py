@@ -44,11 +44,6 @@ class PostDiff(AbstractStep):
         diff = self.cached_lookup(state, "diff")
         description = self._options.description or "Patch"
         comment_text = None
-        codereview_issue = state.get("codereview_issue")
-        # Include codereview issue number in patch name. This is a bit of a hack,
-        # but it makes doing the rietveld integration a lot easier.
-        if codereview_issue:
-            description += "-%s" % state["codereview_issue"]
         self._tool.bugs.add_patch_to_bug(state["bug_id"], diff, description, comment_text=comment_text, mark_for_review=self._options.review, mark_for_commit_queue=self._options.request_commit)
         if self._options.open_bug:
             self._tool.user.open_url(self._tool.bugs.bug_url_for_bug_id(state["bug_id"]))
