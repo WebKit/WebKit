@@ -4909,6 +4909,7 @@ svg/custom/global-constructors.html
 
 # DRT sideeffect - this test make http/tests/xmlhttprequest/null-auth.php fail:
 # https://bugs.webkit.org/show_bug.cgi?id=32961
+http/tests/xmlhttprequest/basic-auth-default.html 
 http/tests/xmlhttprequest/failed-auth.html
 
 # Slider tests that need new results
