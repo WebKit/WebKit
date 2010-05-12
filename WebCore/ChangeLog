@@ -1,3 +1,24 @@
+2010-05-12  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=38871 REGRESSION: 
+        Crash clicking background NPR tab after few minutes of sitting idle
+        -and corresponding-
+        <rdar://problem/7941504>
+
+        Move m_mediaCanStartListeners HashSet to Document away from Page.
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::addMediaCanStartListener):
+        (WebCore::Document::removeMediaCanStartListener):
+        (WebCore::Document::takeAnyMediaCanStartListener):
+        * dom/Document.h:
+        * page/Page.cpp:
+        (WebCore::Page::takeAnyMediaCanStartListener):
+        * page/Page.h:
+        (WebCore::Page::canStartMedia):
+
 2010-05-11  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

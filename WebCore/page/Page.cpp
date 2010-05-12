@@ -393,27 +393,13 @@ PluginData* Page::pluginData() const
     return m_pluginData.get();
 }
 
-void Page::addMediaCanStartListener(MediaCanStartListener* listener)
+inline MediaCanStartListener* Page::takeAnyMediaCanStartListener()
 {
-    ASSERT(!m_canStartMedia);
-    ASSERT(!m_mediaCanStartListeners.contains(listener));
-    m_mediaCanStartListeners.add(listener);
-}
-
-void Page::removeMediaCanStartListener(MediaCanStartListener* listener)
-{
-    ASSERT(m_mediaCanStartListeners.contains(listener));
-    m_mediaCanStartListeners.remove(listener);
-}
-
-MediaCanStartListener* Page::takeAnyMediaCanStartListener()
-{
-    HashSet<MediaCanStartListener*>::iterator slot = m_mediaCanStartListeners.begin();
-    if (slot == m_mediaCanStartListeners.end())
-        return 0;
-    MediaCanStartListener* listener = *slot;
-    m_mediaCanStartListeners.remove(slot);
-    return listener;
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        if (MediaCanStartListener* listener = frame->document()->takeAnyMediaCanStartListener())
+            return listener;
+    }
+    return 0;
 }
 
 void Page::setCanStartMedia(bool canStartMedia)
