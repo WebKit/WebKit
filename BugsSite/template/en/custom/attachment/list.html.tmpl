@@ -108,15 +108,24 @@
 
         [% IF show_attachment_flags %]
           <td class="bz_attach_flags" valign="top">
-            [% IF attachment.flags.size == 0 %]
+[%# if WEBKIT_CHANGES %]
+            [% IF attachment.flags.size == 0  || 
+               (attachment.flags.size == 1 && attachment.flags.0.type.name == 'in-rietveld') %]
+[%# endif // WEBKIT_CHANGES %]
               <i>no flags</i>
             [% ELSE %]
               [% FOREACH flag = attachment.flags %]
-                [% flag.setter.nick FILTER html %]:
-                [%+ flag.type.name FILTER html FILTER no_break %][% flag.status %]
-                [%+ IF flag.status == "?" && flag.requestee %]
-                  ([% flag.requestee.nick FILTER html %])
-                [% END %]<br>
+[%# if WEBKIT_CHANGES %]
+                [% IF flag.type.name != 'in-rietveld' %]
+[%# endif // WEBKIT_CHANGES %]
+                  [% flag.setter.nick FILTER html %]:
+                  [%+ flag.type.name FILTER html FILTER no_break %][% flag.status %]
+                  [%+ IF flag.status == "?" && flag.requestee %]
+                    ([% flag.requestee.nick FILTER html %])
+                  [% END %]<br>
+[%# if WEBKIT_CHANGES %]
+                [% END %]
+[%# endif // WEBKIT_CHANGES %]
               [% END %]
             [% END %]
           </td>

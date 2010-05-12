@@ -1,5 +1,18 @@
 2010-05-12  Julie Parent  <jparent@chromium.org>
 
+        Reviewed by Ojan Vafai.
+
+        Hide the in-rietveld flag in the UI.  It is only used only by tooling and shouldn't clutter the UI.
+        https://bugs.webkit.org/show_bug.cgi?id=39024
+
+        * template/en/custom/attachment/list.html.tmpl:
+          Removes this flag entirely from the UI, not needed on this page.
+        * template/en/custom/flag/list.html.tmpl: Added.
+          Copied from template/en/default/flag/list.html.tmpl with only changes inside the if WEBKIT_CHANGES section.
+          Hides the flag rather than removing it completely, so tools can still interact with it.  
+
+2010-05-12  Julie Parent  <jparent@chromium.org>
+
         Reviewed by David Kilzer.
 
         Adds support for Rietveld reviews.  When there is an associated
