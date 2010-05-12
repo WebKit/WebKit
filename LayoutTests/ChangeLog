@@ -1,3 +1,10 @@
+2010-05-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed fix after r59270. 
+        Update Qt specific expected result based on IRC discussing with Enrica Casucci.
+
+        * platform/qt/editing/deleting/5408255-expected.txt: updated.
+
 2010-05-12  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Dave Hyatt.
