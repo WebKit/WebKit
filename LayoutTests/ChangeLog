@@ -1,3 +1,30 @@
+2010-04-29  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Test that when a frame with fixed position elements is scrolled via the
+        keyboard that the correct repaints happen.
+        https://bugs.webkit.org/show_bug.cgi?id=38286
+ 
+        * fast/repaint/fixed-move-after-keyboard-scroll.html: Added.
+        * fast/repaint/resources/fixed-move-after-keyboard-scroll-iframe.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/repaint/fixed-move-after-keyboard-scroll-expected.checksum: Added.
+        * platform/mac/fast/repaint/fixed-move-after-keyboard-scroll-expected.png: Added.
+        * platform/mac/fast/repaint/fixed-move-after-keyboard-scroll-expected.txt: Added.
+
+<<<<<<< .mine
+2010-05-12  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Update pixel baselines for fast/css/pseudo-cache-stale.html due to r59211
+        https://bugs.webkit.org/show_bug.cgi?id=38976
+
+        * platform/mac/fast/css/pseudo-cache-stale-expected.checksum:
+        * platform/mac/fast/css/pseudo-cache-stale-expected.png:
+
+=======
 2010-05-12  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
@@ -20,6 +47,7 @@
         * platform/gtk/fast/repaint/fixed-move-after-keyboard-scroll-expected.txt:
         * platform/gtk/svg/custom/repaint-stroke-width-changes-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/repaint-stroke-width-changes-expected.txt.
 
+>>>>>>> .r59250
 2010-05-12  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Dave Hyatt.
