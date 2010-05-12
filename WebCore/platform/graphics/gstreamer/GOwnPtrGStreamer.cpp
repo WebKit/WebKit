@@ -30,6 +30,6 @@ template <> void freeOwnedGPtr<GstElement>(GstElement* ptr)
     if (ptr)
         gst_object_unref(ptr);
 }
-#endif
 
 }
+#endif

@@ -1,5 +1,17 @@
 2010-05-10  Philippe Normand  <pnormand@igalia.com>
 
+        Reviewed by David Levin.
+
+        [GStreamer] incoherent #ifdef in GOwnPtrGStreamer.h
+        https://bugs.webkit.org/show_bug.cgi?id=38839
+
+        Fixed #ifdef/curly braces coherence.
+
+        * platform/graphics/gstreamer/GOwnPtrGStreamer.cpp:
+        (WTF::GstElement):
+
+2010-05-10  Philippe Normand  <pnormand@igalia.com>
+
         Reviewed by Dirk Schulze.
 
         [GStreamer] un-needed cairo.h include
