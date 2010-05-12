@@ -1,3 +1,12 @@
+2010-05-12  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Add missing AM_V_GEN directives to generation rules so that they
+        remain silent when requested.
+
+        * GNUmakefile.am:
+
 2010-05-12  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Jeremy Orlow.

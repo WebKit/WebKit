@@ -3984,10 +3984,10 @@ GDOM_HEADERS_FIXED += $(patsubst %,$(srcdir)/WebCore/bindings/gobject/WebKitDOM%
 libgdom_h_api += $(GDOM_HEADERS_FIXED) $(GDOM_HEADERS_BUILT)
 
 DerivedSources/webkit/webkitdom.h: $(WebCore)/bindings/scripts/gobject-generate-headers.pl
-	echo $(GDOM_CLASSES) | $(PERL) $< gdom > $@
+	$(AM_V_GEN)echo $(GDOM_CLASSES) | $(PERL) $< gdom > $@
 
 DerivedSources/webkit/webkitdomdefines.h: $(WebCore)/bindings/scripts/gobject-generate-headers.pl $(IDL_BINDINGS_GDOM) $(WebCore)/GNUmakefile.am
-	echo $(GDOM_CLASSES) | $(PERL) $< defines > $@
+	$(AM_V_GEN)echo $(GDOM_CLASSES) | $(PERL) $< defines > $@
 
 DerivedSources/webkit/WebKitDOM%.h: DerivedSources/webkit/WebKitDOM%.cpp;
 
