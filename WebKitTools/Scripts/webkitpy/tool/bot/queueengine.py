@@ -77,8 +77,8 @@ class QueueEngine:
         self._output_tee = OutputTee()
 
     log_date_format = "%Y-%m-%d %H:%M:%S"
-    sleep_duration_text = "5 mins"
-    seconds_to_sleep = 300
+    sleep_duration_text = "2 mins"  # This could be generated from seconds_to_sleep
+    seconds_to_sleep = 120
     handled_error_code = 2
 
     # Child processes exit with a special code to the parent queue process can detect the error was handled.
@@ -142,8 +142,12 @@ class QueueEngine:
             self._output_tee.remove_log(self._work_log)
             self._work_log = None
 
+    def _now():
+        """Overriden by the unit tests to allow testing _sleep_message"""
+        return datetime.now()
+
     def _sleep_message(self, message):
-        wake_time = datetime.now() + timedelta(seconds=self.seconds_to_sleep)
+        wake_time = self._now() + timedelta(seconds=self.seconds_to_sleep)
         return "%s Sleeping until %s (%s)." % (message, wake_time.strftime(self.log_date_format), self.sleep_duration_text)
 
     def _sleep(self, message):

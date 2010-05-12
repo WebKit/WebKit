@@ -33,6 +33,26 @@
 
         Reviewed by Adam Barth.
 
+        EWS bots should poll more often than every 5 minutes
+        https://bugs.webkit.org/show_bug.cgi?id=38968
+
+        We'll make them poll every 2 minutes to start with.
+        I'm going to re-write how polling works soon, so this is
+        a stop-gap to try and make the bots more responsive.
+
+        If Bill notices any additional load on bugzilla we'll drop
+        the polling frequency back to 5 minutes.  He's historically said
+        that the EWS bots appear to be a drop in the bucket and thus
+        should be able to poll much more frequently w/o causing trouble.
+
+        * Scripts/webkitpy/tool/bot/queueengine.py:
+        * Scripts/webkitpy/tool/bot/queueengine_unittest.py:
+         - Add a test for sleep_message
+
+2010-05-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         commit-queue should commit rollouts without running tests
         https://bugs.webkit.org/show_bug.cgi?id=38940
 

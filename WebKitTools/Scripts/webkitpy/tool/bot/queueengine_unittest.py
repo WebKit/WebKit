@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import datetime
 import os
 import shutil
 import tempfile
@@ -159,6 +160,12 @@ class QueueEngineTest(unittest.TestCase):
         expected_callbacks = expected_callbacks[:next_work_item_index + 2]
         expected_callbacks.append('should_continue_work_queue')
         self.assertEquals(delegate._callbacks, expected_callbacks)
+
+    def test_sleep_message(self):
+        engine = QueueEngine("test", None, None)
+        engine._now = lambda: datetime.datetime(2010, 1, 1)
+        expected_sleep_message = "MESSAGE Sleeping until 2010-01-01 00:02:00 (2 mins)."
+        self.assertEqual(engine._sleep_message("MESSAGE"), expected_sleep_message)
 
     def setUp(self):
         self.temp_dir = tempfile.mkdtemp(suffix="work_queue_test_logs")
