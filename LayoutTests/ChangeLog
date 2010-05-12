@@ -1,3 +1,14 @@
+2010-05-12  Martin Robinson  <mrobinson@webkit.org>
+
+        Not reviewed. Trying once more to generate baselines for GTK+.
+
+        * platform/gtk/fast/css/input-search-padding-expected.txt:
+        * platform/gtk/fast/forms/placeholder-stripped-expected.txt:
+        * platform/gtk/fast/frames/take-focus-from-iframe-expected.txt:
+        * platform/gtk/fast/images/svg-background-partial-redraw-expected.txt: Added.
+        * platform/gtk/fast/repaint/fixed-move-after-keyboard-scroll-expected.txt:
+        * platform/gtk/svg/custom/repaint-stroke-width-changes-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/repaint-stroke-width-changes-expected.txt.
+
 2010-05-12  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Dave Hyatt.
