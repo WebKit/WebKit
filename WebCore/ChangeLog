@@ -1,3 +1,16 @@
+2010-05-12  yael aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Dan Bernstein.
+
+        HTMLLabelElement::control() should return HTMLFormControlElement, not HTMLElement
+        https://bugs.webkit.org/show_bug.cgi?id=38991
+
+        No new tests since no new functionality was introduced.
+
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::control):
+        * html/HTMLLabelElement.h:
+
 2010-05-12  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler.
