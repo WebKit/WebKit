@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+COMPILE_ASSERT(sizeof(AtomicString) == sizeof(String), atomic_string_and_string_must_be_same_size);
+
 class AtomicStringTable {
 public:
     static AtomicStringTable* create()

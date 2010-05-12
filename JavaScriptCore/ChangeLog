@@ -1,5 +1,13 @@
 2010-05-11  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Add a compile time assert that sizeof(String) == sizeof(AtomicString).
+
+        * wtf/text/AtomicString.cpp:
+
+2010-05-11  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Mark Rowe.
 
         https://bugs.webkit.org/show_bug.cgi?id=38961
