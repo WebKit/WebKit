@@ -272,7 +272,6 @@ class BuildBotTest(unittest.TestCase):
             "Tiger",
             "Windows.*Build",
             "GTK",
-            "Qt",
             "Chromium",
         ]
         expected_builders = [
@@ -289,12 +288,6 @@ class BuildBotTest(unittest.TestCase):
             {'name': u'GTK Linux 32-bit Debug', },
             {'name': u'GTK Linux 64-bit Debug', },
             {'name': u'GTK Linux 64-bit Release', },
-            {'name': u'Qt Linux Release', },
-            {'name': u'Qt Linux Release minimal', },
-            {'name': u'Qt Linux ARMv5 Release', },
-            {'name': u'Qt Linux ARMv7 Release', },
-            {'name': u'Qt Windows 32-bit Release', },
-            {'name': u'Qt Windows 32-bit Debug', },
             {'name': u'Chromium Linux Release', },
             {'name': u'Chromium Mac Release', },
             {'name': u'Chromium Win Release', },

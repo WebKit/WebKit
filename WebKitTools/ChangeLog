@@ -2,6 +2,25 @@
 
         Reviewed by Eric Seidel.
 
+        Qt build failures cause SheriffBot false positives
+        https://bugs.webkit.org/show_bug.cgi?id=38969
+
+        The Qt buildbot randomly fails to compile occasionally because its
+        network connection causes SVn to leave zero-byte files around.  These
+        compile failures confuse SheriffBot into thinking someone's patch
+        caused a build break.
+
+        In this patch, I've temporarily removed Qt from the list of core
+        builders.  Ossy is working on a script to clean up the zero byte files.
+        Once that goes in, we can add Qt back to the core builders.
+
+        * Scripts/webkitpy/common/net/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot_unittest.py:
+
+2010-05-11  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         sheriffbot is spammy.
         https://bugs.webkit.org/show_bug.cgi?id=38936
 
