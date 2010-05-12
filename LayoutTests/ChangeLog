@@ -1,3 +1,19 @@
+2010-05-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Body not redrawn, and filled with garbage on some composited pages
+        https://bugs.webkit.org/show_bug.cgi?id=38951
+        <rdar://problem/7891548>
+        
+        New testcase with a layer configuration that forces the root layer into
+        compositing mode.
+
+        * compositing/geometry/composited-html-size.html: Added.
+        * platform/mac/compositing/geometry/composited-html-size-expected.checksum: Added.
+        * platform/mac/compositing/geometry/composited-html-size-expected.png: Added.
+        * platform/mac/compositing/geometry/composited-html-size-expected.txt: Added.
+
 2010-05-11  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dirk Schulze.

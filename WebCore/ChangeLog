@@ -1,3 +1,20 @@
+2010-05-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Body not redrawn, and filled with garbage on some composited pages
+        https://bugs.webkit.org/show_bug.cgi?id=38951
+        <rdar://problem/7891548>
+        
+        When the root layer becomes composited (for example, because a negative z-index
+        descendant in its stacking context becomes composited), then it has to be made
+        large enough to fill the viewport, because the page background draws into it.
+
+        Test: compositing/geometry/composited-html-size.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::calculateCompositedBounds):
+
 2010-05-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mark Rowe.

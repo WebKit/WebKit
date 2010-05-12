@@ -348,8 +348,21 @@ IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* laye
     if (!canBeComposited(layer))
         return IntRect();
 
-    IntRect boundingBoxRect, unionBounds;
-    boundingBoxRect = unionBounds = layer->localBoundingBox();
+    IntRect boundingBoxRect = layer->localBoundingBox();
+    if (layer->renderer()->isRoot()) {
+        // If the root layer becomes composited (e.g. because some descendant with negative z-index is composited),
+        // then it has to be big enough to cover the viewport in order to display the background. This is akin
+        // to the code in RenderBox::paintRootBoxDecorations().
+        if (m_renderView->frameView()) {
+            int rw = m_renderView->frameView()->contentsWidth();
+            int rh = m_renderView->frameView()->contentsHeight();
+            
+            boundingBoxRect.setWidth(max(boundingBoxRect.width(), rw - boundingBoxRect.x()));
+            boundingBoxRect.setHeight(max(boundingBoxRect.height(), rh - boundingBoxRect.y()));
+        }
+    }
+    
+    IntRect unionBounds = boundingBoxRect;
     
     if (layer->renderer()->hasOverflowClip() || layer->renderer()->hasMask()) {
         int ancestorRelX = 0, ancestorRelY = 0;
