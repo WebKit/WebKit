@@ -53,7 +53,8 @@ WebInspector.TimelineAgent.RecordType = {
     ResourceReceiveData: 16,
     GCEvent : 17,
     MarkDOMContentEventType : 18,
-    MarkLoadEventType : 19
+    MarkLoadEventType : 19,
+    ScheduleResourceRequest : 20
 };
 
 WebInspector.addRecordToTimeline = function(record) {

@@ -59,18 +59,20 @@ namespace WebCore {
         static ScriptObject createXHRReadyStateChangeData(InspectorFrontend*, const String& url, int readyState);
 
         static ScriptObject createXHRLoadData(InspectorFrontend*, const String& url);
-        
+
         static ScriptObject createEvaluateScriptData(InspectorFrontend*, const String&, double lineNumber);
-        
+
         static ScriptObject createMarkTimelineData(InspectorFrontend*, const String&);
 
         static ScriptObject createResourceSendRequestData(InspectorFrontend*, unsigned long identifier,
             bool isMainResource, const ResourceRequest&);
 
+        static ScriptObject createScheduleResourceRequestData(InspectorFrontend*, const String&);
+
         static ScriptObject createResourceReceiveResponseData(InspectorFrontend*, unsigned long identifier, const ResourceResponse&);
 
         static ScriptObject createReceiveResourceData(InspectorFrontend*, unsigned long identifier);
-        
+
         static ScriptObject createResourceFinishData(InspectorFrontend*, unsigned long identifier, bool didFail);
 
         static ScriptObject createPaintData(InspectorFrontend*, const IntRect&);

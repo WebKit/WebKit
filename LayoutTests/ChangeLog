@@ -1,3 +1,12 @@
+2010-05-11  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: Sometimes ResourceRequest records aren't connected to the initiator.
+        https://bugs.webkit.org/show_bug.cgi?id=38925
+
+        * inspector/timeline-enum-stability-expected.txt:
+
 2010-05-12  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

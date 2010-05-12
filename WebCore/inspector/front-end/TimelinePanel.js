@@ -82,6 +82,7 @@ WebInspector.TimelinePanel = function()
 
     this._rootRecord = this._createRootRecord();
     this._sendRequestRecords = {};
+    this._scheduledResourceRequests = {};
     this._timerRecords = {};
 
     this._calculator = new WebInspector.TimelineCalculator();
@@ -162,6 +163,7 @@ WebInspector.TimelinePanel.prototype = {
             recordStyles[recordTypes.GCEvent] = { title: WebInspector.UIString("GC Event"), category: this.categories.scripting };
             recordStyles[recordTypes.MarkDOMContentEventType] = { title: WebInspector.UIString("DOMContent event"), category: this.categories.scripting };
             recordStyles[recordTypes.MarkLoadEventType] = { title: WebInspector.UIString("Load event"), category: this.categories.scripting };
+            recordStyles[recordTypes.ScheduleResourceRequest] = { title: WebInspector.UIString("Schedule Request"), category: this.categories.loading };
             this._recordStylesArray = recordStyles;
         }
         return this._recordStylesArray;
@@ -281,6 +283,8 @@ WebInspector.TimelinePanel.prototype = {
             parentRecord = this._sendRequestRecords[record.data.identifier];
         else if (record.type === recordTypes.TimerFire)
             parentRecord = this._timerRecords[record.data.timerId];
+        else if (record.type === recordTypes.ResourceSendRequest)
+            parentRecord = this._scheduledResourceRequests[record.data.url];
         return parentRecord;
     },
 
@@ -308,7 +312,7 @@ WebInspector.TimelinePanel.prototype = {
             }
         }
 
-        var formattedRecord = new WebInspector.TimelinePanel.FormattedRecord(record, parentRecord, this._recordStyles, this._sendRequestRecords, this._timerRecords);
+        var formattedRecord = new WebInspector.TimelinePanel.FormattedRecord(record, parentRecord, this);
 
         if (record.type === recordTypes.MarkDOMContentEventType || record.type === recordTypes.MarkLoadEventType) {
             this._markTimelineRecords.push(formattedRecord);
@@ -378,6 +382,7 @@ WebInspector.TimelinePanel.prototype = {
     {
         this._markTimelineRecords = [];
         this._sendRequestRecords = {};
+        this._scheduledResourceRequests = {};
         this._timerRecords = {};
         this._rootRecord = this._createRootRecord();
         this._boundariesAreValid = false;
@@ -783,10 +788,10 @@ WebInspector.TimelineRecordGraphRow.prototype = {
     }
 }
 
-WebInspector.TimelinePanel.FormattedRecord = function(record, parentRecord, recordStyles, sendRequestRecords, timerRecords)
+WebInspector.TimelinePanel.FormattedRecord = function(record, parentRecord, panel)
 {
     var recordTypes = WebInspector.TimelineAgent.RecordType;
-    var style = recordStyles[record.type];
+    var style = panel._recordStyles[record.type];
 
     this.parent = parentRecord;
     if (parentRecord)
@@ -807,28 +812,32 @@ WebInspector.TimelinePanel.FormattedRecord = function(record, parentRecord, reco
 
     // Make resource receive record last since request was sent; make finish record last since response received.
     if (record.type === recordTypes.ResourceSendRequest) {
-        sendRequestRecords[record.data.identifier] = this;
+        panel._sendRequestRecords[record.data.identifier] = this;
+    } else if (record.type === recordTypes.ScheduleResourceRequest) {
+        panel._scheduledResourceRequests[record.data.url] = this;
     } else if (record.type === recordTypes.ResourceReceiveResponse) {
-        var sendRequestRecord = sendRequestRecords[record.data.identifier];
+        var sendRequestRecord = panel._sendRequestRecords[record.data.identifier];
         if (sendRequestRecord) { // False if we started instrumentation in the middle of request.
             record.data.url = sendRequestRecord.data.url;
             // Now that we have resource in the collection, recalculate details in order to display short url.
-            sendRequestRecord.details = this._getRecordDetails(sendRequestRecord, sendRequestRecords);
+            sendRequestRecord.details = this._getRecordDetails(sendRequestRecord, panel._sendRequestRecords);
+            if (sendRequestRecord.parent !== panel._rootRecord && sendRequestRecord.parent.type === recordTypes.ScheduleResourceRequest)
+                sendRequestRecord.parent.details = this._getRecordDetails(sendRequestRecord, panel._sendRequestRecords);
         }
     } else if (record.type === recordTypes.ResourceReceiveData) {
-        var sendRequestRecord = sendRequestRecords[record.data.identifier];
+        var sendRequestRecord = panel._sendRequestRecords[record.data.identifier];
         if (sendRequestRecord) // False for main resource.
             record.data.url = sendRequestRecord.data.url;
     } else if (record.type === recordTypes.ResourceFinish) {
-        var sendRequestRecord = sendRequestRecords[record.data.identifier];
+        var sendRequestRecord = panel._sendRequestRecords[record.data.identifier];
         if (sendRequestRecord) // False for main resource.
             record.data.url = sendRequestRecord.data.url;
     } else if (record.type === recordTypes.TimerInstall) {
         this.timeout = record.data.timeout;
         this.singleShot = record.data.singleShot;
-        timerRecords[record.data.timerId] = this;
+        panel._timerRecords[record.data.timerId] = this;
     } else if (record.type === recordTypes.TimerFire) {
-        var timerInstalledRecord = timerRecords[record.data.timerId];
+        var timerInstalledRecord = panel._timerRecords[record.data.timerId];
         if (timerInstalledRecord) {
             this.callSiteScriptName = timerInstalledRecord.callerScriptName;
             this.callSiteScriptLine = timerInstalledRecord.callerScriptLine;
@@ -836,7 +845,7 @@ WebInspector.TimelinePanel.FormattedRecord = function(record, parentRecord, reco
             this.singleShot = timerInstalledRecord.singleShot;
         }
     }
-    this.details = this._getRecordDetails(record, sendRequestRecords);
+    this.details = this._getRecordDetails(record, panel._sendRequestRecords);
 }
 
 WebInspector.TimelinePanel.FormattedRecord.prototype = {
@@ -899,6 +908,7 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
             case recordTypes.FunctionCall:
                 contentHelper._appendLinkRow("Location", this.data.scriptName, this.data.scriptLine);
                 break;
+            case recordTypes.ScheduleResourceRequest:
             case recordTypes.ResourceSendRequest:
             case recordTypes.ResourceReceiveResponse:
             case recordTypes.ResourceReceiveData:
@@ -963,6 +973,7 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
                 return record.data.url ? WebInspector.linkifyResourceAsNode(record.data.url, "scripts", record.data.lineNumber, "", "") : null;
             case WebInspector.TimelineAgent.RecordType.XHRReadyStateChange:
             case WebInspector.TimelineAgent.RecordType.XHRLoad:
+            case WebInspector.TimelineAgent.RecordType.ScheduleResourceRequest:
             case WebInspector.TimelineAgent.RecordType.ResourceSendRequest:
             case WebInspector.TimelineAgent.RecordType.ResourceReceiveData:
             case WebInspector.TimelineAgent.RecordType.ResourceReceiveResponse:

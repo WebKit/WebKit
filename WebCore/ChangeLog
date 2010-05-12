@@ -1,3 +1,30 @@
+2010-05-11  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: Sometimes ResourceRequest records aren't connected to the initiator.
+        https://bugs.webkit.org/show_bug.cgi?id=38925
+
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didScheduleResourceRequest):
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::):
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createScheduleResourceRequestData):
+        * inspector/TimelineRecordFactory.h:
+        * inspector/front-end/TimelineAgent.js:
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype.get _recordStyles):
+        (WebInspector.TimelinePanel.prototype._findParentRecord):
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype._clearPanel):
+        (WebInspector.TimelinePanel.FormattedRecord):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generatePopupContent):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._getRecordDetails):
+        * loader/loader.cpp:
+        (WebCore::Loader::load):
+
 2010-05-12  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

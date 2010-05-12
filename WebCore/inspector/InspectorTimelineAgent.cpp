@@ -202,6 +202,15 @@ void InspectorTimelineAgent::didEvaluateScript()
     didCompleteCurrentRecord(EvaluateScriptTimelineRecordType);
 }
 
+void InspectorTimelineAgent::didScheduleResourceRequest(const String& url)
+{
+    pushGCEventRecords();
+    ScriptObject record = TimelineRecordFactory::createGenericRecord(m_frontend, WTF::currentTimeMS());
+    record.set("data", TimelineRecordFactory::createScheduleResourceRequestData(m_frontend, url));
+    record.set("type", ScheduleResourceRequestTimelineRecordType);
+    addRecordToTimeline(record, ScheduleResourceRequestTimelineRecordType);
+}
+
 void InspectorTimelineAgent::willSendResourceRequest(unsigned long identifier, bool isMainResource,
     const ResourceRequest& request)
 {

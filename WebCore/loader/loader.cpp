@@ -28,6 +28,7 @@
 #include "CachedImage.h"
 #include "CachedResource.h"
 #include "DocLoader.h"
+#include "InspectorTimelineAgent.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
@@ -145,6 +146,13 @@ void Loader::load(DocLoader* docLoader, CachedResource* resource, bool increment
         host->servePendingRequests(priority);
     } else {
         // Handle asynchronously so early low priority requests don't get scheduled before later high priority ones
+#if ENABLE(INSPECTOR)
+        if (InspectorTimelineAgent::instanceCount()) {
+            InspectorTimelineAgent* agent = docLoader->doc()->inspectorTimelineAgent();
+            if (agent)
+                agent->didScheduleResourceRequest(resource->url());
+        }
+#endif // ENABLE(INSPECTOR)
         scheduleServePendingRequests();
     }
 }

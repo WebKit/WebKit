@@ -69,7 +69,8 @@ enum TimelineRecordType {
     ReceiveResourceDataTimelineRecordType = 16,
     GCEventTimelineRecordType = 17,
     MarkDOMContentEventType = 18,
-    MarkLoadEventType = 19
+    MarkLoadEventType = 19,
+    ScheduleResourceRequestTimelineRecordType = 20
 };
 
 class InspectorTimelineAgent : ScriptGCEventListener, public Noncopyable {
@@ -116,6 +117,7 @@ public:
     void didMarkDOMContentEvent();
     void didMarkLoadEvent();
 
+    void didScheduleResourceRequest(const String& url);
     void willSendResourceRequest(unsigned long, bool isMainResource, const ResourceRequest&);
     void willReceiveResourceResponse(unsigned long, const ResourceResponse&);
     void didReceiveResourceResponse();
