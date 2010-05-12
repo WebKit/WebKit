@@ -75,20 +75,6 @@ bool unloadModule(PlatformModule module)
     return !dlclose(module);
 }
 
-int writeToFile(PlatformFileHandle handle, const char* data, int length)
-{
-    int totalBytesWritten = 0;
-    while (totalBytesWritten < length) {
-        int bytesWritten = write(handle, data, (size_t)(length - totalBytesWritten));
-        if (bytesWritten < 0 && errno != EINTR)
-            return -1;
-        if (bytesWritten > 0)
-            totalBytesWritten += bytesWritten;
-    }
-
-    return totalBytesWritten;
-}
-
 String homeDirectoryPath() 
 {
     return sPluginPath;

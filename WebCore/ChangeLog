@@ -1,3 +1,16 @@
+2010-05-12  Steve Block  <steveblock@google.com>
+
+        Reviewed by David Levin.
+
+        Android's writeToFile() is buggy
+        https://bugs.webkit.org/show_bug.cgi?id=38908
+
+        No new tests, build fix only.
+
+        * platform/android/FileSystemAndroid.cpp: Remove Android's version of writeToFile().
+        * platform/posix/FileSystemPOSIX.cpp: Use POSIX version of writeToFile() on Android.
+        (WebCore::writeToFile):
+
 2010-05-10  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by David Levin.
