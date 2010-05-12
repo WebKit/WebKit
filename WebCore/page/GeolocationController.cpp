@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "GeolocationController.h"
+#include "GeolocationPosition.h"
 
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
 
@@ -66,10 +67,11 @@ void GeolocationController::removeObserver(Geolocation* observer)
 
 void GeolocationController::positionChanged(GeolocationPosition* position)
 {
+    m_lastPosition = position;
     Vector<RefPtr<Geolocation> > observersVector;
     copyToVector(m_observers, observersVector);
     for (size_t i = 0; i < observersVector.size(); ++i)
-        observersVector[i]->setPosition(position);
+        observersVector[i]->positionChanged();
 }
 
 void GeolocationController::errorOccurred(GeolocationError* error)
@@ -82,6 +84,9 @@ void GeolocationController::errorOccurred(GeolocationError* error)
 
 GeolocationPosition* GeolocationController::lastPosition()
 {
+    if (m_lastPosition.get())
+        return m_lastPosition.get();
+
     if (!m_client)
         return 0;
 

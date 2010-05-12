@@ -230,8 +230,6 @@ void Geolocation::disconnectFrame()
 
 Geoposition* Geolocation::lastPosition()
 {
-    ASSERT(isAllowed());
-
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     if (!m_frame)
         return 0;
@@ -523,24 +521,24 @@ void Geolocation::requestPermission()
 
     if (!m_frame)
         return;
-    
+
     Page* page = m_frame->page();
     if (!page)
         return;
-    
+
     m_allowGeolocation = InProgress;
 
     // Ask the chrome: it maintains the geolocation challenge policy itself.
     page->chrome()->requestGeolocationPermissionForFrame(m_frame, this);
 }
 
-void Geolocation::positionChanged(PassRefPtr<Geoposition> newPosition)
+void Geolocation::positionChangedInternal()
 {
-    m_positionCache->setCachedPosition(newPosition.get());
+    m_positionCache->setCachedPosition(lastPosition());
 
     // Stop all currently running timers.
     stopTimers();
-    
+
     if (!isAllowed()) {
         // requestPermission() will ask the chrome for permission. This may be
         // implemented synchronously or asynchronously. In both cases,
@@ -578,9 +576,9 @@ void Geolocation::makeSuccessCallbacks()
 
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
 
-void Geolocation::setPosition(GeolocationPosition* position)
+void Geolocation::positionChanged()
 {
-    positionChanged(createGeoposition(position));
+    positionChangedInternal();
 }
 
 void Geolocation::setError(GeolocationError* error)
@@ -596,7 +594,7 @@ void Geolocation::geolocationServicePositionChanged(GeolocationService* service)
     ASSERT_UNUSED(service, service == m_service);
     ASSERT(m_service->lastPosition());
 
-    positionChanged(m_service->lastPosition());
+    positionChangedInternal();
 }
 
 void Geolocation::geolocationServiceErrorOccurred(GeolocationService* service)

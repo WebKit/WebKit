@@ -2,6 +2,26 @@
 
         Reviewed by Steve Block.
 
+        Removes Geolocation::setPosition and uses positionChanged() to capture lastPosition().
+        This brings CLIENT_BASED_GEOLOCATION more inline with the non-client based.
+        https://bugs.webkit.org/show_bug.cgi?id=38195
+
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::lastPosition):
+        (WebCore::Geolocation::requestPermission):
+        (WebCore::Geolocation::positionChangedInternal):
+        (WebCore::Geolocation::positionChanged):
+        (WebCore::Geolocation::geolocationServicePositionChanged):
+        * page/Geolocation.h:
+        * page/GeolocationController.cpp:
+        (WebCore::GeolocationController::positionChanged):
+        (WebCore::GeolocationController::lastPosition):
+        * page/GeolocationController.h:
+
+2010-05-12  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Steve Block.
+
         Attaches the geolocation bridge later on startUpdating().
         This prevents a page requesting permission when it has just accessed navigator.geolocation (without calling navigator.geolocation.getCurrentPosition/watchPosition).
         Note: when Geolocation::haveSuitableCachedPosition(), WebGeolocationServiceBridgeImpl::startUpdating() is not called,
