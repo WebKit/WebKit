@@ -1,3 +1,13 @@
+2010-05-12  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Removing the unnecessary dirfd parameter.
+        https://bugs.webkit.org/show_bug.cgi?id=38869
+
+        * platform/chromium/ChromiumBridge.h:
+        * platform/sql/chromium/SQLiteFileSystemChromiumPosix.cpp:
+
 2010-05-12  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Dave Hyatt.

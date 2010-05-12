@@ -1,3 +1,15 @@
+2010-05-12  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Removing the unnecessary dirfd parameter.
+        https://bugs.webkit.org/show_bug.cgi?id=38869
+
+        * public/WebKitClient.h:
+        (WebKit::WebKitClient::databaseOpenFile):
+        * src/ChromiumBridge.cpp:
+        (WebCore::ChromiumBridge::databaseOpenFile):
+
 2010-05-12  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
@@ -141,19 +153,6 @@
         https://bugs.webkit.org/show_bug.cgi?id=38889
 
         * WebKit.gyp:
-
-2010-05-10  Tony Chang  <tony@chromium.org>
-
-        Reviewed by Kent Tamura.
-
-        [chromium] Build DRT when running build-webkit --chromium
-        https://bugs.webkit.org/show_bug.cgi?id=38730
-
-        This allows DRT to use the same .o and .lib files when building
-        on Windows.
-
-        * WebKit.gyp: Move DRT.gyp targets into this file.
-        * gyp_webkit: DRT.gyp is gone
 
 2010-05-10  John Abd-El-Malek  <jam@chromium.org>
 
