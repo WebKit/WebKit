@@ -37,6 +37,7 @@ namespace WebCore {
 
 const UChar blackSquare = 0x25A0;
 const UChar bullet = 0x2022;
+const UChar carriageReturn = 0x000D;
 const UChar ethiopicPrefaceColon = 0x1366;
 const UChar hebrewPunctuationGeresh = 0x05F3;
 const UChar hebrewPunctuationGershayim = 0x05F4;

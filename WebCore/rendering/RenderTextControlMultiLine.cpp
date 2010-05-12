@@ -111,7 +111,7 @@ void RenderTextControlMultiLine::updateFromElement()
 
     HTMLTextAreaElement* textArea = static_cast<HTMLTextAreaElement*>(node());
     if (m_placeholderVisible)
-        setInnerTextValue(textArea->getAttribute(HTMLNames::placeholderAttr));
+        setInnerTextValue(textArea->strippedPlaceholder());
     else
         setInnerTextValue(textArea->value());
 }

@@ -1,3 +1,17 @@
+2010-05-12  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        placeholder text should be stripped from line breaks
+        https://bugs.webkit.org/show_bug.cgi?id=36291
+
+        Add a test for placeholder values with CR and LF.
+
+        * fast/forms/placeholder-stripped.html: Added.
+        * platform/mac/fast/forms/placeholder-stripped-expected.checksum: Added.
+        * platform/mac/fast/forms/placeholder-stripped-expected.png: Added.
+        * platform/mac/fast/forms/placeholder-stripped-expected.txt: Added.
+
 2010-05-10  yael aharon  <yael.aharon@nokia.com>
 
         Reviewed by Darin Adler.

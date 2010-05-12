@@ -558,8 +558,10 @@ void RenderTextControlSingleLine::updateFromElement()
         updateCancelButtonVisibility();
 
     if (m_placeholderVisible) {
+        // node() must be an HTMLInputElement. WMLInputElement doesn't support placeholder.
+        ASSERT(node()->isHTMLElement());
         ExceptionCode ec = 0;
-        innerTextElement()->setInnerText(static_cast<Element*>(node())->getAttribute(placeholderAttr), ec);
+        innerTextElement()->setInnerText(static_cast<HTMLInputElement*>(node())->strippedPlaceholder(), ec);
         ASSERT(!ec);
     } else {
         if (!inputElement()->suggestedValue().isNull())

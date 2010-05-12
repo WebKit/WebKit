@@ -173,6 +173,8 @@ public:
     virtual void dispatchFocusEvent();
     virtual void dispatchBlurEvent();
 
+    String strippedPlaceholder() const;
+
     int selectionStart();
     int selectionEnd();
     void setSelectionStart(int);
@@ -182,6 +184,7 @@ public:
     VisibleSelection selection() const;
 
 protected:
+    bool isPlaceholderEmpty() const;
     bool placeholderShouldBeVisible() const;
     void updatePlaceholderVisibility(bool);
     virtual int cachedSelectionStart() const = 0;

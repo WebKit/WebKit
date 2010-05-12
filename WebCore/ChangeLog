@@ -1,3 +1,31 @@
+2010-05-12  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        placeholder text should be stripped from line breaks
+        https://bugs.webkit.org/show_bug.cgi?id=36291
+
+        According to http://dev.w3.org/html5/spec/forms.html#attr-input-placeholder ,
+        we need to remove CR and LF from the placeholder attribute values.
+        Introduce HTMLTextFormControlElement::strippedPlaceholder(), which
+        returns stripped value, and replace getAttribute(placeholderAttr) with it.
+
+        Test: fast/forms/placeholder-stripped.html
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::strippedPlaceholder):
+        (WebCore::HTMLTextFormControlElement::isPlaceholderEmpty):
+        (WebCore::HTMLTextFormControlElement::placeholderShouldBeVisible):
+          Use strippedPlaceholder().
+        * html/HTMLFormControlElement.h:
+        * platform/text/CharacterNames.h: Add carriageReturn.
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::updateFromElement):
+          Use strippedPlaceholder().
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::updateFromElement):
+          Use strippedPlaceholder().
+
 2010-05-10  Rodrigo Belem  <rodrigo.belem@openbossa.org>
 
         Reviewed by Kenneth Christiansen , Simon Hausmann and Gustavo Noronha.
