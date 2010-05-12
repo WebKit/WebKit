@@ -56,6 +56,8 @@ the output at the beginning of the run, during the run, or at the end:
 
 Overall options:
     nothing             don't print anything. This overrides every other option
+    default             include the default options. This is useful for logging
+                        the default options plus additional settings.
     everything          print everything (except the trace-* options and the
                         detailed-progress option, see below for the full list )
     misc                print miscellaneous things like blank lines
@@ -101,15 +103,19 @@ Notes:
 
 --print 'everything' is equivalent to --print '%(everything)s'.
 
-The default is to --print '%(default)s'.
+The default (--print default) is equivalent to --print '%(default)s'.
 """ % {'slowest': NUM_SLOW_TESTS_TO_LOG, 'everything': PRINT_EVERYTHING,
        'default': PRINT_DEFAULT}
 
 
 def print_options():
     return [
-        # Note: we use print_options rather than just 'print' because print
+        # Note: We use print_options rather than just 'print' because print
         # is a reserved word.
+        # Note: Also, we don't specify a default value so we can detect when
+        # no flag is specified on the command line and use different defaults
+        # based on whether or not --verbose is specified (since --print
+        # overrides --verbose).
         optparse.make_option("--print", dest="print_options",
             help=("controls print output of test run. "
                   "Use --help-printing for more.")),
@@ -170,6 +176,10 @@ def parse_print_options(print_options, verbose, child_processes,
     if 'everything' in switches:
         switches.discard('everything')
         switches.update(set(PRINT_EVERYTHING.split(',')))
+
+    if 'default' in switches:
+        switches.discard('default')
+        switches.update(set(PRINT_DEFAULT.split(',')))
 
     if 'detailed-progress' in switches:
         switches.discard('one-line-progress')
