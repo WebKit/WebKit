@@ -1,3 +1,14 @@
+2010-05-11  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38976, fast/css/pseudo-cache-stale.html has incorrect results.
+
+        Make sure to trigger a relayout of any objects whose first-line styles change dynamically.
+
+        * dom/Element.cpp:
+        (WebCore::Element::pseudoStyleCacheIsInvalid):
+
 2010-05-11  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Timothy Hatcher.

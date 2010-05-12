@@ -878,6 +878,12 @@ bool Element::pseudoStyleCacheIsInvalid(const RenderStyle* currentStyle, RenderS
             if (pseudoId < FIRST_INTERNAL_PSEUDOID)
                 newStyle->setHasPseudoStyle(pseudoId);
             newStyle->addCachedPseudoStyle(newPseudoStyle);
+            if (pseudoId == FIRST_LINE || pseudoId == FIRST_LINE_INHERITED) {
+                // FIXME: We should do an actual diff to determine whether a repaint vs. layout
+                // is needed, but for now just assume a layout will be required.  The diff code
+                // in RenderObject::setStyle would need to be factored out so that it could be reused.
+                renderer()->setNeedsLayoutAndPrefWidthsRecalc();
+            }
             return true;
         }
     }
