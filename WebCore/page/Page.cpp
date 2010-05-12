@@ -406,6 +406,16 @@ void Page::removeMediaCanStartListener(MediaCanStartListener* listener)
     m_mediaCanStartListeners.remove(listener);
 }
 
+MediaCanStartListener* Page::takeAnyMediaCanStartListener()
+{
+    HashSet<MediaCanStartListener*>::iterator slot = m_mediaCanStartListeners.begin();
+    if (slot == m_mediaCanStartListeners.end())
+        return 0;
+    MediaCanStartListener* listener = *slot;
+    m_mediaCanStartListeners.remove(slot);
+    return listener;
+}
+
 void Page::setCanStartMedia(bool canStartMedia)
 {
     if (m_canStartMedia == canStartMedia)
@@ -414,11 +424,9 @@ void Page::setCanStartMedia(bool canStartMedia)
     m_canStartMedia = canStartMedia;
 
     while (m_canStartMedia) {
-        HashSet<MediaCanStartListener*>::iterator slot = m_mediaCanStartListeners.begin();
-        if (slot == m_mediaCanStartListeners.end())
+        MediaCanStartListener* listener = takeAnyMediaCanStartListener();
+        if (!listener)
             break;
-        MediaCanStartListener* listener = *slot;
-        m_mediaCanStartListeners.remove(slot);
         listener->mediaCanStart();
     }
 }

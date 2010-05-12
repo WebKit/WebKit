@@ -1,3 +1,16 @@
+2010-05-11  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Small re-factoring patch in preparation for fixing https://
+        bugs.webkit.org/show_bug.cgi?id=38871 REGRESSION: Crash clicking 
+        background NPR tab after few minutes of sitting idle
+
+        * page/Page.cpp:
+        (WebCore::Page::takeAnyMediaCanStartListener):
+        (WebCore::Page::setCanStartMedia):
+        * page/Page.h:
+
 2010-05-11  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Brady Eidson.
