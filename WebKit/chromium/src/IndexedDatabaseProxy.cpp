@@ -29,9 +29,12 @@
 #include "config.h"
 #include "IndexedDatabaseProxy.h"
 
+#include "Document.h"
+#include "Frame.h"
 #include "IDBCallbacksProxy.h"
 #include "IDBDatabaseError.h"
 #include "IDBDatabaseProxy.h"
+#include "SecurityOrigin.h"
 #include "WebFrameImpl.h"
 #include "WebIDBDatabase.h"
 #include "WebIDBDatabaseError.h"
@@ -59,8 +62,10 @@ IndexedDatabaseProxy::~IndexedDatabaseProxy()
 
 void IndexedDatabaseProxy::open(const String& name, const String& description, bool modifyDatabase, PassRefPtr<IDBCallbacks> callbacks, Frame* frame, ExceptionCode& ec)
 {
+    if (!frame || !frame->document())
+        return;
     WebKit::WebFrame* webFrame = WebKit::WebFrameImpl::fromFrame(frame);
-    m_webIndexedDatabase->open(name, description, modifyDatabase, new IDBCallbacksProxy(callbacks), webFrame, ec);
+    m_webIndexedDatabase->open(name, description, modifyDatabase, new IDBCallbacksProxy(callbacks), frame->document()->securityOrigin()->toString(), webFrame, ec);
 }
 
 } // namespace WebCore

@@ -47,7 +47,8 @@ public:
 
     virtual ~WebIndexedDatabase() { }
 
-    virtual void open(const WebString& name, const WebString& description, bool modifyDatabase, WebIDBCallbacks*, WebFrame*, int& exceptionCode) = 0;
+    // The WebKit implementation of open ignores the WebFrame* parameter.
+    virtual void open(const WebString& name, const WebString& description, bool modifyDatabase, WebIDBCallbacks*, const WebString& origin, WebFrame*, int& exceptionCode) = 0;
 };
 
 } // namespace WebKit
