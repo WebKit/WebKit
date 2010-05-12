@@ -1,3 +1,32 @@
+2010-05-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        commit-queue should commit rollouts without running tests
+        https://bugs.webkit.org/show_bug.cgi?id=38940
+
+        Most of this change is improving our test coverage for the commit-queue.
+        The only functional change is removing the --test flag when the commit-queue
+        is running in rollouts mode.
+
+        I added test coverage for status updates, and updated the commit-queue status
+        messages to distinguish rollout vs. normal landing mode in its empty queue
+        and land patch messages.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+         - Got rid of a bunch of copy/paste code using _default_expected_stderr
+        * Scripts/webkitpy/tool/commands/queues.py:
+         - Moved rollout patch filtering out of _validate_patches_in_commit_queue
+           so that we only have to check if the builders are green in one place.
+         - Make the "empty queue" message note which queue it is referring to.
+         - Don't pass --text to land-attachment when in rollout mode.
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+         - Update results now that we're testing status updates.
+         - Test _can_build_and_test since I made a typo in that call while
+           writing this change and the unit tests failed to catch it!
+        * Scripts/webkitpy/tool/mocktool.py:
+         - Log status updates to make them testable in our unit tests.
+
 2010-05-11  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

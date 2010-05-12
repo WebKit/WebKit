@@ -118,11 +118,13 @@ class CommitQueueTest(QueuesTest):
     def test_commit_queue(self):
         expected_stderr = {
             "begin_work_queue" : "CAUTION: commit-queue will discard all local changes in \"%s\"\nRunning WebKit commit-queue.\n" % MockSCM.fake_checkout_root,
+            "should_proceed_with_work_item": "MOCK: update_status: commit-queue Landing patch\n",
             # FIXME: The commit-queue warns about bad committers twice.  This is due to the fact that we access Attachment.reviewer() twice and it logs each time.
             "next_work_item" : """Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
 Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
 2 patches in commit-queue [197, 106]
 """,
+            "process_work_item" : "MOCK: update_status: commit-queue Pass\n",
         }
         self.assert_queue_outputs(CommitQueue(), expected_stderr=expected_stderr)
 
@@ -131,11 +133,14 @@ Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.c
         tool.buildbot.light_tree_on_fire()
         expected_stderr = {
             "begin_work_queue" : "CAUTION: commit-queue will discard all local changes in \"%s\"\nRunning WebKit commit-queue.\n" % MockSCM.fake_checkout_root,
+            "should_proceed_with_work_item": "MOCK: update_status: commit-queue Builders [\"Builder2\"] are red. See http://build.webkit.org\n",
             # FIXME: The commit-queue warns about bad committers twice.  This is due to the fact that we access Attachment.reviewer() twice and it logs each time.
             "next_work_item" : """Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
 Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
+MOCK: update_status: commit-queue Builders ["Builder2"] are red. See http://build.webkit.org
 1 patch in commit-queue [106]
 """,
+            "process_work_item" : "MOCK: update_status: commit-queue Builders [\"Builder2\"] are red. See http://build.webkit.org\n",
         }
         self.assert_queue_outputs(CommitQueue(), tool=tool, expected_stderr=expected_stderr)
 
@@ -145,20 +150,33 @@ Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.c
         rollout_patch = MockPatch()
         expected_stderr = {
             "begin_work_queue": "CAUTION: commit-queue will discard all local changes in \"%s\"\nRunning WebKit commit-queue.\n" % MockSCM.fake_checkout_root,
+            "should_proceed_with_work_item": "MOCK: update_status: commit-queue Landing rollout patch\n",
             # FIXME: The commit-queue warns about bad committers twice.  This is due to the fact that we access Attachment.reviewer() twice and it logs each time.
             "next_work_item": """Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
 Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
+MOCK: update_status: commit-queue Builders ["Builder2"] are red. See http://build.webkit.org
 1 patch in commit-queue [106]
 """,
-            "process_work_item": "MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--build', '--test', '--non-interactive', '--ignore-builders', '--build-style=both', '--quiet', 76543]\n",
+            "process_work_item": "MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--build', '--non-interactive', '--ignore-builders', '--build-style=both', '--quiet', 76543]\nMOCK: update_status: commit-queue Pass\n",
         }
         self.assert_queue_outputs(CommitQueue(), tool=tool, work_item=rollout_patch, expected_stderr=expected_stderr)
+
+    def test_can_build_and_test(self):
+        queue = CommitQueue()
+        tool = MockTool()
+        tool.executive = Mock()
+        queue.bind_to_tool(tool)
+        self.assertTrue(queue._can_build_and_test())
+        expected_run_args = ["echo", "--status-host=example.com", "build-and-test", "--force-clean", "--build", "--test", "--non-interactive", "--no-update", "--build-style=both", "--quiet"]
+        tool.executive.run_and_throw_if_fail.assert_called_with(expected_run_args)
 
 
 class StyleQueueTest(QueuesTest):
     def test_style_queue(self):
         expected_stderr = {
             "begin_work_queue" : "CAUTION: style-queue will discard all local changes in \"%s\"\nRunning WebKit style-queue.\n" % MockSCM.fake_checkout_root,
+            "should_proceed_with_work_item": "MOCK: update_status: style-queue Checking style\n",
+            "process_work_item" : "MOCK: update_status: style-queue Pass\n",
             "handle_unexpected_error" : "Mock error message\n",
         }
         self.assert_queue_outputs(StyleQueue(), expected_stderr=expected_stderr)

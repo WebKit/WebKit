@@ -168,16 +168,17 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
         # Not using BugzillaQueries.fetch_patches_from_commit_queue() so we can reject patches with invalid committers/reviewers.
         bug_ids = self.tool.bugs.queries.fetch_bug_ids_from_commit_queue()
         all_patches = sum([self.tool.bugs.fetch_bug(bug_id).commit_queued_patches(include_invalid=True) for bug_id in bug_ids], [])
-        valid_patches = self.committer_validator.patches_after_rejecting_invalid_commiters_and_reviewers(all_patches)
-        if not self._builders_are_green():
-            return filter(lambda patch: patch.is_rollout(), valid_patches)
-        return valid_patches
+        return self.committer_validator.patches_after_rejecting_invalid_commiters_and_reviewers(all_patches)
 
     def next_work_item(self):
         patches = self._validate_patches_in_commit_queue()
+        builders_are_green = self._builders_are_green()
+        if not builders_are_green:
+            patches = filter(lambda patch: patch.is_rollout(), patches)
         # FIXME: We could sort the patches in a specific order here, was suggested by https://bugs.webkit.org/show_bug.cgi?id=33395
         if not patches:
-            self._update_status("Empty queue")
+            queue_text = "queue" if builders_are_green else "rollout queue"
+            self._update_status("Empty %s" % queue_text)
             return None
         # Only bother logging if we have patches in the queue.
         self.log_progress([patch.id() for patch in patches])
@@ -211,7 +212,8 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
         if not patch.is_rollout():
             if not self._builders_are_green():
                 return False
-        self._update_status("Landing patch", patch)
+        patch_text = "rollout patch" if patch.is_rollout() else "patch"
+        self._update_status("Landing %s" % patch_text, patch)
         return True
 
     def _land(self, patch, first_run=False):
@@ -226,7 +228,6 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
                 "land-attachment",
                 "--force-clean",
                 "--build",
-                "--test",
                 "--non-interactive",
                 # The master process is responsible for checking the status
                 # of the builders (see above call to _builders_are_green).
@@ -235,6 +236,9 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
                 "--quiet",
                 patch.id()
             ]
+            # We don't bother to run tests for rollouts as that makes them too slow.
+            if not patch.is_rollout():
+                args.append("--test")
             if not first_run:
                 # The first time through, we don't reject the patch from the
                 # commit queue because we want to make sure we can build and
