@@ -1273,14 +1273,13 @@ void FrameView::scheduleRelayoutOfSubtree(RenderObject* relayoutRoot)
 {
     ASSERT(m_frame->view() == this);
 
-    if (!m_layoutSchedulingEnabled || (m_frame->contentRenderer()
-            && m_frame->contentRenderer()->needsLayout())) {
+    if (m_frame->contentRenderer() && m_frame->contentRenderer()->needsLayout()) {
         if (relayoutRoot)
             relayoutRoot->markContainingBlocksForLayout(false);
         return;
     }
 
-    if (layoutPending()) {
+    if (layoutPending() || !m_layoutSchedulingEnabled) {
         if (m_layoutRoot != relayoutRoot) {
             if (isObjectAncestorContainerOf(m_layoutRoot, relayoutRoot)) {
                 // Keep the current root
@@ -1297,7 +1296,7 @@ void FrameView::scheduleRelayoutOfSubtree(RenderObject* relayoutRoot)
                 relayoutRoot->markContainingBlocksForLayout(false);
             }
         }
-    } else {
+    } else if (m_layoutSchedulingEnabled) {
         int delay = m_frame->document()->minimumLayoutDelay();
         m_layoutRoot = relayoutRoot;
         m_delayedLayout = delay != 0;

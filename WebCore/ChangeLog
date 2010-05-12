@@ -1,3 +1,26 @@
+2010-05-12  James Robinson  <jamesr@chromium.org>
+
+        Patch by Dan Bernstein.
+
+        Reviewed by David Hyatt.
+
+        Fix marking the layout root's parent as needing layout
+        https://bugs.webkit.org/show_bug.cgi?id=37760
+
+        If an element gets marked as needing layout due to the recalcStyle()
+        call in FrameView::layout(), the m_layoutSchedulingEnabled flag will
+        be set to false.  It's possible at this point that a parent of the
+        existing FrameView::m_layoutRoot will be marked as needing layout.
+
+        This patch updates FrameView::scheduleRelayoutOfSubtree to account
+        for this case.
+
+        Manual test only due to subtle timing issues.
+
+        * manual-tests/layoutroot_detach.xml: Added.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scheduleRelayoutOfSubtree):
+
 2010-05-12  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, rolling out r59245.
