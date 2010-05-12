@@ -1,3 +1,25 @@
+2010-05-11  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        sheriffbot is spammy.
+        https://bugs.webkit.org/show_bug.cgi?id=38936
+
+        Reduce sheriffbot spam by not warning about new blameworthy revisions
+        that can be explained by previously blamed revisions.  This might cause
+        us to not warn about some real failures, but we're getting too much
+        spam from slow builders that have large blamelists (and we've already
+        poked the responsible folks using data from a fast builder).
+
+        * Scripts/webkitpy/tool/bot/sheriff_unittest.py:
+            - Removed unneeded import
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+            - The logic change
+        * Scripts/webkitpy/tool/commands/sheriffbot_unittest.py:
+            - Tests of the change
+        * Scripts/webkitpy/tool/mocktool.py:
+            - Merged two declarations of MockBuilder
+
 2010-05-11  Tony Chang  <tony@chromium.org>
 
         Reviewed by David Levin.

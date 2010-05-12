@@ -184,15 +184,6 @@ _bug4 = {
 }
 
 
-class MockBuilder(object):
-
-    def name(self):
-        return "Mock builder name (Tests)"
-
-
-mock_builder = MockBuilder()
-
-
 class MockBugzillaQueries(Mock):
 
     def __init__(self, bugzilla):
@@ -319,6 +310,9 @@ class MockBuilder(object):
     def __init__(self, name):
         self._name = name
 
+    def name(self):
+        return self._name
+
     def force_build(self, username, comments):
         log("MOCK: force_build: name=%s, username=%s, comments=%s" % (
             self._name, username, comments))
@@ -369,7 +363,7 @@ class MockBuildBot(object):
 
     def revisions_causing_failures(self):
         return {
-            "29837": [mock_builder]
+            "29837": [self.builder_with_name("Builder1")],
         }
 
 

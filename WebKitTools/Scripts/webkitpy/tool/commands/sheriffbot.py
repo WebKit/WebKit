@@ -57,17 +57,46 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
     def work_item_log_path(self, new_failures):
         return os.path.join("%s-logs" % self.name, "%s.log" % new_failures.keys()[0])
 
-    def next_work_item(self):
-        self._irc_bot.process_pending_messages()
-        self._update()
+    def _new_failures(self, revisions_causing_failures, old_failing_svn_revisions):
+        # We ignore failures that might have been caused by svn_revisions that
+        # we've already complained about.  This is conservative in the sense
+        # that we might be ignoring some new failures, but our experience has
+        # been that skipping this check causes a lot of spam for builders that
+        # take a long time to cycle.
+        old_failing_builder_names = []
+        for svn_revision in old_failing_svn_revisions:
+            old_failing_builder_names.extend(
+                [builder.name() for builder in revisions_causing_failures[svn_revision]])
+
         new_failures = {}
-        revisions_causing_failures = self.tool.buildbot.revisions_causing_failures()
         for svn_revision, builders in revisions_causing_failures.items():
-            if self.tool.status_server.svn_revision(svn_revision):
+            if svn_revision in old_failing_svn_revisions:
                 # FIXME: We should re-process the work item after some time delay.
                 # https://bugs.webkit.org/show_bug.cgi?id=36581
                 continue
-            new_failures[svn_revision] = builders
+            new_builders = [builder for builder in builders
+                            if builder.name() not in old_failing_builder_names]
+            if new_builders:
+                new_failures[svn_revision] = new_builders
+
+        return new_failures
+
+    def next_work_item(self):
+        self._irc_bot.process_pending_messages()
+        self._update()
+
+        # We do one read from buildbot to ensure a consistent view.
+        revisions_causing_failures = self.tool.buildbot.revisions_causing_failures()
+
+        # Similarly, we read once from our the status_server.
+        old_failing_svn_revisions = []
+        for svn_revision in revisions_causing_failures.keys():
+            if self.tool.status_server.svn_revision(svn_revision):
+                old_failing_svn_revisions.append(svn_revision)
+
+        new_failures = self._new_failures(revisions_causing_failures,
+                                          old_failing_svn_revisions)
+
         self._sheriff.provoke_flaky_builders(revisions_causing_failures)
         return new_failures
 

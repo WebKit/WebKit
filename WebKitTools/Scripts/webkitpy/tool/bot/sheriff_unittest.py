@@ -33,7 +33,7 @@ from webkitpy.common.net.buildbot import Builder
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.bot.sheriff import Sheriff
-from webkitpy.tool.mocktool import MockTool, mock_builder
+from webkitpy.tool.mocktool import MockTool
 
 
 class MockSheriffBot(object):

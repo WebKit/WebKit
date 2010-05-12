@@ -30,18 +30,44 @@ import os
 
 from webkitpy.tool.commands.queuestest import QueuesTest
 from webkitpy.tool.commands.sheriffbot import SheriffBot
-from webkitpy.tool.mocktool import mock_builder
+from webkitpy.tool.mocktool import MockBuilder
 
 
 class SheriffBotTest(QueuesTest):
+    builder1 = MockBuilder("Builder1")
+    builder2 = MockBuilder("Builder2")
+
     def test_sheriff_bot(self):
         mock_work_item = {
-            29837: [mock_builder],
+            29837: [self.builder1],
         }
         expected_stderr = {
             "begin_work_queue": "CAUTION: sheriff-bot will discard all local changes in \"%s\"\nRunning WebKit sheriff-bot.\n" % os.getcwd(),
             "next_work_item": "",
-            "process_work_item": "MOCK: irc.post: abarth, darin, eseidel: http://trac.webkit.org/changeset/29837 might have broken Mock builder name (Tests)\nMOCK bug comment: bug_id=42, cc=['webkit-bot-watchers@googlegroups.com', 'abarth@webkit.org', 'eric@webkit.org']\n--- Begin comment ---\\http://trac.webkit.org/changeset/29837 might have broken Mock builder name (Tests)\n--- End comment ---\n\n",
+            "process_work_item": "MOCK: irc.post: abarth, darin, eseidel: http://trac.webkit.org/changeset/29837 might have broken Builder1\nMOCK bug comment: bug_id=42, cc=['webkit-bot-watchers@googlegroups.com', 'abarth@webkit.org', 'eric@webkit.org']\n--- Begin comment ---\\http://trac.webkit.org/changeset/29837 might have broken Builder1\n--- End comment ---\n\n",
             "handle_unexpected_error": "Mock error message\n"
         }
         self.assert_queue_outputs(SheriffBot(), work_item=mock_work_item, expected_stderr=expected_stderr)
+
+    revisions_causing_failures = {
+        1234: [builder1],
+        1235: [builder1, builder2],
+    }
+
+    def test_new_failures(self):
+        old_failing_svn_revisions = []
+        self.assertEquals(SheriffBot()._new_failures(self.revisions_causing_failures,
+                                                     old_failing_svn_revisions),
+                          self.revisions_causing_failures)
+
+    def test_new_failures_with_old_revisions(self):
+        old_failing_svn_revisions = [1234]
+        self.assertEquals(SheriffBot()._new_failures(self.revisions_causing_failures,
+                                                     old_failing_svn_revisions),
+                          {1235: [builder2]})
+
+    def test_new_failures_with_old_revisions(self):
+        old_failing_svn_revisions = [1235]
+        self.assertEquals(SheriffBot()._new_failures(self.revisions_causing_failures,
+                                                     old_failing_svn_revisions),
+                          {})
