@@ -1,3 +1,22 @@
+2010-05-12  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Expectations fix and new chromium baselines resulting from the
+        input type=search change in r58313.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38965
+
+        * platform/chromium-linux/fast/forms/placeholder-pseudo-style-expected.checksum:
+        * platform/chromium-linux/fast/forms/placeholder-pseudo-style-expected.png:
+        * platform/chromium-linux/fast/forms/search-vertical-alignment-expected.checksum:
+        * platform/chromium-linux/fast/forms/search-vertical-alignment-expected.png: Added.
+        * platform/chromium-win/fast/forms/search-vertical-alignment-expected.checksum:
+        * platform/chromium-win/fast/forms/search-vertical-alignment-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/forms/search-zoomed-expected.checksum:
+        * platform/mac/fast/forms/search-zoomed-expected.png:
+
 2010-05-12  Jian Li  <jianli@chromium.org>
 
         Unreviewed. Chromium: rebaseline layout tests.
