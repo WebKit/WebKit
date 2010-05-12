@@ -1,3 +1,22 @@
+2010-05-12  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+        
+        [Chromium] Support HTML5 <progress> element on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=37308
+
+        Extended ChromiumBridge to handle progress bar painting,
+        and added delegations to it.
+        
+        No new tests. Test cases should be shared with existing ones for
+        progress element.  Expectaions will be added after PROGRESS_TAG is
+        enabled on Chromium tree.
+
+        * public/WebThemeEngine.h:
+        (WebKit::WebThemeEngine::paintProgressBar):
+        * src/ChromiumBridge.cpp:
+        (WebCore::ChromiumBridge::paintProgressBar):
+
 2010-05-12  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Steve Block.

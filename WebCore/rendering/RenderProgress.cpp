@@ -167,9 +167,14 @@ PassRefPtr<RenderStyle> RenderProgress::createStyleForValuePart(RenderStyle* par
     return styleForValuePart.release();
 }
 
-double RenderProgress::animationProgress()
+double RenderProgress::animationProgress() const
 {
     return m_animating ? (fmod((currentTime() - m_animationStartTime), m_animationDuration) / m_animationDuration) : 0;
+}
+
+bool RenderProgress::isDeterminate() const
+{
+    return 0 <= position();
 }
 
 void RenderProgress::animationTimerFired(Timer<RenderProgress>*)

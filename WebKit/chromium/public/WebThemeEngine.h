@@ -75,6 +75,11 @@ public:
     virtual void paintTrackbar(
         WebCanvas*, int part, int state, int classicState,
         const WebRect&) = 0;
+
+    virtual void paintProgressBar(
+        WebCanvas*, const WebRect& barRect, 
+        int valuePart, const WebRect& valueRect) {}
+
 #endif
 };
 
