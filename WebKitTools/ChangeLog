@@ -1,3 +1,12 @@
+2010-05-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        run-webkit-tests --exit-after-N-failures should not count new tests as failures
+        https://bugs.webkit.org/show_bug.cgi?id=31829
+
+        * Scripts/old-run-webkit-tests:
+
 2010-05-12  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Simon Fraser.
