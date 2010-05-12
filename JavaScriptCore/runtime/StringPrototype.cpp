@@ -348,7 +348,10 @@ JSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec, JSObject*, JSValue
                 
                 cachedCall.setThis(exec->globalThisValue());
                 JSValue result = cachedCall.call();
-                replacements.append(result.toString(cachedCall.newCallFrame(exec)));
+                if (LIKELY(result.isString()))
+                    replacements.append(asString(result)->value(exec));
+                else
+                    replacements.append(result.toString(cachedCall.newCallFrame(exec)));
                 if (exec->hadException())
                     break;
 

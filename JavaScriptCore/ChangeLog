@@ -1,3 +1,21 @@
+2010-05-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Work around GCC stupidity by either explicitly inlining or by
+        using ALWAYS_INLINE
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace):
+        * runtime/UString.h:
+        (JSC::UString::~UString):
+        * wtf/RefPtr.h:
+        (WTF::RefPtr::RefPtr):
+        (WTF::RefPtr::~RefPtr):
+        * wtf/text/StringImpl.h:
+        (WebCore::StringImpl::create):
+        (WebCore::StringImpl::tryCreateUninitialized):
+
 2010-05-12  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

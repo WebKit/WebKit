@@ -39,21 +39,21 @@ namespace WTF {
 
     template <typename T> class RefPtr : public FastAllocBase {
     public:
-        RefPtr() : m_ptr(0) { }
-        RefPtr(T* ptr) : m_ptr(ptr) { refIfNotNull(ptr); }
-        RefPtr(const RefPtr& o) : m_ptr(o.m_ptr) { T* ptr = m_ptr; refIfNotNull(ptr); }
+        ALWAYS_INLINE RefPtr() : m_ptr(0) { }
+        ALWAYS_INLINE RefPtr(T* ptr) : m_ptr(ptr) { refIfNotNull(ptr); }
+        ALWAYS_INLINE RefPtr(const RefPtr& o) : m_ptr(o.m_ptr) { T* ptr = m_ptr; refIfNotNull(ptr); }
         // see comment in PassRefPtr.h for why this takes const reference
         template <typename U> RefPtr(const PassRefPtr<U>&);
         template <typename U> RefPtr(const NonNullPassRefPtr<U>&);
 
         // Special constructor for cases where we overwrite an object in place.
-        RefPtr(PlacementNewAdoptType) { }
+        ALWAYS_INLINE RefPtr(PlacementNewAdoptType) { }
 
         // Hash table deleted values, which are only constructed and never copied or destroyed.
         RefPtr(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
         bool isHashTableDeletedValue() const { return m_ptr == hashTableDeletedValue(); }
 
-        ~RefPtr() { derefIfNotNull(m_ptr); }
+        ALWAYS_INLINE ~RefPtr() { derefIfNotNull(m_ptr); }
         
         template <typename U> RefPtr(const RefPtr<U>& o) : m_ptr(o.get()) { T* ptr = m_ptr; refIfNotNull(ptr); }
         
