@@ -1,3 +1,17 @@
+2010-05-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38961
+        Move some member variables around to reduce class sizes.
+        
+        Make AtomicString no longer inherit from FastAllocBase.
+
+        Since AtomicString's first (and only) member variable, a RefPtr, also inherits from FastAllocBase this
+        was causing the size of AtomicString to contain sizeof(void*) bytes of padding.
+
+        * wtf/text/AtomicString.h:
+
 2010-05-11  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Maciej Stachowiak.

@@ -33,24 +33,24 @@ namespace WebCore {
     class CSSSelector : public Noncopyable {
     public:
         CSSSelector()
-            : m_tag(anyQName())
-            , m_relation(Descendant)
+            : m_relation(Descendant)
             , m_match(None)
             , m_pseudoType(PseudoNotParsed)
             , m_parsedNth(false)
             , m_isLastInSelectorList(false)
             , m_hasRareData(false)
+            , m_tag(anyQName())
         {
         }
 
         CSSSelector(const QualifiedName& qName)
-            : m_tag(qName)
-            , m_relation(Descendant)
+            : m_relation(Descendant)
             , m_match(None)
             , m_pseudoType(PseudoNotParsed)
             , m_parsedNth(false)
             , m_isLastInSelectorList(false)
             , m_hasRareData(false)
+            , m_tag(qName)
         {
         }
 
@@ -252,9 +252,6 @@ namespace WebCore {
         void setLastInSelectorList() { m_isLastInSelectorList = true; }
         bool isSimple() const;
 
-        mutable AtomicString m_value;
-        QualifiedName m_tag;
-
         unsigned m_relation           : 3; // enum Relation
         mutable unsigned m_match      : 4; // enum Match
         mutable unsigned m_pseudoType : 8; // PseudoType
@@ -268,24 +265,24 @@ namespace WebCore {
 
         struct RareData : Noncopyable {
             RareData(CSSSelector* tagHistory)
-                : m_tagHistory(tagHistory)
+                : m_a(0)
+                , m_b(0)
+                , m_tagHistory(tagHistory)
                 , m_simpleSelector(0)
                 , m_attribute(anyQName())
                 , m_argument(nullAtom)
-                , m_a(0)
-                , m_b(0)
             {
             }
 
             bool parseNth();
             bool matchNth(int count);
 
+            int m_a; // Used for :nth-*
+            int m_b; // Used for :nth-*
             OwnPtr<CSSSelector> m_tagHistory;
             OwnPtr<CSSSelector> m_simpleSelector; // Used for :not.
             QualifiedName m_attribute; // used for attribute selector
             AtomicString m_argument; // Used for :contains, :lang and :nth-*
-            int m_a; // Used for :nth-*
-            int m_b; // Used for :nth-*
         };
 
         void createRareData()
@@ -301,6 +298,10 @@ namespace WebCore {
             CSSSelector* m_tagHistory;
             RareData* m_rareData;
         } m_data;
+        
+    public:
+        mutable AtomicString m_value;
+        QualifiedName m_tag;
     };
 
 } // namespace WebCore

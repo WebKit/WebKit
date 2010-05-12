@@ -1,3 +1,21 @@
+2010-05-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38961
+        Move some member variables around to reduce class sizes.
+
+        If a class inherits (directly or indirectly) from FastAllocBase, we don't want the first member variable
+        of that class to also inherit (directly or indirectly) from FastAllocBase as this will add padding to the class
+        and thus increasing its size.
+
+        * css/CSSParserValues.h:
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::CSSSelector):
+        (WebCore::CSSSelector::RareData::RareData):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontPlatformDataCacheKey::FontPlatformDataCacheKey):
+
 2010-05-11  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.
