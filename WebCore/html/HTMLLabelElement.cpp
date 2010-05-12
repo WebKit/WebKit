@@ -28,12 +28,25 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
+
+static HTMLFormControlElement* nodeAsLabelableFormControl(Node* node)
+{
+    if (!node || !node->isHTMLElement() || !static_cast<HTMLElement*>(node)->isFormControlElement())
+        return 0;
+    
+    HTMLFormControlElement* formControlElement = static_cast<HTMLFormControlElement*>(node);
+    if (!formControlElement->isLabelable())
+        return 0;
+
+    return formControlElement;
+}
 
 HTMLLabelElement::HTMLLabelElement(const QualifiedName& tagName, Document *doc)
     : HTMLElement(tagName, doc)
@@ -50,27 +63,24 @@ bool HTMLLabelElement::isFocusable() const
     return false;
 }
 
-HTMLElement* HTMLLabelElement::correspondingControl()
+HTMLElement* HTMLLabelElement::control()
 {
     const AtomicString& controlId = getAttribute(forAttr);
     if (controlId.isNull()) {
-        // Search children of the label element for a form element.
+        // Search the children and descendants of the label element for a form element.
+        // per http://dev.w3.org/html5/spec/Overview.html#the-label-element
+        // the form element must be "labelable form-associated element".
         Node* node = this;
         while ((node = node->traverseNextNode(this))) {
-            if (node->isHTMLElement()) {
-                HTMLElement* element = static_cast<HTMLElement*>(node);
-                if (element->isFormControlElement())
-                    return element;
-            }
+            if (HTMLFormControlElement* formControlElement = nodeAsLabelableFormControl(node))
+                return formControlElement;
         }
         return 0;
     }
-        
-    // Only return HTML elements.
-    Element* elt = document()->getElementById(controlId);
-    if (elt && elt->isHTMLElement())
-        return static_cast<HTMLElement*>(elt);
-    return 0;
+    
+    // Find the first element whose id is controlId. If it is found and it is a labelable form control,
+    // return it, otherwise return 0.
+    return nodeAsLabelableFormControl(document()->getElementById(controlId));
 }
 
 void HTMLLabelElement::setActive(bool down, bool pause)
@@ -82,7 +92,7 @@ void HTMLLabelElement::setActive(bool down, bool pause)
     HTMLElement::setActive(down, pause);
 
     // Also update our corresponding control.
-    if (HTMLElement* element = correspondingControl())
+    if (HTMLElement* element = control())
         element->setActive(down, pause);
 }
 
@@ -95,7 +105,7 @@ void HTMLLabelElement::setHovered(bool over)
     HTMLElement::setHovered(over);
 
     // Also update our corresponding control.
-    if (HTMLElement* element = correspondingControl())
+    if (HTMLElement* element = control())
         element->setHovered(over);
 }
 
@@ -104,21 +114,21 @@ void HTMLLabelElement::defaultEventHandler(Event* evt)
     static bool processingClick = false;
 
     if (evt->type() == eventNames().clickEvent && !processingClick) {
-        RefPtr<HTMLElement> control = correspondingControl();
+        RefPtr<HTMLElement> element = control();
 
         // If we can't find a control or if the control received the click
         // event, then there's no need for us to do anything.
-        if (!control || (evt->target() && control->contains(evt->target()->toNode())))
+        if (!element || (evt->target() && element->contains(evt->target()->toNode())))
             return;
 
         processingClick = true;
 
         // Click the corresponding control.
-        control->dispatchSimulatedClick(evt);
+        element->dispatchSimulatedClick(evt);
 
         // If the control can be focused via the mouse, then do that too.
-        if (control->isMouseFocusable())
-            control->focus();
+        if (element->isMouseFocusable())
+            element->focus();
 
         processingClick = false;
         
@@ -131,13 +141,13 @@ void HTMLLabelElement::defaultEventHandler(Event* evt)
 void HTMLLabelElement::focus(bool)
 {
     // to match other browsers, always restore previous selection
-    if (HTMLElement* element = correspondingControl())
+    if (HTMLElement* element = control())
         element->focus();
 }
 
 void HTMLLabelElement::accessKeyAction(bool sendToAnyElement)
 {
-    if (HTMLElement* element = correspondingControl())
+    if (HTMLElement* element = control())
         element->accessKeyAction(sendToAnyElement);
     else
         HTMLElement::accessKeyAction(sendToAnyElement);

@@ -1,3 +1,37 @@
+2010-05-10  yael aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Support control attribute of HTMLLabelElement
+        https://bugs.webkit.org/show_bug.cgi?id=38688
+
+        Added support for the control attribute of HTMLLabelElement and changed the logic of determining
+        which control is associated with the label to conform to HTML5 spec.
+        Added a manual test for testing the logic of selecting the control to get focused, activated or hovered
+        when the label gets focused, activated or is hovered.
+
+        Test: fast/dom/HTMLLabelElement/click-label.html
+        Test: fast/dom/HTMLLabelElement/focus-label.html
+        Test: fast/dom/HTMLLabelElement/label-control.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::labelForElement):
+        (WebCore::AccessibilityRenderObject::correspondingControlForLabelElement):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::isLabelable):
+        * html/HTMLFormControlElement.h:
+        * html/HTMLLabelElement.cpp:
+        (WebCore::nodeAsLabelableFormControl):
+        (WebCore::HTMLLabelElement::control):
+        (WebCore::HTMLLabelElement::setActive):
+        (WebCore::HTMLLabelElement::setHovered):
+        (WebCore::HTMLLabelElement::defaultEventHandler):
+        (WebCore::HTMLLabelElement::focus):
+        (WebCore::HTMLLabelElement::accessKeyAction):
+        * html/HTMLLabelElement.h:
+        * html/HTMLLabelElement.idl:
+        * manual-tests/dom/form-control-for-label.html: Added.
+
 2010-05-12  Steve Block  <steveblock@google.com>
 
         Reviewed by David Levin.

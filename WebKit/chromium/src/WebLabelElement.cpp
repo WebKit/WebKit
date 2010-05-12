@@ -42,7 +42,7 @@ namespace WebKit {
 
 WebElement WebLabelElement::correspondingControl()
 {
-    return WebElement(unwrap<HTMLLabelElement>()->correspondingControl());
+    return WebElement(unwrap<HTMLLabelElement>()->control());
 }
 
 WebLabelElement::WebLabelElement(const PassRefPtr<HTMLLabelElement>& elem)

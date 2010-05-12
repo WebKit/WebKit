@@ -400,6 +400,16 @@ void HTMLFormControlElement::removeFromForm()
     m_form = 0;
 }
 
+bool HTMLFormControlElement::isLabelable() const
+{
+    // FIXME: Add meterTag and outputTag to the list once we support them.
+    return hasTagName(buttonTag) || hasTagName(inputTag) || hasTagName(keygenTag)
+#if ENABLE(PROGRESS_TAG)
+        || hasTagName(progressTag)
+#endif
+        || hasTagName(selectTag) || hasTagName(textareaTag);
+}
+    
 HTMLFormControlElementWithState::HTMLFormControlElementWithState(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
     : HTMLFormControlElement(tagName, doc, f)
 {

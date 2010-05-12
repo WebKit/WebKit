@@ -46,7 +46,7 @@ public:
     // Overridden to either click() or focus() the corresponding control.
     virtual void defaultEventHandler(Event*);
 
-    HTMLElement* correspondingControl();
+    HTMLElement* control();
 
     String accessKey() const;
     void setAccessKey(const String&);
