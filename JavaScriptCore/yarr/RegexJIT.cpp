@@ -616,12 +616,11 @@ class RegexGenerator : private MacroAssembler {
 
         add32(Imm32(1), countRegister);
         add32(Imm32(1), index);
-        if (term.quantityCount != 0xffffffff)
+        if (term.quantityCount != 0xffffffff) {
             branch32(NotEqual, countRegister, Imm32(term.quantityCount)).linkTo(loop, this);
-        else
+            failures.append(jump());
+        } else
             jump(loop);
-
-        failures.append(jump());
 
         Label backtrackBegin(this);
         loadFromFrame(term.frameLocation, countRegister);
@@ -742,12 +741,11 @@ class RegexGenerator : private MacroAssembler {
 
         add32(Imm32(1), countRegister);
         add32(Imm32(1), index);
-        if (term.quantityCount != 0xffffffff)
+        if (term.quantityCount != 0xffffffff) {
             branch32(NotEqual, countRegister, Imm32(term.quantityCount)).linkTo(loop, this);
-        else
+            failures.append(jump());
+        } else
             jump(loop);
-
-        failures.append(jump());
 
         Label backtrackBegin(this);
         loadFromFrame(term.frameLocation, countRegister);

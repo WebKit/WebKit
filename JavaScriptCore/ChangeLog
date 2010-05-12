@@ -1,3 +1,16 @@
+2010-05-12  Peter Varga  <pvarga@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        Remove a direct jump in generatePatternCharacterGreedy() and
+        generatePatternCharacterClassGreedy() functions if quantityCount of the term
+        is unlimited.
+        https://bugs.webkit.org/show_bug.cgi?id=38898
+
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::generatePatternCharacterGreedy):
+        (JSC::Yarr::RegexGenerator::generateCharacterClassGreedy):
+
 2010-05-11  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Gavin Barraclough.
