@@ -1,3 +1,15 @@
+2010-05-12  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Detect debug mode consistently
+        https://bugs.webkit.org/show_bug.cgi?id=38863
+
+        * JavaScriptCore.pri:
+        * JavaScriptCore.pro:
+        * jsc.pro:
+        * qt/api/QtScript.pro:
+
 2010-05-12  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.

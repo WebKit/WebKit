@@ -21,7 +21,7 @@ CONFIG(QTDIR_build) {
     # This line was extracted from qbase.pri instead of including the whole file
     win32|mac:!macx-xcode:CONFIG += debug_and_release
 } else {
-    CONFIG(debug, debug|release) {
+    !CONFIG(release, debug|release) {
         OBJECTS_DIR = obj/debug
     } else { # Release
         OBJECTS_DIR = obj/release

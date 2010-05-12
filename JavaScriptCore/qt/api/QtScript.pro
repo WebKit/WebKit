@@ -7,7 +7,7 @@ INCLUDEPATH += $$PWD
 CONFIG += building-libs
 
 isEmpty(JSC_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = ../../generated
-CONFIG(debug, debug|release) {
+!CONFIG(release, debug|release) {
     OBJECTS_DIR = obj/debug
 } else { # Release
     OBJECTS_DIR = obj/release

@@ -1,6 +1,6 @@
 # JavaScriptCore - Qt4 build info
 VPATH += $$PWD
-CONFIG(debug, debug|release) {
+!CONFIG(release, debug|release) {
     # Output in JavaScriptCore/<config>
     JAVASCRIPTCORE_DESTDIR = debug
     # Use a config-specific target to prevent parallel builds file clashes on Mac

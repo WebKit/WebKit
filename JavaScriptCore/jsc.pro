@@ -15,7 +15,7 @@ CONFIG += link_pkgconfig
 
 QMAKE_RPATHDIR += $$OUTPUT_DIR/lib
 
-CONFIG(debug, debug|release) {
+!CONFIG(release, debug|release) {
     OBJECTS_DIR = obj/debug
 } else { # Release
     OBJECTS_DIR = obj/release
