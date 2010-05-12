@@ -2,6 +2,7 @@
     Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric@webkit.org>
+                  2010 Zoltan Herczeg <zherczeg@webkit.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -22,15 +23,39 @@
 #ifndef FloatPoint3D_h
 #define FloatPoint3D_h
 
-namespace WebCore {
+#include "FloatPoint.h"
 
-class FloatPoint;
+namespace WebCore {
 
 class FloatPoint3D {
 public:
-    FloatPoint3D();
-    FloatPoint3D(float x, float y, float z);
-    FloatPoint3D(const FloatPoint&);
+    FloatPoint3D()
+        : m_x(0)
+        , m_y(0)
+        , m_z(0)
+    {
+    }
+
+    FloatPoint3D(float x, float y, float z)
+        : m_x(x)
+        , m_y(y)
+        , m_z(z)
+    {
+    }
+
+    FloatPoint3D(const FloatPoint& p)
+        : m_x(p.x())
+        , m_y(p.y())
+        , m_z(0)
+    {
+    }
+
+    FloatPoint3D(const FloatPoint3D& p)
+        : m_x(p.x())
+        , m_y(p.y())
+        , m_z(p.z())
+    {
+    }
 
     float x() const { return m_x; }
     void setX(float x) { m_x = x; }
@@ -57,6 +82,12 @@ inline bool operator==(const FloatPoint3D& a, const FloatPoint3D& b)
 inline bool operator!=(const FloatPoint3D& a, const FloatPoint3D& b)
 {
     return a.x() != b.x() || a.y() != b.y() || a.z() != b.z();
+}
+
+inline float operator*(const FloatPoint3D& a, const FloatPoint3D& b)
+{
+    // dot product
+    return a.x() * b.x() + a.y() * b.y() + a.z() * b.z();
 }
 
 } // namespace WebCore

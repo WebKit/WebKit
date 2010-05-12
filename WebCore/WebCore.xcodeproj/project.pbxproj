@@ -4909,6 +4909,8 @@
 		E1FF57A60F01256B00891EBB /* ThreadGlobalData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FF57A50F01256B00891EBB /* ThreadGlobalData.cpp */; };
 		E415F1690D9A165D0033CE97 /* DOMElementTimeControl.h in Headers */ = {isa = PBXBuildFile; fileRef = E415F1680D9A165D0033CE97 /* DOMElementTimeControl.h */; };
 		E415F1840D9A1A830033CE97 /* ElementTimeControl.h in Headers */ = {isa = PBXBuildFile; fileRef = E415F1830D9A1A830033CE97 /* ElementTimeControl.h */; };
+		E440A2D51191A50B000820B0 /* SVGFELighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E440A2D41191A50B000820B0 /* SVGFELighting.cpp */; };
+		E440A2D71191A523000820B0 /* SVGFELighting.h in Headers */ = {isa = PBXBuildFile; fileRef = E440A2D61191A523000820B0 /* SVGFELighting.h */; };
 		E44613A10CD6331000FADA75 /* HTMLAudioElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E446138F0CD6331000FADA75 /* HTMLAudioElement.cpp */; };
 		E44613A20CD6331000FADA75 /* HTMLAudioElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E44613900CD6331000FADA75 /* HTMLAudioElement.h */; };
 		E44613A40CD6331000FADA75 /* HTMLMediaElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E44613920CD6331000FADA75 /* HTMLMediaElement.cpp */; };
@@ -10375,6 +10377,8 @@
 		E415F10C0D9A05870033CE97 /* ElementTimeControl.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ElementTimeControl.idl; sourceTree = "<group>"; };
 		E415F1680D9A165D0033CE97 /* DOMElementTimeControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMElementTimeControl.h; sourceTree = "<group>"; };
 		E415F1830D9A1A830033CE97 /* ElementTimeControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementTimeControl.h; sourceTree = "<group>"; };
+		E440A2D41191A50B000820B0 /* SVGFELighting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFELighting.cpp; sourceTree = "<group>"; };
+		E440A2D61191A523000820B0 /* SVGFELighting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFELighting.h; sourceTree = "<group>"; };
 		E446138F0CD6331000FADA75 /* HTMLAudioElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLAudioElement.cpp; sourceTree = "<group>"; };
 		E44613900CD6331000FADA75 /* HTMLAudioElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLAudioElement.h; sourceTree = "<group>"; };
 		E44613910CD6331000FADA75 /* HTMLAudioElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLAudioElement.idl; sourceTree = "<group>"; };
@@ -14763,6 +14767,8 @@
 			isa = PBXGroup;
 			children = (
 				B25598D70D00D8B900BB825C /* SVGDistantLightSource.h */,
+				E440A2D61191A523000820B0 /* SVGFELighting.h */,
+				E440A2D41191A50B000820B0 /* SVGFELighting.cpp */,
 				B25598E00D00D8B900BB825C /* SVGFEConvolveMatrix.cpp */,
 				B25598E10D00D8B900BB825C /* SVGFEConvolveMatrix.h */,
 				B25598E20D00D8B900BB825C /* SVGFEDiffuseLighting.cpp */,
@@ -19152,6 +19158,7 @@
 				6E96BB1D11986EE2007D94CD /* WebGLTypedArrayBase.h in Headers */,
 				2E94F43C119207DA00B7F75D /* JSFileReader.h in Headers */,
 				2E94F4511192096A00B7F75D /* FileReader.h in Headers */,
+				E440A2D71191A523000820B0 /* SVGFELighting.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21419,6 +21426,7 @@
 				C5956678119324C600FDCE47 /* JSIDBRequestCustom.cpp in Sources */,
 				2E94F43B119207DA00B7F75D /* JSFileReader.cpp in Sources */,
 				2E94F4501192096400B7F75D /* FileReader.cpp in Sources */,
+				E440A2D51191A50B000820B0 /* SVGFELighting.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

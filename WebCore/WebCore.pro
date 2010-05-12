@@ -1821,6 +1821,7 @@ HEADERS += \
     svg/graphics/filters/SVGFEDisplacementMap.h \
     svg/graphics/filters/SVGFEFlood.h \
     svg/graphics/filters/SVGFEImage.h \
+    svg/graphics/filters/SVGFELighting.h \
     svg/graphics/filters/SVGFEMerge.h \
     svg/graphics/filters/SVGFEMorphology.h \
     svg/graphics/filters/SVGFEOffset.h \
@@ -2735,6 +2736,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/graphics/filters/SVGFEDisplacementMap.cpp \
         svg/graphics/filters/SVGFEFlood.cpp \
         svg/graphics/filters/SVGFEImage.cpp \
+        svg/graphics/filters/SVGFELighting.cpp \
         svg/graphics/filters/SVGFEMerge.cpp \
         svg/graphics/filters/SVGFEMorphology.cpp \
         svg/graphics/filters/SVGFEOffset.cpp \

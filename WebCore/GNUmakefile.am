@@ -3527,6 +3527,8 @@ webcore_sources += \
 	WebCore/svg/graphics/filters/SVGFEFlood.h \
 	WebCore/svg/graphics/filters/SVGFEImage.cpp \
 	WebCore/svg/graphics/filters/SVGFEImage.h \
+	WebCore/svg/graphics/filters/SVGFELighting.cpp \
+	WebCore/svg/graphics/filters/SVGFELighting.h \
 	WebCore/svg/graphics/filters/SVGFEMerge.cpp \
 	WebCore/svg/graphics/filters/SVGFEMerge.h \
 	WebCore/svg/graphics/filters/SVGFEMorphology.cpp \

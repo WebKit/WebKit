@@ -1,3 +1,21 @@
+2010-05-12  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Updating the pixel tests for feDiffuseLighting and feSpecularLighting
+        https://bugs.webkit.org/show_bug.cgi?id=32197
+        https://bugs.webkit.org/show_bug.cgi?id=32199
+
+        No new test were added, since SVG expected values cover
+        the features of the implementation
+
+        * platform/mac/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-light-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-light-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-specular-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-specular-01-f-expected.png:
+
 2010-05-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed fix.

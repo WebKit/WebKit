@@ -28,29 +28,32 @@
 
 namespace WebCore {
 
-    class DistantLightSource : public LightSource {
-    public:
-        static PassRefPtr<DistantLightSource> create(float azimuth, float elevation)
-        {
-            return adoptRef(new DistantLightSource(azimuth, elevation));
-        }
+class DistantLightSource : public LightSource {
+public:
+    static PassRefPtr<DistantLightSource> create(float azimuth, float elevation)
+    {
+        return adoptRef(new DistantLightSource(azimuth, elevation));
+    }
 
-        float azimuth() const { return m_azimuth; }
-        float elevation() const { return m_elevation; }
+    float azimuth() const { return m_azimuth; }
+    float elevation() const { return m_elevation; }
 
-        virtual TextStream& externalRepresentation(TextStream&) const;
+    virtual void initPaintingData(PaintingData&);
+    virtual void updatePaintingData(PaintingData&, int x, int y, float z);
 
-    private:
-        DistantLightSource(float azimuth, float elevation)
-            : LightSource(LS_DISTANT)
-            , m_azimuth(azimuth)
-            , m_elevation(elevation)
-        {
-        }
+    virtual TextStream& externalRepresentation(TextStream&) const;
 
-        float m_azimuth;
-        float m_elevation;
-    };
+private:
+    DistantLightSource(float azimuth, float elevation)
+        : LightSource(LS_DISTANT)
+        , m_azimuth(azimuth)
+        , m_elevation(elevation)
+    {
+    }
+
+    float m_azimuth;
+    float m_elevation;
+};
 
 } // namespace WebCore
 

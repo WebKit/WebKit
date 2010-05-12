@@ -1,3 +1,86 @@
+2010-05-12  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Implementing SVG filters: feDiffuseLighting and feSpecularLighting
+        https://bugs.webkit.org/show_bug.cgi?id=32197
+        https://bugs.webkit.org/show_bug.cgi?id=32199
+
+        The patch implements the SVG filters feDiffuseLighting and
+        feSpecularLighting including the impementation of their possible
+        light sources according to the Scalable Vector Graphics (SVG)
+        1.1 Specification. Only two features are missing: supporting images
+        with height or width set to 1, and kernelUnitLength other than (1,1).
+        Since the two lighting filters have a similar body, a common base
+        class called FELighting is introduced, and contains the code for
+        both filters. The implementation employs single precision floating
+        point arithmetic (fixed precision integer arithmetic seemed too difficult).
+
+        Indentation is removed of the modified header files in svg/graphics/filters
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/FloatPoint3D.cpp:
+        * platform/graphics/FloatPoint3D.h:
+        (WebCore::FloatPoint3D::FloatPoint3D): constructors changed to inline
+        (WebCore::operator*): dot product
+        * svg/SVGFESpotLightElement.cpp:
+        (WebCore::SVGFESpotLightElement::lightSource):
+        * svg/graphics/filters/SVGDistantLightSource.h:
+        (WebCore::DistantLightSource::create):
+        (WebCore::DistantLightSource::azimuth):
+        (WebCore::DistantLightSource::elevation):
+        (WebCore::DistantLightSource::DistantLightSource):
+        * svg/graphics/filters/SVGFEDiffuseLighting.cpp:
+        (WebCore::FEDiffuseLighting::FEDiffuseLighting):
+        (WebCore::FEDiffuseLighting::create):
+        * svg/graphics/filters/SVGFEDiffuseLighting.h:
+        * svg/graphics/filters/SVGFELighting.cpp: Added.
+        (WebCore::FELighting::FELighting):
+        (WebCore::FELighting::LightingData::upLeftPixelValue):
+        (WebCore::FELighting::LightingData::upPixelValue):
+        (WebCore::FELighting::LightingData::upRightPixelValue):
+        (WebCore::FELighting::LightingData::leftPixelValue):
+        (WebCore::FELighting::LightingData::centerPixelValue):
+        (WebCore::FELighting::LightingData::rightPixelValue):
+        (WebCore::FELighting::LightingData::downLeftPixelValue):
+        (WebCore::FELighting::LightingData::downPixelValue):
+        (WebCore::FELighting::LightingData::downRightPixelValue):
+        (WebCore::FELighting::setPixel):
+        (WebCore::FELighting::drawLighting):
+        (WebCore::FELighting::apply):
+        * svg/graphics/filters/SVGFELighting.h: Added.
+        (WebCore::FELighting::uniteChildEffectSubregions):
+        (WebCore::FELighting::):
+        * svg/graphics/filters/SVGFESpecularLighting.cpp:
+        (WebCore::FESpecularLighting::FESpecularLighting):
+        (WebCore::FESpecularLighting::create):
+        * svg/graphics/filters/SVGFESpecularLighting.h:
+        * svg/graphics/filters/SVGLightSource.cpp:
+        (WebCore::PointLightSource::initPaintingData):
+        (WebCore::PointLightSource::updatePaintingData):
+        (WebCore::SpotLightSource::initPaintingData):
+        (WebCore::SpotLightSource::updatePaintingData):
+        (WebCore::DistantLightSource::initPaintingData):
+        (WebCore::DistantLightSource::updatePaintingData):
+        * svg/graphics/filters/SVGLightSource.h:
+        (WebCore::):
+        (WebCore::LightSource::LightSource):
+        (WebCore::LightSource::~LightSource):
+        (WebCore::LightSource::type):
+        * svg/graphics/filters/SVGPointLightSource.h:
+        (WebCore::PointLightSource::create):
+        (WebCore::PointLightSource::position):
+        (WebCore::PointLightSource::PointLightSource):
+        * svg/graphics/filters/SVGSpotLightSource.h:
+        (WebCore::SpotLightSource::create):
+        (WebCore::SpotLightSource::position):
+        (WebCore::SpotLightSource::direction):
+        (WebCore::SpotLightSource::specularExponent):
+        (WebCore::SpotLightSource::limitingConeAngle):
+        (WebCore::SpotLightSource::SpotLightSource):
+
 2010-05-12  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Nikolas Zimmermann.

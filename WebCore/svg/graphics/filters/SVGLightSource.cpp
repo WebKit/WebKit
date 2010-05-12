@@ -2,6 +2,7 @@
     Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric@webkit.org>
+                  2010 Zoltan Herczeg <zherczeg@webkit.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -22,12 +23,114 @@
 #include "config.h"
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
+#include "SVGLightSource.h"
+
+#include "SVGDistantLightSource.h"
 #include "SVGPointLightSource.h"
 #include "SVGRenderTreeAsText.h"
 #include "SVGSpotLightSource.h"
-#include "SVGDistantLightSource.h"
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
+
+void PointLightSource::initPaintingData(PaintingData&)
+{
+}
+
+void PointLightSource::updatePaintingData(PaintingData& paintingData, int x, int y, float z)
+{
+    paintingData.lightVector.setX(m_position.x() - x);
+    paintingData.lightVector.setY(m_position.y() - y);
+    paintingData.lightVector.setZ(m_position.z() - z);
+    paintingData.lightVector.normalize();
+}
+
+void SpotLightSource::initPaintingData(PaintingData& paintingData)
+{
+    paintingData.privateColorVector = paintingData.colorVector;
+    paintingData.directionVector.setX(m_direction.x() - m_position.x());
+    paintingData.directionVector.setY(m_direction.y() - m_position.y());
+    paintingData.directionVector.setZ(m_direction.z() - m_position.z());
+    paintingData.directionVector.normalize();
+
+    if (!m_limitingConeAngle) {
+        paintingData.coneCutOffLimit = 0.0f;
+        paintingData.coneFullLight = cosf(deg2rad(92.0f));
+    } else {
+        float limitingConeAngle = m_limitingConeAngle;
+        if (limitingConeAngle < 0.0f)
+            limitingConeAngle = 0.0f;
+        else if (limitingConeAngle > 90.0f)
+            limitingConeAngle = 90.0f;
+        paintingData.coneCutOffLimit = cosf(deg2rad(180.0f - limitingConeAngle));
+        limitingConeAngle -= 2.0f;
+        if (limitingConeAngle < 0.0f)
+            limitingConeAngle = 0.0f;
+        paintingData.coneFullLight = cosf(deg2rad(180.0f - limitingConeAngle));
+    }
+
+    // Optimization for common specularExponent values
+    if (!m_specularExponent)
+        paintingData.specularExponent = 0;
+    else if (m_specularExponent == 1.0f)
+        paintingData.specularExponent = 1;
+    else // It is neither 0.0f nor 1.0f
+        paintingData.specularExponent = 2;
+}
+
+void SpotLightSource::updatePaintingData(PaintingData& paintingData, int x, int y, float z)
+{
+    paintingData.lightVector.setX(m_position.x() - x);
+    paintingData.lightVector.setY(m_position.y() - y);
+    paintingData.lightVector.setZ(m_position.z() - z);
+    paintingData.lightVector.normalize();
+
+    float cosineOfAngle = paintingData.lightVector * paintingData.directionVector;
+    if (cosineOfAngle > paintingData.coneCutOffLimit) {
+        // No light is produced, scanlines are not updated
+        paintingData.colorVector.setX(0.0f);
+        paintingData.colorVector.setY(0.0f);
+        paintingData.colorVector.setZ(0.0f);
+        return;
+    }
+
+    // Set the color of the pixel
+    float lightStrength;
+    switch (paintingData.specularExponent) {
+    case 0:
+        lightStrength = 1.0f; // -cosineOfAngle ^ 0 == 1
+        break;
+    case 1:
+        lightStrength = -cosineOfAngle; // -cosineOfAngle ^ 1 == -cosineOfAngle
+        break;
+    default:
+        lightStrength = powf(-cosineOfAngle, m_specularExponent);
+        break;
+    }
+
+    if (cosineOfAngle > paintingData.coneFullLight)
+        lightStrength *= (paintingData.coneCutOffLimit - cosineOfAngle) / (paintingData.coneCutOffLimit - paintingData.coneFullLight);
+
+    if (lightStrength > 1.0f)
+        lightStrength = 1.0f;
+
+    paintingData.colorVector.setX(paintingData.privateColorVector.x() * lightStrength);
+    paintingData.colorVector.setY(paintingData.privateColorVector.y() * lightStrength);
+    paintingData.colorVector.setZ(paintingData.privateColorVector.z() * lightStrength);
+}
+
+void DistantLightSource::initPaintingData(PaintingData& paintingData)
+{
+    float azimuth = deg2rad(m_azimuth);
+    float elevation = deg2rad(m_elevation);
+    paintingData.lightVector.setX(cosf(azimuth) * cosf(elevation));
+    paintingData.lightVector.setY(sinf(azimuth) * cosf(elevation));
+    paintingData.lightVector.setZ(sinf(elevation));
+}
+
+void DistantLightSource::updatePaintingData(PaintingData&, int, int, float)
+{
+}
 
 static TextStream& operator<<(TextStream& ts, const FloatPoint3D& p)
 {

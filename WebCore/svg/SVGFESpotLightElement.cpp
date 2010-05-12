@@ -37,13 +37,8 @@ SVGFESpotLightElement::~SVGFESpotLightElement()
 PassRefPtr<LightSource> SVGFESpotLightElement::lightSource() const
 {
     FloatPoint3D pos(x(), y(), z());
+    FloatPoint3D direction(pointsAtX(), pointsAtY(), pointsAtZ());
 
-    // convert lookAt to a direction
-    FloatPoint3D direction(pointsAtX() - pos.x(), 
-                           pointsAtY() - pos.y(), 
-                           pointsAtZ() - pos.z());
-
-    direction.normalize();
     return SpotLightSource::create(pos, direction, specularExponent(), limitingConeAngle());
 }
 

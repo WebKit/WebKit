@@ -23,29 +23,22 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFESpecularLighting.h"
+
+#include "SVGLightSource.h"
 #include "SVGRenderTreeAsText.h"
-#include "Filter.h"
 
 namespace WebCore {
 
-FESpecularLighting::FESpecularLighting(FilterEffect* in, const Color& lightingColor, const float& surfaceScale,
-    const float& specularConstant, const float& specularExponent, const float& kernelUnitLengthX,
-    const float& kernelUnitLengthY, PassRefPtr<LightSource> lightSource)
-    : FilterEffect()
-    , m_in(in)
-    , m_lightingColor(lightingColor)
-    , m_surfaceScale(surfaceScale)
-    , m_specularConstant(specularConstant)
-    , m_specularExponent(specularExponent)
-    , m_kernelUnitLengthX(kernelUnitLengthX)
-    , m_kernelUnitLengthY(kernelUnitLengthY)
-    , m_lightSource(lightSource)
+FESpecularLighting::FESpecularLighting(FilterEffect* in, const Color& lightingColor, float surfaceScale,
+    float specularConstant, float specularExponent, float kernelUnitLengthX,
+    float kernelUnitLengthY, PassRefPtr<LightSource> lightSource)
+    : FELighting(SpecularLighting, in, lightingColor, surfaceScale, 0.0f, specularConstant, specularExponent, kernelUnitLengthX, kernelUnitLengthY, lightSource)
 {
 }
 
 PassRefPtr<FESpecularLighting> FESpecularLighting::create(FilterEffect* in, const Color& lightingColor,
-    const float& surfaceScale, const float& specularConstant, const float& specularExponent,
-    const float& kernelUnitLengthX, const float& kernelUnitLengthY, PassRefPtr<LightSource> lightSource)
+    float surfaceScale, float specularConstant, float specularExponent,
+    float kernelUnitLengthX, float kernelUnitLengthY, PassRefPtr<LightSource> lightSource)
 {
     return adoptRef(new FESpecularLighting(in, lightingColor, surfaceScale, specularConstant, specularExponent,
         kernelUnitLengthX, kernelUnitLengthY, lightSource));
@@ -123,10 +116,6 @@ const LightSource* FESpecularLighting::lightSource() const
 void FESpecularLighting::setLightSource(PassRefPtr<LightSource> lightSource)
 {
     m_lightSource = lightSource;
-}
-
-void FESpecularLighting::apply(Filter*)
-{
 }
 
 void FESpecularLighting::dump()
