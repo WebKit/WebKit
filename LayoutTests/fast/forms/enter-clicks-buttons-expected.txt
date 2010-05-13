@@ -23,7 +23,7 @@ click: BUTTON type=reset
 
 Looping over 8 input elements...
 
-click: INPUT type=submit in form
+click: BUTTON type=submit in form
 submit: FORM
 click: INPUT type=button in form
 click: INPUT type=submit in form

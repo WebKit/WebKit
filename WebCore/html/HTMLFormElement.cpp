@@ -176,21 +176,20 @@ Node* HTMLFormElement::item(unsigned index)
     return elements()->item(index);
 }
 
-void HTMLFormElement::submitImplicitly(Event* event, bool fromTextField)
+void HTMLFormElement::submitImplicitly(Event* event, bool fromImplicitSubmissionTrigger)
 {
-    int textControlCount = 0;
+    int submissionTriggerCount = 0;
     for (unsigned i = 0; i < formElements.size(); ++i) {
-        if (formElements[i]->hasLocalName(inputTag)) {
-            HTMLInputElement* element = static_cast<HTMLInputElement*>(formElements[i]);
-            if (element->isSuccessfulSubmitButton() && element->renderer()) {
-                element->dispatchSimulatedClick(event);
+        HTMLFormControlElement* formElement = formElements[i];
+        if (formElement->isSuccessfulSubmitButton()) {
+            if (formElement->renderer()) {
+                formElement->dispatchSimulatedClick(event);
                 return;
-            } else if (element->isTextField())
-                ++textControlCount;
-        } else if (formElements[i]->hasLocalName(isindexTag))
-            ++textControlCount;
+            }
+        } else if (formElement->canTriggerImplicitSubmission())
+            ++submissionTriggerCount;
     }
-    if (fromTextField && textControlCount == 1)
+    if (fromImplicitSubmissionTrigger && submissionTriggerCount == 1)
         prepareSubmit(event);
 }
 

@@ -94,6 +94,7 @@ public:
 
     virtual bool isFormControlElement() const { return true; }
     virtual bool isRadioButton() const { return false; }
+    virtual bool canTriggerImplicitSubmission() const { return false; }
 
     /* Override in derived classes to get the encoded name=value pair for submitting.
      * Return true for a successful control (see HTML4-17.13.2).

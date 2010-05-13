@@ -15,8 +15,8 @@ var allTests = [
     [ "Multiple text inputs with submit disabled", "!text,text,text,-submit", "n" ],
     [ "Multiple text inputs and multiple submits, first submit disabled", "!text,text,text,-submit,submit", "y" ], // match IE, not FF.
     [ "Text input and text area, text input focused", "!text,textarea", "y" ],
-    [ "Text input and text area and a submit button, text input focused", "!text,textarea,submit", "y" ],
-    [ "Text input and text area and a disabled submit button, text input focused", "!text,textarea,-submit", "y" ], // match IE, not FF.
+    [ "Text input and text area and a submit, text input focused", "!text,textarea,submit", "y" ],
+    [ "Text input and text area and a disabled submit, text input focused", "!text,textarea,-submit", "y" ], // match IE, not FF.
     [ "Text input and checkbox, text input focused", "!text,checkbox", "y" ],
     [ "Text input and radio, text input focused", "!text,radio", "y" ],
     [ "Text input and text area, textarea focused", "text,!textarea", "n" ],
@@ -24,12 +24,14 @@ var allTests = [
     [ "Text input and radio, radio focused", "text,!radio", "n" ], // match IE, not FF.
     [ "Single radio", "!radio", "n" ], // match IE, not FF.
     [ "Single checkbox", "!checkbox", "n" ],
-    [ "Single checkbox with a submit button", "!checkbox,submit", "y" ],
+    [ "Single checkbox with a submit", "!checkbox,submit", "y" ],
     [ "Single checkbox with a submit disabled", "!checkbox,-submit", "n" ],
     [ "Single select", "!select", "n" ],
     [ "Text field and single select, text focused", "!text,select", "y" ],
     [ "Text field and single select, select focused", "text,!select", "n" ],
-    [ "Isindex", "!isindex", "y"]
+    [ "Isindex", "!isindex", "y"],
+    [ "Multiple text inputs with a button", "!text,text,button", "y"],
+    [ "Multiple text inputs with a disabled button", "!text,text,-button", "n"]
 ];
 
 if (window.layoutTestController) {
@@ -87,6 +89,9 @@ function runTestInIframe()
         } else if (type == "select") {
             control = document.createElement(type);
             control.options.add(new Option("a"));
+        } else if (type == "button") {
+            control = document.createElement(type);
+            control.type = "submit";
         } else {
             control = document.createElement("input");
             control.type = type;
