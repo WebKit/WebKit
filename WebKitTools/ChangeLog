@@ -1,5 +1,22 @@
 2010-05-13  Fumitoshi Ukai  <ukai@chromium.org>
 
+        Unreviewed fix.  Revert previous change.
+
+        Even if with-statments are changed in websocket_server.py, it also claims syntax error for with statement in http_server.py.
+        Until python 2.5 is installed on tiger bot, skips websocket/tests on tiger.
+
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py: use with statement
+
+2010-05-13  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed fix.
+
+        On tiger bot, it claims syntax error for with statement.
+
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py: rewrite with statement with try-finally.
+
+2010-05-13  Fumitoshi Ukai  <ukai@chromium.org>
+
         Reviewed by David Levin.
 
         WebSocket: pywebsocket 0.5

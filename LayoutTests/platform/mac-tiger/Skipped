@@ -178,3 +178,6 @@ fast/js/sputnik/Unicode
 
 # https://bugs.webkit.org/show_bug.cgi?id=38743
 webarchive/test-link-rel-icon.html
+
+# Python 2.5 is required to run websocket tests
+websocket/tests

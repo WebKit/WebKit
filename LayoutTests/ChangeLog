@@ -1,3 +1,11 @@
+2010-05-13  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed.
+
+        Skip websocket/tests on tiger, until Python 2.5 is installed on tiger bot.
+
+        * platform/mac-tiger/Skipped: Add websocket/tests
+
 2010-05-12  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Darin Adler.
