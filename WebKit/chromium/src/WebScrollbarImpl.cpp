@@ -83,6 +83,7 @@ void WebScrollbarImpl::setLocation(const WebRect& rect)
     int length = m_scrollbar->orientation() == HorizontalScrollbar ? m_scrollbar->width() : m_scrollbar->height();
     int pageStep = max(max<int>(length * Scrollbar::minFractionToStepWhenPaging(), length - Scrollbar::maxOverlapBetweenPages()), 1);
     m_scrollbar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
+    m_scrollbar->setEnabled(m_scrollbar->totalSize() > length);
     m_scrollbar->setProportion(length, m_scrollbar->totalSize());
 }
 
@@ -99,6 +100,7 @@ void WebScrollbarImpl::setValue(int position)
 void WebScrollbarImpl::setDocumentSize(int size)
 {
     int length = m_scrollbar->orientation() == HorizontalScrollbar ? m_scrollbar->width() : m_scrollbar->height();
+    m_scrollbar->setEnabled(size > length);
     m_scrollbar->setProportion(length, size);
 }
 
