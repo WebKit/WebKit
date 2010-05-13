@@ -977,6 +977,7 @@ public:
 
     void addMediaCanStartListener(MediaCanStartListener*);
     void removeMediaCanStartListener(MediaCanStartListener*);
+    MediaCanStartListener* takeAnyMediaCanStartListener();
 
 protected:
     Document(Frame*, bool isXHTML, bool isHTML);
@@ -1249,6 +1250,8 @@ private:
 #endif
 
     RefPtr<DocumentWeakReference> m_weakReference;
+
+    HashSet<MediaCanStartListener*> m_mediaCanStartListeners;
 };
 
 inline bool Document::hasElementWithId(AtomicStringImpl* id) const

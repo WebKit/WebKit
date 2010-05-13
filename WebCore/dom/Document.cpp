@@ -4920,18 +4920,24 @@ void Document::enqueuePopstateEvent(PassRefPtr<SerializedScriptValue> stateObjec
 
 void Document::addMediaCanStartListener(MediaCanStartListener* listener)
 {
-    // The plan is to move m_mediaCanStartListeners from Page to Document soon.
-    // For now, this simply forwards the call to the page if any.
-    if (Page* page = this->page())
-        page->addMediaCanStartListener(listener);
+    ASSERT(!m_mediaCanStartListeners.contains(listener));
+    m_mediaCanStartListeners.add(listener);
 }
 
 void Document::removeMediaCanStartListener(MediaCanStartListener* listener)
 {
-    // The plan is to move m_mediaCanStartListeners from Page to Document soon.
-    // For now, this simply forwards the call to the page if any.
-    if (Page* page = this->page())
-        page->removeMediaCanStartListener(listener);
+    ASSERT(m_mediaCanStartListeners.contains(listener));
+    m_mediaCanStartListeners.remove(listener);
+}
+
+MediaCanStartListener* Document::takeAnyMediaCanStartListener()
+{
+    HashSet<MediaCanStartListener*>::iterator slot = m_mediaCanStartListeners.begin();
+    if (slot == m_mediaCanStartListeners.end())
+        return 0;
+    MediaCanStartListener* listener = *slot;
+    m_mediaCanStartListeners.remove(slot);
+    return listener;
 }
 
 #if ENABLE(XHTMLMP)
