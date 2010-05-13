@@ -618,6 +618,9 @@ public:
     void detachRange(Range*);
 
     void nodeChildrenChanged(ContainerNode*);
+    // nodeChildrenWillBeRemoved is used when removing all node children at once.
+    void nodeChildrenWillBeRemoved(ContainerNode*);
+    // nodeWillBeRemoved is only safe when removing one node at a time.
     void nodeWillBeRemoved(Node*);
 
     void textInserted(Node*, unsigned offset, unsigned length);
