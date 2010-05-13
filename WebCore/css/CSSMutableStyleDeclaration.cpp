@@ -240,10 +240,11 @@ String CSSMutableStyleDeclaration::getPropertyValue(int propertyID) const
             return getLayeredShorthandValue(properties, 4);
         }
         case CSSPropertyWebkitAnimation: {
-            const int properties[6] = { CSSPropertyWebkitAnimationName, CSSPropertyWebkitAnimationDuration,
+            const int properties[7] = { CSSPropertyWebkitAnimationName, CSSPropertyWebkitAnimationDuration,
                                         CSSPropertyWebkitAnimationTimingFunction, CSSPropertyWebkitAnimationDelay,
-                                        CSSPropertyWebkitAnimationIterationCount, CSSPropertyWebkitAnimationDirection };
-            return getLayeredShorthandValue(properties, 6);
+                                        CSSPropertyWebkitAnimationIterationCount, CSSPropertyWebkitAnimationDirection,
+                                        CSSPropertyWebkitAnimationFillMode };
+            return getLayeredShorthandValue(properties, 7);
         }
 #if ENABLE(SVG)
         case CSSPropertyMarker: {
