@@ -55,7 +55,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="QTMLClient.lib CVClient.lib WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
+				AdditionalDependencies="QTMLClient.lib CVClient.lib JavaScriptCore$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 				AdditionalLibraryDirectories="&quot;$(WebKitLibrariesDir)\QTInternalSDK\Libraries&quot;;&quot;$(WebKitLibrariesDir)\QuickTime SDK\Libraries&quot;;&quot;$(ProgramFiles)\QuickTime SDK\Libraries&quot;"
 				IgnoreDefaultLibraryNames="LIBCMT"
@@ -128,7 +128,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="QTMLClient.lib CVClient.lib WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
+				AdditionalDependencies="QTMLClient.lib CVClient.lib JavaScriptCore$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 				AdditionalLibraryDirectories="&quot;$(WebKitLibrariesDir)\QTInternalSDK\Libraries&quot;;&quot;$(WebKitLibrariesDir)\QuickTime SDK\Libraries&quot;;&quot;$(ProgramFiles)\QuickTime SDK\Libraries&quot;"
 				IgnoreDefaultLibraryNames="LIBCMT"
@@ -200,7 +200,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="QTMLClient.lib CVClient.lib WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
+				AdditionalDependencies="QTMLClient.lib CVClient.lib JavaScriptCore$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 				AdditionalLibraryDirectories="&quot;$(WebKitLibrariesDir)\QTInternalSDK\Libraries&quot;;&quot;$(WebKitLibrariesDir)\QuickTime SDK\Libraries&quot;;&quot;$(ProgramFiles)\QuickTime SDK\Libraries&quot;"
 				IgnoreDefaultLibraryNames="LIBCMT"
@@ -272,7 +272,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="QTMLClient.lib CVClient.lib WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
+				AdditionalDependencies="QTMLClient.lib CVClient.lib JavaScriptCore$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 				AdditionalLibraryDirectories="&quot;$(WebKitLibrariesDir)\QTInternalSDK\Libraries&quot;;&quot;$(WebKitLibrariesDir)\QuickTime SDK\Libraries&quot;;&quot;$(ProgramFiles)\QuickTime SDK\Libraries&quot;"
 				IgnoreDefaultLibraryNames="LIBCMT"
