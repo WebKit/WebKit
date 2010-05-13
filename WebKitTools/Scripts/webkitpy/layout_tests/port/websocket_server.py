@@ -30,6 +30,8 @@
 """A class to help start/stop the PyWebSocket server used by layout tests."""
 
 
+from __future__ import with_statement
+
 import codecs
 import logging
 import optparse
@@ -236,11 +238,8 @@ class PyWebSocket(http_server.Lighttpd):
             raise PyWebSocketNotStarted(
                 'Failed to start %s server.' % self._server_name)
         if self._pidfile:
-            file = codecs.open(self._pidfile, "w", "ascii")
-            try:
+            with codecs.open(self._pidfile, "w", "ascii") as file:
                 file.write("%d" % self._process.pid)
-            finally:
-                file.close()
 
     def stop(self, force=False):
         if not force and not self.is_running():
@@ -250,11 +249,8 @@ class PyWebSocket(http_server.Lighttpd):
         if self._process:
             pid = self._process.pid
         elif self._pidfile:
-            file = codecs.open(self._pidfile, "r", "ascii")
-            try:
+            with codecs.open(self._pidfile, "r", "ascii") as file:
                 pid = int(file.read().strip())
-            finally:
-                file.close()
 
         if not pid:
             raise PyWebSocketNotFound(
