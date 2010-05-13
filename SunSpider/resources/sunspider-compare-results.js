@@ -297,7 +297,7 @@ function sunspiderCompareResults(output1, output2)
         result += label + ": ";
         result = pad(result, labelWidth + 2);
         
-        var t = (mean1 - mean2) / (Math.sqrt((stdErr1 * stdErr1) + (stdErr1 * stdErr2))); 
+        var t = (mean1 - mean2) / (Math.sqrt((stdErr1 * stdErr1) + (stdErr2 * stdErr2)));
         var df = count1 + count2 - 2;
         
         var statisticallySignificant = (Math.abs(t) > tDist(df+1));

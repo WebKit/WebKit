@@ -1,3 +1,18 @@
+2010-05-07  Adam Roben  <aroben@apple.com>
+
+        Fix typo in sunspider-compare-results.js that caused incorrect
+        two-sample t statistics to be computed
+
+        Fixes <http://webkit.org/b/38768> SunSpider computes incorrect
+        two-sample t statistics
+
+        Reviewed by Darin Adler.
+
+        * resources/sunspider-compare-results.js:
+        (sunspiderCompareResults.resultLine): Fixed the calculation of the t
+        variable to match the definition of a two-sample t statistic. Looks
+        like this was just a simple typo.
+
 2010-04-05  Darin Adler  <darin@apple.com>
 
         Updated the ignore property for changes to the contents here.
