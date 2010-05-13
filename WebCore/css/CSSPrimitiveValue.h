@@ -200,7 +200,8 @@ private:
 
     virtual unsigned short cssValueType() const;
 
-    int m_type;
+    int m_type : 31;
+    mutable unsigned m_hasCachedCSSText : 1;
     union {
         int ident;
         double num;
@@ -211,7 +212,6 @@ private:
         Pair* pair;
         DashboardRegion* region;
     } m_value;
-    mutable String m_cachedCSSText;
 };
 
 } // namespace WebCore
