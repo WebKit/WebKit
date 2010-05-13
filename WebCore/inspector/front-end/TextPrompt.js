@@ -29,6 +29,7 @@
 WebInspector.TextPrompt = function(element, completions, stopCharacters)
 {
     this.element = element;
+    this.element.addStyleClass("text-prompt");
     this.completions = completions;
     this.completionStopCharacters = stopCharacters;
     this.history = [];
