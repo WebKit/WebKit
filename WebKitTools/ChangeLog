@@ -5,6 +5,19 @@
         Disable compositing/iframes tests on the commit-queue as a workaround for  bug 38912
         https://bugs.webkit.org/show_bug.cgi?id=39067
 
+        Fix yet another typo in my original hack.
+        I also added another unit test for this fix.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        * Scripts/webkitpy/common/config/ports_unittest.py:
+
+2010-05-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        Disable compositing/iframes tests on the commit-queue as a workaround for  bug 38912
+        https://bugs.webkit.org/show_bug.cgi?id=39067
+
         My previous (unreviewed) hack didn't actually work due to checking "mac" instead of "Mac".
         This change fixes my hack, and unit tests it.
 

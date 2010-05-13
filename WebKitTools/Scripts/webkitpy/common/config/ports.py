@@ -120,7 +120,7 @@ class MacPort(WebKitPort):
 
     @classmethod
     def is_leopard(cls):
-        return tuple(cls._system_version()[:2]) == (10.5)
+        return tuple(cls._system_version()[:2]) == (10, 5)
 
 
 class WinPort(WebKitPort):

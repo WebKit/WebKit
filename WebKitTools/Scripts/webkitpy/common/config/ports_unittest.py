@@ -41,6 +41,12 @@ class WebKitPortTest(unittest.TestCase):
         self.assertEquals(MacPort.build_webkit_command(build_style="debug"), [WebKitPort.script_path("build-webkit"), "--debug"])
         self.assertEquals(MacPort.build_webkit_command(build_style="release"), [WebKitPort.script_path("build-webkit"), "--release"])
 
+        class TestIsLeopard(MacPort):
+            @classmethod
+            def _system_version(cls):
+                return [10, 5]
+        self.assertTrue(TestIsLeopard.is_leopard())
+
     def test_gtk_port(self):
         self.assertEquals(GtkPort.name(), "Gtk")
         self.assertEquals(GtkPort.flag(), "--port=gtk")
