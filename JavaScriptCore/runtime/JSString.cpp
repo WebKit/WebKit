@@ -107,8 +107,8 @@ void JSString::resolveRope(ExecState* exec) const
 JSValue JSString::replaceCharacter(ExecState* exec, UChar character, const UString& replacement)
 {
     if (!isRope()) {
-        size_t matchPosition = m_value.find(character);
-        if (matchPosition == notFound)
+        unsigned matchPosition = m_value.find(character);
+        if (matchPosition == UString::NotFound)
             return JSValue(this);
         return jsString(exec, m_value.substr(0, matchPosition), replacement, m_value.substr(matchPosition + 1));
     }
@@ -118,7 +118,7 @@ JSValue JSString::replaceCharacter(ExecState* exec, UChar character, const UStri
     // Count total fibers and find matching string.
     size_t fiberCount = 0;
     UStringImpl* matchString = 0;
-    size_t matchPosition = notFound;
+    int matchPosition = -1;
     for (RopeIterator it(m_other.m_fibers, m_fiberCount); it != end; ++it) {
         ++fiberCount;
         if (matchString)
@@ -126,7 +126,7 @@ JSValue JSString::replaceCharacter(ExecState* exec, UChar character, const UStri
 
         UStringImpl* string = *it;
         matchPosition = string->find(character);
-        if (matchPosition == notFound)
+        if (matchPosition == -1)
             continue;
         matchString = string;
     }
