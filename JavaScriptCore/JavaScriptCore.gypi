@@ -433,6 +433,7 @@
             'wtf/text/StringHash.h',
             'wtf/text/StringImpl.cpp',
             'wtf/text/StringImpl.h',
+            'wtf/text/StringStatics.cpp',
             'wtf/text/WTFString.cpp',
             'wtf/text/WTFString.h',
             'wtf/unicode/Collator.h',

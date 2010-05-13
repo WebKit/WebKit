@@ -326,7 +326,19 @@
 	</References>
 	<Files>
 		<File
+			RelativePath="$(WebKitOutputDir)\include\private\JavaScriptCore\AtomicString.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\jsc.cpp"
+			>
+		</File>
+		<File
+			RelativePath="$(WebKitOutputDir)\include\private\JavaScriptCore\StringImpl.cpp"
+			>
+		</File>
+		<File
+			RelativePath="$(WebKitOutputDir)\include\private\JavaScriptCore\WTFString.cpp"
 			>
 		</File>
 	</Files>
