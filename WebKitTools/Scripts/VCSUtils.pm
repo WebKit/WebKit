@@ -68,6 +68,7 @@ BEGIN {
         &pathRelativeToSVNRepositoryRootForPath
         &prepareParsedPatch
         &runPatchCommand
+        &setChangeLogDateAndReviewer
         &svnRevisionForDirectory
         &svnStatus
     );
@@ -83,6 +84,9 @@ my $isGit;
 my $isGitBranchBuild;
 my $isSVN;
 my $svnVersion;
+
+# Project time zone for Cupertino, CA, US
+my $changeLogTimeZone = "PST8PDT";
 
 my $gitDiffStartRegEx = qr#^diff --git (\w/)?(.+) (\w/)?([^\r\n]+)#;
 my $svnDiffStartRegEx = qr#^Index: ([^\r\n]+)#;
@@ -759,6 +763,9 @@ sub parseDiffHeader($$)
 #   $lastReadLine: the line last read from $fileHandle
 sub parseDiff($$)
 {
+    # FIXME: Adjust this method so that it dies if the first line does not
+    #        match the start of a diff.  This will require a change to
+    #        parsePatch() so that parsePatch() skips over leading junk.
     my ($fileHandle, $line) = @_;
 
     my $headerStartRegEx = $svnDiffStartRegEx; # SVN-style header for the default
@@ -927,6 +934,51 @@ sub prepareParsedPatch($@)
     $preparedPatchHash{sourceRevisionHash} = \%sourceRevisionHash;
 
     return \%preparedPatchHash;
+}
+
+# Return localtime() for the project's time zone, given an integer time as
+# returned by Perl's time() function.
+sub localTimeInProjectTimeZone($)
+{
+    my $epochTime = shift;
+
+    # Change the time zone temporarily for the localtime() call.
+    my $savedTimeZone = $ENV{'TZ'};
+    $ENV{'TZ'} = $changeLogTimeZone;
+    my @localTime = localtime($epochTime);
+    if (defined $savedTimeZone) {
+         $ENV{'TZ'} = $savedTimeZone;
+    } else {
+         delete $ENV{'TZ'};
+    }
+
+    return @localTime;
+}
+
+# Set the reviewer and date in a ChangeLog patch, and return the new patch.
+#
+# Args:
+#   $patch: a ChangeLog patch as a string.
+#   $reviewer: the name of the reviewer, or undef if the reviewer should not be set.
+#   $epochTime: an integer time as returned by Perl's time() function.
+sub setChangeLogDateAndReviewer($$$)
+{
+    my ($patch, $reviewer, $epochTime) = @_;
+
+    my @localTime = localTimeInProjectTimeZone($epochTime);
+    my $newDate = strftime("%Y-%m-%d", @localTime);
+
+    my $firstChangeLogLineRegEx = qr#(\n\+)\d{4}-[^-]{2}-[^-]{2}(  )#;
+    $patch =~ s/$firstChangeLogLineRegEx/$1$newDate$2/;
+
+    if (defined($reviewer)) {
+        # We include a leading plus ("+") in the regular expression to make
+        # the regular expression less likely to match text in the leading junk
+        # for the patch, if the patch has leading junk.
+        $patch =~ s/(\n\+.*)NOBODY \(OOPS!\)/$1$reviewer/;
+    }
+
+    return $patch;
 }
 
 # If possible, returns a ChangeLog patch equivalent to the given one,

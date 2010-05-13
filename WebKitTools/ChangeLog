@@ -1,3 +1,30 @@
+2010-05-12  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        Fixed a bug in svn-apply whereby the reviewer would not get set if
+        the portion of the patch for the ChangeLog contains "NOBODY (**PS!)"
+        in the leading junk.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38998
+
+        * Scripts/VCSUtils.pm:
+          - Added the $changeLogTimeZone variable from svn-apply.
+          - Added setChangeLogDateAndReviewer() from svn-apply.
+          - Added a localTimeInProjectTimeZone() subroutine.
+          - In setChangeLogDateAndReviewer():
+            - Added an $epochTime parameter to make the subroutine more testable.
+            - Made the "NOBODY (**PS!)" regular expression more specific so that
+              it will not apply to text in the leading junk.
+            - Updated to call localTimeInProjectTimeZone().
+        * Scripts/svn-apply:
+          - Removed the $changeLogTimeZone file variable.
+          - Added an $epochTime file variable to represent the current time.
+          - Removed the setChangeLogDateAndReviewer() subroutine.
+          - Updated patch() to use the new setChangeLogDateAndReviewer() syntax.
+        * Scripts/webkitperl/VCSUtils_unittest/setChangeLogDateAndReviewer.pl: Added.
+          - Added unit tests.
+
 2010-05-12  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
