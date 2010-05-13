@@ -1,5 +1,21 @@
 2010-05-13  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59241.
+
+    2010-05-12  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        HTML Entity Escape the contents of a textarea node when accessed via the innerHTML and outerHTML node properties.
+        https://bugs.webkit.org/show_bug.cgi?id=38922
+
+        Test: fast/encoding/textnode-XSS.html
+
+        * editing/markup.cpp:
+        (WebCore::appendStartMarkup):
+
+2010-05-13  Mark Rowe  <mrowe@apple.com>
+
         Merge r59247.
 
     2010-05-12  David Hyatt  <hyatt@apple.com>
