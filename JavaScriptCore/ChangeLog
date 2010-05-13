@@ -1,3 +1,27 @@
+2010-05-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Various JavaScript string optimizations
+        https://bugs.webkit.org/show_bug.cgi?id=39051
+
+        Approximately 1% SunSpider speedup.
+        
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncJoin): Remove branches from the hot code path
+        by moving the first pass outside the loop, and duplicating the hot loop
+        to extract the loop-invariant branch.
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::match): resize ovector to 0 instead of clearing to avoid
+        thrash in case of large matches.
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpConstructor::performMatch): Mark ALWAYS_INLINE to make the
+        compiler respect our authority.
+        * runtime/StringPrototype.cpp:
+        (JSC::jsSpliceSubstringsWithSeparators): Inline.
+        (JSC::stringProtoFuncSubstring): Rewrite boundary condition checks to
+        reduce the number of floating point comparisons and branches.
+
 2010-05-12  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
