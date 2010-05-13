@@ -1,3 +1,14 @@
+2010-05-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] Platform specific expected file updated after r59385.
+
+        Adding block elements to a block and removing them changes the height of the element.
+        https://bugs.webkit.org/show_bug.cgi?id=38874
+
+        * platform/qt/editing/deleting/5408255-expected.txt: updated.
+
 2010-05-13  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt.
