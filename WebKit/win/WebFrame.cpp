@@ -342,11 +342,45 @@ HRESULT STDMETHODCALLTYPE WebFrame::paintDocumentRectToContext(
     // We can't paint with a layout still pending.
     view->layoutIfNeededRecursive();
 
-    HDC dc = (HDC)(ULONG64)deviceContext;
+    HDC dc = reinterpret_cast<HDC>(static_cast<ULONG64>(deviceContext));
+    GraphicsContext gc(dc);
+    gc.setShouldIncludeChildWindows(true);
+    gc.save();
+    LONG width = rect.right - rect.left;
+    LONG height = rect.bottom - rect.top;
+    FloatRect dirtyRect;
+    dirtyRect.setWidth(width);
+    dirtyRect.setHeight(height);
+    gc.clip(dirtyRect);
+    gc.translate(-rect.left, -rect.top);
+    view->paintContents(&gc, rect);
+    gc.restore();
+
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebFrame::paintDocumentRectToContextAtPoint(
+    /* [in] */ RECT rect,
+    /* [in] */ POINT pt,
+    /* [in] */ OLE_HANDLE deviceContext)
+{
+    Frame* coreFrame = core(this);
+    if (!coreFrame)
+        return E_FAIL;
+
+    FrameView* view = coreFrame->view();
+    if (!view)
+        return E_FAIL;
+
+    // We can't paint with a layout still pending.
+    view->layoutIfNeededRecursive();
+
+    HDC dc = reinterpret_cast<HDC>(static_cast<ULONG64>(deviceContext));
     GraphicsContext gc(dc);
     gc.setShouldIncludeChildWindows(true);
     gc.save();
     IntRect dirtyRect(rect);
+    gc.translate(-pt.x, -pt.y);
     gc.clip(dirtyRect);
     view->paintContents(&gc, rect);
     gc.restore();
