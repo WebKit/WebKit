@@ -84,6 +84,20 @@ PASS currentEvent.target == currentEvent.currentTarget is true
 PASS currentEvent.target.correspondingElement == currentEvent.currentTarget.correspondingElement is true
 PASS currentEvent.target.correspondingUseElement == currentEvent.currentTarget.correspondingUseElement is true
 
+Test #7: Verify that the recreating the original click event listener dynamically worked and the event is still dispatched to the instance tree
+
+PASS currentEvent.toString() is "[object MouseEvent]"
+PASS currentEvent.type.toString() is "click"
+PASS currentEvent.target.toString() is "[object SVGElementInstance]"
+PASS currentEvent.currentTarget.toString() is "[object SVGElementInstance]"
+PASS currentEvent.target.correspondingElement == rectElement is true
+PASS currentEvent.target.correspondingUseElement == useElement is true
+PASS currentEvent.currentTarget.correspondingElement == rectElement is true
+PASS currentEvent.currentTarget.correspondingUseElement == useElement is true
+PASS currentEvent.target == currentEvent.currentTarget is true
+PASS currentEvent.target.correspondingElement == currentEvent.currentTarget.correspondingElement is true
+PASS currentEvent.target.correspondingUseElement == currentEvent.currentTarget.correspondingUseElement is true
+
 Test #8: Verify that the simulated click event got dispatched to the right target
 
 PASS currentEvent.toString() is "[object MouseEvent]"
@@ -99,4 +113,5 @@ PASS currentEvent.target.correspondingElement == currentEvent.currentTarget.corr
 PASS currentEvent.target.correspondingUseElement == currentEvent.currentTarget.correspondingUseElement is true
 PASS successfullyParsed is true
 
+TEST COMPLETE
 
