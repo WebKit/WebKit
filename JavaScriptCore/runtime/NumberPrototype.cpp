@@ -161,7 +161,7 @@ JSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec, JSObject*, JSValu
     if (radix == 36) {
         if (v.isInt32()) {
             int x = v.asInt32();
-            if (x < 36) {
+            if (static_cast<unsigned>(x) < 36) { // Exclude negatives
                 JSGlobalData* globalData = &exec->globalData();
                 return globalData->smallStrings.singleCharacterString(globalData, digits[x]);
             }
