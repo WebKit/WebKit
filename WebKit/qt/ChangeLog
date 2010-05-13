@@ -1,3 +1,15 @@
+2010-05-13  Antonio Gomes  <tonikitoo@webkit.org>, Yi Shen <yi.4.shen@nokia.com>
+
+        Reviewed by Kenneth Christiansen.
+
+        [Qt] Add LayoutTestController interface: computedStyleIncludingVisitedInfo
+        https://bugs.webkit.org/show_bug.cgi?id=37759
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::markerTextForListItem):
+        (DumpRenderTreeSupportQt::computedStyleIncludingVisitedInfo):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2010-05-12  Joe Ligman  <joseph.ligman@nokia.com>
 
         Reviewed by Laszlo Gombos.

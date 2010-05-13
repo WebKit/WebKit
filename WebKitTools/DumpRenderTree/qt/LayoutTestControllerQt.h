@@ -186,6 +186,7 @@ public slots:
     void setScrollbarPolicy(const QString& orientation, const QString& policy);
 
     QString markerTextForListItem(const QWebElement& listItem);
+    QVariantMap computedStyleIncludingVisitedInfo(const QWebElement& element) const;
 
     // Simulate a request an embedding application could make, populating per-session credential storage.
     void authenticateSession(const QString& url, const QString& username, const QString& password);

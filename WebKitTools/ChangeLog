@@ -1,3 +1,16 @@
+2010-05-13  Antonio Gomes  <tonikitoo@webkit.org>, Yi Shen <yi.4.shen@nokia.com>
+
+        Reviewed by Kenneth Christiansen.
+
+        [Qt] Add LayoutTestController interface: computedStyleIncludingVisitedInfo
+        https://bugs.webkit.org/show_bug.cgi?id=37759
+
+        WebKitTools:
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::computedStyleIncludingVisitedInfo):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2010-05-10  Adam Roben  <aroben@apple.com>
 
         Convert status bar text to UTF-8 before logging it on Windows

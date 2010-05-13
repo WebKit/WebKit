@@ -23,6 +23,7 @@
 #include "config.h"
 #include "DumpRenderTreeSupportQt.h"
 
+#include "CSSComputedStyleDeclaration.h"
 #include "ContextMenu.h"
 #include "ContextMenuClientQt.h"
 #include "ContextMenuController.h"
@@ -47,6 +48,7 @@
 #include "TextIterator.h"
 #include "WorkerThread.h"
 
+#include "qwebelement.h"
 #include "qwebframe.h"
 #include "qwebframe_p.h"
 #include "qwebpage.h"
@@ -375,6 +377,23 @@ bool DumpRenderTreeSupportQt::isCommandEnabled(QWebPage* page, const QString& na
 QString DumpRenderTreeSupportQt::markerTextForListItem(const QWebElement& listItem)
 {
     return WebCore::markerTextForListItem(listItem.m_element);
+}
+
+QVariantMap DumpRenderTreeSupportQt::computedStyleIncludingVisitedInfo(const QWebElement& element)
+{
+    QVariantMap res;
+
+    WebCore::Element* webElement = element.m_element;
+    if (!webElement)
+        return res;
+
+    RefPtr<WebCore::CSSComputedStyleDeclaration> style = computedStyle(webElement, true);
+    for (int i = 0; i < style->length(); i++) {
+        QString name = style->item(i);
+        QString value = (static_cast<WebCore::CSSStyleDeclaration*>(style.get()))->getPropertyValue(name);
+        res[name] = QVariant(value);
+    }
+    return res;
 }
 
 QVariantList DumpRenderTreeSupportQt::selectedRange(QWebPage* page)
