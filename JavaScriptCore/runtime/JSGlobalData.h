@@ -29,6 +29,7 @@
 #ifndef JSGlobalData_h
 #define JSGlobalData_h
 
+#include "CachedTranscendentalFunction.h"
 #include "Collector.h"
 #include "DateInstanceCache.h"
 #include "ExecutableAllocator.h"
@@ -211,6 +212,8 @@ namespace JSC {
 #ifndef NDEBUG
         ThreadIdentifier exclusiveThread;
 #endif
+
+        CachedTranscendentalFunction<sin> cachedSin;
 
         void resetDateCache();
 
