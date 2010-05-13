@@ -351,6 +351,8 @@ public:
 
     void clear(bool clearWindowProperties = true, bool clearScriptObjects = true, bool clearFrameView = true);
     
+    bool shouldClose();
+
 private:
     bool canCachePageContainingThisFrame();
 #ifndef NDEBUG

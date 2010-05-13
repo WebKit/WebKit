@@ -30,7 +30,6 @@
 #include "Frame.h"
 
 #include "ApplyStyleCommand.h"
-#include "BeforeUnloadEvent.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSProperty.h"
@@ -1668,28 +1667,9 @@ void Frame::unfocusWindow()
 
 bool Frame::shouldClose()
 {
-    Chrome* chrome = page() ? page()->chrome() : 0;
-    if (!chrome || !chrome->canRunBeforeUnloadConfirmPanel())
-        return true;
-
-    if (!m_domWindow)
-        return true;
-
-    RefPtr<Document> doc = document();
-    HTMLElement* body = doc->body();
-    if (!body)
-        return true;
-
-    RefPtr<BeforeUnloadEvent> beforeUnloadEvent = BeforeUnloadEvent::create();
-    m_domWindow->dispatchEvent(beforeUnloadEvent.get(), m_domWindow->document());
-
-    if (!beforeUnloadEvent->defaultPrevented())
-        doc->defaultEventHandler(beforeUnloadEvent.get());
-    if (beforeUnloadEvent->result().isNull())
-        return true;
-
-    String text = doc->displayStringModifiedByEncoding(beforeUnloadEvent->result());
-    return chrome->runBeforeUnloadConfirmPanel(text, this);
+    // FIXME: Some WebKit clients call Frame::shouldClose() directly.
+    // We should transition them to calling FrameLoader::shouldClose() then get rid of this method.
+    return m_loader.shouldClose();
 }
 
 void Frame::scheduleClose()
