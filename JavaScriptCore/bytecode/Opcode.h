@@ -46,6 +46,7 @@ namespace JSC {
         \
         macro(op_new_object, 2) \
         macro(op_new_array, 4) \
+        macro(op_new_regexp, 3) \
         macro(op_mov, 3) \
         \
         macro(op_not, 3) \

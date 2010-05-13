@@ -1,0 +1,16 @@
+This test ensures that regeular expression literals are constants, and so persist over multiple executions
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS currentRegExp === lastRegExp is false
+PASS currentRegExp === lastRegExp is false
+PASS returnRegExpLiteral() === returnRegExpLiteral() is false
+PASS returnConditionalRegExpLiteral(true) === returnConditionalRegExpLiteral(true) is false
+PASS returnConditionalRegExpLiteral(false) === returnConditionalRegExpLiteral(false) is false
+PASS returnConditionalRegExpLiteral(true) === returnConditionalRegExpLiteral(false) is false
+PASS returnRegExpLiteral().someAddedProperty is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
