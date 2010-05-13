@@ -1,3 +1,25 @@
+2010-05-13  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by David Levin.
+
+        WebSocket: pywebsocket 0.5
+        https://bugs.webkit.org/show_bug.cgi?id=38034
+
+        Remove pywebsocket from webkitpy/thirdparty.
+        Make pywebsocket autoinstalled.
+
+        * Scripts/new-run-webkit-websocketserver:
+          Add --output-dir option.
+        * Scripts/old-run-webkit-tests:
+          Use new-run-webkit-websocketserver, rather than directly run pywebsocket's standalone.py
+        * Scripts/run-webkit-websocketserver:
+          Ditto.
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py:
+          Use autoinstalled pywebsocket.
+        * Scripts/webkitpy/thirdparty/__init__.py:
+          Autoinstall pywebsocket
+        * Scripts/webkitpy/thirdparty/pywebsocket: Removed.
+
 2010-05-12  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Daniel Bates.

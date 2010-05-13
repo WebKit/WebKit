@@ -47,7 +47,7 @@ my $webSocketPort = 8880;
 my $srcDir = sourceDir();
 my $layoutTestsName = "$srcDir/LayoutTests";
 my $testDirectory = File::Spec->rel2abs($layoutTestsName);
-my $webSocketServerPID = 0;
+my $webSocketServerPidFile = "$testDirectory/websocket.pid";
 
 
 print "Starting Web Socket server...\n";
@@ -60,41 +60,29 @@ closeWebSocketServer();
 print "Stopped.\n";
 exit 0;
 
-
 sub openWebSocketServer()
 {
-    my $webSocketServerPath = "/usr/bin/python";
-    my $webSocketPythonPath = "$srcDir/WebKitTools/Scripts/webkitpy/thirdparty/pywebsocket";
     my $webSocketHandlerDir = "$testDirectory";
-    my $webSocketHandlerScanDir = "$testDirectory/websocket/tests";
-    my $webSocketHandlerMapFile = "$webSocketHandlerScanDir/handler_map.txt";
 
     my @args = (
-        "$srcDir/WebKitTools/Scripts/webkitpy/thirdparty/pywebsocket/mod_pywebsocket/standalone.py",
-        "--server-host", "127.0.0.1",
+        "$srcDir/WebKitTools/Scripts/new-run-webkit-websocketserver",
+        "--server", "start",
         "--port", "$webSocketPort",
-        "--document-root", "$webSocketHandlerDir",
-        "--scan-dir", "$webSocketHandlerScanDir",
-        "--websock-handlers-map-file", "$webSocketHandlerMapFile",
-        "--cgi-paths", "/websocket/tests",
+        "--root", "$webSocketHandlerDir",
+        "--pidfile", "$webSocketServerPidFile"
     );
-
-    $ENV{"PYTHONPATH"} = $webSocketPythonPath;
-    $webSocketServerPID = open2(\*WEBSOCKETSERVER_IN, \*WEBSOCKETSERVER_OUT, $webSocketServerPath, @args);
-
-    my $listen = "http://127.0.0.1:$webSocketPort";
-    my $retryCount = 10;
-    while (system("/usr/bin/curl -k -q --silent --stderr - --output /dev/null $listen") && $retryCount) {
-        sleep 1;
-        --$retryCount;
-    }
-    die "Timed out waiting for WebSocketServer to start" unless $retryCount;
+    system "/usr/bin/python", @args;
 }
 
 sub closeWebSocketServer()
 {
-    close WEBSOCKETSERVER_IN;
-    close WEBSOCKETSERVER_OUT;
-    kill 15, $webSocketServerPID;
+    my @args = (
+        "$srcDir/WebKitTools/Scripts/new-run-webkit-websocketserver",
+        "--server", "stop",
+        "--pidfile", "$webSocketServerPidFile"
+    );
+    system "/usr/bin/python", @args;
+    unlink "$webSocketServerPidFile";
 }
+
 
