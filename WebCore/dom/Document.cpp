@@ -78,6 +78,7 @@
 #include "HTMLParser.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTitleElement.h"
+#include "HTMLTokenizer.h"
 #include "HTTPParsers.h"
 #include "HistoryItem.h"
 #include "HitTestRequest.h"
@@ -203,6 +204,29 @@ using namespace Unicode;
 namespace WebCore {
 
 using namespace HTMLNames;
+
+class SynchronousHTMLTokenizerGuard {
+public:
+    SynchronousHTMLTokenizerGuard(Tokenizer* tokenizer)
+        : m_htmlTokenizer(tokenizer->asHTMLTokenizer())
+        , m_savedForceSynchronous(false)
+    {
+        if (m_htmlTokenizer) {
+            m_savedForceSynchronous = m_htmlTokenizer->forceSynchronous();
+            m_htmlTokenizer->setForceSynchronous(true);
+        }
+    }
+
+    ~SynchronousHTMLTokenizerGuard()
+    {
+        if (m_htmlTokenizer)
+            m_htmlTokenizer->setForceSynchronous(m_savedForceSynchronous);
+    }
+
+private:
+    HTMLTokenizer* m_htmlTokenizer;
+    bool m_savedForceSynchronous;
+};
 
 // #define INSTRUMENT_LAYOUT_SCHEDULING 1
 
@@ -1954,8 +1978,11 @@ void Document::write(const SegmentedString& text, Document* ownerDocument)
     if (!m_tokenizer)
         open(ownerDocument);
 
-    ASSERT(m_tokenizer);
-    m_tokenizer->write(text, false);
+    {
+        ASSERT(m_tokenizer);
+        SynchronousHTMLTokenizerGuard tokenizerGuard(m_tokenizer.get());
+        m_tokenizer->write(text, false);
+    }
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!ownerElement())
