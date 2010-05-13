@@ -1395,6 +1395,132 @@ PASS return 1 && (One<=0); is false
 PASS if (1 && (One<=0)) return true; return false; is false
 PASS var k = 0; while (1 && (One<=0)) if (k++) return true; return false; is false
 PASS var k = 0; for (; 1 && (One<=0); ) if (k++) return true; return false; is false
+PASS 0 <= 0 is true
+PASS 0 <= 1 is true
+PASS 1 <= 1 is true
+PASS 0 < 1 is true
+PASS 1 <= 0 is false
+PASS 2 <= 1 is false
+PASS 1 < 1 is false
+PASS 2 < 1 is false
+PASS if (0 <= 0 || 0) true; else false is true
+PASS if (0 <= 1 || 0) true; else false is true
+PASS if (1 <= 1 || 0) true; else false is true
+PASS if (0 <  1 || 0) true; else false is true
+PASS if (1 <= 0 || 0) true; else false is false
+PASS if (2 <= 1 || 0) true; else false is false
+PASS if (1 <  1 || 0) true; else false is false
+PASS if (2 <  1 || 0) true; else false is false
+PASS 0 <= 0.5 is true
+PASS 0 <= 1.5 is true
+PASS 1 <= 1.5 is true
+PASS 0 < 1.5 is true
+PASS 1 <= 0.5 is false
+PASS 2 <= 1.5 is false
+PASS 1 < 1.5 is true
+PASS 2 < 1.5 is false
+PASS if (0 <= 0.5 || 0) true; else false is true
+PASS if (0 <= 1.5 || 0) true; else false is true
+PASS if (1 <= 1.5 || 0) true; else false is true
+PASS if (0 <  1.5 || 0) true; else false is true
+PASS if (1 <= 0.5 || 0) true; else false is false
+PASS if (2 <= 1.5 || 0) true; else false is false
+PASS if (1 <  1.5 || 0) true; else false is true
+PASS if (2 <  1.5 || 0) true; else false is false
+PASS zero <= zero is true
+PASS zero <= 1 is true
+PASS 1 <= 1 is true
+PASS zero < 1 is true
+PASS 1 <= zero is false
+PASS 2 <= 1 is false
+PASS 1 < 1 is false
+PASS 2 < 1 is false
+PASS if (zero <= zero || 0) true; else false is true
+PASS if (zero <= 1 || zero) true; else false is true
+PASS if (1 <= 1 || zero) true; else false is true
+PASS if (zero <  1 || zero) true; else false is true
+PASS if (1 <= zero || zero) true; else false is false
+PASS if (2 <= 1 || zero) true; else false is false
+PASS if (1 <  1 || zero) true; else false is false
+PASS if (2 <  1 || zero) true; else false is false
+PASS 0 <= p5 is true
+PASS 0 <= p15 is true
+PASS 1 <= p15 is true
+PASS 0 < p15 is true
+PASS 1 <= p5 is false
+PASS 2 <= p15 is false
+PASS 1 < p15 is true
+PASS 2 < p15 is false
+PASS if (0 <= p5 || 0) true; else false is true
+PASS if (0 <= p15 || 0) true; else false is true
+PASS if (1 <= p15 || 0) true; else false is true
+PASS if (0 <  p15 || 0) true; else false is true
+PASS if (1 <= p5 || 0) true; else false is false
+PASS if (2 <= p15 || 0) true; else false is false
+PASS if (1 <  p15 || 0) true; else false is true
+PASS if (2 <  p15 || 0) true; else false is false
+PASS zero <= zero is true
+PASS zero <= one is true
+PASS one <= one is true
+PASS zero < one is true
+PASS one <= zero is false
+PASS two <= one is false
+PASS one < one is false
+PASS two < one is false
+PASS if (zero <= zero || 0) true; else false is true
+PASS if (zero <= one || zero) true; else false is true
+PASS if (one <= one || zero) true; else false is true
+PASS if (zero <  one || zero) true; else false is true
+PASS if (one <= zero || zero) true; else false is false
+PASS if (two <= one || zero) true; else false is false
+PASS if (one <  one || zero) true; else false is false
+PASS if (two <  one || zero) true; else false is false
+PASS 0 <= p5 is true
+PASS 0 <= p15 is true
+PASS one <= p15 is true
+PASS 0 < p15 is true
+PASS one <= p5 is false
+PASS two <= p15 is false
+PASS one < p15 is true
+PASS two < p15 is false
+PASS if (0 <= p5 || 0) true; else false is true
+PASS if (0 <= p15 || 0) true; else false is true
+PASS if (one <= p15 || 0) true; else false is true
+PASS if (0 <  p15 || 0) true; else false is true
+PASS if (one <= p5 || 0) true; else false is false
+PASS if (two <= p15 || 0) true; else false is false
+PASS if (one <  p15 || 0) true; else false is true
+PASS if (two <  p15 || 0) true; else false is false
+PASS  0 <    NaN is false
+PASS  NaN <  NaN is false
+PASS  0 <=   NaN is false
+PASS  NaN <= NaN is false
+PASS  0.5 <  NaN is false
+PASS  NaN <  NaN is false
+PASS  0.5 <= NaN is false
+PASS  NaN <= NaN is false
+PASS  zero < NaN is false
+PASS zero <= NaN is false
+PASS  NaN <= NaN is false
+PASS  p5  <  NaN is false
+PASS NaN  <  NaN is false
+PASS p5  <=  NaN is false
+PASS NaN  <= NaN is false
+PASS if ( 0 <    NaN) true; else false; is false
+PASS if ( NaN <  NaN) true; else false; is false
+PASS if ( 0 <=   NaN) true; else false; is false
+PASS if ( NaN <= NaN) true; else false; is false
+PASS if ( 0.5 <  NaN) true; else false; is false
+PASS if ( NaN <  NaN) true; else false; is false
+PASS if ( 0.5 <= NaN) true; else false; is false
+PASS if ( NaN <= NaN) true; else false; is false
+PASS if ( zero < NaN) true; else false; is false
+PASS if (zero <= NaN) true; else false; is false
+PASS if ( NaN <= NaN) true; else false; is false
+PASS if ( p5  <  NaN) true; else false; is false
+PASS if (NaN  <  NaN) true; else false; is false
+PASS if (p5  <=  NaN) true; else false; is false
+PASS if (NaN  <= NaN) true; else false; is false
 PASS successfullyParsed is true
 
 TEST COMPLETE
