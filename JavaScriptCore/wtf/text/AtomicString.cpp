@@ -250,14 +250,14 @@ PassRefPtr<StringImpl> AtomicString::add(const UChar* s)
     return addResult.second ? adoptRef(*addResult.first) : *addResult.first;
 }
 
-PassRefPtr<StringImpl> AtomicString::add(StringImpl* r)
+PassRefPtr<StringImpl> AtomicString::addSlowCase(StringImpl* r)
 {
     if (!r || r->isAtomic())
         return r;
 
     if (r->length() == 0)
         return StringImpl::empty();
-    
+
     StringImpl* result = *stringTable().add(r).first;
     if (result == r)
         r->setIsAtomic(true);

@@ -86,10 +86,25 @@ int reverseFind(const UChar*, size_t, UChar, int startPosition = -1);
 class String {
 public:
     String() { } // gives null string, distinguishable from an empty string
-    String(const UChar*, unsigned length);
+    String(const UChar* str, unsigned len)
+    {
+        if (!str)
+            return;
+        m_impl = StringImpl::create(str, len);
+    }
+    String(const char* str)
+    {
+        if (!str)
+            return;
+        m_impl = StringImpl::create(str);
+    }
+    String(const char* str, unsigned length)
+    {
+        if (!str)
+            return;
+        m_impl = StringImpl::create(str, length);
+    }
     String(const UChar*); // Specifically for null terminated UTF-16
-    String(const char*);
-    String(const char*, unsigned length);
     String(StringImpl* i) : m_impl(i) { }
     String(PassRefPtr<StringImpl> i) : m_impl(i) { }
     String(RefPtr<StringImpl> i) : m_impl(i) { }
@@ -103,11 +118,28 @@ public:
     static String adopt(StringBuffer& buffer) { return StringImpl::adopt(buffer); }
     static String adopt(Vector<UChar>& vector) { return StringImpl::adopt(vector); }
 
-    unsigned length() const;
-    const UChar* characters() const;
+    unsigned length() const
+    {
+        if (!m_impl)
+            return 0;
+        return m_impl->length();
+    }
+
+    const UChar* characters() const
+    {
+        if (!m_impl)
+            return 0;
+        return m_impl->characters();
+    }
+
     const UChar* charactersWithNullTermination();
     
-    UChar operator[](unsigned i) const; // if i >= length(), returns 0    
+    UChar operator[](unsigned i) const // if i >= length(), returns 0
+    {
+        if (!m_impl || i >= m_impl->length())
+            return 0;
+        return m_impl->characters()[i];
+    }
     UChar32 characterStartingAt(unsigned) const; // Ditto.
     
     bool contains(UChar c) const { return find(c) != -1; }
@@ -215,7 +247,7 @@ public:
     String threadsafeCopy() const;
 
     bool isNull() const { return !m_impl; }
-    bool isEmpty() const;
+    bool isEmpty() const { return !m_impl || !m_impl->length(); }
 
     StringImpl* impl() const { return m_impl.get(); }
 

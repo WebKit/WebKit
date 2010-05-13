@@ -57,9 +57,15 @@ public:
     CString(CStringBuffer* buffer) : m_buffer(buffer) { }
     static CString newUninitialized(size_t length, char*& characterBuffer);
 
-    const char* data() const;
+    const char* data() const
+    {
+        return m_buffer ? m_buffer->data() : 0;
+    }
     char* mutableData();
-    unsigned length() const;
+    unsigned length() const
+    {
+        return m_buffer ? m_buffer->length() - 1 : 0;
+    }
 
     bool isNull() const { return !m_buffer; }
 
