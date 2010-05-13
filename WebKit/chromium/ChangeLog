@@ -1,3 +1,14 @@
+2010-05-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: main inspector toolbar takes noticeable time to expand.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39013
+
+        * src/js/DevTools.js:
+        (devtools.domContentLoaded):
+
 2010-05-12  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Jeremy Orlow.

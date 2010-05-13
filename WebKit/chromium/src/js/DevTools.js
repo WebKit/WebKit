@@ -200,7 +200,7 @@ devtools.domContentLoaded = function()
             var pair = params[i].split("=");
             paramsObject[pair[0]] = pair[1];
         }
-        WebInspector.setAttachedWindow(paramsObject.docked);
+        WebInspector.setAttachedWindow(paramsObject.docked === "true");
         if (paramsObject.toolbar_color && paramsObject.text_color)
             WebInspector.setToolbarColors(paramsObject.toolbar_color, paramsObject.text_color);
     }
