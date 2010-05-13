@@ -1,3 +1,9 @@
+2010-05-13  Martin Robinson  <mrobinson@igalia.com>
+
+        No review. Rebaselining test after r59385.
+
+        * platform/gtk/editing/deleting/delete-select-all-001-expected.txt: Rebaseline
+
 2010-05-13  Brady Eidson  <beidson@apple.com>
 
         Adding fast/loader/recursive-before-unload-crash-expected.html to the gtk skipped list
