@@ -132,6 +132,7 @@ void TestShell::resetWebSettings(WebView& webView)
     settings->setSerifFontFamily(serif);
     settings->setStandardFontFamily(serif);
     settings->setFixedFontFamily(WebString::fromUTF8("Courier"));
+    settings->setSansSerifFontFamily(WebString::fromUTF8("Helvetica"));
 
     settings->setDefaultTextEncodingName(WebString::fromUTF8("ISO-8859-1"));
     settings->setDefaultFontSize(16);

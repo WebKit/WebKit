@@ -1,3 +1,14 @@
+2010-05-12  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        [DRT/Chromium] Add a missing Sans-serif font setting
+        https://bugs.webkit.org/show_bug.cgi?id=38981
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::resetWebSettings):
+          Set "Helvetica" for Sans-serif. It is the same as the default setting of test_shell.
+
 2010-05-10  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.
