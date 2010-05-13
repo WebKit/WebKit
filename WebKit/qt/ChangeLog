@@ -1,3 +1,16 @@
+2010-05-11  Diego Gonzalez  <diegohcg@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] tst_QWebPage::inputMethods failing on Maemo5
+        https://bugs.webkit.org/show_bug.cgi?id=38685
+
+        Check if the SIP (Software Input Panel) is triggered, which normally
+        happens on mobile platforms, when a user input form receives a mouse click.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::inputMethods):
+
 2010-05-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Laszlo Gombos.

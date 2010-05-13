@@ -27,6 +27,7 @@
 #include <QLocale>
 #include <QMenu>
 #include <QPushButton>
+#include <QStyle>
 #include <QtTest/QtTest>
 #include <QTextCharFormat>
 #include <qgraphicsscene.h>
@@ -1364,7 +1365,27 @@ void tst_QWebPage::inputMethods()
     page->event(&evrel);
 
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-    QVERIFY(!viewEventSpy.contains(QEvent::RequestSoftwareInputPanel));
+    // This part of the test checks if the SIP (Software Input Panel) is triggered,
+    // which normally happens on mobile platforms, when a user input form receives
+    // a mouse click.
+    int  inputPanel = 0;
+    if (viewType == "QWebView") {
+        if (QWebView* wv = qobject_cast<QWebView*>(view))
+            inputPanel = wv->style()->styleHint(QStyle::SH_RequestSoftwareInputPanel);
+    } else if (viewType == "QGraphicsWebView") {
+        if (QGraphicsWebView* wv = qobject_cast<QGraphicsWebView*>(view))
+            inputPanel = wv->style()->styleHint(QStyle::SH_RequestSoftwareInputPanel);
+    }
+
+    // For non-mobile platforms RequestSoftwareInputPanel event is not called
+    // because there is no SIP (Software Input Panel) triggered. In the case of a
+    // mobile platform, an input panel, e.g. virtual keyboard, is usually invoked
+    // and the RequestSoftwareInputPanel event is called. For these two situations
+    // this part of the test can verified as the checks below.
+    if (inputPanel)
+        QVERIFY(viewEventSpy.contains(QEvent::RequestSoftwareInputPanel));
+    else
+        QVERIFY(!viewEventSpy.contains(QEvent::RequestSoftwareInputPanel));
 #endif
     viewEventSpy.clear();
 
