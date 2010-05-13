@@ -166,6 +166,8 @@ private:
 
     FillLayer() { }
 
+    FillLayer* m_next;
+
     RefPtr<StyleImage> m_image;
 
     Length m_xPosition;
@@ -192,8 +194,6 @@ private:
     bool m_compositeSet : 1;
     
     unsigned m_type : 1; // EFillLayerType
-
-    FillLayer* m_next;
 };
 
 } // namespace WebCore
