@@ -56,6 +56,7 @@ void JSDocument::markChildren(MarkStack& markStack)
     markActiveObjectsForContext(markStack, globalData, document);
     markDOMObjectWrapper(markStack, globalData, document->implementation());
     markDOMObjectWrapper(markStack, globalData, document->styleSheets());
+    document->markCachedNodeLists(markStack, globalData);
 }
 
 JSValue JSDocument::location(ExecState* exec) const

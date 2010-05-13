@@ -48,7 +48,7 @@ struct NodeListsNodeData : Noncopyable {
     typedef HashMap<String, NameNodeList*> NameNodeListCache;
     NameNodeListCache m_nameNodeListCache;
     
-    typedef HashMap<QualifiedName, TagNodeList*> TagNodeListCache;
+    typedef HashMap<RefPtr<QualifiedName::QualifiedNameImpl>, TagNodeList*> TagNodeListCache;
     TagNodeListCache m_tagNodeListCache;
 
     static PassOwnPtr<NodeListsNodeData> create()
