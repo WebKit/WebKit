@@ -58,4 +58,10 @@ enum ValueType {
     NPObjectValueType
 };
 
+enum RendererType {
+    UseLayerBackedView,
+    UseSoftwareRenderer,
+    UseAcceleratedCompositing
+};
+
 #endif // WebKitPluginHostTypes_h

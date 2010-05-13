@@ -499,7 +499,7 @@ kern_return_t WKPCBooleanAndDataReply(mach_port_t clientPort, uint32_t pluginID,
     return KERN_SUCCESS;
 }
 
-kern_return_t WKPCInstantiatePluginReply(mach_port_t clientPort, uint32_t pluginID, uint32_t requestID, kern_return_t result, uint32_t renderContextID, boolean_t useSoftwareRenderer)
+kern_return_t WKPCInstantiatePluginReply(mach_port_t clientPort, uint32_t pluginID, uint32_t requestID, kern_return_t result, uint32_t renderContextID, uint32_t rendererType)
 {
     NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
     if (!hostProxy)
@@ -509,7 +509,7 @@ kern_return_t WKPCInstantiatePluginReply(mach_port_t clientPort, uint32_t plugin
     if (!instanceProxy)
         return KERN_FAILURE;
 
-    instanceProxy->setCurrentReply(requestID, new NetscapePluginInstanceProxy::InstantiatePluginReply(result, renderContextID, useSoftwareRenderer));
+    instanceProxy->setCurrentReply(requestID, new NetscapePluginInstanceProxy::InstantiatePluginReply(result, renderContextID, static_cast<RendererType>(rendererType)));
     return KERN_SUCCESS;
 }
 

@@ -75,8 +75,8 @@ public:
     uint32_t renderContextID() const { ASSERT(fastMallocSize(this)); return m_renderContextID; }
     void setRenderContextID(uint32_t renderContextID) { m_renderContextID = renderContextID; }
     
-    bool useSoftwareRenderer() const { return m_useSoftwareRenderer; }
-    void setUseSoftwareRenderer(bool useSoftwareRenderer) { m_useSoftwareRenderer = useSoftwareRenderer; }
+    RendererType rendererType() const { return m_rendererType; }
+    void setRendererType(RendererType rendererType) { m_rendererType = rendererType; }
     
     WebHostedNetscapePluginView *pluginView() const { ASSERT(fastMallocSize(this)); return m_pluginView; }
     NetscapePluginHostProxy* hostProxy() const { ASSERT(fastMallocSize(this)); return m_pluginHostProxy; }
@@ -197,17 +197,17 @@ public:
     struct InstantiatePluginReply : public Reply {
         static const int ReplyType = InstantiatePlugin;
         
-        InstantiatePluginReply(kern_return_t resultCode, uint32_t renderContextID, boolean_t useSoftwareRenderer)
+        InstantiatePluginReply(kern_return_t resultCode, uint32_t renderContextID, RendererType rendererType)
             : Reply(InstantiatePlugin)
             , m_resultCode(resultCode)
             , m_renderContextID(renderContextID)
-            , m_useSoftwareRenderer(useSoftwareRenderer)
+            , m_rendererType(rendererType)
         {
         }
                  
         kern_return_t m_resultCode;
         uint32_t m_renderContextID;
-        boolean_t m_useSoftwareRenderer;
+        RendererType m_rendererType;
     };
 
     struct GetScriptableNPObjectReply : public Reply {
@@ -300,7 +300,7 @@ private:
     
     uint32_t m_pluginID;
     uint32_t m_renderContextID;
-    boolean_t m_useSoftwareRenderer;
+    RendererType m_rendererType;
     
     bool m_waitingForReply;
     HashMap<uint32_t, Reply*> m_replies;

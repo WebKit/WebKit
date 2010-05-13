@@ -115,12 +115,12 @@ extern "C" {
     if (!_proxy) 
         return NO;
 
-    if (_proxy->useSoftwareRenderer())
+    if (_proxy->rendererType() == UseSoftwareRenderer)
         _softwareRenderer = WKSoftwareCARendererCreate(_proxy->renderContextID());
     else {
         _pluginLayer = WKMakeRenderLayer(_proxy->renderContextID());
 
-        if (accleratedCompositingEnabled)
+        if (accleratedCompositingEnabled && _proxy->rendererType() == UseAcceleratedCompositing)
             [self element]->setNeedsStyleRecalc(SyntheticStyleChange);
         else
             self.wantsLayer = YES;
