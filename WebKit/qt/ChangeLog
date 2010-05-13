@@ -1,3 +1,19 @@
+2010-05-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] REGRESSION(r58497) tst_QGraphicsWebView::crashOnViewlessWebPages() is failing
+        https://bugs.webkit.org/show_bug.cgi?id=38655
+
+        Fix double free by moving the connect till after the resize.
+
+        The bug is causes by the fact that a resize of an empty page causes a
+        layout, thus deleting the qgraphicswebview before setHtml is called,
+        which then deletes it again, causing a double free.
+
+        * tests/qgraphicswebview/tst_qgraphicswebview.cpp:
+        (tst_QGraphicsWebView::crashOnViewlessWebPages):
+
 2010-05-12  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Laszlo Gombos.

@@ -84,15 +84,18 @@ void tst_QGraphicsWebView::crashOnViewlessWebPages()
     WebPage* page = new WebPage;
     webView->setPage(page);
     page->webView = webView;
-    connect(page->mainFrame(), SIGNAL(initialLayoutCompleted()), page, SLOT(aborting()));
-
     scene.addItem(webView);
 
     view.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     view.resize(600, 480);
     webView->resize(view.geometry().size());
+
     QCoreApplication::processEvents();
     view.show();
+
+    // Resizing the page will resize and layout the empty "about:blank"
+    // page, so we first connect the signal afterward.
+    connect(page->mainFrame(), SIGNAL(initialLayoutCompleted()), page, SLOT(aborting()));
 
     page->mainFrame()->setHtml(QString("data:text/html,"
                                             "<frameset cols=\"25%,75%\">"
@@ -101,6 +104,7 @@ void tst_QGraphicsWebView::crashOnViewlessWebPages()
                                             "</frameset>"));
 
     QVERIFY(waitForSignal(page, SIGNAL(loadFinished(bool))));
+    delete page;
 }
 
 void tst_QGraphicsWebView::microFocusCoordinates()
