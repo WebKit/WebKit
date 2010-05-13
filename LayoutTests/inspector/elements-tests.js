@@ -54,7 +54,7 @@ function frontend_dumpSelectedElementStyles(testController)
     testController.notifyDone(frontend_getSelectedElementStyles(false));
 }
 
-function frontend_getSelectedElementStyles(excludeComputed)
+function frontend_getSelectedElementStyles(excludeComputed, excludeMatched)
 {
     var result = [];
     var styleSections = WebInspector.panels.elements.sidebarPanes.styles.sections;
@@ -64,6 +64,8 @@ function frontend_getSelectedElementStyles(excludeComputed)
         for (var i = 0; i < sections.length; ++i) {
             var section = sections[i];
             if (section.computedStyle && excludeComputed)
+                continue;
+            if (section.rule && excludeMatched)
                 continue;
             if (section.element.previousSibling && section.element.previousSibling.className === "styles-sidebar-separator")
                 result.push("======== " + section.element.previousSibling.textContent + " ========");

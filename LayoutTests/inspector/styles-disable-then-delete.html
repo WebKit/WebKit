@@ -31,38 +31,50 @@ function frontend_disableContainerStyle(testController)
 {
     var treeItem = frontend_getElementStylePropertyTreeItem("font-weight");
     testController.results.push("Before disable");
-    frontend_dumpStyleTreeItem(treeItem, testController.results, "");
+    testController.results = testController.results.concat(frontend_getSelectedElementStyles(true, true));
 
     treeItem.toggleEnabled({ target: { checked: false } });
-    testController.runAfterPendingDispatches(frontend_enableContainerStyle.bind(this, testController));
+    testController.runAfterPendingDispatches(frontend_deleteContainerStyle.bind(this, testController));
 }
 
-function frontend_enableContainerStyle(testController)
+function frontend_deleteContainerStyle(testController)
 {
     var treeItem = frontend_getElementStylePropertyTreeItem("font-weight");
     testController.results.push("After disable");
-    frontend_dumpStyleTreeItem(treeItem, testController.results, "");
+    testController.results = testController.results.concat(frontend_getSelectedElementStyles(true, true));
 
-    treeItem.toggleEnabled({ target: { checked: true } });
-    testController.runAfterPendingDispatches(frontend_dumpResults.bind(this, testController));
+    treeItem.applyStyleText("", true);
+    testController.runAfterPendingDispatches(frontend_reselectNodeAndDumpResults.bind(this, testController));
+}
+
+function frontend_reselectNodeAndDumpResults(testController)
+{
+    function continuation()
+    {
+        frontend_selectElementAndRun(testController, "container", frontend_dumpResults);
+    }
+    frontend_selectElementAndRun(testController, "other", continuation);
 }
 
 function frontend_dumpResults(testController)
 {
     var treeItem = frontend_getElementStylePropertyTreeItem("font-weight");
-    testController.results.push("After enable");
-    frontend_dumpStyleTreeItem(treeItem, testController.results, "");
-    testController.notifyDone(testController.results);
+    testController.results.push("After delete");
+    testController.results = testController.results.concat(frontend_getSelectedElementStyles(true, true));
+    testController.notifyDone();
 }
 </script>
 </head>
 
 <body onload="onload()">
 <p>
-Tests that disabling style property works.
+Tests that removal of property following its disabling works.
 </p>
 
 <div id="container" style="font-weight:bold">
+</div>
+
+<div id="other">
 </div>
 
 </body>

@@ -32,6 +32,7 @@ WebInspector.TestController = function(callId)
 {
     this._callId = callId;
     this._waitUntilDone = false;
+    this.results = [];
 }
 
 WebInspector.TestController.prototype = {
@@ -42,6 +43,8 @@ WebInspector.TestController.prototype = {
 
     notifyDone: function(result)
     {
+        if (typeof result === "undefined" && this.results.length)
+            result = this.results;
         var message = typeof result === "undefined" ? "\"<undefined>\"" : JSON.stringify(result);
         InspectorBackend.didEvaluateForTestInFrontend(this._callId, message);
     },
