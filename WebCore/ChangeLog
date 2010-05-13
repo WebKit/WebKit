@@ -1,3 +1,47 @@
+2010-05-12  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Alias WebGLArray type names to TypedArray type names
+        https://bugs.webkit.org/show_bug.cgi?id=39036
+
+        Exposed the existing WebGL<T>Array constructor functions on the
+        DOMWindow under the naming convention in the TypedArray spec. The
+        implementations will be renamed in a subsequent bug, and the
+        aliases to the WebGL<T>Array type names eventually removed. Ran
+        all WebGL layout tests in Safari and Chromium.
+
+        Test: revised array-unit-tests.html to test both type names.
+
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::arrayBufferEnabled):
+        (WebCore::RuntimeEnabledFeatures::int8ArrayEnabled):
+        (WebCore::RuntimeEnabledFeatures::uint8ArrayEnabled):
+        (WebCore::RuntimeEnabledFeatures::int16ArrayEnabled):
+        (WebCore::RuntimeEnabledFeatures::uint16ArrayEnabled):
+        (WebCore::RuntimeEnabledFeatures::int32ArrayEnabled):
+        (WebCore::RuntimeEnabledFeatures::uint32ArrayEnabled):
+        (WebCore::RuntimeEnabledFeatures::floatArrayEnabled):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::arrayBuffer):
+        (WebCore::JSDOMWindow::int8Array):
+        (WebCore::JSDOMWindow::uint8Array):
+        (WebCore::JSDOMWindow::int32Array):
+        (WebCore::JSDOMWindow::uint32Array):
+        (WebCore::JSDOMWindow::int16Array):
+        (WebCore::JSDOMWindow::uint16Array):
+        (WebCore::JSDOMWindow::floatArray):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::ArrayBufferAccessorGetter):
+        (WebCore::V8DOMWindow::Int8ArrayAccessorGetter):
+        (WebCore::V8DOMWindow::Uint8ArrayAccessorGetter):
+        (WebCore::V8DOMWindow::Int16ArrayAccessorGetter):
+        (WebCore::V8DOMWindow::Uint16ArrayAccessorGetter):
+        (WebCore::V8DOMWindow::Int32ArrayAccessorGetter):
+        (WebCore::V8DOMWindow::Uint32ArrayAccessorGetter):
+        (WebCore::V8DOMWindow::FloatArrayAccessorGetter):
+        * page/DOMWindow.idl:
+
 2010-05-13  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John Sullivan.
