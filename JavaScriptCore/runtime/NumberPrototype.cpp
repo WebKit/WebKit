@@ -143,15 +143,34 @@ JSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec, JSObject*, JSValu
     if (!v)
         return throwError(exec, TypeError);
 
-    double radixAsDouble = args.at(0).toInteger(exec); // nan -> 0
-    if (radixAsDouble == 10 || args.at(0).isUndefined())
+    JSValue radixValue = args.at(0);
+    int radix;
+    if (radixValue.isInt32())
+        radix = radixValue.asInt32();
+    else if (radixValue.isUndefined())
+        radix = 10;
+    else
+        radix = static_cast<int>(radixValue.toInteger(exec)); // nan -> 0
+
+    if (radix == 10)
         return jsString(exec, v.toString(exec));
 
-    if (radixAsDouble < 2 || radixAsDouble > 36)
+    static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+
+    // Fast path for number to character conversion.
+    if (radix == 36) {
+        if (v.isInt32()) {
+            int x = v.asInt32();
+            if (x < 36) {
+                JSGlobalData* globalData = &exec->globalData();
+                return globalData->smallStrings.singleCharacterString(globalData, digits[x]);
+            }
+        }
+    }
+
+    if (radix < 2 || radix > 36)
         return throwError(exec, RangeError, "toString() radix argument must be between 2 and 36");
 
-    int radix = static_cast<int>(radixAsDouble);
-    const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
     // INT_MAX results in 1024 characters left of the dot with radix 2
     // give the same space on the right side. safety checks are in place
     // unless someone finds a precise rule.
