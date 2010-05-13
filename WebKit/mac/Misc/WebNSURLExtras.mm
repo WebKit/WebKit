@@ -1050,6 +1050,41 @@ static BOOL allCharactersInIDNScriptWhiteList(const UChar *buffer, int32_t lengt
     return YES;
 }
 
+static BOOL allCharactersAllowedByTLDRules(const UChar* buffer, int32_t length)
+{
+    // Skip trailing dot for root domain.
+    if (buffer[length - 1] == '.')
+        --length;
+
+    if (length > 3
+        && buffer[length - 3] == '.'
+        && buffer[length - 2] == 0x0440 // CYRILLIC SMALL LETTER ER
+        && buffer[length - 1] == 0x0444) // CYRILLIC SMALL LETTER EF
+    {
+        // Rules defined by <http://www.cctld.ru/ru/docs/rulesrf.php>. This code only checks requirements that matter for presentation purposes.
+        for (int32_t i = length - 4; i; --i) {
+            UChar ch = buffer[i];
+
+            // Only modern Russian letters, digits and dashes are allowed.
+            if ((ch >= 0x0430 && ch <= 0x044f)
+                || ch == 0x0451
+                || (ch >= '0' && ch <= '9')
+                || ch == '-')
+                continue;
+
+            // Only check top level domain. Lower level registrars may have different rules.
+            if (ch == '.')
+                break;
+
+            return NO;
+        }
+        return YES;
+    }
+
+    // Not a known top level domain with special rules.
+    return NO;
+}
+
 // Return value of nil means no mapping is necessary.
 // If makeString is NO, then return value is either nil or self to indicate mapping is necessary.
 // If makeString is YES, then return value is either nil or the mapped string.
@@ -1087,7 +1122,7 @@ static BOOL allCharactersInIDNScriptWhiteList(const UChar *buffer, int32_t lengt
     if (numCharactersConverted == length && memcmp(sourceBuffer, destinationBuffer, length * sizeof(UChar)) == 0) {
         return nil;
     }
-    if (!encode && !allCharactersInIDNScriptWhiteList(destinationBuffer, numCharactersConverted)) {
+    if (!encode && !allCharactersInIDNScriptWhiteList(destinationBuffer, numCharactersConverted) && !allCharactersAllowedByTLDRules(destinationBuffer, numCharactersConverted)) {
         return nil;
     }
     return makeString ? (NSString *)[NSString stringWithCharacters:destinationBuffer length:numCharactersConverted] : (NSString *)self;
