@@ -46,10 +46,12 @@ function frontend_dumpAllElements(testController)
 {
     testController.waitUntilDone();
     // Need test to be async to expand whole the tree first.
-    frontend_expandDOMSubtree(WebInspector.domAgent.document);
-    testController.runAfterPendingDispatches(function() {
-        testController.notifyDone(WebInspector.mainResource.mimeType + " " + WebInspector.panels.elements.treeOutline.element.textContent);
-    });
+    frontend_expandDOMSubtreeAndRun(testController, null, frontend_reportMimeTypeAndContent);
+}
+
+function frontend_reportMimeTypeAndContent(testController)
+{
+    testController.notifyDone(WebInspector.mainResource.mimeType + " " + WebInspector.panels.elements.treeOutline.element.textContent);
 }
 
 function frontend_expandNodes(testController)
@@ -91,10 +93,7 @@ function frontend_loadDOM(testController)
     testController.waitUntilDone();
     // Need test to be async to expand whole the tree first.
     try {
-        frontend_expandDOMSubtree(WebInspector.domAgent.document);
-        testController.runAfterPendingDispatches(function() {
-            testController.notifyDone("");
-        });
+        frontend_expandDOMSubtreeAndRun(testController, null, testController.notifyDone.bind(testController, ""));
     } catch(e) {
         testController.notifyDone("loadDOM: " + e);
     }

@@ -25,10 +25,7 @@ function frontend_testRewriteHrefs(testController)
 {
     testController.waitUntilDone();
     // Need test to be async to expand whole the tree first.
-    frontend_expandDOMSubtree(WebInspector.domAgent.document);
-    testController.runAfterPendingDispatches(function() {
-        frontend_testRewriteHrefsContinuation(testController);
-    });
+    frontend_expandDOMSubtreeAndRun(testController, null, frontend_testRewriteHrefsContinuation);
 }
 
 function frontend_testRewriteHrefsContinuation(testController)

@@ -129,10 +129,7 @@ function frontend_loadDOM(testController)
     testController.waitUntilDone();
     // Need test to be async to expand whole the tree first.
     try {
-        frontend_expandDOMSubtree(WebInspector.domAgent.document);
-        testController.runAfterPendingDispatches(function() {
-            testController.notifyDone("");
-        });
+        frontend_expandDOMSubtreeAndRun(testController, null, testController.notifyDone.bind(testController, ""));
     } catch(e) {
         testController.notifyDone("loadDOM: " + e);
     }
