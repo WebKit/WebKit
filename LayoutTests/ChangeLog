@@ -1,3 +1,14 @@
+2010-05-13  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Two forms tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=31435
+
+        Unskip passing tests.
+
+        * platform/gtk/Skipped: Unskip these tests, because they are passing now.
+
 2010-05-13  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Chromium build fix. Partially rever r59277 which updated Chromium's expectations
