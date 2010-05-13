@@ -1,5 +1,19 @@
 2010-05-12  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59192.
+
+    2010-05-11  Jer Noble  <jer.noble@apple.com>
+
+        No Review.
+        
+        Fix the Windows Debug Build: the correct VCProj variable to use when linking against
+        JavaScriptCore is $(WebKitDLLConfigSuffix), not $(WebKitConfigSuffix), which expands
+        to an empty string rather than "_debug".
+        
+        * WebCore.vcproj/QTMovieWin.vcproj:
+
+2010-05-12  Mark Rowe  <mrowe@apple.com>
+
         Merge r59190.
 
     2010-05-11  Jer Noble  <jer.noble@apple.com>
