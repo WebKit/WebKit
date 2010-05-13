@@ -601,8 +601,10 @@ void MediaPlayerPrivate::prepareToPlay()
 
 PlatformMedia MediaPlayerPrivate::platformMedia() const
 {
-    PlatformMedia plaftformMedia = { m_qtMovie.get() };
-    return plaftformMedia;
+    PlatformMedia pm;
+    pm.type = PlatformMedia::QTMovieType;
+    pm.media.qtMovie = m_qtMovie.get();
+    return pm;
 }
 
 #if USE(ACCELERATED_COMPOSITING)

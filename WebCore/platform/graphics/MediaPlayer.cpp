@@ -63,6 +63,8 @@
 
 namespace WebCore {
 
+const PlatformMedia NoPlatformMedia = { PlatformMedia::None, {0} };
+
 // a null player to make MediaPlayer logic simpler
 
 class NullMediaPlayerPrivate : public MediaPlayerPrivateInterface {

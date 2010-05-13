@@ -93,8 +93,8 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
     QTMovieLayer *layer = [[getQTMovieLayerClass() alloc] init];
     [[window contentView] setLayer:layer];
     [[window contentView] setWantsLayer:YES];
-    if (_mediaElement)
-        [layer setMovie:_mediaElement->platformMedia().qtMovie];
+    if (_mediaElement && _mediaElement->platformMedia().type == WebCore::PlatformMedia::QTMovieType)
+        [layer setMovie:_mediaElement->platformMedia().media.qtMovie];
     [window setHasShadow:YES]; // This is nicer with a shadow.
     [window setLevel:NSPopUpMenuWindowLevel-1];
     [layer release];
@@ -114,7 +114,7 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
 #else
     _mediaElement = mediaElement;
     if ([self isWindowLoaded]) {
-        QTMovie *movie = _mediaElement->platformMedia().qtMovie;
+        QTMovie *movie = _mediaElement->platformMedia().type == WebCore::PlatformMedia::QTMovieType ? _mediaElement->platformMedia().media.qtMovie : 0;
         QTMovieLayer *movieLayer = (QTMovieLayer *)[[[self fullscreenWindow] contentView] layer];
 
         ASSERT(movieLayer && [movieLayer isKindOfClass:[getQTMovieLayerClass() class]]);
