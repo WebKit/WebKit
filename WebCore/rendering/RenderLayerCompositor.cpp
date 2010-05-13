@@ -774,12 +774,22 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, cons
     }
 }
 
-void RenderLayerCompositor::setRootPlatformLayerClippingBox(const IntRect& contentsBox)
+void RenderLayerCompositor::updateContentLayerOffset(const IntPoint& contentsOffset)
 {
-    if (m_clippingLayer) {
-        m_clippingLayer->setPosition(FloatPoint(contentsBox.x(), contentsBox.y()));
-        m_clippingLayer->setSize(FloatSize(contentsBox.width(), contentsBox.height()));
+    if (m_clipLayer) {
+        FrameView* frameView = m_renderView->frameView();
+        m_clipLayer->setPosition(contentsOffset);
+        m_clipLayer->setSize(FloatSize(frameView->layoutWidth(), frameView->layoutHeight()));
+
+        IntPoint scrollPosition = frameView->scrollPosition();
+        m_scrollLayer->setPosition(FloatPoint(-scrollPosition.x(), -scrollPosition.y()));
     }
+}
+
+void RenderLayerCompositor::updateContentLayerScrollPosition(const IntPoint& scrollPosition)
+{
+    if (m_scrollLayer)
+        m_scrollLayer->setPosition(FloatPoint(-scrollPosition.x(), -scrollPosition.y()));
 }
 
 RenderLayerCompositor* RenderLayerCompositor::iframeContentsCompositor(RenderIFrame* renderer)
@@ -965,7 +975,7 @@ RenderLayer* RenderLayerCompositor::rootRenderLayer() const
 
 GraphicsLayer* RenderLayerCompositor::rootPlatformLayer() const
 {
-    return m_clippingLayer ? m_clippingLayer.get() : m_rootPlatformLayer.get();
+    return m_clipLayer ? m_clipLayer.get() : m_rootPlatformLayer.get();
 }
 
 void RenderLayerCompositor::didMoveOnscreen()
@@ -1237,19 +1247,32 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
     m_rootPlatformLayer->setGeometryOrientation(expectedAttachment == RootLayerAttachedViaEnclosingIframe ? GraphicsLayer::CompositingCoordinatesTopDown : GraphicsLayer::compositingCoordinatesOrientation());
     
     if (expectedAttachment == RootLayerAttachedViaEnclosingIframe) {
-        if (!m_clippingLayer) {
+        if (!m_clipLayer) {
+            ASSERT(!m_scrollLayer);
             // Create a clipping layer if this is an iframe
-            m_clippingLayer = GraphicsLayer::create(0);
+            m_clipLayer = GraphicsLayer::create(0);
 #ifndef NDEBUG
-            m_clippingLayer->setName("iframe Clipping");
+            m_clipLayer->setName("iframe Clipping");
 #endif
-            m_clippingLayer->setMasksToBounds(true);
-            m_clippingLayer->addChild(m_rootPlatformLayer.get());
+            m_clipLayer->setMasksToBounds(true);
+            
+            m_scrollLayer = GraphicsLayer::create(0);
+#ifndef NDEBUG
+            m_scrollLayer->setName("iframe scrolling");
+#endif
+            // Hook them up
+            m_clipLayer->addChild(m_scrollLayer.get());
+            m_scrollLayer->addChild(m_rootPlatformLayer.get());
+            
+            updateContentLayerScrollPosition(m_renderView->frameView()->scrollPosition());
         }
-    } else if (m_clippingLayer) {
-        m_clippingLayer->removeAllChildren();
-        m_clippingLayer->removeFromParent();
-        m_clippingLayer = 0;
+    } else if (m_clipLayer) {
+        m_clipLayer->removeAllChildren();
+        m_clipLayer->removeFromParent();
+        m_clipLayer = 0;
+        
+        m_scrollLayer->removeAllChildren();
+        m_scrollLayer = 0;
     }
 
     // Check to see if we have to change the attachment
@@ -1265,10 +1288,14 @@ void RenderLayerCompositor::destroyRootPlatformLayer()
         return;
 
     detachRootPlatformLayer();
-    if (m_clippingLayer) {
-        m_clippingLayer->removeAllChildren();
-        m_clippingLayer = 0;
+    if (m_clipLayer) {
+        m_clipLayer->removeAllChildren();
+        m_clipLayer = 0;
+        
+        m_scrollLayer->removeAllChildren();
+        m_scrollLayer = 0;
     }
+    ASSERT(!m_scrollLayer);
     m_rootPlatformLayer = 0;
 }
 
@@ -1311,8 +1338,8 @@ void RenderLayerCompositor::detachRootPlatformLayer()
         case RootLayerAttachedViaEnclosingIframe: {
             // The layer will get unhooked up via RenderLayerBacking::updateGraphicsLayerConfiguration()
             // for the iframe's renderer in the parent document.
-            if (m_clippingLayer)
-                m_clippingLayer->removeFromParent();
+            if (m_clipLayer)
+                m_clipLayer->removeFromParent();
             else
                 m_rootPlatformLayer->removeFromParent();
 

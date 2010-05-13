@@ -1,3 +1,26 @@
+2010-05-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fix scrolling in composited iframes
+        https://bugs.webkit.org/show_bug.cgi?id=39088
+        <rdar://problem/7980099>
+        
+        Update test results to account for insertion of new scrolling layer, and for
+        the fix to the clipping layer size.
+
+        * compositing/iframes/composited-parent-iframe-expected.txt:
+        * compositing/iframes/connect-compositing-iframe-delayed-expected.txt:
+        * compositing/iframes/connect-compositing-iframe-expected.txt:
+        * compositing/iframes/connect-compositing-iframe2-expected.txt:
+        * compositing/iframes/connect-compositing-iframe3-expected.txt:
+        * compositing/iframes/enter-compositing-iframe-expected.txt:
+        * compositing/iframes/iframe-resize-expected.txt:
+        * compositing/iframes/overlapped-iframe-expected.txt:
+        * compositing/iframes/resources/large-composited-subframe.html: Added.
+        * compositing/iframes/scrolling-iframe-expected.txt: Added.
+        * compositing/iframes/scrolling-iframe.html: Added.
+
 2010-05-13  Martin Robinson  <mrobinson@igalia.com>
 
         No review. Adding baselines for many of the css1 tests. I've checked these manually.

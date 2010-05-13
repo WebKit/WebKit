@@ -1,3 +1,35 @@
+2010-05-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fix scrolling in composited iframes
+        https://bugs.webkit.org/show_bug.cgi?id=39088
+        <rdar://problem/7980099>
+        
+        When propagating compositing out of iframes, we have to update the position of the iframe content
+        layers on scrolling.
+
+        Test: compositing/iframes/scrolling-iframe.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollPositionChanged): Call updateContentLayerScrollPosition() when scrolling.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry): Renamed setRootPlatformLayerClippingBox() to updateContentLayerOffset().
+
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderLayerCompositor.cpp: Rename m_clippingLayer to m_clipLayer to go better with m_scrollLayer.
+        (WebCore::RenderLayerCompositor::updateContentLayerOffset): Renamed from setRootPlatformLayerClippingBox().
+            Set the size of the clipping layer from the FrameView now, so that scrollbars are not clipped out.
+            Update the scroll layer position too.
+        (WebCore::RenderLayerCompositor::updateContentLayerScrollPosition): Set the position of the scroll layer
+            when the ScrollView is scrolled.
+        (WebCore::RenderLayerCompositor::rootPlatformLayer): m_clippingLayer rename.
+        (WebCore::RenderLayerCompositor::ensureRootPlatformLayer): m_clippingLayer rename. Also create m_scrollLayer at
+            the same time as the clip layer, and clean it up as necessary.
+        (WebCore::RenderLayerCompositor::destroyRootPlatformLayer): m_clippingLayer rename, and clean up the m_scrollLayer too.
+        (WebCore::RenderLayerCompositor::detachRootPlatformLayer): m_clippingLayer rename
+
 2010-05-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

@@ -1047,6 +1047,13 @@ void FrameView::scrollPositionChanged()
 #endif
         }
     }
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (RenderView* root = m_frame->contentRenderer()) {
+        if (root->usesCompositing())
+            root->compositor()->updateContentLayerScrollPosition(scrollPosition());
+    }
+#endif
 }
 
 HostWindow* FrameView::hostWindow() const
