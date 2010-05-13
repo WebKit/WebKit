@@ -59,7 +59,7 @@ class RunTests(AbstractStep):
             args.append("--exit-after-n-failures=1")
             # FIXME: Hack to work around https://bugs.webkit.org/show_bug.cgi?id=38912
             # when running the commit-queue on a mac leopard machine.
-            if self.port().name() == "mac" and self.port().is_leopard():
+            if self.port().name() == "Mac" and self.port().is_leopard():
                 args.extend(["--ignore-tests", "compositing/iframes"])
 
         if self._options.quiet:
