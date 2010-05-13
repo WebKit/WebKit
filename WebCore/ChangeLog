@@ -1,5 +1,17 @@
 2010-05-12  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59009.
+
+    2010-05-08  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed, just fixing windows build.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.h: Add #if USE(ACCELERATED_COMPOSITING) guards around GraphicsLayer areas of the code.  Include GraphicsLayer.h directly.
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp: As above.
+        * platform/graphics/win/QTMovieVisualContext.cpp: Remove the #include of d3d9types.h.
+
+2010-05-12  Mark Rowe  <mrowe@apple.com>
+
         Merge r59001.
 
     2010-05-04  Jer Noble  <jer.noble@apple.com>
