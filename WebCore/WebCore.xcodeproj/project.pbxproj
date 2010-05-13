@@ -4206,6 +4206,8 @@
 		B59DD6AA11902A71007E9684 /* JSSQLStatementErrorCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B59DD6A811902A71007E9684 /* JSSQLStatementErrorCallback.cpp */; };
 		B5A684220FFABE9800D24689 /* SQLiteFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B5A684210FFABE9800D24689 /* SQLiteFileSystem.h */; };
 		B5A684240FFABEAA00D24689 /* SQLiteFileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5A684230FFABEAA00D24689 /* SQLiteFileSystem.cpp */; };
+		B5B5DC69119BB3D5002A8790 /* AbstractDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5B5DC67119BB3D5002A8790 /* AbstractDatabase.cpp */; };
+		B5B5DC6A119BB3D5002A8790 /* AbstractDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = B5B5DC68119BB3D5002A8790 /* AbstractDatabase.h */; };
 		B5C1123B102B6C4600096578 /* SQLTransactionCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5C11239102B6C4600096578 /* SQLTransactionCoordinator.cpp */; };
 		B5C1123C102B6C4600096578 /* SQLTransactionCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = B5C1123A102B6C4600096578 /* SQLTransactionCoordinator.h */; };
 		B5D3601A112F8B560048DEA8 /* DatabaseCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B5D36019112F8B560048DEA8 /* DatabaseCallback.h */; };
@@ -9629,6 +9631,8 @@
 		B59DD6A811902A71007E9684 /* JSSQLStatementErrorCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLStatementErrorCallback.cpp; sourceTree = "<group>"; };
 		B5A684210FFABE9800D24689 /* SQLiteFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLiteFileSystem.h; path = sql/SQLiteFileSystem.h; sourceTree = "<group>"; };
 		B5A684230FFABEAA00D24689 /* SQLiteFileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLiteFileSystem.cpp; path = sql/SQLiteFileSystem.cpp; sourceTree = "<group>"; };
+		B5B5DC67119BB3D5002A8790 /* AbstractDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractDatabase.cpp; sourceTree = "<group>"; };
+		B5B5DC68119BB3D5002A8790 /* AbstractDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractDatabase.h; sourceTree = "<group>"; };
 		B5C11239102B6C4600096578 /* SQLTransactionCoordinator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLTransactionCoordinator.cpp; sourceTree = "<group>"; };
 		B5C1123A102B6C4600096578 /* SQLTransactionCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransactionCoordinator.h; sourceTree = "<group>"; };
 		B5D36019112F8B560048DEA8 /* DatabaseCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseCallback.h; sourceTree = "<group>"; };
@@ -10879,6 +10883,8 @@
 		1AE82EC90CAAE177002237AE /* storage */ = {
 			isa = PBXGroup;
 			children = (
+				B5B5DC67119BB3D5002A8790 /* AbstractDatabase.cpp */,
+				B5B5DC68119BB3D5002A8790 /* AbstractDatabase.h */,
 				514185ED0CD65F0400763C99 /* ChangeVersionWrapper.cpp */,
 				514185EC0CD65F0400763C99 /* ChangeVersionWrapper.h */,
 				5196115E0CAC56570010A80C /* Database.cpp */,
@@ -19157,6 +19163,7 @@
 				2E94F43C119207DA00B7F75D /* JSFileReader.h in Headers */,
 				2E94F4511192096A00B7F75D /* FileReader.h in Headers */,
 				E440A2D71191A523000820B0 /* SVGFELighting.h in Headers */,
+				B5B5DC6A119BB3D5002A8790 /* AbstractDatabase.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21425,6 +21432,7 @@
 				2E94F43B119207DA00B7F75D /* JSFileReader.cpp in Sources */,
 				2E94F4501192096400B7F75D /* FileReader.cpp in Sources */,
 				E440A2D51191A50B000820B0 /* SVGFELighting.cpp in Sources */,
+				B5B5DC69119BB3D5002A8790 /* AbstractDatabase.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

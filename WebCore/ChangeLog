@@ -1,3 +1,18 @@
+2010-05-12  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add the parent class for Database and DatabaseSync.
+        https://bugs.webkit.org/show_bug.cgi?id=39041
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * storage/AbstractDatabase.cpp: Added.
+        * storage/AbstractDatabase.h: Added.
+
 2010-05-12  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

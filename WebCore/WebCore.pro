@@ -2282,6 +2282,7 @@ contains(DEFINES, ENABLE_SQLITE=1) {
         platform/sql/SQLiteStatement.cpp \
         platform/sql/SQLiteTransaction.cpp \
         platform/sql/SQLValue.cpp \
+        storage/AbstractDatabase.cpp \
         storage/Database.cpp \
         storage/DatabaseAuthorizer.cpp \
         storage/DatabaseSync.cpp
@@ -2335,6 +2336,7 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
 
 contains(DEFINES, ENABLE_DOM_STORAGE=1) {
     HEADERS += \
+        storage/AbstractDatabase.h \
         storage/ChangeVersionWrapper.h \
         storage/DatabaseAuthorizer.h \
         storage/Database.h \

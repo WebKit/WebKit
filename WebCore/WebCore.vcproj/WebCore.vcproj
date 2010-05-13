@@ -43249,6 +43249,14 @@
 			Name="storage"
 			>
 			<File
+				RelativePath="..\storage\AbstractDatabase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\AbstractDatabase.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\ChangeVersionWrapper.cpp"
 				>
 			</File>

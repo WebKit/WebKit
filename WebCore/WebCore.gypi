@@ -3297,6 +3297,8 @@
             'rendering/TransformState.h',
             'rendering/break_lines.cpp',
             'rendering/break_lines.h',
+            'storage/AbstractDatabase.cpp',
+            'storage/AbstractDatabase.h',
             'storage/ChangeVersionWrapper.cpp',
             'storage/ChangeVersionWrapper.h',
             'storage/chromium/DatabaseObserver.h',

@@ -2341,6 +2341,8 @@ webcore_sources += \
 	WebCore/platform/sql/SQLiteStatement.h \
 	WebCore/platform/sql/SQLiteTransaction.cpp \
 	WebCore/platform/sql/SQLiteTransaction.h \
+	WebCore/storage/AbstractDatabase.cpp \
+	WebCore/storage/AbstractDatabase.h \
 	WebCore/storage/ChangeVersionWrapper.cpp \
 	WebCore/storage/ChangeVersionWrapper.h \
 	WebCore/storage/Database.cpp \
