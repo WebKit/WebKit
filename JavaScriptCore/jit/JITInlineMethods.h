@@ -820,15 +820,6 @@ ALWAYS_INLINE void JIT::emitFastArithReTagImmediate(RegisterID src, RegisterID d
 #endif
 }
 
-ALWAYS_INLINE void JIT::emitFastArithImmToInt(RegisterID reg)
-{
-#if USE(JSVALUE64)
-    UNUSED_PARAM(reg);
-#else
-    rshift32(Imm32(JSImmediate::IntegerPayloadShift), reg);
-#endif
-}
-
 // operand is int32_t, must have been zero-extended if register is 64-bit.
 ALWAYS_INLINE void JIT::emitFastArithIntToImmNoCheck(RegisterID src, RegisterID dest)
 {
