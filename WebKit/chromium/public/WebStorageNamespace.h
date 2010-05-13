@@ -50,12 +50,6 @@ public:
     WEBKIT_API static WebStorageNamespace* createLocalStorageNamespace(const WebString& backingDirectoryPath, unsigned quota);
     WEBKIT_API static WebStorageNamespace* createSessionStorageNamespace(unsigned quota);
 
-    // FIXME: Remove this when Chromium is rolled and all callers pass the quota argument.
-    WEBKIT_API static WebStorageNamespace* createSessionStorageNamespace()
-    {
-        return createSessionStorageNamespace(noQuota);
-    }
-
     // The quota for each storage area.  Suggested by the spec.
     static const unsigned m_localStorageQuota = 5 * 1024 * 1024;
 
