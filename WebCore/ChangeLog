@@ -1,3 +1,23 @@
+2010-05-13  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Event Markers should be hidden in Resource's "Size" Graph
+        https://bugs.webkit.org/show_bug.cgi?id=39074
+
+        Added Show / Hide event dividers functionality to the timeline grid,
+        and included delegation functions in AbstractTimelinePanel.
+
+        * inspector/front-end/AbstractTimelinePanel.js: delegate to the inner grid
+        (WebInspector.AbstractTimelinePanel.prototype.hideEventDividers):
+        (WebInspector.AbstractTimelinePanel.prototype.showEventDividers):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.populateSidebar): save a reference to the size graph item to know when its selected
+        (WebInspector.ResourcesPanel.prototype._graphSelected): if the size graph is selected hide the dividers, otherwise show them
+        * inspector/front-end/TimelineGrid.js:
+        (WebInspector.TimelineGrid.prototype.hideEventDividers): set the container to display: none
+        (WebInspector.TimelineGrid.prototype.showEventDividers): set the container to display: block
+
 2010-05-13  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

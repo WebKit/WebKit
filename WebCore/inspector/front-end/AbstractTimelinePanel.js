@@ -424,6 +424,16 @@ WebInspector.AbstractTimelinePanel.prototype = {
     addEventDivider: function(divider)
     {
         this._timelineGrid.addEventDivider(divider);
+    },
+
+    hideEventDividers: function()
+    {
+        this._timelineGrid.hideEventDividers();
+    },
+
+    showEventDividers: function()
+    {
+        this._timelineGrid.showEventDividers();
     }
 }
 

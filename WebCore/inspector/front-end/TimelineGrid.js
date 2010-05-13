@@ -148,6 +148,16 @@ WebInspector.TimelineGrid.prototype = {
         this._eventDividersElement.removeChildren();
     },
 
+    hideEventDividers: function()
+    {
+        this._eventDividersElement.addStyleClass("hidden");
+    },
+
+    showEventDividers: function()
+    {
+        this._eventDividersElement.removeStyleClass("hidden");
+    },
+
     setScrollAndDividerTop: function(scrollTop, dividersTop)
     {
         this._dividersElement.style.top = scrollTop + "px";
