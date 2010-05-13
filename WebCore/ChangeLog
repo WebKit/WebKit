@@ -1,3 +1,16 @@
+2010-05-13  Yoshiki Hayashi  <yhayashi@google.com>
+
+        Reviewed by Darin Adler.
+
+        Fix a bug in handleRunInChild where only the first child run-in block
+        is inserted because removeChildNode clears next sibling.
+        https://bugs.webkit.org/show_bug.cgi?id=25047
+
+        Test: fast/css/run-in-children.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::handleRunInChild):
+
 2010-05-13  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.
