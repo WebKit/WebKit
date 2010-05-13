@@ -625,7 +625,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::webViewDidInvalidate(
 HRESULT STDMETHODCALLTYPE UIDelegate::setStatusText(IWebView*, BSTR text)
 { 
     if (gLayoutTestController->dumpStatusCallbacks())
-        printf("UI DELEGATE STATUS CALLBACK: setStatusText:%S\n", text ? text : L"");
+        printf("UI DELEGATE STATUS CALLBACK: setStatusText:%s\n", text ? toUTF8(text).c_str() : "");
     return S_OK;
 }
 

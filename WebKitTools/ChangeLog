@@ -1,3 +1,35 @@
+2010-05-10  Adam Roben  <aroben@apple.com>
+
+        Convert status bar text to UTF-8 before logging it on Windows
+
+        We were previously logging the text using printf("%S", bstr). This
+        converts the UTF-16 BSTR to a multibyte string using wctomb, which
+        uses the codepage for the current locale to perform the conversion.
+        The conversion was failing, causing printf to bail and truncate the
+        string. By converting to UTF-8 manually before logging, we avoid this
+        issue (and also end up with UTF-8 output, which is what the expected
+        results contain). We may have to do this in other places in DRT,
+        eventually.
+
+        Fixes <http://webkit.org/b/38849> REGRESSION (r59016):
+        plugins/set-status.html fails on Windows
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (toUTF8): Moved this here from FrameLoadDelegate. Renamed from
+        BSTRtoString.
+
+        * DumpRenderTree/win/DumpRenderTreeWin.h: Added declaration of toUTF8.
+
+        * DumpRenderTree/win/FrameLoadDelegate.cpp: Removed BSTRtoString.
+        (descriptionSuitableForTestResult): Updated for rename.
+
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::setStatusText): Convert the status bar text to UTF-8
+        before logging it so that Windows won't try (and fail) to convert it
+        to the current locale's codepage.
+
 2010-05-13  Eric Seidel  <eric@webkit.org>
 
         Unreviewed hack, attempting to get the commit-queue running again.

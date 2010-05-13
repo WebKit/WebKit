@@ -48,17 +48,6 @@ using std::string;
 
 static FrameLoadDelegate* g_delegateWaitingOnTimer;
 
-string BSTRtoString(BSTR bstr)
-{
-    int result = WideCharToMultiByte(CP_UTF8, 0, bstr, SysStringLen(bstr) + 1, 0, 0, 0, 0);
-    Vector<char> utf8Vector(result);
-    result = WideCharToMultiByte(CP_UTF8, 0, bstr, SysStringLen(bstr) + 1, utf8Vector.data(), result, 0, 0);
-    if (!result)
-        return string();
-
-    return string(utf8Vector.data(), utf8Vector.size() - 1);
-}
-
 string descriptionSuitableForTestResult(IWebFrame* webFrame)
 {
     COMPtr<IWebView> webView;
@@ -70,11 +59,11 @@ string descriptionSuitableForTestResult(IWebFrame* webFrame)
         return string();
 
     BSTR frameNameBSTR;
-    if (FAILED(webFrame->name(&frameNameBSTR)) || BSTRtoString(frameNameBSTR).empty() )
+    if (FAILED(webFrame->name(&frameNameBSTR)) || toUTF8(frameNameBSTR).empty())
         return (webFrame == mainFrame) ? "main frame" : string();
 
     string frameName = (webFrame == mainFrame) ? "main frame" : "frame";
-    frameName += " \"" + BSTRtoString(frameNameBSTR) + "\""; 
+    frameName += " \"" + toUTF8(frameNameBSTR) + "\""; 
 
     SysFreeString(frameNameBSTR); 
     return frameName;
