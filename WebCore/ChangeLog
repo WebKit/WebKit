@@ -1,3 +1,20 @@
+2010-05-13  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Based on the spec and Philip Taylor's test suite, strokeStyle and fillStyle attributes
+        must initially have the string value #000000.
+        The link to the spec:
+        http://philip.html5.org/tests/canvas/suite/tests/spec.html#testrefs.2d.colours.default
+
+        https://bugs.webkit.org/show_bug.cgi?id=39068
+
+        The complete test suite is in the process of checking in.
+        https://bugs.webkit.org/show_bug.cgi?id=20553
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::State::State):
+
 2010-05-13  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed, rolling out r59360.

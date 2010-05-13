@@ -118,8 +118,8 @@ void CanvasRenderingContext2D::reset()
 }
 
 CanvasRenderingContext2D::State::State()
-    : m_strokeStyle(CanvasStyle::create("black"))
-    , m_fillStyle(CanvasStyle::create("black"))
+    : m_strokeStyle(CanvasStyle::create("#000000"))
+    , m_fillStyle(CanvasStyle::create("#000000"))
     , m_lineWidth(1)
     , m_lineCap(ButtCap)
     , m_lineJoin(MiterJoin)
