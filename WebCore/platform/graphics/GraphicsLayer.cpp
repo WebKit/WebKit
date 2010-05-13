@@ -465,17 +465,21 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBe
     }
     ts << ")\n";
 
-    writeIndent(ts, indent + 1);
-    ts << "(childrenTransform ";
-    if (m_childrenTransform.isIdentity())
-        ts << "identity";
-    else {
-        ts << "[" << m_childrenTransform.m11() << " " << m_childrenTransform.m12() << " " << m_childrenTransform.m13() << " " << m_childrenTransform.m14() << "] ";
-        ts << "[" << m_childrenTransform.m21() << " " << m_childrenTransform.m22() << " " << m_childrenTransform.m23() << " " << m_childrenTransform.m24() << "] ";
-        ts << "[" << m_childrenTransform.m31() << " " << m_childrenTransform.m32() << " " << m_childrenTransform.m33() << " " << m_childrenTransform.m34() << "] ";
-        ts << "[" << m_childrenTransform.m41() << " " << m_childrenTransform.m42() << " " << m_childrenTransform.m43() << " " << m_childrenTransform.m44() << "]";
+    // Avoid dumping the sublayer transform on the root layer, because it's used for geometry flipping, whose behavior
+    // differs between platforms.
+    if (parent()) {
+        writeIndent(ts, indent + 1);
+        ts << "(childrenTransform ";
+        if (m_childrenTransform.isIdentity())
+            ts << "identity";
+        else {
+            ts << "[" << m_childrenTransform.m11() << " " << m_childrenTransform.m12() << " " << m_childrenTransform.m13() << " " << m_childrenTransform.m14() << "] ";
+            ts << "[" << m_childrenTransform.m21() << " " << m_childrenTransform.m22() << " " << m_childrenTransform.m23() << " " << m_childrenTransform.m24() << "] ";
+            ts << "[" << m_childrenTransform.m31() << " " << m_childrenTransform.m32() << " " << m_childrenTransform.m33() << " " << m_childrenTransform.m34() << "] ";
+            ts << "[" << m_childrenTransform.m41() << " " << m_childrenTransform.m42() << " " << m_childrenTransform.m43() << " " << m_childrenTransform.m44() << "]";
+        }
+        ts << ")\n";
     }
-    ts << ")\n";
 
     if (m_replicaLayer) {
         writeIndent(ts, indent + 1);

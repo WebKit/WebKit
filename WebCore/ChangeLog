@@ -1,3 +1,17 @@
+2010-05-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix layer dump to avoid spurious platform differences
+        https://bugs.webkit.org/show_bug.cgi?id=39045
+        
+        Only dump the children transform on layers that are not the root layer.
+        The children transform on the root layer is used on Leopard to implement
+        geometry flipping, so avoid this supurious difference in test output.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpProperties):
+
 2010-05-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r59270.

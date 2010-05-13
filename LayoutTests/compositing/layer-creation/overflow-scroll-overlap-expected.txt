@@ -9,7 +9,6 @@
   (backfaceVisibility visible)
   (backgroundColor none)
   (transform identity)
-  (childrenTransform identity)
   (children 1
     (GraphicsLayer
       (position 0.00 -87.00)
