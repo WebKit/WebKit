@@ -1,3 +1,13 @@
+2010-05-13  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by NOBODY (Layout test fix)
+
+        https://bugs.webkit.org/show_bug.cgi?id=38928
+
+        Add Tiger specific results for my new test.
+
+        * platform/mac-tiger/fast/loader/recursive-before-unload-crash-expected.txt: Copied from fast/loader/recursive-before-unload-crash-expected.txt.
+
 2010-05-13  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
