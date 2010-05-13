@@ -1,3 +1,12 @@
+2010-05-13  Martin Robinson  <mrobinson@igalia.com>
+
+        No review needed.
+
+        [GTK] Some test results are one pixel different on x86_64
+        https://bugs.webkit.org/show_bug.cgi?id=39022
+
+        * platform/gtk/Skipped: Skipping this test because of single-pixel difference.
+
 2010-05-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.

@@ -5959,8 +5959,9 @@ fast/css/font-face-woff.html
 # https://bugs.webkit.org/show_bug.cgi?id=38956
 http/tests/xmlhttprequest/basic-auth-default.html
 
-# SVG results are one pixel off on the 64-bit bot
+# Some results are one pixel off on the 64-bit bot
 # https://bugs.webkit.org/show_bug.cgi?id=39022
+css1/box_properties/acid_test.html
 svg/custom/svg-fonts-with-no-element-reference.html
 
 # New test needs enhanced frameloader delegate logging in DRT
