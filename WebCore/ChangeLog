@@ -1,3 +1,17 @@
+2010-05-13  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Based on Philip Taylor's test suite, resetting the canvas
+        state resets the current path.
+        https://bugs.webkit.org/show_bug.cgi?id=38934
+
+        The complete test suite is in the process of checking in.
+        https://bugs.webkit.org/show_bug.cgi?id=20553
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::reset):
+
 2010-05-13  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
