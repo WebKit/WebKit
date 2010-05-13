@@ -237,11 +237,10 @@ bool RenderSVGResourceClipper::createClipData(ClipperData* clipperData, const Fl
         svgStyle->setMaskerResource(String());
         renderer->setStyle(newRenderStyle.release());
 
-        // Get the renderer of the element, that is referenced by the <use>-element.
-        if (isUseElement)
-            renderer = childNode->renderer();
-
-        renderSubtreeToImage(clipperData->clipMaskImage.get(), renderer);
+        // In the case of a <use> element, we obtained its renderere above, to retrieve its clipRule.
+        // We hsve to pass the <use> renderer itself to renderSubtreeToImage() to apply it's x/y/transform/etc. values when rendering.
+        // So if isUseElement is true, refetch the childNode->renderer(), as renderer got overriden above.
+        renderSubtreeToImage(clipperData->clipMaskImage.get(), isUseElement ? childNode->renderer() : renderer);
 
         renderer->setStyle(oldRenderStyle.release());
     }
