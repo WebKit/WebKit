@@ -1,3 +1,19 @@
+2010-05-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Composited plug-ins can cause missed painting
+        https://bugs.webkit.org/show_bug.cgi?id=39033
+        <rdar://problem/7972478>
+        
+        Eagerly enable compositing mode via the enclosing FrameView when the plug-in tells us it wants
+        to do compositing.
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView createPlugin]):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView createPlugin]):
+
 2010-05-12  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.

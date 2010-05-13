@@ -1,3 +1,51 @@
+2010-05-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Composited plug-ins can cause missed painting
+        https://bugs.webkit.org/show_bug.cgi?id=39033
+        <rdar://problem/7972478>
+
+        Fixed missed painting (and assertions in debug builds) related to compositing
+        propagating out of iframes that contain plug-ins.
+        
+        When an iframe enters or leaves compositing mode, RenderLayerCompositor uses
+        setNeedsStyleRecalc(SyntheticStyleChange) to trigger the parent document to re-evaluate
+        whether the iframe itself should be composited. However, for iframes containing plug-ins,
+        this can happen at inappropriate times. For example, when a browser tab is brought frontmost,
+        plug-ins are instantiated for the first time (via -viewDidMoveToWindow), which triggers a 
+        setNeedsStyleRecalc() on the object element. Soon after, the -viewWillDraw machinery
+        does layout from the top down. During layout of the iframe, the iframe enters compositing mode,
+        and does a setNeedsStyleRecalc() on the iframe element in its parent document. This leaves the
+        FrameView as needsLayout(), so the FrameView::paintContents() asserts and bails.
+        
+        The fix is to avoid doing a setNeedsStyleRecalc() on the root while inside a recalcStyle on
+        the iframe. We do this by switching the iframe into compositing mode eagerly as soon as we know
+        the plug-in needs it.
+        
+        A secondary fix is to ensure that if a document has composited iframes, when that document becomes
+        composited, we connect compositing layers between the iframes and the parent document.
+
+        Tests: compositing/iframes/connect-compositing-iframe-delayed.html
+               compositing/iframes/iframe-src-change.html
+
+        * WebCore.base.exp: Export FrameView::enterCompositingMode()
+
+        * page/FrameView.h: New method, enterCompositingMode(), that we can call from WebKit plug-in code.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::enterCompositingMode):
+
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::enableCompositingMode): When we switch into compositing mode, we
+            force a style recaclc on any iframes to get them into compositing layers, so they can hook up
+            with their content layers if necessary.
+        (WebCore::RenderLayerCompositor::didMoveOnscreen): Only call attachRootPlatformLayer() if we really need to.
+        (WebCore::RenderLayerCompositor::willMoveOffscreen): Only call detachRootPlatformLayer() if we really need to.
+        (WebCore::RenderLayerCompositor::detachRootPlatformLayer): Whitespace.
+        (WebCore::RenderLayerCompositor::notifyIFramesOfCompositingChange): Fetch iframe elements, and send a 
+            synthetic style recalc on them.
+
 2010-05-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Simon Fraser.

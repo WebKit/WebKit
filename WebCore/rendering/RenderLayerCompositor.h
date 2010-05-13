@@ -198,6 +198,8 @@ private:
     void detachRootPlatformLayer();
     
     void rootLayerAttachmentChanged();
+    
+    void notifyIFramesOfCompositingChange();
 
     // Whether a running transition or animation enforces the need for a compositing layer.
     bool requiresCompositingForAnimation(RenderObject*) const;
