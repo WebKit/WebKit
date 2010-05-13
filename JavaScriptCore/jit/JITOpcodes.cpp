@@ -963,13 +963,6 @@ void JIT::emit_op_bitxor(Instruction* currentInstruction)
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 
-void JIT::emit_op_new_regexp(Instruction* currentInstruction)
-{
-    JITStubCall stubCall(this, cti_op_new_regexp);
-    stubCall.addArgument(ImmPtr(m_codeBlock->regexp(currentInstruction[2].u.operand)));
-    stubCall.call(currentInstruction[1].u.operand);
-}
-
 void JIT::emit_op_bitor(Instruction* currentInstruction)
 {
     emitGetVirtualRegisters(currentInstruction[2].u.operand, regT0, currentInstruction[3].u.operand, regT1);
