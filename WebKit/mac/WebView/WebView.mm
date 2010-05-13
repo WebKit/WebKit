@@ -1084,8 +1084,9 @@ static bool fastDocumentTeardownEnabled()
     // Deleteing the WebCore::Page will clear the page cache so we call destroy on 
     // all the plug-ins in the page cache to break any retain cycles.
     // See comment in HistoryItem::releaseAllPendingPageCaches() for more information.
-    delete _private->page;
+    Page* page = _private->page;
     _private->page = 0;
+    delete page;
 
     if (_private->hasSpellCheckerDocumentTag) {
         [[NSSpellChecker sharedSpellChecker] closeSpellDocumentWithTag:_private->spellCheckerDocumentTag];

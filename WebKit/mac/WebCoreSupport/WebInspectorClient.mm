@@ -433,8 +433,12 @@ void WebInspectorFrontendClient::updateWindowTitle() const
 
     if (_attachedToInspectedWebView)
         [self close];
+
     _visible = NO;
-    [_inspectedWebView page]->inspectorController()->disconnectFrontend();
+
+    if (Page* inspectedPage = [_inspectedWebView page])
+        inspectedPage->inspectorController()->disconnectFrontend();
+
     [_webView close];
 }
 
