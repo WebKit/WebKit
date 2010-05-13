@@ -212,6 +212,23 @@ void WebSocket::contextDestroyed()
     ActiveDOMObject::contextDestroyed();
 }
 
+bool WebSocket::canSuspend() const
+{
+    return !m_channel;
+}
+
+void WebSocket::suspend()
+{
+    if (m_channel)
+        m_channel->suspend();
+}
+
+void WebSocket::resume()
+{
+    if (m_channel)
+        m_channel->resume();
+}
+
 void WebSocket::stop()
 {
     bool pending = hasPendingActivity();
@@ -259,6 +276,8 @@ void WebSocket::didReceiveMessageError()
 void WebSocket::didClose(unsigned long unhandledBufferedAmount)
 {
     LOG(Network, "WebSocket %p didClose", this);
+    if (!m_channel)
+        return;
     m_state = CLOSED;
     m_bufferedAmountAfterClose += unhandledBufferedAmount;
     ASSERT(scriptExecutionContext());

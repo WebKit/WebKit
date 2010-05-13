@@ -64,6 +64,8 @@ public:
     virtual unsigned long bufferedAmount() const;
     virtual void close();
     virtual void disconnect(); // Will suppress didClose().
+    virtual void suspend();
+    virtual void resume();
 
     using RefCounted<WorkerThreadableWebSocketChannel>::ref;
     using RefCounted<WorkerThreadableWebSocketChannel>::deref;
@@ -88,6 +90,8 @@ private:
         void bufferedAmount();
         void close();
         void disconnect();
+        void suspend();
+        void resume();
 
         virtual void didConnect();
         virtual void didReceiveMessage(const String& message);
@@ -115,6 +119,8 @@ private:
         unsigned long bufferedAmount();
         void close();
         void disconnect();
+        void suspend();
+        void resume();
 
         using RefCounted<Bridge>::ref;
         using RefCounted<Bridge>::deref;
@@ -147,6 +153,8 @@ private:
     static void mainThreadBufferedAmount(ScriptExecutionContext*, Peer*);
     static void mainThreadClose(ScriptExecutionContext*, Peer*);
     static void mainThreadDestroy(ScriptExecutionContext*, Peer*);
+    static void mainThreadSuspend(ScriptExecutionContext*, Peer*);
+    static void mainThreadResume(ScriptExecutionContext*, Peer*);
 
     RefPtr<WorkerContext> m_workerContext;
     RefPtr<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
