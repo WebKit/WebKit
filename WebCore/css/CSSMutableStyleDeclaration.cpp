@@ -485,7 +485,8 @@ void CSSMutableStyleDeclaration::setNeedsStyleRecalc()
     while (StyleBase* parent = root->parent())
         root = parent;
     if (root->isCSSStyleSheet())
-        static_cast<CSSStyleSheet*>(root)->doc()->updateStyleSelector();
+        if (Document* doc = static_cast<CSSStyleSheet*>(root)->doc())
+            doc->updateStyleSelector();
 }
 
 bool CSSMutableStyleDeclaration::getPropertyPriority(int propertyID) const
