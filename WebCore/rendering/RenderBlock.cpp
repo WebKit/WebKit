@@ -740,6 +740,8 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     int repaintTop = 0;
     int repaintBottom = 0;
     int maxFloatBottom = 0;
+    if (!firstChild())
+        setChildrenInline(true);
     if (childrenInline())
         layoutInlineChildren(relayoutChildren, repaintTop, repaintBottom);
     else

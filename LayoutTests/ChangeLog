@@ -1,3 +1,22 @@
+2010-05-13  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Adding block elements to a block and removing them changes the height of the element.
+        https://bugs.webkit.org/show_bug.cgi?id=38874
+
+        The initial height of an empty editable block is different from the height of the same block after we add block elements
+        and remove them.
+        
+        * editing/deleting/delete-block-contents-004-expected.txt: Added.
+        * editing/deleting/delete-block-contents-004.html: Added.
+        The following tests results have been updated to reflect the new renderer structure.
+        * editing/deleting/in-visibly-empty-root-expected.txt:
+        * platform/mac/editing/deleting/5408255-expected.txt:
+        * platform/mac/editing/deleting/delete-select-all-001-expected.txt:
+        * platform/mac/editing/selection/4895428-1-expected.txt:
+        * platform/mac/editing/selection/4895428-4-expected.txt:
+
 2010-05-13  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.
