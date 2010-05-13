@@ -57,6 +57,11 @@ class RunTests(AbstractStep):
         if self._options.non_interactive:
             args.append("--no-launch-safari")
             args.append("--exit-after-n-failures=1")
+            # FIXME: Hack to work around https://bugs.webkit.org/show_bug.cgi?id=38912
+            # when running the commit-queue on a mac leopard machine.
+            if self.port().name() == "mac" and self.port().is_leopard():
+                args.extend(["--ignore-tests", "compositing/iframes"])
+
         if self._options.quiet:
             args.append("--quiet")
         self._tool.executive.run_and_throw_if_fail(args)

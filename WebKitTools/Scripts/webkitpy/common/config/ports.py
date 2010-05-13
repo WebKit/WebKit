@@ -112,6 +112,16 @@ class MacPort(WebKitPort):
     def flag(cls):
         return "--port=mac"
 
+    @classmethod
+    def _system_version(cls):
+        version_string = platform.mac_ver()[0]  # e.g. "10.5.6"
+        version_tuple = version_string.split('.')
+        return map(int, version_tuple)
+
+    @classmethod
+    def is_leopard(cls):
+        return tuple(cls._system_version()[:2]) == (10.5)
+
 
 class WinPort(WebKitPort):
 
