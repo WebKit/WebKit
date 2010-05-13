@@ -1,3 +1,18 @@
+2010-05-12  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        test-webkitpy fails on windows due to lack of readline module
+        https://bugs.webkit.org/show_bug.cgi?id=38884
+
+        Win32 Python does not have a readline module, so we should
+        not exit(1) if the import fails.
+
+        Also the failure message is mac-specific and doesn't need to be.
+        Only print the mac-specific install instructions on mac.
+
+        * Scripts/webkitpy/common/system/user.py:
+
 2010-05-12  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Nate Chapin.

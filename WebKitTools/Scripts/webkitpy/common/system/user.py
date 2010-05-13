@@ -26,17 +26,27 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import os
 import shlex
 import subprocess
 import webbrowser
 
+
+_log = logging.getLogger("webkitpy.common.system.user")
+
+
 try:
     import readline
 except ImportError:
-    print "Unable to import readline.  If you're using MacPorts, try running:"
-    print "  sudo port install py25-readline"
-    exit(1)
+    if sys.platform != "win32":
+        # There is no readline module for win32, not much to do except cry.
+        _log.warn("Unable to import readline.")
+    # FIXME: We could give instructions for non-mac platforms.
+    # Lack of readline results in a very bad user experiance.
+    if sys.platform == "mac":
+        _log.warn("If you're using MacPorts, try running:")
+        _log.warn("  sudo port install py25-readline")
 
 
 class User(object):
