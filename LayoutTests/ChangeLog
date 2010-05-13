@@ -1,3 +1,17 @@
+2010-05-13  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Chromium build fix. Partially rever r59277 which updated Chromium's expectations
+        after r59270. r59270 was reverted, so we need to revert Chromium's expectations.
+
+        * platform/chromium-linux/editing/deleting/5408255-expected.checksum:
+        * platform/chromium-mac/editing/deleting/5408255-expected.checksum: Removed.
+        * platform/chromium-win/editing/deleting/5408255-expected.checksum:
+        * platform/chromium-win/editing/deleting/5408255-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-select-all-001-expected.txt:
+        * platform/chromium-win/editing/selection/4895428-1-expected.txt:
+        * platform/chromium-win/editing/selection/4895428-4-expected.txt:
+        * platform/chromium-win/fast/events/mouseout-dead-node-expected.txt:
+
 2010-05-13  Yoshiki Hayashi  <yhayashi@google.com>
 
         Reviewed by Darin Adler.
