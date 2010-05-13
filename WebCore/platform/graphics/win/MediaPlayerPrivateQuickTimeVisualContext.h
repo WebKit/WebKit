@@ -28,7 +28,7 @@
 
 #if ENABLE(VIDEO)
 
-#include "GraphicsLayerClient.h"
+#include "GraphicsLayer.h"
 #include "MediaPlayerPrivate.h"
 #include "Timer.h"
 #include <wtf/OwnPtr.h>
