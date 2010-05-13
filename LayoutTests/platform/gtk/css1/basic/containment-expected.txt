@@ -1,0 +1,209 @@
+layer at (0,0) size 800x1015
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x1015
+  RenderBlock {HTML} at (0,0) size 800x1015
+    RenderBody {BODY} at (8,8) size 784x999 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 355x20
+          text run at (0,0) width 355: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,36) size 784x160
+        RenderText {#text} at (0,0) size 728x159
+          text run at (0,0) width 624: "<LINK rel=\"stylesheet\" type=\"text/css\" href=\"linktest.css\" title=\"Default SS\">"
+          text run at (624,0) width 0: " "
+          text run at (0,16) width 728: "<LINK rel=\"alternate stylesheet\" type=\"text/css\" href=\"linktest2.css\" title=\"Alternate SS\">"
+          text run at (728,16) width 0: " "
+          text run at (0,32) width 208: "@import url(imptest1.css);"
+          text run at (208,32) width 0: " "
+          text run at (0,48) width 192: "@import \"imptest1a.css\";"
+          text run at (192,48) width 0: " "
+          text run at (0,64) width 128: "UL {color: red;}"
+          text run at (128,64) width 0: " "
+          text run at (0,80) width 176: ".four {color: purple;}"
+          text run at (176,80) width 0: " "
+          text run at (0,96) width 208: "@import url(imptest2.css);"
+          text run at (208,96) width 0: " "
+          text run at (0,112) width 32: "<!--"
+          text run at (32,112) width 0: " "
+          text run at (0,128) width 168: "P.six {color: green;}"
+          text run at (168,128) width 0: " "
+          text run at (0,144) width 24: "-->"
+          text run at (24,144) width 0: " "
+      RenderBlock {HR} at (0,209) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,227) size 784x20
+        RenderText {#text} at (0,0) size 404x20
+          text run at (0,0) width 404: "This sentence should be underlined due to the linked style sheet "
+        RenderInline {CODE} at (0,0) size 96x15
+          RenderText {#text} at (404,4) size 96x15
+            text run at (404,4) width 96: "linktest.css"
+        RenderText {#text} at (500,0) size 254x20
+          text run at (500,0) width 254: ", the reference to which is shown above."
+      RenderBlock {P} at (0,263) size 784x42
+        RenderText {#text} at (0,1) size 442x20
+          text run at (0,1) width 442: "This sentence should NOT be underlined due to the linked style sheet "
+        RenderInline {CODE} at (0,0) size 104x15
+          RenderText {#text} at (442,5) size 104x15
+            text run at (442,5) width 104: "linktest2.css"
+        RenderText {#text} at (546,1) size 8x20
+          text run at (546,1) width 8: ", "
+        RenderInline {STRONG} at (0,0) size 41x22
+          RenderText {#text} at (554,0) size 41x22
+            text run at (554,0) width 41: "unless"
+        RenderText {#text} at (595,1) size 741x41
+          text run at (595,1) width 146: " the external style sheet"
+          text run at (0,22) width 325: "\"Alternate SS\" has been selected via the user agent."
+      RenderBlock {UL} at (0,321) size 784x60 [color=#FF0000]
+        RenderListItem {LI} at (40,0) size 744x20 [color=#008000]
+          RenderListMarker at (-18,0) size 7x20: bullet
+          RenderText {#text} at (0,0) size 390x20
+            text run at (0,0) width 390: "This sentence should be green due to an imported style sheet ["
+          RenderInline {CODE} at (0,0) size 208x15
+            RenderText {#text} at (390,4) size 208x15
+              text run at (390,4) width 208: "@import url(imptest1.css);"
+          RenderText {#text} at (598,0) size 9x20
+            text run at (598,0) width 9: "]."
+        RenderListItem {LI} at (40,20) size 744x20 [color=#800080]
+          RenderListMarker at (-18,0) size 7x20: bullet
+          RenderText {#text} at (0,0) size 395x20
+            text run at (0,0) width 395: "This sentence should be purple due to an imported style sheet ["
+          RenderInline {CODE} at (0,0) size 184x15
+            RenderText {#text} at (395,4) size 184x15
+              text run at (395,4) width 184: "@import \"imptest1a.css\""
+          RenderText {#text} at (579,0) size 9x20
+            text run at (579,0) width 9: "]."
+        RenderListItem {LI} at (40,40) size 744x20 [color=#008000]
+          RenderListMarker at (-18,0) size 7x20: bullet
+          RenderText {#text} at (0,0) size 393x20
+            text run at (0,0) width 393: "This sentence should be green thanks to the STYLE attribute ["
+          RenderInline {CODE} at (0,0) size 168x15
+            RenderText {#text} at (393,4) size 168x15
+              text run at (393,4) width 168: "STYLE=\"color: green;\""
+          RenderText {#text} at (561,0) size 9x20
+            text run at (561,0) width 9: "]."
+      RenderBlock {P} at (0,397) size 784x20 [color=#800080]
+        RenderText {#text} at (0,0) size 500x20
+          text run at (0,0) width 500: "This sentence should be purple, and it doesn't have a terminating paragraph tag."
+      RenderBlock {OL} at (0,433) size 784x60
+        RenderListItem {LI} at (40,0) size 744x20
+          RenderListMarker at (-21,0) size 16x20: "1"
+          RenderText {#text} at (0,0) size 201x20
+            text run at (0,0) width 201: "This list should NOT be purple."
+        RenderListItem {LI} at (40,20) size 744x20
+          RenderListMarker at (-21,0) size 16x20: "2"
+          RenderText {#text} at (0,0) size 172x20
+            text run at (0,0) width 172: "It should, instead, be black."
+        RenderListItem {LI} at (40,40) size 744x20
+          RenderListMarker at (-21,0) size 16x20: "3"
+          RenderText {#text} at (0,0) size 501x20
+            text run at (0,0) width 501: "If it IS purple, then the browser hasn't correctly parsed the preceding paragraph."
+      RenderBlock {P} at (0,509) size 784x40
+        RenderText {#text} at (0,0) size 697x20
+          text run at (0,0) width 197: "This sentence should be black. "
+          text run at (197,0) width 500: "If it is red, then the browser has inappropriately imported the styles from the file"
+        RenderInline {TT} at (0,0) size 96x15
+          RenderText {#text} at (0,24) size 96x15
+            text run at (0,24) width 96: "imptest2.css"
+        RenderText {#text} at (96,20) size 33x20
+          text run at (96,20) width 33: " (see "
+        RenderInline {A} at (0,0) size 68x20 [color=#0000FF]
+          RenderText {#text} at (129,20) size 68x20
+            text run at (129,20) width 68: "section 3.0"
+        RenderText {#text} at (197,20) size 275x20
+          text run at (197,20) width 275: " of the CSS1 specification for more details)."
+      RenderBlock {P} at (0,565) size 784x20 [color=#008000]
+        RenderText {#text} at (0,0) size 203x20
+          text run at (0,0) width 203: "This paragraph should be green."
+      RenderTable {TABLE} at (0,601) size 784x398 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x396
+          RenderTableRow {TR} at (0,0) size 782x30
+            RenderTableCell {TD} at (0,0) size 782x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 163x22
+                RenderText {#text} at (4,4) size 163x22
+                  text run at (4,4) width 163: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,30) size 782x366
+            RenderTableCell {TD} at (0,199) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x20
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,30) size 770x366 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x20
+                RenderText {#text} at (0,0) size 404x20
+                  text run at (0,0) width 404: "This sentence should be underlined due to the linked style sheet "
+                RenderInline {CODE} at (0,0) size 96x15
+                  RenderText {#text} at (404,4) size 96x15
+                    text run at (404,4) width 96: "linktest.css"
+                RenderText {#text} at (500,0) size 254x20
+                  text run at (500,0) width 254: ", the reference to which is shown above."
+              RenderBlock {P} at (4,40) size 762x42
+                RenderText {#text} at (0,1) size 442x20
+                  text run at (0,1) width 442: "This sentence should NOT be underlined due to the linked style sheet "
+                RenderInline {CODE} at (0,0) size 104x15
+                  RenderText {#text} at (442,5) size 104x15
+                    text run at (442,5) width 104: "linktest2.css"
+                RenderText {#text} at (546,1) size 8x20
+                  text run at (546,1) width 8: ", "
+                RenderInline {STRONG} at (0,0) size 41x22
+                  RenderText {#text} at (554,0) size 41x22
+                    text run at (554,0) width 41: "unless"
+                RenderText {#text} at (595,1) size 741x41
+                  text run at (595,1) width 146: " the external style sheet"
+                  text run at (0,22) width 325: "\"Alternate SS\" has been selected via the user agent."
+              RenderBlock {UL} at (4,98) size 762x60 [color=#FF0000]
+                RenderListItem {LI} at (40,0) size 722x20 [color=#008000]
+                  RenderListMarker at (-18,0) size 7x20: bullet
+                  RenderText {#text} at (0,0) size 390x20
+                    text run at (0,0) width 390: "This sentence should be green due to an imported style sheet ["
+                  RenderInline {CODE} at (0,0) size 208x15
+                    RenderText {#text} at (390,4) size 208x15
+                      text run at (390,4) width 208: "@import url(imptest1.css);"
+                  RenderText {#text} at (598,0) size 9x20
+                    text run at (598,0) width 9: "]."
+                RenderListItem {LI} at (40,20) size 722x20 [color=#800080]
+                  RenderListMarker at (-18,0) size 7x20: bullet
+                  RenderText {#text} at (0,0) size 395x20
+                    text run at (0,0) width 395: "This sentence should be purple due to an imported style sheet ["
+                  RenderInline {CODE} at (0,0) size 184x15
+                    RenderText {#text} at (395,4) size 184x15
+                      text run at (395,4) width 184: "@import \"imptest1a.css\""
+                  RenderText {#text} at (579,0) size 9x20
+                    text run at (579,0) width 9: "]."
+                RenderListItem {LI} at (40,40) size 722x20 [color=#008000]
+                  RenderListMarker at (-18,0) size 7x20: bullet
+                  RenderText {#text} at (0,0) size 393x20
+                    text run at (0,0) width 393: "This sentence should be green thanks to the STYLE attribute ["
+                  RenderInline {CODE} at (0,0) size 168x15
+                    RenderText {#text} at (393,4) size 168x15
+                      text run at (393,4) width 168: "STYLE=\"color: green;\""
+                  RenderText {#text} at (561,0) size 9x20
+                    text run at (561,0) width 9: "]."
+              RenderBlock {P} at (4,174) size 762x20 [color=#800080]
+                RenderText {#text} at (0,0) size 500x20
+                  text run at (0,0) width 500: "This sentence should be purple, and it doesn't have a terminating paragraph tag."
+              RenderBlock {OL} at (4,210) size 762x60
+                RenderListItem {LI} at (40,0) size 722x20
+                  RenderListMarker at (-21,0) size 16x20: "1"
+                  RenderText {#text} at (0,0) size 201x20
+                    text run at (0,0) width 201: "This list should NOT be purple."
+                RenderListItem {LI} at (40,20) size 722x20
+                  RenderListMarker at (-21,0) size 16x20: "2"
+                  RenderText {#text} at (0,0) size 172x20
+                    text run at (0,0) width 172: "It should, instead, be black."
+                RenderListItem {LI} at (40,40) size 722x20
+                  RenderListMarker at (-21,0) size 16x20: "3"
+                  RenderText {#text} at (0,0) size 501x20
+                    text run at (0,0) width 501: "If it IS purple, then the browser hasn't correctly parsed the preceding paragraph."
+              RenderBlock {P} at (4,286) size 762x40
+                RenderText {#text} at (0,0) size 697x20
+                  text run at (0,0) width 197: "This sentence should be black. "
+                  text run at (197,0) width 500: "If it is red, then the browser has inappropriately imported the styles from the file"
+                RenderInline {TT} at (0,0) size 96x15
+                  RenderText {#text} at (0,24) size 96x15
+                    text run at (0,24) width 96: "imptest2.css"
+                RenderText {#text} at (96,20) size 33x20
+                  text run at (96,20) width 33: " (see "
+                RenderInline {A} at (0,0) size 68x20 [color=#0000FF]
+                  RenderText {#text} at (129,20) size 68x20
+                    text run at (129,20) width 68: "section 3.0"
+                RenderText {#text} at (197,20) size 275x20
+                  text run at (197,20) width 275: " of the CSS1 specification for more details)."
+              RenderBlock {P} at (4,342) size 762x20 [color=#008000]
+                RenderText {#text} at (0,0) size 203x20
+                  text run at (0,0) width 203: "This paragraph should be green."

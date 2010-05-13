@@ -1,5 +1,70 @@
 2010-05-13  Martin Robinson  <mrobinson@igalia.com>
 
+        No review. Adding baselines for many of the css1 tests. I've checked these manually.
+
+        * platform/gtk/Skipped: Unskipping tests.
+        * platform/gtk/css1/basic/class_as_selector-expected.txt: Added.
+        * platform/gtk/css1/basic/comments-expected.txt: Added.
+        * platform/gtk/css1/basic/containment-expected.txt: Added.
+        * platform/gtk/css1/basic/contextual_selectors-expected.txt: Added.
+        * platform/gtk/css1/basic/grouping-expected.txt: Added.
+        * platform/gtk/css1/basic/id_as_selector-expected.txt: Added.
+        * platform/gtk/css1/basic/inheritance-expected.txt: Added.
+        * platform/gtk/css1/box_properties/acid_test-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border_bottom-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border_bottom_inline-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border_bottom_width-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border_bottom_width_inline-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border_color-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border_color_inline-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border_inline-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border_left-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border_left_inline-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border_left_width-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border_left_width_inline-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border_right-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border_right_inline-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border_right_width-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border_right_width_inline-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border_style-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border_style_inline-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border_top-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border_top_inline-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border_top_width-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border_top_width_inline-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border_width-expected.txt: Added.
+        * platform/gtk/css1/box_properties/border_width_inline-expected.txt: Added.
+        * platform/gtk/css1/box_properties/clear-expected.txt: Added.
+        * platform/gtk/css1/box_properties/clear_float-expected.txt: Added.
+        * platform/gtk/css1/box_properties/float-expected.txt: Added.
+        * platform/gtk/css1/box_properties/float_elements_in_series-expected.txt: Added.
+        * platform/gtk/css1/box_properties/float_margin-expected.txt: Added.
+        * platform/gtk/css1/box_properties/float_on_text_elements-expected.txt: Added.
+        * platform/gtk/css1/box_properties/height-expected.txt: Added.
+        * platform/gtk/css1/box_properties/margin-expected.txt: Added.
+        * platform/gtk/css1/box_properties/margin_bottom-expected.txt: Added.
+        * platform/gtk/css1/box_properties/margin_bottom_inline-expected.txt: Added.
+        * platform/gtk/css1/box_properties/margin_inline-expected.txt: Added.
+        * platform/gtk/css1/box_properties/margin_left-expected.txt: Added.
+        * platform/gtk/css1/box_properties/margin_left_inline-expected.txt: Added.
+        * platform/gtk/css1/box_properties/margin_right-expected.txt: Added.
+        * platform/gtk/css1/box_properties/margin_right_inline-expected.txt: Added.
+        * platform/gtk/css1/box_properties/margin_top-expected.txt: Added.
+        * platform/gtk/css1/box_properties/margin_top_inline-expected.txt: Added.
+        * platform/gtk/css1/box_properties/padding-expected.txt: Added.
+        * platform/gtk/css1/box_properties/padding_bottom-expected.txt: Added.
+        * platform/gtk/css1/box_properties/padding_bottom_inline-expected.txt: Added.
+        * platform/gtk/css1/box_properties/padding_inline-expected.txt: Added.
+        * platform/gtk/css1/box_properties/padding_left-expected.txt: Added.
+        * platform/gtk/css1/box_properties/padding_left_inline-expected.txt: Added.
+        * platform/gtk/css1/box_properties/padding_right-expected.txt: Added.
+        * platform/gtk/css1/box_properties/padding_right_inline-expected.txt: Added.
+        * platform/gtk/css1/box_properties/padding_top-expected.txt: Added.
+        * platform/gtk/css1/box_properties/padding_top_inline-expected.txt: Added.
+
+2010-05-13  Martin Robinson  <mrobinson@igalia.com>
+
         No review. Rebaselining test after r59385.
 
         * platform/gtk/editing/deleting/delete-select-all-001-expected.txt: Rebaseline
