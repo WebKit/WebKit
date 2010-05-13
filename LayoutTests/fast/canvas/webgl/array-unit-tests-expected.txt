@@ -1,258 +1,17 @@
-Verifies the functionality of the new array-like objects in the TypedArray spec
+Verifies the functionality of the new array-like objects in the WebGL spec
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASS test FloatArray SetAndGetPos10ToNeg10
-PASS test FloatArray ConstructWithArrayOfSignedValues
-PASS test FloatArray ConstructWithTypedArrayOfSignedValues
-Testing FloatArray GetWithOutOfRangeIndices
-PASS array[2] is undefined.
-PASS array[-1] is undefined.
-PASS array[0x20000000] is undefined.
-PASS test FloatArray OffsetsAndSizes
-PASS test FloatArray SetFromTypedArray
-PASS negativeTest FloatArray SetFromTypedArray
-PASS test FloatArray SetFromArray
-PASS negativeTest FloatArray SetFromArray
-PASS test FloatArray Slice
-PASS negativeTest FloatArray Slice
-PASS test FloatArray BoundaryConditions(-500.5, -500.5, 500.5, 500.5)
-PASS Construction of FloatArray with null buffer threw exception
-PASS Construction of FloatArray with out-of-range values threw exception
-PASS Construction of FloatArray with negative out-of-range values threw exception
-PASS Construction of huge FloatArray threw exception
-Testing slicing of FloatArray
-PASS array.length is 32 / typeSize
-PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
-PASS array.slice(4, -2147483648).length is 0
-PASS array.length is 0
-Testing slicing with default inputs of FloatArray
-PASS array.length is 32 / typeSize
-PASS array.slice().length is (32 / typeSize)
-PASS array.slice(2).length is (32 / typeSize) - 2
-PASS array.slice(-2).length is 2
-PASS array.slice(-2147483648).length is (32 / typeSize)
-PASS Setting FloatArray from array with out-of-range offset was caught
-PASS Setting FloatArray from fake array with invalid length was caught
-PASS Setting FloatArray from FloatArray with out-of-range offset was caught
-PASS array.get is undefined.
-PASS array.set(0, 1) threw exception.
-PASS test Int8Array SetAndGetPos10ToNeg10
-PASS test Int8Array ConstructWithArrayOfSignedValues
-PASS test Int8Array ConstructWithTypedArrayOfSignedValues
-Testing Int8Array GetWithOutOfRangeIndices
-PASS array[2] is undefined.
-PASS array[-1] is undefined.
-PASS array[0x20000000] is undefined.
-PASS test Int8Array OffsetsAndSizes
-PASS test Int8Array SetFromTypedArray
-PASS negativeTest Int8Array SetFromTypedArray
-PASS test Int8Array SetFromArray
-PASS negativeTest Int8Array SetFromArray
-PASS test Int8Array Slice
-PASS negativeTest Int8Array Slice
-PASS test Int8Array BoundaryConditions(-128, -128, 127, 127)
-PASS Construction of Int8Array with null buffer threw exception
-PASS Construction of Int8Array with out-of-range values threw exception
-PASS Construction of Int8Array with negative out-of-range values threw exception
-Testing slicing of Int8Array
-PASS array.length is 32 / typeSize
-PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
-PASS array.slice(4, -2147483648).length is 0
-Testing slicing with default inputs of Int8Array
-PASS array.length is 32 / typeSize
-PASS array.slice().length is (32 / typeSize)
-PASS array.slice(2).length is (32 / typeSize) - 2
-PASS array.slice(-2).length is 2
-PASS array.slice(-2147483648).length is (32 / typeSize)
-PASS Setting Int8Array from array with out-of-range offset was caught
-PASS Setting Int8Array from fake array with invalid length was caught
-PASS Setting Int8Array from Int8Array with out-of-range offset was caught
-PASS array.get is undefined.
-PASS array.set(0, 1) threw exception.
-PASS test Int16Array SetAndGetPos10ToNeg10
-PASS test Int16Array ConstructWithArrayOfSignedValues
-PASS test Int16Array ConstructWithTypedArrayOfSignedValues
-Testing Int16Array GetWithOutOfRangeIndices
-PASS array[2] is undefined.
-PASS array[-1] is undefined.
-PASS array[0x20000000] is undefined.
-PASS test Int16Array OffsetsAndSizes
-PASS test Int16Array SetFromTypedArray
-PASS negativeTest Int16Array SetFromTypedArray
-PASS test Int16Array SetFromArray
-PASS negativeTest Int16Array SetFromArray
-PASS test Int16Array Slice
-PASS negativeTest Int16Array Slice
-PASS test Int16Array BoundaryConditions(-32768, -32768, 32767, 32767)
-PASS Construction of Int16Array with null buffer threw exception
-PASS Construction of Int16Array with out-of-range values threw exception
-PASS Construction of Int16Array with negative out-of-range values threw exception
-PASS Construction of huge Int16Array threw exception
-Testing slicing of Int16Array
-PASS array.length is 32 / typeSize
-PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
-PASS array.slice(4, -2147483648).length is 0
-PASS array.length is 0
-Testing slicing with default inputs of Int16Array
-PASS array.length is 32 / typeSize
-PASS array.slice().length is (32 / typeSize)
-PASS array.slice(2).length is (32 / typeSize) - 2
-PASS array.slice(-2).length is 2
-PASS array.slice(-2147483648).length is (32 / typeSize)
-PASS Setting Int16Array from array with out-of-range offset was caught
-PASS Setting Int16Array from fake array with invalid length was caught
-PASS Setting Int16Array from Int16Array with out-of-range offset was caught
-PASS array.get is undefined.
-PASS array.set(0, 1) threw exception.
-PASS test Int32Array SetAndGetPos10ToNeg10
-PASS test Int32Array ConstructWithArrayOfSignedValues
-PASS test Int32Array ConstructWithTypedArrayOfSignedValues
-Testing Int32Array GetWithOutOfRangeIndices
-PASS array[2] is undefined.
-PASS array[-1] is undefined.
-PASS array[0x20000000] is undefined.
-PASS test Int32Array OffsetsAndSizes
-PASS test Int32Array SetFromTypedArray
-PASS negativeTest Int32Array SetFromTypedArray
-PASS test Int32Array SetFromArray
-PASS negativeTest Int32Array SetFromArray
-PASS test Int32Array Slice
-PASS negativeTest Int32Array Slice
-PASS test Int32Array BoundaryConditions(-2147483648, -2147483648, 2147483647, 2147483647)
-PASS Construction of Int32Array with null buffer threw exception
-PASS Construction of Int32Array with out-of-range values threw exception
-PASS Construction of Int32Array with negative out-of-range values threw exception
-PASS Construction of huge Int32Array threw exception
-Testing slicing of Int32Array
-PASS array.length is 32 / typeSize
-PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
-PASS array.slice(4, -2147483648).length is 0
-PASS array.length is 0
-Testing slicing with default inputs of Int32Array
-PASS array.length is 32 / typeSize
-PASS array.slice().length is (32 / typeSize)
-PASS array.slice(2).length is (32 / typeSize) - 2
-PASS array.slice(-2).length is 2
-PASS array.slice(-2147483648).length is (32 / typeSize)
-PASS Setting Int32Array from array with out-of-range offset was caught
-PASS Setting Int32Array from fake array with invalid length was caught
-PASS Setting Int32Array from Int32Array with out-of-range offset was caught
-PASS array.get is undefined.
-PASS array.set(0, 1) threw exception.
-PASS test Uint8Array SetAndGet10To1
-PASS test Uint8Array ConstructWithArrayOfUnsignedValues
-PASS test Uint8Array ConstructWithTypedArrayOfUnsignedValues
-Testing Uint8Array GetWithOutOfRangeIndices
-PASS array[2] is undefined.
-PASS array[-1] is undefined.
-PASS array[0x20000000] is undefined.
-PASS test Uint8Array OffsetsAndSizes
-PASS test Uint8Array SetFromTypedArray
-PASS negativeTest Uint8Array SetFromTypedArray
-PASS test Uint8Array SetFromArray
-PASS negativeTest Uint8Array SetFromArray
-PASS test Uint8Array Slice
-PASS negativeTest Uint8Array Slice
-PASS test Uint8Array BoundaryConditions(0, 0, 255, 255)
-PASS Construction of Uint8Array with null buffer threw exception
-PASS Construction of Uint8Array with out-of-range values threw exception
-PASS Construction of Uint8Array with negative out-of-range values threw exception
-Testing slicing of Uint8Array
-PASS array.length is 32 / typeSize
-PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
-PASS array.slice(4, -2147483648).length is 0
-Testing slicing with default inputs of Uint8Array
-PASS array.length is 32 / typeSize
-PASS array.slice().length is (32 / typeSize)
-PASS array.slice(2).length is (32 / typeSize) - 2
-PASS array.slice(-2).length is 2
-PASS array.slice(-2147483648).length is (32 / typeSize)
-PASS Setting Uint8Array from array with out-of-range offset was caught
-PASS Setting Uint8Array from fake array with invalid length was caught
-PASS Setting Uint8Array from Uint8Array with out-of-range offset was caught
-PASS array.get is undefined.
-PASS array.set(0, 1) threw exception.
-PASS test Uint16Array SetAndGet10To1
-PASS test Uint16Array ConstructWithArrayOfUnsignedValues
-PASS test Uint16Array ConstructWithTypedArrayOfUnsignedValues
-Testing Uint16Array GetWithOutOfRangeIndices
-PASS array[2] is undefined.
-PASS array[-1] is undefined.
-PASS array[0x20000000] is undefined.
-PASS test Uint16Array OffsetsAndSizes
-PASS test Uint16Array SetFromTypedArray
-PASS negativeTest Uint16Array SetFromTypedArray
-PASS test Uint16Array SetFromArray
-PASS negativeTest Uint16Array SetFromArray
-PASS test Uint16Array Slice
-PASS negativeTest Uint16Array Slice
-PASS test Uint16Array BoundaryConditions(0, 0, 65535, 65535)
-PASS Construction of Uint16Array with null buffer threw exception
-PASS Construction of Uint16Array with out-of-range values threw exception
-PASS Construction of Uint16Array with negative out-of-range values threw exception
-PASS Construction of huge Uint16Array threw exception
-Testing slicing of Uint16Array
-PASS array.length is 32 / typeSize
-PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
-PASS array.slice(4, -2147483648).length is 0
-PASS array.length is 0
-Testing slicing with default inputs of Uint16Array
-PASS array.length is 32 / typeSize
-PASS array.slice().length is (32 / typeSize)
-PASS array.slice(2).length is (32 / typeSize) - 2
-PASS array.slice(-2).length is 2
-PASS array.slice(-2147483648).length is (32 / typeSize)
-PASS Setting Uint16Array from array with out-of-range offset was caught
-PASS Setting Uint16Array from fake array with invalid length was caught
-PASS Setting Uint16Array from Uint16Array with out-of-range offset was caught
-PASS array.get is undefined.
-PASS array.set(0, 1) threw exception.
-PASS test Uint32Array SetAndGet10To1
-PASS test Uint32Array ConstructWithArrayOfUnsignedValues
-PASS test Uint32Array ConstructWithTypedArrayOfUnsignedValues
-Testing Uint32Array GetWithOutOfRangeIndices
-PASS array[2] is undefined.
-PASS array[-1] is undefined.
-PASS array[0x20000000] is undefined.
-PASS test Uint32Array OffsetsAndSizes
-PASS test Uint32Array SetFromTypedArray
-PASS negativeTest Uint32Array SetFromTypedArray
-PASS test Uint32Array SetFromArray
-PASS negativeTest Uint32Array SetFromArray
-PASS test Uint32Array Slice
-PASS negativeTest Uint32Array Slice
-PASS test Uint32Array BoundaryConditions(0, 0, 4294967295, 4294967295)
-PASS Construction of Uint32Array with null buffer threw exception
-PASS Construction of Uint32Array with out-of-range values threw exception
-PASS Construction of Uint32Array with negative out-of-range values threw exception
-PASS Construction of huge Uint32Array threw exception
-Testing slicing of Uint32Array
-PASS array.length is 32 / typeSize
-PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
-PASS array.slice(4, -2147483648).length is 0
-PASS array.length is 0
-Testing slicing with default inputs of Uint32Array
-PASS array.length is 32 / typeSize
-PASS array.slice().length is (32 / typeSize)
-PASS array.slice(2).length is (32 / typeSize) - 2
-PASS array.slice(-2).length is 2
-PASS array.slice(-2147483648).length is (32 / typeSize)
-PASS Setting Uint32Array from array with out-of-range offset was caught
-PASS Setting Uint32Array from fake array with invalid length was caught
-PASS Setting Uint32Array from Uint32Array with out-of-range offset was caught
-PASS array.get is undefined.
-PASS array.set(0, 1) threw exception.
 PASS test WebGLByteArray SetAndGetPos10ToNeg10
 PASS test WebGLByteArray ConstructWithArrayOfSignedValues
-PASS test WebGLByteArray ConstructWithTypedArrayOfSignedValues
+PASS test WebGLByteArray ConstructWithWebGLArrayOfSignedValues
 Testing WebGLByteArray GetWithOutOfRangeIndices
 PASS array[2] is undefined.
 PASS array[-1] is undefined.
 PASS array[0x20000000] is undefined.
 PASS test WebGLByteArray OffsetsAndSizes
-PASS test WebGLByteArray SetFromTypedArray
-PASS negativeTest WebGLByteArray SetFromTypedArray
+PASS test WebGLByteArray SetFromWebGLArray
+PASS negativeTest WebGLByteArray SetFromWebGLArray
 PASS test WebGLByteArray SetFromArray
 PASS negativeTest WebGLByteArray SetFromArray
 PASS test WebGLByteArray Slice
@@ -278,14 +37,14 @@ PASS array.get is undefined.
 PASS array.set(0, 1) threw exception.
 PASS test WebGLFloatArray SetAndGetPos10ToNeg10
 PASS test WebGLFloatArray ConstructWithArrayOfSignedValues
-PASS test WebGLFloatArray ConstructWithTypedArrayOfSignedValues
+PASS test WebGLFloatArray ConstructWithWebGLArrayOfSignedValues
 Testing WebGLFloatArray GetWithOutOfRangeIndices
 PASS array[2] is undefined.
 PASS array[-1] is undefined.
 PASS array[0x20000000] is undefined.
 PASS test WebGLFloatArray OffsetsAndSizes
-PASS test WebGLFloatArray SetFromTypedArray
-PASS negativeTest WebGLFloatArray SetFromTypedArray
+PASS test WebGLFloatArray SetFromWebGLArray
+PASS negativeTest WebGLFloatArray SetFromWebGLArray
 PASS test WebGLFloatArray SetFromArray
 PASS negativeTest WebGLFloatArray SetFromArray
 PASS test WebGLFloatArray Slice
@@ -313,14 +72,14 @@ PASS array.get is undefined.
 PASS array.set(0, 1) threw exception.
 PASS test WebGLIntArray SetAndGetPos10ToNeg10
 PASS test WebGLIntArray ConstructWithArrayOfSignedValues
-PASS test WebGLIntArray ConstructWithTypedArrayOfSignedValues
+PASS test WebGLIntArray ConstructWithWebGLArrayOfSignedValues
 Testing WebGLIntArray GetWithOutOfRangeIndices
 PASS array[2] is undefined.
 PASS array[-1] is undefined.
 PASS array[0x20000000] is undefined.
 PASS test WebGLIntArray OffsetsAndSizes
-PASS test WebGLIntArray SetFromTypedArray
-PASS negativeTest WebGLIntArray SetFromTypedArray
+PASS test WebGLIntArray SetFromWebGLArray
+PASS negativeTest WebGLIntArray SetFromWebGLArray
 PASS test WebGLIntArray SetFromArray
 PASS negativeTest WebGLIntArray SetFromArray
 PASS test WebGLIntArray Slice
@@ -348,14 +107,14 @@ PASS array.get is undefined.
 PASS array.set(0, 1) threw exception.
 PASS test WebGLShortArray SetAndGetPos10ToNeg10
 PASS test WebGLShortArray ConstructWithArrayOfSignedValues
-PASS test WebGLShortArray ConstructWithTypedArrayOfSignedValues
+PASS test WebGLShortArray ConstructWithWebGLArrayOfSignedValues
 Testing WebGLShortArray GetWithOutOfRangeIndices
 PASS array[2] is undefined.
 PASS array[-1] is undefined.
 PASS array[0x20000000] is undefined.
 PASS test WebGLShortArray OffsetsAndSizes
-PASS test WebGLShortArray SetFromTypedArray
-PASS negativeTest WebGLShortArray SetFromTypedArray
+PASS test WebGLShortArray SetFromWebGLArray
+PASS negativeTest WebGLShortArray SetFromWebGLArray
 PASS test WebGLShortArray SetFromArray
 PASS negativeTest WebGLShortArray SetFromArray
 PASS test WebGLShortArray Slice
@@ -383,14 +142,14 @@ PASS array.get is undefined.
 PASS array.set(0, 1) threw exception.
 PASS test WebGLUnsignedByteArray SetAndGet10To1
 PASS test WebGLUnsignedByteArray ConstructWithArrayOfUnsignedValues
-PASS test WebGLUnsignedByteArray ConstructWithTypedArrayOfUnsignedValues
+PASS test WebGLUnsignedByteArray ConstructWithWebGLArrayOfUnsignedValues
 Testing WebGLUnsignedByteArray GetWithOutOfRangeIndices
 PASS array[2] is undefined.
 PASS array[-1] is undefined.
 PASS array[0x20000000] is undefined.
 PASS test WebGLUnsignedByteArray OffsetsAndSizes
-PASS test WebGLUnsignedByteArray SetFromTypedArray
-PASS negativeTest WebGLUnsignedByteArray SetFromTypedArray
+PASS test WebGLUnsignedByteArray SetFromWebGLArray
+PASS negativeTest WebGLUnsignedByteArray SetFromWebGLArray
 PASS test WebGLUnsignedByteArray SetFromArray
 PASS negativeTest WebGLUnsignedByteArray SetFromArray
 PASS test WebGLUnsignedByteArray Slice
@@ -416,14 +175,14 @@ PASS array.get is undefined.
 PASS array.set(0, 1) threw exception.
 PASS test WebGLUnsignedIntArray SetAndGet10To1
 PASS test WebGLUnsignedIntArray ConstructWithArrayOfUnsignedValues
-PASS test WebGLUnsignedIntArray ConstructWithTypedArrayOfUnsignedValues
+PASS test WebGLUnsignedIntArray ConstructWithWebGLArrayOfUnsignedValues
 Testing WebGLUnsignedIntArray GetWithOutOfRangeIndices
 PASS array[2] is undefined.
 PASS array[-1] is undefined.
 PASS array[0x20000000] is undefined.
 PASS test WebGLUnsignedIntArray OffsetsAndSizes
-PASS test WebGLUnsignedIntArray SetFromTypedArray
-PASS negativeTest WebGLUnsignedIntArray SetFromTypedArray
+PASS test WebGLUnsignedIntArray SetFromWebGLArray
+PASS negativeTest WebGLUnsignedIntArray SetFromWebGLArray
 PASS test WebGLUnsignedIntArray SetFromArray
 PASS negativeTest WebGLUnsignedIntArray SetFromArray
 PASS test WebGLUnsignedIntArray Slice
@@ -451,14 +210,14 @@ PASS array.get is undefined.
 PASS array.set(0, 1) threw exception.
 PASS test WebGLUnsignedShortArray SetAndGet10To1
 PASS test WebGLUnsignedShortArray ConstructWithArrayOfUnsignedValues
-PASS test WebGLUnsignedShortArray ConstructWithTypedArrayOfUnsignedValues
+PASS test WebGLUnsignedShortArray ConstructWithWebGLArrayOfUnsignedValues
 Testing WebGLUnsignedShortArray GetWithOutOfRangeIndices
 PASS array[2] is undefined.
 PASS array[-1] is undefined.
 PASS array[0x20000000] is undefined.
 PASS test WebGLUnsignedShortArray OffsetsAndSizes
-PASS test WebGLUnsignedShortArray SetFromTypedArray
-PASS negativeTest WebGLUnsignedShortArray SetFromTypedArray
+PASS test WebGLUnsignedShortArray SetFromWebGLArray
+PASS negativeTest WebGLUnsignedShortArray SetFromWebGLArray
 PASS test WebGLUnsignedShortArray SetFromArray
 PASS negativeTest WebGLUnsignedShortArray SetFromArray
 PASS test WebGLUnsignedShortArray Slice

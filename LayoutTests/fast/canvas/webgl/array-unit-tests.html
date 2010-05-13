@@ -10,7 +10,7 @@
 
 <script>
 
-description("Verifies the functionality of the new array-like objects in the TypedArray spec");
+description("Verifies the functionality of the new array-like objects in the WebGL spec");
 
 var currentlyRunning = '';
 var allPassed = true;
@@ -92,8 +92,8 @@ function testConstructWithArrayOfUnsignedValues(type, name) {
   }
 }
 
-function testConstructWithTypedArrayOfUnsignedValues(type, name) {
-  running('test ' + name + ' ConstructWithTypedArrayOfUnsignedValues');
+function testConstructWithWebGLArrayOfUnsignedValues(type, name) {
+  running('test ' + name + ' ConstructWithWebGLArrayOfUnsignedValues');
   try {
     var tmp = new type([10, 9, 8, 7, 6, 5, 4, 3, 2, 1]);
     var array = new type(tmp);
@@ -141,8 +141,8 @@ function testConstructWithArrayOfSignedValues(type, name) {
   }
 }
 
-function testConstructWithTypedArrayOfSignedValues(type, name) {
-  running('test ' + name + ' ConstructWithTypedArrayOfSignedValues');
+function testConstructWithWebGLArrayOfSignedValues(type, name) {
+  running('test ' + name + ' ConstructWithWebGLArrayOfSignedValues');
   try {
     var tmp = new type([10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6, -7, -8, -9, -10]);
     var array = new type(tmp);
@@ -189,8 +189,8 @@ function testOffsetsAndSizes(type, name, elementSizeInBytes) {
   }
 }
 
-function testSetFromTypedArray(type, name) {
-  running('test ' + name + ' SetFromTypedArray');
+function testSetFromWebGLArray(type, name) {
+  running('test ' + name + ' SetFromWebGLArray');
   try {
     var array = new type(10);
     var array2 = new type(5);
@@ -214,8 +214,8 @@ function testSetFromTypedArray(type, name) {
   }
 }
 
-function negativeTestSetFromTypedArray(type, name) {
-  running('negativeTest ' + name + ' SetFromTypedArray');
+function negativeTestSetFromWebGLArray(type, name) {
+  running('negativeTest ' + name + ' SetFromWebGLArray');
   try {
     var array = new type(5);
     var array2 = new type(6);
@@ -352,7 +352,7 @@ function testConstructionWithNullBuffer(type, name) {
 
 
 function testConstructionWithOutOfRangeValues(type, name) {
-    var buffer = new ArrayBuffer(4);
+    var buffer = new WebGLArrayBuffer(4);
     var array;
     try {
         array = new type(buffer, 4, 0x3FFFFFFF);
@@ -363,7 +363,7 @@ function testConstructionWithOutOfRangeValues(type, name) {
 }
 
 function testConstructionWithNegativeOutOfRangeValues(type, name) {
-    var buffer = new ArrayBuffer(4);
+    var buffer = new WebGLArrayBuffer(4);
     var array;
     try {
         array = new type(buffer, 4, -2147483648);
@@ -393,7 +393,7 @@ var typeSize;
 function testSlicingWithOutOfRangeValues(type, name, sz) {
     debug("Testing slicing of " + name);
     try {
-        var buffer = new ArrayBuffer(32);
+        var buffer = new WebGLArrayBuffer(32);
         array = new type(buffer);
         typeSize = sz;
         shouldBe("array.length", "32 / typeSize");
@@ -421,7 +421,7 @@ function testSlicingWithOutOfRangeValues(type, name, sz) {
 function testSlicingWithDefaultValues(type, name, sz) {
     debug("Testing slicing with default inputs of " + name);
     try {
-        var buffer = new ArrayBuffer(32);
+        var buffer = new WebGLArrayBuffer(32);
         array = new type(buffer);
         typeSize = sz;
         shouldBe("array.length", "32 / typeSize");
@@ -464,7 +464,7 @@ function testSettingFromFakeArrayWithOutOfRangeLength(type, name) {
     }
 }
 
-function testSettingFromTypedArrayWithOutOfRangeOffset(type, name) {
+function testSettingFromWebGLArrayWithOutOfRangeOffset(type, name) {
     var webglArray = new type(32);
     var srcArray = new type(16);
     for (var i = 0; i < 16; i++) {
@@ -508,59 +508,7 @@ function runTests() {
   // The "name" attribute is a concession to browsers which don't
   // implement the "name" property on function objects
   var testCases =
-    [ {name: "FloatArray",
-       unsigned: false,
-       elementSizeInBytes: 4,
-       low: -500.5,
-       expectedLow: -500.5,
-       high: 500.5,
-       expectedHigh: 500.5},
-      {name: "Int8Array",
-       unsigned: false,
-       elementSizeInBytes: 1,
-       low: -128,
-       expectedLow: -128,
-       high: 127,
-       expectedHigh: 127},
-      {name: "Int16Array",
-       unsigned: false,
-       elementSizeInBytes: 2,
-       low: -32768,
-       expectedLow: -32768,
-       high: 32767,
-       expectedHigh: 32767},
-      {name: "Int32Array",
-       unsigned: false,
-       elementSizeInBytes: 4,
-       low: -2147483648,
-       expectedLow: -2147483648,
-       high: 2147483647,
-       expectedHigh: 2147483647},
-      {name: "Uint8Array",
-       unsigned: true,
-       elementSizeInBytes: 1,
-       low: 0,
-       expectedLow: 0,
-       high: 255,
-       expectedHigh: 255},
-      {name: "Uint16Array",
-       unsigned: true,
-       elementSizeInBytes: 2,
-       low: 0,
-       expectedLow: 0,
-       high: 65535,
-       expectedHigh: 65535},
-      {name: "Uint32Array",
-       unsigned: true,
-       elementSizeInBytes: 4,
-       low: 0,
-       expectedLow: 0,
-       high: 4294967295,
-       expectedHigh: 4294967295},
-
-      // Legacy names of these types. Left here only to catch breakage
-      // until the WebGLArray aliases are removed completely. (FIXME)
-      {name: "WebGLByteArray",
+    [ {name: "WebGLByteArray",
        unsigned: false,
        elementSizeInBytes: 1,
        low: -128,
@@ -622,16 +570,16 @@ function runTests() {
     if (testCase.unsigned) {
       testSetAndGet10To1(type, name);
       testConstructWithArrayOfUnsignedValues(type, name);
-      testConstructWithTypedArrayOfUnsignedValues(type, name);
+      testConstructWithWebGLArrayOfUnsignedValues(type, name);
     } else {
       testSetAndGetPos10ToNeg10(type, name);
       testConstructWithArrayOfSignedValues(type, name);
-      testConstructWithTypedArrayOfSignedValues(type, name);
+      testConstructWithWebGLArrayOfSignedValues(type, name);
     }
     testGetWithOutOfRangeIndices(type, name);
     testOffsetsAndSizes(type, name, testCase.elementSizeInBytes);
-    testSetFromTypedArray(type, name);
-    negativeTestSetFromTypedArray(type, name);
+    testSetFromWebGLArray(type, name);
+    negativeTestSetFromWebGLArray(type, name);
     testSetFromArray(type, name);
     negativeTestSetFromArray(type, name);
     testSlice(type, name);
@@ -650,7 +598,7 @@ function runTests() {
     testSlicingWithDefaultValues(type, name, testCase.elementSizeInBytes);
     testSettingFromArrayWithOutOfRangeOffset(type, name);
     testSettingFromFakeArrayWithOutOfRangeLength(type, name);
-    testSettingFromTypedArrayWithOutOfRangeOffset(type, name);
+    testSettingFromWebGLArrayWithOutOfRangeOffset(type, name);
     negativeTestGetAndSetMethods(type, name);
   }
 
