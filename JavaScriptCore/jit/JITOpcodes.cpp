@@ -462,8 +462,6 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
 #endif
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
     trampolines->ctiStringLengthTrampoline = trampolineAt(finalCode, stringLengthBegin);
-#else
-    UNUSED_PARAM(ctiStringLengthTrampoline);
 #endif
 }
 

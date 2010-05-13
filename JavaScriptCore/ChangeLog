@@ -1,3 +1,17 @@
+2010-05-12  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Eric Seidel.
+
+        JavaScriptCore: fix build when some optimizations are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=38800
+
+        Remove outdated UNUSED_PARAMs when using JIT but with
+        ENABLE_JIT_OPTIMIZE_CALL and ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS
+        disabled.
+
+        * jit/JITOpcodes.cpp:
+        * jit/JITOpcodes32_64.cpp:
+
 2010-05-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
