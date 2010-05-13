@@ -734,13 +734,15 @@ void LauncherWindow::showUserAgentDialog()
         items << customUserAgent;
 
     QDialog* dialog = new QDialog(this);
+    dialog->resize(size().width() * 0.7, dialog->size().height());
+    dialog->setMaximumHeight(dialog->size().height());
     dialog->setWindowTitle("Change User Agent");
 
     QVBoxLayout* layout = new QVBoxLayout(dialog);
     dialog->setLayout(layout);
 
     QComboBox* combo = new QComboBox(dialog);
-    combo->setMaximumWidth(size().width() * 0.7);
+    combo->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLength);
     combo->setEditable(true);
     combo->insertItems(0, items);
     layout->addWidget(combo);
