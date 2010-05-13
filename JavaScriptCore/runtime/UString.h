@@ -335,7 +335,7 @@ namespace JSC {
         StringTypeAdapter<StringType2> adapter2(string2);
         StringTypeAdapter<StringType3> adapter3(string3);
 
-        UChar* buffer;
+        UChar* buffer = 0;
         bool overflow = false;
         unsigned length = adapter1.length();
         sumWithOverflow(length, adapter2.length(), overflow);

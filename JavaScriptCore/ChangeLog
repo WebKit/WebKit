@@ -1,5 +1,14 @@
 2010-05-12  Oliver Hunt  <oliver@apple.com>
 
+        build fix
+
+        <rdar://problem/7977960> REGRESSION (r59282): Tiger PPC build broken
+
+        * runtime/UString.h:
+        (JSC::tryMakeString):
+
+2010-05-12  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         <rdar://7969718> Incorrect 32-bit codegen for op_jnlesseq
