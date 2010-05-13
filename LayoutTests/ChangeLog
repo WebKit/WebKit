@@ -1,3 +1,17 @@
+2010-05-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        <rdar://7969718> Incorrect 32-bit codegen for op_jnlesseq
+        https://bugs.webkit.org/show_bug.cgi?id=39038
+
+        Add more tests for <=, <, >, and >=.
+
+        * fast/js/comparison-operators-greater-expected.txt:
+        * fast/js/comparison-operators-less-expected.txt:
+        * fast/js/script-tests/comparison-operators-greater.js:
+        * fast/js/script-tests/comparison-operators-less.js:
+
 2010-05-12  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, build fix.

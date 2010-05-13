@@ -68,4 +68,155 @@ doTest('1', 'Zero', 1);
 doTest('0', 'One', -1);
 doTest('One', '0', 1);
 
+shouldBeTrue("0 >= 0");
+shouldBeTrue("1 >= 0");
+shouldBeTrue("1 >= 1");
+shouldBeTrue("1 > 0");
+shouldBeFalse("0 >= 1");
+shouldBeFalse("1 >= 2");
+shouldBeFalse("1 > 1");
+shouldBeFalse("1 > 2");
+
+ shouldBeTrue("if (0 >= 0 || 0) true; else false");
+ shouldBeTrue("if (1 >= 0 || 0) true; else false");
+ shouldBeTrue("if (1 >= 1 || 0) true; else false");
+ shouldBeTrue("if (0 <  1 || 0) true; else false");
+shouldBeFalse("if (0 >= 1 || 0) true; else false");
+shouldBeFalse("if (1 >= 2 || 0) true; else false");
+shouldBeFalse("if (1 <  1 || 0) true; else false");
+shouldBeFalse("if (2 <  1 || 0) true; else false");
+
+shouldBeTrue("0.5 >= 0");
+shouldBeTrue("1.5 >= 0");
+shouldBeTrue("1.5 >= 1");
+shouldBeTrue("1.5 > 0");
+shouldBeFalse("0.5 >= 1");
+shouldBeFalse("1.5 >= 2");
+shouldBeTrue("1.5 > 1");
+shouldBeFalse("1.5 > 2");
+
+ shouldBeTrue("if (0.5 >= 0 || 0) true; else false");
+ shouldBeTrue("if (1.5 >= 0 || 0) true; else false");
+ shouldBeTrue("if (1.5 >= 1 || 0) true; else false");
+ shouldBeTrue("if (0 <  1.5 || 0) true; else false");
+shouldBeFalse("if (0.5 >= 1 || 0) true; else false");
+shouldBeFalse("if (1.5 >= 2 || 0) true; else false");
+ shouldBeTrue("if (1 <  1.5 || 0) true; else false");
+shouldBeFalse("if (2 <  1.5 || 0) true; else false");
+
+var zero = 0;
+var one = 1;
+var two = 2;
+var p5 = 0.5;
+var p15 = 1.5;
+
+
+shouldBeTrue("zero >= zero");
+shouldBeTrue("1 >= zero");
+shouldBeTrue("1 >= 1");
+shouldBeTrue("1 > zero");
+shouldBeFalse("zero >= 1");
+shouldBeFalse("1 >= 2");
+shouldBeFalse("1 > 1");
+shouldBeFalse("1 > 2");
+
+ shouldBeTrue("if (zero >= zero || 0) true; else false");
+ shouldBeTrue("if (1 >= zero || zero) true; else false");
+ shouldBeTrue("if (1 >= 1 || zero) true; else false");
+ shouldBeTrue("if (zero <  1 || zero) true; else false");
+shouldBeFalse("if (zero >= 1 || zero) true; else false");
+shouldBeFalse("if (1 >= 2 || zero) true; else false");
+shouldBeFalse("if (1 <  1 || zero) true; else false");
+shouldBeFalse("if (2 <  1 || zero) true; else false");
+
+shouldBeTrue("p5 >= 0");
+shouldBeTrue("p15 >= 0");
+shouldBeTrue("p15 >= 1");
+shouldBeTrue("p15 > 0");
+shouldBeFalse("p5 >= 1");
+shouldBeFalse("p15 >= 2");
+shouldBeTrue("p15 > 1");
+shouldBeFalse("p15 > 2");
+
+ shouldBeTrue("if (p5 >= 0 || 0) true; else false");
+ shouldBeTrue("if (p15 >= 0 || 0) true; else false");
+ shouldBeTrue("if (p15 >= 1 || 0) true; else false");
+ shouldBeTrue("if (0 <  p15 || 0) true; else false");
+shouldBeFalse("if (p5 >= 1 || 0) true; else false");
+shouldBeFalse("if (p15 >= 2 || 0) true; else false");
+ shouldBeTrue("if (1 <  p15 || 0) true; else false");
+shouldBeFalse("if (2 <  p15 || 0) true; else false");
+
+
+shouldBeTrue("zero >= zero");
+shouldBeTrue("one >= zero");
+shouldBeTrue("one >= one");
+shouldBeTrue("one > zero");
+shouldBeFalse("zero >= one");
+shouldBeFalse("one >= two");
+shouldBeFalse("one > one");
+shouldBeFalse("one > two");
+
+ shouldBeTrue("if (zero >= zero || 0) true; else false");
+ shouldBeTrue("if (one >= zero || zero) true; else false");
+ shouldBeTrue("if (one >= one || zero) true; else false");
+ shouldBeTrue("if (zero <  one || zero) true; else false");
+shouldBeFalse("if (zero >= one || zero) true; else false");
+shouldBeFalse("if (one >= two || zero) true; else false");
+shouldBeFalse("if (one <  one || zero) true; else false");
+shouldBeFalse("if (two <  one || zero) true; else false");
+
+shouldBeTrue("p5 >= 0");
+shouldBeTrue("p15 >= 0");
+shouldBeTrue("p15 >= one");
+shouldBeTrue("p15 > 0");
+shouldBeFalse("p5 >= one");
+shouldBeFalse("p15 >= two");
+shouldBeTrue("p15 > one");
+shouldBeFalse("p15 > two");
+
+ shouldBeTrue("if (p5 >= 0 || 0) true; else false");
+ shouldBeTrue("if (p15 >= 0 || 0) true; else false");
+ shouldBeTrue("if (p15 >= one || 0) true; else false");
+ shouldBeTrue("if (0 <  p15 || 0) true; else false");
+shouldBeFalse("if (p5 >= one || 0) true; else false");
+shouldBeFalse("if (p15 >= two || 0) true; else false");
+ shouldBeTrue("if (one <  p15 || 0) true; else false");
+shouldBeFalse("if (two <  p15 || 0) true; else false");
+
+shouldBeFalse(" 0 >    NaN");
+shouldBeFalse(" NaN >  NaN");
+shouldBeFalse(" 0 >=   NaN");
+shouldBeFalse(" NaN >= NaN");
+shouldBeFalse(" 0.5 >  NaN");
+shouldBeFalse(" NaN >  NaN");
+shouldBeFalse(" 0.5 >= NaN");
+shouldBeFalse(" NaN >= NaN");
+shouldBeFalse(" zero > NaN");
+shouldBeFalse("zero >= NaN");
+shouldBeFalse(" NaN >= NaN");
+shouldBeFalse(" p5  >  NaN");
+shouldBeFalse("NaN  >  NaN");
+shouldBeFalse("p5  >=  NaN");
+shouldBeFalse("NaN  >= NaN");
+
+
+shouldBeFalse("if ( 0 >    NaN) true; else false;");
+shouldBeFalse("if ( NaN >  NaN) true; else false;");
+shouldBeFalse("if ( 0 >=   NaN) true; else false;");
+shouldBeFalse("if ( NaN >= NaN) true; else false;");
+shouldBeFalse("if ( 0.5 >  NaN) true; else false;");
+shouldBeFalse("if ( NaN >  NaN) true; else false;");
+shouldBeFalse("if ( 0.5 >= NaN) true; else false;");
+shouldBeFalse("if ( NaN >= NaN) true; else false;");
+shouldBeFalse("if ( zero > NaN) true; else false;");
+shouldBeFalse("if (zero >= NaN) true; else false;");
+shouldBeFalse("if ( NaN >= NaN) true; else false;");
+shouldBeFalse("if ( p5  >  NaN) true; else false;");
+shouldBeFalse("if (NaN  >  NaN) true; else false;");
+shouldBeFalse("if (p5  >=  NaN) true; else false;");
+shouldBeFalse("if (NaN  >= NaN) true; else false;");
+
+
+
 successfullyParsed = true;
