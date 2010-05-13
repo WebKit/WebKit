@@ -364,14 +364,6 @@ void GraphicsLayerQtImpl::updateTransform()
         return;
     }
 
-    // Simplistic depth test - we stack the item behind its parent if its computed z is lower than the parent's computed z at the item's center point.
-    if (parent) {
-        const QPointF centerPointMappedToRoot = rootLayer()->mapFromItem(this, m_size.width() / 2, m_size.height() / 2);
-        setFlag(ItemStacksBehindParent,
-                m_transformRelativeToRootLayer.mapPoint(FloatPoint3D(centerPointMappedToRoot.x(), centerPointMappedToRoot.y(), 0)).z() <
-                parent->m_transformRelativeToRootLayer.mapPoint(FloatPoint3D(centerPointMappedToRoot.x(), centerPointMappedToRoot.y(), 0)).z());
-    }
-
     // The item is front-facing or backface-visibility is on.
     setVisible(true);
 
