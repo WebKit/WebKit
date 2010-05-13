@@ -720,3 +720,5 @@ EXPORTS
 	_Z19qt_drt_setMediaTypeP9QWebFrameRK7QString @ 719 NONAME ABSENT
 	_Z26qt_drt_enableCaretBrowsingP8QWebPageb @ 720 NONAME ABSENT
 	_ZNK12QWebSettings12inspectorUrlEv @ 721 NONAME ABSENT
+	_ZN23DumpRenderTreeSupportQt19webPageSetGroupNameEP8QWebPageRK7QString @ 722 NONAME
+	_ZN23DumpRenderTreeSupportQt16webPageGroupNameEP8QWebPage @ 723 NONAME
