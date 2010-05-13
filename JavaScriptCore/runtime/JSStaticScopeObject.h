@@ -51,7 +51,7 @@ namespace JSC{
         }
         virtual ~JSStaticScopeObject();
         virtual void markChildren(MarkStack&);
-        bool isDynamicScope() const;
+        bool isDynamicScope(bool& requiresDynamicChecks) const;
         virtual JSObject* toThisObject(ExecState*) const;
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual void put(ExecState*, const Identifier&, JSValue, PutPropertySlot&);

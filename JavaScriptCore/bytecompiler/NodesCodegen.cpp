@@ -351,7 +351,8 @@ RegisterID* FunctionCallResolveNode::emitBytecode(BytecodeGenerator& generator, 
     int index = 0;
     size_t depth = 0;
     JSObject* globalObject = 0;
-    if (generator.findScopedProperty(m_ident, index, depth, false, globalObject) && index != missingSymbolMarker()) {
+    bool requiresDynamicChecks = false;
+    if (generator.findScopedProperty(m_ident, index, depth, false, requiresDynamicChecks, globalObject) && index != missingSymbolMarker() && !requiresDynamicChecks) {
         RefPtr<RegisterID> func = generator.emitGetScopedVar(generator.newTemporary(), depth, index, globalObject);
         RefPtr<RegisterID> thisRegister = generator.emitLoad(generator.newTemporary(), jsNull());
         return generator.emitCall(generator.finalDestination(dst, func.get()), func.get(), thisRegister.get(), m_args, divot(), startOffset(), endOffset());
@@ -524,7 +525,8 @@ RegisterID* PostfixResolveNode::emitBytecode(BytecodeGenerator& generator, Regis
     int index = 0;
     size_t depth = 0;
     JSObject* globalObject = 0;
-    if (generator.findScopedProperty(m_ident, index, depth, true, globalObject) && index != missingSymbolMarker()) {
+    bool requiresDynamicChecks = false;
+    if (generator.findScopedProperty(m_ident, index, depth, true, requiresDynamicChecks, globalObject) && index != missingSymbolMarker() && !requiresDynamicChecks) {
         RefPtr<RegisterID> value = generator.emitGetScopedVar(generator.newTemporary(), depth, index, globalObject);
         RegisterID* oldValue;
         if (dst == generator.ignoredResult()) {
@@ -710,7 +712,8 @@ RegisterID* PrefixResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
     int index = 0;
     size_t depth = 0;
     JSObject* globalObject = 0;
-    if (generator.findScopedProperty(m_ident, index, depth, false, globalObject) && index != missingSymbolMarker()) {
+    bool requiresDynamicChecks = false;
+    if (generator.findScopedProperty(m_ident, index, depth, false, requiresDynamicChecks, globalObject) && index != missingSymbolMarker() && !requiresDynamicChecks) {
         RefPtr<RegisterID> propDst = generator.emitGetScopedVar(generator.tempDestination(dst), depth, index, globalObject);
         emitPreIncOrDec(generator, propDst.get(), m_operator);
         generator.emitPutScopedVar(depth, index, propDst.get(), globalObject);
@@ -1132,7 +1135,8 @@ RegisterID* ReadModifyResolveNode::emitBytecode(BytecodeGenerator& generator, Re
     int index = 0;
     size_t depth = 0;
     JSObject* globalObject = 0;
-    if (generator.findScopedProperty(m_ident, index, depth, true, globalObject) && index != missingSymbolMarker()) {
+    bool requiresDynamicChecks = false;
+    if (generator.findScopedProperty(m_ident, index, depth, true, requiresDynamicChecks, globalObject) && index != missingSymbolMarker() && !requiresDynamicChecks) {
         RefPtr<RegisterID> src1 = generator.emitGetScopedVar(generator.tempDestination(dst), depth, index, globalObject);
         RegisterID* result = emitReadModifyAssignment(generator, generator.finalDestination(dst, src1.get()), src1.get(), m_right, m_operator, OperandTypes(ResultType::unknownType(), m_right->resultDescriptor()));
         generator.emitPutScopedVar(depth, index, result, globalObject);
@@ -1161,7 +1165,8 @@ RegisterID* AssignResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
     int index = 0;
     size_t depth = 0;
     JSObject* globalObject = 0;
-    if (generator.findScopedProperty(m_ident, index, depth, true, globalObject) && index != missingSymbolMarker()) {
+    bool requiresDynamicChecks = false;
+    if (generator.findScopedProperty(m_ident, index, depth, true, requiresDynamicChecks, globalObject) && index != missingSymbolMarker() && !requiresDynamicChecks) {
         if (dst == generator.ignoredResult())
             dst = 0;
         RegisterID* value = generator.emitNode(dst, m_right);

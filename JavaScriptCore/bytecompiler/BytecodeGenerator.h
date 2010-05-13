@@ -106,7 +106,7 @@ namespace JSC {
         //
         // NB: depth does _not_ include the local scope.  eg. a depth of 0 refers
         // to the scope containing this codeblock.
-        bool findScopedProperty(const Identifier&, int& index, size_t& depth, bool forWriting, JSObject*& globalObject);
+        bool findScopedProperty(const Identifier&, int& index, size_t& depth, bool forWriting, bool& includesDynamicScopes, JSObject*& globalObject);
 
         // Returns the register storing "this"
         RegisterID* thisRegister() { return &m_thisRegister; }

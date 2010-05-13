@@ -426,7 +426,7 @@ ExecState* JSGlobalObject::globalExec()
     return CallFrame::create(d()->globalCallFrame + RegisterFile::CallFrameHeaderSize);
 }
 
-bool JSGlobalObject::isDynamicScope() const
+bool JSGlobalObject::isDynamicScope(bool&) const
 {
     return true;
 }

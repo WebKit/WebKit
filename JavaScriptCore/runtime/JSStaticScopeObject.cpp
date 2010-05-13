@@ -58,7 +58,7 @@ void JSStaticScopeObject::putWithAttributes(ExecState*, const Identifier& proper
     ASSERT_NOT_REACHED();
 }
 
-bool JSStaticScopeObject::isDynamicScope() const
+bool JSStaticScopeObject::isDynamicScope(bool&) const
 {
     return false;
 }
