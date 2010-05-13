@@ -285,13 +285,16 @@ static void setMozillaState(const RenderTheme* theme, GtkWidgetState* state, Ren
 
 static bool paintMozillaGtkWidget(const RenderThemeGtk* theme, GtkThemeWidgetType type, RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
 {
-    // No GdkWindow to render to, so return true to fall back
-    if (!i.context->gdkDrawable())
-        return true;
+    GRefPtr<GdkDrawable> pixmap;
 
     // Painting is disabled so just claim to have succeeded
     if (i.context->paintingDisabled())
         return false;
+
+    // No GdkWindow to render to, so return true to fall back
+    if (!i.context->gdkDrawable())
+        // This is slow, used only during printing process
+        pixmap = adoptGRef(gdk_pixmap_new(0, rect.width(), rect.height(), gdk_visual_get_system()->depth));
 
     GtkWidgetState mozState;
     setMozillaState(theme, &mozState, o);
@@ -312,11 +315,28 @@ static bool paintMozillaGtkWidget(const RenderThemeGtk* theme, GtkThemeWidgetTyp
         break;
     }
 
+    GtkTextDirection direction = gtkTextDirection(o->style()->direction());
+
+    if (pixmap) {
+        GdkRectangle gdkRect = IntRect(0, 0, rect.width(), rect.height());
+
+        moz_gtk_use_theme_parts(theme->partsForDrawable(pixmap.get()));
+
+        bool result = moz_gtk_widget_paint(type, pixmap.get(), &gdkRect, &gdkRect, &mozState, flags, direction) != MOZ_GTK_SUCCESS;
+
+        if (!result) {
+            cairo_t* cr = i.context->platformContext();
+            gdk_cairo_set_source_pixmap(cr, pixmap.get(), rect.x(), rect.y());
+            cairo_paint(cr);
+        }
+
+        return result;
+    }
+
     AffineTransform ctm = i.context->getCTM();
 
     IntPoint pos = ctm.mapPoint(rect.location());
     GdkRectangle gdkRect = IntRect(pos.x(), pos.y(), rect.width(), rect.height());
-    GtkTextDirection direction = gtkTextDirection(o->style()->direction());
 
     // Find the clip rectangle
     cairo_t* cr = i.context->platformContext();

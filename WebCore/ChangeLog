@@ -1,3 +1,17 @@
+2010-05-13  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        In case there is no expose event we render the theme in a pixmap
+        and copy it to the cairo context. This is slow but it is used just
+        in case we are printing nowadays.
+
+        [GTK] Theme does not render when printing
+        https://bugs.webkit.org/show_bug.cgi?id=38896
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::paintMozillaGtkWidget):
+
 2010-05-12  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Darin Adler.
