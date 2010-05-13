@@ -1,3 +1,13 @@
+2010-05-13  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Can't submit a form with <input type=checkbox required>
+        https://bugs.webkit.org/show_bug.cgi?id=39065
+
+        * fast/forms/interactive-validation-required-checkbox-expected.txt: Added.
+        * fast/forms/interactive-validation-required-checkbox.html: Added.
+
 2010-05-13  Brady Eidson  <beidson@apple.com>
 
         Reviewed by NOBODY (Layout test fix)

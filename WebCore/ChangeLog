@@ -1,3 +1,16 @@
+2010-05-13  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Can't submit a form with <input type=checkbox required>
+        https://bugs.webkit.org/show_bug.cgi?id=39065
+
+        Test: fast/forms/interactive-validation-required-checkbox.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setChecked):
+          Update the validity cache when a checkbox state is changed.
+
 2010-05-13  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
