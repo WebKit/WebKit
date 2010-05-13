@@ -89,24 +89,8 @@ WebInspector.ConsoleView = function(drawer)
     this.logElement = createFilterElement.call(this, "Logs");
 
     this.filter(this.allElement, false);
+    this._registerShortcuts();
 
-    this._shortcuts = {};
-
-    var shortcut;
-
-    shortcut = WebInspector.KeyboardShortcut.makeKey("k", WebInspector.KeyboardShortcut.Modifiers.Meta);
-    // This case requires a separate bound function as its isMacOnly property should not be shared among different shortcut handlers.
-    this._shortcuts[shortcut] = this.requestClearMessages.bind(this);
-    this._shortcuts[shortcut].isMacOnly = true;
-
-    var clearConsoleHandler = this.requestClearMessages.bind(this);
-    shortcut = WebInspector.KeyboardShortcut.makeKey("l", WebInspector.KeyboardShortcut.Modifiers.Ctrl);
-    this._shortcuts[shortcut] = clearConsoleHandler;
-
-    // Since the Context Menu for the Console View will always be the same, we can create it in
-    // the constructor.
-    this._contextMenu = new WebInspector.ContextMenu();
-    this._contextMenu.appendItem(WebInspector.UIString("Clear Console"), clearConsoleHandler);
     this.messagesElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), true);
     
     this._customFormatters = {
@@ -445,6 +429,46 @@ WebInspector.ConsoleView.prototype = {
         WebInspector.updateFocusedNode(link.representedNode.id);
         event.stopPropagation();
         event.preventDefault();
+    },
+
+    _registerShortcuts: function()
+    {
+        this._shortcuts = {};
+
+        var shortcut = WebInspector.KeyboardShortcut;
+        var shortcutK = shortcut.makeDescriptor("k", WebInspector.KeyboardShortcut.Modifiers.Meta);
+        // This case requires a separate bound function as its isMacOnly property should not be shared among different shortcut handlers.
+        this._shortcuts[shortcutK.key] = this.requestClearMessages.bind(this);
+        this._shortcuts[shortcutK.key].isMacOnly = true;
+
+        var clearConsoleHandler = this.requestClearMessages.bind(this);
+        var shortcutL = shortcut.makeDescriptor("l", WebInspector.KeyboardShortcut.Modifiers.Ctrl);
+        this._shortcuts[shortcutL.key] = clearConsoleHandler;
+        this._contextMenu = new WebInspector.ContextMenu();
+        this._contextMenu.appendItem(WebInspector.UIString("Clear Console"), clearConsoleHandler);
+
+        var section = WebInspector.shortcutsHelp.section(WebInspector.UIString("Console"));
+        var keys = WebInspector.isMac() ? [ shortcutK.name, shortcutL.name ] : [ shortcutL.name ];
+        section.addAlternateKeys(keys, WebInspector.UIString("Clear Console"));
+
+        keys = [
+            shortcut.shortcutToString(shortcut.Keys.Tab),
+            shortcut.shortcutToString(shortcut.Keys.Tab, shortcut.Modifiers.Shift)
+        ];
+        section.addRelatedKeys(keys, WebInspector.UIString("Next/previous suggestion"));
+        section.addKey(shortcut.shortcutToString(shortcut.Keys.Right), WebInspector.UIString("Accept suggestion"));
+        keys = [
+            shortcut.shortcutToString(shortcut.Keys.Down),
+            shortcut.shortcutToString(shortcut.Keys.Up)
+        ];
+        section.addRelatedKeys(keys, WebInspector.UIString("Next/previous line"));
+        keys = [
+            shortcut.shortcutToString("N", shortcut.Modifiers.Alt),
+            shortcut.shortcutToString("P", shortcut.Modifiers.Alt)
+        ];
+        if (WebInspector.isMac())
+            section.addRelatedKeys(keys, WebInspector.UIString("Next/previous command"));
+        section.addKey(shortcut.shortcutToString(shortcut.Keys.Enter), WebInspector.UIString("Execute command"));
     },
 
     _promptKeyDown: function(event)

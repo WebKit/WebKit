@@ -27,15 +27,6 @@ WebInspector.CallStackSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Call Stack"));
     
-    this._shortcuts = {};
-
-    var shortcut = WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.KeyCodes.Period,
-                                                         WebInspector.KeyboardShortcut.Modifiers.Ctrl);
-    this._shortcuts[shortcut] = this._selectNextCallFrameOnStack.bind(this);
-
-    var shortcut = WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.KeyCodes.Comma,
-                                                         WebInspector.KeyboardShortcut.Modifiers.Ctrl);
-    this._shortcuts[shortcut] = this._selectPreviousCallFrameOnStack.bind(this);
 }
 
 WebInspector.CallStackSidebarPane.prototype = {
@@ -159,6 +150,21 @@ WebInspector.CallStackSidebarPane.prototype = {
     {
         var placardElement = event.target.enclosingNodeOrSelfWithClass("placard");
         this.selectedCallFrame = placardElement.placard.callFrame;
+    },
+
+    registerShortcuts: function(section)
+    {
+        this._shortcuts = {};
+
+        var nextCallFrame = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Period,
+            WebInspector.KeyboardShortcut.Modifiers.Ctrl);
+        this._shortcuts[nextCallFrame.key] = this._selectNextCallFrameOnStack.bind(this);
+
+        var prevCallFrame = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Comma,
+            WebInspector.KeyboardShortcut.Modifiers.Ctrl);
+        this._shortcuts[prevCallFrame.key] = this._selectPreviousCallFrameOnStack.bind(this);
+
+        section.addRelatedKeys([ nextCallFrame.name, prevCallFrame.name ], WebInspector.UIString("Next/previous call frame"));
     }
 }
 

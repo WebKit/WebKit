@@ -278,6 +278,15 @@ Element.prototype.isInsertionCaretInside = function()
     return selectionRange.startContainer === this || selectionRange.startContainer.isDescendant(this);
 }
 
+Element.prototype.createChild = function(elementName, className)
+{
+    var element = document.createElement(elementName);
+    if (className)
+        element.className = className;
+    this.appendChild(element);
+    return element;
+}
+
 Element.prototype.__defineGetter__("totalOffsetLeft", function()
 {
     var total = 0;

@@ -43928,6 +43928,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\HelpScreen.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ImageView.js"
 					>
 				</File>
@@ -43941,6 +43945,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\InjectedScriptAccess.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\helpScreen.css"
 					>
 				</File>
 				<File
@@ -44053,6 +44061,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\Settings.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\ShortcutsHelp.js"
 					>
 				</File>
 				<File

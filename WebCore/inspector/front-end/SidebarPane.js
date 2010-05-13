@@ -125,7 +125,7 @@ WebInspector.SidebarPane.prototype = {
 
     _onTitleKeyDown: function(event)
     {
-        if (isEnterKey(event) || event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Space)
+        if (isEnterKey(event) || event.keyCode === WebInspector.KeyboardShortcut.Keys.Space.code)
             this.toggleExpanded();
     }
 }
