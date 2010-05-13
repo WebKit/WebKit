@@ -75,8 +75,8 @@ void JSString::resolveRope(ExecState* exec) const
             // (we will be working backwards over the rope).
             unsigned fiberCountMinusOne = rope->fiberCount() - 1;
             for (unsigned i = 0; i < fiberCountMinusOne; ++i)
-                workQueue.append(rope->fibers(i));
-            currentFiber = rope->fibers(fiberCountMinusOne);
+                workQueue.append(rope->fibers()[i]);
+            currentFiber = rope->fibers()[fiberCountMinusOne];
         } else {
             UStringImpl* string = static_cast<UStringImpl*>(currentFiber);
             unsigned length = string->length();
@@ -102,6 +102,57 @@ void JSString::resolveRope(ExecState* exec) const
             workQueue.removeLast();
         }
     }
+}
+
+JSValue JSString::replaceCharacter(ExecState* exec, UChar character, const UString& replacement)
+{
+    if (!isRope()) {
+        size_t matchPosition = m_value.find(character);
+        if (matchPosition == notFound)
+            return JSValue(this);
+        return jsString(exec, m_value.substr(0, matchPosition), replacement, m_value.substr(matchPosition + 1));
+    }
+
+    RopeIterator end;
+    
+    // Count total fibers and find matching string.
+    size_t fiberCount = 0;
+    UStringImpl* matchString = 0;
+    size_t matchPosition = notFound;
+    for (RopeIterator it(m_other.m_fibers, m_fiberCount); it != end; ++it) {
+        ++fiberCount;
+        if (matchString)
+            continue;
+
+        UStringImpl* string = *it;
+        matchPosition = string->find(character);
+        if (matchPosition == notFound)
+            continue;
+        matchString = string;
+    }
+
+    if (!matchString)
+        return this;
+
+    RopeBuilder builder(replacement.size() ? fiberCount + 2 : fiberCount + 1);
+    if (UNLIKELY(builder.isOutOfMemory()))
+        return throwOutOfMemoryError(exec);
+
+    for (RopeIterator it(m_other.m_fibers, m_fiberCount); it != end; ++it) {
+        UStringImpl* string = *it;
+        if (string != matchString) {
+            builder.append(UString(string));
+            continue;
+        }
+
+        builder.append(UString(string).substr(0, matchPosition));
+        if (replacement.size())
+            builder.append(replacement);
+        builder.append(UString(string).substr(matchPosition + 1));
+    }
+
+    JSGlobalData* globalData = &exec->globalData();
+    return JSValue(new (globalData) JSString(globalData, builder.release()));
 }
 
 JSString* JSString::getIndexSlowCase(ExecState* exec, unsigned i)

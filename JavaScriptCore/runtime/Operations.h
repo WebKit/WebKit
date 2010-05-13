@@ -46,7 +46,7 @@ namespace JSC {
         if ((length1 + length2) < length1)
             return throwOutOfMemoryError(exec);
 
-        unsigned fiberCount = s1->fiberCount() + s2->fiberCount();
+        unsigned fiberCount = s1->size() + s2->size();
         JSGlobalData* globalData = &exec->globalData();
 
         if (fiberCount <= JSString::s_maxInternalRopeLength)
@@ -71,7 +71,7 @@ namespace JSC {
         if ((length1 + length2) < length1)
             return throwOutOfMemoryError(exec);
 
-        unsigned fiberCount = 1 + s2->fiberCount();
+        unsigned fiberCount = 1 + s2->size();
         JSGlobalData* globalData = &exec->globalData();
 
         if (fiberCount <= JSString::s_maxInternalRopeLength)
@@ -96,7 +96,7 @@ namespace JSC {
         if ((length1 + length2) < length1)
             return throwOutOfMemoryError(exec);
 
-        unsigned fiberCount = s1->fiberCount() + 1;
+        unsigned fiberCount = s1->size() + 1;
         JSGlobalData* globalData = &exec->globalData();
 
         if (fiberCount <= JSString::s_maxInternalRopeLength)
@@ -110,6 +110,42 @@ namespace JSC {
         return new (globalData) JSString(globalData, ropeBuilder.release());
     }
 
+    ALWAYS_INLINE JSValue jsString(ExecState* exec, const UString& u1, const UString& u2)
+    {
+        unsigned length1 = u1.size();
+        if (!length1)
+            return jsString(exec, u2);
+        unsigned length2 = u2.size();
+        if (!length2)
+            return jsString(exec, u1);
+        if ((length1 + length2) < length1)
+            return throwOutOfMemoryError(exec);
+
+        JSGlobalData* globalData = &exec->globalData();
+        return new (globalData) JSString(globalData, u1, u2);
+    }
+
+    ALWAYS_INLINE JSValue jsString(ExecState* exec, const UString& u1, const UString& u2, const UString& u3)
+    {
+        unsigned length1 = u1.size();
+        unsigned length2 = u2.size();
+        unsigned length3 = u3.size();
+        if (!length1)
+            return jsString(exec, u2, u3);
+        if (!length2)
+            return jsString(exec, u1, u3);
+        if (!length3)
+            return jsString(exec, u1, u2);
+
+        if ((length1 + length2) < length1)
+            return throwOutOfMemoryError(exec);
+        if ((length1 + length2 + length3) < length3)
+            return throwOutOfMemoryError(exec);
+
+        JSGlobalData* globalData = &exec->globalData();
+        return new (globalData) JSString(globalData, u1, u2, u3);
+    }
+
     ALWAYS_INLINE JSValue jsString(ExecState* exec, Register* strings, unsigned count)
     {
         ASSERT(count >= 3);
@@ -118,7 +154,7 @@ namespace JSC {
         for (unsigned i = 0; i < count; ++i) {
             JSValue v = strings[i].jsValue();
             if (LIKELY(v.isString()))
-                fiberCount += asString(v)->fiberCount();
+                fiberCount += asString(v)->size();
             else
                 ++fiberCount;
         }
@@ -157,13 +193,13 @@ namespace JSC {
     {
         unsigned fiberCount = 0;
         if (LIKELY(thisValue.isString()))
-            fiberCount += asString(thisValue)->fiberCount();
+            fiberCount += asString(thisValue)->size();
         else
             ++fiberCount;
         for (unsigned i = 0; i < args.size(); ++i) {
             JSValue v = args.at(i);
             if (LIKELY(v.isString()))
-                fiberCount += asString(v)->fiberCount();
+                fiberCount += asString(v)->size();
             else
                 ++fiberCount;
         }
