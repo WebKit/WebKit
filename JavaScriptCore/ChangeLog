@@ -1,5 +1,15 @@
 2010-05-13  Maciej Stachowiak  <mjs@apple.com>
 
+        No review, attempted build fix.
+
+        Try to fix Tiger build with some gratuitous initialization of
+        seemingly uninitialized variables.
+
+        * wtf/text/StringImpl.h:
+        (WebCore::StringImpl::tryCreateUninitialized):
+
+2010-05-13  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Mark Rowe.
 
         Various JavaScript string optimizations
