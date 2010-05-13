@@ -1,3 +1,25 @@
+2010-05-13  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Part of <rdar://problem/7965182> and https://bugs.webkit.org/show_bug.cgi?id=38928
+
+        No new tests. (No change in behavior)
+
+        m_unloadEventBeingDispatched was already overloaded to include both unload and pagehide events.
+        In general, these are "page dismissal" events, and might also include beforeunload, so let's rename
+        the flag!
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::stopAllLoaders):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::pageHidden):
+        * loader/FrameLoader.h:
+
 2010-05-13  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Pavel Feldman.
