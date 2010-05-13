@@ -55,7 +55,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="QTMLClient.lib WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
+				AdditionalDependencies="QTMLClient.lib CVClient.lib WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 				AdditionalLibraryDirectories="&quot;$(WebKitLibrariesDir)\QTInternalSDK\Libraries&quot;;&quot;$(WebKitLibrariesDir)\QuickTime SDK\Libraries&quot;;&quot;$(ProgramFiles)\QuickTime SDK\Libraries&quot;"
 				IgnoreDefaultLibraryNames="LIBCMT"
@@ -128,7 +128,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="QTMLClient.lib WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
+				AdditionalDependencies="QTMLClient.lib CVClient.lib WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 				AdditionalLibraryDirectories="&quot;$(WebKitLibrariesDir)\QTInternalSDK\Libraries&quot;;&quot;$(WebKitLibrariesDir)\QuickTime SDK\Libraries&quot;;&quot;$(ProgramFiles)\QuickTime SDK\Libraries&quot;"
 				IgnoreDefaultLibraryNames="LIBCMT"
@@ -200,7 +200,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="QTMLClient.lib WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
+				AdditionalDependencies="QTMLClient.lib CVClient.lib WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 				AdditionalLibraryDirectories="&quot;$(WebKitLibrariesDir)\QTInternalSDK\Libraries&quot;;&quot;$(WebKitLibrariesDir)\QuickTime SDK\Libraries&quot;;&quot;$(ProgramFiles)\QuickTime SDK\Libraries&quot;"
 				IgnoreDefaultLibraryNames="LIBCMT"
@@ -272,7 +272,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="QTMLClient.lib WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
+				AdditionalDependencies="QTMLClient.lib CVClient.lib WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 				AdditionalLibraryDirectories="&quot;$(WebKitLibrariesDir)\QTInternalSDK\Libraries&quot;;&quot;$(WebKitLibrariesDir)\QuickTime SDK\Libraries&quot;;&quot;$(ProgramFiles)\QuickTime SDK\Libraries&quot;"
 				IgnoreDefaultLibraryNames="LIBCMT"
@@ -301,7 +301,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\QTMovieWin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\graphics\win\QTMovieWin.h&quot; &quot;$(WebKitOutputDir)\include\QTMovieWin&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\QTMovieWin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\graphics\win\QTMovieCFDictionary.h&quot; &quot;$(WebKitOutputDir)\include\QTMovieWin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\graphics\win\QTMovie.h&quot; &quot;$(WebKitOutputDir)\include\QTMovieWin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\graphics\win\QTMovieGWorld.h&quot; &quot;$(WebKitOutputDir)\include\QTMovieWin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\graphics\win\QTMovieTask.h&quot; &quot;$(WebKitOutputDir)\include\QTMovieWin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\graphics\win\QTMovieVisualContext.h&quot; &quot;$(WebKitOutputDir)\include\QTMovieWin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\graphics\win\QTMovieWinTimer.h&quot; &quot;$(WebKitOutputDir)\include\QTMovieWin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\graphics\win\QTMoviePixelBuffer.h&quot; &quot;$(WebKitOutputDir)\include\QTMovieWin&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -314,11 +314,31 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\platform\graphics\win\QTMovieWin.cpp"
+				RelativePath="..\platform\graphics\win\QTCFDictionary.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\graphics\win\QTMovie.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\graphics\win\QTMovieGWorld.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\graphics\win\QTMovieTask.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\graphics\win\QTMovieVisualContext.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\platform\graphics\win\QTMovieWinTimer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\graphics\win\QTPixelBuffer.cpp"
 				>
 			</File>
 		</Filter>
@@ -328,11 +348,31 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\platform\graphics\win\QTMovieWin.h"
+				RelativePath="..\platform\graphics\win\QTCFDictionary.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\graphics\win\QTMovie.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\graphics\win\QTMovieGWorld.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\graphics\win\QTMovieTask.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\graphics\win\QTMovieVisualContext.h"
 				>
 			</File>
 			<File
 				RelativePath="..\platform\graphics\win\QTMovieWinTimer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\graphics\win\QTPixelBuffer.h"
 				>
 			</File>
 		</Filter>

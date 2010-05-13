@@ -42,6 +42,8 @@ void initializeMainThread();
 
 void callOnMainThread(MainThreadFunction*, void* context);
 void callOnMainThreadAndWait(MainThreadFunction*, void* context);
+void cancelCallOnMainThread(MainThreadFunction*, void* context);
+
 void setMainThreadCallbacksPaused(bool paused);
 
 bool isMainThread();
@@ -63,7 +65,7 @@ void initializeMainThreadToProcessMainThreadPlatform();
 
 using WTF::callOnMainThread;
 using WTF::callOnMainThreadAndWait;
+using WTF::cancelCallOnMainThread;
 using WTF::setMainThreadCallbacksPaused;
 using WTF::isMainThread;
-
 #endif // MainThread_h

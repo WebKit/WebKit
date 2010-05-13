@@ -27,14 +27,14 @@
 
 #if ENABLE(VIDEO)
 #include "MediaPlayer.h"
-#include "MediaPlayerPrivate.h"
 
 #include "ContentType.h"
+#include "Document.h"
+#include "Frame.h"
+#include "FrameView.h"
 #include "IntRect.h"
 #include "MIMETypeRegistry.h"
-#include "FrameView.h"
-#include "Frame.h"
-#include "Document.h"
+#include "MediaPlayerPrivate.h"
 #include "TimeRanges.h"
 
 #if PLATFORM(QT)
@@ -46,7 +46,8 @@
 #elif OS(WINCE) && !PLATFORM(QT)
 #include "MediaPlayerPrivateWince.h"
 #elif PLATFORM(WIN)
-#include "MediaPlayerPrivateQuickTimeWin.h"
+#include "MediaPlayerPrivateQuickTimeVisualContext.h"
+#include "MediaPlayerPrivateQuicktimeWin.h"
 #elif PLATFORM(GTK)
 #include "MediaPlayerPrivateGStreamer.h"
 #elif PLATFORM(QT)
@@ -163,6 +164,9 @@ static Vector<MediaPlayerFactory*>& installedMediaEngines()
 #if USE(GSTREAMER)
         MediaPlayerPrivateGStreamer::registerMediaEngine(addMediaEngine);
 #else
+#if PLATFORM(WIN)
+        MediaPlayerPrivateQuickTimeVisualContext::registerMediaEngine(addMediaEngine);
+#endif
         // FIXME: currently all the MediaEngines are named
         // MediaPlayerPrivate. This code will need an update when bug
         // 36663 is adressed.

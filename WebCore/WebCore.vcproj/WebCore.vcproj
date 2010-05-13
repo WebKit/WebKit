@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
@@ -8149,62 +8149,6 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSStyleMedia.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Internal|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Cairo|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Cairo|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_All|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSStyleMedia.h"
-				>
-			</File>
-			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMediaError.cpp"
 				>
 				<FileConfiguration
@@ -8397,7 +8341,6 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -10387,6 +10330,62 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSStorageEvent.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSStyleMedia.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSStyleMedia.h"
 				>
 			</File>
 			<File
@@ -18842,7 +18841,6 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_All|Win32"
-
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -21463,19 +21461,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\loader\DocumentWriter.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\loader\DocumentWriter.h"
-				>
-			</File>
-			<File
 				RelativePath="..\loader\DocumentThreadableLoader.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\loader\DocumentThreadableLoader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\DocumentWriter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\DocumentWriter.h"
 				>
 			</File>
 			<File
@@ -22842,15 +22840,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\GlyphMetricsMap.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\GlyphPageTreeNode.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\platform\graphics\GlyphPageTreeNode.h"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\graphics\GlyphMetricsMap.h"
 					>
 				</File>
 				<File
@@ -23441,6 +23439,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\win\MediaPlayerPrivateQuickTimeVisualContext.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\MediaPlayerPrivateQuickTimeVisualContext.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\win\MediaPlayerPrivateQuickTimeWin.cpp"
 						>
 						<FileConfiguration
@@ -23479,6 +23485,14 @@
 								Name="VCCustomBuildTool"
 							/>
 						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\MediaPlayerPrivateTaskTimer.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\MediaPlayerPrivateTaskTimer.h"
+						>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\opentype\OpenTypeUtilities.cpp"
@@ -25742,15 +25756,15 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\text\SuffixTree.h"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\graphics\StringTruncator.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\platform\graphics\StringTruncator.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\text\SuffixTree.h"
 					>
 				</File>
 				<File
@@ -27155,14 +27169,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\StyleMedia.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\css\StyleMedia.h"
-				>
-			</File>
-			<File
 				RelativePath="..\css\mediaControls.css"
 				>
 			</File>
@@ -27248,6 +27254,14 @@
 			</File>
 			<File
 				RelativePath="..\css\StyleList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\css\StyleMedia.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\StyleMedia.h"
 				>
 			</File>
 			<File
@@ -31817,7 +31831,6 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-
 			</File>
 			<File
 				RelativePath="..\html\HTMLFormElement.h"
@@ -38767,6 +38780,58 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSScriptProfileNodeCustom.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Internal|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_All|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSSharedWorkerConstructor.cpp"
 					>
 					<FileConfiguration
@@ -38927,7 +38992,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSSQLTransactionCustom.cpp"
+					RelativePath="..\bindings\js\JSStorageCustom.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -39405,58 +39470,6 @@
 				<File
 					RelativePath="..\bindings\js\JSSVGPODTypeWrapper.h"
 					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSScriptProfileNodeCustom.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_Internal|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_Cairo|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release_Cairo|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_All|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSTextCustom.cpp"
@@ -39947,7 +39960,8 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSWorkerContextErrorHandler.cpp" >
+					RelativePath="..\bindings\js\JSWorkerContextErrorHandler.cpp"
+					>
 					<FileConfiguration
 						Name="Debug|Win32"
 						ExcludedFromBuild="true"
@@ -42527,15 +42541,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\storage\DatabaseTask.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\storage\DatabaseSync.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\storage\DatabaseSync.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\DatabaseTask.cpp"
 				>
 			</File>
 			<File
@@ -42919,14 +42933,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\InspectorCSSStore.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\InspectorCSSStore.h"
-				>
-			</File>
-			<File
 				RelativePath="..\inspector\InspectorClient.h"
 				>
 			</File>
@@ -42936,6 +42942,14 @@
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorController.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorCSSStore.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorCSSStore.h"
 				>
 			</File>
 			<File

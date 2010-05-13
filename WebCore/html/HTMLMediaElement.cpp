@@ -1995,21 +1995,21 @@ void HTMLMediaElement::createMediaPlayerProxy()
 void HTMLMediaElement::enterFullscreen()
 {
     ASSERT(!m_isFullscreen);
+    m_isFullscreen = true;
     if (document() && document()->page()) {
         document()->page()->chrome()->client()->enterFullscreenForNode(this);
         scheduleEvent(eventNames().webkitbeginfullscreenEvent);
-        m_isFullscreen = true;
     }
 }
 
 void HTMLMediaElement::exitFullscreen()
 {
     ASSERT(m_isFullscreen);
+    m_isFullscreen = false;
     if (document() && document()->page()) {
         document()->page()->chrome()->client()->exitFullscreenForNode(this);
         scheduleEvent(eventNames().webkitendfullscreenEvent);
     }
-    m_isFullscreen = false;
 }
 
 PlatformMedia HTMLMediaElement::platformMedia() const
