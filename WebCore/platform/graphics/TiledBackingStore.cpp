@@ -120,9 +120,11 @@ void TiledBackingStore::paint(GraphicsContext* context, const IntRect& rect)
             if (currentTile && currentTile->isReadyToPaint())
                 currentTile->paint(context, dirtyRect);
             else {
-                FloatRect tileRect = tileRectForCoordinate(currentCoordinate);
-                FloatRect target = intersection(tileRect, FloatRect(rect));
-                Tile::paintCheckerPattern(context, target);
+                IntRect tileRect = tileRectForCoordinate(currentCoordinate);
+                IntRect target = intersection(tileRect, dirtyRect);
+                if (target.isEmpty())
+                    continue;
+                Tile::paintCheckerPattern(context, FloatRect(target));
             }
         }
     }

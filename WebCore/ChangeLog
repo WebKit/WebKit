@@ -1,3 +1,15 @@
+2010-05-13  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39063
+        [Qt] Tiled backing store checker pattern does not paint correctly when scaling factor is not 1
+
+        Use the dirty rect that has been adjusted for scaling instead of the original one.
+
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::paint):
+
 2010-05-13  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
