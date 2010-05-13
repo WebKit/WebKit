@@ -1,3 +1,27 @@
+2010-05-13  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Alias WebGLArray type names to TypedArray type names
+        https://bugs.webkit.org/show_bug.cgi?id=39036
+
+        Exposed the existing WebGL<T>Array constructor functions on the
+        DOMWindow under the naming convention in the TypedArray spec. The
+        implementations will be renamed in a subsequent bug, and the
+        aliases to the WebGL<T>Array type names eventually removed. Ran
+        all layout tests (including WebGL) in Safari, and WebGL tests in
+        Chromium.
+
+        Test: revised array-unit-tests.html to test both type names.
+        Revised global prototype and constructor tests to ignore new types.
+
+        * fast/canvas/webgl/array-unit-tests-expected.txt:
+        * fast/canvas/webgl/array-unit-tests.html:
+        * fast/dom/Window/script-tests/window-property-descriptors.js:
+        * fast/dom/Window/window-properties.html:
+        * fast/dom/script-tests/prototype-inheritance.js:
+        * fast/js/script-tests/global-constructors.js:
+
 2010-05-13  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Dave Hyatt.

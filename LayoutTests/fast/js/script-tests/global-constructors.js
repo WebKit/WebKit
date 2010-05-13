@@ -26,6 +26,14 @@ for (var x in constructorNames) {
         name =="WebGLUnsignedByteArray" ||
         name =="WebGLUnsignedIntArray" ||
         name =="WebGLUnsignedShortArray" ||
+        name == "ArrayBuffer" ||
+        name == "Int8Array" ||
+        name == "Uint8Array" ||
+        name == "Int16Array" ||
+        name == "Uint16Array" ||
+        name == "Int32Array" ||
+        name == "Uint32Array" ||
+        name == "FloatArray" ||
         name == "FileError" ||
         name == "FileReader")
         continue;
