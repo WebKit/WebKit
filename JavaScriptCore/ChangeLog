@@ -1,5 +1,15 @@
 2010-05-12  Mark Rowe  <mrowe@apple.com>
 
+        Merge r58987.
+
+    2010-05-07  Oliver Hunt  <oliver@apple.com>
+
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-05-12  Mark Rowe  <mrowe@apple.com>
+
         Merge r58986.
 
     2010-05-07  Oliver Hunt  <oliver@apple.com>
