@@ -1,5 +1,18 @@
 2010-05-12  Mark Rowe  <mrowe@apple.com>
 
+        Merge r58991.
+
+    2010-05-07  Oliver Hunt  <oliver@apple.com>
+
+        32-bit buildfix.
+
+        Macro expansion I stab at thee!
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_resolve_global):
+
+2010-05-12  Mark Rowe  <mrowe@apple.com>
+
         Merge r58988.
 
     2010-05-07  Oliver Hunt  <oliver@apple.com>
