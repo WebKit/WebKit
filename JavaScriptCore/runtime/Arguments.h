@@ -220,8 +220,8 @@ namespace JSC {
     {
         ASSERT(!d()->registerArray);
 
-        size_t numParametersMinusThis = d()->functionExecutable->generatedBytecode().m_numParameters - 1;
-        size_t numVars = d()->functionExecutable->generatedBytecode().m_numVars;
+        size_t numParametersMinusThis = d()->functionExecutable->parameterCount();
+        size_t numVars = d()->functionExecutable->variableCount();
         size_t numLocals = numVars + numParametersMinusThis;
 
         if (!numLocals)

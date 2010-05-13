@@ -78,7 +78,9 @@ namespace JSC {
     struct TrampolineStructure {
         MacroAssemblerCodePtr ctiStringLengthTrampoline;
         MacroAssemblerCodePtr ctiVirtualCallLink;
+        MacroAssemblerCodePtr ctiVirtualConstructLink;
         MacroAssemblerCodePtr ctiVirtualCall;
+        MacroAssemblerCodePtr ctiVirtualConstruct;
         RefPtr<NativeExecutable> ctiNativeCallThunk;
         MacroAssemblerCodePtr ctiSoftModulo;
     };
@@ -274,7 +276,9 @@ namespace JSC {
 
         MacroAssemblerCodePtr ctiStringLengthTrampoline() { return m_trampolineStructure.ctiStringLengthTrampoline; }
         MacroAssemblerCodePtr ctiVirtualCallLink() { return m_trampolineStructure.ctiVirtualCallLink; }
+        MacroAssemblerCodePtr ctiVirtualConstructLink() { return m_trampolineStructure.ctiVirtualConstructLink; }
         MacroAssemblerCodePtr ctiVirtualCall() { return m_trampolineStructure.ctiVirtualCall; }
+        MacroAssemblerCodePtr ctiVirtualConstruct() { return m_trampolineStructure.ctiVirtualConstruct; }
         NativeExecutable* ctiNativeCallThunk() { return m_trampolineStructure.ctiNativeCallThunk.get(); }
         MacroAssemblerCodePtr ctiSoftModulo() { return m_trampolineStructure.ctiSoftModulo; }
 
@@ -364,6 +368,7 @@ extern "C" {
     JSObject* JIT_STUB cti_op_put_by_id_transition_realloc(STUB_ARGS_DECLARATION);
     JSPropertyNameIterator* JIT_STUB cti_op_get_pnames(STUB_ARGS_DECLARATION);
     VoidPtrPair JIT_STUB cti_op_call_arityCheck(STUB_ARGS_DECLARATION);
+    VoidPtrPair JIT_STUB cti_op_construct_arityCheck(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_op_eq(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_op_eq_strings(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_op_jless(STUB_ARGS_DECLARATION);
@@ -393,11 +398,13 @@ extern "C" {
     void JIT_STUB cti_op_tear_off_activation(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_tear_off_arguments(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_register_file_check(STUB_ARGS_DECLARATION);
-    void* JIT_STUB cti_op_call_JSFunction(STUB_ARGS_DECLARATION);
+    void* JIT_STUB cti_op_call_jitCompile(STUB_ARGS_DECLARATION);
+    void* JIT_STUB cti_op_construct_jitCompile(STUB_ARGS_DECLARATION);
     void* JIT_STUB cti_op_switch_char(STUB_ARGS_DECLARATION);
     void* JIT_STUB cti_op_switch_imm(STUB_ARGS_DECLARATION);
     void* JIT_STUB cti_op_switch_string(STUB_ARGS_DECLARATION);
     void* JIT_STUB cti_vm_lazyLinkCall(STUB_ARGS_DECLARATION);
+    void* JIT_STUB cti_vm_lazyLinkConstruct(STUB_ARGS_DECLARATION);
 } // extern "C"
 
 } // namespace JSC

@@ -272,7 +272,7 @@ namespace JSC {
     class CodeBlock : public FastAllocBase {
         friend class JIT;
     protected:
-        CodeBlock(ScriptExecutable* ownerExecutable, CodeType, PassRefPtr<SourceProvider>, unsigned sourceOffset, SymbolTable* symbolTable);
+        CodeBlock(ScriptExecutable* ownerExecutable, CodeType, PassRefPtr<SourceProvider>, unsigned sourceOffset, SymbolTable* symbolTable, bool isConstructor);
     public:
         virtual ~CodeBlock();
 
@@ -350,7 +350,7 @@ namespace JSC {
         unsigned getBytecodeIndex(CallFrame* callFrame, ReturnAddressPtr returnAddress)
         {
             reparseForExceptionInfoIfNecessary(callFrame);
-            return binaryChop<CallReturnOffsetToBytecodeIndex, unsigned, getCallReturnOffset>(callReturnIndexVector().begin(), callReturnIndexVector().size(), ownerExecutable()->generatedJITCode().offsetOf(returnAddress.value()))->bytecodeIndex;
+            return binaryChop<CallReturnOffsetToBytecodeIndex, unsigned, getCallReturnOffset>(callReturnIndexVector().begin(), callReturnIndexVector().size(), getJITCode().offsetOf(returnAddress.value()))->bytecodeIndex;
         }
         
         bool functionRegisterForBytecodeOffset(unsigned bytecodeOffset, int& functionRegisterIndex);
@@ -368,8 +368,8 @@ namespace JSC {
 #endif
 
 #if ENABLE(JIT)
-        JITCode& getJITCode() { return ownerExecutable()->generatedJITCode(); }
-        ExecutablePool* executablePool() { return ownerExecutable()->getExecutablePool(); }
+        JITCode& getJITCode() { return m_isConstructor ? ownerExecutable()->generatedJITCodeForConstruct() : ownerExecutable()->generatedJITCodeForCall(); }
+        ExecutablePool* executablePool() { return getJITCode().getExecutablePool(); }
 #endif
 
         ScriptExecutable* ownerExecutable() const { return m_ownerExecutable; }
@@ -489,6 +489,7 @@ namespace JSC {
         int m_numCalleeRegisters;
         int m_numVars;
         int m_numParameters;
+        bool m_isConstructor;
 
     private:
 #if !defined(NDEBUG) || ENABLE(OPCODE_SAMPLING)
@@ -579,7 +580,7 @@ namespace JSC {
     class GlobalCodeBlock : public CodeBlock {
     public:
         GlobalCodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, JSGlobalObject* globalObject)
-            : CodeBlock(ownerExecutable, codeType, sourceProvider, sourceOffset, &m_unsharedSymbolTable)
+            : CodeBlock(ownerExecutable, codeType, sourceProvider, sourceOffset, &m_unsharedSymbolTable, false)
             , m_globalObject(globalObject)
         {
             m_globalObject->codeBlocks().add(this);
@@ -635,8 +636,8 @@ namespace JSC {
         // as we need to initialise the CodeBlock before we could initialise any RefPtr to hold the shared
         // symbol table, so we just pass as a raw pointer with a ref count of 1.  We then manually deref
         // in the destructor.
-        FunctionCodeBlock(FunctionExecutable* ownerExecutable, CodeType codeType, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset)
-            : CodeBlock(ownerExecutable, codeType, sourceProvider, sourceOffset, new SharedSymbolTable)
+        FunctionCodeBlock(FunctionExecutable* ownerExecutable, CodeType codeType, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, bool isConstructor)
+            : CodeBlock(ownerExecutable, codeType, sourceProvider, sourceOffset, new SharedSymbolTable, isConstructor)
         {
         }
         ~FunctionCodeBlock()

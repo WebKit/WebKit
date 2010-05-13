@@ -96,7 +96,8 @@ namespace JSC {
         bool isOpcode(Opcode);
         
         JSValue execute(ProgramExecutable*, CallFrame*, ScopeChainNode*, JSObject* thisObj, JSValue* exception);
-        JSValue execute(FunctionExecutable*, CallFrame*, JSFunction*, JSObject* thisObj, const ArgList& args, ScopeChainNode*, JSValue* exception);
+        JSValue executeCall(FunctionExecutable*, CallFrame*, JSFunction*, JSObject* thisObj, const ArgList& args, ScopeChainNode*, JSValue* exception);
+        JSValue executeConstruct(FunctionExecutable*, CallFrame*, JSFunction*, JSObject* thisObj, const ArgList& args, ScopeChainNode*, JSValue* exception);
         JSValue execute(EvalExecutable* evalNode, CallFrame* exec, JSObject* thisObj, ScopeChainNode* scopeChain, JSValue* exception);
 
         JSValue retrieveArguments(CallFrame*, JSFunction*) const;

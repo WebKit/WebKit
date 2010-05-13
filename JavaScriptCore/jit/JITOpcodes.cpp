@@ -77,9 +77,46 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     Label virtualCallLinkBegin = align();
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
 
-    Jump isNativeFunc2 = branch32(Equal, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParameters)), Imm32(0));
+    Jump isNativeFunc1 = branch32(Equal, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForCall)), Imm32(0));
 
-    Jump hasCodeBlock2 = branch32(GreaterThan, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParameters)), Imm32(0));
+    Jump hasCodeBlock1 = branch32(GreaterThan, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForCall)), Imm32(0));
+    preserveReturnAddressAfterCall(regT3);
+    restoreArgumentReference();
+    Call callJSFunction1 = call();
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
+    emitGetJITStubArg(2, regT1); // argCount
+    restoreReturnAddressBeforeReturn(regT3);
+    hasCodeBlock1.link(this);
+
+    // Check argCount matches callee arity.
+    Jump arityCheckOkay1 = branch32(Equal, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForCall)), regT1);
+    preserveReturnAddressAfterCall(regT3);
+    emitPutJITStubArg(regT3, 1); // return address
+    restoreArgumentReference();
+    Call callArityCheck1 = call();
+    move(regT1, callFrameRegister);
+    emitGetJITStubArg(2, regT1); // argCount
+    restoreReturnAddressBeforeReturn(regT3);
+    arityCheckOkay1.link(this);
+
+    isNativeFunc1.link(this);
+
+    compileOpCallInitializeCallFrame();
+    preserveReturnAddressAfterCall(regT3);
+    emitPutJITStubArg(regT3, 1); // return address
+    restoreArgumentReference();
+    Call callLazyLinkCall1 = call();
+    restoreReturnAddressBeforeReturn(regT3);
+    jump(regT0);
+
+    // VirtualConstructLink Trampoline
+    // regT0 holds callee, regT1 holds argCount.  regT2 will hold the FunctionExecutable.
+    Label virtualConstructLinkBegin = align();
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
+
+    Jump isNativeFunc2 = branch32(Equal, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForConstruct)), Imm32(0));
+
+    Jump hasCodeBlock2 = branch32(GreaterThan, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForConstruct)), Imm32(0));
     preserveReturnAddressAfterCall(regT3);
     restoreArgumentReference();
     Call callJSFunction2 = call();
@@ -89,7 +126,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     hasCodeBlock2.link(this);
 
     // Check argCount matches callee arity.
-    Jump arityCheckOkay2 = branch32(Equal, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParameters)), regT1);
+    Jump arityCheckOkay2 = branch32(Equal, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForConstruct)), regT1);
     preserveReturnAddressAfterCall(regT3);
     emitPutJITStubArg(regT3, 1); // return address
     restoreArgumentReference();
@@ -105,7 +142,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     preserveReturnAddressAfterCall(regT3);
     emitPutJITStubArg(regT3, 1); // return address
     restoreArgumentReference();
-    Call callLazyLinkCall = call();
+    Call callLazyLinkCall2 = call();
     restoreReturnAddressBeforeReturn(regT3);
     jump(regT0);
 
@@ -114,23 +151,23 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     Label virtualCallBegin = align();
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
 
-    Jump isNativeFunc3 = branch32(Equal, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParameters)), Imm32(0));
+    Jump isNativeFunc3 = branch32(Equal, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForCall)), Imm32(0));
 
-    Jump hasCodeBlock3 = branch32(GreaterThan, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParameters)), Imm32(0));
+    Jump hasCodeBlock3 = branch32(GreaterThan, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForCall)), Imm32(0));
     preserveReturnAddressAfterCall(regT3);
     restoreArgumentReference();
-    Call callJSFunction1 = call();
+    Call callJSFunction3 = call();
     emitGetJITStubArg(2, regT1); // argCount
     restoreReturnAddressBeforeReturn(regT3);
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
     hasCodeBlock3.link(this);
     
     // Check argCount matches callee arity.
-    Jump arityCheckOkay3 = branch32(Equal, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParameters)), regT1);
+    Jump arityCheckOkay3 = branch32(Equal, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForCall)), regT1);
     preserveReturnAddressAfterCall(regT3);
     emitPutJITStubArg(regT3, 1); // return address
     restoreArgumentReference();
-    Call callArityCheck1 = call();
+    Call callArityCheck3 = call();
     move(regT1, callFrameRegister);
     emitGetJITStubArg(2, regT1); // argCount
     restoreReturnAddressBeforeReturn(regT3);
@@ -140,9 +177,44 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     isNativeFunc3.link(this);
 
     compileOpCallInitializeCallFrame();
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_jitCode)), regT0);
+    loadPtr(Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_jitCodeForCall)), regT0);
     jump(regT0);
 
+    // VirtualConstruct Trampoline
+    // regT0 holds callee, regT1 holds argCount.  regT2 will hold the FunctionExecutable.
+    Label virtualConstructBegin = align();
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
+
+    Jump isNativeFunc4 = branch32(Equal, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForConstruct)), Imm32(0));
+
+    Jump hasCodeBlock4 = branch32(GreaterThan, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForConstruct)), Imm32(0));
+    preserveReturnAddressAfterCall(regT3);
+    restoreArgumentReference();
+    Call callJSFunction4 = call();
+    emitGetJITStubArg(2, regT1); // argCount
+    restoreReturnAddressBeforeReturn(regT3);
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
+    hasCodeBlock4.link(this);
+    
+    // Check argCount matches callee arity.
+    Jump arityCheckOkay4 = branch32(Equal, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForConstruct)), regT1);
+    preserveReturnAddressAfterCall(regT3);
+    emitPutJITStubArg(regT3, 1); // return address
+    restoreArgumentReference();
+    Call callArityCheck4 = call();
+    move(regT1, callFrameRegister);
+    emitGetJITStubArg(2, regT1); // argCount
+    restoreReturnAddressBeforeReturn(regT3);
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
+    arityCheckOkay4.link(this);
+
+    isNativeFunc4.link(this);
+
+    compileOpCallInitializeCallFrame();
+    loadPtr(Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_jitCodeForConstruct)), regT0);
+    jump(regT0);
+
+    // NativCall Trampoline
     Label nativeCallThunk = align();
     preserveReturnAddressAfterCall(regT0);
     emitPutToCallFrameHeader(regT0, RegisterFile::ReturnPC); // Push return address
@@ -443,19 +515,26 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     patchBuffer.link(string_failureCases2Call, FunctionPtr(cti_op_get_by_id_string_fail));
     patchBuffer.link(string_failureCases3Call, FunctionPtr(cti_op_get_by_id_string_fail));
 #endif
-    patchBuffer.link(callArityCheck1, FunctionPtr(cti_op_call_arityCheck));
-    patchBuffer.link(callJSFunction1, FunctionPtr(cti_op_call_JSFunction));
 #if ENABLE(JIT_OPTIMIZE_CALL)
-    patchBuffer.link(callArityCheck2, FunctionPtr(cti_op_call_arityCheck));
-    patchBuffer.link(callJSFunction2, FunctionPtr(cti_op_call_JSFunction));
-    patchBuffer.link(callLazyLinkCall, FunctionPtr(cti_vm_lazyLinkCall));
+    patchBuffer.link(callArityCheck1, FunctionPtr(cti_op_call_arityCheck));
+    patchBuffer.link(callJSFunction1, FunctionPtr(cti_op_call_jitCompile));
+    patchBuffer.link(callLazyLinkCall1, FunctionPtr(cti_vm_lazyLinkCall));
+    patchBuffer.link(callArityCheck2, FunctionPtr(cti_op_construct_arityCheck));
+    patchBuffer.link(callJSFunction2, FunctionPtr(cti_op_construct_jitCompile));
+    patchBuffer.link(callLazyLinkCall2, FunctionPtr(cti_vm_lazyLinkConstruct));
 #endif
+    patchBuffer.link(callArityCheck3, FunctionPtr(cti_op_call_arityCheck));
+    patchBuffer.link(callJSFunction3, FunctionPtr(cti_op_call_jitCompile));
+    patchBuffer.link(callArityCheck4, FunctionPtr(cti_op_construct_arityCheck));
+    patchBuffer.link(callJSFunction4, FunctionPtr(cti_op_construct_jitCompile));
 
     CodeRef finalCode = patchBuffer.finalizeCode();
     *executablePool = finalCode.m_executablePool;
 
     trampolines->ctiVirtualCallLink = trampolineAt(finalCode, virtualCallLinkBegin);
+    trampolines->ctiVirtualConstructLink = trampolineAt(finalCode, virtualConstructLinkBegin);
     trampolines->ctiVirtualCall = trampolineAt(finalCode, virtualCallBegin);
+    trampolines->ctiVirtualConstruct = trampolineAt(finalCode, virtualConstructBegin);
     trampolines->ctiNativeCallThunk = adoptRef(new NativeExecutable(JITCode(JITCode::HostFunction(trampolineAt(finalCode, nativeCallThunk)))));
 #if ENABLE(JIT_OPTIMIZE_MOD)
     trampolines->ctiSoftModulo = trampolineAt(finalCode, softModBegin);

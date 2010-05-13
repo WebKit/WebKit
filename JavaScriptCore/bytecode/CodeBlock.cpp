@@ -1330,10 +1330,11 @@ void CodeBlock::dumpStatistics()
 #endif
 }
 
-CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, SymbolTable* symTab)
+CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, SymbolTable* symTab, bool isConstructor)
     : m_numCalleeRegisters(0)
     , m_numVars(0)
     , m_numParameters(0)
+    , m_isConstructor(isConstructor)
     , m_ownerExecutable(ownerExecutable)
     , m_globalData(0)
 #ifndef NDEBUG
@@ -1405,7 +1406,7 @@ void CodeBlock::unlinkCallers()
     size_t size = m_linkedCallerList.size();
     for (size_t i = 0; i < size; ++i) {
         CallLinkInfo* currentCaller = m_linkedCallerList[i];
-        JIT::unlinkCall(currentCaller);
+        JIT::unlinkCallOrConstruct(currentCaller);
         currentCaller->setUnlinked();
     }
     m_linkedCallerList.clear();

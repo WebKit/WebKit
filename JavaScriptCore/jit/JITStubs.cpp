@@ -1777,7 +1777,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_func)
     return stackFrame.args[0].function()->make(stackFrame.callFrame, stackFrame.callFrame->scopeChain());
 }
 
-DEFINE_STUB_FUNCTION(void*, op_call_JSFunction)
+DEFINE_STUB_FUNCTION(void*, op_call_jitCompile)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
@@ -1790,7 +1790,25 @@ DEFINE_STUB_FUNCTION(void*, op_call_JSFunction)
     ASSERT(!function->isHostFunction());
     FunctionExecutable* executable = function->jsExecutable();
     ScopeChainNode* callDataScopeChain = function->scope().node();
-    executable->jitCode(stackFrame.callFrame, callDataScopeChain);
+    executable->jitCodeForCall(stackFrame.callFrame, callDataScopeChain);
+
+    return function;
+}
+
+DEFINE_STUB_FUNCTION(void*, op_construct_jitCompile)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+
+#if !ASSERT_DISABLED
+    CallData callData;
+    ASSERT(stackFrame.args[0].jsValue().getCallData(callData) == CallTypeJS);
+#endif
+
+    JSFunction* function = asFunction(stackFrame.args[0].jsValue());
+    ASSERT(!function->isHostFunction());
+    FunctionExecutable* executable = function->jsExecutable();
+    ScopeChainNode* callDataScopeChain = function->scope().node();
+    executable->jitCodeForConstruct(stackFrame.callFrame, callDataScopeChain);
 
     return function;
 }
@@ -1802,7 +1820,54 @@ DEFINE_STUB_FUNCTION(VoidPtrPair, op_call_arityCheck)
     CallFrame* callFrame = stackFrame.callFrame;
     JSFunction* callee = asFunction(stackFrame.args[0].jsValue());
     ASSERT(!callee->isHostFunction());
-    CodeBlock* newCodeBlock = &callee->jsExecutable()->generatedBytecode();
+    CodeBlock* newCodeBlock = &callee->jsExecutable()->generatedBytecodeForCall();
+    int argCount = stackFrame.args[2].int32();
+
+    ASSERT(argCount != newCodeBlock->m_numParameters);
+
+    CallFrame* oldCallFrame = callFrame->callerFrame();
+
+    if (argCount > newCodeBlock->m_numParameters) {
+        size_t numParameters = newCodeBlock->m_numParameters;
+        Register* r = callFrame->registers() + numParameters;
+
+        Register* argv = r - RegisterFile::CallFrameHeaderSize - numParameters - argCount;
+        for (size_t i = 0; i < numParameters; ++i)
+            argv[i + argCount] = argv[i];
+
+        callFrame = CallFrame::create(r);
+        callFrame->setCallerFrame(oldCallFrame);
+    } else {
+        size_t omittedArgCount = newCodeBlock->m_numParameters - argCount;
+        Register* r = callFrame->registers() + omittedArgCount;
+        Register* newEnd = r + newCodeBlock->m_numCalleeRegisters;
+        if (!stackFrame.registerFile->grow(newEnd)) {
+            // Rewind to the previous call frame because op_call already optimistically
+            // moved the call frame forward.
+            stackFrame.callFrame = oldCallFrame;
+            throwStackOverflowError(oldCallFrame, stackFrame.globalData, stackFrame.args[1].returnAddress(), STUB_RETURN_ADDRESS);
+            RETURN_POINTER_PAIR(0, 0);
+        }
+
+        Register* argv = r - RegisterFile::CallFrameHeaderSize - omittedArgCount;
+        for (size_t i = 0; i < omittedArgCount; ++i)
+            argv[i] = jsUndefined();
+
+        callFrame = CallFrame::create(r);
+        callFrame->setCallerFrame(oldCallFrame);
+    }
+
+    RETURN_POINTER_PAIR(callee, callFrame);
+}
+
+DEFINE_STUB_FUNCTION(VoidPtrPair, op_construct_arityCheck)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSFunction* callee = asFunction(stackFrame.args[0].jsValue());
+    ASSERT(!callee->isHostFunction());
+    CodeBlock* newCodeBlock = &callee->jsExecutable()->generatedBytecodeForConstruct();
     int argCount = stackFrame.args[2].int32();
 
     ASSERT(argCount != newCodeBlock->m_numParameters);
@@ -1848,17 +1913,37 @@ DEFINE_STUB_FUNCTION(void*, vm_lazyLinkCall)
     STUB_INIT_STACK_FRAME(stackFrame);
     JSFunction* callee = asFunction(stackFrame.args[0].jsValue());
     ExecutableBase* executable = callee->executable();
-    JITCode& jitCode = executable->generatedJITCode();
+    JITCode& jitCode = executable->generatedJITCodeForCall();
     
     CodeBlock* codeBlock = 0;
     if (!executable->isHostFunction())
-        codeBlock = &static_cast<FunctionExecutable*>(executable)->bytecode(stackFrame.callFrame, callee->scope().node());
+        codeBlock = &static_cast<FunctionExecutable*>(executable)->bytecodeForCall(stackFrame.callFrame, callee->scope().node());
     CallLinkInfo* callLinkInfo = &stackFrame.callFrame->callerFrame()->codeBlock()->getCallLinkInfo(stackFrame.args[1].returnAddress());
 
     if (!callLinkInfo->seenOnce())
         callLinkInfo->setSeen();
     else
         JIT::linkCall(callee, stackFrame.callFrame->callerFrame()->codeBlock(), codeBlock, jitCode, callLinkInfo, stackFrame.args[2].int32(), stackFrame.globalData);
+
+    return jitCode.addressForCall().executableAddress();
+}
+
+DEFINE_STUB_FUNCTION(void*, vm_lazyLinkConstruct)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+    JSFunction* callee = asFunction(stackFrame.args[0].jsValue());
+    ExecutableBase* executable = callee->executable();
+    JITCode& jitCode = executable->generatedJITCodeForConstruct();
+    
+    CodeBlock* codeBlock = 0;
+    if (!executable->isHostFunction())
+        codeBlock = &static_cast<FunctionExecutable*>(executable)->bytecodeForConstruct(stackFrame.callFrame, callee->scope().node());
+    CallLinkInfo* callLinkInfo = &stackFrame.callFrame->callerFrame()->codeBlock()->getCallLinkInfo(stackFrame.args[1].returnAddress());
+
+    if (!callLinkInfo->seenOnce())
+        callLinkInfo->setSeen();
+    else
+        JIT::linkConstruct(callee, stackFrame.callFrame->callerFrame()->codeBlock(), codeBlock, jitCode, callLinkInfo, stackFrame.args[2].int32(), stackFrame.globalData);
 
     return jitCode.addressForCall().executableAddress();
 }

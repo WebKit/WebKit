@@ -267,7 +267,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned)
     addPtr(Imm32(registerOffset * static_cast<int>(sizeof(Register))), callFrameRegister);
     move(Imm32(argCount), regT1);
 
-    emitNakedCall(m_globalData->jitStubs.ctiVirtualCall());
+    emitNakedCall(opcodeID == op_construct ? m_globalData->jitStubs.ctiVirtualConstruct() : m_globalData->jitStubs.ctiVirtualCall());
 
     if (opcodeID == op_call_eval)
         wasEval.link(this);
@@ -400,7 +400,7 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
     addPtr(Imm32(registerOffset * static_cast<int>(sizeof(Register))), callFrameRegister);
     move(Imm32(argCount), regT1);
 
-    m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(m_globalData->jitStubs.ctiVirtualCallLink());
+    m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(opcodeID == op_construct ? m_globalData->jitStubs.ctiVirtualConstructLink() : m_globalData->jitStubs.ctiVirtualCallLink());
 
     // Put the return value in dst.
     emitStore(dst, regT1, regT0);;
@@ -563,7 +563,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned)
     addPtr(Imm32(registerOffset * static_cast<int>(sizeof(Register))), callFrameRegister);
     move(Imm32(argCount), regT1);
 
-    emitNakedCall(m_globalData->jitStubs.ctiVirtualCall());
+    emitNakedCall(opcodeID == op_construct ? m_globalData->jitStubs.ctiVirtualConstruct() : m_globalData->jitStubs.ctiVirtualCall());
 
     if (opcodeID == op_call_eval)
         wasEval.link(this);
@@ -691,7 +691,7 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
 
     move(regT0, regT2);
 
-    m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(m_globalData->jitStubs.ctiVirtualCallLink());
+    m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(opcodeID == op_construct ? m_globalData->jitStubs.ctiVirtualConstructLink() : m_globalData->jitStubs.ctiVirtualCallLink());
 
     // Put the return value in dst.
     emitPutVirtualRegister(dst);

@@ -1,3 +1,93 @@
+2010-05-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39039
+        Provide support for separate bytecode/JIT code translations for call/construct usage
+        This will allow us to produce code generated specifically for use as a constructor, not for general function use.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::unlinkCallers):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::getBytecodeIndex):
+        (JSC::CodeBlock::getJITCode):
+        (JSC::CodeBlock::executablePool):
+        (JSC::GlobalCodeBlock::GlobalCodeBlock):
+        (JSC::FunctionCodeBlock::FunctionCodeBlock):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::privateExecute):
+        * interpreter/Interpreter.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::unlinkCallOrConstruct):
+        (JSC::JIT::linkConstruct):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitSlow_op_get_by_val):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitSlow_op_get_by_val):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        (JSC::JITThunks::ctiVirtualConstructLink):
+        (JSC::JITThunks::ctiVirtualConstruct):
+        (JSC::):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::finalize):
+        * runtime/Arguments.h:
+        (JSC::JSActivation::copyRegisters):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::isNumericCompareFunction):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::~FunctionExecutable):
+        (JSC::FunctionExecutable::compileForCall):
+        (JSC::FunctionExecutable::compileForConstruct):
+        (JSC::EvalExecutable::generateJITCode):
+        (JSC::ProgramExecutable::generateJITCode):
+        (JSC::FunctionExecutable::generateJITCodeForCall):
+        (JSC::FunctionExecutable::generateJITCodeForConstruct):
+        (JSC::FunctionExecutable::markAggregate):
+        (JSC::FunctionExecutable::reparseExceptionInfo):
+        (JSC::EvalExecutable::reparseExceptionInfo):
+        (JSC::FunctionExecutable::recompile):
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::ExecutableBase):
+        (JSC::ExecutableBase::isHostFunction):
+        (JSC::ExecutableBase::generatedJITCodeForCall):
+        (JSC::ExecutableBase::generatedJITCodeForConstruct):
+        (JSC::NativeExecutable::NativeExecutable):
+        (JSC::EvalExecutable::jitCode):
+        (JSC::ProgramExecutable::jitCode):
+        (JSC::FunctionExecutable::bytecodeForCall):
+        (JSC::FunctionExecutable::isGeneratedForCall):
+        (JSC::FunctionExecutable::generatedBytecodeForCall):
+        (JSC::FunctionExecutable::bytecodeForConstruct):
+        (JSC::FunctionExecutable::isGeneratedForConstruct):
+        (JSC::FunctionExecutable::generatedBytecodeForConstruct):
+        (JSC::FunctionExecutable::symbolTable):
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::FunctionExecutable::jitCodeForCall):
+        (JSC::FunctionExecutable::jitCodeForConstruct):
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::JSActivationData::JSActivationData):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::~JSFunction):
+        (JSC::JSFunction::call):
+        (JSC::JSFunction::construct):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::numericCompareFunction):
+
 2010-05-12  Oliver Hunt  <oliver@apple.com>
 
         build fix
