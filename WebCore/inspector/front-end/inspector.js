@@ -441,11 +441,6 @@ WebInspector.loaded = function()
     document.body.addStyleClass("port-" + port);
 
     this.settings = new WebInspector.Settings();
-    this._registerShortcuts();
-
-    // set order of some sections explicitly
-    WebInspector.shortcutsHelp.section("Console");
-    WebInspector.shortcutsHelp.section("Elements Panel");
 
     this.drawer = new WebInspector.Drawer();
     this.console = new WebInspector.ConsoleView(this.drawer);
@@ -685,35 +680,8 @@ WebInspector.documentClick = function(event)
     followLink();
 }
 
-WebInspector._registerShortcuts = function()
-{
-    var shortcut = WebInspector.KeyboardShortcut;
-    var section = WebInspector.shortcutsHelp.section(WebInspector.UIString("All Panels"));
-    var keys = [
-        shortcut.shortcutToString("]", shortcut.Modifiers.CtrlOrMeta),
-        shortcut.shortcutToString("[", shortcut.Modifiers.CtrlOrMeta)
-    ];
-    section.addRelatedKeys(keys, WebInspector.UIString("Next/previous panel"));
-    section.addKey(shortcut.Keys.Esc.name, WebInspector.UIString("Toggle console"));
-    section.addKey(shortcut.shortcutToString("f", shortcut.Modifiers.CtrlOrMeta), WebInspector.UIString("Search"));
-    keys = [
-        shortcut.shortcutToString("g", shortcut.Modifiers.CtrlOrMeta),
-        shortcut.shortcutToString("g", shortcut.Modifiers.CtrlOrMeta | shortcut.Modifiers.Shift)
-    ];
-    section.addRelatedKeys(keys, WebInspector.UIString("Find next/previous"));
-}
-
 WebInspector.documentKeyDown = function(event)
 {
-    const helpKey = WebInspector.isMac() ? "U+003F" : "U+00BF"; // "?" for both platforms
-
-    if (event.keyIdentifier === "F1" ||
-        (event.keyIdentifier === helpKey && (!WebInspector.isEditingAnyField() || event.metaKey))) {
-            WebInspector.shortcutsHelp.show();
-            event.stopPropagation();
-            event.preventDefault();
-    }
-
     if (WebInspector.isEditingAnyField())
         return;
 
@@ -1736,7 +1704,7 @@ WebInspector._searchFieldManualFocus = function(event)
 WebInspector._searchKeyDown = function(event)
 {
     // Escape Key will clear the field and clear the search results
-    if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Esc.code) {
+    if (event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Esc) {
         // If focus belongs here and text is empty - nothing to do, return unhandled.
         if (event.target.value === "" && this.currentFocusElement === this.previousFocusElement)
             return;
@@ -1962,7 +1930,7 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
             editingCommitted.call(element);
             event.preventDefault();
             event.stopPropagation();
-        } else if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Esc.code) {
+        } else if (event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Esc) {
             editingCancelled.call(element);
             event.preventDefault();
             event.stopPropagation();

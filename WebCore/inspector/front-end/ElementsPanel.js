@@ -107,7 +107,6 @@ WebInspector.ElementsPanel = function()
     this.element.appendChild(this.sidebarElement);
     this.element.appendChild(this.sidebarResizeElement);
 
-    this._registerShortcuts();
     this._changedStyles = {};
 
     this.reset();
@@ -1063,25 +1062,6 @@ WebInspector.ElementsPanel.prototype = {
 
         eventListenersSidebarPane.update(this.focusedDOMNode);
         eventListenersSidebarPane.needsUpdate = false;
-    },
-
-    _registerShortcuts: function()
-    {
-        var shortcut = WebInspector.KeyboardShortcut;
-        var section = WebInspector.shortcutsHelp.section(WebInspector.UIString("Elements Panel"));
-        var keys = [
-            shortcut.shortcutToString(shortcut.Keys.Up),
-            shortcut.shortcutToString(shortcut.Keys.Down)
-        ];
-        section.addRelatedKeys(keys, WebInspector.UIString("Navigate elements"));
-        var keys = [
-            shortcut.shortcutToString(shortcut.Keys.Right),
-            shortcut.shortcutToString(shortcut.Keys.Left)
-        ];
-        section.addRelatedKeys(keys, WebInspector.UIString("Expand/collapse"));
-        section.addKey(shortcut.shortcutToString(shortcut.Keys.Enter), WebInspector.UIString("Edit attribute"));
-
-        this.sidebarPanes.styles.registerShortcuts();
     },
 
     handleShortcut: function(event)

@@ -1,3 +1,47 @@
+2010-05-13  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed, rolling out r59360.
+        http://trac.webkit.org/changeset/59360
+        https://bugs.webkit.org/show_bug.cgi?id=38667
+
+        It broke Chromium Win build
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane):
+        (WebInspector.CallStackSidebarPane.prototype._placardSelected):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype._keyDown):
+        * inspector/front-end/HelpScreen.js: Removed.
+        * inspector/front-end/KeyboardShortcut.js:
+        (WebInspector.KeyboardShortcut._makeKeyFromCodeAndModifiers):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype.elementsToRestoreScrollPositionsFor):
+        * inspector/front-end/ShortcutsHelp.js: Removed.
+        * inspector/front-end/SidebarPane.js:
+        (WebInspector.SidebarPane.prototype._onTitleKeyDown):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype.removeSection):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype._handleKeyDown):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/helpScreen.css: Removed.
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+        (WebInspector.documentKeyDown):
+        (WebInspector._searchKeyDown):
+        (WebInspector.startEditing.keyDownEventListener):
+        (WebInspector.startEditing):
+        * inspector/front-end/utilities.js:
+
 2010-05-13  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Kenneth Rohde Christiansen.
