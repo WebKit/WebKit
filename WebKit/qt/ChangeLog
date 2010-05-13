@@ -1,3 +1,19 @@
+2010-05-12  Joe Ligman  <joseph.ligman@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Nested overflow div does not scroll
+        https://bugs.webkit.org/show_bug.cgi?id=38641
+
+        Modify qtwebkit_webframe_scrollOverflow, if the current node's render layer
+        does not scroll it will try and scroll the parent's render layer. Also export
+        qtwebkit_webframe_scrollOverflow so we can use it independently of
+        qtwebkit_webframe_scrollRecursively
+
+        * Api/qwebframe.cpp:
+        (qtwebkit_webframe_scrollOverflow):
+        (qtwebkit_webframe_scrollRecursively):
+
 2010-05-12  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Kenneth Christiansen.
