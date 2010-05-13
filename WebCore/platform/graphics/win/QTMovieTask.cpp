@@ -31,6 +31,7 @@
 
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/Vector.h>
 
 QTMovieTask::QTMovieTask() 
     : m_setTaskTimerDelay(0)
@@ -65,14 +66,16 @@ void QTMovieTask::updateTaskTimer(double maxInterval, double minInterval)
     double interval = intervalInMS / 1000.0;
     if (interval < minInterval)
         interval = minInterval;
-    if (status != noErr && interval > maxInterval)
+    if (interval > maxInterval)
         interval = maxInterval;
     m_setTaskTimerDelay(interval);
 }
 
 void QTMovieTask::fireTaskClients()
 {
-    for (HashSet<QTMovieTaskClient*>::iterator i = m_taskList.begin(); i != m_taskList.end(); ++i)
+    Vector<QTMovieTaskClient*> clients;
+    copyToVector(m_taskList, clients);
+    for (Vector<QTMovieTaskClient*>::iterator i = clients.begin(); i != clients.end(); ++i)
         (*i)->task();
 }
 
