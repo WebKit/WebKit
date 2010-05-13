@@ -1,3 +1,15 @@
+2010-05-13  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Clearing Breakpoints Too Often
+        https://bugs.webkit.org/show_bug.cgi?id=39094
+
+        Minor resets should preserve both workers and breakpoints.
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.reset):
+
 2010-05-13  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt.
