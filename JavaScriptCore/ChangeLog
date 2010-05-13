@@ -1,5 +1,19 @@
 2010-05-13  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59202.
+
+    2010-05-11  Brian Weinstein  <bweinstein@apple.com>
+
+        Possible Gtk build fix - use ALWAYS_INLINE on functions that were inlined.
+
+        * wtf/text/AtomicString.h:
+        (WebCore::AtomicString::add): Use ALWAYS_INLINE.
+        * wtf/text/WTFString.h:
+        (WebCore::String::length): Ditto.
+        (WebCore::String::isEmpty): Ditto.
+
+2010-05-13  Mark Rowe  <mrowe@apple.com>
+
         Merge r59196.
 
     2010-05-11  Brian Weinstein  <bweinstein@apple.com>
