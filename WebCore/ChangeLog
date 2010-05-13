@@ -1,5 +1,19 @@
 2010-05-13  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59210.
+
+    2010-05-11  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Shorthand Properties Getting Deleted When Editing
+        https://bugs.webkit.org/show_bug.cgi?id=38958
+
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.CSSStyleDeclaration.prototype.styleTextWithShorthands): was getting regular values instead of shorthand values
+
+2010-05-13  Mark Rowe  <mrowe@apple.com>
+
         Merge r59232.
 
     2010-05-12  Jer Noble  <jer.noble@apple.com>
