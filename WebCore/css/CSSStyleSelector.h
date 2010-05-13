@@ -87,10 +87,11 @@ public:
         ~CSSStyleSelector();
 
         void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, PseudoId = NOPSEUDO);
-        PassRefPtr<RenderStyle> styleForElement(Element* e, RenderStyle* parentStyle = 0, bool allowSharing = true, bool resolveForRootDefault = false) { return styleForElement(e, parentStyle, allowSharing, resolveForRootDefault, false); }
+        PassRefPtr<RenderStyle> styleForElement(Element* e, RenderStyle* parentStyle = 0, bool allowSharing = true, bool resolveForRootDefault = false, bool matchVisitedPseudoClass = false);
+        
         void keyframeStylesForAnimation(Element*, const RenderStyle*, KeyframeList& list);
 
-        PassRefPtr<RenderStyle> pseudoStyleForElement(PseudoId pseudo, Element* e, RenderStyle* parentStyle = 0) { return pseudoStyleForElement(pseudo, e, parentStyle, false); }
+        PassRefPtr<RenderStyle> pseudoStyleForElement(PseudoId pseudo, Element* e, RenderStyle* parentStyle = 0, bool matchVisitedPseudoClass = false);
 
         static PassRefPtr<RenderStyle> styleForDocument(Document*);
 
@@ -101,9 +102,7 @@ public:
 #endif
 
     private:
-        PassRefPtr<RenderStyle> styleForElement(Element*, RenderStyle* parentStyle, bool allowSharing, bool resolveForRootDefault, bool helperCallForVisitedStyle);
-        PassRefPtr<RenderStyle> pseudoStyleForElement(PseudoId, Element*, RenderStyle*, bool helperCallForVisitedStyle);
-        void initElement(Element*, bool);
+        void initElement(Element*);
         RenderStyle* locateSharedStyle();
         Node* locateCousinList(Element* parent, unsigned depth = 1);
         bool canShareStyleWithElement(Node*);
@@ -258,19 +257,6 @@ public:
 
         StyleImage* styleImage(CSSValue* value);
 
-
-        EInsideLink currentElementLinkState() const
-        {
-            if (!m_haveCachedLinkState) {
-                m_cachedLinkState = m_checker.determineLinkState(m_element);
-                m_haveCachedLinkState = true;
-            }
-            return m_cachedLinkState;
-        }
-
-        mutable EInsideLink m_cachedLinkState;
-        mutable bool m_haveCachedLinkState;
-
         // We collect the set of decls that match in |m_matchedDecls|.  We then walk the
         // set of matched decls four times, once for those properties that others depend on (like font-size),
         // and then a second time for all the remaining properties.  We then do the same two passes
@@ -295,6 +281,7 @@ public:
         RenderStyle* m_rootElementStyle;
         Element* m_element;
         StyledElement* m_styledElement;
+        EInsideLink m_elementLinkState;
         Node* m_parentNode;
         CSSValue* m_lineHeightValue;
         bool m_fontDirty;

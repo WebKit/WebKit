@@ -490,8 +490,7 @@ void CSSStyleSelector::addKeyframeStyle(PassRefPtr<WebKitCSSKeyframesRule> rule)
 
 void CSSStyleSelector::init()
 {
-    m_element = 0;
-    m_haveCachedLinkState = false;
+    initElement(0);
     m_matchedDecls.clear();
     m_ruleList = 0;
     m_rootDefaultStyle = 0;
@@ -804,13 +803,20 @@ void CSSStyleSelector::sortMatchedRules(unsigned start, unsigned end)
         m_matchedRules[i] = rulesMergeBuffer[i - start];
 }
 
-inline void CSSStyleSelector::initElement(Element* e, bool helperCallForVisitedStyle = false)
+inline EInsideLink CSSStyleSelector::SelectorChecker::determineLinkState(Element* element) const
 {
-    if (!helperCallForVisitedStyle)
-        m_haveCachedLinkState = false;
-
-    m_element = e;
-    m_styledElement = m_element && m_element->isStyledElement() ? static_cast<StyledElement*>(m_element) : 0;
+    if (!element || !element->isLink())
+        return NotInsideLink;
+    return determineLinkStateSlowCase(element);
+}
+    
+inline void CSSStyleSelector::initElement(Element* e)
+{
+    if (m_element != e) {
+        m_element = e;
+        m_styledElement = m_element && m_element->isStyledElement() ? static_cast<StyledElement*>(m_element) : 0;
+        m_elementLinkState = m_checker.determineLinkState(m_element);
+    }
 }
 
 inline void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* parentStyle, PseudoId pseudoID)
@@ -880,14 +886,6 @@ CSSStyleSelector::SelectorChecker::SelectorChecker(Document* document, bool stri
     , m_matchVisitedPseudoClass(false)
 {
 }
-
-inline EInsideLink CSSStyleSelector::SelectorChecker::determineLinkState(Element* element) const
-{
-    if (!element->isLink())
-        return NotInsideLink;
-    return determineLinkStateSlowCase(element);
-}
-    
 
 EInsideLink CSSStyleSelector::SelectorChecker::determineLinkStateSlowCase(Element* element) const
 {
@@ -1039,7 +1037,7 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n)
                     mappedAttrsMatch = s->mappedAttributes()->mapsEquivalent(m_styledElement->mappedAttributes());
                 if (mappedAttrsMatch) {
                     if (s->isLink()) {
-                        if (currentElementLinkState() != style->insideLink())
+                        if (m_elementLinkState != style->insideLink())
                             return false;
                     }
                     return true;
@@ -1132,7 +1130,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForDocument(Document* document)
 // If resolveForRootDefault is true, style based on user agent style sheet only. This is used in media queries, where
 // relative units are interpreted according to document root element style, styled only with UA stylesheet
 
-PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultParent, bool allowSharing, bool resolveForRootDefault, bool helperCallForVisitedStyle)
+PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultParent, bool allowSharing, bool resolveForRootDefault, bool matchVisitedPseudoClass)
 {
     // Once an element has a renderer, we don't try to destroy it, since otherwise the renderer
     // will vanish if a style recalc happens during loading.
@@ -1148,7 +1146,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
         return s_styleNotYetAvailable;
     }
 
-    initElement(e, helperCallForVisitedStyle);
+    initElement(e);
     if (allowSharing) {
         RenderStyle* sharedStyle = locateSharedStyle();
         if (sharedStyle)
@@ -1158,7 +1156,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
 
     // Compute our style allowing :visited to match first.
     RefPtr<RenderStyle> visitedStyle;
-    if (!helperCallForVisitedStyle && m_parentStyle && (m_parentStyle->insideLink() || e->isLink()) && e->document()->usesLinkRules()) {
+    if (!matchVisitedPseudoClass && m_parentStyle && (m_parentStyle->insideLink() || e->isLink()) && e->document()->usesLinkRules()) {
         // Fetch our parent style.
         RenderStyle* parentStyle = m_parentStyle;
         if (!e->isLink()) {
@@ -1168,11 +1166,16 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
                 parentStyle = parentVisitedStyle;
         }
         visitedStyle = styleForElement(e, parentStyle, false, false, true);
-        visitedStyle->setStyleType(VISITED_LINK);
+        if (visitedStyle) {
+            if (m_elementLinkState == InsideUnvisitedLink)
+                visitedStyle = 0;  // We made the style to avoid timing attacks. Just throw it away now that we did that, since we don't need it.
+            else
+                visitedStyle->setStyleType(VISITED_LINK);
+        }
         initForStyleResolve(e, defaultParent);
     }
 
-    m_checker.m_matchVisitedPseudoClass = helperCallForVisitedStyle;
+    m_checker.m_matchVisitedPseudoClass = matchVisitedPseudoClass;
 
     m_style = RenderStyle::create();
 
@@ -1183,7 +1186,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
 
     if (e->isLink()) {
         m_style->setIsLink(true);
-        m_style->setInsideLink(currentElementLinkState());
+        m_style->setInsideLink(m_elementLinkState);
     }
     
     if (simpleDefaultStyleSheet && !elementCanUseSimpleDefaultStyle(e))
@@ -1298,7 +1301,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     }
 
     // Reset the value back before applying properties, so that -webkit-link knows what color to use.
-    m_checker.m_matchVisitedPseudoClass = helperCallForVisitedStyle;
+    m_checker.m_matchVisitedPseudoClass = matchVisitedPseudoClass;
     
     // Now we have all of the matched rules in the appropriate order.  Walk the rules and apply
     // high-priority properties first, i.e., those properties that other properties depend on.
@@ -1358,6 +1361,9 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
         // Add the visited style off the main style.
         m_style->addCachedPseudoStyle(visitedStyle.release());
     }
+
+    if (!matchVisitedPseudoClass)
+        initElement(0); // Clear out for the next resolve.
 
     // Now return the style.
     return m_style.release();
@@ -1445,27 +1451,32 @@ void CSSStyleSelector::keyframeStylesForAnimation(Element* e, const RenderStyle*
         list.clear();
 }
 
-PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo, Element* e, RenderStyle* parentStyle, bool helperCallForVisitedStyle)
+PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo, Element* e, RenderStyle* parentStyle, bool matchVisitedPseudoClass)
 {
     if (!e)
         return 0;
 
+    initElement(e);
+
     // Compute our :visited style first, so that we know whether or not we'll need to create a normal style just to hang it
     // off of.
     RefPtr<RenderStyle> visitedStyle;
-    if (!helperCallForVisitedStyle && parentStyle && parentStyle->insideLink()) {
+    if (!matchVisitedPseudoClass && parentStyle && parentStyle->insideLink()) {
         // Fetch our parent style with :visited in effect.
         RenderStyle* parentVisitedStyle = parentStyle->getCachedPseudoStyle(VISITED_LINK);
         visitedStyle = pseudoStyleForElement(pseudo, e, parentVisitedStyle ? parentVisitedStyle : parentStyle, true);
-        if (visitedStyle)
-            visitedStyle->setStyleType(VISITED_LINK);
+        if (visitedStyle) {
+            if (m_elementLinkState == InsideUnvisitedLink)
+                visitedStyle = 0;  // We made the style to avoid timing attacks. Just throw it away now that we did that.
+            else
+                visitedStyle->setStyleType(VISITED_LINK);
+        }
     }
 
-    initElement(e, helperCallForVisitedStyle);
     initForStyleResolve(e, parentStyle, pseudo);
     m_style = parentStyle;
     
-    m_checker.m_matchVisitedPseudoClass = helperCallForVisitedStyle;
+    m_checker.m_matchVisitedPseudoClass = matchVisitedPseudoClass;
 
     // Since we don't use pseudo-elements in any of our quirk/print user agent rules, don't waste time walking
     // those rules.
@@ -1491,7 +1502,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
     m_lineHeightValue = 0;
     
     // Reset the value back before applying properties, so that -webkit-link knows what color to use.
-    m_checker.m_matchVisitedPseudoClass = helperCallForVisitedStyle;
+    m_checker.m_matchVisitedPseudoClass = matchVisitedPseudoClass;
 
     // High-priority properties.
     applyDeclarations<true>(false, 0, m_matchedDecls.size() - 1);
@@ -2918,6 +2929,39 @@ void CSSStyleSelector::applyPropertyToStyle(int id, CSSValue *value, RenderStyle
     applyProperty(id, value);
 }
 
+inline bool isValidVisitedLinkProperty(int id)
+{
+    switch(static_cast<CSSPropertyID>(id)) {
+        case CSSPropertyBackgroundColor:
+        case CSSPropertyBorderLeftColor:
+        case CSSPropertyBorderRightColor:
+        case CSSPropertyBorderTopColor:
+        case CSSPropertyBorderBottomColor:
+        case CSSPropertyColor:
+        case CSSPropertyOutlineColor:
+        case CSSPropertyWebkitColumnRuleColor:
+        case CSSPropertyWebkitTextFillColor:
+        case CSSPropertyWebkitTextStrokeColor:
+        // Also allow shorthands so that inherit/initial still work.
+        case CSSPropertyBackground:
+        case CSSPropertyBorderLeft:
+        case CSSPropertyBorderRight:
+        case CSSPropertyBorderTop:
+        case CSSPropertyBorderBottom:
+        case CSSPropertyOutline:
+        case CSSPropertyWebkitColumnRule:
+#if ENABLE(SVG)
+        case CSSPropertyFill:
+        case CSSPropertyStroke:
+#endif
+            return true;
+        default:
+            break;
+    }
+
+    return false;
+}
+
 void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 {
     CSSPrimitiveValue* primitiveValue = 0;
@@ -2950,6 +2994,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     else if (id == CSSPropertyWebkitPaddingStart)
         id = m_style->direction() == LTR ? CSSPropertyPaddingLeft : CSSPropertyPaddingRight;
 
+    if (m_checker.m_matchVisitedPseudoClass && !isValidVisitedLinkProperty(id)) {
+        // Limit the properties that can be applied to only the ones honored by :visited.
+        return;
+    }
+    
     // What follows is a list that maps the CSS properties into their corresponding front-end
     // RenderStyle values.  Shorthands (e.g. border, background) occur in this list as well and
     // are only hit when mapping "inherit" or "initial" into front-end values.

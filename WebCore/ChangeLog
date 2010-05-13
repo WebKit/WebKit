@@ -1,3 +1,35 @@
+2010-05-13  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39084
+
+        Improve :visited style resolution to reduce its memory footprint and to make some speed adjustments and
+        simplifications.
+
+        (1) Tie the caching of link state on CSSStyleSelector to the element.  Just clear out the element when
+        style resolution finishes for the unvisited case to avoid caching across external calls.  The internal
+        calls share the cache just fine by doing this.
+
+        (2) Delete the RenderStyle if the link is unvisited.  This shouldn't take long enough to make us vulnerable
+        to timing attacks, and it makes sure the overall footprint stays the way it used to be for unvisited links.
+
+        (3) Limit the set of properties that can be applied to :visited links to only the colors it supports.  This
+        stops images from being loadable from :visited rules.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::init):
+        (WebCore::CSSStyleSelector::SelectorChecker::determineLinkState):
+        (WebCore::CSSStyleSelector::initElement):
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        (WebCore::isValidVisitedLinkProperty):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSStyleSelector.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::colorIncludingFallback):
+
 2010-05-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

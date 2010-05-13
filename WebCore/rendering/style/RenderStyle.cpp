@@ -1035,7 +1035,6 @@ static Color colorIncludingFallback(const RenderStyle* style, int colorProperty,
         result = style->textStrokeColor();
         break;
     default:
-        // FIXME: Add SVG fill and stroke.
         ASSERT_NOT_REACHED();
         break;
     }
