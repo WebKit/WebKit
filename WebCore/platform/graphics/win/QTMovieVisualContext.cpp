@@ -31,7 +31,6 @@
 #include <CVHostTime.h>
 #include <ImageCompression.h>
 #include <Movies.h>
-#include <d3d9types.h>
 #include <windows.h>
 
 struct QTCVTimeStamp {
