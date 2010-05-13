@@ -1,5 +1,15 @@
 2010-05-12  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59093.
+
+    2010-05-10  Anders Carlsson  <andersca@apple.com>
+
+        Unbreak the world. (Fix Mac builds).
+
+        * Plugins/Hosted/WebKitPluginHostTypes.h:
+
+2010-05-12  Mark Rowe  <mrowe@apple.com>
+
         Merge r59086.
 
     2010-05-10  Anders Carlsson  <andersca@apple.com>
