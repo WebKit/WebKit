@@ -1,3 +1,14 @@
+2010-05-14  Dawit Alemayehu  <adawit@kde.org>
+
+        Reviewed by Simon Hausmann.
+
+        Implemented createJavaAppletWidget to activate Java applet support.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33044
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createJavaAppletWidget):
+
 2010-05-13  Simon Hausmann  <hausmann@webkit.org>
 
         Symbian build fix.

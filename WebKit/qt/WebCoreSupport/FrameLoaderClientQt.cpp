@@ -1413,11 +1413,10 @@ void FrameLoaderClientQt::redirectDataToPlugin(Widget* pluginWidget)
     m_hasSentResponseToPlugin = false;
 }
 
-PassRefPtr<Widget> FrameLoaderClientQt::createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL&,
-                                                    const Vector<String>&, const Vector<String>&)
+PassRefPtr<Widget> FrameLoaderClientQt::createJavaAppletWidget(const IntSize& pluginSize, HTMLAppletElement* element, const KURL& url,
+                                                    const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
-    notImplemented();
-    return 0;
+    return createPlugin(pluginSize, element, url, paramNames, paramValues, "application/x-java-applet", true);
 }
 
 String FrameLoaderClientQt::overrideMediaType() const
