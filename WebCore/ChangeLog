@@ -1,3 +1,12 @@
+2010-05-14  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Build fix, we need to copy over the files in $(WebKitOutputDir)/include/JavaScriptCore/private before
+        WebCore builds. This is because we are building a couple WTF files in WebCore and JavaScriptCore.
+
+        * WebCore.vcproj/WebCore.make: 
+
 2010-05-14  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Unreviewed.  Attempt to fix chromium's memory bot error.
