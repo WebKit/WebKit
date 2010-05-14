@@ -149,12 +149,17 @@
 
 - (int)attrWithSetterException
 {
-    return IMPL->attrWithSetterException();
+    WebCore::ExceptionCode ec = 0;
+    int result = IMPL->attrWithSetterException(ec);
+    WebCore::raiseOnDOMError(ec);
+    return result;
 }
 
 - (void)setAttrWithSetterException:(int)newAttrWithSetterException
 {
-    IMPL->setAttrWithSetterException(newAttrWithSetterException);
+    WebCore::ExceptionCode ec = 0;
+    IMPL->setAttrWithSetterException(newAttrWithSetterException, ec);
+    WebCore::raiseOnDOMError(ec);
 }
 
 - (int)attrWithGetterException
@@ -164,7 +169,9 @@
 
 - (void)setAttrWithGetterException:(int)newAttrWithGetterException
 {
-    IMPL->setAttrWithGetterException(newAttrWithGetterException);
+    WebCore::ExceptionCode ec = 0;
+    IMPL->setAttrWithGetterException(newAttrWithGetterException, ec);
+    WebCore::raiseOnDOMError(ec);
 }
 
 - (int)customAttr

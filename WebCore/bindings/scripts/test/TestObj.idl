@@ -53,8 +53,8 @@ module test {
         // Exceptions
         void    methodWithException() raises(DOMException);
         attribute long attrWithException raises(DOMException);
-        attribute long attrWithSetterException getraises(DOMException);
-        attribute long attrWithGetterException setraises(DOMException);
+        attribute long attrWithSetterException getter raises(DOMException);
+        attribute long attrWithGetterException setter raises(DOMException);
 
         // 'Custom' extended attribute
         attribute [Custom] long            customAttr;

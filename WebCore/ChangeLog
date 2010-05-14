@@ -1,3 +1,36 @@
+2010-05-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove custom bindings for HTMLInputElement
+        https://bugs.webkit.org/show_bug.cgi?id=38344
+
+        Fix a bug in the TestObj.idl file and update expected results.  This
+        was originally part of a larger change reviewed by Eric, but I'm
+        landing it separately to help me understand the more interesting bits
+        of the patch clearly.
+
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_get_attr_with_setter_exception):
+        (webkit_dom_test_obj_set_attr_with_setter_exception):
+        (webkit_dom_test_obj_set_attr_with_getter_exception):
+        (webkit_dom_test_obj_set_property):
+        (webkit_dom_test_obj_get_property):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjAttrWithSetterException):
+        (WebCore::setJSTestObjAttrWithSetterException):
+        (WebCore::setJSTestObjAttrWithGetterException):
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj attrWithSetterException]):
+        (-[DOMTestObj setAttrWithSetterException:]):
+        (-[DOMTestObj setAttrWithGetterException:]):
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::attrWithSetterExceptionAttrGetter):
+        (WebCore::TestObjInternal::attrWithSetterExceptionAttrSetter):
+        (WebCore::TestObjInternal::attrWithGetterExceptionAttrSetter):
+
 2010-05-14  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Adler.
