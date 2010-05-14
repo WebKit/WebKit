@@ -722,3 +722,4 @@ EXPORTS
 	_ZNK12QWebSettings12inspectorUrlEv @ 721 NONAME ABSENT
 	_ZN23DumpRenderTreeSupportQt19webPageSetGroupNameEP8QWebPageRK7QString @ 722 NONAME
 	_ZN23DumpRenderTreeSupportQt16webPageGroupNameEP8QWebPage @ 723 NONAME
+	_ZN23DumpRenderTreeSupportQt23garbageCollectorCollectEv @ 724 NONAME

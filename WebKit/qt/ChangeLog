@@ -1,3 +1,11 @@
+2010-05-13  Simon Hausmann  <hausmann@webkit.org>
+
+        Symbian build fix.
+
+        [Qt] Updated the def file with new exports.
+
+        * symbian/eabi/QtWebKitu.def: Add missing gc symbol for QtLauncher
+
 2010-05-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Symbian build fix.
