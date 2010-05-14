@@ -346,10 +346,19 @@ void Image::drawPattern(GraphicsContext* context,
 
     if (resampling == RESAMPLE_AWESOME) {
         // Do nice resampling.
-        SkBitmap resampled = skia::ImageOperations::Resize(srcSubset,
-            skia::ImageOperations::RESIZE_LANCZOS3,
-            static_cast<int>(destBitmapWidth),
-            static_cast<int>(destBitmapHeight));
+        SkBitmap resampled;
+        int width = static_cast<int>(destBitmapWidth);
+        int height = static_cast<int>(destBitmapHeight);
+        if (!srcRect.fLeft && !srcRect.fTop
+            && srcRect.fRight == bitmap->width() && srcRect.fBottom == bitmap->height()
+            && (bitmap->hasResizedBitmap(width, height)
+                || bitmap->shouldCacheResampling(width, height, width, height))) {
+            // resizedBitmap() caches resized image.
+            resampled = bitmap->resizedBitmap(width, height);
+        } else {
+            resampled = skia::ImageOperations::Resize(srcSubset,
+                skia::ImageOperations::RESIZE_LANCZOS3, width, height);
+        }
         shader = SkShader::CreateBitmapShader(resampled, SkShader::kRepeat_TileMode, SkShader::kRepeat_TileMode);
 
         // Since we just resized the bitmap, we need to undo the scale set in
