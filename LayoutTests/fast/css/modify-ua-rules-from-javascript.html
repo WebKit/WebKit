@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+<title>Test for Bug 35014 - Modifying UA rules from page JS crashes</title>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function test()
+{
+    var styleToChange = window.getMatchedCSSRules(document.body, "", false)[0].style;
+    var originalMarginTop = styleToChange.marginTop;
+    styleToChange.marginTop = "200px";
+    styleToChange.marginTop = originalMarginTop;
+
+    document.getElementById("result").innerHTML = "PASS";
+}
+</script>
+</head>
+<body onload="test()">
+<div id="result">
+Test didn't run
+</div>
+</body>
+</html>

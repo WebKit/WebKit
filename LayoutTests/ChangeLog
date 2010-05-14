@@ -1,5 +1,19 @@
 2010-05-13  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59351.
+
+    2010-05-12  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Darin Adler.
+
+        Fix Bug 35014 - Modifying UA rules from page JS crashes
+        https://bugs.webkit.org/show_bug.cgi?id=35014
+
+        * fast/css/modify-ua-rules-from-javascript-expected.txt: Copied from LayoutTests/editing/selection/5136696-expected.txt.
+        * fast/css/modify-ua-rules-from-javascript.html: Added.
+
+2010-05-13  Mark Rowe  <mrowe@apple.com>
+
         Merge r59243.
 
     2010-05-12  Pavel Feldman  <pfeldman@chromium.org>
