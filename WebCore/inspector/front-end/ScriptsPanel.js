@@ -478,7 +478,7 @@ WebInspector.ScriptsPanel.prototype = {
         this.reset(true);
     },
 
-    reset: function(preserveWorkers)
+    reset: function(preserveItems)
     {
         this.visibleView = null;
 
@@ -511,11 +511,12 @@ WebInspector.ScriptsPanel.prototype = {
         }
 
         this._sourceIDMap = {};
-        
+
         this.sidebarPanes.watchExpressions.refreshExpressions();
-        this.sidebarPanes.breakpoints.reset();
-        if (!preserveWorkers)
+        if (!preserveItems) {
+            this.sidebarPanes.breakpoints.reset();
             this.sidebarPanes.workers.reset();
+        }
     },
 
     get visibleView()
