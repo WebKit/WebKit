@@ -55,7 +55,7 @@ namespace WebCore {
         {
         }
 
-        void executeFunctionInContext(JSC::JSGlobalObject*, JSC::JSValue thisValue);
+        void executeFunctionInContext(JSC::JSGlobalObject*, JSC::JSValue thisValue, ScriptExecutionContext*);
         void execute(Document*);
 #if ENABLE(WORKERS)
         void execute(WorkerContext*);

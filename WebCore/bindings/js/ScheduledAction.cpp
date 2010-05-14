@@ -30,6 +30,7 @@
 #include "FrameLoader.h"
 #include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
+#include "JSMainThreadExecState.h"
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptSourceCode.h"
@@ -84,7 +85,7 @@ void ScheduledAction::execute(ScriptExecutionContext* context)
 #endif
 }
 
-void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSValue thisValue)
+void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSValue thisValue, ScriptExecutionContext* context)
 {
     ASSERT(m_function);
     JSLock lock(SilenceAssertionsOnly);
@@ -102,7 +103,10 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
         args.append(m_args[i]);
 
     globalObject->globalData()->timeoutChecker.start();
-    JSC::call(exec, m_function, callType, callData, thisValue, args);
+    if (context->isDocument())
+        JSMainThreadExecState::call(exec, m_function, callType, callData, thisValue, args);
+    else
+        JSC::call(exec, m_function, callType, callData, thisValue, args);
     globalObject->globalData()->timeoutChecker.stop();
 
     if (exec->hadException())
@@ -122,7 +126,7 @@ void ScheduledAction::execute(Document* document)
     frame->script()->setProcessingTimerCallback(true);
 
     if (m_function) {
-        executeFunctionInContext(window, window->shell());
+        executeFunctionInContext(window, window->shell(), document);
         Document::updateStyleForAllDocuments();
     } else
         frame->script()->executeScriptInWorld(m_isolatedWorld.get(), m_code);
@@ -140,7 +144,7 @@ void ScheduledAction::execute(WorkerContext* workerContext)
 
     if (m_function) {
         JSWorkerContext* contextWrapper = scriptController->workerContextWrapper();
-        executeFunctionInContext(contextWrapper, contextWrapper);
+        executeFunctionInContext(contextWrapper, contextWrapper, workerContext);
     } else {
         ScriptSourceCode code(m_code, workerContext->url());
         scriptController->evaluate(code);
