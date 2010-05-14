@@ -1,3 +1,13 @@
+2010-05-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39008
+        <rdar://problem/7976142> REGRESSION (r58950): Webkit crashes on clicking back button when in Hotmail
+
+        * fast/parser/tokenizer-close-during-document-write-expected.txt: Added.
+        * fast/parser/tokenizer-close-during-document-write.html: Added.
+
 2010-05-14  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Eric Seidel.
