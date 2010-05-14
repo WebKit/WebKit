@@ -1,3 +1,34 @@
+2010-05-14  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Remove the ENABLE(WORKERS) guard from GenericWorkerTask.h and rename
+        all occurrences of GenericWorkerTask* to GenericTask* in this file.
+        https://bugs.webkit.org/show_bug.cgi?id=39129
+
+        I will have another patch to rename the file and move it to the right
+        place.
+
+        * workers/GenericWorkerTask.h:
+        (WebCore::):
+        (WebCore::GenericTask1::create):
+        (WebCore::GenericTask1::GenericTask1):
+        (WebCore::GenericTask2::create):
+        (WebCore::GenericTask2::GenericTask2):
+        (WebCore::GenericTask3::create):
+        (WebCore::GenericTask3::GenericTask3):
+        (WebCore::GenericTask4::create):
+        (WebCore::GenericTask4::GenericTask4):
+        (WebCore::GenericTask5::create):
+        (WebCore::GenericTask5::GenericTask5):
+        (WebCore::GenericTask6::create):
+        (WebCore::GenericTask6::GenericTask6):
+        (WebCore::GenericTask7::create):
+        (WebCore::GenericTask7::GenericTask7):
+        (WebCore::GenericTask8::create):
+        (WebCore::GenericTask8::GenericTask8):
+        (WebCore::createCallbackTask):
+
 2010-05-14  Evan Martin  <evan@chromium.org>
 
         Reviewed by David Levin.
