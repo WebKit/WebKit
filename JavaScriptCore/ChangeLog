@@ -1,3 +1,16 @@
+2010-05-14  Chao-ying Fu  <fu@mips.com>
+
+        Reviewed by Oliver Hunt.
+
+        String Indexing Failure on JSVALUE32 targets
+        https://bugs.webkit.org/show_bug.cgi?id=39034
+
+        Remove zero-extend/shift-right code on regT1, because we already have
+        it in emit_op_get_by_val().
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+
 2010-05-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Alexey Proskuryakov.

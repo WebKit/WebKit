@@ -58,11 +58,6 @@ PassRefPtr<NativeExecutable> JIT::stringGetByValStubGenerator(JSGlobalData* glob
     JumpList failures;
     failures.append(jit.branchPtr(NotEqual, Address(regT0), ImmPtr(globalData->jsStringVPtr)));
     failures.append(jit.branchTest32(NonZero, Address(regT0, OBJECT_OFFSETOF(JSString, m_fiberCount))));
-#if USE(JSVALUE64)
-    jit.zeroExtend32ToPtr(regT1, regT1);
-#else
-    jit.emitFastArithImmToInt(regT1);
-#endif
 
     // Load string length to regT1, and start the process of loading the data pointer into regT0
     jit.load32(Address(regT0, ThunkHelpers::jsStringLengthOffset()), regT2);
