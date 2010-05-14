@@ -1,3 +1,18 @@
+2010-05-13  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/7975410>
+
+        Allow reporting exceptions that occur when using JavaScriptCore APIs to the Web Inspector.
+
+        * Interfaces/IWebViewPrivate.idl: Add a reportException function off of IWebViewPrivate.
+        * Interfaces/WebKit.idl: Touch WebKit.idl to make sure Interfaces rebuild.
+        * WebView.cpp:
+        (WebView::reportException): Make sure the function was called with a context from a WebView, and call
+            WebCore::reportException.
+        * WebView.h:
+
 2010-05-12  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.
