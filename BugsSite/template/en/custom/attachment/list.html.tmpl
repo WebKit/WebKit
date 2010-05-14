@@ -150,7 +150,7 @@
 [%# if WEBKIT_CHANGES %]
           [% IF attachment.ispatch %]
             [% FOREACH flag = attachment.flags %]
-              [% IF flag.type.name == 'in-rietveld'  %]
+              [% IF flag.type.name == 'in-rietveld' && flag.status == "+"  %]
                 | <a href="attachment.cgi?id=[% attachment.id %]&amp;action=rietveldreview&amp;GoAheadAndLogIn=1">Rietveld Review</a>
               [% END %]
             [% END %]

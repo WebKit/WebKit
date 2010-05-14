@@ -1,3 +1,13 @@
+2010-05-14  Julie Parent  <jparent@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Bugzilla: Only show "Rietveld Review" link when in-rietveld is set to +.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=39141
+
+        * template/en/custom/attachment/list.html.tmpl:
+
 2010-05-13  Julie Parent  <jparent@chromium.org>
 
         Reviewed by David Kilzer.
