@@ -24,6 +24,7 @@
 #include "EWebKit.h"
 #include "Logging.h"
 #include "PageCache.h"
+#include "PageGroup.h"
 #include "ewk_private.h"
 #include "runtime/InitializeThreading.h"
 #include "wtf/Threading.h"

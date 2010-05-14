@@ -1,3 +1,12 @@
+2010-05-14  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by David Levin.
+
+        [EF] Include missing header.
+        http://webkit.org/b/38905
+
+        * efl/ewk/ewk_main.cpp: Include PageGroup.h
+
 2010-05-08  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Laszlo Gombos.
