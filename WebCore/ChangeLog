@@ -1,3 +1,37 @@
+2010-05-14  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Must implement OpenGL ES 2.0 semantics for NPOT textures
+        https://bugs.webkit.org/show_bug.cgi?id=33805
+
+        Test: fast/canvas/webgl/texture-npot.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::WebGLRenderingContext): Create black 1x1 textures.
+        (WebCore::WebGLRenderingContext::bindTexture): Set texture dimensionality.
+        (WebCore::WebGLRenderingContext::copyTexImage2D): Error check, set texture size.
+        (WebCore::WebGLRenderingContext::drawArrays): Bind to black textures if needed.
+        (WebCore::WebGLRenderingContext::drawElements): Bind to black textures if needed.
+        (WebCore::WebGLRenderingContext::generateMipmap): Error check.
+        (WebCore::WebGLRenderingContext::texImage2DBase): Error check, set texture size.
+        (WebCore::WebGLRenderingContext::texParameterf): Set texture parameter.
+        (WebCore::WebGLRenderingContext::texParameteri): Ditto.
+        (WebCore::WebGLRenderingContext::handleNPOTTextures): Bind to black textures if needed before draw, and bind back to original textures after draw.
+        * html/canvas/WebGLRenderingContext.h: Add black 1x1 textures.
+        * html/canvas/WebGLTexture.cpp: Add support to track NPOT textures.
+        (WebCore::WebGLTexture::createBlackTexture1x1): Create a black 1x1 texture.
+        (WebCore::WebGLTexture::WebGLTexture): Initialize parameters and states.
+        (WebCore::WebGLTexture::setDimensionality): Set dimensionality.
+        (WebCore::WebGLTexture::setParameteri): Set parameter.
+        (WebCore::WebGLTexture::setParameterf): Ditto.
+        (WebCore::WebGLTexture::setSize): Set level 0 texture size.
+        (WebCore::WebGLTexture::isNPOT): Whether the texture is NPOT.
+        (WebCore::WebGLTexture::updateNPOTStates): Calculate NPOT and NeedToUseBlackTexture states.
+        * html/canvas/WebGLTexture.h: Add support to track NPOT textures.
+        (WebCore::WebGLTexture::isNPOT):
+        (WebCore::WebGLTexture::needToUseBlackTexture):
+
 2010-05-14  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

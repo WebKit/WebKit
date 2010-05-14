@@ -102,6 +102,8 @@ WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement* passedCanvas, Pa
     int implementationColorReadType = GraphicsContext3D::UNSIGNED_BYTE;
     m_context->getIntegerv(GraphicsContext3D::IMPLEMENTATION_COLOR_READ_TYPE, &implementationColorReadType);
     m_implementationColorReadType = implementationColorReadType;
+    if (!isGLES2Compliant())
+        createFallbackBlackTextures1x1();
     m_context->reshape(canvas()->width(), canvas()->height());
     m_context->viewport(0, 0, canvas()->width(), canvas()->height());
 }
@@ -272,6 +274,8 @@ void WebGLRenderingContext::bindTexture(unsigned long target, WebGLTexture* text
         return;
     }
     m_context->bindTexture(target, texture);
+    if (!isGLES2Compliant() && texture)
+        texture->setTarget(target);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -427,6 +431,28 @@ void WebGLRenderingContext::compileShader(WebGLShader* shader, ExceptionCode& ec
 
 void WebGLRenderingContext::copyTexImage2D(unsigned long target, long level, unsigned long internalformat, long x, long y, unsigned long width, unsigned long height, long border)
 {
+    if (!isGLES2Compliant()) {
+        if (level && WebGLTexture::isNPOT(width, height)) {
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+            return;
+        }
+        RefPtr<WebGLTexture> tex = 0;
+        switch (target) {
+        case GraphicsContext3D::TEXTURE_2D:
+            tex = m_textureUnits[m_activeTextureUnit].m_texture2DBinding;
+            break;
+        case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_X:
+        case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_X:
+        case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Y:
+        case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Y:
+        case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Z:
+        case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Z:
+            tex = m_textureUnits[m_activeTextureUnit].m_textureCubeMapBinding;
+            break;
+        }
+        if (tex && !level) // only for level 0
+            tex->setSize(target, width, height);
+    }
     m_context->copyTexImage2D(target, level, internalformat, x, y, width, height, border);
     cleanupAfterGraphicsCall(false);
 }
@@ -737,8 +763,10 @@ void WebGLRenderingContext::drawArrays(unsigned long mode, long first, long coun
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }
-    
+
+    handleNPOTTextures(true);
     m_context->drawArrays(mode, first, count);
+    handleNPOTTextures(false);
     cleanupAfterGraphicsCall(true);
 }
 
@@ -758,8 +786,10 @@ void WebGLRenderingContext::drawElements(unsigned long mode, unsigned long count
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
             return;
         }
-    
+
+    handleNPOTTextures(true);
     m_context->drawElements(mode, count, type, offset);
+    handleNPOTTextures(false);
     cleanupAfterGraphicsCall(true);
 }
 
@@ -882,6 +912,17 @@ void WebGLRenderingContext::frontFace(unsigned long mode)
 
 void WebGLRenderingContext::generateMipmap(unsigned long target)
 {
+    if (!isGLES2Compliant()) {
+        RefPtr<WebGLTexture> tex = 0;
+        if (target == GraphicsContext3D::TEXTURE_2D)
+            tex = m_textureUnits[m_activeTextureUnit].m_texture2DBinding;
+        else if (target == GraphicsContext3D::TEXTURE_CUBE_MAP)
+            tex = m_textureUnits[m_activeTextureUnit].m_textureCubeMapBinding;
+        if (tex && tex->isNPOT()) {
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+            return;
+        }
+    }
     m_context->generateMipmap(target);
     cleanupAfterGraphicsCall(false);
 }
@@ -1765,6 +1806,28 @@ void WebGLRenderingContext::texImage2DBase(unsigned target, unsigned level, unsi
 {
     // FIXME: For now we ignore any errors returned
     ec = 0;
+    if (!isGLES2Compliant()) {
+        if (level && WebGLTexture::isNPOT(width, height)) {
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+            return;
+        }
+        RefPtr<WebGLTexture> tex = 0;
+        switch (target) {
+        case GraphicsContext3D::TEXTURE_2D:
+            tex = m_textureUnits[m_activeTextureUnit].m_texture2DBinding;
+            break;
+        case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_X:
+        case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_X:
+        case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Y:
+        case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Y:
+        case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Z:
+        case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Z:
+            tex = m_textureUnits[m_activeTextureUnit].m_textureCubeMapBinding;
+            break;
+        }
+        if (tex && !level) // only for level 0
+            tex->setSize(target, width, height);
+    }
     m_context->texImage2D(target, level, internalformat, width, height,
                           border, format, type, pixels);
     cleanupAfterGraphicsCall(false);
@@ -1894,12 +1957,30 @@ void WebGLRenderingContext::texImage2D(unsigned target, unsigned level, HTMLVide
 void WebGLRenderingContext::texParameterf(unsigned target, unsigned pname, float param)
 {
     m_context->texParameterf(target, pname, param);
+    if (!isGLES2Compliant()) {
+        RefPtr<WebGLTexture> tex = 0;
+        if (target == GraphicsContext3D::TEXTURE_2D)
+            tex = m_textureUnits[m_activeTextureUnit].m_texture2DBinding;
+        else if (target == GraphicsContext3D::TEXTURE_CUBE_MAP)
+            tex = m_textureUnits[m_activeTextureUnit].m_textureCubeMapBinding;
+        if (tex)
+            tex->setParameterf(pname, param);
+    }
     cleanupAfterGraphicsCall(false);
 }
 
 void WebGLRenderingContext::texParameteri(unsigned target, unsigned pname, int param)
 {
     m_context->texParameteri(target, pname, param);
+    if (!isGLES2Compliant()) {
+        RefPtr<WebGLTexture> tex = 0;
+        if (target == GraphicsContext3D::TEXTURE_2D)
+            tex = m_textureUnits[m_activeTextureUnit].m_texture2DBinding;
+        else if (target == GraphicsContext3D::TEXTURE_CUBE_MAP)
+            tex = m_textureUnits[m_activeTextureUnit].m_textureCubeMapBinding;
+        if (tex)
+            tex->setParameteri(pname, param);
+    }
     cleanupAfterGraphicsCall(false);
 }
 
@@ -2951,6 +3032,66 @@ WebGLGetInfo WebGLRenderingContext::getWebGLUnsignedByteArrayParameter(unsigned 
 bool WebGLRenderingContext::isGLES2Compliant()
 {
     return m_context->isGLES2Compliant();
+}
+
+void WebGLRenderingContext::handleNPOTTextures(bool prepareToDraw)
+{
+    if (isGLES2Compliant())
+        return;
+    bool resetActiveUnit = false;
+    // FIXME: active texture unit limits should be queries instead of 32.
+    for (unsigned long ii = 0; ii < 32; ++ii) {
+        if (m_textureUnits[ii].m_texture2DBinding && m_textureUnits[ii].m_texture2DBinding->needToUseBlackTexture()
+            || m_textureUnits[ii].m_textureCubeMapBinding && m_textureUnits[ii].m_textureCubeMapBinding->needToUseBlackTexture()) {
+            if (ii != m_activeTextureUnit) {
+                m_context->activeTexture(ii);
+                resetActiveUnit = true;
+            } else if (resetActiveUnit) {
+                m_context->activeTexture(ii);
+                resetActiveUnit = false;
+            }
+            WebGLTexture* tex2D;
+            WebGLTexture* texCubeMap;
+            if (prepareToDraw) {
+                tex2D = m_blackTexture2D.get();
+                texCubeMap = m_blackTextureCubeMap.get();
+            } else {
+                tex2D = m_textureUnits[ii].m_texture2DBinding.get();
+                texCubeMap = m_textureUnits[ii].m_textureCubeMapBinding.get();
+            }
+            if (m_textureUnits[ii].m_texture2DBinding && m_textureUnits[ii].m_texture2DBinding->needToUseBlackTexture())
+                m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, tex2D);
+            if (m_textureUnits[ii].m_textureCubeMapBinding && m_textureUnits[ii].m_textureCubeMapBinding->needToUseBlackTexture())
+                m_context->bindTexture(GraphicsContext3D::TEXTURE_CUBE_MAP, texCubeMap);
+        }
+    }
+    if (resetActiveUnit)
+        m_context->activeTexture(m_activeTextureUnit);
+}
+
+void WebGLRenderingContext::createFallbackBlackTextures1x1()
+{
+    unsigned char black[] = {0, 0, 0, 255};
+    m_blackTexture2D = createTexture();
+    m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_blackTexture2D.get());
+    m_context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, 1, 1,
+                          0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, black);
+    m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, 0);
+    m_blackTextureCubeMap = createTexture();
+    m_context->bindTexture(GraphicsContext3D::TEXTURE_CUBE_MAP, m_blackTextureCubeMap.get());
+    m_context->texImage2D(GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_X, 0, GraphicsContext3D::RGBA, 1, 1,
+                          0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, black);
+    m_context->texImage2D(GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GraphicsContext3D::RGBA, 1, 1,
+                          0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, black);
+    m_context->texImage2D(GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GraphicsContext3D::RGBA, 1, 1,
+                          0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, black);
+    m_context->texImage2D(GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GraphicsContext3D::RGBA, 1, 1,
+                          0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, black);
+    m_context->texImage2D(GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GraphicsContext3D::RGBA, 1, 1,
+                          0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, black);
+    m_context->texImage2D(GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GraphicsContext3D::RGBA, 1, 1,
+                          0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, black);
+    m_context->bindTexture(GraphicsContext3D::TEXTURE_CUBE_MAP, 0);
 }
 
 } // namespace WebCore

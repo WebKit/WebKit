@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <title>WebGL Non-Power of 2 texture conformance test.</title>
+    <link rel="stylesheet" href="../../js//resources/js-test-style.css"/>
+    <script src="../../js/resources/js-test-pre.js"></script>
+    <script src="resources/utils3d.js"> </script>
+</head>
+<body>
+<canvas id="example" width="4" height="4" style="width: 40px; height: 30px;"></canvas>
+<canvas id="canvas2d" width="5" height="3" style="width: 50px; height: 30px;"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+    <script id="vshader" type="x-shader/x-vertex">
+        attribute vec4 vPosition;
+        attribute vec2 texCoord0;
+        varying vec2 texCoord;
+        void main()
+        {
+            gl_Position = vPosition;
+            texCoord = texCoord0;
+        }
+    </script>
+
+    <script id="fshader" type="x-shader/x-fragment">
+        uniform sampler2D tex;
+        varying vec2 texCoord;
+        void main()
+        {
+            gl_FragColor = texture2D(tex, texCoord);
+        }
+    </script>
+
+    <script>
+        function assertMsg(assertion, msg) {
+            if (assertion) {
+                testPassed(msg);
+            } else {
+                testFailed(msg);
+            }
+        }
+
+        function init()
+        {
+            if (window.layoutTestController) {
+                layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
+                layoutTestController.dumpAsText();
+            }
+
+            debug("WebGL NPOT texture conformance test");
+
+            var canvas2d = document.getElementById("canvas2d");
+            var ctx2d = canvas2d.getContext("2d");
+            ctx2d.fillStyle = "rgba(0,192,128,255)";
+            ctx2d.fillRect(0, 0, 5, 3);
+
+            gl = initWebGL("example", "vshader", "fshader", [ "vPosition", "texCoord0"], [ 0, 0, 0, 1 ], 1);
+
+            gl.disable(gl.DEPTH_TEST);
+            gl.disable(gl.BLEND);
+
+            var vertexObject = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
+            gl.bufferData(gl.ARRAY_BUFFER, new WebGLFloatArray([ -1,1,0, 1,1,0, -1,-1,0,
+                                                                 -1,-1,0, 1,1,0, 1,-1,0
+                                                               ]), gl.STATIC_DRAW);
+            gl.enableVertexAttribArray(0);
+            gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+
+            var vertexObject = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
+            gl.bufferData(gl.ARRAY_BUFFER, new WebGLFloatArray([ 0,0, 1,0, 0,1,
+                                                                 0,1, 1,0, 1,1
+                                                               ]), gl.STATIC_DRAW);
+            gl.enableVertexAttribArray(1);
+            gl.vertexAttribPointer(1, 2, gl.FLOAT, false, 0, 0);
+
+            var tex = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, tex);
+
+            // Check that an NPOT texture not on level 0 generates INVALID_VALUE
+            gl.texImage2D(gl.TEXTURE_2D,
+                          1,                 // level
+                          canvas2d);
+            assertMsg(gl.getError() == gl.INVALID_VALUE,
+                      "gl.texImage2D with NPOT texture with level > 0 should return INVALID_VALUE");
+
+            // Check that an NPOT texture on level 0 succeeds
+            gl.texImage2D(gl.TEXTURE_2D,
+                          0,                 // level
+                          canvas2d);
+            assertMsg(gl.getError() == gl.NO_ERROR,
+                      "gl.texImage2D with NPOT texture at level 0 should succeed");
+
+            // Check that generateMipmap fails on NPOT
+            gl.generateMipmap(gl.TEXTURE_2D);
+            assertMsg(gl.getError() == gl.INVALID_OPERATION,
+                      "gl.generateMipmap with NPOT texture should return INVALID_OPERATION");
+
+            var loc = gl.getUniformLocation(gl.program, "tex");
+            gl.uniform1i(loc, 0);
+
+            // Check that nothing is drawn if filtering is not correct for NPOT
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+
+            checkBuffer(0,0,0,255, "NPOT texture with TEXTURE_WRAP set to REPEAT should draw with 0,0,0,255");
+
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR);
+
+            checkBuffer(0,0,0,255, "NPOT texture with TEXTURE_MIN_FILTER not NEAREST or LINEAR should draw with 0,0,0,255");
+
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+            checkBuffer(0,192,128,255, "NPOT texture with TEXTURE_MIN_FILTER set to LINEAR should draw.");
+
+            function checkBuffer(r, g, b, a, msg) {
+              gl.clearColor(1,1,1,1);
+              gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+              gl.drawArrays(gl.TRIANGLES, 0, 6);
+              gl.flush();
+              var buf = gl.readPixels(0, 0, 4, 4, gl.RGBA, gl.UNSIGNED_BYTE);
+              for (var i = 0; i < 4 * 4; ++i) {
+                var offset = i * 4;
+                if (buf[offset + 0] != r ||
+                    buf[offset + 1] != g ||
+                    buf[offset + 2] != b ||
+                    buf[offset + 3] != a) {
+                  testFailed(msg);
+                  return;
+                }
+              }
+              testPassed(msg);
+            }
+       }
+
+       init();
+       successfullyParsed = true;
+    </script>
+</body>
+<script src="../../js/resources/js-test-post.js"></script>
+
+<script>
+</script>
+
+</body>
+</html>
+

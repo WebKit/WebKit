@@ -356,6 +356,9 @@ class WebKitCSSMatrix;
         TextureUnitState m_textureUnits[32];
         unsigned long m_activeTextureUnit;
 
+        RefPtr<WebGLTexture> m_blackTexture2D;
+        RefPtr<WebGLTexture> m_blackTextureCubeMap;
+
         int m_packAlignment;
         int m_unpackAlignment;
         unsigned long m_implementationColorReadFormat;
@@ -381,6 +384,10 @@ class WebKitCSSMatrix;
                                unsigned format, unsigned type, void* pixels, ExceptionCode&);
         void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
                            Image* image, bool flipY, bool premultiplyAlpha, ExceptionCode&);
+
+        void handleNPOTTextures(bool prepareToDraw);
+
+        void createFallbackBlackTextures1x1();
 
         friend class WebGLStateRestorer;
     };
