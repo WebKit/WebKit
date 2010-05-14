@@ -1,3 +1,18 @@
+2010-05-14  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Touch events are disabled by default when using V8.
+        https://bugs.webkit.org/show_bug.cgi?id=38990
+
+        Touch events are protected by a compile time guard, so it's safe to
+        assume that the runtime flag  should be enabled by default when this
+        guard is present.
+
+        No new tests, build fix for Android.
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp: enable touch events by default.
+
 2010-05-14  George Wright  <gwright@rim.com>
 
         Reviewed by George Staikos.
