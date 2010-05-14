@@ -1,5 +1,18 @@
 2010-05-13  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59337.
+
+    2010-05-12  Oliver Hunt  <oliver@apple.com>
+
+        build fix
+
+        <rdar://problem/7977960> REGRESSION (r59282): Tiger PPC build broken
+
+        * runtime/UString.h:
+        (JSC::tryMakeString):
+
+2010-05-13  Mark Rowe  <mrowe@apple.com>
+
         Merge r59202.
 
     2010-05-11  Brian Weinstein  <bweinstein@apple.com>
