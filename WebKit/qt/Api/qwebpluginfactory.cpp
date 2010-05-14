@@ -23,25 +23,40 @@
 /*!
     \class QWebPluginFactory
     \since 4.4
-    \brief The QWebPluginFactory class creates plugins to be embedded into web
-    pages.
+    \brief The QWebPluginFactory class is used to embed custom data types in web pages.
 
     \inmodule QtWebKit
 
-    QWebPluginFactory is a factory for creating plugins for QWebPage. A plugin
-    factory can be installed on a QWebPage using QWebPage::setPluginFactory().
+    The HTML \c{<object>} tag is used to embed arbitrary content into a web page,
+    for example:
+
+    \code
+    <object type="application/x-pdf" data="http://qt.nokia.com/document.pdf" width="500" height="400"></object>
+    \endcode
+
+    QtWebkit will natively handle the most basic data types like \c{text/html} and
+    \c{image/jpeg}, but for any advanced or custom data types you will need to
+    provide a handler yourself.
+
+    QWebPluginFactory is a factory for creating plugins for QWebPage, where each
+    plugin provides support for one or more data types. A plugin factory can be
+    installed on a QWebPage using QWebPage::setPluginFactory().
 
     \note The plugin factory is only used if plugins are enabled through QWebSettings.
 
-    You can provide a QWebPluginFactory by implementing the plugins() and the
-    create() method. For plugins() it is necessary to describe the plugins the
+    You provide a QWebPluginFactory by implementing the plugins() and the
+    create() methods. For plugins() it is necessary to describe the plugins the
     factory can create, including a description and the supported MIME types.
     The MIME types each plugin can handle should match the ones specified in
-    in the HTML \c{<object>} tag.
+    in the HTML \c{<object>} tag of your content.
 
     The create() method is called if the requested MIME type is supported. The
     implementation has to return a new instance of the plugin requested for the
     given MIME type and the specified URL.
+
+    The plugins themselves are subclasses of QObject, but currently only plugins
+    based on either QWidget or QGraphicsWidget are supported.
+
 */
 
 
@@ -183,6 +198,7 @@ void QWebPluginFactory::refreshPlugins()
 
 /*!
     \enum QWebPluginFactory::Extension
+    \internal
 
     This enum describes the types of extensions that the plugin factory can support. Before using these extensions, you
     should verify that the extension is supported by calling supportsExtension().
@@ -192,6 +208,7 @@ void QWebPluginFactory::refreshPlugins()
 
 /*!
     \class QWebPluginFactory::ExtensionOption
+    \internal
     \since 4.4
     \brief The ExtensionOption class provides an extended input argument to QWebPluginFactory's extension support.
 
@@ -202,6 +219,7 @@ void QWebPluginFactory::refreshPlugins()
 
 /*!
     \class QWebPluginFactory::ExtensionReturn
+    \internal
     \since 4.4
     \brief The ExtensionOption class provides an extended output argument to QWebPluginFactory's extension support.
 
@@ -213,6 +231,8 @@ void QWebPluginFactory::refreshPlugins()
 /*!
     This virtual function can be reimplemented in a QWebPluginFactory subclass to provide support for extensions. The \a option
     argument is provided as input to the extension; the output results can be stored in \a output.
+
+    \internal
 
     The behaviour of this function is determined by \a extension.
 
@@ -232,6 +252,8 @@ bool QWebPluginFactory::extension(Extension extension, const ExtensionOption *op
 
 /*!
     This virtual function returns true if the plugin factory supports \a extension; otherwise false is returned.
+
+    \internal
 
     \sa extension()
 */

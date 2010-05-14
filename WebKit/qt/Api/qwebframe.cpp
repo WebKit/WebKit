@@ -372,8 +372,10 @@ void QWebFramePrivate::renderRelativeCoords(GraphicsContext* context, QWebFrame:
     can connect to the web page's \l{QWebPage::}{frameCreated()} signal
     to be notified when a new frame is created.
 
-    The hitTestContent() function can be used to programmatically examine the
-    contents of a frame.
+    There are multiple ways to programmatically examine the contents of a frame.
+    The hitTestContent() function can be used to find elements by coordinate.
+    For access to the underlying DOM tree, there is documentElement(),
+    findAllElements() and findFirstElement().
 
     A QWebFrame can be printed onto a QPrinter using the print() function.
     This function is marked as a slot and can be conveniently connected to
@@ -600,6 +602,10 @@ static inline QUrl ensureAbsoluteUrl(const QUrl &url)
 /*!
     \property QWebFrame::url
     \brief the url of the frame currently viewed
+
+    Setting this property clears the view and loads the URL.
+
+    By default, this property contains an empty, invalid URL.
 
     \sa urlChanged()
 */

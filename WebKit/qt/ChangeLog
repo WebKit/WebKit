@@ -1,3 +1,34 @@
+2010-05-14  Kent Hansen <kent.hansen@nokia.com>, Jocelyn Turcotte <jocelyn.turcotte@nokia.com>, Tor Arne Vestbø <tor.arne.vestbo@nokia.com>, Henry Haverinen <henry.haverinen@nokia.com>, Jedrzej Nowacki <jedrzej.nowacki@nokia.com>, Andreas Kling <andreas.kling@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Merge overhaul of the QtWebKit API documentation
+
+        Numerous improvements in wording, qdoc warning fixes and
+        clarifications, done in a team work effort.
+
+        No functional changes.
+
+        * Api/qwebdatabase.cpp:
+        * Api/qwebelement.cpp:
+        * Api/qwebframe.cpp:
+        * Api/qwebhistoryinterface.cpp:
+        * Api/qwebinspector.cpp:
+        * Api/qwebkitversion.cpp:
+        * Api/qwebpage.cpp:
+        * Api/qwebpluginfactory.cpp:
+        * Api/qwebsecurityorigin.cpp:
+        * Api/qwebsettings.cpp:
+        * Api/qwebsettings.h:
+        * docs/qtwebkit.qdoc:
+        * docs/webkitsnippets/qtwebkit_qwebinspector_snippet.cpp:
+        (wrapInFunction):
+        * docs/webkitsnippets/webelement/main.cpp:
+        (findButtonAndClick):
+        (autocomplete1):
+        (autocomplete2):
+        (main):
+
 2010-05-14  Martin Smith  <msmith@trolltech.com>
 
         Reviewed by Simon Hausmann.

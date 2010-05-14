@@ -36,6 +36,59 @@ static void traverse()
 //! [Traversing with QWebElement]
 }
 
+static void findButtonAndClick()
+{
+
+    frame->setHtml("<form name=\"myform\" action=\"submit_form.asp\" method=\"get\">"
+                   "<input type=\"text\" name=\"myfield\">"
+                   "<input type=\"submit\" value=\"Submit\">"
+                   "</form>");
+
+//! [Calling a DOM element method]
+
+    QWebElement document = frame->documentElement();
+    /* Assume that the document has the following structure:
+
+        <form name="myform" action="submit_form.asp" method="get">
+            <input type="text" name="myfield">
+            <input type="submit" value="Submit">
+        </form>
+
+     */
+
+    QWebElement button = document.findFirst("input[type=submit]");
+    button.evaluateJavaScript("click()");
+
+//! [Calling a DOM element method]
+
+ }
+
+static void autocomplete1()
+{
+    QWebElement document = frame->documentElement();
+
+//! [autocomplete1]
+    QWebElement firstTextInput = document.findFirst("input[type=text]");
+    QString storedText = firstTextInput.attribute("value");
+//! [autocomplete1]
+
+}
+
+
+static void autocomplete2()
+{
+
+    QWebElement document = frame->documentElement();
+    QString storedText = "text";
+
+//! [autocomplete2]
+    QWebElement firstTextInput = document.findFirst("input[type=text]");
+    textInput.setAttribute("value", storedText);
+//! [autocomplete2]
+
+}
+
+
 static void findAll()
 {
 //! [FindAll]
@@ -65,5 +118,8 @@ int main(int argc, char *argv[])
     frame = view->page()->mainFrame();
     traverse();
     findAll();
+    findButtonAndClick();
+    autocomplete1();
+    autocomplete2();
     return 0;
 }

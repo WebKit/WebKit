@@ -290,8 +290,8 @@ QWebSettings* QWebSettings::globalSettings()
     function. The \l{QWebSettings::WebAttribute}{WebAttribute} enum further describes
     each attribute.
 
-    QWebSettings also configures global properties such as the Web page memory
-    cache and the Web page icon database, local database storage and offline
+    QWebSettings also configures global properties such as the web page memory
+    cache, icon database, local database storage and offline
     applications storage.
 
     \section1 Enabling Plugins
@@ -300,8 +300,8 @@ QWebSettings* QWebSettings::globalSettings()
     \l{QWebSettings::PluginsEnabled}{PluginsEnabled} attribute. For many applications,
     this attribute is enabled for all pages by setting it on the
     \l{globalSettings()}{global settings object}. QtWebKit will always ignore this setting
-    \when processing Qt plugins. The decision to allow a Qt plugin is made by the client
-    \in its reimplementation of QWebPage::createPlugin.
+    when processing Qt plugins. The decision to allow a Qt plugin is made by the client
+    in its reimplementation of QWebPage::createPlugin().
 
     \section1 Web Application Support
 
@@ -340,7 +340,7 @@ QWebSettings* QWebSettings::globalSettings()
 
     \value MinimumFontSize The hard minimum font size.
     \value MinimumLogicalFontSize The minimum logical font size that is applied
-        after zooming with QWebFrame's textSizeMultiplier().
+        when zooming out with QWebFrame::setTextSizeMultiplier().
     \value DefaultFontSize The default font size for regular text.
     \value DefaultFixedFontSize The default font size for fixed-pitch text.
 */
@@ -363,67 +363,76 @@ QWebSettings* QWebSettings::globalSettings()
     This enum describes various attributes that are configurable through QWebSettings.
 
     \value AutoLoadImages Specifies whether images are automatically loaded in
-        web pages.
+        web pages. This is enabled by default.
     \value DnsPrefetchEnabled Specifies whether QtWebkit will try to pre-fetch DNS entries to
-        speed up browsing. This only works as a global attribute. Only for Qt 4.6 and later.
+        speed up browsing. This only works as a global attribute. Only for Qt 4.6 and later. This is disabled by default.
     \value JavascriptEnabled Enables or disables the running of JavaScript
-        programs.
+        programs. This is enabled by default
     \value JavaEnabled Enables or disables Java applets.
         Currently Java applets are not supported.
-    \value PluginsEnabled Enables or disables plugins in Web pages. Qt plugins
-        with a mimetype such as "application/x-qt-plugin" are not affected by this setting.
+    \value PluginsEnabled Enables or disables plugins in Web pages (e.g. using NPAPI). Qt plugins
+        with a mimetype such as "application/x-qt-plugin" are not affected by this setting. This is disabled by default.
     \value PrivateBrowsingEnabled Private browsing prevents WebKit from
-        recording visited pages in the history and storing web page icons.
+        recording visited pages in the history and storing web page icons. This is disabled by default.
     \value JavascriptCanOpenWindows Specifies whether JavaScript programs
-        can open new windows.
+        can open new windows. This is disabled by default.
     \value DOMPasteAllowed Specifies whether JavaScript programs can
         read clipboard contents.
+    \value JavascriptCanAccessClipboard Specifies whether JavaScript programs
+        can read or write to the clipboard. This is disabled by default.
     \value DeveloperExtrasEnabled Enables extra tools for Web developers.
         Currently this enables the "Inspect" element in the context menu as
-        well as the use of QWebInspector which controls the WebKit WebInspector
-        for web site debugging.
+        well as the use of QWebInspector which controls the web inspector
+        for web site debugging. This is disabled by default.
     \value SpatialNavigationEnabled Enables or disables the Spatial Navigation
         feature, which consists in the ability to navigate between focusable
         elements in a Web page, such as hyperlinks and form controls, by using
-        Left, Right, Up and Down arrow keys. For example, if an user presses the
+        Left, Right, Up and Down arrow keys. For example, if a user presses the
         Right key, heuristics determine whether there is an element he might be
-        trying to reach towards the right, and if there are multiple elements,
-        which element he probably wants.
+        trying to reach towards the right and which element he probably wants.
+        This is disabled by default.
     \value LinksIncludedInFocusChain Specifies whether hyperlinks should be
-        included in the keyboard focus chain.
-    \value ZoomTextOnly Specifies whether the zoom factor on a frame applies to
-        only the text or all content.
+        included in the keyboard focus chain. This is enabled by default.
+    \value ZoomTextOnly Specifies whether the zoom factor on a frame applies
+        only to the text or to all content. This is disabled by default.
     \value PrintElementBackgrounds Specifies whether the background color and images
-        are also drawn when the page is printed.
+        are also drawn when the page is printed. This is enabled by default.
     \value OfflineStorageDatabaseEnabled Specifies whether support for the HTML 5
-        offline storage feature is enabled or not. Disabled by default.
+        offline storage feature is enabled or not. This is disabled by default.
     \value OfflineWebApplicationCacheEnabled Specifies whether support for the HTML 5
-        web application cache feature is enabled or not. Disabled by default.
+        web application cache feature is enabled or not. This is disabled by default.
     \value LocalStorageEnabled Specifies whether support for the HTML 5
-        local storage feature is enabled or not. Disabled by default.
+        local storage feature is enabled or not. This is disabled by default.
     \value LocalStorageDatabaseEnabled \e{This enum value is deprecated.} Use
         QWebSettings::LocalStorageEnabled instead.
-    \value LocalContentCanAccessRemoteUrls Specifies whether locally loaded documents are allowed to access remote urls.
-    \value LocalContentCanAccessFileUrls Specifies whether locally loaded documents are allowed to access other local urls.
-    \value JavaScriptCanAccessClipboard Specifies whether JavaScript can access the clipboard.
-    \value XSSAuditingEnabled Specifies whether load requests should be monitored for cross-site scripting attempts.
+    \value LocalContentCanAccessRemoteUrls Specifies whether locally loaded documents are
+        allowed to access remote urls. This is disabled by default. For more information
+        about security origins and local vs. remote content see QWebSecurityOrigin.
+    \value LocalContentCanAccessFileUrls Specifies whether locally loaded documents are
+        allowed to access other local urls. This is enabled by default. For more information
+        about security origins and local vs. remote content see QWebSecurityOrigin.
+    \value XSSAuditingEnabled Specifies whether load requests should be monitored for cross-site
+        scripting attempts. Suspicious scripts will be blocked and reported in the inspector's
+        JavaScript console. Enabling this feature might have an impact on performance
+        and it is disabled by default.
     \value AcceleratedCompositingEnabled This feature, when used in conjunction with
         QGraphicsWebView, accelerates animations of web content. CSS animations of the transform and
         opacity properties will be rendered by composing the cached content of the animated elements.
-        This feature is enabled by default
+        This is enabled by default.
     \value TiledBackingStoreEnabled This setting enables the tiled backing store feature
         for a QGraphicsWebView. With the tiled backing store enabled, the web page contents in and around
         the current visible area is speculatively cached to bitmap tiles. The tiles are automatically kept
         in sync with the web page as it changes. Enabling tiling can significantly speed up painting heavy 
         operations like scrolling. Enabling the feature increases memory consumption. It does not work well 
         with contents using CSS fixed positioning (see also \l{QGraphicsWebView::}{resizesToContents} property).
-        \l{QGraphicsWebView::}{tiledBackingStoreFrozen} property allows application to temporarily freeze the contents of the backing store.
+        \l{QGraphicsWebView::}{tiledBackingStoreFrozen} property allows application to temporarily
+        freeze the contents of the backing store. This is disabled by default.
     \value FrameFlatteningEnabled With this setting each subframe is expanded to its contents.
         On touch devices, it is desired to not have any scrollable sub parts of the page
         as it results in a confusing user experience, with scrolling sometimes scrolling sub parts
         and at other times scrolling the page itself. For this reason iframes and framesets are
         barely usable on touch devices. This will flatten all the frames to become one scrollable page.
-        Disabled by default.
+        This is disabled by default.
 */
 
 /*!
@@ -529,7 +538,8 @@ void QWebSettings::resetFontSize(FontSize type)
     with UTF-8 and Base64 encoded data, such as:
 
     "data:text/css;charset=utf-8;base64,cCB7IGJhY2tncm91bmQtY29sb3I6IHJlZCB9Ow=="
-    NOTE: In case the base 64 data is not valid the style will not be applied.
+
+    \note If the base64 data is not valid, the style will not be applied.
 
     \sa userStyleSheetUrl()
 */
@@ -580,9 +590,11 @@ QString QWebSettings::defaultTextEncoding() const
     Sets the path of the icon database to \a path. The icon database is used
     to store "favicons" associated with web sites.
 
-    \a path must point to an existing directory where the icons are stored.
+    \a path must point to an existing directory.
 
     Setting an empty path disables the icon database.
+
+    \sa iconDatabasePath(), clearIconDatabase()
 */
 void QWebSettings::setIconDatabasePath(const QString& path)
 {
@@ -625,7 +637,7 @@ void QWebSettings::clearIconDatabase()
 /*!
     Returns the web site's icon for \a url.
 
-    If the web site does not specify an icon, or the icon is not in the
+    If the web site does not specify an icon \bold OR if the icon is not in the
     database, a null QIcon is returned.
 
     \note The returned icon's size is arbitrary.
@@ -662,7 +674,7 @@ QWebPluginDatabase *QWebSettings::pluginDatabase()
     Sets \a graphic to be drawn when QtWebKit needs to draw an image of the
     given \a type.
 
-    For example, when an image cannot be loaded the pixmap specified by
+    For example, when an image cannot be loaded, the pixmap specified by
     \l{QWebSettings::WebGraphic}{MissingImageGraphic} is drawn instead.
 
     \sa webGraphic()
@@ -679,9 +691,6 @@ void QWebSettings::setWebGraphic(WebGraphic type, const QPixmap& graphic)
 /*!
     Returns a previously set pixmap used to draw replacement graphics of the
     specified \a type.
-
-    For example, when an image cannot be loaded the pixmap specified by
-    \l{QWebSettings::WebGraphic}{MissingImageGraphic} is drawn instead.
 
     \sa setWebGraphic()
 */
@@ -723,8 +732,7 @@ void QWebSettings::clearMemoryCaches()
     Sets the maximum number of pages to hold in the memory page cache to \a pages.
 
     The Page Cache allows for a nicer user experience when navigating forth or back
-    to pages in the forward/back history, by pausing and resuming up to \a pages
-    per page group.
+    to pages in the forward/back history, by pausing and resuming up to \a pages.
 
     For more information about the feature, please refer to:
 
@@ -796,8 +804,8 @@ QString QWebSettings::fontFamily(FontFamily which) const
 }
 
 /*!
-    Resets the actual font family to the default font family, specified by
-    \a which.
+    Resets the actual font family specified by \a which to the one set
+    in the global QWebSettings instance.
 
     This function has no effect on the global QWebSettings instance.
 */
@@ -839,7 +847,9 @@ bool QWebSettings::testAttribute(WebAttribute attr) const
 /*!
     \fn void QWebSettings::resetAttribute(WebAttribute attribute)
 
-    Resets the setting of \a attribute.
+    Resets the setting of \a attribute to the value specified in the
+    global QWebSettings instance.
+
     This function has no effect on the global QWebSettings instance.
 
     \sa globalSettings()
@@ -855,11 +865,14 @@ void QWebSettings::resetAttribute(WebAttribute attr)
 /*!
     \since 4.5
 
-    Sets the path for HTML5 offline storage to \a path.
+    Sets \a path as the save location for HTML5 client-side database storage data.
 
-    \a path must point to an existing directory where the databases are stored.
+    \a path must point to an existing directory.
 
     Setting an empty path disables the feature.
+
+    Support for client-side databases can enabled by setting the
+    \l{QWebSettings::OfflineStorageDatabaseEnabled}{OfflineStorageDatabaseEnabled} attribute.
 
     \sa offlineStoragePath()
 */
@@ -873,7 +886,7 @@ void QWebSettings::setOfflineStoragePath(const QString& path)
 /*!
     \since 4.5
 
-    Returns the path of the HTML5 offline storage or an empty string if the
+    Returns the path of the HTML5 client-side database storage or an empty string if the
     feature is disabled.
 
     \sa setOfflineStoragePath()
@@ -910,21 +923,23 @@ qint64 QWebSettings::offlineStorageDefaultQuota()
 
 /*!
     \since 4.6
-    \relates QWebSettings
 
     Sets the path for HTML5 offline web application cache storage to \a path.
 
     An application cache acts like an HTTP cache in some sense. For documents
-    that use the application cache via JavaScript, the loader mechinery will
+    that use the application cache via JavaScript, the loader engine will
     first ask the application cache for the contents, before hitting the
     network.
 
     The feature is described in details at:
     http://dev.w3.org/html5/spec/Overview.html#appcache
 
-    \a path must point to an existing directory where the cache is stored.
+    \a path must point to an existing directory.
 
     Setting an empty path disables the feature.
+
+    Support for offline web application cache storage can enabled by setting the
+    \l{QWebSettings::OfflineWebApplicationCacheEnabled}{OfflineWebApplicationCacheEnabled} attribute.
 
     \sa offlineWebApplicationCachePath()
 */
@@ -937,7 +952,6 @@ void QWebSettings::setOfflineWebApplicationCachePath(const QString& path)
 
 /*!
     \since 4.6
-    \relates QWebSettings
 
     Returns the path of the HTML5 offline web application cache storage
     or an empty string if the feature is disabled.
@@ -984,7 +998,6 @@ qint64 QWebSettings::offlineWebApplicationCacheQuota()
 
 /*!
     \since 4.6
-    \relates QWebSettings
 
     Sets the path for HTML5 local storage to \a path.
     
@@ -1004,7 +1017,6 @@ void QWebSettings::setLocalStoragePath(const QString& path)
 
 /*!
     \since 4.6
-    \relates QWebSettings
 
     Returns the path for HTML5 local storage.
     
@@ -1017,13 +1029,14 @@ QString QWebSettings::localStoragePath() const
 
 /*!
     \since 4.6
-    \relates QWebSettings
 
-    Enables WebKit persistent data and sets the path to \a path.
-    If the \a path is empty the path for persistent data is set to the 
-    user-specific data location specified by 
-    \l{QDesktopServices::DataLocation}{DataLocation}.
-    
+    Enables WebKit data persistence and sets the path to \a path.
+    If \a path is empty, the user-specific data location specified by
+    \l{QDesktopServices::DataLocation}{DataLocation} will be used instead.
+
+    This method will simultaneously set and enable the iconDatabasePath(),
+    localStoragePath(), offlineStoragePath() and offlineWebApplicationCachePath().
+
     \sa localStoragePath()
 */
 void QWebSettings::enablePersistentStorage(const QString& path)

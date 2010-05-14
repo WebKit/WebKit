@@ -84,12 +84,26 @@ public:
 
     \snippet webkitsnippets/webelement/main.cpp Traversing with QWebElement
 
+    Individual elements can be inspected or changed using methods such as attribute()
+    or setAttribute(). For examle, to capture the user's input in a text field for later
+    use (auto-completion), a browser could do something like this:
+
+    \snippet webkitsnippets/webelement/main.cpp autocomplete1
+
+    When the same page is later revisited, the browser can fill in the text field automatically
+    by modifying the value attribute of the input element:
+
+    \snippet webkitsnippets/webelement/main.cpp autocomplete2
+
+    Another use case is to emulate a click event on an element. The following
+    code snippet demonstrates how to call the JavaScript DOM method click() of
+    a submit button:
+
+    \snippet webkitsnippets/webelement/main.cpp Calling a DOM element method
+
     The underlying content of QWebElement is explicitly shared. Creating a copy
     of a QWebElement does not create a copy of the content. Instead, both
     instances point to the same element.
-
-    The element's attributes can be read using attribute() and modified with
-    setAttribute().
 
     The contents of child elements can be converted to plain text with
     toPlainText(); to XHTML using toInnerXml(). To include the element's tag in

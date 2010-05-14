@@ -39,8 +39,10 @@ using namespace WebCore;
     access on a local computer through JavaScript. QWebDatabase is the C++ interface to these
     databases.
 
-    To get access to all databases defined by a security origin, use QWebSecurityOrigin::databases().
-    Each database has an internal name(), as well as a user-friendly name, provided by displayName().
+    Databases are grouped together in security origins. To get access to all databases defined by
+    a security origin, use QWebSecurityOrigin::databases(). Each database has an internal name(),
+    as well as a user-friendly name, provided by displayName(). These names are specified when
+    creating the database in the JavaScript code.
 
     WebKit uses SQLite to create and access the local SQL databases. The location of the database
     file in the local file system is returned by fileName(). You can access the database directly
@@ -49,7 +51,7 @@ using namespace WebCore;
     For each database the web site can define an expectedSize(). The current size of the database
     in bytes is returned by size().
 
-    For more information refer to the \l{http://dev.w3.org/html5/webdatabase/}{HTML 5 Draft Standard}.
+    For more information refer to the \l{http://dev.w3.org/html5/webdatabase/}{HTML5 Web SQL Database Draft Standard}.
 
     \sa QWebSecurityOrigin
 */
@@ -80,7 +82,7 @@ QString QWebDatabase::name() const
 }
 
 /*!
-    Returns the name of the database as seen by the user.
+    Returns the name of the database in a format that is suitable for display to the user.
 */
 QString QWebDatabase::displayName() const
 {

@@ -31,16 +31,22 @@
 /*!
     \class QWebInspector
     \since 4.6
+    \inmodule QtWebKit
     \brief The QWebInspector class allows the placement and control of a
     QWebPage's inspector.
-    The inspector allows you to see a page current hierarchy and loading
-    statistics.
+    The inspector can display a page's hierarchy, its loading statistics and
+    the current state of its individual elements. It is mostly used by web
+    developers.
 
-    The QWebPage to be inspected is determined with the setPage() method.
+    The QWebPage to be inspected must be specified using the setPage() method.
 
     A typical use of QWebInspector follows:
 
     \snippet webkitsnippets/qtwebkit_qwebinspector_snippet.cpp 0
+
+    A QWebInspector can be made visible either programmatically using
+    setVisible(), or by the user through the attached QWebPage's context
+    menu.
 
     \note A QWebInspector will display a blank widget if either:
     \list
@@ -61,17 +67,16 @@
     \section1 Inspector configuration persistence
 
     The inspector allows the user to configure some options through its
-    interface (e.g. the resource tracking "Always enable" option).
-    These settings are persisted automatically by QtWebKit using QSettings.
-
-    However since the QSettings object is instantiated using the empty
-    constructor, QCoreApplication::setOrganizationName() and
-    QCoreApplication::setApplicationName() must be called within your
-    application to enable the persistence of these options.
+    user interface (e.g. the resource tracking "Always enable" option).
+    These settings will be persisted automatically by QtWebKit only if
+    your application previously called QCoreApplication::setOrganizationName()
+    and QCoreApplication::setApplicationName().
+    See QSettings's default constructor documentation for an explanation
+    of why this is necessary.
 */
 
 /*!
-    Constructs an empty QWebInspector with parent \a parent.
+    Constructs an unbound QWebInspector with \a parent as its parent.
 */
 QWebInspector::QWebInspector(QWidget* parent)
     : QWidget(parent)
@@ -89,16 +94,16 @@ QWebInspector::~QWebInspector()
 }
 
 /*!
-    Sets the QWebPage to be inspected.
+    Bind this inspector to the QWebPage to be inspected.
 
-    There can only be one QWebInspector associated with a QWebPage
-    and vices versa.
-
-    Calling with \a page as null will break the current association, if any.
-
-    If \a page is already associated to another QWebInspector, the association
-    will be replaced and the previous QWebInspector will have no page
-    associated.
+    \bold {Notes:}
+    \list
+        \o There can only be one QWebInspector associated with a QWebPage
+           and vice versa.
+        \o Calling this method with a null \a page will break the current association, if any.
+        \o If \a page is already associated to another QWebInspector, the association
+           will be replaced and the previous QWebInspector will become unbound
+    \endlist
 
     \sa page()
 */
