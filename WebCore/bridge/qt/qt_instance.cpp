@@ -287,7 +287,7 @@ JSValue QtInstance::stringValue(ExecState* exec) const
                     void * qargs[1];
                     qargs[0] = ret.data();
 
-                    if (obj->qt_metacall(QMetaObject::InvokeMetaMethod, index, qargs) < 0) {
+                    if (QMetaObject::metacall(obj, QMetaObject::InvokeMetaMethod, index, qargs) < 0) {
                         if (ret.isValid() && ret.canConvert(QVariant::String)) {
                             buf = ret.toString().toLatin1().constData(); // ### Latin 1? Ascii?
                             useDefault = false;
