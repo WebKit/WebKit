@@ -1,3 +1,16 @@
+2010-05-14  George Wright  <gwright@rim.com>
+
+        Reviewed by George Staikos.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38909
+
+        Update JSDataGridColumnListCustom.cpp to call identifierToAtomicString()
+        on the property name.
+
+        * bindings/js/JSDataGridColumnListCustom.cpp:
+        (WebCore::JSDataGridColumnList::canGetItemsForName):
+        (WebCore::JSDataGridColumnList::nameGetter):
+
 2010-05-14  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.

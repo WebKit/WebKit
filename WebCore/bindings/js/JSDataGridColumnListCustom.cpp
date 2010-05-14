@@ -40,13 +40,13 @@ namespace WebCore {
 
 bool JSDataGridColumnList::canGetItemsForName(ExecState*, DataGridColumnList* impl, const Identifier& propertyName)
 {
-    return impl->itemWithName(propertyName);
+    return impl->itemWithName(identifierToAtomicString(propertyName));
 }
 
 JSValue JSDataGridColumnList::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
 {
     JSDataGridColumnList* thisObj = static_cast<JSDataGridColumnList*>(asObject(slotBase));
-    return toJS(exec, thisObj->globalObject(), thisObj->impl()->itemWithName(propertyName));
+    return toJS(exec, thisObj->globalObject(), thisObj->impl()->itemWithName(identifierToAtomicString(propertyName)));
 }
 
 } // namespace WebCore
