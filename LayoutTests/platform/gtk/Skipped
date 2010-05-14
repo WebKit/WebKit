@@ -116,56 +116,6 @@ animations/3d/change-transform-in-end-event.html
 animations/3d/state-at-end-event-transform.html
 animations/state-at-end-event.html
 
-# Tests in css1/ directory
-#   Tests generating new results
-css1/box_properties/width.html
-css1/cascade/cascade_order.html
-css1/cascade/important.html
-css1/classification/display.html
-css1/classification/list_style.html
-css1/classification/list_style_image.html
-css1/classification/list_style_position.html
-css1/classification/list_style_type.html
-css1/classification/white_space.html
-css1/color_and_background/background.html
-css1/color_and_background/background_attachment.html
-css1/color_and_background/background_color.html
-css1/color_and_background/background_image.html
-css1/color_and_background/background_position.html
-css1/color_and_background/background_repeat.html
-css1/color_and_background/color.html
-css1/conformance/forward_compatible_parsing.html
-css1/font_properties/font.html
-css1/font_properties/font_family.html
-css1/font_properties/font_size.html
-css1/font_properties/font_style.html
-css1/font_properties/font_variant.html
-css1/font_properties/font_weight.html
-css1/formatting_model/canvas.html
-css1/formatting_model/floating_elements.html
-css1/formatting_model/height_of_lines.html
-css1/formatting_model/horizontal_formatting.html
-css1/formatting_model/inline_elements.html
-css1/formatting_model/replaced_elements.html
-css1/formatting_model/vertical_formatting.html
-css1/pseudo/anchor.html
-css1/pseudo/firstletter.html
-css1/pseudo/firstline.html
-css1/pseudo/multiple_pseudo_elements.html
-css1/pseudo/pseudo_elements_in_selectors.html
-css1/text_properties/letter_spacing.html
-css1/text_properties/line_height.html
-css1/text_properties/text_align.html
-css1/text_properties/text_decoration.html
-css1/text_properties/text_indent.html
-css1/text_properties/text_transform.html
-css1/text_properties/vertical_align.html
-css1/text_properties/word_spacing.html
-css1/units/color_units.html
-css1/units/length_units.html
-css1/units/percentage_units.html
-css1/units/urls.html
-
 # Tests in css2.1/ directory
 #   Tests generating new results
 css2.1/t09-c5526c-display-00-e.html
