@@ -748,9 +748,6 @@ bool HTMLInputElement::shouldUseInputMethod() const
 void HTMLInputElement::handleFocusEvent()
 {
     InputElement::dispatchFocusEvent(this, this);
-
-    if (isTextField())
-        m_autofilled = false;
 }
 
 void HTMLInputElement::handleBlurEvent()
@@ -1940,6 +1937,9 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
     updatePlaceholderVisibility(false);
     InputElement::setValueFromRenderer(m_data, this, this, value);
     setNeedsValidityCheck();
+
+    // Clear autofill flag (and yellow background) on user edit.
+    setAutofilled(false);
 }
 
 void HTMLInputElement::setFileListFromRenderer(const Vector<String>& paths)

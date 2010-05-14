@@ -1,3 +1,15 @@
+2010-05-14  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by John Sullivan.
+
+        Don't clear yellow autofill highlight from text fields until the user edits them.
+        https://bugs.webkit.org/show_bug.cgi?id=39032
+        No new tests (Couldn't find any autofill tests. The flag doesn't seem to be exposed to JS.)
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::handleFocusEvent):  Don't clear the autofilled flag.
+        (WebCore::HTMLInputElement::setValueFromRenderer):  Clear the autofilled flag.
+
 2010-05-14  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.
