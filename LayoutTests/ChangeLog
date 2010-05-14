@@ -3,6 +3,16 @@
         Reviewed by Kent Tamura.
 
         Update text_expectations.txt for Chromium
+        fast/forms/input-text-paste-maxlength.html is flaky on Linux Debug
+        See http://code.google.com/p/chromium/issues/detail?id=44150 for detail.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-05-13  Takeshi Yoshino  <tyoshino@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Update text_expectations.txt for Chromium
         fast/events/standalone-image-drag-to-editable.html is flaky on Mac Debug
         See http://crbug.com/44149 and http://crbug.com/37896 for detail.
 
