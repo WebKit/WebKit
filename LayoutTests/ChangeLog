@@ -1,5 +1,11 @@
 2010-05-13  Martin Robinson  <mrobinson@igalia.com>
 
+        No review. Correcting baseline.
+
+        * platform/gtk/css1/basic/class_as_selector-expected.txt: Correct baseline.
+
+2010-05-13  Martin Robinson  <mrobinson@igalia.com>
+
         No review needed.
 
         [GTK] Some test results are one pixel different on x86_64
