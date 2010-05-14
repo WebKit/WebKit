@@ -1,5 +1,20 @@
 2010-05-13  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59330.
+
+    2010-05-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Shrink the size of FillLayer by moving a member variable.
+        https://bugs.webkit.org/show_bug.cgi?id=39035
+
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::FillLayer):
+        * rendering/style/FillLayer.h:
+
+2010-05-13  Mark Rowe  <mrowe@apple.com>
+
         Merge r59387.
 
     2010-05-13  David Hyatt  <hyatt@apple.com>
