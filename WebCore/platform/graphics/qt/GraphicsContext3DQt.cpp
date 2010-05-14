@@ -28,17 +28,17 @@
 #include "NotImplemented.h"
 #include "QWebPageClient.h"
 #include "WebGLActiveInfo.h"
-#include "WebGLArray.h"
+#include "ArrayBufferView.h"
 #include "WebGLBuffer.h"
-#include "WebGLFloatArray.h"
+#include "FloatArray.h"
 #include "WebGLFramebuffer.h"
-#include "WebGLIntArray.h"
+#include "Int32Array.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderbuffer.h"
 #include "WebGLRenderingContext.h"
 #include "WebGLShader.h"
 #include "WebGLTexture.h"
-#include "WebGLUnsignedByteArray.h"
+#include "Uint8Array.h"
 #include <QAbstractScrollArea>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
@@ -671,7 +671,7 @@ void GraphicsContext3D::bufferData(unsigned long target, int size, unsigned long
     m_internal->bufferData(target, size, /* data */ 0, usage);
 }
 
-void GraphicsContext3D::bufferData(unsigned long target, WebGLArray* array, unsigned long usage)
+void GraphicsContext3D::bufferData(unsigned long target, ArrayBufferView* array, unsigned long usage)
 {
     if (!array || !array->length())
         return;
@@ -680,7 +680,7 @@ void GraphicsContext3D::bufferData(unsigned long target, WebGLArray* array, unsi
     m_internal->bufferData(target, array->byteLength(), array->baseAddress(), usage);
 }
 
-void GraphicsContext3D::bufferSubData(unsigned long target, long offset, WebGLArray* array)
+void GraphicsContext3D::bufferSubData(unsigned long target, long offset, ArrayBufferView* array)
 {
     if (!array || !array->length())
         return;

@@ -1,3 +1,32 @@
+2010-05-14  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Adler.
+
+        Rename WebGLArray types to TypedArray types
+        https://bugs.webkit.org/show_bug.cgi?id=39091
+
+        Extended functionality of do-webcore-rename script and used it to
+        rename the WebGLArray types to the TypedArray naming convention.
+        The only source files which were touched by hand, and which are
+        being manually reviewed, are:
+            WebCore/page/DOMWindow.idl
+            WebCore/bindings/generic/RuntimeEnabledFeatures.h (script's changes undone)
+            WebKit/WebCore/bindings/js/JSDOMWindowCustom.cpp
+            WebKit/WebCore/bindings/v8/custom/V8DOMWindowCustom.cpp
+        These only needed to be touched to update the aliases between the
+        WebGLArray and TypedArray names introduced in bug 39036. (It was
+        not feasible to have do-webcore-rename handle this as it would
+        introduce circular renamings.) These aliases will be removed in
+        roughly a month once existing WebGL content has been updated.
+
+        No new tests; covered under existing WebGL tests. Updated
+        constructed-objects-prototypes and prototype-inheritance-2 tests.
+        Ran all layout tests in Safari and all WebGL tests in Chromium.
+
+        * src/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3DInternal::bufferData):
+        (WebCore::GraphicsContext3DInternal::bufferSubData):
+
 2010-05-14  Jochen Eisinger  <jochen@chromium.org>
 
         Reviewed by Eric Seidel.

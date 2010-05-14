@@ -1,3 +1,372 @@
+2010-05-14  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Adler.
+
+        Rename WebGLArray types to TypedArray types
+        https://bugs.webkit.org/show_bug.cgi?id=39091
+
+        Extended functionality of do-webcore-rename script and used it to
+        rename the WebGLArray types to the TypedArray naming convention.
+        The only source files which were touched by hand, and which are
+        being manually reviewed, are:
+            WebCore/page/DOMWindow.idl
+            WebCore/bindings/generic/RuntimeEnabledFeatures.h (script's changes undone)
+            WebKit/WebCore/bindings/js/JSDOMWindowCustom.cpp
+            WebKit/WebCore/bindings/v8/custom/V8DOMWindowCustom.cpp
+        These only needed to be touched to update the aliases between the
+        WebGLArray and TypedArray names introduced in bug 39036. (It was
+        not feasible to have do-webcore-rename handle this as it would
+        introduce circular renamings.) These aliases will be removed in
+        roughly a month once existing WebGL content has been updated.
+
+        No new tests; covered under existing WebGL tests. Updated
+        constructed-objects-prototypes and prototype-inheritance-2 tests.
+        Ran all layout tests in Safari and all WebGL tests in Chromium.
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSArrayBufferConstructor.cpp: Copied from WebCore/bindings/js/JSWebGLArrayBufferConstructor.cpp.
+        (WebCore::):
+        (WebCore::JSArrayBufferConstructor::JSArrayBufferConstructor):
+        (WebCore::constructCanvasArrayBuffer):
+        (WebCore::JSArrayBufferConstructor::getConstructData):
+        * bindings/js/JSArrayBufferConstructor.h: Copied from WebCore/bindings/js/JSWebGLArrayBufferConstructor.h.
+        (WebCore::construct):
+        * bindings/js/JSArrayBufferViewCustom.cpp: Copied from WebCore/bindings/js/JSWebGLArrayCustom.cpp.
+        (WebCore::toJS):
+        (WebCore::JSArrayBufferView::slice):
+        * bindings/js/JSArrayBufferViewHelper.h: Copied from WebCore/bindings/js/JSWebGLArrayHelper.h.
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::arrayBuffer):
+        (WebCore::JSDOMWindow::int8Array):
+        (WebCore::JSDOMWindow::uint8Array):
+        (WebCore::JSDOMWindow::int32Array):
+        (WebCore::JSDOMWindow::uint32Array):
+        (WebCore::JSDOMWindow::int16Array):
+        (WebCore::JSDOMWindow::uint16Array):
+        (WebCore::JSDOMWindow::floatArray):
+        (WebCore::JSDOMWindow::webGLArrayBuffer):
+        (WebCore::JSDOMWindow::webGLByteArray):
+        (WebCore::JSDOMWindow::webGLUnsignedByteArray):
+        (WebCore::JSDOMWindow::webGLIntArray):
+        (WebCore::JSDOMWindow::webGLUnsignedIntArray):
+        (WebCore::JSDOMWindow::webGLShortArray):
+        (WebCore::JSDOMWindow::webGLUnsignedShortArray):
+        (WebCore::JSDOMWindow::webGLFloatArray):
+        * bindings/js/JSFloatArrayConstructor.cpp: Copied from WebCore/bindings/js/JSWebGLFloatArrayConstructor.cpp.
+        (WebCore::):
+        (WebCore::JSFloatArrayConstructor::JSFloatArrayConstructor):
+        (WebCore::constructCanvasFloatArray):
+        (WebCore::JSFloatArrayConstructor::getConstructData):
+        * bindings/js/JSFloatArrayConstructor.h: Copied from WebCore/bindings/js/JSWebGLFloatArrayConstructor.h.
+        * bindings/js/JSFloatArrayCustom.cpp: Copied from WebCore/bindings/js/JSWebGLFloatArrayCustom.cpp.
+        (WebCore::JSFloatArray::indexSetter):
+        (WebCore::toJS):
+        (WebCore::JSFloatArray::set):
+        * bindings/js/JSInt16ArrayConstructor.cpp: Copied from WebCore/bindings/js/JSWebGLShortArrayConstructor.cpp.
+        (WebCore::):
+        (WebCore::JSInt16ArrayConstructor::JSInt16ArrayConstructor):
+        (WebCore::constructCanvasShortArray):
+        (WebCore::JSInt16ArrayConstructor::getConstructData):
+        * bindings/js/JSInt16ArrayConstructor.h: Copied from WebCore/bindings/js/JSWebGLShortArrayConstructor.h.
+        * bindings/js/JSInt16ArrayCustom.cpp: Copied from WebCore/bindings/js/JSWebGLShortArrayCustom.cpp.
+        (WebCore::JSInt16Array::indexSetter):
+        (WebCore::toJS):
+        (WebCore::JSInt16Array::set):
+        * bindings/js/JSInt32ArrayConstructor.cpp: Copied from WebCore/bindings/js/JSWebGLIntArrayConstructor.cpp.
+        (WebCore::):
+        (WebCore::JSInt32ArrayConstructor::JSInt32ArrayConstructor):
+        (WebCore::constructCanvasIntArray):
+        (WebCore::JSInt32ArrayConstructor::getConstructData):
+        * bindings/js/JSInt32ArrayConstructor.h: Copied from WebCore/bindings/js/JSWebGLIntArrayConstructor.h.
+        * bindings/js/JSInt32ArrayCustom.cpp: Copied from WebCore/bindings/js/JSWebGLIntArrayCustom.cpp.
+        (WebCore::JSInt32Array::indexSetter):
+        (WebCore::toJS):
+        (WebCore::JSInt32Array::set):
+        * bindings/js/JSInt8ArrayConstructor.cpp: Copied from WebCore/bindings/js/JSWebGLByteArrayConstructor.cpp.
+        (WebCore::):
+        (WebCore::JSInt8ArrayConstructor::JSInt8ArrayConstructor):
+        (WebCore::constructCanvasByteArray):
+        (WebCore::JSInt8ArrayConstructor::getConstructData):
+        * bindings/js/JSInt8ArrayConstructor.h: Copied from WebCore/bindings/js/JSWebGLByteArrayConstructor.h.
+        * bindings/js/JSInt8ArrayCustom.cpp: Copied from WebCore/bindings/js/JSWebGLByteArrayCustom.cpp.
+        (WebCore::JSInt8Array::indexSetter):
+        (WebCore::toJS):
+        (WebCore::JSInt8Array::set):
+        * bindings/js/JSUint16ArrayConstructor.cpp: Copied from WebCore/bindings/js/JSWebGLUnsignedShortArrayConstructor.cpp.
+        (WebCore::):
+        (WebCore::JSUint16ArrayConstructor::JSUint16ArrayConstructor):
+        (WebCore::constructCanvasUnsignedShortArray):
+        (WebCore::JSUint16ArrayConstructor::getConstructData):
+        * bindings/js/JSUint16ArrayConstructor.h: Copied from WebCore/bindings/js/JSWebGLUnsignedShortArrayConstructor.h.
+        * bindings/js/JSUint16ArrayCustom.cpp: Copied from WebCore/bindings/js/JSWebGLUnsignedShortArrayCustom.cpp.
+        (WebCore::JSUint16Array::indexSetter):
+        (WebCore::toJS):
+        (WebCore::JSUint16Array::set):
+        * bindings/js/JSUint32ArrayConstructor.cpp: Copied from WebCore/bindings/js/JSWebGLUnsignedIntArrayConstructor.cpp.
+        (WebCore::):
+        (WebCore::JSUint32ArrayConstructor::JSUint32ArrayConstructor):
+        (WebCore::constructCanvasUnsignedIntArray):
+        (WebCore::JSUint32ArrayConstructor::getConstructData):
+        * bindings/js/JSUint32ArrayConstructor.h: Copied from WebCore/bindings/js/JSWebGLUnsignedIntArrayConstructor.h.
+        * bindings/js/JSUint32ArrayCustom.cpp: Copied from WebCore/bindings/js/JSWebGLUnsignedIntArrayCustom.cpp.
+        (WebCore::JSUint32Array::indexSetter):
+        (WebCore::toJS):
+        (WebCore::JSUint32Array::set):
+        * bindings/js/JSUint8ArrayConstructor.cpp: Copied from WebCore/bindings/js/JSWebGLUnsignedByteArrayConstructor.cpp.
+        (WebCore::):
+        (WebCore::JSUint8ArrayConstructor::JSUint8ArrayConstructor):
+        (WebCore::constructCanvasUnsignedByteArray):
+        (WebCore::JSUint8ArrayConstructor::getConstructData):
+        * bindings/js/JSUint8ArrayConstructor.h: Copied from WebCore/bindings/js/JSWebGLUnsignedByteArrayConstructor.h.
+        * bindings/js/JSUint8ArrayCustom.cpp: Copied from WebCore/bindings/js/JSWebGLUnsignedByteArrayCustom.cpp.
+        (WebCore::JSUint8Array::indexSetter):
+        (WebCore::toJS):
+        (WebCore::JSUint8Array::set):
+        * bindings/js/JSWebGLArrayBufferConstructor.cpp: Removed.
+        * bindings/js/JSWebGLArrayBufferConstructor.h: Removed.
+        * bindings/js/JSWebGLArrayCustom.cpp: Removed.
+        * bindings/js/JSWebGLArrayHelper.h: Removed.
+        * bindings/js/JSWebGLByteArrayConstructor.cpp: Removed.
+        * bindings/js/JSWebGLByteArrayConstructor.h: Removed.
+        * bindings/js/JSWebGLByteArrayCustom.cpp: Removed.
+        * bindings/js/JSWebGLFloatArrayConstructor.cpp: Removed.
+        * bindings/js/JSWebGLFloatArrayConstructor.h: Removed.
+        * bindings/js/JSWebGLFloatArrayCustom.cpp: Removed.
+        * bindings/js/JSWebGLIntArrayConstructor.cpp: Removed.
+        * bindings/js/JSWebGLIntArrayConstructor.h: Removed.
+        * bindings/js/JSWebGLIntArrayCustom.cpp: Removed.
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::JSWebGLRenderingContext::bufferData):
+        (WebCore::JSWebGLRenderingContext::bufferSubData):
+        (WebCore::JSWebGLRenderingContext::texImage2D):
+        (WebCore::JSWebGLRenderingContext::texSubImage2D):
+        (WebCore::dataFunctionf):
+        (WebCore::dataFunctioni):
+        (WebCore::dataFunctionMatrix):
+        * bindings/js/JSWebGLShortArrayConstructor.cpp: Removed.
+        * bindings/js/JSWebGLShortArrayConstructor.h: Removed.
+        * bindings/js/JSWebGLShortArrayCustom.cpp: Removed.
+        * bindings/js/JSWebGLUnsignedByteArrayConstructor.cpp: Removed.
+        * bindings/js/JSWebGLUnsignedByteArrayConstructor.h: Removed.
+        * bindings/js/JSWebGLUnsignedByteArrayCustom.cpp: Removed.
+        * bindings/js/JSWebGLUnsignedIntArrayConstructor.cpp: Removed.
+        * bindings/js/JSWebGLUnsignedIntArrayConstructor.h: Removed.
+        * bindings/js/JSWebGLUnsignedIntArrayCustom.cpp: Removed.
+        * bindings/js/JSWebGLUnsignedShortArrayConstructor.cpp: Removed.
+        * bindings/js/JSWebGLUnsignedShortArrayConstructor.h: Removed.
+        * bindings/js/JSWebGLUnsignedShortArrayCustom.cpp: Removed.
+        * bindings/v8/V8DOMWrapper.cpp:
+        * bindings/v8/custom/V8ArrayBufferCustom.cpp: Copied from WebCore/bindings/v8/custom/V8WebGLArrayBufferCustom.cpp.
+        (WebCore::V8ArrayBuffer::constructorCallback):
+        * bindings/v8/custom/V8ArrayBufferViewCustom.cpp: Copied from WebCore/bindings/v8/custom/V8WebGLArrayCustom.cpp.
+        (WebCore::toV8):
+        (WebCore::V8ArrayBufferView::sliceCallback):
+        * bindings/v8/custom/V8ArrayBufferViewCustom.h: Copied from WebCore/bindings/v8/custom/V8WebGLArrayCustom.h.
+        (WebCore::constructWebGLArray):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::WebGLArrayBufferAccessorGetter):
+        (WebCore::V8DOMWindow::WebGLByteArrayAccessorGetter):
+        (WebCore::V8DOMWindow::WebGLUnsignedByteArrayAccessorGetter):
+        (WebCore::V8DOMWindow::WebGLShortArrayAccessorGetter):
+        (WebCore::V8DOMWindow::WebGLUnsignedShortArrayAccessorGetter):
+        (WebCore::V8DOMWindow::WebGLIntArrayAccessorGetter):
+        (WebCore::V8DOMWindow::WebGLUnsignedIntArrayAccessorGetter):
+        (WebCore::V8DOMWindow::WebGLFloatArrayAccessorGetter):
+        * bindings/v8/custom/V8FloatArrayCustom.cpp: Copied from WebCore/bindings/v8/custom/V8WebGLFloatArrayCustom.cpp.
+        (WebCore::V8FloatArray::constructorCallback):
+        (WebCore::V8FloatArray::setCallback):
+        (WebCore::toV8):
+        * bindings/v8/custom/V8Int16ArrayCustom.cpp: Copied from WebCore/bindings/v8/custom/V8WebGLShortArrayCustom.cpp.
+        (WebCore::V8Int16Array::constructorCallback):
+        (WebCore::V8Int16Array::setCallback):
+        (WebCore::toV8):
+        * bindings/v8/custom/V8Int32ArrayCustom.cpp: Copied from WebCore/bindings/v8/custom/V8WebGLIntArrayCustom.cpp.
+        (WebCore::V8Int32Array::constructorCallback):
+        (WebCore::V8Int32Array::setCallback):
+        (WebCore::toV8):
+        * bindings/v8/custom/V8Int8ArrayCustom.cpp: Copied from WebCore/bindings/v8/custom/V8WebGLByteArrayCustom.cpp.
+        (WebCore::V8Int8Array::constructorCallback):
+        (WebCore::V8Int8Array::setCallback):
+        (WebCore::toV8):
+        * bindings/v8/custom/V8Uint16ArrayCustom.cpp: Copied from WebCore/bindings/v8/custom/V8WebGLUnsignedShortArrayCustom.cpp.
+        (WebCore::V8Uint16Array::constructorCallback):
+        (WebCore::V8Uint16Array::setCallback):
+        (WebCore::toV8):
+        * bindings/v8/custom/V8Uint32ArrayCustom.cpp: Copied from WebCore/bindings/v8/custom/V8WebGLUnsignedIntArrayCustom.cpp.
+        (WebCore::V8Uint32Array::constructorCallback):
+        (WebCore::V8Uint32Array::setCallback):
+        (WebCore::toV8):
+        * bindings/v8/custom/V8Uint8ArrayCustom.cpp: Copied from WebCore/bindings/v8/custom/V8WebGLUnsignedByteArrayCustom.cpp.
+        (WebCore::V8Uint8Array::constructorCallback):
+        (WebCore::V8Uint8Array::setCallback):
+        (WebCore::toV8):
+        * bindings/v8/custom/V8WebGLArrayBufferCustom.cpp: Removed.
+        * bindings/v8/custom/V8WebGLArrayCustom.cpp: Removed.
+        * bindings/v8/custom/V8WebGLArrayCustom.h: Removed.
+        * bindings/v8/custom/V8WebGLByteArrayCustom.cpp: Removed.
+        * bindings/v8/custom/V8WebGLFloatArrayCustom.cpp: Removed.
+        * bindings/v8/custom/V8WebGLIntArrayCustom.cpp: Removed.
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::vertexAttribAndUniformHelperf):
+        (WebCore::uniformHelperi):
+        (WebCore::uniformMatrixHelper):
+        * bindings/v8/custom/V8WebGLShortArrayCustom.cpp: Removed.
+        * bindings/v8/custom/V8WebGLUnsignedByteArrayCustom.cpp: Removed.
+        * bindings/v8/custom/V8WebGLUnsignedIntArrayCustom.cpp: Removed.
+        * bindings/v8/custom/V8WebGLUnsignedShortArrayCustom.cpp: Removed.
+        * html/canvas/ArrayBuffer.cpp: Copied from WebCore/html/canvas/WebGLArrayBuffer.cpp.
+        (WebCore::ArrayBuffer::create):
+        (WebCore::ArrayBuffer::ArrayBuffer):
+        (WebCore::ArrayBuffer::data):
+        (WebCore::ArrayBuffer::byteLength):
+        (WebCore::ArrayBuffer::~ArrayBuffer):
+        (WebCore::ArrayBuffer::tryAllocate):
+        * html/canvas/ArrayBuffer.h: Copied from WebCore/html/canvas/WebGLArrayBuffer.h.
+        * html/canvas/ArrayBuffer.idl: Copied from WebCore/html/canvas/WebGLArrayBuffer.idl.
+        * html/canvas/ArrayBufferView.cpp: Copied from WebCore/html/canvas/WebGLArray.cpp.
+        (WebCore::ArrayBufferView::ArrayBufferView):
+        (WebCore::ArrayBufferView::~ArrayBufferView):
+        (WebCore::ArrayBufferView::setImpl):
+        (WebCore::ArrayBufferView::calculateOffsetAndLength):
+        * html/canvas/ArrayBufferView.h: Copied from WebCore/html/canvas/WebGLArray.h.
+        (WebCore::ArrayBufferView::buffer):
+        (WebCore::ArrayBufferView::verifySubRange):
+        (WebCore::ArrayBufferView::clampOffsetAndNumElements):
+        * html/canvas/ArrayBufferView.idl: Copied from WebCore/html/canvas/WebGLArray.idl.
+        * html/canvas/FloatArray.cpp: Copied from WebCore/html/canvas/WebGLFloatArray.cpp.
+        (WebCore::FloatArray::create):
+        (WebCore::FloatArray::FloatArray):
+        (WebCore::FloatArray::slice):
+        * html/canvas/FloatArray.h: Copied from WebCore/html/canvas/WebGLFloatArray.h.
+        (WebCore::FloatArray::set):
+        (WebCore::FloatArray::item):
+        * html/canvas/FloatArray.idl: Copied from WebCore/html/canvas/WebGLFloatArray.idl.
+        * html/canvas/Int16Array.cpp: Copied from WebCore/html/canvas/WebGLShortArray.cpp.
+        (WebCore::Int16Array::create):
+        (WebCore::Int16Array::Int16Array):
+        (WebCore::Int16Array::slice):
+        * html/canvas/Int16Array.h: Copied from WebCore/html/canvas/WebGLShortArray.h.
+        * html/canvas/Int16Array.idl: Copied from WebCore/html/canvas/WebGLShortArray.idl.
+        * html/canvas/Int32Array.cpp: Copied from WebCore/html/canvas/WebGLIntArray.cpp.
+        (WebCore::Int32Array::create):
+        (WebCore::Int32Array::Int32Array):
+        (WebCore::Int32Array::slice):
+        * html/canvas/Int32Array.h: Copied from WebCore/html/canvas/WebGLIntArray.h.
+        * html/canvas/Int32Array.idl: Copied from WebCore/html/canvas/WebGLIntArray.idl.
+        * html/canvas/Int8Array.cpp: Copied from WebCore/html/canvas/WebGLByteArray.cpp.
+        (WebCore::Int8Array::create):
+        (WebCore::Int8Array::Int8Array):
+        (WebCore::Int8Array::slice):
+        * html/canvas/Int8Array.h: Copied from WebCore/html/canvas/WebGLByteArray.h.
+        * html/canvas/Int8Array.idl: Copied from WebCore/html/canvas/WebGLByteArray.idl.
+        * html/canvas/IntegralTypedArrayBase.h: Copied from WebCore/html/canvas/WebGLIntegralTypedArrayBase.h.
+        (WebCore::IntegralTypedArrayBase::set):
+        (WebCore::IntegralTypedArrayBase::item):
+        (WebCore::IntegralTypedArrayBase::IntegralTypedArrayBase):
+        * html/canvas/TypedArrayBase.h: Copied from WebCore/html/canvas/WebGLTypedArrayBase.h.
+        (WebCore::TypedArrayBase::set):
+        (WebCore::TypedArrayBase::TypedArrayBase):
+        (WebCore::TypedArrayBase::create):
+        * html/canvas/Uint16Array.cpp: Copied from WebCore/html/canvas/WebGLUnsignedShortArray.cpp.
+        (WebCore::Uint16Array::create):
+        (WebCore::Uint16Array::Uint16Array):
+        (WebCore::Uint16Array::slice):
+        * html/canvas/Uint16Array.h: Copied from WebCore/html/canvas/WebGLUnsignedShortArray.h.
+        * html/canvas/Uint16Array.idl: Copied from WebCore/html/canvas/WebGLUnsignedShortArray.idl.
+        * html/canvas/Uint32Array.cpp: Copied from WebCore/html/canvas/WebGLUnsignedIntArray.cpp.
+        (WebCore::Uint32Array::create):
+        (WebCore::Uint32Array::Uint32Array):
+        (WebCore::Uint32Array::slice):
+        * html/canvas/Uint32Array.h: Copied from WebCore/html/canvas/WebGLUnsignedIntArray.h.
+        * html/canvas/Uint32Array.idl: Copied from WebCore/html/canvas/WebGLUnsignedIntArray.idl.
+        * html/canvas/Uint8Array.cpp: Copied from WebCore/html/canvas/WebGLUnsignedByteArray.cpp.
+        (WebCore::Uint8Array::create):
+        (WebCore::Uint8Array::Uint8Array):
+        (WebCore::Uint8Array::slice):
+        * html/canvas/Uint8Array.h: Copied from WebCore/html/canvas/WebGLUnsignedByteArray.h.
+        * html/canvas/Uint8Array.idl: Copied from WebCore/html/canvas/WebGLUnsignedByteArray.idl.
+        * html/canvas/WebGLArray.cpp: Removed.
+        * html/canvas/WebGLArray.h: Removed.
+        * html/canvas/WebGLArray.idl: Removed.
+        * html/canvas/WebGLArrayBuffer.cpp: Removed.
+        * html/canvas/WebGLArrayBuffer.h: Removed.
+        * html/canvas/WebGLArrayBuffer.idl: Removed.
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::associateBufferData):
+        (WebCore::WebGLBuffer::associateBufferSubData):
+        * html/canvas/WebGLBuffer.h:
+        (WebCore::WebGLBuffer::elementArrayBuffer):
+        * html/canvas/WebGLByteArray.cpp: Removed.
+        * html/canvas/WebGLByteArray.h: Removed.
+        * html/canvas/WebGLByteArray.idl: Removed.
+        * html/canvas/WebGLFloatArray.cpp: Removed.
+        * html/canvas/WebGLFloatArray.h: Removed.
+        * html/canvas/WebGLFloatArray.idl: Removed.
+        * html/canvas/WebGLGetInfo.cpp:
+        (WebCore::WebGLGetInfo::WebGLGetInfo):
+        (WebCore::WebGLGetInfo::getWebGLFloatArray):
+        (WebCore::WebGLGetInfo::getWebGLIntArray):
+        (WebCore::WebGLGetInfo::getWebGLUnsignedByteArray):
+        * html/canvas/WebGLGetInfo.h:
+        * html/canvas/WebGLIntArray.cpp: Removed.
+        * html/canvas/WebGLIntArray.h: Removed.
+        * html/canvas/WebGLIntArray.idl: Removed.
+        * html/canvas/WebGLIntegralTypedArrayBase.h: Removed.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::bufferData):
+        (WebCore::WebGLRenderingContext::bufferSubData):
+        (WebCore::WebGLRenderingContext::getUniform):
+        (WebCore::WebGLRenderingContext::getVertexAttrib):
+        (WebCore::WebGLRenderingContext::readPixels):
+        (WebCore::WebGLRenderingContext::texImage2D):
+        (WebCore::WebGLRenderingContext::texSubImage2D):
+        (WebCore::WebGLRenderingContext::uniform1fv):
+        (WebCore::WebGLRenderingContext::uniform1iv):
+        (WebCore::WebGLRenderingContext::uniform2fv):
+        (WebCore::WebGLRenderingContext::uniform2iv):
+        (WebCore::WebGLRenderingContext::uniform3fv):
+        (WebCore::WebGLRenderingContext::uniform3iv):
+        (WebCore::WebGLRenderingContext::uniform4fv):
+        (WebCore::WebGLRenderingContext::uniform4iv):
+        (WebCore::WebGLRenderingContext::uniformMatrix2fv):
+        (WebCore::WebGLRenderingContext::uniformMatrix3fv):
+        (WebCore::WebGLRenderingContext::uniformMatrix4fv):
+        (WebCore::WebGLRenderingContext::vertexAttrib1fv):
+        (WebCore::WebGLRenderingContext::vertexAttrib2fv):
+        (WebCore::WebGLRenderingContext::vertexAttrib3fv):
+        (WebCore::WebGLRenderingContext::vertexAttrib4fv):
+        (WebCore::WebGLRenderingContext::getWebGLFloatArrayParameter):
+        (WebCore::WebGLRenderingContext::getWebGLIntArrayParameter):
+        (WebCore::WebGLRenderingContext::getWebGLUnsignedByteArrayParameter):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContext.idl:
+        * html/canvas/WebGLShortArray.cpp: Removed.
+        * html/canvas/WebGLShortArray.h: Removed.
+        * html/canvas/WebGLShortArray.idl: Removed.
+        * html/canvas/WebGLTypedArrayBase.h: Removed.
+        * html/canvas/WebGLUnsignedByteArray.cpp: Removed.
+        * html/canvas/WebGLUnsignedByteArray.h: Removed.
+        * html/canvas/WebGLUnsignedByteArray.idl: Removed.
+        * html/canvas/WebGLUnsignedIntArray.cpp: Removed.
+        * html/canvas/WebGLUnsignedIntArray.h: Removed.
+        * html/canvas/WebGLUnsignedIntArray.idl: Removed.
+        * html/canvas/WebGLUnsignedShortArray.cpp: Removed.
+        * html/canvas/WebGLUnsignedShortArray.h: Removed.
+        * html/canvas/WebGLUnsignedShortArray.idl: Removed.
+        * page/DOMWindow.idl:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::bufferData):
+        (WebCore::GraphicsContext3D::bufferSubData):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::bufferData):
+        (WebCore::GraphicsContext3D::bufferSubData):
+
 2010-05-14  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Sam Weinig.

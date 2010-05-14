@@ -28,10 +28,10 @@
 
 #include "CanvasRenderingContext.h"
 #include "ExceptionCode.h"
-#include "WebGLFloatArray.h"
+#include "FloatArray.h"
 #include "WebGLGetInfo.h"
-#include "WebGLIntArray.h"
-#include "WebGLUnsignedByteArray.h"
+#include "Int32Array.h"
+#include "Uint8Array.h"
 #include "GraphicsContext3D.h"
 #include "PlatformString.h"
 
@@ -77,8 +77,8 @@ class WebKitCSSMatrix;
         void blendFuncSeparate(unsigned long srcRGB, unsigned long dstRGB, unsigned long srcAlpha, unsigned long dstAlpha);
 
         void bufferData(unsigned long target, int size, unsigned long usage, ExceptionCode&);
-        void bufferData(unsigned long target, WebGLArray* data, unsigned long usage, ExceptionCode&);
-        void bufferSubData(unsigned long target, long offset, WebGLArray* data, ExceptionCode&);
+        void bufferData(unsigned long target, ArrayBufferView* data, unsigned long usage, ExceptionCode&);
+        void bufferSubData(unsigned long target, long offset, ArrayBufferView* data, ExceptionCode&);
 
         unsigned long checkFramebufferStatus(unsigned long target);
         void clear(unsigned long mask);
@@ -182,7 +182,7 @@ class WebKitCSSMatrix;
         void pixelStorei(unsigned long pname, long param);
         void polygonOffset(double factor, double units);
         
-        PassRefPtr<WebGLArray> readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type);
+        PassRefPtr<ArrayBufferView> readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type);
         
         void releaseShaderCompiler();
         void renderbufferStorage(unsigned long target, unsigned long internalformat, unsigned long width, unsigned long height);
@@ -198,7 +198,7 @@ class WebKitCSSMatrix;
 
         void texImage2D(unsigned target, unsigned level, unsigned internalformat,
                         unsigned width, unsigned height, unsigned border,
-                        unsigned format, unsigned type, WebGLArray* pixels, ExceptionCode&);
+                        unsigned format, unsigned type, ArrayBufferView* pixels, ExceptionCode&);
         void texImage2D(unsigned target, unsigned level, ImageData* pixels, ExceptionCode&);
         void texImage2D(unsigned target, unsigned level, ImageData* pixels, bool flipY, ExceptionCode&);
         void texImage2D(unsigned target, unsigned level, ImageData* pixels, bool flipY, bool premultiplyAlpha, ExceptionCode&);
@@ -217,7 +217,7 @@ class WebKitCSSMatrix;
 
         void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
                            unsigned width, unsigned height,
-                           unsigned format, unsigned type, WebGLArray* pixels, ExceptionCode&);
+                           unsigned format, unsigned type, ArrayBufferView* pixels, ExceptionCode&);
         void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset, ImageData* pixels, ExceptionCode&);
         void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset, ImageData* pixels, bool flipY, ExceptionCode&);
         void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset, ImageData* pixels, bool flipY, bool premultiplyAlpha, ExceptionCode&);
@@ -232,50 +232,50 @@ class WebKitCSSMatrix;
         void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset, HTMLVideoElement* video, bool flipY, bool premultiplyAlpha, ExceptionCode&);
 
         void uniform1f(const WebGLUniformLocation* location, float x, ExceptionCode&);
-        void uniform1fv(const WebGLUniformLocation* location, WebGLFloatArray* v, ExceptionCode&);
+        void uniform1fv(const WebGLUniformLocation* location, FloatArray* v, ExceptionCode&);
         void uniform1fv(const WebGLUniformLocation* location, float* v, int size, ExceptionCode&);
         void uniform1i(const WebGLUniformLocation* location, int x, ExceptionCode&);
-        void uniform1iv(const WebGLUniformLocation* location, WebGLIntArray* v, ExceptionCode&);
+        void uniform1iv(const WebGLUniformLocation* location, Int32Array* v, ExceptionCode&);
         void uniform1iv(const WebGLUniformLocation* location, int* v, int size, ExceptionCode&);
         void uniform2f(const WebGLUniformLocation* location, float x, float y, ExceptionCode&);
-        void uniform2fv(const WebGLUniformLocation* location, WebGLFloatArray* v, ExceptionCode&);
+        void uniform2fv(const WebGLUniformLocation* location, FloatArray* v, ExceptionCode&);
         void uniform2fv(const WebGLUniformLocation* location, float* v, int size, ExceptionCode&);
         void uniform2i(const WebGLUniformLocation* location, int x, int y, ExceptionCode&);
-        void uniform2iv(const WebGLUniformLocation* location, WebGLIntArray* v, ExceptionCode&);
+        void uniform2iv(const WebGLUniformLocation* location, Int32Array* v, ExceptionCode&);
         void uniform2iv(const WebGLUniformLocation* location, int* v, int size, ExceptionCode&);
         void uniform3f(const WebGLUniformLocation* location, float x, float y, float z, ExceptionCode&);
-        void uniform3fv(const WebGLUniformLocation* location, WebGLFloatArray* v, ExceptionCode&);
+        void uniform3fv(const WebGLUniformLocation* location, FloatArray* v, ExceptionCode&);
         void uniform3fv(const WebGLUniformLocation* location, float* v, int size, ExceptionCode&);
         void uniform3i(const WebGLUniformLocation* location, int x, int y, int z, ExceptionCode&);
-        void uniform3iv(const WebGLUniformLocation* location, WebGLIntArray* v, ExceptionCode&);
+        void uniform3iv(const WebGLUniformLocation* location, Int32Array* v, ExceptionCode&);
         void uniform3iv(const WebGLUniformLocation* location, int* v, int size, ExceptionCode&);
         void uniform4f(const WebGLUniformLocation* location, float x, float y, float z, float w, ExceptionCode&);
-        void uniform4fv(const WebGLUniformLocation* location, WebGLFloatArray* v, ExceptionCode&);
+        void uniform4fv(const WebGLUniformLocation* location, FloatArray* v, ExceptionCode&);
         void uniform4fv(const WebGLUniformLocation* location, float* v, int size, ExceptionCode&);
         void uniform4i(const WebGLUniformLocation* location, int x, int y, int z, int w, ExceptionCode&);
-        void uniform4iv(const WebGLUniformLocation* location, WebGLIntArray* v, ExceptionCode&);
+        void uniform4iv(const WebGLUniformLocation* location, Int32Array* v, ExceptionCode&);
         void uniform4iv(const WebGLUniformLocation* location, int* v, int size, ExceptionCode&);
-        void uniformMatrix2fv(const WebGLUniformLocation* location, bool transpose, WebGLFloatArray* value, ExceptionCode&);
+        void uniformMatrix2fv(const WebGLUniformLocation* location, bool transpose, FloatArray* value, ExceptionCode&);
         void uniformMatrix2fv(const WebGLUniformLocation* location, bool transpose, float* value, int size, ExceptionCode&);
-        void uniformMatrix3fv(const WebGLUniformLocation* location, bool transpose, WebGLFloatArray* value, ExceptionCode&);
+        void uniformMatrix3fv(const WebGLUniformLocation* location, bool transpose, FloatArray* value, ExceptionCode&);
         void uniformMatrix3fv(const WebGLUniformLocation* location, bool transpose, float* value, int size, ExceptionCode&);
-        void uniformMatrix4fv(const WebGLUniformLocation* location, bool transpose, WebGLFloatArray* value, ExceptionCode&);
+        void uniformMatrix4fv(const WebGLUniformLocation* location, bool transpose, FloatArray* value, ExceptionCode&);
         void uniformMatrix4fv(const WebGLUniformLocation* location, bool transpose, float* value, int size, ExceptionCode&);
 
         void useProgram(WebGLProgram*, ExceptionCode&);
         void validateProgram(WebGLProgram*, ExceptionCode&);
 
         void vertexAttrib1f(unsigned long indx, float x);
-        void vertexAttrib1fv(unsigned long indx, WebGLFloatArray* values);
+        void vertexAttrib1fv(unsigned long indx, FloatArray* values);
         void vertexAttrib1fv(unsigned long indx, float* values, int size);
         void vertexAttrib2f(unsigned long indx, float x, float y);
-        void vertexAttrib2fv(unsigned long indx, WebGLFloatArray* values);
+        void vertexAttrib2fv(unsigned long indx, FloatArray* values);
         void vertexAttrib2fv(unsigned long indx, float* values, int size);
         void vertexAttrib3f(unsigned long indx, float x, float y, float z);
-        void vertexAttrib3fv(unsigned long indx, WebGLFloatArray* values);
+        void vertexAttrib3fv(unsigned long indx, FloatArray* values);
         void vertexAttrib3fv(unsigned long indx, float* values, int size);
         void vertexAttrib4f(unsigned long indx, float x, float y, float z, float w);
-        void vertexAttrib4fv(unsigned long indx, WebGLFloatArray* values);
+        void vertexAttrib4fv(unsigned long indx, FloatArray* values);
         void vertexAttrib4fv(unsigned long indx, float* values, int size);
         void vertexAttribPointer(unsigned long indx, long size, unsigned long type, bool normalized,
                                  unsigned long stride, unsigned long offset, ExceptionCode&);

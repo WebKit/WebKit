@@ -39,7 +39,7 @@
 #include "RenderBox.h"
 #include "RenderLayer.h"
 #include "WebGLActiveInfo.h"
-#include "WebGLUnsignedShortArray.h"
+#include "Uint16Array.h"
 #include "WebGLBuffer.h"
 #include "WebGLContextAttributes.h"
 #include "WebGLFramebuffer.h"
@@ -332,7 +332,7 @@ void WebGLRenderingContext::bufferData(unsigned long target, int size, unsigned 
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::bufferData(unsigned long target, WebGLArray* data, unsigned long usage, ExceptionCode& ec)
+void WebGLRenderingContext::bufferData(unsigned long target, ArrayBufferView* data, unsigned long usage, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
     if (target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER && m_boundElementArrayBuffer) {
@@ -354,7 +354,7 @@ void WebGLRenderingContext::bufferData(unsigned long target, WebGLArray* data, u
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::bufferSubData(unsigned long target, long offset, WebGLArray* data, ExceptionCode& ec)
+void WebGLRenderingContext::bufferSubData(unsigned long target, long offset, ArrayBufferView* data, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
     if (target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER && m_boundElementArrayBuffer) {
@@ -1451,7 +1451,7 @@ WebGLGetInfo WebGLRenderingContext::getUniform(WebGLProgram* program, const WebG
                 if (length == 1)
                     return WebGLGetInfo(value[0]);
                 else
-                    return WebGLGetInfo(WebGLFloatArray::create(value, length));
+                    return WebGLGetInfo(FloatArray::create(value, length));
             }
             case GraphicsContext3D::INT: {
                 int value[16] = {0};
@@ -1459,7 +1459,7 @@ WebGLGetInfo WebGLRenderingContext::getUniform(WebGLProgram* program, const WebG
                 if (length == 1)
                     return WebGLGetInfo(static_cast<long>(value[0]));
                 else
-                    return WebGLGetInfo(WebGLIntArray::create(value, length));
+                    return WebGLGetInfo(Int32Array::create(value, length));
             }
             case GraphicsContext3D::BOOL: {
                 int value[16] = {0};
@@ -1470,7 +1470,7 @@ WebGLGetInfo WebGLRenderingContext::getUniform(WebGLProgram* program, const WebG
                     unsigned char boolValue[16] = {0};
                     for (unsigned j = 0; j < length; j++)
                         boolValue[j] = static_cast<bool>(value[j]);
-                    return WebGLGetInfo(WebGLUnsignedByteArray::create(boolValue, length));
+                    return WebGLGetInfo(Uint8Array::create(boolValue, length));
                 }
             }
             default:
@@ -1529,7 +1529,7 @@ WebGLGetInfo WebGLRenderingContext::getVertexAttrib(unsigned long index, unsigne
     case GraphicsContext3D::CURRENT_VERTEX_ATTRIB: {
         float value[4] = {0};
         m_context->getVertexAttribfv(index, pname, value);
-        return WebGLGetInfo(WebGLFloatArray::create(value, 4));
+        return WebGLGetInfo(FloatArray::create(value, 4));
     }
     default: {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
@@ -1642,7 +1642,7 @@ void WebGLRenderingContext::polygonOffset(double factor, double units)
     cleanupAfterGraphicsCall(false);
 }
 
-PassRefPtr<WebGLArray> WebGLRenderingContext::readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type)
+PassRefPtr<ArrayBufferView> WebGLRenderingContext::readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type)
 {
     // Validate enums.
     unsigned long componentsPerPixel = 0;
@@ -1690,11 +1690,11 @@ PassRefPtr<WebGLArray> WebGLRenderingContext::readPixels(long x, long y, unsigne
     // The last row needs no padding.
     unsigned long totalBytes = bytesPerRow * height - padding;
     unsigned long num = totalBytes / bytesPerComponent;
-    RefPtr<WebGLArray> array;
+    RefPtr<ArrayBufferView> array;
     if (type == GraphicsContext3D::UNSIGNED_BYTE)
-        array = WebGLUnsignedByteArray::create(num);
+        array = Uint8Array::create(num);
     else
-        array = WebGLUnsignedShortArray::create(num);
+        array = Uint16Array::create(num);
     void* data = array->baseAddress();
     m_context->readPixels(x, y, width, height, format, type, data);
 #if PLATFORM(CG)
@@ -1849,7 +1849,7 @@ void WebGLRenderingContext::texImage2D(unsigned target, unsigned level, Image* i
 
 void WebGLRenderingContext::texImage2D(unsigned target, unsigned level, unsigned internalformat,
                                        unsigned width, unsigned height, unsigned border,
-                                       unsigned format, unsigned type, WebGLArray* pixels, ExceptionCode& ec)
+                                       unsigned format, unsigned type, ArrayBufferView* pixels, ExceptionCode& ec)
 {
     // FIXME: Need to make sure passed buffer has enough bytes to define the texture
     texImage2DBase(target, level, internalformat, width, height, border,
@@ -2010,7 +2010,7 @@ void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsig
 
 void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
                                           unsigned width, unsigned height,
-                                          unsigned format, unsigned type, WebGLArray* pixels, ExceptionCode& ec)
+                                          unsigned format, unsigned type, ArrayBufferView* pixels, ExceptionCode& ec)
 {
     // FIXME: Need to make sure passed buffer has enough bytes to define the texture
     texSubImage2DBase(target, level, xoffset, yoffset, width, height, format, type, pixels ? pixels->baseAddress() : 0, ec);
@@ -2133,7 +2133,7 @@ void WebGLRenderingContext::uniform1f(const WebGLUniformLocation* location, floa
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform1fv(const WebGLUniformLocation* location, WebGLFloatArray* v, ExceptionCode& ec)
+void WebGLRenderingContext::uniform1fv(const WebGLUniformLocation* location, FloatArray* v, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
     if (!location) {
@@ -2192,7 +2192,7 @@ void WebGLRenderingContext::uniform1i(const WebGLUniformLocation* location, int 
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform1iv(const WebGLUniformLocation* location, WebGLIntArray* v, ExceptionCode& ec)
+void WebGLRenderingContext::uniform1iv(const WebGLUniformLocation* location, Int32Array* v, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
     if (!location) {
@@ -2251,7 +2251,7 @@ void WebGLRenderingContext::uniform2f(const WebGLUniformLocation* location, floa
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform2fv(const WebGLUniformLocation* location, WebGLFloatArray* v, ExceptionCode& ec)
+void WebGLRenderingContext::uniform2fv(const WebGLUniformLocation* location, FloatArray* v, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
     if (!location) {
@@ -2312,7 +2312,7 @@ void WebGLRenderingContext::uniform2i(const WebGLUniformLocation* location, int 
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform2iv(const WebGLUniformLocation* location, WebGLIntArray* v, ExceptionCode& ec)
+void WebGLRenderingContext::uniform2iv(const WebGLUniformLocation* location, Int32Array* v, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
     if (!location) {
@@ -2373,7 +2373,7 @@ void WebGLRenderingContext::uniform3f(const WebGLUniformLocation* location, floa
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform3fv(const WebGLUniformLocation* location, WebGLFloatArray* v, ExceptionCode& ec)
+void WebGLRenderingContext::uniform3fv(const WebGLUniformLocation* location, FloatArray* v, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
     if (!location) {
@@ -2434,7 +2434,7 @@ void WebGLRenderingContext::uniform3i(const WebGLUniformLocation* location, int 
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform3iv(const WebGLUniformLocation* location, WebGLIntArray* v, ExceptionCode& ec)
+void WebGLRenderingContext::uniform3iv(const WebGLUniformLocation* location, Int32Array* v, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
     if (!location) {
@@ -2495,7 +2495,7 @@ void WebGLRenderingContext::uniform4f(const WebGLUniformLocation* location, floa
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform4fv(const WebGLUniformLocation* location, WebGLFloatArray* v, ExceptionCode& ec)
+void WebGLRenderingContext::uniform4fv(const WebGLUniformLocation* location, FloatArray* v, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
     if (!location) {
@@ -2556,7 +2556,7 @@ void WebGLRenderingContext::uniform4i(const WebGLUniformLocation* location, int 
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform4iv(const WebGLUniformLocation* location, WebGLIntArray* v, ExceptionCode& ec)
+void WebGLRenderingContext::uniform4iv(const WebGLUniformLocation* location, Int32Array* v, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
     if (!location) {
@@ -2600,7 +2600,7 @@ void WebGLRenderingContext::uniform4iv(const WebGLUniformLocation* location, int
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniformMatrix2fv(const WebGLUniformLocation* location, bool transpose, WebGLFloatArray* v, ExceptionCode& ec)
+void WebGLRenderingContext::uniformMatrix2fv(const WebGLUniformLocation* location, bool transpose, FloatArray* v, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
     if (!location) {
@@ -2644,7 +2644,7 @@ void WebGLRenderingContext::uniformMatrix2fv(const WebGLUniformLocation* locatio
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniformMatrix3fv(const WebGLUniformLocation* location, bool transpose, WebGLFloatArray* v, ExceptionCode& ec)
+void WebGLRenderingContext::uniformMatrix3fv(const WebGLUniformLocation* location, bool transpose, FloatArray* v, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
     if (!location) {
@@ -2688,7 +2688,7 @@ void WebGLRenderingContext::uniformMatrix3fv(const WebGLUniformLocation* locatio
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniformMatrix4fv(const WebGLUniformLocation* location, bool transpose, WebGLFloatArray* v, ExceptionCode& ec)
+void WebGLRenderingContext::uniformMatrix4fv(const WebGLUniformLocation* location, bool transpose, FloatArray* v, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
     if (!location) {
@@ -2763,7 +2763,7 @@ void WebGLRenderingContext::vertexAttrib1f(unsigned long indx, float v0)
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::vertexAttrib1fv(unsigned long indx, WebGLFloatArray* v)
+void WebGLRenderingContext::vertexAttrib1fv(unsigned long indx, FloatArray* v)
 {
     // FIXME: Need to make sure array is big enough for attribute being set
     m_context->vertexAttrib1fv(indx, v->data());
@@ -2785,7 +2785,7 @@ void WebGLRenderingContext::vertexAttrib2f(unsigned long indx, float v0, float v
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::vertexAttrib2fv(unsigned long indx, WebGLFloatArray* v)
+void WebGLRenderingContext::vertexAttrib2fv(unsigned long indx, FloatArray* v)
 {
     // FIXME: Need to make sure array is big enough for attribute being set
     m_context->vertexAttrib2fv(indx, v->data());
@@ -2807,7 +2807,7 @@ void WebGLRenderingContext::vertexAttrib3f(unsigned long indx, float v0, float v
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::vertexAttrib3fv(unsigned long indx, WebGLFloatArray* v)
+void WebGLRenderingContext::vertexAttrib3fv(unsigned long indx, FloatArray* v)
 {
     // FIXME: Need to make sure array is big enough for attribute being set
     m_context->vertexAttrib3fv(indx, v->data());
@@ -2829,7 +2829,7 @@ void WebGLRenderingContext::vertexAttrib4f(unsigned long indx, float v0, float v
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::vertexAttrib4fv(unsigned long indx, WebGLFloatArray* v)
+void WebGLRenderingContext::vertexAttrib4fv(unsigned long indx, FloatArray* v)
 {
     // FIXME: Need to make sure array is big enough for attribute being set
     m_context->vertexAttrib4fv(indx, v->data());
@@ -2992,7 +2992,7 @@ WebGLGetInfo WebGLRenderingContext::getWebGLFloatArrayParameter(unsigned long pn
     default:
         notImplemented();
     }
-    return WebGLGetInfo(WebGLFloatArray::create(value, length));
+    return WebGLGetInfo(FloatArray::create(value, length));
 }
 
 WebGLGetInfo WebGLRenderingContext::getWebGLIntArrayParameter(unsigned long pname)
@@ -3011,7 +3011,7 @@ WebGLGetInfo WebGLRenderingContext::getWebGLIntArrayParameter(unsigned long pnam
     default:
         notImplemented();
     }
-    return WebGLGetInfo(WebGLIntArray::create(value, length));
+    return WebGLGetInfo(Int32Array::create(value, length));
 }
 
 WebGLGetInfo WebGLRenderingContext::getWebGLUnsignedByteArrayParameter(unsigned long pname)
@@ -3026,7 +3026,7 @@ WebGLGetInfo WebGLRenderingContext::getWebGLUnsignedByteArrayParameter(unsigned 
     default:
         notImplemented();
     }
-    return WebGLGetInfo(WebGLUnsignedByteArray::create(value, length));
+    return WebGLGetInfo(Uint8Array::create(value, length));
 }
 
 bool WebGLRenderingContext::isGLES2Compliant()

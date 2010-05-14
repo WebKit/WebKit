@@ -60,12 +60,12 @@ const Platform3DObject NullPlatform3DObject = 0;
 
 namespace WebCore {
     class WebGLActiveInfo;
-    class WebGLArray;
+    class ArrayBufferView;
     class WebGLBuffer;
-    class WebGLUnsignedByteArray;
-    class WebGLFloatArray;
+    class Uint8Array;
+    class FloatArray;
     class WebGLFramebuffer;
-    class WebGLIntArray;
+    class Int32Array;
     class WebGLProgram;
     class WebGLRenderbuffer;
     class WebGLRenderingContext;
@@ -499,8 +499,8 @@ namespace WebCore {
         void blendFuncSeparate(unsigned long srcRGB, unsigned long dstRGB, unsigned long srcAlpha, unsigned long dstAlpha);
 
         void bufferData(unsigned long target, int size, unsigned long usage);
-        void bufferData(unsigned long target, WebGLArray* data, unsigned long usage);
-        void bufferSubData(unsigned long target, long offset, WebGLArray* data);
+        void bufferData(unsigned long target, ArrayBufferView* data, unsigned long usage);
+        void bufferSubData(unsigned long target, long offset, ArrayBufferView* data);
 
         unsigned long checkFramebufferStatus(unsigned long target);
         void clear(unsigned long mask);

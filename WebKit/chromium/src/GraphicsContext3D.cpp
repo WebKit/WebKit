@@ -40,16 +40,16 @@
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "WebGLBuffer.h"
-#include "WebGLByteArray.h"
-#include "WebGLFloatArray.h"
+#include "Int8Array.h"
+#include "FloatArray.h"
 #include "WebGLFramebuffer.h"
-#include "WebGLIntArray.h"
+#include "Int32Array.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderbuffer.h"
 #include "WebGLRenderingContext.h"
 #include "WebGLShader.h"
 #include "WebGLTexture.h"
-#include "WebGLUnsignedByteArray.h"
+#include "Uint8Array.h"
 #include "WebGraphicsContext3D.h"
 #include "WebGraphicsContext3DDefaultImpl.h"
 #include "WebKit.h"
@@ -130,8 +130,8 @@ public:
     void blendFuncSeparate(unsigned long srcRGB, unsigned long dstRGB, unsigned long srcAlpha, unsigned long dstAlpha);
 
     void bufferData(unsigned long target, int size, unsigned long usage);
-    void bufferData(unsigned long target, WebGLArray* data, unsigned long usage);
-    void bufferSubData(unsigned long target, long offset, WebGLArray* data);
+    void bufferData(unsigned long target, ArrayBufferView* data, unsigned long usage);
+    void bufferSubData(unsigned long target, long offset, ArrayBufferView* data);
 
     unsigned long checkFramebufferStatus(unsigned long target);
     void clear(unsigned long mask);
@@ -673,12 +673,12 @@ void GraphicsContext3DInternal::bufferData(unsigned long target, int size, unsig
     m_impl->bufferData(target, size, 0, usage);
 }
 
-void GraphicsContext3DInternal::bufferData(unsigned long target, WebGLArray* array, unsigned long usage)
+void GraphicsContext3DInternal::bufferData(unsigned long target, ArrayBufferView* array, unsigned long usage)
 {
     m_impl->bufferData(target, array->byteLength(), array->baseAddress(), usage);
 }
 
-void GraphicsContext3DInternal::bufferSubData(unsigned long target, long offset, WebGLArray* array)
+void GraphicsContext3DInternal::bufferSubData(unsigned long target, long offset, ArrayBufferView* array)
 {
     m_impl->bufferSubData(target, offset, array->byteLength(), array->baseAddress());
 }
@@ -1104,8 +1104,8 @@ DELEGATE_TO_INTERNAL_2(blendFunc, unsigned long, unsigned long)
 DELEGATE_TO_INTERNAL_4(blendFuncSeparate, unsigned long, unsigned long, unsigned long, unsigned long)
 
 DELEGATE_TO_INTERNAL_3(bufferData, unsigned long, int, unsigned long)
-DELEGATE_TO_INTERNAL_3(bufferData, unsigned long, WebGLArray*, unsigned long)
-DELEGATE_TO_INTERNAL_3(bufferSubData, unsigned long, long, WebGLArray*)
+DELEGATE_TO_INTERNAL_3(bufferData, unsigned long, ArrayBufferView*, unsigned long)
+DELEGATE_TO_INTERNAL_3(bufferSubData, unsigned long, long, ArrayBufferView*)
 
 DELEGATE_TO_INTERNAL_1R(checkFramebufferStatus, unsigned long, unsigned long)
 DELEGATE_TO_INTERNAL_1(clear, unsigned long)

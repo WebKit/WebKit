@@ -30,13 +30,13 @@
 
 #include "WebGLGetInfo.h"
 #include "WebGLBuffer.h"
-#include "WebGLFloatArray.h"
+#include "FloatArray.h"
 #include "WebGLFramebuffer.h"
-#include "WebGLIntArray.h"
+#include "Int32Array.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderbuffer.h"
 #include "WebGLTexture.h"
-#include "WebGLUnsignedByteArray.h"
+#include "Uint8Array.h"
 
 namespace WebCore {
 
@@ -81,7 +81,7 @@ WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLBuffer> value)
 {
 }
 
-WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLFloatArray> value)
+WebGLGetInfo::WebGLGetInfo(PassRefPtr<FloatArray> value)
     : m_type(kTypeWebGLFloatArray)
     , m_webglFloatArray(value)
 {
@@ -93,7 +93,7 @@ WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLFramebuffer> value)
 {
 }
 
-WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLIntArray> value)
+WebGLGetInfo::WebGLGetInfo(PassRefPtr<Int32Array> value)
     : m_type(kTypeWebGLIntArray)
     , m_webglIntArray(value)
 {
@@ -117,7 +117,7 @@ WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLTexture> value)
 {
 }
 
-WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLUnsignedByteArray> value)
+WebGLGetInfo::WebGLGetInfo(PassRefPtr<Uint8Array> value)
     : m_type(kTypeWebGLUnsignedByteArray)
     , m_webglUnsignedByteArray(value)
 {
@@ -168,7 +168,7 @@ PassRefPtr<WebGLBuffer> WebGLGetInfo::getWebGLBuffer() const
     return m_webglBuffer;
 }
 
-PassRefPtr<WebGLFloatArray> WebGLGetInfo::getWebGLFloatArray() const
+PassRefPtr<FloatArray> WebGLGetInfo::getWebGLFloatArray() const
 {
     ASSERT(getType() == kTypeWebGLFloatArray);
     return m_webglFloatArray;
@@ -180,7 +180,7 @@ PassRefPtr<WebGLFramebuffer> WebGLGetInfo::getWebGLFramebuffer() const
     return m_webglFramebuffer;
 }
 
-PassRefPtr<WebGLIntArray> WebGLGetInfo::getWebGLIntArray() const
+PassRefPtr<Int32Array> WebGLGetInfo::getWebGLIntArray() const
 {
     ASSERT(getType() == kTypeWebGLIntArray);
     return m_webglIntArray;
@@ -204,7 +204,7 @@ PassRefPtr<WebGLTexture> WebGLGetInfo::getWebGLTexture() const
     return m_webglTexture;
 }
 
-PassRefPtr<WebGLUnsignedByteArray> WebGLGetInfo::getWebGLUnsignedByteArray() const
+PassRefPtr<Uint8Array> WebGLGetInfo::getWebGLUnsignedByteArray() const
 {
     ASSERT(getType() == kTypeWebGLUnsignedByteArray);
     return m_webglUnsignedByteArray;

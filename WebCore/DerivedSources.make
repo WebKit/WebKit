@@ -72,15 +72,15 @@ DOM_CLASSES = \
     CSSVariablesRule \
     CSSVariablesDeclaration \
     WebGLActiveInfo \
-    WebGLArray \
-    WebGLArrayBuffer \
+    ArrayBufferView \
+    ArrayBuffer \
     WebGLBuffer \
-    WebGLByteArray \
+    Int8Array \
     WebGLContextAttributes \
-    WebGLFloatArray \
+    FloatArray \
     WebGLFramebuffer \
     CanvasGradient \
-    WebGLIntArray \
+    Int32Array \
     CanvasPattern \
     WebGLProgram \
     WebGLRenderbuffer \
@@ -88,12 +88,12 @@ DOM_CLASSES = \
     CanvasRenderingContext2D \
     WebGLRenderingContext \
     WebGLShader \
-    WebGLShortArray \
+    Int16Array \
     WebGLTexture \
     WebGLUniformLocation \
-    WebGLUnsignedByteArray \
-    WebGLUnsignedIntArray \
-    WebGLUnsignedShortArray \
+    Uint8Array \
+    Uint32Array \
+    Uint16Array \
     CharacterData \
     ClientRect \
     ClientRectList \

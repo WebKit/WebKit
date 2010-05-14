@@ -41,21 +41,21 @@
 #include <wtf/FastMalloc.h>
 
 #include "V8Binding.h"
-#include "V8WebGLArray.h"
+#include "V8ArrayBufferView.h"
 #include "V8WebGLBuffer.h"
-#include "V8WebGLByteArray.h"
-#include "V8WebGLFloatArray.h"
+#include "V8Int8Array.h"
+#include "V8FloatArray.h"
 #include "V8WebGLFramebuffer.h"
-#include "V8WebGLIntArray.h"
+#include "V8Int32Array.h"
 #include "V8WebGLProgram.h"
 #include "V8WebGLRenderbuffer.h"
 #include "V8WebGLShader.h"
-#include "V8WebGLShortArray.h"
+#include "V8Int16Array.h"
 #include "V8WebGLTexture.h"
 #include "V8WebGLUniformLocation.h"
-#include "V8WebGLUnsignedByteArray.h"
-#include "V8WebGLUnsignedIntArray.h"
-#include "V8WebGLUnsignedShortArray.h"
+#include "V8Uint8Array.h"
+#include "V8Uint32Array.h"
+#include "V8Uint16Array.h"
 #include "V8HTMLCanvasElement.h"
 #include "V8HTMLImageElement.h"
 #include "V8HTMLVideoElement.h"
@@ -392,21 +392,21 @@ static v8::Handle<v8::Value> vertexAttribAndUniformHelperf(const v8::Arguments& 
                                                            FunctionToCall functionToCall) {
     // Forms:
     // * glUniform1fv(WebGLUniformLocation location, Array data);
-    // * glUniform1fv(WebGLUniformLocation location, WebGLFloatArray data);
+    // * glUniform1fv(WebGLUniformLocation location, FloatArray data);
     // * glUniform2fv(WebGLUniformLocation location, Array data);
-    // * glUniform2fv(WebGLUniformLocation location, WebGLFloatArray data);
+    // * glUniform2fv(WebGLUniformLocation location, FloatArray data);
     // * glUniform3fv(WebGLUniformLocation location, Array data);
-    // * glUniform3fv(WebGLUniformLocation location, WebGLFloatArray data);
+    // * glUniform3fv(WebGLUniformLocation location, FloatArray data);
     // * glUniform4fv(WebGLUniformLocation location, Array data);
-    // * glUniform4fv(WebGLUniformLocation location, WebGLFloatArray data);
+    // * glUniform4fv(WebGLUniformLocation location, FloatArray data);
     // * glVertexAttrib1fv(GLint index, Array data);
-    // * glVertexAttrib1fv(GLint index, WebGLFloatArray data);
+    // * glVertexAttrib1fv(GLint index, FloatArray data);
     // * glVertexAttrib2fv(GLint index, Array data);
-    // * glVertexAttrib2fv(GLint index, WebGLFloatArray data);
+    // * glVertexAttrib2fv(GLint index, FloatArray data);
     // * glVertexAttrib3fv(GLint index, Array data);
-    // * glVertexAttrib3fv(GLint index, WebGLFloatArray data);
+    // * glVertexAttrib3fv(GLint index, FloatArray data);
     // * glVertexAttrib4fv(GLint index, Array data);
-    // * glVertexAttrib4fv(GLint index, WebGLFloatArray data);
+    // * glVertexAttrib4fv(GLint index, FloatArray data);
 
     if (args.Length() != 2) {
         V8Proxy::setDOMException(SYNTAX_ERR);
@@ -424,8 +424,8 @@ static v8::Handle<v8::Value> vertexAttribAndUniformHelperf(const v8::Arguments& 
 
     WebGLRenderingContext* context = V8WebGLRenderingContext::toNative(args.Holder());
 
-    if (V8WebGLFloatArray::HasInstance(args[1])) {
-        WebGLFloatArray* array = V8WebGLFloatArray::toNative(args[1]->ToObject());
+    if (V8FloatArray::HasInstance(args[1])) {
+        FloatArray* array = V8FloatArray::toNative(args[1]->ToObject());
         ASSERT(array != NULL);
         ExceptionCode ec = 0;
         switch (functionToCall) {
@@ -479,13 +479,13 @@ static v8::Handle<v8::Value> uniformHelperi(const v8::Arguments& args,
                                             FunctionToCall functionToCall) {
     // Forms:
     // * glUniform1iv(GLUniformLocation location, Array data);
-    // * glUniform1iv(GLUniformLocation location, WebGLIntArray data);
+    // * glUniform1iv(GLUniformLocation location, Int32Array data);
     // * glUniform2iv(GLUniformLocation location, Array data);
-    // * glUniform2iv(GLUniformLocation location, WebGLIntArray data);
+    // * glUniform2iv(GLUniformLocation location, Int32Array data);
     // * glUniform3iv(GLUniformLocation location, Array data);
-    // * glUniform3iv(GLUniformLocation location, WebGLIntArray data);
+    // * glUniform3iv(GLUniformLocation location, Int32Array data);
     // * glUniform4iv(GLUniformLocation location, Array data);
-    // * glUniform4iv(GLUniformLocation location, WebGLIntArray data);
+    // * glUniform4iv(GLUniformLocation location, Int32Array data);
 
     if (args.Length() != 2) {
         V8Proxy::setDOMException(SYNTAX_ERR);
@@ -496,8 +496,8 @@ static v8::Handle<v8::Value> uniformHelperi(const v8::Arguments& args,
     bool ok = false;
     WebGLUniformLocation* location = toWebGLUniformLocation(args[0], ok);
 
-    if (V8WebGLIntArray::HasInstance(args[1])) {
-        WebGLIntArray* array = V8WebGLIntArray::toNative(args[1]->ToObject());
+    if (V8Int32Array::HasInstance(args[1])) {
+        Int32Array* array = V8Int32Array::toNative(args[1]->ToObject());
         ASSERT(array != NULL);
         ExceptionCode ec = 0;
         switch (functionToCall) {
@@ -592,13 +592,13 @@ static v8::Handle<v8::Value> uniformMatrixHelper(const v8::Arguments& args,
 {
     // Forms:
     // * glUniformMatrix2fv(GLint location, GLboolean transpose, Array data);
-    // * glUniformMatrix2fv(GLint location, GLboolean transpose, WebGLFloatArray data);
+    // * glUniformMatrix2fv(GLint location, GLboolean transpose, FloatArray data);
     // * glUniformMatrix3fv(GLint location, GLboolean transpose, Array data);
-    // * glUniformMatrix3fv(GLint location, GLboolean transpose, WebGLFloatArray data);
+    // * glUniformMatrix3fv(GLint location, GLboolean transpose, FloatArray data);
     // * glUniformMatrix4fv(GLint location, GLboolean transpose, Array data);
-    // * glUniformMatrix4fv(GLint location, GLboolean transpose, WebGLFloatArray data);
+    // * glUniformMatrix4fv(GLint location, GLboolean transpose, FloatArray data);
     //
-    // FIXME: need to change to accept WebGLFloatArray as well.
+    // FIXME: need to change to accept FloatArray as well.
     if (args.Length() != 3) {
         V8Proxy::setDOMException(SYNTAX_ERR);
         return notHandledByInterceptor();
@@ -610,8 +610,8 @@ static v8::Handle<v8::Value> uniformMatrixHelper(const v8::Arguments& args,
     WebGLUniformLocation* location = toWebGLUniformLocation(args[0], ok);
     
     bool transpose = args[1]->BooleanValue();
-    if (V8WebGLFloatArray::HasInstance(args[2])) {
-        WebGLFloatArray* array = V8WebGLFloatArray::toNative(args[2]->ToObject());
+    if (V8FloatArray::HasInstance(args[2])) {
+        FloatArray* array = V8FloatArray::toNative(args[2]->ToObject());
         ASSERT(array != NULL);
         ExceptionCode ec = 0;
         switch (matrixSize) {

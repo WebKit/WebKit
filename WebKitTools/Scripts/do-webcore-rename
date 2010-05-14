@@ -67,9 +67,31 @@ sub wanted
 
     push @paths, $File::Find::name;
 }
-my $isDOMTypeRename = 0;
+
+# Setting isDOMTypeRename to 1 rather than 0 expands the regexps used
+# below to handle custom JavaScript bindings.
+my $isDOMTypeRename = 1;
 my %renames = (
-    "m_sel" => "m_selection",
+    "WebGLArray" => "ArrayBufferView",
+    "WebGLArrayBuffer" => "ArrayBuffer",
+    "WebGLByteArray" => "Int8Array",
+    "WebGLFloatArray" => "FloatArray",
+    "WebGLIntArray" => "Int32Array",
+    "WebGLIntegralTypedArrayBase" => "IntegralTypedArrayBase",
+    "WebGLShortArray" => "Int16Array",
+    "WebGLUnsignedByteArray" => "Uint8Array",
+    "WebGLUnsignedIntArray" => "Uint32Array",
+    "WebGLUnsignedShortArray" => "Uint16Array",
+    "WebGLTypedArrayBase" => "TypedArrayBase",
+    # JSDOMWindow constructors.
+    "webGLArrayBuffer" => "arrayBuffer",
+    "webGLByteArray" => "int8Array",
+    "webGLFloatArray" => "floatArray",
+    "webGLIntArray" => "int32Array",
+    "webGLShortArray" => "int16Array",
+    "webGLUnsignedByteArray" => "uint8Array",
+    "webGLUnsignedIntArray" => "uint32Array",
+    "webGLUnsignedShortArray" => "uint16Array",
 );
 
 my %renamesContemplatedForTheFuture = (
@@ -142,12 +164,39 @@ my %renamesContemplatedForTheFuture = (
     "NativeFunction" => "HostFunction",
 );
 
+# Sort the keys of the renames hash in order of decreasing length. This
+# handles the case where some of the renames are substrings of others;
+# i.e., "Foo" => "Bar" and "FooBuffer" => "BarBuffer".
+my @sortedRenameKeys = sort { length($b) - length($a) } keys %renames;
+
 # rename files
+
+sub renameFile
+{
+    my $file = shift;
+
+    if ($isDOMTypeRename) {
+        # Find the longest key in %renames which matches this more permissive regexp.
+        # (The old regexp would match ".../Foo.cpp" but not ".../JSFooCustom.cpp".)
+        # This handles renaming of custom JavaScript bindings even when some of the
+        # renames are substrings of others. The only reason we don't do this all the
+        # time is to avoid accidental file renamings for short, non-DOM renames.
+        for my $key (@sortedRenameKeys) {
+            my $newFile = "";
+            $newFile = "$1$renames{$2}$3" if $file =~ /^(.*\/\w*)($key)(\w*\.\w+)$/;
+            if ($newFile ne "") {
+                return $newFile;
+            }
+        }
+    } else {
+       $file = "$1$renames{$2}$3" if $file =~ /^(.*\/)(\w+)(\.\w+)$/ && $renames{$2};
+    }
+    return $file;
+}
 
 my %newFile;
 for my $file (sort @paths) {
-    my $f = $file;
-    $f = "$1$renames{$2}$3" if $f =~ /^(.*\/)(\w+)(\.\w+)$/ && $renames{$2};
+    my $f = renameFile($file);
     if ($f ne $file) {
         $newFile{$file} = $f;
     }
@@ -182,11 +231,12 @@ for my $file (sort @paths) {
     my $newContents = $contents;
 
     if ($isDOMTypeRename) {
-        for my $from (keys %renames) {
-            $newContents =~ s/\b$from/$renames{$from}/g;
+        for my $from (@sortedRenameKeys) {
+            # Handle JavaScript custom bindings.
+            $newContents =~ s/\b(JS|V8|to|)$from/$1$renames{$from}/g;
         }
     } else {
-        for my $from (keys %renames) {
+        for my $from (@sortedRenameKeys) {
             $newContents =~ s/\b$from(?!["\w])/$renames{$from}/g; # this " unconfuses Xcode syntax highlighting
         }
     }

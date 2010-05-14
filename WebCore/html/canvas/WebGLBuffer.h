@@ -27,7 +27,7 @@
 #define WebGLBuffer_h
 
 #include "CanvasObject.h"
-#include "WebGLArrayBuffer.h"
+#include "ArrayBuffer.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -45,11 +45,11 @@ namespace WebCore {
         static PassRefPtr<WebGLBuffer> create(WebGLRenderingContext*, Platform3DObject);
 
         bool associateBufferData(unsigned long target, int size);
-        bool associateBufferData(unsigned long target, WebGLArray* array);
-        bool associateBufferSubData(unsigned long target, long offset, WebGLArray* array);
+        bool associateBufferData(unsigned long target, ArrayBufferView* array);
+        bool associateBufferSubData(unsigned long target, long offset, ArrayBufferView* array);
         
         unsigned byteLength(unsigned long target) const;
-        const WebGLArrayBuffer* elementArrayBuffer() const { return m_elementArrayBuffer.get(); }
+        const ArrayBuffer* elementArrayBuffer() const { return m_elementArrayBuffer.get(); }
                         
         // Gets the cached max index for the given type. Returns -1 if
         // none has been set.
@@ -66,7 +66,7 @@ namespace WebCore {
     private:
         virtual bool isBuffer() const { return true; }
 
-        RefPtr<WebGLArrayBuffer> m_elementArrayBuffer;
+        RefPtr<ArrayBuffer> m_elementArrayBuffer;
         unsigned m_elementArrayBufferByteLength;
         unsigned m_arrayBufferByteLength;
 
