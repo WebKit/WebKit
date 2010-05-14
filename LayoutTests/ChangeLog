@@ -1,5 +1,14 @@
 2010-05-13  Martin Robinson  <mrobinson@igalia.com>
 
+        No review.
+
+        [GTK] css1/color_and_background/background_attachment.html fails on the 32-bit debug bot
+        https://bugs.webkit.org/show_bug.cgi?id=39101
+
+        * platform/gtk/Skipped: Skip failing test.
+
+2010-05-13  Martin Robinson  <mrobinson@igalia.com>
+
         No review. Finish adding css1 baselines for GTK+.
 
         * platform/gtk/Skipped: Unskip tests which now have baselines.
