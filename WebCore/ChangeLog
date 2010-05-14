@@ -1,5 +1,20 @@
 2010-05-13  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59381.
+
+    2010-05-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: A disabled style property cannot be deleted.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39057
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::applyStyleText):
+
+2010-05-13  Mark Rowe  <mrowe@apple.com>
+
         Merge r59372.
 
     2010-05-13  Joseph Pecoraro  <joepeck@webkit.org>

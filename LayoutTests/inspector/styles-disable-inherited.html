@@ -30,8 +30,8 @@ function frontend_selectNestedElement(testController)
 function frontend_dumpNestedStyle(testController)
 {
     var treeItem = frontend_getElementStylePropertyTreeItem("font-weight");
-    window.__result = ["Before disable"];
-    window.__result = window.__result.concat(frontend_getSelectedElementStyles(true));
+    testController.results.push("Before disable");
+    testController.results = testController.results.concat(frontend_getSelectedElementStyles(true));
 
     frontend_selectElementAndRun(testController, "container", frontend_disableContainerStyle);
 }
@@ -47,8 +47,8 @@ function frontend_dumpResults(testController)
 {
     function reportResults()
     {
-        window.__result.push("After disable:");
-        window.__result = window.__result.concat(frontend_getSelectedElementStyles(true));
+        testController.results.push("After disable:");
+        testController.results = testController.results.concat(frontend_getSelectedElementStyles(true));
         testController.notifyDone(window.__result);
     }
     frontend_selectElementAndRun(testController, "nested", reportResults);
