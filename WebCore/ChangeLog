@@ -1,5 +1,14 @@
 2010-05-14  Jian Li  <jianli@chromium.org>
 
+        Rubber-stamped by Dmitry Titov.
+
+        Fix the code indentation inside a namespace to be consistent with the
+        style guide.
+
+        * workers/GenericWorkerTask.h:
+
+2010-05-14  Jian Li  <jianli@chromium.org>
+
         Reviewed by Dmitry Titov.
 
         Remove the ENABLE(WORKERS) guard from GenericWorkerTask.h and rename
