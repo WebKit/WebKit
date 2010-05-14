@@ -1,3 +1,16 @@
+2010-05-14  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        [Chromium] Rebaseline storage/domstorage/quota.html
+        https://bugs.webkit.org/show_bug.cgi?id=38996
+
+        Chromium enforces quota on session storage and thus expects to "fail"
+        the first part of this test.
+
+        * platform/chromium-mac/storage/domstorage/quota-expected.txt: Added.
+        * platform/chromium-win/storage/domstorage/quota-expected.txt: Added.
+
 2010-05-14  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Chromium: update test expectations.
