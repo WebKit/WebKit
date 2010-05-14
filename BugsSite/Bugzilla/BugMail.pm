@@ -574,6 +574,14 @@ sub sendMail {
                  && !($user->groups->{Bugzilla->params->{'insidergroup'}})
                 ) {
             $add_diff = 0;
+#if WEBKIT_CHANGES
+        # If the only thing we are modifying is the in-rietveld flag, don't
+        # include this diff.  If multiple flags are being modified,
+        # the diff text will have a comma seperating it.
+        # This will prevent mail from being sent.
+        } elsif ($diff->{'text'} =~ /in-rietveld/ && !($diff->{'text'} =~ /,/)) {
+            $add_diff = 0;
+#endif // WEBKIT_CHANGES
         } else {
             $add_diff = 1;
         }

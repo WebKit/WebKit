@@ -1,3 +1,13 @@
+2010-05-13  Julie Parent  <jparent@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        Bugzilla: Don't send mail if the only change is to the in-rietveld flag.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=39090
+
+        * Bugzilla/BugMail.pm:
+
 2010-05-12  Julie Parent  <jparent@chromium.org>
 
         Reviewed by Ojan Vafai.
