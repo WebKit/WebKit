@@ -1,5 +1,23 @@
 2010-05-13  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59418.
+
+    2010-05-13  Timothy Hatcher  <timothy@apple.com>
+
+        Allow reporting exceptions that occur when using JavaScriptCore APIs
+        to the Web Inspector.
+
+        <rdar://problem/7975410>
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebView.mm:
+        (+[WebView _reportException:inContext:]): Call WebCore::reportException after checking
+        that the global object is a DOMWindow.
+        * WebView/WebViewPrivate.h: Added _reportException:inContext:.
+
+2010-05-13  Mark Rowe  <mrowe@apple.com>
+
         Merge r59391.
 
     2010-05-13  Alexey Proskuryakov  <ap@apple.com>
