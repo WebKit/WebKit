@@ -102,23 +102,23 @@ WebInspector.ResourcesPanel.prototype = {
         timeGraphItem.isBarOpaqueAtLeft = false;
         timeGraphItem.selectedSortingOptionIndex = 1;
 
-        var sizeGraphItem = new WebInspector.SidebarTreeElement("resources-size-graph-sidebar-item", WebInspector.UIString("Size"));
-        sizeGraphItem.onselect = this._graphSelected.bind(this);
+        this.sizeGraphItem = new WebInspector.SidebarTreeElement("resources-size-graph-sidebar-item", WebInspector.UIString("Size"));
+        this.sizeGraphItem.onselect = this._graphSelected.bind(this);
 
         var transferSizeCalculator = new WebInspector.ResourceTransferSizeCalculator();
-        sizeGraphItem.sortingOptions = [
+        this.sizeGraphItem.sortingOptions = [
             { name: WebInspector.UIString("Sort by Transfer Size"), sortingFunction: WebInspector.ResourceSidebarTreeElement.CompareByDescendingTransferSize, calculator: transferSizeCalculator },
             { name: WebInspector.UIString("Sort by Size"), sortingFunction: WebInspector.ResourceSidebarTreeElement.CompareByDescendingSize, calculator: transferSizeCalculator },
         ];
 
-        sizeGraphItem.isBarOpaqueAtLeft = true;
-        sizeGraphItem.selectedSortingOptionIndex = 0;
+        this.sizeGraphItem.isBarOpaqueAtLeft = true;
+        this.sizeGraphItem.selectedSortingOptionIndex = 0;
 
         this.graphsTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("GRAPHS"), {}, true);
         this.sidebarTree.appendChild(this.graphsTreeElement);
 
         this.graphsTreeElement.appendChild(timeGraphItem);
-        this.graphsTreeElement.appendChild(sizeGraphItem);
+        this.graphsTreeElement.appendChild(this.sizeGraphItem);
         this.graphsTreeElement.expand();
 
         this.itemsTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("RESOURCES"), {}, true);
@@ -625,6 +625,11 @@ WebInspector.ResourcesPanel.prototype = {
 
         this.closeVisibleResource();
         this.containerElement.scrollTop = 0;
+
+        if (treeElement === this.sizeGraphItem)
+            this.hideEventDividers();
+        else
+            this.showEventDividers();
     },
 
     _toggleLargerResources: function()
