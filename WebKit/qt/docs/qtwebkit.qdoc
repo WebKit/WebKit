@@ -5,7 +5,9 @@
     \previouspage QtSvg
     \nextpage QtXml
     \ingroup modules
-    \brief The QtWebKit module provides a web browser engine as well as
+    \ingroup technology-apis
+
+    \brief The QtWebKit module provides a web browser engine and
     classes to render and interact with web content.
 
     To include the definitions of the module's classes, use the
