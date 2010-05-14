@@ -1,3 +1,16 @@
+2010-05-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Update tools.html to mention that Tiger users require a newer Python
+        https://bugs.webkit.org/show_bug.cgi?id=38822
+
+        Also updated the instructions that only Tiger users need
+        to install a subversion client.  Newer OSes already have
+        subversion included in the install.
+
+        * building/tools.html:
+
 2010-05-08  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
