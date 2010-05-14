@@ -1,3 +1,11 @@
+2010-05-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Fixing test failure.
+
+        Adding resource that should have been added in r59443.
+
+        * compositing/iframes/resources/subframe.html: Added.
+
 2010-05-13  Takeshi Yoshino  <tyoshino@google.com>
 
         Reviewed by Kent Tamura.
