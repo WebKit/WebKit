@@ -881,8 +881,6 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
         return;
 
     RGBA32 rgba = makeRGBA32FromFloats(r, g, b, a); // default is transparent black
-    if (!state().m_shadowColor.isEmpty())
-        CSSParser::parseColor(rgba, state().m_shadowColor);
     c->setShadow(IntSize(width, -height), state().m_shadowBlur, Color(rgba), DeviceColorSpace);
 }
 
