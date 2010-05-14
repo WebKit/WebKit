@@ -18,6 +18,16 @@
 
         * platform/chromium/test_expectations.txt:
 
+2010-05-13  Takeshi Yoshino  <tyoshino@google.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Update test_expectations.txt for Chromium.
+        fast/forms/implicit-submission.html is flaky on Linux.
+        See http://crbug.com/43890 for detail.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-05-13  Martin Robinson  <mrobinson@igalia.com>
 
         No review.
