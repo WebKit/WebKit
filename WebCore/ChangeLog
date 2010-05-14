@@ -1,3 +1,98 @@
+2010-05-14  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r59489.
+        http://trac.webkit.org/changeset/59489
+        https://bugs.webkit.org/show_bug.cgi?id=37815
+
+        abarth broke the known universe and then some.
+
+        * Android.jscbindings.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSCallbackData.cpp:
+        (WebCore::JSCallbackData::invokeCallback):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::InjectedScriptHost::createInjectedScript):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::executeFunctionInContext):
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScheduledAction.h:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld):
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptFunctionCall.cpp:
+        (WebCore::ScriptFunctionCall::call):
+        * bindings/objc/ObjCEventListener.mm:
+        (WebCore::ObjCEventListener::handleEvent):
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject evaluateWebScript:]):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * bindings/scripts/test/ObjC/DOMTestCallback.mm:
+        (-[DOMTestCallback callbackWithClass1Param:]):
+        (-[DOMTestCallback callbackWithClass2Param:strArg:]):
+        (-[DOMTestCallback callbackWithNonBoolReturnType:]):
+        (-[DOMTestCallback customCallback:class6Param:]):
+        * bindings/scripts/test/ObjC/DOMTestInterface.mm:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj readOnlyIntAttr]):
+        (-[DOMTestObj readOnlyStringAttr]):
+        (-[DOMTestObj readOnlyTestObjAttr]):
+        (-[DOMTestObj intAttr]):
+        (-[DOMTestObj setIntAttr:]):
+        (-[DOMTestObj longLongAttr]):
+        (-[DOMTestObj setLongLongAttr:]):
+        (-[DOMTestObj unsignedLongLongAttr]):
+        (-[DOMTestObj setUnsignedLongLongAttr:]):
+        (-[DOMTestObj stringAttr]):
+        (-[DOMTestObj setStringAttr:]):
+        (-[DOMTestObj testObjAttr]):
+        (-[DOMTestObj setTestObjAttr:]):
+        (-[DOMTestObj attrWithException]):
+        (-[DOMTestObj setAttrWithException:]):
+        (-[DOMTestObj attrWithSetterException]):
+        (-[DOMTestObj setAttrWithSetterException:]):
+        (-[DOMTestObj attrWithGetterException]):
+        (-[DOMTestObj setAttrWithGetterException:]):
+        (-[DOMTestObj customAttr]):
+        (-[DOMTestObj setCustomAttr:]):
+        (-[DOMTestObj scriptStringAttr]):
+        (-[DOMTestObj voidMethod]):
+        (-[DOMTestObj voidMethodWithArgs:strArg:objArg:]):
+        (-[DOMTestObj intMethod]):
+        (-[DOMTestObj intMethodWithArgs:strArg:objArg:]):
+        (-[DOMTestObj objMethod]):
+        (-[DOMTestObj objMethodWithArgs:strArg:objArg:]):
+        (-[DOMTestObj serializedValue:]):
+        (-[DOMTestObj methodWithException]):
+        (-[DOMTestObj customMethod]):
+        (-[DOMTestObj customMethodWithArgs:strArg:objArg:]):
+        (-[DOMTestObj customArgsAndException:]):
+        (-[DOMTestObj addEventListener:listener:useCapture:]):
+        (-[DOMTestObj removeEventListener:listener:useCapture:]):
+        (-[DOMTestObj withDynamicFrame]):
+        (-[DOMTestObj withDynamicFrameAndArg:]):
+        (-[DOMTestObj withDynamicFrameAndOptionalArg:optionalArg:]):
+        (-[DOMTestObj withDynamicFrameAndUserGesture:]):
+        (-[DOMTestObj withDynamicFrameAndUserGestureASAD:optionalArg:]):
+        (-[DOMTestObj withScriptStateVoid]):
+        (-[DOMTestObj withScriptStateObj]):
+        (-[DOMTestObj withScriptStateVoidException]):
+        (-[DOMTestObj withScriptStateObjException]):
+        (-[DOMTestObj methodWithOptionalArg:]):
+        (-[DOMTestObj methodWithNonOptionalArgAndOptionalArg:opt:]):
+        (-[DOMTestObj methodWithNonOptionalArgAndTwoOptionalArgs:opt1:opt2:]):
+        * bindings/v8/ScriptController.cpp:
+        * bindings/v8/ScriptController.h:
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::isURLAllowed):
+
 2010-05-14  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Adam Barth.

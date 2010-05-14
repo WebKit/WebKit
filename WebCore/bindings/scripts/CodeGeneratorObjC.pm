@@ -80,7 +80,6 @@ my %baseTypeHash = ("Object" => 1, "Node" => 1, "NodeList" => 1, "NamedNodeMap" 
 my $buildingForTigerOrEarlier = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} <= 10.4;
 my $buildingForLeopardOrLater = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} >= 10.5;
 my $exceptionInit = "WebCore::ExceptionCode ec = 0;";
-my $jsContextSetter = "WebCore::JSMainThreadNullState state;";
 my $exceptionRaiseOnError = "WebCore::raiseOnDOMError(ec);";
 my $assertMainThread = "{ DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheckRoundOne(); }";
 
@@ -1057,7 +1056,6 @@ sub GenerateImplementation
 
     $implIncludes{"ExceptionHandlers.h"} = 1;
     $implIncludes{"ThreadCheck.h"} = 1;
-    $implIncludes{"JSMainThreadExecState.h"} = 1;
     $implIncludes{"WebScriptObjectPrivate.h"} = 1;
     $implIncludes{$classHeaderName . "Internal.h"} = 1;
 
@@ -1270,7 +1268,6 @@ sub GenerateImplementation
 
             push(@implContent, $getterSig);
             push(@implContent, "{\n");
-            push(@implContent, "    $jsContextSetter\n");
             push(@implContent, @customGetterContent);
             if ($hasGetterException) {
                 # Differentiated between when the return type is a pointer and
@@ -1311,7 +1308,6 @@ sub GenerateImplementation
 
                 push(@implContent, $setterSig);
                 push(@implContent, "{\n");
-                push(@implContent, "    $jsContextSetter\n");
 
                 unless ($codeGenerator->IsPrimitiveType($idlType) or $codeGenerator->IsStringType($idlType)) {
                     push(@implContent, "    ASSERT($argName);\n\n");
@@ -1527,7 +1523,6 @@ sub GenerateImplementation
 
             push(@implContent, "$functionSig\n");
             push(@implContent, "{\n");
-            push(@implContent, "    $jsContextSetter\n");
             push(@implContent, @functionContent);
             push(@implContent, "}\n\n");
 
@@ -1538,7 +1533,6 @@ sub GenerateImplementation
 
                 push(@implContent, "$deprecatedFunctionSig\n");
                 push(@implContent, "{\n");
-                push(@implContent, "    $jsContextSetter\n");
                 push(@implContent, @functionContent);
                 push(@implContent, "}\n\n");
             }

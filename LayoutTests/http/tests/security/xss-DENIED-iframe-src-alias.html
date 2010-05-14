@@ -17,11 +17,6 @@ window.onload = function()
         function(iFrame) { iFrame.attributes['src'].value = alertMsg("value"); iFrame.src = iFrame.src;},
         function(iFrame) { iFrame.attributes['src'].textContent = alertMsg("textContent");},
         function(iFrame) { iFrame.attributes['src'].nodeValue = alertMsg("nodeValue");},
-        
-        // Text Node Manipulation
-        function(iFrame) { iFrame.attributes['src'].firstChild.replaceWholeText(alertMsg("nodeValue"));},
-        function(iFrame) { iFrame.attributes['src'].firstChild.data = alertMsg("nodeValue");},
-
         // Node attribute manipulation functions
         function(iFrame) { iFrame.setAttribute("src", alertMsg("setAttribute"));},
         function(iFrame) { iFrame.setAttributeNS(null, "src", alertMsg("setAttributeNS"));},

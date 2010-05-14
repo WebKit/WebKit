@@ -1,3 +1,14 @@
+2010-05-14  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r59489.
+        http://trac.webkit.org/changeset/59489
+        https://bugs.webkit.org/show_bug.cgi?id=37815
+
+        abarth broke the known universe and then some.
+
+        * http/tests/security/xss-DENIED-iframe-src-alias-expected.txt:
+        * http/tests/security/xss-DENIED-iframe-src-alias.html:
+
 2010-05-14  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Adam Barth.

@@ -39,7 +39,6 @@
 #include "MappedAttribute.h"
 #include "Page.h"
 #include "RenderFrame.h"
-#include "ScriptController.h"
 #include "Settings.h"
 
 namespace WebCore {
@@ -64,12 +63,6 @@ bool HTMLFrameElementBase::isURLAllowed() const
         return true;
 
     const KURL& completeURL = document()->completeURL(m_URL);
-
-    if (protocolIsJavaScript(completeURL)) { 
-        Document* contentDoc = this->contentDocument();
-        if (contentDoc && !ScriptController::canAccessFromCurrentOrigin(contentDoc->frame()))
-            return false;
-    }
 
     // Don't allow more than 200 total frames in a set. This seems
     // like a reasonable upper bound, and otherwise mutually recursive

@@ -32,7 +32,6 @@
 #import "DOMEventListener.h"
 #import "Event.h"
 #import "EventListener.h"
-#import "JSMainThreadExecState.h"
 #import <wtf/HashMap.h>
 
 namespace WebCore {
@@ -76,7 +75,6 @@ ObjCEventListener::~ObjCEventListener()
 
 void ObjCEventListener::handleEvent(ScriptExecutionContext*, Event* event)
 {
-    WebCore::JSMainThreadNullState state;
     [m_listener handleEvent:kit(event)];
 }
 

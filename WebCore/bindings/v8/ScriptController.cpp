@@ -88,11 +88,6 @@ Frame* ScriptController::retrieveFrameForCurrentContext()
     return V8Proxy::retrieveFrameForCurrentContext();
 }
 
-bool ScriptController::canAccessFromCurrentOrigin(Frame *frame)
-{
-    return V8BindingSecurity::canAccessFrame(V8BindingState::Only(), frame, true);
-}
-
 bool ScriptController::isSafeScript(Frame* target)
 {
     return V8BindingSecurity::canAccessFrame(V8BindingState::Only(), target, true);
