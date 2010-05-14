@@ -1,3 +1,21 @@
+2010-05-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        webkit-patch rollout throws exception if bug is already open
+        https://bugs.webkit.org/show_bug.cgi?id=38803
+
+        This was caused by someone incorrectly wrapping the code. :p
+        I'm going to have to start demanding unit tests for wrapping changes...
+
+        I also fixed the code to be able to reopen bugs which were never confirmed.
+        Before it regressed, the code would just log in that case.  Now it actually
+        will reopen the bug, but there is a FIXME about how the logic is a bit backwards.
+
+        * Scripts/webkitpy/common/net/bugzilla.py:
+        * Scripts/webkitpy/common/net/bugzilla_unittest.py:
+         - Yay testing!
+
 2010-05-14  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Rubber-stamped by Antti Koivisto.

@@ -259,6 +259,35 @@ ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
         expected_stderr = "Adding ['adam@example.com'] to the CC list for bug 42\n"
         OutputCapture().assert_outputs(self, bugzilla.add_cc_to_bug, [42, ["adam@example.com"]], expected_stderr=expected_stderr)
 
+    def _mock_control_item(self, name):
+        mock_item = Mock()
+        mock_item.name = name
+        return mock_item
+
+    def _mock_find_control(self, item_names=[], selected_index=0):
+        mock_control = Mock()
+        mock_control.items = [self._mock_control_item(name) for name in item_names]
+        mock_control.value = [item_names[selected_index]] if item_names else None
+        return lambda name, type: mock_control
+
+    def _assert_reopen(self, item_names=None, selected_index=None, extra_stderr=None):
+        bugzilla = Bugzilla()
+        bugzilla.browser = MockBrowser()
+        bugzilla.authenticate = lambda: None
+
+        mock_find_control = self._mock_find_control(item_names, selected_index)
+        bugzilla.browser.find_control = mock_find_control
+        expected_stderr = "Re-opening bug 42\n['comment']\n"
+        if extra_stderr:
+            expected_stderr += extra_stderr
+        OutputCapture().assert_outputs(self, bugzilla.reopen_bug, [42, ["comment"]], expected_stderr=expected_stderr)
+
+    def test_reopen_bug(self):
+        self._assert_reopen(item_names=["REOPENED", "RESOLVED", "CLOSED"], selected_index=1)
+        self._assert_reopen(item_names=["UNCONFIRMED", "RESOLVED", "CLOSED"], selected_index=1)
+        extra_stderr = "Did not reopen bug 42, it appears to already be open with status ['NEW'].\n"
+        self._assert_reopen(item_names=["NEW", "RESOLVED"], selected_index=0, extra_stderr=extra_stderr)
+
 
 class BugzillaQueriesTest(unittest.TestCase):
     _sample_request_page = """
@@ -341,7 +370,3 @@ class BugzillaQueriesTest(unittest.TestCase):
     def test_load_query(self):
         queries = BugzillaQueries(Mock())
         queries._load_query("request.cgi?action=queue&type=review&group=type")
-
-
-if __name__ == '__main__':
-    unittest.main()

@@ -856,9 +856,13 @@ class Bugzilla(object):
         possible_bug_statuses = map(lambda item: item.name, bug_status.items)
         if "REOPENED" in possible_bug_statuses:
             bug_status.value = ["REOPENED"]
+        # If the bug was never confirmed it will not have a "REOPENED"
+        # state, but only an "UNCONFIRMED" state.
+        elif "UNCONFIRMED" in possible_bug_statuses:
+            bug_status.value = ["UNCONFIRMED"]
         else:
-            log("Did not reopen bug %s.  " +
-                "It appears to already be open with status %s." % (
-                        bug_id, bug_status.value))
+            # FIXME: This logic is slightly backwards.  We won't print this
+            # message if the bug is already open with state "UNCONFIRMED".
+            log("Did not reopen bug %s, it appears to already be open with status %s." % (bug_id, bug_status.value))
         self.browser['comment'] = comment_text
         self.browser.submit()
