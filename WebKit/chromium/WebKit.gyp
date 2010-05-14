@@ -547,6 +547,86 @@
                 '../../WebKitTools/DumpRenderTree/chromium/ImageDiff.cpp',
             ],
         },
+        {
+            'target_name': 'DumpRenderTree',
+            'type': 'executable',
+            'mac_bundle': 1,
+            'dependencies': [
+                'webkit',
+                '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf_config',
+                '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
+                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
+            ],
+            'include_dirs': [
+                '.',
+                '../../JavaScriptCore',
+                '../../JavaScriptCore/wtf', # wtf/text/*.h refers headers in wtf/ without wtf/.
+                '<(DEPTH)',
+            ],
+            'defines': [
+                # Technically not a unit test but require functions available only to
+                # unit tests.
+                'UNIT_TEST',
+            ],
+            'sources': [
+                '<@(drt_files)',
+            ],
+            'conditions': [
+                ['OS=="mac"', {
+                    'dependencies': ['LayoutTestHelper'],
+
+                    'mac_bundle_resources': [
+                        '../../WebKitTools/DumpRenderTree/qt/fonts/AHEM____.TTF',
+                        '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher100.ttf',
+                        '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher200.ttf',
+                        '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher300.ttf',
+                        '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher400.ttf',
+                        '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher500.ttf',
+                        '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher600.ttf',
+                        '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher700.ttf',
+                        '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher800.ttf',
+                        '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher900.ttf',
+                    ],
+                    'actions': [
+                        {
+                            'action_name': 'repack_locale',
+                            'variables': {
+                                'repack_path': '<(chromium_src_dir)/tools/data_pack/repack.py',
+                                'pak_inputs': [
+                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_chromium_resources.pak',
+                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_strings_en-US.pak',
+                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_resources.pak',
+                            ]},
+                            'inputs': [
+                                '<(repack_path)',
+                                '<@(pak_inputs)',
+                            ],
+                            'outputs': [
+                                '<(INTERMEDIATE_DIR)/repack/DumpRenderTree.pak',
+                            ],
+                            'action': ['python', '<(repack_path)', '<@(_outputs)', '<@(pak_inputs)'],
+                            'process_outputs_as_mac_bundle_resources': 1,
+                        },
+                    ], # actions
+                }],
+                ['OS!="linux" and OS!="freebsd" and OS!="openbsd"', {
+                    'sources/': [
+                        ['exclude', '(Gtk|Linux)\\.cpp$']
+                    ]
+                }],
+                ['OS!="win"', {
+                    'sources/': [
+                        ['exclude', 'Win\\.cpp$'],
+                    ]
+                }],
+                ['OS!="mac"', {
+                    'sources/': [
+                        # .mm is already excluded by common.gypi
+                        ['exclude', 'Mac\\.cpp$'],
+                    ]
+                }],
+            ],
+        },
     ], # targets
     'conditions': [
         ['OS=="mac"', {
@@ -560,90 +640,6 @@
                             '$(SDKROOT)/System/Library/Frameworks/AppKit.framework',
                         ],
                     },
-                },
-            ],
-        }],
-        ['inside_chromium_build==0', {
-            'targets': [
-                {
-                    'target_name': 'DumpRenderTree',
-                    'type': 'executable',
-                    'mac_bundle': 1,
-                    'dependencies': [
-                        'webkit',
-                        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf_config',
-                        '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
-                        '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
-                    ],
-                    'include_dirs': [
-                        '.',
-                        '../../JavaScriptCore',
-                        '../../JavaScriptCore/wtf', # wtf/text/*.h refers headers in wtf/ without wtf/.
-                        '<(DEPTH)',
-                    ],
-                    'defines': [
-                        # Technically not a unit test but require functions available only to
-                        # unit tests.
-                        'UNIT_TEST',
-                    ],
-                    'sources': [
-                        '<@(drt_files)',
-                    ],
-                    'conditions': [
-                        ['OS=="mac"', {
-                            'dependencies': ['LayoutTestHelper'],
-
-                            'mac_bundle_resources': [
-                                '../../WebKitTools/DumpRenderTree/qt/fonts/AHEM____.TTF',
-                                '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher100.ttf',
-                                '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher200.ttf',
-                                '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher300.ttf',
-                                '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher400.ttf',
-                                '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher500.ttf',
-                                '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher600.ttf',
-                                '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher700.ttf',
-                                '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher800.ttf',
-                                '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher900.ttf',
-                            ],
-                            'actions': [
-                                {
-                                    'action_name': 'repack_locale',
-                                    'variables': {
-                                        'repack_path': '<(chromium_src_dir)/tools/data_pack/repack.py',
-                                        'pak_inputs': [
-                                            '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_chromium_resources.pak',
-                                            '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_strings_en-US.pak',
-                                            '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_resources.pak',
-                                    ]},
-                                    'inputs': [
-                                        '<(repack_path)',
-                                        '<@(pak_inputs)',
-                                    ],
-                                    'outputs': [
-                                        '<(INTERMEDIATE_DIR)/repack/DumpRenderTree.pak',
-                                    ],
-                                    'action': ['python', '<(repack_path)', '<@(_outputs)', '<@(pak_inputs)'],
-                                    'process_outputs_as_mac_bundle_resources': 1,
-                                },
-                            ], # actions
-                        }],
-                        ['OS!="linux" and OS!="freebsd" and OS!="openbsd"', {
-                            'sources/': [
-                                ['exclude', '(Gtk|Linux)\\.cpp$']
-                            ]
-                        }],
-                        ['OS!="win"', {
-                            'sources/': [
-                                ['exclude', 'Win\\.cpp$'],
-                            ]
-                        }],
-                        ['OS!="mac"', {
-                            'sources/': [
-                                # .mm is already excluded by common.gypi
-                                ['exclude', 'Mac\\.cpp$'],
-                            ]
-                        }],
-                    ],
                 },
             ],
         }],
