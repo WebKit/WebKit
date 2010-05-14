@@ -3220,6 +3220,15 @@ QString QWebPage::userAgentForUrl(const QUrl&) const
         case QSysInfo::SV_9_4:
             firstPartTemp += QString::fromLatin1("/9.4");
             break;
+        case QSysInfo::SV_SF_2:
+            firstPartTemp += QString::fromLatin1("^2");
+            break;
+        case QSysInfo::SV_SF_3:
+            firstPartTemp += QString::fromLatin1("^3");
+            break;
+        case QSysInfo::SV_SF_4:
+            firstPartTemp += QString::fromLatin1("^4");
+            break;
         default:
             firstPartTemp += QString::fromLatin1("/Unknown");
         }
