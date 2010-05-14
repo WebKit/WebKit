@@ -58,6 +58,7 @@
 #include "WebPreferences.h"
 #include "WebScriptWorld.h"
 #include "WindowsTouch.h"
+#include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/InitializeThreading.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSValue.h>
@@ -5624,6 +5625,24 @@ HRESULT STDMETHODCALLTYPE WebView::paintDocumentRectToContextAtPoint(
         return E_FAIL;
 
     return m_mainFrame->paintDocumentRectToContextAtPoint(rect, pt, deviceContext);
+}
+
+HRESULT STDMETHODCALLTYPE WebView::reportException(
+    /* [in] */ JSContextRef context,
+    /* [in] */ JSValueRef exception)
+{
+    if (!context || !exception)
+        return E_FAIL;
+
+    JSLock lock(JSC::SilenceAssertionsOnly);
+    JSC::ExecState* execState = toJS(context);
+
+    // Make sure the context has a DOMWindow global object, otherwise this context didn't originate from a WebView.
+    if (!toJSDOMWindow(execState->lexicalGlobalObject()))
+        return E_FAIL;
+
+    WebCore::reportException(execState, toJS(execState, exception));
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebView::setCustomHTMLTokenizerTimeDelay(
