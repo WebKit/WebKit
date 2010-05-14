@@ -32,19 +32,21 @@ namespace WebCore {
 
 enum ProcessingUserGestureState {
     DefinitelyProcessingUserGesture,
-    PossiblyProcessingUserGesture
+    PossiblyProcessingUserGesture,
+    DefinitelyNotProcessingUserGesture
 };
 
 class UserGestureIndicator : public Noncopyable {
 public:
-    static bool processingUserGesture() { return s_processingUserGesture; }
+    static bool processingUserGesture() { return s_processingUserGesture == DefinitelyProcessingUserGesture; }
+    static ProcessingUserGestureState getUserGestureState() { return s_processingUserGesture; }
 
     explicit UserGestureIndicator(ProcessingUserGestureState);
     ~UserGestureIndicator();
 
 private:
-    static bool s_processingUserGesture;
-    bool m_previousValue;
+    static ProcessingUserGestureState s_processingUserGesture;
+    ProcessingUserGestureState m_previousValue;
 };    
 
 } // namespace WebCore

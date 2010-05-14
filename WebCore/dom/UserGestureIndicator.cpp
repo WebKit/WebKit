@@ -28,13 +28,12 @@
 
 namespace WebCore {
 
-bool UserGestureIndicator::s_processingUserGesture = false;
+ProcessingUserGestureState UserGestureIndicator::s_processingUserGesture = PossiblyProcessingUserGesture;
 
 UserGestureIndicator::UserGestureIndicator(ProcessingUserGestureState state)
     : m_previousValue(s_processingUserGesture)
 {
-    if (state == DefinitelyProcessingUserGesture)
-        s_processingUserGesture = true;
+    s_processingUserGesture = state;
 }
 
 UserGestureIndicator::~UserGestureIndicator()

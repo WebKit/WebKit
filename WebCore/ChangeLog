@@ -1,3 +1,21 @@
+2010-05-14  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Chromium-specific fix to prevent zombie infobars.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38948
+
+        * bindings/v8/ScriptController.cpp
+        (WebCore::ScriptController::processingUserGesture):
+          Require a more definite "no" signal.
+        * loader/RedirectScheduler.cpp:
+        (WebCore::ScheduledFormSubmission::fire):
+          Use a very strong yes / no signal; no need for "possible" here.
+        * dom/UserGestureIndicator.h:
+        * dom/UserGestureIndicator.cpp:
+          Adapt to tri-state: definitely yes; definitely no; not sure.
+
 2010-05-14  Aaron Kennedy  <tffeeb@gmail.com>
 
         Reviewed by Simon Hausmann.

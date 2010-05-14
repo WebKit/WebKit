@@ -183,7 +183,7 @@ public:
 
     virtual void fire(Frame* frame)
     {
-        UserGestureIndicator gestureIndicator(m_wasProcessingUserGesture ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
+        UserGestureIndicator gestureIndicator(m_wasProcessingUserGesture ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
 
         // The submitForm function will find a target frame before using the redirection timer.
         // Now that the timer has fired, we need to repeat the security check which normally is done when
