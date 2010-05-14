@@ -7,13 +7,13 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -40,44 +40,50 @@ WebInspector.KeyboardShortcut.Modifiers = {
     Shift: 1,
     Ctrl: 2,
     Alt: 4,
-    Meta: 8    // Command key on Mac, Win key on other platforms.
+    Meta: 8,   // Command key on Mac, Win key on other platforms.
+    get CtrlOrMeta()
+    {
+        // "default" command/ctrl key for platform, Command on Mac, Ctrl on other platforms
+        return WebInspector.isMac() ? this.Meta : this.Ctrl;
+    }
 };
 
-WebInspector.KeyboardShortcut.KeyCodes = {
-    Backspace: 8,
-    Tab: 9,
-    Esc: 27,
-    Space: 32,
-    PageUp: 33,      // also NUM_NORTH_EAST
-    PageDown: 34,    // also NUM_SOUTH_EAST
-    End: 35,         // also NUM_SOUTH_WEST
-    Home: 36,        // also NUM_NORTH_WEST
-    Left: 37,        // also NUM_WEST
-    Up: 38,          // also NUM_NORTH
-    Right: 39,       // also NUM_EAST
-    Down: 40,        // also NUM_SOUTH
-    Delete: 46,
-    Zero: 48,
-    F1: 112,
-    F2: 113,
-    F3: 114,
-    F4: 115,
-    F5: 116,
-    F6: 117,
-    F7: 118,
-    F8: 119,
-    F9: 120,
-    F10: 121,
-    F11: 122,
-    F12: 123,
-    Semicolon: 186,    // ;
-    Plus: 187,         // +
-    Comma: 188,        // ,
-    Minus: 189,        // -
-    Period: 190,       // .
-    Slash: 191,        // /
-    Apostrophe: 192,   // `
-    SingleQuote: 222   // '
+WebInspector.KeyboardShortcut.Keys = {
+    Backspace: { code: 8, name: "\u21a4" },
+    Tab: { code: 9, name: "<Tab>" },
+    Enter: { code: 13, name: "<Enter>" },
+    Esc: { code: 27, name: "<Esc>" },
+    Space: { code: 32, name: "<Space>" },
+    PageUp: { code: 33,  name: "<PageUp>" },      // also NUM_NORTH_EAST
+    PageDown: { code: 34, name: "<PageDown>" },   // also NUM_SOUTH_EAST
+    End: { code: 35, name: "<End>" },             // also NUM_SOUTH_WEST
+    Home: { code: 36, name: "<Home>" },           // also NUM_NORTH_WEST
+    Left: { code: 37, name: "\u2190" },           // also NUM_WEST
+    Up: { code: 38, name: "\u2191" },             // also NUM_NORTH
+    Right: { code: 39, name: "\u2192" },          // also NUM_EAST
+    Down: { code: 40, name: "\u2193" },           // also NUM_SOUTH
+    Delete: { code: 46, name: "<Del>" },
+    Zero: { code: 48, name: "0" },
+    F1: { code: 112, name: "F1" },
+    F2: { code: 113, name: "F2" },
+    F3: { code: 114, name: "F3" },
+    F4: { code: 115, name: "F4" },
+    F5: { code: 116, name: "F5" },
+    F6: { code: 117, name: "F6" },
+    F7: { code: 118, name: "F7" },
+    F8: { code: 119, name: "F8" },
+    F9: { code: 120, name: "F9" },
+    F10: { code: 121, name: "F10" },
+    F11: { code: 122, name: "F11" },
+    F12: { code: 123, name: "F12" },
+    Semicolon: { code: 186, name: ";" },
+    Plus: { code: 187, name: "+" },
+    Comma: { code: 188, name: "," },
+    Minus: { code: 189, name: "-" },
+    Period: { code: 190, name: "." },
+    Slash: { code: 191, name: "/" },
+    Apostrophe: { code: 192, name: "`" },
+    SingleQuote: { code: 222, name: "\'" }
 };
 
 /**
@@ -110,7 +116,44 @@ WebInspector.KeyboardShortcut.makeKeyFromEvent = function(keyboardEvent)
     return WebInspector.KeyboardShortcut._makeKeyFromCodeAndModifiers(keyboardEvent.keyCode, modifiers);
 };
 
+WebInspector.KeyboardShortcut.makeDescriptor = function(key, optModifiers)
+{
+    var modifiers = 0;
+    for (var i = 1; i < arguments.length; i++)
+        modifiers |= arguments[i];
+
+    return {
+        key: WebInspector.KeyboardShortcut.makeKey(typeof key === "string" ? key : key.code, modifiers),
+        name: WebInspector.KeyboardShortcut.shortcutToString(key, modifiers)
+    };
+}
+
+WebInspector.KeyboardShortcut.shortcutToString = function(key, modifiers)
+{
+    return WebInspector.KeyboardShortcut._modifiersToString(modifiers) + (typeof key === "string" ? key.toUpperCase() : key.name);
+}
+
 WebInspector.KeyboardShortcut._makeKeyFromCodeAndModifiers = function(keyCode, modifiers)
 {
     return (keyCode & 255) | (modifiers << 8);
+};
+
+WebInspector.KeyboardShortcut._modifiersToString = function(modifiers)
+{
+    const cmdKey = "\u2318";
+    const optKey = "\u2325";
+    const shiftKey = "\u21e7";
+
+    var isMac = WebInspector.isMac();
+    var res = "";
+    if (modifiers & WebInspector.KeyboardShortcut.Modifiers.Ctrl)
+        res += "<Ctrl> + ";
+    if (modifiers & WebInspector.KeyboardShortcut.Modifiers.Alt)
+        res += isMac ? optKey : "<Alt> + ";
+    if (modifiers & WebInspector.KeyboardShortcut.Modifiers.Shift)
+        res += isMac ? shiftKey : "<Shift> + ";
+    if (modifiers & WebInspector.KeyboardShortcut.Modifiers.Meta)
+        res += isMac ? cmdKey : "<Win> + ";
+
+    return res;
 };

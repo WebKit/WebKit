@@ -1,3 +1,42 @@
+2010-05-14  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: add help on keyboard shortcuts (take 2).
+
+        https://bugs.webkit.org/show_bug.cgi?id=38667
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane):
+        (WebInspector.CallStackSidebarPane.prototype._placardSelected):
+        (WebInspector.CallStackSidebarPane.prototype.registerShortcuts):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView):
+        (WebInspector.ConsoleView.prototype._registerShortcuts):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype._registerShortcuts):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype._keyDown):
+        * inspector/front-end/HelpScreen.js: Added.
+        * inspector/front-end/KeyboardShortcut.js:
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.elementsToRestoreScrollPositionsFor):
+        (WebInspector.ScriptsPanel.prototype._registerShortcuts):
+        * inspector/front-end/ShortcutsHelp.js: Added.
+        * inspector/front-end/SidebarPane.js:
+        (WebInspector.SidebarPane.prototype._onTitleKeyDown):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype.removeSection):
+        (WebInspector.StylesSidebarPane.prototype.registerShortcuts):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype._handleKeyDown):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/helpScreen.css: Added.
+
 2010-05-14  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Darin Fisher.

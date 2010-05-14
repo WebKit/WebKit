@@ -32,6 +32,7 @@
     <file>ElementsTreeOutline.js</file>
     <file>EventListenersSidebarPane.js</file>
     <file>FontView.js</file>
+    <file>HelpScreen.js</file>
     <file>ImageView.js</file>
     <file>InjectedFakeWorker.js</file>
     <file>InjectedScript.js</file>
@@ -63,6 +64,7 @@
     <file>ScriptView.js</file>
     <file>Section.js</file>
     <file>Settings.js</file>
+    <file>ShortcutsHelp.js</file>
     <file>SidebarPane.js</file>
     <file>SidebarTreeElement.js</file>
     <file>SourceCSSTokenizer.js</file>
@@ -92,6 +94,7 @@
     <file>WelcomeView.js</file>
     <file>WorkersSidebarPane.js</file>
     <file>audits.css</file>
+    <file>helpScreen.css</file>
     <file>inspector.css</file>
     <file>inspectorSyntaxHighlight.css</file>
     <file>popover.css</file>

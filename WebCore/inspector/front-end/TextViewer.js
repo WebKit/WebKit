@@ -221,9 +221,9 @@ WebInspector.TextViewer.prototype = {
             return;
 
         var scrollValue = 0;
-        if (event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Up)
+        if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Up.code)
             scrollValue = -1;
-        else if (event.keyCode == WebInspector.KeyboardShortcut.KeyCodes.Down)
+        else if (event.keyCode == WebInspector.KeyboardShortcut.Keys.Down.code)
             scrollValue = 1;
         
         if (scrollValue) {
@@ -234,9 +234,9 @@ WebInspector.TextViewer.prototype = {
         }
         
         scrollValue = 0;
-        if (event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Left)
+        if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Left.code)
             scrollValue = -40;
-        else if (event.keyCode == WebInspector.KeyboardShortcut.KeyCodes.Right)
+        else if (event.keyCode == WebInspector.KeyboardShortcut.Keys.Right.code)
             scrollValue = 40;
         
         if (scrollValue) {

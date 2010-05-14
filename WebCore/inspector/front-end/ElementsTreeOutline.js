@@ -235,8 +235,8 @@ WebInspector.ElementsTreeOutline.prototype = {
         if (!selectedElement)
             return;
 
-        if (event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Backspace ||
-                event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Delete) {
+        if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Backspace.code ||
+                event.keyCode === WebInspector.KeyboardShortcut.Keys.Delete.code) {
             var startTagTreeElement = this.findTreeElement(selectedElement.representedObject);
             if (selectedElement !== startTagTreeElement)
                 selectedElement = startTagTreeElement;
