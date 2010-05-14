@@ -45,7 +45,9 @@
 
 #include <errno.h>
 #include <stdio.h>
+#if PLATFORM(CF)
 #include <wtf/RetainPtr.h>
+#endif
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
