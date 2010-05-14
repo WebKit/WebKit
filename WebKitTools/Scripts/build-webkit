@@ -61,7 +61,7 @@ my ($threeDCanvasSupport, $threeDRenderingSupport, $channelMessagingSupport, $cl
 
 my @features = (
     { option => "3d-canvas", desc => "Toggle 3D canvas support",
-      define => "ENABLE_3D_CANVAS", default => (isAppleMacWebKit() && !isTiger()), value => \$threeDCanvasSupport },
+      define => "ENABLE_3D_CANVAS", default => 0, value => \$threeDCanvasSupport },
 
     { option => "3d-rendering", desc => "Toggle 3D rendering support",
       define => "ENABLE_3D_RENDERING", default => (isAppleMacWebKit() && !isTiger()), value => \$threeDRenderingSupport },

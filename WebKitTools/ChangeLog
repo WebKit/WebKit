@@ -1,5 +1,11 @@
 2010-05-14  Mark Rowe  <mrowe@apple.com>
 
+        <rdar://problem/7677994> Disable WebGL
+
+        * Scripts/build-webkit:
+
+2010-05-14  Mark Rowe  <mrowe@apple.com>
+
         Merge r59177.
 
     2010-05-11  Mark Rowe  <mrowe@apple.com>

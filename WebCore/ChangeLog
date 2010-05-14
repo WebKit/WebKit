@@ -1,3 +1,9 @@
+2010-05-14  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/7677994> Disable WebGL
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2010-05-13  Timothy Hatcher  <timothy@apple.com>
 
         Disable the Audits panel and Workers sidebar in the Web Inspector.
