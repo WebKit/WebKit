@@ -119,6 +119,21 @@
 
 2010-05-13  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        iframes in compositing layers don't redraw correctly on scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=39096
+        <rdar://problem/7932072>
+        
+        Pixel test with an iframe in a compositing layer, and scrolling.
+
+        * compositing/iframes/iframe-copy-on-scroll.html: Added.
+        * platform/mac/compositing/iframes/iframe-copy-on-scroll-expected.checksum: Added.
+        * platform/mac/compositing/iframes/iframe-copy-on-scroll-expected.png: Added.
+        * platform/mac/compositing/iframes/iframe-copy-on-scroll-expected.txt: Added.
+
+2010-05-13  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dave Hyatt.
 
         Fix scrolling in composited iframes

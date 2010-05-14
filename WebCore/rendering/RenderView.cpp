@@ -186,6 +186,15 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, int, int)
             frameView()->setUseSlowRepaints();
             break;
         }
+
+#if USE(ACCELERATED_COMPOSITING)
+        if (RenderLayer* compositingLayer = layer->enclosingCompositingLayer()) {
+            if (!compositingLayer->backing()->paintingGoesToWindow()) {
+                frameView()->setUseSlowRepaints();
+                break;
+            }
+        }
+#endif
     }
 
     // If painting will entirely fill the view, no need to fill the background.
