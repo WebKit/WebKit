@@ -133,6 +133,13 @@ void WebMediaPlayerClientImpl::sawUnsupportedTracks()
     m_mediaPlayer->mediaPlayerClient()->mediaPlayerSawUnsupportedTracks(m_mediaPlayer);
 }
 
+float WebMediaPlayerClientImpl::volume() const
+{
+    if (m_mediaPlayer)
+        return m_mediaPlayer->volume();
+    return 0.0f;
+}
+
 // MediaPlayerPrivateInterface -------------------------------------------------
 
 void WebMediaPlayerClientImpl::load(const String& url)
