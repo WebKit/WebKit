@@ -47,7 +47,7 @@ checkFrameworks();
 # Set paths according to the build system used
 if (isQt()) {
     my $libDir = catdir(productDir(), 'lib');
-    $launcherPath = catdir($launcherPath, "bin", "QtLauncher");
+    $launcherPath = catdir($launcherPath, "bin", "QtTestBrowser");
 
     $ENV{QTWEBKIT_PLUGIN_PATH} = catdir($libDir, 'plugins');
 

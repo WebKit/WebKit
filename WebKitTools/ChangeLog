@@ -1,3 +1,17 @@
+2010-05-14  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Antti Koivisto.
+
+        [Qt] Rename QtLauncher to QtTestBrowser
+
+        * QtTestBrowser: Copied from WebKitTools/QtLauncher.
+        * QtTestBrowser/QtLauncher.pro: Removed.
+        * QtTestBrowser/QtLauncher.qrc: Removed.
+        * QtTestBrowser/QtTestBrowser.pro: Copied from WebKitTools/QtLauncher/QtLauncher.pro.
+        * QtTestBrowser/QtTestBrowser.qrc: Copied from WebKitTools/QtLauncher/QtLauncher.qrc.
+        * Scripts/run-launcher:
+        * Scripts/webkitdirs.pm:
+
 2010-05-14  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

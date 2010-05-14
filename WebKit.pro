@@ -8,7 +8,7 @@ SUBDIRS += \
         WebCore
 
 # If the source exists, built it
-exists($$PWD/WebKitTools/QtLauncher): SUBDIRS += WebKitTools/QtLauncher
+exists($$PWD/WebKitTools/QtTestBrowser): SUBDIRS += WebKitTools/QtTestBrowser
 exists($$PWD/JavaScriptCore/jsc.pro): SUBDIRS += JavaScriptCore/jsc.pro
 exists($$PWD/WebKit/qt/tests): SUBDIRS += WebKit/qt/tests
 exists($$PWD/WebKitTools/DumpRenderTree/qt/DumpRenderTree.pro): SUBDIRS += WebKitTools/DumpRenderTree/qt/DumpRenderTree.pro

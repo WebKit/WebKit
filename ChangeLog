@@ -1,3 +1,12 @@
+2010-05-14  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Antti Koivisto.
+
+        [Qt] Rename QtLauncher to QtTestBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=37665
+
+        * WebKit.pro:
+
 2010-05-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

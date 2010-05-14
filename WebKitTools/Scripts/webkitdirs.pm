@@ -891,7 +891,7 @@ sub launcherName()
     if (isGtk()) {
         return "GtkLauncher";
     } elsif (isQt()) {
-        return "QtLauncher";
+        return "QtTestBrowser";
     } elsif (isWx()) {
         return "wxBrowser";
     } elsif (isAppleWebKit()) {
