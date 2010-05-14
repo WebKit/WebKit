@@ -1,3 +1,15 @@
+2010-05-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix a VS2010 assert in std::copy
+        https://bugs.webkit.org/show_bug.cgi?id=38630
+
+        The assert complains that the output iterator is null.
+
+        * wtf/Vector.h:
+        (WTF::::operator):
+
 2010-05-13  Maciej Stachowiak  <mjs@apple.com>
 
         No review, attempted build fix.
