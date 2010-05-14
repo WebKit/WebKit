@@ -1,3 +1,11 @@
+2010-05-13  Timothy Hatcher  <timothy@apple.com>
+
+        Expose WebCore::reportException and WebCore::toJSDOMWindow symbols.
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.base.exp: Expose reportException and toJSDOMWindow.
+
 2010-05-13  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Timothy Hatcher.

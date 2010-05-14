@@ -28,6 +28,7 @@
 
 #import <WebKit/WebView.h>
 #import <WebKit/WebFramePrivate.h>
+#import <JavaScriptCore/JSBase.h>
 
 #if !defined(ENABLE_DASHBOARD_SUPPORT)
 #define ENABLE_DASHBOARD_SUPPORT 1
@@ -240,6 +241,14 @@ Could be worth adding to the API.
  */
 - (void)_loadBackForwardListFromOtherView:(WebView *)otherView;
 
+/*
+ @method _reportException:inContext:
+ @abstract Logs the exception to the Web Inspector. This only needs called for exceptions that
+ occur while using the JavaScriptCore APIs with a context owned by a WebKit.
+ @param exception The exception value to log.
+ @param context   The context the exception occured in.
+*/
++ (void)_reportException:(JSValueRef)exception inContext:(JSContextRef)context;
 
 /*!
  @method _dispatchPendingLoadRequests:
