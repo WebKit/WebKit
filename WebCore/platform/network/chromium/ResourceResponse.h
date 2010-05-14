@@ -40,6 +40,7 @@ namespace WebCore {
             , m_appCacheID(0)
             , m_wasFetchedViaSPDY(false)
             , m_isMultipartPayload(false)
+            , m_responseTime(0)
         {
         }
 
@@ -49,6 +50,7 @@ namespace WebCore {
             , m_appCacheID(0)
             , m_wasFetchedViaSPDY(false)
             , m_isMultipartPayload(false)
+            , m_responseTime(0)
         {
         }
 
@@ -88,6 +90,12 @@ namespace WebCore {
             m_isMultipartPayload = value;
         }
 
+        double responseTime() const { return m_responseTime; }
+        void setResponseTime(double responseTime)
+        {
+            m_responseTime = responseTime;
+        }
+
     private:
         friend class ResourceResponseBase;
 
@@ -117,6 +125,10 @@ namespace WebCore {
 
         // Set to true if this is part of a multipart response.
         bool m_isMultipartPayload;
+
+        // The time at which the response headers were received.  For cached
+        // responses, this time could be "far" in the past.
+        double m_responseTime;
     };
 
 } // namespace WebCore

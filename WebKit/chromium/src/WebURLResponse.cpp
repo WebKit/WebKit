@@ -93,6 +93,16 @@ void WebURLResponse::setURL(const WebURL& url)
     m_private->m_resourceResponse->setURL(url);
 }
 
+double WebURLResponse::responseTime() const
+{
+    return m_private->m_resourceResponse->responseTime();
+}
+
+void WebURLResponse::setResponseTime(double responseTime)
+{
+    m_private->m_resourceResponse->setResponseTime(responseTime);
+}
+
 WebString WebURLResponse::mimeType() const
 {
     return m_private->m_resourceResponse->mimeType();

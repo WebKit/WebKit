@@ -72,6 +72,9 @@ namespace WebCore {
 
     class ChromiumBridge {
     public:
+        // Cache --------------------------------------------------------------
+        static void cacheMetadata(const KURL& url, double responseTime, const Vector<char>&);
+
         // Clipboard ----------------------------------------------------------
         static bool clipboardIsFormatAvailable(PasteboardPrivate::ClipboardFormat, PasteboardPrivate::ClipboardBuffer);
 

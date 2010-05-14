@@ -1,3 +1,24 @@
+2010-05-14  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Update chromium port to send/receive cached metadata
+        https://bugs.webkit.org/show_bug.cgi?id=38665
+
+        * public/WebKitClient.h:
+        (WebKit::WebKitClient::cacheMetadata):
+        * public/WebURLLoaderClient.h:
+        (WebKit::WebURLLoaderClient::didReceiveCachedMetadata):
+        * public/WebURLResponse.h:
+        * src/ChromiumBridge.cpp:
+        (WebCore::ChromiumBridge::cacheMetadata):
+        * src/ResourceHandle.cpp:
+        (WebCore::ResourceHandleInternal::didReceiveCachedMetadata):
+        (WebCore::ResourceHandle::cacheMetadata):
+        * src/WebURLResponse.cpp:
+        (WebKit::WebURLResponse::responseTime):
+        (WebKit::WebURLResponse::setResponseTime):
+
 2010-05-13  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.

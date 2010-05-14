@@ -1,3 +1,18 @@
+2010-05-14  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Update chromium port to send/receive cached metadata
+        https://bugs.webkit.org/show_bug.cgi?id=38665
+
+        No new tests because no new functionality.
+
+        * platform/chromium/ChromiumBridge.h:
+        * platform/network/chromium/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+        (WebCore::ResourceResponse::responseTime):
+        (WebCore::ResourceResponse::setResponseTime):
+
 2010-05-14  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Adam Barth.

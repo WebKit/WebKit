@@ -72,6 +72,9 @@ public:
     WEBKIT_API WebURL url() const;
     WEBKIT_API void setURL(const WebURL&);
 
+    WEBKIT_API double responseTime() const;
+    WEBKIT_API void setResponseTime(double);
+
     WEBKIT_API WebString mimeType() const;
     WEBKIT_API void setMIMEType(const WebString&);
 
