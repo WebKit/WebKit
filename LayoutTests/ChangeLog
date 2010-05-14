@@ -1,3 +1,21 @@
+2010-05-14  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Add test to check that setting various CanvasRenderingContext2D properties
+        to invalid values is ignored.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38841
+
+        * fast/canvas/canvas-invalid-values-expected.txt: Added.
+        * fast/canvas/canvas-invalid-values.html: Added.
+        * fast/canvas/script-tests/canvas-invalid-values.js: Added.
+        (trySettingMiterLimit):
+        (trySettingLineWidth):
+        (trySettingShadowBlur):
+        (trySettingShadowOffsetX):
+        (trySettingShadowOffsetY):
+
 2010-05-13  Simon Fraser  <simon.fraser@apple.com>
 
         Fixing test failure.

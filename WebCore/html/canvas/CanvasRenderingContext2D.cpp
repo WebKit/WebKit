@@ -215,7 +215,7 @@ float CanvasRenderingContext2D::lineWidth() const
 
 void CanvasRenderingContext2D::setLineWidth(float width)
 {
-    if (!(width > 0))
+    if (!(isfinite(width) && width > 0))
         return;
     state().m_lineWidth = width;
     GraphicsContext* c = drawingContext();
@@ -265,7 +265,7 @@ float CanvasRenderingContext2D::miterLimit() const
 
 void CanvasRenderingContext2D::setMiterLimit(float limit)
 {
-    if (!(limit > 0))
+    if (!(isfinite(limit) && limit > 0))
         return;
     state().m_miterLimit = limit;
     GraphicsContext* c = drawingContext();
@@ -281,6 +281,8 @@ float CanvasRenderingContext2D::shadowOffsetX() const
 
 void CanvasRenderingContext2D::setShadowOffsetX(float x)
 {
+    if (!isfinite(x))
+        return;
     state().m_shadowOffset.setWidth(x);
     applyShadow();
 }
@@ -292,6 +294,8 @@ float CanvasRenderingContext2D::shadowOffsetY() const
 
 void CanvasRenderingContext2D::setShadowOffsetY(float y)
 {
+    if (!isfinite(y))
+        return;
     state().m_shadowOffset.setHeight(y);
     applyShadow();
 }
@@ -303,6 +307,8 @@ float CanvasRenderingContext2D::shadowBlur() const
 
 void CanvasRenderingContext2D::setShadowBlur(float blur)
 {
+    if (!(isfinite(blur) && blur >= 0))
+        return;
     state().m_shadowBlur = blur;
     applyShadow();
 }

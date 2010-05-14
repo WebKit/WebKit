@@ -1,3 +1,21 @@
+2010-05-14  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Ignore invalid values for various CanvasRenderingContext2D properties
+        (lineWidth, miterLimit, shadowOffsetX, shadowOffsetY and shadowBlur)
+
+        https://bugs.webkit.org/show_bug.cgi?id=38841
+
+        Test: fast/canvas/canvas-invalid-values.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setLineWidth):
+        (WebCore::CanvasRenderingContext2D::setMiterLimit):
+        (WebCore::CanvasRenderingContext2D::setShadowOffsetX):
+        (WebCore::CanvasRenderingContext2D::setShadowOffsetY):
+        (WebCore::CanvasRenderingContext2D::setShadowBlur):
+
 2010-05-13  Timothy Hatcher  <timothy@apple.com>
 
         Expose WebCore::reportException and WebCore::toJSDOMWindow symbols.
