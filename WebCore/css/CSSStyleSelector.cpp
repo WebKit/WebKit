@@ -850,7 +850,7 @@ static inline const AtomicString* linkAttribute(Node* node)
     ASSERT(node->isElementNode());
     Element* element = static_cast<Element*>(node);
     if (element->isHTMLElement())
-        return &element->getAttribute(hrefAttr);
+        return &element->fastGetAttribute(hrefAttr);
 
 #if ENABLE(WML)
     if (element->isWMLElement()) {
@@ -859,13 +859,13 @@ static inline const AtomicString* linkAttribute(Node* node)
         if (element->hasTagName(WMLNames::anchorTag))
             return &emptyAtom;
 
-        return &element->getAttribute(hrefAttr);
+        return &element->fastGetAttribute(hrefAttr);
     }
 #endif
 
 #if ENABLE(SVG)
     if (element->isSVGElement())
-        return &element->getAttribute(XLinkNames::hrefAttr);
+        return &element->fastGetAttribute(XLinkNames::hrefAttr);
 #endif
 
     return 0;
@@ -987,11 +987,11 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n)
             (s->active() == m_element->active()) &&
             (s->focused() == m_element->focused()) &&
             (s != s->document()->cssTarget() && m_element != m_element->document()->cssTarget()) &&
-            (s->getAttribute(typeAttr) == m_element->getAttribute(typeAttr)) &&
-            (s->getAttribute(XMLNames::langAttr) == m_element->getAttribute(XMLNames::langAttr)) &&
-            (s->getAttribute(langAttr) == m_element->getAttribute(langAttr)) &&
-            (s->getAttribute(readonlyAttr) == m_element->getAttribute(readonlyAttr)) &&
-            (s->getAttribute(cellpaddingAttr) == m_element->getAttribute(cellpaddingAttr))) {
+            (s->fastGetAttribute(typeAttr) == m_element->fastGetAttribute(typeAttr)) &&
+            (s->fastGetAttribute(XMLNames::langAttr) == m_element->fastGetAttribute(XMLNames::langAttr)) &&
+            (s->fastGetAttribute(langAttr) == m_element->fastGetAttribute(langAttr)) &&
+            (s->fastGetAttribute(readonlyAttr) == m_element->fastGetAttribute(readonlyAttr)) &&
+            (s->fastGetAttribute(cellpaddingAttr) == m_element->fastGetAttribute(cellpaddingAttr))) {
             bool isControl = s->isFormControlElement();
             if (isControl != m_element->isFormControlElement())
                 return false;
@@ -1028,8 +1028,8 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n)
 
             bool classesMatch = true;
             if (s->hasClass()) {
-                const AtomicString& class1 = m_element->getAttribute(classAttr);
-                const AtomicString& class2 = s->getAttribute(classAttr);
+                const AtomicString& class1 = m_element->fastGetAttribute(classAttr);
+                const AtomicString& class2 = s->fastGetAttribute(classAttr);
                 classesMatch = (class1 == class2);
             }
             
@@ -2538,9 +2538,9 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                 while (n && value.isEmpty()) {
                     if (n->isElementNode()) {
                         // Spec: xml:lang takes precedence -- http://www.w3.org/TR/xhtml1/#C_7
-                        value = static_cast<Element*>(n)->getAttribute(XMLNames::langAttr);
+                        value = static_cast<Element*>(n)->fastGetAttribute(XMLNames::langAttr);
                         if (value.isEmpty())
-                            value = static_cast<Element*>(n)->getAttribute(langAttr);
+                            value = static_cast<Element*>(n)->fastGetAttribute(langAttr);
                     } else if (n->isDocumentNode())
                         // checking the MIME content-language
                         value = static_cast<Document*>(n)->contentLanguage();

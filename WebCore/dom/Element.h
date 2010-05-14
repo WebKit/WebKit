@@ -101,11 +101,18 @@ public:
 
     virtual PassRefPtr<DocumentFragment> createContextualFragment(const String&, FragmentScriptingPermission = FragmentScriptingAllowed);
 
-    const AtomicString& getIDAttribute() const;
     bool hasAttribute(const QualifiedName&) const;
     const AtomicString& getAttribute(const QualifiedName&) const;
     void setAttribute(const QualifiedName&, const AtomicString& value, ExceptionCode&);
     void removeAttribute(const QualifiedName&, ExceptionCode&);
+
+    // Call this to get the value of an attribute that is known not to be the style
+    // attribute or one of the SVG animatable attributes.
+    bool fastHasAttribute(const QualifiedName&) const;
+    const AtomicString& fastGetAttribute(const QualifiedName&) const;
+
+    // Call this to get the value of the id attribute. Faster than calling fastGetAttribute.
+    const AtomicString& getIDAttribute() const;
 
     bool hasAttributes() const;
 
@@ -388,6 +395,20 @@ inline void Element::updateId(const AtomicString& oldId, const AtomicString& new
         doc->removeElementById(oldId, this);
     if (!newId.isEmpty())
         doc->addElementById(newId, this);
+}
+
+inline bool Element::fastHasAttribute(const QualifiedName& name) const
+{
+    return namedAttrMap && namedAttrMap->getAttributeItem(name);
+}
+
+inline const AtomicString& Element::fastGetAttribute(const QualifiedName& name) const
+{
+    if (namedAttrMap) {
+        if (Attribute* attribute = namedAttrMap->getAttributeItem(name))
+            return attribute->value();
+    }
+    return nullAtom;
 }
 
 } //namespace

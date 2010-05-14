@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2006, 2007 Apple Computer, Inc.
+ * Copyright (C) 2003, 2006, 2007, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Holger Hans Peter Freyther
  *
  * This library is free software; you can redistribute it and/or
@@ -27,6 +27,7 @@
 
 #include "CharacterNames.h"
 #include "FontDescription.h"
+#include "FontFallbackList.h"
 #include "SimpleFontData.h"
 #include "TextRun.h"
 #include "TypesettingFeatures.h"
@@ -225,6 +226,39 @@ private:
     short m_wordSpacing;
     bool m_isPlatformFont;
 };
+
+inline Font::~Font()
+{
+}
+
+inline const SimpleFontData* Font::primaryFont() const
+{
+    ASSERT(m_fontList);
+    return m_fontList->primarySimpleFontData(this);
+}
+
+inline const FontData* Font::fontDataAt(unsigned index) const
+{
+    ASSERT(m_fontList);
+    return m_fontList->fontDataAt(this, index);
+}
+
+inline const FontData* Font::fontDataForCharacters(const UChar* characters, int length) const
+{
+    ASSERT(m_fontList);
+    return m_fontList->fontDataForCharacters(this, characters, length);
+}
+
+inline bool Font::isFixedPitch() const
+{
+    ASSERT(m_fontList);
+    return m_fontList->isFixedPitch(this);
+}
+
+inline FontSelector* Font::fontSelector() const
+{
+    return m_fontList ? m_fontList->fontSelector() : 0;
+}
 
 }
 
