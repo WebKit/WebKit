@@ -1,5 +1,19 @@
 2010-05-13  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59384.
+
+    2010-05-13  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Repro crash at www.sears.com (infinite recursion in beforeunload handler)
+        <rdar://problem/7965182> and https://bugs.webkit.org/show_bug.cgi?id=38928
+
+        * fast/loader/recursive-before-unload-crash-expected.txt: Added.
+        * fast/loader/recursive-before-unload-crash.html: Added.
+
+2010-05-13  Mark Rowe  <mrowe@apple.com>
+
         Merge r59351.
 
     2010-05-12  Yuzo Fujishima  <yuzo@google.com>

@@ -98,8 +98,12 @@ namespace WebCore {
         FrameView* view() const;
 
         void setDOMWindow(DOMWindow*);
-        DOMWindow* domWindow() const;
         void clearFormerDOMWindow(DOMWindow*);
+
+        // Unlike many of the accessors in Frame, domWindow() always creates a new DOMWindow if m_domWindow is null.
+        // Callers that don't need a new DOMWindow to be created should use existingDOMWindow().
+        DOMWindow* domWindow() const;
+        DOMWindow* existingDOMWindow() { return m_domWindow.get(); }
 
         Editor* editor() const;
         EventHandler* eventHandler() const;
