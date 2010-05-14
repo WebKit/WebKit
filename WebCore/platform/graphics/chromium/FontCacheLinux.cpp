@@ -58,12 +58,27 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font,
                                                           const UChar* characters,
                                                           int length)
 {
-    String family = ChromiumBridge::getFontFamilyForCharacters(characters, length);
-    if (family.isEmpty())
+    int style = SkTypeface::kNormal;
+    if (font.fontDescription().weight() >= FontWeightBold)
+        style |= SkTypeface::kBold;
+    if (font.fontDescription().italic())
+        style |= SkTypeface::kItalic;
+
+    SkTypeface* tf = SkTypeface::CreateForChars(characters, length * 2,
+                                                static_cast<SkTypeface::Style>(style));
+    if (!tf)
         return 0;
 
-    AtomicString atomicFamily(family);
-    return getCachedFontData(getCachedFontPlatformData(font.fontDescription(), atomicFamily, false));
+    // FIXME: we don't have a family name for this font.
+    // However, the family name within FontPlatformData is only used when picking
+    // a render style for the font, so it's not too great of a loss.
+    FontPlatformData result(tf,
+                            "",
+                            font.fontDescription().computedSize(),
+                            (style & SkTypeface::kBold) && !tf->isBold(),
+                            (style & SkTypeface::kItalic) && !tf->isItalic());
+    tf->unref();
+    return getCachedFontData(&result);
 }
 
 SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)

@@ -1,3 +1,30 @@
+2010-05-14  Evan Martin  <evan@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] don't call fontconfig twice in complex text path
+        https://bugs.webkit.org/show_bug.cgi?id=38701
+
+        Previously getFontDataForCharacters would call fontconfig once to
+        resolve a font name, then pass that name to getCachedFontPlatformData
+        to load the font.  This would be two trips through fontconfig (including
+        IPCs).  With this change, we completely load the font in the first pass.
+
+        This patch is actually the same code as in r58341, which was reverted
+        because of a performance problem; a performance improvement has now
+        been committed, and with that change in place this change improves
+        the Chromium intl2 page cycler performance by another 5%.
+
+        See also https://bugs.webkit.org/show_bug.cgi?id=37904 .
+
+        Test: fast/text/international/bold-bengali.html
+        (Was checked in as part of the first attempt at this change, continues
+        to pass after this change.)
+
+        * platform/chromium/ChromiumBridge.h:
+        * platform/graphics/chromium/FontCacheLinux.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+
 2010-05-14  Young Han Lee  <joybro@company100.net>
 
         Reviewed by Darin Adler.
