@@ -34,10 +34,7 @@ from webkitpy.tool.mocktool import MockTool
 class UploadCommandsTest(CommandsTest):
     def test_commit_message_for_current_diff(self):
         tool = MockTool()
-        mock_commit_message_for_this_commit = Mock()
-        mock_commit_message_for_this_commit.message = lambda: "Mock message"
-        tool._checkout.commit_message_for_this_commit = lambda: mock_commit_message_for_this_commit
-        expected_stdout = "Mock message\n"
+        expected_stdout = "This is a fake commit message that is at least 50 characters.\n"
         self.assert_execute_outputs(CommitMessageForCurrentDiff(), [], expected_stdout=expected_stdout, tool=tool)
 
     def test_clean_pending_commit(self):

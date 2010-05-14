@@ -46,14 +46,23 @@ from webkitpy.tool.comments import bug_comment_from_svn_revision
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.common.system.deprecated_logging import error, log
 
+
 class CommitMessageForCurrentDiff(AbstractDeclarativeCommand):
     name = "commit-message"
     help_text = "Print a commit message suitable for the uncommitted changes"
 
+    def __init__(self):
+        options = [
+            steps.Options.squash,
+            steps.Options.git_commit,
+        ]
+        AbstractDeclarativeCommand.__init__(self, options=options)
+
     def execute(self, options, args, tool):
         # This command is a useful test to make sure commit_message_for_this_commit
         # always returns the right value regardless of the current working directory.
-        print "%s" % tool.checkout().commit_message_for_this_commit().message()
+        print "%s" % tool.checkout().commit_message_for_this_commit(options.git_commit, options.squash).message()
+
 
 class CleanPendingCommit(AbstractDeclarativeCommand):
     name = "clean-pending-commit"

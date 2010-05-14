@@ -1,3 +1,16 @@
+2010-05-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION: webkit-patch commit-message throws exception
+        https://bugs.webkit.org/show_bug.cgi?id=38997
+
+        * Scripts/webkitpy/tool/commands/upload.py:
+         - Fix to respect and pass the --squash and --git-commit options.
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+         - Fix the unit test to use the central MockCheckout instead of
+           its own custom Mock which didn't require enough parameters.
+
 2010-05-13  Diego Gonzalez  <diegohcg@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
