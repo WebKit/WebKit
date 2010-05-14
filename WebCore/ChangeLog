@@ -1,3 +1,17 @@
+2010-05-14  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Unreviewed.  Attempt to fix chromium's memory bot error.
+
+        More :visited link optimizations to reduce memory usage
+        https://bugs.webkit.org/show_bug.cgi?id=39084
+
+        The original change (r59386) adds check for m_element in initElement.
+        As don't initialize m_element in the constructor of CSSStyleSelector,
+        valgrind complains.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+
 2010-05-14  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.

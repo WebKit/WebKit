@@ -414,6 +414,9 @@ CSSStyleSelector::CSSStyleSelector(Document* doc, StyleSheetList* styleSheets, C
                                    bool strictParsing, bool matchAuthorAndUserStyles)
     : m_backgroundData(BackgroundFillLayer)
     , m_checker(doc, strictParsing)
+    , m_element(0)
+    , m_styledElement(0)
+    , m_elementLinkState(NotInsideLink)
     , m_fontSelector(CSSFontSelector::create(doc))
 {
     init();
