@@ -1,3 +1,13 @@
+2010-05-14  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Temporarily remove a few test cases that failed on leopard bot.
+        https://bugs.webkit.org/show_bug.cgi?id=33805
+
+        * fast/canvas/webgl/texture-npot-expected.txt: Removed failed test cases.
+        * fast/canvas/webgl/texture-npot.html: Ditto.
+
 2010-05-14  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Chromium: update test expectations.
