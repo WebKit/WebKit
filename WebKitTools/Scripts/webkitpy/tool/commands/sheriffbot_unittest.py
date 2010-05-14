@@ -44,7 +44,7 @@ class SheriffBotTest(QueuesTest):
         expected_stderr = {
             "begin_work_queue": "CAUTION: sheriff-bot will discard all local changes in \"%s\"\nRunning WebKit sheriff-bot.\n" % os.getcwd(),
             "next_work_item": "",
-            "process_work_item": "MOCK: irc.post: abarth, darin, eseidel: http://trac.webkit.org/changeset/29837 might have broken Builder1\nMOCK bug comment: bug_id=42, cc=['webkit-bot-watchers@googlegroups.com', 'abarth@webkit.org', 'eric@webkit.org']\n--- Begin comment ---\\http://trac.webkit.org/changeset/29837 might have broken Builder1\n--- End comment ---\n\n",
+            "process_work_item": "MOCK: irc.post: abarth, darin, eseidel: http://trac.webkit.org/changeset/29837 might have broken Builder1\nMOCK bug comment: bug_id=42, cc=['abarth@webkit.org', 'eric@webkit.org']\n--- Begin comment ---\\http://trac.webkit.org/changeset/29837 might have broken Builder1\n--- End comment ---\n\n",
             "handle_unexpected_error": "Mock error message\n"
         }
         self.assert_queue_outputs(SheriffBot(), work_item=mock_work_item, expected_stderr=expected_stderr)

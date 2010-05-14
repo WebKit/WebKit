@@ -1,3 +1,17 @@
+2010-05-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Stop CCing webkit-bot-watchers
+        https://bugs.webkit.org/show_bug.cgi?id=39020
+
+        webkit-bot-watchers is somewhat of a failed experiment.  No one
+        subscribed to the list (not even me).  Removing it from the code
+        because wms says it bounces email sometimes.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot_unittest.py:
+
 2010-05-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

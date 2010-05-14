@@ -46,7 +46,6 @@ from webkitpy.tool.multicommandtool import Command
 
 class AbstractQueue(Command, QueueEngineDelegate):
     watchers = [
-        "webkit-bot-watchers@googlegroups.com",
     ]
 
     _pass_status = "Pass"
