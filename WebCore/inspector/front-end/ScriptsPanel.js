@@ -135,7 +135,6 @@ WebInspector.ScriptsPanel = function()
     this.sidebarPanes.callstack = new WebInspector.CallStackSidebarPane();
     this.sidebarPanes.scopechain = new WebInspector.ScopeChainSidebarPane();
     this.sidebarPanes.breakpoints = new WebInspector.BreakpointsSidebarPane();
-    this.sidebarPanes.workers = new WebInspector.WorkersSidebarPane();
 
     for (var pane in this.sidebarPanes)
         this.sidebarElement.appendChild(this.sidebarPanes[pane].element);
@@ -515,7 +514,8 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.watchExpressions.refreshExpressions();
         if (!preserveItems) {
             this.sidebarPanes.breakpoints.reset();
-            this.sidebarPanes.workers.reset();
+            if (this.sidebarPanes.workers)
+                this.sidebarPanes.workers.reset();
         }
     },
 

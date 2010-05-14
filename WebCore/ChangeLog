@@ -1,3 +1,19 @@
+2010-05-13  Timothy Hatcher  <timothy@apple.com>
+
+        Disable the Audits panel and Workers sidebar in the Web Inspector.
+
+        <rdar://problem/7947035>
+
+        Reviewed by Ada Chan.
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel): Don't make a workers sidebar pane.
+        (WebInspector.ScriptsPanel.prototype.reset): Null check workers sidebar pane.
+        * inspector/front-end/Settings.js: Set auditsPanelEnabled to false.
+        * inspector/front-end/WorkersSidebarPane.js:
+        (WebInspector.didCreateWorker): Null check workers sidebar pane.
+        (WebInspector.didDestroyWorker): Ditto.
+
 2010-05-13  Mark Rowe  <mrowe@apple.com>
 
         Merge r59418.

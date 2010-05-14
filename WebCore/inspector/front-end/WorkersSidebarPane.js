@@ -104,11 +104,13 @@ WebInspector.Worker = function(id, url, shared)
 WebInspector.didCreateWorker = function()
 {
     var workersPane = WebInspector.panels.scripts.sidebarPanes.workers;
-    workersPane.addWorker.apply(workersPane, arguments);
+    if (workersPane)
+        workersPane.addWorker.apply(workersPane, arguments);
 }
 
 WebInspector.didDestroyWorker = function()
 {
     var workersPane = WebInspector.panels.scripts.sidebarPanes.workers;
-    workersPane.removeWorker.apply(workersPane, arguments);
+    if (workersPane)
+        workersPane.removeWorker.apply(workersPane, arguments);
 }
