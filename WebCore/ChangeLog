@@ -1,3 +1,12 @@
+2010-05-14  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Build fix. Had the environment variables wrong for source and destination of the copy operation
+        that was added.
+
+        * WebCore.vcproj/WebCore.make:
+
 2010-05-14  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
