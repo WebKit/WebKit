@@ -1,3 +1,23 @@
+2010-05-15  Chao-ying Fu  <fu@mips.com>
+
+        Reviewed by Oliver Hunt.
+
+        Update MIPS JIT for unsigned right shift, Math.sqrt, load16
+        https://bugs.webkit.org/show_bug.cgi?id=38412
+
+        Fixed MIPS build failure.
+
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::srl):
+        (JSC::MIPSAssembler::srlv):
+        (JSC::MIPSAssembler::sqrtd):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::urshift32):
+        (JSC::MacroAssemblerMIPS::sqrtDouble):
+        (JSC::MacroAssemblerMIPS::load16):
+        (JSC::MacroAssemblerMIPS::supportsFloatingPointSqrt):
+        * jit/JSInterfaceJIT.h:
+
 2010-05-15  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Geoffrey Garen.

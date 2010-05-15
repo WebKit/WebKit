@@ -392,6 +392,18 @@ public:
                  | (rs << OP_SH_RS));
     }
 
+    void srl(RegisterID rd, RegisterID rt, int shamt)
+    {
+        emitInst(0x00000002 | (rd << OP_SH_RD) | (rt << OP_SH_RT)
+                 | ((shamt & 0x1f) << OP_SH_SHAMT));
+    }
+
+    void srlv(RegisterID rd, RegisterID rt, RegisterID rs)
+    {
+        emitInst(0x00000006 | (rd << OP_SH_RD) | (rt << OP_SH_RT)
+                 | (rs << OP_SH_RS));
+    }
+
     void lbu(RegisterID rt, RegisterID rs, int offset)
     {
         emitInst(0x90000000 | (rt << OP_SH_RT) | (rs << OP_SH_RS)
@@ -547,6 +559,11 @@ public:
     {
         emitInst(0x44000000 | (fs << OP_SH_FS) | (rt << OP_SH_RT));
         copDelayNop();
+    }
+
+    void sqrtd(FPRegisterID fd, FPRegisterID fs)
+    {
+        emitInst(0x46200004 | (fd << OP_SH_FD) | (fs << OP_SH_FS));
     }
 
     void truncwd(FPRegisterID fd, FPRegisterID fs)

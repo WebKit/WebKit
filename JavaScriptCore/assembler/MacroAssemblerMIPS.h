@@ -319,6 +319,16 @@ public:
         m_assembler.sra(dest, dest, imm.m_value);
     }
 
+    void urshift32(RegisterID shiftAmount, RegisterID dest)
+    {
+        m_assembler.srlv(dest, dest, shiftAmount);
+    }
+
+    void urshift32(Imm32 imm, RegisterID dest)
+    {
+        m_assembler.srl(dest, dest, imm.m_value);
+    }
+
     void sub32(RegisterID src, RegisterID dest)
     {
         m_assembler.subu(dest, dest, src);
@@ -433,6 +443,11 @@ public:
         */
         move(imm, immTempRegister);
         m_assembler.xorInsn(dest, dest, immTempRegister);
+    }
+
+    void sqrtDouble(FPRegisterID src, FPRegisterID dst)
+    {
+        m_assembler.sqrtd(dst, src);
     }
 
     // Memory access operations:
@@ -610,6 +625,24 @@ public:
     }
 
     /* Need to use zero-extened load half-word for load16.  */
+    void load16(ImplicitAddress address, RegisterID dest)
+    {
+        if (address.offset >= -32768 && address.offset <= 32767
+            && !m_fixedWidth)
+            m_assembler.lhu(dest, address.base, address.offset);
+        else {
+            /*
+                lui     addrTemp, (offset + 0x8000) >> 16
+                addu    addrTemp, addrTemp, base
+                lhu     dest, (offset & 0xffff)(addrTemp)
+              */
+            m_assembler.lui(addrTempRegister, (address.offset + 0x8000) >> 16);
+            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+            m_assembler.lhu(dest, addrTempRegister, address.offset);
+        }
+    }
+
+    /* Need to use zero-extened load half-word for load16.  */
     void load16(BaseIndex address, RegisterID dest)
     {
         if (address.offset >= -32768 && address.offset <= 32767
@@ -771,6 +804,15 @@ public:
     }
 
     bool supportsFloatingPointTruncate() const
+    {
+#if WTF_MIPS_DOUBLE_FLOAT && WTF_MIPS_ISA_AT_LEAST(2)
+        return true;
+#else
+        return false;
+#endif
+    }
+
+    bool supportsFloatingPointSqrt() const
     {
 #if WTF_MIPS_DOUBLE_FLOAT && WTF_MIPS_ISA_AT_LEAST(2)
         return true;

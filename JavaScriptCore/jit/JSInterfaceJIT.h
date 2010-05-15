@@ -152,7 +152,7 @@ namespace JSC {
         static const FPRegisterID fpRegT0 = MIPSRegisters::f4;
         static const FPRegisterID fpRegT1 = MIPSRegisters::f6;
         static const FPRegisterID fpRegT2 = MIPSRegisters::f8;
-        static const FPRegisterID fpRegT2 = MIPSRegisters::f10;
+        static const FPRegisterID fpRegT3 = MIPSRegisters::f10;
 #else
 #error "JIT not supported on this platform."
 #endif
