@@ -67,6 +67,7 @@ public:
 
     void addSublayer(PassRefPtr<LayerChromium>);
     void insertSublayer(PassRefPtr<LayerChromium>, size_t index);
+    void replaceSublayer(LayerChromium* reference, PassRefPtr<LayerChromium> newLayer);
     void removeFromSuperlayer();
 
     void setAnchorPoint(const FloatPoint& anchorPoint) { m_anchorPoint = anchorPoint; setNeedsCommit(); }
@@ -140,7 +141,6 @@ public:
     void setSublayerTransform(const TransformationMatrix& transform) { m_sublayerTransform = transform; setNeedsCommit(); }
     const TransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
 
-    void setSuperlayer(LayerChromium* superlayer);
     LayerChromium* superlayer() const;
 
 
@@ -166,6 +166,8 @@ private:
     LayerChromium(LayerType, GraphicsLayerChromium* owner);
 
     void setNeedsCommit();
+
+    void setSuperlayer(LayerChromium* superlayer) { m_superlayer = superlayer; }
 
     void paintMe();
 
