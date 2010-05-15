@@ -92,7 +92,7 @@ module test {
         // 'ConvertScriptString' extended attribute
         readonly attribute [ConvertScriptString] DOMString scriptStringAttr;
 
-#ifdef TESTING_V8
+#if defined(TESTING_V8) || defined(TESTING_JS)
         // Overloads
         void    overloadedMethod(in TestObj objArg, in DOMString strArg);
         void    overloadedMethod(in TestObj objArg, in [Optional] long intArg);

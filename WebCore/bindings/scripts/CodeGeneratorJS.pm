@@ -101,6 +101,8 @@ sub GenerateInterface
     my $dataNode = shift;
     my $defines = shift;
 
+    $codeGenerator->LinkOverloadedFunctions($dataNode);
+
     # Start actual generation
     if ($dataNode->extendedAttributes->{"Callback"}) {
         $object->GenerateCallbackHeader($dataNode);
@@ -983,6 +985,7 @@ sub GenerateHeader
     if ($numFunctions > 0) {
         push(@headerContent,"// Functions\n\n");
         foreach my $function (@{$dataNode->functions}) {
+            next if $function->{overloadIndex} > 1;
             my $functionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
             push(@headerContent, "JSC::JSValue JSC_HOST_CALL ${functionName}(JSC::ExecState*, JSC::JSObject*, JSC::JSValue, const JSC::ArgList&);\n");
         }
@@ -1092,6 +1095,79 @@ sub GenerateAttributesHashTable($$)
     return $numAttributes;
 }
 
+sub GenerateParametersCheckExpression
+{
+    my $numParameters = shift;
+    my $function = shift;
+
+    my @andExpression = ();
+    push(@andExpression, "args.size() == $numParameters");
+    my $parameterIndex = 0;
+    foreach $parameter (@{$function->parameters}) {
+        last if $parameterIndex >= $numParameters;
+        my $value = "args.at($parameterIndex)";
+        my $type = $codeGenerator->StripModule($parameter->type);
+
+        # Only DOMString or wrapper types are checked.
+        # For DOMString, Null, Undefined and any Object are accepted too, as
+        # these are acceptable values for a DOMString argument (any Object can
+        # be converted to a string via .toString).
+        push(@andExpression, "(${value}.isNull() || ${value}.isUndefined() || ${value}.isString() || ${value}.isObject())") if $codeGenerator->IsStringType($type);
+        push(@andExpression, "(${value}.isNull() || asObject(${value})->inherits(JS${type}::s_info)") unless IsNativeType($type);
+
+        $parameterIndex++;
+    }
+    my $res = join(" && ", @andExpression);
+    $res = "($res)" if @andExpression > 1;
+    return $res;
+}
+
+sub GenerateFunctionParametersCheck
+{
+    my $function = shift;
+
+    my @orExpression = ();
+    my $numParameters = 0;
+    foreach $parameter (@{$function->parameters}) {
+        if ($parameter->extendedAttributes->{"Optional"}) {
+            push(@orExpression, GenerateParametersCheckExpression($numParameters, $function));
+        }
+        $numParameters++;
+    }
+    push(@orExpression, GenerateParametersCheckExpression($numParameters, $function));
+    return join(" || ", @orExpression);
+}
+
+sub GenerateOverloadedPrototypeFunction
+{
+    my $function = shift;
+    my $dataNode = shift;
+    my $implClassName = shift;
+
+    # Generate code for choosing the correct overload to call. Overloads are
+    # chosen based on the total number of arguments passed and the type of
+    # values passed in non-primitive argument slots. When more than a single
+    # overload is applicable, precedence is given according to the order of
+    # declaration in the IDL.
+
+    my $functionName = "js${implClassName}PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
+
+    push(@implContent, "JSValue JSC_HOST_CALL ${functionName}(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)\n");
+    push(@implContent, <<END);
+{
+END
+    foreach my $overload (@{$function->{overloads}}) {
+        my $parametersCheck = GenerateFunctionParametersCheck($overload);
+        push(@implContent, "    if ($parametersCheck)\n");
+        push(@implContent, "        return ${functionName}$overload->{overloadIndex}(exec, thisValue, args);\n");
+    }
+    push(@implContent, <<END);
+    return throwError(exec, TypeError);
+}
+
+END
+}
+
 sub GenerateImplementation
 {
     my ($object, $dataNode) = @_;
@@ -1178,6 +1254,7 @@ sub GenerateImplementation
     }
 
     foreach my $function (@{$dataNode->functions}) {
+        next if $function->{overloadIndex} > 1;
         my $name = $function->signature->name;
         push(@hashKeys, $name);
 
@@ -1703,6 +1780,12 @@ sub GenerateImplementation
             AddIncludesForType($function->signature->type);
 
             my $functionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
+
+            if (@{$function->{overloads}} > 1) {
+                # Append a number to an overloaded method's name to make it unique:
+                $functionName = $functionName . $function->{overloadIndex};
+            }
+            
             my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementationFunction"} || $codeGenerator->WK_lcfirst($function->signature->name);
 
             push(@implContent, "JSValue JSC_HOST_CALL ${functionName}(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)\n");
@@ -1864,6 +1947,11 @@ sub GenerateImplementation
                 }
             }
             push(@implContent, "}\n\n");
+
+            if (@{$function->{overloads}} > 1 && $function->{overloadIndex} == @{$function->{overloads}}) {
+                # Generate a function dispatching call to the rest of the overloads.
+                GenerateOverloadedPrototypeFunction($function, $dataNode, $implClassName);
+            }
         }
     }
 
@@ -2193,6 +2281,12 @@ sub GetNativeType
 
     # For all other types, the native type is a pointer with same type name as the IDL type.
     return "${type}*";
+}
+
+sub IsNativeType
+{
+    my $type = shift;
+    return exists $nativeType{$type};
 }
 
 sub JSValueToNative

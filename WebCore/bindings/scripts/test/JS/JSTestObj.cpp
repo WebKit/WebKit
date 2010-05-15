@@ -133,7 +133,7 @@ bool JSTestObjConstructor::getOwnPropertyDescriptor(ExecState* exec, const Ident
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestObjPrototypeTableValues[26] =
+static const HashTableValue JSTestObjPrototypeTableValues[27] =
 {
     { "voidMethod", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethod), (intptr_t)0 THUNK_GENERATOR(0) },
     { "voidMethodWithArgs", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethodWithArgs), (intptr_t)3 THUNK_GENERATOR(0) },
@@ -160,6 +160,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[26] =
     { "methodWithOptionalArg", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalArg), (intptr_t)1 THUNK_GENERATOR(0) },
     { "methodWithNonOptionalArgAndOptionalArg", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg), (intptr_t)2 THUNK_GENERATOR(0) },
     { "methodWithNonOptionalArgAndTwoOptionalArgs", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs), (intptr_t)3 THUNK_GENERATOR(0) },
+    { "overloadedMethod", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOverloadedMethod), (intptr_t)2 THUNK_GENERATOR(0) },
     { 0, 0, 0, 0 THUNK_GENERATOR(0) }
 };
 
@@ -804,6 +805,80 @@ JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOp
 
     imp->methodWithNonOptionalArgAndTwoOptionalArgs(nonOpt, opt1, opt2);
     return jsUndefined();
+}
+
+JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod1(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+{
+    UNUSED_PARAM(args);
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwError(exec, TypeError);
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
+    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    TestObj* objArg = toTestObj(args.at(0));
+    const String& strArg = ustringToString(args.at(1).toString(exec));
+
+    imp->overloadedMethod(objArg, strArg);
+    return jsUndefined();
+}
+
+JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod2(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+{
+    UNUSED_PARAM(args);
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwError(exec, TypeError);
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
+    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    TestObj* objArg = toTestObj(args.at(0));
+
+    int argsCount = args.size();
+    if (argsCount < 2) {
+        imp->overloadedMethod(objArg);
+        return jsUndefined();
+    }
+
+    int intArg = args.at(1).toInt32(exec);
+
+    imp->overloadedMethod(objArg, intArg);
+    return jsUndefined();
+}
+
+JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod3(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+{
+    UNUSED_PARAM(args);
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwError(exec, TypeError);
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
+    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    const String& strArg = ustringToString(args.at(0).toString(exec));
+
+    imp->overloadedMethod(strArg);
+    return jsUndefined();
+}
+
+JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod4(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+{
+    UNUSED_PARAM(args);
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwError(exec, TypeError);
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
+    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    int intArg = args.at(0).toInt32(exec);
+
+    imp->overloadedMethod(intArg);
+    return jsUndefined();
+}
+
+JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+{
+    if ((args.size() == 2 && (args.at(0).isNull() || asObject(args.at(0))->inherits(JSTestObj::s_info) && (args.at(1).isNull() || args.at(1).isUndefined() || args.at(1).isString() || args.at(1).isObject())))
+        return jsTestObjPrototypeFunctionOverloadedMethod1(exec, thisValue, args);
+    if ((args.size() == 1 && (args.at(0).isNull() || asObject(args.at(0))->inherits(JSTestObj::s_info)) || (args.size() == 2 && (args.at(0).isNull() || asObject(args.at(0))->inherits(JSTestObj::s_info)))
+        return jsTestObjPrototypeFunctionOverloadedMethod2(exec, thisValue, args);
+    if ((args.size() == 1 && (args.at(0).isNull() || args.at(0).isUndefined() || args.at(0).isString() || args.at(0).isObject())))
+        return jsTestObjPrototypeFunctionOverloadedMethod3(exec, thisValue, args);
+    if (args.size() == 1)
+        return jsTestObjPrototypeFunctionOverloadedMethod4(exec, thisValue, args);
+    return throwError(exec, TypeError);
 }
 
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestObj* object)

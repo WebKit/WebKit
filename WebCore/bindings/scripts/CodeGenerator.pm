@@ -363,4 +363,21 @@ sub NamespaceForAttributeName
     return "HTMLNames";
 }
 
+# Identifies overloaded functions and for each function adds an array with
+# links to its respective overloads (including itself).
+sub LinkOverloadedFunctions
+{
+    my ($object, $dataNode) = @_;
+
+    my %nameToFunctionsMap = ();
+    foreach my $function (@{$dataNode->functions}) {
+        my $name = $function->signature->name;
+        $nameToFunctionsMap{$name} = [] if !exists $nameToFunctionsMap{$name};
+        push(@{$nameToFunctionsMap{$name}}, $function);
+        $function->{overloads} = $nameToFunctionsMap{$name};
+        $function->{overloadIndex} = @{$nameToFunctionsMap{$name}};
+    }
+}
+
+
 1;

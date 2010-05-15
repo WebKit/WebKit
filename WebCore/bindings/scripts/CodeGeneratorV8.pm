@@ -206,23 +206,6 @@ sub GenerateConditionalString
     }
 }
 
-sub LinkOverloadedFunctions
-{
-    my $dataNode = shift;
-
-    # Identifies overloaded functions and for each function adds an array with
-    # links to its respective overloads (including itself).
-    my %nameToFunctionsMap = ();
-    foreach my $function (@{$dataNode->functions}) {
-        my $name = $function->signature->name;
-        $nameToFunctionsMap{$name} = [] if !exists $nameToFunctionsMap{$name};
-        push(@{$nameToFunctionsMap{$name}}, $function);
-        $function->{overloads} = $nameToFunctionsMap{$name};
-        $function->{overloadIndex} = @{$nameToFunctionsMap{$name}};
-    }
-
-}
-
 sub GenerateHeader
 {
     my $object = shift;
@@ -1658,7 +1641,7 @@ sub GenerateImplementation
         GenerateConstructorGetter($implClassName);
     }
 
-    LinkOverloadedFunctions($dataNode);
+    $codeGenerator->LinkOverloadedFunctions($dataNode);
 
     my $indexer;
     my $namedPropertyGetter;
