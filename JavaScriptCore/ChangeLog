@@ -1,3 +1,11 @@
+2010-05-14  Stephanie Lewis  <slewis@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Update order files.
+
+        * JavaScriptCore.order:
+
 2010-05-14  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

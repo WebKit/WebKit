@@ -1,3 +1,11 @@
+2010-05-14  Stephanie Lewis  <slewis@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Update order files.
+
+        * WebKit.order:
+
 2010-05-13  Timothy Hatcher  <timothy@apple.com>
 
         Allow reporting exceptions that occur when using JavaScriptCore APIs
