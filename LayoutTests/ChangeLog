@@ -1,3 +1,10 @@
+2010-05-15  Xan Lopez  <xlopez@igalia.com>
+
+        Skip failing test, it depends on one patch still in the commit
+        queue.
+
+        * platform/gtk/Skipped:
+
 2010-05-15  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.

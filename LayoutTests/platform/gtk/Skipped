@@ -5920,3 +5920,6 @@ fast/loader/recursive-before-unload-crash.html
 # Tests failing only on the 32-bit debug bot
 # https://bugs.webkit.org/show_bug.cgi?id=39101
 css1/color_and_background/background_attachment.html
+
+# Skip this, it's pending on one patch in the commit queue
+accessibility/aria-controls-with-tabs.html
