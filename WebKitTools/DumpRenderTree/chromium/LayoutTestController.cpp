@@ -1108,10 +1108,11 @@ void LayoutTestController::addOriginAccessWhitelistEntry(const CppArgumentList& 
     if (!url.isValid())
         return;
 
-    WebSecurityPolicy::whiteListAccessFromOrigin(url,
-                                                 WebString::fromUTF8(arguments[1].toString()),
-                                                 WebString::fromUTF8(arguments[2].toString()),
-                                                 arguments[3].toBoolean());
+    WebSecurityPolicy::addOriginAccessWhitelistEntry(
+        url,
+        WebString::fromUTF8(arguments[1].toString()),
+        WebString::fromUTF8(arguments[2].toString()),
+        arguments[3].toBoolean());
 }
 
 void LayoutTestController::removeOriginAccessWhitelistEntry(const CppArgumentList& arguments, CppVariant* result)

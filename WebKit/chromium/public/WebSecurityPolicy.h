@@ -62,12 +62,6 @@ public:
         const WebURL& sourceOrigin, const WebString& destinationProtocol,
         const WebString& destinationHost, bool allowDestinationSubdomains);
     WEBKIT_API static void resetOriginAccessWhitelists();
-    // DEPRECATED: Phase on of renaming to addOriginAccessWhitelistEntry.
-    WEBKIT_API static void whiteListAccessFromOrigin(
-        const WebURL& sourceOrigin, const WebString& destinationProtocol,
-        const WebString& destinationHost, bool allowDestinationSubdomains);
-    // DEPRECATED: Phase on of renaming to resetOriginAccessWhitelists..
-    WEBKIT_API static void resetOriginAccessWhiteLists();
     
     // Returns whether the url should be allowed to see the referrer
     // based on their respective protocols.
