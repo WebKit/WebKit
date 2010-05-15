@@ -32,9 +32,6 @@
 import os
 import re
 
-# FIXME: Instead of using run_command directly, most places in this
-# class would rather use an SCM.run method which automatically set
-# cwd=self.checkout_root.
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
 from webkitpy.common.system.user import User
 from webkitpy.common.system.deprecated_logging import error, log
@@ -102,6 +99,18 @@ class SCM:
         self.checkout_root = self.find_checkout_root(self.cwd)
         self.dryrun = False
 
+    # A wrapper used by subclasses to create processes.
+    def run(self, args, cwd=None, input=None, error_handler=None, return_exit_code=False, return_stderr=True, decode_output=True):
+        # FIXME: We should set cwd appropriately.
+        # FIXME: We should use Executive.
+        return run_command(args,
+                           cwd=cwd,
+                           input=input,
+                           error_handler=error_handler,
+                           return_exit_code=return_exit_code,
+                           return_stderr=return_stderr,
+                           decode_output=decode_output)
+
     # SCM always returns repository relative path, but sometimes we need
     # absolute paths to pass to rm, etc.
     def absolute_path(self, repository_relative_path):
@@ -118,7 +127,7 @@ class SCM:
     def ensure_clean_working_directory(self, force_clean):
         if not force_clean and not self.working_directory_is_clean():
             # FIXME: Shouldn't this use cwd=self.checkout_root?
-            print run_command(self.status_command(), error_handler=Executive.ignore_error)
+            print self.run(self.status_command(), error_handler=Executive.ignore_error)
             raise ScriptError(message="Working directory has modifications, pass --force-clean or --no-clean to continue.")
         
         log("Cleaning working directory")
@@ -137,7 +146,7 @@ class SCM:
     def run_status_and_extract_filenames(self, status_command, status_regexp):
         filenames = []
         # We run with cwd=self.checkout_root so that returned-paths are root-relative.
-        for line in run_command(status_command, cwd=self.checkout_root).splitlines():
+        for line in self.run(status_command, cwd=self.checkout_root).splitlines():
             match = re.search(status_regexp, line)
             if not match:
                 continue
@@ -297,17 +306,17 @@ class SVN(SCM):
         if not os.path.isdir(os.path.join(home_directory, ".subversion")):
             return False
         find_args = ["find", ".subversion", "-type", "f", "-exec", "grep", "-q", realm, "{}", ";", "-print"];
-        find_output = run_command(find_args, cwd=home_directory, error_handler=Executive.ignore_error).rstrip()
+        find_output = self.run(find_args, cwd=home_directory, error_handler=Executive.ignore_error).rstrip()
         return find_output and os.path.isfile(os.path.join(home_directory, find_output))
 
     def svn_version(self):
         if not self.cached_version:
-            self.cached_version = run_command(['svn', '--version', '--quiet'])
+            self.cached_version = self.run(['svn', '--version', '--quiet'])
         
         return self.cached_version
 
     def working_directory_is_clean(self):
-        return run_command(["svn", "diff"], cwd=self.checkout_root, decode_output=False) == ""
+        return self.run(["svn", "diff"], cwd=self.checkout_root, decode_output=False) == ""
 
     def clean_working_directory(self):
         # svn revert -R is not as awesome as git reset --hard.
@@ -317,7 +326,7 @@ class SVN(SCM):
         added_files = reversed(sorted(self.added_files()))
         # added_files() returns directories for SVN, we walk the files in reverse path
         # length order so that we remove files before we try to remove the directories.
-        run_command(["svn", "revert", "-R", "."], cwd=self.checkout_root)
+        self.run(["svn", "revert", "-R", "."], cwd=self.checkout_root)
         for path in added_files:
             # This is robust against cwd != self.checkout_root
             absolute_path = self.absolute_path(path)
@@ -336,14 +345,14 @@ class SVN(SCM):
 
     def add(self, path):
         # path is assumed to be cwd relative?
-        run_command(["svn", "add", path])
+        self.run(["svn", "add", path])
 
     def changed_files(self, git_commit=None, squash=None):
         return self.run_status_and_extract_filenames(self.status_command(), self._status_regexp("ACDMR"))
 
     def changed_files_for_revision(self, revision):
         # As far as I can tell svn diff --summarize output looks just like svn status output.
-        # No file contents printed, thus utf-8 auto-decoding in run_command is fine.
+        # No file contents printed, thus utf-8 auto-decoding in self.run is fine.
         status_command = ["svn", "diff", "--summarize", "-c", revision]
         return self.run_status_and_extract_filenames(status_command, self._status_regexp("ACDMR"))
 
@@ -360,26 +369,27 @@ class SVN(SCM):
     def display_name(self):
         return "svn"
 
+    # FIXME: This method should be on Checkout.
     def create_patch(self, git_commit=None, squash=None):
         """Returns a byte array (str()) representing the patch file.
         Patch files are effectively binary since they may contain
         files of multiple different encodings."""
-        return run_command([self.script_path("svn-create-patch")],
+        return self.run([self.script_path("svn-create-patch")],
             cwd=self.checkout_root, return_stderr=False,
             decode_output=False)
 
     def committer_email_for_revision(self, revision):
-        return run_command(["svn", "propget", "svn:author", "--revprop", "-r", revision]).rstrip()
+        return self.run(["svn", "propget", "svn:author", "--revprop", "-r", revision]).rstrip()
 
     def contents_at_revision(self, path, revision):
         """Returns a byte array (str()) containing the contents
         of path @ revision in the repository."""
         remote_path = "%s/%s" % (self._repository_url(), path)
-        return run_command(["svn", "cat", "-r", revision, remote_path], decode_output=False)
+        return self.run(["svn", "cat", "-r", revision, remote_path], decode_output=False)
 
     def diff_for_revision(self, revision):
         # FIXME: This should probably use cwd=self.checkout_root
-        return run_command(['svn', 'diff', '-c', revision])
+        return self.run(['svn', 'diff', '-c', revision])
 
     def _repository_url(self):
         return self.value_from_svn_info(self.checkout_root, 'URL')
@@ -390,11 +400,11 @@ class SVN(SCM):
         log("WARNING: svn merge has been known to take more than 10 minutes to complete.  It is recommended you use git for rollouts.")
         log("Running '%s'" % " ".join(svn_merge_args))
         # FIXME: Should this use cwd=self.checkout_root?
-        run_command(svn_merge_args)
+        self.run(svn_merge_args)
 
     def revert_files(self, file_paths):
         # FIXME: This should probably use cwd=self.checkout_root.
-        run_command(['svn', 'revert'] + file_paths)
+        self.run(['svn', 'revert'] + file_paths)
 
     def should_squash(self, squash):
         # SVN doesn't support the concept of squashing.
@@ -414,11 +424,11 @@ class SVN(SCM):
             svn_commit_args.extend(["--username", username])
         svn_commit_args.extend(["-m", message])
         # FIXME: Should this use cwd=self.checkout_root?
-        return run_command(svn_commit_args, error_handler=commit_error_handler)
+        return self.run(svn_commit_args, error_handler=commit_error_handler)
 
     def svn_commit_log(self, svn_revision):
         svn_revision = self.strip_r_from_svn_revision(svn_revision)
-        return run_command(['svn', 'log', '--non-interactive', '--revision', svn_revision]);
+        return self.run(['svn', 'log', '--non-interactive', '--revision', svn_revision])
 
     def last_svn_commit_log(self):
         # BASE is the checkout revision, HEAD is the remote repository revision
@@ -455,30 +465,30 @@ class Git(SCM):
 
     def discard_local_commits(self):
         # FIXME: This should probably use cwd=self.checkout_root
-        run_command(['git', 'reset', '--hard', self.svn_branch_name()])
+        self.run(['git', 'reset', '--hard', self.svn_branch_name()])
     
     def local_commits(self):
         # FIXME: This should probably use cwd=self.checkout_root
-        return run_command(['git', 'log', '--pretty=oneline', 'HEAD...' + self.svn_branch_name()]).splitlines()
+        return self.run(['git', 'log', '--pretty=oneline', 'HEAD...' + self.svn_branch_name()]).splitlines()
 
     def rebase_in_progress(self):
         return os.path.exists(os.path.join(self.checkout_root, '.git/rebase-apply'))
 
     def working_directory_is_clean(self):
         # FIXME: This should probably use cwd=self.checkout_root
-        return run_command(['git', 'diff', 'HEAD', '--name-only']) == ""
+        return self.run(['git', 'diff', 'HEAD', '--name-only']) == ""
 
     def clean_working_directory(self):
         # FIXME: These should probably use cwd=self.checkout_root.
         # Could run git clean here too, but that wouldn't match working_directory_is_clean
-        run_command(['git', 'reset', '--hard', 'HEAD'])
+        self.run(['git', 'reset', '--hard', 'HEAD'])
         # Aborting rebase even though this does not match working_directory_is_clean
         if self.rebase_in_progress():
-            run_command(['git', 'rebase', '--abort'])
+            self.run(['git', 'rebase', '--abort'])
 
     def status_command(self):
         # git status returns non-zero when there are changes, so we use git diff name --name-status HEAD instead.
-        # No file contents printed, thus utf-8 autodecoding in run_command is fine.
+        # No file contents printed, thus utf-8 autodecoding in self.run is fine.
         return ["git", "diff", "--name-status", "HEAD"]
 
     def _status_regexp(self, expected_types):
@@ -486,7 +496,7 @@ class Git(SCM):
 
     def add(self, path):
         # path is assumed to be cwd relative?
-        run_command(["git", "add", path])
+        self.run(["git", "add", path])
 
     def _merge_base(self, git_commit, squash):
         if git_commit:
@@ -510,7 +520,7 @@ class Git(SCM):
 
     def _changes_files_for_commit(self, git_commit):
         # --pretty="format:" makes git show not print the commit log header,
-        changed_files = run_command(["git", "show", "--pretty=format:", "--name-only", git_commit]).splitlines()
+        changed_files = self.run(["git", "show", "--pretty=format:", "--name-only", git_commit]).splitlines()
         # instead it just prints a blank line at the top, so we skip the blank line:
         return changed_files[1:]
 
@@ -539,7 +549,7 @@ class Git(SCM):
         Patch files are effectively binary since they may contain
         files of multiple different encodings."""
         # FIXME: This should probably use cwd=self.checkout_root
-        return run_command(['git', 'diff', '--binary', "--no-ext-diff", "--full-index", "-M", self._merge_base(git_commit, squash)], decode_output=False)
+        return self.run(['git', 'diff', '--binary', "--no-ext-diff", "--full-index", "-M", self._merge_base(git_commit, squash)], decode_output=False)
 
     @classmethod
     def git_commit_from_svn_revision(cls, revision):
@@ -553,7 +563,7 @@ class Git(SCM):
     def contents_at_revision(self, path, revision):
         """Returns a byte array (str()) containing the contents
         of path @ revision in the repository."""
-        return run_command(["git", "show", "%s:%s" % (self.git_commit_from_svn_revision(revision), path)], decode_output=False)
+        return self.run(["git", "show", "%s:%s" % (self.git_commit_from_svn_revision(revision), path)], decode_output=False)
 
     def diff_for_revision(self, revision):
         git_commit = self.git_commit_from_svn_revision(revision)
@@ -561,7 +571,7 @@ class Git(SCM):
 
     def committer_email_for_revision(self, revision):
         git_commit = self.git_commit_from_svn_revision(revision)
-        committer_email = run_command(["git", "log", "-1", "--pretty=format:%ce", git_commit])
+        committer_email = self.run(["git", "log", "-1", "--pretty=format:%ce", git_commit])
         # Git adds an extra @repository_hash to the end of every committer email, remove it:
         return committer_email.rsplit("@", 1)[0]
 
@@ -569,10 +579,10 @@ class Git(SCM):
         # Assume the revision is an svn revision.
         git_commit = self.git_commit_from_svn_revision(revision)
         # I think this will always fail due to ChangeLogs.
-        run_command(['git', 'revert', '--no-commit', git_commit], error_handler=Executive.ignore_error)
+        self.run(['git', 'revert', '--no-commit', git_commit], error_handler=Executive.ignore_error)
 
     def revert_files(self, file_paths):
-        run_command(['git', 'checkout', 'HEAD'] + file_paths)
+        self.run(['git', 'checkout', 'HEAD'] + file_paths)
 
     def should_squash(self, squash):
         if squash is not None:
@@ -607,7 +617,7 @@ class Git(SCM):
 
         squash = self.should_squash(squash)
         if squash:
-            run_command(['git', 'reset', '--soft', self.svn_branch_name()])
+            self.run(['git', 'reset', '--soft', self.svn_branch_name()])
             self.commit_locally_with_message(message)
         elif not self.working_directory_is_clean():
             if not len(self.local_commits()):
@@ -627,7 +637,7 @@ class Git(SCM):
         return self.push_local_commits_to_server()
 
     def _commit_on_branch(self, message, git_commit):
-        branch_ref = run_command(['git', 'symbolic-ref', 'HEAD']).strip()
+        branch_ref = self.run(['git', 'symbolic-ref', 'HEAD']).strip()
         branch_name = branch_ref.replace('refs/heads/', '')
         commit_ids = self.commit_ids_from_commitish_arguments([git_commit])
 
@@ -645,16 +655,16 @@ class Git(SCM):
         # We wrap in a try...finally block so if anything goes wrong, we clean up the branches.
         commit_succeeded = True
         try:
-            run_command(['git', 'checkout', '-q', '-b', MERGE_BRANCH, self.svn_branch_name()])
+            self.run(['git', 'checkout', '-q', '-b', MERGE_BRANCH, self.svn_branch_name()])
 
             for commit in commit_ids:
                 # We're on a different branch now, so convert "head" to the branch name.
                 commit = re.sub(r'(?i)head', branch_name, commit)
                 # FIXME: Once changed_files and create_patch are modified to separately handle each
                 # commit in a commit range, commit each cherry pick so they'll get dcommitted separately.
-                run_command(['git', 'cherry-pick', '--no-commit', commit])
+                self.run(['git', 'cherry-pick', '--no-commit', commit])
 
-            run_command(['git', 'commit', '-m', message])
+            self.run(['git', 'commit', '-m', message])
             output = self.push_local_commits_to_server()
         except Exception, e:
             log("COMMIT FAILED: " + str(e))
@@ -663,26 +673,26 @@ class Git(SCM):
         finally:
             # And then swap back to the original branch and clean up.
             self.clean_working_directory()
-            run_command(['git', 'checkout', '-q', branch_name])
+            self.run(['git', 'checkout', '-q', branch_name])
             self.delete_branch(MERGE_BRANCH)
 
         return output
 
     def svn_commit_log(self, svn_revision):
         svn_revision = self.strip_r_from_svn_revision(svn_revision)
-        return run_command(['git', 'svn', 'log', '-r', svn_revision])
+        return self.run(['git', 'svn', 'log', '-r', svn_revision])
 
     def last_svn_commit_log(self):
-        return run_command(['git', 'svn', 'log', '--limit=1'])
+        return self.run(['git', 'svn', 'log', '--limit=1'])
 
     # Git-specific methods:
 
     def delete_branch(self, branch):
-        if run_command(['git', 'show-ref', '--quiet', '--verify', 'refs/heads/' + branch], return_exit_code=True) == 0:
-            run_command(['git', 'branch', '-D', branch])
+        if self.run(['git', 'show-ref', '--quiet', '--verify', 'refs/heads/' + branch], return_exit_code=True) == 0:
+            self.run(['git', 'branch', '-D', branch])
 
     def svn_merge_base(self):
-        return run_command(['git', 'merge-base', self.svn_branch_name(), 'HEAD']).strip()
+        return self.run(['git', 'merge-base', self.svn_branch_name(), 'HEAD']).strip()
 
     def svn_branch_name(self):
         # FIXME: This should so something like: Git.read_git_config('svn-remote.svn.fetch').split(':')[1]
@@ -690,13 +700,13 @@ class Git(SCM):
         return 'trunk'
 
     def commit_locally_with_message(self, message):
-        run_command(['git', 'commit', '--all', '-F', '-'], input=message)
+        self.run(['git', 'commit', '--all', '-F', '-'], input=message)
 
     def push_local_commits_to_server(self):
         dcommit_command = ['git', 'svn', 'dcommit']
         if self.dryrun:
             dcommit_command.append('--dry-run')
-        output = run_command(dcommit_command, error_handler=commit_error_handler)
+        output = self.run(dcommit_command, error_handler=commit_error_handler)
         # Return a string which looks like a commit so that things which parse this output will succeed.
         if self.dryrun:
             output += "\nCommitted r0"
@@ -716,14 +726,14 @@ class Git(SCM):
             if '...' in commitish:
                 raise ScriptError(message="'...' is not supported (found in '%s'). Did you mean '..'?" % commitish)
             elif '..' in commitish:
-                commit_ids += reversed(run_command(['git', 'rev-list', commitish]).splitlines())
+                commit_ids += reversed(self.run(['git', 'rev-list', commitish]).splitlines())
             else:
                 # Turn single commits or branch or tag names into commit ids.
-                commit_ids += run_command(['git', 'rev-parse', '--revs-only', commitish]).splitlines()
+                commit_ids += self.run(['git', 'rev-parse', '--revs-only', commitish]).splitlines()
         return commit_ids
 
     def commit_message_for_local_commit(self, commit_id):
-        commit_lines = run_command(['git', 'cat-file', 'commit', commit_id]).splitlines()
+        commit_lines = self.run(['git', 'cat-file', 'commit', commit_id]).splitlines()
 
         # Skip the git headers.
         first_line_after_headers = 0
@@ -734,4 +744,4 @@ class Git(SCM):
         return CommitMessage(commit_lines[first_line_after_headers:])
 
     def files_changed_summary_for_commit(self, commit_id):
-        return run_command(['git', 'diff-tree', '--shortstat', '--no-commit-id', commit_id])
+        return self.run(['git', 'diff-tree', '--shortstat', '--no-commit-id', commit_id])
