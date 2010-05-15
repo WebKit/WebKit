@@ -3,4 +3,3 @@ Requesting notification permission...
 
 PASS: Permission callback invoked.
 
-

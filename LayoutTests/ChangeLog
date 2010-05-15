@@ -1,3 +1,15 @@
+2010-05-15  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Update notifications test results
+        https://bugs.webkit.org/show_bug.cgi?id=39126
+        Add missing line endings.
+
+        * fast/notifications/notifications-replace-expected.txt:
+        * fast/notifications/notifications-request-permission-expected.txt:
+        * fast/notifications/notifications-rtl-expected.txt:
+
 2010-05-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
