@@ -30,8 +30,9 @@ import re
 
 from google.appengine.api import memcache
 
-from model.queues import queues
+from model.queues import queues, name_with_underscores
 from model.queuestatus import QueueStatus
+from model.workitems import WorkItems
 
 
 class Attachment(object):
@@ -60,6 +61,7 @@ class Attachment(object):
     def __init__(self, attachment_id):
         self.id = attachment_id
         self._summary = None
+        self._cached_queue_positions = None
 
     def summary(self):
         if self._summary:
@@ -71,11 +73,7 @@ class Attachment(object):
         memcache.set(str(self.id), self._summary, namespace="attachment-summary")
         return self._summary
 
-    def _dash_to_underscore(self, dashed_name):
-        regexp = re.compile("-")
-        return regexp.sub("_", dashed_name)
-
-    def _state_from_status(self, status):
+    def state_from_queue_status(self, status):
         table = {
             "Pass" : "pass",
             "Fail" : "fail",
@@ -89,6 +87,40 @@ class Attachment(object):
             return "pending"
         return None
 
+    def position_in_queue(self, queue_name):
+        return self._queue_positions().get(queue_name)
+
+    def status_for_queue(self, queue_name):
+        underscore_queue_name = name_with_underscores(queue_name)
+        # summary() is a horrible API and should be killed.
+        queue_summary = self.summary().get(underscore_queue_name)
+        if not queue_summary:
+            return None
+        return queue_summary.get("status")
+
+    def bug_id(self):
+        return self.summary().get("bug_id")
+
+    def _queue_positions(self):
+        if self._cached_queue_positions:
+            return self._cached_queue_positions
+        # FIXME: Should we be mem-caching this?
+        self._cached_queue_positions = self._calculate_queue_positions()
+        return self._cached_queue_positions
+
+    def _calculate_queue_positions(self):
+        queue_positions = {}
+        for work_items in WorkItems.all().fetch(limit=len(queues)):
+            queue_name = str(work_items.queue_name)
+            try:
+                position = work_items.item_ids.index(self.id)
+                # Display 1-based indecies to the user.
+                queue_positions[queue_name] = position + 1
+            except ValueError, e:
+                queue_positions[queue_name] = None
+        return queue_positions
+
+    # FIXME: This is controller/view code and does not belong in a model.
     def _fetch_summary(self):
         summary = { "attachment_id" : self.id }
 
@@ -102,8 +134,8 @@ class Attachment(object):
             summary[queue] = None
             status = QueueStatus.all().filter('queue_name =', queue).filter('active_patch_id =', self.id).order('-date').get()
             if status:
-                summary[self._dash_to_underscore(queue)] = {
-                    "state" : self._state_from_status(status),
-                    "status" : status,
+                summary[name_with_underscores(queue)] = {
+                    "state": self.state_from_queue_status(status),
+                    "status": status,
                 }
         return summary

@@ -43,6 +43,8 @@ from handlers.statusbubble import StatusBubble
 from handlers.svnrevision import SVNRevision
 from handlers.updatestatus import UpdateStatus
 from handlers.updatesvnrevision import UpdateSVNRevision
+from handlers.updateworkitems import UpdateWorkItems
+
 
 webapp.template.register_template_library('filters.webkit_extras')
 
@@ -57,6 +59,7 @@ routes = [
     (r'/svn-revision/(.*)', SVNRevision),
     (r'/queue-status/(.*)', RecentStatus),
     ('/update-status', UpdateStatus),
+    ('/update-work-items', UpdateWorkItems),
     ('/update-svn-revision', UpdateSVNRevision),
 ]
 

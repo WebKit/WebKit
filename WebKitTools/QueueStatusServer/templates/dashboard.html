@@ -17,57 +17,27 @@ function statusDetail(patch_id) {
     <tr>
       <th>Bug</th>
       <th>Attachment</th>
-      <th>Style</th>
-      <th>Cr-Linux</th>
-      <th>Cr-Win</th>
-      <th>Qt</th>
-      <th>Mac</th>
-      <th>Win</th>
-      <th>Gtk</th>
-      <th>Commit</th>
+      {% for header in headers %}
+      <th>{{ header }}</th>
+      {% endfor %}
     </tr>
   </thead>
-  <tbody>{% for summary in summaries %}
+  <tbody>{% for row in rows %}
     <tr>
       <td class="status">
-        {{ summary.bug_id|force_escape|webkit_bug_id|safe }}
+        {{ row.bug_id|force_escape|webkit_bug_id|safe }}
       </td>
       <td class="status">
-        {{ summary.attachment_id|force_escape|webkit_attachment_id|safe }}
+        {{ row.attachment_id|force_escape|webkit_attachment_id|safe }}
       </td>
-      <!-- FIXME: Find some way to remove this copy-and-paste code! -->
-      <td class="status {{ summary.style_queue.state }}"{% if summary.style_queue.status %}
-          onclick="statusDetail({{ summary.attachment_id }})"
-          title="{{ summary.style_queue.status.date|timesince }}"{% endif %}>
+      {% for bubble in row.bubbles %}
+      <td class="status {{ bubble.status_class }}"
+        {% if bubble.status %}
+          onclick="statusDetail({{ row.attachment_id }})"
+          title="{{ bubble.status_date|timesince }}"
+        {% endif %}>
       </td>
-      <td class="status {{ summary.chromium_ews.state }}"{% if summary.chromium_ews.status %}
-          onclick="statusDetail({{ summary.attachment_id }})"
-          title="{{ summary.chromium_ews.status.date|timesince }} ago"{% endif %}>
-      </td>
-      <td class="status {{ summary.cr_win_ews.state }}"{% if summary.cr_win_ews.status %}
-          onclick="statusDetail({{ summary.attachment_id }})"
-          title="{{ summary.cr_win_ews.status.date|timesince }} ago"{% endif %}>
-      </td>
-      <td class="status {{ summary.qt_ews.state }}"{% if summary.qt_ews.status %}
-          onclick="statusDetail({{ summary.attachment_id }})"
-          title="{{ summary.qt_ews.status.date|timesince }} ago"{% endif %}>
-      </td>
-      <td class="status {{ summary.mac_ews.state }}"{% if summary.mac_ews.status %}
-          onclick="statusDetail({{ summary.attachment_id }})"
-          title="{{ summary.mac_ews.status.date|timesince }} ago"{% endif %}>
-      </td>
-      <td class="status {{ summary.win_ews.state }}"{% if summary.win_ews.status %}
-          onclick="statusDetail({{ summary.attachment_id }})"
-          title="{{ summary.win_ews.status.date|timesince }} ago"{% endif %}>
-      </td>
-      <td class="status {{ summary.gtk_ews.state }}"{% if summary.gtk_ews.status %}
-          onclick="statusDetail({{ summary.attachment_id }})"
-          title="{{ summary.gtk_ews.status.date|timesince }} ago"{% endif %}>
-      </td>
-      <td class="status {{ summary.commit_queue.state }}"{% if summary.commit_queue.status %}
-          onclick="statusDetail({{ summary.attachment_id }})"
-          title="{{ summary.commit_queue.status.date|timesince }} ago"{% endif %}>
-      </td>
+      {% endfor %}
     </tr>{% endfor %}
   </tbody>
 </table>

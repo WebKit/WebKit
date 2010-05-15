@@ -3,7 +3,7 @@
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -13,7 +13,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -26,21 +26,39 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import re
+from google.appengine.ext import webapp, db
+from google.appengine.ext.webapp import template
+
+from handlers.updatebase import UpdateBase
+from model.queues import queues
+from model.workitems import WorkItems
+
+from datetime import datetime
 
 
-queues = [
-    "commit-queue",
-    "style-queue",
-    "chromium-ews",
-    "cr-win-ews",
-    "qt-ews",
-    "gtk-ews",
-    "mac-ews",
-    "win-ews",
-]
+class UpdateWorkItems(UpdateBase):
+    def get(self):
+        self.response.out.write(template.render("templates/updateworkitems.html", None))
 
+    def _work_items_for_queue(self, queue_name):
+        if queue_name not in queues:
+            self.response.set_status(500)
+            return
+        work_items = WorkItems.all().filter("queue_name =", queue_name).get()
+        if not work_items:
+            work_items = WorkItems()
+            work_items.queue_name = queue_name
+        return work_items
 
-def name_with_underscores(dashed_name):
-    regexp = re.compile("-")
-    return regexp.sub("_", dashed_name)
+    def _work_items_from_request(self):
+        queue_name = self.request.get("queue_name")
+        work_items = self._work_items_for_queue(queue_name)
+        items_string = self.request.get("work_items")
+        # Our parsing could be much more robust.
+        work_items.item_ids = map(int, items_string.split(" "))
+        work_items.date = datetime.now()
+        return work_items
+
+    def post(self):
+        work_items = self._work_items_from_request()
+        work_items.put()

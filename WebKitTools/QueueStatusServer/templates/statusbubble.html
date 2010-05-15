@@ -18,26 +18,26 @@ body {
     border: 1px solid #AAA;
     background-color: white;
     font-size: 11px;
+    cursor: pointer;
+}
+.none {
+    cursor: auto;
 }
 .pass {
     background-color: #8FDF5F;
     border: 1px solid #4F8530;
-    cursor: pointer;
 }
 .fail {
     background-color: #E98080;
     border: 1px solid #A77272;
-    cursor: pointer;
 }
 .pending {
     background-color: #FFFC6C;
     border: 1px solid #C5C56D;
-    cursor: pointer;
 }
 .error {
   background-color: #E0B0FF;
   border: 1px solid #ACA0B3;
-  cursor: pointer;
 }
 </style>
 <script>
@@ -47,41 +47,15 @@ function statusDetail(patch_id) {
 </script>
 </head>
 <body>
-<!-- FIXME: Find some way to remove this copy-and-paste code! -->
-<div class="status {{ summary.style_queue.state }}"{% if summary.style_queue.status %}
-    onclick="statusDetail({{ summary.attachment_id }})"
-    title="{{ summary.style_queue.status.date|timesince }} ago"{% endif %}>
-  style
+{% for bubble in bubbles %}
+<div class="status {{ bubble.state }}"{% if bubble.status %}
+    onclick="statusDetail({{ bubble.attachment_id }})"
+    title="{{ bubble.status.date|timesince }} ago"{% endif %}>
+  {{ bubble.name }}
+  {% if bubble.queue_position %}
+  (#{{ bubble.queue_position }})
+  {% endif %}
 </div>
-<div class="status {{ summary.chromium_ews.state }}"{% if summary.chromium_ews.status %}
-    onclick="statusDetail({{ summary.attachment_id }})"
-    title="{{ summary.chromium_ews.status.date|timesince }} ago"{% endif %}>
-  cr-linux
-</div>
-<div class="status {{ summary.cr_win_ews.state }}"{% if summary.cr_win_ews.status %}
-    onclick="statusDetail({{ summary.attachment_id }})"
-    title="{{ summary.cr_win_ews.status.date|timesince }} ago"{% endif %}>
-  cr-win
-</div>
-<div class="status {{ summary.qt_ews.state }}"{% if summary.qt_ews.status %}
-    onclick="statusDetail({{ summary.attachment_id }})"
-    title="{{ summary.qt_ews.status.date|timesince }} ago"{% endif %}>
-  qt
-</div>
-<div class="status {{ summary.gtk_ews.state }}"{% if summary.gtk_ews.status %}
-    onclick="statusDetail({{ summary.attachment_id }})"
-    title="{{ summary.gtk_ews.status.date|timesince }} ago"{% endif %}>
-  gtk
-</div>
-<div class="status {{ summary.mac_ews.state }}"{% if summary.mac_ews.status %}
-    onclick="statusDetail({{ summary.attachment_id }})"
-    title="{{ summary.mac_ews.status.date|timesince }} ago"{% endif %}>
-  mac
-</div>
-<div class="status {{ summary.win_ews.state }}"{% if summary.win_ews.status %}
-    onclick="statusDetail({{ summary.attachment_id }})"
-    title="{{ summary.win_ews.status.date|timesince }} ago"{% endif %}>
-  win
-</div>
+{% endfor %}
 </body>
 </html>

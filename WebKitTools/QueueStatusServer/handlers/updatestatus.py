@@ -38,9 +38,10 @@ class UpdateStatus(UpdateBase):
     def get(self):
         self.response.out.write(template.render("templates/updatestatus.html", None))
 
-    def post(self):
+    def _queue_status_from_request(self):
         queue_status = QueueStatus()
 
+        # FIXME: I think this can be removed, no one uses it.
         if users.get_current_user():
             queue_status.author = users.get_current_user()
 
@@ -53,6 +54,10 @@ class UpdateStatus(UpdateBase):
         queue_status.message = self.request.get("status")
         results_file = self.request.get("results_file")
         queue_status.results_file = db.Blob(str(results_file))
+        return queue_status
+
+    def post(self):
+        queue_status = self._queue_status_from_request()
         queue_status.put()
-        Attachment.dirty(patch_id)
+        Attachment.dirty(queue_status.active_patch_id)
         self.response.out.write(queue_status.key().id())

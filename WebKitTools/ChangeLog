@@ -1,3 +1,48 @@
+2010-05-15  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Display queue position inside EWS bubbles
+        https://bugs.webkit.org/show_bug.cgi?id=38979
+
+        This ended up being a lot of clean-up to our status server code.
+
+        Added a new WorkItems model, a form with which to fill it,
+        and taught the Attachment class how to calculate the current queue
+        postion for an attachment using the data in WorkItems.
+
+        I also finally made statusbubble.* and dashboard.* not use copy-paste code.
+
+        The Attachment class has this summary() method which is very
+        controller/view-like and does not belong in a model class.
+        This patch got rid of all direct uses of summary().
+
+        * QueueStatusServer/handlers/dashboard.py:
+          - Build row objects to hand off to the view instead of handing off a
+            summary object and expecting the view to process it directly.
+        * QueueStatusServer/handlers/statusbubble.py:
+          - Build bubble object and hand them off to the view.
+        * QueueStatusServer/handlers/updatestatus.py:
+          - Code cleanup.  Just move some code into _queue_status_from_request
+            to make the main put() handler easier to read.
+        * QueueStatusServer/handlers/updateworkitems.py: Added.
+          - Controller to handle storing WorkItems model objects.
+        * QueueStatusServer/main.py:
+          - Add route for /update-work-items
+        * QueueStatusServer/model/attachment.py:
+          - Add new methods to replace direct summary() access.
+          - Teach attachment how to calculate queue positions from WorkItems data.
+        * QueueStatusServer/model/queues.py:
+          - Move name_with_underscores here for easier re-use.
+        * QueueStatusServer/model/workitems.py: Added.
+         - New model for storing what items are currently queue for any bot.
+        * QueueStatusServer/templates/dashboard.html:
+         - Kill the copy/paste code!
+        * QueueStatusServer/templates/statusbubble.html:
+         - Kill the copy/paste code!
+        * QueueStatusServer/templates/updateworkitems.html: Added.
+         - Simple form for updating a queue's current work items.
+
 2010-05-15  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.
