@@ -2,6 +2,7 @@
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *  Copyright (C) 2008, 2009 Torch Mobile, Inc. All rights reserved.
+ *  Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -38,6 +39,7 @@
 #include <limits.h>
 #include <locale.h>
 #include <math.h>
+#include <stdlib.h>
 #include <time.h>
 #include <wtf/Assertions.h>
 #include <wtf/DateMath.h>
@@ -248,7 +250,27 @@ static JSCell* formatLocaleDate(ExecState* exec, const GregorianDateTime& gdt, L
  
         strncpy(yearLocation, yearString, yearLen - 1);
     }
- 
+
+    // Convert multi-byte result to UNICODE.
+    // If __STDC_ISO_10646__ is defined, wide character represents
+    // UTF-16 (or UTF-32) code point. In most modern Unix like system
+    // (e.g. Linux with glibc 2.2 and above) the macro is defined,
+    // and wide character represents UTF-32 code point.
+    // Here we static_cast potential UTF-32 to UTF-16, it should be
+    // safe because date and (or) time related characters in different languages
+    // should be in UNICODE BMP. If mbstowcs fails, we just fall
+    // back on using multi-byte result as-is.
+#ifdef __STDC_ISO_10646__
+    UChar buffer[bufsize];
+    wchar_t tempbuffer[bufsize];
+    size_t length = mbstowcs(tempbuffer, timebuffer, bufsize - 1);
+    if (length != static_cast<size_t>(-1)) {
+        for (size_t i = 0; i < length; ++i)
+            buffer[i] = static_cast<UChar>(tempbuffer[i]);
+        return jsNontrivialString(exec, UString(buffer, length));
+    }
+#endif
+
     return jsNontrivialString(exec, timebuffer);
 }
 

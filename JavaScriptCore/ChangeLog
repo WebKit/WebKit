@@ -1,3 +1,12 @@
+2010-05-15  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Reviewed by Darin Adler.
+
+        Fix bug https://bugs.webkit.org/show_bug.cgi?id=38890
+
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate):
+
 2010-05-15  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Adam Treat.
