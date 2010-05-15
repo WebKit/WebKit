@@ -1,3 +1,14 @@
+2010-05-15  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        Reviewed by Simon Hausmann.
+
+        This patch fixes the build failure of WebKit on Linux for Qt4.5
+        https://bugs.webkig.org/show_bug.cgi?id=39108
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::syncLayers):
+        * WebCoreSupport/QtPlatformPlugin.cpp:
+
 2010-05-14  Kent Hansen <kent.hansen@nokia.com>, Jocelyn Turcotte <jocelyn.turcotte@nokia.com>, Tor Arne Vestbø <tor.arne.vestbo@nokia.com>, Henry Haverinen <henry.haverinen@nokia.com>, Jedrzej Nowacki <jedrzej.nowacki@nokia.com>, Andreas Kling <andreas.kling@nokia.com>
 
         Reviewed by Simon Hausmann.

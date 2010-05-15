@@ -26,7 +26,6 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QPluginLoader>
-#include <QScopedPointer>
 
 namespace WebCore {
 

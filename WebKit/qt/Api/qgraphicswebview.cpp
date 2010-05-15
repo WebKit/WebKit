@@ -57,9 +57,7 @@ public:
 
     virtual ~QGraphicsWebViewPrivate();
 
-#if USE(ACCELERATED_COMPOSITING)
     void syncLayers();
-#endif
 
     void updateResizesToContentsForPage();
     QRectF graphicsItemVisibleRect() const;
@@ -86,12 +84,12 @@ QGraphicsWebViewPrivate::~QGraphicsWebViewPrivate()
     detachCurrentPage();
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 void QGraphicsWebViewPrivate::syncLayers()
 {
+#if USE(ACCELERATED_COMPOSITING)
     static_cast<PageClientQGraphicsWidget*>(page->d->client)->syncLayers();
-}
 #endif
+}
 
 void QGraphicsWebViewPrivate::_q_doLoadFinished(bool success)
 {
