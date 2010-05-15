@@ -138,12 +138,14 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
             }
         } else if (context->fillPattern()) {
             AffineTransform affine;
-            cairo_set_source(cr, context->fillPattern()->createPlatformPattern(affine));
+            cairo_pattern_t* pattern = context->fillPattern()->createPlatformPattern(affine);
+            cairo_set_source(cr, pattern);
             if (context->getAlpha() < 1.0f) {
                 cairo_push_group(cr);
                 cairo_paint_with_alpha(cr, context->getAlpha());
                 cairo_pop_group_to_source(cr);
             }
+            cairo_pattern_destroy(pattern);
         } else {
             float red, green, blue, alpha;
             fillColor.getRGBA(red, green, blue, alpha);
@@ -172,12 +174,14 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
             }
         } else if (context->strokePattern()) {
             AffineTransform affine;
-            cairo_set_source(cr, context->strokePattern()->createPlatformPattern(affine));
+            cairo_pattern_t* pattern = context->strokePattern()->createPlatformPattern(affine);
+            cairo_set_source(cr, pattern);
             if (context->getAlpha() < 1.0f) {
                 cairo_push_group(cr);
                 cairo_paint_with_alpha(cr, context->getAlpha());
                 cairo_pop_group_to_source(cr);
             }
+            cairo_pattern_destroy(pattern);
         } else {
             Color strokeColor = context->strokeColor();
             float red, green, blue, alpha;
