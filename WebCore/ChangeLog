@@ -1,3 +1,17 @@
+2010-05-14  Steve Falkenburg  <sfalken@apple.com>
+
+        Merge r59515
+
+    2010-05-14  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Hopefully a last fix for the build. Call -mkdir instead of mkdir, so we don't bail if the mkdir call fails. Additionally,
+        use the %Env% syntax instead of $(Env), which is what we need if we are referring to Windows environment variables instead
+        of nmake variables.
+        
+        * WebCore.vcproj/WebCore.make:
+
 2010-05-14  Mark Rowe  <mrowe@apple.com>
 
         Merge r59505.
