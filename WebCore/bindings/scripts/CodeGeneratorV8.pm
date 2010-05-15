@@ -2446,6 +2446,7 @@ sub IsActiveDomType
     return 1 if $type eq "WebSocket";
     return 1 if $type eq "Worker";
     return 1 if $type eq "SharedWorker";
+    return 1 if $type eq "IDBRequest";
     return 0;
 }
 

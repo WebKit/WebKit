@@ -110,7 +110,7 @@ private:
     Timer<IDBRequest> m_timer;
     RefPtr<IDBRequest> m_selfRef; // This is set to us iff there's an event pending.
 
-    bool m_stopped;
+    bool m_suspended;
     bool m_aborted;
     ReadyState m_readyState;
     EventTargetData m_eventTargetData;
