@@ -35,6 +35,7 @@ namespace WebKit {
 
 class WebApplicationCacheHost;
 class WebApplicationCacheHostClient;
+class WebFrame;
 class WebNotificationPresenter;
 class WebString;
 class WebWorker;
@@ -78,6 +79,9 @@ public:
 
     // Called on the main webkit thread in the worker process during initialization.
     virtual WebApplicationCacheHost* createApplicationCacheHost(WebApplicationCacheHostClient*) = 0;
+
+    // Called on the main webkit thread before opening a web database.
+    virtual bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize) = 0;
 
 protected:
     ~WebCommonWorkerClient() { }

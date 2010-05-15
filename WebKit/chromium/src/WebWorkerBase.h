@@ -88,6 +88,9 @@ public:
     virtual void didCreateDataSource(WebFrame*, WebDataSource*);
     virtual WebApplicationCacheHost* createApplicationCacheHost(WebFrame*, WebApplicationCacheHostClient*);
 
+    // Controls whether access to Web Databases is allowed for this worker.
+    virtual bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize);
+
     // Executes the given task on the main thread.
     static void dispatchTaskToMainThread(PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
 

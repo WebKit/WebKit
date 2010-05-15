@@ -1,3 +1,25 @@
+2010-05-15  Jochen Eisinger  <jochen@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Implement canEstablishDatabase call for workers.
+        https://bugs.webkit.org/show_bug.cgi?id=38742
+
+        * public/WebCommonWorkerClient.h:
+        * src/DatabaseObserver.cpp:
+        (WebCore::DatabaseObserver::canEstablishDatabase):
+        * src/WebWorkerBase.cpp:
+        (WebKit::WebWorkerBase::allowDatabase):
+        (WebKit::WebWorkerBase::allowDatabaseTask):
+        (WebKit::WebWorkerBase::AllowDatabaseMainThreadBridge::AllowDatabaseMainThreadBridge):
+        (WebKit::WebWorkerBase::AllowDatabaseMainThreadBridge::cancel):
+        (WebKit::WebWorkerBase::AllowDatabaseMainThreadBridge::result):
+        (WebKit::WebWorkerBase::AllowDatabaseMainThreadBridge::signalCompleted):
+        (WebKit::WebWorkerBase::AllowDatabaseMainThreadBridge::didComplete):
+        * src/WebWorkerBase.h:
+        * src/WebWorkerClientImpl.h:
+        (WebKit::WebWorkerClientImpl::allowDatabase):
+
 2010-05-15  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Darin Fisher.

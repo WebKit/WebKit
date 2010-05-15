@@ -94,6 +94,11 @@ public:
         return 0;
     }
     virtual WebApplicationCacheHost* createApplicationCacheHost(WebApplicationCacheHostClient*) { return 0; }
+    virtual bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize)
+    {
+        ASSERT_NOT_REACHED();
+        return true;
+    }
 
 private:
     virtual ~WebWorkerClientImpl();
