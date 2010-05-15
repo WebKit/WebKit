@@ -31,13 +31,11 @@
 #ifndef FrameLoaderClientImpl_h
 #define FrameLoaderClientImpl_h
 
-// FIXME: remove this relative path once consumers from glue are removed.
-#include "../public/WebNavigationPolicy.h"
 #include "FrameLoaderClient.h"
 #include "KURL.h"
+#include "WebNavigationPolicy.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
-
 
 namespace WebKit {
 

@@ -33,8 +33,7 @@
 
 #if ENABLE(WORKERS)
 
-// FIXME: fix to just "WebWorkerClient.h" once nobody in glue depends on us.
-#include "../public/WebWorkerClient.h"
+#include "WebWorkerClient.h"
 
 #include "WorkerContextProxy.h"
 #include <wtf/PassOwnPtr.h>

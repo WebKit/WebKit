@@ -31,12 +31,11 @@
 #ifndef WebViewImpl_h
 #define WebViewImpl_h
 
-// FIXME: Remove these relative paths once consumers from glue are removed.
-#include "../public/WebNavigationPolicy.h"
-#include "../public/WebPoint.h"
-#include "../public/WebSize.h"
-#include "../public/WebString.h"
-#include "../public/WebView.h"
+#include "WebNavigationPolicy.h"
+#include "WebPoint.h"
+#include "WebSize.h"
+#include "WebString.h"
+#include "WebView.h"
 
 #include "BackForwardListClientImpl.h"
 #include "ChromeClientImpl.h"
@@ -47,7 +46,6 @@
 #include "InspectorClientImpl.h"
 #include "LayerRendererChromium.h"
 #include "NotificationPresenterImpl.h"
-
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 

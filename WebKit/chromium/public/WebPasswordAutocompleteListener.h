@@ -49,5 +49,4 @@ public:
 
 } // namespace WebKit
 
-
 #endif

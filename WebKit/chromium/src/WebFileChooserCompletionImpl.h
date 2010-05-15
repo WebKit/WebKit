@@ -31,14 +31,11 @@
 #ifndef WebFileChooserCompletionImpl_h
 #define WebFileChooserCompletionImpl_h
 
-// FIXME: These relative paths are a temporary hack to support using this
-// header from webkit/glue.
-#include "../public/WebFileChooserCompletion.h"
-#include "../public/WebString.h"
-#include "../public/WebVector.h"
+#include "WebFileChooserCompletion.h"
+#include "WebString.h"
+#include "WebVector.h"
 
 #include "FileChooser.h"
-
 #include <wtf/PassRefPtr.h>
 
 using WebKit::WebFileChooserCompletion;

@@ -31,8 +31,7 @@
 #ifndef WebSettingsImpl_h
 #define WebSettingsImpl_h
 
-// TODO(jorlow): Remove this hack once WebView is free of glue.
-#include "../public/WebSettings.h"
+#include "WebSettings.h"
 
 namespace WebCore {
 class Settings;

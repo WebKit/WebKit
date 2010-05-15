@@ -31,14 +31,10 @@
 #ifndef WebPopupMenuImpl_h
 #define WebPopupMenuImpl_h
 
-// FIXME: Add this to FramelessScrollViewClient.h
-namespace WebCore { class FramelessScrollView; }
-
 #include "FramelessScrollViewClient.h"
-// FIXME: remove the relative paths once glue/ consumers are removed.
-#include "../public/WebPoint.h"
-#include "../public/WebPopupMenu.h"
-#include "../public/WebSize.h"
+#include "WebPoint.h"
+#include "WebPopupMenu.h"
+#include "WebSize.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

@@ -31,9 +31,7 @@
 #ifndef WebDevToolsAgentPrivate_h
 #define WebDevToolsAgentPrivate_h
 
-// FIXME: This relative path is a temporary hack to support using this
-// header from webkit/glue.
-#include "../public/WebDevToolsAgent.h"
+#include "WebDevToolsAgent.h"
 
 namespace WebKit {
 class WebFrameImpl;

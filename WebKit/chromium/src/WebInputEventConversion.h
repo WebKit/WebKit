@@ -31,9 +31,7 @@
 #ifndef WebInputEventConversion_h
 #define WebInputEventConversion_h
 
-// FIXME: This relative path is a temporary hack to support using this
-// header from webkit/glue.
-#include "../public/WebInputEvent.h"
+#include "WebInputEvent.h"
 
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"

@@ -31,9 +31,7 @@
 #ifndef WrappedResourceRequest_h
 #define WrappedResourceRequest_h
 
-// FIXME: This relative path is a temporary hack to support using this
-// header from webkit/glue.
-#include "../public/WebURLRequest.h"
+#include "WebURLRequest.h"
 #include "WebURLRequestPrivate.h"
 
 namespace WebKit {

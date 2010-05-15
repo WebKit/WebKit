@@ -31,15 +31,14 @@
 #ifndef WebFrameImpl_h
 #define WebFrameImpl_h
 
-// FIXME: remove this relative path once consumers from glue are removed.
-#include "../public/WebFrame.h"
+#include "WebAnimationControllerImpl.h"
+#include "WebFrame.h"
+
 #include "Frame.h"
 #include "FrameLoaderClientImpl.h"
 #include "PlatformString.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
-
-#include "WebAnimationControllerImpl.h"
 
 namespace WebCore {
 class GraphicsContext;

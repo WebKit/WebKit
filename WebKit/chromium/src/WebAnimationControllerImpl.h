@@ -31,9 +31,7 @@
 #ifndef WebAnimationControllerImpl_h
 #define WebAnimationControllerImpl_h
 
-// FIXME: This relative path is a temporary hack to support using this
-// header from webkit/glue.
-#include "../public/WebAnimationController.h"
+#include "WebAnimationController.h"
 
 namespace WebCore {
 class AnimationController;
