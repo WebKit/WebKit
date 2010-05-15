@@ -134,6 +134,17 @@ struct WebContextMenuData {
 
     // Custom context menu items provided by the WebCore internals.
     WebVector<WebMenuItemInfo> customItems;
+
+    WebContextMenuData()
+        : mediaType(MediaTypeNone)
+        , isImageBlocked(false)
+        , mediaFlags(MediaNone)
+        , isSpellCheckingEnabled(false)
+        , isEditable(false)
+        , writingDirectionDefault(CheckableMenuItemDisabled)
+        , writingDirectionLeftToRight(CheckableMenuItemEnabled)
+        , writingDirectionRightToLeft(CheckableMenuItemEnabled)
+        , editFlags(0) { }
 };
 
 } // namespace WebKit

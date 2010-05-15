@@ -151,9 +151,6 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
     // all else.
     data.linkURL = r.absoluteLinkURL();
 
-    data.mediaType = WebContextMenuData::MediaTypeNone;
-    data.mediaFlags = WebContextMenuData::MediaNone;
-
     if (!r.absoluteImageURL().isEmpty()) {
         data.srcURL = r.absoluteImageURL();
         data.mediaType = WebContextMenuData::MediaTypeImage;
@@ -202,7 +199,6 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
     if (r.isSelected())
         data.selectedText = selectedFrame->selectedText().stripWhiteSpace();
 
-    data.isEditable = false;
     if (r.isContentEditable()) {
         data.isEditable = true;
         if (m_webView->focusedWebCoreFrame()->editor()->isContinuousSpellCheckingEnabled()) {
@@ -212,11 +208,6 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
     }
 
 #if OS(DARWIN)
-    // Writing direction context menu.
-    data.writingDirectionDefault = WebContextMenuData::CheckableMenuItemDisabled;
-    data.writingDirectionLeftToRight = WebContextMenuData::CheckableMenuItemEnabled;
-    data.writingDirectionRightToLeft = WebContextMenuData::CheckableMenuItemEnabled;
-
     ExceptionCode ec = 0;
     RefPtr<CSSStyleDeclaration> style = selectedFrame->document()->createCSSStyleDeclaration();
     style->setProperty(CSSPropertyDirection, "ltr", false, ec);

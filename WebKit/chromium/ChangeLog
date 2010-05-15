@@ -1,3 +1,22 @@
+2010-05-15  Evan Stade  <estade@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [chromium] "Check spelling in this field" context menu item always checked
+        https://bugs.webkit.org/show_bug.cgi?id=39018
+
+        Initialize all POD members of WebContextMenuData in a default
+        constructor.
+
+        No tests because this code would need some major refactoring to unit
+        test, and AFAICT it's not testable via layout tests. See note at top
+        of getCustomMenuFromDefaultItems.
+
+        * public/WebContextMenuData.h:
+        (WebKit::WebContextMenuData::WebContextMenuData):
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+
 2010-05-14  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Dimitri Glazkov.
