@@ -527,6 +527,7 @@ webcore_sources += \
 	WebCore/bindings/js/ScriptEventListener.h \
 	WebCore/bindings/js/ScriptFunctionCall.cpp \
 	WebCore/bindings/js/ScriptFunctionCall.h \
+	WebCore/bindings/js/ScriptGCEvent.cpp \
 	WebCore/bindings/js/ScriptGCEvent.h \
 	WebCore/bindings/js/ScriptInstance.h \
 	WebCore/bindings/js/ScriptObject.cpp \

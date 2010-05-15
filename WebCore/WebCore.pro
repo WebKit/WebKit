@@ -362,6 +362,7 @@ SOURCES += \
     bindings/js/ScriptDebugServer.cpp \
     bindings/js/ScriptEventListener.cpp \
     bindings/js/ScriptFunctionCall.cpp \
+    bindings/js/ScriptGCEvent.cpp \
     bindings/js/ScriptObject.cpp \
     bindings/js/ScriptState.cpp \
     bindings/js/ScriptValue.cpp \

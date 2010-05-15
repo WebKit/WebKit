@@ -28,24 +28,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptGCEvent_h
-#define ScriptGCEvent_h
+#include "config.h"
+#include "ScriptGCEvent.h"
 
 #if ENABLE(INSPECTOR)
 
+#include "JSDOMWindow.h"
+#include <runtime/Collector.h>
+#include <runtime/JSGlobalData.h>
+#include <wtf/CurrentTime.h>
+
 namespace WebCore {
 
-class ScriptGCEventListener;
+using namespace JSC;
 
-class ScriptGCEvent
+void ScriptGCEvent::getHeapSize(size_t& usedHeapSize, size_t& totalHeapSize)
 {
-public:
-    static void addEventListener(ScriptGCEventListener*) { }
-    static void removeEventListener(ScriptGCEventListener*) { }
-    static void getHeapSize(size_t& usedHeapSize, size_t& totalHeapSize);
-};
-
+    JSGlobalData* globalData = JSDOMWindow::commonJSGlobalData();
+    totalHeapSize = globalData->heap.size();
+    usedHeapSize = totalHeapSize;
+}
 } // namespace WebCore
 
 #endif // !ENABLE(INSPECTOR)
-#endif // !defined(ScriptGCEvent_h)

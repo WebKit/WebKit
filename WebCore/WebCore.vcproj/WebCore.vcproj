@@ -41460,6 +41460,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\ScriptGCEvent.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\ScriptGCEvent.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\ScriptObject.cpp"
 					>
 				</File>

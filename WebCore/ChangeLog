@@ -1,3 +1,18 @@
+2010-05-15  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Geoffrey Garen.
+
+        WebInspector: JSC Should provide heap size info for Timeline panel.
+        https://bugs.webkit.org/show_bug.cgi?id=38420
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ScriptGCEvent.cpp: Added.
+        (WebCore::ScriptGCEvent::getHeapSize):
+        * bindings/js/ScriptGCEvent.h:
+
 2010-05-15  Dave Tapuska  <dtapuska@rim.com>
 
         Reviewed by Darin Adler.

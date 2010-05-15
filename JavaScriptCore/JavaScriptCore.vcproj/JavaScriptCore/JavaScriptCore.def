@@ -263,6 +263,7 @@ EXPORTS
     ?setWritable@PropertyDescriptor@JSC@@QAEX_N@Z
     ?setter@PropertyDescriptor@JSC@@QBE?AVJSValue@2@XZ
     ?signal@ThreadCondition@WTF@@QAEXXZ
+    ?size@Heap@JSC@@QBEIXZ
     ?slowAppend@MarkedArgumentBuffer@JSC@@AAEXVJSValue@2@@Z
     ?startIgnoringLeaks@Structure@JSC@@SAXXZ
     ?startProfiling@Profiler@JSC@@QAEXPAVExecState@2@ABVUString@2@@Z

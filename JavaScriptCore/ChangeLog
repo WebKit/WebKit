@@ -1,3 +1,16 @@
+2010-05-15  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Geoffrey Garen.
+
+        WebInspector: JSC Should provide heap size info for Timeline panel.
+        https://bugs.webkit.org/show_bug.cgi?id=38420
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/Collector.cpp:
+        (JSC::Heap::size):
+        * runtime/Collector.h:
+
 2010-05-15  Dave Tapuska  <dtapuska@rim.com>
 
         Reviewed by Darin Adler.
