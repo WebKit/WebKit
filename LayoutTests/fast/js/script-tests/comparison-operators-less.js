@@ -33,6 +33,7 @@ function doTest(lhs, rhs, relationship) {
 
 var letterA = "a";
 var letterB = "b";
+var letter0 = "0";
 var One = 1;
 var Zero = 0;
 doTest('"a"', '"b"', -1);
@@ -58,6 +59,15 @@ doTest('0', 'letterA', NaN);
 doTest('"a"', 'letterA', 0);
 doTest('0', 'letterA', NaN);
 
+
+doTest('0', '"0"', 0);
+doTest('Zero', 'letter0', 0);
+doTest('0', 'letter0', 0);
+doTest('Zero', '"0"', 0);
+doTest('-1', '"0"', -1);
+doTest('1', '"0"', 1);
+doTest('0', '"-1"', 1);
+doTest('0', '"1"', -1);
 
 doTest('0', '1', -1);
 doTest('0', '0', 0);

@@ -370,7 +370,7 @@ void JIT::emitSlow_op_jnless(Instruction* currentInstruction, Vector<SlowCaseEnt
         linkSlowCase(iter);
         linkSlowCase(iter);
         linkSlowCase(iter);
-        JITStubCall stubCall(this, cti_op_jlesseq);
+        JITStubCall stubCall(this, cti_op_jless);
         stubCall.addArgument(op1, regT0);
         stubCall.addArgument(op2, regT1);
         stubCall.call();
@@ -585,7 +585,7 @@ void JIT::emitSlow_op_jless(Instruction* currentInstruction, Vector<SlowCaseEntr
         linkSlowCase(iter);
         linkSlowCase(iter);
         linkSlowCase(iter);
-        JITStubCall stubCall(this, cti_op_jlesseq);
+        JITStubCall stubCall(this, cti_op_jless);
         stubCall.addArgument(op1, regT0);
         stubCall.addArgument(op2, regT1);
         stubCall.call();

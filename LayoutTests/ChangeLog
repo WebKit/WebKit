@@ -1,3 +1,17 @@
+2010-05-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Incorrect codegen for slowcase of < in 64-bit
+        https://bugs.webkit.org/show_bug.cgi?id=39151
+
+        Add yet more tests for the < operator when comparing integer strings.
+
+        * fast/js/comparison-operators-greater-expected.txt:
+        * fast/js/comparison-operators-less-expected.txt:
+        * fast/js/script-tests/comparison-operators-greater.js:
+        * fast/js/script-tests/comparison-operators-less.js:
+
 2010-05-15  Yael Aharon  <yael.aharon@nokia.com>
 
         Unreviewed. 
