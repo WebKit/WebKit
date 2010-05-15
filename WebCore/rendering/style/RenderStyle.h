@@ -661,6 +661,7 @@ public:
     bool hasAutoColumnWidth() const { return rareNonInheritedData->m_multiCol->m_autoWidth; }
     unsigned short columnCount() const { return rareNonInheritedData->m_multiCol->m_count; }
     bool hasAutoColumnCount() const { return rareNonInheritedData->m_multiCol->m_autoCount; }
+    bool specifiesColumns() const { return !hasAutoColumnCount() || !hasAutoColumnWidth(); }
     float columnGap() const { return rareNonInheritedData->m_multiCol->m_gap; }
     bool hasNormalColumnGap() const { return rareNonInheritedData->m_multiCol->m_normalGap; }
     const Color& columnRuleColor() const { return rareNonInheritedData->m_multiCol->m_rule.color(); }

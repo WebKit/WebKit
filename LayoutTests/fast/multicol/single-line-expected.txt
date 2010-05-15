@@ -11,27 +11,32 @@ layer at (0,0) size 800x290
         RenderText {#text} at (0,0) size 555x18
           text run at (0,0) width 298: "Test successful if the following text is readable "
           text run at (298,0) width 257: "(i.e. not split into two different columns)."
-      RenderBlock {P} at (0,68) size 784x18 [bgcolor=#EEEEEE]
-        RenderText {#text} at (0,0) size 65x18
-          text run at (0,0) width 65: "Short text."
-      RenderBlock {P} at (0,102) size 784x36 [bgcolor=#EEEEEE]
-        RenderInline {SPAN} at (0,0) size 141x36
-          RenderText {#text} at (0,0) size 141x36
-            text run at (0,0) width 141: "Bigger text."
-        RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,154) size 784x36 [bgcolor=#EEEEEE]
-        RenderText {#text} at (0,14) size 56x18
-          text run at (0,14) width 56: "Partially "
-        RenderInline {SPAN} at (0,0) size 38x36
-          RenderText {#text} at (56,0) size 38x36
-            text run at (56,0) width 38: "big"
-        RenderText {#text} at (94,14) size 31x18
-          text run at (94,14) width 31: " text."
-      RenderBlock {DIV} at (0,206) size 784x18 [bgcolor=#EEEEEE]
-        RenderBlock {P} at (0,0) size 184x18
-          RenderText {#text} at (0,0) size 87x18
-            text run at (0,0) width 87: "Nested block."
       RenderBlock {DIV} at (0,240) size 784x18
-        RenderBlock {P} at (0,0) size 784x18 [bgcolor=#EEEEEE]
-          RenderText {#text} at (0,0) size 107x18
-            text run at (0,0) width 107: "Nested block #2."
+layer at (8,84) size 784x18
+  RenderBlock {P} at (0,68) size 784x18 [bgcolor=#EEEEEE]
+    RenderText {#text} at (0,0) size 65x18
+      text run at (0,0) width 65: "Short text."
+layer at (8,118) size 784x36
+  RenderBlock {P} at (0,102) size 784x36 [bgcolor=#EEEEEE]
+    RenderInline {SPAN} at (0,0) size 141x36
+      RenderText {#text} at (0,0) size 141x36
+        text run at (0,0) width 141: "Bigger text."
+    RenderText {#text} at (0,0) size 0x0
+layer at (8,170) size 784x36
+  RenderBlock {P} at (0,154) size 784x36 [bgcolor=#EEEEEE]
+    RenderText {#text} at (0,14) size 56x18
+      text run at (0,14) width 56: "Partially "
+    RenderInline {SPAN} at (0,0) size 38x36
+      RenderText {#text} at (56,0) size 38x36
+        text run at (56,0) width 38: "big"
+    RenderText {#text} at (94,14) size 31x18
+      text run at (94,14) width 31: " text."
+layer at (8,222) size 784x18
+  RenderBlock {DIV} at (0,206) size 784x18 [bgcolor=#EEEEEE]
+    RenderBlock {P} at (0,0) size 184x18
+      RenderText {#text} at (0,0) size 87x18
+        text run at (0,0) width 87: "Nested block."
+layer at (8,256) size 784x18
+  RenderBlock {P} at (0,0) size 784x18 [bgcolor=#EEEEEE]
+    RenderText {#text} at (0,0) size 107x18
+      text run at (0,0) width 107: "Nested block #2."

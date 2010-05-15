@@ -51,6 +51,7 @@ public:
     void setHeight(int height) { m_frameRect.setHeight(height); }
     
     IntPoint location() const { return m_frameRect.location(); }
+    IntSize locationOffset() const { return IntSize(x(), y()); }
     IntSize size() const { return m_frameRect.size(); }
 
     void setLocation(const IntPoint& location) { m_frameRect.setLocation(location); }

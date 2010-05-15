@@ -44,6 +44,8 @@ public:
 
     virtual bool isRenderView() const { return true; }
 
+    virtual bool requiresLayer() const { return true; }
+
     virtual void layout();
     virtual void calcWidth();
     virtual void calcHeight();

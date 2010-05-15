@@ -3769,7 +3769,7 @@ int RenderBlock::layoutColumns(int endOfContent, int requestedColumnHeight)
         int truncationPoint = visibleTopOfHighestFloatExtendingBelow(currY + colHeight, colHeight);
 
         // For the simulated paint, we pretend like everything is in one long strip.
-        IntRect pageRect(left, currY, desiredColumnWidth, truncationPoint - currY);
+        IntRect pageRect(left, currY, contentWidth(), truncationPoint - currY);
         v->setPrintRect(pageRect);
         v->setTruncatedAt(truncationPoint);
         GraphicsContext context((PlatformGraphicsContext*)0);
@@ -3927,11 +3927,10 @@ void RenderBlock::adjustForColumns(IntSize& offset, const IntPoint& point) const
     if (!hasColumns())
         return;
 
-    // FIXME: This is incorrect for right-to-left columns.
-
     Vector<IntRect>& columnRects = *this->columnRects();
 
     int gapWidth = columnGap();
+    
     int xOffset = 0;
     int yOffset = 0;
     size_t columnCount = columnRects.size();
@@ -3942,7 +3941,10 @@ void RenderBlock::adjustForColumns(IntSize& offset, const IntPoint& point) const
             return;
         }
 
-        xOffset += columnRect.width() + gapWidth;
+        if (style()->direction() == LTR)
+            xOffset += columnRect.width() + gapWidth;
+        else
+            xOffset -= columnRect.width() + gapWidth;
         yOffset += columnRect.height();
     }
 }

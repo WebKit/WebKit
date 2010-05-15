@@ -587,72 +587,15 @@ bool RenderLayer::update3DTransformedDescendantStatus()
 
 void RenderLayer::updateLayerPosition()
 {
-    // Clear our cached clip rect information.
-    clearClipRects();
-
-    RenderBox* rendererBox = renderBox();
-    
-    int x = rendererBox ? rendererBox->x() : 0;
-    int y = rendererBox ? rendererBox->y() : 0;
-
-    if (!renderer()->isPositioned() && renderer()->parent()) {
-        // We must adjust our position by walking up the render tree looking for the
-        // nearest enclosing object with a layer.
-        RenderObject* curr = renderer()->parent();
-        while (curr && !curr->hasLayer()) {
-            if (curr->isBox() && !curr->isTableRow()) {
-                // Rows and cells share the same coordinate space (that of the section).
-                // Omit them when computing our xpos/ypos.
-                RenderBox* currBox = toRenderBox(curr);
-                x += currBox->x();
-                y += currBox->y();
-            }
-            curr = curr->parent();
-        }
-        if (curr->isBox() && curr->isTableRow()) {
-            // Put ourselves into the row coordinate space.
-            RenderBox* currBox = toRenderBox(curr);
-            x -= currBox->x();
-            y -= currBox->y();
-        }
-    }
-
-    m_relX = m_relY = 0;
-    if (renderer()->isRelPositioned()) {
-        m_relX = renderer()->relativePositionOffsetX();
-        m_relY = renderer()->relativePositionOffsetY();
-        x += m_relX; y += m_relY;
-    }
-    
-    // Subtract our parent's scroll offset.
-    if (renderer()->isPositioned() && enclosingPositionedAncestor()) {
-        RenderLayer* positionedParent = enclosingPositionedAncestor();
-
-        // For positioned layers, we subtract out the enclosing positioned layer's scroll offset.
-        IntSize offset = positionedParent->scrolledContentOffset();
-        x -= offset.width();
-        y -= offset.height();
-        
-        if (renderer()->isPositioned() && positionedParent->renderer()->isRelPositioned() && positionedParent->renderer()->isRenderInline()) {
-            IntSize offset = toRenderInline(positionedParent->renderer())->relativePositionedInlineOffset(toRenderBox(renderer()));
-            x += offset.width();
-            y += offset.height();
-        }
-    } else if (parent()) {
-        IntSize offset = parent()->scrolledContentOffset();
-        x -= offset.width();
-        y -= offset.height();
-    }
-    
-    // FIXME: We'd really like to just get rid of the concept of a layer rectangle and rely on the renderers.
-
-    setLocation(x, y);
-
+    IntPoint localPoint;
+    IntSize inlineBoundingBoxOffset; // We don't put this into the RenderLayer x/y for inlines, so we need to subtract it out when done.
     if (renderer()->isRenderInline()) {
         RenderInline* inlineFlow = toRenderInline(renderer());
         IntRect lineBox = inlineFlow->linesBoundingBox();
         setWidth(lineBox.width());
         setHeight(lineBox.height());
+        inlineBoundingBoxOffset = IntSize(lineBox.x(), lineBox.y());
+        localPoint += inlineBoundingBoxOffset;
     } else if (RenderBox* box = renderBox()) {
         setWidth(box->width());
         setHeight(box->height());
@@ -663,7 +606,62 @@ void RenderLayer::updateLayerPosition()
             if (box->bottomLayoutOverflow() > box->height())
                 setHeight(box->bottomLayoutOverflow());
         }
+        
+        localPoint += box->locationOffset();
     }
+
+    // Clear our cached clip rect information.
+    clearClipRects();
+ 
+    if (!renderer()->isPositioned() && renderer()->parent()) {
+        // We must adjust our position by walking up the render tree looking for the
+        // nearest enclosing object with a layer.
+        RenderObject* curr = renderer()->parent();
+        while (curr && !curr->hasLayer()) {
+            if (curr->isBox() && !curr->isTableRow()) {
+                // Rows and cells share the same coordinate space (that of the section).
+                // Omit them when computing our xpos/ypos.
+                localPoint += toRenderBox(curr)->locationOffset();
+            }
+            curr = curr->parent();
+        }
+        if (curr->isBox() && curr->isTableRow()) {
+            // Put ourselves into the row coordinate space.
+            localPoint -= toRenderBox(curr)->locationOffset();
+        }
+    }
+    
+    // Subtract our parent's scroll offset.
+    if (renderer()->isPositioned() && enclosingPositionedAncestor()) {
+        RenderLayer* positionedParent = enclosingPositionedAncestor();
+
+        // For positioned layers, we subtract out the enclosing positioned layer's scroll offset.
+        IntSize offset = positionedParent->scrolledContentOffset();
+        localPoint -= offset;
+        
+        if (renderer()->isPositioned() && positionedParent->renderer()->isRelPositioned() && positionedParent->renderer()->isRenderInline()) {
+            IntSize offset = toRenderInline(positionedParent->renderer())->relativePositionedInlineOffset(toRenderBox(renderer()));
+            localPoint += offset;
+        }
+    } else if (parent()) {
+        IntSize columnOffset;
+        parent()->renderer()->adjustForColumns(columnOffset, localPoint);
+        localPoint += columnOffset;
+        
+        IntSize scrollOffset = parent()->scrolledContentOffset();
+        localPoint -= scrollOffset;
+    }
+        
+    m_relX = m_relY = 0;
+    if (renderer()->isRelPositioned()) {
+        m_relX = renderer()->relativePositionOffsetX();
+        m_relY = renderer()->relativePositionOffsetY();
+        localPoint.move(m_relX, m_relY);
+    }
+
+    // FIXME: We'd really like to just get rid of the concept of a layer rectangle and rely on the renderers.
+    localPoint -= inlineBoundingBoxOffset;
+    setLocation(localPoint.x(), localPoint.y());
 }
 
 TransformationMatrix RenderLayer::perspectiveTransform() const
@@ -1148,7 +1146,7 @@ RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, int& xPos, i
         return;
     
     parentLayer->convertToLayerCoords(ancestorLayer, xPos, yPos);
-
+    
     xPos += x();
     yPos += y();
 }
@@ -3429,7 +3427,8 @@ void RenderLayer::repaintIncludingNonCompositingDescendants(RenderBoxModelObject
 
 bool RenderLayer::shouldBeNormalFlowOnly() const
 {
-    return (renderer()->hasOverflowClip() || renderer()->hasReflection() || renderer()->hasMask() || renderer()->isVideo() || renderer()->isEmbeddedObject() || renderer()->isRenderIFrame())
+    return (renderer()->hasOverflowClip() || renderer()->hasReflection() || renderer()->hasMask() || renderer()->isVideo() || renderer()->isEmbeddedObject() || 
+            renderer()->isRenderIFrame() || renderer()->style()->specifiesColumns())
             && !renderer()->isPositioned()
             && !renderer()->isRelPositioned()
             && !renderer()->hasTransform()

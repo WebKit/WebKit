@@ -69,10 +69,6 @@ RenderView::RenderView(Node* node, FrameView* view)
     setPrefWidthsDirty(true, false);
     
     setPositioned(true); // to 0,0 :)
-
-    // Create a new root layer for our layer hierarchy.
-    m_layer = new (node->document()->renderArena()) RenderLayer(this);
-    setHasLayer(true);
 }
 
 RenderView::~RenderView()

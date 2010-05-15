@@ -1,3 +1,50 @@
+2010-05-14  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39137
+
+        Make RenderLayers position properly inside multicolumn layout.
+        
+        (1) Create RenderLayers when column properties are specified.  This allows descendant layers to easily
+        know they are inside a multicolumn layout when positioning.
+        
+        (2) Patch updateLayerPosition to offset the layer into the first column that contains the layer.  Splitting
+        of a layer across columns still does not work, but the layer will now at least appear in the first column in
+        which it occurs.
+        
+        (3) Fix pagination bugs caused by the fact that visual overflow doesn't propagate up the line box tree when layers
+        are involved.  Make sure to use lineTop and lineBottom in this case (it's not perfect, but it gets most cases
+        working properly).  With this change elements like <video> will paginate properly and not get split across pages.
+
+        (4) Make column repainting and layer positioning work with RTL columns by fixing adjustForColumns to
+        account for RTL.
+        
+        (5) Fix RTL pagination by making sure the column pagination rects are the content width of the whole block and not just
+        the width of one column.
+
+        Added fast/multicol/layers-in-multicol.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutColumns):
+        (WebCore::RenderBlock::adjustForColumns):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::locationOffset):
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::requiresLayer):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::RenderLayer::convertToLayerCoords):
+        (WebCore::RenderLayer::shouldBeNormalFlowOnly):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::paint):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::requiresLayer):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::specifiesColumns):
+
 2010-05-14  Leon Clarke  <leonclarke@google.com>
 
         Reviewed by Steve Block.

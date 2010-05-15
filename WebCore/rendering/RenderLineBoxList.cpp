@@ -158,12 +158,21 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, RenderObject::Pain
     if (!firstLineBox())
         return;
 
+    RenderView* v = renderer->view();
+    bool usePrintRect = !v->printRect().isEmpty();
+    
     // We can check the first box and last box and avoid painting if we don't
     // intersect.  This is a quick short-circuit that we can take to avoid walking any lines.
     // FIXME: This check is flawed in the following extremely obscure way:
     // if some line in the middle has a huge overflow, it might actually extend below the last line.
-    int yPos = firstLineBox()->topVisibleOverflow() - renderer->maximalOutlineSize(paintInfo.phase);
-    int h = renderer->maximalOutlineSize(paintInfo.phase) + lastLineBox()->bottomVisibleOverflow() - yPos;
+    int firstLineTop = firstLineBox()->topVisibleOverflow();
+    if (usePrintRect && !firstLineBox()->parent())
+        firstLineTop = min(firstLineTop, firstLineBox()->root()->lineTop());
+    int lastLineBottom = lastLineBox()->bottomVisibleOverflow();
+    if (usePrintRect && !lastLineBox()->parent())
+        lastLineBottom = max(lastLineBottom, lastLineBox()->root()->lineBottom());
+    int yPos = firstLineTop - renderer->maximalOutlineSize(paintInfo.phase);
+    int h = renderer->maximalOutlineSize(paintInfo.phase) + lastLineBottom - yPos;
     yPos += ty;
     if (yPos >= paintInfo.rect.bottom() || yPos + h <= paintInfo.rect.y())
         return;
@@ -175,8 +184,6 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, RenderObject::Pain
     // See if our root lines intersect with the dirty rect.  If so, then we paint
     // them.  Note that boxes can easily overlap, so we can't make any assumptions
     // based off positions of our first line box or our last line box.
-    RenderView* v = renderer->view();
-    bool usePrintRect = !v->printRect().isEmpty();
     for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
         if (usePrintRect) {
             // FIXME: This is a feeble effort to avoid splitting a line across two pages.
@@ -184,12 +191,19 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, RenderObject::Pain
             // The whole way objects break across pages needs to be redone.
             // Try to avoid splitting a line vertically, but only if it's less than the height
             // of the entire page.
-            if (curr->bottomVisibleOverflow() - curr->topVisibleOverflow() <= v->printRect().height()) {
-                if (ty + curr->bottomVisibleOverflow() > v->printRect().bottom()) {
-                    if (ty + curr->topVisibleOverflow() < v->truncatedAt())
-                        v->setBestTruncatedAt(ty + curr->root()->topVisibleOverflow(), renderer);
+            int topForPaginationCheck = curr->topVisibleOverflow();
+            int bottomForPaginationCheck = curr->bottomVisibleOverflow();
+            if (!curr->parent()) {
+                // We're a root box.  Use lineTop and lineBottom as well here.
+                topForPaginationCheck = min(topForPaginationCheck, curr->root()->lineTop());
+                bottomForPaginationCheck = max(bottomForPaginationCheck, curr->root()->lineBottom());
+            }
+            if (bottomForPaginationCheck - topForPaginationCheck <= v->printRect().height()) {
+                if (ty + bottomForPaginationCheck > v->printRect().bottom()) {
+                    if (ty + topForPaginationCheck < v->truncatedAt())
+                        v->setBestTruncatedAt(ty + topForPaginationCheck, renderer);
                     // If we were able to truncate, don't paint.
-                    if (ty + curr->topVisibleOverflow() >= v->truncatedAt())
+                    if (ty + topForPaginationCheck >= v->truncatedAt())
                         break;
                 }
             }

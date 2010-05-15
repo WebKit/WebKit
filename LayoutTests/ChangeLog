@@ -1,3 +1,23 @@
+2010-05-14  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39137
+
+        Reset all multicolumn test results now that columns create RenderLayers.
+
+        * fast/multicol/client-rects-expected.txt:
+        * fast/multicol/layers-in-multicol.html: Added.
+        * fast/multicol/single-line-expected.txt:
+        * platform/mac/fast/multicol/column-rules-expected.txt:
+        * platform/mac/fast/multicol/columns-shorthand-parsing-expected.txt:
+        * platform/mac/fast/multicol/float-avoidance-expected.txt:
+        * platform/mac/fast/multicol/float-multicol-expected.txt:
+        
+        Add a layout test for various types of RenderLayers inside multicol layouts.
+
+        * platform/mac/fast/multicol/layers-in-multicol-expected.txt: Added.
+
 2010-05-14  Alexey Proskuryakov  <ap@apple.com>
 
         Inspired by Simon Fraser, rubber-stamped by Geoff Garen.
