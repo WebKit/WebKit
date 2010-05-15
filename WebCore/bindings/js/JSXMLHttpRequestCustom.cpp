@@ -144,15 +144,6 @@ JSValue JSXMLHttpRequest::getResponseHeader(ExecState* exec, const ArgList& args
     return header;
 }
 
-JSValue JSXMLHttpRequest::overrideMimeType(ExecState* exec, const ArgList& args)
-{
-    if (args.size() < 1)
-        return throwError(exec, SyntaxError, "Not enough arguments");
-
-    impl()->overrideMimeType(ustringToString(args.at(0).toString(exec)));
-    return jsUndefined();
-}
-
 JSValue JSXMLHttpRequest::responseText(ExecState* exec) const
 {
     return jsOwnedStringOrNull(exec, impl()->responseText());

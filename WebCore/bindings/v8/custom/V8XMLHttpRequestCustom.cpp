@@ -172,16 +172,4 @@ v8::Handle<v8::Value> V8XMLHttpRequest::getResponseHeaderCallback(const v8::Argu
     return v8StringOrNull(result);
 }
 
-v8::Handle<v8::Value> V8XMLHttpRequest::overrideMimeTypeCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.XMLHttpRequest.overrideMimeType()");
-    if (args.Length() < 1)
-        return throwError("Not enough arguments", V8Proxy::SyntaxError);
-
-    XMLHttpRequest* xmlHttpRequest = V8XMLHttpRequest::toNative(args.Holder());
-    String value = toWebCoreString(args[0]);
-    xmlHttpRequest->overrideMimeType(value);
-    return v8::Undefined();
-}
-
 } // namespace WebCore

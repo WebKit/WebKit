@@ -1,3 +1,17 @@
+2010-05-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        XMLHttpRequest.overrideMimeType doesn't need to be custom
+        https://bugs.webkit.org/show_bug.cgi?id=39127
+
+        I don't see any reason why this method should be custom.  No tests
+        because no behavior change.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        * xml/XMLHttpRequest.idl:
+
 2010-05-14  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dave Hyatt.

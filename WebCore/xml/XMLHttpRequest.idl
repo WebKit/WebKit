@@ -88,7 +88,8 @@ module xml {
             getter raises(DOMException);
 
         // Extension
-        [Custom] void overrideMimeType(in DOMString override);
+        // FIXME: RequiresAllArguments is probably bogus here.
+        [RequiresAllArguments] void overrideMimeType(in DOMString override);
 
         // EventTarget interface
         void addEventListener(in DOMString type, 
