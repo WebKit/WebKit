@@ -110,8 +110,8 @@ namespace WebCore {
 
         // Not implemented yet.
         virtual bool isDatabaseReadOnly() const { return false; }
-        // Not implemented yet.
-        virtual void databaseExceededQuota(const String&) { }
+        // Not implemented for real yet.
+        virtual void databaseExceededQuota(const String&);
 #endif
         virtual bool isContextThread() const;
         virtual bool isJSExecutionTerminated() const;

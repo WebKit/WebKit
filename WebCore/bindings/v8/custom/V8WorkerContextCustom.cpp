@@ -34,6 +34,7 @@
 #include "V8WorkerContext.h"
 
 #if ENABLE(DATABASE)
+#include "V8Database.h"
 #include "V8DatabaseCallback.h"
 #include "V8DatabaseSync.h"
 #endif
@@ -142,6 +143,13 @@ v8::Handle<v8::Value> toV8(WorkerContext* impl)
 }
 
 #if ENABLE(DATABASE)
+v8::Handle<v8::Value> V8WorkerContext::openDatabaseCallback(const v8::Arguments& args) 
+{ 
+    INC_STATS("DOM.WorkerContext.openDatabase()"); 
+    // Implementation coming soon.
+    return throwError(NOT_SUPPORTED_ERR);
+} 
+
 v8::Handle<v8::Value> V8WorkerContext::openDatabaseSyncCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.V8WorkerContext.openDatabaseSync()");
