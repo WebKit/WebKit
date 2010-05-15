@@ -96,19 +96,6 @@ v8::Handle<v8::Value> V8Clipboard::getDataCallback(const v8::Arguments& args)
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8Clipboard::setDataCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.Clipboard.setData()");
-    Clipboard* clipboard = V8Clipboard::toNative(args.Holder());
-
-    if (args.Length() != 2)
-        return throwError("setData: Invalid number of arguments", V8Proxy::SyntaxError);
-
-    String type = toWebCoreString(args[0]);
-    String data = toWebCoreString(args[1]);
-    return v8Boolean(clipboard->setData(type, data));
-}
-
 v8::Handle<v8::Value> V8Clipboard::setDragImageCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Clipboard.setDragImage()");

@@ -97,17 +97,6 @@ JSValue JSClipboard::getData(ExecState* exec, const ArgList& args)
     return jsString(exec, result);
 }
 
-JSValue JSClipboard::setData(ExecState* exec, const ArgList& args)
-{
-    Clipboard* clipboard = impl();
-
-    // FIXME: It does not match the rest of the JS bindings to throw on invalid number of arguments. 
-    if (args.size() != 2)
-        return throwError(exec, SyntaxError, "setData: Invalid number of arguments");
-
-    return jsBoolean(clipboard->setData(ustringToString(args.at(0).toString(exec)), ustringToString(args.at(1).toString(exec))));
-}
-
 JSValue JSClipboard::setDragImage(ExecState* exec, const ArgList& args)
 {
     Clipboard* clipboard = impl();

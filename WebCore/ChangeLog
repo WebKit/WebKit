@@ -1,3 +1,21 @@
+2010-05-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Clipboard.setData doesn't need to be custom
+        https://bugs.webkit.org/show_bug.cgi?id=39133
+
+        The implementation of the custom binding for this function was a bit
+        different than its declaration in the IDL file.  I've updated the IDL
+        to match the implementation, but we probably should check whether our
+        behavior is correct with respect to the specification.
+
+        No tests because I've maintained our current behavior.
+
+        * bindings/js/JSClipboardCustom.cpp:
+        * bindings/v8/custom/V8ClipboardCustom.cpp:
+        * dom/Clipboard.idl:
+
 2010-05-15  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Adam Barth.
