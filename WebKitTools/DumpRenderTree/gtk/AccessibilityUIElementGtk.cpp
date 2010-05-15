@@ -26,6 +26,7 @@
 
 #include "config.h"
 #include "AccessibilityUIElement.h"
+#include "GRefPtr.h"
 
 #include <JavaScriptCore/JSStringRef.h>
 #include <wtf/Assertions.h>
@@ -364,8 +365,13 @@ bool AccessibilityUIElement::isRequired() const
 
 bool AccessibilityUIElement::isSelected() const
 {
-    // FIXME: implement
-    return false;
+    if (!ATK_IS_OBJECT(m_element))
+        return false;
+
+    GRefPtr<AtkStateSet> stateSet = adoptGRef(atk_object_ref_state_set(ATK_OBJECT(m_element)));
+    gboolean isSelected = atk_state_set_contains_state(stateSet.get(), ATK_STATE_SELECTED);
+
+    return isSelected;
 }
 
 int AccessibilityUIElement::hierarchicalLevel() const

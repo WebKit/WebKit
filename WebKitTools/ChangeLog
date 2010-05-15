@@ -1,3 +1,15 @@
+2010-05-15  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Accessibility: Implement isSelected in DRT for GTK
+        https://bugs.webkit.org/show_bug.cgi?id=31018
+
+        Implement AccessibilityUIElement::isSelected() for Gtk
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::isSelected):
+
 2010-05-14  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
