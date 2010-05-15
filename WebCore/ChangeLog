@@ -1,3 +1,20 @@
+2010-05-15  Dave Tapuska  <dtapuska@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Fix alignment faults on ARMv5TE architectures.
+
+        In debug mode the RenderAreaDebugHeader was 12 bytes which
+        caused an alignment failure for RenderObjects because they
+        would start on a 4 byte boundary. Align the RenderArenaDebugHeader
+        using the ARENA_ALIGN macro.
+
+        In NDEBUG mode the RenderArena objects come from a pool which
+        has 4 byte alignment. Allow the alignment to be based on the
+        AllocAlignmentInteger. This define will be activated for ARMv5TE.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19946
+
 2010-05-14  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

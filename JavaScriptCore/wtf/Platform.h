@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc.  All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -222,11 +223,15 @@
 
 #elif defined(__ARM_ARCH_5__) \
     || defined(__ARM_ARCH_5T__) \
-    || defined(__ARM_ARCH_5E__) \
-    || defined(__ARM_ARCH_5TE__) \
-    || defined(__ARM_ARCH_5TEJ__) \
     || defined(__MARM_ARMV5__)
 #define WTF_ARM_ARCH_VERSION 5
+
+#elif defined(__ARM_ARCH_5E__) \
+    || defined(__ARM_ARCH_5TE__) \
+    || defined(__ARM_ARCH_5TEJ__)
+#define WTF_ARM_ARCH_VERSION 5
+/*ARMv5TE requires allocators to use aligned memory*/
+#define WTF_USE_ARENA_ALLOC_ALIGNMENT_INTEGER 1
 
 #elif defined(__ARM_ARCH_6__) \
     || defined(__ARM_ARCH_6J__) \
@@ -244,6 +249,13 @@
 /* RVCT sets _TARGET_ARCH_ARM */
 #elif defined(__TARGET_ARCH_ARM)
 #define WTF_ARM_ARCH_VERSION __TARGET_ARCH_ARM
+
+#if defined(__TARGET_ARCH_5E) \
+    || defined(__TARGET_ARCH_5TE) \
+    || defined(__TARGET_ARCH_5TEJ)
+/*ARMv5TE requires allocators to use aligned memory*/
+#define WTF_USE_ARENA_ALLOC_ALIGNMENT_INTEGER 1
+#endif
 
 #else
 #define WTF_ARM_ARCH_VERSION 0

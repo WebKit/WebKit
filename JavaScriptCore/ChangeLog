@@ -1,3 +1,12 @@
+2010-05-15  Dave Tapuska  <dtapuska@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Add a new define for we need strict arena alignment. ARMv5 with
+        double word instructions set this value.
+
+        * wtf/Platform.h:
+
 2010-05-14  Stephanie Lewis  <slewis@apple.com>
 
         Rubber-stamped by Mark Rowe.

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
  *
@@ -54,6 +55,8 @@ typedef struct {
     int signature;
 } RenderArenaDebugHeader;
 
+static const size_t debugHeaderSize = ARENA_ALIGN(sizeof(RenderArenaDebugHeader));
+
 #endif
 
 RenderArena::RenderArena(unsigned arenaSize)
@@ -75,12 +78,12 @@ void* RenderArena::allocate(size_t size)
 #ifndef NDEBUG
     // Use standard malloc so that memory debugging tools work.
     ASSERT(this);
-    void* block = ::malloc(sizeof(RenderArenaDebugHeader) + size);
+    void* block = ::malloc(debugHeaderSize + size);
     RenderArenaDebugHeader* header = static_cast<RenderArenaDebugHeader*>(block);
     header->arena = this;
     header->size = size;
     header->signature = signature;
-    return header + 1;
+    return static_cast<char*>(block) + debugHeaderSize;
 #else
     void* result = 0;
 
@@ -112,12 +115,13 @@ void RenderArena::free(size_t size, void* ptr)
 {
 #ifndef NDEBUG
     // Use standard free so that memory debugging tools work.
-    RenderArenaDebugHeader* header = static_cast<RenderArenaDebugHeader*>(ptr) - 1;
+    void* block = static_cast<char*>(ptr) - debugHeaderSize;
+    RenderArenaDebugHeader* header = static_cast<RenderArenaDebugHeader*>(block);
     ASSERT(header->signature == signature);
     ASSERT_UNUSED(size, header->size == size);
     ASSERT(header->arena == this);
     header->signature = signatureDead;
-    ::free(header);
+    ::free(block);
 #else
     // Ensure we have correct alignment for pointers.  Important for Tru64
     size = ROUNDUP(size, sizeof(void*));

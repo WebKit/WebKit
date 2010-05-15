@@ -97,7 +97,7 @@ void InitArenaPool(ArenaPool* pool, const char*, unsigned size, unsigned align)
      pool->mask = BITMASK(CeilingLog2(align));
      pool->first.next = NULL;
      pool->first.base = pool->first.avail = pool->first.limit =
-         (uword)ARENA_ALIGN(pool, &pool->first + 1);
+         (uword)ARENA_ALIGN(&pool->first + 1);
      pool->current = &pool->first;
      pool->arenasize = size;                                  
 }
@@ -129,7 +129,7 @@ void* ArenaAllocate(ArenaPool *pool, unsigned int nb)
 
     ASSERT((nb & pool->mask) == 0);
     
-    nb = (uword)ARENA_ALIGN(pool, nb); /* force alignment */
+    nb = (uword)ARENA_ALIGN(nb); /* force alignment */
 
     /* attempt to allocate from arenas at pool->current */
     {
@@ -181,7 +181,7 @@ void* ArenaAllocate(ArenaPool *pool, unsigned int nb)
         a = (Arena*)fastMalloc(sz);
         // fastMalloc will abort() if it fails, so we are guaranteed that a is not 0.
         a->limit = (uword)a + sz;
-        a->base = a->avail = (uword)ARENA_ALIGN(pool, a + 1);
+        a->base = a->avail = (uword)ARENA_ALIGN(a + 1);
         rp = (char *)a->avail;
         a->avail += nb;
         /* the newly allocated arena is linked after pool->current 

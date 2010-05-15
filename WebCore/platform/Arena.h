@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 1998-2000 Netscape Communications Corporation.
  * Copyright (C) 2003-6 Apple Computer
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * Other contributors:
  *   Nick Blievers <nickb@adacel.com.au>
@@ -40,7 +41,15 @@
 #ifndef Arena_h
 #define Arena_h
 
+#include <wtf/FastMalloc.h>
+
+// FIXME: We'd always like to use AllocAlignmentInteger for Arena alignment
+// but there is concern over the memory growth this may cause.
+#ifdef WTF_USE_ARENA_ALLOC_ALIGNMENT_INTEGER
+#define ARENA_ALIGN_MASK (sizeof(WTF::AllocAlignmentInteger) - 1)
+#else
 #define ARENA_ALIGN_MASK 3
+#endif
 
 namespace WebCore {
 
@@ -66,13 +75,13 @@ void FinishArenaPool(ArenaPool *pool);
 void FreeArenaPool(ArenaPool *pool);
 void* ArenaAllocate(ArenaPool *pool, unsigned int nb);
 
-#define ARENA_ALIGN(pool, n) (((uword)(n) + ARENA_ALIGN_MASK) & ~ARENA_ALIGN_MASK)
+#define ARENA_ALIGN(n) (((uword)(n) + ARENA_ALIGN_MASK) & ~ARENA_ALIGN_MASK)
 #define INIT_ARENA_POOL(pool, name, size) \
         InitArenaPool(pool, name, size, ARENA_ALIGN_MASK + 1)
 
 #define ARENA_ALLOCATE(p, pool, nb) \
         Arena *_a = (pool)->current; \
-        unsigned int _nb = ARENA_ALIGN(pool, nb); \
+        unsigned int _nb = ARENA_ALIGN(nb); \
         uword _p = _a->avail; \
         uword _q = _p + _nb; \
         if (_q > _a->limit) \
@@ -83,10 +92,10 @@ void* ArenaAllocate(ArenaPool *pool, unsigned int nb);
 
 #define ARENA_GROW(p, pool, size, incr) \
         Arena *_a = (pool)->current; \
-        unsigned int _incr = ARENA_ALIGN(pool, incr); \
+        unsigned int _incr = ARENA_ALIGN(incr); \
         uword _p = _a->avail; \
         uword _q = _p + _incr; \
-        if (_p == (uword)(p) + ARENA_ALIGN(pool, size) && \
+        if (_p == (uword)(p) + ARENA_ALIGN(size) && \
             _q <= _a->limit) { \
             _a->avail = _q; \
         } else { \
@@ -112,7 +121,7 @@ void* ArenaAllocate(ArenaPool *pool, unsigned int nb);
          char *_m = (char *)(mark); \
          Arena *_a = (pool)->current; \
          if (UPTRDIFF(_m, _a->base) <= UPTRDIFF(_a->avail, _a->base)) { \
-             _a->avail = (uword)ARENA_ALIGN(pool, _m); \
+             _a->avail = (uword)ARENA_ALIGN(_m); \
              CLEAR_UNUSED(_a); \
          } else { \
              ArenaRelease(pool, _m); \
