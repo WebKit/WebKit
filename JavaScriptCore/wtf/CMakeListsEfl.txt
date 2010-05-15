@@ -1,0 +1,27 @@
+ADD_DEFINITIONS(-DUSE_SYSTEM_MALLOC=1)
+
+LIST(APPEND WTF_SOURCES
+    efl/MainThreadEfl.cpp
+
+    gobject/GOwnPtr.cpp
+    gobject/GRefPtr.cpp
+
+    ThreadIdentifierDataPthreads.cpp
+    ThreadingPthreads.cpp
+
+    unicode/icu/CollatorICU.cpp
+)
+
+LIST(APPEND WTF_LIBRARIES
+    pthread
+    ${ICU_LIBRARIES}
+)
+
+LIST(APPEND WTF_LINK_FLAGS
+    ${ECORE_LDFLAGS}
+)
+
+LIST(APPEND WTF_INCLUDE_DIRECTORIES
+    ${ECORE_INCLUDE_DIRS}
+    ${JAVASCRIPTCORE_DIR}/wtf/unicode/
+)

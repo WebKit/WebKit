@@ -1,3 +1,13 @@
+2010-05-15  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Adam Treat.
+
+        [EFL] Add build system for the EFL port.
+        http://webkit.org/b/37945
+
+        * CMakeLists.txt: Added.
+        * CMakeListsEfl.txt: Added.
+
 2010-05-14  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by David Levin.

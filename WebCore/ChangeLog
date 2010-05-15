@@ -1,3 +1,14 @@
+2010-05-15  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Adam Treat.
+
+        [EFL] Add build system for the EFL port.
+        http://webkit.org/b/37945
+
+        * CMakeLists.txt: Added.
+        * CMakeListsEfl.txt: Added.
+        * config.h: Add conditional to look for cmakeconfig.h.
+
 2010-05-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

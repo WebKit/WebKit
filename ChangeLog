@@ -1,3 +1,35 @@
+2010-05-15  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Adam Treat.
+
+        [EFL] Add build system for the EFL port.
+        http://webkit.org/b/37945
+
+        * CMakeLists.txt: Added.
+        * cmake/FindCFLite.cmake: Added.
+        * cmake/FindCairo.cmake: Added.
+        * cmake/FindEFL.cmake: Added.
+        * cmake/FindFreetype.cmake: Added.
+        * cmake/FindGDK-PixBuf.cmake: Added.
+        * cmake/FindGDK.cmake: Added.
+        * cmake/FindGIO.cmake: Added.
+        * cmake/FindGlib.cmake: Added.
+        * cmake/FindICU.cmake: Added.
+        * cmake/FindLibSoup2.cmake: Added.
+        * cmake/FindLibXlst.cmake: Added.
+        * cmake/FindPango.cmake: Added.
+        * cmake/FindSqlite.cmake: Added.
+        * cmake/LibFindMacros.cmake: Added.
+        * cmake/OptionsCommon.cmake: Added.
+        * cmake/OptionsEfl.cmake: Added.
+        * cmake/WebKitEfl.cmake: Added.
+        * cmake/WebKitFS.cmake: Added.
+        * cmake/WebKitFeatures.cmake: Added.
+        * cmake/WebKitGenerators.cmake: Added.
+        * cmake/WebKitHelpers.cmake: Added.
+        * cmake/WebKitMacros.cmake: Added.
+        * cmakeconfig.h.cmake: Added.
+
 2010-05-14  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Rubber-stamped by Antti Koivisto.
