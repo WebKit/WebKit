@@ -1,3 +1,19 @@
+2010-05-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r59549.
+        http://trac.webkit.org/changeset/59549
+        https://bugs.webkit.org/show_bug.cgi?id=39167
+
+        Broke Chromium build (Requested by abarth on #webkit).
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::suspend):
+        (WebCore::IDBRequest::resume):
+        (WebCore::IDBRequest::timerFired):
+        (WebCore::IDBRequest::onEventCommon):
+        * storage/IDBRequest.h:
+
 2010-05-15  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Darin Fisher.
