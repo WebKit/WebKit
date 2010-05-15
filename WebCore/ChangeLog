@@ -1,3 +1,23 @@
+2010-05-15  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Adding code path for composited layers (LayerChromium) containing only
+        an Image element.
+        https://bugs.webkit.org/show_bug.cgi?id=39142
+
+        No new tests, covered under the existing tests for composited layers.
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setContentsToImage):
+        (WebCore::GraphicsLayerChromium::updateContentsImage):
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::setContents):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::contents):
+
 2010-05-15  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.

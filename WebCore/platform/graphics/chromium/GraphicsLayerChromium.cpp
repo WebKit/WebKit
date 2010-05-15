@@ -311,7 +311,23 @@ void GraphicsLayerChromium::setContentsRect(const IntRect& rect)
 
 void GraphicsLayerChromium::setContentsToImage(Image* image)
 {
-    // FIXME: Implement
+    bool childrenChanged = false;
+    if (image) {
+        m_pendingContentsImage = image->nativeImageForCurrentFrame();
+        m_contentsLayerPurpose = ContentsLayerForImage;
+        if (!m_contentsLayer)
+            childrenChanged = true;
+    } else {
+        m_pendingContentsImage = 0;
+        m_contentsLayerPurpose = NoContentsLayer;
+        if (m_contentsLayer)
+            childrenChanged = true;
+    }
+
+    updateContentsImage();
+
+    if (childrenChanged)
+        updateSublayerList();
 }
 
 void GraphicsLayerChromium::setContentsToVideo(PlatformLayer* videoLayer)
@@ -489,7 +505,22 @@ void GraphicsLayerChromium::updateLayerBackgroundColor()
 
 void GraphicsLayerChromium::updateContentsImage()
 {
-    // FIXME: Implement
+    if (m_pendingContentsImage) {
+        if (!m_contentsLayer.get()) {
+            RefPtr<LayerChromium> imageLayer = LayerChromium::create(LayerChromium::Layer, this);
+
+            setupContentsLayer(imageLayer.get());
+            m_contentsLayer = imageLayer;
+            // m_contentsLayer will be parented by updateSublayerList.
+        }
+        m_contentsLayer->setContents(m_pendingContentsImage);
+        m_pendingContentsImage = 0;
+
+        updateContentsRect();
+    } else {
+        // No image. m_contentsLayer will be removed via updateSublayerList.
+        m_contentsLayer = 0;
+    }
 }
 
 void GraphicsLayerChromium::updateContentsVideo()

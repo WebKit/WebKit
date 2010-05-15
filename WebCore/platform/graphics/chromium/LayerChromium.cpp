@@ -69,6 +69,7 @@ LayerChromium::LayerChromium(LayerType type, GraphicsLayerChromium* owner)
     , m_skiaContext(0)
     , m_graphicsContext(0)
     , m_geometryFlipped(false)
+    , m_contents(0)
 {
     updateGraphicsContext(m_backingStoreRect);
 }
@@ -118,6 +119,14 @@ void LayerChromium::drawDebugBorder()
     m_graphicsContext->drawLine(IntPoint(0, 0), IntPoint(0, m_bounds.height()));
     m_graphicsContext->drawLine(IntPoint(m_bounds.width(), 0), IntPoint(m_bounds.width(), m_bounds.height()));
     m_graphicsContext->drawLine(IntPoint(0, m_bounds.height()), IntPoint(m_bounds.width(), m_bounds.height()));
+}
+
+void LayerChromium::setContents(NativeImagePtr contents)
+{
+    // Check if the image has changed.
+    if (m_contents == contents)
+        return;
+    m_contents = contents;
 }
 
 void LayerChromium::setNeedsCommit()
