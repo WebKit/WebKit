@@ -35,6 +35,15 @@ class KURL;
 
 class HTMLLinkElement : public HTMLElement, public CachedResourceClient {
 public:
+    struct RelAttribute {
+        bool m_isStyleSheet;
+        bool m_isIcon;
+        bool m_isAlternate;
+        bool m_isDNSPrefetch;
+
+        RelAttribute() : m_isStyleSheet(false), m_isIcon(false), m_isAlternate(false), m_isDNSPrefetch(false) { }
+    };
+
     HTMLLinkElement(const QualifiedName&, Document*, bool createdByParser);
     ~HTMLLinkElement();
 
@@ -83,34 +92,36 @@ public:
     bool isLoading() const;
     virtual bool sheetLoaded();
 
-    bool isAlternate() const { return m_disabledState == 0 && m_alternate; }
-    bool isDisabled() const { return m_disabledState == 2; }
-    bool isEnabledViaScript() const { return m_disabledState == 1; }
-    bool isIcon() const { return m_isIcon; }
+    bool isAlternate() const { return m_disabledState == Unset && m_relAttribute.m_isAlternate; }
+    bool isDisabled() const { return m_disabledState == Disabled; }
+    bool isEnabledViaScript() const { return m_disabledState == EnabledViaScript; }
+    bool isIcon() const { return m_relAttribute.m_isIcon; }
     
-    int disabledState() { return m_disabledState; }
     void setDisabledState(bool _disabled);
 
     virtual bool isURLAttribute(Attribute*) const;
     
-    static void tokenizeRelAttribute(const AtomicString& value, bool& stylesheet, bool& alternate, bool& icon, bool& dnsPrefetch);
+    static void tokenizeRelAttribute(const AtomicString& value, RelAttribute&);
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
     virtual void finishParsingChildren();
 
 protected:
+    enum DisabledState {
+        Unset,
+        EnabledViaScript,
+        Disabled
+    };
+
     CachedResourceHandle<CachedCSSStyleSheet> m_cachedSheet;
     RefPtr<CSSStyleSheet> m_sheet;
     KURL m_url;
     String m_type;
     String m_media;
-    int m_disabledState; // 0=unset(default), 1=enabled via script, 2=disabled
+    DisabledState m_disabledState;
+    RelAttribute m_relAttribute;
     bool m_loading;
-    bool m_alternate;
-    bool m_isStyleSheet;
-    bool m_isIcon;
-    bool m_isDNSPrefetch;
     bool m_createdByParser;
 };
 

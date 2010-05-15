@@ -703,12 +703,9 @@ void PreloadScanner::processAttribute()
         if (attribute == hrefAttr && m_urlToLoad.isEmpty())
             m_urlToLoad = deprecatedParseURL(value);
         else if (attribute == relAttr) {
-            bool styleSheet = false;
-            bool alternate = false;
-            bool icon = false;
-            bool dnsPrefetch = false;
-            HTMLLinkElement::tokenizeRelAttribute(value, styleSheet, alternate, icon, dnsPrefetch);
-            m_linkIsStyleSheet = styleSheet && !alternate && !icon && !dnsPrefetch;
+            HTMLLinkElement::RelAttribute rel;
+            HTMLLinkElement::tokenizeRelAttribute(value, rel);
+            m_linkIsStyleSheet = rel.m_isStyleSheet && !rel.m_isAlternate && !rel.m_isIcon && !rel.m_isDNSPrefetch;
         } else if (attribute == charsetAttr)
             m_charset = value;
     }

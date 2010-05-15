@@ -1,3 +1,29 @@
+2010-05-14  Leon Clarke  <leonclarke@google.com>
+
+        Reviewed by Steve Block.
+
+        Refactor signature of tokenizeRelAttribute and the variables it refers to so that new features don't keep changing the signature, and make m_disabledState into an enum.
+        https://bugs.webkit.org/show_bug.cgi?id=38900
+
+        No new tests. Refactoring only.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::HTMLLinkElement):
+        (WebCore::HTMLLinkElement::setDisabledState):
+        (WebCore::HTMLLinkElement::parseMappedAttribute):
+        (WebCore::HTMLLinkElement::tokenizeRelAttribute):
+        (WebCore::HTMLLinkElement::process):
+        (WebCore::HTMLLinkElement::addSubresourceAttributeURLs):
+        * html/HTMLLinkElement.h:
+        (WebCore::HTMLLinkElement::RelAttribute::RelAttribute):
+        (WebCore::HTMLLinkElement::isAlternate):
+        (WebCore::HTMLLinkElement::isDisabled):
+        (WebCore::HTMLLinkElement::isEnabledViaScript):
+        (WebCore::HTMLLinkElement::isIcon):
+        (WebCore::HTMLLinkElement::):
+        * html/PreloadScanner.cpp:
+        (WebCore::PreloadScanner::processAttribute):
+
 2010-05-14  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
