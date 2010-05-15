@@ -1,3 +1,16 @@
+2010-05-15  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Adding a notification on WebViewClient when a new 
+        node gets focused.
+        https://bugs.webkit.org/show_bug.cgi?id=38508
+
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::focusedNodeChanged):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::focusedNodeChanged):
+
 2010-05-15  Evan Stade  <estade@chromium.org>
 
         Reviewed by Adam Barth.

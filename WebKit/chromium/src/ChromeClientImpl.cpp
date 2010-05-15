@@ -66,6 +66,7 @@
 #include "WebFrameImpl.h"
 #include "WebInputEvent.h"
 #include "WebKit.h"
+#include "WebNode.h"
 #include "WebPopupMenuImpl.h"
 #include "WebPopupMenuInfo.h"
 #include "WebPopupType.h"
@@ -214,6 +215,8 @@ void ChromeClientImpl::takeFocus(FocusDirection direction)
 
 void ChromeClientImpl::focusedNodeChanged(Node* node)
 {
+    m_webView->client()->focusedNodeChanged(WebNode(node));
+
     WebURL focus_url;
     if (node && node->isLink()) {
         // This HitTestResult hack is the easiest way to get a link URL out of a

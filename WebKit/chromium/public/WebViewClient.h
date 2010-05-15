@@ -234,6 +234,9 @@ public:
     virtual void focusNext() { }
     virtual void focusPrevious() { }
 
+    // Called when a new node gets focused.
+    virtual void focusedNodeChanged(const WebNode&) { }
+
 
     // Session history -----------------------------------------------------
 
