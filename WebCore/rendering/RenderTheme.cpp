@@ -24,6 +24,7 @@
 
 #include "CSSValueKeywords.h"
 #include "Document.h"
+#include "FloatConversion.h"
 #include "FocusController.h"
 #include "FontSelector.h"
 #include "Frame.h"
@@ -37,6 +38,11 @@
 #include "SelectionController.h"
 #include "Settings.h"
 #include "TextControlInnerElements.h"
+
+#if ENABLE(METER_TAG)
+#include "HTMLMeterElement.h"
+#include "RenderMeter.h"
+#endif
 
 // The methods in this file are shared by all themes on every platform.
 
@@ -214,6 +220,10 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
         case ProgressBarPart:
             return adjustProgressBarStyle(selector, style, e);
 #endif
+#if ENABLE(Meter_TAG)
+        case MeterPart:
+            return adjustMeterStyle(selector, style, e);
+#endif
         default:
             break;
     }
@@ -272,6 +282,10 @@ bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& paintInf
 #endif
         case MenulistPart:
             return paintMenuList(o, paintInfo, r);
+#if ENABLE(METER_TAG)
+        case MeterPart:
+            return paintMeter(o, paintInfo, r);
+#endif
 #if ENABLE(PROGRESS_TAG)
         case ProgressBarPart:
             return paintProgressBar(o, paintInfo, r);
@@ -366,6 +380,9 @@ bool RenderTheme::paintBorderOnly(RenderObject* o, const RenderObject::PaintInfo
         case DefaultButtonPart:
         case ButtonPart:
         case MenulistPart:
+#if ENABLE(METER_TAG)
+        case MeterPart:
+#endif
 #if ENABLE(PROGRESS_TAG)
         case ProgressBarPart:
 #endif
@@ -404,6 +421,9 @@ bool RenderTheme::paintDecorations(RenderObject* o, const RenderObject::PaintInf
         case DefaultButtonPart:
         case ButtonPart:
         case MenulistPart:
+#if ENABLE(METER_TAG)
+        case MeterPart:
+#endif
 #if ENABLE(PROGRESS_TAG)
         case ProgressBarPart:
 #endif
@@ -866,6 +886,61 @@ void RenderTheme::adjustTextAreaStyle(CSSStyleSelector*, RenderStyle*, Element*)
 void RenderTheme::adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const
 {
 }
+
+#if ENABLE(METER_TAG)
+void RenderTheme::adjustMeterStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+{
+    style->setBoxShadow(0);
+}
+
+bool RenderTheme::paintMeter(RenderObject* renderObject, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
+{
+    // Some platforms do not have a native gauge widget, so we draw here a default implementation.
+    RenderMeter* renderMeter = toRenderMeter(renderObject);
+    RenderStyle* style = renderObject->style();
+    int left = style->borderLeft().width() + style->paddingLeft().value();
+    int top = style->borderTop().width() + style->paddingTop().value();
+    int right = style->borderRight().width() + style->paddingRight().value();
+    int bottom = style->borderBottom().width() + style->paddingBottom().value();
+    FloatRect innerRect(rect.x() + left, rect.y() + top, rect.width() - left - right, rect.height() - top - bottom);
+
+    HTMLMeterElement* element = static_cast<HTMLMeterElement*>(renderMeter->node());
+    double min = element->min();
+    double max = element->max();
+    double value = element->value();
+
+    if (min >= max) {
+        paintInfo.context->fillRect(innerRect, Color::black, style->colorSpace());
+        return false;
+    }
+
+    // Paint the background first
+    paintInfo.context->fillRect(innerRect, Color::lightGray, style->colorSpace());
+
+    FloatRect valueRect;
+
+    if (rect.width() < rect.height()) {
+        // Vertical gauge
+        double scale = innerRect.height() / (max - min);
+        valueRect.setLocation(FloatPoint(innerRect.x(), innerRect.y() + narrowPrecisionToFloat((max - value) * scale)));
+        valueRect.setSize(FloatSize(innerRect.width(), narrowPrecisionToFloat((value - min) * scale)));
+    } else if (renderMeter->style()->direction() == RTL) {
+        // right to left horizontal gauge
+        double scale = innerRect.width() / (max - min);
+        valueRect.setLocation(FloatPoint(innerRect.x() + narrowPrecisionToFloat((max - value) * scale), innerRect.y()));
+        valueRect.setSize(FloatSize(narrowPrecisionToFloat((value - min) * scale), innerRect.height()));
+    } else {
+        // left to right horizontal gauge
+        double scale = innerRect.width() / (max - min);
+        valueRect.setLocation(innerRect.location());
+        valueRect.setSize(FloatSize(narrowPrecisionToFloat((value - min)) * scale, innerRect.height()));
+    }
+    if (!valueRect.isEmpty())
+        paintInfo.context->fillRect(valueRect, Color::black, style->colorSpace());
+
+    return false;
+}
+#endif
 
 #if ENABLE(PROGRESS_TAG)
 double RenderTheme::animationRepeatIntervalForProgressBar(RenderProgress*) const

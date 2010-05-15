@@ -276,6 +276,9 @@ public:
     virtual bool isListMarker() const { return false; }
     virtual bool isMedia() const { return false; }
     virtual bool isMenuList() const { return false; }
+#if ENABLE(METER_TAG)
+    virtual bool isMeter() const { return false; }
+#endif
 #if ENABLE(PROGRESS_TAG)
     virtual bool isProgress() const { return false; }
 #endif

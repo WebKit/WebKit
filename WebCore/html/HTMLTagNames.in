@@ -77,6 +77,7 @@ map createWithNew
 marquee createWithNew
 menu createWithNew
 meta createWithNew
+meter interfaceName=HTMLMeterElement, conditional=METER_TAG
 nav interfaceName=HTMLElement
 nobr interfaceName=HTMLElement
 noembed interfaceName=HTMLElement

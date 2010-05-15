@@ -5714,6 +5714,10 @@ fast/dom/HTMLProgressElement/progress-element.html
 fast/dom/HTMLProgressElement/set-progress-properties.html
 fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html
 
+# meter element is not supported
+fast/dom/HTMLMeterElement/meter-element.html
+fast/dom/HTMLMeterElement/set-meter-properties.html
+
 # Needs mock support, and build slave Geolocation service
 # See https://bugs.webkit.org/show_bug.cgi?id=36053
 fast/dom/Geolocation/maximum-age.html

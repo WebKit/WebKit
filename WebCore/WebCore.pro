@@ -655,6 +655,7 @@ SOURCES += \
     html/HTMLMarqueeElement.cpp \
     html/HTMLMenuElement.cpp \
     html/HTMLMetaElement.cpp \
+    html/HTMLMeterElement.cpp \
     html/HTMLModElement.cpp \
     html/HTMLNameCollection.cpp \
     html/HTMLObjectElement.cpp \
@@ -936,6 +937,7 @@ SOURCES += \
     rendering/RenderListMarker.cpp \
     rendering/RenderMarquee.cpp \
     rendering/RenderMenuList.cpp \
+    rendering/RenderMeter.cpp \
     rendering/RenderObject.cpp \
     rendering/RenderObjectChildList.cpp \
     rendering/RenderPart.cpp \
@@ -1376,6 +1378,7 @@ HEADERS += \
     html/HTMLMediaElement.h \
     html/HTMLMenuElement.h \
     html/HTMLMetaElement.h \
+    html/HTMLMeterElement.h \
     html/HTMLModElement.h \
     html/HTMLNameCollection.h \
     html/HTMLNoScriptElement.h \
@@ -1715,6 +1718,7 @@ HEADERS += \
     rendering/RenderMarquee.h \
     rendering/RenderMedia.h \
     rendering/RenderMenuList.h \
+    rendering/RenderMeter.h \
     rendering/RenderObjectChildList.h \
     rendering/RenderObject.h \
     rendering/RenderPart.h \

@@ -140,6 +140,7 @@
 #include "JSHTMLMediaElement.cpp"
 #include "JSHTMLMenuElement.cpp"
 #include "JSHTMLMetaElement.cpp"
+#include "JSHTMLMeterElement.cpp"
 #include "JSHTMLModElement.cpp"
 #include "JSHTMLObjectElement.cpp"
 #include "JSHTMLOListElement.cpp"

@@ -1,3 +1,26 @@
+2010-05-15  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Kent Tamura.
+
+        Initial support for HTMLMeterElement
+        https://bugs.webkit.org/show_bug.cgi?id=38140
+
+        * fast/dom/HTMLMeterElement: Added.
+        * fast/dom/HTMLMeterElement/meter-element.html: Added.
+        * fast/dom/HTMLMeterElement/script-tests: Added.
+        * fast/dom/HTMLMeterElement/script-tests/TEMPLATE.html: Added.
+        * fast/dom/HTMLMeterElement/script-tests/set-meter-properties.js: Added.
+        * fast/dom/HTMLMeterElement/set-meter-properties-expected.txt: Added.
+        * fast/dom/HTMLMeterElement/set-meter-properties.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/fast/dom/HTMLMeterElement: Added.
+        * platform/qt/fast/dom/HTMLMeterElement/meter-element-expected.checksum: Added.
+        * platform/qt/fast/dom/HTMLMeterElement/meter-element-expected.png: Added.
+        * platform/qt/fast/dom/HTMLMeterElement/meter-element-expected.txt: Added.
+        * platform/win/Skipped:
+
 2010-05-15  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Dmitry Titov.

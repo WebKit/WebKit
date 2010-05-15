@@ -2571,6 +2571,10 @@
 		A43BF5991149290A00C643CA /* HTMLProgressElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A43BF5971149290A00C643CA /* HTMLProgressElement.h */; };
 		A43BF59C1149292800C643CA /* RenderProgress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A43BF59A1149292800C643CA /* RenderProgress.cpp */; };
 		A43BF59D1149292800C643CA /* RenderProgress.h in Headers */ = {isa = PBXBuildFile; fileRef = A43BF59B1149292800C643CA /* RenderProgress.h */; };
+		A454424A119B3661009BE912 /* HTMLMeterElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A4544248119B3661009BE912 /* HTMLMeterElement.cpp */; };
+		A454424B119B3661009BE912 /* HTMLMeterElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A4544249119B3661009BE912 /* HTMLMeterElement.h */; };
+		A454424E119B3687009BE912 /* RenderMeter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A454424C119B3687009BE912 /* RenderMeter.cpp */; };
+		A454424F119B3687009BE912 /* RenderMeter.h in Headers */ = {isa = PBXBuildFile; fileRef = A454424D119B3687009BE912 /* RenderMeter.h */; };
 		A513B3D7114B1666001C429B /* KeyEventCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = A5C974CF11485FF10066F2AB /* KeyEventCocoa.h */; };
 		A513B3D8114B166A001C429B /* KeyEventCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5C974D011485FF10066F2AB /* KeyEventCocoa.mm */; };
 		A59E3C1E11580F510072928E /* KeyEventCodesIPhone.h in Headers */ = {isa = PBXBuildFile; fileRef = A59E3C1C11580F510072928E /* KeyEventCodesIPhone.h */; };
@@ -8096,6 +8100,10 @@
 		A43BF5971149290A00C643CA /* HTMLProgressElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLProgressElement.h; sourceTree = "<group>"; };
 		A43BF59A1149292800C643CA /* RenderProgress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderProgress.cpp; sourceTree = "<group>"; };
 		A43BF59B1149292800C643CA /* RenderProgress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderProgress.h; sourceTree = "<group>"; };
+		A4544248119B3661009BE912 /* HTMLMeterElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLMeterElement.cpp; sourceTree = "<group>"; };
+		A4544249119B3661009BE912 /* HTMLMeterElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLMeterElement.h; sourceTree = "<group>"; };
+		A454424C119B3687009BE912 /* RenderMeter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMeter.cpp; sourceTree = "<group>"; };
+		A454424D119B3687009BE912 /* RenderMeter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMeter.h; sourceTree = "<group>"; };
 		A59E3C1C11580F510072928E /* KeyEventCodesIPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyEventCodesIPhone.h; path = iphone/KeyEventCodesIPhone.h; sourceTree = "<group>"; };
 		A59E3C1D11580F510072928E /* KeyEventIPhone.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = KeyEventIPhone.mm; path = iphone/KeyEventIPhone.mm; sourceTree = "<group>"; };
 		A5AFB34D115151A700B045CB /* StepRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StepRange.cpp; sourceTree = "<group>"; };
@@ -13397,6 +13405,8 @@
 				A871DC1B0A15205700B12A68 /* HTMLMetaElement.cpp */,
 				A871DC180A15205700B12A68 /* HTMLMetaElement.h */,
 				A80E79FC0A19C307007FB8C5 /* HTMLMetaElement.idl */,
+				A4544248119B3661009BE912 /* HTMLMeterElement.cpp */,
+				A4544249119B3661009BE912 /* HTMLMeterElement.h */,
 				A8CFF79F0A156978000A4234 /* HTMLModElement.cpp */,
 				A8CFF79D0A156978000A4234 /* HTMLModElement.h */,
 				1AE2AB070A1CE5CF00B42B25 /* HTMLModElement.idl */,
@@ -16164,6 +16174,8 @@
 				E4C279570CF9741900E97B98 /* RenderMedia.h */,
 				ABDDFE730A5C6E6F00A3E11D /* RenderMenuList.cpp */,
 				ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */,
+				A454424C119B3687009BE912 /* RenderMeter.cpp */,
+				A454424D119B3687009BE912 /* RenderMeter.h */,
 				BCEA4840097D93020094C9E4 /* RenderObject.cpp */,
 				BCEA4841097D93020094C9E4 /* RenderObject.h */,
 				BC60EFB60F33A0E700812A93 /* RenderObjectChildList.cpp */,
@@ -19169,6 +19181,8 @@
 				2E94F43C119207DA00B7F75D /* JSFileReader.h in Headers */,
 				2E94F4511192096A00B7F75D /* FileReader.h in Headers */,
 				E440A2D71191A523000820B0 /* SVGFELighting.h in Headers */,
+				A454424B119B3661009BE912 /* HTMLMeterElement.h in Headers */,
+				A454424F119B3687009BE912 /* RenderMeter.h in Headers */,
 				B5B5DC6A119BB3D5002A8790 /* AbstractDatabase.h in Headers */,
 				4FD8D0F3119C718B002FA825 /* ScriptGCEvent.h in Headers */,
 			);
@@ -21439,6 +21453,8 @@
 				2E94F43B119207DA00B7F75D /* JSFileReader.cpp in Sources */,
 				2E94F4501192096400B7F75D /* FileReader.cpp in Sources */,
 				E440A2D51191A50B000820B0 /* SVGFELighting.cpp in Sources */,
+				A454424A119B3661009BE912 /* HTMLMeterElement.cpp in Sources */,
+				A454424E119B3687009BE912 /* RenderMeter.cpp in Sources */,
 				B5B5DC69119BB3D5002A8790 /* AbstractDatabase.cpp in Sources */,
 				4FD8D0F2119C718B002FA825 /* ScriptGCEvent.cpp in Sources */,
 			);

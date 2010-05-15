@@ -98,6 +98,7 @@ frameborder
 headers
 height
 hidden
+high
 href
 hreflang
 hspace
@@ -115,6 +116,7 @@ link
 list
 longdesc
 loop
+low
 playcount
 loopend
 loopstart
@@ -219,6 +221,7 @@ onwebkitanimationend
 onwebkitbeginfullscreen
 onwebkitendfullscreen
 onwebkittransitionend
+optimum
 pattern
 placeholder
 pluginurl

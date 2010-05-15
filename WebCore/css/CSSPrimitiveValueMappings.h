@@ -275,6 +275,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
         case MenulistTextFieldPart:
             m_value.ident = CSSValueMenulistTextfield;
             break;
+        case MeterPart:
+            m_value.ident = CSSValueMeter;
+            break;
         case OuterSpinButtonPart:
             m_value.ident = CSSValueOuterSpinButton;
             break;

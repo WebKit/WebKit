@@ -182,6 +182,7 @@ DOM_CLASSES = \
     HTMLMediaElement \
     HTMLMenuElement \
     HTMLMetaElement \
+    HTMLMeterElement \
     HTMLModElement \
     HTMLOListElement \
     HTMLObjectElement \
@@ -642,6 +643,10 @@ UserAgentStyleSheets.h : css/make-css-file-arrays.pl $(USER_AGENT_STYLE_SHEETS)
 
 ifeq ($(findstring ENABLE_DATALIST,$(FEATURE_DEFINES)), ENABLE_DATALIST)
     HTML_FLAGS := $(HTML_FLAGS) ENABLE_DATALIST=1
+endif
+
+ifeq ($(findstring ENABLE_METER_TAG,$(FEATURE_DEFINES)), ENABLE_METER_TAG)
+    HTML_FLAGS := $(HTML_FLAGS) ENABLE_METER_TAG=1
 endif
 
 ifeq ($(findstring ENABLE_PROGRESS_TAG,$(FEATURE_DEFINES)), ENABLE_PROGRESS_TAG)

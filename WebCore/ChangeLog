@@ -1,3 +1,77 @@
+2010-05-15  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Kent Tamura.
+
+        Initial support for HTMLMeterElement
+        https://bugs.webkit.org/show_bug.cgi?id=38140
+
+        This patch adds support for HTMLMeterElement, including default rendering
+        of the meter element. That is because some platforms do not have a native gauge.
+        The feature is turned on only for the Qt platform.
+
+        Tests: fast/dom/HTMLMeterElement/meter-element.html
+               fast/dom/HTMLMeterElement/set-meter-properties.html
+
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSValueKeywords.in:
+        * css/html.css:
+        (meter):
+        (meter::-webkit-meter):
+        * html/HTMLAttributeNames.in:
+        * html/HTMLElement.cpp:
+        (WebCore::inlineTagList):
+        * html/HTMLElementsAllInOne.cpp:
+        * html/HTMLMeterElement.cpp: Added.
+        (WebCore::HTMLMeterElement::HTMLMeterElement):
+        (WebCore::HTMLMeterElement::create):
+        (WebCore::HTMLMeterElement::createRenderer):
+        (WebCore::HTMLMeterElement::formControlType):
+        (WebCore::HTMLMeterElement::parseMappedAttribute):
+        (WebCore::HTMLMeterElement::min):
+        (WebCore::HTMLMeterElement::setMin):
+        (WebCore::HTMLMeterElement::max):
+        (WebCore::HTMLMeterElement::setMax):
+        (WebCore::HTMLMeterElement::value):
+        (WebCore::HTMLMeterElement::setValue):
+        (WebCore::HTMLMeterElement::low):
+        (WebCore::HTMLMeterElement::setLow):
+        (WebCore::HTMLMeterElement::high):
+        (WebCore::HTMLMeterElement::setHigh):
+        (WebCore::HTMLMeterElement::optimum):
+        (WebCore::HTMLMeterElement::setOptimum):
+        * html/HTMLMeterElement.h: Added.
+        (WebCore::HTMLMeterElement::recalcWillValidate):
+        * html/HTMLMeterElement.idl: Added.
+        * html/HTMLTagNames.in:
+        * page/DOMWindow.idl:
+        * platform/ThemeTypes.h:
+        * rendering/RenderMeter.cpp: Added.
+        (WebCore::RenderMeter::RenderMeter):
+        (WebCore::RenderMeter::layout):
+        (WebCore::RenderMeter::updateFromElement):
+        * rendering/RenderMeter.h: Added.
+        (WebCore::RenderMeter::renderName):
+        (WebCore::RenderMeter::isMeter):
+        (WebCore::toRenderMeter):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isMeter):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::paintBorderOnly):
+        (WebCore::RenderTheme::paintDecorations):
+        (WebCore::RenderTheme::adjustMeterStyle):
+        (WebCore::RenderTheme::paintMeter):
+        * rendering/RenderTheme.h:
+
 2010-05-15  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Dmitry Titov.

@@ -517,6 +517,20 @@ option {
     font-weight: normal;
 }
 
+/* meter */
+
+meter {
+    -webkit-appearance: meter;
+    display: inline-block;
+    height: 1em;
+    width: 5em;
+    vertical-align: -0.2em;
+}
+
+meter::-webkit-meter {
+    -webkit-appearance: meter;
+}
+
 /* progress */
 
 progress {

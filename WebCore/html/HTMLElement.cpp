@@ -861,6 +861,7 @@ static HashSet<AtomicStringImpl*>* inlineTagList()
 #if ENABLE(PROGRESS_TAG)
         tagList.add(progressTag.localName().impl());
 #endif
+        tagList.add(meterTag.localName().impl());
     }
     return &tagList;
 }

@@ -244,6 +244,7 @@ IDL_BINDINGS += \
 	WebCore/html/MediaError.idl \
 	WebCore/html/HTMLMenuElement.idl \
 	WebCore/html/HTMLMetaElement.idl \
+	WebCore/html/HTMLMeterElement.idl \
 	WebCore/html/HTMLModElement.idl \
 	WebCore/html/HTMLOListElement.idl \
 	WebCore/html/HTMLObjectElement.idl \
@@ -1167,6 +1168,8 @@ webcore_sources += \
 	WebCore/html/HTMLMenuElement.h \
 	WebCore/html/HTMLMetaElement.cpp \
 	WebCore/html/HTMLMetaElement.h \
+	WebCore/html/HTMLMeterElement.cpp \
+	WebCore/html/HTMLMeterElement.h \
 	WebCore/html/HTMLModElement.cpp \
 	WebCore/html/HTMLModElement.h \
 	WebCore/html/HTMLNameCollection.cpp \
@@ -1900,6 +1903,8 @@ webcore_sources += \
 	WebCore/rendering/RenderMarquee.h \
 	WebCore/rendering/RenderMenuList.cpp \
 	WebCore/rendering/RenderMenuList.h \
+	WebCore/rendering/RenderMeter.cpp \
+	WebCore/rendering/RenderMeter.h \
 	WebCore/rendering/RenderObject.cpp \
 	WebCore/rendering/RenderObject.h \
 	WebCore/rendering/RenderObjectChildList.cpp \
@@ -2245,6 +2250,14 @@ FEATURE_DEFINES += ENABLE_DATAGRID=0
 
 webcore_cppflags += \
 	-DENABLE_DATAGRID=0
+
+# ----
+# HTML Meter Element - disable for now.
+# ----
+FEATURE_DEFINES += ENABLE_METER_TAG=0
+
+webcore_cppflags += \
+    -DENABLE_METER_TAG=0
 
 # ----
 # HTML Progress Element - disable for now, since painting code is missing.
