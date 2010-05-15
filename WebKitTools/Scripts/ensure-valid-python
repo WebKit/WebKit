@@ -1,0 +1,135 @@
+#!/usr/bin/perl -w
+# Copyright (C) 2010 Google Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+use strict;
+
+use File::Basename;
+use File::Spec;
+use File::Temp qw(tempdir);
+use FindBin;
+
+use lib $FindBin::Bin;
+use webkitdirs;
+use VCSUtils;
+
+my $macPythonURL = "http://www.python.org/ftp/python/2.6.5/python-2.6.5-macosx10.3-2010-03-24.dmg";
+my $macPythonMD5 = "84489bba813fdbb6041b69d4310a86da";
+my $macPythonInstallerName = "Python.mpkg";
+
+# We could use a consistent download location, like the source or build directory.
+my $tempDirectory = File::Temp->newdir();
+my $downloadDirectory = $tempDirectory;
+my $mountPoint = File::Spec->join($tempDirectory, "mount");
+
+sub checkPythonVersion()
+{
+    # Will exit 0 if Python is 2.5 or greater, non-zero otherwise.
+    `python -c "import sys;sys.exit(sys.version_info[:2] < (2,5))"`;
+    return exitStatus($?) == 0;
+}
+
+sub downloadFileToPath($$)
+{
+    my ($remoteURL, $localPath) = @_;
+    print "Downloading $remoteURL to $localPath\n";
+    my $exitCode = system("curl", "-o", $localPath, $remoteURL);
+    return exitStatus($exitCode) == 0;
+}
+
+sub checkMD5($$)
+{
+    my ($path, $expectedMD5) = @_;
+    my $md5Output = `md5 -q "$path"`;
+    chomp($md5Output);
+    my $isValid = $md5Output eq $expectedMD5;
+    print "'$md5Output' does not match expected: '$expectedMD5'\n" unless $isValid;
+    return $isValid;
+}
+
+sub mountDMG($$)
+{
+    my ($dmgPath, $mountPoint) = @_;
+    print "Mounting $dmgPath at $mountPoint\n";
+    return system("hdiutil", "attach", "-mountpoint", $mountPoint, "-nobrowse", $dmgPath) == 0;
+}
+
+sub unmountDMG($)
+{
+    my ($mountPoint) = @_;
+    print "Unmounting disk image from $mountPoint\n";
+    my $exitCode = system("hdiutil", "detach", $mountPoint);
+    return exitStatus($exitCode) == 0;
+}
+
+sub runInstaller($)
+{
+    my ($installerPackage) = @_;
+    print "sudo will now ask for your password to run the Python installer.\n";
+    print "The installer will install Python in /Library/Frameworks/Python.framework\n";
+    print "and add symlinks from /usr/local/bin.\n";
+    return system("sudo", "installer", "-verbose", "-pkg", $installerPackage, "-target", "/") == 0;
+}
+
+sub downloadAndMountMacPythonDMG($$)
+{
+    my ($pythonURL, $pythonMD5) = @_;
+    my $localFilename = basename($pythonURL);
+    my $localPath = File::Spec->join($downloadDirectory, $localFilename);
+    
+    downloadFileToPath($pythonURL, $localPath) or die "Failed to download $pythonURL";
+    checkMD5($localPath, $pythonMD5) or die "MD5 check failed on $localPath";
+    return mountDMG($localPath, $mountPoint);
+}
+
+sub installMacPython()
+{
+    downloadAndMountMacPythonDMG($macPythonURL, $macPythonMD5) or die "Failed to download and mount disk image.";
+    print "Mounted python install image at: $mountPoint\n";
+    my $installerPackage = File::Spec->join($mountPoint, $macPythonInstallerName);
+    my $installSuccess = runInstaller($installerPackage);
+    unmountDMG($mountPoint) or die "Failed to unmount disk image from $mountPoint";
+    return $installSuccess;
+}
+
+sub main()
+{
+    # Congrats, your Python is fine.
+    return 0 if checkPythonVersion();
+    
+    if (!isTiger()) {
+        print "Your Python version is insuficient to run WebKit's Python code.  Please update.\n";
+        print "See http://trac.webkit.org/wiki/PythonGuidelines for more info.\n";
+        return 1;
+    }
+
+    installMacPython() or die "Failed to install Python.";
+
+    checkPythonVersion() or die "Final version check failed, must have failed to update Python";
+    print "Successfully updated python.\n";
+}
+
+exit(main());

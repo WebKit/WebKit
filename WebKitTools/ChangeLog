@@ -1,5 +1,32 @@
 2010-05-15  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Maciej Stachowiak.
+
+        Add script to check for minimum python version and install if missing on Tiger
+        https://bugs.webkit.org/show_bug.cgi?id=38886
+
+        Per Maciej's request on webkit-dev:
+        https://lists.webkit.org/pipermail/webkit-dev/2010-May/012785.html
+        provide a script which can automatically install Python on Tiger where
+        the system provided version is too old to be of use.
+
+        Note this uses the official Mac Python installer from python.org.
+        This installs a copy of Python in /Library/Frameworks/Python.framework.
+        It also makes symlinks from /usr/local/bin to the Python.framework/bin.
+
+        I have tested this script on Leopard and it worked fine.  I have not
+        tested it on Tiger as I do not have access to a Tiger machine.  In
+        either case this should provide a great starting point for someone
+        wishing to upgrade their copy of Python on Tiger.
+
+        Future patches can make our scripts depend on a success return from this
+        script and then they can either skip tests/sections for which python is
+        insufficient, or they can fail themselves.
+
+        * Scripts/ensure-valid-python: Added.
+
+2010-05-15  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         Display queue position inside EWS bubbles
