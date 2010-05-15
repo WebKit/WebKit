@@ -1,102 +1,88 @@
-.help-window {
-    background-color: black;
-    color: white;
-    opacity: 0.85;
-    border: solid black;
-    border-radius: 8px;
+.help-window-outer {
+    position: absolute;
+    top: 60px;
+    left: 5%;
+    width: 90%;
+    bottom: 40px;
     z-index: 2000;
 }
 
-.help-window-upper {
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-    position: absolute;
-    top: 60px;
-    height: 47px;
-    left: 5%;
-    width: 90%;
+body.attached .help-window-outer {
+    top: 32px;
+    left: 0;
+    width: 100%;
+    bottom: 24px;
 }
 
-body.attached .help-window-upper {
+.help-window-main {
+    max-height: 100%;
+    opacity: 0.85;
+    color: white;
+    background-color: black;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    border: 20px black solid;
+    border-top-width: 0;
+    border-radius: 8px;
+    -webkit-box-shadow: 10px 10px 8px rgba(40, 40, 40, 0.40);
+}
+
+body.attached .help-window-main {
+    border-width: 10px;
+    border-radius: 0;
+    -webkit-box-shadow: 0 0 0;
+}
+
+.help-window-caption {
+    margin: 8px;
+}
+
+body.attached .help-window-caption {
     display: none;
 }
 
 .help-window-title {
     border-bottom: solid 1px lightGrey;
     font-size: 18px;
-    margin: 10px 20px 2px 20px;
     padding-bottom: 6px;
 }
 
-.help-window-lower {
-    position: absolute;
-    z-index: 2000;
-    top: 107px;
-    left: 5%;
-    width: 90%;
-    bottom: 32px;
-}
-
-body.attached .help-window-lower {
-    position: absolute;
-    left: 0;
-    width: 100%;
-    top: 32px;
-    bottom: 0;
-}
-
-body.attached .help-scrollable {
-    border-radius: 0;
-    border-width: 10px;
-    height: 100%;
-    border-top-width: 10px !important;
-}
-
-.help-scrollable {
-    border: 20px solid black;
-    border-radius: 8px;
-    border-top-width: 0;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    width: 100%;
-    max-height: 100%;
+.help-content {
     overflow-y: auto;
     overflow-x: hidden;
     scrollbar-width: 11px;
+    -webkit-box-flex: 1;
 }
 
-.help-scrollable::-webkit-scrollbar {
+.help-content::-webkit-scrollbar {
     width: 11px;
 }
 
-.help-scrollable::-webkit-scrollbar-corner {
+.help-content::-webkit-scrollbar-corner,
+.help-content::-webkit-resizer {
     display: none;
 }
 
-.help-scrollable::-webkit-resizer {
-    display: none;
-}
-
-.help-scrollable::-webkit-scrollbar-thumb:vertical {
+.help-content::-webkit-scrollbar-thumb:vertical {
     background: -webkit-gradient(linear, left top, right top, from(rgb(128, 128, 128)), to(rgb(128, 128, 128)), color-stop(40%, rgb(96, 96, 96)));
     border-radius: 5px;
     min-height: 20px;
 }
 
-.help-scrollable::-webkit-scrollbar-thumb:vertical:hover,
-.help-scrollable::-webkit-scrollbar-thumb:vertical:active {
+.help-content::-webkit-scrollbar-thumb:vertical:hover,
+.help-content::-webkit-scrollbar-thumb:vertical:active {
     background: -webkit-gradient(linear, left top, right top, from(rgb(176, 176, 176)), to(rgb(176, 176, 176)), color-stop(40%, rgb(144, 144, 144)));
 }
 
-.help-scrollable::-webkit-scrollbar-track:vertical {
-    background: -webkit-gradient(linear, left top, right top, from(black), to(rgb(32, 32, 32)), color-stop(20%, rgb(32, 32, 32)));
+.help-content::-webkit-scrollbar-track:vertical {
+    background: -webkit-gradient(linear, left top, right top, from(rgb(10, 10, 10)), to(rgb(32, 32, 32)), color-stop(25%, rgb(32, 32, 32)));
     border-radius: 5px;
 }
 
 .help-close-button {
-    border: 0 none transparent;
+    border: 0;
     padding: 0;
-    margin: 2px 10px 0px 2px;
+    margin: 0px -20px 15px -20px;
     font-size: 14px;
     color: rgb(222, 222, 222);
     background: -webkit-gradient(radial, 30% 30%, 1, 50% 50%, 8, from(rgb(128, 128, 128)), to(rgb(80, 80, 80)));
@@ -111,12 +97,12 @@ body.attached .help-scrollable {
 
 body.platform-mac .help-close-button {
     float: left;
+    margin-right: 10px;
     font-size: 12px;
 }
 
 body:not(.platform-mac) .help-close-button {
     float: right;
-    margin-top: 10px;
 }
 
 .help-table {

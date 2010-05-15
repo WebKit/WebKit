@@ -33,14 +33,15 @@ WebInspector.HelpScreen = function(title)
     this._addStyleSheetIfNeeded("helpScreen.css");
 
     this._element = document.createElement("div");
+    this._element.className = "help-window-outer";
     this._element.addEventListener("keydown", this._onKeyDown.bind(this), false);
 
-    var upperWindow = this._element.createChild("div", "help-window-upper help-window");
-    var closeButton = upperWindow.createChild("button", "help-close-button");
-    var lowerWindow = this._element.createChild("div", "help-window-lower");
-    this.contentElement = lowerWindow.createChild("div", "help-scrollable help-window");
+    var mainWindow = this._element.createChild("div", "help-window-main");
+    var captionWindow = mainWindow.createChild("div", "help-window-caption");
+    var closeButton = captionWindow.createChild("button", "help-close-button");
+    this.contentElement = mainWindow.createChild("div", "help-content");
     this.contentElement.tabIndex = 0;
-    upperWindow.createChild("h1", "help-window-title").innerText = title;
+    captionWindow.createChild("h1", "help-window-title").innerText = title;
 
     closeButton.innerText = "\u2716"; // Code stands for HEAVY MULTIPLICATION X.
     closeButton.addEventListener("click", this._hide.bind(this), false);
