@@ -1,3 +1,16 @@
+2010-05-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Show a console message when X-Frame-Options blocks a load
+        https://bugs.webkit.org/show_bug.cgi?id=39087
+
+        The blank page confuses people when X-Frame-Options blocks a load.  The
+        console message should at least give them a hint as to what's going on.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv):
+
 2010-05-15  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Geoffrey Garen.
