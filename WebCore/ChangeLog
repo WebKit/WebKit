@@ -1,3 +1,20 @@
+2010-05-14  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] GraphicsLayer caches directly composited images
+        https://bugs.webkit.org/show_bug.cgi?id=38444
+
+        Directly-composited images and solid fills shouldn't be cached, as that cache
+        is never used (see GraphicsLayerQtImpl::paint). Cache is only relevant for HTML content,
+        but we were missing that test.
+        The fix makes sure we only cache HTML content.
+
+        No new tests: this is a minor optimization.
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQtImpl::flushChanges):
+
 2010-05-14  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Mark Rowe.
