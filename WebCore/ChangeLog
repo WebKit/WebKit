@@ -1,3 +1,20 @@
+2010-05-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39048
+        <rdar://problem/7978384> REGRESSION (r55802): XML errors on Google maps ("Entity 'nbsp' not
+        defined") with JavaScript disabled
+
+        Google Maps goes into mobile mode if JavaScript is disabled for some reason, and sends XHTML
+        content with XHTML Mobile DOCTYPE. We want to handle it whether XHTMLMP is enabled or not.
+
+        Test: fast/doctypes/xhtml-with-xhtmlmp-doctype.xhtml
+
+        * dom/XMLTokenizerLibxml2.cpp: (WebCore::externalSubsetHandler): Restore pre-55802 behavior
+        for builds that don't have XHTMLMP enabled. Given that r55802 negated the condition without
+        breaking XHTMLMP, this line is actually always needed.
+
 2010-05-15  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Darin Fisher.
