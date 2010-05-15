@@ -431,5 +431,113 @@ void tst_QScriptValue::call()
     QVERIFY(incr.call().isValid()); // Exception.
 }
 
+void tst_QScriptValue::toObjectSimple()
+{
+    QScriptEngine eng;
+
+    QScriptValue undefined = eng.undefinedValue();
+    QCOMPARE(undefined.toObject().isValid(), false);
+    QScriptValue null = eng.nullValue();
+    QCOMPARE(null.toObject().isValid(), false);
+    QCOMPARE(QScriptValue().toObject().isValid(), false);
+
+    QScriptValue falskt = QScriptValue(&eng, false);
+    {
+        QScriptValue tmp = falskt.toObject();
+        QCOMPARE(tmp.isObject(), true);
+        QCOMPARE(falskt.isObject(), false);
+        QCOMPARE(tmp.toNumber(), falskt.toNumber());
+    }
+
+    QScriptValue sant = QScriptValue(&eng, true);
+    {
+        QScriptValue tmp = sant.toObject();
+        QCOMPARE(tmp.isObject(), true);
+        QCOMPARE(sant.isObject(), false);
+        QCOMPARE(tmp.toNumber(), sant.toNumber());
+    }
+
+    QScriptValue number = QScriptValue(&eng, 123.0);
+    {
+        QScriptValue tmp = number.toObject();
+        QCOMPARE(tmp.isObject(), true);
+        QCOMPARE(number.isObject(), false);
+        QCOMPARE(tmp.toNumber(), number.toNumber());
+    }
+
+    QScriptValue str = QScriptValue(&eng, QString("ciao"));
+    {
+        QScriptValue tmp = str.toObject();
+        QCOMPARE(tmp.isObject(), true);
+        QCOMPARE(str.isObject(), false);
+        QCOMPARE(tmp.toString(), str.toString());
+    }
+
+
+    QScriptValue object = eng.evaluate("new Object");
+    {
+        QScriptValue tmp = object.toObject();
+        QVERIFY(tmp.strictlyEquals(object));
+        QCOMPARE(tmp.isObject(), true);
+    }
+
+
+    // V2 constructors: in this case, you have to use QScriptEngine::toObject()
+    {
+        QScriptValue undefined = QScriptValue(QScriptValue::UndefinedValue);
+        QVERIFY(!undefined.toObject().isValid());
+        QVERIFY(!eng.toObject(undefined).isValid());
+        QVERIFY(!undefined.engine());
+
+        QScriptValue null = QScriptValue(QScriptValue::NullValue);
+        QVERIFY(!null.toObject().isValid());
+        QVERIFY(!eng.toObject(null).isValid());
+        QVERIFY(!null.engine());
+
+        QScriptValue falskt = QScriptValue(false);
+        QVERIFY(!falskt.toObject().isValid());
+        QCOMPARE(falskt.isObject(), false);
+        QVERIFY(!falskt.engine());
+        {
+            QScriptValue tmp = eng.toObject(falskt);
+            QVERIFY(tmp.isObject());
+            QVERIFY(tmp.toBool());
+            QVERIFY(!falskt.isObject());
+        }
+
+        QScriptValue sant = QScriptValue(true);
+        QVERIFY(!sant.toObject().isValid());
+        QCOMPARE(sant.isObject(), false);
+        QVERIFY(!sant.engine());
+        {
+            QScriptValue tmp = eng.toObject(sant);
+            QVERIFY(tmp.isObject());
+            QVERIFY(tmp.toBool());
+            QVERIFY(!sant.isObject());
+        }
+
+        QScriptValue number = QScriptValue(123.0);
+        QVERIFY(!number.toObject().isValid());
+        QVERIFY(!number.engine());
+        QCOMPARE(number.isObject(), false);
+        {
+            QScriptValue tmp = eng.toObject(number);
+            QVERIFY(tmp.isObject());
+            QCOMPARE(tmp.toInt32(), number.toInt32());
+            QVERIFY(!number.isObject());
+        }
+
+        QScriptValue str = QScriptValue(QString::fromLatin1("ciao"));
+        QVERIFY(!str.toObject().isValid());
+        QVERIFY(!str.engine());
+        QCOMPARE(str.isObject(), false);
+        {
+            QScriptValue tmp = eng.toObject(str);
+            QVERIFY(tmp.isObject());
+            QCOMPARE(tmp.toString(), QString::fromLatin1("ciao"));
+            QVERIFY(!str.isObject());
+        }
+    }
+}
 
 QTEST_MAIN(tst_QScriptValue)

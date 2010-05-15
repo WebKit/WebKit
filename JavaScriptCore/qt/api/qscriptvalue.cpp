@@ -467,6 +467,16 @@ quint16 QScriptValue::toUInt16() const
 }
 
 /*!
+  \obsolete
+
+  This function is obsolete; use QScriptEngine::toObject() instead.
+*/
+QScriptValue QScriptValue::toObject() const
+{
+    return QScriptValuePrivate::get(d_ptr->toObject());
+}
+
+/*!
   Calls this QScriptValue as a function, using \a thisObject as
   the `this' object in the function call, and passing \a args
   as arguments to the function. Returns the value returned from

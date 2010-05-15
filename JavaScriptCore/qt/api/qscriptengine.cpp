@@ -151,6 +151,28 @@ QScriptString QScriptEngine::toStringHandle(const QString& str)
 }
 
 /*!
+  Converts the given \a value to an object, if such a conversion is
+  possible; otherwise returns an invalid QScriptValue. The conversion
+  is performed according to the following table:
+
+    \table
+    \header \o Input Type \o Result
+    \row    \o Undefined  \o An invalid QScriptValue.
+    \row    \o Null       \o An invalid QScriptValue.
+    \row    \o Boolean    \o A new Boolean object whose internal value is set to the value of the boolean.
+    \row    \o Number     \o A new Number object whose internal value is set to the value of the number.
+    \row    \o String     \o A new String object whose internal value is set to the value of the string.
+    \row    \o Object     \o The result is the object itself (no conversion).
+    \endtable
+
+    \sa newObject()
+*/
+QScriptValue QScriptEngine::toObject(const QScriptValue& value)
+{
+    return QScriptValuePrivate::get(QScriptValuePrivate::get(value)->toObject(d_ptr.data()));
+}
+
+/*!
   Returns a QScriptValue of the primitive type Null.
 
   \sa undefinedValue()

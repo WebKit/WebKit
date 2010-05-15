@@ -44,6 +44,8 @@ private slots:
     void evaluateProgram();
     void checkSyntax_data();
     void checkSyntax();
+    void toObject();
+    void toObjectTwoEngines();
 };
 
 /* Evaluating a script that throw an unhandled exception should return an invalid value. */
@@ -303,6 +305,97 @@ void tst_QScriptEngine::checkSyntax()
     QCOMPARE(result.errorMessage(), errorMessage);
 }
 
+void tst_QScriptEngine::toObject()
+{
+    QScriptEngine eng;
+    QVERIFY(!eng.toObject(eng.undefinedValue()).isValid());
+    QVERIFY(!eng.toObject(eng.nullValue()).isValid());
+    QVERIFY(!eng.toObject(QScriptValue()).isValid());
+
+    QScriptValue falskt(false);
+    {
+        QScriptValue tmp = eng.toObject(falskt);
+        QVERIFY(tmp.isObject());
+        QVERIFY(!falskt.isObject());
+        QVERIFY(!falskt.engine());
+        QCOMPARE(tmp.toNumber(), falskt.toNumber());
+    }
+
+    QScriptValue sant(true);
+    {
+        QScriptValue tmp = eng.toObject(sant);
+        QVERIFY(tmp.isObject());
+        QVERIFY(!sant.isObject());
+        QVERIFY(!sant.engine());
+        QCOMPARE(tmp.toNumber(), sant.toNumber());
+    }
+
+    QScriptValue number(123.0);
+    {
+        QScriptValue tmp = eng.toObject(number);
+        QVERIFY(tmp.isObject());
+        QVERIFY(!number.isObject());
+        QVERIFY(!number.engine());
+        QCOMPARE(tmp.toNumber(), number.toNumber());
+    }
+
+    QScriptValue str = QScriptValue(&eng, QString("ciao"));
+    {
+        QScriptValue tmp = eng.toObject(str);
+        QVERIFY(tmp.isObject());
+        QVERIFY(!str.isObject());
+        QCOMPARE(tmp.toString(), str.toString());
+    }
+
+    QScriptValue object = eng.evaluate("new Object");
+    {
+        QScriptValue tmp = eng.toObject(object);
+        QVERIFY(tmp.isObject());
+        QVERIFY(object.isObject());
+        QVERIFY(tmp.strictlyEquals(object));
+    }
+}
+
+void tst_QScriptEngine::toObjectTwoEngines()
+{
+    QScriptEngine engine1;
+    QScriptEngine engine2;
+
+    {
+        QScriptValue null = engine1.nullValue();
+        QTest::ignoreMessage(QtWarningMsg, "QScriptEngine::toObject: cannot convert value created in a different engine");
+        QVERIFY(!engine2.toObject(null).isValid());
+        QVERIFY(null.isValid());
+        QTest::ignoreMessage(QtWarningMsg, "QScriptEngine::toObject: cannot convert value created in a different engine");
+        QVERIFY(engine2.toObject(null).engine() != &engine2);
+    }
+    {
+        QScriptValue undefined = engine1.undefinedValue();
+        QTest::ignoreMessage(QtWarningMsg, "QScriptEngine::toObject: cannot convert value created in a different engine");
+        QVERIFY(!engine2.toObject(undefined).isValid());
+        QVERIFY(undefined.isValid());
+        QTest::ignoreMessage(QtWarningMsg, "QScriptEngine::toObject: cannot convert value created in a different engine");
+        QVERIFY(engine2.toObject(undefined).engine() != &engine2);
+    }
+    {
+        QScriptValue value = engine1.evaluate("1");
+        QTest::ignoreMessage(QtWarningMsg, "QScriptEngine::toObject: cannot convert value created in a different engine");
+        QVERIFY(engine2.toObject(value).engine() != &engine2);
+        QVERIFY(!value.isObject());
+    }
+    {
+        QScriptValue string = engine1.evaluate("'Qt'");
+        QTest::ignoreMessage(QtWarningMsg, "QScriptEngine::toObject: cannot convert value created in a different engine");
+        QVERIFY(engine2.toObject(string).engine() != &engine2);
+        QVERIFY(!string.isObject());
+    }
+    {
+        QScriptValue object = engine1.evaluate("new Object");
+        QTest::ignoreMessage(QtWarningMsg, "QScriptEngine::toObject: cannot convert value created in a different engine");
+        QVERIFY(engine2.toObject(object).engine() != &engine2);
+        QVERIFY(object.isObject());
+    }
+}
 
 QTEST_MAIN(tst_QScriptEngine)
 #include "tst_qscriptengine.moc"

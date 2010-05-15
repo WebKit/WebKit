@@ -83,6 +83,7 @@ public:
     qint32 toInt32() const;
     quint32 toUInt32() const;
     quint16 toUInt16() const;
+    QScriptValue toObject() const;
 
     QScriptValue call(const QScriptValue& thisObject = QScriptValue(),
                       const QScriptValueList& args = QScriptValueList());

@@ -104,6 +104,8 @@ public:
     inline qint32 toInt32() const;
     inline quint32 toUInt32() const;
     inline quint16 toUInt16() const;
+    inline QScriptValuePrivate* toObject(QScriptEnginePrivate* engine);
+    inline QScriptValuePrivate* toObject();
 
     inline bool equals(QScriptValuePrivate* other);
     inline bool strictlyEquals(const QScriptValuePrivate* other) const;
@@ -523,6 +525,75 @@ quint16 QScriptValuePrivate::toUInt16() const
     return toInt32();
 }
 
+/*!
+  Creates a copy of this value and converts it to an object. If this value is an object
+  then pointer to this value will be returned.
+  \attention it should not happen but if this value is bounded to a different engine that the given, the first
+  one will be used.
+  \internal
+  */
+QScriptValuePrivate* QScriptValuePrivate::toObject(QScriptEnginePrivate* engine)
+{
+    switch (m_state) {
+    case Invalid:
+    case CSpecial:
+        return new QScriptValuePrivate;
+    case CString:
+        {
+            // Exception can't occur here.
+            JSObjectRef object = JSValueToObject(engine->context(), engine->makeJSValue(m_string), /* exception */ 0);
+            Q_ASSERT(object);
+            return new QScriptValuePrivate(engine, object, object);
+        }
+    case CNumber:
+        {
+            // Exception can't occur here.
+            JSObjectRef object = JSValueToObject(engine->context(), engine->makeJSValue(m_number), /* exception */ 0);
+            Q_ASSERT(object);
+            return new QScriptValuePrivate(engine, object, object);
+        }
+    case CBool:
+        {
+            // Exception can't occure here.
+            JSObjectRef object = JSValueToObject(engine->context(), engine->makeJSValue(static_cast<bool>(m_number)), /* exception */ 0);
+            Q_ASSERT(object);
+            return new QScriptValuePrivate(engine, object, object);
+        }
+    case JSValue:
+        if (refinedJSValue() != JSPrimitive)
+            break;
+        // Fall-through.
+    case JSPrimitive:
+        {
+            if (engine != this->engine())
+                qWarning("QScriptEngine::toObject: cannot convert value created in a different engine");
+            JSObjectRef object = JSValueToObject(context(), value(), /* exception */ 0);
+            if (object)
+                return new QScriptValuePrivate(m_engine.constData(), object);
+        }
+        return new QScriptValuePrivate;
+    case JSObject:
+        break;
+    }
+
+    if (engine != this->engine())
+        qWarning("QScriptEngine::toObject: cannot convert value created in a different engine");
+    Q_ASSERT(m_state == JSObject);
+    return this;
+}
+
+/*!
+  This method is created only for QScriptValue::toObject() purpose which is obsolete.
+  \internal
+ */
+QScriptValuePrivate* QScriptValuePrivate::toObject()
+{
+    if (isJSBased())
+        return toObject(m_engine.data());
+
+    // Without an engine there is not much we can do.
+    return new QScriptValuePrivate;
+}
 
 bool QScriptValuePrivate::equals(QScriptValuePrivate* other)
 {
