@@ -328,6 +328,8 @@ static AtkAttributeSet* webkit_accessible_get_attributes(AtkObject* object)
 {
     AtkAttributeSet* attributeSet = 0;
 
+    attributeSet = addAttributeToSet(attributeSet, "toolkit", "WebKitGtk");
+
     int headingLevel = core(object)->headingLevel();
     if (headingLevel) {
         String value = String::number(headingLevel);

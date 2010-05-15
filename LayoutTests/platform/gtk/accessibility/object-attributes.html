@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<h1>Heading Level 1</h1>
+<h2>Heading Level 2</h2>
+<h3>Heading Level 3</h3>
+<h4>Heading Level 4</h4>
+<h5>Heading Level 5</h5>
+<h6>Heading Level 6</h6>
+<a href="foo.html">Link</a>
+<table>
+<tr><td>foo</td><td>bar</td></tr>
+</table>
+<table>
+<table border=1>
+<tr><th>Odd</th><th>Even</th></tr>
+<tr><td><p>1</p></td><td><p>2</p></td></tr>
+<tr><td><p>3</p></td><td><p>4</p></td></tr>
+</table>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests the exposure of Atk object attributes.");
+    if (window.accessibilityController) {
+        layoutTestController.dumpAsText();
+        document.getElementById("body").focus();
+        var webArea = accessibilityController.focusedElement;
+        var child = webArea.childAtIndex(0);
+        shouldBe("child.role", "'heading'");
+        shouldBe("child.allAttributes()", "'level:1, toolkit:WebKitGtk'");
+        child = webArea.childAtIndex(1);
+        shouldBe("child.role", "'heading'");
+        shouldBe("child.allAttributes()", "'level:2, toolkit:WebKitGtk'");
+        child = webArea.childAtIndex(2);
+        shouldBe("child.role", "'heading'");
+        shouldBe("child.allAttributes()", "'level:3, toolkit:WebKitGtk'");
+        child = webArea.childAtIndex(3);
+        shouldBe("child.role", "'heading'");
+        shouldBe("child.allAttributes()", "'level:4, toolkit:WebKitGtk'");
+        child = webArea.childAtIndex(4);
+        shouldBe("child.role", "'heading'");
+        shouldBe("child.allAttributes()", "'level:5, toolkit:WebKitGtk'");
+        child = webArea.childAtIndex(5);
+        shouldBe("child.role", "'heading'");
+        shouldBe("child.allAttributes()", "'level:6, toolkit:WebKitGtk'");
+        child = webArea.childAtIndex(6);
+        shouldBe("child.role", "'link'");
+        shouldBe("child.allAttributes()", "'toolkit:WebKitGtk'");
+        child = webArea.childAtIndex(7);
+        shouldBe("child.role", "'table'");
+        shouldBe("child.allAttributes()", "'toolkit:WebKitGtk'");
+        child = webArea.childAtIndex(8);
+        shouldBe("child.role", "'table'");
+        shouldBe("child.allAttributes()", "'toolkit:WebKitGtk'");
+    }
+    successfullyParsed = true;
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

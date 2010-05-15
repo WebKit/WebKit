@@ -1,3 +1,17 @@
+2010-05-15  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30500
+        [Gtk] Find a way for WebKit to "announce" itself so that ATs can readily distinguish it from true Gtk/Gail
+
+        The "announcement" is now made in the form of an object attribute
+        associated with the AtkObject.
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::allAttributes):
+        (attributeSetToString):
+
 2010-05-15  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Xan Lopez.

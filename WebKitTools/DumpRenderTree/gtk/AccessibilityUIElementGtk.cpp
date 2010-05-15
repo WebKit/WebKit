@@ -129,10 +129,22 @@ unsigned AccessibilityUIElement::indexOfChild(AccessibilityUIElement* element)
     return 0;
 }
 
+gchar* attributeSetToString(AtkAttributeSet* attributeSet)
+{
+    GString* str = g_string_new(0);
+    for (GSList* attributes = attributeSet; attributes; attributes = attributes->next) {
+        AtkAttribute* attribute = static_cast<AtkAttribute*>(attributes->data);
+        g_string_append(str, g_strconcat(attribute->name, ":", attribute->value, NULL));
+        if (attributes->next)
+            g_string_append(str, ", ");
+    }
+
+    return g_string_free(str, FALSE);
+}
+
 JSStringRef AccessibilityUIElement::allAttributes()
 {
-    // FIXME: implement
-    return JSStringCreateWithCharacters(0, 0);
+    return JSStringCreateWithUTF8CString(attributeSetToString(atk_object_get_attributes(ATK_OBJECT(m_element))));
 }
 
 JSStringRef AccessibilityUIElement::attributesOfLinkedUIElements()
