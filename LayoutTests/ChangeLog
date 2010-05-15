@@ -1,3 +1,13 @@
+2010-05-14  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=39095 
+        <rdar://problem/7984158> REGRESSION (r53085): Infinite recursion in Position::getInlineBoxAndOffset when changing writing direction to right-to-left
+
+        * editing/selection/applystyle-to-inline-in-block-expected.txt: Added.
+        * editing/selection/applystyle-to-inline-in-block.html: Added.
+
 2010-05-14  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

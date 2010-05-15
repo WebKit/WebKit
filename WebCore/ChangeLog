@@ -1,3 +1,16 @@
+2010-05-14  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=39095 
+        <rdar://problem/7984158> REGRESSION (r53085): Infinite recursion in Position::getInlineBoxAndOffset when changing writing direction to right-to-left
+
+        Test: editing/selection/applystyle-to-inline-inside-block.html
+
+        * dom/Position.cpp: (WebCore::Position::getInlineBoxAndOffset): Now that this function correctly goes in and out of editable areas by calling
+        downstreamIgnoringEditingBoundaries and upstreamIgnoringEditingBoundaries for blocks (added in r58665), we no longer need a special case to 
+        jump out to the parent when we hit an inline (which was added in r53085 when this issue was introduced).
+
 2010-05-14  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Mark Rowe.
