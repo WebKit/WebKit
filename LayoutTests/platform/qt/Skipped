@@ -4680,7 +4680,6 @@ fast/loader/null-request-after-willSendRequest.html
 fast/loader/policy-delegate-action-hit-test-zoomed.html
 fast/loader/reload-policy-delegate.html
 platform/qt/fast/events/event-sender-keydown-frame.html
-security/set-form-autocomplete-attribute.html
 svg/custom/svg-fonts-in-text-controls.html
 svg/custom/text-dom-removal.svg
 svg/custom/use-clipped-transform.svg

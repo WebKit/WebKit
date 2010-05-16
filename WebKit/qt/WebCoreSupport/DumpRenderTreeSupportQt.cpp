@@ -33,6 +33,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GCController.h"
+#include "HTMLInputElement.h"
 #include "InspectorController.h"
 #include "Page.h"
 #include "PageGroup.h"
@@ -438,6 +439,28 @@ QVariantList DumpRenderTreeSupportQt::firstRectForCharacterRange(QWebPage* page,
     QRect resultRect = frame->firstRectForRange(range.get());
     rect << resultRect.x() << resultRect.y() << resultRect.width() << resultRect.height();
     return rect;
+}
+
+bool DumpRenderTreeSupportQt::elementDoesAutoCompleteForElementWithId(QWebFrame* frame, const QString& elementId)
+{
+    Frame* coreFrame = QWebFramePrivate::core(frame);
+    if (!coreFrame)
+        return false;
+
+    Document* doc = coreFrame->document();
+    Q_ASSERT(doc);
+
+    Node* coreNode = doc->getElementById(elementId);
+    if (!coreNode || !coreNode->renderer())
+        return false;
+
+    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(coreNode);
+    if (!inputElement)
+        return false;
+
+    return (inputElement->isTextField()
+            && inputElement->inputType() != HTMLInputElement::PASSWORD
+            && inputElement->autoComplete());
 }
 
 // Provide a backward compatibility with previously exported private symbols as of QtWebKit 4.6 release

@@ -629,6 +629,11 @@ QVariantMap LayoutTestController::computedStyleIncludingVisitedInfo(const QWebEl
     return DumpRenderTreeSupportQt::computedStyleIncludingVisitedInfo(element);
 }
 
+bool LayoutTestController::elementDoesAutoCompleteForElementWithId(const QString& elementId)
+{
+    return DumpRenderTreeSupportQt::elementDoesAutoCompleteForElementWithId(m_drt->webPage()->mainFrame(), elementId);
+}
+
 void LayoutTestController::authenticateSession(const QString&, const QString&, const QString&)
 {
     // FIXME: If there is a concept per-session (per-process) credential storage, the credentials should be added to it for later use.

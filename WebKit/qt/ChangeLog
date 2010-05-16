@@ -1,3 +1,17 @@
+2010-05-16  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt]Unskip security/set-form-autocomplete-attribute.html
+
+        Add support for layoutTestController.elementDoesAutoCompleteForElementWithId().
+
+        https://bugs.webkit.org/show_bug.cgi?id=38859
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::elementDoesAutoCompleteForElementWithId):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2010-05-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Prospective Qt/Mac build fix.

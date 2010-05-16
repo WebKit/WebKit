@@ -77,6 +77,7 @@ public:
     static int numberOfPages(QWebFrame* frame, float width, float height);
     static int pageNumberForElementById(QWebFrame* frame, const QString& id, float width, float height);
     static bool hasDocumentElement(QWebFrame* frame);
+    static bool elementDoesAutoCompleteForElementWithId(QWebFrame* frame, const QString& elementId);
 
     static void whiteListAccessFromOrigin(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains);
     static void resetOriginAccessWhiteLists();
