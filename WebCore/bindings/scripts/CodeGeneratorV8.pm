@@ -1124,8 +1124,14 @@ END
 
     my $numParameters = @{$function->parameters};
 
-    if ($function->signature->extendedAttributes->{"RequiresAllArguments"}) {
-        push(@implContentDecls, "    if (args.Length() < $numParameters)\n    return v8::Handle<v8::Value>();\n");
+    my $requiresAllArguments = $function->signature->extendedAttributes->{"RequiresAllArguments"};
+    if ($requiresAllArguments) {
+        push(@implContentDecls, "    if (args.Length() < $numParameters)\n");
+        if ($requiresAllArguments eq "Raise") {
+            push(@implContentDecls, "        return throwError(\"Not enough arguments\", V8Proxy::SyntaxError);\n");
+        } else {
+            push(@implContentDecls, "        return v8::Handle<v8::Value>();\n");
+        }
     }
 
     if (IsPodType($implClassName)) {

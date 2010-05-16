@@ -48,6 +48,10 @@ module test {
         TestObj objMethod();
         TestObj objMethodWithArgs(in long intArg, in DOMString strArg, in TestObj objArg);
 
+        [RequiresAllArguments] TestObj methodThatRequiresAllArgs(in DOMString strArg, in TestObj objArg);
+        [RequiresAllArguments=Raise] TestObj methodThatRequiresAllArgsAndThrows(in DOMString strArg, in TestObj objArg)
+            raises(DOMException);
+
         void serializedValue(in SerializedScriptValue serializedArg);
 
         // Exceptions

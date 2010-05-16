@@ -271,6 +271,37 @@ static v8::Handle<v8::Value> objMethodWithArgsCallback(const v8::Arguments& args
     return toV8(imp->objMethodWithArgs(intArg, strArg, objArg));
 }
 
+static v8::Handle<v8::Value> methodThatRequiresAllArgsCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.methodThatRequiresAllArgs");
+    if (args.Length() < 2)
+        return v8::Handle<v8::Value>();
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    V8Parameter<> strArg = args[0];
+    TestObj* objArg = V8TestObj::HasInstance(args[1]) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(args[1])) : 0;
+    return toV8(imp->methodThatRequiresAllArgs(strArg, objArg));
+}
+
+static v8::Handle<v8::Value> methodThatRequiresAllArgsAndThrowsCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.methodThatRequiresAllArgsAndThrows");
+    if (args.Length() < 2)
+        return throwError("Not enough arguments", V8Proxy::SyntaxError);
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    ExceptionCode ec = 0;
+    {
+    V8Parameter<> strArg = args[0];
+    TestObj* objArg = V8TestObj::HasInstance(args[1]) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(args[1])) : 0;
+    RefPtr<TestObj> result = imp->methodThatRequiresAllArgsAndThrows(strArg, objArg, ec);
+    if (UNLIKELY(ec))
+        goto fail;
+    return toV8(result.release());
+    }
+    fail:
+    V8Proxy::setDOMException(ec);
+    return v8::Handle<v8::Value>();
+}
+
 static v8::Handle<v8::Value> serializedValueCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.serializedValue");
@@ -655,6 +686,18 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
     v8::Handle<v8::FunctionTemplate> objMethodWithArgsArgv[objMethodWithArgsArgc] = { v8::Handle<v8::FunctionTemplate>(), v8::Handle<v8::FunctionTemplate>(), V8TestObj::GetRawTemplate() };
     v8::Handle<v8::Signature> objMethodWithArgsSignature = v8::Signature::New(desc, objMethodWithArgsArgc, objMethodWithArgsArgv);
     proto->Set(v8::String::New("objMethodWithArgs"), v8::FunctionTemplate::New(TestObjInternal::objMethodWithArgsCallback, v8::Handle<v8::Value>(), objMethodWithArgsSignature));
+
+    // Custom Signature 'methodThatRequiresAllArgs'
+    const int methodThatRequiresAllArgsArgc = 2;
+    v8::Handle<v8::FunctionTemplate> methodThatRequiresAllArgsArgv[methodThatRequiresAllArgsArgc] = { v8::Handle<v8::FunctionTemplate>(), V8TestObj::GetRawTemplate() };
+    v8::Handle<v8::Signature> methodThatRequiresAllArgsSignature = v8::Signature::New(desc, methodThatRequiresAllArgsArgc, methodThatRequiresAllArgsArgv);
+    proto->Set(v8::String::New("methodThatRequiresAllArgs"), v8::FunctionTemplate::New(TestObjInternal::methodThatRequiresAllArgsCallback, v8::Handle<v8::Value>(), methodThatRequiresAllArgsSignature));
+
+    // Custom Signature 'methodThatRequiresAllArgsAndThrows'
+    const int methodThatRequiresAllArgsAndThrowsArgc = 2;
+    v8::Handle<v8::FunctionTemplate> methodThatRequiresAllArgsAndThrowsArgv[methodThatRequiresAllArgsAndThrowsArgc] = { v8::Handle<v8::FunctionTemplate>(), V8TestObj::GetRawTemplate() };
+    v8::Handle<v8::Signature> methodThatRequiresAllArgsAndThrowsSignature = v8::Signature::New(desc, methodThatRequiresAllArgsAndThrowsArgc, methodThatRequiresAllArgsAndThrowsArgv);
+    proto->Set(v8::String::New("methodThatRequiresAllArgsAndThrows"), v8::FunctionTemplate::New(TestObjInternal::methodThatRequiresAllArgsAndThrowsCallback, v8::Handle<v8::Value>(), methodThatRequiresAllArgsAndThrowsSignature));
 
     // Custom Signature 'customArgsAndException'
     const int customArgsAndExceptionArgc = 1;

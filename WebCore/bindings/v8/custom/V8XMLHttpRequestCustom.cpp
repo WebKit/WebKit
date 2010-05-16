@@ -141,22 +141,6 @@ v8::Handle<v8::Value> V8XMLHttpRequest::sendCallback(const v8::Arguments& args)
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8XMLHttpRequest::setRequestHeaderCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.XMLHttpRequest.setRequestHeader()");
-    if (args.Length() < 2)
-        return throwError("Not enough arguments", V8Proxy::SyntaxError);
-
-    XMLHttpRequest* xmlHttpRequest = V8XMLHttpRequest::toNative(args.Holder());
-    ExceptionCode ec = 0;
-    String header = toWebCoreString(args[0]);
-    String value = toWebCoreString(args[1]);
-    xmlHttpRequest->setRequestHeader(header, value, ec);
-    if (ec)
-        return throwError(ec);
-    return v8::Undefined();
-}
-
 v8::Handle<v8::Value> V8XMLHttpRequest::getResponseHeaderCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XMLHttpRequest.getResponseHeader()");

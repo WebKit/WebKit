@@ -63,7 +63,7 @@ module xml {
         [Custom] void open(in DOMString method, in DOMString url, in boolean async, in DOMString user, in DOMString password)
             raises(DOMException);
 
-        [Custom] void setRequestHeader(in DOMString header, in DOMString value)
+        [RequiresAllArguments=Raise] void setRequestHeader(in DOMString header, in DOMString value)
             raises(DOMException);
 
         // void send();
@@ -88,8 +88,7 @@ module xml {
             getter raises(DOMException);
 
         // Extension
-        // FIXME: RequiresAllArguments is probably bogus here.
-        [RequiresAllArguments] void overrideMimeType(in DOMString override);
+        [RequiresAllArguments=Raise] void overrideMimeType(in DOMString override);
 
         // EventTarget interface
         void addEventListener(in DOMString type, 

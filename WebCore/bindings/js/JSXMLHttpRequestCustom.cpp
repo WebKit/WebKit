@@ -91,17 +91,6 @@ JSValue JSXMLHttpRequest::open(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
-JSValue JSXMLHttpRequest::setRequestHeader(ExecState* exec, const ArgList& args)
-{
-    if (args.size() < 2)
-        return throwError(exec, SyntaxError, "Not enough arguments");
-
-    ExceptionCode ec = 0;
-    impl()->setRequestHeader(ustringToAtomicString(args.at(0).toString(exec)), ustringToString(args.at(1).toString(exec)), ec);
-    setDOMException(exec, ec);
-    return jsUndefined();
-}
-
 JSValue JSXMLHttpRequest::send(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;

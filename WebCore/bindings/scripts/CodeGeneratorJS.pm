@@ -1842,9 +1842,14 @@ sub GenerateImplementation
 
                 my $numParameters = @{$function->parameters};
 
-                if ($function->signature->extendedAttributes->{"RequiresAllArguments"}) {
+                my $requiresAllArguments = $function->signature->extendedAttributes->{"RequiresAllArguments"};
+                if ($requiresAllArguments) {
                         push(@implContent, "    if (args.size() < $numParameters)\n");
-                        push(@implContent, "        return jsUndefined();\n");
+                        if ($requiresAllArguments eq "Raise") {
+                            push(@implContent, "        return throwError(exec, SyntaxError, \"Not enough arguments\");\n");
+                        } else {
+                            push(@implContent, "        return jsUndefined();\n");
+                        }
                 }
 
                 if (@{$function->raisesExceptions}) {

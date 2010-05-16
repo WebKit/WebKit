@@ -123,6 +123,44 @@ webkit_dom_test_obj_obj_method_with_args (WebKitDOMTestObj *self, glong int_arg,
 
 }
 
+WebKitDOMTestObj* 
+webkit_dom_test_obj_method_that_requires_all_args (WebKitDOMTestObj *self, gchar*  str_arg, WebKitDOMTestObj*  obj_arg)
+{
+    g_return_val_if_fail (self, 0);
+    WebCore::TestObj * item = WebKit::core(self);
+    g_return_val_if_fail (str_arg, 0);
+    g_return_val_if_fail (obj_arg, 0);
+    WebCore::String _g_str_arg = WebCore::String::fromUTF8(str_arg);
+    WebCore::TestObj * _g_obj_arg = WebKit::core(obj_arg);
+    g_return_val_if_fail (_g_obj_arg, 0);
+    PassRefPtr<WebCore::TestObj> g_res = WTF::getPtr(item->methodThatRequiresAllArgs(_g_str_arg, _g_obj_arg));
+    WebKitDOMTestObj*  res = static_cast<WebKitDOMTestObj* >(WebKit::kit(g_res.get()));
+    return res;
+
+}
+
+WebKitDOMTestObj* 
+webkit_dom_test_obj_method_that_requires_all_args_and_throws (WebKitDOMTestObj *self, gchar*  str_arg, WebKitDOMTestObj*  obj_arg, GError **error)
+{
+    g_return_val_if_fail (self, 0);
+    WebCore::TestObj * item = WebKit::core(self);
+    g_return_val_if_fail (str_arg, 0);
+    g_return_val_if_fail (obj_arg, 0);
+    WebCore::String _g_str_arg = WebCore::String::fromUTF8(str_arg);
+    WebCore::TestObj * _g_obj_arg = WebKit::core(obj_arg);
+    g_return_val_if_fail (_g_obj_arg, 0);
+    WebCore::ExceptionCode ec = 0;
+    PassRefPtr<WebCore::TestObj> g_res = WTF::getPtr(item->methodThatRequiresAllArgsAndThrows(_g_str_arg, _g_obj_arg, ec));
+    if (ec) {
+        WebCore::ExceptionCodeDescription ecdesc;
+        WebCore::getExceptionCodeDescription(ec, ecdesc);
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+    }
+    WebKitDOMTestObj*  res = static_cast<WebKitDOMTestObj* >(WebKit::kit(g_res.get()));
+    return res;
+
+}
+
 void
 webkit_dom_test_obj_serialized_value (WebKitDOMTestObj *self, WebKitDOMSerializedScriptValue*  serialized_arg)
 {

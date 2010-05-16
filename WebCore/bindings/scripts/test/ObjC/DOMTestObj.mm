@@ -219,6 +219,19 @@
     return kit(WTF::getPtr(IMPL->objMethodWithArgs(intArg, strArg, core(objArg))));
 }
 
+- (DOMTestObj *)methodThatRequiresAllArgs:(NSString *)strArg objArg:(DOMTestObj *)objArg
+{
+    return kit(WTF::getPtr(IMPL->methodThatRequiresAllArgs(strArg, core(objArg))));
+}
+
+- (DOMTestObj *)methodThatRequiresAllArgsAndThrows:(NSString *)strArg objArg:(DOMTestObj *)objArg
+{
+    WebCore::ExceptionCode ec = 0;
+    DOMTestObj *result = kit(WTF::getPtr(IMPL->methodThatRequiresAllArgsAndThrows(strArg, core(objArg), ec)));
+    WebCore::raiseOnDOMError(ec);
+    return result;
+}
+
 - (void)serializedValue:(NSString *)serializedArg
 {
     IMPL->serializedValue(WebCore::SerializedScriptValue::create(WebCore::String(serializedArg)));

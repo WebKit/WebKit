@@ -64,6 +64,12 @@ webkit_dom_test_obj_obj_method (WebKitDOMTestObj *self);
 WEBKIT_API WebKitDOMTestObj* 
 webkit_dom_test_obj_obj_method_with_args (WebKitDOMTestObj *self, glong int_arg, gchar*  str_arg, WebKitDOMTestObj*  obj_arg);
 
+WEBKIT_API WebKitDOMTestObj* 
+webkit_dom_test_obj_method_that_requires_all_args (WebKitDOMTestObj *self, gchar*  str_arg, WebKitDOMTestObj*  obj_arg);
+
+WEBKIT_API WebKitDOMTestObj* 
+webkit_dom_test_obj_method_that_requires_all_args_and_throws (WebKitDOMTestObj *self, gchar*  str_arg, WebKitDOMTestObj*  obj_arg, GError **error);
+
 WEBKIT_API void
 webkit_dom_test_obj_serialized_value (WebKitDOMTestObj *self, WebKitDOMSerializedScriptValue*  serialized_arg);
 
