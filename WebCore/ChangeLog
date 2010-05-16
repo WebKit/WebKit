@@ -2,6 +2,18 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        Don't unnecessarily copy data when searching for methods in QtClass.
+
+        [Qt] JSValue QtClass::fallbackObject can be optimized
+        https://bugs.webkit.org/show_bug.cgi?id=37684
+
+        * bridge/qt/qt_class.cpp:
+        (JSC::Bindings::QtClass::fallbackObject):
+
+2010-05-15  Anders Bakken  <agbakken@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         Identifier::ascii() is not threadsafe and shouldn't be used for
         converting to and from QString/QByteArray.
 

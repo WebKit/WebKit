@@ -100,10 +100,12 @@ JSValue QtClass::fallbackObject(ExecState* exec, Instance* inst, const Identifie
         if (m.access() == QMetaMethod::Private)
             continue;
 
-        QByteArray signature = m.signature();
-        signature.truncate(signature.indexOf('('));
+        int index = 0;
+        const char* signature = m.signature();
+        while (signature[index] && signature[index] != '(')
+            ++index;
 
-        if (normal == signature) {
+        if (normal == QByteArray::fromRawData(signature, index)) {
             QtRuntimeMetaMethod* val = new (exec) QtRuntimeMetaMethod(exec, identifier, static_cast<QtInstance*>(inst), index, normal, false);
             qtinst->m_methods.insert(name, val);
             return val;
