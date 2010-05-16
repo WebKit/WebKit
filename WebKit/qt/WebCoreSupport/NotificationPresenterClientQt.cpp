@@ -41,16 +41,12 @@
 
 #include <QtGui>
 
-static bool dumpNotification = false;
-
-void QWEBKIT_EXPORT qt_dump_notification(bool b)
-{
-    dumpNotification = b;
-}
 
 #if ENABLE(NOTIFICATIONS)
 
 using namespace WebCore;
+
+bool NotificationPresenterClientQt::dumpNotification = false;
 
 NotificationPresenterClientQt::NotificationPresenterClientQt()
 {

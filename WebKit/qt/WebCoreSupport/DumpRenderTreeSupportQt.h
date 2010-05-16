@@ -86,6 +86,19 @@ public:
 
     static QString markerTextForListItem(const QWebElement& listItem);
     static QVariantMap computedStyleIncludingVisitedInfo(const QWebElement& element);
+
+    static void dumpFrameLoader(bool b);
+    static void dumpResourceLoadCallbacks(bool b);
+    static void dumpResourceLoadCallbacksPath(const QString& path);
+    static void setWillSendRequestReturnsNullOnRedirect(bool b);
+    static void setWillSendRequestReturnsNull(bool b);
+    static void setWillSendRequestClearHeaders(const QStringList& headers);
+
+    static void dumpEditingCallbacks(bool b);
+    static void dumpSetAcceptsEditing(bool b);
+
+    static void dumpNotification(bool b);
+
 };
 
 #endif

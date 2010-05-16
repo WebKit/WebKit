@@ -2,6 +2,49 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        [Qt] Unskip fast/loader/main-document-url-for-non-http-loads.html
+
+        Fix FrameLoaderClientQt.cpp to print relative filename paths correctly.
+
+        Move qt_* functions in FrameLoaderClientQt, EditorClientQt, and NotificationPresenterClientQt
+        to DumpRenderTreeSupportQt. Create new functions to replace them in DumpRenderTreeSupportQt.
+        Support for the old function names is retained until confirmed that no one uses them outside
+        QtWebKit.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38867
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::dumpFrameLoader):
+        (DumpRenderTreeSupportQt::dumpResourceLoadCallbacks):
+        (DumpRenderTreeSupportQt::dumpResourceLoadCallbacksPath):
+        (DumpRenderTreeSupportQt::setWillSendRequestReturnsNullOnRedirect):
+        (DumpRenderTreeSupportQt::setWillSendRequestReturnsNull):
+        (DumpRenderTreeSupportQt::setWillSendRequestClearHeaders):
+        (DumpRenderTreeSupportQt::dumpEditingCallbacks):
+        (DumpRenderTreeSupportQt::dumpSetAcceptsEditing):
+        (DumpRenderTreeSupportQt::dumpNotification):
+        (qt_dump_frame_loader):
+        (qt_dump_resource_load_callbacks):
+        (qt_dump_resource_load_callbacks_path):
+        (qt_set_will_send_request_returns_null_on_redirect):
+        (qt_set_will_send_request_returns_null):
+        (qt_set_will_send_request_clear_headers):
+        (qt_dump_editing_callbacks):
+        (qt_dump_set_accepts_editing):
+        (qt_dump_notification):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+        * WebCoreSupport/EditorClientQt.cpp:
+        * WebCoreSupport/EditorClientQt.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (drtDescriptionSuitableForTestResult):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        * WebCoreSupport/NotificationPresenterClientQt.h:
+
+2010-05-16  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         [Qt]Unskip security/set-form-autocomplete-attribute.html
 
         Add support for layoutTestController.elementDoesAutoCompleteForElementWithId().

@@ -57,19 +57,6 @@
 #include <QUndoStack>
 #define methodDebug() qDebug("EditorClientQt: %s", __FUNCTION__);
 
-static bool dumpEditingCallbacks = false;
-static bool acceptsEditing = true;
-void QWEBKIT_EXPORT qt_dump_editing_callbacks(bool b)
-{
-    dumpEditingCallbacks = b;
-}
-
-void QWEBKIT_EXPORT qt_dump_set_accepts_editing(bool b)
-{
-    acceptsEditing = b;
-}
-
-
 static QString dumpPath(WebCore::Node *node)
 {
     QString str = node->nodeName();
@@ -98,6 +85,9 @@ static QString dumpRange(WebCore::Range *range)
 
 
 namespace WebCore {
+
+bool EditorClientQt::dumpEditingCallbacks = false;
+bool EditorClientQt::acceptsEditing = true;
 
 using namespace HTMLNames;
 

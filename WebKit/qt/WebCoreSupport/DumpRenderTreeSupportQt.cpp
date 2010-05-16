@@ -28,13 +28,16 @@
 #include "ContextMenuClientQt.h"
 #include "ContextMenuController.h"
 #include "Editor.h"
+#include "EditorClientQt.h"
 #include "Element.h"
 #include "FocusController.h"
 #include "Frame.h"
+#include "FrameLoaderClientQt.h"
 #include "FrameView.h"
 #include "GCController.h"
 #include "HTMLInputElement.h"
 #include "InspectorController.h"
+#include "NotificationPresenterClientQt.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PluginDatabase.h"
@@ -463,6 +466,52 @@ bool DumpRenderTreeSupportQt::elementDoesAutoCompleteForElementWithId(QWebFrame*
             && inputElement->autoComplete());
 }
 
+void DumpRenderTreeSupportQt::dumpFrameLoader(bool b)
+{
+    FrameLoaderClientQt::dumpFrameLoaderCallbacks = b;
+}
+
+void DumpRenderTreeSupportQt::dumpResourceLoadCallbacks(bool b)
+{
+    FrameLoaderClientQt::dumpResourceLoadCallbacks = b;
+}
+
+void DumpRenderTreeSupportQt::dumpResourceLoadCallbacksPath(const QString& path)
+{
+    FrameLoaderClientQt::dumpResourceLoadCallbacksPath = path;
+}
+
+void DumpRenderTreeSupportQt::setWillSendRequestReturnsNullOnRedirect(bool b)
+{
+    FrameLoaderClientQt::sendRequestReturnsNullOnRedirect = b;
+}
+
+void DumpRenderTreeSupportQt::setWillSendRequestReturnsNull(bool b)
+{
+    FrameLoaderClientQt::sendRequestReturnsNull = b;
+}
+
+void DumpRenderTreeSupportQt::setWillSendRequestClearHeaders(const QStringList& headers)
+{
+    FrameLoaderClientQt::sendRequestClearHeaders = headers;
+}
+
+void DumpRenderTreeSupportQt::dumpEditingCallbacks(bool b)
+{
+    EditorClientQt::dumpEditingCallbacks = b;
+}
+
+void DumpRenderTreeSupportQt::dumpSetAcceptsEditing(bool b)
+{
+    EditorClientQt::acceptsEditing = b;
+}
+
+void DumpRenderTreeSupportQt::dumpNotification(bool b)
+{
+#if ENABLE(NOTIFICATIONS)
+    NotificationPresenterClientQt::dumpNotification = b;
+#endif
+}
 // Provide a backward compatibility with previously exported private symbols as of QtWebKit 4.6 release
 
 void QWEBKIT_EXPORT qt_resumeActiveDOMObjects(QWebFrame* frame)
@@ -543,4 +592,50 @@ QString QWEBKIT_EXPORT qt_webpage_groupName(QWebPage* page)
 void QWEBKIT_EXPORT qt_webpage_setGroupName(QWebPage* page, const QString& groupName)
 {
     DumpRenderTreeSupportQt::webPageSetGroupName(page, groupName);
+}
+
+void QWEBKIT_EXPORT qt_dump_frame_loader(bool b)
+{
+    DumpRenderTreeSupportQt::dumpFrameLoader(b);
+}
+
+void QWEBKIT_EXPORT qt_dump_resource_load_callbacks(bool b)
+{
+    DumpRenderTreeSupportQt::dumpResourceLoadCallbacks(b);
+}
+
+void QWEBKIT_EXPORT qt_dump_resource_load_callbacks_path(const QString& path)
+{
+    DumpRenderTreeSupportQt::dumpResourceLoadCallbacksPath(path);
+}
+
+void QWEBKIT_EXPORT qt_set_will_send_request_returns_null_on_redirect(bool b)
+{
+    DumpRenderTreeSupportQt::setWillSendRequestReturnsNullOnRedirect(b);
+
+}
+
+void QWEBKIT_EXPORT qt_set_will_send_request_returns_null(bool b)
+{
+    DumpRenderTreeSupportQt::setWillSendRequestReturnsNull(b);
+}
+
+void QWEBKIT_EXPORT qt_set_will_send_request_clear_headers(const QStringList& headers)
+{
+    DumpRenderTreeSupportQt::setWillSendRequestClearHeaders(headers);
+}
+
+void QWEBKIT_EXPORT qt_dump_editing_callbacks(bool b)
+{
+    DumpRenderTreeSupportQt::dumpEditingCallbacks(b);
+}
+
+void QWEBKIT_EXPORT qt_dump_set_accepts_editing(bool b)
+{
+    DumpRenderTreeSupportQt::dumpSetAcceptsEditing(b);
+}
+
+void QWEBKIT_EXPORT qt_dump_notification(bool b)
+{
+    DumpRenderTreeSupportQt::dumpNotification(b);
 }

@@ -37,22 +37,13 @@
 #include <QLocale>
 #include <qwebsettings.h>
 
-extern void qt_dump_editing_callbacks(bool b);
-extern void qt_dump_frame_loader(bool b);
-extern void qt_dump_resource_load_callbacks(bool b);
-extern void qt_set_will_send_request_returns_null_on_redirect(bool b);
-extern void qt_set_will_send_request_returns_null(bool b);
-extern void qt_set_will_send_request_clear_headers(const QStringList& headers);
-
-extern void qt_dump_notification(bool b);
-
 LayoutTestController::LayoutTestController(WebCore::DumpRenderTree* drt)
     : QObject()
     , m_drt(drt)
 {
     qRegisterMetaType<QWebElement>("QWebElement");
     reset();
-    qt_dump_notification(true);
+    DumpRenderTreeSupportQt::dumpNotification(true);
 }
 
 void LayoutTestController::reset()
@@ -73,12 +64,12 @@ void LayoutTestController::reset()
     m_handleErrorPages = false;
     m_webHistory = 0;
     m_globalFlag = false;
-    qt_dump_editing_callbacks(false);
-    qt_dump_frame_loader(false);
-    qt_dump_resource_load_callbacks(false);
-    qt_set_will_send_request_returns_null_on_redirect(false);
-    qt_set_will_send_request_returns_null(false);
-    qt_set_will_send_request_clear_headers(QStringList());
+    DumpRenderTreeSupportQt::dumpEditingCallbacks(false);
+    DumpRenderTreeSupportQt::dumpFrameLoader(false);
+    DumpRenderTreeSupportQt::dumpResourceLoadCallbacks(false);
+    DumpRenderTreeSupportQt::setWillSendRequestReturnsNullOnRedirect(false);
+    DumpRenderTreeSupportQt::setWillSendRequestReturnsNull(false);
+    DumpRenderTreeSupportQt::setWillSendRequestClearHeaders(QStringList());
     emit hidePage();
 }
 
@@ -217,32 +208,32 @@ QString LayoutTestController::pathToLocalResource(const QString& url)
 void LayoutTestController::dumpEditingCallbacks()
 {
     qDebug() << ">>>dumpEditingCallbacks";
-    qt_dump_editing_callbacks(true);
+    DumpRenderTreeSupportQt::dumpEditingCallbacks(true);
 }
 
 void LayoutTestController::dumpFrameLoadCallbacks()
 {
-    qt_dump_frame_loader(true);
+    DumpRenderTreeSupportQt::dumpFrameLoader(true);
 }
 
 void LayoutTestController::dumpResourceLoadCallbacks()
 {
-    qt_dump_resource_load_callbacks(true);
+    DumpRenderTreeSupportQt::dumpResourceLoadCallbacks(true);
 }
 
 void LayoutTestController::setWillSendRequestReturnsNullOnRedirect(bool enabled)
 {
-    qt_set_will_send_request_returns_null_on_redirect(enabled);
+    DumpRenderTreeSupportQt::setWillSendRequestReturnsNullOnRedirect(enabled);
 }
 
 void LayoutTestController::setWillSendRequestReturnsNull(bool enabled)
 {
-    qt_set_will_send_request_returns_null(enabled);
+    DumpRenderTreeSupportQt::setWillSendRequestReturnsNull(enabled);
 }
 
 void LayoutTestController::setWillSendRequestClearHeader(const QStringList& headers)
 {
-    qt_set_will_send_request_clear_headers(headers);
+    DumpRenderTreeSupportQt::setWillSendRequestClearHeaders(headers);
 }
 
 void LayoutTestController::queueBackNavigation(int howFarBackward)

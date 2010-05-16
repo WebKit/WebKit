@@ -4675,7 +4675,6 @@ fast/forms/textarea-metrics.html
 fast/history/window-open.html
 fast/loader/cancel-load-during-port-block-timer.html
 fast/loader/javascript-url-hierarchical-execution.html
-fast/loader/main-document-url-for-non-http-loads.html
 fast/loader/null-request-after-willSendRequest.html
 fast/loader/policy-delegate-action-hit-test-zoomed.html
 fast/loader/reload-policy-delegate.html

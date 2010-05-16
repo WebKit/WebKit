@@ -80,10 +80,6 @@
 
 #include <qdebug.h>
 
-extern void qt_dump_set_accepts_editing(bool b);
-extern void qt_dump_frame_loader(bool b);
-extern void qt_dump_resource_load_callbacks(bool b);
-
 namespace WebCore {
 
 NetworkAccessManager::NetworkAccessManager(QObject* parent)
@@ -480,6 +476,7 @@ static bool shouldEnableDeveloperExtras(const QUrl& url)
 
 void DumpRenderTree::open(const QUrl& url)
 {
+    DumpRenderTreeSupportQt::dumpResourceLoadCallbacksPath(QFileInfo(url.toString()).path());
     resetToConsistentStateBeforeTesting();
 
     if (shouldEnableDeveloperExtras(m_page->mainFrame()->url())) {
@@ -512,7 +509,7 @@ void DumpRenderTree::open(const QUrl& url)
     initializeFonts();
 #endif
 
-    qt_dump_frame_loader(url.toString().contains("loading/"));
+    DumpRenderTreeSupportQt::dumpFrameLoader(url.toString().contains("loading/"));
     setTextOutputEnabled(true);
     m_page->mainFrame()->load(url);
 }
@@ -733,8 +730,8 @@ static const char *methodNameStringForFailedTest(LayoutTestController *controlle
 void DumpRenderTree::dump()
 {
     // Prevent any further frame load or resource load callbacks from appearing after we dump the result.
-    qt_dump_frame_loader(false);
-    qt_dump_resource_load_callbacks(false);
+    DumpRenderTreeSupportQt::dumpFrameLoader(false);
+    DumpRenderTreeSupportQt::dumpResourceLoadCallbacks(false);
 
     QWebFrame *mainFrame = m_page->mainFrame();
 

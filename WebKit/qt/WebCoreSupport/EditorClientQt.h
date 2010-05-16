@@ -109,6 +109,9 @@ public:
 
     bool isEditing() const;
 
+    static bool dumpEditingCallbacks;
+    static bool acceptsEditing;
+
 private:
     QWebPage* m_page;
     bool m_editing;
