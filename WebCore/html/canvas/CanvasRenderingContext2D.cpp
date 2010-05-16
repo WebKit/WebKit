@@ -1349,6 +1349,11 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::createImageData(float sw, float 
         ec = NOT_SUPPORTED_ERR;
         return 0;
     }
+    if (!sw || !sh) {
+        ec = INDEX_SIZE_ERR;
+        return 0;
+    }
+
     FloatSize unscaledSize(sw, sh);
     IntSize scaledSize = canvas()->convertLogicalToDevice(unscaledSize);
     if (scaledSize.width() < 1)

@@ -1,3 +1,20 @@
+2010-05-15  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Based on the spec and Philip Taylor's test suite, createImageData() should throw
+        an INDEX_SIZE_ERR exception if either the sw or sh arguments are zero.
+        The link to the spec:
+        http://philip.html5.org/tests/canvas/suite/tests/spec.html#testrefs.2d.imageData.getcreate.zero
+
+        https://bugs.webkit.org/show_bug.cgi?id=39166
+
+        The complete test suite is in the process of checking in.
+        https://bugs.webkit.org/show_bug.cgi?id=20553
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createImageData):
+
 2010-05-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
