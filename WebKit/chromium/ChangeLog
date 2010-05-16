@@ -1,3 +1,21 @@
+2010-05-16  Mike Belshe  <mbelshe@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add a flag to the ResourceResponse for tracking if a request was
+        fetched via the TLS/Next-Protocol-Negotiation mechanism.
+
+        Also cleaned up the style in ResourceResponse to group the flags
+        together (and alphabetically) and hopefully improve readability of
+        the file.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39078
+
+        * public/WebURLResponse.h:
+        * src/WebURLResponse.cpp:
+        (WebKit::WebURLResponse::wasNpnNegotiated):
+        (WebKit::WebURLResponse::setWasNpnNegotiated):
+
 2010-05-16  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, rolling out r59571.
