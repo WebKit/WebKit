@@ -2,6 +2,26 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        Properly handle invalid arguments to CanvasRenderingContext2D's getImageData() and putImageData().
+        Both should throw NOT_SUPPORTED_ERR when called with nonfinite arguments.
+        getImageData() should throw INDEX_SIZE_ERR if either width or height is 0.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39175
+
+        Spec link:
+        http://www.whatwg.org/specs/web-apps/current-work/#pixel-manipulation
+
+        Test: fast/canvas/canvas-getImageData-invalid.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createImageData):
+        (WebCore::CanvasRenderingContext2D::getImageData):
+        (WebCore::CanvasRenderingContext2D::putImageData):
+
+2010-05-16  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         Canvas's toDataURL() should be case insensitive wrt the mimeType argument.
         https://bugs.webkit.org/show_bug.cgi?id=39153
 

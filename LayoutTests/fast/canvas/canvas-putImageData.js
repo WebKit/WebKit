@@ -202,24 +202,24 @@ pixelShouldBe(9, 9, [0, 128,0,255]);
 
 
 shouldThrow("context.putImageData({}, 0, 0)", "'Error: TYPE_MISMATCH_ERR: DOM Exception 17'");
-shouldThrow("context.putImageData(buffer, NaN, 0, 0, 0, 0, 0)", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
-shouldThrow("context.putImageData(buffer, 0, NaN, 0, 0, 0, 0)", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
-shouldThrow("context.putImageData(buffer, 0, 0, NaN, 0, 0, 0)", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
-shouldThrow("context.putImageData(buffer, 0, 0, 0, NaN, 0, 0)", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
-shouldThrow("context.putImageData(buffer, 0, 0, 0, 0, NaN, 0)", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
-shouldThrow("context.putImageData(buffer, 0, 0, 0, 0, 0, NaN)", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
-shouldThrow("context.putImageData(buffer, Infinity, 0, 0, 0, 0, 0)", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
-shouldThrow("context.putImageData(buffer, 0, Infinity, 0, 0, 0, 0)", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
-shouldThrow("context.putImageData(buffer, 0, 0, Infinity, 0, 0, 0)", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
-shouldThrow("context.putImageData(buffer, 0, 0, 0, Infinity, 0, 0)", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
-shouldThrow("context.putImageData(buffer, 0, 0, 0, 0, Infinity, 0)", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
-shouldThrow("context.putImageData(buffer, 0, 0, 0, 0, 0, Infinity)", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
-shouldThrow("context.putImageData(buffer, undefined, 0, 0, 0, 0, 0)", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
-shouldThrow("context.putImageData(buffer, 0, undefined, 0, 0, 0, 0)", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
-shouldThrow("context.putImageData(buffer, 0, 0, undefined, 0, 0, 0)", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
-shouldThrow("context.putImageData(buffer, 0, 0, 0, undefined, 0, 0)", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
-shouldThrow("context.putImageData(buffer, 0, 0, 0, 0, undefined, 0)", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
-shouldThrow("context.putImageData(buffer, 0, 0, 0, 0, 0, undefined)", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
+shouldThrow("context.putImageData(buffer, NaN, 0, 0, 0, 0, 0)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
+shouldThrow("context.putImageData(buffer, 0, NaN, 0, 0, 0, 0)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
+shouldThrow("context.putImageData(buffer, 0, 0, NaN, 0, 0, 0)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
+shouldThrow("context.putImageData(buffer, 0, 0, 0, NaN, 0, 0)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
+shouldThrow("context.putImageData(buffer, 0, 0, 0, 0, NaN, 0)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
+shouldThrow("context.putImageData(buffer, 0, 0, 0, 0, 0, NaN)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
+shouldThrow("context.putImageData(buffer, Infinity, 0, 0, 0, 0, 0)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
+shouldThrow("context.putImageData(buffer, 0, Infinity, 0, 0, 0, 0)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
+shouldThrow("context.putImageData(buffer, 0, 0, Infinity, 0, 0, 0)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
+shouldThrow("context.putImageData(buffer, 0, 0, 0, Infinity, 0, 0)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
+shouldThrow("context.putImageData(buffer, 0, 0, 0, 0, Infinity, 0)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
+shouldThrow("context.putImageData(buffer, 0, 0, 0, 0, 0, Infinity)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
+shouldThrow("context.putImageData(buffer, undefined, 0, 0, 0, 0, 0)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
+shouldThrow("context.putImageData(buffer, 0, undefined, 0, 0, 0, 0)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
+shouldThrow("context.putImageData(buffer, 0, 0, undefined, 0, 0, 0)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
+shouldThrow("context.putImageData(buffer, 0, 0, 0, undefined, 0, 0)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
+shouldThrow("context.putImageData(buffer, 0, 0, 0, 0, undefined, 0)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
+shouldThrow("context.putImageData(buffer, 0, 0, 0, 0, 0, undefined)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
 
 // Ensure we don't mess up bounds clipping checks
 var rectcanvas = document.createElement("canvas");

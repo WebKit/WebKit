@@ -1,0 +1,23 @@
+Test the handling of invalid arguments in canvas getImageData().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ctx.getImageData(NaN, 10, 10, 10) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS ctx.getImageData(10, NaN, 10, 10) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS ctx.getImageData(10, 10, NaN, 10) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS ctx.getImageData(10, 10, 10, NaN) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS ctx.getImageData(Infinity, 10, 10, 10) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS ctx.getImageData(10, Infinity, 10, 10) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS ctx.getImageData(10, 10, Infinity, 10) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS ctx.getImageData(10, 10, 10, Infinity) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS ctx.getImageData(undefined, 10, 10, 10) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS ctx.getImageData(10, undefined, 10, 10) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS ctx.getImageData(10, 10, undefined, 10) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS ctx.getImageData(10, 10, 10, undefined) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS ctx.getImageData(10, 10, 0, 10) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS ctx.getImageData(10, 10, 10, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
