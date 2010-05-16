@@ -126,11 +126,6 @@ public:
     WEBKIT_API bool wasFetchedViaSPDY() const;
     WEBKIT_API void setWasFetchedViaSPDY(bool);
 
-    // Flag whether this request was loaded after the TLS/Next-Protocol-Negotiation was used.
-    // This is related to SPDY.
-    WEBKIT_API bool wasNpnNegotiated() const;
-    WEBKIT_API void setWasNpnNegotiated(bool);
-
     // Flag whether this request is part of a multipart response.
     WEBKIT_API bool isMultipartPayload() const;
     WEBKIT_API void setIsMultipartPayload(bool);

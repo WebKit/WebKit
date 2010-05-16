@@ -277,16 +277,6 @@ void WebURLResponse::setWasFetchedViaSPDY(bool value)
     m_private->m_resourceResponse->setWasFetchedViaSPDY(value);
 }
 
-bool WebURLResponse::wasNpnNegotiated() const
-{
-    return m_private->m_resourceResponse->wasNpnNegotiated();
-}
-
-void WebURLResponse::setWasNpnNegotiated(bool value)
-{
-    m_private->m_resourceResponse->setWasNpnNegotiated(value);
-}
-
 bool WebURLResponse::isMultipartPayload() const
 {
     return m_private->m_resourceResponse->isMultipartPayload();
