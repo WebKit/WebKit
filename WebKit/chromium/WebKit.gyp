@@ -587,7 +587,6 @@
                         '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher700.ttf',
                         '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher800.ttf',
                         '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher900.ttf',
-                        '<(SHARED_INTERMEDIATE_DIR)/webkit/textAreaResizeCorner.png',
                     ],
                     'actions': [
                         {

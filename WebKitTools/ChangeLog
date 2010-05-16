@@ -1,3 +1,19 @@
+2010-05-16  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r59571.
+        http://trac.webkit.org/changeset/59571
+        https://bugs.webkit.org/show_bug.cgi?id=39054
+
+        Broke Cr Win, but we didn't notice immediately due to
+        https://bugs.webkit.org/show_bug.cgi?id=38926.  It's possible
+        that this didn't actually break Cr Win, but rather that bug
+        38926 necessitates a clean compile after this and sucessive
+        checkins only produced a partial recompile and thus failed to
+        build.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::canvas):
+
 2010-05-16  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
