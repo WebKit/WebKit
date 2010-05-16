@@ -1,3 +1,15 @@
+2010-05-16  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Prospective Qt/Mac build fix.
+
+        The friend declaration of QGraphicsWidget confuses gcc and thinks that it's an implicit
+        forward declaration, moving the class into the WebCore namespace (WebCore::QGraphicsWidget).
+
+        The declaration seems useless as no method of QGraphicsWidget is going to call anything
+        in this class.
+
+        * WebCoreSupport/PageClientQt.h:
+
 2010-05-15  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         Reviewed by Simon Hausmann.
