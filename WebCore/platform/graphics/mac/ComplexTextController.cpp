@@ -280,7 +280,7 @@ void ComplexTextController::collectComplexTextRuns()
 static inline bool shouldUseATSUIAPI()
 {
     enum TypeRenderingAPIToUse { UnInitialized, UseATSUI, UseCoreText };
-    DEFINE_STATIC_LOCAL(TypeRenderingAPIToUse, apiToUse, (UnInitialized));
+    static TypeRenderingAPIToUse apiToUse = UnInitialized;
 
     if (UNLIKELY(apiToUse == UnInitialized)) {
         if (&CTGetCoreTextVersion != 0 && CTGetCoreTextVersion() >= kCTVersionNumber10_6)

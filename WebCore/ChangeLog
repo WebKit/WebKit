@@ -1,3 +1,19 @@
+2010-05-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Scalar types allocated on the heap due to misuse of DEFINE_STATIC_LOCAL
+        https://bugs.webkit.org/show_bug.cgi?id=39086
+
+        Use global variables directly.
+
+        * bindings/v8/ScriptCallStack.cpp:
+        (WebCore::ScriptCallStack::createUtilityContext):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::shouldUseATSUIAPI):
+
 2010-05-16  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

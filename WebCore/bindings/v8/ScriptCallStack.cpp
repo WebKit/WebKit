@@ -37,7 +37,6 @@
 
 #include <v8-debug.h>
 #include <v8.h>
-#include <wtf/StdLibExtras.h> // For DEFINE_STATIC_LOCAL
 
 namespace WebCore {
 
@@ -91,8 +90,8 @@ void ScriptCallStack::createUtilityContext()
 
     // Compile JavaScript function for retrieving the source line, the source
     // name and the symbol name for the top JavaScript stack frame.
-    DEFINE_STATIC_LOCAL(const char*, topStackFrame,
-        ("function topStackFrame(exec_state) {"
+    const char* topStackFrame =
+        "function topStackFrame(exec_state) {"
         "  if (!exec_state.frameCount())"
         "      return undefined;"
         "  var frame = exec_state.frame(0);"
@@ -101,7 +100,7 @@ void ScriptCallStack::createUtilityContext()
         "  if (func.resolved() && func.script())"
         "      scriptName = func.script().name();"
         "  return [scriptName, frame.sourceLine(), (func.name() || func.inferredName())];"
-        "}"));
+        "}";
     v8::Script::Compile(v8::String::New(topStackFrame))->Run();
 }
 
