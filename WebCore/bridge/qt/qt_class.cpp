@@ -70,7 +70,9 @@ JSValue QtClass::fallbackObject(ExecState* exec, Instance* inst, const Identifie
 {
     QtInstance* qtinst = static_cast<QtInstance*>(inst);
 
-    QByteArray name(identifier.ascii());
+    const UString& ustring = identifier.ustring();
+    const QByteArray name = QString(reinterpret_cast<const QChar*>(ustring.data()),
+                                    ustring.size()).toAscii();
 
     // First see if we have a cache hit
     JSObject* val = qtinst->m_methods.value(name);
@@ -78,7 +80,7 @@ JSValue QtClass::fallbackObject(ExecState* exec, Instance* inst, const Identifie
         return val;
 
     // Nope, create an entry
-    QByteArray normal = QMetaObject::normalizedSignature(name.constData());
+    const QByteArray normal = QMetaObject::normalizedSignature(name.constData());
 
     // See if there is an exact match
     int index = -1;
@@ -92,7 +94,7 @@ JSValue QtClass::fallbackObject(ExecState* exec, Instance* inst, const Identifie
     }
 
     // Nope.. try a basename match
-    int count = m_metaObject->methodCount();
+    const int count = m_metaObject->methodCount();
     for (index = count - 1; index >= 0; --index) {
         const QMetaMethod m = m_metaObject->method(index);
         if (m.access() == QMetaMethod::Private)
@@ -126,12 +128,12 @@ Field* QtClass::fieldNamed(const Identifier& identifier, Instance* instance) con
     QtInstance* qtinst = static_cast<QtInstance*>(instance);
 
     QObject* obj = qtinst->getObject();
-    UString ustring = identifier.ustring();
-    QString objName((const QChar*)ustring.rep()->characters(), ustring.size());
-    QByteArray ba = objName.toAscii();
+    const UString& ustring = identifier.ustring();
+    const QString name(reinterpret_cast<const QChar*>(ustring.data()), ustring.size());
+    const QByteArray ascii = name.toAscii();
 
     // First check for a cached field
-    QtField* f = qtinst->m_fields.value(objName);
+    QtField* f = qtinst->m_fields.value(name);
 
     if (obj) {
         if (f) {
@@ -141,58 +143,60 @@ Field* QtClass::fieldNamed(const Identifier& identifier, Instance* instance) con
                 return f;
 #ifndef QT_NO_PROPERTIES
             else if (f->fieldType() == QtField::DynamicProperty) {
-                if (obj->dynamicPropertyNames().indexOf(ba) >= 0)
+                if (obj->dynamicPropertyNames().indexOf(ascii) >= 0)
                     return f;
                 else {
                     // Dynamic property that disappeared
-                    qtinst->m_fields.remove(objName);
+                    qtinst->m_fields.remove(name);
                     delete f;
                 }
             }
 #endif
             else {
-                QList<QObject*> children = obj->children();
-                for (int index = 0; index < children.count(); ++index) {
+                const QList<QObject*>& children = obj->children();
+                const int count = children.size();
+                for (int index = 0; index < count; ++index) {
                     QObject *child = children.at(index);
-                    if (child->objectName() == objName)
+                    if (child->objectName() == name)
                         return f;
                 }
 
                 // Didn't find it, delete it from the cache
-                qtinst->m_fields.remove(objName);
+                qtinst->m_fields.remove(name);
                 delete f;
             }
         }
 
-        int index = m_metaObject->indexOfProperty(identifier.ascii());
+        int index = m_metaObject->indexOfProperty(ascii);
         if (index >= 0) {
-            QMetaProperty prop = m_metaObject->property(index);
+            const QMetaProperty prop = m_metaObject->property(index);
 
             if (prop.isScriptable(obj)) {
                 f = new QtField(prop);
-                qtinst->m_fields.insert(objName, f);
+                qtinst->m_fields.insert(name, f);
                 return f;
             }
         }
 
 #ifndef QT_NO_PROPERTIES
         // Dynamic properties
-        index = obj->dynamicPropertyNames().indexOf(ba);
+        index = obj->dynamicPropertyNames().indexOf(ascii);
         if (index >= 0) {
-            f = new QtField(ba);
-            qtinst->m_fields.insert(objName, f);
+            f = new QtField(ascii);
+            qtinst->m_fields.insert(name, f);
             return f;
         }
 #endif
 
         // Child objects
 
-        QList<QObject*> children = obj->children();
-        for (index = 0; index < children.count(); ++index) {
+        const QList<QObject*>& children = obj->children();
+        const int count = children.count();
+        for (index = 0; index < count; ++index) {
             QObject *child = children.at(index);
-            if (child->objectName() == objName) {
+            if (child->objectName() == name) {
                 f = new QtField(child);
-                qtinst->m_fields.insert(objName, f);
+                qtinst->m_fields.insert(name, f);
                 return f;
             }
         }
@@ -200,19 +204,18 @@ Field* QtClass::fieldNamed(const Identifier& identifier, Instance* instance) con
         // Nothing named this
         return 0;
     } else {
-        QByteArray ba(identifier.ascii());
         // For compatibility with qtscript, cached methods don't cause
         // errors until they are accessed, so don't blindly create an error
         // here.
-        if (qtinst->m_methods.contains(ba))
+        if (qtinst->m_methods.contains(ascii))
             return 0;
 
 #ifndef QT_NO_PROPERTIES
         // deleted qobject, but can't throw an error from here (no exec)
         // create a fake QtField that will throw upon access
         if (!f) {
-            f = new QtField(ba);
-            qtinst->m_fields.insert(objName, f);
+            f = new QtField(ascii);
+            qtinst->m_fields.insert(name, f);
         }
 #endif
         return f;

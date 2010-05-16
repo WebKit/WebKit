@@ -1,3 +1,16 @@
+2010-05-15  Anders Bakken  <agbakken@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Identifier::ascii() is not threadsafe and shouldn't be used for
+        converting to and from QString/QByteArray.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39009
+
+        * bridge/qt/qt_class.cpp:
+        (JSC::Bindings::QtClass::fallbackObject):
+        (JSC::Bindings::QtClass::fieldNamed):
+
 2010-05-15  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
