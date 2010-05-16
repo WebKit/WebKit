@@ -1,0 +1,15 @@
+Test that toDataURL(mimeType) ignores the case of 'mimeType'.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS tryMimeType('image/png') is 'image/png'
+PASS tryMimeType('iMAge/Png') is 'image/png'
+PASS tryMimeType('IMAGE/PNG') is 'image/png'
+PASS tryMimeType('image/jpeg') is 'image/jpeg'
+PASS tryMimeType('imAgE/jPEg') is 'image/jpeg'
+PASS tryMimeType('IMAGE/JPEG') is 'image/jpeg'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

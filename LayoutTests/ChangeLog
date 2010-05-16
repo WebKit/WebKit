@@ -1,3 +1,18 @@
+2010-05-15  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add a test to verify that Canvas's toDataURL() is case insensitive wrt the mimeType argument.
+        https://bugs.webkit.org/show_bug.cgi?id=39153
+
+        Spec link:
+        http://www.whatwg.org/specs/web-apps/current-work/#dom-canvas-todataurl
+
+        * fast/canvas/canvas-toDataURL-case-insensitive-mimetype-expected.txt: Added.
+        * fast/canvas/canvas-toDataURL-case-insensitive-mimetype.html: Added.
+        * fast/canvas/script-tests/canvas-toDataURL-case-insensitive-mimetype.js: Added.
+        (tryMimeType):
+
 2010-05-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Hyatt.
