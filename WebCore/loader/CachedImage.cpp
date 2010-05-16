@@ -57,7 +57,7 @@ CachedImage::CachedImage(const String& url)
     , m_decodedDataDeletionTimer(this, &CachedImage::decodedDataDeletionTimerFired)
     , m_httpStatusCodeErrorOccurred(false)
 {
-    m_status = Unknown;
+    setStatus(Unknown);
 }
 
 CachedImage::CachedImage(Image* image)
@@ -66,8 +66,8 @@ CachedImage::CachedImage(Image* image)
     , m_decodedDataDeletionTimer(this, &CachedImage::decodedDataDeletionTimerFired)
     , m_httpStatusCodeErrorOccurred(false)
 {
-    m_status = Cached;
-    m_loading = false;
+    setStatus(Cached);
+    setLoading(false);
 }
 
 CachedImage::~CachedImage()
@@ -85,7 +85,7 @@ void CachedImage::load(DocLoader* docLoader)
     if (!docLoader || docLoader->autoLoadImages())
         CachedResource::load(docLoader, true, DoSecurityCheck, true);
     else
-        m_loading = false;
+        setLoading(false);
 }
 
 void CachedImage::didAddClient(CachedResourceClient* c)
@@ -93,7 +93,7 @@ void CachedImage::didAddClient(CachedResourceClient* c)
     if (m_decodedDataDeletionTimer.isActive())
         m_decodedDataDeletionTimer.stop();
     
-    if (m_data && !m_image && !m_errorOccurred) {
+    if (m_data && !m_image && !errorOccurred()) {
         createImage();
         m_image->setData(m_data, true);
     }
@@ -101,13 +101,13 @@ void CachedImage::didAddClient(CachedResourceClient* c)
     if (m_image && !m_image->isNull())
         c->imageChanged(this);
 
-    if (!m_loading)
+    if (!isLoading())
         c->notifyFinished(this);
 }
 
 void CachedImage::allClientsRemoved()
 {
-    if (m_image && !m_errorOccurred)
+    if (m_image && !errorOccurred())
         m_image->resetAnimation();
     if (double interval = cache()->deadDecodedDataDeletionInterval())
         m_decodedDataDeletionTimer.startOneShot(interval);
@@ -129,7 +129,7 @@ Image* CachedImage::image() const
 {
     ASSERT(!isPurgeable());
 
-    if (m_errorOccurred)
+    if (errorOccurred())
         return brokenImage();
 
     if (m_image)
@@ -298,7 +298,7 @@ void CachedImage::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
     }
     
     if (allDataReceived) {
-        m_loading = false;
+        setLoading(false);
         checkNotify();
     }
 }
@@ -306,16 +306,16 @@ void CachedImage::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 void CachedImage::error()
 {
     clear();
-    m_errorOccurred = true;
+    setErrorOccurred(true);
     m_data.clear();
     notifyObservers();
-    m_loading = false;
+    setLoading(false);
     checkNotify();
 }
 
 void CachedImage::checkNotify()
 {
-    if (m_loading)
+    if (isLoading())
         return;
 
     CachedResourceClientWalker w(m_clients);
@@ -326,13 +326,13 @@ void CachedImage::checkNotify()
 void CachedImage::destroyDecodedData()
 {
     bool canDeleteImage = !m_image || (m_image->hasOneRef() && m_image->isBitmapImage());
-    if (isSafeToMakePurgeable() && canDeleteImage && !m_loading) {
+    if (isSafeToMakePurgeable() && canDeleteImage && !isLoading()) {
         // Image refs the data buffer so we should not make it purgeable while the image is alive. 
         // Invoking addClient() will reconstruct the image object.
         m_image = 0;
         setDecodedSize(0);
         makePurgeable(true);
-    } else if (m_image && !m_errorOccurred)
+    } else if (m_image && !errorOccurred())
         m_image->destroyDecodedData();
 }
 

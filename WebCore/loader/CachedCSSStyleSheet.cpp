@@ -52,7 +52,7 @@ CachedCSSStyleSheet::~CachedCSSStyleSheet()
 
 void CachedCSSStyleSheet::didAddClient(CachedResourceClient *c)
 {
-    if (!m_loading)
+    if (!isLoading())
         c->setCSSStyleSheet(m_url, m_response.url(), m_decoder->encoding().name(), this);
 }
 
@@ -100,7 +100,7 @@ void CachedCSSStyleSheet::data(PassRefPtr<SharedBuffer> data, bool allDataReceiv
         m_decodedSheetText = m_decoder->decode(m_data->data(), m_data->size());
         m_decodedSheetText += m_decoder->flush();
     }
-    m_loading = false;
+    setLoading(false);
     checkNotify();
     // Clear the decoded text as it is unlikely to be needed immediately again and is cheap to regenerate.
     m_decodedSheetText = String();
@@ -108,7 +108,7 @@ void CachedCSSStyleSheet::data(PassRefPtr<SharedBuffer> data, bool allDataReceiv
 
 void CachedCSSStyleSheet::checkNotify()
 {
-    if (m_loading)
+    if (isLoading())
         return;
 
     CachedResourceClientWalker w(m_clients);
@@ -118,8 +118,8 @@ void CachedCSSStyleSheet::checkNotify()
 
 void CachedCSSStyleSheet::error()
 {
-    m_loading = false;
-    m_errorOccurred = true;
+    setLoading(false);
+    setErrorOccurred(true);
     checkNotify();
 }
 

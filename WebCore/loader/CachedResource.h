@@ -87,7 +87,7 @@ public:
     virtual void httpStatusCodeError() { error(); } // Images keep loading in spite of HTTP errors (for legacy compat with <img>, etc.).
 
     const String &url() const { return m_url; }
-    Type type() const { return m_type; }
+    Type type() const { return static_cast<Type>(m_type); }
 
     void addClient(CachedResourceClient*);
     void removeClient(CachedResourceClient*);
@@ -100,7 +100,7 @@ public:
         PreloadReferencedWhileLoading,
         PreloadReferencedWhileComplete
     };
-    PreloadResult preloadResult() const { return m_preloadResult; }
+    PreloadResult preloadResult() const { return static_cast<PreloadResult>(m_preloadResult); }
     void setRequestedFromNetworkingLayer() { m_requestedFromNetworkingLayer = true; }
 
     virtual void didAddClient(CachedResourceClient*) = 0;
@@ -108,14 +108,17 @@ public:
 
     unsigned count() const { return m_clients.size(); }
 
-    Status status() const { return m_status; }
+    Status status() const { return static_cast<Status>(m_status); }
+    void setStatus(Status status) { m_status = status; }
 
     unsigned size() const { return encodedSize() + decodedSize() + overheadSize(); }
     unsigned encodedSize() const { return m_encodedSize; }
     unsigned decodedSize() const { return m_decodedSize; }
     unsigned overheadSize() const;
     
-    bool isLoaded() const { return !m_loading; }
+    bool isLoaded() const { return !m_loading; } // FIXME. Method name is inaccurate. Loading might not have started yet.
+
+    bool isLoading() const { return m_loading; }
     void setLoading(bool b) { m_loading = b; }
 
     virtual bool isImage() const { return false; }
@@ -167,6 +170,8 @@ public:
     void setAccept(const String& accept) { m_accept = accept; }
 
     bool errorOccurred() const { return m_errorOccurred; }
+    void setErrorOccurred(bool b) { m_errorOccurred = b; }
+
     bool sendResourceLoadCallbacks() const { return m_sendResourceLoadCallbacks; }
     
     virtual void destroyDecodedData() { }
@@ -212,11 +217,6 @@ protected:
     RefPtr<SharedBuffer> m_data;
     OwnPtr<PurgeableBuffer> m_purgeableData;
 
-    Type m_type;
-    Status m_status;
-
-    bool m_errorOccurred;
-
 private:
     void addClientToSet(CachedResourceClient*);
                                         
@@ -230,27 +230,33 @@ private:
     double freshnessLifetime() const;
 
     RefPtr<CachedMetadata> m_cachedMetadata;
+
+    double m_lastDecodedAccessTime; // Used as a "thrash guard" in the cache
+
     unsigned m_encodedSize;
     unsigned m_decodedSize;
     unsigned m_accessCount;
-    unsigned m_inLiveDecodedResourcesList;
-    double m_lastDecodedAccessTime; // Used as a "thrash guard" in the cache
-    
-    bool m_sendResourceLoadCallbacks;
-    
+    unsigned m_handleCount;
     unsigned m_preloadCount;
-    PreloadResult m_preloadResult;
-    bool m_requestedFromNetworkingLayer;
 
-protected:
-    bool m_inCache;
-    bool m_loading;
+    unsigned m_preloadResult : 2; // PreloadResult
+
+    bool m_inLiveDecodedResourcesList : 1;
+    bool m_requestedFromNetworkingLayer : 1;
+    bool m_sendResourceLoadCallbacks : 1;
+
+    bool m_errorOccurred : 1;
+    bool m_inCache : 1;
+    bool m_loading : 1;
+
+    unsigned m_type : 3; // Type
+    unsigned m_status : 3; // Status
+
 #ifndef NDEBUG
     bool m_deleted;
     unsigned m_lruIndex;
 #endif
 
-private:
     CachedResource* m_nextInAllResourcesList;
     CachedResource* m_prevInAllResourcesList;
     
@@ -259,7 +265,6 @@ private:
 
     DocLoader* m_docLoader; // only non-0 for resources that are not in the cache
     
-    unsigned m_handleCount;
     // If this field is non-null we are using the resource as a proxy for checking whether an existing resource is still up to date
     // using HTTP If-Modified-Since/If-None-Match headers. If the response is 304 all clients of this resource are moved
     // to to be clients of m_resourceToRevalidate and the resource is deleted. If not, the field is zeroed and this

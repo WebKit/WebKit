@@ -51,43 +51,38 @@ static RefCountedLeakCounter cachedResourceLeakCounter("CachedResource");
 
 CachedResource::CachedResource(const String& url, Type type)
     : m_url(url)
+    , m_request(0)
     , m_responseTimestamp(currentTime())
     , m_lastDecodedAccessTime(0)
-    , m_sendResourceLoadCallbacks(true)
+    , m_encodedSize(0)
+    , m_decodedSize(0)
+    , m_accessCount(0)
+    , m_handleCount(0)
     , m_preloadCount(0)
     , m_preloadResult(PreloadNotReferenced)
+    , m_inLiveDecodedResourcesList(false)
     , m_requestedFromNetworkingLayer(false)
+    , m_sendResourceLoadCallbacks(true)
+    , m_errorOccurred(false)
     , m_inCache(false)
     , m_loading(false)
+    , m_type(type)
+    , m_status(Pending)
+#ifndef NDEBUG
+    , m_deleted(false)
+    , m_lruIndex(0)
+#endif
+    , m_nextInAllResourcesList(0)
+    , m_prevInAllResourcesList(0)
+    , m_nextInLiveResourcesList(0)
+    , m_prevInLiveResourcesList(0)
     , m_docLoader(0)
-    , m_handleCount(0)
     , m_resourceToRevalidate(0)
     , m_proxyResource(0)
 {
 #ifndef NDEBUG
     cachedResourceLeakCounter.increment();
 #endif
-
-    m_type = type;
-    m_status = Pending;
-    m_encodedSize = 0;
-    m_decodedSize = 0;
-    m_request = 0;
-
-    m_accessCount = 0;
-    m_inLiveDecodedResourcesList = false;
-    
-    m_nextInAllResourcesList = 0;
-    m_prevInAllResourcesList = 0;
-    
-    m_nextInLiveResourcesList = 0;
-    m_prevInLiveResourcesList = 0;
-
-#ifndef NDEBUG
-    m_deleted = false;
-    m_lruIndex = 0;
-#endif
-    m_errorOccurred = false;
 }
 
 CachedResource::~CachedResource()

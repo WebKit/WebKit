@@ -1,3 +1,62 @@
+2010-05-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Reduce the size of CachedResource
+        https://bugs.webkit.org/show_bug.cgi?id=39171
+
+        Make protected data members of CachedResource private, to allow for
+        easier rearrangement, and hide the fact that enums are in bitfields.
+        
+        Rearrange the data members of CachedResource to save 32 bytes per instance
+        in 64-bit. Also modernized the constructor code.
+
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::didAddClient):
+        (WebCore::CachedCSSStyleSheet::data):
+        (WebCore::CachedCSSStyleSheet::checkNotify):
+        (WebCore::CachedCSSStyleSheet::error):
+        * loader/CachedFont.cpp:
+        (WebCore::CachedFont::load):
+        (WebCore::CachedFont::didAddClient):
+        (WebCore::CachedFont::data):
+        (WebCore::CachedFont::ensureCustomFontData):
+        (WebCore::CachedFont::ensureSVGFontData):
+        (WebCore::CachedFont::checkNotify):
+        (WebCore::CachedFont::error):
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImage):
+        (WebCore::CachedImage::load):
+        (WebCore::CachedImage::didAddClient):
+        (WebCore::CachedImage::allClientsRemoved):
+        (WebCore::CachedImage::image):
+        (WebCore::CachedImage::data):
+        (WebCore::CachedImage::error):
+        (WebCore::CachedImage::checkNotify):
+        (WebCore::CachedImage::destroyDecodedData):
+        * loader/CachedImage.h:
+        (WebCore::CachedImage::stillNeedsLoad):
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::type):
+        (WebCore::CachedResource::preloadResult):
+        (WebCore::CachedResource::status):
+        (WebCore::CachedResource::setStatus):
+        (WebCore::CachedResource::isLoaded):
+        (WebCore::CachedResource::isLoading):
+        (WebCore::CachedResource::setErrorOccurred):
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::didAddClient):
+        (WebCore::CachedScript::data):
+        (WebCore::CachedScript::checkNotify):
+        (WebCore::CachedScript::error):
+        * loader/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::didAddClient):
+        (WebCore::CachedXSLStyleSheet::data):
+        (WebCore::CachedXSLStyleSheet::checkNotify):
+        (WebCore::CachedXSLStyleSheet::error):
+
 2010-05-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r59574.
