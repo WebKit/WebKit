@@ -1,3 +1,14 @@
+2010-05-16  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Removed 5 http/history tests from Skipped file
+
+        [GTK] Improve reporting of frame loader callbacks in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=36454
+
+        * platform/gtk/Skipped:
+
 2010-05-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r59565.

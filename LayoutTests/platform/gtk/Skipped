@@ -3313,6 +3313,7 @@ http/tests/loading/deleted-host-in-resource-load-delegate-callback.html
 http/tests/loading/empty-subframe.html
 http/tests/loading/gmail-assert-on-load.html
 http/tests/loading/preload-img-test.html
+http/tests/loading/redirect-with-no-location-crash.html
 http/tests/loading/slow-parsing-subframe.html
 http/tests/loading/text-content-type-with-binary-extension.html
 http/tests/local/send-dragged-file.html
@@ -5761,15 +5762,6 @@ fast/repaint/no-caret-repaint-in-non-content-editable-element.html
 fast/runin/generated2.html
 fast/runin/generated3.html
 fast/runin/generated4.html
-
-# Tests that need didStartProvisionalLoadForFrame reporting
-# See https://bugs.webkit.org/show_bug.cgi?id=36454
-http/tests/loading/basic.html
-http/tests/loading/load-javascript-after-many-xhrs.html
-http/tests/loading/location-hash-reload-cycle.html
-http/tests/loading/onload-vs-immediate-refresh.pl
-http/tests/loading/redirect-with-no-location-crash.html
-http/tests/loading/state-object-security-exception.html
 
 # No Widgets 1.0 support
 fast/media/media-feature-wgt-view-mode.html

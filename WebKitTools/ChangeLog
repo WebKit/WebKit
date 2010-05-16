@@ -1,3 +1,15 @@
+2010-05-16  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Improve reporting of frame loader callbacks in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=36454
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (webViewLoadStatusNotified):
+        (createWebView): added connection to notify::load-status and
+        signal callback
+
 2010-05-15  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Chris Jerdonek.
