@@ -90,6 +90,7 @@ my $changeLogTimeZone = "PST8PDT";
 
 my $gitDiffStartRegEx = qr#^diff --git (\w/)?(.+) (\w/)?([^\r\n]+)#;
 my $svnDiffStartRegEx = qr#^Index: ([^\r\n]+)#;
+my $svnPropertyValueStartRegEx = qr#^   (\+|-) ([^\r\n]+)#; # $2 is the start of the property's value (which may span multiple lines).
 
 # This method is for portability. Return the system-appropriate exit
 # status of a child process.
@@ -834,6 +835,57 @@ sub parseDiff($$)
     }
 
     return (\@diffHashRefs, $line);
+}
+
+# Parse the value of an SVN property from the given file handle, and advance
+# the handle so the last line read is the first line after the property value.
+#
+# This subroutine dies if the first line is an invalid SVN property value line
+# (i.e. a line that does not begin with "   +" or "   -").
+#
+# Args:
+#   $fileHandle: advanced so the last line read from the handle is the first
+#                line of the property value to parse.  This should be a line
+#                beginning with "   +" or "   -".
+#   $line: the line last read from $fileHandle
+#
+# Returns ($propertyValue, $lastReadLine):
+#   $propertyValue: the value of the property.
+#   $lastReadLine: the line last read from $fileHandle.
+#
+# FIXME: This method is unused as of (05/15/2010). We will call this function
+#        as part of parsing a property from the SVN footer. See <https://bugs.webkit.org/show_bug.cgi?id=38885>.
+sub parseSvnPropertyValue($$)
+{
+    my ($fileHandle, $line) = @_;
+
+    $_ = $line;
+
+    my $propertyValue;
+    my $eol;
+    if (/$svnPropertyValueStartRegEx/) {
+        $propertyValue = $2; # Does not include the end-of-line character(s).
+        $eol = $POSTMATCH;
+    } else {
+        die("Failed to find property value beginning with '+' or '-': \"$_\".");
+    }
+
+    while (<$fileHandle>) {
+        if (/^$/ || /$svnPropertyValueStartRegEx/) {
+            # Note, we may encounter an empty line before the contents of a binary patch.
+            # Also, we check for $svnPropertyValueStartRegEx because a '-' property may be
+            # followed by a '+' property in the case of a "Modified" or "Name" property.
+            last;
+        }
+        # Temporarily strip off any end-of-line characters. We add the end-of-line characters
+        # from the previously processed line to the start of this line so that the last line
+        # of the property value does not end in end-of-line characters.
+        s/([\n\r]+)$//;
+        $propertyValue .= "$eol$_";
+        $eol = $1;
+    }
+
+    return ($propertyValue, $_);
 }
 
 # Parse a patch file created by svn-create-patch.

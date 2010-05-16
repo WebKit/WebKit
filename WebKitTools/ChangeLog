@@ -1,3 +1,17 @@
+2010-05-15  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Chris Jerdonek.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39170
+
+        Add function parseSvnPropertyValue to parse single-line and multi-line
+        property values of an SVN property change.
+
+        * Scripts/VCSUtils.pm:
+            Added function parseSvnPropertyValue. We will use this as part of
+            Bug #38885 <https://bugs.webkit.org/show_bug.cgi?id=38885>.
+        * Scripts/webkitperl/VCSUtils_unittest/parseSvnPropertyValue.pl: Added.
+
 2010-05-15  Jochen Eisinger  <jochen@chromium.org>
 
         Reviewed by Dmitry Titov.
