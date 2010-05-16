@@ -1,3 +1,13 @@
+2010-05-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Rebaseline client-rects.html on Qt
+        https://bugs.webkit.org/show_bug.cgi?id=39169
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/multicol/client-rects-expected.txt:
+
 2010-05-14  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
