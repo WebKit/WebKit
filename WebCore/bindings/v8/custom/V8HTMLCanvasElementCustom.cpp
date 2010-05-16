@@ -78,7 +78,7 @@ v8::Handle<v8::Value> V8HTMLCanvasElement::getContextCallback(const v8::Argument
 #endif
     CanvasRenderingContext* result = imp->getContext(contextId, attrs.get());
     if (!result)
-        return v8::Undefined();
+        return v8::Null();
     if (result->is2d())
         return toV8(static_cast<CanvasRenderingContext2D*>(result));
 #if ENABLE(3D_CANVAS)
@@ -86,7 +86,7 @@ v8::Handle<v8::Value> V8HTMLCanvasElement::getContextCallback(const v8::Argument
         return toV8(static_cast<WebGLRenderingContext*>(result));
 #endif
     ASSERT_NOT_REACHED();
-    return v8::Undefined();
+    return v8::Null();
 }
 
 } // namespace WebCore
