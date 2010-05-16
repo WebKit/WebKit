@@ -225,12 +225,13 @@ void QtInstance::getPropertyNames(ExecState* exec, PropertyNameArray& array)
 
 #ifndef QT_NO_PROPERTIES
         QList<QByteArray> dynProps = obj->dynamicPropertyNames();
-        foreach(QByteArray ba, dynProps) {
+        foreach(const QByteArray& ba, dynProps) {
             array.add(Identifier(exec, ba.constData()));
         }
 #endif
 
-        for (i=0; i < meta->methodCount(); i++) {
+        const int methodCount = meta->methodCount();
+        for (i = 0; i < methodCount; i++) {
             QMetaMethod method = meta->method(i);
             if (method.access() != QMetaMethod::Private) {
                 array.add(Identifier(exec, method.signature()));
@@ -329,7 +330,7 @@ JSValue QtInstance::valueOf(ExecState* exec) const
 JSValue convertQVariantToValue(ExecState*, PassRefPtr<RootObject> root, const QVariant& variant);
 QVariant convertValueToQVariant(ExecState*, JSValue, QMetaType::Type hint, int *distance);
 
-const char* QtField::name() const
+QByteArray QtField::name() const
 {
     if (m_type == MetaProperty)
         return m_property.name();
@@ -337,9 +338,9 @@ const char* QtField::name() const
         return m_childObject->objectName().toLatin1();
 #ifndef QT_NO_PROPERTIES
     else if (m_type == DynamicProperty)
-        return m_dynamicProperty.constData();
+        return m_dynamicProperty;
 #endif
-    return ""; // deleted child object
+    return QByteArray(); // deleted child object
 }
 
 JSValue QtField::valueFromInstance(ExecState* exec, const Instance* inst) const

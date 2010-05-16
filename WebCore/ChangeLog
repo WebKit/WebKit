@@ -2,6 +2,24 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        QObject::objectName() returns a QString and QtField::name()
+        creates a temporary QByteArray object and returns constData() from it.
+        This is not safe.
+
+        This patch changes the signature of the function to return a
+        QByteArray instead of const char *.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39010
+
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::getPropertyNames):
+        (JSC::Bindings::QtField::name):
+        * bridge/qt/qt_runtime.h:
+
+2010-05-15  Anders Bakken  <agbakken@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         Don't unnecessarily copy data when searching for methods in QtClass.
 
         [Qt] JSValue QtClass::fallbackObject can be optimized
