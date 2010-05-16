@@ -78,7 +78,7 @@ module xml {
         // response
         [ConvertNullStringTo=Undefined] DOMString getAllResponseHeaders()
             raises(DOMException);
-        [Custom, ConvertNullStringTo=Null] DOMString getResponseHeader(in DOMString header)
+        [RequiresAllArguments=Raise, ConvertNullStringTo=Null] DOMString getResponseHeader(in DOMString header)
             raises(DOMException);
         readonly attribute [CustomGetter] DOMString responseText; // The custom getter implements ConvertNullStringTo=Null
         readonly attribute Document responseXML;

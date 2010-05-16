@@ -2,6 +2,20 @@
 
         Reviewed by Darin Adler.
 
+        XMLHttpRequest.getResponseHeader doesn't need to be custom
+        https://bugs.webkit.org/show_bug.cgi?id=39125
+
+        I don't see any reason this method needs to be custom.  No new tests
+        because there's no behavior change.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        * xml/XMLHttpRequest.idl:
+
+2010-05-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
         XMLHttpRequest.setRequestHeader shouldn't be custom
         https://bugs.webkit.org/show_bug.cgi?id=39124
 

@@ -141,19 +141,4 @@ v8::Handle<v8::Value> V8XMLHttpRequest::sendCallback(const v8::Arguments& args)
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8XMLHttpRequest::getResponseHeaderCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.XMLHttpRequest.getResponseHeader()");
-    if (args.Length() < 1)
-        return throwError("Not enough arguments", V8Proxy::SyntaxError);
-
-    XMLHttpRequest* xmlHttpRequest = V8XMLHttpRequest::toNative(args.Holder());
-    ExceptionCode ec = 0;
-    String header = toWebCoreString(args[0]);
-    String result = xmlHttpRequest->getResponseHeader(header, ec);
-    if (ec)
-        return throwError(ec);
-    return v8StringOrNull(result);
-}
-
 } // namespace WebCore
