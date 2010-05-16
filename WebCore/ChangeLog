@@ -1,3 +1,17 @@
+2010-05-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Shrink SimpleFontData
+        https://bugs.webkit.org/show_bug.cgi?id=39179
+
+        Change SimpleFontData to have a pointer to the m_glyphToBoundsMap, 
+        and to allocate this lazily. This reduces the size of the class from
+        5632 to 1536 bytes.
+
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::boundsForGlyph):
+
 2010-05-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Maciej Stachowiak.
