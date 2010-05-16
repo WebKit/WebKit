@@ -31,9 +31,7 @@
 #ifndef WebPluginContainerImpl_h
 #define WebPluginContainerImpl_h
 
-// FIXME: This relative path is a temporary hack to support using this
-// header from webkit/glue.
-#include "../public/WebPluginContainer.h"
+#include "WebPluginContainer.h"
 
 #include "Widget.h"
 #include <wtf/PassRefPtr.h>
@@ -77,6 +75,7 @@ public:
     virtual void widgetPositionsUpdated();
 
     // WebPluginContainer methods
+    virtual WebElement element();
     virtual void invalidate();
     virtual void invalidateRect(const WebRect&);
     virtual void reportGeometry();

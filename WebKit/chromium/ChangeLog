@@ -1,3 +1,15 @@
+2010-05-15  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [chromium] Expose element accessor on WebPluginContainer
+        https://bugs.webkit.org/show_bug.cgi?id=39152
+
+        * public/WebPluginContainer.h:
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::element):
+        * src/WebPluginContainerImpl.h:
+
 2010-05-15  Jochen Eisinger  <jochen@chromium.org>
 
         Reviewed by Dmitry Titov.

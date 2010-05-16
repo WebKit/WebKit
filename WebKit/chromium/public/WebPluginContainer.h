@@ -35,6 +35,7 @@ struct NPObject;
 
 namespace WebKit {
 
+class WebElement;
 class WebString;
 class WebURL;
 class WebURLRequest;
@@ -42,6 +43,9 @@ struct WebRect;
 
 class WebPluginContainer {
 public:
+    // Returns the element containing this plugin.
+    virtual WebElement element() = 0;
+
     virtual void invalidate() = 0;
     virtual void invalidateRect(const WebRect&) = 0;
 
