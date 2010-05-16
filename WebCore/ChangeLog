@@ -1,3 +1,14 @@
+2010-05-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39190
+        Shave a word off of GlyphPageTreeNode
+        <rdar://problem/7990428>
+
+        * platform/graphics/GlyphPageTreeNode.h:
+        (WebCore::GlyphPageTreeNode::GlyphPageTreeNode):
+
 2010-05-16  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
