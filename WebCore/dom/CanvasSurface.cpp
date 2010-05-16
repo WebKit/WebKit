@@ -74,11 +74,13 @@ String CanvasSurface::toDataURL(const String& mimeType, ExceptionCode& ec)
     if (m_size.isEmpty() || !buffer())
         return String("data:,");
 
+    String lowercaseMimeType = mimeType.lower();
+
     // FIXME: Make isSupportedImageMIMETypeForEncoding threadsafe (to allow this method to be used on a worker thread).
-    if (mimeType.isNull() || !MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType))
+    if (mimeType.isNull() || !MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(lowercaseMimeType))
         return buffer()->toDataURL("image/png");
 
-    return buffer()->toDataURL(mimeType);
+    return buffer()->toDataURL(lowercaseMimeType);
 }
 
 void CanvasSurface::willDraw(const FloatRect&)
