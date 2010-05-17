@@ -1,3 +1,15 @@
+2010-05-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Laszlo Gombos.
+
+        REGRESSION(59563): [Qt] JSValue QtClass::fallbackObject can be optimized
+
+        Patch declared a variable index, which shadowed an earlier declared
+        variable.
+
+        * bridge/qt/qt_class.cpp:
+        (JSC::Bindings::QtClass::fallbackObject):
+
 2010-05-14  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.
