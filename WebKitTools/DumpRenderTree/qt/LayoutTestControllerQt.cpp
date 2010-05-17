@@ -70,6 +70,7 @@ void LayoutTestController::reset()
     DumpRenderTreeSupportQt::setWillSendRequestReturnsNullOnRedirect(false);
     DumpRenderTreeSupportQt::setWillSendRequestReturnsNull(false);
     DumpRenderTreeSupportQt::setWillSendRequestClearHeaders(QStringList());
+    setIconDatabaseEnabled(false);
     emit hidePage();
 }
 
@@ -456,8 +457,7 @@ unsigned LayoutTestController::numberOfActiveAnimations() const
 
 void LayoutTestController::disableImageLoading()
 {
-    // FIXME: Implement for testing fix for https://bugs.webkit.org/show_bug.cgi?id=27896
-    // Also need to make sure image loading is re-enabled for each new test.
+    m_drt->webPage()->settings()->setAttribute(QWebSettings::AutoLoadImages, false);
 }
 
 void LayoutTestController::dispatchPendingLoadRequests()
@@ -628,6 +628,14 @@ bool LayoutTestController::elementDoesAutoCompleteForElementWithId(const QString
 void LayoutTestController::authenticateSession(const QString&, const QString&, const QString&)
 {
     // FIXME: If there is a concept per-session (per-process) credential storage, the credentials should be added to it for later use.
+}
+
+void LayoutTestController::setIconDatabaseEnabled(bool enable)
+{
+    if (enable && !m_drt->persistentStoragePath().isEmpty())
+        QWebSettings::setIconDatabasePath(m_drt->persistentStoragePath());
+    else
+        QWebSettings::setIconDatabasePath(QString());
 }
 
 const unsigned LayoutTestController::maxViewWidth = 800;

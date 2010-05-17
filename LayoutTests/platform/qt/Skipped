@@ -275,9 +275,6 @@ http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.htm
 http/tests/xmlhttprequest/default-content-type-dashboard.html
 http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
 
-# Missing layoutTestController.setIconDatabaseEnabled()
-http/tests/misc/favicon-loads-with-images-disabled.html
-
 # Missing layoutTestController.setCustomPolicyDelegate()
 fast/loader/onload-policy-ignore-for-frame.html
 http/tests/misc/policy-delegate-called-twice.html
@@ -4750,12 +4747,6 @@ http/tests/misc/isindex-with-no-form.html
 http/tests/misc/refresh-headers.php
 http/tests/misc/timer-vs-loading.html
 
-
-# Have an additional line in results for GET of favicon.ico. Probably innocuous.
-# https://bugs.webkit.org/show_bug.cgi?id=37382
-http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html
-http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html
-http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html
 
 # Skip failing http/tests/security tests
 http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html

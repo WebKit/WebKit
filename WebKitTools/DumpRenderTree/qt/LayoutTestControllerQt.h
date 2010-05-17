@@ -169,6 +169,7 @@ public slots:
 
     void setDatabaseQuota(int size);
     void clearAllDatabases();
+    void setIconDatabaseEnabled(bool enable);
 
     void waitForPolicyDelegate();
     void overridePreference(const QString& name, const QVariant& value);

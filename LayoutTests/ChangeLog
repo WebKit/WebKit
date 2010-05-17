@@ -1,3 +1,25 @@
+2010-05-17  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Disable Icon Database by default in Qt DRT
+
+        Unskip:
+         http/tests/misc/favicon-loads-with-images-disabled.html
+         http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html
+         http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html
+         http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html
+
+        Qt returns 5 (QNetworkReply::OperationCanceledError) instead of -999 for the XFrameOptions tests,
+        so update accordingly.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37382
+
+        * platform/qt/Skipped:
+        * platform/qt/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-expected.txt: Added. Qt returns 5 instead of -999.
+        * platform/qt/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body-expected.txt: Added. Qt returns 5 instead of -999.
+        * platform/qt/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny-expected.txt: Added. Qt returns 5 instead of -999.
+
 2010-05-17  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

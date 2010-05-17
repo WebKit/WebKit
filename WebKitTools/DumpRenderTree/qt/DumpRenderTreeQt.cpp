@@ -188,6 +188,7 @@ void WebPage::resetSettings()
     settings()->resetAttribute(QWebSettings::LocalContentCanAccessRemoteUrls);
     settings()->resetAttribute(QWebSettings::PluginsEnabled);
     settings()->resetAttribute(QWebSettings::JavaScriptCanAccessClipboard);
+    settings()->resetAttribute(QWebSettings::AutoLoadImages);
 
     m_drt->layoutTestController()->setCaretBrowsingEnabled(false);
     m_drt->layoutTestController()->setFrameFlatteningEnabled(false);
@@ -339,14 +340,11 @@ DumpRenderTree::DumpRenderTree()
     , m_stdin(0)
     , m_enableTextOutput(false)
     , m_singleFileMode(false)
+    , m_persistentStoragePath(QString(getenv("DUMPRENDERTREE_TEMP")))
 {
     DumpRenderTreeSupportQt::overwritePluginDirectories();
 
-    char* dumpRenderTreeTemp = getenv("DUMPRENDERTREE_TEMP");
-    if (dumpRenderTreeTemp)
-        QWebSettings::enablePersistentStorage(QString(dumpRenderTreeTemp));
-    else
-        QWebSettings::enablePersistentStorage();
+    QWebSettings::enablePersistentStorage(m_persistentStoragePath);
 
     // create our primary testing page/view.
     m_mainView = new QWebView(0);
