@@ -1,3 +1,12 @@
+2010-05-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Browser-hosted version of SunSpider runs tests twice as many times as advertised
+        https://bugs.webkit.org/show_bug.cgi?id=39201
+
+        * make-hosted: Make sure to reset test list after every test suite.
+
 2010-05-07  Adam Roben  <aroben@apple.com>
 
         Fix typo in sunspider-compare-results.js that caused incorrect

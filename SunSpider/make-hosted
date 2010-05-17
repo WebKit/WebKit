@@ -37,13 +37,13 @@ open RESULTS_TEMPLATE, "<resources/results-TEMPLATE.html";
 my $resultsTemplate = do { local $/; <RESULTS_TEMPLATE> };
 close RESULTS_TEMPLATE;
 
-my @tests = ();
-my @categories = ();
-my %uniqueCategories = ();
-
 my @suites = ("sunspider-0.9", "sunspider-0.9.1");
 
 foreach my $suite (@suites) {
+
+    my @tests = ();
+    my @categories = ();
+    my %uniqueCategories = ();
 
     mkdir "hosted/${suite}";
 
