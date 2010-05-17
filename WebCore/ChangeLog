@@ -1,3 +1,14 @@
+2010-05-17  Robert Hogan  <robert@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Fix --no-svg build.
+
+        I have no idea where the SVG-dependent include of this file is hidden, but
+        it is probably better to include it explicitly anyway like V8WorkerContextCustom.cpp.
+
+        * bindings/js/JSWorkerContextCustom.cpp:
+
 2010-05-17  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

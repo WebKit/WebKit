@@ -35,6 +35,7 @@
 #include "JSDatabaseCallback.h"
 #include "JSDatabaseSync.h"
 #endif
+#include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include "JSDOMGlobalObject.h"
 #include "JSEventListener.h"
