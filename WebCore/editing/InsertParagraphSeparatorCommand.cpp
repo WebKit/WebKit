@@ -48,10 +48,12 @@ using namespace HTMLNames;
 // pasting, it's easy to have each new line be a div deeper than the previous.  E.g., in the case
 // below, we want to insert at ^ instead of |.
 // <div>foo<div>bar</div>|</div>^
-static Element* highestVisuallyEquivalentDiv(Element* startBlock)
+static Element* highestVisuallyEquivalentDivBelowRoot(Element* startBlock)
 {
     Element* curBlock = startBlock;
-    while (!curBlock->nextSibling() && curBlock->parentElement()->hasTagName(divTag)) {
+    // We don't want to return a root node (if it happens to be a div, e.g., in a document fragment) because there are no
+    // siblings for us to append to.
+    while (!curBlock->nextSibling() && curBlock->parentElement()->hasTagName(divTag) && curBlock->parentElement()->parentElement()) {
         NamedNodeMap* attributes = curBlock->parentElement()->attributes(true);
         if (attributes && !attributes->isEmpty())
             break;
@@ -235,7 +237,7 @@ void InsertParagraphSeparatorCommand::doApply()
             // for div nodes, this can result in nested div tags that are hard to break out of.
             Element* siblingNode = startBlock;
             if (blockToInsert->hasTagName(divTag))
-                siblingNode = highestVisuallyEquivalentDiv(startBlock);
+                siblingNode = highestVisuallyEquivalentDivBelowRoot(startBlock);
             insertNodeAfter(blockToInsert, siblingNode);
         }
 
