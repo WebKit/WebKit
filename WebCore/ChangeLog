@@ -1,3 +1,18 @@
+2010-05-17  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39231
+
+        Fix failures in the RTL portion of fast/multicol/layers-in-multicol.html.  Make sure block children of RTL blocks are positioned using
+        the reduced column width instead of the total content width.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::determineHorizontalPosition):
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::hitTestContents):
+        (WebCore::RenderBlock::adjustForColumns):
+
 2010-05-17  Jakob Petsovits  <jpetsovits@rim.com>
 
         Reviewed by George Staikos.
