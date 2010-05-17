@@ -42,7 +42,7 @@ module storage {
 
         // Possible results
         readonly attribute IDBDatabaseError error;
-        readonly attribute [Custom] any result;
+        readonly attribute IDBAny result;
 
         // Events
         attribute EventListener onsuccess;

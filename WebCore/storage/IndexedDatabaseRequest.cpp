@@ -43,6 +43,8 @@ IndexedDatabaseRequest::IndexedDatabaseRequest(IndexedDatabase* indexedDatabase,
     : m_indexedDatabase(indexedDatabase)
     , m_frame(frame)
 {
+    m_this = IDBAny::create();
+    m_this->set(this);
 }
 
 IndexedDatabaseRequest::~IndexedDatabaseRequest()
@@ -51,7 +53,7 @@ IndexedDatabaseRequest::~IndexedDatabaseRequest()
 
 PassRefPtr<IDBRequest> IndexedDatabaseRequest::open(const String& name, const String& description, bool modifyDatabase, ExceptionCode& exception)
 {
-    RefPtr<IDBRequest> request = IDBRequest::create(m_frame->document());
+    RefPtr<IDBRequest> request = IDBRequest::create(m_frame->document(), m_this);
     m_indexedDatabase->open(name, description, modifyDatabase, request, m_frame, exception);
     return request;
 }

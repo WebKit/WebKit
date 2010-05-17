@@ -185,3 +185,6 @@ fast/css/font-face-woff.html
 
 # EventSendingController does not send events on areas outside the WebView.
 scrollbars/scrollbar-click-does-not-blur-content.html
+
+# IndexedDB is not yet enabled.
+storage/indexeddb

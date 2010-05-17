@@ -25,47 +25,57 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef IndexedDatabaseRequest_h
-#define IndexedDatabaseRequest_h
 
-#include "ExceptionCode.h"
-#include "IndexedDatabase.h"
-#include "PlatformString.h"
+#ifndef IDBAny_h
+#define IDBAny_h
+
+#if ENABLE(INDEXED_DATABASE)
+
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-#if ENABLE(INDEXED_DATABASE)
-
 namespace WebCore {
 
-class Frame;
-class IDBAny;
-class IndexedDatabase;
+class IDBDatabaseRequest;
+class IndexedDatabaseRequest;
+class SerializedScriptValue;
 
-class IndexedDatabaseRequest : public RefCounted<IndexedDatabaseRequest> {
+class IDBAny : public RefCounted<IDBAny> {
 public:
-    static PassRefPtr<IndexedDatabaseRequest> create(IndexedDatabase* indexedDatabase, Frame* frame)
-    {
-        return adoptRef(new IndexedDatabaseRequest(indexedDatabase, frame));
-    }
-    ~IndexedDatabaseRequest();
+    static PassRefPtr<IDBAny> create();
+    ~IDBAny();
 
-    PassRefPtr<IDBRequest> open(const String& name, const String& description, bool modifyDatabase, ExceptionCode&);
+    enum Type {
+        UndefinedType = 0,
+        IDBDatabaseRequestType,
+        IndexedDatabaseRequestType,
+        SerializedScriptValueType
+    };
 
-    void disconnectFrame() { m_frame = 0; }
+    Type type() const { return m_type; }
+
+    PassRefPtr<IDBDatabaseRequest> idbDatabaseRequest();
+    PassRefPtr<IndexedDatabaseRequest> indexedDatabaseRequest();
+    PassRefPtr<SerializedScriptValue> serializedScriptValue();
+
+    void set(PassRefPtr<IDBDatabaseRequest>);
+    void set(PassRefPtr<IndexedDatabaseRequest>);
+    void set(PassRefPtr<SerializedScriptValue>);
 
 private:
-    IndexedDatabaseRequest(IndexedDatabase*, Frame*);
+    IDBAny();
 
-    RefPtr<IndexedDatabase> m_indexedDatabase;
-    RefPtr<IDBAny> m_this;
-    Frame* m_frame;
+    Type m_type;
+
+    // Only one of the following should ever be in use at any given time.
+    RefPtr<IDBDatabaseRequest> m_idbDatabaseRequest;
+    RefPtr<IndexedDatabaseRequest> m_indexedDatabaseRequest;
+    RefPtr<SerializedScriptValue> m_serializedScriptValue;
 };
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(INDEXED_DATABASE)
 
-#endif // IndexedDatabaseRequest_h
-
+#endif // IDBAny_h

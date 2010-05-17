@@ -129,6 +129,10 @@ namespace WebCore {
 #if ENABLE(DOM_STORAGE)
         virtual bool isStorageEvent() const;
 #endif
+#if ENABLE(INDEXED_DATABASE)
+        virtual bool isIDBErrorEvent() const;
+        virtual bool isIDBSuccessEvent() const;
+#endif
 #if ENABLE(WORKERS)
         virtual bool isErrorEvent() const;
 #endif

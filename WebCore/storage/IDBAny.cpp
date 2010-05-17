@@ -25,47 +25,74 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef IndexedDatabaseRequest_h
-#define IndexedDatabaseRequest_h
 
-#include "ExceptionCode.h"
-#include "IndexedDatabase.h"
-#include "PlatformString.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include "config.h"
+#include "IDBAny.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBDatabaseRequest.h"
+#include "IndexedDatabaseRequest.h"
+#include "SerializedScriptValue.h"
+
 namespace WebCore {
 
-class Frame;
-class IDBAny;
-class IndexedDatabase;
+PassRefPtr<IDBAny> IDBAny::create()
+{
+    return adoptRef(new IDBAny());
+}
 
-class IndexedDatabaseRequest : public RefCounted<IndexedDatabaseRequest> {
-public:
-    static PassRefPtr<IndexedDatabaseRequest> create(IndexedDatabase* indexedDatabase, Frame* frame)
-    {
-        return adoptRef(new IndexedDatabaseRequest(indexedDatabase, frame));
-    }
-    ~IndexedDatabaseRequest();
+IDBAny::IDBAny()
+    : m_type(UndefinedType)
+{
+}
 
-    PassRefPtr<IDBRequest> open(const String& name, const String& description, bool modifyDatabase, ExceptionCode&);
+IDBAny::~IDBAny()
+{
+}
 
-    void disconnectFrame() { m_frame = 0; }
+PassRefPtr<IDBDatabaseRequest> IDBAny::idbDatabaseRequest()
+{
+    ASSERT(m_type == IDBDatabaseRequestType);
+    return m_idbDatabaseRequest;
+}
 
-private:
-    IndexedDatabaseRequest(IndexedDatabase*, Frame*);
+PassRefPtr<IndexedDatabaseRequest> IDBAny::indexedDatabaseRequest()
+{
+    ASSERT(m_type == IndexedDatabaseRequestType);
+    return m_indexedDatabaseRequest;
+}
 
-    RefPtr<IndexedDatabase> m_indexedDatabase;
-    RefPtr<IDBAny> m_this;
-    Frame* m_frame;
-};
+PassRefPtr<SerializedScriptValue> IDBAny::serializedScriptValue()
+{
+    ASSERT(m_type == SerializedScriptValueType);
+    return m_serializedScriptValue;
+}
+
+void IDBAny::set(PassRefPtr<IDBDatabaseRequest> value)
+{
+    m_type = IDBDatabaseRequestType;
+    m_idbDatabaseRequest = value;
+    m_indexedDatabaseRequest = 0;
+    m_serializedScriptValue = 0;
+}
+
+void IDBAny::set(PassRefPtr<IndexedDatabaseRequest> value)
+{
+    m_type = IndexedDatabaseRequestType;
+    m_idbDatabaseRequest = 0;
+    m_indexedDatabaseRequest = value;
+    m_serializedScriptValue = 0;
+}
+
+void IDBAny::set(PassRefPtr<SerializedScriptValue> value)
+{
+    m_type = SerializedScriptValueType;
+    m_idbDatabaseRequest = 0;
+    m_indexedDatabaseRequest = 0;
+    m_serializedScriptValue = value;
+}
 
 } // namespace WebCore
 
 #endif
-
-#endif // IndexedDatabaseRequest_h
-

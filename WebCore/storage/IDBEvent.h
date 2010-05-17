@@ -25,47 +25,35 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef IndexedDatabaseRequest_h
-#define IndexedDatabaseRequest_h
 
-#include "ExceptionCode.h"
-#include "IndexedDatabase.h"
-#include "PlatformString.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#ifndef IDBEvent_h
+#define IDBEvent_h
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "Event.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
+
 namespace WebCore {
 
-class Frame;
 class IDBAny;
-class IndexedDatabase;
 
-class IndexedDatabaseRequest : public RefCounted<IndexedDatabaseRequest> {
+class IDBEvent : public Event {
 public:
-    static PassRefPtr<IndexedDatabaseRequest> create(IndexedDatabase* indexedDatabase, Frame* frame)
-    {
-        return adoptRef(new IndexedDatabaseRequest(indexedDatabase, frame));
-    }
-    ~IndexedDatabaseRequest();
+    virtual ~IDBEvent();
 
-    PassRefPtr<IDBRequest> open(const String& name, const String& description, bool modifyDatabase, ExceptionCode&);
+    PassRefPtr<IDBAny> source();
 
-    void disconnectFrame() { m_frame = 0; }
+protected:
+    IDBEvent(const AtomicString& type, PassRefPtr<IDBAny> source);
 
 private:
-    IndexedDatabaseRequest(IndexedDatabase*, Frame*);
-
-    RefPtr<IndexedDatabase> m_indexedDatabase;
-    RefPtr<IDBAny> m_this;
-    Frame* m_frame;
+    RefPtr<IDBAny> m_source;
 };
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(INDEXED_DATABASE)
 
-#endif // IndexedDatabaseRequest_h
-
+#endif // IDBEvent_h

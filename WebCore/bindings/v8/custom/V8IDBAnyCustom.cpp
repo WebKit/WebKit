@@ -32,33 +32,34 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "V8IDBRequest.h"
+#include "V8IDBAny.h"
 
 #include "SerializedScriptValue.h"
 #include "V8IDBDatabaseRequest.h"
-#include "V8Proxy.h"
+#include "V8IndexedDatabaseRequest.h"
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8IDBRequest::resultAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> toV8(IDBAny* impl)
 {
-    INC_STATS("DOM.IDBRequest.result");
+    if (!impl)
+        return v8::Null();
 
-    IDBRequest* idbRequest = V8IDBRequest::toNative(info.Holder());
-    switch (idbRequest->resultType()) {
-    case IDBRequest::UNDEFINED:
+    switch (impl->type()) {
+    case IDBAny::UndefinedType:
         return v8::Undefined();
-    case IDBRequest::IDBDATABASE:
-        return toV8(idbRequest->idbDatabaseResult());
-    case IDBRequest::SERIALIZEDSCRIPTVALUE:
-        return idbRequest->serializedScriptValueResult()->deserialize();
+    case IDBAny::IDBDatabaseRequestType:
+        return toV8(impl->idbDatabaseRequest());
+    case IDBAny::IndexedDatabaseRequestType:
+        return toV8(impl->indexedDatabaseRequest());
+    case IDBAny::SerializedScriptValueType:
+        return impl->serializedScriptValue()->deserialize();
     }
 
     ASSERT_NOT_REACHED();
     return v8::Undefined();
 }
 
-} // namespace WebCore
-
 #endif // ENABLE(INDEXED_DATABASE)
 
+} // namespace WebCore

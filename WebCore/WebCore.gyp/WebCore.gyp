@@ -577,6 +577,7 @@
               '--include', '../notifications',
               '--include', '../page',
               '--include', '../plugins',
+              '--include', '../storage',
               '--include', '../svg',
               '--include', '../websockets',
               '--include', '../workers',

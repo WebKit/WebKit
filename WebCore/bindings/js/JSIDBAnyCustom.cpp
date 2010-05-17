@@ -32,27 +32,33 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "JSIDBRequest.h"
+#include "JSIDBAny.h"
 
+#include "IDBAny.h"
 #include "IDBDatabaseRequest.h"
-#include "IDBRequest.h"
+#include "IndexedDatabaseRequest.h"
 #include "JSIDBDatabaseRequest.h"
+#include "JSIndexedDatabaseRequest.h"
 #include "SerializedScriptValue.h"
 
 using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSIDBRequest::result(ExecState* exec) const
+JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, IDBAny* idbAny)
 {
-    IDBRequest* idbRequest = static_cast<IDBRequest*>(impl());
-    switch (idbRequest->resultType()) {
-    case IDBRequest::UNDEFINED:
+    if (!idbAny)
+        return jsNull();
+
+    switch (idbAny->type()) {
+    case IDBAny::UndefinedType:
         return jsUndefined();
-    case IDBRequest::IDBDATABASE:
-        return toJS(exec, globalObject(), idbRequest->idbDatabaseResult());
-    case IDBRequest::SERIALIZEDSCRIPTVALUE:
-        return idbRequest->serializedScriptValueResult()->deserialize(exec, globalObject());
+    case IDBAny::IDBDatabaseRequestType:
+        return toJS(exec, globalObject, idbAny->idbDatabaseRequest());
+    case IDBAny::IndexedDatabaseRequestType:
+        return toJS(exec, globalObject, idbAny->indexedDatabaseRequest());
+    case IDBAny::SerializedScriptValueType:
+        return idbAny->serializedScriptValue()->deserialize(exec, globalObject);
     }
 
     ASSERT_NOT_REACHED();

@@ -5923,3 +5923,6 @@ accessibility/aria-controls-with-tabs.html
 # Need to dump context menu items on eventSender.contextClick(true).
 # https://bugs.webkit.org/show_bug.cgi?id=39102
 editing/spelling/context-menu-suggestions.html
+
+# IndexedDB is not yet enabled.
+storage/indexeddb

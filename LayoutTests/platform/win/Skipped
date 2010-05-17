@@ -880,3 +880,6 @@ inspector/timeline-paint.html
 # Need to dump context menu items on eventSender.contextClick(true). TODO: add bug number
 # https://bugs.webkit.org/show_bug.cgi?id=39104
 editing/spelling/context-menu-suggestions.html
+
+# IndexedDB is not yet enabled.
+storage/indexeddb

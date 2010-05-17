@@ -27,23 +27,25 @@
  */
 
 #include "config.h"
+#include "IDBRequest.h"
 
 #if ENABLE(INDEXED_DATABASE)
-
-#include "IDBRequest.h"
 
 #include "Event.h"
 #include "EventException.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "IDBDatabaseRequest.h"
+#include "IDBErrorEvent.h"
+#include "IDBSuccessEvent.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
-IDBRequest::IDBRequest(ScriptExecutionContext* context)
+IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> source)
     : ActiveDOMObject(context, this)
-    , m_resultType(UNDEFINED)
+    , m_source(source)
+    , m_result(IDBAny::create())
     , m_timer(this, &IDBRequest::timerFired)
     , m_stopped(false)
     , m_aborted(false)
@@ -57,20 +59,6 @@ IDBRequest::~IDBRequest()
         abort();
 }
 
-
-PassRefPtr<IDBDatabaseRequest> IDBRequest::idbDatabaseResult()
-{
-    ASSERT(m_resultType == IDBDATABASE);
-    return m_idbDatabaseResult;
-}
-
-
-PassRefPtr<SerializedScriptValue> IDBRequest::serializedScriptValueResult()
-{
-    ASSERT(m_resultType == SERIALIZEDSCRIPTVALUE);
-    return m_serializedScriptValueResult;
-}
-
 void IDBRequest::onError(PassRefPtr<IDBDatabaseError> error)
 {
     onEventCommon();
@@ -80,15 +68,13 @@ void IDBRequest::onError(PassRefPtr<IDBDatabaseError> error)
 void IDBRequest::onSuccess(PassRefPtr<IDBDatabase> idbDatabase)
 {
     onEventCommon();
-    m_resultType = IDBDATABASE;
-    m_idbDatabaseResult = IDBDatabaseRequest::create(idbDatabase);
+    m_result->set(IDBDatabaseRequest::create(idbDatabase));
 }
 
 void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> serializedScriptValue)
 {
     onEventCommon();
-    m_resultType = SERIALIZEDSCRIPTVALUE;
-    m_serializedScriptValueResult = serializedScriptValue;
+    m_result->set(serializedScriptValue);
 }
 
 void IDBRequest::abort()
@@ -144,18 +130,18 @@ void IDBRequest::timerFired(Timer<IDBRequest>*)
     RefPtr<IDBRequest> selfRef = m_selfRef.release();
 
     if (m_error) {
-        ASSERT(m_resultType == UNDEFINED);
-        dispatchEvent(Event::create(eventNames().errorEvent, false, false));
+        ASSERT(m_result->type() == IDBAny::UndefinedType);
+        dispatchEvent(IDBErrorEvent::create(m_source, *m_error));
     } else {
-        ASSERT(m_resultType != UNDEFINED);
-        dispatchEvent(Event::create(eventNames().successEvent, false, false));        
+        ASSERT(m_result->type() != IDBAny::UndefinedType);
+        dispatchEvent(IDBSuccessEvent::create(m_source, m_result));        
     }
 }
 
 void IDBRequest::onEventCommon()
 {
     ASSERT(m_readyState < DONE);
-    ASSERT(m_resultType == UNDEFINED);
+    ASSERT(m_result->type() == IDBAny::UndefinedType);
     ASSERT(!m_error);
     ASSERT(!m_selfRef);
     ASSERT(!m_timer.isActive());

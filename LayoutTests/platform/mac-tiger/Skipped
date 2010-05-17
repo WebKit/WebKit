@@ -177,3 +177,6 @@ webarchive/test-link-rel-icon.html
 
 # Python 2.5 is required to run websocket tests
 websocket/tests
+
+# IndexedDB is not yet enabled.
+storage/indexeddb

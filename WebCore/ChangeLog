@@ -1,3 +1,93 @@
+2010-05-14  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Finish up IndexedDB events
+        https://bugs.webkit.org/show_bug.cgi?id=39117
+
+        Implement the indexed database event interfaces as proposed by Mozilla.
+        Refactor the run time type detection code that was in IDBRequest into its own
+        class named IDBAny.  Use this new class within the new event classes and
+        IDBResults.
+
+        Test: storage/indexeddb/basics.html
+
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSIDBAnyCustom.cpp: Added.
+        (WebCore::toJS):
+        * bindings/js/JSIDBRequestCustom.cpp: Removed.
+        * bindings/v8/custom/V8EventCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8IDBAnyCustom.cpp: Added.
+        (WebCore::toV8):
+        * bindings/v8/custom/V8IDBRequestCustom.cpp: Removed.
+        * dom/Event.cpp:
+        (WebCore::Event::isIDBErrorEvent):
+        (WebCore::Event::isIDBSuccessEvent):
+        * dom/Event.h:
+        * storage/IDBAny.cpp: Added.
+        (WebCore::IDBAny::create):
+        (WebCore::IDBAny::IDBAny):
+        (WebCore::IDBAny::~IDBAny):
+        (WebCore::IDBAny::idbDatabaseRequest):
+        (WebCore::IDBAny::indexedDatabaseRequest):
+        (WebCore::IDBAny::serializedScriptValue):
+        (WebCore::IDBAny::set):
+        * storage/IDBAny.h: Added.
+        (WebCore::IDBAny::):
+        (WebCore::IDBAny::type):
+        * storage/IDBAny.idl: Added.
+        * storage/IDBErrorEvent.cpp: Added.
+        (WebCore::IDBErrorEvent::create):
+        (WebCore::IDBErrorEvent::IDBErrorEvent):
+        (WebCore::IDBErrorEvent::~IDBErrorEvent):
+        * storage/IDBErrorEvent.h: Added.
+        (WebCore::IDBErrorEvent::code):
+        (WebCore::IDBErrorEvent::message):
+        (WebCore::IDBErrorEvent::isIDBErrorEvent):
+        * storage/IDBErrorEvent.idl: Added.
+        * storage/IDBEvent.cpp: Added.
+        (WebCore::IDBEvent::IDBEvent):
+        (WebCore::IDBEvent::~IDBEvent):
+        (WebCore::IDBEvent::source):
+        * storage/IDBEvent.h: Added.
+        * storage/IDBEvent.idl: Added.
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::timerFired):
+        (WebCore::IDBRequest::onEventCommon):
+        * storage/IDBRequest.h:
+        (WebCore::IDBRequest::create):
+        (WebCore::IDBRequest::result):
+        * storage/IDBRequest.idl:
+        * storage/IDBSuccessEvent.cpp: Added.
+        (WebCore::IDBSuccessEvent::create):
+        (WebCore::IDBSuccessEvent::IDBSuccessEvent):
+        (WebCore::IDBSuccessEvent::~IDBSuccessEvent):
+        (WebCore::IDBSuccessEvent::result):
+        * storage/IDBSuccessEvent.h: Added.
+        (WebCore::IDBSuccessEvent::isIDBSuccessEvent):
+        * storage/IDBSuccessEvent.idl: Added.
+        * storage/IndexedDatabaseImpl.cpp:
+        (WebCore::IndexedDatabaseImpl::open):
+        * storage/IndexedDatabaseRequest.cpp:
+        (WebCore::IndexedDatabaseRequest::IndexedDatabaseRequest):
+        (WebCore::IndexedDatabaseRequest::open):
+        * storage/IndexedDatabaseRequest.h:
+
 2010-05-16  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Unreviewed.

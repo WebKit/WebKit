@@ -5094,3 +5094,6 @@ fast/loader/recursive-before-unload-crash.html
 # Need to dump context menu items on eventSender.contextClick(true).
 # https://bugs.webkit.org/show_bug.cgi?id=39103
 editing/spelling/context-menu-suggestions.html
+
+# IndexedDB is not yet enabled.
+storage/indexeddb

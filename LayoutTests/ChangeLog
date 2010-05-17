@@ -1,3 +1,39 @@
+2010-05-14  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Finish up IndexedDB events
+        https://bugs.webkit.org/show_bug.cgi?id=39117
+
+        Add the beginnings of a test for IndexedDB.  It currently fails, but we'll
+        update this (and/or add other tests) as things start passing.
+
+        Disable it on all !Chromium platforms since none of them compile it
+        in.  (Note that Chromium keeps it behind a runtime flag at the moment,
+        despite compiling it in...so don't worry.)
+
+        This also makes evalAndLog return the result of the evaluation.  I think
+        this was just an oversight when I originally added it, and it's going to
+        come in useful for these tests.
+
+        * fast/js/resources/js-test-pre.js:
+        (evalAndLog):
+        * platform/gtk/Skipped:
+        * platform/mac-leopard/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac-tiger/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * storage/indexeddb/basics-expected.txt: Added.
+        * storage/indexeddb/basics.html: Added.
+        * storage/indexeddb/script-tests/TEMPLATE.html: Copied from LayoutTests/storage/domstorage/script-tests/TEMPLATE.html.
+        * storage/indexeddb/script-tests/basics.js: Added.
+        (eventShared):
+        (successFunction):
+        (errorFunction):
+        (test):
+
 2010-05-17  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update Chromium test expectations.

@@ -209,10 +209,14 @@ DOM_CLASSES = \
     HTMLUListElement \
     HTMLVideoElement \
     History \
+    IDBAny \
     IDBDatabaseError \
     IDBDatabaseException \
     IDBDatabaseRequest \
+    IDBErrorEvent \
+    IDBEvent \
     IDBRequest \
+    IDBSuccessEvent \
     ImageData \
     IndexedDatabaseRequest \
     InjectedScriptHost \

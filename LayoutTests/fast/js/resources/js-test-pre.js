@@ -90,6 +90,7 @@ function evalAndLog(_a)
   } catch (e) {
     testFailed(_a + " threw exception " + e);
   }
+  return _av;
 }
 
 function shouldBe(_a, _b)

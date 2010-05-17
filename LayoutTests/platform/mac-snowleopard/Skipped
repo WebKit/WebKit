@@ -130,3 +130,6 @@ fast/js/sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.12_Array_
 # Test fails on Snow Leopard in DRT but passes when run manually and passes on Leopard. The test itself might need
 # tweaking to deal with scrolling differences between Leopard and SL. https://bugs.webkit.org/show_bug.cgi?id=38416
 fast/repaint/fixed-move-after-keyboard-scroll.html
+
+# IndexedDB is not yet enabled.
+storage/indexeddb

@@ -442,10 +442,14 @@ IDL_BINDINGS += \
     storage/Database.idl \
     storage/DatabaseCallback.idl \
     storage/DatabaseSync.idl \
+    storage/IDBAny.idl \
     storage/IDBDatabaseError.idl \
     storage/IDBDatabaseException.idl \
     storage/IDBDatabaseRequest.idl \
+    storage/IDBErrorEvent.idl \
+    storage/IDBEvent.idl \
     storage/IDBRequest.idl \
+    storage/IDBSuccessEvent.idl \
     storage/IndexedDatabaseRequest.idl \
     storage/Storage.idl \
     storage/StorageEvent.idl \

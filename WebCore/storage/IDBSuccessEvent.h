@@ -25,47 +25,38 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef IndexedDatabaseRequest_h
-#define IndexedDatabaseRequest_h
 
-#include "ExceptionCode.h"
-#include "IndexedDatabase.h"
-#include "PlatformString.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#ifndef IDBSuccessEvent_h
+#define IDBSuccessEvent_h
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBEvent.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
+
 namespace WebCore {
 
-class Frame;
 class IDBAny;
-class IndexedDatabase;
 
-class IndexedDatabaseRequest : public RefCounted<IndexedDatabaseRequest> {
+class IDBSuccessEvent : public IDBEvent {
 public:
-    static PassRefPtr<IndexedDatabaseRequest> create(IndexedDatabase* indexedDatabase, Frame* frame)
-    {
-        return adoptRef(new IndexedDatabaseRequest(indexedDatabase, frame));
-    }
-    ~IndexedDatabaseRequest();
+    static PassRefPtr<IDBSuccessEvent> create(PassRefPtr<IDBAny> source, PassRefPtr<IDBAny> result);
+    // FIXME: Need to allow creation of these events from JS.
+    virtual ~IDBSuccessEvent();
 
-    PassRefPtr<IDBRequest> open(const String& name, const String& description, bool modifyDatabase, ExceptionCode&);
+    PassRefPtr<IDBAny> result();
 
-    void disconnectFrame() { m_frame = 0; }
+    virtual bool isIDBSuccessEvent() const { return true; }
 
 private:
-    IndexedDatabaseRequest(IndexedDatabase*, Frame*);
+    IDBSuccessEvent(PassRefPtr<IDBAny> source, PassRefPtr<IDBAny> result);
 
-    RefPtr<IndexedDatabase> m_indexedDatabase;
-    RefPtr<IDBAny> m_this;
-    Frame* m_frame;
+    RefPtr<IDBAny> m_result;
 };
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(INDEXED_DATABASE)
 
-#endif // IndexedDatabaseRequest_h
-
+#endif // IDBEvent_h

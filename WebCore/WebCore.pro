@@ -2319,21 +2319,29 @@ contains(DEFINES, ENABLE_DATABASE=1) {
 
 contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
     HEADERS += \
+        storage/IDBAny.h \
         storage/IDBCallbacks.h \
         storage/IDBDatabase.h \
         storage/IDBDatabaseError.h \
         storage/IDBDatabaseException.h \
         storage/IDBDatabaseRequest.h \
+        storage/IDBErrorEvent.h \
+        storage/IDBEvent.h \
         storage/IDBRequest.h \
+        storage/IDBSuccessEvent.h \
         storage/IndexedDatabase.h \
         storage/IndexedDatabaseImpl.h \
         storage/IndexedDatabaseRequest.h
 
     SOURCES += \
-        bindings/js/JSIDBRequestCustom.cpp \
+        bindings/js/JSIDBAnyCustom.cpp \
+        storage/IDBAny.cpp \
         storage/IDBDatabase.cpp \
         storage/IDBDatabaseRequest.cpp \
+        storage/IDBErrorEvent.cpp \
+        storage/IDBEvent.cpp \
         storage/IDBRequest.cpp \
+        storage/IDBSuccessEvent.cpp \
         storage/IndexedDatabase.cpp \
         storage/IndexedDatabaseImpl.cpp \
         storage/IndexedDatabaseRequest.cpp

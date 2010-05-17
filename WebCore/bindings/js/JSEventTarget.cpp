@@ -78,6 +78,11 @@
 #include "Notification.h"
 #endif
 
+#if ENABLE(INDEXED_DATABASE)
+#include "IDBRequest.h"
+#include "JSIDBRequest.h"
+#endif
+
 #if ENABLE(WEB_SOCKETS)
 #include "JSWebSocket.h"
 #include "WebSocket.h"
@@ -147,6 +152,11 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, EventTarget* targ
 #if ENABLE(NOTIFICATIONS)
     if (Notification* notification = target->toNotification())
         return toJS(exec, notification);
+#endif
+
+#if ENABLE(INDEXED_DATABASE)
+    if (IDBRequest* idbRequest = target->toIDBRequest())
+        return toJS(exec, idbRequest);
 #endif
 
 #if ENABLE(WEB_SOCKETS)

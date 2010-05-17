@@ -1,0 +1,34 @@
+Test the basics of IndexedDB.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'indexedDB' in window is true
+PASS 'open' in indexedDB is true
+indexedDB.open('name', 'description', true /* allow modification */)
+PASS 'onsuccess' in result is true
+PASS 'onerror' in result is true
+PASS 'abort' in result is true
+PASS 'readyState' in result is true
+
+An event should fire shortly...
+
+FAIL Error function called: (0) Not implemented
+
+PASS 'source' in event is true
+PASS 'open' in event.source is true
+
+FAIL 'result' in event should be true. Was false.
+FAIL 'code' in event should be false. Was true.
+FAIL 'message' in event should be false. Was true.
+
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'abort' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

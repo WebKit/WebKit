@@ -25,47 +25,37 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef IndexedDatabaseRequest_h
-#define IndexedDatabaseRequest_h
 
-#include "ExceptionCode.h"
-#include "IndexedDatabase.h"
-#include "PlatformString.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include "config.h"
+#include "IDBSuccessEvent.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "EventNames.h"
+#include "IDBAny.h"
+
 namespace WebCore {
 
-class Frame;
-class IDBAny;
-class IndexedDatabase;
+PassRefPtr<IDBSuccessEvent> IDBSuccessEvent::create(PassRefPtr<IDBAny> source, PassRefPtr<IDBAny> result)
+{
+    return adoptRef(new IDBSuccessEvent(source, result));
+}
 
-class IndexedDatabaseRequest : public RefCounted<IndexedDatabaseRequest> {
-public:
-    static PassRefPtr<IndexedDatabaseRequest> create(IndexedDatabase* indexedDatabase, Frame* frame)
-    {
-        return adoptRef(new IndexedDatabaseRequest(indexedDatabase, frame));
-    }
-    ~IndexedDatabaseRequest();
+IDBSuccessEvent::IDBSuccessEvent(PassRefPtr<IDBAny> source, PassRefPtr<IDBAny> result)
+    : IDBEvent(eventNames().errorEvent, source)
+    , m_result(result)
+{
+}
 
-    PassRefPtr<IDBRequest> open(const String& name, const String& description, bool modifyDatabase, ExceptionCode&);
+IDBSuccessEvent::~IDBSuccessEvent()
+{
+}
 
-    void disconnectFrame() { m_frame = 0; }
-
-private:
-    IndexedDatabaseRequest(IndexedDatabase*, Frame*);
-
-    RefPtr<IndexedDatabase> m_indexedDatabase;
-    RefPtr<IDBAny> m_this;
-    Frame* m_frame;
-};
+PassRefPtr<IDBAny> IDBSuccessEvent::result()
+{
+    return m_result;
+}
 
 } // namespace WebCore
 
 #endif
-
-#endif // IndexedDatabaseRequest_h
-

@@ -2436,10 +2436,14 @@ if ENABLE_INDEXED_DATABASE
 FEATURE_DEFINES += ENABLE_INDEXED_DATABASE=1
 
 IDL_BINDINGS += \
+	WebCore/storage/IDBDAny.idl \
 	WebCore/storage/IDBDatabaseError.idl \
 	WebCore/storage/IDBDatabaseException.idl \
 	WebCore/storage/IDBDatabaseRequest.idl \
+	WebCore/storage/IDBErrorEvent.idl \
+	WebCore/storage/IDBEvent.idl \
 	WebCore/storage/IDBRequest.idl \
+	WebCore/storage/IDBSuccessEvent.idl \
 	WebCore/storage/IndexedDatabaseRequest.idl
 
 webcore_cppflags += \
@@ -2447,6 +2451,8 @@ webcore_cppflags += \
 
 webcore_sources += \
 	WebCore/bindings/js/JSIDBRequestCustom.cpp \
+	WebCore/storage/IDBAny.cpp \
+	WebCore/storage/IDBAny.h \
 	WebCore/storage/IDBCallbacks.cpp \
 	WebCore/storage/IDBCallbacks.h \
 	WebCore/storage/IDBDatabase.cpp \
@@ -2455,8 +2461,14 @@ webcore_sources += \
 	WebCore/storage/IDBDatabaseException.h \
 	WebCore/storage/IDBDatabaseRequest.cpp \
 	WebCore/storage/IDBDatabaseRequest.h \
+	WebCore/storage/IDBErrorEvent.cpp \
+	WebCore/storage/IDBErrorEvent.h \
+	WebCore/storage/IDBEvent.cpp \
+	WebCore/storage/IDBEvent.h \
 	WebCore/storage/IDBRequest.cpp \
 	WebCore/storage/IDBRequest.h \
+	WebCore/storage/IDBSuccessEvent.cpp \
+	WebCore/storage/IDBSuccessEvent.h \
 	WebCore/storage/IndexedDatabase.cpp \
 	WebCore/storage/IndexedDatabase.h \
 	WebCore/storage/IndexedDatabaseImpl.cpp \
