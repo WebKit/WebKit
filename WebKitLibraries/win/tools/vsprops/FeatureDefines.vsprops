@@ -63,7 +63,7 @@
 	/>
   <UserMacro
 		Name="ENABLE_FILTERS"
-		Value="ENABLE_FILTERS"
+		Value=""
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
