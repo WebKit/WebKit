@@ -202,7 +202,7 @@ void RootInlineBox::childRemoved(InlineBox* box)
     }
 }
 
-int RootInlineBox::verticallyAlignBoxes(int heightOfBlock)
+int RootInlineBox::verticallyAlignBoxes(int heightOfBlock, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
 {
     int maxPositionTop = 0;
     int maxPositionBottom = 0;
@@ -216,7 +216,7 @@ int RootInlineBox::verticallyAlignBoxes(int heightOfBlock)
         curr = curr->container();
     bool strictMode = (curr && curr->document()->inStrictMode());
 
-    computeLogicalBoxHeights(maxPositionTop, maxPositionBottom, maxAscent, maxDescent, strictMode);
+    computeLogicalBoxHeights(maxPositionTop, maxPositionBottom, maxAscent, maxDescent, strictMode, textBoxDataMap);
 
     if (maxAscent + maxDescent < max(maxPositionTop, maxPositionBottom))
         adjustMaxAscentAndDescent(maxAscent, maxDescent, maxPositionTop, maxPositionBottom);
@@ -225,7 +225,7 @@ int RootInlineBox::verticallyAlignBoxes(int heightOfBlock)
     int lineTop = heightOfBlock;
     int lineBottom = heightOfBlock;
     placeBoxesVertically(heightOfBlock, maxHeight, maxAscent, strictMode, lineTop, lineBottom);
-    computeVerticalOverflow(lineTop, lineBottom, strictMode);
+    computeVerticalOverflow(lineTop, lineBottom, strictMode, textBoxDataMap);
     setLineTopBottomPositions(lineTop, lineBottom);
     
     heightOfBlock += maxHeight;

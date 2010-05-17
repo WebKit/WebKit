@@ -1,3 +1,37 @@
+2010-05-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Move transient glyph overflow and fallback font data from a global to the stack
+        https://bugs.webkit.org/show_bug.cgi?id=39050
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesHorizontally): Added a GlyphOverflowAndFallbackFontsMap
+        parameter. Read glyph overflow from the map.
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights): Added a GlyphOverflowAndFallbackFontsMap
+        parameter. Read fallback fonts from the map.
+        (WebCore::InlineFlowBox::computeVerticalOverflow): Added a GlyphOverflowAndFallbackFontsMap
+        parameter. Read glyph overflow from the map.
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.cpp: Removed setFallbackFonts(), fallbackFonts(), setGlyphOverflow(),
+        and glyphOverflow(). Removed s_glyphOverflowAndFallbackFontsMap.
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine): Added a GlyphOverflowAndFallbackFontsMap
+        parameter. Write fallback fonts and glyph overflow into the map.
+        (WebCore::RenderBlock::computeVerticalPositionsForLine): Added a GlyphOverflowAndFallbackFontsMap
+        parameter. Pass it down to verticallyAlignBoxes().
+        (WebCore::RenderBlock::layoutInlineChildren): Create a GlyphOverflowAndFallbackFontsMap on the
+        stack and pass it down to computeHorizontalPositionsForLine(), computeVerticalPositionsForLine(),
+        and verticallyAlignBoxes().
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::verticallyAlignBoxes): Added a GlyphOverflowAndFallbackFontsMap parameter.
+        Pass it down to computeLogicalBoxHeights() and computeVerticalOverflow().
+        * rendering/RootInlineBox.h:
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::layoutInlineBoxes): Updated.
+
 2010-05-12  Tony Chang  <tony@chromium.org>
 
         Reviewed by Darin Adler.

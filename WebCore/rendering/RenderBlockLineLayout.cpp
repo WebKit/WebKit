@@ -309,7 +309,7 @@ RootInlineBox* RenderBlock::constructLine(unsigned runCount, BidiRun* firstRun, 
     return lastRootBox();
 }
 
-void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool firstLine, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd)
+void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool firstLine, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
 {
     // First determine our total width.
     int availableWidth = lineWidth(height(), firstLine);
@@ -349,7 +349,9 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool
 #endif
             ) {
                 ASSERT(r->m_box->isText());
-                static_cast<InlineTextBox*>(r->m_box)->setFallbackFonts(fallbackFonts);
+                GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(static_cast<InlineTextBox*>(r->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).first;
+                ASSERT(it->second.first.isEmpty());
+                copyToVector(fallbackFonts, it->second.first);
             }
             if ((glyphOverflow.top || glyphOverflow.bottom || glyphOverflow.left || glyphOverflow.right)
 #if ENABLE(SVG)
@@ -357,7 +359,8 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool
 #endif
             ) {
                 ASSERT(r->m_box->isText());
-                static_cast<InlineTextBox*>(r->m_box)->setGlyphOverflow(glyphOverflow);
+                GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(static_cast<InlineTextBox*>(r->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).first;
+                it->second.second = glyphOverflow;
             }
         } else if (!r->m_object->isRenderInline()) {
             RenderBox* renderBox = toRenderBox(r->m_object);
@@ -474,12 +477,12 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool
     // The widths of all runs are now known.  We can now place every inline box (and
     // compute accurate widths for the inline flow boxes).
     needsWordSpacing = false;
-    lineBox->placeBoxesHorizontally(x, needsWordSpacing);
+    lineBox->placeBoxesHorizontally(x, needsWordSpacing, textBoxDataMap);
 }
 
-void RenderBlock::computeVerticalPositionsForLine(RootInlineBox* lineBox, BidiRun* firstRun)
+void RenderBlock::computeVerticalPositionsForLine(RootInlineBox* lineBox, BidiRun* firstRun, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
 {
-    setHeight(lineBox->verticallyAlignBoxes(height()));
+    setHeight(lineBox->verticallyAlignBoxes(height(), textBoxDataMap));
     lineBox->setBlockHeight(height());
 
     // Now make sure we place replaced render objects correctly.
@@ -739,11 +742,11 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                         lineBox->setEndsWithBreak(previousLineBrokeCleanly);
 
                         // Now we position all of our text runs horizontally.
-                        computeHorizontalPositionsForLine(lineBox, firstLine, resolver.firstRun(), trailingSpaceRun, end.atEnd());
+                        GlyphOverflowAndFallbackFontsMap textBoxDataMap;
+                        computeHorizontalPositionsForLine(lineBox, firstLine, resolver.firstRun(), trailingSpaceRun, end.atEnd(), textBoxDataMap);
 
                         // Now position our text runs vertically.
-                        computeVerticalPositionsForLine(lineBox, resolver.firstRun());
-                        InlineTextBox::clearGlyphOverflowAndFallbackFontMap();
+                        computeVerticalPositionsForLine(lineBox, resolver.firstRun(), textBoxDataMap);
 
 #if ENABLE(SVG)
                         // Special SVG text layout code
@@ -839,7 +842,8 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                 RootInlineBox* trailingFloatsLineBox = new (renderArena()) RootInlineBox(this);
                 m_lineBoxes.appendLineBox(trailingFloatsLineBox);
                 trailingFloatsLineBox->setConstructed();
-                trailingFloatsLineBox->verticallyAlignBoxes(height());
+                GlyphOverflowAndFallbackFontsMap textBoxDataMap;
+                trailingFloatsLineBox->verticallyAlignBoxes(height(), textBoxDataMap);
                 trailingFloatsLineBox->setHeight(0);
                 trailingFloatsLineBox->setVerticalOverflowPositions(height(), bottomLayoutOverflow, height(), bottomVisualOverflow);
                 trailingFloatsLineBox->setBlockHeight(height());

@@ -1024,48 +1024,4 @@ bool InlineTextBox::containsCaretOffset(int offset) const
     return true;
 }
 
-void InlineTextBox::setFallbackFonts(const HashSet<const SimpleFontData*>& fallbackFonts)
-{
-    if (!s_glyphOverflowAndFallbackFontsMap)
-        s_glyphOverflowAndFallbackFontsMap = new GlyphOverflowAndFallbackFontsMap;
-
-    GlyphOverflowAndFallbackFontsMap::iterator it = s_glyphOverflowAndFallbackFontsMap->add(this, make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).first;
-    ASSERT(it->second.first.isEmpty());
-    copyToVector(fallbackFonts, it->second.first);
-}
-
-Vector<const SimpleFontData*>* InlineTextBox::fallbackFonts() const
-{
-    if (!s_glyphOverflowAndFallbackFontsMap)
-        return 0;
-
-    GlyphOverflowAndFallbackFontsMap::iterator it = s_glyphOverflowAndFallbackFontsMap->find(this);
-    if (it == s_glyphOverflowAndFallbackFontsMap->end())
-        return 0;
-
-    return &it->second.first;
-}
-
-InlineTextBox::GlyphOverflowAndFallbackFontsMap* InlineTextBox::s_glyphOverflowAndFallbackFontsMap = 0;
-
-void InlineTextBox::setGlyphOverflow(const GlyphOverflow& glyphOverflow)
-{
-    if (!s_glyphOverflowAndFallbackFontsMap)
-        s_glyphOverflowAndFallbackFontsMap = new GlyphOverflowAndFallbackFontsMap;
-
-    GlyphOverflowAndFallbackFontsMap::iterator it = s_glyphOverflowAndFallbackFontsMap->add(this, make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).first;
-    it->second.second = glyphOverflow;
-}
-
-GlyphOverflow* InlineTextBox::glyphOverflow() const
-{
-    if (!s_glyphOverflowAndFallbackFontsMap)
-        return 0;
-    GlyphOverflowAndFallbackFontsMap::iterator it = s_glyphOverflowAndFallbackFontsMap->find(this);
-    if (it == s_glyphOverflowAndFallbackFontsMap->end())
-        return 0;
-
-    return &it->second.second;
-}
-
 } // namespace WebCore

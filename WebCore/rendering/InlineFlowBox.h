@@ -28,7 +28,10 @@ namespace WebCore {
 
 class HitTestRequest;
 class HitTestResult;
+class InlineTextBox;
 class RenderLineBoxList;
+
+typedef HashMap<const InlineTextBox*, pair<Vector<const SimpleFontData*>, GlyphOverflow> > GlyphOverflowAndFallbackFontsMap;
 
 class InlineFlowBox : public InlineBox {
 public:
@@ -124,13 +127,13 @@ public:
     void determineSpacingForFlowBoxes(bool lastLine, RenderObject* endObject);
     int getFlowSpacingWidth();
     bool onEndChain(RenderObject* endObject);
-    virtual int placeBoxesHorizontally(int x, bool& needsWordSpacing);
+    virtual int placeBoxesHorizontally(int x, bool& needsWordSpacing, GlyphOverflowAndFallbackFontsMap&);
     void computeLogicalBoxHeights(int& maxPositionTop, int& maxPositionBottom,
-                                  int& maxAscent, int& maxDescent, bool strictMode);
+                                  int& maxAscent, int& maxDescent, bool strictMode, GlyphOverflowAndFallbackFontsMap&);
     void adjustMaxAscentAndDescent(int& maxAscent, int& maxDescent,
                                    int maxPositionTop, int maxPositionBottom);
     void placeBoxesVertically(int y, int maxHeight, int maxAscent, bool strictMode, int& lineTop, int& lineBottom);
-    void computeVerticalOverflow(int lineTop, int lineBottom, bool strictMode);
+    void computeVerticalOverflow(int lineTop, int lineBottom, bool strictMode, GlyphOverflowAndFallbackFontsMap&);
 
     void removeChild(InlineBox* child);
 

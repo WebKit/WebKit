@@ -61,7 +61,7 @@ public:
     int selectionBottom() const { return lineBottom(); }
     int selectionHeight() const { return max(0, selectionBottom() - selectionTop()); }
 
-    virtual int verticallyAlignBoxes(int heightOfBlock);
+    virtual int verticallyAlignBoxes(int heightOfBlock, GlyphOverflowAndFallbackFontsMap&);
     void setLineTopBottomPositions(int top, int bottom);
 
     virtual RenderLineBoxList* rendererLineBoxes() const;
