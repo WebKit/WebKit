@@ -5090,3 +5090,7 @@ editing/selection/shift-click.html
 # New test hangs QT bot
 # Discussed in https://bugs.webkit.org/show_bug.cgi?id=38928
 fast/loader/recursive-before-unload-crash.html 
+
+# Need to dump context menu items on eventSender.contextClick(true).
+# https://bugs.webkit.org/show_bug.cgi?id=39103
+editing/spelling/context-menu-suggestions.html

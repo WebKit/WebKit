@@ -392,8 +392,9 @@ void ContextMenu::populate()
     } else { // Make an editing context menu
         SelectionController* selection = frame->selection();
         bool inPasswordField = selection->isInPasswordField();
+        bool spellCheckingEnabled = frame->editor()->spellCheckingEnabledInFocusedNode();
         
-        if (!inPasswordField) {
+        if (!inPasswordField && spellCheckingEnabled) {
             // Consider adding spelling-related or grammar-related context menu items (never both, since a single selected range
             // is never considered a misspelling and bad grammar at the same time)
             bool misspelling;

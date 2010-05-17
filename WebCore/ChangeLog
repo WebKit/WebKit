@@ -1,3 +1,15 @@
+2010-05-12  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Spellcheck disabling does not disable context menu
+        https://bugs.webkit.org/show_bug.cgi?id=25639
+
+        Test: editing/spelling/context-menu-suggestions.html
+
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate):
+
 2010-05-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

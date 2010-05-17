@@ -2831,3 +2831,6 @@ BUG44018 WIN : inspector/styles-disable-then-enable.html = TEXT
 
 // Flaky crashing test. Started crashing around Chromium r47220
 BUG44150 LINUX DEBUG : fast/forms/input-text-paste-maxlength.html = CRASH PASS
+
+// Need to dump context menu items on eventSender.contextClick(true).
+BUGWK39105 : editing/spelling/context-menu-suggestions.html = TEXT
