@@ -60,7 +60,8 @@ public:
     void syncLayers();
 
     void updateResizesToContentsForPage();
-    QRectF graphicsItemVisibleRect() const;
+    virtual QRectF graphicsItemVisibleRect() const;
+
 
     void detachCurrentPage();
 
@@ -311,12 +312,7 @@ void QGraphicsWebView::paint(QPainter* painter, const QStyleOptionGraphicsItem* 
 #if ENABLE(TILED_BACKING_STORE)
     if (WebCore::TiledBackingStore* backingStore = QWebFramePrivate::core(page()->mainFrame())->tiledBackingStore()) {
         // FIXME: We should set the backing store viewport earlier than in paint
-        if (d->resizesToContents)
-            backingStore->viewportChanged(WebCore::IntRect(d->graphicsItemVisibleRect()));
-        else {
-            QRectF visibleRect(d->page->mainFrame()->scrollPosition(), d->page->mainFrame()->geometry().size());
-            backingStore->viewportChanged(WebCore::IntRect(visibleRect));
-        }
+        backingStore->adjustVisibleRect();
         // QWebFrame::render is a public API, bypass it for tiled rendering so behavior does not need to change.
         WebCore::GraphicsContext context(painter); 
         page()->mainFrame()->d->renderFromTiledBackingStore(&context, option->exposedRect.toAlignedRect());

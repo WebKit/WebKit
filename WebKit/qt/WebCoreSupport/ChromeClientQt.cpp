@@ -567,6 +567,15 @@ bool ChromeClientQt::allowsAcceleratedCompositing() const
 }
 
 #endif
+    
+#if ENABLE(TILED_BACKING_STORE)
+IntRect ChromeClientQt::visibleRectForTiledBackingStore() const
+{ 
+    if (!platformPageClient())
+        return IntRect();
+    return enclosingIntRect(FloatRect(platformPageClient()->graphicsItemVisibleRect()));
+}
+#endif
 
 QtAbstractWebPopup* ChromeClientQt::createSelectPopup()
 {

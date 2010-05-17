@@ -1,3 +1,27 @@
+2010-05-17  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39218
+        [Qt] Tiled backing store tiles sometimes flicker when exiting a zoom animation
+        
+        Tiles sometimes flicker when exiting a zoom animation. This happens as a result
+        of the visible rectangle being momentarily out of sync.
+        
+        Instead of updating the visible rect by explicitly setting it, pull it through
+        the client and recompute in the WebKit level.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::visibleRectForTiledBackingStore):
+        * page/Frame.cpp:
+        (WebCore::Frame::tiledBackingStoreVisibleRect):
+        * page/Frame.h:
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::checkVisibleRectChanged):
+        (WebCore::TiledBackingStore::createTiles):
+        * platform/graphics/TiledBackingStore.h:
+        * platform/graphics/TiledBackingStoreClient.h:
+
 2010-05-15  Adam Roben  <aroben@apple.com>
 
         Periodically try to reset a lost IDirect3DDevice9 until we succeed

@@ -41,7 +41,7 @@ public:
     TiledBackingStore(TiledBackingStoreClient*);
     ~TiledBackingStore();
 
-    void viewportChanged(const IntRect& viewportRect);
+    void adjustVisibleRect();
     
     float contentsScale() { return m_contentsScale; }
     void setContentsScale(float);
@@ -95,7 +95,7 @@ private:
 
     IntSize m_tileSize;
     
-    IntRect m_viewport;
+    IntRect m_previousVisibleRect;
     float m_contentsScale;
     float m_pendingScale;
 

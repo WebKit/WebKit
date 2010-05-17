@@ -145,6 +145,10 @@ namespace WebCore {
         virtual bool allowsAcceleratedCompositing() const;
 #endif
 
+#if ENABLE(TILED_BACKING_STORE)
+        virtual IntRect visibleRectForTiledBackingStore() const;
+#endif
+
 #if ENABLE(TOUCH_EVENTS)
         virtual void needTouchEvents(bool) { }
 #endif

@@ -222,7 +222,11 @@ namespace WebCore {
         virtual bool supportsFullscreenForNode(const Node*) { return false; }
         virtual void enterFullscreenForNode(Node*) { }
         virtual void exitFullscreenForNode(Node*) { }
-        
+
+#if ENABLE(TILED_BACKING_STORE)
+        virtual IntRect visibleRectForTiledBackingStore() const { return IntRect(); }
+#endif
+
 #if PLATFORM(MAC)
         virtual KeyboardUIMode keyboardUIMode() { return KeyboardAccessDefault; }
 
