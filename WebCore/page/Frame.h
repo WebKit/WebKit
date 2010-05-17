@@ -5,7 +5,7 @@
  *                     2000-2001 Simon Hausmann <hausmann@kde.org>
  *                     2000-2001 Dirk Mueller <mueller@kde.org>
  *                     2000 Stefan Schimanski <1Stein@gmx.de>
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
@@ -227,7 +227,6 @@ namespace WebCore {
         void applyEditingStyleToBodyElement() const;
         void removeEditingStyleFromBodyElement() const;
         void applyEditingStyleToElement(Element*) const;
-        void removeEditingStyleFromElement(Element*) const;
 
         IntRect firstRectForRange(Range*) const;
 
@@ -377,6 +376,168 @@ namespace WebCore {
         OwnPtr<TiledBackingStore> m_tiledBackingStore;
 #endif
     };
+
+    inline void Frame::init()
+    {
+        m_loader.init();
+    }
+
+    inline FrameLoader* Frame::loader() const
+    {
+        return &m_loader;
+    }
+
+    inline RedirectScheduler* Frame::redirectScheduler() const
+    {
+        return &m_redirectScheduler;
+    }
+
+    inline FrameView* Frame::view() const
+    {
+        return m_view.get();
+    }
+
+    inline ScriptController* Frame::script()
+    {
+        return &m_script;
+    }
+
+    inline Document* Frame::document() const
+    {
+        return m_doc.get();
+    }
+
+    inline SelectionController* Frame::selection() const
+    {
+        return &m_selectionController;
+    }
+
+    inline Editor* Frame::editor() const
+    {
+        return &m_editor;
+    }
+
+    inline AnimationController* Frame::animation() const
+    {
+        return &m_animationController;
+    }
+
+    inline const VisibleSelection& Frame::mark() const
+    {
+        return m_mark;
+    }
+
+    inline void Frame::setMark(const VisibleSelection& s)
+    {
+        ASSERT(!s.base().node() || s.base().node()->document() == document());
+        ASSERT(!s.extent().node() || s.extent().node()->document() == document());
+        ASSERT(!s.start().node() || s.start().node()->document() == document());
+        ASSERT(!s.end().node() || s.end().node()->document() == document());
+
+        m_mark = s;
+    }
+
+    inline float Frame::zoomFactor() const
+    {
+        return m_zoomFactor;
+    }
+
+    inline String Frame::jsStatusBarText() const
+    {
+        return m_kjsStatusBarText;
+    }
+
+    inline String Frame::jsDefaultStatusBarText() const
+    {
+        return m_kjsDefaultStatusBarText;
+    }
+
+    inline bool Frame::needsReapplyStyles() const
+    {
+        return m_needsReapplyStyles;
+    }
+
+    inline CSSMutableStyleDeclaration* Frame::typingStyle() const
+    {
+        return m_typingStyle.get();
+    }
+
+    inline void Frame::setTypingStyle(CSSMutableStyleDeclaration *style)
+    {
+        m_typingStyle = style;
+    }
+
+    inline void Frame::clearTypingStyle()
+    {
+        m_typingStyle = 0;
+    }
+
+    inline HTMLFrameOwnerElement* Frame::ownerElement() const
+    {
+        return m_ownerElement;
+    }
+
+    inline bool Frame::isDisconnected() const
+    {
+        return m_isDisconnected;
+    }
+
+    inline void Frame::setIsDisconnected(bool isDisconnected)
+    {
+        m_isDisconnected = isDisconnected;
+    }
+
+    inline bool Frame::excludeFromTextSearch() const
+    {
+        return m_excludeFromTextSearch;
+    }
+
+    inline void Frame::setExcludeFromTextSearch(bool exclude)
+    {
+        m_excludeFromTextSearch = exclude;
+    }
+
+    inline bool Frame::inViewSourceMode() const
+    {
+        return m_inViewSourceMode;
+    }
+
+    inline void Frame::setInViewSourceMode(bool mode)
+    {
+        m_inViewSourceMode = mode;
+    }
+
+    inline bool Frame::markedTextMatchesAreHighlighted() const
+    {
+        return m_highlightTextMatches;
+    }
+
+    inline FrameTree* Frame::tree() const
+    {
+        return &m_treeNode;
+    }
+
+    inline Page* Frame::page() const
+    {
+        return m_page;
+    }
+
+    inline void Frame::detachFromPage()
+    {
+        m_page = 0;
+    }
+
+    inline EventHandler* Frame::eventHandler() const
+    {
+        return &m_eventHandler;
+    }
+
+    inline bool Frame::shouldClose()
+    {
+        // FIXME: Some WebKit clients call Frame::shouldClose() directly.
+        // We should transition them to calling FrameLoader::shouldClose() then get rid of this method.
+        return m_loader.shouldClose();
+    }
 
 } // namespace WebCore
 

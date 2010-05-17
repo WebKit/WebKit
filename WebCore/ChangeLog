@@ -1,3 +1,49 @@
+2010-05-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Frame has many trivial member functions that should be inlined
+        https://bugs.webkit.org/show_bug.cgi?id=39147
+
+        * WebCore.base.exp: Export the functions that are now inlined.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::removeEditingStyleFromBodyElement):
+        Removed the body of this function.
+
+        * page/Frame.h:
+        (WebCore::Frame::init): Moved here from .cpp.
+        (WebCore::Frame::loader): Ditto.
+        (WebCore::Frame::redirectScheduler): Ditto.
+        (WebCore::Frame::view): Ditto.
+        (WebCore::Frame::script): Ditto.
+        (WebCore::Frame::document): Ditto.
+        (WebCore::Frame::selection): Ditto.
+        (WebCore::Frame::editor): Ditto.
+        (WebCore::Frame::animation): Ditto.
+        (WebCore::Frame::mark): Ditto.
+        (WebCore::Frame::setMark): Ditto.
+        (WebCore::Frame::zoomFactor): Ditto.
+        (WebCore::Frame::jsStatusBarText): Ditto.
+        (WebCore::Frame::jsDefaultStatusBarText): Ditto.
+        (WebCore::Frame::needsReapplyStyles): Ditto.
+        (WebCore::Frame::typingStyle): Ditto.
+        (WebCore::Frame::setTypingStyle): Ditto.
+        (WebCore::Frame::clearTypingStyle): Ditto.
+        (WebCore::Frame::ownerElement): Ditto.
+        (WebCore::Frame::isDisconnected): Ditto.
+        (WebCore::Frame::setIsDisconnected): Ditto.
+        (WebCore::Frame::excludeFromTextSearch): Ditto.
+        (WebCore::Frame::setExcludeFromTextSearch): Ditto.
+        (WebCore::Frame::inViewSourceMode): Ditto.
+        (WebCore::Frame::setInViewSourceMode): Ditto.
+        (WebCore::Frame::markedTextMatchesAreHighlighted): Ditto.
+        (WebCore::Frame::tree): Ditto.
+        (WebCore::Frame::page): Ditto.
+        (WebCore::Frame::detachFromPage): Ditto.
+        (WebCore::Frame::eventHandler): Ditto.
+        (WebCore::Frame::shouldClose): Ditto.
+
 2010-05-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

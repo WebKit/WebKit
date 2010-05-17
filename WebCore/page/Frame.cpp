@@ -5,7 +5,7 @@
  *                     2000 Simon Hausmann <hausmann@kde.org>
  *                     2000 Stefan Schimanski <1Stein@gmx.de>
  *                     2001 George Staikos <staikos@kde.org>
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2005 Alexey Proskuryakov <ap@nypop.com>
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
@@ -94,6 +94,10 @@
 #include "runtime_root.h"
 #endif
 
+#if ENABLE(MATHML)
+#include "MathMLNames.h"
+#endif
+
 #if ENABLE(SVG)
 #include "SVGDocument.h"
 #include "SVGDocumentExtensions.h"
@@ -101,16 +105,12 @@
 #include "XLinkNames.h"
 #endif
 
-#if ENABLE(WML)
-#include "WMLNames.h"
-#endif
-
-#if ENABLE(MATHML)
-#include "MathMLNames.h"
-#endif
-
 #if ENABLE(TILED_BACKING_STORE)
 #include "TiledBackingStore.h"
+#endif
+
+#if ENABLE(WML)
+#include "WMLNames.h"
 #endif
 
 using namespace std;
@@ -224,26 +224,6 @@ Frame::~Frame()
     ASSERT(!m_lifeSupportTimer.isActive());
 }
 
-void Frame::init()
-{
-    m_loader.init();
-}
-
-FrameLoader* Frame::loader() const
-{
-    return &m_loader;
-}
-
-RedirectScheduler* Frame::redirectScheduler() const
-{
-    return &m_redirectScheduler;
-}
-
-FrameView* Frame::view() const
-{
-    return m_view.get();
-}
-
 void Frame::setView(PassRefPtr<FrameView> view)
 {
     // We the custom scroll bars as early as possible to prevent m_doc->detach()
@@ -274,16 +254,6 @@ void Frame::setView(PassRefPtr<FrameView> view)
     if (m_view && tiledBackingStore())
         m_view->setPaintsEntireContents(true);
 #endif
-}
-
-ScriptController* Frame::script()
-{
-    return &m_script;
-}
-
-Document* Frame::document() const
-{
-    return m_doc.get();
 }
 
 void Frame::setDocument(PassRefPtr<Document> newDoc)
@@ -362,16 +332,6 @@ IntRect Frame::firstRectForRange(Range* range) const
                    startCaretRect.height());
 }
 
-SelectionController* Frame::selection() const
-{
-    return &m_selectionController;
-}
-
-Editor* Frame::editor() const
-{
-    return &m_editor;
-}
-
 TextGranularity Frame::selectionGranularity() const
 {
     return m_selectionController.granularity();
@@ -380,12 +340,6 @@ TextGranularity Frame::selectionGranularity() const
 SelectionController* Frame::dragCaretController() const
 {
     return m_page->dragCaretController();
-}
-
-
-AnimationController* Frame::animation() const
-{
-    return &m_animationController;
 }
 
 static RegularExpression* createRegExpForLabels(const Vector<String>& labels)
@@ -575,21 +529,6 @@ String Frame::matchLabelsAgainstElement(const Vector<String>& labels, Element* e
     return matchLabelsAgainstString(labels, element->getAttribute(idAttr));
 }
 
-const VisibleSelection& Frame::mark() const
-{
-    return m_mark;
-}
-
-void Frame::setMark(const VisibleSelection& s)
-{
-    ASSERT(!s.base().node() || s.base().node()->document() == document());
-    ASSERT(!s.extent().node() || s.extent().node()->document() == document());
-    ASSERT(!s.start().node() || s.start().node()->document() == document());
-    ASSERT(!s.end().node() || s.end().node()->document() == document());
-
-    m_mark = s;
-}
-
 void Frame::notifyRendererOfSelectionChange(bool userTriggered)
 {
     RenderObject* renderer = 0;
@@ -666,11 +605,6 @@ void Frame::paintDragCaret(GraphicsContext* p, int tx, int ty, const IntRect& cl
     UNUSED_PARAM(ty);
     UNUSED_PARAM(clipRect);
 #endif
-}
-
-float Frame::zoomFactor() const
-{
-    return m_zoomFactor;
 }
 
 ZoomMode Frame::zoomMode() const
@@ -751,16 +685,6 @@ void Frame::setJSDefaultStatusBarText(const String& text)
         m_page->chrome()->setStatusbarText(this, m_kjsDefaultStatusBarText);
 }
 
-String Frame::jsStatusBarText() const
-{
-    return m_kjsStatusBarText;
-}
-
-String Frame::jsDefaultStatusBarText() const
-{
-    return m_kjsDefaultStatusBarText;
-}
-
 void Frame::setNeedsReapplyStyles()
 {
     // When the frame is not showing web content, it doesn't make sense to apply styles.
@@ -778,11 +702,6 @@ void Frame::setNeedsReapplyStyles()
     // name, it's what we want to call here.
     if (view())
         view()->scheduleRelayout();
-}
-
-bool Frame::needsReapplyStyles() const
-{
-    return m_needsReapplyStyles;
 }
 
 void Frame::reapplyStyles()
@@ -853,21 +772,6 @@ bool Frame::isContentEditable() const
     if (m_editor.clientIsEditable())
         return true;
     return m_doc->inDesignMode();
-}
-
-CSSMutableStyleDeclaration *Frame::typingStyle() const
-{
-    return m_typingStyle.get();
-}
-
-void Frame::setTypingStyle(CSSMutableStyleDeclaration *style)
-{
-    m_typingStyle = style;
-}
-
-void Frame::clearTypingStyle()
-{
-    m_typingStyle = 0;
 }
 
 void Frame::computeAndSetTypingStyle(CSSStyleDeclaration *style, EditAction editingAction)
@@ -1024,10 +928,8 @@ void Frame::applyEditingStyleToBodyElement() const
 
 void Frame::removeEditingStyleFromBodyElement() const
 {
-    RefPtr<NodeList> list = m_doc->getElementsByTagName("body");
-    unsigned len = list->length();
-    for (unsigned i = 0; i < len; i++)
-        removeEditingStyleFromElement(static_cast<Element*>(list->item(i)));
+    // FIXME: This function does nothing. We should either implement it
+    // or remove it along with all call sites.
 }
 
 void Frame::applyEditingStyleToElement(Element* element) const
@@ -1045,10 +947,6 @@ void Frame::applyEditingStyleToElement(Element* element) const
     ASSERT(!ec);
     style->setProperty(CSSPropertyWebkitLineBreak, "after-white-space", false, ec);
     ASSERT(!ec);
-}
-
-void Frame::removeEditingStyleFromElement(Element*) const
-{
 }
 
 #ifndef NDEBUG
@@ -1112,11 +1010,6 @@ RenderView* Frame::contentRenderer() const
     return toRenderView(object);
 }
 
-HTMLFrameOwnerElement* Frame::ownerElement() const
-{
-    return m_ownerElement;
-}
-
 RenderPart* Frame::ownerRenderer() const
 {
     HTMLFrameOwnerElement* ownerElement = m_ownerElement;
@@ -1132,26 +1025,6 @@ RenderPart* Frame::ownerRenderer() const
     if (!object->isRenderPart())
         return 0;
     return toRenderPart(object);
-}
-
-bool Frame::isDisconnected() const
-{
-    return m_isDisconnected;
-}
-
-void Frame::setIsDisconnected(bool isDisconnected)
-{
-    m_isDisconnected = isDisconnected;
-}
-
-bool Frame::excludeFromTextSearch() const
-{
-    return m_excludeFromTextSearch;
-}
-
-void Frame::setExcludeFromTextSearch(bool exclude)
-{
-    m_excludeFromTextSearch = exclude;
 }
 
 // returns FloatRect because going through IntRect would truncate any floats
@@ -1349,16 +1222,6 @@ void Frame::setSelectionFromNone()
         selection()->setSelection(VisibleSelection(Position(node, 0), DOWNSTREAM));
 }
 
-bool Frame::inViewSourceMode() const
-{
-    return m_inViewSourceMode;
-}
-
-void Frame::setInViewSourceMode(bool mode)
-{
-    m_inViewSourceMode = mode;
-}
-
 // Searches from the beginning of the document if nothing is selected.
 bool Frame::findString(const String& target, bool forward, bool caseFlag, bool wrapFlag, bool startInSelection)
 {
@@ -1503,11 +1366,6 @@ unsigned Frame::markAllMatchesForText(const String& target, bool caseFlag, unsig
     return matchCount;
 }
 
-bool Frame::markedTextMatchesAreHighlighted() const
-{
-    return m_highlightTextMatches;
-}
-
 void Frame::setMarkedTextMatchesAreHighlighted(bool flag)
 {
     if (flag == m_highlightTextMatches)
@@ -1515,11 +1373,6 @@ void Frame::setMarkedTextMatchesAreHighlighted(bool flag)
 
     m_highlightTextMatches = flag;
     document()->repaintMarkers(DocumentMarker::TextMatch);
-}
-
-FrameTree* Frame::tree() const
-{
-    return &m_treeNode;
 }
 
 void Frame::setDOMWindow(DOMWindow* domWindow)
@@ -1542,21 +1395,6 @@ DOMWindow* Frame::domWindow() const
 void Frame::clearFormerDOMWindow(DOMWindow* window)
 {
     m_liveFormerWindows.remove(window);
-}
-
-Page* Frame::page() const
-{
-    return m_page;
-}
-
-void Frame::detachFromPage()
-{
-    m_page = 0;
-}
-
-EventHandler* Frame::eventHandler() const
-{
-    return &m_eventHandler;
 }
 
 void Frame::pageDestroyed()
@@ -1664,13 +1502,6 @@ void Frame::unfocusWindow()
     // If we're a top level window, deactivate the window.
     if (!tree()->parent())
         page()->chrome()->unfocus();
-}
-
-bool Frame::shouldClose()
-{
-    // FIXME: Some WebKit clients call Frame::shouldClose() directly.
-    // We should transition them to calling FrameLoader::shouldClose() then get rid of this method.
-    return m_loader.shouldClose();
 }
 
 void Frame::scheduleClose()
