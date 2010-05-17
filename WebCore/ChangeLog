@@ -1,3 +1,9 @@
+2010-05-17  Xan Lopez  <xlopez@igalia.com>
+
+        Try to fix GTK+ build.
+
+        * GNUmakefile.am:
+
 2010-05-14  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Nate Chapin.
