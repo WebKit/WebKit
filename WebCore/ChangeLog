@@ -1,3 +1,58 @@
+2010-05-17  Jakob Petsovits  <jpetsovits@rim.com>
+
+        Reviewed by George Staikos.
+
+        [OpenVG] Add support for decoding and drawing images
+        https://bugs.webkit.org/show_bug.cgi?id=36072
+
+        OpenVG has a maximum image size (how large is
+        specific to the OpenVG implementation), so this
+        requires us to store them as separate image tiles.
+
+        Image decoding and initial drawing code by
+        Adam Treat <atreat@rim.com>. Image decoder
+        downsampling support by Yong Li <yoli@rim.com>.
+
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/openvg/ImageOpenVG.cpp: Added.
+        (WebCore::FrameData::clear):
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::checkForSolidColor):
+        (WebCore::BitmapImage::initPlatformData):
+        (WebCore::BitmapImage::invalidatePlatformData):
+        (WebCore::adjustSourceRectForDownSampling):
+        (WebCore::BitmapImage::draw):
+        (WebCore::Image::drawPattern):
+        (WebCore::Image::loadPlatformResource):
+        * platform/graphics/openvg/PainterOpenVG.cpp:
+        (WebCore::PainterOpenVG::drawImage):
+        (WebCore::PainterOpenVG::asNewNativeImage):
+        * platform/graphics/openvg/PainterOpenVG.h:
+        * platform/graphics/openvg/TiledImageOpenVG.cpp: Added.
+        (WebCore::TiledImageOpenVG::TiledImageOpenVG):
+        (WebCore::TiledImageOpenVG::operator=):
+        (WebCore::TiledImageOpenVG::~TiledImageOpenVG):
+        (WebCore::TiledImageOpenVG::numTiles):
+        (WebCore::TiledImageOpenVG::numColumns):
+        (WebCore::TiledImageOpenVG::numRows):
+        (WebCore::TiledImageOpenVG::setTile):
+        (WebCore::TiledImageOpenVG::tilesInRect):
+        (WebCore::TiledImageOpenVG::tile):
+        (WebCore::TiledImageOpenVG::tileRect):
+        (WebCore::TiledImageOpenVG::detachTiles):
+        (WebCore::TiledImageOpenVG::destroyTiles):
+        * platform/graphics/openvg/TiledImageOpenVG.h: Added.
+        (WebCore::TiledImageOpenVG::size):
+        (WebCore::TiledImageOpenVG::maxTileSize):
+        * platform/graphics/openvg/VGUtils.cpp:
+        (WebCore::VGUtils::bytesForImage):
+        (WebCore::VGUtils::bytesForImageScanline):
+        (WebCore::VGUtils::imageFormatBitsPerPixel):
+        (WebCore::VGUtils::endianAwareImageFormat):
+        * platform/graphics/openvg/VGUtils.h:
+        * platform/image-decoders/openvg/ImageDecoderOpenVG.cpp: Added.
+        (WebCore::RGBA32Buffer::asNewNativeImage):
+
 2010-05-17  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Darin Adler.

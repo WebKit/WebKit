@@ -62,6 +62,11 @@ class String;
 #if PLATFORM(CG)
 typedef CGImageSourceRef NativeImageSourcePtr;
 typedef CGImageRef NativeImagePtr;
+#elif PLATFORM(OPENVG)
+class ImageDecoder;
+class TiledImageOpenVG;
+typedef ImageDecoder* NativeImageSourcePtr;
+typedef TiledImageOpenVG* NativeImagePtr;
 #elif PLATFORM(QT)
 class ImageDecoderQt;
 typedef ImageDecoderQt* NativeImageSourcePtr;
