@@ -1,3 +1,25 @@
+2010-05-17  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Bring CanvasRenderingContext2D's createImageData() in line with HTML5 spec
+        Added createImageData(ImageData) which returns a new ImageData with the same size as the one passed.
+        Changed createImageData(width, height) to use the absolute values of width and height.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39189
+
+        Spec link:
+        http://www.whatwg.org/specs/web-apps/current-work/#dom-context-2d-createimagedata
+
+        Test: fast/canvas/canvas-createImageData.html
+
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::JSCanvasRenderingContext2D::createImageData):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createImageData):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.idl:
+
 2010-05-17  Antti Koivisto  <koivisto@iki.fi>
 
         This was missing from previous commit.

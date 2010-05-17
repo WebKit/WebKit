@@ -148,6 +148,10 @@ module html {
             raises (DOMException);
         void putImageData(in ImageData imagedata, in float dx, in float dy, in [Optional] float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight)
             raises(DOMException);
+        ImageData createImageData(in ImageData imagedata)
+            raises (DOMException);
+        ImageData createImageData(in float sw, in float sh)
+            raises (DOMException);
 #else
         // FIXME: Remove 'else' once JSC supports overloads too.
         [Custom] void fillText(/* 4 */);
@@ -160,14 +164,13 @@ module html {
         [Custom] void setShadow(/* 3 */);
         [Custom] void createPattern(/* 2 */);
         [Custom] void putImageData(/* in ImageData imagedata, in float dx, in float dy [, in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight] */);
+        [Custom] ImageData createImageData(/* 3 */);
 #endif // defined(V8_BINDING)
 
         attribute [Custom] custom strokeStyle;
         attribute [Custom] custom fillStyle;
 
         // pixel manipulation
-        ImageData createImageData(in float sw, in float sh)
-            raises (DOMException);
         ImageData getImageData(in float sx, in float sy, in float sw, in float sh)
             raises(DOMException);
     };

@@ -1342,6 +1342,17 @@ static PassRefPtr<ImageData> createEmptyImageData(const IntSize& size)
     return data.get();
 }
 
+PassRefPtr<ImageData> CanvasRenderingContext2D::createImageData(PassRefPtr<ImageData> imageData, ExceptionCode& ec) const
+{
+    if (!imageData) {
+        ec = NOT_SUPPORTED_ERR;
+        return 0;
+    }
+
+    IntSize size(imageData->width(), imageData->height());
+    return createEmptyImageData(size);
+}
+
 PassRefPtr<ImageData> CanvasRenderingContext2D::createImageData(float sw, float sh, ExceptionCode& ec) const
 {
     ec = 0;
@@ -1354,7 +1365,7 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::createImageData(float sw, float 
         return 0;
     }
 
-    FloatSize unscaledSize(sw, sh);
+    FloatSize unscaledSize(fabs(sw), fabs(sh));
     IntSize scaledSize = canvas()->convertLogicalToDevice(unscaledSize);
     if (scaledSize.width() < 1)
         scaledSize.setWidth(1);

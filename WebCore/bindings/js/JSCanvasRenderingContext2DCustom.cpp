@@ -361,6 +361,24 @@ JSValue JSCanvasRenderingContext2D::createPattern(ExecState* exec, const ArgList
     return jsUndefined();
 }
 
+JSValue JSCanvasRenderingContext2D::createImageData(ExecState* exec, const ArgList& args)
+{
+    // createImageData has two variants
+    // createImageData(ImageData)
+    // createImageData(width, height)
+    CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
+    RefPtr<ImageData> imageData = 0;
+
+    ExceptionCode ec = 0;
+    if (args.size() == 1)
+        imageData = context->createImageData(toImageData(args.at(0)), ec);
+    else if (args.size() == 2)
+        imageData = context->createImageData(args.at(0).toFloat(exec), args.at(1).toFloat(exec), ec);
+
+    setDOMException(exec, ec);
+    return toJS(exec, globalObject(), WTF::getPtr(imageData));
+}
+
 JSValue JSCanvasRenderingContext2D::putImageData(ExecState* exec, const ArgList& args)
 {
     // putImageData has two variants
