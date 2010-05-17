@@ -90,6 +90,7 @@ my $changeLogTimeZone = "PST8PDT";
 
 my $gitDiffStartRegEx = qr#^diff --git (\w/)?(.+) (\w/)?([^\r\n]+)#;
 my $svnDiffStartRegEx = qr#^Index: ([^\r\n]+)#;
+my $svnPropertyStartRegEx = qr#^(Modified|Name|Added|Deleted): ([^\r\n]+)#; # $2 is the name of the property.
 my $svnPropertyValueStartRegEx = qr#^   (\+|-) ([^\r\n]+)#; # $2 is the start of the property's value (which may span multiple lines).
 
 # This method is for portability. Return the system-appropriate exit
@@ -837,6 +838,103 @@ sub parseDiff($$)
     return (\@diffHashRefs, $line);
 }
 
+# Parse the next SVN property from the given file handle, and advance the handle so the last
+# line read is the first line after the property.
+#
+# This subroutine dies if the first line is not a valid start of an SVN property,
+# or the property is missing a value, or the property change type (e.g. "Added")
+# does not correspond to the property value type (e.g. "+").
+#
+# Args:
+#   $fileHandle: advanced so the last line read from the handle is the first
+#                line of the property to parse.  This should be a line
+#                that matches $svnPropertyStartRegEx.
+#   $line: the line last read from $fileHandle.
+#
+# Returns ($propertyHashRef, $lastReadLine):
+#   $propertyHashRef: a hash reference representing a SVN property.
+#     name: the name of the property.
+#     value: the last property value.  For instance, suppose the property is "Modified".
+#            Then it has both a '-' and '+' property value in that order.  Therefore,
+#            the value of this key is the value of the '+' property by ordering (since
+#            it is the last value).
+#     propertyChangeDelta: the value 1 or -1 if the property was added or
+#                          removed, respectively.
+#   $lastReadLine: the line last read from $fileHandle.
+#
+# FIXME: This method is unused as of (05/16/2010).  We will call this function
+#        as part of parsing a SVN footer.  See <https://bugs.webkit.org/show_bug.cgi?id=38885>.
+sub parseSvnProperty($$)
+{
+    my ($fileHandle, $line) = @_;
+
+    $_ = $line;
+
+    my $propertyName;
+    my $propertyChangeType;
+    if (/$svnPropertyStartRegEx/) {
+        $propertyChangeType = $1;
+        $propertyName = $2;
+    } else {
+        die("Failed to find SVN property: \"$_\".");
+    }
+
+    $_ = <$fileHandle>; # Not defined if end-of-file reached.
+
+    # The "svn diff" command neither inserts newline characters between property values
+    # nor between successive properties.
+    #
+    # FIXME: We do not support property values that contain tailing newline characters
+    #        as it is difficult to disambiguate these trailing newlines from the empty
+    #        line that precedes the contents of a binary patch.
+    my $propertyValue;
+    my $propertyValueType;
+    while (defined($_) && /$svnPropertyValueStartRegEx/) {
+        # Note, a '-' property may be followed by a '+' property in the case of a "Modified"
+        # or "Name" property.  We only care about the ending value (i.e. the '+' property)
+        # in such circumstances.  So, we take the property value for the property to be its
+        # last parsed property value.
+        #
+        # FIXME: We may want to consider strictly enforcing a '-', '+' property ordering or
+        #        add error checking to prevent '+', '+', ..., '+' and other invalid combinations.
+        $propertyValueType = $1;
+        ($propertyValue, $_) = parseSvnPropertyValue($fileHandle, $_);
+    }
+
+    if (!$propertyValue) {
+        die("Failed to find the property value for the SVN property \"$propertyName\": \"$_\".");
+    }
+
+    my $propertyChangeDelta;
+    if ($propertyValueType eq '+') {
+        $propertyChangeDelta = 1;
+    } elsif ($propertyValueType eq '-') {
+        $propertyChangeDelta = -1;
+    } else {
+        die("Not reached.");
+    }
+
+    # We perform a simple validation that an "Added" or "Deleted" property
+    # change type corresponds with a "+" and "-" value type, respectively.
+    my $expectedChangeDelta;
+    if ($propertyChangeType eq "Added") {
+        $expectedChangeDelta = 1;
+    } elsif ($propertyChangeType eq "Deleted") {
+        $expectedChangeDelta = -1;
+    }
+
+    if ($expectedChangeDelta && $propertyChangeDelta != $expectedChangeDelta) {
+        die("The final property value type found \"$propertyValueType\" does not " .
+            "correspond to the property change type found \"$propertyChangeType\".");
+    }
+
+    my %propertyHash;
+    $propertyHash{name} = $propertyName;
+    $propertyHash{propertyChangeDelta} = $propertyChangeDelta;
+    $propertyHash{value} = $propertyValue;
+    return (\%propertyHash, $_);
+}
+
 # Parse the value of an SVN property from the given file handle, and advance
 # the handle so the last line read is the first line after the property value.
 #
@@ -847,14 +945,11 @@ sub parseDiff($$)
 #   $fileHandle: advanced so the last line read from the handle is the first
 #                line of the property value to parse.  This should be a line
 #                beginning with "   +" or "   -".
-#   $line: the line last read from $fileHandle
+#   $line: the line last read from $fileHandle.
 #
 # Returns ($propertyValue, $lastReadLine):
 #   $propertyValue: the value of the property.
 #   $lastReadLine: the line last read from $fileHandle.
-#
-# FIXME: This method is unused as of (05/15/2010). We will call this function
-#        as part of parsing a property from the SVN footer. See <https://bugs.webkit.org/show_bug.cgi?id=38885>.
 sub parseSvnPropertyValue($$)
 {
     my ($fileHandle, $line) = @_;
@@ -871,12 +966,15 @@ sub parseSvnPropertyValue($$)
     }
 
     while (<$fileHandle>) {
-        if (/^$/ || /$svnPropertyValueStartRegEx/) {
+        if (/^$/ || /$svnPropertyValueStartRegEx/ || /$svnPropertyStartRegEx/) {
             # Note, we may encounter an empty line before the contents of a binary patch.
             # Also, we check for $svnPropertyValueStartRegEx because a '-' property may be
             # followed by a '+' property in the case of a "Modified" or "Name" property.
+            # We check for $svnPropertyStartRegEx because it indicates the start of the
+            # next property to parse.
             last;
         }
+
         # Temporarily strip off any end-of-line characters. We add the end-of-line characters
         # from the previously processed line to the start of this line so that the last line
         # of the property value does not end in end-of-line characters.

@@ -58,12 +58,22 @@ END
 },
 {
     # New test
-    diffName => "simple multi-line '-' change",
+    diffName => "single-line '-' change followed by empty line",
     inputText => <<'END',
    - *
 
 END
     expectedReturn => ["*", "\n"],
+    expectedNextLine => undef,
+},
+{
+    # New test
+    diffName => "single-line '-' change followed by the next property",
+    inputText => <<'END',
+   - *
+Deleted: svn:executable
+END
+    expectedReturn => ["*", "Deleted: svn:executable\n"],
     expectedNextLine => undef,
 },
 {
@@ -89,6 +99,18 @@ multiple lines.
    + A single-line.
 END
     expectedReturn => ["A\nlong sentence that spans\nmultiple lines.", "   + A single-line.\n"],
+    expectedNextLine => undef,
+},
+{
+    # New test
+    diffName => "multi-line '-' change followed by the next property",
+    inputText => <<'END',
+   - A
+long sentence that spans
+multiple lines.
+Added: svn:executable
+END
+    expectedReturn => ["A\nlong sentence that spans\nmultiple lines.", "Added: svn:executable\n"],
     expectedNextLine => undef,
 },
 {
