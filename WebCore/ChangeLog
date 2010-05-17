@@ -1,3 +1,26 @@
+2010-05-14  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        IDBRequest is not a proper ActiveDomObject
+        https://bugs.webkit.org/show_bug.cgi?id=39001
+
+        Add IDBRequest interface to the IsActiveDomType
+        routine of the CodeGeneratorV8.pm.
+
+        Rename IDBRequest::m_stopped to m_suspended and reset
+        the flag when resume() is called.
+
+        No new tests, Indexed Database isn't yet testable.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::suspend):
+        (WebCore::IDBRequest::resume):
+        (WebCore::IDBRequest::timerFired):
+        (WebCore::IDBRequest::onEventCommon):
+        * storage/IDBRequest.h:
+
 2010-05-17  Xan Lopez  <xlopez@igalia.com>
 
         Do not include the indexed database headers if the feature is not

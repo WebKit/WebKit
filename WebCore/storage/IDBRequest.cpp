@@ -98,10 +98,12 @@ void IDBRequest::stop()
 void IDBRequest::suspend()
 {
     m_timer.stop();
+    m_stopped = true;
 }
 
 void IDBRequest::resume()
 {
+    m_stopped = false;
     // We only hold our self ref when we're waiting to dispatch an event.
     if (m_selfRef && !m_aborted)
         m_timer.startOneShot(0);
