@@ -1,3 +1,31 @@
+2010-05-17  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Update Chromium test expectations.
+
+        * platform/chromium-linux/fast/loader/recursive-before-unload-crash-expected.txt:
+        * platform/chromium-linux/fast/multicol/client-rects-expected.txt: Removed.
+        * platform/chromium-linux/fast/multicol/column-count-with-rules-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/column-count-with-rules-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/layers-in-multicol-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/layers-in-multicol-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/column-count-with-rules-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/column-count-with-rules-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/layers-in-multicol-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/layers-in-multicol-expected.png: Added.
+        * platform/chromium-win/fast/canvas/canvas-toDataURL-case-insensitive-mimetype-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/client-rects-expected.txt:
+        * platform/chromium-win/fast/multicol/column-count-with-rules-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/column-count-with-rules-expected.png: Added.
+        * platform/chromium-win/fast/multicol/column-count-with-rules-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/column-rules-expected.txt:
+        * platform/chromium-win/fast/multicol/columns-shorthand-parsing-expected.txt:
+        * platform/chromium-win/fast/multicol/float-avoidance-expected.txt:
+        * platform/chromium-win/fast/multicol/float-multicol-expected.txt:
+        * platform/chromium-win/fast/multicol/layers-in-multicol-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/layers-in-multicol-expected.png: Added.
+        * platform/chromium-win/fast/multicol/layers-in-multicol-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/single-line-expected.txt:
+
 2010-05-16  Takeshi Yoshino  <tyoshino@google.com>
 
         Unreviewed
