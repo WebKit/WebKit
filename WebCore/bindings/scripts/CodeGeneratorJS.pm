@@ -2480,17 +2480,8 @@ sub GenerateHashTable
     my $value2 = shift;
     my $conditionals = shift;
 
-    # Generate size data for two hash tables
-    # - The 'perfect' size makes a table large enough for perfect hashing
-    # - The 'compact' size uses the legacy table format for smaller table sizes
+    # Generate size data for compact' size hash table
 
-    # Perfect size
-    my @hashes = ();
-    foreach my $key (@{$keys}) {
-        push @hashes, $object->GenerateHashValue($key);
-    }
-
-    # Compact size
     my @table = ();
     my @links = ();
 
@@ -2521,20 +2512,6 @@ sub GenerateHashTable
 
         $i++;
         $maxDepth = $depth if ($depth > $maxDepth);
-    }
-
-    # Collect hashtable information
-    my $perfectSize;
-tableSizeLoop:
-    for ($perfectSize = ceilingToPowerOf2(scalar @{$keys}); ; $perfectSize += $perfectSize) {
-        my @table = ();
-        my $i = 0;
-        foreach my $hash (@hashes) {
-            my $h = $hash % $perfectSize;
-            next tableSizeLoop if defined $table[$h];
-            $table[$h] = $i++;
-        }
-        last;
     }
 
     # Start outputing the hashtables
@@ -2593,14 +2570,8 @@ tableSizeLoop:
     push(@implContent, "    { 0, 0, 0, 0 THUNK_GENERATOR(0) }\n");
     push(@implContent, "};\n\n");
     push(@implContent, "#undef THUNK_GENERATOR\n");
-    my $perfectSizeMask = $perfectSize - 1;
     my $compactSizeMask = $numEntries - 1;
-    push(@implContent, "static JSC_CONST_HASHTABLE HashTable $name =\n");
-    push(@implContent, "#if ENABLE(PERFECT_HASH_SIZE)\n");
-    push(@implContent, "    { $perfectSizeMask, $nameEntries, 0 };\n");
-    push(@implContent, "#else\n");
-    push(@implContent, "    { $compactSize, $compactSizeMask, $nameEntries, 0 };\n");
-    push(@implContent, "#endif\n\n");
+    push(@implContent, "static JSC_CONST_HASHTABLE HashTable $name = { $compactSize, $compactSizeMask, $nameEntries, 0 };\n");
 }
 
 # Internal helper
