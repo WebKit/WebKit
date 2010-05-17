@@ -1,5 +1,12 @@
 2010-05-17  Xan Lopez  <xlopez@igalia.com>
 
+        Do not include the indexed database headers if the feature is not
+        enabled. Should fix the build in GTK+.
+
+        * bindings/js/JSEventCustom.cpp:
+
+2010-05-17  Xan Lopez  <xlopez@igalia.com>
+
         Try to fix GTK+ build.
 
         * GNUmakefile.am:
