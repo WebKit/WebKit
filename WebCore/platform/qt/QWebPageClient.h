@@ -87,6 +87,8 @@ public:
     virtual QObject* pluginParent() const = 0;
 
     virtual QStyle* style() const = 0;
+    
+    virtual QRectF graphicsItemVisibleRect() const { return QRectF(); }
 
 protected:
 #ifndef QT_NO_CURSOR

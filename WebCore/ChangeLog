@@ -1,5 +1,12 @@
 2010-05-17  Antti Koivisto  <koivisto@iki.fi>
 
+        This was missing from previous commit.
+
+        * platform/qt/QWebPageClient.h:
+        (QWebPageClient::graphicsItemVisibleRect):
+
+2010-05-17  Antti Koivisto  <koivisto@iki.fi>
+
         Reviewed by Kenneth Rohde Christiansen.
 
         https://bugs.webkit.org/show_bug.cgi?id=39218
