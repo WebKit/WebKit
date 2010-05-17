@@ -585,8 +585,10 @@ QtAbstractWebPopup* ChromeClientQt::createSelectPopup()
 
 #if defined(Q_WS_MAEMO_5)
     return new QtMaemoWebPopup;
-#else
+#elif !defined(QT_NO_COMBOBOX)
     return new QtFallbackWebPopup;
+#else
+    return result;
 #endif
 }
 
