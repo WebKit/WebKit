@@ -1,3 +1,54 @@
+2010-05-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39247
+        <rdar://problem/7994707>
+        Move rarely used data members to the rare structures, thus saving memory.
+
+        Move rarely used member variables from StyleInheritedData and StyleVisualData to
+        StyleRareInheritedData and StyleRareNonInheritedData, namely:
+
+        indent, cursorData, m_effectiveZoom, widows and orphans move from StyleInheritedData to StyleRareInheritedData.
+        m_counterIncrement and m_counterReset move from StyleVisualData to StyleRareNonInheritedData.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        (WebCore::RenderStyle::addCursor):
+        (WebCore::RenderStyle::setCursorList):
+        (WebCore::RenderStyle::clearCursorList):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::textIndent):
+        (WebCore::InheritedFlags::effectiveZoom):
+        (WebCore::InheritedFlags::counterIncrement):
+        (WebCore::InheritedFlags::counterReset):
+        (WebCore::InheritedFlags::cursors):
+        (WebCore::InheritedFlags::widows):
+        (WebCore::InheritedFlags::orphans):
+        (WebCore::InheritedFlags::setTextIndent):
+        (WebCore::InheritedFlags::setEffectiveZoom):
+        (WebCore::InheritedFlags::setCounterIncrement):
+        (WebCore::InheritedFlags::setCounterReset):
+        (WebCore::InheritedFlags::setWidows):
+        (WebCore::InheritedFlags::setOrphans):
+        * rendering/style/StyleInheritedData.cpp:
+        (WebCore::StyleInheritedData::StyleInheritedData):
+        (WebCore::StyleInheritedData::operator==):
+        * rendering/style/StyleInheritedData.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::cursorDataEquivalent):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * rendering/style/StyleVisualData.cpp:
+        (WebCore::StyleVisualData::StyleVisualData):
+        * rendering/style/StyleVisualData.h:
+        (WebCore::StyleVisualData::operator==):
+
 2010-05-17  Robert Hogan  <robert@webkit.org>
 
         Rubber-stamped by Eric Seidel.

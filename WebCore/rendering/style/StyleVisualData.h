@@ -41,8 +41,6 @@ public:
     {
         return ( clip == o.clip &&
                  hasClip == o.hasClip &&
-                 counterIncrement == o.counterIncrement &&
-                 counterReset == o.counterReset &&
                  textDecoration == o.textDecoration &&
                  m_zoom == o.m_zoom);
     }
@@ -52,9 +50,6 @@ public:
     bool hasClip : 1;
     unsigned textDecoration : 4; // Text decorations defined *only* by this element.
     
-    short counterIncrement; // ok, so these are not visual mode specific
-    short counterReset;     // can't go to inherited, since these are not inherited
-
     float m_zoom;
 
 private:
