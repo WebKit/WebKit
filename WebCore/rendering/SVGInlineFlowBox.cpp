@@ -37,13 +37,7 @@ void SVGInlineFlowBox::paint(RenderObject::PaintInfo&, int, int)
     ASSERT_NOT_REACHED();
 }
 
-int SVGInlineFlowBox::placeBoxesHorizontally(int, int&, int&, bool&)
-{
-    // no-op
-    return 0;
-}
-
-int SVGInlineFlowBox::verticallyAlignBoxes(int)
+int SVGInlineFlowBox::placeBoxesHorizontally(int, int&, int&, bool&, GlyphOverflowAndFallbackFontsMap&)
 {
     // no-op
     return 0;

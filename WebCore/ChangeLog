@@ -1,5 +1,23 @@
 2010-05-16  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Dave Hyatt.
+
+        Fix SVG test failures after r59588.
+
+        Updated SVG InlineBox virtual method overrides to match HTML ones. Removed
+        SVGInlineFlowBox::verticallyAlignBoxes() since InlineFlowBox no longer declares
+        verticallyAlignBoxes().
+
+        * rendering/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::placeBoxesHorizontally):
+        * rendering/SVGInlineFlowBox.h:
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::placeBoxesHorizontally):
+        (WebCore::SVGRootInlineBox::verticallyAlignBoxes):
+        * rendering/SVGRootInlineBox.h:
+
+2010-05-16  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         Move transient glyph overflow and fallback font data from a global to the stack

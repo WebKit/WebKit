@@ -37,8 +37,7 @@ public:
     }
 
     virtual void paint(RenderObject::PaintInfo&, int tx, int ty);
-    virtual int placeBoxesHorizontally(int x, int& leftPosition, int& rightPosition, bool& needsWordSpacing);
-    virtual int verticallyAlignBoxes(int heightOfBlock);
+    virtual int placeBoxesHorizontally(int x, int& leftPosition, int& rightPosition, bool& needsWordSpacing, GlyphOverflowAndFallbackFontsMap&);
 };
 
 } // namespace WebCore
