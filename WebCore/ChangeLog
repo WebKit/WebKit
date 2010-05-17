@@ -1,5 +1,55 @@
 2010-05-15  Adam Roben  <aroben@apple.com>
 
+        Periodically try to reset a lost IDirect3DDevice9 until we succeed
+
+        This is how MSDN says we must respond to a lost device (see
+        <http://msdn.microsoft.com/en-us/library/bb174714(v=VS.85).aspx>).
+
+        Only testable by a manual test, unfortunately.
+
+        Fixes <rdar://problem/7986906> <http://webkit.org/b/39139> Pages that
+        use hardware acceleration don't repaint after waking computer from
+        sleep
+
+        Reviewed by John Sullivan.
+
+        * manual-tests/no-repaint-after-wake-from-sleep.html: Added. This is
+        the Poster Circle demo from webkit.org/blog, but with instructions for
+        putting the computer to sleep and waking it up again.
+
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::WKCACFLayerRenderer): Initialize new
+        member that tells us whether we need to try to reset the device before
+        rendering.
+        (WebCore::WKCACFLayerRenderer::resize): Changed to tell resetDevice
+        the reason why the device needs to be reset (which is because the
+        window's size has changed).
+        (WebCore::WKCACFLayerRenderer::render): Before we do anything else,
+        check if we need to reset the device before rendering. If we do, try
+        to reset it. If that fails, bail out and set a timer to try again
+        later. If we discover that the device is lost when calling
+        IDirect3DDevice9::Present and resetting the device fails, bail out and
+        set a timer to try again later.
+        (WebCore::WKCACFLayerRenderer::resetDevice): Changed to return a
+        boolean indicating whether resetting succeeded or not. Added a
+        ResetReason parameter so callers can specify whey the device needs to
+        be reset. Before trying to do anything, we call
+        IDirect3DDevice9::TestCooperativeLevel to find out whether the device
+        can be reset currently. If it can't, we set a flag to tell ourselves
+        that the device must be reset before we next render, and indicate to
+        the caller that the reset failed. If we thought the device was lost
+        but it turns out not to be, we don't have to do anything and can tell
+        the caller that the reset succeeded. Otherwise we go ahead and reset
+        the device as before, and indicate to the caller that the reset
+        succeeded.
+
+        * platform/graphics/win/WKCACFLayerRenderer.h: Changed resetDevice to
+        return a boolean and take a ResetReason parameter. Added a comment
+        about when and why this function should be called. And added
+        m_mustResetLostDeviceBeforeRendering.
+
+2010-05-15  Adam Roben  <aroben@apple.com>
+
         Call CARenderOGLPurge whenever we call IDirect3DDevice9::Reset
 
         MSDN says that all resoures allocated with D3DPOOL_DEFAULT must be
