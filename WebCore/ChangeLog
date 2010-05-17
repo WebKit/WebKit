@@ -1,3 +1,16 @@
+2010-05-17  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Remove debug code that was introduced to help narrow down the
+        source of a crash.
+        https://bugs.webkit.org/show_bug.cgi?id=36426
+
+        No change in behavior, so no new tests.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::finishedLoadingDocument):
+
 2010-05-17  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
