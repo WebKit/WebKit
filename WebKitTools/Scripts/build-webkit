@@ -67,7 +67,7 @@ my @features = (
       define => "ENABLE_3D_RENDERING", default => (isAppleMacWebKit() && !isTiger()), value => \$threeDRenderingSupport },
 
     { option => "blob-slice", desc => "Toggle Blob.slice support",
-      define => "ENABLE_BLOB_SLICE", default => (isAppleMacWebKit()), value => \$blobSliceSupport },
+      define => "ENABLE_BLOB_SLICE", default => 0, value => \$blobSliceSupport },
 
     { option => "channel-messaging", desc => "Toggle MessageChannel and MessagePort support",
       define => "ENABLE_CHANNEL_MESSAGING", default => 1, value => \$channelMessagingSupport },

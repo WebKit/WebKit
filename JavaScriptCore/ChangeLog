@@ -1,5 +1,11 @@
 2010-05-17  Mark Rowe  <mrowe@apple.com>
 
+        <rdar://problem/7987743> Disable Blob.slice.
+
+        * Configurations/FeatureDefines.xcconfig:
+
+2010-05-17  Mark Rowe  <mrowe@apple.com>
+
         <rdar://problem/7987750> Disable progress element.
 
         * Configurations/FeatureDefines.xcconfig:
