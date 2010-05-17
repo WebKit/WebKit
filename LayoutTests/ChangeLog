@@ -2,6 +2,24 @@
 
         Unreviewed. Update Chromium test expectations.
 
+        * platform/chromium-linux/fast/multicol/layers-in-multicol-expected.checksum:
+        * platform/chromium-linux/fast/multicol/layers-in-multicol-expected.png:
+        * platform/chromium-linux/fast/multicol/nested-columns-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/nested-columns-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/layers-in-multicol-expected.checksum:
+        * platform/chromium-mac/fast/multicol/layers-in-multicol-expected.png:
+        * platform/chromium-mac/fast/multicol/nested-columns-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/nested-columns-expected.png: Added.
+        * platform/chromium-win/fast/multicol/layers-in-multicol-expected.checksum:
+        * platform/chromium-win/fast/multicol/layers-in-multicol-expected.png:
+        * platform/chromium-win/fast/multicol/layers-in-multicol-expected.txt:
+        * platform/chromium-win/fast/multicol/nested-columns-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/nested-columns-expected.png: Added.
+
+2010-05-17  Drew Wilson  <atwilson@chromium.org>
+
+        Unreviewed. Update Chromium test expectations.
+
         * platform/chromium-win/fast/multicol/nested-columns-expected.txt: Added.
 
 2010-05-17  Robert Hogan  <robert@webkit.org>
