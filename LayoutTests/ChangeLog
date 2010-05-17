@@ -2,6 +2,13 @@
 
         Unreviewed. Update Chromium test expectations.
 
+        * platform/chromium-win-xp/fast/multicol/client-rects-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
+2010-05-17  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Update Chromium test expectations.
+
         * platform/chromium-linux/fast/loader/recursive-before-unload-crash-expected.txt:
         * platform/chromium-linux/fast/multicol/client-rects-expected.txt: Removed.
         * platform/chromium-linux/fast/multicol/column-count-with-rules-expected.checksum: Added.

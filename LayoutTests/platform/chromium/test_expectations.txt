@@ -2833,7 +2833,8 @@ BUG44018 WIN : inspector/styles-disable-then-enable.html = TEXT
 BUG44150 LINUX DEBUG : fast/forms/input-text-paste-maxlength.html = CRASH PASS
 
 // Need to dump context menu items on eventSender.contextClick(true).
-BUGWK39105 : editing/spelling/context-menu-suggestions.html = TEXT
+BUGWK39105 MAC : editing/spelling/context-menu-suggestions.html = TEXT
+BUGWK39105 WIN LINUX : editing/spelling/context-menu-suggestions.html = MISSING
 
 // Flaky tests
 BUG44229 WIN LINUX : fast/loader/recursive-before-unload-crash.html = PASS TEXT
