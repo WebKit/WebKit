@@ -1560,13 +1560,12 @@ void RenderBlock::paintColumnRules(PaintInfo& paintInfo, int tx, int ty)
         return;
 
     // We need to do multiple passes, breaking up our child painting into strips.
-    int currXOffset = 0;
-    int ruleAdd = borderLeft() + paddingLeft();
-    int ruleX = 0;
     Vector<IntRect>* colRects = columnRects();
     unsigned colCount = colRects->size();
+    int currXOffset = style()->direction() == LTR ? 0 : contentWidth();
+    int ruleAdd = borderLeft() + paddingLeft();
+    int ruleX = style()->direction() == LTR ? 0 : contentWidth();
     for (unsigned i = 0; i < colCount; i++) {
-        // For each rect, we clip to the rect, and then we adjust our coords.
         IntRect colRect = colRects->at(i);
 
         // Move to the next position.
@@ -1596,11 +1595,13 @@ void RenderBlock::paintColumnContents(PaintInfo& paintInfo, int tx, int ty, bool
 {
     // We need to do multiple passes, breaking up our child painting into strips.
     GraphicsContext* context = paintInfo.context;
-    int currXOffset = 0;
-    int currYOffset = 0;
     int colGap = columnGap();
     Vector<IntRect>* colRects = columnRects();
     unsigned colCount = colRects->size();
+    if (!colCount)
+        return;
+    int currXOffset = style()->direction() == LTR ? 0 : contentWidth() - colRects->at(0).width();
+    int currYOffset = 0;
     for (unsigned i = 0; i < colCount; i++) {
         // For each rect, we clip to the rect, and then we adjust our coords.
         IntRect colRect = colRects->at(i);
@@ -3368,11 +3369,14 @@ bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& r
     // We need to do multiple passes, breaking up our hit testing into strips.
     // We can always go left to right, since column contents are clipped (meaning that there
     // can't be any overlap).
-    int currXOffset = 0;
+    Vector<IntRect>* colRects = columnRects();
+    unsigned colCount = colRects->size();
+    if (!colCount)
+        return false;
+    int currXOffset = style()->direction() == LTR ? 0 : contentWidth() - colRects->at(0).width();
     int currYOffset = 0;
     int colGap = columnGap();
-    Vector<IntRect>* colRects = columnRects();
-    for (unsigned i = 0; i < colRects->size(); i++) {
+    for (unsigned i = 0; i < colCount; i++) {
         IntRect colRect = colRects->at(i);
         colRect.move(tx, ty);
         
@@ -3897,10 +3901,13 @@ void RenderBlock::adjustRectForColumns(IntRect& r) const
     IntRect result;
     
     // Determine which columns we intersect.
-    int currXOffset = 0;
+    unsigned colCount = colRects->size();
+    if (!colCount)
+        return;
+    int currXOffset = style()->direction() == LTR ? 0 : contentWidth() - colRects->at(0).width();
     int currYOffset = 0;
     int colGap = columnGap();
-    for (unsigned i = 0; i < colRects->size(); i++) {
+    for (unsigned i = 0; i < colCount; i++) {
         IntRect colRect = colRects->at(i);
         
         IntRect repaintRect = r;

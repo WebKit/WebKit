@@ -1,3 +1,19 @@
+2010-05-16  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39194
+
+        Fix all of the multi-column painting and hit testing functions to properly account for RTL directionality.
+
+        Added fast/multicol/column-count-with-rules.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintColumnRules):
+        (WebCore::RenderBlock::paintColumnContents):
+        (WebCore::RenderBlock::hitTestColumns):
+        (WebCore::RenderBlock::adjustRectForColumns):
+
 2010-05-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
