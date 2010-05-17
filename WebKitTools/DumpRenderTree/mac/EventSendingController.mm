@@ -515,9 +515,11 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
         if (shouldPrintMenuItems) {
             printf("ContextMenuItems: ");
             for (int i = 0; i < [menu numberOfItems]; ++i) {
+                NSMenuItem* menuItem = [menu itemAtIndex:i];
+                if (!strcmp("Inspect Element", [[menuItem title] UTF8String]))
+                    continue;
                 if (i > 0)
                     printf(", ");
-                NSMenuItem* menuItem = [menu itemAtIndex:i];
                 fputs([menuItem isSeparatorItem] ? "<separator>" : [[menuItem title] UTF8String], stdout);
             }
             printf("\n");

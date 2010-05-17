@@ -1,3 +1,13 @@
+2010-05-16  Tony Chang  <tony@chromium.org>
+
+        Not reviewed, fixing layout test.
+
+        Don't output Inspect Element since this is not enabled on the bots,
+        but most developers probably have it installed.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController contextClick:]):
+
 2010-05-12  Tony Chang  <tony@chromium.org>
 
         Reviewed by Darin Adler.
