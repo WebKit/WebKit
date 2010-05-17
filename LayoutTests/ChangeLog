@@ -1,3 +1,13 @@
+2010-05-17  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add a test of columns inside columns.  The test also puts a RenderLayer in the 2nd column of the 2nd column
+        to make sure layer positioning works across nested columns.
+
+        * fast/multicol/nested-columns.html: Added.
+        * platform/mac/fast/multicol/nested-columns-expected.txt: Added.
+
 2010-05-17  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
