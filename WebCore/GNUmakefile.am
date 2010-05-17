@@ -4092,7 +4092,9 @@ webcore_dist += \
 webinspectordir = ${datadir}/webkit-1.0/webinspector
 dist_webinspector_DATA = \
 	$(WebCore)/English.lproj/localizedStrings.js \
-	$(shell ls $(WebCore)/inspector/front-end/*.{js,html,css})
+	$(shell ls $(WebCore)/inspector/front-end/*.js) \
+	$(shell ls $(WebCore)/inspector/front-end/*.html) \
+	$(shell ls $(WebCore)/inspector/front-end/*.css)
 
 webinspectorimagesdir = ${datadir}/webkit-1.0/webinspector/Images
 dist_webinspectorimages_DATA = \
