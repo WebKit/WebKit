@@ -1,6 +1,15 @@
 2010-05-16  Chris Jerdonek  <cjerdonek@webkit.org>
 
-        Reviewed by =Adam Barth.
+        Unreviewed.
+
+        Removed the stray equals sign from the reviewer's name in the
+        "Reviewed by" line of the ChangeLog entry for r59596:
+
+        http://trac.webkit.org/changeset/59596
+
+2010-05-16  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Adam Barth.
 
         Refactored FrameLoader::changeLocation() and urlSelected() to share more code.
 
