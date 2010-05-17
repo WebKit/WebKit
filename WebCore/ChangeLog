@@ -1,3 +1,28 @@
+2010-05-15  Adam Roben  <aroben@apple.com>
+
+        Call CARenderOGLPurge whenever we call IDirect3DDevice9::Reset
+
+        MSDN says that all resoures allocated with D3DPOOL_DEFAULT must be
+        destroyed before calling IDirect3DDevice9::Reset. The only way to
+        guarantee this with Core Animation is to call CARenderOGLPurge.
+
+        Unfortunately this isn't testable at the moment, as we don't use any
+        features of Core Animation (e.g., mask layers) that actually make this
+        required. But it seems like a good idea to fix the code now so that
+        if/when we do start using those features we won't run into problems.
+
+        Fixes <http://webkit.org/b/39159> WKCACFLayerRenderer::resetDevice
+        might fail due to failing to destroy all D3DPOOL_DEFAULT resources
+
+        Reviewed by John Sullivan.
+
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::render): Moved the call to
+        CARenderOGLPurge from here...
+        (WebCore::WKCACFLayerRenderer::resetDevice): ...to here, so that it
+        will be called whenever we reset the device (e.g., when resizing the
+        window).
+
 2010-05-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Rubber-stamped by Xan Lopez.

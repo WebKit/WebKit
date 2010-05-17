@@ -548,7 +548,6 @@ void WKCACFLayerRenderer::render(const Vector<CGRect>& dirtyRects)
 
         if (err == D3DERR_DEVICELOST) {
             // Lost device situation.
-            CARenderOGLPurge(m_renderer);
             resetDevice();
             CARenderUpdateAddRect(u, &bounds);
         }
@@ -596,6 +595,11 @@ void WKCACFLayerRenderer::initD3DGeometry()
 void WKCACFLayerRenderer::resetDevice()
 {
     ASSERT(m_d3dDevice);
+
+    // We have to purge the CARenderOGLContext whenever we reset the IDirect3DDevice9 in order to
+    // destroy any D3DPOOL_DEFAULT resources that Core Animation has allocated (e.g., textures used
+    // for mask layers). See <http://msdn.microsoft.com/en-us/library/bb174425(v=VS.85).aspx>.
+    CARenderOGLPurge(m_renderer);
 
     D3DPRESENT_PARAMETERS parameters = initialPresentationParameters();
     m_d3dDevice->Reset(&parameters);
