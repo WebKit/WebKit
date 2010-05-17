@@ -1,3 +1,9 @@
+2010-05-17  Drew Wilson  <atwilson@chromium.org>
+
+        Unreviewed. Update Chromium test expectations.
+
+        * platform/chromium-win/fast/multicol/nested-columns-expected.txt: Added.
+
 2010-05-17  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
