@@ -151,22 +151,22 @@ public:
     int bottomVisibleOverflow() const { return std::max(bottomLayoutOverflow(), bottomVisualOverflow()); }
     int leftVisibleOverflow() const { return std::min(leftLayoutOverflow(), leftVisualOverflow()); }
     int rightVisibleOverflow() const { return std::max(rightLayoutOverflow(), rightVisualOverflow()); }
-    IntRect visibleOverflowRect() const { return m_overflow ? m_overflow->visibleOverflowRect() : frameRect();  }
+    IntRect visibleOverflowRect() const { return m_overflow ? m_overflow->visibleOverflowRect() : IntRect(m_x, m_y, m_width, height());  }
 
-    int topLayoutOverflow() const { return m_overflow ? m_overflow->topLayoutOverflow() : y(); }
-    int bottomLayoutOverflow() const { return m_overflow ? m_overflow->bottomLayoutOverflow() : frameRect().bottom(); }
-    int leftLayoutOverflow() const { return m_overflow ? m_overflow->leftLayoutOverflow() : x(); }
-    int rightLayoutOverflow() const { return m_overflow ? m_overflow->rightLayoutOverflow() : frameRect().right(); }
-    IntRect layoutOverflowRect() const { return m_overflow ? m_overflow->layoutOverflowRect() : frameRect(); }
+    int topLayoutOverflow() const { return m_overflow ? m_overflow->topLayoutOverflow() : m_y; }
+    int bottomLayoutOverflow() const { return m_overflow ? m_overflow->bottomLayoutOverflow() : m_y + height(); }
+    int leftLayoutOverflow() const { return m_overflow ? m_overflow->leftLayoutOverflow() : m_x; }
+    int rightLayoutOverflow() const { return m_overflow ? m_overflow->rightLayoutOverflow() : m_x + m_width; }
+    IntRect layoutOverflowRect() const { return m_overflow ? m_overflow->layoutOverflowRect() : IntRect(m_x, m_y, m_width, height()); }
 
-    int topVisualOverflow() const { return m_overflow ? m_overflow->topVisualOverflow() : y(); }
-    int bottomVisualOverflow() const { return m_overflow ? m_overflow->bottomVisualOverflow() : frameRect().bottom(); }
-    int leftVisualOverflow() const { return m_overflow ? m_overflow->leftVisualOverflow() : x(); }
-    int rightVisualOverflow() const { return m_overflow ? m_overflow->rightVisualOverflow() : frameRect().right(); }
-    IntRect visualOverflowRect() const { return m_overflow ? m_overflow->visualOverflowRect() : frameRect(); }
+    int topVisualOverflow() const { return m_overflow ? m_overflow->topVisualOverflow() : m_y; }
+    int bottomVisualOverflow() const { return m_overflow ? m_overflow->bottomVisualOverflow() : m_y + height(); }
+    int leftVisualOverflow() const { return m_overflow ? m_overflow->leftVisualOverflow() : m_x; }
+    int rightVisualOverflow() const { return m_overflow ? m_overflow->rightVisualOverflow() : m_x + m_width; }
+    IntRect visualOverflowRect() const { return m_overflow ? m_overflow->visualOverflowRect() : IntRect(m_x, m_y, m_width, height()); }
 
     void setHorizontalOverflowPositions(int leftLayoutOverflow, int rightLayoutOverflow, int leftVisualOverflow, int rightVisualOverflow);
-    void setVerticalOverflowPositions(int topLayoutOverflow, int bottomLayoutOverflow, int topVisualOverflow, int bottomVisualOverflow);
+    void setVerticalOverflowPositions(int topLayoutOverflow, int bottomLayoutOverflow, int topVisualOverflow, int bottomVisualOverflow, int boxHeight);
 
 protected:
     OwnPtr<RenderOverflow> m_overflow;
@@ -191,9 +191,9 @@ protected:
 inline void InlineFlowBox::setHorizontalOverflowPositions(int leftLayoutOverflow, int rightLayoutOverflow, int leftVisualOverflow, int rightVisualOverflow) 
 { 
     if (!m_overflow) {
-        if (leftLayoutOverflow == x() && rightLayoutOverflow == frameRect().right() && leftVisualOverflow == x() && rightVisualOverflow == frameRect().right())
+        if (leftLayoutOverflow == m_x && rightLayoutOverflow == m_x + m_width && leftVisualOverflow == m_x && rightVisualOverflow == m_x + m_width)
             return;
-        m_overflow.set(new RenderOverflow(frameRect()));   
+        m_overflow.set(new RenderOverflow(IntRect(m_x, m_y, m_width, m_renderer->style(m_firstLine)->font().height())));    
     }
 
     m_overflow->setLeftLayoutOverflow(leftLayoutOverflow);
@@ -202,12 +202,12 @@ inline void InlineFlowBox::setHorizontalOverflowPositions(int leftLayoutOverflow
     m_overflow->setRightVisualOverflow(rightVisualOverflow);  
 }
 
-inline void InlineFlowBox::setVerticalOverflowPositions(int topLayoutOverflow, int bottomLayoutOverflow, int topVisualOverflow, int bottomVisualOverflow)
+inline void InlineFlowBox::setVerticalOverflowPositions(int topLayoutOverflow, int bottomLayoutOverflow, int topVisualOverflow, int bottomVisualOverflow, int boxHeight)
 {
     if (!m_overflow) {
-        if (topLayoutOverflow == y() && bottomLayoutOverflow == frameRect().bottom() && topVisualOverflow == y() && bottomVisualOverflow == frameRect().bottom())
+        if (topLayoutOverflow == m_y && bottomLayoutOverflow == m_y + boxHeight && topVisualOverflow == m_y && bottomVisualOverflow == m_y + boxHeight)
             return;
-        m_overflow.set(new RenderOverflow(frameRect()));
+        m_overflow.set(new RenderOverflow(IntRect(m_x, m_y, m_width, boxHeight)));
     }
 
     m_overflow->setTopLayoutOverflow(topLayoutOverflow);

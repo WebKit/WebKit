@@ -85,6 +85,27 @@ void InlineBox::showTreeForThis() const
 }
 #endif
 
+int InlineBox::height() const
+{
+#if ENABLE(SVG)
+    if (hasVirtualHeight())
+        return virtualHeight();
+#endif
+    
+    if (renderer()->isText())
+        return m_isText ? renderer()->style(m_firstLine)->font().height() : 0;
+    if (renderer()->isBox() && parent())
+        return toRenderBox(m_renderer)->height();
+
+    ASSERT(isInlineFlowBox());
+    RenderBoxModelObject* flowObject = boxModelObject();
+    const Font& font = renderer()->style(m_firstLine)->font();
+    int result = font.height();
+    if (parent())
+        result += flowObject->borderAndPaddingHeight();
+    return result;
+}
+
 int InlineBox::caretMinOffset() const 
 { 
     return m_renderer->caretMinOffset(); 
@@ -130,7 +151,8 @@ void InlineBox::attachLine()
 
 void InlineBox::adjustPosition(int dx, int dy)
 {
-    move(dx, dy);
+    m_x += dx;
+    m_y += dy;
     if (m_renderer->isReplaced()) {
         RenderBox* box = toRenderBox(m_renderer);
         box->move(dx, dy);
@@ -246,7 +268,7 @@ bool InlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidt
     if (!m_renderer || !m_renderer->isReplaced())
         return true;
     
-    IntRect boxRect(x(), 0, width(), 10);
+    IntRect boxRect(m_x, 0, m_width, 10);
     IntRect ellipsisRect(ltr ? blockEdge - ellipsisWidth : blockEdge, 0, ellipsisWidth, 10);
     return !(boxRect.intersects(ellipsisRect));
 }

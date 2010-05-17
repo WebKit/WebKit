@@ -378,13 +378,13 @@ VisiblePosition RenderText::positionForPoint(const IntPoint& point)
     int offset;
 
     // FIXME: We should be able to roll these special cases into the general cases in the loop below.
-    if (firstTextBox() && point.y() <  firstTextBox()->root()->lineBottom() && point.x() < firstTextBox()->x()) {
+    if (firstTextBox() && point.y() <  firstTextBox()->root()->lineBottom() && point.x() < firstTextBox()->m_x) {
         // at the y coordinate of the first line or above
         // and the x coordinate is to the left of the first text box left edge
         offset = firstTextBox()->offsetForPosition(point.x());
         return createVisiblePosition(offset + firstTextBox()->start(), DOWNSTREAM);
     }
-    if (lastTextBox() && point.y() >= lastTextBox()->root()->lineTop() && point.x() >= lastTextBox()->right()) {
+    if (lastTextBox() && point.y() >= lastTextBox()->root()->lineTop() && point.x() >= lastTextBox()->m_x + lastTextBox()->m_width) {
         // at the y coordinate of the last line or below
         // and the x coordinate is to the right of the last text box right edge
         offset = lastTextBox()->offsetForPosition(point.x());
@@ -398,17 +398,17 @@ VisiblePosition RenderText::positionForPoint(const IntPoint& point)
             if (point.y() < bottom) {
                 offset = box->offsetForPosition(point.x());
 
-                if (point.x() == box->x())
+                if (point.x() == box->m_x)
                     // the x coordinate is equal to the left edge of this box
                     // the affinity must be downstream so the position doesn't jump back to the previous line
                     return createVisiblePosition(offset + box->start(), DOWNSTREAM);
 
-                if (point.x() < box->right())
+                if (point.x() < box->m_x + box->m_width)
                     // and the x coordinate is to the left of the right edge of this box
                     // check to see if position goes in this box
                     return createVisiblePosition(offset + box->start(), offset > 0 ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM);
 
-                if (!box->prevOnLine() && point.x() < box->x())
+                if (!box->prevOnLine() && point.x() < box->m_x)
                     // box is first on line
                     // and the x coordinate is to the left of the first text box left edge
                     return createVisiblePosition(offset + box->start(), DOWNSTREAM);
@@ -868,12 +868,12 @@ IntPoint RenderText::firstRunOrigin() const
 
 int RenderText::firstRunX() const
 {
-    return m_firstTextBox ? m_firstTextBox->x() : 0;
+    return m_firstTextBox ? m_firstTextBox->m_x : 0;
 }
 
 int RenderText::firstRunY() const
 {
-    return m_firstTextBox ? m_firstTextBox->y() : 0;
+    return m_firstTextBox ? m_firstTextBox->m_y : 0;
 }
     
 void RenderText::setSelectionState(SelectionState state)

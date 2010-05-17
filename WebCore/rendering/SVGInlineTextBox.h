@@ -40,8 +40,11 @@ class SVGInlineTextBox : public InlineTextBox {
 public:
     SVGInlineTextBox(RenderObject* obj);
 
-    virtual int selectionTop() { return y(); }
-    virtual int selectionHeight() { return height(); }
+    virtual int virtualHeight() const { return m_height; }
+    void setHeight(int h) { m_height = h; }
+
+    virtual int selectionTop() { return m_y; }
+    virtual int selectionHeight() { return m_height; }
 
     virtual int offsetForPosition(int x, bool includePartialGlyphs = true) const;
     virtual int positionForOffset(int offset) const;

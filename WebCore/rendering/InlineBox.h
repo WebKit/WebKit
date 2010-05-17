@@ -30,6 +30,7 @@ class HitTestRequest;
 class HitTestResult;
 class RootInlineBox;
 
+
 // InlineBox represents a rectangle that occurs on a line.  It corresponds to
 // some RenderObject (i.e., it represents a portion of that RenderObject).
 class InlineBox {
@@ -39,11 +40,17 @@ public:
         , m_prev(0)
         , m_parent(0)
         , m_renderer(obj)
+        , m_x(0)
+        , m_y(0)
+        , m_width(0)
         , m_firstLine(false)
         , m_constructed(false)
         , m_bidiEmbeddingLevel(0)
         , m_dirty(false)
         , m_extracted(false)
+#if ENABLE(SVG)
+        , m_hasVirtualHeight(false)
+#endif
         , m_endsWithBreak(false)
         , m_hasSelectedChildren(false)
         , m_hasEllipsisBox(false)
@@ -60,18 +67,23 @@ public:
     {
     }
 
-    InlineBox(RenderObject* obj, const IntRect& frameRect, bool firstLine, bool constructed,
+    InlineBox(RenderObject* obj, int x, int y, int width, bool firstLine, bool constructed,
               bool dirty, bool extracted, InlineBox* next, InlineBox* prev, InlineFlowBox* parent)
         : m_next(next)
         , m_prev(prev)
         , m_parent(parent)
         , m_renderer(obj)
-        , m_frameRect(frameRect)
+        , m_x(x)
+        , m_y(y)
+        , m_width(width)
         , m_firstLine(firstLine)
         , m_constructed(constructed)
         , m_bidiEmbeddingLevel(0)
         , m_dirty(dirty)
         , m_extracted(extracted)
+#if ENABLE(SVG)
+        , m_hasVirtualHeight(false)
+#endif
         , m_endsWithBreak(false)
         , m_hasSelectedChildren(false)   
         , m_hasEllipsisBox(false)
@@ -121,11 +133,16 @@ public:
     bool isText() const { return m_isText; }
     void setIsText(bool b) { m_isText = b; }
  
+    virtual bool isInlineBox() { return false; }
     virtual bool isInlineFlowBox() const { return false; }
     virtual bool isInlineTextBox() { return false; }
     virtual bool isRootInlineBox() const { return false; }
 #if ENABLE(SVG) 
     virtual bool isSVGRootInlineBox() { return false; }
+
+    bool hasVirtualHeight() const { return m_hasVirtualHeight; }
+    void setHasVirtualHeight() { m_hasVirtualHeight = true; }
+    virtual int virtualHeight() const { ASSERT_NOT_REACHED(); return 0; }
 #endif
     
     bool isConstructed() { return m_constructed; }
@@ -175,32 +192,21 @@ public:
     const RootInlineBox* root() const;
     RootInlineBox* root();
 
-    int x() const { return m_frameRect.x(); }
-    int y() const { return m_frameRect.y(); }
-    int width() const { return m_frameRect.width(); }
-    int height() const { return m_frameRect.height(); }
-    int bottom() const { return m_frameRect.bottom(); }
-    int right() const { return m_frameRect.right(); }
+    void setWidth(int w) { m_width = w; }
+    int width() const { return m_width; }
 
-    void setX(int x) { m_frameRect.setX(x); }
-    void setY(int y) { m_frameRect.setY(y); }
-    void setWidth(int width) { m_frameRect.setWidth(width); }
-    void setHeight(int height) { m_frameRect.setHeight(height); }
-    
-    IntPoint location() const { return m_frameRect.location(); }
-    IntSize size() const { return m_frameRect.size(); }
+    // x() is the left side of the box in the parent's coordinate system.
+    void setX(int x) { m_x = x; }
+    int x() const { return m_x; }
 
-    void setLocation(const IntPoint& location) { m_frameRect.setLocation(location); }
-    void setLocation(int x, int y) { setLocation(IntPoint(x, y)); }
-    
-    void setSize(const IntSize& size) { m_frameRect.setSize(size); }
-    void move(int dx, int dy) { m_frameRect.move(dx, dy); }
+    // y() is the top of the box in the parent's coordinate system.
+    void setY(int y) { m_y = y; }
+    int y() const { return m_y; }
 
-    const IntRect& frameRect() const { return m_frameRect; }
-    void setFrameRect(const IntRect& rect) { m_frameRect = rect; }
+    int height() const;
 
-    int baselinePosition(bool isRootLineBox) const { return renderer()->baselinePosition(m_firstLine, isRootLineBox); }
-    int lineHeight(bool isRootLineBox) const { return renderer()->lineHeight(m_firstLine, isRootLineBox); }
+    inline int baselinePosition(bool isRootLineBox) const { return renderer()->baselinePosition(m_firstLine, isRootLineBox); }
+    inline int lineHeight(bool isRootLineBox) const { return renderer()->lineHeight(m_firstLine, isRootLineBox); }
 
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
@@ -248,7 +254,9 @@ private:
 public:
     RenderObject* m_renderer;
 
-    IntRect m_frameRect;
+    int m_x;
+    int m_y;
+    int m_width;
     
     // Some of these bits are actually for subclasses and moved here to compact the structures.
 
@@ -261,6 +269,7 @@ private:
 protected:
     bool m_dirty : 1;
     bool m_extracted : 1;
+    bool m_hasVirtualHeight : 1;
 
     // for RootInlineBox
     bool m_endsWithBreak : 1;  // Whether the line ends with a <br>.

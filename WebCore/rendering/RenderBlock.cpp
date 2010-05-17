@@ -3539,7 +3539,7 @@ VisiblePosition RenderBlock::positionForPointWithInlineChildren(const IntPoint& 
         }
 
         // pass the box a y position that is inside it
-        return closestBox->renderer()->positionForPoint(IntPoint(pointInContents.x(), closestBox->y()));
+        return closestBox->renderer()->positionForPoint(IntPoint(pointInContents.x(), closestBox->m_y));
     }
 
     if (lastRootBoxWithChildren) {
