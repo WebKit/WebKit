@@ -1,3 +1,15 @@
+2010-05-17  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Remove WinCE endian dedection.
+        https://bugs.webkit.org/show_bug.cgi?id=38511
+
+        Windows CE supports little-endian format only.
+        Correct dedection was added in r57804.
+
+        * wtf/Platform.h:
+
 2010-05-16  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.
