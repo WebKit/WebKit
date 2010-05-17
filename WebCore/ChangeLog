@@ -1,3 +1,32 @@
+2010-05-16  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by =Adam Barth.
+
+        Refactored FrameLoader::changeLocation() and urlSelected() to share more code.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38827
+
+        No change in behavior, so no new tests.
+
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::executeIfJavaScriptURL):
+          - Changed a parameter from boolean to the ShouldReplaceDocumentIfJavaScriptURL enum.
+        * bindings/js/ScriptController.h:
+          - Changed a parameter from boolean to the ShouldReplaceDocumentIfJavaScriptURL enum.
+        * bindings/v8/ScriptController.h:
+          - Changed a parameter from boolean to the ShouldReplaceDocumentIfJavaScriptURL enum.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::changeLocation):
+          - Changed to call the new private overload of urlSelected().
+        (WebCore::FrameLoader::urlSelected):
+          - Added a private overload of urlSelected().
+          - Changed the public urlSelected() to call the private overload.
+        (WebCore::FrameLoader::submitForm):
+        * loader/FrameLoader.h:
+          - Added a private overload of urlSelected().
+        * loader/FrameLoaderTypes.h:
+          - Added a ShouldReplaceDocumentIfJavaScriptURL enum.
+
 2010-05-16  Daniel Bates  <dbates@rim.com>
 
         Reviewed by David Hyatt.
