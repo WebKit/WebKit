@@ -65,7 +65,6 @@ def run(options):
                                      tempfile.gettempdir(),
                                      port=options.port,
                                      root=options.root,
-                                     register_cygwin=options.register_cygwin,
                                      run_background=options.run_background)
         if options.server == 'start':
             httpd.start()

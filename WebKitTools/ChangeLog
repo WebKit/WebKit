@@ -1,3 +1,29 @@
+2010-05-17  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Chromium: Add --chromium option to new-run-webkit-websocketserver
+        https://bugs.webkit.org/show_bug.cgi?id=37664
+
+        os.environ setup and setup_mount for cygwin are moved in ChromiumWinPort.setup_environ_for_server.
+
+        * Scripts/new-run-webkit-httpd:
+          Remove passing register_cygwin.
+        * Scripts/new-run-webkit-websocketserver:
+          Add --chromium flag.
+          Remove passing register_cygwin.
+          Create port object using options.
+        * Scripts/webkitpy/layout_tests/port/base.py:
+          Add setup_environ_for_server().
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+          Ditto.
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py: Added.
+        * Scripts/webkitpy/layout_tests/port/http_server.py:
+          Remove register_cygwin_parameter.
+          Call setup_environ_for_server().
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py:
+          Ditto.
+
 2010-05-16  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Chris Jerdonek.

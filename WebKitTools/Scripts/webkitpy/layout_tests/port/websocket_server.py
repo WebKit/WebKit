@@ -97,15 +97,13 @@ class PyWebSocket(http_server.Lighttpd):
 
     def __init__(self, port_obj, output_dir, port=_DEFAULT_WS_PORT,
                  root=None, use_tls=False,
-                 register_cygwin=True,
                  pidfile=None):
         """Args:
           output_dir: the absolute path to the layout test result directory
         """
         http_server.Lighttpd.__init__(self, port_obj, output_dir,
                                       port=_DEFAULT_WS_PORT,
-                                      root=root,
-                                      register_cygwin=register_cygwin)
+                                      root=root)
         self._output_dir = output_dir
         self._process = None
         self._port = port
@@ -188,21 +186,7 @@ class PyWebSocket(http_server.Lighttpd):
             start_cmd.extend(['-t', '-k', self._private_key,
                               '-c', self._certificate])
 
-        # Put the cygwin directory first in the path to find cygwin1.dll
-        env = os.environ
-        if sys.platform in ('cygwin', 'win32'):
-            env['PATH'] = '%s;%s' % (
-                self._port_obj.path_from_chromium_base('third_party',
-                                                       'cygwin', 'bin'),
-                env['PATH'])
-            env['CYGWIN_PATH'] = self._port_obj.path_from_chromium_base(
-                'third_party', 'cygwin', 'bin')
-
-        if sys.platform == 'win32' and self._register_cygwin:
-            setup_mount = self._port_obj.path_from_chromium_base(
-                'third_party', 'cygwin', 'setup_mount.bat')
-            subprocess.Popen(setup_mount).wait()
-
+        env = self._port_obj.setup_environ_for_server()
         env['PYTHONPATH'] = (pywebsocket_base + os.path.pathsep +
                              env.get('PYTHONPATH', ''))
 

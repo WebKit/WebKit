@@ -414,9 +414,16 @@ class Port(object):
         raise NotImplemented('Port.results_directory')
 
     def setup_test_run(self):
-        """This routine can be overridden to perform any port-specific
-        work that shouuld be done at the beginning of a test run."""
+        """Perform port-specific work at the beginning of a test run."""
         pass
+
+    def setup_environ_for_server(self):
+        """Perform port-specific work at the beginning of a server launch.
+
+        Returns:
+           Operating-system's environment.
+        """
+        return os.environ
 
     def show_html_results_file(self, results_filename):
         """This routine should display the HTML file pointed at by

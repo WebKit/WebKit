@@ -42,27 +42,32 @@ def main():
     option_parser = optparse.OptionParser()
     option_parser.add_option('--server', type='choice',
                              choices=['start', 'stop'], default='start',
-                             help='Server action (start|stop)')
+                             help='Server action (start|stop).')
     option_parser.add_option('-p', '--port', dest='port',
-                             default=None, help='Port to listen on')
+                             default=None, help='Port to listen on.')
     option_parser.add_option('-r', '--root',
                              help='Absolute path to DocumentRoot '
-                                  '(overrides layout test roots)')
+                                  '(overrides layout test roots).')
     option_parser.add_option('-t', '--tls', dest='use_tls',
                              action='store_true',
-                             default=False, help='use TLS (wss://)')
+                             default=False, help='use TLS (wss://).')
     option_parser.add_option('-k', '--private_key', dest='private_key',
                              default='', help='TLS private key file.')
     option_parser.add_option('-c', '--certificate', dest='certificate',
                              default='', help='TLS certificate file.')
+    option_parser.add_option('--chromium', action='store_true',
+                             dest='chromium',
+                             default=False,
+                             help='Use the Chromium port.')
     option_parser.add_option('--register_cygwin', action="store_true",
                              dest="register_cygwin",
-                             help='Register Cygwin paths (on Win try bots)')
+                             help='Register Cygwin paths (on Win try bots).')
     option_parser.add_option('--pidfile', help='path to pid file.')
     option_parser.add_option('--output-dir', dest='output_dir',
                              default=None, help='output directory.')
     option_parser.add_option('-v', '--verbose', action='store_true',
-                             default=False, help='include debug-level logging')
+                             default=False,
+                             help='Include debug-level logging.')
     options, args = option_parser.parse_args()
 
     if not options.port:
@@ -83,7 +88,6 @@ def main():
         kwds['private_key'] = options.private_key
     if options.certificate:
         kwds['certificate'] = options.certificate
-    kwds['register_cygwin'] = options.register_cygwin
     if options.pidfile:
         kwds['pidfile'] = options.pidfile
 
