@@ -1,3 +1,14 @@
+2010-05-17  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix JSC's generation of 'Optional' arguments. When a single 'Optional' extended attribute precedes multiple method arguments, all of these arguments are optional as a group (either all or non must be specified). This fix, which makes JSC compliant with V8 and with the Web IDL specs, is pretty harmless, since Optional is currently not being used anywhere in JSC, but it blocks further work on overloads.
+        https://bugs.webkit.org/show_bug.cgi?id=39227
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs):
+
 2010-05-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Barth.

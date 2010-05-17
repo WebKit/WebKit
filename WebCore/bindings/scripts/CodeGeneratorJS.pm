@@ -1894,12 +1894,12 @@ sub GenerateImplementation
                     }
 
                     foreach my $parameter (@{$function->parameters}) {
-                        if (!$hasOptionalArguments && $parameter->extendedAttributes->{"Optional"}) {
-                            push(@implContent, "\n    int argsCount = args.size();\n");
-                            $hasOptionalArguments = 1;
-                        }
-
-                        if ($hasOptionalArguments) {
+                        if ($parameter->extendedAttributes->{"Optional"}) {
+                            # Generate early call if there are enough parameters.
+                            if (!$hasOptionalArguments) {
+                                push(@implContent, "\n    int argsCount = args.size();\n");
+                                $hasOptionalArguments = 1;
+                            }
                             push(@implContent, "    if (argsCount < " . ($paramIndex + 1) . ") {\n");
                             GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    " x 2, $podType, $implClassName);
                             push(@implContent, "    }\n\n");
