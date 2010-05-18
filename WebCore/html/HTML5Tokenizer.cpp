@@ -29,17 +29,6 @@
 #include "HTML5Tokenizer.h"
 
 #include "AtomicString.h"
-#include "CachedCSSStyleSheet.h"
-#include "CachedImage.h"
-#include "CachedResource.h"
-#include "CachedResourceClient.h"
-#include "CachedScript.h"
-#include "CSSHelper.h"
-#include "DocLoader.h"
-#include "Document.h"
-#include "Frame.h"
-#include "FrameLoader.h"
-#include "HTMLLinkElement.h"
 #include "HTMLNames.h"
 #include <wtf/text/CString.h>
 #include <wtf/CurrentTime.h>
@@ -58,50 +47,33 @@ struct Entity {
 const struct Entity* findEntity(register const char* str, register unsigned int len);
 #endif
 
-#define PRELOAD_DEBUG 0
-
 using namespace WTF;
 
 namespace WebCore {
-    
+
 using namespace HTMLNames;
-    
-HTML5Tokenizer::HTML5Tokenizer(Document* doc)
-    : m_inProgress(false)
-    , m_timeUsed(0)
-    , m_bodySeen(false)
-    , m_document(doc)
+
+HTML5Tokenizer::HTML5Tokenizer()
 {
-#if PRELOAD_DEBUG
-    printf("CREATING PRELOAD SCANNER FOR %s\n", m_document->url().string().latin1().data());
-#endif
 }
-    
+
 HTML5Tokenizer::~HTML5Tokenizer()
 {
-#if PRELOAD_DEBUG
-    printf("DELETING PRELOAD SCANNER FOR %s\n", m_document->url().string().latin1().data());
-    printf("TOTAL TIME USED %.4fs\n", m_timeUsed);
-#endif
 }
-    
+
 void HTML5Tokenizer::begin() 
 { 
-    ASSERT(!m_inProgress); 
     reset(); 
-    m_inProgress = true; 
 }
-    
+
 void HTML5Tokenizer::end() 
-{ 
-    ASSERT(m_inProgress); 
-    m_inProgress = false; 
+{
 }
 
 void HTML5Tokenizer::reset()
 {
     m_source.clear();
-    
+
     m_state = Data;
     m_escape = false;
     m_contentModel = PCDATA;
@@ -112,50 +84,32 @@ void HTML5Tokenizer::reset()
     m_attributeName.clear();
     m_attributeValue.clear();
     m_lastStartTag = AtomicString();
-    
-    m_urlToLoad = String();
-    m_charset = String();
-    m_linkIsStyleSheet = false;
+
     m_lastCharacterIndex = 0;
     clearLastCharacters();
-    
-    m_cssState = CSSInitial;
-    m_cssRule.clear();
-    m_cssRuleValue.clear();
 }
-    
-bool HTML5Tokenizer::scanningBody() const
-{
-    return m_document->body() || m_bodySeen;
-}
-    
+
 void HTML5Tokenizer::write(const SegmentedString& source)
 {
-#if PRELOAD_DEBUG
-    double startTime = currentTime();
-#endif
     tokenize(source);
-#if PRELOAD_DEBUG
-    m_timeUsed += currentTime() - startTime;
-#endif
 }
-    
+
 static inline bool isWhitespace(UChar c)
 {
     return c == ' ' || c == '\n' || c == '\r' || c == '\t';
 }
-    
+
 inline void HTML5Tokenizer::clearLastCharacters()
 {
     memset(m_lastCharacters, 0, lastCharactersBufferSize * sizeof(UChar));
 }
-    
+
 inline void HTML5Tokenizer::rememberCharacter(UChar c)
 {
     m_lastCharacterIndex = (m_lastCharacterIndex + 1) % lastCharactersBufferSize;
     m_lastCharacters[m_lastCharacterIndex] = c;
 }
-    
+
 inline bool HTML5Tokenizer::lastCharactersMatch(const char* chars, unsigned count) const
 {
     unsigned pos = m_lastCharacterIndex;
@@ -192,7 +146,7 @@ unsigned HTML5Tokenizer::consumeEntity(SegmentedString& source, bool& notEnoughC
     unsigned result = 0;
     Vector<UChar, 10> seenChars;
     Vector<char, 10> entityName;
-    
+
     while (!source.isEmpty()) {
         UChar cc = *source;
         seenChars.append(cc);
@@ -298,8 +252,6 @@ outOfCharacters:
 
 void HTML5Tokenizer::tokenize(const SegmentedString& source)
 {
-    ASSERT(m_inProgress);
-    
     m_source.append(source);
 
     // This is a simplified HTML5 Tokenizer
@@ -357,13 +309,11 @@ void HTML5Tokenizer::tokenize(const SegmentedString& source)
                     m_state = CloseTagOpen;
                 else if (cc >= 'A' && cc <= 'Z') {
                     m_tagName.clear();
-                    m_charset = String();
                     m_tagName.append(cc + 0x20);
                     m_closeTag = false;
                     m_state = TagName;
                 } else if (cc >= 'a' && cc <= 'z') {
                     m_tagName.clear();
-                    m_charset = String();
                     m_tagName.append(cc);
                     m_closeTag = false;
                     m_state = TagName;
@@ -403,13 +353,11 @@ void HTML5Tokenizer::tokenize(const SegmentedString& source)
             }
             if (cc >= 'A' && cc <= 'Z') {
                 m_tagName.clear();
-                m_charset = String();
                 m_tagName.append(cc + 0x20);
                 m_closeTag = true;
                 m_state = TagName;
             } else if (cc >= 'a' && cc <= 'z') {
                 m_tagName.clear();
-                m_charset = String();
                 m_tagName.append(cc);
                 m_closeTag = true;
                 m_state = TagName;
@@ -688,127 +636,30 @@ void HTML5Tokenizer::tokenize(const SegmentedString& source)
         m_source.advance();
     }
 }
-    
+
 void HTML5Tokenizer::processAttribute()
 {
     AtomicString tag = AtomicString(m_tagName.data(), m_tagName.size());
     AtomicString attribute = AtomicString(m_attributeName.data(), m_attributeName.size());
-    
+
     String value(m_attributeValue.data(), m_attributeValue.size());
-    if (tag == scriptTag || tag == imgTag) {
-        if (attribute == srcAttr && m_urlToLoad.isEmpty())
-            m_urlToLoad = deprecatedParseURL(value);
-        else if (attribute == charsetAttr)
-            m_charset = value;
-    } else if (tag == linkTag) {
-        if (attribute == hrefAttr && m_urlToLoad.isEmpty())
-            m_urlToLoad = deprecatedParseURL(value);
-        else if (attribute == relAttr) {
-            HTMLLinkElement::RelAttribute rel;
-            HTMLLinkElement::tokenizeRelAttribute(value, rel);
-            m_linkIsStyleSheet = rel.m_isStyleSheet && !rel.m_isAlternate && !rel.m_isIcon && !rel.m_isDNSPrefetch;
-        } else if (attribute == charsetAttr)
-            m_charset = value;
-    }
 }
-    
-inline void HTML5Tokenizer::emitCharacter(UChar c)
+
+inline void HTML5Tokenizer::emitCharacter(UChar)
 {
-    if (m_contentModel == CDATA && m_lastStartTag == styleTag) 
-        tokenizeCSS(c);
 }
-    
-inline void HTML5Tokenizer::tokenizeCSS(UChar c)
-{    
-    // We are just interested in @import rules, no need for real tokenization here
-    // Searching for other types of resources is probably low payoff
-    switch (m_cssState) {
-    case CSSInitial:
-        if (c == '@')
-            m_cssState = CSSRuleStart;
-        else if (c == '/')
-            m_cssState = CSSMaybeComment;
-        break;
-    case CSSMaybeComment:
-        if (c == '*')
-            m_cssState = CSSComment;
-        else
-            m_cssState = CSSInitial;
-        break;
-    case CSSComment:
-        if (c == '*')
-            m_cssState = CSSMaybeCommentEnd;
-        break;
-    case CSSMaybeCommentEnd:
-        if (c == '/')
-            m_cssState = CSSInitial;
-        else if (c == '*')
-            ;
-        else
-            m_cssState = CSSComment;
-        break;
-    case CSSRuleStart:
-        if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
-            m_cssRule.clear();
-            m_cssRuleValue.clear();
-            m_cssRule.append(c);
-            m_cssState = CSSRule;
-        } else
-            m_cssState = CSSInitial;
-        break;
-    case CSSRule:
-        if (isWhitespace(c))
-            m_cssState = CSSAfterRule;
-        else if (c == ';')
-            m_cssState = CSSInitial;
-        else
-            m_cssRule.append(c);
-        break;
-    case CSSAfterRule:
-        if (isWhitespace(c))
-            ;
-        else if (c == ';')
-            m_cssState = CSSInitial;
-        else {
-            m_cssState = CSSRuleValue;
-            m_cssRuleValue.append(c);
-        }
-        break;
-    case CSSRuleValue:
-        if (isWhitespace(c))
-            m_cssState = CSSAfterRuleValue;
-        else if (c == ';') {
-            emitCSSRule();
-            m_cssState = CSSInitial;
-        } else 
-            m_cssRuleValue.append(c);
-        break;
-    case CSSAfterRuleValue:
-        if (isWhitespace(c))
-            ;
-        else if (c == ';') {
-            emitCSSRule();
-            m_cssState = CSSInitial;
-        } else {
-            // FIXME media rules
-             m_cssState = CSSInitial;
-        }
-        break;
-    }
-}
-    
+
 void HTML5Tokenizer::emitTag()
 {
     if (m_closeTag) {
         m_contentModel = PCDATA;
-        m_cssState = CSSInitial;
         clearLastCharacters();
         return;
     }
-    
+
     AtomicString tag(m_tagName.data(), m_tagName.size());
     m_lastStartTag = tag;
-    
+
     if (tag == textareaTag || tag == titleTag)
         m_contentModel = RCDATA;
     else if (tag == styleTag || tag == xmpTag || tag == scriptTag || tag == iframeTag || tag == noembedTag || tag == noframesTag)
@@ -820,38 +671,6 @@ void HTML5Tokenizer::emitTag()
         m_contentModel = PLAINTEXT;
     else
         m_contentModel = PCDATA;
-    
-    if (tag == bodyTag)
-        m_bodySeen = true;
-    
-    if (m_urlToLoad.isEmpty()) {
-        m_linkIsStyleSheet = false;
-        return;
-    }
-    
-    if (tag == scriptTag)
-        m_document->docLoader()->preload(CachedResource::Script, m_urlToLoad, m_charset, scanningBody());
-    else if (tag == imgTag) 
-        m_document->docLoader()->preload(CachedResource::ImageResource, m_urlToLoad, String(), scanningBody());
-    else if (tag == linkTag && m_linkIsStyleSheet) 
-        m_document->docLoader()->preload(CachedResource::CSSStyleSheet, m_urlToLoad, m_charset, scanningBody());
+}
 
-    m_urlToLoad = String();
-    m_charset = String();
-    m_linkIsStyleSheet = false;
-}
-    
-void HTML5Tokenizer::emitCSSRule()
-{
-    String rule(m_cssRule.data(), m_cssRule.size());
-    if (equalIgnoringCase(rule, "import") && !m_cssRuleValue.isEmpty()) {
-        String value(m_cssRuleValue.data(), m_cssRuleValue.size());
-        String url = deprecatedParseURL(value);
-        if (!url.isEmpty())
-            m_document->docLoader()->preload(CachedResource::CSSStyleSheet, url, String(), scanningBody());
-    }
-    m_cssRule.clear();
-    m_cssRuleValue.clear();
-}
-                
 }

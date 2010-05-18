@@ -2,6 +2,31 @@
 
         Reviewed by Eric Seidel.
 
+        Remove load-related code from HTML5Tokenizer
+        https://bugs.webkit.org/show_bug.cgi?id=39263
+
+        This code is related to reloading resources and not to tokenizing.  In
+        the PreloadScanner, these concerns are coupled, but we want to decouple
+        them.
+
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::HTML5Tokenizer):
+        (WebCore::HTML5Tokenizer::~HTML5Tokenizer):
+        (WebCore::HTML5Tokenizer::begin):
+        (WebCore::HTML5Tokenizer::end):
+        (WebCore::HTML5Tokenizer::reset):
+        (WebCore::HTML5Tokenizer::write):
+        (WebCore::HTML5Tokenizer::consumeEntity):
+        (WebCore::HTML5Tokenizer::tokenize):
+        (WebCore::HTML5Tokenizer::processAttribute):
+        (WebCore::HTML5Tokenizer::emitCharacter):
+        (WebCore::HTML5Tokenizer::emitTag):
+        * html/HTML5Tokenizer.h:
+
+2010-05-17  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Add HTML5Tokenizer to the build system on Mac
         https://bugs.webkit.org/show_bug.cgi?id=39262
 
