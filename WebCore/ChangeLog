@@ -1,3 +1,18 @@
+2010-05-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Rename HTML5Tokenzier to HTML5Lexer so that we can add a new HTML5Tokenizer which implements Tokenizer
+        https://bugs.webkit.org/show_bug.cgi?id=39272
+
+        Strictly a rename, no functionality change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTML5Lexer.cpp: Added.
+        * html/HTML5Lexer.h: Added.
+        * html/HTML5Tokenizer.cpp: Removed.
+        * html/HTML5Tokenizer.h: Removed.
+
 2010-05-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r59652.

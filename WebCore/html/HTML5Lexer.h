@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTML5Tokenizer_h
-#define HTML5Tokenizer_h
+#ifndef HTML5Lexer_h
+#define HTML5Lexer_h
 
 #include "AtomicString.h"
 #include "SegmentedString.h"
@@ -34,10 +34,10 @@
 
 namespace WebCore {
 
-    class HTML5Tokenizer : public Noncopyable {
+    class HTML5Lexer : public Noncopyable {
     public:
-        HTML5Tokenizer();
-        ~HTML5Tokenizer();
+        HTML5Lexer();
+        ~HTML5Lexer();
 
         void begin();
         void write(const SegmentedString&);
