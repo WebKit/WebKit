@@ -14,7 +14,7 @@
         Reviewed by Dmitry Titov.
 
         Fix bug 39285: fast/files/file-reader.html is timing out on all mac bots.
-        https://bugs.webkit.org/show_bug.cgi?id=39135
+        https://bugs.webkit.org/show_bug.cgi?id=39285
 
         The timeout is caused by 59659 that changed the GC timer to 0 and thus
         triggered a bug in FileReader code. The fix is to add more states so
