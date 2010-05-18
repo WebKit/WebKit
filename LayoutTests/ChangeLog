@@ -1,3 +1,10 @@
+2010-05-17  Drew Wilson  <atwilson@chromium.org>
+
+        Unreviewed test expectations update for chromium.
+
+        * platform/chromium-mac/html5lib/runner-expected.txt: Added.
+        * platform/chromium-win/html5lib/runner-expected.txt: Added.
+
 2010-05-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r59652.
