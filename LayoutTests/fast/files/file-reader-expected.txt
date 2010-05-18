@@ -1,37 +1,4 @@
 
-Test reading a non-existent file
-readyState: 0
-Received error event
-readyState: 2
-error code: 8
-Received loadend event
-Test reading an empty file as binary string
-readyState: 0
-Received loadstart event
-readyState: 1
-Received load event
-readyState: 2
-result size: 0
-result: 
-Received loadend event
-Test reading an empty file as text
-readyState: 0
-Received loadstart event
-readyState: 1
-Received load event
-readyState: 2
-result size: 0
-result: 
-Received loadend event
-Test reading an empty file as data URL
-readyState: 0
-Received loadstart event
-readyState: 1
-Received load event
-readyState: 2
-result size: 5
-result: data:
-Received loadend event
 Test reading a UTF-8 file as binary string
 readyState: 0
 Received loadstart event
