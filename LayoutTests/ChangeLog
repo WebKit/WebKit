@@ -1,3 +1,14 @@
+2010-05-16  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Darin Adler.
+
+        Add tests for Bug 31267 - :nth-child(-2n) should match no element.
+        http://trac.webkit.org/changeset/58300 has fixed this already.
+        https://bugs.webkit.org/show_bug.cgi?id=31267
+
+        * fast/css/nth-child-negative-a-param-expected.txt: Added.
+        * fast/css/nth-child-negative-a-param.html: Added.
+
 2010-05-17  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed.
