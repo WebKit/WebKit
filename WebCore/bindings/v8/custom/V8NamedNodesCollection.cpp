@@ -31,7 +31,7 @@
 #include "V8NamedNodesCollection.h"
 
 #include "Element.h"
-#include "NamedAttrMap.h"
+#include "NamedNodeMap.h"
 
 namespace WebCore {
 

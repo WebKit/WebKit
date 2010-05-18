@@ -487,8 +487,8 @@ SOURCES += \
     dom/MouseEvent.cpp \
     dom/MouseRelatedEvent.cpp \
     dom/MutationEvent.cpp \
-    dom/NamedAttrMap.cpp \
     dom/NamedMappedAttrMap.cpp \
+    dom/NamedNodeMap.cpp \
     dom/NameNodeList.cpp \
     dom/Node.cpp \
     dom/NodeFilterCondition.cpp \

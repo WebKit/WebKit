@@ -29625,19 +29625,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\NamedAttrMap.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\NamedAttrMap.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\NamedMappedAttrMap.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\dom\NamedMappedAttrMap.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\NamedNodeMap.cpp"
 				>
 			</File>
 			<File

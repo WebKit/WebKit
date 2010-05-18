@@ -38,7 +38,6 @@
 #include "HTMLNames.h"
 #include "Image.h"
 #include "MIMETypeRegistry.h"
-#include "NamedAttrMap.h"
 #include "NamedNodeMap.h"
 #include "Pasteboard.h"
 #include "PlatformString.h"

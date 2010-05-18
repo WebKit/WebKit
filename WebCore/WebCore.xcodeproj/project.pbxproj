@@ -3015,8 +3015,6 @@
 		A8C4A80009D563270003AC8D /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C4A7EE09D563270003AC8D /* Node.cpp */; };
 		A8C4A80109D563270003AC8D /* NamedMappedAttrMap.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A7EF09D563270003AC8D /* NamedMappedAttrMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8C4A80209D563270003AC8D /* NamedMappedAttrMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C4A7F009D563270003AC8D /* NamedMappedAttrMap.cpp */; };
-		A8C4A80309D563270003AC8D /* NamedAttrMap.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A7F109D563270003AC8D /* NamedAttrMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A8C4A80409D563270003AC8D /* NamedAttrMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C4A7F209D563270003AC8D /* NamedAttrMap.cpp */; };
 		A8C4A80509D563270003AC8D /* MappedAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A7F309D563270003AC8D /* MappedAttribute.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8C4A80609D563270003AC8D /* MappedAttribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C4A7F409D563270003AC8D /* MappedAttribute.cpp */; };
 		A8C4A80709D563270003AC8D /* Element.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A7F509D563270003AC8D /* Element.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4742,6 +4740,7 @@
 		BCEFE1E50DCA5F3300739219 /* JSXSLTProcessorCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEFE1E40DCA5F3300739219 /* JSXSLTProcessorCustom.cpp */; };
 		BCEFE1EA0DCA5F6400739219 /* JSXSLTProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEFE1E80DCA5F6400739219 /* JSXSLTProcessor.cpp */; };
 		BCEFE1EB0DCA5F6400739219 /* JSXSLTProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEFE1E90DCA5F6400739219 /* JSXSLTProcessor.h */; };
+		BCF34A3711A231CD00C71804 /* NamedNodeMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF34A3611A231CD00C71804 /* NamedNodeMap.cpp */; };
 		BCF524600FEBEE5D0095BF26 /* HTMLDataGridElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF5245F0FEBEE5D0095BF26 /* HTMLDataGridElement.cpp */; };
 		BCFA930810333193007B25D1 /* RenderOverflow.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFA930710333193007B25D1 /* RenderOverflow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCFB2E5E0979E46400BA703D /* CachedResourceClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2E5D0979E46400BA703D /* CachedResourceClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8432,8 +8431,6 @@
 		A8C4A7EE09D563270003AC8D /* Node.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Node.cpp; sourceTree = "<group>"; };
 		A8C4A7EF09D563270003AC8D /* NamedMappedAttrMap.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NamedMappedAttrMap.h; sourceTree = "<group>"; };
 		A8C4A7F009D563270003AC8D /* NamedMappedAttrMap.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = NamedMappedAttrMap.cpp; sourceTree = "<group>"; };
-		A8C4A7F109D563270003AC8D /* NamedAttrMap.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NamedAttrMap.h; sourceTree = "<group>"; };
-		A8C4A7F209D563270003AC8D /* NamedAttrMap.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = NamedAttrMap.cpp; sourceTree = "<group>"; };
 		A8C4A7F309D563270003AC8D /* MappedAttribute.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MappedAttribute.h; sourceTree = "<group>"; };
 		A8C4A7F409D563270003AC8D /* MappedAttribute.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MappedAttribute.cpp; sourceTree = "<group>"; };
 		A8C4A7F509D563270003AC8D /* Element.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Element.h; sourceTree = "<group>"; };
@@ -10230,6 +10227,7 @@
 		BCEFE1E40DCA5F3300739219 /* JSXSLTProcessorCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXSLTProcessorCustom.cpp; sourceTree = "<group>"; };
 		BCEFE1E80DCA5F6400739219 /* JSXSLTProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXSLTProcessor.cpp; sourceTree = "<group>"; };
 		BCEFE1E90DCA5F6400739219 /* JSXSLTProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSXSLTProcessor.h; sourceTree = "<group>"; };
+		BCF34A3611A231CD00C71804 /* NamedNodeMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NamedNodeMap.cpp; sourceTree = "<group>"; };
 		BCF5245F0FEBEE5D0095BF26 /* HTMLDataGridElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDataGridElement.cpp; sourceTree = "<group>"; };
 		BCFA930710333193007B25D1 /* RenderOverflow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderOverflow.h; sourceTree = "<group>"; };
 		BCFB2E5D0979E46400BA703D /* CachedResourceClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedResourceClient.h; sourceTree = "<group>"; };
@@ -16534,10 +16532,9 @@
 				85031B330A44EFC700F992E0 /* MutationEvent.cpp */,
 				85031B340A44EFC700F992E0 /* MutationEvent.h */,
 				93EEC1F309C2877700C515D1 /* MutationEvent.idl */,
-				A8C4A7F209D563270003AC8D /* NamedAttrMap.cpp */,
-				A8C4A7F109D563270003AC8D /* NamedAttrMap.h */,
 				A8C4A7F009D563270003AC8D /* NamedMappedAttrMap.cpp */,
 				A8C4A7EF09D563270003AC8D /* NamedMappedAttrMap.h */,
+				BCF34A3611A231CD00C71804 /* NamedNodeMap.cpp */,
 				A81872180977D3C0005826D9 /* NamedNodeMap.h */,
 				85ACA9F90A9B631000671E90 /* NamedNodeMap.idl */,
 				A81872190977D3C0005826D9 /* NameNodeList.cpp */,
@@ -18448,7 +18445,6 @@
 				85031B480A44EFC700F992E0 /* MouseRelatedEvent.h in Headers */,
 				93309DFC099E64920056E581 /* MoveSelectionCommand.h in Headers */,
 				85031B4A0A44EFC700F992E0 /* MutationEvent.h in Headers */,
-				A8C4A80309D563270003AC8D /* NamedAttrMap.h in Headers */,
 				A8C4A80109D563270003AC8D /* NamedMappedAttrMap.h in Headers */,
 				A81872230977D3C0005826D9 /* NamedNodeMap.h in Headers */,
 				A818721E0977D3C0005826D9 /* NameNodeList.h in Headers */,
@@ -20832,7 +20828,6 @@
 				85031B470A44EFC700F992E0 /* MouseRelatedEvent.cpp in Sources */,
 				93309DFB099E64920056E581 /* MoveSelectionCommand.cpp in Sources */,
 				85031B490A44EFC700F992E0 /* MutationEvent.cpp in Sources */,
-				A8C4A80409D563270003AC8D /* NamedAttrMap.cpp in Sources */,
 				A8C4A80209D563270003AC8D /* NamedMappedAttrMap.cpp in Sources */,
 				A81872240977D3C0005826D9 /* NameNodeList.cpp in Sources */,
 				E10B9B6D0B747599003ED890 /* NativeXPathNSResolver.cpp in Sources */,
@@ -21549,6 +21544,7 @@
 				C56C91A0119D918100DE4CD9 /* JSIDBErrorEvent.cpp in Sources */,
 				C56C91A2119D918100DE4CD9 /* JSIDBEvent.cpp in Sources */,
 				C56C91A6119D918700DE4CD9 /* JSIDBSuccessEvent.cpp in Sources */,
+				BCF34A3711A231CD00C71804 /* NamedNodeMap.cpp in Sources */,
 				97E8B35611A23CE200169409 /* HTML5Lexer.cpp in Sources */,
 				A871038A11A2947000DBD50E /* HTML5Tokenizer.cpp in Sources */,
 			);
