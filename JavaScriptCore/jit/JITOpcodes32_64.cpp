@@ -310,7 +310,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     move(callFrameRegister, X86Registers::edx);
 
     loadPtr(Address(X86Registers::eax, OBJECT_OFFSETOF(JSFunction, m_executable)), X86Registers::ebx);
-    call(Address(X86Registers::eax, OBJECT_OFFSETOF(NativeExecutable, m_function)));
+    call(Address(X86Registers::ebx, OBJECT_OFFSETOF(NativeExecutable, m_function)));
 
     // JSValue is a non-POD type, so eax points to it
     emitLoad(0, regT1, regT0, X86Registers::eax);

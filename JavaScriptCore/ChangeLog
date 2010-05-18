@@ -2,6 +2,14 @@
 
         Reviewed by Geoff Garen.
 
+        Oops, meant ebx not eax there.  Fix Qt (and probably Win too).
+
+        * jit/JITOpcodes32_64.cpp:
+
+2010-05-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
         Bug 39252 - Move host/native JSFunction's NativeFunction onto NativeExecutable.
 
         Currently host functions reuse JSFunction's ScopeChain as storage for their
