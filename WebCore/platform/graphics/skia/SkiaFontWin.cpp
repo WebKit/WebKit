@@ -77,7 +77,7 @@ struct CachedOutlineKeyHash {
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
-typedef ListHashSet<CachedOutlineKey, CachedOutlineKeyHash> OutlineCache;
+typedef ListHashSet<CachedOutlineKey, outlineCacheSize, CachedOutlineKeyHash> OutlineCache;
 
 // FIXME: Convert from static constructor to accessor function. WebCore tries to
 // avoid global constructors to save on start-up time.
