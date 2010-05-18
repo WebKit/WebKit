@@ -1147,7 +1147,6 @@ private:
     
     bool m_processingLoadEvent;
     RefPtr<SerializedScriptValue> m_pendingStateObject;
-    HashSet<RefPtr<HistoryItem> > m_associatedHistoryItems;
     double m_startTime;
     bool m_overMinimumLayoutThreshold;
     // This is used to increase the minimum delay between re-layouts. It is set

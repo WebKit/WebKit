@@ -1,3 +1,14 @@
+2010-05-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Remove unused member member from Document
+        https://bugs.webkit.org/show_bug.cgi?id=39251
+
+        Remove m_associatedHistoryItems from Document; it is never used.
+
+        * dom/Document.h:
+
 2010-05-17  Darin Adler  <darin@apple.com>
 
         Fix Qt build.
