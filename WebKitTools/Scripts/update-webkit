@@ -33,6 +33,7 @@ use strict;
 use FindBin;
 use lib $FindBin::Bin;
 use File::Basename;
+use File::Path;
 use File::Spec;
 use Getopt::Long;
 use VCSUtils;
@@ -67,6 +68,8 @@ __END__
     exit 1;
 }
 
+my $startTime = time();
+
 my @svnOptions = ();
 push @svnOptions, '-q' if $quiet;
 
@@ -83,6 +86,13 @@ if (-d "../Internal") {
     runSvnUpdate() if $isSVN;
     runGitUpdate() if $isGit;
 } elsif (isChromium()) {
+    # Workaround for https://bugs.webkit.org/show_bug.cgi?id=38926
+    # We should remove the following "if" block when we find a right fix.
+    if ((isCygwin() || isWindows()) && (stat("WebKit/chromium/features.gypi"))[9] >= $startTime) {
+        print "features.gypi has been updated. Cleaning the build directories.\n";
+        rmtree(["WebKit/chromium/Debug", "WebKit/chromium/Release"]);
+    }
+
     system("perl", "WebKitTools/Scripts/update-webkit-chromium") == 0 or die $!;
 } elsif (isAppleWinWebKit()) {
     system("perl", "WebKitTools/Scripts/update-webkit-auxiliary-libs") == 0 or die;

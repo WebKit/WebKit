@@ -1,3 +1,17 @@
+2010-05-17  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by David Levin.
+
+        Chromium Windows build system does not rebuild correctly when
+        enabling/disabling a feature
+        https://bugs.webkit.org/show_bug.cgi?id=38926
+
+        Add a workaround of this issue.
+
+        * Scripts/update-webkit:
+          Chromium-Windows only: If WebKit/chromium/features.gyp has been
+          updated, remove WebKit/chromium/Debug and WebKit/chromium/Release.
+
 2010-05-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r59631.
