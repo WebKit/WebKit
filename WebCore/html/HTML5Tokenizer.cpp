@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2008 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009 Torch Mobile, Inc. http://www.torchmobile.com/
+ * Copyright (C) 2010 Google, Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +26,7 @@
  */
 
 #include "config.h"
-#include "PreloadScanner.h"
+#include "HTML5Tokenizer.h"
 
 #include "AtomicString.h"
 #include "CachedCSSStyleSheet.h"
@@ -65,7 +66,7 @@ namespace WebCore {
     
 using namespace HTMLNames;
     
-PreloadScanner::PreloadScanner(Document* doc)
+HTML5Tokenizer::HTML5Tokenizer(Document* doc)
     : m_inProgress(false)
     , m_timeUsed(0)
     , m_bodySeen(false)
@@ -76,7 +77,7 @@ PreloadScanner::PreloadScanner(Document* doc)
 #endif
 }
     
-PreloadScanner::~PreloadScanner()
+HTML5Tokenizer::~HTML5Tokenizer()
 {
 #if PRELOAD_DEBUG
     printf("DELETING PRELOAD SCANNER FOR %s\n", m_document->url().string().latin1().data());
@@ -84,20 +85,20 @@ PreloadScanner::~PreloadScanner()
 #endif
 }
     
-void PreloadScanner::begin() 
+void HTML5Tokenizer::begin() 
 { 
     ASSERT(!m_inProgress); 
     reset(); 
     m_inProgress = true; 
 }
     
-void PreloadScanner::end() 
+void HTML5Tokenizer::end() 
 { 
     ASSERT(m_inProgress); 
     m_inProgress = false; 
 }
 
-void PreloadScanner::reset()
+void HTML5Tokenizer::reset()
 {
     m_source.clear();
     
@@ -123,12 +124,12 @@ void PreloadScanner::reset()
     m_cssRuleValue.clear();
 }
     
-bool PreloadScanner::scanningBody() const
+bool HTML5Tokenizer::scanningBody() const
 {
     return m_document->body() || m_bodySeen;
 }
     
-void PreloadScanner::write(const SegmentedString& source)
+void HTML5Tokenizer::write(const SegmentedString& source)
 {
 #if PRELOAD_DEBUG
     double startTime = currentTime();
@@ -144,18 +145,18 @@ static inline bool isWhitespace(UChar c)
     return c == ' ' || c == '\n' || c == '\r' || c == '\t';
 }
     
-inline void PreloadScanner::clearLastCharacters()
+inline void HTML5Tokenizer::clearLastCharacters()
 {
     memset(m_lastCharacters, 0, lastCharactersBufferSize * sizeof(UChar));
 }
     
-inline void PreloadScanner::rememberCharacter(UChar c)
+inline void HTML5Tokenizer::rememberCharacter(UChar c)
 {
     m_lastCharacterIndex = (m_lastCharacterIndex + 1) % lastCharactersBufferSize;
     m_lastCharacters[m_lastCharacterIndex] = c;
 }
     
-inline bool PreloadScanner::lastCharactersMatch(const char* chars, unsigned count) const
+inline bool HTML5Tokenizer::lastCharactersMatch(const char* chars, unsigned count) const
 {
     unsigned pos = m_lastCharacterIndex;
     while (count) {
@@ -177,7 +178,7 @@ static inline unsigned legalEntityFor(unsigned value)
     return value;
 }
     
-unsigned PreloadScanner::consumeEntity(SegmentedString& source, bool& notEnoughCharacters)
+unsigned HTML5Tokenizer::consumeEntity(SegmentedString& source, bool& notEnoughCharacters)
 {
     enum EntityState {
         Initial,
@@ -295,7 +296,7 @@ outOfCharacters:
     return 0;
 }
 
-void PreloadScanner::tokenize(const SegmentedString& source)
+void HTML5Tokenizer::tokenize(const SegmentedString& source)
 {
     ASSERT(m_inProgress);
     
@@ -688,7 +689,7 @@ void PreloadScanner::tokenize(const SegmentedString& source)
     }
 }
     
-void PreloadScanner::processAttribute()
+void HTML5Tokenizer::processAttribute()
 {
     AtomicString tag = AtomicString(m_tagName.data(), m_tagName.size());
     AtomicString attribute = AtomicString(m_attributeName.data(), m_attributeName.size());
@@ -711,13 +712,13 @@ void PreloadScanner::processAttribute()
     }
 }
     
-inline void PreloadScanner::emitCharacter(UChar c)
+inline void HTML5Tokenizer::emitCharacter(UChar c)
 {
     if (m_contentModel == CDATA && m_lastStartTag == styleTag) 
         tokenizeCSS(c);
 }
     
-inline void PreloadScanner::tokenizeCSS(UChar c)
+inline void HTML5Tokenizer::tokenizeCSS(UChar c)
 {    
     // We are just interested in @import rules, no need for real tokenization here
     // Searching for other types of resources is probably low payoff
@@ -796,7 +797,7 @@ inline void PreloadScanner::tokenizeCSS(UChar c)
     }
 }
     
-void PreloadScanner::emitTag()
+void HTML5Tokenizer::emitTag()
 {
     if (m_closeTag) {
         m_contentModel = PCDATA;
@@ -840,7 +841,7 @@ void PreloadScanner::emitTag()
     m_linkIsStyleSheet = false;
 }
     
-void PreloadScanner::emitCSSRule()
+void HTML5Tokenizer::emitCSSRule()
 {
     String rule(m_cssRule.data(), m_cssRule.size());
     if (equalIgnoringCase(rule, "import") && !m_cssRuleValue.isEmpty()) {

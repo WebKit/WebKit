@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010 Google, Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PreloadScanner_h
-#define PreloadScanner_h
+#ifndef HTML5Tokenizer_h
+#define HTML5Tokenizer_h
 
 #include "AtomicString.h"
 #include "SegmentedString.h"
@@ -37,10 +38,10 @@ namespace WebCore {
     class CachedResourceClient;
     class Document;
     
-    class PreloadScanner : public Noncopyable {
+    class HTML5Tokenizer : public Noncopyable {
     public:
-        PreloadScanner(Document*);
-        ~PreloadScanner();
+        HTML5Tokenizer(Document*);
+        ~HTML5Tokenizer();
         void begin();
         void write(const SegmentedString&);
         void end();
