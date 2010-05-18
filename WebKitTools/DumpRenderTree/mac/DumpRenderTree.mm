@@ -135,6 +135,7 @@ static int dumpPixels;
 static int threaded;
 static int dumpTree = YES;
 static int forceComplexText;
+static int useHTML5Parser;
 static BOOL printSeparators;
 static RetainPtr<CFStringRef> persistentUserStyleSheetLocation;
 
@@ -451,6 +452,7 @@ static void resetDefaultsToConsistentValues()
     [preferences setUsesPageCache:NO];
     [preferences setAcceleratedCompositingEnabled:YES];
     [preferences setWebGLEnabled:NO];
+    [preferences setHTML5ParserEnabled:useHTML5Parser];
 
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
 
@@ -557,6 +559,7 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
         {"tree", no_argument, &dumpTree, YES},
         {"threaded", no_argument, &threaded, YES},
         {"complex-text", no_argument, &forceComplexText, YES},
+        {"html5-parser", no_argument, &useHTML5Parser, YES},
         {NULL, 0, NULL, 0}
     };
     

@@ -1,3 +1,22 @@
+2010-05-18  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add an --html5-parser option to DumpRenderTree to allow testing the new HTML5Lexer
+        https://bugs.webkit.org/show_bug.cgi?id=39311
+
+        This flag allows us to run the new HTML5Lexer code.
+        Right now all documents parse as empty documents, but
+        now that we're able to run the code we can fix that.
+
+        Once we're able to lex a few basic documents I'll add
+        an --html5-parser flag to run-webkit-tests so that we test
+        running all of the layout tests with the HTML5 parser.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+        (initializeGlobalsFromCommandLineOptions):
+
 2010-05-08  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Simon Hausmann.
