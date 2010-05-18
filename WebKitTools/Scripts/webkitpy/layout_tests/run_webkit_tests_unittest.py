@@ -65,7 +65,7 @@ class MainTest(unittest.TestCase):
         self.assertTrue(passing_run(['--platform', 'test',
                                      'fast/html']))
         self.assertTrue(passing_run(['--platform', 'test',
-                                     '--singly',
+                                     '--run-singly',
                                      'fast/html']))
         self.assertTrue(passing_run(['--platform', 'test',
                                      'fast/html/article-element.html']))
@@ -130,28 +130,5 @@ class DryrunTest(unittest.TestCase):
                                      'fast/html']))
 
 
-class OptionParsingTest(unittest.TestCase):
-    def _assert_name_split(self, option_name, expected_prefix, expected_name):
-        prefix, name = run_webkit_tests._split_option_name(option_name)
-        self.assertEqual(prefix, expected_prefix)
-        self.assertEqual(name, expected_name)
-
-    def test_option_sorting(self):
-        self._assert_name_split("-n", "-", "n")
-        self._assert_name_split("--name", "--", "name")
-        self._assert_name_split("--no-name", "--no-", "name")
-
-        options = [
-            "--no-abc",
-            "-a",
-            "--xyz",
-            "--abc",
-        ]
-        expected_sort = [
-            "-a",
-            "--abc",
-            "--no-abc",
-            "--xyz",
-        ]
-        options.sort(run_webkit_tests._compare_option_names)
-        self.assertEqual(options, expected_sort)
+if __name__ == '__main__':
+    unittest.main()

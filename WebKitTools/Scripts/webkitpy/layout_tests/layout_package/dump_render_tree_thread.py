@@ -324,7 +324,6 @@ class TestShellThread(threading.Thread):
             # We have a url, run tests.
             batch_count += 1
             self._num_tests += 1
-            # FIXME: options.run_singly and options.batch_size=1 should use the same code path!
             if self._options.run_singly:
                 result = self._run_test_singly(test_info)
             else:

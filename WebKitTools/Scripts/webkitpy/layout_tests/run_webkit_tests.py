@@ -1325,7 +1325,7 @@ def run(port_obj, options, args, regular_output=sys.stderr,
             printer.write("\n".join(last_unexpected_results) + "\n")
             return 0
 
-    if options.reset_results:
+    if options.clobber_old_results:
         # Just clobber the actual test results directories since the other
         # files in the results directory are explicitly used for cross-run
         # tracking.
@@ -1435,84 +1435,14 @@ def run(port_obj, options, args, regular_output=sys.stderr,
     return num_unexpected_results
 
 
-class HiddenOptionGroup(optparse.OptionGroup):
-    def __init__(self, parser):
-        optparse.OptionGroup.__init__(self, parser, title=None)
-
-    def format_help(self, formatter):
-        return ""
-
-
 def _compat_shim_callback(option, opt_str, value, parser):
-    """Logs that an option is being ignored."""
     print "Ignoring unsupported option: %s" % opt_str
 
 
 def _compat_shim_option(option_name, **kwargs):
-    """returns an optparse Option which simply logs that it's being ignored."""
     return optparse.make_option(option_name, action="callback",
         callback=_compat_shim_callback,
         help="Ignored, for old-run-webkit-tests compat only.", **kwargs)
-
-
-def _deprecated_shim_callback(option, opt_str, value, parser, new_option):
-    """Logs that the option is deprecated and then calls new_option.process"""
-    print "%s is DEPRECATED please use %s" % (opt_str, new_option)
-    # We could time.sleep here or some other discouraging measure.
-    new_option.process(opt_str, value, parser.values, parser)
-
-
-def _deprecated_option(parser, option_name, long_name=None, new_option_name=None):
-    """Returns an option which maps from and old new to a new name and prints
-    a deprecation warning when called."""
-    new_option = parser.get_option(new_option_name)
-    option_names = [option_name]
-    if long_name:
-        option_names.append(long_name)
-    return optparse.make_option(
-        action="callback",
-        callback=_deprecated_shim_callback,
-        callback_args=(new_option,),
-        nargs=new_option.nargs,
-        help="DEPRECATED, use %s" % new_option,
-        *option_names)
-
-
-def _split_option_name(option_name):
-    """Returns the name of the option, ignoring any leading -, --, or --no-"""
-    match = re.match(r"(--no-|--|-)(.*)", option_name)
-    return (match.group(1), match.group(2))
-
-
-def _compare_option_names(a, b):
-    """Compares option names, sorting by name, with --no-foo after --foo."""
-    a_prefix, a_name = _split_option_name(a)
-    b_prefix, b_name = _split_option_name(b)
-    # Sort options first by name ignoring prefix
-    compare_result = cmp(a_name, b_name)
-    if compare_result != 0:
-        return compare_result
-    # Sort --no-foo after --foo
-    return cmp(a_prefix, b_prefix)
-
-
-def _compare_options(a, b):
-    """Compares options, sorting by name using _compare_option_names."""
-    return _compare_option_names(a.get_opt_string(), b.get_opt_string())
-
-
-def _add_option_group(parser, title, options):
-    """Sorts and groups options and then adds the group to the parser."""
-    group = optparse.OptionGroup(parser, title)
-    group.add_options(sorted(options, _compare_options))
-    parser.add_option_group(group)
-
-
-def _add_hidden_options(parser, options):
-    """Groups options into a HiddenOptionGroup and adds the group to the parser."""
-    hidden_group = HiddenOptionGroup(parser)
-    hidden_group.add_options(options)
-    parser.add_option_group(hidden_group)
 
 
 def parse_args(args=None):
@@ -1520,41 +1450,39 @@ def parse_args(args=None):
 
     Returns a tuple of options, args from optparse"""
 
-    parser = optparse.OptionParser()
-
     # FIXME: All of these options should be stored closer to the code which
     # FIXME: actually uses them. configuration_options should move
     # FIXME: to WebKitPort and be shared across all scripts.
     configuration_options = [
+        optparse.make_option("-t", "--target", dest="configuration",
+                             help="(DEPRECATED)"),
+        # FIXME: --help should display which configuration is default.
         optparse.make_option('--debug', action='store_const', const='Debug',
                              dest="configuration",
-                             help="Set build configuration to Debug"),
+                             help='Set the configuration to Debug'),
         optparse.make_option('--release', action='store_const',
                              const='Release', dest="configuration",
-                             help="Set build configuration to Release"),
-        # FIXME: --help should display which configuration is default.
-        optparse.make_option("-c", "--configuration", action="store",
-                             help="Set build configuration"),
+                             help='Set the configuration to Release'),
+        # old-run-webkit-tests also accepts -c, --configuration CONFIGURATION.
     ]
-    _add_option_group(parser, "Configuration Options", configuration_options)
-    _add_option_group(parser, "Printing Options", printing.print_options())
+
+    print_options = printing.print_options()
 
     # FIXME: These options should move onto the ChromiumPort.
     chromium_options = [
-        optparse.make_option("--chromium", action="store_true",
-            help="Use the Chromium port."),
+        optparse.make_option("--chromium", action="store_true", default=False,
+            help="use the Chromium port"),
         optparse.make_option("--startup-dialog", action="store_true",
-            help="Create a dialog on test_shell startup."),
+            default=False, help="create a dialog on DumpRenderTree startup"),
         optparse.make_option("--gp-fault-error-box", action="store_true",
-            help="Enable Windows GP fault error box."),
+            default=False, help="enable Windows GP fault error box"),
         optparse.make_option("--nocheck-sys-deps", action="store_true",
-            help="Disable system dependencies check (eg. fonts, themes)."),
+            default=False,
+            help="Don't check the system dependencies (themes)"),
         optparse.make_option("--use-drt", action="store_true",
-            help="Use DumpRenderTree instead of test_shell."),
-        optparse.make_option("--use-apache", action="store_true",
-            help="Use apache instead of lighttpd (Windows only)."),
+            default=False,
+            help="Use DumpRenderTree instead of test_shell"),
     ]
-    _add_option_group(parser, "Chromium Options", chromium_options)
 
     # Missing Mac-specific old-run-webkit-tests options:
     # FIXME: Need: -g, --guard for guard malloc support on Mac.
@@ -1566,39 +1494,54 @@ def parse_args(args=None):
         _compat_shim_option("--no-new-test-results"),
         # NRWT doesn't sample on timeout yet anyway.
         _compat_shim_option("--no-sample-on-timeout"),
-        # FIXME: NRWT needs to support remote links.
+        # FIXME: NRWT needs to support remote links eventually.
         _compat_shim_option("--use-remote-links-to-tests"),
         # FIXME: NRWT doesn't need this option as much since failures are
         # designed to be cheap.  We eventually plan to add this support.
         _compat_shim_option("--exit-after-n-failures", nargs=1, type="int"),
     ]
-    _add_hidden_options(parser, old_run_webkit_tests_compat)
 
     results_options = [
         # NEED for bots: --use-remote-links-to-tests Link to test files
         # within the SVN repository in the results.
         optparse.make_option("-p", "--pixel-tests", action="store_true",
-            help="Enable pixel-to-pixel PNG comparisons"),
+            dest="pixel_tests", help="Enable pixel-to-pixel PNG comparisons"),
         optparse.make_option("--no-pixel-tests", action="store_false",
             dest="pixel_tests", help="Disable pixel-to-pixel PNG comparisons"),
+        optparse.make_option("--fuzzy-pixel-tests", action="store_true",
+            default=False,
+            help="Also use fuzzy matching to compare pixel test outputs."),
         # old-run-webkit-tests allows a specific tolerance: --tolerance t
         # Ignore image differences less than this percentage (default: 0.1)
-        optparse.make_option("--fuzzy-pixel-tests", action="store_true",
-            help="Also use fuzzy matching to compare pixel test outputs."),
         optparse.make_option("--results-directory",
             default="layout-test-results",
-            help="Output results directory, relative to build directory"),
+            help="Output results directory source dir, relative to Debug or "
+                 "Release"),
         optparse.make_option("--new-baseline", action="store_true",
-            help="Save all generated results as new baselines "
+            default=False, help="Save all generated results as new baselines "
                  "into the platform directory, overwriting whatever's "
                  "already there."),
         optparse.make_option("--no-show-results", action="store_false",
             default=True, dest="show_results",
-            help="Do not launch a browser with results after testing"),
+            help="Don't launch a browser with results after the tests "
+                 "are done"),
+        # FIXME: We should have a helper function to do this sort of
+        # deprectated mapping and automatically log, etc.
+        optparse.make_option("--noshow-results", action="store_false",
+            dest="show_results",
+            help="Deprecated, same as --no-show-results."),
+        optparse.make_option("--no-launch-safari", action="store_false",
+            dest="show_results",
+            help="old-run-webkit-tests compat, same as --noshow-results."),
+        # old-run-webkit-tests:
+        # --[no-]launch-safari    Launch (or do not launch) Safari to display
+        #                         test results (default: launch)
         optparse.make_option("--full-results-html", action="store_true",
-            help="Include expected failures in results.html."),
-        optparse.make_option("--reset-results", action="store_true",
-            help="Reset all results with new expectations from this run."),
+            default=False,
+            help="Show all failures in results.html, rather than only "
+                 "regressions"),
+        optparse.make_option("--clobber-old-results", action="store_true",
+            default=False, help="Clobbers test results from previous runs."),
         optparse.make_option("--platform",
             help="Override the platform for expected results"),
         # old-run-webkit-tests also has HTTP toggle options:
@@ -1609,7 +1552,6 @@ def parse_args(args=None):
         #                                 as WEBKIT_WAIT_FOR_HTTPD=1).
         #                                 (default: 0)
     ]
-    _add_option_group(parser, "Results Options", results_options)
 
     test_options = [
         optparse.make_option("--build", dest="build",
@@ -1621,54 +1563,50 @@ def parse_args(args=None):
                                        "DumpRenderTree build is up-to-date."),
         # old-run-webkit-tests has --valgrind instead of wrapper.
         optparse.make_option("--wrapper",
-            help="Wrap all invocations of DumpRenderTree with WRAPPER. "
-                 "WRAPPER is split on whitespace before running. "
-                 "(Example: --wrapper='valgrind --smc-check=all')"),
+            help="wrapper command to insert before invocations of "
+                 "DumpRenderTree; option is split on whitespace before "
+                 "running. (Example: --wrapper='valgrind --smc-check=all')"),
         # old-run-webkit-tests:
         # -i|--ignore-tests               Comma-separated list of directories
         #                                 or tests to ignore
         optparse.make_option("--test-list", action="append",
-            help="Read list of tests to run from file.", metavar="FILE"),
+            help="read list of tests to run from file", metavar="FILE"),
         # old-run-webkit-tests uses --skipped==[default|ignore|only]
         # instead of --force:
-        optparse.make_option("--force", action="store_true",
+        optparse.make_option("--force", action="store_true", default=False,
             help="Run all tests, even those marked SKIP in the test list"),
-        optparse.make_option("--time-out-ms", metavar="MS",
-            help="Set the timeout for all tests."),
+        optparse.make_option("--use-apache", action="store_true",
+            default=False, help="Whether to use apache instead of lighttpd."),
+        optparse.make_option("--time-out-ms",
+            help="Set the timeout for each test"),
+        # old-run-webkit-tests calls --randomize-order --random:
         optparse.make_option("--randomize-order", action="store_true",
-            help="Run the tests in a random order."),
-        optparse.make_option("--singly", action="store_true", dest="run_singly",
-            help="Run a separate DumpRenderTree for each test"),
-        optparse.make_option("--nthly", dest="batch_size",
-            help="Restart DumpRenderTree every n tests."),
-        # FIXME: Display default number of child processes that will run.
-        optparse.make_option("--child-processes",
-            help="Number of DumpRenderTrees to run in parallel."),
-        optparse.make_option("--experimental-fully-parallel",
-            action="store_true", help="Run tests with per-file parallelism."),
-        # FIXME: Need --exit-after-n-failures N
-        #      Exit after the first N failures instead of running all tests
-        # FIXME: consider: --iterations n
-        #      Number of times to run the set of tests (e.g. ABCABCABC)
-    ]
-    _add_option_group(parser, "Test Options", test_options)
-
-    # These two options exist only for the Chromium valgrind bot to use.
-    # valgrind is too slow to run more than a few tests per build, so
-    # the builder runs a different small chunk each build.
-    test_grouping_options = [
+            default=False, help=("Run tests in random order (useful "
+                                "for tracking down corruption)")),
         optparse.make_option("--run-chunk",
             help=("Run a specified chunk (n:l), the nth of len l, "
                  "of the layout tests")),
         optparse.make_option("--run-part", help=("Run a specified part (n:m), "
                   "the nth of m parts, of the layout tests")),
-    ]
-    _add_hidden_options(parser, test_grouping_options)
-
-    misc_options = [
-        optparse.make_option("--lint-test-files", action="store_true",
-        default=False, help=("Makes sure the test files parse for all "
-                            "configurations. Does not run any tests.")),
+        # old-run-webkit-tests calls --batch-size: --nthly n
+        #   Restart DumpRenderTree every n tests (default: 1000)
+        optparse.make_option("--batch-size",
+            help=("Run a the tests in batches (n), after every n tests, "
+                  "DumpRenderTree is relaunched.")),
+        # old-run-webkit-tests calls --run-singly: -1|--singly
+        # Isolate each test case run (implies --nthly 1 --verbose)
+        optparse.make_option("--run-singly", action="store_true",
+            default=False, help="run a separate DumpRenderTree for each test"),
+        optparse.make_option("--child-processes",
+            help="Number of DumpRenderTrees to run in parallel."),
+        # FIXME: Display default number of child processes that will run.
+        optparse.make_option("--experimental-fully-parallel",
+            action="store_true", default=False,
+            help="run all tests in parallel"),
+        # FIXME: Need --exit-after-n-failures N
+        #      Exit after the first N failures instead of running all tests
+        # FIXME: consider: --iterations n
+        #      Number of times to run the set of tests (e.g. ABCABCABC)
         optparse.make_option("--print-last-failures", action="store_true",
             default=False, help="Print the tests in the last run that "
             "had unexpected failures (or passes)."),
@@ -1682,34 +1620,35 @@ def parse_args(args=None):
             dest="retry_failures",
             help="Don't re-try any tests that produce unexpected results."),
     ]
-    parser.add_options(misc_options)
 
-    # These only exist for the build bots for generating results.json output.
+    misc_options = [
+        optparse.make_option("--lint-test-files", action="store_true",
+        default=False, help=("Makes sure the test files parse for all "
+                            "configurations. Does not run any tests.")),
+    ]
+
+    # FIXME: Move these into json_results_generator.py
     results_json_options = [
         optparse.make_option("--builder-name", default="DUMMY_BUILDER_NAME",
-            help="Builder name as shown on the on the waterfall e.g. WebKit."),
+            help=("The name of the builder shown on the waterfall running "
+                  "this script e.g. WebKit.")),
         optparse.make_option("--build-name", default="DUMMY_BUILD_NAME",
-            help="Builder name as used in urls, e.g. webkit-rel."),
+            help=("The name of the builder used in its path, e.g. "
+                  "webkit-rel.")),
         optparse.make_option("--build-number", default="DUMMY_BUILD_NUMBER",
-            help="Buildbot's build number for this build."),
+            help=("The build number of the builder running this script.")),
         optparse.make_option("--test-results-server", default="",
             help=("If specified, upload results json files to this appengine "
                   "server.")),
     ]
-    _add_hidden_options(parser, results_json_options)
 
-    deprecated_options = [
-        _deprecated_option(parser, "--batch-size", new_option_name="--nthly"),
-        _deprecated_option(parser, "--clobber-old-results", new_option_name="--reset-results"),
-        _deprecated_option(parser, "--noshow-results", new_option_name="--no-show-results"),
-        _deprecated_option(parser, "--no-launch-safari", new_option_name="--no-show-results"),
-        _deprecated_option(parser, "--random", new_option_name="--randomize-order"),
-        _deprecated_option(parser, "--run-singly", new_option_name="--singly"),
-        _deprecated_option(parser, "-t", "--target", new_option_name="--configuration"),
-    ]
-    _add_hidden_options(parser, deprecated_options)
+    option_list = (configuration_options + print_options +
+                   chromium_options + results_options + test_options +
+                   misc_options + results_json_options +
+                   old_run_webkit_tests_compat)
+    option_parser = optparse.OptionParser(option_list=option_list)
 
-    options, args = parser.parse_args(args)
+    options, args = option_parser.parse_args(args)
     if options.sources:
         options.verbose = True
 
