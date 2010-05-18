@@ -1321,6 +1321,7 @@ PlatformCanvas* WebViewHost::canvas()
         return m_canvas.get();
     WebSize widgetSize = webWidget()->size();
     resetScrollRect();
+    m_paintRect = WebRect(0, 0, widgetSize.width, widgetSize.height);
     m_canvas.set(new PlatformCanvas(widgetSize.width, widgetSize.height, true));
     return m_canvas.get();
 }

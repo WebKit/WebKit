@@ -39,7 +39,7 @@
       # chromium build, overrides this list with its own values. See
       # features_override.gypi inline documentation for more details.
       'feature_defines%': [
-        'ENABLE_3D_CANVAS=1',
+        'ENABLE_3D_CANVAS=0',
         'ENABLE_BLOB_SLICE=1',
         'ENABLE_CHANNEL_MESSAGING=1',
         'ENABLE_DATABASE=1',
