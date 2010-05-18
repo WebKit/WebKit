@@ -1,3 +1,35 @@
+2010-05-18  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Refactored FrameLoader::isDocumentSandboxed() from a private member function
+        to a static, non-member, non-friend function.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39157
+
+        Making this function non-private lets us make FrameLoader::createWindow()
+        a non-member function in a subsequent patch.  We also made it non-member
+        rather than member to increase encapsulation and limit the number of
+        public functions with access to private FrameLoader data.
+
+        No new functionality, so no new tests.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::isDocumentSandboxed):
+          - Moved this function from a private member function of FrameLoader
+            to a static, non-member, non-friend function.
+        (WebCore::FrameLoader::createWindow):
+          - Updated the call to isDocumentSandboxed().
+        (WebCore::FrameLoader::submitForm):
+          - Updated the call to isDocumentSandboxed().
+        (WebCore::FrameLoader::requestObject):
+          - Updated the call to isDocumentSandboxed().
+        (WebCore::FrameLoader::shouldAllowNavigation):
+          - Updated the call to isDocumentSandboxed().
+        * loader/FrameLoader.h:
+          - Removed isDocumentSandboxed() and added a FIXME to move
+            createWindow() out of the FrameLoader class.
+
 2010-05-08  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Simon Hausmann.
