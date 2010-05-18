@@ -1,3 +1,15 @@
+2010-05-18  Jakob Petsovits  <jpetsovits@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        [OpenVG] Fix stupid build errors from the OpenVG Path commit
+        https://bugs.webkit.org/show_bug.cgi?id=39228
+
+        * platform/graphics/openvg/PainterOpenVG.cpp:
+        (WebCore::PainterOpenVG::clipPath):
+        * platform/graphics/openvg/PathOpenVG.cpp:
+        (WebCore::Path::transform):
+
 2010-05-18  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Darin Adler.
