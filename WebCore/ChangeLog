@@ -1,3 +1,21 @@
+2010-05-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement ScriptData states for HTML5Lexer
+        https://bugs.webkit.org/show_bug.cgi?id=39273
+
+        This patch implements more of the lexer states according to the HTML5
+        specification.  Currently, this code is compiled by not tested.  We're
+        working on bringing up a test harness in parallel with transliterating
+        the spec into code.
+
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTML5Lexer::tokenize):
+        (WebCore::HTML5Lexer::temporaryBufferIs):
+        * html/HTML5Lexer.h:
+        (WebCore::HTML5Lexer::):
+
 2010-05-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

@@ -425,6 +425,7 @@ void HTML5Lexer::tokenize(const SegmentedString& source)
             } else {
                 emitCharacter('<');
                 emitCharacter('/');
+                m_state = RAWTEXTState;
                 continue;
             }
             break;
@@ -447,26 +448,264 @@ void HTML5Lexer::tokenize(const SegmentedString& source)
                 emitCharacter('<');
                 emitCharacter('/');
                 notImplemented();
+                m_state = RAWTEXTState;
                 continue;
             }
         }
-        case ScriptDataLessThanSignState:
-        case ScriptDataEndTagOpenState:
-        case ScriptDataEndTagNameState:
-        case ScriptDataEscapeStartState:
-        case ScriptDataEscapeStartDashState:
-        case ScriptDataEscapedState:
-        case ScriptDataEscapedDashState:
-        case ScriptDataEscapedDashDashState:
-        case ScriptDataEscapedLessThanSignState:
-        case ScriptDataEscapedEndTagOpenState:
-        case ScriptDataEscapedEndtagNameState:
-        case ScriptDataDoubleEscapeStartState:
-        case ScriptDataDoubleEscapedState:
-        case ScriptDataDoubleEscapedDashState:
-        case ScriptDataDoubleEscapedDashDashState:
-        case ScriptDataDoubleEscapedLessThanSignState:
-        case ScriptDataDoubleEscapeEndState:
+        case ScriptDataLessThanSignState: {
+            if (cc == '/') {
+                m_temporaryBuffer.clear();
+                m_state = ScriptDataEndTagOpenState;
+            } else if (cc == '!') {
+                emitCharacter('<');
+                emitCharacter('!');
+                m_state = ScriptDataEscapeStartState;
+            } else {
+                emitCharacter('<');
+                m_state = ScriptDataState;
+                continue;
+            }
+            break;
+        }
+        case ScriptDataEndTagOpenState: {
+            if (cc >= 'A' && cc <= 'Z') {
+                notImplemented();
+                m_state = ScriptDataEndTagNameState;
+            } else if (cc >= 'a' && cc <= 'z') {
+                notImplemented();
+                m_state = ScriptDataEndTagNameState;
+            } else {
+                emitCharacter('<');
+                emitCharacter('/');
+                m_state = ScriptDataState;
+                continue;
+            }
+            break;
+        }
+        case ScriptDataEndTagNameState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
+                notImplemented();
+                m_state = BeforeAttributeNameState;
+            } else if (cc == '/') {
+                notImplemented();
+                m_state = SelfClosingStartTagState;
+            } else if (cc == '>') {
+                notImplemented();
+                m_state = DataState;
+            } else if (cc >= 'A' && cc <= 'Z')
+                notImplemented();
+            else if (cc >= 'a' && cc <= 'z')
+                notImplemented();
+            else {
+                emitCharacter('<');
+                emitCharacter('/');
+                notImplemented();
+                m_state = ScriptDataState;
+                continue;
+            }
+            break;
+        }
+        case ScriptDataEscapeStartState: {
+            if (cc == '-') {
+                emitCharacter(cc);
+                m_state = ScriptDataEscapeStartDashState;
+            } else {
+                m_state = ScriptDataState;
+                continue;
+            }
+            break;
+        }
+        case ScriptDataEscapeStartDashState: {
+            if (cc == '-') {
+                emitCharacter(cc);
+                m_state = ScriptDataEscapedDashDashState;
+            } else {
+                m_state = ScriptDataState;
+                continue;
+            }
+            break;
+        }
+        case ScriptDataEscapedState: {
+            if (cc == '-') {
+                emitCharacter(cc);
+                m_state = ScriptDataEscapedDashState;
+            } else if (cc == '<')
+                m_state = ScriptDataEscapedLessThanSignState;
+            else
+                emitCharacter(cc);
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case ScriptDataEscapedDashState: {
+            if (cc == '-') {
+                emitCharacter(cc);
+                m_state = ScriptDataEscapedDashDashState;
+            } else if (cc == '<')
+                m_state = ScriptDataEscapedLessThanSignState;
+            else {
+                emitCharacter(cc);
+                m_state = ScriptDataEscapedState;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case ScriptDataEscapedDashDashState: {
+            if (cc == '-')
+                emitCharacter(cc);
+            else if (cc == '<')
+                m_state = ScriptDataEscapedLessThanSignState;
+            else if (cc == '>') {
+                emitCharacter(cc);
+                m_state = ScriptDataState;
+            } else {
+                emitCharacter(cc);
+                m_state = ScriptDataEscapedState;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case ScriptDataEscapedLessThanSignState: {
+            if (cc == '/') {
+                m_temporaryBuffer.clear();
+                m_state = ScriptDataEscapedEndTagOpenState;
+            } else if (cc >= 'A' && cc <= 'Z') {
+                notImplemented();
+                m_state = ScriptDataDoubleEscapeStartState;
+            } else if (cc >= 'a' && cc <= 'z') {
+                notImplemented();
+                m_state = ScriptDataDoubleEscapeStartState;
+            } else {
+                emitCharacter('<');
+                m_state = ScriptDataEscapedState;
+                continue;
+            }
+            break;
+        }
+        case ScriptDataEscapedEndTagOpenState: {
+            if (cc >= 'A' && cc <= 'Z') {
+                notImplemented();
+                m_state = ScriptDataEscapedEndTagNameState;
+            } else if (cc >= 'a' && cc <= 'z') {
+                notImplemented();
+                m_state = ScriptDataEscapedEndTagNameState;
+            } else {
+                emitCharacter('<');
+                emitCharacter('/');
+                m_state = ScriptDataEscapedState;
+                continue;
+            }
+            break;
+        }
+        case ScriptDataEscapedEndTagNameState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
+                notImplemented();
+                m_state = BeforeAttributeNameState;
+            } else if (cc == '/') {
+                notImplemented();
+                m_state = SelfClosingStartTagState;
+            } else if (cc == '>') {
+                notImplemented();
+                m_state = DataState;
+            } else if (cc >= 'A' && cc <= 'Z')
+                notImplemented();
+            else if (cc >= 'a' && cc <= 'z')
+                notImplemented();
+            else {
+                emitCharacter('<');
+                emitCharacter('/');
+                notImplemented();
+                m_state = ScriptDataEscapedState;
+                continue;
+            }
+            break;
+        }
+        case ScriptDataDoubleEscapeStartState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ' || cc == '/' || cc == '>') {
+                emitCharacter(cc);
+                if (temporaryBufferIs("string"))
+                    m_state = ScriptDataDoubleEscapedState;
+                else
+                    m_state = ScriptDataEscapedState;
+            } else if (cc >= 'A' && cc <= 'Z')
+                notImplemented();
+            else if (cc >= 'a' && cc <= 'z')
+                notImplemented();
+            else {
+                m_state = ScriptDataEscapedState;
+                continue;
+            }
+            break;
+        }
+        case ScriptDataDoubleEscapedState: {
+            if (cc == '-') {
+                emitCharacter(cc);
+                m_state = ScriptDataDoubleEscapedDashState;
+            } else if (cc == '<') {
+                emitCharacter(cc);
+                m_state = ScriptDataDoubleEscapedLessThanSignState;
+            } else
+                emitCharacter(cc);
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case ScriptDataDoubleEscapedDashState: {
+            if (cc == '-') {
+                emitCharacter(cc);
+                m_state = ScriptDataDoubleEscapedDashDashState;
+            } else if (cc == '<') {
+                emitCharacter(cc);
+                m_state = ScriptDataDoubleEscapedLessThanSignState;
+            } else {
+                emitCharacter(cc);
+                m_state = ScriptDataDoubleEscapedState;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case ScriptDataDoubleEscapedDashDashState: {
+            if (cc == '-')
+                emitCharacter(cc);
+            else if (cc == '<') {
+                emitCharacter(cc);
+                m_state = ScriptDataDoubleEscapedLessThanSignState;
+            } else if (cc == '>') {
+                emitCharacter(cc);
+                m_state = ScriptDataState;
+            } else {
+                emitCharacter(cc);
+                m_state = ScriptDataDoubleEscapedState;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case ScriptDataDoubleEscapedLessThanSignState: {
+            if (cc == '/') {
+                emitCharacter(cc);
+                m_temporaryBuffer.clear();
+                m_state = ScriptDataDoubleEscapeEndState;
+            } else {
+                m_state = ScriptDataDoubleEscapedState;
+                continue;
+            }
+            break;
+        }
+        case ScriptDataDoubleEscapeEndState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ' || cc == '/' || cc == '>') {
+                emitCharacter(cc);
+                if (temporaryBufferIs("string"))
+                    m_state = ScriptDataEscapedState;
+                else
+                    m_state = ScriptDataDoubleEscapedState;
+            } else if (cc >= 'A' && cc <= 'Z')
+                notImplemented();
+            else if (cc >= 'a' && cc <= 'z')
+                notImplemented();
+            else {
+                m_state = ScriptDataDoubleEscapedState;
+                continue;
+            }
+            break;
+        }
         case BeforeAttributeNameState:
         case AttributeNameState:
         case AfterAttributeNameState:
@@ -518,6 +757,12 @@ void HTML5Lexer::processAttribute()
     AtomicString attribute = AtomicString(m_attributeName.data(), m_attributeName.size());
 
     String value(m_attributeValue.data(), m_attributeValue.size());
+}
+
+inline bool HTML5Lexer::temporaryBufferIs(const char*)
+{
+    notImplemented();
+    return true;
 }
 
 inline void HTML5Lexer::emitCharacter(UChar)

@@ -54,6 +54,8 @@ namespace WebCore {
         inline void emitParseError();
         void processAttribute();
 
+        inline bool temporaryBufferIs(const char*);
+
         void clearLastCharacters();
         void rememberCharacter(UChar);
         bool lastCharactersMatch(const char*, unsigned count) const;
@@ -87,7 +89,7 @@ namespace WebCore {
             ScriptDataEscapedDashDashState,
             ScriptDataEscapedLessThanSignState,
             ScriptDataEscapedEndTagOpenState,
-            ScriptDataEscapedEndtagNameState,
+            ScriptDataEscapedEndTagNameState,
             ScriptDataDoubleEscapeStartState,
             ScriptDataDoubleEscapedState,
             ScriptDataDoubleEscapedDashState,
