@@ -1,3 +1,13 @@
+2010-05-18  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] DragClientGtk::startDrag leaks GdkEvents
+        https://bugs.webkit.org/show_bug.cgi?id=39322
+
+        * WebCoreSupport/DragClientGtk.cpp:
+        (WebKit::DragClient::startDrag): Properly clean up allocated GdkEvent.
+
 2010-05-12  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
