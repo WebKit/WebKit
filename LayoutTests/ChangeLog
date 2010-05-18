@@ -1,5 +1,11 @@
 2010-05-18  Jian Li  <jianli@chromium.org>
 
+        Unreviewed. Build fix. Disable file-reader.html for more investigation.
+
+        * platform/mac/Skipped:
+
+2010-05-18  Jian Li  <jianli@chromium.org>
+
         Unreviewed. Build fix. Disable test cases in file-reader.html that
         cause time-out in mac bot for further investigation.
 

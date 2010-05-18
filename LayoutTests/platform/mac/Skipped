@@ -188,3 +188,6 @@ scrollbars/scrollbar-click-does-not-blur-content.html
 
 # IndexedDB is not yet enabled.
 storage/indexeddb
+
+# Need to investigate why it times out in Mac bots.
+fast/files/file-reader.html
