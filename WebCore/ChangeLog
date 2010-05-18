@@ -1,5 +1,55 @@
 2010-05-18  Adam Roben  <aroben@apple.com>
 
+        Fix a crash when a page that uses accelerated compositing loads soon
+        after the computer wakes from sleep
+
+        The set-up:
+
+        For a short time after waking from sleep, IDirect3D9::CreateDevice
+        will fail. This caused WKCACFLayerRenderer::createRenderer to fail,
+        and meant that WKCACFLayerRenderer never allocated a root layer.
+        WebView wouldn't notice that createRenderer failed, and would go ahead
+        and try to use the root layer anyway, resulting in a crash.
+
+        The fix:
+
+        We now allocate the root layer (and all the other members of
+        WKCACFLayerRenderer that aren't dependent on having an
+        IDirect3DDevice9) in WKCACFLayerRenderer's constructor. This way the
+        layers will always be present, even when creating the D3D device
+        fails.
+
+        There are two remaining problems:
+          1) This results in slightly more memory usage in the case where
+             CreateDevice fails.
+          2) Once we get into this bad state, the WebView doesn't repaint
+             until we navigate somewhere else.
+
+        (2) is covered by
+        <http://webkit.org/b/39297>/<rdar://problem/7997431>. We'll fix it by
+        retrying CreateDevice later in hopes that it will succeed after more
+        time has passed. This will in turn fix (1). (We should never end up in
+        a case where CreateDevice fails forever because we already did some
+        preliminary checks in acceleratedCompositingAvailable().)
+
+        Fixes <http://webkit.org/b/39295> <rdar://problem/7971319> Crash
+        (preceded by assertion) in WKCACFLayerRenderer::setNeedsDisplay when
+        computer wakes from sleep on particular page
+
+        Reviewed by John Sullivan.
+
+        * manual-tests/crash-after-wake-from-sleep.html: Added. This
+        is the Poster Circle demo from webkit.org/blog, but modified to
+        automatically reload every 5 seconds and with instructions to put the
+        computer to sleep and wake it up again.
+
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::WKCACFLayerRenderer): Moved code to
+        initialize m_context, m_renderContext, and m_*Layer here...
+        (WebCore::WKCACFLayerRenderer::createRenderer): ...from here.
+
+2010-05-18  Adam Roben  <aroben@apple.com>
+
         Remove an unused member variable from WKCACFLayerRenderer
 
         Rubber-stamped by Ada Chan.
