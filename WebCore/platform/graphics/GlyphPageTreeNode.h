@@ -172,8 +172,8 @@ public:
         : m_parent(0)
         , m_level(0)
         , m_isSystemFallback(false)
-        , m_systemFallbackChild(0)
         , m_customFontCount(0)
+        , m_systemFallbackChild(0)
 #ifndef NDEBUG
         , m_pageNumber(0)
 #endif
@@ -221,11 +221,11 @@ private:
 
     GlyphPageTreeNode* m_parent;
     RefPtr<GlyphPage> m_page;
-    unsigned m_level;
-    bool m_isSystemFallback;
+    unsigned m_level : 31;
+    bool m_isSystemFallback : 1;
+    unsigned m_customFontCount;
     HashMap<const FontData*, GlyphPageTreeNode*> m_children;
     GlyphPageTreeNode* m_systemFallbackChild;
-    unsigned m_customFontCount;
 
 #ifndef NDEBUG
     unsigned m_pageNumber;
