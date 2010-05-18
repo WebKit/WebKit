@@ -32,7 +32,7 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '46899',
+  'chromium_rev': '47248',
 
   'pthreads-win32_rev': '26716',
 }

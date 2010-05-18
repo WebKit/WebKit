@@ -1,3 +1,15 @@
+2010-05-17  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Fix repaint, WebGL, textarea tests
+        https://bugs.webkit.org/show_bug.cgi?id=39054
+
+        * DEPS: Update to Chromium r47248 to use a fix for CommandLine assertion
+          and textAreaResizeCorner.png
+        * WebKit.gyp: Add textAreaResizeCorner.png as a Mac resource
+        * features.gypi: Enable ENABLE_3D_CANVAS.
+
 2010-05-16  Mike Belshe  <mbelshe@chromium.org>
 
         Reviewed by Dimitri Glazkov.
