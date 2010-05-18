@@ -444,8 +444,8 @@ WebInspector.loaded = function()
     this._registerShortcuts();
 
     // set order of some sections explicitly
-    WebInspector.shortcutsHelp.section("Console");
-    WebInspector.shortcutsHelp.section("Elements Panel");
+    WebInspector.shortcutsHelp.section(WebInspector.UIString("Console"));
+    WebInspector.shortcutsHelp.section(WebInspector.UIString("Elements Panel"));
 
     this.drawer = new WebInspector.Drawer();
     this.console = new WebInspector.ConsoleView(this.drawer);
@@ -1514,7 +1514,7 @@ WebInspector.setRecordingProfile = function(isProfiling)
         if (!this._temporaryRecordingProfile) {
             this._temporaryRecordingProfile = {
                 typeId: WebInspector.CPUProfileType.TypeId,
-                title: WebInspector.UIString('Recording...'),
+                title: WebInspector.UIString("Recording…"),
                 uid: -1,
                 isTemporary: true
             };
@@ -1861,10 +1861,10 @@ WebInspector.UIString = function(string)
     if (window.localizedStrings && string in window.localizedStrings)
         string = window.localizedStrings[string];
     else {
-        if (!(string in this.missingLocalizedStrings)) {
+        if (!(string in WebInspector.missingLocalizedStrings)) {
             if (!WebInspector.InspectorBackendStub)
                 console.error("Localized string \"" + string + "\" not found.");
-            this.missingLocalizedStrings[string] = true;
+            WebInspector.missingLocalizedStrings[string] = true;
         }
 
         if (Preferences.showMissingLocalizedStrings)

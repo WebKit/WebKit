@@ -92,13 +92,13 @@ WebInspector.AuditRules.GzipRule.prototype = {
                 }
                 var savings = 2 * size / 3;
                 totalSavings += savings;
-                summary.addChild(String.sprintf("%s could save ~%s", WebInspector.AuditRuleResult.linkifyDisplayName(resource.url), Number.bytesToString(savings)));
+                summary.addChild(String.sprintf("%s could save ~%s", WebInspector.AuditRuleResult.linkifyDisplayName(resource.url), Number.bytesToString(savings, WebInspector.UIString)));
                 result.violationCount++;
             }
         }
         if (!totalSavings)
             return callback(null);
-        summary.value = String.sprintf("Compressing the following resources with gzip could reduce their transfer size by about two thirds (~%s):", Number.bytesToString(totalSavings));
+        summary.value = String.sprintf("Compressing the following resources with gzip could reduce their transfer size by about two thirds (~%s):", Number.bytesToString(totalSavings, WebInspector.UIString));
         callback(result);
     },
 
@@ -955,7 +955,7 @@ WebInspector.AuditRules.CookieSizeRule.prototype = {
         for (var i = 0, len = sortedCookieSizes.length; i < len; ++i) {
             var maxCookieSize = sortedCookieSizes[i].maxCookieSize;
             if (maxCookieSize > this._maxBytesThreshold)
-                hugeCookieDomains.push(WebInspector.AuditRuleResult.resourceDomain(sortedCookieSizes[i].domain) + ": " + Number.bytesToString(maxCookieSize));
+                hugeCookieDomains.push(WebInspector.AuditRuleResult.resourceDomain(sortedCookieSizes[i].domain) + ": " + Number.bytesToString(maxCookieSize, WebInspector.UIString));
         }
 
         var bigAvgCookieDomains = [];
@@ -964,9 +964,9 @@ WebInspector.AuditRules.CookieSizeRule.prototype = {
             var domain = sortedCookieSizes[i].domain;
             var avgCookieSize = sortedCookieSizes[i].avgCookieSize;
             if (avgCookieSize > this._avgBytesThreshold && avgCookieSize < this._maxBytesThreshold)
-                bigAvgCookieDomains.push(WebInspector.AuditRuleResult.resourceDomain(domain) + ": " + Number.bytesToString(avgCookieSize));
+                bigAvgCookieDomains.push(WebInspector.AuditRuleResult.resourceDomain(domain) + ": " + Number.bytesToString(avgCookieSize, WebInspector.UIString));
         }
-        result.addChild(String.sprintf("The average cookie size for all requests on this page is %s", Number.bytesToString(avgAllCookiesSize)));
+        result.addChild(String.sprintf("The average cookie size for all requests on this page is %s", Number.bytesToString(avgAllCookiesSize, WebInspector.UIString)));
 
         var message;
         if (hugeCookieDomains.length) {
@@ -1017,7 +1017,7 @@ WebInspector.AuditRules.StaticCookielessRule.prototype = {
         if (badUrls.length < this._minResources)
             return;
 
-        var entry = result.addChild(String.sprintf("%s of cookies were sent with the following static resources. Serve these static resources from a domain that does not set cookies:", Number.bytesToString(cookieBytes)), true);
+        var entry = result.addChild(String.sprintf("%s of cookies were sent with the following static resources. Serve these static resources from a domain that does not set cookies:", Number.bytesToString(cookieBytes, WebInspector.UIString)), true);
         entry.addURLs(badUrls);
         result.violationCount = badUrls.length;
     },

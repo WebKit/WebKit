@@ -1,3 +1,56 @@
+2010-05-18  Timothy Hatcher  <timothy@apple.com>
+
+        Fix a handful of various localization issues in the Web Inspector.
+
+        * Localize strings that where not localized.
+        * Make WebInspector.UIString work without bind.
+        * Always pass WebInspector.UIString to Number.secondsToString and Number.bytesToString.
+        * Never pass a variable to WebInspector.UIString, since that prevents auto-generation.
+        * Use an ellipsis instead of three periods.
+
+        https://webkit.org/b/39303
+        rdar://problem/7997101
+
+        Reviewed by Adam Roben.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.GzipRule.prototype.doRun):
+        (WebInspector.AuditRules.CookieSizeRule.prototype.processCookies):
+        (WebInspector.AuditRules.StaticCookielessRule.prototype.processCookies):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView):
+        * inspector/front-end/ImageView.js:
+        (WebInspector.ImageView.prototype.contentTabSelected):
+        * inspector/front-end/ProfileDataGridTree.js:
+        (WebInspector.ProfileDataGridNode.prototype.get data.formatMilliseconds):
+        (WebInspector.ProfileDataGridNode.prototype.get data):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourceTimeCalculator.prototype.formatValue):
+        (WebInspector.ResourceTransferTimeCalculator.prototype.formatValue):
+        (WebInspector.ResourceTransferDurationCalculator.prototype.formatValue):
+        (WebInspector.ResourceTransferSizeCalculator.prototype.formatValue):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._registerShortcuts):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._contextMenu):
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewCalculator):
+        (WebInspector.TimelineOverviewCalculator.prototype.formatValue):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelineCalculator):
+        (WebInspector.TimelineCalculator.prototype.formatValue):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generateAggregatedInfo):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generatePopupContent):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._getRecordDetails):
+        (WebInspector.TimelinePanel.PopupContentHelper.prototype._appendTextRow):
+        (WebInspector.TimelinePanel.PopupContentHelper.prototype._appendElementRow):
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+        (WebInspector.setRecordingProfile):
+        (WebInspector.UIString):
+
 2010-05-18  Sam Weinig  <sam@webkit.org>
 
         Another attempt to fix the build.

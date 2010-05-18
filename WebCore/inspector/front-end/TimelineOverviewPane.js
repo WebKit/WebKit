@@ -336,7 +336,6 @@ WebInspector.TimelineOverviewPane.prototype.__proto__ = WebInspector.Object.prot
 
 WebInspector.TimelineOverviewCalculator = function()
 {
-    this._uiString = WebInspector.UIString.bind(WebInspector);
 }
 
 WebInspector.TimelineOverviewCalculator.prototype = {
@@ -373,7 +372,7 @@ WebInspector.TimelineOverviewCalculator.prototype = {
 
     formatValue: function(value)
     {
-        return Number.secondsToString(value, this._uiString);
+        return Number.secondsToString(value, WebInspector.UIString);
     }
 }
 

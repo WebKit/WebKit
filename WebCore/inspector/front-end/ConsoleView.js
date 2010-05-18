@@ -82,11 +82,11 @@ WebInspector.ConsoleView = function(drawer)
         return categoryElement;
     }
     
-    this.allElement = createFilterElement.call(this, "All");
+    this.allElement = createFilterElement.call(this, WebInspector.UIString("All"));
     createDividerElement.call(this);
-    this.errorElement = createFilterElement.call(this, "Errors");
-    this.warningElement = createFilterElement.call(this, "Warnings");
-    this.logElement = createFilterElement.call(this, "Logs");
+    this.errorElement = createFilterElement.call(this, WebInspector.UIString("Errors"));
+    this.warningElement = createFilterElement.call(this, WebInspector.UIString("Warnings"));
+    this.logElement = createFilterElement.call(this, WebInspector.UIString("Logs"));
 
     this.filter(this.allElement, false);
     this._registerShortcuts();

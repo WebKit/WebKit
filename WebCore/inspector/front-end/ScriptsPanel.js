@@ -978,7 +978,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _registerShortcuts: function()
     {
-        var section = WebInspector.shortcutsHelp.section("Scripts Panel");
+        var section = WebInspector.shortcutsHelp.section(WebInspector.UIString("Scripts Panel"));
         var handler, shortcut1, shortcut2;
         var platformSpecificModifier = WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta;
 
@@ -990,7 +990,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._shortcuts[shortcut1.key] = handler;
         shortcut2 = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Slash, platformSpecificModifier);
         this._shortcuts[shortcut2.key] = handler;
-        section.addAlternateKeys([ shortcut1.name, shortcut2.name ], "Continue");
+        section.addAlternateKeys([ shortcut1.name, shortcut2.name ], WebInspector.UIString("Continue"));
 
         // Step over.
         handler = this.stepOverButton.click.bind(this.stepOverButton);
@@ -998,7 +998,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._shortcuts[shortcut1.key] = handler;
         shortcut2 = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.SingleQuote, platformSpecificModifier);
         this._shortcuts[shortcut2.key] = handler;
-        section.addAlternateKeys([ shortcut1.name, shortcut2.name ], "Step over");
+        section.addAlternateKeys([ shortcut1.name, shortcut2.name ], WebInspector.UIString("Step over"));
 
         // Step into.
         handler = this.stepIntoButton.click.bind(this.stepIntoButton);
@@ -1006,7 +1006,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._shortcuts[shortcut1.key] = handler;
         shortcut2 = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Semicolon, platformSpecificModifier);
         this._shortcuts[shortcut2.key] = handler;
-        section.addAlternateKeys([ shortcut1.name, shortcut2.name ], "Step into");
+        section.addAlternateKeys([ shortcut1.name, shortcut2.name ], WebInspector.UIString("Step into"));
 
         // Step out.
         handler = this.stepOutButton.click.bind(this.stepOutButton);
@@ -1014,7 +1014,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._shortcuts[shortcut1.key] = handler;
         shortcut2 = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Semicolon, WebInspector.KeyboardShortcut.Modifiers.Shift, platformSpecificModifier);
         this._shortcuts[shortcut2.key] = handler;
-        section.addAlternateKeys([ shortcut1.name, shortcut2.name ], "Step out");
+        section.addAlternateKeys([ shortcut1.name, shortcut2.name ], WebInspector.UIString("Step out"));
 
         this.sidebarPanes.callstack.registerShortcuts(section);
     }

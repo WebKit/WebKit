@@ -87,7 +87,7 @@ WebInspector.TimelinePanel = function()
 
     this._calculator = new WebInspector.TimelineCalculator();
     this._calculator._showShortEvents = false;
-    var shortRecordThresholdTitle = Number.secondsToString(WebInspector.TimelinePanel.shortRecordThreshold, WebInspector.UIString.bind(WebInspector));
+    var shortRecordThresholdTitle = Number.secondsToString(WebInspector.TimelinePanel.shortRecordThreshold, WebInspector.UIString);
     this._showShortRecordsTitleText = WebInspector.UIString("Show the records that are shorter than %s", shortRecordThresholdTitle);
     this._hideShortRecordsTitleText = WebInspector.UIString("Hide the records that are shorter than %s", shortRecordThresholdTitle);
     this._createStatusbarButtons();
@@ -615,7 +615,6 @@ WebInspector.TimelineCalculator = function()
     this.reset();
     this.windowLeft = 0.0;
     this.windowRight = 1.0;
-    this._uiString = WebInspector.UIString.bind(WebInspector);
 }
 
 WebInspector.TimelineCalculator.prototype = {
@@ -671,7 +670,7 @@ WebInspector.TimelineCalculator.prototype = {
 
     formatValue: function(value)
     {
-        return Number.secondsToString(value + this.minimumBoundary - this._absoluteMinimumBoundary, this._uiString);
+        return Number.secondsToString(value + this.minimumBoundary - this._absoluteMinimumBoundary, WebInspector.UIString);
     }
 }
 
@@ -870,7 +869,7 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
             label.className = "timeline-aggregated-category timeline-" + index;
             cell.appendChild(label);
             var text = document.createElement("span");
-            text.textContent = Number.secondsToString(this._aggregatedStats[index] + 0.0001);
+            text.textContent = Number.secondsToString(this._aggregatedStats[index] + 0.0001, WebInspector.UIString);
             cell.appendChild(text);
         }
         return cell;
@@ -881,71 +880,71 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
         var contentHelper = new WebInspector.TimelinePanel.PopupContentHelper(this.title);
 
         if (this._children && this._children.length) {
-            contentHelper._appendTextRow("Self Time", Number.secondsToString(this._selfTime + 0.0001));
-            contentHelper._appendElementRow("Aggregated Time", this._generateAggregatedInfo());
+            contentHelper._appendTextRow(WebInspector.UIString("Self Time"), Number.secondsToString(this._selfTime + 0.0001, WebInspector.UIString));
+            contentHelper._appendElementRow(WebInspector.UIString("Aggregated Time"), this._generateAggregatedInfo());
         }
-        var text = Number.secondsToString(this._lastChildEndTime - this.startTime) + " (@" +
-            calculator.formatValue(this.startTime - calculator.minimumBoundary) + ")";
-        contentHelper._appendTextRow("Duration", text);
+        var text = WebInspector.UIString("%s (at %s)", Number.secondsToString(this._lastChildEndTime - this.startTime, WebInspector.UIString),
+            calculator.formatValue(this.startTime - calculator.minimumBoundary));
+        contentHelper._appendTextRow(WebInspector.UIString("Duration"), text);
 
         const recordTypes = WebInspector.TimelineAgent.RecordType;
 
         switch (this.type) {
             case recordTypes.GCEvent:
-                contentHelper._appendTextRow("Collected", Number.bytesToString(this.data.usedHeapSizeDelta));
+                contentHelper._appendTextRow(WebInspector.UIString("Collected"), Number.bytesToString(this.data.usedHeapSizeDelta, WebInspector.UIString));
                 break;
             case recordTypes.TimerInstall:
             case recordTypes.TimerFire:
             case recordTypes.TimerRemove:
-                contentHelper._appendTextRow("Timer Id", this.data.timerId);
+                contentHelper._appendTextRow(WebInspector.UIString("Timer ID"), this.data.timerId);
                 if (typeof this.timeout === "number") {
-                    contentHelper._appendTextRow("Timeout", this.timeout);
-                    contentHelper._appendTextRow("Repeats", !this.singleShot);
+                    contentHelper._appendTextRow(WebInspector.UIString("Timeout"), this.timeout);
+                    contentHelper._appendTextRow(WebInspector.UIString("Repeats"), !this.singleShot);
                 }
                 if (typeof this.callSiteScriptLine === "number")
-                    contentHelper._appendLinkRow("Call Site", this.callSiteScriptName, this.callSiteScriptLine);
+                    contentHelper._appendLinkRow(WebInspector.UIString("Call Site"), this.callSiteScriptName, this.callSiteScriptLine);
                 break;
             case recordTypes.FunctionCall:
-                contentHelper._appendLinkRow("Location", this.data.scriptName, this.data.scriptLine);
+                contentHelper._appendLinkRow(WebInspector.UIString("Location"), this.data.scriptName, this.data.scriptLine);
                 break;
             case recordTypes.ScheduleResourceRequest:
             case recordTypes.ResourceSendRequest:
             case recordTypes.ResourceReceiveResponse:
             case recordTypes.ResourceReceiveData:
             case recordTypes.ResourceFinish:
-                contentHelper._appendLinkRow("Resource", this.data.url);
+                contentHelper._appendLinkRow(WebInspector.UIString("Resource"), this.data.url);
                 if (this.data.requestMethod)
-                    contentHelper._appendTextRow("Request Method", this.data.requestMethod);
+                    contentHelper._appendTextRow(WebInspector.UIString("Request Method"), this.data.requestMethod);
                 if (typeof this.data.statusCode === "number")
-                    contentHelper._appendTextRow("Status Code", this.data.statusCode);
+                    contentHelper._appendTextRow(WebInspector.UIString("Status Code"), this.data.statusCode);
                 if (this.data.mimeType)
-                    contentHelper._appendTextRow("Mime Type", this.data.mimeType);
+                    contentHelper._appendTextRow(WebInspector.UIString("MIME Type"), this.data.mimeType);
                 if (typeof this.data.expectedContentLength === "number" && this.data.expectedContentLength !== -1)
-                    contentHelper._appendTextRow("Expected Content Length", this.data.expectedContentLength);
+                    contentHelper._appendTextRow(WebInspector.UIString("Expected Content Length"), this.data.expectedContentLength);
                 break;
             case recordTypes.EvaluateScript:
                 if (this.data && this.data.url)
-                    contentHelper._appendLinkRow("Script", this.data.url, this.data.lineNumber);
+                    contentHelper._appendLinkRow(WebInspector.UIString("Script"), this.data.url, this.data.lineNumber);
                 break;
             case recordTypes.Paint:
-                contentHelper._appendTextRow("Location", this.data.x + "\u2009\u00d7\u2009" + this.data.y);
-                contentHelper._appendTextRow("Dimensions", this.data.width + "\u2009\u00d7\u2009" + this.data.height);
+                contentHelper._appendTextRow(WebInspector.UIString("Location"), WebInspector.UIString("%d × %d", this.data.x, this.data.y));
+                contentHelper._appendTextRow(WebInspector.UIString("Dimensions"), WebInspector.UIString("%d × %d", this.data.width, this.data.height));
             case recordTypes.RecalculateStyles: // We don't want to see default details.
                 break;
             default:
                 if (this.details)
-                    contentHelper._appendTextRow("Details", this.details);
+                    contentHelper._appendTextRow(WebInspector.UIString("Details"), this.details);
                 break;
         }
 
         if (this.data.scriptName && this.type !== recordTypes.FunctionCall)
-            contentHelper._appendLinkRow("Function Call", this.data.scriptName, this.data.scriptLine);
+            contentHelper._appendLinkRow(WebInspector.UIString("Function Call"), this.data.scriptName, this.data.scriptLine);
 
         if (this.callerScriptName && this.type !== recordTypes.GCEvent)
-            contentHelper._appendLinkRow("Caller", this.callerScriptName, this.callerScriptLine);
+            contentHelper._appendLinkRow(WebInspector.UIString("Caller"), this.callerScriptName, this.callerScriptLine);
 
         if (this.usedHeapSize)
-            contentHelper._appendTextRow("Used Heap Size", WebInspector.UIString("%s of %s", Number.bytesToString(this.usedHeapSize), Number.bytesToString(this.totalHeapSize)));
+            contentHelper._appendTextRow(WebInspector.UIString("Used Heap Size"), WebInspector.UIString("%s of %s", Number.bytesToString(this.usedHeapSize, WebInspector.UIString), Number.bytesToString(this.totalHeapSize, WebInspector.UIString)));
 
         return contentHelper._contentTable;
     },
@@ -954,7 +953,7 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
     {
         switch (record.type) {
             case WebInspector.TimelineAgent.RecordType.GCEvent:
-                return WebInspector.UIString("%s collected", Number.bytesToString(record.data.usedHeapSizeDelta));
+                return WebInspector.UIString("%s collected", Number.bytesToString(record.data.usedHeapSizeDelta, WebInspector.UIString));
             case WebInspector.TimelineAgent.RecordType.TimerFire:
                 return record.data.scriptName ? WebInspector.linkifyResourceAsNode(record.data.scriptName, "scripts", record.data.scriptLine, "", "") : record.data.timerId;
             case WebInspector.TimelineAgent.RecordType.FunctionCall:
@@ -1032,7 +1031,7 @@ WebInspector.TimelinePanel.PopupContentHelper.prototype = {
     _appendTextRow: function(title, content)
     {
         var row = document.createElement("tr");
-        row.appendChild(this._createCell(WebInspector.UIString(title), "timeline-details-row-title"));
+        row.appendChild(this._createCell(title, "timeline-details-row-title"));
         row.appendChild(this._createCell(content, "timeline-details-row-data"));
         this._contentTable.appendChild(row);
     },
@@ -1040,7 +1039,7 @@ WebInspector.TimelinePanel.PopupContentHelper.prototype = {
     _appendElementRow: function(title, content)
     {
         var row = document.createElement("tr");
-        row.appendChild(this._createCell(WebInspector.UIString(title), "timeline-details-row-title"));
+        row.appendChild(this._createCell(title, "timeline-details-row-title"));
         var cell = document.createElement("td");
         cell.appendChild(content);
         row.appendChild(cell);

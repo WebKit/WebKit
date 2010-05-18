@@ -898,7 +898,7 @@ WebInspector.ResourceTimeCalculator.prototype = {
 
     formatValue: function(value)
     {
-        return Number.secondsToString(value, WebInspector.UIString.bind(WebInspector));
+        return Number.secondsToString(value, WebInspector.UIString);
     },
 
     _lowerBound: function(resource)
@@ -922,7 +922,7 @@ WebInspector.ResourceTransferTimeCalculator = function()
 WebInspector.ResourceTransferTimeCalculator.prototype = {
     formatValue: function(value)
     {
-        return Number.secondsToString(value, WebInspector.UIString.bind(WebInspector));
+        return Number.secondsToString(value, WebInspector.UIString);
     },
 
     _lowerBound: function(resource)
@@ -946,7 +946,7 @@ WebInspector.ResourceTransferDurationCalculator = function()
 WebInspector.ResourceTransferDurationCalculator.prototype = {
     formatValue: function(value)
     {
-        return Number.secondsToString(value, WebInspector.UIString.bind(WebInspector));
+        return Number.secondsToString(value, WebInspector.UIString);
     },
 
     _upperBound: function(resource)
@@ -1002,7 +1002,7 @@ WebInspector.ResourceTransferSizeCalculator.prototype = {
 
     formatValue: function(value)
     {
-        return Number.bytesToString(value, WebInspector.UIString.bind(WebInspector));
+        return Number.bytesToString(value, WebInspector.UIString);
     }
 }
 
