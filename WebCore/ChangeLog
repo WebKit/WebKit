@@ -1,3 +1,23 @@
+2010-05-18  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Implementing clipToImageBuffer for Qt port.
+        https://bugs.webkit.org/show_bug.cgi?id=24289
+
+        The implementation combines pixmap layers and destinationIn
+        composition mode.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::TransparencyLayer::TransparencyLayer):
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContext::savePlatformState):
+        (WebCore::GraphicsContext::restorePlatformState):
+        (WebCore::GraphicsContext::inTransparencyLayer):
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        (WebCore::GraphicsContext::clipToImageBuffer):
+
 2010-05-18  Eric Seidel  <eric@webkit.org>
 
         Unreviewed build fix.
