@@ -1,3 +1,49 @@
+2010-05-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Repro crash with many Google image search results
+        <rdar://problem/7685669> and https://bugs.webkit.org/show_bug.cgi?id=39323
+
+        When an iframe has a plugin resource as its src, that case bypassed the plugin sandboxing checks and continued to load
+        the data for the plugin resource. It handed that data off to a nonexistent Widget, causing a null deref and the crash.
+
+        By replacing PluginDocuments in sandboxes iframes with a new "SinkDocument" that just acts as a data sink, we prevent the
+        crash and also prevent actually loading the plugin binaries.
+
+        I filed https://bugs.webkit.org/show_bug.cgi?id=39330 to follow up and let us cancel the load as soon as we know we should.
+
+        Test: fast/loader/sandboxed-plugin-crash.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin): If the created document is a PluginDocument and the plugin sandbox flag is set,
+          replace it with a SinkDocument.
+
+        * loader/PluginDocument.h:
+        (WebCore::PluginDocument::isPluginDocument): Make public (it was already public at the Document.h level).
+
+        Add a simple document/tokenizer pair that simply presents a blank HTML document and acts as a data sink for whatever
+        data is handed to it:
+        * loader/SinkDocument.cpp: Added.
+        (WebCore::SinkTokenizer::SinkTokenizer):
+        (WebCore::SinkTokenizer::write):
+        (WebCore::SinkTokenizer::isWaitingForScripts):
+        (WebCore::SinkTokenizer::wantsRawData):
+        (WebCore::SinkTokenizer::writeRawData):
+        (WebCore::SinkTokenizer::stopParsing):
+        (WebCore::SinkTokenizer::finish):
+        (WebCore::SinkDocument::SinkDocument):
+        (WebCore::SinkDocument::createTokenizer):
+        * loader/SinkDocument.h: Added.
+        (WebCore::SinkDocument::create):
+
 2010-05-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

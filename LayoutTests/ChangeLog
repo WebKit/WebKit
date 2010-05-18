@@ -1,3 +1,14 @@
+2010-05-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Repro crash with many Google image search results
+        <rdar://problem/7685669> and https://bugs.webkit.org/show_bug.cgi?id=39323
+
+        * fast/loader/resources/test.swf: Copied from LayoutTests/fast/replaced/resources/test.swf.
+        * fast/loader/sandboxed-plugin-crash-expected.txt: Added.
+        * fast/loader/sandboxed-plugin-crash.html: Added.
+
 2010-05-18  Martin Robinson  <mrobinson@igalia.com>
 
         No review necessary.

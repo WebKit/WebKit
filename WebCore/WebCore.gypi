@@ -1809,6 +1809,8 @@
             'loader/ResourceLoader.h',
             'loader/ResourceLoadNotifier.cpp',
             'loader/ResourceLoadNotifier.h',
+            'loader/SinkDocument.cpp',
+            'loader/SinkDocument.h',
             'loader/SubresourceLoader.cpp',
             'loader/SubresourceLoader.h',
             'loader/SubresourceLoaderClient.h',

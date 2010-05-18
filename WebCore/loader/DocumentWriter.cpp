@@ -40,6 +40,7 @@
 #include "SecurityOrigin.h"
 #include "SegmentedString.h"
 #include "Settings.h"
+#include "SinkDocument.h"
 #include "TextResourceDecoder.h"
 #include "Tokenizer.h"
 
@@ -96,6 +97,11 @@ void DocumentWriter::begin(const KURL& url, bool dispatch, SecurityOrigin* origi
     // Create a new document before clearing the frame, because it may need to
     // inherit an aliased security context.
     RefPtr<Document> document = createDocument();
+    
+    // If the new document is for a Plugin but we're supposed to be sandboxed from Plugins,
+    // then replace the document with one whose tokenizer will ignore the incoming data (bug 39323)
+    if (document->isPluginDocument() && m_frame->loader()->isSandboxed(SandboxPlugins))
+        document = SinkDocument::create(m_frame);
 
     bool resetScripting = !(m_frame->loader()->isDisplayingInitialEmptyDocument() && m_frame->document()->securityOrigin()->isSecureTransitionTo(url));
     m_frame->loader()->clear(resetScripting, resetScripting);
