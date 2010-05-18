@@ -66,11 +66,10 @@ String DragData::asURL(String* title) const
     String url;
     if (m_platformDragData->hasValidURL())
         url = m_platformDragData->getURL().string();
-    else if (m_platformDragData->filenames.size() == 1) {
+    else if (!m_platformDragData->filenames.isEmpty()) {
         String fileName = m_platformDragData->filenames[0];
         fileName = ChromiumBridge::getAbsolutePath(fileName);
-        if (fileExists(fileName) && !ChromiumBridge::isDirectory(fileName))
-            url = ChromiumBridge::filePathToURL(fileName).string();
+        url = ChromiumBridge::filePathToURL(fileName).string();
     }
  
     // |title| can be NULL

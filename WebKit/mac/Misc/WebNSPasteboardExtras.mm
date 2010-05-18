@@ -141,12 +141,17 @@ static NSArray *_writableTypesForImageWithArchive (void)
 
     if ([types containsObject:NSFilenamesPboardType]) {
         NSArray *files = [self propertyListForType:NSFilenamesPboardType];
+        // FIXME: Maybe it makes more sense to allow multiple files and only use the first one?
         if ([files count] == 1) {
             NSString *file = [files objectAtIndex:0];
+            // FIXME: We are filtering out directories because that's what the original code used to
+            // do. Without this check, if the URL points to a local directory, Safari will open the
+            // parent directory of the directory in Finder. This check should go away as soon as
+            // possible.
             BOOL isDirectory;
-            if([[NSFileManager defaultManager] fileExistsAtPath:file isDirectory:&isDirectory] && !isDirectory){
-                return [[NSURL fileURLWithPath:file] _webkit_canonicalize];
-            }
+            if ([[NSFileManager defaultManager] fileExistsAtPath:file isDirectory:&isDirectory] && isDirectory)
+                return nil;
+            return [[NSURL fileURLWithPath:file] _webkit_canonicalize];
         }
     }
 

@@ -1,3 +1,20 @@
+2010-05-18  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Darin Adler, Jian Li.
+
+        DragData::asURL() shouldn't do file validity checks
+        https://bugs.webkit.org/show_bug.cgi?id=38711
+
+        There's no point to trying to make sure the file is valid in
+        DragData::asURL(). It's better to ask for forgiveness than to ask for
+        permission, since asking for permission is prone to race conditions
+        and results in unnecessary I/O.  Consumers of this function either:
+        - need to verify the file exists themselves (e.g. the loader)
+        - don't care about file validity (rich text drag-and-drop)
+
+        * platform/chromium/DragDataChromium.cpp:
+        (WebCore::DragData::asURL):
+
 2010-05-18  Timothy Hatcher  <timothy@apple.com>
 
         Fix a handful of various localization issues in the Web Inspector.

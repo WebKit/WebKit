@@ -3,9 +3,6 @@ Tests for multi-file drag onto file input elements for https://bugs.webkit.org/s
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Dragging to a disabled file input control:
-PASS fileInput.value is ""
-PASS fileInput.files.length is 0
 Dragging a single (non-existant) file to a file input control:
 PASS fileInput.value is "DRTFakeFile"
 PASS fileInput.files.length is 1
@@ -56,6 +53,9 @@ FIXME:  elements should refuse drags including directories: https://bugs.webkit.
 Dragging a directory and a file onto a mutli-file input control:
 FAIL fileInput.value should be . Was directory-for-dragging.
 FAIL fileInput.files.length should be 0. Was 2.
+Dragging to a disabled file input control:
+PASS fileInput.value is ""
+PASS fileInput.files.length is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

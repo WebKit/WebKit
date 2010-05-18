@@ -43,6 +43,13 @@ dragTarget.addEventListener("drop", function() {
     event.preventDefault();
 }, false);
 
+// Some tests don't end up dropping the draggee over the drag target. Catch any
+// leftover drop events bubbling up through the tree so they don't cause page
+// navigation.
+document.body.addEventListener("dragover", function() {
+    event.preventDefault();
+});
+
 function moveMouseToCenterOfElement(element) {
     var centerX = element.offsetLeft + element.offsetWidth / 2;
     var centerY = element.offsetTop + element.offsetHeight / 2;

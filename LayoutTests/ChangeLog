@@ -1,3 +1,24 @@
+2010-05-18  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Darin Adler, Jian Li.
+
+        DragData::asURL() shouldn't do file validity checks
+        https://bugs.webkit.org/show_bug.cgi?id=38711
+
+        Several layout tests depended on the fact that dropping a file would
+        never trigger navigation. This never happened to occur in the past,
+        since it just so happened that the filenames used in the tests never
+        resolved to files that exist. Since DragData::asURL() no longer tries
+        to verify file existence, the layout tests were updated to either
+        suppress navigation or log any navigation that should occur as part of
+        the test.
+
+        * editing/pasteboard/file-input-files-access-expected.txt:
+        * editing/pasteboard/script-tests/file-input-files-access.js:
+        (runTest.window.onbeforeunload):
+        (runTest):
+        * http/tests/security/clipboard/script-tests/clipboard-file-access.js:
+
 2010-05-18  Jian Li  <jianli@chromium.org>
 
         Unreviewed. Build fix. Disable file-reader.html for more investigation.
