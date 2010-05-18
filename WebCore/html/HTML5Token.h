@@ -27,8 +27,6 @@
 #define HTML5Token_h
 
 #include "NamedMappedAttrMap.h"
-#include "Node.h"
-#include "String.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {

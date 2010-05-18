@@ -59,7 +59,7 @@ public:
     PassRefPtr<Node> getNamedItem(const QualifiedName& name) const;
     PassRefPtr<Node> removeNamedItem(const QualifiedName& name, ExceptionCode&);
     PassRefPtr<Node> setNamedItem(Node*, ExceptionCode&);
-    PassRefPtr<Node> setNamedItemNS(Node* node, ExceptionCode& ec) { return setNamedItem(node, ec); }
+    PassRefPtr<Node> setNamedItemNS(Node*, ExceptionCode&);
 
     PassRefPtr<Node> item(unsigned index) const;
     size_t length() const { return m_attributes.size(); }
