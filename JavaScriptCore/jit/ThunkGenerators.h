@@ -27,19 +27,18 @@
 #define ThunkGenerators_h
 
 #if ENABLE(JIT)
-#include <wtf/PassRefPtr.h>
-
 namespace JSC {
     class ExecutablePool;
     class JSGlobalData;
     class NativeExecutable;
+    class MacroAssemblerCodePtr;
 
-    typedef PassRefPtr<NativeExecutable> (*ThunkGenerator)(JSGlobalData*, ExecutablePool*);
-    PassRefPtr<NativeExecutable> charCodeAtThunkGenerator(JSGlobalData*, ExecutablePool*);
-    PassRefPtr<NativeExecutable> charAtThunkGenerator(JSGlobalData*, ExecutablePool*);
-    PassRefPtr<NativeExecutable> fromCharCodeThunkGenerator(JSGlobalData*, ExecutablePool*);
-    PassRefPtr<NativeExecutable> sqrtThunkGenerator(JSGlobalData*, ExecutablePool*);
-    PassRefPtr<NativeExecutable> powThunkGenerator(JSGlobalData*, ExecutablePool*);
+    typedef MacroAssemblerCodePtr (*ThunkGenerator)(JSGlobalData*, ExecutablePool*);
+    MacroAssemblerCodePtr charCodeAtThunkGenerator(JSGlobalData*, ExecutablePool*);
+    MacroAssemblerCodePtr charAtThunkGenerator(JSGlobalData*, ExecutablePool*);
+    MacroAssemblerCodePtr fromCharCodeThunkGenerator(JSGlobalData*, ExecutablePool*);
+    MacroAssemblerCodePtr sqrtThunkGenerator(JSGlobalData*, ExecutablePool*);
+    MacroAssemblerCodePtr powThunkGenerator(JSGlobalData*, ExecutablePool*);
 }
 #endif
 

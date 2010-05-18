@@ -3404,13 +3404,12 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, to_object)
     return JSValue::encode(stackFrame.args[0].jsValue().toObject(callFrame));
 }
 
-NativeExecutable* JITThunks::specializedThunk(JSGlobalData* globalData, ThunkGenerator generator)
+MacroAssemblerCodePtr JITThunks::specializedThunk(JSGlobalData* globalData, ThunkGenerator generator)
 {
-    std::pair<ThunkMap::iterator, bool> entry = m_thunkMap.add(generator, 0);
-    if (!entry.second)
-        return entry.first->second.get();
-    entry.first->second = generator(globalData, m_executablePool.get());
-    return entry.first->second.get();
+    std::pair<ThunkMap::iterator, bool> entry = m_thunkMap.add(generator, MacroAssemblerCodePtr());
+    if (entry.second)
+        entry.first->second = generator(globalData, m_executablePool.get());
+    return entry.first->second;
 }
 
 } // namespace JSC

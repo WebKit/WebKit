@@ -905,7 +905,7 @@ namespace JSC {
         int m_uninterruptedConstantSequenceBegin;
 #endif
 #endif
-        static PassRefPtr<NativeExecutable> stringGetByValStubGenerator(JSGlobalData* globalData, ExecutablePool* pool);
+        static CodePtr stringGetByValStubGenerator(JSGlobalData* globalData, ExecutablePool* pool);
     } JIT_CLASS_ALIGNMENT;
 
     inline void JIT::emit_op_loop(Instruction* currentInstruction)

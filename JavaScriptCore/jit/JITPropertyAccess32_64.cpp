@@ -269,7 +269,7 @@ void JIT::emitSlow_op_method_check(Instruction*, Vector<SlowCaseEntry>::iterator
 
 #endif
 
-PassRefPtr<NativeExecutable> JIT::stringGetByValStubGenerator(JSGlobalData* globalData, ExecutablePool* pool)
+JIT::CodePtr JIT::stringGetByValStubGenerator(JSGlobalData* globalData, ExecutablePool* pool)
 {
     JSInterfaceJIT jit;
     JumpList failures;
@@ -298,7 +298,7 @@ PassRefPtr<NativeExecutable> JIT::stringGetByValStubGenerator(JSGlobalData* glob
     jit.ret();
     
     LinkBuffer patchBuffer(&jit, pool);
-    return adoptRef(new NativeExecutable(patchBuffer.finalizeCode()));
+    return patchBuffer.finalizeCode().m_code;
 }
 
 void JIT::emit_op_get_by_val(Instruction* currentInstruction)
@@ -336,7 +336,7 @@ void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCas
     Jump nonCell = jump();
     linkSlowCase(iter); // base array check
     Jump notString = branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsStringVPtr));
-    emitNakedCall(m_globalData->getThunk(stringGetByValStubGenerator)->generatedJITCodeForCall().addressForCall());
+    emitNakedCall(m_globalData->getThunk(stringGetByValStubGenerator));
     Jump failed = branchTestPtr(Zero, regT0);
     emitStore(dst, regT1, regT0);
     emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_get_by_val));

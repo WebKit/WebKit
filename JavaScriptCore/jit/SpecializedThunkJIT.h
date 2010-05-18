@@ -127,11 +127,11 @@ namespace JSC {
             ret();
         }
         
-        PassRefPtr<NativeExecutable> finalize()
+        MacroAssemblerCodePtr finalize()
         {
             LinkBuffer patchBuffer(this, m_pool.get());
-            patchBuffer.link(m_failures, CodeLocationLabel(m_globalData->jitStubs.ctiNativeCallThunk()->generatedJITCodeForCall().addressForCall()));
-            return adoptRef(new NativeExecutable(patchBuffer.finalizeCode()));
+            patchBuffer.link(m_failures, CodeLocationLabel(m_globalData->jitStubs.ctiNativeCall()));
+            return patchBuffer.finalizeCode().m_code;
         }
         
     private:

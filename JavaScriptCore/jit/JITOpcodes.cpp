@@ -259,7 +259,8 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
 
     move(callFrameRegister, X86Registers::edi); 
 
-    call(Address(X86Registers::esi, OBJECT_OFFSETOF(JSFunction, m_data)));
+    loadPtr(Address(X86Registers::esi, OBJECT_OFFSETOF(JSFunction, m_executable)), X86Registers::r9);
+    call(Address(X86Registers::r9, OBJECT_OFFSETOF(NativeExecutable, m_function)));
     
     addPtr(Imm32(sizeof(ArgList)), stackPointerRegister);
 #elif CPU(X86)
@@ -337,7 +338,8 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     // Plant callframe
     move(callFrameRegister, X86Registers::edx);
 
-    call(Address(X86Registers::eax, OBJECT_OFFSETOF(JSFunction, m_data)));
+    loadPtr(Address(X86Registers::eax, OBJECT_OFFSETOF(JSFunction, m_executable)), X86Registers::ebx);
+    call(Address(X86Registers::ebx, OBJECT_OFFSETOF(NativeExecutable, m_function)));
 
     // JSValue is a non-POD type
     loadPtr(Address(X86Registers::eax), X86Registers::eax);
@@ -347,7 +349,8 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
 
     // Plant callframe
     move(callFrameRegister, X86Registers::ecx);
-    call(Address(X86Registers::edx, OBJECT_OFFSETOF(JSFunction, m_data)));
+    loadPtr(Address(X86Registers::edx, OBJECT_OFFSETOF(JSFunction, m_executable)), X86Registers::ebx);
+    call(Address(X86Registers::ebx, OBJECT_OFFSETOF(NativeExecutable, m_function)));
 #endif
 
     // We've put a few temporaries on the stack in addition to the actual arguments
@@ -395,7 +398,8 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     subPtr(Imm32(sizeof(Register)), stackPointerRegister);
     storePtr(regT0, Address(stackPointerRegister));
 
-    call(Address(regT2, OBJECT_OFFSETOF(JSFunction, m_data)));
+    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSFunction, m_executable)), regT3);
+    call(Address(regT3, OBJECT_OFFSETOF(NativeExecutable, m_function)));
 
     loadPtr(Address(regT0), regT0);
 
@@ -413,7 +417,8 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     // Setup arg4: This is a plain hack
     move(stackPointerRegister, ARMRegisters::r3);
 
-    call(Address(regT1, OBJECT_OFFSETOF(JSFunction, m_data)));
+    loadPtr(Address(regT1, OBJECT_OFFSETOF(JSFunction, m_executable)), regT3);
+    call(Address(regT3, OBJECT_OFFSETOF(NativeExecutable, m_function)));
 
     addPtr(Imm32(sizeof(ArgList)), stackPointerRegister);
 #endif // OS(WINCE)
@@ -460,7 +465,8 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     addPtr(Imm32(20), stackPointerRegister, MIPSRegisters::a0);
 
     // Call
-    call(Address(MIPSRegisters::a2, OBJECT_OFFSETOF(JSFunction, m_data)));
+    loadPtr(Address(MIPSRegisters::a2, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
+    call(Address(regT2, OBJECT_OFFSETOF(NativeExecutable, m_function)));
 
     // Get returned value from 0($v0) which is the same as 20($sp)
     loadPtr(Address(returnValueRegister, 0), returnValueRegister);
@@ -535,7 +541,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     trampolines->ctiVirtualConstructLink = trampolineAt(finalCode, virtualConstructLinkBegin);
     trampolines->ctiVirtualCall = trampolineAt(finalCode, virtualCallBegin);
     trampolines->ctiVirtualConstruct = trampolineAt(finalCode, virtualConstructBegin);
-    trampolines->ctiNativeCallThunk = adoptRef(new NativeExecutable(JITCode(JITCode::HostFunction(trampolineAt(finalCode, nativeCallThunk)))));
+    trampolines->ctiNativeCall = trampolineAt(finalCode, nativeCallThunk);
 #if ENABLE(JIT_OPTIMIZE_MOD)
     trampolines->ctiSoftModulo = trampolineAt(finalCode, softModBegin);
 #endif

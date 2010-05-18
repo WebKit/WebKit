@@ -1,3 +1,64 @@
+2010-05-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 39252 - Move host/native JSFunction's NativeFunction onto NativeExecutable.
+
+        Currently host functions reuse JSFunction's ScopeChain as storage for their
+        NativeFunction (the C function pointer to the host function implementation).
+        Instead, move this onto NativeExecutable.  This will allow host functions to
+        have a scopechain (which will be implemented as a separate patch).
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallInitializeCallFrame):
+        (JSC::JIT::compileOpCall):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITOpcodes32_64.cpp:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::specializedThunk):
+        * jit/JITStubs.h:
+        (JSC::JITThunks::ctiNativeCall):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::finalize):
+        * jit/ThunkGenerators.cpp:
+        (JSC::charCodeAtThunkGenerator):
+        (JSC::charAtThunkGenerator):
+        (JSC::fromCharCodeThunkGenerator):
+        (JSC::sqrtThunkGenerator):
+        (JSC::powThunkGenerator):
+        * jit/ThunkGenerators.h:
+        * runtime/Executable.h:
+        (JSC::NativeExecutable::create):
+        (JSC::NativeExecutable::function):
+        (JSC::NativeExecutable::NativeExecutable):
+        (JSC::JSFunction::nativeFunction):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::~JSFunction):
+        (JSC::JSFunction::markChildren):
+        (JSC::JSFunction::getCallData):
+        (JSC::JSFunction::call):
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::getConstructData):
+        (JSC::JSFunction::construct):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::scope):
+        * runtime/JSGlobalData.h:
+        (JSC::JSGlobalData::getThunk):
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::StringConstructor):
+
 2010-05-17  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Laszlo Gombos.

@@ -20,6 +20,7 @@
 #include "config.h"
 #include "Lookup.h"
 
+#include "Executable.h"
 #include "JSFunction.h"
 #include "PrototypeFunction.h"
 
@@ -77,7 +78,7 @@ void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
         InternalFunction* function;
 #if ENABLE(JIT)
         if (entry->generator())
-            function = new (exec) NativeFunctionWrapper(exec, exec->lexicalGlobalObject()->prototypeFunctionStructure(), entry->functionLength(), propertyName, exec->globalData().getThunk(entry->generator()), entry->function());
+            function = new (exec) NativeFunctionWrapper(exec, exec->lexicalGlobalObject()->prototypeFunctionStructure(), entry->functionLength(), propertyName, exec->globalData().getNativeExecutable(entry->function(), entry->generator()));
         else
 #endif
             function = new (exec) NativeFunctionWrapper(exec, exec->lexicalGlobalObject()->prototypeFunctionStructure(), entry->functionLength(), propertyName, entry->function());

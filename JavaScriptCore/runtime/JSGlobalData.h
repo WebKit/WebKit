@@ -170,7 +170,7 @@ namespace JSC {
         Interpreter* interpreter;
 #if ENABLE(JIT)
         JITThunks jitStubs;
-        NativeExecutable* getThunk(ThunkGenerator generator)
+        MacroAssemblerCodePtr getThunk(ThunkGenerator generator)
         {
             return jitStubs.specializedThunk(this, generator);
         }
@@ -178,6 +178,13 @@ namespace JSC {
         TimeoutChecker timeoutChecker;
         Terminator terminator;
         Heap heap;
+
+        typedef HashMap<NativeFunction, RefPtr<NativeExecutable> > NativeExecutableMap;
+        NativeExecutableMap m_nativeExecutableMap;
+        PassRefPtr<NativeExecutable> getNativeExecutable(NativeFunction function);
+#if ENABLE(JIT)
+        PassRefPtr<NativeExecutable> getNativeExecutable(NativeFunction function, ThunkGenerator generator);
+#endif
 
         JSValue exception;
 #if ENABLE(JIT)

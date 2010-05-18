@@ -21,6 +21,8 @@
 #include "config.h"
 #include "StringConstructor.h"
 
+#include "Executable.h"
+#include "JITCode.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "PrototypeFunction.h"
@@ -55,7 +57,7 @@ StringConstructor::StringConstructor(ExecState* exec, NonNullPassRefPtr<Structur
 
     // ECMA 15.5.3.2 fromCharCode()
 #if ENABLE(JIT)
-    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 1, exec->propertyNames().fromCharCode, exec->globalData().getThunk(fromCharCodeThunkGenerator), stringFromCharCode), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 1, exec->propertyNames().fromCharCode, exec->globalData().getNativeExecutable(stringFromCharCode, fromCharCodeThunkGenerator)), DontEnum);
 #else
     putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 1, exec->propertyNames().fromCharCode, stringFromCharCode), DontEnum);
 #endif

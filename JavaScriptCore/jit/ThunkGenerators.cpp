@@ -62,7 +62,7 @@ static void charToString(SpecializedThunkJIT& jit, JSGlobalData* globalData, Mac
     jit.appendFailure(jit.branchTestPtr(MacroAssembler::Zero, dst));
 }
 
-PassRefPtr<NativeExecutable> charCodeAtThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
+MacroAssemblerCodePtr charCodeAtThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
 {
     SpecializedThunkJIT jit(1, globalData, pool);
     stringCharLoad(jit);
@@ -70,7 +70,7 @@ PassRefPtr<NativeExecutable> charCodeAtThunkGenerator(JSGlobalData* globalData, 
     return jit.finalize();
 }
 
-PassRefPtr<NativeExecutable> charAtThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
+MacroAssemblerCodePtr charAtThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
 {
     SpecializedThunkJIT jit(1, globalData, pool);
     stringCharLoad(jit);
@@ -79,7 +79,7 @@ PassRefPtr<NativeExecutable> charAtThunkGenerator(JSGlobalData* globalData, Exec
     return jit.finalize();
 }
 
-PassRefPtr<NativeExecutable> fromCharCodeThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
+MacroAssemblerCodePtr fromCharCodeThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
 {
     SpecializedThunkJIT jit(1, globalData, pool);
     // load char code
@@ -89,12 +89,12 @@ PassRefPtr<NativeExecutable> fromCharCodeThunkGenerator(JSGlobalData* globalData
     return jit.finalize();
 }
 
-PassRefPtr<NativeExecutable> sqrtThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
+MacroAssemblerCodePtr sqrtThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
 {
 #if USE(JSVALUE64) || USE(JSVALUE32_64)
     SpecializedThunkJIT jit(1, globalData, pool);
     if (!jit.supportsFloatingPointSqrt())
-        return globalData->jitStubs.ctiNativeCallThunk();
+        return globalData->jitStubs.ctiNativeCall();
 
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
     jit.sqrtDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT0);
@@ -102,19 +102,19 @@ PassRefPtr<NativeExecutable> sqrtThunkGenerator(JSGlobalData* globalData, Execut
     return jit.finalize();
 #else
     UNUSED_PARAM(pool);
-    return globalData->jitStubs.ctiNativeCallThunk();
+    return globalData->jitStubs.ctiNativeCall();
 #endif
 }
 
 static const double oneConstant = 1.0;
 static const double negativeHalfConstant = -0.5;
 
-PassRefPtr<NativeExecutable> powThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
+MacroAssemblerCodePtr powThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
 {
 #if USE(JSVALUE64) || USE(JSVALUE32_64)
     SpecializedThunkJIT jit(2, globalData, pool);
     if (!jit.supportsFloatingPoint())
-        return globalData->jitStubs.ctiNativeCallThunk();
+        return globalData->jitStubs.ctiNativeCall();
 
     jit.loadDouble(&oneConstant, SpecializedThunkJIT::fpRegT1);
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
@@ -150,7 +150,7 @@ PassRefPtr<NativeExecutable> powThunkGenerator(JSGlobalData* globalData, Executa
     return jit.finalize();
 #else
     UNUSED_PARAM(pool);
-    return globalData->jitStubs.ctiNativeCallThunk();
+    return globalData->jitStubs.ctiNativeCall();
 #endif
 }
 
