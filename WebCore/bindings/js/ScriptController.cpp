@@ -181,7 +181,7 @@ void ScriptController::getAllWorlds(Vector<DOMWrapperWorld*>& worlds)
     static_cast<WebCoreJSClientData*>(JSDOMWindow::commonJSGlobalData()->clientData)->getAllWorlds(worlds);
 }
 
-void ScriptController::clearWindowShell()
+void ScriptController::clearWindowShell(bool goingIntoPageCache)
 {
     if (m_windowShells.isEmpty())
         return;
@@ -203,8 +203,10 @@ void ScriptController::clearWindowShell()
         }
     }
 
-    // It's likely that resetting our windows created a lot of garbage.
-    gcController().garbageCollectSoon();
+    // It's likely that resetting our windows created a lot of garbage, unless
+    // it went in a back/forward cache.
+    if (!goingIntoPageCache)
+        gcController().garbageCollectSoon();
 }
 
 JSDOMWindowShell* ScriptController::initScript(DOMWrapperWorld* world)

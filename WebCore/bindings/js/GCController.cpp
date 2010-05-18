@@ -61,7 +61,7 @@ GCController::GCController()
 void GCController::garbageCollectSoon()
 {
     if (!m_GCTimer.isActive())
-        m_GCTimer.startOneShot(0.5);
+        m_GCTimer.startOneShot(0);
 }
 
 void GCController::gcTimerFired(Timer<GCController>*)

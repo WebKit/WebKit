@@ -1,3 +1,24 @@
+2010-05-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        GC more promptly when navigating to a new inner window, but not at all when it went in the page cache
+        https://bugs.webkit.org/show_bug.cgi?id=39254
+        <rdar://problem/7996370>
+
+        ~1% PLT speedup
+        ~4% iBench HTML speedup
+
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::garbageCollectSoon): Change back to a 0 delay timer instead of
+        0.5 second.
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::clearWindowShell): Add a new boolean parameter. Don't
+        garbageColectSoon if the page is going into the page cache.
+        * bindings/js/ScriptController.h: Prototype change for above.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear): Indicate when the page is going into the page cache.
+
 2010-05-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
