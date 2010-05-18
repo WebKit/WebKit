@@ -659,9 +659,11 @@ bool RenderThemeChromiumWin::paintTextFieldInternal(RenderObject* o,
 // MSDN says that update intervals for the bar is 30ms.
 // http://msdn.microsoft.com/en-us/library/bb760842(v=VS.85).aspx
 static const double progressAnimationFrameRate = 0.033;
-// There is no documentation about the animation speed of 
-// the indeterminate progress bar. So we just guess it.
-static const double progressAnimationNumFrames = 60;
+// There is no documentation about the animation speed, frame-rate, nor 
+// size of moving overlay of the indeterminate progress bar. 
+// So we just observed real-world programs and guessed following parameters.
+static const double progressIndeterminateOverlayPixelsPerSecond =  175;
+static const int progressIndeterminateOverlayWidth = 120;
 
 double RenderThemeChromiumWin::animationRepeatIntervalForProgressBar(RenderProgress*) const
 {
@@ -672,7 +674,7 @@ double RenderThemeChromiumWin::animationDurationForProgressBar(RenderProgress* r
 {
     if (renderProgress->isDeterminate())
         return 0;
-    return progressAnimationNumFrames * progressAnimationFrameRate;
+    return (renderProgress->width() + progressIndeterminateOverlayWidth) / progressIndeterminateOverlayPixelsPerSecond;
 }
 
 void RenderThemeChromiumWin::adjustProgressBarStyle(CSSStyleSelector*, RenderStyle*, Element*) const
@@ -694,8 +696,8 @@ bool RenderThemeChromiumWin::paintProgressBar(RenderObject* o, const RenderObjec
             valueRect = IntRect(r.x(), r.y(), dx, r.height());
     } else {
         valuePart = PP_MOVEOVERLAY;
-        int dx = r.width() * renderProgress->animationProgress() * 2 - r.width();
-        valueRect = IntRect(r.x() + dx, r.y(), r.width(), r.height());
+        int dx = (r.width() + progressIndeterminateOverlayWidth) * renderProgress->animationProgress() - progressIndeterminateOverlayWidth;
+        valueRect = IntRect(r.x() + dx, r.y(), progressIndeterminateOverlayWidth, r.height());
     }
 
     ThemePainter painter(i.context, r);
