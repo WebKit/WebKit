@@ -27,11 +27,13 @@
 
 #include "AtomicString.h"
 #include "Color.h"
+#include "Length.h"
 #include <wtf/RefCounted.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
+class CursorList;
 class ShadowData;
 
 // This struct is for rarely used inherited CSS3, CSS2, and WebKit-specific properties.
@@ -56,6 +58,15 @@ public:
 
     ShadowData* textShadow; // Our text shadow information for shadowed text drawing.
     AtomicString highlight; // Apple-specific extension for custom highlight rendering.
+    
+    RefPtr<CursorList> cursorData;
+    Length indent;
+    float m_effectiveZoom;
+
+    // Paged media properties.
+    short widows;
+    short orphans;
+    
     unsigned textSecurity : 2; // ETextSecurity
     unsigned userModify : 2; // EUserModify (editing)
     unsigned wordBreak : 2; // EWordBreak

@@ -379,6 +379,8 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
 
     if (rareInheritedData.get() != other->rareInheritedData.get()) {
         if (rareInheritedData->highlight != other->rareInheritedData->highlight ||
+            rareInheritedData->indent != other->rareInheritedData->indent ||
+            rareInheritedData->m_effectiveZoom != other->rareInheritedData->m_effectiveZoom ||
             rareInheritedData->textSizeAdjust != other->rareInheritedData->textSizeAdjust ||
             rareInheritedData->wordBreak != other->rareInheritedData->wordBreak ||
             rareInheritedData->wordWrap != other->rareInheritedData->wordWrap ||
@@ -394,8 +396,7 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
             return StyleDifferenceLayout;
     }
 
-    if (inherited->indent != other->inherited->indent ||
-        inherited->line_height != other->inherited->line_height ||
+    if (inherited->line_height != other->inherited->line_height ||
         inherited->list_style_image != other->inherited->list_style_image ||
         inherited->font != other->inherited->font ||
         inherited->horizontal_border_spacing != other->inherited->horizontal_border_spacing ||
@@ -461,11 +462,8 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
     const CounterDirectiveMap* mapB = other->rareNonInheritedData->m_counterDirectives.get();
     if (!(mapA == mapB || (mapA && mapB && *mapA == *mapB)))
         return StyleDifferenceLayout;
-    if (visual->counterIncrement != other->visual->counterIncrement ||
-        visual->counterReset != other->visual->counterReset)
-        return StyleDifferenceLayout;
-
-    if (inherited->m_effectiveZoom != other->inherited->m_effectiveZoom)
+    if (rareNonInheritedData->m_counterIncrement != other->rareNonInheritedData->m_counterIncrement ||
+        rareNonInheritedData->m_counterReset != other->rareNonInheritedData->m_counterReset)
         return StyleDifferenceLayout;
 
     if ((rareNonInheritedData->opacity == 1 && other->rareNonInheritedData->opacity < 1) ||
@@ -553,20 +551,20 @@ void RenderStyle::setClip(Length top, Length right, Length bottom, Length left)
 
 void RenderStyle::addCursor(CachedImage* image, const IntPoint& hotSpot)
 {
-    if (!inherited.access()->cursorData)
-        inherited.access()->cursorData = CursorList::create();
-    inherited.access()->cursorData->append(CursorData(image, hotSpot));
+    if (!rareInheritedData.access()->cursorData)
+        rareInheritedData.access()->cursorData = CursorList::create();
+    rareInheritedData.access()->cursorData->append(CursorData(image, hotSpot));
 }
 
 void RenderStyle::setCursorList(PassRefPtr<CursorList> other)
 {
-    inherited.access()->cursorData = other;
+    rareInheritedData.access()->cursorData = other;
 }
 
 void RenderStyle::clearCursorList()
 {
-    if (inherited->cursorData)
-        inherited.access()->cursorData = 0;
+    if (rareInheritedData->cursorData)
+        rareInheritedData.access()->cursorData = 0;
 }
 
 void RenderStyle::clearContent()
