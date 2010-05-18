@@ -1,3 +1,22 @@
+2010-05-17  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        DragData::asURL() shouldn't do file validity checks
+        https://bugs.webkit.org/show_bug.cgi?id=38711
+
+        Change [NSPasteboard _web_bestURL] to still return a file URL for paths
+        that don't exist. Callers who care about the existence of the file or
+        whether or not it is a directory should check themselves when they
+        want to use the file. The directory check has been left in for now,
+        since the Mac implementation of ResourceHandle, which uses this function
+        indirectly via DragController::performDrag) handles directories somewhat
+        non-intuitively: it opens the parent directory in the Finder, rather
+        than opening the directory itself.
+
+        * Misc/WebNSPasteboardExtras.mm:
+        (-[NSPasteboard _web_bestURL]):
+
 2010-05-14  Stephanie Lewis  <slewis@apple.com>
 
         Rubber-stamped by Mark Rowe.
