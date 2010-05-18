@@ -30,6 +30,7 @@
 
 #include "AtomicString.h"
 #include "HTMLNames.h"
+#include "NotImplemented.h"
 #include <wtf/text/CString.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/unicode/Unicode.h>
@@ -258,7 +259,7 @@ void HTML5Tokenizer::tokenize(const SegmentedString& source)
     while (!m_source.isEmpty()) {
         UChar cc = *m_source;
         switch (m_state) {
-        case DataState:
+        case DataState: {
             if (cc == '&')
                 m_state = CharacterReferenceInDataState;
             else if (cc == '<')
@@ -266,8 +267,157 @@ void HTML5Tokenizer::tokenize(const SegmentedString& source)
             else
                 emitCharacter(cc);
             break;
+        }
+        case CharacterReferenceInDataState: {
+            notImplemented();
+            break;
+        }
+        case RCDATAState: {
+            if (cc == '&')
+                m_state = CharacterReferenceInRCDATAState;
+            else if (cc == '<')
+                m_state = RCDATALessThanSignState;
+            else
+                emitCharacter(cc);
+            break;
+        }
+        case CharacterReferenceInRCDATAState: {
+            notImplemented();
+            break;
+        }
+        case RAWTEXTState: {
+            if (cc == '<')
+                m_state = RAWTEXTLessThanSignState;
+            else
+                emitCharacter(cc);
+            break;
+        }
+        case ScriptDataState: {
+            if (cc == '<')
+                m_state = ScriptDataLessThanSignState;
+            else
+                emitCharacter(cc);
+            break;
+        }
+        case PLAINTEXTState: {
+            emitCharacter(cc);
+            break;
+        }
+        case TagOpenState: {
+            if (cc == '!')
+                m_state = MarkupDeclarationOpenState;
+            else if (cc == '/')
+                m_state = EndTagOpenState;
+            else if (cc >= 'A' && cc <= 'Z') {
+                notImplemented();
+                m_state = TagNameState;
+            } else if (cc >= 'a' && cc <= 'z') {
+                notImplemented();
+                m_state = TagNameState;
+            } else if (cc == '?') {
+                emitParseError();
+                m_state = BogusCommentState;
+            } else {
+                emitParseError();
+                m_state = DataState;
+                emitCharacter('<');
+                continue;
+            }
+            break;
+        }
+        case EndTagOpenState: {
+            if (cc >= 'A' && cc <= 'Z') {
+                notImplemented();
+                m_state = TagNameState;
+            } else if (cc >= 'a' && cc <= 'z') {
+                notImplemented();
+                m_state = TagNameState;
+            } else if (cc == '>') {
+                emitParseError();
+                m_state = DataState;
+            } else {
+                emitParseError();
+                m_state = DataState;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case TagNameState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+                m_state = BeforeAttributeNameState;
+            else if (cc == '/')
+                m_state = SelfClosingStartTagState;
+            else if (cc == '>')
+                m_state = DataState;
+            else if (cc >= 'A' && cc <= 'Z')
+                notImplemented();
+            else
+                notImplemented();
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case RCDATALessThanSignState:
+        case RCDATAEndTagOpenState:
+        case RCDATAEndTagNameState:
+        case RAWTEXTLessThanSignState:
+        case RAWTEXTEndTagOpenState:
+        case RAWTEXTEndTagNameState:
+        case ScriptDataLessThanSignState:
+        case ScriptDataEndTagOpenState:
+        case ScriptDataEndTagNameState:
+        case ScriptDataEscapeStartState:
+        case ScriptDataEscapeStartDashState:
+        case ScriptDataEscapedState:
+        case ScriptDataEscapedDashState:
+        case ScriptDataEscapedDashDashState:
+        case ScriptDataEscapedLessThanSignState:
+        case ScriptDataEscapedEndTagOpenState:
+        case ScriptDataEscapedEndtagNameState:
+        case ScriptDataDoubleEscapeStartState:
+        case ScriptDataDoubleEscapedState:
+        case ScriptDataDoubleEscapedDashState:
+        case ScriptDataDoubleEscapedDashDashState:
+        case ScriptDataDoubleEscapedLessThanSignState:
+        case ScriptDataDoubleEscapeEndState:
+        case BeforeAttributeNameState:
+        case AttributeNameState:
+        case AfterAttributeNameState:
+        case BeforeAttributeValueState:
+        case AttributeValueDoubleQuotedState:
+        case AttributeValueSingleQuotedState:
+        case AttributeValueUnquotedState:
+        case CharacterReferenceInAttributeValueState:
+        case AfterAttributeValueQuotedState:
+        case SelfClosingStartTagState:
+        case BogusCommentState:
+        case MarkupDeclarationOpenState:
+        case CommentStartState:
+        case CommentStartDashState:
+        case CommentState:
+        case CommentEndDashState:
+        case CommentEndState:
+        case CommentEndBangState:
+        case CommentEndSpaceState:
+        case DOCTYPEState:
+        case BeforeDOCTYPENameState:
+        case DOCTYPENameState:
+        case AfterDOCTYPENameState:
+        case AfterDOCTYPEPublicKeywordState:
+        case BeforeDOCTYPEPublicIdentifierState:
+        case DOCTYPEPublicIdentifierDoubleQuotedState:
+        case DOCTYPEPublicIdentifierSingleQuotedState:
+        case AfterDOCTYPEPublicIdentifierState:
+        case BetweenDOCTYPEPublicAndSystemIdentifiersState:
+        case AfterDOCTYPESystemKeywordState:
+        case BeforeDOCTYPESystemIdentifierState:
+        case DOCTYPESystemIdentifierDoubleQuotedState:
+        case DOCTYPESystemIdentifierSingleQuotedState:
+        case AfterDOCTYPESystemIdentifierState:
+        case BogusDOCTYPEState:
+        case CDATASectionState:
+        case TokenizingCharacterReferencesState:
         default:
-            // FIXME: Add the rest of the tokenizer states.
+            notImplemented();
             break;
         }
         m_source.advance();
@@ -283,6 +433,10 @@ void HTML5Tokenizer::processAttribute()
 }
 
 inline void HTML5Tokenizer::emitCharacter(UChar)
+{
+}
+
+inline void HTML5Tokenizer::emitParseError()
 {
 }
 
