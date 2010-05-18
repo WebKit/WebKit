@@ -1,5 +1,13 @@
 2010-05-18  Anders Carlsson  <andersca@apple.com>
 
+        Revert unintended indentation and unnecessary nested name specifier.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::clipOutPositionedObjects):
+        (WebCore::RenderBlock::insertPositionedObject):
+
+2010-05-18  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Add an inlineCapacity template parameter to ListHashSet and use it to shrink the positioned object list hash set.
