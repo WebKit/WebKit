@@ -69,7 +69,6 @@ JSFunction::JSFunction(ExecState* exec, NonNullPassRefPtr<Structure> structure, 
 #else
     UNUSED_PARAM(thunk);
     UNUSED_PARAM(length);
-    UNUSED_PARAM(func);
     ASSERT_NOT_REACHED();
 #endif
 }
@@ -126,10 +125,12 @@ void JSFunction::markChildren(MarkStack& markStack)
 
 CallType JSFunction::getCallData(CallData& callData)
 {
+#if ENABLE(JIT)
     if (isHostFunction()) {
         callData.native.function = nativeFunction();
         return CallTypeHost;
     }
+#endif
     callData.js.functionExecutable = jsExecutable();
     callData.js.scopeChain = scope().node();
     return CallTypeJS;
