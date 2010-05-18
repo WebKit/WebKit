@@ -1,3 +1,9 @@
+2010-05-18  Sam Weinig  <sam@webkit.org>
+
+        Try to fix the windows build.
+
+        * API/JSStringRefBSTR.cpp:
+
 2010-05-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
