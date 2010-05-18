@@ -74,6 +74,11 @@ function testOrderedDraggingWithDirectory()
 
 function runTest()
 {
+    debug("Dragging to a disabled file input control:");
+    fileInput.disabled = true;
+    draggingPathsShouldResultInFiles(['DRTFakeFile'], [])
+    fileInput.disabled = false;
+
     debug("Dragging a single (non-existant) file to a file input control:");
     testDraggingFiles([
         { 'path': 'DRTFakeFile', 'name' : 'DRTFakeFile', 'size' : 0, 'type' : '' }
@@ -106,27 +111,7 @@ function runTest()
     ]);
 
     testOrderedDraggingWithDirectory();
-
-    debug("Dragging to a disabled file input control:");
-    fileInput.disabled = true;
-    window.onbeforeunload = function() {
-        // Since the drop triggered a navigation, verify the properties of the file input here.
-        shouldBeEqualToString("fileInput.value", "");
-        filesShouldBe([]);
-        shouldBeTrue("successfullyParsed");
-        debug('<br /><span class="pass">TEST COMPLETE</span>');
-
-        // Clean up after ourselves
-        fileInput.parentNode.removeChild(fileInput);
-
-        layoutTestController.notifyDone();
-    };
-    draggingPathsShouldResultInFiles(['DRTFakeFile'], []);
-    window.onbefureunload = null;
-    testFailed("The final test case should have resulted in navigation");
 }
-
-var successfullyParsed = true;
 
 if (window.eventSender) {
     runTest();
@@ -135,3 +120,6 @@ if (window.eventSender) {
 } else {
     testFailed("This test is not interactive, please run using DumpRenderTree");
 }
+
+
+var successfullyParsed = true;

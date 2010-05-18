@@ -1,3 +1,17 @@
+2010-05-17  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r59652.
+        http://trac.webkit.org/changeset/59652
+        https://bugs.webkit.org/show_bug.cgi?id=39268
+
+        file-input-files-access test is broken on Mac (Requested by
+        dcheng on #webkit).
+
+        * editing/pasteboard/file-input-files-access-expected.txt:
+        * editing/pasteboard/script-tests/file-input-files-access.js:
+        (runTest):
+        * http/tests/security/clipboard/script-tests/clipboard-file-access.js:
+
 2010-05-17  Daniel Cheng  <dcheng@chromium.org>
 
         DragData::asURL() shouldn't do file validity checks
