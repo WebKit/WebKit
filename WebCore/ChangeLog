@@ -1,3 +1,9 @@
+2010-05-18  Sam Weinig  <sam@webkit.org>
+
+        Another attempt to fix the build.
+
+        * css/CSSCursorImageValue.cpp:
+
 2010-05-18  Adam Roben  <aroben@apple.com>
 
         Make accelerated compositing work on machines that don't support
