@@ -97,7 +97,6 @@ private:
     bool m_triedToCreateD3DRenderer;
     COMPtr<IDirect3DDevice9> m_d3dDevice;
     RefPtr<WKCACFRootLayer> m_rootLayer;
-    RefPtr<WKCACFLayer> m_viewLayer;
     RefPtr<WKCACFLayer> m_scrollLayer;
     RefPtr<WKCACFLayer> m_rootChildLayer;
     RefPtr<WKCACFLayer> m_clipLayer;
