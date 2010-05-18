@@ -94,7 +94,7 @@ private:
     void render(const Vector<CGRect>& dirtyRects = Vector<CGRect>());
     void paint();
 
-    bool m_triedToCreateD3DRenderer;
+    bool m_mightBeAbleToCreateDeviceLater;
     COMPtr<IDirect3DDevice9> m_d3dDevice;
     RefPtr<WKCACFRootLayer> m_rootLayer;
     RefPtr<WKCACFLayer> m_scrollLayer;

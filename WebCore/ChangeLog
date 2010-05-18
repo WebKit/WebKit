@@ -1,5 +1,53 @@
 2010-05-18  Adam Roben  <aroben@apple.com>
 
+        Make WKCACFLayerRenderer robust against temporary failure of
+        Direct3DCreate9 and IDirect3D9::CreateDevice
+
+        For a short time after waking from sleep, Direct3DCreate9() will
+        return an IDirect3D9 for which IDirect3D9::CreateDevice will always
+        fail. Also during this time period, IDirect3D9::CreateDevice
+        will fail even for non-bad IDirect3D9s. (It will later start
+        succeeding.) WKCACFLayerRenderer now works around this behavior by
+        detecting when it might be in this situation and calling these
+        functions again later.
+
+        Fixes <http://webkit.org/b/39297> <rdar://problem/7997431> WebView
+        doesn't repaint until page reloads when page using hardware
+        acceleration loads just after waking from sleep
+
+        Reviewed by John Sullivan.
+
+        * manual-tests/crash-and-no-repaint-after-wake-from-sleep.html:
+        Renamed from WebCore/manual-tests/crash-after-wake-from-sleep.html.
+        Modified to also include instructions for reproducing this bug.
+
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::WKCACFLayerRenderer): Replaced
+        m_triedToCreateD3DRenderer with m_mightBeAbleToCreateDeviceLater. The
+        new member is initialized to true, since we haven't even tried to
+        create a device once yet.
+        (WebCore::WKCACFLayerRenderer::createRenderer): If we already have a
+        D3D device, or we don't have one and are sure that we won't be able to
+        create one later, just return the previously-created device, if any.
+        We assume that we won't be able to create a device later if this
+        function fails, unless the function fails due to CreateDevice failing.
+        As noted above, CreateDevice will sometimes temporarily fail and then
+        later start working again. When CreateDevice fails, we also assume
+        that we might have a bad IDirect3D9, so we get rid of the one we have
+        so a new (and hopefully non-bad) one will be allocated later.
+        (WebCore::WKCACFLayerRenderer::destroyRenderer): Reset
+        m_mightBeAbleToCreateDeviceLater to true, since we no longer have a
+        device.
+        (WebCore::WKCACFLayerRenderer::paint): Before trying to paint, try to
+        create our D3D device and renderer. If this fails, we bail out, but if
+        we think we might be able to create a device later we schedule another
+        paint (via renderSoon()) so that we'll try again soon.
+
+        * platform/graphics/win/WKCACFLayerRenderer.h: Replaced
+        m_triedToCreateD3DRenderer with m_mightBeAbleToCreateDeviceLater.
+
+2010-05-18  Adam Roben  <aroben@apple.com>
+
         Fix a crash when a page that uses accelerated compositing loads soon
         after the computer wakes from sleep
 

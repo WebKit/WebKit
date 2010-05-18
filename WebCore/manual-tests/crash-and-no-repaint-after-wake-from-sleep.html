@@ -2,7 +2,7 @@
   "http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
-    <title>Test for Bug 39295</title>
+    <title>Test for Bugs 39295 and 39297</title>
     <meta http-equiv="refresh" content="5">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="initial-scale=0.60, minimum-scale=0.60, maximum-scale=0.60">
@@ -167,10 +167,12 @@
   
   <body>
 
-    <p>This is a test for <a href="https://bugs.webkit.org/show_bug.cgi?id=39295">Bug 39295: Crash
-    (preceded by assertion) in WKCACFLayerRenderer::setNeedsDisplay when computer wakes from sleep
-    on particular page</a>. To test, put your computer to sleep (or "Standby", as Windows calls it).
-    When you wake your computer up, the browser should not crash.</p>
+    <p>This is a combined test for <a href="https://bugs.webkit.org/show_bug.cgi?id=39295">Bug 39295: Crash (preceded by
+    assertion) in WKCACFLayerRenderer::setNeedsDisplay when computer wakes from sleep on particular page</a> and <a
+    href="https://bugs.webkit.org/show_bug.cgi?id=39297">Bug 39297: WebView doesn't repaint until page reloads when page
+    using hardware acceleration loads just after waking from sleep</a>. To test, put your computer to sleep (or
+    "Standby", as Windows calls it). When you wake your computer up, the browser should not crash and the animation
+    below should still be running without any periods of non-painting of the WebView.</p>
     <div id="stage">
       <div id="rotate">
         <div id="ring-1" class="ring"></div>
