@@ -1,5 +1,17 @@
 2010-05-18  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59514.
+
+    2010-05-14  Stephanie Lewis  <slewis@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Update order files.
+
+        * JavaScriptCore.order:
+
+2010-05-18  Mark Rowe  <mrowe@apple.com>
+
         Merge r59587.
 
     2010-05-16  Simon Fraser  <simon.fraser@apple.com>
