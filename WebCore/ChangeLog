@@ -1,3 +1,18 @@
+2010-05-17  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Update states in HTML5Tokenizer to match HTML5 spec
+        https://bugs.webkit.org/show_bug.cgi?id=39264
+
+        I've also implemented the DataState.  More states to follow.
+
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::reset):
+        (WebCore::HTML5Tokenizer::tokenize):
+        * html/HTML5Tokenizer.h:
+        (WebCore::HTML5Tokenizer::):
+
 2010-05-17  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
