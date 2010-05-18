@@ -356,12 +356,100 @@ void HTML5Tokenizer::tokenize(const SegmentedString& source)
             // FIXME: Handle EOF properly.
             break;
         }
-        case RCDATALessThanSignState:
-        case RCDATAEndTagOpenState:
-        case RCDATAEndTagNameState:
-        case RAWTEXTLessThanSignState:
-        case RAWTEXTEndTagOpenState:
-        case RAWTEXTEndTagNameState:
+        case RCDATALessThanSignState: {
+            if (cc == '/') {
+                m_temporaryBuffer.clear();
+                m_state = RCDATAEndTagOpenState;
+            } else {
+                emitCharacter('<');
+                m_state = RCDATAState;
+                continue;
+            }
+            break;
+        }
+        case RCDATAEndTagOpenState: {
+            if (cc >= 'A' && cc <= 'Z') {
+                notImplemented();
+                m_state = RCDATAEndTagNameState;
+            } else if (cc >= 'a' && cc <= 'z') {
+                notImplemented();
+                m_state = RCDATAEndTagNameState;
+                emitCharacter('<');
+                emitCharacter('/');
+                m_state = RCDATAState;
+                continue;
+            }
+            break;
+        }
+        case RCDATAEndTagNameState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
+                notImplemented();
+                m_state = BeforeAttributeNameState;
+            } else if (cc == '/') {
+                notImplemented();
+                m_state = SelfClosingStartTagState;
+            } else if (cc == '>') {
+                notImplemented();
+                m_state = DataState;
+            } else if (cc >= 'A' && cc <= 'Z')
+                notImplemented();
+            else if (cc >= 'a' && cc <= 'z')
+                notImplemented();
+            else {
+                emitCharacter('<');
+                emitCharacter('/');
+                notImplemented();
+                m_state = RCDATAState;
+                continue;
+            }
+            break;
+        }
+        case RAWTEXTLessThanSignState: {
+            if (cc == '/') {
+                m_temporaryBuffer.clear();
+                m_state = RAWTEXTEndTagOpenState;
+            } else {
+                emitCharacter('<');
+                m_state = RAWTEXTState;
+                continue;
+            }
+            break;
+        }
+        case RAWTEXTEndTagOpenState: {
+            if (cc >= 'A' && cc <= 'Z') {
+                notImplemented();
+                m_state = RAWTEXTEndTagNameState;
+            } else if (cc >= 'a' && cc <= 'z') {
+                notImplemented();
+                m_state = RAWTEXTEndTagNameState;
+            } else {
+                emitCharacter('<');
+                emitCharacter('/');
+                continue;
+            }
+            break;
+        }
+        case RAWTEXTEndTagNameState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
+                notImplemented();
+                m_state = BeforeAttributeNameState;
+            } else if (cc == '/') {
+                notImplemented();
+                m_state = SelfClosingStartTagState;
+            } else if (cc == '>') {
+                notImplemented();
+                m_state = DataState;
+            } else if (cc >= 'A' && cc <= 'Z')
+                notImplemented();
+            else if (cc >= 'a' && cc <= 'z')
+                notImplemented();
+            else {
+                emitCharacter('<');
+                emitCharacter('/');
+                notImplemented();
+                continue;
+            }
+        }
         case ScriptDataLessThanSignState:
         case ScriptDataEndTagOpenState:
         case ScriptDataEndTagNameState:
