@@ -540,6 +540,8 @@ QDataStream& operator>>(QDataStream& source, QWebHistory& history)
                 d->lst->addItem(item);
             }
             d->lst->removeItem(nullItem);
+            // Update the HistoryController.
+            history.d->lst->page()->mainFrame()->loader()->history()->setCurrentItem(history.d->lst->entries()[currentIndex].get());
             history.goToItem(history.itemAt(currentIndex));
         }
     }
