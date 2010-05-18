@@ -723,3 +723,4 @@ EXPORTS
 	_ZN23DumpRenderTreeSupportQt19webPageSetGroupNameEP8QWebPageRK7QString @ 722 NONAME
 	_ZN23DumpRenderTreeSupportQt16webPageGroupNameEP8QWebPage @ 723 NONAME
 	_ZN23DumpRenderTreeSupportQt23garbageCollectorCollectEv @ 724 NONAME
+	_Z32qtwebkit_webframe_scrollOverflowP9QWebFrameiiRK6QPoint @ 725 NONAME
