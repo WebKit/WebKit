@@ -1,5 +1,11 @@
 2010-05-18  Drew Wilson  <atwilson@chromium.org>
 
+        Unreviewed: Speculative build fix for Chromium win.
+
+        * platform/graphics/skia/SkiaFontWin.cpp: Properly set inlineCapacity.
+
+2010-05-18  Drew Wilson  <atwilson@chromium.org>
+
         Unreviewed fix for Chromium build break.
 
         * platform/graphics/skia/SkiaFontWin.cpp: Now set inlineCapacity param.

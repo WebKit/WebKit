@@ -77,14 +77,14 @@ struct CachedOutlineKeyHash {
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
-typedef ListHashSet<CachedOutlineKey, outlineCacheSize, CachedOutlineKeyHash> OutlineCache;
+// The global number of glyph outlines we'll cache.
+static const int outlineCacheSize = 256;
+
+typedef ListHashSet<CachedOutlineKey, outlineCacheSize+1, CachedOutlineKeyHash> OutlineCache;
 
 // FIXME: Convert from static constructor to accessor function. WebCore tries to
 // avoid global constructors to save on start-up time.
 static OutlineCache outlineCache;
-
-// The global number of glyph outlines we'll cache.
-static const int outlineCacheSize = 256;
 
 static SkScalar FIXEDToSkScalar(FIXED fixed)
 {
