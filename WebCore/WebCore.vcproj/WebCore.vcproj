@@ -30753,6 +30753,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\HTML5Lexer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HTML5Lexer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HTML5Tokenizer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HTML5Tokenizer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\HTMLAllCollection.cpp"
 				>
 			</File>

@@ -5,6 +5,18 @@
         Make it possible to enable the new HTML5Tokenizer for testing
         https://bugs.webkit.org/show_bug.cgi?id=39275
 
+        * WebCore.gypi:
+         - Fix HTMLLexer.* -> HTML5Lexer.*
+        * WebCore.vcproj/WebCore.vcproj:
+         - Add HTML5Lexer and HTML5Tokenizer to project.
+
+2010-05-18  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed build fix.
+
+        Make it possible to enable the new HTML5Tokenizer for testing
+        https://bugs.webkit.org/show_bug.cgi?id=39275
+
         * dom/NamedAttrMap.cpp:
         (WebCore::NamedNodeMap::setNamedItemNS):
          - Move this to the .cpp file so as to avoid needing to include "Node.h" in the header.
