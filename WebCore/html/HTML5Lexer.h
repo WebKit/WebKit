@@ -49,6 +49,7 @@ namespace WebCore {
     private:
         inline void emitCharacter(UChar);
         inline void emitParseError();
+        inline void emitCurrentTagToken();
 
         inline bool temporaryBufferIs(const char*);
 

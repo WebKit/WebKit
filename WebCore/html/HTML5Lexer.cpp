@@ -657,8 +657,47 @@ void HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             }
             break;
         }
-        case BeforeAttributeNameState:
-        case AttributeNameState:
+        case BeforeAttributeNameState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+                break;
+            else if (cc == '/')
+                m_state = SelfClosingStartTagState;
+            else if (cc == '>') {
+                emitCurrentTagToken();
+                m_state = DataState;
+            } else if (cc >= 'A' && cc <= 'Z') {
+                notImplemented();
+                m_state = AttributeNameState;
+            } else {
+                if (cc == '"' || cc == '\'' || cc == '<' || cc == '=')
+                    emitParseError();
+                notImplemented();
+                m_state = AttributeNameState;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case AttributeNameState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+                m_state = AfterAttributeNameState;
+            else if (cc == '/')
+                m_state = SelfClosingStartTagState;
+            else if (cc == '=')
+                m_state = BeforeAttributeValueState;
+            else if (cc == '>') {
+                emitCurrentTagToken();
+                m_state = DataState;
+            } else if (cc >= 'A' && cc <= 'Z')
+                notImplemented();
+            else {
+                if (cc == '"' || cc == '\'' || cc == '<' || cc == '=')
+                    emitParseError();
+                notImplemented();
+                m_state = AttributeNameState;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
         case AfterAttributeNameState:
         case BeforeAttributeValueState:
         case AttributeValueDoubleQuotedState:
@@ -716,6 +755,12 @@ inline void HTML5Lexer::emitCharacter(UChar character)
 
 inline void HTML5Lexer::emitParseError()
 {
+    notImplemented();
+}
+
+inline void HTML5Lexer::emitCurrentTagToken() 
+{
+    notImplemented();
 }
 
 }
