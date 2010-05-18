@@ -1,5 +1,15 @@
 2010-05-17  Kent Tamura  <tkent@chromium.org>
 
+        Unreviewed.
+
+        Update a test for the behavior change of r59645.
+        https://bugs.webkit.org/show_bug.cgi?id=39162
+
+        * fast/forms/script-tests/willvalidate.js:
+        * fast/forms/willvalidate-expected.txt:
+
+2010-05-17  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Darin Adler.
 
         ':valid' CSS selector should not be applied to some form controls
