@@ -1,3 +1,13 @@
+2010-05-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, build fix.
+
+        Attempt to fix build for v8 bindings (untested).
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::clearWindowShell):
+        * bindings/v8/ScriptController.h:
+
 2010-05-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver Hunt.

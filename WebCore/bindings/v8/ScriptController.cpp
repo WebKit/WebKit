@@ -431,7 +431,7 @@ NPObject* ScriptController::createScriptObjectForPluginElement(HTMLPlugInElement
 }
 
 
-void ScriptController::clearWindowShell()
+void ScriptController::clearWindowShell(bool)
 {
     // V8 binding expects ScriptController::clearWindowShell only be called
     // when a frame is loading a new page. V8Proxy::clearForNavigation
