@@ -462,11 +462,6 @@ namespace WebCore {
         return m_typingStyle.get();
     }
 
-    inline void Frame::setTypingStyle(CSSMutableStyleDeclaration *style)
-    {
-        m_typingStyle = style;
-    }
-
     inline void Frame::clearTypingStyle()
     {
         m_typingStyle = 0;

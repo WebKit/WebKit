@@ -1,3 +1,11 @@
+2010-05-17  Darin Adler  <darin@apple.com>
+
+        Fix Qt build.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setTypingStyle): Move back to make non-inline.
+        * page/Frame.h: Removed inline version of setTypingStyle.
+
 2010-05-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Brady Eidson.
