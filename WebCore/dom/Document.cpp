@@ -205,29 +205,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-class SynchronousHTMLTokenizerGuard {
-public:
-    SynchronousHTMLTokenizerGuard(Tokenizer* tokenizer)
-        : m_htmlTokenizer(tokenizer->asHTMLTokenizer())
-        , m_savedForceSynchronous(false)
-    {
-        if (m_htmlTokenizer) {
-            m_savedForceSynchronous = m_htmlTokenizer->forceSynchronous();
-            m_htmlTokenizer->setForceSynchronous(true);
-        }
-    }
-
-    ~SynchronousHTMLTokenizerGuard()
-    {
-        if (m_htmlTokenizer)
-            m_htmlTokenizer->setForceSynchronous(m_savedForceSynchronous);
-    }
-
-private:
-    HTMLTokenizer* m_htmlTokenizer;
-    bool m_savedForceSynchronous;
-};
-
 // #define INSTRUMENT_LAYOUT_SCHEDULING 1
 
 // This amount of time must have elapsed before we will even consider scheduling a layout without a delay.
@@ -1978,11 +1955,18 @@ void Document::write(const SegmentedString& text, Document* ownerDocument)
     if (!m_tokenizer)
         open(ownerDocument);
 
-    {
-        ASSERT(m_tokenizer);
-        SynchronousHTMLTokenizerGuard tokenizerGuard(m_tokenizer.get());
-        m_tokenizer->write(text, false);
+    ASSERT(m_tokenizer);
+    bool wasForcedSynchronous = false;
+    HTMLTokenizer* tokenizer = m_tokenizer->asHTMLTokenizer();
+    if (tokenizer) {
+        wasForcedSynchronous = tokenizer->forceSynchronous();
+        tokenizer->setForceSynchronous(true);
     }
+
+    m_tokenizer->write(text, false);
+
+    if (m_tokenizer && tokenizer && m_tokenizer->asHTMLTokenizer() == tokenizer)
+        tokenizer->setForceSynchronous(wasForcedSynchronous);
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!ownerElement())
