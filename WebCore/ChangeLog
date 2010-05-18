@@ -1,3 +1,14 @@
+2010-05-18  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rubberstamped by Simon Hausmann.
+
+        Return null when creating an ImageBuffer failed, due to for
+        instance a nulled pixmap.
+
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBufferData::ImageBufferData):
+        (WebCore::ImageBuffer::ImageBuffer):
+
 2010-05-18  Jian Li  <jianli@chromium.org>
 
         Reviewed by Dmitry Titov.

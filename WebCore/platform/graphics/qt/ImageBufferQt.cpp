@@ -46,11 +46,18 @@ namespace WebCore {
 
 ImageBufferData::ImageBufferData(const IntSize& size)
     : m_pixmap(size)
+    , m_painter(0)
 {
+    if (m_pixmap.isNull())
+        return;
+
     m_pixmap.fill(QColor(Qt::transparent));
 
-    QPainter* painter = new QPainter(&m_pixmap);
+    QPainter* painter = new QPainter;
     m_painter.set(painter);
+
+    if (!painter->begin(&m_pixmap))
+        return;
 
     // Since ImageBuffer is used mainly for Canvas, explicitly initialize
     // its painter's pen and brush with the corresponding canvas defaults
@@ -72,8 +79,11 @@ ImageBuffer::ImageBuffer(const IntSize& size, ImageColorSpace, bool& success)
     : m_data(size)
     , m_size(size)
 {
+    success = m_data.m_painter && m_data.m_painter->isActive();
+    if (!success)
+        return;
+
     m_context.set(new GraphicsContext(m_data.m_painter.get()));
-    success = true;
 }
 
 ImageBuffer::~ImageBuffer()
