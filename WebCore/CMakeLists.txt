@@ -590,6 +590,7 @@ SET(WebCore_SOURCES
     bindings/js/JSJavaScriptCallFrameCustom.cpp
     bindings/js/JSLazyEventListener.cpp
     bindings/js/JSLocationCustom.cpp
+    bindings/js/JSMainThreadExecState.cpp
     bindings/js/JSMessageChannelConstructor.cpp
     bindings/js/JSMessageChannelCustom.cpp
     bindings/js/JSMessageEventCustom.cpp

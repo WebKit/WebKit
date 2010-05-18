@@ -1,3 +1,13 @@
+2010-05-18  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Moving frame.src checks out of the bindings
+        https://bugs.webkit.org/show_bug.cgi?id=37815
+
+        * http/tests/security/xss-DENIED-iframe-src-alias-expected.txt:
+        * http/tests/security/xss-DENIED-iframe-src-alias.html:
+
 2010-05-18  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Darin Adler, Jian Li.

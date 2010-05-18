@@ -2266,6 +2266,7 @@
 		895253DC116C4EF500CABF00 /* FileStreamProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 895253DA116C4EF500CABF00 /* FileStreamProxy.cpp */; };
 		895253DD116C4EF500CABF00 /* FileStreamProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 895253DB116C4EF500CABF00 /* FileStreamProxy.h */; };
 		895253DF116C4F0600CABF00 /* FileThreadTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 895253DE116C4F0600CABF00 /* FileThreadTask.h */; };
+		8FAC774D119872CB0015AE94 /* JSMainThreadExecState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */; };
 		9302B0BD0D79F82900C7EE83 /* PageGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */; };
 		9302B0BF0D79F82C00C7EE83 /* PageGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 9302B0BE0D79F82C00C7EE83 /* PageGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9305B24D098F1B6B00C28855 /* Timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9305B24C098F1B6B00C28855 /* Timer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7835,6 +7836,8 @@
 		895253DA116C4EF500CABF00 /* FileStreamProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileStreamProxy.cpp; sourceTree = "<group>"; };
 		895253DB116C4EF500CABF00 /* FileStreamProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileStreamProxy.h; sourceTree = "<group>"; };
 		895253DE116C4F0600CABF00 /* FileThreadTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileThreadTask.h; sourceTree = "<group>"; };
+		8F934D831189F1EE00508D5D /* JSMainThreadExecState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMainThreadExecState.h; sourceTree = "<group>"; };
+		8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMainThreadExecState.cpp; sourceTree = "<group>"; };
 		9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageGroup.cpp; sourceTree = "<group>"; };
 		9302B0BE0D79F82C00C7EE83 /* PageGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageGroup.h; sourceTree = "<group>"; };
 		9305B24C098F1B6B00C28855 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timer.h; sourceTree = "<group>"; };
@@ -15208,6 +15211,8 @@
 				BC60901D0E91B8EC000C68B5 /* JSEventTarget.h */,
 				3314ACE910892086000F0E56 /* JSExceptionBase.cpp */,
 				3314ACEA10892086000F0E56 /* JSExceptionBase.h */,
+				8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */,
+				8F934D831189F1EE00508D5D /* JSMainThreadExecState.h */,
 				93B70D4F09EB0C7C009D8468 /* JSPluginElementFunctions.cpp */,
 				93B70D5009EB0C7C009D8468 /* JSPluginElementFunctions.h */,
 				415B7C550FF598E6006770F7 /* JSSharedWorkerConstructor.cpp */,
@@ -21511,6 +21516,7 @@
 				B59DD6A211902A52007E9684 /* JSSQLTransactionErrorCallback.cpp in Sources */,
 				B59DD6A611902A62007E9684 /* JSSQLStatementCallback.cpp in Sources */,
 				B59DD6AA11902A71007E9684 /* JSSQLStatementErrorCallback.cpp in Sources */,
+				8FAC774D119872CB0015AE94 /* JSMainThreadExecState.cpp in Sources */,
 				B55D5AA5119131FC00BCC315 /* JSSQLTransactionSyncCallback.cpp in Sources */,
 				B55D5AA81191325000BCC315 /* JSDatabaseSyncCustom.cpp in Sources */,
 				B55D5AA91191325000BCC315 /* JSSQLTransactionSyncCustom.cpp in Sources */,

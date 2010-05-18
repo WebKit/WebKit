@@ -50,6 +50,7 @@
 #import "DOMStyleSheetInternal.h"
 #import "DOMTestCallbackInternal.h"
 #import "ExceptionHandlers.h"
+#import "JSMainThreadExecState.h"
 #import "KURL.h"
 #import "TestCallback.h"
 #import "ThreadCheck.h"
@@ -80,21 +81,25 @@
 
 - (BOOL)callbackWithClass1Param:(DOMClass1 *)class1Param
 {
+    WebCore::JSMainThreadNullState state;
     return IMPL->callbackWithClass1Param(core(class1Param));
 }
 
 - (BOOL)callbackWithClass2Param:(DOMClass2 *)class2Param strArg:(NSString *)strArg
 {
+    WebCore::JSMainThreadNullState state;
     return IMPL->callbackWithClass2Param(core(class2Param), strArg);
 }
 
 - (int)callbackWithNonBoolReturnType:(DOMClass3 *)class3Param
 {
+    WebCore::JSMainThreadNullState state;
     return IMPL->callbackWithNonBoolReturnType(core(class3Param));
 }
 
 - (int)customCallback:(DOMClass5 *)class5Param class6Param:(DOMClass6 *)class6Param
 {
+    WebCore::JSMainThreadNullState state;
     return IMPL->customCallback(core(class5Param), core(class6Param));
 }
 
