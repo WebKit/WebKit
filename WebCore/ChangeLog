@@ -1,3 +1,21 @@
+2010-05-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add an inlineCapacity template parameter to ListHashSet and use it to shrink the positioned object list hash set.
+        https://bugs.webkit.org/show_bug.cgi?id=39304
+        <rdar://problem/7998366>
+
+        Set the inlineCapacity for the positionedObjects ListHashSet to 4 instead of 256. Since a RenderBlock usually has 
+        few positioned objects, this saves memory.
+
+        * WebCore.base.exp:
+        * rendering/RenderBlock.cpp:
+        (WebCore::clipOutPositionedObjects):
+        (WebCore::RenderBlock::insertPositionedObject):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::positionedObjects):
+
 2010-05-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

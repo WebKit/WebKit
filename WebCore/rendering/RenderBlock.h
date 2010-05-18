@@ -74,7 +74,9 @@ public:
     void insertPositionedObject(RenderBox*);
     void removePositionedObject(RenderBox*);
     void removePositionedObjects(RenderBlock*);
-    ListHashSet<RenderBox*>* positionedObjects() const { return m_positionedObjects; }
+
+    typedef ListHashSet<RenderBox*, 4> PositionedObjectsListHashSet;
+    PositionedObjectsListHashSet* positionedObjects() const { return m_positionedObjects; }
 
     void addPercentHeightDescendant(RenderBox*);
     static void removePercentHeightDescendant(RenderBox*);
@@ -483,9 +485,10 @@ private:
     void setCollapsedBottomMargin(const MarginInfo&);
     // End helper functions and structs used by layoutBlockChildren.
 
-    typedef ListHashSet<RenderBox*>::const_iterator Iterator;
+    typedef PositionedObjectsListHashSet::const_iterator Iterator;
     DeprecatedPtrList<FloatingObject>* m_floatingObjects;
-    ListHashSet<RenderBox*>* m_positionedObjects;
+    
+    PositionedObjectsListHashSet* m_positionedObjects;
 
     // An inline can be split with blocks occurring in between the inline content.
     // When this occurs we need a pointer to our next object.  We can basically be
