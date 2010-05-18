@@ -50,14 +50,13 @@ const double progressNotificationIntervalMS = 50;
 
 FileReader::FileReader(ScriptExecutionContext* context)
     : ActiveDOMObject(context, this)
-    , m_state(Empty)
+    , m_state(None)
     , m_readType(ReadFileAsBinaryString)
     , m_result("")
     , m_isRawDataConverted(false)
     , m_bytesLoaded(0)
     , m_totalBytes(0)
     , m_lastProgressNotificationTimeMS(0)
-    , m_alreadyStarted(false)
 {
     m_buffer.resize(bufferSize);
 }
@@ -69,7 +68,7 @@ FileReader::~FileReader()
 
 bool FileReader::hasPendingActivity() const
 {
-    return m_state == Loading || ActiveDOMObject::hasPendingActivity();
+    return (m_state != None && m_state != Completed) || ActiveDOMObject::hasPendingActivity();
 }
 
 bool FileReader::canSuspend() const
@@ -110,11 +109,12 @@ void FileReader::readAsDataURL(File* file)
 void FileReader::readInternal(Blob* fileBlob, ReadType type)
 {
     // readAs*** methods() can be called multiple times. Only the last call before the actual reading happens is processed.
-    if (m_alreadyStarted)
+    if (m_state != None && m_state != Starting)
         return;
 
     m_fileBlob = fileBlob;
     m_readType = type;
+    m_state = Starting;
 
     // When FileStreamProxy is created, FileReader::didStart() will get notified on the File thread and we will start
     // opening and reading the file since then.
@@ -142,18 +142,18 @@ void FileReader::terminate()
         m_streamProxy->stop();
         m_streamProxy = 0;
     }
-    m_state = Done;
+    m_state = Completed;
 }
 
 void FileReader::didStart()
 {
-    m_alreadyStarted = true;
+    m_state = Opening;
     m_streamProxy->openForRead(m_fileBlob.get());
 }
 
 void FileReader::didGetSize(long long size)
 {
-    m_state = Loading;
+    m_state = Reading;
     fireEvent(eventNames().loadstartEvent);
 
     m_totalBytes = size;
@@ -165,7 +165,7 @@ void FileReader::didRead(const char* data, int bytesRead)
     ASSERT(data && bytesRead);
 
     // Bail out if we have aborted the reading.
-    if (m_state == Done)
+    if (m_state == Completed)
       return;
 
     switch (m_readType) {
@@ -198,7 +198,7 @@ void FileReader::didRead(const char* data, int bytesRead)
 
 void FileReader::didFinish()
 {
-    m_state = Done;
+    m_state = Completed;
 
     m_streamProxy->close();
 
@@ -208,7 +208,7 @@ void FileReader::didFinish()
 
 void FileReader::didFail(ExceptionCode ec)
 {
-    m_state = Done;
+    m_state = Completed;
     m_error = FileError::create(ec);
 
     m_streamProxy->close();
@@ -221,6 +221,22 @@ void FileReader::fireEvent(const AtomicString& type)
 {
     // FIXME: the current ProgressEvent uses "unsigned long" for total and loaded attributes. Need to talk with the spec writer to resolve the issue.
     dispatchEvent(ProgressEvent::create(type, true, static_cast<unsigned>(m_bytesLoaded), static_cast<unsigned>(m_totalBytes)));
+}
+
+FileReader::ReadyState FileReader::readyState() const
+{
+    switch (m_state) {
+    case None:
+    case Starting:
+        return Empty;
+    case Opening:
+    case Reading:
+        return Loading;
+    case Completed:
+        return Done;
+    }
+    ASSERT_NOT_REACHED();
+    return Empty;
 }
 
 const ScriptString& FileReader::result()
@@ -237,7 +253,7 @@ const ScriptString& FileReader::result()
     if (m_readType == ReadFileAsText)
         convertToText();
     // For data URL, we only do the coversion until we receive all the raw data.
-    else if (m_readType == ReadFileAsDataURL && m_state == Done)
+    else if (m_readType == ReadFileAsDataURL && m_state == Completed)
         convertToDataURL();
 
     return m_result;

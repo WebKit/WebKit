@@ -72,7 +72,7 @@ public:
     void readAsDataURL(File*);
     void abort();
 
-    ReadyState readyState() const { return m_state; }
+    ReadyState readyState() const;
     PassRefPtr<FileError> error() { return m_error; }
     const ScriptString& result();
 
@@ -108,6 +108,13 @@ private:
         ReadFileAsText,
         ReadFileAsDataURL
     };
+    enum InternalState {
+        None,
+        Starting,
+        Opening,
+        Reading,
+        Completed
+    };
 
     FileReader(ScriptExecutionContext*);
 
@@ -123,7 +130,7 @@ private:
     void convertToText();
     void convertToDataURL();
 
-    ReadyState m_state;
+    InternalState m_state;
     EventTargetData m_eventTargetData;
 
     RefPtr<Blob> m_fileBlob;
@@ -153,7 +160,6 @@ private:
     long long m_bytesLoaded;
     long long m_totalBytes;
     double m_lastProgressNotificationTimeMS;
-    bool m_alreadyStarted;
 };
 
 } // namespace WebCore
