@@ -1,3 +1,38 @@
+2010-05-08  Robert Hogan  <robert@roberthogan.net>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix http/tests/xmlhttprequest/cross-origin-no-authorization.html
+             and http/tests/xmlhttprequest/cross-origin-authorization.html
+
+        QHttpNetworkRequest adds Authorization and Cookie headers to XHRs
+        without knowing if this is valid behaviour or not. In order to allow
+        Qt to decide whether Cookie/Authorization headers should be added
+        to an XHR QtWebKit needs to use an attribute added to QNetworkRequest.
+        These new attributes are: QNetworkRequest::CookieLoadControlAttribute,
+        QNetworkRequest::CookieSaveControlAttribute,and
+        QNetworkRequest::AuthenticationReuseControlAttribute.
+
+        QtWebKit will set QNetworkRequest::AuthenticationReuseControlAttribute to false
+        unless withCredentials is set to true in the XHR.
+
+        QtWebkit will set CookieLoad/SaveControlAttribute to false unless withCredentials
+        is set to true in the XHR.
+
+        Qt will pass the values onto QHttpNetworkRequest and this will permit
+        the Qt network access processing to decide whether or not to add either
+        or both of the Cookie/Authorisation headers, and whether to save cookies
+        returned from such requests. By default the attribute
+        will always be true so unless QtWebKit sets it to false normal
+        header processing is unaffected.
+
+        The Qt part of these changes was merged at: http://gitorious.org/qt/qt/merge_requests/592
+
+        https://bugs.webkit.org/show_bug.cgi?id=32967
+
+        * platform/network/qt/ResourceRequestQt.cpp:
+        (WebCore::ResourceRequest::toNetworkRequest):
+
 2010-05-18  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

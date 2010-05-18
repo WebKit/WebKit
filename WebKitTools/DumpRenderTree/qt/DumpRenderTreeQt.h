@@ -61,6 +61,7 @@ class GCController;
 namespace WebCore {
 
 class WebPage;
+class NetworkAccessManager;
 
 class DumpRenderTree : public QObject {
 Q_OBJECT
@@ -87,6 +88,7 @@ public:
     EventSender *eventSender() const { return m_eventSender; }
     TextInputController *textInputController() const { return m_textInputController; }
     QString persistentStoragePath() const { return m_persistentStoragePath; }
+    NetworkAccessManager *networkAccessManager() const { return m_networkAccessManager; }
 
     QWebPage *createWindow();
     int windowCount() const;
@@ -94,7 +96,6 @@ public:
     void switchFocus(bool focused);
 
     WebPage *webPage() const { return m_page; }
-
 
 #if defined(Q_WS_X11)
     static void initializeFonts();
@@ -136,6 +137,7 @@ private:
     EventSender *m_eventSender;
     TextInputController *m_textInputController;
     GCController* m_gcController;
+    NetworkAccessManager* m_networkAccessManager;
 
     QFile *m_stdin;
 
