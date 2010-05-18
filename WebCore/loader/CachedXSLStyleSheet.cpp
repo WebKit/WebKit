@@ -48,7 +48,7 @@ CachedXSLStyleSheet::CachedXSLStyleSheet(const String &url)
 
 void CachedXSLStyleSheet::didAddClient(CachedResourceClient* c)
 {  
-    if (!m_loading)
+    if (!isLoading())
         c->setXSLStyleSheet(m_url, m_response.url(), m_sheet);
 }
 
@@ -73,13 +73,13 @@ void CachedXSLStyleSheet::data(PassRefPtr<SharedBuffer> data, bool allDataReceiv
         m_sheet = String(m_decoder->decode(m_data->data(), encodedSize()));
         m_sheet += m_decoder->flush();
     }
-    m_loading = false;
+    setLoading(false);
     checkNotify();
 }
 
 void CachedXSLStyleSheet::checkNotify()
 {
-    if (m_loading)
+    if (isLoading())
         return;
     
     CachedResourceClientWalker w(m_clients);
@@ -89,8 +89,8 @@ void CachedXSLStyleSheet::checkNotify()
 
 void CachedXSLStyleSheet::error()
 {
-    m_loading = false;
-    m_errorOccurred = true;
+    setLoading(false);
+    setErrorOccurred(true);
     checkNotify();
 }
 
