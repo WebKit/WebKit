@@ -64,7 +64,7 @@ class ChromiumWinPort(chromium.ChromiumPort):
             setup_mount = self.path_from_chromium_base("third_party",
                                                        "cygwin",
                                                        "setup_mount.bat")
-            self._executive.run_command(setup_mount)
+            self._executive.run_command([setup_mount])
         return env
 
     def baseline_search_path(self):

@@ -1,3 +1,19 @@
+2010-05-18  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Chromium: new-run-webkit-httpd fails to setup_mount
+        https://bugs.webkit.org/show_bug.cgi?id=39257
+
+        * Scripts/webkitpy/common/system/executive.py:
+         Assert type of args in run_command.
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+         Add test_run_command_args_type
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+         Executive.run_command takes array for command line.
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+         Test if setup_environ_for_server() run setup_mount.bat.
+
 2010-05-17  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by David Levin.

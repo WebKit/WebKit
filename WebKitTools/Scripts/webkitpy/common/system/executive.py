@@ -265,6 +265,7 @@ class Executive(object):
                     return_stderr=True,
                     decode_output=True):
         """Popen wrapper for convenience and to work around python bugs."""
+        assert(isinstance(args, list) or isinstance(args, tuple))
         args = map(unicode, args)  # Popen will throw an exception if args are non-strings (like int())
         stdin, string_to_communicate = self._compute_stdin(input)
         stderr = subprocess.STDOUT if return_stderr else None

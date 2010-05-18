@@ -32,7 +32,7 @@ import subprocess
 import sys
 import unittest
 
-from webkitpy.common.system.executive import Executive, run_command
+from webkitpy.common.system.executive import Executive, run_command, ScriptError
 
 
 class ExecutiveTest(unittest.TestCase):
@@ -41,6 +41,13 @@ class ExecutiveTest(unittest.TestCase):
         def run_bad_command():
             run_command(["foo_bar_command_blah"], error_handler=Executive.ignore_error, return_exit_code=True)
         self.failUnlessRaises(OSError, run_bad_command)
+
+    def test_run_command_args_type(self):
+        executive = Executive()
+        self.assertRaises(AssertionError, executive.run_command, "echo")
+        self.assertRaises(AssertionError, executive.run_command, u"echo")
+        executive.run_command(["echo", "foo"])
+        executive.run_command(("echo", "foo"))
 
     def test_run_command_with_unicode(self):
         """Validate that it is safe to pass unicode() objects
