@@ -5,6 +5,17 @@
         Copy PreloadScanner.* to HTML5Tokenizer.* to start work on the new HTML5 Tokenizer
         https://bugs.webkit.org/show_bug.cgi?id=39261
 
+        This time copy the cpp from the right file.
+
+        * html/HTML5Tokenizer.cpp: Copied from WebCore/html/PreloadScanner.cpp.
+
+2010-05-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Copy PreloadScanner.* to HTML5Tokenizer.* to start work on the new HTML5 Tokenizer
+        https://bugs.webkit.org/show_bug.cgi?id=39261
+
         * html/HTML5Tokenizer.cpp: Copied from WebCore/html/PreloadScanner.h.
         * html/HTML5Tokenizer.h: Copied from WebCore/html/PreloadScanner.h.
 
