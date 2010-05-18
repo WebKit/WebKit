@@ -1,3 +1,24 @@
+2010-05-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        <rdar://problem/7993468> REGRESSION (r58586): Audio doesn't play on first click of play button at NPR.org
+
+        NPR swallows the first mouse click on the play button, calls load() on the element, then waits for the
+        canplay event to come in before calling play itself.
+
+        After the site specific hack added in r58586, we disallowed play() from within the canplay event handler.
+        By tracking whether a load() was triggered by a user gesture, we can differentiate between the original
+        canplay event that we meant to ignore and the one resulting from the first mouse click which we want to honor.
+        
+        No new tests. (Currently no way to test such site specific hack behavior)
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::load): Set the m_loadInitiatedByUserGesture flag
+        (WebCore::HTMLMediaElement::play): Only apply the site specific hack if the load wasn't initiated by a user gesture.
+        * html/HTMLMediaElement.h:
+
 2010-05-18  Jakob Petsovits  <jpetsovits@rim.com>
 
         Reviewed by Dirk Schulze.
