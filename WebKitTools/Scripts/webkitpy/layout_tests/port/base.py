@@ -423,7 +423,7 @@ class Port(object):
         Returns:
            Operating-system's environment.
         """
-        return os.environ
+        return os.environ.copy()
 
     def show_html_results_file(self, results_filename):
         """This routine should display the HTML file pointed at by

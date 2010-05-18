@@ -54,7 +54,10 @@ class ChromiumWinTest(unittest.TestCase):
         port._executive = mocktool.MockExecute(True)
         port.path_from_chromium_base = self._mock_path_from_chromium_base
         output = outputcapture.OutputCapture()
-        output.assert_outputs(self, port.setup_environ_for_server)
+        orig_environ = os.environ.copy()
+        env = output.assert_outputs(self, port.setup_environ_for_server)
+        self.assertEqual(orig_environ["PATH"], os.environ["PATH"])
+        self.assertNotEqual(env["PATH"], os.environ["PATH"])
 
     def test_setup_environ_for_server_register_cygwin(self):
         sys.platform = "win32"
