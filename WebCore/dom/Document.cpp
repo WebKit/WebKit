@@ -2620,9 +2620,9 @@ void Document::addStyleSheetCandidateNode(Node* node, bool createdByParser)
     }
 
     // Determine an appropriate insertion point.
-    ListHashSet<Node*>::iterator begin = m_styleSheetCandidateNodes.begin();
-    ListHashSet<Node*>::iterator end = m_styleSheetCandidateNodes.end();
-    ListHashSet<Node*>::iterator it = end;
+    StyleSheetCandidateListHashSet::iterator begin = m_styleSheetCandidateNodes.begin();
+    StyleSheetCandidateListHashSet::iterator end = m_styleSheetCandidateNodes.end();
+    StyleSheetCandidateListHashSet::iterator it = end;
     Node* followingNode = 0;
     do {
         --it;
@@ -2654,11 +2654,11 @@ void Document::recalcStyleSelector()
     if (Settings* settings = this->settings())
         matchAuthorAndUserStyles = settings->authorAndUserStylesEnabled();
 
-    ListHashSet<Node*>::iterator begin = m_styleSheetCandidateNodes.begin();
-    ListHashSet<Node*>::iterator end = m_styleSheetCandidateNodes.end();
+    StyleSheetCandidateListHashSet::iterator begin = m_styleSheetCandidateNodes.begin();
+    StyleSheetCandidateListHashSet::iterator end = m_styleSheetCandidateNodes.end();
     if (!matchAuthorAndUserStyles)
         end = begin;
-    for (ListHashSet<Node*>::iterator it = begin; it != end; ++it) {
+    for (StyleSheetCandidateListHashSet::iterator it = begin; it != end; ++it) {
         Node* n = *it;
 
         StyleSheet* sheet = 0;
@@ -4362,7 +4362,7 @@ Vector<String> Document::formElementsState() const
 {
     Vector<String> stateVector;
     stateVector.reserveInitialCapacity(m_formElementsWithState.size() * 3);
-    typedef ListHashSet<Element*>::const_iterator Iterator;
+    typedef FormElementListHashSet::const_iterator Iterator;
     Iterator end = m_formElementsWithState.end();
     for (Iterator it = m_formElementsWithState.begin(); it != end; ++it) {
         Element* elementWithState = *it;
