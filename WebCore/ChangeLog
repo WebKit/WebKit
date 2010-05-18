@@ -33,6 +33,27 @@
 
         Reviewed by Eric Seidel.
 
+        Add an HTML5Token
+        https://bugs.webkit.org/show_bug.cgi?id=39274
+
+        The token object is an ugly fake union, but I'm sure sure there's a
+        better way...  Eric needs this to provide output for the test harness.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTML5Lexer::HTML5Lexer):
+        (WebCore::HTML5Lexer::write):
+        (WebCore::HTML5Lexer::emitCharacter):
+        * html/HTML5Lexer.h:
+        * html/HTML5Token.h: Added.
+        (WebCore::HTML5Token::):
+        (WebCore::HTML5Token::HTML5Token):
+        (WebCore::HTML5Token::setToCharacter):
+
+2010-05-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Implement ScriptData states for HTML5Lexer
         https://bugs.webkit.org/show_bug.cgi?id=39273
 

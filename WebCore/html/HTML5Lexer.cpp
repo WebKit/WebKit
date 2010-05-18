@@ -29,6 +29,7 @@
 #include "HTML5Lexer.h"
 
 #include "AtomicString.h"
+#include "HTML5Token.h"
 #include "HTMLNames.h"
 #include "NotImplemented.h"
 #include <wtf/text/CString.h>
@@ -55,6 +56,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTML5Lexer::HTML5Lexer()
+    : m_outputToken(0)
 {
 }
 
@@ -90,9 +92,11 @@ void HTML5Lexer::reset()
     clearLastCharacters();
 }
 
-void HTML5Lexer::write(const SegmentedString& source)
+void HTML5Lexer::write(const SegmentedString& source, HTML5Token& outputToken)
 {
+    m_outputToken = &outputToken;
     tokenize(source);
+    m_outputToken = 0;
 }
 
 static inline bool isWhitespace(UChar c)
@@ -765,8 +769,9 @@ inline bool HTML5Lexer::temporaryBufferIs(const char*)
     return true;
 }
 
-inline void HTML5Lexer::emitCharacter(UChar)
+inline void HTML5Lexer::emitCharacter(UChar character)
 {
+    m_outputToken->setToCharacter(character);
 }
 
 inline void HTML5Lexer::emitParseError()

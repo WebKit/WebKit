@@ -2546,6 +2546,7 @@
 		97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 97DD4D850FDF4D6E00ECF9A4 /* XSSAuditor.h */; };
 		97E8B35611A23CE200169409 /* HTML5Lexer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E8B35411A23CE200169409 /* HTML5Lexer.cpp */; };
 		97E8B35711A23CE200169409 /* HTML5Lexer.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E8B35511A23CE200169409 /* HTML5Lexer.h */; };
+		97E8B3C311A2890800169409 /* HTML5Token.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E8B3C211A2890800169409 /* HTML5Token.h */; };
 		97EF7DFE107E55B700D7C49C /* ScriptControllerBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97EF7DFD107E55B700D7C49C /* ScriptControllerBase.cpp */; };
 		9F6FC1961122E82A00E80196 /* ScriptDebugServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F6FC1941122E82A00E80196 /* ScriptDebugServer.cpp */; };
 		9F6FC1971122E82A00E80196 /* ScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F6FC1951122E82A00E80196 /* ScriptDebugServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8091,6 +8092,7 @@
 		97DD4D850FDF4D6E00ECF9A4 /* XSSAuditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSSAuditor.h; sourceTree = "<group>"; };
 		97E8B35411A23CE200169409 /* HTML5Lexer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTML5Lexer.cpp; sourceTree = "<group>"; };
 		97E8B35511A23CE200169409 /* HTML5Lexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTML5Lexer.h; sourceTree = "<group>"; };
+		97E8B3C211A2890800169409 /* HTML5Token.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTML5Token.h; sourceTree = "<group>"; };
 		97EF7DFD107E55B700D7C49C /* ScriptControllerBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptControllerBase.cpp; sourceTree = "<group>"; };
 		9F6FC1941122E82A00E80196 /* ScriptDebugServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptDebugServer.cpp; sourceTree = "<group>"; };
 		9F6FC1951122E82A00E80196 /* ScriptDebugServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptDebugServer.h; sourceTree = "<group>"; };
@@ -13309,6 +13311,7 @@
 				A8136D360973A8E700D74463 /* FormDataList.h */,
 				97E8B35411A23CE200169409 /* HTML5Lexer.cpp */,
 				97E8B35511A23CE200169409 /* HTML5Lexer.h */,
+				97E8B3C211A2890800169409 /* HTML5Token.h */,
 				BC97E239109144950010D361 /* HTMLAllCollection.cpp */,
 				BC97E238109144950010D361 /* HTMLAllCollection.h */,
 				BC97E23C109146F10010D361 /* HTMLAllCollection.idl */,
@@ -19258,6 +19261,7 @@
 				C56C91A3119D918100DE4CD9 /* JSIDBEvent.h in Headers */,
 				C56C91A7119D918700DE4CD9 /* JSIDBSuccessEvent.h in Headers */,
 				97E8B35711A23CE200169409 /* HTML5Lexer.h in Headers */,
+				97E8B3C311A2890800169409 /* HTML5Token.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

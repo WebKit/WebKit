@@ -34,13 +34,15 @@
 
 namespace WebCore {
 
+    class HTML5Token;
+    
     class HTML5Lexer : public Noncopyable {
     public:
         HTML5Lexer();
         ~HTML5Lexer();
 
         void begin();
-        void write(const SegmentedString&);
+        void write(const SegmentedString&, HTML5Token&);
         void end();
 
         static unsigned consumeEntity(SegmentedString&, bool& notEnoughCharacters);
@@ -61,6 +63,7 @@ namespace WebCore {
         bool lastCharactersMatch(const char*, unsigned count) const;
 
         SegmentedString m_source;
+        HTML5Token* m_outputToken;
 
         enum State {
             DataState,
