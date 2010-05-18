@@ -1,3 +1,38 @@
+2010-05-17  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add the html5lib HTML parser tests
+        https://bugs.webkit.org/show_bug.cgi?id=39260
+
+        We currently fail a bunch of these.  Hopefully we'll get better as we
+        implement the HTML5 parser.
+
+        Source: http://gsnedders.html5.org/html5lib-tests/runner.html
+
+        * html5lib/resources/dom2string.js: Added.
+        (String.prototype.toAsciiLowerCase):
+        (indent):
+        (dom2string):
+        * html5lib/resources/tests1.dat: Added.
+        * html5lib/resources/tests10.dat: Added.
+        * html5lib/resources/tests11.dat: Added.
+        * html5lib/resources/tests12.dat: Added.
+        * html5lib/resources/tests13.dat: Added.
+        * html5lib/resources/tests14.dat: Added.
+        * html5lib/resources/tests15.dat: Added.
+        * html5lib/resources/tests16.dat: Added.
+        * html5lib/resources/tests2.dat: Added.
+        * html5lib/resources/tests3.dat: Added.
+        * html5lib/resources/tests4.dat: Added.
+        * html5lib/resources/tests5.dat: Added.
+        * html5lib/resources/tests6.dat: Added.
+        * html5lib/resources/tests7.dat: Added.
+        * html5lib/resources/tests8.dat: Added.
+        * html5lib/resources/tests9.dat: Added.
+        * html5lib/runner-expected.txt: Added.
+        * html5lib/runner.html: Added.
+
 2010-05-17  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Adler.
