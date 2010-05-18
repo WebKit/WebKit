@@ -1,3 +1,16 @@
+2010-05-17  Julie Parent  <jparent@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Rietveld review page should dedicate more space to Rietveld, less to high level comments form.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39244
+
+        * template/en/custom/attachment/reviewform.html.tmpl:
+        Delete a random BR amongst the hidden elements that was causing extra whitespace.
+        * template/en/custom/attachment/rietveldreview.html.tmpl:
+        Increase size of Rietveld frame to 80%, from 60%.
+
 2010-05-14  Julie Parent  <jparent@chromium.org>
 
         Reviewed by Ojan Vafai.

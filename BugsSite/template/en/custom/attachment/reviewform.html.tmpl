@@ -86,7 +86,7 @@
   [% END %]
   <input type="hidden" name="description" value="[% attachment.description FILTER html %]">
   <input type="hidden" name="filename" value="[% attachment.filename FILTER html %]">
-  <input type="hidden" name="contenttypeentry" value="[% attachment.contenttype FILTER html %]"><br>
+  <input type="hidden" name="contenttypeentry" value="[% attachment.contenttype FILTER html %]">
   <input type="hidden" name="ispatch" [% IF attachment.ispatch %] value="1" [% ELSE %] value="0" [% END %] >
   <input type="hidden" name="isobsolete" [% IF attachment.isobsolete %] value="1" [% ELSE %] value="0" [% END %] >
   [% IF (Param("insidergroup") && user.in_group(Param("insidergroup"))) %]

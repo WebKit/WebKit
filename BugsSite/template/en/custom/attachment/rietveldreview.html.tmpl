@@ -70,7 +70,7 @@ else
     This is just here as a safeguard if anyone directly navigates to it. %]
 Please log in and refresh this page.
 [% ELSE %]
-<frameset rows="60%,40%">
+<frameset rows="80%,20%">
 <frame id=rietveldFrame src="http://wkrietveld.appspot.com/[% attachment.bug_id  %]?email=[% user.login %]">
 <frame id=reviewFormFrame src="attachment.cgi?id=[% attachment.id %]&action=reviewform&rietveldreview=true">
 </frameset>
