@@ -360,8 +360,18 @@ bool WKCACFLayerRenderer::createRenderer()
         parameters.BackBufferHeight = 1;
     }
 
+    D3DCAPS9 d3dCaps;
+    if (FAILED(d3d()->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &d3dCaps)))
+        return false;
+
+    DWORD behaviorFlags = D3DCREATE_FPU_PRESERVE;
+    if ((d3dCaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) && d3dCaps.VertexProcessingCaps)
+        behaviorFlags |= D3DCREATE_HARDWARE_VERTEXPROCESSING;
+    else
+        behaviorFlags |= D3DCREATE_SOFTWARE_VERTEXPROCESSING;
+
     COMPtr<IDirect3DDevice9> device;
-    if (FAILED(d3d()->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hostWindow, D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_FPU_PRESERVE, &parameters, &device))) {
+    if (FAILED(d3d()->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hostWindow, behaviorFlags, &parameters, &device))) {
         // In certain situations (e.g., shortly after waking from sleep), Direct3DCreate9() will
         // return an IDirect3D9 for which IDirect3D9::CreateDevice will always fail. In case we
         // have one of these bad IDirect3D9s, get rid of it so we'll fetch a new one the next time

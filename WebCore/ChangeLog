@@ -1,5 +1,21 @@
 2010-05-18  Adam Roben  <aroben@apple.com>
 
+        Make accelerated compositing work on machines that don't support
+        hardware vertex processing
+
+        Fixes <http://webkit.org/b/39299> <rdar://problem/7997692> Accelerated
+        compositing on Windows doesn't work on machines that don't support
+        hardware vertex processing, but should
+
+        Reviewed by Eric Carlson.
+
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::createRenderer): Query the device
+        capabilities to decide whether to request hardware or software vertex
+        processing.
+
+2010-05-18  Adam Roben  <aroben@apple.com>
+
         Make WKCACFLayerRenderer robust against temporary failure of
         Direct3DCreate9 and IDirect3D9::CreateDevice
 
