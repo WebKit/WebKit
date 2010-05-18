@@ -96,19 +96,7 @@ void RenderLayerBacking::createGraphicsLayer()
     m_graphicsLayer = GraphicsLayer::create(this);
     
 #ifndef NDEBUG
-    if (renderer()->node()) {
-        if (renderer()->node()->isDocumentNode())
-            m_graphicsLayer->setName("Document Node");
-        else {
-            if (renderer()->node()->isHTMLElement() && renderer()->node()->hasID())
-                m_graphicsLayer->setName(renderer()->renderName() + String(" ") + static_cast<HTMLElement*>(renderer()->node())->getIDAttribute());
-            else
-                m_graphicsLayer->setName(renderer()->renderName());
-        }
-    } else if (m_owningLayer->isReflection())
-        m_graphicsLayer->setName("Reflection");
-    else
-        m_graphicsLayer->setName("Anonymous Node");
+    m_graphicsLayer->setName(nameForLayer());
 #endif  // NDEBUG
 
     updateLayerOpacity(renderer()->style());
@@ -466,7 +454,7 @@ bool RenderLayerBacking::updateForegroundLayer(bool needsForegroundLayer)
         if (!m_foregroundLayer) {
             m_foregroundLayer = GraphicsLayer::create(this);
 #ifndef NDEBUG
-            m_foregroundLayer->setName("Foreground");
+            m_foregroundLayer->setName(nameForLayer() + " (foreground)");
 #endif
             m_foregroundLayer->setDrawsContent(true);
             m_foregroundLayer->setPaintingPhase(GraphicsLayerPaintForeground);
@@ -1261,6 +1249,25 @@ AnimatedPropertyID RenderLayerBacking::cssToGraphicsLayerProperty(int cssPropert
     }
     return AnimatedPropertyInvalid;
 }
+
+#ifndef NDEBUG
+String RenderLayerBacking::nameForLayer() const
+{
+    String name = renderer()->renderName();
+    if (Node* node = renderer()->node()) {
+        if (node->isElementNode())
+            name += " " + static_cast<Element *>(node)->tagName();
+
+        if (node->isHTMLElement() && static_cast<HTMLElement *>(node)->hasID())
+            name += " \'" + static_cast<Element *>(node)->getIDAttribute() + "\'";
+    }
+
+    if (m_owningLayer->isReflection())
+        name += " (reflection)";
+
+    return name;
+}
+#endif
 
 } // namespace WebCore
 

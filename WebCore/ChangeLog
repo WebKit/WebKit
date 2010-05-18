@@ -1,3 +1,19 @@
+2010-05-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Clean up GraphicsLayer naming code
+        https://bugs.webkit.org/show_bug.cgi?id=39316
+
+        Move code that generates a name for the GraphicsLayer (used in debug builds only) into
+        a new nameForLayer() method. Use it when naming the foreground layer.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createGraphicsLayer):
+        (WebCore::RenderLayerBacking::updateForegroundLayer):
+        (WebCore::RenderLayerBacking::nameForLayer):
+        * rendering/RenderLayerBacking.h:
+
 2010-05-18  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Adam Barth.
