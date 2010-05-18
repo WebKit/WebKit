@@ -1,3 +1,21 @@
+2010-05-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Attempt to make new-run-webkit-tests --help more sane
+        https://bugs.webkit.org/show_bug.cgi?id=37836
+
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+         - Add a FIXME about options.singly and options.batch_size being different.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+         - Add support for hidden options.
+         - Add option groupings to attempt to simplify --help.
+         - Fix a bunch of option helps to start with a capitalized verb.
+         - Hide a bunch of options which make no sense to users.
+         - Sort options in --help.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+         - Add tests for option sorting.
+
 2010-05-17  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
