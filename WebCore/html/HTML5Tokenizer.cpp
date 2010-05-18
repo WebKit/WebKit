@@ -23,64 +23,64 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTML5Token_h
-#define HTML5Token_h
+#include "config.h"
+#include "HTML5Tokenizer.h"
 
-#include "NamedMappedAttrMap.h"
-#include "Node.h"
-#include "String.h"
-#include <wtf/Noncopyable.h>
+#include "HTML5Lexer.h"
+#include "HTML5Token.h"
+#include "HTMLDocument.h"
+#include "HTMLParser.h"
+#include "NotImplemented.h"
 
 namespace WebCore {
 
-class HTML5Token : public Noncopyable {
-public:
-    enum Type {
-        Uninitialized,
-        DOCTYPE,
-        StartTag,
-        EndTag,
-        Comment,
-        Character,
-        EndOfFile,
-    };
-
-    explicit HTML5Token(Type type = Uninitialized)
-        : m_type(type)
-        , m_forceQuirks(false)
-        , m_selfClosing(false)
-        , m_character(0)
-    {
-    }
-
-    inline void setToCharacter(UChar character)
-    {
-        m_type = Character;
-        m_character = character;
-    }
-
-private:
-    Type m_type;
-
-    // For DOCTYPE and StartTag
-    String m_name;
-
-    // For DOCTYPE
-    String m_publicIdentifier;
-    String m_systemIdentifier;
-    bool m_forceQuirks;
-
-    // For StartTag and EndTag
-    bool m_selfClosing;
-    RefPtr<NamedMappedAttrMap> attrs;
-
-    // For Character
-    UChar m_character;
-
-    // For Comment
-    String m_data;
-};
-
+HTML5Tokenizer::HTML5Tokenizer(HTMLDocument* doc, bool reportErrors)
+    : Tokenizer()
+    , m_doc(doc)
+    , m_lexer(new HTML5Lexer)
+    , m_parser(new HTMLParser(doc, reportErrors))
+{
+    begin();
 }
 
-#endif
+HTML5Tokenizer::~HTML5Tokenizer()
+{
+}
+
+void HTML5Tokenizer::begin()
+{
+}
+
+void HTML5Tokenizer::write(const SegmentedString& source, bool)
+{
+    m_source.append(source);
+
+    while (!m_source.isEmpty()) {
+        HTML5Token token;
+        m_lexer->nextToken(m_source, token);
+        // http://www.whatwg.org/specs/web-apps/current-work/#tree-construction
+        // We need to add code to the parser in order to understand
+        // HTML5Token objects.  The old HTML codepath does not have a nice
+        // separation between the parser logic and tokenizer logic like
+        // the HTML5 codepath should.  The call should look something like:
+        // m_parser->constructTreeFromToken(token);
+    }
+}
+
+void HTML5Tokenizer::end()
+{
+    m_parser->finished();
+}
+
+void HTML5Tokenizer::finish()
+{
+    end();
+}
+
+bool HTML5Tokenizer::isWaitingForScripts() const
+{
+    notImplemented();
+    return false;
+}
+
+}

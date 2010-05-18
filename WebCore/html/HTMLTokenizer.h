@@ -132,6 +132,11 @@ public:
 
 //-----------------------------------------------------------------------------
 
+// FIXME: This class does too much.  Right now it is both an HTML lexer as well
+// as handling all of the non-lexer-specific junk related to tokenizing HTML
+// (like dealing with <script> tags).  The HTML lexer bits should be pushed
+// down into a separate HTML lexer class.
+
 class HTMLTokenizer : public Tokenizer, public CachedResourceClient {
 public:
     HTMLTokenizer(HTMLDocument*, bool reportErrors);

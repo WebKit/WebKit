@@ -23,62 +23,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTML5Token_h
-#define HTML5Token_h
+#ifndef HTML5Tokenizer_h
+#define HTML5Tokenizer_h
 
-#include "NamedMappedAttrMap.h"
-#include "Node.h"
-#include "String.h"
-#include <wtf/Noncopyable.h>
+#include "CachedResourceClient.h"
+#include "SegmentedString.h"
+#include "Tokenizer.h"
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
-class HTML5Token : public Noncopyable {
+class Document;
+class HTMLDocument;
+class HTMLParser;
+class HTML5Lexer;
+
+// FIXME: This is the wrong layer to hook in the new HTML 5 Lexer,
+// however HTMLTokenizer is too large and too fragile of a class to hack into.
+// Eventually we should split all of the HTML lexer logic out from HTMLTokenizer
+// and then share non-lexer-specific tokenizer logic between HTML5 and the
+// legacy WebKit HTML lexer.
+
+// FIXME: This class is far from complete.
+class HTML5Tokenizer :  public Tokenizer, public CachedResourceClient {
 public:
-    enum Type {
-        Uninitialized,
-        DOCTYPE,
-        StartTag,
-        EndTag,
-        Comment,
-        Character,
-        EndOfFile,
-    };
+    HTML5Tokenizer(HTMLDocument*, bool reportErrors);
+    virtual ~HTML5Tokenizer();
 
-    explicit HTML5Token(Type type = Uninitialized)
-        : m_type(type)
-        , m_forceQuirks(false)
-        , m_selfClosing(false)
-        , m_character(0)
-    {
-    }
-
-    inline void setToCharacter(UChar character)
-    {
-        m_type = Character;
-        m_character = character;
-    }
+    virtual void begin();
+    virtual void write(const SegmentedString&, bool appendData);
+    virtual void end();
+    virtual void finish();
+    virtual bool isWaitingForScripts() const;
 
 private:
-    Type m_type;
+    SegmentedString m_source;
 
-    // For DOCTYPE and StartTag
-    String m_name;
-
-    // For DOCTYPE
-    String m_publicIdentifier;
-    String m_systemIdentifier;
-    bool m_forceQuirks;
-
-    // For StartTag and EndTag
-    bool m_selfClosing;
-    RefPtr<NamedMappedAttrMap> attrs;
-
-    // For Character
-    UChar m_character;
-
-    // For Comment
-    String m_data;
+    Document* m_doc;
+    OwnPtr<HTML5Lexer> m_lexer;
+    OwnPtr<HTMLParser> m_parser;
 };
 
 }

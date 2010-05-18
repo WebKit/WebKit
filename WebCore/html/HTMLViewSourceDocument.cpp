@@ -59,6 +59,7 @@ Tokenizer* HTMLViewSourceDocument::createTokenizer()
         || m_type == "application/vnd.wap.xhtml+xml"
 #endif
         ) {
+        // FIXME: Should respect Settings::html5ParserEnabled()
         return new HTMLTokenizer(this);
     }
 

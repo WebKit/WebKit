@@ -1,3 +1,49 @@
+2010-05-18  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make it possible to enable the new HTML5Tokenizer for testing
+        https://bugs.webkit.org/show_bug.cgi?id=39275
+
+        I added html5ParserEnabled to Settings so that we can enable/disable
+        the HTML5 parser for testing.
+
+        I also ripped out a bunch of dead code from HTML5Lexer.
+
+        I had to add HTML5Lexer/HTML5Tokenizer to all build systems so that
+        the build wouldn't fail now that we reference these classes from HTMLDocument.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTML5Lexer::reset):
+        (WebCore::isWhitespace):
+        (WebCore::HTML5Lexer::nextToken):
+        * html/HTML5Lexer.h:
+        * html/HTML5Tokenizer.cpp: Added.
+        (WebCore::HTML5Tokenizer::HTML5Tokenizer):
+        (WebCore::HTML5Tokenizer::~HTML5Tokenizer):
+        (WebCore::HTML5Tokenizer::begin):
+        (WebCore::HTML5Tokenizer::write):
+        (WebCore::HTML5Tokenizer::end):
+        (WebCore::HTML5Tokenizer::finish):
+        (WebCore::HTML5Tokenizer::isWaitingForScripts):
+        * html/HTML5Tokenizer.h: Added.
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::createTokenizer):
+        * html/HTMLTokenizer.h:
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createTokenizer):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setHTML5ParserEnabled):
+        (WebCore::Settings::html5ParserEnabled):
+
 2010-05-18  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed, build fix.

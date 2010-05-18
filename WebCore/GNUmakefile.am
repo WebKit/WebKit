@@ -1069,6 +1069,10 @@ webcore_sources += \
 	WebCore/html/FileThreadTask.h \
 	WebCore/html/FormDataList.cpp \
 	WebCore/html/FormDataList.h \
+	WebCore/html/HTML5Lexer.cpp \
+	WebCore/html/HTML5Lexer.h \
+	WebCore/html/HTML5Tokenizer.cpp \
+	WebCore/html/HTML5Tokenizer.h \
 	WebCore/html/HTMLAllCollection.cpp \
 	WebCore/html/HTMLAllCollection.h \
 	WebCore/html/HTMLAnchorElement.cpp \

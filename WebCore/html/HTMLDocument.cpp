@@ -64,6 +64,7 @@
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "HTML5Tokenizer.h"
 #include "HTMLBodyElement.h"
 #include "HTMLElementFactory.h"
 #include "HTMLNames.h"
@@ -71,6 +72,7 @@
 #include "InspectorController.h"
 #include "KURL.h"
 #include "Page.h"
+#include "Settings.h"
 #include <wtf/text/CString.h>
 
 #include "DocTypeStrings.cpp"
@@ -281,13 +283,16 @@ void HTMLDocument::releaseEvents()
 {
 }
 
-Tokenizer *HTMLDocument::createTokenizer()
+Tokenizer* HTMLDocument::createTokenizer()
 {
     bool reportErrors = false;
 #if ENABLE(INSPECTOR)
     if (Page* page = this->page())
         reportErrors = page->inspectorController()->windowVisible();
 #endif
+
+    if (settings() && settings()->html5ParserEnabled())
+        return new HTML5Tokenizer(this, reportErrors);
 
     return new HTMLTokenizer(this, reportErrors);
 }

@@ -1237,6 +1237,16 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitFrameFlatteningEnabledPreferenceKey];
 }
 
+- (BOOL)html5ParserEnabled
+{
+    return [self _boolValueForKey:WebKitHTML5ParserEnabledPreferenceKey];
+}
+
+- (void)setHTML5ParserEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitHTML5ParserEnabledPreferenceKey];
+}
+
 - (void)didRemoveFromWebView
 {
     ASSERT(_private->numWebViews);

@@ -167,6 +167,9 @@ extern NSString *WebPreferencesRemovedNotification;
 - (BOOL)webGLEnabled;
 - (void)setWebGLEnabled:(BOOL)enabled;
 
+- (BOOL)html5ParserEnabled;
+- (void)setHTML5ParserEnabled:(BOOL)flag;
+
 - (BOOL)usesProxiedOpenPanel;
 - (void)setUsesProxiedOpenPanel:(BOOL)enabled;
 

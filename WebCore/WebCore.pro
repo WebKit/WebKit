@@ -605,6 +605,8 @@ SOURCES += \
     html/FileStreamProxy.cpp \
     html/FileThread.cpp \
     html/FormDataList.cpp \
+    html/HTML5Lexer.cpp \
+    html/HTML5Tokenizer.cpp \
     html/HTMLAllCollection.cpp \
     html/HTMLAnchorElement.cpp \
     html/HTMLAppletElement.cpp \

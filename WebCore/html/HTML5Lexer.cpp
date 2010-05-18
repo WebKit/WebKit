@@ -32,9 +32,11 @@
 #include "HTML5Token.h"
 #include "HTMLNames.h"
 #include "NotImplemented.h"
-#include <wtf/text/CString.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/UnusedParam.h>
+#include <wtf/text/CString.h>
 #include <wtf/unicode/Unicode.h>
+
 
 // Use __GNUC__ instead of PLATFORM(GCC) to stay consistent with the gperf generated c file
 #ifdef __GNUC__
@@ -64,69 +66,14 @@ HTML5Lexer::~HTML5Lexer()
 {
 }
 
-void HTML5Lexer::begin() 
-{ 
-    reset(); 
-}
-
-void HTML5Lexer::end() 
-{
-}
-
 void HTML5Lexer::reset()
 {
-    m_source.clear();
-
     m_state = DataState;
-    m_escape = false;
-    m_contentModel = PCDATA;
-    m_commentPos = 0;
-
-    m_closeTag = false;
-    m_tagName.clear();
-    m_attributeName.clear();
-    m_attributeValue.clear();
-    m_lastStartTag = AtomicString();
-
-    m_lastCharacterIndex = 0;
-    clearLastCharacters();
-}
-
-void HTML5Lexer::write(const SegmentedString& source, HTML5Token& outputToken)
-{
-    m_outputToken = &outputToken;
-    tokenize(source);
-    m_outputToken = 0;
 }
 
 static inline bool isWhitespace(UChar c)
 {
     return c == ' ' || c == '\n' || c == '\r' || c == '\t';
-}
-
-inline void HTML5Lexer::clearLastCharacters()
-{
-    memset(m_lastCharacters, 0, lastCharactersBufferSize * sizeof(UChar));
-}
-
-inline void HTML5Lexer::rememberCharacter(UChar c)
-{
-    m_lastCharacterIndex = (m_lastCharacterIndex + 1) % lastCharactersBufferSize;
-    m_lastCharacters[m_lastCharacterIndex] = c;
-}
-
-inline bool HTML5Lexer::lastCharactersMatch(const char* chars, unsigned count) const
-{
-    unsigned pos = m_lastCharacterIndex;
-    while (count) {
-        if (chars[count - 1] != m_lastCharacters[pos])
-            return false;
-        --count;
-        if (!pos)
-            pos = lastCharactersBufferSize;
-        --pos;
-    }
-    return true;
 }
     
 static inline unsigned legalEntityFor(unsigned value)
@@ -255,13 +202,13 @@ outOfCharacters:
     return 0;
 }
 
-void HTML5Lexer::tokenize(const SegmentedString& source)
+void HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
 {
-    m_source.append(source);
-
+    m_outputToken = &token;
     // Source: http://www.whatwg.org/specs/web-apps/current-work/#tokenisation0
-    while (!m_source.isEmpty()) {
-        UChar cc = *m_source;
+    // FIXME: This while should stop as soon as we have a token to return.
+    while (!source.isEmpty()) {
+        UChar cc = *source;
         switch (m_state) {
         case DataState: {
             if (cc == '&')
@@ -751,16 +698,9 @@ void HTML5Lexer::tokenize(const SegmentedString& source)
             notImplemented();
             break;
         }
-        m_source.advance();
+        source.advance();
     }
-}
-
-void HTML5Lexer::processAttribute()
-{
-    AtomicString tag = AtomicString(m_tagName.data(), m_tagName.size());
-    AtomicString attribute = AtomicString(m_attributeName.data(), m_attributeName.size());
-
-    String value(m_attributeValue.data(), m_attributeValue.size());
+    m_outputToken = 0;
 }
 
 inline bool HTML5Lexer::temporaryBufferIs(const char*)
@@ -776,30 +716,6 @@ inline void HTML5Lexer::emitCharacter(UChar character)
 
 inline void HTML5Lexer::emitParseError()
 {
-}
-
-void HTML5Lexer::emitTag()
-{
-    if (m_closeTag) {
-        m_contentModel = PCDATA;
-        clearLastCharacters();
-        return;
-    }
-
-    AtomicString tag(m_tagName.data(), m_tagName.size());
-    m_lastStartTag = tag;
-
-    if (tag == textareaTag || tag == titleTag)
-        m_contentModel = RCDATA;
-    else if (tag == styleTag || tag == xmpTag || tag == scriptTag || tag == iframeTag || tag == noembedTag || tag == noframesTag)
-        m_contentModel = CDATA;
-    else if (tag == noscriptTag)
-        // we wouldn't be here if scripts were disabled
-        m_contentModel = CDATA;
-    else if (tag == plaintextTag)
-        m_contentModel = PLAINTEXT;
-    else
-        m_contentModel = PCDATA;
 }
 
 }

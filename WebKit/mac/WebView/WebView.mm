@@ -1405,6 +1405,7 @@ static bool fastDocumentTeardownEnabled()
     settings->setWebGLEnabled([preferences webGLEnabled]);
     settings->setLoadDeferringEnabled(shouldEnableLoadDeferring());
     settings->setFrameFlatteningEnabled([preferences isFrameFlatteningEnabled]);
+    settings->setHTML5ParserEnabled([preferences html5ParserEnabled]);
 }
 
 static inline IMP getMethod(id o, SEL s)

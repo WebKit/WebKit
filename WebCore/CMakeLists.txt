@@ -880,6 +880,8 @@ SET(WebCore_SOURCES
     html/File.cpp
     html/FileList.cpp
     html/FormDataList.cpp
+    html/HTML5Lexer.cpp
+    html/HTML5Tokenizer.cpp
     html/HTMLAllCollection.cpp
     html/HTMLAnchorElement.cpp
     html/HTMLAppletElement.cpp

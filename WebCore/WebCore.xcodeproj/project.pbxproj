@@ -2938,6 +2938,8 @@
 		A86629D209DA2B48009633A5 /* JSMouseEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A86629CC09DA2B47009633A5 /* JSMouseEvent.cpp */; };
 		A86629D309DA2B48009633A5 /* JSKeyboardEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A86629CD09DA2B47009633A5 /* JSKeyboardEvent.h */; };
 		A86629D409DA2B48009633A5 /* JSKeyboardEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */; };
+		A871038A11A2947000DBD50E /* HTML5Tokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871038811A2947000DBD50E /* HTML5Tokenizer.cpp */; };
+		A871038B11A2947000DBD50E /* HTML5Tokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = A871038911A2947000DBD50E /* HTML5Tokenizer.h */; };
 		A871D4560A127CBC00B12A68 /* HTMLPlugInElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871D44C0A127CBC00B12A68 /* HTMLPlugInElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A871D4570A127CBC00B12A68 /* HTMLPlugInElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871D44D0A127CBC00B12A68 /* HTMLPlugInElement.cpp */; };
 		A871D4580A127CBC00B12A68 /* HTMLParamElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871D44E0A127CBC00B12A68 /* HTMLParamElement.h */; };
@@ -8354,6 +8356,8 @@
 		A86629CC09DA2B47009633A5 /* JSMouseEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSMouseEvent.cpp; sourceTree = "<group>"; };
 		A86629CD09DA2B47009633A5 /* JSKeyboardEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSKeyboardEvent.h; sourceTree = "<group>"; };
 		A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSKeyboardEvent.cpp; sourceTree = "<group>"; };
+		A871038811A2947000DBD50E /* HTML5Tokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTML5Tokenizer.cpp; sourceTree = "<group>"; };
+		A871038911A2947000DBD50E /* HTML5Tokenizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTML5Tokenizer.h; sourceTree = "<group>"; };
 		A871D44C0A127CBC00B12A68 /* HTMLPlugInElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLPlugInElement.h; sourceTree = "<group>"; };
 		A871D44D0A127CBC00B12A68 /* HTMLPlugInElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLPlugInElement.cpp; sourceTree = "<group>"; };
 		A871D44E0A127CBC00B12A68 /* HTMLParamElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLParamElement.h; sourceTree = "<group>"; };
@@ -13267,10 +13271,10 @@
 		93EEC1EC09C2877700C515D1 /* html */ = {
 			isa = PBXGroup;
 			children = (
-				49484FAE102CF01E00187DD3 /* canvas */,
 				2EAFAF0B10E2AF2D007ED3D6 /* Blob.cpp */,
 				2EAFAF0C10E2AF2D007ED3D6 /* Blob.h */,
 				2EAFAF0D10E2AF2D007ED3D6 /* Blob.idl */,
+				49484FAE102CF01E00187DD3 /* canvas */,
 				93C441ED0F813A1A00C1A634 /* CollectionCache.cpp */,
 				93C441EE0F813A1A00C1A634 /* CollectionCache.h */,
 				93C441FF0F813AE100C1A634 /* CollectionType.h */,
@@ -13312,6 +13316,8 @@
 				97E8B35411A23CE200169409 /* HTML5Lexer.cpp */,
 				97E8B35511A23CE200169409 /* HTML5Lexer.h */,
 				97E8B3C211A2890800169409 /* HTML5Token.h */,
+				A871038811A2947000DBD50E /* HTML5Tokenizer.cpp */,
+				A871038911A2947000DBD50E /* HTML5Tokenizer.h */,
 				BC97E239109144950010D361 /* HTMLAllCollection.cpp */,
 				BC97E238109144950010D361 /* HTMLAllCollection.h */,
 				BC97E23C109146F10010D361 /* HTMLAllCollection.idl */,
@@ -19262,6 +19268,7 @@
 				C56C91A7119D918700DE4CD9 /* JSIDBSuccessEvent.h in Headers */,
 				97E8B35711A23CE200169409 /* HTML5Lexer.h in Headers */,
 				97E8B3C311A2890800169409 /* HTML5Token.h in Headers */,
+				A871038B11A2947000DBD50E /* HTML5Tokenizer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21543,6 +21550,7 @@
 				C56C91A2119D918100DE4CD9 /* JSIDBEvent.cpp in Sources */,
 				C56C91A6119D918700DE4CD9 /* JSIDBSuccessEvent.cpp in Sources */,
 				97E8B35611A23CE200169409 /* HTML5Lexer.cpp in Sources */,
+				A871038A11A2947000DBD50E /* HTML5Tokenizer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

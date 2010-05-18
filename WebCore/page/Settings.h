@@ -308,6 +308,9 @@ namespace WebCore {
         void setTiledBackingStoreEnabled(bool);
         bool tiledBackingStoreEnabled() const { return m_tiledBackingStoreEnabled; }
 
+        void setHTML5ParserEnabled(bool flag) { m_html5ParserEnabled = flag; }
+        bool html5ParserEnabled() const { return m_html5ParserEnabled; }
+
     private:
         Page* m_page;
         
@@ -387,6 +390,7 @@ namespace WebCore {
         bool m_webGLEnabled : 1;
         bool m_loadDeferringEnabled : 1;
         bool m_tiledBackingStoreEnabled : 1;
+        bool m_html5ParserEnabled: 1;
 
 #if USE(SAFARI_THEME)
         static bool gShouldPaintNativeControls;
