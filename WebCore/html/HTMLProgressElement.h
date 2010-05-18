@@ -41,6 +41,7 @@ public:
 private:
     HTMLProgressElement(const QualifiedName&, Document*, HTMLFormElement*);
 
+    virtual bool recalcWillValidate() const { return false; }
     virtual bool isOptionalFormControl() const { return true; }
 
     virtual const AtomicString& formControlType() const;

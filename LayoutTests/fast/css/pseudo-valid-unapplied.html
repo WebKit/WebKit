@@ -10,6 +10,8 @@
  fieldset { background: lime; }
  object { background: lime; }
  button { background: lime; }
+ progress { background: lime; }
+ meter { background: lime; }
 </style>
 </head>
 <body>
@@ -20,16 +22,21 @@
 <input name="input-button" type="button" value="Lorem ipsum">
 <input name="input-reset" type="reset" value="Lorem ipsum"/>
 <input name="input-hidden" type="hidden" value="Lorem ipsum"/>
+<input name="input-submit" type="submit">
+<input name="input-image" type="image">
 <fieldset name="fieldset"></fieldset>
 <object name="object"></object>
 <button name="button">Lorem ipsum</button>
+<progress id="progress" value=50 max=100>50</progress>
+<meter id="meter" value=50 max=100>50</meter>
 </form>
 <div id="console"></div>
 <script>
 description("This test performs a check for the :valid CSS selector on various input elements and other elements where it shouldn't be applied.");
 
-function getBackgroundColor(elementName) {
-    var element = document.getElementsByName(elementName)[0];
+function getBackgroundColor(nameOrId) {
+    var list = document.getElementsByName(nameOrId);
+    var element = list.length > 0 ? list[0] : document.getElementById(nameOrId);
     return document.defaultView.getComputedStyle(element, null).getPropertyValue('background-color')
 }
 
@@ -39,9 +46,13 @@ var names = [
     "input-button",
     "input-reset",
     "input-hidden",
+    "input-submit",
+    "input-image",
     "fieldset",
     "object",
     "button",
+    "progress",
+    "meter",
 ];
 
 var normalColor = "rgb(0, 255, 0)";

@@ -1,3 +1,21 @@
+2010-05-17  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        ':valid' CSS selector should not be applied to some form controls
+        https://bugs.webkit.org/show_bug.cgi?id=39162
+
+        * html/HTMLElement.cpp:
+        (WebCore::inlineTagList): Always includes progressTag. This change is
+        needed in a case of no ENABLE_PROGRESS_TAG. Without this change and
+        ENABLE_PROGRESS_TAG, <progress> tags disappear.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::recalcWillValidate):
+          Return false for SUBMIT and IMAGE.
+        * html/HTMLProgressElement.h:
+        (WebCore::HTMLProgressElement::recalcWillValidate):
+          Return false. This change is needed in a case of ENABLE_PROGRESS_TAG.
+
 2010-05-17  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
