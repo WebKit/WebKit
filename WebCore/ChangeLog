@@ -1,5 +1,25 @@
 2010-05-18  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59443.
+
+    2010-05-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        iframes in compositing layers don't redraw correctly on scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=39096
+
+        When an iframe ends up in a compositing layer (that is painting to its backing store), we need
+        to turn off blitting on scrolling. RenderView::paintBoxDecorations() already has code to do this
+        for transformed frames, so do the same thing when the frame is enclosed in a compositing layer.
+
+        Test: compositing/iframes/iframe-copy-on-scroll.html
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paintBoxDecorations):
+
+2010-05-18  Mark Rowe  <mrowe@apple.com>
+
         Merge r59390.
 
     2010-05-13  Kent Tamura  <tkent@chromium.org>
