@@ -3,9 +3,6 @@ WebGL NPOT texture conformance test
 PASS gl.texImage2D with NPOT texture with level > 0 should return INVALID_VALUE
 PASS gl.texImage2D with NPOT texture at level 0 should succeed
 PASS gl.generateMipmap with NPOT texture should return INVALID_OPERATION
-PASS NPOT texture with TEXTURE_WRAP set to REPEAT should draw with 0,0,0,255
-PASS NPOT texture with TEXTURE_MIN_FILTER not NEAREST or LINEAR should draw with 0,0,0,255
-PASS NPOT texture with TEXTURE_MIN_FILTER set to LINEAR should draw with 0,192,128,255
 PASS successfullyParsed is true
 
 TEST COMPLETE
