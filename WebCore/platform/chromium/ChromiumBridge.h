@@ -225,7 +225,7 @@ namespace WebCore {
         static void paintTrackbar(
             GraphicsContext*, int part, int state, int classicState, const IntRect&);
         static void paintProgressBar(
-            GraphicsContext*, const IntRect& barRect, int valuePart, const IntRect& valueRect);
+            GraphicsContext*, const IntRect& barRect, const IntRect& valueRect, bool determinate, double animatedSeconds);
 #endif
 
         // Trace Event --------------------------------------------------------

@@ -77,8 +77,8 @@ public:
         const WebRect&) = 0;
 
     virtual void paintProgressBar(
-        WebCanvas*, const WebRect& barRect, 
-        int valuePart, const WebRect& valueRect) {}
+        WebCanvas*, const WebRect& barRect, const WebRect& valueRect,
+        bool determinate, double animatedSeconds) {}
 
 #endif
 };

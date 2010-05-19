@@ -1,3 +1,25 @@
+2010-05-18  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] Windows: Determinate progress bar should have glossy overlay
+        https://bugs.webkit.org/show_bug.cgi?id=39269
+        
+        - Moved animation code from RenderThemeChromiumWin to chromium tree
+          because it should be behind the theme implementation, which lives
+          in chromium tree.
+        - Passed current time to the bridge, which will be used to compute
+          the state of the theme animation.
+        
+        No new tests, animation effect can be confirmed only manually.
+        
+        * platform/chromium/ChromiumBridge.h:
+        * rendering/RenderProgress.h:
+        (WebCore::RenderProgress::animationStartTime): Added.
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::animationDurationForProgressBar):
+        (WebCore::RenderThemeChromiumWin::paintProgressBar):
+
 2010-05-18  Sam Weinig  <sam@webkit.org>
 
         Fix release build.

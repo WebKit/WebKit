@@ -1,3 +1,21 @@
+2010-05-18  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] Windows: Determinate progress bar should have glossy overlay
+        https://bugs.webkit.org/show_bug.cgi?id=39269
+
+        Changed WebThemeEngine::drawProgressBar() signature to delegate
+        theme implementation detail to the engine.
+        Chromium side will come to http://crbug.com/44430.
+        
+        No new tests, animation effect can be confirmed only manually.        
+
+        * public/WebThemeEngine.h:
+        (WebKit::WebThemeEngine::paintProgressBar):
+        * src/ChromiumBridge.cpp:
+        (WebCore::ChromiumBridge::paintProgressBar):
+
 2010-05-16  Mike Belshe  <mbelshe@chromium.org>
 
         Reviewed by Dimitri Glazkov.
