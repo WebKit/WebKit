@@ -1,5 +1,14 @@
 2010-05-19  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Anders Carlsson.
+
+        Use ASSERT_UNUSED instead of UNUSED_PARAM.
+
+        * dom/Attribute.cpp:
+        (WebCore::Attribute::unbindAttr):
+
+2010-05-19  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Anders Carlsson.
 
         Complete the merge of MappedAttribute and Attribute.
