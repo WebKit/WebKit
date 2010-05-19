@@ -1,3 +1,48 @@
+2010-05-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Move all member variables from MappedAttribute to Attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=39336
+        <rdar://problem/8000853>
+
+        This saves one word because we no longer have any virtual member functions in Attribute, and
+        thus no vtable pointer.
+        
+        I plan to remove MappedAttribute altogether in a subsequent commit.
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForElement):
+        * dom/Attribute.cpp:
+        (WebCore::Attribute::clone):
+        * dom/Attribute.h:
+        (WebCore::Attribute::create):
+        (WebCore::Attribute::style):
+        (WebCore::Attribute::decl):
+        (WebCore::Attribute::setDecl):
+        (WebCore::Attribute::isMappedAttribute):
+        (WebCore::Attribute::Attribute):
+        * dom/MappedAttribute.cpp: Removed.
+        * dom/MappedAttribute.h:
+        (WebCore::MappedAttribute::create):
+        (WebCore::MappedAttribute::MappedAttribute):
+        (WebCore::toMappedAttribute):
+        * dom/NamedMappedAttrMap.cpp:
+        (WebCore::NamedMappedAttrMap::declCount):
+        (WebCore::NamedMappedAttrMap::mapsEquivalent):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::updateCSSForAttribute):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::getPresentationAttribute):
+
 2010-05-18  Tony Chang  <tony@chromium.org>
 
         Reviewed by Darin Adler.

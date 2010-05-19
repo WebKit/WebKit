@@ -803,7 +803,6 @@ webcore_sources += \
 	WebCore/dom/InputElement.h \
 	WebCore/dom/KeyboardEvent.cpp \
 	WebCore/dom/KeyboardEvent.h \
-	WebCore/dom/MappedAttribute.cpp \
 	WebCore/dom/MappedAttribute.h \
 	WebCore/dom/MappedAttributeEntry.h \
 	WebCore/dom/MessageChannel.cpp \

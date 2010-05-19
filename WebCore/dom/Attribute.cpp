@@ -31,7 +31,7 @@ namespace WebCore {
 
 PassRefPtr<Attribute> Attribute::clone() const
 {
-    return adoptRef(new Attribute(m_name, m_value));
+    return adoptRef(new Attribute(m_name, m_value, m_isMappedAttribute, m_styleDecl.get()));
 }
 
 PassRefPtr<Attr> Attribute::createAttrIfNeeded(Element* e)
@@ -42,4 +42,4 @@ PassRefPtr<Attr> Attribute::createAttrIfNeeded(Element* e)
     return r.release();
 }
 
-}
+} // namespace WebCore

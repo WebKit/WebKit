@@ -1137,7 +1137,6 @@
             'dom/InputElement.h',
             'dom/KeyboardEvent.cpp',
             'dom/KeyboardEvent.h',
-            'dom/MappedAttribute.cpp',
             'dom/MappedAttribute.h',
             'dom/MappedAttributeEntry.h',
             'dom/MessageChannel.cpp',
