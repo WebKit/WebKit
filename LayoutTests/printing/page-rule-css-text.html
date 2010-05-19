@@ -2,6 +2,13 @@
 <html>
 <head>
 <style type="text/css">
+@page :visited { /* :visited is invalid for @page */
+    color: red;
+}
+@page a_page_name:visited { /* :visited is invalid for @page */
+    background-color: red;
+}
+
 @page {
     margin-top:5cm;
     margin-bottom:10cm;
@@ -19,7 +26,7 @@
     color:green;
 }
 @page world:right {
-    color:red;
+    background-color:green;
 }
 @media print {
     @page somepage:first {

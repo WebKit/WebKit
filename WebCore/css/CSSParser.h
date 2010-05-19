@@ -209,6 +209,8 @@ namespace WebCore {
 
         void updateLastSelectorLine() { m_lastSelectorLine = m_line; }
 
+        void clearProperties();
+
         bool m_strict;
         bool m_important;
         int m_id;
@@ -245,8 +247,6 @@ namespace WebCore {
     private:
         void recheckAtKeyword(const UChar* str, int len);
     
-        void clearProperties();
-
         void setupParser(const char* prefix, const String&, const char* suffix);
 
         bool inShorthand() const { return m_inParseShorthand; }

@@ -1,3 +1,18 @@
+2010-05-18  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Make CSS Parser properly handle only-for-pages pseudo-classes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38731
+
+        * fast/css/misplaced-paged-media-pseudo-expected.txt: Removed.
+        * fast/css/misplaced-paged-media-pseudo.html: Removed.
+        * printing/page-rule-css-text-expected.txt:
+        * printing/page-rule-css-text.html:
+        * printing/pseudo-class-outside-page-expected.txt:
+        * printing/pseudo-class-outside-page.html:
+
 2010-05-18  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, skip test.

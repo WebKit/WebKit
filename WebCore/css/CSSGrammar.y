@@ -257,6 +257,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %type <selector> class
 %type <selector> attrib
 %type <selector> pseudo
+%type <selector> pseudo_page
 %type <selector> page_selector
 
 %type <boolean> declaration_list
@@ -755,7 +756,14 @@ page:
     PAGE_SYM maybe_space page_selector maybe_space
     '{' maybe_space declarations_and_margins closing_brace {
         CSSParser* p = static_cast<CSSParser*>(parser);
-        $$ = p->createPageRule(p->sinkFloatingSelector($3));
+        if ($3)
+            $$ = p->createPageRule(p->sinkFloatingSelector($3));
+        else {
+            // Clear properties in the invalid @page rule.
+            p->clearProperties();
+            // Also clear margin at-rules here once we fully implement margin at-rules parsing.
+            $$ = 0;
+        }
     }
     | PAGE_SYM error invalid_block {
       $$ = 0;
@@ -771,13 +779,13 @@ page_selector:
         $$ = p->createFloatingSelector();
         $$->m_tag = QualifiedName(nullAtom, $1, p->m_defaultNamespace);
     }
-    | IDENT pseudo {
+    | IDENT pseudo_page {
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = $2;
         if ($$)
             $$->m_tag = QualifiedName(nullAtom, $1, p->m_defaultNamespace);
     }
-    | pseudo {
+    | pseudo_page {
         $$ = $1;
     }
     | /* empty */ {
@@ -1166,6 +1174,17 @@ ident_or_string:
     IDENT
   | STRING
     ;
+
+pseudo_page:
+    ':' IDENT {
+        $$ = static_cast<CSSParser*>(parser)->createFloatingSelector();
+        $$->m_match = CSSSelector::PagePseudoClass;
+        $2.lower();
+        $$->m_value = $2;
+        CSSSelector::PseudoType type = $$->pseudoType();
+        if (type == CSSSelector::PseudoUnknown)
+            $$ = 0;
+    }
 
 pseudo:
     ':' IDENT {
