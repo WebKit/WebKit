@@ -1,3 +1,22 @@
+2010-05-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add an HTML parsing benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=39338
+
+        This benchmark parses the HTML5 specification 10 times and
+        reports how long it takes.  It does this 21 times, discarding
+        the first warm-up run, and then prints the average time and
+        standard deviation.
+
+        Sharking the benchmark correctly shows over 60% of the time spent under HTMLTokenizer::write().
+        The numbers from the benchmark are rather consistent.  On my
+        Mac Book Pro, I consistently see standard deviations < 2% of total time.
+
+        * benchmarks/parser/html-parser.html: Added.
+        * benchmarks/parser/resources/html5.html: Added.
+
 2010-05-18  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Shinichiro Hamaji.
