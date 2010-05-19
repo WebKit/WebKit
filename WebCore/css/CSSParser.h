@@ -85,7 +85,7 @@ namespace WebCore {
         void parseFillPosition(RefPtr<CSSValue>&, RefPtr<CSSValue>&);
         void parseFillRepeat(RefPtr<CSSValue>&, RefPtr<CSSValue>&);
         PassRefPtr<CSSValue> parseFillSize(int propId, bool &allowComma);
-        
+
         bool parseFillProperty(int propId, int& propId1, int& propId2, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
         bool parseFillShorthand(int propId, const int* properties, int numProperties, bool important);
 
@@ -108,7 +108,7 @@ namespace WebCore {
         bool parseAnimationProperty(int propId, RefPtr<CSSValue>&);
         bool parseTransitionShorthand(bool important);
         bool parseAnimationShorthand(bool important);
-        
+
         bool parseDashboardRegions(int propId, bool important);
 
         bool parseShape(int propId, bool important);
@@ -148,7 +148,7 @@ namespace WebCore {
         bool parseShadow(int propId, bool important);
         bool parseBorderImage(int propId, bool important, RefPtr<CSSValue>&);
         bool parseBorderRadius(int propId, bool important);
-        
+
         bool parseReflect(int propId, bool important);
 
         // Image generators
@@ -243,16 +243,16 @@ namespace WebCore {
         UChar* text(int* length);
         void countLines();
         int lex();
-        
+
     private:
         void recheckAtKeyword(const UChar* str, int len);
-    
+
         void setupParser(const char* prefix, const String&, const char* suffix);
 
         bool inShorthand() const { return m_inParseShorthand; }
 
         void checkForOrphanedUnits();
-        
+
         void clearVariables();
 
         void deleteFontFaceOnlyValues();
@@ -294,7 +294,7 @@ namespace WebCore {
         MediaQuery* m_floatingMediaQuery;
         MediaQueryExp* m_floatingMediaQueryExp;
         Vector<MediaQueryExp*>* m_floatingMediaQueryExpList;
-        
+
         Vector<CSSSelector*> m_reusableSelectorVector;
 
         // defines units allowed for a certain property, used in parseUnit
@@ -317,7 +317,7 @@ namespace WebCore {
         }
 
         static bool validUnit(CSSParserValue*, Units, bool strict);
-        
+
         friend class TransformOperationInfo;
     };
 

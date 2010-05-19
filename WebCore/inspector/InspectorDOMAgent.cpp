@@ -748,7 +748,7 @@ void InspectorDOMAgent::didRemoveDOMNode(Node* node)
             m_frontend->childNodeCountUpdated(parentId, 0);
     } else
         m_frontend->childNodeRemoved(parentId, m_documentNodeToIdMap.get(node));
-    unbind(node, &m_documentNodeToIdMap);    
+    unbind(node, &m_documentNodeToIdMap);
 }
 
 void InspectorDOMAgent::didModifyDOMAttr(Element* element)
@@ -761,14 +761,14 @@ void InspectorDOMAgent::didModifyDOMAttr(Element* element)
     m_frontend->attributesUpdated(id, buildArrayForElementAttributes(element));
 }
 
-void InspectorDOMAgent::getStyles(long callId, long nodeId, bool authorOnly)    
+void InspectorDOMAgent::getStyles(long callId, long nodeId, bool authorOnly)
 {
     Node* node = nodeForId(nodeId);
     if (!node || node->nodeType() != Node::ELEMENT_NODE) {
         m_frontend->didGetStyles(callId, ScriptValue::undefined());
         return;
     }
-    
+
     DOMWindow* defaultView = node->ownerDocument()->defaultView();
     if (!defaultView) {
         m_frontend->didGetStyles(callId, ScriptValue::undefined());
@@ -789,7 +789,7 @@ void InspectorDOMAgent::getStyles(long callId, long nodeId, bool authorOnly)
 
     result.set("styleAttributes", buildObjectForAttributeStyles(element));
     result.set("pseudoElements", buildArrayForPseudoElements(element, authorOnly));
-    
+
     ScriptObject currentStyle = result;
     Element* parentElement = element->parentElement();
     while (parentElement) {
@@ -906,7 +906,7 @@ void InspectorDOMAgent::applyStyleText(long callId, long styleId, const String& 
         return;
     }
 
-    // Remove disabled property entry for property with given name. 
+    // Remove disabled property entry for property with given name.
     IdToDisabledStyleMap::iterator disabledIt = cssStore()->idToDisabledStyle.find(styleId);
     if (disabledIt != cssStore()->idToDisabledStyle.end())
         disabledIt->second.remove(propertyName);
@@ -978,7 +978,7 @@ void InspectorDOMAgent::applyStyleText(long callId, long styleId, const String& 
         // Set the property on the real style declaration.
         ExceptionCode ec = 0;
         style->setProperty(name, value, priority, ec);
-        // Remove disabled property entry for property with this name. 
+        // Remove disabled property entry for property with this name.
         if (disabledIt != cssStore()->idToDisabledStyle.end())
             disabledIt->second.remove(name);
         changedProperties.append(name);

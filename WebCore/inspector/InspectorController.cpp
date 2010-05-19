@@ -24,7 +24,7 @@
  * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -445,12 +445,12 @@ void InspectorController::setFrontend(PassOwnPtr<InspectorFrontend> frontend)
     m_frontend->inspectedURLChanged(m_inspectedPage->mainFrame()->loader()->url().string());
 
     populateScriptObjects();
-    
+
     if (m_showAfterVisible == CurrentPanel) {
         String lastActivePanelSetting = setting(lastActivePanelSettingName);
         m_showAfterVisible = specialPanelForJSName(lastActivePanelSetting);
     }
-    
+
     if (m_nodeToFocus)
         focusNode();
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -467,7 +467,7 @@ void InspectorController::show()
 
     if (m_openingFrontend)
         return;
-    
+
     if (m_frontend)
         m_frontend->bringToFront();
     else {
@@ -604,10 +604,10 @@ void InspectorController::populateScriptObjects()
 
 void InspectorController::unbindAllResources()
 {
-    ResourcesMap::iterator resourcesEnd = m_resources.end(); 
-    for (ResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it) 
-        it->second->releaseScriptObject(0); 
-    
+    ResourcesMap::iterator resourcesEnd = m_resources.end();
+    for (ResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it)
+        it->second->releaseScriptObject(0);
+
 #if ENABLE(DATABASE)
     DatabaseResourcesMap::iterator databasesEnd = m_databaseResources.end();
     for (DatabaseResourcesMap::iterator it = m_databaseResources.begin(); it != databasesEnd; ++it)
@@ -668,7 +668,7 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
         // unbindAllResources should be called before database and DOM storage
         // resources are cleared so that it has a chance to unbind them.
         unbindAllResources();
-        
+
         m_cssStore->reset();
         if (m_frontend) {
             m_frontend->reset();
@@ -981,11 +981,11 @@ void InspectorController::scriptImported(unsigned long identifier, const String&
 {
     if (!enabled() || !m_resourceTrackingEnabled)
         return;
-    
+
     InspectorResource* resource = m_resources.get(identifier).get();
     if (!resource)
         return;
-    
+
     resource->setOverrideContent(ScriptString(sourceString), InspectorResource::Script);
 
     if (m_frontend)
@@ -1208,7 +1208,7 @@ void InspectorController::getCookies(long callId)
     else
         m_frontend->didGetCookies(callId, buildArrayForCookies(rawCookiesList), String());
 }
-    
+
 ScriptArray InspectorController::buildArrayForCookies(ListHashSet<Cookie>& cookiesList)
 {
     ScriptArray cookies = m_frontend->newScriptArray();
@@ -1235,7 +1235,7 @@ ScriptObject InspectorController::buildObjectForCookie(const Cookie& cookie)
     value.set("session", cookie.session);
     return value;
 }
-    
+
 #if ENABLE(DOM_STORAGE)
 void InspectorController::didUseDOMStorage(StorageArea* storageArea, bool isLocalStorage, Frame* frame)
 {
@@ -1419,7 +1419,7 @@ ScriptObject InspectorController::createProfileHeader(const ScriptProfile& profi
 String InspectorController::getCurrentUserInitiatedProfileName(bool incrementProfileNumber = false)
 {
     if (incrementProfileNumber)
-        m_currentUserInitiatedProfileNumber = m_nextUserInitiatedProfileNumber++;        
+        m_currentUserInitiatedProfileNumber = m_nextUserInitiatedProfileNumber++;
 
     return String::format("%s.%d", UserInitiatedProfileName, m_currentUserInitiatedProfileNumber);
 }
@@ -1591,7 +1591,7 @@ void InspectorController::setBreakpoint(const String& sourceID, unsigned lineNum
 void InspectorController::removeBreakpoint(const String& sourceID, unsigned lineNumber)
 {
     ScriptDebugServer::shared().removeBreakpoint(sourceID, lineNumber);
- 
+
     String url = m_sourceIDToURL.get(sourceID);
     if (url.isEmpty())
         return;
@@ -1695,7 +1695,7 @@ static void drawOutlinedQuad(GraphicsContext& context, const FloatQuad& quad, co
 
         context.restore();
     }
-    
+
     // Now do the fill
     context.addPath(quadPath);
     context.setFillColor(fillColor, DeviceColorSpace);
@@ -1836,7 +1836,7 @@ bool InspectorController::stopTiming(const String& title, double& elapsed)
 
     double startTime = it->second;
     m_times.remove(it);
-    
+
     elapsed = currentTime() * 1000 - startTime;
     return true;
 }
@@ -1904,5 +1904,5 @@ void InspectorController::removeAllScriptsToEvaluateOnLoad()
 }
 
 } // namespace WebCore
-    
+
 #endif // ENABLE(INSPECTOR)

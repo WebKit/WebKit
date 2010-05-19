@@ -1,3 +1,77 @@
+2010-05-19  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Fix whitespace for the bug 38906
+        https://bugs.webkit.org/show_bug.cgi?id=39351
+
+        No new tests required (no code change).
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::~CSSParser):
+        (WebCore::CSSParser::setupParser):
+        (WebCore::CSSParser::parseSheet):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseSelector):
+        (WebCore::unitFromString):
+        (WebCore::CSSParser::checkForOrphanedUnits):
+        (WebCore::CSSParser::parseWCSSInputProperty):
+        (WebCore::CSSParser::parseFillShorthand):
+        (WebCore::CSSParser::parseAnimationShorthand):
+        (WebCore::CSSParser::parseTransitionShorthand):
+        (WebCore::CSSParser::parseShorthand):
+        (WebCore::CSSParser::parse4Values):
+        (WebCore::CSSParser::parseAttr):
+        (WebCore::CSSParser::parseFillPositionXY):
+        (WebCore::CSSParser::parseFillPosition):
+        (WebCore::CSSParser::parseFillRepeat):
+        (WebCore::CSSParser::parseFillProperty):
+        (WebCore::CSSParser::parseAnimationTimingFunction):
+        (WebCore::CSSParser::parseAnimationProperty):
+        (WebCore::CSSParser::parseDashboardRegions):
+        (WebCore::CSSParser::parseCounterContent):
+        (WebCore::CSSParser::parseShape):
+        (WebCore::CSSParser::parseFont):
+        (WebCore::CSSParser::parseFontFamily):
+        (WebCore::CSSParser::parseFontFaceSrc):
+        (WebCore::parseInt):
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::parseShadow):
+        (WebCore::CSSParser::parseReflect):
+        (WebCore::BorderImageParseContext::commitNumber):
+        (WebCore::BorderImageParseContext::commitBorderImage):
+        (WebCore::CSSParser::parseBorderImage):
+        (WebCore::CSSParser::parseCounter):
+        (WebCore::parseGradientPoint):
+        (WebCore::parseGradientColorStop):
+        (WebCore::CSSParser::parseGradient):
+        (WebCore::CSSParser::parseCanvas):
+        (WebCore::CSSParser::parseTransform):
+        (WebCore::CSSParser::parseTransformOrigin):
+        (WebCore::CSSParser::parsePerspectiveOrigin):
+        (WebCore::CSSParser::text):
+        (WebCore::CSSParser::createRuleList):
+        (WebCore::CSSParser::createVariablesRule):
+        (WebCore::CSSParser::parseVariable):
+        (WebCore::CSSParser::parsePropertyWithResolvedVariables):
+        (WebCore::CSSParser::checkForVariables):
+        (WebCore::CSSParser::createKeyframeRule):
+        * css/CSSParser.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::setFrontend):
+        (WebCore::InspectorController::show):
+        (WebCore::InspectorController::unbindAllResources):
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::scriptImported):
+        (WebCore::InspectorController::getCurrentUserInitiatedProfileName):
+        (WebCore::InspectorController::removeBreakpoint):
+        (WebCore::drawOutlinedQuad):
+        (WebCore::InspectorController::stopTiming):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::didRemoveDOMNode):
+        (WebCore::InspectorDOMAgent::getStyles):
+        (WebCore::InspectorDOMAgent::applyStyleText):
+
 2010-05-19  Steve Block  <steveblock@google.com>
 
         Reviewed by Nate Chapin.
