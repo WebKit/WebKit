@@ -1,3 +1,12 @@
+2010-05-18  Jakob Petsovits  <jpetsovits@rim.com>
+
+        Unreviewed, forgot to svn add source file in r59619.
+        http://trac.webkit.org/changeset/59619
+
+        * platform/image-decoders/openvg: Added.
+        * platform/image-decoders/openvg/ImageDecoderOpenVG.cpp: Added.
+        (WebCore::RGBA32Buffer::asNewNativeImage):
+
 2010-05-18  Yaar Schnitman  <yaar@chromium.org>
 
         Unreviewed, rolling out r59693.
