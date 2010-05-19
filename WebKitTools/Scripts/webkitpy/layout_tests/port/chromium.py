@@ -158,9 +158,8 @@ class ChromiumPort(base.Port):
             return self.path_from_chromium_base('webkit',
                 self._options.configuration, self._options.results_directory)
         except AssertionError:
-            return self.path_from_webkit_base('WebKit', 'chromium',
-                'xcodebuild', self._options.configuration,
-                self._options.results_directory)
+            return self._build_path(self._options.configuration,
+                                    self._options.results_directory)
 
     def setup_test_run(self):
         # Delete the disk cache if any to ensure a clean test run.
@@ -272,6 +271,12 @@ class ChromiumPort(base.Port):
         if platform is None:
             platform = self.name()
         return self.path_from_webkit_base('LayoutTests', 'platform', platform)
+
+    def _path_to_image_diff(self):
+        binary_name = 'image_diff'
+        if self._options.use_drt:
+            binary_name = 'ImageDiff'
+        return self._build_path(self._options.configuration, binary_name)
 
 
 class ChromiumDriver(base.Driver):

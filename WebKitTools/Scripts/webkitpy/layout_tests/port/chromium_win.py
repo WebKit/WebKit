@@ -117,6 +117,9 @@ class ChromiumWinPort(chromium.ChromiumPort):
     #
 
     def _build_path(self, *comps):
+        if self._options.use_drt:
+            return os.path.join(self.path_from_webkit_base(), 'WebKit',
+                                'chromium', *comps)
         p = self.path_from_chromium_base('webkit', *comps)
         if os.path.exists(p):
             return p

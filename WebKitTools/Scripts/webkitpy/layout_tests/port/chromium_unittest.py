@@ -27,6 +27,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import chromium
+import chromium_linux
+import chromium_mac
+import chromium_win
 import unittest
 import StringIO
 
@@ -78,3 +81,17 @@ class ChromiumDriverTest(unittest.TestCase):
             raise IOError
         self.driver._proc.stdout.readline = mock_readline
         self._assert_write_command_and_read_line(expected_crash=True)
+
+    def test_path_to_image_diff(self):
+        class MockOptions:
+            def __init__(self):
+                self.use_drt = True
+
+        port = chromium_linux.ChromiumLinuxPort('test-port', options=MockOptions())
+        self.assertTrue(port._path_to_image_diff().endswith(
+            '/out/Release/ImageDiff'))
+        port = chromium_mac.ChromiumMacPort('test-port', options=MockOptions())
+        self.assertTrue(port._path_to_image_diff().endswith(
+            '/xcodebuild/Release/ImageDiff'))
+        # FIXME: Figure out how this is going to work on Windows.
+        #port = chromium_win.ChromiumWinPort('test-port', options=MockOptions())

@@ -81,11 +81,15 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
     #
 
     def _build_path(self, *comps):
-        base = self.path_from_chromium_base()
-        if os.path.exists(os.path.join(base, 'sconsbuild')):
-            return self.path_from_chromium_base('sconsbuild', *comps)
+        if self._options.use_drt:
+            base = os.path.join(self.path_from_webkit_base(), 'WebKit',
+                                'chromium')
         else:
-            return self.path_from_chromium_base('out', *comps)
+            base = self.path_from_chromium_base()
+        if os.path.exists(os.path.join(base, 'sconsbuild')):
+            return os.path.join(base, 'sconsbuild', *comps)
+        else:
+            return os.path.join(base, 'out', *comps)
 
     def _check_apache_install(self):
         result = chromium.check_file_exists(self._path_to_apache(),
@@ -147,13 +151,13 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
     def _path_to_driver(self, configuration=None):
         if not configuration:
             configuration = self._options.configuration
-        return self._build_path(configuration, 'test_shell')
+        binary_name = 'test_shell'
+        if self._options.use_drt:
+            binary_name = 'DumpRenderTree'
+        return self._build_path(configuration, binary_name)
 
     def _path_to_helper(self):
         return None
-
-    def _path_to_image_diff(self):
-        return self._build_path(self._options.configuration, 'image_diff')
 
     def _path_to_wdiff(self):
         if self._is_redhat_based():

@@ -150,12 +150,6 @@ class ChromiumMacPort(chromium.ChromiumPort):
             binary_name = 'LayoutTestHelper'
         return self._build_path(self._options.configuration, binary_name)
 
-    def _path_to_image_diff(self):
-        binary_name = 'image_diff'
-        if self._options.use_drt:
-            binary_name = 'ImageDiff'
-        return self._build_path(self._options.configuration, binary_name)
-
     def _path_to_wdiff(self):
         return 'wdiff'
 
