@@ -1,3 +1,72 @@
+2010-05-18  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed.
+
+        Add leopard-specific pixel results for more tests that need them
+        https://bugs.webkit.org/show_bug.cgi?id=39325
+
+        This adds new Leopard baselines for all tests that currently
+        pass with tolerance=0 on Snow Leopard but fail on Leopard
+        with an image diff of <= 0.1%.  These tests previously had
+        expectations in platform/mac that were Snow Leopard specific.
+
+        * platform/mac-leopard/animations: Added.
+        * platform/mac-leopard/animations/3d: Added.
+        * platform/mac-leopard/animations/3d/change-transform-in-end-event-expected.checksum: Added.
+        * platform/mac-leopard/animations/3d/change-transform-in-end-event-expected.png: Added.
+        * platform/mac-leopard/compositing/animation: Added.
+        * platform/mac-leopard/compositing/animation/state-at-end-event-transform-layer-expected.checksum: Added.
+        * platform/mac-leopard/compositing/animation/state-at-end-event-transform-layer-expected.png: Added.
+        * platform/mac-leopard/compositing/compositing-visible-descendant-expected.checksum: Added.
+        * platform/mac-leopard/compositing/compositing-visible-descendant-expected.png: Added.
+        * platform/mac-leopard/compositing/geometry/abs-position-inside-opacity-expected.checksum: Added.
+        * platform/mac-leopard/compositing/geometry/abs-position-inside-opacity-expected.png: Added.
+        * platform/mac-leopard/compositing/geometry/fixed-position-expected.checksum: Added.
+        * platform/mac-leopard/compositing/geometry/fixed-position-expected.png: Added.
+        * platform/mac-leopard/compositing/geometry/horizontal-scroll-composited-expected.checksum: Added.
+        * platform/mac-leopard/compositing/geometry/horizontal-scroll-composited-expected.png: Added.
+        * platform/mac-leopard/compositing/geometry/partial-layout-update-expected.checksum: Added.
+        * platform/mac-leopard/compositing/geometry/partial-layout-update-expected.png: Added.
+        * platform/mac-leopard/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.checksum: Added.
+        * platform/mac-leopard/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.png: Added.
+        * platform/mac-leopard/compositing/geometry/vertical-scroll-composited-expected.checksum: Added.
+        * platform/mac-leopard/compositing/geometry/vertical-scroll-composited-expected.png: Added.
+        * platform/mac-leopard/compositing/iframes/iframe-copy-on-scroll-expected.checksum: Added.
+        * platform/mac-leopard/compositing/iframes/iframe-copy-on-scroll-expected.png: Added.
+        * platform/mac-leopard/compositing/masks: Added.
+        * platform/mac-leopard/compositing/masks/direct-image-mask-expected.checksum: Added.
+        * platform/mac-leopard/compositing/masks/direct-image-mask-expected.png: Added.
+        * platform/mac-leopard/compositing/overflow/fixed-position-ancestor-clip-expected.checksum: Added.
+        * platform/mac-leopard/compositing/overflow/fixed-position-ancestor-clip-expected.png: Added.
+        * platform/mac-leopard/compositing/reflections/reflection-in-composited-expected.checksum: Added.
+        * platform/mac-leopard/compositing/reflections/reflection-in-composited-expected.png: Added.
+        * platform/mac-leopard/compositing/reflections/reflection-ordering-expected.checksum: Added.
+        * platform/mac-leopard/compositing/reflections/reflection-ordering-expected.png: Added.
+        * platform/mac-leopard/compositing/repaint/content-into-overflow-expected.checksum: Added.
+        * platform/mac-leopard/compositing/repaint/content-into-overflow-expected.png: Added.
+        * platform/mac-leopard/compositing/repaint/layer-repaint-expected.checksum: Added.
+        * platform/mac-leopard/compositing/repaint/layer-repaint-expected.png: Added.
+        * platform/mac-leopard/compositing/repaint/opacity-between-absolute-expected.checksum: Added.
+        * platform/mac-leopard/compositing/repaint/opacity-between-absolute-expected.png: Added.
+        * platform/mac-leopard/compositing/repaint/opacity-between-absolute2-expected.checksum: Added.
+        * platform/mac-leopard/compositing/repaint/opacity-between-absolute2-expected.png: Added.
+        * platform/mac-leopard/fast/borders: Added.
+        * platform/mac-leopard/fast/borders/svg-as-border-image-2-expected.checksum: Added.
+        * platform/mac-leopard/fast/borders/svg-as-border-image-2-expected.png: Added.
+        * platform/mac-leopard/fast/borders/svg-as-border-image-expected.checksum: Added.
+        * platform/mac-leopard/fast/borders/svg-as-border-image-expected.png: Added.
+        * platform/mac-leopard/fast/forms/placeholder-stripped-expected.checksum: Added.
+        * platform/mac-leopard/fast/forms/placeholder-stripped-expected.png: Added.
+        * platform/mac-leopard/fast/multicol: Added.
+        * platform/mac-leopard/fast/multicol/column-count-with-rules-expected.checksum: Added.
+        * platform/mac-leopard/fast/multicol/column-count-with-rules-expected.png: Added.
+        * platform/mac-leopard/media/controls-strict-expected.checksum:
+        * platform/mac-leopard/media/controls-strict-expected.png:
+        * platform/mac-leopard/media/video-display-toggle-expected.checksum:
+        * platform/mac-leopard/media/video-display-toggle-expected.png:
+        * platform/mac-leopard/media/video-replaces-poster-expected.checksum: Added.
+        * platform/mac-leopard/media/video-replaces-poster-expected.png: Added.
+
 2010-05-18  Martin Robinson  <mrobinson@igalia.com>
 
         Not reviewed.
