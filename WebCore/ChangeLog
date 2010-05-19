@@ -1,3 +1,17 @@
+2010-05-19  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Darin Adler.
+
+        Touch events are marked DontEnum in DOMWindow.idl
+        https://bugs.webkit.org/show_bug.cgi?id=39118
+
+        Touch events are the only attribute event listeners on the
+        window object that are marked DontEnum. For consistency allow
+        them to be enumerated.
+
+        * page/DOMWindow.idl: Remove DontEnum from touchcancel, touchend,
+            touchstart and touchmove attributes.
+
 2010-05-19  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix build warning

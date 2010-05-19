@@ -1,3 +1,15 @@
+2010-05-19  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Darin Adler.
+
+        Touch events are marked DontEnum in DOMWindow.idl
+        https://bugs.webkit.org/show_bug.cgi?id=39118
+
+        Update the expected results for enumerating the window object
+        properties now touch event listeners are no longer marked DontEnum.
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+
 2010-05-18  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Shinichiro Hamaji.
