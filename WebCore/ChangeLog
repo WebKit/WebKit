@@ -1,3 +1,24 @@
+2010-05-19  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        REGRESSION (r59385) crash destroying inline renderers
+        https://bugs.webkit.org/show_bug.cgi?id=39143
+        <rdar://problem/8003662>
+        
+        The goal of r59385 was to make sure that the layout of block after all its children had been removed produced the identical result
+        as the one of a newly created empty block. In order to do so, we had to make sure that the m_inlineChildren flag was reset to true when
+        the block had no children (as it is upon creation).
+        I discovered that, by doing that for anonymous blocks it leads removeChild to conclude that the anonymous children can be removed,
+        without considering that the anonymous block could be part of a continuation chain. For this reason, when RenderInline::destroy()
+        tries to remove the continuations we are effectively deleting a renderer that had been deleted already.
+        
+        Test: fast/inline-block/anonymous-block-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock): resetting the flag m_inlineChildren only for non anonymous blocks otherwise we incurr in
+        a double deletion of the renderer that causes the crash.
+
 2010-05-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r59782.

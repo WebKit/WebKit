@@ -1,3 +1,14 @@
+2010-05-19  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        REGRESSION (r59385) crash destroying inline renderers
+        https://bugs.webkit.org/show_bug.cgi?id=39143
+        <rdar://problem/8003662>
+
+        * fast/inline-block/anonymous-block-crash-expected.txt: Added.
+        * fast/inline-block/anonymous-block-crash.html: Added.
+
 2010-05-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r59782.
