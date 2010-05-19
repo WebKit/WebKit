@@ -1,3 +1,9 @@
+2010-05-18  Sam Weinig  <sam@webkit.org>
+
+        Fix the build for platforms that don't always include UnusedParam.h
+
+        * dom/Attribute.cpp:
+
 2010-05-18  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.

@@ -27,6 +27,7 @@
 #include "Attr.h"
 #include "Element.h"
 #include <wtf/HashMap.h>
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
