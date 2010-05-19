@@ -39,6 +39,7 @@ namespace WebCore {
 
 class Frame;
 class IDBDatabase;
+class SecurityOrigin;
 
 // This class is shared by IndexedDatabaseRequest (async) and IndexedDatabaseSync (sync).
 // This is implemented by IndexedDatabaseImpl and optionally others (in order to proxy
@@ -49,7 +50,7 @@ public:
     static PassRefPtr<IndexedDatabase> create();
     virtual ~IndexedDatabase() { }
 
-    virtual void open(const String& name, const String& description, bool modifyDatabase, PassRefPtr<IDBCallbacks>, Frame*, ExceptionCode&) = 0;
+    virtual void open(const String& name, const String& description, bool modifyDatabase, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, ExceptionCode&) = 0;
 };
 
 } // namespace WebCore

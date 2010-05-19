@@ -30,14 +30,21 @@
 #define WebIndexedDatabaseImpl_h
 
 #include "WebIndexedDatabase.h"
+#include <wtf/RefPtr.h>
+
+namespace WebCore { class IndexedDatabase; }
 
 namespace WebKit {
 
 class WebIndexedDatabaseImpl : public WebIndexedDatabase {
 public:
+    WebIndexedDatabaseImpl();
     virtual ~WebIndexedDatabaseImpl();
 
-    virtual void open(const WebString& name, const WebString& description, bool modifyDatabase, WebIDBCallbacks*, const WebString& origin, WebFrame*, int& exceptionCode);
+    virtual void open(const WebString& name, const WebString& description, bool modifyDatabase, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, int& exceptionCode);
+
+private:
+    WTF::RefPtr<WebCore::IndexedDatabase> m_indexedDatabase;
 };
 
 } // namespace WebKit

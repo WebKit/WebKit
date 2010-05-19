@@ -115,7 +115,7 @@ WebString WebSecurityOrigin::toString() const
     return m_private->toString();
 }
 
-WebString WebSecurityOrigin::databaseIdentifier()
+WebString WebSecurityOrigin::databaseIdentifier() const
 {
     ASSERT(m_private);
     return m_private->databaseIdentifier();

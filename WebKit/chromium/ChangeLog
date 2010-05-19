@@ -1,3 +1,46 @@
+2010-05-17  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Hook Chromium's WebIndexedDatabaseImpl up to IndexedDatabaseImpl
+        https://bugs.webkit.org/show_bug.cgi?id=39216
+
+        Web____Impl is for re-entering the WebKit layer from the browser layer.
+        Thus the previous IDBCallbacksProxy was mis-named (and should have been
+        WebIDBCallbacksImpl).  This patch renames it and then implements the
+        proper proxy (which is for going from WebCore to WebKit).
+
+        Also change using security origin strings to using WebSecurityOrigin
+        objects.
+
+        This patch also implements the glue between WebIndexedDatabaseImpl and
+        IndexedDatabaseImpl.
+
+        * WebKit.gyp:
+        * src/IDBCallbacksProxy.cpp:
+        (WebCore::IDBCallbacksProxy::create):
+        (WebCore::IDBCallbacksProxy::IDBCallbacksProxy):
+        (WebCore::IDBCallbacksProxy::onError):
+        (WebCore::IDBCallbacksProxy::onSuccess):
+        * src/IDBCallbacksProxy.h:
+        * src/IndexedDatabaseProxy.cpp:
+        (WebCore::IndexedDatabaseProxy::open):
+        * src/IndexedDatabaseProxy.h:
+        * src/WebIDBCallbacksImpl.cpp: Added.
+        (WebCore::WebIDBCallbacksImpl::WebIDBCallbacksImpl):
+        (WebCore::WebIDBCallbacksImpl::~WebIDBCallbacksImpl):
+        (WebCore::WebIDBCallbacksImpl::onError):
+        (WebCore::WebIDBCallbacksImpl::onSuccess):
+        * src/WebIDBCallbacksImpl.h: Added.
+        * src/WebIDBDatabaseImpl.cpp: Added.
+        (WebKit::WebIDBDatabaseImpl::WebIDBDatabaseImpl):
+        (WebKit::WebIDBDatabaseImpl::~WebIDBDatabaseImpl):
+        * src/WebIDBDatabaseImpl.h: Added.
+        * src/WebIndexedDatabaseImpl.cpp:
+        (WebKit::WebIndexedDatabaseImpl::WebIndexedDatabaseImpl):
+        (WebKit::WebIndexedDatabaseImpl::open):
+        * src/WebIndexedDatabaseImpl.h:
+
 2010-05-18  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

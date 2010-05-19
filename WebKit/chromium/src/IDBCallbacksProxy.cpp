@@ -29,11 +29,10 @@
 #include "config.h"
 #include "IDBCallbacksProxy.h"
 
-#include "IDBCallbacks.h"
 #include "IDBDatabaseError.h"
 #include "IDBDatabaseProxy.h"
 #include "WebIDBCallbacks.h"
-#include "WebIDBDatabase.h"
+#include "WebIDBDatabaseImpl.h"
 #include "WebIDBDatabaseError.h"
 #include "WebSerializedScriptValue.h"
 
@@ -41,7 +40,12 @@
 
 namespace WebCore {
 
-IDBCallbacksProxy::IDBCallbacksProxy(PassRefPtr<IDBCallbacks> callbacks)
+PassRefPtr<IDBCallbacksProxy> IDBCallbacksProxy::create(PassOwnPtr<WebKit::WebIDBCallbacks> callbacks)
+{
+    return new IDBCallbacksProxy(callbacks);
+}
+
+IDBCallbacksProxy::IDBCallbacksProxy(PassOwnPtr<WebKit::WebIDBCallbacks> callbacks)
     : m_callbacks(callbacks)
 {
 }
@@ -50,21 +54,21 @@ IDBCallbacksProxy::~IDBCallbacksProxy()
 {
 }
 
-void IDBCallbacksProxy::onError(const WebKit::WebIDBDatabaseError& error)
+void IDBCallbacksProxy::onError(PassRefPtr<IDBDatabaseError> idbDatabaseError)
 {
-    m_callbacks->onError(error);
+    m_callbacks->onError(WebKit::WebIDBDatabaseError(idbDatabaseError));
     m_callbacks.clear();
 }
 
-void IDBCallbacksProxy::onSuccess(WebKit::WebIDBDatabase* webKitInstance)
+void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBDatabase> idbDatabase)
 {
-    m_callbacks->onSuccess(IDBDatabaseProxy::create(webKitInstance));
+    m_callbacks->onSuccess(new WebKit::WebIDBDatabaseImpl(idbDatabase));
     m_callbacks.clear();
 }
 
-void IDBCallbacksProxy::onSuccess(const WebKit::WebSerializedScriptValue& serializedScriptValue)
+void IDBCallbacksProxy::onSuccess(PassRefPtr<SerializedScriptValue> serializedScriptValue)
 {
-    m_callbacks->onSuccess(serializedScriptValue);
+    m_callbacks->onSuccess(WebKit::WebSerializedScriptValue(serializedScriptValue));
     m_callbacks.clear();
 }
 

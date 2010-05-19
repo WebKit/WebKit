@@ -25,41 +25,31 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "config.h"
-#include "IndexedDatabaseImpl.h"
 
-#include "IDBDatabase.h"
-#include "IDBDatabaseError.h"
-#include <wtf/Threading.h>
-#include <wtf/UnusedParam.h>
+#ifndef WebIDBDatabaseImpl_h
+#define WebIDBDatabaseImpl_h
 
-#if ENABLE(INDEXED_DATABASE)
+#include "WebCommon.h"
+#include "WebIDBDatabase.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
-namespace WebCore {
+namespace WebCore { class IDBDatabase; }
 
-PassRefPtr<IndexedDatabaseImpl> IndexedDatabaseImpl::create()
-{
-    return new IndexedDatabaseImpl();
-}
+namespace WebKit {
 
-IndexedDatabaseImpl::IndexedDatabaseImpl()
-{
-}
+// See comment in WebIndexedDatabase for a high level overview these classes.
+class WebIDBDatabaseImpl : public WebIDBDatabase {
+public:
+    WebIDBDatabaseImpl(WTF::PassRefPtr<WebCore::IDBDatabase> idbDatabase);
+    virtual ~WebIDBDatabaseImpl();
 
-IndexedDatabaseImpl::~IndexedDatabaseImpl()
-{
-}
+    // FIXME: Implement.
 
-void IndexedDatabaseImpl::open(const String& name, const String& description, bool modifyDatabase, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin>, Frame*, ExceptionCode&)
-{
-    // FIXME: Write for realz.
-    UNUSED_PARAM(name);
-    UNUSED_PARAM(description);
-    UNUSED_PARAM(modifyDatabase);
-    callbacks->onError(IDBDatabaseError::create(0, "Not implemented"));
-}
+private:
+    WTF::RefPtr<WebCore::IDBDatabase> m_idbDatabase;
+};
 
-} // namespace WebCore
+} // namespace WebKit
 
-#endif // ENABLE(INDEXED_DATABASE)
-
+#endif // WebIDBDatabaseImpl_h

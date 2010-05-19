@@ -31,10 +31,15 @@
 #include "config.h"
 #include "WebIndexedDatabaseImpl.h"
 
+#include "IDBCallbacksProxy.h"
+#include "IndexedDatabaseImpl.h"
+#include "SecurityOrigin.h"
 #include "WebIDBDatabaseError.h"
 #include <wtf/OwnPtr.h>
 
 #if ENABLE(INDEXED_DATABASE)
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -43,15 +48,18 @@ WebIndexedDatabase* WebIndexedDatabase::create()
     return new WebIndexedDatabaseImpl();
 }
 
+WebIndexedDatabaseImpl::WebIndexedDatabaseImpl()
+    : m_indexedDatabase(WebCore::IndexedDatabaseImpl::create())
+{
+}
+
 WebIndexedDatabaseImpl::~WebIndexedDatabaseImpl()
 {
 }
 
-void WebIndexedDatabaseImpl::open(const WebString& name, const WebString& description, bool modifyDatabase, WebIDBCallbacks* callbacksPtr, const WebString& origin, WebFrame*, int& exceptionCode)
+void WebIndexedDatabaseImpl::open(const WebString& name, const WebString& description, bool modifyDatabase, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame*, int& exceptionCode)
 {
-    OwnPtr<WebIDBCallbacks> callbacks(callbacksPtr);
-    callbacks->onError(WebIDBDatabaseError(0, "Not implemented"));
-    // FIXME: Implement for realz.
+    m_indexedDatabase->open(name, description, modifyDatabase, IDBCallbacksProxy::create(callbacks), origin, 0, exceptionCode);    
 }
 
 } // namespace WebKit

@@ -1,3 +1,27 @@
+2010-05-17  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Hook Chromium's WebIndexedDatabaseImpl up to IndexedDatabaseImpl
+        https://bugs.webkit.org/show_bug.cgi?id=39216
+
+        All of these functions are supposed to be passing around the origin since
+        the caller of IndexedDatabaseImpl might not be able to pass in a Frame*
+        object.  I tried to fix this in an ealier patch, but obviously messed up.
+
+        Also change passing security origin strings to passing SecurityOrigin
+        objects.
+
+        No behavior change because Chromium was emulating the old behavior before
+        even though the code wasn't properly hooked up.
+
+        * storage/IndexedDatabase.h:
+        * storage/IndexedDatabaseImpl.cpp:
+        (WebCore::IndexedDatabaseImpl::open):
+        * storage/IndexedDatabaseImpl.h:
+        * storage/IndexedDatabaseRequest.cpp:
+        (WebCore::IndexedDatabaseRequest::open):
+
 2010-05-19  Ben Murdoch  <benm@google.com>
 
         Reviewed by Darin Adler.

@@ -31,12 +31,15 @@
 
 #include "WebCommon.h"
 #include "WebIDBCallbacks.h"
+#include "WebSecurityOrigin.h"
+#include "WebString.h"
 
 namespace WebKit {
 
 class WebFrame;
 class WebIDBDatabase;
 class WebString;
+class WebSecurityOrigin;
 
 // The entry point into the IndexedDatabase API.  These classes match their _____Request and
 // _____Sync counterparts in the spec, but operate only in an async manner.
@@ -48,7 +51,17 @@ public:
     virtual ~WebIndexedDatabase() { }
 
     // The WebKit implementation of open ignores the WebFrame* parameter.
-    virtual void open(const WebString& name, const WebString& description, bool modifyDatabase, WebIDBCallbacks*, const WebString& origin, WebFrame*, int& exceptionCode) = 0;
+    virtual void open(const WebString& name, const WebString& description, bool modifyDatabase,
+                      WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* webFrame, int& exceptionCode)
+    {
+        open(name, description, modifyDatabase, callbacks, origin.toString(), webFrame, exceptionCode);
+    }
+    // FIXME: Delete soon.  Compatability hack.
+    virtual void open(const WebString& name, const WebString& description, bool modifyDatabase,
+                      WebIDBCallbacks* callbacks, const WebString& origin, WebFrame* webFrame, int& exceptionCode)
+    {
+        open(name, description, modifyDatabase, callbacks, WebSecurityOrigin::createFromString(origin), webFrame, exceptionCode);
+    }
 };
 
 } // namespace WebKit

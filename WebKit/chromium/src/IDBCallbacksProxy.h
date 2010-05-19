@@ -29,33 +29,35 @@
 #ifndef IDBCallbacksProxy_h
 #define IDBCallbacksProxy_h
 
-#include "WebIDBCallbacks.h"
+#include "IDBCallbacks.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebKit {
-class WebIDBDatabase;
-class WebIDBDatabaseError;
-class WebSerializedScriptValue;
+class WebIDBCallbacks;
 }
 
 namespace WebCore {
 
-class IDBCallbacks;
+class IDBDatabaseError;
+class IDBDatabase;
+class SerializedScriptValue;
 
-class IDBCallbacksProxy : public WebKit::WebIDBCallbacks {
+class IDBCallbacksProxy : public IDBCallbacks {
 public:
-    IDBCallbacksProxy(PassRefPtr<IDBCallbacks> callbacks);
+    static PassRefPtr<IDBCallbacksProxy> create(PassOwnPtr<WebKit::WebIDBCallbacks>);
     virtual ~IDBCallbacksProxy();
 
-    virtual void onError(const WebKit::WebIDBDatabaseError& error);
-    virtual void onSuccess(WebKit::WebIDBDatabase* webKitInstance);
-    virtual void onSuccess(const WebKit::WebSerializedScriptValue& serializedScriptValue);
+    virtual void onError(PassRefPtr<IDBDatabaseError>);
+    virtual void onSuccess(PassRefPtr<IDBDatabase>);
+    virtual void onSuccess(PassRefPtr<SerializedScriptValue>);
 
 private:
-    RefPtr<IDBCallbacks> m_callbacks;
+    IDBCallbacksProxy(PassOwnPtr<WebKit::WebIDBCallbacks>);
+
+    OwnPtr<WebKit::WebIDBCallbacks> m_callbacks;
 };
 
 

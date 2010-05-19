@@ -25,41 +25,41 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "config.h"
-#include "IndexedDatabaseImpl.h"
 
-#include "IDBDatabase.h"
-#include "IDBDatabaseError.h"
-#include <wtf/Threading.h>
-#include <wtf/UnusedParam.h>
+#ifndef WebIDBCallbacksImpl_h
+#define WebIDBCallbacksImpl_h
+
+#include "WebIDBCallbacks.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
+namespace WebKit {
+class WebIDBDatabase;
+class WebIDBDatabaseError;
+class WebSerializedScriptValue;
+}
+
 namespace WebCore {
 
-PassRefPtr<IndexedDatabaseImpl> IndexedDatabaseImpl::create()
-{
-    return new IndexedDatabaseImpl();
-}
+class IDBCallbacks;
 
-IndexedDatabaseImpl::IndexedDatabaseImpl()
-{
-}
+class WebIDBCallbacksImpl : public WebKit::WebIDBCallbacks {
+public:
+    WebIDBCallbacksImpl(PassRefPtr<IDBCallbacks> callbacks);
+    virtual ~WebIDBCallbacksImpl();
 
-IndexedDatabaseImpl::~IndexedDatabaseImpl()
-{
-}
+    virtual void onError(const WebKit::WebIDBDatabaseError& error);
+    virtual void onSuccess(WebKit::WebIDBDatabase* webKitInstance);
+    virtual void onSuccess(const WebKit::WebSerializedScriptValue& serializedScriptValue);
 
-void IndexedDatabaseImpl::open(const String& name, const String& description, bool modifyDatabase, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin>, Frame*, ExceptionCode&)
-{
-    // FIXME: Write for realz.
-    UNUSED_PARAM(name);
-    UNUSED_PARAM(description);
-    UNUSED_PARAM(modifyDatabase);
-    callbacks->onError(IDBDatabaseError::create(0, "Not implemented"));
-}
+private:
+    RefPtr<IDBCallbacks> m_callbacks;
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE)
+#endif
 
+#endif // WebIDBCallbacksImpl_h
