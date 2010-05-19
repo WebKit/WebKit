@@ -1,3 +1,18 @@
+2010-05-19  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        [wx] Ensure m_nsFont is initialized properly, and tweak fallback font handling
+        to handle more cases.
+        https://bugs.webkit.org/show_bug.cgi?id=39365
+        
+        * platform/graphics/wx/FontCacheWx.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+        (WebCore::FontCache::getSimilarFontPlatformData):
+        (WebCore::FontCache::getLastResortFallbackFont):
+        * platform/graphics/wx/FontPlatformDataWx.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+
 2010-05-19  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Eric Seidel.

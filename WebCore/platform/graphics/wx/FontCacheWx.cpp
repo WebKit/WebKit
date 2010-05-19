@@ -48,13 +48,33 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
     if (!fontData->containsCharacters(characters, length))
         fontData = getLastResortFallbackFont(font.fontDescription());
     
-    ASSERT(fontData->containsCharacters(characters, length));
+    ASSERT(fontData);
     return fontData;
 }
 
 SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
 {
-    return getCachedFontData(font.fontDescription(), font.family().family());
+    SimpleFontData* simpleFontData = 0;
+#if OS(DARWIN)
+    // Attempt to find an appropriate font using a match based on 
+    // the presence of keywords in the the requested names.  For example, we'll
+    // match any name that contains "Arabic" to Geeza Pro.
+    const FontFamily* currFamily = &font.fontDescription().family();
+    while (currFamily && !simpleFontData) {
+        if (currFamily->family().length()) {
+            static String* matchWords[3] = { new String("Arabic"), new String("Pashto"), new String("Urdu") };
+            DEFINE_STATIC_LOCAL(AtomicString, geezaStr, ("Geeza Pro"));
+            for (int j = 0; j < 3 && !simpleFontData; ++j)
+                if (currFamily->family().contains(*matchWords[j], false))
+                    simpleFontData = getCachedFontData(font.fontDescription(), geezaStr);
+        }
+        currFamily = currFamily->next();
+    }
+#endif
+    if (!simpleFontData)
+        simpleFontData = getCachedFontData(font.fontDescription(), font.family().family());
+
+    return simpleFontData;
 }
 
 SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription)
@@ -62,12 +82,13 @@ SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& font
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
     // the default that the user would get without changing any prefs.
     SimpleFontData* fallback = 0;
-#if OS(WINDOWS) || (OS(DARWIN) && !defined(BUILDING_ON_TIGER))
+#if OS(WINDOWS)
     static AtomicString fallbackName("Arial Unicode MS");
 #else
     static AtomicString fallbackName("Times New Roman");
 #endif
     fallback = getCachedFontData(fontDescription, fallbackName);
+    ASSERT(fallback);
     
     return fallback;
 }
