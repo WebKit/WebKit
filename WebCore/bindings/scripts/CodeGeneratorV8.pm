@@ -628,7 +628,10 @@ sub GenerateNormalAttrGetter
 
     my $getterStringUsesImp = $implClassName ne "float";
 
-  # Getter
+    # Getter
+    my $conditionalString = GenerateConditionalString($attribute->signature);
+    push(@implContentDecls, "#if ${conditionalString}\n\n") if $conditionalString;
+
     push(@implContentDecls, <<END);
 static v8::Handle<v8::Value> ${attrName}AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
@@ -671,6 +674,7 @@ END
             $implIncludes{"${namespace}.h"} = 1;
             push(@implContentDecls, "    return getElementStringAttr(info, ${namespace}::${contentAttributeName}Attr);\n");
             push(@implContentDecls, "}\n\n");
+            push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
             return;
             # Skip the rest of the function!
         }
@@ -801,6 +805,7 @@ END
             push(@implContentDecls, "    }\n");
             push(@implContentDecls, "    return wrapper;\n");
             push(@implContentDecls, "}\n\n");
+            push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
             return;
         }
     }
@@ -825,6 +830,7 @@ END
     }
 
     push(@implContentDecls, "}\n\n");  # end of getter
+    push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
 }
 
 sub GenerateNormalAttrSetter
@@ -835,6 +841,9 @@ sub GenerateNormalAttrSetter
     my $interfaceName = shift;
 
     my $attrExt = $attribute->signature->extendedAttributes;
+
+    my $conditionalString = GenerateConditionalString($attribute->signature);
+    push(@implContentDecls, "#if ${conditionalString}\n\n") if $conditionalString;
 
     push(@implContentDecls, "static void ${attrName}AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)\n{\n");
     push(@implContentDecls, "    INC_STATS(\"DOM.$implClassName.$attrName._set\");\n");
@@ -875,6 +884,7 @@ END
             $implIncludes{"${namespace}.h"} = 1;
             push(@implContentDecls, "    setElementStringAttr(info, ${namespace}::${contentAttributeName}Attr, value);\n");
             push(@implContentDecls, "}\n\n");
+            push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
             return;
             # Skip the rest of the function!
         }
@@ -963,6 +973,7 @@ END
 
     push(@implContentDecls, "    return;\n");
     push(@implContentDecls, "}\n\n");  # end of setter
+    push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
 }
 
 sub GetFunctionTemplateCallbackName
