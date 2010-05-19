@@ -1,3 +1,18 @@
+2010-05-19  Peter Varga  <pvarga@inf.u-szeged.hu>
+
+        Reviewed by Darin Adler.
+
+        The backtrackParenthesesOnceEnd function should store the start position
+        of the subpattern's non-greedy match at the place of the subpattern's
+        start index in the output array instead of the place of the
+        subpattern's end index.
+        Add layout test for checking of non-greedy matching of subpattern in
+        regular expressions.
+        https://bugs.webkit.org/show_bug.cgi?id=39289
+
+        * yarr/RegexInterpreter.cpp:
+        (JSC::Yarr::Interpreter::backtrackParenthesesOnceEnd):
+
 2010-05-18  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

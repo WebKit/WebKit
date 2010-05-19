@@ -1,3 +1,19 @@
+2010-05-19  Peter Varga  <pvarga@inf.u-szeged.hu>
+
+        Reviewed by Darin Adler.
+
+        The backtrackParenthesesOnceEnd function should store the start position
+        of the subpattern's non-greedy match at the place of the subpattern's
+        start index in the output array instead of the place of the
+        subpattern's end index.
+        Add layout test for checking of non-greedy matching of subpattern in
+        regular expressions.
+        https://bugs.webkit.org/show_bug.cgi?id=39289
+
+        * fast/js/regexp-non-greedy-parentheses-expected.txt: Added.
+        * fast/js/regexp-non-greedy-parentheses.html: Added.
+        * fast/js/script-tests/regexp-non-greedy-parentheses.js: Added.
+
 2010-05-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r59758.
