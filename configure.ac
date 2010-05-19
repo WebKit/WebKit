@@ -652,17 +652,12 @@ if test "$enable_introspection" = "yes"; then
   G_IR_SCANNER="$($PKG_CONFIG --variable=g_ir_scanner gobject-introspection-1.0)"
   G_IR_COMPILER="$($PKG_CONFIG --variable=g_ir_compiler gobject-introspection-1.0)"
   G_IR_GENERATE="$($PKG_CONFIG --variable=g_ir_generate gobject-introspection-1.0)"
-  GIRDIR="$($PKG_CONFIG --define-variable=prefix=$prefix --variable=girdir gobject-introspection-1.0)"
-  GIRTYPELIBDIR="$($PKG_CONFIG --define-variable=prefix=$prefix --variable=typelibdir gobject-introspection-1.0)"
-
   AC_DEFINE([ENABLE_INTROSPECTION],[1],[Define to enable GObject introspection support])
 fi
 
 AC_SUBST([G_IR_SCANNER])
 AC_SUBST([G_IR_COMPILER])
 AC_SUBST([G_IR_GENERATE])
-AC_SUBST([GIRDIR])
-AC_SUBST([GIRTYPELIBDIR])
 
 # determine the font backend
 AC_MSG_CHECKING([the font backend to use])

@@ -1,3 +1,13 @@
+2010-05-19  Dan Winship  <danw@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Install introspection files in our prefix, not
+        gobject-introspection's prefix
+
+        * GNUmakefile.am:
+        * configure.ac:
+
 2010-05-15  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Adam Treat.

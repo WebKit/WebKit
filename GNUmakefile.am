@@ -453,10 +453,10 @@ $(WEBKIT_GIRSOURCES): $(JSCORE_GIRSOURCES) $(G_IR_SCANNER) libwebkit-1.0.la
 	     -I$(top_srcdir) \
 	     $(webkitgtk_h_api)
 
-girdir = $(GIRDIR)
+girdir = $(datadir)/gir-1.0
 gir_DATA = $(WEBKIT_GIRSOURCES) $(JSCORE_GIRSOURCES)
 
-typelibsdir += $(GIRTYPELIBDIR)
+typelibsdir += $(libdir)/girepository-1.0
 typelibs_DATA += $(JSCORE_GIRSOURCES:.gir=.typelib) $(WEBKIT_GIRSOURCES:.gir=.typelib)
 
 %.typelib: %.gir $(G_IR_COMPILER)
