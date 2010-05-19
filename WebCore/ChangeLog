@@ -1,3 +1,19 @@
+2010-05-19  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Check that the node is a text node before doing a static cast
+        to a Text class pointer.
+        https://bugs.webkit.org/show_bug.cgi?id=38626    
+
+        Test: fast/text/text-transform-nontext-node-crash.xhtml
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::originalText):
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::originalText):
+        (WebCore::RenderTextFragment::previousCharacter):
+
 2010-05-19  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Eric Seidel.

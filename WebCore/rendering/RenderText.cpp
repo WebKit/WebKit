@@ -252,7 +252,7 @@ void RenderText::deleteTextBoxes()
 PassRefPtr<StringImpl> RenderText::originalText() const
 {
     Node* e = node();
-    return e ? static_cast<Text*>(e)->dataImpl() : 0;
+    return (e && e->isTextNode()) ? static_cast<Text*>(e)->dataImpl() : 0;
 }
 
 void RenderText::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
