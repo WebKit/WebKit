@@ -220,15 +220,15 @@ void EditorClient::setInputMethodState(bool active)
     WebKitWebViewPrivate* priv = m_webView->priv;
 
     if (active)
-        gtk_im_context_focus_in(priv->imContext.get());
+        gtk_im_context_focus_in(priv->imContext);
     else
-        gtk_im_context_focus_out(priv->imContext.get());
+        gtk_im_context_focus_out(priv->imContext);
 
 #ifdef MAEMO_CHANGES
     if (active)
-        hildon_gtk_im_context_show(priv->imContext.get());
+        hildon_gtk_im_context_show(priv->imContext);
     else
-        hildon_gtk_im_context_hide(priv->imContext.get());
+        hildon_gtk_im_context_hide(priv->imContext);
 #endif
 }
 
@@ -367,7 +367,7 @@ void EditorClient::respondToChangedSelection()
     unsigned end;
     if (!targetFrame->editor()->getCompositionSelection(start, end)) {
         // gtk_im_context_reset() clears the composition for us.
-        gtk_im_context_reset(priv->imContext.get());
+        gtk_im_context_reset(priv->imContext);
         targetFrame->editor()->confirmCompositionWithoutDisturbingSelection();
     }
 }
@@ -700,7 +700,7 @@ void EditorClient::handleInputMethodKeydown(KeyboardEvent* event)
     m_treatContextCommitAsKeyEvent = (!targetFrame->editor()->hasComposition())
          && event->keyEvent()->gdkEventKey()->keyval;
     clearPendingComposition();
-    if ((gtk_im_context_filter_keypress(priv->imContext.get(), event->keyEvent()->gdkEventKey()) && !m_pendingComposition)
+    if ((gtk_im_context_filter_keypress(priv->imContext, event->keyEvent()->gdkEventKey()) && !m_pendingComposition)
         || (!m_treatContextCommitAsKeyEvent && !targetFrame->editor()->hasComposition()))
         event->preventDefault();
 
@@ -714,8 +714,8 @@ EditorClient::EditorClient(WebKitWebView* webView)
     , m_nativeWidget(gtk_text_view_new())
 {
     WebKitWebViewPrivate* priv = m_webView->priv;
-    g_signal_connect(priv->imContext.get(), "commit", G_CALLBACK(imContextCommitted), this);
-    g_signal_connect(priv->imContext.get(), "preedit-changed", G_CALLBACK(imContextPreeditChanged), this);
+    g_signal_connect(priv->imContext, "commit", G_CALLBACK(imContextCommitted), this);
+    g_signal_connect(priv->imContext, "preedit-changed", G_CALLBACK(imContextPreeditChanged), this);
 
     g_signal_connect(m_nativeWidget.get(), "backspace", G_CALLBACK(backspaceCallback), this);
     g_signal_connect(m_nativeWidget.get(), "cut-clipboard", G_CALLBACK(cutClipboardCallback), this);
@@ -729,8 +729,8 @@ EditorClient::EditorClient(WebKitWebView* webView)
 EditorClient::~EditorClient()
 {
     WebKitWebViewPrivate* priv = m_webView->priv;
-    g_signal_handlers_disconnect_by_func(priv->imContext.get(), (gpointer)imContextCommitted, this);
-    g_signal_handlers_disconnect_by_func(priv->imContext.get(), (gpointer)imContextPreeditChanged, this);
+    g_signal_handlers_disconnect_by_func(priv->imContext, (gpointer)imContextCommitted, this);
+    g_signal_handlers_disconnect_by_func(priv->imContext, (gpointer)imContextPreeditChanged, this);
 }
 
 void EditorClient::textFieldDidBeginEditing(Element*)

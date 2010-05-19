@@ -1,3 +1,58 @@
+2010-05-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r59240.
+        http://trac.webkit.org/changeset/59240
+        https://bugs.webkit.org/show_bug.cgi?id=39377
+
+        "Might cause crashes in GTK+ bots" (Requested by xan_ on
+        #webkit).
+
+        * WebCoreSupport/ContextMenuClientGtk.cpp:
+        (WebKit::inputMethodsMenuItem):
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::setInputMethodState):
+        (WebKit::EditorClient::respondToChangedSelection):
+        (WebKit::EditorClient::handleInputMethodKeydown):
+        (WebKit::EditorClient::EditorClient):
+        (WebKit::EditorClient::~EditorClient):
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::postCommitFrameViewSetup):
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebview.cpp:
+        (destroy_menu_cb):
+        (webkit_web_view_forward_context_menu_event):
+        (webkit_web_view_key_release_event):
+        (webkit_web_view_button_release_event):
+        (webkit_web_view_focus_in_event):
+        (webkit_web_view_focus_out_event):
+        (webkit_web_view_realize):
+        (webkit_web_view_set_scroll_adjustments):
+        (webkit_web_view_dispose):
+        (webkit_web_view_finalize):
+        (webViewGetDPI):
+        (webkit_web_view_screen_changed):
+        (webkit_web_view_query_tooltip):
+        (webkit_web_view_get_im_context):
+        (webkit_web_view_update_settings):
+        (webkit_web_view_init):
+        (webkit_web_view_set_settings):
+        (webkit_web_view_get_settings):
+        (webkit_web_view_get_inspector):
+        (webkit_web_view_set_window_features):
+        (webkit_web_view_get_window_features):
+        (webkit_web_view_get_back_forward_list):
+        (webkit_web_view_zoom_in):
+        (webkit_web_view_zoom_out):
+        (webkit_web_view_get_encoding):
+        (webkit_web_view_get_custom_encoding):
+        (webkit_web_view_add_resource):
+        (webkit_web_view_get_resource):
+        (webkit_web_view_get_main_resource):
+        (webkit_web_view_clear_resources):
+        (webkit_web_view_get_subresources):
+        (webkit_web_view_set_tooltip_text):
+        (webkit_web_view_get_icon_uri):
+
 2010-05-18  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
