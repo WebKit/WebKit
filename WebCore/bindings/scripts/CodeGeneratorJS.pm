@@ -985,7 +985,7 @@ sub GenerateHeader
     if ($numFunctions > 0) {
         push(@headerContent,"// Functions\n\n");
         foreach my $function (@{$dataNode->functions}) {
-            next if $function->{overloadIndex} > 1;
+            next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
             my $functionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
             push(@headerContent, "JSC::JSValue JSC_HOST_CALL ${functionName}(JSC::ExecState*, JSC::JSObject*, JSC::JSValue, const JSC::ArgList&);\n");
         }
@@ -1254,7 +1254,7 @@ sub GenerateImplementation
     }
 
     foreach my $function (@{$dataNode->functions}) {
-        next if $function->{overloadIndex} > 1;
+        next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
         my $name = $function->signature->name;
         push(@hashKeys, $name);
 
@@ -1781,7 +1781,7 @@ sub GenerateImplementation
 
             my $functionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
 
-            if (@{$function->{overloads}} > 1) {
+            if ($function->{overloads} && @{$function->{overloads}} > 1) {
                 # Append a number to an overloaded method's name to make it unique:
                 $functionName = $functionName . $function->{overloadIndex};
             }
@@ -1953,7 +1953,7 @@ sub GenerateImplementation
             }
             push(@implContent, "}\n\n");
 
-            if (@{$function->{overloads}} > 1 && $function->{overloadIndex} == @{$function->{overloads}}) {
+            if ($function->{overloads} && @{$function->{overloads}} > 1 && $function->{overloadIndex} == @{$function->{overloads}}) {
                 # Generate a function dispatching call to the rest of the overloads.
                 GenerateOverloadedPrototypeFunction($function, $dataNode, $implClassName);
             }

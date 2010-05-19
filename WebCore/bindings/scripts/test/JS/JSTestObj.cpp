@@ -66,13 +66,7 @@ static const HashTableValue JSTestObjTableValues[15] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestObjTable =
-#if ENABLE(PERFECT_HASH_SIZE)
-    { 127, JSTestObjTableValues, 0 };
-#else
-    { 34, 31, JSTestObjTableValues, 0 };
-#endif
-
+static JSC_CONST_HASHTABLE HashTable JSTestObjTable = { 34, 31, JSTestObjTableValues, 0 };
 /* Hash table for constructor */
 #if ENABLE(JIT)
 #define THUNK_GENERATOR(generator) , generator
@@ -86,13 +80,7 @@ static const HashTableValue JSTestObjConstructorTableValues[1] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestObjConstructorTable =
-#if ENABLE(PERFECT_HASH_SIZE)
-    { 0, JSTestObjConstructorTableValues, 0 };
-#else
-    { 1, 0, JSTestObjConstructorTableValues, 0 };
-#endif
-
+static JSC_CONST_HASHTABLE HashTable JSTestObjConstructorTable = { 1, 0, JSTestObjConstructorTableValues, 0 };
 class JSTestObjConstructor : public DOMConstructorObject {
 public:
     JSTestObjConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
@@ -167,13 +155,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[29] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestObjPrototypeTable =
-#if ENABLE(PERFECT_HASH_SIZE)
-    { 8191, JSTestObjPrototypeTableValues, 0 };
-#else
-    { 69, 63, JSTestObjPrototypeTableValues, 0 };
-#endif
-
+static JSC_CONST_HASHTABLE HashTable JSTestObjPrototypeTable = { 69, 63, JSTestObjPrototypeTableValues, 0 };
 const ClassInfo JSTestObjPrototype::s_info = { "TestObjPrototype", 0, &JSTestObjPrototypeTable, 0 };
 
 JSObject* JSTestObjPrototype::self(ExecState* exec, JSGlobalObject* globalObject)

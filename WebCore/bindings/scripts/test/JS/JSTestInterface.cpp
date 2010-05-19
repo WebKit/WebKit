@@ -44,13 +44,7 @@ static const HashTableValue JSTestInterfaceTableValues[2] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestInterfaceTable =
-#if ENABLE(PERFECT_HASH_SIZE)
-    { 0, JSTestInterfaceTableValues, 0 };
-#else
-    { 2, 1, JSTestInterfaceTableValues, 0 };
-#endif
-
+static JSC_CONST_HASHTABLE HashTable JSTestInterfaceTable = { 2, 1, JSTestInterfaceTableValues, 0 };
 /* Hash table for constructor */
 #if ENABLE(JIT)
 #define THUNK_GENERATOR(generator) , generator
@@ -64,13 +58,7 @@ static const HashTableValue JSTestInterfaceConstructorTableValues[1] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestInterfaceConstructorTable =
-#if ENABLE(PERFECT_HASH_SIZE)
-    { 0, JSTestInterfaceConstructorTableValues, 0 };
-#else
-    { 1, 0, JSTestInterfaceConstructorTableValues, 0 };
-#endif
-
+static JSC_CONST_HASHTABLE HashTable JSTestInterfaceConstructorTable = { 1, 0, JSTestInterfaceConstructorTableValues, 0 };
 class JSTestInterfaceConstructor : public DOMConstructorObject {
 public:
     JSTestInterfaceConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
@@ -129,13 +117,7 @@ static const HashTableValue JSTestInterfacePrototypeTableValues[1] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestInterfacePrototypeTable =
-#if ENABLE(PERFECT_HASH_SIZE)
-    { 0, JSTestInterfacePrototypeTableValues, 0 };
-#else
-    { 1, 0, JSTestInterfacePrototypeTableValues, 0 };
-#endif
-
+static JSC_CONST_HASHTABLE HashTable JSTestInterfacePrototypeTable = { 1, 0, JSTestInterfacePrototypeTableValues, 0 };
 const ClassInfo JSTestInterfacePrototype::s_info = { "TestInterfacePrototype", 0, &JSTestInterfacePrototypeTable, 0 };
 
 JSObject* JSTestInterfacePrototype::self(ExecState* exec, JSGlobalObject* globalObject)
