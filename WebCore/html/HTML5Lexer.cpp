@@ -824,13 +824,102 @@ void HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             notImplemented();
             break;
         }
-        case CommentStartState:
-        case CommentStartDashState:
-        case CommentState:
-        case CommentEndDashState:
-        case CommentEndState:
-        case CommentEndBangState:
-        case CommentEndSpaceState:
+        case CommentStartState: {
+            if (cc == '-')
+                m_state = CommentStartDashState;
+            else if (cc == '>') {
+                emitParseError();
+                emitCommentToken();
+                m_state = DataState;
+            } else {
+                notImplemented();
+                m_state = CommentState;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case CommentStartDashState: {
+            if (cc == '-')
+                m_state = CommentEndState;
+            else if (cc == '>') {
+                emitParseError();
+                m_state = DataState;
+            } else {
+                notImplemented();
+                m_state = CommentState;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case CommentState: {
+            if (cc == '-')
+                m_state = CommentEndDashState;
+            else
+                notImplemented();
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case CommentEndDashState: {
+            if (cc == '-')
+                m_state = CommentEndState;
+            else {
+                notImplemented();
+                m_state = CommentState;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case CommentEndState: {
+            if (cc == '>') {
+                emitCommentToken();
+                m_state = DataState;
+            } else if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
+                emitParseError();
+                notImplemented();
+                m_state = CommentEndSpaceState;
+            } else if (cc == '!') {
+                emitParseError();
+                m_state = CommentEndBangState;
+            } else if (cc == '-') {
+                emitParseError();
+                notImplemented();
+            } else {
+                emitParseError();
+                notImplemented();
+                m_state = CommentState;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case CommentEndBangState: {
+            if (cc == '-') {
+                notImplemented();
+                m_state = CommentEndDashState;
+            } else if (cc == '>') {
+                emitCommentToken();
+                m_state = DataState;
+            } else {
+                notImplemented();
+                m_state = CommentState;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case CommentEndSpaceState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+                notImplemented();
+            else if (cc == '-')
+                m_state = CommentEndDashState;
+            else if (cc == '>') {
+                emitCommentToken();
+                m_state = DataState;
+            } else {
+                notImplemented();
+                m_state = CommentState;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
         case DOCTYPEState:
         case BeforeDOCTYPENameState:
         case DOCTYPENameState:
@@ -862,6 +951,11 @@ inline bool HTML5Lexer::temporaryBufferIs(const char*)
 {
     notImplemented();
     return true;
+}
+
+inline void HTML5Lexer::emitCommentToken()
+{
+    notImplemented();
 }
 
 inline void HTML5Lexer::emitCharacter(UChar character)
