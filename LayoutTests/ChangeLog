@@ -1,3 +1,12 @@
+2010-05-18  Martin Robinson  <mrobinson@igalia.com>
+
+        Not reviewed.
+
+        [GTK] fast/dom/Geolocation/enabled.html is crashing on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=39326
+
+        * platform/gtk/Skipped: Skip another test causing crashes.
+
 2010-05-18  Yaar Schnitman  <yaar@chromium.org>
 
         Unreviewed, rolling out r59693.
