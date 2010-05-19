@@ -36,7 +36,6 @@
 #if ENABLE(INSPECTOR)
 
 #include "Console.h"
-#include "JSMainThreadExecState.h"
 #if ENABLE(DATABASE)
 #include "Database.h"
 #include "JSDatabase.h"
@@ -83,7 +82,7 @@ ScriptObject InjectedScriptHost::createInjectedScript(const String& source, Scri
     JSLock lock(SilenceAssertionsOnly);
     JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
     JSValue globalThisValue = scriptState->globalThisValue();
-    Completion comp = JSMainThreadExecState::evaluate(scriptState, globalObject->globalScopeChain(), sourceCode, globalThisValue);
+    Completion comp = JSC::evaluate(scriptState, globalObject->globalScopeChain(), sourceCode, globalThisValue);
     if (comp.complType() != JSC::Normal && comp.complType() != JSC::ReturnValue)
         return ScriptObject();
     JSValue functionValue = comp.value();

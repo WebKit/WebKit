@@ -31,7 +31,6 @@
 
 #include "Document.h"
 #include "JSDOMBinding.h"
-#include "JSMainThreadExecState.h"
 
 using namespace JSC;
     
@@ -60,9 +59,7 @@ JSValue JSCallbackData::invokeCallback(MarkedArgumentBuffer& args, bool* raisedE
     }
     
     globalObject()->globalData()->timeoutChecker.start();
-    JSValue result = globalObject()->scriptExecutionContext()->isDocument() 
-        ? JSMainThreadExecState::call(exec, function, callType, callData, callback(), args)
-        : JSC::call(exec, function, callType, callData, callback(), args);
+    JSValue result = JSC::call(exec, function, callType, callData, callback(), args);
     globalObject()->globalData()->timeoutChecker.stop();
 
     Document::updateStyleForAllDocuments();

@@ -32,7 +32,6 @@
 #include "ScriptFunctionCall.h"
 
 #include "JSDOMBinding.h"
-#include "JSMainThreadExecState.h"
 #include "ScriptString.h"
 #include "ScriptValue.h"
 
@@ -147,7 +146,7 @@ ScriptValue ScriptFunctionCall::call(bool& hadException, bool reportExceptions)
     if (callType == CallTypeNone)
         return ScriptValue();
 
-    JSValue result = JSMainThreadExecState::call(m_exec, function, callType, callData, thisObject, m_arguments);
+    JSValue result = JSC::call(m_exec, function, callType, callData, thisObject, m_arguments);
     if (m_exec->hadException()) {
         if (reportExceptions)
             reportException(m_exec, m_exec->exception());
