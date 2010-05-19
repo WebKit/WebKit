@@ -30,6 +30,7 @@
 
 #include "IDBDatabase.h"
 #include "IDBDatabaseError.h"
+#include "SecurityOrigin.h"
 #include <wtf/Threading.h>
 #include <wtf/UnusedParam.h>
 
