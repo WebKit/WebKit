@@ -42,9 +42,10 @@ static GeolocationService* createGeolocationServiceNull(GeolocationServiceClient
 }
 
 GeolocationService::FactoryFunction* GeolocationService::s_factoryFunction = &createGeolocationServiceNull;
-#endif
-
+GeolocationService::FactoryFunction* GeolocationService::s_mockFactoryFunction = &createGeolocationServiceNull;
+#else
 GeolocationService::FactoryFunction* GeolocationService::s_mockFactoryFunction = &GeolocationServiceMock::create;
+#endif
 
 GeolocationService* GeolocationService::create(GeolocationServiceClient* client)
 {
