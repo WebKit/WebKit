@@ -32,9 +32,11 @@
 #include "HTMLNames.h"
 #include "HTMLScriptElement.h"
 #include "MIMETypeRegistry.h"
+#include "Page.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
+#include "Settings.h"
 #include "StringHash.h"
 #include "Text.h"
 #include <wtf/StdLibExtras.h>
@@ -82,12 +84,28 @@ void ScriptElement::childrenChanged(ScriptElementData& data)
         data.evaluateScript(ScriptSourceCode(data.scriptContent(), element->document()->url())); // FIXME: Provide a real starting line number here
 }
 
+static inline bool useHTML5Parser(Document* document)
+{
+    ASSERT(document);
+    Settings* settings = document->page() ? document->page()->settings() : 0;
+    return settings && settings->html5ParserEnabled();
+}
+
 void ScriptElement::finishParsingChildren(ScriptElementData& data, const String& sourceUrl)
 {
     // The parser just reached </script>. If we have no src and no text,
     // allow dynamic loading later.
     if (sourceUrl.isEmpty() && data.scriptContent().isEmpty())
         data.setCreatedByParser(false);
+    // HTML5 Requires that we execute scripts from the parser, not from
+    // HTMLTokenizer like we currently do.
+    // FIXME: It may not be safe to execute scripts from here if
+    // HTMLParser::popOneBlockCommon is not reentrant.
+    else if (useHTML5Parser(data.element()->document())) {
+        // This is currently an incomplete implementation, see:
+        // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#parsing-main-incdata
+        data.evaluateScript(ScriptSourceCode(data.scriptContent(), data.element()->document()->url())); // FIXME: Provide a real starting line number here
+    }
 }
 
 void ScriptElement::handleSourceAttribute(ScriptElementData& data, const String& sourceUrl)

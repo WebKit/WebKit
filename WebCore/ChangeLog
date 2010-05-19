@@ -1,3 +1,25 @@
+2010-05-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add support for handling basic <script> tags in the HTML5 Parser
+        https://bugs.webkit.org/show_bug.cgi?id=39350
+
+        WebKit currently executes scripts from HTMLTokenizer in one giagantic
+        hack.  HTML 5 requires that we execute scripts from the tree-builders/parser.
+
+        It will take me a while to re-factor enough of HTMLTokenizer to be able to
+        move the script execution logic without breaking things.  In the interest
+        of allowing Adam to continue improving the HTML 5 lexer I've added this
+        very basic (and very incomplete) <script> support to the HTML 5 parser code
+        path so the he can run the HTML5 parser test suite.
+
+        <script> support is tested by most of the layout tests.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::useHTML5Parser):
+        (WebCore::ScriptElement::finishParsingChildren):
+
 2010-05-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
