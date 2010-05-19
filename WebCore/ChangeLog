@@ -1,3 +1,11 @@
+2010-05-19  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix build warning
+
+        NamedAttrMap.h has been renamed to NamedNodeMap.h
+
+        * WebCore.pro:
+
 2010-05-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

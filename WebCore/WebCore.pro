@@ -1211,7 +1211,7 @@ HEADERS += \
     dom/MouseEvent.h \
     dom/MouseRelatedEvent.h \
     dom/MutationEvent.h \
-    dom/NamedAttrMap.h \
+    dom/NamedNodeMap.h \
     dom/NamedMappedAttrMap.h \
     dom/NameNodeList.h \
     dom/NodeFilterCondition.h \
