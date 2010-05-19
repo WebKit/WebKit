@@ -1,3 +1,16 @@
+2010-05-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r59782.
+        http://trac.webkit.org/changeset/59782
+        https://bugs.webkit.org/show_bug.cgi?id=39379
+
+        broke DRT build (Requested by dpranke on #webkit).
+
+        * fast/notifications/notifications-replace-expected.txt: Added.
+        * fast/notifications/notifications-replace.html: Added.
+        * fast/notifications/notifications-rtl-expected.txt: Added.
+        * fast/notifications/notifications-rtl.html: Added.
+
 2010-05-18  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Dimitri Glazkov.
