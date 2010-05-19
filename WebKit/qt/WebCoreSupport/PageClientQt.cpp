@@ -290,7 +290,7 @@ QRect PageClientQGraphicsWidget::geometryRelativeToOwnerWidget() const
 
 #if ENABLE(TILED_BACKING_STORE)
 QRectF PageClientQGraphicsWidget::graphicsItemVisibleRect() const
-{
+{ 
     if (!view->scene())
         return QRectF();
 

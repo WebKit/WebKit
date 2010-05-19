@@ -76,6 +76,8 @@ public:
     virtual QObject* pluginParent() const;
 
     virtual QStyle* style() const;
+    
+    virtual bool viewResizesToContentsEnabled() const { return false; }
 
     QWidget* view;
 };
@@ -160,6 +162,8 @@ public:
     virtual QObject* pluginParent() const;
 
     virtual QStyle* style() const;
+
+    virtual bool viewResizesToContentsEnabled() const { return viewResizesToContents; }
 
     void createOrDeleteOverlay();
 

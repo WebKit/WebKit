@@ -571,8 +571,12 @@ bool ChromeClientQt::allowsAcceleratedCompositing() const
 #if ENABLE(TILED_BACKING_STORE)
 IntRect ChromeClientQt::visibleRectForTiledBackingStore() const
 { 
-    if (!platformPageClient())
+    if (!platformPageClient() || !m_webPage)
         return IntRect();
+
+    if (!platformPageClient()->viewResizesToContentsEnabled())
+        return QRect(m_webPage->mainFrame()->scrollPosition(), m_webPage->mainFrame()->geometry().size());
+
     return enclosingIntRect(FloatRect(platformPageClient()->graphicsItemVisibleRect()));
 }
 #endif
