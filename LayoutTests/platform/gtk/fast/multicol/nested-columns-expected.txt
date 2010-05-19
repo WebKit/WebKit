@@ -48,35 +48,3 @@ layer at (8,8) size 1133x500
         text run at (0,20) width 154: "Nulla varius enim ac mi."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-layer at (391,192) size 367x240
-  RenderBlock {DIV} at (0,671) size 367x240
-    RenderText {#text} at (0,0) size 175x440
-      text run at (0,0) width 139: "Lorem ipsum dolor sit"
-      text run at (0,20) width 116: "amet, consectetuer"
-      text run at (0,40) width 172: "adipiscing elit. Nulla varius"
-      text run at (0,60) width 137: "enim ac mi. Curabitur"
-      text run at (0,80) width 173: "sollicitudin felis quis lectus."
-      text run at (0,100) width 175: "Quisque adipiscing rhoncus"
-      text run at (0,120) width 145: "sem. Proin nulla purus,"
-      text run at (0,140) width 147: "vulputate vel, varius ut,"
-      text run at (0,160) width 164: "euismod et, nisi. Sed vitae"
-      text run at (0,180) width 124: "felis vel orci sagittis"
-      text run at (0,200) width 147: "aliquam. Cras convallis"
-      text run at (0,220) width 132: "adipiscing sem. Nam"
-      text run at (0,240) width 154: "nonummy enim. Nullam"
-      text run at (0,260) width 160: "bibendum lobortis neque."
-      text run at (0,280) width 136: "Vestibulum velit orci,"
-      text run at (0,300) width 158: "tempus euismod, pretium"
-      text run at (0,320) width 167: "quis, interdum vitae, nulla."
-      text run at (0,340) width 172: "Phasellus eget ante et tortor"
-      text run at (0,360) width 163: "condimentum vestibulum."
-      text run at (0,380) width 137: "Suspendisse hendrerit"
-      text run at (0,400) width 165: "quam nec felis. Sed varius"
-      text run at (0,420) width 111: "turpis vitae pede. "
-    RenderText {#text} at (0,0) size 0x0
-layer at (582,-48) size 173x60 backgroundClip at (0,0) size 1141x600 clip at (0,0) size 1141x600 outlineClip at (0,0) size 1141x600
-  RenderInline (relative positioned) {SPAN} at (0,0) size 173x60
-    RenderText {#text} at (111,420) size 173x60
-      text run at (111,420) width 42: "Lorem"
-      text run at (0,440) width 131: "ipsum dolor sit amet,"
-      text run at (0,460) width 173: "consectetuer adipiscing elit."

@@ -1,3 +1,13 @@
+2010-05-19  Martin Robinson  <mrobinson@igalia.com>
+
+        Not reviewed.
+
+        Updated multi-column test baselines.
+
+        * platform/gtk/fast/multicol/layers-in-multicol-expected.txt: Updated.
+        * platform/gtk/fast/multicol/layers-split-across-columns-expected.txt: Added.
+        * platform/gtk/fast/multicol/nested-columns-expected.txt: Updated.
+
 2010-05-19  Yaar Schnitman  <yaar@chromium.org>
 
         Unreviewed, rolling out r59769.
