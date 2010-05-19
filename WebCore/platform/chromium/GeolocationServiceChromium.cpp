@@ -37,7 +37,7 @@ namespace WebCore {
 
 GeolocationServiceChromium::GeolocationServiceChromium(GeolocationServiceClient* c)
         : GeolocationService(c),
-          m_geolocation(reinterpret_cast<Geolocation*>(c)),
+          m_geolocation(static_cast<Geolocation*>(c)),
           m_geolocationServiceBridge(ChromiumBridge::createGeolocationServiceBridge(this)),
           m_lastError(PositionError::create(PositionError::POSITION_UNAVAILABLE, ""))
 {

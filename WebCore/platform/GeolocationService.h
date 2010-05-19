@@ -60,6 +60,8 @@ public:
     void errorOccurred();
 
     static void useMock();
+    typedef GeolocationService* (FactoryFunction)(GeolocationServiceClient*);
+    static void setCustomMockFactory(FactoryFunction);
 
 protected:
     GeolocationService(GeolocationServiceClient*);
@@ -68,8 +70,8 @@ protected:
 private:
     GeolocationServiceClient* m_geolocationServiceClient;
 
-    typedef GeolocationService* (FactoryFunction)(GeolocationServiceClient*);
     static FactoryFunction* s_factoryFunction;
+    static FactoryFunction* s_mockFactoryFunction;
 };
 
 } // namespace WebCore

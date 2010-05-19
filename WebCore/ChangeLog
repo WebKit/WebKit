@@ -1,3 +1,21 @@
+2010-05-19  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Steve Block.
+
+        [chromium] Adds supports for layout tests using GeolocationServiceMock.
+        https://bugs.webkit.org/show_bug.cgi?id=39081
+
+        Allows injection of GeolocationServiceMock factory.
+
+        Tests: existing fast/dom/Geolocation/*
+
+        * platform/GeolocationService.cpp:
+        (WebCore::GeolocationService::useMock):
+        (WebCore::GeolocationService::useMockFactory):
+        * platform/GeolocationService.h:
+        * platform/chromium/GeolocationServiceChromium.cpp:
+        (WebCore::GeolocationServiceChromium::GeolocationServiceChromium):
+
 2010-05-19  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Adam Barth.
