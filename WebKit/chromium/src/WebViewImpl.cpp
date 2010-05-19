@@ -1154,7 +1154,9 @@ bool WebViewImpl::handleCompositionEvent(WebCompositionCommand command,
                                          const WebString& imeString)
 {
     Frame* focused = focusedWebCoreFrame();
-    if (!focused || !m_imeAcceptEvents)
+    // If we're not going to fire a keypress event, then the keydown event was
+    // canceled so don't update the IME.
+    if (!focused || !m_imeAcceptEvents || m_suppressNextKeypressEvent)
         return false;
     Editor* editor = focused->editor();
     if (!editor)

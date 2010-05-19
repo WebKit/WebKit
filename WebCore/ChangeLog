@@ -1,3 +1,15 @@
+2010-05-18  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        [chromium] ignore IME events if the keydown event was prevented
+        https://bugs.webkit.org/show_bug.cgi?id=37692
+
+        A manual test to verify the IME behavior since the existing methods of
+        textInputController test at a lower level than the fix.
+
+        * manual-tests/ime-keydown-preventdefault.html: Added.
+
 2010-05-18  Sam Weinig  <sam@webkit.org>
 
         Fix the build for platforms that don't always include UnusedParam.h
