@@ -1,5 +1,12 @@
 2010-05-18  Sam Weinig  <sam@webkit.org>
 
+        Fix release build.
+
+        * dom/Attribute.cpp:
+        (WebCore::Attribute::unbindAttr):
+
+2010-05-18  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Maciej Stachowiak.
 
         Move Attr pointer from Attribute to a global HashMap.
