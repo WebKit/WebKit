@@ -73,18 +73,24 @@ class ImageDiff(test_type_base.TestTypeBase):
             if errno.ENOENT != e.errno:
                 raise
 
-    def _save_baseline_files(self, filename, png_path, checksum):
+    def _save_baseline_files(self, filename, png_path, checksum,
+                             generate_new_baseline):
         """Saves new baselines for the PNG and checksum.
 
         Args:
           filename: test filename
           png_path: path to the actual PNG result file
           checksum: value of the actual checksum result
+          generate_new_baseline: whether to generate a new, platform-specific
+            baseline, or update the existing one
         """
         with open(png_path, "rb") as png_file:
             png_data = png_file.read()
-        self._save_baseline_data(filename, png_data, ".png", encoding=None)
-        self._save_baseline_data(filename, checksum, ".checksum", encoding="ascii")
+        self._save_baseline_data(filename, png_data, ".png", encoding=None,
+                                 generate_new_baseline=generate_new_baseline)
+        self._save_baseline_data(filename, checksum, ".checksum",
+                                 encoding="ascii",
+                                 generate_new_baseline=generate_new_baseline)
 
     def _create_image_diff(self, port, filename, configuration):
         """Creates the visual diff of the expected/actual PNGs.
@@ -128,9 +134,9 @@ class ImageDiff(test_type_base.TestTypeBase):
             return failures
 
         # If we're generating a new baseline, we pass.
-        if test_args.new_baseline:
+        if test_args.new_baseline or test_args.reset_results:
             self._save_baseline_files(filename, test_args.png_path,
-                                    test_args.hash)
+                                    test_args.hash, test_args.new_baseline)
             return failures
 
         # Compare hashes.

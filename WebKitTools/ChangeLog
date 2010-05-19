@@ -1,3 +1,43 @@
+2010-05-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        new-run-webkit-tests: implement '--reset-results' flag to complement
+        the '--new-baseline' flag. '--new-baseline' will always write the
+        results into the platform directory; '--reset-results' will update the
+        existing baseline wherever it happens to be. Both sets of behavior
+        are useful in different circumstances.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38879
+
+        * Scripts/webkitpy/layout_tests/data/image/canvas-bg.html: Added.
+        * Scripts/webkitpy/layout_tests/data/image/canvas-zoom-expected.checksum: Added.
+        * Scripts/webkitpy/layout_tests/data/image/canvas-zoom-expected.png: Added.
+        * Scripts/webkitpy/layout_tests/data/image/canvas-zoom-expected.txt: Added.
+        * Scripts/webkitpy/layout_tests/data/image/canvas-zoom.html: Added.
+        * Scripts/webkitpy/layout_tests/data/misc/crash-expected.txt: Added.
+        * Scripts/webkitpy/layout_tests/data/misc/crash.html: Added.
+        * Scripts/webkitpy/layout_tests/data/misc/missing-expectation.html: Added.
+        * Scripts/webkitpy/layout_tests/data/misc/passing-expected.txt: Added.
+        * Scripts/webkitpy/layout_tests/data/misc/passing.html: Added.
+        * Scripts/webkitpy/layout_tests/data/platform/test/image/canvas-bg-expected.checksum: Added.
+        * Scripts/webkitpy/layout_tests/data/platform/test/image/canvas-bg-expected.png: Added.
+        * Scripts/webkitpy/layout_tests/data/platform/test/image/canvas-bg-expected.txt: Added.
+        * Scripts/webkitpy/layout_tests/data/platform/test/test_expectations.txt: Added.
+        * Scripts/webkitpy/layout_tests/data/text/article-element-expected.txt: Added.
+        * Scripts/webkitpy/layout_tests/data/text/article-element.html: Added.
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        * Scripts/webkitpy/layout_tests/layout_package/printing_unittest.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/test_types/image_diff.py:
+        * Scripts/webkitpy/layout_tests/test_types/test_type_base.py:
+        * Scripts/webkitpy/layout_tests/test_types/text_diff.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/port/dryrun.py:
+
 2010-05-18  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Roben.

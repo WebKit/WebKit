@@ -425,7 +425,8 @@ class TestShellThread(threading.Thread):
         # are generating a new baseline.  (Otherwise, an image from a
         # previous run will be copied into the baseline.)
         image_hash = test_info.image_hash()
-        if image_hash and self._test_args.new_baseline:
+        if (image_hash and
+            (self._test_args.new_baseline or self._test_args.reset_results)):
             image_hash = ""
         start = time.time()
         crash, timeout, actual_checksum, output, error = \

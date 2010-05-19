@@ -28,7 +28,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """Dummy Port implementation used for testing."""
+from __future__ import with_statement
 
+import codecs
 import os
 import time
 
@@ -45,9 +47,8 @@ class TestPort(base.Port):
         return ('test',)
 
     def baseline_path(self):
-        curdir = os.path.abspath(__file__)
-        self.topdir = curdir[0:curdir.index("WebKitTools")]
-        return os.path.join(self.topdir, 'LayoutTests', 'platform', 'test')
+        return os.path.join(self.layout_tests_dir(), 'platform',
+                            self.name())
 
     def baseline_search_path(self):
         return [self.baseline_path()]
@@ -66,18 +67,20 @@ class TestPort(base.Port):
                   expected_filename, actual_filename):
         return ''
 
-    def relative_test_filename(self, filename):
-        return filename
-
-    def expected_filename(self, filename, suffix):
-        (basename, ext) = os.path.splitext(filename)
-        return basename + '.' + suffix
+    def layout_tests_dir(self):
+        return self.path_from_webkit_base('WebKitTools', 'Scripts',
+                                          'webkitpy', 'layout_tests', 'data')
 
     def name(self):
         return self._name
 
     def options(self):
         return self._options
+
+    def path_to_test_expectations_file(self):
+        return self.path_from_webkit_base('WebKitTools', 'Scripts',
+            'webkitpy', 'layout_tests', 'data', 'platform', 'test',
+            'test_expectations.txt')
 
     def results_directory(self):
         return '/tmp/' + self._options.results_directory
@@ -104,7 +107,13 @@ class TestPort(base.Port):
         pass
 
     def test_expectations(self):
-        return ''
+        """Returns the test expectations for this port.
+
+        Basically this string should contain the equivalent of a
+        test_expectations file. See test_expectations.py for more details."""
+        expectations_path = self.path_to_test_expectations_file()
+        with codecs.open(expectations_path, "r", "utf-8") as file:
+            return file.read()
 
     def test_base_platform_names(self):
         return ('test',)
@@ -129,6 +138,7 @@ class TestDriver(base.Driver):
         self._driver_options = test_driver_options
         self._image_path = image_path
         self._port = port
+        self._image_written = False
 
     def poll(self):
         return True
@@ -137,6 +147,15 @@ class TestDriver(base.Driver):
         return 0
 
     def run_test(self, uri, timeoutms, image_hash):
+        if not self._image_written and self._port._options.pixel_tests:
+            with open(self._image_path, "w") as f:
+                f.write("bad png file from TestDriver")
+                self._image_written = True
+
+        # We special-case this because we can't fake an image hash for a
+        # missing expectation.
+        if uri.find('misc/missing-expectation') != -1:
+            return (False, False, 'deadbeefdeadbeefdeadbeefdeadbeef', '', None)
         return (False, False, image_hash, '', None)
 
     def start(self):

@@ -143,7 +143,7 @@ class DryrunDriver(base.Driver):
         text_filename = self._port.expected_filename(test_name, '.txt')
         text_output = _read_file(text_filename)
 
-        if image_hash:
+        if image_hash is not None:
             image_filename = self._port.expected_filename(test_name, '.png')
             image = _read_file(image_filename, 'rb')
             if self._image_path:

@@ -1,0 +1,22 @@
+<html>
+ <head>
+ <style>
+ div { background: -webkit-canvas(squares); width:600px; height:600px; border:2px solid black }
+ </style>
+ 
+  <script type="application/x-javascript">
+function draw(w, h) {
+ var ctx = document.getCSSCanvasContext("2d", "squares", w, h);
+
+ ctx.fillStyle = "rgb(200,0,0)";
+ ctx.fillRect (10, 10, 55, 50);
+
+ ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
+ ctx.fillRect (30, 30, 55, 50);
+}
+  </script>
+ </head>
+ <body onload="draw(300, 300)">
+   <div></div>
+ </body>
+</html>

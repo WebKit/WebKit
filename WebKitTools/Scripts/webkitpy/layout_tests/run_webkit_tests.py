@@ -575,6 +575,7 @@ class TestRunner:
             test_args.png_path = png_path
 
         test_args.new_baseline = self._options.new_baseline
+        test_args.reset_results = self._options.reset_results
 
         test_args.show_sources = self._options.sources
 
@@ -1521,6 +1522,9 @@ def parse_args(args=None):
             default=False, help="Save all generated results as new baselines "
                  "into the platform directory, overwriting whatever's "
                  "already there."),
+        optparse.make_option("--reset-results", action="store_true",
+            default=False, help="Reset any existing baselines to the "
+                 "generated results"),
         optparse.make_option("--no-show-results", action="store_false",
             default=True, dest="show_results",
             help="Don't launch a browser with results after the tests "

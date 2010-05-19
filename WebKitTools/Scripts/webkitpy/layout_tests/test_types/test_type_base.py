@@ -93,7 +93,8 @@ class TestTypeBase(object):
             self._port.relative_test_filename(filename))
         self._port.maybe_make_directory(os.path.split(output_filename)[0])
 
-    def _save_baseline_data(self, filename, data, modifier, encoding):
+    def _save_baseline_data(self, filename, data, modifier, encoding,
+                            generate_new_baseline=True):
         """Saves a new baseline file into the port's baseline directory.
 
         The file will be named simply "<test>-expected<modifier>", suitable for
@@ -103,18 +104,25 @@ class TestTypeBase(object):
           filename: path to the test file
           data: result to be saved as the new baseline
           modifier: type of the result file, e.g. ".txt" or ".png"
+          encoding: file encoding (none, "utf-8", etc.)
+          generate_new_baseline: whether to enerate a new, platform-specific
+            baseline, or update the existing one
         """
-        relative_dir = os.path.dirname(
-            self._port.relative_test_filename(filename))
 
-        baseline_path = self._port.baseline_path()
-        output_dir = os.path.join(baseline_path, relative_dir)
-        output_file = os.path.basename(os.path.splitext(filename)[0] +
-            self.FILENAME_SUFFIX_EXPECTED + modifier)
+        if generate_new_baseline:
+            relative_dir = os.path.dirname(
+                self._port.relative_test_filename(filename))
+            baseline_path = self._port.baseline_path()
+            output_dir = os.path.join(baseline_path, relative_dir)
+            output_file = os.path.basename(os.path.splitext(filename)[0] +
+                self.FILENAME_SUFFIX_EXPECTED + modifier)
+            self._port.maybe_make_directory(output_dir)
+            output_path = os.path.join(output_dir, output_file)
+            _log.debug('writing new baseline result "%s"' % (output_path))
+        else:
+            output_path = self._port.expected_filename(filename, modifier)
+            _log.debug('resetting baseline result "%s"' % output_path)
 
-        self._port.maybe_make_directory(output_dir)
-        output_path = os.path.join(output_dir, output_file)
-        _log.debug('writing new baseline to "%s"' % (output_path))
         self._write_into_file_at_path(output_path, data, encoding)
 
     def output_filename(self, filename, modifier):

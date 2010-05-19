@@ -239,6 +239,8 @@ class  Testprinter(unittest.TestCase):
     def test_print_test_result(self):
         result = get_result('foo.html')
         printer, err, out = self.get_printer(['--print', 'nothing'])
+        result = get_result(os.path.join(self._port.layout_tests_dir(),
+                                         'foo.html'))
         printer.print_test_result(result, expected=False, exp_str='',
                                   got_str='')
         self.assertTrue(err.empty())

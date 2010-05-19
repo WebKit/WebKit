@@ -98,19 +98,18 @@ class TestExpectationsTest(unittest.TestCase):
         return os.path.join(self._port.layout_tests_dir(), test_name)
 
     def get_basic_tests(self):
-        return [self.get_test('fast/html/article-element.html'),
-                self.get_test('fast/html/header-element.html'),
-                self.get_test('fast/html/keygen.html'),
-                self.get_test('fast/html/tab-order.html'),
-                self.get_test('fast/events/space-scroll-event.html'),
-                self.get_test('fast/events/tab-imagemap.html')]
+        return [self.get_test('text/article-element.html'),
+                self.get_test('image/canvas-bg.html'),
+                self.get_test('image/canvas-zoom.html'),
+                self.get_test('misc/crash.html'),
+                self.get_test('misc/passing.html')]
 
     def get_basic_expectations(self):
         return """
-BUG_TEST : fast/html/article-element.html = TEXT
-BUG_TEST SKIP : fast/html/keygen.html = CRASH
-BUG_TEST REBASELINE : fast/htmltab-order.html = MISSING
-BUG_TEST : fast/events = IMAGE
+BUG_TEST : text/article-element.html = TEXT
+BUG_TEST SKIP : misc/crash.html = CRASH
+BUG_TEST REBASELINE : misc/missing-expectation.html = MISSING
+BUG_TEST : image = IMAGE
 """
 
     def parse_exp(self, expectations, overrides=None):
@@ -128,42 +127,42 @@ BUG_TEST : fast/events = IMAGE
                           set([result]))
 
     def test_basic(self):
-       self.parse_exp(self.get_basic_expectations())
-       self.assert_exp('fast/html/article-element.html', TEXT)
-       self.assert_exp('fast/events/tab-imagemap.html', IMAGE)
-       self.assert_exp('fast/html/header-element.html', PASS)
+        self.parse_exp(self.get_basic_expectations())
+        self.assert_exp('text/article-element.html', TEXT)
+        self.assert_exp('image/canvas-zoom.html', IMAGE)
+        self.assert_exp('misc/passing.html', PASS)
 
     def test_duplicates(self):
-       self.assertRaises(SyntaxError, self.parse_exp, """
-BUG_TEST : fast/html/article-element.html = TEXT
-BUG_TEST : fast/html/article-element.html = IMAGE""")
-       self.assertRaises(SyntaxError, self.parse_exp,
-           self.get_basic_expectations(), """
-BUG_TEST : fast/html/article-element.html = TEXT
-BUG_TEST : fast/html/article-element.html = IMAGE""")
+        self.assertRaises(SyntaxError, self.parse_exp, """
+BUG_TEST : text/article-element.html = TEXT
+BUG_TEST : text/article-element.html = IMAGE""")
+        self.assertRaises(SyntaxError, self.parse_exp,
+            self.get_basic_expectations(), """
+BUG_TEST : text/article-element.html = TEXT
+BUG_TEST : text/article-element.html = IMAGE""")
 
     def test_overrides(self):
-       self.parse_exp(self.get_basic_expectations(), """
-BUG_OVERRIDE : fast/html/article-element.html = IMAGE""")
-       self.assert_exp('fast/html/article-element.html', IMAGE)
+        self.parse_exp(self.get_basic_expectations(), """
+BUG_OVERRIDE : text/article-element.html = IMAGE""")
+        self.assert_exp('text/article-element.html', IMAGE)
 
     def test_matches_an_expected_result(self):
 
-       def match(test, result, pixel_tests_enabled):
-           return self._exp.matches_an_expected_result(
-               self.get_test(test), result, pixel_tests_enabled)
+        def match(test, result, pixel_tests_enabled):
+            return self._exp.matches_an_expected_result(
+                self.get_test(test), result, pixel_tests_enabled)
 
-       self.parse_exp(self.get_basic_expectations())
-       self.assertTrue(match('fast/html/article-element.html', TEXT, True))
-       self.assertTrue(match('fast/html/article-element.html', TEXT, False))
-       self.assertFalse(match('fast/html/article-element.html', CRASH, True))
-       self.assertFalse(match('fast/html/article-element.html', CRASH, False))
+        self.parse_exp(self.get_basic_expectations())
+        self.assertTrue(match('text/article-element.html', TEXT, True))
+        self.assertTrue(match('text/article-element.html', TEXT, False))
+        self.assertFalse(match('text/article-element.html', CRASH, True))
+        self.assertFalse(match('text/article-element.html', CRASH, False))
 
-       self.assertTrue(match('fast/events/tab-imagemap.html', IMAGE, True))
-       self.assertTrue(match('fast/events/tab-imagemap.html', PASS, False))
+        self.assertTrue(match('image/canvas-bg.html', IMAGE, True))
+        self.assertTrue(match('image/canvas-bg.html', PASS, False))
 
-       self.assertTrue(match('fast/html/keygen.html', SKIP, False))
-       self.assertTrue(match('fast/html/tab-order.html', PASS, False))
+        self.assertTrue(match('misc/crash.html', SKIP, False))
+        self.assertTrue(match('misc/passing.html', PASS, False))
 
 if __name__ == '__main__':
     unittest.main()
