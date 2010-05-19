@@ -1,3 +1,18 @@
+2010-05-18  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Fix some initialization/reset issues
+        https://bugs.webkit.org/show_bug.cgi?id=39281
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::reset): Reset m_userStyleSheetLocation.
+        * DumpRenderTree/chromium/LayoutTestController.h:
+          Remove unused variable, m_workQueueFrozen.
+        (LayoutTestController::WorkQueue::WorkQueue): Initialize m_frozen.
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::resetTestController): Reset WebSettings too.
+
 2010-05-18  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.

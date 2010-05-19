@@ -477,6 +477,7 @@ void LayoutTestController::reset()
     m_stopProvisionalFrameLoads = false;
     m_globalFlag.set(false);
     m_webHistoryItemCount.set(0);
+    m_userStyleSheetLocation = WebURL();
 
     webkit_support::SetAcceptAllCookies(false);
     WebSecurityPolicy::resetOriginAccessWhitelists();

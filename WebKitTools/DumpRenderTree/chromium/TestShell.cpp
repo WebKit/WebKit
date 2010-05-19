@@ -211,6 +211,7 @@ void TestShell::resizeWindowForTest(WebViewHost* window, const WebURL& url)
 
 void TestShell::resetTestController()
 {
+    resetWebSettings(*webView());
     m_accessibilityController->reset();
     m_layoutTestController->reset();
     m_eventSender->reset();
