@@ -89,7 +89,7 @@ static int depth(CodeBlock* codeBlock, ScopeChain& sc)
     return sc.localDepth();
 }
 
-#if USE(INTERPRETER)
+#if !ENABLE(JIT)
 NEVER_INLINE bool Interpreter::resolve(CallFrame* callFrame, Instruction* vPC, JSValue& exceptionValue)
 {
     int dst = vPC[1].u.operand;
@@ -304,7 +304,7 @@ NEVER_INLINE bool Interpreter::resolveBaseAndProperty(CallFrame* callFrame, Inst
     return false;
 }
 
-#endif // USE(INTERPRETER)
+#endif // !ENABLE(JIT)
 
 ALWAYS_INLINE CallFrame* Interpreter::slideRegisterWindowForCall(CodeBlock* newCodeBlock, RegisterFile* registerFile, CallFrame* callFrame, size_t registerOffset, int argc)
 {
@@ -343,7 +343,7 @@ ALWAYS_INLINE CallFrame* Interpreter::slideRegisterWindowForCall(CodeBlock* newC
     return CallFrame::create(r);
 }
 
-#if USE(INTERPRETER)
+#if !ENABLE(JIT)
 static NEVER_INLINE bool isInvalidParamForIn(CallFrame* callFrame, CodeBlock* codeBlock, const Instruction* vPC, JSValue value, JSValue& exceptionData)
 {
     if (value.isObject())
@@ -1022,7 +1022,7 @@ NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookID debugHook
     }
 }
     
-#if USE(INTERPRETER)
+#if !ENABLE(JIT)
 NEVER_INLINE ScopeChainNode* Interpreter::createExceptionScope(CallFrame* callFrame, const Instruction* vPC)
 {
     int dst = vPC[1].u.operand;
@@ -1258,7 +1258,7 @@ NEVER_INLINE void Interpreter::uncacheGetByID(CodeBlock* codeBlock, Instruction*
     vPC[4] = 0;
 }
 
-#endif // USE(INTERPRETER)
+#endif // !ENABLE(JIT)
 
 JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFile, CallFrame* callFrame, JSValue* exception)
 {
@@ -1279,7 +1279,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
     // Mixing Interpreter + JIT is not supported.
     ASSERT_NOT_REACHED();
 #endif
-#if !USE(INTERPRETER)
+#if !!ENABLE(JIT)
     UNUSED_PARAM(registerFile);
     UNUSED_PARAM(callFrame);
     UNUSED_PARAM(exception);
@@ -4404,11 +4404,11 @@ skip_id_custom_self:
 #if !HAVE(COMPUTED_GOTO)
     } // iterator loop ends
 #endif
-#endif // USE(INTERPRETER)
     #undef NEXT_INSTRUCTION
     #undef DEFINE_OPCODE
     #undef CHECK_FOR_EXCEPTION
     #undef CHECK_FOR_TIMEOUT
+#endif // !ENABLE(JIT)
 }
 
 JSValue Interpreter::retrieveArguments(CallFrame* callFrame, JSFunction* function) const

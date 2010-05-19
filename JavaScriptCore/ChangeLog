@@ -1,5 +1,19 @@
 2010-05-19  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Don't build the Interpreter into JIT builds.
+        https://bugs.webkit.org/show_bug.cgi?id=39373
+
+        SunSpider says no change.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * interpreter/Interpreter.h:
+        * wtf/Platform.h:
+
+2010-05-19  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Gavin Barraclough.
         
         Standardized naming: "bytecode offset" wins; "bytecode index" loses.

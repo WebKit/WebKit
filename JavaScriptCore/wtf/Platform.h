@@ -997,12 +997,6 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #define HAVE_COMPUTED_GOTO 1
 #endif
 
-#if ENABLE(JIT) && defined(COVERAGE)
-    #define WTF_USE_INTERPRETER 0
-#else
-    #define WTF_USE_INTERPRETER 1
-#endif
-
 /* Yet Another Regex Runtime. */
 #if !defined(ENABLE_YARR_JIT)
 
