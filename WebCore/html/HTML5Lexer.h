@@ -133,6 +133,9 @@ namespace WebCore {
 
         // http://www.whatwg.org/specs/web-apps/current-work/#temporary-buffer
         Vector<UChar, 1024> m_temporaryBuffer;
+
+        // http://www.whatwg.org/specs/web-apps/current-work/#additional-allowed-character
+        UChar m_additionalAllowedCharacter;
     };
 
 }

@@ -59,6 +59,7 @@ using namespace HTMLNames;
 
 HTML5Lexer::HTML5Lexer()
     : m_outputToken(0)
+    , m_additionalAllowedCharacter('\0')
 {
 }
 
@@ -698,16 +699,131 @@ void HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             // FIXME: Handle EOF properly.
             break;
         }
-        case AfterAttributeNameState:
-        case BeforeAttributeValueState:
-        case AttributeValueDoubleQuotedState:
-        case AttributeValueSingleQuotedState:
-        case AttributeValueUnquotedState:
-        case CharacterReferenceInAttributeValueState:
-        case AfterAttributeValueQuotedState:
-        case SelfClosingStartTagState:
-        case BogusCommentState:
-        case MarkupDeclarationOpenState:
+        case AfterAttributeNameState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+                break;
+            else if (cc == '/')
+                m_state = SelfClosingStartTagState;
+            else if (cc == '=')
+                m_state = BeforeAttributeValueState;
+            else if (cc == '=') {
+                emitCurrentTagToken();
+                m_state = DataState;
+            } else if (cc >= 'A' && cc <= 'Z') {
+                notImplemented();
+                m_state = AttributeNameState;
+            } else {
+                if (cc == '"' || cc == '\'' || cc == '<')
+                    emitParseError();
+                notImplemented();
+                m_state = AttributeNameState;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case BeforeAttributeValueState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+                break;
+            else if (cc == '"')
+                m_state = AttributeValueDoubleQuotedState;
+            else if (cc == '&') {
+                m_state = AttributeValueUnquotedState;
+                continue;
+            } else if (cc == '\'')
+                m_state = AttributeValueSingleQuotedState;
+            else if (cc == '>') {
+                emitParseError();
+                emitCurrentTagToken();
+                m_state = DataState;
+            } else {
+                if (cc == '<' || cc == '=' || cc == '`')
+                    emitParseError();
+                notImplemented();
+                m_state = AttributeValueUnquotedState;
+            }
+            break;
+        }
+        case AttributeValueDoubleQuotedState: {
+            if (cc == '"')
+                m_state = AfterAttributeValueQuotedState;
+            else if (cc == '&') {
+                m_state = CharacterReferenceInAttributeValueState;
+                m_additionalAllowedCharacter = '"';
+            } else
+                notImplemented();
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case AttributeValueSingleQuotedState: {
+            if (cc == '\'')
+                m_state = AfterAttributeValueQuotedState;
+            else if (cc == '&') {
+                m_state = CharacterReferenceInAttributeValueState;
+                m_additionalAllowedCharacter = '\'';
+            } else
+                notImplemented();
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case AttributeValueUnquotedState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+                m_state = BeforeAttributeNameState;
+            else if (cc == '&') {
+                m_state = CharacterReferenceInAttributeValueState;
+                m_additionalAllowedCharacter = '>';
+            } else if (cc == '>') {
+                emitCurrentTagToken();
+                m_state = DataState;
+            } else {
+                if (cc == '"' || cc == '\'' || cc == '<' || cc == '=' || cc == '`')
+                    emitParseError();
+                notImplemented();
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case CharacterReferenceInAttributeValueState: {
+            notImplemented();
+            break;
+        }
+        case AfterAttributeValueQuotedState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+                m_state = BeforeAttributeNameState;
+            else if (cc == '/')
+                m_state = SelfClosingStartTagState;
+            else if (cc == '>') {
+                emitCurrentTagToken();
+                m_state = DataState;
+            } else {
+                emitParseError();
+                m_state = BeforeAttributeNameState;
+                continue;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case SelfClosingStartTagState: {
+            if (cc == '>') {
+                notImplemented();
+                emitCurrentTagToken();
+                m_state = DataState;
+            } else {
+                emitParseError();
+                m_state = BeforeAttributeNameState;
+                continue;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case BogusCommentState: {
+            notImplemented();
+            m_state = DataState;
+            break;
+        }
+        case MarkupDeclarationOpenState: {
+            notImplemented();
+            break;
+        }
         case CommentStartState:
         case CommentStartDashState:
         case CommentState:
