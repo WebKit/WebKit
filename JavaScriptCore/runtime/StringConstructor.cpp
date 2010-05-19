@@ -57,7 +57,7 @@ StringConstructor::StringConstructor(ExecState* exec, NonNullPassRefPtr<Structur
 
     // ECMA 15.5.3.2 fromCharCode()
 #if ENABLE(JIT)
-    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 1, exec->propertyNames().fromCharCode, exec->globalData().getNativeExecutable(stringFromCharCode, fromCharCodeThunkGenerator)), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 1, exec->propertyNames().fromCharCode, exec->globalData().getHostFunction(stringFromCharCode, fromCharCodeThunkGenerator)), DontEnum);
 #else
     putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 1, exec->propertyNames().fromCharCode, stringFromCharCode), DontEnum);
 #endif

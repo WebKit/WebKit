@@ -1,3 +1,48 @@
+2010-05-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 39343 - Dynamically generate a native call thunk per NativeFunction
+        
+        https://bugs.webkit.org/show_bug.cgi?id=39252 regressed performance on i386,
+        by adding an extra indirection to making a native call.  By introducing per-
+        NativeFunction thunks we can hard code the function pointer into the thunk
+        so that it need not be loaded from the callee.
+
+        * jit/JIT.h:
+        (JSC::JIT::compileCTINativeCall):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitSlow_op_get_by_val):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitSlow_op_get_by_val):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::ctiStub):
+        (JSC::JITThunks::hostFunctionStub):
+        * jit/JITStubs.h:
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::finalize):
+        * jit/ThunkGenerators.cpp:
+        (JSC::charCodeAtThunkGenerator):
+        (JSC::charAtThunkGenerator):
+        (JSC::fromCharCodeThunkGenerator):
+        (JSC::sqrtThunkGenerator):
+        (JSC::powThunkGenerator):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::getHostFunction):
+        * runtime/JSGlobalData.h:
+        (JSC::JSGlobalData::getCTIStub):
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::StringConstructor):
+        * wtf/Platform.h:
+
 2010-05-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

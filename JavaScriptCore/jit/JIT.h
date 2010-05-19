@@ -223,6 +223,12 @@ namespace JSC {
             jit.privateCompileCTIMachineTrampolines(executablePool, globalData, trampolines);
         }
 
+        static CodePtr compileCTINativeCall(JSGlobalData* globalData, PassRefPtr<ExecutablePool> executablePool, NativeFunction func)
+        {
+            JIT jit(globalData);
+            return jit.privateCompileCTINativeCall(executablePool, globalData, func);
+        }
+
         static void patchGetByIdSelf(CodeBlock* codeblock, StructureStubInfo*, Structure*, size_t cachedOffset, ReturnAddressPtr returnAddress);
         static void patchPutByIdReplace(CodeBlock* codeblock, StructureStubInfo*, Structure*, size_t cachedOffset, ReturnAddressPtr returnAddress);
         static void patchMethodCallProto(CodeBlock* codeblock, MethodCallLinkInfo&, JSFunction*, Structure*, JSObject*, ReturnAddressPtr);
@@ -263,6 +269,7 @@ namespace JSC {
         void privateCompilePutByIdTransition(StructureStubInfo*, Structure*, Structure*, size_t cachedOffset, StructureChain*, ReturnAddressPtr returnAddress);
 
         void privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executablePool, JSGlobalData* data, TrampolineStructure *trampolines);
+        CodePtr privateCompileCTINativeCall(PassRefPtr<ExecutablePool> executablePool, JSGlobalData* data, NativeFunction func);
         void privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress);
 
         void addSlowCase(Jump);

@@ -125,7 +125,7 @@ void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCas
     Jump nonCell = jump();
     linkSlowCase(iter); // base array check
     Jump notString = branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsStringVPtr));
-    emitNakedCall(m_globalData->getThunk(stringGetByValStubGenerator));
+    emitNakedCall(m_globalData->getCTIStub(stringGetByValStubGenerator));
     Jump failed = branchTestPtr(Zero, regT0);
     emitPutVirtualRegister(dst, regT0);
     emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_get_by_val));

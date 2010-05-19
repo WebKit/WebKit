@@ -550,6 +550,11 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
 #endif
 }
 
+JIT::CodePtr JIT::privateCompileCTINativeCall(PassRefPtr<ExecutablePool>, JSGlobalData* globalData, NativeFunction)
+{
+    return globalData->jitStubs.ctiNativeCall();
+}
+
 void JIT::emit_op_mov(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;

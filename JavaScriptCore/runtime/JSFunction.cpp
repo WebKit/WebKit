@@ -76,7 +76,7 @@ JSFunction::JSFunction(ExecState* exec, NonNullPassRefPtr<Structure> structure, 
 JSFunction::JSFunction(ExecState* exec, NonNullPassRefPtr<Structure> structure, int length, const Identifier& name, NativeFunction func)
     : Base(&exec->globalData(), structure, name)
 #if ENABLE(JIT)
-    , m_executable(exec->globalData().getNativeExecutable(func))
+    , m_executable(exec->globalData().getHostFunction(func))
 #endif
     , m_scopeChain(NoScopeChain())
 {

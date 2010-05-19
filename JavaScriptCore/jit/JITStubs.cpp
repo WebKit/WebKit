@@ -3404,11 +3404,27 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, to_object)
     return JSValue::encode(stackFrame.args[0].jsValue().toObject(callFrame));
 }
 
-MacroAssemblerCodePtr JITThunks::specializedThunk(JSGlobalData* globalData, ThunkGenerator generator)
+MacroAssemblerCodePtr JITThunks::ctiStub(JSGlobalData* globalData, ThunkGenerator generator)
 {
-    std::pair<ThunkMap::iterator, bool> entry = m_thunkMap.add(generator, MacroAssemblerCodePtr());
+    std::pair<CTIStubMap::iterator, bool> entry = m_ctiStubMap.add(generator, MacroAssemblerCodePtr());
     if (entry.second)
         entry.first->second = generator(globalData, m_executablePool.get());
+    return entry.first->second;
+}
+
+PassRefPtr<NativeExecutable> JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFunction function)
+{
+    std::pair<HostFunctionStubMap::iterator, bool> entry = m_hostFunctionStubMap.add(function, 0);
+    if (entry.second)
+        entry.first->second = NativeExecutable::create(JIT::compileCTINativeCall(globalData, m_executablePool, function), function);
+    return entry.first->second;
+}
+
+PassRefPtr<NativeExecutable> JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFunction function, ThunkGenerator generator)
+{
+    std::pair<HostFunctionStubMap::iterator, bool> entry = m_hostFunctionStubMap.add(function, 0);
+    if (entry.second)
+        entry.first->second = NativeExecutable::create(generator(globalData, m_executablePool.get()), function);
     return entry.first->second;
 }
 
