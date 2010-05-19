@@ -1,3 +1,16 @@
+2010-05-19  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Add test to verify that CanvasRenderingContext2D's arc() connects arcs
+        by a straight line (unless it's the first element in the path.)
+        https://bugs.webkit.org/show_bug.cgi?id=38526
+
+        * fast/canvas/canvas-arc-connecting-line-expected.txt: Added.
+        * fast/canvas/canvas-arc-connecting-line.html: Added.
+        * fast/canvas/script-tests/canvas-arc-connecting-line.js: Added.
+        (deg2rad):
+
 2010-05-19  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Reviewed by Darin Adler.
