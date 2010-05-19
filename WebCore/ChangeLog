@@ -1,3 +1,25 @@
+2010-05-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Move Attr pointer from Attribute to a global HashMap.
+        https://bugs.webkit.org/show_bug.cgi?id=39337
+        <rdar://problem/8001168>
+
+        Shaves another word off of Attribute.
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::Attr):
+        (WebCore::Attr::~Attr):
+        * dom/Attribute.cpp:
+        (WebCore::attributeAttrMap):
+        (WebCore::Attribute::attr):
+        (WebCore::Attribute::createAttrIfNeeded):
+        (WebCore::Attribute::bindAttr):
+        (WebCore::Attribute::unbindAttr):
+        * dom/Attribute.h:
+        (WebCore::Attribute::Attribute):
+
 2010-05-18  Jakob Petsovits  <jpetsovits@rim.com>
 
         Unreviewed, forgot to svn add source file in r59619.
