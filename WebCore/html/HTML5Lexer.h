@@ -56,7 +56,7 @@ namespace WebCore {
         inline bool temporaryBufferIs(const char*);
 
         SegmentedString m_source;
-        HTML5Token* m_outputToken;
+        HTML5Token* m_token;
 
         enum State {
             DataState,

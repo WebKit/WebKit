@@ -28,6 +28,7 @@
 
 #include "NamedMappedAttrMap.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -47,21 +48,56 @@ public:
         : m_type(type)
         , m_forceQuirks(false)
         , m_selfClosing(false)
-        , m_character(0)
     {
     }
 
-    inline void setToCharacter(UChar character)
+    void beginStartTag(UChar character)
     {
-        m_type = Character;
-        m_character = character;
+        m_type = StartTag;
+        m_data.clear();
+        m_data.append(character);
+    }
+
+    void beginEndTag(UChar character)
+    {
+        m_type = EndTag;
+        m_data.clear();
+        m_data.append(character);
+    }
+
+    void appendToName(UChar character)
+    {
+        ASSERT(m_type == StartTag || m_type == EndTag || m_type == DOCTYPE);
+        m_data.append(character);
+    }
+
+    Type type() const { return m_type; }
+
+    AtomicString name()
+    {
+        ASSERT(m_type == StartTag || m_type == EndTag || m_type == DOCTYPE);
+        return AtomicString(StringImpl::adopt(m_data));
+    }
+
+    bool selfClosing() const
+    {
+        ASSERT(m_type == StartTag || m_type == EndTag);
+        return m_selfClosing;
+    }
+
+    NamedMappedAttrMap* attrs() const
+    {
+        ASSERT(m_type == StartTag || m_type == EndTag);
+        return m_attrs.get();
     }
 
 private:
     Type m_type;
 
-    // For DOCTYPE and StartTag
-    String m_name;
+    // "name" for DOCTYPE, StartTag, and EndTag
+    // "characters" for Character
+    // "data" for Comment
+    WTF::Vector<UChar, 1024> m_data;
 
     // For DOCTYPE
     String m_publicIdentifier;
@@ -70,13 +106,7 @@ private:
 
     // For StartTag and EndTag
     bool m_selfClosing;
-    RefPtr<NamedMappedAttrMap> attrs;
-
-    // For Character
-    UChar m_character;
-
-    // For Comment
-    String m_data;
+    RefPtr<NamedMappedAttrMap> m_attrs;
 };
 
 }

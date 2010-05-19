@@ -30,9 +30,25 @@
 #include "HTML5Token.h"
 #include "HTMLDocument.h"
 #include "HTMLParser.h"
+#include "HTMLTokenizer.h"
 #include "NotImplemented.h"
 
 namespace WebCore {
+
+static void convertToOldStyle(HTML5Token& token, Token& oldStyleToken)
+{
+    switch (token.type()) {
+    case HTML5Token::StartTag:
+    case HTML5Token::EndTag:
+        oldStyleToken.beginTag = (token.type() == HTML5Token::StartTag);
+        oldStyleToken.selfClosingTag = token.selfClosing();
+        oldStyleToken.tagName = token.name();
+        oldStyleToken.attrs = token.attrs();
+        break;
+    default:
+        notImplemented();
+    }
+}
 
 HTML5Tokenizer::HTML5Tokenizer(HTMLDocument* doc, bool reportErrors)
     : Tokenizer()
@@ -64,6 +80,14 @@ void HTML5Tokenizer::write(const SegmentedString& source, bool)
         // separation between the parser logic and tokenizer logic like
         // the HTML5 codepath should.  The call should look something like:
         // m_parser->constructTreeFromToken(token);
+        // For now, we translate into an old-style token for testing.
+        if (token.type() == HTML5Token::Uninitialized) {
+            notImplemented();
+            continue;
+        }
+        Token oldStyleToken;
+        convertToOldStyle(token, oldStyleToken);
+        m_parser->parseToken(&oldStyleToken);
     }
 }
 
