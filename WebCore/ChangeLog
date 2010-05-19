@@ -1,3 +1,21 @@
+2010-05-18  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        ':optional' pseudo selector should not be applied to <keygen> and <progress>
+        https://bugs.webkit.org/show_bug.cgi?id=39292
+
+        Test: fast/css/pseudo-required-optional-unapplied.html
+
+        * html/HTMLKeygenElement.h:
+        (WebCore::HTMLKeygenElement::isOptionalFormControl):
+          Add isOptionalFormControl() returning false.
+          HTMLKeygenElement inherits HTMLSelectElement, which should return true
+          for isOptionalFormControl(). However, <keygen> is not :optional
+          according to the standard.
+        * html/HTMLProgressElement.h:
+          Remove isOptionalFormControl().
+
 2010-05-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

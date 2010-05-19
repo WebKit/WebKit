@@ -1,3 +1,15 @@
+2010-05-18  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        ':optional' pseudo selector should not be applied to <keygen> and <progress>
+        https://bugs.webkit.org/show_bug.cgi?id=39292
+
+        Add a test for non-optional form elements.
+
+        * fast/css/pseudo-required-optional-unapplied-expected.txt: Added.
+        * fast/css/pseudo-required-optional-unapplied.html: Added.
+
 2010-05-18  James Robinson  <jamesr@chromium.org>
 
         Unreviewed.

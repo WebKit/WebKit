@@ -39,6 +39,8 @@ public:
     virtual bool appendFormData(FormDataList&, bool);
 
 private:
+    virtual bool isOptionalFormControl() const { return false; }
+
     AtomicString m_challenge;
     AtomicString m_keyType;
 };
