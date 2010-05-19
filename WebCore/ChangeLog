@@ -1,3 +1,15 @@
+2010-05-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Attempt to revert r58765 to see if it was causing a performance
+        regression.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39328
+
+        * notifications/Notification.h:
+        * notifications/Notification.idl:
+
 2010-05-19  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

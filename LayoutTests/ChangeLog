@@ -1,3 +1,17 @@
+2010-05-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Attempt to revert r58765 to see if it was causing a performance
+        regression.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39328
+
+        * fast/notifications/notifications-replace-expected.txt: Removed.
+        * fast/notifications/notifications-replace.html: Removed.
+        * fast/notifications/notifications-rtl-expected.txt: Removed.
+        * fast/notifications/notifications-rtl.html: Removed.
+
 2010-05-19  Martin Robinson  <mrobinson@igalia.com>
 
         Not reviewed.
