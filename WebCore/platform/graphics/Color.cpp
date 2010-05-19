@@ -178,6 +178,18 @@ Color::Color(const char* name)
     }
 }
 
+String Color::serialized() const
+{
+    if (alpha() == 0xFF)
+        return String::format("#%02x%02x%02x", red(), green(), blue());
+
+    // Match Gecko ("0.0" for zero, 5 decimals for anything else)
+    if (!alpha())
+        return String::format("rgba(%u, %u, %u, 0.0)", red(), green(), blue());
+
+    return String::format("rgba(%u, %u, %u, %.5f)", red(), green(), blue(), alpha() / 255.0f);
+}
+
 String Color::name() const
 {
     if (alpha() < 0xFF)

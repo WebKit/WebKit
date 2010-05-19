@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2008, 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
@@ -48,62 +48,76 @@
 
 namespace WebCore {
 
-CanvasStyle::CanvasStyle(const String& color)
-    : m_type(ColorString)
-    , m_color(color)
+CanvasStyle::CanvasStyle(RGBA32 rgba)
+    : m_type(RGBA)
+    , m_rgba(rgba)
 {
 }
 
 CanvasStyle::CanvasStyle(float grayLevel)
-    : m_type(GrayLevel)
-    , m_alpha(1)
-    , m_grayLevel(grayLevel)
-{
-}
-
-CanvasStyle::CanvasStyle(const String& color, float alpha)
-    : m_type(ColorStringWithAlpha)
-    , m_color(color)
-    , m_alpha(alpha)
+    : m_type(RGBA)
+    , m_rgba(makeRGBA32FromFloats(grayLevel, grayLevel, grayLevel, 1.0f))
 {
 }
 
 CanvasStyle::CanvasStyle(float grayLevel, float alpha)
-    : m_type(GrayLevel)
-    , m_alpha(alpha)
-    , m_grayLevel(grayLevel)
+    : m_type(RGBA)
+    , m_rgba(makeRGBA32FromFloats(grayLevel, grayLevel, grayLevel, alpha))
 {
 }
 
 CanvasStyle::CanvasStyle(float r, float g, float b, float a)
     : m_type(RGBA)
-    , m_alpha(a)
-    , m_red(r)
-    , m_green(g)
-    , m_blue(b)
+    , m_rgba(makeRGBA32FromFloats(r, g, b, a))
 {
 }
 
 CanvasStyle::CanvasStyle(float c, float m, float y, float k, float a)
     : m_type(CMYKA)
-    , m_alpha(a)
-    , m_cyan(c)
-    , m_magenta(m)
-    , m_yellow(y)
-    , m_black(k)
+    , m_rgba(makeRGBAFromCMYKA(c, m, y, k, a))
+    , m_cmyka(c, m, y, k, a)
 {
 }
 
 CanvasStyle::CanvasStyle(PassRefPtr<CanvasGradient> gradient)
-    : m_type(gradient ? Gradient : ColorString)
+    : m_type(Gradient)
     , m_gradient(gradient)
 {
 }
 
 CanvasStyle::CanvasStyle(PassRefPtr<CanvasPattern> pattern)
-    : m_type(pattern ? ImagePattern : ColorString)
+    : m_type(ImagePattern)
     , m_pattern(pattern)
 {
+}
+
+PassRefPtr<CanvasStyle> CanvasStyle::create(const String& color)
+{
+    RGBA32 rgba;
+    if (!CSSParser::parseColor(rgba, color))
+        return 0;
+    return adoptRef(new CanvasStyle(rgba));
+}
+
+PassRefPtr<CanvasStyle> CanvasStyle::create(const String& color, float alpha)
+{
+    RGBA32 rgba;
+    if (!CSSParser::parseColor(rgba, color))
+        return 0;
+    return adoptRef(new CanvasStyle(colorWithOverrideAlpha(rgba, alpha)));
+}
+
+PassRefPtr<CanvasStyle> CanvasStyle::create(PassRefPtr<CanvasGradient> gradient)
+{
+    if (!gradient)
+        return 0;
+    return adoptRef(new CanvasStyle(gradient));
+}
+PassRefPtr<CanvasStyle> CanvasStyle::create(PassRefPtr<CanvasPattern> pattern)
+{
+    if (!pattern)
+        return 0;
+    return adoptRef(new CanvasStyle(pattern));
 }
 
 void CanvasStyle::applyStrokeColor(GraphicsContext* context)
@@ -111,59 +125,31 @@ void CanvasStyle::applyStrokeColor(GraphicsContext* context)
     if (!context)
         return;
     switch (m_type) {
-        case ColorString: {
-            Color c = Color(m_color);
-            if (c.isValid()) {
-                context->setStrokeColor(c.rgb(), DeviceColorSpace);
-                break;
-            }
-            RGBA32 color = 0; // default is transparent black
-            if (CSSParser::parseColor(color, m_color))
-                context->setStrokeColor(color, DeviceColorSpace);
-            break;
-        }
-        case ColorStringWithAlpha: {
-            Color c = Color(m_color);
-            if (c.isValid()) {
-                context->setStrokeColor(colorWithOverrideAlpha(c.rgb(), m_alpha), DeviceColorSpace);
-                break;
-            }
-            RGBA32 color = 0; // default is transparent black
-            if (CSSParser::parseColor(color, m_color))
-                context->setStrokeColor(colorWithOverrideAlpha(color, m_alpha), DeviceColorSpace);
-            break;
-        }
-        case GrayLevel:
-            // We're only supporting 255 levels of gray here.  Since this isn't
-            // even part of HTML5, I don't expect anyone will care.  If they do
-            // we'll make a fancier Color abstraction.
-            context->setStrokeColor(Color(m_grayLevel, m_grayLevel, m_grayLevel, m_alpha), DeviceColorSpace);
-            break;
-        case RGBA:
-            context->setStrokeColor(Color(m_red, m_green, m_blue, m_alpha), DeviceColorSpace);
-            break;
-        case CMYKA: {
-            // FIXME: Do this through platform-independent GraphicsContext API.
-            // We'll need a fancier Color abstraction to support CYMKA correctly
+    case RGBA:
+        context->setStrokeColor(m_rgba, DeviceColorSpace);
+        break;
+    case CMYKA: {
+        // FIXME: Do this through platform-independent GraphicsContext API.
+        // We'll need a fancier Color abstraction to support CMYKA correctly
 #if PLATFORM(CG)
-            CGContextSetCMYKStrokeColor(context->platformContext(), m_cyan, m_magenta, m_yellow, m_black, m_alpha);
+        CGContextSetCMYKStrokeColor(context->platformContext(), m_cmyka.c, m_cmyka.m, m_cmyka.y, m_cmyka.k, m_cmyka.a);
 #elif PLATFORM(QT)
-            QPen currentPen = context->platformContext()->pen();
-            QColor clr;
-            clr.setCmykF(m_cyan, m_magenta, m_yellow, m_black, m_alpha);
-            currentPen.setColor(clr);
-            context->platformContext()->setPen(currentPen);
+        QPen currentPen = context->platformContext()->pen();
+        QColor clr;
+        clr.setCmykF(m_cmyka.c, m_cmyka.m, m_cmyka.y, m_cmyka.k, m_cmyka.a);
+        currentPen.setColor(clr);
+        context->platformContext()->setPen(currentPen);
 #else
-            context->setStrokeColor(Color(m_cyan, m_magenta, m_yellow, m_black, m_alpha), DeviceColorSpace);
+        context->setStrokeColor(m_rgba, DeviceColorSpace);
 #endif
-            break;
-        }
-        case Gradient:
-            context->setStrokeGradient(canvasGradient()->gradient());
-            break;
-        case ImagePattern:
-            context->setStrokePattern(canvasPattern()->pattern());
-            break;
+        break;
+    }
+    case Gradient:
+        context->setStrokeGradient(canvasGradient()->gradient());
+        break;
+    case ImagePattern:
+        context->setStrokePattern(canvasPattern()->pattern());
+        break;
     }
 }
 
@@ -172,49 +158,31 @@ void CanvasStyle::applyFillColor(GraphicsContext* context)
     if (!context)
         return;
     switch (m_type) {
-        case ColorString: {
-            RGBA32 rgba = 0; // default is transparent black
-            if (CSSParser::parseColor(rgba, m_color))
-                context->setFillColor(rgba, DeviceColorSpace);
-            break;
-        }
-        case ColorStringWithAlpha: {
-            RGBA32 color = 0; // default is transparent black
-            if (CSSParser::parseColor(color, m_color))
-                context->setFillColor(colorWithOverrideAlpha(color, m_alpha), DeviceColorSpace);
-            break;
-        }
-        case GrayLevel:
-            // We're only supporting 255 levels of gray here.  Since this isn't
-            // even part of HTML5, I don't expect anyone will care.  If they do
-            // we'll make a fancier Color abstraction.
-            context->setFillColor(Color(m_grayLevel, m_grayLevel, m_grayLevel, m_alpha), DeviceColorSpace);
-            break;
-        case RGBA:
-            context->setFillColor(Color(m_red, m_green, m_blue, m_alpha), DeviceColorSpace);
-            break;
-        case CMYKA: {
-            // FIXME: Do this through platform-independent GraphicsContext API.
-            // We'll need a fancier Color abstraction to support CYMKA correctly
+    case RGBA:
+        context->setFillColor(m_rgba, DeviceColorSpace);
+        break;
+    case CMYKA: {
+        // FIXME: Do this through platform-independent GraphicsContext API.
+        // We'll need a fancier Color abstraction to support CMYKA correctly
 #if PLATFORM(CG)
-            CGContextSetCMYKFillColor(context->platformContext(), m_cyan, m_magenta, m_yellow, m_black, m_alpha);
+        CGContextSetCMYKFillColor(context->platformContext(), m_cmyka.c, m_cmyka.m, m_cmyka.y, m_cmyka.k, m_cmyka.a);
 #elif PLATFORM(QT)
-            QBrush currentBrush = context->platformContext()->brush();
-            QColor clr;
-            clr.setCmykF(m_cyan, m_magenta, m_yellow, m_black, m_alpha);
-            currentBrush.setColor(clr);
-            context->platformContext()->setBrush(currentBrush);
+        QBrush currentBrush = context->platformContext()->brush();
+        QColor clr;
+        clr.setCmykF(m_cmyka.c, m_cmyka.m, m_cmyka.y, m_cmyka.k, m_cmyka.a);
+        currentBrush.setColor(clr);
+        context->platformContext()->setBrush(currentBrush);
 #else
-            context->setFillColor(Color(m_cyan, m_magenta, m_yellow, m_black, m_alpha), DeviceColorSpace);
+        context->setFillColor(m_rgba, DeviceColorSpace);
 #endif
-            break;
-        }
-        case Gradient:
-            context->setFillGradient(canvasGradient()->gradient());
-            break;
-        case ImagePattern:
-            context->setFillPattern(canvasPattern()->pattern());
-            break;
+        break;
+    }
+    case Gradient:
+        context->setFillGradient(canvasGradient()->gradient());
+        break;
+    case ImagePattern:
+        context->setFillPattern(canvasPattern()->pattern());
+        break;
     }
 }
 

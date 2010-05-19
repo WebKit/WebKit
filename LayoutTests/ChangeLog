@@ -1,5 +1,53 @@
 2010-05-19  Andreas Kling  <andreas.kling@nokia.com>
 
+        Reviewed by Darin Adler.
+
+        Added a test to verify proper color serialization in CanvasRenderingContext2D's getters.
+        https://bugs.webkit.org/show_bug.cgi?id=38845
+
+        Spec link:
+        http://www.whatwg.org/specs/web-apps/current-work/#serialization-of-a-color
+
+        * fast/canvas/canvas-color-serialization-expected.txt: Added.
+        * fast/canvas/canvas-color-serialization.html: Added.
+        * fast/canvas/canvas-set-properties-with-non-invertible-ctm-expected.txt: Updated baseline.
+        * fast/canvas/script-tests/canvas-color-serialization.js: Added.
+        (trySettingStrokeStyle):
+        (trySettingFillStyle):
+        (trySettingShadowColor):
+        (trySettingColor):
+        (trySettingStrokeColorWithSetter):
+        (trySettingFillColorWithSetter):
+        (trySettingShadowWithSetter):
+        (trySettingColorWithSetter):
+        (trySettingFillColorRGBA):
+        (trySettingStrokeColorRGBA):
+        (trySettingShadowRGBA):
+        (trySettingRGBA):
+        (trySettingFillColorCMYKA):
+        (trySettingStrokeColorCMYKA):
+        (trySettingShadowCMYKA):
+        (trySettingCMYKA):
+        (trySettingFillColorWithOverrideAlpha):
+        (trySettingStrokeColorWithOverrideAlpha):
+        (trySettingShadowWithOverrideAlpha):
+        (trySettingColorWithOverrideAlpha):
+        (trySettingFillColorGrayLevel):
+        (trySettingStrokeColorGrayLevel):
+        (trySettingShadowGrayLevel):
+        (trySettingGrayLevel):
+        (trySettingFillColorGrayLevelWithAlpha):
+        (trySettingStrokeColorGrayLevelWithAlpha):
+        (trySettingShadowGrayLevelWithAlpha):
+        (trySettingGrayLevelWithAlpha):
+        (tryClearShadowAfterSettingColor):
+        (checkDefaultValue):
+        * fast/canvas/script-tests/canvas-set-properties-with-non-invertible-ctm.js:
+        * fast/dom/canvasContext2d-element-attribute-js-null-expected.txt: Updated baseline.
+        * fast/dom/canvasContext2d-element-attribute-js-null.html:
+
+2010-05-19  Andreas Kling  <andreas.kling@nokia.com>
+
         Reviewed by Simon Hausmann.
 
         Add test to verify that CanvasRenderingContext2D's arc() connects arcs

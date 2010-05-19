@@ -1,5 +1,45 @@
 2010-05-19  Andreas Kling  <andreas.kling@nokia.com>
 
+        Reviewed by Darin Adler.
+
+        CanvasRenderingContext2D's property getters that return colors should
+        serialize them in accordance with the HTML5 spec (4.8.11.1.4)
+        Setters should ignore invalid colors.
+
+        Also, shadowColor should initially be transparent black (4.8.11.1.6)
+
+        https://bugs.webkit.org/show_bug.cgi?id=38845
+
+        Refactored CanvasStyle to store an RGBA32 instead of RGBA components and/or the color string.
+
+        Spec links:
+        http://www.whatwg.org/specs/web-apps/current-work/#serialization-of-a-color
+        http://www.whatwg.org/specs/web-apps/current-work/#dom-context-2d-shadowcolor
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::State::State):
+        (WebCore::CanvasRenderingContext2D::shadowColor):
+        (WebCore::CanvasRenderingContext2D::setShadowColor):
+        (WebCore::CanvasRenderingContext2D::setShadow):
+        (WebCore::CanvasRenderingContext2D::clearShadow):
+        (WebCore::CanvasRenderingContext2D::applyShadow):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::CanvasStyle):
+        (WebCore::CanvasStyle::create):
+        (WebCore::CanvasStyle::applyStrokeColor):
+        (WebCore::CanvasStyle::applyFillColor):
+        * html/canvas/CanvasStyle.h:
+        (WebCore::CanvasStyle::create):
+        (WebCore::CanvasStyle::color):
+        (WebCore::CanvasStyle::):
+        (WebCore::CanvasStyle::CMYKAValues::CMYKAValues):
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::serialized):
+        * platform/graphics/Color.h:
+
+2010-05-19  Andreas Kling  <andreas.kling@nokia.com>
+
         Reviewed by Simon Hausmann.
 
         [Qt] REGRESSION: CoolClock isn't rendered properly

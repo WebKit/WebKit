@@ -16,7 +16,7 @@ function testPixel(x,y, r, g, b) {
 ctx.save();
 ctx.scale(0, 0);
 ctx.fillStyle = "green";
-shouldBe('ctx.fillStyle', '"green"');
+shouldBe('ctx.fillStyle', '"#008000"');
 ctx.setTransform(1, 0, 0, 1, 0, 0);
 ctx.fillRect(0,0,100,100);
 testPixel(50, 50, 0, 128, 0);
@@ -28,7 +28,7 @@ ctx.fillStyle = "red";
 ctx.fillRect(0,0,100,100);
 ctx.scale(0, 0);
 ctx.strokeStyle = "green";
-shouldBe('ctx.strokeStyle', '"green"');
+shouldBe('ctx.strokeStyle', '"#008000"');
 ctx.lineWidth = 100;
 ctx.setTransform(1, 0, 0, 1, 0, 0);
 ctx.strokeRect(0,0,100,100);
