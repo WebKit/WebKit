@@ -1,0 +1,29 @@
+
+<HTML>
+<HEAD>
+</HEAD>
+<BODY>
+<DIV contentEditable="">
+<UL>
+<UL>
+<LI id="foo">
+<#text>PASSED</#text>
+</LI>
+</UL>
+</UL>
+</DIV>
+<#text>
+</#text>
+<SCRIPT src="../../resources/dump-as-markup.js"></SCRIPT>
+<#text>
+</#text>
+<SCRIPT>
+window.getSelection().setBaseAndExtent(foo, 0, foo, 0);
+// This test passes if it does not crash.
+document.execCommand('indent', false, null);
+document.getElementById("foo").innerText = "PASSED";
+</SCRIPT>
+<#text>
+</#text>
+</BODY>
+</HTML>
