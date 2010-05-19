@@ -1717,7 +1717,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_instanceof)
     if (!baseVal.isObject() || !(typeInfo = asObject(baseVal)->structure()->typeInfo()).implementsHasInstance()) {
         CallFrame* callFrame = stackFrame.callFrame;
         CodeBlock* codeBlock = callFrame->codeBlock();
-        unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
+        unsigned vPCIndex = codeBlock->bytecodeOffset(callFrame, STUB_RETURN_ADDRESS);
         stackFrame.globalData->exception = createInvalidParamError(callFrame, "instanceof", baseVal, vPCIndex, codeBlock);
         VM_THROW_EXCEPTION();
     }
@@ -2002,7 +2002,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_call_NotJSFunction)
 
     CallFrame* callFrame = stackFrame.callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
-    unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
+    unsigned vPCIndex = codeBlock->bytecodeOffset(callFrame, STUB_RETURN_ADDRESS);
     stackFrame.globalData->exception = createNotAFunctionError(stackFrame.callFrame, funcVal, vPCIndex, codeBlock);
     VM_THROW_EXCEPTION();
 }
@@ -2097,7 +2097,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve)
     } while (++iter != end);
 
     CodeBlock* codeBlock = callFrame->codeBlock();
-    unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
+    unsigned vPCIndex = codeBlock->bytecodeOffset(callFrame, STUB_RETURN_ADDRESS);
     stackFrame.globalData->exception = createUndefinedVariableError(callFrame, ident, vPCIndex, codeBlock);
     VM_THROW_EXCEPTION();
 }
@@ -2110,7 +2110,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_construct_JSConstruct)
     if (constructor->isHostFunction()) {
         CallFrame* callFrame = stackFrame.callFrame;
         CodeBlock* codeBlock = callFrame->codeBlock();
-        unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
+        unsigned vPCIndex = codeBlock->bytecodeOffset(callFrame, STUB_RETURN_ADDRESS);
         stackFrame.globalData->exception = createNotAConstructorError(callFrame, constructor, vPCIndex, codeBlock);
         VM_THROW_EXCEPTION();
     }
@@ -2157,7 +2157,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_construct_NotJSConstruct)
     ASSERT(constructType == ConstructTypeNone);
 
     CodeBlock* codeBlock = callFrame->codeBlock();
-    unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
+    unsigned vPCIndex = codeBlock->bytecodeOffset(callFrame, STUB_RETURN_ADDRESS);
     stackFrame.globalData->exception = createNotAConstructorError(callFrame, constrVal, vPCIndex, codeBlock);
     VM_THROW_EXCEPTION();
 }
@@ -2426,7 +2426,7 @@ DEFINE_STUB_FUNCTION(int, op_load_varargs)
     } else if (!arguments.isUndefinedOrNull()) {
         if (!arguments.isObject()) {
             CodeBlock* codeBlock = callFrame->codeBlock();
-            unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
+            unsigned vPCIndex = codeBlock->bytecodeOffset(callFrame, STUB_RETURN_ADDRESS);
             stackFrame.globalData->exception = createInvalidParamError(callFrame, "Function.prototype.apply", arguments, vPCIndex, codeBlock);
             VM_THROW_EXCEPTION();
         }
@@ -2466,7 +2466,7 @@ DEFINE_STUB_FUNCTION(int, op_load_varargs)
             }
         } else {
             CodeBlock* codeBlock = callFrame->codeBlock();
-            unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
+            unsigned vPCIndex = codeBlock->bytecodeOffset(callFrame, STUB_RETURN_ADDRESS);
             stackFrame.globalData->exception = createInvalidParamError(callFrame, "Function.prototype.apply", arguments, vPCIndex, codeBlock);
             VM_THROW_EXCEPTION();
         }
@@ -2526,7 +2526,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_skip)
     } while (++iter != end);
 
     CodeBlock* codeBlock = callFrame->codeBlock();
-    unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
+    unsigned vPCIndex = codeBlock->bytecodeOffset(callFrame, STUB_RETURN_ADDRESS);
     stackFrame.globalData->exception = createUndefinedVariableError(callFrame, ident, vPCIndex, codeBlock);
     VM_THROW_EXCEPTION();
 }
@@ -2558,7 +2558,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_global)
         return JSValue::encode(result);
     }
 
-    unsigned vPCIndex = callFrame->codeBlock()->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
+    unsigned vPCIndex = callFrame->codeBlock()->bytecodeOffset(callFrame, STUB_RETURN_ADDRESS);
     stackFrame.globalData->exception = createUndefinedVariableError(callFrame, ident, vPCIndex, callFrame->codeBlock());
     VM_THROW_EXCEPTION();
 }
@@ -2860,7 +2860,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_with_base)
     } while (iter != end);
 
     CodeBlock* codeBlock = callFrame->codeBlock();
-    unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
+    unsigned vPCIndex = codeBlock->bytecodeOffset(callFrame, STUB_RETURN_ADDRESS);
     stackFrame.globalData->exception = createUndefinedVariableError(callFrame, ident, vPCIndex, codeBlock);
     VM_THROW_EXCEPTION_AT_END();
     return JSValue::encode(JSValue());
@@ -3014,7 +3014,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_throw)
     CallFrame* callFrame = stackFrame.callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
 
-    unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
+    unsigned vPCIndex = codeBlock->bytecodeOffset(callFrame, STUB_RETURN_ADDRESS);
 
     JSValue exceptionValue = stackFrame.args[0].jsValue();
     ASSERT(exceptionValue);
@@ -3181,7 +3181,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_in)
     if (!baseVal.isObject()) {
         CallFrame* callFrame = stackFrame.callFrame;
         CodeBlock* codeBlock = callFrame->codeBlock();
-        unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
+        unsigned vPCIndex = codeBlock->bytecodeOffset(callFrame, STUB_RETURN_ADDRESS);
         stackFrame.globalData->exception = createInvalidParamError(callFrame, "in", baseVal, vPCIndex, codeBlock);
         VM_THROW_EXCEPTION();
     }
@@ -3376,7 +3376,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, vm_throw)
     CodeBlock* codeBlock = callFrame->codeBlock();
     JSGlobalData* globalData = stackFrame.globalData;
 
-    unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, globalData->exceptionLocation);
+    unsigned vPCIndex = codeBlock->bytecodeOffset(callFrame, globalData->exceptionLocation);
 
     JSValue exceptionValue = globalData->exception;
     ASSERT(exceptionValue);

@@ -113,10 +113,10 @@ ALWAYS_INLINE void JIT::emitGetFromCallFrameHeader32(RegisterFile::CallFrameHead
 
 ALWAYS_INLINE JIT::Call JIT::emitNakedCall(CodePtr function)
 {
-    ASSERT(m_bytecodeIndex != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
+    ASSERT(m_bytecodeOffset != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
 
     Call nakedCall = nearCall();
-    m_calls.append(CallRecord(nakedCall, m_bytecodeIndex, function.executableAddress()));
+    m_calls.append(CallRecord(nakedCall, m_bytecodeOffset, function.executableAddress()));
     return nakedCall;
 }
 
@@ -243,33 +243,33 @@ ALWAYS_INLINE void JIT::linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator&
 
 ALWAYS_INLINE void JIT::addSlowCase(Jump jump)
 {
-    ASSERT(m_bytecodeIndex != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
+    ASSERT(m_bytecodeOffset != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
 
-    m_slowCases.append(SlowCaseEntry(jump, m_bytecodeIndex));
+    m_slowCases.append(SlowCaseEntry(jump, m_bytecodeOffset));
 }
 
 ALWAYS_INLINE void JIT::addSlowCase(JumpList jumpList)
 {
-    ASSERT(m_bytecodeIndex != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
+    ASSERT(m_bytecodeOffset != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
 
     const JumpList::JumpVector& jumpVector = jumpList.jumps();
     size_t size = jumpVector.size();
     for (size_t i = 0; i < size; ++i)
-        m_slowCases.append(SlowCaseEntry(jumpVector[i], m_bytecodeIndex));
+        m_slowCases.append(SlowCaseEntry(jumpVector[i], m_bytecodeOffset));
 }
 
 ALWAYS_INLINE void JIT::addJump(Jump jump, int relativeOffset)
 {
-    ASSERT(m_bytecodeIndex != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
+    ASSERT(m_bytecodeOffset != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
 
-    m_jmpTable.append(JumpTable(jump, m_bytecodeIndex + relativeOffset));
+    m_jmpTable.append(JumpTable(jump, m_bytecodeOffset + relativeOffset));
 }
 
 ALWAYS_INLINE void JIT::emitJumpSlowToHot(Jump jump, int relativeOffset)
 {
-    ASSERT(m_bytecodeIndex != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
+    ASSERT(m_bytecodeOffset != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
 
-    jump.linkTo(m_labels[m_bytecodeIndex + relativeOffset], this);
+    jump.linkTo(m_labels[m_bytecodeOffset + relativeOffset], this);
 }
 
 #if ENABLE(SAMPLING_FLAGS)
@@ -485,24 +485,24 @@ ALWAYS_INLINE void JIT::emitInitRegister(unsigned dst)
     emitStore(dst, jsUndefined());
 }
 
-inline bool JIT::isLabeled(unsigned bytecodeIndex)
+inline bool JIT::isLabeled(unsigned bytecodeOffset)
 {
     for (size_t numberOfJumpTargets = m_codeBlock->numberOfJumpTargets(); m_jumpTargetIndex != numberOfJumpTargets; ++m_jumpTargetIndex) {
         unsigned jumpTarget = m_codeBlock->jumpTarget(m_jumpTargetIndex);
-        if (jumpTarget == bytecodeIndex)
+        if (jumpTarget == bytecodeOffset)
             return true;
-        if (jumpTarget > bytecodeIndex)
+        if (jumpTarget > bytecodeOffset)
             return false;
     }
     return false;
 }
 
-inline void JIT::map(unsigned bytecodeIndex, unsigned virtualRegisterIndex, RegisterID tag, RegisterID payload)
+inline void JIT::map(unsigned bytecodeOffset, unsigned virtualRegisterIndex, RegisterID tag, RegisterID payload)
 {
-    if (isLabeled(bytecodeIndex))
+    if (isLabeled(bytecodeOffset))
         return;
 
-    m_mappedBytecodeIndex = bytecodeIndex;
+    m_mappedBytecodeOffset = bytecodeOffset;
     m_mappedVirtualRegisterIndex = virtualRegisterIndex;
     m_mappedTag = tag;
     m_mappedPayload = payload;
@@ -518,7 +518,7 @@ inline void JIT::unmap(RegisterID registerID)
 
 inline void JIT::unmap()
 {
-    m_mappedBytecodeIndex = (unsigned)-1;
+    m_mappedBytecodeOffset = (unsigned)-1;
     m_mappedVirtualRegisterIndex = (unsigned)-1;
     m_mappedTag = (RegisterID)-1;
     m_mappedPayload = (RegisterID)-1;
@@ -526,7 +526,7 @@ inline void JIT::unmap()
 
 inline bool JIT::isMapped(unsigned virtualRegisterIndex)
 {
-    if (m_mappedBytecodeIndex != m_bytecodeIndex)
+    if (m_mappedBytecodeOffset != m_bytecodeOffset)
         return false;
     if (m_mappedVirtualRegisterIndex != virtualRegisterIndex)
         return false;
@@ -535,7 +535,7 @@ inline bool JIT::isMapped(unsigned virtualRegisterIndex)
 
 inline bool JIT::getMappedPayload(unsigned virtualRegisterIndex, RegisterID& payload)
 {
-    if (m_mappedBytecodeIndex != m_bytecodeIndex)
+    if (m_mappedBytecodeOffset != m_bytecodeOffset)
         return false;
     if (m_mappedVirtualRegisterIndex != virtualRegisterIndex)
         return false;
@@ -547,7 +547,7 @@ inline bool JIT::getMappedPayload(unsigned virtualRegisterIndex, RegisterID& pay
 
 inline bool JIT::getMappedTag(unsigned virtualRegisterIndex, RegisterID& tag)
 {
-    if (m_mappedBytecodeIndex != m_bytecodeIndex)
+    if (m_mappedBytecodeOffset != m_bytecodeOffset)
         return false;
     if (m_mappedVirtualRegisterIndex != virtualRegisterIndex)
         return false;
@@ -632,7 +632,7 @@ ALWAYS_INLINE void JIT::killLastResultRegister()
 // get arg puts an arg from the SF register array into a h/w register
 ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst)
 {
-    ASSERT(m_bytecodeIndex != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
+    ASSERT(m_bytecodeOffset != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
 
     // TODO: we want to reuse values that are already in registers if we can - add a register allocator!
     if (m_codeBlock->isConstantRegisterIndex(src)) {
@@ -644,8 +644,8 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst)
 
     if (src == m_lastResultBytecodeRegister && m_codeBlock->isTemporaryRegisterIndex(src)) {
         bool atJumpTarget = false;
-        while (m_jumpTargetsPosition < m_codeBlock->numberOfJumpTargets() && m_codeBlock->jumpTarget(m_jumpTargetsPosition) <= m_bytecodeIndex) {
-            if (m_codeBlock->jumpTarget(m_jumpTargetsPosition) == m_bytecodeIndex)
+        while (m_jumpTargetsPosition < m_codeBlock->numberOfJumpTargets() && m_codeBlock->jumpTarget(m_jumpTargetsPosition) <= m_bytecodeOffset) {
+            if (m_codeBlock->jumpTarget(m_jumpTargetsPosition) == m_bytecodeOffset)
                 atJumpTarget = true;
             ++m_jumpTargetsPosition;
         }

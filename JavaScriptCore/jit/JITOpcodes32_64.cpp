@@ -748,7 +748,7 @@ void JIT::emit_op_mov(Instruction* currentInstruction)
     else {
         emitLoad(src, regT1, regT0);
         emitStore(dst, regT1, regT0);
-        map(m_bytecodeIndex + OPCODE_LENGTH(op_mov), dst, regT1, regT0);
+        map(m_bytecodeOffset + OPCODE_LENGTH(op_mov), dst, regT1, regT0);
     }
 }
 
@@ -898,7 +898,7 @@ void JIT::emit_op_get_global_var(Instruction* currentInstruction)
 
     emitLoad(index, regT1, regT0, regT2);
     emitStore(dst, regT1, regT0);
-    map(m_bytecodeIndex + OPCODE_LENGTH(op_get_global_var), dst, regT1, regT0);
+    map(m_bytecodeOffset + OPCODE_LENGTH(op_get_global_var), dst, regT1, regT0);
 }
 
 void JIT::emit_op_put_global_var(Instruction* currentInstruction)
@@ -912,7 +912,7 @@ void JIT::emit_op_put_global_var(Instruction* currentInstruction)
 
     loadPtr(&globalObject->d()->registers, regT2);
     emitStore(index, regT1, regT0, regT2);
-    map(m_bytecodeIndex + OPCODE_LENGTH(op_put_global_var), value, regT1, regT0);
+    map(m_bytecodeOffset + OPCODE_LENGTH(op_put_global_var), value, regT1, regT0);
 }
 
 void JIT::emit_op_get_scoped_var(Instruction* currentInstruction)
@@ -931,7 +931,7 @@ void JIT::emit_op_get_scoped_var(Instruction* currentInstruction)
 
     emitLoad(index, regT1, regT0, regT2);
     emitStore(dst, regT1, regT0);
-    map(m_bytecodeIndex + OPCODE_LENGTH(op_get_scoped_var), dst, regT1, regT0);
+    map(m_bytecodeOffset + OPCODE_LENGTH(op_get_scoped_var), dst, regT1, regT0);
 }
 
 void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
@@ -951,7 +951,7 @@ void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
     loadPtr(Address(regT2, OBJECT_OFFSETOF(JSVariableObject::JSVariableObjectData, registers)), regT2);
 
     emitStore(index, regT1, regT0, regT2);
-    map(m_bytecodeIndex + OPCODE_LENGTH(op_put_scoped_var), value, regT1, regT0);
+    map(m_bytecodeOffset + OPCODE_LENGTH(op_put_scoped_var), value, regT1, regT0);
 }
 
 void JIT::emit_op_tear_off_activation(Instruction* currentInstruction)
@@ -1001,7 +1001,7 @@ void JIT::emit_op_to_primitive(Instruction* currentInstruction)
 
     if (dst != src)
         emitStore(dst, regT1, regT0);
-    map(m_bytecodeIndex + OPCODE_LENGTH(op_to_primitive), dst, regT1, regT0);
+    map(m_bytecodeOffset + OPCODE_LENGTH(op_to_primitive), dst, regT1, regT0);
 }
 
 void JIT::emitSlow_op_to_primitive(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -1060,7 +1060,7 @@ void JIT::emit_op_resolve_global(Instruction* currentInstruction, bool dynamic)
     load32(BaseIndex(regT2, regT3, TimesEight), regT0); // payload
     load32(BaseIndex(regT2, regT3, TimesEight, 4), regT1); // tag
     emitStore(dst, regT1, regT0);
-    map(m_bytecodeIndex + dynamic ? OPCODE_LENGTH(op_resolve_global_dynamic) : OPCODE_LENGTH(op_resolve_global), dst, regT1, regT0);
+    map(m_bytecodeOffset + dynamic ? OPCODE_LENGTH(op_resolve_global_dynamic) : OPCODE_LENGTH(op_resolve_global), dst, regT1, regT0);
 }
 
 void JIT::emitSlow_op_resolve_global(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -1646,7 +1646,7 @@ void JIT::emit_op_to_jsnumber(Instruction* currentInstruction)
 
     if (src != dst)
         emitStore(dst, regT1, regT0);
-    map(m_bytecodeIndex + OPCODE_LENGTH(op_to_jsnumber), dst, regT1, regT0);
+    map(m_bytecodeOffset + OPCODE_LENGTH(op_to_jsnumber), dst, regT1, regT0);
 }
 
 void JIT::emitSlow_op_to_jsnumber(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -1680,7 +1680,7 @@ void JIT::emit_op_catch(Instruction* currentInstruction)
 
     // Now store the exception returned by cti_op_throw.
     emitStore(exception, regT1, regT0);
-    map(m_bytecodeIndex + OPCODE_LENGTH(op_catch), exception, regT1, regT0);
+    map(m_bytecodeOffset + OPCODE_LENGTH(op_catch), exception, regT1, regT0);
 }
 
 void JIT::emit_op_jmp_scopes(Instruction* currentInstruction)
@@ -1699,7 +1699,7 @@ void JIT::emit_op_switch_imm(Instruction* currentInstruction)
 
     // create jump table for switch destinations, track this switch statement.
     SimpleJumpTable* jumpTable = &m_codeBlock->immediateSwitchJumpTable(tableIndex);
-    m_switches.append(SwitchRecord(jumpTable, m_bytecodeIndex, defaultOffset, SwitchRecord::Immediate));
+    m_switches.append(SwitchRecord(jumpTable, m_bytecodeOffset, defaultOffset, SwitchRecord::Immediate));
     jumpTable->ctiOffsets.grow(jumpTable->branchOffsets.size());
 
     JITStubCall stubCall(this, cti_op_switch_imm);
@@ -1717,7 +1717,7 @@ void JIT::emit_op_switch_char(Instruction* currentInstruction)
 
     // create jump table for switch destinations, track this switch statement.
     SimpleJumpTable* jumpTable = &m_codeBlock->characterSwitchJumpTable(tableIndex);
-    m_switches.append(SwitchRecord(jumpTable, m_bytecodeIndex, defaultOffset, SwitchRecord::Character));
+    m_switches.append(SwitchRecord(jumpTable, m_bytecodeOffset, defaultOffset, SwitchRecord::Character));
     jumpTable->ctiOffsets.grow(jumpTable->branchOffsets.size());
 
     JITStubCall stubCall(this, cti_op_switch_char);
@@ -1735,7 +1735,7 @@ void JIT::emit_op_switch_string(Instruction* currentInstruction)
 
     // create jump table for switch destinations, track this switch statement.
     StringJumpTable* jumpTable = &m_codeBlock->stringSwitchJumpTable(tableIndex);
-    m_switches.append(SwitchRecord(jumpTable, m_bytecodeIndex, defaultOffset));
+    m_switches.append(SwitchRecord(jumpTable, m_bytecodeOffset, defaultOffset));
 
     JITStubCall stubCall(this, cti_op_switch_string);
     stubCall.addArgument(scrutinee);
@@ -1753,7 +1753,7 @@ void JIT::emit_op_new_error(Instruction* currentInstruction)
     JITStubCall stubCall(this, cti_op_new_error);
     stubCall.addArgument(Imm32(type));
     stubCall.addArgument(m_codeBlock->getConstant(message));
-    stubCall.addArgument(Imm32(m_bytecodeIndex));
+    stubCall.addArgument(Imm32(m_bytecodeOffset));
     stubCall.call(dst);
 }
 
@@ -1824,7 +1824,7 @@ void JIT::emit_op_convert_this(Instruction* currentInstruction)
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
     addSlowCase(branchTest8(NonZero, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(NeedsThisConversion)));
 
-    map(m_bytecodeIndex + OPCODE_LENGTH(op_convert_this), thisRegister, regT1, regT0);
+    map(m_bytecodeOffset + OPCODE_LENGTH(op_convert_this), thisRegister, regT1, regT0);
 }
 
 void JIT::emitSlow_op_convert_this(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

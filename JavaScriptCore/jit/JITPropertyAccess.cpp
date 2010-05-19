@@ -380,7 +380,7 @@ void JIT::emit_op_method_check(Instruction* currentInstruction)
     emitPutVirtualRegister(resultVReg);
 
     // We've already generated the following get_by_id, so make sure it's skipped over.
-    m_bytecodeIndex += OPCODE_LENGTH(op_get_by_id);
+    m_bytecodeOffset += OPCODE_LENGTH(op_get_by_id);
 }
 
 void JIT::emitSlow_op_method_check(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -393,7 +393,7 @@ void JIT::emitSlow_op_method_check(Instruction* currentInstruction, Vector<SlowC
     compileGetByIdSlowCase(resultVReg, baseVReg, ident, iter, true);
 
     // We've already generated the following get_by_id, so make sure it's skipped over.
-    m_bytecodeIndex += OPCODE_LENGTH(op_get_by_id);
+    m_bytecodeOffset += OPCODE_LENGTH(op_get_by_id);
 }
 
 #else //!ENABLE(JIT_OPTIMIZE_METHOD_CALLS)

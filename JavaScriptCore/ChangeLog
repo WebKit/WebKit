@@ -1,3 +1,78 @@
+2010-05-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Gavin Barraclough.
+        
+        Standardized naming: "bytecode offset" wins; "bytecode index" loses.
+        
+        Also renamed getBytecodeOffset to bytecodeOffset, to match the WebKit
+        naming style.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CallReturnOffsetToBytecodeOffset::CallReturnOffsetToBytecodeOffset):
+        (JSC::getCallReturnOffset):
+        (JSC::CodeBlock::bytecodeOffset):
+        (JSC::CodeBlock::callReturnIndexVector):
+        * interpreter/Interpreter.cpp:
+        (JSC::bytecodeOffsetForPC):
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileLinkPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::CallRecord::CallRecord):
+        (JSC::JumpTable::JumpTable):
+        (JSC::SwitchRecord::SwitchRecord):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallVarargsSlowCase):
+        (JSC::JIT::compileOpCall):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitNakedCall):
+        (JSC::JIT::addSlowCase):
+        (JSC::JIT::addJump):
+        (JSC::JIT::emitJumpSlowToHot):
+        (JSC::JIT::isLabeled):
+        (JSC::JIT::map):
+        (JSC::JIT::unmap):
+        (JSC::JIT::isMapped):
+        (JSC::JIT::getMappedPayload):
+        (JSC::JIT::getMappedTag):
+        (JSC::JIT::emitGetVirtualRegister):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        (JSC::JIT::emit_op_switch_string):
+        (JSC::JIT::emit_op_new_error):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_mov):
+        (JSC::JIT::emit_op_get_global_var):
+        (JSC::JIT::emit_op_put_global_var):
+        (JSC::JIT::emit_op_get_scoped_var):
+        (JSC::JIT::emit_op_put_scoped_var):
+        (JSC::JIT::emit_op_to_primitive):
+        (JSC::JIT::emit_op_resolve_global):
+        (JSC::JIT::emit_op_to_jsnumber):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        (JSC::JIT::emit_op_switch_string):
+        (JSC::JIT::emit_op_new_error):
+        (JSC::JIT::emit_op_convert_this):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_method_check):
+        (JSC::JIT::emitSlow_op_method_check):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_method_check):
+        (JSC::JIT::emitSlow_op_method_check):
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_get_by_pname):
+        * jit/JITStubCall.h:
+        (JSC::JITStubCall::call):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+
 2010-05-19  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Reviewed by Darin Adler.

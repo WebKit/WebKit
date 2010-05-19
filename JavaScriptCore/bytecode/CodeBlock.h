@@ -109,7 +109,7 @@ namespace JSC {
         {
         }
 
-        unsigned bytecodeIndex;
+        unsigned bytecodeOffset;
         CodeLocationNearCall callReturnLocation;
         CodeLocationDataLabelPtr hotPathBegin;
         CodeLocationNearCall hotPathOther;
@@ -191,15 +191,15 @@ namespace JSC {
     // (given as an offset in bytes into the JIT code) back to
     // the bytecode index of the corresponding bytecode operation.
     // This is then used to look up the corresponding handler.
-    struct CallReturnOffsetToBytecodeIndex {
-        CallReturnOffsetToBytecodeIndex(unsigned callReturnOffset, unsigned bytecodeIndex)
+    struct CallReturnOffsetToBytecodeOffset {
+        CallReturnOffsetToBytecodeOffset(unsigned callReturnOffset, unsigned bytecodeOffset)
             : callReturnOffset(callReturnOffset)
-            , bytecodeIndex(bytecodeIndex)
+            , bytecodeOffset(bytecodeOffset)
         {
         }
 
         unsigned callReturnOffset;
-        unsigned bytecodeIndex;
+        unsigned bytecodeOffset;
     };
 
     // valueAtPosition helpers for the binaryChop algorithm below.
@@ -219,7 +219,7 @@ namespace JSC {
         return methodCallLinkInfo->callReturnLocation.executableAddress();
     }
 
-    inline unsigned getCallReturnOffset(CallReturnOffsetToBytecodeIndex* pc)
+    inline unsigned getCallReturnOffset(CallReturnOffsetToBytecodeOffset* pc)
     {
         return pc->callReturnOffset;
     }
@@ -267,7 +267,7 @@ namespace JSC {
         Vector<GetByIdExceptionInfo> m_getByIdExceptionInfo;
 
 #if ENABLE(JIT)
-        Vector<CallReturnOffsetToBytecodeIndex> m_callReturnIndexVector;
+        Vector<CallReturnOffsetToBytecodeOffset> m_callReturnIndexVector;
 #endif
     };
 
@@ -349,10 +349,10 @@ namespace JSC {
             return *(binaryChop<MethodCallLinkInfo, void*, getMethodCallLinkInfoReturnLocation>(m_methodCallLinkInfos.begin(), m_methodCallLinkInfos.size(), returnAddress.value()));
         }
 
-        unsigned getBytecodeIndex(CallFrame* callFrame, ReturnAddressPtr returnAddress)
+        unsigned bytecodeOffset(CallFrame* callFrame, ReturnAddressPtr returnAddress)
         {
             reparseForExceptionInfoIfNecessary(callFrame);
-            return binaryChop<CallReturnOffsetToBytecodeIndex, unsigned, getCallReturnOffset>(callReturnIndexVector().begin(), callReturnIndexVector().size(), getJITCode().offsetOf(returnAddress.value()))->bytecodeIndex;
+            return binaryChop<CallReturnOffsetToBytecodeOffset, unsigned, getCallReturnOffset>(callReturnIndexVector().begin(), callReturnIndexVector().size(), getJITCode().offsetOf(returnAddress.value()))->bytecodeOffset;
         }
         
         bool functionRegisterForBytecodeOffset(unsigned bytecodeOffset, int& functionRegisterIndex);
@@ -450,7 +450,7 @@ namespace JSC {
         LineInfo& lastLineInfo() { ASSERT(m_exceptionInfo); return m_exceptionInfo->m_lineInfo.last(); }
 
 #if ENABLE(JIT)
-        Vector<CallReturnOffsetToBytecodeIndex>& callReturnIndexVector() { ASSERT(m_exceptionInfo); return m_exceptionInfo->m_callReturnIndexVector; }
+        Vector<CallReturnOffsetToBytecodeOffset>& callReturnIndexVector() { ASSERT(m_exceptionInfo); return m_exceptionInfo->m_callReturnIndexVector; }
 #endif
 
         // Constant Pool

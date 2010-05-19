@@ -66,16 +66,16 @@ namespace JSC {
 
     struct CallRecord {
         MacroAssembler::Call from;
-        unsigned bytecodeIndex;
+        unsigned bytecodeOffset;
         void* to;
 
         CallRecord()
         {
         }
 
-        CallRecord(MacroAssembler::Call from, unsigned bytecodeIndex, void* to = 0)
+        CallRecord(MacroAssembler::Call from, unsigned bytecodeOffset, void* to = 0)
             : from(from)
-            , bytecodeIndex(bytecodeIndex)
+            , bytecodeOffset(bytecodeOffset)
             , to(to)
         {
         }
@@ -83,11 +83,11 @@ namespace JSC {
 
     struct JumpTable {
         MacroAssembler::Jump from;
-        unsigned toBytecodeIndex;
+        unsigned toBytecodeOffset;
 
         JumpTable(MacroAssembler::Jump f, unsigned t)
             : from(f)
-            , toBytecodeIndex(t)
+            , toBytecodeOffset(t)
         {
         }
     };
@@ -119,20 +119,20 @@ namespace JSC {
             StringJumpTable* stringJumpTable;
         } jumpTable;
 
-        unsigned bytecodeIndex;
+        unsigned bytecodeOffset;
         unsigned defaultOffset;
 
-        SwitchRecord(SimpleJumpTable* jumpTable, unsigned bytecodeIndex, unsigned defaultOffset, Type type)
+        SwitchRecord(SimpleJumpTable* jumpTable, unsigned bytecodeOffset, unsigned defaultOffset, Type type)
             : type(type)
-            , bytecodeIndex(bytecodeIndex)
+            , bytecodeOffset(bytecodeOffset)
             , defaultOffset(defaultOffset)
         {
             this->jumpTable.simpleJumpTable = jumpTable;
         }
 
-        SwitchRecord(StringJumpTable* jumpTable, unsigned bytecodeIndex, unsigned defaultOffset)
+        SwitchRecord(StringJumpTable* jumpTable, unsigned bytecodeOffset, unsigned defaultOffset)
             : type(String)
-            , bytecodeIndex(bytecodeIndex)
+            , bytecodeOffset(bytecodeOffset)
             , defaultOffset(defaultOffset)
         {
             this->jumpTable.stringJumpTable = jumpTable;
@@ -313,8 +313,8 @@ namespace JSC {
         void emitStoreBool(unsigned index, RegisterID tag, bool indexIsBool = false);
         void emitStoreDouble(unsigned index, FPRegisterID value);
 
-        bool isLabeled(unsigned bytecodeIndex);
-        void map(unsigned bytecodeIndex, unsigned virtualRegisterIndex, RegisterID tag, RegisterID payload);
+        bool isLabeled(unsigned bytecodeOffset);
+        void map(unsigned bytecodeOffset, unsigned virtualRegisterIndex, RegisterID tag, RegisterID payload);
         void unmap(RegisterID);
         void unmap();
         bool isMapped(unsigned virtualRegisterIndex);
@@ -886,7 +886,7 @@ namespace JSC {
         Vector<MethodCallCompilationInfo> m_methodCallCompilationInfo;
         Vector<JumpTable> m_jmpTable;
 
-        unsigned m_bytecodeIndex;
+        unsigned m_bytecodeOffset;
         Vector<JSRInfo> m_jsrSites;
         Vector<SlowCaseEntry> m_slowCases;
         Vector<SwitchRecord> m_switches;
@@ -897,7 +897,7 @@ namespace JSC {
 
 #if USE(JSVALUE32_64)
         unsigned m_jumpTargetIndex;
-        unsigned m_mappedBytecodeIndex;
+        unsigned m_mappedBytecodeOffset;
         unsigned m_mappedVirtualRegisterIndex;
         RegisterID m_mappedTag;
         RegisterID m_mappedPayload;

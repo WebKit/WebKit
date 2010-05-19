@@ -42,7 +42,7 @@ namespace JSC {
 #if !USE(JSVALUE32_64)
 
 #define RECORD_JUMP_TARGET(targetOffset) \
-   do { m_labels[m_bytecodeIndex + (targetOffset)].used(); } while (false)
+   do { m_labels[m_bytecodeOffset + (targetOffset)].used(); } while (false)
 
 void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executablePool, JSGlobalData* globalData, TrampolineStructure *trampolines)
 {
@@ -1284,7 +1284,7 @@ void JIT::emit_op_switch_imm(Instruction* currentInstruction)
 
     // create jump table for switch destinations, track this switch statement.
     SimpleJumpTable* jumpTable = &m_codeBlock->immediateSwitchJumpTable(tableIndex);
-    m_switches.append(SwitchRecord(jumpTable, m_bytecodeIndex, defaultOffset, SwitchRecord::Immediate));
+    m_switches.append(SwitchRecord(jumpTable, m_bytecodeOffset, defaultOffset, SwitchRecord::Immediate));
     jumpTable->ctiOffsets.grow(jumpTable->branchOffsets.size());
 
     JITStubCall stubCall(this, cti_op_switch_imm);
@@ -1302,7 +1302,7 @@ void JIT::emit_op_switch_char(Instruction* currentInstruction)
 
     // create jump table for switch destinations, track this switch statement.
     SimpleJumpTable* jumpTable = &m_codeBlock->characterSwitchJumpTable(tableIndex);
-    m_switches.append(SwitchRecord(jumpTable, m_bytecodeIndex, defaultOffset, SwitchRecord::Character));
+    m_switches.append(SwitchRecord(jumpTable, m_bytecodeOffset, defaultOffset, SwitchRecord::Character));
     jumpTable->ctiOffsets.grow(jumpTable->branchOffsets.size());
 
     JITStubCall stubCall(this, cti_op_switch_char);
@@ -1320,7 +1320,7 @@ void JIT::emit_op_switch_string(Instruction* currentInstruction)
 
     // create jump table for switch destinations, track this switch statement.
     StringJumpTable* jumpTable = &m_codeBlock->stringSwitchJumpTable(tableIndex);
-    m_switches.append(SwitchRecord(jumpTable, m_bytecodeIndex, defaultOffset));
+    m_switches.append(SwitchRecord(jumpTable, m_bytecodeOffset, defaultOffset));
 
     JITStubCall stubCall(this, cti_op_switch_string);
     stubCall.addArgument(scrutinee, regT2);
@@ -1334,7 +1334,7 @@ void JIT::emit_op_new_error(Instruction* currentInstruction)
     JITStubCall stubCall(this, cti_op_new_error);
     stubCall.addArgument(Imm32(currentInstruction[2].u.operand));
     stubCall.addArgument(ImmPtr(JSValue::encode(m_codeBlock->getConstant(currentInstruction[3].u.operand))));
-    stubCall.addArgument(Imm32(m_bytecodeIndex));
+    stubCall.addArgument(Imm32(m_bytecodeOffset));
     stubCall.call(currentInstruction[1].u.operand);
 }
 

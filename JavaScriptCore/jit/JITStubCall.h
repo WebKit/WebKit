@@ -167,17 +167,17 @@ namespace JSC {
         JIT::Call call()
         {
 #if ENABLE(OPCODE_SAMPLING)
-            if (m_jit->m_bytecodeIndex != (unsigned)-1)
-                m_jit->sampleInstruction(m_jit->m_codeBlock->instructions().begin() + m_jit->m_bytecodeIndex, true);
+            if (m_jit->m_bytecodeOffset != (unsigned)-1)
+                m_jit->sampleInstruction(m_jit->m_codeBlock->instructions().begin() + m_jit->m_bytecodeOffset, true);
 #endif
 
             m_jit->restoreArgumentReference();
             JIT::Call call = m_jit->call();
-            m_jit->m_calls.append(CallRecord(call, m_jit->m_bytecodeIndex, m_stub.value()));
+            m_jit->m_calls.append(CallRecord(call, m_jit->m_bytecodeOffset, m_stub.value()));
 
 #if ENABLE(OPCODE_SAMPLING)
-            if (m_jit->m_bytecodeIndex != (unsigned)-1)
-                m_jit->sampleInstruction(m_jit->m_codeBlock->instructions().begin() + m_jit->m_bytecodeIndex, false);
+            if (m_jit->m_bytecodeOffset != (unsigned)-1)
+                m_jit->sampleInstruction(m_jit->m_codeBlock->instructions().begin() + m_jit->m_bytecodeOffset, false);
 #endif
 
 #if USE(JSVALUE32_64)
