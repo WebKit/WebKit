@@ -356,6 +356,11 @@ namespace JSC {
         }
         
         bool functionRegisterForBytecodeOffset(unsigned bytecodeOffset, int& functionRegisterIndex);
+#else
+        unsigned bytecodeOffset(CallFrame*, Instruction* returnAddress)
+        {
+            return static_cast<Instruction*>(returnAddress) - instructions().begin();
+        }
 #endif
 
         void setIsNumericCompareFunction(bool isNumericCompareFunction) { m_isNumericCompareFunction = isNumericCompareFunction; }

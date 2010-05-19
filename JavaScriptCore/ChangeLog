@@ -2,6 +2,23 @@
 
         Reviewed by Sam Weinig.
 
+        Slight refactoring to CodeBlock bytecode access
+        https://bugs.webkit.org/show_bug.cgi?id=39384
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::bytecodeOffset):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::returnPC):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::Interpreter::retrieveLastCaller): Moved bytecode access into a
+        CodeBlock helper function. Changed CallFrame to accurately represent
+        how the returnPC is stored in JIT vs Interpreter.
+
+2010-05-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Don't build the Interpreter into JIT builds.
         https://bugs.webkit.org/show_bug.cgi?id=39373
 

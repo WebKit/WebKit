@@ -71,16 +71,6 @@ using namespace std;
 
 namespace JSC {
 
-static ALWAYS_INLINE unsigned bytecodeOffsetForPC(CallFrame* callFrame, CodeBlock* codeBlock, void* pc)
-{
-#if ENABLE(JIT)
-    return codeBlock->bytecodeOffset(callFrame, ReturnAddressPtr(pc));
-#else
-    UNUSED_PARAM(callFrame);
-    return static_cast<Instruction*>(pc) - codeBlock->instructions().begin();
-#endif
-}
-
 // Returns the depth of the scope chain within a given call frame.
 static int depth(CodeBlock* codeBlock, ScopeChain& sc)
 {
@@ -551,13 +541,13 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
     if (oldCodeBlock->needsFullScopeChain())
         scopeChain->deref();
 
-    void* returnPC = callFrame->returnPC();
-    callFrame = callFrame->callerFrame();
-    if (callFrame->hasHostCallFrameFlag())
+    CallFrame* callerFrame = callFrame->callerFrame();
+    if (callerFrame->hasHostCallFrameFlag())
         return false;
 
-    codeBlock = callFrame->codeBlock();
-    bytecodeOffset = bytecodeOffsetForPC(callFrame, codeBlock, returnPC);
+    codeBlock = callerFrame->codeBlock();
+    bytecodeOffset = codeBlock->bytecodeOffset(callerFrame, callFrame->returnPC());
+    callFrame = callerFrame;
     return true;
 }
 
@@ -4465,7 +4455,7 @@ void Interpreter::retrieveLastCaller(CallFrame* callFrame, int& lineNumber, intp
     if (!callerCodeBlock)
         return;
 
-    unsigned bytecodeOffset = bytecodeOffsetForPC(callerFrame, callerCodeBlock, callFrame->returnPC());
+    unsigned bytecodeOffset = callerCodeBlock->bytecodeOffset(callerFrame, callFrame->returnPC());
     lineNumber = callerCodeBlock->lineNumberForBytecodeOffset(callerFrame, bytecodeOffset - 1);
     sourceID = callerCodeBlock->ownerExecutable()->sourceID();
     sourceURL = callerCodeBlock->ownerExecutable()->sourceURL();
