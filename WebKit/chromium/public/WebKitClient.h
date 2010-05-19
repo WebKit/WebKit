@@ -95,23 +95,6 @@ public:
                                       const WebURL& url, bool isLocalStorage) { }
 
 
-    // File ----------------------------------------------------------------
-
-    // Various file/directory related functions.  These map 1:1 with
-    // functions in WebCore's FileSystem.h.
-    virtual bool fileExists(const WebString& path) { return false; }
-    virtual bool deleteFile(const WebString& path) { return false; }
-    virtual bool deleteEmptyDirectory(const WebString& path) { return false; }
-    virtual bool getFileSize(const WebString& path, long long& result) { return false; }
-    virtual bool getFileModificationTime(const WebString& path, double& result) { return false; }
-    virtual WebString directoryName(const WebString& path) { return WebString(); }
-    virtual WebString pathByAppendingComponent(const WebString& path, const WebString& component) { return WebString(); }
-    virtual bool makeAllDirectories(const WebString& path) { return false; }
-    virtual WebString getAbsolutePath(const WebString& path) { return WebString(); }
-    virtual bool isDirectory(const WebString& path) { return false; }
-    virtual WebURL filePathToURL(const WebString& path) { return WebURL(); }
-
-
     // History -------------------------------------------------------------
 
     // Returns the hash for the given canonicalized URL for use in visited

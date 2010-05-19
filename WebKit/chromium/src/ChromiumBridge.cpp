@@ -278,86 +278,61 @@ void ChromiumBridge::prefetchDNS(const String& hostname)
 
 bool ChromiumBridge::fileExists(const String& path)
 {
-    if (webKitClient()->fileSystem())
-        return webKitClient()->fileSystem()->fileExists(path);
-    return webKitClient()->fileExists(path);
+    return webKitClient()->fileSystem()->fileExists(path);
 }
 
 bool ChromiumBridge::deleteFile(const String& path)
 {
-    if (webKitClient()->fileSystem())
-        return webKitClient()->fileSystem()->deleteFile(path);
-    return webKitClient()->deleteFile(path);
+    return webKitClient()->fileSystem()->deleteFile(path);
 }
 
 bool ChromiumBridge::deleteEmptyDirectory(const String& path)
 {
-    if (webKitClient()->fileSystem())
-        return webKitClient()->fileSystem()->deleteEmptyDirectory(path);
-    return webKitClient()->deleteEmptyDirectory(path);
+    return webKitClient()->fileSystem()->deleteEmptyDirectory(path);
 }
 
 bool ChromiumBridge::getFileSize(const String& path, long long& result)
 {
-    if (webKitClient()->fileSystem())
-        return webKitClient()->fileSystem()->getFileSize(path, result);
-    return webKitClient()->getFileSize(path, result);
+    return webKitClient()->fileSystem()->getFileSize(path, result);
 }
 
 bool ChromiumBridge::getFileModificationTime(const String& path, time_t& result)
 {
     double modificationTime;
-    if (webKitClient()->fileSystem()) {
-        if (!webKitClient()->fileSystem()->getFileModificationTime(path, modificationTime))
-            return false;
-    } else {
-        if (!webKitClient()->getFileModificationTime(path, modificationTime))
-            return false;
-    }
+    if (!webKitClient()->fileSystem()->getFileModificationTime(path, modificationTime))
+        return false;
     result = static_cast<time_t>(modificationTime);
     return true;
 }
 
 String ChromiumBridge::directoryName(const String& path)
 {
-    if (webKitClient()->fileSystem())
-        return webKitClient()->fileSystem()->directoryName(path);
-    return webKitClient()->directoryName(path);
+    return webKitClient()->fileSystem()->directoryName(path);
 }
 
 String ChromiumBridge::pathByAppendingComponent(const String& path, const String& component)
 {
-    if (webKitClient()->fileSystem())
-        return webKitClient()->fileSystem()->pathByAppendingComponent(path, component);
-    return webKitClient()->pathByAppendingComponent(path, component);
+    return webKitClient()->fileSystem()->pathByAppendingComponent(path, component);
 }
 
 bool ChromiumBridge::makeAllDirectories(const String& path)
 {
-    if (webKitClient()->fileSystem())
-        return webKitClient()->fileSystem()->makeAllDirectories(path);
-    return webKitClient()->makeAllDirectories(path);
+    return webKitClient()->fileSystem()->makeAllDirectories(path);
 }
 
 String ChromiumBridge::getAbsolutePath(const String& path)
 {
-    if (webKitClient()->fileSystem())
-        return webKitClient()->fileSystem()->getAbsolutePath(path);
-    return webKitClient()->getAbsolutePath(path);
+    return webKitClient()->fileSystem()->getAbsolutePath(path);
 }
 
 bool ChromiumBridge::isDirectory(const String& path)
 {
-    if (webKitClient()->fileSystem())
-        return webKitClient()->fileSystem()->isDirectory(path);
-    return webKitClient()->isDirectory(path);
+    return webKitClient()->fileSystem()->isDirectory(path);
 }
 
 KURL ChromiumBridge::filePathToURL(const String& path)
 {
-    if (webKitClient()->fileSystem())
-        return webKitClient()->fileSystem()->filePathToURL(path);
-    return webKitClient()->filePathToURL(path);
+    return webKitClient()->fileSystem()->filePathToURL(path);
 }
 
 PlatformFileHandle ChromiumBridge::openFile(const String& path, FileOpenMode mode)
