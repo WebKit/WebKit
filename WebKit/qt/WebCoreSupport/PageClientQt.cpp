@@ -288,6 +288,23 @@ QRect PageClientQGraphicsWidget::geometryRelativeToOwnerWidget() const
     return graphicsView->mapFromScene(view->boundingRect()).boundingRect();
 }
 
+#if ENABLE(TILED_BACKING_STORE)
+QRectF PageClientQGraphicsWidget::graphicsItemVisibleRect() const
+{
+    if (!view->scene())
+        return QRectF();
+
+    QList<QGraphicsView*> views = view->scene()->views();
+    if (views.isEmpty())
+        return QRectF();
+    
+    QGraphicsView* graphicsView = views.at(0);
+    int xOffset = graphicsView->horizontalScrollBar()->value();
+    int yOffset = graphicsView->verticalScrollBar()->value();
+    return view->mapRectFromScene(QRectF(QPointF(xOffset, yOffset), graphicsView->viewport()->size()));
+}
+#endif
+
 QObject* PageClientQGraphicsWidget::pluginParent() const
 {
     return view;

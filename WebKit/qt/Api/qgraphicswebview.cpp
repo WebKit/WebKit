@@ -60,8 +60,6 @@ public:
     void syncLayers();
 
     void updateResizesToContentsForPage();
-    virtual QRectF graphicsItemVisibleRect() const;
-
 
     void detachCurrentPage();
 
@@ -155,25 +153,6 @@ void QGraphicsWebViewPrivate::_q_scaleChanged()
 #if ENABLE(TILED_BACKING_STORE)
     static_cast<PageClientQGraphicsWidget*>(page->d->client)->updateTiledBackingStoreScale();
 #endif
-}
-
-QRectF QGraphicsWebViewPrivate::graphicsItemVisibleRect() const
-{
-    if (!q->scene())
-        return QRectF();
-    QList<QGraphicsView*> views = q->scene()->views();
-    if (views.size() > 1) {
-#ifndef QT_NO_DEBUG_STREAM
-        qDebug() << "QGraphicsWebView is in more than one graphics views, unable to compute the visible rect";
-#endif
-        return QRectF();
-    }
-    if (views.size() < 1)
-        return QRectF();
-
-    int xPosition = views[0]->horizontalScrollBar()->value();
-    int yPosition = views[0]->verticalScrollBar()->value();
-    return q->mapRectFromScene(QRectF(QPoint(xPosition, yPosition), views[0]->viewport()->size()));
 }
 
 /*!
