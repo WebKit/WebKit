@@ -75,23 +75,22 @@ void HTML5Tokenizer::write(const SegmentedString& source, bool)
 {
     m_source.append(source);
 
+    HTML5Token token;
     while (!m_source.isEmpty()) {
-        HTML5Token token;
-        m_lexer->nextToken(m_source, token);
-        // http://www.whatwg.org/specs/web-apps/current-work/#tree-construction
-        // We need to add code to the parser in order to understand
-        // HTML5Token objects.  The old HTML codepath does not have a nice
-        // separation between the parser logic and tokenizer logic like
-        // the HTML5 codepath should.  The call should look something like:
-        // m_parser->constructTreeFromToken(token);
-        // For now, we translate into an old-style token for testing.
-        if (token.type() == HTML5Token::Uninitialized) {
-            notImplemented();
-            continue;
+        if (m_lexer->nextToken(m_source, token)) {
+            // http://www.whatwg.org/specs/web-apps/current-work/#tree-construction
+            // We need to add code to the parser in order to understand
+            // HTML5Token objects.  The old HTML codepath does not have a nice
+            // separation between the parser logic and tokenizer logic like
+            // the HTML5 codepath should.  The call should look something like:
+            // m_parser->constructTreeFromToken(token);
+            // For now, we translate into an old-style token for testing.
+            Token oldStyleToken;
+            convertToOldStyle(token, oldStyleToken);
+            m_parser->parseToken(&oldStyleToken);
+
+            token.clear();
         }
-        Token oldStyleToken;
-        convertToOldStyle(token, oldStyleToken);
-        m_parser->parseToken(&oldStyleToken);
     }
 }
 

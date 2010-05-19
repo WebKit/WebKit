@@ -65,8 +65,6 @@ inline UChar toLowerCase(UChar cc)
 }
 
 HTML5Lexer::HTML5Lexer()
-    : m_token(0)
-    , m_additionalAllowedCharacter('\0')
 {
     reset();
 }
@@ -78,7 +76,9 @@ HTML5Lexer::~HTML5Lexer()
 void HTML5Lexer::reset()
 {
     m_state = DataState;
+    m_token = 0;
     m_emitPending = false;
+    m_additionalAllowedCharacter = '\0';
 }
 
 static inline bool isWhitespace(UChar c)
@@ -212,8 +212,11 @@ outOfCharacters:
     return 0;
 }
 
-void HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
+bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
 {
+    // If we have a token in progress, then we're supposed to be called back
+    // with the same token so we can finish it.
+    ASSERT(!m_token || m_token == &token || token.type() == HTML5Token::Uninitialized);
     m_token = &token;
     // Source: http://www.whatwg.org/specs/web-apps/current-work/#tokenisation0
     // FIXME: This while should stop as soon as we have a token to return.
@@ -227,7 +230,7 @@ void HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
                 if (m_token->type() == HTML5Token::Character) {
                     // We have a bunch of character tokens queued up that we
                     // are emitting lazily here.
-                    return;
+                    return true;
                 }
                 m_state = TagOpenState;
             } else
@@ -1205,10 +1208,10 @@ void HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
         source.advance();
         if (m_emitPending) {
             m_emitPending = false;
-            return;
+            return true;
         }
     }
-    m_token = 0;
+    return false;
 }
 
 inline bool HTML5Lexer::temporaryBufferIs(const char*)

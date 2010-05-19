@@ -1,3 +1,26 @@
+2010-05-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Change the API of nextToken to distinguish between emitting a token and just running out of input
+        https://bugs.webkit.org/show_bug.cgi?id=39349
+
+        I'm not sure there's a functional difference with this patch yet, but
+        as discussed with Eric, we need this to handle attributes.
+
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTML5Lexer::reset):
+        (WebCore::HTML5Lexer::nextToken):
+        * html/HTML5Lexer.h:
+        * html/HTML5Token.h:
+        (WebCore::HTML5Token::HTML5Token):
+        (WebCore::HTML5Token::clear):
+        (WebCore::HTML5Token::beginStartTag):
+        (WebCore::HTML5Token::beginEndTag):
+        (WebCore::HTML5Token::beginCharacter):
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::write):
+
 2010-05-18  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej Stachowiak.

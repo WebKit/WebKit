@@ -44,29 +44,35 @@ public:
         EndOfFile,
     };
 
-    explicit HTML5Token(Type type = Uninitialized)
-        : m_type(type)
-        , m_forceQuirks(false)
-        , m_selfClosing(false)
-    {
-    }
+    HTML5Token() { clear(); }
+
+    void clear() { m_type = Uninitialized; }
 
     void beginStartTag(UChar character)
     {
+        ASSERT(m_type == Uninitialized);
         m_type = StartTag;
         m_data.clear();
+        m_selfClosing = false;
+        m_attrs = 0;
+
         m_data.append(character);
     }
 
     void beginEndTag(UChar character)
     {
+        ASSERT(m_type == Uninitialized);
         m_type = EndTag;
         m_data.clear();
+        m_selfClosing = false;
+        m_attrs = 0;
+
         m_data.append(character);
     }
 
     void beginCharacter(UChar character)
     {
+        ASSERT(m_type == Uninitialized);
         m_type = Character;
         m_data.clear();
         m_data.append(character);

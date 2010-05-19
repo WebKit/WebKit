@@ -42,7 +42,11 @@ namespace WebCore {
         ~HTML5Lexer();
 
         void reset();
-        void nextToken(SegmentedString&, HTML5Token&);
+
+        // This function returns true if it emits a token.  Otherwise, callers
+        // must provide the same (in progress) token on the next call (unless
+        // they call reset() first).
+        bool nextToken(SegmentedString&, HTML5Token&);
 
         static unsigned consumeEntity(SegmentedString&, bool& notEnoughCharacters);
 
@@ -54,9 +58,6 @@ namespace WebCore {
         inline void emitCurrentDoctypeToken();
 
         inline bool temporaryBufferIs(const char*);
-
-        SegmentedString m_source;
-        HTML5Token* m_token;
 
         enum State {
             DataState,
@@ -132,6 +133,10 @@ namespace WebCore {
         };
 
         State m_state;
+
+        // m_token is owned by the caller.  If nextToken is not on the stack,
+        // this member might be pointing to unallocated memory.
+        HTML5Token* m_token;
 
         bool m_emitPending;
 
