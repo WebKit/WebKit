@@ -1605,24 +1605,27 @@ void RenderBlock::paintColumnContents(PaintInfo& paintInfo, int tx, int ty, bool
         // For each rect, we clip to the rect, and then we adjust our coords.
         IntRect colRect = colRects->at(i);
         colRect.move(tx, ty);
-        context->save();
-        
-        // Each strip pushes a clip, since column boxes are specified as being
-        // like overflow:hidden.
-        context->clip(colRect);
-        
-        // Adjust tx and ty to change where we paint.
         PaintInfo info(paintInfo);
         info.rect.intersect(colRect);
         
-        // Adjust our x and y when painting.
-        int finalX = tx + currXOffset;
-        int finalY = ty + currYOffset;
-        if (paintingFloats)
-            paintFloats(info, finalX, finalY, paintInfo.phase == PaintPhaseSelection || paintInfo.phase == PaintPhaseTextClip);
-        else
-            paintContents(info, finalX, finalY);
+        if (!info.rect.isEmpty()) {
+            context->save();
+            
+            // Each strip pushes a clip, since column boxes are specified as being
+            // like overflow:hidden.
+            context->clip(colRect);
+            
+            // Adjust our x and y when painting.
+            int finalX = tx + currXOffset;
+            int finalY = ty + currYOffset;
+            if (paintingFloats)
+                paintFloats(info, finalX, finalY, paintInfo.phase == PaintPhaseSelection || paintInfo.phase == PaintPhaseTextClip);
+            else
+                paintContents(info, finalX, finalY);
 
+            context->restore();
+        }
+        
         // Move to the next position.
         if (style()->direction() == LTR)
             currXOffset += colRect.width() + colGap;
@@ -1630,8 +1633,6 @@ void RenderBlock::paintColumnContents(PaintInfo& paintInfo, int tx, int ty, bool
             currXOffset -= (colRect.width() + colGap);
         
         currYOffset -= colRect.height();
-        
-        context->restore();
     }
 }
 
@@ -3370,17 +3371,19 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
 {
     // We need to do multiple passes, breaking up our hit testing into strips.
-    // We can always go left to right, since column contents are clipped (meaning that there
-    // can't be any overlap).
     Vector<IntRect>* colRects = columnRects();
-    unsigned colCount = colRects->size();
+    int colCount = colRects->size();
     if (!colCount)
         return false;
-    int currXOffset = style()->direction() == LTR ? 0 : contentWidth() - colRects->at(0).width();
+    int left = borderLeft() + paddingLeft();
     int currYOffset = 0;
-    int colGap = columnGap();
-    for (unsigned i = 0; i < colCount; i++) {
+    int i;
+    for (i = 0; i < colCount; i++)
+        currYOffset -= colRects->at(i).height();
+    for (i = colCount - 1; i >= 0; i--) {
         IntRect colRect = colRects->at(i);
+        int currXOffset = colRect.x() - left;
+        currYOffset += colRect.height();
         colRect.move(tx, ty);
         
         if (colRect.contains(x, y)) {
@@ -3391,14 +3394,6 @@ bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& r
             int finalY = ty + currYOffset;
             return hitTestContents(request, result, x, y, finalX, finalY, hitTestAction);
         }
-        
-        // Move to the next position.
-        if (style()->direction() == LTR)
-            currXOffset += colRect.width() + colGap;
-        else
-            currXOffset -= (colRect.width() + colGap);
-
-        currYOffset -= colRect.height();
     }
 
     return false;
@@ -3903,11 +3898,13 @@ void RenderBlock::adjustRectForColumns(IntRect& r) const
     unsigned colCount = colRects->size();
     if (!colCount)
         return;
-    int currXOffset = style()->direction() == LTR ? 0 : contentWidth() - colRects->at(0).width();
+    
+    int left = borderLeft() + paddingLeft();
+    
     int currYOffset = 0;
-    int colGap = columnGap();
     for (unsigned i = 0; i < colCount; i++) {
         IntRect colRect = colRects->at(i);
+        int currXOffset = colRect.x() - left;
         
         IntRect repaintRect = r;
         repaintRect.move(currXOffset, currYOffset);
@@ -3917,11 +3914,6 @@ void RenderBlock::adjustRectForColumns(IntRect& r) const
         result.unite(repaintRect);
 
         // Move to the next position.
-        if (style()->direction() == LTR)
-            currXOffset += colRect.width() + colGap;
-        else
-            currXOffset -= (colRect.width() + colGap);
-
         currYOffset -= colRect.height();
     }
 
@@ -3934,23 +3926,18 @@ void RenderBlock::adjustForColumns(IntSize& offset, const IntPoint& point) const
         return;
 
     Vector<IntRect>& columnRects = *this->columnRects();
-
-    int gapWidth = columnGap();
-    
-    int xOffset = style()->direction() == LTR ? 0 : contentWidth() - columnRects[0].width();
+  
+    int left = borderLeft() + paddingLeft();
     int yOffset = 0;
     size_t columnCount = columnRects.size();
     for (size_t i = 0; i < columnCount; ++i) {
         IntRect columnRect = columnRects[i];
+        int xOffset = columnRect.x() - left;
         if (point.y() < columnRect.bottom() + yOffset) {
             offset.expand(xOffset, -yOffset);
             return;
         }
 
-        if (style()->direction() == LTR)
-            xOffset += columnRect.width() + gapWidth;
-        else
-            xOffset -= columnRect.width() + gapWidth;
         yOffset += columnRect.height();
     }
 }

@@ -143,6 +143,9 @@ public:
     static void appendRunsForObject(int start, int end, RenderObject*, InlineBidiResolver&);    
     static bool requiresLineBox(const InlineIterator&, bool isLineEmpty = true, bool previousLineBrokeCleanly = true);
 
+    Vector<IntRect>* columnRects() const;
+    int columnGap() const;
+    
 protected:
     void moveChildTo(RenderObject* to, RenderObjectChildList* toChildList, RenderObject* child);
     void moveChildTo(RenderObject* to, RenderObjectChildList* toChildList, RenderObject* beforeChild, RenderObject* child);
@@ -200,7 +203,7 @@ protected:
 
     virtual bool hasLineIfEmpty() const;
     bool layoutOnlyPositionedObjects();
-
+    
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }
@@ -348,10 +351,8 @@ private:
 
     int desiredColumnWidth() const;
     unsigned desiredColumnCount() const;
-    Vector<IntRect>* columnRects() const;
     void setDesiredColumnCountAndWidth(int count, int width);
-    int columnGap() const;
-    
+
     void paintContinuationOutlines(PaintInfo&, int tx, int ty);
 
     virtual IntRect localCaretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);

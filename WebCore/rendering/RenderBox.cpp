@@ -1188,22 +1188,11 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, In
 
     EPosition position = style()->position();
 
-    if (o->isBlockFlow() && position != AbsolutePosition && position != FixedPosition) {
-        RenderBlock* cb = toRenderBlock(o);
-        if (cb->hasColumns()) {
-            IntRect repaintRect(topLeft, rect.size());
-            cb->adjustRectForColumns(repaintRect);
-            topLeft = repaintRect.location();
-            rect = repaintRect;
-        }
-    }
-
     // We are now in our parent container's coordinate space.  Apply our transform to obtain a bounding box
     // in the parent's coordinate space that encloses us.
     if (layer() && layer()->transform()) {
         fixed = position == FixedPosition;
         rect = layer()->transform()->mapRect(rect);
-        // FIXME: this clobbers topLeft adjustment done for multicol above
         topLeft = rect.location();
         topLeft.move(x(), y());
     } else if (position == FixedPosition)
@@ -1219,6 +1208,16 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, In
         topLeft += layer()->relativePositionOffset();
     }
     
+    if (o->isBlockFlow() && position != AbsolutePosition && position != FixedPosition) {
+        RenderBlock* cb = toRenderBlock(o);
+        if (cb->hasColumns()) {
+            IntRect repaintRect(topLeft, rect.size());
+            cb->adjustRectForColumns(repaintRect);
+            topLeft = repaintRect.location();
+            rect = repaintRect;
+        }
+    }
+
     // FIXME: We ignore the lightweight clipping rect that controls use, since if |o| is in mid-layout,
     // its controlClipRect will be wrong. For overflow clip we use the values cached by the layer.
     if (o->hasOverflowClip()) {

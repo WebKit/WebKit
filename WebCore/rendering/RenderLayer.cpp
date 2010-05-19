@@ -166,6 +166,7 @@ RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
     , m_hasVisibleContent(false)
     , m_visibleDescendantStatusDirty(false)
     , m_hasVisibleDescendant(false)
+    , m_isPaginated(false)
     , m_3DTransformedDescendantStatusDirty(true)
     , m_has3DTransformedDescendant(false)
 #if USE(ACCELERATED_COMPOSITING)
@@ -308,7 +309,12 @@ void RenderLayer::updateLayerPositions(UpdateLayerPositionsFlags flags, IntPoint
     updateVisibilityStatus();
 
     updateTransform();
-     
+
+    if (flags & UpdatePagination)
+        updatePagination();
+    else
+        m_isPaginated = false;
+
     if (m_hasVisibleContent) {
         RenderView* view = renderer()->view();
         ASSERT(view);
@@ -350,6 +356,9 @@ void RenderLayer::updateLayerPositions(UpdateLayerPositionsFlags flags, IntPoint
     if (isComposited())
         flags &= ~IsCompositingUpdateRoot;
 #endif
+
+    if (renderer()->hasColumns())
+        flags |= UpdatePagination;
 
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
         child->updateLayerPositions(flags, cachedOffset);
@@ -447,6 +456,30 @@ TransformationMatrix RenderLayer::renderableTransform(PaintBehavior paintBehavio
     }
 
     return *m_transform;
+}
+
+void RenderLayer::updatePagination()
+{
+    m_isPaginated = false;
+    if (isComposited() || !parent() || renderer()->isPositioned())
+        return; // FIXME: We will have to deal with paginated compositing layers someday.
+                // FIXME: For now the RenderView can't be paginated.  Eventually printing will move to a model where it is though.
+    
+    if (isNormalFlowOnly()) {
+        m_isPaginated = parent()->renderer()->hasColumns();
+        return;
+    }
+
+    // If we're not normal flow, then we need to look for a multi-column object between us and our stacking context.
+    RenderLayer* ancestorStackingContext = stackingContext();
+    for (RenderLayer* curr = parent(); curr; curr = curr->parent()) {
+        if (curr->renderer()->hasColumns()) {
+            m_isPaginated = true;
+            return;
+        }
+        if (curr == ancestorStackingContext || (curr->parent() && curr->parent()->renderer()->isPositioned()))
+            return;
+    }
 }
 
 void RenderLayer::setHasVisibleContent(bool b)
@@ -644,10 +677,14 @@ void RenderLayer::updateLayerPosition()
             localPoint += offset;
         }
     } else if (parent()) {
-        IntSize columnOffset;
-        parent()->renderer()->adjustForColumns(columnOffset, localPoint);
-        localPoint += columnOffset;
-        
+        if (isComposited()) {
+            // FIXME: Composited layers ignore pagination, so about the best we can do is make sure they're offset into the appropriate column.
+            // They won't split across columns properly.
+            IntSize columnOffset;
+            parent()->renderer()->adjustForColumns(columnOffset, localPoint);
+            localPoint += columnOffset;
+        }
+
         IntSize scrollOffset = parent()->scrolledContentOffset();
         localPoint -= scrollOffset;
     }
@@ -2376,10 +2413,8 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     }
 
     // Now walk the sorted list of children with negative z-indices.
-    if (m_negZOrderList)
-        for (Vector<RenderLayer*>::iterator it = m_negZOrderList->begin(); it != m_negZOrderList->end(); ++it)
-            it[0]->paintLayer(rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, localPaintFlags);
-    
+    paintList(m_negZOrderList, rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, localPaintFlags);
+
     // Now establish the appropriate clip and paint our child RenderObjects.
     if (shouldPaint && !clipRectToApply.isEmpty()) {
         // Begin transparency layers lazily now that we know we have to paint something.
@@ -2415,15 +2450,11 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     }
     
     // Paint any child layers that have overflow.
-    if (m_normalFlowList)
-        for (Vector<RenderLayer*>::iterator it = m_normalFlowList->begin(); it != m_normalFlowList->end(); ++it)
-            it[0]->paintLayer(rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, localPaintFlags);
-
-    // Now walk the sorted list of children with positive z-indices.
-    if (m_posZOrderList)
-        for (Vector<RenderLayer*>::iterator it = m_posZOrderList->begin(); it != m_posZOrderList->end(); ++it)
-            it[0]->paintLayer(rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, localPaintFlags);
+    paintList(m_normalFlowList, rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, localPaintFlags);
     
+    // Now walk the sorted list of children with positive z-indices.
+    paintList(m_posZOrderList, rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, localPaintFlags);
+        
     if (renderer()->hasMask() && shouldPaint && !selectionOnly && !damageRect.isEmpty()) {
         setClip(p, paintDirtyRect, damageRect);
 
@@ -2440,6 +2471,119 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         p->endTransparencyLayer();
         p->restore();
         m_usedTransparency = false;
+    }
+}
+
+void RenderLayer::paintList(Vector<RenderLayer*>* list, RenderLayer* rootLayer, GraphicsContext* p,
+                            const IntRect& paintDirtyRect, PaintBehavior paintBehavior,
+                            RenderObject* paintingRoot, RenderObject::OverlapTestRequestMap* overlapTestRequests,
+                            PaintLayerFlags paintFlags)
+{
+    if (!list)
+        return;
+    
+    for (size_t i = 0; i < list->size(); ++i) {
+        RenderLayer* childLayer = list->at(i);
+        if (!childLayer->isPaginated())
+            childLayer->paintLayer(rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, paintFlags);
+        else
+            paintPaginatedChildLayer(childLayer, rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, paintFlags);
+    }
+}
+
+void RenderLayer::paintPaginatedChildLayer(RenderLayer* childLayer, RenderLayer* rootLayer, GraphicsContext* context,
+                                             const IntRect& paintDirtyRect, PaintBehavior paintBehavior,
+                                             RenderObject* paintingRoot, RenderObject::OverlapTestRequestMap* overlapTestRequests,
+                                             PaintLayerFlags paintFlags)
+{
+    // We need to do multiple passes, breaking up our child layer into strips.
+    ASSERT(!renderer()->isPositioned());
+    Vector<RenderLayer*> columnLayers;
+    RenderLayer* ancestorLayer = isNormalFlowOnly() ? parent() : stackingContext();
+    for (RenderLayer* curr = childLayer->parent(); curr; curr = curr->parent()) {
+        if (curr->renderer()->hasColumns())
+            columnLayers.append(curr);
+        if (curr == ancestorLayer || (curr->parent() && curr->parent()->renderer()->isPositioned()))
+            break;
+    }
+
+    ASSERT(columnLayers.size());
+    
+    paintChildLayerIntoColumns(childLayer, rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, paintFlags, columnLayers, columnLayers.size() - 1);
+}
+
+void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLayer* rootLayer, GraphicsContext* context,
+                                             const IntRect& paintDirtyRect, PaintBehavior paintBehavior,
+                                             RenderObject* paintingRoot, RenderObject::OverlapTestRequestMap* overlapTestRequests,
+                                             PaintLayerFlags paintFlags, const Vector<RenderLayer*>& columnLayers, size_t colIndex)
+{
+    RenderBlock* columnBlock = toRenderBlock(columnLayers[colIndex]->renderer());
+
+    ASSERT(columnBlock && columnBlock->hasColumns());
+    if (!columnBlock || !columnBlock->hasColumns())
+        return;
+    
+    int layerX = 0;
+    int layerY = 0;
+    columnBlock->layer()->convertToLayerCoords(rootLayer, layerX, layerY);
+    
+    Vector<IntRect>* colRects = columnBlock->columnRects();
+    unsigned colCount = colRects->size();
+    int currYOffset = 0;
+    for (unsigned i = 0; i < colCount; i++) {
+        // For each rect, we clip to the rect, and then we adjust our coords.
+        IntRect colRect = colRects->at(i);
+        int currXOffset = colRect.x() - (columnBlock->borderLeft() + columnBlock->paddingLeft());
+        colRect.move(layerX, layerY);
+
+        IntRect localDirtyRect(paintDirtyRect);
+        localDirtyRect.intersect(colRect);
+        
+        if (!localDirtyRect.isEmpty()) {
+            context->save();
+            
+            // Each strip pushes a clip, since column boxes are specified as being
+            // like overflow:hidden.
+            context->clip(colRect);
+
+            if (!colIndex) {
+                // Apply a translation transform to change where the layer paints.
+                TransformationMatrix oldTransform;
+                bool oldHasTransform = childLayer->transform();
+                if (oldHasTransform)
+                    oldTransform = *childLayer->transform();
+                TransformationMatrix newTransform(oldTransform);
+                newTransform.translateRight(currXOffset, currYOffset);
+                
+                childLayer->m_transform.set(new TransformationMatrix(newTransform));
+                childLayer->paintLayer(rootLayer, context, localDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, paintFlags);
+                if (oldHasTransform)
+                    childLayer->m_transform.set(new TransformationMatrix(oldTransform));
+                else
+                    childLayer->m_transform.clear();
+            } else {
+                // Adjust the transform such that the renderer's upper left corner will paint at (0,0) in user space.
+                // This involves subtracting out the position of the layer in our current coordinate space.
+                int childX = 0;
+                int childY = 0;
+                columnLayers[colIndex - 1]->convertToLayerCoords(rootLayer, childX, childY);
+                TransformationMatrix transform;
+                transform.translateRight(childX + currXOffset, childY + currYOffset);
+                
+                // Apply the transform.
+                context->concatCTM(transform.toAffineTransform());
+
+                // Now do a paint with the root layer shifted to be the next multicol block.
+                paintChildLayerIntoColumns(childLayer, columnLayers[colIndex - 1], context, transform.inverse().mapRect(localDirtyRect), paintBehavior, 
+                                           paintingRoot, overlapTestRequests, paintFlags, 
+                                           columnLayers, colIndex - 1);
+            }
+
+            context->restore();
+        }
+
+        // Move to the next position.
+        currYOffset -= colRect.height();
     }
 }
 
@@ -2575,8 +2719,8 @@ static bool isHitCandidate(const RenderLayer* hitLayer, bool canDepthSort, doubl
 // If zOffset is non-null (which indicates that the caller wants z offset information), 
 //  *zOffset on return is the z offset of the hit point relative to the containing flattening layer.
 RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest& request, HitTestResult& result,
-                                                const IntRect& hitTestRect, const IntPoint& hitTestPoint, bool appliedTransform,
-                                                const HitTestingTransformState* transformState, double* zOffset)
+                                       const IntRect& hitTestRect, const IntPoint& hitTestPoint, bool appliedTransform,
+                                       const HitTestingTransformState* transformState, double* zOffset)
 {
     // The natural thing would be to keep HitTestingTransformState on the stack, but it's big, so we heap-allocate.
 
@@ -2686,34 +2830,21 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     RenderLayer* candidateLayer = 0;
 
     // Begin by walking our list of positive layers from highest z-index down to the lowest z-index.
-    if (m_posZOrderList) {
-        for (int i = m_posZOrderList->size() - 1; i >= 0; --i) {
-            HitTestResult tempResult(result.point());
-            RenderLayer* hitLayer = m_posZOrderList->at(i)->hitTestLayer(rootLayer, this, request, tempResult, hitTestRect, hitTestPoint, false, localTransformState.get(), zOffsetForDescendantsPtr);
-            if (isHitCandidate(hitLayer, depthSortDescendants, zOffset, unflattenedTransformState.get())) {
-                result = tempResult;
-                if (!depthSortDescendants)
-                    return hitLayer;
-
-                candidateLayer = hitLayer;
-            }
-        }
+    RenderLayer* hitLayer = hitTestList(m_posZOrderList, rootLayer, request, result, hitTestRect, hitTestPoint,
+                                        localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
+    if (hitLayer) {
+        if (!depthSortDescendants)
+            return hitLayer;
+        candidateLayer = hitLayer;
     }
 
     // Now check our overflow objects.
-    if (m_normalFlowList) {
-        for (int i = m_normalFlowList->size() - 1; i >= 0; --i) {
-            RenderLayer* currLayer = m_normalFlowList->at(i);
-            HitTestResult tempResult(result.point());
-            RenderLayer* hitLayer = currLayer->hitTestLayer(rootLayer, this, request, tempResult, hitTestRect, hitTestPoint, false, localTransformState.get(), zOffsetForDescendantsPtr);
-            if (isHitCandidate(hitLayer, depthSortDescendants, zOffset, unflattenedTransformState.get())) {
-                result = tempResult;
-                if (!depthSortDescendants)
-                    return hitLayer;
-
-                candidateLayer = hitLayer;
-            }
-        }
+    hitLayer = hitTestList(m_normalFlowList, rootLayer, request, result, hitTestRect, hitTestPoint,
+                           localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
+    if (hitLayer) {
+        if (!depthSortDescendants)
+            return hitLayer;
+        candidateLayer = hitLayer;
     }
 
     // Next we want to see if the mouse pos is inside the child RenderObjects of the layer.
@@ -2731,20 +2862,14 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     }
 
     // Now check our negative z-index children.
-    if (m_negZOrderList) {
-        for (int i = m_negZOrderList->size() - 1; i >= 0; --i) {
-            HitTestResult tempResult(result.point());
-            RenderLayer* hitLayer = m_negZOrderList->at(i)->hitTestLayer(rootLayer, this, request, tempResult, hitTestRect, hitTestPoint, false, localTransformState.get(), zOffsetForDescendantsPtr);
-            if (isHitCandidate(hitLayer, depthSortDescendants, zOffset, unflattenedTransformState.get())) {
-                result = tempResult;
-                if (!depthSortDescendants)
-                    return hitLayer;
-
-                candidateLayer = hitLayer;
-            }
-        }
+    hitLayer = hitTestList(m_negZOrderList, rootLayer, request, result, hitTestRect, hitTestPoint,
+                                        localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
+    if (hitLayer) {
+        if (!depthSortDescendants)
+            return hitLayer;
+        candidateLayer = hitLayer;
     }
-    
+
     // If we found a layer, return. Child layers, and foreground always render in front of background.
     if (candidateLayer)
         return candidateLayer;
@@ -2785,6 +2910,127 @@ bool RenderLayer::hitTestContents(const HitTestRequest& request, HitTestResult& 
     }
         
     return true;
+}
+
+RenderLayer* RenderLayer::hitTestList(Vector<RenderLayer*>* list, RenderLayer* rootLayer,
+                                      const HitTestRequest& request, HitTestResult& result,
+                                      const IntRect& hitTestRect, const IntPoint& hitTestPoint,
+                                      const HitTestingTransformState* transformState, 
+                                      double* zOffsetForDescendants, double* zOffset,
+                                      const HitTestingTransformState* unflattenedTransformState,
+                                      bool depthSortDescendants)
+{
+    if (!list)
+        return 0;
+    
+    RenderLayer* resultLayer = 0;
+    for (int i = list->size() - 1; i >= 0; --i) {
+        RenderLayer* childLayer = list->at(i);
+        RenderLayer* hitLayer = 0;
+        HitTestResult tempResult(result.point());
+        if (childLayer->isPaginated())
+            hitLayer = hitTestPaginatedChildLayer(childLayer, rootLayer, request, tempResult, hitTestRect, hitTestPoint, transformState, zOffsetForDescendants);
+        else
+            hitLayer = childLayer->hitTestLayer(rootLayer, this, request, tempResult, hitTestRect, hitTestPoint, false, transformState, zOffsetForDescendants);
+        if (isHitCandidate(hitLayer, depthSortDescendants, zOffset, unflattenedTransformState)) {
+            resultLayer = hitLayer;
+            result = tempResult;
+            if (!depthSortDescendants)
+                break;
+        }
+    }
+    
+    return resultLayer;
+}
+
+RenderLayer* RenderLayer::hitTestPaginatedChildLayer(RenderLayer* childLayer, RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result,
+                                                     const IntRect& hitTestRect, const IntPoint& hitTestPoint, const HitTestingTransformState* transformState, double* zOffset)
+{
+    ASSERT(!renderer()->isPositioned());
+    Vector<RenderLayer*> columnLayers;
+    RenderLayer* ancestorLayer = isNormalFlowOnly() ? parent() : stackingContext();
+    for (RenderLayer* curr = childLayer->parent(); curr; curr = curr->parent()) {
+        if (curr->renderer()->hasColumns())
+            columnLayers.append(curr);
+        if (curr == ancestorLayer || (curr->parent() && curr->parent()->renderer()->isPositioned()))
+            break;
+    }
+
+    ASSERT(columnLayers.size());
+    return hitTestChildLayerColumns(childLayer, rootLayer, request, result, hitTestRect, hitTestPoint, transformState, zOffset,
+                                    columnLayers, columnLayers.size() - 1);
+}
+
+RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result,
+                                                   const IntRect& hitTestRect, const IntPoint& hitTestPoint, const HitTestingTransformState* transformState, double* zOffset,
+                                                   const Vector<RenderLayer*>& columnLayers, size_t columnIndex)
+{
+    RenderBlock* columnBlock = toRenderBlock(columnLayers[columnIndex]->renderer());
+
+    ASSERT(columnBlock && columnBlock->hasColumns());
+    if (!columnBlock || !columnBlock->hasColumns())
+        return 0;
+    
+    int layerX = 0;
+    int layerY = 0;
+    columnBlock->layer()->convertToLayerCoords(rootLayer, layerX, layerY);
+    
+    Vector<IntRect>* colRects = columnBlock->columnRects();
+    int colCount = colRects->size();
+    
+    // We have to go backwards from the last column to the first.
+    int left = columnBlock->borderLeft() + columnBlock->paddingLeft();
+    int currYOffset = 0;
+    int i;
+    for (i = 0; i < colCount; i++)
+        currYOffset -= colRects->at(i).height();
+    for (i = colCount - 1; i >= 0; i--) {
+        // For each rect, we clip to the rect, and then we adjust our coords.
+        IntRect colRect = colRects->at(i);
+        int currXOffset = colRect.x() - left;
+        currYOffset += colRect.height();
+        colRect.move(layerX, layerY);
+
+        IntRect localClipRect(hitTestRect);
+        localClipRect.intersect(colRect);
+        
+        if (!localClipRect.isEmpty() && localClipRect.contains(hitTestPoint)) {
+            RenderLayer* hitLayer = 0;
+            if (!columnIndex) {
+                // Apply a translation transform to change where the layer paints.
+                TransformationMatrix oldTransform;
+                bool oldHasTransform = childLayer->transform();
+                if (oldHasTransform)
+                    oldTransform = *childLayer->transform();
+                TransformationMatrix newTransform(oldTransform);
+                newTransform.translateRight(currXOffset, currYOffset);
+                
+                childLayer->m_transform.set(new TransformationMatrix(newTransform));
+                hitLayer = childLayer->hitTestLayer(rootLayer, columnLayers[0], request, result, localClipRect, hitTestPoint, false, transformState, zOffset);
+                if (oldHasTransform)
+                    childLayer->m_transform.set(new TransformationMatrix(oldTransform));
+                else
+                    childLayer->m_transform.clear();
+            } else {
+                // Adjust the transform such that the renderer's upper left corner will be at (0,0) in user space.
+                // This involves subtracting out the position of the layer in our current coordinate space.
+                RenderLayer* nextLayer = columnLayers[columnIndex - 1];
+                RefPtr<HitTestingTransformState> newTransformState = nextLayer->createLocalTransformState(rootLayer, nextLayer, localClipRect, hitTestPoint, transformState);
+                newTransformState->translate(currXOffset, currYOffset, HitTestingTransformState::AccumulateTransform);
+                IntPoint localPoint = roundedIntPoint(newTransformState->mappedPoint());
+                IntRect localHitTestRect = newTransformState->mappedQuad().enclosingBoundingBox();
+                newTransformState->flatten();
+
+                hitLayer = hitTestChildLayerColumns(childLayer, columnLayers[columnIndex - 1], request, result, localHitTestRect, localPoint,
+                                                    newTransformState.get(), zOffset, columnLayers, columnIndex - 1);
+            }
+
+            if (hitLayer)
+                return hitLayer;
+        }
+    }
+
+    return 0;
 }
 
 void RenderLayer::updateClipRects(const RenderLayer* rootLayer)

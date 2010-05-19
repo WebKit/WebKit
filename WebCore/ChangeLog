@@ -1,3 +1,56 @@
+2010-05-18  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21049, opacity and position:relative fail in multi-column layouts.
+        
+        Make layers split painting across columns just as normal flow content does.  This is actually very
+        challenging, since intermediate multicol layers can exist between a child that has to be split and
+        its enclosing stacking context.
+        
+        In order to properly paginate layers, a bit is set on all pagination roots, i.e., layers that will get
+        split and thus split any descendant layers that they are also responsible for painting.  For a paginated
+        root, we walk up the layer hierarchy and collect all intermediate multicol blocks between the child
+        and the enclosing stacking context.
+        
+        We then recur from the outside in, applying clipping and translation as we break up the layer into strips.
+        
+        Composited layers remain unsplittable and have a hacked offset still in order to be placed in the right
+        column.
+        
+        Painting and hit testing of columns has been simplified in all of the functions to use the x position of
+        the column rect instead of trying to increment an x offset by adding in widths and column gaps.  This
+        makes those functions directionality-independent (and the LTR/RTL code paths are now the same).
+        
+        Fix repainting of columns as well to make sure rects are split across columns only after relative position
+        and transforms have been applied.
+        
+        Added fast/multicol/layers-split-across-columns.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintColumnContents):
+        (WebCore::RenderBlock::adjustRectForColumns):
+        (WebCore::RenderBlock::adjustForColumns):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeRectForRepaint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::updatePagination):
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::paintList):
+        (WebCore::RenderLayer::paintPaginatedChildLayer):
+        (WebCore::RenderLayer::paintChildLayerIntoColumns):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::hitTestList):
+        (WebCore::RenderLayer::hitTestPaginatedChildLayer):
+        (WebCore::RenderLayer::hitTestChildLayerColumns):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::):
+        (WebCore::RenderLayer::isPaginated):
+
 2010-05-18  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Dimitri Glazkov.
