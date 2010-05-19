@@ -467,7 +467,6 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
     printf("[ReturnValueRegister]      | %10p | %d \n", it, (*it).i()); ++it;
     printf("[ArgumentCount]            | %10p | %d \n", it, (*it).i()); ++it;
     printf("[Callee]                   | %10p | %p \n", it, (*it).function()); ++it;
-    printf("[OptionalCalleeArguments]  | %10p | %p \n", it, (*it).arguments()); ++it;
     printf("-----------------------------------------------------------------------------\n");
 
     int registerCount = 0;
@@ -540,10 +539,13 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
     if (oldCodeBlock->codeType() == FunctionCode && oldCodeBlock->needsFullScopeChain()) {
         while (!scopeChain->object->inherits(&JSActivation::info))
             scopeChain = scopeChain->pop();
-        static_cast<JSActivation*>(scopeChain->object)->copyRegisters(callFrame->optionalCalleeArguments());
-    } else if (Arguments* arguments = callFrame->optionalCalleeArguments()) {
-        if (!arguments->isTornOff())
-            arguments->copyRegisters();
+        JSActivation* activation = asActivation(scopeChain->object);
+        activation->copyRegisters();
+        if (JSValue arguments = callFrame->r(unmodifiedArgumentsRegister(oldCodeBlock->argumentsRegister())).jsValue())
+            asArguments(arguments)->setActivation(activation);
+    } else if (oldCodeBlock->usesArguments()) {
+        if (JSValue arguments = callFrame->r(unmodifiedArgumentsRegister(oldCodeBlock->argumentsRegister())).jsValue())
+            asArguments(arguments)->copyRegisters();
     }
 
     if (oldCodeBlock->needsFullScopeChain())
@@ -3776,43 +3778,46 @@ skip_id_custom_self:
         goto vm_throw;
     }
     DEFINE_OPCODE(op_tear_off_activation) {
-        /* tear_off_activation activation(r)
+        /* tear_off_activation activation(r) arguments(r)
 
-           Copy all locals and parameters to new memory allocated on
-           the heap, and make the passed activation use this memory
-           in the future when looking up entries in the symbol table.
-           If there is an 'arguments' object, then it will also use
-           this memory for storing the named parameters, but not any
-           extra arguments.
+           Copy locals and named parameters from the register file to the heap.
+           Point the bindings in 'activation' and 'arguments' to this new backing
+           store. (Note that 'arguments' may not have been created. If created,
+           'arguments' already holds a copy of any extra / unnamed parameters.)
 
-           This opcode should only be used immediately before op_ret.
+           This opcode appears before op_ret in functions that require full scope chains.
         */
 
-        int src = vPC[1].u.operand;
+        int src1 = vPC[1].u.operand;
+        int src2 = vPC[2].u.operand;
         ASSERT(callFrame->codeBlock()->needsFullScopeChain());
 
-        asActivation(callFrame->r(src).jsValue())->copyRegisters(callFrame->optionalCalleeArguments());
+        JSActivation* activation = asActivation(callFrame->r(src1).jsValue());
+        activation->copyRegisters();
+
+        if (JSValue arguments = callFrame->r(unmodifiedArgumentsRegister(src2)).jsValue())
+            asArguments(arguments)->setActivation(activation);
 
         vPC += OPCODE_LENGTH(op_tear_off_activation);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_tear_off_arguments) {
-        /* tear_off_arguments
+        /* tear_off_arguments arguments(r)
 
-           Copy all arguments to new memory allocated on the heap,
-           and make the 'arguments' object use this memory in the
-           future when looking up named parameters, but not any
-           extra arguments. If an activation object exists for the
-           current function context, then the tear_off_activation
-           opcode should be used instead.
+           Copy named parameters from the register file to the heap. Point the
+           bindings in 'arguments' to this new backing store. (Note that
+           'arguments' may not have been created. If created, 'arguments' already
+           holds a copy of any extra / unnamed parameters.)
 
-           This opcode should only be used immediately before op_ret.
+           This opcode appears before op_ret in functions that don't require full
+           scope chains, but do use 'arguments'.
         */
 
-        ASSERT(callFrame->codeBlock()->usesArguments() && !callFrame->codeBlock()->needsFullScopeChain());
+        int src1 = vPC[1].u.operand;
+        ASSERT(!callFrame->codeBlock()->needsFullScopeChain() && callFrame->codeBlock()->usesArguments());
 
-        if (callFrame->optionalCalleeArguments())
-            callFrame->optionalCalleeArguments()->copyRegisters();
+        if (JSValue arguments = callFrame->r(unmodifiedArgumentsRegister(src1)).jsValue())
+            asArguments(arguments)->copyRegisters();
 
         vPC += OPCODE_LENGTH(op_tear_off_arguments);
         NEXT_INSTRUCTION();
@@ -3848,12 +3853,10 @@ skip_id_custom_self:
     DEFINE_OPCODE(op_enter) {
         /* enter
 
-           Initializes local variables to undefined and fills constant
-           registers with their values. If the code block requires an
-           activation, enter_with_activation should be used instead.
+           Initializes local variables to undefined. If the code block requires
+           an activation, enter_with_activation is used instead.
 
-           This opcode should only be used at the beginning of a code
-           block.
+           This opcode appears only at the beginning of a code block.
         */
 
         size_t i = 0;
@@ -3868,14 +3871,10 @@ skip_id_custom_self:
     DEFINE_OPCODE(op_enter_with_activation) {
         /* enter_with_activation dst(r)
 
-           Initializes local variables to undefined, fills constant
-           registers with their values, creates an activation object,
-           and places the new activation both in dst and at the top
-           of the scope chain. If the code block does not require an
-           activation, enter should be used instead.
+           Initializes local variables to undefined, creates an activation object,
+           places it in dst, and pushes it onto the scope chain.
 
-           This opcode should only be used at the beginning of a code
-           block.
+           This opcode appears only at the beginning of a code block.
         */
 
         size_t i = 0;
@@ -3913,32 +3912,34 @@ skip_id_custom_self:
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_init_arguments) {
-        /* create_arguments
+        /* create_arguments dst(r)
 
-           Initialises the arguments object reference to null to ensure
-           we can correctly detect that we need to create it later (or
-           avoid creating it altogether).
+           Initialises 'arguments' to JSValue().
 
-           This opcode should only be used at the beginning of a code
-           block.
+           This opcode appears only at the beginning of a code block.
          */
-        callFrame->r(RegisterFile::ArgumentsRegister) = JSValue();
+        int dst = vPC[1].u.operand;
+
+        callFrame->r(dst) = JSValue();
+        callFrame->r(unmodifiedArgumentsRegister(dst)) = JSValue();
         vPC += OPCODE_LENGTH(op_init_arguments);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_create_arguments) {
-        /* create_arguments
+        /* create_arguments dst(r)
 
            Creates the 'arguments' object and places it in both the
            'arguments' call frame slot and the local 'arguments'
            register, if it has not already been initialised.
          */
         
-         if (!callFrame->r(RegisterFile::ArgumentsRegister).jsValue()) {
-             Arguments* arguments = new (globalData) Arguments(callFrame);
-             callFrame->setCalleeArguments(arguments);
-             callFrame->r(RegisterFile::ArgumentsRegister) = JSValue(arguments);
-         }
+        int dst = vPC[1].u.operand;
+
+        if (!callFrame->r(dst).jsValue()) {
+            Arguments* arguments = new (globalData) Arguments(callFrame);
+            callFrame->r(dst) = JSValue(arguments);
+            callFrame->r(unmodifiedArgumentsRegister(dst)) = JSValue(arguments);
+        }
         vPC += OPCODE_LENGTH(op_create_arguments);
         NEXT_INSTRUCTION();
     }
@@ -4419,23 +4420,17 @@ JSValue Interpreter::retrieveArguments(CallFrame* callFrame, JSFunction* functio
     CodeBlock* codeBlock = functionCallFrame->codeBlock();
     if (codeBlock->usesArguments()) {
         ASSERT(codeBlock->codeType() == FunctionCode);
-        SymbolTable& symbolTable = *codeBlock->symbolTable();
-        int argumentsIndex = symbolTable.get(functionCallFrame->propertyNames().arguments.ustring().rep()).getIndex();
-        if (!functionCallFrame->r(argumentsIndex).jsValue()) {
-            Arguments* arguments = new (callFrame) Arguments(functionCallFrame);
-            functionCallFrame->setCalleeArguments(arguments);
-            functionCallFrame->r(RegisterFile::ArgumentsRegister) = JSValue(arguments);
+        int argumentsRegister = codeBlock->argumentsRegister();
+        if (!functionCallFrame->r(argumentsRegister).jsValue()) {
+            JSValue arguments = JSValue(new (callFrame) Arguments(functionCallFrame));
+            functionCallFrame->r(argumentsRegister) = arguments;
+            functionCallFrame->r(unmodifiedArgumentsRegister(argumentsRegister)) = arguments;
         }
-        return functionCallFrame->r(argumentsIndex).jsValue();
+        return functionCallFrame->r(argumentsRegister).jsValue();
     }
 
-    Arguments* arguments = functionCallFrame->optionalCalleeArguments();
-    if (!arguments) {
-        arguments = new (functionCallFrame) Arguments(functionCallFrame);
-        arguments->copyRegisters();
-        callFrame->setCalleeArguments(arguments);
-    }
-
+    Arguments* arguments = new (functionCallFrame) Arguments(functionCallFrame);
+    arguments->copyRegisters();
     return arguments;
 }
 

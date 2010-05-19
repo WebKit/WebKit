@@ -36,7 +36,6 @@
 
 namespace JSC {
 
-    class Arguments;
     class CodeBlock;
     class ExecState;
     class JSActivation;
@@ -66,7 +65,6 @@ namespace JSC {
 
         int32_t i() const;
         JSActivation* activation() const;
-        Arguments* arguments() const;
         CallFrame* callFrame() const;
         CodeBlock* codeBlock() const;
         JSFunction* function() const;

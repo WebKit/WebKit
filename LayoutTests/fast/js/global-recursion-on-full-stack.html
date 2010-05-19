@@ -5,11 +5,11 @@ if (window.layoutTestController)
     layoutTestController.dumpAsText();
 
 var depth = 0;
-function f(a,b,c,d,e) {
-    var a, b, c, d, e;
+function f(a, b, c, d) {
+    var a, b;
     try {
         depth++;
-        f(a, b, c, d, e);
+        f(a, b, c, d);
     } catch(e) {
         document.write('<script> try { f(); result.innerText = "FAILED: Attempting to call f() should throw due to stack exhaustion"; } catch(e) { } </'+'script> ');
     }

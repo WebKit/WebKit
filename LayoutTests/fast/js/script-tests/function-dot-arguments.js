@@ -39,7 +39,7 @@ function assignVarUndefinedTest()
     var arguments;
     return g();
 }
-shouldBeUndefined("assignVarUndefinedTest()");
+shouldBe("assignVarUndefinedTest().toString()", "'[object Arguments]'");
 
 function assignVarUndefinedTest2()
 {
@@ -51,7 +51,7 @@ function assignVarUndefinedTest2()
     var a, arguments;
     return g();
 }
-shouldBeUndefined("assignVarUndefinedTest2()");
+shouldBe("assignVarUndefinedTest2().toString()", "'[object Arguments]'");
 
 function assignVarInitTest()
 {
@@ -87,7 +87,7 @@ function assignConstUndefinedTest()
     var arguments;
     return g();
 }
-shouldBeUndefined("assignConstUndefinedTest()");
+shouldBe("assignConstUndefinedTest().toString()", "'[object Arguments]'");
 
 function assignConstUndefinedTest2()
 {
@@ -99,7 +99,7 @@ function assignConstUndefinedTest2()
     var a, arguments;
     return g();
 }
-shouldBeUndefined("assignConstUndefinedTest2()");
+shouldBe("assignConstUndefinedTest2().toString()", "'[object Arguments]'");
 
 function assignConstInitTest()
 {
@@ -169,14 +169,14 @@ function paramInitTestCheckArguments()
 {
     return paramInitTest.arguments;
 }
-shouldBeTrue("paramInitTest(true)");
+shouldBe("paramInitTest(true).toString()", "'[object Arguments]'");
 
 var paramFunctionConstructorInitTest = Function("arguments", "return paramFunctionConstructorInitTestCheckArguments();");
 function paramFunctionConstructorInitTestCheckArguments()
 {
     return paramFunctionConstructorInitTest.arguments;
 }
-shouldBeTrue("paramFunctionConstructorInitTest(true)");
+shouldBe("paramFunctionConstructorInitTest(true).toString()", "'[object Arguments]'");
 
 function tearOffTest()
 {
@@ -301,7 +301,7 @@ shouldBe("argumentsNotLiveWrite3(1, 2, 0)", "0");
 
 function argumentsIdentity()
 {
-    return argumentsIdentity.arguments == argumentsIdentity.arguments;
+    return argumentsIdentity.arguments != argumentsIdentity.arguments;
 }
 shouldBeTrue("argumentsIdentity()");
 

@@ -745,12 +745,19 @@ void JIT::emit_op_tear_off_activation(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_tear_off_activation);
     stubCall.addArgument(currentInstruction[1].u.operand, regT2);
+    stubCall.addArgument(unmodifiedArgumentsRegister(currentInstruction[2].u.operand), regT2);
     stubCall.call();
 }
 
-void JIT::emit_op_tear_off_arguments(Instruction*)
+void JIT::emit_op_tear_off_arguments(Instruction* currentInstruction)
 {
-    JITStubCall(this, cti_op_tear_off_arguments).call();
+    unsigned dst = currentInstruction[1].u.operand;
+
+    Jump argsNotCreated = branchTestPtr(Zero, Address(callFrameRegister, sizeof(Register) * (unmodifiedArgumentsRegister(dst))));
+    JITStubCall stubCall(this, cti_op_tear_off_arguments);
+    stubCall.addArgument(unmodifiedArgumentsRegister(dst), regT2);
+    stubCall.call();
+    argsNotCreated.link(this);
 }
 
 void JIT::emit_op_ret(Instruction* currentInstruction)
@@ -1413,19 +1420,26 @@ void JIT::emit_op_enter_with_activation(Instruction* currentInstruction)
     JITStubCall(this, cti_op_push_activation).call(currentInstruction[1].u.operand);
 }
 
-void JIT::emit_op_create_arguments(Instruction*)
+void JIT::emit_op_create_arguments(Instruction* currentInstruction)
 {
-    Jump argsCreated = branchTestPtr(NonZero, Address(callFrameRegister, sizeof(Register) * RegisterFile::ArgumentsRegister));
+    unsigned dst = currentInstruction[1].u.operand;
+
+    Jump argsCreated = branchTestPtr(NonZero, Address(callFrameRegister, sizeof(Register) * dst));
     if (m_codeBlock->m_numParameters == 1)
         JITStubCall(this, cti_op_create_arguments_no_params).call();
     else
         JITStubCall(this, cti_op_create_arguments).call();
+    emitPutVirtualRegister(dst);
+    emitPutVirtualRegister(unmodifiedArgumentsRegister(dst));
     argsCreated.link(this);
 }
-    
-void JIT::emit_op_init_arguments(Instruction*)
+
+void JIT::emit_op_init_arguments(Instruction* currentInstruction)
 {
-    storePtr(ImmPtr(0), Address(callFrameRegister, sizeof(Register) * RegisterFile::ArgumentsRegister));
+    unsigned dst = currentInstruction[1].u.operand;
+
+    storePtr(ImmPtr(0), Address(callFrameRegister, sizeof(Register) * dst));
+    storePtr(ImmPtr(0), Address(callFrameRegister, sizeof(Register) * (unmodifiedArgumentsRegister(dst))));
 }
 
 void JIT::emit_op_convert_this(Instruction* currentInstruction)

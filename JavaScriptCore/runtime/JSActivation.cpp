@@ -70,17 +70,16 @@ void JSActivation::markChildren(MarkStack& markStack)
 
 bool JSActivation::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
+    if (propertyName == exec->propertyNames().arguments) {
+        slot.setCustom(this, getArgumentsGetter());
+        return true;
+    }
+
     if (symbolTableGet(propertyName, slot))
         return true;
 
     if (JSValue* location = getDirectLocation(propertyName)) {
         slot.setValueSlot(location);
-        return true;
-    }
-
-    // Only return the built-in arguments object if it wasn't overridden above.
-    if (propertyName == exec->propertyNames().arguments) {
-        slot.setCustom(this, getArgumentsGetter());
         return true;
     }
 
@@ -140,26 +139,19 @@ bool JSActivation::isDynamicScope(bool& requiresDynamicChecks) const
     return false;
 }
 
-JSValue JSActivation::argumentsGetter(ExecState* exec, JSValue slotBase, const Identifier&)
+JSValue JSActivation::argumentsGetter(ExecState*, JSValue slotBase, const Identifier&)
 {
     JSActivation* activation = asActivation(slotBase);
-
-    if (activation->d()->functionExecutable->usesArguments()) {
-        PropertySlot slot;
-        activation->symbolTableGet(exec->propertyNames().arguments, slot);
-        return slot.getValue(exec, exec->propertyNames().arguments);
-    }
-
     CallFrame* callFrame = CallFrame::create(activation->d()->registers);
-    Arguments* arguments = callFrame->optionalCalleeArguments();
-    if (!arguments) {
-        arguments = new (callFrame) Arguments(callFrame);
-        arguments->copyRegisters();
-        callFrame->setCalleeArguments(arguments);
+    int argumentsRegister = activation->d()->functionExecutable->generatedByteCode().argumentsRegister();
+    if (!callFrame->r(argumentsRegister).jsValue()) {
+        JSValue arguments = JSValue(new (callFrame) Arguments(callFrame));
+        callFrame->r(argumentsRegister) = arguments;
+        callFrame->r(unmodifiedArgumentsRegister(argumentsRegister)) = arguments;
     }
-    ASSERT(arguments->inherits(&Arguments::info));
 
-    return arguments;
+    ASSERT(callFrame->r(argumentsRegister).jsValue().inherits(&Arguments::info));
+    return callFrame->r(argumentsRegister).jsValue();
 }
 
 // These two functions serve the purpose of isolating the common case from a

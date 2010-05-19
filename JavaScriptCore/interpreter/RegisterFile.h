@@ -97,20 +97,18 @@ namespace JSC {
         friend class JIT;
     public:
         enum CallFrameHeaderEntry {
-            CallFrameHeaderSize = 8,
+            CallFrameHeaderSize = 7,
 
-            CodeBlock = -8,
-            ScopeChain = -7,
-            CallerFrame = -6,
-            ReturnPC = -5, // This is either an Instruction* or a pointer into JIT generated code stored as an Instruction*.
-            ReturnValueRegister = -4,
-            ArgumentCount = -3,
-            Callee = -2,
-            OptionalCalleeArguments = -1,
+            CodeBlock = -7,
+            ScopeChain = -6,
+            CallerFrame = -5,
+            ReturnPC = -4, // This is either an Instruction* or a pointer into JIT generated code stored as an Instruction*.
+            ReturnValueRegister = -3,
+            ArgumentCount = -2,
+            Callee = -1,
         };
 
         enum { ProgramCodeThisRegister = -CallFrameHeaderSize - 1 };
-        enum { ArgumentsRegister = 0 };
 
         static const size_t defaultCapacity = 524288;
         static const size_t defaultMaxGlobals = 8192;

@@ -9,19 +9,19 @@ PASS basicTest('one', 'two', 'three')[1] is 'two'
 PASS lengthTest() is '0'
 PASS lengthTest('From', '%E5%8C%97%E4%BA%AC', 360, '/', 'webkit.org') is '5'
 PASS assignTest() is true
-FAIL assignVarUndefinedTest() should be undefined. Was [object Arguments]
-FAIL assignVarUndefinedTest2() should be undefined. Was [object Arguments]
+PASS assignVarUndefinedTest().toString() is '[object Arguments]'
+PASS assignVarUndefinedTest2().toString() is '[object Arguments]'
 PASS assignVarInitTest() is true
 PASS assignVarInitTest2() is true
-FAIL assignConstUndefinedTest() should be undefined. Was [object Arguments]
-FAIL assignConstUndefinedTest2() should be undefined. Was [object Arguments]
+PASS assignConstUndefinedTest().toString() is '[object Arguments]'
+PASS assignConstUndefinedTest2().toString() is '[object Arguments]'
 PASS assignConstInitTest() is true
 PASS assignConstInitTest2() is true
 PASS assignForInitTest() is true
 PASS assignForInitTest2() is true
 PASS assignForInInitTest() is true
-PASS paramInitTest(true) is true
-PASS paramFunctionConstructorInitTest(true) is true
+PASS paramInitTest(true).toString() is '[object Arguments]'
+PASS paramFunctionConstructorInitTest(true).toString() is '[object Arguments]'
 PASS tearOffTest()[0] is true
 PASS tearOffTest2(true)[0] is true
 PASS lexicalArgumentsLiveRead1(0, 2, 3) is 1

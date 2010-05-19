@@ -2007,22 +2007,20 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_call_NotJSFunction)
     VM_THROW_EXCEPTION();
 }
 
-DEFINE_STUB_FUNCTION(void, op_create_arguments)
+DEFINE_STUB_FUNCTION(EncodedJSValue, op_create_arguments)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
     Arguments* arguments = new (stackFrame.globalData) Arguments(stackFrame.callFrame);
-    stackFrame.callFrame->setCalleeArguments(arguments);
-    stackFrame.callFrame[RegisterFile::ArgumentsRegister] = JSValue(arguments);
+    return JSValue::encode(JSValue(arguments));
 }
 
-DEFINE_STUB_FUNCTION(void, op_create_arguments_no_params)
+DEFINE_STUB_FUNCTION(EncodedJSValue, op_create_arguments_no_params)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
     Arguments* arguments = new (stackFrame.globalData) Arguments(stackFrame.callFrame, Arguments::NoParameters);
-    stackFrame.callFrame->setCalleeArguments(arguments);
-    stackFrame.callFrame[RegisterFile::ArgumentsRegister] = JSValue(arguments);
+    return JSValue::encode(JSValue(arguments));
 }
 
 DEFINE_STUB_FUNCTION(void, op_tear_off_activation)
@@ -2030,7 +2028,10 @@ DEFINE_STUB_FUNCTION(void, op_tear_off_activation)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     ASSERT(stackFrame.callFrame->codeBlock()->needsFullScopeChain());
-    asActivation(stackFrame.args[0].jsValue())->copyRegisters(stackFrame.callFrame->optionalCalleeArguments());
+    JSActivation* activation = asActivation(stackFrame.args[0].jsValue());
+    activation->copyRegisters();
+    if (JSValue v = stackFrame.args[1].jsValue())
+        asArguments(v)->setActivation(activation);
 }
 
 DEFINE_STUB_FUNCTION(void, op_tear_off_arguments)
@@ -2038,8 +2039,7 @@ DEFINE_STUB_FUNCTION(void, op_tear_off_arguments)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     ASSERT(stackFrame.callFrame->codeBlock()->usesArguments() && !stackFrame.callFrame->codeBlock()->needsFullScopeChain());
-    if (stackFrame.callFrame->optionalCalleeArguments())
-        stackFrame.callFrame->optionalCalleeArguments()->copyRegisters();
+    asArguments(stackFrame.args[0].jsValue())->copyRegisters();
 }
 
 DEFINE_STUB_FUNCTION(void, op_profile_will_call)

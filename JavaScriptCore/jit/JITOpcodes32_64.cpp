@@ -713,12 +713,19 @@ void JIT::emit_op_tear_off_activation(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_tear_off_activation);
     stubCall.addArgument(currentInstruction[1].u.operand);
+    stubCall.addArgument(unmodifiedArgumentsRegister(currentInstruction[2].u.operand));
     stubCall.call();
 }
 
-void JIT::emit_op_tear_off_arguments(Instruction*)
+void JIT::emit_op_tear_off_arguments(Instruction* currentInstruction)
 {
-    JITStubCall(this, cti_op_tear_off_arguments).call();
+    int dst = currentInstruction[1].u.operand;
+
+    Jump argsNotCreated = branch32(Equal, tagFor(unmodifiedArgumentsRegister(dst)), Imm32(JSValue::EmptyValueTag));
+    JITStubCall stubCall(this, cti_op_tear_off_arguments);
+    stubCall.addArgument(unmodifiedArgumentsRegister(dst));
+    stubCall.call();
+    argsNotCreated.link(this);
 }
 
 void JIT::emit_op_new_array(Instruction* currentInstruction)
@@ -1536,22 +1543,29 @@ void JIT::emit_op_enter_with_activation(Instruction* currentInstruction)
     JITStubCall(this, cti_op_push_activation).call(currentInstruction[1].u.operand);
 }
 
-void JIT::emit_op_create_arguments(Instruction*)
+void JIT::emit_op_create_arguments(Instruction* currentInstruction)
 {
-    Jump argsCreated = branch32(NotEqual, tagFor(RegisterFile::ArgumentsRegister, callFrameRegister), Imm32(JSValue::EmptyValueTag));
+    unsigned dst = currentInstruction[1].u.operand;
 
-    // If we get here the arguments pointer is a null cell - i.e. arguments need lazy creation.
+    Jump argsCreated = branch32(NotEqual, tagFor(dst), Imm32(JSValue::EmptyValueTag));
+
     if (m_codeBlock->m_numParameters == 1)
         JITStubCall(this, cti_op_create_arguments_no_params).call();
     else
         JITStubCall(this, cti_op_create_arguments).call();
 
+    emitStore(dst, regT1, regT0);
+    emitStore(unmodifiedArgumentsRegister(dst), regT1, regT0);
+
     argsCreated.link(this);
 }
 
-void JIT::emit_op_init_arguments(Instruction*)
+void JIT::emit_op_init_arguments(Instruction* currentInstruction)
 {
-    emitStore(RegisterFile::ArgumentsRegister, JSValue(), callFrameRegister);
+    unsigned dst = currentInstruction[1].u.operand;
+
+    emitStore(dst, JSValue());
+    emitStore(unmodifiedArgumentsRegister(dst), JSValue());
 }
 
 void JIT::emit_op_convert_this(Instruction* currentInstruction)

@@ -40,8 +40,8 @@ namespace JSC {
     #define FOR_EACH_OPCODE_ID(macro) \
         macro(op_enter, 1) \
         macro(op_enter_with_activation, 2) \
-        macro(op_init_arguments, 1) \
-        macro(op_create_arguments, 1) \
+        macro(op_init_arguments, 2) \
+        macro(op_create_arguments, 2) \
         macro(op_convert_this, 2) \
         \
         macro(op_new_object, 2) \
@@ -157,8 +157,8 @@ namespace JSC {
         macro(op_call_eval, 5) \
         macro(op_call_varargs, 5) \
         macro(op_load_varargs, 3) \
-        macro(op_tear_off_activation, 2) \
-        macro(op_tear_off_arguments, 1) \
+        macro(op_tear_off_activation, 3) \
+        macro(op_tear_off_arguments, 2) \
         macro(op_ret, 2) \
         macro(op_method_check, 1) \
         \

@@ -32,13 +32,12 @@ function f(a,b,c) {
 
   // ReadOnly
   var newargs = new Object();
-  var oldargs = f.arguments;
   f.arguments = newargs;
-  ReadOnlyOK = (f.arguments == oldargs);
+  ReadOnlyOK = (f.arguments != newargs);
 
   // DontDelete
   DontDeleteOK = !delete(f.arguments);
-  if (f.arguments != oldargs)
+  if (f.arguments == undefined || !f.hasOwnProperty("arguments"))
     DontDeleteOK = false;
 
   // DontEnum

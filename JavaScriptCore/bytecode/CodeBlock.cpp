@@ -490,11 +490,13 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             break;
         }
         case op_create_arguments: {
-            printf("[%4d] create_arguments\n", location);
+            int r0 = (++it)->u.operand;
+            printf("[%4d] create_arguments\t %s\n", location, registerName(exec, r0).data());
             break;
         }
         case op_init_arguments: {
-            printf("[%4d] init_arguments\n", location);
+            int r0 = (++it)->u.operand;
+            printf("[%4d] init_arguments\t %s\n", location, registerName(exec, r0).data());
             break;
         }
         case op_convert_this: {
@@ -1055,11 +1057,13 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         }
         case op_tear_off_activation: {
             int r0 = (++it)->u.operand;
-            printf("[%4d] tear_off_activation\t %s\n", location, registerName(exec, r0).data());
+            int r1 = (++it)->u.operand;
+            printf("[%4d] tear_off_activation\t %s, %s\n", location, registerName(exec, r0).data(), registerName(exec, r1).data());
             break;
         }
         case op_tear_off_arguments: {
-            printf("[%4d] tear_off_arguments\n", location);
+            int r0 = (++it)->u.operand;
+            printf("[%4d] tear_off_arguments\t %s\n", location, registerName(exec, r0).data());
             break;
         }
         case op_ret: {
@@ -1340,9 +1344,9 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, PassR
 #ifndef NDEBUG
     , m_instructionCount(0)
 #endif
+    , m_argumentsRegister(-1)
     , m_needsFullScopeChain(ownerExecutable->needsActivation())
     , m_usesEval(ownerExecutable->usesEval())
-    , m_usesArguments(false)
     , m_isNumericCompareFunction(false)
     , m_codeType(codeType)
     , m_source(sourceProvider)

@@ -1,3 +1,123 @@
+2010-05-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Simplified handling of 'arguments' -- 1.2% SunSpider speedup
+        https://bugs.webkit.org/show_bug.cgi?id=39200
+        
+        Removed the reserved OptionalCalleeArguments slot from the CallFrame.
+        Now, slots for 'arguments' are allocated and initialized only by
+        functions that might need them.
+        
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump): Updated for new bytecode operands.
+
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::unmodifiedArgumentsRegister): Added a helper function for mapping
+        from the arguments register to its unmodified counterpart.
+
+        (JSC::CodeBlock::setArgumentsRegister):
+        (JSC::CodeBlock::argumentsRegister):
+        (JSC::CodeBlock::usesArguments):  Changed from a "usesArguments" bool to
+        an optional int index representing the arguments register.
+
+        * bytecode/Opcode.h: Updated for new bytecode operands.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addVar): Factored out a helper function for
+        allocating an anonymous var.
+
+        (JSC::BytecodeGenerator::BytecodeGenerator): Merged / simplified some
+        arguments vs activation logic, and added code to allocate the arguments
+        registers when needed.
+
+        (JSC::BytecodeGenerator::createArgumentsIfNecessary): Updated for new bytecode operands.
+
+        (JSC::BytecodeGenerator::emitCallEval): No need to create the arguments
+        object before calling eval; the activation object will lazily create the
+        arguments object if eval resolves it.
+
+        (JSC::BytecodeGenerator::emitReturn): Updated for new bytecode operands.
+
+        (JSC::BytecodeGenerator::emitPushScope):
+        (JSC::BytecodeGenerator::emitPushNewScope): Ditto emitCallEval.
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::addVar): Factored out a helper function for
+        allocating an anonymous var.
+
+        (JSC::BytecodeGenerator::registerFor): No more need for special handling
+        of the arguments registers; they're allocated just like normal registers
+        now.
+
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::callerFrame):
+        (JSC::ExecState::init):
+        * interpreter/CallFrameClosure.h:
+        (JSC::CallFrameClosure::resetCallFrame): Nixed optionalCalleeArguments.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::dumpRegisters):
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::Interpreter::privateExecute):
+        (JSC::Interpreter::retrieveArguments): Opcodes accessing 'arguments' now
+        take operands specifying registers, just like all other opcodes.
+        JSActivation::copyRegisters is no longer responsible for tearing off the
+        arguments object; instead, the VM is responsible for both.
+
+        Also, a behavior change: Each access to f.arguments creates a new object,
+        unless f itself uses 'arguments'. This matches Chrome, and is necessary
+        for the optimization. f.arguments is a nonstandard, deprecated feature,
+        so high fidelity to a given implementation is not necessarily a goal.
+        Also, as illustrated by the new test case, the identity of f.arguments
+        has been broken since 2008, except in the case where f itself accesses
+        f.arguments -- but nobody seemed to notice. So, hopefully this change won't
+        break the web.
+        
+        * interpreter/Register.h: Nixed the special arguments accessor. It's no
+        longer needed.
+
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallInitializeCallFrame):
+        (JSC::JIT::compileOpCall):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_tear_off_activation):
+        (JSC::JIT::emit_op_tear_off_arguments):
+        (JSC::JIT::emit_op_create_arguments):
+        (JSC::JIT::emit_op_init_arguments):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_tear_off_activation):
+        (JSC::JIT::emit_op_tear_off_arguments):
+        (JSC::JIT::emit_op_create_arguments):
+        (JSC::JIT::emit_op_init_arguments): The actual optimization: Removed
+        OptionalCalleeArguments from the callframe slot. Now, it doesn't need
+        to be initialized for most calls.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        (JSC::): Updated stubs to support arbitrary 'arguments' registers,
+        instead of hard-coding something in the call frame.
+
+        * runtime/Arguments.h:
+        (JSC::JSActivation::copyRegisters): Removed some obfuscatory abstraction.
+
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::generatedByteCode): Added a helper for accessing
+        the 'arguments' register. In a future patch, that kind of data should
+        probably move out of CodeBlock and into Executable.
+
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::getOwnPropertySlot):
+        (JSC::JSActivation::argumentsGetter):
+        * runtime/JSActivation.h: Simplified / fixed access to 'arguments' via
+        the activation object. It now implements the same behavior implemented
+        by optimized variable access in the VM. This simplifies some other
+        things, too -- like eval code generation.
+
 2010-05-18  Sam Weinig  <sam@webkit.org>
 
         Try to fix the windows build.
