@@ -75,9 +75,6 @@ public:
     WEBKIT_API WebString title() const;
     WEBKIT_API WebString body() const;
 
-    WEBKIT_API WebString dir() const;
-    WEBKIT_API WebString replaceId() const;
-
     // Called to indicate the notification has been displayed.
     WEBKIT_API void dispatchDisplayEvent();
 

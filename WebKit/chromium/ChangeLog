@@ -1,3 +1,10 @@
+2010-05-19  Dirk Pranke  <dpranke@chromium.org>
+
+        Try again to roll out r58765.
+
+        * public/WebNotification.h:
+        * src/WebNotification.cpp:
+
 2010-05-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r59782.
