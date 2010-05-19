@@ -40,7 +40,7 @@ namespace WebCore {
         virtual ~SVGForeignObjectElement();
 
         virtual bool isValid() const { return SVGTests::isValid(); }
-        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void parseMappedAttribute(Attribute*);
         virtual void svgAttributeChanged(const QualifiedName&);
         virtual void synchronizeProperty(const QualifiedName&);
 

@@ -23,8 +23,8 @@
 #if ENABLE(WML)
 #include "WMLOnEventElement.h"
 
+#include "Attribute.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "WMLErrorHandling.h"
 #include "WMLEventHandlingElement.h"
 #include "WMLIntrinsicEventHandler.h"
@@ -41,7 +41,7 @@ WMLOnEventElement::WMLOnEventElement(const QualifiedName& tagName, Document* doc
 {
 }
 
-void WMLOnEventElement::parseMappedAttribute(MappedAttribute* attr)
+void WMLOnEventElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == HTMLNames::typeAttr) {
         String parsedValue = parseValueForbiddingVariableReferences(attr->value());

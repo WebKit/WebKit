@@ -26,8 +26,8 @@
 #if ENABLE(SVG)
 #include "SVGMaskElement.h"
 
+#include "Attribute.h"
 #include "CSSStyleSelector.h"
-#include "MappedAttribute.h"
 #include "RenderSVGResourceMasker.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
@@ -59,7 +59,7 @@ SVGMaskElement::~SVGMaskElement()
 {
 }
 
-void SVGMaskElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGMaskElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::maskUnitsAttr) {
         if (attr->value() == "userSpaceOnUse")

@@ -23,13 +23,13 @@
 #include "config.h"
 #include "HTMLPlugInElement.h"
 
+#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "Page.h"
 #include "RenderWidget.h"
 #include "ScriptController.h"
@@ -126,7 +126,7 @@ bool HTMLPlugInElement::mapToEntry(const QualifiedName& attrName, MappedAttribut
     return HTMLFrameOwnerElement::mapToEntry(attrName, result);
 }
 
-void HTMLPlugInElement::parseMappedAttribute(MappedAttribute* attr)
+void HTMLPlugInElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == widthAttr)
         addCSSLength(attr, CSSPropertyWidth, attr->value());

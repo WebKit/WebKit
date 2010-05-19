@@ -35,7 +35,7 @@ public:
     virtual bool isWMLTaskElement() const { return false; }
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
 
     virtual String title() const;
 

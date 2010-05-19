@@ -73,7 +73,7 @@ private:
 #endif
     virtual void attach();
     virtual void detach();
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
     virtual bool isVideo() const { return true; }
     virtual bool hasVideo() const { return player() && player()->hasVideo(); }
     virtual bool supportsFullscreen() const;

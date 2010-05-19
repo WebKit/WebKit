@@ -35,7 +35,7 @@ public:
     WMLBRElement(const QualifiedName& tagName, Document*);
 
     virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 };

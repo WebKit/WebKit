@@ -40,7 +40,7 @@ public:
     virtual bool checkDTD(const Node* newChild);
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
 
     virtual void attach();
     virtual bool rendererIsNeeded(RenderStyle*);

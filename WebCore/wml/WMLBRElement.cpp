@@ -28,9 +28,9 @@
 #if ENABLE(WML)
 #include "WMLBRElement.h"
 
+#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "RenderBR.h"
 
 namespace WebCore {
@@ -50,7 +50,7 @@ bool WMLBRElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntr
     return WMLElement::mapToEntry(attrName, result);
 }
 
-void WMLBRElement::parseMappedAttribute(MappedAttribute* attr)
+void WMLBRElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == HTMLNames::clearAttr) {
         // If the string is empty, then don't add the clear property. 

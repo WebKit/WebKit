@@ -25,7 +25,6 @@
 
 #include "Attr.h"
 #include "Document.h"
-#include "MappedAttribute.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 
@@ -48,7 +47,7 @@ SVGCursorElement::~SVGCursorElement()
         (*it)->setCursorElement(0);
 }
 
-void SVGCursorElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGCursorElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::xAttr)
         setXBaseValue(SVGLength(LengthModeWidth, attr->value()));

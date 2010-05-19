@@ -25,9 +25,9 @@
 #include "config.h"
 #include "NamedMappedAttrMap.h"
 
+#include "Attribute.h"
 #include "Document.h"
 #include "Element.h"
-#include "MappedAttribute.h"
 
 namespace WebCore {
 
@@ -48,8 +48,7 @@ int NamedMappedAttrMap::declCount() const
     int result = 0;
     for (unsigned i = 0; i < length(); i++) {
         Attribute* attr = attributeItem(i);
-        if (attr->isMappedAttribute() &&
-            toMappedAttribute(attr)->decl())
+        if (attr->isMappedAttribute() && attr->decl())
             result++;
     }
     return result;
@@ -64,8 +63,7 @@ bool NamedMappedAttrMap::mapsEquivalent(const NamedMappedAttrMap* otherMap) cons
     // The values for each decl must match.
     for (unsigned i = 0; i < length(); i++) {
         Attribute* attr = attributeItem(i);
-        if (attr->isMappedAttribute() &&
-            toMappedAttribute(attr)->decl()) {
+        if (attr->isMappedAttribute() && attr->decl()) {
             Attribute* otherAttr = otherMap->getAttributeItem(attr->name());
             if (!otherAttr || (attr->value() != otherAttr->value()))
                 return false;

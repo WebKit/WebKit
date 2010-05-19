@@ -25,11 +25,11 @@
 #include "config.h"
 #include "HTMLTableCellElement.h"
 
+#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
-#include "MappedAttribute.h"
 #include "RenderTableCell.h"
 
 using std::max;
@@ -84,7 +84,7 @@ bool HTMLTableCellElement::mapToEntry(const QualifiedName& attrName, MappedAttri
     return HTMLTablePartElement::mapToEntry(attrName, result);
 }
 
-void HTMLTableCellElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLTableCellElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == rowspanAttr) {
         rSpan = !attr->isNull() ? attr->value().toInt() : 1;

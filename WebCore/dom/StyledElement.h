@@ -33,8 +33,8 @@
 
 namespace WebCore {
 
+class Attribute;
 class CSSMappedAttributeDeclaration;
-class MappedAttribute;
 
 class StyledElement : public Element {
 public:
@@ -46,11 +46,11 @@ public:
     bool hasMappedAttributes() const { return namedAttrMap && mappedAttributes()->hasMappedAttributes(); }
     bool isMappedAttribute(const QualifiedName& name) const { MappedAttributeEntry res = eNone; mapToEntry(name, res); return res != eNone; }
 
-    void addCSSLength(MappedAttribute*, int id, const String& value);
-    void addCSSProperty(MappedAttribute*, int id, const String& value);
-    void addCSSProperty(MappedAttribute*, int id, int value);
-    void addCSSImageProperty(MappedAttribute*, int propertyID, const String& url);
-    void addCSSColor(MappedAttribute*, int id, const String& color);
+    void addCSSLength(Attribute*, int id, const String& value);
+    void addCSSProperty(Attribute*, int id, const String& value);
+    void addCSSProperty(Attribute*, int id, int value);
+    void addCSSImageProperty(Attribute*, int propertyID, const String& url);
+    void addCSSColor(Attribute*, int id, const String& color);
 
     static CSSMappedAttributeDeclaration* getMappedAttributeDecl(MappedAttributeEntry, const QualifiedName& name, const AtomicString& value);
     static void setMappedAttributeDecl(MappedAttributeEntry, const QualifiedName& name, const AtomicString& value, CSSMappedAttributeDeclaration*);
@@ -79,7 +79,7 @@ protected:
     }
 
     virtual void attributeChanged(Attribute*, bool preserveDecls = false);
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
     virtual void copyNonAttributeProperties(const Element*);
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
@@ -92,7 +92,7 @@ protected:
     virtual void didMoveToNewOwnerDocument();
 
 private:
-    void createMappedDecl(MappedAttribute*);
+    void createMappedDecl(Attribute*);
 
     void createInlineStyleDecl();
     void destroyInlineStyleDecl();

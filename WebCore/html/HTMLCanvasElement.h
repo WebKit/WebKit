@@ -94,7 +94,7 @@ private:
     virtual int tagPriority() const;
 #endif
 
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
     void reset();

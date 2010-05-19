@@ -38,7 +38,7 @@ public:
     void registerPostfieldElement(WMLPostfieldElement*);
     void deregisterPostfieldElement(WMLPostfieldElement*);
 
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
     virtual void executeTask();
 
 private:

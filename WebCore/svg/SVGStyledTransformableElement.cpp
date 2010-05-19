@@ -25,7 +25,6 @@
 
 #include "AffineTransform.h"
 #include "Attr.h"
-#include "MappedAttribute.h"
 #include "RenderPath.h"
 #include "SVGDocument.h"
 #include "SVGStyledElement.h"
@@ -66,7 +65,7 @@ AffineTransform* SVGStyledTransformableElement::supplementalTransform()
     return m_supplementalTransform.get();
 }
 
-void SVGStyledTransformableElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGStyledTransformableElement::parseMappedAttribute(Attribute* attr)
 {
     if (SVGTransformable::isKnownAttribute(attr->name())) {
         SVGTransformList* localTransforms = transformBaseValue();

@@ -38,7 +38,7 @@ namespace WebCore {
         SVGViewElement(const QualifiedName&, Document*);
         virtual ~SVGViewElement();
 
-        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void parseMappedAttribute(Attribute*);
         virtual void synchronizeProperty(const QualifiedName&);
 
         SVGStringList* viewTarget() const;

@@ -24,7 +24,6 @@
 #include "SVGExternalResourcesRequired.h"
 
 #include "Attr.h"
-#include "MappedAttribute.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
 
@@ -38,7 +37,7 @@ SVGExternalResourcesRequired::~SVGExternalResourcesRequired()
 {
 }
 
-bool SVGExternalResourcesRequired::parseMappedAttribute(MappedAttribute* attr)
+bool SVGExternalResourcesRequired::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::externalResourcesRequiredAttr) {
         setExternalResourcesRequiredBaseValue(attr->value() == "true");

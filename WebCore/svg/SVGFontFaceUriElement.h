@@ -37,7 +37,7 @@ namespace WebCore {
         
         PassRefPtr<CSSFontFaceSrcValue> srcValue() const;
 
-        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void parseMappedAttribute(Attribute*);
         virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
         virtual void insertedIntoDocument();
 

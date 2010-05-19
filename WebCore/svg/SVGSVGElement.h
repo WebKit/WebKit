@@ -112,7 +112,7 @@ namespace WebCore {
         static SVGTransform createSVGTransform();
         static SVGTransform createSVGTransformFromMatrix(const AffineTransform&);
 
-        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void parseMappedAttribute(Attribute*);
 
         virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);

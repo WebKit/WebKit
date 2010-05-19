@@ -23,12 +23,12 @@
 #if ENABLE(WML)
 #include "WMLTableElement.h"
 
-#include "CharacterNames.h"
+#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "CharacterNames.h"
 #include "Document.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "NodeList.h"
 #include "RenderObject.h"
 #include "Text.h"
@@ -59,7 +59,7 @@ bool WMLTableElement::mapToEntry(const QualifiedName& attrName, MappedAttributeE
     return WMLElement::mapToEntry(attrName, result);
 }
 
-void WMLTableElement::parseMappedAttribute(MappedAttribute* attr)
+void WMLTableElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == columnsAttr) {
         bool isNumber = false;

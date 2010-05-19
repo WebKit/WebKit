@@ -35,7 +35,7 @@ public:
     virtual int tagPriority() const { return 0; }
     virtual const AtomicString& formControlType() const;
     virtual bool isEnumeratable() const { return false; }
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
     virtual bool appendFormData(FormDataList&, bool);
 
 private:

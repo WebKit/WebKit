@@ -23,8 +23,8 @@
 #if ENABLE(SVG)
 #include "SVGEllipseElement.h"
 
+#include "Attribute.h"
 #include "FloatPoint.h"
-#include "MappedAttribute.h"
 #include "RenderPath.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
@@ -47,7 +47,7 @@ SVGEllipseElement::~SVGEllipseElement()
 {
 }
 
-void SVGEllipseElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGEllipseElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::cxAttr)
         setCxBaseValue(SVGLength(LengthModeWidth, attr->value()));

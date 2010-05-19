@@ -28,7 +28,6 @@
 #include "CachedImage.h"
 #include "DocLoader.h"
 #include "Document.h"
-#include "MappedAttribute.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"
@@ -67,7 +66,7 @@ void SVGFEImageElement::requestImageResource()
         m_cachedImage->addClient(this);
 }
 
-void SVGFEImageElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGFEImageElement::parseMappedAttribute(Attribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::preserveAspectRatioAttr)

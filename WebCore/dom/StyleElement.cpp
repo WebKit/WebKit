@@ -21,9 +21,9 @@
 #include "config.h"
 #include "StyleElement.h"
 
+#include "Attribute.h"
 #include "Document.h"
 #include "Element.h"
-#include "MappedAttribute.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 

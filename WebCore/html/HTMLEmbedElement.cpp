@@ -24,6 +24,7 @@
 #include "config.h"
 #include "HTMLEmbedElement.h"
 
+#include "Attribute.h"
 #include "CSSHelper.h"
 #include "CSSPropertyNames.h"
 #include "Frame.h"
@@ -31,7 +32,6 @@
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
-#include "MappedAttribute.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderImage.h"
 #include "RenderWidget.h"
@@ -83,7 +83,7 @@ bool HTMLEmbedElement::mapToEntry(const QualifiedName& attrName, MappedAttribute
     return HTMLPlugInElement::mapToEntry(attrName, result);
 }
 
-void HTMLEmbedElement::parseMappedAttribute(MappedAttribute* attr)
+void HTMLEmbedElement::parseMappedAttribute(Attribute* attr)
 {
     const AtomicString& value = attr->value();
   

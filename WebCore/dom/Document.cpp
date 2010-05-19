@@ -29,6 +29,7 @@
 #include "AXObjectCache.h"
 #include "AnimationController.h"
 #include "Attr.h"
+#include "Attribute.h"
 #include "CDATASection.h"
 #include "CSSHelper.h"
 #include "CSSStyleSelector.h"
@@ -88,7 +89,6 @@
 #include "InspectorTimelineAgent.h"
 #include "KeyboardEvent.h"
 #include "Logging.h"
-#include "MappedAttribute.h"
 #include "MessageEvent.h"
 #include "MouseEvent.h"
 #include "MouseEventWithHitTestResults.h"
@@ -4239,7 +4239,7 @@ PassRefPtr<Attr> Document::createAttributeNS(const String& namespaceURI, const S
 
     // FIXME: Assume this is a mapped attribute, since createAttribute isn't namespace-aware.  There's no harm to XML
     // documents if we're wrong.
-    return Attr::create(0, this, MappedAttribute::create(qName, StringImpl::empty()));
+    return Attr::create(0, this, Attribute::createMapped(qName, StringImpl::empty()));
 }
 
 #if ENABLE(SVG)

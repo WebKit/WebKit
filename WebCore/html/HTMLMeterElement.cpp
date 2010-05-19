@@ -22,12 +22,12 @@
 #if ENABLE(METER_TAG)
 #include "HTMLMeterElement.h"
 
+#include "Attribute.h"
 #include "EventNames.h"
 #include "FormDataList.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLParser.h"
-#include "MappedAttribute.h"
 #include "RenderMeter.h"
 #include <wtf/StdLibExtras.h>
 
@@ -57,7 +57,7 @@ const AtomicString& HTMLMeterElement::formControlType() const
     return meter;
 }
 
-void HTMLMeterElement::parseMappedAttribute(MappedAttribute* attribute)
+void HTMLMeterElement::parseMappedAttribute(Attribute* attribute)
 {
     if (attribute->name() == valueAttr || attribute->name() == minAttr || attribute->name() == maxAttr || attribute->name() == lowAttr || attribute->name() == highAttr || attribute->name() == optimumAttr) {
         if (renderer())

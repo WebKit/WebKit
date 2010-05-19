@@ -59,7 +59,7 @@ public:
 
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool appendFormData(FormDataList&, bool);

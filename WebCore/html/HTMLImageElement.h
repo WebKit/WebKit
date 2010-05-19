@@ -44,7 +44,7 @@ public:
     virtual int tagPriority() const { return 0; }
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
 
     virtual void attach();
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);

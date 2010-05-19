@@ -25,11 +25,11 @@
 #include "config.h"
 #include "HTMLIFrameElement.h"
 
+#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "Frame.h"
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "RenderIFrame.h"
 
 namespace WebCore {
@@ -68,7 +68,7 @@ bool HTMLIFrameElement::mapToEntry(const QualifiedName& attrName, MappedAttribut
 }
 
 #if ENABLE(SANDBOX)
-static SandboxFlags parseSandboxAttribute(MappedAttribute* attribute)
+static SandboxFlags parseSandboxAttribute(Attribute* attribute)
 {
     if (attribute->isNull())
         return SandboxNone;
@@ -105,7 +105,7 @@ static SandboxFlags parseSandboxAttribute(MappedAttribute* attribute)
 }
 #endif
 
-void HTMLIFrameElement::parseMappedAttribute(MappedAttribute* attr)
+void HTMLIFrameElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == widthAttr)
         addCSSLength(attr, CSSPropertyWidth, attr->value());

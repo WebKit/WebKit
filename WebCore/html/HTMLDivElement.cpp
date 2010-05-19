@@ -23,10 +23,10 @@
 #include "config.h"
 #include "HTMLDivElement.h"
 
+#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 
 namespace WebCore {
 
@@ -51,7 +51,7 @@ bool HTMLDivElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEn
     return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLDivElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLDivElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == alignAttr) {
         String v = attr->value();

@@ -29,9 +29,9 @@
 
 namespace WebCore {
 
-class HTMLSelectElement;
+class Attribute;
 class HTMLFormElement;
-class MappedAttribute;
+class HTMLSelectElement;
 
 class HTMLOptionElement : public HTMLFormControlElement, public OptionElement {
     friend class HTMLSelectElement;
@@ -59,7 +59,7 @@ public:
     void setText(const String&, ExceptionCode&);
 
     int index() const;
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
 
     virtual String value() const;
     void setValue(const String&);

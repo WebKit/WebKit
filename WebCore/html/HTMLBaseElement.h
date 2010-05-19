@@ -37,7 +37,7 @@ private:
 
     virtual String target() const { return m_target; }
 
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
 

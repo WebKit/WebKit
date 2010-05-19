@@ -42,7 +42,7 @@ public:
 
     // overrides
     virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
     virtual bool canHaveAdditionalAttributeStyleDecls() const { return true; }
     virtual void additionalAttributeStyleDecls(Vector<CSSMutableStyleDeclaration*>&);
    

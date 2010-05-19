@@ -25,10 +25,10 @@
 #if ENABLE(SVG)
 #include "SVGStyleElement.h"
 
+#include "Attribute.h"
 #include "CSSStyleSheet.h"
 #include "Document.h"
 #include "ExceptionCode.h"
-#include "MappedAttribute.h"
 #include "SVGNames.h"
 #include <wtf/StdLibExtras.h>
 
@@ -77,7 +77,7 @@ void SVGStyleElement::setTitle(const AtomicString& title, ExceptionCode& ec)
     setAttribute(SVGNames::titleAttr, title, ec);
 }
 
-void SVGStyleElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGStyleElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::titleAttr && m_sheet)
         m_sheet->setTitle(attr->value());

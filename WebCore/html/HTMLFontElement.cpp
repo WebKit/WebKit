@@ -23,10 +23,10 @@
 #include "config.h"
 #include "HTMLFontElement.h"
 
+#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 
 using namespace WTF;
 
@@ -130,7 +130,7 @@ bool HTMLFontElement::cssValueFromFontSizeNumber(const String& s, int& size)
     return true;
 }
 
-void HTMLFontElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLFontElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == sizeAttr) {
         int size;

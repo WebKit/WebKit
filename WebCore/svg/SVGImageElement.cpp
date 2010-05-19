@@ -24,8 +24,8 @@
 #if ENABLE(SVG)
 #include "SVGImageElement.h"
 
+#include "Attribute.h"
 #include "CSSPropertyNames.h"
-#include "MappedAttribute.h"
 #include "RenderSVGImage.h"
 #include "SVGDocument.h"
 #include "SVGLength.h"
@@ -53,7 +53,7 @@ SVGImageElement::~SVGImageElement()
 {
 }
 
-void SVGImageElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGImageElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::xAttr)
         setXBaseValue(SVGLength(LengthModeWidth, attr->value()));

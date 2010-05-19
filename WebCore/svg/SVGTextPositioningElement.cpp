@@ -23,7 +23,7 @@
 #if ENABLE(SVG)
 #include "SVGTextPositioningElement.h"
 
-#include "MappedAttribute.h"
+#include "Attribute.h"
 #include "RenderObject.h"
 #include "SVGLengthList.h"
 #include "SVGNames.h"
@@ -45,7 +45,7 @@ SVGTextPositioningElement::~SVGTextPositioningElement()
 {
 }
 
-void SVGTextPositioningElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGTextPositioningElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::xAttr)
         xBaseValue()->parse(attr->value(), LengthModeWidth);

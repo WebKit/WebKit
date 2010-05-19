@@ -23,7 +23,6 @@
 #include "SVGFEDiffuseLightingElement.h"
 
 #include "Attr.h"
-#include "MappedAttribute.h"
 #include "RenderObject.h"
 #include "SVGColor.h"
 #include "SVGFEDiffuseLighting.h"
@@ -48,7 +47,7 @@ SVGFEDiffuseLightingElement::~SVGFEDiffuseLightingElement()
 {
 }
 
-void SVGFEDiffuseLightingElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGFEDiffuseLightingElement::parseMappedAttribute(Attribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::inAttr)

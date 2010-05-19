@@ -3018,7 +3018,6 @@
 		A8C4A80009D563270003AC8D /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C4A7EE09D563270003AC8D /* Node.cpp */; };
 		A8C4A80109D563270003AC8D /* NamedMappedAttrMap.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A7EF09D563270003AC8D /* NamedMappedAttrMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8C4A80209D563270003AC8D /* NamedMappedAttrMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C4A7F009D563270003AC8D /* NamedMappedAttrMap.cpp */; };
-		A8C4A80509D563270003AC8D /* MappedAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A7F309D563270003AC8D /* MappedAttribute.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8C4A80709D563270003AC8D /* Element.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A7F509D563270003AC8D /* Element.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8C4A80809D563270003AC8D /* Element.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C4A7F609D563270003AC8D /* Element.cpp */; };
 		A8C4A80909D563270003AC8D /* CSSMappedAttributeDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A7F709D563270003AC8D /* CSSMappedAttributeDeclaration.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8437,7 +8436,6 @@
 		A8C4A7EE09D563270003AC8D /* Node.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Node.cpp; sourceTree = "<group>"; };
 		A8C4A7EF09D563270003AC8D /* NamedMappedAttrMap.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NamedMappedAttrMap.h; sourceTree = "<group>"; };
 		A8C4A7F009D563270003AC8D /* NamedMappedAttrMap.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = NamedMappedAttrMap.cpp; sourceTree = "<group>"; };
-		A8C4A7F309D563270003AC8D /* MappedAttribute.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MappedAttribute.h; sourceTree = "<group>"; };
 		A8C4A7F509D563270003AC8D /* Element.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Element.h; sourceTree = "<group>"; };
 		A8C4A7F609D563270003AC8D /* Element.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Element.cpp; sourceTree = "<group>"; };
 		A8C4A7F709D563270003AC8D /* CSSMappedAttributeDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSMappedAttributeDeclaration.h; sourceTree = "<group>"; };
@@ -16519,7 +16517,6 @@
 				85031B2D0A44EFC700F992E0 /* KeyboardEvent.cpp */,
 				85031B2E0A44EFC700F992E0 /* KeyboardEvent.h */,
 				14CF7C2009F7110600EB3665 /* KeyboardEvent.idl */,
-				A8C4A7F309D563270003AC8D /* MappedAttribute.h */,
 				A8C4A84B09D5649D0003AC8D /* MappedAttributeEntry.h */,
 				E1ADECCD0E76AD8B004A1A5E /* MessageChannel.cpp */,
 				E1ADECCC0E76AD8B004A1A5E /* MessageChannel.h */,
@@ -18418,7 +18415,6 @@
 				A8239E0109B3CF8A00B60641 /* Logging.h in Headers */,
 				656D37410ADBA5DE00A4554D /* MainResourceLoader.h in Headers */,
 				1A8F6BC60DB55CDC001DB794 /* ManifestParser.h in Headers */,
-				A8C4A80509D563270003AC8D /* MappedAttribute.h in Headers */,
 				A8C4A84C09D5649D0003AC8D /* MappedAttributeEntry.h in Headers */,
 				93309DF8099E64920056E581 /* markup.h in Headers */,
 				FABE72F51059C1EB00D999DD /* MathMLElement.h in Headers */,

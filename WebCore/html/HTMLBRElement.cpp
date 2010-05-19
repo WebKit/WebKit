@@ -23,9 +23,9 @@
 #include "config.h"
 #include "HTMLBRElement.h"
 
+#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "RenderBR.h"
 
 namespace WebCore {
@@ -48,7 +48,7 @@ bool HTMLBRElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEnt
     return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLBRElement::parseMappedAttribute(MappedAttribute* attr)
+void HTMLBRElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == clearAttr) {
         // If the string is empty, then don't add the clear property. 

@@ -40,7 +40,7 @@ SVGGElement::~SVGGElement()
 {
 }
 
-void SVGGElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGGElement::parseMappedAttribute(Attribute* attr)
 {
     if (SVGTests::parseMappedAttribute(attr))
         return;

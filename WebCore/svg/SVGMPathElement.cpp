@@ -38,7 +38,7 @@ SVGMPathElement::~SVGMPathElement()
 {
 }
 
-void SVGMPathElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGMPathElement::parseMappedAttribute(Attribute* attr)
 {
     if (SVGURIReference::parseMappedAttribute(attr))
         return;

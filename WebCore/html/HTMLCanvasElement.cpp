@@ -27,14 +27,11 @@
 #include "config.h"
 #include "HTMLCanvasElement.h"
 
+#include "Attribute.h"
 #include "CanvasContextAttributes.h"
-#include "CanvasRenderingContext2D.h"
-#if ENABLE(3D_CANVAS)    
-#include "WebGLContextAttributes.h"
-#include "WebGLRenderingContext.h"
-#endif
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
+#include "CanvasRenderingContext2D.h"
 #include "CanvasStyle.h"
 #include "Chrome.h"
 #include "Document.h"
@@ -42,12 +39,16 @@
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "ImageBuffer.h"
-#include "MappedAttribute.h"
 #include "Page.h"
 #include "RenderHTMLCanvas.h"
 #include "Settings.h"
 #include <math.h>
 #include <stdio.h>
+
+#if ENABLE(3D_CANVAS)    
+#include "WebGLContextAttributes.h"
+#include "WebGLRenderingContext.h"
+#endif
 
 namespace WebCore {
 
@@ -90,7 +91,7 @@ int HTMLCanvasElement::tagPriority() const
 
 #endif
 
-void HTMLCanvasElement::parseMappedAttribute(MappedAttribute* attr)
+void HTMLCanvasElement::parseMappedAttribute(Attribute* attr)
 {
     const QualifiedName& attrName = attr->name();
     if (attrName == widthAttr || attrName == heightAttr)

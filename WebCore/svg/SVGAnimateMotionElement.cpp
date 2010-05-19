@@ -26,7 +26,7 @@
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 #include "SVGAnimateMotionElement.h"
 
-#include "MappedAttribute.h"
+#include "Attribute.h"
 #include "RenderObject.h"
 #include "SVGElementInstance.h"
 #include "SVGMPathElement.h"
@@ -83,7 +83,7 @@ bool SVGAnimateMotionElement::hasValidTarget() const
     return false;
 }
 
-void SVGAnimateMotionElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGAnimateMotionElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::pathAttr) {
         m_path = Path();

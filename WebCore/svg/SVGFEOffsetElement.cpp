@@ -24,7 +24,6 @@
 #include "SVGFEOffsetElement.h"
 
 #include "Attr.h"
-#include "MappedAttribute.h"
 
 namespace WebCore {
 
@@ -37,7 +36,7 @@ SVGFEOffsetElement::~SVGFEOffsetElement()
 {
 }
 
-void SVGFEOffsetElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGFEOffsetElement::parseMappedAttribute(Attribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::dxAttr)

@@ -39,7 +39,7 @@ SVGSymbolElement::~SVGSymbolElement()
 {
 }
 
-void SVGSymbolElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGSymbolElement::parseMappedAttribute(Attribute* attr)
 {
     if (SVGLangSpace::parseMappedAttribute(attr))
         return;

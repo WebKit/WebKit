@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSStyleSelector.h"
 
+#include "Attribute.h"
 #include "CSSBorderImageValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSFontFaceRule.h"
@@ -61,9 +62,8 @@
 #include "HTMLTextAreaElement.h"
 #include "KeyframeList.h"
 #include "LinkHash.h"
-#include "MappedAttribute.h"
-#include "MatrixTransformOperation.h"
 #include "Matrix3DTransformOperation.h"
+#include "MatrixTransformOperation.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "NodeRenderStyle.h"
@@ -1258,14 +1258,11 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
                 const NamedMappedAttrMap* map = m_styledElement->mappedAttributes();
                 for (unsigned i = 0; i < map->length(); i++) {
                     Attribute* attr = map->attributeItem(i);
-                    if (attr->isMappedAttribute()) {
-                        MappedAttribute* mappedAttr = toMappedAttribute(attr);
-                        if (mappedAttr->decl()) {
-                            lastAuthorRule = m_matchedDecls.size();
-                            if (firstAuthorRule == -1)
-                                firstAuthorRule = lastAuthorRule;
-                            addMatchedDeclaration(mappedAttr->decl());
-                        }
+                    if (attr->isMappedAttribute() && attr->decl()) {
+                        lastAuthorRule = m_matchedDecls.size();
+                        if (firstAuthorRule == -1)
+                            firstAuthorRule = lastAuthorRule;
+                        addMatchedDeclaration(attr->decl());
                     }
                 }
             }

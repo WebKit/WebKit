@@ -26,10 +26,11 @@
 #include "config.h"
 #include "HTMLTextAreaElement.h"
 
+#include "Attribute.h"
 #include "BeforeTextInsertedEvent.h"
+#include "CSSValueKeywords.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "CSSValueKeywords.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -39,7 +40,6 @@
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "InputElement.h"
-#include "MappedAttribute.h"
 #include "Page.h"
 #include "RenderStyle.h"
 #include "RenderTextControlMultiLine.h"
@@ -104,7 +104,7 @@ void HTMLTextAreaElement::childrenChanged(bool changedByParser, Node* beforeChan
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
     
-void HTMLTextAreaElement::parseMappedAttribute(MappedAttribute* attr)
+void HTMLTextAreaElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == rowsAttr) {
         int rows = attr->value().toInt();

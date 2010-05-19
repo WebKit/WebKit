@@ -28,13 +28,14 @@
 #if ENABLE(VIDEO)
 #include "HTMLMediaElement.h"
 
+#include "Attribute.h"
+#include "CSSHelper.h"
+#include "CSSPropertyNames.h"
+#include "CSSValueKeywords.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ClientRect.h"
 #include "ClientRectList.h"
-#include "CSSHelper.h"
-#include "CSSPropertyNames.h"
-#include "CSSValueKeywords.h"
 #include "ContentType.h"
 #include "DocLoader.h"
 #include "Event.h"
@@ -49,7 +50,6 @@
 #include "HTMLSourceElement.h"
 #include "HTMLVideoElement.h"
 #include "MIMETypeRegistry.h"
-#include "MappedAttribute.h"
 #include "MediaDocument.h"
 #include "MediaError.h"
 #include "MediaList.h"
@@ -189,7 +189,7 @@ void HTMLMediaElement::attributeChanged(Attribute* attr, bool preserveDecls)
 #endif
 }
 
-void HTMLMediaElement::parseMappedAttribute(MappedAttribute* attr)
+void HTMLMediaElement::parseMappedAttribute(Attribute* attr)
 {
     const QualifiedName& attrName = attr->name();
 

@@ -37,7 +37,7 @@ public:
         
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
     virtual void defaultEventHandler(Event*);
     virtual bool appendFormData(FormDataList&, bool);
 

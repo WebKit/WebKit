@@ -23,7 +23,7 @@
 #if ENABLE(SVG)
 #include "SVGZoomAndPan.h"
 
-#include "MappedAttribute.h"
+#include "Attribute.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 
@@ -48,7 +48,7 @@ void SVGZoomAndPan::setZoomAndPan(unsigned short zoomAndPan)
     m_zoomAndPan = zoomAndPan;
 }
 
-bool SVGZoomAndPan::parseMappedAttribute(MappedAttribute* attr)
+bool SVGZoomAndPan::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::zoomAndPanAttr) {
         const UChar* start = attr->value().characters();

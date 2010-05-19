@@ -25,6 +25,7 @@
 #include "config.h"
 #include "HTMLTableElement.h"
 
+#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
@@ -34,7 +35,6 @@
 #include "HTMLTableRowElement.h"
 #include "HTMLTableRowsCollection.h"
 #include "HTMLTableSectionElement.h"
-#include "MappedAttribute.h"
 #include "RenderTable.h"
 #include "Text.h"
 
@@ -316,7 +316,7 @@ static bool setTableCellsChanged(Node* n)
     return cellChanged;
 }
 
-void HTMLTableElement::parseMappedAttribute(MappedAttribute* attr)
+void HTMLTableElement::parseMappedAttribute(Attribute* attr)
 {
     CellBorders bordersBefore = cellBorders();
     unsigned short oldPadding = m_padding;

@@ -24,6 +24,7 @@
 #include "config.h"
 #include "HTMLBodyElement.h"
 
+#include "Attribute.h"
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
@@ -32,7 +33,6 @@
 #include "FrameView.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "ScriptEventListener.h"
 
 namespace WebCore {
@@ -82,7 +82,7 @@ bool HTMLBodyElement::mapToEntry(const QualifiedName& attrName, MappedAttributeE
     return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLBodyElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLBodyElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == backgroundAttr) {
         String url = deprecatedParseURL(attr->value());

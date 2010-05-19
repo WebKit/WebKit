@@ -25,9 +25,9 @@
 #include "config.h"
 #include "HTMLTableCaptionElement.h"
 
+#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 
 namespace WebCore {
 
@@ -49,7 +49,7 @@ bool HTMLTableCaptionElement::mapToEntry(const QualifiedName& attrName, MappedAt
     return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLTableCaptionElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLTableCaptionElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == alignAttr) {
         if (!attr->value().isEmpty())

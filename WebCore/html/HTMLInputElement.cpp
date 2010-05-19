@@ -27,6 +27,7 @@
 #include "HTMLInputElement.h"
 
 #include "AXObjectCache.h"
+#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "ChromeClient.h"
 #include "DateComponents.h"
@@ -49,7 +50,6 @@
 #include "HTMLParser.h"
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
-#include "MappedAttribute.h"
 #include "MouseEvent.h"
 #include "Page.h"
 #include "RegularExpression.h"
@@ -1056,7 +1056,7 @@ bool HTMLInputElement::mapToEntry(const QualifiedName& attrName, MappedAttribute
     return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLInputElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == nameAttr) {
         checkedRadioButtons(this).removeButton(this);

@@ -23,7 +23,7 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFECompositeElement.h"
 
-#include "MappedAttribute.h"
+#include "Attribute.h"
 #include "SVGNames.h"
 
 namespace WebCore {
@@ -38,7 +38,7 @@ SVGFECompositeElement::~SVGFECompositeElement()
 {
 }
 
-void SVGFECompositeElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGFECompositeElement::parseMappedAttribute(Attribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::operatorAttr) {

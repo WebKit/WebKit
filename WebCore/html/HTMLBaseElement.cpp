@@ -23,11 +23,11 @@
 #include "config.h"
 #include "HTMLBaseElement.h"
 
+#include "Attribute.h"
 #include "CSSHelper.h"
 #include "Document.h"
 #include "Frame.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "XSSAuditor.h"
 
 namespace WebCore {
@@ -40,7 +40,7 @@ HTMLBaseElement::HTMLBaseElement(const QualifiedName& qName, Document* document)
     ASSERT(hasTagName(baseTag));
 }
 
-void HTMLBaseElement::parseMappedAttribute(MappedAttribute* attr)
+void HTMLBaseElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == hrefAttr) {
         m_hrefAttrValue = attr->value();

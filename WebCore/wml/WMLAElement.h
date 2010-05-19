@@ -39,7 +39,7 @@ public:
     virtual bool isMouseFocusable() const;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
 
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
     virtual void defaultEventHandler(Event*);
 
     virtual void accessKeyAction(bool fullAction);

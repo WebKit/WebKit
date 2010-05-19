@@ -24,7 +24,6 @@
 #include "SVGViewElement.h"
 
 #include "Attr.h"
-#include "MappedAttribute.h"
 #include "PlatformString.h"
 #include "SVGFitToViewBox.h"
 #include "SVGNames.h"
@@ -53,7 +52,7 @@ SVGStringList* SVGViewElement::viewTarget() const
     return m_viewTarget.get();
 }
 
-void SVGViewElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGViewElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::viewTargetAttr)
         viewTarget()->reset(attr->value());

@@ -23,12 +23,12 @@
 #if ENABLE(WML)
 #include "WMLInputElement.h"
 
+#include "Attribute.h"
 #include "EventNames.h"
 #include "FormDataList.h"
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
-#include "MappedAttribute.h"
 #include "RenderTextControlSingleLine.h"
 #include "TextEvent.h"
 #include "WMLDocument.h"
@@ -195,7 +195,7 @@ void WMLInputElement::accessKeyAction(bool)
     focus(false);
 }
 
-void WMLInputElement::parseMappedAttribute(MappedAttribute* attr)
+void WMLInputElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == HTMLNames::nameAttr)
         m_data.setName(parseValueForbiddingVariableReferences(attr->value()));

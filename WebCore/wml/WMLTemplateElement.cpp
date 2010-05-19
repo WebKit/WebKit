@@ -23,7 +23,7 @@
 #if ENABLE(WML)
 #include "WMLTemplateElement.h"
 
-#include "MappedAttribute.h"
+#include "Attribute.h"
 #include "NodeList.h"
 #include "WMLCardElement.h"
 #include "WMLDocument.h"
@@ -43,7 +43,7 @@ WMLTemplateElement::~WMLTemplateElement()
 {
 }
 
-void WMLTemplateElement::parseMappedAttribute(MappedAttribute* attr)
+void WMLTemplateElement::parseMappedAttribute(Attribute* attr)
 {
     WMLIntrinsicEventType eventType = WMLIntrinsicEventUnknown;
 

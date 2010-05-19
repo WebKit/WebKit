@@ -33,7 +33,7 @@ namespace WebCore {
         SVGTextElement(const QualifiedName&, Document*);
         virtual ~SVGTextElement();
 
-        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void parseMappedAttribute(Attribute*);
 
         virtual SVGElement* nearestViewportElement() const;
         virtual SVGElement* farthestViewportElement() const;

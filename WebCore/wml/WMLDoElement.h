@@ -33,7 +33,7 @@ public:
     WMLDoElement(const QualifiedName& tagName, Document*);
 
     virtual void defaultEventHandler(Event*);
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
 

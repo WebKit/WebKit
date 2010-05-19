@@ -56,7 +56,7 @@ namespace WebCore {
  
         virtual void insertedIntoDocument();
 
-        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void parseMappedAttribute(Attribute*);
         virtual void synchronizeProperty(const QualifiedName&);
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 

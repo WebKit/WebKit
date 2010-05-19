@@ -35,7 +35,7 @@ public:
     virtual int tagPriority() const { return 0; }
     virtual bool canTriggerImplicitSubmission() const { return true; }
 
-    virtual void parseMappedAttribute(MappedAttribute *attr);
+    virtual void parseMappedAttribute(Attribute* attr);
 
     String prompt() const;
     void setPrompt(const String &);

@@ -61,7 +61,7 @@ public:
     void setOrientToAuto();
     void setOrientToAngle(const SVGAngle&);
 
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);

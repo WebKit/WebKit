@@ -27,11 +27,11 @@
 
 #if ENABLE(DATAGRID)
 
+#include "Attribute.h"
 #include "DataGridColumn.h"
-#include "HTMLDataGridElement.h"
 #include "HTMLDataGridColElement.h"
+#include "HTMLDataGridElement.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -145,7 +145,7 @@ void HTMLDataGridColElement::setPrimary(bool primary)
     setAttribute(primaryAttr, primary ? "" : 0);
 }
 
-void HTMLDataGridColElement::parseMappedAttribute(MappedAttribute* attr) 
+void HTMLDataGridColElement::parseMappedAttribute(Attribute* attr) 
 {
     HTMLElement::parseMappedAttribute(attr);
      

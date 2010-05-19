@@ -49,7 +49,7 @@ public:
     int rowSpan() const { return rSpan; }
 
     virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
 
     // used by table cells to share style decls created by the enclosing table.
     virtual bool canHaveAdditionalAttributeStyleDecls() const { return true; }

@@ -35,7 +35,7 @@ namespace WebCore {
         SVGMPathElement(const QualifiedName&, Document*);
         virtual ~SVGMPathElement();
         
-        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void parseMappedAttribute(Attribute*);
         virtual void synchronizeProperty(const QualifiedName&);
         
         SVGPathElement* pathElement();

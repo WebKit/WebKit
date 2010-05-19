@@ -39,7 +39,7 @@ public:
     
     virtual bool hasValidTarget() const;
 
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
 
 private:
     virtual void resetToBaseValue(const String&);

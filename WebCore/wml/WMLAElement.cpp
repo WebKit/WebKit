@@ -29,6 +29,7 @@
 #if ENABLE(WML)
 #include "WMLAElement.h"
 
+#include "Attribute.h"
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"
@@ -36,7 +37,6 @@
 #include "FrameLoader.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
-#include "MappedAttribute.h"
 #include "MouseEvent.h"
 #include "RenderBox.h"
 #include "ResourceHandle.h"
@@ -51,7 +51,7 @@ WMLAElement::WMLAElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
-void WMLAElement::parseMappedAttribute(MappedAttribute* attr)
+void WMLAElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == HTMLNames::hrefAttr) {
         bool wasLink = isLink();

@@ -30,7 +30,7 @@ class WMLAccessElement : public WMLElement {
 public:
     WMLAccessElement(const QualifiedName& tagName, Document*);
 
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
     virtual void insertedIntoDocument();
 
 private:

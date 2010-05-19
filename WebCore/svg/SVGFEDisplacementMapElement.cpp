@@ -22,7 +22,7 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFEDisplacementMapElement.h"
 
-#include "MappedAttribute.h"
+#include "Attribute.h"
 
 namespace WebCore {
 
@@ -51,7 +51,7 @@ ChannelSelectorType SVGFEDisplacementMapElement::stringToChannel(const String& k
     return CHANNEL_UNKNOWN;
 }
 
-void SVGFEDisplacementMapElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGFEDisplacementMapElement::parseMappedAttribute(Attribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::xChannelSelectorAttr)

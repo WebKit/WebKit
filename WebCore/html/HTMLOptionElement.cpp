@@ -26,12 +26,12 @@
 #include "config.h"
 #include "HTMLOptionElement.h"
 
+#include "Attribute.h"
 #include "CSSStyleSelector.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
-#include "MappedAttribute.h"
 #include "NodeRenderStyle.h"
 #include "RenderMenuList.h"
 #include "Text.h"
@@ -134,7 +134,7 @@ int HTMLOptionElement::index() const
     return OptionElement::optionIndex(ownerSelectElement(), this);
 }
 
-void HTMLOptionElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLOptionElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == selectedAttr)
         m_data.setSelected(!attr->isNull());

@@ -28,7 +28,7 @@
 #include "SVGAnimateTransformElement.h"
 
 #include "AffineTransform.h"
-#include "MappedAttribute.h"
+#include "Attribute.h"
 #include "RenderObject.h"
 #include "SVGAngle.h"
 #include "SVGElementInstance.h"
@@ -63,7 +63,7 @@ bool SVGAnimateTransformElement::hasValidTarget() const
     return SVGAnimationElement::hasValidTarget() && (targetElement->isStyledTransformable() || targetElement->hasTagName(SVGNames::textTag));
 }
 
-void SVGAnimateTransformElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGAnimateTransformElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::typeAttr) {
         if (attr->value() == "translate")

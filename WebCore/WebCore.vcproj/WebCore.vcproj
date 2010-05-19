@@ -29565,10 +29565,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\MappedAttribute.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\MappedAttributeEntry.h"
 				>
 			</File>

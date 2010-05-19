@@ -31,6 +31,7 @@
 #include "CSSStyleSelector.h"
 #endif
 
+#include "Attribute.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
@@ -39,7 +40,6 @@
 #include "Frame.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "Page.h"
 #include "RenderTextControlSingleLine.h"
 #include "SelectionController.h"
@@ -219,7 +219,7 @@ void InputElement::handleBeforeTextInsertedEvent(InputElementData& data, InputEl
     textEvent->setText(sanitizeUserInputValue(inputElement, textEvent->text(), appendableLength));
 }
 
-void InputElement::parseSizeAttribute(InputElementData& data, Element* element, MappedAttribute* attribute)
+void InputElement::parseSizeAttribute(InputElementData& data, Element* element, Attribute* attribute)
 {
     data.setSize(attribute->isNull() ? InputElement::s_defaultSize : attribute->value().toInt());
 
@@ -227,7 +227,7 @@ void InputElement::parseSizeAttribute(InputElementData& data, Element* element, 
         renderer->setNeedsLayoutAndPrefWidthsRecalc();
 }
 
-void InputElement::parseMaxLengthAttribute(InputElementData& data, InputElement* inputElement, Element* element, MappedAttribute* attribute)
+void InputElement::parseMaxLengthAttribute(InputElementData& data, InputElement* inputElement, Element* element, Attribute* attribute)
 {
     int maxLength = attribute->isNull() ? InputElement::s_maximumLength : attribute->value().toInt();
     if (maxLength <= 0 || maxLength > InputElement::s_maximumLength)

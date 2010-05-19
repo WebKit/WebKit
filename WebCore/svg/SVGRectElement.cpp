@@ -23,7 +23,7 @@
 #if ENABLE(SVG)
 #include "SVGRectElement.h"
 
-#include "MappedAttribute.h"
+#include "Attribute.h"
 #include "RenderPath.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
@@ -48,7 +48,7 @@ SVGRectElement::~SVGRectElement()
 {
 }
 
-void SVGRectElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGRectElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::xAttr)
         setXBaseValue(SVGLength(LengthModeWidth, attr->value()));

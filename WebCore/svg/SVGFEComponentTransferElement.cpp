@@ -24,7 +24,6 @@
 #include "SVGFEComponentTransferElement.h"
 
 #include "Attr.h"
-#include "MappedAttribute.h"
 #include "SVGFEFuncAElement.h"
 #include "SVGFEFuncBElement.h"
 #include "SVGFEFuncGElement.h"
@@ -43,7 +42,7 @@ SVGFEComponentTransferElement::~SVGFEComponentTransferElement()
 {
 }
 
-void SVGFEComponentTransferElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGFEComponentTransferElement::parseMappedAttribute(Attribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::inAttr)

@@ -28,15 +28,15 @@
 #if ENABLE(VIDEO)
 #include "HTMLVideoElement.h"
 
-#include "Chrome.h"
-#include "ChromeClient.h"
+#include "Attribute.h"
 #include "CSSHelper.h"
 #include "CSSPropertyNames.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "Page.h"
 #include "RenderImage.h"
 #include "RenderVideo.h"
@@ -91,7 +91,7 @@ void HTMLVideoElement::detach()
             m_imageLoader.clear();
 }
 
-void HTMLVideoElement::parseMappedAttribute(MappedAttribute* attr)
+void HTMLVideoElement::parseMappedAttribute(Attribute* attr)
 {
     const QualifiedName& attrName = attr->name();
 

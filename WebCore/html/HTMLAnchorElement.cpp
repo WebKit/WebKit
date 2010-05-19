@@ -24,13 +24,13 @@
 #include "config.h"
 #include "HTMLAnchorElement.h"
 
+#include "Attribute.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoaderTypes.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
-#include "MappedAttribute.h"
 #include "MouseEvent.h"
 #include "Page.h"
 #include "RenderImage.h"
@@ -251,7 +251,7 @@ void HTMLAnchorElement::setActive(bool down, bool pause)
     ContainerNode::setActive(down, pause);
 }
 
-void HTMLAnchorElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLAnchorElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == hrefAttr) {
         bool wasLink = isLink();

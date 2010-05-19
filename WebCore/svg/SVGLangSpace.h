@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-    class MappedAttribute;
+    class Attribute;
     class QualifiedName;
 
     class SVGLangSpace {
@@ -40,7 +40,7 @@ namespace WebCore {
         const AtomicString& xmlspace() const;
         void setXmlspace(const AtomicString& xmlSpace);
 
-        bool parseMappedAttribute(MappedAttribute*);
+        bool parseMappedAttribute(Attribute*);
         bool isKnownAttribute(const QualifiedName&);
 
     private:

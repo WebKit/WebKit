@@ -37,7 +37,7 @@ public:
     bool parseViewBox(Document*, const UChar*& start, const UChar* end, float& x, float& y, float& w, float& h, bool validate = true);
     static AffineTransform viewBoxToViewTransform(const FloatRect& viewBoxRect, const SVGPreserveAspectRatio&, float viewWidth, float viewHeight);
 
-    bool parseMappedAttribute(Document*, MappedAttribute*);
+    bool parseMappedAttribute(Document*, Attribute*);
     bool isKnownAttribute(const QualifiedName&);
 
     virtual void setViewBoxBaseValue(SVGAnimatedPropertyTraits<FloatRect>::PassType) = 0;

@@ -23,10 +23,10 @@
 #include "config.h"
 #include "HTMLPreElement.h"
 
+#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 
 namespace WebCore {
 
@@ -46,7 +46,7 @@ bool HTMLPreElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEn
     return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLPreElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLPreElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == widthAttr) {
         // FIXME: Implement this some day.  Width on a <pre> is the # of characters that

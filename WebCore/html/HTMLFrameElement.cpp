@@ -24,10 +24,10 @@
 #include "config.h"
 #include "HTMLFrameElement.h"
 
+#include "Attribute.h"
 #include "Frame.h"
 #include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "RenderFrame.h"
 
 namespace WebCore {
@@ -80,7 +80,7 @@ void HTMLFrameElement::attach()
     }
 }
 
-void HTMLFrameElement::parseMappedAttribute(MappedAttribute* attr)
+void HTMLFrameElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == frameborderAttr) {
         m_frameBorder = attr->value().toInt();

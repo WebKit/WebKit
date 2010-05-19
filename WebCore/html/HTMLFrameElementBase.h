@@ -49,7 +49,7 @@ protected:
 
     bool isURLAllowed() const;
 
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
 
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();

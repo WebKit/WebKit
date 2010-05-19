@@ -34,7 +34,7 @@ public:
     WMLPElement(const QualifiedName& tagName, Document*);
 
     virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
 
     virtual void insertedIntoDocument();
 

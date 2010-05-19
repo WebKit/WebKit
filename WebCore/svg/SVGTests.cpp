@@ -23,9 +23,9 @@
 #if ENABLE(SVG)
 #include "SVGTests.h"
 
+#include "Attribute.h"
 #include "DOMImplementation.h"
 #include "Language.h"
-#include "MappedAttribute.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
 #include "SVGStringList.h"
@@ -93,7 +93,7 @@ bool SVGTests::isValid() const
     return true;
 }
 
-bool SVGTests::parseMappedAttribute(MappedAttribute* attr)
+bool SVGTests::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::requiredFeaturesAttr) {
         requiredFeatures()->reset(attr->value());

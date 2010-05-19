@@ -1204,7 +1204,6 @@ HEADERS += \
     dom/ExceptionCode.h \
     dom/InputElement.h \
     dom/KeyboardEvent.h \
-    dom/MappedAttribute.h \
     dom/MessageChannel.h \
     dom/MessageEvent.h \
     dom/MessagePortChannel.h \

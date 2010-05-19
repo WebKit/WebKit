@@ -22,8 +22,9 @@
 
 #if ENABLE(WML)
 #include "WMLSelectElement.h"
+
+#include "Attribute.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "OptionElement.h"
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
@@ -129,7 +130,7 @@ void WMLSelectElement::childrenChanged(bool changedByParser, Node* beforeChange,
     WMLFormControlElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
 
-void WMLSelectElement::parseMappedAttribute(MappedAttribute* attr) 
+void WMLSelectElement::parseMappedAttribute(Attribute* attr) 
 {
     if (attr->name() == HTMLNames::multipleAttr)
         SelectElement::parseMultipleAttribute(m_data, this, attr);

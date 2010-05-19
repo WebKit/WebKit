@@ -23,7 +23,7 @@
 #if ENABLE(SVG)
 #include "SVGLangSpace.h"
 
-#include "MappedAttribute.h"
+#include "Attribute.h"
 #include "SVGElement.h"
 #include "XMLNames.h"
 #include <wtf/StdLibExtras.h>
@@ -63,7 +63,7 @@ void SVGLangSpace::setXmlspace(const AtomicString& xmlSpace)
     m_space = xmlSpace;
 }
 
-bool SVGLangSpace::parseMappedAttribute(MappedAttribute* attr)
+bool SVGLangSpace::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name().matches(XMLNames::langAttr)) {
         setXmllang(attr->value());

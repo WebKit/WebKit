@@ -173,7 +173,7 @@ protected:
     HTMLMediaElement(const QualifiedName&, Document*);
     virtual ~HTMLMediaElement();
 
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
     virtual void attach();
 
     virtual void willMoveToNewOwnerDocument();

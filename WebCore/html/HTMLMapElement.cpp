@@ -22,6 +22,7 @@
 #include "config.h"
 #include "HTMLMapElement.h"
 
+#include "Attribute.h"
 #include "Document.h"
 #include "HTMLAreaElement.h"
 #include "HTMLCollection.h"
@@ -29,7 +30,6 @@
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "IntSize.h"
-#include "MappedAttribute.h"
 #include "RenderObject.h"
 
 using namespace std;
@@ -95,7 +95,7 @@ HTMLImageElement* HTMLMapElement::imageElement() const
     return 0;    
 }
     
-void HTMLMapElement::parseMappedAttribute(MappedAttribute* attr)
+void HTMLMapElement::parseMappedAttribute(Attribute* attr)
 {
     const QualifiedName& attrName = attr->name();
     if (attrName == idAttributeName() || attrName == nameAttr) {

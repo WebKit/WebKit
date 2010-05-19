@@ -26,14 +26,14 @@
 #include "config.h"
 #include "HTMLButtonElement.h"
 
+#include "Attribute.h"
 #include "EventNames.h"
 #include "FormDataList.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
-#include "ScriptEventListener.h"
 #include "KeyboardEvent.h"
-#include "MappedAttribute.h"
 #include "RenderButton.h"
+#include "ScriptEventListener.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -78,7 +78,7 @@ const AtomicString& HTMLButtonElement::formControlType() const
     return emptyAtom;
 }
 
-void HTMLButtonElement::parseMappedAttribute(MappedAttribute* attr)
+void HTMLButtonElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == typeAttr) {
         if (equalIgnoringCase(attr->value(), "reset"))

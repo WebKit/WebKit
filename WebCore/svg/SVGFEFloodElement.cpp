@@ -23,7 +23,7 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFEFloodElement.h"
 
-#include "MappedAttribute.h"
+#include "Attribute.h"
 #include "RenderStyle.h"
 #include "SVGRenderStyle.h"
 

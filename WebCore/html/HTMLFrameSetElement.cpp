@@ -24,16 +24,16 @@
 #include "config.h"
 #include "HTMLFrameSetElement.h"
 
+#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
-#include "ScriptEventListener.h"
 #include "Length.h"
-#include "MappedAttribute.h"
 #include "MouseEvent.h"
 #include "RenderFrameSet.h"
+#include "ScriptEventListener.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -83,7 +83,7 @@ bool HTMLFrameSetElement::mapToEntry(const QualifiedName& attrName, MappedAttrib
     return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLFrameSetElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLFrameSetElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == rowsAttr) {
         if (!attr->isNull()) {

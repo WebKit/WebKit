@@ -23,7 +23,7 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFEBlendElement.h"
 
-#include "MappedAttribute.h"
+#include "Attribute.h"
 
 namespace WebCore {
 
@@ -37,7 +37,7 @@ SVGFEBlendElement::~SVGFEBlendElement()
 {
 }
 
-void SVGFEBlendElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGFEBlendElement::parseMappedAttribute(Attribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::modeAttr) {

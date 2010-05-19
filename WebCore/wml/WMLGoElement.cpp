@@ -23,11 +23,11 @@
 #if ENABLE(WML)
 #include "WMLGoElement.h"
 
+#include "Attribute.h"
 #include "FormData.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "ResourceRequest.h"
 #include "TextEncoding.h"
 #include "WMLCardElement.h"
@@ -61,7 +61,7 @@ void WMLGoElement::deregisterPostfieldElement(WMLPostfieldElement* postfield)
     m_postfieldElements.remove(position);
 }
 
-void WMLGoElement::parseMappedAttribute(MappedAttribute* attr)
+void WMLGoElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == HTMLNames::methodAttr)
         m_formDataBuilder.parseMethodType(attr->value());

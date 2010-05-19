@@ -24,7 +24,7 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFELightElement.h"
 
-#include "MappedAttribute.h"
+#include "Attribute.h"
 #include "SVGNames.h"
 
 namespace WebCore {
@@ -39,7 +39,7 @@ SVGFELightElement::~SVGFELightElement()
 {
 }
 
-void SVGFELightElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGFELightElement::parseMappedAttribute(Attribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::azimuthAttr)

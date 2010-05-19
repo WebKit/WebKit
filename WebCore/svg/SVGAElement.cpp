@@ -25,6 +25,7 @@
 #include "SVGAElement.h"
 
 #include "Attr.h"
+#include "Attribute.h"
 #include "CSSHelper.h"
 #include "Document.h"
 #include "EventHandler.h"
@@ -33,7 +34,6 @@
 #include "FrameLoader.h"
 #include "FrameLoaderTypes.h"
 #include "KeyboardEvent.h"
-#include "MappedAttribute.h"
 #include "MouseEvent.h"
 #include "PlatformMouseEvent.h"
 #include "RenderSVGInline.h"
@@ -69,7 +69,7 @@ String SVGAElement::title() const
     return SVGStyledElement::title();
 }
 
-void SVGAElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGAElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::targetAttr)
         setTargetBaseValue(attr->value());

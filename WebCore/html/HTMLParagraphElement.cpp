@@ -23,11 +23,11 @@
 #include "config.h"
 #include "HTMLParagraphElement.h"
 
+#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 
 namespace WebCore {
 
@@ -53,7 +53,7 @@ bool HTMLParagraphElement::mapToEntry(const QualifiedName& attrName, MappedAttri
     return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLParagraphElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLParagraphElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == alignAttr) {
         String v = attr->value();

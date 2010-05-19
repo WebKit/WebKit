@@ -24,9 +24,9 @@
 #if ENABLE(SVG)
 #include "SVGClipPathElement.h"
 
+#include "Attribute.h"
 #include "CSSStyleSelector.h"
 #include "Document.h"
-#include "MappedAttribute.h"
 #include "RenderSVGResourceClipper.h"
 #include "SVGNames.h"
 #include "SVGTransformList.h"
@@ -47,7 +47,7 @@ SVGClipPathElement::~SVGClipPathElement()
 {
 }
 
-void SVGClipPathElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGClipPathElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::clipPathUnitsAttr) {
         if (attr->value() == "userSpaceOnUse")

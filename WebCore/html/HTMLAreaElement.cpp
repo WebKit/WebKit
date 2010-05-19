@@ -22,11 +22,11 @@
 #include "config.h"
 #include "HTMLAreaElement.h"
 
+#include "Attribute.h"
 #include "HTMLImageElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
-#include "MappedAttribute.h"
 #include "Path.h"
 #include "RenderObject.h"
 
@@ -50,7 +50,7 @@ PassRefPtr<HTMLAreaElement> HTMLAreaElement::create(const QualifiedName& tagName
     return adoptRef(new HTMLAreaElement(tagName, document));
 }
 
-void HTMLAreaElement::parseMappedAttribute(MappedAttribute* attr)
+void HTMLAreaElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == shapeAttr) {
         if (equalIgnoringCase(attr->value(), "default"))

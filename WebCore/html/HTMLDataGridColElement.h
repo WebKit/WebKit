@@ -43,7 +43,7 @@ public:
     virtual int tagPriority() const { return 0; }
     virtual void insertedIntoTree(bool /*deep*/);
     virtual void removedFromTree(bool /*deep*/);
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
 
     String label() const;
     void setLabel(const String&);

@@ -24,6 +24,7 @@
 #if ENABLE(SVG_FONTS)
 #include "SVGFontFaceElement.h"
 
+#include "Attribute.h"
 #include "CSSFontFaceRule.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSParser.h"
@@ -35,7 +36,6 @@
 #include "CSSValueList.h"
 #include "Document.h"
 #include "Font.h"
-#include "MappedAttribute.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceSrcElement.h"
 #include "SVGGlyphElement.h"
@@ -109,7 +109,7 @@ static int cssPropertyIdForSVGAttributeName(const QualifiedName& attrName)
     return propertyNameToIdMap->get(attrName.localName().impl());
 }
 
-void SVGFontFaceElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGFontFaceElement::parseMappedAttribute(Attribute* attr)
 {    
     int propId = cssPropertyIdForSVGAttributeName(attr->name());
     if (propId > 0) {

@@ -33,7 +33,7 @@ class WMLOnEventElement : public WMLElement {
 public:
     WMLOnEventElement(const QualifiedName& tagName, Document*);
 
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
 
     void registerTask(WMLTaskElement*);
     void deregisterTask(WMLTaskElement*);

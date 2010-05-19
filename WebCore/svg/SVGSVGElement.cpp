@@ -25,6 +25,7 @@
 #include "SVGSVGElement.h"
 
 #include "AffineTransform.h"
+#include "Attribute.h"
 #include "CSSHelper.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
@@ -34,7 +35,6 @@
 #include "FloatRect.h"
 #include "Frame.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGViewportContainer.h"
 #include "SMILTimeContainer.h"
@@ -220,7 +220,7 @@ void SVGSVGElement::setCurrentTranslate(const FloatPoint &translation)
         document()->renderer()->repaint();
 }
 
-void SVGSVGElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGSVGElement::parseMappedAttribute(Attribute* attr)
 {
     if (!nearestViewportElement()) {
         bool setListener = true;
@@ -282,7 +282,7 @@ static void updateCSSForAttribute(SVGSVGElement* element, const QualifiedName& a
     Attribute* attribute = element->attributes(false)->getAttributeItem(attrName);
     if (!attribute || !attribute->isMappedAttribute())
         return;
-    element->addCSSProperty(toMappedAttribute(attribute), property, value.valueAsString());
+    element->addCSSProperty(attribute, property, value.valueAsString());
 }
 
 void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)

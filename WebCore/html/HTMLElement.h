@@ -79,15 +79,15 @@ public:
 
     HTMLFormElement* form() const { return virtualForm(); }
 
-    static void addHTMLAlignmentToStyledElement(StyledElement*, MappedAttribute*);
+    static void addHTMLAlignmentToStyledElement(StyledElement*, Attribute*);
 
 protected:
     HTMLElement(const QualifiedName& tagName, Document*, ConstructionType = CreateHTMLElementZeroRefCount);
 
-    void addHTMLAlignment(MappedAttribute*);
+    void addHTMLAlignment(Attribute*);
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
 
     virtual bool childAllowed(Node* newChild); // Error-checking during parsing that checks the DTD
 
@@ -104,7 +104,7 @@ protected:
 private:
     virtual String nodeName() const;
 
-    void setContentEditable(MappedAttribute*);
+    void setContentEditable(Attribute*);
 
     virtual HTMLFormElement* virtualForm() const;
 

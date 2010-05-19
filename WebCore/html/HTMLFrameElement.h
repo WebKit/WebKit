@@ -48,7 +48,7 @@ private:
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
 
     bool m_frameBorder;
     bool m_frameBorderSet;

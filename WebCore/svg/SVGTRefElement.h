@@ -33,7 +33,7 @@ namespace WebCore {
         SVGTRefElement(const QualifiedName&, Document*);
         virtual ~SVGTRefElement();
 
-        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void parseMappedAttribute(Attribute*);
         virtual void svgAttributeChanged(const QualifiedName&);
         virtual void synchronizeProperty(const QualifiedName&);
 

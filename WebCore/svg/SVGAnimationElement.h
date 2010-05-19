@@ -47,7 +47,7 @@ namespace WebCore {
         SVGAnimationElement(const QualifiedName&, Document*);
         virtual ~SVGAnimationElement();
 
-        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void parseMappedAttribute(Attribute*);
         virtual void attributeChanged(Attribute*, bool preserveDecls);
         virtual void synchronizeProperty(const QualifiedName&);
 

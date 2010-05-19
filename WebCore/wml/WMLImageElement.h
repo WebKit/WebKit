@@ -33,7 +33,7 @@ public:
     virtual ~WMLImageElement();
 
     virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
 
     virtual void attach();
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);

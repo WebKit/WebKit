@@ -58,7 +58,7 @@ protected:
     static void updateWidgetCallback(Node*);
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
 
 private:
     virtual void defaultEventHandler(Event*);

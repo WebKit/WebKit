@@ -23,8 +23,8 @@
 #if ENABLE(WML)
 #include "WMLTimerElement.h"
 
+#include "Attribute.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "WMLCardElement.h"
 #include "WMLDocument.h"
 #include "WMLNames.h"
@@ -42,7 +42,7 @@ WMLTimerElement::WMLTimerElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
-void WMLTimerElement::parseMappedAttribute(MappedAttribute* attr)
+void WMLTimerElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == HTMLNames::nameAttr)
         m_name = parseValueForbiddingVariableReferences(attr->value());

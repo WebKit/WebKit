@@ -24,9 +24,9 @@
 #include "config.h"
 #include "HTMLStyleElement.h"
 
+#include "Attribute.h"
 #include "Document.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 
 namespace WebCore {
 
@@ -41,7 +41,7 @@ HTMLStyleElement::HTMLStyleElement(const QualifiedName& tagName, Document* doc, 
 }
 
 // other stuff...
-void HTMLStyleElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLStyleElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == mediaAttr)
         m_media = attr->value().string().lower();

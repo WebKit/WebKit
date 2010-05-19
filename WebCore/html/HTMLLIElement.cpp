@@ -23,10 +23,10 @@
 #include "config.h"
 #include "HTMLLIElement.h"
 
+#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "RenderListItem.h"
 
 namespace WebCore {
@@ -50,7 +50,7 @@ bool HTMLLIElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEnt
     return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLLIElement::parseMappedAttribute(MappedAttribute* attr)
+void HTMLLIElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == valueAttr) {
         m_requestedValue = attr->value().toInt();

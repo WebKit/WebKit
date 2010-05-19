@@ -28,6 +28,7 @@
 #include "config.h"
 #include "HTMLTokenizer.h"
 
+#include "Attribute.h"
 #include "CSSHelper.h"
 #include "Cache.h"
 #include "CachedScript.h"
@@ -45,7 +46,6 @@
 #include "HTMLViewSourceDocument.h"
 #include "ImageLoader.h"
 #include "InspectorTimelineAgent.h"
-#include "MappedAttribute.h"
 #include "Page.h"
 #include "PreloadScanner.h"
 #include "ScriptController.h"
@@ -135,7 +135,7 @@ inline void Token::addAttribute(AtomicString& attrName, const AtomicString& attr
 {
     if (!attrName.isEmpty()) {
         ASSERT(!attrName.contains('/'));
-        RefPtr<MappedAttribute> a = MappedAttribute::create(attrName, attributeValue);
+        RefPtr<Attribute> a = Attribute::createMapped(attrName, attributeValue);
         if (!attrs) {
             attrs = NamedMappedAttrMap::create();
             attrs->reserveInitialCapacity(10);

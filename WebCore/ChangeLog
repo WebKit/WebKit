@@ -1,3 +1,11 @@
+2010-05-19  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Anders Carlsson.
+
+        Complete the merge of MappedAttribute and Attribute.
+
+        Files elided for brevity.
+
 2010-05-19  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Steve Block.

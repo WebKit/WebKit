@@ -57,7 +57,7 @@ private:
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual int tagPriority() const { return 0; }
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
     virtual bool supportsFocus() const;
     virtual String target() const;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;

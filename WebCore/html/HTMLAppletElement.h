@@ -42,7 +42,7 @@ private:
 
     virtual int tagPriority() const { return 1; }
 
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
     
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);

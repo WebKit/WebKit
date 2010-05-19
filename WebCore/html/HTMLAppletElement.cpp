@@ -24,9 +24,9 @@
 #include "config.h"
 #include "HTMLAppletElement.h"
 
+#include "Attribute.h"
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "RenderApplet.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -46,7 +46,7 @@ PassRefPtr<HTMLAppletElement> HTMLAppletElement::create(const QualifiedName& tag
     return adoptRef(new HTMLAppletElement(tagName, document));
 }
 
-void HTMLAppletElement::parseMappedAttribute(MappedAttribute* attr)
+void HTMLAppletElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == altAttr ||
         attr->name() == archiveAttr ||

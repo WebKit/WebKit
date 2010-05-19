@@ -24,6 +24,7 @@
 #include "config.h"
 #include "HTMLLinkElement.h"
 
+#include "Attribute.h"
 #include "CSSHelper.h"
 #include "CachedCSSStyleSheet.h"
 #include "DocLoader.h"
@@ -33,7 +34,6 @@
 #include "FrameLoaderClient.h"
 #include "FrameTree.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "Page.h"
@@ -108,7 +108,7 @@ StyleSheet* HTMLLinkElement::sheet() const
     return m_sheet.get();
 }
 
-void HTMLLinkElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLLinkElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == relAttr) {
         tokenizeRelAttribute(attr->value(), m_relAttribute);

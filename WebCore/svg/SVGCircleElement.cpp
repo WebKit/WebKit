@@ -23,8 +23,8 @@
 #if ENABLE(SVG)
 #include "SVGCircleElement.h"
 
+#include "Attribute.h"
 #include "FloatPoint.h"
-#include "MappedAttribute.h"
 #include "RenderPath.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
@@ -46,7 +46,7 @@ SVGCircleElement::~SVGCircleElement()
 {
 }
 
-void SVGCircleElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGCircleElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::cxAttr)
         setCxBaseValue(SVGLength(LengthModeWidth, attr->value()));       

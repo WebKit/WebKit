@@ -23,8 +23,8 @@
 #if ENABLE(SVG)
 #include "SVGLineElement.h"
 
+#include "Attribute.h"
 #include "FloatPoint.h"
-#include "MappedAttribute.h"
 #include "RenderPath.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
@@ -47,7 +47,7 @@ SVGLineElement::~SVGLineElement()
 {
 }
 
-void SVGLineElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGLineElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::x1Attr)
         setX1BaseValue(SVGLength(LengthModeWidth, attr->value()));

@@ -23,6 +23,7 @@
 #include "config.h"
 #include "HTMLImageElement.h"
 
+#include "Attribute.h"
 #include "CSSHelper.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
@@ -31,7 +32,6 @@
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "RenderImage.h"
 #include "ScriptEventListener.h"
 
@@ -88,7 +88,7 @@ bool HTMLImageElement::mapToEntry(const QualifiedName& attrName, MappedAttribute
     return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLImageElement::parseMappedAttribute(MappedAttribute* attr)
+void HTMLImageElement::parseMappedAttribute(Attribute* attr)
 {
     const QualifiedName& attrName = attr->name();
     if (attrName == altAttr) {

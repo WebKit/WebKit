@@ -32,7 +32,7 @@ public:
     WMLTemplateElement(const QualifiedName&, Document*);
     virtual ~WMLTemplateElement();
 
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
 
     static void registerTemplatesInDocument(Document*);
 };

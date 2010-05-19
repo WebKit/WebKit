@@ -25,10 +25,10 @@
 #include "config.h"
 #include "HTMLTableColElement.h"
 
+#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
-#include "MappedAttribute.h"
 #include "RenderTableCol.h"
 #include "Text.h"
 
@@ -72,7 +72,7 @@ bool HTMLTableColElement::mapToEntry(const QualifiedName& attrName, MappedAttrib
     return HTMLTablePartElement::mapToEntry(attrName, result);
 }
 
-void HTMLTableColElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLTableColElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == spanAttr) {
         _span = !attr->isNull() ? attr->value().toInt() : 1;

@@ -24,7 +24,6 @@
 #include "SVGFETileElement.h"
 
 #include "Attr.h"
-#include "MappedAttribute.h"
 #include "SVGRenderStyle.h"
 
 namespace WebCore {
@@ -38,7 +37,7 @@ SVGFETileElement::~SVGFETileElement()
 {
 }
 
-void SVGFETileElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGFETileElement::parseMappedAttribute(Attribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::inAttr)

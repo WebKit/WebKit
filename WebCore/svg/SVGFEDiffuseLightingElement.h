@@ -39,7 +39,7 @@ public:
     SVGFEDiffuseLightingElement(const QualifiedName&, Document*);
     virtual ~SVGFEDiffuseLightingElement();
 
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
     virtual void synchronizeProperty(const QualifiedName&);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
 

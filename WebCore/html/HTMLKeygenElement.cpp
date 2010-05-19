@@ -25,11 +25,11 @@
 #include "config.h"
 #include "HTMLKeygenElement.h"
 
+#include "Attribute.h"
 #include "Document.h"
 #include "FormDataList.h"
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
-#include "MappedAttribute.h"
 #include "SSLKeyGenerator.h"
 #include "Text.h"
 #include <wtf/StdLibExtras.h>
@@ -61,7 +61,7 @@ const AtomicString& HTMLKeygenElement::formControlType() const
     return keygen;
 }
 
-void HTMLKeygenElement::parseMappedAttribute(MappedAttribute* attr)
+void HTMLKeygenElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == challengeAttr)
         m_challenge = attr->value();

@@ -25,8 +25,8 @@
 #if ENABLE(SVG) && ENABLE(SVG_FOREIGN_OBJECT)
 #include "SVGForeignObjectElement.h"
 
+#include "Attribute.h"
 #include "CSSPropertyNames.h"
-#include "MappedAttribute.h"
 #include "RenderForeignObject.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
@@ -50,7 +50,7 @@ SVGForeignObjectElement::~SVGForeignObjectElement()
 {
 }
 
-void SVGForeignObjectElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGForeignObjectElement::parseMappedAttribute(Attribute* attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::xAttr)

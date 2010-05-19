@@ -23,15 +23,15 @@
 #if ENABLE(WML)
 #include "WMLCardElement.h"
 
+#include "Attribute.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "NodeList.h"
 #include "Page.h"
 #include "RenderStyle.h"
-#include "WMLDocument.h"
 #include "WMLDoElement.h"
+#include "WMLDocument.h"
 #include "WMLInputElement.h"
 #include "WMLIntrinsicEventHandler.h"
 #include "WMLNames.h"
@@ -209,7 +209,7 @@ void WMLCardElement::handleDeckLevelTaskOverridesIfNeeded()
         (*it)->setActive(!cardDoElementNames.contains((*it)->name()));
 }
 
-void WMLCardElement::parseMappedAttribute(MappedAttribute* attr)
+void WMLCardElement::parseMappedAttribute(Attribute* attr)
 {
     WMLIntrinsicEventType eventType = WMLIntrinsicEventUnknown;
 

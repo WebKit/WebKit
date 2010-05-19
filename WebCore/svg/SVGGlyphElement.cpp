@@ -24,7 +24,7 @@
 #if ENABLE(SVG_FONTS)
 #include "SVGGlyphElement.h"
 
-#include "MappedAttribute.h"
+#include "Attribute.h"
 #include "SVGFontData.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
@@ -55,7 +55,7 @@ void SVGGlyphElement::invalidateGlyphCache()
     }
 }
 
-void SVGGlyphElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGGlyphElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::dAttr)
         invalidateGlyphCache();

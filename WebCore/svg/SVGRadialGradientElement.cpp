@@ -26,9 +26,9 @@
 #if ENABLE(SVG)
 #include "SVGRadialGradientElement.h"
 
+#include "Attribute.h"
 #include "FloatConversion.h"
 #include "FloatPoint.h"
-#include "MappedAttribute.h"
 #include "RadialGradientAttributes.h"
 #include "RenderSVGResourceRadialGradient.h"
 #include "SVGLength.h"
@@ -55,7 +55,7 @@ SVGRadialGradientElement::~SVGRadialGradientElement()
 {
 }
 
-void SVGRadialGradientElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGRadialGradientElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::cxAttr)
         setCxBaseValue(SVGLength(LengthModeWidth, attr->value()));

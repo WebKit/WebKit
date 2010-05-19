@@ -46,7 +46,7 @@ public:
     void setFilterRes(unsigned long filterResX, unsigned long filterResY) const;
     FloatRect filterBoundingBox(const FloatRect&) const;
 
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
     virtual void synchronizeProperty(const QualifiedName&);
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);

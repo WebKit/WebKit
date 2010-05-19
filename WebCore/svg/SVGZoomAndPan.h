@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-    class MappedAttribute;
+    class Attribute;
     class QualifiedName;
 
     class SVGZoomAndPan {
@@ -43,7 +43,7 @@ namespace WebCore {
         unsigned short zoomAndPan() const;
         virtual void setZoomAndPan(unsigned short zoomAndPan);
 
-        bool parseMappedAttribute(MappedAttribute*);
+        bool parseMappedAttribute(Attribute*);
         bool isKnownAttribute(const QualifiedName&);
 
         bool parseZoomAndPan(const UChar*& start, const UChar* end);

@@ -23,7 +23,7 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFEColorMatrixElement.h"
 
-#include "MappedAttribute.h"
+#include "Attribute.h"
 #include "SVGNames.h"
 #include "SVGNumberList.h"
 
@@ -40,7 +40,7 @@ SVGFEColorMatrixElement::~SVGFEColorMatrixElement()
 {
 }
 
-void SVGFEColorMatrixElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGFEColorMatrixElement::parseMappedAttribute(Attribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::typeAttr) {

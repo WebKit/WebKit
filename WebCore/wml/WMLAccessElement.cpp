@@ -23,7 +23,7 @@
 #if ENABLE(WML)
 #include "WMLAccessElement.h"
 
-#include "MappedAttribute.h"
+#include "Attribute.h"
 #include "WMLDocument.h"
 #include "WMLNames.h"
 #include "WMLVariables.h"
@@ -37,7 +37,7 @@ WMLAccessElement::WMLAccessElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
-void WMLAccessElement::parseMappedAttribute(MappedAttribute* attr)
+void WMLAccessElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == domainAttr) {
         String value = parseValueForbiddingVariableReferences(attr->value());

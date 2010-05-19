@@ -35,7 +35,7 @@ public:
     virtual int tagPriority() const { return 0; }
     
     virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
 
     String align() const;
     void setAlign(const String&);

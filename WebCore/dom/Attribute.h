@@ -46,6 +46,14 @@ public:
     {
         return adoptRef(new Attribute(name, value, false, 0));
     }
+    static PassRefPtr<Attribute> createMapped(const QualifiedName& name, const AtomicString& value)
+    {
+        return adoptRef(new Attribute(name, value, true, 0));
+    }
+    static PassRefPtr<Attribute> createMapped(const AtomicString& name, const AtomicString& value)
+    {
+        return adoptRef(new Attribute(name, value, true, 0));
+    }
 
     const AtomicString& value() const { return m_value; }
     const AtomicString& prefix() const { return m_name.prefix(); }
@@ -72,7 +80,7 @@ public:
 
     bool isMappedAttribute() { return m_isMappedAttribute; }
 
-protected:
+private:
     Attribute(const QualifiedName& name, const AtomicString& value, bool isMappedAttribute, CSSMappedAttributeDeclaration* styleDecl)
         : m_isMappedAttribute(isMappedAttribute)
         , m_hasAttr(false)
@@ -91,7 +99,6 @@ protected:
     {
     }
 
-private:
     void bindAttr(Attr*);
     void unbindAttr(Attr*);
 

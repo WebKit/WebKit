@@ -27,14 +27,14 @@
 
 namespace WebCore {
 
-    class MappedAttribute;
+    class Attribute;
 
     class SVGURIReference {
     public:
         SVGURIReference();
         virtual ~SVGURIReference();
 
-        bool parseMappedAttribute(MappedAttribute*);
+        bool parseMappedAttribute(Attribute*);
         bool isKnownAttribute(const QualifiedName&);
 
         static String getTarget(const String& url);

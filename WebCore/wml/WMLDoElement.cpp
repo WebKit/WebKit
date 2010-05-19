@@ -23,19 +23,19 @@
 #if ENABLE(WML)
 #include "WMLDoElement.h"
 
+#include "Attribute.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
-#include "MappedAttribute.h"
 #include "Page.h"
 #include "RenderButton.h"
 #include "WMLCardElement.h"
 #include "WMLDocument.h"
-#include "WMLTaskElement.h"
-#include "WMLTimerElement.h"
 #include "WMLNames.h"
 #include "WMLPageState.h"
+#include "WMLTaskElement.h"
+#include "WMLTimerElement.h"
 #include "WMLVariables.h"
 
 namespace WebCore {
@@ -95,7 +95,7 @@ void WMLDoElement::defaultEventHandler(Event* event)
     }
 }
 
-void WMLDoElement::parseMappedAttribute(MappedAttribute* attr)
+void WMLDoElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == HTMLNames::typeAttr)
         m_type = parseValueForbiddingVariableReferences(attr->value());

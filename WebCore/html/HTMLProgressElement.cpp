@@ -22,12 +22,12 @@
 #if ENABLE(PROGRESS_TAG)
 #include "HTMLProgressElement.h"
 
+#include "Attribute.h"
 #include "EventNames.h"
 #include "FormDataList.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLParser.h"
-#include "MappedAttribute.h"
 #include "RenderProgress.h"
 #include <wtf/StdLibExtras.h>
 
@@ -57,7 +57,7 @@ const AtomicString& HTMLProgressElement::formControlType() const
     return progress;
 }
 
-void HTMLProgressElement::parseMappedAttribute(MappedAttribute* attribute)
+void HTMLProgressElement::parseMappedAttribute(Attribute* attribute)
 {
     if (attribute->name() == valueAttr) {
         if (renderer())

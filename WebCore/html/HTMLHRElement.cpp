@@ -23,10 +23,10 @@
 #include "config.h"
 #include "HTMLHRElement.h"
 
+#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 
 namespace WebCore {
 
@@ -55,7 +55,7 @@ bool HTMLHRElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEnt
     return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLHRElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLHRElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == alignAttr) {
         if (equalIgnoringCase(attr->value(), "left")) {

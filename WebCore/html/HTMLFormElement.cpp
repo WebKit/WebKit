@@ -25,6 +25,7 @@
 #include "config.h"
 #include "HTMLFormElement.h"
 
+#include "Attribute.h"
 #include "CSSHelper.h"
 #include "DOMFormData.h"
 #include "DOMWindow.h"
@@ -44,10 +45,9 @@
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
-#include "ScriptEventListener.h"
 #include "MIMETypeRegistry.h"
-#include "MappedAttribute.h"
 #include "RenderTextControl.h"
+#include "ScriptEventListener.h"
 #include "ValidityState.h"
 #include <limits>
 #include <wtf/CurrentTime.h>
@@ -431,7 +431,7 @@ void HTMLFormElement::reset()
     m_inreset = false;
 }
 
-void HTMLFormElement::parseMappedAttribute(MappedAttribute* attr)
+void HTMLFormElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == actionAttr)
         m_url = deprecatedParseURL(attr->value());

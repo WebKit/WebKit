@@ -23,7 +23,7 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFETurbulenceElement.h"
 
-#include "MappedAttribute.h"
+#include "Attribute.h"
 #include "SVGParserUtilities.h"
 
 namespace WebCore {
@@ -43,7 +43,7 @@ SVGFETurbulenceElement::~SVGFETurbulenceElement()
 {
 }
 
-void SVGFETurbulenceElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGFETurbulenceElement::parseMappedAttribute(Attribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::typeAttr) {

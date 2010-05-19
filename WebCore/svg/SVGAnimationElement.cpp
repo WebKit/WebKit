@@ -27,16 +27,16 @@
 #if ENABLE(SVG_ANIMATION)
 #include "SVGAnimationElement.h"
 
-#include "Color.h"
+#include "Attribute.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
+#include "Color.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventListener.h"
 #include "FloatConversion.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "PlatformString.h"
 #include "RenderObject.h"
 #include "SVGElementInstance.h"
@@ -140,7 +140,7 @@ static void parseKeySplines(const String& parse, Vector<UnitBezier>& result)
         result.clear();
 }
 
-void SVGAnimationElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGAnimationElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::valuesAttr)
         attr->value().string().split(';', m_values);

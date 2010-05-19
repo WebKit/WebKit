@@ -94,7 +94,7 @@ public:
 protected:
     HTMLAnchorElement(const QualifiedName&, Document*);
 
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
 
 private:
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }

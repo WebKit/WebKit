@@ -47,7 +47,7 @@ public:
     void handleIntrinsicEventIfNeeded();
     void handleDeckLevelTaskOverridesIfNeeded();
 
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
     virtual void insertedIntoDocument();
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 

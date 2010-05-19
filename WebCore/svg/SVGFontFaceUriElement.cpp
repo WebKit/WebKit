@@ -23,11 +23,11 @@
 #if ENABLE(SVG_FONTS)
 #include "SVGFontFaceUriElement.h"
 
+#include "Attribute.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CachedFont.h"
 #include "DocLoader.h"
 #include "Document.h"
-#include "MappedAttribute.h"
 #include "SVGFontFaceElement.h"
 #include "SVGNames.h"
 #include "XLinkNames.h"
@@ -55,7 +55,7 @@ PassRefPtr<CSSFontFaceSrcValue> SVGFontFaceUriElement::srcValue() const
     return src.release();
 }
 
-void SVGFontFaceUriElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGFontFaceUriElement::parseMappedAttribute(Attribute* attr)
 {
     const QualifiedName& attrName = attr->name();
     if (attrName == XLinkNames::hrefAttr)

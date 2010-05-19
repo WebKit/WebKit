@@ -23,11 +23,11 @@
 #include "config.h"
 #include "HTMLScriptElement.h"
 
+#include "Attribute.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "ScriptEventListener.h"
 #include "Text.h"
 
@@ -63,7 +63,7 @@ void HTMLScriptElement::childrenChanged(bool changedByParser, Node* beforeChange
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
 
-void HTMLScriptElement::parseMappedAttribute(MappedAttribute* attr)
+void HTMLScriptElement::parseMappedAttribute(Attribute* attr)
 {
     const QualifiedName& attrName = attr->name();
 

@@ -23,10 +23,10 @@
 #include "config.h"
 #include "HTMLMarqueeElement.h"
 
+#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "RenderLayer.h"
 #include "RenderMarquee.h"
 
@@ -64,7 +64,7 @@ bool HTMLMarqueeElement::mapToEntry(const QualifiedName& attrName, MappedAttribu
     return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLMarqueeElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLMarqueeElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == widthAttr) {
         if (!attr->value().isEmpty())

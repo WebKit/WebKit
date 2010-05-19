@@ -26,10 +26,10 @@
 #if ENABLE(SVG)
 #include "SVGLinearGradientElement.h"
 
+#include "Attribute.h"
 #include "Document.h"
 #include "FloatPoint.h"
 #include "LinearGradientAttributes.h"
-#include "MappedAttribute.h"
 #include "RenderSVGResourceLinearGradient.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
@@ -53,7 +53,7 @@ SVGLinearGradientElement::~SVGLinearGradientElement()
 {
 }
 
-void SVGLinearGradientElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGLinearGradientElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::x1Attr)
         setX1BaseValue(SVGLength(LengthModeWidth, attr->value()));

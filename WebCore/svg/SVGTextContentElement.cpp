@@ -23,13 +23,13 @@
 #if ENABLE(SVG)
 #include "SVGTextContentElement.h"
 
+#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "ExceptionCode.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "Frame.h"
-#include "MappedAttribute.h"
 #include "Position.h"
 #include "RenderSVGText.h"
 #include "SVGCharacterData.h"
@@ -482,7 +482,7 @@ void SVGTextContentElement::selectSubString(unsigned charnum, unsigned nchars, E
     controller->setSelection(VisibleSelection(start, end));
 }
 
-void SVGTextContentElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGTextContentElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::lengthAdjustAttr) {
         if (attr->value() == "spacing")

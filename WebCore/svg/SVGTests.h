@@ -26,10 +26,10 @@
 
 namespace WebCore {
 
-    class MappedAttribute;
-    class String;
-    class SVGStringList;
+    class Attribute;
     class QualifiedName;
+    class SVGStringList;
+    class String;
 
     class SVGTests {
     public:
@@ -44,7 +44,7 @@ namespace WebCore {
 
         bool isValid() const;
         
-        bool parseMappedAttribute(MappedAttribute*);
+        bool parseMappedAttribute(Attribute*);
         bool isKnownAttribute(const QualifiedName&);
 
     private:

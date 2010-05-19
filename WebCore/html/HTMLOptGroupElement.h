@@ -39,7 +39,7 @@ public:
     virtual const AtomicString& formControlType() const;
     virtual bool supportsFocus() const;
     virtual bool isFocusable() const;
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(Attribute*);
     virtual bool rendererIsNeeded(RenderStyle*) { return false; }
     virtual void attach();
     virtual void detach();

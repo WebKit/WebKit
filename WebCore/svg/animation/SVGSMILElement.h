@@ -45,7 +45,7 @@ namespace WebCore {
         
         static bool isSMILElement(Node* node);
         
-        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void parseMappedAttribute(Attribute*);
         virtual void attributeChanged(Attribute*, bool preserveDecls);
         virtual void insertedIntoDocument();
         virtual void removedFromDocument();

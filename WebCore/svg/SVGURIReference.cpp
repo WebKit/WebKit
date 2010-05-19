@@ -23,7 +23,7 @@
 #if ENABLE(SVG)
 #include "SVGURIReference.h"
 
-#include "MappedAttribute.h"
+#include "Attribute.h"
 
 namespace WebCore {
 
@@ -35,7 +35,7 @@ SVGURIReference::~SVGURIReference()
 {
 }
 
-bool SVGURIReference::parseMappedAttribute(MappedAttribute* attr)
+bool SVGURIReference::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name().matches(XLinkNames::hrefAttr)) {
         setHrefBaseValue(attr->value());

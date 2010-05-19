@@ -24,7 +24,7 @@
 #if ENABLE(SVG)
 #include "SVGMarkerElement.h"
 
-#include "MappedAttribute.h"
+#include "Attribute.h"
 #include "PlatformString.h"
 #include "RenderSVGResourceMarker.h"
 #include "SVGFitToViewBox.h"
@@ -62,7 +62,7 @@ AffineTransform SVGMarkerElement::viewBoxToViewTransform(float viewWidth, float 
     return SVGFitToViewBox::viewBoxToViewTransform(viewBox(), preserveAspectRatio(), viewWidth, viewHeight);
 }
 
-void SVGMarkerElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGMarkerElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::markerUnitsAttr) {
         if (attr->value() == "userSpaceOnUse")

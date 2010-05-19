@@ -23,7 +23,7 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFEMergeNodeElement.h"
 
-#include "MappedAttribute.h"
+#include "Attribute.h"
 
 namespace WebCore {
 
@@ -36,7 +36,7 @@ SVGFEMergeNodeElement::~SVGFEMergeNodeElement()
 {
 }
 
-void SVGFEMergeNodeElement::parseMappedAttribute(MappedAttribute* attr)
+void SVGFEMergeNodeElement::parseMappedAttribute(Attribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::inAttr)
