@@ -1,3 +1,14 @@
+2010-05-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        user.py throws exception when readline module is missing
+        https://bugs.webkit.org/show_bug.cgi?id=39239
+
+        * Scripts/webkitpy/common/system/user.py:
+         - The error handling path requires the "sys" module,
+           so added an import sys at the top of the file.
+
 2010-05-18  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
