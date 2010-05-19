@@ -35,6 +35,8 @@
 #include <wtf/HashSet.h>
 #include <wtf/Assertions.h>
 
+using namespace WebCore;
+
 // FIXME: Consider removing locks if we're singlethreaded already.
 // The static initializer here should work okay, but we want to avoid
 // static initialization in general.
