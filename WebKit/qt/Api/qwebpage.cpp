@@ -3402,7 +3402,7 @@ QString QWebPage::userAgentForUrl(const QUrl&) const
         languageName = d->client->ownerWidget()->locale().name();
     else
         languageName = QLocale().name();
-    languageName[2] = QLatin1Char('-');
+    languageName.replace(QLatin1Char('_'), QLatin1Char('-'));
 
     // Application name/version
     QString appName = QCoreApplication::applicationName();

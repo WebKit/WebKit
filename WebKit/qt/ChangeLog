@@ -1,3 +1,13 @@
+2010-05-19  Denis Dzyubenko <denis.dzyubenko@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        When creating the UA, do not sassmue the language code is a
+        two-letter iso639-1 code.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::userAgentForUrl):
+
 2010-05-18  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Kenneth Rohde Christiansen.
