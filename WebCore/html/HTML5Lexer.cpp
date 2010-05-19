@@ -920,27 +920,272 @@ void HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             // FIXME: Handle EOF properly.
             break;
         }
-        case DOCTYPEState:
-        case BeforeDOCTYPENameState:
-        case DOCTYPENameState:
-        case AfterDOCTYPENameState:
-        case AfterDOCTYPEPublicKeywordState:
-        case BeforeDOCTYPEPublicIdentifierState:
-        case DOCTYPEPublicIdentifierDoubleQuotedState:
-        case DOCTYPEPublicIdentifierSingleQuotedState:
-        case AfterDOCTYPEPublicIdentifierState:
-        case BetweenDOCTYPEPublicAndSystemIdentifiersState:
-        case AfterDOCTYPESystemKeywordState:
-        case BeforeDOCTYPESystemIdentifierState:
-        case DOCTYPESystemIdentifierDoubleQuotedState:
-        case DOCTYPESystemIdentifierSingleQuotedState:
-        case AfterDOCTYPESystemIdentifierState:
-        case BogusDOCTYPEState:
-        case CDATASectionState:
-        case TokenizingCharacterReferencesState:
-        default:
+        case DOCTYPEState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+                m_state = BeforeDOCTYPENameState;
+            else {
+                emitParseError();
+                m_state = BeforeDOCTYPENameState;
+                continue;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case BeforeDOCTYPENameState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+                break;
+            else if (cc >= 'A' && cc <= 'Z') {
+                notImplemented();
+                m_state = DOCTYPENameState;
+            } else if (cc == '>') {
+                emitParseError();
+                notImplemented();
+                emitCurrentDoctypeToken();
+                m_state = DataState;
+            } else {
+                notImplemented();
+                m_state = DOCTYPENameState;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case DOCTYPENameState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+                m_state = AfterDOCTYPENameState;
+            else if (cc == '>') {
+                emitCurrentDoctypeToken();
+                m_state = DataState;
+            } else if (cc >= 'A' && cc <= 'Z')
+                notImplemented();
+            else
+                notImplemented();
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case AfterDOCTYPENameState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+                break;
+            else if (cc == '>') {
+                emitCurrentDoctypeToken();
+                m_state = DataState;
+            } else
+                notImplemented();
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case AfterDOCTYPEPublicKeywordState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+                m_state = BeforeDOCTYPEPublicIdentifierState;
+            else if (cc == '"') {
+                emitParseError();
+                notImplemented();
+                m_state = DOCTYPEPublicIdentifierDoubleQuotedState;
+            } else if (cc == '\'') {
+                emitParseError();
+                notImplemented();
+                m_state = DOCTYPEPublicIdentifierSingleQuotedState;
+            } else if (cc == '>') {
+                emitParseError();
+                notImplemented();
+                emitCurrentDoctypeToken();
+                m_state = DataState;
+            } else {
+                emitParseError();
+                notImplemented();
+                m_state = BogusDOCTYPEState;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case BeforeDOCTYPEPublicIdentifierState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+                break;
+            else if (cc == '"') {
+                notImplemented();
+                m_state = DOCTYPEPublicIdentifierDoubleQuotedState;
+            } else if (cc == '\'') {
+                notImplemented();
+                m_state = DOCTYPEPublicIdentifierSingleQuotedState;
+            } else if (cc == '>') {
+                emitParseError();
+                notImplemented();
+                emitCurrentDoctypeToken();
+                m_state = DataState;
+            } else {
+                emitParseError();
+                notImplemented();
+                m_state = BogusDOCTYPEState;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case DOCTYPEPublicIdentifierDoubleQuotedState: {
+            if (cc == '"')
+                m_state = AfterDOCTYPEPublicIdentifierState;
+            else if (cc == '>') {
+                emitParseError();
+                notImplemented();
+                emitCurrentDoctypeToken();
+                m_state = DataState;
+            } else
+                notImplemented();
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case DOCTYPEPublicIdentifierSingleQuotedState: {
+            if (cc == '\'')
+                m_state = AfterDOCTYPEPublicIdentifierState;
+            else if (cc == '>') {
+                emitParseError();
+                notImplemented();
+                emitCurrentDoctypeToken();
+                m_state = DataState;
+            } else
+                notImplemented();
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case AfterDOCTYPEPublicIdentifierState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+                m_state = BetweenDOCTYPEPublicAndSystemIdentifiersState;
+            else if (cc == '>') {
+                emitCurrentDoctypeToken();
+                m_state = DataState;
+            } else if (cc == '"') {
+                emitParseError();
+                notImplemented();
+                m_state = DOCTYPESystemIdentifierDoubleQuotedState;
+            } else if (cc == '\'') {
+                emitParseError();
+                notImplemented();
+                m_state = DOCTYPESystemIdentifierSingleQuotedState;
+            } else {
+                emitParseError();
+                notImplemented();
+                m_state = BogusDOCTYPEState;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case BetweenDOCTYPEPublicAndSystemIdentifiersState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+                m_state = BetweenDOCTYPEPublicAndSystemIdentifiersState;
+            else if (cc == '>') {
+                emitCurrentDoctypeToken();
+                m_state = DataState;
+            } else if (cc == '"') {
+                notImplemented();
+                m_state = DOCTYPESystemIdentifierDoubleQuotedState;
+            } else if (cc == '\'') {
+                notImplemented();
+                m_state = DOCTYPESystemIdentifierSingleQuotedState;
+            } else {
+                emitParseError();
+                notImplemented();
+                m_state = BogusDOCTYPEState;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case AfterDOCTYPESystemKeywordState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+                m_state = BeforeDOCTYPESystemIdentifierState;
+            else if (cc == '"') {
+                emitParseError();
+                notImplemented();
+                m_state = DOCTYPESystemIdentifierDoubleQuotedState;
+            } else if (cc == '\'') {
+                emitParseError();
+                notImplemented();
+                m_state = DOCTYPESystemIdentifierSingleQuotedState;
+            } else if (cc == '>') {
+                emitParseError();
+                notImplemented();
+                emitCurrentDoctypeToken();
+                m_state = DataState;
+            } else {
+                emitParseError();
+                notImplemented();
+                m_state = BogusDOCTYPEState;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case BeforeDOCTYPESystemIdentifierState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+                break;
+            else if (cc == '"') {
+                notImplemented();
+                m_state = DOCTYPESystemIdentifierDoubleQuotedState;
+            } else if (cc == '\'') {
+                notImplemented();
+                m_state = DOCTYPESystemIdentifierSingleQuotedState;
+            } else if (cc == '>') {
+                emitParseError();
+                notImplemented();
+                emitCurrentDoctypeToken();
+                m_state = DataState;
+            } else {
+                emitParseError();
+                notImplemented();
+                m_state = BogusDOCTYPEState;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case DOCTYPESystemIdentifierDoubleQuotedState: {
+            if (cc == '"')
+                m_state = AfterDOCTYPESystemIdentifierState;
+            else if (cc == '>') {
+                emitParseError();
+                notImplemented();
+                emitCurrentDoctypeToken();
+                m_state = DataState;
+            } else
+                notImplemented();
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case DOCTYPESystemIdentifierSingleQuotedState: {
+            if (cc == '\'')
+                m_state = AfterDOCTYPESystemIdentifierState;
+            else if (cc == '>') {
+                emitParseError();
+                notImplemented();
+                emitCurrentDoctypeToken();
+                m_state = DataState;
+            } else
+                notImplemented();
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case AfterDOCTYPESystemIdentifierState: {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+                break;
+            else if (cc == '>') {
+                emitCurrentDoctypeToken();
+                m_state = DataState;
+            } else {
+                emitParseError();
+                m_state = BogusDOCTYPEState;
+            }
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case BogusDOCTYPEState: {
+            if (cc == '>')
+                emitCurrentDoctypeToken();
+            // FIXME: Handle EOF properly.
+            break;
+        }
+        case CDATASectionState: {
             notImplemented();
             break;
+        }
+        case TokenizingCharacterReferencesState: {
+            notImplemented();
+            break;
+        }
         }
         source.advance();
     }
@@ -971,6 +1216,10 @@ inline void HTML5Lexer::emitParseError()
 inline void HTML5Lexer::emitCurrentTagToken() 
 {
     notImplemented();
+}
+
+inline void HTML5Lexer::emitCurrentDoctypeToken()
+{
 }
 
 }
