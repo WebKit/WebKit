@@ -37,6 +37,7 @@
 #import "DOMStyleSheetInternal.h"
 #import "DOMTestInterfaceInternal.h"
 #import "ExceptionHandlers.h"
+#import "JSMainThreadExecState.h"
 #import "TestInterface.h"
 #import "ThreadCheck.h"
 #import "WebCoreObjCExtras.h"

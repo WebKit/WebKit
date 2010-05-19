@@ -39,6 +39,7 @@
 #import "DOMlogInternal.h"
 #import "EventListener.h"
 #import "ExceptionHandlers.h"
+#import "JSMainThreadExecState.h"
 #import "KURL.h"
 #import "ObjCEventListener.h"
 #import "SerializedScriptValue.h"
@@ -72,66 +73,79 @@
 
 - (int)readOnlyIntAttr
 {
+    WebCore::JSMainThreadNullState state;
     return IMPL->readOnlyIntAttr();
 }
 
 - (NSString *)readOnlyStringAttr
 {
+    WebCore::JSMainThreadNullState state;
     return IMPL->readOnlyStringAttr();
 }
 
 - (DOMTestObj *)readOnlyTestObjAttr
 {
+    WebCore::JSMainThreadNullState state;
     return kit(WTF::getPtr(IMPL->readOnlyTestObjAttr()));
 }
 
 - (int)intAttr
 {
+    WebCore::JSMainThreadNullState state;
     return IMPL->intAttr();
 }
 
 - (void)setIntAttr:(int)newIntAttr
 {
+    WebCore::JSMainThreadNullState state;
     IMPL->setIntAttr(newIntAttr);
 }
 
 - (long long)longLongAttr
 {
+    WebCore::JSMainThreadNullState state;
     return IMPL->longLongAttr();
 }
 
 - (void)setLongLongAttr:(long long)newLongLongAttr
 {
+    WebCore::JSMainThreadNullState state;
     IMPL->setLongLongAttr(newLongLongAttr);
 }
 
 - (unsigned long long)unsignedLongLongAttr
 {
+    WebCore::JSMainThreadNullState state;
     return IMPL->unsignedLongLongAttr();
 }
 
 - (void)setUnsignedLongLongAttr:(unsigned long long)newUnsignedLongLongAttr
 {
+    WebCore::JSMainThreadNullState state;
     IMPL->setUnsignedLongLongAttr(newUnsignedLongLongAttr);
 }
 
 - (NSString *)stringAttr
 {
+    WebCore::JSMainThreadNullState state;
     return IMPL->stringAttr();
 }
 
 - (void)setStringAttr:(NSString *)newStringAttr
 {
+    WebCore::JSMainThreadNullState state;
     IMPL->setStringAttr(newStringAttr);
 }
 
 - (DOMTestObj *)testObjAttr
 {
+    WebCore::JSMainThreadNullState state;
     return kit(WTF::getPtr(IMPL->testObjAttr()));
 }
 
 - (void)setTestObjAttr:(DOMTestObj *)newTestObjAttr
 {
+    WebCore::JSMainThreadNullState state;
     ASSERT(newTestObjAttr);
 
     IMPL->setTestObjAttr(core(newTestObjAttr));
@@ -139,16 +153,19 @@
 
 - (int)attrWithException
 {
+    WebCore::JSMainThreadNullState state;
     return IMPL->attrWithException();
 }
 
 - (void)setAttrWithException:(int)newAttrWithException
 {
+    WebCore::JSMainThreadNullState state;
     IMPL->setAttrWithException(newAttrWithException);
 }
 
 - (int)attrWithSetterException
 {
+    WebCore::JSMainThreadNullState state;
     WebCore::ExceptionCode ec = 0;
     int result = IMPL->attrWithSetterException(ec);
     WebCore::raiseOnDOMError(ec);
@@ -157,6 +174,7 @@
 
 - (void)setAttrWithSetterException:(int)newAttrWithSetterException
 {
+    WebCore::JSMainThreadNullState state;
     WebCore::ExceptionCode ec = 0;
     IMPL->setAttrWithSetterException(newAttrWithSetterException, ec);
     WebCore::raiseOnDOMError(ec);
@@ -164,11 +182,13 @@
 
 - (int)attrWithGetterException
 {
+    WebCore::JSMainThreadNullState state;
     return IMPL->attrWithGetterException();
 }
 
 - (void)setAttrWithGetterException:(int)newAttrWithGetterException
 {
+    WebCore::JSMainThreadNullState state;
     WebCore::ExceptionCode ec = 0;
     IMPL->setAttrWithGetterException(newAttrWithGetterException, ec);
     WebCore::raiseOnDOMError(ec);
@@ -176,56 +196,67 @@
 
 - (int)customAttr
 {
+    WebCore::JSMainThreadNullState state;
     return IMPL->customAttr();
 }
 
 - (void)setCustomAttr:(int)newCustomAttr
 {
+    WebCore::JSMainThreadNullState state;
     IMPL->setCustomAttr(newCustomAttr);
 }
 
 - (NSString *)scriptStringAttr
 {
+    WebCore::JSMainThreadNullState state;
     return IMPL->scriptStringAttr();
 }
 
 - (void)voidMethod
 {
+    WebCore::JSMainThreadNullState state;
     IMPL->voidMethod();
 }
 
 - (void)voidMethodWithArgs:(int)intArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg
 {
+    WebCore::JSMainThreadNullState state;
     IMPL->voidMethodWithArgs(intArg, strArg, core(objArg));
 }
 
 - (int)intMethod
 {
+    WebCore::JSMainThreadNullState state;
     return IMPL->intMethod();
 }
 
 - (int)intMethodWithArgs:(int)intArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg
 {
+    WebCore::JSMainThreadNullState state;
     return IMPL->intMethodWithArgs(intArg, strArg, core(objArg));
 }
 
 - (DOMTestObj *)objMethod
 {
+    WebCore::JSMainThreadNullState state;
     return kit(WTF::getPtr(IMPL->objMethod()));
 }
 
 - (DOMTestObj *)objMethodWithArgs:(int)intArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg
 {
+    WebCore::JSMainThreadNullState state;
     return kit(WTF::getPtr(IMPL->objMethodWithArgs(intArg, strArg, core(objArg))));
 }
 
 - (DOMTestObj *)methodThatRequiresAllArgs:(NSString *)strArg objArg:(DOMTestObj *)objArg
 {
+    WebCore::JSMainThreadNullState state;
     return kit(WTF::getPtr(IMPL->methodThatRequiresAllArgs(strArg, core(objArg))));
 }
 
 - (DOMTestObj *)methodThatRequiresAllArgsAndThrows:(NSString *)strArg objArg:(DOMTestObj *)objArg
 {
+    WebCore::JSMainThreadNullState state;
     WebCore::ExceptionCode ec = 0;
     DOMTestObj *result = kit(WTF::getPtr(IMPL->methodThatRequiresAllArgsAndThrows(strArg, core(objArg), ec)));
     WebCore::raiseOnDOMError(ec);
@@ -234,11 +265,13 @@
 
 - (void)serializedValue:(NSString *)serializedArg
 {
+    WebCore::JSMainThreadNullState state;
     IMPL->serializedValue(WebCore::SerializedScriptValue::create(WebCore::String(serializedArg)));
 }
 
 - (void)methodWithException
 {
+    WebCore::JSMainThreadNullState state;
     WebCore::ExceptionCode ec = 0;
     IMPL->methodWithException(ec);
     WebCore::raiseOnDOMError(ec);
@@ -246,16 +279,19 @@
 
 - (void)customMethod
 {
+    WebCore::JSMainThreadNullState state;
     IMPL->customMethod();
 }
 
 - (void)customMethodWithArgs:(int)intArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg
 {
+    WebCore::JSMainThreadNullState state;
     IMPL->customMethodWithArgs(intArg, strArg, core(objArg));
 }
 
 - (void)customArgsAndException:(DOMlog *)intArg
 {
+    WebCore::JSMainThreadNullState state;
     WebCore::ExceptionCode ec = 0;
     IMPL->customArgsAndException(core(intArg), ec);
     WebCore::raiseOnDOMError(ec);
@@ -263,53 +299,63 @@
 
 - (void)addEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture
 {
+    WebCore::JSMainThreadNullState state;
     RefPtr<WebCore::EventListener> nativeEventListener = WebCore::ObjCEventListener::wrap(listener);
     IMPL->addEventListener(type, WTF::getPtr(nativeEventListener), useCapture);
 }
 
 - (void)removeEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture
 {
+    WebCore::JSMainThreadNullState state;
     RefPtr<WebCore::EventListener> nativeEventListener = WebCore::ObjCEventListener::wrap(listener);
     IMPL->removeEventListener(type, WTF::getPtr(nativeEventListener), useCapture);
 }
 
 - (void)withDynamicFrame
 {
+    WebCore::JSMainThreadNullState state;
     IMPL->withDynamicFrame();
 }
 
 - (void)withDynamicFrameAndArg:(int)intArg
 {
+    WebCore::JSMainThreadNullState state;
     IMPL->withDynamicFrameAndArg(intArg);
 }
 
 - (void)withDynamicFrameAndOptionalArg:(int)intArg optionalArg:(int)optionalArg
 {
+    WebCore::JSMainThreadNullState state;
     IMPL->withDynamicFrameAndOptionalArg(intArg, optionalArg);
 }
 
 - (void)withDynamicFrameAndUserGesture:(int)intArg
 {
+    WebCore::JSMainThreadNullState state;
     IMPL->withDynamicFrameAndUserGesture(intArg);
 }
 
 - (void)withDynamicFrameAndUserGestureASAD:(int)intArg optionalArg:(int)optionalArg
 {
+    WebCore::JSMainThreadNullState state;
     IMPL->withDynamicFrameAndUserGestureASAD(intArg, optionalArg);
 }
 
 - (void)withScriptStateVoid
 {
+    WebCore::JSMainThreadNullState state;
     IMPL->withScriptStateVoid();
 }
 
 - (DOMTestObj *)withScriptStateObj
 {
+    WebCore::JSMainThreadNullState state;
     return kit(WTF::getPtr(IMPL->withScriptStateObj()));
 }
 
 - (void)withScriptStateVoidException
 {
+    WebCore::JSMainThreadNullState state;
     WebCore::ExceptionCode ec = 0;
     IMPL->withScriptStateVoidException(ec);
     WebCore::raiseOnDOMError(ec);
@@ -317,6 +363,7 @@
 
 - (DOMTestObj *)withScriptStateObjException
 {
+    WebCore::JSMainThreadNullState state;
     WebCore::ExceptionCode ec = 0;
     DOMTestObj *result = kit(WTF::getPtr(IMPL->withScriptStateObjException(ec)));
     WebCore::raiseOnDOMError(ec);
@@ -325,16 +372,19 @@
 
 - (void)methodWithOptionalArg:(int)opt
 {
+    WebCore::JSMainThreadNullState state;
     IMPL->methodWithOptionalArg(opt);
 }
 
 - (void)methodWithNonOptionalArgAndOptionalArg:(int)nonOpt opt:(int)opt
 {
+    WebCore::JSMainThreadNullState state;
     IMPL->methodWithNonOptionalArgAndOptionalArg(nonOpt, opt);
 }
 
 - (void)methodWithNonOptionalArgAndTwoOptionalArgs:(int)nonOpt opt1:(int)opt1 opt2:(int)opt2
 {
+    WebCore::JSMainThreadNullState state;
     IMPL->methodWithNonOptionalArgAndTwoOptionalArgs(nonOpt, opt1, opt2);
 }
 
