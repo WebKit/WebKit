@@ -312,7 +312,7 @@ private:
 
     bool pseudoStyleCacheIsInvalid(const RenderStyle* currentStyle, RenderStyle* newStyle);
 
-    virtual void createAttributeMap() const;
+    void createAttributeMap() const;
 
     virtual void updateStyleAttribute() const { }
 

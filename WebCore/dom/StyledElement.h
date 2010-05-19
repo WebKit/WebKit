@@ -98,8 +98,6 @@ private:
     void destroyInlineStyleDecl();
     virtual void updateStyleAttribute() const;
 
-    virtual void createAttributeMap() const;
-
     RefPtr<CSSMutableStyleDeclaration> m_inlineStyleDecl;
 };
 

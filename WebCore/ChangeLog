@@ -1,3 +1,31 @@
+2010-05-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Move member variables from NamedMappedAttrMap to its base class NamedNodeMap
+        https://bugs.webkit.org/show_bug.cgi?id=39367
+        <rdar://problem/8003304>
+
+        This lets us get rid of the vtable pointer in NamedNodeMap which saves 8 bytes, and also allows us to
+        fit the m_mappedAttributeCount unsigned int in the RefCounted padding (in 64-bit).
+        
+        The net result is that we shrink the NamedMappedAttrMap size by 16 bytes, while keeping the size of NamedNodeMap the same.
+
+        * dom/Element.cpp:
+        (WebCore::Element::createAttributeMap):
+        * dom/Element.h:
+        * dom/NamedMappedAttrMap.cpp:
+        * dom/NamedMappedAttrMap.h:
+        (WebCore::NamedMappedAttrMap::NamedMappedAttrMap):
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::clearAttributes):
+        * dom/NamedNodeMap.h:
+        (WebCore::NamedNodeMap::NamedNodeMap):
+        * dom/Node.cpp:
+        (WebCore::Node::dumpStatistics):
+        * dom/StyledElement.cpp:
+        * dom/StyledElement.h:
+
 2010-05-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

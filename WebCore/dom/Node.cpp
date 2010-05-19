@@ -147,7 +147,6 @@ void Node::dumpStatistics()
     size_t mappedAttributesWithStyleDecl = 0;
     size_t attributesWithAttr = 0;
     size_t attrMaps = 0;
-    size_t mappedAttrMaps = 0;
 
     for (HashSet<Node*>::iterator it = liveNodeSet.begin(); it != liveNodeSet.end(); ++it) {
         Node* node = *it;
@@ -169,8 +168,6 @@ void Node::dumpStatistics()
                 if (NamedNodeMap* attrMap = element->attributes(true)) {
                     attributes += attrMap->length();
                     ++attrMaps;
-                    if (attrMap->isMappedAttributeMap())
-                        ++mappedAttrMaps;
                     for (unsigned i = 0; i < attrMap->length(); ++i) {
                         Attribute* attr = attrMap->attributeItem(i);
                         if (attr->attr())
@@ -262,8 +259,7 @@ void Node::dumpStatistics()
     printf("  Number of Attributes that are mapped: %zu\n", mappedAttributes);
     printf("  Number of Attributes with a StyleDeclaration: %zu\n", mappedAttributesWithStyleDecl);
     printf("  Number of Attributes with an Attr: %zu\n", attributesWithAttr);
-    printf("  Number of NamedNodeMaps: %zu\n", attrMaps);
-    printf("  Number of NamedMappedAttrMap: %zu\n", mappedAttrMaps);
+    printf("  Number of NamedNodeMaps: %zu [%zu]\n", attrMaps, sizeof(NamedNodeMap));
 #endif
 }
 
