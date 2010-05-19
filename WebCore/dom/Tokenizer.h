@@ -29,6 +29,9 @@ namespace WebCore {
     class SegmentedString;
     class XSSAuditor;
 
+    // FIXME: This class should renamed DocumentParser or similar to express
+    // that it does more than tokenizing.  It manages the lifetime of of the
+    // parser as well as handles various tag-handling hacks for HTML/XML.
     class Tokenizer : public Noncopyable {
     public:
         virtual ~Tokenizer() { }

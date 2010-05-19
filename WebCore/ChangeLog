@@ -1,3 +1,30 @@
+2010-05-18  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Refactor HTMLTokenizer::write to make it more readable and split out the lexer bits from flow control bits
+        https://bugs.webkit.org/show_bug.cgi?id=39318
+
+        No functional changes, only moving code into smaller functions.
+
+        This code is already covered by numerous layout tests.
+
+        HTML parsing benchmark shows this to be a wash.
+
+        * dom/Tokenizer.h:
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::advance):
+         - New funtion to encapulate code which will move into HTMLLexer eventually.
+         - Use ALWAYS_INLINE to make sure compilers inline this large
+           function (otherwise this patch is a regression).
+        (WebCore::HTMLTokenizer::willWriteHTML):
+         - New function to handle calling any pre-write delegates.
+        (WebCore::HTMLTokenizer::didWriteHTML):
+         - New function to handle calling any post-write delegates.
+        (WebCore::HTMLTokenizer::write):
+         - Call the new functions.
+        * html/HTMLTokenizer.h:
+
 2010-05-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
