@@ -1,3 +1,18 @@
+2010-05-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker and Simon Fraser.
+
+        <rdar://problem/8004528> 
+        REGRESSION: Coordinate system for Core Animation NPAPI plug-ins is flipped with accelerated compositing turned on
+        
+        When needed, create a new CALayer and set it's geometry to be flipped. Add the plug-in layer as a sublayer and then return
+        the newly created layer.
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView createPlugin]):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView createPlugin]):
+
 2010-05-18  Tony Chang  <tony@chromium.org>
 
         Reviewed by Darin Adler.
