@@ -45,6 +45,10 @@ static void convertToOldStyle(HTML5Token& token, Token& oldStyleToken)
         oldStyleToken.tagName = token.name();
         oldStyleToken.attrs = token.attrs();
         break;
+    case HTML5Token::Character:
+        oldStyleToken.tagName = textAtom;
+        oldStyleToken.text = token.characters().impl();
+        break;
     default:
         notImplemented();
     }

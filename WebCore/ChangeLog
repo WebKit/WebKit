@@ -2,6 +2,30 @@
 
         Reviewed by Eric Seidel.
 
+        Make the HTML5 parser correctly parse <div>Hello</div>
+        https://bugs.webkit.org/show_bug.cgi?id=39345
+
+        Again, this patch is covered by a large number of LayoutTests.
+
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTML5Lexer::HTML5Lexer):
+        (WebCore::HTML5Lexer::reset):
+        (WebCore::HTML5Lexer::nextToken):
+        (WebCore::HTML5Lexer::emitCommentToken):
+        (WebCore::HTML5Lexer::emitCharacter):
+        (WebCore::HTML5Lexer::emitCurrentTagToken):
+        * html/HTML5Lexer.h:
+        * html/HTML5Token.h:
+        (WebCore::HTML5Token::beginCharacter):
+        (WebCore::HTML5Token::appendToCharacter):
+        (WebCore::HTML5Token::characters):
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::convertToOldStyle):
+
+2010-05-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Make the HTML5 parser actually parse <div></div>
         https://bugs.webkit.org/show_bug.cgi?id=39342
 

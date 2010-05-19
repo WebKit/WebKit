@@ -65,9 +65,22 @@ public:
         m_data.append(character);
     }
 
+    void beginCharacter(UChar character)
+    {
+        m_type = Character;
+        m_data.clear();
+        m_data.append(character);
+    }
+
     void appendToName(UChar character)
     {
         ASSERT(m_type == StartTag || m_type == EndTag || m_type == DOCTYPE);
+        m_data.append(character);
+    }
+
+    void appendToCharacter(UChar character)
+    {
+        ASSERT(m_type == Character);
         m_data.append(character);
     }
 
@@ -89,6 +102,12 @@ public:
     {
         ASSERT(m_type == StartTag || m_type == EndTag);
         return m_attrs.get();
+    }
+
+    String characters()
+    {
+        ASSERT(m_type == Character);
+        return String(StringImpl::adopt(m_data));
     }
 
 private:
