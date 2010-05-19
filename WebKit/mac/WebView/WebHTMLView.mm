@@ -4344,9 +4344,6 @@ static BOOL isInPasswordField(Frame* coreFrame)
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
     [[event retain] autorelease];
 
-    if ([self _handleStyleKeyEquivalent:event])
-        return YES;
-    
     BOOL eventWasSentToWebCore = (_private->keyDownEvent == event);
     BOOL ret = NO;
 
@@ -4364,7 +4361,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
             ret = frame->eventHandler()->keyEvent(event);
 
     if (!ret)
-        ret = [super performKeyEquivalent:event];
+        ret = [self _handleStyleKeyEquivalent:event] || [super performKeyEquivalent:event];
 
     [self release];
     
