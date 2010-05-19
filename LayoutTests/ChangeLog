@@ -1,3 +1,52 @@
+2010-05-18  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed.
+
+        Add leopard-specific pixel results for tests that need them
+        https://bugs.webkit.org/show_bug.cgi?id=39325
+
+        This adds new Leopard baselines for all tests that currently
+        pass with tolerance=0 on Snow Leopard but fail on Leopard
+        with an image diff of <= 0.01%.  These tests previously had
+        expectations in platform/mac that were Snow Leopard specific.
+
+        * platform/mac-leopard/compositing/color-matching: Added.
+        * platform/mac-leopard/compositing/color-matching/pdf-image-match-expected.checksum: Added.
+        * platform/mac-leopard/compositing/color-matching/pdf-image-match-expected.png: Added.
+        * platform/mac-leopard/compositing/reflections: Added.
+        * platform/mac-leopard/compositing/reflections/simple-composited-reflections-expected.checksum: Added.
+        * platform/mac-leopard/compositing/reflections/simple-composited-reflections-expected.png: Added.
+        * platform/mac-leopard/compositing/repaint/overflow-into-content-expected.checksum: Added.
+        * platform/mac-leopard/compositing/repaint/overflow-into-content-expected.png: Added.
+        * platform/mac-leopard/editing/pasteboard: Added.
+        * platform/mac-leopard/editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.checksum: Added.
+        * platform/mac-leopard/editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.png: Added.
+        * platform/mac-leopard/fast/css: Added.
+        * platform/mac-leopard/fast/css/pseudo-cache-stale-expected.checksum: Added.
+        * platform/mac-leopard/fast/css/pseudo-cache-stale-expected.png: Added.
+        * platform/mac-leopard/fast/frames: Added.
+        * platform/mac-leopard/fast/frames/take-focus-from-iframe-expected.checksum: Added.
+        * platform/mac-leopard/fast/frames/take-focus-from-iframe-expected.png: Added.
+        * platform/mac-leopard/fast/repaint: Added.
+        * platform/mac-leopard/fast/repaint/fixed-child-move-after-scroll-expected.checksum: Added.
+        * platform/mac-leopard/fast/repaint/fixed-child-move-after-scroll-expected.png: Added.
+        * platform/mac-leopard/fast/repaint/fixed-child-of-fixed-move-after-scroll-expected.checksum: Added.
+        * platform/mac-leopard/fast/repaint/fixed-child-of-fixed-move-after-scroll-expected.png: Added.
+        * platform/mac-leopard/fast/repaint/fixed-child-of-transformed-move-after-scroll-expected.checksum: Added.
+        * platform/mac-leopard/fast/repaint/fixed-child-of-transformed-move-after-scroll-expected.png: Added.
+        * platform/mac-leopard/fast/repaint/fixed-move-after-scroll-expected.checksum: Added.
+        * platform/mac-leopard/fast/repaint/fixed-move-after-scroll-expected.png: Added.
+        * platform/mac-leopard/fast/text/format-control-expected.checksum: Added.
+        * platform/mac-leopard/fast/text/format-control-expected.png: Added.
+        * platform/mac-leopard/plugins: Added.
+        * platform/mac-leopard/plugins/qt-qwidget-plugin-expected.checksum: Added.
+        * platform/mac-leopard/plugins/qt-qwidget-plugin-expected.png: Added.
+        * platform/mac-leopard/transforms/svg-vs-css-expected.checksum: Added.
+        * platform/mac-leopard/transforms/svg-vs-css-expected.png: Added.
+        * platform/mac-leopard/transitions: Added.
+        * platform/mac-leopard/transitions/move-after-transition-expected.checksum: Added.
+        * platform/mac-leopard/transitions/move-after-transition-expected.png: Added.
+
 2010-05-18  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej Stachowiak.
