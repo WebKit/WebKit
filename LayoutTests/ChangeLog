@@ -1,3 +1,15 @@
+2010-05-19  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Darin Adler.
+
+        Misleading variable name in a11y test
+        https://bugs.webkit.org/show_bug.cgi?id=38465
+
+        Use a more appropriate variable name for the return
+        value of accessibilityController.rootElement
+
+        * accessibility/aria-controls-with-tabs.html:
+
 2010-05-19  Victor Wang  <victorw@chromium.org>
 
         Unreviewed. Update Chromium test expectations.

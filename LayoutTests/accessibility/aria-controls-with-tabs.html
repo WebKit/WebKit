@@ -34,8 +34,9 @@ var successfullyParsed = false;
 
     if (window.accessibilityController) {
 
-          var body = accessibilityController.rootElement;
-          var tabList = body.childAtIndex(0).childAtIndex(0);
+          var root = accessibilityController.rootElement;
+          var body = root.childAtIndex(0);
+          var tabList = body.childAtIndex(0);
           var tab1 = tabList.childAtIndex(0);
           var tab2 = tabList.childAtIndex(1);
 
