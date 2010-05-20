@@ -31,18 +31,6 @@
 
 namespace WebCore {
 
-void NamedMappedAttrMap::clearAttributes()
-{
-    m_classNames.clear();
-    m_mappedAttributeCount = 0;
-    NamedNodeMap::clearAttributes();
-}
-
-bool NamedMappedAttrMap::isMappedAttributeMap() const
-{
-    return true;
-}
-
 int NamedMappedAttrMap::declCount() const
 {
     int result = 0;

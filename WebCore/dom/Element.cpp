@@ -758,7 +758,7 @@ KURL Element::baseURI() const
 
 void Element::createAttributeMap() const
 {
-    namedAttrMap = NamedNodeMap::create(const_cast<Element*>(this));
+    namedAttrMap = NamedMappedAttrMap::create(const_cast<Element*>(this));
 }
 
 bool Element::isURLAttribute(Attribute*) const

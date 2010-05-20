@@ -253,11 +253,6 @@ void StyledElement::parseMappedAttribute(MappedAttribute *attr)
     }
 }
 
-void StyledElement::createAttributeMap() const
-{
-    namedAttrMap = NamedMappedAttrMap::create(const_cast<StyledElement*>(this));
-}
-
 CSSMutableStyleDeclaration* StyledElement::getInlineStyleDecl()
 {
     if (!m_inlineStyleDecl)

@@ -54,11 +54,6 @@ NamedNodeMap::~NamedNodeMap()
     detachAttributesFromElement();
 }
 
-bool NamedNodeMap::isMappedAttributeMap() const
-{
-    return false;
-}
-
 PassRefPtr<Node> NamedNodeMap::getNamedItem(const String& name) const
 {
     Attribute* a = getAttributeItem(name, shouldIgnoreAttributeCase(m_element));
@@ -205,6 +200,9 @@ Attribute* NamedNodeMap::getAttributeItemSlowCase(const String& name, bool shoul
 
 void NamedNodeMap::clearAttributes()
 {
+    m_classNames.clear();
+    m_mappedAttributeCount = 0;
+
     detachAttributesFromElement();
     m_attributes.clear();
 }

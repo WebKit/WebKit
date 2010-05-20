@@ -26,6 +26,7 @@
 #define NamedNodeMap_h
 
 #include "Attribute.h"
+#include "SpaceSplitString.h"
 
 #ifdef __OBJC__
 #define id id_AVOID_KEYWORD
@@ -41,12 +42,16 @@ class NamedNodeMap : public RefCounted<NamedNodeMap> {
     friend class Element;
 
 protected:
-    NamedNodeMap(Element* element) : m_element(element) { }
+    NamedNodeMap(Element* element) 
+        : m_mappedAttributeCount(0)
+        , m_element(element)
+    {
+    }
 
 public:
     static PassRefPtr<NamedNodeMap> create(Element* element) { return adoptRef(new NamedNodeMap(element)); }
 
-    virtual ~NamedNodeMap();
+    ~NamedNodeMap();
 
     // Public DOM interface.
 
@@ -85,8 +90,6 @@ public:
             addAttribute(newAttribute);
     }
 
-    virtual bool isMappedAttributeMap() const;
-
     const AtomicString& id() const { return m_id; }
     void setID(const AtomicString& newId) { m_id = newId; }
 
@@ -99,14 +102,16 @@ public:
     Element* element() const { return m_element; }
 
 protected:
-    virtual void clearAttributes();
+    int m_mappedAttributeCount;
+    SpaceSplitString m_classNames;
 
 private:
     void detachAttributesFromElement();
     void detachFromElement();
     Attribute* getAttributeItem(const String& name, bool shouldIgnoreAttributeCase) const;
     Attribute* getAttributeItemSlowCase(const String& name, bool shouldIgnoreAttributeCase) const;
-
+    void clearAttributes();
+    
     Element* m_element;
     Vector<RefPtr<Attribute> > m_attributes;
     AtomicString m_id;
