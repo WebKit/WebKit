@@ -1,5 +1,15 @@
 2010-05-20  Martin Robinson  <mrobinson@igalia.com>
 
+        Reviewed by Adam Roben.
+
+        Fix the Windows build and move new IDL declarations to the bottom of the file.
+
+        * Interfaces/IWebPreferences.idl: Move new API to the bottom of the IDL file to prevent vtable mismatch.
+        * WebPreferences.cpp: 
+        (WebPreferences::setEditingBehavior): Change the type of the parameter to setEditingBehavior to the proper type.
+
+2010-05-20  Martin Robinson  <mrobinson@igalia.com>
+
         Unreviewed.
 
         Fix the Windows build.

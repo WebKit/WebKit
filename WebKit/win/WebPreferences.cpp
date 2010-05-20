@@ -1138,7 +1138,7 @@ HRESULT STDMETHODCALLTYPE WebPreferences::editingBehavior(
 }
 
 HRESULT STDMETHODCALLTYPE WebPreferences::setEditingBehavior(
-    /* [in] */ WebKitEditableLinkBehavior behavior)
+    /* [in] */ WebKitEditingBehavior behavior)
 {
     setIntegerValue(CFSTR(WebKitEditingBehaviorPreferenceKey), behavior);
     return S_OK;
