@@ -1,3 +1,24 @@
+2010-05-20  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Video elements show no video on Windows machines that do not support accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=39446
+        rdar://problem/7999794
+
+        Implement the paint() method in MediaPlayerPrivateQuickTimeVisualContext.  The visual context should
+        be set up in load() and torn down in the destructor (as opposed to setUpVideoRendering and 
+        tearDownVideoRendering, which won't get called in a non-accelerated compositing case).
+        
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::~MediaPlayerPrivateQuickTimeVisualContext):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::load):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::paint):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::visualContextTimerFired):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::retrieveCurrentImage):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::setUpVideoRendering):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::tearDownVideoRendering):
+
 2010-05-20  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Adam Barth.
