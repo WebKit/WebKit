@@ -659,11 +659,11 @@ void MediaPlayerPrivateQuickTimeVisualContext::visualContextTimerFired(Timer<Med
 
 static CFDictionaryRef QTCFDictionaryCreateWithDataCallback(CFAllocatorRef allocator, const UInt8* bytes, CFIndex length)
 {
-    CFDataRef data = CFDataCreateWithBytesNoCopy(allocator, bytes, length, 0);
+    RetainPtr<CFDataRef> data(AdoptCF, CFDataCreateWithBytesNoCopy(allocator, bytes, length, kCFAllocatorNull));
     if (!data)
         return 0;
 
-    return reinterpret_cast<CFDictionaryRef>(CFPropertyListCreateFromXMLData(allocator, data, kCFPropertyListImmutable, 0));
+    return reinterpret_cast<CFDictionaryRef>(CFPropertyListCreateFromXMLData(allocator, data.get(), kCFPropertyListImmutable, 0));
 }
 
 static CGImageRef CreateCGImageFromPixelBuffer(QTPixelBuffer buffer)

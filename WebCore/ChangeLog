@@ -1,3 +1,18 @@
+2010-05-20  Adam Roben  <aroben@apple.com>
+
+        Fix a CFData leak in MediaPlayerPrivateQuickTimeVisualContext
+
+        Fixes <http://webkit.org/b/39432> <rdar://problem/8008992>
+
+        Reviewed by Ada Chan
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::QTCFDictionaryCreateWithDataCallback): Use a RetainPtr to
+        hold the CFData we allocate so it will get released when this function
+        is exited. Also pass kCFAllocatorNull as the bytes deallocator to
+        CFDataCreateWithBytesNoCopy so that CF doesn't try to deallocate the
+        bytes we pass to it.
+
 2010-05-20  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.
