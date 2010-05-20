@@ -223,7 +223,7 @@ PassOwnPtr<WKCACFLayerRenderer> WKCACFLayerRenderer::create()
 }
 
 WKCACFLayerRenderer::WKCACFLayerRenderer()
-    : m_triedToCreateD3DRenderer(false)
+    : m_mightBeAbleToCreateDeviceLater(true)
     , m_rootLayer(WKCACFRootLayer::create(this))
     , m_scrollLayer(WKCACFLayer::create(WKCACFLayer::Layer))
     , m_clipLayer(WKCACFLayer::create(WKCACFLayer::Layer))
@@ -340,10 +340,10 @@ void WKCACFLayerRenderer::setNeedsDisplay()
 
 bool WKCACFLayerRenderer::createRenderer()
 {
-    if (m_triedToCreateD3DRenderer)
+    if (m_d3dDevice || !m_mightBeAbleToCreateDeviceLater)
         return m_d3dDevice;
 
-    m_triedToCreateD3DRenderer = true;
+    m_mightBeAbleToCreateDeviceLater = false;
     D3DPRESENT_PARAMETERS parameters = initialPresentationParameters();
 
     if (!d3d() || !::IsWindow(m_hostWindow))
@@ -361,8 +361,20 @@ bool WKCACFLayerRenderer::createRenderer()
     }
 
     COMPtr<IDirect3DDevice9> device;
-    if (FAILED(d3d()->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hostWindow, D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_FPU_PRESERVE, &parameters, &device)))
+    if (FAILED(d3d()->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hostWindow, D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_FPU_PRESERVE, &parameters, &device))) {
+        // In certain situations (e.g., shortly after waking from sleep), Direct3DCreate9() will
+        // return an IDirect3D9 for which IDirect3D9::CreateDevice will always fail. In case we
+        // have one of these bad IDirect3D9s, get rid of it so we'll fetch a new one the next time
+        // we want to call CreateDevice.
+        s_d3d->Release();
+        s_d3d = 0;
+
+        // Even if we don't have a bad IDirect3D9, in certain situations (e.g., shortly after
+        // waking from sleep), CreateDevice will fail, but will later succeed if called again.
+        m_mightBeAbleToCreateDeviceLater = true;
+
         return false;
+    }
 
     // Now that we've created the IDirect3DDevice9 based on the capabilities we
     // got from the IDirect3D9 global object, we requery the device for its
@@ -411,7 +423,7 @@ void WKCACFLayerRenderer::destroyRenderer()
     m_scrollLayer = 0;
     m_rootChildLayer = 0;
 
-    m_triedToCreateD3DRenderer = false;
+    m_mightBeAbleToCreateDeviceLater = true;
 }
 
 void WKCACFLayerRenderer::resize()
@@ -469,8 +481,12 @@ void WKCACFLayerRenderer::renderTimerFired(Timer<WKCACFLayerRenderer>*)
 
 void WKCACFLayerRenderer::paint()
 {
-    if (!m_d3dDevice)
+    createRenderer();
+    if (!m_d3dDevice) {
+        if (m_mightBeAbleToCreateDeviceLater)
+            renderSoon();
         return;
+    }
 
     if (m_backingStoreDirty) {
         // If the backing store is still dirty when we are about to draw the
