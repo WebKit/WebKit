@@ -1281,7 +1281,8 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
     JSValue exceptionValue;
     HandlerInfo* handler = 0;
 
-    Instruction* vPC = callFrame->codeBlock()->instructions().begin();
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    Instruction* vPC = codeBlock->instructions().begin();
     Profiler** enabledProfilerReference = Profiler::enabledProfilerReference();
     unsigned tickCount = globalData->timeoutChecker.ticksUntilNextCheck();
     JSValue functionReturnValue;
@@ -1314,7 +1315,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 #endif
 
 #if HAVE(COMPUTED_GOTO)
-    #define NEXT_INSTRUCTION() SAMPLE(callFrame->codeBlock(), vPC); goto *vPC->u.opcode
+    #define NEXT_INSTRUCTION() SAMPLE(codeBlock, vPC); goto *vPC->u.opcode
 #if ENABLE(OPCODE_STATS)
     #define DEFINE_OPCODE(opcode) opcode: OpcodeStats::recordInstruction(opcode);
 #else
@@ -1322,7 +1323,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 #endif
     NEXT_INSTRUCTION();
 #else
-    #define NEXT_INSTRUCTION() SAMPLE(callFrame->codeBlock(), vPC); goto interpreterLoopStart
+    #define NEXT_INSTRUCTION() SAMPLE(codeBlock, vPC); goto interpreterLoopStart
 #if ENABLE(OPCODE_STATS)
     #define DEFINE_OPCODE(opcode) case opcode: OpcodeStats::recordInstruction(opcode);
 #else
@@ -1371,7 +1372,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         */
         int dst = vPC[1].u.operand;
         int regExp = vPC[2].u.operand;
-        callFrame->r(dst) = JSValue(new (globalData) RegExpObject(callFrame->scopeChain()->globalObject->regExpStructure(), callFrame->codeBlock()->regexp(regExp)));
+        callFrame->r(dst) = JSValue(new (globalData) RegExpObject(callFrame->scopeChain()->globalObject->regExpStructure(), codeBlock->regexp(regExp)));
 
         vPC += OPCODE_LENGTH(op_new_regexp);
         NEXT_INSTRUCTION();
@@ -1945,7 +1946,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 
         JSValue baseVal = callFrame->r(base).jsValue();
 
-        if (isInvalidParamForInstanceOf(callFrame, callFrame->codeBlock(), vPC, baseVal, exceptionValue))
+        if (isInvalidParamForInstanceOf(callFrame, codeBlock, vPC, baseVal, exceptionValue))
             goto vm_throw;
 
         bool result = asObject(baseVal)->hasInstance(callFrame, callFrame->r(value).jsValue(), callFrame->r(baseProto).jsValue());
@@ -2067,7 +2068,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         int base = vPC[3].u.operand;
 
         JSValue baseVal = callFrame->r(base).jsValue();
-        if (isInvalidParamForIn(callFrame, callFrame->codeBlock(), vPC, baseVal, exceptionValue))
+        if (isInvalidParamForIn(callFrame, codeBlock, vPC, baseVal, exceptionValue))
             goto vm_throw;
 
         JSObject* baseObj = asObject(baseVal);
@@ -2182,7 +2183,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
          */
         int dst = vPC[1].u.operand;
         int index = vPC[2].u.operand;
-        int skip = vPC[3].u.operand + callFrame->codeBlock()->needsFullScopeChain();
+        int skip = vPC[3].u.operand + codeBlock->needsFullScopeChain();
 
         ScopeChainNode* scopeChain = callFrame->scopeChain();
         ScopeChainIterator iter = scopeChain->begin();
@@ -2203,7 +2204,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 
          */
         int index = vPC[1].u.operand;
-        int skip = vPC[2].u.operand + callFrame->codeBlock()->needsFullScopeChain();
+        int skip = vPC[2].u.operand + codeBlock->needsFullScopeChain();
         int value = vPC[3].u.operand;
 
         ScopeChainNode* scopeChain = callFrame->scopeChain();
@@ -2262,7 +2263,6 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         int base = vPC[2].u.operand;
         int property = vPC[3].u.operand;
 
-        CodeBlock* codeBlock = callFrame->codeBlock();
         Identifier& ident = codeBlock->identifier(property);
         JSValue baseValue = callFrame->r(base).jsValue();
         PropertySlot slot(baseValue);
@@ -2295,7 +2295,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
                 int dst = vPC[1].u.operand;
                 int offset = vPC[5].u.operand;
 
-                ASSERT(baseObject->get(callFrame, callFrame->codeBlock()->identifier(vPC[3].u.operand)) == baseObject->getDirectOffset(offset));
+                ASSERT(baseObject->get(callFrame, codeBlock->identifier(vPC[3].u.operand)) == baseObject->getDirectOffset(offset));
                 callFrame->r(dst) = JSValue(baseObject->getDirectOffset(offset));
 
                 vPC += OPCODE_LENGTH(op_get_by_id_self);
@@ -2303,7 +2303,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
             }
         }
 
-        uncacheGetByID(callFrame->codeBlock(), vPC);
+        uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_get_by_id_proto) {
@@ -2329,8 +2329,8 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
                     int dst = vPC[1].u.operand;
                     int offset = vPC[6].u.operand;
 
-                    ASSERT(protoObject->get(callFrame, callFrame->codeBlock()->identifier(vPC[3].u.operand)) == protoObject->getDirectOffset(offset));
-                    ASSERT(baseValue.get(callFrame, callFrame->codeBlock()->identifier(vPC[3].u.operand)) == protoObject->getDirectOffset(offset));
+                    ASSERT(protoObject->get(callFrame, codeBlock->identifier(vPC[3].u.operand)) == protoObject->getDirectOffset(offset));
+                    ASSERT(baseValue.get(callFrame, codeBlock->identifier(vPC[3].u.operand)) == protoObject->getDirectOffset(offset));
                     callFrame->r(dst) = JSValue(protoObject->getDirectOffset(offset));
 
                     vPC += OPCODE_LENGTH(op_get_by_id_proto);
@@ -2339,7 +2339,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
             }
         }
 
-        uncacheGetByID(callFrame->codeBlock(), vPC);
+        uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
 #if HAVE(COMPUTED_GOTO)
@@ -2381,7 +2381,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
                 }
             }
         }
-        uncacheGetByID(callFrame->codeBlock(), vPC);
+        uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
 #if HAVE(COMPUTED_GOTO)
@@ -2412,7 +2412,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
                 if (LIKELY(protoObject->structure() == prototypeStructure)) {
                     int dst = vPC[1].u.operand;
                     int property = vPC[3].u.operand;
-                    Identifier& ident = callFrame->codeBlock()->identifier(property);
+                    Identifier& ident = codeBlock->identifier(property);
                     
                     PropertySlot::GetValueFunc getter = vPC[6].u.getterFunc;
                     JSValue result = getter(callFrame, protoObject, ident);
@@ -2423,7 +2423,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
                 }
             }
         }
-        uncacheGetByID(callFrame->codeBlock(), vPC);
+        uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
 #if HAVE(COMPUTED_GOTO)
@@ -2500,8 +2500,8 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
                         int dst = vPC[1].u.operand;
                         int offset = vPC[7].u.operand;
 
-                        ASSERT(baseObject->get(callFrame, callFrame->codeBlock()->identifier(vPC[3].u.operand)) == baseObject->getDirectOffset(offset));
-                        ASSERT(baseValue.get(callFrame, callFrame->codeBlock()->identifier(vPC[3].u.operand)) == baseObject->getDirectOffset(offset));
+                        ASSERT(baseObject->get(callFrame, codeBlock->identifier(vPC[3].u.operand)) == baseObject->getDirectOffset(offset));
+                        ASSERT(baseValue.get(callFrame, codeBlock->identifier(vPC[3].u.operand)) == baseObject->getDirectOffset(offset));
                         callFrame->r(dst) = JSValue(baseObject->getDirectOffset(offset));
 
                         vPC += OPCODE_LENGTH(op_get_by_id_chain);
@@ -2514,7 +2514,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
             }
         }
 
-        uncacheGetByID(callFrame->codeBlock(), vPC);
+        uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
 #if HAVE(COMPUTED_GOTO)
@@ -2554,7 +2554,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
                 NEXT_INSTRUCTION();
             }
         }
-        uncacheGetByID(callFrame->codeBlock(), vPC);
+        uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
 #if HAVE(COMPUTED_GOTO)
@@ -2581,7 +2581,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
                 ASSERT(baseCell->isObject());
                 int dst = vPC[1].u.operand;
                 int property = vPC[3].u.operand;
-                Identifier& ident = callFrame->codeBlock()->identifier(property);
+                Identifier& ident = codeBlock->identifier(property);
 
                 PropertySlot::GetValueFunc getter = vPC[5].u.getterFunc;
                 JSValue result = getter(callFrame, baseValue, ident);
@@ -2591,7 +2591,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
                 NEXT_INSTRUCTION();
             }
         }
-        uncacheGetByID(callFrame->codeBlock(), vPC);
+        uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
 #if HAVE(COMPUTED_GOTO)
@@ -2607,7 +2607,7 @@ skip_id_custom_self:
         int base = vPC[2].u.operand;
         int property = vPC[3].u.operand;
 
-        Identifier& ident = callFrame->codeBlock()->identifier(property);
+        Identifier& ident = codeBlock->identifier(property);
         JSValue baseValue = callFrame->r(base).jsValue();
         PropertySlot slot(baseValue);
         JSValue result = baseValue.get(callFrame, ident, slot);
@@ -2666,7 +2666,7 @@ skip_id_custom_self:
                 }
             }
         }
-        uncacheGetByID(callFrame->codeBlock(), vPC);
+        uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
 #if HAVE(COMPUTED_GOTO)
@@ -2703,7 +2703,7 @@ skip_id_custom_self:
                     if (++it == end) {
                         int dst = vPC[1].u.operand;
                         int property = vPC[3].u.operand;
-                        Identifier& ident = callFrame->codeBlock()->identifier(property);
+                        Identifier& ident = codeBlock->identifier(property);
                         
                         PropertySlot::GetValueFunc getter = vPC[7].u.getterFunc;
                         JSValue result = getter(callFrame, baseObject, ident);
@@ -2718,7 +2718,7 @@ skip_id_custom_self:
                 }
             }
         }
-        uncacheGetByID(callFrame->codeBlock(), vPC);
+        uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
 #if HAVE(COMPUTED_GOTO)
@@ -2741,7 +2741,7 @@ skip_id_custom_self:
             NEXT_INSTRUCTION();
         }
 
-        uncacheGetByID(callFrame->codeBlock(), vPC);
+        uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_get_string_length) {
@@ -2761,7 +2761,7 @@ skip_id_custom_self:
             NEXT_INSTRUCTION();
         }
 
-        uncacheGetByID(callFrame->codeBlock(), vPC);
+        uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_put_by_id) {
@@ -2778,7 +2778,6 @@ skip_id_custom_self:
         int property = vPC[2].u.operand;
         int value = vPC[3].u.operand;
 
-        CodeBlock* codeBlock = callFrame->codeBlock();
         JSValue baseValue = callFrame->r(base).jsValue();
         Identifier& ident = codeBlock->identifier(property);
         PutPropertySlot slot;
@@ -2818,7 +2817,7 @@ skip_id_custom_self:
                 JSValue proto = baseObject->structure()->prototypeForLookup(callFrame);
                 while (!proto.isNull()) {
                     if (UNLIKELY(asObject(proto)->structure() != (*it).get())) {
-                        uncachePutByID(callFrame->codeBlock(), vPC);
+                        uncachePutByID(codeBlock, vPC);
                         NEXT_INSTRUCTION();
                     }
                     ++it;
@@ -2829,7 +2828,7 @@ skip_id_custom_self:
 
                 int value = vPC[3].u.operand;
                 unsigned offset = vPC[7].u.operand;
-                ASSERT(baseObject->offsetForLocation(baseObject->getDirectLocation(callFrame->codeBlock()->identifier(vPC[2].u.operand))) == offset);
+                ASSERT(baseObject->offsetForLocation(baseObject->getDirectLocation(codeBlock->identifier(vPC[2].u.operand))) == offset);
                 baseObject->putDirectOffset(offset, callFrame->r(value).jsValue());
 
                 vPC += OPCODE_LENGTH(op_put_by_id_transition);
@@ -2837,7 +2836,7 @@ skip_id_custom_self:
             }
         }
         
-        uncachePutByID(callFrame->codeBlock(), vPC);
+        uncachePutByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_put_by_id_replace) {
@@ -2864,7 +2863,7 @@ skip_id_custom_self:
                 int value = vPC[3].u.operand;
                 unsigned offset = vPC[5].u.operand;
                 
-                ASSERT(baseObject->offsetForLocation(baseObject->getDirectLocation(callFrame->codeBlock()->identifier(vPC[2].u.operand))) == offset);
+                ASSERT(baseObject->offsetForLocation(baseObject->getDirectLocation(codeBlock->identifier(vPC[2].u.operand))) == offset);
                 baseObject->putDirectOffset(offset, callFrame->r(value).jsValue());
 
                 vPC += OPCODE_LENGTH(op_put_by_id_replace);
@@ -2872,7 +2871,7 @@ skip_id_custom_self:
             }
         }
 
-        uncachePutByID(callFrame->codeBlock(), vPC);
+        uncachePutByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_put_by_id_generic) {
@@ -2889,7 +2888,7 @@ skip_id_custom_self:
         int value = vPC[3].u.operand;
 
         JSValue baseValue = callFrame->r(base).jsValue();
-        Identifier& ident = callFrame->codeBlock()->identifier(property);
+        Identifier& ident = codeBlock->identifier(property);
         PutPropertySlot slot;
         baseValue.put(callFrame, ident, callFrame->r(value).jsValue(), slot);
         CHECK_FOR_EXCEPTION();
@@ -2910,7 +2909,7 @@ skip_id_custom_self:
         int property = vPC[3].u.operand;
 
         JSObject* baseObj = callFrame->r(base).jsValue().toObject(callFrame);
-        Identifier& ident = callFrame->codeBlock()->identifier(property);
+        Identifier& ident = codeBlock->identifier(property);
         JSValue result = jsBoolean(baseObj->deleteProperty(callFrame, ident));
         CHECK_FOR_EXCEPTION();
         callFrame->r(dst) = result;
@@ -3403,12 +3402,12 @@ skip_id_custom_self:
         int defaultOffset = vPC[2].u.operand;
         JSValue scrutinee = callFrame->r(vPC[3].u.operand).jsValue();
         if (scrutinee.isInt32())
-            vPC += callFrame->codeBlock()->immediateSwitchJumpTable(tableIndex).offsetForValue(scrutinee.asInt32(), defaultOffset);
+            vPC += codeBlock->immediateSwitchJumpTable(tableIndex).offsetForValue(scrutinee.asInt32(), defaultOffset);
         else {
             double value;
             int32_t intValue;
             if (scrutinee.getNumber(value) && ((intValue = static_cast<int32_t>(value)) == value))
-                vPC += callFrame->codeBlock()->immediateSwitchJumpTable(tableIndex).offsetForValue(intValue, defaultOffset);
+                vPC += codeBlock->immediateSwitchJumpTable(tableIndex).offsetForValue(intValue, defaultOffset);
             else
                 vPC += defaultOffset;
         }
@@ -3433,7 +3432,7 @@ skip_id_custom_self:
             if (value->length() != 1)
                 vPC += defaultOffset;
             else
-                vPC += callFrame->codeBlock()->characterSwitchJumpTable(tableIndex).offsetForValue(value->characters()[0], defaultOffset);
+                vPC += codeBlock->characterSwitchJumpTable(tableIndex).offsetForValue(value->characters()[0], defaultOffset);
         }
         NEXT_INSTRUCTION();
     }
@@ -3452,7 +3451,7 @@ skip_id_custom_self:
         if (!scrutinee.isString())
             vPC += defaultOffset;
         else 
-            vPC += callFrame->codeBlock()->stringSwitchJumpTable(tableIndex).offsetForValue(asString(scrutinee)->value(callFrame).rep(), defaultOffset);
+            vPC += codeBlock->stringSwitchJumpTable(tableIndex).offsetForValue(asString(scrutinee)->value(callFrame).rep(), defaultOffset);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_new_func) {
@@ -3466,7 +3465,7 @@ skip_id_custom_self:
         int dst = vPC[1].u.operand;
         int func = vPC[2].u.operand;
 
-        callFrame->r(dst) = JSValue(callFrame->codeBlock()->functionDecl(func)->make(callFrame, callFrame->scopeChain()));
+        callFrame->r(dst) = JSValue(codeBlock->functionDecl(func)->make(callFrame, callFrame->scopeChain()));
 
         vPC += OPCODE_LENGTH(op_new_func);
         NEXT_INSTRUCTION();
@@ -3482,7 +3481,7 @@ skip_id_custom_self:
         int dst = vPC[1].u.operand;
         int funcIndex = vPC[2].u.operand;
 
-        FunctionExecutable* function = callFrame->codeBlock()->functionExpr(funcIndex);
+        FunctionExecutable* function = codeBlock->functionExpr(funcIndex);
         JSFunction* func = function->make(callFrame, callFrame->scopeChain());
 
         /* 
@@ -3573,6 +3572,8 @@ skip_id_custom_self:
             }
 
             callFrame->init(newCodeBlock, vPC + OPCODE_LENGTH(op_call), callDataScopeChain, previousCallFrame, 0, argCount, asFunction(v));
+            codeBlock = newCodeBlock;
+            ASSERT(codeBlock == callFrame->codeBlock());
             vPC = newCodeBlock->instructions().begin();
 
 #if ENABLE(OPCODE_STATS)
@@ -3610,7 +3611,7 @@ skip_id_custom_self:
 
         ASSERT(callType == CallTypeNone);
 
-        exceptionValue = createNotAFunctionError(callFrame, v, vPC - callFrame->codeBlock()->instructions().begin(), callFrame->codeBlock());
+        exceptionValue = createNotAFunctionError(callFrame, v, vPC - codeBlock->instructions().begin(), codeBlock);
         goto vm_throw;
     }
     DEFINE_OPCODE(op_load_varargs) {
@@ -3641,7 +3642,7 @@ skip_id_custom_self:
                 argStore[i] = callFrame->registers()[i - RegisterFile::CallFrameHeaderSize - expectedParams - argCount - 1];
         } else if (!arguments.isUndefinedOrNull()) {
             if (!arguments.isObject()) {
-                exceptionValue = createInvalidParamError(callFrame, "Function.prototype.apply", arguments, vPC - callFrame->codeBlock()->instructions().begin(), callFrame->codeBlock());
+                exceptionValue = createInvalidParamError(callFrame, "Function.prototype.apply", arguments, vPC - codeBlock->instructions().begin(), codeBlock);
                 goto vm_throw;
             }
             if (asObject(arguments)->classInfo() == &Arguments::info) {
@@ -3680,7 +3681,7 @@ skip_id_custom_self:
                 }
             } else {
                 if (!arguments.isObject()) {
-                    exceptionValue = createInvalidParamError(callFrame, "Function.prototype.apply", arguments, vPC - callFrame->codeBlock()->instructions().begin(), callFrame->codeBlock());
+                    exceptionValue = createInvalidParamError(callFrame, "Function.prototype.apply", arguments, vPC - codeBlock->instructions().begin(), codeBlock);
                     goto vm_throw;
                 }
             }
@@ -3726,6 +3727,8 @@ skip_id_custom_self:
             }
             
             callFrame->init(newCodeBlock, vPC + OPCODE_LENGTH(op_call_varargs), callDataScopeChain, previousCallFrame, 0, argCount, asFunction(v));
+            codeBlock = newCodeBlock;
+            ASSERT(codeBlock == callFrame->codeBlock());
             vPC = newCodeBlock->instructions().begin();
             
 #if ENABLE(OPCODE_STATS)
@@ -3763,7 +3766,7 @@ skip_id_custom_self:
         
         ASSERT(callType == CallTypeNone);
         
-        exceptionValue = createNotAFunctionError(callFrame, v, vPC - callFrame->codeBlock()->instructions().begin(), callFrame->codeBlock());
+        exceptionValue = createNotAFunctionError(callFrame, v, vPC - codeBlock->instructions().begin(), codeBlock);
         goto vm_throw;
     }
     DEFINE_OPCODE(op_tear_off_activation) {
@@ -3779,7 +3782,7 @@ skip_id_custom_self:
 
         int src1 = vPC[1].u.operand;
         int src2 = vPC[2].u.operand;
-        ASSERT(callFrame->codeBlock()->needsFullScopeChain());
+        ASSERT(codeBlock->needsFullScopeChain());
 
         JSActivation* activation = asActivation(callFrame->r(src1).jsValue());
         activation->copyRegisters();
@@ -3803,7 +3806,7 @@ skip_id_custom_self:
         */
 
         int src1 = vPC[1].u.operand;
-        ASSERT(!callFrame->codeBlock()->needsFullScopeChain() && callFrame->codeBlock()->usesArguments());
+        ASSERT(!codeBlock->needsFullScopeChain() && codeBlock->ownerExecutable()->usesArguments());
 
         if (JSValue arguments = callFrame->r(unmodifiedArgumentsRegister(src1)).jsValue())
             asArguments(arguments)->copyRegisters();
@@ -3862,7 +3865,7 @@ skip_id_custom_self:
 
         int result = vPC[1].u.operand;
 
-        if (callFrame->codeBlock()->needsFullScopeChain())
+        if (codeBlock->needsFullScopeChain())
             callFrame->scopeChain()->deref();
 
         JSValue returnValue = callFrame->r(result).jsValue();
@@ -3877,6 +3880,8 @@ skip_id_custom_self:
             return returnValue;
 
         functionReturnValue = returnValue;
+        codeBlock = callFrame->codeBlock();
+        ASSERT(codeBlock == callFrame->codeBlock());
 
         NEXT_INSTRUCTION();
     }
@@ -3890,8 +3895,6 @@ skip_id_custom_self:
         */
 
         size_t i = 0;
-        CodeBlock* codeBlock = callFrame->codeBlock();
-        
         for (size_t count = codeBlock->m_numVars; i < count; ++i)
             callFrame->r(i) = jsUndefined();
 
@@ -3908,8 +3911,6 @@ skip_id_custom_self:
         */
 
         size_t i = 0;
-        CodeBlock* codeBlock = callFrame->codeBlock();
-
         for (size_t count = codeBlock->m_numVars; i < count; ++i)
             callFrame->r(i) = jsUndefined();
 
@@ -4023,6 +4024,7 @@ skip_id_custom_self:
             }
 
             callFrame->init(newCodeBlock, vPC + OPCODE_LENGTH(op_construct), callDataScopeChain, previousCallFrame, 0, argCount, asFunction(v));
+            codeBlock = newCodeBlock;
             vPC = newCodeBlock->instructions().begin();
 
 #if ENABLE(OPCODE_STATS)
@@ -4053,7 +4055,7 @@ skip_id_custom_self:
 
         ASSERT(constructType == ConstructTypeNone);
 
-        exceptionValue = createNotAConstructorError(callFrame, v, vPC - callFrame->codeBlock()->instructions().begin(), callFrame->codeBlock());
+        exceptionValue = createNotAConstructorError(callFrame, v, vPC - codeBlock->instructions().begin(), codeBlock);
         goto vm_throw;
     }
     DEFINE_OPCODE(op_strcat) {
@@ -4233,13 +4235,14 @@ skip_id_custom_self:
         int ex = vPC[1].u.operand;
         exceptionValue = callFrame->r(ex).jsValue();
 
-        handler = throwException(callFrame, exceptionValue, vPC - callFrame->codeBlock()->instructions().begin(), true);
+        handler = throwException(callFrame, exceptionValue, vPC - codeBlock->instructions().begin(), true);
         if (!handler) {
             *exception = exceptionValue;
             return jsNull();
         }
 
-        vPC = callFrame->codeBlock()->instructions().begin() + handler->target;
+        codeBlock = callFrame->codeBlock();
+        vPC = codeBlock->instructions().begin() + handler->target;
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_new_error) {
@@ -4254,7 +4257,6 @@ skip_id_custom_self:
         int type = vPC[2].u.operand;
         int message = vPC[3].u.operand;
 
-        CodeBlock* codeBlock = callFrame->codeBlock();
         callFrame->r(dst) = JSValue(Error::create(callFrame, (ErrorType)type, callFrame->r(message).jsValue().toString(callFrame), codeBlock->lineNumberForBytecodeOffset(callFrame, vPC - codeBlock->instructions().begin()), codeBlock->ownerExecutable()->sourceID(), codeBlock->ownerExecutable()->sourceURL()));
 
         vPC += OPCODE_LENGTH(op_new_error);
@@ -4267,7 +4269,7 @@ skip_id_custom_self:
            program. Return control to the calling native code.
         */
 
-        if (callFrame->codeBlock()->needsFullScopeChain()) {
+        if (codeBlock->needsFullScopeChain()) {
             ScopeChainNode* scopeChain = callFrame->scopeChain();
             ASSERT(scopeChain->refCount > 1);
             scopeChain->deref();
@@ -4292,7 +4294,7 @@ skip_id_custom_self:
 
         ASSERT(callFrame->r(base).jsValue().isObject());
         JSObject* baseObj = asObject(callFrame->r(base).jsValue());
-        Identifier& ident = callFrame->codeBlock()->identifier(property);
+        Identifier& ident = codeBlock->identifier(property);
         ASSERT(callFrame->r(function).jsValue().isObject());
         baseObj->defineGetter(callFrame, ident, asObject(callFrame->r(function).jsValue()));
 
@@ -4316,7 +4318,7 @@ skip_id_custom_self:
 
         ASSERT(callFrame->r(base).jsValue().isObject());
         JSObject* baseObj = asObject(callFrame->r(base).jsValue());
-        Identifier& ident = callFrame->codeBlock()->identifier(property);
+        Identifier& ident = codeBlock->identifier(property);
         ASSERT(callFrame->r(function).jsValue().isObject());
         baseObj->defineSetter(callFrame, ident, asObject(callFrame->r(function).jsValue()), 0);
 
@@ -4401,13 +4403,14 @@ skip_id_custom_self:
             // cannot fathom if we don't assign to the exceptionValue before branching)
             exceptionValue = createInterruptedExecutionException(globalData);
         }
-        handler = throwException(callFrame, exceptionValue, vPC - callFrame->codeBlock()->instructions().begin(), false);
+        handler = throwException(callFrame, exceptionValue, vPC - codeBlock->instructions().begin(), false);
         if (!handler) {
             *exception = exceptionValue;
             return jsNull();
         }
 
-        vPC = callFrame->codeBlock()->instructions().begin() + handler->target;
+        codeBlock = callFrame->codeBlock();
+        vPC = codeBlock->instructions().begin() + handler->target;
         NEXT_INSTRUCTION();
     }
     }

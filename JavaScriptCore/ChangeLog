@@ -1,3 +1,18 @@
+2010-05-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Removed some reliance on callFame[CodeBlock] by storing CodeBlock in a
+        local variable in the Interpreter.
+        https://bugs.webkit.org/show_bug.cgi?id=39447
+
+        Small speedup on SunSpider in Interpreter mode.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jsc.cpp:
+        * wtf/Platform.h:
+
 2010-05-19  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
