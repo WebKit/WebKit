@@ -600,7 +600,12 @@ private slots:
     void setHtmlWithBaseURL();
     void ipv6HostEncoding();
     void metaData();
+#if !defined(Q_WS_MAEMO_5)
+    // as maemo 5 does not use QComboBoxes to implement the popups
+    // this test does not make sense for it.
     void popupFocus();
+#endif
+    void inputFieldFocus();
     void hitTestContent();
     void jsByteArray();
     void ownership();
@@ -686,13 +691,13 @@ private:
     QWebView* m_view;
     QWebPage* m_page;
     MyQObject* m_myObject;
-    QWebView* m_popupTestView;
-    int m_popupTestPaintCount;
+    QWebView* m_inputFieldsTestView;
+    int m_inputFieldTestPaintCount;
 };
 
 tst_QWebFrame::tst_QWebFrame()
     : sTrue("true"), sFalse("false"), sUndefined("undefined"), sArray("array"), sFunction("function"), sError("error"),
-        sString("string"), sObject("object"), sNumber("number"), m_popupTestView(0), m_popupTestPaintCount(0)
+        sString("string"), sObject("object"), sNumber("number"), m_inputFieldsTestView(0), m_inputFieldTestPaintCount(0)
 {
 }
 
@@ -702,10 +707,10 @@ tst_QWebFrame::~tst_QWebFrame()
 
 bool tst_QWebFrame::eventFilter(QObject* watched, QEvent* event)
 {
-    // used on the popupFocus test
-    if (watched == m_popupTestView) {
+    // used on the inputFieldFocus test
+    if (watched == m_inputFieldsTestView) {
         if (event->type() == QEvent::Paint)
-            m_popupTestPaintCount++;
+            m_inputFieldTestPaintCount++;
     }
     return QObject::eventFilter(watched, event);
 }
@@ -2549,6 +2554,7 @@ void tst_QWebFrame::metaData()
     QCOMPARE(metaData.value("nonexistant"), QString());
 }
 
+#if !defined(Q_WS_MAEMO_5)
 void tst_QWebFrame::popupFocus()
 {
     QWebView view;
@@ -2580,16 +2586,27 @@ void tst_QWebFrame::popupFocus()
     // hide the popup and check if focus is on the page
     combo->hidePopup();
     QTRY_VERIFY(view.hasFocus() && !combo->view()->hasFocus()); // Focus should be back on the WebView
+}
+#endif
+
+void tst_QWebFrame::inputFieldFocus()
+{
+    QWebView view;
+    view.setHtml("<html><body><input type=\"text\"></input></body></html>");
+    view.resize(400, 100);
+    view.show();
+    view.setFocus();
+    QTRY_VERIFY(view.hasFocus());
 
     // double the flashing time, should at least blink once already
     int delay = qApp->cursorFlashTime() * 2;
 
     // focus the lineedit and check if it blinks
-    QTest::mouseClick(&view, Qt::LeftButton, 0, QPoint(200, 25));
-    m_popupTestView = &view;
+    QTest::mouseClick(&view, Qt::LeftButton, 0, QPoint(25, 25));
+    m_inputFieldsTestView = &view;
     view.installEventFilter( this );
     QTest::qWait(delay);
-    QVERIFY2(m_popupTestPaintCount >= 3,
+    QVERIFY2(m_inputFieldTestPaintCount >= 3,
              "The input field should have a blinking caret");
 }
 

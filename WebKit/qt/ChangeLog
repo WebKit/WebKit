@@ -1,3 +1,19 @@
+2010-05-20  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Skipping popup focus test for maemo
+        https://bugs.webkit.org/show_bug.cgi?id=39314
+
+        Skipping popup focus test for maemo in qwebframe auto test.
+
+        The test method tst_QWebFrame::popupFocus() was testing popup focus AND input
+        field focus. The input field focus has been removed from the method popupFocus()
+        and a new test method named inputFieldFocus() has been added. Finally the test 
+        method popupFocus() has been skipped for maemo.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2010-05-19  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
