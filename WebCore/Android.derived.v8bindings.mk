@@ -30,7 +30,8 @@ js_binding_scripts := \
 	$(LOCAL_PATH)/bindings/scripts/IDLStructure.pm \
 	$(LOCAL_PATH)/bindings/scripts/generate-bindings.pl
 
-FEATURE_DEFINES := ANDROID_ORIENTATION_SUPPORT ENABLE_TOUCH_EVENTS=1 V8_BINDING ENABLE_DATABASE=1 ENABLE_OFFLINE_WEB_APPLICATIONS=1 ENABLE_DOM_STORAGE=1 ENABLE_VIDEO=1 ENABLE_WORKERS=1 ENABLE_GEOLOCATION=1
+FEATURE_DEFINES := ANDROID_ORIENTATION_SUPPORT ENABLE_TOUCH_EVENTS=1 ENABLE_DATABASE=1 ENABLE_OFFLINE_WEB_APPLICATIONS=1 ENABLE_DOM_STORAGE=1 ENABLE_VIDEO=1 ENABLE_WORKERS=1 ENABLE_GEOLOCATION=1 ENABLE_DEVICE_ORIENTATION=1
+FEATURE_DEFINES += V8_BINDING
 
 # CSS
 GEN := \
@@ -84,6 +85,7 @@ GEN := \
     $(intermediates)/bindings/V8Comment.h \
     $(intermediates)/bindings/V8DOMCoreException.h \
     $(intermediates)/bindings/V8DOMImplementation.h \
+    $(intermediates)/bindings/V8DeviceOrientationEvent.h \
     $(intermediates)/bindings/V8Document.h \
     $(intermediates)/bindings/V8DocumentFragment.h \
     $(intermediates)/bindings/V8DocumentType.h \

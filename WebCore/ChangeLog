@@ -1,3 +1,50 @@
+2010-05-20  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Provide bindings for DeviceOrientation
+        https://bugs.webkit.org/show_bug.cgi?id=39210
+
+        Tests: fast/dom/DeviceOrientation/window-property.html
+               fast/dom/Window/window-properties-on-device-orientation.html
+
+        Adds bindings for DeviceOrientation as defined in
+        http://dev.w3.org/geo/api/spec-source-orientation.html
+        This is guarded by ENABLE(DEVICE_ORIENTATION) which is currently disabled on
+        all platforms but Android.
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * Android.mk:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8EventCustom.cpp:
+        (WebCore::toV8):
+        * dom/DeviceOrientationEvent.cpp: Added.
+        (WebCore::DeviceOrientationEvent::DeviceOrientationEvent):
+        (WebCore::DeviceOrientationEvent::initDeviceOrientationEvent):
+        * dom/DeviceOrientationEvent.h: Added.
+        (WebCore::DeviceOrientationEvent::create):
+        (WebCore::DeviceOrientationEvent::alpha):
+        (WebCore::DeviceOrientationEvent::beta):
+        (WebCore::DeviceOrientationEvent::gamma):
+        (WebCore::DeviceOrientationEvent::isDeviceOrientationEvent):
+        * dom/DeviceOrientationEvent.idl: Added.
+        * dom/Event.cpp:
+        (WebCore::Event::isDeviceOrientationEvent):
+        * dom/Event.h:
+        * dom/EventNames.h:
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
 2010-05-20  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Rubberstamped by Antti Koivisto.

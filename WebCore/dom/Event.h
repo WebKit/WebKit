@@ -139,6 +139,9 @@ namespace WebCore {
 #if ENABLE(TOUCH_EVENTS)
         virtual bool isTouchEvent() const;
 #endif
+#if ENABLE(DEVICE_ORIENTATION)
+        virtual bool isDeviceOrientationEvent() const;
+#endif
         bool fromUserGesture();
         
         bool propagationStopped() const { return m_propagationStopped || m_immediatePropagationStopped; }

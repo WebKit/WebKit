@@ -1,3 +1,15 @@
+2010-05-20  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Provide bindings for DeviceOrientation
+        https://bugs.webkit.org/show_bug.cgi?id=39210
+
+        Adds ENABLE_DEVICE_ORIENTATION to VisualStudio project files, always disabled.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops:
+
 2010-04-09  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Maciej Stachowiak.

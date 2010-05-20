@@ -1,3 +1,14 @@
+2010-05-20  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Provide bindings for DeviceOrientation
+        https://bugs.webkit.org/show_bug.cgi?id=39210
+
+        Adds ENABLE_DEVICE_ORIENTATION to XCode project file, always disabled.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2010-05-19  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

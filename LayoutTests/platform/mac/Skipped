@@ -188,3 +188,7 @@ scrollbars/scrollbar-click-does-not-blur-content.html
 
 # IndexedDB is not yet enabled.
 storage/indexeddb
+
+# This port doesn't support DeviceOrientation.
+fast/dom/DeviceOrientation
+fast/dom/Window/window-properties-on-device-orientation.html

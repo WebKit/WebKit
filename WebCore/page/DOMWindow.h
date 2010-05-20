@@ -325,6 +325,10 @@ namespace WebCore {
         DEFINE_ATTRIBUTE_EVENT_LISTENER(orientationchange);
 #endif
 
+#if ENABLE(DEVICE_ORIENTATION)
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(deviceorientation);
+#endif
+
         DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(webkitanimationstart, webkitAnimationStart);
         DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(webkitanimationiteration, webkitAnimationIteration);
         DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(webkitanimationend, webkitAnimationEnd);

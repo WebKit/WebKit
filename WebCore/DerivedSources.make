@@ -117,6 +117,7 @@ DOM_CLASSES = \
     Database \
     DatabaseCallback \
     DatabaseSync \
+    DeviceOrientationEvent \
     Document \
     DocumentFragment \
     DocumentType \

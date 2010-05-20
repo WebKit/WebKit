@@ -1,3 +1,34 @@
+2010-05-20  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Provide bindings for DeviceOrientation
+        https://bugs.webkit.org/show_bug.cgi?id=39210
+
+        Modifies existing fast/dom/Window tests to skip window.ondeviceorientation until
+        it is widely supported.
+        Adds new fast/dom/Window/window-properties-on-device-orientation.html to test
+        type and presence of window.ondeviceorientation.
+        Adds new fast/dom/DeviceOrientation directory and initial test.
+        Adds all DeviceOrientation tests to all skipped lists.
+
+        * fast/dom/DeviceOrientation: Added.
+        * fast/dom/DeviceOrientation/script-tests: Added.
+        * fast/dom/DeviceOrientation/script-tests/TEMPLATE.html: Added.
+        * fast/dom/DeviceOrientation/script-tests/window-property.js: Added.
+        (hasOnDeviceOrientationProperty):
+        * fast/dom/DeviceOrientation/window-property-expected.txt: Added.
+        * fast/dom/DeviceOrientation/window-property.html: Added.
+        * fast/dom/Window/script-tests/window-property-descriptors.js:
+        * fast/dom/Window/window-properties-on-device-orientation-expected.txt: Added.
+        * fast/dom/Window/window-properties-on-device-orientation.html: Added.
+        * fast/dom/Window/window-properties.html:
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-05-20  Martin Robinson  <mrobinson@webkit.org>
 
         Reviewed by Ojan Vafai.

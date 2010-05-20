@@ -37,6 +37,7 @@ var __skip__ = {
     "FloatArray" : 1,
     "FileError" : 1,
     "FileReader" : 1,
+    "ondeviceorientation" : 1,
     // Ignore this property because it only appears in debug builds and not in release.
     "jscprint" : 1
 };

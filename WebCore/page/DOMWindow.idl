@@ -299,6 +299,8 @@ module window {
         attribute [Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchend;
         attribute [Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchcancel;
 
+        attribute [Conditional=DEVICE_ORIENTATION] EventListener ondeviceorientation;
+
         // EventTarget interface
         [Custom] void addEventListener(in DOMString type,
                                       in EventListener listener,

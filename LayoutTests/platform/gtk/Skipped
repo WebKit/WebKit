@@ -1179,6 +1179,7 @@ fast/dom/client-width-height-quirks.html
 fast/dom/client-width-height.html
 fast/dom/cssTarget-crash.html
 fast/dom/frame-loading-via-document-write.html
+fast/dom/DeviceOrientation/window-property.html
 fast/dom/Geolocation/callback-exception.html
 fast/dom/Geolocation/error.html
 fast/dom/Geolocation/permission-denied-already-clear-watch.html
@@ -1204,6 +1205,7 @@ fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml
 fast/dom/Window/new-window-opener.html
 fast/dom/Window/webkitConvertPoint.html
 fast/dom/Window/window-onFocus.html
+fast/dom/Window/window-properties-on-device-orientation.html
 fast/dom/Window/window-resize-and-move-arguments.html
 fast/dom/Window/window-resize.html
 fast/dom/Window/window-xy-properties.html

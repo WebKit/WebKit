@@ -212,6 +212,13 @@ bool Event::isTouchEvent() const
 }
 #endif
 
+#if ENABLE(DEVICE_ORIENTATION)
+bool Event::isDeviceOrientationEvent() const
+{
+    return false;
+}
+#endif
+
 bool Event::fromUserGesture()
 {
     if (!UserGestureIndicator::processingUserGesture())
