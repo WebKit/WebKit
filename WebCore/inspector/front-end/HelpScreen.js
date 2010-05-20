@@ -41,6 +41,7 @@ WebInspector.HelpScreen = function(title)
     var closeButton = captionWindow.createChild("button", "help-close-button");
     this.contentElement = mainWindow.createChild("div", "help-content");
     this.contentElement.tabIndex = 0;
+    this.contentElement.addEventListener("blur", this._onBlur.bind(this), false);
     captionWindow.createChild("h1", "help-window-title").innerText = title;
 
     closeButton.innerText = "\u2716"; // Code stands for HEAVY MULTIPLICATION X.
@@ -56,15 +57,20 @@ WebInspector.HelpScreen = function(title)
 WebInspector.HelpScreen.prototype = {
     show: function()
     {
+        if (this._isShown)
+            return;
+
         this._element.style.visibility = "visible";
         this._isShown = true;
-        this.contentElement.focus();
+        this._previousFocusElement = WebInspector.currentFocusElement;
+        WebInspector.currentFocusElement = this.contentElement;
     },
 
     _hide: function()
     {
         this._isShown = false;
         this._element.style.visibility = "hidden";
+        WebInspector.currentFocusElement = this._previousFocusElement;
     },
 
     _onKeyDown: function(event)
@@ -73,6 +79,13 @@ WebInspector.HelpScreen.prototype = {
             this._hide();
             event.stopPropagation();
         }
+    },
+
+    _onBlur: function()
+    {
+         // Pretend we're modal, grab focus back if we're still shown.
+        if (this._isShown)
+            WebInspector.currentFocusElement = this.contentElement;
     },
 
     _addStyleSheetIfNeeded: function(href)
