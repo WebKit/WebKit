@@ -1,3 +1,15 @@
+2010-05-20  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Ojan Vafai.
+
+        editingBehavior settings needs to be set back to a reasonable default between tests
+        https://bugs.webkit.org/show_bug.cgi?id=39433
+
+        Revert the changes from r59840 to this test until there is a method
+        in the WebKit APIs to consistently reset the editingBehavior setting
+        to a reasonable default.
+
+        * editing/selection/extend-selection-after-double-click.html: Revert previous changes to this test.
 2010-05-20  Victor Wang  <victorw@chromium.org>
 
         Unreviewed. Update test expectations from chromium.
