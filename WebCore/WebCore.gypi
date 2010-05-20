@@ -582,6 +582,8 @@
             'bindings/js/JSLazyEventListener.h',
             'bindings/js/JSLocationCustom.cpp',
             'bindings/js/JSLocationCustom.h',
+            'bindings/js/JSMainThreadExecState.cpp',
+            'bindings/js/JSMainThreadExecState.h',
             'bindings/js/JSMessageChannelConstructor.cpp',
             'bindings/js/JSMessageChannelConstructor.h',
             'bindings/js/JSMessageChannelCustom.cpp',

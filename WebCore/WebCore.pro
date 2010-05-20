@@ -351,6 +351,7 @@ SOURCES += \
     bindings/js/JSDOMBinding.cpp \
     bindings/js/JSEventListener.cpp \
     bindings/js/JSLazyEventListener.cpp \
+    bindings/js/JSMainThreadExecState.cpp \
     bindings/js/JSPluginElementFunctions.cpp \
     bindings/js/JSPopStateEventCustom.cpp \
     bindings/js/JSWorkerContextErrorHandler.cpp \

@@ -468,6 +468,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSLazyEventListener.h \
 	WebCore/bindings/js/JSLocationCustom.cpp \
 	WebCore/bindings/js/JSLocationCustom.h \
+	WebCore/bindings/js/JSMainThreadExecState.cpp \
+	WebCore/bindings/js/JSMainThreadExecState.h \
 	WebCore/bindings/js/JSMessageChannelConstructor.cpp \
 	WebCore/bindings/js/JSMessageChannelConstructor.h \
 	WebCore/bindings/js/JSMessageChannelCustom.cpp \
