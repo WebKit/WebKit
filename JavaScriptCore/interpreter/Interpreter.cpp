@@ -4424,7 +4424,7 @@ JSValue Interpreter::retrieveArguments(CallFrame* callFrame, JSFunction* functio
     return arguments;
 }
 
-JSValue Interpreter::retrieveCaller(CallFrame* callFrame, InternalFunction* function) const
+JSValue Interpreter::retrieveCaller(CallFrame* callFrame, JSFunction* function) const
 {
     CallFrame* functionCallFrame = findFunctionCallFrame(callFrame, function);
     if (!functionCallFrame)
@@ -4462,7 +4462,7 @@ void Interpreter::retrieveLastCaller(CallFrame* callFrame, int& lineNumber, intp
     function = callerFrame->callee();
 }
 
-CallFrame* Interpreter::findFunctionCallFrame(CallFrame* callFrame, InternalFunction* function)
+CallFrame* Interpreter::findFunctionCallFrame(CallFrame* callFrame, JSFunction* function)
 {
     for (CallFrame* candidate = callFrame; candidate; candidate = candidate->callerFrame()->removeHostCallFrameFlag()) {
         if (candidate->callee() == function)

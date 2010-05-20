@@ -1,3 +1,36 @@
+2010-05-19  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 39393 - JSFunction need not be a subclass of InternalFunction.
+
+        This may prevent us from introducing a more useful parent class to
+        JSFunction, e.g. a JSObject that holds an executable, which could
+        also reference an eval or program executable.
+
+        * JavaScriptCore.exp:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::retrieveCaller):
+        (JSC::Interpreter::findFunctionCallFrame):
+        * interpreter/Interpreter.h:
+        * profiler/Profiler.cpp:
+        (JSC::Profiler::createCallIdentifier):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString):
+        * runtime/JSFunction.cpp:
+        (JSC::):
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::name):
+        (JSC::JSFunction::displayName):
+        (JSC::JSFunction::calculatedDisplayName):
+        * runtime/JSFunction.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectFunction):
+        (JSC::JSObject::putDirectFunctionWithoutTransition):
+        * runtime/JSObject.h:
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+
 2010-05-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
