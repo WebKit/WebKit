@@ -1,5 +1,29 @@
 2010-05-19  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (build fix).
+
+        Reverting r59800, this b0rked stuff.
+
+        * JavaScriptCore.exp:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::retrieveCaller):
+        (JSC::Interpreter::findFunctionCallFrame):
+        * interpreter/Interpreter.h:
+        * profiler/Profiler.cpp:
+        (JSC::Profiler::createCallIdentifier):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString):
+        * runtime/JSFunction.cpp:
+        (JSC::):
+        (JSC::JSFunction::JSFunction):
+        * runtime/JSFunction.h:
+        * runtime/JSObject.cpp:
+        * runtime/JSObject.h:
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+
+2010-05-19  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Bug 39393 - JSFunction need not be a subclass of InternalFunction.

@@ -75,7 +75,7 @@ void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
     JSValue* location = thisObj->getDirectLocation(propertyName);
 
     if (!location) {
-        NativeFunctionWrapper* function;
+        InternalFunction* function;
 #if ENABLE(JIT)
         if (entry->generator())
             function = new (exec) NativeFunctionWrapper(exec, exec->lexicalGlobalObject()->prototypeFunctionStructure(), entry->functionLength(), propertyName, exec->globalData().getHostFunction(entry->function(), entry->generator()));

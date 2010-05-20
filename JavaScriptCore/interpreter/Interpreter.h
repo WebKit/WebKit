@@ -44,6 +44,7 @@ namespace JSC {
     class CodeBlock;
     class EvalExecutable;
     class FunctionExecutable;
+    class InternalFunction;
     class JSFunction;
     class JSGlobalObject;
     class ProgramExecutable;
@@ -100,7 +101,7 @@ namespace JSC {
         JSValue execute(EvalExecutable* evalNode, CallFrame* exec, JSObject* thisObj, ScopeChainNode* scopeChain, JSValue* exception);
 
         JSValue retrieveArguments(CallFrame*, JSFunction*) const;
-        JSValue retrieveCaller(CallFrame*, JSFunction*) const;
+        JSValue retrieveCaller(CallFrame*, InternalFunction*) const;
         void retrieveLastCaller(CallFrame*, int& lineNumber, intptr_t& sourceID, UString& sourceURL, JSValue& function) const;
         
         void getArgumentsData(CallFrame*, JSFunction*&, ptrdiff_t& firstParameterIndex, Register*& argv, int& argc);
@@ -142,7 +143,7 @@ namespace JSC {
 
         static ALWAYS_INLINE CallFrame* slideRegisterWindowForCall(CodeBlock*, RegisterFile*, CallFrame*, size_t registerOffset, int argc);
 
-        static CallFrame* findFunctionCallFrame(CallFrame*, JSFunction*);
+        static CallFrame* findFunctionCallFrame(CallFrame*, InternalFunction*);
 
         JSValue privateExecute(ExecutionFlag, RegisterFile*, CallFrame*, JSValue* exception);
 
