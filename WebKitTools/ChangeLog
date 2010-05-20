@@ -1,3 +1,15 @@
+2010-05-20  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Chromium: Add --chromium option to new-run-webkit-websocketserver
+        https://bugs.webkit.org/show_bug.cgi?id=37664
+
+        Missed to pass options to factory.get() in r59595
+
+        * Scripts/new-run-webkit-websocketserver:
+          Pass options to factory.get().
+
 2010-05-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Roben.
