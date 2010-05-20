@@ -4593,11 +4593,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setEditableLinkBehavior((EditableLinkBehavior)behavior);
 
-    WebKitEditingBehavior behavior;
-    hr = preferences->editingBehavior(&behavior);
+    WebKitEditingBehavior editingBehavior;
+    hr = preferences->editingBehavior(&editingBehavior);
     if (FAILED(hr))
         return hr;
-    settings->setEditingBehavior((EditingBehavior)behavior);
+    settings->setEditingBehavior((EditingBehavior)editingBehavior);
 
     hr = preferences->usesPageCache(&enabled);
     if (FAILED(hr))

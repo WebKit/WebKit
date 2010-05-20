@@ -1,3 +1,12 @@
+2010-05-20  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
+        Fix the Windows build.
+
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged): Change behavior to 'editingBehavior'.
+
 2010-05-20  Martin Robinson  <mrobinson@webkit.org>
 
         Reviewed by Ojan Vafai.
