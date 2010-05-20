@@ -56,7 +56,11 @@ QT_END_NAMESPACE
 
 namespace WebCore {
 
+#if Q_WS_MAC
+const double EventHandler::TextDragDelay = 0.15;
+#else
 const double EventHandler::TextDragDelay = 0.0;
+#endif
 
 static bool isKeyboardOptionTab(KeyboardEvent* event)
 {

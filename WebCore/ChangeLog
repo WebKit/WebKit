@@ -1,3 +1,12 @@
+2010-05-20  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Rubberstamped by Antti Koivisto.
+
+        Use 0.15 as text drag delay when Q_WS_MAC is defined, which is
+        consistent with the Mac OS X platform.
+
+        * page/qt/EventHandlerQt.cpp:
+
 2010-05-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.
