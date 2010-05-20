@@ -145,7 +145,7 @@ void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
         return;
     }
  
-    MappedAttribute* mappedAttr = static_cast<MappedAttribute*>(attr);
+    MappedAttribute* mappedAttr = toMappedAttribute(attr);
     if (mappedAttr->decl() && !preserveDecls) {
         mappedAttr->setDecl(0);
         setNeedsStyleRecalc();

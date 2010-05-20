@@ -25,6 +25,7 @@
 #ifndef Attribute_h
 #define Attribute_h
 
+#include "CSSMappedAttributeDeclaration.h"
 #include "QualifiedName.h"
 
 namespace WebCore {
@@ -43,10 +44,9 @@ class Attribute : public RefCounted<Attribute> {
 public:
     static PassRefPtr<Attribute> create(const QualifiedName& name, const AtomicString& value)
     {
-        return adoptRef(new Attribute(name, value));
+        return adoptRef(new Attribute(name, value, false, 0));
     }
-    virtual ~Attribute() { }
-    
+
     const AtomicString& value() const { return m_value; }
     const AtomicString& prefix() const { return m_name.prefix(); }
     const AtomicString& localName() const { return m_name.localName(); }
@@ -60,30 +60,45 @@ public:
     bool isNull() const { return m_value.isNull(); }
     bool isEmpty() const { return m_value.isEmpty(); }
     
-    virtual PassRefPtr<Attribute> clone() const;
+    PassRefPtr<Attribute> clone() const;
 
     // An extension to get the style information for presentational attributes.
-    virtual CSSStyleDeclaration* style() const { return 0; }
-    
+    CSSStyleDeclaration* style() const { return m_styleDecl.get(); }
+    CSSMappedAttributeDeclaration* decl() const { return m_styleDecl.get(); }
+    void setDecl(PassRefPtr<CSSMappedAttributeDeclaration> decl) { m_styleDecl = decl; }
+
     void setValue(const AtomicString& value) { m_value = value; }
     void setPrefix(const AtomicString& prefix) { m_name.setPrefix(prefix); }
 
-    virtual bool isMappedAttribute() { return false; }
+    bool isMappedAttribute() { return m_isMappedAttribute; }
 
 protected:
-    Attribute(const QualifiedName& name, const AtomicString& value)
-        : m_name(name), m_value(value), m_impl(0)
+    Attribute(const QualifiedName& name, const AtomicString& value, bool isMappedAttribute, CSSMappedAttributeDeclaration* styleDecl)
+        : m_isMappedAttribute(isMappedAttribute)
+        , m_name(name)
+        , m_value(value)
+        , m_impl(0)
+        , m_styleDecl(styleDecl)
     {
     }
-    Attribute(const AtomicString& name, const AtomicString& value)
-        : m_name(nullAtom, name, nullAtom), m_value(value), m_impl(0)
+
+    Attribute(const AtomicString& name, const AtomicString& value, bool isMappedAttribute, CSSMappedAttributeDeclaration* styleDecl)
+        : m_isMappedAttribute(isMappedAttribute)
+        , m_name(nullAtom, name, nullAtom)
+        , m_value(value)
+        , m_impl(0)
+        , m_styleDecl(styleDecl)
     {
     }
 
 private:
+    // This boolean will go into the spare 32-bits of padding from RefCounted in 64-bit.
+    bool m_isMappedAttribute;
+    
     QualifiedName m_name;
     AtomicString m_value;
     Attr* m_impl;
+    RefPtr<CSSMappedAttributeDeclaration> m_styleDecl;
 };
 
 } //namespace

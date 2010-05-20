@@ -29253,10 +29253,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\MappedAttribute.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\MappedAttribute.h"
 				>
 			</File>

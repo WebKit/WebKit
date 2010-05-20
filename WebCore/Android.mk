@@ -128,7 +128,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/ExceptionCode.cpp \
 	dom/InputElement.cpp \
 	dom/KeyboardEvent.cpp \
-	dom/MappedAttribute.cpp \
 	dom/MessageChannel.cpp \
 	dom/MessageEvent.cpp \
 	dom/MessagePort.cpp \
