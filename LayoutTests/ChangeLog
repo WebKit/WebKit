@@ -1,3 +1,15 @@
+2010-05-20  Adam Langley  <agl@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] Add test which previously crashed on Linux.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39015
+        http://code.google.com/p/chromium/issues/detail?id=43831
+
+        * fast/text/chromium-linux-fallback-crash-expected.txt: Added.
+        * fast/text/chromium-linux-fallback-crash.html: Added.
+
 2010-05-20  Herczeg Zoltan  <zherczeg@webkit.org>
 
         Unreviewed. Update Qt specific expected file.

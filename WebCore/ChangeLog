@@ -1,3 +1,15 @@
+2010-05-20  Adam Langley  <agl@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] Avoid crash when msttcorefonts aren't provided
+
+        https://bugs.webkit.org/show_bug.cgi?id=39015
+        http://code.google.com/p/chromium/issues/detail?id=43831
+
+        * platform/graphics/chromium/FontCacheLinux.cpp:
+        (WebCore::FontCache::createFontPlatformData):
+
 2010-05-20  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Dirk Schulze.
