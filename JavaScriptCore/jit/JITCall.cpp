@@ -151,25 +151,35 @@ void JIT::emit_op_ret(Instruction* currentInstruction)
     ret();
 }
 
-void JIT::emit_op_construct_verify(Instruction* currentInstruction)
+void JIT::emit_op_constructor_ret(Instruction* currentInstruction)
 {
-    unsigned dst = currentInstruction[1].u.operand;
+    unsigned result = currentInstruction[1].u.operand;
+    unsigned thisReg = currentInstruction[2].u.operand;
 
-    emitLoad(dst, regT1, regT0);
-    addSlowCase(branch32(NotEqual, regT1, Imm32(JSValue::CellTag)));
+    // We could JIT generate the deref, only calling out to C when the refcount hits zero.
+    if (m_codeBlock->needsFullScopeChain())
+        JITStubCall(this, cti_op_ret_scopeChain).call();
+
+    emitLoad(result, regT1, regT0);
+    Jump notJSCell = branch32(NotEqual, regT1, Imm32(JSValue::CellTag));
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-    addSlowCase(branch8(NotEqual, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo) + OBJECT_OFFSETOF(TypeInfo, m_type)), Imm32(ObjectType)));
-}
+    Jump notObject = branch8(NotEqual, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo) + OBJECT_OFFSETOF(TypeInfo, m_type)), Imm32(ObjectType));
 
-void JIT::emitSlow_op_construct_verify(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned src = currentInstruction[2].u.operand;
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, regT2);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
 
-    linkSlowCase(iter);
-    linkSlowCase(iter);
-    emitLoad(src, regT1, regT0);
-    emitStore(dst, regT1, regT0);
+    restoreReturnAddressBeforeReturn(regT2);
+    ret();
+
+    notJSCell.link(this);
+    notObject.link(this);
+    emitLoad(thisReg, regT1, regT0);
+
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, regT2);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
+
+    restoreReturnAddressBeforeReturn(regT2);
+    ret();
 }
 
 void JIT::emitSlow_op_call(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

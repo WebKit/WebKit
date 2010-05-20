@@ -3840,6 +3840,37 @@ skip_id_custom_self:
 
         NEXT_INSTRUCTION();
     }
+    DEFINE_OPCODE(op_constructor_ret) {
+        /* ret result(r)
+           
+           Return register result as the return value of the current
+           function call, writing it into the caller's expected return
+           value register. In addition, unwind one call frame and
+           restore the scope chain, code block instruction pointer and
+           register base to those of the calling function.
+        */
+
+        int result = vPC[1].u.operand;
+
+        if (callFrame->codeBlock()->needsFullScopeChain())
+            callFrame->scopeChain()->deref();
+
+        JSValue returnValue = callFrame->r(result).jsValue();
+
+        if (UNLIKELY(!returnValue.isObject()))
+            returnValue = callFrame->r(vPC[2].u.operand).jsValue();
+
+        vPC = callFrame->returnPC();
+        int dst = callFrame->returnValueRegister();
+        callFrame = callFrame->callerFrame();
+        
+        if (callFrame->hasHostCallFrameFlag())
+            return returnValue;
+
+        callFrame->r(dst) = returnValue;
+
+        NEXT_INSTRUCTION();
+    }
     DEFINE_OPCODE(op_enter) {
         /* enter
 
@@ -4016,25 +4047,6 @@ skip_id_custom_self:
 
         exceptionValue = createNotAConstructorError(callFrame, v, vPC - callFrame->codeBlock()->instructions().begin(), callFrame->codeBlock());
         goto vm_throw;
-    }
-    DEFINE_OPCODE(op_construct_verify) {
-        /* construct_verify dst(r) override(r)
-
-           Verifies that register dst holds an object. If not, moves
-           the object in register override to register dst.
-        */
-
-        int dst = vPC[1].u.operand;
-        if (LIKELY(callFrame->r(dst).jsValue().isObject())) {
-            vPC += OPCODE_LENGTH(op_construct_verify);
-            NEXT_INSTRUCTION();
-        }
-
-        int override = vPC[2].u.operand;
-        callFrame->r(dst) = callFrame->r(override);
-
-        vPC += OPCODE_LENGTH(op_construct_verify);
-        NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_strcat) {
         int dst = vPC[1].u.operand;

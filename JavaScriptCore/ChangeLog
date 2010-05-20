@@ -1,5 +1,35 @@
 2010-05-19  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Geoff Garen.
+
+        Bug 39399 - Move responsibility for verifying constructors return objects from the caller to the callee.
+        
+        This is a necessary step to move object creation from caller to callee.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitReturn):
+        (JSC::BytecodeGenerator::emitConstruct):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::isConstructor):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionBodyNode::emitBytecode):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::emit_op_constructor_ret):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_constructor_ret):
+
+2010-05-19  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by NOBODY (build fix).
 
         Fix windows build II.

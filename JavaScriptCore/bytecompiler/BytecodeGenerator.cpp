@@ -365,7 +365,7 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, const Debug
     ++m_nextParameterIndex;
     ++m_codeBlock->m_numParameters;
 
-    if (functionBody->usesThis() || m_shouldEmitDebugHooks) {
+    if (!isConstructor() && (functionBody->usesThis() || m_shouldEmitDebugHooks)) {
         emitOpcode(op_convert_this);
         instructions().append(m_thisRegister.index());
     }
@@ -1541,6 +1541,15 @@ RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
         instructions().append(m_codeBlock->argumentsRegister());
     }
 
+    // Constructors use op_constructor_ret to check the result is an
+    // object, unless we can trivially determine the check is not
+    // necessary (currently, if the return value is 'this').
+    if (isConstructor() && (src->index() != m_thisRegister.index())) {
+        emitOpcode(op_constructor_ret);
+        instructions().append(src->index());
+        instructions().append(m_thisRegister.index());
+        return src;
+    }
     return emitUnaryNoDstOp(op_ret, src);
 }
 
@@ -1606,10 +1615,6 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
     instructions().append(argv[0]->index() + argv.size() + RegisterFile::CallFrameHeaderSize); // registerOffset
     instructions().append(funcProto->index()); // proto
     instructions().append(argv[0]->index()); // thisRegister
-
-    emitOpcode(op_construct_verify);
-    instructions().append(dst->index());
-    instructions().append(argv[0]->index());
 
     if (m_shouldEmitProfileHooks) {
         emitOpcode(op_profile_did_call);

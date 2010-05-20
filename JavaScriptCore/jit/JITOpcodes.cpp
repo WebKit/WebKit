@@ -789,6 +789,48 @@ void JIT::emit_op_ret(Instruction* currentInstruction)
     ret();
 }
 
+void JIT::emit_op_constructor_ret(Instruction* currentInstruction)
+{
+    // We could JIT generate the deref, only calling out to C when the refcount hits zero.
+    if (m_codeBlock->needsFullScopeChain())
+        JITStubCall(this, cti_op_ret_scopeChain).call();
+
+    ASSERT(callFrameRegister != regT1);
+    ASSERT(regT1 != returnValueRegister);
+    ASSERT(returnValueRegister != callFrameRegister);
+
+    // Return the result in %eax.
+    emitGetVirtualRegister(currentInstruction[1].u.operand, returnValueRegister);
+    Jump notJSCell = emitJumpIfNotJSCell(returnValueRegister);
+    loadPtr(Address(returnValueRegister, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
+    Jump notObject = branch8(NotEqual, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo) + OBJECT_OFFSETOF(TypeInfo, m_type)), Imm32(ObjectType));
+
+    // Grab the return address.
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, regT1);
+
+    // Restore our caller's "r".
+    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
+
+    // Return.
+    restoreReturnAddressBeforeReturn(regT1);
+    ret();
+
+    // Return 'this' in %eax.
+    notJSCell.link(this);
+    notObject.link(this);
+    emitGetVirtualRegister(currentInstruction[2].u.operand, returnValueRegister);
+
+    // Grab the return address.
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, regT1);
+
+    // Restore our caller's "r".
+    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
+
+    // Return.
+    restoreReturnAddressBeforeReturn(regT1);
+    ret();
+}
+
 void JIT::emit_op_new_array(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_new_array);
@@ -802,16 +844,6 @@ void JIT::emit_op_resolve(Instruction* currentInstruction)
     JITStubCall stubCall(this, cti_op_resolve);
     stubCall.addArgument(ImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
     stubCall.call(currentInstruction[1].u.operand);
-}
-
-void JIT::emit_op_construct_verify(Instruction* currentInstruction)
-{
-    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
-
-    emitJumpSlowCaseIfNotJSCell(regT0);
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-    addSlowCase(branch8(NotEqual, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo.m_type)), Imm32(ObjectType)));
-
 }
 
 void JIT::emit_op_to_primitive(Instruction* currentInstruction)
@@ -1490,14 +1522,6 @@ void JIT::emitSlow_op_convert_this(Instruction* currentInstruction, Vector<SlowC
     JITStubCall stubCall(this, cti_op_convert_this);
     stubCall.addArgument(regT0);
     stubCall.call(currentInstruction[1].u.operand);
-}
-
-void JIT::emitSlow_op_construct_verify(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkSlowCase(iter);
-    linkSlowCase(iter);
-    emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
-    emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 
 void JIT::emitSlow_op_to_primitive(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
