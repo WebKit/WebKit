@@ -21677,6 +21677,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\SinkDocument.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\SinkDocument.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\SubresourceLoader.cpp"
 				>
 			</File>
