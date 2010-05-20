@@ -1,5 +1,25 @@
 2010-05-19  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59716.
+
+    2010-05-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39321
+        Reduce the size of ListHashSets used by Document
+        <rdar://problem/7999388>
+
+        Reduce Membuster peak memory usage by ~450K by reducing the pool sizes
+        of the ListHashSets used by Document.
+
+        * dom/Document.cpp:
+        (WebCore::Document::addStyleSheetCandidateNode):
+        (WebCore::Document::recalcStyleSelector):
+        * dom/Document.h:
+
+2010-05-19  Mark Rowe  <mrowe@apple.com>
+
         Merge r59680.
 
     2010-05-18  Anders Carlsson  <andersca@apple.com>
