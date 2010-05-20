@@ -852,7 +852,7 @@ void LayoutTestController::authenticateSession(JSStringRef url, JSStringRef user
 
 void LayoutTestController::setEditingBehavior(const char* editingBehavior)
 {
-    NSString* editingBehaviorNS = [NSString stringWithUTF8String:editingBehavior];
+    NSString* editingBehaviorNS = [[NSString alloc] initWithUTF8String:editingBehavior];
     if ([editingBehaviorNS isEqualToString:@"mac"])
         [[WebPreferences standardPreferences] setEditingBehavior:WebKitEditingMacBehavior];
     if ([editingBehaviorNS isEqualToString:@"win"])
