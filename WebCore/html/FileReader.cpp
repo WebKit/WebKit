@@ -41,6 +41,7 @@
 #include "Logging.h"
 #include "ProgressEvent.h"
 #include "ScriptExecutionContext.h"
+#include "TextResourceDecoder.h"
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {
@@ -266,26 +267,17 @@ void FileReader::convertToText()
         return;
     }
 
-    // Try to determine the encoding if it is not provided.
-    // FIXME: move the following logic to a more generic place.
-    int offset = 0;
-    if (!m_encoding.isValid()) {
-        if (m_rawData.size() >= 2 && m_rawData[0] == '\xFE' && m_rawData[1] == '\xFF') {
-            offset = 2;
-            m_encoding = UTF16BigEndianEncoding();
-        } else if (m_rawData.size() >= 2 && m_rawData[0] == '\xFF' && m_rawData[1] == '\xFE') {
-            offset = 2;
-            m_encoding = UTF16LittleEndianEncoding();
-        } else if (m_rawData.size() >= 2 && m_rawData[0] == '\xEF' && m_rawData[1] == '\xBB' && m_rawData[2] == '\xBF') {
-            offset = 3;
-            m_encoding = UTF8Encoding();
-        } else
-            m_encoding = UTF8Encoding();
-    }
-
     // Decode the data.
+    // The File API spec says that we should use the supplied encoding if it is valid. However, we choose to ignore this
+    // requirement in order to be consistent with how WebKit decodes the web content: always has the BOM override the
+    // provided encoding.     
     // FIXME: consider supporting incremental decoding to improve the perf.
-    m_result = m_encoding.decode(&m_rawData.at(0) + offset, m_rawData.size() - offset);
+    if (!m_decoder)
+        m_decoder = TextResourceDecoder::create("text/plain", m_encoding.isValid() ? m_encoding : UTF8Encoding());
+    m_result = m_decoder->decode(&m_rawData.at(0), m_rawData.size());
+
+    if (m_state == Completed && !m_error)
+        m_result += m_decoder->flush();
 }
 
 void FileReader::convertToDataURL()

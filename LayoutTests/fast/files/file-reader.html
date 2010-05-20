@@ -11,11 +11,14 @@ var testCases = [
     "testReadingEmptyFileAsText",
     "testReadingEmptyFileAsDataURL",
     "testReadingUTF8EncodedFileAsBinaryString",
+    "testReadingBinaryFileAsBinaryString",
     "testReadingUTF8EncodedFileAsText",
     "testReadingUTF16BEBOMEncodedFileAsText",
     "testReadingUTF16LEBOMEncodedFileAsText",
     "testReadingUTF8BOMEncodedFileAsText",
     "testReadingUTF16BEEncodedFileAsTextWithUTF16Encoding",
+    "testReadingUTF16BEBOMEncodedFileAsTextWithUTF8Encoding",
+    "testReadingUTF16BEBOMEncodedFileAsTextWithInvalidEncoding",
     "testReadingUTF8EncodedFileAsDataURL",
     "testMultipleReads",
 ];
@@ -29,12 +32,34 @@ var testFileInfoList = [
     { 'name': 'UTF16LE-BOM-file', 'path': 'resources/UTF16LE-BOM.txt' },
     { 'name': 'UTF8-BOM-file', 'path': 'resources/UTF8-BOM.txt' },
     { 'name': 'UTF16BE-file', 'path': 'resources/UTF16BE.txt' },
+    { 'name': 'binary-file', 'path': 'resources/binary-file' },
 ];
 var testFiles = { };
 
 function log(message)
 {
     document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
+}
+
+function isASCIIString(str)
+{
+    for (var i = 0; i < str.length; ++i) {
+        if (str.charCodeAt(i) >= 128)
+            return false;
+    }
+    return true;
+}
+
+function toHexadecimal(str)
+{
+    var result = "";
+    for (var i = 0; i < str.length; ++i) {
+        var hex = "0x" + (str.charCodeAt(i) & 0xFF).toString(16);
+        if (i > 0)
+            result += " ";
+        result += hex;
+    }
+    return result;
 }
 
 function createFileReader()
@@ -67,7 +92,10 @@ function loaded(event)
     logEvent(event);
     log("readyState: " + event.target.readyState);
     log("result size: " + event.target.result.length);
-    log("result: " + event.target.result);
+
+    var result = event.target.result;
+    var resultOutput = isASCIIString(result) ? result : toHexadecimal(result);
+    log("result: " + resultOutput);
 }
 
 function loadFailed(event)
@@ -139,6 +167,13 @@ function testReadingUTF8EncodedFileAsBinaryString()
     reader.readAsBinaryString(testFiles['UTF8-file']);
 }
 
+function testReadingBinaryFileAsBinaryString()
+{
+    log("Test reading a binary file as binary string");
+    var reader = createFileReader();
+    reader.readAsBinaryString(testFiles['binary-file']);
+}
+
 function testReadingUTF8EncodedFileAsText()
 {
     log("Test reading a UTF-8 file as text");
@@ -172,6 +207,20 @@ function testReadingUTF16BEEncodedFileAsTextWithUTF16Encoding()
     log("Test reading a UTF-16BE file as text with UTF-16BE encoding");
     var reader = createFileReader();
     reader.readAsText(testFiles['UTF16BE-file'], "UTF-16BE");
+}
+
+function testReadingUTF16BEBOMEncodedFileAsTextWithUTF8Encoding()
+{
+    log("Test reading a UTF-16BE BOM file as text with UTF8 encoding");
+    var reader = createFileReader();
+    reader.readAsText(testFiles['UTF16BE-BOM-file'], "UTF-8");
+}
+
+function testReadingUTF16BEBOMEncodedFileAsTextWithInvalidEncoding()
+{
+    log("Test reading a UTF-16BE BOM file as text with invalid encoding");
+    var reader = createFileReader();
+    reader.readAsText(testFiles['UTF16BE-BOM-file'], "AnyInvalidEncoding");
 }
 
 function testReadingUTF8EncodedFileAsDataURL()

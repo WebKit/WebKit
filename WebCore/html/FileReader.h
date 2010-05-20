@@ -51,6 +51,7 @@ class Blob;
 class File;
 class FileStreamProxy;
 class ScriptExecutionContext;
+class TextResourceDecoder;
 
 class FileReader : public RefCounted<FileReader>, public ActiveDOMObject, public EventTarget, public FileStreamClient {
 public:
@@ -135,6 +136,7 @@ private:
 
     RefPtr<Blob> m_fileBlob;
     ReadType m_readType;
+    TextEncoding m_encoding;
 
     // Like XMLHttpRequest.m_responseText, we keep this as a ScriptString, not a WebCore::String.
     // That's because these strings can easily get huge (they are filled from the file) and
@@ -148,8 +150,8 @@ private:
     Vector<char> m_rawData;
     bool m_isRawDataConverted;
 
-    // Encoding scheme used to decode the data.
-    TextEncoding m_encoding;
+    // The decoder used to decode the text data.
+    RefPtr<TextResourceDecoder> m_decoder;
 
     // Needed to create data URL.
     String m_fileType;

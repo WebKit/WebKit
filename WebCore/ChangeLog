@@ -1,3 +1,21 @@
+2010-05-19  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Refactor text encoding detection logic in FileReader.
+        https://bugs.webkit.org/show_bug.cgi?id=39131
+
+        Changed FileReader::convertToText to call TextResourceDecoder::decode to
+        detect the encoding from BOM and decode the text. Though the File API
+        spec says that the supplied encoding should be used if it is valid, we
+        choose to ignore this requirement in order to be consistent with how
+        WebKit decodes the web content: always has the BOM override the provided
+        encoding.
+
+        * html/FileReader.cpp:
+        (WebCore::FileReader::convertToText):
+        * html/FileReader.h:
+
 2010-05-19  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by David Hyatt.
