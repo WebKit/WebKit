@@ -5931,8 +5931,3 @@ editing/spelling/context-menu-suggestions.html
 
 # IndexedDB is not yet enabled.
 storage/indexeddb
-
-# Re-enable geolocation tests after
-# https://bugs.webkit.org/show_bug.cgi?id=39388
-# is closed:
-fast/dom/Geolocation
