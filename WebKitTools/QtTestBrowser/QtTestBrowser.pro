@@ -20,13 +20,13 @@ HEADERS += \
     webview.h \
     fpstimer.h \
 
-CONFIG -= app_bundle
 CONFIG += uitools
 
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../..
 include(../../WebKit.pri)
 
 DESTDIR = $$OUTPUT_DIR/bin
+!CONFIG(standalone_package): CONFIG -= app_bundle
 
 QT += network
 macx:QT+=xml
