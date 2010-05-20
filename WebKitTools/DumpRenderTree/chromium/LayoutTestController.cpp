@@ -159,6 +159,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setTimelineProfilingEnabled", &LayoutTestController::setTimelineProfilingEnabled);
     bindMethod("evaluateInWebInspector", &LayoutTestController::evaluateInWebInspector);
     bindMethod("forceRedSelectionColors", &LayoutTestController::forceRedSelectionColors);
+    bindMethod("setEditingBehavior", &LayoutTestController::setEditingBehavior);
 
     // The fallback method is called when an unknown method is invoked.
     bindFallbackMethod(&LayoutTestController::fallbackMethod);
@@ -1271,4 +1272,16 @@ void LayoutTestController::addUserStyleSheet(const CppArgumentList& arguments, C
     if (arguments.size() < 1 || !arguments[0].isString())
         return;
     m_shell->webView()->addUserStyleSheet(WebString::fromUTF8(arguments[0].toString()));
+}
+
+void LayoutTestController::setEditingBehavior(const CppArgumentList& arguments, CppVariant* results)
+{
+    WebSettings* settings = m_shell->webView()->settings();
+    string key = arguments[0].toString();
+    if (key == "mac")
+        settings->setEditingBehavior(WebSettings::EditingBehaviorMac);
+    else if (key == "win")
+        settings->setEditingBehavior(WebSettings::EditingBehaviorWin);
+    else
+        logErrorToConsole("Passed invalid editing behavior. Should be 'mac' or 'win'.");
 }

@@ -1130,6 +1130,21 @@ HRESULT STDMETHODCALLTYPE WebPreferences::setEditableLinkBehavior(
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE WebPreferences::editingBehavior(
+    /* [out, retval] */ WebKitEditingBehavior* editingBehavior)
+{
+    *editingBehavior = (WebKitEditingBehavior) integerValueForKey(CFSTR(WebKitEditingBehaviorPreferenceKey));
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebPreferences::setEditingBehavior(
+    /* [in] */ WebKitEditableLinkBehavior behavior)
+{
+    setIntegerValue(CFSTR(WebKitEditingBehaviorPreferenceKey), behavior);
+    return S_OK;
+}
+
+
 HRESULT STDMETHODCALLTYPE WebPreferences::cookieStorageAcceptPolicy( 
         /* [retval][out] */ WebKitCookieStorageAcceptPolicy *acceptPolicy )
 {

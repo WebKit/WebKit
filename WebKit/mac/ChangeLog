@@ -1,3 +1,22 @@
+2010-05-20  Martin Robinson  <mrobinson@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        Expose the editing behavior setting in DRT to test all editing code paths
+        https://bugs.webkit.org/show_bug.cgi?id=38603
+
+        * WebView/WebFrame.mm:
+        (core):
+        * WebView/WebFrameInternal.h: Added a conversion method from the API enum to the WebCore enum.
+        * WebView/WebPreferenceKeysPrivate.h: Added a preference key for the new setting.
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Initialize the EditingBehavior to Mac style.
+        (-[WebPreferences editingBehavior]): Added.
+        (-[WebPreferences setEditingBehavior:]): Added.
+        * WebView/WebPreferencesPrivate.h: Added the new API points to the private API.
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]): Set the editing behavior via the WebPreferences setting.
+
 2010-05-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker and Simon Fraser.

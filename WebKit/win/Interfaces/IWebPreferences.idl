@@ -47,6 +47,12 @@ typedef enum WebKitEditableLinkBehavior {
     WebKitEditableLinkNeverLive
 } WebKitEditableLinkBehavior;
 
+typedef enum WebKitEditingBehavior {
+    WebKitEditingMacBehavior = 0,
+    WebKitEditingWinBehavior
+} WebKitEditingBehavior;
+
+
 typedef enum WebKitCookieStorageAcceptPolicy {
     WebKitCookieStorageAcceptPolicyAlways = 0,
     WebKitCookieStorageAcceptPolicyNever,
@@ -161,6 +167,9 @@ interface IWebPreferences : IUnknown
 
     HRESULT editableLinkBehavior([out, retval] WebKitEditableLinkBehavior* editableLinkBehavior);
     HRESULT setEditableLinkBehavior([in] WebKitEditableLinkBehavior behavior);
+
+    HRESULT editingBehavior([out, retval] WebKitEditingBehavior* editingBehavior);
+    HRESULT setEditingBehavior([in] WebKitEditingBehavior behavior);
 
     HRESULT cookieStorageAcceptPolicy([out, retval] WebKitCookieStorageAcceptPolicy* acceptPolicy);
     HRESULT setCookieStorageAcceptPolicy([in] WebKitCookieStorageAcceptPolicy acceptPolicy);

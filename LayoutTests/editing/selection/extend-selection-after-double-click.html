@@ -18,13 +18,25 @@
         eventSender.leapForward(1000);
     }
 
-    function runTest()
+    function logResult(result)
+    {
+        document.getElementById("result").innerHTML += result + "<br/>";
+    }
+
+    function runTests()
     {
         if (!window.eventSender || !window.layoutTestController)
             return;
 
         layoutTestController.dumpAsText();
 
+        runTest("mac", "a paragraph");
+        runTest("win", "paragra");
+    }
+
+    function runTest(behavior, expectedText)
+    {
+        layoutTestController.setEditingBehavior(behavior);
         doubleClickWord();
         getSelection().modify("extend", "backward", "character");
         getSelection().modify("extend", "backward", "character");
@@ -32,19 +44,15 @@
         getSelection().modify("extend", "backward", "character");
         getSelection().modify("extend", "backward", "character");
 
-        var result;
         var selectedText = getSelection().toString();
-        var onMacPlatform = navigator.userAgent.search(/\bMac OS X\b/) != -1;
-        var expectedText = onMacPlatform ? "a paragraph" : "paragra";
         if (selectedText == expectedText)
-            result = "SUCCESS";
+            logResult("SUCCESS");
         else
-            result = "FAILURE: The selected text is \"" + selectedText + "\" and should be \"" + expectedText + "\".";
-        document.getElementById("result").firstChild.data = result;
+            logResult("FAILURE: The selected text is \"" + selectedText + "\" and should be \"" + expectedText + "\".");
     }
 </script>
 </head>
-<body onload="runTest()">
+<body onload="runTests()">
 <p>This tests modifying a selection created with a double click with shift arrow key.</p>
 <p style="color:green">
     This test does not run interactively.
@@ -54,5 +62,5 @@
     The selection should include the words "a paragraph" on mac and "paragra" on win/linux..
 </p>
 <p>This is a para<span style="color:blue" id="start">g</span>raph.</p>
-<p id="result">TEST HAS NOT RUN</p>
+<p id="result"></p>
 </body>

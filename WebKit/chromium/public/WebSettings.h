@@ -43,6 +43,11 @@ class WebURL;
 // these functions have a 1:1 mapping with the methods in WebCore/page/settings.h.
 class WebSettings {
 public:
+    enum EditingBehavior {
+        EditingBehaviorMac,
+        EditingBehaviorWin
+    };
+
     virtual void setStandardFontFamily(const WebString&) = 0;
     virtual void setFixedFontFamily(const WebString&) = 0;
     virtual void setSerifFontFamily(const WebString&) = 0;
@@ -84,6 +89,7 @@ public:
     virtual void setOfflineWebApplicationCacheEnabled(bool) = 0;
     virtual void setExperimentalWebGLEnabled(bool) = 0;
     virtual void setShowDebugBorders(bool) = 0;
+    virtual void setEditingBehavior(EditingBehavior) = 0;
 
 protected:
     ~WebSettings() { }

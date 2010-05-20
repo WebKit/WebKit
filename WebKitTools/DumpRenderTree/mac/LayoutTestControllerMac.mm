@@ -849,3 +849,13 @@ void LayoutTestController::authenticateSession(JSStringRef url, JSStringRef user
     [SynchronousLoader makeRequest:request withUsername:(NSString *)usernameCF.get() password:(NSString *)passwordCF.get()];
 #endif
 }
+
+void LayoutTestController::setEditingBehavior(const char* editingBehavior)
+{
+    NSString* editingBehaviorNS = [NSString stringWithUTF8String:editingBehavior];
+    if ([editingBehaviorNS isEqualToString:@"mac"])
+        [[WebPreferences standardPreferences] setEditingBehavior:WebKitEditingMacBehavior];
+    if ([editingBehaviorNS isEqualToString:@"win"])
+        [[WebPreferences standardPreferences] setEditingBehavior:WebKitEditingWinBehavior];
+    [editingBehaviorNS release];
+}

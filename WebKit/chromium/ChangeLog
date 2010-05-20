@@ -1,3 +1,16 @@
+2010-05-20  Martin Robinson  <mrobinson@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        Expose the editing behavior setting in DRT to test all editing code paths
+        https://bugs.webkit.org/show_bug.cgi?id=38603
+
+        * public/WebSettings.h:
+        (WebKit::WebSettings::): Added an enum for EditingBehavior types.
+        * src/WebSettingsImpl.cpp: 
+        (WebKit::WebSettingsImpl::setEditingBehavior): Added.
+        * src/WebSettingsImpl.h:
+
 2010-05-19  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Darin Fisher.

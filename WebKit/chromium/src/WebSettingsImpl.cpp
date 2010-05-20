@@ -269,4 +269,9 @@ void WebSettingsImpl::setShowDebugBorders(bool show)
     m_settings->setShowDebugBorders(show);
 }
 
+void WebSettingsImpl::setEditingBehavior(EditingBehavior behavior)
+{
+    m_settings->setEditingBehavior(static_cast<WebCore::EditingBehavior>(behavior));
+}
+
 } // namespace WebKit

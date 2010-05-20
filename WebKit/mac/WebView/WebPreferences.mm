@@ -334,6 +334,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         @"0",                           WebKitPDFScaleFactorPreferenceKey,
         @"0",                           WebKitUseSiteSpecificSpoofingPreferenceKey,
         [NSNumber numberWithInt:WebKitEditableLinkDefaultBehavior], WebKitEditableLinkBehaviorPreferenceKey,
+        [NSNumber numberWithInt:WebKitEditingMacBehavior], WebKitEditingBehaviorPreferenceKey,
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
         [NSNumber numberWithInt:WebTextDirectionSubmenuAutomaticallyIncluded],
 #else
@@ -1245,6 +1246,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setHTML5ParserEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitHTML5ParserEnabledPreferenceKey];
+}
+
+- (WebKitEditingBehavior)editingBehavior
+{
+    return static_cast<WebKitEditingBehavior>([self _integerValueForKey:WebKitEditingBehaviorPreferenceKey]);
+}
+
+- (void)setEditingBehavior:(WebKitEditingBehavior)behavior
+{
+    [self _setIntegerValue:behavior forKey:WebKitEditingBehaviorPreferenceKey];
 }
 
 - (void)didRemoveFromWebView

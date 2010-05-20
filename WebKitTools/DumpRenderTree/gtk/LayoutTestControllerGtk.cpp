@@ -39,6 +39,7 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
 
+#include <cstring>
 #include <iostream>
 #include <sstream>
 #include <stdio.h>
@@ -692,4 +693,15 @@ JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSContextRe
 
 void LayoutTestController::authenticateSession(JSStringRef, JSStringRef, JSStringRef)
 {
+}
+
+void LayoutTestController::setEditingBehavior(const char* editingBehavior)
+{
+    WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
+    WebKitWebSettings* settings = webkit_web_view_get_settings(webView);
+
+    if (!strcmp(editingBehavior, "win"))
+        g_object_set(G_OBJECT(settings), "editing-behavior", WEBKIT_EDITING_BEHAVIOR_WINDOWS, NULL);
+    if (!strcmp(editingBehavior, "mac"))
+        g_object_set(G_OBJECT(settings), "editing-behavior", WEBKIT_EDITING_BEHAVIOR_MAC, NULL);
 }

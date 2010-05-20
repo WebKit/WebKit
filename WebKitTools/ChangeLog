@@ -1,3 +1,29 @@
+2010-05-20  Martin Robinson  <mrobinson@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        Expose the editing behavior setting in DRT to test all editing code paths
+        https://bugs.webkit.org/show_bug.cgi?id=38603
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setEditingBehaviorCallback): Added.
+        (LayoutTestController::staticFunctions): Expose the setEditingBehaviorCallback function.
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp: Add callback method for setting editing behavior.
+        * DumpRenderTree/chromium/LayoutTestController.h: Declaration for this method.
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp: 
+        (LayoutTestController::setEditingBehavior): Implementation of editing behavior control.
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setEditingBehavior): Ditto
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setEditingBehavior): Added stub implementation of editing behavior control.
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        (LayoutTestController::setEditingBehavior): Add slot for controlling editor behavior.
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setEditingBehavior): Implementation of editing behavior control.
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setEditingBehavior): Added stub implementation of editing behavior control.
+
 2010-05-20  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.

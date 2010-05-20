@@ -1,3 +1,13 @@
+2010-05-20  Martin Robinson  <mrobinson@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        Expose the editing behavior setting in DRT to test all editing code paths
+        https://bugs.webkit.org/show_bug.cgi?id=38603
+
+        * editing/selection/extend-selection-after-double-click.html: Use the new DRT support for changing editing behavior.
+        * editing/selection/extend-selection-after-double-click-expected.txt: Update expected results to reflect both behaviors.
+
 2010-05-20  Adam Langley  <agl@chromium.org>
 
         Reviewed by David Levin.

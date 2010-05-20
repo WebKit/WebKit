@@ -41,6 +41,7 @@
 #include "NotificationPresenter.h"
 #include "PasteboardPrivate.h"
 #include "PlatformCursor.h"
+#include "Settings.h"
 #include "StringImpl.h"
 #include "TextAffinity.h"
 #include "WebAccessibilityObject.h"
@@ -52,6 +53,7 @@
 #include "WebMediaPlayer.h"
 #include "WebNotificationPresenter.h"
 #include "WebScrollbar.h"
+#include "WebSettings.h"
 #include "WebTextAffinity.h"
 #include "WebTextCaseSensitivity.h"
 #include <wtf/Assertions.h>
@@ -299,6 +301,9 @@ COMPILE_ASSERT_MATCHING_ENUM(WebScrollbar::ScrollByLine, ScrollByLine);
 COMPILE_ASSERT_MATCHING_ENUM(WebScrollbar::ScrollByPage, ScrollByPage);
 COMPILE_ASSERT_MATCHING_ENUM(WebScrollbar::ScrollByDocument, ScrollByDocument);
 COMPILE_ASSERT_MATCHING_ENUM(WebScrollbar::ScrollByPixel, ScrollByPixel);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebSettings::EditingBehaviorMac, EditingMacBehavior);
+COMPILE_ASSERT_MATCHING_ENUM(WebSettings::EditingBehaviorWin, EditingWindowsBehavior);
 
 COMPILE_ASSERT_MATCHING_ENUM(WebTextAffinityUpstream, UPSTREAM);
 COMPILE_ASSERT_MATCHING_ENUM(WebTextAffinityDownstream, DOWNSTREAM);

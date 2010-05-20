@@ -446,3 +446,8 @@ JSValueRef LayoutTestController::computedStyleIncludingVisitedInfo(JSContextRef,
 void LayoutTestController::authenticateSession(JSStringRef, JSStringRef, JSStringRef)
 {
 }
+
+void LayoutTestController::setEditingBehavior(JSStringRef editingBehavior)
+{
+    // FIXME: Implement
+}

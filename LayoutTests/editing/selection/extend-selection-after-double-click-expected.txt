@@ -5,3 +5,5 @@ This test does not run interactively. It uses the event sender to do mouse click
 This is a paragraph.
 
 SUCCESS
+SUCCESS
+
