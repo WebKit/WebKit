@@ -274,12 +274,14 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 - (PortState)saveAndSetNewPortStateForUpdate:(BOOL)forUpdate
 {
     ASSERT([self currentWindow] != nil);
-
-    // Use AppKit to convert view coordinates to NSWindow coordinates.
-    NSRect boundsInWindow = [self convertRect:[self bounds] toView:nil];
-    NSRect visibleRectInWindow = [self convertRect:[self visibleRect] toView:nil];
     
-    // Flip Y to convert NSWindow coordinates to top-left-based window coordinates.
+    // The base coordinates of a window and it's contentView happen to be the equal at a userSpaceScaleFactor
+    // of 1. For non-1.0 scale factors this assumption is false.
+    NSView *windowContentView = [[self window] contentView];
+    NSRect boundsInWindow = [self convertRect:[self bounds] toView:windowContentView];
+    NSRect visibleRectInWindow = [self convertRect:[self visibleRect] toView:windowContentView];
+    
+    // Flip Y to convert -[NSWindow contentView] coordinates to top-left-based window coordinates.
     float borderViewHeight = [[self currentWindow] frame].size.height;
     boundsInWindow.origin.y = borderViewHeight - NSMaxY(boundsInWindow);
     visibleRectInWindow.origin.y = borderViewHeight - NSMaxY(visibleRectInWindow);

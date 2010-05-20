@@ -1,3 +1,20 @@
+2010-05-20  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39441
+        <rdar://problem/7985715> Flash context menu is both horizontally and vertically offset from point of click
+        <rdar://problem/7986109> Youtube video controller UI entirely missing
+        <rdar://problem/7986154> Flash content paints at horizontally and vertically shifted locations (within the plug-in region)
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView updateAndSetWindow]): The base coordinates of a window and
+         it's contentView happen to be the equal at a userSpaceScaleFactor of 1. For non-1.0 scale
+         factors this assumption is false. Accordingly we now convert to the window contentView
+        coordinate system when computing bounds in "window" and the visible rect.
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView saveAndSetNewPortStateForUpdate:]): Ditto.
+
 2010-05-20  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

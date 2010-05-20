@@ -180,8 +180,11 @@ extern "C" {
     if (!_proxy)
         return;
     
-    // Use AppKit to convert view coordinates to NSWindow coordinates.
-    NSRect boundsInWindow = [self convertRect:[self bounds] toView:nil];
+    // The base coordinates of a window and it's contentView happen to be the equal at a userSpaceScaleFactor
+    // of 1. For non-1.0 scale factors this assumption is false.
+    NSView *windowContentView = [[self window] contentView];
+    NSRect boundsInWindow = [self convertRect:[self bounds] toView:windowContentView];
+
     NSRect visibleRectInWindow;
     
     // Core Animation plug-ins need to be updated (with a 0,0,0,0 clipRect) when
@@ -190,7 +193,7 @@ extern "C" {
     // compatible with this behavior.    
     BOOL shouldClipOutPlugin = _pluginLayer && [self shouldClipOutPlugin];
     if (!shouldClipOutPlugin)
-        visibleRectInWindow = [self convertRect:[self visibleRect] toView:nil];
+        visibleRectInWindow = [self convertRect:[self visibleRect] toView:windowContentView];
     else
         visibleRectInWindow = NSZeroRect;
     
