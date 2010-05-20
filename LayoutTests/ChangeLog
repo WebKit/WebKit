@@ -1,3 +1,13 @@
+2010-05-20  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Tests putting focus into a textarea and setting display:none
+        https://bugs.webkit.org/show_bug.cgi?id=39389
+
+        * editing/selection/focus-and-display-none-expected.txt: Added.
+        * editing/selection/focus-and-display-none.html: Added.
+
 2010-05-20  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Ojan Vafai.

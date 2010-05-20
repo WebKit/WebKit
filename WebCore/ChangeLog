@@ -1,3 +1,22 @@
+2010-05-20  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Ensures styles are up-to-date before determining selection
+        https://bugs.webkit.org/show_bug.cgi?id=39389
+
+        This adds a call to document::updateStyleIfNeeded() to
+        Frame::notifyRendererOfSelectionChange(). Without this call, if there
+        is a pending style update that will detach part of the DOM and the
+        the selection is within that part of the DOM when
+        notifyRendererOfSeletionChange is called, the rootEditableElement
+        algorithm ends up walking through detached parts of the render tree.
+
+        Test: editing/selection/focus-and-display-none.html
+
+        * page/Frame.cpp:
+        (WebCore::Frame::notifyRendererOfSelectionChange):
+
 2010-05-20  Adam Roben  <aroben@apple.com>
 
         Remove code that fetched, but did nothing useful with, a CFDictionary
