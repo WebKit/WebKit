@@ -1,3 +1,19 @@
+2010-05-20  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [DRT/Chromium] Increase the time out value
+        https://bugs.webkit.org/show_bug.cgi?id=39203
+
+        Change the time out value of Chromium DRT to 30 seconds, which is
+        the same as other ports.
+        If a DRT process exits before new-run-webkit-tests detects time
+        out, new-run-webkit-tests assumes the DRT process crashed.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::layoutTestTimeout):
+          Change the time out value from 10 seconds to 30 seconds.
+
 2010-05-20  Chris Evans  <cevans@google.com>
 
         Unreviewed.

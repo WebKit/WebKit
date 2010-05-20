@@ -566,7 +566,11 @@ void TestShell::bindJSObjectsToWindow(WebFrame* frame)
 
 int TestShell::layoutTestTimeout()
 {
-    return 10 * 1000;
+    // 30 second is the same as the value in Mac DRT.
+    // If we use a value smaller than the timeout value of
+    // (new-)run-webkit-tests, (new-)run-webkit-tests misunderstands that a
+    // timed-out DRT process was crashed.
+    return 30 * 1000;
 }
 
 WebViewHost* TestShell::createWebView()
