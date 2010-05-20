@@ -31,8 +31,8 @@
 #include "config.h"
 #include "WebWorkerBase.h"
 
+#include "CrossThreadTask.h"
 #include "DatabaseTask.h"
-#include "GenericWorkerTask.h"
 #include "MessagePortChannel.h"
 #include "PlatformMessagePortChannel.h"
 

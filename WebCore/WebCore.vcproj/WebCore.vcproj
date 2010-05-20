@@ -29397,6 +29397,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\CrossThreadTask.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\CSSMappedAttributeDeclaration.cpp"
 				>
 			</File>
@@ -30030,10 +30034,6 @@
 			</File>
 			<File
 				RelativePath="..\workers\DefaultSharedWorkerRepository.h"
-				>
-			</File>
-			<File
-				RelativePath="..\workers\GenericWorkerTask.h"
 				>
 			</File>
 			<File

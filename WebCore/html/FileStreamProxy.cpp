@@ -35,10 +35,10 @@
 #include "FileStreamProxy.h"
 
 #include "Blob.h"
+#include "CrossThreadTask.h"
 #include "FileStream.h"
 #include "FileThread.h"
 #include "FileThreadTask.h"
-#include "GenericWorkerTask.h"
 #include "PlatformString.h"
 #include "ScriptExecutionContext.h"
 

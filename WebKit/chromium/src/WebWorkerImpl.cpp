@@ -31,9 +31,9 @@
 #include "config.h"
 #include "WebWorkerImpl.h"
 
+#include "CrossThreadTask.h"
 #include "DedicatedWorkerContext.h"
 #include "DedicatedWorkerThread.h"
-#include "GenericWorkerTask.h"
 #include "KURL.h"
 #include "MessageEvent.h"
 #include "MessagePort.h"

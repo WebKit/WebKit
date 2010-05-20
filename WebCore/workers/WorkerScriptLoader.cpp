@@ -31,7 +31,7 @@
 
 #include "WorkerScriptLoader.h"
 
-#include "GenericWorkerTask.h"
+#include "CrossThreadTask.h"
 #include "ResourceRequest.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"

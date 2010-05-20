@@ -35,8 +35,8 @@
 #include "DefaultSharedWorkerRepository.h"
 
 #include "ActiveDOMObject.h"
+#include "CrossThreadTask.h"
 #include "Document.h"
-#include "GenericWorkerTask.h"
 #include "InspectorController.h"
 #include "MessageEvent.h"
 #include "MessagePort.h"

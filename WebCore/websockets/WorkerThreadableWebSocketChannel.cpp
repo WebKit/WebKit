@@ -34,7 +34,7 @@
 
 #include "WorkerThreadableWebSocketChannel.h"
 
-#include "GenericWorkerTask.h"
+#include "CrossThreadTask.h"
 #include "PlatformString.h"
 #include "ScriptExecutionContext.h"
 #include "ThreadableWebSocketChannelClientWrapper.h"

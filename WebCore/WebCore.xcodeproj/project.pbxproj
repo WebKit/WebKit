@@ -642,7 +642,7 @@
 		2E3BC108117D479800B9409A /* DOMFileError.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E3BC106117D479800B9409A /* DOMFileError.h */; };
 		2E3BC109117D479800B9409A /* DOMFileError.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E3BC107117D479800B9409A /* DOMFileError.mm */; };
 		2E3BC10B117D47C800B9409A /* DOMFileErrorInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E3BC10A117D47C800B9409A /* DOMFileErrorInternal.h */; };
-		2E4346440F546A8200B0F1BA /* GenericWorkerTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346320F546A8200B0F1BA /* GenericWorkerTask.h */; };
+		2E3FAA0911A36BF100576624 /* CrossThreadTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E3FAA0811A36BF100576624 /* CrossThreadTask.h */; };
 		2E4346450F546A8200B0F1BA /* Worker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E4346330F546A8200B0F1BA /* Worker.cpp */; };
 		2E4346460F546A8200B0F1BA /* Worker.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346340F546A8200B0F1BA /* Worker.h */; };
 		2E4346480F546A8200B0F1BA /* WorkerContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E4346360F546A8200B0F1BA /* WorkerContext.cpp */; };
@@ -6164,7 +6164,7 @@
 		2E3BC106117D479800B9409A /* DOMFileError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMFileError.h; sourceTree = "<group>"; };
 		2E3BC107117D479800B9409A /* DOMFileError.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMFileError.mm; sourceTree = "<group>"; };
 		2E3BC10A117D47C800B9409A /* DOMFileErrorInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMFileErrorInternal.h; sourceTree = "<group>"; };
-		2E4346320F546A8200B0F1BA /* GenericWorkerTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericWorkerTask.h; path = workers/GenericWorkerTask.h; sourceTree = "<group>"; };
+		2E3FAA0811A36BF100576624 /* CrossThreadTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadTask.h; sourceTree = "<group>"; };
 		2E4346330F546A8200B0F1BA /* Worker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Worker.cpp; path = workers/Worker.cpp; sourceTree = "<group>"; };
 		2E4346340F546A8200B0F1BA /* Worker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Worker.h; path = workers/Worker.h; sourceTree = "<group>"; };
 		2E4346350F546A8200B0F1BA /* Worker.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Worker.idl; path = workers/Worker.idl; sourceTree = "<group>"; };
@@ -11230,7 +11230,6 @@
 				41A3D58D101C152D00316D07 /* DedicatedWorkerThread.h */,
 				4167EBF3102962BA003D252A /* DefaultSharedWorkerRepository.cpp */,
 				4167EBF4102962BA003D252A /* DefaultSharedWorkerRepository.h */,
-				2E4346320F546A8200B0F1BA /* GenericWorkerTask.h */,
 				41E1B1CD0FF5986900576B3B /* SharedWorker.cpp */,
 				41E1B1CE0FF5986900576B3B /* SharedWorker.h */,
 				41E1B1CF0FF5986900576B3B /* SharedWorker.idl */,
@@ -16468,6 +16467,7 @@
 				A81872140977D3C0005826D9 /* ContainerNode.cpp */,
 				A81872110977D3C0005826D9 /* ContainerNode.h */,
 				E1A1470711102B1500EEC0F3 /* ContainerNodeAlgorithms.h */,
+				2E3FAA0811A36BF100576624 /* CrossThreadTask.h */,
 				A8C4A7F809D563270003AC8D /* CSSMappedAttributeDeclaration.cpp */,
 				A8C4A7F709D563270003AC8D /* CSSMappedAttributeDeclaration.h */,
 				62CD32561157E57C0063B0A7 /* CustomEvent.cpp */,
@@ -17797,7 +17797,6 @@
 				C0C054CC1118C8E400CE2636 /* generate-bindings.pl in Headers */,
 				BC23F0DB0DAFF4A4009FDC91 /* GeneratedImage.h in Headers */,
 				BCE04C8A0DAFF7A0007A0F41 /* Generator.h in Headers */,
-				2E4346440F546A8200B0F1BA /* GenericWorkerTask.h in Headers */,
 				FE80D7C60E9C1F25000D6F75 /* Geolocation.h in Headers */,
 				BC56CB2210D5AC8000A77C64 /* GeolocationController.h in Headers */,
 				BC56CB2310D5AC8000A77C64 /* GeolocationControllerClient.h in Headers */,
@@ -19281,6 +19280,7 @@
 				51327D6011A33A2B004F9D65 /* SinkDocument.h in Headers */,
 				59A85EA4119D68EC00DEF1EF /* DeviceOrientationEvent.h in Headers */,
 				59A86008119DAFA100DEF1EF /* JSDeviceOrientationEvent.h in Headers */,
+				2E3FAA0911A36BF100576624 /* CrossThreadTask.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

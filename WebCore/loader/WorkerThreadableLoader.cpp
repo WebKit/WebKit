@@ -34,7 +34,7 @@
 
 #include "WorkerThreadableLoader.h"
 
-#include "GenericWorkerTask.h"
+#include "CrossThreadTask.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"

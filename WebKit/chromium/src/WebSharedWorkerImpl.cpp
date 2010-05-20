@@ -31,7 +31,7 @@
 #include "config.h"
 #include "WebSharedWorkerImpl.h"
 
-#include "GenericWorkerTask.h"
+#include "CrossThreadTask.h"
 #include "KURL.h"
 #include "MessageEvent.h"
 #include "MessagePortChannel.h"

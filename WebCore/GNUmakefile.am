@@ -761,6 +761,7 @@ webcore_sources += \
 	WebCore/dom/ContainerNode.cpp \
 	WebCore/dom/ContainerNode.h \
 	WebCore/dom/ContainerNodeAlgorithms.h \
+	WebCore/dom/CrossThreadTask.h \
 	WebCore/dom/CustomEvent.cpp \
 	WebCore/dom/CustomEvent.h \
 	WebCore/dom/DOMCoreException.h \
@@ -2771,7 +2772,6 @@ webcore_sources += \
 	WebCore/workers/DedicatedWorkerContext.h \
 	WebCore/workers/DedicatedWorkerThread.cpp \
 	WebCore/workers/DedicatedWorkerThread.h \
-	WebCore/workers/GenericWorkerTask.h \
 	WebCore/workers/Worker.cpp \
 	WebCore/workers/Worker.h \
 	WebCore/workers/WorkerContext.cpp \

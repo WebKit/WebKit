@@ -31,13 +31,13 @@
 
 #include "WorkerMessagingProxy.h"
 
+#include "CrossThreadTask.h"
 #include "DedicatedWorkerContext.h"
 #include "DedicatedWorkerThread.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "ErrorEvent.h"
 #include "ExceptionCode.h"
-#include "GenericWorkerTask.h"
 #include "InspectorController.h"
 #include "MessageEvent.h"
 #include "ScriptExecutionContext.h"

@@ -33,11 +33,11 @@
 
 #if ENABLE(WORKERS)
 
+#include "CrossThreadTask.h"
 #include "DedicatedWorkerThread.h"
 #include "ErrorEvent.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
-#include "GenericWorkerTask.h"
 #include "MessageEvent.h"
 #include "MessagePort.h"
 #include "MessagePortChannel.h"

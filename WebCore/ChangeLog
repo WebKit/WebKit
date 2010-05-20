@@ -1,3 +1,22 @@
+2010-05-20  Jian Li  <jianli@chromium.org>
+
+        Reviewed by David Levin.
+
+        Rename GenericWorkerTask.h to CrossThreadTask.h and move it to dom directory.
+        https://bugs.webkit.org/show_bug.cgi?id=39135
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/CrossThreadTask.h: Renamed from WebCore/workers/GenericWorkerTask.h.
+        * html/FileStreamProxy.cpp:
+        * loader/WorkerThreadableLoader.cpp:
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        * workers/DefaultSharedWorkerRepository.cpp:
+        * workers/WorkerMessagingProxy.cpp:
+        * workers/WorkerScriptLoader.cpp:
+
 2010-05-20  Adele Peterson  <adele@apple.com>
 
         Reviewed by Mark Rowe.
