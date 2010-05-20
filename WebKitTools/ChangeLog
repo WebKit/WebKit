@@ -1,3 +1,18 @@
+2010-05-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        WinEWS should build Debug instead of Release
+        https://bugs.webkit.org/show_bug.cgi?id=39242
+
+        This is a workaround for
+        https://bugs.webkit.org/show_bug.cgi?id=39197
+        Adam Roben and Brian Weinstein believe this may
+        also make building faster since Debug builds
+        take less time to link.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+
 2010-05-19  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, build fix.
