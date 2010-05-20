@@ -1,3 +1,9 @@
+2010-05-20  Victor Wang  <victorw@chromium.org>
+
+        Unreviewed. Update test expectations from chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-05-20  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
