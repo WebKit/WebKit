@@ -1,3 +1,9 @@
+2010-05-20  Herczeg Zoltan  <zherczeg@webkit.org>
+
+        Unreviewed. Update Qt specific expected file.
+
+        * platform/qt/svg/filters/feLighting-crash-expected.txt:
+
 2010-05-20  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Dirk Schulze.
