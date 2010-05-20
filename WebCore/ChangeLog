@@ -1,3 +1,19 @@
+2010-05-20  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Dirk Schulze.
+
+        Fix a crash caused by feLigthing::apply()
+        https://bugs.webkit.org/show_bug.cgi?id=39004
+
+        Make FELighting::apply() similar to other filters' applies
+        to avoid an assertion fail in putUnmultipliedImageData(),
+        when effectDrawingRect has negative location (x or y is less than 0).
+
+        Test: svg/filters/feLighting-crash.svg
+
+        * svg/graphics/filters/SVGFELighting.cpp:
+        (WebCore::FELighting::apply):
+
 2010-05-20  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Eric Seidel.

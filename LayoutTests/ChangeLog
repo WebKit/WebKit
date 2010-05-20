@@ -1,3 +1,17 @@
+2010-05-20  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Dirk Schulze.
+
+        In case of lighting SVG effects, a wider output rectangle
+        than the input image size should not cause crash.
+        https://bugs.webkit.org/show_bug.cgi?id=39004
+
+        * platform/mac/svg/filters/feLighting-crash-expected.checksum: Added.
+        * platform/mac/svg/filters/feLighting-crash-expected.png: Added.
+        * platform/mac/svg/filters/feLighting-crash-expected.txt: Added.
+        * platform/qt/svg/filters/feLighting-crash-expected.txt: Added.
+        * svg/filters/feLighting-crash.svg: Added.
+
 2010-05-20  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.
