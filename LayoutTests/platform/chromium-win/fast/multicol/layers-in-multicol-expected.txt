@@ -349,21 +349,7 @@ layer at (8,358) size 769x310
       RenderText {#text} at (142,260) size 100x19
         text run at (142,260) width 100: "This is some text"
       RenderBR {BR} at (142,275) size 0x0
-layer at (271,33) size 100x270
+layer at (13,293) size 100x270
   RenderBlock (relative positioned) {DIV} at (0,0) size 100x270 [bgcolor=#008000]
-layer at (787,-287) size 175x19 backgroundClip at (0,0) size 1287x676 clip at (0,0) size 1287x676 outlineClip at (0,0) size 1287x676
-  RenderInline {SPAN} at (0,0) size 175x19
-    RenderText {#text} at (0,540) size 175x19
-      text run at (0,540) width 175: "This is some transparent text."
-    RenderBR {BR} at (175,555) size 0x0
-layer at (797,273) size 242x20
-  RenderBlock (relative positioned) {DIV} at (5,1095) size 242x20
-    RenderText {#text} at (0,0) size 181x19
-      text run at (0,0) width 181: "This is relative positioned text."
-layer at (414,363) size 100x270
+layer at (155,623) size 100x270 backgroundClip at (0,0) size 1287x676 clip at (0,0) size 1287x676 outlineClip at (0,0) size 1287x676
   RenderBlock (relative positioned) {DIV} at (142,0) size 100x270 [bgcolor=#008000]
-layer at (-234,603) size 242x20 backgroundClip at (0,0) size 1287x676 clip at (0,0) size 1287x676 outlineClip at (0,0) size 1287x676
-  RenderBlock (relative positioned) {DIV} at (5,1095) size 242x20
-    RenderText {#text} at (61,0) size 181x19
-      text run at (61,0) width 4 RTL: "."
-      text run at (65,0) width 177: "This is relative positioned text"

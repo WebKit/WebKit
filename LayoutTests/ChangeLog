@@ -1,3 +1,18 @@
+2010-05-19  Victor Wang  <victorw@chromium.org>
+
+        Unreviewed. Update Chromium test expectations.
+
+        * platform/chromium-linux/fast/multicol/layers-split-across-columns-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/layers-split-across-columns-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/layers-in-multicol-expected.checksum:
+        * platform/chromium-mac/fast/multicol/layers-in-multicol-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/layers-split-across-columns-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/layers-in-multicol-expected.txt:
+        * platform/chromium-win/fast/multicol/layers-split-across-columns-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/layers-split-across-columns-expected.png: Added.
+        * platform/chromium-win/fast/multicol/layers-split-across-columns-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/nested-columns-expected.txt:
+
 2010-05-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
