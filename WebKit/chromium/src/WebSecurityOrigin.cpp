@@ -121,6 +121,12 @@ WebString WebSecurityOrigin::databaseIdentifier() const
     return m_private->databaseIdentifier();
 }
 
+bool WebSecurityOrigin::canAccessPasswordManager() const
+{
+    ASSERT(m_private);
+    return m_private->canAccessPasswordManager();
+}
+
 WebSecurityOrigin::WebSecurityOrigin(const WTF::PassRefPtr<WebCore::SecurityOrigin>& origin)
     : m_private(static_cast<WebSecurityOriginPrivate*>(origin.releaseRef()))
 {

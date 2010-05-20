@@ -119,6 +119,7 @@ public:
     bool canAccessDatabase() const { return !isUnique(); }
     bool canAccessLocalStorage() const { return !isUnique(); }
     bool canAccessCookies() const { return !isUnique(); }
+    bool canAccessPasswordManager() const { return !isUnique(); }
 
     // Technically, we should always allow access to sessionStorage, but we
     // currently don't handle creating a sessionStorage area for unique
