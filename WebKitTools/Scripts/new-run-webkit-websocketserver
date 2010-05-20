@@ -91,7 +91,7 @@ def main():
     if options.pidfile:
         kwds['pidfile'] = options.pidfile
 
-    port_obj = factory.get(options)
+    port_obj = factory.get(options=options)
     pywebsocket = websocket_server.PyWebSocket(port_obj, options.output_dir, **kwds)
 
     log_level = logging.WARN

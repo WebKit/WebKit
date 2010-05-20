@@ -1,5 +1,12 @@
 2010-05-20  Fumitoshi Ukai  <ukai@chromium.org>
 
+        Unreviewed fix for websocket test failures.
+
+        * Scripts/new-run-webkit-websocketserver:
+         options is named parameter for factory.get().
+
+2010-05-20  Fumitoshi Ukai  <ukai@chromium.org>
+
         Reviewed by Shinichiro Hamaji.
 
         Chromium: Add --chromium option to new-run-webkit-websocketserver
