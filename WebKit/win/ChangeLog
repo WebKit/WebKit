@@ -1,3 +1,33 @@
+2010-05-18  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [WinCairo] Correct scaling for print preview
+        https://bugs.webkit.org/show_bug.cgi?id=39329
+
+        Cairo does not properly deal with Windows HDCs that have been
+        scaled using MM_ANISOTROPIC mapping mode, and a WindowExt and
+        ViewportExt setting.
+        (see http://bugs.freedesktop.org/show_bug.cgi?id=28161)
+
+        Instead, reset the HDC's WorldTransform to be unscaled, then
+        scale the cairo context to the desired scaling, and perform
+        the drawing operation.
+
+        * WebFrame.cpp:
+        (WebFrame::drawHeader): Use pre-positioned context to simplify 
+          this method.
+        (WebFrame::drawFooter): Use pre-positioned context to simplify
+          this method.
+        (WebFrame::spoolPage): Revise scaling logic to turn off HDC
+          scaling, and scale using only Cairo.  Revert scaling at end
+          so that user-defined GDI-based routines (e.g., header/footer)
+          will draw in the right position.
+        (WebFrame::spoolPages): Identify print preview case, and
+          retrieve scaling factors from preview context.  Set the
+          Cairo context to use these factors during the spoolPage
+          operation.
+
 2010-05-20  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed.
