@@ -604,27 +604,6 @@ void QWEBKIT_EXPORT qt_dump_resource_load_callbacks(bool b)
     DumpRenderTreeSupportQt::dumpResourceLoadCallbacks(b);
 }
 
-void QWEBKIT_EXPORT qt_dump_resource_load_callbacks_path(const QString& path)
-{
-    DumpRenderTreeSupportQt::dumpResourceLoadCallbacksPath(path);
-}
-
-void QWEBKIT_EXPORT qt_set_will_send_request_returns_null_on_redirect(bool b)
-{
-    DumpRenderTreeSupportQt::setWillSendRequestReturnsNullOnRedirect(b);
-
-}
-
-void QWEBKIT_EXPORT qt_set_will_send_request_returns_null(bool b)
-{
-    DumpRenderTreeSupportQt::setWillSendRequestReturnsNull(b);
-}
-
-void QWEBKIT_EXPORT qt_set_will_send_request_clear_headers(const QStringList& headers)
-{
-    DumpRenderTreeSupportQt::setWillSendRequestClearHeaders(headers);
-}
-
 void QWEBKIT_EXPORT qt_dump_editing_callbacks(bool b)
 {
     DumpRenderTreeSupportQt::dumpEditingCallbacks(b);
@@ -635,7 +614,3 @@ void QWEBKIT_EXPORT qt_dump_set_accepts_editing(bool b)
     DumpRenderTreeSupportQt::dumpSetAcceptsEditing(b);
 }
 
-void QWEBKIT_EXPORT qt_dump_notification(bool b)
-{
-    DumpRenderTreeSupportQt::dumpNotification(b);
-}

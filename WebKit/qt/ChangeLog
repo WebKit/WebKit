@@ -1,3 +1,14 @@
+2010-05-20  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove unused "old style" private APIs
+
+        These symbols were introduced after QtWebKit v4.6
+        so no-one should be using them
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+
 2010-05-20  Rajiv Ramanasankaran  <rajiv.ramanasankaran@nokia.com>
 
         Reviewed by Simon Hausmann.
