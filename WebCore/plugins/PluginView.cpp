@@ -42,8 +42,6 @@
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
 #include "Image.h"
-#include "JSDOMBinding.h"
-#include "JSDOMWindow.h"
 #include "KeyboardEvent.h"
 #include "MIMETypeRegistry.h"
 #include "MouseEvent.h"
@@ -60,22 +58,27 @@
 #include "ScriptValue.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
-#include "c_instance.h"
 #include "npruntime_impl.h"
-#include "runtime_root.h"
-#include <runtime/JSLock.h>
-#include <runtime/JSValue.h>
 #include <wtf/ASCIICType.h>
 
 #if OS(WINDOWS) && ENABLE(NETSCAPE_PLUGIN_API)
 #include "PluginMessageThrottlerWin.h"
 #endif
 
+#if USE(JSC)
+#include "JSDOMBinding.h"
+#include "JSDOMWindow.h"
+#include "c_instance.h"
+#include "runtime_root.h"
+#include <runtime/JSLock.h>
+#include <runtime/JSValue.h>
+
 using JSC::ExecState;
 using JSC::JSLock;
 using JSC::JSObject;
 using JSC::JSValue;
 using JSC::UString;
+#endif
 
 using std::min;
 
@@ -229,7 +232,9 @@ bool PluginView::start()
     NPError npErr;
     {
         PluginView::setCurrentPluginView(this);
+#if USE(JSC)
         JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+#endif
         setCallingPlugin(true);
         npErr = m_plugin->pluginFuncs()->newp((NPMIMEType)m_mimeType.utf8().data(), m_instance, m_mode, m_paramCount, m_paramNames, m_paramValues, NULL);
         setCallingPlugin(false);
@@ -320,7 +325,9 @@ void PluginView::stop()
 
     m_isStarted = false;
 
+#if USE(JSC)
     JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+#endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #ifdef XP_WIN
@@ -403,20 +410,6 @@ static char* createUTF8String(const String& str)
     return result;
 }
 
-static bool getString(ScriptController* proxy, JSValue result, String& string)
-{
-    if (!proxy || !result || result.isUndefined())
-        return false;
-    JSLock lock(JSC::SilenceAssertionsOnly);
-
-    ExecState* exec = proxy->globalObject(pluginWorld())->globalExec();
-    UString ustring = result.toString(exec);
-    exec->clearException();
-
-    string = ustringToString(ustring);
-    return true;
-}
-
 void PluginView::performRequest(PluginRequest* request)
 {
     if (!m_isStarted)
@@ -449,7 +442,9 @@ void PluginView::performRequest(PluginRequest* request)
             // FIXME: <rdar://problem/4807469> This should be sent when the document has finished loading
             if (request->sendNotification()) {
                 PluginView::setCurrentPluginView(this);
+#if USE(JSC)
                 JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+#endif
                 setCallingPlugin(true);
                 m_plugin->pluginFuncs()->urlnotify(m_instance, requestURL.string().utf8().data(), NPRES_DONE, request->notifyData());
                 setCallingPlugin(false);
@@ -465,13 +460,18 @@ void PluginView::performRequest(PluginRequest* request)
     
     // Executing a script can cause the plugin view to be destroyed, so we keep a reference to the parent frame.
     RefPtr<Frame> parentFrame = m_parentFrame;
-    JSValue result = m_parentFrame->script()->executeScript(jsString, request->shouldAllowPopups()).jsValue();
+    ScriptValue result = m_parentFrame->script()->executeScript(jsString, request->shouldAllowPopups());
 
     if (targetFrameName.isNull()) {
         String resultString;
 
+#if USE(JSC)
+        ScriptState* scriptState = parentFrame->script()->globalObject(pluginWorld())->globalExec();
+#elif USE(V8)
+        ScriptState* scriptState = 0; // Not used with V8
+#endif
         CString cstr;
-        if (getString(parentFrame->script(), result, resultString))
+        if (result.getString(scriptState, resultString))
             cstr = resultString.utf8();
 
         RefPtr<PluginStream> stream = PluginStream::create(this, m_parentFrame.get(), request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData(), plugin()->pluginFuncs(), instance(), m_plugin->quirks());
@@ -716,6 +716,7 @@ void PluginView::setJavaScriptPaused(bool paused)
         m_requestTimer.startOneShot(0);
 }
 
+#if USE(JSC)
 PassRefPtr<JSC::Bindings::Instance> PluginView::bindingInstance()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -759,6 +760,7 @@ PassRefPtr<JSC::Bindings::Instance> PluginView::bindingInstance()
     return 0;
 #endif
 }
+#endif
 
 void PluginView::disconnectStream(PluginStream* stream)
 {

@@ -1,3 +1,18 @@
+2010-05-20  Steve Block  <steveblock@google.com>
+
+        Reviewed by Eric Seidel.
+
+        PluginView contains JSC-specific code
+        https://bugs.webkit.org/show_bug.cgi?id=38907
+
+        Build fix only, no new tests.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::start):
+        (WebCore::PluginView::stop):
+        (WebCore::PluginView::performRequest):
+        * plugins/PluginView.h:
+
 2010-05-17  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Seidel.
