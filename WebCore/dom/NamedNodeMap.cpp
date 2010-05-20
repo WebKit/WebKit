@@ -98,6 +98,11 @@ PassRefPtr<Node> NamedNodeMap::getNamedItem(const QualifiedName& name) const
     return a->createAttrIfNeeded(m_element);
 }
 
+PassRefPtr<Node> NamedNodeMap::setNamedItemNS(Node* arg, ExceptionCode& ec)
+{
+    return setNamedItem(arg, ec);
+}
+
 PassRefPtr<Node> NamedNodeMap::setNamedItem(Node* arg, ExceptionCode& ec)
 {
     if (!m_element || !arg) {

@@ -34,7 +34,6 @@
 #include "htmlediting.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
-#include "NamedAttrMap.h"
 
 #include <wtf/Assertions.h>
 
