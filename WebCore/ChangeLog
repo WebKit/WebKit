@@ -1,3 +1,17 @@
+2010-05-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Fix painting when using clipToImageBuffer()
+
+        When we apply the transform of the parent painter to the painter of
+        the transparency layer, we adopt its coordinate system, thus offset
+        should not be in page coordinates, but in the coordinate system of
+        the parent painter.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::TransparencyLayer::TransparencyLayer):
+
 2010-05-20  Adam Langley  <agl@chromium.org>
 
         Reviewed by David Levin.

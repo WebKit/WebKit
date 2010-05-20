@@ -173,7 +173,7 @@ struct TransparencyLayer : FastAllocBase {
         , alphaMask(alphaMask)
         , saveCounter(1) // see the comment for saveCounter
     {
-        offset = rect.topLeft();
+        offset = p->transform().mapRect(rect).topLeft();
         pixmap.fill(Qt::transparent);
         painter.begin(&pixmap);
         painter.setRenderHint(QPainter::Antialiasing, p->testRenderHint(QPainter::Antialiasing));
