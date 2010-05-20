@@ -1,3 +1,28 @@
+2010-05-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        emitJumpIfNotJSCell should special case constant immediate values
+        https://bugs.webkit.org/show_bug.cgi?id=39392
+        <rdar://problem/8001324>
+
+        Make emitJumpSlowCaseIfNotJSCell special case constant immediate
+        values, in addition to the immediate JSCell optimisation.
+
+        Also add assertions to make sure no one else produces code that
+        attempts to load constants from the register file.
+
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitJumpSlowCaseIfNotJSCell):
+        * jit/JSInterfaceJIT.h:
+        (JSC::JSInterfaceJIT::emitJumpIfNotJSCell):
+        (JSC::JSInterfaceJIT::emitLoadInt32):
+        (JSC::JSInterfaceJIT::tagFor):
+        (JSC::JSInterfaceJIT::payloadFor):
+        (JSC::JSInterfaceJIT::emitLoadDouble):
+        (JSC::JSInterfaceJIT::addressFor):
+        * jit/ThunkGenerators.cpp:
+
 2010-05-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

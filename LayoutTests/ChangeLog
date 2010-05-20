@@ -1,3 +1,17 @@
+2010-05-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        emitJumpIfNotJSCell should special case constant immediate values
+        https://bugs.webkit.org/show_bug.cgi?id=39392
+
+        Add tests for immediate constants being used where cells are expected.
+
+        * fast/js/immediate-constant-instead-of-cell-expected.txt: Added.
+        * fast/js/immediate-constant-instead-of-cell.html: Added.
+        * fast/js/script-tests/immediate-constant-instead-of-cell.js: Added.
+        ():
+
 2010-05-19  Jian Li  <jianli@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

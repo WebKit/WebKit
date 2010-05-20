@@ -25,8 +25,9 @@
 
 #include "config.h"
 #include "ThunkGenerators.h"
-#include <wtf/text/StringImpl.h>
 
+#include "CodeBlock.h"
+#include <wtf/text/StringImpl.h>
 #include "SpecializedThunkJIT.h"
 
 #if ENABLE(JIT)

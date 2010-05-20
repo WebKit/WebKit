@@ -559,14 +559,22 @@ inline bool JIT::getMappedTag(unsigned virtualRegisterIndex, RegisterID& tag)
 
 inline void JIT::emitJumpSlowCaseIfNotJSCell(unsigned virtualRegisterIndex)
 {
-    if (!m_codeBlock->isKnownNotImmediate(virtualRegisterIndex))
-        addSlowCase(emitJumpIfNotJSCell(virtualRegisterIndex));
+    if (!m_codeBlock->isKnownNotImmediate(virtualRegisterIndex)) {
+        if (m_codeBlock->isConstantRegisterIndex(virtualRegisterIndex))
+            addSlowCase(jump());
+        else
+            addSlowCase(emitJumpIfNotJSCell(virtualRegisterIndex));
+    }
 }
 
 inline void JIT::emitJumpSlowCaseIfNotJSCell(unsigned virtualRegisterIndex, RegisterID tag)
 {
-    if (!m_codeBlock->isKnownNotImmediate(virtualRegisterIndex))
-        addSlowCase(branch32(NotEqual, tag, Imm32(JSValue::CellTag)));
+    if (!m_codeBlock->isKnownNotImmediate(virtualRegisterIndex)) {
+        if (m_codeBlock->isConstantRegisterIndex(virtualRegisterIndex))
+            addSlowCase(jump());
+        else
+            addSlowCase(branch32(NotEqual, tag, Imm32(JSValue::CellTag)));
+    }
 }
 
 inline void JIT::linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator& iter, unsigned virtualRegisterIndex)
