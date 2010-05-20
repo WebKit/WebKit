@@ -1,3 +1,28 @@
+2010-05-20  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Modified FrameLoader::urlSelected() to accept a KURL instead of a
+        ResourceRequest.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39320
+
+        Since ResourceRequest has non-explicit single-parameter constructors for
+        String and KURL, urlSelected() previously accepted any of String, KURL,
+        and ResourceRequest.  This revision changes urlSelected() to accept only
+        a KURL to make the API tighter and easier to refactor.
+
+        No new functionality, so no new tests.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::urlSelected):
+          - Changed the public overload to accept a KURL instead of a ResourceRequest.
+        * loader/FrameLoader.h:
+          - Changed the public overload to accept a KURL instead of a ResourceRequest.
+        * wml/WMLAElement.cpp:
+        (WebCore::WMLAElement::defaultEventHandler):
+          - Updated the call to urlSelected().
+
 2010-05-20  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.
