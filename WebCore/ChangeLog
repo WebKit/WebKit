@@ -1,3 +1,58 @@
+2010-05-19  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Implementing hardware accelerated compositing of layers for Chromium.
+        Completely removed the existing software compositing path to replace
+        it with code implemented using OpenGL.
+        https://bugs.webkit.org/show_bug.cgi?id=38783
+
+        Tests: Covered by existing compositing tests.
+
+        * WebCore.gyp/WebCore.gyp:
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::~GraphicsLayerChromium):
+        (WebCore::GraphicsLayerChromium::updateLayerDrawsContent):
+        (WebCore::GraphicsLayerChromium::updateContentsRect):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::~LayerChromium):
+        (WebCore::LayerChromium::updateGraphicsContext):
+        (WebCore::LayerChromium::drawsContentUpdated):
+        (WebCore::LayerChromium::updateContents):
+        (WebCore::LayerChromium::setContents):
+        (WebCore::LayerChromium::setBackingStoreSize):
+        (WebCore::LayerChromium::setBounds):
+        (WebCore::LayerChromium::setNeedsDisplay):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::contentsDirty):
+        (WebCore::LayerChromium::drawsContent):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::):
+        (WebCore::checkGLError):
+        (WebCore::loadShader):
+        (WebCore::loadShaderProgram):
+        (WebCore::toGLMatrix):
+        (WebCore::orthoMatrix):
+        (WebCore::createLayerTexture):
+        (WebCore::LayerRendererChromium::create):
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::~LayerRendererChromium):
+        (WebCore::LayerRendererChromium::drawTexturedQuad):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::getTextureId):
+        (WebCore::LayerRendererChromium::assignTextureForLayer):
+        (WebCore::LayerRendererChromium::freeLayerTexture):
+        (WebCore::LayerRendererChromium::drawDebugBorder):
+        (WebCore::LayerRendererChromium::isLayerVisible):
+        (WebCore::LayerRendererChromium::compositeLayersRecursive):
+        (WebCore::LayerRendererChromium::makeContextCurrent):
+        (WebCore::LayerRendererChromium::initGL):
+        (WebCore::LayerRendererChromium::bindCommonAttribLocation):
+        (WebCore::LayerRendererChromium::initializeSharedGLObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::):
+
 2010-05-19  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Timothy Hatcher.

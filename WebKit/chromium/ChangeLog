@@ -1,3 +1,17 @@
+2010-05-19  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Modifying WebViewImpl to support new hardware compositing for
+        LayerChromium layers.
+        https://bugs.webkit.org/show_bug.cgi?id=38783
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::paint):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::updateRootLayerContents):
+        (WebKit::WebViewImpl::setRootLayerNeedsDisplay):
+
 2010-05-19  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.

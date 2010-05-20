@@ -55,9 +55,10 @@ LayerChromium::LayerChromium(LayerType type, GraphicsLayerChromium* owner)
     , m_borderWidth(0)
     , m_borderColor(0, 0, 0, 0)
     , m_backgroundColor(0, 0, 0, 0)
+    , m_anchorPoint(0.5, 0.5)
     , m_anchorPointZ(0)
     , m_clearsContext(false)
-    , m_doubleSided(false)
+    , m_doubleSided(true)
     , m_edgeAntialiasingMask(0)
     , m_hidden(false)
     , m_masksToBounds(false)
@@ -69,9 +70,10 @@ LayerChromium::LayerChromium(LayerType type, GraphicsLayerChromium* owner)
     , m_skiaContext(0)
     , m_graphicsContext(0)
     , m_geometryFlipped(false)
+    , m_contentsDirty(false)
     , m_contents(0)
+    , m_hasContext(false)
 {
-    updateGraphicsContext(m_backingStoreRect);
 }
 
 LayerChromium::~LayerChromium()
@@ -79,14 +81,30 @@ LayerChromium::~LayerChromium()
     // Our superlayer should be holding a reference to us so there should be no
     // way for us to be destroyed while we still have a superlayer.
     ASSERT(!superlayer());
+
+    // Remove the superlayer reference from all sublayers.
+    removeAllSublayers();
 }
 
-void LayerChromium::updateGraphicsContext(const IntSize& size)
+void LayerChromium::updateGraphicsContext()
 {
+    // If the layer doesn't draw anything (e.g. it's a container layer) then we
+    // don't create a canvas / context for it. The root layer is a special
+    // case as even if it's marked as a container layer it does actually have
+    // content that it draws.
+    RenderLayerBacking* backing = static_cast<RenderLayerBacking*>(m_owner->client());
+    if (!drawsContent() && !(this == rootLayer())) {
+        m_graphicsContext.clear();
+        m_skiaContext.clear();
+        m_canvas.clear();
+        m_hasContext = false;
+        return;
+    }
+
 #if PLATFORM(SKIA)
     // Create new canvas and context. OwnPtr takes care of freeing up
     // the old ones.
-    m_canvas = new skia::PlatformCanvas(size.width(), size.height(), false);
+    m_canvas = new skia::PlatformCanvas(m_backingStoreSize.width(), m_backingStoreSize.height(), false);
     m_skiaContext = new PlatformContextSkia(m_canvas.get());
 
     // This is needed to get text to show up correctly. Without it,
@@ -95,31 +113,32 @@ void LayerChromium::updateGraphicsContext(const IntSize& size)
     m_skiaContext->setDrawingToImageBuffer(true);
 
     m_graphicsContext = new GraphicsContext(reinterpret_cast<PlatformGraphicsContext*>(m_skiaContext.get()));
+
+    m_hasContext = true;
+    m_contentsDirty = true;
 #else
 #error "Need to implement for your platform."
 #endif
-    // The backing store allocated for a layer can be smaller than the layer's bounds.
-    // This is mostly true for the root layer whose backing store is sized based on the visible
-    // portion of the layer rather than the actual page size.
-    m_backingStoreRect = size;
+
+    return;
+}
+
+void LayerChromium::drawsContentUpdated()
+{
+    // Create a drawing context if the layer now draws content
+    // or delete the existing context if the layer doesn't draw
+    // content anymore.
+    updateGraphicsContext();
 }
 
 void LayerChromium::updateContents()
 {
     RenderLayerBacking* backing = static_cast<RenderLayerBacking*>(m_owner->client());
 
-    if (backing && !backing->paintingGoesToWindow())
+    if (backing && !backing->paintingGoesToWindow() && drawsContent())
         m_owner->paintGraphicsLayerContents(*m_graphicsContext, IntRect(0, 0, m_bounds.width(), m_bounds.height()));
-}
 
-void LayerChromium::drawDebugBorder()
-{
-    m_graphicsContext->setStrokeColor(m_borderColor, DeviceColorSpace);
-    m_graphicsContext->setStrokeThickness(m_borderWidth);
-    m_graphicsContext->drawLine(IntPoint(0, 0), IntPoint(m_bounds.width(), 0));
-    m_graphicsContext->drawLine(IntPoint(0, 0), IntPoint(0, m_bounds.height()));
-    m_graphicsContext->drawLine(IntPoint(m_bounds.width(), 0), IntPoint(m_bounds.width(), m_bounds.height()));
-    m_graphicsContext->drawLine(IntPoint(0, m_bounds.height()), IntPoint(m_bounds.width(), m_bounds.height()));
+    m_contentsDirty = false;
 }
 
 void LayerChromium::setContents(NativeImagePtr contents)
@@ -128,6 +147,7 @@ void LayerChromium::setContents(NativeImagePtr contents)
     if (m_contents == contents)
         return;
     m_contents = contents;
+    m_contentsDirty = true;
 }
 
 void LayerChromium::setNeedsCommit()
@@ -201,28 +221,29 @@ int LayerChromium::indexOfSublayer(const LayerChromium* reference)
     return -1;
 }
 
-void LayerChromium::setBackingStoreRect(const IntSize& rect)
+// This method can be called to overide the size of the backing store
+// used for the layer. It's typically called on the root layer to limit
+// its size to the actual visible size.
+void LayerChromium::setBackingStoreSize(const IntSize& size)
 {
-    if (m_backingStoreRect == rect)
+    if (m_backingStoreSize == size)
         return;
 
-    updateGraphicsContext(rect);
+    m_backingStoreSize = size;
+    updateGraphicsContext();
+    setNeedsCommit();
 }
 
-void LayerChromium::setBounds(const IntSize& rect)
+void LayerChromium::setBounds(const IntSize& size)
 {
-    if (rect == m_bounds)
+    if (m_bounds == size)
         return;
 
-    m_bounds = rect;
+    m_bounds = size;
+    m_backingStoreSize = size;
 
     // Re-create the canvas and associated contexts.
-    updateGraphicsContext(m_bounds);
-
-    // Layer contents need to be redrawn as the backing surface
-    // was recreated above.
-    updateContents();
-
+    updateGraphicsContext();
     setNeedsCommit();
 }
 
@@ -270,8 +291,11 @@ LayerChromium* LayerChromium::superlayer() const
 
 void LayerChromium::setNeedsDisplay(const FloatRect& dirtyRect)
 {
-    // Redraw the contents of the layer.
-    updateContents();
+    // Simply mark the contents as dirty. The actual redraw will
+    // happen when it's time to do the compositing.
+    // FIXME: Should only update the dirty rect instead of marking
+    //        the entire layer dirty.
+    m_contentsDirty = true;
 
     setNeedsCommit();
 }

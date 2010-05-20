@@ -970,12 +970,19 @@ void WebViewImpl::paint(WebCanvas* canvas, const WebRect& rect)
         // Draw the contents of the root layer.
         updateRootLayerContents(rect);
 
-        // Composite everything into the canvas that's passed to us.
-#if PLATFORM(SKIA)
-        m_layerRenderer->drawLayersInCanvas(static_cast<skia::PlatformCanvas*>(canvas), IntRect(rect));
-#elif PLATFORM(CG)
-#error "Need to implement CG version"
-#endif
+        WebFrameImpl* webframe = mainFrameImpl();
+        if (!webframe)
+            return;
+        FrameView* view = webframe->frameView();
+        if (!view)
+            return;
+
+        // The visibleRect includes scrollbars whereas the contentRect doesn't.
+        IntRect visibleRect = view->visibleContentRect(true);
+        IntRect contentRect = view->visibleContentRect(false);
+
+        // Ask the layer compositor to redraw all the layers.
+        m_layerRenderer->drawLayers(rect, visibleRect, contentRect, IntPoint(view->scrollX(), view->scrollY()));
     }
 #endif
 }
@@ -2074,9 +2081,13 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         return;
 
     if (active) {
-        m_layerRenderer = LayerRendererChromium::create();
-        if (m_layerRenderer)
+        m_layerRenderer = LayerRendererChromium::create(page());
+        if (m_layerRenderer->hardwareCompositing())
             m_isAcceleratedCompositingActive = true;
+        else {
+            m_layerRenderer.clear();
+            m_isAcceleratedCompositingActive = false;
+        }
     } else {
         m_layerRenderer = 0;
         m_isAcceleratedCompositingActive = false;
@@ -2088,6 +2099,12 @@ void WebViewImpl::updateRootLayerContents(const WebRect& rect)
     if (!isAcceleratedCompositingActive())
         return;
 
+    // FIXME: The accelerated compositing path invalidates a 1x1 rect at (0, 0)
+    // in order to get the renderer to ask the compositor to redraw. This is only
+    // temporary until we get the compositor to render directly from its own thread.
+    if (!rect.x && !rect.y && rect.width == 1 && rect.height == 1)
+        return;
+
     WebFrameImpl* webframe = mainFrameImpl();
     if (!webframe)
         return;
@@ -2095,24 +2112,28 @@ void WebViewImpl::updateRootLayerContents(const WebRect& rect)
     if (!view)
         return;
 
-    WebRect viewRect = view->frameRect();
-    SkIRect scrollFrame;
-    scrollFrame.set(view->scrollX(), view->scrollY(), view->layoutWidth() + view->scrollX(), view->layoutHeight() + view->scrollY());
-    m_layerRenderer->setScrollFrame(scrollFrame);
     LayerChromium* rootLayer = m_layerRenderer->rootLayer();
     if (rootLayer) {
         IntRect visibleRect = view->visibleContentRect(true);
 
-        // Set the backing store size used by the root layer to be the size of the visible
-        // area. Note that the root layer bounds could be larger than the backing store size,
-        // but there's no reason to waste memory by allocating backing store larger than the
-        // visible portion.
-        rootLayer->setBackingStoreRect(IntSize(visibleRect.width(), visibleRect.height()));
+        // Update the root layer's backing store to be the size of the dirty rect.
+        // Unlike other layers the root layer doesn't have persistent storage for its
+        // contents in system memory.
+        rootLayer->setBackingStoreSize(IntSize(rect.width, rect.height));
         GraphicsContext* rootLayerContext = rootLayer->graphicsContext();
+        skia::PlatformCanvas* platformCanvas = rootLayer->platformCanvas();
+
+        platformCanvas->save();
+
+        // Bring the canvas into the coordinate system of the paint rect.
+        platformCanvas->translate(static_cast<SkScalar>(-rect.x), static_cast<SkScalar>(-rect.y));
+
         rootLayerContext->save();
 
         webframe->paintWithContext(*(rootLayer->graphicsContext()), rect);
         rootLayerContext->restore();
+
+        platformCanvas->restore();
     }
 }
 
@@ -2121,8 +2142,10 @@ void WebViewImpl::setRootLayerNeedsDisplay()
     // FIXME: For now we're posting a repaint event for the entire page which is an overkill.
     if (WebFrameImpl* webframe = mainFrameImpl()) {
         if (FrameView* view = webframe->frameView()) {
+            // FIXME: Temporary hack to invalidate part of the page so that we get called to render
+            //        again.
             IntRect visibleRect = view->visibleContentRect(true);
-            m_client->didInvalidateRect(visibleRect);
+            m_client->didInvalidateRect(IntRect(0, 0, 1, 1));
         }
     }
 

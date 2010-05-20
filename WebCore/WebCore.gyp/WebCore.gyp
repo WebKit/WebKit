@@ -723,6 +723,7 @@
       'include_dirs': [
         '<(INTERMEDIATE_DIR)',
         '<@(webcore_include_dirs)',
+        '<(chromium_src_dir)/gpu'
       ],
       'sources': [
         '<@(webcore_files)',

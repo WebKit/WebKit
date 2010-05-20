@@ -101,12 +101,6 @@ GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)
 
 GraphicsLayerChromium::~GraphicsLayerChromium()
 {
-    // Clean up the Skia layer.
-    if (m_layer)
-        m_layer->removeFromSuperlayer();
-
-    if (m_transformLayer)
-        m_transformLayer->removeFromSuperlayer();
 }
 
 void GraphicsLayerChromium::setName(const String& inName)
@@ -485,6 +479,11 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
 
 void GraphicsLayerChromium::updateLayerDrawsContent()
 {
+    // Since only layers that draw content have a valid context
+    // we need to call updateGraphicsContext() here to make sure one
+    // gets created.
+    m_layer->drawsContentUpdated();
+
     if (m_drawsContent)
         m_layer->setNeedsDisplay();
 
@@ -533,7 +532,8 @@ void GraphicsLayerChromium::updateContentsRect()
     if (!m_contentsLayer)
         return;
 
-    m_contentsLayer->setPosition(FloatPoint(m_contentsRect.x(), m_contentsRect.y()));
+    // The position of the layer is the center of quad.
+    m_contentsLayer->setPosition(FloatPoint(m_contentsRect.x() + m_contentsRect.width() / 2, m_contentsRect.y() + m_contentsRect.height() / 2));
     m_contentsLayer->setBounds(IntSize(m_contentsRect.width(), m_contentsRect.height()));
 }
 

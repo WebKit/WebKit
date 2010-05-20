@@ -36,45 +36,98 @@
 
 #include "IntRect.h"
 #include "LayerChromium.h"
+#include "SkBitmap.h"
+#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
-namespace skia {
-class PlatformCanvas;
-}
-
 namespace WebCore {
 
+class GLES2Context;
+class Page;
+
+// Class that handles drawing of composited render layers using GL.
 class LayerRendererChromium : public Noncopyable {
 public:
-    static PassOwnPtr<LayerRendererChromium> create();
+    static PassOwnPtr<LayerRendererChromium> create(Page* page);
 
-    LayerRendererChromium();
+    LayerRendererChromium(Page* page);
     ~LayerRendererChromium();
 
-#if PLATFORM(SKIA)
-    void drawLayersInCanvas(skia::PlatformCanvas*, const IntRect& clipRect);
-#endif
-    void updateLayerContents();
+    // Updates the contents of the root layer that fall inside the updateRect and recomposites
+    // all the layers.
+    void drawLayers(const IntRect& updateRect, const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition);
 
     void setRootLayer(PassRefPtr<LayerChromium> layer) { m_rootLayer = layer; }
     LayerChromium* rootLayer() { return m_rootLayer.get(); }
 
     void setNeedsDisplay() { m_needsDisplay = true; }
 
-    void setScrollFrame(SkIRect& scrollFrame) { m_scrollFrame = scrollFrame; }
+    // Frees the texture associated with the given layer.
+    bool freeLayerTexture(LayerChromium*);
+
+    bool hardwareCompositing() const { return m_hardwareCompositing; }
 
 private:
-#if PLATFORM(SKIA)
-    void drawLayerInCanvasRecursive(skia::PlatformCanvas*, LayerChromium*, float opacity);
-#endif
-    void updateLayerContentsRecursive(LayerChromium*);
+    void compositeLayersRecursive(LayerChromium*, const TransformationMatrix&, float opacity, const IntRect& visibleRect);
+
+    void drawDebugBorder(LayerChromium*, const TransformationMatrix&);
+
+    void drawTexturedQuad(const TransformationMatrix& matrix, float width, float height, float opacity, bool scrolling);
+
+    bool isLayerVisible(LayerChromium*, const TransformationMatrix&, const IntRect& visibleRect);
+
+    void bindCommonAttribLocation(int location, char* attribName);
+
+    enum VboIds { Vertices, LayerElements };
+
+    // These are here only temporarily and should be removed once we switch over to GGL
+    bool initGL();
+    bool makeContextCurrent();
+
+    bool initializeSharedGLObjects();
+    int getTextureId(LayerChromium*);
+    int assignTextureForLayer(LayerChromium*);
+
+    // GL shader program object IDs.
+    unsigned int m_layerProgramObject;
+    unsigned int m_borderProgramObject;
+    unsigned int m_scrollProgramObject;
+
+    unsigned int m_rootLayerTextureId;
+    int m_rootLayerTextureWidth;
+    int m_rootLayerTextureHeight;
+
+    // Shader uniform and attribute locations.
+    const int m_positionLocation;
+    const int m_texCoordLocation;
+    int m_samplerLocation;
+    int m_matrixLocation;
+    int m_alphaLocation;
+    int m_scrollMatrixLocation;
+    int m_scrollSamplerLocation;
+
+    int m_borderMatrixLocation;
+    int m_borderColorLocation;
+
+    unsigned int m_quadVboIds[3];
+    TransformationMatrix m_projectionMatrix;
 
     RefPtr<LayerChromium> m_rootLayer;
 
     bool m_needsDisplay;
-    SkIRect m_scrollFrame;
+    IntPoint m_scrollPosition;
+    bool m_hardwareCompositing;
+
+    // Map associating layers with textures ids used by the GL compositor.
+    typedef HashMap<LayerChromium*, unsigned int> TextureIdMap;
+    TextureIdMap m_textureIdMap;
+
+    OwnPtr<GLES2Context> m_gles2Context;
+
+    // The WebCore Page that the compositor renders into.
+    Page* m_page;
 };
 
 }
