@@ -1,3 +1,12 @@
+2010-05-20  Martin Robinson  <mrobinson@igalia.com>
+
+        Not reviewed.
+
+        Tests that use Geolocation.getCurrentPosition fail
+        https://bugs.webkit.org/show_bug.cgi?id=39454
+
+        * platform/gtk/Skipped: Skip failing tests until this bug is resolved.
+
 2010-05-20  Victor Wang  <victorw@chromium.org>
 
         Unreviewed. Update test expectations for chromium.
