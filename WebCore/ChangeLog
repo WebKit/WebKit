@@ -1,3 +1,32 @@
+2010-05-19  Darin Fisher  <darin@chromium.org>
+
+        Revert r59790 due to failing Chromium npruntime tests.
+
+        * bindings/v8/NPV8Object.cpp:
+        (v8ObjectToNPObject):
+        (npCreateV8ScriptObject):
+        (_NPN_Invoke):
+        (_NPN_InvokeDefault):
+        (_NPN_Evaluate):
+        (_NPN_EvaluateHelper):
+        (_NPN_GetProperty):
+        (_NPN_SetProperty):
+        (_NPN_RemoveProperty):
+        (_NPN_HasProperty):
+        (_NPN_HasMethod):
+        (_NPN_SetException):
+        (_NPN_Enumerate):
+        (_NPN_Construct):
+        * bindings/v8/NPV8Object.h:
+        * bindings/v8/V8NPObject.cpp:
+        (forgetV8ObjectForNPObject):
+        * bindings/v8/V8NPObject.h:
+        * bindings/v8/V8NPUtils.cpp:
+        (convertV8ObjectToNPVariant):
+        (getStringIdentifier):
+        * bindings/v8/V8NPUtils.h:
+        * bindings/v8/npruntime.cpp:
+
 2010-05-19  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber Stamped by Sam Weinig.

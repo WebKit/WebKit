@@ -1,5 +1,12 @@
 2010-05-19  Darin Fisher  <darin@chromium.org>
 
+        Revert r59790 due to failing Chromium npruntime tests.
+
+        * public/WebBindings.h:
+        * src/WebBindings.cpp:
+
+2010-05-19  Darin Fisher  <darin@chromium.org>
+
         Reviewed by Nate Chapin.
 
         [chromium] Provide a way to catch exceptions thrown while interacting

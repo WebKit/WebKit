@@ -45,7 +45,7 @@
 #include "npruntime_priv.h"
 #include <wtf/OwnArrayPtr.h>
 
-namespace WebCore {
+using namespace WebCore;
 
 enum InvokeFunctionType {
     InvokeMethod = 1,
@@ -409,5 +409,3 @@ void forgetV8ObjectForNPObject(NPObject* object)
         _NPN_ReleaseObject(object);
     }
 }
-
-} // namespace WebCore

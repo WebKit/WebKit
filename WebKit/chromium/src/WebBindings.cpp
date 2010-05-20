@@ -45,7 +45,6 @@
 #include "V8DOMWrapper.h"
 #include "V8Event.h"
 #include "V8Helpers.h"
-#include "V8NPUtils.h"
 #include "V8Proxy.h"
 #include "V8Range.h"
 #elif USE(JSC)
@@ -321,16 +320,6 @@ bool WebBindings::getRange(NPObject* range, WebRange* webrange)
     // Not supported on other ports (JSC, etc).
     return false;
 #endif
-}
-
-void WebBindings::pushExceptionHandler(ExceptionHandler handler, void* data)
-{
-    WebCore::pushExceptionHandler(handler, data);
-}
-
-void WebBindings::popExceptionHandler()
-{
-    WebCore::popExceptionHandler();
 }
 
 } // namespace WebKit
