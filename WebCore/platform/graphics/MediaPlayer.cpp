@@ -41,6 +41,10 @@
 #include <QtGlobal>
 #endif
 
+#if USE(GSTREAMER)
+#include "MediaPlayerPrivateGStreamer.h"
+#endif
+
 #if PLATFORM(MAC)
 #include "MediaPlayerPrivateQTKit.h"
 #elif OS(WINCE) && !PLATFORM(QT)
@@ -48,8 +52,6 @@
 #elif PLATFORM(WIN)
 #include "MediaPlayerPrivateQuickTimeVisualContext.h"
 #include "MediaPlayerPrivateQuicktimeWin.h"
-#elif PLATFORM(GTK)
-#include "MediaPlayerPrivateGStreamer.h"
 #elif PLATFORM(QT)
 // QtMultimedia support is disabled currently.
 #if 1 || (QT_VERSION < 0x040700)
@@ -165,10 +167,11 @@ static Vector<MediaPlayerFactory*>& installedMediaEngines()
         enginesQueried = true;
 #if USE(GSTREAMER)
         MediaPlayerPrivateGStreamer::registerMediaEngine(addMediaEngine);
-#else
+#endif
+
 #if PLATFORM(WIN)
         MediaPlayerPrivateQuickTimeVisualContext::registerMediaEngine(addMediaEngine);
-#endif
+#elif !PLATFORM(GTK)
         // FIXME: currently all the MediaEngines are named
         // MediaPlayerPrivate. This code will need an update when bug
         // 36663 is adressed.

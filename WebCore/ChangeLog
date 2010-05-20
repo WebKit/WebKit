@@ -1,3 +1,16 @@
+2010-05-17  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GStreamer] enable gst support if USE_GSTREAMER macro is defined
+        https://bugs.webkit.org/show_bug.cgi?id=39205
+
+        Include gstreamer private player in the build when the
+        USE_GSTREAMER macro is enabled.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::installedMediaEngines):
+
 2010-05-19  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Darin Fisher.
