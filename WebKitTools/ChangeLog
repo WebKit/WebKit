@@ -1,3 +1,11 @@
+2010-05-20  Chris Evans  <cevans@google.com>
+
+        Unreviewed.
+
+        Marking myself as a committer.
+
+        * Scripts/webkitpy/common/config/committers.py: Add cevans@google.com.
+
 2010-05-20  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbo.
