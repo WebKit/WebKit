@@ -1,3 +1,15 @@
+2010-05-20  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+        
+        2x execCommand ReadAV@NULL
+        https://bugs.webkit.org/show_bug.cgi?id=35791
+
+        This test passes if it doesn't crash.        
+ 
+        * editing/execCommand/35791-expected.txt: Added.
+        * editing/execCommand/35791.html: Added.
+
 2010-05-19  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Darin Adler.

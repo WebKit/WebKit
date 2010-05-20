@@ -1,3 +1,25 @@
+2010-05-20  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        2x execCommand ReadAV@NULL
+        https://bugs.webkit.org/show_bug.cgi?id=35791
+
+        In applyBlockStyle(), a node which is referred from
+        nextParagraphStart sometimes removed from the document and goes
+        orphan, and that causes an assertion failed. This is because
+        moveParagraphs() replaces the node with a new one with some new
+        styles applied. So we re-compute nextParagraphStart in that case.
+
+        Test: editing/execCommand/35791.html
+
+        * dom/Position.h:
+        (WebCore::Position::isOrphan):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyBlockStyle):
+        * editing/VisiblePosition.h:
+        (WebCore::VisiblePosition::isOrphan):
+
 2010-05-20  Steve Block  <steveblock@google.com>
 
         Reviewed by Eric Seidel.
