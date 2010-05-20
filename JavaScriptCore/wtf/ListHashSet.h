@@ -37,27 +37,27 @@ namespace WTF {
     // and an append that moves the element to the end even if already present,
     // but unclear yet if these are needed.
 
-    template<typename Value, typename HashFunctions> class ListHashSet;
+    template<typename Value, size_t inlineCapacity, typename HashFunctions> class ListHashSet;
 
     template<typename T> struct IdentityExtractor;
 
-    template<typename Value, typename HashFunctions>
-    void deleteAllValues(const ListHashSet<Value, HashFunctions>&);
+    template<typename Value, size_t inlineCapacity, typename HashFunctions>
+    void deleteAllValues(const ListHashSet<Value, inlineCapacity, HashFunctions>&);
 
-    template<typename ValueArg, typename HashArg> class ListHashSetIterator;
-    template<typename ValueArg, typename HashArg> class ListHashSetConstIterator;
+    template<typename ValueArg, size_t inlineCapacity, typename HashArg> class ListHashSetIterator;
+    template<typename ValueArg, size_t inlineCapacity, typename HashArg> class ListHashSetConstIterator;
 
-    template<typename ValueArg> struct ListHashSetNode;
-    template<typename ValueArg> struct ListHashSetNodeAllocator;
-    template<typename ValueArg, typename HashArg> struct ListHashSetNodeHashFunctions;
+    template<typename ValueArg, size_t inlineCapacity> struct ListHashSetNode;
+    template<typename ValueArg, size_t inlineCapacity> struct ListHashSetNodeAllocator;
+    template<typename ValueArg, size_t inlineCapacity, typename HashArg> struct ListHashSetNodeHashFunctions;
 
-    template<typename ValueArg, typename HashArg = typename DefaultHash<ValueArg>::Hash> class ListHashSet : public FastAllocBase {
+    template<typename ValueArg, size_t inlineCapacity = 256, typename HashArg = typename DefaultHash<ValueArg>::Hash> class ListHashSet : public FastAllocBase {
     private:
-        typedef ListHashSetNode<ValueArg> Node;
-        typedef ListHashSetNodeAllocator<ValueArg> NodeAllocator;
+        typedef ListHashSetNode<ValueArg, inlineCapacity> Node;
+        typedef ListHashSetNodeAllocator<ValueArg, inlineCapacity> NodeAllocator;
 
         typedef HashTraits<Node*> NodeTraits;
-        typedef ListHashSetNodeHashFunctions<ValueArg, HashArg> NodeHash;
+        typedef ListHashSetNodeHashFunctions<ValueArg, inlineCapacity, HashArg> NodeHash;
 
         typedef HashTable<Node*, Node*, IdentityExtractor<Node*>, NodeHash, NodeTraits, NodeTraits> ImplType;
         typedef HashTableIterator<Node*, Node*, IdentityExtractor<Node*>, NodeHash, NodeTraits, NodeTraits> ImplTypeIterator;
@@ -67,10 +67,10 @@ namespace WTF {
 
     public:
         typedef ValueArg ValueType;
-        typedef ListHashSetIterator<ValueType, HashArg> iterator;
-        typedef ListHashSetConstIterator<ValueType, HashArg> const_iterator;
+        typedef ListHashSetIterator<ValueType, inlineCapacity, HashArg> iterator;
+        typedef ListHashSetConstIterator<ValueType, inlineCapacity, HashArg> const_iterator;
 
-        friend class ListHashSetConstIterator<ValueType, HashArg>;
+        friend class ListHashSetConstIterator<ValueType, inlineCapacity, HashArg>;
 
         ListHashSet();
         ListHashSet(const ListHashSet&);
@@ -119,9 +119,9 @@ namespace WTF {
         OwnPtr<NodeAllocator> m_allocator;
     };
 
-    template<typename ValueArg> struct ListHashSetNodeAllocator {
-        typedef ListHashSetNode<ValueArg> Node;
-        typedef ListHashSetNodeAllocator<ValueArg> NodeAllocator;
+    template<typename ValueArg, size_t inlineCapacity> struct ListHashSetNodeAllocator {
+        typedef ListHashSetNode<ValueArg, inlineCapacity> Node;
+        typedef ListHashSetNodeAllocator<ValueArg, inlineCapacity> NodeAllocator;
 
         ListHashSetNodeAllocator() 
             : m_freeList(pool())
@@ -181,15 +181,15 @@ namespace WTF {
 
         Node* m_freeList;
         bool m_isDoneWithInitialFreeList;
-        static const size_t m_poolSize = 256;
+        static const size_t m_poolSize = inlineCapacity;
         union {
             char pool[sizeof(Node) * m_poolSize];
             double forAlignment;
         } m_pool;
     };
 
-    template<typename ValueArg> struct ListHashSetNode {
-        typedef ListHashSetNodeAllocator<ValueArg> NodeAllocator;
+    template<typename ValueArg, size_t inlineCapacity> struct ListHashSetNode {
+        typedef ListHashSetNodeAllocator<ValueArg, inlineCapacity> NodeAllocator;
 
         ListHashSetNode(ValueArg value)
             : m_value(value)
@@ -220,25 +220,25 @@ namespace WTF {
 #endif
     };
 
-    template<typename ValueArg, typename HashArg> struct ListHashSetNodeHashFunctions {
-        typedef ListHashSetNode<ValueArg> Node;
+    template<typename ValueArg, size_t inlineCapacity, typename HashArg> struct ListHashSetNodeHashFunctions {
+        typedef ListHashSetNode<ValueArg, inlineCapacity> Node;
         
         static unsigned hash(Node* const& key) { return HashArg::hash(key->m_value); }
         static bool equal(Node* const& a, Node* const& b) { return HashArg::equal(a->m_value, b->m_value); }
         static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
-    template<typename ValueArg, typename HashArg> class ListHashSetIterator {
+    template<typename ValueArg, size_t inlineCapacity, typename HashArg> class ListHashSetIterator {
     private:
-        typedef ListHashSet<ValueArg, HashArg> ListHashSetType;
-        typedef ListHashSetIterator<ValueArg, HashArg> iterator;
-        typedef ListHashSetConstIterator<ValueArg, HashArg> const_iterator;
-        typedef ListHashSetNode<ValueArg> Node;
+        typedef ListHashSet<ValueArg, inlineCapacity, HashArg> ListHashSetType;
+        typedef ListHashSetIterator<ValueArg, inlineCapacity, HashArg> iterator;
+        typedef ListHashSetConstIterator<ValueArg, inlineCapacity, HashArg> const_iterator;
+        typedef ListHashSetNode<ValueArg, inlineCapacity> Node;
         typedef ValueArg ValueType;
         typedef ValueType& ReferenceType;
         typedef ValueType* PointerType;
 
-        friend class ListHashSet<ValueArg, HashArg>;
+        friend class ListHashSet<ValueArg, inlineCapacity, HashArg>;
 
         ListHashSetIterator(const ListHashSetType* set, Node* position) : m_iterator(set, position) { }
 
@@ -271,18 +271,18 @@ namespace WTF {
         const_iterator m_iterator;
     };
 
-    template<typename ValueArg, typename HashArg> class ListHashSetConstIterator {
+    template<typename ValueArg, size_t inlineCapacity, typename HashArg> class ListHashSetConstIterator {
     private:
-        typedef ListHashSet<ValueArg, HashArg> ListHashSetType;
-        typedef ListHashSetIterator<ValueArg, HashArg> iterator;
-        typedef ListHashSetConstIterator<ValueArg, HashArg> const_iterator;
-        typedef ListHashSetNode<ValueArg> Node;
+        typedef ListHashSet<ValueArg, inlineCapacity, HashArg> ListHashSetType;
+        typedef ListHashSetIterator<ValueArg, inlineCapacity, HashArg> iterator;
+        typedef ListHashSetConstIterator<ValueArg, inlineCapacity, HashArg> const_iterator;
+        typedef ListHashSetNode<ValueArg, inlineCapacity> Node;
         typedef ValueArg ValueType;
         typedef const ValueType& ReferenceType;
         typedef const ValueType* PointerType;
 
-        friend class ListHashSet<ValueArg, HashArg>;
-        friend class ListHashSetIterator<ValueArg, HashArg>;
+        friend class ListHashSet<ValueArg, inlineCapacity, HashArg>;
+        friend class ListHashSetIterator<ValueArg, inlineCapacity, HashArg>;
 
         ListHashSetConstIterator(const ListHashSetType* set, Node* position)
             : m_set(set)
@@ -341,11 +341,11 @@ namespace WTF {
     };
 
 
-    template<typename ValueType, typename HashFunctions>
+    template<typename ValueType, size_t inlineCapacity, typename HashFunctions>
     struct ListHashSetTranslator {
     private:
-        typedef ListHashSetNode<ValueType> Node;
-        typedef ListHashSetNodeAllocator<ValueType> NodeAllocator;
+        typedef ListHashSetNode<ValueType, inlineCapacity> Node;
+        typedef ListHashSetNodeAllocator<ValueType, inlineCapacity> NodeAllocator;
     public:
         static unsigned hash(const ValueType& key) { return HashFunctions::hash(key); }
         static bool equal(Node* const& a, const ValueType& b) { return HashFunctions::equal(a->m_value, b); }
@@ -355,16 +355,16 @@ namespace WTF {
         }
     };
 
-    template<typename T, typename U>
-    inline ListHashSet<T, U>::ListHashSet()
+    template<typename T, size_t inlineCapacity, typename U>
+    inline ListHashSet<T, inlineCapacity, U>::ListHashSet()
         : m_head(0)
         , m_tail(0)
         , m_allocator(new NodeAllocator)
     {
     }
 
-    template<typename T, typename U>
-    inline ListHashSet<T, U>::ListHashSet(const ListHashSet& other)
+    template<typename T, size_t inlineCapacity, typename U>
+    inline ListHashSet<T, inlineCapacity, U>::ListHashSet(const ListHashSet& other)
         : m_head(0)
         , m_tail(0)
         , m_allocator(new NodeAllocator)
@@ -374,16 +374,16 @@ namespace WTF {
             add(*it);
     }
 
-    template<typename T, typename U>
-    inline ListHashSet<T, U>& ListHashSet<T, U>::operator=(const ListHashSet& other)
+    template<typename T, size_t inlineCapacity, typename U>
+    inline ListHashSet<T, inlineCapacity, U>& ListHashSet<T, inlineCapacity, U>::operator=(const ListHashSet& other)
     {
         ListHashSet tmp(other);
         swap(tmp);
         return *this;
     }
 
-    template<typename T, typename U>
-    inline void ListHashSet<T, U>::swap(ListHashSet& other)
+    template<typename T, size_t inlineCapacity, typename U>
+    inline void ListHashSet<T, inlineCapacity, U>::swap(ListHashSet& other)
     {
         m_impl.swap(other.m_impl);
         std::swap(m_head, other.m_head);
@@ -391,95 +391,95 @@ namespace WTF {
         m_allocator.swap(other.m_allocator);
     }
 
-    template<typename T, typename U>
-    inline ListHashSet<T, U>::~ListHashSet()
+    template<typename T, size_t inlineCapacity, typename U>
+    inline ListHashSet<T, inlineCapacity, U>::~ListHashSet()
     {
         deleteAllNodes();
     }
 
-    template<typename T, typename U>
-    inline int ListHashSet<T, U>::size() const
+    template<typename T, size_t inlineCapacity, typename U>
+    inline int ListHashSet<T, inlineCapacity, U>::size() const
     {
         return m_impl.size(); 
     }
 
-    template<typename T, typename U>
-    inline int ListHashSet<T, U>::capacity() const
+    template<typename T, size_t inlineCapacity, typename U>
+    inline int ListHashSet<T, inlineCapacity, U>::capacity() const
     {
         return m_impl.capacity(); 
     }
 
-    template<typename T, typename U>
-    inline bool ListHashSet<T, U>::isEmpty() const
+    template<typename T, size_t inlineCapacity, typename U>
+    inline bool ListHashSet<T, inlineCapacity, U>::isEmpty() const
     {
         return m_impl.isEmpty(); 
     }
 
-    template<typename T, typename U>
-    inline typename ListHashSet<T, U>::iterator ListHashSet<T, U>::begin()
+    template<typename T, size_t inlineCapacity, typename U>
+    inline typename ListHashSet<T, inlineCapacity, U>::iterator ListHashSet<T, inlineCapacity, U>::begin()
     {
         return makeIterator(m_head); 
     }
 
-    template<typename T, typename U>
-    inline typename ListHashSet<T, U>::iterator ListHashSet<T, U>::end()
+    template<typename T, size_t inlineCapacity, typename U>
+    inline typename ListHashSet<T, inlineCapacity, U>::iterator ListHashSet<T, inlineCapacity, U>::end()
     {
         return makeIterator(0);
     }
 
-    template<typename T, typename U>
-    inline typename ListHashSet<T, U>::const_iterator ListHashSet<T, U>::begin() const
+    template<typename T, size_t inlineCapacity, typename U>
+    inline typename ListHashSet<T, inlineCapacity, U>::const_iterator ListHashSet<T, inlineCapacity, U>::begin() const
     {
         return makeConstIterator(m_head); 
     }
 
-    template<typename T, typename U>
-    inline typename ListHashSet<T, U>::const_iterator ListHashSet<T, U>::end() const
+    template<typename T, size_t inlineCapacity, typename U>
+    inline typename ListHashSet<T, inlineCapacity, U>::const_iterator ListHashSet<T, inlineCapacity, U>::end() const
     {
         return makeConstIterator(0); 
     }
 
-    template<typename T, typename U>
-    inline typename ListHashSet<T, U>::iterator ListHashSet<T, U>::find(const ValueType& value)
+    template<typename T, size_t inlineCapacity, typename U>
+    inline typename ListHashSet<T, inlineCapacity, U>::iterator ListHashSet<T, inlineCapacity, U>::find(const ValueType& value)
     {
-        typedef ListHashSetTranslator<ValueType, HashFunctions> Translator;
+        typedef ListHashSetTranslator<ValueType, inlineCapacity, HashFunctions> Translator;
         ImplTypeIterator it = m_impl.template find<ValueType, Translator>(value);
         if (it == m_impl.end())
             return end();
         return makeIterator(*it); 
     }
 
-    template<typename T, typename U>
-    inline typename ListHashSet<T, U>::const_iterator ListHashSet<T, U>::find(const ValueType& value) const
+    template<typename T, size_t inlineCapacity, typename U>
+    inline typename ListHashSet<T, inlineCapacity, U>::const_iterator ListHashSet<T, inlineCapacity, U>::find(const ValueType& value) const
     {
-        typedef ListHashSetTranslator<ValueType, HashFunctions> Translator;
+        typedef ListHashSetTranslator<ValueType, inlineCapacity, HashFunctions> Translator;
         ImplTypeConstIterator it = m_impl.template find<ValueType, Translator>(value);
         if (it == m_impl.end())
             return end();
         return makeConstIterator(*it);
     }
 
-    template<typename T, typename U>
-    inline bool ListHashSet<T, U>::contains(const ValueType& value) const
+    template<typename T, size_t inlineCapacity, typename U>
+    inline bool ListHashSet<T, inlineCapacity, U>::contains(const ValueType& value) const
     {
-        typedef ListHashSetTranslator<ValueType, HashFunctions> Translator;
+        typedef ListHashSetTranslator<ValueType, inlineCapacity, HashFunctions> Translator;
         return m_impl.template contains<ValueType, Translator>(value);
     }
 
-    template<typename T, typename U>
-    pair<typename ListHashSet<T, U>::iterator, bool> ListHashSet<T, U>::add(const ValueType &value)
+    template<typename T, size_t inlineCapacity, typename U>
+    pair<typename ListHashSet<T, inlineCapacity, U>::iterator, bool> ListHashSet<T, inlineCapacity, U>::add(const ValueType &value)
     {
-        typedef ListHashSetTranslator<ValueType, HashFunctions> Translator;
+        typedef ListHashSetTranslator<ValueType, inlineCapacity, HashFunctions> Translator;
         pair<typename ImplType::iterator, bool> result = m_impl.template add<ValueType, NodeAllocator*, Translator>(value, m_allocator.get());
         if (result.second)
             appendNode(*result.first);
         return std::make_pair(makeIterator(*result.first), result.second);
     }
 
-    template<typename T, typename U>
-    pair<typename ListHashSet<T, U>::iterator, bool> ListHashSet<T, U>::insertBefore(iterator it, const ValueType& newValue)
+    template<typename T, size_t inlineCapacity, typename U>
+    pair<typename ListHashSet<T, inlineCapacity, U>::iterator, bool> ListHashSet<T, inlineCapacity, U>::insertBefore(iterator it, const ValueType& newValue)
     {
-        typedef ListHashSetTranslator<ValueType, HashFunctions> Translator;
+        typedef ListHashSetTranslator<ValueType, inlineCapacity, HashFunctions> Translator;
         pair<typename ImplType::iterator, bool> result = m_impl.template add<ValueType, NodeAllocator*, Translator>(newValue, m_allocator.get());
         if (result.second)
             insertNodeBefore(it.node(), *result.first);
@@ -487,14 +487,14 @@ namespace WTF {
 
     }
 
-    template<typename T, typename U>
-    pair<typename ListHashSet<T, U>::iterator, bool> ListHashSet<T, U>::insertBefore(const ValueType& beforeValue, const ValueType& newValue)
+    template<typename T, size_t inlineCapacity, typename U>
+    pair<typename ListHashSet<T, inlineCapacity, U>::iterator, bool> ListHashSet<T, inlineCapacity, U>::insertBefore(const ValueType& beforeValue, const ValueType& newValue)
     {
         return insertBefore(find(beforeValue), newValue); 
     }
 
-    template<typename T, typename U>
-    inline void ListHashSet<T, U>::remove(iterator it)
+    template<typename T, size_t inlineCapacity, typename U>
+    inline void ListHashSet<T, inlineCapacity, U>::remove(iterator it)
     {
         if (it == end())
             return;
@@ -502,14 +502,14 @@ namespace WTF {
         unlinkAndDelete(it.node());
     }
 
-    template<typename T, typename U>
-    inline void ListHashSet<T, U>::remove(const ValueType& value)
+    template<typename T, size_t inlineCapacity, typename U>
+    inline void ListHashSet<T, inlineCapacity, U>::remove(const ValueType& value)
     {
         remove(find(value));
     }
 
-    template<typename T, typename U>
-    inline void ListHashSet<T, U>::clear()
+    template<typename T, size_t inlineCapacity, typename U>
+    inline void ListHashSet<T, inlineCapacity, U>::clear()
     {
         deleteAllNodes();
         m_impl.clear(); 
@@ -517,8 +517,8 @@ namespace WTF {
         m_tail = 0;
     }
 
-    template<typename T, typename U>
-    void ListHashSet<T, U>::unlinkAndDelete(Node* node)
+    template<typename T, size_t inlineCapacity, typename U>
+    void ListHashSet<T, inlineCapacity, U>::unlinkAndDelete(Node* node)
     {
         if (!node->m_prev) {
             ASSERT(node == m_head);
@@ -539,8 +539,8 @@ namespace WTF {
         node->destroy(m_allocator.get());
     }
 
-    template<typename T, typename U>
-    void ListHashSet<T, U>::appendNode(Node* node)
+    template<typename T, size_t inlineCapacity, typename U>
+    void ListHashSet<T, inlineCapacity, U>::appendNode(Node* node)
     {
         node->m_prev = m_tail;
         node->m_next = 0;
@@ -556,8 +556,8 @@ namespace WTF {
         m_tail = node;
     }
 
-    template<typename T, typename U>
-    void ListHashSet<T, U>::insertNodeBefore(Node* beforeNode, Node* newNode)
+    template<typename T, size_t inlineCapacity, typename U>
+    void ListHashSet<T, inlineCapacity, U>::insertNodeBefore(Node* beforeNode, Node* newNode)
     {
         if (!beforeNode)
             return appendNode(newNode);
@@ -572,8 +572,8 @@ namespace WTF {
             m_head = newNode;
     }
 
-    template<typename T, typename U>
-    void ListHashSet<T, U>::deleteAllNodes()
+    template<typename T, size_t inlineCapacity, typename U>
+    void ListHashSet<T, inlineCapacity, U>::deleteAllNodes()
     {
         if (!m_head)
             return;
@@ -582,16 +582,16 @@ namespace WTF {
             node->destroy(m_allocator.get());
     }
 
-    template<typename T, typename U>
-    inline ListHashSetIterator<T, U> ListHashSet<T, U>::makeIterator(Node* position) 
+    template<typename T, size_t inlineCapacity, typename U>
+    inline ListHashSetIterator<T, inlineCapacity, U> ListHashSet<T, inlineCapacity, U>::makeIterator(Node* position) 
     {
-        return ListHashSetIterator<T, U>(this, position); 
+        return ListHashSetIterator<T, inlineCapacity, U>(this, position); 
     }
 
-    template<typename T, typename U>
-    inline ListHashSetConstIterator<T, U> ListHashSet<T, U>::makeConstIterator(Node* position) const
+    template<typename T, size_t inlineCapacity, typename U>
+    inline ListHashSetConstIterator<T, inlineCapacity, U> ListHashSet<T, inlineCapacity, U>::makeConstIterator(Node* position) const
     { 
-        return ListHashSetConstIterator<T, U>(this, position); 
+        return ListHashSetConstIterator<T, inlineCapacity, U>(this, position); 
     }
 
     template<bool, typename ValueType, typename HashTableType>
@@ -603,10 +603,10 @@ namespace WTF {
             delete (*it)->m_value;
     }
 
-    template<typename T, typename U>
-    inline void deleteAllValues(const ListHashSet<T, U>& collection)
+    template<typename T, size_t inlineCapacity, typename U>
+    inline void deleteAllValues(const ListHashSet<T, inlineCapacity, U>& collection)
     {
-        deleteAllValues<true, typename ListHashSet<T, U>::ValueType>(collection.m_impl);
+        deleteAllValues<true, typename ListHashSet<T, inlineCapacity, U>::ValueType>(collection.m_impl);
     }
 
 } // namespace WTF
