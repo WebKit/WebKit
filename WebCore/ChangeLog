@@ -1,3 +1,11 @@
+2010-05-20  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Remove the Safari welcome page site-specific quirk, since its no longer needed.
+
+        * css/CSSStyleSheet.cpp: (WebCore::CSSStyleSheet::cssRules):
+
 2010-05-20  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
