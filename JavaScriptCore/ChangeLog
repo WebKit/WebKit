@@ -1,5 +1,13 @@
 2010-05-19  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (build fix).
+
+        Fix windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-05-19  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Bug 39393 - JSFunction need not be a subclass of InternalFunction.
