@@ -1,3 +1,15 @@
+2010-05-20  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Ensure timers are stopped on Geolocation::disconnectFrame()
+        https://bugs.webkit.org/show_bug.cgi?id=39388
+
+        fast/dom/Geolocation/notimer-after-unload.html, plus it should be possible to re-enable Gtk LayoutTests.
+
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::disconnectFrame):
+
 2010-05-20  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Eric Seidel.
