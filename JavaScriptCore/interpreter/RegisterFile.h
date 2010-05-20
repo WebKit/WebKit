@@ -103,7 +103,7 @@ namespace JSC {
             ScopeChain = -6,
             CallerFrame = -5,
             ReturnPC = -4, // This is either an Instruction* or a pointer into JIT generated code stored as an Instruction*.
-            ReturnValueRegister = -3,
+            CallFrameUnused = -3,
             ArgumentCount = -2,
             Callee = -1,
         };

@@ -1474,10 +1474,13 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
 
     // Emit call.
     emitOpcode(opcodeID);
-    instructions().append(dst->index()); // dst
     instructions().append(func->index()); // func
     instructions().append(argv.size()); // argCount
     instructions().append(argv[0]->index() + argv.size() + RegisterFile::CallFrameHeaderSize); // registerOffset
+    if (dst != ignoredResult()) {
+        emitOpcode(op_call_put_result);
+        instructions().append(dst->index()); // dst
+    }
 
     if (m_shouldEmitProfileHooks) {
         emitOpcode(op_profile_did_call);
@@ -1519,10 +1522,13 @@ RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func
     
     // Emit call.
     emitOpcode(op_call_varargs);
-    instructions().append(dst->index()); // dst
     instructions().append(func->index()); // func
     instructions().append(argCountRegister->index()); // arg count
     instructions().append(thisRegister->index() + RegisterFile::CallFrameHeaderSize); // initial registerOffset
+    if (dst != ignoredResult()) {
+        emitOpcode(op_call_put_result);
+        instructions().append(dst->index()); // dst
+    }
     if (m_shouldEmitProfileHooks) {
         emitOpcode(op_profile_did_call);
         instructions().append(func->index());
@@ -1609,12 +1615,15 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
 #endif
 
     emitOpcode(op_construct);
-    instructions().append(dst->index()); // dst
     instructions().append(func->index()); // func
     instructions().append(argv.size()); // argCount
     instructions().append(argv[0]->index() + argv.size() + RegisterFile::CallFrameHeaderSize); // registerOffset
     instructions().append(funcProto->index()); // proto
     instructions().append(argv[0]->index()); // thisRegister
+    if (dst != ignoredResult()) {
+        emitOpcode(op_call_put_result);
+        instructions().append(dst->index()); // dst
+    }
 
     if (m_shouldEmitProfileHooks) {
         emitOpcode(op_profile_did_call);

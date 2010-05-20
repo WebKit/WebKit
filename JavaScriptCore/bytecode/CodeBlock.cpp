@@ -1028,27 +1028,24 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             break;
         }
         case op_call: {
-            int dst = (++it)->u.operand;
             int func = (++it)->u.operand;
             int argCount = (++it)->u.operand;
             int registerOffset = (++it)->u.operand;
-            printf("[%4d] call\t\t %s, %s, %d, %d\n", location, registerName(exec, dst).data(), registerName(exec, func).data(), argCount, registerOffset);
+            printf("[%4d] call\t\t %s, %d, %d\n", location, registerName(exec, func).data(), argCount, registerOffset);
             break;
         }
         case op_call_eval: {
-            int dst = (++it)->u.operand;
             int func = (++it)->u.operand;
             int argCount = (++it)->u.operand;
             int registerOffset = (++it)->u.operand;
-            printf("[%4d] call_eval\t %s, %s, %d, %d\n", location, registerName(exec, dst).data(), registerName(exec, func).data(), argCount, registerOffset);
+            printf("[%4d] call_eval\t %s, %d, %d\n", location, registerName(exec, func).data(), argCount, registerOffset);
             break;
         }
         case op_call_varargs: {
-            int dst = (++it)->u.operand;
             int func = (++it)->u.operand;
             int argCount = (++it)->u.operand;
             int registerOffset = (++it)->u.operand;
-            printf("[%4d] call_varargs\t %s, %s, %s, %d\n", location, registerName(exec, dst).data(), registerName(exec, func).data(), registerName(exec, argCount).data(), registerOffset);
+            printf("[%4d] call_varargs\t %s, %s, %d\n", location, registerName(exec, func).data(), registerName(exec, argCount).data(), registerOffset);
             break;
         }
         case op_load_varargs: {
@@ -1071,6 +1068,11 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printf("[%4d] ret\t\t %s\n", location, registerName(exec, r0).data());
             break;
         }
+        case op_call_put_result: {
+            int r0 = (++it)->u.operand;
+            printf("[%4d] ret_result\t\t %s\n", location, registerName(exec, r0).data());
+            break;
+        }
         case op_ret_object_or_this: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
@@ -1078,13 +1080,12 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             break;
         }
         case op_construct: {
-            int dst = (++it)->u.operand;
             int func = (++it)->u.operand;
             int argCount = (++it)->u.operand;
             int registerOffset = (++it)->u.operand;
             int proto = (++it)->u.operand;
             int thisRegister = (++it)->u.operand;
-            printf("[%4d] construct\t %s, %s, %d, %d, %s, %s\n", location, registerName(exec, dst).data(), registerName(exec, func).data(), argCount, registerOffset, registerName(exec, proto).data(), registerName(exec, thisRegister).data());
+            printf("[%4d] construct\t %s, %d, %d, %s, %s\n", location, registerName(exec, func).data(), argCount, registerOffset, registerName(exec, proto).data(), registerName(exec, thisRegister).data());
             break;
         }
         case op_strcat: {

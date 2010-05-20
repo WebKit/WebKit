@@ -60,8 +60,8 @@ void JIT::compileOpCallInitializeCallFrame()
 
 void JIT::compileOpCallSetupArgs(Instruction* instruction)
 {
-    int argCount = instruction[3].u.operand;
-    int registerOffset = instruction[4].u.operand;
+    int argCount = instruction[2].u.operand;
+    int registerOffset = instruction[3].u.operand;
 
     emitPutJITStubArg(regT1, regT0, 0);
     emitPutJITStubArgConstant(registerOffset, 1);
@@ -70,10 +70,10 @@ void JIT::compileOpCallSetupArgs(Instruction* instruction)
           
 void JIT::compileOpConstructSetupArgs(Instruction* instruction)
 {
-    int argCount = instruction[3].u.operand;
-    int registerOffset = instruction[4].u.operand;
-    int proto = instruction[5].u.operand;
-    int thisRegister = instruction[6].u.operand;
+    int argCount = instruction[2].u.operand;
+    int registerOffset = instruction[3].u.operand;
+    int proto = instruction[4].u.operand;
+    int thisRegister = instruction[5].u.operand;
 
     emitPutJITStubArg(regT1, regT0, 0);
     emitPutJITStubArgConstant(registerOffset, 1);
@@ -89,12 +89,17 @@ void JIT::compileOpCallVarargsSetupArgs(Instruction*)
     emitPutJITStubArg(regT2, 2); // argCount
 }
 
-void JIT::compileOpCallVarargs(Instruction* instruction)
+void JIT::emit_op_call_put_result(Instruction* instruction)
 {
     int dst = instruction[1].u.operand;
-    int callee = instruction[2].u.operand;
-    int argCountRegister = instruction[3].u.operand;
-    int registerOffset = instruction[4].u.operand;
+    emitStore(dst, regT1, regT0);
+}
+
+void JIT::compileOpCallVarargs(Instruction* instruction)
+{
+    int callee = instruction[1].u.operand;
+    int argCountRegister = instruction[2].u.operand;
+    int registerOffset = instruction[3].u.operand;
 
     emitLoad(callee, regT1, regT0);
     emitLoadPayload(argCountRegister, regT2); // argCount
@@ -115,23 +120,19 @@ void JIT::compileOpCallVarargs(Instruction* instruction)
 
     emitNakedCall(m_globalData->jitStubs.ctiVirtualCall());
 
-    emitStore(dst, regT1, regT0);
-    
     sampleCodeBlock(m_codeBlock);
 }
 
 void JIT::compileOpCallVarargsSlowCase(Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    int dst = instruction[1].u.operand;
-    int callee = instruction[2].u.operand;
+    int callee = instruction[1].u.operand;
 
     linkSlowCaseIfNotJSCell(iter, callee);
     linkSlowCase(iter);
 
     JITStubCall stubCall(this, cti_op_call_NotJSFunction);
-    stubCall.call(dst); // In the interpreter, the callee puts the return value in dst.
+    stubCall.call();
 
-    map(m_bytecodeOffset + OPCODE_LENGTH(op_call_varargs), dst, regT1, regT0);
     sampleCodeBlock(m_codeBlock);
 }
 
@@ -240,10 +241,9 @@ void JIT::emit_op_construct(Instruction* currentInstruction)
 
 void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned)
 {
-    int dst = instruction[1].u.operand;
-    int callee = instruction[2].u.operand;
-    int argCount = instruction[3].u.operand;
-    int registerOffset = instruction[4].u.operand;
+    int callee = instruction[1].u.operand;
+    int argCount = instruction[2].u.operand;
+    int registerOffset = instruction[3].u.operand;
 
     Jump wasEval;
     if (opcodeID == op_call_eval) {
@@ -281,21 +281,18 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned)
     if (opcodeID == op_call_eval)
         wasEval.link(this);
 
-    emitStore(dst, regT1, regT0);
-
     sampleCodeBlock(m_codeBlock);
 }
 
 void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter, unsigned, OpcodeID opcodeID)
 {
-    int dst = instruction[1].u.operand;
-    int callee = instruction[2].u.operand;
+    int callee = instruction[1].u.operand;
 
     linkSlowCaseIfNotJSCell(iter, callee);
     linkSlowCase(iter);
 
     JITStubCall stubCall(this, opcodeID == op_construct ? cti_op_construct_NotJSConstruct : cti_op_call_NotJSFunction);
-    stubCall.call(dst); // In the interpreter, the callee puts the return value in dst.
+    stubCall.call();
 
     sampleCodeBlock(m_codeBlock);
 }
@@ -306,10 +303,9 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
 
 void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned callLinkInfoIndex)
 {
-    int dst = instruction[1].u.operand;
-    int callee = instruction[2].u.operand;
-    int argCount = instruction[3].u.operand;
-    int registerOffset = instruction[4].u.operand;
+    int callee = instruction[1].u.operand;
+    int argCount = instruction[2].u.operand;
+    int registerOffset = instruction[3].u.operand;
 
     Jump wasEval;
     if (opcodeID == op_call_eval) {
@@ -341,8 +337,8 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
 
     // In the case of OpConstruct, call out to a cti_ function to create the new object.
     if (opcodeID == op_construct) {
-        int proto = instruction[5].u.operand;
-        int thisRegister = instruction[6].u.operand;
+        int proto = instruction[4].u.operand;
+        int thisRegister = instruction[5].u.operand;
 
         JITStubCall stubCall(this, cti_op_construct_JSConstruct);
         stubCall.addArgument(regT1, regT0);
@@ -370,19 +366,14 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     if (opcodeID == op_call_eval)
         wasEval.link(this);
 
-    // Put the return value in dst. In the interpreter, op_ret does this.
-    emitStore(dst, regT1, regT0);
-    map(m_bytecodeOffset + opcodeLengths[opcodeID], dst, regT1, regT0);
-
     sampleCodeBlock(m_codeBlock);
 }
 
 void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter, unsigned callLinkInfoIndex, OpcodeID opcodeID)
 {
-    int dst = instruction[1].u.operand;
-    int callee = instruction[2].u.operand;
-    int argCount = instruction[3].u.operand;
-    int registerOffset = instruction[4].u.operand;
+    int callee = instruction[1].u.operand;
+    int argCount = instruction[2].u.operand;
+    int registerOffset = instruction[3].u.operand;
 
     linkSlowCase(iter);
     linkSlowCase(iter);
@@ -410,10 +401,6 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
 
     m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(opcodeID == op_construct ? m_globalData->jitStubs.ctiVirtualConstructLink() : m_globalData->jitStubs.ctiVirtualCallLink());
 
-    // Put the return value in dst.
-    emitStore(dst, regT1, regT0);;
-    sampleCodeBlock(m_codeBlock);
-
     // If not, we need an extra case in the if below!
     ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_call_eval));
 
@@ -428,7 +415,6 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
     callLinkFailNotJSFunction.link(this);
     JITStubCall(this, opcodeID == op_construct ? cti_op_construct_NotJSConstruct : cti_op_call_NotJSFunction).call();
 
-    emitStore(dst, regT1, regT0);;
     sampleCodeBlock(m_codeBlock);
 }
 
@@ -450,8 +436,8 @@ void JIT::compileOpCallInitializeCallFrame()
 
 void JIT::compileOpCallSetupArgs(Instruction* instruction)
 {
-    int argCount = instruction[3].u.operand;
-    int registerOffset = instruction[4].u.operand;
+    int argCount = instruction[2].u.operand;
+    int registerOffset = instruction[3].u.operand;
 
     // ecx holds func
     emitPutJITStubArg(regT0, 0);
@@ -461,7 +447,7 @@ void JIT::compileOpCallSetupArgs(Instruction* instruction)
           
 void JIT::compileOpCallVarargsSetupArgs(Instruction* instruction)
 {
-    int registerOffset = instruction[4].u.operand;
+    int registerOffset = instruction[3].u.operand;
     
     // ecx holds func
     emitPutJITStubArg(regT0, 0);
@@ -472,10 +458,10 @@ void JIT::compileOpCallVarargsSetupArgs(Instruction* instruction)
 
 void JIT::compileOpConstructSetupArgs(Instruction* instruction)
 {
-    int argCount = instruction[3].u.operand;
-    int registerOffset = instruction[4].u.operand;
-    int proto = instruction[5].u.operand;
-    int thisRegister = instruction[6].u.operand;
+    int argCount = instruction[2].u.operand;
+    int registerOffset = instruction[3].u.operand;
+    int proto = instruction[4].u.operand;
+    int thisRegister = instruction[5].u.operand;
 
     // ecx holds func
     emitPutJITStubArg(regT0, 0);
@@ -485,11 +471,16 @@ void JIT::compileOpConstructSetupArgs(Instruction* instruction)
     emitPutJITStubArgConstant(thisRegister, 4);
 }
 
-void JIT::compileOpCallVarargs(Instruction* instruction)
+void JIT::emit_op_call_put_result(Instruction* instruction)
 {
     int dst = instruction[1].u.operand;
-    int callee = instruction[2].u.operand;
-    int argCountRegister = instruction[3].u.operand;
+    emitPutVirtualRegister(dst);
+}
+
+void JIT::compileOpCallVarargs(Instruction* instruction)
+{
+    int callee = instruction[1].u.operand;
+    int argCountRegister = instruction[2].u.operand;
 
     emitGetVirtualRegister(argCountRegister, regT1);
     emitGetVirtualRegister(callee, regT0);
@@ -508,20 +499,15 @@ void JIT::compileOpCallVarargs(Instruction* instruction)
     addPtr(regT2, callFrameRegister);
     emitNakedCall(m_globalData->jitStubs.ctiVirtualCall());
 
-    // Put the return value in dst. In the interpreter, op_ret does this.
-    emitPutVirtualRegister(dst);
-    
     sampleCodeBlock(m_codeBlock);
 }
 
-void JIT::compileOpCallVarargsSlowCase(Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::compileOpCallVarargsSlowCase(Instruction*, Vector<SlowCaseEntry>::iterator& iter)
 {
-    int dst = instruction[1].u.operand;
-    
     linkSlowCase(iter);
     linkSlowCase(iter);
     JITStubCall stubCall(this, cti_op_call_NotJSFunction);
-    stubCall.call(dst); // In the interpreter, the callee puts the return value in dst.
+    stubCall.call();
     
     sampleCodeBlock(m_codeBlock);
 }
@@ -532,10 +518,9 @@ void JIT::compileOpCallVarargsSlowCase(Instruction* instruction, Vector<SlowCase
 
 void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned)
 {
-    int dst = instruction[1].u.operand;
-    int callee = instruction[2].u.operand;
-    int argCount = instruction[3].u.operand;
-    int registerOffset = instruction[4].u.operand;
+    int callee = instruction[1].u.operand;
+    int argCount = instruction[2].u.operand;
+    int registerOffset = instruction[3].u.operand;
 
     // Handle eval
     Jump wasEval;
@@ -575,20 +560,15 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned)
     if (opcodeID == op_call_eval)
         wasEval.link(this);
 
-    // Put the return value in dst. In the interpreter, op_ret does this.
-    emitPutVirtualRegister(dst);
-
     sampleCodeBlock(m_codeBlock);
 }
 
 void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter, unsigned, OpcodeID opcodeID)
 {
-    int dst = instruction[1].u.operand;
-
     linkSlowCase(iter);
     linkSlowCase(iter);
     JITStubCall stubCall(this, opcodeID == op_construct ? cti_op_construct_NotJSConstruct : cti_op_call_NotJSFunction);
-    stubCall.call(dst); // In the interpreter, the callee puts the return value in dst.
+    stubCall.call();
 
     sampleCodeBlock(m_codeBlock);
 }
@@ -599,10 +579,9 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
 
 void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned callLinkInfoIndex)
 {
-    int dst = instruction[1].u.operand;
-    int callee = instruction[2].u.operand;
-    int argCount = instruction[3].u.operand;
-    int registerOffset = instruction[4].u.operand;
+    int callee = instruction[1].u.operand;
+    int argCount = instruction[2].u.operand;
+    int registerOffset = instruction[3].u.operand;
 
     // Handle eval
     Jump wasEval;
@@ -634,8 +613,8 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
 
     // In the case of OpConstruct, call out to a cti_ function to create the new object.
     if (opcodeID == op_construct) {
-        int proto = instruction[5].u.operand;
-        int thisRegister = instruction[6].u.operand;
+        int proto = instruction[4].u.operand;
+        int thisRegister = instruction[5].u.operand;
 
         emitPutJITStubArg(regT0, 0);
         emitPutJITStubArgFromVirtualRegister(proto, 3, regT2);
@@ -659,18 +638,14 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     if (opcodeID == op_call_eval)
         wasEval.link(this);
 
-    // Put the return value in dst. In the interpreter, op_ret does this.
-    emitPutVirtualRegister(dst);
-
     sampleCodeBlock(m_codeBlock);
 }
 
 void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter, unsigned callLinkInfoIndex, OpcodeID opcodeID)
 {
-    int dst = instruction[1].u.operand;
-    int callee = instruction[2].u.operand;
-    int argCount = instruction[3].u.operand;
-    int registerOffset = instruction[4].u.operand;
+    int callee = instruction[1].u.operand;
+    int argCount = instruction[2].u.operand;
+    int registerOffset = instruction[3].u.operand;
 
     linkSlowCase(iter);
 
@@ -699,10 +674,6 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
 
     m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(opcodeID == op_construct ? m_globalData->jitStubs.ctiVirtualConstructLink() : m_globalData->jitStubs.ctiVirtualCallLink());
 
-    // Put the return value in dst.
-    emitPutVirtualRegister(dst);
-    sampleCodeBlock(m_codeBlock);
-
     // If not, we need an extra case in the if below!
     ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_call_eval));
 
@@ -717,7 +688,6 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
     callLinkFailNotJSFunction.link(this);
     JITStubCall(this, opcodeID == op_construct ? cti_op_construct_NotJSConstruct : cti_op_call_NotJSFunction).call();
 
-    emitPutVirtualRegister(dst);
     sampleCodeBlock(m_codeBlock);
 }
 

@@ -1,3 +1,72 @@
+2010-05-19  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 39408 - Unify JIT/interpreter return behaviour.
+
+        Presently the JIT and the interpreter have differing implementations in how
+        they handle storing the result of a function call back to the register file.
+        In both cases the op_call ( / _eval / _varargs / op_construct) opcode has an
+        operand indicating the VM register in which the result should be stored.
+        The JIT plants code after the call to store the result, so the value will be
+        stored as soon as the callee has returned.  In the interpreter the call
+        passes the return value register id into the callee via the callee callframe,
+        and the callee is responsible for writing the result back into its callers
+        register file after it has restored the parents callframe pointer, but before
+        returning.
+
+        Instead, move the task of writing the call result to the register file into a
+        new opcode (op_call_put_result), and after returning the callee should leave
+        the return value in a canonical location.  In the case of the interpreter,
+        this canonical location is a local variable in privateExecute
+        (functionReturnValue), in the case of the JIT this is the normal return value
+        registers (regT0, or regT1:regT0 in JSVALUE32_64).  op_call_put_result stores
+        the result from the canonical location to the registerfile.
+
+        In addition to unifying JIT & interpreter behaviour this change allows us to
+        remove a slot from the callframe, omit the write of the result where the
+        return value from the call is not used, and provides a 2% speedup on sunspider
+        in the interpreter.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitCallVarargs):
+        (JSC::BytecodeGenerator::emitConstruct):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::finalDestinationOrIgnored):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::NewExprNode::emitBytecode):
+        (JSC::FunctionCallValueNode::emitBytecode):
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::FunctionCallBracketNode::emitBytecode):
+        (JSC::FunctionCallDotNode::emitBytecode):
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::init):
+        (JSC::ExecState::noCaller):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::dumpRegisters):
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::privateExecute):
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallSetupArgs):
+        (JSC::JIT::compileOpConstructSetupArgs):
+        (JSC::JIT::emit_op_call_put_result):
+        (JSC::JIT::compileOpCallVarargs):
+        (JSC::JIT::compileOpCallVarargsSlowCase):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        (JSC::JIT::compileOpCallVarargsSetupArgs):
+
 2010-05-20  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
