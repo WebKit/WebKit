@@ -176,10 +176,12 @@ namespace JSC {
         void putDirectFunction(const Identifier& propertyName, JSCell* value, unsigned attr = 0);
         void putDirectFunction(const Identifier& propertyName, JSCell* value, unsigned attr, bool checkReadOnly, PutPropertySlot& slot);
         void putDirectFunction(ExecState* exec, InternalFunction* function, unsigned attr = 0);
+        void putDirectFunction(ExecState* exec, JSFunction* function, unsigned attr = 0);
 
         void putDirectWithoutTransition(const Identifier& propertyName, JSValue value, unsigned attr = 0);
         void putDirectFunctionWithoutTransition(const Identifier& propertyName, JSCell* value, unsigned attr = 0);
         void putDirectFunctionWithoutTransition(ExecState* exec, InternalFunction* function, unsigned attr = 0);
+        void putDirectFunctionWithoutTransition(ExecState* exec, JSFunction* function, unsigned attr = 0);
 
         // Fast access to known property offsets.
         JSValue getDirectOffset(size_t offset) const { return JSValue::decode(propertyStorage()[offset]); }

@@ -24,7 +24,7 @@
 #ifndef JSFunction_h
 #define JSFunction_h
 
-#include "InternalFunction.h"
+#include "JSObject.h"
 
 namespace JSC {
 
@@ -35,11 +35,11 @@ namespace JSC {
     class JSGlobalObject;
     class NativeExecutable;
 
-    class JSFunction : public InternalFunction {
+    class JSFunction : public JSObject {
         friend class JIT;
         friend class JSGlobalData;
 
-        typedef InternalFunction Base;
+        typedef JSObject Base;
 
     public:
         JSFunction(ExecState*, NonNullPassRefPtr<Structure>, int length, const Identifier&, NativeFunction);
@@ -49,6 +49,10 @@ namespace JSC {
 
         JSObject* construct(ExecState*, const ArgList&);
         JSValue call(ExecState*, JSValue thisValue, const ArgList&);
+
+        const UString& name(ExecState*);
+        const UString displayName(ExecState*);
+        const UString calculatedDisplayName(ExecState*);
 
         ScopeChain& scope()
         {
@@ -80,7 +84,7 @@ namespace JSC {
         virtual CallType getCallData(CallData&);
 
     protected:
-        const static unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesMarkChildren | OverridesGetPropertyNames | InternalFunction::StructureFlags;
+        const static unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesMarkChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
 
     private:
         JSFunction(NonNullPassRefPtr<Structure>);

@@ -61,7 +61,7 @@ namespace WebCore {
 
         JSC::ExecState* m_exec;
         Vector<ScriptCallFrame> m_frames;
-        JSC::InternalFunction* m_caller;
+        JSC::JSFunction* m_caller;
     };
 
 } // namespace WebCore

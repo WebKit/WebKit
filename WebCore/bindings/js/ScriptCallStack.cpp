@@ -33,7 +33,7 @@
 
 #include <interpreter/CallFrame.h>
 #include <interpreter/Interpreter.h>
-#include <runtime/InternalFunction.h>
+#include <runtime/JSFunction.h>
 #include <runtime/JSValue.h>
 #include <runtime/UString.h>
 #include <runtime/JSGlobalData.h>
@@ -57,7 +57,7 @@ ScriptCallStack::ScriptCallStack(ExecState* exec, const ArgList& args, unsigned 
     unsigned lineNumber = signedLineNumber >= 0 ? signedLineNumber : 0;
 
     if (function) {
-        m_caller = asInternalFunction(function);
+        m_caller = asFunction(function);
         m_frames.append(ScriptCallFrame(m_caller->name(m_exec), urlString, lineNumber, args, skipArgumentCount));
     } else {
         // Caller is unknown, but we should still add the frame, because
@@ -93,10 +93,10 @@ void ScriptCallStack::initialize()
 
     JSValue func = m_exec->interpreter()->retrieveCaller(m_exec, m_caller);
     while (!func.isNull()) {
-        InternalFunction* internalFunction = asInternalFunction(func);
+        JSFunction* jsFunction = asFunction(func);
         ArgList emptyArgList;
-        m_frames.append(ScriptCallFrame(internalFunction->name(m_exec), UString(), 0, emptyArgList, 0));
-        func = m_exec->interpreter()->retrieveCaller(m_exec, internalFunction);
+        m_frames.append(ScriptCallFrame(jsFunction->name(m_exec), UString(), 0, emptyArgList, 0));
+        func = m_exec->interpreter()->retrieveCaller(m_exec, jsFunction);
     }
     m_initialized = true;
 }
