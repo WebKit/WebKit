@@ -224,7 +224,11 @@ PassOwnPtr<WKCACFLayerRenderer> WKCACFLayerRenderer::create()
 
 WKCACFLayerRenderer::WKCACFLayerRenderer()
     : m_triedToCreateD3DRenderer(false)
-    , m_renderContext(0)
+    , m_rootLayer(WKCACFRootLayer::create(this))
+    , m_scrollLayer(WKCACFLayer::create(WKCACFLayer::Layer))
+    , m_clipLayer(WKCACFLayer::create(WKCACFLayer::Layer))
+    , m_context(AdoptCF, CACFContextCreate(0))
+    , m_renderContext(static_cast<CARenderContext*>(CACFContextGetRenderContext(m_context.get())))
     , m_renderer(0)
     , m_hostWindow(0)
     , m_renderTimer(this, &WKCACFLayerRenderer::renderTimerFired)
@@ -233,6 +237,36 @@ WKCACFLayerRenderer::WKCACFLayerRenderer()
     , m_backingStoreDirty(false)
     , m_mustResetLostDeviceBeforeRendering(false)
 {
+    windowsForContexts().set(m_context.get(), this);
+
+    // Under the root layer, we have a clipping layer to clip the content,
+    // that contains a scroll layer that we use for scrolling the content.
+    // The root layer is the size of the client area of the window.
+    // The clipping layer is the size of the WebView client area (window less the scrollbars).
+    // The scroll layer is the size of the root child layer.
+    // Resizing the window will change the bounds of the rootLayer and the clip layer and will not
+    // cause any repositioning.
+    // Scrolling will affect only the position of the scroll layer without affecting the bounds.
+
+    m_rootLayer->setName("WKCACFLayerRenderer rootLayer");
+    m_clipLayer->setName("WKCACFLayerRenderer clipLayer");
+    m_scrollLayer->setName("WKCACFLayerRenderer scrollLayer");
+
+    m_rootLayer->addSublayer(m_clipLayer);
+    m_clipLayer->addSublayer(m_scrollLayer);
+    m_clipLayer->setMasksToBounds(true);
+    m_scrollLayer->setAnchorPoint(CGPointMake(0, 1));
+    m_clipLayer->setAnchorPoint(CGPointMake(0, 1));
+
+#ifndef NDEBUG
+    CGColorRef debugColor = createCGColor(Color(255, 0, 0, 204));
+    m_rootLayer->setBackgroundColor(debugColor);
+    CGColorRelease(debugColor);
+#endif
+
+    if (m_context)
+        m_rootLayer->becomeRootLayerForContext(m_context.get());
+
 #ifndef NDEBUG
     char* printTreeFlag = getenv("CA_PRINT_TREE");
     m_printTree = printTreeFlag && atoi(printTreeFlag);
@@ -349,48 +383,10 @@ bool WKCACFLayerRenderer::createRenderer()
 
     m_d3dDevice->SetTransform(D3DTS_PROJECTION, &projection);
 
-    m_context.adoptCF(CACFContextCreate(0));
-    windowsForContexts().set(m_context.get(), this);
-
-    m_renderContext = static_cast<CARenderContext*>(CACFContextGetRenderContext(m_context.get()));
     m_renderer = CARenderOGLNew(&kCARenderDX9Callbacks, m_d3dDevice.get(), 0);
-
-    // Create the root hierarchy.
-    // Under the root layer, we have a clipping layer to clip the content,
-    // that contains a scroll layer that we use for scrolling the content.
-    // The root layer is the size of the client area of the window.
-    // The clipping layer is the size of the WebView client area (window less the scrollbars).
-    // The scroll layer is the size of the root child layer.
-    // Resizing the window will change the bounds of the rootLayer and the clip layer and will not
-    // cause any repositioning.
-    // Scrolling will affect only the position of the scroll layer without affecting the bounds.
-
-    m_rootLayer = WKCACFRootLayer::create(this);
-    m_rootLayer->setName("WKCACFLayerRenderer rootLayer");
-
-    m_clipLayer = WKCACFLayer::create(WKCACFLayer::Layer);
-    m_clipLayer->setName("WKCACFLayerRenderer clipLayer");
-    
-    m_scrollLayer = WKCACFLayer::create(WKCACFLayer::Layer);
-    m_scrollLayer->setName("WKCACFLayerRenderer scrollLayer");
-
-    m_rootLayer->addSublayer(m_clipLayer);
-    m_clipLayer->addSublayer(m_scrollLayer);
-    m_clipLayer->setMasksToBounds(true);
-    m_scrollLayer->setAnchorPoint(CGPointMake(0, 1));
-    m_clipLayer->setAnchorPoint(CGPointMake(0, 1));
-
-#ifndef NDEBUG
-    CGColorRef debugColor = createCGColor(Color(255, 0, 0, 204));
-    m_rootLayer->setBackgroundColor(debugColor);
-    CGColorRelease(debugColor);
-#endif
 
     if (IsWindow(m_hostWindow))
         m_rootLayer->setFrame(bounds());
-
-    if (m_context)
-        m_rootLayer->becomeRootLayerForContext(m_context.get());
 
     return true;
 }
