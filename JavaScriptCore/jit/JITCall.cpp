@@ -151,7 +151,7 @@ void JIT::emit_op_ret(Instruction* currentInstruction)
     ret();
 }
 
-void JIT::emit_op_constructor_ret(Instruction* currentInstruction)
+void JIT::emit_op_ret_object_or_this(Instruction* currentInstruction)
 {
     unsigned result = currentInstruction[1].u.operand;
     unsigned thisReg = currentInstruction[2].u.operand;

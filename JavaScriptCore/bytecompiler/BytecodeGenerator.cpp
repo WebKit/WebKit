@@ -1541,11 +1541,11 @@ RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
         instructions().append(m_codeBlock->argumentsRegister());
     }
 
-    // Constructors use op_constructor_ret to check the result is an
+    // Constructors use op_ret_object_or_this to check the result is an
     // object, unless we can trivially determine the check is not
     // necessary (currently, if the return value is 'this').
     if (isConstructor() && (src->index() != m_thisRegister.index())) {
-        emitOpcode(op_constructor_ret);
+        emitOpcode(op_ret_object_or_this);
         instructions().append(src->index());
         instructions().append(m_thisRegister.index());
         return src;

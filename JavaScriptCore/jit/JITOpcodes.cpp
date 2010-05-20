@@ -789,7 +789,7 @@ void JIT::emit_op_ret(Instruction* currentInstruction)
     ret();
 }
 
-void JIT::emit_op_constructor_ret(Instruction* currentInstruction)
+void JIT::emit_op_ret_object_or_this(Instruction* currentInstruction)
 {
     // We could JIT generate the deref, only calling out to C when the refcount hits zero.
     if (m_codeBlock->needsFullScopeChain())

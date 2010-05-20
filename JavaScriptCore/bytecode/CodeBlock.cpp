@@ -1071,7 +1071,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printf("[%4d] ret\t\t %s\n", location, registerName(exec, r0).data());
             break;
         }
-        case op_constructor_ret: {
+        case op_ret_object_or_this: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             printf("[%4d] constructor_ret\t\t %s %s\n", location, registerName(exec, r0).data(), registerName(exec, r1).data());

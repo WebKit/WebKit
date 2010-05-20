@@ -729,7 +729,7 @@ namespace JSC {
         void emit_op_resolve_skip(Instruction*);
         void emit_op_resolve_with_base(Instruction*);
         void emit_op_ret(Instruction*);
-        void emit_op_constructor_ret(Instruction*);
+        void emit_op_ret_object_or_this(Instruction*);
         void emit_op_rshift(Instruction*);
         void emit_op_sret(Instruction*);
         void emit_op_strcat(Instruction*);
