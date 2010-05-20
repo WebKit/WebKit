@@ -1,3 +1,18 @@
+2010-05-20  Adam Roben  <aroben@apple.com>
+
+        Fix an HRGN leak in WKCACFLayerRenderer
+
+        Fixes <http://webkit.org/b/39312> <rdar://problem/7998728> REGRESSION
+        (r53686-r55990): Graphics corruption when watching video (affects
+        youtube.com)
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::getDirtyRects): Use an OwnPtr to hold the HRGN we allocate.
+        That way we don't have to remember to destroy it (as we were
+        forgetting to do) when we bail out of this function early.
+
 2010-05-20  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Nate Chapin.

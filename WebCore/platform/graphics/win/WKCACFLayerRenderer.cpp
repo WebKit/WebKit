@@ -460,8 +460,8 @@ static void getDirtyRects(HWND window, Vector<CGRect>& outRects)
     if (!GetClientRect(window, &clientRect))
         return;
 
-    HRGN region = CreateRectRgn(0, 0, 0, 0);
-    int regionType = GetUpdateRgn(window, region, false);
+    OwnPtr<HRGN> region(CreateRectRgn(0, 0, 0, 0));
+    int regionType = GetUpdateRgn(window, region.get(), false);
     if (regionType != COMPLEXREGION) {
         RECT dirtyRect;
         if (GetUpdateRect(window, &dirtyRect, false))
@@ -469,10 +469,10 @@ static void getDirtyRects(HWND window, Vector<CGRect>& outRects)
         return;
     }
 
-    DWORD dataSize = GetRegionData(region, 0, 0);
+    DWORD dataSize = GetRegionData(region.get(), 0, 0);
     OwnArrayPtr<unsigned char> regionDataBuffer(new unsigned char[dataSize]);
     RGNDATA* regionData = reinterpret_cast<RGNDATA*>(regionDataBuffer.get());
-    if (!GetRegionData(region, dataSize, regionData))
+    if (!GetRegionData(region.get(), dataSize, regionData))
         return;
 
     outRects.resize(regionData->rdh.nCount);
@@ -480,8 +480,6 @@ static void getDirtyRects(HWND window, Vector<CGRect>& outRects)
     RECT* rect = reinterpret_cast<RECT*>(regionData->Buffer);
     for (size_t i = 0; i < outRects.size(); ++i, ++rect)
         outRects[i] = winRectToCGRect(*rect, clientRect);
-
-    DeleteObject(region);
 }
 
 void WKCACFLayerRenderer::renderTimerFired(Timer<WKCACFLayerRenderer>*)
