@@ -29,19 +29,18 @@
  */
 
 #include "config.h"
-
 #include "V8NPUtils.h"
 
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "PlatformString.h"
-#undef LOG
-
+#include "npruntime_impl.h"
+#include "npruntime_priv.h"
 #include "NPV8Object.h"
 #include "V8NPObject.h"
 #include "V8Proxy.h"
-#include "npruntime_impl.h"
-#include "npruntime_priv.h"
+
+namespace WebCore {
 
 void convertV8ObjectToNPVariant(v8::Local<v8::Value> object, NPObject* owner, NPVariant* result)
 {
@@ -69,14 +68,13 @@ void convertV8ObjectToNPVariant(v8::Local<v8::Value> object, NPObject* owner, NP
         char* utf8_chars = strdup(*utf8);
         STRINGN_TO_NPVARIANT(utf8_chars, utf8.length(), *result);
     } else if (object->IsObject()) {
-        WebCore::DOMWindow* window = WebCore::V8Proxy::retrieveWindow(WebCore::V8Proxy::currentContext());
+        DOMWindow* window = V8Proxy::retrieveWindow(V8Proxy::currentContext());
         NPObject* npobject = npCreateV8ScriptObject(0, v8::Handle<v8::Object>::Cast(object), window);
         if (npobject)
             _NPN_RegisterObject(npobject, owner);
         OBJECT_TO_NPVARIANT(npobject, *result);
     }
 }
-
 
 v8::Handle<v8::Value> convertNPVariantToV8Object(const NPVariant* variant, NPObject* npobject)
 {
@@ -128,3 +126,45 @@ NPIdentifier getStringIdentifier(v8::Handle<v8::String> str)
     v8::String::Utf8Value utf8(str);
     return _NPN_GetStringIdentifier(*utf8);
 }
+
+struct ExceptionHandlerInfo {
+    ExceptionHandlerInfo* previous;
+    ExceptionHandler handler;
+    void* data;
+};
+
+static ExceptionHandlerInfo* topHandler;
+
+void pushExceptionHandler(ExceptionHandler handler, void* data)
+{
+    ExceptionHandlerInfo* info = new ExceptionHandlerInfo;
+    info->previous = topHandler;
+    info->handler = handler;
+    info->data = data;
+    topHandler = info;
+}
+
+void popExceptionHandler()
+{
+    ASSERT(topHandler);
+    ExceptionHandlerInfo* doomed = topHandler;
+    topHandler = topHandler->previous;
+    delete doomed;
+}
+
+ExceptionCatcher::ExceptionCatcher()
+{
+    if (!topHandler)
+        m_tryCatch.SetVerbose(true);
+}
+
+ExceptionCatcher::~ExceptionCatcher()
+{
+    if (!m_tryCatch.HasCaught())
+        return;
+
+    if (topHandler)
+        topHandler->handler(topHandler->data, *v8::String::Utf8Value(m_tryCatch.Exception()));
+}
+
+} // namespace WebCore

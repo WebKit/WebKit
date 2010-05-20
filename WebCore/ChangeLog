@@ -1,3 +1,46 @@
+2010-05-20  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        [chromium] Provide a way to catch exceptions thrown while interacting
+        with a NPObject via WebBindings methods.
+        https://bugs.webkit.org/show_bug.cgi?id=39378
+
+        This change also includes a small bit of cleanup in V8NPObject and
+        friends.  I moved code into the WebCore namespace where appropriate.
+        
+        In _NPN_Invoke, I also moved the call to _NPN_Evaluate outside of the
+        context scope.  I did this to avoid having nested ExceptionCatcher
+        objects, which is not strictly necessary, but it seemed cleaner.
+        _NPN_Evaluate already takes care of creating a context scope.
+
+        * bindings/v8/NPV8Object.cpp:
+        (WebCore::v8ObjectToNPObject):
+        (WebCore::npCreateV8ScriptObject):
+        (_NPN_Invoke):
+        (_NPN_InvokeDefault):
+        (_NPN_Evaluate):
+        (_NPN_EvaluateHelper):
+        (_NPN_GetProperty):
+        (_NPN_SetProperty):
+        (_NPN_RemoveProperty):
+        (_NPN_HasProperty):
+        (_NPN_HasMethod):
+        (_NPN_SetException):
+        (_NPN_Enumerate):
+        (_NPN_Construct):
+        * bindings/v8/NPV8Object.h:
+        * bindings/v8/V8NPObject.cpp:
+        * bindings/v8/V8NPObject.h:
+        * bindings/v8/V8NPUtils.cpp:
+        (WebCore::convertV8ObjectToNPVariant):
+        (WebCore::pushExceptionHandler):
+        (WebCore::popExceptionHandler):
+        (WebCore::ExceptionCatcher::ExceptionCatcher):
+        (WebCore::ExceptionCatcher::~ExceptionCatcher):
+        * bindings/v8/V8NPUtils.h:
+        * bindings/v8/npruntime.cpp:
+
 2010-05-20  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Steve Block.
