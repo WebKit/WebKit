@@ -644,6 +644,9 @@ void HistoryController::updateBackForwardListClippedAtTarget(bool doClip)
 
 void HistoryController::pushState(PassRefPtr<SerializedScriptValue> stateObject, const String& title, const String& urlString)
 {
+    if (!m_previousItem)
+        return;
+
     Page* page = m_frame->page();
     ASSERT(page);
 
@@ -665,12 +668,8 @@ void HistoryController::pushState(PassRefPtr<SerializedScriptValue> stateObject,
 
 void HistoryController::replaceState(PassRefPtr<SerializedScriptValue> stateObject, const String& title, const String& urlString)
 {
-    // FIXME: We should always have m_currentItem here!!
-    // https://bugs.webkit.org/show_bug.cgi?id=36464
-    if (!m_currentItem) {
-        ASSERT_NOT_REACHED();
+    if (!m_currentItem)
         return;
-    }
 
     if (!urlString.isEmpty())
         m_currentItem->setURLString(urlString);

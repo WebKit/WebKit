@@ -1,3 +1,22 @@
+2010-05-19  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Crash fix in the HistoryController.
+
+        The problem was casued by a documented feature of the QWebFrame::setHtml().
+        The method doesn't affect a browsing history (doesn't create a HistoryItem instance), so
+        m_currentItem and m_previousItem are not set.
+
+        A null check was added.
+
+        [Qt] The QWebPage crashes on history.pushState().
+        https://bugs.webkit.org/show_bug.cgi?id=38840
+
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::pushState):
+        (WebCore::HistoryController::replaceState):
+
 2010-05-19  Darin Fisher  <darin@chromium.org>
 
         Revert r59790 due to failing Chromium npruntime tests.
