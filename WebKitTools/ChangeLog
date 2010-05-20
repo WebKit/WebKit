@@ -1,3 +1,12 @@
+2010-05-20  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build fix.  No review.
+
+        The WebKitAPITest targets do not use the "_debug" suffix needed
+        by the WinCairo port.  Added Debug_Cairo target to correct this.
+
+        * WebKitAPITest/WebKitAPITest.vcproj:
+
 2010-05-20  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Ojan Vafai.
