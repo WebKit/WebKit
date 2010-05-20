@@ -1,5 +1,14 @@
 2010-05-20  Jer Noble  <jer.noble@apple.com>
 
+        No review; build fix only.
+
+        When WTF_USE_ACCELERATED_COMPOSITING is turned off, MediaPlayerPrivateQuickTimeVisualContext.cpp
+        must include CoreGraphics/CGContext.h.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+
+2010-05-20  Jer Noble  <jer.noble@apple.com>
+
         Reviewed by Sam Weinig.
 
         Video elements show no video on Windows machines that do not support accelerated compositing
