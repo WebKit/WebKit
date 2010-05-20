@@ -45,7 +45,7 @@ namespace JSC {
 static double getCount()
 {
 #if OS(WINDOWS)
-    static LARGE_INTEGER frequency = {0};
+    static LARGE_INTEGER frequency;
     if (!frequency.QuadPart)
         QueryPerformanceFrequency(&frequency);
     LARGE_INTEGER counter;

@@ -1,3 +1,46 @@
+2010-05-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Fix warnings seen on the buildbots today
+        https://bugs.webkit.org/show_bug.cgi?id=39368
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::pruneUnretainedIcons): Use the type "long long" for
+        things being printed with "%lli". There is no guaranteed that int64_t is the
+        same thing as long long.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent): Added parentheses as suggested
+        by warnings in newer versions of GCC.
+
+        * platform/ContextMenu.cpp: Fix #if around the functions to match the #if
+        around the call sites to avoid unused function warning.
+
+        * platform/graphics/gtk/ImageGtk.cpp:
+        (WebCore::Image::loadPlatformResource): Use NULL to end a variable argument list
+        rather than 0. This is a case where the WebKit "use 0 instead of NULL" guideline
+        is incorrect and won't work properly.
+
+        * platform/win/SystemTimeWin.cpp:
+        (WebCore::userIdleTime): Removed unnecessary initialization of LASTINPUTINFO.
+
+        * platform/win/WebCoreInstanceHandle.h: Added property svn:eol-style.
+        Made functions inline instead of static. It's not correct to have functions with
+        internal linkage in a header file. Marking them inline makes more sense.
+
+        * plugins/win/PluginMessageThrottlerWin.cpp:
+        (WebCore::PluginMessageThrottlerWin::PluginMessageThrottlerWin): Reordered the
+        initializers to match the order of the data members from the class definition.
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::paintIntoTransformedContext): Initialized all the fields
+        of WINDOWPOS. I know this goes against the traditions of Windows programming,
+        but it's correct and silences the warning. Also removed the unneeded separate
+        code path for non-WinCE platforms that translates only the corner of the window
+        rectangle; the WinCE version is correct for normal Windows as well. Not sure
+        why this wasn't caught when the code was originally checked in.
+
 2010-05-20  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Adam Barth.

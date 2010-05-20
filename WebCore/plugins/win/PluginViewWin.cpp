@@ -524,23 +524,14 @@ void PluginView::paintIntoTransformedContext(HDC hdc)
     m_npWindow.type = NPWindowTypeDrawable;
     m_npWindow.window = hdc;
 
-    WINDOWPOS windowpos = { 0 };
+    WINDOWPOS windowpos = { 0, 0, 0, 0, 0, 0, 0 };
 
-#if OS(WINCE)
     IntRect r = static_cast<FrameView*>(parent())->contentsToWindow(frameRect());
 
     windowpos.x = r.x();
     windowpos.y = r.y();
     windowpos.cx = r.width();
     windowpos.cy = r.height();
-#else
-    IntPoint p = static_cast<FrameView*>(parent())->contentsToWindow(frameRect().location());
-
-    windowpos.x = p.x();
-    windowpos.y = p.y();
-    windowpos.cx = frameRect().width();
-    windowpos.cy = frameRect().height();
-#endif
 
     NPEvent npEvent;
     npEvent.event = WM_WINDOWPOSCHANGED;

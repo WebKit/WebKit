@@ -38,7 +38,7 @@ namespace WebCore {
 float userIdleTime()
 {
 #if !OS(WINCE)
-    LASTINPUTINFO lastInputInfo = {0};
+    LASTINPUTINFO lastInputInfo;
     lastInputInfo.cbSize = sizeof(LASTINPUTINFO);
     if (::GetLastInputInfo(&lastInputInfo))
         return (GetTickCount() - lastInputInfo.dwTime) * 0.001; // ::GetTickCount returns ms of uptime valid for up to 49.7 days.

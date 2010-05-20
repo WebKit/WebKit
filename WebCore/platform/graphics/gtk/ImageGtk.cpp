@@ -158,7 +158,7 @@ PassRefPtr<Image> Image::loadPlatformResource(const char* name)
         fileName = getThemeIconFileName(GTK_STOCK_MISSING_IMAGE, 16);
     if (fileName.isNull()) {
         gchar* imagename = g_strdup_printf("%s.png", name);
-        gchar* glibFileName = g_build_filename(DATA_DIR, "webkit-1.0", "images", imagename, 0);
+        gchar* glibFileName = g_build_filename(DATA_DIR, "webkit-1.0", "images", imagename, NULL);
         fileName = glibFileName;
         g_free(imagename);
         g_free(glibFileName);

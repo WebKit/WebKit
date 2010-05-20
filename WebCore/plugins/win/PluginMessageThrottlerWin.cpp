@@ -45,9 +45,9 @@ static const double MessageThrottleTimeInterval = 0.016;
 static const double MessageDirectProcessingInterval = 0.005;
 
 PluginMessageThrottlerWin::PluginMessageThrottlerWin(PluginView* pluginView)
-    : m_back(0)
+    : m_pluginView(pluginView)
+    , m_back(0)
     , m_front(0)
-    , m_pluginView(pluginView)
     , m_lastMessageTime(0)
     , m_messageThrottleTimer(this, &PluginMessageThrottlerWin::messageThrottleTimerFired)
 {

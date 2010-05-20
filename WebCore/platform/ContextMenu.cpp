@@ -102,7 +102,10 @@ static void createAndAppendFontSubMenu(const HitTestResult& result, ContextMenuI
     fontMenuItem.setSubMenu(&fontMenu);
 }
 
-#if !defined(BUILDING_ON_TIGER) && !PLATFORM(GTK)
+#if !defined(BUILDING_ON_TIGER)
+
+#if !PLATFORM(GTK)
+
 static void createAndAppendSpellingAndGrammarSubMenu(const HitTestResult& result, ContextMenuItem& spellingAndGrammarMenuItem)
 {
     ContextMenu spellingAndGrammarMenu(result);
@@ -115,24 +118,27 @@ static void createAndAppendSpellingAndGrammarSubMenu(const HitTestResult& result
         contextMenuItemTagCheckSpellingWhileTyping());
     ContextMenuItem grammarWithSpelling(CheckableActionType, ContextMenuItemTagCheckGrammarWithSpelling, 
         contextMenuItemTagCheckGrammarWithSpelling());
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
     ContextMenuItem correctSpelling(CheckableActionType, ContextMenuItemTagCorrectSpellingAutomatically, 
         contextMenuItemTagCorrectSpellingAutomatically());
 #endif
 
     spellingAndGrammarMenu.appendItem(showSpellingPanel);
     spellingAndGrammarMenu.appendItem(checkSpelling);
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
     spellingAndGrammarMenu.appendItem(*separatorItem());
 #endif
     spellingAndGrammarMenu.appendItem(checkAsYouType);
     spellingAndGrammarMenu.appendItem(grammarWithSpelling);
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
     spellingAndGrammarMenu.appendItem(correctSpelling);
 #endif
 
     spellingAndGrammarMenuItem.setSubMenu(&spellingAndGrammarMenu);
 }
+
+#endif // !PLATFORM(GTK)
+
 #else
 
 static void createAndAppendSpellingSubMenu(const HitTestResult& result, ContextMenuItem& spellingMenuItem)
@@ -152,9 +158,11 @@ static void createAndAppendSpellingSubMenu(const HitTestResult& result, ContextM
 
     spellingMenuItem.setSubMenu(&spellingMenu);
 }
+
 #endif
 
 #if PLATFORM(MAC)
+
 static void createAndAppendSpeechSubMenu(const HitTestResult& result, ContextMenuItem& speechMenuItem)
 {
     ContextMenu speechMenu(result);
@@ -167,9 +175,11 @@ static void createAndAppendSpeechSubMenu(const HitTestResult& result, ContextMen
 
     speechMenuItem.setSubMenu(&speechMenu);
 }
+
 #endif
  
 #if !PLATFORM(GTK)
+
 static void createAndAppendWritingDirectionSubMenu(const HitTestResult& result, ContextMenuItem& writingDirectionMenuItem)
 {
     ContextMenu writingDirectionMenu(result);
@@ -200,9 +210,11 @@ static void createAndAppendTextDirectionSubMenu(const HitTestResult& result, Con
 
     textDirectionMenuItem.setSubMenu(&textDirectionMenu);
 }
+
 #endif
 
 #if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+
 static void createAndAppendSubstitutionsSubMenu(const HitTestResult& result, ContextMenuItem& substitutionsMenuItem)
 {
     ContextMenu substitutionsMenu(result);
@@ -239,6 +251,7 @@ static void createAndAppendTransformationsSubMenu(const HitTestResult& result, C
 
     transformationsMenuItem.setSubMenu(&transformationsMenu);
 }
+
 #endif
 
 static bool selectionContainsPossibleWord(Frame* frame)
