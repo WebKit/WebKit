@@ -1,3 +1,13 @@
+2010-05-20  Victor Wang  <victorw@chromium.org>
+
+        Unreviewed. Update test expectations for chromium.
+
+        * platform/chromium-mac/svg/filters/feLighting-crash-expected.checksum: Added.
+        * platform/chromium-mac/svg/filters/feLighting-crash-expected.png: Added.
+        * platform/chromium-win/svg/filters/feLighting-crash-expected.checksum: Added.
+        * platform/chromium-win/svg/filters/feLighting-crash-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-05-20  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Adam Barth.
