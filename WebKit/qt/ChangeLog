@@ -1,3 +1,27 @@
+2010-05-20  Rajiv Ramanasankaran  <rajiv.ramanasankaran@nokia.com>
+
+        Reviewed by Simon Hausmann.
+        
+        [Qt] QWebPage::inputMethodQuery() returns wrong values for Qt::ImCursorPosition, Qt::ImAnchorPosition
+        https://bugs.webkit.org/show_bug.cgi?id=38779
+
+        The earlier implementation was written with the assumption that in this scenario the 
+        anchor position always corresponds to the START index and that the current cursor position
+        always corresponds to the END index in WebKit.
+
+        Updated the implementation of QWebPage::inputMethodQuery(Qt::ImCursorPosition) and 
+        QWebPage::inputMethodQuery(Qt::ImAnchorPosition) for the case where the Editor is not in
+        composition mode. In the non-composition mode, the Anchor and the Current cursor positions
+        correspond to the Base and Extent position offsets in WebKit.
+
+        Also added the auto-tests for the RIGHT to LEFT and LEFT to RIGHT selections.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::inputMethodQuery): Now returning correct values for Qt::ImCursorPosition and
+        Qt::ImAnchorPosition when the Editor is not in composition mode. 
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::inputMethods): Added auto-tests for RIGHT to LEFT and LEFT to RIGHT selections
+
 2010-05-20  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

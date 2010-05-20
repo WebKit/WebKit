@@ -1494,6 +1494,98 @@ void tst_QWebPage::inputMethods()
     QCOMPARE(value, QString("QtWebKit"));
 #endif
 
+    // Cancel current composition first
+    inputAttributes << QInputMethodEvent::Attribute(QInputMethodEvent::Selection, 0, 0, QVariant());
+    QInputMethodEvent eventSelection4("", inputAttributes);
+    page->event(&eventSelection4);
+
+    // START - Tests for Selection when the Editor is NOT in Composition mode
+
+    // LEFT to RIGHT selection
+    // Deselect the selection by sending MouseButtonPress events
+    // This moves the current cursor to the end of the text
+    page->event(&evpres);
+    page->event(&evrel);
+
+    //Move to the start of the line
+    page->triggerAction(QWebPage::MoveToStartOfLine);
+
+    QKeyEvent keyRightEventPress(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier);
+    QKeyEvent keyRightEventRelease(QEvent::KeyRelease, Qt::Key_Right, Qt::NoModifier);
+
+    //Move 2 characters RIGHT
+    for (int j = 0; j < 2; ++j) {
+        page->event(&keyRightEventPress);
+        page->event(&keyRightEventRelease);
+    }
+
+    //Select to the end of the line
+    page->triggerAction(QWebPage::SelectEndOfLine);
+
+    //ImAnchorPosition QtWebKit
+    variant = page->inputMethodQuery(Qt::ImAnchorPosition);
+    anchorPosition =  variant.toInt();
+    QCOMPARE(anchorPosition, 2);
+
+    //ImCursorPosition
+    variant = page->inputMethodQuery(Qt::ImCursorPosition);
+    cursorPosition =  variant.toInt();
+    QCOMPARE(cursorPosition, 8);
+
+    //ImCurrentSelection
+    variant = page->inputMethodQuery(Qt::ImCurrentSelection);
+    selectionValue = variant.value<QString>();
+    QCOMPARE(selectionValue, QString("WebKit"));
+
+    //RIGHT to LEFT selection
+    //Deselect the selection (this moves the current cursor to the end of the text)
+    page->event(&evpres);
+    page->event(&evrel);
+
+    //ImAnchorPosition
+    variant = page->inputMethodQuery(Qt::ImAnchorPosition);
+    anchorPosition =  variant.toInt();
+    QCOMPARE(anchorPosition, 8);
+
+    //ImCursorPosition
+    variant = page->inputMethodQuery(Qt::ImCursorPosition);
+    cursorPosition =  variant.toInt();
+    QCOMPARE(cursorPosition, 8);
+
+    //ImCurrentSelection
+    variant = page->inputMethodQuery(Qt::ImCurrentSelection);
+    selectionValue = variant.value<QString>();
+    QCOMPARE(selectionValue, QString(""));
+
+    QKeyEvent keyLeftEventPress(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier);
+    QKeyEvent keyLeftEventRelease(QEvent::KeyRelease, Qt::Key_Left, Qt::NoModifier);
+
+    //Move 2 characters LEFT
+    for (int i = 0; i < 2; ++i) {
+        page->event(&keyLeftEventPress);
+        page->event(&keyLeftEventRelease);
+    }
+
+    //Select to the start of the line
+    page->triggerAction(QWebPage::SelectStartOfLine);
+
+    //ImAnchorPosition
+    variant = page->inputMethodQuery(Qt::ImAnchorPosition);
+    anchorPosition =  variant.toInt();
+    QCOMPARE(anchorPosition, 6);
+
+    //ImCursorPosition
+    variant = page->inputMethodQuery(Qt::ImCursorPosition);
+    cursorPosition =  variant.toInt();
+    QCOMPARE(cursorPosition, 0);
+
+    //ImCurrentSelection
+    variant = page->inputMethodQuery(Qt::ImCurrentSelection);
+    selectionValue = variant.value<QString>();
+    QCOMPARE(selectionValue, QString("QtWebK"));
+
+    //END - Tests for Selection when the Editor is not in Composition mode
+
     //ImhHiddenText
     QMouseEvent evpresPassword(QEvent::MouseButtonPress, inputs.at(1).geometry().center(), Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
     page->event(&evpresPassword);

@@ -1369,7 +1369,7 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
                     RefPtr<Range> range = editor->compositionRange();
                     return QVariant(renderTextControl->selectionEnd() - TextIterator::rangeLength(range.get()));
                 }
-                return QVariant(renderTextControl->selectionEnd());
+                return QVariant(frame->selection()->extent().offsetInContainerNode());
             }
             return QVariant();
         }
@@ -1401,7 +1401,7 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
                     RefPtr<Range> range = editor->compositionRange();
                     return QVariant(renderTextControl->selectionStart() - TextIterator::rangeLength(range.get()));
                 }
-                return QVariant(renderTextControl->selectionStart());
+                return QVariant(frame->selection()->base().offsetInContainerNode());
             }
             return QVariant();
         }
