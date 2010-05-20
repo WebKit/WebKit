@@ -1,5 +1,13 @@
 2010-05-20  Martin Robinson  <mrobinson@igalia.com>
 
+        Unreviewed.
+
+        Touch WebKit.idl to ensure that interfaces rebuild.
+
+        * Interfaces/WebKit.idl: Touched.
+
+2010-05-20  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Adam Roben.
 
         Fix the Windows build and move new IDL declarations to the bottom of the file.
