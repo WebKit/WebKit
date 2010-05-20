@@ -1,5 +1,32 @@
 2010-05-20  Adam Roben  <aroben@apple.com>
 
+        Remove code that fetched, but did nothing useful with, a CFDictionary
+        in MediaPlayerPrivateQuickTimeVisualContext
+
+        I also removed the code in QTPixelBuffer that vended the dictionary.
+
+        Fixes <http://webkit.org/b/39435> <rdar://problem/8009278>
+        QTPixelBuffer passes CFDictionaries across the DLL boundary, which can
+        lead to crashes
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::retrieveCurrentImage):
+        Deleted code that fetched the attachments dictionary, which was never
+        used other than to pass it to CFRetain/CFRelease, which could be
+        enough to cause a crash due to incompatible copies of
+        CoreFoundation.dll.
+
+        * platform/graphics/win/QTMovieVisualContext.h: Added a now-needed
+        forward declaration.
+
+        * platform/graphics/win/QTPixelBuffer.cpp:
+        * platform/graphics/win/QTPixelBuffer.h:
+        Removed the now-unused attachments function.
+
+2010-05-20  Adam Roben  <aroben@apple.com>
+
         Fix a CFData leak in MediaPlayerPrivateQuickTimeVisualContext
 
         Fixes <http://webkit.org/b/39432> <rdar://problem/8008992>

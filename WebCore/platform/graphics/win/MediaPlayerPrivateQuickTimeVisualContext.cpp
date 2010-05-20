@@ -739,22 +739,11 @@ void MediaPlayerPrivateQuickTimeVisualContext::retrieveCurrentImage()
     WKCACFLayer* layer = static_cast<WKCACFLayer*>(m_qtVideoLayer->platformLayer());
 
     if (!buffer.lockBaseAddress()) {
-#ifndef NDEBUG
-        // Debug QuickTime links against a non-Debug version of CoreFoundation, so the CFDictionary attached to the CVPixelBuffer cannot be directly passed on into the CAImageQueue without being converted to a non-Debug CFDictionary:
-        CFDictionaryRef attachments = QTCFDictionaryCreateCopyWithDataCallback(kCFAllocatorDefault, buffer.attachments(), &QTCFDictionaryCreateWithDataCallback);
-#else
-        // However, this is unnecssesary in the non-Debug case:
-        CFDictionaryRef attachments = static_cast<CFDictionaryRef>(CFRetain(buffer.attachments()));
-#endif
-
         CFTimeInterval imageTime = QTMovieVisualContext::currentHostTime();
 
         CGImageRef image = CreateCGImageFromPixelBuffer(buffer);
         layer->setContents(image);
         CGImageRelease(image);
-
-        if (attachments)
-            CFRelease(attachments);
 
         buffer.unlockBaseAddress();
         layer->rootLayer()->setNeedsRender();
