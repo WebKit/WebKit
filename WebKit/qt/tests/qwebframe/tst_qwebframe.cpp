@@ -785,7 +785,7 @@ void tst_QWebFrame::getSetStaticProperty()
         QCOMPARE(vm.size(), 3);
         QCOMPARE(vm.value("a").toInt(), 123);
         QCOMPARE(vm.value("b").toString(), QLatin1String("foo"));
-        QCOMPARE(vm.value("c").value<QObject*>(), m_myObject);
+        QCOMPARE(vm.value("c").value<QObject*>(), static_cast<QObject*>(m_myObject));
     }
     QCOMPARE(evalJS("myObject.variantMapProperty.a === 123"), sTrue);
     QCOMPARE(evalJS("myObject.variantMapProperty.b === 'foo'"), sTrue);
