@@ -1,3 +1,11 @@
+2010-05-21  Julie Parent  <jparent@chromium.org>
+
+        Unreviewed.
+
+        Updating Chromium test_expectations to mark drop-link test as failing in win debug.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-05-21  Victor Wang  <victorw@chromium.org>
 
         Unreviewed. Update test expectations for chromium.
