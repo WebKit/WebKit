@@ -3844,6 +3844,8 @@ skip_id_custom_self:
             return returnValue;
 
         functionReturnValue = returnValue;
+        codeBlock = callFrame->codeBlock();
+        ASSERT(codeBlock == callFrame->codeBlock());
 
         NEXT_INSTRUCTION();
     }
