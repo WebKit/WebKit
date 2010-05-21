@@ -3842,7 +3842,7 @@ skip_id_custom_self:
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_call_put_result) {
-        /* ret_result result(r)
+        /* op_call_put_result result(r)
            
            Move call result from functionReturnValue to caller's
            expected return value register.

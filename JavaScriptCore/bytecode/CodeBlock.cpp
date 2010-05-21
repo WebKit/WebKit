@@ -1070,7 +1070,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         }
         case op_call_put_result: {
             int r0 = (++it)->u.operand;
-            printf("[%4d] ret_result\t\t %s\n", location, registerName(exec, r0).data());
+            printf("[%4d] op_call_put_result\t\t %s\n", location, registerName(exec, r0).data());
             break;
         }
         case op_ret_object_or_this: {

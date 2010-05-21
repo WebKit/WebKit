@@ -1,5 +1,16 @@
 2010-05-20  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Beth Dakin.
+
+        Fixed naming mixup: it's op_call_put_result, not ret_result.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+
+2010-05-20  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Whittling away at CodeBlock use: Removed a little wonkiness in closure lookup
