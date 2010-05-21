@@ -1,3 +1,13 @@
+2010-05-21  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Symbian build fix.
+
+        [Qt] Updated the wins def file with one new export.
+
+        The DRT symbols are still missing, but I can't build DRT ;(
+
+        * symbian/bwins/QtWebKitu.def:
+
 2010-05-20  Janne Koskinen  <janne.p.koskinen@digia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
