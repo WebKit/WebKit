@@ -1,3 +1,9 @@
+2010-05-21  Victor Wang  <victorw@chromium.org>
+
+        Unremivewed. Update test expecations for chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-05-21  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         Reviewed by Adam Roben.

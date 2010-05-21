@@ -2843,7 +2843,3 @@ BUG44229 WIN LINUX : fast/loader/recursive-before-unload-crash.html = PASS TEXT
 // DeviceOrientation API not yet implemented.
 BUG44654 SKIP : fast/dom/DeviceOrientation = TEXT
 BUG44654 SKIP : fast/dom/Window/window-properties-on-device-orientation.html = TEXT
-
-// Need to implement setEditingBehavior in layoutTestController
-BUG44663 WIN LINUX MAC : editing/selection/extend-selection-after-double-click.html = TEXT
-
