@@ -2737,6 +2737,62 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSDeviceOrientationEvent.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSDeviceOrientationEvent.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDocument.cpp"
 				>
 				<FileConfiguration
@@ -29414,6 +29470,26 @@
 			</File>
 			<File
 				RelativePath="..\dom\CustomEvent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\DeviceOrientation.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\DeviceOrientation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\DeviceOrientationClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\DeviceOrientationEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\DeviceOrientationEvent.h"
 				>
 			</File>
 			<File

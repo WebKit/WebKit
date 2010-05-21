@@ -1,3 +1,41 @@
+2010-05-21  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Add DeviceOrientation and DeviceOrientationClient
+        https://bugs.webkit.org/show_bug.cgi?id=39479
+
+        The page owns a DeviceOrientation object, which has a pointer to a
+        DeviceOrientationClient object provided by the embedder. The
+        DeviceOrientation object forwards requests to start listening to
+        orientation to the client, and when updates are available, fires a
+        DeviceOrientationEvent on the window object.
+
+        No new tests are possible at this time as the implementation is
+        incomplete. Future patches will add LayoutTestController methods
+        to provide mock orientation events to test this.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.base.exp:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DeviceOrientation.cpp: Added.
+        (WebCore::DeviceOrientation::DeviceOrientation):
+        (WebCore::DeviceOrientation::onDeviceOrientationChange):
+        * dom/DeviceOrientation.h: Added.
+        * dom/DeviceOrientationClient.h: Added.
+        (WebCore::DeviceOrientationClient::~DeviceOrientationClient):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::deviceOrientation):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2010-05-21  Tasuku Suzuki  <tasuku.suzuki@nokia.com>
 
         Reviewed by Simon Hausmann.

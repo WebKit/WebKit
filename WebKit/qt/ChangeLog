@@ -1,3 +1,13 @@
+2010-05-21  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Add DeviceOrientation and DeviceOrientationClient
+        https://bugs.webkit.org/show_bug.cgi?id=39479
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+
 2010-05-21  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Symbian build fix.

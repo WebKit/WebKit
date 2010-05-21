@@ -42,6 +42,8 @@ namespace WebCore {
     class ChromeClient;
     class ContextMenuClient;
     class ContextMenuController;
+    class DeviceOrientation;
+    class DeviceOrientationClient;
     class Document;
     class DragClient;
     class DragController;
@@ -85,7 +87,7 @@ namespace WebCore {
     public:
         static void setNeedsReapplyStyles();
 
-        Page(ChromeClient*, ContextMenuClient*, EditorClient*, DragClient*, InspectorClient*, PluginHalterClient*, GeolocationControllerClient*);
+        Page(ChromeClient*, ContextMenuClient*, EditorClient*, DragClient*, InspectorClient*, PluginHalterClient*, GeolocationControllerClient*, DeviceOrientationClient*);
         ~Page();
 
         RenderTheme* theme() const { return m_theme.get(); };
@@ -144,6 +146,9 @@ namespace WebCore {
 #endif
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
         GeolocationController* geolocationController() const { return m_geolocationController.get(); }
+#endif
+#if ENABLE(DEVICE_ORIENTATION)
+        DeviceOrientation* deviceOrientation() const { return m_deviceOrientation.get(); }
 #endif
         Settings* settings() const { return m_settings.get(); }
         ProgressTracker* progress() const { return m_progress.get(); }
@@ -252,6 +257,9 @@ namespace WebCore {
 #endif
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
         OwnPtr<GeolocationController> m_geolocationController;
+#endif
+#if ENABLE(DEVICE_ORIENTATION)
+        OwnPtr<DeviceOrientation> m_deviceOrientation;
 #endif
         OwnPtr<Settings> m_settings;
         OwnPtr<ProgressTracker> m_progress;

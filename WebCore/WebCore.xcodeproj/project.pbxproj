@@ -1171,6 +1171,9 @@
 		59A85EA4119D68EC00DEF1EF /* DeviceOrientationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 59A85EA3119D68EC00DEF1EF /* DeviceOrientationEvent.h */; };
 		59A86006119DAF7F00DEF1EF /* JSDeviceOrientationEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59A86005119DAF7F00DEF1EF /* JSDeviceOrientationEvent.cpp */; };
 		59A86008119DAFA100DEF1EF /* JSDeviceOrientationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 59A86007119DAFA100DEF1EF /* JSDeviceOrientationEvent.h */; };
+		59A8F1D411A69508001AC34A /* DeviceOrientation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59A8F1D311A69508001AC34A /* DeviceOrientation.cpp */; };
+		59A8F1D611A69513001AC34A /* DeviceOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = 59A8F1D511A69513001AC34A /* DeviceOrientation.h */; };
+		59A8F1D811A69520001AC34A /* DeviceOrientationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 59A8F1D711A69520001AC34A /* DeviceOrientationClient.h */; };
 		59A9E7B01104758800DFB4C1 /* JavaInstanceJSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59A9E7AF1104758800DFB4C1 /* JavaInstanceJSC.cpp */; };
 		59A9E7B21104759400DFB4C1 /* JavaInstanceJSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59A9E7B11104759400DFB4C1 /* JavaInstanceJSC.h */; };
 		59B597731108656B007159E8 /* BridgeJSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59B597721108656B007159E8 /* BridgeJSC.cpp */; };
@@ -6779,6 +6782,9 @@
 		59A85EAA119D7B6E00DEF1EF /* DeviceOrientationEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DeviceOrientationEvent.idl; sourceTree = "<group>"; };
 		59A86005119DAF7F00DEF1EF /* JSDeviceOrientationEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDeviceOrientationEvent.cpp; sourceTree = "<group>"; };
 		59A86007119DAFA100DEF1EF /* JSDeviceOrientationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDeviceOrientationEvent.h; sourceTree = "<group>"; };
+		59A8F1D311A69508001AC34A /* DeviceOrientation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceOrientation.cpp; sourceTree = "<group>"; };
+		59A8F1D511A69513001AC34A /* DeviceOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceOrientation.h; sourceTree = "<group>"; };
+		59A8F1D711A69520001AC34A /* DeviceOrientationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceOrientationClient.h; sourceTree = "<group>"; };
 		59A9E7AF1104758800DFB4C1 /* JavaInstanceJSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JavaInstanceJSC.cpp; path = jsc/JavaInstanceJSC.cpp; sourceTree = "<group>"; };
 		59A9E7B11104759400DFB4C1 /* JavaInstanceJSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JavaInstanceJSC.h; path = jsc/JavaInstanceJSC.h; sourceTree = "<group>"; };
 		59B597721108656B007159E8 /* BridgeJSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BridgeJSC.cpp; path = bridge/jsc/BridgeJSC.cpp; sourceTree = "<group>"; };
@@ -16421,6 +16427,9 @@
 		F523D32402DE4478018635CA /* dom */ = {
 			isa = PBXGroup;
 			children = (
+				59A8F1D711A69520001AC34A /* DeviceOrientationClient.h */,
+				59A8F1D511A69513001AC34A /* DeviceOrientation.h */,
+				59A8F1D311A69508001AC34A /* DeviceOrientation.cpp */,
 				59A85EAA119D7B6E00DEF1EF /* DeviceOrientationEvent.idl */,
 				59A85EA3119D68EC00DEF1EF /* DeviceOrientationEvent.h */,
 				59A85EA1119D68D900DEF1EF /* DeviceOrientationEvent.cpp */,
@@ -19286,6 +19295,8 @@
 				59A85EA4119D68EC00DEF1EF /* DeviceOrientationEvent.h in Headers */,
 				59A86008119DAFA100DEF1EF /* JSDeviceOrientationEvent.h in Headers */,
 				2E3FAA0911A36BF100576624 /* CrossThreadTask.h in Headers */,
+				59A8F1D611A69513001AC34A /* DeviceOrientation.h in Headers */,
+				59A8F1D811A69520001AC34A /* DeviceOrientationClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21571,6 +21582,7 @@
 				51327D6111A33A2B004F9D65 /* SinkDocument.cpp in Sources */,
 				59A85EA2119D68D900DEF1EF /* DeviceOrientationEvent.cpp in Sources */,
 				59A86006119DAF7F00DEF1EF /* JSDeviceOrientationEvent.cpp in Sources */,
+				59A8F1D411A69508001AC34A /* DeviceOrientation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

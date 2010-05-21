@@ -463,6 +463,7 @@ SOURCES += \
     dom/ContainerNode.cpp \
     dom/CSSMappedAttributeDeclaration.cpp \
     dom/CustomEvent.cpp \
+    dom/DeviceOrientation.cpp \
     dom/DeviceOrientationEvent.cpp \
     dom/Document.cpp \
     dom/DocumentFragment.cpp \
@@ -1189,6 +1190,8 @@ HEADERS += \
     dom/CSSMappedAttributeDeclaration.h \
     dom/CustomEvent.h \
     dom/default/PlatformMessagePortChannel.h \
+    dom/DeviceOrientation.h \
+    dom/DeviceOrientationClient.h \
     dom/DeviceOrientationEvent.h \
     dom/DocumentFragment.h \
     dom/Document.h \

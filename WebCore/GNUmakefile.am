@@ -769,6 +769,9 @@ webcore_sources += \
 	WebCore/dom/DOMCoreException.h \
 	WebCore/dom/DOMImplementation.cpp \
 	WebCore/dom/DOMImplementation.h \
+	WebCore/dom/DeviceOrientation.cpp \
+	WebCore/dom/DeviceOrientation.h \
+	WebCore/dom/DeviceOrientationClient.h \
 	WebCore/dom/DeviceOrientationEvent.cpp \
 	WebCore/dom/DeviceOrientationEvent.h \
 	WebCore/dom/Document.cpp \

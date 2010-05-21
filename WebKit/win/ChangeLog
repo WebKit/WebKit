@@ -1,3 +1,13 @@
+2010-05-21  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Add DeviceOrientation and DeviceOrientationClient
+        https://bugs.webkit.org/show_bug.cgi?id=39479
+
+        * WebView.cpp:
+        (WebView::initWithFrame):
+
 2010-05-20  Simon Fraser  <simon.fraser@apple.com>
 
         Build fix, no review.

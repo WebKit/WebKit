@@ -254,13 +254,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     m_lastMousePosition = WebPoint(-1, -1);
 
     // the page will take ownership of the various clients
-    m_page.set(new Page(&m_chromeClientImpl,
-                        &m_contextMenuClientImpl,
-                        &m_editorClientImpl,
-                        &m_dragClientImpl,
-                        &m_inspectorClientImpl,
-                        0,
-                        0));
+    m_page.set(new Page(&m_chromeClientImpl, &m_contextMenuClientImpl, &m_editorClientImpl, &m_dragClientImpl, &m_inspectorClientImpl, 0, 0, 0));
 
     m_page->backForwardList()->setClient(&m_backForwardListClientImpl);
     m_page->setGroupName(pageGroupName);
