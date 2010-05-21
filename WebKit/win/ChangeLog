@@ -1,5 +1,15 @@
 2010-05-20  Simon Fraser  <simon.fraser@apple.com>
 
+        Build fix, no review.
+
+        Fix the non-accelerated-compositing Windows build with some
+        #if USE(ACCELERATED_COMPOSITING) loving.
+
+        * WebView.cpp:
+        * WebView.h:
+
+2010-05-20  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Adam Roben.
 
         Avoid flushing CA layers when a layout is pending
