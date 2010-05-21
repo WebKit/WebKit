@@ -1,3 +1,13 @@
+2010-05-21  Steve Block  <steveblock@google.com>
+
+        Unreviewed build fix for WebKit2
+
+        Pass 0 to Page constructor for DeviceOrientationClient.
+        See http://trac.webkit.org/changeset/59935
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+
 2010-05-11  Mark Rowe  <mrowe@apple.com>
 
         Fix the world.
