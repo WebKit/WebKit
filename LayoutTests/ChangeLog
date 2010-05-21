@@ -1,5 +1,20 @@
 2010-05-20  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59795.
+
+    2010-05-19  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Tests that text transformation applied to a non-text node
+        does not result in crash.
+        https://bugs.webkit.org/show_bug.cgi?id=38626        
+
+        * fast/text/text-transform-nontext-node-crash-expected.txt: Added.
+        * fast/text/text-transform-nontext-node-crash.xhtml: Added.
+
+2010-05-20  Mark Rowe  <mrowe@apple.com>
+
         Merge r59798.
 
     2010-05-19  Oliver Hunt  <oliver@apple.com>
