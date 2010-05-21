@@ -1051,12 +1051,16 @@ sub setupCygwinEnv()
 
 sub dieIfWindowsPlatformSDKNotInstalled
 {
-    my $windowsPlatformSDKRegistryEntry = "/proc/registry/HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/MicrosoftSDK/InstalledSDKs/D2FF9F89-8AA2-4373-8A31-C838BF4DBBE1";
+    my $registry32Path = "/proc/registry/";
+    my $registry64Path = "/proc/registry64/";
+    my $windowsPlatformSDKRegistryEntry = "HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/MicrosoftSDK/InstalledSDKs/D2FF9F89-8AA2-4373-8A31-C838BF4DBBE1";
 
-    return if -e $windowsPlatformSDKRegistryEntry;
+    # FIXME: It would be better to detect whether we are using 32- or 64-bit Windows
+    # and only check the appropriate entry. But for now we just blindly check both.
+    return if (-e $registry32Path . $windowsPlatformSDKRegistryEntry) || (-e $registry64Path . $windowsPlatformSDKRegistryEntry);
 
     print "*************************************************************\n";
-    print "Cannot find '$windowsPlatformSDKRegistryEntry'.\n";
+    print "Cannot find registry entry '$windowsPlatformSDKRegistryEntry'.\n";
     print "Please download and install the Microsoft Windows Server 2003 R2\n";
     print "Platform SDK from <http://www.microsoft.com/downloads/details.aspx?\n";
     print "familyid=0baf2b35-c656-4969-ace8-e4c0c0716adb&displaylang=en>.\n\n";

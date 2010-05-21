@@ -1,3 +1,16 @@
+2010-05-20  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Daniel Bates.
+
+        Look in /proc/registry64 for the Platform SDK on 64-bit Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=39296
+
+        The build-webkit script failed for me on Vista 64. A web search turned
+        up this blog post with a patch that worked for me:
+        http://www.nicholaswilson.me.uk/2010/04/hacking-webkit-fail/
+
+        * Scripts/webkitdirs.pm:
+
 2010-05-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
