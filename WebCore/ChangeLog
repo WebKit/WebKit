@@ -1,3 +1,28 @@
+2010-05-18  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson.
+
+        [GStreamer] PlatformMedia support
+        https://bugs.webkit.org/show_bug.cgi?id=39300
+
+        Basic support for PlatformMedia in the gst player. The
+        PlatformMedia object contains a GStreamerGWorld object. That
+        object is empty for now. XOverlay features will be added later
+        on for easy review sake.
+
+        * GNUmakefile.am:
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::PlatformMedia::):
+        * platform/graphics/gstreamer/GStreamerGWorld.cpp: Added.
+        (WebCore::GStreamerGWorld::createGWorld):
+        (WebCore::GStreamerGWorld::GStreamerGWorld):
+        (WebCore::GStreamerGWorld::~GStreamerGWorld):
+        * platform/graphics/gstreamer/GStreamerGWorld.h: Added.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::platformMedia):
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
 2010-05-20  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.

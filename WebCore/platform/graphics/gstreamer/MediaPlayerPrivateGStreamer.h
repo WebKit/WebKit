@@ -43,6 +43,7 @@ class GraphicsContext;
 class IntSize;
 class IntRect;
 class String;
+class GStreamerGWorld;
 
 gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpointer data);
 void mediaPlayerPrivateVolumeChangedCallback(GObject* element, GParamSpec* pspec, gpointer data);
@@ -116,6 +117,7 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             bool hasSingleSecurityOrigin() const;
 
             bool supportsFullscreen() const;
+            PlatformMedia platformMedia() const;
 
             GstElement* pipeline() const { return m_playBin; }
             bool pipelineReset() const { return m_resetPipeline; }
@@ -172,6 +174,7 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             MediaPlayer::Preload m_preload;
             bool m_delayingLoad;
             bool m_mediaDurationKnown;
+            RefPtr<GStreamerGWorld> m_gstGWorld;
     };
 }
 

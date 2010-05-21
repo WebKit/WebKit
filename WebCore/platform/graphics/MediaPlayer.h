@@ -54,6 +54,8 @@ class QTMovieVisualContext;
 
 namespace WebCore {
 
+class GStreamerGWorld;
+
 // Structure that will hold every native
 // types supported by the current media player.
 // We have to do that has multiple media players
@@ -63,13 +65,15 @@ struct PlatformMedia {
         None,
         QTMovieType,
         QTMovieGWorldType,
-        QTMovieVisualContextType
+        QTMovieVisualContextType,
+        GStreamerGWorldType,
     } type;
 
     union {
         QTMovie* qtMovie;
         QTMovieGWorld* qtMovieGWorld;
         QTMovieVisualContext* qtMovieVisualContext;
+        GStreamerGWorld* gstreamerGWorld;
     } media;
 };
 
