@@ -1,3 +1,11 @@
+2010-05-21  Alejandro G. Castro  <alex@igalia.com>
+
+        Rubber-stamped by Xan Lopez.
+
+        Updated test results.
+
+        * platform/gtk/fast/dom/prototype-inheritance-expected.txt:
+
 2010-05-21  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.
