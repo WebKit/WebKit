@@ -1,3 +1,20 @@
+2010-05-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Removed the unused entry in the CallFrame
+        https://bugs.webkit.org/show_bug.cgi?id=39470
+        
+        Removed the unused entry in the CallFrame, and reordered CallFrame
+        writes on the hot path to be in forwards order.
+        
+        SunSpider says 0.3% faster.
+
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+
 2010-05-21  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

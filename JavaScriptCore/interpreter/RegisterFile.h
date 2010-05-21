@@ -97,15 +97,14 @@ namespace JSC {
         friend class JIT;
     public:
         enum CallFrameHeaderEntry {
-            CallFrameHeaderSize = 7,
+            CallFrameHeaderSize = 6,
 
-            CodeBlock = -7,
-            ScopeChain = -6,
+            ArgumentCount = -6,
             CallerFrame = -5,
-            ReturnPC = -4, // This is either an Instruction* or a pointer into JIT generated code stored as an Instruction*.
-            CallFrameUnused = -3,
-            ArgumentCount = -2,
-            Callee = -1,
+            Callee = -4,
+            ScopeChain = -3,
+            ReturnPC = -2, // This is either an Instruction* or a pointer into JIT generated code stored as an Instruction*.
+            CodeBlock = -1,
         };
 
         enum { ProgramCodeThisRegister = -CallFrameHeaderSize - 1 };
