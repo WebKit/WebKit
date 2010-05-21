@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.path.arc.negative</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.path.arc.selfintersect.2.html" title="2d.path.arc.selfintersect.2">
+<link rel="next" href="2d.path.arc.zeroradius.html" title="2d.path.arc.zeroradius">
+<body class="show_output">
+<p>
+ <a href="2d.path.arc.selfintersect.2.html" accesskey="p" title="[p] 2d.path.arc.selfintersect.2">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.path.arc.zeroradius.html" accesskey="n" title="[n] 2d.path.arc.zeroradius">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.path.html">path</a>.<a href="index.2d.path.arc.html">arc</a>.negative</h1>
+<p class="desc">arc() with negative radius throws INDEX_SIZE_ERR</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.path.arc.negative">2d.path.arc.negative</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+try { var _thrown = false;
+  ctx.arc(0, 0, -1, 0, 0, true);
+} catch (e) { if (e.code != DOMException.INDEX_SIZE_ERR) _fail("Failed assertion: expected exception of type INDEX_SIZE_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type INDEX_SIZE_ERR: ctx.arc(0, 0, -1, 0, 0, true)"); }
+
+
+});
+</script>
+

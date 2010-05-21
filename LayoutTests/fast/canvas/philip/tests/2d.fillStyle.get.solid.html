@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.fillStyle.get.solid</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.fillStyle.invalidtype.html" title="2d.fillStyle.invalidtype">
+<link rel="next" href="2d.fillStyle.get.semitransparent.html" title="2d.fillStyle.get.semitransparent">
+<body class="show_output">
+<p>
+ <a href="2d.fillStyle.invalidtype.html" accesskey="p" title="[p] 2d.fillStyle.invalidtype">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.fillStyle.get.semitransparent.html" accesskey="n" title="[n] 2d.fillStyle.get.semitransparent">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.fillStyle.html">fillStyle</a>.<a href="index.2d.fillStyle.get.html">get</a>.solid</h1>
+<p class="desc"></p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.colours.getcolour">2d.colours.getcolour</a>
+<li><a href="spec.html#testrefs.2d.serializecolour.solid">2d.serializecolour.solid</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+ctx.fillStyle = '#fa0';
+_assertSame(ctx.fillStyle, '#ffaa00', "ctx.fillStyle", "'#ffaa00'");
+
+
+});
+</script>
+

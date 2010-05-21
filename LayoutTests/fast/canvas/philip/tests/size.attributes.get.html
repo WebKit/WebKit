@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<title>Canvas test: size.attributes.get</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="type.extend.html" title="type.extend">
+<link rel="next" href="size.attributes.set.html" title="size.attributes.set">
+<body class="show_output">
+<p>
+ <a href="type.extend.html" accesskey="p" title="[p] type.extend">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="size.attributes.set.html" accesskey="n" title="[n] size.attributes.set">&gt;</a>
+<h1><a href="index.size.html">size</a>.<a href="index.size.attributes.html">attributes</a>.get</h1>
+<p class="desc">Getting width/height IDL/content attributes</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.size.width">size.width</a>
+<li><a href="spec.html#testrefs.size.height">size.height</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="120" height="60"><p class="fallback">FAIL (fallback content)</p></canvas>
+<p class="output expectedtext">Expected output:<p><img src="size.attributes.get.png" class="output expected" id="expected" alt="">
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+_assertSame(canvas.width, 120, "canvas.width", "120");
+_assertSame(canvas.height, 60, "canvas.height", "60");
+_assertSame(canvas.getAttribute('width'), '120', "canvas.getAttribute('width')", "'120'");
+_assertSame(canvas.getAttribute('height'), '60', "canvas.getAttribute('height')", "'60'");
+
+
+});
+</script>
+

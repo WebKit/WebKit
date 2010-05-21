@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.canvas.readonly</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.canvas.reference.html" title="2d.canvas.reference">
+<link rel="next" href="2d.state.saverestore.strokeStyle.html" title="2d.state.saverestore.strokeStyle">
+<body class="show_output">
+<p>
+ <a href="2d.canvas.reference.html" accesskey="p" title="[p] 2d.canvas.reference">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.state.saverestore.strokeStyle.html" accesskey="n" title="[n] 2d.state.saverestore.strokeStyle">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.canvas.html">canvas</a>.readonly</h1>
+<p class="desc">CanvasRenderingContext2D.canvas is readonly</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.canvas.attribute">2d.canvas.attribute</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+var c = document.createElement('canvas');
+var d = ctx.canvas;
+_assertDifferent(c, d, "c", "d");
+try { ctx.canvas = c; } catch (e) {} // TODO: not sure whether this should throw or not...
+_assertSame(ctx.canvas, d, "ctx.canvas", "d");
+
+
+});
+</script>
+

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<title>Canvas test: size.attributes.setAttribute.decimal</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="size.attributes.setAttribute.exp.html" title="size.attributes.setAttribute.exp">
+<link rel="next" href="size.attributes.setAttribute.percent.html" title="size.attributes.setAttribute.percent">
+<body class="show_output">
+<p>
+ <a href="size.attributes.setAttribute.exp.html" accesskey="p" title="[p] size.attributes.setAttribute.exp">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="size.attributes.setAttribute.percent.html" accesskey="n" title="[n] size.attributes.setAttribute.percent">&gt;</a>
+<h1><a href="index.size.html">size</a>.<a href="index.size.attributes.html">attributes</a>.<a href="index.size.attributes.setAttribute.html">setAttribute</a>.decimal</h1>
+<p class="desc">Parsing of non-negative integers in setAttribute</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.size.nonnegativeinteger">size.nonnegativeinteger</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="50" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+<p class="output expectedtext">Expected output:<p><img src="size.attributes.setAttribute.decimal.png" class="output expected" id="expected" alt="">
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+canvas.setAttribute('width', '100.999');
+canvas.setAttribute('height', '100.999');
+_assertSame(canvas.width, 100, "canvas.width", "100");
+_assertSame(canvas.height, 100, "canvas.height", "100");
+_assertEqual(window.getComputedStyle(canvas, null).getPropertyValue("width"), "100px", "window.getComputedStyle(canvas, null).getPropertyValue(\"width\")", "\"100px\"");
+
+
+});
+</script>
+

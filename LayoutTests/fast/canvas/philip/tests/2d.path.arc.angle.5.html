@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.path.arc.angle.5</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.path.arc.angle.4.html" title="2d.path.arc.angle.4">
+<link rel="next" href="2d.path.arc.angle.6.html" title="2d.path.arc.angle.6">
+<body class="show_output">
+<p>
+ <a href="2d.path.arc.angle.4.html" accesskey="p" title="[p] 2d.path.arc.angle.4">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.path.arc.angle.6.html" accesskey="n" title="[n] 2d.path.arc.angle.6">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.path.html">path</a>.<a href="index.2d.path.arc.html">arc</a>.<a href="index.2d.path.arc.angle.html">angle</a>.5</h1>
+<p class="desc">arc() wraps angles mod 2pi when clockwise and start > end+2pi</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.path.arc.draw">2d.path.arc.draw</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+<p class="output expectedtext">Expected output:<p><img src="green-100x50.png" class="output expected" id="expected" alt="">
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+ctx.fillStyle = '#0f0';
+ctx.fillRect(0, 0, 100, 50);
+ctx.fillStyle = '#f00';
+ctx.beginPath();
+ctx.moveTo(100, 0);
+ctx.arc(100, 0, 150, (1024-1)*Math.PI, (512+1/2)*Math.PI, false);
+ctx.fill();
+_assertPixel(canvas, 50,25, 0,255,0,255, "50,25", "0,255,0,255");
+
+
+});
+</script>
+

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.state.saverestore.strokeStyle</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.canvas.readonly.html" title="2d.canvas.readonly">
+<link rel="next" href="2d.state.saverestore.fillStyle.html" title="2d.state.saverestore.fillStyle">
+<body class="show_output">
+<p>
+ <a href="2d.canvas.readonly.html" accesskey="p" title="[p] 2d.canvas.readonly">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.state.saverestore.fillStyle.html" accesskey="n" title="[n] 2d.state.saverestore.fillStyle">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.state.html">state</a>.<a href="index.2d.state.saverestore.html">saverestore</a>.strokeStyle</h1>
+<p class="desc">save()/restore() works for strokeStyle</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.state.strokeStyle">2d.state.strokeStyle</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+// Test that restore() undoes any modifications
+var old = ctx.strokeStyle;
+ctx.save();
+ctx.strokeStyle = "#ff0000";
+ctx.restore();
+_assertSame(ctx.strokeStyle, old, "ctx.strokeStyle", "old");
+
+// Also test that save() doesn't modify the values
+ctx.strokeStyle = "#ff0000";
+old = ctx.strokeStyle;
+    // we're not interested in failures caused by get(set(x)) != x (e.g.
+    // from rounding), so compare against 'old' instead of against "#ff0000"
+ctx.save();
+_assertSame(ctx.strokeStyle, old, "ctx.strokeStyle", "old");
+ctx.restore();
+
+
+});
+</script>
+

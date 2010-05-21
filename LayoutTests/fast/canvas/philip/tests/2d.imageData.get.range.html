@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.imageData.get.range</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.imageData.get.nonpremul.html" title="2d.imageData.get.nonpremul">
+<link rel="next" href="2d.imageData.get.clamp.html" title="2d.imageData.get.clamp">
+<body class="show_output">
+<p>
+ <a href="2d.imageData.get.nonpremul.html" accesskey="p" title="[p] 2d.imageData.get.nonpremul">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.imageData.get.clamp.html" accesskey="n" title="[n] 2d.imageData.get.clamp">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.imageData.html">imageData</a>.<a href="index.2d.imageData.get.html">get</a>.range</h1>
+<p class="desc">getImageData() returns values in the range [0, 255]</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.pixelarray.range">2d.pixelarray.range</a>
+<li><a href="spec.html#testrefs.2d.pixelarray.retrieve">2d.pixelarray.retrieve</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+ctx.fillStyle = '#000';
+ctx.fillRect(0, 0, 100, 50);
+ctx.fillStyle = '#fff';
+ctx.fillRect(20, 10, 60, 10);
+var imgdata1 = ctx.getImageData(10, 5, 1, 1);
+_assertSame(imgdata1.data[0], 0, "imgdata1.data[\""+(0)+"\"]", "0");
+var imgdata2 = ctx.getImageData(30, 15, 1, 1);
+_assertSame(imgdata2.data[0], 255, "imgdata2.data[\""+(0)+"\"]", "255");
+
+
+});
+</script>
+

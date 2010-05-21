@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<title>Canvas test: fallback.nested</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="fallback.multiple.html" title="fallback.multiple">
+<link rel="next" href="type.name.html" title="type.name">
+<body class="show_output">
+<p>
+ <a href="fallback.multiple.html" accesskey="p" title="[p] fallback.multiple">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="type.name.html" accesskey="n" title="[n] type.name">&gt;</a>
+<h1><a href="index.fallback.html">fallback</a>.nested</h1>
+<p class="desc">Fallback content containing another canvas (mostly testing parsers)</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.fallback">fallback</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><canvas><p class="fallback">FAIL (fallback content)</p></canvas><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+_assertEqual(canvas.childNodes.length, 2, "canvas.childNodes.length", "2");
+
+
+});
+</script>
+

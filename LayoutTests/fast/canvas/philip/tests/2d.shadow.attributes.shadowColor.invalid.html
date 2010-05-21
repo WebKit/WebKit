@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.shadow.attributes.shadowColor.invalid</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.shadow.attributes.shadowColor.valid.html" title="2d.shadow.attributes.shadowColor.valid">
+<link rel="next" href="2d.shadow.enable.off.1.html" title="2d.shadow.enable.off.1">
+<body class="show_output">
+<p>
+ <a href="2d.shadow.attributes.shadowColor.valid.html" accesskey="p" title="[p] 2d.shadow.attributes.shadowColor.valid">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.shadow.enable.off.1.html" accesskey="n" title="[n] 2d.shadow.enable.off.1">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.shadow.html">shadow</a>.<a href="index.2d.shadow.attributes.html">attributes</a>.<a href="index.2d.shadow.attributes.shadowColor.html">shadowColor</a>.invalid</h1>
+<p class="desc"></p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.shadow.color.invalid">2d.shadow.color.invalid</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+ctx.shadowColor = '#00ff00';
+ctx.shadowColor = 'bogus';
+_assertSame(ctx.shadowColor, '#00ff00', "ctx.shadowColor", "'#00ff00'");
+
+ctx.shadowColor = '#00ff00';
+ctx.shadowColor = 'red bogus';
+_assertSame(ctx.shadowColor, '#00ff00', "ctx.shadowColor", "'#00ff00'");
+
+ctx.shadowColor = '#00ff00';
+ctx.shadowColor = ctx;
+_assertSame(ctx.shadowColor, '#00ff00', "ctx.shadowColor", "'#00ff00'");
+
+ctx.shadowColor = '#00ff00';
+ctx.shadowColor = undefined;
+_assertSame(ctx.shadowColor, '#00ff00', "ctx.shadowColor", "'#00ff00'");
+
+
+});
+</script>
+

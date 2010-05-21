@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.path.rect.selfintersect</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.path.rect.winding.html" title="2d.path.rect.winding">
+<link rel="next" href="2d.path.rect.nonfinite.html" title="2d.path.rect.nonfinite">
+<body class="show_output">
+<p>
+ <a href="2d.path.rect.winding.html" accesskey="p" title="[p] 2d.path.rect.winding">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.path.rect.nonfinite.html" accesskey="n" title="[n] 2d.path.rect.nonfinite">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.path.html">path</a>.<a href="index.2d.path.rect.html">rect</a>.selfintersect</h1>
+<p class="desc"></p>
+<div class="refs">References:
+<ul>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+<p class="output expectedtext">Expected output:<p><img src="green-100x50.png" class="output expected" id="expected" alt="">
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+ctx.fillStyle = '#f00';
+ctx.fillRect(0, 0, 100, 50);
+ctx.strokeStyle = '#0f0';
+ctx.lineWidth = 90;
+ctx.beginPath();
+ctx.rect(45, 20, 10, 10);
+ctx.stroke();
+_assertPixel(canvas, 50,25, 0,255,0,255, "50,25", "0,255,0,255");
+
+
+});
+</script>
+

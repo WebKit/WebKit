@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.pattern.basic.zerocanvas</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.pattern.basic.canvas.html" title="2d.pattern.basic.canvas">
+<link rel="next" href="2d.pattern.basic.nocontext.html" title="2d.pattern.basic.nocontext">
+<body class="show_output">
+<p>
+ <a href="2d.pattern.basic.canvas.html" accesskey="p" title="[p] 2d.pattern.basic.canvas">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.pattern.basic.nocontext.html" accesskey="n" title="[n] 2d.pattern.basic.nocontext">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.pattern.html">pattern</a>.<a href="index.2d.pattern.basic.html">basic</a>.zerocanvas</h1>
+<p class="desc"></p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.pattern.zerocanvas">2d.pattern.zerocanvas</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+canvas.width = 0;
+canvas.height = 10;
+_assertSame(canvas.width, 0, "canvas.width", "0");
+_assertSame(canvas.height, 10, "canvas.height", "10");
+try { var _thrown = false;
+  ctx.createPattern(canvas, 'repeat');
+} catch (e) { if (e.code != DOMException.INVALID_STATE_ERR) _fail("Failed assertion: expected exception of type INVALID_STATE_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type INVALID_STATE_ERR: ctx.createPattern(canvas, 'repeat')"); }
+
+canvas.width = 10;
+canvas.height = 0;
+_assertSame(canvas.width, 10, "canvas.width", "10");
+_assertSame(canvas.height, 0, "canvas.height", "0");
+try { var _thrown = false;
+  ctx.createPattern(canvas, 'repeat');
+} catch (e) { if (e.code != DOMException.INVALID_STATE_ERR) _fail("Failed assertion: expected exception of type INVALID_STATE_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type INVALID_STATE_ERR: ctx.createPattern(canvas, 'repeat')"); }
+
+canvas.width = 0;
+canvas.height = 0;
+_assertSame(canvas.width, 0, "canvas.width", "0");
+_assertSame(canvas.height, 0, "canvas.height", "0");
+try { var _thrown = false;
+  ctx.createPattern(canvas, 'repeat');
+} catch (e) { if (e.code != DOMException.INVALID_STATE_ERR) _fail("Failed assertion: expected exception of type INVALID_STATE_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type INVALID_STATE_ERR: ctx.createPattern(canvas, 'repeat')"); }
+
+
+});
+</script>
+

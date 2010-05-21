@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<title>Canvas test: toDataURL.nocontext</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="toDataURL.arguments.3.html" title="toDataURL.arguments.3">
+<link rel="next" href="toDataURL.zerosize.html" title="toDataURL.zerosize">
+<body class="show_output">
+<p>
+ <a href="toDataURL.arguments.3.html" accesskey="p" title="[p] toDataURL.arguments.3">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="toDataURL.zerosize.html" accesskey="n" title="[n] toDataURL.zerosize">&gt;</a>
+<h1><a href="index.toDataURL.html">toDataURL</a>.nocontext</h1>
+<p class="desc">toDataURL works before any context has been got</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.toDataURL.noarguments">toDataURL.noarguments</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+var canvas2 = document.createElement('canvas');
+var data = canvas2.toDataURL();
+_assertMatch(data, /^data:image\/png[;,]/, "data", "/^data:image\\/png[;,]/");
+
+
+});
+</script>
+

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.state.saverestore.miterLimit</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.state.saverestore.lineJoin.html" title="2d.state.saverestore.lineJoin">
+<link rel="next" href="2d.state.saverestore.shadowOffsetX.html" title="2d.state.saverestore.shadowOffsetX">
+<body class="show_output">
+<p>
+ <a href="2d.state.saverestore.lineJoin.html" accesskey="p" title="[p] 2d.state.saverestore.lineJoin">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.state.saverestore.shadowOffsetX.html" accesskey="n" title="[n] 2d.state.saverestore.shadowOffsetX">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.state.html">state</a>.<a href="index.2d.state.saverestore.html">saverestore</a>.miterLimit</h1>
+<p class="desc">save()/restore() works for miterLimit</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.state.miterLimit">2d.state.miterLimit</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+// Test that restore() undoes any modifications
+var old = ctx.miterLimit;
+ctx.save();
+ctx.miterLimit = 0.5;
+ctx.restore();
+_assertSame(ctx.miterLimit, old, "ctx.miterLimit", "old");
+
+// Also test that save() doesn't modify the values
+ctx.miterLimit = 0.5;
+old = ctx.miterLimit;
+    // we're not interested in failures caused by get(set(x)) != x (e.g.
+    // from rounding), so compare against 'old' instead of against 0.5
+ctx.save();
+_assertSame(ctx.miterLimit, old, "ctx.miterLimit", "old");
+ctx.restore();
+
+
+});
+</script>
+

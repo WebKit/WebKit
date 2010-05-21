@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<title>Canvas test: size.attributes.parse.zero</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="size.attributes.removed.html" title="size.attributes.removed">
+<link rel="next" href="size.attributes.parse.empty.html" title="size.attributes.parse.empty">
+<body class="show_output">
+<p>
+ <a href="size.attributes.removed.html" accesskey="p" title="[p] size.attributes.removed">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="size.attributes.parse.empty.html" accesskey="n" title="[n] size.attributes.parse.empty">&gt;</a>
+<h1><a href="index.size.html">size</a>.<a href="index.size.attributes.html">attributes</a>.<a href="index.size.attributes.parse.html">parse</a>.zero</h1>
+<p class="desc">Parsing of non-negative integers</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.size.nonnegativeinteger">size.nonnegativeinteger</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="0" height="0"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+_assertSame(canvas.width, 0, "canvas.width", "0");
+_assertSame(canvas.height, 0, "canvas.height", "0");
+_assertEqual(window.getComputedStyle(canvas, null).getPropertyValue("width"), "0px", "window.getComputedStyle(canvas, null).getPropertyValue(\"width\")", "\"0px\"");
+
+
+});
+</script>
+

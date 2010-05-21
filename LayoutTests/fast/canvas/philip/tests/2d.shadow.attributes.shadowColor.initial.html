@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.shadow.attributes.shadowColor.initial</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.shadow.attributes.shadowOffset.invalid.html" title="2d.shadow.attributes.shadowOffset.invalid">
+<link rel="next" href="2d.shadow.attributes.shadowColor.valid.html" title="2d.shadow.attributes.shadowColor.valid">
+<body class="show_output">
+<p>
+ <a href="2d.shadow.attributes.shadowOffset.invalid.html" accesskey="p" title="[p] 2d.shadow.attributes.shadowOffset.invalid">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.shadow.attributes.shadowColor.valid.html" accesskey="n" title="[n] 2d.shadow.attributes.shadowColor.valid">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.shadow.html">shadow</a>.<a href="index.2d.shadow.attributes.html">attributes</a>.<a href="index.2d.shadow.attributes.shadowColor.html">shadowColor</a>.initial</h1>
+<p class="desc"></p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.shadow.color.initial">2d.shadow.color.initial</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+_assertSame(ctx.shadowColor, 'rgba(0, 0, 0, 0.0)', "ctx.shadowColor", "'rgba(0, 0, 0, 0.0)'");
+
+
+});
+</script>
+

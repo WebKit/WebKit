@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.state.saverestore.lineJoin</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.state.saverestore.lineCap.html" title="2d.state.saverestore.lineCap">
+<link rel="next" href="2d.state.saverestore.miterLimit.html" title="2d.state.saverestore.miterLimit">
+<body class="show_output">
+<p>
+ <a href="2d.state.saverestore.lineCap.html" accesskey="p" title="[p] 2d.state.saverestore.lineCap">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.state.saverestore.miterLimit.html" accesskey="n" title="[n] 2d.state.saverestore.miterLimit">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.state.html">state</a>.<a href="index.2d.state.saverestore.html">saverestore</a>.lineJoin</h1>
+<p class="desc">save()/restore() works for lineJoin</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.state.lineJoin">2d.state.lineJoin</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+// Test that restore() undoes any modifications
+var old = ctx.lineJoin;
+ctx.save();
+ctx.lineJoin = "round";
+ctx.restore();
+_assertSame(ctx.lineJoin, old, "ctx.lineJoin", "old");
+
+// Also test that save() doesn't modify the values
+ctx.lineJoin = "round";
+old = ctx.lineJoin;
+    // we're not interested in failures caused by get(set(x)) != x (e.g.
+    // from rounding), so compare against 'old' instead of against "round"
+ctx.save();
+_assertSame(ctx.lineJoin, old, "ctx.lineJoin", "old");
+ctx.restore();
+
+
+});
+</script>
+

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<title>Canvas test: initial.reset.transform</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="initial.reset.clip.html" title="initial.reset.clip">
+<link rel="next" href="initial.reset.gradient.html" title="initial.reset.gradient">
+<body class="show_output">
+<p>
+ <a href="initial.reset.clip.html" accesskey="p" title="[p] initial.reset.clip">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="initial.reset.gradient.html" accesskey="n" title="[n] initial.reset.gradient">&gt;</a>
+<h1><a href="index.initial.html">initial</a>.<a href="index.initial.reset.html">reset</a>.transform</h1>
+<p class="desc">Resetting the canvas state resets the current transformation matrix</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.initial.reset">initial.reset</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+<p class="output expectedtext">Expected output:<p><img src="green-100x50.png" class="output expected" id="expected" alt="">
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+canvas.width = 100;
+ctx.scale(0.1, 0.1);
+canvas.width = 100;
+ctx.fillStyle = '#0f0';
+ctx.fillRect(0, 0, 100, 50);
+_assertPixel(canvas, 20,20, 0,255,0,255, "20,20", "0,255,0,255");
+
+
+});
+</script>
+

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.composite.globalAlpha.range</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.transformation.setTransform.nonfinite.html" title="2d.transformation.setTransform.nonfinite">
+<link rel="next" href="2d.composite.globalAlpha.invalid.html" title="2d.composite.globalAlpha.invalid">
+<body class="show_output">
+<p>
+ <a href="2d.transformation.setTransform.nonfinite.html" accesskey="p" title="[p] 2d.transformation.setTransform.nonfinite">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.composite.globalAlpha.invalid.html" accesskey="n" title="[n] 2d.composite.globalAlpha.invalid">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.composite.html">composite</a>.<a href="index.2d.composite.globalAlpha.html">globalAlpha</a>.range</h1>
+<p class="desc"></p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.composite.globalAlpha.range">2d.composite.globalAlpha.range</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+ctx.globalAlpha = 0.5;
+var a = ctx.globalAlpha; // might not be exactly 0.5, if it is rounded/quantised, so remember for future comparisons
+ctx.globalAlpha = 1.1;
+_assertEqual(ctx.globalAlpha, a, "ctx.globalAlpha", "a");
+ctx.globalAlpha = -0.1;
+_assertEqual(ctx.globalAlpha, a, "ctx.globalAlpha", "a");
+ctx.globalAlpha = 0;
+_assertEqual(ctx.globalAlpha, 0, "ctx.globalAlpha", "0");
+ctx.globalAlpha = 1;
+_assertEqual(ctx.globalAlpha, 1, "ctx.globalAlpha", "1");
+
+
+});
+</script>
+

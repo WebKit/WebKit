@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.pattern.image.null</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.pattern.image.undefined.html" title="2d.pattern.image.undefined">
+<link rel="next" href="2d.pattern.image.string.html" title="2d.pattern.image.string">
+<body class="show_output">
+<p>
+ <a href="2d.pattern.image.undefined.html" accesskey="p" title="[p] 2d.pattern.image.undefined">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.pattern.image.string.html" accesskey="n" title="[n] 2d.pattern.image.string">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.pattern.html">pattern</a>.<a href="index.2d.pattern.image.html">image</a>.null</h1>
+<p class="desc"></p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.pattern.wrongtype">2d.pattern.wrongtype</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+try { var _thrown = false;
+  ctx.createPattern(null, 'repeat');
+} catch (e) { if (e.code != DOMException.TYPE_MISMATCH_ERR) _fail("Failed assertion: expected exception of type TYPE_MISMATCH_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type TYPE_MISMATCH_ERR: ctx.createPattern(null, 'repeat')"); }
+
+
+});
+</script>
+

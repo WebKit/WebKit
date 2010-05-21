@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.canvas.reference</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.scaled.html" title="2d.scaled">
+<link rel="next" href="2d.canvas.readonly.html" title="2d.canvas.readonly">
+<body class="show_output">
+<p>
+ <a href="2d.scaled.html" accesskey="p" title="[p] 2d.scaled">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.canvas.readonly.html" accesskey="n" title="[n] 2d.canvas.readonly">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.canvas.html">canvas</a>.reference</h1>
+<p class="desc">CanvasRenderingContext2D.canvas refers back to its canvas</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.canvas">2d.canvas</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+_assertSame(ctx.canvas, canvas, "ctx.canvas", "canvas");
+
+
+});
+</script>
+

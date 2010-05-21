@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.transformation.rotate.wrapnegative</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.transformation.rotate.wrap.html" title="2d.transformation.rotate.wrap">
+<link rel="next" href="2d.transformation.rotate.nonfinite.html" title="2d.transformation.rotate.nonfinite">
+<body class="show_output">
+<p>
+ <a href="2d.transformation.rotate.wrap.html" accesskey="p" title="[p] 2d.transformation.rotate.wrap">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.transformation.rotate.nonfinite.html" accesskey="n" title="[n] 2d.transformation.rotate.nonfinite">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.transformation.html">transformation</a>.<a href="index.2d.transformation.rotate.html">rotate</a>.wrapnegative</h1>
+<p class="desc">rotate() wraps large negative values correctly</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.transformation.rotate">2d.transformation.rotate</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+<p class="output expectedtext">Expected output:<p><img src="green-100x50.png" class="output expected" id="expected" alt="">
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+ctx.fillStyle = '#f00';
+ctx.fillRect(0, 0, 100, 50);
+
+ctx.rotate(-Math.PI * (1 + 4096));
+ctx.fillStyle = '#0f0';
+ctx.fillRect(-100, -50, 100, 50);
+_assertPixel(canvas, 50,25, 0,255,0,255, "50,25", "0,255,0,255");
+_assertPixel(canvas, 98,2, 0,255,0,255, "98,2", "0,255,0,255");
+_assertPixel(canvas, 98,47, 0,255,0,255, "98,47", "0,255,0,255");
+
+
+});
+</script>
+

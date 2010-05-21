@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.shadow.stroke.cap.1</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.shadow.stroke.basic.html" title="2d.shadow.stroke.basic">
+<link rel="next" href="2d.shadow.stroke.cap.2.html" title="2d.shadow.stroke.cap.2">
+<body class="show_output">
+<p>
+ <a href="2d.shadow.stroke.basic.html" accesskey="p" title="[p] 2d.shadow.stroke.basic">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.shadow.stroke.cap.2.html" accesskey="n" title="[n] 2d.shadow.stroke.cap.2">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.shadow.html">shadow</a>.<a href="index.2d.shadow.stroke.html">stroke</a>.<a href="index.2d.shadow.stroke.cap.html">cap</a>.1</h1>
+<p class="desc">Shadows are not drawn for areas outside stroke caps</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.shadow.render">2d.shadow.render</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+<p class="output expectedtext">Expected output:<p><img src="green-100x50.png" class="output expected" id="expected" alt="">
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+ctx.fillStyle = '#0f0';
+ctx.fillRect(0, 0, 100, 50);
+ctx.strokeStyle = '#f00';
+ctx.shadowColor = '#f00';
+ctx.shadowOffsetY = 50;
+ctx.beginPath();
+ctx.lineWidth = 50;
+ctx.lineCap = 'butt';
+ctx.moveTo(-50, -25);
+ctx.lineTo(0, -25);
+ctx.moveTo(100, -25);
+ctx.lineTo(150, -25);
+ctx.stroke();
+
+_assertPixel(canvas, 1,25, 0,255,0,255, "1,25", "0,255,0,255");
+_assertPixel(canvas, 50,25, 0,255,0,255, "50,25", "0,255,0,255");
+_assertPixel(canvas, 98,25, 0,255,0,255, "98,25", "0,255,0,255");
+
+
+});
+</script>
+

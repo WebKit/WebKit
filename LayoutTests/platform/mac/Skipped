@@ -186,6 +186,9 @@ fast/css/font-face-woff.html
 # EventSendingController does not send events on areas outside the WebView.
 scrollbars/scrollbar-click-does-not-blur-content.html
 
+# New canvas test suite from http://philip.html5.org/tests/canvas/suite/tests/
+fast/canvas/philip
+
 # IndexedDB is not yet enabled.
 storage/indexeddb
 

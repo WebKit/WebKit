@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.imageData.object.string</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.imageData.object.nan.html" title="2d.imageData.object.nan">
+<link rel="next" href="2d.imageData.object.wrap.html" title="2d.imageData.object.wrap">
+<body class="show_output">
+<p>
+ <a href="2d.imageData.object.nan.html" accesskey="p" title="[p] 2d.imageData.object.nan">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.imageData.object.wrap.html" accesskey="n" title="[n] 2d.imageData.object.wrap">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.imageData.html">imageData</a>.<a href="index.2d.imageData.object.html">object</a>.string</h1>
+<p class="desc">ImageData.data converts strings to numbers with ToNumber</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.pixelarray.modify">2d.pixelarray.modify</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+var imgdata = ctx.getImageData(0, 0, 10, 10);
+imgdata.data[0] = 100;
+imgdata.data[0] = "110";
+_assertSame(imgdata.data[0], 110, "imgdata.data[\""+(0)+"\"]", "110");
+imgdata.data[0] = 100;
+imgdata.data[0] = "0x78";
+_assertSame(imgdata.data[0], 120, "imgdata.data[\""+(0)+"\"]", "120");
+imgdata.data[0] = 100;
+imgdata.data[0] = " +130e0 ";
+_assertSame(imgdata.data[0], 130, "imgdata.data[\""+(0)+"\"]", "130");
+
+
+});
+</script>
+

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.line.miter.obtuse</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.line.miter.acute.html" title="2d.line.miter.acute">
+<link rel="next" href="2d.line.miter.rightangle.html" title="2d.line.miter.rightangle">
+<body class="show_output">
+<p>
+ <a href="2d.line.miter.acute.html" accesskey="p" title="[p] 2d.line.miter.acute">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.line.miter.rightangle.html" accesskey="n" title="[n] 2d.line.miter.rightangle">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.line.html">line</a>.<a href="index.2d.line.miter.html">miter</a>.obtuse</h1>
+<p class="desc">Miter joins are drawn correctly with obtuse angles</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.lineJoin.miterLimit">2d.lineJoin.miterLimit</a>
+<li><a href="spec.html#testrefs.2d.lineJoin.miter">2d.lineJoin.miter</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+<p class="output expectedtext">Expected output:<p><img src="green-100x50.png" class="output expected" id="expected" alt="">
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+ctx.fillStyle = '#f00';
+ctx.fillRect(0, 0, 100, 50);
+
+ctx.lineWidth = 1600;
+ctx.lineJoin = 'miter';
+
+ctx.strokeStyle = '#0f0';
+ctx.miterLimit = 1.083;
+ctx.beginPath();
+ctx.moveTo(800, 10000);
+ctx.lineTo(800, 300);
+ctx.lineTo(10000, -8900);
+ctx.stroke();
+
+ctx.strokeStyle = '#f00';
+ctx.miterLimit = 1.082;
+ctx.beginPath();
+ctx.moveTo(800, 10000);
+ctx.lineTo(800, 300);
+ctx.lineTo(10000, -8900);
+ctx.stroke();
+
+_assertPixel(canvas, 1,1, 0,255,0,255, "1,1", "0,255,0,255");
+_assertPixel(canvas, 48,1, 0,255,0,255, "48,1", "0,255,0,255");
+_assertPixel(canvas, 48,48, 0,255,0,255, "48,48", "0,255,0,255");
+_assertPixel(canvas, 1,48, 0,255,0,255, "1,48", "0,255,0,255");
+
+
+});
+</script>
+

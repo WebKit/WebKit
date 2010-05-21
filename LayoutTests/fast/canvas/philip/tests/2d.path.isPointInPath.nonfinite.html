@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.path.isPointInPath.nonfinite</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.path.isPointInPath.transform.3.html" title="2d.path.isPointInPath.transform.3">
+<link rel="next" href="2d.drawImage.3arg.html" title="2d.drawImage.3arg">
+<body class="show_output">
+<p>
+ <a href="2d.path.isPointInPath.transform.3.html" accesskey="p" title="[p] 2d.path.isPointInPath.transform.3">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.drawImage.3arg.html" accesskey="n" title="[n] 2d.drawImage.3arg">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.path.html">path</a>.<a href="index.2d.path.isPointInPath.html">isPointInPath</a>.nonfinite</h1>
+<p class="desc">isPointInPath() returns false for non-finite arguments</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.path.isPointInPath.nonfinite">2d.path.isPointInPath.nonfinite</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+ctx.rect(-100, -50, 200, 100);
+_assertSame(ctx.isPointInPath(Infinity, 0), false, "ctx.isPointInPath(Infinity, 0)", "false");
+_assertSame(ctx.isPointInPath(-Infinity, 0), false, "ctx.isPointInPath(-Infinity, 0)", "false");
+_assertSame(ctx.isPointInPath(NaN, 0), false, "ctx.isPointInPath(NaN, 0)", "false");
+_assertSame(ctx.isPointInPath(0, Infinity), false, "ctx.isPointInPath(0, Infinity)", "false");
+_assertSame(ctx.isPointInPath(0, -Infinity), false, "ctx.isPointInPath(0, -Infinity)", "false");
+_assertSame(ctx.isPointInPath(0, NaN), false, "ctx.isPointInPath(0, NaN)", "false");
+_assertSame(ctx.isPointInPath(NaN, NaN), false, "ctx.isPointInPath(NaN, NaN)", "false");
+
+
+});
+</script>
+

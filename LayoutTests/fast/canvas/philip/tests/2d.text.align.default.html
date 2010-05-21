@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.text.align.default</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.text.align.invalid.html" title="2d.text.align.invalid">
+<link rel="next" href="2d.text.baseline.valid.html" title="2d.text.baseline.valid">
+<body class="show_output">
+<p>
+ <a href="2d.text.align.invalid.html" accesskey="p" title="[p] 2d.text.align.invalid">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.text.baseline.valid.html" accesskey="n" title="[n] 2d.text.baseline.valid">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.text.html">text</a>.<a href="index.2d.text.align.html">align</a>.default</h1>
+<p class="desc"></p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.text.align.default">2d.text.align.default</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+_assertSame(ctx.textAlign, 'start', "ctx.textAlign", "'start'");
+
+
+});
+</script>
+

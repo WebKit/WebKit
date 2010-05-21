@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.gradient.object.return</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.strokeStyle.default.html" title="2d.strokeStyle.default">
+<link rel="next" href="2d.gradient.interpolate.solid.html" title="2d.gradient.interpolate.solid">
+<body class="show_output">
+<p>
+ <a href="2d.strokeStyle.default.html" accesskey="p" title="[p] 2d.strokeStyle.default">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.gradient.interpolate.solid.html" accesskey="n" title="[n] 2d.gradient.interpolate.solid">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.gradient.html">gradient</a>.<a href="index.2d.gradient.object.html">object</a>.return</h1>
+<p class="desc">createLinearGradient() and createRadialGradient() returns objects implementing CanvasGradient</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.gradient.linear.return">2d.gradient.linear.return</a>
+<li><a href="spec.html#testrefs.2d.gradient.radial.return">2d.gradient.radial.return</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+window.CanvasGradient.prototype.thisImplementsCanvasGradient = true;
+
+var g1 = ctx.createLinearGradient(0, 0, 100, 0);
+_assertDifferent(g1.addColorStop, undefined, "g1.addColorStop", "undefined");
+_assertSame(g1.thisImplementsCanvasGradient, true, "g1.thisImplementsCanvasGradient", "true");
+
+var g2 = ctx.createRadialGradient(0, 0, 10, 0, 0, 20);
+_assertDifferent(g2.addColorStop, undefined, "g2.addColorStop", "undefined");
+_assertSame(g2.thisImplementsCanvasGradient, true, "g2.thisImplementsCanvasGradient", "true");
+
+
+});
+</script>
+

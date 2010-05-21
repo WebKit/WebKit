@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.imageData.object.set</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.imageData.object.ctor.html" title="2d.imageData.object.ctor">
+<link rel="next" href="2d.imageData.object.undefined.html" title="2d.imageData.object.undefined">
+<body class="show_output">
+<p>
+ <a href="2d.imageData.object.ctor.html" accesskey="p" title="[p] 2d.imageData.object.ctor">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.imageData.object.undefined.html" accesskey="n" title="[n] 2d.imageData.object.undefined">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.imageData.html">imageData</a>.<a href="index.2d.imageData.object.html">object</a>.set</h1>
+<p class="desc">ImageData.data can be modified</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.pixelarray.modify">2d.pixelarray.modify</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+var imgdata = ctx.getImageData(0, 0, 10, 10);
+imgdata.data[0] = 100;
+_assertSame(imgdata.data[0], 100, "imgdata.data[\""+(0)+"\"]", "100");
+imgdata.data[0] = 200;
+_assertSame(imgdata.data[0], 200, "imgdata.data[\""+(0)+"\"]", "200");
+
+
+});
+</script>
+

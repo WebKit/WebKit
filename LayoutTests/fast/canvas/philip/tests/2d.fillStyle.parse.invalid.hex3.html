@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.fillStyle.parse.invalid.hex3</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.fillStyle.parse.invalid.hex2.html" title="2d.fillStyle.parse.invalid.hex2">
+<link rel="next" href="2d.fillStyle.parse.invalid.hex4.html" title="2d.fillStyle.parse.invalid.hex4">
+<body class="show_output">
+<p>
+ <a href="2d.fillStyle.parse.invalid.hex2.html" accesskey="p" title="[p] 2d.fillStyle.parse.invalid.hex2">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.fillStyle.parse.invalid.hex4.html" accesskey="n" title="[n] 2d.fillStyle.parse.invalid.hex4">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.fillStyle.html">fillStyle</a>.<a href="index.2d.fillStyle.parse.html">parse</a>.<a href="index.2d.fillStyle.parse.invalid.html">invalid</a>.hex3</h1>
+<p class="desc"></p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.colours.parse">2d.colours.parse</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+<p class="output expectedtext">Expected output:<p><img src="green-100x50.png" class="output expected" id="expected" alt="">
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+
+ctx.fillStyle = '#0f0';
+try { ctx.fillStyle = '#g00'; } catch (e) { } // this shouldn't throw, but it shouldn't matter here if it does
+ctx.fillRect(0, 0, 100, 50);
+_assertPixel(canvas, 50,25, 0,255,0,255, "50,25", "0,255,0,255");
+
+
+});
+</script>
+

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<title>Canvas test: toDataURL.unrecognised</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="toDataURL.bogustype.html" title="toDataURL.bogustype">
+<link rel="next" href="toDataURL.lowercase.ascii.html" title="toDataURL.lowercase.ascii">
+<body class="show_output">
+<p>
+ <a href="toDataURL.bogustype.html" accesskey="p" title="[p] toDataURL.bogustype">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="toDataURL.lowercase.ascii.html" accesskey="n" title="[n] toDataURL.lowercase.ascii">&gt;</a>
+<h1><a href="index.toDataURL.html">toDataURL</a>.unrecognised</h1>
+<p class="desc">toDataURL with an unhandled type returns a PNG</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.toDataURL.unrecognised">toDataURL.unrecognised</a>
+<li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=489304">Bugzilla</a>
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+var data = canvas.toDataURL('image/example');
+_assertMatch(data, /^data:image\/png[;,]/, "data", "/^data:image\\/png[;,]/");
+
+
+});
+</script>
+

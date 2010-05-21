@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<title>Canvas test: context.casesensitive</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="context.unrecognised.unicode.html" title="context.unrecognised.unicode">
+<link rel="next" href="toDataURL.default.html" title="toDataURL.default">
+<body class="show_output">
+<p>
+ <a href="context.unrecognised.unicode.html" accesskey="p" title="[p] context.unrecognised.unicode">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="toDataURL.default.html" accesskey="n" title="[n] toDataURL.default">&gt;</a>
+<h1><a href="index.context.html">context</a>.casesensitive</h1>
+<p class="desc">Context name "2D" is unrecognised; matching is case sensitive</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.context.casesensitive">context.casesensitive</a>
+<li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=401788">Bugzilla</a>
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+_assertSame(canvas.getContext('2D'), null, "canvas.getContext('2D')", "null");
+
+
+});
+</script>
+

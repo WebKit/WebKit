@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.strokeRect.path</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="2d.strokeRect.basic.html" title="2d.strokeRect.basic">
+<link rel="next" href="2d.strokeRect.zero.1.html" title="2d.strokeRect.zero.1">
+<body class="show_output">
+<p>
+ <a href="2d.strokeRect.basic.html" accesskey="p" title="[p] 2d.strokeRect.basic">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="2d.strokeRect.zero.1.html" accesskey="n" title="[n] 2d.strokeRect.zero.1">&gt;</a>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.strokeRect.html">strokeRect</a>.path</h1>
+<p class="desc">strokeRect does not affect the current path</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.strokeRect">2d.strokeRect</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+<p class="output expectedtext">Expected output:<p><img src="green-100x50.png" class="output expected" id="expected" alt="">
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+ctx.beginPath();
+ctx.rect(0, 0, 100, 50);
+ctx.strokeStyle = '#f00';
+ctx.lineWidth = 5;
+ctx.strokeRect(0, 0, 16, 16);
+ctx.fillStyle = '#0f0';
+ctx.fill();
+_assertPixel(canvas, 50,25, 0,255,0,255, "50,25", "0,255,0,255");
+
+
+});
+</script>
+

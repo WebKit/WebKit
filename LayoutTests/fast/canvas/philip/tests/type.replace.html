@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<title>Canvas test: type.replace</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<link rel="prev" href="type.prototype.html" title="type.prototype">
+<link rel="next" href="type.extend.html" title="type.extend">
+<body class="show_output">
+<p>
+ <a href="type.prototype.html" accesskey="p" title="[p] type.prototype">&lt;</a>
+ <a href="index.html">[index]</a>
+ <a href="type.extend.html" accesskey="n" title="[n] type.extend">&gt;</a>
+<h1><a href="index.type.html">type</a>.replace</h1>
+<p class="desc">HTMLCanvasElement methods can be replaced, and the replacement methods used by canvases</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.canvas.type">canvas.type</a>
+
+</ul>
+</div>
+<p class="notes">Defined in "Language Bindings for DOM Specifications" (draft)
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+window.HTMLCanvasElement.prototype.getContext = function (name) { return 0; };
+_assertSame(canvas.getContext('2d'), 0, "canvas.getContext('2d')", "0");
+
+
+});
+</script>
+
