@@ -1,3 +1,18 @@
+2010-05-20  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Add ScrollTheme
+        https://bugs.webkit.org/show_bug.cgi?id=39406
+
+        As BREW MP always uses frame flattening, there is no need to render scorllbars.
+        Use the default scrollbar theme with thickness 0.
+
+        * platform/brew/ScrollbarThemeBrew.cpp: Added.
+        (WebCore::ScrollbarTheme::nativeTheme):
+        (WebCore::ScrollbarThemeBrew::~ScrollbarThemeBrew):
+        * platform/brew/ScrollbarThemeBrew.h: Added.
+
 2010-05-20  Jon Honeycutt  <jhoneycutt@apple.com>
 
         REGRESSION(r53637): DivX plug-in fails to start until window is resized
