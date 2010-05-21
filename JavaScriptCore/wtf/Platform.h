@@ -522,6 +522,10 @@
 #endif
 #endif
 
+#if PLATFORM(BREWMP)
+#define WTF_PLATFORM_SKIA 1
+#endif
+
 #if PLATFORM(GTK)
 #define WTF_PLATFORM_CAIRO 1
 #endif
