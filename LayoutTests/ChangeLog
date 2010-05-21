@@ -1,3 +1,12 @@
+2010-05-21  Julie Parent  <jparent@chromium.org>
+
+        Unreviewed.
+
+        Updating Chromium test_expectations for newly added test, 
+        svg/animations/animate-points.html which uses unsupported API.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-05-21  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         Reviewed by Eric Seidel.

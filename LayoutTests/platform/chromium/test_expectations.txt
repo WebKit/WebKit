@@ -2681,8 +2681,9 @@ BUGWK36666 : storage/open-database-over-quota.html = TEXT
 
 // Caused by http://trac.webkit.org/changeset/56795
 // These are new tests that are failing in Chromium because of a missing API.
-BUG39904 : svg/animations/animate-points.html = TEXT TIMEOUT
-BUG39904 : svg/animations/animate-keySplines.html = TEXT TIMEOUT
+BUG39904 : svg/animations/animate-points.html = TIMEOUT
+BUG39904 : svg/animations/animate-keySplines.html = TIMEOUT
+BUG39904 : svg/animations/animate-gradient-transform.html = TIMEOUT
 
 BUGWK37283 : fast/overflow/scrollbar-restored-and-then-locked.html = TEXT
 
