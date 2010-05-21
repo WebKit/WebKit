@@ -830,7 +830,7 @@ bool RenderThemeSafari::paintMenuListButton(RenderObject* o, const RenderObject:
 
     paintInfo.context->save();
 
-    paintInfo.context->setFillColor(o->style()->color(), DeviceColorSpace);
+    paintInfo.context->setFillColor(o->style()->visitedDependentColor(CSSPropertyColor), DeviceColorSpace);
     paintInfo.context->setStrokeColor(NoStroke, DeviceColorSpace);
 
     FloatPoint arrow[3];
