@@ -1,3 +1,11 @@
+2010-05-21  Julie Parent  <jparent@chromium.org>
+
+        Unreviewed.
+
+        Updating Chromium test_expectations to mark two websockets tests as failing in debug mode.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-05-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed. Skip failing test until fix.
