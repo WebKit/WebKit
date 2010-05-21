@@ -1,3 +1,15 @@
+2010-05-21  Victor Wang  <victorw@chromium.org>
+
+        Unreviewed. Update test expectations for chromium.
+
+        * platform/chromium-linux/fast/lists/alpha-boundary-values-expected.checksum: Added.
+        * platform/chromium-linux/fast/lists/alpha-boundary-values-expected.png: Added.
+        * platform/chromium-mac/fast/lists/alpha-boundary-values-expected.checksum: Added.
+        * platform/chromium-mac/fast/lists/alpha-boundary-values-expected.png: Added.
+        * platform/chromium-win/fast/lists/alpha-boundary-values-expected.checksum: Added.
+        * platform/chromium-win/fast/lists/alpha-boundary-values-expected.png: Added.
+        * platform/chromium-win/fast/lists/alpha-boundary-values-expected.txt: Added.
+
 2010-05-21  Julie Parent  <jparent@chromium.org>
 
         Unreviewed.
