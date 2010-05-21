@@ -1372,7 +1372,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         */
         int dst = vPC[1].u.operand;
         int regExp = vPC[2].u.operand;
-        callFrame->r(dst) = JSValue(new (globalData) RegExpObject(callFrame->scopeChain()->globalObject->regExpStructure(), codeBlock->regexp(regExp)));
+        callFrame->r(dst) = JSValue(new (globalData) RegExpObject(callFrame->lexicalGlobalObject(), callFrame->scopeChain()->globalObject->regExpStructure(), codeBlock->regexp(regExp)));
 
         vPC += OPCODE_LENGTH(op_new_regexp);
         NEXT_INSTRUCTION();
