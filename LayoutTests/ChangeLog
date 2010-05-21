@@ -1,5 +1,20 @@
 2010-05-20  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59876.
+
+    2010-05-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/8007953> Textarea using custom font appears blank
+
+        * fast/css/font-face-in-shadow-DOM.html: Added.
+        * platform/mac/fast/css/font-face-in-shadow-DOM-expected.checksum: Added.
+        * platform/mac/fast/css/font-face-in-shadow-DOM-expected.png: Added.
+        * platform/mac/fast/css/font-face-in-shadow-DOM-expected.txt: Added.
+
+2010-05-20  Mark Rowe  <mrowe@apple.com>
+
         Merge r59795.
 
     2010-05-19  Abhishek Arya  <inferno@chromium.org>

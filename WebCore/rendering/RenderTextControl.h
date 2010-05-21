@@ -105,6 +105,8 @@ private:
 
     virtual bool canBeProgramaticallyScrolled(bool) const { return true; }
 
+    virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
+
     String finishText(Vector<UChar>&) const;
 
     bool m_wasChangedSinceLastChangeEvent;

@@ -47,6 +47,8 @@ private:
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
+    virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
+
     void animationTimerFired(Timer<RenderProgress>*);
     void updateAnimationState();
     void updateValuePartState();

@@ -57,11 +57,13 @@ public:
 
     virtual bool canHaveChildren() const;
 
-protected:
+private:
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     virtual bool hasLineIfEmpty() const { return true; }
+
+    virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
 
     void timerFired(Timer<RenderButton>*);
 

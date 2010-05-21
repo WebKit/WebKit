@@ -118,6 +118,8 @@ private:
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
+    virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
+
     RefPtr<HTMLElement> m_controlsShadowRoot;
     RefPtr<MediaControlElement> m_panel;
     RefPtr<MediaControlMuteButtonElement> m_muteButton;
