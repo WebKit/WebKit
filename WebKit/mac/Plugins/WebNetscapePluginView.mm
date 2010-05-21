@@ -1089,9 +1089,22 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 #if USE(ACCELERATED_COMPOSITING)
             accleratedCompositingEnabled = [[[self webView] preferences] acceleratedCompositingEnabled];
 #endif
-            if (accleratedCompositingEnabled)
+            if (accleratedCompositingEnabled) {
+                // FIXME: This code can be shared between WebHostedNetscapePluginView and WebNetscapePluginView.
+#ifndef BUILDING_ON_LEOPARD
+                // Since this layer isn't going to be inserted into a view, we need to create another layer and flip its geometry
+                // in order to get the coordinate system right.
+                RetainPtr<CALayer> realPluginLayer(AdoptNS, _pluginLayer.releaseRef());
+                
+                _pluginLayer.adoptNS([[CALayer alloc] init]);
+                _pluginLayer.get().bounds = realPluginLayer.get().bounds;
+                _pluginLayer.get().geometryFlipped = YES;
+
+                realPluginLayer.get().autoresizingMask = kCALayerWidthSizable | kCALayerHeightSizable;
+                [_pluginLayer.get() addSublayer:realPluginLayer.get()];
+#endif
                 [self element]->setNeedsStyleRecalc(SyntheticStyleChange);
-            else
+            } else
                 [self setWantsLayer:YES];
             LOG(Plugins, "%@ is using Core Animation drawing model with layer %@", _pluginPackage.get(), _pluginLayer.get());
         }
