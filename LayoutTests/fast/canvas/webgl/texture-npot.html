@@ -110,17 +110,17 @@
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
 
-            // checkBuffer(0,0,0,255, "NPOT texture with TEXTURE_WRAP set to REPEAT should draw with 0,0,0,255");
+            checkBuffer(0,0,0,255, "NPOT texture with TEXTURE_WRAP set to REPEAT should draw with 0,0,0,255");
 
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR);
 
-            // checkBuffer(0,0,0,255, "NPOT texture with TEXTURE_MIN_FILTER not NEAREST or LINEAR should draw with 0,0,0,255");
+            checkBuffer(0,0,0,255, "NPOT texture with TEXTURE_MIN_FILTER not NEAREST or LINEAR should draw with 0,0,0,255");
 
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
-            // checkBuffer(0,192,128,255, "NPOT texture with TEXTURE_MIN_FILTER set to LINEAR should draw.");
+            checkBuffer(0,192,128,255, "NPOT texture with TEXTURE_MIN_FILTER set to LINEAR should draw with 0,192,128,255");
 
             function checkBuffer(r, g, b, a, msg) {
               gl.clearColor(1,1,1,1);
@@ -134,7 +134,8 @@
                     buf[offset + 1] != g ||
                     buf[offset + 2] != b ||
                     buf[offset + 3] != a) {
-                  testFailed(msg);
+                  testFailed(msg + ', read back color is ' + buf[offset + 0] + ',' + buf[offset + 1]
+                             + ',' + buf[offset + 2] + ',' + buf[offset + 3]);
                   return;
                 }
               }

@@ -2,6 +2,17 @@
 
         Reviewed by Dimitri Glazkov.
 
+        fast/canvas/webgl/texture-npot.html failed on leopard bot
+        https://bugs.webkit.org/show_bug.cgi?id=39128
+
+        * fast/canvas/webgl/texture-npot-expected.txt: Adding the failed test cases back.
+        * fast/canvas/webgl/texture-npot.html:
+        * platform/mac-leopard/Skipped: Skip texture-npot.html on leopard for now.
+
+2010-05-20  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
         Map RGBA4/RGB5_A1 to RGBA and RGB565 to RGB in RenderbufferStorage
         https://bugs.webkit.org/show_bug.cgi?id=39077
 
