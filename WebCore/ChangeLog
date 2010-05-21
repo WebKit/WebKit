@@ -1,3 +1,18 @@
+2010-05-21  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        Reviewed by Eric Seidel.
+
+        animateTransform does not work on gradientTransform
+        https://bugs.webkit.org/show_bug.cgi?id=38115
+
+        Tests: svg/animations/animate-gradient-transform.html
+
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::hasValidTarget): Check if the target element is gradient.
+        (WebCore::transformListFor): Ditto.
+        (WebCore::SVGAnimateTransformElement::resetToBaseValue): Ditto.
+        (WebCore::SVGAnimateTransformElement::applyResultsToTarget): Ditto.
+
 2010-05-21  Young Han Lee  <joybro@company100.net>
 
         Reviewed by Eric Seidel.

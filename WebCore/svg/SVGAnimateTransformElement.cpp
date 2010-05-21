@@ -32,6 +32,7 @@
 #include "RenderObject.h"
 #include "SVGAngle.h"
 #include "SVGElementInstance.h"
+#include "SVGGradientElement.h"
 #include "SVGParserUtilities.h"
 #include "SVGSVGElement.h"
 #include "SVGStyledTransformableElement.h"
@@ -60,7 +61,11 @@ SVGAnimateTransformElement::~SVGAnimateTransformElement()
 bool SVGAnimateTransformElement::hasValidTarget() const
 {
     SVGElement* targetElement = this->targetElement();
-    return SVGAnimationElement::hasValidTarget() && (targetElement->isStyledTransformable() || targetElement->hasTagName(SVGNames::textTag));
+    return SVGAnimationElement::hasValidTarget()
+        && (targetElement->isStyledTransformable()
+        || targetElement->hasTagName(SVGNames::textTag)
+        || targetElement->hasTagName(SVGNames::linearGradientTag)
+        || targetElement->hasTagName(SVGNames::radialGradientTag));
 }
 
 void SVGAnimateTransformElement::parseMappedAttribute(Attribute* attr)
@@ -88,6 +93,8 @@ static PassRefPtr<SVGTransformList> transformListFor(SVGElement* element)
         return static_cast<SVGStyledTransformableElement*>(element)->transform();
     if (element->hasTagName(SVGNames::textTag))
         return static_cast<SVGTextElement*>(element)->transform();
+    if (element->hasTagName(SVGNames::linearGradientTag) || element->hasTagName(SVGNames::radialGradientTag))
+        return static_cast<SVGGradientElement*>(element)->gradientTransform();
     return 0;
 }
     
@@ -95,6 +102,12 @@ void SVGAnimateTransformElement::resetToBaseValue(const String& baseValue)
 {
     if (!hasValidTarget())
         return;
+
+    if (targetElement()->hasTagName(SVGNames::linearGradientTag) || targetElement()->hasTagName(SVGNames::radialGradientTag)) {
+        targetElement()->setAttribute(SVGNames::gradientTransformAttr, baseValue.isEmpty() ? "matrix(1 0 0 1 0 0)" : baseValue);
+        return;
+    }
+
     if (baseValue.isEmpty()) {
         ExceptionCode ec;
         RefPtr<SVGTransformList> list = transformListFor(targetElement());
@@ -175,6 +188,8 @@ void SVGAnimateTransformElement::applyResultsToTarget()
             static_cast<SVGStyledTransformableElement*>(shadowTreeElement)->setTransformBaseValue(transformList.get());
         else if (shadowTreeElement->hasTagName(SVGNames::textTag))
             static_cast<SVGTextElement*>(shadowTreeElement)->setTransformBaseValue(transformList.get());
+        else if (shadowTreeElement->hasTagName(SVGNames::linearGradientTag) || shadowTreeElement->hasTagName(SVGNames::radialGradientTag))
+            static_cast<SVGGradientElement*>(shadowTreeElement)->setGradientTransformBaseValue(transformList.get());
         if (RenderObject* renderer = shadowTreeElement->renderer()) {
             renderer->setNeedsTransformUpdate();
             renderer->setNeedsLayout(true);
