@@ -6161,7 +6161,7 @@ void WebView::setAcceleratedCompositing(bool accelerated)
         return;
 
     if (accelerated) {
-        m_layerRenderer = WKCACFLayerRenderer::create();
+        m_layerRenderer = WKCACFLayerRenderer::create(this);
         if (m_layerRenderer) {
             m_isAcceleratedCompositing = true;
 
@@ -6375,6 +6375,18 @@ HRESULT WebView::nextDisplayIsSynchronous()
 {
     m_nextDisplayIsSynchronous = true;
     return S_OK;
+}
+
+bool WebView::shouldRender() const
+{
+    Frame* coreFrame = core(m_mainFrame);
+    if (!coreFrame)
+        return true;
+    FrameView* frameView = coreFrame->view();
+    if (!frameView)
+        return true;
+
+    return !frameView->layoutPending();
 }
 
 class EnumTextMatches : public IEnumTextMatches

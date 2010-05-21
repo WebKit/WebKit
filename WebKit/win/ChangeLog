@@ -1,3 +1,26 @@
+2010-05-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Avoid flushing CA layers when a layout is pending
+        https://bugs.webkit.org/show_bug.cgi?id=39463
+
+        <rdar://problem/7999463>
+
+        Avoid rendering the compositing layers to the screen if there's a layout pending,
+        since the layer tree not in a state that should be presented to the user.
+        
+        This fixes flashes in some types of content that dynamically add and remove layers.
+
+        Have the WebView implement WKCACFLayerRendererClient so that the
+        WKCACFLayerRenderer can ask whether it's a good time to render. If the FrameView
+        has a layout pending, say no.
+
+        * WebView.h: 
+        * WebView.cpp:
+        (WebView::setAcceleratedCompositing):
+        (WebView::shouldRender):
+
 2010-05-18  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Adam Roben.

@@ -198,7 +198,7 @@ bool WKCACFLayerRenderer::acceleratedCompositingAvailable()
         return available;
     }
 
-    OwnPtr<WKCACFLayerRenderer> testLayerRenderer = WKCACFLayerRenderer::create();
+    OwnPtr<WKCACFLayerRenderer> testLayerRenderer = WKCACFLayerRenderer::create(0);
     testLayerRenderer->setHostWindow(testWindow);
     available = testLayerRenderer->createRenderer();
     ::DestroyWindow(testWindow);
@@ -215,15 +215,16 @@ void WKCACFLayerRenderer::didFlushContext(CACFContextRef context)
     window->renderSoon();
 }
 
-PassOwnPtr<WKCACFLayerRenderer> WKCACFLayerRenderer::create()
+PassOwnPtr<WKCACFLayerRenderer> WKCACFLayerRenderer::create(WKCACFLayerRendererClient* client)
 {
     if (!acceleratedCompositingAvailable())
         return 0;
-    return new WKCACFLayerRenderer;
+    return new WKCACFLayerRenderer(client);
 }
 
-WKCACFLayerRenderer::WKCACFLayerRenderer()
-    : m_mightBeAbleToCreateDeviceLater(true)
+WKCACFLayerRenderer::WKCACFLayerRenderer(WKCACFLayerRendererClient* client)
+    : m_client(client)
+    , m_mightBeAbleToCreateDeviceLater(true)
     , m_rootLayer(WKCACFRootLayer::create(this))
     , m_scrollLayer(WKCACFLayer::create(WKCACFLayer::Layer))
     , m_clipLayer(WKCACFLayer::create(WKCACFLayer::Layer))
@@ -516,6 +517,11 @@ void WKCACFLayerRenderer::render(const Vector<CGRect>& dirtyRects)
 
     if (m_mustResetLostDeviceBeforeRendering && !resetDevice(LostDevice)) {
         // We can't reset the device right now. Try again soon.
+        renderSoon();
+        return;
+    }
+
+    if (m_client && !m_client->shouldRender()) {
         renderSoon();
         return;
     }

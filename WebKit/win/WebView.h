@@ -66,6 +66,7 @@ class WebView
     , public IWebNotificationObserver
     , public IDropTarget
     , WebCore::WindowMessageListener
+    , WebCore::WKCACFLayerRendererClient
 {
 public:
     static WebView* createInstance();
@@ -920,6 +921,9 @@ private:
     // Thus, on return from DoDragDrop we have the correct pdwEffect for the drag-and-drop operation.
     // (see https://bugs.webkit.org/show_bug.cgi?id=29264)
     DWORD m_lastDropEffect;
+
+    // WKCACFLayerRendererClient
+    virtual bool shouldRender() const;
 
 protected:
     static bool registerWebViewWindowClass();
