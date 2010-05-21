@@ -601,6 +601,10 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     if (context->paintingDisabled())
         return;
 
+    // Ensure that we have called SetWindow before we try to paint.
+    if (!m_haveCalledSetWindow)
+        setNPWindowRect(frameRect());
+
     if (m_isWindowed) {
 #if !OS(WINCE)
         if (context->shouldIncludeChildWindows())
@@ -805,6 +809,8 @@ void PluginView::setNPWindowRect(const IntRect& rect)
         setCallingPlugin(true);
         m_plugin->pluginFuncs()->setwindow(m_instance, &m_npWindow);
         setCallingPlugin(false);
+
+        m_haveCalledSetWindow = true;
 
         if (!m_isWindowed)
             return;

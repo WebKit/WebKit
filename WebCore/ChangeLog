@@ -1,3 +1,32 @@
+2010-05-20  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        REGRESSION(r53637): DivX plug-in fails to start until window is resized
+        https://bugs.webkit.org/show_bug.cgi?id=39457
+        <rdar://problem/8006102>
+
+        Before r53637, we called Widget::move() (which caused us to call
+        NPP_SetWindow) before painting a plug-in. r53637 removed the call to
+        Widget::move(), and we end up never calling NPP_SetWindow for plug-ins
+        with the "DeferFirstSetWindowCall" quirk, including the DivX plug-in.
+
+        Reviewed by Simon Fraser.
+
+        * manual-tests/divx-plugin-fails-to-draw.html: Added.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::PluginView):
+        Initialize new member to false.
+
+        * plugins/PluginView.h:
+        Added new member.
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::paint):
+        Call setNPWindowRect() before painting to ensure that NPP_SetWindow gets
+        called.
+        (WebCore::PluginView::setNPWindowRect):
+        Set m_haveCalledSetWindow.
+
 2010-05-20  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
