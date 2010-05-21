@@ -35,6 +35,7 @@ namespace WebCore {
 
     class Document;
     class DocumentFragment;
+    class KURL;
     class Node;
     class Range;
     class String;
@@ -54,6 +55,7 @@ namespace WebCore {
     String createFullMarkup(const Node*);
     String createFullMarkup(const Range*);
 
+    String urlToMarkup(const KURL&, const String& title);
 }
 
 #endif // markup_h

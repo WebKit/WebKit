@@ -52,16 +52,4 @@ void replaceNBSPWithSpace(String& str)
     str.replace(NonBreakingSpaceCharacter, SpaceCharacter);
 }
 
-String urlToMarkup(const KURL& url, const String& title)
-{
-    String markup("<a href=\"");
-    markup.append(url.string());
-    markup.append("\">");
-    // FIXME: HTML escape this, possibly by moving into the glue layer so we
-    // can use net/base/escape.h.
-    markup.append(title);
-    markup.append("</a>");
-    return markup;
-}
-
 } // namespace WebCore

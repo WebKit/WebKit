@@ -5,12 +5,15 @@ if (window.layoutTestController)
 <div>This test checks that links dragged into editable regions preserve their title and URL.</div>
 
 <div contenteditable="true" id="destination">Hello</div>
+<div contenteditable="true" id="destination2">Goodbye</div>
 
 <div><a href="http://apple.com" id="grabme">This is a link</a></div>
+<div><a href="http://apple.com" id="grabme2">This &lt;/a&gt;&lt;a href="http://webkit.org/"&gt;is another link</a></div>
 
 <ul id="console"></ul>
 
-<div>To run this test manually, drag the link into the box with 'hello' in it, and then click on the button.<br><input type="button" value="Verify" onClick="verifier()"></div>
+<div>To run this test manually, drag the first link into the box with 'Hello' in it,
+drag the second link into the box with 'Goodbye' in it, and then click on the button.<br><input type="button" value="Verify" onClick="verifier()"></div>
 
 <script>
 
@@ -26,8 +29,19 @@ function log(message) {
 function runTest() {
     if (!window.layoutTestController)
         return;
-    
-    var anchorToDrag = document.getElementById("grabme");
+    layoutTestController.dumpAsText();
+
+    dragLink('grabme', 'destination');
+    dragLink('grabme2', 'destination2');
+
+    verifier();
+}
+
+function dragLink(srcId, targetId)
+{
+    var anchorToDrag = document.getElementById(srcId);
+    window.getSelection().setBaseAndExtent(anchorToDrag, 0, anchorToDrag, 0);
+
     var x = anchorToDrag.offsetLeft + anchorToDrag.offsetWidth / 2;
     var y = anchorToDrag.offsetTop + anchorToDrag.offsetHeight / 2;
 
@@ -36,43 +50,57 @@ function runTest() {
     eventSender.mouseDown();
     // Wait a moment so that the mouseDown will kick off a drag instead of navigating to the link
     eventSender.leapForward(400);
-    
-    var destinationObject = document.getElementById("destination");
+
+    var destinationObject = document.getElementById(targetId);
     var x = destinationObject.offsetLeft + destinationObject.offsetWidth / 2;
     var y = destinationObject.offsetTop + destinationObject.offsetHeight / 2;
 
-
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseUp();
-
-    verifier();
 }
 
 function verifier() {
     var anchorToDrag = document.getElementById("grabme");
+    var anchorToDrag2 = document.getElementById("grabme2");
+
+    var passed = verifyLink('grabme', 0) && verifyLink('grabme2', 1);
+
+    var anchors = document.getElementsByTagName("a");
+    if (anchors.length != 2) {
+        log("Failure, incorrect number of anchor tags present");
+        passed = false;
+    }
+
+    if (passed)
+        log("Success!");
+}
+
+function verifyLink(linkId, linkNumber)
+{
+    var anchorToDrag = document.getElementById(linkId);
 
     var originalTarget = anchorToDrag.href;
     var originalText = anchorToDrag.innerText;
     var anchorParent = anchorToDrag.parentNode;
     anchorParent.removeChild(anchorToDrag);
-    
+
     var anchors = document.getElementsByTagName("a");
-    if (anchors.length != 1) {
-        log("Failure, incorrect number of anchor tags present");
+    if (!anchors[linkNumber]) {
+        log("Link " + linkNumber + " not found");
+        passed = false;
     } else {
-        log("Link is " + anchors[0].href);
+        log("Link is " + anchors[linkNumber].href);
         var passed = true;
-        if (anchors[0].href != originalTarget) {
+        if (anchors[linkNumber].href != originalTarget) {
             log("Failure! Link targets differ");
             passed = false;
         }
-        if (anchors[0].innerText != originalText) {
+        if (anchors[linkNumber].innerText != originalText) {
             log("Failure! Link texts differ");
             passed = false;
         }
-        if (passed)
-            log("Success!");
     }
+    return passed;
 }
 
 runTest();
