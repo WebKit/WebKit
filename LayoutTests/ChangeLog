@@ -1,3 +1,13 @@
+2010-05-20  Victor Wang  <victorw@chromium.org>
+
+        Unreviewed. Update test expectations for chromium.
+
+        * platform/chromium-linux/fast/css/font-face-in-shadow-DOM-expected.checksum: Added.
+        * platform/chromium-linux/fast/css/font-face-in-shadow-DOM-expected.png: Added.
+        * platform/chromium-win/fast/css/font-face-in-shadow-DOM-expected.checksum: Added.
+        * platform/chromium-win/fast/css/font-face-in-shadow-DOM-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-05-20  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.
