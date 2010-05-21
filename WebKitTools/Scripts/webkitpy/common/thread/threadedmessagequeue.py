@@ -26,6 +26,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import with_statement
+
 import threading
 
 
@@ -36,20 +38,17 @@ class ThreadedMessageQueue(object):
         self._lock = threading.Lock()
 
     def post(self, message):
-        self._lock.acquire()
-        self._messages.append(message)
-        self._lock.release()
+        with self._lock:
+            self._messages.append(message)
 
     def stop(self):
-        self._lock.acquire()
-        self._is_running = False
-        self._lock.release()
+        with self._lock:
+            self._is_running = False
 
     def take_all(self):
-        self._lock.acquire()
-        messages = self._messages
-        is_running = self._is_running
-        self._messages = []
-        self._lock.release()
+        with self._lock:
+            messages = self._messages
+            is_running = self._is_running
+            self._messages = []
         return (messages, is_running)
 
