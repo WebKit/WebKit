@@ -1,3 +1,19 @@
+2010-05-21  Steve Block  <steveblock@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Calls to CallJNIMethodIDA() in JavaInstance::invokeMethod() are required on Android
+        https://bugs.webkit.org/show_bug.cgi?id=39426
+
+        This code path has always been used by Android, but was guarded with
+        BUILDING_ON_TIGER in http://trac.webkit.org/changeset/55054, thus
+        breaking the Android build.
+
+        No new tests, build fix only.
+
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaInstance::invokeMethod):
+
 2010-05-20  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.

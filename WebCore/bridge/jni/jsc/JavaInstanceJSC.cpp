@@ -193,7 +193,9 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod
         }
     }
 
-#ifdef BUILDING_ON_TIGER
+// This is a deprecated code path which should not be required on Android.
+// Remove this guard once Bug 39476 is fixed.
+#if PLATFORM(ANDROID) || defined(BUILDING_ON_TIGER)
     if (!handled) {
         jobject obj = m_instance->m_instance;
         switch (jMethod->JNIReturnType()) {
