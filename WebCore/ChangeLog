@@ -1,3 +1,42 @@
+2010-05-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/8007953> Textarea using custom font appears blank
+
+        Test: fast/css/font-face-in-shadow-DOM.html
+
+        When a remote font is loaded, CSSFontSelector forces a style recalc, which replaces all
+        RenderSyles that have FontFallbackLists referencing the placeholder font with fresh
+        RenderStyles. However, it does not descend into shadow DOM trees, so those may end up with
+        styles that still reference the placeholder font.
+
+        The fix is to add RenderObject::requiresForcedStyleRecalcPropagation() and have it return
+        true from renderers that maintain shadow DOM trees or otherwise keep their own RenderStyles.
+
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle): Check if forced style recalc needs to propagated.
+        * rendering/RenderButton.h:
+        (WebCore::RenderButton::requiresForcedStyleRecalcPropagation):
+        * rendering/RenderDataGrid.h:
+        (WebCore::RenderDataGrid::requiresForcedStyleRecalcPropagation):
+        * rendering/RenderFileUploadControl.h:
+        (WebCore::RenderFileUploadControl::requiresForcedStyleRecalcPropagation):
+        * rendering/RenderListItem.h:
+        (WebCore::RenderListItem::requiresForcedStyleRecalcPropagation):
+        * rendering/RenderMedia.h:
+        (WebCore::RenderMedia::requiresForcedStyleRecalcPropagation):
+        * rendering/RenderMenuList.h:
+        (WebCore::RenderMenuList::RenderMenuList::requiresForcedStyleRecalcPropagation):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::requiresForcedStyleRecalcPropagation):
+        * rendering/RenderProgress.h:
+        (WebCore::RenderProgress::requiresForcedStyleRecalcPropagation):
+        * rendering/RenderSlider.h:
+        (WebCore::RenderSlider::requiresForcedStyleRecalcPropagation):
+        * rendering/RenderTextControl.h:
+        (WebCore::RenderTextControl::requiresForcedStyleRecalcPropagation):
+
 2010-05-20  Jer Noble  <jer.noble@apple.com>
 
         No review; build fix only.

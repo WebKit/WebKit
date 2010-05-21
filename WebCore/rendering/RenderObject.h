@@ -325,6 +325,8 @@ public:
     bool cellWidthChanged() const { return m_cellWidthChanged; }
     void setCellWidthChanged(bool b = true) { m_cellWidthChanged = b; }
 
+    virtual bool requiresForcedStyleRecalcPropagation() const { return false; }
+
 #if ENABLE(MATHML)
     virtual bool isRenderMathMLBlock() const { return false; }
 #endif // ENABLE(MATHML)
@@ -422,7 +424,6 @@ public:
     void drawArcForBoxSide(GraphicsContext*, int x, int y, float thickness, IntSize radius, int angleStart,
                            int angleSpan, BoxSide, Color, EBorderStyle, bool firstCorner);
 
-public:
     // The pseudo element style can be cached or uncached.  Use the cached method if the pseudo element doesn't respect
     // any pseudo classes (and therefore has no concept of changing state).
     RenderStyle* getCachedPseudoStyle(PseudoId, RenderStyle* parentStyle = 0) const;

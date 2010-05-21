@@ -58,6 +58,8 @@ namespace WebCore {
 
         virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
+        virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
+
         PassRefPtr<RenderStyle> createThumbStyle(const RenderStyle* parentStyle);
 
         int trackSize();
