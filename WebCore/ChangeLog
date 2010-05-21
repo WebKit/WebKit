@@ -1,3 +1,11 @@
+2010-05-20  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        <rdar://problem/7848154> Remove the dependency on Foundation's private __COCOA_FORMAL_PROTOCOLS_2__ define.
+
+        * platform/mac/EmptyProtocolDefinitions.h:
+
 2010-05-20  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.

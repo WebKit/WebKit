@@ -1,3 +1,11 @@
+2010-05-20  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        <rdar://problem/7848154> Remove the dependency on Foundation's private __COCOA_FORMAL_PROTOCOLS_2__ define.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+
 2010-05-20  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Daniel Bates.
