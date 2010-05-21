@@ -1,3 +1,16 @@
+2010-05-20  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Add dummy SSLKeyGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=39403
+
+        Add dummy implementation of SSLKeyGenerator.
+
+        * platform/brew/SSLKeyGeneratorBrew.cpp: Added.
+        (WebCore::WebCore::getSupportedKeySizes):
+        (WebCore::WebCore::signedPublicKeyAndChallengeString):
+
 2010-05-20  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Dan Bernstein.
