@@ -5095,3 +5095,7 @@ storage/indexeddb
 # This port doesn't support DeviceOrientation.
 fast/dom/DeviceOrientation
 fast/dom/Window/window-properties-on-device-orientation.html
+
+# [Qt] need an implementation of LayoutTestController::computedStyleIncludingVisitedInfo
+# https://bugs.webkit.org/show_bug.cgi?id=37759
+fast/history/self-is-visited.html

@@ -1,3 +1,15 @@
+2010-05-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Skip failing test until fix.
+
+        [Qt] need an implementation of LayoutTestController::computedStyleIncludingVisitedInfo
+        https://bugs.webkit.org/show_bug.cgi?id=37759
+
+        The implementation of LayoutTestController::computedStyleIncludingVisitedInfo
+        is incorrect now, this bug was revealed by r59956.
+
+        * platform/qt/Skipped: fast/history/self-is-visited.html skipped.
+
 2010-05-21  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Anders Carlsson.
