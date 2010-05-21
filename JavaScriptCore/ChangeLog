@@ -1,3 +1,15 @@
+2010-05-21  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Add !PLATFORM(BREWMP) guard for isMainThread
+        https://bugs.webkit.org/show_bug.cgi?id=39396
+
+        BREWMP sets ENABLE(SINGLE_THREADED), so it uses isMainThread from ThreadingNone.cpp.
+        Exclude isMainThread in MainThread.cpp.
+
+        * wtf/MainThread.cpp:
+
 2010-05-20  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.

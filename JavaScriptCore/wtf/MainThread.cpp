@@ -230,7 +230,7 @@ void setMainThreadCallbacksPaused(bool paused)
         scheduleDispatchFunctionsOnMainThread();
 }
 
-#if !PLATFORM(MAC) && !PLATFORM(QT)
+#if !PLATFORM(MAC) && !PLATFORM(QT) && !PLATFORM(BREWMP)
 bool isMainThread()
 {
     return currentThread() == mainThreadIdentifier;
