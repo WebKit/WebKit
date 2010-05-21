@@ -1,3 +1,21 @@
+2010-05-20  Viet-Trung Luu  <viettrungluu@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Don't rely on focused node to route mouse events to plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=39375
+        http://crbug.com/43935
+
+        On mouse down, do a hit test and check if a plugin was hit. If so, then
+        save the node for future mouse events (until mouse up or capture lost).
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::mouseDown):
+        (WebKit::WebViewImpl::handleInputEvent):
+        (WebKit::WebViewImpl::mouseCaptureLost):
+        * src/WebViewImpl.h: Remove m_haveMouseCapture; add m_mouseCaptureNode.
+
 2010-05-20  Dominic Mazzoni  <dmazzoni@chromium.org>
 
         Reviewed by Darin Fisher.

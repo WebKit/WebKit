@@ -239,7 +239,6 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_suggestionsPopup(0)
     , m_isTransparent(false)
     , m_tabsToLinks(false)
-    , m_haveMouseCapture(false)
 #if USE(ACCELERATED_COMPOSITING)
     , m_layerRenderer(0)
     , m_isAcceleratedCompositingActive(false)
@@ -337,19 +336,23 @@ void WebViewImpl::mouseDown(const WebMouseEvent& event)
     }
 
     m_lastMouseDownPoint = WebPoint(event.x, event.y);
-    m_haveMouseCapture = true;
 
-    // If a text field that has focus is clicked again, we should display the
-    // suggestions popup.
     RefPtr<Node> clickedNode;
     if (event.button == WebMouseEvent::ButtonLeft) {
+        IntPoint point(event.x, event.y);
+        point = m_page->mainFrame()->view()->windowToContents(point);
+        HitTestResult result(m_page->mainFrame()->eventHandler()->hitTestResultAtPoint(point, false));
+        Node* hitNode = result.innerNonSharedNode();
+
+        // Take capture on a mouse down on a plugin so we can send it mouse events.
+        if (hitNode && hitNode->renderer() && hitNode->renderer()->isEmbeddedObject())
+            m_mouseCaptureNode = hitNode;
+
+        // If a text field that has focus is clicked again, we should display the
+        // suggestions popup.
         RefPtr<Node> focusedNode = focusedWebCoreNode();
         if (focusedNode.get() && toHTMLInputElement(focusedNode.get())) {
-            IntPoint point(event.x, event.y);
-            point = m_page->mainFrame()->view()->windowToContents(point);
-            HitTestResult result(point);
-            result = m_page->mainFrame()->eventHandler()->hitTestResultAtPoint(point, false);
-            if (result.innerNonSharedNode() == focusedNode) {
+            if (hitNode == focusedNode) {
                 // Already focused text field was clicked, let's remember this.  If
                 // focus has not changed after the mouse event is processed, we'll
                 // trigger the autocomplete.
@@ -1001,36 +1004,36 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
     if (m_ignoreInputEvents)
         return true;
 
-    if (m_haveMouseCapture && WebInputEvent::isMouseEventType(inputEvent.type)) {
+    if (m_mouseCaptureNode.get() && WebInputEvent::isMouseEventType(inputEvent.type)) {
+        // Save m_mouseCaptureNode since mouseCaptureLost() will clear it.
+        RefPtr<Node> node = m_mouseCaptureNode;
+
         // Not all platforms call mouseCaptureLost() directly.
         if (inputEvent.type == WebInputEvent::MouseUp)
             mouseCaptureLost();
 
-        Node* node = focusedWebCoreNode();
-        if (node && node->renderer() && node->renderer()->isEmbeddedObject()) {
-            AtomicString eventType;
-            switch (inputEvent.type) {
-            case WebInputEvent::MouseMove:
-                eventType = eventNames().mousemoveEvent;
-                break;
-            case WebInputEvent::MouseLeave:
-                eventType = eventNames().mouseoutEvent;
-                break;
-            case WebInputEvent::MouseDown:
-                eventType = eventNames().mousedownEvent;
-                break;
-            case WebInputEvent::MouseUp:
-                eventType = eventNames().mouseupEvent;
-                break;
-            default:
-                ASSERT_NOT_REACHED();
-            }
-
-            node->dispatchMouseEvent(
-                  PlatformMouseEventBuilder(mainFrameImpl()->frameView(), *static_cast<const WebMouseEvent*>(&inputEvent)),
-                  eventType);
-            return true;
+        AtomicString eventType;
+        switch (inputEvent.type) {
+        case WebInputEvent::MouseMove:
+            eventType = eventNames().mousemoveEvent;
+            break;
+        case WebInputEvent::MouseLeave:
+            eventType = eventNames().mouseoutEvent;
+            break;
+        case WebInputEvent::MouseDown:
+            eventType = eventNames().mousedownEvent;
+            break;
+        case WebInputEvent::MouseUp:
+            eventType = eventNames().mouseupEvent;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
         }
+
+        node->dispatchMouseEvent(
+              PlatformMouseEventBuilder(mainFrameImpl()->frameView(), *static_cast<const WebMouseEvent*>(&inputEvent)),
+              eventType);
+        return true;
     }
 
     // FIXME: Remove m_currentInputEvent.
@@ -1097,7 +1100,7 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
 
 void WebViewImpl::mouseCaptureLost()
 {
-    m_haveMouseCapture = false;
+    m_mouseCaptureNode = 0;
 }
 
 void WebViewImpl::setFocus(bool enable)

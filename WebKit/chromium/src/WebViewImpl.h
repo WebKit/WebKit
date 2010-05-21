@@ -490,7 +490,8 @@ private:
     NotificationPresenterImpl m_notificationPresenter;
 #endif
 
-    bool m_haveMouseCapture;
+    // If set, the (plugin) node which has mouse capture.
+    RefPtr<WebCore::Node> m_mouseCaptureNode;
 
 #if USE(ACCELERATED_COMPOSITING)
     OwnPtr<WebCore::LayerRendererChromium> m_layerRenderer;
