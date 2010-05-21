@@ -6,7 +6,9 @@ include(../tests.pri)
 
 SOURCES += \
     tst_qscriptvalue.cpp \
-    tst_qscriptvalue_generated.cpp
+    tst_qscriptvalue_generated_init.cpp \
+    tst_qscriptvalue_generated_istype.cpp \
+    tst_qscriptvalue_generated_totype.cpp \
 
 HEADERS += \
     tst_qscriptvalue.h
