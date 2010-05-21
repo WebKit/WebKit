@@ -61,6 +61,7 @@ SET(JavaScriptCore_SOURCES
     jit/JITPropertyAccess32_64.cpp
     jit/JITArithmetic.cpp
     jit/JITCall.cpp
+    jit/JITCall32_64.cpp
     jit/JIT.cpp
 
     parser/Lexer.cpp

@@ -51,6 +51,7 @@ LOCAL_SRC_FILES := \
 	jit/JIT.cpp \
 	jit/JITArithmetic.cpp \
 	jit/JITCall.cpp \
+	jit/JITCall32_64.cpp \
 	jit/JITOpcodes.cpp \
 	jit/JITPropertyAccess.cpp \
 	jit/JITStubs.cpp \

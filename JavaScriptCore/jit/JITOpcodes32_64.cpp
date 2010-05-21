@@ -25,9 +25,10 @@
  */
 
 #include "config.h"
-#include "JIT.h"
 
-#if ENABLE(JIT) && USE(JSVALUE32_64)
+#if ENABLE(JIT)
+#if USE(JSVALUE32_64)
+#include "JIT.h"
 
 #include "JITInlineMethods.h"
 #include "JITStubCall.h"
@@ -1861,6 +1862,7 @@ void JIT::emit_op_profile_did_call(Instruction* currentInstruction)
     noProfiler.link(this);
 }
 
-}
+} // namespace JSC
 
-#endif // ENABLE(JIT) && USE(JSVALUE32_64)
+#endif // USE(JSVALUE32_64)
+#endif // ENABLE(JIT)

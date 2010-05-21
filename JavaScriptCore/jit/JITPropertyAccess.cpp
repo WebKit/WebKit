@@ -25,11 +25,9 @@
 
 #include "config.h"
 
-#if !USE(JSVALUE32_64)
-
-#include "JIT.h"
-
 #if ENABLE(JIT)
+#if !USE(JSVALUE32_64)
+#include "JIT.h"
 
 #include "CodeBlock.h"
 #include "GetterSetter.h"
@@ -1112,6 +1110,5 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
 
 } // namespace JSC
 
-#endif // ENABLE(JIT)
-
 #endif // !USE(JSVALUE32_64)
+#endif // ENABLE(JIT)

@@ -117,6 +117,7 @@
             'jit/JITArithmetic.cpp',
             'jit/JITArithmetic32_64.cpp',
             'jit/JITCall.cpp',
+            'jit/JITCall32_64.cpp',
             'jit/JITCode.h',
             'jit/JITInlineMethods.h',
             'jit/JITOpcodes.cpp',

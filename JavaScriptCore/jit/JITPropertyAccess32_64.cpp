@@ -25,11 +25,9 @@
 
 #include "config.h"
 
-#if USE(JSVALUE32_64)
-
-#include "JIT.h"
-
 #if ENABLE(JIT)
+#if USE(JSVALUE32_64)
+#include "JIT.h"
 
 #include "CodeBlock.h"
 #include "JITInlineMethods.h"
@@ -1182,7 +1180,5 @@ void JIT::emitSlow_op_get_by_pname(Instruction* currentInstruction, Vector<SlowC
 
 } // namespace JSC
 
+#endif // USE(JSVALUE32_64)
 #endif // ENABLE(JIT)
-
-#endif // ENABLE(JSVALUE32_64)
-

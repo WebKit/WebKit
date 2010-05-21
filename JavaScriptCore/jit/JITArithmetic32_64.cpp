@@ -24,9 +24,10 @@
 */
 
 #include "config.h"
-#include "JIT.h"
 
 #if ENABLE(JIT)
+#if USE(JSVALUE32_64)
+#include "JIT.h"
 
 #include "CodeBlock.h"
 #include "JITInlineMethods.h"
@@ -45,8 +46,6 @@
 using namespace std;
 
 namespace JSC {
-
-#if USE(JSVALUE32_64)
 
 void JIT::emit_op_negate(Instruction* currentInstruction)
 {
@@ -1404,8 +1403,7 @@ void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>
 
 /* ------------------------------ END: OP_MOD ------------------------------ */
 
+} // namespace JSC
+
 #endif // USE(JSVALUE32_64)
-
-}
-
 #endif // ENABLE(JIT)

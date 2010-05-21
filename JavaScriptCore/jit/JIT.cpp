@@ -24,6 +24,8 @@
  */
 
 #include "config.h"
+
+#if ENABLE(JIT)
 #include "JIT.h"
 
 // This probably does not belong here; adding here for now as a quick Windows build fix.
@@ -31,8 +33,6 @@
 #include "MacroAssembler.h"
 JSC::MacroAssemblerX86Common::SSE2CheckState JSC::MacroAssemblerX86Common::s_sse2CheckState = NotCheckedSSE2;
 #endif
-
-#if ENABLE(JIT)
 
 #include "CodeBlock.h"
 #include "Interpreter.h"

@@ -25,9 +25,8 @@
  */
 
 #include "config.h"
-#include "JIT.h"
-
 #if ENABLE(JIT)
+#include "JIT.h"
 
 #include "JITInlineMethods.h"
 #include "JITStubCall.h"

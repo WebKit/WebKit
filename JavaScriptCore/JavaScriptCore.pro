@@ -101,6 +101,7 @@ SOURCES += \
     jit/JITArithmetic.cpp \
     jit/JITArithmetic32_64.cpp \
     jit/JITCall.cpp \
+    jit/JITCall32_64.cpp \
     jit/JIT.cpp \
     jit/JITOpcodes.cpp \
     jit/JITOpcodes32_64.cpp \

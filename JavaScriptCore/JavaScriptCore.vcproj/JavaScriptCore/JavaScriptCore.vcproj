@@ -1653,6 +1653,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\jit\JITCall32_64.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\jit\JITCode.h"
 				>
 			</File>

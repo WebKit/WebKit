@@ -86,6 +86,7 @@ javascriptcore_sources += \
 	JavaScriptCore/jit/JITOpcodes.cpp \
 	JavaScriptCore/jit/JITOpcodes32_64.cpp \
 	JavaScriptCore/jit/JITCall.cpp \
+	JavaScriptCore/jit/JITCall32_64.cpp \
 	JavaScriptCore/jit/JITCode.h \
 	JavaScriptCore/jit/JITPropertyAccess.cpp \
 	JavaScriptCore/jit/JITPropertyAccess32_64.cpp \
