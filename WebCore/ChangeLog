@@ -1,3 +1,39 @@
+2010-05-20  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket handshake incompatible change in draft-hixie-thewebsocketprotocol-76
+        https://bugs.webkit.org/show_bug.cgi?id=35572
+
+        WebSocket opening handshake is changed.  New protocol draft could be found at http://www.whatwg.org/specs/web-socket-protocol/
+        It requires https://bugs.webkit.org/show_bug.cgi?id=38034 to pass websocket tests.
+
+        * websockets/WebSocketHandshake.cpp:
+        (WebCore::extractResponseCode):
+        add lineLength parameter to return length of status line.
+        (WebCore::hostName): Added.
+        (WebCore::generateSecWebSocketKey): Added.
+        (WebCore::generateKey3): Added.
+        (WebCore::setChallengeNumber): Added.
+        (WebCore::generateChallengeResponseExpected): Added.
+        (WebCore::WebSocketHandshake::WebSocketHandshake):
+         generate challenge response key and expected data.
+        (WebCore::WebSocketHandshake::clientLocation):
+         use hostName.
+        (WebCore::WebSocketHandshake::clientHandshakeMessage):
+         changed for draft 76 spec.
+        (WebCore::WebSocketHandshake::clientHandshakeRequest):
+        (WebCore::WebSocketHandshake::readServerHandshake):
+         changed for draft 76 spec.
+         m_mode is managed in this method.
+        (WebCore::WebSocketHandshake::readHTTPHeaders):
+         change error log messages.
+        (WebCore::WebSocketHandshake::processHeaders):
+         chagned for draft 76 spec.
+        (WebCore::WebSocketHandshake::checkResponseHeaders):
+         return boolean whether response header is ok or not and not change m_mode in it.
+        * websockets/WebSocketHandshake.h:
+
 2010-05-20  Adam Roben  <aroben@apple.com>
 
         Stop leaking all CACFContexts

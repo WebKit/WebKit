@@ -1,3 +1,17 @@
+2010-05-20  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket handshake incompatible change in draft-hixie-thewebsocketprotocol-76
+        https://bugs.webkit.org/show_bug.cgi?id=35572
+
+        Fix LayoutTests for new WebSocket protocol.
+        It requires https://bugs.webkit.org/show_bug.cgi?id=38034 to pass websocket tests.
+
+        * websocket/tests/handshake-error-expected.txt: Update expected data.
+        * websocket/tests/handshake-error_wsh.py: Without CRLF, the wsh will sends "ThisWillCauseHandshakeErrorHTTP/1.1 101 WebSocket Protocol Handshake\r\n", which is legal for the first line of draft 76 WebSocket opening handshake. (4.1 Opening Handhshake, step 28 to 30).  To fail handshake, it needs \r\n.
+        * websocket/tests/long-invalid-header-expected.txt:  Originally, it expects Upgrade header after status line.  In draft 76, order is not important.  But "pppp..\r\n" would fail because it misses ":" (end of name) before \r.
+
 2010-05-20  Victor Wang  <victorw@chromium.org>
 
         Unreviewed. Update test expectations for chromium.
