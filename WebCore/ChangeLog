@@ -1,3 +1,13 @@
+2010-05-21  Tasuku Suzuki  <tasuku.suzuki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix compilation with QT_NO_GRAPHICSEFFECT
+        https://bugs.webkit.org/show_bug.cgi?id=38324
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQtImpl::flushChanges):
+
 2010-05-21  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Darin Fisher.
