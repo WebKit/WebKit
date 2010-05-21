@@ -1,3 +1,18 @@
+2010-05-21  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Darin Fisher.
+
+        Fix the HistoryController::pushState.
+
+        It should be possible to call the pushState method from
+        the first page in a window.
+
+        history.pushState doesn't work for the first page in a window.
+        https://bugs.webkit.org/show_bug.cgi?id=39418
+
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::pushState):
+
 2010-05-21  Victoria Kirst  <vrk@google.com>
 
         Reviewed by David Levin.

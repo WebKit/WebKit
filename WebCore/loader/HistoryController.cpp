@@ -644,7 +644,7 @@ void HistoryController::updateBackForwardListClippedAtTarget(bool doClip)
 
 void HistoryController::pushState(PassRefPtr<SerializedScriptValue> stateObject, const String& title, const String& urlString)
 {
-    if (!m_previousItem)
+    if (!m_currentItem)
         return;
 
     Page* page = m_frame->page();
