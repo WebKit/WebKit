@@ -118,7 +118,7 @@
 
 #include <time.h>
 
-#if !defined(BUILDING_WX__) && !defined(ANDROID)
+#if !defined(BUILDING_WX__) && !defined(ANDROID) && !defined(BUILDING_BREWMP__)
 #include <CoreFoundation/CoreFoundation.h>
 #ifdef WIN_CAIRO
 #include <ConditionalMacros.h>
