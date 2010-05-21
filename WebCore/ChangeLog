@@ -1,3 +1,12 @@
+2010-05-21  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Prospective Qt/Mac build fix
+
+        My cpp is paranoid and doesn't like #if Q_WS_MAC:
+        error: #if with no expression
+
+        * page/qt/EventHandlerQt.cpp:
+
 2010-05-21  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Eric Seidel.
