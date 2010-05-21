@@ -393,5 +393,15 @@ String validationMessageStepMismatchText()
     return String();
 }
 
+String missingPluginText()
+{
+    return "Missing Plug-in";
+}
+
+String crashedPluginText()
+{
+    return "Plug-in Crashed";
+}
+
 } // namespace WebCore
 

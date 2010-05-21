@@ -1,3 +1,16 @@
+2010-05-21  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Add missing localized string symbols.
+        https://bugs.webkit.org/show_bug.cgi?id=39394
+
+        Add missingPluginText and crashedPluginText.
+
+        * platform/brew/LocalizedStringsBrew.cpp:
+        (WebCore::missingPluginText):
+        (WebCore::crashedPluginText):
+
 2010-05-21  Steve Block  <steveblock@google.com>
 
         Reviewed by Alexey Proskuryakov.
