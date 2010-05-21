@@ -15,6 +15,7 @@ var fbo;
 var depthBuffer;
 var stencilBuffer;
 var depthStencilBuffer;
+var colorBuffer;
 var width = 2;
 var height = 2;
 
@@ -41,6 +42,15 @@ function testAttachments(attachment0, buffer0, attachment1, buffer1, isConflicte
         gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment1, gl.RENDERBUFFER, buffer1);
         shouldBe("gl.getError()", "gl.NO_ERROR");
     }
+}
+
+function testColorRenderbuffer(internalformat)
+{
+    shouldBeNonNull("colorBuffer = gl.createRenderbuffer()");
+    gl.bindRenderbuffer(gl.RENDERBUFFER, colorBuffer);
+    gl.renderbufferStorage(gl.RENDERBUFFER, internalformat, width, height);
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    testAttachment(gl.COLOR_ATTACHMENT0, colorBuffer, false);
 }
 
 description("Test framebuffer object attachment behaviors");
@@ -91,6 +101,15 @@ debug("Attach stencil, then depthStencil, causing conflict");
 testAttachments(gl.DEPTH_ATTACHMENT, depthBuffer, gl.DEPTH_STENCIL_ATTACHMENT, depthStencilBuffer, true);
 debug("Attach depthStencil, then stencil, causing conflict");
 testAttachments(gl.DEPTH_STENCIL_ATTACHMENT, depthStencilBuffer, gl.STENCIL_ATTACHMENT, stencilBuffer, true);
+
+debug("Attach color renderbuffer with internalformat == RGBA4");
+testColorRenderbuffer(gl.RGBA4);
+
+debug("Attach color renderbuffer with internalformat == RGB5_A1");
+testColorRenderbuffer(gl.RGB5_A1);
+
+debug("Attach color renderbuffer with internalformat == RGB565");
+testColorRenderbuffer(gl.RGB565);
 
 successfullyParsed = true;
 </script>

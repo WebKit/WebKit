@@ -1,3 +1,13 @@
+2010-05-20  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Map RGBA4/RGB5_A1 to RGBA and RGB565 to RGB in RenderbufferStorage
+        https://bugs.webkit.org/show_bug.cgi?id=39077
+
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+        (WebKit::WebGraphicsContext3DDefaultImpl::renderbufferStorage): Mapping the enums.
+
 2010-05-20  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Adam Barth.

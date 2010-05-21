@@ -73,6 +73,21 @@ PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.INVALID_OPERATION
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
+Attach color renderbuffer with internalformat == RGBA4
+PASS colorBuffer = gl.createRenderbuffer() is non-null.
+PASS gl.getError() is gl.NO_ERROR
+PASS fbo = gl.createFramebuffer() is non-null.
+PASS gl.getError() is gl.NO_ERROR
+Attach color renderbuffer with internalformat == RGB5_A1
+PASS colorBuffer = gl.createRenderbuffer() is non-null.
+PASS gl.getError() is gl.NO_ERROR
+PASS fbo = gl.createFramebuffer() is non-null.
+PASS gl.getError() is gl.NO_ERROR
+Attach color renderbuffer with internalformat == RGB565
+PASS colorBuffer = gl.createRenderbuffer() is non-null.
+PASS gl.getError() is gl.NO_ERROR
+PASS fbo = gl.createFramebuffer() is non-null.
+PASS gl.getError() is gl.NO_ERROR
 PASS successfullyParsed is true
 
 TEST COMPLETE
