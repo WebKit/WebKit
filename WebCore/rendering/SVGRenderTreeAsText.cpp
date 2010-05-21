@@ -433,8 +433,8 @@ static void writeRenderSVGTextBox(TextStream& ts, const RenderBlock& text)
     Vector<SVGTextChunk>& chunks = const_cast<Vector<SVGTextChunk>& >(box->svgTextChunks());
     ts << " at (" << text.x() << "," << text.y() << ") size " << box->width() << "x" << box->height() << " contains " << chunks.size() << " chunk(s)";
 
-    if (text.parent() && (text.parent()->style()->color() != text.style()->color()))
-        writeNameValuePair(ts, "color", text.style()->color().name());
+    if (text.parent() && (text.parent()->style()->visitedDependentColor(CSSPropertyColor) != text.style()->visitedDependentColor(CSSPropertyColor)))
+        writeNameValuePair(ts, "color", text.style()->visitedDependentColor(CSSPropertyColor).name());
 }
 
 static inline bool containsInlineTextBox(SVGTextChunk& chunk, SVGInlineTextBox* box)

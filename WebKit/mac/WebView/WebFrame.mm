@@ -1037,7 +1037,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     RenderObject* bodyRenderer = body->renderer();
     if (!bodyRenderer)
         return nil;
-    Color color = bodyRenderer->style()->backgroundColor();
+    Color color = bodyRenderer->style()->visitedDependentColor(CSSPropertyBackgroundColor);
     if (!color.isValid())
         return nil;
     return nsColor(color);

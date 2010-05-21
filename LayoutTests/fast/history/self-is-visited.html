@@ -11,7 +11,7 @@ function compareStyles()
     if (window.layoutTestController) {
         var firstStyle = window.layoutTestController.computedStyleIncludingVisitedInfo(document.getElementById('one'));
         var secondStyle = window.layoutTestController.computedStyleIncludingVisitedInfo(document.getElementById('two'));
-        if (firstStyle.color == secondStyle.color) {
+        if (firstStyle.color == secondStyle.color || firstStyle.backgroundColor == secondStyle.backgroundColor) {
             document.getElementById('result').innerHTML = 'FAIL';
             return;
         }
@@ -19,15 +19,15 @@ function compareStyles()
     
     var firstStyle = window.getComputedStyle(document.getElementById('one'), "");
     var secondStyle = window.getComputedStyle(document.getElementById('two'), "");
-    if (firstStyle.color != secondStyle.color) {
+    if (firstStyle.color != secondStyle.color || firstStyle.backgroundColor != secondStyle.backgroundColor) {
         document.getElementById('result').innerHTML = 'FAIL';
         return;
     }
 }
 </script>
 <style>
-:link { color: green }
-:visited { color: orange }
+:link { color: green; background-color: white }
+:visited { color: orange; background-color: black }
 </style>
 </head>
 <body onload="compareStyles()">

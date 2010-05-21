@@ -90,13 +90,13 @@ static int angleToGlyphOrientation(float angle)
     return -1;
 }
 
-static Color colorFromSVGColorCSSValue(CSSValue* value, RenderStyle* style)
+static Color colorFromSVGColorCSSValue(CSSValue* value, const Color& fgColor)
 {
     ASSERT(value->isSVGColor());
     SVGColor* c = static_cast<SVGColor*>(value);
     Color color;
     if (c->colorType() == SVGColor::SVG_COLORTYPE_CURRENTCOLOR)
-        color = style->color();
+        color = fgColor;
     else
         color = c->color();
     return color;
@@ -454,13 +454,13 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
         case CSSPropertyStopColor:
         {
             HANDLE_INHERIT_AND_INITIAL(stopColor, StopColor);
-            svgstyle->setStopColor(colorFromSVGColorCSSValue(value, m_style.get()));
+            svgstyle->setStopColor(colorFromSVGColorCSSValue(value, m_style->color()));
             break;
         }
        case CSSPropertyLightingColor:
         {
             HANDLE_INHERIT_AND_INITIAL(lightingColor, LightingColor);
-            svgstyle->setLightingColor(colorFromSVGColorCSSValue(value, m_style.get()));
+            svgstyle->setLightingColor(colorFromSVGColorCSSValue(value, m_style->color()));
             break;
         }
         case CSSPropertyFloodOpacity:
@@ -487,7 +487,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
                 svgstyle->setFloodColor(SVGRenderStyle::initialFloodColor());
                 return;
             }
-            svgstyle->setFloodColor(colorFromSVGColorCSSValue(value, m_style.get()));
+            svgstyle->setFloodColor(colorFromSVGColorCSSValue(value, m_style->color()));
             break;
         }
         case CSSPropertyGlyphOrientationHorizontal:

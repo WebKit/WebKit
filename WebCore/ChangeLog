@@ -1,3 +1,145 @@
+2010-05-21  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39420, :visited not working with background-color.
+
+        Make the RenderStyle color accessors private.  This forces callers to use visitedDependentColor
+        instead (or to make the decision to become friends of the RenderStyle class in order to get access
+        to the real style information).
+
+        Modified history/self-is-visited.html to also test background colors.
+
+        * WebCore.base.exp:
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isTableExposableThroughAccessibility):
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (AXAttributeStringSetStyle):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::currentColorOrValidColor):
+        * css/CSSComputedStyleDeclaration.h:
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::colorFromSVGColorCSSValue):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::editingStyleAtPosition):
+        (WebCore::prepareEditingStyleToApplyAt):
+        (WebCore::removeStylesAddedByNode):
+        (WebCore::fontColorChangesComputedStyle):
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded):
+        * editing/ApplyStyleCommand.h:
+        (WebCore::):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        (WebCore::CompositeEditCommand::breakOutOfEmptyListItem):
+        * editing/DeleteButtonController.cpp:
+        (WebCore::isDeletableElement):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::saveTypingStyleState):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::calculateStyleBeforeInsertion):
+        * editing/RemoveFormatCommand.cpp:
+        (WebCore::RemoveFormatCommand::doApply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::handleStyleSpansBeforeInsertion):
+        (WebCore::ReplaceSelectionCommand::handleStyleSpans):
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::paintCaret):
+        * editing/markup.cpp:
+        (WebCore::createMarkup):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::ensurePropertyMap):
+        * page/animation/AnimationBase.h:
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::fontAttributesForSelectionStart):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        (WebCore::EllipsisBox::paintSelection):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        (WebCore::RenderBox::paintRootBoxDecorations):
+        (WebCore::RenderBox::paintBoxDecorationsWithSize):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::paintColumnBorder):
+        (WebCore::RenderFrameSet::paintRowBorder):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::rendererBackgroundColor):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::paintItemBackground):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::itemStyle):
+        (WebCore::RenderMenuList::itemBackgroundColor):
+        (WebCore::RenderMenuList::menuStyle):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::selectionBackgroundColor):
+        (WebCore::RenderObject::selectionForegroundColor):
+        * rendering/RenderSVGResource.cpp:
+        (WebCore::RenderSVGResource::adjustColorForPseudoRules):
+        (WebCore::RenderSVGResource::fillPaintingResource):
+        (WebCore::RenderSVGResource::strokePaintingResource):
+        * rendering/RenderSVGResource.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintBoxDecorations):
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::bgColor):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::adjustInnerTextStyle):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::menuStyle):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isControlStyled):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMenuListButton):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        (WebCore::write):
+        * rendering/RenderTreeAsText.h:
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintSelection):
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeRenderSVGTextBox):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::colorIncludingFallback):
+        (WebCore::RenderStyle::visitedDependentColor):
+        * rendering/style/RenderStyle.h:
+        (WebCore::):
+        (WebCore::InheritedFlags::hasBackground):
+        (WebCore::InheritedFlags::borderLeftStyle):
+        (WebCore::InheritedFlags::borderRightStyle):
+        (WebCore::InheritedFlags::borderTopStyle):
+        (WebCore::InheritedFlags::borderBottomStyle):
+        (WebCore::InheritedFlags::textShadow):
+        (WebCore::InheritedFlags::textStrokeWidth):
+        (WebCore::InheritedFlags::hasNormalColumnGap):
+        (WebCore::InheritedFlags::borderLeftColor):
+        (WebCore::InheritedFlags::borderRightColor):
+        (WebCore::InheritedFlags::borderTopColor):
+        (WebCore::InheritedFlags::borderBottomColor):
+        (WebCore::InheritedFlags::backgroundColor):
+        (WebCore::InheritedFlags::color):
+        (WebCore::InheritedFlags::columnRuleColor):
+        (WebCore::InheritedFlags::outlineColor):
+        (WebCore::InheritedFlags::textFillColor):
+        (WebCore::InheritedFlags::textStrokeColor):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::adjustForCurrentColor):
+
 2010-05-21  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

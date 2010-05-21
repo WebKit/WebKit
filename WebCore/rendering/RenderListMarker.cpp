@@ -1009,7 +1009,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
         context->fillRect(selRect, selectionBackgroundColor(), style()->colorSpace());
     }
 
-    const Color color(style()->color());
+    const Color color(style()->visitedDependentColor(CSSPropertyColor));
     context->setStrokeColor(color, style()->colorSpace());
     context->setStrokeStyle(SolidStroke);
     context->setStrokeThickness(1.0f);

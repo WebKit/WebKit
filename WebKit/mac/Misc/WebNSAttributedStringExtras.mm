@@ -154,12 +154,12 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
         RenderStyle* style = renderer->style();
         NSFont *font = style->font().primaryFont()->getNSFont();
         [attrs.get() setObject:font forKey:NSFontAttributeName];
-        if (style->color().isValid())
-            [attrs.get() setObject:nsColor(style->color()) forKey:NSForegroundColorAttributeName];
+        if (style->visitedDependentColor(CSSPropertyColor).isValid())
+            [attrs.get() setObject:nsColor(style->visitedDependentColor(CSSPropertyColor)) forKey:NSForegroundColorAttributeName];
         else
             [attrs.get() removeObjectForKey:NSForegroundColorAttributeName];
-        if (style->backgroundColor().isValid())
-            [attrs.get() setObject:nsColor(style->backgroundColor()) forKey:NSBackgroundColorAttributeName];
+        if (style->visitedDependentColor(CSSPropertyBackgroundColor).isValid())
+            [attrs.get() setObject:nsColor(style->visitedDependentColor(CSSPropertyBackgroundColor)) forKey:NSBackgroundColorAttributeName];
         else
             [attrs.get() removeObjectForKey:NSBackgroundColorAttributeName];
 

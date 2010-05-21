@@ -159,7 +159,7 @@ private:
     void updateImageContents();
 
     bool rendererHasBackground() const;
-    const Color& rendererBackgroundColor() const;
+    const Color rendererBackgroundColor() const;
 
     bool hasNonCompositingContent() const;
     

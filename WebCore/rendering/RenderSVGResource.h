@@ -44,6 +44,7 @@ enum RenderSVGResourceMode {
     ApplyToTextMode    = 1 << 3 // used in combination with ApplyTo{Fill|Stroke}Mode
 };
 
+class Color;
 class FloatRect;
 class GraphicsContext;
 class RenderObject;
@@ -78,6 +79,9 @@ public:
     static RenderSVGResource* strokePaintingResource(const RenderObject*, const RenderStyle*);
     static RenderSVGResourceSolidColor* sharedSolidPaintingResource();
 
+private:
+    static void adjustColorForPseudoRules(const RenderStyle*, bool useFillPaint, Color&);
+    
 protected:
     void markForLayoutAndResourceInvalidation(RenderObject*);
 };

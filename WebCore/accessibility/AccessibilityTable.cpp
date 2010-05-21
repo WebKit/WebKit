@@ -126,7 +126,7 @@ bool AccessibilityTable::isTableExposableThroughAccessibility()
     RenderStyle* tableStyle = table->style();
     if (!tableStyle)
         return false;
-    Color tableBGColor = tableStyle->backgroundColor();
+    Color tableBGColor = tableStyle->visitedDependentColor(CSSPropertyBackgroundColor);
     
     // check enough of the cells to find if the table matches our criteria
     // Criteria: 
@@ -169,7 +169,7 @@ bool AccessibilityTable::isTableExposableThroughAccessibility()
             
             // if the cell has a different color from the table and there is cell spacing,
             // then it is probably a data table cell (spacing and colors take the place of borders)
-            Color cellColor = renderStyle->backgroundColor();
+            Color cellColor = renderStyle->visitedDependentColor(CSSPropertyBackgroundColor);
             if (table->hBorderSpacing() > 0 && table->vBorderSpacing() > 0
                 && tableBGColor != cellColor && cellColor.alpha() != 1)
                 backgroundDifferenceCellCount++;

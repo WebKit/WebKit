@@ -994,7 +994,7 @@ bool RenderThemeMac::paintMenuListButton(RenderObject* o, const RenderObject::Pa
     
     paintInfo.context->save();
 
-    paintInfo.context->setFillColor(o->style()->color(), o->style()->colorSpace());
+    paintInfo.context->setFillColor(o->style()->visitedDependentColor(CSSPropertyColor), o->style()->colorSpace());
     paintInfo.context->setStrokeStyle(NoStroke);
 
     FloatPoint arrow1[3];

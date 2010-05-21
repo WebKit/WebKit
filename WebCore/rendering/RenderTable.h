@@ -25,6 +25,7 @@
 #ifndef RenderTable_h
 #define RenderTable_h
 
+#include "CSSPropertyNames.h"
 #include "RenderBlock.h"
 #include <wtf/Vector.h>
 
@@ -50,7 +51,7 @@ public:
     int borderTop() const;
     int borderBottom() const;
     
-    const Color& bgColor() const { return style()->backgroundColor(); }
+    const Color bgColor() const { return style()->visitedDependentColor(CSSPropertyBackgroundColor); }
 
     int outerBorderTop() const;
     int outerBorderBottom() const;

@@ -44,7 +44,7 @@ static inline void registerPendingResource(const AtomicString& id, const SVGPain
     object->document()->accessSVGExtensions()->addPendingResource(id, static_cast<SVGStyledElement*>(svgElement));
 }
 
-static inline void adjustColorForPseudoRules(const RenderStyle* style, bool useFillPaint, Color& color)
+inline void RenderSVGResource::adjustColorForPseudoRules(const RenderStyle* style, bool useFillPaint, Color& color)
 {
     if (style->insideLink() != InsideVisitedLink)
         return;
@@ -95,7 +95,7 @@ RenderSVGResource* RenderSVGResource::fillPaintingResource(const RenderObject* o
 
         Color fillColor;
         if (fillPaint->paintType() == SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR)
-            fillColor = style->color();
+            fillColor = style->visitedDependentColor(CSSPropertyColor);
         else
             fillColor = fillPaint->color();
 
@@ -149,7 +149,7 @@ RenderSVGResource* RenderSVGResource::strokePaintingResource(const RenderObject*
 
         Color strokeColor;
         if (strokePaint->paintType() == SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR)
-            strokeColor = style->color();
+            strokeColor = style->visitedDependentColor(CSSPropertyColor);
         else
             strokeColor = strokePaint->color();
 

@@ -416,7 +416,7 @@ static const int editingStyleProperties[] = {
 };
 size_t numEditingStyleProperties = sizeof(editingStyleProperties)/sizeof(editingStyleProperties[0]);
 
-PassRefPtr<CSSMutableStyleDeclaration> editingStyleAtPosition(Position pos, ShouldIncludeTypingStyle shouldIncludeTypingStyle)
+PassRefPtr<CSSMutableStyleDeclaration> ApplyStyleCommand::editingStyleAtPosition(Position pos, ShouldIncludeTypingStyle shouldIncludeTypingStyle)
 {
     RefPtr<CSSComputedStyleDeclaration> computedStyleAtPosition = pos.computedStyle();
     RefPtr<CSSMutableStyleDeclaration> style;
@@ -454,7 +454,7 @@ void prepareEditingStyleToApplyAt(CSSMutableStyleDeclaration* editingStyle, Posi
     // ReplaceSelectionCommand::handleStyleSpans() requires that this function only removes the editing style.
     // If this function was modified in the future to delete all redundant properties, then add a boolean value to indicate
     // which one of editingStyleAtPosition or computedStyle is called.
-    RefPtr<CSSMutableStyleDeclaration> style = editingStyleAtPosition(pos);
+    RefPtr<CSSMutableStyleDeclaration> style = ApplyStyleCommand::editingStyleAtPosition(pos);
     style->diff(editingStyle);
 
     // if alpha value is zero, we don't add the background color.
@@ -472,8 +472,8 @@ void removeStylesAddedByNode(CSSMutableStyleDeclaration* editingStyle, Node* nod
 {
     ASSERT(node);
     ASSERT(node->parentNode());
-    RefPtr<CSSMutableStyleDeclaration> parentStyle = editingStyleAtPosition(Position(node->parentNode(), 0));
-    RefPtr<CSSMutableStyleDeclaration> style = editingStyleAtPosition(Position(node, 0));
+    RefPtr<CSSMutableStyleDeclaration> parentStyle = ApplyStyleCommand::editingStyleAtPosition(Position(node->parentNode(), 0));
+    RefPtr<CSSMutableStyleDeclaration> style = ApplyStyleCommand::editingStyleAtPosition(Position(node, 0));
     parentStyle->diff(style.get());
     style->diff(editingStyle);
 }
@@ -1757,10 +1757,10 @@ void ApplyStyleCommand::addBlockStyle(const StyleChange& styleChange, HTMLElemen
     setNodeAttribute(block, styleAttr, cssText);
 }
 
-static bool fontColorChangesComputedStyle(RenderStyle* computedStyle, StyleChange styleChange)
+static bool fontColorChangesComputedStyle(const Color& computedStyleColor, StyleChange styleChange)
 {
     if (styleChange.applyFontColor()) {
-        if (Color(styleChange.fontColor()) != computedStyle->color())
+        if (Color(styleChange.fontColor()) != computedStyleColor)
             return true;
     }
     return false;
@@ -1801,7 +1801,7 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclaration *style
         // We only want to insert a font element if it will end up changing the style of the
         // text somehow. Otherwise it will be a garbage node that will create problems for us
         // most notably when we apply a blockquote style for a message reply.
-        if (fontColorChangesComputedStyle(computedStyle, styleChange)
+        if (fontColorChangesComputedStyle(computedStyle->color(), styleChange)
                 || fontFaceChangesComputedStyle(computedStyle, styleChange)
                 || fontSizeChangesComputedStyle(computedStyle, styleChange)) {
             if (styleChange.applyFontColor())

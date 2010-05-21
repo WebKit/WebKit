@@ -849,7 +849,7 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, int tx, i
     int w = width();
     int h = height();
 
-    Color c = backgroundObject->style()->backgroundColor();
+    Color c = backgroundObject->style()->visitedDependentColor(CSSPropertyBackgroundColor);
     const FillLayer* bgLayer = backgroundObject->style()->backgroundLayers();
 
     if (bgLayer->hasImage() || c.isValid()) {

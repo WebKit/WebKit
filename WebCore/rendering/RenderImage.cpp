@@ -397,7 +397,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 
             if (!m_altText.isEmpty()) {
                 String text = document()->displayStringModifiedByEncoding(m_altText);
-                context->setFillColor(style()->color(), style()->colorSpace());
+                context->setFillColor(style()->visitedDependentColor(CSSPropertyColor), style()->colorSpace());
                 int ax = tx + leftBorder + leftPad;
                 int ay = ty + topBorder + topPad;
                 const Font& font = style()->font();
