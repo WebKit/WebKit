@@ -1,3 +1,16 @@
+2010-05-21  Oliver Hunt  <oliver@apple.com>
+
+        Qt buildfix #1
+
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtRuntimeObject::QtRuntimeObject):
+        (JSC::Bindings::QtInstance::newRuntimeObject):
+        (JSC::Bindings::QtInstance::getMethod):
+        * bridge/qt/qt_pixmapruntime.cpp:
+        (JSC::Bindings::QtPixmapRuntimeObject::QtPixmapRuntimeObject):
+        (JSC::Bindings::QtPixmapInstance::getMethod):
+        (JSC::Bindings::QtPixmapInstance::createRuntimeObject):
+
 2010-05-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
