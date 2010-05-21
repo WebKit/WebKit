@@ -34,7 +34,7 @@ navigator.geolocation.getCurrentPosition(function(p) {
     testZeroMaximumAge();
 }, function(e) {
     testFailed('Error callback invoked unexpectedly');
-    window.layoutTestController.notifyDone();
+    finishJSTest();
 });
 
 function testZeroMaximumAge() {
@@ -46,7 +46,7 @@ function testZeroMaximumAge() {
         testNonZeroMaximumAge();
     }, function(e) {
         testFailed('Error callback invoked unexpectedly');
-        window.layoutTestController.notifyDone();
+        finishJSTest();
     });
 }
 
@@ -59,7 +59,7 @@ function testNonZeroMaximumAge() {
         testZeroMaximumAgeError();
     }, function(e) {
         testFailed('Error callback invoked unexpectedly');
-        window.layoutTestController.notifyDone();
+        finishJSTest();
     }, {maximumAge: 1000});
 }
 
@@ -67,15 +67,14 @@ function testZeroMaximumAgeError() {
     // The default maximumAge is zero, so we expect the error from the service.
     navigator.geolocation.getCurrentPosition(function(p) {
         testFailed('Success callback invoked unexpectedly');
-        window.layoutTestController.notifyDone();
+        finishJSTest();
     }, function(e) {
         checkError(e);
-        debug('<br /><span class="pass">TEST COMPLETE</span>');
-        window.layoutTestController.notifyDone();
+        finishJSTest();
     });
 }
 
 window.layoutTestController.waitUntilDone();
 
-var isAsynchronous = true;
-var successfullyParsed = true;
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;

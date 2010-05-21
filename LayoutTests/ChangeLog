@@ -1,3 +1,94 @@
+2010-05-21  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow
+
+        Geolocation LayoutTests should use standard template pattern
+        https://bugs.webkit.org/show_bug.cgi?id=39301
+
+        Renamed resources to script-tests, updated TEMPLATE.html to use standard
+        js-test-post.js, ran make-script-test-wrappers and updated test scripts and
+        expected results.
+
+        * fast/dom/Geolocation/argument-types.html:
+        * fast/dom/Geolocation/callback-exception-expected.txt:
+        * fast/dom/Geolocation/callback-exception.html:
+        * fast/dom/Geolocation/enabled.html:
+        * fast/dom/Geolocation/error-expected.txt:
+        * fast/dom/Geolocation/error.html:
+        * fast/dom/Geolocation/maximum-age-expected.txt:
+        * fast/dom/Geolocation/maximum-age.html:
+        * fast/dom/Geolocation/notimer-after-unload.html:
+        * fast/dom/Geolocation/permission-denied-already-clear-watch-expected.txt:
+        * fast/dom/Geolocation/permission-denied-already-clear-watch.html:
+        * fast/dom/Geolocation/permission-denied-already-error-expected.txt:
+        * fast/dom/Geolocation/permission-denied-already-error.html:
+        * fast/dom/Geolocation/permission-denied-already-success-expected.txt:
+        * fast/dom/Geolocation/permission-denied-already-success.html:
+        * fast/dom/Geolocation/permission-denied-expected.txt:
+        * fast/dom/Geolocation/permission-denied-stops-watches-expected.txt:
+        * fast/dom/Geolocation/permission-denied-stops-watches.html:
+        * fast/dom/Geolocation/permission-denied.html:
+        * fast/dom/Geolocation/position-string-expected.txt:
+        * fast/dom/Geolocation/position-string.html:
+        * fast/dom/Geolocation/reentrant-error-expected.txt:
+        * fast/dom/Geolocation/reentrant-error.html:
+        * fast/dom/Geolocation/reentrant-success-expected.txt:
+        * fast/dom/Geolocation/reentrant-success.html:
+        * fast/dom/Geolocation/resources: Removed.
+        * fast/dom/Geolocation/resources/TEMPLATE.html: Removed.
+        * fast/dom/Geolocation/resources/argument-types.js: Removed.
+        * fast/dom/Geolocation/resources/callback-exception.js: Removed.
+        * fast/dom/Geolocation/resources/enabled.js: Removed.
+        * fast/dom/Geolocation/resources/error.js: Removed.
+        * fast/dom/Geolocation/resources/js-test-post.js: Removed.
+        * fast/dom/Geolocation/resources/maximum-age.js: Removed.
+        * fast/dom/Geolocation/resources/notimer-after-unload.js: Removed.
+        * fast/dom/Geolocation/resources/permission-denied-already-clear-watch.js: Removed.
+        * fast/dom/Geolocation/resources/permission-denied-already-error.js: Removed.
+        * fast/dom/Geolocation/resources/permission-denied-already-success.js: Removed.
+        * fast/dom/Geolocation/resources/permission-denied-stops-watches.js: Removed.
+        * fast/dom/Geolocation/resources/permission-denied.js: Removed.
+        * fast/dom/Geolocation/resources/position-string.js: Removed.
+        * fast/dom/Geolocation/resources/reentrant-error.js: Removed.
+        * fast/dom/Geolocation/resources/reentrant-success.js: Removed.
+        * fast/dom/Geolocation/resources/success.js: Removed.
+        * fast/dom/Geolocation/resources/timeout-clear-watch.js: Removed.
+        * fast/dom/Geolocation/resources/timeout-zero.js: Removed.
+        * fast/dom/Geolocation/resources/timeout.js: Removed.
+        * fast/dom/Geolocation/resources/watch.js: Removed.
+        * fast/dom/Geolocation/script-tests: Copied from LayoutTests/fast/dom/Geolocation/resources.
+        * fast/dom/Geolocation/script-tests/TEMPLATE.html:
+        * fast/dom/Geolocation/script-tests/argument-types.js:
+        * fast/dom/Geolocation/script-tests/callback-exception.js:
+        * fast/dom/Geolocation/script-tests/enabled.js:
+        * fast/dom/Geolocation/script-tests/error.js:
+        * fast/dom/Geolocation/script-tests/js-test-post.js: Removed.
+        * fast/dom/Geolocation/script-tests/maximum-age.js:
+        * fast/dom/Geolocation/script-tests/notimer-after-unload.js:
+        * fast/dom/Geolocation/script-tests/permission-denied-already-clear-watch.js:
+        * fast/dom/Geolocation/script-tests/permission-denied-already-error.js:
+        * fast/dom/Geolocation/script-tests/permission-denied-already-success.js:
+        * fast/dom/Geolocation/script-tests/permission-denied-stops-watches.js:
+        * fast/dom/Geolocation/script-tests/permission-denied.js:
+        * fast/dom/Geolocation/script-tests/position-string.js:
+        * fast/dom/Geolocation/script-tests/reentrant-error.js:
+        * fast/dom/Geolocation/script-tests/reentrant-success.js:
+        * fast/dom/Geolocation/script-tests/success.js:
+        * fast/dom/Geolocation/script-tests/timeout-clear-watch.js:
+        * fast/dom/Geolocation/script-tests/timeout-zero.js:
+        * fast/dom/Geolocation/script-tests/timeout.js:
+        * fast/dom/Geolocation/script-tests/watch.js:
+        * fast/dom/Geolocation/success-expected.txt:
+        * fast/dom/Geolocation/success.html:
+        * fast/dom/Geolocation/timeout-clear-watch-expected.txt:
+        * fast/dom/Geolocation/timeout-clear-watch.html:
+        * fast/dom/Geolocation/timeout-expected.txt:
+        * fast/dom/Geolocation/timeout-zero-expected.txt:
+        * fast/dom/Geolocation/timeout-zero.html:
+        * fast/dom/Geolocation/timeout.html:
+        * fast/dom/Geolocation/watch-expected.txt:
+        * fast/dom/Geolocation/watch.html:
+
 2010-05-20  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.

@@ -15,7 +15,7 @@ document.body.onunload = function() {
     alert("unload-called");
 }
 
-var isAsynchronous = true;
-var successfullyParsed = true;
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;
 
 if (window.layoutTestController) layoutTestController.waitUntilDone();

@@ -3,7 +3,6 @@ Tests that watchPosition correctly reports position updates and errors from the 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS successfullyParsed is true
 PASS position.coords.latitude is mockLatitude
 PASS position.coords.longitude is mockLongitude
 PASS position.coords.accuracy is mockAccuracy
@@ -19,6 +18,7 @@ PASS position.coords.latitude is mockLatitude
 PASS position.coords.longitude is mockLongitude
 PASS position.coords.accuracy is mockAccuracy
 
+PASS successfullyParsed is true
 
 TEST COMPLETE
 

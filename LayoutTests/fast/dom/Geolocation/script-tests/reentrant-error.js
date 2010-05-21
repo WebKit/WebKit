@@ -9,11 +9,11 @@ var error;
 var errorCallbackInvoked = false;
 navigator.geolocation.getCurrentPosition(function(p) {
     testFailed('Success callback invoked unexpectedly');
-    window.layoutTestController.notifyDone();
+    finishJSTest();
 }, function(e) {
     if (errorCallbackInvoked) {
         testFailed('Error callback invoked unexpectedly');
-        window.layoutTestController.notifyDone();
+        finishJSTest();
     }
     errorCallbackInvoked = true;
 
@@ -32,16 +32,15 @@ function continueTest() {
 
     navigator.geolocation.getCurrentPosition(function(p) {
         testFailed('Success callback invoked unexpectedly');
-        window.layoutTestController.notifyDone();
+        finishJSTest();
     }, function(e) {
         error = e;
         shouldBe('error.code', 'mockCode');
         shouldBe('error.message', 'mockMessage');
-        debug('<br /><span class="pass">TEST COMPLETE</span>');
-        window.layoutTestController.notifyDone();
+        finishJSTest();
     });
 }
 window.layoutTestController.waitUntilDone();
 
-var isAsynchronous = true;
-var successfullyParsed = true;
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;

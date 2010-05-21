@@ -41,12 +41,11 @@ navigator.geolocation.watchPosition(function(p) {
             break;
         case 3:
             checkPosition(p);
-            debug('<br /><span class="pass">TEST COMPLETE</span>');
-            window.layoutTestController.notifyDone();
+            finishJSTest();
             break;
         default:
             testFailed('Success callback invoked unexpectedly');
-            window.layoutTestController.notifyDone();
+            finishJSTest();
     }
 }, function(e) {
     switch (state++) {
@@ -56,10 +55,10 @@ navigator.geolocation.watchPosition(function(p) {
             break;
         default:
             testFailed('Error callback invoked unexpectedly');
-            window.layoutTestController.notifyDone();
+            finishJSTest();
     }
 });
 window.layoutTestController.waitUntilDone();
 
-var isAsynchronous = true;
-var successfullyParsed = true;
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;

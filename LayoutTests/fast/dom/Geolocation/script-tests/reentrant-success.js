@@ -14,7 +14,7 @@ var successCallbackInvoked = false;
 navigator.geolocation.getCurrentPosition(function(p) {
     if (successCallbackInvoked) {
         testFailed('Success callback invoked unexpectedly');
-        window.layoutTestController.notifyDone();
+        finishJSTest();
     }
     successCallbackInvoked = true;
 
@@ -26,7 +26,7 @@ navigator.geolocation.getCurrentPosition(function(p) {
     continueTest();
 }, function(e) {
     testFailed('Error callback invoked unexpectedly');
-    window.layoutTestController.notifyDone();
+    finishJSTest();
 });
 
 function continueTest() {
@@ -39,14 +39,13 @@ function continueTest() {
         shouldBe('position.coords.latitude', 'mockLatitude');
         shouldBe('position.coords.longitude', 'mockLongitude');
         shouldBe('position.coords.accuracy', 'mockAccuracy');
-        debug('<br /><span class="pass">TEST COMPLETE</span>');
-        window.layoutTestController.notifyDone();
+        finishJSTest();
     }, function(e) {
         testFailed('Error callback invoked unexpectedly');
-        window.layoutTestController.notifyDone();
+        finishJSTest();
     });
 }
 window.layoutTestController.waitUntilDone();
 
-var isAsynchronous = true;
-var successfullyParsed = true;
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;

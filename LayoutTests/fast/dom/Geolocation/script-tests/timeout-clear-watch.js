@@ -5,23 +5,18 @@ window.layoutTestController.setMockGeolocationPosition(51.478, -0.166, 100.0);
 var error;
 var watchId = navigator.geolocation.watchPosition(function() {
     testFailed('Success callback invoked unexpectedly');
-    window.layoutTestController.notifyDone();
+    finishJSTest();
 }, function(e) {
     error = e
     shouldBe('error.code', 'error.TIMEOUT');
     shouldBe('error.message', '"Timeout expired"');
     navigator.geolocation.clearWatch(watchId);
-    window.setTimeout(completeTest, 0);
+    window.setTimeout(finishJSTest, 0);
 }, {
     timeout: 0
 });
 
-function completeTest()
-{
-    debug('<br /><span class="pass">TEST COMPLETE</span>');
-    window.layoutTestController.notifyDone();
-}
 window.layoutTestController.waitUntilDone();
 
-var isAsynchronous = true;
-var successfullyParsed = true;
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;

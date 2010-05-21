@@ -9,11 +9,11 @@ var error;
 var errorCallbackInvoked = false;
 navigator.geolocation.watchPosition(function(p) {
     testFailed('Success callback invoked unexpectedly');
-    window.layoutTestController.notifyDone();
+    finishJSTest();
 }, function(e) {
     if (errorCallbackInvoked) {
         testFailed('Error callback invoked unexpectedly : ' + error.message);
-        window.layoutTestController.notifyDone();
+        finishJSTest();
     }
     errorCallbackInvoked = true;
 
@@ -24,15 +24,10 @@ navigator.geolocation.watchPosition(function(p) {
     // Update the mock Geolocation service to report a new position, then
     // yield to allow a chance for the success callback to be invoked.
     window.layoutTestController.setMockGeolocationPosition(55.478, -0.166, 100);
-    window.setTimeout(completeTest, 0);
+    window.setTimeout(finishJSTest, 0);
 });
 
-function completeTest()
-{
-    debug('<br /><span class="pass">TEST COMPLETE</span>');
-    window.layoutTestController.notifyDone();
-}
 window.layoutTestController.waitUntilDone();
 
-var isAsynchronous = true;
-var successfullyParsed = true;
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;
