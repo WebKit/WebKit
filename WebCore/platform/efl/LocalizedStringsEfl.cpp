@@ -70,37 +70,37 @@ String fileButtonNoFileSelectedLabel()
 
 String contextMenuItemTagOpenLinkInNewWindow()
 {
-    return String::fromUTF8("Open Link in New _Window");
+    return String::fromUTF8("Open Link in New Window");
 }
 
 String contextMenuItemTagDownloadLinkToDisk()
 {
-    return String::fromUTF8("_Download Linked File");
+    return String::fromUTF8("Download Linked File");
 }
 
 String contextMenuItemTagCopyLinkToClipboard()
 {
-    return String::fromUTF8("Copy Link Loc_ation");
+    return String::fromUTF8("Copy Link Location");
 }
 
 String contextMenuItemTagOpenImageInNewWindow()
 {
-    return String::fromUTF8("Open _Image in New Window");
+    return String::fromUTF8("Open Image in New Window");
 }
 
 String contextMenuItemTagDownloadImageToDisk()
 {
-    return String::fromUTF8("Sa_ve Image As");
+    return String::fromUTF8("Save Image As");
 }
 
 String contextMenuItemTagCopyImageToClipboard()
 {
-    return String::fromUTF8("Cop_y Image");
+    return String::fromUTF8("Copy Image");
 }
 
 String contextMenuItemTagOpenFrameInNewWindow()
 {
-    return String::fromUTF8("Open _Frame in New Window");
+    return String::fromUTF8("Open Frame in New Window");
 }
 
 String contextMenuItemTagCopy()
@@ -117,29 +117,29 @@ String contextMenuItemTagDelete()
 
 String contextMenuItemTagSelectAll()
 {
-    static String stockLabel = String::fromUTF8("Select _All");
+    static String stockLabel = String::fromUTF8("Select All");
     return stockLabel;
 }
 
 String contextMenuItemTagUnicode()
 {
-    return String::fromUTF8("_Insert Unicode Control Character");
+    return String::fromUTF8("Insert Unicode Control Character");
 }
 
 String contextMenuItemTagInputMethods()
 {
-    return String::fromUTF8("Input _Methods");
+    return String::fromUTF8("Input Methods");
 }
 
 String contextMenuItemTagGoBack()
 {
-    static String stockLabel = String::fromUTF8("Go_Back");
+    static String stockLabel = String::fromUTF8("Go Back");
     return stockLabel;
 }
 
 String contextMenuItemTagGoForward()
 {
-    static String stockLabel = String::fromUTF8("Go_Forward");
+    static String stockLabel = String::fromUTF8("Go Forward");
     return stockLabel;
 }
 
@@ -151,7 +151,7 @@ String contextMenuItemTagStop()
 
 String contextMenuItemTagReload()
 {
-    return String::fromUTF8("_Reload");
+    return String::fromUTF8("Reload");
 }
 
 String contextMenuItemTagCut()
@@ -173,37 +173,37 @@ String contextMenuItemTagNoGuessesFound()
 
 String contextMenuItemTagIgnoreSpelling()
 {
-    return String::fromUTF8("_Ignore Spelling");
+    return String::fromUTF8("Ignore Spelling");
 }
 
 String contextMenuItemTagLearnSpelling()
 {
-    return String::fromUTF8("_Learn Spelling");
+    return String::fromUTF8("Learn Spelling");
 }
 
 String contextMenuItemTagSearchWeb()
 {
-    return String::fromUTF8("_Search the Web");
+    return String::fromUTF8("Search the Web");
 }
 
 String contextMenuItemTagLookUpInDictionary()
 {
-    return String::fromUTF8("_Look Up in Dictionary");
+    return String::fromUTF8("Look Up in Dictionary");
 }
 
 String contextMenuItemTagOpenLink()
 {
-    return String::fromUTF8("_Open Link");
+    return String::fromUTF8("Open Link");
 }
 
 String contextMenuItemTagIgnoreGrammar()
 {
-    return String::fromUTF8("Ignore _Grammar");
+    return String::fromUTF8("Ignore Grammar");
 }
 
 String contextMenuItemTagSpellingMenu()
 {
-    return String::fromUTF8("Spelling and _Grammar");
+    return String::fromUTF8("Spelling and Grammar");
 }
 
 String contextMenuItemTagShowSpellingPanel(bool show)
@@ -213,7 +213,7 @@ String contextMenuItemTagShowSpellingPanel(bool show)
 
 String contextMenuItemTagCheckSpelling()
 {
-    return String::fromUTF8("_Check Document Now");
+    return String::fromUTF8("Check Document Now");
 }
 
 String contextMenuItemTagCheckSpellingWhileTyping()
@@ -223,12 +223,12 @@ String contextMenuItemTagCheckSpellingWhileTyping()
 
 String contextMenuItemTagCheckGrammarWithSpelling()
 {
-    return String::fromUTF8("Check _Grammar With Spelling");
+    return String::fromUTF8("Check Grammar With Spelling");
 }
 
 String contextMenuItemTagFontMenu()
 {
-    return String::fromUTF8("_Font");
+    return String::fromUTF8("Font");
 }
 
 String contextMenuItemTagBold()
@@ -251,12 +251,12 @@ String contextMenuItemTagUnderline()
 
 String contextMenuItemTagOutline()
 {
-    return String::fromUTF8("_Outline");
+    return String::fromUTF8("Outline");
 }
 
 String contextMenuItemTagInspectElement()
 {
-    return String::fromUTF8("Inspect _Element");
+    return String::fromUTF8("Inspect Element");
 }
 
 String contextMenuItemTagRightToLeft()
@@ -296,7 +296,7 @@ String searchMenuRecentSearchesText()
 
 String searchMenuClearRecentSearchesText()
 {
-    return String::fromUTF8("_Clear recent searches");
+    return String::fromUTF8("Clear recent searches");
 }
 
 String AXDefinitionListTermText()
@@ -395,6 +395,11 @@ String validationMessageValueMissingText()
     return String::fromUTF8("value missing");
 }
 
+String missingPluginText()
+{
+    return String::fromUTF8("missing plugin");
+}
+
 String AXMenuListPopupActionVerb()
 {
     return String();
@@ -405,14 +410,14 @@ String AXMenuListActionVerb()
     return String();
 }
 
-String missingPluginText()
+String multipleFileUploadText(unsigned numberOfFiles)
 {
-    return String::fromUTF8("Missing Plug-in");
+    return String::number(numberOfFiles) + String::fromUTF8(" files");
 }
 
 String crashedPluginText()
 {
-    return String::fromUTF8("Plug-in Crashed");
+    return String::fromUTF8("plugin crashed");
 }
 
 }

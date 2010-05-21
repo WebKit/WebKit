@@ -2,6 +2,47 @@
 
         Reviewed by Eric Seidel.
 
+        [EFL] Update Localized Strings. Remove markers from strings
+        since we are not using them and they are only polluting output.
+        https://bugs.webkit.org/show_bug.cgi?id=39371
+
+        No new tests required.
+
+        * platform/efl/LocalizedStringsEfl.cpp:
+        (WebCore::contextMenuItemTagOpenLinkInNewWindow):
+        (WebCore::contextMenuItemTagDownloadLinkToDisk):
+        (WebCore::contextMenuItemTagCopyLinkToClipboard):
+        (WebCore::contextMenuItemTagOpenImageInNewWindow):
+        (WebCore::contextMenuItemTagDownloadImageToDisk):
+        (WebCore::contextMenuItemTagCopyImageToClipboard):
+        (WebCore::contextMenuItemTagOpenFrameInNewWindow):
+        (WebCore::contextMenuItemTagSelectAll):
+        (WebCore::contextMenuItemTagUnicode):
+        (WebCore::contextMenuItemTagInputMethods):
+        (WebCore::contextMenuItemTagGoBack):
+        (WebCore::contextMenuItemTagGoForward):
+        (WebCore::contextMenuItemTagReload):
+        (WebCore::contextMenuItemTagIgnoreSpelling):
+        (WebCore::contextMenuItemTagLearnSpelling):
+        (WebCore::contextMenuItemTagSearchWeb):
+        (WebCore::contextMenuItemTagLookUpInDictionary):
+        (WebCore::contextMenuItemTagOpenLink):
+        (WebCore::contextMenuItemTagIgnoreGrammar):
+        (WebCore::contextMenuItemTagSpellingMenu):
+        (WebCore::contextMenuItemTagCheckSpelling):
+        (WebCore::contextMenuItemTagCheckGrammarWithSpelling):
+        (WebCore::contextMenuItemTagFontMenu):
+        (WebCore::contextMenuItemTagOutline):
+        (WebCore::contextMenuItemTagInspectElement):
+        (WebCore::searchMenuClearRecentSearchesText):
+        (WebCore::missingPluginText): Add missing message.
+        (WebCore::multipleFileUploadText):
+        (WebCore::crashedPluginText):
+
+2010-05-21  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Eric Seidel.
+
         [EF] Fix support for focus ring.
         https://bugs.webkit.org/show_bug.cgi?id=39387
 
