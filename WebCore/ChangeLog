@@ -1,3 +1,19 @@
+2010-05-21  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by David Levin.
+
+        [chromium] Fix slider status when buffering
+        https://bugs.webkit.org/show_bug.cgi?id=39370
+        Adjusts the buffering bar to be aligned with the slider thumb.
+
+        No new tests. (Covered by existing layout tests.)
+
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::paintMediaSlider):
+        Added logic to align the buffering bar with the thumb. Half of the
+        thumb image is transparent, so the buffer bar is adjusted to fill in
+        this gap.
+
 2010-05-21  Jesus Sanchez-Palencia  <jesus@webkit.org>
 
         Reviewed by Eric Seidel.

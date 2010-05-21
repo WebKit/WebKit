@@ -99,6 +99,12 @@ static bool paintMediaPlayButton(RenderObject* object, const RenderObject::Paint
     return paintMediaButton(paintInfo.context, rect, mediaElement->paused() ? mediaPlay : mediaPause);
 }
 
+static Image* getMediaSliderThumb()
+{
+    static Image* mediaSliderThumb = platformResource("mediaSliderThumb");
+    return mediaSliderThumb;
+}
+
 static bool paintMediaSlider(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
 {
     HTMLMediaElement* mediaElement = toParentMediaElement(object);
@@ -124,7 +130,18 @@ static bool paintMediaSlider(RenderObject* object, const RenderObject::PaintInfo
     // FIXME: Draw multiple ranges if there are multiple buffered ranges.
     IntRect bufferedRect = rect;
     bufferedRect.inflate(-style->borderLeftWidth());
-    bufferedRect.setWidth((bufferedRect.width() * mediaElement->percentLoaded()));
+
+    double bufferedWidth = 0.0;
+    if (mediaElement->percentLoaded() > 0.0) {
+        // Account for the width of the slider thumb.
+        Image* mediaSliderThumb = getMediaSliderThumb();
+        double thumbWidth = mediaSliderThumb->width() / 2.0 + 1.0;
+        double rectWidth = bufferedRect.width() - thumbWidth;
+        if (rectWidth < 0.0)
+            rectWidth = 0.0;
+        bufferedWidth = rectWidth * mediaElement->percentLoaded() + thumbWidth;
+    }
+    bufferedRect.setWidth(bufferedWidth);
 
     // Don't bother drawing an empty area.
     if (!bufferedRect.isEmpty()) {
@@ -159,7 +176,7 @@ static bool paintMediaSliderThumb(RenderObject* object, const RenderObject::Pain
     if (!hasSource(mediaElement))
         return true;
 
-    static Image* mediaSliderThumb = platformResource("mediaSliderThumb");
+    Image* mediaSliderThumb = getMediaSliderThumb();
     return paintMediaButton(paintInfo.context, rect, mediaSliderThumb);
 }
 
