@@ -1,5 +1,11 @@
 2010-05-21  Oliver Hunt  <oliver@apple.com>
 
+        Windows build fix #2
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-05-21  Oliver Hunt  <oliver@apple.com>
+
         Windows build fix #1
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
