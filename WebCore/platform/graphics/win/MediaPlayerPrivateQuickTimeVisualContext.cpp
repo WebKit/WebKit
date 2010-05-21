@@ -45,6 +45,7 @@
 #include "StringHash.h"
 #include "TimeRanges.h"
 #include "Timer.h"
+#include <CoreGraphics/CGContext.h>
 #include <Wininet.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>
