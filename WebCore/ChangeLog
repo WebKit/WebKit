@@ -1,3 +1,16 @@
+2010-05-21  Jesus Sanchez-Palencia  <jesus@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Extra processesArguments() calls in Document::processViewport
+        https://bugs.webkit.org/show_bug.cgi?id=39358
+
+        The viewport arguments are only needed when there is a frame->page(),
+        therefore we don't need to always call processArguments().
+
+        * dom/Document.cpp:
+        (WebCore::Document::processViewport):
+
 2010-05-17  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson.
