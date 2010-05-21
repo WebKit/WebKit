@@ -1,3 +1,9 @@
+2010-05-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Update Qt specific expected file after r59941.
+
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt: updated.
+
 2010-05-21  Alejandro G. Castro  <alex@igalia.com>
 
         Rubber-stamped by Xan Lopez.
