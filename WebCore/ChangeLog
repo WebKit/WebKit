@@ -1,3 +1,19 @@
+2010-05-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fixed failure seen on buildbot (due to flaky test).
+        
+        Don't report an exception in a nested script evaluation -- just pass the
+        exception on to our caller. Our caller can decide to report the exception,
+        if it fully propagates -- but we don't want to report an exception that's
+        going to get caught.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::ScriptController):
+        (WebCore::ScriptController::evaluateInWorld):
+        * bindings/js/ScriptController.h:
+
 2010-05-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
