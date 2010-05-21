@@ -1,3 +1,24 @@
+2010-05-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Avoid creating huge tiled layers with accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=39515
+        
+        Constrain the size of huge composited layers, to avoid bad behavior. We only
+        need to do this if we detect that we need a tiled layer, since we'll make tiled
+        layers for elements over a certain size that need to draw already.
+        
+        Constrain the size by attempting to shrink the longer dimension first.
+
+        Test: compositing/geometry/huge-layer.html
+
+        * platform/graphics/mac/GraphicsLayerCA.h:
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::updateLayerPosition):
+        (WebCore::GraphicsLayerCA::updateLayerSize):
+        (WebCore::GraphicsLayerCA::constrainedSize):
+
 2010-05-21  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

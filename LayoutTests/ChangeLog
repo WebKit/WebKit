@@ -1,3 +1,15 @@
+2010-05-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Avoid creating huge tiled layers with accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=39515
+        
+        New test with two large composited layers.
+
+        * compositing/geometry/huge-layer-expected.txt: Added.
+        * compositing/geometry/huge-layer.html: Added.
+
 2010-05-21  Alejandro G. Castro  <alex@igalia.com>
 
         Rubber-stamped by Xan Lopez.
