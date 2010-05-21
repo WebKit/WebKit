@@ -1,3 +1,13 @@
+2010-05-21  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        Reviewed by Adam Roben.
+
+        fast/dom/HTMLObjectElement/children-changed.html times out on Windows run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=31315
+
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (FrameLoadDelegate::didFailProvisionalLoadWithError): Need to invoke locationChangeDone here as mac port does.
+
 2010-05-20  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Dan Bernstein.
