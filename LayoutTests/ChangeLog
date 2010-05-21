@@ -1,3 +1,11 @@
+2010-05-21  Alejandro G. Castro  <alex@igalia.com>
+
+        Rubber-stamped by Xan Lopez.
+
+        Updated test results, added web sockets lines.
+
+        * platform/gtk/fast/dom/prototype-inheritance-expected.txt:
+
 2010-05-14  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Eric Seidel.
