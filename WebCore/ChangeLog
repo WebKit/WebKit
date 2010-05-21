@@ -1,3 +1,26 @@
+2010-05-21  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39516, back end support for column-span property.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::columnSpan):
+        (WebCore::InheritedFlags::setColumnSpan):
+        (WebCore::InheritedFlags::initialColumnSpan):
+        * rendering/style/StyleMultiColData.cpp:
+        (WebCore::StyleMultiColData::StyleMultiColData):
+        (WebCore::StyleMultiColData::operator==):
+        * rendering/style/StyleMultiColData.h:
+
 2010-05-21  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -1486,6 +1486,12 @@ bool CSSParser::parseValue(int propId, bool important)
         else
             validPrimitive = validUnit(value, FLength | FNonNeg, m_strict);
         break;
+    case CSSPropertyWebkitColumnSpan:        // all | 1
+        if (id == CSSValueAll)
+            validPrimitive = true;
+        else
+            validPrimitive = validUnit(value, FNumber | FNonNeg, m_strict) && value->fValue == 1;
+        break;
     case CSSPropertyWebkitColumnWidth:         // auto | <length>
         if (id == CSSValueAuto)
             validPrimitive = true;

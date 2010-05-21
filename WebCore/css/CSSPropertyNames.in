@@ -203,6 +203,7 @@ z-index
 -webkit-column-rule-color
 -webkit-column-rule-style
 -webkit-column-rule-width
+-webkit-column-span
 -webkit-column-width
 -webkit-columns
 -webkit-font-size-delta

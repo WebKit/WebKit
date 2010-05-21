@@ -182,6 +182,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitColumnRuleColor,
     CSSPropertyWebkitColumnRuleStyle,
     CSSPropertyWebkitColumnRuleWidth,
+    CSSPropertyWebkitColumnSpan,
     CSSPropertyWebkitColumnWidth,
 #if ENABLE(DASHBOARD_SUPPORT)
     CSSPropertyWebkitDashboardRegion,
@@ -814,6 +815,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return CSSPrimitiveValue::create(style->columnRuleStyle());
         case CSSPropertyWebkitColumnRuleWidth:
             return CSSPrimitiveValue::create(style->columnRuleWidth(), CSSPrimitiveValue::CSS_PX);
+        case CSSPropertyWebkitColumnSpan:
+            if (style->columnSpan())
+                return CSSPrimitiveValue::createIdentifier(CSSValueAll);
+            return CSSPrimitiveValue::create(1, CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitColumnBreakAfter:
             return CSSPrimitiveValue::create(style->columnBreakAfter());
         case CSSPropertyWebkitColumnBreakBefore:
