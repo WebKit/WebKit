@@ -57,7 +57,8 @@ void JSString::resolveRope(ExecState* exec) const
         m_fiberCount = 0;
         ASSERT(!isRope());
         ASSERT(m_value == UString());
-        throwOutOfMemoryError(exec);
+        if (exec)
+            throwOutOfMemoryError(exec);
         return;
     }
     UChar* position = buffer + m_length;

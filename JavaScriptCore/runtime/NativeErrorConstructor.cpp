@@ -32,13 +32,16 @@ ASSERT_CLASS_FITS_IN_CELL(NativeErrorConstructor);
 
 const ClassInfo NativeErrorConstructor::info = { "Function", &InternalFunction::info, 0, 0 };
 
-NativeErrorConstructor::NativeErrorConstructor(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, NativeErrorPrototype* nativeErrorPrototype)
-    : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, nativeErrorPrototype->getDirect(exec->propertyNames().name).getString(exec)))
-    , m_errorStructure(ErrorInstance::createStructure(nativeErrorPrototype))
+NativeErrorConstructor::NativeErrorConstructor(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, NonNullPassRefPtr<Structure> prototypeStructure, const UString& nameAndMessage)
+    : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, nameAndMessage))
 {
+    NativeErrorPrototype* prototype = new (exec) NativeErrorPrototype(exec, globalObject, prototypeStructure, nameAndMessage, this);
+
     putDirect(exec->propertyNames().length, jsNumber(exec, 1), DontDelete | ReadOnly | DontEnum); // ECMA 15.11.7.5
-    putDirect(exec->propertyNames().prototype, nativeErrorPrototype, DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->propertyNames().prototype, prototype, DontDelete | ReadOnly | DontEnum);
+    m_errorStructure = ErrorInstance::createStructure(prototype);
 }
+
 
 ErrorInstance* NativeErrorConstructor::construct(ExecState* exec, const ArgList& args)
 {

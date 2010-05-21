@@ -22,6 +22,42 @@
 
 2010-05-21  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Bug 39509 - Exceptions raised when JSString::value() is called not always properly thrown.
+        Missing some CHECK_FOR_EXCEPTION()s, cleanup NativeError construction (adding a property
+        via the prototype was inefficient, and whilst trivially true that the property is is not
+        a rope - and thus couldn't except - it would be hard to prove this).
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::callEval):
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::name):
+        (JSC::InternalFunction::displayName):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::name):
+        (JSC::JSFunction::displayName):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * runtime/JSPropertyNameIterator.cpp:
+        * runtime/JSPropertyNameIterator.h:
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::tryGetValue):
+        (JSC::JSString::getIndex):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::NativeErrorConstructor):
+        * runtime/NativeErrorConstructor.h:
+        * runtime/NativeErrorPrototype.cpp:
+        (JSC::NativeErrorPrototype::NativeErrorPrototype):
+        * runtime/NativeErrorPrototype.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace):
+
+2010-05-21  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by NOBODY (build fix).
 
         Fix interpreter build.

@@ -31,7 +31,7 @@ namespace JSC {
 
     class NativeErrorConstructor : public InternalFunction {
     public:
-        NativeErrorConstructor(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, NativeErrorPrototype*);
+        NativeErrorConstructor(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure> structure, NonNullPassRefPtr<Structure> prototypeStructure, const UString&);
 
         static const ClassInfo info;
 

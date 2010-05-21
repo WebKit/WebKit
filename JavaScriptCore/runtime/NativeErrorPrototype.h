@@ -24,10 +24,11 @@
 #include "JSObjectWithGlobalObject.h"
 
 namespace JSC {
+    class NativeErrorConstructor;
 
     class NativeErrorPrototype : public JSObjectWithGlobalObject {
     public:
-        NativeErrorPrototype(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, const UString& name, const UString& message);
+        NativeErrorPrototype(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, const UString&, NativeErrorConstructor*);
     };
 
 } // namespace JSC

@@ -302,6 +302,8 @@ JSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec, JSObject*, JSValue
 
     if (pattern.inherits(&RegExpObject::info)) {
         const UString& source = sourceVal->value(exec);
+        if (exec->hadException())
+            return JSValue();
         RegExp* reg = asRegExpObject(pattern)->regExp();
         bool global = reg->global();
 

@@ -89,17 +89,6 @@ JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSObject
     return jsPropertyNameIterator;
 }
 
-JSValue JSPropertyNameIterator::get(ExecState* exec, JSObject* base, size_t i)
-{
-    JSValue& identifier = m_jsStrings[i];
-    if (m_cachedStructure == base->structure() && m_cachedPrototypeChain == base->structure()->prototypeChain(exec))
-        return identifier;
-
-    if (!base->hasProperty(exec, Identifier(exec, asString(identifier)->value(exec))))
-        return JSValue();
-    return identifier;
-}
-
 void JSPropertyNameIterator::markChildren(MarkStack& markStack)
 {
     markStack.appendValues(m_jsStrings.get(), m_jsStringsSize, MayContainNullValues);

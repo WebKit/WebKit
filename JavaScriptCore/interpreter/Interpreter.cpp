@@ -362,6 +362,8 @@ NEVER_INLINE JSValue Interpreter::callEval(CallFrame* callFrame, RegisterFile* r
         return program;
 
     UString programSource = asString(program)->value(callFrame);
+    if (callFrame->hadException())
+        return JSValue();
 
     LiteralParser preparser(callFrame, programSource, LiteralParser::NonStrictJSON);
     if (JSValue parsedObject = preparser.tryLiteralParse())
@@ -1479,7 +1481,9 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         int dst = vPC[1].u.operand;
         JSValue src1 = callFrame->r(vPC[2].u.operand).jsValue();
         JSValue src2 = callFrame->r(vPC[3].u.operand).jsValue();
-        callFrame->r(dst) = jsBoolean(JSValue::strictEqual(callFrame, src1, src2));
+        bool result = JSValue::strictEqual(callFrame, src1, src2);
+        CHECK_FOR_EXCEPTION();
+        callFrame->r(dst) = jsBoolean(result);
 
         vPC += OPCODE_LENGTH(op_stricteq);
         NEXT_INSTRUCTION();
@@ -1494,7 +1498,9 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         int dst = vPC[1].u.operand;
         JSValue src1 = callFrame->r(vPC[2].u.operand).jsValue();
         JSValue src2 = callFrame->r(vPC[3].u.operand).jsValue();
-        callFrame->r(dst) = jsBoolean(!JSValue::strictEqual(callFrame, src1, src2));
+        bool result = !JSValue::strictEqual(callFrame, src1, src2);
+        CHECK_FOR_EXCEPTION();
+        callFrame->r(dst) = jsBoolean(result);
 
         vPC += OPCODE_LENGTH(op_nstricteq);
         NEXT_INSTRUCTION();
