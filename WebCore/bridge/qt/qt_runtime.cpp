@@ -825,7 +825,7 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
 
             RefPtr<JSC::RegExp> regExp = JSC::RegExp::create(&exec->globalData(), pattern, uflags);
             if (regExp->isValid())
-                return new (exec) RegExpObject(exec->lexicalGlobalObject()->regExpStructure(), regExp.release());
+                return new (exec) RegExpObject(exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->regExpStructure(), regExp.release());
             else
                 return jsNull();
         }
@@ -947,7 +947,7 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
 const ClassInfo QtRuntimeMethod::s_info = { "QtRuntimeMethod", 0, 0, 0 };
 
 QtRuntimeMethod::QtRuntimeMethod(QtRuntimeMethodData* dd, ExecState* exec, const Identifier& ident, PassRefPtr<QtInstance> inst)
-    : InternalFunction(&exec->globalData(), deprecatedGetDOMStructure<QtRuntimeMethod>(exec), ident)
+    : InternalFunction(&exec->globalData(), exec->lexicalGlobalObject(), deprecatedGetDOMStructure<QtRuntimeMethod>(exec), ident)
     , d_ptr(dd)
 {
     QW_D(QtRuntimeMethod);

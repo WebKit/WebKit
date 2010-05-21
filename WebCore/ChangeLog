@@ -1,5 +1,13 @@
 2010-05-21  Oliver Hunt  <oliver@apple.com>
 
+        Qt buildfix #2
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertQVariantToValue):
+        (JSC::Bindings::QtRuntimeMethod::QtRuntimeMethod):
+
+2010-05-21  Oliver Hunt  <oliver@apple.com>
+
         Qt buildfix #1
 
         * bridge/qt/qt_instance.cpp:
