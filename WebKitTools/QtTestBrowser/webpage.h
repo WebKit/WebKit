@@ -56,6 +56,7 @@ public slots:
     void openUrlInDefaultBrowser(const QUrl& url = QUrl());
     void setUserAgent(const QString& ua) { m_userAgent = ua; }
     bool shouldInterruptJavaScript();
+    void authenticationRequired(QNetworkReply*, QAuthenticator*);
 
 private:
     void applyProxy();

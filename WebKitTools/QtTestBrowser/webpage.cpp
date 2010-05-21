@@ -32,8 +32,10 @@
 
 #include "webpage.h"
 
+#include <QAuthenticator>
 #include <QDesktopServices>
 #include <QtGui>
+#include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkProxy>
 
@@ -43,6 +45,9 @@ WebPage::WebPage(QObject* parent)
     , m_interruptingJavaScriptEnabled(false)
 {
     applyProxy();
+
+    connect(networkAccessManager(), SIGNAL(authenticationRequired(QNetworkReply*, QAuthenticator*)),
+            this, SLOT(authenticationRequired(QNetworkReply*, QAuthenticator*)));
 }
 
 void WebPage::applyProxy()
@@ -117,4 +122,43 @@ bool WebPage::shouldInterruptJavaScript()
     if (!m_interruptingJavaScriptEnabled)
         return false;
     return QWebPage::shouldInterruptJavaScript();
+}
+
+void WebPage::authenticationRequired(QNetworkReply* reply, QAuthenticator* authenticator)
+{
+    QDialog* dialog = new QDialog(QApplication::activeWindow());
+    dialog->setWindowTitle("HTTP Authentication");
+
+    QGridLayout* layout = new QGridLayout(dialog);
+    dialog->setLayout(layout);
+
+    QLabel* messageLabel = new QLabel(dialog);
+    messageLabel->setWordWrap(true);
+    QString messageStr = QString("Enter with username and password for: %1");
+    messageLabel->setText(messageStr.arg(reply->url().toString()));
+    layout->addWidget(messageLabel, 0, 1);
+
+    QLabel* userLabel = new QLabel("Username:", dialog);
+    layout->addWidget(userLabel, 1, 0);
+    QLineEdit* userInput = new QLineEdit(dialog);
+    layout->addWidget(userInput, 1, 1);
+
+    QLabel* passLabel = new QLabel("Password:", dialog);
+    layout->addWidget(passLabel, 2, 0);
+    QLineEdit* passInput = new QLineEdit(dialog);
+    passInput->setEchoMode(QLineEdit::Password);
+    layout->addWidget(passInput, 2, 1);
+
+    QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
+            | QDialogButtonBox::Cancel, Qt::Horizontal, dialog);
+    connect(buttonBox, SIGNAL(accepted()), dialog, SLOT(accept()));
+    connect(buttonBox, SIGNAL(rejected()), dialog, SLOT(reject()));
+    layout->addWidget(buttonBox, 3, 1);
+
+    if (dialog->exec() == QDialog::Accepted) {
+        authenticator->setUser(userInput->text());
+        authenticator->setPassword(passInput->text());
+    }
+
+    delete dialog;
 }
