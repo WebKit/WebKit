@@ -1,5 +1,16 @@
 2010-05-21  Julie Parent  <jparent@chromium.org>
 
+        Unreviewed.  Updating test expectations for chromium due to http://trac.webkit.org/changeset/59968.
+
+        * platform/chromium-mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-mac/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-win/svg/css/getComputedStyle-basic-expected.txt:
+
+2010-05-21  Julie Parent  <jparent@chromium.org>
+
         Unreviewed.
 
         Updating Chromium test_expectations to mark drop-link test as failing in win debug.
