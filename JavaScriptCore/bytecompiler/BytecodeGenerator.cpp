@@ -1031,7 +1031,7 @@ bool BytecodeGenerator::findScopedProperty(const Identifier& property, int& inde
                     globalObject = currentVariableObject;
                 return false;
             }
-            stackDepth = depth;
+            stackDepth = depth + m_codeBlock->needsFullScopeChain();
             index = entry.getIndex();
             if (++iter == end)
                 globalObject = currentVariableObject;
@@ -1043,7 +1043,7 @@ bool BytecodeGenerator::findScopedProperty(const Identifier& property, int& inde
         requiresDynamicChecks |= scopeRequiresDynamicChecks;
     }
     // Can't locate the property but we're able to avoid a few lookups.
-    stackDepth = depth;
+    stackDepth = depth + m_codeBlock->needsFullScopeChain();
     index = missingSymbolMarker();
     JSObject* scope = *iter;
     if (++iter == end)

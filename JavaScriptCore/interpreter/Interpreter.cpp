@@ -114,7 +114,7 @@ NEVER_INLINE bool Interpreter::resolveSkip(CallFrame* callFrame, Instruction* vP
 
     int dst = vPC[1].u.operand;
     int property = vPC[2].u.operand;
-    int skip = vPC[3].u.operand + codeBlock->needsFullScopeChain();
+    int skip = vPC[3].u.operand;
 
     ScopeChainNode* scopeChain = callFrame->scopeChain();
     ScopeChainIterator iter = scopeChain->begin();
@@ -190,7 +190,7 @@ NEVER_INLINE bool Interpreter::resolveGlobalDynamic(CallFrame* callFrame, Instru
     Structure* structure = vPC[4].u.structure;
     int offset = vPC[5].u.operand;
     CodeBlock* codeBlock = callFrame->codeBlock();
-    int skip = vPC[6].u.operand + codeBlock->needsFullScopeChain();
+    int skip = vPC[6].u.operand;
     
     ScopeChainNode* scopeChain = callFrame->scopeChain();
     ScopeChainIterator iter = scopeChain->begin();
@@ -2179,11 +2179,11 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         /* get_scoped_var dst(r) index(n) skip(n)
 
          Loads the contents of the index-th local from the scope skip nodes from
-         the top of the scope chain, and places it in register dst
+         the top of the scope chain, and places it in register dst.
          */
         int dst = vPC[1].u.operand;
         int index = vPC[2].u.operand;
-        int skip = vPC[3].u.operand + codeBlock->needsFullScopeChain();
+        int skip = vPC[3].u.operand;
 
         ScopeChainNode* scopeChain = callFrame->scopeChain();
         ScopeChainIterator iter = scopeChain->begin();
@@ -2204,7 +2204,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 
          */
         int index = vPC[1].u.operand;
-        int skip = vPC[2].u.operand + codeBlock->needsFullScopeChain();
+        int skip = vPC[2].u.operand;
         int value = vPC[3].u.operand;
 
         ScopeChainNode* scopeChain = callFrame->scopeChain();

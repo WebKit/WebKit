@@ -1,3 +1,31 @@
+2010-05-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Whittling away at CodeBlock use: Removed a little wonkiness in closure lookup
+        https://bugs.webkit.org/show_bug.cgi?id=39444
+        
+        Calculate all lookup depths at compile time. I'm not sure why we couldn't
+        do this before, but whatever the reason, it seems to be gone now.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::findScopedProperty):
+        * bytecompiler/BytecodeGenerator.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::resolveSkip):
+        (JSC::Interpreter::resolveGlobalDynamic):
+        (JSC::Interpreter::privateExecute):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_get_scoped_var):
+        (JSC::JIT::emit_op_put_scoped_var):
+        (JSC::JIT::emit_op_resolve_skip):
+        (JSC::JIT::emit_op_resolve_global_dynamic):
+        (JSC::JIT::emitSlow_op_resolve_global_dynamic):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_get_scoped_var):
+        (JSC::JIT::emit_op_put_scoped_var):
+        (JSC::JIT::emit_op_resolve_skip):
+
 2010-05-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric Seidel.

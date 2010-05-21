@@ -722,7 +722,7 @@ void JIT::emit_op_put_global_var(Instruction* currentInstruction)
 
 void JIT::emit_op_get_scoped_var(Instruction* currentInstruction)
 {
-    int skip = currentInstruction[3].u.operand + m_codeBlock->needsFullScopeChain();
+    int skip = currentInstruction[3].u.operand;
 
     emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT0);
     while (skip--)
@@ -735,7 +735,7 @@ void JIT::emit_op_get_scoped_var(Instruction* currentInstruction)
 
 void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
 {
-    int skip = currentInstruction[2].u.operand + m_codeBlock->needsFullScopeChain();
+    int skip = currentInstruction[2].u.operand;
 
     emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1);
     emitGetVirtualRegister(currentInstruction[3].u.operand, regT0);
@@ -881,7 +881,7 @@ void JIT::emit_op_resolve_skip(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_resolve_skip);
     stubCall.addArgument(ImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
-    stubCall.addArgument(Imm32(currentInstruction[3].u.operand + m_codeBlock->needsFullScopeChain()));
+    stubCall.addArgument(Imm32(currentInstruction[3].u.operand));
     stubCall.call(currentInstruction[1].u.operand);
 }
 
@@ -1721,7 +1721,7 @@ void JIT::emitSlow_op_to_jsnumber(Instruction* currentInstruction, Vector<SlowCa
 
 void JIT::emit_op_resolve_global_dynamic(Instruction* currentInstruction)
 {
-    int skip = currentInstruction[6].u.operand + m_codeBlock->needsFullScopeChain();
+    int skip = currentInstruction[6].u.operand;
     
     emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT0);
     while (skip--) {
@@ -1737,7 +1737,7 @@ void JIT::emitSlow_op_resolve_global_dynamic(Instruction* currentInstruction, Ve
     unsigned dst = currentInstruction[1].u.operand;
     void* globalObject = currentInstruction[2].u.jsCell;
     Identifier* ident = &m_codeBlock->identifier(currentInstruction[3].u.operand);
-    int skip = currentInstruction[6].u.operand + m_codeBlock->needsFullScopeChain();
+    int skip = currentInstruction[6].u.operand;
     while (skip--)
         linkSlowCase(iter);
     JITStubCall resolveStubCall(this, cti_op_resolve);
