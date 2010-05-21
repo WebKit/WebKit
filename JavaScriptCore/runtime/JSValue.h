@@ -203,6 +203,7 @@ namespace JSC {
 
         bool isCell() const;
         JSCell* asCell() const;
+        bool isValidCallee();
 
 #ifndef NDEBUG
         char* description();

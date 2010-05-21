@@ -58,8 +58,8 @@ const ClassInfo RegExpObject::info = { "RegExp", 0, 0, ExecState::regExpTable };
 @end
 */
 
-RegExpObject::RegExpObject(NonNullPassRefPtr<Structure> structure, NonNullPassRefPtr<RegExp> regExp)
-    : JSObject(structure)
+RegExpObject::RegExpObject(JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, NonNullPassRefPtr<RegExp> regExp)
+    : JSObjectWithGlobalObject(globalObject, structure)
     , d(new RegExpObjectData(regExp, 0))
 {
 }

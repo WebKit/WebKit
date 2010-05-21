@@ -203,14 +203,14 @@ void JSGlobalObject::reset(JSValue prototype)
 
     // Prototypes
 
-    d()->functionPrototype = new (exec) FunctionPrototype(exec, FunctionPrototype::createStructure(jsNull())); // The real prototype will be set once ObjectPrototype is created.
+    d()->functionPrototype = new (exec) FunctionPrototype(exec, this, FunctionPrototype::createStructure(jsNull())); // The real prototype will be set once ObjectPrototype is created.
     d()->prototypeFunctionStructure = PrototypeFunction::createStructure(d()->functionPrototype);
     NativeFunctionWrapper* callFunction = 0;
     NativeFunctionWrapper* applyFunction = 0;
-    d()->functionPrototype->addFunctionProperties(exec, d()->prototypeFunctionStructure.get(), &callFunction, &applyFunction);
+    d()->functionPrototype->addFunctionProperties(exec, this, d()->prototypeFunctionStructure.get(), &callFunction, &applyFunction);
     d()->callFunction = callFunction;
     d()->applyFunction = applyFunction;
-    d()->objectPrototype = new (exec) ObjectPrototype(exec, ObjectPrototype::createStructure(jsNull()), d()->prototypeFunctionStructure.get());
+    d()->objectPrototype = new (exec) ObjectPrototype(exec, this, ObjectPrototype::createStructure(jsNull()), d()->prototypeFunctionStructure.get());
     d()->functionPrototype->structure()->setPrototypeWithoutTransition(d()->objectPrototype);
 
     d()->emptyObjectStructure = d()->objectPrototype->inheritorID();
@@ -219,63 +219,63 @@ void JSGlobalObject::reset(JSValue prototype)
     d()->callbackFunctionStructure = JSCallbackFunction::createStructure(d()->functionPrototype);
     d()->argumentsStructure = Arguments::createStructure(d()->objectPrototype);
     d()->callbackConstructorStructure = JSCallbackConstructor::createStructure(d()->objectPrototype);
-    d()->callbackObjectStructure = JSCallbackObject<JSObject>::createStructure(d()->objectPrototype);
+    d()->callbackObjectStructure = JSCallbackObject<JSObjectWithGlobalObject>::createStructure(d()->objectPrototype);
 
-    d()->arrayPrototype = new (exec) ArrayPrototype(ArrayPrototype::createStructure(d()->objectPrototype));
+    d()->arrayPrototype = new (exec) ArrayPrototype(this, ArrayPrototype::createStructure(d()->objectPrototype));
     d()->arrayStructure = JSArray::createStructure(d()->arrayPrototype);
     d()->regExpMatchesArrayStructure = RegExpMatchesArray::createStructure(d()->arrayPrototype);
 
-    d()->stringPrototype = new (exec) StringPrototype(exec, StringPrototype::createStructure(d()->objectPrototype));
+    d()->stringPrototype = new (exec) StringPrototype(exec, this, StringPrototype::createStructure(d()->objectPrototype));
     d()->stringObjectStructure = StringObject::createStructure(d()->stringPrototype);
 
-    d()->booleanPrototype = new (exec) BooleanPrototype(exec, BooleanPrototype::createStructure(d()->objectPrototype), d()->prototypeFunctionStructure.get());
+    d()->booleanPrototype = new (exec) BooleanPrototype(exec, this, BooleanPrototype::createStructure(d()->objectPrototype), d()->prototypeFunctionStructure.get());
     d()->booleanObjectStructure = BooleanObject::createStructure(d()->booleanPrototype);
 
-    d()->numberPrototype = new (exec) NumberPrototype(exec, NumberPrototype::createStructure(d()->objectPrototype), d()->prototypeFunctionStructure.get());
+    d()->numberPrototype = new (exec) NumberPrototype(exec, this, NumberPrototype::createStructure(d()->objectPrototype), d()->prototypeFunctionStructure.get());
     d()->numberObjectStructure = NumberObject::createStructure(d()->numberPrototype);
 
-    d()->datePrototype = new (exec) DatePrototype(exec, DatePrototype::createStructure(d()->objectPrototype));
+    d()->datePrototype = new (exec) DatePrototype(exec, this, DatePrototype::createStructure(d()->objectPrototype));
     d()->dateStructure = DateInstance::createStructure(d()->datePrototype);
 
-    d()->regExpPrototype = new (exec) RegExpPrototype(exec, RegExpPrototype::createStructure(d()->objectPrototype), d()->prototypeFunctionStructure.get());
+    d()->regExpPrototype = new (exec) RegExpPrototype(exec, this, RegExpPrototype::createStructure(d()->objectPrototype), d()->prototypeFunctionStructure.get());
     d()->regExpStructure = RegExpObject::createStructure(d()->regExpPrototype);
 
     d()->methodCallDummy = constructEmptyObject(exec);
 
-    ErrorPrototype* errorPrototype = new (exec) ErrorPrototype(exec, ErrorPrototype::createStructure(d()->objectPrototype), d()->prototypeFunctionStructure.get());
+    ErrorPrototype* errorPrototype = new (exec) ErrorPrototype(exec, this, ErrorPrototype::createStructure(d()->objectPrototype), d()->prototypeFunctionStructure.get());
     d()->errorStructure = ErrorInstance::createStructure(errorPrototype);
 
     RefPtr<Structure> nativeErrorPrototypeStructure = NativeErrorPrototype::createStructure(errorPrototype);
 
-    NativeErrorPrototype* evalErrorPrototype = new (exec) NativeErrorPrototype(exec, nativeErrorPrototypeStructure, "EvalError", "EvalError");
-    NativeErrorPrototype* rangeErrorPrototype = new (exec) NativeErrorPrototype(exec, nativeErrorPrototypeStructure, "RangeError", "RangeError");
-    NativeErrorPrototype* referenceErrorPrototype = new (exec) NativeErrorPrototype(exec, nativeErrorPrototypeStructure, "ReferenceError", "ReferenceError");
-    NativeErrorPrototype* syntaxErrorPrototype = new (exec) NativeErrorPrototype(exec, nativeErrorPrototypeStructure, "SyntaxError", "SyntaxError");
-    NativeErrorPrototype* typeErrorPrototype = new (exec) NativeErrorPrototype(exec, nativeErrorPrototypeStructure, "TypeError", "TypeError");
-    NativeErrorPrototype* URIErrorPrototype = new (exec) NativeErrorPrototype(exec, nativeErrorPrototypeStructure, "URIError", "URIError");
+    NativeErrorPrototype* evalErrorPrototype = new (exec) NativeErrorPrototype(exec, this, nativeErrorPrototypeStructure, "EvalError", "EvalError");
+    NativeErrorPrototype* rangeErrorPrototype = new (exec) NativeErrorPrototype(exec, this, nativeErrorPrototypeStructure, "RangeError", "RangeError");
+    NativeErrorPrototype* referenceErrorPrototype = new (exec) NativeErrorPrototype(exec, this, nativeErrorPrototypeStructure, "ReferenceError", "ReferenceError");
+    NativeErrorPrototype* syntaxErrorPrototype = new (exec) NativeErrorPrototype(exec, this, nativeErrorPrototypeStructure, "SyntaxError", "SyntaxError");
+    NativeErrorPrototype* typeErrorPrototype = new (exec) NativeErrorPrototype(exec, this, nativeErrorPrototypeStructure, "TypeError", "TypeError");
+    NativeErrorPrototype* URIErrorPrototype = new (exec) NativeErrorPrototype(exec, this, nativeErrorPrototypeStructure, "URIError", "URIError");
 
     // Constructors
 
-    JSCell* objectConstructor = new (exec) ObjectConstructor(exec, ObjectConstructor::createStructure(d()->functionPrototype), d()->objectPrototype, d()->prototypeFunctionStructure.get());
-    JSCell* functionConstructor = new (exec) FunctionConstructor(exec, FunctionConstructor::createStructure(d()->functionPrototype), d()->functionPrototype);
-    JSCell* arrayConstructor = new (exec) ArrayConstructor(exec, ArrayConstructor::createStructure(d()->functionPrototype), d()->arrayPrototype, d()->prototypeFunctionStructure.get());
-    JSCell* stringConstructor = new (exec) StringConstructor(exec, StringConstructor::createStructure(d()->functionPrototype), d()->prototypeFunctionStructure.get(), d()->stringPrototype);
-    JSCell* booleanConstructor = new (exec) BooleanConstructor(exec, BooleanConstructor::createStructure(d()->functionPrototype), d()->booleanPrototype);
-    JSCell* numberConstructor = new (exec) NumberConstructor(exec, NumberConstructor::createStructure(d()->functionPrototype), d()->numberPrototype);
-    JSCell* dateConstructor = new (exec) DateConstructor(exec, DateConstructor::createStructure(d()->functionPrototype), d()->prototypeFunctionStructure.get(), d()->datePrototype);
+    JSCell* objectConstructor = new (exec) ObjectConstructor(exec, this, ObjectConstructor::createStructure(d()->functionPrototype), d()->objectPrototype, d()->prototypeFunctionStructure.get());
+    JSCell* functionConstructor = new (exec) FunctionConstructor(exec, this, FunctionConstructor::createStructure(d()->functionPrototype), d()->functionPrototype);
+    JSCell* arrayConstructor = new (exec) ArrayConstructor(exec, this, ArrayConstructor::createStructure(d()->functionPrototype), d()->arrayPrototype, d()->prototypeFunctionStructure.get());
+    JSCell* stringConstructor = new (exec) StringConstructor(exec, this, StringConstructor::createStructure(d()->functionPrototype), d()->prototypeFunctionStructure.get(), d()->stringPrototype);
+    JSCell* booleanConstructor = new (exec) BooleanConstructor(exec, this, BooleanConstructor::createStructure(d()->functionPrototype), d()->booleanPrototype);
+    JSCell* numberConstructor = new (exec) NumberConstructor(exec, this, NumberConstructor::createStructure(d()->functionPrototype), d()->numberPrototype);
+    JSCell* dateConstructor = new (exec) DateConstructor(exec, this, DateConstructor::createStructure(d()->functionPrototype), d()->prototypeFunctionStructure.get(), d()->datePrototype);
 
-    d()->regExpConstructor = new (exec) RegExpConstructor(exec, RegExpConstructor::createStructure(d()->functionPrototype), d()->regExpPrototype);
+    d()->regExpConstructor = new (exec) RegExpConstructor(exec, this, RegExpConstructor::createStructure(d()->functionPrototype), d()->regExpPrototype);
 
-    d()->errorConstructor = new (exec) ErrorConstructor(exec, ErrorConstructor::createStructure(d()->functionPrototype), errorPrototype);
+    d()->errorConstructor = new (exec) ErrorConstructor(exec, this, ErrorConstructor::createStructure(d()->functionPrototype), errorPrototype);
 
     RefPtr<Structure> nativeErrorStructure = NativeErrorConstructor::createStructure(d()->functionPrototype);
 
-    d()->evalErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, evalErrorPrototype);
-    d()->rangeErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, rangeErrorPrototype);
-    d()->referenceErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, referenceErrorPrototype);
-    d()->syntaxErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, syntaxErrorPrototype);
-    d()->typeErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, typeErrorPrototype);
-    d()->URIErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, URIErrorPrototype);
+    d()->evalErrorConstructor = new (exec) NativeErrorConstructor(exec, this, nativeErrorStructure, evalErrorPrototype);
+    d()->rangeErrorConstructor = new (exec) NativeErrorConstructor(exec, this, nativeErrorStructure, rangeErrorPrototype);
+    d()->referenceErrorConstructor = new (exec) NativeErrorConstructor(exec, this, nativeErrorStructure, referenceErrorPrototype);
+    d()->syntaxErrorConstructor = new (exec) NativeErrorConstructor(exec, this, nativeErrorStructure, syntaxErrorPrototype);
+    d()->typeErrorConstructor = new (exec) NativeErrorConstructor(exec, this, nativeErrorStructure, typeErrorPrototype);
+    d()->URIErrorConstructor = new (exec) NativeErrorConstructor(exec, this, nativeErrorStructure, URIErrorPrototype);
 
     d()->objectPrototype->putDirectFunctionWithoutTransition(exec->propertyNames().constructor, objectConstructor, DontEnum);
     d()->functionPrototype->putDirectFunctionWithoutTransition(exec->propertyNames().constructor, functionConstructor, DontEnum);
@@ -316,31 +316,31 @@ void JSGlobalObject::reset(JSValue prototype)
 
     // Set global values.
     GlobalPropertyInfo staticGlobals[] = {
-        GlobalPropertyInfo(Identifier(exec, "Math"), new (exec) MathObject(exec, MathObject::createStructure(d()->objectPrototype)), DontEnum | DontDelete),
+        GlobalPropertyInfo(Identifier(exec, "Math"), new (exec) MathObject(exec, this, MathObject::createStructure(d()->objectPrototype)), DontEnum | DontDelete),
         GlobalPropertyInfo(Identifier(exec, "NaN"), jsNaN(exec), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(Identifier(exec, "Infinity"), jsNumber(exec, Inf), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(Identifier(exec, "undefined"), jsUndefined(), DontEnum | DontDelete | ReadOnly),
-        GlobalPropertyInfo(Identifier(exec, "JSON"), new (exec) JSONObject(JSONObject::createStructure(d()->objectPrototype)), DontEnum | DontDelete)
+        GlobalPropertyInfo(Identifier(exec, "JSON"), new (exec) JSONObject(this, JSONObject::createStructure(d()->objectPrototype)), DontEnum | DontDelete)
     };
 
     addStaticGlobals(staticGlobals, sizeof(staticGlobals) / sizeof(GlobalPropertyInfo));
 
     // Set global functions.
 
-    d()->evalFunction = new (exec) GlobalEvalFunction(exec, GlobalEvalFunction::createStructure(d()->functionPrototype), 1, exec->propertyNames().eval, globalFuncEval, this);
+    d()->evalFunction = new (exec) GlobalEvalFunction(exec, this, GlobalEvalFunction::createStructure(d()->functionPrototype), 1, exec->propertyNames().eval, globalFuncEval, this);
     putDirectFunctionWithoutTransition(exec, d()->evalFunction, DontEnum);
-    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, d()->prototypeFunctionStructure.get(), 2, Identifier(exec, "parseInt"), globalFuncParseInt), DontEnum);
-    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "parseFloat"), globalFuncParseFloat), DontEnum);
-    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "isNaN"), globalFuncIsNaN), DontEnum);
-    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "isFinite"), globalFuncIsFinite), DontEnum);
-    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "escape"), globalFuncEscape), DontEnum);
-    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "unescape"), globalFuncUnescape), DontEnum);
-    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "decodeURI"), globalFuncDecodeURI), DontEnum);
-    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "decodeURIComponent"), globalFuncDecodeURIComponent), DontEnum);
-    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "encodeURI"), globalFuncEncodeURI), DontEnum);
-    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "encodeURIComponent"), globalFuncEncodeURIComponent), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, this, d()->prototypeFunctionStructure.get(), 2, Identifier(exec, "parseInt"), globalFuncParseInt), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, this, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "parseFloat"), globalFuncParseFloat), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, this, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "isNaN"), globalFuncIsNaN), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, this, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "isFinite"), globalFuncIsFinite), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, this, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "escape"), globalFuncEscape), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, this, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "unescape"), globalFuncUnescape), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, this, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "decodeURI"), globalFuncDecodeURI), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, this, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "decodeURIComponent"), globalFuncDecodeURIComponent), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, this, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "encodeURI"), globalFuncEncodeURI), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, this, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "encodeURIComponent"), globalFuncEncodeURIComponent), DontEnum);
 #ifndef NDEBUG
-    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "jscprint"), globalFuncJSCPrint), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, this, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "jscprint"), globalFuncJSCPrint), DontEnum);
 #endif
 
     resetPrototype(prototype);

@@ -37,7 +37,7 @@ class CInstance;
 
 class CRuntimeObject : public RuntimeObject {
 public:
-    CRuntimeObject(ExecState*, PassRefPtr<CInstance>);
+    CRuntimeObject(ExecState*, JSGlobalObject*, PassRefPtr<CInstance>);
     virtual ~CRuntimeObject();
 
     CInstance* getInternalCInstance() const;

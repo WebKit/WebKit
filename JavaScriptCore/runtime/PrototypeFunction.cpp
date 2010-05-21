@@ -32,16 +32,16 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(PrototypeFunction);
 
-PrototypeFunction::PrototypeFunction(ExecState* exec, int length, const Identifier& name, NativeFunction function)
-    : InternalFunction(&exec->globalData(), exec->lexicalGlobalObject()->prototypeFunctionStructure(), name)
+PrototypeFunction::PrototypeFunction(ExecState* exec, JSGlobalObject* globalObject, int length, const Identifier& name, NativeFunction function)
+    : InternalFunction(&exec->globalData(), globalObject, exec->lexicalGlobalObject()->prototypeFunctionStructure(), name)
     , m_function(function)
 {
     ASSERT_ARG(function, function);
     putDirect(exec->propertyNames().length, jsNumber(exec, length), DontDelete | ReadOnly | DontEnum);
 }
 
-PrototypeFunction::PrototypeFunction(ExecState* exec, NonNullPassRefPtr<Structure> prototypeFunctionStructure, int length, const Identifier& name, NativeFunction function)
-    : InternalFunction(&exec->globalData(), prototypeFunctionStructure, name)
+PrototypeFunction::PrototypeFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> prototypeFunctionStructure, int length, const Identifier& name, NativeFunction function)
+    : InternalFunction(&exec->globalData(), globalObject, prototypeFunctionStructure, name)
     , m_function(function)
 {
     ASSERT_ARG(function, function);

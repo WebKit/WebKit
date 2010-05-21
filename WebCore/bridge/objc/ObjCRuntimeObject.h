@@ -35,7 +35,7 @@ class ObjcInstance;
 
 class ObjCRuntimeObject : public RuntimeObject {
 public:
-    ObjCRuntimeObject(ExecState*, PassRefPtr<ObjcInstance>);
+    ObjCRuntimeObject(ExecState*, JSGlobalObject*, PassRefPtr<ObjcInstance>);
     virtual ~ObjCRuntimeObject();
 
     ObjcInstance* getInternalObjCInstance() const;

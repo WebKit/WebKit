@@ -181,4 +181,9 @@ NEVER_INLINE double nonInlineNaN()
 #endif
 }
 
+bool JSValue::isValidCallee()
+{
+    return asObject(asObject(asCell())->getAnonymousValue(0))->isGlobalObject();
+}
+
 } // namespace JSC

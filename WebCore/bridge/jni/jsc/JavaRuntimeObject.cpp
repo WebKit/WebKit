@@ -33,8 +33,8 @@ namespace Bindings {
 
 const ClassInfo JavaRuntimeObject::s_info = { "JavaRuntimeObject", &RuntimeObject::s_info, 0, 0 };
 
-JavaRuntimeObject::JavaRuntimeObject(ExecState* exec, PassRefPtr<JavaInstance> instance)
-    : RuntimeObject(exec, instance)
+JavaRuntimeObject::JavaRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<JavaInstance> instance)
+    : RuntimeObject(exec, globalObject, instance)
 {
 }
 

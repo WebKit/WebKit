@@ -21,13 +21,13 @@
 #ifndef MathObject_h
 #define MathObject_h
 
-#include "JSObject.h"
+#include "JSObjectWithGlobalObject.h"
 
 namespace JSC {
 
-    class MathObject : public JSObject {
+    class MathObject : public JSObjectWithGlobalObject {
     public:
-        MathObject(ExecState*, NonNullPassRefPtr<Structure>);
+        MathObject(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>);
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);

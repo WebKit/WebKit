@@ -643,6 +643,8 @@ sub GenerateHeader
     if ($hasParent && $dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
         $headerIncludes{"$implClassName.h"} = 1;
     }
+    
+    $headerIncludes{"<runtime/JSObjectWithGlobalObject.h>"} = 1;
 
     $headerIncludes{"SVGElement.h"} = 1 if $className =~ /^JSSVG/;
 
@@ -935,8 +937,8 @@ sub GenerateHeader
 
     # Add prototype declaration.
     %structureFlags = ();
-    push(@headerContent, "class ${className}Prototype : public JSC::JSObject {\n");
-    push(@headerContent, "    typedef JSC::JSObject Base;\n");
+    push(@headerContent, "class ${className}Prototype : public JSC::JSObjectWithGlobalObject {\n");
+    push(@headerContent, "    typedef JSC::JSObjectWithGlobalObject Base;\n");
     push(@headerContent, "public:\n");
     if ($interfaceName eq "DOMWindow") {
         push(@headerContent, "    void* operator new(size_t);\n");
@@ -970,7 +972,7 @@ sub GenerateHeader
     # Custom defineGetter function
     push(@headerContent, "    virtual void defineGetter(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSObject* getterFunction, unsigned attributes);\n") if $dataNode->extendedAttributes->{"CustomPrototypeDefineGetter"};
 
-    push(@headerContent, "    ${className}Prototype(NonNullPassRefPtr<JSC::Structure> structure) : JSC::JSObject(structure) { }\n");
+    push(@headerContent, "    ${className}Prototype(JSC::JSGlobalObject* globalObject, NonNullPassRefPtr<JSC::Structure> structure) : JSC::JSObjectWithGlobalObject(globalObject, structure) { }\n");
 
     # structure flags
     push(@headerContent, "protected:\n");
@@ -1440,9 +1442,9 @@ sub GenerateImplementation
         push(@implContent, "JSObject* ${className}::createPrototype(ExecState* exec, JSGlobalObject* globalObject)\n");
         push(@implContent, "{\n");
         if ($hasParent && $parentClassName ne "JSC::DOMNodeFilter") {
-            push(@implContent, "    return new (exec) ${className}Prototype(${className}Prototype::createStructure(${parentClassName}Prototype::self(exec, globalObject)));\n");
+            push(@implContent, "    return new (exec) ${className}Prototype(globalObject, ${className}Prototype::createStructure(${parentClassName}Prototype::self(exec, globalObject)));\n");
         } else {
-            push(@implContent, "    return new (exec) ${className}Prototype(${className}Prototype::createStructure(globalObject->objectPrototype()));\n");
+            push(@implContent, "    return new (exec) ${className}Prototype(globalObject, ${className}Prototype::createStructure(globalObject->objectPrototype()));\n");
         }
         push(@implContent, "}\n\n");
     }

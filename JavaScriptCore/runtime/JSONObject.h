@@ -26,18 +26,15 @@
 #ifndef JSONObject_h
 #define JSONObject_h
 
-#include "JSObject.h"
+#include "JSObjectWithGlobalObject.h"
 
 namespace JSC {
 
     class Stringifier;
 
-    class JSONObject : public JSObject {
+    class JSONObject : public JSObjectWithGlobalObject {
     public:
-        JSONObject(NonNullPassRefPtr<Structure> structure)
-            : JSObject(structure)
-        {
-        }
+        JSONObject(JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure);
 
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {

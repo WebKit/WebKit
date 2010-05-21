@@ -35,7 +35,7 @@ class JavaInstance;
 
 class JavaRuntimeObject : public RuntimeObject {
 public:
-    JavaRuntimeObject(ExecState*, PassRefPtr<JavaInstance>);
+    JavaRuntimeObject(ExecState*, JSGlobalObject*, PassRefPtr<JavaInstance>);
     virtual ~JavaRuntimeObject();
 
     JavaInstance* getInternalJavaInstance() const;

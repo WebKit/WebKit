@@ -207,12 +207,16 @@ namespace JSC {
 
     inline CallType JSValue::getCallData(CallData& callData)
     {
-        return isCell() ? asCell()->getCallData(callData) : CallTypeNone;
+        CallType result = isCell() ? asCell()->getCallData(callData) : CallTypeNone;
+        ASSERT(result == CallTypeNone || isValidCallee());
+        return result;
     }
 
     inline ConstructType JSValue::getConstructData(ConstructData& constructData)
     {
-        return isCell() ? asCell()->getConstructData(constructData) : ConstructTypeNone;
+        ConstructType result = isCell() ? asCell()->getConstructData(constructData) : ConstructTypeNone;
+        ASSERT(result == ConstructTypeNone || isValidCallee());
+        return result;
     }
 
     ALWAYS_INLINE bool JSValue::getUInt32(uint32_t& v) const

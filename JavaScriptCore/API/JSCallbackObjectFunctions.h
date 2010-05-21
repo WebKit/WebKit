@@ -48,8 +48,8 @@ inline JSCallbackObject<Base>* JSCallbackObject<Base>::asCallbackObject(JSValue 
 }
 
 template <class Base>
-JSCallbackObject<Base>::JSCallbackObject(ExecState* exec, NonNullPassRefPtr<Structure> structure, JSClassRef jsClass, void* data)
-    : Base(structure)
+JSCallbackObject<Base>::JSCallbackObject(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, JSClassRef jsClass, void* data)
+    : Base(globalObject, structure)
     , m_callbackObjectData(new JSCallbackObjectData(data, jsClass))
 {
     init(exec);
@@ -58,8 +58,8 @@ JSCallbackObject<Base>::JSCallbackObject(ExecState* exec, NonNullPassRefPtr<Stru
 // Global object constructor.
 // FIXME: Move this into a separate JSGlobalCallbackObject class derived from this one.
 template <class Base>
-JSCallbackObject<Base>::JSCallbackObject(JSClassRef jsClass)
-    : Base()
+JSCallbackObject<Base>::JSCallbackObject(JSClassRef jsClass, NonNullPassRefPtr<Structure> structure)
+    : Base(structure)
     , m_callbackObjectData(new JSCallbackObjectData(0, jsClass))
 {
     ASSERT(Base::isGlobalObject());
@@ -560,7 +560,8 @@ JSValue JSCallbackObject<Base>::staticFunctionGetter(ExecState* exec, JSValue sl
         if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(exec)) {
             if (StaticFunctionEntry* entry = staticFunctions->get(propertyName.ustring().rep())) {
                 if (JSObjectCallAsFunctionCallback callAsFunction = entry->callAsFunction) {
-                    JSObject* o = new (exec) JSCallbackFunction(exec, callAsFunction, propertyName);
+                    
+                    JSObject* o = new (exec) JSCallbackFunction(exec, asGlobalObject(thisObj->getAnonymousValue(0)), callAsFunction, propertyName);
                     thisObj->putDirect(propertyName, o, entry->attributes);
                     return o;
                 }

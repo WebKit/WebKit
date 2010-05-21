@@ -29,7 +29,7 @@ namespace JSC {
 
     class DateConstructor : public InternalFunction {
     public:
-        DateConstructor(ExecState*, NonNullPassRefPtr<Structure>, Structure* prototypeFunctionStructure, DatePrototype*);
+        DateConstructor(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, Structure* prototypeFunctionStructure, DatePrototype*);
 
     private:
         virtual ConstructType getConstructData(ConstructData&);

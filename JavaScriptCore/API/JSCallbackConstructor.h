@@ -27,13 +27,13 @@
 #define JSCallbackConstructor_h
 
 #include "JSObjectRef.h"
-#include <runtime/JSObject.h>
+#include <runtime/JSObjectWithGlobalObject.h>
 
 namespace JSC {
 
-class JSCallbackConstructor : public JSObject {
+class JSCallbackConstructor : public JSObjectWithGlobalObject {
 public:
-    JSCallbackConstructor(NonNullPassRefPtr<Structure>, JSClassRef, JSObjectCallAsConstructorCallback);
+    JSCallbackConstructor(JSGlobalObject*, NonNullPassRefPtr<Structure>, JSClassRef, JSObjectCallAsConstructorCallback);
     virtual ~JSCallbackConstructor();
     JSClassRef classRef() const { return m_class; }
     JSObjectCallAsConstructorCallback callback() const { return m_callback; }

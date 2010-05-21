@@ -81,7 +81,7 @@ JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, void* data)
     if (!jsClass)
         return toRef(new (exec) JSObject(exec->lexicalGlobalObject()->emptyObjectStructure())); // slightly more efficient
 
-    JSCallbackObject<JSObject>* object = new (exec) JSCallbackObject<JSObject>(exec, exec->lexicalGlobalObject()->callbackObjectStructure(), jsClass, data);
+    JSCallbackObject<JSObjectWithGlobalObject>* object = new (exec) JSCallbackObject<JSObjectWithGlobalObject>(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->callbackObjectStructure(), jsClass, data);
     if (JSObject* prototype = jsClass->prototype(exec))
         object->setPrototype(prototype);
 
@@ -95,7 +95,7 @@ JSObjectRef JSObjectMakeFunctionWithCallback(JSContextRef ctx, JSStringRef name,
 
     Identifier nameID = name ? name->identifier(&exec->globalData()) : Identifier(exec, "anonymous");
     
-    return toRef(new (exec) JSCallbackFunction(exec, callAsFunction, nameID));
+    return toRef(new (exec) JSCallbackFunction(exec, exec->lexicalGlobalObject(), callAsFunction, nameID));
 }
 
 JSObjectRef JSObjectMakeConstructor(JSContextRef ctx, JSClassRef jsClass, JSObjectCallAsConstructorCallback callAsConstructor)
@@ -107,7 +107,7 @@ JSObjectRef JSObjectMakeConstructor(JSContextRef ctx, JSClassRef jsClass, JSObje
     if (!jsPrototype)
         jsPrototype = exec->lexicalGlobalObject()->objectPrototype();
 
-    JSCallbackConstructor* constructor = new (exec) JSCallbackConstructor(exec->lexicalGlobalObject()->callbackConstructorStructure(), jsClass, callAsConstructor);
+    JSCallbackConstructor* constructor = new (exec) JSCallbackConstructor(exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->callbackConstructorStructure(), jsClass, callAsConstructor);
     constructor->putDirect(exec->propertyNames().prototype, jsPrototype, DontEnum | DontDelete | ReadOnly);
     return toRef(constructor);
 }
@@ -343,8 +343,8 @@ void* JSObjectGetPrivate(JSObjectRef object)
     
     if (jsObject->inherits(&JSCallbackObject<JSGlobalObject>::info))
         return static_cast<JSCallbackObject<JSGlobalObject>*>(jsObject)->getPrivate();
-    else if (jsObject->inherits(&JSCallbackObject<JSObject>::info))
-        return static_cast<JSCallbackObject<JSObject>*>(jsObject)->getPrivate();
+    else if (jsObject->inherits(&JSCallbackObject<JSObjectWithGlobalObject>::info))
+        return static_cast<JSCallbackObject<JSObjectWithGlobalObject>*>(jsObject)->getPrivate();
     
     return 0;
 }
@@ -356,8 +356,8 @@ bool JSObjectSetPrivate(JSObjectRef object, void* data)
     if (jsObject->inherits(&JSCallbackObject<JSGlobalObject>::info)) {
         static_cast<JSCallbackObject<JSGlobalObject>*>(jsObject)->setPrivate(data);
         return true;
-    } else if (jsObject->inherits(&JSCallbackObject<JSObject>::info)) {
-        static_cast<JSCallbackObject<JSObject>*>(jsObject)->setPrivate(data);
+    } else if (jsObject->inherits(&JSCallbackObject<JSObjectWithGlobalObject>::info)) {
+        static_cast<JSCallbackObject<JSObjectWithGlobalObject>*>(jsObject)->setPrivate(data);
         return true;
     }
         
@@ -373,8 +373,8 @@ JSValueRef JSObjectGetPrivateProperty(JSContextRef ctx, JSObjectRef object, JSSt
     Identifier name(propertyName->identifier(&exec->globalData()));
     if (jsObject->inherits(&JSCallbackObject<JSGlobalObject>::info))
         result = static_cast<JSCallbackObject<JSGlobalObject>*>(jsObject)->getPrivateProperty(name);
-    else if (jsObject->inherits(&JSCallbackObject<JSObject>::info))
-        result = static_cast<JSCallbackObject<JSObject>*>(jsObject)->getPrivateProperty(name);
+    else if (jsObject->inherits(&JSCallbackObject<JSObjectWithGlobalObject>::info))
+        result = static_cast<JSCallbackObject<JSObjectWithGlobalObject>*>(jsObject)->getPrivateProperty(name);
     return toRef(exec, result);
 }
 
@@ -389,8 +389,8 @@ bool JSObjectSetPrivateProperty(JSContextRef ctx, JSObjectRef object, JSStringRe
         static_cast<JSCallbackObject<JSGlobalObject>*>(jsObject)->setPrivateProperty(name, jsValue);
         return true;
     }
-    if (jsObject->inherits(&JSCallbackObject<JSObject>::info)) {
-        static_cast<JSCallbackObject<JSObject>*>(jsObject)->setPrivateProperty(name, jsValue);
+    if (jsObject->inherits(&JSCallbackObject<JSObjectWithGlobalObject>::info)) {
+        static_cast<JSCallbackObject<JSObjectWithGlobalObject>*>(jsObject)->setPrivateProperty(name, jsValue);
         return true;
     }
     return false;
@@ -406,8 +406,8 @@ bool JSObjectDeletePrivateProperty(JSContextRef ctx, JSObjectRef object, JSStrin
         static_cast<JSCallbackObject<JSGlobalObject>*>(jsObject)->deletePrivateProperty(name);
         return true;
     }
-    if (jsObject->inherits(&JSCallbackObject<JSObject>::info)) {
-        static_cast<JSCallbackObject<JSObject>*>(jsObject)->deletePrivateProperty(name);
+    if (jsObject->inherits(&JSCallbackObject<JSObjectWithGlobalObject>::info)) {
+        static_cast<JSCallbackObject<JSObjectWithGlobalObject>*>(jsObject)->deletePrivateProperty(name);
         return true;
     }
     return false;

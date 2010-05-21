@@ -28,13 +28,14 @@
 
 #include "Bridge.h"
 #include <runtime/JSGlobalObject.h>
+#include <runtime/JSObjectWithGlobalObject.h>
 
 namespace JSC {
 namespace Bindings {
 
-class RuntimeObject : public JSObject {
+class RuntimeObject : public JSObjectWithGlobalObject {
 public:
-    RuntimeObject(ExecState*, PassRefPtr<Instance>);
+    RuntimeObject(ExecState*, JSGlobalObject*, PassRefPtr<Instance>);
     virtual ~RuntimeObject();
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
@@ -67,7 +68,7 @@ public:
 
 protected:
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSObject::StructureFlags;
-    RuntimeObject(ExecState*, NonNullPassRefPtr<Structure>, PassRefPtr<Instance>);
+    RuntimeObject(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, PassRefPtr<Instance>);
 
 private:
     virtual const ClassInfo* classInfo() const { return &s_info; }

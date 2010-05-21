@@ -35,8 +35,8 @@ namespace WebKit {
 
 const ClassInfo ProxyRuntimeObject::s_info = { "ProxyRuntimeObject", &RuntimeObject::s_info, 0, 0 };
 
-ProxyRuntimeObject::ProxyRuntimeObject(ExecState* exec, PassRefPtr<ProxyInstance> instance)
-    : RuntimeObject(exec, instance)
+ProxyRuntimeObject::ProxyRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<ProxyInstance> instance)
+    : RuntimeObject(exec, globalObject, instance)
 {
 }
 

@@ -1,3 +1,15 @@
+2010-05-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        All callable objects should have a global object reference
+        https://bugs.webkit.org/show_bug.cgi?id=39495
+
+        Update expected results as we now give all function objects
+        get their prototypes from the correct global object.
+
+        * fast/dom/prototype-inheritance-expected.txt:
+
 2010-05-21  Victor Wang  <victorw@chromium.org>
 
         Unremivewed. Update test expecations for chromium.

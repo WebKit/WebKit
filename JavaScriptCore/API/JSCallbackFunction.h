@@ -33,7 +33,7 @@ namespace JSC {
 
 class JSCallbackFunction : public InternalFunction {
 public:
-    JSCallbackFunction(ExecState*, JSObjectCallAsFunctionCallback, const Identifier& name);
+    JSCallbackFunction(ExecState*, JSGlobalObject*, JSObjectCallAsFunctionCallback, const Identifier& name);
 
     static const ClassInfo info;
     

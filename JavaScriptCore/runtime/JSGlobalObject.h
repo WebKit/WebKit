@@ -160,10 +160,20 @@ namespace JSC {
 
     public:
         void* operator new(size_t, JSGlobalData*);
-
+        
         explicit JSGlobalObject()
             : JSVariableObject(JSGlobalObject::createStructure(jsNull()), new JSGlobalObjectData(destroyJSGlobalObjectData))
         {
+            COMPILE_ASSERT(JSGlobalObject::AnonymousSlotCount == 1, JSGlobalObject_has_only_a_single_slot);
+            putAnonymousValue(0, this);
+            init(this);
+        }
+        
+        explicit JSGlobalObject(NonNullPassRefPtr<Structure> structure)
+            : JSVariableObject(structure, new JSGlobalObjectData(destroyJSGlobalObjectData))
+        {
+            COMPILE_ASSERT(JSGlobalObject::AnonymousSlotCount == 1, JSGlobalObject_has_only_a_single_slot);
+            putAnonymousValue(0, this);
             init(this);
         }
 
@@ -171,6 +181,8 @@ namespace JSC {
         JSGlobalObject(NonNullPassRefPtr<Structure> structure, JSGlobalObjectData* data, JSObject* thisValue)
             : JSVariableObject(structure, data)
         {
+            COMPILE_ASSERT(JSGlobalObject::AnonymousSlotCount == 1, JSGlobalObject_has_only_a_single_slot);
+            putAnonymousValue(0, this);
             init(thisValue);
         }
 
@@ -285,6 +297,7 @@ namespace JSC {
 
     protected:
 
+        static const unsigned AnonymousSlotCount = JSVariableObject::AnonymousSlotCount + 1;
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesMarkChildren | OverridesGetPropertyNames | JSVariableObject::StructureFlags;
 
         struct GlobalPropertyInfo {

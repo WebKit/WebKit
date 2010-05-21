@@ -57,12 +57,12 @@ JSFunction::JSFunction(NonNullPassRefPtr<Structure> structure)
 {
 }
 
-JSFunction::JSFunction(ExecState* exec, NonNullPassRefPtr<Structure> structure, int length, const Identifier& name, PassRefPtr<NativeExecutable> thunk)
-    : Base(structure)
+JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, int length, const Identifier& name, PassRefPtr<NativeExecutable> thunk)
+    : Base(globalObject, structure)
 #if ENABLE(JIT)
     , m_executable(thunk)
 #endif
-    , m_scopeChain(NoScopeChain())
+    , m_scopeChain(globalObject->globalScopeChain())
 {
     putDirect(exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
 #if ENABLE(JIT)
@@ -74,12 +74,12 @@ JSFunction::JSFunction(ExecState* exec, NonNullPassRefPtr<Structure> structure, 
 #endif
 }
 
-JSFunction::JSFunction(ExecState* exec, NonNullPassRefPtr<Structure> structure, int length, const Identifier& name, NativeFunction func)
-    : Base(structure)
+JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, int length, const Identifier& name, NativeFunction func)
+    : Base(globalObject, structure)
 #if ENABLE(JIT)
     , m_executable(exec->globalData().getHostFunction(func))
 #endif
-    , m_scopeChain(NoScopeChain())
+    , m_scopeChain(globalObject->globalScopeChain())
 {
     putDirect(exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
 #if ENABLE(JIT)
@@ -92,7 +92,7 @@ JSFunction::JSFunction(ExecState* exec, NonNullPassRefPtr<Structure> structure, 
 }
 
 JSFunction::JSFunction(ExecState* exec, NonNullPassRefPtr<FunctionExecutable> executable, ScopeChainNode* scopeChainNode)
-    : Base(exec->lexicalGlobalObject()->functionStructure())
+    : Base(scopeChainNode->globalObject, scopeChainNode->globalObject->functionStructure())
     , m_executable(executable)
     , m_scopeChain(scopeChainNode)
 {

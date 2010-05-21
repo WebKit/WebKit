@@ -24,6 +24,7 @@
 #include "InternalFunction.h"
 
 #include "FunctionPrototype.h"
+#include "JSGlobalObject.h"
 #include "JSString.h"
 
 namespace JSC {
@@ -37,8 +38,13 @@ const ClassInfo* InternalFunction::classInfo() const
     return &info;
 }
 
-InternalFunction::InternalFunction(JSGlobalData* globalData, NonNullPassRefPtr<Structure> structure, const Identifier& name)
-    : JSObject(structure)
+InternalFunction::InternalFunction(NonNullPassRefPtr<Structure> structure)
+    : JSObjectWithGlobalObject(structure)
+{
+}
+
+InternalFunction::InternalFunction(JSGlobalData* globalData, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, const Identifier& name)
+    : JSObjectWithGlobalObject(globalObject, structure)
 {
     putDirect(globalData->propertyNames->name, jsString(globalData, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
 }

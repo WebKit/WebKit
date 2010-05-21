@@ -114,8 +114,8 @@ struct JSCallbackObjectData {
 template <class Base>
 class JSCallbackObject : public Base {
 public:
-    JSCallbackObject(ExecState*, NonNullPassRefPtr<Structure>, JSClassRef, void* data);
-    JSCallbackObject(JSClassRef);
+    JSCallbackObject(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, JSClassRef, void* data);
+    JSCallbackObject(JSClassRef, NonNullPassRefPtr<Structure>);
     virtual ~JSCallbackObject();
 
     void setPrivate(void* data);

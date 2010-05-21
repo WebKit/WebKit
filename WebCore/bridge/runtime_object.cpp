@@ -38,16 +38,16 @@ namespace Bindings {
 
 const ClassInfo RuntimeObject::s_info = { "RuntimeObject", 0, 0, 0 };
 
-RuntimeObject::RuntimeObject(ExecState* exec, PassRefPtr<Instance> instance)
+RuntimeObject::RuntimeObject(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<Instance> instance)
     // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
     // We need to pass in the right global object for "i".
-    : JSObject(deprecatedGetDOMStructure<RuntimeObject>(exec))
+    : JSObjectWithGlobalObject(globalObject, deprecatedGetDOMStructure<RuntimeObject>(exec))
     , m_instance(instance)
 {
 }
 
-RuntimeObject::RuntimeObject(ExecState*, NonNullPassRefPtr<Structure> structure, PassRefPtr<Instance> instance)
-    : JSObject(structure)
+RuntimeObject::RuntimeObject(ExecState*, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, PassRefPtr<Instance> instance)
+    : JSObjectWithGlobalObject(globalObject, structure)
     , m_instance(instance)
 {
 }

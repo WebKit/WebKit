@@ -1,3 +1,68 @@
+2010-05-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        All callable objects should have a global object reference
+        https://bugs.webkit.org/show_bug.cgi?id=39495
+
+        Update the bindings generator to give prototype objects a
+        global object.  Update all the manually written JSObject
+        subclasses to pass a global object.
+
+        * ForwardingHeaders/runtime/JSObjectWithGlobalObject.h: Added.
+        * WebCore.PluginHostProcess.exp:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::objectToStringFunctionGetter):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::nonCachingStaticFunctionGetter):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::setWindow):
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::nonCachingStaticBackFunctionGetter):
+        (WebCore::nonCachingStaticForwardFunctionGetter):
+        (WebCore::nonCachingStaticGoFunctionGetter):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::nonCachingStaticReplaceFunctionGetter):
+        (WebCore::nonCachingStaticReloadFunctionGetter):
+        (WebCore::nonCachingStaticAssignFunctionGetter):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::initScript):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/c/CRuntimeObject.cpp:
+        (JSC::Bindings::CRuntimeObject::CRuntimeObject):
+        * bridge/c/CRuntimeObject.h:
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CInstance::newRuntimeObject):
+        (JSC::Bindings::CRuntimeMethod::CRuntimeMethod):
+        (JSC::Bindings::CInstance::getMethod):
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaInstance::newRuntimeObject):
+        (JavaRuntimeMethod::JavaRuntimeMethod):
+        (JavaInstance::getMethod):
+        * bridge/jni/jsc/JavaRuntimeObject.cpp:
+        (JSC::Bindings::JavaRuntimeObject::JavaRuntimeObject):
+        * bridge/jni/jsc/JavaRuntimeObject.h:
+        * bridge/jsc/BridgeJSC.cpp:
+        (JSC::Bindings::Instance::newRuntimeObject):
+        * bridge/objc/ObjCRuntimeObject.h:
+        * bridge/objc/ObjCRuntimeObject.mm:
+        (JSC::Bindings::ObjCRuntimeObject::ObjCRuntimeObject):
+        * bridge/objc/objc_class.mm:
+        (JSC::Bindings::ObjcClass::fallbackObject):
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::newRuntimeObject):
+        (ObjCRuntimeMethod::ObjCRuntimeMethod):
+        (ObjcInstance::getMethod):
+        * bridge/objc/objc_runtime.h:
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcFallbackObjectImp::ObjcFallbackObjectImp):
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::RuntimeMethod):
+        * bridge/runtime_method.h:
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::RuntimeObject):
+        * bridge/runtime_object.h:
+
 2010-05-21  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

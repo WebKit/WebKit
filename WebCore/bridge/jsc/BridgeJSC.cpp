@@ -98,7 +98,7 @@ RuntimeObject* Instance::createRuntimeObject(ExecState* exec)
 RuntimeObject* Instance::newRuntimeObject(ExecState* exec)
 {
     JSLock lock(SilenceAssertionsOnly);
-    return new (exec)RuntimeObject(exec, this);
+    return new (exec)RuntimeObject(exec, exec->lexicalGlobalObject(), this);
 }
 
 void Instance::willDestroyRuntimeObject()

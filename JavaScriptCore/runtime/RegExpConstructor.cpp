@@ -91,8 +91,8 @@ const ClassInfo RegExpConstructor::info = { "Function", &InternalFunction::info,
 @end
 */
 
-RegExpConstructor::RegExpConstructor(ExecState* exec, NonNullPassRefPtr<Structure> structure, RegExpPrototype* regExpPrototype)
-    : InternalFunction(&exec->globalData(), structure, Identifier(exec, "RegExp"))
+RegExpConstructor::RegExpConstructor(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, RegExpPrototype* regExpPrototype)
+    : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, "RegExp"))
     , d(new RegExpConstructorPrivate)
 {
     // ECMA 15.10.5.1 RegExp.prototype
@@ -304,7 +304,7 @@ JSObject* constructRegExp(ExecState* exec, const ArgList& args)
     RefPtr<RegExp> regExp = RegExp::create(&exec->globalData(), pattern, flags);
     if (!regExp->isValid())
         return throwError(exec, SyntaxError, makeString("Invalid regular expression: ", regExp->errorMessage()));
-    return new (exec) RegExpObject(exec->lexicalGlobalObject()->regExpStructure(), regExp.release());
+    return new (exec) RegExpObject(exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->regExpStructure(), regExp.release());
 }
 
 static JSObject* constructWithRegExpConstructor(ExecState* exec, JSObject*, const ArgList& args)

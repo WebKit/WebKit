@@ -32,8 +32,8 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(GlobalEvalFunction);
 
-GlobalEvalFunction::GlobalEvalFunction(ExecState* exec, NonNullPassRefPtr<Structure> structure, int len, const Identifier& name, NativeFunction function, JSGlobalObject* cachedGlobalObject)
-    : PrototypeFunction(exec, structure, len, name, function)
+GlobalEvalFunction::GlobalEvalFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, int len, const Identifier& name, NativeFunction function, JSGlobalObject* cachedGlobalObject)
+    : PrototypeFunction(exec, globalObject, structure, len, name, function)
     , m_cachedGlobalObject(cachedGlobalObject)
 {
     ASSERT_ARG(cachedGlobalObject, cachedGlobalObject);

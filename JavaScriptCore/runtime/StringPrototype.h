@@ -29,7 +29,7 @@ namespace JSC {
 
     class StringPrototype : public StringObject {
     public:
-        StringPrototype(ExecState*, NonNullPassRefPtr<Structure>);
+        StringPrototype(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>);
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);

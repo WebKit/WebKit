@@ -24,7 +24,7 @@
 #ifndef JSFunction_h
 #define JSFunction_h
 
-#include "JSObject.h"
+#include "JSObjectWithGlobalObject.h"
 
 namespace JSC {
 
@@ -35,15 +35,15 @@ namespace JSC {
     class JSGlobalObject;
     class NativeExecutable;
 
-    class JSFunction : public JSObject {
+    class JSFunction : public JSObjectWithGlobalObject {
         friend class JIT;
         friend class JSGlobalData;
 
-        typedef JSObject Base;
+        typedef JSObjectWithGlobalObject Base;
 
     public:
-        JSFunction(ExecState*, NonNullPassRefPtr<Structure>, int length, const Identifier&, NativeFunction);
-        JSFunction(ExecState*, NonNullPassRefPtr<Structure>, int length, const Identifier&, PassRefPtr<NativeExecutable>);
+        JSFunction(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, int length, const Identifier&, NativeFunction);
+        JSFunction(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, int length, const Identifier&, PassRefPtr<NativeExecutable>);
         JSFunction(ExecState*, NonNullPassRefPtr<FunctionExecutable>, ScopeChainNode*);
         virtual ~JSFunction();
 

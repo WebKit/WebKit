@@ -36,7 +36,7 @@ class ProxyInstance;
 
 class ProxyRuntimeObject : public JSC::Bindings::RuntimeObject {
 public:
-    ProxyRuntimeObject(JSC::ExecState*, PassRefPtr<ProxyInstance>);
+    ProxyRuntimeObject(JSC::ExecState*, JSC::JSGlobalObject*, PassRefPtr<ProxyInstance>);
     virtual ~ProxyRuntimeObject();
 
     ProxyInstance* getInternalProxyInstance() const;

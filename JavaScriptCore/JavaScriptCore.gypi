@@ -247,6 +247,8 @@
             'runtime/JSNumberCell.h',
             'runtime/JSObject.cpp',
             'runtime/JSObject.h',
+            'runtime/JSObjectWithGlobalObject.cpp',
+            'runtime/JSObjectWithGlobalObject.h',
             'runtime/JSONObject.cpp',
             'runtime/JSONObject.h',
             'runtime/JSPropertyNameIterator.cpp',

@@ -133,7 +133,7 @@ ProxyInstance::~ProxyInstance()
     
 RuntimeObject* ProxyInstance::newRuntimeObject(ExecState* exec)
 {
-    return new (exec) ProxyRuntimeObject(exec, this);
+    return new (exec) ProxyRuntimeObject(exec, exec->lexicalGlobalObject(), this);
 }
 
 JSC::Bindings::Class* ProxyInstance::getClass() const
@@ -178,8 +178,8 @@ JSValue ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t id
 
 class ProxyRuntimeMethod : public RuntimeMethod {
 public:
-    ProxyRuntimeMethod(ExecState* exec, const Identifier& name, Bindings::MethodList& list)
-        : RuntimeMethod(exec, name, list)
+    ProxyRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
+        : RuntimeMethod(exec, globalObject, name, list)
     {
     }
 
@@ -193,7 +193,7 @@ const ClassInfo ProxyRuntimeMethod::s_info = { "ProxyRuntimeMethod", &RuntimeMet
 JSValue ProxyInstance::getMethod(JSC::ExecState* exec, const JSC::Identifier& propertyName)
 {
     MethodList methodList = getClass()->methodsNamed(propertyName, this);
-    return new (exec) ProxyRuntimeMethod(exec, propertyName, methodList);
+    return new (exec) ProxyRuntimeMethod(exec, exec->lexicalGlobalObject(), propertyName, methodList);
 }
 
 JSValue ProxyInstance::invokeMethod(ExecState* exec, JSC::RuntimeMethod* runtimeMethod, const ArgList& args)

@@ -86,8 +86,8 @@ const ClassInfo MathObject::info = { "Math", 0, 0, ExecState::mathTable };
 @end
 */
 
-MathObject::MathObject(ExecState* exec, NonNullPassRefPtr<Structure> structure)
-    : JSObject(structure)
+MathObject::MathObject(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure)
+    : JSObjectWithGlobalObject(globalObject, structure)
 {
     putDirectWithoutTransition(Identifier(exec, "E"), jsNumber(exec, exp(1.0)), DontDelete | DontEnum | ReadOnly);
     putDirectWithoutTransition(Identifier(exec, "LN2"), jsNumber(exec, log(2.0)), DontDelete | DontEnum | ReadOnly);

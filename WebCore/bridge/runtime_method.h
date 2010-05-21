@@ -35,7 +35,7 @@ namespace JSC {
 
 class RuntimeMethod : public InternalFunction {
 public:
-    RuntimeMethod(ExecState*, const Identifier& name, Bindings::MethodList&);
+    RuntimeMethod(ExecState*, JSGlobalObject*, const Identifier& name, Bindings::MethodList&);
     Bindings::MethodList* methods() const { return _methodList.get(); }
 
     static const ClassInfo s_info;

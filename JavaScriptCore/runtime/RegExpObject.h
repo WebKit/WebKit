@@ -21,14 +21,14 @@
 #ifndef RegExpObject_h
 #define RegExpObject_h
 
-#include "JSObject.h"
+#include "JSObjectWithGlobalObject.h"
 #include "RegExp.h"
 
 namespace JSC {
 
-    class RegExpObject : public JSObject {
+    class RegExpObject : public JSObjectWithGlobalObject {
     public:
-        RegExpObject(NonNullPassRefPtr<Structure>, NonNullPassRefPtr<RegExp>);
+        RegExpObject(JSGlobalObject* globalObject, NonNullPassRefPtr<Structure>, NonNullPassRefPtr<RegExp>);
         virtual ~RegExpObject();
 
         void setRegExp(PassRefPtr<RegExp> r) { d->regExp = r; }
@@ -53,8 +53,8 @@ namespace JSC {
         }
 
     protected:
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObject::StructureFlags;
-
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObjectWithGlobalObject::StructureFlags;
+        
     private:
         bool match(ExecState*, const ArgList&);
 

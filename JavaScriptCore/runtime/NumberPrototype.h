@@ -27,7 +27,7 @@ namespace JSC {
 
     class NumberPrototype : public NumberObject {
     public:
-        NumberPrototype(ExecState*, NonNullPassRefPtr<Structure>, Structure* prototypeFunctionStructure);
+        NumberPrototype(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, Structure* prototypeFunctionStructure);
     };
 
 } // namespace JSC

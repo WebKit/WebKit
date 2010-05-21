@@ -65,7 +65,7 @@ static NSMapTable *createInstanceWrapperCache()
 
 RuntimeObject* ObjcInstance::newRuntimeObject(ExecState* exec)
 {
-    return new (exec) ObjCRuntimeObject(exec, this);
+    return new (exec) ObjCRuntimeObject(exec, exec->lexicalGlobalObject(), this);
 }
 
 void ObjcInstance::setGlobalException(NSString* exception, JSGlobalObject* exceptionEnvironment)
@@ -176,8 +176,8 @@ bool ObjcInstance::supportsInvokeDefaultMethod() const
 
 class ObjCRuntimeMethod : public RuntimeMethod {
 public:
-    ObjCRuntimeMethod(ExecState* exec, const Identifier& name, Bindings::MethodList& list)
-        : RuntimeMethod(exec, name, list)
+    ObjCRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
+        : RuntimeMethod(exec, globalObject, name, list)
     {
     }
 
@@ -191,7 +191,7 @@ const ClassInfo ObjCRuntimeMethod::s_info = { "ObjCRuntimeMethod", &RuntimeMetho
 JSValue ObjcInstance::getMethod(ExecState* exec, const Identifier& propertyName)
 {
     MethodList methodList = getClass()->methodsNamed(propertyName, this);
-    return new (exec) ObjCRuntimeMethod(exec, propertyName, methodList);
+    return new (exec) ObjCRuntimeMethod(exec, exec->lexicalGlobalObject(), propertyName, methodList);
 }
 
 JSValue ObjcInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod, const ArgList &args)

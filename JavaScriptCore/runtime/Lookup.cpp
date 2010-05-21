@@ -71,17 +71,20 @@ void HashTable::deleteTable() const
 
 void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot)
 {
+    ASSERT(thisObj->structure()->anonymousSlotCount() > 0);
+    ASSERT(thisObj->getAnonymousValue(0).isCell() && asObject(thisObj->getAnonymousValue(0).asCell())->isGlobalObject());
     ASSERT(entry->attributes() & Function);
     JSValue* location = thisObj->getDirectLocation(propertyName);
 
     if (!location) {
         NativeFunctionWrapper* function;
+        JSGlobalObject* globalObject = asGlobalObject(thisObj->getAnonymousValue(0).asCell());
 #if ENABLE(JIT)
         if (entry->generator())
-            function = new (exec) NativeFunctionWrapper(exec, exec->lexicalGlobalObject()->prototypeFunctionStructure(), entry->functionLength(), propertyName, exec->globalData().getHostFunction(entry->function(), entry->generator()));
+            function = new (exec) NativeFunctionWrapper(exec, globalObject, globalObject->prototypeFunctionStructure(), entry->functionLength(), propertyName, exec->globalData().getHostFunction(entry->function(), entry->generator()));
         else
 #endif
-            function = new (exec) NativeFunctionWrapper(exec, exec->lexicalGlobalObject()->prototypeFunctionStructure(), entry->functionLength(), propertyName, entry->function());
+            function = new (exec) NativeFunctionWrapper(exec, globalObject, globalObject->prototypeFunctionStructure(), entry->functionLength(), propertyName, entry->function());
 
         thisObj->putDirectFunction(propertyName, function, entry->attributes());
         location = thisObj->getDirectLocation(propertyName);

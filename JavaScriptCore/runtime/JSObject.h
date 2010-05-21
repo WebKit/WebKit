@@ -74,6 +74,7 @@ namespace JSC {
         friend class BatchedTransitionOptimizer;
         friend class JIT;
         friend class JSCell;
+        friend void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot);
 
     public:
         explicit JSObject(NonNullPassRefPtr<Structure>);
@@ -219,9 +220,6 @@ namespace JSC {
             m_structure->flattenDictionaryStructure(this);
         }
 
-    protected:
-        static const unsigned StructureFlags = 0;
-
         void putAnonymousValue(unsigned index, JSValue value)
         {
             ASSERT(index < m_structure->anonymousSlotCount());
@@ -232,7 +230,10 @@ namespace JSC {
             ASSERT(index < m_structure->anonymousSlotCount());
             return *locationForOffset(index);
         }
-
+        
+    protected:
+        static const unsigned StructureFlags = 0;
+        
     private:
         // Nobody should ever ask any of these questions on something already known to be a JSObject.
         using JSCell::isAPIValueWrapper;

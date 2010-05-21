@@ -29,7 +29,7 @@ namespace JSC {
 
     class FunctionConstructor : public InternalFunction {
     public:
-        FunctionConstructor(ExecState*, NonNullPassRefPtr<Structure>, FunctionPrototype*);
+        FunctionConstructor(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, FunctionPrototype*);
 
     private:
         virtual ConstructType getConstructData(ConstructData&);

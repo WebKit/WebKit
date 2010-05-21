@@ -54,8 +54,8 @@ const ClassInfo NumberConstructor::info = { "Function", &InternalFunction::info,
 @end
 */
 
-NumberConstructor::NumberConstructor(ExecState* exec, NonNullPassRefPtr<Structure> structure, NumberPrototype* numberPrototype)
-    : InternalFunction(&exec->globalData(), structure, Identifier(exec, numberPrototype->info.className))
+NumberConstructor::NumberConstructor(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, NumberPrototype* numberPrototype)
+    : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, numberPrototype->info.className))
 {
     // Number.Prototype
     putDirectWithoutTransition(exec->propertyNames().prototype, numberPrototype, DontEnum | DontDelete | ReadOnly);

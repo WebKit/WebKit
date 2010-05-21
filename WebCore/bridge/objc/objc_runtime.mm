@@ -189,9 +189,9 @@ unsigned int ObjcArray::getLength() const
 
 const ClassInfo ObjcFallbackObjectImp::s_info = { "ObjcFallbackObject", 0, 0, 0 };
 
-ObjcFallbackObjectImp::ObjcFallbackObjectImp(ExecState* exec, ObjcInstance* i, const Identifier& propertyName)
+ObjcFallbackObjectImp::ObjcFallbackObjectImp(ExecState* exec, JSGlobalObject* globalObject, ObjcInstance* i, const Identifier& propertyName)
     // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
-    : JSObject(deprecatedGetDOMStructure<ObjcFallbackObjectImp>(exec))
+    : JSObjectWithGlobalObject(globalObject, deprecatedGetDOMStructure<ObjcFallbackObjectImp>(exec))
     , _instance(i)
     , _item(propertyName)
 {

@@ -418,10 +418,11 @@ const ClassInfo DatePrototype::info = {"Date", &DateInstance::info, 0, ExecState
 
 // ECMA 15.9.4
 
-DatePrototype::DatePrototype(ExecState* exec, NonNullPassRefPtr<Structure> structure)
+DatePrototype::DatePrototype(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure)
     : DateInstance(exec, structure)
 {
     // The constructor will be added later, after DateConstructor has been built.
+    putAnonymousValue(0, globalObject);
 }
 
 bool DatePrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
