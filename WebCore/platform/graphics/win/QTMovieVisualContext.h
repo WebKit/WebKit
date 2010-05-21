@@ -38,6 +38,7 @@
 #include <WTF/OwnPtr.h>
 #include <WTF/RefCounted.h>
 
+typedef const struct __CFDictionary* CFDictionaryRef;
 typedef struct OpaqueQTVisualContext*   QTVisualContextRef;
 
 // QTCVTimeStamp is a struct containing only a CVTimeStamp.  This is to 
