@@ -150,7 +150,7 @@ MediaPlayerPrivateQuickTimeVisualContext::~MediaPlayerPrivateQuickTimeVisualCont
 
 bool MediaPlayerPrivateQuickTimeVisualContext::supportsFullscreen() const
 {
-    return true;
+    return false;
 }
 
 PlatformMedia MediaPlayerPrivateQuickTimeVisualContext::platformMedia() const

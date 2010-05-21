@@ -1,3 +1,24 @@
+2010-05-21  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Disable full-screen video on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=39506
+        rdar://problem/8012516
+
+        Disable full-screen video through MediaPlayerPrivateVisualContext since
+        we no longer use GWorlds and QuickTime's built in full-screen support.
+        
+        Media layout tests updated with new expected results.        
+
+        * platform/win/media/controls-after-reload-expected.txt:
+        * platform/win/media/controls-drag-timebar-expected.txt:
+        * platform/win/media/controls-strict-expected.txt:
+        * platform/win/media/controls-styling-expected.txt:
+        * platform/win/media/video-controls-rendering-expected.txt:
+        * platform/win/media/video-display-toggle-expected.txt:
+        * platform/win/media/video-no-audio-expected.txt:
+
 2010-05-21  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
