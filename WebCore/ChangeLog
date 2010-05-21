@@ -1,3 +1,15 @@
+2010-05-20  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Add Editor
+        https://bugs.webkit.org/show_bug.cgi?id=39404
+
+        Implement Editor::newGeneralClipboard.
+
+        * editing/brew/EditorBrew.cpp: Added.
+        (WebCore::Editor::newGeneralClipboard):
+
 2010-05-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Adam Roben.
