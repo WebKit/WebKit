@@ -262,6 +262,15 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     NSSize documentSize = [documentView frame].size;
     NSSize visibleSize = [self documentVisibleRect].size;
     NSSize frameSize = [self frame].size;
+    
+    // When in HiDPI with a scale factor > 1, the visibleSize and frameSize may be non-integral values,
+    // while the documentSize (set by WebCore) will be integral.  Round up the non-integral sizes so that
+    // the mismatch won't cause unwanted scrollbars to appear.  This can result in slightly cut off content,
+    // but it will always be less than one pixel, which should not be noticeable.
+    visibleSize.width = ceilf(visibleSize.width);
+    visibleSize.height = ceilf(visibleSize.height);
+    frameSize.width = ceilf(frameSize.width);
+    frameSize.height = ceilf(frameSize.height);
 
     if (_private->hScroll == ScrollbarAuto) {
         newHasHorizontalScroller = documentSize.width > visibleSize.width;

@@ -1,3 +1,14 @@
+2010-05-20  Mike Thole  <mthole@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        When using a scale factor > 1, scrollbars sometimes appear when not necessary
+        https://bugs.webkit.org/show_bug.cgi?id=39458
+
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView updateScrollers]): Round up non-integral sizes from AppKit
+        so that they can be compared against the integral document size.
+
 2010-05-20  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Anders Carlsson.
