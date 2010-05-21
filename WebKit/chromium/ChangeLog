@@ -1,3 +1,16 @@
+2010-05-20  Dominic Mazzoni  <dmazzoni@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add headingLevel and setFocused methods.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39238
+
+        * public/WebAccessibilityObject.h:
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::headingLevel):
+        (WebKit::WebAccessibilityObject::setFocused):
+
 2010-05-20  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.
