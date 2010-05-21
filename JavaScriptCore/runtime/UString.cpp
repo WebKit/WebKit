@@ -60,6 +60,8 @@ extern const double Inf;
 // The null string is immutable, except for refCount.
 UString* UString::s_nullUString;
 
+COMPILE_ASSERT(sizeof(UString) == sizeof(void*), UString_should_stay_small);
+
 void initializeUString()
 {
     // UStringImpl::empty() does not construct its static string in a threadsafe fashion,

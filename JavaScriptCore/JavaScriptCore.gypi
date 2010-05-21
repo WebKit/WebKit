@@ -403,6 +403,7 @@
             'wtf/RefPtrHashMap.h',
             'wtf/RetainPtr.h',
             'wtf/SegmentedVector.h',
+            'wtf/SizeLimits.cpp',
             'wtf/StaticConstructors.h',
             'wtf/StdLibExtras.h',
             'wtf/StringExtras.h',

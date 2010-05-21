@@ -38,6 +38,8 @@ namespace WebCore {
 
 static const unsigned minLengthToShare = 20;
 
+COMPILE_ASSERT(sizeof(StringImpl) == 2 * sizeof(int) + 3 * sizeof(void*), StringImpl_should_stay_small);
+
 StringImpl::~StringImpl()
 {
     ASSERT(!isStatic());

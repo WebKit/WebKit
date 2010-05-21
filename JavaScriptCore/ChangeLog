@@ -1,3 +1,19 @@
+2010-05-21  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Enforce size constraints on various data structures in JavaScriptCore/wtf.
+        https://bugs.webkit.org/show_bug.cgi?id=39327
+
+        I only modified the default build for OSX and Chromium's build file to include WTFCompileAsserts.cpp
+        as those should be sufficient to catch regressions on the size of the data structures.
+
+        * JavaScriptCore.gypi: Added the WTFCompileAsserts.cpp file.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added the WTFCompileAsserts.cpp file.
+        * runtime/UString.cpp: Added a compile assert for UString size.
+        * wtf/SizeLimits.cpp: Added compile asserts for data structures that didn't have cpp files.
+        * wtf/text/StringImpl.cpp: Added a compile assert for StringImpl size.
+
 2010-05-21  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (build fix).
