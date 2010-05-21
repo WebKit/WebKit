@@ -42,13 +42,10 @@ namespace WTF {
 
 #ifndef NDEBUG
 static const size_t refCountedExtraDebugSize = sizeof(int);
-static const size_t crossThreadRefCountedExtraDebugSize = sizeof(ThreadIdentifier);
 #else
 static const size_t refCountedExtraDebugSize = 0;
-static const size_t crossThreadRefCountedExtraDebugSize = 0;
 #endif
 
-COMPILE_ASSERT(sizeof(CrossThreadRefCounted<int>) == 2 * sizeof(int*) + sizeof(RefCountedBase) + crossThreadRefCountedExtraDebugSize, CrossThreadRefCounted_should_stay_small);
 COMPILE_ASSERT(sizeof(OwnPtr<int>) == sizeof(int*), OwnPtr_should_stay_small);
 COMPILE_ASSERT(sizeof(PassRefPtr<RefCounted<int> >) == sizeof(int*), PassRefPtr_should_stay_small);
 COMPILE_ASSERT(sizeof(RefCounted<int>) == sizeof(int) + refCountedExtraDebugSize, RefCounted_should_stay_small);
