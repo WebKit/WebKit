@@ -78,6 +78,6 @@ MOCK run_and_throw_if_fail: ['WebKitTools/Scripts/test-webkitperl']
 Running JavaScriptCore tests
 MOCK run_and_throw_if_fail: ['WebKitTools/Scripts/run-javascriptcore-tests']
 Running run-webkit-tests
-MOCK run_and_throw_if_fail: ['WebKitTools/Scripts/run-webkit-tests', '--no-launch-safari', '--exit-after-n-failures=1', '--ignore-tests', 'compositing/iframes', '--quiet']
+MOCK run_and_throw_if_fail: ['WebKitTools/Scripts/run-webkit-tests', '--no-launch-safari', '--exit-after-n-failures=1', '--ignore-tests', 'compositing', '--quiet']
 """
         OutputCapture().assert_outputs(self, step.run, [{}], expected_stderr=expected_stderr)
