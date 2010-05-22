@@ -23,7 +23,6 @@
 #define ScriptController_h
 
 #include "JSDOMWindowShell.h"
-#include "ScriptControllerBase.h"
 #include "ScriptInstance.h"
 #include <runtime/Protect.h>
 #include <wtf/RefPtr.h>
@@ -62,6 +61,17 @@ class Widget;
 class XSSAuditor;
 
 typedef HashMap<void*, RefPtr<JSC::Bindings::RootObject> > RootObjectMap;
+
+enum ReasonForCallingCanExecuteScripts {
+    AboutToExecuteScript,
+    NotAboutToExecuteScript
+};
+
+// Whether to call the XSSAuditor to audit a script before passing it to the JavaScript engine.
+enum ShouldAllowXSS {
+    AllowXSS,
+    DoNotAllowXSS
+};
 
 class ScriptController {
     friend class ScriptCachedFrameData;

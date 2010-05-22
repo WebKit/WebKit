@@ -1,5 +1,25 @@
 2010-05-22  Daniel Bates  <dbates@rim.com>
 
+        No review, rolling out 60017.
+        http://trac.webkit.org/changeset/60017
+        https://bugs.webkit.org/show_bug.cgi?id=39448
+
+        Rolling out since this broke the build on the Windows and Qt bots.
+        Need to look into this some more.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/ScriptControllerBase.h: Removed.
+        * bindings/js/ScriptController.h:
+        (WebCore::):
+        * bindings/v8/ScriptController.h:
+        (WebCore::):
+
+2010-05-22  Daniel Bates  <dbates@rim.com>
+
         Reviewed by Darin Adler.
 
         Move enum ReasonForCallingCanExecuteScripts to header ScriptControllerBase.h
