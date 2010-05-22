@@ -2,6 +2,20 @@
 
         Reviewed by Xan Lopez.
 
+        [GTK] webkit_web_view_drag_end should call EventHandler::dragSourceEndedAt
+        https://bugs.webkit.org/show_bug.cgi?id=39465
+
+        Properly call EventHandler::dragSourceEndedAt so that dragEnd events are processed in the DOM.
+        dragSourceEndedAt is responsible for calling the dragEnd DOM event as well as cleaning up assets
+        (such as the Clipboard) associated with the drag source.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_drag_end): Remember to call dragSourceEndedAt here.
+
+2010-05-22  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
         [GTK] WebKit/gtk/WebCoreSupport/DragClientGtk::startDrag should use the Clipboard::sourceOperation
         https://bugs.webkit.org/show_bug.cgi?id=39459
 

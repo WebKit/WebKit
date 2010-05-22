@@ -44,6 +44,7 @@
 #include "BackForwardList.h"
 #include "Cache.h"
 #include "ChromeClientGtk.h"
+#include "ClipboardUtilitiesGtk.h"
 #include "ContextMenuClientGtk.h"
 #include "ContextMenuController.h"
 #include "ContextMenu.h"
@@ -1236,14 +1237,37 @@ static void webkit_web_view_screen_changed(GtkWidget* widget, GdkScreen* previou
 
 static void webkit_web_view_drag_end(GtkWidget* widget, GdkDragContext* context)
 {
-    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(WEBKIT_WEB_VIEW(widget));
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
+    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
 
     // This might happen if a drag is still in progress after a WebKitWebView
-    // is diposed and before it is finalized.
+    // is disposed and before it is finalized.
     if (!priv->draggingDataObjects.contains(context))
         return;
 
     priv->draggingDataObjects.remove(context);
+
+    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    GdkEvent* event = gdk_event_new(GDK_BUTTON_RELEASE);
+    int x, y, xRoot, yRoot;
+    GdkModifierType modifiers;
+    GdkDisplay* display = gdk_display_get_default();
+    gdk_display_get_pointer(display, 0, &xRoot, &yRoot, &modifiers);
+
+    event->button.window = static_cast<GdkWindow*>(g_object_ref(gdk_display_get_window_at_pointer(display, &x, &y)));
+    event->button.x = x;
+    event->button.y = y;
+    event->button.x_root = xRoot;
+    event->button.y_root = yRoot;
+    event->button.state = modifiers;
+
+    PlatformMouseEvent platformEvent(&event->button);
+    frame->eventHandler()->dragSourceEndedAt(platformEvent, gdkDragActionToDragOperation(context->action));
+
+    gdk_event_free(event);
 }
 
 static void webkit_web_view_drag_data_get(GtkWidget* widget, GdkDragContext* context, GtkSelectionData* selectionData, guint info, guint)

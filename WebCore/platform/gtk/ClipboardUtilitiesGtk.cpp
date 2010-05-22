@@ -38,4 +38,19 @@ GdkDragAction dragOperationToGdkDragActions(DragOperation coreAction)
 
     return gdkAction;
 }
+
+DragOperation gdkDragActionToDragOperation(GdkDragAction gdkAction)
+{
+    unsigned int action = DragOperationNone;
+    if (gdkAction & GDK_ACTION_COPY)
+        action |= DragOperationCopy;
+    if (gdkAction & GDK_ACTION_MOVE)
+        action |= DragOperationMove;
+    if (gdkAction & GDK_ACTION_LINK)
+        action |= DragOperationLink;
+    if (gdkAction & GDK_ACTION_PRIVATE)
+        action |= DragOperationPrivate;
+    return static_cast<DragOperation>(action);
+}
+
 }
