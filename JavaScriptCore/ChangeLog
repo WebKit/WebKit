@@ -1,3 +1,11 @@
+2010-05-21  Oliver Hunt  <oliver@apple.com>
+
+        "asm volatile" isn't valid outside of functions.
+
+        Reviewed by Gavin Barraclough.
+
+        * jit/JITStubs.cpp:
+
 2010-05-21  Gavin Barraclough  <barraclough@apple.com>
 
         Unreviewed build fix.
