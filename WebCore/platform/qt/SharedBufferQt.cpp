@@ -39,16 +39,9 @@ PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& fi
     if (!file.exists() || !file.open(QFile::ReadOnly))
         return 0;
 
-
-    RefPtr<SharedBuffer> result = SharedBuffer::create();
-    result->m_buffer.resize(file.size());
-    if (result->m_buffer.size() != file.size())
-        return 0;
-
-    result->m_size = result->m_buffer.size();
-
-    file.read(result->m_buffer.data(), result->m_buffer.size());
-    return result.release();
+    Vector<char> buffer(file.size());
+    file.read(buffer.data(), buffer.size());
+    return SharedBuffer::adoptVector(buffer);
 }
 
-}
+} // namespace WebCore
