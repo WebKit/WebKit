@@ -562,7 +562,7 @@ static int gPropertyWrapperMap[numCSSProperties];
 static const int cInvalidPropertyWrapperIndex = -1;
 
 
-static void ensurePropertyMap()
+void AnimationBase::ensurePropertyMap()
 {
     // FIXME: This data is never destroyed. Maybe we should ref count it and toss it when the last AnimationController is destroyed?
     if (gPropertyWrappers == 0) {

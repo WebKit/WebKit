@@ -308,8 +308,8 @@ static void paintButtonLike(RenderTheme* theme, RenderObject* o, const RenderObj
     const int right = rect.x() + rect.width();
     const int bottom = rect.y() + rect.height();
     SkColor baseColor = SkColorSetARGB(0xff, 0xdd, 0xdd, 0xdd);
-    if (o->style()->hasBackground())
-        baseColor = o->style()->backgroundColor().rgb();
+    if (o->hasBackground())
+        baseColor = o->style()->visitedDependentColor(CSSPropertyBackgroundColor).rgb();
     double h, s, l;
     Color(baseColor).getHSL(h, s, l);
     // Our standard gradient is from 0xdd to 0xf8. This is the amount of

@@ -48,6 +48,14 @@ typedef unsigned RenderAsTextBehavior;
 String externalRepresentation(Frame*, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
 void write(TextStream&, const RenderObject&, int indent = 0, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
 
+class RenderTreeAsText {
+// FIXME: This is a cheesy hack to allow easy access to RenderStyle colors.  It won't be needed if we convert
+// it to use visitedDependentColor instead. (This just involves rebaselining many results though, so for now it's
+// not being done).
+public:
+static void writeRenderObject(TextStream& ts, const RenderObject& o, RenderAsTextBehavior behavior);
+};
+
 // Helper function shared with SVGRenderTreeAsText
 String quoteAndEscapeNonPrintables(const String&);
 

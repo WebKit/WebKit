@@ -1,3 +1,21 @@
+2010-05-21  Mark Rowe  <mrowe@apple.com>
+
+        Merge r59956.
+
+    2010-05-21  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39420
+
+        Make sure everyone who needs to is using visitedDependentColor rather than accessing styles
+        directly.
+
+        * Misc/WebNSAttributedStringExtras.mm:
+        (+[NSAttributedString _web_attributedStringFromRange:]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _bodyBackgroundColor]):
+
 2010-05-20  Mark Rowe  <mrowe@apple.com>
 
         Merge r59793.

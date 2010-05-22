@@ -374,8 +374,9 @@ static PassRefPtr<CSSValue> getPositionOffsetValue(RenderStyle* style, int prope
     return CSSPrimitiveValue::createIdentifier(CSSValueAuto);
 }
 
-static PassRefPtr<CSSPrimitiveValue> currentColorOrValidColor(RenderStyle* style, const Color& color)
+PassRefPtr<CSSPrimitiveValue> CSSComputedStyleDeclaration::currentColorOrValidColor(RenderStyle* style, const Color& color) const
 {
+    // This function does NOT look at visited information, so that computed style doesn't expose that.
     if (!color.isValid())
         return CSSPrimitiveValue::createColor(style->color().rgb());
     return CSSPrimitiveValue::createColor(color.rgb());

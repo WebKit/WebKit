@@ -577,7 +577,7 @@ static bool handleStyleSpansBeforeInsertion(ReplacementFragment& fragment, const
     Node* sourceDocumentStyleSpan = topNode;
     RefPtr<Node> copiedRangeStyleSpan = sourceDocumentStyleSpan->firstChild();
 
-    RefPtr<CSSMutableStyleDeclaration> styleAtInsertionPos = editingStyleAtPosition(rangeCompliantEquivalent(insertionPos));
+    RefPtr<CSSMutableStyleDeclaration> styleAtInsertionPos = ApplyStyleCommand::editingStyleAtPosition(rangeCompliantEquivalent(insertionPos));
 
     String styleText = styleAtInsertionPos->cssText();
     
@@ -634,8 +634,8 @@ void ReplaceSelectionCommand::handleStyleSpans()
     // styles from blockquoteNode are allowed to override those from the source document, see <rdar://problem/4930986> and <rdar://problem/5089327>.
     Node* blockquoteNode = isMailPasteAsQuotationNode(context) ? context : nearestMailBlockquote(context);
     if (blockquoteNode) {
-        RefPtr<CSSMutableStyleDeclaration> blockquoteStyle = editingStyleAtPosition(Position(blockquoteNode, 0));
-        RefPtr<CSSMutableStyleDeclaration> parentStyle = editingStyleAtPosition(Position(blockquoteNode->parentNode(), 0));
+        RefPtr<CSSMutableStyleDeclaration> blockquoteStyle = ApplyStyleCommand::editingStyleAtPosition(Position(blockquoteNode, 0));
+        RefPtr<CSSMutableStyleDeclaration> parentStyle = ApplyStyleCommand::editingStyleAtPosition(Position(blockquoteNode->parentNode(), 0));
         parentStyle->diff(blockquoteStyle.get());
 
         CSSMutableStyleDeclaration::const_iterator end = blockquoteStyle->end();
@@ -794,7 +794,7 @@ void ReplaceSelectionCommand::doApply()
         return;
     
     if (m_matchStyle)
-        m_insertionStyle = editingStyleAtPosition(selection.start(), IncludeTypingStyle);
+        m_insertionStyle = ApplyStyleCommand::editingStyleAtPosition(selection.start(), IncludeTypingStyle);
     
     VisiblePosition visibleStart = selection.visibleStart();
     VisiblePosition visibleEnd = selection.visibleEnd();

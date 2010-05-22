@@ -622,7 +622,7 @@ bool RenderTheme::isControlStyled(const RenderStyle* style, const BorderData& bo
             // Test the style to see if the UA border and background match.
             return (style->border() != border ||
                     *style->backgroundLayers() != background ||
-                    style->backgroundColor() != backgroundColor);
+                    style->visitedDependentColor(CSSPropertyBackgroundColor) != backgroundColor);
         default:
             return false;
     }

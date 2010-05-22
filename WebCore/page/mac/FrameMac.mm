@@ -407,14 +407,14 @@ NSDictionary* Frame::fontAttributesForSelectionStart() const
 
     NSMutableDictionary* result = [NSMutableDictionary dictionary];
 
-    if (style->backgroundColor().isValid() && style->backgroundColor().alpha() != 0)
-        [result setObject:nsColor(style->backgroundColor()) forKey:NSBackgroundColorAttributeName];
+    if (style->visitedDependentColor(CSSPropertyBackgroundColor).isValid() && style->visitedDependentColor(CSSPropertyBackgroundColor).alpha() != 0)
+        [result setObject:nsColor(style->visitedDependentColor(CSSPropertyBackgroundColor)) forKey:NSBackgroundColorAttributeName];
 
     if (style->font().primaryFont()->getNSFont())
         [result setObject:style->font().primaryFont()->getNSFont() forKey:NSFontAttributeName];
 
-    if (style->color().isValid() && style->color() != Color::black)
-        [result setObject:nsColor(style->color()) forKey:NSForegroundColorAttributeName];
+    if (style->visitedDependentColor(CSSPropertyColor).isValid() && style->visitedDependentColor(CSSPropertyColor) != Color::black)
+        [result setObject:nsColor(style->visitedDependentColor(CSSPropertyColor)) forKey:NSForegroundColorAttributeName];
 
     const ShadowData* shadow = style->textShadow();
     if (shadow) {

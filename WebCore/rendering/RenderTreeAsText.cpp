@@ -180,7 +180,7 @@ String quoteAndEscapeNonPrintables(const String& s)
     return String::adopt(result);
 }
 
-static void writeRenderObject(TextStream& ts, const RenderObject& o, RenderAsTextBehavior behavior)
+void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, RenderAsTextBehavior behavior)
 {
     ts << o.renderName();
 
@@ -429,7 +429,7 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
 
     writeIndent(ts, indent);
 
-    writeRenderObject(ts, o, behavior);
+    RenderTreeAsText::writeRenderObject(ts, o, behavior);
     ts << "\n";
 
     if (o.isText() && !o.isBR()) {

@@ -995,42 +995,42 @@ static EBorderStyle borderStyleForColorProperty(const RenderStyle* style, int co
     return borderStyle;
 }
 
-static Color colorIncludingFallback(const RenderStyle* style, int colorProperty, EBorderStyle borderStyle)
+const Color RenderStyle::colorIncludingFallback(int colorProperty, EBorderStyle borderStyle) const
 {
     Color result;
     switch (colorProperty) {
     case CSSPropertyBackgroundColor:
-        return style->backgroundColor(); // Background color doesn't fall back.
+        return backgroundColor(); // Background color doesn't fall back.
     case CSSPropertyBorderLeftColor:
-        result = style->borderLeftColor();
-        borderStyle = style->borderLeftStyle();
+        result = borderLeftColor();
+        borderStyle = borderLeftStyle();
         break;
     case CSSPropertyBorderRightColor:
-        result = style->borderRightColor();
-        borderStyle = style->borderRightStyle();
+        result = borderRightColor();
+        borderStyle = borderRightStyle();
         break;
     case CSSPropertyBorderTopColor:
-        result = style->borderTopColor();
-        borderStyle = style->borderTopStyle();
+        result = borderTopColor();
+        borderStyle = borderTopStyle();
         break;
     case CSSPropertyBorderBottomColor:
-        result = style->borderBottomColor();
-        borderStyle = style->borderBottomStyle();
+        result = borderBottomColor();
+        borderStyle = borderBottomStyle();
         break;
     case CSSPropertyColor:
-        result = style->color();
+        result = color();
         break;
     case CSSPropertyOutlineColor:
-        result = style->outlineColor();
+        result = outlineColor();
         break;
     case CSSPropertyWebkitColumnRuleColor:
-        result = style->columnRuleColor();
+        result = columnRuleColor();
         break;
     case CSSPropertyWebkitTextFillColor:
-        result = style->textFillColor();
+        result = textFillColor();
         break;
     case CSSPropertyWebkitTextStrokeColor:
-        result = style->textStrokeColor();
+        result = textStrokeColor();
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -1043,23 +1043,23 @@ static Color colorIncludingFallback(const RenderStyle* style, int colorProperty,
             && (borderStyle == INSET || borderStyle == OUTSET || borderStyle == RIDGE || borderStyle == GROOVE))
             result.setRGB(238, 238, 238);
         else
-            result = style->color();
+            result = color();
     }
 
     return result;
 }
 
-Color RenderStyle::visitedDependentColor(int colorProperty) const
+const Color RenderStyle::visitedDependentColor(int colorProperty) const
 {
     EBorderStyle borderStyle = borderStyleForColorProperty(this, colorProperty);
-    Color unvisitedColor = colorIncludingFallback(this, colorProperty, borderStyle);
+    Color unvisitedColor = colorIncludingFallback(colorProperty, borderStyle);
     if (insideLink() != InsideVisitedLink)
         return unvisitedColor;
 
     RenderStyle* visitedStyle = getCachedPseudoStyle(VISITED_LINK);
     if (!visitedStyle)
         return unvisitedColor;
-    Color visitedColor = colorIncludingFallback(visitedStyle, colorProperty, borderStyle);
+    Color visitedColor = visitedStyle->colorIncludingFallback(colorProperty, borderStyle);
 
     // Take the alpha from the unvisited color, but get the RGB values from the visited color.
     return Color(visitedColor.red(), visitedColor.green(), visitedColor.blue(), unvisitedColor.alpha());
