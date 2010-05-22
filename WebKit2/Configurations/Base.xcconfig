@@ -46,7 +46,7 @@ GCC_WARN_UNUSED_VARIABLE = YES;
 LINKER_DISPLAYS_MANGLED_NAMES = YES;
 OTHER_MIGFLAGS = -F$(BUILT_PRODUCTS_DIR);
 PREBINDING = NO;
-VALID_ARCHS = i386 ppc x86_64 ppc64;
+VALID_ARCHS = i386 x86_64;
 // FIXME: <rdar://problem/5070292> WebKit should build with -Wshorten-64-to-32
 WARNING_CFLAGS = -Wall -Wextra -Wcast-align -Wchar-subscripts -Wextra-tokens -Wformat-security -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wno-unused-parameter -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings;
 
@@ -76,7 +76,8 @@ STRIP_INSTALLED_PRODUCT_debug = NO;
 // building the MiG bindings for WebKitPluginClient even when the functions that the bindings wrap are not built.
 DEAD_CODE_STRIPPING = YES;
 
-SECTORDER_FLAGS = -sectorder __TEXT __text mac/WebKit.order;
+// FIXME: Production builds should use an order file.
+// SECTORDER_FLAGS = -sectorder __TEXT __text mac/WebKit2.order;
 
 // Use GCC 4.2 with Xcode 3.1, which includes GCC 4.2 but defaults to GCC 4.0.
 // Note that Xcode versions as new as 3.1.2 use XCODE_VERSION_ACTUAL for the minor version

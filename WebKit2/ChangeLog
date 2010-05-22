@@ -1,3 +1,18 @@
+2010-05-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Teach WebKit2 to build in the Production configuration.
+
+        * Configurations/Base.xcconfig: Restrict WebKit2 to Intel, and disable the order file.
+        * Configurations/BaseTarget.xcconfig: Fix the path to the umbrella framework directory.
+        This path is used to locate WebCore.framework, so it needs to be relative to WebKit.framework
+        rather than WebKit2.framework.
+        * Configurations/WebKit2.xcconfig: Update the install path.  Add an exports file.
+        * Configurations/WebProcess.xcconfig: Update the install path.
+        * WebKit2.xcodeproj/project.pbxproj: Add a Production configuration.
+        * mac/WebKit2.exp: Added.
+
 2010-05-21  Steve Block  <steveblock@google.com>
 
         Unreviewed build fix for WebKit2

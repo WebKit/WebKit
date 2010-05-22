@@ -1167,6 +1167,38 @@
 			};
 			name = Release;
 		};
+		5D22D69B11A7534600BF30E5 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1A4F976A100E7B6600637A18 /* Base.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		5D22D69C11A7534600BF30E5 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = All;
+			};
+			name = Production;
+		};
+		5D22D69D11A7534600BF30E5 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit2.xcconfig */;
+			buildSettings = {
+				OTHER_LDFLAGS = (
+					"$(OTHER_LDFLAGS)",
+					"-lWebKitSystemInterface",
+				);
+			};
+			name = Production;
+		};
+		5D22D69E11A7534600BF30E5 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5DAD7294116FF70B00EE5396 /* WebProcess.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1175,36 +1207,40 @@
 			buildConfigurations = (
 				1A50DB21110A3BDD000D3FE5 /* Debug */,
 				1A50DB22110A3BDD000D3FE5 /* Release */,
+				5D22D69E11A7534600BF30E5 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Production;
 		};
 		1A50DB48110A3C27000D3FE5 /* Build configuration list for PBXAggregateTarget "All" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1A50DB39110A3C13000D3FE5 /* Debug */,
 				1A50DB3A110A3C13000D3FE5 /* Release */,
+				5D22D69C11A7534600BF30E5 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Production;
 		};
 		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "WebKit2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB91AE08733DA50010E9CD /* Debug */,
 				1DEB91AF08733DA50010E9CD /* Release */,
+				5D22D69D11A7534600BF30E5 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Production;
 		};
 		1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "WebKit2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB91B208733DA50010E9CD /* Debug */,
 				1DEB91B308733DA50010E9CD /* Release */,
+				5D22D69B11A7534600BF30E5 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Production;
 		};
 /* End XCConfigurationList section */
 	};
