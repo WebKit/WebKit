@@ -1,3 +1,15 @@
+2010-05-22  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] WebKit/gtk/WebCoreSupport/DragClientGtk::startDrag should use the Clipboard::sourceOperation
+        https://bugs.webkit.org/show_bug.cgi?id=39459
+
+        * WebCoreSupport/DragClientGtk.cpp:
+        (WebKit::DragClient::startDrag):
+        Use Clipboard::sourceOperation instead of trying to figure out the GdkDragAction
+        manually. The DOM may have changed the appropriate list of actions anyhow.
+
 2010-05-21  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

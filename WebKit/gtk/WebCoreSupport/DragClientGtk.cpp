@@ -20,8 +20,10 @@
 #include "DragClientGtk.h"
 
 #include "ClipboardGtk.h"
+#include "ClipboardUtilitiesGtk.h"
 #include "DataObjectGtk.h"
 #include "Document.h"
+#include "DragController.h"
 #include "Element.h"
 #include "Frame.h"
 #include "GRefPtrGtk.h"
@@ -71,10 +73,6 @@ void DragClient::startDrag(DragImageRef image, const IntPoint& dragImageOrigin, 
 {
     ClipboardGtk* clipboardGtk = reinterpret_cast<ClipboardGtk*>(clipboard);
 
-    GdkDragAction dragAction = GDK_ACTION_COPY;
-    if (linkDrag)
-        dragAction = (GdkDragAction) (dragAction | GDK_ACTION_LINK);
-
     WebKitWebView* webView = webkit_web_frame_get_web_view(kit(frame));
     RefPtr<DataObjectGtk> dataObject = clipboardGtk->dataObject();
 
@@ -84,7 +82,7 @@ void DragClient::startDrag(DragImageRef image, const IntPoint& dragImageOrigin, 
     event->button.window = static_cast<GdkWindow*>(g_object_ref(gtk_widget_get_window(GTK_WIDGET(m_webView))));
     event->button.time = GDK_CURRENT_TIME;
 
-    GdkDragContext* context = gtk_drag_begin(GTK_WIDGET(m_webView), targetList.get(), dragAction, 1, event);
+    GdkDragContext* context = gtk_drag_begin(GTK_WIDGET(m_webView), targetList.get(), dragOperationToGdkDragActions(clipboard->sourceOperation()), 1, event);
     webView->priv->draggingDataObjects.set(context, dataObject);
 
     if (image)

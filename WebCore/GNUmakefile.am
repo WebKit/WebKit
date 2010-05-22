@@ -2109,6 +2109,8 @@ webcoregtk_sources += \
 	WebCore/platform/graphics/gtk/IntRectGtk.cpp \
 	WebCore/platform/gtk/ClipboardGtk.cpp \
 	WebCore/platform/gtk/ClipboardGtk.h \
+	WebCore/platform/gtk/ClipboardUtilitiesGtk.cpp \
+	WebCore/platform/gtk/ClipboardUtilitiesGtk.h \
 	WebCore/platform/gtk/ContextMenuGtk.cpp \
 	WebCore/platform/gtk/ContextMenuItemGtk.cpp \
 	WebCore/platform/gtk/CursorGtk.cpp \

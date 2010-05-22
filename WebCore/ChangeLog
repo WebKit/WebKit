@@ -1,3 +1,21 @@
+2010-05-22  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] WebKit/gtk/WebCoreSupport/DragClientGtk::startDrag should use the Clipboard::sourceOperation
+        https://bugs.webkit.org/show_bug.cgi?id=39459
+
+        Add ClipboardUtilitiesGtk, a container for GTK+/WebCore clipboard utility functions.
+        Initially add a function which converts a WebCore::DragOperation to a bitmask of
+        GdkDragActions.
+
+        No new tests, because behavior has not changed.
+
+        * GNUmakefile.am:
+        * platform/gtk/ClipboardUtilitiesGtk.cpp: Added.
+        (WebCore::dragOperationToGdkDragActions): Added.
+        * platform/gtk/ClipboardUtilitiesGtk.h: Added.
+
 2010-05-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
