@@ -1,5 +1,17 @@
 2010-05-21  Gavin Barraclough  <barraclough@apple.com>
 
+        Unreviewed build fix.
+
+        Interpreter fix following r59974.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::get):
+        * runtime/JSPropertyNameIterator.h:
+
+2010-05-21  Gavin Barraclough  <barraclough@apple.com>
+
         Rubber stamped by Oliver Hunt.
 
         Interpreter fix following r59939.

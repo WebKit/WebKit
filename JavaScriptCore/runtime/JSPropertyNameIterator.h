@@ -64,6 +64,7 @@ namespace JSC {
             return true;
         }
 
+        JSValue get(ExecState*, JSObject*, size_t i);
         size_t size() { return m_jsStringsSize; }
 
         void setCachedStructure(Structure* structure)

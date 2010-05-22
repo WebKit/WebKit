@@ -4164,6 +4164,7 @@ skip_id_custom_self:
         JSPropertyNameIterator* it = callFrame->r(iter).propertyNameIterator();
         while (callFrame->r(i).i() != callFrame->r(size).i()) {
             JSValue key = it->get(callFrame, asObject(callFrame->r(base).jsValue()), callFrame->r(i).i());
+            CHECK_FOR_EXCEPTION();
             callFrame->r(i) = Register::withInt(callFrame->r(i).i() + 1);
             if (key) {
                 CHECK_FOR_TIMEOUT();
