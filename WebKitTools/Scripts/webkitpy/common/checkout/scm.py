@@ -584,25 +584,32 @@ class Git(SCM):
     def revert_files(self, file_paths):
         self.run(['git', 'checkout', 'HEAD'] + file_paths)
 
+    def _get_squash_error_message(self, num_local_commits):
+        working_directory_message = "" if self.working_directory_is_clean() else " and working copy changes"
+        return ("""There are %s local commits%s. Do one of the following:
+            1) Use --squash or --no-squash
+            2) git config webkit-patch.squash true/false
+            """ % (num_local_commits, working_directory_message))
+
     def should_squash(self, squash):
-        if squash is not None:
-            # Squash is specified on the command-line.
-            return squash
+        if squash is None:
+            config_squash = Git.read_git_config('webkit-patch.squash')
+            if (config_squash and config_squash is not ""):
+                squash = config_squash.lower() == "true"
+            else:
+                # Only raise an error if there are actually multiple commits to squash.
+                num_local_commits = len(self.local_commits())
+                if num_local_commits > 1 or (num_local_commits > 0 and not self.working_directory_is_clean()):
+                    raise ScriptError(message=self._get_squash_error_message(num_local_commits))
 
-        config_squash = Git.read_git_config('webkit-patch.squash')
-        if (config_squash and config_squash is not ""):
-            return config_squash.lower() == "true"
+        if squash and self._svn_branch_has_extra_commits():
+            raise ScriptError(message="Cannot use --squash when HEAD is not fully merged/rebased to %s. "
+                                      "This branch needs to be synced first." % self.svn_branch_name())
 
-        # Only raise an error if there are actually multiple commits to squash.
-        num_local_commits = len(self.local_commits())
-        if num_local_commits > 1 or num_local_commits > 0 and not self.working_directory_is_clean():
-            working_directory_message = "" if self.working_directory_is_clean() else " and working copy changes"
-            raise ScriptError(message="""There are %s local commits%s. Do one of the following:
-1) Use --squash or --no-squash
-2) git config webkit-patch.squash true/false
-""" % (num_local_commits, working_directory_message))
+        return squash
 
-        return None
+    def _svn_branch_has_extra_commits(self):
+        return len(run_command(['git', 'rev-list', '--max-count=1', self.svn_branch_name(), '^head']))
 
     def commit_with_message(self, message, username=None, git_commit=None, squash=None):
         # Username is ignored during Git commits.

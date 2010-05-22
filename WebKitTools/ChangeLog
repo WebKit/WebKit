@@ -1,3 +1,13 @@
+2010-05-14  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        webkit-patch land --squash commits too much if branch is not up to date
+        https://bugs.webkit.org/show_bug.cgi?id=38852
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+
 2010-05-21  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

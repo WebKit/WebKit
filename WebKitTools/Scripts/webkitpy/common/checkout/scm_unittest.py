@@ -875,6 +875,12 @@ class GitTest(SCMTest):
         self.assertTrue(re.search(r'test_file_commit2', svn_log))
         self.assertTrue(re.search(r'test_file_commit1', svn_log))
 
+    def test_commit_with_message_not_synced_squash(self):
+        run_command(['git', 'checkout', '-b', 'my-branch', 'trunk~3'])
+        self._two_local_commits()
+        scm = detect_scm_system(self.git_checkout_path)
+        self.assertRaises(ScriptError, scm.commit_with_message, "another test commit", squash=True)
+
     def test_reverse_diff(self):
         self._shared_test_reverse_diff()
 
@@ -936,6 +942,12 @@ class GitTest(SCMTest):
         patch = scm.create_patch(squash=True)
         self.assertTrue(re.search(r'test_file_commit2', patch))
         self.assertTrue(re.search(r'test_file_commit1', patch))
+
+    def test_create_patch_not_synced_squash(self):
+        run_command(['git', 'checkout', '-b', 'my-branch', 'trunk~3'])
+        self._two_local_commits()
+        scm = detect_scm_system(self.git_checkout_path)
+        self.assertRaises(ScriptError, scm.create_patch, squash=True)
 
     def test_create_binary_patch(self):
         # Create a git binary patch and check the contents.
@@ -1015,6 +1027,12 @@ class GitTest(SCMTest):
         files = scm.changed_files(squash=True)
         self.assertTrue('test_file_commit2' in files)
         self.assertTrue('test_file_commit1' in files)
+
+    def test_changed_files_not_synced_squash(self):
+        run_command(['git', 'checkout', '-b', 'my-branch', 'trunk~3'])
+        self._two_local_commits()
+        scm = detect_scm_system(self.git_checkout_path)
+        self.assertRaises(ScriptError, scm.changed_files, squash=True)
 
     def test_changed_files(self):
         self._shared_test_changed_files()
