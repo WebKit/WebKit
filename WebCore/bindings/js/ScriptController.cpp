@@ -112,7 +112,7 @@ JSDOMWindowShell* ScriptController::createWindowShell(DOMWrapperWorld* world)
     return windowShell;
 }
 
-ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld* world)
+ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld* world, ShouldAllowXSS shouldAllowXSS)
 {
     bool wasInEvaluateInWorld = m_inEvaluateInWorld;
     m_inEvaluateInWorld = true;
@@ -120,7 +120,7 @@ ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode
     const SourceCode& jsSourceCode = sourceCode.jsSourceCode();
     String sourceURL = ustringToString(jsSourceCode.provider()->url());
 
-    if (!m_XSSAuditor->canEvaluate(sourceCode.source())) {
+    if (shouldAllowXSS == DoNotAllowXSS && !m_XSSAuditor->canEvaluate(sourceCode.source())) {
         // This script is not safe to be evaluated.
         return JSValue();
     }
@@ -173,9 +173,9 @@ ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode
     return JSValue();
 }
 
-ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode) 
+ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode, ShouldAllowXSS shouldAllowXSS) 
 {
-    return evaluateInWorld(sourceCode, mainThreadNormalWorld());
+    return evaluateInWorld(sourceCode, mainThreadNormalWorld(), shouldAllowXSS);
 }
 
 PassRefPtr<DOMWrapperWorld> ScriptController::createWorld()
@@ -460,7 +460,7 @@ void ScriptController::clearScriptObjects()
 #endif
 }
 
-ScriptValue ScriptController::executeScriptInWorld(DOMWrapperWorld* world, const String& script, bool forceUserGesture)
+ScriptValue ScriptController::executeScriptInWorld(DOMWrapperWorld* world, const String& script, bool forceUserGesture, ShouldAllowXSS shouldAllowXSS)
 {
     ScriptSourceCode sourceCode(script, forceUserGesture ? KURL() : m_frame->loader()->url());
 
@@ -470,7 +470,7 @@ ScriptValue ScriptController::executeScriptInWorld(DOMWrapperWorld* world, const
     bool wasInExecuteScript = m_inExecuteScript;
     m_inExecuteScript = true;
 
-    ScriptValue result = evaluateInWorld(sourceCode, world);
+    ScriptValue result = evaluateInWorld(sourceCode, world, shouldAllowXSS);
 
     if (!wasInExecuteScript) {
         m_inExecuteScript = false;

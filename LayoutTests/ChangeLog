@@ -1,3 +1,21 @@
+2010-05-22  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION (r56295): Can't create a new wave on Google Wave
+        https://bugs.webkit.org/show_bug.cgi?id=39249
+
+        Added a test to ensure that we don't raise an alarm when the source code
+        portion of a JavaScript URL matches some substring of the page URL or
+        post data.
+
+        Our existing test coverage ensures that we raise an alarm when the entire
+        JavaScript URL matches some substring of the page URL or post data.
+
+        * http/tests/security/xssAuditor/javascript-link-safe-expected.txt: Added.
+        * http/tests/security/xssAuditor/javascript-link-safe.html: Added.
+        * http/tests/security/xssAuditor/resources/javascript-link-safe.html: Added.
+
 2010-05-22  Simon Fraser  <simon.fraser@apple.com>
 
         Add test results for Mac; no review.

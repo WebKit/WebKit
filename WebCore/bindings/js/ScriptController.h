@@ -67,6 +67,12 @@ enum ReasonForCallingCanExecuteScripts {
     NotAboutToExecuteScript
 };
 
+// Whether to call the XSSAuditor to audit a script before passing it to the JavaScript engine.
+enum ShouldAllowXSS {
+    AllowXSS,
+    DoNotAllowXSS
+};
+
 class ScriptController {
     friend class ScriptCachedFrameData;
     typedef WTF::HashMap< RefPtr<DOMWrapperWorld>, JSC::ProtectedPtr<JSDOMWindowShell> > ShellMap;
@@ -97,9 +103,9 @@ public:
 
     static void getAllWorlds(Vector<DOMWrapperWorld*>&);
 
-    ScriptValue executeScript(const ScriptSourceCode&);
-    ScriptValue executeScript(const String& script, bool forceUserGesture = false);
-    ScriptValue executeScriptInWorld(DOMWrapperWorld* world, const String& script, bool forceUserGesture = false);
+    ScriptValue executeScript(const ScriptSourceCode&, ShouldAllowXSS shouldAllowXSS = DoNotAllowXSS);
+    ScriptValue executeScript(const String& script, bool forceUserGesture = false, ShouldAllowXSS shouldAllowXSS = DoNotAllowXSS);
+    ScriptValue executeScriptInWorld(DOMWrapperWorld* world, const String& script, bool forceUserGesture = false, ShouldAllowXSS shouldAllowXSS = DoNotAllowXSS);
 
     // Returns true if argument is a JavaScript URL.
     bool executeIfJavaScriptURL(const KURL&, bool userGesture = false, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL);
@@ -108,8 +114,8 @@ public:
     // Darwin is an exception to this rule: it is OK to call this function from any thread, even reentrantly.
     static void initializeThreading();
 
-    ScriptValue evaluate(const ScriptSourceCode&);
-    ScriptValue evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld*);
+    ScriptValue evaluate(const ScriptSourceCode&, ShouldAllowXSS shouldAllowXSS = DoNotAllowXSS);
+    ScriptValue evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld*, ShouldAllowXSS shouldAllowXSS = DoNotAllowXSS);
 
     void setEventHandlerLineNumber(int lineno) { m_handlerLineNumber = lineno; }
     int eventHandlerLineNumber() { return m_handlerLineNumber; }

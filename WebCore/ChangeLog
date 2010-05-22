@@ -1,3 +1,31 @@
+2010-05-22  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION (r56295): Can't create a new wave on Google Wave
+        https://bugs.webkit.org/show_bug.cgi?id=39249
+
+        Instead of just using the source code portion of a JavaScript URL to
+        detect an XSS attack, we now include the JavaScript URL schema. This
+        reduces the chance of a false positive by providing additional context.
+
+        Test: http/tests/security/xssAuditor/javascript-link-safe.html
+
+        * WebCore.base.exp: Updated exported symbols as necessary.
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::executeScript): Added parameter shouldAllowXSS.
+        (WebCore::ScriptController::executeIfJavaScriptURL): Ditto.
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld): Ditto.
+        (WebCore::ScriptController::evaluate): Ditto.
+        (WebCore::ScriptController::executeScriptInWorld): Ditto.
+        * bindings/js/ScriptController.h: Added enum ShouldAllowXSS.
+        (WebCore::):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::evaluate): Added parameter shouldAllowXSS.
+        * bindings/v8/ScriptController.h: Added enum ShouldAllowXSS.
+        (WebCore::):
+
 2010-05-22  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Eric Seidel.

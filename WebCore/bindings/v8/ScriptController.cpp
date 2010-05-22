@@ -224,13 +224,13 @@ void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<Sc
 }
 
 // Evaluate a script file in the environment of this proxy.
-ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
+ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode, ShouldAllowXSS shouldAllowXSS)
 {
     String sourceURL = sourceCode.url();
     const String* savedSourceURL = m_sourceURL;
     m_sourceURL = &sourceURL;
 
-    if (!m_XSSAuditor->canEvaluate(sourceCode.source())) {
+    if (!shouldAllowXSS && !m_XSSAuditor->canEvaluate(sourceCode.source())) {
         // This script is not safe to be evaluated.
         return ScriptValue();
     }
