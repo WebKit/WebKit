@@ -31,7 +31,11 @@ from webkitpy.common.system.deprecated_logging import log
 from webkitpy.thirdparty.autoinstalled.mechanize import Browser
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
+import logging
 import urllib2
+
+
+_log = logging.getLogger("webkitpy.common.net.statusserver")
 
 
 class StatusServer:
@@ -93,7 +97,7 @@ class StatusServer:
         return self.browser.submit().read()
 
     def update_work_items(self, queue_name, work_items):
-        log("Recording work items: %s for %s" % (work_items, queue_name))
+        _log.debug("Recording work items: %s for %s" % (work_items, queue_name))
         return NetworkTransaction().run(lambda: self._post_work_items_to_server(queue_name, work_items))
 
     def update_status(self, queue_name, status, patch=None, results_file=None):

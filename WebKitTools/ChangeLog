@@ -1,5 +1,29 @@
 2010-05-21  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Adam Barth.
+
+        QueueStatusServer returns 500 error when EWS bots post empty queues
+        https://bugs.webkit.org/show_bug.cgi?id=39523
+
+        updateworkitems handler was raising an exception because
+        int() couldn't convert "" to a number.
+
+        I attempted to unit test this but we don't yet have a system by
+        which to load unit tests for appengine classes which depend on
+        google.appengine libraries which are not in the python default install.
+
+        We'll need to write a wrapper script to load those into the python path
+        and then run the unit test files.
+
+        * QueueStatusServer/handlers/statusbubble.py:
+         - Hide cr-win-ews since we're not currently running this bot.
+        * QueueStatusServer/handlers/updateworkitems.py:
+         - Fix the parsing logic to be able to understand "".
+        * Scripts/webkitpy/common/net/statusserver.py:
+         - Only log the work items posted to the server to the debug log channel.
+
+2010-05-21  Eric Seidel  <eric@webkit.org>
+
         Unreviewed, fixing the commit-queue to run again.
 
         Make the EWSes report queue position in white bubbles

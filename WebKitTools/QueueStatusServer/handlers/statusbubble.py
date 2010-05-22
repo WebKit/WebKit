@@ -42,7 +42,6 @@ class StatusBubble(webapp.RequestHandler):
     _queues_to_display = [
         ["style", "style-queue"],
         ["cr-linux", "chromium-ews"],
-        ["cr-win", "cr-win-ews"],
         ["gtk", "gtk-ews"],
         ["qt", "qt-ews"],
         ["mac", "mac-ews"],

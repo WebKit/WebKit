@@ -42,23 +42,32 @@ class UpdateWorkItems(UpdateBase):
 
     def _work_items_for_queue(self, queue_name):
         if queue_name not in queues:
-            self.response.set_status(500)
-            return
+            self.response.out.write("\"%s\" is not in queues %s" % (queue_name, queues))
+            return None
         work_items = WorkItems.all().filter("queue_name =", queue_name).get()
         if not work_items:
             work_items = WorkItems()
             work_items.queue_name = queue_name
         return work_items
 
+    def _parse_work_items_string(self, work_items_string):
+        # Our parsing could be much more robust.
+        item_strings = items_string.split(" ") if items_string else []
+        return map(int, item_strings)
+
     def _work_items_from_request(self):
         queue_name = self.request.get("queue_name")
         work_items = self._work_items_for_queue(queue_name)
+        if not work_items:
+            return None
         items_string = self.request.get("work_items")
-        # Our parsing could be much more robust.
-        work_items.item_ids = map(int, items_string.split(" "))
+        work_items.item_ids = self._parse_work_items_string(items_string)
         work_items.date = datetime.now()
         return work_items
 
     def post(self):
         work_items = self._work_items_from_request()
+        if not work_items:
+            self.response.set_status(500)
+            return
         work_items.put()
