@@ -882,7 +882,7 @@ private:
     bool m_isDragging                : 1;
 
     bool m_hasLayer                  : 1;
-    bool m_hasOverflowClip           : 1;
+    bool m_hasOverflowClip           : 1; // Set in the case of overflow:auto/scroll/hidden
     bool m_hasTransform              : 1;
     bool m_hasReflection             : 1;
 

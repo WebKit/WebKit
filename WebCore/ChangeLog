@@ -1,3 +1,15 @@
+2010-05-22  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Document RenderObject::m_hasOverflowClip.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39425
+
+        No new functionality, so no new tests.
+
+        * rendering/RenderObject.h:
+
 2010-05-22  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.
