@@ -1,3 +1,15 @@
+2010-05-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Added a test for a typo in my last commit.
+        https://bugs.webkit.org/show_bug.cgi?id=39518
+
+        * inspector/arobens-test-expected.txt: Added.
+        * inspector/arobens-test.html: Added. Verify that the first script
+        evaluation doesn't stomp over the bit of state saying that we're
+        a nested script evaluation.
+
 2010-05-21  Julie Parent  <jparent@chromium.org>
 
         Unreviewed.  Updating test expectations for chromium due to http://trac.webkit.org/changeset/59968.
