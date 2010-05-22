@@ -2,7 +2,7 @@
 
         No review, rolling out 60017.
         http://trac.webkit.org/changeset/60017
-        https://bugs.webkit.org/show_bug.cgi?id=39448
+        https://bugs.webkit.org/show_bug.cgi?id=39339
 
         Rolling out since this broke the build on the Windows and Qt bots.
         Need to look into this some more.
