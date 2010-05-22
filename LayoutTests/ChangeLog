@@ -1,3 +1,398 @@
+2010-05-21  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed pixel rebaseline
+
+        Update pixel test expectations for LayoutTests/svg to account for Leopard-SnowLeopard differences
+        https://bugs.webkit.org/show_bug.cgi?id=39317
+
+        This patch fixes the pixel test expecations for svg/ tests to work on Snow Leopard.
+        Specifically, for each test that currently passes on Leopard with -p --tolerance=0,
+        but fails with small diffs on Snow Leopard, the old expectation is moved from
+        platform/mac to platform/mac-leopard and a new expecation is added in
+        platform/mac.
+
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-36-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-36-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-36-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-36-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-37-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-37-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-37-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-37-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-39-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-39-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-39-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-39-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-40-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-40-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-40-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-40-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-41-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-41-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-41-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-41-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-46-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-46-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-46-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-46-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-60-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-60-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-60-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-60-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-61-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-61-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-61-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-61-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-62-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-62-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-62-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-62-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-63-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-63-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-63-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-63-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-65-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-65-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-65-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-65-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-66-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-66-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-66-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-66-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-67-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-67-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-67-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-67-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-68-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-68-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-68-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-68-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-69-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-69-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-69-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-69-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-70-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-70-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-70-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-70-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-77-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-77-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-77-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-77-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-78-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-78-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-78-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-78-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-80-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-80-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-80-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-80-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-81-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-81-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-81-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-81-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-83-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-83-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-83-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-83-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/coords-units-01-b-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/coords-units-01-b-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/coords-units-01-b-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/coords-units-01-b-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/coords-units-02-b-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/coords-units-02-b-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/coords-units-02-b-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/coords-units-02-b-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/coords-units-03-b-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/coords-units-03-b-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/coords-units-03-b-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/coords-units-03-b-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/coords-viewattr-03-b-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/coords-viewattr-03-b-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/coords-viewattr-03-b-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/coords-viewattr-03-b-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-composite-02-b-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/filters-composite-02-b-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-composite-02-b-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/filters-composite-02-b-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-conv-01-f-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/filters-conv-01-f-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-conv-01-f-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/filters-conv-01-f-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-image-01-b-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/filters-image-01-b-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-image-01-b-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/filters-image-01-b-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-morph-01-f-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/filters-morph-01-f-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-specular-01-f-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/filters-specular-01-f-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-specular-01-f-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/filters-specular-01-f-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/fonts-elem-01-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/fonts-elem-01-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/fonts-elem-01-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/fonts-elem-01-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/linking-a-05-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/linking-a-05-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/linking-a-05-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/linking-a-05-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/linking-uri-01-b-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/linking-uri-01-b-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/linking-uri-01-b-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/linking-uri-01-b-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/linking-uri-02-b-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/linking-uri-02-b-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/linking-uri-02-b-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/linking-uri-02-b-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/linking-uri-03-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/linking-uri-03-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/linking-uri-03-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/linking-uri-03-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/pservers-grad-14-b-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/pservers-grad-14-b-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/pservers-grad-14-b-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/pservers-grad-14-b-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/script-handle-01-b-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/script-handle-01-b-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/script-handle-01-b-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/script-handle-01-b-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/struct-frag-06-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/struct-frag-06-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/struct-frag-06-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/struct-frag-06-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/text-text-04-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/text-text-04-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/text-text-04-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/text-text-04-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/text-text-05-t-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/text-text-05-t-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/text-text-05-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/text-text-05-t-expected.png.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/text-tselect-02-f-expected.checksum: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/text-tselect-02-f-expected.checksum.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/text-tselect-02-f-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/text-tselect-02-f-expected.png.
+        * platform/mac-leopard/svg/batik: Added.
+        * platform/mac-leopard/svg/batik/filters: Added.
+        * platform/mac-leopard/svg/batik/filters/feTile-expected.checksum: Copied from LayoutTests/platform/mac/svg/batik/filters/feTile-expected.checksum.
+        * platform/mac-leopard/svg/batik/filters/feTile-expected.png: Copied from LayoutTests/platform/mac/svg/batik/filters/feTile-expected.png.
+        * platform/mac-leopard/svg/batik/paints: Added.
+        * platform/mac-leopard/svg/batik/paints/patternRegions-expected.checksum: Copied from LayoutTests/platform/mac/svg/batik/paints/patternRegions-expected.checksum.
+        * platform/mac-leopard/svg/batik/paints/patternRegions-expected.png: Copied from LayoutTests/platform/mac/svg/batik/paints/patternRegions-expected.png.
+        * platform/mac-leopard/svg/batik/text: Added.
+        * platform/mac-leopard/svg/batik/text/textAnchor3-expected.checksum: Copied from LayoutTests/platform/mac/svg/batik/text/textAnchor3-expected.checksum.
+        * platform/mac-leopard/svg/batik/text/textAnchor3-expected.png: Copied from LayoutTests/platform/mac/svg/batik/text/textAnchor3-expected.png.
+        * platform/mac-leopard/svg/batik/text/textLayout-expected.checksum: Copied from LayoutTests/platform/mac/svg/batik/text/textLayout-expected.checksum.
+        * platform/mac-leopard/svg/batik/text/textLayout-expected.png: Copied from LayoutTests/platform/mac/svg/batik/text/textLayout-expected.png.
+        * platform/mac-leopard/svg/batik/text/textLength-expected.checksum: Copied from LayoutTests/platform/mac/svg/batik/text/textLength-expected.checksum.
+        * platform/mac-leopard/svg/batik/text/textLength-expected.png: Copied from LayoutTests/platform/mac/svg/batik/text/textLength-expected.png.
+        * platform/mac-leopard/svg/batik/text/textOnPath-expected.checksum: Copied from LayoutTests/platform/mac/svg/batik/text/textOnPath-expected.checksum.
+        * platform/mac-leopard/svg/batik/text/textOnPath-expected.png: Copied from LayoutTests/platform/mac/svg/batik/text/textOnPath-expected.png.
+        * platform/mac-leopard/svg/batik/text/textOnPath2-expected.checksum: Copied from LayoutTests/platform/mac/svg/batik/text/textOnPath2-expected.checksum.
+        * platform/mac-leopard/svg/batik/text/textOnPath2-expected.png: Copied from LayoutTests/platform/mac/svg/batik/text/textOnPath2-expected.png.
+        * platform/mac-leopard/svg/batik/text/textOnPathSpaces-expected.checksum: Copied from LayoutTests/platform/mac/svg/batik/text/textOnPathSpaces-expected.checksum.
+        * platform/mac-leopard/svg/batik/text/textOnPathSpaces-expected.png: Copied from LayoutTests/platform/mac/svg/batik/text/textOnPathSpaces-expected.png.
+        * platform/mac-leopard/svg/batik/text/textPCDATA-expected.checksum: Copied from LayoutTests/platform/mac/svg/batik/text/textPCDATA-expected.checksum.
+        * platform/mac-leopard/svg/batik/text/textPCDATA-expected.png: Copied from LayoutTests/platform/mac/svg/batik/text/textPCDATA-expected.png.
+        * platform/mac-leopard/svg/batik/text/textProperties-expected.checksum: Copied from LayoutTests/platform/mac/svg/batik/text/textProperties-expected.checksum.
+        * platform/mac-leopard/svg/batik/text/textProperties-expected.png: Copied from LayoutTests/platform/mac/svg/batik/text/textProperties-expected.png.
+        * platform/mac-leopard/svg/batik/text/verticalTextOnPath-expected.checksum: Copied from LayoutTests/platform/mac/svg/batik/text/verticalTextOnPath-expected.checksum.
+        * platform/mac-leopard/svg/batik/text/verticalTextOnPath-expected.png: Copied from LayoutTests/platform/mac/svg/batik/text/verticalTextOnPath-expected.png.
+        * platform/mac-leopard/svg/batik/text/xmlSpace-expected.checksum: Copied from LayoutTests/platform/mac/svg/batik/text/xmlSpace-expected.checksum.
+        * platform/mac-leopard/svg/batik/text/xmlSpace-expected.png: Copied from LayoutTests/platform/mac/svg/batik/text/xmlSpace-expected.png.
+        * platform/mac-leopard/svg/custom/altglyph-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/altglyph-expected.checksum.
+        * platform/mac-leopard/svg/custom/altglyph-expected.png: Copied from LayoutTests/platform/mac/svg/custom/altglyph-expected.png.
+        * platform/mac-leopard/svg/custom/baseval-animval-equality-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/baseval-animval-equality-expected.checksum.
+        * platform/mac-leopard/svg/custom/baseval-animval-equality-expected.png: Copied from LayoutTests/platform/mac/svg/custom/baseval-animval-equality-expected.png.
+        * platform/mac-leopard/svg/custom/clip-path-referencing-use-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/clip-path-referencing-use-expected.checksum.
+        * platform/mac-leopard/svg/custom/clip-path-referencing-use-expected.png: Copied from LayoutTests/platform/mac/svg/custom/clip-path-referencing-use-expected.png.
+        * platform/mac-leopard/svg/custom/clip-path-referencing-use2-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/clip-path-referencing-use2-expected.checksum.
+        * platform/mac-leopard/svg/custom/clip-path-referencing-use2-expected.png: Copied from LayoutTests/platform/mac/svg/custom/clip-path-referencing-use2-expected.png.
+        * platform/mac-leopard/svg/custom/dominant-baseline-hanging-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/dominant-baseline-hanging-expected.checksum.
+        * platform/mac-leopard/svg/custom/dominant-baseline-hanging-expected.png: Copied from LayoutTests/platform/mac/svg/custom/dominant-baseline-hanging-expected.png.
+        * platform/mac-leopard/svg/custom/feComponentTransfer-Discrete-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/feComponentTransfer-Discrete-expected.checksum.
+        * platform/mac-leopard/svg/custom/feComponentTransfer-Discrete-expected.png: Copied from LayoutTests/platform/mac/svg/custom/feComponentTransfer-Discrete-expected.png.
+        * platform/mac-leopard/svg/custom/feComponentTransfer-Gamma-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/feComponentTransfer-Gamma-expected.checksum.
+        * platform/mac-leopard/svg/custom/feComponentTransfer-Gamma-expected.png: Copied from LayoutTests/platform/mac/svg/custom/feComponentTransfer-Gamma-expected.png.
+        * platform/mac-leopard/svg/custom/feComponentTransfer-Linear-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/feComponentTransfer-Linear-expected.checksum.
+        * platform/mac-leopard/svg/custom/feComponentTransfer-Linear-expected.png: Copied from LayoutTests/platform/mac/svg/custom/feComponentTransfer-Linear-expected.png.
+        * platform/mac-leopard/svg/custom/feComponentTransfer-Table-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/feComponentTransfer-Table-expected.checksum.
+        * platform/mac-leopard/svg/custom/feComponentTransfer-Table-expected.png: Copied from LayoutTests/platform/mac/svg/custom/feComponentTransfer-Table-expected.png.
+        * platform/mac-leopard/svg/custom/fill-fallback-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/fill-fallback-expected.checksum.
+        * platform/mac-leopard/svg/custom/fill-fallback-expected.png: Copied from LayoutTests/platform/mac/svg/custom/fill-fallback-expected.png.
+        * platform/mac-leopard/svg/custom/getPresentationAttribute-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/getPresentationAttribute-expected.checksum.
+        * platform/mac-leopard/svg/custom/getPresentationAttribute-expected.png: Copied from LayoutTests/platform/mac/svg/custom/getPresentationAttribute-expected.png.
+        * platform/mac-leopard/svg/custom/getsvgdocument-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/getsvgdocument-expected.checksum.
+        * platform/mac-leopard/svg/custom/getsvgdocument-expected.png: Copied from LayoutTests/platform/mac/svg/custom/getsvgdocument-expected.png.
+        * platform/mac-leopard/svg/custom/image-parent-translation-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/image-parent-translation-expected.checksum.
+        * platform/mac-leopard/svg/custom/image-parent-translation-expected.png: Copied from LayoutTests/platform/mac/svg/custom/image-parent-translation-expected.png.
+        * platform/mac-leopard/svg/custom/invalid-fill-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/invalid-fill-expected.checksum.
+        * platform/mac-leopard/svg/custom/invalid-fill-expected.png: Copied from LayoutTests/platform/mac/svg/custom/invalid-fill-expected.png.
+        * platform/mac-leopard/svg/custom/invalid-fill-hex-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/invalid-fill-hex-expected.checksum.
+        * platform/mac-leopard/svg/custom/invalid-fill-hex-expected.png: Copied from LayoutTests/platform/mac/svg/custom/invalid-fill-hex-expected.png.
+        * platform/mac-leopard/svg/custom/invisible-text-after-scrolling-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/invisible-text-after-scrolling-expected.checksum.
+        * platform/mac-leopard/svg/custom/invisible-text-after-scrolling-expected.png: Copied from LayoutTests/platform/mac/svg/custom/invisible-text-after-scrolling-expected.png.
+        * platform/mac-leopard/svg/custom/percentage-of-html-parent-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/percentage-of-html-parent-expected.checksum.
+        * platform/mac-leopard/svg/custom/percentage-of-html-parent-expected.png: Copied from LayoutTests/platform/mac/svg/custom/percentage-of-html-parent-expected.png.
+        * platform/mac-leopard/svg/custom/pointer-events-image-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/pointer-events-image-expected.checksum.
+        * platform/mac-leopard/svg/custom/pointer-events-image-expected.png: Copied from LayoutTests/platform/mac/svg/custom/pointer-events-image-expected.png.
+        * platform/mac-leopard/svg/custom/pointer-events-text-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/pointer-events-text-expected.checksum.
+        * platform/mac-leopard/svg/custom/pointer-events-text-expected.png: Copied from LayoutTests/platform/mac/svg/custom/pointer-events-text-expected.png.
+        * platform/mac-leopard/svg/custom/relative-sized-content-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/relative-sized-content-expected.checksum.
+        * platform/mac-leopard/svg/custom/relative-sized-content-expected.png: Copied from LayoutTests/platform/mac/svg/custom/relative-sized-content-expected.png.
+        * platform/mac-leopard/svg/custom/relative-sized-deep-shadow-tree-content-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/relative-sized-deep-shadow-tree-content-expected.checksum.
+        * platform/mac-leopard/svg/custom/relative-sized-deep-shadow-tree-content-expected.png: Copied from LayoutTests/platform/mac/svg/custom/relative-sized-deep-shadow-tree-content-expected.png.
+        * platform/mac-leopard/svg/custom/relative-sized-shadow-tree-content-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/relative-sized-shadow-tree-content-expected.checksum.
+        * platform/mac-leopard/svg/custom/relative-sized-shadow-tree-content-expected.png: Copied from LayoutTests/platform/mac/svg/custom/relative-sized-shadow-tree-content-expected.png.
+        * platform/mac-leopard/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.checksum.
+        * platform/mac-leopard/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.png: Copied from LayoutTests/platform/mac/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.png.
+        * platform/mac-leopard/svg/custom/rootmost-svg-xy-attrs-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/rootmost-svg-xy-attrs-expected.checksum.
+        * platform/mac-leopard/svg/custom/rootmost-svg-xy-attrs-expected.png: Copied from LayoutTests/platform/mac/svg/custom/rootmost-svg-xy-attrs-expected.png.
+        * platform/mac-leopard/svg/custom/shape-rendering-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/shape-rendering-expected.checksum.
+        * platform/mac-leopard/svg/custom/shape-rendering-expected.png: Copied from LayoutTests/platform/mac/svg/custom/shape-rendering-expected.png.
+        * platform/mac-leopard/svg/custom/stroke-fallback-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/stroke-fallback-expected.checksum.
+        * platform/mac-leopard/svg/custom/stroke-fallback-expected.png: Copied from LayoutTests/platform/mac/svg/custom/stroke-fallback-expected.png.
+        * platform/mac-leopard/svg/custom/svg-float-border-padding-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/svg-float-border-padding-expected.checksum.
+        * platform/mac-leopard/svg/custom/svg-float-border-padding-expected.png: Copied from LayoutTests/platform/mac/svg/custom/svg-float-border-padding-expected.png.
+        * platform/mac-leopard/svg/filters/feGaussianBlur-expected.checksum: Copied from LayoutTests/platform/mac/svg/filters/feGaussianBlur-expected.checksum.
+        * platform/mac-leopard/svg/filters/feGaussianBlur-expected.png: Copied from LayoutTests/platform/mac/svg/filters/feGaussianBlur-expected.png.
+        * platform/mac-leopard/svg/filters/shadow-on-filter-expected.checksum: Copied from LayoutTests/platform/mac/svg/filters/shadow-on-filter-expected.checksum.
+        * platform/mac-leopard/svg/filters/shadow-on-filter-expected.png: Copied from LayoutTests/platform/mac/svg/filters/shadow-on-filter-expected.png.
+        * platform/mac-leopard/svg/hixie/links: Added.
+        * platform/mac-leopard/svg/text/kerning-expected.checksum: Copied from LayoutTests/platform/mac/svg/text/kerning-expected.checksum.
+        * platform/mac-leopard/svg/text/kerning-expected.png: Copied from LayoutTests/platform/mac/svg/text/kerning-expected.png.
+        * platform/mac-leopard/svg/text/multichar-glyph-expected.checksum: Copied from LayoutTests/platform/mac/svg/text/multichar-glyph-expected.checksum.
+        * platform/mac-leopard/svg/text/multichar-glyph-expected.png: Copied from LayoutTests/platform/mac/svg/text/multichar-glyph-expected.png.
+        * platform/mac-leopard/svg/text/text-repaint-rects-expected.checksum: Copied from LayoutTests/platform/mac/svg/text/text-repaint-rects-expected.checksum.
+        * platform/mac-leopard/svg/text/text-repaint-rects-expected.png: Copied from LayoutTests/platform/mac/svg/text/text-repaint-rects-expected.png.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-36-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-36-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-37-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-37-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-39-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-39-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-40-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-40-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-41-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-41-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-46-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-46-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-60-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-60-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-61-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-61-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-62-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-62-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-63-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-63-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-65-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-65-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-66-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-66-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-67-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-67-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-68-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-68-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-69-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-69-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-70-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-70-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-77-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-77-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-78-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-78-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-80-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-80-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-81-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-81-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-83-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-83-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/coords-units-01-b-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/coords-units-01-b-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/coords-units-02-b-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/coords-units-02-b-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/coords-units-03-b-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/coords-units-03-b-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/coords-viewattr-03-b-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/coords-viewattr-03-b-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/filters-composite-02-b-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/filters-composite-02-b-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/filters-conv-01-f-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/filters-conv-01-f-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/filters-image-01-b-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/filters-image-01-b-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/filters-morph-01-f-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/filters-specular-01-f-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/filters-specular-01-f-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-01-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-01-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/linking-a-05-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/linking-a-05-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/linking-uri-01-b-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/linking-uri-01-b-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/linking-uri-02-b-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/linking-uri-02-b-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/linking-uri-03-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/linking-uri-03-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-14-b-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-14-b-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/script-handle-01-b-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/script-handle-01-b-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/struct-frag-06-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/struct-frag-06-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/text-text-04-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/text-text-04-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/text-text-05-t-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/text-text-05-t-expected.png: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/text-tselect-02-f-expected.checksum: Replaced.
+        * platform/mac/svg/W3C-SVG-1.1/text-tselect-02-f-expected.png: Replaced.
+        * platform/mac/svg/batik/filters/feTile-expected.checksum: Replaced.
+        * platform/mac/svg/batik/filters/feTile-expected.png: Replaced.
+        * platform/mac/svg/batik/paints/patternRegions-expected.checksum: Replaced.
+        * platform/mac/svg/batik/paints/patternRegions-expected.png: Replaced.
+        * platform/mac/svg/batik/text/textAnchor3-expected.checksum: Replaced.
+        * platform/mac/svg/batik/text/textAnchor3-expected.png: Replaced.
+        * platform/mac/svg/batik/text/textLayout-expected.checksum: Replaced.
+        * platform/mac/svg/batik/text/textLayout-expected.png: Replaced.
+        * platform/mac/svg/batik/text/textLength-expected.checksum: Replaced.
+        * platform/mac/svg/batik/text/textLength-expected.png: Replaced.
+        * platform/mac/svg/batik/text/textOnPath-expected.checksum: Replaced.
+        * platform/mac/svg/batik/text/textOnPath-expected.png: Replaced.
+        * platform/mac/svg/batik/text/textOnPath2-expected.checksum: Replaced.
+        * platform/mac/svg/batik/text/textOnPath2-expected.png: Replaced.
+        * platform/mac/svg/batik/text/textOnPathSpaces-expected.checksum: Replaced.
+        * platform/mac/svg/batik/text/textOnPathSpaces-expected.png: Replaced.
+        * platform/mac/svg/batik/text/textPCDATA-expected.checksum: Replaced.
+        * platform/mac/svg/batik/text/textPCDATA-expected.png: Replaced.
+        * platform/mac/svg/batik/text/textProperties-expected.checksum: Replaced.
+        * platform/mac/svg/batik/text/textProperties-expected.png: Replaced.
+        * platform/mac/svg/batik/text/verticalTextOnPath-expected.checksum: Replaced.
+        * platform/mac/svg/batik/text/verticalTextOnPath-expected.png: Replaced.
+        * platform/mac/svg/batik/text/xmlSpace-expected.checksum: Replaced.
+        * platform/mac/svg/batik/text/xmlSpace-expected.png: Replaced.
+        * platform/mac/svg/custom/altglyph-expected.checksum: Replaced.
+        * platform/mac/svg/custom/altglyph-expected.png: Replaced.
+        * platform/mac/svg/custom/baseval-animval-equality-expected.checksum: Replaced.
+        * platform/mac/svg/custom/baseval-animval-equality-expected.png: Replaced.
+        * platform/mac/svg/custom/clip-path-referencing-use-expected.checksum: Replaced.
+        * platform/mac/svg/custom/clip-path-referencing-use-expected.png: Replaced.
+        * platform/mac/svg/custom/clip-path-referencing-use2-expected.checksum: Replaced.
+        * platform/mac/svg/custom/clip-path-referencing-use2-expected.png: Replaced.
+        * platform/mac/svg/custom/container-opacity-clip-viewBox-expected.checksum:
+        * platform/mac/svg/custom/container-opacity-clip-viewBox-expected.png:
+        * platform/mac/svg/custom/dominant-baseline-hanging-expected.checksum: Replaced.
+        * platform/mac/svg/custom/dominant-baseline-hanging-expected.png: Replaced.
+        * platform/mac/svg/custom/feComponentTransfer-Discrete-expected.checksum: Replaced.
+        * platform/mac/svg/custom/feComponentTransfer-Discrete-expected.png: Replaced.
+        * platform/mac/svg/custom/feComponentTransfer-Gamma-expected.checksum: Replaced.
+        * platform/mac/svg/custom/feComponentTransfer-Gamma-expected.png: Replaced.
+        * platform/mac/svg/custom/feComponentTransfer-Linear-expected.checksum: Replaced.
+        * platform/mac/svg/custom/feComponentTransfer-Linear-expected.png: Replaced.
+        * platform/mac/svg/custom/feComponentTransfer-Table-expected.checksum: Replaced.
+        * platform/mac/svg/custom/feComponentTransfer-Table-expected.png: Replaced.
+        * platform/mac/svg/custom/fill-fallback-expected.checksum: Replaced.
+        * platform/mac/svg/custom/fill-fallback-expected.png: Replaced.
+        * platform/mac/svg/custom/getPresentationAttribute-expected.checksum: Replaced.
+        * platform/mac/svg/custom/getPresentationAttribute-expected.png: Replaced.
+        * platform/mac/svg/custom/getsvgdocument-expected.checksum: Replaced.
+        * platform/mac/svg/custom/getsvgdocument-expected.png: Replaced.
+        * platform/mac/svg/custom/image-parent-translation-expected.checksum: Replaced.
+        * platform/mac/svg/custom/image-parent-translation-expected.png: Replaced.
+        * platform/mac/svg/custom/invalid-fill-expected.checksum: Replaced.
+        * platform/mac/svg/custom/invalid-fill-expected.png: Replaced.
+        * platform/mac/svg/custom/invalid-fill-hex-expected.checksum: Replaced.
+        * platform/mac/svg/custom/invalid-fill-hex-expected.png: Replaced.
+        * platform/mac/svg/custom/invisible-text-after-scrolling-expected.checksum: Replaced.
+        * platform/mac/svg/custom/invisible-text-after-scrolling-expected.png: Replaced.
+        * platform/mac/svg/custom/percentage-of-html-parent-expected.checksum: Replaced.
+        * platform/mac/svg/custom/percentage-of-html-parent-expected.png: Replaced.
+        * platform/mac/svg/custom/pointer-events-image-expected.checksum: Replaced.
+        * platform/mac/svg/custom/pointer-events-image-expected.png: Replaced.
+        * platform/mac/svg/custom/pointer-events-text-expected.checksum: Replaced.
+        * platform/mac/svg/custom/pointer-events-text-expected.png: Replaced.
+        * platform/mac/svg/custom/relative-sized-content-expected.checksum: Replaced.
+        * platform/mac/svg/custom/relative-sized-content-expected.png: Replaced.
+        * platform/mac/svg/custom/relative-sized-deep-shadow-tree-content-expected.checksum: Replaced.
+        * platform/mac/svg/custom/relative-sized-deep-shadow-tree-content-expected.png: Replaced.
+        * platform/mac/svg/custom/relative-sized-shadow-tree-content-expected.checksum: Replaced.
+        * platform/mac/svg/custom/relative-sized-shadow-tree-content-expected.png: Replaced.
+        * platform/mac/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.checksum: Replaced.
+        * platform/mac/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.png: Replaced.
+        * platform/mac/svg/custom/rootmost-svg-xy-attrs-expected.checksum: Replaced.
+        * platform/mac/svg/custom/rootmost-svg-xy-attrs-expected.png: Replaced.
+        * platform/mac/svg/custom/shape-rendering-expected.checksum: Replaced.
+        * platform/mac/svg/custom/shape-rendering-expected.png: Replaced.
+        * platform/mac/svg/custom/stroke-fallback-expected.checksum: Replaced.
+        * platform/mac/svg/custom/stroke-fallback-expected.png: Replaced.
+        * platform/mac/svg/custom/svg-float-border-padding-expected.checksum: Replaced.
+        * platform/mac/svg/custom/svg-float-border-padding-expected.png: Replaced.
+        * platform/mac/svg/filters/feGaussianBlur-expected.checksum: Replaced.
+        * platform/mac/svg/filters/feGaussianBlur-expected.png: Replaced.
+        * platform/mac/svg/filters/shadow-on-filter-expected.checksum: Replaced.
+        * platform/mac/svg/filters/shadow-on-filter-expected.png: Replaced.
+        * platform/mac/svg/hixie/links/003-broken-expected.checksum:
+        * platform/mac/svg/hixie/links/003-broken-expected.png:
+        * platform/mac/svg/text/kerning-expected.checksum: Replaced.
+        * platform/mac/svg/text/kerning-expected.png: Replaced.
+        * platform/mac/svg/text/multichar-glyph-expected.checksum: Replaced.
+        * platform/mac/svg/text/multichar-glyph-expected.png: Replaced.
+        * platform/mac/svg/text/text-repaint-rects-expected.checksum: Replaced.
+        * platform/mac/svg/text/text-repaint-rects-expected.png: Replaced.
+
 2010-05-21  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.
