@@ -88,6 +88,7 @@ class StatusServer:
         self.browser.open(update_work_items_url)
         self.browser.select_form(name="update_work_items")
         self.browser["queue_name"] = queue_name
+        work_items = map(unicode, work_items)  # .join expects strings
         self.browser["work_items"] = " ".join(work_items)
         return self.browser.submit().read()
 

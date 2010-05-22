@@ -1,3 +1,16 @@
+2010-05-21  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, fixing the commit-queue to run again.
+
+        Make the EWSes report queue position in white bubbles
+        https://bugs.webkit.org/show_bug.cgi?id=39519
+
+        * Scripts/webkitpy/common/net/statusserver.py:
+         - Fix exception in _post_work_items_to_server when passed
+           integers. Unfortunately we have no good way to mock
+           the Browser object yet, and after several attempts I was
+           not able to create a good one, so no tests. :(
+
 2010-05-14  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.
