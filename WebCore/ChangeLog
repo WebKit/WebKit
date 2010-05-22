@@ -1,5 +1,22 @@
 2010-05-21  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59897.
+
+    2010-05-20  Adam Roben  <aroben@apple.com>
+
+        Stop leaking all CACFContexts
+
+        Fixes <http://webkit.org/b/39466> <rdar://problem/8007141>.
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/win/WKCACFContextFlusher.cpp:
+        (WebCore::WKCACFContextFlusher::addContext): Only retain the context
+        when we first add it to the m_contexts set. Otherwise we'll retain the
+        same context multiple times, causing it to leak.
+
+2010-05-21  Mark Rowe  <mrowe@apple.com>
+
         Merge r59962.
 
     2010-05-21  Simon Fraser  <simon.fraser@apple.com>
