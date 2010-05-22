@@ -1,3 +1,9 @@
+2010-05-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Update GTK specific expected file after r59968.
+
+        * platform/gtk/svg/css/getComputedStyle-basic-expected.txt: updated.
+
 2010-05-21  James Robinson  <jamesr@chromium.org>
 
         Unreviewed pixel rebaseline
