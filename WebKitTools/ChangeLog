@@ -1,3 +1,24 @@
+2010-05-22  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Link resources and load Ahem font for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=39473
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main): Call platformInit().
+        * DumpRenderTree/chromium/TestShell.h:
+         Declare platformInit(). It is not related to TestShell class, but the
+         implementation of paltformInit() is placed at TestShell*.{cpp,mm}.
+        * DumpRenderTree/chromium/TestShellGtk.cpp:
+        (platformInit):
+        * DumpRenderTree/chromium/TestShellMac.mm:
+        (platformInit):
+        * DumpRenderTree/chromium/TestShellWin.cpp:
+        (platformInit):
+         - Make stdout/stderr binary mode
+         - Load Ahem font
+
 2010-05-21  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, EWS build fix only.

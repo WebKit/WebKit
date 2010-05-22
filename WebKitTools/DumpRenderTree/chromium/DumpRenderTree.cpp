@@ -36,6 +36,8 @@
 
 using namespace std;
 
+void platformInit();
+
 static const char optionComplexText[] = "--complex-text";
 static const char optionDumpAllPixels[] = "--dump-all-pixels";
 static const char optionNotree[] = "--notree";
@@ -59,6 +61,7 @@ static void runTest(TestShell& shell, TestParams& params, const string& testName
 int main(int argc, char* argv[])
 {
     webkit_support::SetUpTestEnvironment();
+    platformInit();
 
     TestParams params;
     Vector<string> tests;

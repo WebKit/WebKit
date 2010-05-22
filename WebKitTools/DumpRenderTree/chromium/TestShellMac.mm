@@ -123,3 +123,7 @@ void TestShell::waitTestFinished()
     [thread cancel];
     [thread release];
 }
+
+void platformInit()
+{
+}

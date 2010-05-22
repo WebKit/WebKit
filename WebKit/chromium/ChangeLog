@@ -1,3 +1,14 @@
+2010-05-22  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Link resources and load Ahem font for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=39473
+
+        * WebKit.gyp:
+          Add net and webkit resources for Windows.
+          Copy AHEM____.TTF to DumpRenderTree.exe directory.
+
 2010-05-21  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

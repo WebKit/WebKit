@@ -47,6 +47,7 @@
                 'chromium_src_dir': '../../../..',
             }],
         ],
+        'ahem_path': '../../WebKitTools/DumpRenderTree/qt/fonts/AHEM____.TTF',
     },
     'targets': [
         {
@@ -579,11 +580,24 @@
                 '<@(drt_files)',
             ],
             'conditions': [
+                ['OS=="win"', {
+                    'resource_include_dirs': ['<(SHARED_INTERMEDIATE_DIR)/webkit'],
+                    'sources': [
+                       '<(SHARED_INTERMEDIATE_DIR)/net/net_resources.rc',
+                       '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_chromium_resources.rc',
+                       '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_resources.rc',
+                       '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_strings_en-US.rc',
+                    ],
+                    'copies': [{
+                       'destination': '<(PRODUCT_DIR)',
+                       'files': ['<(ahem_path)'],
+                    }],
+                }],
                 ['OS=="mac"', {
                     'dependencies': ['LayoutTestHelper'],
 
                     'mac_bundle_resources': [
-                        '../../WebKitTools/DumpRenderTree/qt/fonts/AHEM____.TTF',
+                        '<(ahem_path)',
                         '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher100.ttf',
                         '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher200.ttf',
                         '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher300.ttf',
