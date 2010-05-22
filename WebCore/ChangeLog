@@ -1,3 +1,12 @@
+2010-05-22  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Eric Seidel.
+
+        [EFL] Build fix (update source code lists).
+        http://webkit.org/b/39235
+
+        * CMakeLists.txt:
+
 2010-05-22  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

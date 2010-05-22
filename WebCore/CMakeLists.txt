@@ -233,6 +233,7 @@ SET(WebCore_IDL_FILES
     html/HTMLMediaElement.idl
     html/HTMLMenuElement.idl
     html/HTMLMetaElement.idl
+    html/HTMLMeterElement.idl
     html/HTMLModElement.idl
     html/HTMLOListElement.idl
     html/HTMLObjectElement.idl
@@ -268,16 +269,17 @@ SET(WebCore_IDL_FILES
     html/canvas/CanvasPattern.idl
     html/canvas/CanvasRenderingContext.idl
     html/canvas/CanvasRenderingContext2D.idl
-    html/canvas/WebGLArray.idl
-    html/canvas/WebGLArrayBuffer.idl
-    html/canvas/WebGLByteArray.idl
-    html/canvas/WebGLFloatArray.idl
-    html/canvas/WebGLIntArray.idl
     html/canvas/WebGLRenderingContext.idl
-    html/canvas/WebGLShortArray.idl
-    html/canvas/WebGLUnsignedByteArray.idl
-    html/canvas/WebGLUnsignedIntArray.idl
-    html/canvas/WebGLUnsignedShortArray.idl
+
+    html/canvas/ArrayBuffer.idl
+    html/canvas/ArrayBufferView.idl
+    html/canvas/FloatArray.idl
+    html/canvas/Int16Array.idl
+    html/canvas/Int32Array.idl
+    html/canvas/Int8Array.idl
+    html/canvas/Uint16Array.idl
+    html/canvas/Uint32Array.idl
+    html/canvas/Uint8Array.idl
 
     inspector/InjectedScriptHost.idl
     inspector/InspectorBackend.idl
@@ -315,11 +317,18 @@ SET(WebCore_IDL_FILES
     storage/Database.idl
     storage/DatabaseCallback.idl
     storage/DatabaseSync.idl
+    storage/IDBAny.idl
+    storage/IDBDatabaseError.idl
+    storage/IDBDatabaseException.idl
+    storage/IDBDatabaseRequest.idl
+    storage/IDBErrorEvent.idl
+    storage/IDBEvent.idl
+    storage/IDBRequest.idl
+    storage/IDBSuccessEvent.idl
+    storage/IndexedDatabaseRequest.idl
     storage/SQLError.idl
     storage/SQLResultSet.idl
     storage/SQLResultSetRowList.idl
-    storage/Storage.idl
-    storage/StorageEvent.idl
     storage/SQLStatementCallback.idl
     storage/SQLStatementErrorCallback.idl
     storage/SQLTransaction.idl
@@ -327,6 +336,8 @@ SET(WebCore_IDL_FILES
     storage/SQLTransactionErrorCallback.idl
     storage/SQLTransactionSync.idl
     storage/SQLTransactionSyncCallback.idl
+    storage/Storage.idl
+    storage/StorageEvent.idl
 
     workers/AbstractWorker.idl
     workers/DedicatedWorkerContext.idl
@@ -527,25 +538,32 @@ SET(WebCore_SOURCES
     bindings/js/DOMObjectHashTableMap.cpp
     bindings/js/DOMWrapperWorld.cpp
     bindings/js/GCController.cpp
+    bindings/js/JavaScriptCallFrame.cpp
     bindings/js/JSAttrCustom.cpp
+    bindings/js/JSCallbackData.cpp
+    bindings/js/JSCanvasRenderingContext2DCustom.cpp
+    bindings/js/JSCanvasRenderingContextCustom.cpp
     bindings/js/JSCDATASectionCustom.cpp
+    bindings/js/JSClipboardCustom.cpp
+    bindings/js/JSConsoleCustom.cpp
+    bindings/js/JSCoordinatesCustom.cpp
     bindings/js/JSCSSRuleCustom.cpp
     bindings/js/JSCSSRuleListCustom.cpp
     bindings/js/JSCSSStyleDeclarationCustom.cpp
     bindings/js/JSCSSValueCustom.cpp
-    bindings/js/JSCallbackData.cpp
-    bindings/js/JSCanvasRenderingContext2DCustom.cpp
-    bindings/js/JSCanvasRenderingContextCustom.cpp
-    bindings/js/JSClipboardCustom.cpp
-    bindings/js/JSConsoleCustom.cpp
-    bindings/js/JSCoordinatesCustom.cpp
     bindings/js/JSCustomPositionCallback.cpp
     bindings/js/JSCustomPositionErrorCallback.cpp
     bindings/js/JSCustomSQLStatementErrorCallback.cpp
-    bindings/js/JSDatabaseCustom.cpp
-    bindings/js/JSDatabaseSyncCustom.cpp
     bindings/js/JSCustomVoidCallback.cpp
     bindings/js/JSCustomXPathNSResolver.cpp
+    bindings/js/JSDatabaseCustom.cpp
+    bindings/js/JSDatabaseCustom.cpp
+    bindings/js/JSDatabaseSyncCustom.cpp
+    bindings/js/JSDataGridColumnListCustom.cpp
+    bindings/js/JSDataGridDataSource.cpp
+    bindings/js/JSDebugWrapperSet.cpp
+    bindings/js/JSDedicatedWorkerContextCustom.cpp
+    bindings/js/JSDocumentCustom.cpp
     bindings/js/JSDOMApplicationCacheCustom.cpp
     bindings/js/JSDOMBinding.cpp
     bindings/js/JSDOMFormDataCustom.cpp
@@ -554,12 +572,6 @@ SET(WebCore_SOURCES
     bindings/js/JSDOMWindowCustom.cpp
     bindings/js/JSDOMWindowShell.cpp
     bindings/js/JSDOMWrapper.cpp
-    bindings/js/JSDataGridColumnListCustom.cpp
-    bindings/js/JSDataGridDataSource.cpp
-    bindings/js/JSDatabaseCustom.cpp
-    bindings/js/JSDebugWrapperSet.cpp
-    bindings/js/JSDedicatedWorkerContextCustom.cpp
-    bindings/js/JSDocumentCustom.cpp
     bindings/js/JSElementCustom.cpp
     bindings/js/JSEventCustom.cpp
     bindings/js/JSEventListener.cpp
@@ -567,6 +579,7 @@ SET(WebCore_SOURCES
     bindings/js/JSEventTarget.cpp
     bindings/js/JSExceptionBase.cpp
     bindings/js/JSGeolocationCustom.cpp
+    bindings/js/JSHistoryCustom.cpp
     bindings/js/JSHTMLAllCollectionCustom.cpp
     bindings/js/JSHTMLAppletElementCustom.cpp
     bindings/js/JSHTMLCanvasElementCustom.cpp
@@ -583,7 +596,6 @@ SET(WebCore_SOURCES
     bindings/js/JSHTMLObjectElementCustom.cpp
     bindings/js/JSHTMLOptionsCollectionCustom.cpp
     bindings/js/JSHTMLSelectElementCustom.cpp
-    bindings/js/JSHistoryCustom.cpp
     bindings/js/JSImageConstructor.cpp
     bindings/js/JSImageDataCustom.cpp
     bindings/js/JSInjectedScriptHostCustom.cpp
@@ -609,12 +621,12 @@ SET(WebCore_SOURCES
     bindings/js/JSPluginCustom.cpp
     bindings/js/JSPluginElementFunctions.cpp
     bindings/js/JSPopStateEventCustom.cpp
-    bindings/js/JSSQLResultSetRowListCustom.cpp
-    bindings/js/JSSQLTransactionCustom.cpp
-    bindings/js/JSSQLTransactionSyncCustom.cpp
     bindings/js/JSScriptProfileNodeCustom.cpp
     bindings/js/JSSharedWorkerConstructor.cpp
     bindings/js/JSSharedWorkerCustom.cpp
+    bindings/js/JSSQLResultSetRowListCustom.cpp
+    bindings/js/JSSQLTransactionCustom.cpp
+    bindings/js/JSSQLTransactionSyncCustom.cpp
     bindings/js/JSStorageCustom.cpp
     bindings/js/JSStyleSheetCustom.cpp
     bindings/js/JSStyleSheetListCustom.cpp
@@ -632,7 +644,6 @@ SET(WebCore_SOURCES
     bindings/js/JSXMLHttpRequestUploadCustom.cpp
     bindings/js/JSXSLTProcessorConstructor.cpp
     bindings/js/JSXSLTProcessorCustom.cpp
-    bindings/js/JavaScriptCallFrame.cpp
     bindings/js/ScheduledAction.cpp
     bindings/js/ScriptArray.cpp
     bindings/js/ScriptCachedFrameData.cpp
@@ -643,6 +654,7 @@ SET(WebCore_SOURCES
     bindings/js/ScriptDebugServer.cpp
     bindings/js/ScriptEventListener.cpp
     bindings/js/ScriptFunctionCall.cpp
+    bindings/js/ScriptGCEvent.cpp
     bindings/js/ScriptObject.cpp
     bindings/js/ScriptProfiler.cpp
     bindings/js/ScriptState.cpp
@@ -936,6 +948,7 @@ SET(WebCore_SOURCES
     html/HTMLMarqueeElement.cpp
     html/HTMLMenuElement.cpp
     html/HTMLMetaElement.cpp
+    html/HTMLMeterElement.cpp
     html/HTMLModElement.cpp
     html/HTMLNameCollection.cpp
     html/HTMLOListElement.cpp
@@ -1274,6 +1287,7 @@ SET(WebCore_SOURCES
     rendering/RenderListMarker.cpp
     rendering/RenderMarquee.cpp
     rendering/RenderMenuList.cpp
+    rendering/RenderMeter.cpp
     rendering/RenderObject.cpp
     rendering/RenderObjectChildList.cpp
     rendering/RenderPart.cpp
@@ -1338,6 +1352,16 @@ SET(WebCore_SOURCES
     storage/DatabaseTask.cpp
     storage/DatabaseThread.cpp
     storage/DatabaseTracker.cpp
+    storage/IDBAny.cpp
+    storage/IDBDatabase.cpp
+    storage/IDBDatabaseRequest.cpp
+    storage/IDBErrorEvent.cpp
+    storage/IDBEvent.cpp
+    storage/IDBRequest.cpp
+    storage/IDBSuccessEvent.cpp
+    storage/IndexedDatabase.cpp
+    storage/IndexedDatabaseImpl.cpp
+    storage/IndexedDatabaseRequest.cpp
     storage/LocalStorageTask.cpp
     storage/LocalStorageThread.cpp
     storage/OriginQuotaManager.cpp

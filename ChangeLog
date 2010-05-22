@@ -1,3 +1,15 @@
+2010-05-22  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Eric Seidel.
+
+        [EFL] Build fix (always compile libraries with -fPIC when compiler
+        is gcc; always define WTF_USE_PTHREADS).
+        http://webkit.org/b/39235
+
+        * cmake/OptionsCommon.cmake:
+        * cmake/OptionsEfl.cmake:
+        * cmake/WebKitHelpers.cmake:
+
 2010-05-19  Dan Winship  <danw@gnome.org>
 
         Reviewed by Xan Lopez.
