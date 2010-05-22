@@ -1050,6 +1050,8 @@ void GraphicsLayerCA::updateSublayerList()
 
 void GraphicsLayerCA::updateLayerPosition()
 {
+    // FIXME: if constrained the size, the position will be wrong. Fixing this is not trivial.
+
     // Position is offset on the layer by the layer anchor point.
     CGPoint posPoint = CGPointMake(m_position.x() + m_anchorPoint.x() * m_size.width(),
                                    m_position.y() + m_anchorPoint.y() * m_size.height());
@@ -1097,6 +1099,11 @@ void GraphicsLayerCA::updateLayerSize()
     bool needTiledLayer = requiresTiledLayer(m_size);
     if (needTiledLayer != m_usingTiledLayer)
         swapFromOrToTiledLayer(needTiledLayer);
+    
+    if (m_usingTiledLayer) {
+        FloatSize sizeToUse = constrainedSize();
+        rect = CGRectMake(0, 0, sizeToUse.width(), sizeToUse.height());
+    }
     
     [m_layer.get() setBounds:rect];
     if (LayerMap* layerCloneMap = m_layerClones.get()) {
@@ -2142,6 +2149,29 @@ void GraphicsLayerCA::setDebugBorder(const Color& color, float borderWidth)
     }
     
     END_BLOCK_OBJC_EXCEPTIONS
+}
+
+FloatSize GraphicsLayerCA::constrainedSize() const
+{
+    float tileColumns = ceilf(m_size.width() / cTiledLayerTileSize);
+    float tileRows = ceilf(m_size.height() / cTiledLayerTileSize);
+    double numTiles = tileColumns * tileRows;
+    
+    FloatSize constrainedSize = m_size;
+    const unsigned cMaxTileCount = 512;
+    while (numTiles > cMaxTileCount) {
+        // Constrain the wider dimension.
+        if (constrainedSize.width() >= constrainedSize.height()) {
+            tileColumns = max(floorf(cMaxTileCount / tileRows), 1.0f);
+            constrainedSize.setWidth(tileColumns * cTiledLayerTileSize);
+        } else {
+            tileRows = max(floorf(cMaxTileCount / tileColumns), 1.0f);
+            constrainedSize.setHeight(tileRows * cTiledLayerTileSize);
+        }
+        numTiles = tileColumns * tileRows;
+    }
+    
+    return constrainedSize;
 }
 
 bool GraphicsLayerCA::requiresTiledLayer(const FloatSize& size) const
