@@ -1,3 +1,12 @@
+2010-05-22  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Re-order Yong's email addresses because his gmail account is the one he
+        uses for bugs.webkit.org.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-05-22  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Chris Jerdonek.
