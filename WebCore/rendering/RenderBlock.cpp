@@ -120,7 +120,7 @@ RenderBlock::RenderBlock(Node* node)
       : RenderBox(node)
       , m_floatingObjects(0)
       , m_positionedObjects(0)
-      , m_inlineContinuation(0)
+      , m_continuation(0)
       , m_maxMargin(0)
       , m_lineHeight(-1)
 {
@@ -165,9 +165,9 @@ void RenderBlock::destroy()
     // Destroy our continuation before anything other than anonymous children.
     // The reason we don't destroy it before anonymous children is that they may
     // have continuations of their own that are anonymous children of our continuation.
-    if (m_inlineContinuation) {
-        m_inlineContinuation->destroy();
-        m_inlineContinuation = 0;
+    if (m_continuation) {
+        m_continuation->destroy();
+        m_continuation = 0;
     }
     
     if (!documentBeingDestroyed()) {
@@ -496,7 +496,7 @@ void RenderBlock::removeLeftoverAnonymousBlock(RenderBlock* child)
     ASSERT(child->isAnonymousBlock());
     ASSERT(!child->childrenInline());
     
-    if (child->inlineContinuation()) 
+    if (child->continuation()) 
         return;
     
     RenderObject* firstAnChild = child->m_children.firstChild();
@@ -540,10 +540,10 @@ void RenderBlock::removeChild(RenderObject* oldChild)
     // fold the inline content back together.
     RenderObject* prev = oldChild->previousSibling();
     RenderObject* next = oldChild->nextSibling();
-    bool canDeleteAnonymousBlocks = !documentBeingDestroyed() && !isInline() && !oldChild->isInline() && 
-                                    (!oldChild->isRenderBlock() || !toRenderBlock(oldChild)->inlineContinuation()) && 
-                                    (!prev || (prev->isAnonymousBlock() && prev->childrenInline())) &&
-                                    (!next || (next->isAnonymousBlock() && next->childrenInline()));
+    bool canDeleteAnonymousBlocks = !documentBeingDestroyed() && !isInline() && !oldChild->isInline()
+                                    && (!oldChild->isRenderBlock() || !toRenderBlock(oldChild)->continuation())
+                                    && (!prev || (prev->isAnonymousBlock() && prev->childrenInline()))
+                                    && (!next || (next->isAnonymousBlock() && next->childrenInline()));
     if (canDeleteAnonymousBlocks && prev && next) {
         // Take all the children out of the |next| block and put them in
         // the |prev| block.
@@ -1769,8 +1769,9 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, int tx, int ty)
 
     // 6. paint continuation outlines.
     if ((paintPhase == PaintPhaseOutline || paintPhase == PaintPhaseChildOutlines)) {
-        if (inlineContinuation() && inlineContinuation()->hasOutline() && inlineContinuation()->style()->visibility() == VISIBLE) {
-            RenderInline* inlineRenderer = toRenderInline(inlineContinuation()->node()->renderer());
+        RenderInline* inlineCont = inlineElementContinuation();
+        if (inlineCont && inlineCont->hasOutline() && inlineCont->style()->visibility() == VISIBLE) {
+            RenderInline* inlineRenderer = toRenderInline(inlineCont->node()->renderer());
             if (!inlineRenderer->hasSelfPaintingLayer())
                 containingBlock()->addContinuationWithOutline(inlineRenderer);
             else if (!inlineRenderer->firstLineBox())
@@ -1843,6 +1844,21 @@ void RenderBlock::paintEllipsisBoxes(PaintInfo& paintInfo, int tx, int ty)
     }
 }
 
+RenderInline* RenderBlock::inlineElementContinuation() const
+{ 
+    return m_continuation && m_continuation->isInline() ? toRenderInline(m_continuation) : 0;
+}
+
+RenderBlock* RenderBlock::blockElementContinuation() const
+{
+    if (!m_continuation || m_continuation->isInline())
+        return 0;
+    RenderBlock* nextContinuation = toRenderBlock(m_continuation);
+    if (nextContinuation->isAnonymousBlock())
+        return nextContinuation->blockElementContinuation();
+    return 0;
+}
+    
 static ContinuationOutlineTableMap* continuationOutlineTable()
 {
     DEFINE_STATIC_LOCAL(ContinuationOutlineTableMap, table, ());
@@ -1853,7 +1869,7 @@ void RenderBlock::addContinuationWithOutline(RenderInline* flow)
 {
     // We can't make this work if the inline is in a layer.  We'll just rely on the broken
     // way of painting.
-    ASSERT(!flow->layer() && !flow->isInlineContinuation());
+    ASSERT(!flow->layer() && !flow->isInlineElementContinuation());
     
     ContinuationOutlineTableMap* table = continuationOutlineTable();
     ListHashSet<RenderInline*>* continuations = table->get(this);
@@ -4937,12 +4953,12 @@ void RenderBlock::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
     // inline boxes above and below us (thus getting merged with them to form a single irregular
     // shape).
-    if (inlineContinuation()) {
+    if (isAnonymousBlockContinuation()) {
         rects.append(IntRect(tx, ty - collapsedMarginTop(),
                              width(), height() + collapsedMarginTop() + collapsedMarginBottom()));
-        inlineContinuation()->absoluteRects(rects,
-                                            tx - x() + inlineContinuation()->containingBlock()->x(),
-                                            ty - y() + inlineContinuation()->containingBlock()->y());
+        continuation()->absoluteRects(rects,
+                                      tx - x() + inlineElementContinuation()->containingBlock()->x(),
+                                      ty - y() + inlineElementContinuation()->containingBlock()->y());
     } else
         rects.append(IntRect(tx, ty, width(), height()));
 }
@@ -4952,11 +4968,11 @@ void RenderBlock::absoluteQuads(Vector<FloatQuad>& quads)
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
     // inline boxes above and below us (thus getting merged with them to form a single irregular
     // shape).
-    if (inlineContinuation()) {
+    if (isAnonymousBlockContinuation()) {
         FloatRect localRect(0, -collapsedMarginTop(),
                             width(), height() + collapsedMarginTop() + collapsedMarginBottom());
         quads.append(localToAbsoluteQuad(localRect));
-        inlineContinuation()->absoluteQuads(quads);
+        continuation()->absoluteQuads(quads);
     } else
         quads.append(RenderBox::localToAbsoluteQuad(FloatRect(0, 0, width(), height())));
 }
@@ -4964,26 +4980,26 @@ void RenderBlock::absoluteQuads(Vector<FloatQuad>& quads)
 IntRect RenderBlock::rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth)
 {
     IntRect r(RenderBox::rectWithOutlineForRepaint(repaintContainer, outlineWidth));
-    if (inlineContinuation())
+    if (isAnonymousBlockContinuation())
         r.inflateY(collapsedMarginTop());
     return r;
 }
 
 RenderObject* RenderBlock::hoverAncestor() const
 {
-    return inlineContinuation() ? inlineContinuation() : RenderBox::hoverAncestor();
+    return isAnonymousBlockContinuation() ? continuation() : RenderBox::hoverAncestor();
 }
 
 void RenderBlock::updateDragState(bool dragOn)
 {
     RenderBox::updateDragState(dragOn);
-    if (inlineContinuation())
-        inlineContinuation()->updateDragState(dragOn);
+    if (continuation())
+        continuation()->updateDragState(dragOn);
 }
 
 RenderStyle* RenderBlock::outlineStyleForRepaint() const
 {
-    return inlineContinuation() ? inlineContinuation()->style() : style();
+    return isAnonymousBlockContinuation() ? continuation()->style() : style();
 }
 
 void RenderBlock::childBecameNonInline(RenderObject*)
@@ -5000,11 +5016,11 @@ void RenderBlock::updateHitTestResult(HitTestResult& result, const IntPoint& poi
         return;
 
     Node* n = node();
-    if (inlineContinuation())
+    if (isAnonymousBlockContinuation())
         // We are in the margins of block elements that are part of a continuation.  In
-        // this case we're actually still inside the enclosing inline element that was
+        // this case we're actually still inside the enclosing element that was
         // split.  Go ahead and set our inner node accordingly.
-        n = inlineContinuation()->node();
+        n = continuation()->node();
 
     if (n) {
         result.setInnerNode(n);
@@ -5097,11 +5113,11 @@ void RenderBlock::addFocusRingRects(Vector<IntRect>& rects, int tx, int ty)
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
     // inline boxes above and below us (thus getting merged with them to form a single irregular
     // shape).
-    if (inlineContinuation()) {
+    if (inlineElementContinuation()) {
         // FIXME: This check really isn't accurate. 
-        bool nextInlineHasLineBox = inlineContinuation()->firstLineBox();
+        bool nextInlineHasLineBox = inlineElementContinuation()->firstLineBox();
         // FIXME: This is wrong. The principal renderer may not be the continuation preceding this block.
-        bool prevInlineHasLineBox = toRenderInline(inlineContinuation()->node()->renderer())->firstLineBox(); 
+        bool prevInlineHasLineBox = toRenderInline(inlineElementContinuation()->node()->renderer())->firstLineBox(); 
         int topMargin = prevInlineHasLineBox ? collapsedMarginTop() : 0;
         int bottomMargin = nextInlineHasLineBox ? collapsedMarginBottom() : 0;
         IntRect rect(tx, ty - topMargin, width(), height() + topMargin + bottomMargin);
@@ -5133,10 +5149,10 @@ void RenderBlock::addFocusRingRects(Vector<IntRect>& rects, int tx, int ty)
         }
     }
 
-    if (inlineContinuation())
-        inlineContinuation()->addFocusRingRects(rects, 
-                                                tx - x() + inlineContinuation()->containingBlock()->x(),
-                                                ty - y() + inlineContinuation()->containingBlock()->y());
+    if (inlineElementContinuation())
+        inlineElementContinuation()->addFocusRingRects(rects, 
+                                                       tx - x() + inlineElementContinuation()->containingBlock()->x(),
+                                                       ty - y() + inlineElementContinuation()->containingBlock()->y());
 }
 
 RenderBlock* RenderBlock::createAnonymousBlock(bool isFlexibleBox) const

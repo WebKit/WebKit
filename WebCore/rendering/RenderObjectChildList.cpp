@@ -340,12 +340,12 @@ void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, Pseudo
 
     // For <q><p/></q>, if this object is the inline continuation of the <q>, we only want to generate
     // :after content and not :before content.
-    if (newContentWanted && type == BEFORE && owner->isRenderInline() && toRenderInline(owner)->isInlineContinuation())
+    if (newContentWanted && type == BEFORE && owner->isElementContinuation())
         newContentWanted = false;
 
     // Similarly, if we're the beginning of a <q>, and there's an inline continuation for our object,
     // then we don't generate the :after content.
-    if (newContentWanted && type == AFTER && owner->isRenderInline() && toRenderInline(owner)->continuation())
+    if (newContentWanted && type == AFTER && owner->virtualContinuation())
         newContentWanted = false;
     
     // If we don't want generated content any longer, or if we have generated content, but it's no longer

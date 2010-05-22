@@ -386,7 +386,11 @@ public:
     {
         return m_isAnonymous && style()->display() == BLOCK && style()->styleType() == NOPSEUDO && !isListMarker();
     }
-    bool isInlineContinuation() const { return (node() ? node()->renderer() != this : false) && isRenderInline(); }
+    bool isElementContinuation() const { return node() && node()->renderer() != this; }
+    bool isInlineElementContinuation() const { return isElementContinuation() && isInline(); }
+    bool isBlockElementContinuation() const { return isElementContinuation() && !isInline(); }
+    virtual RenderBoxModelObject* virtualContinuation() const { return 0; }
+
     bool isFloating() const { return m_floating; }
     bool isPositioned() const { return m_positioned; } // absolute or fixed positioning
     bool isRelPositioned() const { return m_relPositioned; } // relative positioning

@@ -60,6 +60,9 @@ public:
     InlineFlowBox* lastLineBox() const { return m_lineBoxes.lastLineBox(); }
 
     RenderBoxModelObject* continuation() const { return m_continuation; }
+    void setContinuation(RenderBoxModelObject* c) { m_continuation = c; }
+    virtual RenderBoxModelObject* virtualContinuation() const { return continuation(); }
+    RenderInline* inlineElementContinuation() const;
 
     virtual void updateDragState(bool dragOn);
     
@@ -70,8 +73,6 @@ public:
 
     int verticalPositionFromCache(bool firstLine) const;
     void invalidateVerticalPosition() { m_verticalPosition = PositionUndefined; }
-
-    RenderInline* inlineContinuation() const;
 
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
@@ -127,8 +128,6 @@ private:
     virtual void dirtyLinesFromChangedChild(RenderObject* child) { m_lineBoxes.dirtyLinesFromChangedChild(this, child); }
 
     virtual int lineHeight(bool firstLine, bool isRootLineBox = false) const;
-
-    void setContinuation(RenderBoxModelObject* c) { m_continuation = c; }
     
     virtual void childBecameNonInline(RenderObject* child);
 

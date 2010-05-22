@@ -1,3 +1,84 @@
+2010-05-21  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Preparation for support of column-span, which will be implemented using continuations.  When a block splits an inline, a
+        continuation chain is created of the form inline -> anonymous block -> inline.  The middle block is always anonymous.  When a column-span
+        splits the blocks in a multi-column block, it will create a similar chain: block -> anonymous block -> block. Enclosing split elements
+        directly connect to their continuations, so their chains will look like inline -> inline or block -> block.
+        
+        This patch changes the member variable in RenderBlock, m_inlineContinuation, to simply be m_continuation and loosens up the type on it
+        to RenderBoxModelObject.  This reflects the fact that the continuation of the block can now be another block and isn't always simply an inline.
+        
+        Some renames have been done for cleanup:
+            isInlineContinuation -> isInlineElementContinuation to emphasize that this is a split non-anonymous element.
+            inlineContinuation -> inlineElementContinuation, again to emphasize that the inline is not anonymous.
+            
+        Some new methods have been added:
+            isBlockElementContinuation - just like isInlineElementContinuation but for split block elements.
+            blockElementContinuation - just like inlineElementContinuation but for split block elements.
+            virtualContinuation - A way to just walk an entire continuation chain of mixed types (blocks and inlines) using their common base class.
+            isAnonymousBlockContinuation - A method for asking if a RenderBlock is an anonymous block in the continuation chain (the guy in the middle).
+            
+        Code that was specific to the anonymous blocks in a continuation chain has been patched to ask isAnonymousBlockContinuation, so that it won't
+        incorrectly apply to non-anonymous blocks in the future.  Where possible, code that really didn't care about being an inline vs. a block has
+        been broadened so that it will work with block continuations as well.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::lastChildConsideringContinuation):
+        (WebCore::startOfContinuations):
+        (WebCore::endOfContinuations):
+        (WebCore::childBeforeConsideringContinuations):
+        (WebCore::firstChildIsInlineContinuation):
+        (WebCore::AccessibilityRenderObject::nextSibling):
+        (WebCore::AccessibilityRenderObject::anchorElement):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::determineSpacingForFlowBoxes):
+        (WebCore::InlineFlowBox::paint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::RenderBlock):
+        (WebCore::RenderBlock::destroy):
+        (WebCore::RenderBlock::removeLeftoverAnonymousBlock):
+        (WebCore::RenderBlock::removeChild):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::inlineElementContinuation):
+        (WebCore::RenderBlock::blockElementContinuation):
+        (WebCore::RenderBlock::addContinuationWithOutline):
+        (WebCore::RenderBlock::absoluteRects):
+        (WebCore::RenderBlock::absoluteQuads):
+        (WebCore::RenderBlock::rectWithOutlineForRepaint):
+        (WebCore::RenderBlock::hoverAncestor):
+        (WebCore::RenderBlock::updateDragState):
+        (WebCore::RenderBlock::outlineStyleForRepaint):
+        (WebCore::RenderBlock::updateHitTestResult):
+        (WebCore::RenderBlock::addFocusRingRects):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::continuation):
+        (WebCore::RenderBlock::setContinuation):
+        (WebCore::RenderBlock::virtualContinuation):
+        (WebCore::RenderBlock::isAnonymousBlockContinuation):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::inlineElementContinuation):
+        (WebCore::RenderInline::styleDidChange):
+        (WebCore::nextContinuation):
+        (WebCore::RenderInline::splitInlines):
+        (WebCore::RenderInline::positionForPoint):
+        (WebCore::RenderInline::updateHitTestResult):
+        * rendering/RenderInline.h:
+        (WebCore::RenderInline::setContinuation):
+        (WebCore::RenderInline::virtualContinuation):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::getTextDecorationColors):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isElementContinuation):
+        (WebCore::RenderObject::isInlineElementContinuation):
+        (WebCore::RenderObject::isBlockElementContinuation):
+        (WebCore::RenderObject::virtualContinuation):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::updateBeforeAfterContent):
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::moveBlockChildren):
+
 2010-05-21  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.

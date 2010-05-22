@@ -92,11 +92,11 @@ void RenderInline::destroy()
     RenderBoxModelObject::destroy();
 }
 
-RenderInline* RenderInline::inlineContinuation() const
+RenderInline* RenderInline::inlineElementContinuation() const
 {
     if (!m_continuation || m_continuation->isInline())
         return toRenderInline(m_continuation);
-    return toRenderBlock(m_continuation)->inlineContinuation();
+    return toRenderBlock(m_continuation)->inlineElementContinuation();
 }
 
 void RenderInline::updateBoxModelInfoFromStyle()
@@ -120,7 +120,7 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     // e.g., <font>foo <h4>goo</h4> moo</font>.  The <font> inlines before
     // and after the block share the same style, but the block doesn't
     // need to pass its style on to anyone else.
-    for (RenderInline* currCont = inlineContinuation(); currCont; currCont = currCont->inlineContinuation()) {
+    for (RenderInline* currCont = inlineElementContinuation(); currCont; currCont = currCont->inlineElementContinuation()) {
         RenderBoxModelObject* nextCont = currCont->continuation();
         currCont->setContinuation(0);
         currCont->setStyle(style());
@@ -147,7 +147,7 @@ static RenderBoxModelObject* nextContinuation(RenderObject* renderer)
 {
     if (renderer->isInline() && !renderer->isReplaced())
         return toRenderInline(renderer)->continuation();
-    return toRenderBlock(renderer)->inlineContinuation();
+    return toRenderBlock(renderer)->inlineElementContinuation();
 }
 
 RenderBoxModelObject* RenderInline::continuationBefore(RenderObject* beforeChild)
@@ -240,7 +240,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
     }
 
     // Hook |clone| up as the continuation of the middle block.
-    middleBlock->setInlineContinuation(clone);
+    middleBlock->setContinuation(clone);
 
     // We have been reparented and are now under the fromBlock.  We need
     // to walk up our inline parent chain until we hit the containing block.
@@ -516,7 +516,7 @@ VisiblePosition RenderInline::positionForPoint(const IntPoint& point)
         RenderBox* contBlock = c->isInline() ? c->containingBlock() : toRenderBlock(c);
         if (c->isInline() || c->firstChild())
             return c->positionForCoordinates(parentBlockX - contBlock->x(), parentBlockY - contBlock->y());
-        c = toRenderBlock(c)->inlineContinuation();
+        c = toRenderBlock(c)->inlineElementContinuation();
     }
     
     return RenderBoxModelObject::positionForPoint(point);
@@ -815,7 +815,7 @@ void RenderInline::updateHitTestResult(HitTestResult& result, const IntPoint& po
     Node* n = node();
     IntPoint localPoint(point);
     if (n) {
-        if (isInlineContinuation()) {
+        if (isInlineElementContinuation()) {
             // We're in the continuation of a split inline.  Adjust our local point to be in the coordinate space
             // of the principal renderer's containing block.  This will end up being the innerNonSharedNode.
             RenderBlock* firstBlock = n->renderer()->containingBlock();

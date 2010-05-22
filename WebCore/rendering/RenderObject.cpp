@@ -2221,8 +2221,8 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
             }
         }
         curr = curr->parent();
-        if (curr && curr->isRenderBlock() && toRenderBlock(curr)->inlineContinuation())
-            curr = toRenderBlock(curr)->inlineContinuation();
+        if (curr && curr->isAnonymousBlock() && toRenderBlock(curr)->continuation())
+            curr = toRenderBlock(curr)->continuation();
     } while (curr && decorations && (!quirksMode || !curr->node() ||
                                      (!curr->node()->hasTagName(aTag) && !curr->node()->hasTagName(fontTag))));
 
