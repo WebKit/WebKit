@@ -1,0 +1,41 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (50,24) size 40x306
+  RenderBlock (positioned) {OL} at (50,24) size 40x306
+    RenderListItem {LI} at (40,0) size 0x18
+      RenderListMarker at (-24,0) size 20x18: "A"
+    RenderListItem {LI} at (40,18) size 0x18
+      RenderListMarker at (-23,0) size 19x18: "B"
+    RenderListItem {LI} at (40,36) size 0x18
+      RenderListMarker at (-24,0) size 20x18: "Y"
+    RenderListItem {LI} at (40,54) size 0x18
+      RenderListMarker at (-22,0) size 18x18: "Z"
+    RenderListItem {LI} at (40,72) size 0x18
+      RenderListMarker at (-36,0) size 32x18: "AA"
+    RenderListItem {LI} at (40,90) size 0x18
+      RenderListMarker at (-35,0) size 31x18: "AB"
+    RenderListItem {LI} at (40,108) size 0x18
+      RenderListMarker at (-34,0) size 30x18: "YZ"
+    RenderListItem {LI} at (40,126) size 0x18
+      RenderListMarker at (-34,0) size 30x18: "ZA"
+    RenderListItem {LI} at (40,144) size 0x18
+      RenderListMarker at (-33,0) size 29x18: "ZB"
+    RenderListItem {LI} at (40,162) size 0x18
+      RenderListMarker at (-32,0) size 28x18: "ZZ"
+    RenderListItem {LI} at (40,180) size 0x18
+      RenderListMarker at (-48,0) size 44x18: "AAA"
+    RenderListItem {LI} at (40,198) size 0x18
+      RenderListMarker at (-47,0) size 43x18: "AAB"
+    RenderListItem {LI} at (40,216) size 0x18
+      RenderListMarker at (-44,0) size 40x18: "ZZY"
+    RenderListItem {LI} at (40,234) size 0x18
+      RenderListMarker at (-42,0) size 38x18: "ZZZ"
+    RenderListItem {LI} at (40,252) size 0x18
+      RenderListMarker at (-60,0) size 56x18: "AAAA"
+    RenderListItem {LI} at (40,270) size 0x18
+      RenderListMarker at (-59,0) size 55x18: "AAAB"
+    RenderListItem {LI} at (40,288) size 0x18
+      RenderListMarker at (-59,0) size 55x18: "AAAC"

@@ -1,5 +1,26 @@
 2010-05-21  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59950.
+
+    2010-05-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/8009118> Crash in WebCore::toAlphabetic() 
+        while running MangleMe
+        -and corresponding-
+        https://bugs.webkit.org/show_bug.cgi?id=39508
+
+        The math was slightly off here, and we wound up trying to access an 
+        array at index -1 in some cases. We need to decrement numberShadow 
+        rather than subtracting one from the result of the modulo 
+        operation.
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::toAlphabeticOrNumeric):
+
+2010-05-21  Mark Rowe  <mrowe@apple.com>
+
         Merge r59897.
 
     2010-05-20  Adam Roben  <aroben@apple.com>
