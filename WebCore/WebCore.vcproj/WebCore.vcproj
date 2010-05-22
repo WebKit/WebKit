@@ -35180,6 +35180,10 @@
 				RelativePath="..\bindings\ScriptControllerBase.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\bindings\ScriptControllerBase.h"
+				>
+			</File>
 			<Filter
 				Name="js"
 				>

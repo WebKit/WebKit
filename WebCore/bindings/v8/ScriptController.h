@@ -31,6 +31,7 @@
 #ifndef ScriptController_h
 #define ScriptController_h
 
+#include "ScriptControllerBase.h"
 #include "ScriptInstance.h"
 #include "ScriptValue.h"
 
@@ -54,17 +55,6 @@ class ScriptSourceCode;
 class String;
 class Widget;
 class XSSAuditor;
-
-enum ReasonForCallingCanExecuteScripts {
-    AboutToExecuteScript,
-    NotAboutToExecuteScript
-};
-
-// Whether to call the XSSAuditor to audit a script before passing it to the JavaScript engine.
-enum ShouldAllowXSS {
-    AllowXSS,
-    DoNotAllowXSS
-};
 
 class ScriptController {
 public:

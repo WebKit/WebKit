@@ -4822,6 +4822,7 @@
 		C5F4F411119306C000FDFADD /* JSIndexedDatabaseRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C5F4F40F119306C000FDFADD /* JSIndexedDatabaseRequest.h */; };
 		C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */ = {isa = PBXBuildFile; fileRef = C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */; };
 		C6D74AE409AA290A000B0A52 /* ModifySelectionListLevel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */; };
+		CE0D03AC11A888C200C958EB /* ScriptControllerBase.h in Headers */ = {isa = PBXBuildFile; fileRef = CE0D03AB11A888C200C958EB /* ScriptControllerBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE172E011136E8CE0062A533 /* ZoomMode.h in Headers */ = {isa = PBXBuildFile; fileRef = CE172E001136E8CE0062A533 /* ZoomMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE4C00E410F6F7BA00CA38F5 /* HTMLNoScriptElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE4C00E310F6F7BA00CA38F5 /* HTMLNoScriptElement.cpp */; };
 		CE4C00E610F6F7C100CA38F5 /* HTMLNoScriptElement.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4C00E510F6F7C100CA38F5 /* HTMLNoScriptElement.h */; };
@@ -10329,6 +10330,7 @@
 		C5F4F40F119306C000FDFADD /* JSIndexedDatabaseRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIndexedDatabaseRequest.h; sourceTree = "<group>"; };
 		C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModifySelectionListLevel.h; sourceTree = "<group>"; };
 		C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModifySelectionListLevel.cpp; sourceTree = "<group>"; };
+		CE0D03AB11A888C200C958EB /* ScriptControllerBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptControllerBase.h; sourceTree = "<group>"; };
 		CE172E001136E8CE0062A533 /* ZoomMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZoomMode.h; sourceTree = "<group>"; };
 		CE4C00E310F6F7BA00CA38F5 /* HTMLNoScriptElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLNoScriptElement.cpp; sourceTree = "<group>"; };
 		CE4C00E510F6F7C100CA38F5 /* HTMLNoScriptElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLNoScriptElement.h; sourceTree = "<group>"; };
@@ -15188,6 +15190,7 @@
 				14813BF309EDF88E00F757E1 /* IDLParser.pm */,
 				93F8B3080A300FEA00F61AB8 /* IDLStructure.pm */,
 				97EF7DFD107E55B700D7C49C /* ScriptControllerBase.cpp */,
+				CE0D03AB11A888C200C958EB /* ScriptControllerBase.h */,
 			);
 			path = bindings;
 			sourceTree = "<group>";
@@ -19297,6 +19300,7 @@
 				2E3FAA0911A36BF100576624 /* CrossThreadTask.h in Headers */,
 				59A8F1D611A69513001AC34A /* DeviceOrientation.h in Headers */,
 				59A8F1D811A69520001AC34A /* DeviceOrientationClient.h in Headers */,
+				CE0D03AC11A888C200C958EB /* ScriptControllerBase.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

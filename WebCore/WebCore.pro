@@ -1024,6 +1024,7 @@ HEADERS += \
     accessibility/AccessibilityTableHeaderContainer.h \
     accessibility/AccessibilityTableRow.h \
     accessibility/AXObjectCache.h \
+    bindings/ScriptControllerBase.h \
     bindings/js/CachedScriptSourceProvider.h \
     bindings/js/GCController.h \
     bindings/js/DOMObjectHashTableMap.h \
