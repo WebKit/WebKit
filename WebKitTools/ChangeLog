@@ -1,3 +1,13 @@
+2010-05-22  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.
+
+        Disable compositing tests on the commit-queue as a workaround for  bug 38912
+        https://bugs.webkit.org/show_bug.cgi?id=39067
+
+        * Scripts/webkitpy/tool/steps/runtests.py:
+         - Disable all of compositing, not just compositing/iframes
+
 2010-05-22  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
