@@ -1,3 +1,15 @@
+2010-05-22  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Remove and simplify custom bindings for Node
+        https://bugs.webkit.org/show_bug.cgi?id=39467
+
+        Child manipulation methods now throw security exception instead of
+        not implemented exception.
+
+        * http/tests/security/xss-DENIED-iframe-src-alias-expected.txt:
+
 2010-05-22  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Adam Barth.

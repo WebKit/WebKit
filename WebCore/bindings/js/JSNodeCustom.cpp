@@ -68,51 +68,9 @@ using namespace JSC;
 
 namespace WebCore {
 
-static inline bool isAttrFrameSrc(Element *element, const String& name)
-{
-    return element && (element->hasTagName(HTMLNames::iframeTag) || element->hasTagName(HTMLNames::frameTag)) && equalIgnoringCase(name, "src");
-}
-
-void JSNode::setNodeValue(JSC::ExecState* exec, JSC::JSValue value)
-{
-    Node* imp = static_cast<Node*>(impl());
-    String nodeValue = valueToStringWithNullCheck(exec, value);
-
-    if (imp->nodeType() == Node::ATTRIBUTE_NODE) {
-        Element* ownerElement = static_cast<Attr*>(impl())->ownerElement();
-        if (ownerElement && !allowSettingSrcToJavascriptURL(exec, ownerElement, imp->nodeName(), nodeValue))
-            return;
-    }
-
-    ExceptionCode ec = 0;
-    imp->setNodeValue(nodeValue, ec);
-    setDOMException(exec, ec);
-}
-
-void JSNode::setTextContent(JSC::ExecState* exec, JSC::JSValue value)
-{
-    Node* imp = static_cast<Node*>(impl());
-    String nodeValue = valueToStringWithNullCheck(exec, value);
-
-    if (imp->nodeType() == Node::ATTRIBUTE_NODE) {
-        Element* ownerElement = static_cast<Attr*>(impl())->ownerElement();
-        if (ownerElement && !allowSettingSrcToJavascriptURL(exec, ownerElement, imp->nodeName(), nodeValue))
-            return;
-    }
-
-    ExceptionCode ec = 0;
-    imp->setTextContent(nodeValue, ec);
-    setDOMException(exec, ec);
-}
-
 JSValue JSNode::insertBefore(ExecState* exec, const ArgList& args)
 {
     Node* imp = static_cast<Node*>(impl());
-    if (imp->nodeType() == Node::ATTRIBUTE_NODE && isAttrFrameSrc(static_cast<Attr*>(impl())->ownerElement(), imp->nodeName())) {
-        setDOMException(exec, NOT_SUPPORTED_ERR);
-        return jsNull();
-    }
-
     ExceptionCode ec = 0;
     bool ok = imp->insertBefore(toNode(args.at(0)), toNode(args.at(1)), ec, true);
     setDOMException(exec, ec);
@@ -124,11 +82,6 @@ JSValue JSNode::insertBefore(ExecState* exec, const ArgList& args)
 JSValue JSNode::replaceChild(ExecState* exec, const ArgList& args)
 {
     Node* imp = static_cast<Node*>(impl());
-    if (imp->nodeType() == Node::ATTRIBUTE_NODE && isAttrFrameSrc(static_cast<Attr*>(impl())->ownerElement(), imp->nodeName())) {
-        setDOMException(exec, NOT_SUPPORTED_ERR);
-        return jsNull();
-    }
-
     ExceptionCode ec = 0;
     bool ok = imp->replaceChild(toNode(args.at(0)), toNode(args.at(1)), ec, true);
     setDOMException(exec, ec);
@@ -140,11 +93,6 @@ JSValue JSNode::replaceChild(ExecState* exec, const ArgList& args)
 JSValue JSNode::removeChild(ExecState* exec, const ArgList& args)
 {
     Node* imp = static_cast<Node*>(impl());
-    if (imp->nodeType() == Node::ATTRIBUTE_NODE && isAttrFrameSrc(static_cast<Attr*>(impl())->ownerElement(), imp->nodeName())) {
-        setDOMException(exec, NOT_SUPPORTED_ERR);
-        return jsNull();
-    }
-
     ExceptionCode ec = 0;
     bool ok = imp->removeChild(toNode(args.at(0)), ec);
     setDOMException(exec, ec);
@@ -156,11 +104,6 @@ JSValue JSNode::removeChild(ExecState* exec, const ArgList& args)
 JSValue JSNode::appendChild(ExecState* exec, const ArgList& args)
 {
     Node* imp = static_cast<Node*>(impl());
-    if (imp->nodeType() == Node::ATTRIBUTE_NODE && isAttrFrameSrc(static_cast<Attr*>(impl())->ownerElement(), imp->nodeName())) {
-        setDOMException(exec, NOT_SUPPORTED_ERR);
-        return jsNull();
-    }
-
     ExceptionCode ec = 0;
     bool ok = imp->appendChild(toNode(args.at(0)), ec, true);
     setDOMException(exec, ec);

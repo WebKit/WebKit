@@ -2,6 +2,29 @@
 
         Reviewed by Nate Chapin.
 
+        Remove and simplify custom bindings for Node
+        https://bugs.webkit.org/show_bug.cgi?id=39467
+
+        Custom bindings for nodeValue and textContent are no longer needed, 
+        and child manipulators are simplified because origin checks were moved 
+        out of the bindings by: http://trac.webkit.org/changeset/59866
+
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::insertBefore):
+        (WebCore::JSNode::replaceChild):
+        (WebCore::JSNode::removeChild):
+        (WebCore::JSNode::appendChild):
+        * bindings/v8/custom/V8NodeCustom.cpp:
+        (WebCore::V8Node::insertBeforeCallback):
+        (WebCore::V8Node::replaceChildCallback):
+        (WebCore::V8Node::removeChildCallback):
+        (WebCore::V8Node::appendChildCallback):
+        * dom/Node.idl:
+
+2010-05-22  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Nate Chapin.
+
         Remove custom bindings for NamedNodeMap.setNamedItem and .setNamedItemNS
         https://bugs.webkit.org/show_bug.cgi?id=39462
 
