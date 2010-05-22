@@ -31,6 +31,7 @@
 #include "HTMLDocument.h"
 #include "HTMLParser.h"
 #include "HTMLTokenizer.h"
+#include "Attribute.h"
 #include "NotImplemented.h"
 
 namespace WebCore {
@@ -39,12 +40,24 @@ static void convertToOldStyle(HTML5Token& token, Token& oldStyleToken)
 {
     switch (token.type()) {
     case HTML5Token::StartTag:
-    case HTML5Token::EndTag:
+    case HTML5Token::EndTag: {
         oldStyleToken.beginTag = (token.type() == HTML5Token::StartTag);
         oldStyleToken.selfClosingTag = token.selfClosing();
         oldStyleToken.tagName = token.name();
-        oldStyleToken.attrs = token.attrs();
+        HTML5Token::AttributeList& attributes = token.attributes();
+        for (HTML5Token::AttributeList::iterator iter = attributes.begin();
+             iter != attributes.end(); ++iter) {
+            if (!iter->m_name.isEmpty()) {
+                String name = String(StringImpl::adopt(iter->m_name));
+                String value = String(StringImpl::adopt(iter->m_value));
+                RefPtr<Attribute> mappedAttribute = Attribute::createMapped(name, value);
+                if (!oldStyleToken.attrs)
+                    oldStyleToken.attrs = NamedMappedAttrMap::create();
+                oldStyleToken.attrs->insertAttribute(mappedAttribute.release(), false);
+            }
+        }
         break;
+    }
     case HTML5Token::Character:
         oldStyleToken.tagName = textAtom;
         oldStyleToken.text = token.characters().impl();

@@ -1,3 +1,27 @@
+2010-05-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Parse attributes with HTML5 lexer
+        https://bugs.webkit.org/show_bug.cgi?id=39520
+
+        This patch lets the HTML5 lexer parse attributes, as in
+        <div attr="foo"></div>.  This patch is on the critical path to running
+        the html5lib tests.
+
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTML5Lexer::nextToken):
+        * html/HTML5Lexer.h:
+        * html/HTML5Token.h:
+        (WebCore::HTML5Token::beginStartTag):
+        (WebCore::HTML5Token::beginEndTag):
+        (WebCore::HTML5Token::addNewAttribute):
+        (WebCore::HTML5Token::appendToAttributeName):
+        (WebCore::HTML5Token::appendToAttributeValue):
+        (WebCore::HTML5Token::attributes):
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::convertToOldStyle):
+
 2010-05-21  Mark Rowe  <mrowe@apple.com>
 
         60,000!
