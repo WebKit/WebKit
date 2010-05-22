@@ -200,12 +200,12 @@ bool WKCACFLayer::isTransformLayer() const
 
 void WKCACFLayer::addSublayer(PassRefPtr<WKCACFLayer> sublayer)
 {
-    insertSublayer(sublayer, numSublayers());
+    insertSublayer(sublayer, sublayerCount());
 }
 
-void WKCACFLayer::insertSublayer(PassRefPtr<WKCACFLayer> sublayer, size_t index)
+void WKCACFLayer::internalInsertSublayer(PassRefPtr<WKCACFLayer> sublayer, size_t index)
 {
-    index = min(index, numSublayers());
+    index = min(index, sublayerCount());
     sublayer->removeFromSuperlayer();
     CACFLayerInsertSublayer(layer(), sublayer->layer(), index);
     setNeedsCommit();
@@ -218,7 +218,7 @@ void WKCACFLayer::insertSublayerAboveLayer(PassRefPtr<WKCACFLayer> sublayer, con
         return;
     }
 
-    int referenceIndex = indexOfSublayer(reference);
+    int referenceIndex = internalIndexOfSublayer(reference);
     if (referenceIndex == -1) {
         addSublayer(sublayer);
         return;
@@ -234,7 +234,7 @@ void WKCACFLayer::insertSublayerBelowLayer(PassRefPtr<WKCACFLayer> sublayer, con
         return;
     }
 
-    int referenceIndex = indexOfSublayer(reference);
+    int referenceIndex = internalIndexOfSublayer(reference);
     if (referenceIndex == -1) {
         addSublayer(sublayer);
         return;
@@ -251,7 +251,7 @@ void WKCACFLayer::replaceSublayer(WKCACFLayer* reference, PassRefPtr<WKCACFLayer
     if (reference == newLayer)
         return;
 
-    int referenceIndex = indexOfSublayer(reference);
+    int referenceIndex = internalIndexOfSublayer(reference);
     ASSERT(referenceIndex != -1);
     if (referenceIndex == -1)
         return;
@@ -264,6 +264,25 @@ void WKCACFLayer::replaceSublayer(WKCACFLayer* reference, PassRefPtr<WKCACFLayer
     }
 }
 
+size_t WKCACFLayer::internalSublayerCount() const
+{
+    CFArrayRef sublayers = CACFLayerGetSublayers(layer());
+    return sublayers ? CFArrayGetCount(sublayers) : 0;
+}
+
+void  WKCACFLayer::adoptSublayers(WKCACFLayer* source)
+{
+    // We will use setSublayers() because it properly nulls
+    // out the superlayer pointer.
+    Vector<RefPtr<WKCACFLayer> > sublayers;
+    size_t n = source->sublayerCount();
+
+    for (size_t i = 0; i < n; ++i)
+        sublayers.append(source->internalSublayerAtIndex(i));
+
+    setSublayers(sublayers);
+}
+
 void WKCACFLayer::removeFromSuperlayer()
 {
     WKCACFLayer* superlayer = this->superlayer();
@@ -274,22 +293,25 @@ void WKCACFLayer::removeFromSuperlayer()
     superlayer->setNeedsCommit();
 }
 
-const WKCACFLayer* WKCACFLayer::sublayerAtIndex(int index) const
+WKCACFLayer* WKCACFLayer::internalSublayerAtIndex(int index) const
 {
     CFArrayRef sublayers = CACFLayerGetSublayers(layer());
-    if (index < 0 || CFArrayGetCount(sublayers) <= index)
+    if (!sublayers || index < 0 || CFArrayGetCount(sublayers) <= index)
         return 0;
     
     return layer(static_cast<CACFLayerRef>(const_cast<void*>(CFArrayGetValueAtIndex(sublayers, index))));
 }
 
-int WKCACFLayer::indexOfSublayer(const WKCACFLayer* reference)
+int WKCACFLayer::internalIndexOfSublayer(const WKCACFLayer* reference)
 {
     CACFLayerRef ref = reference->layer();
     if (!ref)
         return -1;
 
     CFArrayRef sublayers = CACFLayerGetSublayers(layer());
+    if (!sublayers)
+        return -1;
+
     size_t n = CFArrayGetCount(sublayers);
 
     for (size_t i = 0; i < n; ++i)
@@ -315,19 +337,6 @@ void WKCACFLayer::setBounds(const CGRect& rect)
         return;
 
     CACFLayerSetBounds(layer(), rect);
-    setNeedsCommit();
-
-    if (m_needsDisplayOnBoundsChange)
-        setNeedsDisplay();
-}
-
-void WKCACFLayer::setFrame(const CGRect& rect)
-{
-    CGRect oldFrame = frame();
-    if (CGRectEqualToRect(rect, oldFrame))
-        return;
-
-    CACFLayerSetFrame(layer(), rect);
     setNeedsCommit();
 
     if (m_needsDisplayOnBoundsChange)
@@ -374,13 +383,13 @@ WKCACFLayer* WKCACFLayer::rootLayer() const
     return layer;
 }
 
-void WKCACFLayer::removeAllSublayers()
+void WKCACFLayer::internalRemoveAllSublayers()
 {
     CACFLayerSetSublayers(layer(), 0);
     setNeedsCommit();
 }
 
-void WKCACFLayer::setSublayers(const Vector<RefPtr<WKCACFLayer> >& sublayers)
+void WKCACFLayer::internalSetSublayers(const Vector<RefPtr<WKCACFLayer> >& sublayers)
 {
     // Remove all the current sublayers and add the passed layers
     CACFLayerSetSublayers(layer(), 0);
@@ -404,15 +413,9 @@ WKCACFLayer* WKCACFLayer::superlayer() const
     return WKCACFLayer::layer(super);
 }
 
-void WKCACFLayer::setNeedsDisplay(const CGRect* dirtyRect)
+void WKCACFLayer::internalSetNeedsDisplay(const CGRect* dirtyRect)
 {
     CACFLayerSetNeedsDisplay(layer(), dirtyRect);
-    setNeedsCommit();
-}
-
-void WKCACFLayer::setNeedsDisplay()
-{
-    setNeedsDisplay(0);
 }
 
 #ifndef NDEBUG
@@ -502,12 +505,12 @@ void WKCACFLayer::printLayer(int indent) const
     }
 
     // Print sublayers if needed
-    int n = numSublayers();
+    int n = sublayerCount();
     if (n > 0) {
         printIndent(indent + 1);
         fprintf(stderr, "(sublayers\n");
         for (int i = 0; i < n; ++i)
-            sublayerAtIndex(i)->printLayer(indent + 2);
+            internalSublayerAtIndex(i)->printLayer(indent + 2);
 
         printIndent(indent + 1);
         fprintf(stderr, ")\n");

@@ -98,6 +98,9 @@ private:
     WKCACFLayer* hostLayerForSublayers() const;
     WKCACFLayer* layerForSuperlayer() const;
 
+    bool requiresTiledLayer(const FloatSize&) const;
+    void swapFromOrToTiledLayer(bool useTiledLayer);
+
     CompositingCoordinatesOrientation defaultContentsOrientation() const;
     void updateSublayerList();
     void updateLayerPosition();

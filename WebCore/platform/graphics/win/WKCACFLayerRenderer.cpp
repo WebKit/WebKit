@@ -256,6 +256,7 @@ WKCACFLayerRenderer::WKCACFLayerRenderer(WKCACFLayerRendererClient* client)
     m_rootLayer->addSublayer(m_clipLayer);
     m_clipLayer->addSublayer(m_scrollLayer);
     m_clipLayer->setMasksToBounds(true);
+    m_rootLayer->setAnchorPoint(CGPointMake(0, 0));
     m_scrollLayer->setAnchorPoint(CGPointMake(0, 1));
     m_clipLayer->setAnchorPoint(CGPointMake(0, 1));
 
@@ -409,7 +410,7 @@ bool WKCACFLayerRenderer::createRenderer()
     m_renderer = CARenderOGLNew(&kCARenderDX9Callbacks, m_d3dDevice.get(), 0);
 
     if (IsWindow(m_hostWindow))
-        m_rootLayer->setFrame(bounds());
+        m_rootLayer->setBounds(bounds());
 
     return true;
 }
@@ -417,6 +418,7 @@ bool WKCACFLayerRenderer::createRenderer()
 void WKCACFLayerRenderer::destroyRenderer()
 {
     if (m_context) {
+        CACFContextSetLayer(m_context.get(), 0);
         windowsForContexts().remove(m_context.get());
         WKCACFContextFlusher::shared().removeContext(m_context.get());
     }
@@ -447,7 +449,7 @@ void WKCACFLayerRenderer::resize()
     resetDevice(ChangedWindowSize);
 
     if (m_rootLayer) {
-        m_rootLayer->setFrame(bounds());
+        m_rootLayer->setBounds(bounds());
         WKCACFContextFlusher::shared().flushAllContexts();
         updateScrollFrame();
     }

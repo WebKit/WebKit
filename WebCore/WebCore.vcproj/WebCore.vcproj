@@ -23931,6 +23931,22 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\win\WebLayer.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\WebLayer.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\WebTiledLayer.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\WebTiledLayer.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\win\WKCACFContextFlusher.cpp"
 						>
 					</File>

@@ -1,3 +1,29 @@
+2010-05-21  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Implement tiled compositing layers on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=39461
+        
+        These tests show several capabilities, including simple huge layers,
+        resizing from small to huge and back again, huge layers with
+        layer children, resizing huge layers with layer children and 
+        adding and removing children from huge layers.
+        
+        Expected results are of the resulting compositing layer tree so
+        they are Windows specific. General results will be needed for Mac.
+
+        * compositing/huge-layer-add-remove-child.html: Added.
+        * compositing/huge-layer-resize.html: Added.
+        * compositing/huge-layer-with-layer-children-resize.html: Added.
+        * compositing/huge-layer-with-layer-children.html: Added.
+        * compositing/huge-layer.html: Added.
+        * platform/win/compositing/huge-layer-add-remove-child-expected.txt: Added.
+        * platform/win/compositing/huge-layer-expected.txt: Added.
+        * platform/win/compositing/huge-layer-resize-expected.txt: Added.
+        * platform/win/compositing/huge-layer-with-layer-children-expected.txt: Added.
+        * platform/win/compositing/huge-layer-with-layer-children-resize-expected.txt: Added.
+
 2010-05-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

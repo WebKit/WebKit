@@ -1,3 +1,90 @@
+2010-05-21  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Implement tiled compositing layers on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=39461
+        
+        This adds a tiling implementation similar (from a GraphicsLayer standpoint)
+        to the one for Mac. But where Mac uses the existing CATiledLayer, I've had
+        to implement one. If a layer is greater then 2k x 2k, I split it into an
+        array of 512 x 512 tiles. These tiles are positioned in the correct place 
+        for the TiledLayer's content. When setNeedsDisplay is called on the TiledLayer
+        the tiles' setNeedDisplay methods are called. Each tile clips and positions the
+        CGContext appropriately and then renders the layer.
+        
+        I also got rid of all frame()/setFrame() API to reduce the number of calls to
+        override for tiling.
+        
+        Much optimization is possible. Most significantly right now all tiles are
+        rendered whether visible or not. We need to only render tiles that are 
+        currently visible.
+
+        Tests: compositing/huge-layer-add-remove-child.html
+               compositing/huge-layer-resize.html
+               compositing/huge-layer-with-layer-children-resize.html
+               compositing/huge-layer-with-layer-children.html
+               compositing/huge-layer.html
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/graphics/win/GraphicsLayerCACF.cpp: Added tiling code similar to GraphicsLayerCA
+        (WebCore::GraphicsLayerCACF::requiresTiledLayer):
+        (WebCore::GraphicsLayerCACF::swapFromOrToTiledLayer):
+        (WebCore::GraphicsLayerCACF::updateLayerSize):
+        (WebCore::GraphicsLayerCACF::updateLayerDrawsContent):
+        * platform/graphics/win/GraphicsLayerCACF.h:
+        * platform/graphics/win/WKCACFLayer.cpp: Made some methods virtual so WebTiledLayer can override.
+                                                 Also added sublayer setting and manipulation methods needed for tiling
+        (WebCore::WKCACFLayer::addSublayer):
+        (WebCore::WKCACFLayer::internalInsertSublayer):
+        (WebCore::WKCACFLayer::insertSublayerAboveLayer):
+        (WebCore::WKCACFLayer::insertSublayerBelowLayer):
+        (WebCore::WKCACFLayer::replaceSublayer):
+        (WebCore::WKCACFLayer::internalSublayerCount):
+        (WebCore::WKCACFLayer::adoptSublayers):
+        (WebCore::WKCACFLayer::internalSublayerAtIndex):
+        (WebCore::WKCACFLayer::internalIndexOfSublayer):
+        (WebCore::WKCACFLayer::internalRemoveAllSublayers):
+        (WebCore::WKCACFLayer::internalSetSublayers):
+        (WebCore::WKCACFLayer::internalSetNeedsDisplay):
+        (WebCore::WKCACFLayer::printLayer):
+        * platform/graphics/win/WKCACFLayer.h:
+        (WebCore::WKCACFLayer::setNeedsDisplay):
+        (WebCore::WKCACFLayer::removeAllSublayers):
+        (WebCore::WKCACFLayer::setSublayers):
+        (WebCore::WKCACFLayer::insertSublayer):
+        (WebCore::WKCACFLayer::sublayerCount):
+        * platform/graphics/win/WKCACFLayerRenderer.cpp: Fix a crash exposed when tiling code is active
+        (WebCore::WKCACFLayerRenderer::createRenderer):
+        (WebCore::WKCACFLayerRenderer::destroyRenderer):
+        (WebCore::WKCACFLayerRenderer::resize):
+        * platform/graphics/win/WebLayer.cpp: Added. Split this out from GraphicsLayerCACF so it could be subclassed by WebTiledLayer
+        (WebCore::WebLayer::internalSetNeedsDisplay):
+        (WebCore::WebLayer::drawInContext):
+        * platform/graphics/win/WebLayer.h: Added.
+        (WebCore::WebLayer::create):
+        (WebCore::WebLayer::WebLayer):
+        * platform/graphics/win/WebTiledLayer.cpp: Added. Where all the tile construction and rendering is done
+        (WebCore::WebTiledLayer::tileDisplayCallback):
+        (WebCore::WebTiledLayer::create):
+        (WebCore::WebTiledLayer::WebTiledLayer):
+        (WebCore::WebTiledLayer::~WebTiledLayer):
+        (WebCore::WebTiledLayer::setBounds):
+        (WebCore::WebTiledLayer::internalSetNeedsDisplay):
+        (WebCore::WebTiledLayer::internalSublayerCount):
+        (WebCore::WebTiledLayer::internalRemoveAllSublayers):
+        (WebCore::WebTiledLayer::internalSetSublayers):
+        (WebCore::WebTiledLayer::internalInsertSublayer):
+        (WebCore::WebTiledLayer::internalSublayerAtIndex):
+        (WebCore::WebTiledLayer::internalIndexOfSublayer):
+        (WebCore::WebTiledLayer::addTile):
+        (WebCore::WebTiledLayer::removeTile):
+        (WebCore::WebTiledLayer::tileAtIndex):
+        (WebCore::WebTiledLayer::tileCount):
+        (WebCore::WebTiledLayer::updateTiles):
+        (WebCore::WebTiledLayer::drawTile):
+        * platform/graphics/win/WebTiledLayer.h: Added.
+
 2010-05-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
