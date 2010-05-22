@@ -1,3 +1,23 @@
+2010-05-22  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Chris Jerdonek.
+
+        Add infrastructure to parse SVN property changes
+        https://bugs.webkit.org/show_bug.cgi?id=38885
+
+        Adds function VCSUtils::parseSvnDiffFooter to parse an SVN footer
+        that consists of one or more properties.
+
+        Note, the first line of an SVN footer begins with "Property changes on".
+
+        * Scripts/VCSUtils.pm:
+          - Added function parseSvnDiffFooter. Will use this function
+            towards resolving Bug #39409 <https://bugs.webkit.org/show_bug.cgi?id=39409>.
+          - Removed FIXME comment above function parseSvnProperty, since
+            it is being used by parseSvnDiffFooter.
+        * Scripts/webkitperl/VCSUtils_unittest/parseSvnDiffFooter.pl: Added.
+          - Added unit tests.
+
 2010-05-22  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, fixing test results only.

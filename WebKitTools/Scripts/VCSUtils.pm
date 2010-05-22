@@ -838,6 +838,81 @@ sub parseDiff($$)
     return (\@diffHashRefs, $line);
 }
 
+# Parse an SVN property change diff from the given file handle, and advance
+# the handle so the last line read is the first line after this diff.
+#
+# For the case of an SVN binary diff, the binary contents will follow the
+# the property changes.
+#
+# This subroutine dies if the first line does not begin with "Property changes on"
+# or if the separator line that follows this line is missing.
+#
+# Args:
+#   $fileHandle: advanced so the last line read from the handle is the first
+#                line of the footer to parse.  This line begins with
+#                "Property changes on".
+#   $line: the line last read from $fileHandle.
+#
+# Returns ($propertyHashRef, $lastReadLine):
+#   $propertyHashRef: a hash reference representing an SVN diff footer.
+#     propertyPath: the path of the target file.
+#     executableBitDelta: the value 1 or -1 if the executable bit was added or
+#                         removed from the target file, respectively.
+#   $lastReadLine: the line last read from $fileHandle.
+#
+# FIXME: This method is unused as of (05/22/2010).  We will call this function
+#        as part of parsing a diff.  See <https://bugs.webkit.org/show_bug.cgi?id=39409>.
+sub parseSvnDiffProperties($$)
+{
+    my ($fileHandle, $line) = @_;
+
+    $_ = $line;
+
+    my $svnFooterDiffStartRegEx = qr#Property changes on: ([^\r\n]+)#; # $1 is normally the same as the index path.
+
+    my %footer;
+    if (/$svnFooterDiffStartRegEx/) {
+        $footer{propertyPath} = $1;
+    } else {
+        die("Failed to find start of SVN property change, \"Property changes on \": \"$_\"");
+    }
+
+    # We advance $fileHandle two lines so that the next line that
+    # we process is $svnPropertyStartRegEx in a well-formed footer.
+    # A well-formed footer has the form:
+    # Property changes on: FileA
+    # ___________________________________________________________________
+    # Added: svn:executable
+    #    + *
+    $_ = <$fileHandle>; # Not defined if end-of-file reached.
+    my $separator = "_" x 67;
+    if (defined($_) && /^$separator[\r\n]+$/) {
+        $_ = <$fileHandle>;
+    } else {
+        die("Failed to find separator line: \"$_\".");
+    }
+
+    # FIXME: We should expand this to support other SVN properties
+    #        (e.g. return a hash of property key-values that represents
+    #        all properties).
+    #
+    # Notice, we keep processing until we hit end-of-file or some
+    # line that does not resemble $svnPropertyStartRegEx, such as
+    # the empty line that precedes the start of the binary contents
+    # of a patch, or the start of the next diff (e.g. "Index:").
+    my $propertyHashRef;
+    while (defined($_) && /$svnPropertyStartRegEx/) {
+        ($propertyHashRef, $_) = parseSvnProperty($fileHandle, $_);
+        if ($propertyHashRef->{name} eq "svn:executable") {
+            # Notice, for SVN properties, propertyChangeDelta is always non-zero
+            # because a property can only be added or removed.
+            $footer{executableBitDelta} = $propertyHashRef->{propertyChangeDelta};   
+        }
+    }
+
+    return(\%footer, $_);
+}
+
 # Parse the next SVN property from the given file handle, and advance the handle so the last
 # line read is the first line after the property.
 #
@@ -861,9 +936,6 @@ sub parseDiff($$)
 #     propertyChangeDelta: the value 1 or -1 if the property was added or
 #                          removed, respectively.
 #   $lastReadLine: the line last read from $fileHandle.
-#
-# FIXME: This method is unused as of (05/16/2010).  We will call this function
-#        as part of parsing a SVN footer.  See <https://bugs.webkit.org/show_bug.cgi?id=38885>.
 sub parseSvnProperty($$)
 {
     my ($fileHandle, $line) = @_;
