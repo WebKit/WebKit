@@ -122,7 +122,8 @@ class CommitQueueTest(QueuesTest):
             # FIXME: The commit-queue warns about bad committers twice.  This is due to the fact that we access Attachment.reviewer() twice and it logs each time.
             "next_work_item" : """Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
 Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
-2 patches in commit-queue [197, 106]
+MOCK: update_work_items: commit-queue [106, 197]
+2 patches in commit-queue [106, 197]
 """,
             "process_work_item" : "MOCK: update_status: commit-queue Pass\n",
         }
@@ -137,6 +138,7 @@ Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.c
             # FIXME: The commit-queue warns about bad committers twice.  This is due to the fact that we access Attachment.reviewer() twice and it logs each time.
             "next_work_item" : """Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
 Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
+MOCK: update_work_items: commit-queue [106, 197]
 MOCK: update_status: commit-queue Builders ["Builder2"] are red. See http://build.webkit.org
 1 patch in commit-queue [106]
 """,
@@ -154,6 +156,7 @@ MOCK: update_status: commit-queue Builders ["Builder2"] are red. See http://buil
             # FIXME: The commit-queue warns about bad committers twice.  This is due to the fact that we access Attachment.reviewer() twice and it logs each time.
             "next_work_item": """Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
 Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
+MOCK: update_work_items: commit-queue [106, 197]
 MOCK: update_status: commit-queue Builders ["Builder2"] are red. See http://build.webkit.org
 1 patch in commit-queue [106]
 """,
@@ -170,11 +173,31 @@ MOCK: update_status: commit-queue Builders ["Builder2"] are red. See http://buil
         expected_run_args = ["echo", "--status-host=example.com", "build-and-test", "--force-clean", "--build", "--test", "--non-interactive", "--no-update", "--build-style=both", "--quiet"]
         tool.executive.run_and_throw_if_fail.assert_called_with(expected_run_args)
 
+    def _mock_attachment(self, is_rollout, attach_date):
+        attachment = Mock()
+        attachment.is_rollout = lambda: is_rollout
+        attachment.attach_date = lambda: attach_date
+        return attachment
+
+    def test_patch_cmp(self):
+        long_ago_date = datetime(1900, 1, 21)
+        recent_date = datetime(2010, 1, 21)
+        attachment1 = self._mock_attachment(is_rollout=False, attach_date=recent_date)
+        attachment2 = self._mock_attachment(is_rollout=False, attach_date=long_ago_date)
+        attachment3 = self._mock_attachment(is_rollout=True, attach_date=recent_date)
+        attachment4 = self._mock_attachment(is_rollout=True, attach_date=long_ago_date)
+        attachments = [attachment1, attachment2, attachment3, attachment4]
+        expected_sort = [attachment4, attachment3, attachment2, attachment1]
+        queue = CommitQueue()
+        attachments.sort(queue._patch_cmp)
+        self.assertEqual(attachments, expected_sort)
+
 
 class StyleQueueTest(QueuesTest):
     def test_style_queue(self):
         expected_stderr = {
             "begin_work_queue" : "CAUTION: style-queue will discard all local changes in \"%s\"\nRunning WebKit style-queue.\n" % MockSCM.fake_checkout_root,
+            "next_work_item": "MOCK: update_work_items: style-queue [103]\n",
             "should_proceed_with_work_item": "MOCK: update_status: style-queue Checking style\n",
             "process_work_item" : "MOCK: update_status: style-queue Pass\n",
             "handle_unexpected_error" : "Mock error message\n",

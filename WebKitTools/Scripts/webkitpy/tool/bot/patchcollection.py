@@ -1,4 +1,4 @@
-# Copyright (c) 2009 Google Inc. All rights reserved.
+# Copyright (c) 2010 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,6 +25,7 @@
 # THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 
 class PersistentPatchCollectionDelegate:
     def collection_name(self):
@@ -56,9 +57,22 @@ class PersistentPatchCollection:
             self._status_cache[patch_id] = status
         return status
 
-    def next(self):
+    def _is_active_patch_id(self, patch_id):
+        """Active patches are patches waiting to be processed from this collection."""
+        status = self._cached_status(patch_id)
+        return not status or not self._delegate.is_terminal_status(status)
+
+    def _fetch_active_patch_ids(self):
         patch_ids = self._delegate.fetch_potential_patch_ids()
-        for patch_id in patch_ids:
-            status = self._cached_status(patch_id)
-            if not status or not self._delegate.is_terminal_status(status):
-                return patch_id
+        return filter(lambda patch_id: self._is_active_patch_id(patch_id), patch_ids)
+
+    def next(self):
+        # Note: We only fetch all the ids so we can post them back to the server.
+        # This will go away once we have a feeder queue and all other queues are
+        # just pulling their next work item from the server.
+        patch_ids = self._fetch_active_patch_ids()
+        # FIXME: We're assuming self._name is a valid queue-name.
+        self._status.update_work_items(self._name, patch_ids)
+        if not patch_ids:
+            return None
+        return patch_ids[0]

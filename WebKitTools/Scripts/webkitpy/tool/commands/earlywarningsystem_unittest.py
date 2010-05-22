@@ -47,6 +47,7 @@ class EarlyWarningSytemTest(QueuesTest):
         expected_stderr = {
             "begin_work_queue": "CAUTION: %(name)s will discard all local changes in \"%(checkout_dir)s\"\nRunning WebKit %(name)s.\n" % string_replacemnts,
             "handle_unexpected_error": "Mock error message\n",
+            "next_work_item": "MOCK: update_work_items: %(name)s [103]\n" % string_replacemnts,
             "process_work_item": "MOCK: update_status: %(name)s Pass\n" % string_replacemnts,
         }
         return expected_stderr

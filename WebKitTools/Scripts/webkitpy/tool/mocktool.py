@@ -477,6 +477,9 @@ class MockStatusServer(object):
     def svn_revision(self, svn_revision):
         return None
 
+    def update_work_items(self, queue_name, work_items):
+        log("MOCK: update_work_items: %s %s" % (queue_name, work_items))
+
     def update_status(self, queue_name, status, patch=None, results_file=None):
         log("MOCK: update_status: %s %s" % (queue_name, status))
         return 187

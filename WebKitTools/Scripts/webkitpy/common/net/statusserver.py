@@ -83,6 +83,18 @@ class StatusServer:
         self.browser["broken_bot"] = broken_bot
         return self.browser.submit().read()
 
+    def _post_work_items_to_server(self, queue_name, work_items):
+        update_work_items_url = "%s/update-work-items" % self.url
+        self.browser.open(update_work_items_url)
+        self.browser.select_form(name="update_work_items")
+        self.browser["queue_name"] = queue_name
+        self.browser["work_items"] = " ".join(work_items)
+        return self.browser.submit().read()
+
+    def update_work_items(self, queue_name, work_items):
+        log("Recording work items: %s for %s" % (work_items, queue_name))
+        return NetworkTransaction().run(lambda: self._post_work_items_to_server(queue_name, work_items))
+
     def update_status(self, queue_name, status, patch=None, results_file=None):
         log(status)
         return NetworkTransaction().run(lambda: self._post_status_to_server(queue_name, status, patch, results_file))

@@ -1,3 +1,44 @@
+2010-05-21  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make the EWSes report queue position in white bubbles
+        https://bugs.webkit.org/show_bug.cgi?id=39519
+
+        This also fixes sorting of commit-queue patches
+        to be in order of patch attachment.
+        https://bugs.webkit.org/show_bug.cgi?id=33395
+
+        This makes the various Queues post what patches they are about to process
+        so that we can display a list of patches on status server pages, as well
+        as report queue position in status bubbles.
+
+        This is the first step towards creating a control-channel for the queues.
+        Next step will be to have them read back the patches in order from the server
+        and finally we will add the ability for the server to control that order.
+
+        * Scripts/webkitpy/common/net/bugzilla.py:
+         - Teach bugzilla how to parse attach_date for attachments.
+        * Scripts/webkitpy/common/net/bugzilla_unittest.py:
+         - Test that we're parsing dates correctly.
+           This may have timezone issues for non-PST contributers, unsure.
+        * Scripts/webkitpy/common/net/statusserver.py:
+         - Post work items to the status server for display.
+        * Scripts/webkitpy/tool/bot/patchcollection.py:
+         - Call StatusServer.update_work_items
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+         - Update unit test results now that we're posting work item list.
+        * Scripts/webkitpy/tool/commands/queues.py:
+         - Call StatusSever.update_work_items
+         - Sort patches so that the server's list understands
+           that the commit-queue gives priority to rollout patches.
+         - I also fixed patch sorting per bug 33395 while I was here.
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+         - Update results after update_work_items changes.
+         - Test attachment sorting.
+        * Scripts/webkitpy/tool/mocktool.py:
+         - Add mock for update_work_items
+
 2010-05-21  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         Reviewed by Adam Roben.

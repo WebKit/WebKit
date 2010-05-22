@@ -28,6 +28,8 @@
 
 import unittest
 
+import datetime
+
 from webkitpy.common.config.committers import CommitterList, Reviewer, Committer
 from webkitpy.common.net.bugzilla import Bugzilla, BugzillaQueries, parse_bug_id, CommitterValidator, Bug
 from webkitpy.common.system.outputcapture import OutputCapture
@@ -97,6 +99,7 @@ class BugzillaTest(unittest.TestCase):
         </attachment>
 '''
     _expected_example_attachment_parsing = {
+        'attach_date': datetime.datetime(2009, 07, 29, 10, 23),
         'bug_id' : 100,
         'is_obsolete' : True,
         'is_patch' : True,
@@ -204,6 +207,7 @@ ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
         "reporter_email" : "eric@webkit.org",
         "assigned_to_email" : "webkit-unassigned@lists.webkit.org",
         "attachments" : [{
+            "attach_date": datetime.datetime(2009, 12, 27, 23, 51),
             'name': u'Patch',
             'url' : "https://bugs.webkit.org/attachment.cgi?id=45548",
             'is_obsolete': False,

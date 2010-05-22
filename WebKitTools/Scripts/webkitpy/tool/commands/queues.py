@@ -135,6 +135,9 @@ class AbstractPatchQueue(AbstractQueue):
     def _update_status(self, message, patch=None, results_file=None):
         self.tool.status_server.update_status(self.name, message, patch, results_file)
 
+    def _update_work_items(self, patch_ids):
+        self.tool.status_server.update_work_items(self.name, patch_ids)
+
     def _did_pass(self, patch):
         self._update_status(self._pass_status, patch)
 
@@ -169,12 +172,21 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
         all_patches = sum([self.tool.bugs.fetch_bug(bug_id).commit_queued_patches(include_invalid=True) for bug_id in bug_ids], [])
         return self.committer_validator.patches_after_rejecting_invalid_commiters_and_reviewers(all_patches)
 
+    def _patch_cmp(self, a, b):
+        # Sort first by is_rollout, then by attach_date.
+        # Reversing the order so that is_rollout is first.
+        rollout_cmp = cmp(b.is_rollout(), a.is_rollout())
+        if (rollout_cmp != 0):
+            return rollout_cmp
+        return cmp(a.attach_date(), b.attach_date())
+
     def next_work_item(self):
         patches = self._validate_patches_in_commit_queue()
+        patches = sorted(patches, self._patch_cmp)
+        self._update_work_items([patch.id() for patch in patches])
         builders_are_green = self._builders_are_green()
         if not builders_are_green:
             patches = filter(lambda patch: patch.is_rollout(), patches)
-        # FIXME: We could sort the patches in a specific order here, was suggested by https://bugs.webkit.org/show_bug.cgi?id=33395
         if not patches:
             queue_text = "queue" if builders_are_green else "rollout queue"
             self._update_status("Empty %s" % queue_text)

@@ -104,6 +104,9 @@ class Attachment(object):
     def name(self):
         return self._attachment_dictionary.get("name")
 
+    def attach_date(self):
+        return self._attachment_dictionary.get("attach_date")
+
     def review(self):
         return self._attachment_dictionary.get("review")
 
@@ -430,6 +433,7 @@ class Bugzilla(object):
             attachment[flag_name] = flag['status']
             if flag['status'] == '+':
                 attachment[result_key] = flag['setter']
+        # Sadly show_bug.cgi?ctype=xml does not expose the flag modification date.
 
     def _string_contents(self, soup):
         # WebKit's bugzilla instance uses UTF-8.
@@ -439,8 +443,18 @@ class Bugzilla(object):
         # convert from NavigableString to a real unicode() object using unicode().
         return unicode(soup.string)
 
-    def _parse_attachment_element(self, element, bug_id):
+    # Example: 2010-01-20 14:31 PST
+    # FIXME: Some bugzilla dates seem to have seconds in them?
+    _bugzilla_date_format = "%Y-%m-%d %H:%M %Z"
 
+    @classmethod
+    def _parse_date(cls, date_string):
+        return datetime.strptime(date_string, cls._bugzilla_date_format)
+
+    def _date_contents(self, soup):
+        return self._parse_date(self._string_contents(soup))
+
+    def _parse_attachment_element(self, element, bug_id):
         attachment = {}
         attachment['bug_id'] = bug_id
         attachment['is_obsolete'] = (element.has_key('isobsolete') and element['isobsolete'] == "1")
@@ -448,6 +462,7 @@ class Bugzilla(object):
         attachment['id'] = int(element.find('attachid').string)
         # FIXME: No need to parse out the url here.
         attachment['url'] = self.attachment_url_for_id(attachment['id'])
+        attachment["attach_date"] = self._date_contents(element.find("date"))
         attachment['name'] = self._string_contents(element.find('desc'))
         attachment['attacher_email'] = self._string_contents(element.find('attacher'))
         attachment['type'] = self._string_contents(element.find('type'))
