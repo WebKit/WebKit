@@ -1,5 +1,23 @@
 2010-05-21  Eric Seidel  <eric@webkit.org>
 
+        Unreviewed, EWS build fix only.
+
+        QueueStatusServer returns 500 error when EWS bots post empty queues
+        https://bugs.webkit.org/show_bug.cgi?id=39523
+
+        Mac python seems to have some built-in timezone support
+        however other python installs don't.  So we need to ignore
+        timezones in our parsing.
+
+        Date parsing is tested by existing unit tests.
+
+        * QueueStatusServer/handlers/updateworkitems.py:
+         - Fix typo causing exception on server.
+        * Scripts/webkitpy/common/net/bugzilla.py:
+         - Fix exception due to python's lack of timezone support.
+
+2010-05-21  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         QueueStatusServer returns 500 error when EWS bots post empty queues

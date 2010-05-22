@@ -445,10 +445,15 @@ class Bugzilla(object):
 
     # Example: 2010-01-20 14:31 PST
     # FIXME: Some bugzilla dates seem to have seconds in them?
-    _bugzilla_date_format = "%Y-%m-%d %H:%M %Z"
+    # Python does not support timezones out of the box.
+    # Assume that bugzilla always uses PST (which is true for bugs.webkit.org)
+    _bugzilla_date_format = "%Y-%m-%d %H:%M"
 
     @classmethod
     def _parse_date(cls, date_string):
+        (date, time, time_zone) = date_string.split(" ")
+        # Ignore the timezone because python doesn't understand timezones out of the box.
+        date_string = "%s %s" % (date, time)
         return datetime.strptime(date_string, cls._bugzilla_date_format)
 
     def _date_contents(self, soup):

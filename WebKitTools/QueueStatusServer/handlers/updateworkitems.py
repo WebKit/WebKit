@@ -50,7 +50,7 @@ class UpdateWorkItems(UpdateBase):
             work_items.queue_name = queue_name
         return work_items
 
-    def _parse_work_items_string(self, work_items_string):
+    def _parse_work_items_string(self, items_string):
         # Our parsing could be much more robust.
         item_strings = items_string.split(" ") if items_string else []
         return map(int, item_strings)
