@@ -1,3 +1,20 @@
+2010-05-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Add test results for Mac; no review.
+
+        Add platform-independent test results for new tiling tests, and move them into their own directory.
+
+        * compositing/tiling/huge-layer-add-remove-child-expected.txt: Renamed from LayoutTests/platform/win/compositing/huge-layer-add-remove-child-expected.txt.
+        * compositing/tiling/huge-layer-add-remove-child.html: Renamed from LayoutTests/compositing/huge-layer-add-remove-child.html.
+        * compositing/tiling/huge-layer-expected.txt: Renamed from LayoutTests/platform/win/compositing/huge-layer-expected.txt.
+        * compositing/tiling/huge-layer-resize-expected.txt: Renamed from LayoutTests/platform/win/compositing/huge-layer-resize-expected.txt.
+        * compositing/tiling/huge-layer-resize.html: Renamed from LayoutTests/compositing/huge-layer-resize.html.
+        * compositing/tiling/huge-layer-with-layer-children-expected.txt: Renamed from LayoutTests/platform/win/compositing/huge-layer-with-layer-children-expected.txt.
+        * compositing/tiling/huge-layer-with-layer-children-resize-expected.txt: Renamed from LayoutTests/platform/win/compositing/huge-layer-with-layer-children-resize-expected.txt.
+        * compositing/tiling/huge-layer-with-layer-children-resize.html: Renamed from LayoutTests/compositing/huge-layer-with-layer-children-resize.html.
+        * compositing/tiling/huge-layer-with-layer-children.html: Renamed from LayoutTests/compositing/huge-layer-with-layer-children.html.
+        * compositing/tiling/huge-layer.html: Renamed from LayoutTests/compositing/huge-layer.html.
+
 2010-05-22  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed.
