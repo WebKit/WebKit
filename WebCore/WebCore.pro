@@ -489,7 +489,6 @@ SOURCES += \
     dom/MouseEvent.cpp \
     dom/MouseRelatedEvent.cpp \
     dom/MutationEvent.cpp \
-    dom/NamedMappedAttrMap.cpp \
     dom/NamedNodeMap.cpp \
     dom/NameNodeList.cpp \
     dom/Node.cpp \
@@ -1217,7 +1216,6 @@ HEADERS += \
     dom/MouseRelatedEvent.h \
     dom/MutationEvent.h \
     dom/NamedNodeMap.h \
-    dom/NamedMappedAttrMap.h \
     dom/NameNodeList.h \
     dom/NodeFilterCondition.h \
     dom/NodeFilter.h \

@@ -787,7 +787,6 @@ SET(WebCore_SOURCES
     dom/MouseRelatedEvent.cpp
     dom/MutationEvent.cpp
     dom/NameNodeList.cpp
-    dom/NamedMappedAttrMap.cpp
     dom/NamedNodeMap.cpp
     dom/Node.cpp
     dom/NodeFilter.cpp

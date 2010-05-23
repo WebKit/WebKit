@@ -78,7 +78,7 @@ void HTMLViewSourceDocument::createContainingTable()
     // Create a line gutter div that can be used to make sure the gutter extends down the height of the whole
     // document.
     RefPtr<HTMLDivElement> div = new HTMLDivElement(divTag, this);
-    RefPtr<NamedMappedAttrMap> attrs = NamedMappedAttrMap::create();
+    RefPtr<NamedNodeMap> attrs = NamedNodeMap::create();
     attrs->addAttribute(Attribute::createMapped(classAttr, "webkit-line-gutter-backdrop"));
     div->setAttributeMap(attrs.release());
     body->addChild(div);
@@ -211,7 +211,7 @@ PassRefPtr<Element> HTMLViewSourceDocument::addSpanWithClassName(const String& c
     }
 
     RefPtr<HTMLElement> span = HTMLElement::create(spanTag, this);
-    RefPtr<NamedMappedAttrMap> attrs = NamedMappedAttrMap::create();
+    RefPtr<NamedNodeMap> attrs = NamedNodeMap::create();
     attrs->addAttribute(Attribute::createMapped(classAttr, className));
     span->setAttributeMap(attrs.release());
     m_current->addChild(span);
@@ -228,7 +228,7 @@ void HTMLViewSourceDocument::addLine(const String& className)
     
     // Create a cell that will hold the line number (it is generated in the stylesheet using counters).
     RefPtr<HTMLTableCellElement> td = new HTMLTableCellElement(tdTag, this);
-    RefPtr<NamedMappedAttrMap> attrs = NamedMappedAttrMap::create();
+    RefPtr<NamedNodeMap> attrs = NamedNodeMap::create();
     attrs->addAttribute(Attribute::createMapped(classAttr, "webkit-line-number"));
     td->setAttributeMap(attrs.release());
     trow->addChild(td);
@@ -236,7 +236,7 @@ void HTMLViewSourceDocument::addLine(const String& className)
 
     // Create a second cell for the line contents
     td = new HTMLTableCellElement(tdTag, this);
-    attrs = NamedMappedAttrMap::create();
+    attrs = NamedNodeMap::create();
     attrs->addAttribute(Attribute::createMapped(classAttr, "webkit-line-content"));
     td->setAttributeMap(attrs.release());
     trow->addChild(td);
@@ -294,7 +294,7 @@ PassRefPtr<Element> HTMLViewSourceDocument::addLink(const String& url, bool isAn
     
     // Now create a link for the attribute value instead of a span.
     RefPtr<HTMLAnchorElement> anchor = HTMLAnchorElement::create(this);
-    RefPtr<NamedMappedAttrMap> attrs = NamedMappedAttrMap::create();
+    RefPtr<NamedNodeMap> attrs = NamedNodeMap::create();
     const char* classValue;
     if (isAnchor)
         classValue = "webkit-html-attribute-value webkit-html-external-link";

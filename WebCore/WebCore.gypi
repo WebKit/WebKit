@@ -1160,8 +1160,6 @@
             'dom/MutationEvent.h',
             'dom/NameNodeList.cpp',
             'dom/NameNodeList.h',
-            'dom/NamedMappedAttrMap.cpp',
-            'dom/NamedMappedAttrMap.h',
             'dom/NamedNodeMap.cpp',
             'dom/NamedNodeMap.h',
             'dom/Node.cpp',

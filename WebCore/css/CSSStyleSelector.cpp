@@ -1037,7 +1037,7 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n)
             if (classesMatch) {
                 bool mappedAttrsMatch = true;
                 if (s->hasMappedAttributes())
-                    mappedAttrsMatch = s->mappedAttributes()->mapsEquivalent(m_styledElement->mappedAttributes());
+                    mappedAttrsMatch = s->mappedAttributes()->mappedMapsEquivalent(m_styledElement->mappedAttributes());
                 if (mappedAttrsMatch) {
                     if (s->isLink()) {
                         if (m_elementLinkState != style->insideLink())
@@ -1255,7 +1255,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
             // Ask if the HTML element has mapped attributes.
             if (m_styledElement->hasMappedAttributes()) {
                 // Walk our attribute list and add in each decl.
-                const NamedMappedAttrMap* map = m_styledElement->mappedAttributes();
+                const NamedNodeMap* map = m_styledElement->mappedAttributes();
                 for (unsigned i = 0; i < map->length(); i++) {
                     Attribute* attr = map->attributeItem(i);
                     if (attr->isMappedAttribute() && attr->decl()) {

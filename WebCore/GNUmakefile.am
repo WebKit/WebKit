@@ -827,8 +827,6 @@ webcore_sources += \
 	WebCore/dom/MutationEvent.h \
 	WebCore/dom/NameNodeList.cpp \
 	WebCore/dom/NameNodeList.h \
-	WebCore/dom/NamedMappedAttrMap.cpp \
-	WebCore/dom/NamedMappedAttrMap.h \
 	WebCore/dom/NamedNodeMap.cpp \
 	WebCore/dom/NamedNodeMap.h \
 	WebCore/dom/Node.cpp \

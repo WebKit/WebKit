@@ -29,7 +29,7 @@
 #include "CSSPrimitiveValue.h"
 #include "Element.h"
 #include "MappedAttributeEntry.h"
-#include "NamedMappedAttrMap.h"
+#include "NamedNodeMap.h"
 
 namespace WebCore {
 
@@ -40,8 +40,8 @@ class StyledElement : public Element {
 public:
     virtual ~StyledElement();
 
-    NamedMappedAttrMap* mappedAttributes() { return static_cast<NamedMappedAttrMap*>(namedAttrMap.get()); }
-    const NamedMappedAttrMap* mappedAttributes() const { return static_cast<NamedMappedAttrMap*>(namedAttrMap.get()); }
+    NamedNodeMap* mappedAttributes() { return namedAttrMap.get(); }
+    const NamedNodeMap* mappedAttributes() const { return namedAttrMap.get(); }
 
     bool hasMappedAttributes() const { return namedAttrMap && mappedAttributes()->hasMappedAttributes(); }
     bool isMappedAttribute(const QualifiedName& name) const { MappedAttributeEntry res = eNone; mapToEntry(name, res); return res != eNone; }

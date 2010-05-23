@@ -842,7 +842,7 @@ void HTMLInputElement::setInputType(const String& t)
                 registerForActivationCallbackIfNeeded();
 
             if (didRespectHeightAndWidth != willRespectHeightAndWidth) {
-                NamedMappedAttrMap* map = mappedAttributes();
+                NamedNodeMap* map = mappedAttributes();
                 ASSERT(map);
                 if (Attribute* height = map->getAttributeItem(heightAttr))
                     attributeChanged(height, false);

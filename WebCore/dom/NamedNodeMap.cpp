@@ -302,6 +302,29 @@ void NamedNodeMap::removeAttribute(const QualifiedName& name)
     }
 }
 
+void NamedNodeMap::setClass(const String& classStr) 
+{ 
+    if (!element()->hasClass()) { 
+        m_classNames.clear(); 
+        return;
+    }
+
+    m_classNames.set(classStr, element()->document()->inCompatMode()); 
+}
+
+int NamedNodeMap::declCount() const
+{
+    int result = 0;
+    for (unsigned i = 0; i < length(); i++) {
+        Attribute* attr = attributeItem(i);
+        if (attr->decl()) {
+            ASSERT(attr->isMappedAttribute());
+            result++;
+        }
+    }
+    return result;
+}
+
 bool NamedNodeMap::mapsEquivalent(const NamedNodeMap* otherMap) const
 {
     if (!otherMap)
@@ -312,9 +335,8 @@ bool NamedNodeMap::mapsEquivalent(const NamedNodeMap* otherMap) const
         return false;
     
     for (unsigned i = 0; i < len; i++) {
-        Attribute *attr = attributeItem(i);
-        Attribute *otherAttr = otherMap->getAttributeItem(attr->name());
-            
+        Attribute* attr = attributeItem(i);
+        Attribute* otherAttr = otherMap->getAttributeItem(attr->name());
         if (!otherAttr || attr->value() != otherAttr->value())
             return false;
     }
@@ -322,4 +344,24 @@ bool NamedNodeMap::mapsEquivalent(const NamedNodeMap* otherMap) const
     return true;
 }
 
+bool NamedNodeMap::mappedMapsEquivalent(const NamedNodeMap* otherMap) const
+{
+    // The # of decls must match.
+    if (declCount() != otherMap->declCount())
+        return false;
+    
+    // The values for each decl must match.
+    for (unsigned i = 0; i < length(); i++) {
+        Attribute* attr = attributeItem(i);
+        if (attr->decl()) {
+            ASSERT(attr->isMappedAttribute());
+
+            Attribute* otherAttr = otherMap->getAttributeItem(attr->name());
+            if (!otherAttr || attr->value() != otherAttr->value())
+                return false;
+        }
+    }
+    return true;
 }
+
+} // namespace WebCore

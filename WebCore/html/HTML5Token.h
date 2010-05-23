@@ -26,7 +26,7 @@
 #ifndef HTML5Token_h
 #define HTML5Token_h
 
-#include "NamedMappedAttrMap.h"
+#include "NamedNodeMap.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 

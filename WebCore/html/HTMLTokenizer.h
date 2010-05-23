@@ -26,8 +26,8 @@
 
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
-#include "NamedMappedAttrMap.h"
 #include "MappedAttributeEntry.h"
+#include "NamedNodeMap.h"
 #include "SegmentedString.h"
 #include "Timer.h"
 #include "Tokenizer.h"
@@ -83,7 +83,7 @@ struct Token {
 
     void addViewSourceChar(UChar c) { if (!m_sourceInfo.get()) m_sourceInfo.set(new Vector<UChar>); m_sourceInfo->append(c); }
 
-    RefPtr<NamedMappedAttrMap> attrs;
+    RefPtr<NamedNodeMap> attrs;
     RefPtr<StringImpl> text;
     AtomicString tagName;
     bool beginTag;

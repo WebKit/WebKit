@@ -60,7 +60,7 @@ static void convertToOldStyle(HTML5Token& token, Token& oldStyleToken)
                 String value = String(StringImpl::adopt(iter->m_value));
                 RefPtr<Attribute> mappedAttribute = Attribute::createMapped(name, value);
                 if (!oldStyleToken.attrs)
-                    oldStyleToken.attrs = NamedMappedAttrMap::create();
+                    oldStyleToken.attrs = NamedNodeMap::create();
                 oldStyleToken.attrs->insertAttribute(mappedAttribute.release(), false);
             }
         }

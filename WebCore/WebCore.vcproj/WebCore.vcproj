@@ -29721,14 +29721,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\NamedMappedAttrMap.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\NamedMappedAttrMap.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\NamedNodeMap.cpp"
 				>
 			</File>

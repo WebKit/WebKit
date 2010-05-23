@@ -1,3 +1,56 @@
+2010-05-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=39574
+        Complete the merge of NamedMappedAttrMap into NamedNodeMap.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::CSSStyleSelector::styleForElement):
+        * dom/Element.cpp:
+        (WebCore::Element::createAttributeMap):
+        * dom/NamedMappedAttrMap.cpp: Removed.
+        * dom/NamedMappedAttrMap.h: Removed.
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::setClass):
+        (WebCore::NamedNodeMap::declCount):
+        (WebCore::NamedNodeMap::mapsEquivalent):
+        (WebCore::NamedNodeMap::mappedMapsEquivalent):
+        * dom/NamedNodeMap.h:
+        (WebCore::NamedNodeMap::create):
+        (WebCore::NamedNodeMap::clearClass):
+        (WebCore::NamedNodeMap::classNames):
+        (WebCore::NamedNodeMap::hasMappedAttributes):
+        (WebCore::NamedNodeMap::declRemoved):
+        (WebCore::NamedNodeMap::declAdded):
+        (WebCore::NamedNodeMap::NamedNodeMap):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::mappedAttributes):
+        * html/HTML5Token.h:
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::convertToOldStyle):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setInputType):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleIsindex):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::Token::addAttribute):
+        (WebCore::HTMLTokenizer::processToken):
+        * html/HTMLTokenizer.h:
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createContainingTable):
+        (WebCore::HTMLViewSourceDocument::addSpanWithClassName):
+        (WebCore::HTMLViewSourceDocument::addLine):
+        (WebCore::HTMLViewSourceDocument::addLink):
+
 2010-05-23  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

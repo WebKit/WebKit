@@ -137,7 +137,7 @@ inline void Token::addAttribute(AtomicString& attrName, const AtomicString& attr
         ASSERT(!attrName.contains('/'));
         RefPtr<Attribute> a = Attribute::createMapped(attrName, attributeValue);
         if (!attrs) {
-            attrs = NamedMappedAttrMap::create();
+            attrs = NamedNodeMap::create();
             attrs->reserveInitialCapacity(10);
         }
         attrs->insertAttribute(a.release(), viewSourceMode);
@@ -1943,7 +1943,7 @@ PassRefPtr<Node> HTMLTokenizer::processToken()
     RefPtr<Node> n;
     
     if (!m_parserStopped) {
-        if (NamedMappedAttrMap* map = m_currentToken.attrs.get())
+        if (NamedNodeMap* map = m_currentToken.attrs.get())
             map->shrinkToLength();
         if (inViewSourceMode())
             static_cast<HTMLViewSourceDocument*>(m_doc)->addViewSourceToken(&m_currentToken);

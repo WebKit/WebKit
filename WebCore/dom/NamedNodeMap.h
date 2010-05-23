@@ -40,16 +40,11 @@ typedef int ExceptionCode;
 
 class NamedNodeMap : public RefCounted<NamedNodeMap> {
     friend class Element;
-
-protected:
-    NamedNodeMap(Element* element) 
-        : m_mappedAttributeCount(0)
-        , m_element(element)
-    {
-    }
-
 public:
-    static PassRefPtr<NamedNodeMap> create(Element* element) { return adoptRef(new NamedNodeMap(element)); }
+    static PassRefPtr<NamedNodeMap> create(Element* element = 0)
+    {
+        return adoptRef(new NamedNodeMap(element));
+    }
 
     ~NamedNodeMap();
 
@@ -93,7 +88,9 @@ public:
     const AtomicString& id() const { return m_id; }
     void setID(const AtomicString& newId) { m_id = newId; }
 
+    // FIXME: These two functions should be merged if possible.
     bool mapsEquivalent(const NamedNodeMap* otherMap) const;
+    bool mappedMapsEquivalent(const NamedNodeMap* otherMap) const;
 
     // These functions do no error checking.
     void addAttribute(PassRefPtr<Attribute>);
@@ -101,17 +98,30 @@ public:
 
     Element* element() const { return m_element; }
 
-protected:
-    int m_mappedAttributeCount;
-    SpaceSplitString m_classNames;
+    void clearClass() { m_classNames.clear(); }
+    void setClass(const String&);
+    const SpaceSplitString& classNames() const { return m_classNames; }
+
+    bool hasMappedAttributes() const { return m_mappedAttributeCount > 0; }
+    void declRemoved() { m_mappedAttributeCount--; }
+    void declAdded() { m_mappedAttributeCount++; }
 
 private:
+    NamedNodeMap(Element* element) 
+        : m_mappedAttributeCount(0)
+        , m_element(element)
+    {
+    }
+
     void detachAttributesFromElement();
     void detachFromElement();
     Attribute* getAttributeItem(const String& name, bool shouldIgnoreAttributeCase) const;
     Attribute* getAttributeItemSlowCase(const String& name, bool shouldIgnoreAttributeCase) const;
     void clearAttributes();
-    
+    int declCount() const;
+
+    int m_mappedAttributeCount;
+    SpaceSplitString m_classNames;
     Element* m_element;
     Vector<RefPtr<Attribute> > m_attributes;
     AtomicString m_id;
