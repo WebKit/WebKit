@@ -640,7 +640,7 @@ v8::Handle<v8::Value> V8DOMWindow::openCallback(const v8::Arguments& args)
             // the outgoingReferrer.  We replicate that behavior here.
             String referrer = enteredFrame->loader()->outgoingReferrer();
 
-            frame->redirectScheduler()->scheduleLocationChange(completedUrl, referrer, false, userGesture);
+            frame->redirectScheduler()->scheduleLocationChange(completedUrl, referrer, false, false, userGesture);
         }
         return toV8(frame->domWindow());
     }

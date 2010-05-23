@@ -1,3 +1,20 @@
+2010-05-23  Grace Kloba  <klobag@gmail.com>
+
+        Reviewed by Nate Chapin.
+
+        Match the call of scheduleLocationChange() to its correct signature.
+        Fixes <http://webkit.org/b/39452>
+
+        The call of scheduleLocationChange() in generic and v8 bindings assuming the
+        fourth parameter is "usergesture". But it is actually the fifth parameter.
+
+        No new features. No new tests.
+
+        * bindings/generic/BindingDOMWindow.h:
+        (WebCore::::createWindow):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::openCallback):
+
 2010-05-23  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
