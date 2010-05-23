@@ -31,6 +31,7 @@
 
 #include "CSSHelper.h"
 #include "Document.h"
+#include "Element.h"
 #include "HTMLNames.h"
 
 using namespace JSC;
