@@ -1,3 +1,37 @@
+2010-05-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Make HTML5 parser parse <script>alert("<hi>");</script>
+        https://bugs.webkit.org/show_bug.cgi?id=39525
+
+        More progress towards getting the html5lib test harness running.  We
+        need to parse script data in the ScriptDataState.  The spec says the
+        parser should set the lexer's state to ScriptDataState, but we want to
+        keep using the existing parser for a while so I've added some temporary
+        logic to HTML5Tokenizer to set the state in the lexer.
+
+        To get this case running, I needed to flesh out a bunch of the
+        ScriptDataState logic.  There's a bunch more to do, but this is a
+        start.
+
+        I'm not 100% happy with this patch, but it lets us execute a simplified
+        version of the test harness up to the point where it starts running the
+        first test.
+
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTML5Lexer::nextToken):
+        (WebCore::HTML5Lexer::isAppropriateEndTag):
+        (WebCore::HTML5Lexer::emitCurrentTagToken):
+        * html/HTML5Lexer.h:
+        (WebCore::HTML5Lexer::setState):
+        * html/HTML5Token.h:
+        (WebCore::HTML5Token::beginEndTag):
+        (WebCore::HTML5Token::appendToCharacter):
+        (WebCore::HTML5Token::name):
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::write):
+
 2010-05-23  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

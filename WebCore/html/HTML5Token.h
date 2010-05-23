@@ -67,7 +67,8 @@ public:
         m_data.append(character);
     }
 
-    void beginEndTag(UChar character)
+    template<typename T>
+    void beginEndTag(T characters)
     {
         ASSERT(m_type == Uninitialized);
         m_type = EndTag;
@@ -75,7 +76,7 @@ public:
         m_selfClosing = false;
         m_currentAttribute = 0;
 
-        m_data.append(character);
+        m_data.append(characters);
     }
 
     void beginCharacter(UChar character)
@@ -92,10 +93,11 @@ public:
         m_data.append(character);
     }
 
-    void appendToCharacter(UChar character)
+    template<typename T>
+    void appendToCharacter(T characters)
     {
         ASSERT(m_type == Character);
-        m_data.append(character);
+        m_data.append(characters);
     }
 
     void addNewAttribute()
@@ -122,7 +124,10 @@ public:
     AtomicString name()
     {
         ASSERT(m_type == StartTag || m_type == EndTag || m_type == DOCTYPE);
-        return AtomicString(StringImpl::adopt(m_data));
+        if (!m_data.isEmpty())
+            m_cachedName = AtomicString(StringImpl::adopt(m_data));
+        ASSERT(!m_cachedName.isEmpty());
+        return m_cachedName;
     }
 
     bool selfClosing() const
@@ -162,6 +167,8 @@ private:
 
     // A pointer into m_attributes used during lexing.
     Attribute* m_currentAttribute;
+
+    AtomicString m_cachedName;
 };
 
 }

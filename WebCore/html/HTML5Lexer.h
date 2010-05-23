@@ -38,27 +38,6 @@ namespace WebCore {
 
     class HTML5Lexer : public Noncopyable {
     public:
-        HTML5Lexer();
-        ~HTML5Lexer();
-
-        void reset();
-
-        // This function returns true if it emits a token.  Otherwise, callers
-        // must provide the same (in progress) token on the next call (unless
-        // they call reset() first).
-        bool nextToken(SegmentedString&, HTML5Token&);
-
-        static unsigned consumeEntity(SegmentedString&, bool& notEnoughCharacters);
-
-    private:
-        inline void emitCommentToken();
-        inline void emitCharacter(UChar);
-        inline void emitParseError();
-        inline void emitCurrentTagToken();
-        inline void emitCurrentDoctypeToken();
-
-        inline bool temporaryBufferIs(const char*);
-
         enum State {
             DataState,
             CharacterReferenceInDataState,
@@ -132,7 +111,34 @@ namespace WebCore {
             TokenizingCharacterReferencesState,
         };
 
+        HTML5Lexer();
+        ~HTML5Lexer();
+
+        void reset();
+
+        // This function returns true if it emits a token.  Otherwise, callers
+        // must provide the same (in progress) token on the next call (unless
+        // they call reset() first).
+        bool nextToken(SegmentedString&, HTML5Token&);
+
+        void setState(State state) { m_state = state; }
+
+        static unsigned consumeEntity(SegmentedString&, bool& notEnoughCharacters);
+
+    private:
+        inline void emitCommentToken();
+        inline void emitCharacter(UChar);
+        inline void emitParseError();
+        inline void emitCurrentToken();
+        inline void emitCurrentDoctypeToken();
+
+        inline bool temporaryBufferIs(const char*);
+
+        inline bool isAppropriateEndTag();
+
         State m_state;
+
+        AtomicString m_appropriateEndTagName;
 
         // m_token is owned by the caller.  If nextToken is not on the stack,
         // this member might be pointing to unallocated memory.
@@ -140,11 +146,13 @@ namespace WebCore {
 
         bool m_emitPending;
 
-        Vector<UChar, 32> m_attributeName;
-        Vector<UChar, 32> m_attributeValue;
-
         // http://www.whatwg.org/specs/web-apps/current-work/#temporary-buffer
-        Vector<UChar, 1024> m_temporaryBuffer;
+        Vector<UChar, 32> m_temporaryBuffer;
+
+        // We occationally want to emit both a character token and an end tag
+        // token (e.g., when lexing script).  We buffer the name of the end tag
+        // token here so we remember it next time we re-enter the lexer.
+        Vector<UChar, 32> m_bufferedEndTagName;
 
         // http://www.whatwg.org/specs/web-apps/current-work/#additional-allowed-character
         UChar m_additionalAllowedCharacter;

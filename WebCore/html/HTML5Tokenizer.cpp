@@ -97,9 +97,16 @@ void HTML5Tokenizer::write(const SegmentedString& source, bool)
             // separation between the parser logic and tokenizer logic like
             // the HTML5 codepath should.  The call should look something like:
             // m_parser->constructTreeFromToken(token);
+            if (token.type() == HTML5Token::StartTag && token.name() == "script") {
+                // FIXME: This work is supposed to be done by the parser, but
+                // we want to keep using the old parser for now, so we have to
+                // do this work manually.
+                m_lexer->setState(HTML5Lexer::ScriptDataState);
+            }           
             // For now, we translate into an old-style token for testing.
             Token oldStyleToken;
             convertToOldStyle(token, oldStyleToken);
+
             m_parser->parseToken(&oldStyleToken);
 
             token.clear();
