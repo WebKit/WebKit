@@ -50,6 +50,7 @@ PassRefPtr<WebTiledLayer> WebTiledLayer::create(const CGSize& tileSize, Graphics
 WebTiledLayer::WebTiledLayer(const CGSize& tileSize, GraphicsLayer* owner)
     : WebLayer(WKCACFLayer::Layer, owner)
     , m_tileSize(tileSize)
+    , m_constrainedSize(constrainedSize(bounds().size))
 {
     // Tiled layers are placed in a child layer that is always the first child of the TiledLayer
     m_tileParent.adoptCF(CACFLayerCreate(kCACFLayer));
@@ -68,6 +69,7 @@ void WebTiledLayer::setBounds(const CGRect& rect)
         return;
 
     WebLayer::setBounds(rect);
+    m_constrainedSize = constrainedSize(rect.size);
     updateTiles();
 }
 
@@ -127,6 +129,38 @@ int WebTiledLayer::internalIndexOfSublayer(const WKCACFLayer* layer)
     return (i > 0) ? i - 1 : -1;
 }
 
+CGSize WebTiledLayer::constrainedSize(const CGSize& size) const
+{
+    const int cMaxTileCount = 512;
+    const float cSqrtMaxTileCount = sqrtf(cMaxTileCount);
+
+    CGSize constrainedSize = size;
+
+    int tileColumns = ceilf(constrainedSize.width / m_tileSize.width);
+    int tileRows = ceilf(constrainedSize.height / m_tileSize.height);
+    int numTiles = tileColumns * tileRows;
+
+    // If number of tiles vertically or horizontally is < sqrt(cMaxTileCount)
+    // just shorten the longer dimension. Otherwise shorten both dimensions
+    // according to the ratio of width to height
+
+    if (numTiles > cMaxTileCount) {
+        if (tileRows < cSqrtMaxTileCount)
+            tileColumns = floorf(cMaxTileCount / tileRows);
+        else if (tileColumns < cSqrtMaxTileCount)
+            tileRows = floorf(cMaxTileCount / tileColumns);
+        else {
+            tileRows = ceilf(sqrtf(cMaxTileCount * constrainedSize.height / constrainedSize.width));
+            tileColumns = floorf(cMaxTileCount / tileRows);
+        }
+        
+        constrainedSize.width = tileColumns * m_tileSize.width;
+        constrainedSize.height = tileRows * m_tileSize.height;
+    }
+    
+    return constrainedSize;
+}
+
 void WebTiledLayer::addTile()
 {
     RetainPtr<CACFLayerRef> newLayer(AdoptCF, CACFLayerCreate(kCACFLayer));
@@ -169,9 +203,8 @@ void WebTiledLayer::updateTiles()
 {
     // FIXME: In addition to redoing the number of tiles, we need to only render and have backing
     // store for visible layers
-    CGRect layerBounds = bounds();
-    int numTilesHorizontal = ceil(layerBounds.size.width / m_tileSize.width);
-    int numTilesVertical = ceil(layerBounds.size.height / m_tileSize.height);
+    int numTilesHorizontal = ceil(m_constrainedSize.width / m_tileSize.width);
+    int numTilesVertical = ceil(m_constrainedSize.height / m_tileSize.height);
     int numTilesTotal = numTilesHorizontal * numTilesVertical;
 
     int numTilesToChange = numTilesTotal - tileCount();
@@ -193,8 +226,8 @@ void WebTiledLayer::updateTiles()
         for (int j = 0; j < numTilesVertical; ++j) {
             CACFLayerRef tile = static_cast<CACFLayerRef>(const_cast<void*>(CFArrayGetValueAtIndex(tileArray, i * numTilesVertical + j)));
             CACFLayerSetPosition(tile, CGPointMake(i * m_tileSize.width, j * m_tileSize.height));
-            int width = min(m_tileSize.width, layerBounds.size.width - i * m_tileSize.width);
-            int height = min(m_tileSize.height, layerBounds.size.height - j * m_tileSize.height);
+            int width = min(m_tileSize.width, m_constrainedSize.width - i * m_tileSize.width);
+            int height = min(m_tileSize.height, m_constrainedSize.height - j * m_tileSize.height);
             CACFLayerSetBounds(tile, CGRectMake(i * m_tileSize.width, j * m_tileSize.height, width, height));
 
             // Flip Y to compensate for the flipping that happens during render to match the CG context coordinate space

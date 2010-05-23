@@ -1,3 +1,28 @@
+2010-05-23  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Limit the number of tiles created for large tiled layers
+        https://bugs.webkit.org/show_bug.cgi?id=39522
+        
+        I added an algorithm to limit the number of tiles created to 512.
+        It tried to limit them in only one dimension and if that's not
+        possible it limits them in both dimensions according to the
+        ratio of width to height. This has the effect of rendering
+        tiles starting from the upper-left, which is often the part
+        that is visible. So it both prevents crashing and tried to do
+        the best job it can of displaying what the author intended.
+
+        The test LayoutTests/compositing/geometry/huge-layers.html was
+        crashing before this fix. Now it works correctly.
+
+        * platform/graphics/win/WebTiledLayer.cpp:
+        (WebCore::WebTiledLayer::WebTiledLayer):
+        (WebCore::WebTiledLayer::setBounds):
+        (WebCore::WebTiledLayer::constrainedSize):
+        (WebCore::WebTiledLayer::updateTiles):
+        * platform/graphics/win/WebTiledLayer.h:
+
 2010-05-23  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
