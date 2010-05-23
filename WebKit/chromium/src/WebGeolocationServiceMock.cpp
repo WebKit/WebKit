@@ -121,6 +121,13 @@ void GeolocationServiceChromiumMock::geolocationServiceErrorOccurred(Geolocation
 
 namespace WebKit {
 
+bool WebGeolocationServiceMock::s_mockGeolocationPermission = false;
+
+void WebGeolocationServiceMock::setMockGeolocationPermission(bool allowed)
+{
+    s_mockGeolocationPermission = allowed;
+}
+
 void WebGeolocationServiceMock::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
 {
     WebCore::GeolocationService::setCustomMockFactory(&WebCore::GeolocationServiceChromiumMock::create);
@@ -133,6 +140,29 @@ void WebGeolocationServiceMock::setMockGeolocationError(int errorCode, const Web
     WebCore::GeolocationService::setCustomMockFactory(&WebCore::GeolocationServiceChromiumMock::create);
     RefPtr<PositionError> positionError = PositionError::create(static_cast<PositionError::ErrorCode>(errorCode), message);
     GeolocationServiceMock::setError(positionError);
+}
+
+void WebGeolocationServiceMock::requestPermissionForFrame(int bridgeId, const WebURL& url)
+{
+    IdToBridgeMap::iterator iter = m_idToBridgeMap.find(bridgeId);
+    if (iter == m_idToBridgeMap.end())
+        return;
+    iter->second->setIsAllowed(s_mockGeolocationPermission);
+}
+
+int WebGeolocationServiceMock::attachBridge(WebGeolocationServiceBridge* bridge)
+{
+    static int nextAvailableWatchId = 1;
+    // In case of overflow, make sure the ID remains positive, but reuse the ID values.
+    if (nextAvailableWatchId < 1)
+        nextAvailableWatchId = 1;
+    m_idToBridgeMap.set(nextAvailableWatchId, bridge);
+    return nextAvailableWatchId++;
+}
+
+void WebGeolocationServiceMock::detachBridge(int bridgeId)
+{
+    m_idToBridgeMap.remove(bridgeId);
 }
 
 } // namespace WebKit

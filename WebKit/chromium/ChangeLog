@@ -1,3 +1,19 @@
+2010-05-23  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] Adds Geolocation support to DumpRenderTree.
+        https://bugs.webkit.org/show_bug.cgi?id=39440
+
+        Existing LayoutTests/fast/dom/Geolocation/* should pass.
+
+        * public/WebGeolocationServiceMock.h:
+        * src/WebGeolocationServiceMock.cpp:
+        (WebKit::WebGeolocationServiceMock::setMockGeolocationPermission):
+        (WebKit::WebGeolocationServiceMock::requestPermissionForFrame):
+        (WebKit::WebGeolocationServiceMock::attachBridge):
+        (WebKit::WebGeolocationServiceMock::detachBridge):
+
 2010-05-22  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

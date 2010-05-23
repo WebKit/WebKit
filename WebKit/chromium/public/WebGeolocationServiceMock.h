@@ -31,14 +31,28 @@
 #ifndef WebGeolocationServiceMock_h
 #define WebGeolocationServiceMock_h
 
+#include "WebGeolocationService.h"
+#include <wtf/HashMap.h>
+
 namespace WebKit {
 
 class WebString;
 
-class WebGeolocationServiceMock {
+class WebGeolocationServiceMock : public WebGeolocationService {
 public:
+    static void setMockGeolocationPermission(bool allowed);
     static void setMockGeolocationPosition(double latitude, double longitude, double accuracy);
     static void setMockGeolocationError(int errorCode, const WebString& message);
+
+    virtual void requestPermissionForFrame(int bridgeId, const WebURL& url);
+    virtual int attachBridge(WebGeolocationServiceBridge*);
+    virtual void detachBridge(int bridgeId);
+
+private:
+    typedef HashMap<int, WebGeolocationServiceBridge*> IdToBridgeMap;
+    IdToBridgeMap m_idToBridgeMap;
+
+    static bool s_mockGeolocationPermission;
 };
 
 } // namespace WebKit

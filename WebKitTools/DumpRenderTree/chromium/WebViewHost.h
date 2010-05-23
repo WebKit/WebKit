@@ -45,6 +45,7 @@ class LayoutTestController;
 class TestShell;
 namespace WebKit {
 class WebFrame;
+class WebGeolocationServiceMock;
 class WebURL;
 struct WebRect;
 struct WebURLError;
@@ -125,6 +126,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual int historyForwardListCount();
     virtual void focusAccessibilityObject(const WebKit::WebAccessibilityObject&);
     virtual WebKit::WebNotificationPresenter* notificationPresenter();
+    virtual WebKit::WebGeolocationService* geolocationService();
 
     // WebKit::WebWidgetClient
     virtual void didInvalidateRect(const WebKit::WebRect&);
@@ -277,6 +279,9 @@ private:
     OwnPtr<skia::PlatformCanvas> m_canvas;
     WebKit::WebRect m_paintRect;
     bool m_isPainting;
+
+    // Geolocation
+    OwnPtr<WebKit::WebGeolocationServiceMock> m_geolocationServiceMock;
 
     OwnPtr<TestNavigationController*> m_navigationController;
 };
