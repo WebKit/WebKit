@@ -31,29 +31,13 @@
 
 #include "CSSHelper.h"
 #include "Document.h"
-#include "HTMLFrameElementBase.h"
 #include "HTMLNames.h"
-#include "JSDOMBinding.h"
 
 using namespace JSC;
 
 namespace WebCore {
 
 using namespace HTMLNames;
-
-void JSAttr::setValue(ExecState* exec, JSValue value)
-{
-    Attr* imp = static_cast<Attr*>(impl());
-    String attrValue = valueToStringWithNullCheck(exec, value);
-
-    Element* ownerElement = imp->ownerElement();
-    if (ownerElement && !allowSettingSrcToJavascriptURL(exec, ownerElement, imp->name(), attrValue))
-        return;
-
-    ExceptionCode ec = 0;
-    imp->setValue(attrValue, ec);
-    setDOMException(exec, ec);
-}
 
 void JSAttr::markChildren(MarkStack& markStack)
 {

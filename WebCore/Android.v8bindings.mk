@@ -84,7 +84,6 @@ LOCAL_SRC_FILES += \
 	\
 	bindings/v8/npruntime.cpp \
 	\
-	bindings/v8/custom/V8AttrCustom.cpp \
 	bindings/v8/custom/V8CSSRuleCustom.cpp \
 	bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp \
 	bindings/v8/custom/V8CSSStyleSheetCustom.cpp \

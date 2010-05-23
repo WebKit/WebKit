@@ -1,3 +1,19 @@
+2010-05-23  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Remove custom binding for Attr.value
+        https://bugs.webkit.org/show_bug.cgi?id=39499
+
+        Custom bindings are no longer needed because origin checks were moved
+        out of the bindings by: http://trac.webkit.org/changeset/59866
+
+        * Android.v8bindings.mk:
+        * WebCore.gypi:
+        * bindings/js/JSAttrCustom.cpp:
+        * bindings/v8/custom/V8AttrCustom.cpp: Removed.
+        * dom/Attr.idl:
+
 2010-05-23  Grace Kloba  <klobag@gmail.com>
 
         Reviewed by Nate Chapin.

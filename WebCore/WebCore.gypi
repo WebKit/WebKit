@@ -694,7 +694,6 @@
             'bindings/ScriptControllerBase.cpp',
             'bindings/v8/ChildThreadDOMData.cpp',
             'bindings/v8/ChildThreadDOMData.h',
-            'bindings/v8/custom/V8AttrCustom.cpp',
             'bindings/v8/custom/V8CanvasPixelArrayCustom.cpp',
             'bindings/v8/custom/V8ArrayBufferViewCustom.h',
             'bindings/v8/custom/V8ArrayBufferViewCustom.cpp',

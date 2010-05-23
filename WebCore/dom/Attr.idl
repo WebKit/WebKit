@@ -31,7 +31,7 @@ module core {
 
         readonly attribute boolean specified;
 
-                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString, CustomSetter] DOMString value 
+                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString value 
                      setter raises(DOMException);
 
         // DOM Level 2
