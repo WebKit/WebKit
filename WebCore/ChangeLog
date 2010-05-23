@@ -1,3 +1,40 @@
+2010-05-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] GraphicsLayerQt: Coding style and comment fixes.
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::MaskEffectQt::MaskEffectQt):
+        (WebCore::MaskEffectQt::draw):
+        (WebCore::GraphicsLayerQtImpl::ContentData::ContentData):
+        (WebCore::GraphicsLayerQtImpl::State::State):
+        (WebCore::GraphicsLayerQtImpl::GraphicsLayerQtImpl):
+        (WebCore::GraphicsLayerQtImpl::~GraphicsLayerQtImpl):
+        (WebCore::GraphicsLayerQtImpl::rootLayer):
+        (WebCore::GraphicsLayerQtImpl::recache):
+        (WebCore::GraphicsLayerQtImpl::updateTransform):
+        (WebCore::GraphicsLayerQtImpl::opaqueArea):
+        (WebCore::GraphicsLayerQtImpl::flushChanges):
+        (WebCore::GraphicsLayerQtImpl::notifyAnimationStarted):
+        (WebCore::GraphicsLayerQt::setNeedsDisplayInRect):
+        (WebCore::GraphicsLayerQt::setContentsToImage):
+        (WebCore::applyTimingFunction):
+        (WebCore::AnimationQtBase::updateState):
+        (WebCore::AnimationQt::AnimationQt):
+        (WebCore::AnimationQt::updateCurrentTime):
+        (WebCore::TransformAnimationQt::applyFrame):
+        (WebCore::TransformAnimationQt::updateState):
+        (WebCore::OpacityAnimationQt::OpacityAnimationQt):
+        (WebCore::OpacityAnimationQt::applyFrame):
+        (WebCore::GraphicsLayerQt::addAnimation):
+        (WebCore::GraphicsLayerQt::removeAnimationsForProperty):
+        (WebCore::GraphicsLayerQt::removeAnimationsForKeyframes):
+        (WebCore::GraphicsLayerQt::pauseAnimation):
+        (WebCore::GraphicsLayerQt::suspendAnimations):
+        (WebCore::GraphicsLayerQt::resumeAnimations):
+        * platform/graphics/qt/GraphicsLayerQt.h:
+
 2010-05-23  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Darin Adler.
