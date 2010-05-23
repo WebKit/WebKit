@@ -1,5 +1,19 @@
 2010-05-22  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Remove recently added test "arobens-test" because it is invalid
+        https://bugs.webkit.org/show_bug.cgi?id=39555
+        
+        The test below was based on a false assuption (that document.write propagates exceptions)
+        and was testing for incorrect behavior. The newly added fast/dom/nested-script-exceptions.html
+        tests for the correct behavior.
+
+        * inspector/arobens-test-expected.txt: Removed.
+        * inspector/arobens-test.html: Removed.
+
+2010-05-22  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Mark Rowe.
 
         REGRESSION(r59977): platform/mac/fast/AppleScript/001.html failure
