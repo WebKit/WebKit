@@ -1,3 +1,21 @@
+2010-05-23  Roman Gershman  <romange@google.com>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Suggestion popup is not closed when the view is scrolled.
+        https://bugs.webkit.org/show_bug.cgi?id=38640
+
+        This bug appears on both Windows and Linux platforms.
+        Mac OS, however handles window messages differently and
+        closes popup menu in RenderWidgetHostViewMac::Destroy().
+
+        No tests were added because test_shell does not support suggestion
+        popup.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::invalidateContentsForSlowScroll):
+        (WebKit::ChromeClientImpl::scroll):
+
 2010-05-23  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Kent Tamura.
