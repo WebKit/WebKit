@@ -168,7 +168,6 @@ class Post(AbstractPatchUploadingCommand):
     name = "post"
     help_text = "Attach the current working directory diff to a bug as a patch file"
     argument_names = "[BUGID]"
-    show_in_main_help = True
     steps = [
         steps.CheckStyle,
         steps.ConfirmDiff,
@@ -193,7 +192,6 @@ class Prepare(AbstractSequencedCommand):
     name = "prepare"
     help_text = "Creates a bug (or prompts for an existing bug) and prepares the ChangeLogs"
     argument_names = "[BUGID]"
-    show_in_main_help = True
     steps = [
         steps.PromptForBugOrTitle,
         steps.CreateBug,

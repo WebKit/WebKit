@@ -1,3 +1,15 @@
+2010-05-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Hide prepare and post commands for webkit-patch
+        https://bugs.webkit.org/show_bug.cgi?id=39539
+
+        It turns out these commands aren't very popular and they confuse new
+        users.  They'll still be there for advanced users, however.
+
+        * Scripts/webkitpy/tool/commands/upload.py:
+
 2010-05-23  Jesus Sanchez-Palencia  <jesus@webkit.org>
 
         Reviewed by Laszlo Gombos.
