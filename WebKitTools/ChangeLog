@@ -1,3 +1,19 @@
+2010-05-23  Jesus Sanchez-Palencia  <jesus@webkit.org>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] QtTestBrowser is still called QtLauncher in the code
+        https://bugs.webkit.org/show_bug.cgi?id=39488
+
+        Finish the name change of QtLauncher to QtTestBrowser.
+
+        * QtTestBrowser/main.cpp:
+        (LauncherApplication::LauncherApplication):
+        (LauncherApplication::handleUserOptions):
+        * QtTestBrowser/mainwindow.cpp:
+        (MainWindow::MainWindow):
+        * QtTestBrowser/useragentlist.txt:
+
 2010-05-23  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Kent Tamura.

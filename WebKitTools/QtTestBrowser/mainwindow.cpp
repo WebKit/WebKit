@@ -39,7 +39,7 @@ MainWindow::MainWindow(const QString& url)
     : m_page(new WebPage(this))
 {
     setAttribute(Qt::WA_DeleteOnClose);
-    if (qgetenv("QTLAUNCHER_USE_ARGB_VISUALS").toInt() == 1)
+    if (qgetenv("QTTESTBROWSER_USE_ARGB_VISUALS").toInt() == 1)
         setAttribute(Qt::WA_TranslucentBackground);
 
     buildUI();
