@@ -55,6 +55,7 @@
 #include "HTMLTokenizer.h"
 #include "LocalizedStrings.h"
 #include "Page.h"
+#include "QualifiedName.h"
 #include "Settings.h"
 #include "Text.h"
 #include "TreeDepthLimit.h"
@@ -76,6 +77,18 @@ static const int minBlockLevelTagPriority = 3;
 // allowed in m_blockStack. The cap is enforced by adding such new elements as
 // siblings instead of children once it is reached.
 static const size_t cMaxBlockDepth = 4096;
+
+
+typedef HashSet<AtomicStringImpl*> TagNameSet;
+
+template< size_t ArraySize >
+static void addTags(TagNameSet& set, QualifiedName (&names)[ArraySize])
+{
+    for (size_t x = 0; x < ArraySize; x++) {
+        const QualifiedName& name = names[x];
+        set.add(name.localName().impl());
+    }
+}
 
 struct HTMLStackElem : Noncopyable {
     HTMLStackElem(const AtomicString& t, int lvl, Node* n, bool r, HTMLStackElem* nx)
@@ -342,8 +355,8 @@ static bool isTableSection(const Node* n)
 
 static bool isTablePart(const Node* n)
 {
-    return n->hasTagName(trTag) || n->hasTagName(tdTag) || n->hasTagName(thTag) ||
-           isTableSection(n);
+    return n->hasTagName(trTag) || n->hasTagName(tdTag) || n->hasTagName(thTag)
+        || isTableSection(n);
 }
 
 static bool isTableRelated(const Node* n)
@@ -353,7 +366,9 @@ static bool isTableRelated(const Node* n)
 
 static bool isScopingTag(const AtomicString& tagName)
 {
-    return tagName == appletTag || tagName == captionTag || tagName == tdTag || tagName == thTag || tagName == buttonTag || tagName == marqueeTag || tagName == objectTag || tagName == tableTag || tagName == htmlTag;
+    return tagName == appletTag || tagName == captionTag || tagName == tdTag
+        || tagName == thTag || tagName == buttonTag || tagName == marqueeTag
+        || tagName == objectTag || tagName == tableTag || tagName == htmlTag;
 }
 
 bool HTMLParser::insertNode(Node* n, bool flat)
@@ -912,74 +927,62 @@ bool HTMLParser::mapCreateErrorCheck(Token*, RefPtr<Node>& result)
     return false;
 }
 
+static void mapTagToFunc(FunctionMap& map, const QualifiedName& tag, CreateErrorCheckFunc func)
+{
+    map.set(tag.localName().impl(), func);
+}
+
+template< size_t ArraySize >
+static void mapTagsToFunc(FunctionMap& map, QualifiedName (&names)[ArraySize], CreateErrorCheckFunc func)
+{
+    for (size_t x = 0; x < ArraySize; x++) {
+        const QualifiedName& name = names[x];
+        mapTagToFunc(map, name, func);
+    }
+}
+
 PassRefPtr<Node> HTMLParser::getNode(Token* t)
 {
     // Init our error handling table.
     DEFINE_STATIC_LOCAL(FunctionMap, gFunctionMap, ());
     if (gFunctionMap.isEmpty()) {
-        gFunctionMap.set(aTag.localName().impl(), &HTMLParser::nestedCreateErrorCheck);
-        gFunctionMap.set(addressTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(articleTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(asideTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(bTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
-        gFunctionMap.set(bigTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
-        gFunctionMap.set(blockquoteTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(bodyTag.localName().impl(), &HTMLParser::bodyCreateErrorCheck);
-        gFunctionMap.set(buttonTag.localName().impl(), &HTMLParser::nestedCreateErrorCheck);
-        gFunctionMap.set(centerTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
+        QualifiedName nestedCreateErrorTags[] = { aTag, buttonTag, nobrTag, trTag };
+        mapTagsToFunc(gFunctionMap, nestedCreateErrorTags, &HTMLParser::nestedCreateErrorCheck);
+
+        QualifiedName nestedStyleCreateErrorTags[] = { bTag, bigTag, iTag, sTag, smallTag, strikeTag, ttTag, uTag };
+        mapTagsToFunc(gFunctionMap, nestedStyleCreateErrorTags, &HTMLParser::nestedStyleCreateErrorCheck);
+
+        QualifiedName pCloserCreateErrorTags[] = { addressTag, articleTag,
+            asideTag, blockquoteTag, centerTag, dirTag, divTag, dlTag,
+            fieldsetTag, footerTag, h1Tag, h2Tag, h3Tag, h4Tag, h5Tag, h6Tag,
+            headerTag, hgroupTag, hrTag, listingTag, menuTag, navTag, olTag,
+            pTag, plaintextTag, preTag, sectionTag, ulTag };
+        mapTagsToFunc(gFunctionMap, pCloserCreateErrorTags, &HTMLParser::pCloserCreateErrorCheck);
+
+        mapTagToFunc(gFunctionMap, bodyTag, &HTMLParser::bodyCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, ddTag, &HTMLParser::ddCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, dtTag, &HTMLParser::dtCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, formTag, &HTMLParser::formCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, framesetTag, &HTMLParser::framesetCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, headTag, &HTMLParser::headCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, isindexTag, &HTMLParser::isindexCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, mapTag, &HTMLParser::mapCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, liTag, &HTMLParser::nestedPCloserCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, noembedTag, &HTMLParser::noembedCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, noframesTag, &HTMLParser::noframesCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, noscriptTag, &HTMLParser::noscriptCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, tableTag, &HTMLParser::pCloserStrictCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, rpTag, &HTMLParser::rpCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, rtTag, &HTMLParser::rtCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, selectTag, &HTMLParser::selectCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, tdTag, &HTMLParser::tableCellCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, thTag, &HTMLParser::tableCellCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, tbodyTag, &HTMLParser::tableSectionCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, tfootTag, &HTMLParser::tableSectionCreateErrorCheck);
+        mapTagToFunc(gFunctionMap, theadTag, &HTMLParser::tableSectionCreateErrorCheck);
+
         gFunctionMap.set(commentAtom.impl(), &HTMLParser::commentCreateErrorCheck);
-        gFunctionMap.set(ddTag.localName().impl(), &HTMLParser::ddCreateErrorCheck);
-        gFunctionMap.set(dirTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(divTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(dlTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(dtTag.localName().impl(), &HTMLParser::dtCreateErrorCheck);
-        gFunctionMap.set(formTag.localName().impl(), &HTMLParser::formCreateErrorCheck);
-        gFunctionMap.set(fieldsetTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(footerTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(framesetTag.localName().impl(), &HTMLParser::framesetCreateErrorCheck);
-        gFunctionMap.set(h1Tag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(h2Tag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(h3Tag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(h4Tag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(h5Tag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(h6Tag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(headTag.localName().impl(), &HTMLParser::headCreateErrorCheck);
-        gFunctionMap.set(headerTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(hgroupTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(hrTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(iTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
-        gFunctionMap.set(isindexTag.localName().impl(), &HTMLParser::isindexCreateErrorCheck);
-        gFunctionMap.set(liTag.localName().impl(), &HTMLParser::nestedPCloserCreateErrorCheck);
-        gFunctionMap.set(listingTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(mapTag.localName().impl(), &HTMLParser::mapCreateErrorCheck);
-        gFunctionMap.set(menuTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(navTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(nobrTag.localName().impl(), &HTMLParser::nestedCreateErrorCheck);
-        gFunctionMap.set(noembedTag.localName().impl(), &HTMLParser::noembedCreateErrorCheck);
-        gFunctionMap.set(noframesTag.localName().impl(), &HTMLParser::noframesCreateErrorCheck);
-        gFunctionMap.set(noscriptTag.localName().impl(), &HTMLParser::noscriptCreateErrorCheck);
-        gFunctionMap.set(olTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(pTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(plaintextTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(preTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(rpTag.localName().impl(), &HTMLParser::rpCreateErrorCheck);
-        gFunctionMap.set(rtTag.localName().impl(), &HTMLParser::rtCreateErrorCheck);
-        gFunctionMap.set(sTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
-        gFunctionMap.set(sectionTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
-        gFunctionMap.set(selectTag.localName().impl(), &HTMLParser::selectCreateErrorCheck);
-        gFunctionMap.set(smallTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
-        gFunctionMap.set(strikeTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
-        gFunctionMap.set(tableTag.localName().impl(), &HTMLParser::pCloserStrictCreateErrorCheck);
-        gFunctionMap.set(tbodyTag.localName().impl(), &HTMLParser::tableSectionCreateErrorCheck);
-        gFunctionMap.set(tdTag.localName().impl(), &HTMLParser::tableCellCreateErrorCheck);
         gFunctionMap.set(textAtom.impl(), &HTMLParser::textCreateErrorCheck);
-        gFunctionMap.set(tfootTag.localName().impl(), &HTMLParser::tableSectionCreateErrorCheck);
-        gFunctionMap.set(thTag.localName().impl(), &HTMLParser::tableCellCreateErrorCheck);
-        gFunctionMap.set(theadTag.localName().impl(), &HTMLParser::tableSectionCreateErrorCheck);
-        gFunctionMap.set(trTag.localName().impl(), &HTMLParser::nestedCreateErrorCheck);
-        gFunctionMap.set(ttTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
-        gFunctionMap.set(uTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
-        gFunctionMap.set(ulTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
     }
 
     bool proceed = true;
@@ -1035,16 +1038,11 @@ void HTMLParser::processCloseTag(Token* t)
 
 bool HTMLParser::isHeadingTag(const AtomicString& tagName)
 {
-    DEFINE_STATIC_LOCAL(HashSet<AtomicStringImpl*>, headingTags, ());
+    DEFINE_STATIC_LOCAL(TagNameSet, headingTags, ());
     if (headingTags.isEmpty()) {
-        headingTags.add(h1Tag.localName().impl());
-        headingTags.add(h2Tag.localName().impl());
-        headingTags.add(h3Tag.localName().impl());
-        headingTags.add(h4Tag.localName().impl());
-        headingTags.add(h5Tag.localName().impl());
-        headingTags.add(h6Tag.localName().impl());
+        QualifiedName tagNames[] = { h1Tag, h2Tag, h3Tag, h4Tag, h5Tag, h6Tag };
+        addTags(headingTags, tagNames);
     }
-    
     return headingTags.contains(tagName.impl());
 }
 
@@ -1082,26 +1080,11 @@ bool HTMLParser::isResidualStyleTag(const AtomicString& tagName)
 {
     DEFINE_STATIC_LOCAL(HashSet<AtomicStringImpl*>, residualStyleTags, ());
     if (residualStyleTags.isEmpty()) {
-        residualStyleTags.add(aTag.localName().impl());
-        residualStyleTags.add(fontTag.localName().impl());
-        residualStyleTags.add(ttTag.localName().impl());
-        residualStyleTags.add(uTag.localName().impl());
-        residualStyleTags.add(bTag.localName().impl());
-        residualStyleTags.add(iTag.localName().impl());
-        residualStyleTags.add(sTag.localName().impl());
-        residualStyleTags.add(strikeTag.localName().impl());
-        residualStyleTags.add(bigTag.localName().impl());
-        residualStyleTags.add(smallTag.localName().impl());
-        residualStyleTags.add(emTag.localName().impl());
-        residualStyleTags.add(strongTag.localName().impl());
-        residualStyleTags.add(dfnTag.localName().impl());
-        residualStyleTags.add(codeTag.localName().impl());
-        residualStyleTags.add(sampTag.localName().impl());
-        residualStyleTags.add(kbdTag.localName().impl());
-        residualStyleTags.add(varTag.localName().impl());
-        residualStyleTags.add(nobrTag.localName().impl());
+        QualifiedName tagNames[] = { aTag, fontTag, ttTag, uTag, bTag, iTag,
+            sTag, strikeTag, bigTag, smallTag, emTag, strongTag, dfnTag,
+            codeTag, sampTag, kbdTag, varTag, nobrTag };
+        addTags(residualStyleTags, tagNames);
     }
-    
     return residualStyleTags.contains(tagName.impl());
 }
 
@@ -1109,25 +1092,11 @@ bool HTMLParser::isAffectedByResidualStyle(const AtomicString& tagName)
 {
     DEFINE_STATIC_LOCAL(HashSet<AtomicStringImpl*>, unaffectedTags, ());
     if (unaffectedTags.isEmpty()) {
-        unaffectedTags.add(bodyTag.localName().impl());
-        unaffectedTags.add(tableTag.localName().impl());
-        unaffectedTags.add(theadTag.localName().impl());
-        unaffectedTags.add(tbodyTag.localName().impl());
-        unaffectedTags.add(tfootTag.localName().impl());
-        unaffectedTags.add(trTag.localName().impl());
-        unaffectedTags.add(thTag.localName().impl());
-        unaffectedTags.add(tdTag.localName().impl());
-        unaffectedTags.add(captionTag.localName().impl());
-        unaffectedTags.add(colgroupTag.localName().impl());
-        unaffectedTags.add(colTag.localName().impl());
-        unaffectedTags.add(optionTag.localName().impl());
-        unaffectedTags.add(optgroupTag.localName().impl());
-        unaffectedTags.add(selectTag.localName().impl());
-        unaffectedTags.add(objectTag.localName().impl());
-        unaffectedTags.add(datagridTag.localName().impl());
-        unaffectedTags.add(datalistTag.localName().impl());
+        QualifiedName tagNames[] = { bodyTag, tableTag, theadTag, tbodyTag,
+            tfootTag, trTag, thTag, tdTag, captionTag, colgroupTag, colTag,
+            optionTag, optgroupTag, selectTag, objectTag, datagridTag, datalistTag };
+        addTags(unaffectedTags, tagNames);
     }
-    
     return !unaffectedTags.contains(tagName.impl());
 }
 

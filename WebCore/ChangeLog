@@ -1,3 +1,27 @@
+2010-05-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Reduce copy/paste code in HTMLParser using some template functions
+        https://bugs.webkit.org/show_bug.cgi?id=39471
+
+        No functional changes, thus no tests.
+
+        * html/HTMLParser.cpp:
+        (WebCore::addTags):
+         - New function which takes a set an an array of QualifiedNames
+           and adds the localName().impl() to the set for each QualifiedName.
+        (WebCore::isTablePart):
+        (WebCore::isScopingTag):
+        (WebCore::mapTagToFunc):
+        (WebCore::mapTagsToFunc):
+         - New functions which take QualifiedNames and a function and map from the
+           localName().impl() to the function.
+        (WebCore::HTMLParser::getNode):
+        (WebCore::HTMLParser::isHeadingTag):
+        (WebCore::HTMLParser::isResidualStyleTag):
+        (WebCore::HTMLParser::isAffectedByResidualStyle):
+
 2010-05-22  Julie Parent  <jparent@chromium.org>
 
         Reviewed by Adam Barth.
