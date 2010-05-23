@@ -54,13 +54,17 @@ public:
 
     HTML5Token() { clear(); }
 
-    void clear() { m_type = Uninitialized; }
+    void clear()
+    {
+        m_type = Uninitialized;
+    }
 
     void beginStartTag(UChar character)
     {
         ASSERT(m_type == Uninitialized);
         m_type = StartTag;
         m_data.clear();
+        m_dataString = AtomicString();
         m_selfClosing = false;
         m_currentAttribute = 0;
 
@@ -73,6 +77,7 @@ public:
         ASSERT(m_type == Uninitialized);
         m_type = EndTag;
         m_data.clear();
+        m_dataString = AtomicString();
         m_selfClosing = false;
         m_currentAttribute = 0;
 
@@ -84,7 +89,16 @@ public:
         ASSERT(m_type == Uninitialized);
         m_type = Character;
         m_data.clear();
+        m_dataString = AtomicString();
         m_data.append(character);
+    }
+
+    void beginComment()
+    {
+        ASSERT(m_type == Uninitialized);
+        m_type = Comment;
+        m_data.clear();
+        m_dataString = AtomicString();
     }
 
     void appendToName(UChar character)
@@ -98,6 +112,12 @@ public:
     {
         ASSERT(m_type == Character);
         m_data.append(characters);
+    }
+
+    void appendToComment(UChar character)
+    {
+        ASSERT(m_type == Comment);
+        m_data.append(character);
     }
 
     void addNewAttribute()
@@ -121,15 +141,6 @@ public:
 
     Type type() const { return m_type; }
 
-    AtomicString name()
-    {
-        ASSERT(m_type == StartTag || m_type == EndTag || m_type == DOCTYPE);
-        if (!m_data.isEmpty())
-            m_cachedName = AtomicString(StringImpl::adopt(m_data));
-        ASSERT(!m_cachedName.isEmpty());
-        return m_cachedName;
-    }
-
     bool selfClosing() const
     {
         ASSERT(m_type == StartTag || m_type == EndTag);
@@ -142,13 +153,32 @@ public:
         return m_attributes;
     }
 
-    String characters()
+    AtomicString name()
+    {
+        ASSERT(m_type == StartTag || m_type == EndTag || m_type == DOCTYPE);
+        return dataString();
+    }
+
+    AtomicString characters()
     {
         ASSERT(m_type == Character);
-        return String(StringImpl::adopt(m_data));
+        return dataString();
+    }
+
+    AtomicString data()
+    {
+        ASSERT(m_type == Comment);
+        return dataString();
     }
 
 private:
+    AtomicString dataString()
+    {
+        if (!m_data.isEmpty() && m_dataString.isEmpty())
+            m_dataString = AtomicString(StringImpl::adopt(m_data));
+        return m_dataString;
+    }
+
     Type m_type;
 
     // "name" for DOCTYPE, StartTag, and EndTag
@@ -168,7 +198,7 @@ private:
     // A pointer into m_attributes used during lexing.
     Attribute* m_currentAttribute;
 
-    AtomicString m_cachedName;
+    AtomicString m_dataString;
 };
 
 }

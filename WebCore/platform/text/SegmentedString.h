@@ -103,6 +103,25 @@ public:
     bool isEmpty() const { return !current(); }
     unsigned length() const;
 
+    enum LookAheadResult {
+        DidNotMatch,
+        DidMatch,
+        NotEnoughCharacters,
+    };
+
+    // WARNING: This method is currently used only by the HTML5 parser and is incomplete.
+    LookAheadResult lookAhead(const String& string)
+    {
+        if (!m_pushedChar1 && string.length() <= (unsigned) m_currentString.m_length) {
+            if (memcmp(string.characters(), m_currentString.m_current, string.length() * sizeof(UChar)))
+                return DidNotMatch;
+            return DidMatch;
+        }
+        // We haven't implemented the slow case yet.
+        ASSERT_NOT_REACHED();
+        return DidNotMatch;
+    }
+
     void advance()
     {
         if (!m_pushedChar1 && m_currentString.m_length > 1) {
@@ -112,7 +131,13 @@ public:
         }
         advanceSlowCase();
     }
-    
+
+    void advanceAndASSERT(UChar expectedCharacter)
+    {
+        ASSERT_UNUSED(expectedCharacter, *current() == expectedCharacter);
+        advance();
+    }
+
     void advancePastNewline(int& lineNumber)
     {
         ASSERT(*current() == '\n');

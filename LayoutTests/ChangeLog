@@ -2,6 +2,26 @@
 
         Reviewed by Eric Seidel.
 
+        Teach HTML5 parser how to lex comments correctly
+        https://bugs.webkit.org/show_bug.cgi?id=39537
+
+        Added a new data file for testing comment parsing.  There are some more
+        things we can test here once we implement the bogus comment state.
+
+        * html5lib/resources/comments01.dat: Added.
+        * html5lib/webkit-runner-expected.txt:
+            - Some of these tests fail in our current parser because our
+              current parser doesn't comply with HTML5.  I've set these
+              expectations to failing so the tests will "pass" in the current
+              parser.  I've double-checked the results in comments01.dat with a
+              nightly build of Firefox to make sure we agree on our
+              implementation of the spec.
+        * html5lib/webkit-runner.html:
+
+2010-05-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Add tests for previous HTML5 parser patches
         https://bugs.webkit.org/show_bug.cgi?id=39534
 

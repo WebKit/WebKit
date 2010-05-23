@@ -2,6 +2,36 @@
 
         Reviewed by Eric Seidel.
 
+        Teach HTML5 parser how to lex comments correctly
+        https://bugs.webkit.org/show_bug.cgi?id=39537
+
+        Implement the non-bogus comment states for the lexer.  There's more
+        work to do in some of these states (e.g., to handle doctype tokens and
+        bogus comments), but I'm trying to keep the patches small.
+
+        Tests: comments01.dat
+
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTML5Lexer::nextToken):
+        * html/HTML5Lexer.h:
+        * html/HTML5Token.h:
+        (WebCore::HTML5Token::beginComment):
+        (WebCore::HTML5Token::appendToComment):
+        (WebCore::HTML5Token::data):
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::convertToOldStyle):
+        * platform/text/SegmentedString.h:
+        (WebCore::SegmentedString::):
+        (WebCore::SegmentedString::peek):
+            - Occationally, the HTML5 parsing algorithm looks ahead in the
+              input stream.  The implementation here is incomplete, but its
+              enough to run the current HTML5 parsing tests.  I'll eventually
+              need to implement the slow case here.
+
+2010-05-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Make the html5lib parser tests run using the HTML5 parser
         https://bugs.webkit.org/show_bug.cgi?id=39533
 

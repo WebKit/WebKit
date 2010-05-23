@@ -873,6 +873,18 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             break;
         }
         case MarkupDeclarationOpenState: {
+            DEFINE_STATIC_LOCAL(String, dashDashString, ("--"));
+            if (cc == '-') {
+                SegmentedString::LookAheadResult result = source.lookAhead(dashDashString);
+                if (result == SegmentedString::DidMatch) {
+                    source.advanceAndASSERT('-');
+                    source.advanceAndASSERT('-');
+                    m_token->beginComment();
+                    m_state = CommentStartState;
+                    continue;
+                } else if (result == SegmentedString::NotEnoughCharacters)
+                    return false; // We need to wait for more characters to arrive.
+            }
             notImplemented();
             break;
         }
@@ -881,10 +893,10 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
                 m_state = CommentStartDashState;
             else if (cc == '>') {
                 emitParseError();
-                emitCommentToken();
+                emitCurrentToken();
                 m_state = DataState;
             } else {
-                notImplemented();
+                m_token->appendToComment(cc);
                 m_state = CommentState;
             }
             // FIXME: Handle EOF properly.
@@ -895,9 +907,11 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
                 m_state = CommentEndState;
             else if (cc == '>') {
                 emitParseError();
+                emitCurrentToken();
                 m_state = DataState;
             } else {
-                notImplemented();
+                m_token->appendToComment('-');
+                m_token->appendToComment(cc);
                 m_state = CommentState;
             }
             // FIXME: Handle EOF properly.
@@ -907,7 +921,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             if (cc == '-')
                 m_state = CommentEndDashState;
             else
-                notImplemented();
+                m_token->appendToComment(cc);
             // FIXME: Handle EOF properly.
             break;
         }
@@ -915,7 +929,8 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             if (cc == '-')
                 m_state = CommentEndState;
             else {
-                notImplemented();
+                m_token->appendToComment('-');
+                m_token->appendToComment(cc);
                 m_state = CommentState;
             }
             // FIXME: Handle EOF properly.
@@ -923,21 +938,26 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
         }
         case CommentEndState: {
             if (cc == '>') {
-                emitCommentToken();
+                emitCurrentToken();
                 m_state = DataState;
             } else if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
                 emitParseError();
-                notImplemented();
+                m_token->appendToComment('-');
+                m_token->appendToComment('-');
+                m_token->appendToComment(cc);
                 m_state = CommentEndSpaceState;
             } else if (cc == '!') {
                 emitParseError();
                 m_state = CommentEndBangState;
             } else if (cc == '-') {
                 emitParseError();
-                notImplemented();
+                m_token->appendToComment('-');
+                m_token->appendToComment(cc);
             } else {
                 emitParseError();
-                notImplemented();
+                m_token->appendToComment('-');
+                m_token->appendToComment('-');
+                m_token->appendToComment(cc);
                 m_state = CommentState;
             }
             // FIXME: Handle EOF properly.
@@ -945,13 +965,18 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
         }
         case CommentEndBangState: {
             if (cc == '-') {
-                notImplemented();
+                m_token->appendToComment('-');
+                m_token->appendToComment('-');
+                m_token->appendToComment('!');
                 m_state = CommentEndDashState;
             } else if (cc == '>') {
-                emitCommentToken();
+                emitCurrentToken();
                 m_state = DataState;
             } else {
-                notImplemented();
+                m_token->appendToComment('-');
+                m_token->appendToComment('-');
+                m_token->appendToComment('!');
+                m_token->appendToComment(cc);
                 m_state = CommentState;
             }
             // FIXME: Handle EOF properly.
@@ -959,14 +984,14 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
         }
         case CommentEndSpaceState: {
             if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
-                notImplemented();
+                m_token->appendToComment(cc);
             else if (cc == '-')
                 m_state = CommentEndDashState;
             else if (cc == '>') {
-                emitCommentToken();
+                emitCurrentToken();
                 m_state = DataState;
             } else {
-                notImplemented();
+                m_token->appendToComment(cc);
                 m_state = CommentState;
             }
             // FIXME: Handle EOF properly.
@@ -1264,10 +1289,6 @@ inline bool HTML5Lexer::isAppropriateEndTag()
     const UChar* actual = m_bufferedEndTagName.data();
     // FIXME: Is there a higher-level function we should be calling here?
     return !memcmp(appropriate, actual, m_bufferedEndTagName.size() * sizeof(UChar));
-}
-
-inline void HTML5Lexer::emitCommentToken()
-{
 }
 
 inline void HTML5Lexer::emitCharacter(UChar character)

@@ -1,3 +1,69 @@
 CONSOLE MESSAGE: line 3: PASS
 CONSOLE MESSAGE: line 3: FOO<span>BAR</span>BAZ
 resources/webkit01.dat: PASS
+
+resources/comments01.dat: 3, 6, 8, 9
+
+Test 3 of 9 in resources/comments01.dat failed. Input:
+FOO<!-- BAR --   >BAZ
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     "BAZ"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <!--  BAR --    -->
+|     "BAZ"
+
+Test 6 of 9 in resources/comments01.dat failed. Input:
+FOO<!-- BAR -- <QUX> -- MUX -- >BAZ
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     " -- MUX -- >BAZ"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <!--  BAR -- <QUX> -- MUX --  -->
+|     "BAZ"
+
+Test 8 of 9 in resources/comments01.dat failed. Input:
+FOO<!--->BAZ
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     "BAZ"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <!--  -->
+|     "BAZ"
+
+Test 9 of 9 in resources/comments01.dat failed. Input:
+FOO<!-->BAZ
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     "BAZ"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <!--  -->
+|     "BAZ"

@@ -39,6 +39,14 @@ namespace WebCore {
 static void convertToOldStyle(HTML5Token& token, Token& oldStyleToken)
 {
     switch (token.type()) {
+    case HTML5Token::Uninitialized:
+        ASSERT_NOT_REACHED();
+        break;
+    case HTML5Token::DOCTYPE:
+    case HTML5Token::EndOfFile:
+        ASSERT_NOT_REACHED();
+        notImplemented();
+        break;
     case HTML5Token::StartTag:
     case HTML5Token::EndTag: {
         oldStyleToken.beginTag = (token.type() == HTML5Token::StartTag);
@@ -58,12 +66,14 @@ static void convertToOldStyle(HTML5Token& token, Token& oldStyleToken)
         }
         break;
     }
+    case HTML5Token::Comment:
+        oldStyleToken.tagName = commentAtom;
+        oldStyleToken.text = token.data().impl();
+        break;
     case HTML5Token::Character:
         oldStyleToken.tagName = textAtom;
         oldStyleToken.text = token.characters().impl();
         break;
-    default:
-        notImplemented();
     }
 }
 
