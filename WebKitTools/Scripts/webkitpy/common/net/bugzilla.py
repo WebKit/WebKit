@@ -584,6 +584,7 @@ class Bugzilla(object):
                     raise Exception(errorMessage)
             else:
                 self.authenticated = True
+                self.username = username
 
     def _fill_attachment_form(self,
                               description,
@@ -677,6 +678,7 @@ class Bugzilla(object):
                    patch_description=None,
                    cc=None,
                    blocked=None,
+                   assignee=None,
                    mark_for_review=False,
                    mark_for_commit_queue=False):
         self.authenticate()
@@ -699,6 +701,10 @@ class Bugzilla(object):
             self.browser["cc"] = cc
         if blocked:
             self.browser["blocked"] = unicode(blocked)
+        if assignee == None:
+            assignee = self.username
+        if assignee:
+            self.browser["assigned_to"] = assignee
         self.browser["short_desc"] = bug_title
         self.browser["comment"] = bug_description
 
