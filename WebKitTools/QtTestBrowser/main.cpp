@@ -883,13 +883,13 @@ void LauncherWindow::createChrome()
     QAction* toggleResizesToContents = graphicsViewMenu->addAction("Toggle Resizes To Contents Mode", this, SLOT(toggleResizesToContents(bool)));
     toggleResizesToContents->setCheckable(true);
     toggleResizesToContents->setChecked(false);
-    toggleResizesToContents->setEnabled(false);
+    toggleResizesToContents->setEnabled(isGraphicsBased());
     toggleResizesToContents->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
 
     QAction* toggleTiledBackingStore = graphicsViewMenu->addAction("Toggle Tiled Backing Store", this, SLOT(toggleTiledBackingStore(bool)));
     toggleTiledBackingStore->setCheckable(true);
     toggleTiledBackingStore->setChecked(false);
-    toggleTiledBackingStore->setEnabled(false);
+    toggleTiledBackingStore->setEnabled(isGraphicsBased());
     toggleTiledBackingStore->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
 
     QAction* spatialNavigationAction = toolsMenu->addAction("Toggle Spatial Navigation", this, SLOT(toggleSpatialNavigation(bool)));

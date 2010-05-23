@@ -2,6 +2,19 @@
 
         Reviewed by Laszlo Gombos.
 
+        [Qt] QtTestBrowser has two graphicsview options that aren't enabled correctly
+        https://bugs.webkit.org/show_bug.cgi?id=39491
+
+        Making toggleResizesToContents and toggleTiledBackingStore checkable when
+        QtTestBrowser is started on graphics view mode.
+
+        * QtTestBrowser/main.cpp:
+        (LauncherWindow::createChrome):
+
+2010-05-23  Jesus Sanchez-Palencia  <jesus@webkit.org>
+
+        Reviewed by Laszlo Gombos.
+
         [Qt] QtTestBrowser is still called QtLauncher in the code
         https://bugs.webkit.org/show_bug.cgi?id=39488
 
