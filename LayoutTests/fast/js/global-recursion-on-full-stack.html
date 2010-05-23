@@ -11,7 +11,7 @@ function f(a, b, c, d) {
         depth++;
         f(a, b, c, d);
     } catch(e) {
-        document.write('<script> try { f(); result.innerText = "FAILED: Attempting to call f() should throw due to stack exhaustion"; } catch(e) { } </'+'script> ');
+        document.write('<script> f(); result.innerText = "FAILED: Attempting to call f() should throw due to stack exhaustion"; </'+'script> ');
     }
 }
 
