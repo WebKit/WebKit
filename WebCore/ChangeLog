@@ -2,6 +2,30 @@
 
         Reviewed by Eric Seidel.
 
+        [BREWMP] Add DragData
+        https://bugs.webkit.org/show_bug.cgi?id=39469
+
+        As BREW MP does not support dragging, add dummy implementation of DragData.
+
+        * platform/DragData.h:
+        * platform/brew/DragDataBrew.cpp: Added.
+        (WebCore::DragData::canSmartReplace):
+        (WebCore::DragData::containsColor):
+        (WebCore::DragData::containsPlainText):
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::asColor):
+        (WebCore::DragData::createClipboard):
+        (WebCore::DragData::containsCompatibleContent):
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::asFragment):
+        (WebCore::DragData::asFilenames):
+        (WebCore::DragData::containsFiles):
+
+2010-05-22  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
         [BREWMP] Add dummy Icon
         https://bugs.webkit.org/show_bug.cgi?id=39468
 
