@@ -262,7 +262,9 @@ function test()
             }
             var detail = document.createElement("pre");
             detail.appendChild(document.createTextNode(log.substring(2)));
-            detail.style.display = "none";
+            // WebKit change:
+            // We want to show the dump of the parse tree in the failure diff by default.
+            // detail.style.display = "none";
             document.body.appendChild(overview);
             document.body.appendChild(detail);
         }

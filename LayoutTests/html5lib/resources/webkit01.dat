@@ -7,3 +7,89 @@ Line: 1 Col: 4 Unexpected non-space characters. Expected DOCTYPE.
 |   <head>
 |   <body>
 |     "Test"
+
+#data
+<div></div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <div>
+
+#data
+<div>Test</div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <div>
+|       "Test"
+
+#data
+<di
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+
+#data
+<div>Hello</div>
+<script>
+console.log("PASS");
+</script>
+<div>Bye</div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <div>
+|       "Hello"
+|     "
+"
+|     <script>
+|       "
+console.log("PASS");
+"
+|     "
+"
+|     <div>
+|       "Bye"
+
+#data
+<div foo="bar">Hello</div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <div>
+|       foo="bar"
+|       "Hello"
+
+#data
+<div>Hello</div>
+<script>
+console.log("FOO<span>BAR</span>BAZ");
+</script>
+<div>Bye</div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <div>
+|       "Hello"
+|     "
+"
+|     <script>
+|       "
+console.log("FOO<span>BAR</span>BAZ");
+"
+|     "
+"
+|     <div>
+|       "Bye"

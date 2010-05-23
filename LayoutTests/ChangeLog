@@ -2,6 +2,22 @@
 
         Reviewed by Eric Seidel.
 
+        Add tests for previous HTML5 parser patches
+        https://bugs.webkit.org/show_bug.cgi?id=39534
+
+        Now that we have the test harness working, I've added tests for the
+        previous HTML5 parser patches.  To run these tests, you need to pass
+        the --html5-parser flag to DumpRenderTree (of course, you can run them
+        with the old parser in the usual way).
+
+        * html5lib/resources/webkit01.dat:
+        * html5lib/webkit-runner-expected.txt:
+        * html5lib/webkit-runner.html:
+
+2010-05-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Make the html5lib parser tests run using the HTML5 parser
         https://bugs.webkit.org/show_bug.cgi?id=39533
 
