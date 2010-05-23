@@ -132,6 +132,8 @@ void PageClientQGraphicsWidget::update(const QRect& dirtyRect)
         overlay->update(QRectF(dirtyRect));
 #if USE(ACCELERATED_COMPOSITING)
     syncLayers();
+    // This might be a slow-scroll. We ensure that the compositing layers are in the right position.
+    updateCompositingScrollPosition();
 #endif
 }
 
