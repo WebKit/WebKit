@@ -1,0 +1,9 @@
+#data
+Test
+#errors
+Line: 1 Col: 4 Unexpected non-space characters. Expected DOCTYPE.
+#document
+| <html>
+|   <head>
+|   <body>
+|     "Test"

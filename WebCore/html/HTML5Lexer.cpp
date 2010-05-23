@@ -1245,7 +1245,9 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             return true;
         }
     }
-    return false;
+    // We've reached the end of the input stream.  If we have a character
+    // token buffered, we should emit it.
+    return m_token->type() == HTML5Token::Character;
 }
 
 inline bool HTML5Lexer::temporaryBufferIs(const char*)

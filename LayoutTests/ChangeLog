@@ -1,3 +1,22 @@
+2010-05-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Make the html5lib parser tests run using the HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=39533
+
+        This patch adds a version of runner.html that's easier to parse (e.g.,
+        no doctype or HTML comments) as well as a new test data file.  The
+        exciting thing is that this test passes in the new HTML5 parser using
+        this runner.
+
+        Once the HTML5 parser is strong enough, we'll remove webkit-runner.html
+        and have runner.html run the new webkit*.dat files.
+
+        * html5lib/resources/webkit01.dat: Added.
+        * html5lib/webkit-runner-expected.txt: Added.
+        * html5lib/webkit-runner.html: Added.
+
 2010-05-23  Julie Parent  <jparent@chromium.org>
 
         Unreviewed.

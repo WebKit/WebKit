@@ -2,6 +2,22 @@
 
         Reviewed by Eric Seidel.
 
+        Make the html5lib parser tests run using the HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=39533
+
+        Turns out we're just one small tweak away from running the html5lib
+        tests.  After this patch lands, we should be able to introduce tests
+        for every change to the HTML5 parser.
+
+        Test: html5lib/webkit-runner.html
+
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTML5Lexer::nextToken):
+
+2010-05-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Make HTML5 parser parse <script>alert("<hi>");</script>
         https://bugs.webkit.org/show_bug.cgi?id=39525
 
