@@ -35,6 +35,7 @@ class PostDiff(AbstractStep):
     def options(cls):
         return AbstractStep.options() + [
             Options.description,
+            Options.comment,
             Options.review,
             Options.request_commit,
             Options.open_bug,
@@ -43,7 +44,7 @@ class PostDiff(AbstractStep):
     def run(self, state):
         diff = self.cached_lookup(state, "diff")
         description = self._options.description or "Patch"
-        comment_text = None
+        comment_text = self._options.comment
         self._tool.bugs.add_patch_to_bug(state["bug_id"], diff, description, comment_text=comment_text, mark_for_review=self._options.review, mark_for_commit_queue=self._options.request_commit)
         if self._options.open_bug:
             self._tool.user.open_url(self._tool.bugs.bug_url_for_bug_id(state["bug_id"]))

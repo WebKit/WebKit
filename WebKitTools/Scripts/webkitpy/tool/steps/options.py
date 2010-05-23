@@ -36,6 +36,7 @@ class Options(object):
     check_style = make_option("--ignore-style", action="store_false", dest="check_style", default=True, help="Don't check to see if the patch has proper style before uploading.")
     clean = make_option("--no-clean", action="store_false", dest="clean", default=True, help="Don't check if the working directory is clean before applying patches")
     close_bug = make_option("--no-close", action="store_false", dest="close_bug", default=True, help="Leave bug open after landing.")
+    comment = make_option("--comment", action="store", type="string", dest="comment", help="Comment to post to bug.")
     component = make_option("--component", action="store", type="string", dest="component", help="Component for the new bug.")
     confirm = make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Skip confirmation steps.")
     description = make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: \"patch\")")
