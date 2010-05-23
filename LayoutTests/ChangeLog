@@ -1,3 +1,13 @@
+2010-05-23  Julie Parent  <jparent@chromium.org>
+
+        Unreviewed.
+
+        Adds Chromium expectations for new test added in http://trac.webkit.org/changeset/60026/.
+        Difference is in the line number printed for the exception.
+
+        * platform/chromium-mac/fast/dom/nested-script-exceptions-expected.txt: Added.
+        * platform/chromium-win/fast/dom/nested-script-exceptions-expected.txt: Added.
+
 2010-05-23  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Darin Adler.
