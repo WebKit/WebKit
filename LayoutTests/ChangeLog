@@ -1,3 +1,21 @@
+2010-05-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        REGRESSION(r59977): platform/mac/fast/AppleScript/001.html failure
+        https://bugs.webkit.org/show_bug.cgi?id=39531
+
+        Revert r59977 and r59943. These changes caused some exceptions to no longer be
+        reported in the inspector; I can't tell what they were originally trying to fix
+        so I am not sure how to fix them other than by reverting.
+
+        Unskipped the test that was broken, and also added a new test.
+        
+        * fast/dom/nested-script-exceptions-expected.txt: Added.
+        * fast/dom/nested-script-exceptions.html: Added. Shows that inspector functionality
+        would break in a meaningful way if the reverted change was allowed to stand.
+        * platform/mac/Skipped:
+
 2010-05-22  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Nate Chapin.

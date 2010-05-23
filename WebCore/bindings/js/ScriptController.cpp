@@ -63,7 +63,6 @@ ScriptController::ScriptController(Frame* frame)
     , m_handlerLineNumber(0)
     , m_sourceURL(0)
     , m_inExecuteScript(false)
-    , m_inEvaluateInWorld(false)
     , m_processingTimerCallback(false)
     , m_paused(false)
     , m_allowPopupsFromPlugin(false)
@@ -114,9 +113,6 @@ JSDOMWindowShell* ScriptController::createWindowShell(DOMWrapperWorld* world)
 
 ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld* world, ShouldAllowXSS shouldAllowXSS)
 {
-    bool wasInEvaluateInWorld = m_inEvaluateInWorld;
-    m_inEvaluateInWorld = true;
-
     const SourceCode& jsSourceCode = sourceCode.jsSourceCode();
     String sourceURL = ustringToString(jsSourceCode.provider()->url());
 
@@ -158,15 +154,13 @@ ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode
     // Evaluating the JavaScript could cause the frame to be deallocated
     // so we start the keep alive timer here.
     m_frame->keepAlive();
-    
-    m_inEvaluateInWorld = wasInEvaluateInWorld;
 
     if (comp.complType() == Normal || comp.complType() == ReturnValue) {
         m_sourceURL = savedSourceURL;
         return comp.value();
     }
 
-    if ((comp.complType() == Throw || comp.complType() == Interrupted) && !wasInEvaluateInWorld)
+    if (comp.complType() == Throw || comp.complType() == Interrupted)
         reportException(exec, comp.value());
 
     m_sourceURL = savedSourceURL;

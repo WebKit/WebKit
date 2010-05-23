@@ -187,7 +187,6 @@ private:
     const String* m_sourceURL;
 
     bool m_inExecuteScript;
-    bool m_inEvaluateInWorld;
 
     bool m_processingTimerCallback;
     bool m_paused;
