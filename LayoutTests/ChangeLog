@@ -1,3 +1,25 @@
+2010-05-24  Jaime Yap  <jaimeyap@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Removes test forkages that are no longer needed due to new v8 stack trace API.
+        https://bugs.webkit.org/show_bug.cgi?id=39622
+
+        * platform/chromium-mac/plugins/document-open-expected.txt: Removed.
+        * platform/chromium-mac/plugins/geturlnotify-during-document-teardown-expected.txt: Removed.
+        * platform/chromium-mac/plugins/netscape-plugin-map-data-to-src-expected.txt: Removed.
+        * platform/chromium-mac/plugins/netscape-plugin-setwindow-size-2-expected.txt: Removed.
+        * platform/chromium-mac/plugins/netscape-plugin-setwindow-size-expected.txt: Removed.
+        * platform/chromium-mac/plugins/open-and-close-window-with-plugin-expected.txt: Removed.
+        * platform/chromium-mac/plugins/window-open-expected.txt: Removed.
+        * platform/chromium-win/plugins/document-open-expected.txt: Removed.
+        * platform/chromium-win/plugins/geturlnotify-during-document-teardown-expected.txt: Removed.
+        * platform/chromium-win/plugins/netscape-plugin-map-data-to-src-expected.txt: Removed.
+        * platform/chromium-win/plugins/netscape-plugin-setwindow-size-2-expected.txt: Removed.
+        * platform/chromium-win/plugins/netscape-plugin-setwindow-size-expected.txt: Removed.
+        * platform/chromium-win/plugins/open-and-close-window-with-plugin-expected.txt: Removed.
+        * platform/chromium-win/plugins/window-open-expected.txt: Removed.
+
 2010-05-24  Adam Barth  <abarth@webkit.org>
 
         Rubber-stamped by Eric Seidel.
