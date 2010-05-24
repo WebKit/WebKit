@@ -1,5 +1,11 @@
 2010-05-24  Shinichiro Hamaji  <hamaji@chromium.org>
 
+        Unreviewed. Fixed a typo in test_expecations.txt.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-05-24  Shinichiro Hamaji  <hamaji@chromium.org>
+
         Unreviewed. Fixed the expectations for Windows.
         It seems my win environment was unhealthy.
 

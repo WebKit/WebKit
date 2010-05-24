@@ -2843,4 +2843,4 @@ BUG44804 WIN DEBUG : websocket/tests/long-invalid-header.html = TEXT
 
 // Need rebaseline
 BUGWK24906 : fast/text/backslash-to-yen-sign.html = FAIL
-BUGWK24906 : fast/text/backslash-to-yen-sign-dynamic.html = FAI
+BUGWK24906 : fast/text/backslash-to-yen-sign-dynamic.html = FAIL
