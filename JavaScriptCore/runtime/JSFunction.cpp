@@ -28,6 +28,7 @@
 #include "CodeBlock.h"
 #include "CommonIdentifiers.h"
 #include "CallFrame.h"
+#include "ExceptionHelpers.h"
 #include "FunctionPrototype.h"
 #include "JSGlobalObject.h"
 #include "Interpreter.h"
@@ -40,6 +41,14 @@ using namespace WTF;
 using namespace Unicode;
 
 namespace JSC {
+
+JSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState* exec, JSObject* constructor, JSValue, const ArgList&)
+{
+    CodeBlock* codeBlock = exec->callerFrame()->codeBlock();
+    unsigned vPCIndex = codeBlock->bytecodeOffset(exec, exec->returnPC());
+    exec->setException(createNotAConstructorError(exec, constructor, vPCIndex, codeBlock));
+    return JSValue();
+}
 
 ASSERT_CLASS_FITS_IN_CELL(JSFunction);
 

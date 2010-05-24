@@ -364,16 +364,29 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, const Debug
     m_thisRegister.setIndex(m_nextParameterIndex);
     ++m_nextParameterIndex;
     ++m_codeBlock->m_numParameters;
-
-    if (!isConstructor() && (functionBody->usesThis() || m_shouldEmitDebugHooks)) {
-        emitOpcode(op_convert_this);
-        instructions().append(m_thisRegister.index());
-    }
     
     for (size_t i = 0; i < parameterCount; ++i)
         addParameter(parameters[i]);
 
     preserveLastVar();
+
+    if (isConstructor()) {
+        RefPtr<RegisterID> func = newTemporary();
+        RefPtr<RegisterID> funcProto = newTemporary();
+
+        emitOpcode(op_get_callee);
+        instructions().append(func->index());
+        // Load prototype.
+        emitGetByIdExceptionInfo(op_create_this);
+        emitGetById(funcProto.get(), func.get(), globalData()->propertyNames->prototype);
+
+        emitOpcode(op_create_this);
+        instructions().append(m_thisRegister.index());
+        instructions().append(funcProto->index());
+    } else if (functionBody->usesThis() || m_shouldEmitDebugHooks) {
+        emitOpcode(op_convert_this);
+        instructions().append(m_thisRegister.index());
+    }
 }
 
 BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, const Debugger* debugger, const ScopeChain& scopeChain, SymbolTable* symbolTable, EvalCodeBlock* codeBlock)
@@ -1581,8 +1594,6 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
         }
     }
 
-    RefPtr<RegisterID> funcProto = newTemporary();
-
     // Generate code for arguments.
     Vector<RefPtr<RegisterID>, 16> argv;
     argv.append(newTemporary()); // reserve space for "this"
@@ -1597,11 +1608,6 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
         emitOpcode(op_profile_will_call);
         instructions().append(func->index());
     }
-
-    // Load prototype.
-    emitExpressionInfo(divot, startOffset, endOffset);
-    emitGetByIdExceptionInfo(op_construct);
-    emitGetById(funcProto.get(), func, globalData()->propertyNames->prototype);
 
     // Reserve space for call frame.
     Vector<RefPtr<RegisterID>, RegisterFile::CallFrameHeaderSize> callFrame;
@@ -1618,8 +1624,6 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
     instructions().append(func->index()); // func
     instructions().append(argv.size()); // argCount
     instructions().append(argv[0]->index() + argv.size() + RegisterFile::CallFrameHeaderSize); // registerOffset
-    instructions().append(funcProto->index()); // proto
-    instructions().append(argv[0]->index()); // thisRegister
     if (dst != ignoredResult()) {
         emitOpcode(op_call_put_result);
         instructions().append(dst->index()); // dst
