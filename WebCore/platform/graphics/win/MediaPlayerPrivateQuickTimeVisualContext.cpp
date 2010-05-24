@@ -45,6 +45,7 @@
 #include "StringHash.h"
 #include "TimeRanges.h"
 #include "Timer.h"
+#include "WKCAImageQueue.h"
 #include <CoreGraphics/CGContext.h>
 #include <Wininet.h>
 #include <wtf/CurrentTime.h>
