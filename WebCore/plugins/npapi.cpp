@@ -25,7 +25,6 @@
 
 #include "config.h"
 
-#include "PluginInfoStore.h"
 #include "PluginMainThreadScheduler.h"
 #include "PluginView.h"
 #include "npruntime_internal.h"

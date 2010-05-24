@@ -42385,14 +42385,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\plugins\PluginInfoStore.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\plugins\PluginInfoStore.h"
-				>
-			</File>
-			<File
 				RelativePath="..\plugins\PluginMainThreadScheduler.cpp"
 				>
 			</File>

@@ -793,7 +793,6 @@
 
         # Exclude some, but not all, of plugins.
         '../plugins/PluginDatabase.cpp',
-        '../plugins/PluginInfoStore.cpp',
         '../plugins/PluginMainThreadScheduler.cpp',
         '../plugins/PluginPackage.cpp',
         '../plugins/PluginStream.cpp',

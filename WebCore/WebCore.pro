@@ -901,7 +901,6 @@ SOURCES += \
     platform/Widget.cpp \
     plugins/PluginDatabase.cpp \
     plugins/PluginDebug.cpp \
-    plugins/PluginInfoStore.cpp \
     plugins/PluginPackage.cpp \
     plugins/PluginStream.cpp \
     plugins/PluginView.cpp \
@@ -1681,7 +1680,6 @@ HEADERS += \
     plugins/PluginData.h \
     plugins/PluginDebug.h \
     plugins/Plugin.h \
-    plugins/PluginInfoStore.h \
     plugins/PluginMainThreadScheduler.h \
     plugins/PluginPackage.h \
     plugins/PluginStream.h \

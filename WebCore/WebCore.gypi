@@ -2994,8 +2994,6 @@
             'plugins/PluginDatabase.h',
             'plugins/PluginDebug.cpp',
             'plugins/PluginDebug.h',
-            'plugins/PluginInfoStore.cpp',
-            'plugins/PluginInfoStore.h',
             'plugins/PluginMainThreadScheduler.cpp',
             'plugins/PluginMainThreadScheduler.h',
             'plugins/PluginPackage.cpp',
