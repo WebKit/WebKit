@@ -761,12 +761,9 @@ SET(WebCore_SOURCES
     dom/ContainerNode.cpp
     dom/CustomEvent.cpp
     dom/DOMImplementation.cpp
-<<<<<<< HEAD
+    dom/DOMStringList.cpp
     dom/DeviceOrientation.cpp
     dom/DeviceOrientationEvent.cpp
-=======
-    dom/DOMStringList.cpp
->>>>>>> x
     dom/Document.cpp
     dom/DocumentFragment.cpp
     dom/DocumentType.cpp

@@ -1,5 +1,14 @@
 2010-05-24  Jeremy Orlow  <jorlow@chromium.org>
 
+        Unreviewed.  Forgot to redo the expectation after adding the contains
+        method.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+
+2010-05-24  Jeremy Orlow  <jorlow@chromium.org>
+
         Not reviewed.
 
         I forgot to update platform specific expectations in
