@@ -975,13 +975,18 @@ inline bool objectIsRelayoutBoundary(const RenderObject *obj)
 {
     // FIXME: In future it may be possible to broaden this condition in order to improve performance.
     // Table cells are excluded because even when their CSS height is fixed, their height()
-    // may depend on their contents.
-    return obj->isTextControl()
-        || (obj->hasOverflowClip() && !obj->style()->width().isIntrinsicOrAuto() && !obj->style()->height().isIntrinsicOrAuto() && !obj->style()->height().isPercent() && !obj->isTableCell())
+    // may also depend on their contents.
+    bool hasContentsDependHeight = ((obj->style()->height().isIntrinsicOrAuto() || obj->style()->height().isPercent()) 
+                                 || (obj->style()->minHeight().isIntrinsicOrAuto() || obj->style()->minHeight().isPercent())
+                                 || (obj->style()->maxHeight().isIntrinsicOrAuto() || obj->style()->maxHeight().isPercent()));
+
+    return !hasContentsDependHeight
+           && (obj->isTextControl() 
+               || (obj->hasOverflowClip() && !obj->style()->width().isIntrinsicOrAuto() && !obj->isTableCell() && !hasContentsDependHeight)
 #if ENABLE(SVG)
-           || obj->isSVGRoot()
+               || obj->isSVGRoot()
 #endif
-           ;
+               );
 }
 
 inline void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, RenderObject* newRoot)
