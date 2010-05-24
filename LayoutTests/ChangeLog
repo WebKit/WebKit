@@ -1,3 +1,13 @@
+2010-05-24  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Unreviewed broken Qt test fix.
+
+        0x5C of EUC-JP is not Yen Sign but U+005C
+        https://bugs.webkit.org/show_bug.cgi?id=24906
+
+        * platform/qt/fast/text/backslash-to-yen-sign-dynamic-expected.txt:
+        * platform/qt/fast/text/backslash-to-yen-sign-expected.txt:
+
 2010-05-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r60068.

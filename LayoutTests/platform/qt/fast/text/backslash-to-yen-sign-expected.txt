@@ -4,8 +4,8 @@ layer at (0,0) size 800x277
   RenderBlock {HTML} at (0,0) size 800x277
     RenderBody {BODY} at (8,8) size 784x261
       RenderBlock {DIV} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 352x20
-          text run at (0,0) width 352: "No font is specified. expected: backslash, actual: \\"
+        RenderText {#text} at (0,0) size 351x20
+          text run at (0,0) width 351: "No font is specified. expected: backslash, actual: \\"
       RenderBlock {DIV} at (0,20) size 784x20
         RenderText {#text} at (0,0) size 382x20
           text run at (0,0) width 382: "Using font \"MS PGothic\". expected: yen sign, actual: \x{A5}"
@@ -37,8 +37,8 @@ layer at (0,0) size 800x277
         RenderText {#text} at (0,0) size 313x20
           text run at (0,0) width 313: "Using font \"\x{30E1}\x{30A4}\x{30EA}\x{30AA}\". expected: yen sign, actual: \x{A5}"
       RenderBlock {DIV} at (0,220) size 784x21
-        RenderText {#text} at (0,0) size 339x21
-          text run at (0,0) width 339: "Using font \"Times\". expected: backslash, actual: \\"
+        RenderText {#text} at (0,0) size 337x21
+          text run at (0,0) width 337: "Using font \"Times\". expected: backslash, actual: \\"
       RenderBlock {DIV} at (0,241) size 784x20
-        RenderText {#text} at (0,0) size 350x20
-          text run at (0,0) width 350: "Using font \"foobar\". expected: backslash, actual: \\"
+        RenderText {#text} at (0,0) size 349x20
+          text run at (0,0) width 349: "Using font \"foobar\". expected: backslash, actual: \\"
