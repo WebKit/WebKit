@@ -5083,7 +5083,7 @@ editing/selection/shift-click.html
 fast/loader/recursive-before-unload-crash.html 
 
 # New canvas test suite from http://philip.html5.org/tests/canvas/suite/tests/
-fast/canvas/philip
+canvas/philip
 
 # Need to dump context menu items on eventSender.contextClick(true).
 # https://bugs.webkit.org/show_bug.cgi?id=39103

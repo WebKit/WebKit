@@ -187,7 +187,7 @@ fast/css/font-face-woff.html
 scrollbars/scrollbar-click-does-not-blur-content.html
 
 # New canvas test suite from http://philip.html5.org/tests/canvas/suite/tests/
-fast/canvas/philip
+canvas/philip
 
 # IndexedDB is not yet enabled.
 storage/indexeddb

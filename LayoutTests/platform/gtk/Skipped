@@ -5924,7 +5924,7 @@ fast/loader/recursive-before-unload-crash.html
 css1/color_and_background/background_attachment.html
 
 # New canvas test suite from http://philip.html5.org/tests/canvas/suite/tests/
-fast/canvas/philip
+canvas/philip
 
 # Skip this, it's pending on one patch in the commit queue
 accessibility/aria-controls-with-tabs.html
