@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 2: PASS
+CONSOLE MESSAGE: line 2: FOO<span>BAR</span>BAZ
+Content-Type: text/plain
+resources/webkit01.dat: PASS
+
+resources/comments01.dat: PASS
+#EOF

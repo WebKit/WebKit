@@ -1,5 +1,14 @@
 2010-05-24  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Adam Barth.
+
+        Add a temporary script for testing the html5 parser until it can run more layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=39611
+
+        * Scripts/test-html5-parser: Added.
+
+2010-05-24  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Chris Jerdonek.
 
         webkit-patch needs --verbose flag to enable DEBUG logging
