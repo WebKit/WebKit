@@ -1,5 +1,13 @@
 2010-05-24  Anders Carlsson  <andersca@apple.com>
 
+        Yet another Windows build fix.
+        
+        * WebView.cpp:
+        (WebView::canShowMIMEType):
+        Use the right capitalizatinon of 'MIME' (which also happens to be incorrect according to our guidelines).
+
+2010-05-24  Anders Carlsson  <andersca@apple.com>
+
         Another Windows build fix.
 
         * WebView.cpp:
