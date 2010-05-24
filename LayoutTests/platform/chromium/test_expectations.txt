@@ -2840,5 +2840,3 @@ BUG44654 SKIP : fast/dom/Window/window-properties-on-device-orientation.html = T
 
 BUG44804 WIN DEBUG : websocket/tests/handshake-error.html = TEXT
 BUG44804 WIN DEBUG : websocket/tests/long-invalid-header.html = TEXT
-
-BUG44806 WIN DEBUG : editing/pasteboard/drop-link.html = TEXT
