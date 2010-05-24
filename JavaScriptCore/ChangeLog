@@ -1,3 +1,19 @@
+2010-05-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=39575
+        Make JS DOMObject inherit from JSObjectWithGlobalObject instead of JSObject
+
+        Expose the global object stored in JSObjectWithGlobalObject.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSObjectWithGlobalObject.cpp:
+        (JSC::JSObjectWithGlobalObject::JSObjectWithGlobalObject):
+        (JSC::JSObjectWithGlobalObject::globalObject):
+        * runtime/JSObjectWithGlobalObject.h:
+
 2010-05-21  Oliver Hunt  <oliver@apple.com>
 
         "asm volatile" isn't valid outside of functions.

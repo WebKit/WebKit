@@ -33,8 +33,14 @@ namespace JSC {
 JSObjectWithGlobalObject::JSObjectWithGlobalObject(JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure)
     : JSObject(structure)
 {
+    COMPILE_ASSERT(AnonymousSlotCount == 1, AnonymousSlotCount_must_be_one);
     ASSERT(!globalObject || globalObject->isGlobalObject());
-    putAnonymousValue(0, globalObject);
+    putAnonymousValue(GlobalObjectSlot, globalObject);
 }
 
+JSGlobalObject* JSObjectWithGlobalObject::globalObject() const
+{
+    return asGlobalObject((getAnonymousValue(GlobalObjectSlot).asCell()));
 }
+
+} // namespace JSC

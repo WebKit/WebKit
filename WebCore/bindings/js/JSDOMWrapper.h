@@ -22,15 +22,15 @@
 #ifndef JSDOMWrapper_h
 #define JSDOMWrapper_h
 
-#include <runtime/JSObject.h>
+#include <runtime/JSObjectWithGlobalObject.h>
 
 namespace WebCore {
 
-// Base class for all objects in this binding except Window.
-class DOMObject : public JSC::JSObject {
+// FIXME: Rename to JSDOMWrapper.
+class DOMObject : public JSC::JSObjectWithGlobalObject {
 protected:
-    explicit DOMObject(NonNullPassRefPtr<JSC::Structure> structure) 
-        : JSObject(structure)
+    explicit DOMObject(JSC::JSGlobalObject* globalObject, NonNullPassRefPtr<JSC::Structure> structure) 
+        : JSObjectWithGlobalObject(globalObject, structure)
     {
     }
 

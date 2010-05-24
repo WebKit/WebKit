@@ -1,3 +1,29 @@
+2010-05-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=39575
+        Make JS DOMObject inherit from JSObjectWithGlobalObject instead of JSObject
+
+        - Changes JSDOMWindowShell to inherit from JSObject instead of
+          DOMObject since it doesn't ever go into any DOMObject tables.
+          In a separate change, we may want to make this inherit from 
+          JSObjectWithGlobalObject since JSDOMWindowShell does store a
+          global object pointer.
+        - Change DOMObject to inherit from JSObjectWithGlobalObject
+          instead of JSObject. In this change I am keeping around
+          DOMObjectWithGlobalPointer, which now just uses the capabilities
+          of JSObjectWithGlobalObject instead of implementing them
+          itself.  DOMObjectWithGlobalPointer will go away in a subsequent
+          patch.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMObjectWithGlobalPointer::globalObject):
+        (WebCore::DOMObjectWithGlobalPointer::DOMObjectWithGlobalPointer):
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/JSDOMWrapper.h:
+        (WebCore::DOMObject::DOMObject):
+
 2010-05-23  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, just being a copy/paste monkey.  Oook, eeek.
