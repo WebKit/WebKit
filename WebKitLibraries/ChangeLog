@@ -1,3 +1,17 @@
+2010-05-23  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        HTML5 <video> tag performance worse than Flash
+        https://bugs.webkit.org/show_bug.cgi?id=39577
+        rdar://problem/7982458
+
+        Added WebKitSystemInterface calls for new CAImageQueue APIs.
+        
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
+        * win/lib/WebKitSystemInterface.lib:
+        * win/lib/WebKitSystemInterface_debug.lib:
+
 2010-05-20  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
