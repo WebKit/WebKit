@@ -1,3 +1,15 @@
+2010-05-24  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        Geolocation causes DOMWindow to leak if position requests are in progress when the page is navigated away
+        https://bugs.webkit.org/show_bug.cgi?id=39288
+
+        * fast/dom/Geolocation/ongoing-request-leak-expected.txt: Added.
+        * fast/dom/Geolocation/ongoing-request-leak.html: Added.
+        * fast/dom/Geolocation/script-tests/ongoing-request-leak.js: Added.
+        * platform/gtk/Skipped:
+
 2010-05-24  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.

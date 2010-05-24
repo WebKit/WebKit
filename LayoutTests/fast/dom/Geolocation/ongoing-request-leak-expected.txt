@@ -1,0 +1,1 @@
+Exercises a condition where the DOMWindow may leak if Geolocation requests are ongoing when the page is navigated away or closed. Complete.
