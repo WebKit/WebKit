@@ -85,6 +85,7 @@ GEN := \
     $(intermediates)/bindings/V8Comment.h \
     $(intermediates)/bindings/V8DOMCoreException.h \
     $(intermediates)/bindings/V8DOMImplementation.h \
+    $(intermediates)/bindings/V8DOMStringList.h \
     $(intermediates)/bindings/V8DeviceOrientationEvent.h \
     $(intermediates)/bindings/V8Document.h \
     $(intermediates)/bindings/V8DocumentFragment.h \

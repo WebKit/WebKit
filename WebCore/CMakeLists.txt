@@ -139,6 +139,7 @@ SET(WebCore_IDL_FILES
     dom/CustomEvent.idl
     dom/DOMCoreException.idl
     dom/DOMImplementation.idl
+    dom/DOMStringList.idl
     dom/DeviceOrientationEvent.idl
     dom/Document.idl
     dom/DocumentFragment.idl
@@ -760,8 +761,12 @@ SET(WebCore_SOURCES
     dom/ContainerNode.cpp
     dom/CustomEvent.cpp
     dom/DOMImplementation.cpp
+<<<<<<< HEAD
     dom/DeviceOrientation.cpp
     dom/DeviceOrientationEvent.cpp
+=======
+    dom/DOMStringList.cpp
+>>>>>>> x
     dom/Document.cpp
     dom/DocumentFragment.cpp
     dom/DocumentType.cpp

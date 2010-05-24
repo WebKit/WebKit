@@ -470,6 +470,7 @@ SOURCES += \
     dom/DocumentFragment.cpp \
     dom/DocumentType.cpp \
     dom/DOMImplementation.cpp \
+    dom/DOMStringList.cpp \
     dom/DynamicNodeList.cpp \
     dom/EditingText.cpp \
     dom/Element.cpp \
@@ -1199,6 +1200,7 @@ HEADERS += \
     dom/Document.h \
     dom/DocumentType.h \
     dom/DOMImplementation.h \
+    dom/DOMStringList.h \
     dom/DynamicNodeList.h \
     dom/EditingText.h \
     dom/Element.h \

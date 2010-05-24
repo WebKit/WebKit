@@ -139,6 +139,7 @@ IDL_BINDINGS += \
 	Webcore/dom/CustomEvent.idl \
 	WebCore/dom/DOMCoreException.idl \
 	WebCore/dom/DOMImplementation.idl \
+	WebCore/dom/DOMStringList.idl \
 	WebCore/dom/DeviceOrientationEvent.idl \
 	WebCore/dom/Document.idl \
 	WebCore/dom/DocumentFragment.idl \
@@ -770,6 +771,8 @@ webcore_sources += \
 	WebCore/dom/DOMCoreException.h \
 	WebCore/dom/DOMImplementation.cpp \
 	WebCore/dom/DOMImplementation.h \
+	WebCore/dom/DOMStringList.cpp \
+	WebCore/dom/DOMStringList.h \
 	WebCore/dom/DeviceOrientation.cpp \
 	WebCore/dom/DeviceOrientation.h \
 	WebCore/dom/DeviceOrientationClient.h \
@@ -3909,6 +3912,7 @@ IDL_BINDINGS_GDOM += \
 	WebCore/dom/DocumentFragment.idl \
 	WebCore/dom/DocumentType.idl \
 	WebCore/dom/DOMImplementation.idl \
+	WebCore/dom/DOMStringList.idl \
 	WebCore/dom/Element.idl \
 	WebCore/dom/EntityReference.idl \
 	WebCore/dom/MessagePort.idl \

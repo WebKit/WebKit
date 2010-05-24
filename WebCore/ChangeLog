@@ -1,3 +1,42 @@
+2010-05-20  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add DOMStringList idl, needed for IndexedDB and for HTML5 drag & drop
+        https://bugs.webkit.org/show_bug.cgi?id=39429
+
+        IndexedDB depends on DOMStringList.
+        http://dev.w3.org/2006/webapi/WebSimpleDB/#idl-def-IDBDatabase
+        It's currently specced here:
+        http://www.w3.org/TR/DOM-Level-3-Core/core.html#DOMStringList
+
+        Existing tests cover the constructor.  IndexedDB will also use this
+        soon (and thus add test coverage).
+
+        * Android.mk:
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/DOMStringList.h: Added.
+        (WebCore::DOMStringList::create):
+        (WebCore::DOMStringList::length):
+        (WebCore::DOMStringList::item):
+        (WebCore::DOMStringList::isEmpty):
+        (WebCore::DOMStringList::clear):
+        (WebCore::DOMStringList::append):
+        (WebCore::DOMStringList::DOMStringList):
+        * dom/DOMStringList.idl: Added.
+        * page/DOMWIndow.idl: Re-enabled constructor
+
 2010-05-23  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
