@@ -1,3 +1,35 @@
+2010-05-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Database origins aren't populated at launch (missing db in prefs sheet, possible other symptoms)
+        <rdar://problem/8013233> and https://bugs.webkit.org/show_bug.cgi?id=39486
+
+        Currently, a Tracker needs to know it's path before origins are populated. Testing databases and 
+        related features is made very difficult with this regression, so instead of changing things in a
+        complicated way to make this not the case, I've added an "initialize Tracker with this path" function
+        that calls the DatabaseTracker constructor with the initial path.
+
+        I checked the other platforms besides Mac and Win, and none of them seem to perform the 
+        "initialize databases if necessary" step in their init routines, so this change shouldn't effect them.
+
+        No new tests. (API specific layout test in DRT is forthcoming)
+
+        * WebCore.base.exp:
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::initializeTracker): Added to create the tracker with its initial path.
+        (WebCore::DatabaseTracker::tracker): Move the static tracker out so tracker() and initializeTracker()
+          can share it. Add a fallback to not change behavior of platforms that don't call the new 
+          "initializeTracker()" method.
+        (WebCore::DatabaseTracker::DatabaseTracker): Changed to take the initial path as an argument.
+        * storage/DatabaseTracker.h:
+
+        * storage/chromium/DatabaseTrackerChromium.cpp:
+        (WebCore::DatabaseTracker::tracker): Adapt to new c'tor.
+        (WebCore::DatabaseTracker::DatabaseTracker): Ditto.
+
+
 2010-05-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
