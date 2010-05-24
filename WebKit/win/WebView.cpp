@@ -105,8 +105,8 @@
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PlatformWheelEvent.h>
+#include <WebCore/PluginData.h>
 #include <WebCore/PluginDatabase.h>
-#include <WebCore/PluginInfoStore.h>
 #include <WebCore/PluginView.h>
 #include <WebCore/PopupMenu.h>
 #include <WebCore/ProgressTracker.h>

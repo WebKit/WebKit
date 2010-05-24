@@ -1,5 +1,12 @@
 2010-05-24  Anders Carlsson  <andersca@apple.com>
 
+        Another Windows build fix.
+
+        * WebView.cpp:
+        Don't include PlugInInfoStore.h, instead include PluginData.h
+
+2010-05-24  Anders Carlsson  <andersca@apple.com>
+
         Fix Windows build.
 
         * WebView.cpp:
