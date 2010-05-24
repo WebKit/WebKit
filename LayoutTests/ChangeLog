@@ -1,3 +1,18 @@
+2010-05-18  Jaime Yap  <jaimeyap@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Test expectations changed due to new stackTrace field on timeline
+        records.
+        https://bugs.webkit.org/show_bug.cgi?id=37502
+
+        * inspector/timeline-test.js:
+        * platform/chromium-win/inspector/timeline-event-dispatch-expected.txt:
+        * platform/chromium-win/inspector/timeline-mark-timeline-expected.txt:
+        * platform/chromium-win/inspector/timeline-network-resource-expected.txt:
+        * platform/chromium-win/inspector/timeline-paint-expected.txt:
+        * platform/chromium-win/inspector/timeline-parse-html-expected.txt:
+
 2010-05-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

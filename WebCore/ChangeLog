@@ -1,3 +1,28 @@
+2010-05-18  Jaime Yap  <jaimeyap@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Removes public callLocation API and utility context from ScriptCallStack.
+        Adds ability to grab the top 5 JavaScript stack frames for each timeline
+        record using new fast V8 stack trace API.
+        https://bugs.webkit.org/show_bug.cgi?id=37502
+
+        * bindings/js/ScriptCallStack.cpp:
+        (WebCore::ScriptCallStack::stackTrace):
+        * bindings/js/ScriptCallStack.h:
+        * bindings/v8/ScriptArray.h:
+        (WebCore::ScriptArray::ScriptArray):
+        * bindings/v8/ScriptCallStack.cpp:
+        (WebCore::ScriptCallStack::callLocation):
+        (WebCore::ScriptCallStack::stackTrace):
+        * bindings/v8/ScriptCallStack.h:
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createGenericRecord):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.FormattedRecord):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generatePopupContent):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._getRecordDetails):
+
 2010-05-24  Anders Carlsson  <andersca@apple.com>
 
         Try to fix build.

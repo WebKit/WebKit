@@ -2,9 +2,7 @@ Tests the Timeline API mark feature
 
 MarkTimeline Properties:
 + startTime : * DEFINED *
-+ callerScriptName : * DEFINED *
-+ callerScriptLine : * DEFINED *
-+ callerFunctionName : * DEFINED *
++ stackTrace : * DEFINED *
 + data : {
 +- message : MARK TIMELINE
 + }

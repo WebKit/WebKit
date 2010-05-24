@@ -3,9 +3,7 @@ Tests the Timeline API instrumentation of a network resource load
 
 ResourceSendRequest Properties:
 + startTime : * DEFINED *
-+ callerScriptName : * DEFINED *
-+ callerScriptLine : * DEFINED *
-+ callerFunctionName : * DEFINED *
++ stackTrace : * DEFINED *
 + data : {
 +- identifier : * DEFINED *
 +- url : * DEFINED *

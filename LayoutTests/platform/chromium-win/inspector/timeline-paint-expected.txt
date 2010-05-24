@@ -2,9 +2,7 @@ Tests the Timeline API instrumentation of a paint event
 
 Paint Properties:
 + startTime : * DEFINED *
-+ callerScriptName : * DEFINED *
-+ callerScriptLine : * DEFINED *
-+ callerFunctionName : * DEFINED *
++ stackTrace : * DEFINED *
 + data : {
 +- x : 0
 +- y : 0

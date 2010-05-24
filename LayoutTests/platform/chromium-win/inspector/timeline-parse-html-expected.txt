@@ -2,9 +2,7 @@ Tests the Timeline API instrumentation of ParseHTML
 
 ParseHTML Properties:
 + startTime : * DEFINED *
-+ callerScriptName : * DEFINED *
-+ callerScriptLine : * DEFINED *
-+ callerFunctionName : * DEFINED *
++ stackTrace : * DEFINED *
 + data : {
 +- length : 9
 +- startLine : 0

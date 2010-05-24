@@ -31,6 +31,7 @@
 #include "config.h"
 #include "ScriptCallStack.h"
 
+#include "ScriptScope.h"
 #include "ScriptController.h"
 #include "ScriptDebugServer.h"
 #include "V8Binding.h"
@@ -39,8 +40,6 @@
 #include <v8.h>
 
 namespace WebCore {
-
-v8::Persistent<v8::Context> ScriptCallStack::s_utilityContext;
 
 ScriptCallStack* ScriptCallStack::create(const v8::Arguments& arguments, unsigned skipArgumentCount) {
     String sourceName;
@@ -53,9 +52,22 @@ ScriptCallStack* ScriptCallStack::create(const v8::Arguments& arguments, unsigne
 
 bool ScriptCallStack::callLocation(String* sourceName, int* sourceLineNumber, String* functionName)
 {
-    if (!topStackFrame(*sourceName, *sourceLineNumber, *functionName))
+    v8::HandleScope scope;
+    v8::Context::Scope contextScope(v8::Context::GetCurrent());
+    v8::Handle<v8::StackTrace> stackTrace(v8::StackTrace::CurrentStackTrace(1));
+    if (stackTrace.IsEmpty())
         return false;
-    *sourceLineNumber += 1;
+    if (stackTrace->GetFrameCount() <= 0) {
+        // Fallback to setting lineNumber to 0, and source and function name to "undefined".
+        *sourceName = toWebCoreString(v8::Undefined());
+        *sourceLineNumber = 0;
+        *functionName = toWebCoreString(v8::Undefined());
+        return true;
+    }
+    v8::Handle<v8::StackFrame> frame = stackTrace->GetFrame(0);
+    *sourceName = toWebCoreString(frame->GetScriptName());
+    *sourceLineNumber = frame->GetLineNumber();
+    *functionName = toWebCoreString(frame->GetFunctionName());
     return true;
 }
 
@@ -77,66 +89,13 @@ const ScriptCallFrame& ScriptCallStack::at(unsigned index) const
     return m_lastCaller;
 }
 
-// Create the utility context for holding JavaScript functions used internally
-// which are not visible to JavaScript executing on the page.
-void ScriptCallStack::createUtilityContext()
+bool ScriptCallStack::stackTrace(int frameLimit, ScriptState* state, ScriptArray& stackTrace)
 {
-    ASSERT(s_utilityContext.IsEmpty());
-
-    v8::HandleScope scope;
-    v8::Handle<v8::ObjectTemplate> globalTemplate = v8::ObjectTemplate::New();
-    s_utilityContext = v8::Context::New(0, globalTemplate);
-    v8::Context::Scope contextScope(s_utilityContext);
-
-    // Compile JavaScript function for retrieving the source line, the source
-    // name and the symbol name for the top JavaScript stack frame.
-    const char* topStackFrame =
-        "function topStackFrame(exec_state) {"
-        "  if (!exec_state.frameCount())"
-        "      return undefined;"
-        "  var frame = exec_state.frame(0);"
-        "  var func = frame.func();"
-        "  var scriptName;"
-        "  if (func.resolved() && func.script())"
-        "      scriptName = func.script().name();"
-        "  return [scriptName, frame.sourceLine(), (func.name() || func.inferredName())];"
-        "}";
-    v8::Script::Compile(v8::String::New(topStackFrame))->Run();
-}
-
-bool ScriptCallStack::topStackFrame(String& sourceName, int& lineNumber, String& functionName)
-{
-    v8::HandleScope scope;
-    v8::Handle<v8::Context> v8UtilityContext = utilityContext();
-    if (v8UtilityContext.IsEmpty())
+    ScriptScope scope(state);
+    v8::Handle<v8::StackTrace> trace(v8::StackTrace::CurrentStackTrace(frameLimit));
+    if (trace.IsEmpty() || !trace->GetFrameCount())
         return false;
-    v8::Context::Scope contextScope(v8UtilityContext);
-    v8::Handle<v8::Function> topStackFrame;
-    topStackFrame = v8::Local<v8::Function>::Cast(v8UtilityContext->Global()->Get(v8::String::New("topStackFrame")));
-    if (topStackFrame.IsEmpty())
-        return false;
-    v8::Handle<v8::Value> value = v8::Debug::Call(topStackFrame);
-    if (value.IsEmpty())
-        return false;
-    // If there is no top stack frame, we still return success, but fill the input params with defaults.
-    if (value->IsUndefined()) {
-      // Fallback to setting lineNumber to 0, and source and function name to "undefined".
-      sourceName = toWebCoreString(value);
-      lineNumber = 0;
-      functionName = toWebCoreString(value);
-      return true;
-    }
-    if (!value->IsArray())
-        return false;
-    v8::Local<v8::Object> jsArray = value->ToObject();
-    v8::Local<v8::Value> sourceNameValue = jsArray->Get(0);
-    v8::Local<v8::Value> lineNumberValue = jsArray->Get(1);
-    v8::Local<v8::Value> functionNameValue = jsArray->Get(2);
-    if (sourceNameValue.IsEmpty() || lineNumberValue.IsEmpty() || functionNameValue.IsEmpty())
-        return false;
-    sourceName = toWebCoreString(sourceNameValue);
-    lineNumber = lineNumberValue->Int32Value();
-    functionName = toWebCoreString(functionNameValue);
+    stackTrace = ScriptArray(state, trace->AsArray());
     return true;
 }
 

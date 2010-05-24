@@ -49,14 +49,9 @@ ScriptObject TimelineRecordFactory::createGenericRecord(InspectorFrontend* front
     ScriptObject record = frontend->newScriptObject();
     record.set("startTime", startTime);
 
-    String sourceName;
-    int sourceLineNumber;
-    String functionName;
-    if (ScriptCallStack::callLocation(&sourceName, &sourceLineNumber, &functionName) && sourceName != "undefined") {
-        record.set("callerScriptName", sourceName);
-        record.set("callerScriptLine", sourceLineNumber);
-        record.set("callerFunctionName", functionName);
-    }
+    ScriptArray stackTrace;
+    if (ScriptCallStack::stackTrace(5, frontend->scriptState(), stackTrace))
+        record.set("stackTrace", stackTrace);
     return record;
 }
 
