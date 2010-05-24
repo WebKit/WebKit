@@ -3839,7 +3839,6 @@ skip_id_custom_self:
 
         vPC = callFrame->returnPC();
         callFrame = callFrame->callerFrame();
-        codeBlock = callFrame->codeBlock();
         
         if (callFrame->hasHostCallFrameFlag())
             return returnValue;
@@ -3884,8 +3883,7 @@ skip_id_custom_self:
 
         vPC = callFrame->returnPC();
         callFrame = callFrame->callerFrame();
-        codeBlock = callFrame->codeBlock();
-        
+
         if (callFrame->hasHostCallFrameFlag())
             return returnValue;
 
