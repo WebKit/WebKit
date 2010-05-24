@@ -1,3 +1,19 @@
+2010-05-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Chris Jerdonek.
+
+        webkit-patch needs --verbose flag to enable DEBUG logging
+        https://bugs.webkit.org/show_bug.cgi?id=39208
+
+        I also added some code to print out how long commands take to run.
+
+        * Scripts/webkit-patch:
+         - Add hackish -v/--verbose parsing (similar to check-webkit-style)
+        * Scripts/webkitpy/common/system/executive.py:
+         - Log how long commands take to run.
+        * Scripts/webkitpy/tool/main.py:
+         - Add -v/--verbose option to global options.
+
 2010-05-23  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Daniel Bates.

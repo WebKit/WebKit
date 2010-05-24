@@ -56,6 +56,7 @@ from webkitpy.common.system.deprecated_logging import log
 
 class WebKitPatch(MultiCommandTool):
     global_options = [
+        make_option("-v", "--verbose", action="store_true", dest="verbose", default=False, help="enable all logging"),
         make_option("--dry-run", action="store_true", dest="dry_run", default=False, help="do not touch remote servers"),
         make_option("--status-host", action="store", dest="status_host", type="string", nargs=1, help="Hostname (e.g. localhost or commit.webkit.org) where status updates should be posted."),
         make_option("--irc-password", action="store", dest="irc_password", type="string", nargs=1, help="Password to use when communicating via IRC."),

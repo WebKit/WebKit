@@ -41,6 +41,7 @@ import StringIO
 import signal
 import subprocess
 import sys
+import time
 
 from webkitpy.common.system.deprecated_logging import tee
 
@@ -255,6 +256,18 @@ class Executive(object):
             input = input.encode("utf-8")
         return (subprocess.PIPE, input)
 
+    def _command_for_printing(self, args):
+        """Returns a print-ready string representing command args.
+        The string should be copy/paste ready for execution in a shell."""
+        escaped_args = []
+        for arg in args:
+            if isinstance(arg, unicode):
+                # Escape any non-ascii characters for easy copy/paste
+                arg = arg.encode("unicode_escape")
+            # FIXME: Do we need to fix quotes here?
+            escaped_args.append(arg)
+        return " ".join(escaped_args)
+
     # FIXME: run_and_throw_if_fail should be merged into this method.
     def run_command(self,
                     args,
@@ -266,6 +279,7 @@ class Executive(object):
                     decode_output=True):
         """Popen wrapper for convenience and to work around python bugs."""
         assert(isinstance(args, list) or isinstance(args, tuple))
+        start_time = time.time()
         args = map(unicode, args)  # Popen will throw an exception if args are non-strings (like int())
         stdin, string_to_communicate = self._compute_stdin(input)
         stderr = subprocess.STDOUT if return_stderr else None
@@ -283,6 +297,8 @@ class Executive(object):
         # wait() is not threadsafe and can throw OSError due to:
         # http://bugs.python.org/issue1731717
         exit_code = process.wait()
+
+        _log.debug('"%s" took %.2fs' % (self._command_for_printing(args), time.time() - start_time))
 
         if return_exit_code:
             return exit_code

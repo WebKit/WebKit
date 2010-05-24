@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2009, Google Inc. All rights reserved.
+# Copyright (c) 2010 Google Inc. All rights reserved.
 # Copyright (c) 2009 Apple Inc. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
 #
@@ -31,6 +31,7 @@
 #
 # A tool for automating dealing with bugzilla, posting patches, committing patches, etc.
 
+import logging
 import os
 import sys
 
@@ -39,7 +40,14 @@ import webkitpy.python24.versioning as versioning
 
 
 def main():
-    configure_logging()
+    # This is a hack to let us enable DEBUG logging as early as possible.
+    # Note this can't be ternary as versioning.check_version()
+    # hasn't run yet and this python might be older than 2.5.
+    if set(["-v", "--verbose"]).intersection(set(sys.argv)):
+        logging_level = logging.DEBUG
+    else:
+        logging_level = logging.INFO
+    configure_logging(logging_level=logging_level)
 
     versioning.check_version()
 
