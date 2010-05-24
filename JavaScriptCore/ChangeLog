@@ -1,5 +1,11 @@
 2010-05-23  Sam Weinig  <sam@webkit.org>
 
+        Fix windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-05-23  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Oliver Hunt.
 
         Fix for https://bugs.webkit.org/show_bug.cgi?id=39575
