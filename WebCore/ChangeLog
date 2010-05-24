@@ -1,3 +1,13 @@
+2010-05-24  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Add wtf/UnusedParam.h include to make Chromium happy.
+
+        Chromium does not use a prefix header in order to support
+        distcc3.  Other ports all do.  The real fix is to remove
+        wtf/UnusedParam.h from the prefix header.
+
+        * html/HTML5TreeBuilder.cpp:
+
 2010-05-24  Jer Noble  <jer.noble@apple.com>
 
         No review; build fix only.

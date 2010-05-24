@@ -33,6 +33,7 @@
 #include "HTMLParser.h"
 #include "HTMLTokenizer.h"
 #include "NotImplemented.h"
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
