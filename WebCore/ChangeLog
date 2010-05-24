@@ -1,3 +1,14 @@
+2010-05-23  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, rolling out r60060.
+        http://trac.webkit.org/changeset/60060
+        https://bugs.webkit.org/show_bug.cgi?id=32077
+
+        breaks chromium test
+
+        * rendering/RenderObject.h:
+        (WebCore::objectIsRelayoutBoundary):
+
 2010-05-23  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Shinichiro Hamaji.
