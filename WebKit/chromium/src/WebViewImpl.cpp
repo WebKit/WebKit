@@ -1158,9 +1158,7 @@ bool WebViewImpl::handleCompositionEvent(WebCompositionCommand command,
                                          const WebString& imeString)
 {
     Frame* focused = focusedWebCoreFrame();
-    // If we're not going to fire a keypress event, then the keydown event was
-    // canceled so don't update the IME.
-    if (!focused || !m_imeAcceptEvents || m_suppressNextKeypressEvent)
+    if (!focused || !m_imeAcceptEvents)
         return false;
     Editor* editor = focused->editor();
     if (!editor)
@@ -1184,7 +1182,11 @@ bool WebViewImpl::handleCompositionEvent(WebCompositionCommand command,
             return false;
     }
 
-    if (command == WebCompositionCommandDiscard) {
+    // If we're not going to fire a keypress event, then the keydown event was
+    // canceled.  In that case, cancel any existing composition.
+    // FIXME: Ideally, we would only cancel a single keypress, rather than the
+    // whole composition.
+    if ((command == WebCompositionCommandDiscard) || m_suppressNextKeypressEvent) {
         // A browser process sent an IPC message which does not contain a valid
         // string, which means an ongoing composition has been canceled.
         // If the ongoing composition has been canceled, replace the ongoing

@@ -1,3 +1,13 @@
+2010-05-21  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        [chromium] if keydown is prevented, don't update the IME and clear the IME state
+        https://bugs.webkit.org/show_bug.cgi?id=39475
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleCompositionEvent):
+
 2010-05-23  Roman Gershman  <romange@google.com>
 
         Reviewed by Darin Fisher.
