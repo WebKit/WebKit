@@ -83,7 +83,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
-#include <WebCore/PluginInfoStore.h>
+#include <WebCore/PluginData.h>
 #include <WebCore/PluginDatabase.h>
 #include <WebCore/PluginView.h>
 #include <WebCore/PrintContext.h>
