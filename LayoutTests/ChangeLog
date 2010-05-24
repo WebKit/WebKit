@@ -1,3 +1,24 @@
+2010-05-24  Jeremy Orlow  <jorlow@chromium.org>
+
+        Not reviewed.
+
+        I forgot to update platform specific expectations in
+        http://trac.webkit.org/changeset/44943
+
+        * platform/chromium/fast/dom/prototype-inheritance-expected.txt:
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/gtk/fast/dom/prototype-inheritance-expected.txt:
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt:
+        * platform/qt/fast/js/global-constructors-expected.txt:
+        * platform/win/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/win/fast/dom/prototype-inheritance-2-expected.txt:
+        * platform/win/fast/dom/prototype-inheritance-expected.txt:
+        * platform/win/fast/js/global-constructors-expected.txt:
+
 2010-05-24  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.

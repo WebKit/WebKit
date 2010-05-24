@@ -63,6 +63,8 @@ PASS inner.DOMImplementation.isInner is true
 PASS inner.DOMImplementation.constructor.isInner is true
 PASS inner.DOMParser.isInner is true
 PASS inner.DOMParser.constructor.isInner is true
+PASS inner.DOMStringList.isInner is true
+PASS inner.DOMStringList.constructor.isInner is true
 PASS inner.Document.isInner is true
 PASS inner.Document.constructor.isInner is true
 PASS inner.DocumentFragment.isInner is true
