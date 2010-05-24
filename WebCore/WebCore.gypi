@@ -2726,6 +2726,8 @@
             'platform/text/qt/TextCodecQt.h',
             'platform/text/symbian/StringImplSymbian.cpp',
             'platform/text/symbian/StringSymbian.cpp',
+            'platform/text/transcoder/FontTranscoder.cpp',
+            'platform/text/transcoder/FontTranscoder.h',
             'platform/text/win/TextBreakIteratorInternalICUWin.cpp',
             'platform/text/wx/StringWx.cpp',
             'platform/text/AtomicString.h',

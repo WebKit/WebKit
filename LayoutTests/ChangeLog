@@ -1,3 +1,28 @@
+2010-05-23  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        0x5C of EUC-JP is not Yen Sign but U+005C
+        https://bugs.webkit.org/show_bug.cgi?id=24906
+
+        * editing/selection/find-yensign-and-backslash-with-japanese-fonts-expected.txt: Added.
+        * editing/selection/find-yensign-and-backslash-with-japanese-fonts.html: Added.
+        * fast/text/backslash-to-yen-sign-dynamic.html: Added.
+        * fast/text/backslash-to-yen-sign.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/fast/text/backslash-to-yen-sign-dynamic-expected.txt: Added.
+        * platform/gtk/fast/text/backslash-to-yen-sign-expected.txt: Added.
+        * platform/mac/fast/text/backslash-to-yen-sign-dynamic-expected.checksum: Added.
+        * platform/mac/fast/text/backslash-to-yen-sign-dynamic-expected.png: Added.
+        * platform/mac/fast/text/backslash-to-yen-sign-dynamic-expected.txt: Added.
+        * platform/mac/fast/text/backslash-to-yen-sign-expected.checksum: Added.
+        * platform/mac/fast/text/backslash-to-yen-sign-expected.png: Added.
+        * platform/mac/fast/text/backslash-to-yen-sign-expected.txt: Added.
+        * platform/qt/fast/text/backslash-to-yen-sign-dynamic-expected.txt: Added.
+        * platform/qt/fast/text/backslash-to-yen-sign-expected.txt: Added.
+        * platform/win/fast/text/backslash-to-yen-sign-dynamic-expected.txt: Added.
+        * platform/win/fast/text/backslash-to-yen-sign-expected.txt: Added.
+
 2010-05-23  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, rolling out r60060.

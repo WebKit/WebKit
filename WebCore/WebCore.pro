@@ -200,6 +200,7 @@ INCLUDEPATH = \
     $$PWD/platform/network \
     $$PWD/platform/sql \
     $$PWD/platform/text \
+    $$PWD/platform/text/transcoder \
     $$PWD/plugins \
     $$PWD/rendering \
     $$PWD/rendering/style \
@@ -894,6 +895,7 @@ SOURCES += \
     platform/ThreadTimers.cpp \
     platform/Timer.cpp \
     platform/text/UnicodeRange.cpp \
+    platform/text/transcoder/FontTranscoder.cpp \
     platform/UUID.cpp \
     platform/Widget.cpp \
     plugins/PluginDatabase.cpp \
@@ -1665,6 +1667,7 @@ HEADERS += \
     platform/text/TextEncodingRegistry.h \
     platform/text/TextStream.h \
     platform/text/UnicodeRange.h \
+    platform/text/transcoder/FontTranscoder.h \
     platform/ThreadGlobalData.h \
     platform/ThreadTimers.h \
     platform/Timer.h \

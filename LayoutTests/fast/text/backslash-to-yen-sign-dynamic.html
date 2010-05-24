@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<script>
+
+function test()
+{
+    document.getElementById("to_msgothic").style.fontFamily = "MS Gothic";
+    document.getElementById("from_msgothic").style.fontFamily = "Times";
+}
+
+</script>
+</head>
+
+<body onload="test();">
+
+<div id="to_msgothic">This should be a yen-sign: \</div>
+<div id="from_msgothic" style="font-family: MS Gothic">This should be a backslash: \</div>
+
+</body>
+
+</html>

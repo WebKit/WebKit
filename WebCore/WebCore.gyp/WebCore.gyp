@@ -154,6 +154,7 @@
       '../platform/network/chromium',
       '../platform/sql',
       '../platform/text',
+      '../platform/text/transcoder',
       '../plugins',
       '../plugins/chromium',
       '../rendering',

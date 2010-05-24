@@ -51,6 +51,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/platform/network \
 	-I$(srcdir)/WebCore/platform/sql \
 	-I$(srcdir)/WebCore/platform/text \
+	-I$(srcdir)/WebCore/platform/text/transcoder \
 	-I$(srcdir)/WebCore/plugins \
 	-I$(srcdir)/WebCore/rendering \
 	-I$(srcdir)/WebCore/rendering/style \
@@ -1804,6 +1805,8 @@ webcore_sources += \
 	WebCore/platform/text/TextStream.h \
 	WebCore/platform/text/UnicodeRange.cpp \
 	WebCore/platform/text/UnicodeRange.h \
+	WebCore/platform/text/transcoder/FontTranscoder.cpp \
+	WebCore/platform/text/transcoder/FontTranscoder.h \
 	WebCore/plugins/MimeType.cpp \
 	WebCore/plugins/MimeType.h \
 	WebCore/plugins/MimeTypeArray.cpp \

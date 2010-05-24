@@ -29,6 +29,7 @@
 #include "CharacterNames.h"
 #include "EllipsisBox.h"
 #include "FloatQuad.h"
+#include "FontTranscoder.h"
 #include "FrameView.h"
 #include "InlineTextBox.h"
 #include "Range.h"
@@ -139,7 +140,9 @@ bool RenderText::isWordBreak() const
 
 void RenderText::updateNeedsTranscoding()
 {
-    m_needsTranscoding = document()->decoder() && document()->decoder()->encoding().backslashAsCurrencySymbol() != '\\';
+    const AtomicString& fontFamily = style()->font().family().family();
+    const TextEncoding* encoding = document()->decoder() ? &document()->decoder()->encoding() : 0;
+    m_needsTranscoding = fontTranscoder().needsTranscoding(fontFamily, encoding);
 }
 
 void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
@@ -157,6 +160,9 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     if (!oldStyle) {
         updateNeedsTranscoding();
         needsResetText = m_needsTranscoding;
+    } else if (oldStyle->font().needsTranscoding() != style()->font().needsTranscoding() || (style()->font().needsTranscoding() && oldStyle->font().family().family() != style()->font().family().family())) {
+        updateNeedsTranscoding();
+        needsResetText = true;
     }
 
     ETextTransform oldTransform = oldStyle ? oldStyle->textTransform() : TTNONE;
@@ -1036,10 +1042,12 @@ void RenderText::transformText(String& text) const
 void RenderText::setTextInternal(PassRefPtr<StringImpl> text)
 {
     ASSERT(text);
-    if (m_needsTranscoding)
-        m_text = document()->displayStringModifiedByEncoding(text);
-    else
-        m_text = text;
+    m_text = text;
+    if (m_needsTranscoding) {
+        const AtomicString& fontFamily = style()->font().family().family();
+        const TextEncoding* encoding = document()->decoder() ? &document()->decoder()->encoding() : 0;
+        fontTranscoder().convert(m_text, fontFamily, encoding);
+    }
     ASSERT(m_text);
 
 #if ENABLE(SVG)

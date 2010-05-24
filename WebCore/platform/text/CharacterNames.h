@@ -64,6 +64,7 @@ const UChar rightToLeftOverride = 0x202E;
 const UChar softHyphen = 0x00AD;
 const UChar space = 0x0020;
 const UChar whiteBullet = 0x25E6;
+const UChar yenSign = 0x00A5;
 const UChar zeroWidthJoiner = 0x200D;
 const UChar zeroWidthNonJoiner = 0x200C;
 const UChar zeroWidthSpace = 0x200B;

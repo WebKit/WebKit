@@ -1,3 +1,40 @@
+2010-05-23  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        0x5C of EUC-JP is not Yen Sign but U+005C
+        https://bugs.webkit.org/show_bug.cgi?id=24906
+
+        Tests: editing/selection/find-yensign-and-backslash-with-japanese-fonts.html
+               fast/text/backslash-to-yen-sign-dynamic.html
+               fast/text/backslash-to-yen-sign.html
+
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::Font):
+        (WebCore::Font::operator=):
+        * platform/graphics/Font.h:
+        (WebCore::Font::needsTranscoding):
+        * platform/text/CharacterNames.h:
+        * platform/text/transcoder/FontTranscoder.cpp: Added.
+        (WebCore::FontTranscoder::FontTranscoder):
+        (WebCore::FontTranscoder::converterType):
+        (WebCore::FontTranscoder::convert):
+        (WebCore::FontTranscoder::needsTranscoding):
+        (WebCore::fontTranscoder):
+        * platform/text/transcoder/FontTranscoder.h: Added.
+        (WebCore::FontTranscoder::):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::updateNeedsTranscoding):
+        (WebCore::RenderText::styleDidChange):
+        (WebCore::RenderText::setTextInternal):
+
 2010-05-23  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, rolling out r60060.

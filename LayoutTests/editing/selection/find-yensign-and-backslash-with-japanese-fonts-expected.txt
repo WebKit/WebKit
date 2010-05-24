@@ -1,0 +1,27 @@
+No specified font + yen sign: PASS
+No specified font + backslash: PASS
+MS PGothic + yen sign: PASS
+MS PGothic + backslash: PASS
+MS Gothic + yen sign: PASS
+MS Gothic + backslash: PASS
+MS PMincho + yen sign: PASS
+MS PMincho + backslash: PASS
+MS Mincho + yen sign: PASS
+MS Mincho + backslash: PASS
+Meiryo + yen sign: PASS
+Meiryo + backslash: PASS
+ＭＳ Ｐゴシック + yen sign: PASS
+ＭＳ Ｐゴシック + backslash: PASS
+ＭＳ ゴシック + yen sign: PASS
+ＭＳ ゴシック + backslash: PASS
+ＭＳ Ｐ明朝 + yen sign: PASS
+ＭＳ Ｐ明朝 + backslash: PASS
+ＭＳ 明朝 + yen sign: PASS
+ＭＳ 明朝 + backslash: PASS
+メイリオ + yen sign: PASS
+メイリオ + backslash: PASS
+Times + yen sign: PASS
+Times + backslash: PASS
+foobar + yen sign: PASS
+foobar + backslash: PASS
+
