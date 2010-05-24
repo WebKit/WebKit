@@ -1,5 +1,16 @@
 2010-05-24  Adam Barth  <abarth@webkit.org>
 
+        Rubber-stamped by Eric Seidel.
+
+        Add the tests14.dat suite to the HTML5 parser test harness because it
+        passes.
+
+        * html5lib/webkit-runner-expected-html5.txt:
+        * html5lib/webkit-runner-expected.txt:
+        * html5lib/webkit-runner.html:
+
+2010-05-24  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.  Update HTML4 parser expected results for new tests.
 
         * html5lib/webkit-runner-expected.txt:

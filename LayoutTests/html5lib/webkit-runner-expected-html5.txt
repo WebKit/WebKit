@@ -1,6 +1,8 @@
 CONSOLE MESSAGE: line 2: PASS
 CONSOLE MESSAGE: line 2: FOO<span>BAR</span>BAZ
 Content-Type: text/plain
+resources/tests14.dat: PASS
+
 resources/webkit01.dat: PASS
 
 resources/doctype01.dat: PASS
