@@ -1,3 +1,20 @@
+2010-05-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        Split PatchReader out into its own file
+        https://bugs.webkit.org/show_bug.cgi?id=39576
+
+        This is in preparation for making check-webkit-style
+        support being passed paths to patch files on the command line.
+
+        * Scripts/check-webkit-style:
+        * Scripts/webkitpy/style/checker.py:
+        * Scripts/webkitpy/style/checker_unittest.py:
+        * Scripts/webkitpy/style/patchreader.py: Added.
+        * Scripts/webkitpy/style/patchreader_unittest.py: Added.
+        * Scripts/webkitpy/style_references.py:
+
 2010-05-23  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Daniel Bates.

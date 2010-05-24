@@ -43,7 +43,6 @@ from error_handlers import DefaultStyleErrorHandler
 from filter import FilterConfiguration
 from optparser import ArgumentParser
 from optparser import DefaultCommandOptionValues
-from webkitpy.style_references import parse_patch
 from webkitpy.style_references import configure_logging as _configure_logging
 
 _log = logging.getLogger("webkitpy.style.checker")
@@ -697,42 +696,3 @@ class StyleProcessor(ProcessorBase):
         _log.debug("Using class: " + checker.__class__.__name__)
 
         checker.check(lines)
-
-
-class PatchReader(object):
-
-    """Supports checking style in patches."""
-
-    def __init__(self, text_file_reader):
-        """Create a PatchReader instance.
-
-        Args:
-          text_file_reader: A TextFileReader instance.
-
-        """
-        self._text_file_reader = text_file_reader
-
-    def check(self, patch_string):
-        """Check style in the given patch."""
-        patch_files = parse_patch(patch_string)
-
-        # The diff variable is a DiffFile instance.
-        for path, diff in patch_files.iteritems():
-            line_numbers = set()
-            for line in diff.lines:
-                # When deleted line is not set, it means that
-                # the line is newly added (or modified).
-                if not line[0]:
-                    line_numbers.add(line[1])
-
-            _log.debug('Found %s new or modified lines in: %s'
-                       % (len(line_numbers), path))
-
-            # If line_numbers is empty, the file has no new or
-            # modified lines.  In this case, we don't check the file
-            # because we'll never output errors for the file.
-            # This optimization also prevents the program from exiting
-            # due to a deleted file.
-            if line_numbers:
-                self._text_file_reader.process_file(file_path=path,
-                                                    line_numbers=line_numbers)

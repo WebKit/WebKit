@@ -56,14 +56,6 @@ def detect_checkout():
     return None if scm is None else WebKitCheckout(scm)
 
 
-def parse_patch(patch_string):
-
-    """Parse a patch string and return the affected files."""
-
-    patch = DiffParser(patch_string.splitlines())
-    return patch.files
-
-
 class WebKitCheckout(object):
 
     """Simple facade to the SCM class for use by style package."""

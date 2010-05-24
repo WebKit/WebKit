@@ -50,7 +50,7 @@ import sys
 
 from webkitpy.style_references import detect_checkout
 import webkitpy.style.checker as checker
-from webkitpy.style.checker import PatchReader
+from webkitpy.style.patchreader import PatchReader
 from webkitpy.style.checker import StyleProcessor
 from webkitpy.style.filereader import TextFileReader
 from webkitpy.style.main import change_directory

@@ -39,7 +39,6 @@ import os
 import unittest
 
 import checker as style
-from webkitpy.style_references import parse_patch
 from webkitpy.style_references import LogTesting
 from webkitpy.style_references import TestLogStream
 from checker import _BASE_FILTER_RULES
@@ -50,7 +49,6 @@ from checker import check_webkit_style_configuration
 from checker import check_webkit_style_parser
 from checker import configure_logging
 from checker import CheckerDispatcher
-from checker import PatchReader
 from checker import ProcessorBase
 from checker import StyleProcessor
 from checker import StyleProcessorConfiguration
@@ -769,52 +767,3 @@ class StyleProcessor_CodeCoverageTest(LoggingTestCase):
         self.assertRaises(AssertionError, self._processor.process,
                           lines=['line1', 'line2'], file_path=path,
                           line_numbers=[100])
-
-
-class PatchReaderTest(unittest.TestCase):
-
-    """Test the PatchReader class."""
-
-    class MockTextFileReader(object):
-
-        def __init__(self):
-            self.passed_to_process_file = []
-            """A list of (file_path, line_numbers) pairs."""
-
-        def process_file(self, file_path, line_numbers):
-            self.passed_to_process_file.append((file_path, line_numbers))
-
-    def setUp(self):
-        file_reader = self.MockTextFileReader()
-        self._file_reader = file_reader
-        self._patch_checker = PatchReader(file_reader)
-
-    def _call_check_patch(self, patch_string):
-        self._patch_checker.check(patch_string)
-
-    def _assert_checked(self, passed_to_process_file):
-        self.assertEquals(self._file_reader.passed_to_process_file,
-                          passed_to_process_file)
-
-    def test_check_patch(self):
-        # The modified line_numbers array for this patch is: [2].
-        self._call_check_patch("""diff --git a/__init__.py b/__init__.py
-index ef65bee..e3db70e 100644
---- a/__init__.py
-+++ b/__init__.py
-@@ -1,1 +1,2 @@
- # Required for Python to search this directory for module files
-+# New line
-""")
-        self._assert_checked([("__init__.py", set([2]))])
-
-    def test_check_patch_with_deletion(self):
-        self._call_check_patch("""Index: __init__.py
-===================================================================
---- __init__.py  (revision 3593)
-+++ __init__.py  (working copy)
-@@ -1 +0,0 @@
--foobar
-""")
-        # _mock_check_file should not be called for the deletion patch.
-        self._assert_checked([])
