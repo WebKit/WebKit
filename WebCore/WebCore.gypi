@@ -1468,6 +1468,8 @@
             'html/HTML5Lexer.h',
             'html/HTML5Tokenizer.cpp',
             'html/HTML5Tokenizer.h',
+            'html/HTML5TreeBuilder.cpp',
+            'html/HTML5TreeBuilder.h',
             'html/HTMLAllCollection.cpp',
             'html/HTMLAllCollection.h',
             'html/HTMLAnchorElement.cpp',

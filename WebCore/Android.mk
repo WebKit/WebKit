@@ -247,6 +247,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/FormDataList.cpp \
 	html/HTML5Lexer.cpp \
 	html/HTML5Tokenizer.cpp \
+	html/HTML5TreeBuilder.cpp \
 	html/HTMLAllCollection.cpp \
 	html/HTMLCollection.cpp \
 	html/HTMLDataListElement.cpp \

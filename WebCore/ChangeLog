@@ -1,5 +1,21 @@
 2010-05-23  Eric Seidel  <eric@webkit.org>
 
+        Unreviewed, just being a copy/paste monkey.  Oook, eeek.
+
+        Add new HTML5TreeBuilder class to hold the tree builder section of the HTML5 parsing spec
+        https://bugs.webkit.org/show_bug.cgi?id=39572
+
+        Add HTML5TreeBuilder.* to each of WebKit's 85,324 build systems.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+
+2010-05-23  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         Add new HTML5TreeBuilder class to hold the tree builder section of the HTML5 parsing spec

@@ -30849,6 +30849,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\HTML5TreeBuilder.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HTML5TreeBuilder.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\HTMLAllCollection.cpp"
 				>
 			</File>

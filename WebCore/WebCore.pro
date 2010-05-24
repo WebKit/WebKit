@@ -608,6 +608,7 @@ SOURCES += \
     html/FormDataList.cpp \
     html/HTML5Lexer.cpp \
     html/HTML5Tokenizer.cpp \
+    html/HTML5TreeBuilder.cpp \
     html/HTMLAllCollection.cpp \
     html/HTMLAnchorElement.cpp \
     html/HTMLAppletElement.cpp \
