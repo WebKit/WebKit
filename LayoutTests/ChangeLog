@@ -1,3 +1,14 @@
+2010-05-24  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Unreviewed. Fixed the expectations for Windows.
+        It seems my win environment was unhealthy.
+
+        0x5C of EUC-JP is not Yen Sign but U+005C
+        https://bugs.webkit.org/show_bug.cgi?id=24906
+
+        * platform/win/fast/text/backslash-to-yen-sign-dynamic-expected.txt:
+        * platform/win/fast/text/backslash-to-yen-sign-expected.txt:
+
 2010-05-23  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
