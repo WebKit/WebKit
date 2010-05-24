@@ -51,6 +51,7 @@ public:
     };
 
     typedef WTF::Vector<Attribute> AttributeList;
+    typedef WTF::Vector<UChar, 1024> DataVector;
 
     HTML5Token() { clear(); }
 
@@ -63,8 +64,7 @@ public:
     {
         ASSERT(m_type == Uninitialized);
         m_type = StartTag;
-        m_data.clear();
-        m_dataString = AtomicString();
+        clearData();
         m_selfClosing = false;
         m_currentAttribute = 0;
 
@@ -76,8 +76,7 @@ public:
     {
         ASSERT(m_type == Uninitialized);
         m_type = EndTag;
-        m_data.clear();
-        m_dataString = AtomicString();
+        clearData();
         m_selfClosing = false;
         m_currentAttribute = 0;
 
@@ -88,8 +87,7 @@ public:
     {
         ASSERT(m_type == Uninitialized);
         m_type = Character;
-        m_data.clear();
-        m_dataString = AtomicString();
+        clearData();
         m_data.append(character);
     }
 
@@ -97,16 +95,14 @@ public:
     {
         ASSERT(m_type == Uninitialized);
         m_type = Comment;
-        m_data.clear();
-        m_dataString = AtomicString();
+        clearData();
     }
 
     void beginDOCTYPE()
     {
         ASSERT(m_type == Uninitialized);
         m_type = DOCTYPE;
-        m_data.clear();
-        m_dataString = AtomicString();
+        clearData();
         m_doctypeData.set(new DoctypeData());
     }
 
@@ -171,19 +167,43 @@ public:
     AtomicString name()
     {
         ASSERT(m_type == StartTag || m_type == EndTag || m_type == DOCTYPE);
-        return dataString();
+        if (!m_data.isEmpty() && m_dataAsNameAtom.isEmpty())
+            m_dataAsNameAtom = AtomicString(adoptDataAsStringImpl());
+        return m_dataAsNameAtom;
     }
 
-    AtomicString characters()
+    PassRefPtr<StringImpl> adoptDataAsStringImpl()
+    {
+        ASSERT(!m_dataAsNameAtom); // An attempt to make sure this isn't called twice.
+        return StringImpl::adopt(m_data);
+    }
+
+    const DataVector& characters()
     {
         ASSERT(m_type == Character);
-        return dataString();
+        ASSERT(!m_dataAsNameAtom);
+        return m_data;
     }
 
-    AtomicString data()
+    const DataVector& comment()
     {
         ASSERT(m_type == Comment);
-        return dataString();
+        ASSERT(!m_dataAsNameAtom);
+        return m_data;
+    }
+
+    // FIXME: Should be removed once we stop using the old parser.
+    String takeCharacters()
+    {
+        ASSERT(m_type == Character);
+        return String(adoptDataAsStringImpl());
+    }
+
+    // FIXME: Should be removed once we stop using the old parser.
+    String takeComment()
+    {
+        ASSERT(m_type == Comment);
+        return String(adoptDataAsStringImpl());
     }
 
     // FIXME: Distinguish between a missing public identifer and an empty one.
@@ -245,11 +265,10 @@ private:
         WTF::Vector<UChar> m_systemIdentifier;
     };
 
-    AtomicString dataString()
+    void clearData()
     {
-        if (!m_data.isEmpty() && m_dataString.isEmpty())
-            m_dataString = AtomicString(StringImpl::adopt(m_data));
-        return m_dataString;
+        m_data.clear();
+        m_dataAsNameAtom = AtomicString();
     }
 
     Type m_type;
@@ -257,7 +276,8 @@ private:
     // "name" for DOCTYPE, StartTag, and EndTag
     // "characters" for Character
     // "data" for Comment
-    WTF::Vector<UChar, 1024> m_data;
+    DataVector m_data;
+    AtomicString m_dataAsNameAtom;
 
     // For DOCTYPE
     OwnPtr<DoctypeData> m_doctypeData;
@@ -268,8 +288,6 @@ private:
 
     // A pointer into m_attributes used during lexing.
     Attribute* m_currentAttribute;
-
-    AtomicString m_dataString;
 };
 
 }

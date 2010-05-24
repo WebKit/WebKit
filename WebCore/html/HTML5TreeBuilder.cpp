@@ -80,11 +80,11 @@ static void convertToOldStyle(HTML5Token& token, Token& oldStyleToken)
     }
     case HTML5Token::Comment:
         oldStyleToken.tagName = commentAtom;
-        oldStyleToken.text = token.data().impl();
+        oldStyleToken.text = token.takeComment().impl();
         break;
     case HTML5Token::Character:
         oldStyleToken.tagName = textAtom;
-        oldStyleToken.text = token.characters().impl();
+        oldStyleToken.text = token.takeCharacters().impl();
         break;
     }
 }
@@ -117,7 +117,27 @@ PassRefPtr<Node> HTML5TreeBuilder::passTokenToLegacyParser(HTML5Token& token)
 PassRefPtr<Node> HTML5TreeBuilder::constructTreeFromToken(HTML5Token& token)
 {
     return passTokenToLegacyParser(token);
-    // Our HTML5 parser implementation will go here in a separate patch.
+
+    // HTML5 expects the tokenizer to call the parser every time a character is
+    // emitted.  We instead collect characters and call the parser with a batch.
+    // In order to make our first-pass parser code simple, processToken matches
+    // the spec in only handling one character at a time.
+    if (token.type() == HTML5Token::Character) {
+        HTML5Token::DataVector characters = token.characters();
+        HTML5Token::DataVector::const_iterator itr = characters.begin();
+        for (;itr; ++itr)
+            processToken(token, *itr);
+        return 0; // FIXME: Should we be returning the Text node?
+    }
+    return processToken(token);
+}
+
+PassRefPtr<Node> HTML5TreeBuilder::processToken(HTML5Token& token, UChar currentCharacter)
+{
+    UNUSED_PARAM(token);
+    UNUSED_PARAM(currentCharacter);
+    // Implementation coming in the next patch.
+    return 0;
 }
 
 void HTML5TreeBuilder::finished()

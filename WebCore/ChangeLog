@@ -1,3 +1,33 @@
+2010-05-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Prepare HTML5TreeBuilder for addition of new HTML5 parser code
+        https://bugs.webkit.org/show_bug.cgi?id=39623
+
+        Before we start transcribing the parser, we need a place to put it.
+
+        This also cleans up HTML5 token to not convert comment and character
+        data into AtomicStrings (which makes no sense).
+
+        No functionality change, so no new tests.
+
+        * html/HTML5Token.h:
+        (WebCore::HTML5Token::beginStartTag):
+        (WebCore::HTML5Token::beginEndTag):
+        (WebCore::HTML5Token::beginCharacter):
+        (WebCore::HTML5Token::beginComment):
+        (WebCore::HTML5Token::name):
+        (WebCore::HTML5Token::adoptDataAsStringImpl):
+        (WebCore::HTML5Token::characters):
+        (WebCore::HTML5Token::commentData):
+        (WebCore::HTML5Token::clearData):
+        * html/HTML5TreeBuilder.cpp:
+        (WebCore::convertToOldStyle):
+        (WebCore::HTML5TreeBuilder::constructTreeFromToken):
+        (WebCore::HTML5TreeBuilder::processToken):
+        * html/HTML5TreeBuilder.h:
+
 2010-05-23  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.

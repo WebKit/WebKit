@@ -29,6 +29,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 class Document;
@@ -49,6 +50,7 @@ public:
 
 private:
     PassRefPtr<Node> passTokenToLegacyParser(HTML5Token&);
+    PassRefPtr<Node> processToken(HTML5Token&, UChar currentCharacter = 0);
 
     // We could grab m_document off the lexer if we wanted to save space.
     Document* m_document;
