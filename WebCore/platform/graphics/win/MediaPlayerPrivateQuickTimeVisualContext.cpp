@@ -56,7 +56,6 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "GraphicsLayerCACF.h"
 #include "WKCACFLayer.h"
-#include "WKCAImageQueue.h"
 #endif
 
 using namespace std;

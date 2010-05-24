@@ -1,3 +1,11 @@
+2010-05-24  Jer Noble  <jer.noble@apple.com>
+
+        No review; build fix only.
+
+        Include WKCAImageQueue.h outside the ACCELERATED_COMPOSITING check.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+
 2010-05-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
