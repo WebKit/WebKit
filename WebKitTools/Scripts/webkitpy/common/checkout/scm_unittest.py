@@ -813,6 +813,12 @@ class GitTest(SCMTest):
         run_command(['git', 'add', 'test_file_commit2'])
         self.scm.commit_locally_with_message("yet another test commit")
 
+    def _three_local_commits(self):
+        write_into_file_at_path('test_file_commit0', 'more test content')
+        run_command(['git', 'add', 'test_file_commit0'])
+        self.scm.commit_locally_with_message("another test commit")
+        self._two_local_commits()
+
     def test_commit_with_message_git_commit(self):
         self._two_local_commits()
 
@@ -825,13 +831,14 @@ class GitTest(SCMTest):
         self.assertFalse(re.search(r'test_file_commit2', svn_log))
 
     def test_commit_with_message_git_commit_range(self):
-        self._two_local_commits()
+        self._three_local_commits()
 
         scm = detect_scm_system(self.git_checkout_path)
         commit_text = scm.commit_with_message("another test commit", git_commit="HEAD~2..HEAD")
         self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '6')
 
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
+        self.assertFalse(re.search(r'test_file_commit0', svn_log))
         self.assertTrue(re.search(r'test_file_commit1', svn_log))
         self.assertTrue(re.search(r'test_file_commit2', svn_log))
 
@@ -922,9 +929,10 @@ class GitTest(SCMTest):
         self.assertFalse(re.search(r'test_file_commit2', patch))
 
     def test_create_patch_git_commit_range(self):
-        self._two_local_commits()
+        self._three_local_commits()
         scm = detect_scm_system(self.git_checkout_path)
         patch = scm.create_patch(git_commit="HEAD~2..HEAD")
+        self.assertFalse(re.search(r'test_file_commit0', patch))
         self.assertTrue(re.search(r'test_file_commit2', patch))
         self.assertTrue(re.search(r'test_file_commit1', patch))
 
@@ -1007,9 +1015,10 @@ class GitTest(SCMTest):
         self.assertFalse('test_file_commit2' in files)
 
     def test_changed_files_git_commit_range(self):
-        self._two_local_commits()
+        self._three_local_commits()
         scm = detect_scm_system(self.git_checkout_path)
         files = scm.changed_files(git_commit="HEAD~2..HEAD")
+        self.assertTrue('test_file_commit0' not in files)
         self.assertTrue('test_file_commit1' in files)
         self.assertTrue('test_file_commit2' in files)
 
