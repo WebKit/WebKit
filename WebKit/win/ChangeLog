@@ -1,3 +1,10 @@
+2010-05-24  Anders Carlsson  <andersca@apple.com>
+
+        Fix Windows build.
+
+        * WebView.cpp:
+        (WebView::canShowMIMEType):
+
 2010-05-21  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
