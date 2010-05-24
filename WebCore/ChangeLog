@@ -1,3 +1,25 @@
+2010-05-24  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Textarea shouldn't grow when you type.
+        https://bugs.webkit.org/show_bug.cgi?id=32077
+
+        <textarea> with percent-specified, height-related properties did
+        cause partial-layout rooted from the renderer, that resulted
+        different box height between full-layout and partial-layout. This
+        is because calcHeight() assumes that the layout calculation of the
+        RenderBlock's parent is ongoing. But this assumption is violated
+        when the RenderBlock is root of the layout calculation. 
+        
+        So we prevent such <textarea>'s RenderObjects from being layout
+        root.
+
+        Test: fast/forms/textarea-percentage-dimensions.html
+
+        * rendering/RenderObject.h:
+        (WebCore::objectIsRelayoutBoundary):
+
 2010-05-20  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
