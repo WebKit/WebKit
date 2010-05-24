@@ -73,7 +73,6 @@
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
-#include "PluginInfoStore.h"
 #include "PopupMenuChromium.h"
 #include "PopupMenuClient.h"
 #include "ProgressTracker.h"

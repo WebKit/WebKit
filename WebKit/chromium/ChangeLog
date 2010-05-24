@@ -1,3 +1,9 @@
+2010-05-24  Anders Carlsson  <andersca@apple.com>
+
+        Attempt to fix the Chromium build.
+
+        * src/WebViewImpl.cpp:
+
 2010-05-21  Tony Chang  <tony@chromium.org>
 
         Reviewed by Ojan Vafai.
