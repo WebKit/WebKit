@@ -1,5 +1,12 @@
 2010-05-24  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Update expected results for HTML5 parser.  I didn't know
+        we had this file.
+
+        * html5lib/webkit-runner-expected-html5.txt:
+
+2010-05-24  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Teach the HTML5 parser to lex DOCTYPEs
