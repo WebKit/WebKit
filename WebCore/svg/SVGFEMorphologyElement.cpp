@@ -91,16 +91,16 @@ void SVGFEMorphologyElement::synchronizeProperty(const QualifiedName& attrName)
 PassRefPtr<FilterEffect> SVGFEMorphologyElement::build(SVGFilterBuilder* filterBuilder)
 {
     FilterEffect* input1 = filterBuilder->getEffectById(in1());
-    SVGAnimatedPropertyTraits<float>::ReturnType radX = radiusX(),
-        radY = radiusY();
+    float xRadius = radiusX();
+    float yRadius = radiusY();
 
     if (!input1)
         return 0;
 
-    if (radX < 0 || radY < 0)
+    if (xRadius < 0 || yRadius < 0)
         return 0;
 
-    return FEMorphology::create(input1, static_cast<MorphologyOperatorType>(_operator()), radX, radY);
+    return FEMorphology::create(input1, static_cast<MorphologyOperatorType>(_operator()), xRadius, yRadius);
 }
 
 } //namespace WebCore

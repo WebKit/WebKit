@@ -1,3 +1,16 @@
+2010-05-23  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Style cleanup for r56288
+        https://bugs.webkit.org/show_bug.cgi?id=39554
+
+        Cleaning up style from a previous patch. No tests needed because no
+        logic is changed. 
+
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::build):
+
 2010-05-23  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.
