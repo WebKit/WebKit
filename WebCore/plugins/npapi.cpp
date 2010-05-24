@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "Page.h"
 #include "PluginMainThreadScheduler.h"
 #include "PluginView.h"
 #include "npruntime_internal.h"
@@ -60,7 +61,7 @@ uint32_t NPN_MemFlush(uint32_t size)
 
 void NPN_ReloadPlugins(NPBool reloadPages)
 {
-    refreshPlugins(reloadPages);
+    Page::refreshPlugins(reloadPages);
 }
 
 NPError NPN_RequestRead(NPStream* stream, NPByteRange* rangeList)

@@ -1,5 +1,12 @@
 2010-05-24  Anders Carlsson  <andersca@apple.com>
 
+        Try to fix build.
+
+        * plugins/npapi.cpp:
+        (NPN_ReloadPlugins):
+
+2010-05-24  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Get rid of PlugInInfoStore.
