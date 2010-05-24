@@ -57,11 +57,21 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+namespace {
+
 inline UChar toLowerCase(UChar cc)
 {
     ASSERT(cc >= 'A' && cc <= 'Z');
     const int lowerCaseOffset = 0x20;
     return cc + lowerCaseOffset;
+}
+
+inline void advanceStringAndASSERTIgnoringCase(SegmentedString& source, const char* expectedCharacters)
+{
+    while (*expectedCharacters)
+        source.advanceAndASSERTIgnoringCase(*expectedCharacters++);
+}
+
 }
 
 HTML5Lexer::HTML5Lexer()
@@ -874,6 +884,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
         }
         case MarkupDeclarationOpenState: {
             DEFINE_STATIC_LOCAL(String, dashDashString, ("--"));
+            DEFINE_STATIC_LOCAL(String, doctypeString, ("doctype"));
             if (cc == '-') {
                 SegmentedString::LookAheadResult result = source.lookAhead(dashDashString);
                 if (result == SegmentedString::DidMatch) {
@@ -884,9 +895,21 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
                     continue;
                 } else if (result == SegmentedString::NotEnoughCharacters)
                     return false; // We need to wait for more characters to arrive.
+            } else if (cc == 'D' || cc == 'd') {
+                SegmentedString::LookAheadResult result = source.lookAheadIgnoringCase(doctypeString);
+                if (result == SegmentedString::DidMatch) {
+                    advanceStringAndASSERTIgnoringCase(source, "doctype");
+                    m_state = DOCTYPEState;
+                    continue;
+                } else if (result == SegmentedString::NotEnoughCharacters)
+                    return false; // We need to wait for more characters to arrive.
             }
             notImplemented();
-            break;
+            // FIXME: We're still missing the bits about the insertion mode being in foreign content:
+            // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#markup-declaration-open-state
+            emitParseError();
+            m_state = BogusCommentState;
+            continue;
         }
         case CommentStartState: {
             if (cc == '-')
@@ -1012,15 +1035,16 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
                 break;
             else if (cc >= 'A' && cc <= 'Z') {
-                notImplemented();
+                m_token->beginDOCTYPE(toLowerCase(cc));
                 m_state = DOCTYPENameState;
             } else if (cc == '>') {
                 emitParseError();
+                m_token->beginDOCTYPE();
                 notImplemented();
-                emitCurrentDoctypeToken();
+                emitCurrentToken();
                 m_state = DataState;
             } else {
-                notImplemented();
+                m_token->beginDOCTYPE(cc);
                 m_state = DOCTYPENameState;
             }
             // FIXME: Handle EOF properly.
@@ -1030,23 +1054,45 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
                 m_state = AfterDOCTYPENameState;
             else if (cc == '>') {
-                emitCurrentDoctypeToken();
+                emitCurrentToken();
                 m_state = DataState;
             } else if (cc >= 'A' && cc <= 'Z')
-                notImplemented();
+                m_token->appendToName(toLowerCase(cc));
             else
-                notImplemented();
+                m_token->appendToName(cc);
             // FIXME: Handle EOF properly.
             break;
         }
         case AfterDOCTYPENameState: {
             if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
                 break;
-            else if (cc == '>') {
-                emitCurrentDoctypeToken();
+            if (cc == '>') {
+                emitCurrentToken();
                 m_state = DataState;
-            } else
+            } else {
+                DEFINE_STATIC_LOCAL(String, publicString, ("public"));
+                DEFINE_STATIC_LOCAL(String, systemString, ("system"));
+                if (cc == 'P' || cc == 'p') {
+                    SegmentedString::LookAheadResult result = source.lookAheadIgnoringCase(publicString);
+                    if (result == SegmentedString::DidMatch) {
+                        advanceStringAndASSERTIgnoringCase(source, "public");
+                        m_state = AfterDOCTYPEPublicKeywordState;
+                        continue;
+                    } else if (result == SegmentedString::NotEnoughCharacters)
+                        return false;
+                } else if (cc == 'S' || cc == 's') {
+                    SegmentedString::LookAheadResult result = source.lookAheadIgnoringCase(systemString);
+                    if (result == SegmentedString::DidMatch) {
+                        advanceStringAndASSERTIgnoringCase(source, "system");
+                        m_state = AfterDOCTYPESystemKeywordState;
+                        continue;
+                    } else if (result == SegmentedString::NotEnoughCharacters)
+                        return false;
+                }
+                emitParseError();
                 notImplemented();
+                m_state = BogusDOCTYPEState;
+            }
             // FIXME: Handle EOF properly.
             break;
         }
@@ -1055,16 +1101,16 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
                 m_state = BeforeDOCTYPEPublicIdentifierState;
             else if (cc == '"') {
                 emitParseError();
-                notImplemented();
+                m_token->setPublicIdentifierToEmptyString();
                 m_state = DOCTYPEPublicIdentifierDoubleQuotedState;
             } else if (cc == '\'') {
                 emitParseError();
-                notImplemented();
+                m_token->setPublicIdentifierToEmptyString();
                 m_state = DOCTYPEPublicIdentifierSingleQuotedState;
             } else if (cc == '>') {
                 emitParseError();
                 notImplemented();
-                emitCurrentDoctypeToken();
+                emitCurrentToken();
                 m_state = DataState;
             } else {
                 emitParseError();
@@ -1078,15 +1124,15 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
                 break;
             else if (cc == '"') {
-                notImplemented();
+                m_token->setPublicIdentifierToEmptyString();
                 m_state = DOCTYPEPublicIdentifierDoubleQuotedState;
             } else if (cc == '\'') {
-                notImplemented();
+                m_token->setPublicIdentifierToEmptyString();
                 m_state = DOCTYPEPublicIdentifierSingleQuotedState;
             } else if (cc == '>') {
                 emitParseError();
                 notImplemented();
-                emitCurrentDoctypeToken();
+                emitCurrentToken();
                 m_state = DataState;
             } else {
                 emitParseError();
@@ -1102,10 +1148,10 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             else if (cc == '>') {
                 emitParseError();
                 notImplemented();
-                emitCurrentDoctypeToken();
+                emitCurrentToken();
                 m_state = DataState;
             } else
-                notImplemented();
+                m_token->appendToPublicIdentifier(cc);
             // FIXME: Handle EOF properly.
             break;
         }
@@ -1115,10 +1161,10 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             else if (cc == '>') {
                 emitParseError();
                 notImplemented();
-                emitCurrentDoctypeToken();
+                emitCurrentToken();
                 m_state = DataState;
             } else
-                notImplemented();
+                m_token->appendToPublicIdentifier(cc);
             // FIXME: Handle EOF properly.
             break;
         }
@@ -1126,15 +1172,15 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
                 m_state = BetweenDOCTYPEPublicAndSystemIdentifiersState;
             else if (cc == '>') {
-                emitCurrentDoctypeToken();
+                emitCurrentToken();
                 m_state = DataState;
             } else if (cc == '"') {
                 emitParseError();
-                notImplemented();
+                m_token->setPublicIdentifierToEmptyString();
                 m_state = DOCTYPESystemIdentifierDoubleQuotedState;
             } else if (cc == '\'') {
                 emitParseError();
-                notImplemented();
+                m_token->setPublicIdentifierToEmptyString();
                 m_state = DOCTYPESystemIdentifierSingleQuotedState;
             } else {
                 emitParseError();
@@ -1148,13 +1194,13 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
                 m_state = BetweenDOCTYPEPublicAndSystemIdentifiersState;
             else if (cc == '>') {
-                emitCurrentDoctypeToken();
+                emitCurrentToken();
                 m_state = DataState;
             } else if (cc == '"') {
-                notImplemented();
+                m_token->setSystemIdentifierToEmptyString();
                 m_state = DOCTYPESystemIdentifierDoubleQuotedState;
             } else if (cc == '\'') {
-                notImplemented();
+                m_token->setSystemIdentifierToEmptyString();
                 m_state = DOCTYPESystemIdentifierSingleQuotedState;
             } else {
                 emitParseError();
@@ -1169,16 +1215,16 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
                 m_state = BeforeDOCTYPESystemIdentifierState;
             else if (cc == '"') {
                 emitParseError();
-                notImplemented();
+                m_token->setSystemIdentifierToEmptyString();
                 m_state = DOCTYPESystemIdentifierDoubleQuotedState;
             } else if (cc == '\'') {
                 emitParseError();
-                notImplemented();
+                m_token->setSystemIdentifierToEmptyString();
                 m_state = DOCTYPESystemIdentifierSingleQuotedState;
             } else if (cc == '>') {
                 emitParseError();
                 notImplemented();
-                emitCurrentDoctypeToken();
+                emitCurrentToken();
                 m_state = DataState;
             } else {
                 emitParseError();
@@ -1191,16 +1237,16 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
         case BeforeDOCTYPESystemIdentifierState: {
             if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
                 break;
-            else if (cc == '"') {
-                notImplemented();
+            if (cc == '"') {
+                m_token->setSystemIdentifierToEmptyString();
                 m_state = DOCTYPESystemIdentifierDoubleQuotedState;
             } else if (cc == '\'') {
-                notImplemented();
+                m_token->setSystemIdentifierToEmptyString();
                 m_state = DOCTYPESystemIdentifierSingleQuotedState;
             } else if (cc == '>') {
                 emitParseError();
                 notImplemented();
-                emitCurrentDoctypeToken();
+                emitCurrentToken();
                 m_state = DataState;
             } else {
                 emitParseError();
@@ -1216,10 +1262,10 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             else if (cc == '>') {
                 emitParseError();
                 notImplemented();
-                emitCurrentDoctypeToken();
+                emitCurrentToken();
                 m_state = DataState;
             } else
-                notImplemented();
+                m_token->appendToSystemIdentifier(cc);
             // FIXME: Handle EOF properly.
             break;
         }
@@ -1229,10 +1275,10 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             else if (cc == '>') {
                 emitParseError();
                 notImplemented();
-                emitCurrentDoctypeToken();
+                emitCurrentToken();
                 m_state = DataState;
             } else
-                notImplemented();
+                m_token->appendToSystemIdentifier(cc);
             // FIXME: Handle EOF properly.
             break;
         }
@@ -1240,7 +1286,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
                 break;
             else if (cc == '>') {
-                emitCurrentDoctypeToken();
+                emitCurrentToken();
                 m_state = DataState;
             } else {
                 emitParseError();
@@ -1250,8 +1296,10 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             break;
         }
         case BogusDOCTYPEState: {
-            if (cc == '>')
-                emitCurrentDoctypeToken();
+            if (cc == '>') {
+                emitCurrentToken();
+                m_state = DataState;
+            }
             // FIXME: Handle EOF properly.
             break;
         }
@@ -1307,13 +1355,10 @@ inline void HTML5Lexer::emitParseError()
 
 inline void HTML5Lexer::emitCurrentToken()
 {
+    ASSERT(m_token->type() != HTML5Token::Uninitialized);
     m_emitPending = true;
     if (m_token->type() == HTML5Token::StartTag)
         m_appropriateEndTagName = m_token->name();
-}
-
-inline void HTML5Lexer::emitCurrentDoctypeToken()
-{
 }
 
 }

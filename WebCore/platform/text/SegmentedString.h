@@ -122,6 +122,19 @@ public:
         return DidNotMatch;
     }
 
+    // WARNING: This method is currently used only by the HTML5 parser and is incomplete.
+    LookAheadResult lookAheadIgnoringCase(const String& string)
+    {
+        if (!m_pushedChar1 && string.length() <= (unsigned) m_currentString.m_length) {
+            if (WTF::Unicode::umemcasecmp(string.characters(), m_currentString.m_current, string.length()))
+                return DidNotMatch;
+            return DidMatch;
+        }
+        // We haven't implemented the slow case yet.
+        ASSERT_NOT_REACHED();
+        return DidNotMatch;
+    }
+
     void advance()
     {
         if (!m_pushedChar1 && m_currentString.m_length > 1) {
@@ -135,6 +148,12 @@ public:
     void advanceAndASSERT(UChar expectedCharacter)
     {
         ASSERT_UNUSED(expectedCharacter, *current() == expectedCharacter);
+        advance();
+    }
+
+    void advanceAndASSERTIgnoringCase(UChar expectedCharacter)
+    {
+        ASSERT_UNUSED(expectedCharacter, WTF::Unicode::foldCase(*current()) == WTF::Unicode::foldCase(expectedCharacter));
         advance();
     }
 

@@ -101,6 +101,21 @@ public:
         m_dataString = AtomicString();
     }
 
+    void beginDOCTYPE()
+    {
+        ASSERT(m_type == Uninitialized);
+        m_type = DOCTYPE;
+        m_data.clear();
+        m_dataString = AtomicString();
+        m_doctypeData.set(new DoctypeData());
+    }
+
+    void beginDOCTYPE(UChar character)
+    {
+        beginDOCTYPE();
+        m_data.append(character);
+    }
+
     void appendToName(UChar character)
     {
         ASSERT(m_type == StartTag || m_type == EndTag || m_type == DOCTYPE);
@@ -171,7 +186,65 @@ public:
         return dataString();
     }
 
+    // FIXME: Distinguish between a missing public identifer and an empty one.
+    const WTF::Vector<UChar>& publicIdentifier()
+    {
+        ASSERT(m_type == DOCTYPE);
+        return m_doctypeData->m_publicIdentifier;
+    }
+
+    // FIXME: Distinguish between a missing system identifer and an empty one.
+    const WTF::Vector<UChar>& systemIdentifier()
+    {
+        ASSERT(m_type == DOCTYPE);
+        return m_doctypeData->m_systemIdentifier;
+    }
+
+    void setPublicIdentifierToEmptyString()
+    {
+        ASSERT(m_type == DOCTYPE);
+        m_doctypeData->m_hasPublicIdentifier = true;
+        m_doctypeData->m_publicIdentifier.clear();
+    }
+
+    void setSystemIdentifierToEmptyString()
+    {
+        ASSERT(m_type == DOCTYPE);
+        m_doctypeData->m_hasSystemIdentifier = true;
+        m_doctypeData->m_systemIdentifier.clear();
+    }
+
+    void appendToPublicIdentifier(UChar character)
+    {
+        ASSERT(m_type == DOCTYPE);
+        ASSERT(m_doctypeData->m_hasPublicIdentifier);
+        m_doctypeData->m_publicIdentifier.append(character);
+    }
+
+    void appendToSystemIdentifier(UChar character)
+    {
+        ASSERT(m_type == DOCTYPE);
+        ASSERT(m_doctypeData->m_hasSystemIdentifier);
+        m_doctypeData->m_systemIdentifier.append(character);
+    }
+
 private:
+    class DoctypeData {
+    public:
+        DoctypeData()
+            : m_hasPublicIdentifier(false)
+            , m_hasSystemIdentifier(false)
+            , m_forceQuirks(false)
+        {
+        }
+
+        bool m_hasPublicIdentifier;
+        bool m_hasSystemIdentifier;
+        bool m_forceQuirks;
+        WTF::Vector<UChar> m_publicIdentifier;
+        WTF::Vector<UChar> m_systemIdentifier;
+    };
+
     AtomicString dataString()
     {
         if (!m_data.isEmpty() && m_dataString.isEmpty())
@@ -187,9 +260,7 @@ private:
     WTF::Vector<UChar, 1024> m_data;
 
     // For DOCTYPE
-    String m_publicIdentifier;
-    String m_systemIdentifier;
-    bool m_forceQuirks;
+    OwnPtr<DoctypeData> m_doctypeData;
 
     // For StartTag and EndTag
     bool m_selfClosing;

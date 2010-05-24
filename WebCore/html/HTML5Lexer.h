@@ -129,7 +129,6 @@ namespace WebCore {
         inline void emitCharacter(UChar);
         inline void emitParseError();
         inline void emitCurrentToken();
-        inline void emitCurrentDoctypeToken();
 
         inline bool temporaryBufferIs(const char*);
 

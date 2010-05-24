@@ -1,1 +1,27 @@
+2010-05-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Teach the HTML5 parser to lex DOCTYPEs
+        https://bugs.webkit.org/show_bug.cgi?id=39571
+
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTML5Lexer::nextToken):
+        * html/HTML5Lexer.h:
+        * html/HTML5Token.h:
+        (WebCore::HTML5Token::beginDOCTYPE):
+        (WebCore::HTML5Token::publicIdentifier):
+        (WebCore::HTML5Token::systemIdentifier):
+        (WebCore::HTML5Token::setPublicIdentifierToEmptyString):
+        (WebCore::HTML5Token::setSystemIdentifierToEmptyString):
+        (WebCore::HTML5Token::appendToPublicIdentifier):
+        (WebCore::HTML5Token::appendToSystemIdentifier):
+        (WebCore::HTML5Token::DoctypeData::DoctypeData):
+        * html/HTML5TreeBuilder.cpp:
+        (WebCore::convertToOldStyle):
+        (WebCore::HTML5TreeBuilder::passTokenToLegacyParser):
+        * platform/text/SegmentedString.h:
+        (WebCore::SegmentedString::lookAheadIgnoringCase):
+        (WebCore::SegmentedString::advanceAndASSERTIgnoringCase):
+
 == Rolled over to ChangeLog-2010-05-24 ==

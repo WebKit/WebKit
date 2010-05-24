@@ -52,9 +52,9 @@ static void convertToOldStyle(HTML5Token& token, Token& oldStyleToken)
 {
     switch (token.type()) {
     case HTML5Token::Uninitialized:
+    case HTML5Token::DOCTYPE:
         ASSERT_NOT_REACHED();
         break;
-    case HTML5Token::DOCTYPE:
     case HTML5Token::EndOfFile:
         ASSERT_NOT_REACHED();
         notImplemented();
@@ -96,6 +96,17 @@ PassRefPtr<Node> HTML5TreeBuilder::passTokenToLegacyParser(HTML5Token& token)
         // when using the old parser for we have to do this manually.
         m_lexer->setState(HTML5Lexer::ScriptDataState);
     }
+
+    if (token.type() == HTML5Token::DOCTYPE) {
+        DoctypeToken doctypeToken;
+        doctypeToken.m_name.append(token.name().characters(), token.name().length());
+        doctypeToken.m_publicID = token.publicIdentifier();
+        doctypeToken.m_systemID = token.systemIdentifier();
+
+        m_legacyHTMLParser->parseDoctypeToken(&doctypeToken);
+        return 0;
+    }
+
     // For now, we translate into an old-style token for testing.
     Token oldStyleToken;
     convertToOldStyle(token, oldStyleToken);
