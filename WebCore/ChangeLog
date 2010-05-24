@@ -1,3 +1,32 @@
+2010-05-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add new HTML5TreeBuilder class to hold the tree builder section of the HTML5 parsing spec
+        https://bugs.webkit.org/show_bug.cgi?id=39572
+
+        We've been working on the tokenization (lexing) section of the HTML5
+        spec until now and leaning on the old HTMLParser for tree building.
+        We need to start writing more of the tree building sections of the spec,
+        but to do that we need a place to put the new code.
+
+        This patch moves our old-to-new conversion hacks out of HTML5Tokenizer
+        (our Tokenizer.h implementation) and into HTML5TreeBuilder.
+        Follow-up patches will add new HTML5 tree building code to this file
+        and will allow us to switch between old and new parser/treebuilder
+        implementations.
+
+        No change in behavior, thus no new tests.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::HTML5Tokenizer):
+        (WebCore::HTML5Tokenizer::write):
+         - Call the new HTML5TreeBuilder code.
+        * html/HTML5Tokenizer.h:
+        * html/HTML5TreeBuilder.cpp: Added.
+        * html/HTML5TreeBuilder.h: Added.
+
 2010-05-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.

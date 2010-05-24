@@ -3008,6 +3008,8 @@
 		A871DFE30A15376B00B12A68 /* RenderReplaced.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DFDF0A15376B00B12A68 /* RenderReplaced.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A871DFE40A15376B00B12A68 /* RenderWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DFE00A15376B00B12A68 /* RenderWidget.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A871DFE50A15376B00B12A68 /* RenderWidget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DFE10A15376B00B12A68 /* RenderWidget.cpp */; };
+		A879C62511A9D1F70059237A /* HTML5TreeBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A879C62311A9D1F70059237A /* HTML5TreeBuilder.cpp */; };
+		A879C62611A9D1F70059237A /* HTML5TreeBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A879C62411A9D1F70059237A /* HTML5TreeBuilder.h */; };
 		A883DF270F3D045D00F19BF6 /* VisibleSelection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A883DF250F3D045D00F19BF6 /* VisibleSelection.cpp */; };
 		A883DF280F3D045D00F19BF6 /* VisibleSelection.h in Headers */ = {isa = PBXBuildFile; fileRef = A883DF260F3D045D00F19BF6 /* VisibleSelection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A88AD52F09524B92001DD196 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */; };
@@ -8433,6 +8435,8 @@
 		A871DFDF0A15376B00B12A68 /* RenderReplaced.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderReplaced.h; sourceTree = "<group>"; };
 		A871DFE00A15376B00B12A68 /* RenderWidget.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderWidget.h; sourceTree = "<group>"; };
 		A871DFE10A15376B00B12A68 /* RenderWidget.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderWidget.cpp; sourceTree = "<group>"; };
+		A879C62311A9D1F70059237A /* HTML5TreeBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTML5TreeBuilder.cpp; sourceTree = "<group>"; };
+		A879C62411A9D1F70059237A /* HTML5TreeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTML5TreeBuilder.h; sourceTree = "<group>"; };
 		A883DF250F3D045D00F19BF6 /* VisibleSelection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisibleSelection.cpp; sourceTree = "<group>"; };
 		A883DF260F3D045D00F19BF6 /* VisibleSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisibleSelection.h; sourceTree = "<group>"; };
 		A88DD4860B4629A300C02990 /* PathTraversalState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PathTraversalState.h; sourceTree = "<group>"; };
@@ -13326,6 +13330,8 @@
 				A8136D360973A8E700D74463 /* FormDataList.h */,
 				97E8B35411A23CE200169409 /* HTML5Lexer.cpp */,
 				97E8B35511A23CE200169409 /* HTML5Lexer.h */,
+				A879C62311A9D1F70059237A /* HTML5TreeBuilder.cpp */,
+				A879C62411A9D1F70059237A /* HTML5TreeBuilder.h */,
 				97E8B3C211A2890800169409 /* HTML5Token.h */,
 				A871038811A2947000DBD50E /* HTML5Tokenizer.cpp */,
 				A871038911A2947000DBD50E /* HTML5Tokenizer.h */,
@@ -19290,6 +19296,7 @@
 				2E3FAA0911A36BF100576624 /* CrossThreadTask.h in Headers */,
 				59A8F1D611A69513001AC34A /* DeviceOrientation.h in Headers */,
 				59A8F1D811A69520001AC34A /* DeviceOrientationClient.h in Headers */,
+				A879C62611A9D1F70059237A /* HTML5TreeBuilder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21575,6 +21582,7 @@
 				59A85EA2119D68D900DEF1EF /* DeviceOrientationEvent.cpp in Sources */,
 				59A86006119DAF7F00DEF1EF /* JSDeviceOrientationEvent.cpp in Sources */,
 				59A8F1D411A69508001AC34A /* DeviceOrientation.cpp in Sources */,
+				A879C62511A9D1F70059237A /* HTML5TreeBuilder.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

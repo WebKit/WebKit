@@ -10,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY GOOGLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL GOOGLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -23,43 +23,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTML5Tokenizer_h
-#define HTML5Tokenizer_h
+#ifndef HTML5TreeBuilder_h
+#define HTML5TreeBuilder_h
 
-#include "CachedResourceClient.h"
-#include "SegmentedString.h"
-#include "Tokenizer.h"
+#include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
-
-class HTMLDocument;
-class HTML5TreeBuilder;
+class Document;
 class HTML5Lexer;
+class HTML5Token;
+class HTMLDocument;
+class HTMLParser;
+class Node;
 
-// FIXME: This is the wrong layer to hook in the new HTML 5 Lexer,
-// however HTMLTokenizer is too large and too fragile of a class to hack into.
-// Eventually we should split all of the HTML lexer logic out from HTMLTokenizer
-// and then share non-lexer-specific tokenizer logic between HTML5 and the
-// legacy WebKit HTML lexer.
-
-// FIXME: This class is far from complete.
-class HTML5Tokenizer :  public Tokenizer, public CachedResourceClient {
+class HTML5TreeBuilder : public Noncopyable {
 public:
-    HTML5Tokenizer(HTMLDocument*, bool reportErrors);
-    virtual ~HTML5Tokenizer();
+    HTML5TreeBuilder(HTML5Lexer*, HTMLDocument*, bool reportErrors);
+    ~HTML5TreeBuilder();
 
-    virtual void begin();
-    virtual void write(const SegmentedString&, bool appendData);
-    virtual void end();
-    virtual void finish();
-    virtual bool isWaitingForScripts() const;
+    // The token really should be passed as a const& since it's never modified.
+    PassRefPtr<Node> constructTreeFromToken(HTML5Token&);
+    void finished();
 
 private:
-    SegmentedString m_source;
+    PassRefPtr<Node> passTokenToLegacyParser(HTML5Token&);
 
-    OwnPtr<HTML5Lexer> m_lexer;
-    OwnPtr<HTML5TreeBuilder> m_treeBuilder;
+    // We could grab m_document off the lexer if we wanted to save space.
+    Document* m_document;
+    bool m_reportErrors;
+    // HTML5 spec requires that we be able to change the state of the lexer
+    // from within parser actions.
+    HTML5Lexer* m_lexer;
+
+    // We're re-using logic from the old HTMLParser while this class is being written.
+    OwnPtr<HTMLParser> m_legacyHTMLParser;
 };
 
 }

@@ -28,60 +28,16 @@
 
 #include "HTML5Lexer.h"
 #include "HTML5Token.h"
-#include "HTMLDocument.h"
-#include "HTMLParser.h"
-#include "HTMLTokenizer.h"
-#include "Attribute.h"
+#include "HTML5TreeBuilder.h"
+#include "Node.h"
 #include "NotImplemented.h"
 
 namespace WebCore {
 
-static void convertToOldStyle(HTML5Token& token, Token& oldStyleToken)
-{
-    switch (token.type()) {
-    case HTML5Token::Uninitialized:
-        ASSERT_NOT_REACHED();
-        break;
-    case HTML5Token::DOCTYPE:
-    case HTML5Token::EndOfFile:
-        ASSERT_NOT_REACHED();
-        notImplemented();
-        break;
-    case HTML5Token::StartTag:
-    case HTML5Token::EndTag: {
-        oldStyleToken.beginTag = (token.type() == HTML5Token::StartTag);
-        oldStyleToken.selfClosingTag = token.selfClosing();
-        oldStyleToken.tagName = token.name();
-        HTML5Token::AttributeList& attributes = token.attributes();
-        for (HTML5Token::AttributeList::iterator iter = attributes.begin();
-             iter != attributes.end(); ++iter) {
-            if (!iter->m_name.isEmpty()) {
-                String name = String(StringImpl::adopt(iter->m_name));
-                String value = String(StringImpl::adopt(iter->m_value));
-                RefPtr<Attribute> mappedAttribute = Attribute::createMapped(name, value);
-                if (!oldStyleToken.attrs)
-                    oldStyleToken.attrs = NamedNodeMap::create();
-                oldStyleToken.attrs->insertAttribute(mappedAttribute.release(), false);
-            }
-        }
-        break;
-    }
-    case HTML5Token::Comment:
-        oldStyleToken.tagName = commentAtom;
-        oldStyleToken.text = token.data().impl();
-        break;
-    case HTML5Token::Character:
-        oldStyleToken.tagName = textAtom;
-        oldStyleToken.text = token.characters().impl();
-        break;
-    }
-}
-
-HTML5Tokenizer::HTML5Tokenizer(HTMLDocument* doc, bool reportErrors)
+HTML5Tokenizer::HTML5Tokenizer(HTMLDocument* document, bool reportErrors)
     : Tokenizer()
-    , m_doc(doc)
     , m_lexer(new HTML5Lexer)
-    , m_parser(new HTMLParser(doc, reportErrors))
+    , m_treeBuilder(new HTML5TreeBuilder(m_lexer.get(), document, reportErrors))
 {
     begin();
 }
@@ -101,24 +57,7 @@ void HTML5Tokenizer::write(const SegmentedString& source, bool)
     HTML5Token token;
     while (!m_source.isEmpty()) {
         if (m_lexer->nextToken(m_source, token)) {
-            // http://www.whatwg.org/specs/web-apps/current-work/#tree-construction
-            // We need to add code to the parser in order to understand
-            // HTML5Token objects.  The old HTML codepath does not have a nice
-            // separation between the parser logic and tokenizer logic like
-            // the HTML5 codepath should.  The call should look something like:
-            // m_parser->constructTreeFromToken(token);
-            if (token.type() == HTML5Token::StartTag && token.name() == "script") {
-                // FIXME: This work is supposed to be done by the parser, but
-                // we want to keep using the old parser for now, so we have to
-                // do this work manually.
-                m_lexer->setState(HTML5Lexer::ScriptDataState);
-            }           
-            // For now, we translate into an old-style token for testing.
-            Token oldStyleToken;
-            convertToOldStyle(token, oldStyleToken);
-
-            m_parser->parseToken(&oldStyleToken);
-
+            m_treeBuilder->constructTreeFromToken(token);
             token.clear();
         }
     }
@@ -126,7 +65,7 @@ void HTML5Tokenizer::write(const SegmentedString& source, bool)
 
 void HTML5Tokenizer::end()
 {
-    m_parser->finished();
+    m_treeBuilder->finished();
 }
 
 void HTML5Tokenizer::finish()
