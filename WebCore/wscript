@@ -194,7 +194,6 @@ def build(bld):
         # Investigate how to resolve these issues.
         excludes.append('JSAbstractView.cpp')
         excludes.append('JSPositionCallback.cpp')
-        excludes.append('JSDOMStringList.cpp')
         excludes.append('JSInspectorController.cpp')
         
         # The bindings generator seems to think these are ref-counted, while they aren't in trunk.

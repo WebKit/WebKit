@@ -1,3 +1,11 @@
+2010-05-25  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix after API change and addition of WebCore/platform/text/transcoder dir. 
+
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setEditingBehavior):
+        * wx/build/settings.py:
+
 2010-05-24  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Eric Seidel and Kent Tamura (for the Chromium part).
