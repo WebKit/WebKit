@@ -1827,8 +1827,6 @@ webcore_sources += \
 	WebCore/plugins/PluginDatabaseClient.h \
 	WebCore/plugins/PluginDebug.cpp \
 	WebCore/plugins/PluginDebug.h \
-	WebCore/plugins/PluginInfoStore.cpp \
-	WebCore/plugins/PluginInfoStore.h \
 	WebCore/plugins/PluginMainThreadScheduler.cpp \
 	WebCore/plugins/PluginMainThreadScheduler.h \
 	WebCore/plugins/PluginPackage.cpp \

@@ -1,3 +1,9 @@
+2010-05-25  Xan Lopez  <xlopez@igalia.com>
+
+        Fix the GTK+ build, PluginInfoStore was removed.
+
+        * GNUmakefile.am:
+
 2010-05-25  Ada Chan  <adachan@apple.com>
 
         Reviewed by Steve Falkenburg.
