@@ -1,3 +1,11 @@
+CONSOLE MESSAGE: line 92: TypeError: Result of expression 'file.slice' [undefined] is not a function.
+CONSOLE MESSAGE: line 92: TypeError: Result of expression 'file.slice' [undefined] is not a function.
+CONSOLE MESSAGE: line 92: TypeError: Result of expression 'file.slice' [undefined] is not a function.
+CONSOLE MESSAGE: line 92: TypeError: Result of expression 'file.slice' [undefined] is not a function.
+CONSOLE MESSAGE: line 92: TypeError: Result of expression 'file.slice' [undefined] is not a function.
+CONSOLE MESSAGE: line 92: TypeError: Result of expression 'file.slice' [undefined] is not a function.
+CONSOLE MESSAGE: line 92: TypeError: Result of expression 'file.slice' [undefined] is not a function.
+CONSOLE MESSAGE: line 110: TypeError: Result of expression 'file.slice' [undefined] is not a function.
 Test for slicing a dragged file and sending it via XMLHttpRequest.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -5,33 +13,16 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Test slicing and sending an empty file.
 PASS event.dataTransfer contains a File object on drop.
-PASS subfile.size is 0
-PASS Expected response data received: OK
 Test slicing and sending a small file.
 PASS event.dataTransfer contains a File object on drop.
-PASS subfile.size is 4
-PASS Expected response data received: OK
 PASS event.dataTransfer contains a File object on drop.
-PASS subfile.size is 8
-PASS Expected response data received: OK
 PASS event.dataTransfer contains a File object on drop.
-PASS subfile.size is 0
-PASS Expected response data received: OK
 Test slicing and sending a big file.
 PASS event.dataTransfer contains a File object on drop.
-PASS subfile.size is 40
-PASS Expected response data received: OK
 PASS event.dataTransfer contains a File object on drop.
-PASS subfile.size is 3000
-PASS Expected response data received: OK
 PASS event.dataTransfer contains a File object on drop.
-PASS subfile.size is 9242
-PASS Expected response data received: OK
 Test slicing and sending a file that has been changed right before sending.
 PASS event.dataTransfer contains a File object on drop.
-PASS subfile.size is 5
-PASS Expected response data received: OK
-PASS Expected exception thrown: Error: NETWORK_ERR: XMLHttpRequest Exception 101
 PASS successfullyParsed is true
 
 TEST COMPLETE
