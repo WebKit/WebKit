@@ -1,3 +1,22 @@
+2010-05-17  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add an optional "starting node' parameter to scrollRecursively and scrollOverflow of EventHandler
+        https://bugs.webkit.org/show_bug.cgi?id=39217
+
+        It would be usefull if scrollOverflow and scrollRecursively methods of EventHandler
+        could receive a parameter to specify where to start scrolling from. Currently they
+        start scrolling from either the current focused node or the node where mouse last
+        pressed on. Patch proposes an aditional starting point as an optional parameter.
+        Since it is optional, all call sites can remain as are, and if a Null node is passed
+        in, both methods work as previously.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::scrollOverflow):
+        (WebCore::EventHandler::scrollRecursively):
+        * page/EventHandler.h:
+
 2010-05-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Timothy Hatcher.

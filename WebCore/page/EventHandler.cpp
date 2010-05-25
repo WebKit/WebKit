@@ -971,9 +971,13 @@ void EventHandler::setMousePressNode(PassRefPtr<Node> node)
     m_mousePressNode = node;
 }
 
-bool EventHandler::scrollOverflow(ScrollDirection direction, ScrollGranularity granularity)
+bool EventHandler::scrollOverflow(ScrollDirection direction, ScrollGranularity granularity, Node* startingNode)
 {
-    Node* node = m_frame->document()->focusedNode();
+    Node* node = startingNode;
+
+    if (!node)
+        node = m_frame->document()->focusedNode();
+
     if (!node)
         node = m_mousePressNode.get();
     
@@ -988,9 +992,9 @@ bool EventHandler::scrollOverflow(ScrollDirection direction, ScrollGranularity g
     return false;
 }
 
-bool EventHandler::scrollRecursively(ScrollDirection direction, ScrollGranularity granularity)
+bool EventHandler::scrollRecursively(ScrollDirection direction, ScrollGranularity granularity, Node* startingNode)
 {
-    bool handled = scrollOverflow(direction, granularity);
+    bool handled = scrollOverflow(direction, granularity, startingNode);
     if (!handled) {
         Frame* frame = m_frame;
         do {
