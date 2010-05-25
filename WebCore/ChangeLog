@@ -1,3 +1,13 @@
+2010-05-24  Tasuku Suzuki  <tasuku.suzuki@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Fix compilation with QT_NO_TEMPORARYFILE
+        https://bugs.webkit.org/show_bug.cgi?id=38324
+
+        * platform/qt/FileSystemQt.cpp:
+        (WebCore::openTemporaryFile):
+
 2010-05-24  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.
