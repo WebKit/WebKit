@@ -1,3 +1,13 @@
+2010-05-24  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] Adds WebGeolocationServiceMockImpl to remove public dependency on wtf/HashMap.h
+        https://bugs.webkit.org/show_bug.cgi?id=39587
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::geolocationService):
+
 2010-05-24  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Laszlo Gombos.

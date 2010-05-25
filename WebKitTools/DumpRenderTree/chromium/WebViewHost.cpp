@@ -531,7 +531,7 @@ WebNotificationPresenter* WebViewHost::notificationPresenter()
 WebKit::WebGeolocationService* WebViewHost::geolocationService()
 {
     if (!m_geolocationServiceMock.get())
-        m_geolocationServiceMock.set(new WebGeolocationServiceMock);
+        m_geolocationServiceMock.set(WebGeolocationServiceMock::createWebGeolocationServiceMock());
     return m_geolocationServiceMock.get();
 }
 
