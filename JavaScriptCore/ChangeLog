@@ -1,3 +1,22 @@
+2010-05-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/8020221>
+        
+        Fixed a crash seen on Windows when calling a function with too many
+        arguments.
+        
+        SunSpider reports no change.
+        
+        No test because the ASSERT I added fires in existing tests.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION): Make sure to grow the registerFile when too
+        many arguments have been provided, since the caller only allocated enough
+        registerFile space for the arguments it provided, not enough for the extra
+        copy of arguments we're going to need.
+
 2010-05-25  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Darin Adler.
