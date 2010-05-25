@@ -1,3 +1,16 @@
+2010-05-24  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Re-commit r58765 - it had been rolled out to see if it was causing
+        a perf regression (in r59787 and r59789), but that does not seem to
+        have been the case.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39605
+
+        * DumpRenderTree/chromium/NotificationPresenter.cpp:
+        (NotificationPresenter::show):
+
 2010-05-25  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Chris Jerdonek.

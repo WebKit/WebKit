@@ -1,3 +1,16 @@
+2010-05-24  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Re-commit r58765 - it had been rolled out to see if it was causing
+        a perf regression (in r59787 and r59789), but that does not seem to
+        have been the case.
+
+        * public/WebNotification.h:
+        * src/WebNotification.cpp:
+        (WebKit::WebNotification::dir):
+        (WebKit::WebNotification::replaceId):
+
 2010-05-25  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Darin Fisher.
@@ -377,18 +390,6 @@
         * src/WebNotification.cpp:
         (WebKit::WebNotification::dir):
         (WebKit::WebNotification::replaceId):
-
-2010-05-18  Dirk Pranke  <dpranke@chromium.org>
-
-        Reviewed by Dimitri Glazkov.
-
-        Attempt to revert r58765 to see if it was causing a performance
-        regression.
-
-        https://bugs.webkit.org/show_bug.cgi?id=39328
-
-        * public/WebNotification.h:
-        * src/WebNotification.cpp:
 
 2010-05-19  Jian Li  <jianli@chromium.org>
 

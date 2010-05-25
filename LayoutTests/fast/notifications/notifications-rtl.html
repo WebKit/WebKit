@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript">
+        function log(message)
+        {
+            document.getElementById("result").innerHTML += message + "<br>";
+        }
+        
+        function runTests()
+        {
+            if (window.layoutTestController) {
+                layoutTestController.grantDesktopNotificationPermission("file://");
+                layoutTestController.dumpAsText();
+            }
+
+            if (!window.webkitNotifications) {
+                log("FAIL: No webkitNotifications interface!");
+            }
+            
+            var M = window.webkitNotifications.createNotification("", "New E-mail", "Meet me tonight at 8!");
+            M.dir = "rtl";
+            M.show();
+        }
+    </script>
+</head>
+<body>
+<p>Showing a notification with direction "rtl"...</p>
+    
+<div id="result"></div>
+   
+<script type="text/javascript">
+runTests();
+</script>
+
+</body>
+</html>

@@ -94,6 +94,16 @@ WebString WebNotification::body() const
     return m_private->contents().body();
 }
 
+WebString WebNotification::dir() const
+{
+    return m_private->dir();
+}
+
+WebString WebNotification::replaceId() const
+{
+    return m_private->replaceId();
+}
+
 void WebNotification::dispatchDisplayEvent()
 {
     RefPtr<Event> event = Event::create("display", false, true);

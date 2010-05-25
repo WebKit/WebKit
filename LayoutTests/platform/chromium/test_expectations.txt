@@ -2846,3 +2846,9 @@ BUGWK24906 : fast/text/backslash-to-yen-sign.html = FAIL
 BUGWK24906 : fast/text/backslash-to-yen-sign-dynamic.html = FAIL
 
 BUGWK39655 : fast/dom/prototype-property.html = FAIL
+
+// temporarily mark these tests as failing until we can turn the feature
+// on in test_shell
+BUGWK39605 : fast/notifications/notifications-replace.html = FAIL
+BUGWK39605 : fast/notifications/notifications-rtl.html = FAIL
+
