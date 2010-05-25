@@ -1,3 +1,14 @@
+2010-05-25  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39686
+
+        Fix the ProjectGUID of the WebKit2 project so it doesn't conflict with the one in WebKit.        
+
+        * WebKit2.sln:
+        * win/WebKit2.vcproj:
+
 2010-05-24  Ada Chan  <adachan@apple.com>
 
         Rubber-stamped by Mark Rowe.

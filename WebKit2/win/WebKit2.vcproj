@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="WebKit2"
-	ProjectGUID="{0662A8A9-82A3-4638-97D8-EC425D8D87C9}"
+	ProjectGUID="{2E51ABE8-76CB-485B-A66C-46AEF4DF8ACD}"
 	RootNamespace="WebKit2"
 	Keyword="Win32Proj"
 	>
@@ -906,15 +906,15 @@
 						>
 					</File>
 					<File
-						RelativePath="..\UIProcess\API\C\WKPagePrivate.h"
-						>
-					</File>
-					<File
 						RelativePath="..\UIProcess\API\C\WKPageNamespace.cpp"
 						>
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKPageNamespace.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKPagePrivate.h"
 						>
 					</File>
 					<File
