@@ -1,3 +1,17 @@
+2010-05-25  Joone Hur  <joone.hur@samsung.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [EFL] Build fix.
+        http://webkit.org/b/39648
+
+        * efl/ewk/ewk_frame.cpp:
+        (ewk_frame_zoom_get): Add missed namespace 
+        (ewk_frame_zoom_set): Ditto.
+        (ewk_frame_zoom_text_only_set): Ditto.
+        * efl/ewk/ewk_view.cpp:
+        (_ewk_view_priv_new): Add a null parameter when creating a Page.
+
 2010-05-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric Seidel.
