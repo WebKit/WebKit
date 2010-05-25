@@ -1,3 +1,9 @@
+2010-05-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Fix Chromium Mac Release build.
+
+        * bindings/v8/ScriptDebugServer.cpp:
+
 2010-05-24  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

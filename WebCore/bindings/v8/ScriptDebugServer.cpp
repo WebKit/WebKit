@@ -44,6 +44,7 @@
 
 namespace WebCore {
 
+#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
 static Frame* retrieveFrame(v8::Handle<v8::Context> context)
 {
     if (context.IsEmpty())
@@ -60,6 +61,7 @@ static Frame* retrieveFrame(v8::Handle<v8::Context> context)
 
     return V8Proxy::retrieveFrame(context);
 }
+#endif
 
 ScriptDebugServer& ScriptDebugServer::shared()
 {
