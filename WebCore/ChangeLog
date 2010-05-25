@@ -1,5 +1,13 @@
 2010-05-25  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Fix typo pointed out by Maciej.
+
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTMLNames::unconsumeCharacters):
+        (WebCore::HTML5Lexer::consumeEntity):
+
+2010-05-25  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Fix <noembed> and <plaintext> content models
