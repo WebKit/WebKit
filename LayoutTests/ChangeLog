@@ -1,3 +1,700 @@
+2010-05-25  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed. Pixel expectations change only
+
+        Move Leopard-specific pixel test results from platform/mac to platform/mac-leopard
+        https://bugs.webkit.org/show_bug.cgi?id=39317
+
+        Adds snow leopard specific baselines for tables/mozilla and moves the current
+        leopard-specific baselines to platform/mac-leopard.
+
+        * platform/mac-leopard/tables: Added.
+        * platform/mac-leopard/tables/mozilla: Added.
+        * platform/mac-leopard/tables/mozilla/bugs: Added.
+        * platform/mac-leopard/tables/mozilla/bugs/bug10296-1-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug10296-1-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug10296-1-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug10296-1-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug1055-1-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug1055-1-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug1055-1-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug1055-1-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug106816-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug106816-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug106816-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug106816-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug113235-3-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug113235-3-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug113235-3-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug113235-3-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug11944-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug11944-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug11944-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug11944-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug119786-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug119786-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug119786-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug119786-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug131020-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug131020-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug131020-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug131020-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug13118-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug13118-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug13118-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug13118-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug13196-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug13196-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug13196-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug13196-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug133756-2-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug133756-2-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug133756-2-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug133756-2-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug139524-2-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug139524-2-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug139524-2-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug139524-2-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug14159-1-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug14159-1-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug14159-1-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug14159-1-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug1430-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug1430-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug1430-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug1430-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug14929-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug14929-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug14929-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug14929-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug15247-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug15247-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug15247-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug15247-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug17130-1-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug17130-1-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug17130-1-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug17130-1-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug17130-2-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug17130-2-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug17130-2-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug17130-2-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug1800-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug1800-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug1800-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug1800-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug18359-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug18359-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug18359-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug18359-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug18955-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug18955-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug18955-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug18955-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug19061-1-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug19061-1-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug19061-1-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug19061-1-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug19061-2-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug19061-2-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug19061-2-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug19061-2-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug194024-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug194024-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug194024-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug194024-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug19599-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug19599-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug19599-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug19599-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug20804-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug20804-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug20804-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug20804-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug2267-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2267-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug2267-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2267-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug23235-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug23235-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug23235-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug23235-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug23299-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug23299-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug23299-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug23299-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug24627-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug24627-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug24627-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug24627-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug2479-3-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2479-3-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug2479-3-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2479-3-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug2479-4-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2479-4-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug2479-4-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2479-4-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug25086-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug25086-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug25086-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug25086-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug25663-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug25663-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug25663-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug25663-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug2684-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2684-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug2684-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2684-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug27038-2-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug27038-2-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug27038-2-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug27038-2-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug2773-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2773-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug2773-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2773-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug2886-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2886-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug2886-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2886-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug29058-3-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug29058-3-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug29058-3-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug29058-3-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug29429-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug29429-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug29429-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug29429-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug2947-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2947-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug2947-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2947-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug2981-1-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2981-1-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug2981-1-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2981-1-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug2981-2-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2981-2-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug2981-2-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2981-2-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug2997-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2997-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug2997-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2997-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug30692-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug30692-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug30692-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug30692-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug3103-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug3103-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug3103-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug3103-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug32205-3-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug32205-3-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug32205-3-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug32205-3-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug33855-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug33855-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug33855-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug33855-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug3454-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug3454-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug3454-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug3454-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug3681-1-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug3681-1-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug3681-1-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug3681-1-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug3977-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug3977-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug3977-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug3977-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug41890-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug41890-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug41890-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug41890-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug42187-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug42187-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug42187-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug42187-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug43039-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug43039-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug43039-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug43039-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug4382-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug4382-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug4382-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug4382-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug43854-2-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug43854-2-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug43854-2-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug43854-2-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug4427-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug4427-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug4427-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug4427-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug44505-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug44505-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug44505-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug44505-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug45055-2-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug45055-2-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug45055-2-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug45055-2-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug45486-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug45486-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug45486-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug45486-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug46368-1-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug46368-1-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug46368-1-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug46368-1-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug46368-2-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug46368-2-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug46368-2-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug46368-2-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug46623-2-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug46623-2-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug46623-2-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug46623-2-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug46924-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug46924-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug46924-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug46924-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug47432-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug47432-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug47432-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug47432-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug51727-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug51727-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug51727-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug51727-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug52505-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug52505-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug52505-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug52505-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug52506-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug52506-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug52506-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug52506-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug5538-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug5538-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug5538-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug5538-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug55694-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug55694-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug55694-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug55694-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug57300-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug57300-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug57300-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug57300-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug5799-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug5799-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug5799-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug5799-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug5835-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug5835-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug5835-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug5835-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug60749-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug60749-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug60749-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug60749-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug6184-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug6184-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug6184-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug6184-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug6404-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug6404-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug6404-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug6404-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug650-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug650-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug650-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug650-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug68912-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug68912-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug68912-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug68912-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug69382-1-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug69382-1-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug69382-1-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug69382-1-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug7112-1-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug7112-1-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug7112-1-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug7112-1-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug7112-2-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug7112-2-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug7112-2-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug7112-2-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug7121-1-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug7121-1-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug7121-1-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug7121-1-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug7342-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug7342-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug7342-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug7342-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug7471-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug7471-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug7471-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug7471-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug7714-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug7714-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug7714-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug7714-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug78162-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug78162-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug78162-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug78162-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug80762-1-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug80762-1-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug80762-1-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug80762-1-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug82946-1-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug82946-1-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug82946-1-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug82946-1-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug8858-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug8858-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug8858-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug8858-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug8950-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug8950-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug8950-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug8950-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug9123-1-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug9123-1-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug9123-1-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug9123-1-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug9123-2-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug9123-2-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug9123-2-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug9123-2-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug92143-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug92143-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug92143-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug92143-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug93363-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug93363-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug93363-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug93363-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug96334-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug96334-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug96334-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug96334-expected.png.
+        * platform/mac-leopard/tables/mozilla/bugs/bug965-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug965-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/bugs/bug965-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug965-expected.png.
+        * platform/mac-leopard/tables/mozilla/collapsing_borders: Added.
+        * platform/mac-leopard/tables/mozilla/collapsing_borders/bug41262-3-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/collapsing_borders/bug41262-3-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/collapsing_borders/bug41262-3-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/collapsing_borders/bug41262-3-expected.png.
+        * platform/mac-leopard/tables/mozilla/core: Added.
+        * platform/mac-leopard/tables/mozilla/core/borders-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/core/borders-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/core/borders-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/core/borders-expected.png.
+        * platform/mac-leopard/tables/mozilla/core/col_span-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/core/col_span-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/core/col_span-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/core/col_span-expected.png.
+        * platform/mac-leopard/tables/mozilla/core/col_widths_auto_autoFix-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/core/col_widths_auto_autoFix-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/core/col_widths_auto_autoFix-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/core/col_widths_auto_autoFix-expected.png.
+        * platform/mac-leopard/tables/mozilla/core/col_widths_auto_autoPer-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/core/col_widths_auto_autoPer-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/core/col_widths_auto_autoPer-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/core/col_widths_auto_autoPer-expected.png.
+        * platform/mac-leopard/tables/mozilla/core/col_widths_auto_fix-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/core/col_widths_auto_fix-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/core/col_widths_auto_fix-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/core/col_widths_auto_fix-expected.png.
+        * platform/mac-leopard/tables/mozilla/core/col_widths_auto_fixPer-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/core/col_widths_auto_fixPer-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/core/col_widths_auto_fixPer-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/core/col_widths_auto_fixPer-expected.png.
+        * platform/mac-leopard/tables/mozilla/core/col_widths_auto_per-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/core/col_widths_auto_per-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/core/col_widths_auto_per-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/core/col_widths_auto_per-expected.png.
+        * platform/mac-leopard/tables/mozilla/core/col_widths_fix_autoFix-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/core/col_widths_fix_autoFix-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/core/col_widths_fix_autoFix-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/core/col_widths_fix_autoFix-expected.png.
+        * platform/mac-leopard/tables/mozilla/core/col_widths_fix_autoPer-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/core/col_widths_fix_autoPer-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/core/col_widths_fix_autoPer-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/core/col_widths_fix_autoPer-expected.png.
+        * platform/mac-leopard/tables/mozilla/core/col_widths_fix_fix-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/core/col_widths_fix_fix-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/core/col_widths_fix_fix-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/core/col_widths_fix_fix-expected.png.
+        * platform/mac-leopard/tables/mozilla/core/col_widths_fix_fixPer-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/core/col_widths_fix_fixPer-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/core/col_widths_fix_fixPer-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/core/col_widths_fix_fixPer-expected.png.
+        * platform/mac-leopard/tables/mozilla/core/margins-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/core/margins-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/core/margins-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/core/margins-expected.png.
+        * platform/mac-leopard/tables/mozilla/core/one_row-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/core/one_row-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/core/one_row-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/core/one_row-expected.png.
+        * platform/mac-leopard/tables/mozilla/core/row_span-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/core/row_span-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/core/row_span-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/core/row_span-expected.png.
+        * platform/mac-leopard/tables/mozilla/core/table_rules-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/core/table_rules-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/core/table_rules-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/core/table_rules-expected.png.
+        * platform/mac-leopard/tables/mozilla/core/table_widths-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/core/table_widths-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/core/table_widths-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/core/table_widths-expected.png.
+        * platform/mac-leopard/tables/mozilla/dom: Added.
+        * platform/mac-leopard/tables/mozilla/dom/deleteTbodyRebuild1-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/dom/deleteTbodyRebuild1-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/dom/deleteTbodyRebuild1-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/dom/deleteTbodyRebuild1-expected.png.
+        * platform/mac-leopard/tables/mozilla/dom/insertCellsRebuild1-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/dom/insertCellsRebuild1-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/dom/insertCellsRebuild1-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/dom/insertCellsRebuild1-expected.png.
+        * platform/mac-leopard/tables/mozilla/images: Added.
+        * platform/mac-leopard/tables/mozilla/images/adforce_imgis_com-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/images/adforce_imgis_com-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/images/adforce_imgis_com-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/images/adforce_imgis_com-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin: Added.
+        * platform/mac-leopard/tables/mozilla/marvin/body_tbody-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/body_tbody-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/body_tbody-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/body_tbody-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/body_tfoot-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/body_tfoot-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/body_tfoot-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/body_tfoot-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/body_thead-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/body_thead-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/body_thead-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/body_thead-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/col_span-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/col_span-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/col_span-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/col_span-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/colgroup_align_center-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/colgroup_align_center-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/colgroup_align_center-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/colgroup_align_center-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/colgroup_align_justify-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/colgroup_align_justify-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/colgroup_align_justify-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/colgroup_align_justify-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/colgroup_align_left-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/colgroup_align_left-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/colgroup_align_left-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/colgroup_align_left-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/colgroup_align_right-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/colgroup_align_right-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/colgroup_align_right-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/colgroup_align_right-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/colgroup_span-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/colgroup_span-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/colgroup_span-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/colgroup_span-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/colgroup_valign_baseline-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/colgroup_valign_baseline-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/colgroup_valign_baseline-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/colgroup_valign_baseline-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/colgroup_valign_bottom-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/colgroup_valign_bottom-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/colgroup_valign_bottom-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/colgroup_valign_bottom-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/colgroup_valign_middle-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/colgroup_valign_middle-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/colgroup_valign_middle-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/colgroup_valign_middle-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/colgroup_valign_top-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/colgroup_valign_top-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/colgroup_valign_top-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/colgroup_valign_top-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/colgroup_width_pct-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/colgroup_width_pct-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/colgroup_width_pct-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/colgroup_width_pct-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/colgroup_width_px-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/colgroup_width_px-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/colgroup_width_px-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/colgroup_width_px-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/table_frame_border-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/table_frame_border-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/table_frame_border-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/table_frame_border-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/table_frame_box-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/table_frame_box-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/table_frame_box-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/table_frame_box-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/table_row_align_center-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/table_row_align_center-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/table_row_align_center-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/table_row_align_center-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/table_row_align_left-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/table_row_align_left-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/table_row_align_left-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/table_row_align_left-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/table_row_align_right-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/table_row_align_right-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/table_row_align_right-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/table_row_align_right-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/table_rules_all-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/table_rules_all-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/table_rules_all-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/table_rules_all-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/table_rules_groups-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/table_rules_groups-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/table_rules_groups-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/table_rules_groups-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/table_rules_none-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/table_rules_none-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/table_rules_none-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/table_rules_none-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_align_center-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_align_center-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_align_center-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_align_center-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_align_left-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_align_left-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_align_left-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_align_left-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_align_right-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_align_right-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_align_right-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_align_right-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_border_0-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_border_0-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_border_0-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_border_0-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_border_1-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_border_1-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_border_1-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_border_1-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_border_2-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_border_2-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_border_2-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_border_2-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_border_3-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_border_3-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_border_3-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_border_3-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_cellpadding-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_cellpadding-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_cellpadding-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_cellpadding-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_cellpadding_pct-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_cellpadding_pct-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_cellpadding_pct-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_cellpadding_pct-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_cellspacing-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_cellspacing-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_cellspacing-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_cellspacing-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_class-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_class-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_class-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_class-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_id-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_id-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_id-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_id-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_row_th_nowrap-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_row_th_nowrap-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_row_th_nowrap-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_row_th_nowrap-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_style-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_style-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_style-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_style-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_td_align_center-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_td_align_center-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_td_align_center-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_td_align_center-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_td_align_left-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_td_align_left-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_td_align_left-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_td_align_left-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_td_align_right-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_td_align_right-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_td_align_right-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_td_align_right-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_td_colspan-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_td_colspan-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_td_colspan-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_td_colspan-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_td_height-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_td_height-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_td_height-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_td_height-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_td_nowrap-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_td_nowrap-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_td_nowrap-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_td_nowrap-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_td_rowspan-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_td_rowspan-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_td_rowspan-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_td_rowspan-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_td_width-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_td_width-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_td_width-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_td_width-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_th_align_center-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_th_align_center-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_th_align_center-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_th_align_center-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_th_align_left-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_th_align_left-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_th_align_left-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_th_align_left-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_th_align_right-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_th_align_right-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_th_align_right-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_th_align_right-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_th_colspan-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_th_colspan-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_th_colspan-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_th_colspan-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_th_height-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_th_height-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_th_height-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_th_height-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_th_rowspan-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_th_rowspan-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_th_rowspan-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_th_rowspan-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_th_width-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_th_width-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_th_width-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_th_width-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_width_percent-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_width_percent-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_width_percent-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_width_percent-expected.png.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_width_px-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_width_px-expected.checksum.
+        * platform/mac-leopard/tables/mozilla/marvin/tables_width_px-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/tables_width_px-expected.png.
+        * platform/mac/tables/mozilla/bugs/bug10296-1-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug10296-1-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug1055-1-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug1055-1-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug106816-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug106816-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug113235-3-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug113235-3-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug11944-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug11944-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug119786-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug119786-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug131020-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug131020-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug13118-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug13118-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug13196-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug13196-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug133756-2-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug133756-2-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug139524-2-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug139524-2-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug14159-1-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug14159-1-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug1430-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug1430-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug14929-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug14929-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug15247-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug15247-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug17130-1-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug17130-1-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug17130-2-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug17130-2-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug1800-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug1800-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug18359-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug18359-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug18955-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug18955-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug19061-1-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug19061-1-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug19061-2-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug19061-2-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug194024-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug194024-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug19599-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug19599-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug20804-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug20804-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug2267-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug2267-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug23235-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug23235-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug23299-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug23299-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug24627-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug24627-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug2479-3-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug2479-3-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug2479-4-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug2479-4-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug25086-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug25086-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug25663-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug25663-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug2684-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug2684-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug27038-2-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug27038-2-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug2773-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug2773-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug2886-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug2886-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug29058-3-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug29058-3-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug29429-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug29429-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug2947-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug2947-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug2981-1-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug2981-1-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug2981-2-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug2981-2-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug2997-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug2997-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug30692-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug30692-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug3103-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug3103-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug32205-3-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug32205-3-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug33855-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug33855-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug3454-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug3454-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug3681-1-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug3681-1-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug3977-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug3977-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug41890-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug41890-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug42187-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug42187-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug43039-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug43039-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug4382-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug4382-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug43854-2-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug43854-2-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug4427-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug4427-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug44505-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug44505-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug45055-2-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug45055-2-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug45486-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug45486-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug46368-1-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug46368-1-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug46368-2-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug46368-2-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug46623-2-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug46623-2-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug46924-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug46924-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug47432-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug47432-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug51727-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug51727-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug52505-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug52505-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug52506-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug52506-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug5538-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug5538-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug55694-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug55694-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug57300-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug57300-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug5799-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug5799-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug5835-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug5835-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug60749-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug60749-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug6184-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug6184-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug6404-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug6404-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug650-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug650-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug68912-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug68912-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug69382-1-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug69382-1-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug7112-1-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug7112-1-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug7112-2-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug7112-2-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug7121-1-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug7121-1-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug7342-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug7342-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug7471-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug7471-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug7714-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug7714-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug78162-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug78162-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug80762-1-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug80762-1-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug82946-1-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug82946-1-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug8411-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug8411-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug8858-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug8858-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug8950-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug8950-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug9123-1-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug9123-1-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug9123-2-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug9123-2-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug92143-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug92143-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug93363-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug93363-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug96334-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug96334-expected.png: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug965-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/bugs/bug965-expected.png: Replaced.
+        * platform/mac/tables/mozilla/collapsing_borders/bug41262-3-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/collapsing_borders/bug41262-3-expected.png: Replaced.
+        * platform/mac/tables/mozilla/core/borders-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/core/borders-expected.png: Replaced.
+        * platform/mac/tables/mozilla/core/col_span-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/core/col_span-expected.png: Replaced.
+        * platform/mac/tables/mozilla/core/col_widths_auto_autoFix-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/core/col_widths_auto_autoFix-expected.png: Replaced.
+        * platform/mac/tables/mozilla/core/col_widths_auto_autoPer-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/core/col_widths_auto_autoPer-expected.png: Replaced.
+        * platform/mac/tables/mozilla/core/col_widths_auto_fix-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/core/col_widths_auto_fix-expected.png: Replaced.
+        * platform/mac/tables/mozilla/core/col_widths_auto_fixPer-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/core/col_widths_auto_fixPer-expected.png: Replaced.
+        * platform/mac/tables/mozilla/core/col_widths_auto_per-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/core/col_widths_auto_per-expected.png: Replaced.
+        * platform/mac/tables/mozilla/core/col_widths_fix_autoFix-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/core/col_widths_fix_autoFix-expected.png: Replaced.
+        * platform/mac/tables/mozilla/core/col_widths_fix_autoPer-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/core/col_widths_fix_autoPer-expected.png: Replaced.
+        * platform/mac/tables/mozilla/core/col_widths_fix_fix-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/core/col_widths_fix_fix-expected.png: Replaced.
+        * platform/mac/tables/mozilla/core/col_widths_fix_fixPer-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/core/col_widths_fix_fixPer-expected.png: Replaced.
+        * platform/mac/tables/mozilla/core/margins-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/core/margins-expected.png: Replaced.
+        * platform/mac/tables/mozilla/core/one_row-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/core/one_row-expected.png: Replaced.
+        * platform/mac/tables/mozilla/core/row_span-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/core/row_span-expected.png: Replaced.
+        * platform/mac/tables/mozilla/core/table_rules-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/core/table_rules-expected.png: Replaced.
+        * platform/mac/tables/mozilla/core/table_widths-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/core/table_widths-expected.png: Replaced.
+        * platform/mac/tables/mozilla/dom/deleteTbodyRebuild1-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/dom/deleteTbodyRebuild1-expected.png: Replaced.
+        * platform/mac/tables/mozilla/dom/insertCellsRebuild1-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/dom/insertCellsRebuild1-expected.png: Replaced.
+        * platform/mac/tables/mozilla/images/adforce_imgis_com-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/images/adforce_imgis_com-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/body_tbody-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/body_tbody-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/body_tfoot-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/body_tfoot-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/body_thead-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/body_thead-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/col_span-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/col_span-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/colgroup_align_center-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/colgroup_align_center-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/colgroup_align_justify-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/colgroup_align_justify-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/colgroup_align_left-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/colgroup_align_left-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/colgroup_align_right-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/colgroup_align_right-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/colgroup_span-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/colgroup_span-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/colgroup_valign_baseline-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/colgroup_valign_baseline-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/colgroup_valign_bottom-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/colgroup_valign_bottom-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/colgroup_valign_middle-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/colgroup_valign_middle-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/colgroup_valign_top-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/colgroup_valign_top-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/colgroup_width_pct-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/colgroup_width_pct-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/colgroup_width_px-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/colgroup_width_px-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/table_frame_border-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/table_frame_border-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/table_frame_box-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/table_frame_box-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/table_row_align_center-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/table_row_align_center-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/table_row_align_left-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/table_row_align_left-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/table_row_align_right-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/table_row_align_right-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/table_rules_all-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/table_rules_all-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/table_rules_groups-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/table_rules_groups-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/table_rules_none-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/table_rules_none-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_align_center-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_align_center-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_align_left-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_align_left-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_align_right-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_align_right-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_border_0-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_border_0-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_border_1-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_border_1-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_border_2-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_border_2-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_border_3-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_border_3-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_cellpadding-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_cellpadding-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_cellpadding_pct-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_cellpadding_pct-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_cellspacing-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_cellspacing-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_class-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_class-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_id-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_id-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_row_th_nowrap-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_row_th_nowrap-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_style-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_style-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_td_align_center-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_td_align_center-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_td_align_left-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_td_align_left-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_td_align_right-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_td_align_right-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_td_colspan-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_td_colspan-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_td_height-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_td_height-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_td_nowrap-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_td_nowrap-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_td_rowspan-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_td_rowspan-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_td_width-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_td_width-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_th_align_center-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_th_align_center-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_th_align_left-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_th_align_left-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_th_align_right-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_th_align_right-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_th_colspan-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_th_colspan-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_th_height-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_th_height-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_th_rowspan-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_th_rowspan-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_th_width-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_th_width-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_width_percent-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_width_percent-expected.png: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_width_px-expected.checksum: Replaced.
+        * platform/mac/tables/mozilla/marvin/tables_width_px-expected.png: Replaced.
+
 2010-05-25  Darin Adler  <darin@apple.com>
 
         Update more files that changed as a result of
