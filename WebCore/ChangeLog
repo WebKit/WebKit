@@ -1,3 +1,27 @@
+2010-05-24  Jer Noble  <jer.noble@apple.com>
+
+        No review; build fix only.
+
+        Roll-out changes r60094, 60096-60097.
+        
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::load):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::retrieveCurrentImage):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::destroyLayerForMovie):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.h:
+        * platform/graphics/win/QTPixelBuffer.cpp:
+        * platform/graphics/win/QTPixelBuffer.h:
+        * platform/graphics/win/WKCACFLayer.cpp:
+        (WebCore::WKCACFLayer::printLayer):
+        * platform/graphics/win/WKCACFLayer.h:
+        (WebCore::WKCACFLayer::setContents):
+        (WebCore::WKCACFLayer::contents):
+        (WebCore::WKCACFLayer::speed):
+        (WebCore::WKCACFLayer::timeOffset):
+        * platform/graphics/win/WKCAImageQueue.cpp: Removed.
+        * platform/graphics/win/WKCAImageQueue.h: Removed.
+
 2010-05-24  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Add wtf/UnusedParam.h include to make Chromium happy.

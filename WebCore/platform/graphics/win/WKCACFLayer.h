@@ -155,8 +155,8 @@ public:
     void setClearsContext(bool clears) { CACFLayerSetClearsContext(layer(), clears); setNeedsCommit(); }
     bool clearsContext() const { return CACFLayerGetClearsContext(layer()); }
 
-    void setContents(CFTypeRef contents) { CACFLayerSetContents(layer(), contents); setNeedsCommit(); }
-    CFTypeRef contents() const { return CACFLayerGetContents(layer()); }
+    void setContents(CGImageRef contents) { CACFLayerSetContents(layer(), contents); setNeedsCommit(); }
+    CGImageRef contents() const { return static_cast<CGImageRef>(const_cast<void*>(CACFLayerGetContents(layer()))); }
 
     void setContentsRect(const CGRect& contentsRect) { CACFLayerSetContentsRect(layer(), contentsRect); setNeedsCommit(); }
     CGRect contentsRect() const { return CACFLayerGetContentsRect(layer()); }
@@ -206,10 +206,10 @@ public:
     CGFloat zPosition() const { return CACFLayerGetZPosition(layer()); }
 
     void setSpeed(float speed) { CACFLayerSetSpeed(layer(), speed); }
-    CFTimeInterval speed() const { return CACFLayerGetSpeed(layer()); }
+    CFTimeInterval speed() const { CACFLayerGetSpeed(layer()); }
 
     void setTimeOffset(CFTimeInterval t) { CACFLayerSetTimeOffset(layer(), t); }
-    CFTimeInterval timeOffset() const { return CACFLayerGetTimeOffset(layer()); }
+    CFTimeInterval timeOffset() const { CACFLayerGetTimeOffset(layer()); }
 
     WKCACFLayer* rootLayer() const;
 

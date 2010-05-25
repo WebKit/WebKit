@@ -1,3 +1,13 @@
+2010-05-24  Jer Noble  <jer.noble@apple.com>
+
+        No review; build fix only.
+
+        Roll-out changes r60094, 60096-60097.
+
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
+        * win/lib/WebKitSystemInterface.lib:
+        * win/lib/WebKitSystemInterface_debug.lib:
+
 2010-05-23  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.
