@@ -1,3 +1,30 @@
+2010-05-22  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Full screen doesn't work for video elements
+        https://bugs.webkit.org/show_bug.cgi?id=39557
+        rdar://problem/8011813
+        
+        Modified FullscreenVideoController to work with MediaPlayerPrivateFullscreenWindow.  The FullscreenVideoController
+        is now MediaPlayerPrivate agnostic..
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::LayoutClient::LayoutClient): New helper class which implements WKCACFLayerLayoutClient.
+        (FullscreenVideoController::LayoutClient::layoutSublayersOfLayer):
+        (FullscreenVideoController::FullscreenVideoController):
+        (FullscreenVideoController::~FullscreenVideoController):
+        (FullscreenVideoController::enterFullscreen):
+        (FullscreenVideoController::exitFullscreen):
+        (FullscreenVideoController::fullscreenClientWndProc): Handle WM_KEYDOWN.
+        (FullscreenVideoController::createHUDWindow):
+        (FullscreenVideoController::hudWndProc):  Handle WM_KEYDOWN.
+        (FullscreenVideoController::onChar):
+        (FullscreenVideoController::onKeyDown):  New function: handles the VK_ESCAPE case more reliably than WM_CHAR.
+        * FullscreenVideoController.h:
+        * WebView.h: 
+        (WebView::viewWindow): Added a simple viewWindow() accessor.
+
 2010-05-25  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

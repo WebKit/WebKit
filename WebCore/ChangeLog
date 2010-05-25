@@ -1,3 +1,52 @@
+2010-05-22  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Full screen doesn't work for video elements
+        https://bugs.webkit.org/show_bug.cgi?id=39557
+        rdar://problem/8011813
+        
+        Add fullscreen support for MediaPlayerPrivateVisualContext.  A new class, MediaPlayerPrivateFullscreenWindow,
+        provides the fullscreen hwnd and layer renderer.  Any WKCACFLayer can be provided to MediaPlayerPrivateFullscreenWindow
+        so future additional MediaPlayerPrivate implementations can use the fullscreen window.
+        
+        Minor additions have been made to the FloatSize and IntSize classes.
+
+        MediaPlayerPrivateQuickTimeVisualContext now calls retrieveCurrentImage after creating a new 
+        videoLayer; this is an existing bug that was never really exposed before now.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/graphics/FloatSize.h: Added aspectRatio() and scale(float).
+        (WebCore::FloatSize::aspectRatio):
+        (WebCore::FloatSize::scale):
+        * platform/graphics/IntSize.h: Added aspectRatio().
+        (WebCore::IntSize::aspectRatio):
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.cpp: Added.
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.h: Added.
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp: Call retrieveCurrentImage() after creating the videoLayer.
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::supportsFullscreen):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::retrieveCurrentImage):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::createLayerForMovie):
+        * platform/graphics/win/WKCACFLayer.cpp: 
+        (WebCore::WKCACFLayer::WKCACFLayer):
+        (WebCore::WKCACFLayer::removeFromSuperlayer):
+        (WebCore::WKCACFLayer::setFrame):
+        (WebCore::WKCACFLayer::internalSetNeedsDisplay):
+        (WebCore::WKCACFLayer::setLayoutClient):
+        (WebCore::WKCACFLayer::layoutSublayersProc):
+        (WebCore::WKCACFLayer::layoutClient):
+        (WebCore::WKCACFLayer::setNeedsLayout):
+        * platform/graphics/win/WKCACFLayer.h: Add layout client class.
+        (WebCore::WKCACFLayerLayoutClient::~WKCACFLayerLayoutClient):
+        (WebCore::WKCACFLayer::frame): Added back frame()/setFrame().
+        * platform/graphics/win/WebTiledLayer.cpp:
+        (WebCore::WebTiledLayer::setFrame): Implamented setFrame() in subclass of WKCACFLayer
+        * platform/graphics/win/WebTiledLayer.h:
+        * platform/graphics/win/WebTiledLayer.cpp: Added setFrame() overriding WKCACFLayer's implementation
+        (WebCore::WebTiledLayer::setFrame):
+        * platform/graphics/win/WebTiledLayer.h:
+
+
 2010-05-25  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Brady Eidson.

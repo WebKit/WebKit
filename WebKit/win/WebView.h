@@ -886,6 +886,7 @@ public:
     void cancelDeleteBackingStoreSoon();
 
     HWND topLevelParent() const { return m_topLevelParent; }
+    HWND viewWindow() const { return m_viewWindow; }
 
     void updateActiveState();
 

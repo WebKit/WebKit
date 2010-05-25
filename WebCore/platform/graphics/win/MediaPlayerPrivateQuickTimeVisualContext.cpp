@@ -40,6 +40,7 @@
 #include "QTMovieTask.h"
 #include "QTMovieVisualContext.h"
 #include "ScrollView.h"
+#include "Settings.h"
 #include "SoftLinking.h"
 #include "StringBuilder.h"
 #include "StringHash.h"
@@ -149,6 +150,11 @@ MediaPlayerPrivateQuickTimeVisualContext::~MediaPlayerPrivateQuickTimeVisualCont
 
 bool MediaPlayerPrivateQuickTimeVisualContext::supportsFullscreen() const
 {
+#if USE(ACCELERATED_COMPOSITING)
+    Document* document = m_player->mediaPlayerClient()->mediaPlayerOwningDocument(); 
+    if (document && document->settings())
+        return document->settings()->acceleratedCompositingEnabled();
+#endif
     return false;
 }
 
@@ -761,7 +767,6 @@ void MediaPlayerPrivateQuickTimeVisualContext::retrieveCurrentImage()
         WKCACFLayer* layer = static_cast<WKCACFLayer*>(m_qtVideoLayer->platformLayer());
 
         if (!buffer.lockBaseAddress()) {
-
             if (requiredDllsAvailable()) {
                 if (!m_imageQueue) {
                     m_imageQueue = new WKCAImageQueue(buffer.width(), buffer.height(), 30);
@@ -1031,6 +1036,12 @@ void MediaPlayerPrivateQuickTimeVisualContext::createLayerForMovie()
 #endif
     // The layer will get hooked up via RenderLayerBacking::updateGraphicsLayerConfiguration().
 #endif
+
+    // Fill the newly created layer with image data, so we're not looking at 
+    // an empty layer until the next time a new image is available, which could
+    // be a long time if we're paused.
+    if (m_visualContext)
+        retrieveCurrentImage();
 }
 
 void MediaPlayerPrivateQuickTimeVisualContext::destroyLayerForMovie()

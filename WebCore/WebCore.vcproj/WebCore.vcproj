@@ -23855,6 +23855,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\win\MediaPlayerPrivateFullscreenWindow.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\MediaPlayerPrivateFullscreenWindow.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\win\MediaPlayerPrivateQuickTimeVisualContext.cpp"
 						>
 					</File>
