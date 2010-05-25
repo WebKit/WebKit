@@ -1,3 +1,15 @@
+2010-05-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add RCDATA and RAWTEXT suport to the HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=39642
+
+        Adam Barth wrote half of this patch.
+
+        * html/HTML5TreeBuilder.cpp:
+        (WebCore::HTML5TreeBuilder::passTokenToLegacyParser):
+
 2010-05-24  Tony Chang  <tony@chromium.org>
 
         Not reviewed, build fix.

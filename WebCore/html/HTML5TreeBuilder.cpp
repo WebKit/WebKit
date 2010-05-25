@@ -30,12 +30,15 @@
 #include "HTML5Lexer.h"
 #include "HTML5Token.h"
 #include "HTMLDocument.h"
+#include "HTMLNames.h"
 #include "HTMLParser.h"
 #include "HTMLTokenizer.h"
 #include "NotImplemented.h"
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 HTML5TreeBuilder::HTML5TreeBuilder(HTML5Lexer* lexer, HTMLDocument* document, bool reportErrors)
     : m_document(document)
@@ -92,10 +95,17 @@ static void convertToOldStyle(HTML5Token& token, Token& oldStyleToken)
 
 PassRefPtr<Node> HTML5TreeBuilder::passTokenToLegacyParser(HTML5Token& token)
 {
-    if (token.type() == HTML5Token::StartTag && token.name() == "script") {
+    if (token.type() == HTML5Token::StartTag) {
         // This work is supposed to be done by the parser, but
         // when using the old parser for we have to do this manually.
-        m_lexer->setState(HTML5Lexer::ScriptDataState);
+        if (token.name() == scriptTag)
+            m_lexer->setState(HTML5Lexer::ScriptDataState);
+        else if (token.name() == textareaTag || token.name() == titleTag)
+            m_lexer->setState(HTML5Lexer::RCDATAState);
+        else if (token.name() == styleTag || token.name() == iframeTag || token.name() == xmpTag) {
+            // FIXME: noscript, noframes, and noembed may conditionally enter this state as well.
+            m_lexer->setState(HTML5Lexer::RAWTEXTState);
+        }
     }
 
     if (token.type() == HTML5Token::DOCTYPE) {

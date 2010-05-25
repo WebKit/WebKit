@@ -361,6 +361,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
         case RCDATALessThanSignState: {
             if (cc == '/') {
                 m_temporaryBuffer.clear();
+                ASSERT(m_bufferedEndTagName.isEmpty());
                 m_state = RCDATAEndTagOpenState;
             } else {
                 emitCharacter('<');
@@ -371,11 +372,14 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
         }
         case RCDATAEndTagOpenState: {
             if (cc >= 'A' && cc <= 'Z') {
-                notImplemented();
+                m_temporaryBuffer.append(cc);
+                m_bufferedEndTagName.append(toLowerCase(cc));
                 m_state = RCDATAEndTagNameState;
             } else if (cc >= 'a' && cc <= 'z') {
-                notImplemented();
+                m_temporaryBuffer.append(cc);
+                m_bufferedEndTagName.append(cc);
                 m_state = RCDATAEndTagNameState;
+            } else {
                 emitCharacter('<');
                 emitCharacter('/');
                 m_state = RCDATAState;
@@ -384,23 +388,36 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             break;
         }
         case RCDATAEndTagNameState: {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
-                notImplemented();
-                m_state = BeforeAttributeNameState;
-            } else if (cc == '/') {
-                notImplemented();
-                m_state = SelfClosingStartTagState;
-            } else if (cc == '>') {
-                notImplemented();
-                m_state = DataState;
-            } else if (cc >= 'A' && cc <= 'Z')
-                notImplemented();
-            else if (cc >= 'a' && cc <= 'z')
-                notImplemented();
-            else {
+            if (cc >= 'A' && cc <= 'Z') {
+                m_temporaryBuffer.append(cc);
+                m_bufferedEndTagName.append(toLowerCase(cc));
+            } else if (cc >= 'a' && cc <= 'z') {
+                m_temporaryBuffer.append(cc);
+                m_bufferedEndTagName.append(cc);
+            } else {
+                if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
+                    if (isAppropriateEndTag()) {
+                        m_state = BeforeAttributeNameState;
+                        maybeFlushBufferedEndTag();
+                        break;
+                    }
+                } else if (cc == '/') {
+                    if (isAppropriateEndTag()) {
+                        m_state = SelfClosingStartTagState;
+                        maybeFlushBufferedEndTag();
+                        break;
+                    }
+                } else if (cc == '>') {
+                    if (isAppropriateEndTag()) {
+                        m_state = DataState;
+                        maybeFlushBufferedEndTag();
+                        break;
+                    }
+                }
                 emitCharacter('<');
                 emitCharacter('/');
-                notImplemented();
+                m_token->appendToCharacter(m_temporaryBuffer);
+                m_bufferedEndTagName.clear();
                 m_state = RCDATAState;
                 continue;
             }
@@ -409,6 +426,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
         case RAWTEXTLessThanSignState: {
             if (cc == '/') {
                 m_temporaryBuffer.clear();
+                ASSERT(m_bufferedEndTagName.isEmpty());
                 m_state = RAWTEXTEndTagOpenState;
             } else {
                 emitCharacter('<');
@@ -419,10 +437,12 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
         }
         case RAWTEXTEndTagOpenState: {
             if (cc >= 'A' && cc <= 'Z') {
-                notImplemented();
+                m_temporaryBuffer.append(cc);
+                m_bufferedEndTagName.append(toLowerCase(cc));
                 m_state = RAWTEXTEndTagNameState;
             } else if (cc >= 'a' && cc <= 'z') {
-                notImplemented();
+                m_temporaryBuffer.append(cc);
+                m_bufferedEndTagName.append(cc);
                 m_state = RAWTEXTEndTagNameState;
             } else {
                 emitCharacter('<');
@@ -433,26 +453,40 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             break;
         }
         case RAWTEXTEndTagNameState: {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
-                notImplemented();
-                m_state = BeforeAttributeNameState;
-            } else if (cc == '/') {
-                notImplemented();
-                m_state = SelfClosingStartTagState;
-            } else if (cc == '>') {
-                notImplemented();
-                m_state = DataState;
-            } else if (cc >= 'A' && cc <= 'Z')
-                notImplemented();
-            else if (cc >= 'a' && cc <= 'z')
-                notImplemented();
-            else {
+            if (cc >= 'A' && cc <= 'Z') {
+                m_temporaryBuffer.append(cc);
+                m_bufferedEndTagName.append(toLowerCase(cc));
+            } else if (cc >= 'a' && cc <= 'z') {
+                m_temporaryBuffer.append(cc);
+                m_bufferedEndTagName.append(cc);
+            } else {
+                if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
+                    if (isAppropriateEndTag()) {
+                        m_state = BeforeAttributeNameState;
+                        maybeFlushBufferedEndTag();
+                        break;
+                    }
+                } else if (cc == '/') {
+                    if (isAppropriateEndTag()) {
+                        m_state = SelfClosingStartTagState;
+                        maybeFlushBufferedEndTag();
+                        break;
+                    }
+                } else if (cc == '>') {
+                    if (isAppropriateEndTag()) {
+                        m_state = DataState;
+                        maybeFlushBufferedEndTag();
+                        break;
+                    }
+                }
                 emitCharacter('<');
                 emitCharacter('/');
-                notImplemented();
+                m_token->appendToCharacter(m_temporaryBuffer);
+                m_bufferedEndTagName.clear();
                 m_state = RAWTEXTState;
                 continue;
             }
+            break;
         }
         case ScriptDataLessThanSignState: {
             if (cc == '/') {
