@@ -116,6 +116,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-column-rule-color: rgb(0, 0, 0)
     -webkit-column-rule-style: none
     -webkit-column-rule-width: 0px
+    -webkit-column-span: 1
     -webkit-column-width: auto
     -webkit-highlight: none
     -webkit-line-break: normal

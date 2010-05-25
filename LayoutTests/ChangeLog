@@ -1,3 +1,21 @@
+2010-05-25  Darin Adler  <darin@apple.com>
+
+        Update more files that changed as a result of
+        https://bugs.webkit.org/show_bug.cgi?id=39516
+        That patch added -webkit-column-span.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-mac/fast/css/computed-style-expected.txt:
+        * platform/chromium-mac/fast/css/computed-style-without-renderer-expected.txt:
+        * platform/chromium-win/fast/css/computed-style-expected.txt:
+        * platform/chromium-win/fast/css/computed-style-without-renderer-expected.txt:
+        * platform/qt/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/qt/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        Added -webkit-column-span.
+
 2010-05-25  Julie Parent  <jparent@chromium.org>
 
         Unreviewed.
