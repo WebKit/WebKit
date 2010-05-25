@@ -117,7 +117,9 @@ PassRefPtr<Node> HTML5TreeBuilder::passTokenToLegacyParser(HTML5Token& token)
 
 PassRefPtr<Node> HTML5TreeBuilder::constructTreeFromToken(HTML5Token& token)
 {
-    return passTokenToLegacyParser(token);
+    // Make MSVC ignore our unreachable code for now.
+    if (true)
+        return passTokenToLegacyParser(token);
 
     // HTML5 expects the tokenizer to call the parser every time a character is
     // emitted.  We instead collect characters and call the parser with a batch.

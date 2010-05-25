@@ -1,3 +1,13 @@
+2010-05-24  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Trick MSVC into ignoring our unused code for the moment.
+
+        Prepare HTML5TreeBuilder for addition of new HTML5 parser code
+        https://bugs.webkit.org/show_bug.cgi?id=39623
+
+        * html/HTML5TreeBuilder.cpp:
+        (WebCore::HTML5TreeBuilder::constructTreeFromToken):
+
 2010-05-24  Darin Adler  <darin@apple.com>
 
         Fix build on platforms with touch code enabled.
