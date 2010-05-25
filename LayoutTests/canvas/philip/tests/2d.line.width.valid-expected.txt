@@ -1,0 +1,6 @@
+< [index] >
+2d.line.width.valid
+Setting lineWidth to valid values works
+References: 2d.lineWidth.set 2d.lineWidth.get
+Actual output:
+Passed

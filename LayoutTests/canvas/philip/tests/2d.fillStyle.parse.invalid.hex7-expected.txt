@@ -1,0 +1,7 @@
+< [index] >
+2d.fillStyle.parse.invalid.hex7
+References: 2d.colours.parse
+Actual output:
+Expected output:
+
+Passed

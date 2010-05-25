@@ -1,0 +1,7 @@
+< [index] >
+2d.path.fill.closed.basic
+References: 2d.path.fill.closed
+Actual output:
+Expected output:
+
+Passed

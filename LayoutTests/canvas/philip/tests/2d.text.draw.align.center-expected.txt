@@ -1,0 +1,8 @@
+< [index] >
+2d.text.draw.align.center
+textAlign center is the center of the em squares (not the bounding box)
+References: 2d.text.align.center
+Actual output:
+Expected output:
+
+Passed

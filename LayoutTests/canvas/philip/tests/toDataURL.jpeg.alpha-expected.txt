@@ -1,0 +1,8 @@
+< [index] >
+toDataURL.jpeg.alpha
+toDataURL with JPEG composites onto black
+References: toDataURL.jpeg toDataURL.noalpha
+Actual output:
+Expected output:
+
+Passed

@@ -1,0 +1,6 @@
+< [index] >
+2d.state.saverestore.globalCompositeOperation
+save()/restore() works for globalCompositeOperation
+References: 2d.state.globalCompositeOperation
+Actual output:
+Passed

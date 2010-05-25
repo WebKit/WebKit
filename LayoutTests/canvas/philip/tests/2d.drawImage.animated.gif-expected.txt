@@ -1,0 +1,9 @@
+< [index] >
+2d.drawImage.animated.gif
+drawImage() of an animated GIF draws the first frame
+References: 2d.drawImage.animated.image
+Actual output:
+Expected output:
+
+Passed
+

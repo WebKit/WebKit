@@ -1,0 +1,13 @@
+< [index] >
+2d.text.draw.baseline.top
+textBaseline top is the top of the em square (not the bounding box)
+References: 2d.text.baseline.top
+Actual output:
+Expected output:
+
+Passed
+
+
+
+
+

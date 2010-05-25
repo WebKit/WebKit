@@ -1,0 +1,9 @@
+< [index] >
+2d.text.measure.width.space
+Space characters are converted to U+0020 and collapsed (per CSS)
+References: 2d.text.measure.spaces
+Actual output:
+Passed
+
+
+

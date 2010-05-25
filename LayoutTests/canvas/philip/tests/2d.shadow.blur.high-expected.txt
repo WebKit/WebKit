@@ -1,0 +1,8 @@
+< [index] >
+2d.shadow.blur.high
+Shadows look correct for large blurs
+References: 2d.shadow.render
+Actual output:
+Expected output:
+
+Cannot automatically verify result

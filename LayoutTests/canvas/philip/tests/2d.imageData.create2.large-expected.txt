@@ -1,0 +1,6 @@
+< [index] >
+2d.imageData.create2.large
+createImageData(sw, sh) works for sizes much larger than the canvas
+References: 2d.imageData.create2.size Bugzilla
+Actual output:
+Passed

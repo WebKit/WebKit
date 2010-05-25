@@ -1,0 +1,8 @@
+< [index] >
+size.attributes.style
+Canvas size is independent of CSS resizing
+References: size.css
+Actual output:
+Expected output:
+
+Passed

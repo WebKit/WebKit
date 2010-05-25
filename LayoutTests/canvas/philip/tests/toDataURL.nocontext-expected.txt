@@ -1,0 +1,6 @@
+< [index] >
+toDataURL.nocontext
+toDataURL works before any context has been got
+References: toDataURL.noarguments
+Actual output:
+Passed

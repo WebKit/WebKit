@@ -1,0 +1,5 @@
+< [index] >
+2d.text.measure.width.basic
+References: 2d.text.measure
+Actual output:
+Passed

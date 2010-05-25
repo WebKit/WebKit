@@ -1,0 +1,6 @@
+< [index] >
+2d.canvas.readonly
+CanvasRenderingContext2D.canvas is readonly
+References: 2d.canvas.attribute
+Actual output:
+Passed

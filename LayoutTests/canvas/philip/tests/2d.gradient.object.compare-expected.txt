@@ -1,0 +1,5 @@
+< [index] >
+2d.gradient.object.compare
+References: 2d.gradient.object
+Actual output:
+Passed

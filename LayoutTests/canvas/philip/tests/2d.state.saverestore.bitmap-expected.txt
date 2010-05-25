@@ -1,0 +1,8 @@
+< [index] >
+2d.state.saverestore.bitmap
+save()/restore() does not affect the current bitmap
+References: 2d.state.bitmap
+Actual output:
+Expected output:
+
+Passed

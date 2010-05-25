@@ -1,0 +1,8 @@
+< [index] >
+toDataURL.png.primarycolours
+toDataURL with PNG handles simple colours correctly
+References: toDataURL.png
+Actual output:
+Expected output:
+
+Passed

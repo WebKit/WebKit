@@ -1,0 +1,8 @@
+< [index] >
+2d.text.draw.fill.basic
+fillText draws filled text
+References: 2d.text.draw 2d.text.draw.fill
+Actual output:
+Expected output:
+
+Cannot automatically verify result

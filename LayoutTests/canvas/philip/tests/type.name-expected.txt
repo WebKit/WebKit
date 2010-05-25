@@ -1,0 +1,6 @@
+< [index] >
+type.name
+HTMLCanvasElement type and toString
+References: canvas.type
+Actual output:
+Passed

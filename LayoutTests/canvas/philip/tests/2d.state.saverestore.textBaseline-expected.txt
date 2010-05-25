@@ -1,0 +1,6 @@
+< [index] >
+2d.state.saverestore.textBaseline
+save()/restore() works for textBaseline
+References: 2d.state.textBaseline
+Actual output:
+Passed

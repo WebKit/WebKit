@@ -1,0 +1,6 @@
+< [index] >
+fallback.nested
+Fallback content containing another canvas (mostly testing parsers)
+References: fallback
+Actual output:
+Passed

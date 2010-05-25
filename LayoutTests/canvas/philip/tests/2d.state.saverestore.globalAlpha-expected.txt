@@ -1,0 +1,6 @@
+< [index] >
+2d.state.saverestore.globalAlpha
+save()/restore() works for globalAlpha
+References: 2d.state.globalAlpha
+Actual output:
+Passed

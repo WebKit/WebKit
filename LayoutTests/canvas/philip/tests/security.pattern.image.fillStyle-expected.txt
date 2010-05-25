@@ -1,0 +1,9 @@
+Blocked access to external URL http://excors.googlepages.com/yellow.png
+< [index] >
+security.pattern.image.fillStyle
+Setting fillStyle to a pattern of a different-origin image makes the canvas origin-unclean
+References: security.fillStyle.image
+Actual output:
+Passed
+
+

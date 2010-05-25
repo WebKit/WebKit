@@ -1,0 +1,10 @@
+< [index] >
+2d.text.draw.baseline.hanging
+References: 2d.text.baseline.hanging
+Actual output:
+Expected output:
+
+Passed
+
+
+

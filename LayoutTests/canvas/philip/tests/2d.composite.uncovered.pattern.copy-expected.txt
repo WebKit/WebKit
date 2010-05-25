@@ -1,0 +1,9 @@
+< [index] >
+2d.composite.uncovered.pattern.copy
+Pattern fill() draws pixels not covered by the source object as (0,0,0,0), and does not leave the pixels unchanged.
+References: 2d.composite.copy
+Actual output:
+Expected output:
+
+Passed
+

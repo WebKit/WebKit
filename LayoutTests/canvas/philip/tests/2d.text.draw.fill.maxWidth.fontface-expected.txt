@@ -1,0 +1,11 @@
+< [index] >
+2d.text.draw.fill.maxWidth.fontface
+fillText works on @font-face fonts
+References: 2d.text.draw.maxwidth
+Actual output:
+Expected output:
+
+Passed
+
+
+

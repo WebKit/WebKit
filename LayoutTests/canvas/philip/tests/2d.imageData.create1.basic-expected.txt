@@ -1,0 +1,6 @@
+< [index] >
+2d.imageData.create1.basic
+createImageData(imgdata) exists and returns something
+References: 2d.imageData.create1.object Bugzilla
+Actual output:
+Passed

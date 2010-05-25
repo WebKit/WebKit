@@ -1,0 +1,5 @@
+< [index] >
+2d.text.align.invalid
+References: 2d.text.align.invalid
+Actual output:
+Passed

@@ -1,0 +1,7 @@
+< [index] >
+2d.composite.solid.destination-out
+References: 2d.composite.destination-out
+Actual output:
+Expected output:
+
+Passed

@@ -1,0 +1,7 @@
+< [index] >
+2d.composite.globalAlpha.canvaspattern
+References: 2d.composite.globalAlpha.image Bugzilla
+Actual output:
+Expected output:
+
+Passed

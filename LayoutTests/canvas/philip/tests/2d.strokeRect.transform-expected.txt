@@ -1,0 +1,8 @@
+< [index] >
+2d.strokeRect.transform
+fillRect is affected by transforms
+References: 2d.strokeRect
+Actual output:
+Expected output:
+
+Passed

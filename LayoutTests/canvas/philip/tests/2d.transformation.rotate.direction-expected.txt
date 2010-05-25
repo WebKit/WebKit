@@ -1,0 +1,8 @@
+< [index] >
+2d.transformation.rotate.direction
+rotate() is clockwise
+References: 2d.transformation.rotate.direction
+Actual output:
+Expected output:
+
+Passed

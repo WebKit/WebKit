@@ -1,0 +1,8 @@
+< [index] >
+2d.shadow.outside
+Shadows of shapes outside the visible area can be offset onto the visible area
+References: 2d.shadow.render
+Actual output:
+Expected output:
+
+Passed

@@ -1,0 +1,8 @@
+< [index] >
+2d.path.arc.zeroradius
+arc() with zero radius draws a line to the start point
+References: 2d.path.arc.zero
+Actual output:
+Expected output:
+
+Passed

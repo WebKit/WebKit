@@ -1,0 +1,9 @@
+< [index] >
+2d.pattern.animated.gif
+createPattern() of an animated GIF draws the first frame
+References: 2d.pattern.animated.image
+Actual output:
+Expected output:
+
+Passed
+

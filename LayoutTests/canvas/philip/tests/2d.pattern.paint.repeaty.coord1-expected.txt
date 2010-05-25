@@ -1,0 +1,8 @@
+< [index] >
+2d.pattern.paint.repeaty.coord1
+References: 2d.pattern.painting
+Actual output:
+Expected output:
+
+Passed
+

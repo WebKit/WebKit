@@ -1,0 +1,8 @@
+< [index] >
+2d.text.draw.stroke.basic
+strokeText draws stroked text
+References: 2d.text.draw 2d.text.draw.stroke
+Actual output:
+Expected output:
+
+Cannot automatically verify result

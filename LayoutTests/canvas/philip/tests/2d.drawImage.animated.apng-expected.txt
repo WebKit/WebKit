@@ -1,0 +1,9 @@
+< [index] >
+2d.drawImage.animated.apng
+drawImage() of an APNG with no poster frame draws the first frame
+References: 2d.drawImage.animated.image
+Actual output:
+Expected output:
+
+Passed
+

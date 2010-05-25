@@ -1,0 +1,9 @@
+< [index] >
+2d.drawImage.nowrap
+Stretched images do not get pixels wrapping around the edges
+References:
+Actual output:
+Expected output:
+
+Passed
+

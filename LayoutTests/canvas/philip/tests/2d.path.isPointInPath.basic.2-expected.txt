@@ -1,0 +1,6 @@
+< [index] >
+2d.path.isPointInPath.basic.2
+isPointInPath() detects whether the point is inside the path
+References: 2d.path.isPointInPath
+Actual output:
+Passed

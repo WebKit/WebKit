@@ -1,0 +1,5 @@
+< [index] >
+2d.shadow.attributes.shadowBlur.invalid
+References: 2d.shadow.blur.invalid
+Actual output:
+Passed

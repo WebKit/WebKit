@@ -1,0 +1,7 @@
+< [index] >
+2d.drawImage.wrongtype
+References: 2d.drawImage.type
+Actual output:
+Passed
+
+

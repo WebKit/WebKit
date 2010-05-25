@@ -1,0 +1,8 @@
+< [index] >
+2d.text.draw.space.collapse.nonspace
+Non-space characters are not converted to U+0020 and collapsed
+References: 2d.text.draw.spaces
+Actual output:
+Expected output:
+
+Passed

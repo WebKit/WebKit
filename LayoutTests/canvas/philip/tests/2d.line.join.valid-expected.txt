@@ -1,0 +1,6 @@
+< [index] >
+2d.line.join.valid
+Setting lineJoin to valid values works
+References: 2d.lineJoin.set 2d.lineJoin.get
+Actual output:
+Passed

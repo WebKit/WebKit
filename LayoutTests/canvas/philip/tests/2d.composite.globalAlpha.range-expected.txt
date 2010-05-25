@@ -1,0 +1,5 @@
+< [index] >
+2d.composite.globalAlpha.range
+References: 2d.composite.globalAlpha.range
+Actual output:
+Passed

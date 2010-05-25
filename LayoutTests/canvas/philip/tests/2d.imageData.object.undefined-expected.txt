@@ -1,0 +1,6 @@
+< [index] >
+2d.imageData.object.undefined
+ImageData.data converts undefined to 0
+References: 2d.pixelarray.modify
+Actual output:
+Passed

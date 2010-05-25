@@ -1,0 +1,8 @@
+< [index] >
+size.attributes.setAttribute.exp
+Parsing of non-negative integers in setAttribute
+References: size.nonnegativeinteger
+Actual output:
+Expected output:
+
+Passed

@@ -1,0 +1,6 @@
+< [index] >
+2d.state.saverestore.shadowOffsetY
+save()/restore() works for shadowOffsetY
+References: 2d.state.shadowOffsetY
+Actual output:
+Passed

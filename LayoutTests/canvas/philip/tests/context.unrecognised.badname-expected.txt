@@ -1,0 +1,6 @@
+< [index] >
+context.unrecognised.badname
+getContext with unrecognised context name returns null
+References: context.unrecognised Bugzilla
+Actual output:
+Passed

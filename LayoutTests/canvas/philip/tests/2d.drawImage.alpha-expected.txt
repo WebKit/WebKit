@@ -1,0 +1,8 @@
+< [index] >
+2d.drawImage.alpha
+References: 2d.drawImage.subject
+Actual output:
+Expected output:
+
+Passed
+

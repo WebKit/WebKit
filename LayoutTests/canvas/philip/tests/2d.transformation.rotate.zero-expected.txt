@@ -1,0 +1,8 @@
+< [index] >
+2d.transformation.rotate.zero
+rotate() by 0 does nothing
+References: 2d.transformation.rotate
+Actual output:
+Expected output:
+
+Passed

@@ -1,0 +1,8 @@
+< [index] >
+2d.drawImage.outsidesource
+References: 2d.drawImage.outsidesource
+Actual output:
+Expected output:
+
+Passed
+ 

@@ -1,0 +1,7 @@
+< [index] >
+2d.fillStyle.parse.hsla-clamp-5
+References: 2d.colours.parse
+Actual output:
+Expected output:
+
+Passed

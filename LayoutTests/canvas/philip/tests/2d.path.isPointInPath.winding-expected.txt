@@ -1,0 +1,6 @@
+< [index] >
+2d.path.isPointInPath.winding
+isPointInPath() uses the non-zero winding number rule
+References: 2d.path.isPointInPath
+Actual output:
+Passed

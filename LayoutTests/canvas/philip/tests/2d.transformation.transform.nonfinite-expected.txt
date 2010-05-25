@@ -1,0 +1,8 @@
+< [index] >
+2d.transformation.transform.nonfinite
+transform() with Infinity/NaN is ignored
+References: 2d.nonfinite
+Actual output:
+Expected output:
+
+Passed

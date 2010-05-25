@@ -1,0 +1,8 @@
+< [index] >
+2d.fillRect.zero
+fillRect of zero pixels has no effect
+References: 2d.fillRect
+Actual output:
+Expected output:
+
+Passed

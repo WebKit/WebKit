@@ -1,0 +1,7 @@
+< [index] >
+2d.path.initial
+References: 2d.path.initial
+Actual output:
+Expected output:
+
+Passed

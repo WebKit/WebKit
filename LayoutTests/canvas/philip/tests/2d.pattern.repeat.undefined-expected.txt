@@ -1,0 +1,5 @@
+< [index] >
+2d.pattern.repeat.undefined
+References: 2d.pattern.unrecognised
+Actual output:
+Passed

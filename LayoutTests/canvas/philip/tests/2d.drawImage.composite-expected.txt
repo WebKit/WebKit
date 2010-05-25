@@ -1,0 +1,8 @@
+< [index] >
+2d.drawImage.composite
+References: 2d.drawImage.subject
+Actual output:
+Expected output:
+
+Passed
+

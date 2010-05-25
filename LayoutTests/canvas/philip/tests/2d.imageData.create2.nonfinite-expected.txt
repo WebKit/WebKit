@@ -1,0 +1,6 @@
+< [index] >
+2d.imageData.create2.nonfinite
+createImageData() throws NOT_SUPPORTED_ERR if arguments are not finite
+References: 2d.imageData.getcreate.nonfinite Bugzilla
+Actual output:
+Passed

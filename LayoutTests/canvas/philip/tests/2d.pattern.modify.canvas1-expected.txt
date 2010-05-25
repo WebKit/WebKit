@@ -1,0 +1,7 @@
+< [index] >
+2d.pattern.modify.canvas1
+References: 2d.pattern.modify
+Actual output:
+Expected output:
+
+Passed

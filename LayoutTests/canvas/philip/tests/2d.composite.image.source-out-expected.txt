@@ -1,0 +1,8 @@
+< [index] >
+2d.composite.image.source-out
+References: 2d.composite.source-out
+Actual output:
+Expected output:
+
+Passed
+

@@ -1,0 +1,8 @@
+< [index] >
+2d.drawImage.floatsource
+References: 2d.drawImage.paint
+Actual output:
+Expected output:
+
+Passed
+

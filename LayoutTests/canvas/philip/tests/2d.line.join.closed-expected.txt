@@ -1,0 +1,8 @@
+< [index] >
+2d.line.join.closed
+Line joins are drawn at the corner of a closed rectangle
+References: 2d.lineJoin.joinclosed
+Actual output:
+Expected output:
+
+Passed

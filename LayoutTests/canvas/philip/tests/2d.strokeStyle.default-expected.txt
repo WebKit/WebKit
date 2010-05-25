@@ -1,0 +1,5 @@
+< [index] >
+2d.strokeStyle.default
+References: 2d.colours.default
+Actual output:
+Passed

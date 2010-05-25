@@ -1,0 +1,6 @@
+< [index] >
+2d.line.miter.invalid
+Setting miterLimit to invalid values is ignored
+References: 2d.miterLimit.invalid
+Actual output:
+Passed

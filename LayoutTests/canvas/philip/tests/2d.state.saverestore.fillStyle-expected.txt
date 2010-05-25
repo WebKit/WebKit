@@ -1,0 +1,6 @@
+< [index] >
+2d.state.saverestore.fillStyle
+save()/restore() works for fillStyle
+References: 2d.state.fillStyle
+Actual output:
+Passed

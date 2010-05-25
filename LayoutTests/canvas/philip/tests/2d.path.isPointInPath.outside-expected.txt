@@ -1,0 +1,6 @@
+< [index] >
+2d.path.isPointInPath.outside
+isPointInPath() works on paths outside the canvas
+References: 2d.path.isPointInPath
+Actual output:
+Passed

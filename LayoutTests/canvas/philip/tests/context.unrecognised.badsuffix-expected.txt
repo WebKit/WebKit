@@ -1,0 +1,6 @@
+< [index] >
+context.unrecognised.badsuffix
+Context name "2d" plus a suffix is unrecognised
+References: context.unrecognised Bugzilla
+Actual output:
+Passed

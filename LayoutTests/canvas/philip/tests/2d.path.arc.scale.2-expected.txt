@@ -1,0 +1,8 @@
+< [index] >
+2d.path.arc.scale.2
+Highly scaled arcs are the right shape
+References: 2d.path.arc.draw
+Actual output:
+Expected output:
+
+Passed

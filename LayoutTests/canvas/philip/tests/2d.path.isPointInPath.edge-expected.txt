@@ -1,0 +1,6 @@
+< [index] >
+2d.path.isPointInPath.edge
+isPointInPath() counts points on the path as being inside
+References: 2d.path.isPointInPath.edge
+Actual output:
+Passed

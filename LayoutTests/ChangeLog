@@ -1,3 +1,18 @@
+2010-05-25  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The following are the steps on how the expected results were created:
+        1. Generated ~800 results on Mac.
+        2. Manually edited ~100 failed results to "Passed" to make them "expected".
+           All ~800 expected results are the same across the platforms.
+        3. Put the failed ones in Mac's Skipped list. Other platforms are skipping 
+           the whole directory, which will be worked on later.
+        https://bugs.webkit.org/show_bug.cgi?id=20553
+
+        * canvas/philip/tests/*-expected.txt: 788 files Added.
+        * platform/mac/Skipped:
+
 2010-05-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

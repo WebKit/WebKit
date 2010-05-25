@@ -1,0 +1,8 @@
+< [index] >
+2d.fillRect.negative
+fillRect of negative sizes works
+References: 2d.fillRect
+Actual output:
+Expected output:
+
+Passed

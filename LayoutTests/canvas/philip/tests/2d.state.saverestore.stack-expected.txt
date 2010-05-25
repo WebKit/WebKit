@@ -1,0 +1,6 @@
+< [index] >
+2d.state.saverestore.stack
+save()/restore() can be nested as a stack
+References: 2d.state.save 2d.state.restore
+Actual output:
+Passed

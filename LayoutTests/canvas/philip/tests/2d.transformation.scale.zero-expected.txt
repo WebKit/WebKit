@@ -1,0 +1,8 @@
+< [index] >
+2d.transformation.scale.zero
+scale() with a scale factor of zero works
+References: 2d.transformation.scale
+Actual output:
+Expected output:
+
+Passed

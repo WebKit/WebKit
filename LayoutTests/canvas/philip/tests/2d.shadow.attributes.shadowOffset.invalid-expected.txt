@@ -1,0 +1,5 @@
+< [index] >
+2d.shadow.attributes.shadowOffset.invalid
+References: 2d.shadow.offset.invalid
+Actual output:
+Passed

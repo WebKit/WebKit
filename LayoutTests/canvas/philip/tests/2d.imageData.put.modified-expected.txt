@@ -1,0 +1,8 @@
+< [index] >
+2d.imageData.put.modified
+putImageData() puts modified image data correctly
+References: 2d.imageData.put.normal
+Actual output:
+Expected output:
+
+Passed

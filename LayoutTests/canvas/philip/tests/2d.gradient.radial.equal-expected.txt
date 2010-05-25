@@ -1,0 +1,7 @@
+< [index] >
+2d.gradient.radial.equal
+References: 2d.gradient.radial.equal
+Actual output:
+Expected output:
+
+Passed

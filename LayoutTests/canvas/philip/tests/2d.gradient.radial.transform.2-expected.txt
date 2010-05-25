@@ -1,0 +1,8 @@
+< [index] >
+2d.gradient.radial.transform.2
+Radial gradient coordinates are relative to the coordinate space at the time of filling
+References: 2d.gradient.radial.transform
+Actual output:
+Expected output:
+
+Passed

@@ -1,0 +1,8 @@
+< [index] >
+2d.path.arc.angle.2
+arc() draws -3pi/2 .. -pi anticlockwise correctly
+References: 2d.path.arc.draw
+Actual output:
+Expected output:
+
+Passed

@@ -1,0 +1,7 @@
+< [index] >
+type.exists
+HTMLCanvasElement is a property of window
+References: canvas.type
+Defined in "Language Bindings for DOM Specifications" (draft)
+Actual output:
+Passed

@@ -1,0 +1,8 @@
+< [index] >
+2d.path.lineTo.nonfinite
+lineTo() with Infinity/NaN is ignored
+References: 2d.nonfinite
+Actual output:
+Expected output:
+
+Passed

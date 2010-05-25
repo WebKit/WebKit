@@ -1,0 +1,7 @@
+< [index] >
+2d.composite.globalAlpha.canvas
+References: 2d.composite.globalAlpha.image
+Actual output:
+Expected output:
+
+Passed

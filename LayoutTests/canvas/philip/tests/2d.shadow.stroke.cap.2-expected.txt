@@ -1,0 +1,8 @@
+< [index] >
+2d.shadow.stroke.cap.2
+Shadows are drawn for stroke caps
+References: 2d.shadow.render
+Actual output:
+Expected output:
+
+Passed

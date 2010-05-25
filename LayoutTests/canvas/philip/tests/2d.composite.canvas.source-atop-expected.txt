@@ -1,0 +1,8 @@
+< [index] >
+2d.composite.canvas.source-atop
+References: 2d.composite.source-atop
+Actual output:
+Expected output:
+
+Passed
+

@@ -1,0 +1,6 @@
+< [index] >
+2d.pattern.image.incomplete
+References: 2d.pattern.incomplete.image
+Actual output:
+Passed
+

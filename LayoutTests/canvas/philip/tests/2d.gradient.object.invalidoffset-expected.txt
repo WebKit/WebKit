@@ -1,0 +1,5 @@
+< [index] >
+2d.gradient.object.invalidoffset
+References: 2d.gradient.invalidoffset
+Actual output:
+Passed

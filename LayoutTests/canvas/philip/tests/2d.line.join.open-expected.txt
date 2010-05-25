@@ -1,0 +1,8 @@
+< [index] >
+2d.line.join.open
+Line joins are not drawn at the corner of an unclosed rectangle
+References: 2d.lineJoin.joins
+Actual output:
+Expected output:
+
+Passed

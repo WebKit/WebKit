@@ -1,0 +1,8 @@
+< [index] >
+2d.path.stroke.unaffected
+Stroking does not start a new path or subpath
+References: 2d.path.stroke.basic
+Actual output:
+Expected output:
+
+Passed

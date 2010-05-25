@@ -1,0 +1,13 @@
+< [index] >
+2d.imageData.object.round
+ImageData.data rounds numbers with round-to-zero
+References: 2d.pixelarray.modify
+Actual output:
+Passed
+
+
+
+
+
+
+

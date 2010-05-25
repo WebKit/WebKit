@@ -1,0 +1,8 @@
+< [index] >
+2d.path.stroke.prune.rect
+Zero-length line segments from rect and strokeRect are removed before stroking
+References: 2d.path.stroke.prune
+Actual output:
+Expected output:
+
+Passed

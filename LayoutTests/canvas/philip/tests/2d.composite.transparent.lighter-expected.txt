@@ -1,0 +1,7 @@
+< [index] >
+2d.composite.transparent.lighter
+References: 2d.composite.lighter
+Actual output:
+Expected output:
+
+Passed

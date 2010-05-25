@@ -1,0 +1,8 @@
+< [index] >
+2d.transformation.order
+Transformations are applied in the right order
+References: 2d.transformation.order
+Actual output:
+Expected output:
+
+Passed

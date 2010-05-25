@@ -1,0 +1,8 @@
+Blocked access to external URL http://excors.googlepages.com/yellow.png
+< [index] >
+security.pattern.create
+Creating an unclean pattern does not make the canvas origin-unclean
+References: security.start
+Actual output:
+Passed
+

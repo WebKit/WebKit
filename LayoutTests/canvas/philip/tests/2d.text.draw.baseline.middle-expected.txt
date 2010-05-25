@@ -1,0 +1,9 @@
+< [index] >
+2d.text.draw.baseline.middle
+textBaseline middle is the middle of the em square (not the bounding box)
+References: 2d.text.baseline.middle
+Actual output:
+Expected output:
+
+Passed
+

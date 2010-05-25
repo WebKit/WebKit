@@ -1,0 +1,7 @@
+< [index] >
+2d.fillStyle.invalidtype
+References: 2d.colours.invalidtype
+Actual output:
+Expected output:
+
+Passed

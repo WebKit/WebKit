@@ -1,0 +1,8 @@
+< [index] >
+2d.path.rect.winding
+References: 2d.path.rect.subpath
+Actual output:
+Passed
+
+
+

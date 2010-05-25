@@ -1,0 +1,7 @@
+< [index] >
+2d.voidreturn
+void methods return undefined
+References:
+Actual output:
+Passed
+

@@ -1,0 +1,5 @@
+< [index] >
+2d.composite.operation.get
+References: 2d.composite.operation
+Actual output:
+Passed

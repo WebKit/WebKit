@@ -1,0 +1,6 @@
+< [index] >
+2d.gradient.object.return
+createLinearGradient() and createRadialGradient() returns objects implementing CanvasGradient
+References: 2d.gradient.linear.return 2d.gradient.radial.return
+Actual output:
+Aborted with exception: Result of expression 'window.CanvasGradient' [undefined] is not an object.

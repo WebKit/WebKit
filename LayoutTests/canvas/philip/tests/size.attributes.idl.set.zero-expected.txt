@@ -1,0 +1,6 @@
+< [index] >
+size.attributes.idl.set.zero
+Setting width/height IDL attributes to 0
+References: size.width size.height
+Actual output:
+Passed

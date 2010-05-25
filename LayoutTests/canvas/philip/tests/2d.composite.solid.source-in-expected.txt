@@ -1,0 +1,7 @@
+< [index] >
+2d.composite.solid.source-in
+References: 2d.composite.source-in
+Actual output:
+Expected output:
+
+Passed

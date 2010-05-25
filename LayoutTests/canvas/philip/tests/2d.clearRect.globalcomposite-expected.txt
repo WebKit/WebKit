@@ -1,0 +1,8 @@
+< [index] >
+2d.clearRect.globalcomposite
+clearRect is not affected by globalCompositeOperation
+References: 2d.clearRect
+Actual output:
+Expected output:
+
+Passed

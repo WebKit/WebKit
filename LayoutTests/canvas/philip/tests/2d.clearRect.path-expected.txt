@@ -1,0 +1,8 @@
+< [index] >
+2d.clearRect.path
+clearRect does not affect the current path
+References: 2d.clearRect
+Actual output:
+Expected output:
+
+Passed

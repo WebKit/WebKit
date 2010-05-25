@@ -1,0 +1,7 @@
+< [index] >
+2d.path.clip.intersect
+References: 2d.path.clip.basic
+Actual output:
+Expected output:
+
+Passed

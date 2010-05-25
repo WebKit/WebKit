@@ -1,0 +1,9 @@
+< [index] >
+2d.shadow.pattern.basic
+Shadows are drawn for fill patterns
+References: 2d.shadow.render
+Actual output:
+Expected output:
+
+Passed
+

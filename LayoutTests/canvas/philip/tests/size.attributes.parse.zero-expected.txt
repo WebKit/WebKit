@@ -1,0 +1,6 @@
+< [index] >
+size.attributes.parse.zero
+Parsing of non-negative integers
+References: size.nonnegativeinteger
+Actual output:
+Passed

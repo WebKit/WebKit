@@ -1,0 +1,8 @@
+< [index] >
+security.dataURI
+data: URIs do not count as different-origin, and do not taint the canvas
+References: Bugzilla
+Actual output:
+Expected output:
+
+Passed

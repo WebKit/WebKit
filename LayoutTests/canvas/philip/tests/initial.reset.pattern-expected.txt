@@ -1,0 +1,8 @@
+< [index] >
+initial.reset.pattern
+Resetting the canvas state does not invalidate any existing patterns
+References: initial.reset
+Actual output:
+Expected output:
+
+Passed

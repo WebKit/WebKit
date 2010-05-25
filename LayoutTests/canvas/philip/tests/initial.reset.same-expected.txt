@@ -1,0 +1,8 @@
+< [index] >
+initial.reset.same
+Setting size (not changing the value) resets canvas to transparent black
+References: initial.reset
+Actual output:
+Expected output:
+
+Passed

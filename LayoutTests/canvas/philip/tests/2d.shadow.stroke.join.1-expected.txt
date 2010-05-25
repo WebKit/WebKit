@@ -1,0 +1,8 @@
+< [index] >
+2d.shadow.stroke.join.1
+Shadows are not drawn for areas outside stroke joins
+References: 2d.shadow.render
+Actual output:
+Expected output:
+
+Passed

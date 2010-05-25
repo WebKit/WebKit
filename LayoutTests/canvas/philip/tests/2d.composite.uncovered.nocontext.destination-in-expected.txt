@@ -1,0 +1,8 @@
+< [index] >
+2d.composite.uncovered.nocontext.destination-in
+drawImage() of a canvas with no context draws pixels as (0,0,0,0), and does not leave the pixels unchanged.
+References: 2d.composite.destination-in
+Actual output:
+Expected output:
+
+Passed

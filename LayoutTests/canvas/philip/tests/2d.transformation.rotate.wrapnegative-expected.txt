@@ -1,0 +1,8 @@
+< [index] >
+2d.transformation.rotate.wrapnegative
+rotate() wraps large negative values correctly
+References: 2d.transformation.rotate
+Actual output:
+Expected output:
+
+Passed

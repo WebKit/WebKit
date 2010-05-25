@@ -1,0 +1,9 @@
+Blocked access to external URL http://excors.googlepages.com/yellow.png
+< [index] >
+security.pattern.canvas.strokeStyle
+Setting strokeStyle to a pattern of an unclean canvas makes the canvas origin-unclean
+References: security.strokeStyle.canvas Bugzilla
+Actual output:
+Passed
+
+

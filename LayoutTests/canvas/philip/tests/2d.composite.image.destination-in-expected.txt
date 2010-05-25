@@ -1,0 +1,8 @@
+< [index] >
+2d.composite.image.destination-in
+References: 2d.composite.destination-in
+Actual output:
+Expected output:
+
+Passed
+

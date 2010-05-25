@@ -1,0 +1,8 @@
+< [index] >
+size.attributes.reflect.setcontent
+Setting content attributes updates IDL and content attributes
+References: size.reflect
+Actual output:
+Expected output:
+
+Passed

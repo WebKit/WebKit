@@ -1,0 +1,7 @@
+< [index] >
+2d.gradient.empty
+References: 2d.gradient.empty
+Actual output:
+Expected output:
+
+Passed

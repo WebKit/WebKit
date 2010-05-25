@@ -1,0 +1,7 @@
+< [index] >
+2d.path.quadraticCurveTo.basic
+References: 2d.path.quadratic.nonempty
+Actual output:
+Expected output:
+
+Passed

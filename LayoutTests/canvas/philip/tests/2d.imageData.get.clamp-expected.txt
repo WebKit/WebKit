@@ -1,0 +1,6 @@
+< [index] >
+2d.imageData.get.clamp
+getImageData() clamps colours to the range [0, 255]
+References: 2d.pixelarray.range
+Actual output:
+Passed

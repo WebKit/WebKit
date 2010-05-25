@@ -1,0 +1,5 @@
+< [index] >
+2d.text.align.default
+References: 2d.text.align.default
+Actual output:
+Passed

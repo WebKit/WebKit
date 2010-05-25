@@ -1,0 +1,6 @@
+< [index] >
+2d.imageData.put.unchanged
+putImageData(getImageData(...), ...) has no effect
+References: 2d.imageData.unchanged
+Actual output:
+Passed

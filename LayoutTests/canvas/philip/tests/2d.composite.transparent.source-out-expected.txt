@@ -1,0 +1,7 @@
+< [index] >
+2d.composite.transparent.source-out
+References: 2d.composite.source-out
+Actual output:
+Expected output:
+
+Passed

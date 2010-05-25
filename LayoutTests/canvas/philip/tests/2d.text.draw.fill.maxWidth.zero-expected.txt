@@ -1,0 +1,8 @@
+< [index] >
+2d.text.draw.fill.maxWidth.zero
+fillText handles maxWidth correctly
+References: 2d.text.draw.maxwidth
+Actual output:
+Expected output:
+
+Cannot automatically verify result

@@ -1,0 +1,7 @@
+< [index] >
+2d.composite.transparent.xor
+References: 2d.composite.xor
+Actual output:
+Expected output:
+
+Passed

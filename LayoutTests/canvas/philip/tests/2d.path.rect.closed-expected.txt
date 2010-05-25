@@ -1,0 +1,7 @@
+< [index] >
+2d.path.rect.closed
+References: 2d.path.rect.closed
+Actual output:
+Expected output:
+
+Passed

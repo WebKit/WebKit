@@ -1,0 +1,5 @@
+< [index] >
+2d.composite.globalAlpha.default
+References: 2d.composite.globalAlpha.default
+Actual output:
+Passed

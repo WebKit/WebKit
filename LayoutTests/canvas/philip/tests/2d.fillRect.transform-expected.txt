@@ -1,0 +1,8 @@
+< [index] >
+2d.fillRect.transform
+fillRect is affected by transforms
+References: 2d.fillRect
+Actual output:
+Expected output:
+
+Passed

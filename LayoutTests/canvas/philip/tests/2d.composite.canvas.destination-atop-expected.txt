@@ -1,0 +1,8 @@
+< [index] >
+2d.composite.canvas.destination-atop
+References: 2d.composite.destination-atop
+Actual output:
+Expected output:
+
+Passed
+

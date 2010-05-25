@@ -1,0 +1,8 @@
+< [index] >
+2d.text.draw.fill.rtl
+fillText respects Right-To-Left Override characters
+References: 2d.text.draw
+Actual output:
+Expected output:
+
+Cannot automatically verify result

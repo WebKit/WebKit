@@ -1,0 +1,7 @@
+< [index] >
+2d.pattern.basic.type
+References: 2d.pattern.return
+Actual output:
+Passed
+
+

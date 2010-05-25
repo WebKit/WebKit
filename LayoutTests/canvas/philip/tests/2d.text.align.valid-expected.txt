@@ -1,0 +1,5 @@
+< [index] >
+2d.text.align.valid
+References: 2d.text.align.get 2d.text.align.set
+Actual output:
+Passed

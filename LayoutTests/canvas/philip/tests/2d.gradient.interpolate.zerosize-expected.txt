@@ -1,0 +1,7 @@
+< [index] >
+2d.gradient.interpolate.zerosize
+References: 2d.gradient.linear.zerosize
+Actual output:
+Expected output:
+
+Passed

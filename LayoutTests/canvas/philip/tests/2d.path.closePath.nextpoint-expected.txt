@@ -1,0 +1,7 @@
+< [index] >
+2d.path.closePath.nextpoint
+References: 2d.path.closePath.nonempty
+Actual output:
+Expected output:
+
+Passed

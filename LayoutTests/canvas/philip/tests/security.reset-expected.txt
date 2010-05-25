@@ -1,0 +1,9 @@
+Blocked access to external URL http://excors.googlepages.com/yellow.png
+< [index] >
+security.reset
+Resetting the canvas state does not reset the origin-clean flag
+References: initial.reset
+Actual output:
+Passed
+
+

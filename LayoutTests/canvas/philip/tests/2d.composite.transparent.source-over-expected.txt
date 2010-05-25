@@ -1,0 +1,7 @@
+< [index] >
+2d.composite.transparent.source-over
+References: 2d.composite.source-over
+Actual output:
+Expected output:
+
+Passed

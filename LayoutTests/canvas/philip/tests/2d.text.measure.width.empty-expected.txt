@@ -1,0 +1,6 @@
+< [index] >
+2d.text.measure.width.empty
+The empty string has zero width
+References: 2d.text.measure
+Actual output:
+Passed
