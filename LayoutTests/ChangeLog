@@ -1,3 +1,15 @@
+2010-05-25  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Move Leopard-specific pixel test results from platform/mac to platform/mac-leopard
+        https://bugs.webkit.org/show_bug.cgi?id=39317
+
+        Add leopard baselines for one test I missed.
+
+        * platform/mac-leopard/tables/mozilla/bugs/bug8411-expected.checksum: Added.
+        * platform/mac-leopard/tables/mozilla/bugs/bug8411-expected.png: Added.
+
 2010-05-25  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Adam Roben.
