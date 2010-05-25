@@ -1,5 +1,14 @@
 2010-05-25  Chang Shu  <chang.shu@nokia.com>
 
+        Unreviewed.
+
+        Skipped two additional canvas test cases that failed on SnowLeopard only.
+        https://bugs.webkit.org/show_bug.cgi?id=20553
+
+        * platform/mac-snowleopard/Skipped:
+
+2010-05-25  Chang Shu  <chang.shu@nokia.com>
+
         Reviewed by Kenneth Rohde Christiansen.
 
         The following are the steps on how the expected results were created:
