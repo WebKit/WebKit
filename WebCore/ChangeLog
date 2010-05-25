@@ -1,3 +1,30 @@
+2010-05-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        First cut at HTML5 entities
+        https://bugs.webkit.org/show_bug.cgi?id=39649
+
+        There's still a bunch more work to do to get our entity parsing fully
+        up to spec.  This patch contains the bulk of the implementation
+        however.
+        
+        The basics are covered by the existing html5lib tests.  I'll add more
+        detailed tests in a followup patch.
+
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTMLNames::legalEntityFor):
+        (WebCore::HTMLNames::isHexDigit):
+        (WebCore::HTMLNames::isAlphaNumeric):
+        (WebCore::HTMLNames::uncomsumeCharacters):
+        (WebCore::HTML5Lexer::consumeEntity):
+        (WebCore::HTML5Lexer::nextToken):
+        (WebCore::HTML5Lexer::haveBufferedCharacterToken):
+        * html/HTML5Lexer.h:
+        (WebCore::HTML5Lexer::):
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::write):
+
 2010-05-24  Tasuku Suzuki  <tasuku.suzuki@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

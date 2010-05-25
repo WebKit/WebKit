@@ -55,11 +55,9 @@ void HTML5Tokenizer::write(const SegmentedString& source, bool)
     m_source.append(source);
 
     HTML5Token token;
-    while (!m_source.isEmpty()) {
-        if (m_lexer->nextToken(m_source, token)) {
-            m_treeBuilder->constructTreeFromToken(token);
-            token.clear();
-        }
+    while (m_lexer->nextToken(m_source, token)) {
+        m_treeBuilder->constructTreeFromToken(token);
+        token.clear();
     }
 }
 
