@@ -1,5 +1,5 @@
+.objc_class_name_WKView
 _InitWebCoreSystemInterface
-_OBJC_CLASS_$_WKView
 _WKContextCreateWithProcessModel
 _WKContextGetStatistics
 _WKContextRelease
