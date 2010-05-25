@@ -72,6 +72,16 @@ inline void advanceStringAndASSERTIgnoringCase(SegmentedString& source, const ch
         source.advanceAndASSERTIgnoringCase(*expectedCharacters++);
 }
 
+inline bool vectorEqualsString(const Vector<UChar, 32>& vector, const String& string)
+{
+    if (vector.size() != string.length())
+        return false;
+    const UChar* stringData = string.characters();
+    const UChar* vectorData = vector.data();
+    // FIXME: Is there a higher-level function we should be calling here?
+    return !memcmp(stringData, vectorData, vector.size() * sizeof(UChar));
+}
+
 }
 
 HTML5Lexer::HTML5Lexer()
@@ -230,6 +240,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
     m_token = &token;
 
     if (!m_bufferedEndTagName.isEmpty()) {
+        // FIXME: This should call flushBufferedEndTag().
         // We started an end tag during our last iteration.
         m_token->beginEndTag(m_bufferedEndTagName);
         m_bufferedEndTagName.clear();
@@ -487,22 +498,19 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
                 if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
                     if (isAppropriateEndTag()) {
                         m_state = BeforeAttributeNameState;
-                        ASSERT(m_token->type() == HTML5Token::Character);
-                        emitCurrentToken();
+                        maybeFlushBufferedEndTag();
                         break;
                     }
                 } else if (cc == '/') {
                     if (isAppropriateEndTag()) {
                         m_state = SelfClosingStartTagState;
-                        ASSERT(m_token->type() == HTML5Token::Character);
-                        emitCurrentToken();
+                        maybeFlushBufferedEndTag();
                         break;
                     }
                 } else if (cc == '>') {
                     if (isAppropriateEndTag()) {
                         m_state = DataState;
-                        ASSERT(m_token->type() == HTML5Token::Character);
-                        emitCurrentToken();
+                        maybeFlushBufferedEndTag();
                         break;
                     }
                 }
@@ -577,12 +585,19 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
         case ScriptDataEscapedLessThanSignState: {
             if (cc == '/') {
                 m_temporaryBuffer.clear();
+                ASSERT(m_bufferedEndTagName.isEmpty());
                 m_state = ScriptDataEscapedEndTagOpenState;
             } else if (cc >= 'A' && cc <= 'Z') {
-                notImplemented();
+                emitCharacter('<');
+                emitCharacter(cc);
+                m_temporaryBuffer.clear();
+                m_temporaryBuffer.append(toLowerCase(cc));
                 m_state = ScriptDataDoubleEscapeStartState;
             } else if (cc >= 'a' && cc <= 'z') {
-                notImplemented();
+                emitCharacter('<');
+                emitCharacter(cc);
+                m_temporaryBuffer.clear();
+                m_temporaryBuffer.append(cc);
                 m_state = ScriptDataDoubleEscapeStartState;
             } else {
                 emitCharacter('<');
@@ -593,10 +608,12 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
         }
         case ScriptDataEscapedEndTagOpenState: {
             if (cc >= 'A' && cc <= 'Z') {
-                notImplemented();
+                m_temporaryBuffer.append(cc);
+                m_bufferedEndTagName.append(toLowerCase(cc));
                 m_state = ScriptDataEscapedEndTagNameState;
             } else if (cc >= 'a' && cc <= 'z') {
-                notImplemented();
+                m_temporaryBuffer.append(cc);
+                m_bufferedEndTagName.append(cc);
                 m_state = ScriptDataEscapedEndTagNameState;
             } else {
                 emitCharacter('<');
@@ -607,23 +624,36 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             break;
         }
         case ScriptDataEscapedEndTagNameState: {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
-                notImplemented();
-                m_state = BeforeAttributeNameState;
-            } else if (cc == '/') {
-                notImplemented();
-                m_state = SelfClosingStartTagState;
-            } else if (cc == '>') {
-                notImplemented();
-                m_state = DataState;
-            } else if (cc >= 'A' && cc <= 'Z')
-                notImplemented();
-            else if (cc >= 'a' && cc <= 'z')
-                notImplemented();
-            else {
+            if (cc >= 'A' && cc <= 'Z') {
+                m_temporaryBuffer.append(cc);
+                m_bufferedEndTagName.append(toLowerCase(cc));
+            } else if (cc >= 'a' && cc <= 'z') {
+                m_temporaryBuffer.append(cc);
+                m_bufferedEndTagName.append(cc);
+            } else {
+                if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
+                    if (isAppropriateEndTag()) {
+                        m_state = BeforeAttributeNameState;
+                        maybeFlushBufferedEndTag();
+                        break;
+                    }
+                } else if (cc == '/') {
+                    if (isAppropriateEndTag()) {
+                        m_state = SelfClosingStartTagState;
+                        maybeFlushBufferedEndTag();
+                        break;
+                    }
+                } else if (cc == '>') {
+                    if (isAppropriateEndTag()) {
+                        m_state = DataState;
+                        maybeFlushBufferedEndTag();
+                        break;
+                    }
+                }
                 emitCharacter('<');
                 emitCharacter('/');
-                notImplemented();
+                m_token->appendToCharacter(m_temporaryBuffer);
+                m_bufferedEndTagName.clear();
                 m_state = ScriptDataEscapedState;
                 continue;
             }
@@ -632,15 +662,17 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
         case ScriptDataDoubleEscapeStartState: {
             if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ' || cc == '/' || cc == '>') {
                 emitCharacter(cc);
-                if (temporaryBufferIs("string"))
+                if (temporaryBufferIs(scriptTag.localName()))
                     m_state = ScriptDataDoubleEscapedState;
                 else
                     m_state = ScriptDataEscapedState;
-            } else if (cc >= 'A' && cc <= 'Z')
-                notImplemented();
-            else if (cc >= 'a' && cc <= 'z')
-                notImplemented();
-            else {
+            } else if (cc >= 'A' && cc <= 'Z') {
+                emitCharacter(cc);
+                m_temporaryBuffer.append(toLowerCase(cc));
+            } else if (cc >= 'a' && cc <= 'z') {
+                emitCharacter(cc);
+                m_temporaryBuffer.append(cc);
+            } else {
                 m_state = ScriptDataEscapedState;
                 continue;
             }
@@ -702,15 +734,17 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
         case ScriptDataDoubleEscapeEndState: {
             if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ' || cc == '/' || cc == '>') {
                 emitCharacter(cc);
-                if (temporaryBufferIs("string"))
+                if (temporaryBufferIs(scriptTag.localName()))
                     m_state = ScriptDataEscapedState;
                 else
                     m_state = ScriptDataDoubleEscapedState;
-            } else if (cc >= 'A' && cc <= 'Z')
-                notImplemented();
-            else if (cc >= 'a' && cc <= 'z')
-                notImplemented();
-            else {
+            } else if (cc >= 'A' && cc <= 'Z') {
+                emitCharacter(cc);
+                m_temporaryBuffer.append(toLowerCase(cc));
+            } else if (cc >= 'a' && cc <= 'z') {
+                emitCharacter(cc);
+                m_temporaryBuffer.append(cc);
+            } else {
                 m_state = ScriptDataDoubleEscapedState;
                 continue;
             }
@@ -1323,20 +1357,14 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
     return m_token->type() == HTML5Token::Character;
 }
 
-inline bool HTML5Lexer::temporaryBufferIs(const char*)
+inline bool HTML5Lexer::temporaryBufferIs(const String& expectedString)
 {
-    notImplemented();
-    return true;
+    return vectorEqualsString(m_temporaryBuffer, expectedString);
 }
 
 inline bool HTML5Lexer::isAppropriateEndTag()
 {
-    if (m_bufferedEndTagName.size() != m_appropriateEndTagName.length())
-        return false;
-    const UChar* appropriate = m_appropriateEndTagName.characters();
-    const UChar* actual = m_bufferedEndTagName.data();
-    // FIXME: Is there a higher-level function we should be calling here?
-    return !memcmp(appropriate, actual, m_bufferedEndTagName.size() * sizeof(UChar));
+    return vectorEqualsString(m_bufferedEndTagName, m_appropriateEndTagName);
 }
 
 inline void HTML5Lexer::emitCharacter(UChar character)
@@ -1351,6 +1379,26 @@ inline void HTML5Lexer::emitCharacter(UChar character)
 inline void HTML5Lexer::emitParseError()
 {
     notImplemented();
+}
+
+inline void HTML5Lexer::maybeFlushBufferedEndTag()
+{
+    ASSERT(m_token->type() == HTML5Token::Character || m_token->type() == HTML5Token::Uninitialized);
+    if (m_token->type() == HTML5Token::Character) {
+        // We have a character token queued up.  We need to emit it before we
+        // can start begin the buffered end tag token.
+        emitCurrentToken();
+        return;
+    }
+    flushBufferedEndTag();
+}
+
+inline void HTML5Lexer::flushBufferedEndTag()
+{
+    m_token->beginEndTag(m_bufferedEndTagName);
+    m_bufferedEndTagName.clear();
+    if (m_state == DataState)
+        emitCurrentToken();
 }
 
 inline void HTML5Lexer::emitCurrentToken()

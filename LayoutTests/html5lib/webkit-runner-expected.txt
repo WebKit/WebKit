@@ -1,5 +1,6 @@
 CONSOLE MESSAGE: line 3: PASS
 CONSOLE MESSAGE: line 3: FOO<span>BAR</span>BAZ
+CONSOLE MESSAGE: line 1: SyntaxError: Parse error
 resources/tests14.dat: PASS
 
 resources/webkit01.dat: PASS
@@ -295,6 +296,169 @@ Expected:
 |   <body>
 |     <b>
 |       "Mine!"
+resources/scriptdata01.dat: 6, 17, 18, 19, 21, 22, 23, 24, 26
+
+Test 6 of 26 in resources/scriptdata01.dat failed. Input:
+FOO<script></scriptx>BAR
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <script>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <script>
+|       "</scriptx>BAR"
+
+Test 17 of 26 in resources/scriptdata01.dat failed. Input:
+FOO<script>'<!-- <sCrIpt>'</script>BAR
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <script>
+|       "'<!-- <sCrIpt>'"
+|     "BAR"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <script>
+|       "'<!-- <sCrIpt>'</script>BAR"
+
+Test 18 of 26 in resources/scriptdata01.dat failed. Input:
+FOO<script>'<!-- <sCrIpt> -'</script>BAR
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <script>
+|       "'<!-- <sCrIpt> -'"
+|     "BAR"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <script>
+|       "'<!-- <sCrIpt> -'</script>BAR"
+
+Test 19 of 26 in resources/scriptdata01.dat failed. Input:
+FOO<script>'<!-- <sCrIpt> --'</script>BAR
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <script>
+|       "'<!-- <sCrIpt> --'"
+|     "BAR"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <script>
+|       "'<!-- <sCrIpt> --'</script>BAR"
+
+Test 21 of 26 in resources/scriptdata01.dat failed. Input:
+FOO<script>'<!-- <sCrIpt> --!>'</script>BAR
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <script>
+|       "'<!-- <sCrIpt> --!>'"
+|     "BAR"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <script>
+|       "'<!-- <sCrIpt> --!>'</script>BAR"
+
+Test 22 of 26 in resources/scriptdata01.dat failed. Input:
+FOO<script>'<!-- <sCrIpt> -- >'</script>BAR
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <script>
+|       "'<!-- <sCrIpt> -- >'"
+|     "BAR"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <script>
+|       "'<!-- <sCrIpt> -- >'</script>BAR"
+
+Test 23 of 26 in resources/scriptdata01.dat failed. Input:
+FOO<script>'<!-- <sCrIpt '</script>BAR
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <script>
+|       "'<!-- <sCrIpt '"
+|     "BAR"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <script>
+|       "'<!-- <sCrIpt '</script>BAR"
+
+Test 24 of 26 in resources/scriptdata01.dat failed. Input:
+FOO<script>'<!-- <sCrIpt/'</script>BAR
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <script>
+|       "'<!-- <sCrIpt/'"
+|     "BAR"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <script>
+|       "'<!-- <sCrIpt/'</script>BAR"
+
+Test 26 of 26 in resources/scriptdata01.dat failed. Input:
+FOO<script>'<!-- <sCrIpt/'</script>BAR</script>QUX
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <script>
+|       "'<!-- <sCrIpt/'"
+|     "BAR"
+|     "QUX"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <script>
+|       "'<!-- <sCrIpt/'</script>BAR"
+|     "QUX"
 resources/comments01.dat: 3, 6, 8, 9
 
 Test 3 of 9 in resources/comments01.dat failed. Input:

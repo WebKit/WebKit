@@ -1,3 +1,19 @@
+2010-05-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Teach the HTML5 parser how to lex escaped script data
+        https://bugs.webkit.org/show_bug.cgi?id=39630
+
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTMLNames::vectorEqualsString):
+        (WebCore::HTML5Lexer::nextToken):
+        (WebCore::HTML5Lexer::temporaryBufferIs):
+        (WebCore::HTML5Lexer::isAppropriateEndTag):
+        (WebCore::HTML5Lexer::maybeFlushBufferedEndTag):
+        (WebCore::HTML5Lexer::flushBufferedEndTag):
+        * html/HTML5Lexer.h:
+
 2010-05-24  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Trick MSVC into ignoring our unused code for the moment.
@@ -231,7 +247,6 @@
         * storage/chromium/DatabaseTrackerChromium.cpp:
         (WebCore::DatabaseTracker::tracker): Adapt to new c'tor.
         (WebCore::DatabaseTracker::DatabaseTracker): Ditto.
-
 
 2010-05-24  Adam Barth  <abarth@webkit.org>
 

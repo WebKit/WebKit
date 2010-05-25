@@ -1,3 +1,18 @@
+2010-05-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Teach the HTML5 parser how to lex escaped script data
+        https://bugs.webkit.org/show_bug.cgi?id=39630
+
+        Add a bunch of tests for parsing script data.  I think these tests
+        drive the lexer into all the script data states.
+
+        * html5lib/resources/scriptdata01.dat: Added.
+        * html5lib/webkit-runner-expected-html5.txt:
+        * html5lib/webkit-runner-expected.txt:
+        * html5lib/webkit-runner.html:
+
 2010-05-24  James Robinson  <jamesr@chromium.org>
 
         Unreviewed baseline only change
