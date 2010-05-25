@@ -1,3 +1,17 @@
+2010-05-25  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Chris Jerdonek.
+
+        remove suppression of rietveld logging
+        https://bugs.webkit.org/show_bug.cgi?id=39693
+
+        Now that we only upload to rietveld explicitly, e.g. on the bot
+        or via webkit-patch post-attachment-to-rietveld, we should print
+        all the rietveld logging. It was suppressed before to avoid making
+        webkit-patch upload too noisy.
+
+        * Scripts/webkitpy/common/net/rietveld.py:
+
 2010-05-25  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Ojan Vafai.

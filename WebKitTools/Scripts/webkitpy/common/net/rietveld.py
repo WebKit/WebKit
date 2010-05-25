@@ -67,15 +67,8 @@ class Rietveld(object):
             log("Would have run %s" % args)
             return
 
-        # Set logging level to avoid rietveld's logging spew.
-        old_level_name = logging.getLogger().getEffectiveLevel()
-        logging.getLogger().setLevel(logging.ERROR)
-
         # Use RealMain instead of calling upload from the commandline so that
         # we can pass in the diff ourselves. Otherwise, upload will just use
         # git diff for git checkouts, which doesn't respect --squash and --git-commit.
         issue, patchset = upload.RealMain(args[1:], data=diff)
-
-        # Reset logging level to the original value.
-        logging.getLogger().setLevel(old_level_name)
         return issue
