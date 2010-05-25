@@ -1372,20 +1372,6 @@ PassRefPtr<Widget> FrameLoaderClientImpl::createPlugin(
     const String& mimeType,
     bool loadManually)
 {
-#if !OS(WINDOWS)
-    // WebCore asks us to make a plugin even if we don't have a
-    // registered handler, with a comment saying it's so we can display
-    // the broken plugin icon.  In Chromium, we normally register a
-    // fallback plugin handler that allows you to install a missing
-    // plugin.  Since we don't yet have a default plugin handler, we
-    // need to return null here rather than going through all the
-    // plugin-creation IPCs only to discover we don't have a plugin
-    // registered, which causes a crash.
-    // FIXME: remove me once we have a default plugin.
-    if (objectContentType(url, mimeType) != ObjectContentNetscapePlugin)
-        return 0;
-#endif
-
     if (!m_webFrame->client())
         return 0;
 

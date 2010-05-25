@@ -1,3 +1,15 @@
+2010-05-25  Brett Wilson  <brettw@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Remove obsolete code for Mac & Windows plugin creation in the Chromium
+        port. This non-Windows code was to prevent a crash which we no longer
+        seem to have, and it is preventing other types of plugins from working.
+        https://bugs.webkit.org/show_bug.cgi?id=39684
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::createPlugin):
+
 2010-05-25  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
