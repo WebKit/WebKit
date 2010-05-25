@@ -3,13 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 450x500
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGResourceFilter {filter} [id="blur"] [filterUnits=userSpaceOnUse] [primitiveUnits=userSpaceOnUse]
-        [last primitive ]
-    RenderSVGContainer {g} at (45,36) size 405x453
+    RenderSVGContainer {g} at (45,36) size 349x450
       RenderSVGText {text} at (151,50) size 148x17 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 148x17
           chunk 1 (middle anchor) text run 1 at (151.00,50.00) startOffset 0 endOffset 21 width 148.00: "Text Element Features"
-      RenderSVGContainer {g} at (45,72) size 405x417
+      RenderSVGContainer {g} at (45,72) size 349x414
         RenderSVGText {text} at (45,100) size 328x36 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-13) size 107x17
             chunk 1 text run 1 at (45.00,100.00) startOffset 0 endOffset 16 width 107.00: "Text can change "
@@ -143,11 +141,9 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (45,475) size 154x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-13) size 154x17
             chunk 1 text run 1 at (45.00,475.00) startOffset 0 endOffset 25 width 154.00: "filtered and transformed."
-        RenderSVGContainer {g} at (171,389) size 279x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,475.00)}]
+        RenderSVGContainer {g} at (208,433) size 172x53 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,475.00)}]
           RenderSVGText {text} at (0,0) size 129x46 contains 1 chunk(s)
-            [filter="blur"] RenderSVGResourceFilter {filter} at (0,-80) size 200x100
             RenderSVGInlineText {#text} at (0,-36) size 129x46
-              [filter="blur"] RenderSVGResourceFilter {filter} at (0,-80) size 200x100
               chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 6 width 129.00: "Shadow"
           RenderSVGText {text} at (0,0) size 129x46 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-36) size 129x46

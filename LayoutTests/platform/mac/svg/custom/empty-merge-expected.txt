@@ -3,11 +3,5 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGResourceFilter {filter} [id="MyFilter1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-        [last primitive [type=MERGE] [merge inputs=[1]]]
-      RenderSVGResourceFilter {filter} [id="MyFilter2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-        [last primitive [type=MERGE] [merge inputs=[1]]]
-    RenderPath {rect} at (0,0) size 121x121 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,10.00 L110.00,10.00 L110.00,110.00 L10.00,110.00 Z"]
-      [filter="MyFilter1"] RenderSVGResourceFilter {filter} at (0,0) size 120x120
-    RenderPath {rect} at (120,0) size 120x121 [fill={[type=SOLID] [color=#008000]}] [data="M130.00,10.00 L230.00,10.00 L230.00,110.00 L130.00,110.00 Z"]
-      [filter="MyFilter2"] RenderSVGResourceFilter {filter} at (120,0) size 120x120
+    RenderPath {rect} at (10,10) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,10.00 L110.00,10.00 L110.00,110.00 L10.00,110.00 Z"]
+    RenderPath {rect} at (130,10) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M130.00,10.00 L230.00,10.00 L230.00,110.00 L130.00,110.00 Z"]
