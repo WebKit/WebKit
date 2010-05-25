@@ -281,11 +281,8 @@ namespace JSC {
         void compileOpCall(OpcodeID, Instruction* instruction, unsigned callLinkInfoIndex);
         void compileOpCallVarargs(Instruction* instruction);
         void compileOpCallInitializeCallFrame();
-        void compileOpCallSetupArgs(Instruction*);
-        void compileOpCallVarargsSetupArgs(Instruction*);
         void compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter, unsigned callLinkInfoIndex, OpcodeID opcodeID);
         void compileOpCallVarargsSlowCase(Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter);
-        void compileOpConstructSetupArgs(Instruction*);
 
         enum CompileOpStrictEqType { OpStrictEq, OpNStrictEq };
         void compileOpStrictEq(Instruction* instruction, CompileOpStrictEqType type);
@@ -806,16 +803,7 @@ namespace JSC {
         void emitRightShift(Instruction*, bool isUnsigned);
         void emitRightShiftSlowCase(Instruction*, Vector<SlowCaseEntry>::iterator&, bool isUnsigned);
 
-        /* These functions are deprecated: Please use JITStubCall instead. */
-        void emitPutJITStubArg(RegisterID src, unsigned argumentNumber);
-#if USE(JSVALUE32_64)
-        void emitPutJITStubArg(RegisterID tag, RegisterID payload, unsigned argumentNumber);
-        void emitPutJITStubArgFromVirtualRegister(unsigned src, unsigned argumentNumber, RegisterID scratch1, RegisterID scratch2);
-#else
-        void emitPutJITStubArgFromVirtualRegister(unsigned src, unsigned argumentNumber, RegisterID scratch);
-#endif
-        void emitPutJITStubArgConstant(unsigned value, unsigned argumentNumber);
-        void emitPutJITStubArgConstant(void* value, unsigned argumentNumber);
+        /* This function is deprecated. */
         void emitGetJITStubArg(unsigned argumentNumber, RegisterID dst);
 
         void emitInitRegister(unsigned dst);

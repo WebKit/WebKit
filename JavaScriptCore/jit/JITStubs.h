@@ -246,23 +246,6 @@ namespace JSC {
     #endif
 #endif
 
-#if CPU(X86_64)
-    struct VoidPtrPair {
-        void* first;
-        void* second;
-    };
-    #define RETURN_POINTER_PAIR(a,b) VoidPtrPair pair = { a, b }; return pair
-#else
-    // MSVC doesn't support returning a two-value struct in two registers, so
-    // we cast the struct to int64_t instead.
-    typedef uint64_t VoidPtrPair;
-    union VoidPtrPairUnion {
-        struct { void* first; void* second; } s;
-        VoidPtrPair i;
-    };
-    #define RETURN_POINTER_PAIR(a,b) VoidPtrPairUnion pair = {{ a, b }}; return pair.i
-#endif
-
     extern "C" void ctiVMThrowTrampoline();
     extern "C" void ctiOpThrowNotCaught();
     extern "C" EncodedJSValue ctiTrampoline(void* code, RegisterFile*, CallFrame*, JSValue* exception, Profiler**, JSGlobalData*);
@@ -376,8 +359,6 @@ extern "C" {
     JSObject* JIT_STUB cti_op_push_scope(STUB_ARGS_DECLARATION);
     JSObject* JIT_STUB cti_op_put_by_id_transition_realloc(STUB_ARGS_DECLARATION);
     JSPropertyNameIterator* JIT_STUB cti_op_get_pnames(STUB_ARGS_DECLARATION);
-    VoidPtrPair JIT_STUB cti_op_call_arityCheck(STUB_ARGS_DECLARATION);
-    VoidPtrPair JIT_STUB cti_op_construct_arityCheck(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_op_eq(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_op_eq_strings(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_op_jless(STUB_ARGS_DECLARATION);
@@ -405,6 +386,8 @@ extern "C" {
     void JIT_STUB cti_op_tear_off_activation(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_tear_off_arguments(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_register_file_check(STUB_ARGS_DECLARATION);
+    void* JIT_STUB cti_op_call_arityCheck(STUB_ARGS_DECLARATION);
+    void* JIT_STUB cti_op_construct_arityCheck(STUB_ARGS_DECLARATION);
     void* JIT_STUB cti_op_call_jitCompile(STUB_ARGS_DECLARATION);
     void* JIT_STUB cti_op_construct_jitCompile(STUB_ARGS_DECLARATION);
     void* JIT_STUB cti_op_switch_char(STUB_ARGS_DECLARATION);

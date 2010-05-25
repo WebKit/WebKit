@@ -1,6 +1,44 @@
 2010-05-24  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
+
+        Bug 39643 - Clean up code generation in the JIT of stub function calls for op_call.
+
+        Presently, as soon as op-call strays off the hot path we set up a set of values on
+        the stack to be passed as arguments to cti functions, in case any should be called.
+
+        Instead, hoist the setup of the callframe to happen slightly sooner, and make the
+        cti functions to compile & check arity read these values from the callframe. This
+        allows up to remove the deprecated methods to manually set up cti arguments, rather
+        than using JITStubCall.h.
+
+        * interpreter/CallFrame.h:
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallInitializeCallFrame):
+        (JSC::JIT::compileOpCallVarargs):
+        (JSC::JIT::compileOpCallVarargsSlowCase):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCallInitializeCallFrame):
+        (JSC::JIT::compileOpCallVarargs):
+        (JSC::JIT::compileOpCallVarargsSlowCase):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITInlineMethods.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        (JSC::):
+
+2010-05-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
         Relanding r60075.
 
         * bytecode/CodeBlock.cpp:
