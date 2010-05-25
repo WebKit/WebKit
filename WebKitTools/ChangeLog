@@ -1,3 +1,17 @@
+2010-05-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        webkit-patch land calls scm.changed_files 4 times!
+        https://bugs.webkit.org/show_bug.cgi?id=39584
+
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+         - Assert that we don't call modified_changelogs too often.
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreviewer.py:
+         - Use cached changelogs list instead of calling modified_changelogs directly.
+        * Scripts/webkitpy/tool/steps/validatereviewer.py:
+         - ditto.
+
 2010-05-24  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
