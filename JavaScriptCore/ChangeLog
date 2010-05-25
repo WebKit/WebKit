@@ -1,3 +1,18 @@
+2010-05-25  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Darin Adler.
+
+        Build fix for JSFunction
+        https://bugs.webkit.org/show_bug.cgi?id=39658
+
+        MSVC can't compile one of JSFunction constructors when JIT is disabled.
+        "PassRefPtr<NativeExecutable>" causes the compile error as NativeExecutable is not defined. 
+        Add ENABLE(JIT) guard to the constructor.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        * runtime/JSFunction.h:
+
 2010-05-24  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

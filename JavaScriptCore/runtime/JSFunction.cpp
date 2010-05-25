@@ -66,22 +66,16 @@ JSFunction::JSFunction(NonNullPassRefPtr<Structure> structure)
 {
 }
 
+#if ENABLE(JIT)
 JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, int length, const Identifier& name, PassRefPtr<NativeExecutable> thunk)
     : Base(globalObject, structure)
-#if ENABLE(JIT)
     , m_executable(thunk)
-#endif
     , m_scopeChain(globalObject->globalScopeChain())
 {
     putDirect(exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
-#if ENABLE(JIT)
     putDirect(exec->propertyNames().length, jsNumber(exec, length), DontDelete | ReadOnly | DontEnum);
-#else
-    UNUSED_PARAM(thunk);
-    UNUSED_PARAM(length);
-    ASSERT_NOT_REACHED();
-#endif
 }
+#endif
 
 JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, int length, const Identifier& name, NativeFunction func)
     : Base(globalObject, structure)

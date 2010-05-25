@@ -45,7 +45,9 @@ namespace JSC {
 
     public:
         JSFunction(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, int length, const Identifier&, NativeFunction);
+#if ENABLE(JIT)
         JSFunction(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, int length, const Identifier&, PassRefPtr<NativeExecutable>);
+#endif
         JSFunction(ExecState*, NonNullPassRefPtr<FunctionExecutable>, ScopeChainNode*);
         virtual ~JSFunction();
 
