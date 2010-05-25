@@ -1102,6 +1102,7 @@ SET(WebCore_SOURCES
     page/SecurityOrigin.cpp
     page/Settings.cpp
     page/SpatialNavigation.cpp
+    page/SuspendableTimer.cpp
     page/UserContentURLPattern.cpp
     page/WindowFeatures.cpp
     page/WorkerNavigator.cpp

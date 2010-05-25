@@ -44,13 +44,8 @@ double DOMTimer::s_minTimerInterval = 0.010; // 10 milliseconds
 static int timerNestingLevel = 0;
 
 DOMTimer::DOMTimer(ScriptExecutionContext* context, PassOwnPtr<ScheduledAction> action, int timeout, bool singleShot)
-    : ActiveDOMObject(context, this)
+    : SuspendableTimer(context)
     , m_action(action)
-    , m_nextFireInterval(0)
-    , m_repeatInterval(0)
-#if !ASSERT_DISABLED
-    , m_suspended(false)
-#endif
 {
     static int lastUsedTimeoutId = 0;
     ++lastUsedTimeoutId;
@@ -155,50 +150,19 @@ void DOMTimer::fired()
     timerNestingLevel = 0;
 }
 
-bool DOMTimer::hasPendingActivity() const
-{
-    return isActive();
-}
-
 void DOMTimer::contextDestroyed()
 {
-    ActiveDOMObject::contextDestroyed();
+    SuspendableTimer::contextDestroyed();
     delete this;
 }
 
 void DOMTimer::stop()
 {
-    TimerBase::stop();
+    SuspendableTimer::stop();
     // Need to release JS objects potentially protected by ScheduledAction
     // because they can form circular references back to the ScriptExecutionContext
     // which will cause a memory leak.
     m_action.clear();
-}
-
-void DOMTimer::suspend()
-{
-#if !ASSERT_DISABLED
-    ASSERT(!m_suspended);
-    m_suspended = true;
-#endif
-    m_nextFireInterval = nextFireInterval();
-    m_repeatInterval = repeatInterval();
-    TimerBase::stop();
-}
-
-void DOMTimer::resume()
-{
-#if !ASSERT_DISABLED
-    ASSERT(m_suspended);
-    m_suspended = false;
-#endif
-    start(m_nextFireInterval, m_repeatInterval);
-}
-
-
-bool DOMTimer::canSuspend() const
-{
-    return true;
 }
 
 } // namespace WebCore

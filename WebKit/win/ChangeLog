@@ -1,3 +1,24 @@
+2010-05-25  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39651
+        
+        Make m_closeWindowTimer a SuspendableTimer, so it is properly suspended
+        when page loading is deferred.
+
+        * WebView.cpp:
+        (WebView::WebView): m_closeWindowTimer is now a pointer to a SuspendableTimer.
+        (WindowCloseTimer::create):
+        (WindowCloseTimer::WindowCloseTimer):
+        (WindowCloseTimer::contextDestroyed): Make sure we delete the WindowCloseTimer in the end.
+        (WindowCloseTimer::fired):
+        (WebView::closeWindowSoon):
+        (WebView::closeWindowTimerFired):
+        (WebView::notifyPreferencesChanged): Can just check for the existence m_closeWindowTimer, since
+        we only create it when we need to start the timer.
+        * WebView.h:
+
 2010-05-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric Seidel.

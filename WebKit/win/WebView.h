@@ -33,7 +33,7 @@
 #include <WebCore/DragActions.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/RefCountedGDIHandle.h>
-#include <WebCore/Timer.h>
+#include <WebCore/SuspendableTimer.h>
 #include <WebCore/WindowMessageListener.h>
 #include <WebCore/WKCACFLayer.h>
 #include <WebCore/WKCACFLayerRenderer.h>
@@ -832,6 +832,7 @@ public:
     void frameRect(RECT* rect);
     void closeWindow();
     void closeWindowSoon();
+    void closeWindowTimerFired();
     bool didClose() const { return m_didClose; }
 
     bool transparent() const { return m_transparent; }
@@ -939,7 +940,6 @@ protected:
     void preflightSpellChecker();
     bool continuousCheckingAllowed();
     void initializeToolTipWindow();
-    void closeWindowTimerFired(WebCore::Timer<WebView>*);
     void prepareCandidateWindow(WebCore::Frame*, HIMC);
     void updateSelectionForIME();
     LRESULT onIMERequestCharPosition(WebCore::Frame*, IMECHARPOSITION*);
@@ -1011,7 +1011,7 @@ protected:
 
     static bool s_allowSiteSpecificHacks;
 
-    WebCore::Timer<WebView> m_closeWindowTimer;
+    WebCore::SuspendableTimer* m_closeWindowTimer;
     OwnPtr<TRACKMOUSEEVENT> m_mouseOutTracker;
 
     HWND m_topLevelParent;

@@ -10,7 +10,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
@@ -24,47 +24,60 @@
  *
  */
 
-#ifndef DOMTimer_h
-#define DOMTimer_h
-
-#include "ScheduledAction.h"
+#include "config.h"
 #include "SuspendableTimer.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
+
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
-    class InspectorTimelineAgent;
+SuspendableTimer::SuspendableTimer(ScriptExecutionContext* context)
+    : ActiveDOMObject(context, this)
+    , m_nextFireInterval(0)
+    , m_repeatInterval(0)
+#if !ASSERT_DISABLED
+    , m_suspended(false)
+#endif
+{
+}
 
-    class DOMTimer : public SuspendableTimer {
-    public:
-        virtual ~DOMTimer();
-        // Creates a new timer owned by specified ScriptExecutionContext, starts it
-        // and returns its Id.
-        static int install(ScriptExecutionContext*, PassOwnPtr<ScheduledAction>, int timeout, bool singleShot);
-        static void removeById(ScriptExecutionContext*, int timeoutId);
+SuspendableTimer::~SuspendableTimer()
+{
+}
 
-        // ActiveDOMObject
-        virtual void contextDestroyed();
-        virtual void stop();
+bool SuspendableTimer::hasPendingActivity() const
+{
+    return isActive();
+}
 
-        // The lowest allowable timer setting (in seconds, 0.001 == 1 ms).
-        // Default is 10ms.
-        // Chromium uses a non-default timeout.
-        static double minTimerInterval() { return s_minTimerInterval; }
-        static void setMinTimerInterval(double value) { s_minTimerInterval = value; }
+void SuspendableTimer::stop()
+{
+    TimerBase::stop();
+}
 
-    private:
-        DOMTimer(ScriptExecutionContext*, PassOwnPtr<ScheduledAction>, int timeout, bool singleShot);
-        virtual void fired();
+void SuspendableTimer::suspend()
+{
+#if !ASSERT_DISABLED
+    ASSERT(!m_suspended);
+    m_suspended = true;
+#endif
+    m_nextFireInterval = nextFireInterval();
+    m_repeatInterval = repeatInterval();
+    TimerBase::stop();
+}
 
-        int m_timeoutId;
-        int m_nestingLevel;
-        OwnPtr<ScheduledAction> m_action;
-        static double s_minTimerInterval;
-    };
+void SuspendableTimer::resume()
+{
+#if !ASSERT_DISABLED
+    ASSERT(m_suspended);
+    m_suspended = false;
+#endif
+    start(m_nextFireInterval, m_repeatInterval);
+}
+
+bool SuspendableTimer::canSuspend() const
+{
+    return true;
+}
 
 } // namespace WebCore
-
-#endif // DOMTimer_h
-

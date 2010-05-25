@@ -1965,6 +1965,8 @@
             'page/Settings.h',
             'page/SpatialNavigation.h',
             'page/SpatialNavigation.cpp',
+            'page/SuspendableTimer.cpp',
+            'page/SuspendableTimer.h',
             'page/UserContentURLPattern.cpp',
             'page/UserContentURLPattern.h',
             'page/UserScript.h',

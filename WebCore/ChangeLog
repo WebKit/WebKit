@@ -1,3 +1,35 @@
+2010-05-25  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        Add a base class for DOMTimer called SuspendableTimer which captures just the
+        basic functionality of TimerBase and ActiveDOMObject combined.  It does not
+        contain functionality specific to scripting timers.
+        
+        SuspendableTimer is used in fixing https://bugs.webkit.org/show_bug.cgi?id=39651
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::DOMTimer):
+        (WebCore::DOMTimer::contextDestroyed):
+        (WebCore::DOMTimer::stop):
+        * page/DOMTimer.h:
+        * page/SuspendableTimer.cpp: Added.
+        (WebCore::SuspendableTimer::SuspendableTimer):
+        (WebCore::SuspendableTimer::~SuspendableTimer):
+        (WebCore::SuspendableTimer::hasPendingActivity):
+        (WebCore::SuspendableTimer::stop):
+        (WebCore::SuspendableTimer::suspend):
+        (WebCore::SuspendableTimer::resume):
+        (WebCore::SuspendableTimer::canSuspend):
+        * page/SuspendableTimer.h: Added.
+
 2010-05-25  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Nate Chapin.

@@ -330,7 +330,7 @@ WebView::WebView()
     , m_didClose(false)
     , m_inIMEComposition(0)
     , m_toolTipHwnd(0)
-    , m_closeWindowTimer(this, &WebView::closeWindowTimerFired)
+    , m_closeWindowTimer(0)
     , m_topLevelParent(0)
     , m_deleteBackingStoreTimerActive(false)
     , m_transparent(false)
@@ -1079,13 +1079,67 @@ void WebView::frameRect(RECT* rect)
     ::GetWindowRect(m_viewWindow, rect);
 }
 
+class WindowCloseTimer : public WebCore::SuspendableTimer {
+public:
+    static WindowCloseTimer* create(WebView*);
+
+private:
+    WindowCloseTimer(ScriptExecutionContext*, WebView*);
+    virtual void contextDestroyed();
+    virtual void fired();
+
+    WebView* m_webView;
+};
+
+WindowCloseTimer* WindowCloseTimer::create(WebView* webView)
+{
+    ASSERT_ARG(webView, webView);
+    Frame* frame = core(webView->topLevelFrame());
+    ASSERT(frame);
+    if (!frame)
+        return 0;
+
+    Document* document = frame->document();
+    ASSERT(document);
+    if (!document)
+        return 0;
+
+    return new WindowCloseTimer(document, webView);
+}
+
+WindowCloseTimer::WindowCloseTimer(ScriptExecutionContext* context, WebView* webView)
+    : SuspendableTimer(context)
+    , m_webView(webView)
+{
+    ASSERT_ARG(context, context);
+    ASSERT_ARG(webView, webView);
+}
+
+void WindowCloseTimer::contextDestroyed()
+{
+    SuspendableTimer::contextDestroyed();
+    delete this;
+}
+
+void WindowCloseTimer::fired()
+{
+    m_webView->closeWindowTimerFired();
+}
+
 void WebView::closeWindowSoon()
 {
-    m_closeWindowTimer.startOneShot(0);
+    if (m_closeWindowTimer)
+        return;
+
+    m_closeWindowTimer = WindowCloseTimer::create(this);
+    if (!m_closeWindowTimer)
+        return;
+    m_closeWindowTimer->startOneShot(0);
+
     AddRef();
 }
 
-void WebView::closeWindowTimerFired(WebCore::Timer<WebView>*)
+void WebView::closeWindowTimerFired()
 {
     closeWindow();
     Release();
@@ -4737,7 +4791,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     settings->setWebGLEnabled(true);
 #endif  // ENABLE(3D_CANVAS)
 
-    if (!m_closeWindowTimer.isActive())
+    if (!m_closeWindowTimer)
         m_mainFrame->invalidate(); // FIXME
 
     hr = updateSharedSettingsFromPreferencesIfNeeded(preferences.get());
