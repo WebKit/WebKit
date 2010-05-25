@@ -49,5 +49,7 @@ resources/doctype01.dat: PASS
 
 resources/scriptdata01.dat: PASS
 
+resources/entities01.dat: 2, 5
+
 resources/comments01.dat: PASS
 #EOF

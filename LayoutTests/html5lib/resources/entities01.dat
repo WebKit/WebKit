@@ -1,0 +1,180 @@
+#data
+FOO&gt;BAR
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "FOO>BAR"
+
+#data
+FOO&gtBAR
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "FOO>BAR"
+
+#data
+FOO&gt BAR
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "FOO> BAR"
+
+#data
+FOO&gt;;;BAR
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "FOO>;;BAR"
+
+#data
+I'm &notit; I tell you
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "I'm ¬it; I tell you"
+
+#data
+I'm &notin; I tell you
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "I'm ∉ I tell you"
+
+#data
+FOO& BAR
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "FOO& BAR"
+
+#data
+FOO&<BAR>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "FOO&"
+|     <bar>
+
+#data
+FOO&&&&gt;BAR
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "FOO&&&>BAR"
+
+#data
+FOO&#41;BAR
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "FOO)BAR"
+
+#data
+FOO&#x41;BAR
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "FOOABAR"
+
+#data
+FOO&#X41;BAR
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "FOOABAR"
+
+#data
+FOO&#BAR
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "FOO&#BAR"
+
+#data
+FOO&#ZOO
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "FOO&#ZOO"
+
+#data
+FOO&#xBAR
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "FOOºR"
+
+#data
+FOO&#xZOO
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "FOO&#xZOO"
+
+#data
+FOO&#XZOO
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "FOO&#XZOO"
+
+#data
+FOO&#41BAR
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "FOO)BAR"
+
+#data
+FOO&#x41BAR
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "FOO䆺R"
+
+#data
+FOO&#x41ZOO
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "FOOAZOO"
