@@ -1,3 +1,22 @@
+2010-05-25  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(51522): typing at the end of a line in designMode documents is *very* slow.
+        https://bugs.webkit.org/show_bug.cgi?id=36037
+        <rdar://problem/8022887>
+
+        The performance regression was traced to r51522 but this is not entirely true. That revision introduced, among other things,
+        additional checks in the method isCandidate of both Position and PositionIterator classes to support scenarios of mixed editability
+        that were not allowed before. This change uncovered an underlying issue with the decrement method of PositionIterator, that in some
+        cases would iterate through every position as offset in a block before moving to the last child in the block.
+        This was exactly the case of the attached test case, where, trying to check if the caret was placed at the end of a block, we were examining
+        every position in the block before considering the last true position in the block.
+        The performance was linear with the number of child nodes in the block, instead of constant.
+        
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::decrement):
+
 2010-05-25  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

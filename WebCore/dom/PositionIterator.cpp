@@ -84,15 +84,14 @@ void PositionIterator::decrement()
         }
         return;
     }
-
-    if (m_offsetInAnchor) {
-        m_offsetInAnchor = Position::uncheckedPreviousOffset(m_anchorNode, m_offsetInAnchor);
+    
+    if (m_anchorNode->hasChildNodes()) {
+        m_anchorNode = m_anchorNode->lastChild();
+        m_offsetInAnchor = m_anchorNode->hasChildNodes()? 0: lastOffsetForEditing(m_anchorNode);
     } else {
-        if (m_anchorNode->hasChildNodes()) {
-            m_anchorNode = m_anchorNode->lastChild();
-            if (!m_anchorNode->hasChildNodes())
-                m_offsetInAnchor = lastOffsetForEditing(m_anchorNode);
-        } else {
+        if (m_offsetInAnchor)
+            m_offsetInAnchor = Position::uncheckedPreviousOffset(m_anchorNode, m_offsetInAnchor);
+        else {
             m_nodeAfterPositionInAnchor = m_anchorNode;
             m_anchorNode = m_anchorNode->parentNode();
         }
