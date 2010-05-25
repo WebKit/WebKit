@@ -1,3 +1,17 @@
+2010-05-24  Tony Chang  <tony@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] Fix zoom tests after r60104
+        https://bugs.webkit.org/show_bug.cgi?id=39645
+        
+        m_zoomFactor moved from Frame to FrameView.  FrameView has separate
+        notions of page zoom and text zoom.  In my hurried compile fix, I
+        assumed that m_zoomFactor was for page zoom, but it's not always.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setZoomLevel):
+
 2010-05-24  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed. Sort features.
