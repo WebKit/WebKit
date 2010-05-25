@@ -484,7 +484,7 @@ void LayoutTestController::addOriginAccessWhitelistEntry(const QString& sourceOr
 
 void LayoutTestController::removeOriginAccessWhitelistEntry(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains)
 {
-    // FIXME: Implement.
+    DumpRenderTreeSupportQt::removeWhiteListAccessFromOrigin(sourceOrigin, destinationProtocol, destinationHost, allowDestinationSubdomains);
 }
 
 void LayoutTestController::waitForPolicyDelegate()

@@ -288,9 +288,6 @@ storage/statement-success-callback-isolated-world.html
 storage/transaction-callback-isolated-world.html
 storage/transaction-error-callback-isolated-world.html
 
-# Missing layoutTestController.removeOriginAccessWhitelistEntry()
-http/tests/xmlhttprequest/origin-whitelisting-removal.html
-
 # Evaluate expected results for frame loader callbacks
 # https://bugs.webkit.org/show_bug.cgi?id=34839
 http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html

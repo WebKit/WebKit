@@ -80,6 +80,7 @@ public:
     static bool elementDoesAutoCompleteForElementWithId(QWebFrame* frame, const QString& elementId);
 
     static void whiteListAccessFromOrigin(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains);
+    static void removeWhiteListAccessFromOrigin(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains);
     static void resetOriginAccessWhiteLists();
 
     static int workerThreadCount();

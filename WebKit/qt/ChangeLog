@@ -1,3 +1,18 @@
+2010-05-24  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] DRT Support for removeOriginAccessWhitelistEntry
+
+        Unskips http/tests/xmlhttprequest/origin-whitelisting-removal.html
+
+        [Qt] DRT Support for removeOriginAccessWhitelistEntry
+        https://bugs.webkit.org/show_bug.cgi?id=39565
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::removeWhiteListAccessFromOrigin):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2010-05-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric Seidel.
