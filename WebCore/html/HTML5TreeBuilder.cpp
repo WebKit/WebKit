@@ -102,10 +102,12 @@ PassRefPtr<Node> HTML5TreeBuilder::passTokenToLegacyParser(HTML5Token& token)
             m_lexer->setState(HTML5Lexer::ScriptDataState);
         else if (token.name() == textareaTag || token.name() == titleTag)
             m_lexer->setState(HTML5Lexer::RCDATAState);
-        else if (token.name() == styleTag || token.name() == iframeTag || token.name() == xmpTag) {
-            // FIXME: noscript, noframes, and noembed may conditionally enter this state as well.
+        else if (token.name() == styleTag || token.name() == iframeTag
+                 || token.name() == xmpTag || token.name() == noembedTag) {
+            // FIXME: noscript and noframes may conditionally enter this state as well.
             m_lexer->setState(HTML5Lexer::RAWTEXTState);
-        }
+        } else if (token.name() == plaintextTag)
+            m_lexer->setState(HTML5Lexer::PLAINTEXTState);
     }
 
     if (token.type() == HTML5Token::DOCTYPE) {
