@@ -1,3 +1,13 @@
+2010-05-24  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Fixed handling of bare '/' and '?' at console prompt.
+        https://bugs.webkit.org/show_bug.cgi?id=39585
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentKeyDown):
+
 2010-05-24  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Sam Weinig.

@@ -705,19 +705,20 @@ WebInspector._registerShortcuts = function()
 
 WebInspector.documentKeyDown = function(event)
 {
+    var isInEditMode = event.target.enclosingNodeOrSelfWithClass("text-prompt") || WebInspector.isEditingAnyField();
     const helpKey = WebInspector.isMac() ? "U+003F" : "U+00BF"; // "?" for both platforms
 
     if (event.keyIdentifier === "F1" ||
-        (event.keyIdentifier === helpKey && (!WebInspector.isEditingAnyField() || event.metaKey))) {
-            WebInspector.shortcutsHelp.show();
-            event.stopPropagation();
-            event.preventDefault();
+        (event.keyIdentifier === helpKey && event.shiftKey && (!isInEditMode || event.metaKey))) {
+        WebInspector.shortcutsHelp.show();
+        event.stopPropagation();
+        event.preventDefault();
+        return;
     }
 
     if (WebInspector.isEditingAnyField())
         return;
 
-    var isInTextPrompt = event.target.enclosingNodeOrSelfWithClass("text-prompt");
     if (this.currentFocusElement && this.currentFocusElement.handleKeyEvent) {
         this.currentFocusElement.handleKeyEvent(event);
         if (event.handled) {
@@ -737,7 +738,7 @@ WebInspector.documentKeyDown = function(event)
     var isMac = WebInspector.isMac();
     switch (event.keyIdentifier) {
         case "Left":
-            var isBackKey = !isInTextPrompt && (isMac ? event.metaKey : event.ctrlKey);
+            var isBackKey = !isInEditMode && (isMac ? event.metaKey : event.ctrlKey);
             if (isBackKey && this._panelHistory.canGoBack()) {
                 this._panelHistory.goBack();
                 event.preventDefault();
@@ -745,7 +746,7 @@ WebInspector.documentKeyDown = function(event)
             break;
 
         case "Right":
-            var isForwardKey = !isInTextPrompt && (isMac ? event.metaKey : event.ctrlKey);
+            var isForwardKey = !isInEditMode && (isMac ? event.metaKey : event.ctrlKey);
             if (isForwardKey && this._panelHistory.canGoForward()) {
                 this._panelHistory.goForward();
                 event.preventDefault();
