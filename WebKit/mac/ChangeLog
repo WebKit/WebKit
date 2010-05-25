@@ -1,3 +1,14 @@
+2010-05-25  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Database origins aren't populated at launch (missing db in prefs sheet, possible other symptoms)
+        <rdar://problem/8013233> and https://bugs.webkit.org/show_bug.cgi?id=39486
+
+        * Storage/WebDatabaseManager.mm:
+        (WebKitInitializeDatabasesIfNecessary): Call initializeTracker() instead of trying to set the path on
+          an already created tracker that already has its origins populated.
+
 2010-05-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric Seidel.

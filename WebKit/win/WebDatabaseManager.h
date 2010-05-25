@@ -88,7 +88,7 @@ private:
     ULONG m_refCount;
 };
 
-void WebKitSetWebDatabasesPathIfNecessary();
+void WebKitInitializeWebDatabasesIfNecessary();
 
 #endif
 

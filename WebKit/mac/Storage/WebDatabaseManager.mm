@@ -138,7 +138,7 @@ void WebKitInitializeDatabasesIfNecessary()
         return;
 
     // Set the database root path in WebCore
-    DatabaseTracker::tracker().setDatabaseDirectoryPath(databasesDirectoryPath());
+    DatabaseTracker::initializeTracker(databasesDirectoryPath());
 
     // Set the DatabaseTrackerClient
     DatabaseTracker::tracker().setClient(WebDatabaseTrackerClient::sharedWebDatabaseTrackerClient());

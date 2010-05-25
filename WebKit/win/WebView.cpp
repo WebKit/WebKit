@@ -2600,7 +2600,7 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
 
     InitializeLoggingChannelsIfNecessary();
 #if ENABLE(DATABASE)
-    WebKitSetWebDatabasesPathIfNecessary();
+    WebKitInitializeWebDatabasesIfNecessary();
 #endif
     WebKitSetApplicationCachePathIfNecessary();
     
