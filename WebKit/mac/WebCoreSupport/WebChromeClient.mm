@@ -695,11 +695,6 @@ String WebChromeClient::generateReplacementFile(const String& path)
     return [[m_webView _UIDelegateForwarder] webView:m_webView generateReplacementFile:path];
 }
 
-void WebChromeClient::formStateDidChange(const WebCore::Node* node)
-{
-    CallUIDelegate(m_webView, @selector(webView:formStateDidChangeForNode:), kit(const_cast<WebCore::Node*>(node)));
-}
-
 void WebChromeClient::formDidFocus(const WebCore::Node* node)
 {
     CallUIDelegate(m_webView, @selector(webView:formDidFocusNode:), kit(const_cast<WebCore::Node*>(node)));

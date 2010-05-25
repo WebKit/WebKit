@@ -143,7 +143,7 @@ public:
     virtual bool shouldReplaceWithGeneratedFileForUpload(const WebCore::String& path, WebCore::String &generatedFilename);
     virtual WebCore::String generateReplacementFile(const WebCore::String& path);
 
-    virtual void formStateDidChange(const WebCore::Node*);
+    virtual void formStateDidChange(const WebCore::Node*) { }
 
     virtual void formDidFocus(const WebCore::Node*);
     virtual void formDidBlur(const WebCore::Node*);

@@ -75,7 +75,6 @@ HTMLTextAreaElement::HTMLTextAreaElement(const QualifiedName& tagName, Document*
 {
     ASSERT(hasTagName(textareaTag));
     setFormControlValueMatchesRenderer(true);
-    notifyFormStateChanged(this);
 }
 
 const AtomicString& HTMLTextAreaElement::formControlType() const

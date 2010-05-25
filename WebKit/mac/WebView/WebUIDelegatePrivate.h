@@ -141,7 +141,6 @@ enum {
                                                                          frame:(WebFrame *)frame
                                                                       listener:(id<WebGeolocationPolicyListener>)listener;
 
-- (void)webView:(WebView *)sender formStateDidChangeForNode:(DOMNode *)node;
 - (void)webView:(WebView *)sender formDidFocusNode:(DOMNode *)node;
 - (void)webView:(WebView *)sender formDidBlurNode:(DOMNode *)node;
 
