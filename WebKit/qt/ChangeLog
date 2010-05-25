@@ -1,3 +1,17 @@
+2010-05-25  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        [Qt] Expose the editing behavior setting in DRT to test all editing code paths
+        https://bugs.webkit.org/show_bug.cgi?id=39680
+
+        Add support to Qt's DRT to setting the editing behavior. Patch is a follow up of
+        bug 38603, which just stubbed out the Qt bits of it.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp: Implementation of editing behavior control.
+        (DumpRenderTreeSupportQt::setEditingBehavior):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2010-05-24  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Laszlo Gombos.
