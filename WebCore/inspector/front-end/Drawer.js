@@ -40,6 +40,8 @@ WebInspector.Drawer = function()
     this.mainStatusBar = document.getElementById("main-status-bar");
     this.mainStatusBar.addEventListener("mousedown", this._startStatusBarDragging.bind(this), true);
     this.viewStatusBar = document.getElementById("other-drawer-status-bar-items");
+    this._counters = document.getElementById("counters");
+    this._drawerStatusBar = document.getElementById("drawer-status-bar");
 }
 
 WebInspector.Drawer.prototype = {
@@ -110,6 +112,15 @@ WebInspector.Drawer.prototype = {
         var drawerStatusBar = document.getElementById("drawer-status-bar");
         drawerStatusBar.insertBefore(anchoredItems, drawerStatusBar.firstChild);
 
+        if (this._currentPanelCounters) {
+            var oldRight = this._drawerStatusBar.clientWidth - (this._counters.offsetLeft + this._currentPanelCounters.offsetWidth);
+            var newRight = WebInspector.Panel.counterRightMargin;
+            var rightPadding = (oldRight - newRight);
+            animations.push({element: this._currentPanelCounters, start: {"padding-right": rightPadding}, end: {"padding-right": 0}});
+            this._currentPanelCounters.parentNode.removeChild(this._currentPanelCounters);
+            this.mainStatusBar.appendChild(this._currentPanelCounters);
+        }
+
         function animationFinished()
         {
             if ("updateStatusBarItems" in WebInspector.currentPanel)
@@ -119,6 +130,8 @@ WebInspector.Drawer.prototype = {
             delete this._animating;
             delete this._currentAnimationInterval;
             this.state = (this.fullPanel ? WebInspector.Drawer.State.Full : WebInspector.Drawer.State.Variable);
+            if (this._currentPanelCounters)
+                this._currentPanelCounters.removeAttribute("style");
         }
 
         this._currentAnimationInterval = WebInspector.animateStyle(animations, this._animationDuration(), animationFinished.bind(this));
@@ -158,12 +171,26 @@ WebInspector.Drawer.prototype = {
             {element: document.getElementById("other-drawer-status-bar-items"), start: {opacity: 1}, end: {opacity: 0}}
         ];
 
+        if (this._currentPanelCounters) {
+            var newRight = this._drawerStatusBar.clientWidth - this._counters.offsetLeft;
+            var oldRight = this.mainStatusBar.clientWidth - (this._currentPanelCounters.offsetLeft + this._currentPanelCounters.offsetWidth);
+            var rightPadding = (newRight - oldRight);
+            animations.push({element: this._currentPanelCounters, start: {"padding-right": 0}, end: {"padding-right": rightPadding}});
+        }
+
         function animationFinished()
         {
             WebInspector.currentPanel.resize();
             var mainStatusBar = document.getElementById("main-status-bar");
             mainStatusBar.insertBefore(anchoredItems, mainStatusBar.firstChild);
             mainStatusBar.style.removeProperty("padding-left");
+
+            if (this._currentPanelCounters) {
+                this._currentPanelCounters.setAttribute("style", null);
+                this._currentPanelCounters.parentNode.removeChild(this._currentPanelCounters);
+                this._counters.insertBefore(this._currentPanelCounters, this._counters.firstChild);
+            }
+
             document.body.removeStyleClass("drawer-visible");
             delete this._animating;
             delete this._currentAnimationInterval;
@@ -220,6 +247,22 @@ WebInspector.Drawer.prototype = {
     {
         this.visible = false;
         this.fullPanel = false;
+    },
+
+    set currentPanelCounters(x)
+    {
+        if (!x) {
+            if (this._currentPanelCounters)
+                this._currentPanelCounters.parentElement.removeChild(this._currentPanelCounters);
+            delete this._currentPanelCounters;
+            return;
+        }
+
+        this._currentPanelCounters = x;
+        if (this.visible)
+            this.mainStatusBar.appendChild(x);
+        else
+            this._counters.insertBefore(x, this._counters.firstChild);
     },
 
     _cancelAnimationIfNeeded: function()

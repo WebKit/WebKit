@@ -1,3 +1,62 @@
+2010-05-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Add memory graph to Timeline overview pane.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37879
+
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer):
+        (WebInspector.Drawer.prototype.show.animationFinished):
+        (WebInspector.Drawer.prototype.show):
+        (WebInspector.Drawer.prototype.hide):
+        (WebInspector.Drawer.prototype.set currentPanelCounters):
+        * inspector/front-end/Panel.js:
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane):
+        (WebInspector.TimelineOverviewPane.prototype.showTimelines):
+        (WebInspector.TimelineOverviewPane.prototype.showMemoryGraph):
+        (WebInspector.TimelineOverviewPane.prototype._forAllRecords):
+        (WebInspector.TimelineOverviewPane.prototype.update):
+        (WebInspector.TimelineOverviewPane.prototype.updateMainViewWidth):
+        (WebInspector.TimelineOverviewPane.prototype._endWindowDragging):
+        (WebInspector.TimelineOverviewPane.prototype._createTimelineCategoryStatusBarCheckbox):
+        (WebInspector.HeapGraph):
+        (WebInspector.HeapGraph.prototype.get element):
+        (WebInspector.HeapGraph.prototype.get visible):
+        (WebInspector.HeapGraph.prototype.show):
+        (WebInspector.HeapGraph.prototype.hide):
+        (WebInspector.HeapGraph.prototype.setSize):
+        (WebInspector.HeapGraph.prototype.update):
+        (WebInspector.HeapGraph.prototype._clear):
+        (WebInspector.HeapGraph.prototype._drawScale):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype.toolbarItemClass._createTopPane):
+        (WebInspector.TimelinePanel.prototype.get statusBarItems):
+        (WebInspector.TimelinePanel.prototype._timelinesOverviewItemSelected):
+        (WebInspector.TimelinePanel.prototype._memoryOverviewItemSelected):
+        (WebInspector.TimelinePanel.prototype.setSidebarWidth):
+        (WebInspector.TimelinePanel.prototype.show):
+        (WebInspector.TimelinePanel.prototype.hide):
+        * inspector/front-end/inspector.css:
+        (#counters):
+        (#timeline-overview-sidebar):
+        (.timeline-category-statusbar-item):
+        (.timeline-category-statusbar-item .timeline-category-checkbox):
+        (.timeline-category-statusbar-item .timeline-category-checkbox:checked):
+        (.timeline-category-statusbar-item.timeline-category-loading .timeline-category-checkbox):
+        (.timeline-category-statusbar-item.timeline-category-scripting .timeline-category-checkbox):
+        (.timeline-category-statusbar-item.timeline-category-rendering .timeline-category-checkbox):
+        (#timeline-overview-memory):
+        (.timeline-records-counter):
+        (#main-status-bar > .timeline-records-counter):
+        (#counters > .timeline-records-counter):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/utilities.js:
+        ():
+
 2010-05-25  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Fix typo pointed out by Maciej.

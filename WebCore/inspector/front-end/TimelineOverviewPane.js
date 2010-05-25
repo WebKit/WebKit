@@ -30,32 +30,26 @@
 
 WebInspector.TimelineOverviewPane = function(categories)
 {
-    this.element = document.createElement("div");
-    this.element.id = "timeline-overview-panel";
-
     this._categories = categories;
-    this._overviewSidebarElement = document.createElement("div");
-    this._overviewSidebarElement.id = "timeline-overview-sidebar";
-    this.element.appendChild(this._overviewSidebarElement);
 
-    var overviewTreeElement = document.createElement("ol");
-    overviewTreeElement.className = "sidebar-tree";
-    this._overviewSidebarElement.appendChild(overviewTreeElement);
-    var sidebarTree = new TreeOutline(overviewTreeElement);
-
-    var categoriesTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("TIMELINES"), {}, true);
-    categoriesTreeElement.expanded = true;
-    sidebarTree.appendChild(categoriesTreeElement);
+    this.statusBarFilters = document.createElement("div");
+    this.statusBarFilters.id = "timeline-view-status-bar-items";
+    this.statusBarFilters.addStyleClass("status-bar-item");
     for (var categoryName in this._categories) {
         var category = this._categories[categoryName];
-        categoriesTreeElement.appendChild(new WebInspector.TimelineCategoryTreeElement(category, this._onCheckboxClicked.bind(this, category)));
+        this.statusBarFilters.appendChild(this._createTimelineCategoryStatusBarCheckbox(category, this._onCheckboxClicked.bind(this, category)));
     }
 
     this._overviewGrid = new WebInspector.TimelineGrid();
     this._overviewGrid.element.id = "timeline-overview-grid";
-    this._overviewGrid.itemsGraphsElement.id = "timeline-overview-graphs";
+    this._overviewGrid.itemsGraphsElement.id = "timeline-overview-timelines";
     this._overviewGrid.element.addEventListener("mousedown", this._dragWindow.bind(this), true);
-    this.element.appendChild(this._overviewGrid.element);
+
+    this._heapGraph = new WebInspector.HeapGraph();
+    this._heapGraph.element.id = "timeline-overview-memory";
+    this._overviewGrid.element.insertBefore(this._heapGraph.element, this._overviewGrid.itemsGraphsElement);
+
+    this.element = this._overviewGrid.element;
 
     this._categoryGraphs = {};
     var i = 0;
@@ -90,10 +84,6 @@ WebInspector.TimelineOverviewPane = function(categories)
 
     this._overviewCalculator = new WebInspector.TimelineOverviewCalculator();
 
-    var separatorElement = document.createElement("div");
-    separatorElement.id = "timeline-overview-separator";
-    this.element.appendChild(separatorElement);
-
     this.windowLeft = 0.0;
     this.windowRight = 1.0;
 }
@@ -101,6 +91,17 @@ WebInspector.TimelineOverviewPane = function(categories)
 WebInspector.TimelineOverviewPane.minSelectableSize = 12;
 
 WebInspector.TimelineOverviewPane.prototype = {
+    showTimelines: function(event) {
+        this._heapGraph.hide();
+        this._overviewGrid.itemsGraphsElement.removeStyleClass("hidden");
+    },
+
+    showMemoryGraph: function(records) {
+        this._heapGraph.show();
+        this._heapGraph.update(records);
+        this._overviewGrid.itemsGraphsElement.addStyleClass("hidden");
+    },
+
     _onCheckboxClicked: function (category, event) {
         if (event.target.checked)
             category.hidden = false;
@@ -108,6 +109,16 @@ WebInspector.TimelineOverviewPane.prototype = {
             category.hidden = true;
         this._categoryGraphs[category.name].dimmed = !event.target.checked;
         this.dispatchEventToListeners("filter changed");
+    },
+
+    _forAllRecords: function(recordsArray, callback)
+    {
+        if (!recordsArray)
+            return;
+        for (var i = 0; i < recordsArray.length; ++i) {
+            callback(recordsArray[i]);
+            this._forAllRecords(recordsArray[i].children, callback);
+        }
     },
 
     update: function(records, showShortEvents)
@@ -120,19 +131,9 @@ WebInspector.TimelineOverviewPane.prototype = {
             this._categoryGraphs[category].clearChunks();
         }
 
-        function forAllRecords(recordsArray, callback)
-        {
-            if (!recordsArray)
-                return;
-            for (var i = 0; i < recordsArray.length; ++i) {
-                callback(recordsArray[i]);
-                forAllRecords(recordsArray[i].children, callback);
-            }
-        }
-
         // Create sparse arrays with 101 cells each to fill with chunks for a given category.
         this._overviewCalculator.reset();
-        forAllRecords(records, this._overviewCalculator.updateBoundaries.bind(this._overviewCalculator));
+        this._forAllRecords(records, this._overviewCalculator.updateBoundaries.bind(this._overviewCalculator));
 
         function markTimeline(record)
         {
@@ -145,7 +146,7 @@ WebInspector.TimelineOverviewPane.prototype = {
             for (var j = Math.round(percentages.start); j <= end; ++j)
                 timelines[categoryName][j] = true;
         }
-        forAllRecords(records, markTimeline.bind(this));
+        this._forAllRecords(records, markTimeline.bind(this));
 
         // Convert sparse arrays to continuous segments, render graphs for each.
         for (var category in this._categories) {
@@ -168,6 +169,11 @@ WebInspector.TimelineOverviewPane.prototype = {
                 chunkStart = -1;
             }
         }
+
+        this._heapGraph.setSize(this._overviewGrid.element.offsetWidth, 60);
+        if (this._heapGraph.visible)
+            this._heapGraph.update(records);
+
         this._overviewGrid.updateDividers(true, this._overviewCalculator);
     },
 
@@ -188,12 +194,7 @@ WebInspector.TimelineOverviewPane.prototype = {
         this._overviewGrid.addEventDividers(dividers);
     },
 
-    setSidebarWidth: function(width)
-    {
-        this._overviewSidebarElement.style.width = width + "px";
-    },
-
-    updateMainViewWidth: function(width)
+    updateMainViewWidth: function(width, records)
     {
         this._overviewGrid.element.style.left = width + "px";
     },
@@ -328,7 +329,32 @@ WebInspector.TimelineOverviewPane.prototype = {
     _endWindowDragging: function(event)
     {
         WebInspector.elementDragEnd(event);
+    },
+
+    _createTimelineCategoryStatusBarCheckbox: function(category, onCheckboxClicked)
+    {
+        var labelContainer = document.createElement("div");
+        labelContainer.addStyleClass("timeline-category-statusbar-item");
+        labelContainer.addStyleClass("timeline-category-" + category.name);
+        labelContainer.addStyleClass("status-bar-item");
+
+        var label = document.createElement("label");
+        var checkElement = document.createElement("input");
+        checkElement.type = "checkbox";
+        checkElement.className = "timeline-category-checkbox";
+        checkElement.checked = true;
+        checkElement.addEventListener("click", onCheckboxClicked);
+        label.appendChild(checkElement);
+
+        var typeElement = document.createElement("span");
+        typeElement.className = "type";
+        typeElement.textContent = category.title;
+        label.appendChild(typeElement);
+
+        labelContainer.appendChild(label);
+        return labelContainer;
     }
+
 }
 
 WebInspector.TimelineOverviewPane.prototype.__proto__ = WebInspector.Object.prototype;
@@ -376,41 +402,6 @@ WebInspector.TimelineOverviewCalculator.prototype = {
     }
 }
 
-
-WebInspector.TimelineCategoryTreeElement = function(category, onCheckboxClicked)
-{
-    this._category = category;
-    this._onCheckboxClicked = onCheckboxClicked;
-    // Pass an empty title, the title gets made later in onattach.
-    TreeElement.call(this, "", null, false);
-}
-
-WebInspector.TimelineCategoryTreeElement.prototype = {
-    onattach: function()
-    {
-        this.listItemElement.removeChildren();
-        this.listItemElement.addStyleClass("timeline-category-tree-item");
-        this.listItemElement.addStyleClass("timeline-category-" + this._category.name);
-
-        var label = document.createElement("label");
-
-        var checkElement = document.createElement("input");
-        checkElement.type = "checkbox";
-        checkElement.className = "timeline-category-checkbox";
-        checkElement.checked = true;
-        checkElement.addEventListener("click", this._onCheckboxClicked);
-        label.appendChild(checkElement);
-
-        var typeElement = document.createElement("span");
-        typeElement.className = "type";
-        typeElement.textContent = this._category.title;
-        label.appendChild(typeElement);
-
-        this.listItemElement.appendChild(label);
-    }
-}
-
-WebInspector.TimelineCategoryTreeElement.prototype.__proto__ = TreeElement.prototype;
 
 WebInspector.TimelineCategoryGraph = function(category, isEven)
 {
@@ -497,3 +488,113 @@ WebInspector.TimelinePanel.WindowSelector.prototype = {
     }
 }
 
+WebInspector.HeapGraph = function() {
+    this._canvas = document.createElement("canvas");
+
+    this._maxHeapSizeLabel = document.createElement("div");
+    this._maxHeapSizeLabel.addStyleClass("memory-graph-label");
+
+    this._element = document.createElement("div");
+    this._element.addStyleClass("hidden");
+    this._element.appendChild(this._canvas);
+    this._element.appendChild(this._maxHeapSizeLabel);
+}
+
+WebInspector.HeapGraph.prototype = {
+    get element() {
+    //    return this._canvas;
+        return this._element;
+    },
+
+    get visible() {
+        return !this.element.hasStyleClass("hidden");
+    },
+
+    show: function() {
+        this.element.removeStyleClass("hidden");
+    },
+
+    hide: function() {
+        this.element.addStyleClass("hidden");
+    },
+
+    setSize: function(w, h) {
+        this._canvas.width = w;
+        this._canvas.height = h - 5;
+    },
+
+    update: function(records)
+    {
+        if (!records.length)
+            return;
+
+        var maxTotalHeapSize = 0;
+        var minTime;
+        var maxTime;
+        this._forAllRecords(records, function(r) {
+            if (r.totalHeapSize && r.totalHeapSize > maxTotalHeapSize)
+                maxTotalHeapSize = r.totalHeapSize;
+
+            if (typeof minTime === "undefined" || r.startTime < minTime)
+                minTime = r.startTime;
+            if (typeof maxTime === "undefined" || r.endTime > maxTime)
+                maxTime = r.endTime;
+        });
+
+        var width = this._canvas.width;
+        var height = this._canvas.height;
+        var xFactor = width / (maxTime - minTime);
+        var yFactor = height / maxTotalHeapSize;
+
+        var histogram = new Array(width);
+        this._forAllRecords(records, function(r) {
+            if (!r.usedHeapSize)
+                return;
+             var x = Math.round((r.endTime - minTime) * xFactor);
+             var y = Math.round(r.usedHeapSize * yFactor);
+             histogram[x] = Math.max(histogram[x] || 0, y);
+        });
+
+        var ctx = this._canvas.getContext("2d");
+        this._clear(ctx);
+
+        // +1 so that the border always fit into the canvas area.
+        height = height + 1;
+
+        ctx.beginPath();
+        var initialY = 0;
+        for (var k = 0; k < histogram.length; k++) {
+            if (histogram[k]) {
+                initialY = histogram[k];
+                break;
+            }
+        }
+        ctx.moveTo(0, height - initialY);
+
+        for (var x = 0; x < histogram.length; x++) {
+             if (!histogram[x])
+                 continue;
+             ctx.lineTo(x, height - histogram[x]);
+        }
+
+        ctx.lineWidth = 0.5;
+        ctx.strokeStyle = "rgba(20,0,0,0.8)";
+        ctx.stroke();
+
+        ctx.fillStyle = "rgba(214,225,254, 0.8);";
+        ctx.lineTo(width, 60);
+        ctx.lineTo(0, 60);
+        ctx.lineTo(0, height - initialY);
+        ctx.fill();
+        ctx.closePath();
+
+        this._maxHeapSizeLabel.textContent = Number.bytesToString(maxTotalHeapSize);
+    },
+
+    _clear: function(ctx) {
+        ctx.fillStyle = "rgba(255,255,255,0.8)";
+        ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
+    },
+
+    _forAllRecords: WebInspector.TimelineOverviewPane.prototype._forAllRecords
+}

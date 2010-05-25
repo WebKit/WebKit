@@ -33,6 +33,9 @@ WebInspector.Panel = function()
     this.element.addStyleClass("panel");
 }
 
+// Should by in sync with style declarations.
+WebInspector.Panel.counterRightMargin = 25;
+
 WebInspector.Panel.prototype = {
     get toolbarItem()
     {

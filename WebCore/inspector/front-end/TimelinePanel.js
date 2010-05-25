@@ -33,10 +33,7 @@ WebInspector.TimelinePanel = function()
     WebInspector.Panel.call(this);
     this.element.addStyleClass("timeline");
 
-    this._overviewPane = new WebInspector.TimelineOverviewPane(this.categories);
-    this._overviewPane.addEventListener("window changed", this._windowChanged, this);
-    this._overviewPane.addEventListener("filter changed", this._refresh, this);
-    this.element.appendChild(this._overviewPane.element);
+    this.element.appendChild(this._createTopPane());
     this.element.tabIndex = 0;
 
     this._sidebarBackgroundElement = document.createElement("div");
@@ -111,6 +108,39 @@ WebInspector.TimelinePanel.shortRecordThreshold = 0.015;
 WebInspector.TimelinePanel.prototype = {
     toolbarItemClass: "timeline",
 
+    _createTopPane: function() {
+        var topPaneElement = document.createElement("div");
+        topPaneElement.id = "timeline-overview-panel";
+
+        this._topPaneSidebarElement = document.createElement("div");
+        this._topPaneSidebarElement.id = "timeline-overview-sidebar";
+
+        var overviewTreeElement = document.createElement("ol");
+        overviewTreeElement.className = "sidebar-tree";
+        this._topPaneSidebarElement.appendChild(overviewTreeElement);
+        topPaneElement.appendChild(this._topPaneSidebarElement);
+
+        var topPaneSidebarTree = new TreeOutline(overviewTreeElement);
+        var timelinesOverviewItem = new WebInspector.SidebarTreeElement("resources-time-graph-sidebar-item", WebInspector.UIString("Timelines"));
+        topPaneSidebarTree.appendChild(timelinesOverviewItem);
+        timelinesOverviewItem.onselect = this._timelinesOverviewItemSelected.bind(this);
+        timelinesOverviewItem.select(true);
+
+        var memoryOverviewItem = new WebInspector.SidebarTreeElement("resources-size-graph-sidebar-item", WebInspector.UIString("Memory"));
+        topPaneSidebarTree.appendChild(memoryOverviewItem);
+        memoryOverviewItem.onselect = this._memoryOverviewItemSelected.bind(this);
+
+        this._overviewPane = new WebInspector.TimelineOverviewPane(this.categories);
+        this._overviewPane.addEventListener("window changed", this._windowChanged, this);
+        this._overviewPane.addEventListener("filter changed", this._refresh, this);
+        topPaneElement.appendChild(this._overviewPane.element);
+
+        var separatorElement = document.createElement("div");
+        separatorElement.id = "timeline-overview-separator";
+        topPaneElement.appendChild(separatorElement);
+        return topPaneElement;
+    },
+
     get toolbarItemLabel()
     {
         return WebInspector.UIString("Timeline");
@@ -118,7 +148,7 @@ WebInspector.TimelinePanel.prototype = {
 
     get statusBarItems()
     {
-        return [this.toggleFilterButton.element, this.toggleTimelineButton.element, this.clearButton.element, this.recordsCounter];
+        return [this.toggleFilterButton.element, this.toggleTimelineButton.element, this.clearButton.element, this._overviewPane.statusBarFilters];
     },
 
     get categories()
@@ -228,6 +258,14 @@ WebInspector.TimelinePanel.prototype = {
         }
         eventDividerPadding.appendChild(eventDivider);
         return eventDividerPadding;
+    },
+
+    _timelinesOverviewItemSelected: function(event) {
+        this._overviewPane.showTimelines();
+    },
+
+    _memoryOverviewItemSelected: function(event) {
+        this._overviewPane.showMemoryGraph(this._rootRecord.children);
     },
 
     _toggleTimelineButtonClicked: function()
@@ -352,7 +390,7 @@ WebInspector.TimelinePanel.prototype = {
     {
         WebInspector.Panel.prototype.setSidebarWidth.call(this, width);
         this._sidebarBackgroundElement.style.width = width + "px";
-        this._overviewPane.setSidebarWidth(width);
+        this._topPaneSidebarElement.style.width = width + "px";
     },
 
     updateMainViewWidth: function(width)
@@ -398,12 +436,14 @@ WebInspector.TimelinePanel.prototype = {
         if (typeof this._scrollTop === "number")
             this._containerElement.scrollTop = this._scrollTop;
         this._refresh();
+        WebInspector.drawer.currentPanelCounters = this.recordsCounter;
     },
 
     hide: function()
     {
         WebInspector.Panel.prototype.hide.call(this);
         this._closeRecordDetails();
+        WebInspector.drawer.currentPanelCounters = null;
     },
 
     _onScroll: function(event)

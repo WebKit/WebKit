@@ -237,6 +237,6 @@ select.status-bar-item {
     -webkit-box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.0);
 }
 
-.timeline-category-tree-item input {
+.timeline-category-statusbar-item input {
     vertical-align: middle;
 }

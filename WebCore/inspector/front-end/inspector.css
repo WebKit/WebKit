@@ -432,12 +432,12 @@ body.port-qt #dock-status-bar-item {
     -webkit-mask-image: url(Images/clearConsoleButtonGlyph.png);
 }
 
-#count-items {
+#counters {
     position: absolute;
     right: 16px;
     top: 0;
     cursor: pointer;
-    padding: 6px 2px;
+    padding: 6px 2px 6px 0px;
     font-size: 10px;
     height: 19px;
 }
@@ -2713,6 +2713,15 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     white-space: nowrap;
 }
 
+.memory-graph-label {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    font-size: 9px;
+    color: rgb(50%, 50%, 50%);
+    white-space: nowrap;
+}
+
 .resources-graph-label {
     position: absolute;
     top: 0;
@@ -3338,7 +3347,7 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     top: 0px;
     bottom: 0px;
     left: 0px;
-    padding-top: 1px;
+    padding-top: 2px;
     background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(242, 242, 242)), to(rgb(209, 209, 209)));
     border-right: 1px solid rgb(163, 163, 163);
 }
@@ -3426,9 +3435,9 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     -webkit-mask-image: url(Images/clearConsoleButtonGlyph.png);
 }
 
-.timeline-category-tree-item {
-    height: 20px;
-    line-height: 20px;
+.timeline-category-statusbar-item {
+    height: 24px;
+    line-height: 24px;
     padding-left: 6px;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -3436,7 +3445,7 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     font-weight: bold;
 }
 
-.timeline-category-tree-item .timeline-category-checkbox {
+.timeline-category-statusbar-item .timeline-category-checkbox {
     width: 10px;
     height: 11px;
     margin: 0 3px 0 5px;
@@ -3448,24 +3457,20 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     -webkit-appearance: none;
 }
 
-.timeline-category-tree-item .timeline-category-checkbox:checked {
+.timeline-category-statusbar-item .timeline-category-checkbox:checked {
     background-position-x: -10px;
 }
 
-.timeline-category-tree-item.timeline-category-loading .timeline-category-checkbox {
+.timeline-category-statusbar-item.timeline-category-loading .timeline-category-checkbox {
     background-position-y: 0;
 }
 
-.timeline-category-tree-item.timeline-category-scripting .timeline-category-checkbox {
+.timeline-category-statusbar-item.timeline-category-scripting .timeline-category-checkbox {
     background-position-y: -33px;
 }
 
-.timeline-category-tree-item.timeline-category-rendering .timeline-category-checkbox {
+.timeline-category-statusbar-item.timeline-category-rendering .timeline-category-checkbox {
     background-position-y: -11px;
-}
-
-.timeline-category-tree-item:nth-of-type(2n) {
-    background-color: rgba(0, 0, 0, 0.05);
 }
 
 .timeline-tree-item {
@@ -3533,13 +3538,24 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     color: rgba(0, 0, 0, 0.7);
 }
 
-#timeline-overview-graphs {
+#timeline-overview-timelines,
+#timeline-overview-memory {
     position: absolute;
     left: 0;
     right: 0;
     bottom: 0;
     top: 20px;
+    z-index: 160;
 }
+
+#timeline-overview-memory > canvas {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 5px;
+}
+
 
 #timeline-graphs {
     position: absolute;
@@ -3688,10 +3704,18 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
 
 .timeline-records-counter {
     font-size: 11px;
-    position: relative;
-    top: 5px;
-    margin-left: 5px;
     text-shadow: white 0 1px 0;
+}
+
+#main-status-bar > .timeline-records-counter {
+    float: right;
+    margin-top: 4px;
+    margin-right: 25px;
+}
+
+#counters > .timeline-records-counter {
+    float: left;
+    margin-top: -2px;
 }
 
 /* Profiler Style */
@@ -3704,6 +3728,7 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     bottom: 0;
 }
 
+#timeline-view-status-bar-items,
 #profile-view-status-bar-items {
     position: absolute;
     top: 0;
