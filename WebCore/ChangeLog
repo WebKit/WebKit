@@ -1,3 +1,19 @@
+2010-05-25  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Remove custom bindings for Element.SetAttribute*
+        https://bugs.webkit.org/show_bug.cgi?id=39604
+
+        Custom bindings are no longer needed because origin checks were moved
+        out of the bindings by: http://trac.webkit.org/changeset/59866
+
+        Behavior isn't changed and is covered by existing tests.
+
+        * bindings/js/JSElementCustom.cpp:
+        * bindings/v8/custom/V8ElementCustom.cpp:
+        * dom/Element.idl:
+
 2010-05-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

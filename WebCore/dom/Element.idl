@@ -31,13 +31,13 @@ module core {
         readonly attribute [ConvertNullStringTo=Null] DOMString tagName;
 
         [ConvertNullStringTo=Null] DOMString getAttribute(in DOMString name);
-        [OldStyleObjC, Custom] void setAttribute(in DOMString name,
-                                                 in DOMString value)
+        [OldStyleObjC] void setAttribute(in DOMString name,
+                                         in DOMString value)
             raises(DOMException);
         void removeAttribute(in DOMString name)
             raises(DOMException);
         Attr getAttributeNode(in DOMString name);
-        [Custom] Attr setAttributeNode(in Attr newAttr)
+        Attr setAttributeNode(in Attr newAttr)
             raises(DOMException);
         Attr removeAttributeNode(in Attr oldAttr)
             raises(DOMException);
@@ -47,9 +47,9 @@ module core {
 
         [OldStyleObjC] DOMString getAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                                 in DOMString localName);
-        [OldStyleObjC, Custom] void setAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
-                                                   in DOMString qualifiedName, 
-                                                   in DOMString value)
+        [OldStyleObjC] void setAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
+                                           in DOMString qualifiedName, 
+                                           in DOMString value)
             raises(DOMException);
         [OldStyleObjC] void removeAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                               in DOMString localName)
@@ -58,7 +58,7 @@ module core {
                                                        in DOMString localName);
         [OldStyleObjC] Attr getAttributeNodeNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                                in DOMString localName);
-        [Custom] Attr setAttributeNodeNS(in Attr newAttr)
+        Attr setAttributeNodeNS(in Attr newAttr)
             raises(DOMException);
         boolean hasAttribute(in DOMString name);
         [OldStyleObjC] boolean hasAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
