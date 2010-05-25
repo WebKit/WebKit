@@ -2,6 +2,18 @@
 
         Reviewed by Dimitri Glazkov.
 
+        [DRT/Chromium] Import layout_test_helper for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=39581
+
+        Import Chromium win/layout_test_helper.cc as LayoutTestHelperWin.cpp.
+        http://src.chromium.org/viewvc/chrome/trunk/src/webkit/tools/test_shell/win/layout_test_helper.cc
+
+        * DumpRenderTree/chromium/LayoutTestHelperWin.cpp: Added.
+
+2010-05-24  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         [DRT/Chromium] Reset frame name
         https://bugs.webkit.org/show_bug.cgi?id=39586
 

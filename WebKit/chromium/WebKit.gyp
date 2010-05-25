@@ -581,6 +581,8 @@
             ],
             'conditions': [
                 ['OS=="win"', {
+                    'dependencies': ['LayoutTestHelper'],
+
                     'resource_include_dirs': ['<(SHARED_INTERMEDIATE_DIR)/webkit'],
                     'sources': [
                        '<(SHARED_INTERMEDIATE_DIR)/net/net_resources.rc',
@@ -651,6 +653,13 @@
         },
     ], # targets
     'conditions': [
+        ['OS=="win"', {
+            'targets': [{
+                'target_name': 'LayoutTestHelper',
+                'type': 'executable',
+                'sources': ['../../WebKitTools/DumpRenderTree/chromium/LayoutTestHelperWin.cpp'],
+            }],
+        }],
         ['OS=="mac"', {
             'targets': [
                 {

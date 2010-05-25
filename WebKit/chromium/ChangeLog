@@ -1,3 +1,12 @@
+2010-05-24  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Import layout_test_helper for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=39581
+
+        * WebKit.gyp: Add a build rule for LayoutTestHelper.exe for Windows.
+
 2010-05-24  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Kent Tamura.
