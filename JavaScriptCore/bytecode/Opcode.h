@@ -42,6 +42,8 @@ namespace JSC {
         macro(op_enter_with_activation, 2) \
         macro(op_init_arguments, 2) \
         macro(op_create_arguments, 2) \
+        macro(op_create_this, 3) \
+        macro(op_get_callee, 2) \
         macro(op_convert_this, 2) \
         \
         macro(op_new_object, 2) \
@@ -164,7 +166,7 @@ namespace JSC {
         macro(op_ret_object_or_this, 3) \
         macro(op_method_check, 1) \
         \
-        macro(op_construct, 6) \
+        macro(op_construct, 4) \
         macro(op_strcat, 4) \
         macro(op_to_primitive, 3) \
         \

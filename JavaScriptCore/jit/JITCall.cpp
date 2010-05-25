@@ -78,21 +78,6 @@ void JIT::compileOpCallVarargsSetupArgs(Instruction* instruction)
     emitPutJITStubArg(regT2, 1);
 }
 
-void JIT::compileOpConstructSetupArgs(Instruction* instruction)
-{
-    int argCount = instruction[2].u.operand;
-    int registerOffset = instruction[3].u.operand;
-    int proto = instruction[4].u.operand;
-    int thisRegister = instruction[5].u.operand;
-
-    // ecx holds func
-    emitPutJITStubArg(regT0, 0);
-    emitPutJITStubArgConstant(registerOffset, 1);
-    emitPutJITStubArgConstant(argCount, 2);
-    emitPutJITStubArgFromVirtualRegister(proto, 3, regT2);
-    emitPutJITStubArgConstant(thisRegister, 4);
-}
-
 void JIT::emit_op_call_put_result(Instruction* instruction)
 {
     int dst = instruction[1].u.operand;
@@ -157,20 +142,12 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned)
 
     emitGetVirtualRegister(callee, regT0);
     // The arguments have been set up on the hot path for op_call_eval
-    if (opcodeID == op_call)
+    if (opcodeID != op_call_eval)
         compileOpCallSetupArgs(instruction);
-    else if (opcodeID == op_construct)
-        compileOpConstructSetupArgs(instruction);
 
     // Check for JSFunctions.
     emitJumpSlowCaseIfNotJSCell(regT0);
     addSlowCase(branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsFunctionVPtr)));
-
-    // First, in the case of a construct, allocate the new object.
-    if (opcodeID == op_construct) {
-        JITStubCall(this, cti_op_construct_JSConstruct).call(registerOffset - RegisterFile::CallFrameHeaderSize - argCount);
-        emitGetVirtualRegister(callee, regT0);
-    }
 
     // Speculatively roll the callframe, assuming argCount will match the arity.
     storePtr(callFrameRegister, Address(callFrameRegister, (RegisterFile::CallerFrame + registerOffset) * static_cast<int>(sizeof(Register))));
@@ -233,18 +210,6 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
 
     // The following is the fast case, only used whan a callee can be linked.
 
-    // In the case of OpConstruct, call out to a cti_ function to create the new object.
-    if (opcodeID == op_construct) {
-        int proto = instruction[4].u.operand;
-        int thisRegister = instruction[5].u.operand;
-
-        emitPutJITStubArg(regT0, 0);
-        emitPutJITStubArgFromVirtualRegister(proto, 3, regT2);
-        JITStubCall stubCall(this, cti_op_construct_JSConstruct);
-        stubCall.call(thisRegister);
-        emitGetVirtualRegister(callee, regT0);
-    }
-
     // Fast version of stack frame initialization, directly relative to edi.
     // Note that this omits to set up RegisterFile::CodeBlock, which is set in the callee
 
@@ -267,27 +232,18 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
 
 void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter, unsigned callLinkInfoIndex, OpcodeID opcodeID)
 {
-    int callee = instruction[1].u.operand;
     int argCount = instruction[2].u.operand;
     int registerOffset = instruction[3].u.operand;
 
     linkSlowCase(iter);
 
     // The arguments have been set up on the hot path for op_call_eval
-    if (opcodeID == op_call)
+    if (opcodeID != op_call_eval)
         compileOpCallSetupArgs(instruction);
-    else if (opcodeID == op_construct)
-        compileOpConstructSetupArgs(instruction);
 
     // Fast check for JS function.
     Jump callLinkFailNotObject = emitJumpIfNotJSCell(regT0);
     Jump callLinkFailNotJSFunction = branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsFunctionVPtr));
-
-    // First, in the case of a construct, allocate the new object.
-    if (opcodeID == op_construct) {
-        JITStubCall(this, cti_op_construct_JSConstruct).call(registerOffset - RegisterFile::CallFrameHeaderSize - argCount);
-        emitGetVirtualRegister(callee, regT0);
-    }
 
     // Speculatively roll the callframe, assuming argCount will match the arity.
     storePtr(callFrameRegister, Address(callFrameRegister, (RegisterFile::CallerFrame + registerOffset) * static_cast<int>(sizeof(Register))));
@@ -298,14 +254,10 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
 
     m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(opcodeID == op_construct ? m_globalData->jitStubs.ctiVirtualConstructLink() : m_globalData->jitStubs.ctiVirtualCallLink());
 
-    // If not, we need an extra case in the if below!
-    ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_call_eval));
-
     // Done! - return back to the hot path.
-    if (opcodeID == op_construct)
-        emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_construct));
-    else
-        emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_call));
+    ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_call_eval));
+    ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_construct));
+    emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_call));
 
     // This handles host functions
     callLinkFailNotObject.link(this);

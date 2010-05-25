@@ -97,7 +97,7 @@ namespace JSC {
     // thrown by these instances op_get_by_id need to reflect this.
     struct GetByIdExceptionInfo {
         unsigned bytecodeOffset : 31;
-        bool isOpConstruct : 1;
+        bool isOpCreateThis : 1;
     };
 
 #if ENABLE(JIT)
