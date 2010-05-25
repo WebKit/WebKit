@@ -1,3 +1,8 @@
+2010-05-25  Darin Adler  <darin@apple.com>
+
+        * dom/Element.cpp:
+        (WebCore::Element::getIDAttribute): Added comments about problems with this function.
+
 2010-05-25  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Gustavo Noronha Silva.
