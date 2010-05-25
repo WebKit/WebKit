@@ -1,3 +1,22 @@
+2010-05-24  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Sam Weinig.
+
+        Add a test to verify that the 'prototype' property on generated Web IDL interfaces is { DontDelete | ReadOnly }.
+
+        Spec link:
+        http://www.w3.org/TR/WebIDL/#interface-object
+
+        https://bugs.webkit.org/show_bug.cgi?id=39436
+
+        * fast/dom/global-constructors-expected.txt: Updated baseline.
+        * fast/dom/global-constructors.html:
+        * fast/dom/prototype-property-expected.txt: Added.
+        * fast/dom/prototype-property.html: Added.
+        * fast/dom/script-tests/prototype-property.js: Added.
+        (tryToDeletePrototype):
+        (tryToSetPrototype):
+
 2010-05-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

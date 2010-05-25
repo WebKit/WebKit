@@ -2719,7 +2719,7 @@ public:
     ${constructorClassName}(ExecState* exec, JSDOMGlobalObject* globalObject)
         : DOMConstructorObject(${constructorClassName}::createStructure(globalObject->objectPrototype()), globalObject)
     {
-        putDirect(exec->propertyNames().prototype, ${protoClassName}::self(exec, globalObject), None);
+        putDirect(exec->propertyNames().prototype, ${protoClassName}::self(exec, globalObject), DontDelete | ReadOnly);
     }
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);

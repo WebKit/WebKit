@@ -22,7 +22,7 @@ PASS: window.XPathEvaluator.prototype.isPrototypeOf(xpathevaluator) should be tr
 PASS: window.XPathResult.prototype.isPrototypeOf(xpathresult) should be true and is.
 PASS: window.NodeFilter.prototype.isPrototypeOf(nodeFilter) should be true and is.
 [Deleted window.Node.prototype]
-PASS: window.Node.prototype should be undefined and is.
+PASS: window.Node.prototype should be [object NodePrototype] and is.
 [Set window.Node = 1]
 PASS: window.Node should be 1 and is.
 [Deleted window.Node]
