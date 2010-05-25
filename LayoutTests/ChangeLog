@@ -1,3 +1,1054 @@
+2010-05-24  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed baseline only change
+
+        Move Leopard-specific pixel test results from platform/mac to platform/mac-leopard
+        https://bugs.webkit.org/show_bug.cgi?id=39317
+
+        This shuffles the pixel failures in editing/ that are due to small (<0.1%) pixel
+        diffs in text rendering between Leopard and Snow Leopard.
+
+        * platform/mac-leopard/editing/deleting/4922367-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/4922367-expected.checksum.
+        * platform/mac-leopard/editing/deleting/4922367-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/4922367-expected.png.
+        * platform/mac-leopard/editing/deleting/5026848-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/5026848-1-expected.checksum.
+        * platform/mac-leopard/editing/deleting/5026848-1-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/5026848-1-expected.png.
+        * platform/mac-leopard/editing/deleting/5026848-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/5026848-2-expected.checksum.
+        * platform/mac-leopard/editing/deleting/5026848-2-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/5026848-2-expected.png.
+        * platform/mac-leopard/editing/deleting/5026848-3-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/5026848-3-expected.checksum.
+        * platform/mac-leopard/editing/deleting/5026848-3-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/5026848-3-expected.png.
+        * platform/mac-leopard/editing/deleting/5032066-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/5032066-expected.checksum.
+        * platform/mac-leopard/editing/deleting/5032066-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/5032066-expected.png.
+        * platform/mac-leopard/editing/deleting/5091898-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/5091898-expected.checksum.
+        * platform/mac-leopard/editing/deleting/5091898-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/5091898-expected.png.
+        * platform/mac-leopard/editing/deleting/5099303-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/5099303-expected.checksum.
+        * platform/mac-leopard/editing/deleting/5099303-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/5099303-expected.png.
+        * platform/mac-leopard/editing/deleting/5115601-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/5115601-expected.checksum.
+        * platform/mac-leopard/editing/deleting/5115601-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/5115601-expected.png.
+        * platform/mac-leopard/editing/deleting/5126166-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/5126166-expected.checksum.
+        * platform/mac-leopard/editing/deleting/5126166-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/5126166-expected.png.
+        * platform/mac-leopard/editing/deleting/5144139-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/5144139-2-expected.checksum.
+        * platform/mac-leopard/editing/deleting/5144139-2-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/5144139-2-expected.png.
+        * platform/mac-leopard/editing/deleting/5168598-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/5168598-expected.checksum.
+        * platform/mac-leopard/editing/deleting/5168598-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/5168598-expected.png.
+        * platform/mac-leopard/editing/deleting/5206311-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/5206311-1-expected.checksum.
+        * platform/mac-leopard/editing/deleting/5206311-1-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/5206311-1-expected.png.
+        * platform/mac-leopard/editing/deleting/5206311-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/5206311-2-expected.checksum.
+        * platform/mac-leopard/editing/deleting/5206311-2-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/5206311-2-expected.png.
+        * platform/mac-leopard/editing/deleting/5272440-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/5272440-expected.checksum.
+        * platform/mac-leopard/editing/deleting/5272440-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/5272440-expected.png.
+        * platform/mac-leopard/editing/deleting/5369009-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/5369009-expected.checksum.
+        * platform/mac-leopard/editing/deleting/5369009-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/5369009-expected.png.
+        * platform/mac-leopard/editing/deleting/5390681-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/5390681-2-expected.checksum.
+        * platform/mac-leopard/editing/deleting/5390681-2-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/5390681-2-expected.png.
+        * platform/mac-leopard/editing/deleting/5390681-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/5390681-expected.checksum.
+        * platform/mac-leopard/editing/deleting/5390681-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/5390681-expected.png.
+        * platform/mac-leopard/editing/deleting/5433862-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/5433862-2-expected.checksum.
+        * platform/mac-leopard/editing/deleting/5433862-2-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/5433862-2-expected.png.
+        * platform/mac-leopard/editing/deleting/5483370-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/5483370-expected.checksum.
+        * platform/mac-leopard/editing/deleting/5483370-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/5483370-expected.png.
+        * platform/mac-leopard/editing/deleting/delete-4038408-fix-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/delete-4038408-fix-expected.checksum.
+        * platform/mac-leopard/editing/deleting/delete-4038408-fix-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/delete-4038408-fix-expected.png.
+        * platform/mac-leopard/editing/deleting/delete-br-013-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/delete-br-013-expected.checksum.
+        * platform/mac-leopard/editing/deleting/delete-br-013-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/delete-br-013-expected.png.
+        * platform/mac-leopard/editing/deleting/delete-first-list-item-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/delete-first-list-item-expected.checksum.
+        * platform/mac-leopard/editing/deleting/delete-first-list-item-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/delete-first-list-item-expected.png.
+        * platform/mac-leopard/editing/deleting/delete-line-015-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/delete-line-015-expected.checksum.
+        * platform/mac-leopard/editing/deleting/delete-line-015-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/delete-line-015-expected.png.
+        * platform/mac-leopard/editing/deleting/delete-line-016-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/delete-line-016-expected.checksum.
+        * platform/mac-leopard/editing/deleting/delete-line-016-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/delete-line-016-expected.png.
+        * platform/mac-leopard/editing/deleting/delete-line-017-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/delete-line-017-expected.checksum.
+        * platform/mac-leopard/editing/deleting/delete-line-017-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/delete-line-017-expected.png.
+        * platform/mac-leopard/editing/deleting/delete-ws-fixup-002-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/delete-ws-fixup-002-expected.checksum.
+        * platform/mac-leopard/editing/deleting/delete-ws-fixup-002-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/delete-ws-fixup-002-expected.png.
+        * platform/mac-leopard/editing/deleting/merge-endOfParagraph-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/merge-endOfParagraph-expected.checksum.
+        * platform/mac-leopard/editing/deleting/merge-endOfParagraph-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/merge-endOfParagraph-expected.png.
+        * platform/mac-leopard/editing/deleting/merge-into-empty-block-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/merge-into-empty-block-1-expected.checksum.
+        * platform/mac-leopard/editing/deleting/merge-into-empty-block-1-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/merge-into-empty-block-1-expected.png.
+        * platform/mac-leopard/editing/deleting/merge-no-br-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/merge-no-br-expected.checksum.
+        * platform/mac-leopard/editing/deleting/merge-no-br-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/merge-no-br-expected.png.
+        * platform/mac-leopard/editing/deleting/merge-whitespace-pre-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/merge-whitespace-pre-expected.checksum.
+        * platform/mac-leopard/editing/deleting/merge-whitespace-pre-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/merge-whitespace-pre-expected.png.
+        * platform/mac-leopard/editing/deleting/pruning-after-merge-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/pruning-after-merge-2-expected.checksum.
+        * platform/mac-leopard/editing/deleting/pruning-after-merge-2-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/pruning-after-merge-2-expected.png.
+        * platform/mac-leopard/editing/deleting/smart-delete-003-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/smart-delete-003-expected.checksum.
+        * platform/mac-leopard/editing/deleting/smart-delete-003-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/smart-delete-003-expected.png.
+        * platform/mac-leopard/editing/deleting/smart-delete-004-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/smart-delete-004-expected.checksum.
+        * platform/mac-leopard/editing/deleting/smart-delete-004-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/smart-delete-004-expected.png.
+        * platform/mac-leopard/editing/deleting/table-cells-expected.checksum: Copied from LayoutTests/platform/mac/editing/deleting/table-cells-expected.checksum.
+        * platform/mac-leopard/editing/deleting/table-cells-expected.png: Copied from LayoutTests/platform/mac/editing/deleting/table-cells-expected.png.
+        * platform/mac-leopard/editing/execCommand: Added.
+        * platform/mac-leopard/editing/execCommand/4580583-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/4580583-1-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/4580583-1-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/4580583-1-expected.png.
+        * platform/mac-leopard/editing/execCommand/4580583-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/4580583-2-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/4580583-2-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/4580583-2-expected.png.
+        * platform/mac-leopard/editing/execCommand/4641880-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/4641880-1-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/4641880-1-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/4641880-1-expected.png.
+        * platform/mac-leopard/editing/execCommand/4641880-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/4641880-2-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/4641880-2-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/4641880-2-expected.png.
+        * platform/mac-leopard/editing/execCommand/4747450-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/4747450-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/4747450-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/4747450-expected.png.
+        * platform/mac-leopard/editing/execCommand/4786404-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/4786404-2-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/4786404-2-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/4786404-2-expected.png.
+        * platform/mac-leopard/editing/execCommand/4916402-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/4916402-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/4916402-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/4916402-expected.png.
+        * platform/mac-leopard/editing/execCommand/4916541-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/4916541-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/4916541-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/4916541-expected.png.
+        * platform/mac-leopard/editing/execCommand/4920488-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/4920488-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/4920488-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/4920488-expected.png.
+        * platform/mac-leopard/editing/execCommand/4920742-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/4920742-1-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/4920742-1-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/4920742-1-expected.png.
+        * platform/mac-leopard/editing/execCommand/4924441-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/4924441-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/4924441-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/4924441-expected.png.
+        * platform/mac-leopard/editing/execCommand/5049671-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/5049671-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/5049671-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/5049671-expected.png.
+        * platform/mac-leopard/editing/execCommand/5080333-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/5080333-1-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/5080333-1-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/5080333-1-expected.png.
+        * platform/mac-leopard/editing/execCommand/5080333-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/5080333-2-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/5080333-2-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/5080333-2-expected.png.
+        * platform/mac-leopard/editing/execCommand/5136770-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/5136770-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/5136770-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/5136770-expected.png.
+        * platform/mac-leopard/editing/execCommand/5138441-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/5138441-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/5138441-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/5138441-expected.png.
+        * platform/mac-leopard/editing/execCommand/5190926-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/5190926-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/5190926-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/5190926-expected.png.
+        * platform/mac-leopard/editing/execCommand/5481523-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/5481523-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/5481523-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/5481523-expected.png.
+        * platform/mac-leopard/editing/execCommand/create-list-with-hr-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/create-list-with-hr-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/create-list-with-hr-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/create-list-with-hr-expected.png.
+        * platform/mac-leopard/editing/execCommand/find-after-replace-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/find-after-replace-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/find-after-replace-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/find-after-replace-expected.png.
+        * platform/mac-leopard/editing/execCommand/findString-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/findString-2-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/findString-2-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/findString-2-expected.png.
+        * platform/mac-leopard/editing/execCommand/insertHorizontalRule-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/insertHorizontalRule-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/insertHorizontalRule-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/insertHorizontalRule-expected.png.
+        * platform/mac-leopard/editing/execCommand/insertImage-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/insertImage-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/insertImage-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/insertImage-expected.png.
+        * platform/mac-leopard/editing/execCommand/outdent-selection-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/outdent-selection-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/outdent-selection-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/outdent-selection-expected.png.
+        * platform/mac-leopard/editing/execCommand/remove-formatting-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/remove-formatting-2-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/remove-formatting-2-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/remove-formatting-2-expected.png.
+        * platform/mac-leopard/editing/execCommand/remove-formatting-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/remove-formatting-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/remove-formatting-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/remove-formatting-expected.png.
+        * platform/mac-leopard/editing/execCommand/remove-list-from-range-selection-expected.checksum: Copied from LayoutTests/platform/mac/editing/execCommand/remove-list-from-range-selection-expected.checksum.
+        * platform/mac-leopard/editing/execCommand/remove-list-from-range-selection-expected.png: Copied from LayoutTests/platform/mac/editing/execCommand/remove-list-from-range-selection-expected.png.
+        * platform/mac-leopard/editing/inserting: Added.
+        * platform/mac-leopard/editing/inserting/12882-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/12882-expected.checksum.
+        * platform/mac-leopard/editing/inserting/12882-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/12882-expected.png.
+        * platform/mac-leopard/editing/inserting/4278698-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/4278698-expected.checksum.
+        * platform/mac-leopard/editing/inserting/4278698-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/4278698-expected.png.
+        * platform/mac-leopard/editing/inserting/4840662-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/4840662-expected.checksum.
+        * platform/mac-leopard/editing/inserting/4840662-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/4840662-expected.png.
+        * platform/mac-leopard/editing/inserting/4875189-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/4875189-2-expected.checksum.
+        * platform/mac-leopard/editing/inserting/4875189-2-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/4875189-2-expected.png.
+        * platform/mac-leopard/editing/inserting/5002441-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/5002441-expected.checksum.
+        * platform/mac-leopard/editing/inserting/5002441-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/5002441-expected.png.
+        * platform/mac-leopard/editing/inserting/5058163-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/5058163-1-expected.checksum.
+        * platform/mac-leopard/editing/inserting/5058163-1-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/5058163-1-expected.png.
+        * platform/mac-leopard/editing/inserting/5058163-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/5058163-2-expected.checksum.
+        * platform/mac-leopard/editing/inserting/5058163-2-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/5058163-2-expected.png.
+        * platform/mac-leopard/editing/inserting/5156401-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/5156401-2-expected.checksum.
+        * platform/mac-leopard/editing/inserting/5156401-2-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/5156401-2-expected.png.
+        * platform/mac-leopard/editing/inserting/5418891-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/5418891-expected.checksum.
+        * platform/mac-leopard/editing/inserting/5418891-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/5418891-expected.png.
+        * platform/mac-leopard/editing/inserting/5510537-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/5510537-expected.checksum.
+        * platform/mac-leopard/editing/inserting/5510537-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/5510537-expected.png.
+        * platform/mac-leopard/editing/inserting/5549929-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/5549929-2-expected.checksum.
+        * platform/mac-leopard/editing/inserting/5549929-2-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/5549929-2-expected.png.
+        * platform/mac-leopard/editing/inserting/5607069-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/5607069-2-expected.checksum.
+        * platform/mac-leopard/editing/inserting/5607069-2-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/5607069-2-expected.png.
+        * platform/mac-leopard/editing/inserting/5607069-3-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/5607069-3-expected.checksum.
+        * platform/mac-leopard/editing/inserting/5607069-3-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/5607069-3-expected.png.
+        * platform/mac-leopard/editing/inserting/6703873-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/6703873-expected.checksum.
+        * platform/mac-leopard/editing/inserting/6703873-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/6703873-expected.png.
+        * platform/mac-leopard/editing/inserting/editable-html-element-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/editable-html-element-expected.checksum.
+        * platform/mac-leopard/editing/inserting/editable-html-element-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/editable-html-element-expected.png.
+        * platform/mac-leopard/editing/inserting/edited-whitespace-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/edited-whitespace-1-expected.checksum.
+        * platform/mac-leopard/editing/inserting/edited-whitespace-1-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/edited-whitespace-1-expected.png.
+        * platform/mac-leopard/editing/inserting/editing-empty-divs-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/editing-empty-divs-expected.checksum.
+        * platform/mac-leopard/editing/inserting/editing-empty-divs-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/editing-empty-divs-expected.png.
+        * platform/mac-leopard/editing/inserting/insert-3786362-fix-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/insert-3786362-fix-expected.checksum.
+        * platform/mac-leopard/editing/inserting/insert-3786362-fix-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/insert-3786362-fix-expected.png.
+        * platform/mac-leopard/editing/inserting/insert-at-end-01-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/insert-at-end-01-expected.checksum.
+        * platform/mac-leopard/editing/inserting/insert-at-end-01-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/insert-at-end-01-expected.png.
+        * platform/mac-leopard/editing/inserting/insert-at-end-02-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/insert-at-end-02-expected.checksum.
+        * platform/mac-leopard/editing/inserting/insert-at-end-02-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/insert-at-end-02-expected.png.
+        * platform/mac-leopard/editing/inserting/insert-br-009-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/insert-br-009-expected.checksum.
+        * platform/mac-leopard/editing/inserting/insert-br-009-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/insert-br-009-expected.png.
+        * platform/mac-leopard/editing/inserting/insert-br-quoted-001-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/insert-br-quoted-001-expected.checksum.
+        * platform/mac-leopard/editing/inserting/insert-br-quoted-001-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/insert-br-quoted-001-expected.png.
+        * platform/mac-leopard/editing/inserting/insert-br-quoted-002-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/insert-br-quoted-002-expected.checksum.
+        * platform/mac-leopard/editing/inserting/insert-br-quoted-002-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/insert-br-quoted-002-expected.png.
+        * platform/mac-leopard/editing/inserting/insert-br-quoted-003-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/insert-br-quoted-003-expected.checksum.
+        * platform/mac-leopard/editing/inserting/insert-br-quoted-003-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/insert-br-quoted-003-expected.png.
+        * platform/mac-leopard/editing/inserting/insert-br-quoted-004-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/insert-br-quoted-004-expected.checksum.
+        * platform/mac-leopard/editing/inserting/insert-br-quoted-004-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/insert-br-quoted-004-expected.png.
+        * platform/mac-leopard/editing/inserting/insert-br-quoted-005-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/insert-br-quoted-005-expected.checksum.
+        * platform/mac-leopard/editing/inserting/insert-br-quoted-005-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/insert-br-quoted-005-expected.png.
+        * platform/mac-leopard/editing/inserting/insert-br-quoted-006-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/insert-br-quoted-006-expected.checksum.
+        * platform/mac-leopard/editing/inserting/insert-br-quoted-006-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/insert-br-quoted-006-expected.png.
+        * platform/mac-leopard/editing/inserting/insert-paragraph-01-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/insert-paragraph-01-expected.checksum.
+        * platform/mac-leopard/editing/inserting/insert-paragraph-01-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/insert-paragraph-01-expected.png.
+        * platform/mac-leopard/editing/inserting/insert-paragraph-02-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/insert-paragraph-02-expected.checksum.
+        * platform/mac-leopard/editing/inserting/insert-paragraph-02-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/insert-paragraph-02-expected.png.
+        * platform/mac-leopard/editing/inserting/insert-paragraph-03-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/insert-paragraph-03-expected.checksum.
+        * platform/mac-leopard/editing/inserting/insert-paragraph-03-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/insert-paragraph-03-expected.png.
+        * platform/mac-leopard/editing/inserting/insert-paragraph-04-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/insert-paragraph-04-expected.checksum.
+        * platform/mac-leopard/editing/inserting/insert-paragraph-04-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/insert-paragraph-04-expected.png.
+        * platform/mac-leopard/editing/inserting/insert-paragraph-05-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/insert-paragraph-05-expected.checksum.
+        * platform/mac-leopard/editing/inserting/insert-paragraph-05-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/insert-paragraph-05-expected.png.
+        * platform/mac-leopard/editing/inserting/line-break-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/line-break-expected.checksum.
+        * platform/mac-leopard/editing/inserting/line-break-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/line-break-expected.png.
+        * platform/mac-leopard/editing/inserting/multiple-lines-selected-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/multiple-lines-selected-expected.checksum.
+        * platform/mac-leopard/editing/inserting/multiple-lines-selected-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/multiple-lines-selected-expected.png.
+        * platform/mac-leopard/editing/inserting/paragraph-separator-03-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/paragraph-separator-03-expected.checksum.
+        * platform/mac-leopard/editing/inserting/paragraph-separator-03-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/paragraph-separator-03-expected.png.
+        * platform/mac-leopard/editing/inserting/paragraph-separator-in-table-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/paragraph-separator-in-table-2-expected.checksum.
+        * platform/mac-leopard/editing/inserting/paragraph-separator-in-table-2-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/paragraph-separator-in-table-2-expected.png.
+        * platform/mac-leopard/editing/inserting/typing-around-br-001-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/typing-around-br-001-expected.checksum.
+        * platform/mac-leopard/editing/inserting/typing-around-br-001-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/typing-around-br-001-expected.png.
+        * platform/mac-leopard/editing/pasteboard/3976872-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/3976872-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/3976872-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/3976872-expected.png.
+        * platform/mac-leopard/editing/pasteboard/4076267-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/4076267-2-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/4076267-2-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/4076267-2-expected.png.
+        * platform/mac-leopard/editing/pasteboard/4242293-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/4242293-1-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/4242293-1-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/4242293-1-expected.png.
+        * platform/mac-leopard/editing/pasteboard/4242293-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/4242293-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/4242293-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/4242293-expected.png.
+        * platform/mac-leopard/editing/pasteboard/4631972-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/4631972-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/4631972-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/4631972-expected.png.
+        * platform/mac-leopard/editing/pasteboard/4641033-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/4641033-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/4641033-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/4641033-expected.png.
+        * platform/mac-leopard/editing/pasteboard/4861080-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/4861080-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/4861080-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/4861080-expected.png.
+        * platform/mac-leopard/editing/pasteboard/4944770-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/4944770-1-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/4944770-1-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/4944770-1-expected.png.
+        * platform/mac-leopard/editing/pasteboard/4944770-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/4944770-2-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/4944770-2-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/4944770-2-expected.png.
+        * platform/mac-leopard/editing/pasteboard/4947130-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/4947130-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/4947130-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/4947130-expected.png.
+        * platform/mac-leopard/editing/pasteboard/5027857-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/5027857-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/5027857-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/5027857-expected.png.
+        * platform/mac-leopard/editing/pasteboard/5032095-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/5032095-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/5032095-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/5032095-expected.png.
+        * platform/mac-leopard/editing/pasteboard/5065605-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/5065605-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/5065605-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/5065605-expected.png.
+        * platform/mac-leopard/editing/pasteboard/5071074-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/5071074-2-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/5071074-2-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/5071074-2-expected.png.
+        * platform/mac-leopard/editing/pasteboard/5071074-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/5071074-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/5071074-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/5071074-expected.png.
+        * platform/mac-leopard/editing/pasteboard/5075944-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/5075944-2-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/5075944-2-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/5075944-2-expected.png.
+        * platform/mac-leopard/editing/pasteboard/5075944-3-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/5075944-3-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/5075944-3-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/5075944-3-expected.png.
+        * platform/mac-leopard/editing/pasteboard/5089327-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/5089327-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/5089327-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/5089327-expected.png.
+        * platform/mac-leopard/editing/pasteboard/5247341-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/5247341-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/5247341-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/5247341-expected.png.
+        * platform/mac-leopard/editing/pasteboard/5368833-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/5368833-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/5368833-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/5368833-expected.png.
+        * platform/mac-leopard/editing/pasteboard/5387578-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/5387578-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/5387578-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/5387578-expected.png.
+        * platform/mac-leopard/editing/pasteboard/5478250-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/5478250-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/5478250-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/5478250-expected.png.
+        * platform/mac-leopard/editing/pasteboard/5601583-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/5601583-1-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/5601583-1-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/5601583-1-expected.png.
+        * platform/mac-leopard/editing/pasteboard/8145-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/8145-2-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/8145-2-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/8145-2-expected.png.
+        * platform/mac-leopard/editing/pasteboard/8145-3-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/8145-3-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/8145-3-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/8145-3-expected.png.
+        * platform/mac-leopard/editing/pasteboard/bad-placeholder-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/bad-placeholder-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/bad-placeholder-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/bad-placeholder-expected.png.
+        * platform/mac-leopard/editing/pasteboard/copy-paste-bidi-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/copy-paste-bidi-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/copy-paste-bidi-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/copy-paste-bidi-expected.png.
+        * platform/mac-leopard/editing/pasteboard/copy-standalone-image-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/copy-standalone-image-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/copy-standalone-image-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/copy-standalone-image-expected.png.
+        * platform/mac-leopard/editing/pasteboard/displaced-generic-placeholder-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/displaced-generic-placeholder-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/displaced-generic-placeholder-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/displaced-generic-placeholder-expected.png.
+        * platform/mac-leopard/editing/pasteboard/display-block-on-spans-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/display-block-on-spans-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/display-block-on-spans-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/display-block-on-spans-expected.png.
+        * platform/mac-leopard/editing/pasteboard/drop-text-without-selection-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/drop-text-without-selection-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/drop-text-without-selection-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/drop-text-without-selection-expected.png.
+        * platform/mac-leopard/editing/pasteboard/interchange-newline-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/interchange-newline-1-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/interchange-newline-1-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/interchange-newline-1-expected.png.
+        * platform/mac-leopard/editing/pasteboard/interchange-newline-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/interchange-newline-2-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/interchange-newline-2-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/interchange-newline-2-expected.png.
+        * platform/mac-leopard/editing/pasteboard/interchange-newline-3-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/interchange-newline-3-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/interchange-newline-3-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/interchange-newline-3-expected.png.
+        * platform/mac-leopard/editing/pasteboard/interchange-newline-4-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/interchange-newline-4-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/interchange-newline-4-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/interchange-newline-4-expected.png.
+        * platform/mac-leopard/editing/pasteboard/merge-after-delete-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/merge-after-delete-1-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/merge-after-delete-1-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/merge-after-delete-1-expected.png.
+        * platform/mac-leopard/editing/pasteboard/merge-after-delete-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/merge-after-delete-2-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/merge-after-delete-2-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/merge-after-delete-2-expected.png.
+        * platform/mac-leopard/editing/pasteboard/merge-end-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/merge-end-1-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/merge-end-1-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/merge-end-1-expected.png.
+        * platform/mac-leopard/editing/pasteboard/merge-end-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/merge-end-2-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/merge-end-2-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/merge-end-2-expected.png.
+        * platform/mac-leopard/editing/pasteboard/merge-end-5-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/merge-end-5-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/merge-end-5-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/merge-end-5-expected.png.
+        * platform/mac-leopard/editing/pasteboard/merge-end-blockquote-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/merge-end-blockquote-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/merge-end-blockquote-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/merge-end-blockquote-expected.png.
+        * platform/mac-leopard/editing/pasteboard/merge-end-borders-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/merge-end-borders-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/merge-end-borders-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/merge-end-borders-expected.png.
+        * platform/mac-leopard/editing/pasteboard/merge-end-list-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/merge-end-list-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/merge-end-list-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/merge-end-list-expected.png.
+        * platform/mac-leopard/editing/pasteboard/merge-end-table-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/merge-end-table-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/merge-end-table-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/merge-end-table-expected.png.
+        * platform/mac-leopard/editing/pasteboard/merge-start-blockquote-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/merge-start-blockquote-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/merge-start-blockquote-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/merge-start-blockquote-expected.png.
+        * platform/mac-leopard/editing/pasteboard/nested-blocks-with-text-area-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/nested-blocks-with-text-area-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/nested-blocks-with-text-area-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/nested-blocks-with-text-area-expected.png.
+        * platform/mac-leopard/editing/pasteboard/nested-blocks-with-text-field-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/nested-blocks-with-text-field-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/nested-blocks-with-text-field-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/nested-blocks-with-text-field-expected.png.
+        * platform/mac-leopard/editing/pasteboard/paste-RTFD-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/paste-RTFD-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/paste-RTFD-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/paste-RTFD-expected.png.
+        * platform/mac-leopard/editing/pasteboard/paste-blockquote-3-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/paste-blockquote-3-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/paste-blockquote-3-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/paste-blockquote-3-expected.png.
+        * platform/mac-leopard/editing/pasteboard/paste-blockquote-into-blockquote-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/paste-blockquote-into-blockquote-2-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/paste-blockquote-into-blockquote-2-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/paste-blockquote-into-blockquote-2-expected.png.
+        * platform/mac-leopard/editing/pasteboard/paste-pre-002-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/paste-pre-002-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/paste-pre-002-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/paste-pre-002-expected.png.
+        * platform/mac-leopard/editing/pasteboard/paste-table-003-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/paste-table-003-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/paste-table-003-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/paste-table-003-expected.png.
+        * platform/mac-leopard/editing/pasteboard/paste-text-012-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/paste-text-012-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/paste-text-012-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/paste-text-012-expected.png.
+        * platform/mac-leopard/editing/pasteboard/paste-text-013-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/paste-text-013-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/paste-text-013-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/paste-text-013-expected.png.
+        * platform/mac-leopard/editing/pasteboard/paste-text-014-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/paste-text-014-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/paste-text-014-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/paste-text-014-expected.png.
+        * platform/mac-leopard/editing/pasteboard/paste-text-016-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/paste-text-016-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/paste-text-016-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/paste-text-016-expected.png.
+        * platform/mac-leopard/editing/pasteboard/pasting-object-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/pasting-object-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/pasting-object-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/pasting-object-expected.png.
+        * platform/mac-leopard/editing/pasteboard/pasting-tabs-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/pasting-tabs-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/pasting-tabs-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/pasting-tabs-expected.png.
+        * platform/mac-leopard/editing/pasteboard/prevent-block-nesting-01-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/prevent-block-nesting-01-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/prevent-block-nesting-01-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/prevent-block-nesting-01-expected.png.
+        * platform/mac-leopard/editing/pasteboard/quirks-mode-br-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/quirks-mode-br-1-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/quirks-mode-br-1-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/quirks-mode-br-1-expected.png.
+        * platform/mac-leopard/editing/pasteboard/select-element-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/select-element-1-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/select-element-1-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/select-element-1-expected.png.
+        * platform/mac-leopard/editing/pasteboard/smart-drag-drop-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/smart-drag-drop-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/smart-drag-drop-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/smart-drag-drop-expected.png.
+        * platform/mac-leopard/editing/pasteboard/smart-paste-008-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/smart-paste-008-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/smart-paste-008-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/smart-paste-008-expected.png.
+        * platform/mac-leopard/editing/pasteboard/styled-element-markup-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/styled-element-markup-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/styled-element-markup-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/styled-element-markup-expected.png.
+        * platform/mac-leopard/editing/pasteboard/subframe-dragndrop-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/subframe-dragndrop-1-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/subframe-dragndrop-1-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/subframe-dragndrop-1-expected.png.
+        * platform/mac-leopard/editing/pasteboard/testcase-9507-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/testcase-9507-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/testcase-9507-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/testcase-9507-expected.png.
+        * platform/mac-leopard/editing/pasteboard/undoable-fragment-removes-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/undoable-fragment-removes-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/undoable-fragment-removes-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/undoable-fragment-removes-expected.png.
+        * platform/mac-leopard/editing/pasteboard/unrendered-br-expected.checksum: Copied from LayoutTests/platform/mac/editing/pasteboard/unrendered-br-expected.checksum.
+        * platform/mac-leopard/editing/pasteboard/unrendered-br-expected.png: Copied from LayoutTests/platform/mac/editing/pasteboard/unrendered-br-expected.png.
+        * platform/mac-leopard/editing/selection: Added.
+        * platform/mac-leopard/editing/selection/13804-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/13804-expected.checksum.
+        * platform/mac-leopard/editing/selection/13804-expected.png: Copied from LayoutTests/platform/mac/editing/selection/13804-expected.png.
+        * platform/mac-leopard/editing/selection/14971-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/14971-expected.checksum.
+        * platform/mac-leopard/editing/selection/14971-expected.png: Copied from LayoutTests/platform/mac/editing/selection/14971-expected.png.
+        * platform/mac-leopard/editing/selection/4402375-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/4402375-expected.checksum.
+        * platform/mac-leopard/editing/selection/4402375-expected.png: Copied from LayoutTests/platform/mac/editing/selection/4402375-expected.png.
+        * platform/mac-leopard/editing/selection/4818145-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/4818145-expected.checksum.
+        * platform/mac-leopard/editing/selection/4818145-expected.png: Copied from LayoutTests/platform/mac/editing/selection/4818145-expected.png.
+        * platform/mac-leopard/editing/selection/4889598-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/4889598-expected.checksum.
+        * platform/mac-leopard/editing/selection/4889598-expected.png: Copied from LayoutTests/platform/mac/editing/selection/4889598-expected.png.
+        * platform/mac-leopard/editing/selection/4895428-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/4895428-2-expected.checksum.
+        * platform/mac-leopard/editing/selection/4895428-2-expected.png: Copied from LayoutTests/platform/mac/editing/selection/4895428-2-expected.png.
+        * platform/mac-leopard/editing/selection/4895428-3-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/4895428-3-expected.checksum.
+        * platform/mac-leopard/editing/selection/4895428-3-expected.png: Copied from LayoutTests/platform/mac/editing/selection/4895428-3-expected.png.
+        * platform/mac-leopard/editing/selection/4895428-4-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/4895428-4-expected.checksum.
+        * platform/mac-leopard/editing/selection/4895428-4-expected.png: Copied from LayoutTests/platform/mac/editing/selection/4895428-4-expected.png.
+        * platform/mac-leopard/editing/selection/4932260-3-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/4932260-3-expected.checksum.
+        * platform/mac-leopard/editing/selection/4932260-3-expected.png: Copied from LayoutTests/platform/mac/editing/selection/4932260-3-expected.png.
+        * platform/mac-leopard/editing/selection/4947387-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/4947387-expected.checksum.
+        * platform/mac-leopard/editing/selection/4947387-expected.png: Copied from LayoutTests/platform/mac/editing/selection/4947387-expected.png.
+        * platform/mac-leopard/editing/selection/4960116-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/4960116-expected.checksum.
+        * platform/mac-leopard/editing/selection/4960116-expected.png: Copied from LayoutTests/platform/mac/editing/selection/4960116-expected.png.
+        * platform/mac-leopard/editing/selection/4975120-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/4975120-expected.checksum.
+        * platform/mac-leopard/editing/selection/4975120-expected.png: Copied from LayoutTests/platform/mac/editing/selection/4975120-expected.png.
+        * platform/mac-leopard/editing/selection/4983858-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/4983858-expected.checksum.
+        * platform/mac-leopard/editing/selection/4983858-expected.png: Copied from LayoutTests/platform/mac/editing/selection/4983858-expected.png.
+        * platform/mac-leopard/editing/selection/5007143-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/5007143-2-expected.checksum.
+        * platform/mac-leopard/editing/selection/5007143-2-expected.png: Copied from LayoutTests/platform/mac/editing/selection/5007143-2-expected.png.
+        * platform/mac-leopard/editing/selection/5007143-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/5007143-expected.checksum.
+        * platform/mac-leopard/editing/selection/5007143-expected.png: Copied from LayoutTests/platform/mac/editing/selection/5007143-expected.png.
+        * platform/mac-leopard/editing/selection/5057506-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/5057506-2-expected.checksum.
+        * platform/mac-leopard/editing/selection/5057506-2-expected.png: Copied from LayoutTests/platform/mac/editing/selection/5057506-2-expected.png.
+        * platform/mac-leopard/editing/selection/5057506-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/5057506-expected.checksum.
+        * platform/mac-leopard/editing/selection/5057506-expected.png: Copied from LayoutTests/platform/mac/editing/selection/5057506-expected.png.
+        * platform/mac-leopard/editing/selection/5076323-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/5076323-1-expected.checksum.
+        * platform/mac-leopard/editing/selection/5076323-1-expected.png: Copied from LayoutTests/platform/mac/editing/selection/5076323-1-expected.png.
+        * platform/mac-leopard/editing/selection/5081257-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/5081257-1-expected.checksum.
+        * platform/mac-leopard/editing/selection/5081257-1-expected.png: Copied from LayoutTests/platform/mac/editing/selection/5081257-1-expected.png.
+        * platform/mac-leopard/editing/selection/5099303-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/5099303-expected.checksum.
+        * platform/mac-leopard/editing/selection/5099303-expected.png: Copied from LayoutTests/platform/mac/editing/selection/5099303-expected.png.
+        * platform/mac-leopard/editing/selection/5131716-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/5131716-1-expected.checksum.
+        * platform/mac-leopard/editing/selection/5131716-1-expected.png: Copied from LayoutTests/platform/mac/editing/selection/5131716-1-expected.png.
+        * platform/mac-leopard/editing/selection/5131716-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/5131716-2-expected.checksum.
+        * platform/mac-leopard/editing/selection/5131716-2-expected.png: Copied from LayoutTests/platform/mac/editing/selection/5131716-2-expected.png.
+        * platform/mac-leopard/editing/selection/5131716-3-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/5131716-3-expected.checksum.
+        * platform/mac-leopard/editing/selection/5131716-3-expected.png: Copied from LayoutTests/platform/mac/editing/selection/5131716-3-expected.png.
+        * platform/mac-leopard/editing/selection/5131716-4-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/5131716-4-expected.checksum.
+        * platform/mac-leopard/editing/selection/5131716-4-expected.png: Copied from LayoutTests/platform/mac/editing/selection/5131716-4-expected.png.
+        * platform/mac-leopard/editing/selection/5195166-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/5195166-2-expected.checksum.
+        * platform/mac-leopard/editing/selection/5195166-2-expected.png: Copied from LayoutTests/platform/mac/editing/selection/5195166-2-expected.png.
+        * platform/mac-leopard/editing/selection/5232159-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/5232159-expected.checksum.
+        * platform/mac-leopard/editing/selection/5232159-expected.png: Copied from LayoutTests/platform/mac/editing/selection/5232159-expected.png.
+        * platform/mac-leopard/editing/selection/5234383-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/5234383-1-expected.checksum.
+        * platform/mac-leopard/editing/selection/5234383-1-expected.png: Copied from LayoutTests/platform/mac/editing/selection/5234383-1-expected.png.
+        * platform/mac-leopard/editing/selection/5234383-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/5234383-2-expected.checksum.
+        * platform/mac-leopard/editing/selection/5234383-2-expected.png: Copied from LayoutTests/platform/mac/editing/selection/5234383-2-expected.png.
+        * platform/mac-leopard/editing/selection/5240265-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/5240265-expected.checksum.
+        * platform/mac-leopard/editing/selection/5240265-expected.png: Copied from LayoutTests/platform/mac/editing/selection/5240265-expected.png.
+        * platform/mac-leopard/editing/selection/5354455-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/5354455-1-expected.checksum.
+        * platform/mac-leopard/editing/selection/5354455-1-expected.png: Copied from LayoutTests/platform/mac/editing/selection/5354455-1-expected.png.
+        * platform/mac-leopard/editing/selection/5354455-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/5354455-2-expected.checksum.
+        * platform/mac-leopard/editing/selection/5354455-2-expected.png: Copied from LayoutTests/platform/mac/editing/selection/5354455-2-expected.png.
+        * platform/mac-leopard/editing/selection/6476-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/6476-expected.checksum.
+        * platform/mac-leopard/editing/selection/6476-expected.png: Copied from LayoutTests/platform/mac/editing/selection/6476-expected.png.
+        * platform/mac-leopard/editing/selection/7152-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/7152-1-expected.checksum.
+        * platform/mac-leopard/editing/selection/7152-1-expected.png: Copied from LayoutTests/platform/mac/editing/selection/7152-1-expected.png.
+        * platform/mac-leopard/editing/selection/7152-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/7152-2-expected.checksum.
+        * platform/mac-leopard/editing/selection/7152-2-expected.png: Copied from LayoutTests/platform/mac/editing/selection/7152-2-expected.png.
+        * platform/mac-leopard/editing/selection/addRange-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/addRange-expected.checksum.
+        * platform/mac-leopard/editing/selection/addRange-expected.png: Copied from LayoutTests/platform/mac/editing/selection/addRange-expected.png.
+        * platform/mac-leopard/editing/selection/after-line-wrap-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/after-line-wrap-expected.checksum.
+        * platform/mac-leopard/editing/selection/after-line-wrap-expected.png: Copied from LayoutTests/platform/mac/editing/selection/after-line-wrap-expected.png.
+        * platform/mac-leopard/editing/selection/caret-and-focus-ring-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/caret-and-focus-ring-expected.checksum.
+        * platform/mac-leopard/editing/selection/caret-and-focus-ring-expected.png: Copied from LayoutTests/platform/mac/editing/selection/caret-and-focus-ring-expected.png.
+        * platform/mac-leopard/editing/selection/caret-rtl-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/caret-rtl-2-expected.checksum.
+        * platform/mac-leopard/editing/selection/caret-rtl-2-expected.png: Copied from LayoutTests/platform/mac/editing/selection/caret-rtl-2-expected.png.
+        * platform/mac-leopard/editing/selection/caret-rtl-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/caret-rtl-expected.checksum.
+        * platform/mac-leopard/editing/selection/caret-rtl-expected.png: Copied from LayoutTests/platform/mac/editing/selection/caret-rtl-expected.png.
+        * platform/mac-leopard/editing/selection/clear-selection-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/clear-selection-expected.checksum.
+        * platform/mac-leopard/editing/selection/clear-selection-expected.png: Copied from LayoutTests/platform/mac/editing/selection/clear-selection-expected.png.
+        * platform/mac-leopard/editing/selection/click-start-of-line-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/click-start-of-line-expected.checksum.
+        * platform/mac-leopard/editing/selection/click-start-of-line-expected.png: Copied from LayoutTests/platform/mac/editing/selection/click-start-of-line-expected.png.
+        * platform/mac-leopard/editing/selection/contenteditable-click-inside-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/contenteditable-click-inside-expected.checksum.
+        * platform/mac-leopard/editing/selection/contenteditable-click-inside-expected.png: Copied from LayoutTests/platform/mac/editing/selection/contenteditable-click-inside-expected.png.
+        * platform/mac-leopard/editing/selection/designmode-no-caret-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/designmode-no-caret-expected.checksum.
+        * platform/mac-leopard/editing/selection/designmode-no-caret-expected.png: Copied from LayoutTests/platform/mac/editing/selection/designmode-no-caret-expected.png.
+        * platform/mac-leopard/editing/selection/drag-in-iframe-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/drag-in-iframe-expected.checksum.
+        * platform/mac-leopard/editing/selection/drag-in-iframe-expected.png: Copied from LayoutTests/platform/mac/editing/selection/drag-in-iframe-expected.png.
+        * platform/mac-leopard/editing/selection/editable-html-element-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/editable-html-element-expected.checksum.
+        * platform/mac-leopard/editing/selection/editable-html-element-expected.png: Copied from LayoutTests/platform/mac/editing/selection/editable-html-element-expected.png.
+        * platform/mac-leopard/editing/selection/editable-non-editable-crash-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/editable-non-editable-crash-expected.checksum.
+        * platform/mac-leopard/editing/selection/editable-non-editable-crash-expected.png: Copied from LayoutTests/platform/mac/editing/selection/editable-non-editable-crash-expected.png.
+        * platform/mac-leopard/editing/selection/end-of-document-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/end-of-document-expected.checksum.
+        * platform/mac-leopard/editing/selection/end-of-document-expected.png: Copied from LayoutTests/platform/mac/editing/selection/end-of-document-expected.png.
+        * platform/mac-leopard/editing/selection/expanding-selections-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/expanding-selections-expected.checksum.
+        * platform/mac-leopard/editing/selection/expanding-selections-expected.png: Copied from LayoutTests/platform/mac/editing/selection/expanding-selections-expected.png.
+        * platform/mac-leopard/editing/selection/expanding-selections2-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/expanding-selections2-expected.checksum.
+        * platform/mac-leopard/editing/selection/expanding-selections2-expected.png: Copied from LayoutTests/platform/mac/editing/selection/expanding-selections2-expected.png.
+        * platform/mac-leopard/editing/selection/focus_editable_html-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/focus_editable_html-expected.checksum.
+        * platform/mac-leopard/editing/selection/focus_editable_html-expected.png: Copied from LayoutTests/platform/mac/editing/selection/focus_editable_html-expected.png.
+        * platform/mac-leopard/editing/selection/iframe-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/iframe-expected.checksum.
+        * platform/mac-leopard/editing/selection/iframe-expected.png: Copied from LayoutTests/platform/mac/editing/selection/iframe-expected.png.
+        * platform/mac-leopard/editing/selection/inline-closest-leaf-child-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/inline-closest-leaf-child-expected.checksum.
+        * platform/mac-leopard/editing/selection/inline-closest-leaf-child-expected.png: Copied from LayoutTests/platform/mac/editing/selection/inline-closest-leaf-child-expected.png.
+        * platform/mac-leopard/editing/selection/inline-table-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/inline-table-expected.checksum.
+        * platform/mac-leopard/editing/selection/inline-table-expected.png: Copied from LayoutTests/platform/mac/editing/selection/inline-table-expected.png.
+        * platform/mac-leopard/editing/selection/leave-requested-block-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/leave-requested-block-expected.checksum.
+        * platform/mac-leopard/editing/selection/leave-requested-block-expected.png: Copied from LayoutTests/platform/mac/editing/selection/leave-requested-block-expected.png.
+        * platform/mac-leopard/editing/selection/mixed-editability-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/mixed-editability-1-expected.checksum.
+        * platform/mac-leopard/editing/selection/mixed-editability-1-expected.png: Copied from LayoutTests/platform/mac/editing/selection/mixed-editability-1-expected.png.
+        * platform/mac-leopard/editing/selection/mixed-editability-3-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/mixed-editability-3-expected.checksum.
+        * platform/mac-leopard/editing/selection/mixed-editability-3-expected.png: Copied from LayoutTests/platform/mac/editing/selection/mixed-editability-3-expected.png.
+        * platform/mac-leopard/editing/selection/mixed-editability-4-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/mixed-editability-4-expected.checksum.
+        * platform/mac-leopard/editing/selection/mixed-editability-4-expected.png: Copied from LayoutTests/platform/mac/editing/selection/mixed-editability-4-expected.png.
+        * platform/mac-leopard/editing/selection/mixed-editability-5-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/mixed-editability-5-expected.checksum.
+        * platform/mac-leopard/editing/selection/mixed-editability-5-expected.png: Copied from LayoutTests/platform/mac/editing/selection/mixed-editability-5-expected.png.
+        * platform/mac-leopard/editing/selection/mixed-editability-6-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/mixed-editability-6-expected.checksum.
+        * platform/mac-leopard/editing/selection/mixed-editability-6-expected.png: Copied from LayoutTests/platform/mac/editing/selection/mixed-editability-6-expected.png.
+        * platform/mac-leopard/editing/selection/mixed-editability-7-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/mixed-editability-7-expected.checksum.
+        * platform/mac-leopard/editing/selection/mixed-editability-7-expected.png: Copied from LayoutTests/platform/mac/editing/selection/mixed-editability-7-expected.png.
+        * platform/mac-leopard/editing/selection/mixed-editability-8-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/mixed-editability-8-expected.checksum.
+        * platform/mac-leopard/editing/selection/mixed-editability-8-expected.png: Copied from LayoutTests/platform/mac/editing/selection/mixed-editability-8-expected.png.
+        * platform/mac-leopard/editing/selection/mixed-editability-9-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/mixed-editability-9-expected.checksum.
+        * platform/mac-leopard/editing/selection/mixed-editability-9-expected.png: Copied from LayoutTests/platform/mac/editing/selection/mixed-editability-9-expected.png.
+        * platform/mac-leopard/editing/selection/move-by-sentence-linebreak-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/move-by-sentence-linebreak-expected.checksum.
+        * platform/mac-leopard/editing/selection/move-by-sentence-linebreak-expected.png: Copied from LayoutTests/platform/mac/editing/selection/move-by-sentence-linebreak-expected.png.
+        * platform/mac-leopard/editing/selection/node-removal-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/node-removal-1-expected.checksum.
+        * platform/mac-leopard/editing/selection/node-removal-1-expected.png: Copied from LayoutTests/platform/mac/editing/selection/node-removal-1-expected.png.
+        * platform/mac-leopard/editing/selection/node-removal-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/node-removal-2-expected.checksum.
+        * platform/mac-leopard/editing/selection/node-removal-2-expected.png: Copied from LayoutTests/platform/mac/editing/selection/node-removal-2-expected.png.
+        * platform/mac-leopard/editing/selection/paragraph-granularity-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/paragraph-granularity-expected.checksum.
+        * platform/mac-leopard/editing/selection/paragraph-granularity-expected.png: Copied from LayoutTests/platform/mac/editing/selection/paragraph-granularity-expected.png.
+        * platform/mac-leopard/editing/selection/previous-line-position-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/previous-line-position-expected.checksum.
+        * platform/mac-leopard/editing/selection/previous-line-position-expected.png: Copied from LayoutTests/platform/mac/editing/selection/previous-line-position-expected.png.
+        * platform/mac-leopard/editing/selection/replace-selection-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/replace-selection-1-expected.checksum.
+        * platform/mac-leopard/editing/selection/replace-selection-1-expected.png: Copied from LayoutTests/platform/mac/editing/selection/replace-selection-1-expected.png.
+        * platform/mac-leopard/editing/selection/replaced-boundaries-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/replaced-boundaries-1-expected.checksum.
+        * platform/mac-leopard/editing/selection/replaced-boundaries-1-expected.png: Copied from LayoutTests/platform/mac/editing/selection/replaced-boundaries-1-expected.png.
+        * platform/mac-leopard/editing/selection/replaced-boundaries-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/replaced-boundaries-2-expected.checksum.
+        * platform/mac-leopard/editing/selection/replaced-boundaries-2-expected.png: Copied from LayoutTests/platform/mac/editing/selection/replaced-boundaries-2-expected.png.
+        * platform/mac-leopard/editing/selection/replaced-boundaries-3-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/replaced-boundaries-3-expected.checksum.
+        * platform/mac-leopard/editing/selection/replaced-boundaries-3-expected.png: Copied from LayoutTests/platform/mac/editing/selection/replaced-boundaries-3-expected.png.
+        * platform/mac-leopard/editing/selection/select-all-005-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/select-all-005-expected.checksum.
+        * platform/mac-leopard/editing/selection/select-all-005-expected.png: Copied from LayoutTests/platform/mac/editing/selection/select-all-005-expected.png.
+        * platform/mac-leopard/editing/selection/select-all-006-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/select-all-006-expected.checksum.
+        * platform/mac-leopard/editing/selection/select-all-006-expected.png: Copied from LayoutTests/platform/mac/editing/selection/select-all-006-expected.png.
+        * platform/mac-leopard/editing/selection/select-all-iframe-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/select-all-iframe-expected.checksum.
+        * platform/mac-leopard/editing/selection/select-all-iframe-expected.png: Copied from LayoutTests/platform/mac/editing/selection/select-all-iframe-expected.png.
+        * platform/mac-leopard/editing/selection/select-box-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/select-box-expected.checksum.
+        * platform/mac-leopard/editing/selection/select-box-expected.png: Copied from LayoutTests/platform/mac/editing/selection/select-box-expected.png.
+        * platform/mac-leopard/editing/selection/select-element-paragraph-boundary-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/select-element-paragraph-boundary-expected.checksum.
+        * platform/mac-leopard/editing/selection/select-element-paragraph-boundary-expected.png: Copied from LayoutTests/platform/mac/editing/selection/select-element-paragraph-boundary-expected.png.
+        * platform/mac-leopard/editing/selection/select-from-textfield-outwards-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/select-from-textfield-outwards-expected.checksum.
+        * platform/mac-leopard/editing/selection/select-from-textfield-outwards-expected.png: Copied from LayoutTests/platform/mac/editing/selection/select-from-textfield-outwards-expected.png.
+        * platform/mac-leopard/editing/selection/selection-actions-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/selection-actions-expected.checksum.
+        * platform/mac-leopard/editing/selection/selection-actions-expected.png: Copied from LayoutTests/platform/mac/editing/selection/selection-actions-expected.png.
+        * platform/mac-leopard/editing/selection/selection-background-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/selection-background-expected.checksum.
+        * platform/mac-leopard/editing/selection/selection-background-expected.png: Copied from LayoutTests/platform/mac/editing/selection/selection-background-expected.png.
+        * platform/mac-leopard/editing/selection/triple-click-in-pre-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/triple-click-in-pre-expected.checksum.
+        * platform/mac-leopard/editing/selection/triple-click-in-pre-expected.png: Copied from LayoutTests/platform/mac/editing/selection/triple-click-in-pre-expected.png.
+        * platform/mac-leopard/editing/selection/unrendered-space-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/unrendered-space-expected.checksum.
+        * platform/mac-leopard/editing/selection/unrendered-space-expected.png: Copied from LayoutTests/platform/mac/editing/selection/unrendered-space-expected.png.
+        * platform/mac-leopard/editing/selection/word-granularity-expected.checksum: Copied from LayoutTests/platform/mac/editing/selection/word-granularity-expected.checksum.
+        * platform/mac-leopard/editing/selection/word-granularity-expected.png: Copied from LayoutTests/platform/mac/editing/selection/word-granularity-expected.png.
+        * platform/mac-leopard/editing/spelling/inline_spelling_markers-expected.checksum: Copied from LayoutTests/platform/mac/editing/spelling/inline_spelling_markers-expected.checksum.
+        * platform/mac-leopard/editing/spelling/inline_spelling_markers-expected.png: Copied from LayoutTests/platform/mac/editing/spelling/inline_spelling_markers-expected.png.
+        * platform/mac-leopard/editing/spelling/spellcheck-attribute-expected.checksum: Copied from LayoutTests/platform/mac/editing/spelling/spellcheck-attribute-expected.checksum.
+        * platform/mac-leopard/editing/spelling/spellcheck-attribute-expected.png: Copied from LayoutTests/platform/mac/editing/spelling/spellcheck-attribute-expected.png.
+        * platform/mac-leopard/editing/style: Added.
+        * platform/mac-leopard/editing/style/5017613-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/style/5017613-1-expected.checksum.
+        * platform/mac-leopard/editing/style/5017613-1-expected.png: Copied from LayoutTests/platform/mac/editing/style/5017613-1-expected.png.
+        * platform/mac-leopard/editing/style/5017613-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/style/5017613-2-expected.checksum.
+        * platform/mac-leopard/editing/style/5017613-2-expected.png: Copied from LayoutTests/platform/mac/editing/style/5017613-2-expected.png.
+        * platform/mac-leopard/editing/style/5046875-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/style/5046875-1-expected.checksum.
+        * platform/mac-leopard/editing/style/5046875-1-expected.png: Copied from LayoutTests/platform/mac/editing/style/5046875-1-expected.png.
+        * platform/mac-leopard/editing/style/5046875-2-expected.checksum: Copied from LayoutTests/platform/mac/editing/style/5046875-2-expected.checksum.
+        * platform/mac-leopard/editing/style/5046875-2-expected.png: Copied from LayoutTests/platform/mac/editing/style/5046875-2-expected.png.
+        * platform/mac-leopard/editing/style/5065910-expected.checksum: Copied from LayoutTests/platform/mac/editing/style/5065910-expected.checksum.
+        * platform/mac-leopard/editing/style/5065910-expected.png: Copied from LayoutTests/platform/mac/editing/style/5065910-expected.png.
+        * platform/mac-leopard/editing/style/5084241-expected.checksum: Copied from LayoutTests/platform/mac/editing/style/5084241-expected.checksum.
+        * platform/mac-leopard/editing/style/5084241-expected.png: Copied from LayoutTests/platform/mac/editing/style/5084241-expected.png.
+        * platform/mac-leopard/editing/style/apple-style-editable-mix-expected.checksum: Copied from LayoutTests/platform/mac/editing/style/apple-style-editable-mix-expected.checksum.
+        * platform/mac-leopard/editing/style/apple-style-editable-mix-expected.png: Copied from LayoutTests/platform/mac/editing/style/apple-style-editable-mix-expected.png.
+        * platform/mac-leopard/editing/style/fontsize-1-expected.checksum: Copied from LayoutTests/platform/mac/editing/style/fontsize-1-expected.checksum.
+        * platform/mac-leopard/editing/style/fontsize-1-expected.png: Copied from LayoutTests/platform/mac/editing/style/fontsize-1-expected.png.
+        * platform/mac-leopard/editing/style/non-inheritable-styles-expected.checksum: Copied from LayoutTests/platform/mac/editing/style/non-inheritable-styles-expected.checksum.
+        * platform/mac-leopard/editing/style/non-inheritable-styles-expected.png: Copied from LayoutTests/platform/mac/editing/style/non-inheritable-styles-expected.png.
+        * platform/mac/editing/deleting/4922367-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/4922367-expected.png: Replaced.
+        * platform/mac/editing/deleting/5026848-1-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/5026848-1-expected.png: Replaced.
+        * platform/mac/editing/deleting/5026848-2-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/5026848-2-expected.png: Replaced.
+        * platform/mac/editing/deleting/5026848-3-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/5026848-3-expected.png: Replaced.
+        * platform/mac/editing/deleting/5032066-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/5032066-expected.png: Replaced.
+        * platform/mac/editing/deleting/5091898-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/5091898-expected.png: Replaced.
+        * platform/mac/editing/deleting/5099303-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/5099303-expected.png: Replaced.
+        * platform/mac/editing/deleting/5115601-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/5115601-expected.png: Replaced.
+        * platform/mac/editing/deleting/5126166-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/5126166-expected.png: Replaced.
+        * platform/mac/editing/deleting/5144139-2-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/5144139-2-expected.png: Replaced.
+        * platform/mac/editing/deleting/5168598-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/5168598-expected.png: Replaced.
+        * platform/mac/editing/deleting/5206311-1-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/5206311-1-expected.png: Replaced.
+        * platform/mac/editing/deleting/5206311-2-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/5206311-2-expected.png: Replaced.
+        * platform/mac/editing/deleting/5272440-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/5272440-expected.png: Replaced.
+        * platform/mac/editing/deleting/5369009-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/5369009-expected.png: Replaced.
+        * platform/mac/editing/deleting/5390681-2-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/5390681-2-expected.png: Replaced.
+        * platform/mac/editing/deleting/5390681-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/5390681-expected.png: Replaced.
+        * platform/mac/editing/deleting/5433862-2-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/5433862-2-expected.png: Replaced.
+        * platform/mac/editing/deleting/5483370-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/5483370-expected.png: Replaced.
+        * platform/mac/editing/deleting/delete-4038408-fix-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/delete-4038408-fix-expected.png: Replaced.
+        * platform/mac/editing/deleting/delete-br-013-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/delete-br-013-expected.png: Replaced.
+        * platform/mac/editing/deleting/delete-first-list-item-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/delete-first-list-item-expected.png: Replaced.
+        * platform/mac/editing/deleting/delete-line-015-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/delete-line-015-expected.png: Replaced.
+        * platform/mac/editing/deleting/delete-line-016-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/delete-line-016-expected.png: Replaced.
+        * platform/mac/editing/deleting/delete-line-017-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/delete-line-017-expected.png: Replaced.
+        * platform/mac/editing/deleting/delete-ws-fixup-002-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/delete-ws-fixup-002-expected.png: Replaced.
+        * platform/mac/editing/deleting/merge-endOfParagraph-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/merge-endOfParagraph-expected.png: Replaced.
+        * platform/mac/editing/deleting/merge-into-empty-block-1-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/merge-into-empty-block-1-expected.png: Replaced.
+        * platform/mac/editing/deleting/merge-no-br-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/merge-no-br-expected.png: Replaced.
+        * platform/mac/editing/deleting/merge-whitespace-pre-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/merge-whitespace-pre-expected.png: Replaced.
+        * platform/mac/editing/deleting/pruning-after-merge-2-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/pruning-after-merge-2-expected.png: Replaced.
+        * platform/mac/editing/deleting/smart-delete-003-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/smart-delete-003-expected.png: Replaced.
+        * platform/mac/editing/deleting/smart-delete-004-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/smart-delete-004-expected.png: Replaced.
+        * platform/mac/editing/deleting/table-cells-expected.checksum: Replaced.
+        * platform/mac/editing/deleting/table-cells-expected.png: Replaced.
+        * platform/mac/editing/execCommand/4580583-1-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/4580583-1-expected.png: Replaced.
+        * platform/mac/editing/execCommand/4580583-2-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/4580583-2-expected.png: Replaced.
+        * platform/mac/editing/execCommand/4641880-1-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/4641880-1-expected.png: Replaced.
+        * platform/mac/editing/execCommand/4641880-2-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/4641880-2-expected.png: Replaced.
+        * platform/mac/editing/execCommand/4747450-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/4747450-expected.png: Replaced.
+        * platform/mac/editing/execCommand/4786404-2-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/4786404-2-expected.png: Replaced.
+        * platform/mac/editing/execCommand/4916402-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/4916402-expected.png: Replaced.
+        * platform/mac/editing/execCommand/4916541-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/4916541-expected.png: Replaced.
+        * platform/mac/editing/execCommand/4920488-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/4920488-expected.png: Replaced.
+        * platform/mac/editing/execCommand/4920742-1-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/4920742-1-expected.png: Replaced.
+        * platform/mac/editing/execCommand/4924441-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/4924441-expected.png: Replaced.
+        * platform/mac/editing/execCommand/5049671-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/5049671-expected.png: Replaced.
+        * platform/mac/editing/execCommand/5080333-1-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/5080333-1-expected.png: Replaced.
+        * platform/mac/editing/execCommand/5080333-2-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/5080333-2-expected.png: Replaced.
+        * platform/mac/editing/execCommand/5136770-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/5136770-expected.png: Replaced.
+        * platform/mac/editing/execCommand/5138441-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/5138441-expected.png: Replaced.
+        * platform/mac/editing/execCommand/5190926-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/5190926-expected.png: Replaced.
+        * platform/mac/editing/execCommand/5481523-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/5481523-expected.png: Replaced.
+        * platform/mac/editing/execCommand/create-list-with-hr-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/create-list-with-hr-expected.png: Replaced.
+        * platform/mac/editing/execCommand/find-after-replace-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/find-after-replace-expected.png: Replaced.
+        * platform/mac/editing/execCommand/findString-2-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/findString-2-expected.png: Replaced.
+        * platform/mac/editing/execCommand/insertHorizontalRule-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/insertHorizontalRule-expected.png: Replaced.
+        * platform/mac/editing/execCommand/insertImage-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/insertImage-expected.png: Replaced.
+        * platform/mac/editing/execCommand/outdent-selection-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/outdent-selection-expected.png: Replaced.
+        * platform/mac/editing/execCommand/remove-formatting-2-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/remove-formatting-2-expected.png: Replaced.
+        * platform/mac/editing/execCommand/remove-formatting-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/remove-formatting-expected.png: Replaced.
+        * platform/mac/editing/execCommand/remove-list-from-range-selection-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/remove-list-from-range-selection-expected.png: Replaced.
+        * platform/mac/editing/inserting/12882-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/12882-expected.png: Replaced.
+        * platform/mac/editing/inserting/4278698-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/4278698-expected.png: Replaced.
+        * platform/mac/editing/inserting/4840662-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/4840662-expected.png: Replaced.
+        * platform/mac/editing/inserting/4875189-2-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/4875189-2-expected.png: Replaced.
+        * platform/mac/editing/inserting/5002441-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/5002441-expected.png: Replaced.
+        * platform/mac/editing/inserting/5058163-1-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/5058163-1-expected.png: Replaced.
+        * platform/mac/editing/inserting/5058163-2-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/5058163-2-expected.png: Replaced.
+        * platform/mac/editing/inserting/5156401-2-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/5156401-2-expected.png: Replaced.
+        * platform/mac/editing/inserting/5418891-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/5418891-expected.png: Replaced.
+        * platform/mac/editing/inserting/5510537-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/5510537-expected.png: Replaced.
+        * platform/mac/editing/inserting/5549929-2-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/5549929-2-expected.png: Replaced.
+        * platform/mac/editing/inserting/5607069-2-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/5607069-2-expected.png: Replaced.
+        * platform/mac/editing/inserting/5607069-3-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/5607069-3-expected.png: Replaced.
+        * platform/mac/editing/inserting/6703873-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/6703873-expected.png: Replaced.
+        * platform/mac/editing/inserting/editable-html-element-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/editable-html-element-expected.png: Replaced.
+        * platform/mac/editing/inserting/edited-whitespace-1-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/edited-whitespace-1-expected.png: Replaced.
+        * platform/mac/editing/inserting/editing-empty-divs-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/editing-empty-divs-expected.png: Replaced.
+        * platform/mac/editing/inserting/insert-3786362-fix-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/insert-3786362-fix-expected.png: Replaced.
+        * platform/mac/editing/inserting/insert-at-end-01-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/insert-at-end-01-expected.png: Replaced.
+        * platform/mac/editing/inserting/insert-at-end-02-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/insert-at-end-02-expected.png: Replaced.
+        * platform/mac/editing/inserting/insert-br-009-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/insert-br-009-expected.png: Replaced.
+        * platform/mac/editing/inserting/insert-br-quoted-001-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/insert-br-quoted-001-expected.png: Replaced.
+        * platform/mac/editing/inserting/insert-br-quoted-002-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/insert-br-quoted-002-expected.png: Replaced.
+        * platform/mac/editing/inserting/insert-br-quoted-003-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/insert-br-quoted-003-expected.png: Replaced.
+        * platform/mac/editing/inserting/insert-br-quoted-004-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/insert-br-quoted-004-expected.png: Replaced.
+        * platform/mac/editing/inserting/insert-br-quoted-005-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/insert-br-quoted-005-expected.png: Replaced.
+        * platform/mac/editing/inserting/insert-br-quoted-006-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/insert-br-quoted-006-expected.png: Replaced.
+        * platform/mac/editing/inserting/insert-paragraph-01-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/insert-paragraph-01-expected.png: Replaced.
+        * platform/mac/editing/inserting/insert-paragraph-02-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/insert-paragraph-02-expected.png: Replaced.
+        * platform/mac/editing/inserting/insert-paragraph-03-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/insert-paragraph-03-expected.png: Replaced.
+        * platform/mac/editing/inserting/insert-paragraph-04-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/insert-paragraph-04-expected.png: Replaced.
+        * platform/mac/editing/inserting/insert-paragraph-05-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/insert-paragraph-05-expected.png: Replaced.
+        * platform/mac/editing/inserting/line-break-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/line-break-expected.png: Replaced.
+        * platform/mac/editing/inserting/multiple-lines-selected-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/multiple-lines-selected-expected.png: Replaced.
+        * platform/mac/editing/inserting/paragraph-separator-03-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/paragraph-separator-03-expected.png: Replaced.
+        * platform/mac/editing/inserting/paragraph-separator-in-table-2-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/paragraph-separator-in-table-2-expected.png: Replaced.
+        * platform/mac/editing/inserting/typing-around-br-001-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/typing-around-br-001-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/3976872-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/3976872-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/4076267-2-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/4076267-2-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/4242293-1-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/4242293-1-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/4242293-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/4242293-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/4631972-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/4631972-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/4641033-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/4641033-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/4861080-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/4861080-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/4944770-1-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/4944770-1-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/4944770-2-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/4944770-2-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/4947130-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/4947130-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/5027857-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/5027857-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/5032095-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/5032095-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/5065605-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/5065605-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/5071074-2-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/5071074-2-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/5071074-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/5071074-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/5075944-2-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/5075944-2-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/5075944-3-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/5075944-3-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/5089327-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/5089327-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/5247341-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/5247341-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/5368833-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/5368833-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/5387578-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/5387578-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/5478250-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/5478250-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/5601583-1-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/5601583-1-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/8145-2-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/8145-2-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/8145-3-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/8145-3-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/bad-placeholder-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/bad-placeholder-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/copy-paste-bidi-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/copy-paste-bidi-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/copy-standalone-image-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/copy-standalone-image-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/displaced-generic-placeholder-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/displaced-generic-placeholder-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/display-block-on-spans-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/display-block-on-spans-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/drop-text-without-selection-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/drop-text-without-selection-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/interchange-newline-1-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/interchange-newline-1-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/interchange-newline-2-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/interchange-newline-2-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/interchange-newline-3-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/interchange-newline-3-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/interchange-newline-4-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/interchange-newline-4-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/merge-after-delete-1-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/merge-after-delete-1-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/merge-after-delete-2-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/merge-after-delete-2-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/merge-end-1-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/merge-end-1-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/merge-end-2-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/merge-end-2-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/merge-end-5-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/merge-end-5-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/merge-end-blockquote-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/merge-end-blockquote-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/merge-end-borders-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/merge-end-borders-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/merge-end-list-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/merge-end-list-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/merge-end-table-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/merge-end-table-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/merge-start-blockquote-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/merge-start-blockquote-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/nested-blocks-with-text-area-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/nested-blocks-with-text-area-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/nested-blocks-with-text-field-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/nested-blocks-with-text-field-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/paste-RTFD-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/paste-RTFD-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/paste-blockquote-3-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/paste-blockquote-3-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/paste-blockquote-into-blockquote-2-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/paste-blockquote-into-blockquote-2-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/paste-pre-002-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/paste-pre-002-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/paste-table-003-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/paste-table-003-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/paste-text-012-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/paste-text-012-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/paste-text-013-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/paste-text-013-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/paste-text-014-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/paste-text-014-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/paste-text-016-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/paste-text-016-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/pasting-object-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/pasting-object-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/pasting-tabs-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/pasting-tabs-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/prevent-block-nesting-01-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/prevent-block-nesting-01-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/quirks-mode-br-1-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/quirks-mode-br-1-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/select-element-1-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/select-element-1-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/smart-drag-drop-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/smart-drag-drop-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/smart-paste-008-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/smart-paste-008-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/styled-element-markup-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/styled-element-markup-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/subframe-dragndrop-1-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/subframe-dragndrop-1-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/testcase-9507-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/testcase-9507-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/undoable-fragment-removes-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/undoable-fragment-removes-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/unrendered-br-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/unrendered-br-expected.png: Replaced.
+        * platform/mac/editing/selection/13804-expected.checksum: Replaced.
+        * platform/mac/editing/selection/13804-expected.png: Replaced.
+        * platform/mac/editing/selection/14971-expected.checksum: Replaced.
+        * platform/mac/editing/selection/14971-expected.png: Replaced.
+        * platform/mac/editing/selection/4402375-expected.checksum: Replaced.
+        * platform/mac/editing/selection/4402375-expected.png: Replaced.
+        * platform/mac/editing/selection/4818145-expected.checksum: Replaced.
+        * platform/mac/editing/selection/4818145-expected.png: Replaced.
+        * platform/mac/editing/selection/4889598-expected.checksum: Replaced.
+        * platform/mac/editing/selection/4889598-expected.png: Replaced.
+        * platform/mac/editing/selection/4895428-2-expected.checksum: Replaced.
+        * platform/mac/editing/selection/4895428-2-expected.png: Replaced.
+        * platform/mac/editing/selection/4895428-3-expected.checksum: Replaced.
+        * platform/mac/editing/selection/4895428-3-expected.png: Replaced.
+        * platform/mac/editing/selection/4895428-4-expected.checksum: Replaced.
+        * platform/mac/editing/selection/4895428-4-expected.png: Replaced.
+        * platform/mac/editing/selection/4932260-3-expected.checksum: Replaced.
+        * platform/mac/editing/selection/4932260-3-expected.png: Replaced.
+        * platform/mac/editing/selection/4947387-expected.checksum: Replaced.
+        * platform/mac/editing/selection/4947387-expected.png: Replaced.
+        * platform/mac/editing/selection/4960116-expected.checksum: Replaced.
+        * platform/mac/editing/selection/4960116-expected.png: Replaced.
+        * platform/mac/editing/selection/4975120-expected.checksum: Replaced.
+        * platform/mac/editing/selection/4975120-expected.png: Replaced.
+        * platform/mac/editing/selection/4983858-expected.checksum: Replaced.
+        * platform/mac/editing/selection/4983858-expected.png: Replaced.
+        * platform/mac/editing/selection/5007143-2-expected.checksum: Replaced.
+        * platform/mac/editing/selection/5007143-2-expected.png: Replaced.
+        * platform/mac/editing/selection/5007143-expected.checksum: Replaced.
+        * platform/mac/editing/selection/5007143-expected.png: Replaced.
+        * platform/mac/editing/selection/5057506-2-expected.checksum: Replaced.
+        * platform/mac/editing/selection/5057506-2-expected.png: Replaced.
+        * platform/mac/editing/selection/5057506-expected.checksum: Replaced.
+        * platform/mac/editing/selection/5057506-expected.png: Replaced.
+        * platform/mac/editing/selection/5076323-1-expected.checksum: Replaced.
+        * platform/mac/editing/selection/5076323-1-expected.png: Replaced.
+        * platform/mac/editing/selection/5081257-1-expected.checksum: Replaced.
+        * platform/mac/editing/selection/5081257-1-expected.png: Replaced.
+        * platform/mac/editing/selection/5099303-expected.checksum: Replaced.
+        * platform/mac/editing/selection/5099303-expected.png: Replaced.
+        * platform/mac/editing/selection/5131716-1-expected.checksum: Replaced.
+        * platform/mac/editing/selection/5131716-1-expected.png: Replaced.
+        * platform/mac/editing/selection/5131716-2-expected.checksum: Replaced.
+        * platform/mac/editing/selection/5131716-2-expected.png: Replaced.
+        * platform/mac/editing/selection/5131716-3-expected.checksum: Replaced.
+        * platform/mac/editing/selection/5131716-3-expected.png: Replaced.
+        * platform/mac/editing/selection/5131716-4-expected.checksum: Replaced.
+        * platform/mac/editing/selection/5131716-4-expected.png: Replaced.
+        * platform/mac/editing/selection/5195166-2-expected.checksum: Replaced.
+        * platform/mac/editing/selection/5195166-2-expected.png: Replaced.
+        * platform/mac/editing/selection/5232159-expected.checksum: Replaced.
+        * platform/mac/editing/selection/5232159-expected.png: Replaced.
+        * platform/mac/editing/selection/5234383-1-expected.checksum: Replaced.
+        * platform/mac/editing/selection/5234383-1-expected.png: Replaced.
+        * platform/mac/editing/selection/5234383-2-expected.checksum: Replaced.
+        * platform/mac/editing/selection/5234383-2-expected.png: Replaced.
+        * platform/mac/editing/selection/5240265-expected.checksum: Replaced.
+        * platform/mac/editing/selection/5240265-expected.png: Replaced.
+        * platform/mac/editing/selection/5354455-1-expected.checksum: Replaced.
+        * platform/mac/editing/selection/5354455-1-expected.png: Replaced.
+        * platform/mac/editing/selection/5354455-2-expected.checksum: Replaced.
+        * platform/mac/editing/selection/5354455-2-expected.png: Replaced.
+        * platform/mac/editing/selection/6476-expected.checksum: Replaced.
+        * platform/mac/editing/selection/6476-expected.png: Replaced.
+        * platform/mac/editing/selection/7152-1-expected.checksum: Replaced.
+        * platform/mac/editing/selection/7152-1-expected.png: Replaced.
+        * platform/mac/editing/selection/7152-2-expected.checksum: Replaced.
+        * platform/mac/editing/selection/7152-2-expected.png: Replaced.
+        * platform/mac/editing/selection/addRange-expected.checksum: Replaced.
+        * platform/mac/editing/selection/addRange-expected.png: Replaced.
+        * platform/mac/editing/selection/after-line-wrap-expected.checksum: Replaced.
+        * platform/mac/editing/selection/after-line-wrap-expected.png: Replaced.
+        * platform/mac/editing/selection/caret-and-focus-ring-expected.checksum: Replaced.
+        * platform/mac/editing/selection/caret-and-focus-ring-expected.png: Replaced.
+        * platform/mac/editing/selection/caret-rtl-2-expected.checksum: Replaced.
+        * platform/mac/editing/selection/caret-rtl-2-expected.png: Replaced.
+        * platform/mac/editing/selection/caret-rtl-expected.checksum: Replaced.
+        * platform/mac/editing/selection/caret-rtl-expected.png: Replaced.
+        * platform/mac/editing/selection/clear-selection-expected.checksum: Replaced.
+        * platform/mac/editing/selection/clear-selection-expected.png: Replaced.
+        * platform/mac/editing/selection/click-start-of-line-expected.checksum: Replaced.
+        * platform/mac/editing/selection/click-start-of-line-expected.png: Replaced.
+        * platform/mac/editing/selection/contenteditable-click-inside-expected.checksum: Replaced.
+        * platform/mac/editing/selection/contenteditable-click-inside-expected.png: Replaced.
+        * platform/mac/editing/selection/designmode-no-caret-expected.checksum: Replaced.
+        * platform/mac/editing/selection/designmode-no-caret-expected.png: Replaced.
+        * platform/mac/editing/selection/drag-in-iframe-expected.checksum: Replaced.
+        * platform/mac/editing/selection/drag-in-iframe-expected.png: Replaced.
+        * platform/mac/editing/selection/editable-html-element-expected.checksum: Replaced.
+        * platform/mac/editing/selection/editable-html-element-expected.png: Replaced.
+        * platform/mac/editing/selection/editable-non-editable-crash-expected.checksum: Replaced.
+        * platform/mac/editing/selection/editable-non-editable-crash-expected.png: Replaced.
+        * platform/mac/editing/selection/end-of-document-expected.checksum: Replaced.
+        * platform/mac/editing/selection/end-of-document-expected.png: Replaced.
+        * platform/mac/editing/selection/expanding-selections-expected.checksum: Replaced.
+        * platform/mac/editing/selection/expanding-selections-expected.png: Replaced.
+        * platform/mac/editing/selection/expanding-selections2-expected.checksum: Replaced.
+        * platform/mac/editing/selection/expanding-selections2-expected.png: Replaced.
+        * platform/mac/editing/selection/focus_editable_html-expected.checksum: Replaced.
+        * platform/mac/editing/selection/focus_editable_html-expected.png: Replaced.
+        * platform/mac/editing/selection/iframe-expected.checksum: Replaced.
+        * platform/mac/editing/selection/iframe-expected.png: Replaced.
+        * platform/mac/editing/selection/inline-closest-leaf-child-expected.checksum: Replaced.
+        * platform/mac/editing/selection/inline-closest-leaf-child-expected.png: Replaced.
+        * platform/mac/editing/selection/inline-table-expected.checksum: Replaced.
+        * platform/mac/editing/selection/inline-table-expected.png: Replaced.
+        * platform/mac/editing/selection/leave-requested-block-expected.checksum: Replaced.
+        * platform/mac/editing/selection/leave-requested-block-expected.png: Replaced.
+        * platform/mac/editing/selection/mixed-editability-1-expected.checksum: Replaced.
+        * platform/mac/editing/selection/mixed-editability-1-expected.png: Replaced.
+        * platform/mac/editing/selection/mixed-editability-3-expected.checksum: Replaced.
+        * platform/mac/editing/selection/mixed-editability-3-expected.png: Replaced.
+        * platform/mac/editing/selection/mixed-editability-4-expected.checksum: Replaced.
+        * platform/mac/editing/selection/mixed-editability-4-expected.png: Replaced.
+        * platform/mac/editing/selection/mixed-editability-5-expected.checksum: Replaced.
+        * platform/mac/editing/selection/mixed-editability-5-expected.png: Replaced.
+        * platform/mac/editing/selection/mixed-editability-6-expected.checksum: Replaced.
+        * platform/mac/editing/selection/mixed-editability-6-expected.png: Replaced.
+        * platform/mac/editing/selection/mixed-editability-7-expected.checksum: Replaced.
+        * platform/mac/editing/selection/mixed-editability-7-expected.png: Replaced.
+        * platform/mac/editing/selection/mixed-editability-8-expected.checksum: Replaced.
+        * platform/mac/editing/selection/mixed-editability-8-expected.png: Replaced.
+        * platform/mac/editing/selection/mixed-editability-9-expected.checksum: Replaced.
+        * platform/mac/editing/selection/mixed-editability-9-expected.png: Replaced.
+        * platform/mac/editing/selection/move-by-sentence-linebreak-expected.checksum: Replaced.
+        * platform/mac/editing/selection/move-by-sentence-linebreak-expected.png: Replaced.
+        * platform/mac/editing/selection/node-removal-1-expected.checksum: Replaced.
+        * platform/mac/editing/selection/node-removal-1-expected.png: Replaced.
+        * platform/mac/editing/selection/node-removal-2-expected.checksum: Replaced.
+        * platform/mac/editing/selection/node-removal-2-expected.png: Replaced.
+        * platform/mac/editing/selection/paragraph-granularity-expected.checksum: Replaced.
+        * platform/mac/editing/selection/paragraph-granularity-expected.png: Replaced.
+        * platform/mac/editing/selection/previous-line-position-expected.checksum: Replaced.
+        * platform/mac/editing/selection/previous-line-position-expected.png: Replaced.
+        * platform/mac/editing/selection/replace-selection-1-expected.checksum: Replaced.
+        * platform/mac/editing/selection/replace-selection-1-expected.png: Replaced.
+        * platform/mac/editing/selection/replaced-boundaries-1-expected.checksum: Replaced.
+        * platform/mac/editing/selection/replaced-boundaries-1-expected.png: Replaced.
+        * platform/mac/editing/selection/replaced-boundaries-2-expected.checksum: Replaced.
+        * platform/mac/editing/selection/replaced-boundaries-2-expected.png: Replaced.
+        * platform/mac/editing/selection/replaced-boundaries-3-expected.checksum: Replaced.
+        * platform/mac/editing/selection/replaced-boundaries-3-expected.png: Replaced.
+        * platform/mac/editing/selection/select-all-005-expected.checksum: Replaced.
+        * platform/mac/editing/selection/select-all-005-expected.png: Replaced.
+        * platform/mac/editing/selection/select-all-006-expected.checksum: Replaced.
+        * platform/mac/editing/selection/select-all-006-expected.png: Replaced.
+        * platform/mac/editing/selection/select-all-iframe-expected.checksum: Replaced.
+        * platform/mac/editing/selection/select-all-iframe-expected.png: Replaced.
+        * platform/mac/editing/selection/select-box-expected.checksum: Replaced.
+        * platform/mac/editing/selection/select-box-expected.png: Replaced.
+        * platform/mac/editing/selection/select-element-paragraph-boundary-expected.checksum: Replaced.
+        * platform/mac/editing/selection/select-element-paragraph-boundary-expected.png: Replaced.
+        * platform/mac/editing/selection/select-from-textfield-outwards-expected.checksum: Replaced.
+        * platform/mac/editing/selection/select-from-textfield-outwards-expected.png: Replaced.
+        * platform/mac/editing/selection/selection-actions-expected.checksum: Replaced.
+        * platform/mac/editing/selection/selection-actions-expected.png: Replaced.
+        * platform/mac/editing/selection/selection-background-expected.checksum: Replaced.
+        * platform/mac/editing/selection/selection-background-expected.png: Replaced.
+        * platform/mac/editing/selection/triple-click-in-pre-expected.checksum: Replaced.
+        * platform/mac/editing/selection/triple-click-in-pre-expected.png: Replaced.
+        * platform/mac/editing/selection/unrendered-space-expected.checksum: Replaced.
+        * platform/mac/editing/selection/unrendered-space-expected.png: Replaced.
+        * platform/mac/editing/selection/word-granularity-expected.checksum: Replaced.
+        * platform/mac/editing/selection/word-granularity-expected.png: Replaced.
+        * platform/mac/editing/spelling/inline_spelling_markers-expected.checksum: Replaced.
+        * platform/mac/editing/spelling/inline_spelling_markers-expected.png: Replaced.
+        * platform/mac/editing/spelling/spellcheck-attribute-expected.checksum: Replaced.
+        * platform/mac/editing/spelling/spellcheck-attribute-expected.png: Replaced.
+        * platform/mac/editing/style/5017613-1-expected.checksum: Replaced.
+        * platform/mac/editing/style/5017613-1-expected.png: Replaced.
+        * platform/mac/editing/style/5017613-2-expected.checksum: Replaced.
+        * platform/mac/editing/style/5017613-2-expected.png: Replaced.
+        * platform/mac/editing/style/5046875-1-expected.checksum: Replaced.
+        * platform/mac/editing/style/5046875-1-expected.png: Replaced.
+        * platform/mac/editing/style/5046875-2-expected.checksum: Replaced.
+        * platform/mac/editing/style/5046875-2-expected.png: Replaced.
+        * platform/mac/editing/style/5065910-expected.checksum: Replaced.
+        * platform/mac/editing/style/5065910-expected.png: Replaced.
+        * platform/mac/editing/style/5084241-expected.checksum: Replaced.
+        * platform/mac/editing/style/5084241-expected.png: Replaced.
+        * platform/mac/editing/style/apple-style-editable-mix-expected.checksum: Replaced.
+        * platform/mac/editing/style/apple-style-editable-mix-expected.png: Replaced.
+        * platform/mac/editing/style/fontsize-1-expected.checksum: Replaced.
+        * platform/mac/editing/style/fontsize-1-expected.png: Replaced.
+        * platform/mac/editing/style/non-inheritable-styles-expected.checksum: Replaced.
+        * platform/mac/editing/style/non-inheritable-styles-expected.png: Replaced.
+
 2010-05-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: cleaning up, actually deleting false expectations.
