@@ -67,6 +67,7 @@ public:
         clearData();
         m_selfClosing = false;
         m_currentAttribute = 0;
+        m_attributes.clear();
 
         m_data.append(character);
     }
@@ -79,6 +80,7 @@ public:
         clearData();
         m_selfClosing = false;
         m_currentAttribute = 0;
+        m_attributes.clear();
 
         m_data.append(characters);
     }

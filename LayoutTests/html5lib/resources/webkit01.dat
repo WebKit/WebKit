@@ -93,3 +93,37 @@ console.log("FOO<span>BAR</span>BAZ");
 "
 |     <div>
 |       "Bye"
+
+#data
+<foo bar="baz"></foo><potato quack="duck"></potato>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <foo>
+|       bar="baz"
+|     <potato>
+|       quack="duck"
+
+#data
+<foo bar="baz"><potato quack="duck"></potato></foo>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <foo>
+|       bar="baz"
+|       <potato>
+|         quack="duck"
+
+#data
+<foo></foo bar="baz"><potato></potato quack="duck">
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <foo>
+|     <potato>

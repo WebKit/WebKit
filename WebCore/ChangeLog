@@ -1,3 +1,16 @@
+2010-05-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Clear attributes for each tag in the HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=39660
+
+        Yes, I did screw this up.
+
+        * html/HTML5Token.h:
+        (WebCore::HTML5Token::beginStartTag):
+        (WebCore::HTML5Token::beginEndTag):
+
 2010-05-25  Anders Bakken  <agbakken@gmail.com>
 
         Reviewed by Darin Adler.
