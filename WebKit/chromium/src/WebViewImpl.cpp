@@ -2117,12 +2117,12 @@ void WebViewImpl::updateRootLayerContents(const WebRect& rect)
     if (rootLayer) {
         IntRect visibleRect = view->visibleContentRect(true);
 
-        // Update the root layer's backing store to be the size of the dirty rect.
-        // Unlike other layers the root layer doesn't have persistent storage for its
-        // contents in system memory.
-        rootLayer->setBackingStoreSize(IntSize(rect.width, rect.height));
-        GraphicsContext* rootLayerContext = rootLayer->graphicsContext();
-        skia::PlatformCanvas* platformCanvas = rootLayer->platformCanvas();
+        m_layerRenderer->setRootLayerCanvasSize(IntSize(rect.width, rect.height));
+        GraphicsContext* rootLayerContext = m_layerRenderer->rootLayerGraphicsContext();
+
+#if PLATFORM(SKIA)
+        PlatformContextSkia* skiaContext = rootLayerContext->platformContext();
+        skia::PlatformCanvas* platformCanvas = skiaContext->canvas();
 
         platformCanvas->save();
 
@@ -2131,10 +2131,11 @@ void WebViewImpl::updateRootLayerContents(const WebRect& rect)
 
         rootLayerContext->save();
 
-        webframe->paintWithContext(*(rootLayer->graphicsContext()), rect);
+        webframe->paintWithContext(*rootLayerContext, rect);
         rootLayerContext->restore();
 
         platformCanvas->restore();
+#endif
     }
 }
 

@@ -479,11 +479,6 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
 
 void GraphicsLayerChromium::updateLayerDrawsContent()
 {
-    // Since only layers that draw content have a valid context
-    // we need to call updateGraphicsContext() here to make sure one
-    // gets created.
-    m_layer->drawsContentUpdated();
-
     if (m_drawsContent)
         m_layer->setNeedsDisplay();
 

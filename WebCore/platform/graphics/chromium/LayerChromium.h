@@ -52,6 +52,8 @@ class PlatformCanvas;
 
 namespace WebCore {
 
+class LayerRendererChromium;
+
 class LayerChromium : public RefCounted<LayerChromium> {
 public:
     enum LayerType { Layer, TransformLayer };
@@ -150,22 +152,15 @@ public:
     void setGeometryFlipped(bool flipped) { m_geometryFlipped = flipped; setNeedsCommit(); }
     bool geometryFlipped() const { return m_geometryFlipped; }
 
-    void updateContents();
+    void updateTextureContents(unsigned int textureId);
     bool contentsDirty() { return m_contentsDirty; }
 
     void setContents(NativeImagePtr contents);
     NativeImagePtr contents() const { return m_contents; }
 
-    skia::PlatformCanvas* platformCanvas() { return m_canvas.get(); }
-    GraphicsContext* graphicsContext() { return m_graphicsContext.get(); }
-
-    void setBackingStoreSize(const IntSize&);
-
     bool drawsContent() { return m_owner && m_owner->drawsContent(); }
 
-    // This method should be called every time the status drawsContent()
-    // status changes to ensure that the internal graphics context is in sync.
-    void drawsContentUpdated();
+    void setLayerRenderer(LayerRendererChromium*);
 
 private:
     LayerChromium(LayerType, GraphicsLayerChromium* owner);
@@ -187,21 +182,10 @@ private:
     // This should only be called from removeFromSuperlayer.
     void removeSublayer(LayerChromium*);
 
-    // Re-creates the canvas and graphics context. This method
-    // must be called every time the layer is resized. Only layers
-    // that do drawing and the root layer get a context.
-    void updateGraphicsContext();
-
     Vector<RefPtr<LayerChromium> > m_sublayers;
     LayerChromium* m_superlayer;
 
     GraphicsLayerChromium* m_owner;
-#if PLATFORM(SKIA)
-    OwnPtr<skia::PlatformCanvas> m_canvas;
-    OwnPtr<PlatformContextSkia> m_skiaContext;
-    OwnPtr<GraphicsContext> m_graphicsContext;
-#endif
-    bool m_hasContext;
 
     LayerType m_layerType;
 
@@ -211,6 +195,9 @@ private:
     FloatPoint m_anchorPoint;
     Color m_backgroundColor;
     Color m_borderColor;
+    FloatRect m_dirtyRect;
+
+    LayerRendererChromium* m_layerRenderer;
 
     FloatRect m_frame;
     TransformationMatrix m_transform;
@@ -221,6 +208,9 @@ private:
     float m_zPosition;
     float m_anchorPointZ;
     float m_borderWidth;
+
+    unsigned int m_allocatedTextureId;
+    IntSize m_allocatedTextureSize;
 
     bool m_clearsContext;
     bool m_doubleSided;

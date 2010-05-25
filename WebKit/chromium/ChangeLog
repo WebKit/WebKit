@@ -1,3 +1,16 @@
+2010-05-25  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        The GraphicsContext that serves as a backing store for the root layer
+        updates when doing accelerated compositing is now stored in LayerRendererChromium
+        instead of the Layer itself. Updating code in WebViewImpl to reflect
+        that change.
+        https://bugs.webkit.org/show_bug.cgi?id=39640
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::updateRootLayerContents):
+
 2010-05-24  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

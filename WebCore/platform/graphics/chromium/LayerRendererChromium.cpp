@@ -187,6 +187,33 @@ LayerRendererChromium::~LayerRendererChromium()
         glDeleteProgram(m_scrollProgramObject);
         glDeleteProgram(m_borderProgramObject);
     }
+
+    // Free up all GL textures.
+    for (TextureIdMap::iterator iter = m_textureIdMap.begin(); iter != m_textureIdMap.end(); ++iter) {
+        glDeleteTextures(1, &(iter->second));
+        iter->first->setLayerRenderer(0);
+    }
+}
+
+// Creates a canvas and an associated graphics context that the root layer will
+// render into.
+void LayerRendererChromium::setRootLayerCanvasSize(const IntSize& size)
+{
+    if (size == m_rootLayerCanvasSize)
+        return;
+
+#if PLATFORM(SKIA)
+    // Create new canvas and context. OwnPtr takes care of freeing up
+    // the old ones.
+    m_rootLayerCanvas = new skia::PlatformCanvas(size.width(), size.height(), false);
+    m_rootLayerSkiaContext = new PlatformContextSkia(m_rootLayerCanvas.get());
+    m_rootLayerSkiaContext->setDrawingToImageBuffer(true);
+    m_rootLayerGraphicsContext = new GraphicsContext(reinterpret_cast<PlatformGraphicsContext*>(m_rootLayerSkiaContext.get()));
+#else
+#error "Need to implement for your platform."
+#endif
+
+    m_rootLayerCanvasSize = size;
 }
 
 void LayerRendererChromium::drawTexturedQuad(const TransformationMatrix& matrix, float width, float height, float opacity, bool scrolling)
@@ -292,7 +319,7 @@ void LayerRendererChromium::drawLayers(const IntRect& updateRect, const IntRect&
 
 #if PLATFORM(SKIA)
         // Get the contents of the updated rect.
-        const SkBitmap bitmap = m_rootLayer->platformCanvas()->getDevice()->accessBitmap(false);
+        const SkBitmap bitmap = m_rootLayerCanvas->getDevice()->accessBitmap(false);
         int rootLayerWidth = bitmap.width();
         int rootLayerHeight = bitmap.height();
         ASSERT(rootLayerWidth == updateRect.width() && rootLayerHeight == updateRect.height());
@@ -363,13 +390,15 @@ int LayerRendererChromium::getTextureId(LayerChromium* layer)
 
 // Allocates a new texture for the layer and registers it in the textureId map.
 // FIXME: We will need to come up with a more sophisticated allocation strategy here.
-// FIXME: We need to free up the associated texture upon layer destruction.
 int LayerRendererChromium::assignTextureForLayer(LayerChromium* layer)
 {
     GLuint textureId = createLayerTexture();
 
     // FIXME: Check that textureId is valid
     m_textureIdMap.set(layer, textureId);
+
+    layer->setLayerRenderer(this);
+
     return textureId;
 }
 
@@ -491,40 +520,7 @@ void LayerRendererChromium::compositeLayersRecursive(LayerChromium* layer, const
             // Update the contents of the layer before taking a snapshot. For layers that
             // are simply containers, the following call just clears the dirty flag but doesn't
             // actually do any draws/copies.
-            layer->updateContents();
-
-            const SkBitmap* skiaBitmap = 0;
-            void* pixels = 0;
-            if (layer->drawsContent()) { // Layer has its own GraphicsContext.
-                // The contents of the layer are stored in the canvas associated with it.
-                const SkBitmap& bitmap = layer->platformCanvas()->getDevice()->accessBitmap(false);
-                skiaBitmap = &bitmap;
-            } else { // Layer is a container.
-                // The layer contains an Image.
-                NativeImageSkia* skiaImage = static_cast<NativeImageSkia*>(layer->contents());
-                skiaBitmap = skiaImage;
-            }
-
-            ASSERT(skiaBitmap);
-            SkBitmap::Config skiaConfig = skiaBitmap->config();
-            // FIXME: must support more image configurations.
-            if (skiaConfig == SkBitmap::kARGB_8888_Config) {
-                SkAutoLockPixels lock(*skiaBitmap);
-                int bitmapWidth = skiaBitmap->width();
-                int bitmapHeight = skiaBitmap->height();
-                int rowBytes = skiaBitmap->rowBytes();
-                ASSERT(rowBytes == bitmapWidth * 4);
-
-                // Copy the layer contents into the texture.
-                glBindTexture(GL_TEXTURE_2D, textureId);
-                void* pixels = skiaBitmap->getPixels();
-                if (pixels) {
-                    // FIXME. We can be smart here and call glTexSubImage2D if the new bitmap has the same
-                    // size as the old one which will save us one unecessary allocation / deallocation.
-                    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bitmapWidth, bitmapHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-                    checkGLError();
-                }
-            }
+            layer->updateTextureContents(textureId);
         }
 
         if (layer->doubleSided())

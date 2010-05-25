@@ -69,6 +69,10 @@ public:
 
     bool hardwareCompositing() const { return m_hardwareCompositing; }
 
+    void setRootLayerCanvasSize(const IntSize&);
+
+    GraphicsContext* rootLayerGraphicsContext() const { return m_rootLayerGraphicsContext.get(); }
+
 private:
     void compositeLayersRecursive(LayerChromium*, const TransformationMatrix&, float opacity, const IntRect& visibleRect);
 
@@ -123,6 +127,13 @@ private:
     // Map associating layers with textures ids used by the GL compositor.
     typedef HashMap<LayerChromium*, unsigned int> TextureIdMap;
     TextureIdMap m_textureIdMap;
+
+#if PLATFORM(SKIA)
+    OwnPtr<skia::PlatformCanvas> m_rootLayerCanvas;
+    OwnPtr<PlatformContextSkia> m_rootLayerSkiaContext;
+    OwnPtr<GraphicsContext> m_rootLayerGraphicsContext;
+#endif
+    IntSize m_rootLayerCanvasSize;
 
     OwnPtr<GLES2Context> m_gles2Context;
 

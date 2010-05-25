@@ -1,3 +1,32 @@
+2010-05-25  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Removing the persistent GraphicsContext from LayerChromium to save on
+        memory and simplify code. Layers now create a temporary context, draw into
+        it, update the GL texture and discard the context.
+        https://bugs.webkit.org/show_bug.cgi?id=39640
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::updateLayerDrawsContent):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::~LayerChromium):
+        (WebCore::LayerChromium::setLayerRenderer):
+        (WebCore::LayerChromium::updateTextureContents):
+        (WebCore::LayerChromium::setContents):
+        (WebCore::LayerChromium::setBounds):
+        (WebCore::LayerChromium::setNeedsDisplay):
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::~LayerRendererChromium):
+        (WebCore::LayerRendererChromium::setRootLayerCanvasSize):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::assignTextureForLayer):
+        (WebCore::LayerRendererChromium::compositeLayersRecursive):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::rootLayerGraphicsContext):
+
 2010-05-24  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.
