@@ -1,3 +1,32 @@
+2010-05-24  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        HTML5 <video> tag performance worse than Flash
+        https://bugs.webkit.org/show_bug.cgi?id=39577
+        rdar://problem/7982458
+        
+        Added attachments() back to QTPixelBuffer, as they are necessary for CAImageQueue.
+        
+        WKCACFLayer contents()/setContents() now return/take a CFTypeRef instead of a CGImageRef, which allows
+        a CAImageQueueRef to be set as a layer's contents.
+        
+        WKCAImageQueue is a simple C++ wrapper around the WebKitSystemInterface CAImageQueue functions.
+        
+        MediaPlayerPrivateQuickTimeVisualContext will now use a CAImageQueue to display movie frames if 
+        certain prerequisites are met (QuartzCore.dll and CoreVideo.dll version numbers must meet a certain
+        threshold defined in MediaPlayerPrivateQuickTimeVisualContext.cpp).
+        
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.h:
+        * platform/graphics/win/QTPixelBuffer.cpp:
+        * platform/graphics/win/QTPixelBuffer.h:
+        * platform/graphics/win/WKCACFLayer.cpp:
+        * platform/graphics/win/WKCACFLayer.h:
+        * platform/graphics/win/WKCAImageQueue.cpp: Added.
+        * platform/graphics/win/WKCAImageQueue.h: Added.
+
 2010-05-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -172,6 +172,11 @@ void QTPixelBuffer::getExtendedPixels(size_t* left, size_t* right, size_t* top, 
     return CVPixelBufferGetExtendedPixels(m_pixelBuffer, left, right, top, bottom);
 }
 
+CFDictionaryRef QTPixelBuffer::attachments() const
+{
+    return CVBufferGetAttachments(m_pixelBuffer, kCVAttachmentMode_ShouldPropagate);
+}
+
 void QTPixelBuffer::retainCallback(void* refcon)
 {
     CVPixelBufferRetain(static_cast<CVPixelBufferRef>(refcon));
