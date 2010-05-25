@@ -245,11 +245,16 @@ JavaScriptCallFrame* ScriptDebugServer::currentCallFrame()
     return m_currentCallFrame.get();
 }
 
-ScriptState* ScriptDebugServer::currentCallFrameState()
+void ScriptDebugServer::dispatchDidPause(ScriptDebugListener* listener)
 {
-    if (!m_paused)
-        return 0;
-    return m_currentCallFrame->scopeChain()->globalObject->globalExec();        
+    ASSERT(m_paused);
+    ScriptState* state = m_currentCallFrame->scopeChain()->globalObject->globalExec();        
+    listener->didPause(state);
+}
+
+void ScriptDebugServer::dispatchDidContinue(ScriptDebugListener* listener)
+{
+    listener->didContinue();
 }
 
 void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, const JSC::SourceCode& source)
@@ -335,7 +340,7 @@ void ScriptDebugServer::dispatchFunctionToListeners(const ListenerSet& listeners
     Vector<ScriptDebugListener*> copy;
     copyToVector(listeners, copy);
     for (size_t i = 0; i < copy.size(); ++i)
-        (copy[i]->*callback)();
+        (this->*callback)(copy[i]);
 }
 
 void ScriptDebugServer::dispatchFunctionToListeners(JavaScriptExecutionCallback callback, Page* page)
@@ -431,7 +436,7 @@ void ScriptDebugServer::pauseIfNeeded(Page* page)
     m_pauseOnNextStatement = false;
     m_paused = true;
 
-    dispatchFunctionToListeners(&ScriptDebugListener::didPause, page);
+    dispatchFunctionToListeners(&ScriptDebugServer::dispatchDidPause, page);
 
     setJavaScriptPaused(page->group(), true);
 
@@ -446,7 +451,7 @@ void ScriptDebugServer::pauseIfNeeded(Page* page)
 
     m_paused = false;
 
-    dispatchFunctionToListeners(&ScriptDebugListener::didContinue, page);
+    dispatchFunctionToListeners(&ScriptDebugServer::dispatchDidContinue, page);
 }
 
 void ScriptDebugServer::callEvent(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber)

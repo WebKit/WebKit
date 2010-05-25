@@ -43,9 +43,9 @@ DebuggerScript._pauseOnExceptionsState = DebuggerScript.PauseOnExceptionsState.D
 Debug.clearBreakOnException();
 Debug.clearBreakOnUncaughtException();
 
-DebuggerScript.getAfterCompileScript = function(execState, args)
+DebuggerScript.getAfterCompileScript = function(eventData)
 {
-    return DebuggerScript._formatScript(args.eventData.script_.script_);
+    return DebuggerScript._formatScript(eventData.script_.script_);
 }
 
 DebuggerScript.getScripts = function(contextData)
@@ -137,17 +137,17 @@ DebuggerScript.currentCallFrame = function(execState, args)
     return topFrame;
 }
 
-DebuggerScript.stepIntoStatement = function(execState, args)
+DebuggerScript.stepIntoStatement = function(execState)
 {
     execState.prepareStep(Debug.StepAction.StepIn, 1);
 }
 
-DebuggerScript.stepOverStatement = function(execState, args)
+DebuggerScript.stepOverStatement = function(execState)
 {
     execState.prepareStep(Debug.StepAction.StepNext, 1);
 }
 
-DebuggerScript.stepOutOfFunction = function(execState, args)
+DebuggerScript.stepOutOfFunction = function(execState)
 {
     execState.prepareStep(Debug.StepAction.StepOut, 1);
 }

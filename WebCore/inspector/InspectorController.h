@@ -241,7 +241,7 @@ public:
 
     virtual void didParseSource(const String& sourceID, const String& url, const String& data, int firstLine);
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage);
-    virtual void didPause();
+    virtual void didPause(ScriptState*);
     virtual void didContinue();
 #endif
 

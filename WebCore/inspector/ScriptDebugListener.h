@@ -32,6 +32,8 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
+#include "ScriptState.h"
+
 namespace WebCore {
 
 class String;
@@ -42,7 +44,7 @@ public:
 
     virtual void didParseSource(const String&  sourceID, const String& url, const String& data, int firstLine) = 0;
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) = 0;
-    virtual void didPause() = 0;
+    virtual void didPause(ScriptState*) = 0;
     virtual void didContinue() = 0;
 };
 

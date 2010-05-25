@@ -1628,9 +1628,8 @@ void InspectorController::failedToParseSource(const String& url, const String& d
     m_frontend->failedToParseScriptSource(url, data, firstLine, errorLine, errorMessage);
 }
 
-void InspectorController::didPause()
+void InspectorController::didPause(ScriptState* scriptState)
 {
-    ScriptState* scriptState = ScriptDebugServer::shared().currentCallFrameState();
     ASSERT(scriptState);
     InjectedScript injectedScript = m_injectedScriptHost->injectedScriptFor(scriptState);
     RefPtr<SerializedScriptValue> callFrames = injectedScript.callFrames();

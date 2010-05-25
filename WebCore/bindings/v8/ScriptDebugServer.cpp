@@ -44,7 +44,22 @@
 
 namespace WebCore {
 
-ScriptDebugServer::MessageLoopDispatchHandler ScriptDebugServer::s_messageLoopDispatchHandler = 0;
+static Frame* retrieveFrame(v8::Handle<v8::Context> context)
+{
+    if (context.IsEmpty())
+        return 0;
+
+    // Test that context has associated global dom window object.
+    v8::Handle<v8::Object> global = context->Global();
+    if (global.IsEmpty())
+        return 0;
+
+    global = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), global);
+    if (global.IsEmpty())
+        return 0;
+
+    return V8Proxy::retrieveFrame(context);
+}
 
 ScriptDebugServer& ScriptDebugServer::shared()
 {
@@ -54,7 +69,7 @@ ScriptDebugServer& ScriptDebugServer::shared()
 
 ScriptDebugServer::ScriptDebugServer()
     : m_pauseOnExceptionsState(DontPauseOnExceptions)
-    , m_currentCallFrameState(0)
+    , m_pausedPage(0)
 {
 }
 
@@ -73,8 +88,7 @@ void ScriptDebugServer::addListener(ScriptDebugListener* listener, Page* page)
     if (!m_listenersMap.size()) {
         ensureDebuggerScriptCompiled();
         ASSERT(!m_debuggerScript.get()->IsUndefined());
-        v8::Debug::SetMessageHandler2(&ScriptDebugServer::onV8DebugMessage);
-        v8::Debug::SetHostDispatchHandler(&ScriptDebugServer::onV8DebugHostDispatch, 100 /* ms */);
+        v8::Debug::SetDebugEventListener2(&ScriptDebugServer::v8DebugEventCallback);
     }
     m_listenersMap.set(page, listener);
     V8Proxy* proxy = V8Proxy::retrieve(page->mainFrame());
@@ -97,17 +111,14 @@ void ScriptDebugServer::removeListener(ScriptDebugListener* listener, Page* page
     if (!m_listenersMap.contains(page))
         return;
 
+    if (m_pausedPage == page)
+        continueProgram();
+
     m_listenersMap.remove(page);
 
-    if (m_listenersMap.isEmpty()) {
-        v8::Debug::SetMessageHandler2(0);
-        v8::Debug::SetHostDispatchHandler(0);
-    }
+    if (m_listenersMap.isEmpty())
+        v8::Debug::SetDebugEventListener(0);
     // FIXME: Remove all breakpoints set by the agent.
-    // FIXME: Force continue if detach happened in nessted message loop while
-    // debugger was paused on a breakpoint(as long as there are other
-    // attached agents v8 will wait for explicit'continue' message).
-    // FIXME: send continue command to v8 if necessary;
 }
 
 void ScriptDebugServer::setBreakpoint(const String& sourceID, unsigned lineNumber, ScriptBreakpoint breakpoint)
@@ -152,8 +163,8 @@ void ScriptDebugServer::clearBreakpoints()
     v8::Local<v8::Context> debuggerContext = v8::Debug::GetDebugContext();
     v8::Context::Scope contextScope(debuggerContext);
 
-    v8::Handle<v8::Function> setBreakpointsActivated = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("clearBreakpoints")));
-    v8::Debug::Call(setBreakpointsActivated);
+    v8::Handle<v8::Function> clearBreakpoints = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("clearBreakpoints")));
+    v8::Debug::Call(clearBreakpoints);
 #endif
 }
 
@@ -179,9 +190,9 @@ ScriptDebugServer::PauseOnExceptionsState ScriptDebugServer::pauseOnExceptionsSt
     v8::HandleScope scope;
     v8::Context::Scope contextScope(v8::Debug::GetDebugContext());
 
-    v8::Handle<v8::Function> currentCallFrameFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("pauseOnExceptionsState")));
+    v8::Handle<v8::Function> function = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("pauseOnExceptionsState")));
     v8::Handle<v8::Value> argv[] = { v8::Handle<v8::Value>() };
-    v8::Handle<v8::Value> result = currentCallFrameFunction->Call(m_debuggerScript.get(), 0, argv);
+    v8::Handle<v8::Value> result = function->Call(m_debuggerScript.get(), 0, argv);
     return static_cast<ScriptDebugServer::PauseOnExceptionsState>(result->Int32Value());
 #else
     return DontPauseOnExceptions;
@@ -195,17 +206,17 @@ void ScriptDebugServer::setPauseOnExceptionsState(PauseOnExceptionsState pauseOn
     v8::HandleScope scope;
     v8::Context::Scope contextScope(v8::Debug::GetDebugContext());
 
-    v8::Handle<v8::Function> currentCallFrameFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("setPauseOnExceptionsState")));
+    v8::Handle<v8::Function> setPauseOnExceptionsFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("setPauseOnExceptionsState")));
     v8::Handle<v8::Value> argv[] = { v8::Int32::New(pauseOnExceptionsState) };
-    currentCallFrameFunction->Call(m_debuggerScript.get(), 1, argv);
+    setPauseOnExceptionsFunction->Call(m_debuggerScript.get(), 1, argv);
 #endif
 }
 
 void ScriptDebugServer::continueProgram()
 {
 #if ENABLE(V8_SCRIPT_DEBUG_SERVER)
-    String cmd("{\"seq\":1,\"type\":\"request\",\"command\":\"continue\"}");
-    v8::Debug::SendCommand(reinterpret_cast<const uint16_t*>(cmd.characters()), cmd.length(), new v8::Debug::ClientData());
+    if (m_pausedPage)
+        m_clientMessageLoop->quitNow();
     didResume();
 #endif
 }
@@ -213,33 +224,34 @@ void ScriptDebugServer::continueProgram()
 void ScriptDebugServer::stepIntoStatement()
 {
 #if ENABLE(V8_SCRIPT_DEBUG_SERVER)
-    String cmd("{\"seq\":1,\"type\":\"request\",\"command\":\"continue\",\"arguments\":{\"stepaction\":\"in\"}}");
-    v8::Debug::SendCommand(reinterpret_cast<const uint16_t*>(cmd.characters()), cmd.length(), new v8::Debug::ClientData());
-    didResume();
+    ASSERT(m_pausedPage);
+    v8::Handle<v8::Function> function = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("stepIntoStatement")));
+    v8::Handle<v8::Value> argv[] = { m_executionState.get() };
+    function->Call(m_debuggerScript.get(), 1, argv);
+    continueProgram();
 #endif
 }
 
 void ScriptDebugServer::stepOverStatement()
 {
 #if ENABLE(V8_SCRIPT_DEBUG_SERVER)
-    String cmd("{\"seq\":1,\"type\":\"request\",\"command\":\"continue\",\"arguments\":{\"stepaction\":\"next\"}}");
-    v8::Debug::SendCommand(reinterpret_cast<const uint16_t*>(cmd.characters()), cmd.length(), new v8::Debug::ClientData());
-    didResume();
+    ASSERT(m_pausedPage);
+    v8::Handle<v8::Function> function = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("stepOverStatement")));
+    v8::Handle<v8::Value> argv[] = { m_executionState.get() };
+    function->Call(m_debuggerScript.get(), 1, argv);
+    continueProgram();
 #endif
 }
 
 void ScriptDebugServer::stepOutOfFunction()
 {
 #if ENABLE(V8_SCRIPT_DEBUG_SERVER)
-    String cmd("{\"seq\":1,\"type\":\"request\",\"command\":\"continue\",\"arguments\":{\"stepaction\":\"out\"}}");
-    v8::Debug::SendCommand(reinterpret_cast<const uint16_t*>(cmd.characters()), cmd.length(), new v8::Debug::ClientData());
-    didResume();
+    ASSERT(m_pausedPage);
+    v8::Handle<v8::Function> function = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("stepOutOfFunction")));
+    v8::Handle<v8::Value> argv[] = { m_executionState.get() };
+    function->Call(m_debuggerScript.get(), 1, argv);
+    continueProgram();
 #endif
-}
-
-ScriptState* ScriptDebugServer::currentCallFrameState()
-{
-    return m_currentCallFrameState;
 }
 
 PassRefPtr<JavaScriptCallFrame> ScriptDebugServer::currentCallFrame()
@@ -253,83 +265,48 @@ PassRefPtr<JavaScriptCallFrame> ScriptDebugServer::currentCallFrame()
     return m_currentCallFrame;
 }
 
-void ScriptDebugServer::onV8DebugMessage(const v8::Debug::Message& message)
+#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
+void ScriptDebugServer::v8DebugEventCallback(const v8::Debug::EventDetails& eventDetails)
 {
-    ScriptDebugServer::shared().handleV8DebugMessage(message);
+    ScriptDebugServer::shared().handleV8DebugEvent(eventDetails);
 }
 
-void ScriptDebugServer::onV8DebugHostDispatch()
+void ScriptDebugServer::handleV8DebugEvent(const v8::Debug::EventDetails& eventDetails)
 {
-    ScriptDebugServer::shared().handleV8DebugHostDispatch();
-}
-
-void ScriptDebugServer::handleV8DebugHostDispatch()
-{
-    if (!s_messageLoopDispatchHandler)
+    v8::DebugEvent event = eventDetails.GetEvent();
+    if (event != v8::Break && event != v8::Exception && event != v8::AfterCompile)
         return;
 
-    Vector<WebCore::Page*> pages;
-    for (ListenersMap::iterator it = m_listenersMap.begin(); it != m_listenersMap.end(); ++it)
-        pages.append(it->first);
-    
-    s_messageLoopDispatchHandler(pages);
-}
+    v8::Handle<v8::Context> eventContext = eventDetails.GetEventContext();
+    ASSERT(!eventContext.IsEmpty());
 
-void ScriptDebugServer::handleV8DebugMessage(const v8::Debug::Message& message)
-{
-    v8::HandleScope scope;
-
-    if (!message.IsEvent())
-        return;
-
-    // Ignore unsupported event types.
-    if (message.GetEvent() != v8::AfterCompile && message.GetEvent() != v8::Break && message.GetEvent() != v8::Exception)
-        return;
-
-    v8::Handle<v8::Context> context = message.GetEventContext();
-    // If the context is from one of the inpected tabs it should have its context
-    // data. Skip events from unknown contexts.
-    if (context.IsEmpty())
-        return;
-
-    // Test that context has associated global dom window object.
-    v8::Handle<v8::Object> global = context->Global();
-    if (global.IsEmpty())
-        return;
-
-    global = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), global);
-    if (global.IsEmpty())
-        return;
-
-    bool handled = false;
-    Frame* frame = V8Proxy::retrieveFrame(context);
+    Frame* frame = retrieveFrame(eventContext);
     if (frame) {
         ScriptDebugListener* listener = m_listenersMap.get(frame->page());
         if (listener) {
-            if (message.GetEvent() == v8::AfterCompile) {
-                handled = true;
+            v8::HandleScope scope;
+            if (event == v8::AfterCompile) {
                 v8::Context::Scope contextScope(v8::Debug::GetDebugContext());
-                v8::Local<v8::Object> args = v8::Object::New();
-                args->Set(v8::String::New("eventData"), message.GetEventData());
                 v8::Handle<v8::Function> onAfterCompileFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("getAfterCompileScript")));
-                v8::Handle<v8::Value> argv[] = { message.GetExecutionState(), args };
-                v8::Handle<v8::Value> value = onAfterCompileFunction->Call(m_debuggerScript.get(), 2, argv);
+                v8::Handle<v8::Value> argv[] = { eventDetails.GetEventData() };
+                v8::Handle<v8::Value> value = onAfterCompileFunction->Call(m_debuggerScript.get(), 1, argv);
                 ASSERT(value->IsObject());
                 v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(value);
                 dispatchDidParseSource(listener, object);
-            } else if (message.GetEvent() == v8::Break || message.GetEvent() == v8::Exception) {
-                handled = true;
-                m_executionState.set(message.GetExecutionState());
-                m_currentCallFrameState = mainWorldScriptState(frame);
-                listener->didPause();
-                m_currentCallFrameState = 0;
+            } else if (event == v8::Break || event == v8::Exception) {
+                m_executionState.set(eventDetails.GetExecutionState());
+                m_pausedPage = frame->page();
+                ScriptState* currentCallFrameState = mainWorldScriptState(frame);
+                listener->didPause(currentCallFrameState);
+
+                // Wait for continue or step command.
+                m_clientMessageLoop->run(m_pausedPage);
+                ASSERT(!m_pausedPage);
             }
         }
     }
-
-    if (!handled && !message.WillStartRunning())
-        continueProgram();
 }
+#endif
 
 void ScriptDebugServer::dispatchDidParseSource(ScriptDebugListener* listener, v8::Handle<v8::Object> object)
 {
@@ -354,6 +331,7 @@ void ScriptDebugServer::didResume()
 {
     m_currentCallFrame.clear();
     m_executionState.clear();
+    m_pausedPage = 0;
 }
 
 } // namespace WebCore

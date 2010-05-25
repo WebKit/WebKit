@@ -56,6 +56,14 @@ public:
     virtual WebCString injectedScriptSource() { return WebCString(); }
     virtual WebCString injectedScriptDispatcherSource() { return WebCString(); }
 
+    class WebKitClientMessageLoop {
+    public:
+        virtual ~WebKitClientMessageLoop() { }
+        virtual void run() = 0;
+        virtual void quitNow() = 0;
+    };
+    virtual WebKitClientMessageLoop* createClientMessageLoop() { return 0; }
+
 protected:
     ~WebDevToolsAgentClient() { }
 };

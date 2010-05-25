@@ -1,3 +1,40 @@
+2010-05-24  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        ScriptDebugServer is now implemented as DebugEventListener which means it doesn't
+        depend on v8 debugging protocol, instead it uses ExecState to collect debugging
+        info and pass it to the listeners.
+
+        New implementation of ScriptDebugServer uses methods provided by client to dispatch
+        its messages while JS is paused(previously the messages was dispatched in a callback
+        passed to v8 along with DebugEventHandler).
+
+        Pause command is dispatched on IO thread.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39594
+
+        * public/WebDevToolsAgentClient.h:
+        (WebKit::WebDevToolsAgentClient::ClientMessageLoop::~ClientMessageLoop):
+        (WebKit::WebDevToolsAgentClient::createClientMessageLoop): Returns an object that allows to run
+        nested client message loop while script execution is paused on a breakpoint.
+        * src/DebuggerAgentManager.cpp:
+        (WebKit::DebuggerAgentManager::setMessageLoopDispatchHandler):
+        * src/DebuggerAgentManager.h:
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::):
+        (WebKit::WebDevToolsAgentImpl::~WebDevToolsAgentImpl):
+        (WebKit::WebDevToolsAgentImpl::attach):
+        * src/js/DebuggerScript.js:
+        (debuggerScriptConstructor.DebuggerScript.getAfterCompileScript):
+        (debuggerScriptConstructor.DebuggerScript.stepIntoStatement):
+        (debuggerScriptConstructor.DebuggerScript.stepOverStatement):
+        (debuggerScriptConstructor.DebuggerScript.stepOutOfFunction):
+        * src/js/InspectorControllerImpl.js:
+        (devtools.InspectorBackendImpl):
+        (else.devtools.InspectorBackendImpl.prototype.pauseInDebugger): Pause command should be handled on IO
+        thread so that script can be paused even if it's in an infinite loop.
+
 2010-05-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

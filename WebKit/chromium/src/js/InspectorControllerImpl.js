@@ -94,7 +94,6 @@ devtools.InspectorBackendImpl = function()
     this.installInspectorControllerDelegate_("removeBreakpoint");
     this.installInspectorControllerDelegate_("activateBreakpoints");
     this.installInspectorControllerDelegate_("deactivateBreakpoints");
-    this.installInspectorControllerDelegate_("pauseInDebugger");
     this.installInspectorControllerDelegate_("resumeDebugger");
     this.installInspectorControllerDelegate_("stepIntoStatementInDebugger");
     this.installInspectorControllerDelegate_("stepOutOfFunctionInDebugger");
@@ -215,6 +214,13 @@ devtools.InspectorBackendImpl.prototype.pauseOnExceptions = function()
 devtools.InspectorBackendImpl.prototype.setPauseOnExceptions = function(value)
 {
     return devtools.tools.getDebuggerAgent().setPauseOnExceptions(value);
+};
+
+} else {
+
+devtools.InspectorBackendImpl.prototype.pauseInDebugger = function()
+{
+    RemoteDebuggerCommandExecutor.DebuggerPauseScript();
 };
 
 }

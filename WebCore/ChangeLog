@@ -1,3 +1,49 @@
+2010-05-24  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        ScriptDebugServer is now implemented as DebugEventListener which means it doesn't
+        depend on v8 debugging protocol, instead it uses ExecState to collect debugging
+        info and pass it to the listeners.
+
+        New implementation of ScriptDebugServer uses methods provided by client to dispatch
+        its messages while JS is paused(previously the messages was dispatched in a callback
+        passed to v8 along with DebugEventHandler).
+
+        https://bugs.webkit.org/show_bug.cgi?id=39594
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::dispatchDidPause):
+        (WebCore::ScriptDebugServer::dispatchDidContinue):
+        (WebCore::ScriptDebugServer::dispatchFunctionToListeners): Changed method signature to allow
+        invocation of ScriptDebugListener methods that have non-empty argument list.
+        (WebCore::ScriptDebugServer::pauseIfNeeded):
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::retrieveFrame):
+        (WebCore::ScriptDebugServer::ScriptDebugServer):
+        (WebCore::ScriptDebugServer::addListener):
+        (WebCore::ScriptDebugServer::removeListener): Execution is resumed(nested message loop is terminated) when
+        corresponding debugger window closes.
+        (WebCore::ScriptDebugServer::clearBreakpoints):
+        (WebCore::ScriptDebugServer::pauseOnExceptionsState):
+        (WebCore::ScriptDebugServer::setPauseOnExceptionsState):
+        (WebCore::ScriptDebugServer::continueProgram):
+        (WebCore::ScriptDebugServer::stepIntoStatement):
+        (WebCore::ScriptDebugServer::stepOverStatement):
+        (WebCore::ScriptDebugServer::stepOutOfFunction):
+        (WebCore::ScriptDebugServer::v8DebugEventCallback):
+        (WebCore::ScriptDebugServer::handleV8DebugEvent):
+        (WebCore::ScriptDebugServer::didResume):
+        * bindings/v8/ScriptDebugServer.h:
+        (WebCore::ScriptDebugServer::ClientMessageLoop::~ClientMessageLoop):
+        (WebCore::ScriptDebugServer::setClientMessageLoop):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didPause):
+        * inspector/InspectorController.h:
+        * inspector/ScriptDebugListener.h: Changed didPause signature to explicitly pass ScriptState
+        where execution is paused.
+
 2010-05-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

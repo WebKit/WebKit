@@ -100,7 +100,6 @@ private:
     DebuggerAgentManager();
     ~DebuggerAgentManager();
 
-    static void hostDispatchHandler(const Vector<WebCore::Page*>&);
     static void debugHostDispatchHandler();
     static void onV8DebugMessage(const v8::Debug::Message& message);
     static void sendCommandToV8(const WebCore::String& cmd,
