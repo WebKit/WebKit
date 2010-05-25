@@ -1,3 +1,12 @@
+2010-05-24  Tony Chang  <tony@chromium.org>
+
+        Not reviewed, build fix.
+
+        Fix the chromium compile due to pageZoomFactor refactoring.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setZoomLevel):
+
 2010-05-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric Seidel.

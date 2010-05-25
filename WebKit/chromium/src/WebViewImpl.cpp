@@ -1464,7 +1464,7 @@ int WebViewImpl::setZoomLevel(bool textOnly, int zoomLevel)
     FrameView* view = frame->view();
     if (!view)
         return m_zoomLevel;
-    if (zoomFactor != frame->zoomFactor()) {
+    if (zoomFactor != view->pageZoomFactor()) {
         m_zoomLevel = zoomLevel;
         view->setZoomFactor(zoomFactor, textOnly ? ZoomTextOnly : ZoomPage);
     }

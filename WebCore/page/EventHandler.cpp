@@ -2746,7 +2746,7 @@ static PassRefPtr<TouchList> assembleTargetTouches(Touch* touchTarget, TouchList
 static float pageZoomFactor(Frame* frame)
 {
     FrameView* view = frame->view();
-    return view ? view->pageZoomFactor : 1.0f;
+    return view ? view->pageZoomFactor() : 1.0f;
 }
 
 bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
