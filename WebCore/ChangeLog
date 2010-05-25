@@ -1,3 +1,14 @@
+2010-05-25  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        Allow FTS3 functions.
+        https://bugs.webkit.org/show_bug.cgi?id=38003
+
+        * storage/DatabaseAuthorizer.cpp:
+        (WebCore::DatabaseAuthorizer::addWhitelistedFunctions):
+        (WebCore::DatabaseAuthorizer::createVTable):
+
 2010-05-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

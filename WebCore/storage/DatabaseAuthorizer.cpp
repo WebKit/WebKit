@@ -102,6 +102,7 @@ void DatabaseAuthorizer::addWhitelistedFunctions()
     m_whitelistedFunctions.add("total");
 
     // SQLite FTS functions
+    m_whitelistedFunctions.add("match");
     m_whitelistedFunctions.add("snippet");
     m_whitelistedFunctions.add("offsets");
     m_whitelistedFunctions.add("optimize");
@@ -268,8 +269,8 @@ int DatabaseAuthorizer::createVTable(const String& tableName, const String& modu
     if (m_readOnly && m_securityEnabled)
         return SQLAuthDeny;
 
-    // fts2 is used in Chromium
-    if (moduleName != "fts2")
+    // Allow only the FTS3 extension
+    if (moduleName != "fts3")
         return SQLAuthDeny;
 
     m_lastActionChangedDatabase = true;
