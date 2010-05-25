@@ -12,16 +12,6 @@ CONSOLE MESSAGE: line 1: SyntaxError: Parse error
 CONSOLE MESSAGE: line 1: SyntaxError: Parse error
 CONSOLE MESSAGE: line 2: PASS
 CONSOLE MESSAGE: line 2: FOO<span>BAR</span>BAZ
-CONSOLE MESSAGE: line 1: SyntaxError: Parse error
-CONSOLE MESSAGE: line 1: SyntaxError: Parse error
-CONSOLE MESSAGE: line 1: SyntaxError: Parse error
-CONSOLE MESSAGE: line 1: SyntaxError: Parse error
-CONSOLE MESSAGE: line 1: SyntaxError: Parse error
-CONSOLE MESSAGE: line 1: SyntaxError: Parse error
-CONSOLE MESSAGE: line 1: SyntaxError: Parse error
-CONSOLE MESSAGE: line 1: SyntaxError: Parse error
-CONSOLE MESSAGE: line 1: SyntaxError: Parse error
-CONSOLE MESSAGE: line 1: SyntaxError: Parse error
 Content-Type: text/plain
 resources/tests1.dat: 25, 29, 30, 32, 33, 34, 35, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 50, 51, 52, 53, 54, 57, 59, 78, 79, 80, 81, 82, 87, 90, 91, 92, 96, 98, 101, 104, 106, 109, 113
 

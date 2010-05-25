@@ -55,7 +55,7 @@ FOO<script></script/ >BAR
 |     "BAR"
 
 #data
-FOO<script></scriptx>BAR
+FOO<script type="text/plain"></scriptx>BAR
 #errors
 #document
 | <html>
@@ -63,6 +63,7 @@ FOO<script></scriptx>BAR
 |   <body>
 |     "FOO"
 |     <script>
+|       type="text/plain"
 |       "</scriptx>BAR"
 
 #data
@@ -185,7 +186,7 @@ FOO<script>'<!-- <sCrIpt'</script>BAR
 |     "BAR"
 
 #data
-FOO<script>'<!-- <sCrIpt>'</script>BAR
+FOO<script type="text/plain">'<!-- <sCrIpt>'</script>BAR
 #errors
 #document
 | <html>
@@ -193,10 +194,11 @@ FOO<script>'<!-- <sCrIpt>'</script>BAR
 |   <body>
 |     "FOO"
 |     <script>
+|       type="text/plain"
 |       "'<!-- <sCrIpt>'</script>BAR"
 
 #data
-FOO<script>'<!-- <sCrIpt> -'</script>BAR
+FOO<script type="text/plain">'<!-- <sCrIpt> -'</script>BAR
 #errors
 #document
 | <html>
@@ -204,10 +206,11 @@ FOO<script>'<!-- <sCrIpt> -'</script>BAR
 |   <body>
 |     "FOO"
 |     <script>
+|       type="text/plain"
 |       "'<!-- <sCrIpt> -'</script>BAR"
 
 #data
-FOO<script>'<!-- <sCrIpt> --'</script>BAR
+FOO<script type="text/plain">'<!-- <sCrIpt> --'</script>BAR
 #errors
 #document
 | <html>
@@ -215,6 +218,7 @@ FOO<script>'<!-- <sCrIpt> --'</script>BAR
 |   <body>
 |     "FOO"
 |     <script>
+|       type="text/plain"
 |       "'<!-- <sCrIpt> --'</script>BAR"
 
 #data
@@ -230,7 +234,7 @@ FOO<script>'<!-- <sCrIpt> -->'</script>BAR
 |     "BAR"
 
 #data
-FOO<script>'<!-- <sCrIpt> --!>'</script>BAR
+FOO<script type="text/plain">'<!-- <sCrIpt> --!>'</script>BAR
 #errors
 #document
 | <html>
@@ -238,10 +242,11 @@ FOO<script>'<!-- <sCrIpt> --!>'</script>BAR
 |   <body>
 |     "FOO"
 |     <script>
+|       type="text/plain"
 |       "'<!-- <sCrIpt> --!>'</script>BAR"
 
 #data
-FOO<script>'<!-- <sCrIpt> -- >'</script>BAR
+FOO<script type="text/plain">'<!-- <sCrIpt> -- >'</script>BAR
 #errors
 #document
 | <html>
@@ -249,10 +254,11 @@ FOO<script>'<!-- <sCrIpt> -- >'</script>BAR
 |   <body>
 |     "FOO"
 |     <script>
+|       type="text/plain"
 |       "'<!-- <sCrIpt> -- >'</script>BAR"
 
 #data
-FOO<script>'<!-- <sCrIpt '</script>BAR
+FOO<script type="text/plain">'<!-- <sCrIpt '</script>BAR
 #errors
 #document
 | <html>
@@ -260,10 +266,11 @@ FOO<script>'<!-- <sCrIpt '</script>BAR
 |   <body>
 |     "FOO"
 |     <script>
+|       type="text/plain"
 |       "'<!-- <sCrIpt '</script>BAR"
 
 #data
-FOO<script>'<!-- <sCrIpt/'</script>BAR
+FOO<script type="text/plain">'<!-- <sCrIpt/'</script>BAR
 #errors
 #document
 | <html>
@@ -271,10 +278,11 @@ FOO<script>'<!-- <sCrIpt/'</script>BAR
 |   <body>
 |     "FOO"
 |     <script>
+|       type="text/plain"
 |       "'<!-- <sCrIpt/'</script>BAR"
 
 #data
-FOO<script>'<!-- <sCrIpt\'</script>BAR
+FOO<script type="text/plain">'<!-- <sCrIpt\'</script>BAR
 #errors
 #document
 | <html>
@@ -282,11 +290,12 @@ FOO<script>'<!-- <sCrIpt\'</script>BAR
 |   <body>
 |     "FOO"
 |     <script>
+|       type="text/plain"
 |       "'<!-- <sCrIpt\'"
 |     "BAR"
 
 #data
-FOO<script>'<!-- <sCrIpt/'</script>BAR</script>QUX
+FOO<script type="text/plain">'<!-- <sCrIpt/'</script>BAR</script>QUX
 #errors
 #document
 | <html>
@@ -294,5 +303,6 @@ FOO<script>'<!-- <sCrIpt/'</script>BAR</script>QUX
 |   <body>
 |     "FOO"
 |     <script>
+|       type="text/plain"
 |       "'<!-- <sCrIpt/'</script>BAR"
 |     "QUX"

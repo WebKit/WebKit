@@ -1,5 +1,17 @@
 2010-05-25  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.
+
+        Use @type="text/plain" to silence JavaScript parse errors.  These
+        errors show up differently in JSC and V8 and that's not what we're
+        trying to test with this test.
+
+        * html5lib/resources/scriptdata01.dat:
+        * html5lib/webkit-runner-expected-html5.txt:
+        * html5lib/webkit-runner-expected.txt:
+
+2010-05-25  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Fix <noembed> and <plaintext> content models
