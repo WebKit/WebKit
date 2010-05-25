@@ -1202,28 +1202,6 @@ RVCT()
 #define DEFINE_STUB_FUNCTION(rtype, op) rtype JIT_STUB cti_##op(STUB_ARGS_DECLARATION)
 #endif
 
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_create_this)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-    CallFrame* callFrame = stackFrame.callFrame;
-
-    JSFunction* constructor = asFunction(callFrame->callee());
-#if !ASSERT_DISABLED
-    ConstructData constructData;
-    ASSERT(constructor->getConstructData(constructData) == ConstructTypeJS);
-#endif
-
-    Structure* structure;
-    JSValue proto = stackFrame.args[0].jsValue();
-    if (proto.isObject())
-        structure = asObject(proto)->inheritorID();
-    else
-        structure = constructor->scope().node()->globalObject->emptyObjectStructure();
-    JSValue result = new (&callFrame->globalData()) JSObject(structure);
-
-    return JSValue::encode(result);
-}
-
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_convert_this)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
@@ -2124,6 +2102,32 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve)
     VM_THROW_EXCEPTION();
 }
 
+DEFINE_STUB_FUNCTION(JSObject*, op_construct_JSConstruct)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+
+    JSFunction* constructor = asFunction(stackFrame.args[0].jsValue());
+    if (constructor->isHostFunction()) {
+        CallFrame* callFrame = stackFrame.callFrame;
+        CodeBlock* codeBlock = callFrame->codeBlock();
+        unsigned vPCIndex = codeBlock->bytecodeOffset(callFrame, STUB_RETURN_ADDRESS);
+        stackFrame.globalData->exception = createNotAConstructorError(callFrame, constructor, vPCIndex, codeBlock);
+        VM_THROW_EXCEPTION();
+    }
+
+#if !ASSERT_DISABLED
+    ConstructData constructData;
+    ASSERT(constructor->getConstructData(constructData) == ConstructTypeJS);
+#endif
+
+    Structure* structure;
+    if (stackFrame.args[3].jsValue().isObject())
+        structure = asObject(stackFrame.args[3].jsValue())->inheritorID();
+    else
+        structure = constructor->scope().node()->globalObject->emptyObjectStructure();
+    return new (stackFrame.globalData) JSObject(structure);
+}
+
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_construct_NotJSConstruct)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
@@ -2132,14 +2136,13 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_construct_NotJSConstruct)
 
     JSValue constrVal = stackFrame.args[0].jsValue();
     int argCount = stackFrame.args[2].int32();
+    int thisRegister = stackFrame.args[4].int32();
 
     ConstructData constructData;
     ConstructType constructType = constrVal.getConstructData(constructData);
 
     if (constructType == ConstructTypeHost) {
-        int registerOffset = stackFrame.args[1].int32();
-        Register* thisRegister = callFrame->registers() + registerOffset - RegisterFile::CallFrameHeaderSize - argCount;
-        ArgList argList(thisRegister + 1, argCount - 1);
+        ArgList argList(callFrame->registers() + thisRegister + 1, argCount - 1);
 
         JSValue returnValue;
         {
@@ -3423,7 +3426,7 @@ PassRefPtr<NativeExecutable> JITThunks::hostFunctionStub(JSGlobalData* globalDat
 {
     std::pair<HostFunctionStubMap::iterator, bool> entry = m_hostFunctionStubMap.add(function, 0);
     if (entry.second)
-        entry.first->second = NativeExecutable::create(JIT::compileCTINativeCall(globalData, m_executablePool, function), function, ctiNativeConstruct(), callHostFunctionAsConstructor);
+        entry.first->second = NativeExecutable::create(JIT::compileCTINativeCall(globalData, m_executablePool, function), function);
     return entry.first->second;
 }
 
@@ -3431,7 +3434,7 @@ PassRefPtr<NativeExecutable> JITThunks::hostFunctionStub(JSGlobalData* globalDat
 {
     std::pair<HostFunctionStubMap::iterator, bool> entry = m_hostFunctionStubMap.add(function, 0);
     if (entry.second)
-        entry.first->second = NativeExecutable::create(generator(globalData, m_executablePool.get()), function, ctiNativeConstruct(), callHostFunctionAsConstructor);
+        entry.first->second = NativeExecutable::create(generator(globalData, m_executablePool.get()), function);
     return entry.first->second;
 }
 

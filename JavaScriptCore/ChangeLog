@@ -1,1 +1,50 @@
+2010-05-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (revert).
+
+        Reverting 60075 & 60084, these broke the interpreter.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::getByIdExceptionInfoForBytecodeOffset):
+        * bytecode/CodeBlock.h:
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitConstruct):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitGetByIdExceptionInfo):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpConstructSetupArgs):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpConstructSetupArgs):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::emit_op_neq_null):
+        (JSC::JIT::emit_op_convert_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC::JITThunks::hostFunctionStub):
+        * jit/JITStubs.h:
+        (JSC::JITThunks::ctiNativeCall):
+        (JSC::):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createNotAnObjectError):
+        * runtime/Executable.h:
+        (JSC::NativeExecutable::create):
+        (JSC::NativeExecutable::NativeExecutable):
+        * runtime/JSFunction.cpp:
+        * runtime/JSFunction.h:
+
 == Rolled over to ChangeLog-2010-05-24 ==

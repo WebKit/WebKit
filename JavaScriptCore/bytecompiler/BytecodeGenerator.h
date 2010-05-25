@@ -248,10 +248,10 @@ namespace JSC {
         {
             // Only op_construct and op_instanceof need exception info for
             // a preceding op_get_by_id.
-            ASSERT(opcodeID == op_create_this || opcodeID == op_instanceof);
+            ASSERT(opcodeID == op_construct || opcodeID == op_instanceof);
             GetByIdExceptionInfo info;
             info.bytecodeOffset = instructions().size();
-            info.isOpCreateThis = (opcodeID == op_create_this);
+            info.isOpConstruct = (opcodeID == op_construct);
             m_codeBlock->addGetByIdExceptionInfo(info);
         }
         

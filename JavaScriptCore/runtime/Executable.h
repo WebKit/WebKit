@@ -93,9 +93,9 @@ namespace JSC {
     class NativeExecutable : public ExecutableBase {
         friend class JIT;
     public:
-        static PassRefPtr<NativeExecutable> create(MacroAssemblerCodePtr callThunk, NativeFunction function, MacroAssemblerCodePtr constructThunk, NativeFunction constructor)
+        static PassRefPtr<NativeExecutable> create(MacroAssemblerCodePtr thunk, NativeFunction function)
         {
-            return adoptRef(new NativeExecutable(JITCode::HostFunction(callThunk), function, JITCode::HostFunction(constructThunk), constructor));
+            return adoptRef(new NativeExecutable(JITCode::HostFunction(thunk), function));
         }
 
         ~NativeExecutable();
@@ -103,19 +103,15 @@ namespace JSC {
         NativeFunction function() { return m_function; }
 
     private:
-        NativeExecutable(JITCode callThunk, NativeFunction function, JITCode constructThunk, NativeFunction constructor)
+        NativeExecutable(JITCode thunk, NativeFunction function)
             : ExecutableBase(NUM_PARAMETERS_IS_HOST)
             , m_function(function)
-            , m_constructor(constructor)
         {
-            m_jitCodeForCall = callThunk;
-            m_jitCodeForConstruct = constructThunk;
+            m_jitCodeForCall = thunk;
+            m_jitCodeForConstruct = thunk;
         }
 
         NativeFunction m_function;
-        // Probably should be a NativeConstructor, but this will currently require rewriting the JIT
-        // trampoline. It may be easier to make NativeFunction be passed 'this' as a part of the ArgList.
-        NativeFunction m_constructor;
     };
 #endif
 

@@ -269,7 +269,6 @@ namespace JSC {
         void privateCompilePutByIdTransition(StructureStubInfo*, Structure*, Structure*, size_t cachedOffset, StructureChain*, ReturnAddressPtr returnAddress);
 
         void privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executablePool, JSGlobalData* data, TrampolineStructure *trampolines);
-        Label privateCompileCTINativeCall(JSGlobalData*, bool isConstruct = false);
         CodePtr privateCompileCTINativeCall(PassRefPtr<ExecutablePool> executablePool, JSGlobalData* data, NativeFunction func);
         void privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress);
 
@@ -655,8 +654,6 @@ namespace JSC {
         void emit_op_call_put_result(Instruction*);
         void emit_op_catch(Instruction*);
         void emit_op_construct(Instruction*);
-        void emit_op_get_callee(Instruction*);
-        void emit_op_create_this(Instruction*);
         void emit_op_convert_this(Instruction*);
         void emit_op_create_arguments(Instruction*);
         void emit_op_debug(Instruction*);
