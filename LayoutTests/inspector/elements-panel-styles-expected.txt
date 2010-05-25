@@ -15,11 +15,11 @@ width: auto;
 [expanded] Style Attribute (element’s “style” attribute)
 display: none;
 
-[expanded] .foo, .foo::before (resources/elements-panel-styles.css:15)
+[expanded] .foo, .foo::before (elements-panel-styles.css:15)
 color: blue;
 content: '[before Foo]';
 
-[expanded] .foo (resources/elements-panel-styles.css:10)
+[expanded] .foo (elements-panel-styles.css:10)
 /-- overloaded --/ color: black;
 margin: 10px 0px 2px;
 > margin-top: 10px;
@@ -31,30 +31,30 @@ margin: 10px 0px 2px;
 /-- overloaded --/ display: block;
 
 ======== Inherited from div#container ========
-[collapsed] #container (resources/elements-panel-styles.css:5)
+[collapsed] #container (elements-panel-styles.css:5)
 font-family: serif;
 font-size: 14px;
 
 ======== Inherited from body ========
-[collapsed] body (resources/elements-panel-styles.css:1)
+[collapsed] body (elements-panel-styles.css:1)
 /-- overloaded --/ font-size: 12px;
 
 
 ======== Pseudo ::before element ========
-[expanded] .foo::before (resources/elements-panel-styles.css:20)
+[expanded] .foo::before (elements-panel-styles.css:20)
 color: red;
 
-[expanded] .foo, .foo::before (resources/elements-panel-styles.css:15)
+[expanded] .foo, .foo::before (elements-panel-styles.css:15)
 /-- overloaded --/ color: blue;
 content: '[before Foo]';
 
 
 ======== Pseudo ::after element ========
-[expanded] .foo::after (resources/elements-panel-styles.css:28)
+[expanded] .foo::after (elements-panel-styles.css:28)
 content: '[after Foo 2]';
 font-family: courier;
 
-[expanded] .foo::after (resources/elements-panel-styles.css:24)
+[expanded] .foo::after (elements-panel-styles.css:24)
 color: green;
 /-- overloaded --/ content: '[after Foo]';
 

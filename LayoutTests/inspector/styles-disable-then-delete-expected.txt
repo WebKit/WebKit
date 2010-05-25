@@ -1,17 +1,4 @@
+FAIL: Timed out waiting for notifyDone to be called
 Tests that removal of property following its disabling works.
-
-Before disable
-[expanded] element.style { (element’s “style” attribute)
-font-weight: bold;
-
-
-After disable
-[expanded] element.style { (element’s “style” attribute)
-/-- overloaded --/ /-- disabled --/ font-weight: bold;
-
-
-After delete
-[expanded] element.style { (element’s “style” attribute)
-
 
 
