@@ -1,5 +1,11 @@
 2010-05-24  Kent Tamura  <tkent@chromium.org>
 
+        Unreviewed. Sort features.
+
+        * features.gypi:
+
+2010-05-24  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         [DRT/Chromium] Import layout_test_helper for Windows
