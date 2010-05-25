@@ -59,6 +59,8 @@ private:
     static void tileDisplayCallback(CACFLayerRef, CGContextRef);
     void drawTile(CACFLayerRef, CGContextRef);
 
+    CGSize constrainedSize(const CGSize& size) const;
+
     void addTile();
     void removeTile();
     CACFLayerRef tileAtIndex(int);
@@ -67,6 +69,7 @@ private:
     void updateTiles();
 
     CGSize m_tileSize;
+    CGSize m_constrainedSize;
     RetainPtr<CACFLayerRef> m_tileParent;
 };
 
