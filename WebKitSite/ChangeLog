@@ -1,3 +1,22 @@
+2010-05-24  David Levin  <levin@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Improve canvas perf test accuracy.
+        https://bugs.webkit.org/show_bug.cgi?id=39635
+
+        * demos/canvas-perf/canvas.html:
+          1. Change the various tests to get the image data for the result
+             to help ensure that the operation has completed by the time,
+             and subtract out the time needed to do this.
+          2. Made the test more flexible about number of repetitions and
+             image size.
+          3. Make the tests run separately and have a pause between them
+             to allow for garbage collection so that results are more
+             consistent.
+          4. Added a standard logging function and shouldBe asserts to
+             verify that the correct scaling operations were happening.
+
 2010-05-20  Daniel Bates  <dbates@rim.com>
 
         Rubber-stamped by Simon Fraser.
