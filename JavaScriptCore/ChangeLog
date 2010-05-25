@@ -1,5 +1,13 @@
 2010-05-25  Geoffrey Garen  <ggaren@apple.com>
 
+        Fixed build failure caused by merge.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION): On error, return a single value, since this
+        function no longer returns a pair.
+
+2010-05-25  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Oliver Hunt.
 
         <rdar://problem/8020221>

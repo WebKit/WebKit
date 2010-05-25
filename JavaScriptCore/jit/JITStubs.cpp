@@ -1859,7 +1859,7 @@ DEFINE_STUB_FUNCTION(void*, op_call_arityCheck)
             // moved the call frame forward.
             stackFrame.callFrame = oldCallFrame;
             throwStackOverflowError(oldCallFrame, stackFrame.globalData, stackFrame.args[1].returnAddress(), STUB_RETURN_ADDRESS);
-            RETURN_POINTER_PAIR(0, 0);
+            return 0;
         }
 
         Register* argv = r - RegisterFile::CallFrameHeaderSize - numParameters - argCount;
@@ -1916,7 +1916,7 @@ DEFINE_STUB_FUNCTION(void*, op_construct_arityCheck)
             // moved the call frame forward.
             stackFrame.callFrame = oldCallFrame;
             throwStackOverflowError(oldCallFrame, stackFrame.globalData, stackFrame.args[1].returnAddress(), STUB_RETURN_ADDRESS);
-            RETURN_POINTER_PAIR(0, 0);
+            return 0;
         }
 
         Register* argv = r - RegisterFile::CallFrameHeaderSize - numParameters - argCount;
