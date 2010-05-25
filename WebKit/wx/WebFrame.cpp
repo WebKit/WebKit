@@ -305,7 +305,7 @@ bool wxWebFrame::CanRedo()
 
 bool wxWebFrame::CanIncreaseTextSize() const
 {
-    if (m_impl->frame) {
+    if (m_impl->frame && m_impl->frame->view()) {
         if (m_textMagnifier*TextSizeMultiplierRatio <= MaximumTextSizeMultiplier)
             return true;
     }
@@ -316,13 +316,13 @@ void wxWebFrame::IncreaseTextSize()
 {
     if (CanIncreaseTextSize()) {
         m_textMagnifier = m_textMagnifier*TextSizeMultiplierRatio;
-        m_impl->frame->setZoomFactor(m_textMagnifier, WebCore::ZoomTextOnly);
+        m_impl->frame->view()->setZoomFactor(m_textMagnifier, WebCore::ZoomTextOnly);
     }
 }
 
 bool wxWebFrame::CanDecreaseTextSize() const
 {
-    if (m_impl->frame) {
+    if (m_impl->frame && m_impl->frame->view()) {
         if (m_textMagnifier/TextSizeMultiplierRatio >= MinimumTextSizeMultiplier)
             return true;
     }
@@ -333,15 +333,15 @@ void wxWebFrame::DecreaseTextSize()
 {        
     if (CanDecreaseTextSize()) {
         m_textMagnifier = m_textMagnifier/TextSizeMultiplierRatio;
-        m_impl->frame->setZoomFactor(m_textMagnifier, WebCore::ZoomTextOnly);
+        m_impl->frame->view()->setZoomFactor(m_textMagnifier, WebCore::ZoomTextOnly);
     }
 }
 
 void wxWebFrame::ResetTextSize()
 {
     m_textMagnifier = 1.0;
-    if (m_impl->frame)
-        m_impl->frame->setZoomFactor(m_textMagnifier, WebCore::ZoomTextOnly);
+    if (m_impl->frame && m_impl->frame->view())
+        m_impl->frame->view()->setZoomFactor(m_textMagnifier, WebCore::ZoomTextOnly);
 }
 
 void wxWebFrame::MakeEditable(bool enable)

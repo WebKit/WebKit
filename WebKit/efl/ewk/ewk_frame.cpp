@@ -634,8 +634,6 @@ Eina_Bool ewk_frame_editable_set(Evas_Object* o, Eina_Bool editable)
         return EINA_TRUE;
     if (editable)
         sd->frame->applyEditingStyleToBodyElement();
-    else
-        sd->frame->removeEditingStyleFromBodyElement();
     return EINA_TRUE;
 }
 
@@ -971,7 +969,10 @@ float ewk_frame_zoom_get(const Evas_Object* o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, -1.0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, -1.0);
-    return sd->frame->zoomFactor();
+    FrameView* view = sd->frame->view();
+    if (!view)
+        return -1;
+    return view->zoomFactor();
 }
 
 /**
@@ -993,7 +994,10 @@ Eina_Bool ewk_frame_zoom_set(Evas_Object* o, float zoom)
         zoomMode = WebCore::ZoomTextOnly;
     else
         zoomMode = WebCore::ZoomPage;
-    sd->frame->setZoomFactor(zoom, zoomMode);
+    FrameView* view = sd->frame->view();
+    if (!view)
+        return EINA_FALSE;
+    view->setZoomFactor(zoom, zoomMode);
     return EINA_TRUE;
 }
 
@@ -1032,7 +1036,10 @@ Eina_Bool ewk_frame_zoom_text_only_set(Evas_Object* o, Eina_Bool setting)
         zoomMode = WebCore::ZoomTextOnly;
     else
         zoomMode = WebCore::ZoomPage;
-    sd->frame->setZoomFactor(sd->frame->zoomFactor(), zoomMode);
+    FrameView* view = sd->frame->view();
+    if (!view)
+        return EINA_FALSE;
+    view->setZoomFactor(view->zoomFactor(), zoomMode);
     return EINA_TRUE;
 }
 

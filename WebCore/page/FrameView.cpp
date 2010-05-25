@@ -107,6 +107,17 @@ struct ScheduledEvent : Noncopyable {
     RefPtr<Node> m_eventTarget;
 };
 
+static inline float parentZoomFactor(Frame* frame)
+{
+    Frame* parent = frame->tree()->parent();
+    if (!parent)
+        return 1;
+    FrameView* parentView = parent->view();
+    if (!parentView)
+        return 1;
+    return parentView->zoomFactor();
+}
+
 FrameView::FrameView(Frame* frame)
     : m_frame(frame)
     , m_canHaveScrollbars(true)
@@ -128,6 +139,7 @@ FrameView::FrameView(Frame* frame)
     , m_deferSetNeedsLayouts(0)
     , m_setNeedsLayoutWasDeferred(false)
     , m_scrollCorner(0)
+    , m_zoomFactor(parentZoomFactor(frame))
 {
     init();
 }
@@ -2128,6 +2140,74 @@ IntPoint FrameView::convertFromContainingView(const IntPoint& parentPoint) const
     }
     
     return parentPoint;
+}
+
+bool FrameView::shouldApplyTextZoom() const
+{
+    if (m_zoomFactor == 1)
+        return false;
+    if (!m_frame)
+        return false;
+    Page* page = m_frame->page();
+    return page && page->settings()->zoomMode() == ZoomTextOnly;
+}
+
+bool FrameView::shouldApplyPageZoom() const
+{
+    if (m_zoomFactor == 1)
+        return false;
+    if (!m_frame)
+        return false;
+    Page* page = m_frame->page();
+    return page && page->settings()->zoomMode() == ZoomPage;
+}
+
+void FrameView::setZoomFactor(float percent, ZoomMode mode)
+{
+    if (!m_frame)
+        return;
+
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    if (m_zoomFactor == percent && page->settings()->zoomMode() == mode)
+        return;
+
+    Document* document = m_frame->document();
+    if (!document)
+        return;
+
+#if ENABLE(SVG)
+    // Respect SVGs zoomAndPan="disabled" property in standalone SVG documents.
+    // FIXME: How to handle compound documents + zoomAndPan="disabled"? Needs SVG WG clarification.
+    if (document->isSVGDocument()) {
+        if (!static_cast<SVGDocument*>(document)->zoomAndPanEnabled())
+            return;
+        if (document->renderer())
+            document->renderer()->setNeedsLayout(true);
+    }
+#endif
+
+    if (mode == ZoomPage) {
+        // Update the scroll position when doing a full page zoom, so the content stays in relatively the same position.
+        IntPoint scrollPosition = this->scrollPosition();
+        float percentDifference = (percent / m_zoomFactor);
+        setScrollPosition(IntPoint(scrollPosition.x() * percentDifference, scrollPosition.y() * percentDifference));
+    }
+
+    m_zoomFactor = percent;
+    page->settings()->setZoomMode(mode);
+
+    document->recalcStyle(Node::Force);
+
+    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
+        if (FrameView* childView = child->view())
+            childView->setZoomFactor(m_zoomFactor, mode);
+    }
+
+    if (document->renderer() && document->renderer()->needsLayout() && didFirstLayout())
+        layout();
 }
 
 } // namespace WebCore

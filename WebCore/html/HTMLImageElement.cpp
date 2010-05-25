@@ -28,7 +28,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "EventNames.h"
-#include "Frame.h"
+#include "FrameView.h"
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
@@ -255,7 +255,7 @@ int HTMLImageElement::width(bool ignorePendingStylesheets) const
 
         // if the image is available, use its width
         if (m_imageLoader.image()) {
-            float zoomFactor = document()->frame() ? document()->frame()->pageZoomFactor() : 1.0f;
+            float zoomFactor = document()->view() ? document()->view()->pageZoomFactor() : 1.0f;
             return m_imageLoader.image()->imageSize(zoomFactor).width();
         }
     }
@@ -279,7 +279,7 @@ int HTMLImageElement::height(bool ignorePendingStylesheets) const
 
         // if the image is available, use its height
         if (m_imageLoader.image()) {
-            float zoomFactor = document()->frame() ? document()->frame()->pageZoomFactor() : 1.0f;
+            float zoomFactor = document()->view() ? document()->view()->pageZoomFactor() : 1.0f;
             return m_imageLoader.image()->imageSize(zoomFactor).height();
         }
     }

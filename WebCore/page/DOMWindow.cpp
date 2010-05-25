@@ -954,7 +954,7 @@ int DOMWindow::innerHeight() const
     if (!view)
         return 0;
     
-    return static_cast<int>(view->height() / m_frame->pageZoomFactor());
+    return static_cast<int>(view->height() / view->pageZoomFactor());
 }
 
 int DOMWindow::innerWidth() const
@@ -966,7 +966,7 @@ int DOMWindow::innerWidth() const
     if (!view)
         return 0;
 
-    return static_cast<int>(view->width() / m_frame->pageZoomFactor());
+    return static_cast<int>(view->width() / view->pageZoomFactor());
 }
 
 int DOMWindow::screenX() const
@@ -1004,7 +1004,7 @@ int DOMWindow::scrollX() const
 
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
 
-    return static_cast<int>(view->scrollX() / m_frame->pageZoomFactor());
+    return static_cast<int>(view->scrollX() / view->pageZoomFactor());
 }
 
 int DOMWindow::scrollY() const
@@ -1018,7 +1018,7 @@ int DOMWindow::scrollY() const
 
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
 
-    return static_cast<int>(view->scrollY() / m_frame->pageZoomFactor());
+    return static_cast<int>(view->scrollY() / view->pageZoomFactor());
 }
 
 bool DOMWindow::closed() const
@@ -1240,8 +1240,8 @@ void DOMWindow::scrollTo(int x, int y) const
     if (!view)
         return;
 
-    int zoomedX = static_cast<int>(x * m_frame->pageZoomFactor());
-    int zoomedY = static_cast<int>(y * m_frame->pageZoomFactor());
+    int zoomedX = static_cast<int>(x * view->pageZoomFactor());
+    int zoomedY = static_cast<int>(y * view->pageZoomFactor());
     view->setScrollPosition(IntPoint(zoomedX, zoomedY));
 }
 

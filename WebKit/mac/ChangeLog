@@ -1,3 +1,15 @@
+2010-05-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Move view-related functions from Frame to FrameView
+        https://bugs.webkit.org/show_bug.cgi?id=39366
+
+        * WebView/WebView.mm:
+        (-[WebView _setZoomMultiplier:isTextOnly:]): Call function on FrameView.
+        (-[WebView setEditable:]): Get rid of call to empty function,
+        removeEditingStyleFromBodyElement.
+
 2010-05-21  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

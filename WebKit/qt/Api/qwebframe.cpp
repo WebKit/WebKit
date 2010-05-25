@@ -1079,7 +1079,11 @@ void QWebFrame::render(QPainter* painter)
 */
 void QWebFrame::setTextSizeMultiplier(qreal factor)
 {
-    d->frame->setZoomFactor(factor, ZoomTextOnly);
+    FrameView* view = d->frame->view();
+    if (!view)
+        return;
+
+    view->setZoomFactor(factor, ZoomTextOnly);
 }
 
 /*!
@@ -1087,7 +1091,11 @@ void QWebFrame::setTextSizeMultiplier(qreal factor)
 */
 qreal QWebFrame::textSizeMultiplier() const
 {
-    return d->frame->zoomFactor();
+    FrameView* view = d->frame->view();
+    if (!view)
+        return 1;
+
+    return view->zoomFactor();
 }
 
 /*!
@@ -1098,12 +1106,24 @@ qreal QWebFrame::textSizeMultiplier() const
 
 void QWebFrame::setZoomFactor(qreal factor)
 {
-    d->frame->setZoomFactor(factor, d->frame->zoomMode());
+    Page* page = d->frame->page();
+    if (!page)
+        return;
+
+    FrameView* view = d->frame->view();
+    if (!view)
+        return;
+
+    view->setZoomFactor(factor, page->settings()->zoomMode());
 }
 
 qreal QWebFrame::zoomFactor() const
 {
-    return d->frame->zoomFactor();
+    FrameView* view = d->frame->view();
+    if (!view)
+        return 1;
+
+    return view->zoomFactor();
 }
 
 /*!

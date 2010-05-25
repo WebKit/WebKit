@@ -1,3 +1,19 @@
+2010-05-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Move view-related functions from Frame to FrameView
+        https://bugs.webkit.org/show_bug.cgi?id=39366
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::setTextSizeMultiplier): Call functions on FrameView.
+        (QWebFrame::textSizeMultiplier): Ditto.
+        (QWebFrame::setZoomFactor): Ditto.
+        (QWebFrame::zoomFactor): Ditto.
+        * Api/qwebpage.cpp:
+        (QWebPage::setContentEditable): Removed call to empty function,
+        removeEditingStyleFromBodyElement.
+
 2010-05-23  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

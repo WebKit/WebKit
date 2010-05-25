@@ -1,3 +1,17 @@
+2010-05-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Move view-related functions from Frame to FrameView
+        https://bugs.webkit.org/show_bug.cgi?id=39366
+
+        * WebFrame.cpp:
+        (wxWebFrame::CanIncreaseTextSize): Check FrameView is not null.
+        (wxWebFrame::IncreaseTextSize): Call function on FrameView.
+        (wxWebFrame::CanDecreaseTextSize): Ditto.
+        (wxWebFrame::DecreaseTextSize): Ditto.
+        (wxWebFrame::ResetTextSize): Ditto.
+
 2010-05-11  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

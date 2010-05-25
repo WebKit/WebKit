@@ -149,9 +149,9 @@ namespace WebCore {
         void setInViewSourceMode(bool = true);
 
         void keepAlive(); // Used to keep the frame alive when running a script that might destroy it.
-    #ifndef NDEBUG
+#ifndef NDEBUG
         static void cancelAllKeepAlive();
-    #endif
+#endif
 
         void setDocument(PassRefPtr<Document>);
 
@@ -189,17 +189,6 @@ namespace WebCore {
     private:
         void lifeSupportTimerFired(Timer<Frame>*);
 
-    // === to be moved into FrameView
-
-    public:
-        void setZoomFactor(float scale, ZoomMode);
-        float zoomFactor() const;
-        ZoomMode zoomMode() const;
-        bool shouldApplyTextZoom() const;
-        bool shouldApplyPageZoom() const;
-        float pageZoomFactor() const { return shouldApplyPageZoom() ? zoomFactor() : 1.0f; }
-        float textZoomFactor() const { return shouldApplyTextZoom() ? zoomFactor() : 1.0f; }
-
     // === to be moved into Chrome
 
     public:
@@ -225,7 +214,6 @@ namespace WebCore {
         void computeAndSetTypingStyle(CSSStyleDeclaration* , EditAction = EditActionUnspecified);
         String selectionStartStylePropertyValue(int stylePropertyID) const;
         void applyEditingStyleToBodyElement() const;
-        void removeEditingStyleFromBodyElement() const;
         void applyEditingStyleToElement(Element*) const;
 
         IntRect firstRectForRange(Range*) const;
@@ -285,9 +273,10 @@ namespace WebCore {
 
         VisiblePosition visiblePositionForPoint(const IntPoint& framePoint);
         Document* documentAtPoint(const IntPoint& windowPoint);
-        
-    private:
+
 #if ENABLE(TILED_BACKING_STORE)
+
+    private:
         // TiledBackingStoreClient interface
         virtual void tiledBackingStorePaintBegin();
         virtual void tiledBackingStorePaint(GraphicsContext*, const IntRect&);
@@ -296,7 +285,7 @@ namespace WebCore {
         virtual IntRect tiledBackingStoreVisibleRect();
 #endif
 
-    #if PLATFORM(MAC)
+#if PLATFORM(MAC)
 
     // === undecided, would like to consider moving to another class
 
@@ -305,9 +294,9 @@ namespace WebCore {
         NSString* searchForLabelsBeforeElement(NSArray* labels, Element*, size_t* resultDistance, bool* resultIsInCellAbove);
         NSString* matchLabelsAgainstElement(NSArray* labels, Element*);
 
-    #if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT)
         NSMutableDictionary* dashboardRegionsDictionary();
-    #endif
+#endif
 
         NSImage* selectionImage(bool forceBlackText = false) const;
         NSImage* snapshotDragImage(Node*, NSRect* imageRect, NSRect* elementRect) const;
@@ -322,15 +311,15 @@ namespace WebCore {
         NSDictionary* fontAttributesForSelectionStart() const;
         NSWritingDirection baseWritingDirectionForSelectionStart() const;
 
-    #endif
+#endif
 
-    #if PLATFORM(WIN)
+#if PLATFORM(WIN)
 
     public:
         // FIXME - We should have a single version of nodeImage instead of using platform types.
         HBITMAP nodeImage(Node*) const;
 
-    #endif
+#endif
 
     private:
         Page* m_page;
@@ -349,8 +338,6 @@ namespace WebCore {
 
         String m_kjsStatusBarText;
         String m_kjsDefaultStatusBarText;
-
-        float m_zoomFactor;
 
         mutable SelectionController m_selectionController;
         mutable VisibleSelection m_mark;
@@ -435,11 +422,6 @@ namespace WebCore {
         ASSERT(!s.end().node() || s.end().node()->document() == document());
 
         m_mark = s;
-    }
-
-    inline float Frame::zoomFactor() const
-    {
-        return m_zoomFactor;
     }
 
     inline String Frame::jsStatusBarText() const

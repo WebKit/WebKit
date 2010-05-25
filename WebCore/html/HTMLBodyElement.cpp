@@ -244,7 +244,7 @@ void HTMLBodyElement::setVLink(const String& value)
 
 static int adjustForZoom(int value, FrameView* frameView)
 {
-    float zoomFactor = frameView->frame()->zoomFactor();
+    float zoomFactor = frameView->zoomFactor();
     if (zoomFactor == 1)
         return value;
     // Needed because of truncation (rather than rounding) when scaling up.
@@ -264,12 +264,12 @@ int HTMLBodyElement::scrollLeft() const
 
 void HTMLBodyElement::setScrollLeft(int scrollLeft)
 {
-    FrameView* sview = ownerDocument()->view();
-    if (sview) {
-        // Update the document's layout
-        document()->updateLayoutIgnorePendingStylesheets();
-        sview->setScrollPosition(IntPoint(static_cast<int>(scrollLeft * sview->frame()->zoomFactor()), sview->scrollY()));
-    }    
+    Document* document = this->document();
+    document->updateLayoutIgnorePendingStylesheets();
+    FrameView* view = document->view();
+    if (!view)
+        return;
+    view->setScrollPosition(IntPoint(static_cast<int>(scrollLeft * view->zoomFactor()), view->scrollY()));
 }
 
 int HTMLBodyElement::scrollTop() const
@@ -283,12 +283,12 @@ int HTMLBodyElement::scrollTop() const
 
 void HTMLBodyElement::setScrollTop(int scrollTop)
 {
-    FrameView* sview = ownerDocument()->view();
-    if (sview) {
-        // Update the document's layout
-        document()->updateLayoutIgnorePendingStylesheets();
-        sview->setScrollPosition(IntPoint(sview->scrollX(), static_cast<int>(scrollTop * sview->frame()->zoomFactor())));
-    }        
+    Document* document = this->document();
+    document->updateLayoutIgnorePendingStylesheets();
+    FrameView* view = document->view();
+    if (!view)
+        return;
+    view->setScrollPosition(IntPoint(view->scrollX(), static_cast<int>(scrollTop * view->zoomFactor())));
 }
 
 int HTMLBodyElement::scrollHeight() const

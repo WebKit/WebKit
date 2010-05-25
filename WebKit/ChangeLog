@@ -1,3 +1,17 @@
+2010-05-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Move view-related functions from Frame to FrameView
+        https://bugs.webkit.org/show_bug.cgi?id=39366
+
+        * efl/ewk/ewk_frame.cpp:
+        (ewk_frame_editable_set): Removed call to empty function,
+        removeEditingStyleFromBodyElement.
+        (ewk_frame_zoom_get): Call function on FrameView.
+        (ewk_frame_zoom_set): Ditto.
+        (ewk_frame_zoom_text_only_set): Ditto.
+
 2010-05-15  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Adam Treat.

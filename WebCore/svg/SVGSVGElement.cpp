@@ -33,7 +33,7 @@
 #include "EventNames.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
-#include "Frame.h"
+#include "FrameView.h"
 #include "HTMLNames.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGViewportContainer.h"
@@ -188,18 +188,18 @@ SVGViewSpec* SVGSVGElement::currentView() const
 float SVGSVGElement::currentScale() const
 {
     // Only the page zoom factor is relevant for SVG
-    if (Frame* frame = document()->frame())
-        return frame->pageZoomFactor();
+    if (FrameView* view = document()->view())
+        return view->pageZoomFactor();
     return m_scale;
 }
 
 void SVGSVGElement::setCurrentScale(float scale)
 {
-    if (Frame* frame = document()->frame()) {
+    if (FrameView* view = document()->view()) {
         // Calling setCurrentScale() on the outermost <svg> element in a standalone SVG document
         // is allowed to change the page zoom factor, influencing the document size, scrollbars etc.
         if (parentNode() == document())
-            frame->setZoomFactor(scale, ZoomPage);
+            view->setZoomFactor(scale, ZoomPage);
         return;
     }
 

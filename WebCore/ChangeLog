@@ -1,3 +1,79 @@
+2010-05-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Move view-related functions from Frame to FrameView
+        https://bugs.webkit.org/show_bug.cgi?id=39366
+
+        Refactoring only so adds no new tests.
+
+        * WebCore.base.exp: Updated.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForDocument): Call zoom factor function
+        on FrameView.
+        (WebCore::CSSStyleSelector::applyProperty): Ditto.
+        (WebCore::CSSStyleSelector::getComputedSizeFromSpecifiedSize): Ditto.
+        * dom/Document.cpp:
+        (WebCore::Document::elementFromPoint): Ditto.
+        (WebCore::Document::caretRangeFromPoint): Ditto.
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::contentsX): Ditto.
+        (WebCore::contentsY): Ditto.
+        (WebCore::pageZoomFactor): Added helper function.
+        (WebCore::MouseRelatedEvent::computePageLocation): Use helper.
+        (WebCore::MouseRelatedEvent::receivedTarget): Ditto.
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchMouseEvent): Call zoom factor function on FrameView.
+        (WebCore::Node::dispatchWheelEvent): Ditto.
+        * dom/Touch.cpp:
+        (WebCore::contentsX): Call zoom factor function on FrameView.
+        (WebCore::contentsY): Ditto.
+        * html/HTMLBodyElement.cpp:
+        (WebCore::adjustForZoom): Ditto.
+        (WebCore::HTMLBodyElement::setScrollLeft): Ditto.
+        (WebCore::HTMLBodyElement::setScrollTop): Ditto.
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::width): Ditto.
+        (WebCore::HTMLImageElement::height): Ditto.
+        * loader/ImageDocument.cpp:
+        (WebCore::pageZoomFactor): Added helper function.
+        (WebCore::ImageTokenizer::finish): Use helper function
+        (WebCore::ImageDocument::scale): Ditto.
+        (WebCore::ImageDocument::resizeImageToFit): Ditto.
+        (WebCore::ImageDocument::imageChanged): Ditto.
+        (WebCore::ImageDocument::restoreImageSize): Ditto.
+        (WebCore::ImageDocument::imageFitsInWindow): Ditto.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::innerHeight): Ditto.
+        (WebCore::DOMWindow::innerWidth): Ditto.
+        (WebCore::DOMWindow::scrollX): Ditto.
+        (WebCore::DOMWindow::scrollY): Ditto.
+        (WebCore::DOMWindow::scrollTo): Ditto.
+        * page/DragController.cpp:
+        (WebCore::elementUnderMouse): Ditto.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame): Removed code to initialize m_zoomFactor.
+        * page/Frame.h: Moved functions to FrameView. Moved all #if to the left
+        margin to make the style consistent. Removed empty function
+        removeEditingStyleFromBodyElement.
+
+        * page/FrameView.cpp:
+        (WebCore::parentZoomFactor): Added helper function for constructor.
+        (WebCore::FrameView::FrameView): Added initialization of m_zoomFactor.
+        (WebCore::FrameView::shouldApplyTextZoom): Moved this here from Frame.
+        (WebCore::FrameView::shouldApplyPageZoom): Ditto.
+        (WebCore::FrameView::setZoomFactor): Ditto.
+
+        * page/FrameView.h: Added members moved here from Frame.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::zoomFactor): Call FrameView instead of Frame.
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::currentScale): Ditto.
+        (WebCore::SVGSVGElement::setCurrentScale): Ditto.
+
 2010-05-24  Jer Noble  <jer.noble@apple.com>
 
         No review; build fix only.

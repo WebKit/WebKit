@@ -3636,8 +3636,7 @@ void webkit_web_view_set_editable(WebKitWebView* webView, gboolean flag)
         // TODO: If the WebKitWebView is made editable and the selection is empty, set it to something.
         //if (!webkit_web_view_get_selected_dom_range(webView))
         //    mainFrame->setSelectionFromNone();
-    } else
-        frame->removeEditingStyleFromBodyElement();
+    }
     g_object_notify(G_OBJECT(webView), "editable");
 }
 
@@ -3761,7 +3760,11 @@ gfloat webkit_web_view_get_zoom_level(WebKitWebView* webView)
     if (!frame)
         return 1.0f;
 
-    return frame->zoomFactor();
+    FrameView* view = frame->view();
+    if (!view)
+        return 1;
+
+    return view->zoomFactor();
 }
 
 static void webkit_web_view_apply_zoom_level(WebKitWebView* webView, gfloat zoomLevel)
@@ -3770,8 +3773,12 @@ static void webkit_web_view_apply_zoom_level(WebKitWebView* webView, gfloat zoom
     if (!frame)
         return;
 
+    FrameView* view = frame->view();
+    if (!view)
+        return;
+
     WebKitWebViewPrivate* priv = webView->priv;
-    frame->setZoomFactor(zoomLevel, priv->zoomFullContent ? ZoomPage : ZoomTextOnly);
+    view->setZoomFactor(zoomLevel, priv->zoomFullContent ? ZoomPage : ZoomTextOnly);
 }
 
 /**

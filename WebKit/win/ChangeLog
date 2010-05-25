@@ -1,3 +1,15 @@
+2010-05-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Move view-related functions from Frame to FrameView
+        https://bugs.webkit.org/show_bug.cgi?id=39366
+
+        * WebFrame.cpp:
+        (WebFrame::setTextSizeMultiplier): Call function on FrameView.
+        * WebView.cpp:
+        (WebView::setZoomMultiplier): Ditto.
+
 2010-05-24  Anders Carlsson  <andersca@apple.com>
 
         Yet another Windows build fix.

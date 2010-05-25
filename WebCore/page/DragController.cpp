@@ -268,7 +268,8 @@ static HTMLInputElement* asFileInput(Node* node)
 
 static Element* elementUnderMouse(Document* documentUnderMouse, const IntPoint& p)
 {
-    float zoomFactor = documentUnderMouse->frame()->pageZoomFactor();
+    FrameView* view = documentUnderMouse->view();
+    float zoomFactor = view ? view->pageZoomFactor() : 1;
     IntPoint point = roundedIntPoint(FloatPoint(p.x() * zoomFactor, p.y() * zoomFactor));
 
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active);

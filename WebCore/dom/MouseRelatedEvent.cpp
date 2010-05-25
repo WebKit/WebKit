@@ -57,7 +57,7 @@ static int contentsX(AbstractView* abstractView)
     FrameView* frameView = frame->view();
     if (!frameView)
         return 0;
-    return frameView->scrollX() / frame->pageZoomFactor();
+    return frameView->scrollX() / frameView->pageZoomFactor();
 }
 
 static int contentsY(AbstractView* abstractView)
@@ -70,7 +70,7 @@ static int contentsY(AbstractView* abstractView)
     FrameView* frameView = frame->view();
     if (!frameView)
         return 0;
-    return frameView->scrollY() / frame->pageZoomFactor();
+    return frameView->scrollY() / frameView->pageZoomFactor();
 }
 
 MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubble, bool cancelable, PassRefPtr<AbstractView> viewArg,
@@ -118,9 +118,23 @@ void MouseRelatedEvent::initCoordinates(int clientX, int clientY)
     computePageLocation();
 }
 
+static float pageZoomFactor(UIEvent* event)
+{
+    DOMWindow* window = event->view();
+    if (!window)
+        return 1;
+    Frame* frame = window->frame();
+    if (!frame)
+        return 1;
+    FrameView* view = frame->view();
+    if (!view)
+        return 1;
+    return view->pageZoomFactor();
+}
+
 void MouseRelatedEvent::computePageLocation()
 {
-    float zoomFactor = (view() && view()->frame()) ? view()->frame()->pageZoomFactor() : 1.0f;
+    float zoomFactor = pageZoomFactor(this);
     setAbsoluteLocation(roundedIntPoint(FloatPoint(pageX() * zoomFactor, pageY() * zoomFactor)));
 }
 
@@ -144,7 +158,7 @@ void MouseRelatedEvent::receivedTarget()
     if (!isSimulated()) {
         if (RenderObject* r = targ->renderer()) {
             FloatPoint localPos = r->absoluteToLocal(absoluteLocation(), false, true);
-            float zoomFactor = (view() && view()->frame()) ? view()->frame()->pageZoomFactor() : 1.0f;
+            float zoomFactor = pageZoomFactor(this);
             m_offsetX = lroundf(localPos.x() / zoomFactor);
             m_offsetY = lroundf(localPos.y() / zoomFactor);
         }

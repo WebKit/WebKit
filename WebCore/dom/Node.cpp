@@ -2834,8 +2834,8 @@ bool Node::dispatchMouseEvent(const AtomicString& eventType, int button, int det
 
     int adjustedPageX = pageX;
     int adjustedPageY = pageY;
-    if (Frame* frame = document()->frame()) {
-        float pageZoom = frame->pageZoomFactor();
+    if (FrameView* view = document()->view()) {
+        float pageZoom = view->pageZoomFactor();
         if (pageZoom != 1.0f) {
             // Adjust our pageX and pageY to account for the page zoom.
             adjustedPageX = lroundf(pageX / pageZoom);
@@ -2891,8 +2891,8 @@ void Node::dispatchWheelEvent(PlatformWheelEvent& e)
 
     int adjustedPageX = pos.x();
     int adjustedPageY = pos.y();
-    if (Frame* frame = document()->frame()) {
-        float pageZoom = frame->pageZoomFactor();
+    if (FrameView* view = document()->view()) {
+        float pageZoom = view->pageZoomFactor();
         if (pageZoom != 1.0f) {
             // Adjust our pageX and pageY to account for the page zoom.
             adjustedPageX = lroundf(pos.x() / pageZoom);

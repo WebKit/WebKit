@@ -1,3 +1,16 @@
+2010-05-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Move view-related functions from Frame to FrameView
+        https://bugs.webkit.org/show_bug.cgi?id=39366
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_set_editable): Remove call to empty function
+        removeEditngStyleFromBodyElement.
+        (webkit_web_view_get_zoom_level): Call functions on FrameView.
+        (webkit_web_view_apply_zoom_level): Ditto.
+
 2010-05-22  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

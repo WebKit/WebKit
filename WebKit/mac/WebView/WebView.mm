@@ -3183,19 +3183,22 @@ static bool needsWebViewInitThreadWorkaround()
     return [self _realZoomMultiplierIsTextOnly] ? _private->zoomMultiplier : 1.0f;
 }
 
-- (void)_setZoomMultiplier:(float)m isTextOnly:(BOOL)isTextOnly
+- (void)_setZoomMultiplier:(float)multiplier isTextOnly:(BOOL)isTextOnly
 {
     // NOTE: This has no visible effect when viewing a PDF (see <rdar://problem/4737380>)
-    _private->zoomMultiplier = m;
+    _private->zoomMultiplier = multiplier;
+
     ASSERT(_private->page);
     if (_private->page)
         _private->page->settings()->setZoomMode(isTextOnly ? ZoomTextOnly : ZoomPage);
-    
-    // FIXME: it would be nice to rework this code so that _private->zoomMultiplier doesn't exist and callers
-    // all access _private->page->settings().
+
+    // FIXME: It would be nice to rework this code so that _private->zoomMultiplier doesn't exist
+    // and instead FrameView::zoomFactor is used.
     Frame* coreFrame = [self _mainCoreFrame];
-    if (coreFrame)
-        coreFrame->setZoomFactor(m, isTextOnly ? ZoomTextOnly : ZoomPage);
+    if (coreFrame) {
+        if (FrameView* view = coreFrame->view())
+            view->setZoomFactor(multiplier, isTextOnly ? ZoomTextOnly : ZoomPage);
+    }
 }
 
 - (float)_zoomMultiplier:(BOOL)isTextOnly
@@ -4664,8 +4667,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
                 // If the WebView is made editable and the selection is empty, set it to something.
                 if (![self selectedDOMRange])
                     mainFrame->setSelectionFromNone();
-            } else
-                mainFrame->removeEditingStyleFromBodyElement();
+            }
         }
     }
 }

@@ -151,9 +151,6 @@ Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient*
     , m_isDisconnected(false)
     , m_excludeFromTextSearch(false)
 {
-    Frame* parent = parentFromOwnerElement(ownerElement);
-    m_zoomFactor = parent ? parent->m_zoomFactor : 1.0f;
-
     AtomicString::init();
     HTMLNames::init();
     QualifiedName::init();
@@ -610,56 +607,6 @@ void Frame::paintDragCaret(GraphicsContext* p, int tx, int ty, const IntRect& cl
 #endif
 }
 
-ZoomMode Frame::zoomMode() const
-{
-    return m_page->settings()->zoomMode();
-}
-
-bool Frame::shouldApplyTextZoom() const
-{
-    return m_zoomFactor != 1.0f && zoomMode() == ZoomTextOnly;
-}
-
-bool Frame::shouldApplyPageZoom() const
-{
-    return m_zoomFactor != 1.0f && zoomMode() == ZoomPage;
-}
-
-void Frame::setZoomFactor(float percent, ZoomMode mode)
-{
-    if (m_zoomFactor == percent && zoomMode() == mode)
-        return;
-
-#if ENABLE(SVG)
-    // Respect SVGs zoomAndPan="disabled" property in standalone SVG documents.
-    // FIXME: How to handle compound documents + zoomAndPan="disabled"? Needs SVG WG clarification.
-    if (m_doc->isSVGDocument()) {
-        if (!static_cast<SVGDocument*>(m_doc.get())->zoomAndPanEnabled())
-            return;
-        if (m_doc->renderer())
-            m_doc->renderer()->setNeedsLayout(true);
-    }
-#endif
-
-    if (mode == ZoomPage) {
-        // Update the scroll position when doing a full page zoom, so the content stays in relatively the same position.
-        IntPoint scrollPosition = view()->scrollPosition();
-        float percentDifference = (percent / m_zoomFactor);
-        view()->setScrollPosition(IntPoint(scrollPosition.x() * percentDifference, scrollPosition.y() * percentDifference));
-    }
-
-    m_zoomFactor = percent;
-    m_page->settings()->setZoomMode(mode);
-
-    m_doc->recalcStyle(Node::Force);
-
-    for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
-        child->setZoomFactor(m_zoomFactor, mode);
-
-    if (m_doc->renderer() && m_doc->renderer()->needsLayout() && view()->didFirstLayout())
-        view()->layout();
-}
-
 void Frame::setPrinting(bool printing, float minPageWidth, float maxPageWidth, bool adjustViewSize)
 {
     m_doc->setPrinting(printing);
@@ -932,12 +879,6 @@ void Frame::applyEditingStyleToBodyElement() const
     unsigned len = list->length();
     for (unsigned i = 0; i < len; i++)
         applyEditingStyleToElement(static_cast<Element*>(list->item(i)));
-}
-
-void Frame::removeEditingStyleFromBodyElement() const
-{
-    // FIXME: This function does nothing. We should either implement it
-    // or remove it along with all call sites.
 }
 
 void Frame::applyEditingStyleToElement(Element* element) const
