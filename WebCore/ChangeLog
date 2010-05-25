@@ -1,3 +1,16 @@
+2010-05-24  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Make text filling work together with text stroke.
+
+        When the text has stroke a new QPen was set, overriding the pen
+        set for text filling. This patch fixes that by storing the two
+        pens and using where appropriate.
+
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::Font::drawComplexText):
+
 2010-05-17  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Darin Adler.
