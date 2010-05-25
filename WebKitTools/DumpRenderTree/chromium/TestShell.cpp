@@ -174,6 +174,12 @@ void TestShell::resetWebSettings(WebView& webView)
 
     settings->setLoadsImagesAutomatically(true);
     settings->setImagesEnabled(true);
+
+#if OS(DARWIN)
+    settings->setEditingBehavior(WebSettings::EditingBehaviorMac);
+#else
+    settings->setEditingBehavior(WebSettings::EditingBehaviorWin);
+#endif
 }
 
 void TestShell::runFileTest(const TestParams& params)
