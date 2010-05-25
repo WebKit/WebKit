@@ -21,8 +21,9 @@ function parse(html) {
     iframe.src = "about:blank";
     iframe.style.display = "none";
     document.body.appendChild(iframe)
-    var detachedElement = iframe.contentDocument.createElement("div");
-    detachedElement.innerHTML = html;
+    iframe.contentDocument.open();
+    iframe.contentDocument.write(html);
+    iframe.contentDocument.close();
     document.body.removeChild(iframe)
 }
 

@@ -1,3 +1,15 @@
+2010-05-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch HTML parsing benchmark to use document.write instead of innerHTML
+        https://bugs.webkit.org/show_bug.cgi?id=39661
+
+        We'd like to exercise the main parsing pipeline instead of the fragment
+        parsing pipeline.
+
+        * benchmarks/parser/html-parser.html:
+
 2010-05-25  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Laszlo Gombos.
