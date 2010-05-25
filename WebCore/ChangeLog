@@ -1,3 +1,29 @@
+2010-05-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18595
+        REGRESSION (r20766): Setting display:none on an iframe causes the ownerDocument to freeze
+
+        Test: fast/events/frame-detached-in-mousedown.html
+
+        * page/EventHandler.h: Added a boolean tracking whether EventHandler needs to reset capturing
+        node on mouse up. It's only done for nodes that hold subframes - elements that capture events
+        are responsible for resetting the state.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler): Don't initialize m_capturingMouseEventsNode, it's a
+        RefPtr and is initialized automatically.
+        (WebCore::EventHandler::handleMousePressEvent): Remember that EventHandler should reset
+        capturing node on its own.
+        (WebCore::EventHandler::handleMouseDoubleClickEvent): The code here looked like it was copied
+        from the below in r21156. Copied correct code instead.
+        (WebCore::EventHandler::handleMouseReleaseEvent): We only clear the capturing node when it
+        holds a subframe, but the frame may be already detached by the time mouse up is handled, so the
+        check was wrong - and return code of passMouseReleaseEventToSubframe() is obviously irrelevant.
+        (WebCore::EventHandler::setCapturingMouseEventsNode): Remember that EventHandler should not
+        reset capturing node on its own.
+
 2010-05-25  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix for missing symbol.

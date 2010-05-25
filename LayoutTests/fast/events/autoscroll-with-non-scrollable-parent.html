@@ -22,7 +22,7 @@
            var input = iframeDocument.getElementById('inp');
            if (window.eventSender) {
                var x = iframe.offsetLeft + input.offsetLeft + 7;
-               var y = iframe.offsetLeft + input.offsetTop + 7;
+               var y = iframe.offsetTop + input.offsetTop + 7;
                eventSender.dragMode = false;
                eventSender.mouseMoveTo(x, y);
                eventSender.mouseDown();

@@ -179,7 +179,7 @@ EventHandler::EventHandler(Frame* frame)
     , m_svgPan(false)
 #endif
     , m_resizeLayer(0)
-    , m_capturingMouseEventsNode(0)
+    , m_eventHandlerWillResetCapturingMouseEventsNode(0)
     , m_clickCount(0)
     , m_mouseDownTimestamp(0)
     , m_useLatchedWheelEventNode(false)
@@ -1264,8 +1264,10 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
         // Start capturing future events for this frame.  We only do this if we didn't clear
         // the m_mousePressed flag, which may happen if an AppKit widget entered a modal event loop.
         m_capturesDragging = subframe->eventHandler()->capturesDragging();
-        if (m_mousePressed && m_capturesDragging)
+        if (m_mousePressed && m_capturesDragging) {
             m_capturingMouseEventsNode = mev.targetNode();
+            m_eventHandlerWillResetCapturingMouseEventsNode = true;
+        }
         invalidateClick();
         return true;
     }
@@ -1357,10 +1359,10 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEv
     HitTestRequest request(HitTestRequest::Active);
     MouseEventWithHitTestResults mev = prepareMouseEvent(request, mouseEvent);
     Frame* subframe = subframeForHitTestResult(mev);
-    if (subframe && passMousePressEventToSubframe(mev, subframe)) {
+    if (m_eventHandlerWillResetCapturingMouseEventsNode)
         m_capturingMouseEventsNode = 0;
+    if (subframe && passMousePressEventToSubframe(mev, subframe))
         return true;
-    }
 
     m_clickCount = mouseEvent.clickCount();
     bool swallowMouseUpEvent = dispatchMouseEvent(eventNames().mouseupEvent, mev.targetNode(), true, m_clickCount, mouseEvent, false);
@@ -1548,10 +1550,10 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
     HitTestRequest request(HitTestRequest::MouseUp);
     MouseEventWithHitTestResults mev = prepareMouseEvent(request, mouseEvent);
     Frame* subframe = m_capturingMouseEventsNode.get() ? subframeForTargetNode(m_capturingMouseEventsNode.get()) : subframeForHitTestResult(mev);
-    if (subframe && passMouseReleaseEventToSubframe(mev, subframe)) {
+    if (m_eventHandlerWillResetCapturingMouseEventsNode)
         m_capturingMouseEventsNode = 0;
+    if (subframe && passMouseReleaseEventToSubframe(mev, subframe))
         return true;
-    }
 
     bool swallowMouseUpEvent = dispatchMouseEvent(eventNames().mouseupEvent, mev.targetNode(), true, m_clickCount, mouseEvent, false);
 
@@ -1715,6 +1717,7 @@ void EventHandler::clearDragState()
 void EventHandler::setCapturingMouseEventsNode(PassRefPtr<Node> n)
 {
     m_capturingMouseEventsNode = n;
+    m_eventHandlerWillResetCapturingMouseEventsNode = false;
 }
 
 MouseEventWithHitTestResults EventHandler::prepareMouseEvent(const HitTestRequest& request, const PlatformMouseEvent& mev)

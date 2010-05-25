@@ -1,3 +1,18 @@
+2010-05-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18595
+        REGRESSION (r20766): Setting display:none on an iframe causes the ownerDocument to freeze
+
+        * fast/events/autoscroll-nonscrollable-iframe-in-scrollable-div.html:
+        * fast/events/autoscroll-with-non-scrollable-parent.html:
+        Fixed a typo in tests that I used as copy/paste inspiration. It isn't significant here,
+        because frame's left and top offsets are equal.
+
+        * fast/events/frame-detached-in-mousedown-expected.txt: Added.
+        * fast/events/frame-detached-in-mousedown.html: Added.
+
 2010-05-25  James Robinson  <jamesr@chromium.org>
 
         Unreviewed. Pixel expectations change only
