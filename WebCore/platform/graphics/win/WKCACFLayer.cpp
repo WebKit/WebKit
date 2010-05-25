@@ -497,11 +497,14 @@ void WKCACFLayer::printLayer(int indent) const
     }
 
     // Print contents if needed
-    CGImageRef layerContents = contents();
+    CFTypeRef layerContents = contents();
     if (layerContents) {
-        printIndent(indent + 1);
-        fprintf(stderr, "(contents (image [%d %d]))\n",
-            CGImageGetWidth(layerContents), CGImageGetHeight(layerContents));
+        if (CFGetTypeID(layerContents) == CGImageGetTypeID()) {
+            CGImageRef imageContents = static_cast<CGImageRef>(const_cast<void*>(layerContents));
+            printIndent(indent + 1);
+            fprintf(stderr, "(contents (image [%d %d]))\n",
+                CGImageGetWidth(imageContents), CGImageGetHeight(imageContents));
+        }
     }
 
     // Print sublayers if needed

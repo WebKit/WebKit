@@ -23626,6 +23626,14 @@
 						RelativePath="..\platform\graphics\win\WKCACFLayerRenderer.h"
 						>
 					</File>
+					<File
+						RelativePath="..\platform\graphics\win\WKCAImageQueue.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\WKCAImageQueue.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="cg"
