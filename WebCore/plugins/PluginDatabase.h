@@ -75,11 +75,6 @@ namespace WebCore {
             m_pluginDirectories = directories;
         }
 
-        void setClient(PluginDatabaseClient* client)
-        {
-            m_client = client;
-        }
-
         static Vector<String> defaultPluginDirectories();
         Vector<String> pluginDirectories() const { return m_pluginDirectories; }
 
@@ -99,7 +94,6 @@ namespace WebCore {
         HashMap<String, RefPtr<PluginPackage> > m_pluginsByPath;
         HashMap<String, time_t> m_pluginPathsWithTimes;
         HashMap<String, RefPtr<PluginPackage> > m_preferredPlugins;
-        PluginDatabaseClient* m_client;
     };
 
 } // namespace WebCore

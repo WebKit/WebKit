@@ -1,3 +1,19 @@
+2010-05-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Get rid of PluginDatabaseClient
+        https://bugs.webkit.org/show_bug.cgi?id=39685
+
+        PluginDatabaseClient isn't used anywhere so just remove it.
+
+        * GNUmakefile.am:
+        * plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::PluginDatabase):
+        (WebCore::PluginDatabase::refresh):
+        * plugins/PluginDatabase.h:
+        * plugins/PluginDatabaseClient.h: Removed.
+
 2010-05-25  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
