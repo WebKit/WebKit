@@ -1,3 +1,13 @@
+2010-05-25  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Enable 3D_CANVAS, FILTERS, METER_TAG and PROGRESS_TAG
+        https://bugs.webkit.org/show_bug.cgi?id=39652
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paintMeter): Fix narrowPrecisionToFloat() usage.
+
 2010-05-25  Darin Adler  <darin@apple.com>
 
         Sort ".exp" files with the sort tool.

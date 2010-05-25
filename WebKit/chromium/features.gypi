@@ -39,7 +39,7 @@
       # chromium build, overrides this list with its own values. See
       # features_override.gypi inline documentation for more details.
       'feature_defines%': [
-        'ENABLE_3D_CANVAS=0',
+        'ENABLE_3D_CANVAS=1',
         'ENABLE_BLOB_SLICE=1',
         'ENABLE_CHANNEL_MESSAGING=1',
         'ENABLE_DASHBOARD_SUPPORT=0',
@@ -48,15 +48,18 @@
         'ENABLE_DOM_STORAGE=1',
         'ENABLE_FILE_READER=1',
         'ENABLE_FILE_WRITER=0',
+        'ENABLE_FILTERS=1',
         'ENABLE_GEOLOCATION=1',
         'ENABLE_ICONDATABASE=0',
         'ENABLE_INDEXED_DATABASE=1',
         'ENABLE_JAVASCRIPT_DEBUGGER=1',
         'ENABLE_JSC_MULTIPLE_THREADS=0',
+        'ENABLE_METER_TAG=1',
         'ENABLE_NOTIFICATIONS=1',
         'ENABLE_OFFLINE_WEB_APPLICATIONS=1',
         'ENABLE_OPENTYPE_SANITIZER=1',
         'ENABLE_ORIENTATION_EVENTS=0',
+        'ENABLE_PROGRESS_TAG=1',
         'ENABLE_RUBY=1',
         'ENABLE_SANDBOX=1',
         'ENABLE_SHARED_WORKERS=1',

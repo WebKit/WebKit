@@ -933,7 +933,7 @@ bool RenderTheme::paintMeter(RenderObject* renderObject, const RenderObject::Pai
         // left to right horizontal gauge
         double scale = innerRect.width() / (max - min);
         valueRect.setLocation(innerRect.location());
-        valueRect.setSize(FloatSize(narrowPrecisionToFloat((value - min)) * scale, innerRect.height()));
+        valueRect.setSize(FloatSize(narrowPrecisionToFloat((value - min) * scale), innerRect.height()));
     }
     if (!valueRect.isEmpty())
         paintInfo.context->fillRect(valueRect, Color::black, style->colorSpace());

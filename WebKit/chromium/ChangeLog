@@ -1,3 +1,18 @@
+2010-05-25  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Enable 3D_CANVAS, FILTERS, METER_TAG and PROGRESS_TAG
+        https://bugs.webkit.org/show_bug.cgi?id=39652
+
+        3D_CANVAS and FILTERS have been enabled for Chromium tree
+        build. They fix dozens of unexpected test results in a case of
+        upstreaming build.
+        Enable METER_TAG and PROGRESS_TAG too because they will be enabled
+        in Chromium tree in the near future.
+
+        * features.gypi:
+
 2010-05-25  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Darin Fisher.
