@@ -1,1 +1,10 @@
+2010-05-24  Marcus Bulach  <bulach@google.com>
+
+        Reviewed by Ojan Vafai.
+
+        _svn_branch_has_extra_commits needs to check for ^HEAD instead of ^head.
+        https://bugs.webkit.org/show_bug.cgi?id=39603
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+
 == Rolled over to ChangeLog-2010-05-24 ==

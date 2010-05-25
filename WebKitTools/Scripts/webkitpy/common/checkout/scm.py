@@ -609,7 +609,7 @@ class Git(SCM):
         return squash
 
     def _svn_branch_has_extra_commits(self):
-        return len(run_command(['git', 'rev-list', '--max-count=1', self.svn_branch_name(), '^head']))
+        return len(run_command(['git', 'rev-list', '--max-count=1', self.svn_branch_name(), '^HEAD']))
 
     def commit_with_message(self, message, username=None, git_commit=None, squash=None):
         # Username is ignored during Git commits.
