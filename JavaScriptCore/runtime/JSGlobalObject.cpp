@@ -245,15 +245,6 @@ void JSGlobalObject::reset(JSValue prototype)
     ErrorPrototype* errorPrototype = new (exec) ErrorPrototype(exec, ErrorPrototype::createStructure(d()->objectPrototype), d()->prototypeFunctionStructure.get());
     d()->errorStructure = ErrorInstance::createStructure(errorPrototype);
 
-    RefPtr<Structure> nativeErrorPrototypeStructure = NativeErrorPrototype::createStructure(errorPrototype);
-
-    NativeErrorPrototype* evalErrorPrototype = new (exec) NativeErrorPrototype(exec, nativeErrorPrototypeStructure, "EvalError", "EvalError");
-    NativeErrorPrototype* rangeErrorPrototype = new (exec) NativeErrorPrototype(exec, nativeErrorPrototypeStructure, "RangeError", "RangeError");
-    NativeErrorPrototype* referenceErrorPrototype = new (exec) NativeErrorPrototype(exec, nativeErrorPrototypeStructure, "ReferenceError", "ReferenceError");
-    NativeErrorPrototype* syntaxErrorPrototype = new (exec) NativeErrorPrototype(exec, nativeErrorPrototypeStructure, "SyntaxError", "SyntaxError");
-    NativeErrorPrototype* typeErrorPrototype = new (exec) NativeErrorPrototype(exec, nativeErrorPrototypeStructure, "TypeError", "TypeError");
-    NativeErrorPrototype* URIErrorPrototype = new (exec) NativeErrorPrototype(exec, nativeErrorPrototypeStructure, "URIError", "URIError");
-
     // Constructors
 
     JSCell* objectConstructor = new (exec) ObjectConstructor(exec, ObjectConstructor::createStructure(d()->functionPrototype), d()->objectPrototype, d()->prototypeFunctionStructure.get());
@@ -268,14 +259,15 @@ void JSGlobalObject::reset(JSValue prototype)
 
     d()->errorConstructor = new (exec) ErrorConstructor(exec, ErrorConstructor::createStructure(d()->functionPrototype), errorPrototype);
 
+    RefPtr<Structure> nativeErrorPrototypeStructure = NativeErrorPrototype::createStructure(errorPrototype);
     RefPtr<Structure> nativeErrorStructure = NativeErrorConstructor::createStructure(d()->functionPrototype);
 
-    d()->evalErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, evalErrorPrototype);
-    d()->rangeErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, rangeErrorPrototype);
-    d()->referenceErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, referenceErrorPrototype);
-    d()->syntaxErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, syntaxErrorPrototype);
-    d()->typeErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, typeErrorPrototype);
-    d()->URIErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, URIErrorPrototype);
+    d()->evalErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, nativeErrorPrototypeStructure, "EvalError");
+    d()->rangeErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, nativeErrorPrototypeStructure, "RangeError");
+    d()->referenceErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, nativeErrorPrototypeStructure, "ReferenceError");
+    d()->syntaxErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, nativeErrorPrototypeStructure, "SyntaxError");
+    d()->typeErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, nativeErrorPrototypeStructure, "TypeError");
+    d()->URIErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, nativeErrorPrototypeStructure, "URIError");
 
     d()->objectPrototype->putDirectFunctionWithoutTransition(exec->propertyNames().constructor, objectConstructor, DontEnum);
     d()->functionPrototype->putDirectFunctionWithoutTransition(exec->propertyNames().constructor, functionConstructor, DontEnum);
@@ -286,13 +278,6 @@ void JSGlobalObject::reset(JSValue prototype)
     d()->datePrototype->putDirectFunctionWithoutTransition(exec->propertyNames().constructor, dateConstructor, DontEnum);
     d()->regExpPrototype->putDirectFunctionWithoutTransition(exec->propertyNames().constructor, d()->regExpConstructor, DontEnum);
     errorPrototype->putDirectFunctionWithoutTransition(exec->propertyNames().constructor, d()->errorConstructor, DontEnum);
-
-    evalErrorPrototype->putDirect(exec->propertyNames().constructor, d()->evalErrorConstructor, DontEnum);
-    rangeErrorPrototype->putDirect(exec->propertyNames().constructor, d()->rangeErrorConstructor, DontEnum);
-    referenceErrorPrototype->putDirect(exec->propertyNames().constructor, d()->referenceErrorConstructor, DontEnum);
-    syntaxErrorPrototype->putDirect(exec->propertyNames().constructor, d()->syntaxErrorConstructor, DontEnum);
-    typeErrorPrototype->putDirect(exec->propertyNames().constructor, d()->typeErrorConstructor, DontEnum);
-    URIErrorPrototype->putDirect(exec->propertyNames().constructor, d()->URIErrorConstructor, DontEnum);
 
     // Set global constructors
 

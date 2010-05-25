@@ -45,7 +45,7 @@ InternalFunction::InternalFunction(JSGlobalData* globalData, NonNullPassRefPtr<S
 
 const UString& InternalFunction::name(ExecState* exec)
 {
-    return asString(getDirect(exec->globalData().propertyNames->name))->value(exec);
+    return asString(getDirect(exec->globalData().propertyNames->name))->tryGetValue();
 }
 
 const UString InternalFunction::displayName(ExecState* exec)
@@ -53,7 +53,7 @@ const UString InternalFunction::displayName(ExecState* exec)
     JSValue displayName = getDirect(exec->globalData().propertyNames->displayName);
     
     if (displayName && isJSString(&exec->globalData(), displayName))
-        return asString(displayName)->value(exec);
+        return asString(displayName)->tryGetValue();
     
     return UString::null();
 }
