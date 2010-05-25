@@ -1,3 +1,16 @@
+2010-05-25  Darin Adler  <darin@apple.com>
+
+        Sort ".exp" files with the sort tool.
+        This makes later merging easier.
+
+        These Mac-specific files should probably move into a subdirectory
+        at some point.
+
+        * WebCore.Inspector.exp: Sorted.
+        * WebCore.PluginHostProcess.exp: Removed blank line.
+        * WebCore.VideoProxy.exp: Sorted.
+        * WebCore.base.exp: Ditto.
+
 2010-05-25  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Darin Fisher.
