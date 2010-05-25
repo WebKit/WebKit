@@ -1,3 +1,14 @@
+2010-05-25  Anders Bakken  <agbakken@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Remove warning for GCC 4.4.3
+
+        GCC suggest parentheses around && within ||
+
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle):
+
 2010-05-25  Xan Lopez  <xlopez@igalia.com>
 
         Fix the GTK+ build, PluginInfoStore was removed.
