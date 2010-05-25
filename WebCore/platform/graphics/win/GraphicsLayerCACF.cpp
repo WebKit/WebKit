@@ -36,7 +36,8 @@
 #include "Image.h"
 #include "PlatformString.h"
 #include "SystemTime.h"
-#include "WKCACFLayer.h"
+#include "WebLayer.h"
+#include "WebTiledLayer.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
@@ -45,115 +46,15 @@ using namespace std;
 
 namespace WebCore {
 
-class WebLayer : public WKCACFLayer {
-public:
-    static PassRefPtr<WKCACFLayer> create(LayerType layerType, GraphicsLayerCACF* owner)
-    {
-        return adoptRef(new WebLayer(layerType, owner));
-    }
+// The threshold width or height above which a tiled layer will be used. This should be
+// large enough to avoid tiled layers for most GraphicsLayers, but less than the D3D
+// texture size limit on all supported hardware.
+static const int cMaxPixelDimension = 2000;
 
-    virtual void setNeedsDisplay(const CGRect* dirtyRect)
-    {
-        if (m_owner) {
-            if (m_owner->showRepaintCounter()) {
-                CGRect layerBounds = bounds();
-                CGRect repaintCounterRect = layerBounds;
-                // We assume a maximum of 4 digits and a font size of 22.
-                repaintCounterRect.size.width = 48;
-                repaintCounterRect.size.height = 25;
-                if (m_owner->contentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesTopDown)
-                    repaintCounterRect.origin.y = layerBounds.size.height - (layerBounds.origin.y + repaintCounterRect.size.height);
-                WKCACFLayer::setNeedsDisplay(&repaintCounterRect);
-            }
-            if (dirtyRect && m_owner->contentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesTopDown) {
-                CGRect flippedDirtyRect = *dirtyRect;
-                flippedDirtyRect.origin.y = bounds().size.height - (flippedDirtyRect.origin.y + flippedDirtyRect.size.height);
-                WKCACFLayer::setNeedsDisplay(&flippedDirtyRect);
-                return;
-            }
-        }
-        WKCACFLayer::setNeedsDisplay(dirtyRect);
-    }
-
-    virtual void drawInContext(PlatformGraphicsContext* context)
-    {
-        if (!m_owner)
-            return;
-
-        CGContextSaveGState(context);
-
-        CGRect layerBounds = bounds();
-        if (m_owner->contentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesTopDown) {
-            CGContextScaleCTM(context, 1, -1);
-            CGContextTranslateCTM(context, 0, -layerBounds.size.height);
-        }
-
-        if (m_owner->client()) {
-            GraphicsContext graphicsContext(context);
-
-            // It's important to get the clip from the context, because it may be significantly
-            // smaller than the layer bounds (e.g. tiled layers)
-            CGRect clipBounds = CGContextGetClipBoundingBox(context);
-            IntRect clip(enclosingIntRect(clipBounds));
-            m_owner->paintGraphicsLayerContents(graphicsContext, clip);
-        }
-#ifndef NDEBUG
-        else {
-            ASSERT_NOT_REACHED();
-
-            // FIXME: ideally we'd avoid calling -setNeedsDisplay on a layer that is a plain color,
-            // so CA never makes backing store for it (which is what -setNeedsDisplay will do above).
-            CGContextSetRGBFillColor(context, 0.0f, 1.0f, 0.0f, 1.0f);
-            CGContextFillRect(context, layerBounds);
-        }
-#endif
-
-        if (m_owner->showRepaintCounter()) {
-            String text = String::format("%d", m_owner->incrementRepaintCount());;
-
-            CGContextSaveGState(context);
-            CGContextSetRGBFillColor(context, 1.0f, 0.0f, 0.0f, 0.8f);
-            
-            CGRect aBounds = layerBounds;
-
-            aBounds.size.width = 10 + 12 * text.length();
-            aBounds.size.height = 25;
-            CGContextFillRect(context, aBounds);
-            
-            FontDescription desc;
-
-            NONCLIENTMETRICS metrics;
-            metrics.cbSize = sizeof(metrics);
-            SystemParametersInfo(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
-            FontFamily family;
-            family.setFamily(metrics.lfSmCaptionFont.lfFaceName);
-            desc.setFamily(family);
-
-            desc.setComputedSize(22);
-            
-            Font font = Font(desc, 0, 0);
-            font.update(0);
-
-            GraphicsContext cg(context);
-            cg.setFillColor(Color::black, DeviceColorSpace);
-            cg.drawText(font, TextRun(text), IntPoint(aBounds.origin.x + 3, aBounds.origin.y + 20));
-
-            CGContextRestoreGState(context);        
-        }
-
-        CGContextRestoreGState(context);
-    }
-
-protected:
-    WebLayer(LayerType layerType, GraphicsLayerCACF* owner)
-     : WKCACFLayer(layerType)
-     , m_owner(owner)
-    {
-    }
-
-private:
-    GraphicsLayer* m_owner;
-};
+// The width and height of a single tile in a tiled layer. Should be large enough to
+// avoid lots of small tiles (and therefore lots of drawing callbacks), but small enough
+// to keep the overall tile cost low.
+static const int cTiledLayerTileSize = 512;
 
 static inline void copyTransform(CATransform3D& toT3D, const TransformationMatrix& t)
 {
@@ -537,6 +438,64 @@ void GraphicsLayerCACF::setDebugBorder(const Color& color, float borderWidth)
     }
 }
 
+bool GraphicsLayerCACF::requiresTiledLayer(const FloatSize& size) const
+{
+    if (!m_drawsContent)
+        return false;
+
+    // FIXME: catch zero-size height or width here (or earlier)?
+    return size.width() > cMaxPixelDimension || size.height() > cMaxPixelDimension;
+}
+
+void GraphicsLayerCACF::swapFromOrToTiledLayer(bool useTiledLayer)
+{
+    if (useTiledLayer == m_usingTiledLayer)
+        return;
+
+    CGSize tileSize = CGSizeMake(cTiledLayerTileSize, cTiledLayerTileSize);
+
+    RefPtr<WKCACFLayer> oldLayer = m_layer;
+    if (useTiledLayer)
+        m_layer = WebTiledLayer::create(tileSize, this);
+    else
+        m_layer = WebLayer::create(WKCACFLayer::Layer, this);
+    
+    m_usingTiledLayer = useTiledLayer;
+
+    if (useTiledLayer) {
+        if (GraphicsLayer::compositingCoordinatesOrientation() == GraphicsLayer::CompositingCoordinatesBottomUp)
+            m_layer->setContentsGravity(WKCACFLayer::BottomLeft);
+        else
+            m_layer->setContentsGravity(WKCACFLayer::TopLeft);
+    }
+    
+    m_layer->adoptSublayers(oldLayer.get());
+    if (oldLayer->superlayer())
+        oldLayer->superlayer()->replaceSublayer(oldLayer.get(), m_layer.get());
+    
+    updateLayerPosition();
+    updateLayerSize();
+    updateAnchorPoint();
+    updateTransform();
+    updateChildrenTransform();
+    updateMasksToBounds();
+    updateContentsOpaque();
+    updateBackfaceVisibility();
+    updateLayerBackgroundColor();
+    
+    updateOpacityOnLayer();
+    
+#ifndef NDEBUG
+    String name = String::format("CALayer(%p) GraphicsLayer(%p) %s", m_layer.get(), this, m_usingTiledLayer ? "[Tiled Layer] " : "") + m_name;
+    m_layer->setName(name);
+#endif
+
+    // need to tell new layer to draw itself
+    setNeedsDisplay();
+    
+    updateDebugIndicators();
+}
+
 GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayerCACF::defaultContentsOrientation() const
 {
     return CompositingCoordinatesTopDown;
@@ -599,6 +558,10 @@ void GraphicsLayerCACF::updateLayerSize()
         CGPoint centerPoint = CGPointMake(m_size.width() / 2.0f, m_size.height() / 2.0f);
         m_layer->setPosition(centerPoint);
     }
+    
+    bool needTiledLayer = requiresTiledLayer(m_size);
+    if (needTiledLayer != m_usingTiledLayer)
+        swapFromOrToTiledLayer(needTiledLayer);
     
     m_layer->setBounds(rect);
     
@@ -699,6 +662,10 @@ void GraphicsLayerCACF::updateLayerPreserves3D()
 
 void GraphicsLayerCACF::updateLayerDrawsContent()
 {
+    bool needTiledLayer = requiresTiledLayer(m_size);
+    if (needTiledLayer != m_usingTiledLayer)
+        swapFromOrToTiledLayer(needTiledLayer);
+
     if (m_drawsContent)
         m_layer->setNeedsDisplay();
     else
