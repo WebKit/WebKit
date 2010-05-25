@@ -1,3 +1,12 @@
+2010-05-25  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [EFL] Build fix.
+        http://webkit.org/b/39598
+
+        * CMakeLists.txt:
+
 2010-05-25  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.

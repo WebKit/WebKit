@@ -36,6 +36,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/network"
     "${WEBCORE_DIR}/platform/sql"
     "${WEBCORE_DIR}/platform/text"
+    "${WEBCORE_DIR}/platform/text/transcoder"
     "${WEBCORE_DIR}/plugins"
     "${WEBCORE_DIR}/rendering"
     "${WEBCORE_DIR}/rendering/style"
@@ -100,6 +101,7 @@ SET(WebCore_IDL_PURE_FILES
 )
 
 SET(WebCore_IDL_FILES
+    css/Counter.idl
     css/CSSCharsetRule.idl
     css/CSSFontFaceRule.idl
     css/CSSImportRule.idl
@@ -115,10 +117,9 @@ SET(WebCore_IDL_FILES
     css/CSSValueList.idl
     css/CSSVariablesDeclaration.idl
     css/CSSVariablesRule.idl
-    css/Counter.idl
     css/MediaList.idl
-    css/RGBColor.idl
     css/Rect.idl
+    css/RGBColor.idl
     css/StyleMedia.idl
     css/StyleSheet.idl
     css/StyleSheetList.idl
@@ -137,19 +138,19 @@ SET(WebCore_IDL_FILES
     dom/Comment.idl
     dom/CompositionEvent.idl
     dom/CustomEvent.idl
+    dom/DeviceOrientationEvent.idl
+    dom/DocumentFragment.idl
+    dom/Document.idl
+    dom/DocumentType.idl
     dom/DOMCoreException.idl
     dom/DOMImplementation.idl
     dom/DOMStringList.idl
-    dom/DeviceOrientationEvent.idl
-    dom/Document.idl
-    dom/DocumentFragment.idl
-    dom/DocumentType.idl
     dom/Element.idl
     dom/Entity.idl
     dom/EntityReference.idl
     dom/ErrorEvent.idl
-    dom/Event.idl
     dom/EventException.idl
+    dom/Event.idl
     dom/KeyboardEvent.idl
     dom/MessageChannel.idl
     dom/MessageEvent.idl
@@ -157,8 +158,8 @@ SET(WebCore_IDL_FILES
     dom/MouseEvent.idl
     dom/MutationEvent.idl
     dom/NamedNodeMap.idl
-    dom/Node.idl
     dom/NodeFilter.idl
+    dom/Node.idl
     dom/NodeIterator.idl
     dom/NodeList.idl
     dom/Notation.idl
@@ -167,12 +168,12 @@ SET(WebCore_IDL_FILES
     dom/PopStateEvent.idl
     dom/ProcessingInstruction.idl
     dom/ProgressEvent.idl
-    dom/Range.idl
     dom/RangeException.idl
-    dom/Text.idl
+    dom/Range.idl
     dom/TextEvent.idl
-    dom/Touch.idl
+    dom/Text.idl
     dom/TouchEvent.idl
+    dom/Touch.idl
     dom/TouchList.idl
     dom/TreeWalker.idl
     dom/UIEvent.idl
@@ -181,11 +182,11 @@ SET(WebCore_IDL_FILES
     dom/WheelEvent.idl
 
     html/Blob.idl
-    html/DOMFormData.idl
     html/DataGridColumn.idl
     html/DataGridColumnList.idl
-    html/File.idl
+    html/DOMFormData.idl
     html/FileError.idl
+    html/File.idl
     html/FileList.idl
     html/FileReader.idl
     html/HTMLAllCollection.idl
@@ -193,15 +194,14 @@ SET(WebCore_IDL_FILES
     html/HTMLAppletElement.idl
     html/HTMLAreaElement.idl
     html/HTMLAudioElement.idl
-    html/HTMLBRElement.idl
     html/HTMLBaseElement.idl
     html/HTMLBaseFontElement.idl
     html/HTMLBlockquoteElement.idl
     html/HTMLBodyElement.idl
+    html/HTMLBRElement.idl
     html/HTMLButtonElement.idl
     html/HTMLCanvasElement.idl
     html/HTMLCollection.idl
-    html/HTMLDListElement.idl
     html/HTMLDataGridCellElement.idl
     html/HTMLDataGridColElement.idl
     html/HTMLDataGridElement.idl
@@ -209,6 +209,7 @@ SET(WebCore_IDL_FILES
     html/HTMLDataListElement.idl
     html/HTMLDirectoryElement.idl
     html/HTMLDivElement.idl
+    html/HTMLDListElement.idl
     html/HTMLDocument.idl
     html/HTMLElement.idl
     html/HTMLEmbedElement.idl
@@ -217,17 +218,17 @@ SET(WebCore_IDL_FILES
     html/HTMLFormElement.idl
     html/HTMLFrameElement.idl
     html/HTMLFrameSetElement.idl
-    html/HTMLHRElement.idl
     html/HTMLHeadElement.idl
     html/HTMLHeadingElement.idl
+    html/HTMLHRElement.idl
     html/HTMLHtmlElement.idl
     html/HTMLIFrameElement.idl
     html/HTMLImageElement.idl
     html/HTMLInputElement.idl
     html/HTMLIsIndexElement.idl
-    html/HTMLLIElement.idl
     html/HTMLLabelElement.idl
     html/HTMLLegendElement.idl
+    html/HTMLLIElement.idl
     html/HTMLLinkElement.idl
     html/HTMLMapElement.idl
     html/HTMLMarqueeElement.idl
@@ -236,8 +237,8 @@ SET(WebCore_IDL_FILES
     html/HTMLMetaElement.idl
     html/HTMLMeterElement.idl
     html/HTMLModElement.idl
-    html/HTMLOListElement.idl
     html/HTMLObjectElement.idl
+    html/HTMLOListElement.idl
     html/HTMLOptGroupElement.idl
     html/HTMLOptionElement.idl
     html/HTMLOptionsCollection.idl
@@ -266,10 +267,12 @@ SET(WebCore_IDL_FILES
     html/ValidityState.idl
     html/VoidCallback.idl
 
+    html/canvas/ArrayBuffer.idl
+    html/canvas/ArrayBufferView.idl
     html/canvas/CanvasGradient.idl
     html/canvas/CanvasPattern.idl
-    html/canvas/CanvasRenderingContext.idl
     html/canvas/CanvasRenderingContext2D.idl
+    html/canvas/CanvasRenderingContext.idl
     html/canvas/WebGLRenderingContext.idl
 
     html/canvas/ArrayBuffer.idl
@@ -780,7 +783,6 @@ SET(WebCore_SOURCES
     dom/ExceptionCode.cpp
     dom/InputElement.cpp
     dom/KeyboardEvent.cpp
-    dom/MappedAttribute.cpp
     dom/MessageChannel.cpp
     dom/MessageEvent.cpp
     dom/MessagePort.cpp
@@ -1240,6 +1242,8 @@ SET(WebCore_SOURCES
     platform/text/TextEncodingRegistry.cpp
     platform/text/TextStream.cpp
     platform/text/UnicodeRange.cpp
+
+    platform/text/transcoder/FontTranscoder.cpp
 
     plugins/MimeTypeArray.cpp
     plugins/MimeType.cpp
