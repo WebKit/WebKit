@@ -55,6 +55,7 @@
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "Scrollbar.h"
+#include "Settings.h"
 #include "SelectionController.h"
 #include "SubstituteData.h"
 #include "SVGSMILElement.h"
