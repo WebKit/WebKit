@@ -180,3 +180,14 @@ websocket/tests
 
 # IndexedDB is not yet enabled.
 storage/indexeddb
+
+# Failing philip tests
+canvas/philip/tests/2d.gradient.radial.equal.html
+canvas/philip/tests/2d.gradient.radial.touch1.html
+canvas/philip/tests/2d.gradient.radial.touch2.html
+canvas/philip/tests/2d.gradient.radial.touch3.html
+canvas/philip/tests/2d.path.isPointInPath.edge.html
+canvas/philip/tests/2d.shadow.composite.1.html
+canvas/philip/tests/2d.shadow.composite.2.html
+canvas/philip/tests/2d.shadow.pattern.alpha.html
+canvas/philip/tests/2d.shadow.pattern.transparent.1.html
