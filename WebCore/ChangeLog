@@ -1,3 +1,17 @@
+2010-05-25  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Running with accelerated compositing enabled sometimes result in a crash
+        https://bugs.webkit.org/show_bug.cgi?id=39609
+
+        Check if we have a scene before applying the workaround for
+        the QGraphicsScene bug where opacity change doesn't always have
+        immediate effect.
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::OpacityAnimationQt::applyFrame):
+
 2010-05-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Fix Chromium Mac Release build.
