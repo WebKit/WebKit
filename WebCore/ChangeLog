@@ -1,3 +1,24 @@
+2010-05-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r60251.
+        http://trac.webkit.org/changeset/60251
+        https://bugs.webkit.org/show_bug.cgi?id=39788
+
+        broke tests (Requested by dhyatt on #webkit).
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::moveChildTo):
+        (WebCore::RenderBlock::moveAllChildrenTo):
+        (WebCore::RenderBlock::makeChildrenNonInline):
+        (WebCore::RenderBlock::removeChild):
+        * rendering/RenderBlock.h:
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::moveInlineChildren):
+        (WebCore::RenderRubyBase::moveBlockChildren):
+        (WebCore::RenderRubyBase::mergeBlockChildren):
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::removeChild):
+
 2010-05-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
