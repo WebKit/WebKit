@@ -1,3 +1,9 @@
+2010-05-26  Beth Dakin  <bdakin@apple.com>
+
+        Build fix for Mac clean builds.
+
+        * storage/IDBDatabaseRequest.idl:
+
 2010-05-26  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.
