@@ -1649,6 +1649,8 @@
             'html/HTMLViewSourceDocument.h',
             'html/ImageData.cpp',
             'html/ImageData.h',
+            'html/LabelsNodeList.cpp',
+            'html/LabelsNodeList.h',
             'html/MediaError.h',
             'html/PreloadScanner.cpp',
             'html/PreloadScanner.h',

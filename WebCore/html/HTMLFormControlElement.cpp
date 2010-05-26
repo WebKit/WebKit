@@ -30,6 +30,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
+#include "ElementRareData.h"
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"
@@ -39,6 +40,7 @@
 #include "HTMLNames.h"
 #include "HTMLParser.h"
 #include "HTMLTokenizer.h"
+#include "LabelsNodeList.h"
 #include "Page.h"
 #include "RenderBox.h"
 #include "RenderTextControl.h"
@@ -406,10 +408,29 @@ bool HTMLFormControlElement::isLabelable() const
 {
     // FIXME: Add meterTag and outputTag to the list once we support them.
     return hasTagName(buttonTag) || hasTagName(inputTag) || hasTagName(keygenTag)
+#if ENABLE(METER_TAG)
+        || hasTagName(meterTag)
+#endif
 #if ENABLE(PROGRESS_TAG)
         || hasTagName(progressTag)
 #endif
         || hasTagName(selectTag) || hasTagName(textareaTag);
+}
+
+PassRefPtr<NodeList> HTMLFormControlElement::labels()
+{
+    if (!isLabelable())
+        return 0;
+    if (!document())
+        return 0;
+    
+    NodeRareData* data = Node::ensureRareData();
+    if (!data->nodeLists()) {
+        data->setNodeLists(NodeListsNodeData::create());
+        document()->addNodeListCache();
+    }
+    
+    return LabelsNodeList::create(this);
 }
     
 HTMLFormControlElementWithState::HTMLFormControlElementWithState(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)

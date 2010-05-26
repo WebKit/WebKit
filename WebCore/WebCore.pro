@@ -695,6 +695,7 @@ SOURCES += \
     html/HTMLUListElement.cpp \
     html/HTMLViewSourceDocument.cpp \
     html/ImageData.cpp \
+    html/LabelsNodeList.cpp \
     html/PreloadScanner.cpp \
     html/StepRange.cpp \
     html/ValidityState.cpp \
@@ -1425,6 +1426,7 @@ HEADERS += \
     html/HTMLVideoElement.h \
     html/HTMLViewSourceDocument.h \
     html/ImageData.h \
+    html/LabelsNodeList.h \
     html/PreloadScanner.h \
     html/StepRange.h \
     html/TimeRanges.h \

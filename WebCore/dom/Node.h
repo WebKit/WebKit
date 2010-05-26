@@ -527,9 +527,11 @@ public:
     void notifyLocalNodeListsChildrenChanged();
     void notifyNodeListsAttributeChanged();
     void notifyLocalNodeListsAttributeChanged();
+    void notifyLocalNodeListsLabelChanged();
     void removeCachedClassNodeList(ClassNodeList*, const String&);
     void removeCachedNameNodeList(NameNodeList*, const String&);
     void removeCachedTagNodeList(TagNodeList*, const QualifiedName&);
+    void removeCachedLabelsNodeList(DynamicNodeList*);
     
     PassRefPtr<NodeList> getElementsByTagName(const String&);
     PassRefPtr<NodeList> getElementsByTagNameNS(const AtomicString& namespaceURI, const String& localName);

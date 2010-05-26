@@ -68,6 +68,7 @@ module html {
         // "The contained options can be directly accessed through the select element as a collection."
         Node item(in [IsIndex] unsigned long index);
         Node namedItem(in DOMString name);
+        readonly attribute NodeList        labels;
     };
 
 }

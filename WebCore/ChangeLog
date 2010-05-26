@@ -1,3 +1,59 @@
+2010-05-26  yael aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Kent Tamura.
+
+        Support the labels attribute in labelable form controls
+        https://bugs.webkit.org/show_bug.cgi?id=38713
+
+        Added a new cache type in NodeRareData to store the new cache type.
+        This cache is created on demand.
+
+        Added the "labels" attribute to all form controls that support this attribute.
+
+        Tests: fast/forms/labels-add-htmlFor-label.html
+               fast/forms/labels-add-parent-label.html
+               fast/forms/labels-change-htmlFor-attribute.html
+               fast/forms/labels-item-index.html
+               fast/forms/labels-remove-htmlFor-attribute.html
+               fast/forms/labels-remove-htmlFor-label.html
+               fast/forms/labels-remove-parent-label.html
+               fast/forms/labels-set-htmlFor-attribute.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Node.cpp:
+        (WebCore::Node::notifyLocalNodeListsLabelChanged):
+        (WebCore::Node::removeCachedLabelsNodeList):
+        (WebCore::NodeListsNodeData::invalidateCaches):
+        (WebCore::NodeListsNodeData::invalidateCachesThatDependOnAttributes):
+        (WebCore::NodeListsNodeData::isEmpty):
+        * dom/Node.h:
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::NodeListsNodeData):
+        * html/HTMLButtonElement.idl:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::isLabelable):
+        (WebCore::HTMLFormControlElement::labels):
+        * html/HTMLFormControlElement.h:
+        * html/HTMLInputElement.idl:
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::parseMappedAttribute):
+        * html/HTMLLabelElement.h:
+        * html/HTMLMeterElement.idl:
+        * html/HTMLProgressElement.idl:
+        * html/HTMLSelectElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        * html/LabelsNodeList.cpp: Added.
+        (WebCore::LabelsNodeList::LabelsNodeList):
+        (WebCore::LabelsNodeList::~LabelsNodeList):
+        (WebCore::LabelsNodeList::nodeMatches):
+        * html/LabelsNodeList.h: Added.
+        (WebCore::LabelsNodeList::create):
+
 2010-05-26  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Jeremy Orlow.

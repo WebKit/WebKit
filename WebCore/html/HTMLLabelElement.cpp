@@ -173,4 +173,15 @@ void HTMLLabelElement::setHtmlFor(const String &value)
     setAttribute(forAttr, value);
 }
 
+void HTMLLabelElement::parseMappedAttribute(Attribute* attribute)
+{
+    if (attribute->name() == forAttr) {
+        // htmlFor attribute change affects other nodes than this.
+        // Clear the caches to ensure that the labels caches are cleared.
+        if (document())
+            document()->notifyLocalNodeListsLabelChanged();
+    } else
+        HTMLElement::parseMappedAttribute(attribute);
+}
+                
 } // namespace

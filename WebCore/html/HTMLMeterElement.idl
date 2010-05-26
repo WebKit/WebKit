@@ -34,5 +34,6 @@ module html {
                  attribute double optimum
                      setter raises(DOMException);
         readonly attribute HTMLFormElement form;
+        readonly attribute NodeList labels;
     };
 }

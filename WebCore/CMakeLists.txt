@@ -986,6 +986,7 @@ SET(WebCore_SOURCES
     html/HTMLUListElement.cpp
     html/HTMLViewSourceDocument.cpp
     html/ImageData.cpp
+    html/LabelsNodeList.cpp
     html/PreloadScanner.cpp
     html/StepRange.cpp
     html/ValidityState.cpp

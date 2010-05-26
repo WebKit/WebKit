@@ -1256,6 +1256,8 @@ webcore_sources += \
 	WebCore/html/HTMLViewSourceDocument.h \
 	WebCore/html/ImageData.cpp \
 	WebCore/html/ImageData.h \
+	WebCore/html/LabelsNodeList.cpp \
+	WebCore/html/LabelsNodeList.h \
 	WebCore/html/MediaError.h \
 	WebCore/html/PreloadScanner.cpp \
 	WebCore/html/PreloadScanner.h \

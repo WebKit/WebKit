@@ -123,6 +123,7 @@ public:
     virtual void dispatchBlurEvent();
 
     bool isLabelable() const;
+    PassRefPtr<NodeList> labels();
     
 protected:
     void removeFromForm();

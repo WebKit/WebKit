@@ -27,6 +27,7 @@ module html {
                      setter raises(DOMException);
         readonly attribute  double                position;
         readonly attribute  HTMLFormElement       form;
+        readonly attribute  NodeList              labels;
     };
 
 }

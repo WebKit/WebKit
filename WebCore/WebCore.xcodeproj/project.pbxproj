@@ -2589,6 +2589,8 @@
 		A454424B119B3661009BE912 /* HTMLMeterElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A4544249119B3661009BE912 /* HTMLMeterElement.h */; };
 		A454424E119B3687009BE912 /* RenderMeter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A454424C119B3687009BE912 /* RenderMeter.cpp */; };
 		A454424F119B3687009BE912 /* RenderMeter.h in Headers */ = {isa = PBXBuildFile; fileRef = A454424D119B3687009BE912 /* RenderMeter.h */; };
+		A456FA2611AD4A830020B420 /* LabelsNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A456FA2411AD4A830020B420 /* LabelsNodeList.cpp */; };
+		A456FA2711AD4A830020B420 /* LabelsNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = A456FA2511AD4A830020B420 /* LabelsNodeList.h */; };
 		A513B3D7114B1666001C429B /* KeyEventCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = A5C974CF11485FF10066F2AB /* KeyEventCocoa.h */; };
 		A513B3D8114B166A001C429B /* KeyEventCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5C974D011485FF10066F2AB /* KeyEventCocoa.mm */; };
 		A59E3C1E11580F510072928E /* KeyEventCodesIPhone.h in Headers */ = {isa = PBXBuildFile; fileRef = A59E3C1C11580F510072928E /* KeyEventCodesIPhone.h */; };
@@ -8155,6 +8157,8 @@
 		A4544249119B3661009BE912 /* HTMLMeterElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLMeterElement.h; sourceTree = "<group>"; };
 		A454424C119B3687009BE912 /* RenderMeter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMeter.cpp; sourceTree = "<group>"; };
 		A454424D119B3687009BE912 /* RenderMeter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMeter.h; sourceTree = "<group>"; };
+		A456FA2411AD4A830020B420 /* LabelsNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LabelsNodeList.cpp; sourceTree = "<group>"; };
+		A456FA2511AD4A830020B420 /* LabelsNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelsNodeList.h; sourceTree = "<group>"; };
 		A59E3C1C11580F510072928E /* KeyEventCodesIPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyEventCodesIPhone.h; path = iphone/KeyEventCodesIPhone.h; sourceTree = "<group>"; };
 		A59E3C1D11580F510072928E /* KeyEventIPhone.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = KeyEventIPhone.mm; path = iphone/KeyEventIPhone.mm; sourceTree = "<group>"; };
 		A5AFB34D115151A700B045CB /* StepRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StepRange.cpp; sourceTree = "<group>"; };
@@ -13605,6 +13609,8 @@
 				A77979130D6B9D0C003851B9 /* ImageData.cpp */,
 				A77979140D6B9D0C003851B9 /* ImageData.h */,
 				A77979150D6B9D0C003851B9 /* ImageData.idl */,
+				A456FA2411AD4A830020B420 /* LabelsNodeList.cpp */,
+				A456FA2511AD4A830020B420 /* LabelsNodeList.h */,
 				E446139B0CD6331000FADA75 /* MediaError.h */,
 				E446139C0CD6331000FADA75 /* MediaError.idl */,
 				E4D4ABE00D7542F000F96869 /* PreloadScanner.cpp */,
@@ -19332,6 +19338,7 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 				CE172E011136E8CE0062A533 /* ZoomMode.h in Headers */,
+				A456FA2711AD4A830020B420 /* LabelsNodeList.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21621,6 +21628,7 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
+				A456FA2611AD4A830020B420 /* LabelsNodeList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

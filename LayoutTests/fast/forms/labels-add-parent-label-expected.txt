@@ -1,0 +1,18 @@
+Test that the labels list of a form control is dynamically updated when adding a label as parent for that form control.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS labels.length is 0
+PASS labels.length is 1
+PASS labels.length is 0
+PASS labels.length is 1
+PASS labels.length is 0
+PASS labels.length is 1
+PASS labels.length is 0
+PASS labels.length is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

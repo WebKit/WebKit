@@ -51,13 +51,15 @@ public:
 
     String accessKey() const;
     void setAccessKey(const String&);
-
+    
     String htmlFor() const;
     void setHtmlFor(const String&);
 
     void focus(bool restorePreviousSelection = true);
 
  private:
+    virtual void parseMappedAttribute(Attribute*);
+
     String m_formElementID;
 };
 

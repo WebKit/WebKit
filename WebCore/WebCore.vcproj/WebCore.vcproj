@@ -35233,6 +35233,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\LabelsNodeList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\LabelsNodeList.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\MediaError.h"
 				>
 			</File>

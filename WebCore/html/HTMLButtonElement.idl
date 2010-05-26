@@ -35,6 +35,7 @@ module html {
         boolean  checkValidity();
         void setCustomValidity(in [ConvertUndefinedOrNullToNullString] DOMString error);
         void click();
+        readonly attribute  NodeList              labels;
     };
 
 }

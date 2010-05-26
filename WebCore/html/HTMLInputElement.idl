@@ -95,6 +95,7 @@ module html {
 #endif
 
         readonly attribute FileList files;
+        readonly attribute  NodeList       labels;
     };
 
 }
