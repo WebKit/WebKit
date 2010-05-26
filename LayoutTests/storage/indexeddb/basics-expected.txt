@@ -13,14 +13,14 @@ PASS 'readyState' in result is true
 
 An event should fire shortly...
 
-FAIL Error function called: (0) Not implemented
+Success function called
 
 PASS 'source' in event is true
 PASS 'open' in event.source is true
 
-FAIL 'result' in event should be true. Was false.
-FAIL 'code' in event should be false. Was true.
-FAIL 'message' in event should be false. Was true.
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
 
 PASS 'onsuccess' in event.target is true
 PASS 'onerror' in event.target is true

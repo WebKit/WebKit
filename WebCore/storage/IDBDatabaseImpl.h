@@ -25,16 +25,42 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "config.h"
+
+#ifndef IDBDatabaseImpl_h
+#define IDBDatabaseImpl_h
+
 #include "IDBDatabase.h"
+#include <wtf/PassRefPtr.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-// FIXME: Write.
+class IDBDatabaseImpl : public IDBDatabase {
+public:
+    static PassRefPtr<IDBDatabase> create(const String& name, const String& description, const String& version)
+    {
+        return adoptRef(new IDBDatabaseImpl(name, description, version));
+    }
+    virtual ~IDBDatabaseImpl();
+
+    // Implements IDBDatabase
+    virtual String name() { return m_name; }
+    virtual String description() { return m_description; }
+    virtual String version() { return m_version; }
+    virtual PassRefPtr<DOMStringList> objectStores();
+
+private:
+    IDBDatabaseImpl(const String& name, const String& description, const String& version);
+
+    String m_name;
+    String m_description;
+    String m_version;
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE)
+#endif
+
+#endif // IDBDatabaseImpl_h
 

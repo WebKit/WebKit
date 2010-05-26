@@ -51,16 +51,16 @@ public:
     virtual ~WebIndexedDatabase() { }
 
     // The WebKit implementation of open ignores the WebFrame* parameter.
-    virtual void open(const WebString& name, const WebString& description, bool modifyDatabase,
+    virtual void open(const WebString& name, const WebString& description,
                       WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* webFrame, int& exceptionCode)
     {
-        open(name, description, modifyDatabase, callbacks, origin.toString(), webFrame, exceptionCode);
+        open(name, description, false, callbacks, origin.toString(), webFrame, exceptionCode);
     }
     // FIXME: Delete soon.  Compatability hack.
     virtual void open(const WebString& name, const WebString& description, bool modifyDatabase,
                       WebIDBCallbacks* callbacks, const WebString& origin, WebFrame* webFrame, int& exceptionCode)
     {
-        open(name, description, modifyDatabase, callbacks, WebSecurityOrigin::createFromString(origin), webFrame, exceptionCode);
+        open(name, description, callbacks, WebSecurityOrigin::createFromString(origin), webFrame, exceptionCode);
     }
 };
 

@@ -28,6 +28,7 @@
 #ifndef IDBDatabaseRequest_h
 #define IDBDatabaseRequest_h
 
+#include "DOMStringList.h"
 #include "IDBDatabase.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
@@ -47,13 +48,11 @@ public:
     }
     ~IDBDatabaseRequest();
 
-    // FIXME: Write.
-    void createObjectStore(const String& name, const String& keyPath, bool autoIncrement)
-    {
-        UNUSED_PARAM(name);
-        UNUSED_PARAM(keyPath);
-        UNUSED_PARAM(autoIncrement);
-    }
+    // Implement the IDL
+    String name() const { return m_idbDatabase->name(); }
+    String description() const { return m_idbDatabase->description(); }
+    String version() const { return m_idbDatabase->version(); }
+    PassRefPtr<DOMStringList> objectStores() const { return m_idbDatabase->objectStores(); }
 
 private:
     IDBDatabaseRequest(PassRefPtr<IDBDatabase>);

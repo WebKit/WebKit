@@ -25,11 +25,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 #include "IndexedDatabaseImpl.h"
 
-#include "IDBDatabase.h"
-#include "IDBDatabaseError.h"
+#include "IDBDatabaseImpl.h"
 #include "SecurityOrigin.h"
 #include <wtf/Threading.h>
 #include <wtf/UnusedParam.h>
@@ -51,13 +51,18 @@ IndexedDatabaseImpl::~IndexedDatabaseImpl()
 {
 }
 
-void IndexedDatabaseImpl::open(const String& name, const String& description, bool modifyDatabase, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin>, Frame*, ExceptionCode&)
+void IndexedDatabaseImpl::open(const String& name, const String& description, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin>, Frame*, ExceptionCode&)
 {
-    // FIXME: Write for realz.
-    UNUSED_PARAM(name);
-    UNUSED_PARAM(description);
-    UNUSED_PARAM(modifyDatabase);
-    callbacks->onError(IDBDatabaseError::create(0, "Not implemented"));
+    RefPtr<IDBDatabase> database;
+    IDBDatabaseMap::iterator it = m_databaseMap.find(name);
+    if (it == m_databaseMap.end()) {
+        // FIXME: What should the version be?  The spec doesn't define it yet.
+        database = IDBDatabaseImpl::create(name, description, "");
+        m_databaseMap.set(name, database);
+    } else
+        database = it->second;
+
+    callbacks->onSuccess(database.release());
 }
 
 } // namespace WebCore

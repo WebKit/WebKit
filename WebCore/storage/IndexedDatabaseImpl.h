@@ -29,6 +29,8 @@
 #define IndexedDatabaseImpl_h
 
 #include "IndexedDatabase.h"
+#include "StringHash.h"
+#include <wtf/HashMap.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -39,10 +41,13 @@ public:
     static PassRefPtr<IndexedDatabaseImpl> create();
     virtual ~IndexedDatabaseImpl();
 
-    virtual void open(const String& name, const String& description, bool modifyDatabase, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, ExceptionCode&);
+    virtual void open(const String& name, const String& description, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, ExceptionCode&);
 
 private:
     IndexedDatabaseImpl();
+
+    typedef HashMap<String, RefPtr<IDBDatabase> > IDBDatabaseMap;
+    IDBDatabaseMap m_databaseMap;
 
     // We only create one instance of this class at a time.
     static IndexedDatabaseImpl* indexedDatabaseImpl;

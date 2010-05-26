@@ -4779,7 +4779,6 @@
 		C5160EEA1004543A00A7CEE2 /* StorageAreaImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5160EE81004543A00A7CEE2 /* StorageAreaImpl.cpp */; };
 		C5160EEB1004543A00A7CEE2 /* StorageAreaImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = C5160EE91004543A00A7CEE2 /* StorageAreaImpl.h */; };
 		C5198F4C1192ECFD002B74A6 /* IDBCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = C5198F381192ECFD002B74A6 /* IDBCallbacks.h */; };
-		C5198F4D1192ECFD002B74A6 /* IDBDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5198F391192ECFD002B74A6 /* IDBDatabase.cpp */; };
 		C5198F4E1192ECFD002B74A6 /* IDBDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = C5198F3A1192ECFD002B74A6 /* IDBDatabase.h */; };
 		C5198F4F1192ECFD002B74A6 /* IDBDatabaseError.h in Headers */ = {isa = PBXBuildFile; fileRef = C5198F3B1192ECFD002B74A6 /* IDBDatabaseError.h */; };
 		C5198F511192ECFD002B74A6 /* IDBDatabaseException.h in Headers */ = {isa = PBXBuildFile; fileRef = C5198F3D1192ECFD002B74A6 /* IDBDatabaseException.h */; };
@@ -10273,6 +10272,8 @@
 		C0DFC86F0DB6841A003EAE7C /* JSConsoleCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSConsoleCustom.cpp; sourceTree = "<group>"; };
 		C105DA610F3AA68F001DD44F /* TextEncodingDetectorICU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextEncodingDetectorICU.cpp; sourceTree = "<group>"; };
 		C105DA630F3AA6B8001DD44F /* TextEncodingDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextEncodingDetector.h; sourceTree = "<group>"; };
+		C50AD2A911AC1631008CF2FB /* IDBDatabaseImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBDatabaseImpl.cpp; sourceTree = "<group>"; };
+		C50AD2AA11AC1631008CF2FB /* IDBDatabaseImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseImpl.h; sourceTree = "<group>"; };
 		C50D0E800FF4272900AC2644 /* StorageNamespace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageNamespace.cpp; sourceTree = "<group>"; };
 		C50D0E810FF4272900AC2644 /* StorageNamespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageNamespace.h; sourceTree = "<group>"; };
 		C5102D920FD9AA2D00FAFF04 /* StorageSyncManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageSyncManager.h; sourceTree = "<group>"; };
@@ -10284,7 +10285,6 @@
 		C5160EE81004543A00A7CEE2 /* StorageAreaImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageAreaImpl.cpp; sourceTree = "<group>"; };
 		C5160EE91004543A00A7CEE2 /* StorageAreaImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageAreaImpl.h; sourceTree = "<group>"; };
 		C5198F381192ECFD002B74A6 /* IDBCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCallbacks.h; sourceTree = "<group>"; };
-		C5198F391192ECFD002B74A6 /* IDBDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBDatabase.cpp; sourceTree = "<group>"; };
 		C5198F3A1192ECFD002B74A6 /* IDBDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabase.h; sourceTree = "<group>"; };
 		C5198F3B1192ECFD002B74A6 /* IDBDatabaseError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseError.h; sourceTree = "<group>"; };
 		C5198F3C1192ECFD002B74A6 /* IDBDatabaseError.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBDatabaseError.idl; sourceTree = "<group>"; };
@@ -10999,8 +10999,9 @@
 				C56C9150119D84CB00DE4CD9 /* IDBAny.h */,
 				C56C9151119D84CB00DE4CD9 /* IDBAny.idl */,
 				C5198F381192ECFD002B74A6 /* IDBCallbacks.h */,
-				C5198F391192ECFD002B74A6 /* IDBDatabase.cpp */,
 				C5198F3A1192ECFD002B74A6 /* IDBDatabase.h */,
+				C50AD2A911AC1631008CF2FB /* IDBDatabaseImpl.cpp */,
+				C50AD2AA11AC1631008CF2FB /* IDBDatabaseImpl.h */,
 				C5198F3B1192ECFD002B74A6 /* IDBDatabaseError.h */,
 				C5198F3C1192ECFD002B74A6 /* IDBDatabaseError.idl */,
 				C5198F3D1192ECFD002B74A6 /* IDBDatabaseException.h */,
@@ -20299,7 +20300,6 @@
 				B275358E0B053A66002CE64F /* IconMac.mm in Sources */,
 				51E1ECC00C91C90400DC255B /* IconRecord.cpp in Sources */,
 				C56C9152119D84CB00DE4CD9 /* IDBAny.cpp in Sources */,
-				C5198F4D1192ECFD002B74A6 /* IDBDatabase.cpp in Sources */,
 				C5198F531192ECFD002B74A6 /* IDBDatabaseRequest.cpp in Sources */,
 				C56C915F119D84E600DE4CD9 /* IDBErrorEvent.cpp in Sources */,
 				C56C9162119D84E600DE4CD9 /* IDBEvent.cpp in Sources */,

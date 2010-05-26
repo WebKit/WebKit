@@ -1,3 +1,32 @@
+2010-05-24  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Add IDBDatabase's attributes
+        https://bugs.webkit.org/show_bug.cgi?id=39602
+
+        Plumbing to hook up the synchronous attribute requests
+        on IDBDatabase.
+
+        * public/WebIDBDatabase.h:
+        (WebKit::WebIDBDatabase::name):
+        (WebKit::WebIDBDatabase::description):
+        (WebKit::WebIDBDatabase::version):
+        (WebKit::WebIDBDatabase::objectStores):
+        * src/IDBDatabaseProxy.cpp:
+        (WebCore::IDBDatabaseProxy::name):
+        (WebCore::IDBDatabaseProxy::description):
+        (WebCore::IDBDatabaseProxy::version):
+        (WebCore::IDBDatabaseProxy::objectStores):
+        * src/IDBDatabaseProxy.h:
+        * src/WebIDBDatabaseImpl.cpp:
+        (WebKit::WebIDBDatabaseImpl::WebIDBDatabaseImpl):
+        (WebKit::WebIDBDatabaseImpl::name):
+        (WebKit::WebIDBDatabaseImpl::description):
+        (WebKit::WebIDBDatabaseImpl::version):
+        (WebKit::WebIDBDatabaseImpl::objectStores):
+        * src/WebIDBDatabaseImpl.h:
+
 2010-05-24  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Dimitri Glazkov.

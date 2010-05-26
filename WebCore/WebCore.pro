@@ -2332,6 +2332,7 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         storage/IDBAny.h \
         storage/IDBCallbacks.h \
         storage/IDBDatabase.h \
+        storage/IDBDatabaseImpl.h \
         storage/IDBDatabaseError.h \
         storage/IDBDatabaseException.h \
         storage/IDBDatabaseRequest.h \
@@ -2346,7 +2347,7 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
     SOURCES += \
         bindings/js/JSIDBAnyCustom.cpp \
         storage/IDBAny.cpp \
-        storage/IDBDatabase.cpp \
+        storage/IDBDatabaseImpl.cpp \
         storage/IDBDatabaseRequest.cpp \
         storage/IDBErrorEvent.cpp \
         storage/IDBEvent.cpp \

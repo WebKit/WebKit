@@ -29,6 +29,7 @@
 #include "config.h"
 #include "IDBDatabaseProxy.h"
 
+#include "DOMStringList.h"
 #include "IDBDatabaseError.h"
 #include "WebIDBDatabase.h"
 #include "WebIDBDatabaseError.h"
@@ -49,6 +50,30 @@ IDBDatabaseProxy::IDBDatabaseProxy(PassOwnPtr<WebKit::WebIDBDatabase> database)
 
 IDBDatabaseProxy::~IDBDatabaseProxy()
 {
+}
+
+String IDBDatabaseProxy::name()
+{
+    return m_webIDBDatabase->name();
+}
+
+String IDBDatabaseProxy::description()
+{
+    return m_webIDBDatabase->description();
+}
+
+String IDBDatabaseProxy::version()
+{
+    return m_webIDBDatabase->version();
+}
+
+PassRefPtr<DOMStringList> IDBDatabaseProxy::objectStores()
+{
+    WebKit::WebVector<WebKit::WebString> webStrings = m_webIDBDatabase->objectStores();
+    RefPtr<DOMStringList> strings = DOMStringList::create();
+    for (size_t i = 0; i < webStrings.size(); ++i)
+        strings->append(webStrings[i]);
+    return strings.release();
 }
 
 } // namespace WebCore

@@ -30,10 +30,12 @@ module storage {
     interface [
         Conditional=INDEXED_DATABASE
     ] IDBDatabaseRequest {
-        // FIXME: Boolean should be optional and keyPath should take nulls.
-        void createObjectStore(in DOMString name, in DOMString keyPath, in boolean autoIncrement);
+        // FIXME: Complete this file.
 
-        // FIXME: Finish.
+        readonly attribute DOMString name;
+        readonly attribute DOMString description;
+        readonly attribute DOMString version;
+        readonly attribute DOMStringList objectStores;
     };
 
 }

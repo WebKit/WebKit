@@ -29,11 +29,15 @@
 #ifndef IDBDatabase_h
 #define IDBDatabase_h
 
+#include "PlatformString.h"
+#include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
+
+class DOMStringList;
 
 // This class is shared by IDBDatabaseRequest (async) and IDBDatabaseSync (sync).
 // This is implemented by IDBDatabaseImpl and optionally others (in order to proxy
@@ -42,7 +46,11 @@ namespace WebCore {
 class IDBDatabase : public ThreadSafeShared<IDBDatabase> {
 public:
     virtual ~IDBDatabase() { }
-    // FIXME: Write.
+
+    virtual String name() = 0;
+    virtual String description() = 0;
+    virtual String version() = 0;
+    virtual PassRefPtr<DOMStringList> objectStores() = 0;
 };
 
 } // namespace WebCore

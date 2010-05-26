@@ -30,6 +30,8 @@
 #define WebIDBDatabase_h
 
 #include "WebCommon.h"
+#include "WebString.h"
+#include "WebVector.h"
 
 namespace WebKit {
 
@@ -38,7 +40,11 @@ class WebIDBDatabase {
 public:
     virtual ~WebIDBDatabase() { }
 
-    // FIXME: Implement.
+    // FIXME: These should be purely virtual.
+    virtual WebString name() { return WebString(); }
+    virtual WebString description() { return WebString(); }
+    virtual WebString version() { return WebString(); }
+    virtual WebVector<WebString> objectStores() { return WebVector<WebString>(); }
 };
 
 } // namespace WebKit

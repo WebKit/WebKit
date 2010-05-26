@@ -51,7 +51,7 @@ public:
     }
     ~IndexedDatabaseRequest();
 
-    PassRefPtr<IDBRequest> open(const String& name, const String& description, bool modifyDatabase, ExceptionCode&);
+    PassRefPtr<IDBRequest> open(const String& name, const String& description, ExceptionCode&);
 
     void disconnectFrame() { m_frame = 0; }
 

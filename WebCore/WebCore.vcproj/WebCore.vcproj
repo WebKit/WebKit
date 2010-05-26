@@ -43981,6 +43981,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\IDBDatabaseImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBDatabaseImpl.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\LocalStorageTask.cpp"
 				>
 			</File>

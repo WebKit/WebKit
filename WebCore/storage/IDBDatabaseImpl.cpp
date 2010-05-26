@@ -25,13 +25,38 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-module storage {
 
-    interface [
-        Conditional=INDEXED_DATABASE
-    ] IndexedDatabaseRequest {
-        IDBRequest open(in DOMString name, in DOMString description)
-            raises(IDBDatabaseException);
-    };
+#include "config.h"
+#include "IDBDatabaseImpl.h"
 
+#include "DOMStringList.h"
+#include "SecurityOrigin.h"
+#include <wtf/Threading.h>
+#include <wtf/UnusedParam.h>
+
+#if ENABLE(INDEXED_DATABASE)
+
+namespace WebCore {
+
+IDBDatabaseImpl::IDBDatabaseImpl(const String& name, const String& description, const String& version)
+    : m_name(name)
+    , m_description(description)
+    , m_version(version)
+{
 }
+
+IDBDatabaseImpl::~IDBDatabaseImpl()
+{
+}
+
+PassRefPtr<DOMStringList> IDBDatabaseImpl::objectStores()
+{
+    // FIXME: This should return the actual list.
+    ASSERT_NOT_REACHED();
+    return DOMStringList::create();
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(INDEXED_DATABASE)
+

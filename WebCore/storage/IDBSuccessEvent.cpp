@@ -42,7 +42,7 @@ PassRefPtr<IDBSuccessEvent> IDBSuccessEvent::create(PassRefPtr<IDBAny> source, P
 }
 
 IDBSuccessEvent::IDBSuccessEvent(PassRefPtr<IDBAny> source, PassRefPtr<IDBAny> result)
-    : IDBEvent(eventNames().errorEvent, source)
+    : IDBEvent(eventNames().successEvent, source)
     , m_result(result)
 {
 }
