@@ -1,6 +1,6 @@
 2010-05-26  Jeremy Orlow  <jorlow@chromium.org>
 
-        Unreviewed build fix for Windows + clean up the xcode project.
+        Unreviewed build fix for Windows + clean up the Visual Studio project.
 
         * WebCore.gypi:
         * WebCore.vcproj/WebCore.vcproj:
@@ -332,7 +332,7 @@
 
 2010-05-26  Nikolas Zimmermann  <nzimmermann@rim.com>
 
-        Not reviewed. Sort XCode project file.
+        Not reviewed. Sort Xcode project file.
 
         * WebCore.xcodeproj/project.pbxproj:
 
