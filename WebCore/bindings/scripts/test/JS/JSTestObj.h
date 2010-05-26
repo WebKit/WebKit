@@ -23,6 +23,7 @@
 
 #include "JSDOMBinding.h"
 #include <runtime/JSGlobalObject.h>
+#include <runtime/JSObjectWithGlobalObject.h>
 #include <runtime/ObjectPrototype.h>
 
 namespace WebCore {
@@ -66,8 +67,8 @@ protected:
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestObj*);
 TestObj* toTestObj(JSC::JSValue);
 
-class JSTestObjPrototype : public JSC::JSObject {
-    typedef JSC::JSObject Base;
+class JSTestObjPrototype : public JSC::JSObjectWithGlobalObject {
+    typedef JSC::JSObjectWithGlobalObject Base;
 public:
     static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);
     virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
@@ -78,7 +79,7 @@ public:
     {
         return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount);
     }
-    JSTestObjPrototype(NonNullPassRefPtr<JSC::Structure> structure) : JSC::JSObject(structure) { }
+    JSTestObjPrototype(JSC::JSGlobalObject* globalObject, NonNullPassRefPtr<JSC::Structure> structure) : JSC::JSObjectWithGlobalObject(globalObject, structure) { }
 protected:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };

@@ -1,3 +1,18 @@
+2010-05-26  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Update test expectations for JS generator, when using run-webkit-tests. This has been forgotten.
+
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::JSTestInterfaceConstructor):
+        (WebCore::JSTestInterface::createPrototype):
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        (WebCore::JSTestInterfacePrototype::JSTestInterfacePrototype):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::JSTestObjConstructor):
+        (WebCore::JSTestObj::createPrototype):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        (WebCore::JSTestObjPrototype::JSTestObjPrototype):
+
 2010-05-25  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

@@ -86,7 +86,7 @@ public:
     JSTestObjConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
         : DOMConstructorObject(JSTestObjConstructor::createStructure(globalObject->objectPrototype()), globalObject)
     {
-        putDirect(exec->propertyNames().prototype, JSTestObjPrototype::self(exec, globalObject), None);
+        putDirect(exec->propertyNames().prototype, JSTestObjPrototype::self(exec, globalObject), DontDelete | ReadOnly);
     }
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
@@ -188,7 +188,7 @@ JSTestObj::~JSTestObj()
 
 JSObject* JSTestObj::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
 {
-    return new (exec) JSTestObjPrototype(JSTestObjPrototype::createStructure(globalObject->objectPrototype()));
+    return new (exec) JSTestObjPrototype(globalObject, JSTestObjPrototype::createStructure(globalObject->objectPrototype()));
 }
 
 bool JSTestObj::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
