@@ -187,7 +187,7 @@ CFDictionaryRef QTMovieVisualContext::getCGImageOptions()
         SetNumberValue(pixelBufferOptions, kCVPixelBufferBytesPerRowAlignmentKey, 16);
 
         // compatability
-        SetNumberValue(pixelBufferOptions, kCVPixelBufferCGImageCompatibilityKey, 1);
+        CFDictionarySetValue(pixelBufferOptions, kCVPixelBufferCGImageCompatibilityKey, kCFBooleanTrue);
      
         // QT Visual Context attributes
         visualContextOptions = CFDictionaryCreateMutable(kCFAllocatorDefault, 0,
