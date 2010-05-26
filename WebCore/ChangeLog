@@ -1,3 +1,10 @@
+2010-05-25  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, changing "fts2" to "fts3" in one location I missed in r60188.
+
+        * storage/DatabaseAuthorizer.cpp:
+        (WebCore::DatabaseAuthorizer::dropVTable):
+
 2010-05-25  Mark Rowe  <mrowe@apple.com>
 
         Build fix.
