@@ -1193,6 +1193,8 @@
 		5DFE8F570D16477C0076E937 /* ScheduledAction.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA378BB0D15F64200B793D6 /* ScheduledAction.h */; };
 		626CDE0E1140424C001E5A68 /* SpatialNavigation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 626CDE0C1140424C001E5A68 /* SpatialNavigation.cpp */; };
 		626CDE0F1140424C001E5A68 /* SpatialNavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = 626CDE0D1140424C001E5A68 /* SpatialNavigation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		62C1217C11AB9E77003C462C /* SuspendableTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62C1217A11AB9E76003C462C /* SuspendableTimer.cpp */; };
+		62C1217D11AB9E77003C462C /* SuspendableTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 62C1217B11AB9E77003C462C /* SuspendableTimer.h */; };
 		62CD32591157E57C0063B0A7 /* CustomEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62CD32561157E57C0063B0A7 /* CustomEvent.cpp */; };
 		62CD325A1157E57C0063B0A7 /* CustomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 62CD32571157E57C0063B0A7 /* CustomEvent.h */; };
 		63189AE30E83A33300012E41 /* NodeRareData.h in Headers */ = {isa = PBXBuildFile; fileRef = 63189AE20E83A33300012E41 /* NodeRareData.h */; settings = {ATTRIBUTES = (); }; };
@@ -6707,6 +6709,8 @@
 		5DCF836C0D59159800953BC6 /* PluginInfoStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInfoStore.h; sourceTree = "<group>"; };
 		626CDE0C1140424C001E5A68 /* SpatialNavigation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpatialNavigation.cpp; sourceTree = "<group>"; };
 		626CDE0D1140424C001E5A68 /* SpatialNavigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpatialNavigation.h; sourceTree = "<group>"; };
+		62C1217A11AB9E76003C462C /* SuspendableTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SuspendableTimer.cpp; sourceTree = "<group>"; };
+		62C1217B11AB9E77003C462C /* SuspendableTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SuspendableTimer.h; sourceTree = "<group>"; };
 		62CD32561157E57C0063B0A7 /* CustomEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomEvent.cpp; sourceTree = "<group>"; };
 		62CD32571157E57C0063B0A7 /* CustomEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomEvent.h; sourceTree = "<group>"; };
 		62CD32581157E57C0063B0A7 /* CustomEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CustomEvent.idl; sourceTree = "<group>"; };
@@ -11795,6 +11799,8 @@
 				F587863A02DE3A1401EA4122 /* Settings.h */,
 				626CDE0C1140424C001E5A68 /* SpatialNavigation.cpp */,
 				626CDE0D1140424C001E5A68 /* SpatialNavigation.h */,
+				62C1217A11AB9E76003C462C /* SuspendableTimer.cpp */,
+				62C1217B11AB9E77003C462C /* SuspendableTimer.h */,
 				BCACF3BA1072921A00C0C8A3 /* UserContentURLPattern.cpp */,
 				BCACF3BB1072921A00C0C8A3 /* UserContentURLPattern.h */,
 				BCA2B0601050475F0043BD1C /* UserScript.h */,
@@ -18953,6 +18959,7 @@
 				B59DD6A511902A62007E9684 /* JSSQLStatementCallback.h in Headers */,
 				B59DD6A911902A71007E9684 /* JSSQLStatementErrorCallback.h in Headers */,
 				51327D6011A33A2B004F9D65 /* SinkDocument.h in Headers */,
+				62C1217D11AB9E77003C462C /* SuspendableTimer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21195,6 +21202,7 @@
 				B59DD6AA11902A71007E9684 /* JSSQLStatementErrorCallback.cpp in Sources */,
 				51327D6111A33A2B004F9D65 /* SinkDocument.cpp in Sources */,
 				BCF34A3711A231CD00C71804 /* NamedNodeMap.cpp in Sources */,
+				62C1217C11AB9E77003C462C /* SuspendableTimer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

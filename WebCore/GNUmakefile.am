@@ -1492,6 +1492,8 @@ webcore_sources += \
 	WebCore/page/Settings.h \
 	WebCore/page/SpatialNavigation.cpp \
 	WebCore/page/SpatialNavigation.h \
+	WebCore/page/SuspendableTimer.cpp \
+	WebCore/page/SuspendableTimer.h \
 	WebCore/page/UserContentURLPattern.cpp \
 	WebCore/page/UserContentURLPattern.h \
 	WebCore/page/UserScript.h \

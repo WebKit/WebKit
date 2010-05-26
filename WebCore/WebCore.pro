@@ -788,6 +788,7 @@ SOURCES += \
     page/Screen.cpp \
     page/Settings.cpp \
     page/SpatialNavigation.cpp \
+    page/SuspendableTimer.cpp \
     page/UserContentURLPattern.cpp \
     page/WindowFeatures.cpp \
     page/XSSAuditor.cpp \
