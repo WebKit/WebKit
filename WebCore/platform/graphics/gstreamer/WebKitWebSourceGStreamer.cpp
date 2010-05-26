@@ -388,10 +388,6 @@ static bool webKitWebSrcStart(WebKitWebSrc* src)
     request.setTargetType(ResourceRequestBase::TargetIsMedia);
     request.setAllowCookies(true);
 
-    // Let Apple web servers know we want to access their nice movie trailers.
-    if (!g_ascii_strcasecmp("movies.apple.com", url.host().utf8().data()))
-        request.setHTTPUserAgent("Quicktime/7.2.0");
-
     if (priv->frame) {
         Document* document = priv->frame->document();
         if (document)
@@ -401,6 +397,11 @@ static bool webKitWebSrcStart(WebKitWebSrc* src)
         if (loader)
             loader->addExtraFieldsToSubresourceRequest(request);
     }
+
+    // Let Apple web servers know we want to access their nice movie trailers.
+    if (!g_ascii_strcasecmp("movies.apple.com", url.host().utf8().data())
+        || !g_ascii_strcasecmp("trailers.apple.com", url.host().utf8().data()))
+        request.setHTTPUserAgent("Quicktime/7.6.6");
 
     if (priv->requestedOffset) {
         GOwnPtr<gchar> val;

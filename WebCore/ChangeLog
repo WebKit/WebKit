@@ -1,3 +1,17 @@
+2010-05-25  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GStreamer] Apple trailers not playing
+        https://bugs.webkit.org/show_bug.cgi?id=37390
+
+        Set the AppleTrailer User-Agent workaround after
+        FrameLoader::addExtraFieldsToSubresourceRequest has been called
+        because that method sets the global User-Agent.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcStart):
+
 2010-05-25  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, changing "fts2" to "fts3" in one location I missed in r60188.
