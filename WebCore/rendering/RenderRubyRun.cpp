@@ -175,8 +175,8 @@ void RenderRubyRun::removeChild(RenderObject* child)
             RenderRubyBase* rightBase = rightRun->rubyBaseSafe();
             // Collect all children in a single base, then swap the bases.
             rightBase->moveChildren(base);
-            moveChildTo(rightRun, rightRun->children(), base);
-            rightRun->moveChildTo(this, children(), rightBase);
+            moveChildTo(rightRun, base);
+            rightRun->moveChildTo(this, rightBase);
             // The now empty ruby base will be removed below.
         }
     }

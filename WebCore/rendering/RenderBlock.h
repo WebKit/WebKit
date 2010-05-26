@@ -154,10 +154,19 @@ public:
     int columnGap() const;
 
 protected:
-    void moveChildTo(RenderObject* to, RenderObjectChildList* toChildList, RenderObject* child);
-    void moveChildTo(RenderObject* to, RenderObjectChildList* toChildList, RenderObject* beforeChild, RenderObject* child);
-    void moveAllChildrenTo(RenderObject* to, RenderObjectChildList* toChildList, bool fullRemoveAppend = false);
-    void moveAllChildrenTo(RenderObject* to, RenderObjectChildList* toChildList, RenderObject* beforeChild);
+    // These functions are only used internally to manipulate the render tree structure via remove/insert/appendChildNode.
+    // Since they are typically called only to move objects around within anonymous blocks (which only have layers in
+    // the case of column spans), the default for fullRemoveInsert is false rather than true.
+    void moveChildTo(RenderBlock* to, RenderObject* child, bool fullRemoveInsert = false)
+    {
+        return moveChildTo(to, child, 0, fullRemoveInsert);
+    }
+    void moveChildTo(RenderBlock* to, RenderObject* child, RenderObject* beforeChild, bool fullRemoveInsert = false);
+    void moveAllChildrenTo(RenderBlock* to, bool fullRemoveInsert = false)
+    {
+        return moveAllChildrenTo(to, 0, fullRemoveInsert);
+    }
+    void moveAllChildrenTo(RenderBlock* to, RenderObject* beforeChild, bool fullRemoveInsert = false);
 
     int maxTopPosMargin() const { return m_maxMargin ? m_maxMargin->m_topPos : MaxMargin::topPosDefault(this); }
     int maxTopNegMargin() const { return m_maxMargin ? m_maxMargin->m_topNeg : MaxMargin::topNegDefault(this); }
