@@ -1812,6 +1812,14 @@ DEFINE_STUB_FUNCTION(VoidPtrPair, op_call_arityCheck)
     if (argCount > newCodeBlock->m_numParameters) {
         size_t numParameters = newCodeBlock->m_numParameters;
         Register* r = callFrame->registers() + numParameters;
+        Register* newEnd = r + newCodeBlock->m_numCalleeRegisters;
+        if (!stackFrame.registerFile->grow(newEnd)) {
+            // Rewind to the previous call frame because op_call already optimistically
+            // moved the call frame forward.
+            stackFrame.callFrame = oldCallFrame;
+            throwStackOverflowError(oldCallFrame, stackFrame.globalData, stackFrame.args[1].returnAddress(), STUB_RETURN_ADDRESS);
+            RETURN_POINTER_PAIR(0, 0);
+        }
 
         Register* argv = r - RegisterFile::CallFrameHeaderSize - numParameters - argCount;
         for (size_t i = 0; i < numParameters; ++i)
@@ -1839,6 +1847,7 @@ DEFINE_STUB_FUNCTION(VoidPtrPair, op_call_arityCheck)
         callFrame->setCallerFrame(oldCallFrame);
     }
 
+    ASSERT((void*)callFrame <= stackFrame.registerFile->end());
     RETURN_POINTER_PAIR(callee, callFrame);
 }
 
