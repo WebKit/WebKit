@@ -1,3 +1,17 @@
+2010-05-24  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] setup fonts on chromium linux DRT
+        https://bugs.webkit.org/show_bug.cgi?id=39644
+
+        * DumpRenderTree/chromium/TestShellGtk.cpp:
+        (setupFontconfig):
+        (platformInit):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::paintRect):  Fix a bug where in release builds, we didn't initialize m_canvas.
+        * DumpRenderTree/chromium/fonts.conf: Added.
+
 2010-05-24  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Dimitri Glazkov.

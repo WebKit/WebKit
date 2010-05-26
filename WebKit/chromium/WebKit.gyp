@@ -585,14 +585,14 @@
 
                     'resource_include_dirs': ['<(SHARED_INTERMEDIATE_DIR)/webkit'],
                     'sources': [
-                       '<(SHARED_INTERMEDIATE_DIR)/net/net_resources.rc',
-                       '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_chromium_resources.rc',
-                       '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_resources.rc',
-                       '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_strings_en-US.rc',
+                        '<(SHARED_INTERMEDIATE_DIR)/net/net_resources.rc',
+                        '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_chromium_resources.rc',
+                        '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_resources.rc',
+                        '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_strings_en-US.rc',
                     ],
                     'copies': [{
-                       'destination': '<(PRODUCT_DIR)',
-                       'files': ['<(ahem_path)'],
+                        'destination': '<(PRODUCT_DIR)',
+                        'files': ['<(ahem_path)'],
                     }],
                 }],
                 ['OS=="mac"', {
@@ -632,6 +632,15 @@
                             'process_outputs_as_mac_bundle_resources': 1,
                         },
                     ], # actions
+                }],
+                ['OS=="linux"', {
+                    'copies': [{
+                        'destination': '<(PRODUCT_DIR)',
+                        'files': [
+                            '<(ahem_path)',
+                            '../../WebKitTools/DumpRenderTree/chromium/fonts.conf',
+                        ],
+                    }],
                 }],
                 ['OS!="linux" and OS!="freebsd" and OS!="openbsd"', {
                     'sources/': [
