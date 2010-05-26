@@ -307,7 +307,7 @@ public:
     void setTitle(const String&);
     void setIconURL(const String&);
 
-    void commitProvisionalLoad(PassRefPtr<CachedPage>);
+    void commitProvisionalLoad();
     bool isLoadingFromCachedPage() const { return m_loadingFromCachedPage; }
 
     bool committingFirstRealLoad() const { return !m_creatingInitialEmptyDocument && !m_committedFirstRealDocumentLoad; }
@@ -351,7 +351,9 @@ public:
     bool isDisplayingInitialEmptyDocument() const { return m_isDisplayingInitialEmptyDocument; }
 
     void clear(bool clearWindowProperties = true, bool clearScriptObjects = true, bool clearFrameView = true);
-    
+
+    bool quickRedirectComing() const { return m_quickRedirectComing; }
+
     bool shouldClose();
 
 private:
@@ -372,8 +374,7 @@ private:
     void navigateWithinDocument(HistoryItem*);
     void navigateToDifferentDocument(HistoryItem*, FrameLoadType);
     
-    bool loadProvisionalItemFromCachedPage();
-    void cachePageForHistoryItem(HistoryItem*);
+    void loadProvisionalItemFromCachedPage();
     void pageHidden();
 
     void receivedFirstData();
@@ -414,7 +415,7 @@ private:
     void setState(FrameState);
 
     void closeOldDataSources();
-    void open(CachedPage&);
+    void prepareForCachedPageRestore();
 
     void updateHistoryAfterClientRedirect();
 

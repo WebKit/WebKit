@@ -1,3 +1,35 @@
+2010-05-26  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Factor PageCache functionality out of FrameLoader and into
+        PageCache.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39382
+
+        Refactor only, so no new tests.
+
+        * history/PageCache.cpp:
+        (WebCore::pageCacheLogPrefix):
+        (WebCore::pageCacheLog):
+        (WebCore::logCanCacheFrameDecision):
+        (WebCore::logCanCachePageDecision):
+        (WebCore::PageCache::canCachePageContainingThisFrame):
+        (WebCore::PageCache::canCache):
+        (WebCore::PageCache::add):
+        (WebCore::PageCache::get):
+        * history/PageCache.h:
+        * loader/DocumentLoader.cpp:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::prepareForCachedPageRestore):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::loadProvisionalItemFromCachedPage):
+        (WebCore::FrameLoader::navigateToDifferentDocument):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::quickRedirectComing):
+        * svg/graphics/SVGImage.cpp:
+
 2010-05-26  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Adam Barth.

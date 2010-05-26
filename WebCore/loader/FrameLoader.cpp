@@ -1420,208 +1420,6 @@ static inline bool frameContainsWMLContent(Frame* frame)
 }
 #endif
 
-bool FrameLoader::canCachePageContainingThisFrame()
-{
-    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
-        if (!child->loader()->canCachePageContainingThisFrame())
-            return false;
-    }
-            
-    return m_documentLoader
-        && m_documentLoader->mainDocumentError().isNull()
-        // FIXME: If we ever change this so that frames with plug-ins will be cached,
-        // we need to make sure that we don't cache frames that have outstanding NPObjects
-        // (objects created by the plug-in). Since there is no way to pause/resume a Netscape plug-in,
-        // they would need to be destroyed and then recreated, and there is no way that we can recreate
-        // the right NPObjects. See <rdar://problem/5197041> for more information.
-        && !m_containsPlugIns
-        && !m_URL.protocolIs("https")
-        && (!m_frame->domWindow() || !m_frame->domWindow()->hasEventListeners(eventNames().unloadEvent))
-#if ENABLE(DATABASE)
-        && !m_frame->document()->hasOpenDatabases()
-#endif
-#if ENABLE(SHARED_WORKERS)
-        && !SharedWorkerRepository::hasSharedWorkers(m_frame->document())
-#endif
-        && !m_frame->document()->usingGeolocation()
-        && history()->currentItem()
-        && !m_quickRedirectComing
-        && !m_documentLoader->isLoadingInAPISense()
-        && !m_documentLoader->isStopping()
-        && m_frame->document()->canSuspendActiveDOMObjects()
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-        // FIXME: We should investigating caching frames that have an associated
-        // application cache. <rdar://problem/5917899> tracks that work.
-        && m_documentLoader->applicationCacheHost()->canCacheInPageCache()
-#endif
-#if ENABLE(WML)
-        && !frameContainsWMLContent(m_frame)
-#endif
-        && m_client->canCachePage()
-        ;
-}
-
-bool FrameLoader::canCachePage()
-{
-#ifndef NDEBUG
-    logCanCachePageDecision();
-#endif
-    
-    // Cache the page, if possible.
-    // Don't write to the cache if in the middle of a redirect, since we will want to
-    // store the final page we end up on.
-    // No point writing to the cache on a reload or loadSame, since we will just write
-    // over it again when we leave that page.
-    // FIXME: <rdar://problem/4886592> - We should work out the complexities of caching pages with frames as they
-    // are the most interesting pages on the web, and often those that would benefit the most from caching!
-    FrameLoadType loadType = this->loadType();
-    
-    return !m_frame->tree()->parent()
-        && canCachePageContainingThisFrame()
-        && m_frame->page()
-        && m_frame->page()->backForwardList()->enabled()
-        && m_frame->page()->backForwardList()->capacity() > 0
-        && m_frame->page()->settings()->usesPageCache()
-        && loadType != FrameLoadTypeReload 
-        && loadType != FrameLoadTypeReloadFromOrigin
-        && loadType != FrameLoadTypeSame
-        ;
-}
-
-#ifndef NDEBUG
-static String& pageCacheLogPrefix(int indentLevel)
-{
-    static int previousIndent = -1;
-    DEFINE_STATIC_LOCAL(String, prefix, ());
-    
-    if (indentLevel != previousIndent) {    
-        previousIndent = indentLevel;
-        prefix.truncate(0);
-        for (int i = 0; i < previousIndent; ++i)
-            prefix += "    ";
-    }
-    
-    return prefix;
-}
-
-static void pageCacheLog(const String& prefix, const String& message)
-{
-    LOG(PageCache, "%s%s", prefix.utf8().data(), message.utf8().data());
-}
-
-#define PCLOG(...) pageCacheLog(pageCacheLogPrefix(indentLevel), String::format(__VA_ARGS__))
-
-void FrameLoader::logCanCachePageDecision()
-{
-    // Only bother logging for main frames that have actually loaded and have content.
-    if (m_creatingInitialEmptyDocument)
-        return;
-    KURL currentURL = m_documentLoader ? m_documentLoader->url() : KURL();
-    if (currentURL.isEmpty())
-        return;
-
-    int indentLevel = 0;
-    PCLOG("--------\n Determining if page can be cached:");
-
-    bool cannotCache = !logCanCacheFrameDecision(1);
-        
-    FrameLoadType loadType = this->loadType();
-    do {
-        if (m_frame->tree()->parent())
-            { PCLOG("   -Frame has a parent frame"); cannotCache = true; }
-        if (!m_frame->page()) {
-            PCLOG("   -There is no Page object");
-            cannotCache = true;
-            break;
-        }
-        if (!m_frame->page()->backForwardList()->enabled())
-            { PCLOG("   -The back/forward list is disabled"); cannotCache = true; }
-        if (!(m_frame->page()->backForwardList()->capacity() > 0))
-            { PCLOG("   -The back/forward list has a 0 capacity"); cannotCache = true; }
-        if (!m_frame->page()->settings()->usesPageCache())
-            { PCLOG("   -Page settings says b/f cache disabled"); cannotCache = true; }
-        if (loadType == FrameLoadTypeReload)
-            { PCLOG("   -Load type is: Reload"); cannotCache = true; }
-        if (loadType == FrameLoadTypeReloadFromOrigin)
-            { PCLOG("   -Load type is: Reload from origin"); cannotCache = true; }
-        if (loadType == FrameLoadTypeSame)
-            { PCLOG("   -Load type is: Same"); cannotCache = true; }
-    } while (false);
-    
-    PCLOG(cannotCache ? " Page CANNOT be cached\n--------" : " Page CAN be cached\n--------");
-}
-
-bool FrameLoader::logCanCacheFrameDecision(int indentLevel)
-{
-    // Only bother logging for frames that have actually loaded and have content.
-    if (m_creatingInitialEmptyDocument)
-        return false;
-    KURL currentURL = m_documentLoader ? m_documentLoader->url() : KURL();
-    if (currentURL.isEmpty())
-        return false;
-
-    PCLOG("+---");
-    KURL newURL = m_provisionalDocumentLoader ? m_provisionalDocumentLoader->url() : KURL();
-    if (!newURL.isEmpty())
-        PCLOG(" Determining if frame can be cached navigating from (%s) to (%s):", currentURL.string().utf8().data(), newURL.string().utf8().data());
-    else
-        PCLOG(" Determining if subframe with URL (%s) can be cached:", currentURL.string().utf8().data());
-        
-    bool cannotCache = false;
-
-    do {
-        if (!m_documentLoader) {
-            PCLOG("   -There is no DocumentLoader object");
-            cannotCache = true;
-            break;
-        }
-        if (!m_documentLoader->mainDocumentError().isNull())
-            { PCLOG("   -Main document has an error"); cannotCache = true; }
-        if (m_containsPlugIns)
-            { PCLOG("   -Frame contains plugins"); cannotCache = true; }
-        if (m_URL.protocolIs("https"))
-            { PCLOG("   -Frame is HTTPS"); cannotCache = true; }
-        if (m_frame->domWindow() && m_frame->domWindow()->hasEventListeners(eventNames().unloadEvent))
-            { PCLOG("   -Frame has an unload event listener"); cannotCache = true; }
-#if ENABLE(DATABASE)
-        if (m_frame->document()->hasOpenDatabases())
-            { PCLOG("   -Frame has open database handles"); cannotCache = true; }
-#endif
-#if ENABLE(SHARED_WORKERS)
-        if (SharedWorkerRepository::hasSharedWorkers(m_frame->document()))
-            { PCLOG("   -Frame has associated SharedWorkers"); cannotCache = true; }
-#endif
-        if (m_frame->document()->usingGeolocation())
-            { PCLOG("   -Frame uses Geolocation"); cannotCache = true; }
-        if (!history()->currentItem())
-            { PCLOG("   -No current history item"); cannotCache = true; }
-        if (m_quickRedirectComing)
-            { PCLOG("   -Quick redirect is coming"); cannotCache = true; }
-        if (m_documentLoader->isLoadingInAPISense())
-            { PCLOG("   -DocumentLoader is still loading in API sense"); cannotCache = true; }
-        if (m_documentLoader->isStopping())
-            { PCLOG("   -DocumentLoader is in the middle of stopping"); cannotCache = true; }
-        if (!m_frame->document()->canSuspendActiveDOMObjects())
-            { PCLOG("   -The document cannot suspect its active DOM Objects"); cannotCache = true; }
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-        if (!m_documentLoader->applicationCacheHost()->canCacheInPageCache())
-            { PCLOG("   -The DocumentLoader uses an application cache"); cannotCache = true; }
-#endif
-        if (!m_client->canCachePage())
-            { PCLOG("   -The client says this frame cannot be cached"); cannotCache = true; }
-    } while (false);
-
-    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-        if (!child->loader()->logCanCacheFrameDecision(indentLevel + 1))
-            cannotCache = true;
-    
-    PCLOG(cannotCache ? " Frame CANNOT be cached" : " Frame CAN be cached");
-    PCLOG("+---");
-
-    return !cannotCache;
-}
-#endif
-
 void FrameLoader::updateFirstPartyForCookies()
 {
     if (m_frame->tree()->parent())
@@ -2353,9 +2151,9 @@ void FrameLoader::markLoadComplete()
     setState(FrameStateComplete);
 }
 
-void FrameLoader::commitProvisionalLoad(PassRefPtr<CachedPage> prpCachedPage)
+void FrameLoader::commitProvisionalLoad()
 {
-    RefPtr<CachedPage> cachedPage = prpCachedPage;
+    RefPtr<CachedPage> cachedPage = m_loadingFromCachedPage ? pageCache()->get(history()->provisionalItem()) : 0;
     RefPtr<DocumentLoader> pdl = m_provisionalDocumentLoader;
 
     LOG(PageCache, "WebCoreLoading %s: About to commit provisional load from previous URL '%s' to new URL '%s'", m_frame->tree()->name().string().utf8().data(), m_URL.string().utf8().data(), 
@@ -2363,7 +2161,11 @@ void FrameLoader::commitProvisionalLoad(PassRefPtr<CachedPage> prpCachedPage)
 
     // Check to see if we need to cache the page we are navigating away from into the back/forward cache.
     // We are doing this here because we know for sure that a new page is about to be loaded.
-    cachePageForHistoryItem(history()->currentItem());
+    HistoryItem* item = history()->currentItem();
+    if (PageCache::canCache(m_frame->page()) && !item->isInPageCache()) {
+        pageHidden();
+        pageCache()->add(item, m_frame->page());
+    }
     
     if (m_loadType != FrameLoadTypeReplace)
         closeOldDataSources();
@@ -2380,9 +2182,11 @@ void FrameLoader::commitProvisionalLoad(PassRefPtr<CachedPage> prpCachedPage)
     if (m_sentRedirectNotification)
         clientRedirectCancelledOrFinished(false);
     
-    if (cachedPage && cachedPage->document())
-        open(*cachedPage);
-    else {        
+    if (cachedPage && cachedPage->document()) {
+        prepareForCachedPageRestore();
+        cachedPage->restore(m_frame->page());
+        checkCompleted();
+    } else {        
         KURL url = pdl->substituteData().responseURL();
         if (url.isEmpty())
             url = pdl->url();
@@ -2598,7 +2402,7 @@ void FrameLoader::closeOldDataSources()
     m_client->setMainFrameDocumentReady(false); // stop giving out the actual DOMDocument to observers
 }
 
-void FrameLoader::open(CachedPage& cachedPage)
+void FrameLoader::prepareForCachedPageRestore()
 {
     ASSERT(!m_frame->tree()->parent());
     ASSERT(m_frame->page());
@@ -2614,10 +2418,6 @@ void FrameLoader::open(CachedPage& cachedPage)
         m_frame->setJSStatusBarText(String());
         m_frame->setJSDefaultStatusBarText(String());
     }
-
-    cachedPage.restore(m_frame->page());
-
-    checkCompleted();
 }
 
 void FrameLoader::open(CachedFrameBase& cachedFrame)
@@ -3472,8 +3272,10 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest&, Pass
 
     setPolicyDocumentLoader(0);
 
-    if (isBackForwardLoadType(type) && loadProvisionalItemFromCachedPage())
+    if (isBackForwardLoadType(type) && history()->provisionalItem()->isInPageCache()) {
+        loadProvisionalItemFromCachedPage();
         return;
+    }
 
     if (formState)
         m_client->dispatchWillSubmitForm(&PolicyChecker::continueLoadAfterWillSubmitForm, formState);
@@ -3586,36 +3388,17 @@ bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, con
     return false;
 }
 
-bool FrameLoader::loadProvisionalItemFromCachedPage()
+void FrameLoader::loadProvisionalItemFromCachedPage()
 {
-    RefPtr<CachedPage> cachedPage = pageCache()->get(history()->provisionalItem());
-    if (!cachedPage || !cachedPage->document())
-        return false;
+    DocumentLoader* provisionalLoader = provisionalDocumentLoader();
+    LOG(PageCache, "WebCorePageCache: Loading provisional DocumentLoader %p with URL '%s' from CachedPage", provisionalDocumentLoader(), provisionalDocumentLoader()->url().string().utf8().data());
 
-    DocumentLoader *provisionalLoader = provisionalDocumentLoader();
-    LOG(PageCache, "WebCorePageCache: FrameLoader %p loading provisional DocumentLoader %p with URL '%s' from CachedPage %p", this, provisionalLoader, provisionalLoader->url().string().utf8().data(), cachedPage.get());
-    
     provisionalLoader->prepareForLoadStart();
 
     m_loadingFromCachedPage = true;
 
     provisionalLoader->setCommitted(true);
-    commitProvisionalLoad(cachedPage);
-    
-    return true;
-}
-
-void FrameLoader::cachePageForHistoryItem(HistoryItem* item)
-{
-    if (!canCachePage() || item->isInPageCache())
-        return;
-
-    pageHidden();
-    
-    if (Page* page = m_frame->page()) {
-        RefPtr<CachedPage> cachedPage = CachedPage::create(page);
-        pageCache()->add(item, cachedPage.release());
-    }
+    commitProvisionalLoad();
 }
 
 void FrameLoader::pageHidden()
@@ -3683,21 +3466,10 @@ void FrameLoader::navigateToDifferentDocument(HistoryItem* item, FrameLoadType l
 {
     // Remember this item so we can traverse any child items as child frames load
     history()->setProvisionalItem(item);
-    
-    // Check if we'll be using the page cache.  We only use the page cache
-    // if one exists and it is less than _backForwardCacheExpirationInterval
-    // seconds old.  If the cache is expired it gets flushed here.
-    if (RefPtr<CachedPage> cachedPage = pageCache()->get(item)) {
-        // FIXME: 1800 should not be hardcoded, it should come from
-        // WebKitBackForwardCacheExpirationIntervalKey in WebKit.
-        // Or we should remove WebKitBackForwardCacheExpirationIntervalKey.
-        if (currentTime() - cachedPage->timeStamp() <= 1800) {
-            loadWithDocumentLoader(cachedPage->documentLoader(), loadType, 0);   
-            return;
-        }
-        
-        LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", history()->provisionalItem()->url().string().ascii().data());
-        pageCache()->remove(item);
+
+    if (CachedPage* cachedPage = pageCache()->get(item)) {
+        loadWithDocumentLoader(cachedPage->documentLoader(), loadType, 0);   
+        return;
     }
 
     KURL itemURL = item->url();

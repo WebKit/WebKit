@@ -268,7 +268,7 @@ bool SVGImage::dataChanged(bool allDataReceived)
         loader->setForcedSandboxFlags(SandboxAll);
         loader->load(fakeRequest, false); // Make sure the DocumentLoader is created
         loader->policyChecker()->cancelCheck(); // cancel any policy checks
-        loader->commitProvisionalLoad(0);
+        loader->commitProvisionalLoad();
         loader->writer()->setMIMEType("image/svg+xml");
         loader->writer()->begin(KURL()); // create the empty document
         loader->writer()->addData(data()->data(), data()->size());
