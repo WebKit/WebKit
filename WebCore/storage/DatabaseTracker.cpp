@@ -57,15 +57,30 @@ static WebCore::OriginQuotaManager& originQuotaManager()
 
 namespace WebCore {
 
-DatabaseTracker& DatabaseTracker::tracker()
+static DatabaseTracker* staticTracker = 0;
+
+void DatabaseTracker::initializeTracker(const String& databasePath)
 {
-    DEFINE_STATIC_LOCAL(DatabaseTracker, tracker, ());
-    return tracker;
+    ASSERT(!staticTracker);
+    if (staticTracker)
+        return;
+
+    staticTracker = new DatabaseTracker(databasePath);
 }
 
-DatabaseTracker::DatabaseTracker()
+DatabaseTracker& DatabaseTracker::tracker()
+{
+    if (!staticTracker)
+        staticTracker = new DatabaseTracker("");
+
+    return *staticTracker;
+}
+
+DatabaseTracker::DatabaseTracker(const String& databasePath)
     : m_client(0)
 {
+    setDatabaseDirectoryPath(databasePath);
+    
     SQLiteFileSystem::registerSQLiteVFS();
 
     MutexLocker lockDatabase(m_databaseGuard);

@@ -48,11 +48,11 @@ namespace WebCore {
 
 DatabaseTracker& DatabaseTracker::tracker()
 {
-    DEFINE_STATIC_LOCAL(DatabaseTracker, tracker, ());
+    DEFINE_STATIC_LOCAL(DatabaseTracker, tracker, (""));
     return tracker;
 }
 
-DatabaseTracker::DatabaseTracker()
+DatabaseTracker::DatabaseTracker(const String&)
 {
     SQLiteFileSystem::registerSQLiteVFS();
 }
