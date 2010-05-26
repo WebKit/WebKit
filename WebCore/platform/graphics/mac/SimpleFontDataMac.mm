@@ -32,6 +32,7 @@
 
 #import "BlockExceptions.h"
 #import "Color.h"
+#import "FloatConversion.h"
 #import "FloatRect.h"
 #import "Font.h"
 #import "FontCache.h"
@@ -265,14 +266,19 @@ void SimpleFontData::platformInit()
     GlyphPage* glyphPageZero = GlyphPageTreeNode::getRootChild(this, 0)->page();
     NSGlyph xGlyph = glyphPageZero ? glyphPageZero->glyphDataForCharacter('x').glyph : 0;
     if (xGlyph) {
-        NSRect xBox = [m_platformData.font() boundingRectForGlyph:xGlyph];
+        CGRect xBox = platformBoundsForGlyph(xGlyph);
         // Use the maximum of either width or height because "x" is nearly square
         // and web pages that foolishly use this metric for width will be laid out
         // poorly if we return an accurate height. Classic case is Times 13 point,
         // which has an "x" that is 7x6 pixels.
-        m_xHeight = max(NSMaxX(xBox), NSMaxY(xBox));
-    } else
-        m_xHeight = [m_platformData.font() xHeight];
+        m_xHeight = narrowPrecisionToFloat(max(CGRectGetMaxX(xBox), CGRectGetMaxY(xBox)));
+    } else {
+#ifndef BUILDING_ON_TIGER
+        m_xHeight = static_cast<float>(CGFontGetXHeight(m_platformData.cgFont())) / m_unitsPerEm;
+#else
+        m_xHeight = m_platformData.font() ? [m_platformData.font() xHeight] : 0;
+#endif
+    }
 }
     
 static CFDataRef copyFontTableForTag(FontPlatformData platformData, FourCharCode tableName)
@@ -417,11 +423,15 @@ FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
     float pointSize = platformData().m_size;
     CGFloat scale = pointSize / unitsPerEm();
     boundingBox = CGRectApplyAffineTransform(box, CGAffineTransformMakeScale(scale, -scale));
+#else
+    // FIXME: Custom fonts don't have NSFonts, so this function doesn't compute correct bounds for these on Tiger.
+    if (!m_platformData.font())
+        return boundingBox;
+    boundingBox = [m_platformData.font() boundingRectForGlyph:glyph];
+#endif
     if (m_syntheticBoldOffset)
         boundingBox.setWidth(boundingBox.width() + m_syntheticBoldOffset);
-#else
-    UNUSED_PARAM(glyph);
-#endif
+
     return boundingBox;
 }
 

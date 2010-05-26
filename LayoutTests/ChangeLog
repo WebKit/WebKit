@@ -1,3 +1,15 @@
+2010-05-26  Alexey Proskuryakov  <ap@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=39682
+        <rdar://problem/8026774> REGRESSION: WebKit nightly adding insane height to div at random
+
+        Without the fix, the height is usually zero, but could also be huge, depending on uninialized
+        memory contents.
+
+        * fast/css/custom-font-xheight-expected.txt: Added.
+        * fast/css/custom-font-xheight.html: Added.
+        * platform/mac-tiger/Skipped:
+
 2010-05-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed fix, Qt specific expected file updated after r60235.

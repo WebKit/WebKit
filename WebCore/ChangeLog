@@ -1,3 +1,32 @@
+2010-05-26  Dan Bernstein  <mitz@apple.com>
+
+        Typed and reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39682
+        <rdar://problem/8026774> REGRESSION: WebKit nightly adding insane height to div at random
+
+        Test: fast/css/custom-font-xheight.html
+
+        * platform/graphics/mac/SimpleFontDataMac.mm: (WebCore::SimpleFontData::platformInit):
+        Calling an Objective C method that returns a structure with a null object can leave garbage in
+        returned value. Custom fonts don't have an NSFont, they only have a CGFont. Call
+        platformBoundsForGlyph() function instead, which works with CGFont.
+        (WebCore::SimpleFontData::platformBoundsForGlyph): Fixed to work on Tiger (for fonts that
+        have an NSFont), since this is now used in more cases.
+
+2010-05-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39682
+        <rdar://problem/8026774> REGRESSION: WebKit nightly adding insane height to div at random
+
+        Can't be tested in DRT.
+
+        * platform/graphics/mac/SimpleFontDataMac.mm: (WebCore::SimpleFontData::platformInit):
+        Calling an Objective C method that returns a structure with a null object can leave garbage in
+        returned value. Custom fonts don't have an NSFont, they only have a CGFont.
+
 2010-05-26  Beth Dakin  <bdakin@apple.com>
 
         Build fix for Mac clean builds.

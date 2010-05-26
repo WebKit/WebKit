@@ -191,3 +191,6 @@ canvas/philip/tests/2d.shadow.composite.1.html
 canvas/philip/tests/2d.shadow.composite.2.html
 canvas/philip/tests/2d.shadow.pattern.alpha.html
 canvas/philip/tests/2d.shadow.pattern.transparent.1.html
+
+# Cannot compute bounds of custom fonts on Tiger, see SimpleFontData::platformBoundsForGlyph().
+fast/css/custom-font-xheight.html
