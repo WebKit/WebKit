@@ -1,5 +1,11 @@
 2010-05-26  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Unreviewed fix, Qt specific expected file updated after r60235.
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt: updated.
+
+2010-05-26  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed.
 
         [Qt] media/media-can-play-ogg.html crashes intermittently on the bot
