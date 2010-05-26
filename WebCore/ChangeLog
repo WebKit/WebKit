@@ -1,3 +1,9 @@
+2010-05-26  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Sort XCode project file.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2010-05-26  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
