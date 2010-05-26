@@ -634,6 +634,7 @@ webkit_tests_ldflags = \
 
 TEST_PROGS += \
 	Programs/unittests/testdomdocument \
+	Programs/unittests/testdomdomwindow \
 	Programs/unittests/testhttpbackend \
 	Programs/unittests/testloading \
 	Programs/unittests/testglobals \
@@ -659,6 +660,11 @@ Programs_unittests_testdomdocument_SOURCES = WebKit/gtk/tests/testdomdocument.c
 Programs_unittests_testdomdocument_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testdomdocument_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testdomdocument_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testdomdomwindow_SOURCES = WebKit/gtk/tests/testdomdomwindow.c
+Programs_unittests_testdomdomwindow_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testdomdomwindow_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testdomdomwindow_LDFLAGS = $(webkit_tests_ldflags)
 
 Programs_unittests_testhttpbackend_SOURCES = WebKit/gtk/tests/testhttpbackend.c
 Programs_unittests_testhttpbackend_CFLAGS = $(webkit_tests_cflags)

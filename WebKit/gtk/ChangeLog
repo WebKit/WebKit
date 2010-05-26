@@ -1,3 +1,23 @@
+2010-05-26  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Add support for DOM events in the GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=38844
+
+        Test DOMWindow signals.
+
+        * tests/testdomdomwindow.c: Added.
+        (finish_loading):
+        (dom_domview_fixture_setup):
+        (dom_domview_fixture_teardown):
+        (loadedCallback):
+        (clickedCallback):
+        (map_event_cb):
+        (load_event_callback):
+        (test_dom_domview_signals):
+        (main):
+
 2010-05-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric Seidel.

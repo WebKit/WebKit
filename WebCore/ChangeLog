@@ -1,3 +1,25 @@
+2010-05-26  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by NOBODY Gustavo Noronha.
+
+        [GTK] Add support for DOM events in the GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=38844
+
+        Add actual GObject event objects to the DOM event signals.
+
+        * GNUmakefile.am:
+        * bindings/gobject/GObjectEventListener.cpp:
+        (WebCore::GObjectEventListener::handleEvent):
+        * bindings/gobject/WebKitDOMBinding.cpp:
+        (WebKit::wrapEventTarget):
+        (WebKit::kit):
+        * bindings/gobject/WebKitDOMBinding.h:
+        * bindings/gobject/WebKitDOMEventTarget.cpp: Added.
+        (webkit_dom_event_target_default_init):
+        (webkit_dom_event_target_dispatch_event):
+        * bindings/gobject/WebKitDOMEventTarget.h: Added.
+        * bindings/scripts/CodeGeneratorGObject.pm:
+
 2010-05-24  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.

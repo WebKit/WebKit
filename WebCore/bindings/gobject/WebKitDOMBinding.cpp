@@ -27,6 +27,7 @@
 #include "Event.h"
 #include "EventException.h"
 #include "HTMLNames.h"
+#include "WebKitDOMDOMWindowPrivate.h"
 #include "WebKitDOMElementPrivate.h"
 #include "WebKitDOMNode.h"
 #include "WebKitDOMNodePrivate.h"
@@ -116,6 +117,33 @@ gpointer kit(Element* element)
         wrappedElement = wrapElement(element);
 
     return DOMObjectCache::put(element, wrappedElement);
+}
+
+static gpointer wrapEventTarget(EventTarget* target)
+{
+    ASSERT(target);
+
+    gpointer wrappedTarget = 0;
+
+    if (target->toNode()) {
+        Node* node = target->toNode();
+        wrappedTarget = wrapNode(node);
+    } else if (target->toDOMWindow()) {
+        DOMWindow* window = target->toDOMWindow();
+        wrappedTarget = wrapDOMWindow(window);
+    }
+
+    return DOMObjectCache::put(target, wrappedTarget);
+}
+
+gpointer kit(WebCore::EventTarget* obj)
+{
+    g_return_val_if_fail(obj, 0);
+
+    if (gpointer ret = DOMObjectCache::get(obj))
+        return ret;
+
+    return DOMObjectCache::put(obj, WebKit::wrapEventTarget(obj));
 }
 
 } // namespace WebKit
