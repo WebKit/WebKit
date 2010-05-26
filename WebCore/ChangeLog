@@ -1,3 +1,45 @@
+2010-05-26  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Indexed Database component is missing IDBObjectStoreRequest interface
+        https://bugs.webkit.org/show_bug.cgi?id=39490
+
+        Adding IDL and stub implementation for IDBObjectStoreRequest.
+
+        No new tests, indexed database isn't yet testable.
+
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSIDBObjectStoreRequestCustom.cpp: Added.
+        (WebCore::JSIDBObjectStoreRequest::remove):
+        (WebCore::JSIDBObjectStoreRequest::addOrModify):
+        (WebCore::JSIDBObjectStoreRequest::modify):
+        (WebCore::JSIDBObjectStoreRequest::add):
+        (WebCore::JSIDBObjectStoreRequest::get):
+        * bindings/v8/custom/V8IDBObjectStoreRequestCustom.cpp: Added.
+        (WebCore::V8IDBObjectStoreRequest::removeCallback):
+        (WebCore::V8IDBObjectStoreRequest::addOrModifyCallback):
+        (WebCore::V8IDBObjectStoreRequest::modifyCallback):
+        (WebCore::V8IDBObjectStoreRequest::addCallback):
+        (WebCore::V8IDBObjectStoreRequest::getCallback):
+        * storage/IDBObjectStore.cpp: Added.
+        * storage/IDBObjectStore.h: Added.
+        (WebCore::IDBObjectStore::~IDBObjectStore):
+        * storage/IDBObjectStoreRequest.cpp: Added.
+        (WebCore::IDBObjectStoreRequest::name):
+        (WebCore::IDBObjectStoreRequest::keyPath):
+        (WebCore::IDBObjectStoreRequest::IDBObjectStoreRequest):
+        * storage/IDBObjectStoreRequest.h: Added.
+        (WebCore::IDBObjectStoreRequest::create):
+        (WebCore::IDBObjectStoreRequest::~IDBObjectStoreRequest):
+        * storage/IDBObjectStoreRequest.idl: Added.
+
 2010-05-26  Xan Lopez  <xlopez@igalia.com>
 
         Unreviewed GTK+ build fix.

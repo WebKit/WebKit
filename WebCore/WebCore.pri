@@ -450,6 +450,7 @@ IDL_BINDINGS += \
     storage/IDBDatabaseRequest.idl \
     storage/IDBErrorEvent.idl \
     storage/IDBEvent.idl \
+    storage/IDBObjectStoreRequest.idl \
     storage/IDBRequest.idl \
     storage/IDBSuccessEvent.idl \
     storage/IndexedDatabaseRequest.idl \

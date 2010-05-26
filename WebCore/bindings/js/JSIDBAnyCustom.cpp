@@ -36,8 +36,10 @@
 
 #include "IDBAny.h"
 #include "IDBDatabaseRequest.h"
+#include "IDBObjectStoreRequest.h"
 #include "IndexedDatabaseRequest.h"
 #include "JSIDBDatabaseRequest.h"
+#include "JSIDBObjectStoreRequest.h"
 #include "JSIndexedDatabaseRequest.h"
 #include "SerializedScriptValue.h"
 
@@ -55,6 +57,8 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, IDBAny* idbAny)
         return jsUndefined();
     case IDBAny::IDBDatabaseRequestType:
         return toJS(exec, globalObject, idbAny->idbDatabaseRequest());
+    case IDBAny::IDBObjectStoreRequestType:
+        return toJS(exec, globalObject, idbAny->idbObjectStoreRequest());
     case IDBAny::IndexedDatabaseRequestType:
         return toJS(exec, globalObject, idbAny->indexedDatabaseRequest());
     case IDBAny::SerializedScriptValueType:

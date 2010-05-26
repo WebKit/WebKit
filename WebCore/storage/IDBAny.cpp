@@ -32,6 +32,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBDatabaseRequest.h"
+#include "IDBObjectStoreRequest.h"
 #include "IndexedDatabaseRequest.h"
 #include "SerializedScriptValue.h"
 
@@ -57,6 +58,12 @@ PassRefPtr<IDBDatabaseRequest> IDBAny::idbDatabaseRequest()
     return m_idbDatabaseRequest;
 }
 
+PassRefPtr<IDBObjectStoreRequest> IDBAny::idbObjectStoreRequest()
+{
+    ASSERT(m_type == IDBObjectStoreRequestType);
+    return m_idbObjectStoreRequest;
+}
+
 PassRefPtr<IndexedDatabaseRequest> IDBAny::indexedDatabaseRequest()
 {
     ASSERT(m_type == IndexedDatabaseRequestType);
@@ -73,6 +80,16 @@ void IDBAny::set(PassRefPtr<IDBDatabaseRequest> value)
 {
     m_type = IDBDatabaseRequestType;
     m_idbDatabaseRequest = value;
+    m_idbObjectStoreRequest = 0;
+    m_indexedDatabaseRequest = 0;
+    m_serializedScriptValue = 0;
+}
+
+void IDBAny::set(PassRefPtr<IDBObjectStoreRequest> value)
+{
+    m_type = IDBObjectStoreRequestType;
+    m_idbDatabaseRequest = 0;
+    m_idbObjectStoreRequest = value;
     m_indexedDatabaseRequest = 0;
     m_serializedScriptValue = 0;
 }
@@ -81,6 +98,7 @@ void IDBAny::set(PassRefPtr<IndexedDatabaseRequest> value)
 {
     m_type = IndexedDatabaseRequestType;
     m_idbDatabaseRequest = 0;
+    m_idbObjectStoreRequest = 0;
     m_indexedDatabaseRequest = value;
     m_serializedScriptValue = 0;
 }
@@ -89,6 +107,7 @@ void IDBAny::set(PassRefPtr<SerializedScriptValue> value)
 {
     m_type = SerializedScriptValueType;
     m_idbDatabaseRequest = 0;
+    m_idbObjectStoreRequest = 0;
     m_indexedDatabaseRequest = 0;
     m_serializedScriptValue = value;
 }

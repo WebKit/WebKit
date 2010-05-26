@@ -38564,6 +38564,62 @@
 					>
 				</File>
 				<File
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBObjectStoreRequest.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Internal|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_All|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBObjectStoreRequest.h"
+					>
+				</File>
+				<File
 					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBRequest.cpp"
 					>
 					<FileConfiguration
@@ -43994,6 +44050,54 @@
 			</File>
 			<File
 				RelativePath="..\storage\IDBDatabaseImpl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBAny.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBDatabase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBDatabaseRequest.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBErrorEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBObjectStore.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBObjectStoreRequest.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBRequest.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBSuccessEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IndexedDatabase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IndexedDatabaseImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IndexedDatabaseRequest.cpp"
 				>
 			</File>
 			<File

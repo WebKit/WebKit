@@ -327,6 +327,7 @@ SET(WebCore_IDL_FILES
     storage/IDBDatabaseRequest.idl
     storage/IDBErrorEvent.idl
     storage/IDBEvent.idl
+    storage/IDBObjectStoreRequest.idl
     storage/IDBRequest.idl
     storage/IDBSuccessEvent.idl
     storage/IndexedDatabaseRequest.idl
@@ -1366,6 +1367,8 @@ SET(WebCore_SOURCES
     storage/IDBErrorEvent.cpp
     storage/IDBEvent.cpp
     storage/IDBRequest.cpp
+    storage/IDBObjectStore.cpp
+    storage/IDBObjectStoreRequest.cpp
     storage/IDBSuccessEvent.cpp
     storage/IndexedDatabase.cpp
     storage/IndexedDatabaseImpl.cpp

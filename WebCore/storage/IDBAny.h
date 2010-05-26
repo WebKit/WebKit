@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class IDBDatabaseRequest;
+class IDBObjectStoreRequest;
 class IndexedDatabaseRequest;
 class SerializedScriptValue;
 
@@ -49,6 +50,7 @@ public:
     enum Type {
         UndefinedType = 0,
         IDBDatabaseRequestType,
+        IDBObjectStoreRequestType,
         IndexedDatabaseRequestType,
         SerializedScriptValueType
     };
@@ -56,10 +58,12 @@ public:
     Type type() const { return m_type; }
 
     PassRefPtr<IDBDatabaseRequest> idbDatabaseRequest();
+    PassRefPtr<IDBObjectStoreRequest> idbObjectStoreRequest();
     PassRefPtr<IndexedDatabaseRequest> indexedDatabaseRequest();
     PassRefPtr<SerializedScriptValue> serializedScriptValue();
 
     void set(PassRefPtr<IDBDatabaseRequest>);
+    void set(PassRefPtr<IDBObjectStoreRequest>);
     void set(PassRefPtr<IndexedDatabaseRequest>);
     void set(PassRefPtr<SerializedScriptValue>);
 
@@ -70,6 +74,7 @@ private:
 
     // Only one of the following should ever be in use at any given time.
     RefPtr<IDBDatabaseRequest> m_idbDatabaseRequest;
+    RefPtr<IDBObjectStoreRequest> m_idbObjectStoreRequest;
     RefPtr<IndexedDatabaseRequest> m_indexedDatabaseRequest;
     RefPtr<SerializedScriptValue> m_serializedScriptValue;
 };

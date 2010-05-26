@@ -217,6 +217,7 @@ DOM_CLASSES = \
     IDBDatabaseRequest \
     IDBErrorEvent \
     IDBEvent \
+    IDBObjectStoreRequest \
     IDBRequest \
     IDBSuccessEvent \
     ImageData \
