@@ -39,6 +39,7 @@ public:
     virtual ~WebTiledLayer();
 
     virtual void setBounds(const CGRect&);
+    virtual void setFrame(const CGRect&);
 
 protected:
     WebTiledLayer(const CGSize& tileSize, GraphicsLayer* owner);

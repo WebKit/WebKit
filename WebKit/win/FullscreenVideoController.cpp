@@ -30,12 +30,16 @@
 #include "FullscreenVideoController.h"
 
 #include "WebKitDLL.h"
+#include "WebView.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <WebCore/BitmapInfo.h>
+#include <WebCore/Chrome.h>
 #include <WebCore/Font.h>
 #include <WebCore/FontSelector.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/Page.h>
 #include <WebCore/TextRun.h>
+#include <WebCore/WKCACFLayer.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <windowsx.h>
 #include <wtf/StdLibExtras.h>
@@ -169,9 +173,53 @@ void HUDSlider::drag(const IntPoint& point, bool start)
     m_buttonPosition = max(0, min(m_rect.width() - m_buttonSize, point.x() - m_dragStartOffset));
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+class FullscreenVideoController::LayoutClient : public WKCACFLayerLayoutClient {
+public:
+    LayoutClient(FullscreenVideoController* parent);
+    void layoutSublayersOfLayer(WKCACFLayer* layer);
+
+    FullscreenVideoController* m_parent;
+};
+
+FullscreenVideoController::LayoutClient::LayoutClient(FullscreenVideoController* parent)
+    : m_parent(parent)
+{
+}
+
+void FullscreenVideoController::LayoutClient::layoutSublayersOfLayer(WKCACFLayer* layer) 
+{
+    ASSERT_ARG(layer, layer == m_parent->m_rootChild);
+
+    HTMLMediaElement* mediaElement = m_parent->m_mediaElement.get();
+    if (!mediaElement)
+        return;
+
+    WKCACFLayer* videoLayer = mediaElement->platformLayer();
+    if (!videoLayer || videoLayer->superlayer() != layer)
+        return;
+
+    FloatRect layerBounds = layer->bounds();
+
+    FloatSize videoSize = mediaElement->player()->naturalSize();
+    float scaleFactor;
+    if (videoSize.aspectRatio() > layerBounds.size().aspectRatio())
+        scaleFactor = layerBounds.width() / videoSize.width();
+    else
+        scaleFactor = layerBounds.height() / videoSize.height();
+    videoSize.scale(scaleFactor);
+
+    // Calculate the centered position based on the videoBounds and layerBounds:
+    FloatPoint videoPosition;
+    FloatPoint videoOrigin;
+    videoOrigin.setX((layerBounds.width() - videoSize.width()) * 0.5);
+    videoOrigin.setY((layerBounds.height() - videoSize.height()) * 0.5);
+    videoLayer->setFrame(FloatRect(videoOrigin, videoSize));
+}
+#endif 
+
 FullscreenVideoController::FullscreenVideoController()
     : m_hudWindow(0)
-    , m_videoWindow(0)
     , m_playPauseButton(HUDButton::PlayPauseButton, IntPoint((windowWidth - buttonSize) / 2, marginTop))
     , m_timeSliderButton(HUDButton::TimeSliderButton, IntPoint(0, 0))
     , m_volumeUpButton(HUDButton::VolumeUpButton, IntPoint(margin + buttonMiniSize + volumeSliderWidth + buttonMiniSize / 2, marginTop + (buttonSize - buttonMiniSize) / 2))
@@ -183,25 +231,22 @@ FullscreenVideoController::FullscreenVideoController()
     , m_hitWidget(0)
     , m_movingWindow(false)
     , m_timer(this, &FullscreenVideoController::timerFired)
+#if USE(ACCELERATED_COMPOSITING)
+    , m_rootChild(WKCACFLayer::create(WKCACFLayer::Layer))
+    , m_layoutClient(new LayoutClient(this))
+#endif
+    , m_fullscreenWindow(new MediaPlayerPrivateFullscreenWindow(this))
 {
+#if USE(ACCELERATED_COMPOSITING)
+    m_rootChild->setLayoutClient(m_layoutClient.get());
+#endif
 }
 
 FullscreenVideoController::~FullscreenVideoController()
 {
-    if (movie())
-        movie()->exitFullscreen();
-}
-
-QTMovieGWorld* FullscreenVideoController::movie() const
-{
-    if (!m_mediaElement)
-        return 0;
-
-    PlatformMedia platformMedia = m_mediaElement->platformMedia();
-    if (platformMedia.type != PlatformMedia::QTMovieGWorldType)
-        return 0;
-
-    return platformMedia.media.qtMovieGWorld;
+#if USE(ACCELERATED_COMPOSITING)
+    m_rootChild->setLayoutClient(0);
+#endif
 }
 
 void FullscreenVideoController::setMediaElement(HTMLMediaElement* mediaElement)
@@ -218,13 +263,23 @@ void FullscreenVideoController::setMediaElement(HTMLMediaElement* mediaElement)
 
 void FullscreenVideoController::enterFullscreen()
 {
-    if (!movie())
+    if (!m_mediaElement)
         return;
 
-    m_videoWindow = movie()->enterFullscreen(this);
+    WebView* webView = kit(m_mediaElement->document()->page());
+    HWND parentHwnd = webView ? webView->viewWindow() : 0;
+
+    m_fullscreenWindow->createWindow(parentHwnd);
+#if USE(ACCELERATED_COMPOSITING)
+    m_fullscreenWindow->setRootChildLayer(m_rootChild);
+
+    WKCACFLayer* videoLayer = m_mediaElement->player()->platformLayer();
+    m_rootChild->addSublayer(videoLayer);
+    m_rootChild->setNeedsLayout();
+#endif
 
     RECT windowRect;
-    GetClientRect(m_videoWindow, &windowRect);
+    GetClientRect(m_fullscreenWindow->hwnd(), &windowRect);
     m_fullscreenSize.setWidth(windowRect.right - windowRect.left);
     m_fullscreenSize.setHeight(windowRect.bottom - windowRect.top);
 
@@ -234,12 +289,23 @@ void FullscreenVideoController::enterFullscreen()
 void FullscreenVideoController::exitFullscreen()
 {
     SetWindowLongPtr(m_hudWindow, 0, 0);
-    if (movie())
-        movie()->exitFullscreen();
+
+    if (m_fullscreenWindow)
+        m_fullscreenWindow = 0;
 
     ASSERT(!IsWindow(m_hudWindow));
-    m_videoWindow = 0;
     m_hudWindow = 0;
+
+    // We previously ripped the mediaElement's platform layer out
+    // of its orginial layer tree to display it in our fullscreen
+    // window.  Now, we need to get the layer back in its original
+    // tree.
+    // 
+    // As a side effect of setting the player to invisible/visible,
+    // the player's layer will be recreated, and will be picked up 
+    // the next time the layer tree is synched.
+    m_mediaElement->player()->setVisible(0);
+    m_mediaElement->player()->setVisible(1);
 }
 
 bool FullscreenVideoController::canPlay() const
@@ -308,6 +374,9 @@ LRESULT FullscreenVideoController::fullscreenClientWndProc(HWND wnd, UINT messag
     case WM_CHAR:
         onChar(wParam);
         break;
+    case WM_KEYDOWN:
+        onKeyDown(wParam);
+        break;
     case WM_LBUTTONDOWN:
         onMouseDown(IntPoint(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
         break;
@@ -364,7 +433,7 @@ void FullscreenVideoController::createHUDWindow()
     
     // Dirty the window so the HUD draws
     RECT clearRect = { m_hudPosition.x(), m_hudPosition.y(), m_hudPosition.x() + windowWidth, m_hudPosition.y() + windowHeight };
-    InvalidateRect(m_videoWindow, &clearRect, true);
+    InvalidateRect(m_fullscreenWindow->hwnd(), &clearRect, true);
 
     m_playPauseButton.setShowAltButton(!canPlay());
     m_volumeSlider.setValue(volume());
@@ -377,7 +446,7 @@ void FullscreenVideoController::createHUDWindow()
 
     m_hudWindow = CreateWindowEx(WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW, 
         fullscreenVideeoHUDWindowClassName, 0, WS_POPUP | WS_VISIBLE,
-        m_hudPosition.x(), m_hudPosition.y(), 0, 0, m_videoWindow, 0, gInstance, 0);
+        m_hudPosition.x(), m_hudPosition.y(), 0, 0, m_fullscreenWindow->hwnd(), 0, gInstance, 0);
     ASSERT(::IsWindow(m_hudWindow));
     SetWindowLongPtr(m_hudWindow, 0, reinterpret_cast<LONG_PTR>(this));
 
@@ -488,6 +557,9 @@ LRESULT FullscreenVideoController::hudWndProc(HWND wnd, UINT message, WPARAM wPa
     case WM_CHAR:
         controller->onChar(wParam);
         break;
+    case WM_KEYDOWN:
+        controller->onKeyDown(wParam);
+        break;
     case WM_LBUTTONDOWN:
         controller->onMouseDown(IntPoint(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
         break;
@@ -509,6 +581,14 @@ void FullscreenVideoController::onChar(int c)
             m_mediaElement->exitFullscreen();
     } else if (c == VK_SPACE)
         togglePlay();
+}
+
+void FullscreenVideoController::onKeyDown(int virtualKey)
+{
+    if (virtualKey == VK_ESCAPE) {
+        if (m_mediaElement)
+            m_mediaElement->exitFullscreen();
+    }
 }
 
 void FullscreenVideoController::timerFired(Timer<FullscreenVideoController>*)
