@@ -44,7 +44,7 @@ function test()
 {
     var totalHeight = document.defaultView.getComputedStyle(document.getElementById("test"), null).getPropertyCSSValue("height");
     totalHeight = totalHeight.getFloatValue(CSSPrimitiveValue.CSS_PX);
-    if (totalHeight > 200 && totalHeight < 300)
+    if (totalHeight > 150 && totalHeight < 300)
         document.getElementById("result").innerHTML = "PASS";
     else
         document.getElementById("result").innerHTML = "FAIL: " + totalHeight + "px";
