@@ -323,6 +323,8 @@ IDL_BINDINGS += \
 webcoregtk_dom_sources = \
 	WebCore/bindings/gobject/ConvertToUTF8String.cpp \
 	WebCore/bindings/gobject/ConvertToUTF8String.h \
+	WebCore/bindings/gobject/GObjectEventListener.cpp \
+	WebCore/bindings/gobject/GObjectEventListener.h \
 	WebCore/bindings/gobject/WebKitDOMBinding.cpp \
 	WebCore/bindings/gobject/WebKitDOMBinding.h \
 	WebCore/bindings/gobject/WebKitHTMLElementWrapperFactory.cpp \

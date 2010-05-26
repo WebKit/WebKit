@@ -8,6 +8,47 @@
 
         Reviewed by Gustavo Noronha.
 
+        [GTK] Add support for DOM events in the GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=38844
+
+        First step towards DOM events support. We create one signal per
+        event supported in the DOM classes, and create a custom
+        GObjectEventListener that will emit a GObject signal when an event
+        is dispatched to the object. There is no event object at the
+        moment (we just pass NULL), and no support for hooking into the
+        capture phase.
+
+        * GNUmakefile.am:
+        * bindings/gobject/GObjectEventListener.cpp: Added.
+        (WebCore::GObjectEventListener::handleEvent):
+        (WebCore::GObjectEventListener::operator==):
+        * bindings/gobject/GObjectEventListener.h: Added.
+        (WebCore::GObjectEventListener::create):
+        (WebCore::GObjectEventListener::cast):
+        (WebCore::GObjectEventListener::GObjectEventListener):
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.cpp:
+        (WebKit::core):
+        (webkit_dom_test_callback_finalize):
+        (webkit_dom_test_callback_class_init):
+        (WebKit::wrapTestCallback):
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp:
+        (WebKit::core):
+        (webkit_dom_test_interface_finalize):
+        (webkit_dom_test_interface_class_init):
+        (WebKit::wrapTestInterface):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (WebKit::core):
+        (webkit_dom_test_obj_finalize):
+        (webkit_dom_test_obj_class_init):
+        (WebKit::wrapTestObj):
+        * dom/EventListener.h:
+        (WebCore::EventListener::):
+
+2010-05-26  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
         [GTK] GObject DOM bindings
         https://bugs.webkit.org/show_bug.cgi?id=33590
 

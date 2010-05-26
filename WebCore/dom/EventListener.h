@@ -41,7 +41,8 @@ namespace WebCore {
                     InspectorDOMAgentType,
                     InspectorDOMStorageResourceType,
                     ObjCEventListenerType, 
-                    ConditionEventListenerType };
+                    ConditionEventListenerType,
+                    GObjectEventListenerType };
                     
         virtual ~EventListener() { }
         virtual bool operator==(const EventListener&) = 0;

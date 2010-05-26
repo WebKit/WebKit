@@ -26,6 +26,9 @@ package CodeGeneratorGObject;
 my %implIncludes = ();
 my %hdrIncludes = ();
 
+my @txtEventListeners = ();
+my @txtInstallEventListeners = ();
+my @txtInstallSignals = ();
 my @txtInstallProps = ();
 my @txtSetProps = ();
 my @txtGetProps = ();
@@ -153,10 +156,6 @@ sub SkipAttribute {
     }
     
     my $propType = $attribute->signature->type;
-    if ($propType eq "EventListener") {
-        return 1;
-    }
-
     if ($propType =~ /Constructor$/) {
         return 1;
     }
@@ -446,6 +445,38 @@ EOF
     push(@txtInstallProps, $txtInstallProp);
 }
 
+sub GenerateEventListener {
+    my $attribute = shift;
+    my $object = shift;
+    my $interfaceName = shift;
+
+    my $name = $attribute->signature->name;
+    my $signalName = substr($name, 2);
+
+    my $txtInstallSignal = << "EOF";
+    g_signal_new("${signalName}",
+                 G_TYPE_FROM_CLASS(gobjectClass),
+                 G_SIGNAL_RUN_LAST,
+                 0,
+                 g_signal_accumulator_true_handled, 0,
+                 webkit_marshal_BOOLEAN__OBJECT,
+                 G_TYPE_BOOLEAN, 1,
+                 G_TYPE_POINTER | G_SIGNAL_TYPE_STATIC_SCOPE);
+
+EOF
+    push(@txtInstallSignals, $txtInstallSignal);
+
+    my ${listenerName} = $signalName . "Listener";
+
+    my $txtInstallEventListener = << "EOF";
+    RefPtr<WebCore::GObjectEventListener> ${listenerName} = WebCore::GObjectEventListener::create(reinterpret_cast<GObject*>(wrapper), "${signalName}");
+    coreObject->addEventListener("${signalName}", ${listenerName}, false);
+EOF
+    push(@txtInstallEventListeners, $txtInstallEventListener);
+
+    $implIncludes{"GObjectEventListener.h"} = 1;
+}
+
 sub GenerateProperties {
     my ($object, $interfaceName, $dataNode) = @_;
 
@@ -506,7 +537,11 @@ EOF
     push(@txtSetProps, $txtSetProps);
 
     foreach my $attribute (@readableProperties) {
-        GenerateProperty($attribute, $interfaceName, \@writeableProperties);
+        if ($attribute->signature->type eq "EventListener") {
+            GenerateEventListener($attribute, $object, $interfaceName);
+        } else {
+            GenerateProperty($attribute, $interfaceName, \@writeableProperties);
+        }
     }
 
     push(@cBodyPriv, "};\n\n");
@@ -529,17 +564,13 @@ EOF
 EOF
     push(@txtSetProps, $txtSetProps);
 
-    # TODO: work out if it's appropriate to split this into many different
-    # signals e.g. "click" etc.
-    my $txtInstallSignals = "";
-
     $implContent = << "EOF";
 
 static void ${lowerCaseIfaceName}_finalize(GObject* object)
 {
     WebKitDOMObject* dom_object = WEBKIT_DOM_OBJECT(object);
     
-    if (dom_object->coreObject != NULL) {
+    if (dom_object->coreObject) {
         WebCore::${interfaceName}* coreObject = static_cast<WebCore::${interfaceName} *>(dom_object->coreObject);
 
         WebKit::DOMObjectCache::forget(coreObject);
@@ -563,8 +594,7 @@ static void ${lowerCaseIfaceName}_class_init(${className}Class* requestClass)
     gobjectClass->get_property = ${lowerCaseIfaceName}_get_property;
 
 @txtInstallProps
-
-$txtInstallSignals
+@txtInstallSignals
 }
 
 static void ${lowerCaseIfaceName}_init(${className}* request)
@@ -938,7 +968,7 @@ sub GenerateFunctions {
 
     TOP:
     foreach my $attribute (@{$dataNode->attributes}) {
-        if (SkipAttribute($attribute)) {
+        if (SkipAttribute($attribute) || $attribute->signature->type eq "EventListener") {
             next TOP;
         }
         
@@ -1006,31 +1036,13 @@ G_DEFINE_TYPE(${className}, ${lowerCaseIfaceName}, ${parentGObjType})
 
 namespace WebKit {
 
-${className}* wrap${interfaceName}(WebCore::${interfaceName}* coreObject)
-{
-    g_return_val_if_fail(coreObject != 0, 0);
-    
-    ${className}* wrapper = WEBKIT_DOM_${clsCaps}(g_object_new(WEBKIT_TYPE_DOM_${clsCaps}, NULL));
-    g_return_val_if_fail(wrapper != 0, 0);
-
-    /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
-     * in a C-allocated GObject structure.  See the finalize() code for the
-     * matching deref().
-     */
-
-    coreObject->ref();
-    WEBKIT_DOM_OBJECT(wrapper)->coreObject = coreObject;
-
-    return wrapper;
-}
-
 WebCore::${interfaceName}* core(${className}* request)
 {
-    g_return_val_if_fail(request != 0, 0);
-    
+    g_return_val_if_fail(request, 0);
+
     WebCore::${interfaceName}* coreObject = static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(request)->coreObject);
-    g_return_val_if_fail(coreObject != 0, 0);
-    
+    g_return_val_if_fail(coreObject, 0);
+
     return coreObject;
 }
 
@@ -1040,6 +1052,30 @@ EOF
     push(@cBodyPriv, $implContent);
     $object->GenerateProperties($interfaceName, $dataNode);
     $object->GenerateFunctions($interfaceName, $dataNode);
+
+    my $wrapMethod = << "EOF";
+namespace WebKit {
+${className}* wrap${interfaceName}(WebCore::${interfaceName}* coreObject)
+{
+    g_return_val_if_fail(coreObject, 0);
+    
+    ${className}* wrapper = WEBKIT_DOM_${clsCaps}(g_object_new(WEBKIT_TYPE_DOM_${clsCaps}, NULL));
+    g_return_val_if_fail(wrapper, 0);
+
+    /* We call ref() rather than using a C++ smart pointer because we can't store a C++ object
+     * in a C-allocated GObject structure.  See the finalize() code for the
+     * matching deref().
+     */
+
+    coreObject->ref();
+    WEBKIT_DOM_OBJECT(wrapper)->coreObject = coreObject;
+@txtInstallEventListeners
+
+    return wrapper;
+}
+} // namespace WebKit
+EOF
+    push(@cBodyPriv, $wrapMethod);
 }
 
 sub GenerateEndHeader {
@@ -1152,7 +1188,7 @@ namespace WebKit {
     
 gpointer kit(WebCore::$interfaceName* obj)
 {
-    g_return_val_if_fail(obj != 0, 0);
+    g_return_val_if_fail(obj, 0);
 
     if (gpointer ret = DOMObjectCache::get(obj))
         return ret;
