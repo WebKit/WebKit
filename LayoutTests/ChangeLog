@@ -1,3 +1,10 @@
+2010-05-26  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Add results for svg/hixie/links/003-broken.xml for mac-leopard. All SVG tests pass with --tolerance 0 again for me on Leopard.
+
+        * platform/mac-leopard/svg/hixie/links/003-broken-expected.checksum: Added.
+        * platform/mac-leopard/svg/hixie/links/003-broken-expected.png: Added.
+
 2010-05-26  yael aharon  <yael.aharon@nokia.com>
 
         Reviewed by Kent Tamura.
