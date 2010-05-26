@@ -1,3 +1,14 @@
+2010-05-26  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Implement WebDOMStorageList and make WebIDBDatabase use it
+        https://bugs.webkit.org/show_bug.cgi?id=39731
+
+        Remove unused function.
+
+        * dom/DOMStringList.h:
+
 2010-05-26  Jessie Berlin  <jberlin@webkit.org>
 
         Reviewed by Pavel Feldman

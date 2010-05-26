@@ -69,11 +69,7 @@ String IDBDatabaseProxy::version()
 
 PassRefPtr<DOMStringList> IDBDatabaseProxy::objectStores()
 {
-    WebKit::WebVector<WebKit::WebString> webStrings = m_webIDBDatabase->objectStores();
-    RefPtr<DOMStringList> strings = DOMStringList::create();
-    for (size_t i = 0; i < webStrings.size(); ++i)
-        strings->append(webStrings[i]);
-    return strings.release();
+    return m_webIDBDatabase->objectStores();
 }
 
 } // namespace WebCore

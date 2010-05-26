@@ -62,9 +62,9 @@ WebString WebIDBDatabaseImpl::version()
     return m_idbDatabase->version();
 }
 
-WebVector<WebString> WebIDBDatabaseImpl::objectStores()
+WebDOMStringList WebIDBDatabaseImpl::objectStores()
 {
-    return m_idbDatabase->objectStores()->strings();
+    return m_idbDatabase->objectStores();
 }
 
 } // namespace WebCore

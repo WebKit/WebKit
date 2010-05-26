@@ -1,3 +1,32 @@
+2010-05-26  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Implement WebDOMStorageList and make WebIDBDatabase use it
+        https://bugs.webkit.org/show_bug.cgi?id=39731
+
+        * WebKit.gyp:
+        * public/WebDOMStringList.h: Added.
+        (WebKit::WebDOMStringList::~WebDOMStringList):
+        (WebKit::WebDOMStringList::WebDOMStringList):
+        (WebKit::WebDOMStringList::operator=):
+        * public/WebIDBDatabase.h:
+        (WebKit::WebIDBDatabase::objectStores):
+        * src/IDBDatabaseProxy.cpp:
+        (WebCore::IDBDatabaseProxy::objectStores):
+        * src/WebDOMStringList.cpp: Added.
+        (WebKit::WebDOMStringList::reset):
+        (WebKit::WebDOMStringList::assign):
+        (WebKit::WebDOMStringList::append):
+        (WebKit::WebDOMStringList::length):
+        (WebKit::WebDOMStringList::item):
+        (WebKit::WebDOMStringList::WebDOMStringList):
+        (WebKit::WebDOMStringList::operator=):
+        (WebKit::WebDOMStringList::operator WTF::PassRefPtr<WebCore::DOMStringList>):
+        * src/WebIDBDatabaseImpl.cpp:
+        (WebKit::WebIDBDatabaseImpl::objectStores):
+        * src/WebIDBDatabaseImpl.h:
+
 2010-05-24  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.

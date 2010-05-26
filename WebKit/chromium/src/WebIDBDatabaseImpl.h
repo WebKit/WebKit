@@ -47,7 +47,7 @@ public:
     virtual WebString name();
     virtual WebString description();
     virtual WebString version();
-    virtual WebVector<WebString> objectStores();
+    virtual WebDOMStringList objectStores();
 
 private:
     WTF::RefPtr<WebCore::IDBDatabase> m_idbDatabase;
