@@ -130,8 +130,12 @@ namespace WebCore {
         UChar consumeEntity(SegmentedString&, bool& notEnoughCharacters);
 
         inline bool temporaryBufferIs(const String&);
-        inline bool isAppropriateEndTag();
 
+        // Sometimes we speculatively consume input characters and we don't
+        // know whether they represent end tags or RCDATA, etc.  These
+        // functions help manage these state.
+        inline void addToPossibleEndTag(UChar cc);
+        inline bool isAppropriateEndTag();
         inline void maybeFlushBufferedEndTag();
         inline void flushBufferedEndTag();
 

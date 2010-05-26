@@ -27,6 +27,7 @@
 #define HTML5Tokenizer_h
 
 #include "CachedResourceClient.h"
+#include "HTML5Token.h"
 #include "SegmentedString.h"
 #include "Tokenizer.h"
 #include <wtf/OwnPtr.h>
@@ -57,6 +58,9 @@ public:
 
 private:
     SegmentedString m_source;
+
+    // We hold m_token here because it might be partially complete.
+    HTML5Token m_token;
 
     OwnPtr<HTML5Lexer> m_lexer;
     OwnPtr<HTML5TreeBuilder> m_treeBuilder;

@@ -60,6 +60,7 @@ system("WebKitTools/Scripts/build-dumprendertree", @args) == 0 or die "Failed to
 
 my @tests = (
     "html5lib/webkit-runner",
+    "html5lib/webkit-resumer",
 );
 
 foreach my $test (@tests) {
