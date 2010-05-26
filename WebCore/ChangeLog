@@ -1,3 +1,30 @@
+2010-05-25  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Show HTTP status message sent from server in Resources tab.
+
+        This patch obtains an HTTP status message of each resource and pass it to
+        the front end of Web Inspector. The status message is shown in "Headers" tab in
+        the detail view of that resource, along with the HTTP status code.
+
+        Web Inspector does not respect HTTP status message
+        https://bugs.webkit.org/show_bug.cgi?id=39595
+
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::updateResponse):
+        (WebCore::InspectorResource::updateScriptObject):
+        * inspector/InspectorResource.h:
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.CompareByTransferSize):
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView.prototype._refreshHTTPInformation):
+        * inspector/front-end/inspector.js:
+        (WebInspector.updateResource):
+        * inspector/front-end/utilities.js:
+        (String.prototype.escapeHTML): Escape '"' so that we can escape messages
+        that may occur inside HTML attributes.
+
 2010-05-24  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

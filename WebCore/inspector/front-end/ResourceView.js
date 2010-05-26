@@ -342,13 +342,15 @@ WebInspector.ResourceView.prototype = {
                 statusImageSource = "Images/warningOrangeDot.png";
             else
                 statusImageSource = "Images/errorRedDot.png";
-            statusCodeImage = "<img class=\"resource-status-image\" src=\"" + statusImageSource + "\" title=\"" + WebInspector.Resource.StatusTextForCode(this.resource.statusCode) + "\">";
+
+            var statusTextEscaped = this.resource.statusCode + " " + this.resource.statusText.escapeHTML();
+            statusCodeImage = "<img class=\"resource-status-image\" src=\"" + statusImageSource + "\" title=\"" + statusTextEscaped + "\">";
     
             requestMethodElement.title = "<div class=\"header-name\">" + WebInspector.UIString("Request Method") + ":</div>" +
                 "<div class=\"header-value source-code\">" + this.resource.requestMethod + "</div>";
 
             statusCodeElement.title = "<div class=\"header-name\">" + WebInspector.UIString("Status Code") + ":</div>" +
-                statusCodeImage + "<div class=\"header-value source-code\">" + WebInspector.Resource.StatusTextForCode(this.resource.statusCode) + "</div>";
+                statusCodeImage + "<div class=\"header-value source-code\">" + statusTextEscaped + "</div>";
         }
     },
     

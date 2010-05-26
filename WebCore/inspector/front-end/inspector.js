@@ -1160,6 +1160,7 @@ WebInspector.updateResource = function(identifier, payload)
         resource.suggestedFilename = payload.suggestedFilename;
         resource.expectedContentLength = payload.expectedContentLength;
         resource.statusCode = payload.statusCode;
+        resource.statusText = payload.statusText;
         resource.suggestedFilename = payload.suggestedFilename;
         resource.responseHeaders = payload.responseHeaders;
     }

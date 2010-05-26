@@ -125,6 +125,7 @@ void InspectorResource::updateResponse(const ResourceResponse& response)
     }
     m_responseHeaderFields = response.httpHeaderFields();
     m_responseStatusCode = response.httpStatusCode();
+    m_responseStatusText = response.httpStatusText();
     m_suggestedFilename = response.suggestedFilename();
 
     m_changes.set(ResponseChange);
@@ -167,6 +168,7 @@ void InspectorResource::updateScriptObject(InspectorFrontend* frontend)
         jsonObject.set("suggestedFilename", m_suggestedFilename);
         jsonObject.set("expectedContentLength", m_expectedContentLength);
         jsonObject.set("statusCode", m_responseStatusCode);
+        jsonObject.set("statusText", m_responseStatusText);
         jsonObject.set("suggestedFilename", m_suggestedFilename);
         ScriptObject responseHeaders = frontend->newScriptObject();
         populateHeadersObject(&responseHeaders, m_responseHeaderFields);
