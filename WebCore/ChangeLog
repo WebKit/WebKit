@@ -1,3 +1,12 @@
+2010-05-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Buildfix for build without ENABLE(RUBY) after r60201.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::canMergeContiguousAnonymousBlocks): Missing #if ENABLE(RUBY) guard added.
+
 2010-05-26  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Update test expectations for JS generator, when using run-webkit-tests. This has been forgotten.

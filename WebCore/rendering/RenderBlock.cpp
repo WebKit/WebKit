@@ -741,14 +741,20 @@ static bool canMergeContiguousAnonymousBlocks(RenderObject* oldChild, RenderObje
 {
     if (oldChild->documentBeingDestroyed() || oldChild->isInline() || oldChild->virtualContinuation())
         return false;
-        
-    if ((prev && (!prev->isAnonymousBlock() || toRenderBlock(prev)->continuation() || prev->isRubyRun() || prev->isRubyBase()))
-        || (next && (!next->isAnonymousBlock() || toRenderBlock(next)->continuation() || next->isRubyRun() || next->isRubyBase())))
+
+    if ((prev && (!prev->isAnonymousBlock() || toRenderBlock(prev)->continuation()))
+        || (next && (!next->isAnonymousBlock() || toRenderBlock(next)->continuation())))
         return false;
-    
+
+#if ENABLE(RUBY)
+    if ((prev && (prev->isRubyRun() || prev->isRubyBase()))
+        || (next && (next->isRubyRun() || next->isRubyBase())))
+        return false;
+#endif
+
     if (!prev || !next)
         return true;
-        
+
     // Make sure the types of the anonymous blocks match up.
     return prev->isAnonymousColumnsBlock() == next->isAnonymousColumnsBlock()
            && prev->isAnonymousColumnSpanBlock() == prev->isAnonymousColumnSpanBlock();
