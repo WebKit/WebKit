@@ -26,48 +26,52 @@
 
 namespace WebCore {
 
-    class Page;
-    struct PluginInfo;
+class Page;
+struct PluginInfo;
 
-    struct MimeClassInfo : Noncopyable {
-        String type;
-        String desc;
-        String suffixes;
-        PluginInfo* plugin;
-    };
+struct MimeClassInfo {
+    String type;
+    String desc;
+    String suffixes;
+    unsigned pluginIndex;
+};
 
-    struct PluginInfo : Noncopyable {
-        String name;
-        String file;
-        String desc;
-        Vector<MimeClassInfo*> mimes;
-    };
+inline bool operator==(const MimeClassInfo& a, const MimeClassInfo& b)
+{
+    return a.type == b.type && a.desc == b.desc && a.suffixes == b.suffixes && a.pluginIndex == b.pluginIndex;
+}
 
-    // FIXME: merge with PluginDatabase in the future
-    class PluginData : public RefCounted<PluginData> {
-    public:
-        static PassRefPtr<PluginData> create(const Page* page) { return adoptRef(new PluginData(page)); }
-        ~PluginData();
+struct PluginInfo {
+    String name;
+    String file;
+    String desc;
+    Vector<MimeClassInfo> mimes;
+};
 
-        void disconnectPage() { m_page = 0; }
-        const Page* page() const { return m_page; }
+// FIXME: merge with PluginDatabase in the future
+class PluginData : public RefCounted<PluginData> {
+public:
+    static PassRefPtr<PluginData> create(const Page* page) { return adoptRef(new PluginData(page)); }
+ 
+    void disconnectPage() { m_page = 0; }
+    const Page* page() const { return m_page; }
 
-        const Vector<PluginInfo*>& plugins() const { return m_plugins; }
-        const Vector<MimeClassInfo*>& mimes() const { return m_mimes; }
+    const Vector<PluginInfo>& plugins() const { return m_plugins; }
+    const Vector<MimeClassInfo>& mimes() const { return m_mimes; }
 
-        bool supportsMimeType(const String& mimeType) const;
-        String pluginNameForMimeType(const String& mimeType) const;
+    bool supportsMimeType(const String& mimeType) const;
+    String pluginNameForMimeType(const String& mimeType) const;
 
-        static void refresh();
+    static void refresh();
 
-    private:
-        PluginData(const Page*);
-        void initPlugins();
+private:
+    PluginData(const Page*);
+    void initPlugins();
 
-        Vector<PluginInfo*> m_plugins;
-        Vector<MimeClassInfo*> m_mimes;
-        const Page* m_page;
-    };
+    Vector<PluginInfo> m_plugins;
+    Vector<MimeClassInfo> m_mimes;
+    const Page* m_page;
+};
 
 }
 

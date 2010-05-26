@@ -42,6 +42,8 @@ namespace WebCore {
         PassRefPtr<Plugin> enabledPlugin() const;
 
     private:
+        const MimeClassInfo& mimeClassInfo() const { return m_pluginData->mimes()[m_index]; }
+        
         MimeType(PassRefPtr<PluginData>, unsigned index);
         RefPtr<PluginData> m_pluginData;
         unsigned m_index;

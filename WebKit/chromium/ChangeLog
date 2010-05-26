@@ -1,3 +1,19 @@
+2010-05-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Clean up MimeClassInfo and PluginInfo
+        https://bugs.webkit.org/show_bug.cgi?id=39700
+
+        Update for WebCore changes.
+
+        * src/WebPluginListBuilderImpl.cpp:
+        (WebKit::WebPluginListBuilderImpl::addPlugin):
+        (WebKit::WebPluginListBuilderImpl::addMediaTypeToLastPlugin):
+        (WebKit::WebPluginListBuilderImpl::addFileExtensionToLastMediaType):
+        * src/WebPluginListBuilderImpl.h:
+        (WebKit::WebPluginListBuilderImpl::WebPluginListBuilderImpl):
+
 2010-05-26  Jeremy Orlow  <jorlow@chromium.org>
 
         Unreviewed chromium build fix

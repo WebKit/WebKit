@@ -40,17 +40,17 @@ MimeType::~MimeType()
 
 const String &MimeType::type() const
 {
-    return m_pluginData->mimes()[m_index]->type;
+    return mimeClassInfo().type;
 }
 
 const String &MimeType::suffixes() const
 {
-    return m_pluginData->mimes()[m_index]->suffixes;
+    return mimeClassInfo().suffixes;
 }
 
 const String &MimeType::description() const
 {
-    return m_pluginData->mimes()[m_index]->desc;
+    return mimeClassInfo().desc;
 }
 
 PassRefPtr<Plugin> MimeType::enabledPlugin() const
@@ -59,13 +59,7 @@ PassRefPtr<Plugin> MimeType::enabledPlugin() const
     if (!p || !p->mainFrame()->loader()->allowPlugins(NotAboutToInstantiatePlugin))
         return 0;
 
-    const PluginInfo *info = m_pluginData->mimes()[m_index]->plugin;
-    const Vector<PluginInfo*>& plugins = m_pluginData->plugins();
-    for (size_t i = 0; i < plugins.size(); ++i) {
-        if (plugins[i] == info)
-            return Plugin::create(m_pluginData.get(), i);
-    }
-    return 0;
+    return Plugin::create(m_pluginData.get(), mimeClassInfo().pluginIndex);
 }
 
 } // namespace WebCore

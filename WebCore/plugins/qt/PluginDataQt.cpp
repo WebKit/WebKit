@@ -42,19 +42,20 @@ void PluginData::initPlugins()
         for (int i = 0; i < qplugins.count(); ++i) {
             const QWebPluginFactory::Plugin& qplugin = qplugins.at(i);
 
-            PluginInfo* info = new PluginInfo;
-            info->name = qplugin.name;
-            info->desc = qplugin.description;
+            PluginInfo info;
+            info.name = qplugin.name;
+            info.desc = qplugin.description;
 
             for (int j = 0; j < qplugin.mimeTypes.count(); ++j) {
                 const QWebPluginFactory::MimeType& mimeType = qplugin.mimeTypes.at(j);
 
-                MimeClassInfo* mimeInfo = new MimeClassInfo;
-                mimeInfo->type = mimeType.name;
-                mimeInfo->desc = mimeType.description;
-                mimeInfo->suffixes = mimeType.fileExtensions.join(QLatin1String("; "));
+                MimeClassInfo mimeInfo;
+                mimeInfo.type = mimeType.name;
+                mimeInfo.desc = mimeType.description;
+                mimeInfo.suffixes = mimeType.fileExtensions.join(QLatin1String("; "));
+                mimeInfo.pluginIndex = m_plugins.size();
 
-                info->mimes.append(mimeInfo);
+                info.mimes.append(mimeInfo);
             }
 
             m_plugins.append(info);
@@ -65,30 +66,30 @@ void PluginData::initPlugins()
     const Vector<PluginPackage*> &plugins = db->plugins();
 
     for (unsigned int i = 0; i < plugins.size(); ++i) {
-        PluginInfo* info = new PluginInfo;
+        PluginInfo info;
         PluginPackage* package = plugins[i];
 
-        info->name = package->name();
-        info->file = package->fileName();
-        info->desc = package->description();
+        info.name = package->name();
+        info.file = package->fileName();
+        info.desc = package->description();
 
         const MIMEToDescriptionsMap& mimeToDescriptions = package->mimeToDescriptions();
         MIMEToDescriptionsMap::const_iterator end = mimeToDescriptions.end();
         for (MIMEToDescriptionsMap::const_iterator it = mimeToDescriptions.begin(); it != end; ++it) {
-            MimeClassInfo* mime = new MimeClassInfo;
-            info->mimes.append(mime);
+            MimeClassInfo mime;
+            info.mimes.append(mime);
 
-            mime->type = it->first;
-            mime->desc = it->second;
-            mime->plugin = info;
+            mime.type = it->first;
+            mime.desc = it->second;
+            mime.pluginIndex = m_plugins.size();
 
-            Vector<String> extensions = package->mimeToExtensions().get(mime->type);
+            Vector<String> extensions = package->mimeToExtensions().get(mime.type);
 
             for (unsigned i = 0; i < extensions.size(); i++) {
                 if (i > 0)
-                    mime->suffixes += ",";
+                    mime.suffixes += ",";
 
-                mime->suffixes += extensions[i];
+                mime.suffixes += extensions[i];
             }
         }
 

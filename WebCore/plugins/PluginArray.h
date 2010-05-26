@@ -48,7 +48,7 @@ namespace WebCore {
 
     private:
         PluginArray(Frame*);
-        PluginData* getPluginData() const;
+        PluginData* pluginData() const;
 
         Frame* m_frame;
     };

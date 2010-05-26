@@ -505,7 +505,7 @@ String ChromiumBridge::preferredExtensionForMIMEType(const String& mimeType)
 
 // Plugin ---------------------------------------------------------------------
 
-bool ChromiumBridge::plugins(bool refresh, Vector<PluginInfo*>* results)
+bool ChromiumBridge::plugins(bool refresh, Vector<PluginInfo>* results)
 {
     WebPluginListBuilderImpl builder(results);
     webKitClient()->getPluginList(refresh, &builder);

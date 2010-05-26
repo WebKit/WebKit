@@ -39,22 +39,24 @@ void PluginData::initPlugins()
 
     NSArray* plugins = [[WebCoreViewFactory sharedFactory] pluginsInfo];
     for (unsigned int i = 0; i < [plugins count]; ++i) {
-        PluginInfo* pluginInfo = new PluginInfo;
+        PluginInfo pluginInfo;
 
         id <WebCorePluginInfo> plugin = [plugins objectAtIndex:i];
     
-        pluginInfo->name = [plugin name];
-        pluginInfo->file = [plugin filename];
-        pluginInfo->desc = [plugin pluginDescription];
+        pluginInfo.name = [plugin name];
+        pluginInfo.file = [plugin filename];
+        pluginInfo.desc = [plugin pluginDescription];
 
         NSEnumerator* MIMETypeEnumerator = [plugin MIMETypeEnumerator];
         while (NSString* MIME = [MIMETypeEnumerator nextObject]) {
-            MimeClassInfo* mime = new MimeClassInfo;
-            pluginInfo->mimes.append(mime);
-            mime->type = String(MIME).lower();
-            mime->suffixes = [[plugin extensionsForMIMEType:MIME] componentsJoinedByString:@","];
-            mime->desc = [plugin descriptionForMIMEType:MIME];
-            mime->plugin = pluginInfo;
+            MimeClassInfo mime;
+
+            mime.type = String(MIME).lower();
+            mime.suffixes = [[plugin extensionsForMIMEType:MIME] componentsJoinedByString:@","];
+            mime.desc = [plugin descriptionForMIMEType:MIME];
+            mime.pluginIndex = m_plugins.size();
+            
+            pluginInfo.mimes.append(mime);
         }
 
         m_plugins.append(pluginInfo);

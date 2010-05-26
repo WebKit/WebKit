@@ -50,7 +50,7 @@ PassRefPtr<MimeType> MimeTypeArray::item(unsigned index)
     PluginData* data = getPluginData();
     if (!data)
         return 0;
-    const Vector<MimeClassInfo*>& mimes = data->mimes();
+    const Vector<MimeClassInfo>& mimes = data->mimes();
     if (index >= mimes.size())
         return 0;
     return MimeType::create(data, index).get();
@@ -61,9 +61,9 @@ bool MimeTypeArray::canGetItemsForName(const AtomicString& propertyName)
     PluginData *data = getPluginData();
     if (!data)
         return 0;
-    const Vector<MimeClassInfo*>& mimes = data->mimes();
+    const Vector<MimeClassInfo>& mimes = data->mimes();
     for (unsigned i = 0; i < mimes.size(); ++i) {
-        if (mimes[i]->type == propertyName)
+        if (mimes[i].type == propertyName)
             return true;
     }
     return false;
@@ -74,9 +74,9 @@ PassRefPtr<MimeType> MimeTypeArray::namedItem(const AtomicString& propertyName)
     PluginData *data = getPluginData();
     if (!data)
         return 0;
-    const Vector<MimeClassInfo*>& mimes = data->mimes();
+    const Vector<MimeClassInfo>& mimes = data->mimes();
     for (unsigned i = 0; i < mimes.size(); ++i) {
-        if (mimes[i]->type == propertyName)
+        if (mimes[i].type == propertyName)
             return MimeType::create(data, i).get();
     }
     return 0;

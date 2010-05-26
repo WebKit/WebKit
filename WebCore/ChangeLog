@@ -1,3 +1,73 @@
+2010-05-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Clean up MimeClassInfo and PluginInfo
+        https://bugs.webkit.org/show_bug.cgi?id=39700
+
+        This gets rid of all the heap allocation from MimeClassInfo and PluginInfo. 
+        
+        It also changes the m_plugins and m_mimes vectors in PluginData to not hold heap allocated MimeClassInfo
+        and PluginClassInfo objects.
+
+        * page/Page.cpp:
+        (WebCore::Page::refreshPlugins):
+        * plugins/MimeType.cpp:
+        (WebCore::MimeType::type):
+        (WebCore::MimeType::suffixes):
+        (WebCore::MimeType::description):
+        (WebCore::MimeType::enabledPlugin):
+        * plugins/MimeType.h:
+        (WebCore::MimeType::mimeClassInfo):
+        * plugins/MimeTypeArray.cpp:
+        (WebCore::MimeTypeArray::item):
+        (WebCore::MimeTypeArray::canGetItemsForName):
+        (WebCore::MimeTypeArray::namedItem):
+        * plugins/Plugin.cpp:
+        (WebCore::Plugin::name):
+        (WebCore::Plugin::filename):
+        (WebCore::Plugin::description):
+        (WebCore::Plugin::length):
+        (WebCore::Plugin::item):
+        (WebCore::Plugin::canGetItemsForName):
+        (WebCore::Plugin::namedItem):
+        * plugins/Plugin.h:
+        (WebCore::Plugin::pluginInfo):
+        * plugins/PluginArray.cpp:
+        (WebCore::PluginArray::length):
+        (WebCore::PluginArray::item):
+        (WebCore::PluginArray::canGetItemsForName):
+        (WebCore::PluginArray::namedItem):
+        (WebCore::PluginArray::pluginData):
+        * plugins/PluginArray.h:
+        * plugins/PluginData.cpp:
+        (WebCore::PluginData::PluginData):
+        (WebCore::PluginData::~PluginData):
+        (WebCore::PluginData::supportsMimeType):
+        (WebCore::PluginData::pluginNameForMimeType):
+        * plugins/PluginData.h:
+        (WebCore::operator==):
+        (WebCore::PluginData::create):
+        (WebCore::PluginData::disconnectPage):
+        (WebCore::PluginData::page):
+        (WebCore::PluginData::plugins):
+        (WebCore::PluginData::mimes):
+        * plugins/chromium/PluginDataChromium.cpp:
+        (WebCore::PluginCache::reset):
+        (WebCore::PluginCache::plugins):
+        (WebCore::PluginData::initPlugins):
+        (WebCore::getPluginMimeTypeFromExtension):
+        * plugins/gtk/PluginDataGtk.cpp:
+        (WebCore::PluginData::initPlugins):
+        * plugins/mac/PluginDataMac.mm:
+        (WebCore::PluginData::initPlugins):
+        * plugins/qt/PluginDataQt.cpp:
+        (WebCore::PluginData::initPlugins):
+        * plugins/win/PluginDataWin.cpp:
+        (WebCore::PluginData::initPlugins):
+        * plugins/wx/PluginDataWx.cpp:
+        (WebCore::PluginData::initPlugins):
+
 2010-05-26  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.
