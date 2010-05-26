@@ -143,17 +143,20 @@ public:
     // This function is a convenience helper for creating an anonymous block that inherits its
     // style from this RenderBlock.
     RenderBlock* createAnonymousBlock(bool isFlexibleBox = false) const;
-
+    RenderBlock* createAnonymousColumnsBlock() const;
+    RenderBlock* createAnonymousColumnSpanBlock() const;
+    RenderBlock* createAnonymousBlockWithSameTypeAs(RenderBlock* otherAnonymousBlock) const;
+    
     static void appendRunsForObject(int start, int end, RenderObject*, InlineBidiResolver&);    
     static bool requiresLineBox(const InlineIterator&, bool isLineEmpty = true, bool previousLineBrokeCleanly = true);
 
     Vector<IntRect>* columnRects() const;
     int columnGap() const;
-    
+
 protected:
     void moveChildTo(RenderObject* to, RenderObjectChildList* toChildList, RenderObject* child);
     void moveChildTo(RenderObject* to, RenderObjectChildList* toChildList, RenderObject* beforeChild, RenderObject* child);
-    void moveAllChildrenTo(RenderObject* to, RenderObjectChildList* toChildList);
+    void moveAllChildrenTo(RenderObject* to, RenderObjectChildList* toChildList, bool fullRemoveAppend = false);
     void moveAllChildrenTo(RenderObject* to, RenderObjectChildList* toChildList, RenderObject* beforeChild);
 
     int maxTopPosMargin() const { return m_maxMargin ? m_maxMargin->m_topPos : MaxMargin::topPosDefault(this); }
@@ -223,6 +226,9 @@ private:
 
     virtual void dirtyLinesFromChangedChild(RenderObject* child) { m_lineBoxes.dirtyLinesFromChangedChild(this, child); }
 
+    void addChildToAnonymousColumnBlocks(RenderObject* newChild, RenderObject* beforeChild);
+    virtual void addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, RenderObject* beforeChild = 0);
+    
     virtual bool isSelfCollapsingBlock() const;
 
     virtual int maxTopMargin(bool positive) const { return positive ? maxTopPosMargin() : maxTopNegMargin(); }
@@ -380,11 +386,14 @@ private:
     void calcColumnWidth();
     int layoutColumns(int endOfContent = -1, int requestedColumnHeight = -1);
     int visibleTopOfHighestFloatExtendingBelow(int bottom, int maxHeight) const;
+    void makeChildrenAnonymousColumnBlocks(RenderObject* beforeChild, RenderBlock* newBlockBox, RenderObject* newChild);
 
     bool expandsToEncloseOverhangingFloats() const;
 
     void updateScrollInfoAfterLayout();
 
+    RenderObject* splitAnonymousBlocksAroundChild(RenderObject* beforeChild);
+    
     struct FloatingObject : Noncopyable {
         enum Type {
             FloatLeft,
@@ -528,7 +537,7 @@ private:
     RenderLineBoxList m_lineBoxes;   // All of the root line boxes created for this block flow.  For example, <div>Hello<br>world.</div> will have two total lines for the <div>.
 
     mutable int m_lineHeight;
-    
+
     // RenderRubyBase objects need to be able to split and merge, moving their children around
     // (calling moveChildTo, moveAllChildrenTo, and makeChildrenNonInline).
     friend class RenderRubyBase;

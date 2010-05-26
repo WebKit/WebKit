@@ -1,3 +1,97 @@
+2010-05-24  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39615, implement basic support for -webkit-column-span.
+
+        This patch adds support for -webkit-column-span elements that can span across all of the columns
+        in a multi-column block.  In this first stage, column span support is limited to only immediate
+        children of the multi-column block, so no elements actually have to split across a span yet.
+
+        Two new kinds of anonymous blocks have been added: anonymous columns blocks and anonymous column
+        span blocks.  When a span gets inserted into a multicol block, the block is split, with the
+        column portions of the multicol getting wrapped in anonymous columns blocks and the spans getting
+        wrapped in anonymous column span blocks.  The multicol block then stops being multicol and lets
+        the anonymous multicol blocks take over column layout.
+        
+        Many new tests added in fast/multicol/span.
+
+        * dom/Node.cpp:
+        (WebCore::Node::diff):
+        Changes to column span result in a detach/attach, since spanning elements don't typically have
+        much content.
+    
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleDidChange):
+        Make sure to inherit the appropriate new styles into the anonymous column and column span blocks.
+
+        (WebCore::RenderBlock::addChildToAnonymousColumnBlocks):
+        This method handles the insertion of new children into the block after it has had to wrap its
+        children in anonymous column/column-span blocks.
+        
+        (WebCore::RenderBlock::splitAnonymousBlocksAroundChild):
+        A helper method for splitting all anonymous blocks between beforeChild and this block so that
+        a new element with an incompatible type can be inserted between them.
+        
+        (WebCore::RenderBlock::makeChildrenAnonymousColumnBlocks):
+        This method does the initial split of a block into anonymous components.  This happens the first
+        time a column-span element gets inserted into the block.
+
+        (WebCore::columnsBlockForSpanningElement):
+        This function checks whether or not the column-span element is actually being inserted into a viable
+        columns block.
+
+        (WebCore::RenderBlock::addChildIgnoringAnonymousColumnBlocks):
+        This is the original RenderBlock::addChild.  It handles everything else just like it used to.
+        
+        (WebCore::RenderBlock::addChild):
+        Patched to now call addChildToAnonymousColumnBlocks if the block has wrapped its current children
+        in anonymous column/column-span blocks already.
+
+        (WebCore::RenderBlock::moveAllChildrenTo):
+        moveAllChildrenTo has been enhanced to support doing a full remove/append in the case where elements
+        are shifting across layers.  (This should arguably be the default behavior, but that can happen in
+        a future patch.)
+
+        (WebCore::RenderBlock::removeLeftoverAnonymousBlock):
+        Patched to fix a bug when the leftover block is empty and to prevent anonymous column/column-span
+        block from being coalesced with a parent if they are non-empty.
+
+        (WebCore::canMergeContiguousAnonymousBlocks):
+        Whether or not two contiguous anonymous blocks can merge after the removal of a child.
+
+        (WebCore::RenderBlock::removeChild):
+        removeChild has been patched to handle more cases of merging/deletion than it did before.  It
+        can now destroy empty anonymous block chains and can now merge two contiguous anonymous blocks
+        that don't share the same childrenInline() setting (by putting one inside the other).  It also
+        makes sure to do full appends/moves/inserts in the cases where the affected blocks have layers.
+        
+        (WebCore::RenderBlock::fillSelectionGaps):
+        Don't let the selection extend outside of a column-span.
+        
+        (WebCore::RenderBlock::setDesiredColumnCountAndWidth):
+        Turn off multi-column layout on the outermost block if it has wrapped its children in anonymous
+        column/column-span blocks.
+
+        (WebCore::RenderBlock::createAnonymousBlockWithSameTypeAs):
+        (WebCore::RenderBlock::createAnonymousColumnsBlock):
+        (WebCore::RenderBlock::createAnonymousColumnSpanBlock):
+        New helper functions for anonymous block creation.
+        
+        (WebCore::RenderBlock::renderName):
+        Patched to dump anonymous column and column-span blocks so that they can be distinguished from
+        regular anonymous blocks.
+        * rendering/RenderBlock.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isAnonymousColumnsBlock):
+        (WebCore::RenderObject::isAnonymousColumnSpanBlock):
+        New helper functions for asking the type of an anonymous block.
+        
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::inheritColumnPropertiesFrom):
+        A helper function to allow anonymous column blocks to easily inherit all column properties for
+        rendering.
+
 2010-05-25  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Dimitri Glazkov.

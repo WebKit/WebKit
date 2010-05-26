@@ -294,8 +294,13 @@ Node::StyleChange Node::diff(const RenderStyle* s1, const RenderStyle* s2)
     bool fl1 = s1 && s1->hasPseudoStyle(FIRST_LETTER);
     EDisplay display2 = s2 ? s2->display() : NONE;
     bool fl2 = s2 && s2->hasPseudoStyle(FIRST_LETTER);
-        
-    if (display1 != display2 || fl1 != fl2 || (s1 && s2 && !s1->contentDataEquivalent(s2)))
+    
+    // We just detach if a renderer acquires or loses a column-span, since spanning elements
+    // typically won't contain much content.
+    bool colSpan1 = s1 && s1->columnSpan();
+    bool colSpan2 = s2 && s2->columnSpan();
+    
+    if (display1 != display2 || fl1 != fl2 || colSpan1 != colSpan2 || (s1 && s2 && !s1->contentDataEquivalent(s2)))
         ch = Detach;
     else if (!s1 || !s2)
         ch = Inherit;

@@ -235,6 +235,12 @@ void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
         if (child->isAnonymousBlock()) {
             RefPtr<RenderStyle> newStyle = RenderStyle::create();
             newStyle->inheritFrom(style());
+            if (style()->specifiesColumns()) {
+                if (child->style()->specifiesColumns())
+                    newStyle->inheritColumnPropertiesFrom(style());
+                if (child->style()->columnSpan())
+                    newStyle->setColumnSpan(true);
+            }
             newStyle->setDisplay(BLOCK);
             child->setStyle(newStyle.release());
         }
@@ -257,17 +263,202 @@ void RenderBlock::updateBeforeAfterContent(PseudoId pseudoId)
         return;
     return children()->updateBeforeAfterContent(this, pseudoId);
 }
+
+void RenderBlock::addChildToAnonymousColumnBlocks(RenderObject* newChild, RenderObject* beforeChild)
+{
+    ASSERT(!continuation()); // We don't yet support column spans that aren't immediate children of the multi-column block.
+        
+    // The goal is to locate a suitable box in which to place our child.
+    RenderBlock* beforeChildParent = toRenderBlock(beforeChild ? beforeChild->parent() : lastChild());
     
-void RenderBlock::addChild(RenderObject* newChild, RenderObject* beforeChild)
+    // If the new child is floating or positioned it can just go in that block.
+    if (newChild->isFloatingOrPositioned())
+        return beforeChildParent->addChildIgnoringAnonymousColumnBlocks(newChild, beforeChild);
+
+    // See if the child can be placed in the box.
+    bool newChildHasColumnSpan = newChild->style()->columnSpan() && !newChild->isInline();
+    bool beforeChildParentHoldsColumnSpans = beforeChildParent->isAnonymousColumnSpanBlock();
+
+    if (newChildHasColumnSpan == beforeChildParentHoldsColumnSpans)
+        return beforeChildParent->addChildIgnoringAnonymousColumnBlocks(newChild, beforeChild);
+
+    if (!beforeChild) {
+        // Create a new block of the correct type.
+        RenderBlock* newBox = newChildHasColumnSpan ? createAnonymousColumnSpanBlock() : createAnonymousColumnsBlock();
+        children()->appendChildNode(this, newBox);
+        newBox->addChildIgnoringAnonymousColumnBlocks(newChild, 0);
+        return;
+    }
+
+    RenderObject* immediateChild = beforeChild;
+    bool isPreviousBlockViable = true;
+    while (immediateChild->parent() != this) {
+        if (isPreviousBlockViable)
+            isPreviousBlockViable = !immediateChild->previousSibling();
+        immediateChild = immediateChild->parent();
+    }
+    if (isPreviousBlockViable && immediateChild->previousSibling())
+        return toRenderBlock(immediateChild->previousSibling())->addChildIgnoringAnonymousColumnBlocks(newChild, 0); // Treat like an append.
+        
+    // Split our anonymous blocks.
+    RenderObject* newBeforeChild = splitAnonymousBlocksAroundChild(beforeChild);
+    
+    // Create a new anonymous box of the appropriate type.
+    RenderBlock* newBox = newChildHasColumnSpan ? createAnonymousColumnSpanBlock() : createAnonymousColumnsBlock();
+    children()->insertChildNode(this, newBox, newBeforeChild);
+    newBox->addChildIgnoringAnonymousColumnBlocks(newChild, 0);
+    return;
+}
+
+RenderObject* RenderBlock::splitAnonymousBlocksAroundChild(RenderObject* beforeChild)
+{
+    while (beforeChild->parent() != this) {
+        RenderBlock* blockToSplit = toRenderBlock(beforeChild->parent());
+        ASSERT(blockToSplit->isAnonymousBlock() && !blockToSplit->continuation());
+        
+        if (blockToSplit->firstChild() != beforeChild) {
+            // We have to split the parentBlock into two blocks.
+            RenderBlock* post = createAnonymousBlockWithSameTypeAs(blockToSplit);
+            post->setChildrenInline(blockToSplit->childrenInline());
+            RenderBlock* parentBlock = toRenderBlock(blockToSplit->parent());
+            parentBlock->children()->insertChildNode(parentBlock, post, blockToSplit->nextSibling());
+            RenderObject* o = beforeChild;
+            while (o) {
+                RenderObject* no = o;
+                o = no->nextSibling();
+                post->children()->appendChildNode(post, blockToSplit->children()->removeChildNode(blockToSplit, no));
+                no->setNeedsLayoutAndPrefWidthsRecalc();
+            }
+            
+            post->setNeedsLayoutAndPrefWidthsRecalc();
+            blockToSplit->setNeedsLayoutAndPrefWidthsRecalc();
+            beforeChild = post;
+        } else
+            beforeChild = blockToSplit;
+    }
+
+    return beforeChild;
+}
+
+void RenderBlock::makeChildrenAnonymousColumnBlocks(RenderObject* beforeChild, RenderBlock* newBlockBox, RenderObject* newChild)
+{
+    RenderBlock* pre = 0;
+    RenderBlock* post = 0;
+    RenderBlock* block = this; // Eventually block will not just be |this|, but will also be a block nested inside |this|.  Assign to a variable
+                               // so that we don't have to patch all of the rest of the code later on.
+    
+    // Delete the block's line boxes before we do the split.
+    block->deleteLineBoxTree();
+    
+    if (beforeChild && beforeChild->parent() != this)
+        beforeChild = splitAnonymousBlocksAroundChild(beforeChild);
+        
+    if (beforeChild != firstChild()) {
+        pre = block->createAnonymousColumnsBlock();
+        pre->setChildrenInline(block->childrenInline());
+    }
+
+    if (beforeChild) {
+        post = block->createAnonymousColumnsBlock();
+        post->setChildrenInline(block->childrenInline());
+    }
+
+    RenderObject* boxFirst = block->firstChild();
+    if (pre)
+        block->children()->insertChildNode(block, pre, boxFirst);
+    block->children()->insertChildNode(block, newBlockBox, boxFirst);
+    if (post)
+        block->children()->insertChildNode(block, post, boxFirst);
+    block->setChildrenInline(false);
+    
+    RenderObject* o = boxFirst;
+    while (o) {
+        if (o == beforeChild)
+            break;
+        ASSERT(pre);
+        RenderObject* no = o;
+        o = no->nextSibling();
+        pre->children()->appendChildNode(pre, block->children()->removeChildNode(block, no));
+        no->setNeedsLayoutAndPrefWidthsRecalc();
+    }
+
+    o = beforeChild;
+    while (o) {
+        ASSERT(post);
+        RenderObject* no = o;
+        o = no->nextSibling();
+        post->children()->appendChildNode(post, block->children()->removeChildNode(block, no));
+        no->setNeedsLayoutAndPrefWidthsRecalc();
+    }
+
+    // We already know the newBlockBox isn't going to contain inline kids, so avoid wasting
+    // time in makeChildrenNonInline by just setting this explicitly up front.
+    newBlockBox->setChildrenInline(false);
+
+    // We delayed adding the newChild until now so that the |newBlockBox| would be fully
+    // connected, thus allowing newChild access to a renderArena should it need
+    // to wrap itself in additional boxes (e.g., table construction).
+    newBlockBox->addChild(newChild);
+
+    // Always just do a full layout in order to ensure that line boxes (especially wrappers for images)
+    // get deleted properly.  Because objects moved from the pre block into the post block, we want to
+    // make new line boxes instead of leaving the old line boxes around.
+    if (pre)
+        pre->setNeedsLayoutAndPrefWidthsRecalc();
+    block->setNeedsLayoutAndPrefWidthsRecalc();
+    if (post)
+        post->setNeedsLayoutAndPrefWidthsRecalc();
+}
+
+static RenderBlock* columnsBlockForSpanningElement(RenderBlock* block, RenderObject* newChild)
+{
+    // FIXME: The style of this function may seem weird.
+    // This function is the gateway for the addition of column-span support.  Support will be added in three stages:
+    // (1) Immediate children of a multi-column block can span.
+    // (2) Nested block-level children with only block-level ancestors between them and the multi-column block can span.
+    // (3) Nested children with block or inline ancestors between them and the multi-column block can span (this is when we
+    // cross the streams and have to cope with both types of continuations mixed together).
+    // This function currently only supports (1).
+    if (!newChild->isText() && newChild->style()->columnSpan() && !newChild->isFloatingOrPositioned() 
+        && !newChild->isInline() && !block->isAnonymousColumnSpanBlock() && block->style()->specifiesColumns())
+        return block;
+    return 0;
+}
+
+void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, RenderObject* beforeChild)
 {
     // Make sure we don't append things after :after-generated content if we have it.
     if (!beforeChild) {
         RenderObject* lastRenderer = lastChild();
-
         if (isAfterContent(lastRenderer))
             beforeChild = lastRenderer;
         else if (lastRenderer && lastRenderer->isAnonymousBlock() && isAfterContent(lastRenderer->lastChild()))
             beforeChild = lastRenderer->lastChild();
+    }
+
+    // Check for a spanning element in columns.
+    RenderBlock* columnsBlockAncestor = columnsBlockForSpanningElement(this, newChild);
+    if (columnsBlockAncestor) {
+        ASSERT(columnsBlockAncestor == this);
+
+        // We are placing a column-span element inside a block. We have to perform a split of this
+        // block's children.  This involves creating an anonymous block box to hold
+        // the column-spanning |newChild|.  We take all of the children from before |newChild| and put them into
+        // one anonymous columns block, and all of the children after |newChild| go into another anonymous block.
+        RenderBlock* newBox = createAnonymousColumnSpanBlock();
+        
+        // Someone may have put the spanning element inside an element with generated content, causing a split.  When this happens,
+        // the :after content has to move into the last anonymous block.  Call updateBeforeAfterContent to ensure that our :after
+        // content gets properly destroyed.
+        bool isLastChild = (beforeChild == lastChild());
+        if (document()->usesBeforeAfterRules())
+            children()->updateBeforeAfterContent(this, AFTER);
+        if (isLastChild && beforeChild != lastChild())
+            beforeChild = 0; // We destroyed the last child, so now we need to update our insertion
+                             // point to be 0.  It's just a straight append now.
+
+        makeChildrenAnonymousColumnBlocks(beforeChild, newBox, newChild);
+        return;
     }
 
     bool madeBoxesNonInline = false;
@@ -347,6 +538,13 @@ void RenderBlock::addChild(RenderObject* newChild, RenderObject* beforeChild)
     // this object may be dead here
 }
 
+void RenderBlock::addChild(RenderObject* newChild, RenderObject* beforeChild)
+{
+    if (!isAnonymous() && firstChild() && (firstChild()->isAnonymousColumnsBlock() || firstChild()->isAnonymousColumnSpanBlock()))
+        return addChildToAnonymousColumnBlocks(newChild, beforeChild);
+    return addChildIgnoringAnonymousColumnBlocks(newChild, beforeChild);
+}
+
 static void getInlineRun(RenderObject* start, RenderObject* boundary,
                          RenderObject*& inlineRunStart,
                          RenderObject*& inlineRunEnd)
@@ -417,13 +615,13 @@ void RenderBlock::moveChildTo(RenderObject* to, RenderObjectChildList* toChildLi
     toChildList->insertChildNode(to, children()->removeChildNode(this, child, false), beforeChild, false);
 }
 
-void RenderBlock::moveAllChildrenTo(RenderObject* to, RenderObjectChildList* toChildList)
+void RenderBlock::moveAllChildrenTo(RenderObject* to, RenderObjectChildList* toChildList, bool fullRemoveAppend)
 {
     RenderObject* nextChild = children()->firstChild();
     while (nextChild) {
         RenderObject* child = nextChild;
         nextChild = child->nextSibling();
-        toChildList->appendChildNode(to, children()->removeChildNode(this, child, false), false);
+        toChildList->appendChildNode(to, children()->removeChildNode(this, child, fullRemoveAppend), fullRemoveAppend);
     }
 }
 
@@ -496,7 +694,7 @@ void RenderBlock::removeLeftoverAnonymousBlock(RenderBlock* child)
     ASSERT(child->isAnonymousBlock());
     ASSERT(!child->childrenInline());
     
-    if (child->continuation()) 
+    if (child->continuation() || (child->firstChild() && (child->isAnonymousColumnSpanBlock() || child->isAnonymousColumnsBlock())))
         return;
     
     RenderObject* firstAnChild = child->m_children.firstChild();
@@ -513,16 +711,22 @@ void RenderBlock::removeLeftoverAnonymousBlock(RenderBlock* child)
             child->previousSibling()->setNextSibling(firstAnChild);
         if (child->nextSibling())
             child->nextSibling()->setPreviousSibling(lastAnChild);
+            
+        if (child == m_children.firstChild())
+            m_children.setFirstChild(firstAnChild);
+        if (child == m_children.lastChild())
+            m_children.setLastChild(lastAnChild);
     } else {
+        if (child == m_children.firstChild())
+            m_children.setFirstChild(child->nextSibling());
+        if (child == m_children.lastChild())
+            m_children.setLastChild(child->previousSibling());
+
         if (child->previousSibling())
             child->previousSibling()->setNextSibling(child->nextSibling());
         if (child->nextSibling())
             child->nextSibling()->setPreviousSibling(child->previousSibling());
     }
-    if (child == m_children.firstChild())
-        m_children.setFirstChild(firstAnChild);
-    if (child == m_children.lastChild())
-        m_children.setLastChild(lastAnChild);
     child->setParent(0);
     child->setPreviousSibling(0);
     child->setNextSibling(0);
@@ -533,6 +737,23 @@ void RenderBlock::removeLeftoverAnonymousBlock(RenderBlock* child)
     child->destroy();
 }
 
+static bool canMergeContiguousAnonymousBlocks(RenderObject* oldChild, RenderObject* prev, RenderObject* next)
+{
+    if (oldChild->documentBeingDestroyed() || oldChild->isInline() || oldChild->virtualContinuation())
+        return false;
+        
+    if ((prev && (!prev->isAnonymousBlock() || toRenderBlock(prev)->continuation() || prev->isRubyRun() || prev->isRubyBase()))
+        || (next && (!next->isAnonymousBlock() || toRenderBlock(next)->continuation() || next->isRubyRun() || next->isRubyBase())))
+        return false;
+    
+    if (!prev || !next)
+        return true;
+        
+    // Make sure the types of the anonymous blocks match up.
+    return prev->isAnonymousColumnsBlock() == next->isAnonymousColumnsBlock()
+           && prev->isAnonymousColumnSpanBlock() == prev->isAnonymousColumnSpanBlock();
+}
+
 void RenderBlock::removeChild(RenderObject* oldChild)
 {
     // If this child is a block, and if our previous and next siblings are
@@ -540,41 +761,65 @@ void RenderBlock::removeChild(RenderObject* oldChild)
     // fold the inline content back together.
     RenderObject* prev = oldChild->previousSibling();
     RenderObject* next = oldChild->nextSibling();
-    bool canDeleteAnonymousBlocks = !documentBeingDestroyed() && !isInline() && !oldChild->isInline()
-                                    && (!oldChild->isRenderBlock() || !toRenderBlock(oldChild)->continuation())
-                                    && (!prev || (prev->isAnonymousBlock() && prev->childrenInline()))
-                                    && (!next || (next->isAnonymousBlock() && next->childrenInline()));
-    if (canDeleteAnonymousBlocks && prev && next) {
-        // Take all the children out of the |next| block and put them in
-        // the |prev| block.
+    bool canMergeAnonymousBlocks = canMergeContiguousAnonymousBlocks(oldChild, prev, next);
+    if (canMergeAnonymousBlocks && prev && next) {
         prev->setNeedsLayoutAndPrefWidthsRecalc();
         RenderBlock* nextBlock = toRenderBlock(next);
         RenderBlock* prevBlock = toRenderBlock(prev);
-        nextBlock->moveAllChildrenTo(prevBlock, prevBlock->children());
-        // Delete the now-empty block's lines and nuke it.
-        nextBlock->deleteLineBoxTree();
-        nextBlock->destroy();
+       
+        if (prev->childrenInline() != next->childrenInline()) {
+            RenderBlock* inlineChildrenBlock = prev->childrenInline() ? prevBlock : nextBlock;
+            RenderBlock* blockChildrenBlock = prev->childrenInline() ? nextBlock : prevBlock;
+            
+            // Place the inline children block inside of the block children block instead of deleting it.
+            // In order to reuse it, we have to reset it to just be a generic anonymous block.  Make sure
+            // to clear out inherited column properties by just making a new style, and to also clear the
+            // column span flag if it is set.
+            ASSERT(!inlineChildrenBlock->continuation());
+            RefPtr<RenderStyle> newStyle = RenderStyle::create();
+            newStyle->inheritFrom(style());
+            children()->removeChildNode(this, inlineChildrenBlock, inlineChildrenBlock->hasLayer());
+            inlineChildrenBlock->setStyle(newStyle);
+            
+            // Now just put the inlineChildrenBlock inside the blockChildrenBlock.
+            blockChildrenBlock->children()->insertChildNode(blockChildrenBlock, inlineChildrenBlock, prev == inlineChildrenBlock ? blockChildrenBlock->firstChild() : 0,
+                                                            inlineChildrenBlock->hasLayer() || blockChildrenBlock->hasLayer());
+            next->setNeedsLayoutAndPrefWidthsRecalc();
+        } else {
+            // Take all the children out of the |next| block and put them in
+            // the |prev| block.
+            nextBlock->moveAllChildrenTo(prevBlock, prevBlock->children(), nextBlock->hasLayer() || prevBlock->hasLayer());
+       
+            // Delete the now-empty block's lines and nuke it.
+            nextBlock->deleteLineBoxTree();
+            nextBlock->destroy();
+        }
     }
 
     RenderBox::removeChild(oldChild);
 
     RenderObject* child = prev ? prev : next;
-    if (canDeleteAnonymousBlocks && child && !child->previousSibling() && !child->nextSibling() && !isFlexibleBox()) {
+    if (canMergeAnonymousBlocks && child && !child->previousSibling() && !child->nextSibling() && !isFlexibleBox()) {
         // The removal has knocked us down to containing only a single anonymous
         // box.  We can go ahead and pull the content right back up into our
         // box.
         setNeedsLayoutAndPrefWidthsRecalc();
-        RenderBlock* anonBlock = toRenderBlock(children()->removeChildNode(this, child, false));
-        setChildrenInline(true);
-        anonBlock->moveAllChildrenTo(this, children());
+        setChildrenInline(child->childrenInline());
+        RenderBlock* anonBlock = toRenderBlock(children()->removeChildNode(this, child, child->hasLayer()));
+        anonBlock->moveAllChildrenTo(this, children(), child->hasLayer());
         // Delete the now-empty block's lines and nuke it.
         anonBlock->deleteLineBoxTree();
         anonBlock->destroy();
     }
 
-    // If this was our last child be sure to clear out our line boxes.
-    if (childrenInline() && !firstChild())
-        lineBoxes()->deleteLineBoxes(renderArena());
+    if (!firstChild() && !documentBeingDestroyed()) {
+        // If this was our last child be sure to clear out our line boxes.
+        if (childrenInline())
+            lineBoxes()->deleteLineBoxes(renderArena());
+        // If we're now an empty anonymous block then go ahead and delete ourselves.
+        else if (isAnonymousBlock() && parent() && parent()->isRenderBlock() && !continuation())
+            destroy();
+    }
 }
 
 bool RenderBlock::isSelfCollapsingBlock() const
@@ -2045,7 +2290,7 @@ GapRects RenderBlock::fillSelectionGaps(RenderBlock* rootBlock, int blockX, int 
     if (!isBlockFlow()) // FIXME: Make multi-column selection gap filling work someday.
         return result;
 
-    if (hasColumns() || hasTransform()) {
+    if (hasColumns() || hasTransform() || style()->columnSpan()) {
         // FIXME: We should learn how to gap fill multiple columns and transforms eventually.
         lastTop = (ty - blockY) + height();
         lastLeft = leftSelectionOffset(rootBlock, height());
@@ -3686,7 +3931,11 @@ void RenderBlock::calcColumnWidth()
 
 void RenderBlock::setDesiredColumnCountAndWidth(int count, int width)
 {
-    if (count == 1 && style()->hasAutoColumnWidth()) {
+    bool destroyColumns = !firstChild()
+                          || (count == 1 && style()->hasAutoColumnWidth())
+                          || firstChild()->isAnonymousColumnsBlock()
+                          || firstChild()->isAnonymousColumnSpanBlock();
+    if (destroyColumns) {
         if (hasColumns()) {
             delete gColumnInfoMap->take(this);
             setHasColumns(false);
@@ -5173,6 +5422,39 @@ RenderBlock* RenderBlock::createAnonymousBlock(bool isFlexibleBox) const
     return newBox;
 }
 
+RenderBlock* RenderBlock::createAnonymousBlockWithSameTypeAs(RenderBlock* otherAnonymousBlock) const
+{
+    if (otherAnonymousBlock->isAnonymousColumnsBlock())
+        return createAnonymousColumnsBlock();
+    if (otherAnonymousBlock->isAnonymousColumnSpanBlock())
+        return createAnonymousColumnSpanBlock();
+    return createAnonymousBlock(otherAnonymousBlock->style()->display() == BOX);
+}
+
+RenderBlock* RenderBlock::createAnonymousColumnsBlock() const
+{
+    RefPtr<RenderStyle> newStyle = RenderStyle::create();
+    newStyle->inheritFrom(style());
+    newStyle->inheritColumnPropertiesFrom(style());
+    newStyle->setDisplay(BLOCK);
+
+    RenderBlock* newBox = new (renderArena()) RenderBlock(document() /* anonymous box */);
+    newBox->setStyle(newStyle.release());
+    return newBox;
+}
+
+RenderBlock* RenderBlock::createAnonymousColumnSpanBlock() const
+{
+    RefPtr<RenderStyle> newStyle = RenderStyle::create();
+    newStyle->inheritFrom(style());
+    newStyle->setColumnSpan(true);
+    newStyle->setDisplay(BLOCK);
+
+    RenderBlock* newBox = new (renderArena()) RenderBlock(document() /* anonymous box */);
+    newBox->setStyle(newStyle.release());
+    return newBox;
+}
+
 const char* RenderBlock::renderName() const
 {
     if (isBody())
@@ -5182,6 +5464,10 @@ const char* RenderBlock::renderName() const
         return "RenderBlock (floating)";
     if (isPositioned())
         return "RenderBlock (positioned)";
+    if (isAnonymousColumnsBlock())
+        return "RenderBlock (anonymous multi-column)";
+    if (isAnonymousColumnSpanBlock())
+        return "RenderBlock (anonymous multi-column span)";
     if (isAnonymousBlock())
         return "RenderBlock (anonymous)";
     else if (isAnonymous())
