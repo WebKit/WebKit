@@ -1,3 +1,10 @@
+2010-05-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Mac 32 bit build fix.
+
+        * platform/graphics/mac/SimpleFontDataMac.mm: (WebCore::SimpleFontData::platformInit):
+        Use static_cast instead of narrowPrecisionToFloat - the latter can't convert from float to float.
+
 2010-05-26  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Ojan.
