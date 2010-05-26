@@ -1,0 +1,6 @@
+Tests that proper start/end offset positions are reported for CSS rule bodies.
+
+body: [5-28]
+body.main1: [98-124]
+body.main2: [150-169]
+

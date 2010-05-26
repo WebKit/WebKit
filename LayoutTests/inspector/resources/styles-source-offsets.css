@@ -1,0 +1,7 @@
+body {
+    font-size: 12px;
+}
+
+/* comment before selector */body.main1/* comment after selector */{/* comment */color: #000;}/* comment */
+
+body.main2{background: green;}

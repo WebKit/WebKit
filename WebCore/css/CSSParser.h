@@ -56,7 +56,7 @@ namespace WebCore {
         CSSParser(bool strictParsing = true);
         ~CSSParser();
 
-        void parseSheet(CSSStyleSheet*, const String&);
+        void parseSheet(CSSStyleSheet*, const String&, Vector<std::pair<unsigned, unsigned> >* ruleStartEndPositions = 0);
         PassRefPtr<CSSRule> parseRule(CSSStyleSheet*, const String&);
         PassRefPtr<CSSRule> parseKeyframeRule(CSSStyleSheet*, const String&);
         bool parseValue(CSSMutableStyleDeclaration*, int propId, const String&, bool important);
@@ -207,7 +207,7 @@ namespace WebCore {
 
         Vector<CSSSelector*>* reusableSelectorVector() { return &m_reusableSelectorVector; }
 
-        void updateLastSelectorLine() { m_lastSelectorLine = m_line; }
+        void updateLastSelectorLineAndPosition();
 
         void clearProperties();
 
@@ -238,6 +238,12 @@ namespace WebCore {
         AtomicString m_defaultNamespace;
 
         // tokenizer methods and data
+        unsigned m_ruleBodyStartOffset;
+        unsigned m_ruleBodyEndOffset;
+        Vector<std::pair<unsigned, unsigned> >* m_ruleStartEndOffsets;
+        void markRuleBodyStart();
+        void markRuleBodyEnd();
+        void resetRuleBodyMarks() { m_ruleBodyStartOffset = m_ruleBodyEndOffset = 0; }
         int lex(void* yylval);
         int token() { return yyTok; }
         UChar* text(int* length);

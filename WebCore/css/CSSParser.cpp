@@ -146,6 +146,9 @@ CSSParser::CSSParser(bool strictParsing)
     , m_hasFontFaceOnlyValues(false)
     , m_hadSyntacticallyValidCSSRule(false)
     , m_defaultNamespace(starAtom)
+    , m_ruleBodyStartOffset(0)
+    , m_ruleBodyEndOffset(0)
+    , m_ruleStartEndOffsets(0)
     , m_data(0)
     , yy_start(1)
     , m_line(0)
@@ -225,12 +228,14 @@ void CSSParser::setupParser(const char* prefix, const String& string, const char
     yyleng = 0;
     yytext = yy_c_buf_p = m_data;
     yy_hold_char = *yy_c_buf_p;
+    resetRuleBodyMarks();
 }
 
-void CSSParser::parseSheet(CSSStyleSheet* sheet, const String& string)
+void CSSParser::parseSheet(CSSStyleSheet* sheet, const String& string, Vector<std::pair<unsigned, unsigned> >* ruleStartEndOffsets)
 {
     m_styleSheet = sheet;
     m_defaultNamespace = starAtom; // Reset the default namespace.
+    m_ruleStartEndOffsets = ruleStartEndOffsets;
 
     setupParser("", string, "");
     cssyyparse(this);
@@ -5234,8 +5239,11 @@ CSSRule* CSSParser::createStyleRule(Vector<CSSSelector*>* selectors)
 {
     m_allowImportRules = m_allowNamespaceDeclarations = m_allowVariablesRules = false;
     CSSStyleRule* result = 0;
+    markRuleBodyEnd();
     if (selectors) {
         RefPtr<CSSStyleRule> rule = CSSStyleRule::create(m_styleSheet, m_lastSelectorLine);
+        if (m_ruleStartEndOffsets)
+            m_ruleStartEndOffsets->append(std::pair<unsigned, unsigned>(m_ruleBodyStartOffset, m_ruleBodyEndOffset));
         rule->adoptSelectorVector(*selectors);
         if (m_hasFontFaceOnlyValues)
             deleteFontFaceOnlyValues();
@@ -5243,6 +5251,7 @@ CSSRule* CSSParser::createStyleRule(Vector<CSSSelector*>* selectors)
         result = rule.get();
         m_parsedStyleObjects.append(rule.release());
     }
+    resetRuleBodyMarks();
     clearProperties();
     return result;
 }
@@ -5482,6 +5491,26 @@ void CSSParser::invalidBlockHit()
 {
     if (m_styleSheet && !m_hadSyntacticallyValidCSSRule)
         m_styleSheet->setHasSyntacticallyValidCSSHeader(false);
+}
+
+void CSSParser::updateLastSelectorLineAndPosition()
+{
+    m_lastSelectorLine = m_line;
+    markRuleBodyStart();
+}
+
+void CSSParser::markRuleBodyStart()
+{
+    unsigned offset = yytext - m_data;
+    if (!m_ruleBodyStartOffset || offset < m_ruleBodyStartOffset)
+        m_ruleBodyStartOffset = offset;
+}
+
+void CSSParser::markRuleBodyEnd()
+{
+    unsigned offset = yytext - m_data;
+    if (offset > m_ruleBodyEndOffset)
+        m_ruleBodyEndOffset = offset;
 }
 
 static int cssPropertyID(const UChar* propertyName, unsigned length)

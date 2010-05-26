@@ -1,3 +1,69 @@
+2010-05-26  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Expose CSS rule body start/end offsets in the parent stylesheet
+        https://bugs.webkit.org/show_bug.cgi?id=38906
+
+        CSSParser::parseSheet() accepts an optional external Vector where the start/end offsets
+        of the CSSStyleRule bodies, relative to the beginning of the stylesheet, will be stored.
+        This Vector is only used when the Web Inspector needs the body ranges, thus there is no
+        memory overhead until the user starts editing styles via the Web Inspector.
+        Additionally, fixed an issue with a single inspectorStyleSheet for all frames in the page.
+
+        Test: inspector/styles-source-offsets.html
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::setupParser):
+        (WebCore::CSSParser::parseSheet):
+        (WebCore::CSSParser::createStyleRule):
+        (WebCore::CSSParser::updateLastSelectorLineAndPosition):
+        (WebCore::CSSParser::markRuleBodyStart):
+        (WebCore::CSSParser::markRuleBodyEnd):
+        * css/CSSParser.h:
+        (WebCore::CSSParser::resetRuleBodyMarks):
+        * inspector/InspectorCSSStore.cpp:
+        (WebCore::InspectorCSSStore::InspectorCSSStore):
+        (WebCore::InspectorCSSStore::reset):
+        (WebCore::InspectorCSSStore::removeDocument):
+        (WebCore::InspectorCSSStore::inspectorStyleSheet):
+        (WebCore::InspectorCSSStore::getStartEndOffsets):
+        (WebCore::InspectorCSSStore::getIndexInStyleRules):
+        (WebCore::InspectorCSSStore::disabledStyleForId):
+        (WebCore::InspectorCSSStore::styleForId):
+        (WebCore::InspectorCSSStore::ruleForId):
+        (WebCore::InspectorCSSStore::bindStyle):
+        (WebCore::InspectorCSSStore::bindStyleSheet):
+        (WebCore::InspectorCSSStore::bindRule):
+        * inspector/InspectorCSSStore.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::resourceForURL):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::inspectorFrontend):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::unbind):
+        (WebCore::InspectorDOMAgent::getStyles):
+        (WebCore::InspectorDOMAgent::getAllStyles):
+        (WebCore::InspectorDOMAgent::buildArrayForCSSRules):
+        (WebCore::InspectorDOMAgent::buildArrayForPseudoElements):
+        (WebCore::InspectorDOMAgent::applyStyleText):
+        (WebCore::InspectorDOMAgent::setStyleText):
+        (WebCore::InspectorDOMAgent::setStyleProperty):
+        (WebCore::InspectorDOMAgent::toggleStyleEnabled):
+        (WebCore::InspectorDOMAgent::setRuleSelector):
+        (WebCore::InspectorDOMAgent::addRule):
+        (WebCore::InspectorDOMAgent::buildObjectForStyle):
+        (WebCore::InspectorDOMAgent::buildArrayForDisabledStyleProperties):
+        (WebCore::InspectorDOMAgent::buildObjectForStyleSheet):
+        (WebCore::InspectorDOMAgent::buildObjectForRule):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.CSSStyleDeclaration):
+
 2010-05-26  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

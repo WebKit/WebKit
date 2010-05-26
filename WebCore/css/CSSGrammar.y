@@ -889,7 +889,8 @@ unary_operator:
 
 ruleset:
     selector_list '{' maybe_space declaration_list closing_brace {
-        $$ = static_cast<CSSParser*>(parser)->createStyleRule($1);
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        $$ = p->createStyleRule($1);
     }
   ;
 
@@ -901,7 +902,7 @@ selector_list:
             deleteAllValues(*$$);
             $$->shrink(0);
             $$->append(p->sinkFloatingSelector($1));
-            p->updateLastSelectorLine();
+            p->updateLastSelectorLineAndPosition();
         }
     }
     | selector_list ',' maybe_space selector %prec UNIMPORTANT_TOK {
@@ -909,7 +910,7 @@ selector_list:
             CSSParser* p = static_cast<CSSParser*>(parser);
             $$ = $1;
             $$->append(p->sinkFloatingSelector($4));
-            p->updateLastSelectorLine();
+            p->updateLastSelectorLineAndPosition();
         } else
             $$ = 0;
     }

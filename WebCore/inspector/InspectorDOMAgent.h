@@ -141,7 +141,7 @@ namespace WebCore {
         bool pushDocumentToFrontend();
 
         ScriptObject buildObjectForAttributeStyles(Element* element);
-        ScriptArray buildArrayForCSSRules(CSSRuleList*);
+        ScriptArray buildArrayForCSSRules(Document* ownerDocument, CSSRuleList*);
         ScriptArray buildArrayForPseudoElements(Element* element, bool authorOnly);
 
         ScriptObject buildObjectForNode(Node* node, int depth, NodeToIdMap* nodesMap);
@@ -162,13 +162,11 @@ namespace WebCore {
         String documentURLString(Document* document) const;
         InspectorCSSStore* cssStore() { return m_cssStore; }
 
-        long bindStyle(CSSStyleDeclaration*);
-        long bindRule(CSSStyleRule*);
         ScriptObject buildObjectForStyle(CSSStyleDeclaration*, bool bind);
         void populateObjectWithStyleProperties(CSSStyleDeclaration*, ScriptObject& result);
-        ScriptArray buildArrayForDisabledStyleProperties(DisabledStyleDeclaration&);
-        ScriptObject buildObjectForRule(CSSStyleRule*);
-        ScriptObject buildObjectForStyleSheet(CSSStyleSheet*);
+        ScriptArray buildArrayForDisabledStyleProperties(DisabledStyleDeclaration*);
+        ScriptObject buildObjectForRule(Document* ownerDocument, CSSStyleRule*);
+        ScriptObject buildObjectForStyleSheet(Document* ownerDocument, CSSStyleSheet*);
         Vector<String> longhandProperties(CSSStyleDeclaration*, const String& shorthandProperty);
         String shorthandValue(CSSStyleDeclaration*, const String& shorthandProperty);
         String shorthandPriority(CSSStyleDeclaration*, const String& shorthandProperty);
@@ -186,8 +184,6 @@ namespace WebCore {
         HashMap<long, NodeToIdMap*> m_idToNodesMap;
         HashSet<long> m_childrenRequested;
         long m_lastNodeId;
-        long m_lastStyleId;
-        long m_lastRuleId;
         ListHashSet<RefPtr<Document> > m_documents;
     };
 

@@ -52,7 +52,6 @@
 #include "EventNames.h"
 #include "EventTarget.h"
 #include "HTMLFrameOwnerElement.h"
-#include "HTMLHeadElement.h"
 #include "InspectorFrontend.h"
 #include "markup.h"
 #include "MutationEvent.h"
@@ -78,8 +77,6 @@ InspectorDOMAgent::InspectorDOMAgent(InspectorCSSStore* cssStore, InspectorFront
     , m_cssStore(cssStore)
     , m_frontend(frontend)
     , m_lastNodeId(1)
-    , m_lastStyleId(1)
-    , m_lastRuleId(1)
 {
 }
 
@@ -188,6 +185,7 @@ void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
     if (node->isFrameOwnerElement()) {
         const HTMLFrameOwnerElement* frameOwner = static_cast<const HTMLFrameOwnerElement*>(node);
         stopListening(frameOwner->contentDocument());
+        cssStore()->removeDocument(frameOwner->contentDocument());
     }
 
     long id = nodesMap->get(node);
@@ -785,7 +783,7 @@ void InspectorDOMAgent::getStyles(long callId, long nodeId, bool authorOnly)
 
     CSSStyleSelector* selector = element->ownerDocument()->styleSelector();
     RefPtr<CSSRuleList> matchedRules = selector->styleRulesForElement(element, authorOnly);
-    result.set("matchedCSSRules", buildArrayForCSSRules(matchedRules.get()));
+    result.set("matchedCSSRules", buildArrayForCSSRules(node->ownerDocument(), matchedRules.get()));
 
     result.set("styleAttributes", buildObjectForAttributeStyles(element));
     result.set("pseudoElements", buildArrayForPseudoElements(element, authorOnly));
@@ -800,7 +798,7 @@ void InspectorDOMAgent::getStyles(long callId, long nodeId, bool authorOnly)
 
         CSSStyleSelector* parentSelector = parentElement->ownerDocument()->styleSelector();
         RefPtr<CSSRuleList> parentMatchedRules = parentSelector->styleRulesForElement(parentElement, authorOnly);
-        parentStyle.set("matchedCSSRules", buildArrayForCSSRules(parentMatchedRules.get()));
+        parentStyle.set("matchedCSSRules", buildArrayForCSSRules(parentElement->ownerDocument(), parentMatchedRules.get()));
 
         parentElement = parentElement->parentElement();
         currentStyle = parentStyle;
@@ -817,7 +815,7 @@ void InspectorDOMAgent::getAllStyles(long callId)
         for (unsigned i = 0; i < list->length(); ++i) {
             StyleSheet* styleSheet = list->item(i);
             if (styleSheet->isCSSStyleSheet())
-                result.set(counter++, buildObjectForStyleSheet(static_cast<CSSStyleSheet*>(styleSheet)));
+                result.set(counter++, buildObjectForStyleSheet((*it).get(), static_cast<CSSStyleSheet*>(styleSheet)));
         }
     }
     m_frontend->didGetAllStyles(callId, result);
@@ -867,14 +865,14 @@ ScriptObject InspectorDOMAgent::buildObjectForAttributeStyles(Element* element)
     return styleAttributes;
 }
 
-ScriptArray InspectorDOMAgent::buildArrayForCSSRules(CSSRuleList* matchedRules)
+ScriptArray InspectorDOMAgent::buildArrayForCSSRules(Document* ownerDocument, CSSRuleList* matchedRules)
 {
     ScriptArray matchedCSSRules = m_frontend->newScriptArray();
     unsigned counter = 0;
     for (unsigned i = 0; matchedRules && i < matchedRules->length(); ++i) {
         CSSRule* rule = matchedRules->item(i);
         if (rule->type() == CSSRule::STYLE_RULE)
-            matchedCSSRules.set(counter++, buildObjectForRule(static_cast<CSSStyleRule*>(rule)));
+            matchedCSSRules.set(counter++, buildObjectForRule(ownerDocument, static_cast<CSSStyleRule*>(rule)));
     }
     return matchedCSSRules;
 }
@@ -891,7 +889,7 @@ ScriptArray InspectorDOMAgent::buildArrayForPseudoElements(Element* element, boo
         if (matchedRules && matchedRules->length()) {
             ScriptObject pseudoStyles = m_frontend->newScriptObject();
             pseudoStyles.set("pseudoId", static_cast<int>(pseudoId));
-            pseudoStyles.set("rules", buildArrayForCSSRules(matchedRules.get()));
+            pseudoStyles.set("rules", buildArrayForCSSRules(element->ownerDocument(), matchedRules.get()));
             result.set(counter++, pseudoStyles);
         }
     }
@@ -900,18 +898,17 @@ ScriptArray InspectorDOMAgent::buildArrayForPseudoElements(Element* element, boo
 
 void InspectorDOMAgent::applyStyleText(long callId, long styleId, const String& styleText, const String& propertyName)
 {
-    IdToStyleMap::iterator it = cssStore()->idToStyle.find(styleId);
-    if (it == cssStore()->idToStyle.end()) {
+    CSSStyleDeclaration* style = cssStore()->styleForId(styleId);
+    if (!style) {
         m_frontend->didApplyStyleText(callId, false, ScriptValue::undefined(), m_frontend->newScriptArray());
         return;
     }
 
     // Remove disabled property entry for property with given name.
-    IdToDisabledStyleMap::iterator disabledIt = cssStore()->idToDisabledStyle.find(styleId);
-    if (disabledIt != cssStore()->idToDisabledStyle.end())
-        disabledIt->second.remove(propertyName);
+    DisabledStyleDeclaration* disabledStyle = cssStore()->disabledStyleForId(styleId, false);
+    if (disabledStyle)
+        disabledStyle->remove(propertyName);
 
-    CSSStyleDeclaration* style = it->second.get();
     int styleTextLength = styleText.length();
 
     RefPtr<CSSMutableStyleDeclaration> tempMutableStyle = CSSMutableStyleDeclaration::create();
@@ -979,8 +976,8 @@ void InspectorDOMAgent::applyStyleText(long callId, long styleId, const String& 
         ExceptionCode ec = 0;
         style->setProperty(name, value, priority, ec);
         // Remove disabled property entry for property with this name.
-        if (disabledIt != cssStore()->idToDisabledStyle.end())
-            disabledIt->second.remove(name);
+        if (disabledStyle)
+            disabledStyle->remove(name);
         changedProperties.append(name);
     }
     m_frontend->didApplyStyleText(callId, true, buildObjectForStyle(style, true), toArray(changedProperties));
@@ -988,12 +985,11 @@ void InspectorDOMAgent::applyStyleText(long callId, long styleId, const String& 
 
 void InspectorDOMAgent::setStyleText(long callId, long styleId, const String& cssText)
 {
-    IdToStyleMap::iterator it = cssStore()->idToStyle.find(styleId);
-    if (it == cssStore()->idToStyle.end()) {
+    CSSStyleDeclaration* style = cssStore()->styleForId(styleId);
+    if (!style) {
         m_frontend->didSetStyleText(callId, false);
         return;
     }
-    CSSStyleDeclaration* style = it->second.get();
     ExceptionCode ec = 0;
     style->setCssText(cssText, ec);
     m_frontend->didSetStyleText(callId, !ec);
@@ -1001,13 +997,12 @@ void InspectorDOMAgent::setStyleText(long callId, long styleId, const String& cs
 
 void InspectorDOMAgent::setStyleProperty(long callId, long styleId, const String& name, const String& value)
 {
-    IdToStyleMap::iterator it = cssStore()->idToStyle.find(styleId);
-    if (it == cssStore()->idToStyle.end()) {
+    CSSStyleDeclaration* style = cssStore()->styleForId(styleId);
+    if (!style) {
         m_frontend->didSetStyleProperty(callId, false);
         return;
     }
 
-    CSSStyleDeclaration* style = it->second.get();
     ExceptionCode ec = 0;
     style->setProperty(name, value, ec);
     m_frontend->didSetStyleProperty(callId, !ec);
@@ -1015,28 +1010,25 @@ void InspectorDOMAgent::setStyleProperty(long callId, long styleId, const String
 
 void InspectorDOMAgent::toggleStyleEnabled(long callId, long styleId, const String& propertyName, bool disabled)
 {
-    IdToStyleMap::iterator it = cssStore()->idToStyle.find(styleId);
-    if (it == cssStore()->idToStyle.end()) {
+    CSSStyleDeclaration* style = cssStore()->styleForId(styleId);
+    if (!style) {
         m_frontend->didToggleStyleEnabled(callId, ScriptValue::undefined());
         return;
     }
-    CSSStyleDeclaration* style = it->second.get();
 
-    IdToDisabledStyleMap::iterator disabledIt = cssStore()->idToDisabledStyle.find(styleId);
-    if (disabledIt == cssStore()->idToDisabledStyle.end())
-        disabledIt = cssStore()->idToDisabledStyle.set(styleId, DisabledStyleDeclaration()).first;
+    DisabledStyleDeclaration* disabledStyle = cssStore()->disabledStyleForId(styleId, true);
 
     // TODO: make sure this works with shorthands right.
     ExceptionCode ec = 0;
     if (disabled) {
-        disabledIt->second.set(propertyName, std::make_pair(style->getPropertyValue(propertyName), style->getPropertyPriority(propertyName)));
+        disabledStyle->set(propertyName, std::make_pair(style->getPropertyValue(propertyName), style->getPropertyPriority(propertyName)));
         if (!ec)
             style->removeProperty(propertyName, ec);
-    } else if (disabledIt->second.contains(propertyName)) {
-        PropertyValueAndPriority valueAndPriority = disabledIt->second.get(propertyName);
+    } else if (disabledStyle->contains(propertyName)) {
+        PropertyValueAndPriority valueAndPriority = disabledStyle->get(propertyName);
         style->setProperty(propertyName, valueAndPriority.first, valueAndPriority.second, ec);
         if (!ec)
-            disabledIt->second.remove(propertyName);
+            disabledStyle->remove(propertyName);
     }
     if (ec) {
         m_frontend->didToggleStyleEnabled(callId, ScriptValue::undefined());
@@ -1047,13 +1039,12 @@ void InspectorDOMAgent::toggleStyleEnabled(long callId, long styleId, const Stri
 
 void InspectorDOMAgent::setRuleSelector(long callId, long ruleId, const String& selector, long selectedNodeId)
 {
-    IdToRuleMap::iterator it = cssStore()->idToRule.find(ruleId);
-    if (it == cssStore()->idToRule.end()) {
+    CSSStyleRule* rule = cssStore()->ruleForId(ruleId);
+    if (!rule) {
         m_frontend->didSetRuleSelector(callId, ScriptValue::undefined(), false);
         return;
     }
 
-    CSSStyleRule* rule = it->second.get();
     Node* node = nodeForId(selectedNodeId);
 
     CSSStyleSheet* styleSheet = rule->parentStyleSheet();
@@ -1077,7 +1068,7 @@ void InspectorDOMAgent::setRuleSelector(long callId, long ruleId, const String& 
         return;
     }
 
-    m_frontend->didSetRuleSelector(callId, buildObjectForRule(newRule), ruleAffectsNode(newRule, node));
+    m_frontend->didSetRuleSelector(callId, buildObjectForRule(node->ownerDocument(), newRule), ruleAffectsNode(newRule, node));
 }
 
 void InspectorDOMAgent::addRule(long callId, const String& selector, long selectedNodeId)
@@ -1088,73 +1079,45 @@ void InspectorDOMAgent::addRule(long callId, const String& selector, long select
         return;
     }
 
-    if (!cssStore()->inspectorStyleSheet.get()) {
-        Document* ownerDocument = node->ownerDocument();
-        ExceptionCode ec = 0;
-        RefPtr<Element> styleElement = ownerDocument->createElement("style", ec);
-        if (!ec)
-            styleElement->setAttribute("type", "text/css", ec);
-        if (!ec)
-            ownerDocument->head()->appendChild(styleElement, ec);
-        if (ec) {
-            m_frontend->didAddRule(callId, ScriptValue::undefined(), false);
-            return;
-        }
-        StyleSheetList* styleSheets = ownerDocument->styleSheets();
-        StyleSheet* styleSheet = styleSheets->item(styleSheets->length() - 1);
-        if (!styleSheet->isCSSStyleSheet()) {
-            m_frontend->didAddRule(callId, ScriptValue::undefined(), false);
-            return;
-        }
-        cssStore()->inspectorStyleSheet = static_cast<CSSStyleSheet*>(styleSheet);
-    }
+    CSSStyleSheet* styleSheet = cssStore()->inspectorStyleSheet(node->ownerDocument(), true, callId);
+    if (!styleSheet)
+        return; // could not add a stylesheet to the ownerDocument
 
     ExceptionCode ec = 0;
-    cssStore()->inspectorStyleSheet->addRule(selector, "", ec);
+    styleSheet->addRule(selector, "", ec);
     if (ec) {
         m_frontend->didAddRule(callId, ScriptValue::undefined(), false);
         return;
     }
 
-    CSSStyleRule* newRule = static_cast<CSSStyleRule*>(cssStore()->inspectorStyleSheet->item(cssStore()->inspectorStyleSheet->length() - 1));
-    m_frontend->didAddRule(callId, buildObjectForRule(newRule), ruleAffectsNode(newRule, node));
-}
-
-long InspectorDOMAgent::bindStyle(CSSStyleDeclaration* style)
-{
-    long id = cssStore()->styleToId.get(style);
-    if (!id) {
-        id = m_lastStyleId++;
-        cssStore()->idToStyle.set(id, style);
-        cssStore()->styleToId.set(style, id);
-    }
-    return id;
-}
-
-long InspectorDOMAgent::bindRule(CSSStyleRule* rule)
-{
-    long id = cssStore()->ruleToId.get(rule);
-    if (!id) {
-        id = m_lastRuleId++;
-        cssStore()->idToRule.set(id, rule);
-        cssStore()->ruleToId.set(rule, id);
-    }
-    return id;
+    CSSStyleRule* newRule = static_cast<CSSStyleRule*>(styleSheet->item(styleSheet->length() - 1));
+    m_frontend->didAddRule(callId, buildObjectForRule(node->ownerDocument(), newRule), ruleAffectsNode(newRule, node));
 }
 
 ScriptObject InspectorDOMAgent::buildObjectForStyle(CSSStyleDeclaration* style, bool bind)
 {
     ScriptObject result = m_frontend->newScriptObject();
     if (bind) {
-        long styleId = bindStyle(style);
+        long styleId = cssStore()->bindStyle(style);
         result.set("id", styleId);
 
-        IdToDisabledStyleMap::iterator disabledIt = cssStore()->idToDisabledStyle.find(styleId);
-        if (disabledIt != cssStore()->idToDisabledStyle.end())
-            result.set("disabled", buildArrayForDisabledStyleProperties(disabledIt->second));
+        DisabledStyleDeclaration* disabledStyle = cssStore()->disabledStyleForId(styleId, false);
+        if (disabledStyle)
+            result.set("disabled", buildArrayForDisabledStyleProperties(disabledStyle));
     }
     result.set("width", style->getPropertyValue("width"));
     result.set("height", style->getPropertyValue("height"));
+    if (bind) {
+        CSSRule* parentRule = style->parentRule();
+        if (parentRule && parentRule->type() == CSSRule::STYLE_RULE) {
+            CSSStyleRule* parentStyleRule = static_cast<CSSStyleRule*>(parentRule);
+            std::pair<unsigned, unsigned> startEnd = cssStore()->getStartEndOffsets(parentStyleRule);
+            if (startEnd.second) {
+                result.set("bodyStartOffset", startEnd.first);
+                result.set("bodyEndOffset", startEnd.second);
+            }
+        }
+    }
     populateObjectWithStyleProperties(style, result);
     return result;
 }
@@ -1184,11 +1147,11 @@ void InspectorDOMAgent::populateObjectWithStyleProperties(CSSStyleDeclaration* s
     }
 }
 
-ScriptArray InspectorDOMAgent::buildArrayForDisabledStyleProperties(DisabledStyleDeclaration& declaration)
+ScriptArray InspectorDOMAgent::buildArrayForDisabledStyleProperties(DisabledStyleDeclaration* declaration)
 {
     int counter = 0;
     ScriptArray properties = m_frontend->newScriptArray();
-    for (DisabledStyleDeclaration::iterator it = declaration.begin(); it != declaration.end(); ++it) {
+    for (DisabledStyleDeclaration::iterator it = declaration->begin(); it != declaration->end(); ++it) {
         ScriptObject property = m_frontend->newScriptObject();
         property.set("name", it->first);
         property.set("value", it->second.first);
@@ -1198,7 +1161,7 @@ ScriptArray InspectorDOMAgent::buildArrayForDisabledStyleProperties(DisabledStyl
     return properties;
 }
 
-ScriptObject InspectorDOMAgent::buildObjectForStyleSheet(CSSStyleSheet* styleSheet)
+ScriptObject InspectorDOMAgent::buildObjectForStyleSheet(Document* ownerDocument, CSSStyleSheet* styleSheet)
 {
     ScriptObject result = m_frontend->newScriptObject();
     result.set("disabled", styleSheet->disabled());
@@ -1214,12 +1177,12 @@ ScriptObject InspectorDOMAgent::buildObjectForStyleSheet(CSSStyleSheet* styleShe
     for (unsigned i = 0; i < cssRuleList->length(); ++i) {
         CSSRule* rule = cssRuleList->item(i);
         if (rule->isStyleRule())
-            cssRules.set(counter++, buildObjectForRule(static_cast<CSSStyleRule*>(rule)));
+            cssRules.set(counter++, buildObjectForRule(ownerDocument, static_cast<CSSStyleRule*>(rule)));
     }
     return result;
 }
 
-ScriptObject InspectorDOMAgent::buildObjectForRule(CSSStyleRule* rule)
+ScriptObject InspectorDOMAgent::buildObjectForRule(Document* ownerDocument, CSSStyleRule* rule)
 {
     CSSStyleSheet* parentStyleSheet = rule->parentStyleSheet();
 
@@ -1227,6 +1190,11 @@ ScriptObject InspectorDOMAgent::buildObjectForRule(CSSStyleRule* rule)
     result.set("selectorText", rule->selectorText());
     result.set("cssText", rule->cssText());
     result.set("sourceLine", rule->sourceLine());
+    std::pair<unsigned, unsigned> startEnd = cssStore()->getStartEndOffsets(rule);
+    if (startEnd.second) {
+        result.set("bodyStartOffset", startEnd.first);
+        result.set("bodyEndOffset", startEnd.second);
+    }
     if (parentStyleSheet) {
         ScriptObject parentStyleSheetValue = m_frontend->newScriptObject();
         result.set("parentStyleSheet", parentStyleSheetValue);
@@ -1236,14 +1204,14 @@ ScriptObject InspectorDOMAgent::buildObjectForRule(CSSStyleRule* rule)
     bool isUser = parentStyleSheet && parentStyleSheet->ownerNode() && parentStyleSheet->ownerNode()->nodeName() == "#document";
     result.set("isUserAgent", isUserAgent);
     result.set("isUser", isUser);
-    result.set("isViaInspector", rule->parentStyleSheet() == cssStore()->inspectorStyleSheet.get());
+    result.set("isViaInspector", rule->parentStyleSheet() == cssStore()->inspectorStyleSheet(ownerDocument, false, -1));
 
     // Bind editable scripts only.
     bool bind = !isUserAgent && !isUser;
     result.set("style", buildObjectForStyle(rule->style(), bind));
 
     if (bind)
-        result.set("id", bindRule(rule));
+        result.set("id", cssStore()->bindRule(rule));
     return result;
 }
 

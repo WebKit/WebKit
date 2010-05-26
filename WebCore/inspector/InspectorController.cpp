@@ -145,7 +145,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     : m_inspectedPage(page)
     , m_client(client)
     , m_openingFrontend(false)
-    , m_cssStore(new InspectorCSSStore())
+    , m_cssStore(new InspectorCSSStore(this))
     , m_expiredConsoleMessageCount(0)
     , m_showAfterVisible(CurrentPanel)
     , m_groupLevel(0)
@@ -773,6 +773,15 @@ InspectorResource* InspectorController::getTrackedResource(unsigned long identif
     if (isMainResource)
         return m_mainResource.get();
 
+    return 0;
+}
+
+InspectorResource* InspectorController::resourceForURL(const String& url)
+{
+    for (InspectorController::ResourcesMap::iterator resIt = m_resources.begin(); resIt != m_resources.end(); ++resIt) {
+        if (resIt->second->requestURL().string() == url)
+            return resIt->second.get();
+    }
     return 0;
 }
 

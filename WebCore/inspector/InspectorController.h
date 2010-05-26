@@ -6,13 +6,13 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -65,7 +65,7 @@ class InjectedScript;
 class InjectedScriptHost;
 class InspectorBackend;
 class InspectorClient;
-struct InspectorCSSStore;
+class InspectorCSSStore;
 class InspectorFrontend;
 class InspectorFrontendClient;
 class InspectorTimelineAgent;
@@ -147,7 +147,7 @@ public:
 
     void setInspectorFrontendClient(PassOwnPtr<InspectorFrontendClient> client);
     bool hasInspectorFrontendClient() const { return m_inspectorFrontendClient; }
-                                                        
+
     void inspectedWindowScriptObjectCleared(Frame*);
 
     bool windowVisible();
@@ -203,6 +203,8 @@ public:
 #endif
 
     const ResourcesMap& resources() const { return m_resources; }
+    InspectorResource* resourceForURL(const String& url);
+    InspectorFrontend* inspectorFrontend() { return m_frontend.get(); }
 
     void drawNodeHighlight(GraphicsContext&) const;
 
@@ -258,14 +260,12 @@ private:
 
     friend class InspectorBackend;
     friend class InjectedScriptHost;
-                                                        
+
     void populateScriptObjects();
     void unbindAllResources();
-                                                        
-    // Following are used from InspectorBackend and internally.
-    void setSearchingForNode(bool enabled);
 
     // Following are used from InspectorBackend and internally.
+    void setSearchingForNode(bool enabled);
     void storeLastActivePanel(const String& panelName);
     InspectorDOMAgent* domAgent() { return m_domAgent.get(); }
     void releaseDOMAgent();
@@ -292,7 +292,7 @@ private:
 #if ENABLE(DOM_STORAGE)
     InspectorDOMStorageResource* getDOMStorageResourceForId(long storageId);
 #endif
-                                                        
+
     ScriptObject buildObjectForCookie(const Cookie&);
     ScriptArray buildArrayForCookies(ListHashSet<Cookie>&);
 

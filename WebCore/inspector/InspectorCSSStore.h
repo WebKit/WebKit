@@ -36,30 +36,63 @@
 
 namespace WebCore {
 
+class Document;
+class InspectorController;
+class InspectorFrontend;
+class CSSMutableStyleDeclaration;
 class CSSStyleDeclaration;
+class CSSRuleList;
 class CSSStyleRule;
 class CSSStyleSheet;
 class String;
 
 typedef std::pair<String, String> PropertyValueAndPriority;
+typedef std::pair<unsigned, unsigned> SourceRange;
 typedef HashMap<String, PropertyValueAndPriority> DisabledStyleDeclaration;
 typedef HashMap<CSSStyleDeclaration*, long> StyleToIdMap;
 typedef HashMap<long, RefPtr<CSSStyleDeclaration> > IdToStyleMap;
 typedef HashMap<CSSStyleRule*, long> RuleToIdMap;
 typedef HashMap<long, RefPtr<CSSStyleRule> > IdToRuleMap;
+typedef HashMap<CSSStyleSheet*, Vector<SourceRange>* > StyleSheetToOffsetsMap;
+typedef HashMap<CSSStyleSheet*, long> StyleSheetToIdMap;
+typedef HashMap<long, RefPtr<CSSStyleSheet> > IdToStyleSheetMap;
 typedef HashMap<long, DisabledStyleDeclaration> IdToDisabledStyleMap;
+typedef HashMap<RefPtr<Document>, RefPtr<CSSStyleSheet> > DocumentToStyleSheetMap;
 
-struct InspectorCSSStore {
-    InspectorCSSStore();
+class InspectorCSSStore {
+
+public:
+    InspectorCSSStore(InspectorController* inspectorController);
     ~InspectorCSSStore();
     void reset();
+    SourceRange getStartEndOffsets(CSSStyleRule* rule);
+    CSSStyleDeclaration* styleForId(long styleId);
+    CSSStyleRule* ruleForId(long styleRuleId);
+    DisabledStyleDeclaration* disabledStyleForId(long styleId, bool createIfAbsent);
+    CSSStyleSheet* inspectorStyleSheet(Document* ownerDocument, bool createIfAbsent, long callId);
+    void removeDocument(Document*);
 
-    StyleToIdMap styleToId;
-    IdToStyleMap idToStyle;
-    RuleToIdMap ruleToId;
-    IdToRuleMap idToRule;
-    IdToDisabledStyleMap idToDisabledStyle;
-    RefPtr<CSSStyleSheet> inspectorStyleSheet;
+    long bindRule(CSSStyleRule* rule);
+    long bindStyle(CSSStyleDeclaration* style);
+    long bindStyleSheet(CSSStyleSheet* styleSheet);
+
+private:
+    static unsigned getIndexInStyleRules(CSSStyleRule* rule, CSSRuleList* ruleList);
+
+    StyleToIdMap m_styleToId;
+    IdToStyleMap m_idToStyle;
+    RuleToIdMap m_ruleToId;
+    IdToRuleMap m_idToRule;
+    StyleSheetToOffsetsMap m_styleSheetToOffsets;
+    StyleSheetToIdMap m_styleSheetToId;
+    IdToStyleSheetMap m_idToStyleSheet;
+    IdToDisabledStyleMap m_idToDisabledStyle;
+    DocumentToStyleSheetMap m_documentNodeToInspectorStyleSheetMap;
+
+    InspectorController* m_inspectorController;
+    long m_lastStyleId;
+    long m_lastStyleSheetId;
+    long m_lastRuleId;
 };
 
 } // namespace WebCore

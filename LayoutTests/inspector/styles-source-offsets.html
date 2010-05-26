@@ -1,0 +1,55 @@
+<html>
+<head>
+
+<link rel="stylesheet" href="resources/styles-source-offsets.css" -->
+
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="elements-tests.js"></script>
+<script>
+
+function doit()
+{
+    function callback(styles)
+    {
+        if (styles === "refreshing")
+            return;
+        var matchedCSSRules = styles.matchedCSSRules;
+        for (var i = 0; i < matchedCSSRules.length; ++i)
+            output(matchedCSSRules[i].selectorText + ": [" + matchedCSSRules[i].bodyStartOffset + "-" + matchedCSSRules[i].bodyEndOffset + "]");
+
+        notifyDone();
+    }
+    evaluateInWebInspector("frontend_dumpBodyOffsets", callback);
+}
+
+
+// Frontend functions.
+
+function frontend_dumpBodyOffsets(testController)
+{
+    if (!WebInspector.panels.resources.resourceTrackingEnabled) {
+        InspectorBackend.enableResourceTracking(false);
+        return "refreshing";
+    }
+
+    testController.waitUntilDone();
+    frontend_expandDOMSubtree(WebInspector.domAgent.document);
+    testController.runAfterPendingDispatches(function() {
+        function callback(styles)
+        {
+            testController.notifyDone(styles);
+        }
+        InspectorBackend.getStyles(WebInspector.Callback.wrap(callback), WebInspector.domAgent.document.body.id, true);
+    });
+}
+
+</script>
+</head>
+
+<body class="main1 main2" onload="onload()">
+<p>
+Tests that proper start/end offset positions are reported for CSS rule bodies.
+</p>
+
+</body>
+</html>
