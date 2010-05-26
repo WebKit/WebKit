@@ -1,5 +1,16 @@
 2010-05-26  Jeremy Orlow  <jorlow@chromium.org>
 
+        Unreviewed chromium build fix
+        https://bugs.webkit.org/show_bug.cgi?id=39739
+
+        The backwards compat function needs to take in a WebSecurityOrigin
+        instead of a WebString.
+
+        * public/WebIndexedDatabase.h:
+        (WebKit::WebIndexedDatabase::open):
+
+2010-05-26  Jeremy Orlow  <jorlow@chromium.org>
+
         Reviewed by Darin Fisher.
 
         Implement WebDOMStorageList and make WebIDBDatabase use it
