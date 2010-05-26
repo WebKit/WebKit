@@ -445,16 +445,41 @@ EOF
     push(@txtInstallProps, $txtInstallProp);
 }
 
+my %breakWords = ("before" => 1, "can" => 1, "context" => 1, "dbl" => 1, "drag" => 1,
+                  "drag" => 1, "duration" => 1, "has" => 1, "key" => 1, "loaded" => 1,
+                  "mouse" => 1, "page" => 1, "pop" => 1, "rate" => 1, "select" => 1,
+                  "time" => 1, "touch" => 1, "volume" => 1);
+
+sub SplitEventListenerAttrName {
+    my $attrName = shift;
+
+    my @matches = grep { $attrName =~ /^$_/ } keys (%breakWords);
+
+    if (@matches && (length $matches[0] < length $attrName)) {
+        $attrName = $matches[0] . "-" . substr($attrName, length $matches[0]);
+    }
+
+    return $attrName;
+}
+
+sub EventSignalName {
+    my $attrName = shift;
+    my $name = SplitEventListenerAttrName($attrName) . "-event";
+
+    return $name;
+}
+
 sub GenerateEventListener {
     my $attribute = shift;
     my $object = shift;
     my $interfaceName = shift;
 
     my $name = $attribute->signature->name;
-    my $signalName = substr($name, 2);
+    my $domSignalName = substr($name, 2);
+    my $gobjectSignalName = EventSignalName($domSignalName);
 
     my $txtInstallSignal = << "EOF";
-    g_signal_new("${signalName}",
+    g_signal_new("${gobjectSignalName}",
                  G_TYPE_FROM_CLASS(gobjectClass),
                  G_SIGNAL_RUN_LAST,
                  0,
@@ -466,11 +491,11 @@ sub GenerateEventListener {
 EOF
     push(@txtInstallSignals, $txtInstallSignal);
 
-    my ${listenerName} = $signalName . "Listener";
+    my ${listenerName} = $domSignalName . "Listener";
 
     my $txtInstallEventListener = << "EOF";
-    RefPtr<WebCore::GObjectEventListener> ${listenerName} = WebCore::GObjectEventListener::create(reinterpret_cast<GObject*>(wrapper), "${signalName}");
-    coreObject->addEventListener("${signalName}", ${listenerName}, false);
+    RefPtr<WebCore::GObjectEventListener> ${listenerName} = WebCore::GObjectEventListener::create(reinterpret_cast<GObject*>(wrapper), "${gobjectSignalName}");
+    coreObject->addEventListener("${domSignalName}", ${listenerName}, false);
 EOF
     push(@txtInstallEventListeners, $txtInstallEventListener);
 
