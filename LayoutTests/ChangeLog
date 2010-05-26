@@ -1,3 +1,17 @@
+2010-05-26  Jessie Berlin  <jberlin@webkit.org>
+
+        Reviewed by Pavel Feldman
+
+        Bug 31296 - Web Inspector: Should support console.groupCollapsed
+        https://bugs.webkit.org/show_bug.cgi?id=31296
+
+        * fast/dom/Window/window-properties-expected.txt:
+        Update results to take into account added groupCollapsed function.
+
+        * inspector/console-tests-expected.txt:
+        * inspector/console-tests.html:
+        Add test for groupCollapsed and its results.
+
 2010-05-26  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Add results for svg/hixie/links/003-broken.xml for mac-leopard. All SVG tests pass with --tolerance 0 again for me on Leopard.

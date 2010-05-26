@@ -336,11 +336,11 @@ void InspectorController::clearConsoleMessages()
         m_frontend->clearConsoleMessages();
 }
 
-void InspectorController::startGroup(MessageSource source, ScriptCallStack* callStack)
+void InspectorController::startGroup(MessageSource source, ScriptCallStack* callStack, bool collapsed)
 {
     ++m_groupLevel;
 
-    addConsoleMessage(callStack->state(), new ConsoleMessage(source, StartGroupMessageType, LogMessageLevel, callStack, m_groupLevel));
+    addConsoleMessage(callStack->state(), new ConsoleMessage(source, collapsed ? StartGroupCollapsedMessageType : StartGroupMessageType, LogMessageLevel, callStack, m_groupLevel));
 }
 
 void InspectorController::endGroup(MessageSource source, unsigned lineNumber, const String& sourceURL)

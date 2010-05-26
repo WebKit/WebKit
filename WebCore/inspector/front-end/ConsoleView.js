@@ -249,7 +249,7 @@ WebInspector.ConsoleView.prototype = {
 
             this.currentGroup = this.currentGroup.parentGroup;
         } else {
-            if (msg.type === WebInspector.ConsoleMessage.MessageType.StartGroup) {
+            if (msg.type === WebInspector.ConsoleMessage.MessageType.StartGroup || msg.type === WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed) {
                 this.groupLevel++;
 
                 var group = new WebInspector.ConsoleGroup(this.currentGroup, this.groupLevel);
@@ -808,8 +808,8 @@ WebInspector.ConsoleMessage.prototype = {
                 element.addStyleClass("console-error-level");
                 break;
         }
-        
-        if (this.type === WebInspector.ConsoleMessage.MessageType.StartGroup)
+
+        if (this.type === WebInspector.ConsoleMessage.MessageType.StartGroup || this.type === WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed)
             element.addStyleClass("console-group-title");
 
         if (this.elementsTreeOutline) {
@@ -894,6 +894,7 @@ WebInspector.ConsoleMessage.prototype = {
             case WebInspector.ConsoleMessage.MessageType.Trace:
                 typeString = "Trace";
                 break;
+            case WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed:
             case WebInspector.ConsoleMessage.MessageType.StartGroup:
                 typeString = "Start Group";
                 break;
@@ -961,9 +962,10 @@ WebInspector.ConsoleMessage.MessageType = {
     Object: 1,
     Trace: 2,
     StartGroup: 3,
-    EndGroup: 4,
-    Assert: 5,
-    Result: 6
+    StartGroupCollapsed: 4,
+    EndGroup: 5,
+    Assert: 6,
+    Result: 7
 }
 
 WebInspector.ConsoleMessage.MessageLevel = {
@@ -1051,10 +1053,13 @@ WebInspector.ConsoleGroup.prototype = {
     addMessage: function(msg)
     {
         var element = msg.toMessageElement();
-        
-        if (msg.type === WebInspector.ConsoleMessage.MessageType.StartGroup) {
+
+        if (msg.type === WebInspector.ConsoleMessage.MessageType.StartGroup || msg.type === WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed) {
             this.messagesElement.parentNode.insertBefore(element, this.messagesElement);
             element.addEventListener("click", this._titleClicked.bind(this), true);
+            var groupElement = element.enclosingNodeOrSelfWithClass("console-group");
+            if (groupElement && msg.type === WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed)
+                groupElement.addStyleClass("collapsed");
         } else
             this.messagesElement.appendChild(element);
 

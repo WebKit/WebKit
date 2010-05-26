@@ -22,4 +22,5 @@ console-tests.html:17count: 2 console-message console-js-source console-log-leve
 console-tests.html:18group console-message console-js-source console-log-level console-group-title
 console-message console-js-source console-log-level
 console-tests.html:201 2 3 console-message console-js-source console-log-level
+console-tests.html:21groupCollapsed console-message console-js-source console-log-level console-group-title
 

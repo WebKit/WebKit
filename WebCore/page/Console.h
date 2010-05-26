@@ -62,6 +62,7 @@ enum MessageType {
     ObjectMessageType,
     TraceMessageType,
     StartGroupMessageType,
+    StartGroupCollapsedMessageType,
     EndGroupMessageType,
     AssertMessageType
 };
@@ -104,6 +105,7 @@ public:
     void time(const String&);
     void timeEnd(const String&, ScriptCallStack*);
     void group(ScriptCallStack*);
+    void groupCollapsed(ScriptCallStack*);
     void groupEnd();
 
     static bool shouldPrintExceptions();

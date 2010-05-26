@@ -427,6 +427,19 @@ void Console::group(ScriptCallStack* callStack)
 #endif
 }
 
+void Console::groupCollapsed(ScriptCallStack* callStack)
+{
+#if ENABLE(INSPECTOR)
+    Page* page = this->page();
+    if (!page)
+        return;
+
+    page->inspectorController()->startGroup(JSMessageSource, callStack, true);
+#else
+    UNUSED_PARAM(callStack);
+#endif
+}
+
 void Console::groupEnd()
 {
 #if ENABLE(INSPECTOR)

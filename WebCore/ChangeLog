@@ -1,3 +1,32 @@
+2010-05-26  Jessie Berlin  <jberlin@webkit.org>
+
+        Reviewed by Pavel Feldman
+
+        Bug 31296 - Web Inspector: Should support console.groupCollapsed
+        https://bugs.webkit.org/show_bug.cgi?id=31296
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::startGroup):
+        Set the message type based on whether or not it should be initially collapsed.
+        * inspector/InspectorController.h:
+
+        * inspector/front-end/ConsoleView.js:
+        Treat a StartGroupCollapsed message the same way as a StartGroup message, but display the tree for the group as collapsed.
+        (WebInspector.ConsoleView.prototype.addMessage):
+        (WebInspector.ConsoleMessage.prototype.toMessageElement):
+        (WebInspector.ConsoleMessage.prototype.toString):
+        (WebInspector.ConsoleGroup.prototype.addMessage):
+
+        * page/Console.cpp:
+        (WebCore::Console::groupCollapsed):
+        Create a group and indicate that it should be collapsed.
+        * page/Console.h:
+        Add the StartGroupCollapsed message type.
+
+        (WebCore::):
+        * page/Console.idl:
+        Create the JS bindings for groupCollapsed.
+
 2010-05-26  yael aharon  <yael.aharon@nokia.com>
 
         Reviewed by Kent Tamura.
