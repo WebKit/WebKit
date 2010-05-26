@@ -136,6 +136,20 @@ public:
     double monthsSinceEpoch() const;
     static inline double invalidMilliseconds() { return std::numeric_limits<double>::quiet_NaN(); }
 
+    // Minimum and maxmimum limits for setMillisecondsSince*(),
+    // setMonthsSinceEpoch(), millisecondsSinceEpoch(), and monthsSinceEpoch().
+    static inline double minimumDate() { return -12219292800000.0; } // This means 1582-10-15T00:00Z.
+    static inline double minimumDateTime() { return -12219292800000.0; } // ditto.
+    static inline double minimumMonth() { return (1582.0 - 1970) * 12 + 10 - 1; } // 1582-10
+    static inline double minimumTime() { return 0; } // 00:00:00.000
+    static inline double minimumWeek() { return -12212380800000.0; } // 1583-01-03, the first Monday of 1583.
+    static inline double maximumDate() { return std::numeric_limits<double>::max(); }
+    static inline double maximumDateTime() { return std::numeric_limits<double>::max(); }
+    // DateComponents::m_year can't represent a year greater than INT_MAX.
+    static inline double maximumMonth() { return (std::numeric_limits<int>::max() - 1970) * 12.0 + 12 - 1; }
+    static inline double maximumTime() { return 86399999; } // 23:59:59.999
+    static inline double maximumWeek() { return std::numeric_limits<double>::max(); }
+
 private:
     // Returns the maximum week number in this DateComponents's year.
     // The result is either of 52 and 53.

@@ -1,3 +1,19 @@
+2010-05-26  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Move date/time limit values to DateComponents.h from HTMLInputElement.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=39423
+
+        The minimum and maximum values for date, datetime, datetime-local,
+        month, time, and week types depend on the implementation of
+        DateComponents.  So move them to DateComponents.
+
+        * html/DateComponents.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::minimum):
+        (WebCore::HTMLInputElement::maximum):
+
 2010-05-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Simon Hausmann.
