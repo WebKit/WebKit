@@ -2,6 +2,17 @@
 
         Reviewed by Eric Seidel.
 
+        Fix webkit01.dat resumer tests in HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=39796
+
+        Update expectations to show massive passage.
+
+        * html5lib/webkit-resumer-expected-html5.txt:
+
+2010-05-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Make HTML5 lexer not ASSERT when resuming partial parses
         https://bugs.webkit.org/show_bug.cgi?id=39755
 

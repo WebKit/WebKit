@@ -326,7 +326,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             bool notEnoughCharacters = false;
             UChar entity = consumeEntity(source, notEnoughCharacters);
             if (notEnoughCharacters)
-                return haveBufferedCharacterToken();
+                return shouldEmitBufferedCharacterToken(source);
             emitCharacter(entity ? entity : '&');
             m_state = DataState;
             continue;
@@ -344,7 +344,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             bool notEnoughCharacters = false;
             UChar entity = consumeEntity(source, notEnoughCharacters);
             if (notEnoughCharacters)
-                return haveBufferedCharacterToken();
+                return shouldEmitBufferedCharacterToken(source);
             emitCharacter(entity ? entity : '&');
             m_state = RCDATAState;
             continue;
@@ -979,7 +979,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             bool notEnoughCharacters = false;
             UChar entity = consumeEntity(source, notEnoughCharacters);
             if (notEnoughCharacters)
-                return haveBufferedCharacterToken();
+                return shouldEmitBufferedCharacterToken(source);
             m_token->appendToAttributeValue(entity ? entity : '&');
             // We're supposed to switch back to the attribute value state that
             // we were in when we were switched into this state.  Rather than
@@ -1041,7 +1041,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
                     m_state = CommentStartState;
                     continue;
                 } else if (result == SegmentedString::NotEnoughCharacters)
-                    return haveBufferedCharacterToken();
+                    return shouldEmitBufferedCharacterToken(source);
             } else if (cc == 'D' || cc == 'd') {
                 SegmentedString::LookAheadResult result = source.lookAheadIgnoringCase(doctypeString);
                 if (result == SegmentedString::DidMatch) {
@@ -1049,7 +1049,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
                     m_state = DOCTYPEState;
                     continue;
                 } else if (result == SegmentedString::NotEnoughCharacters)
-                    return haveBufferedCharacterToken();
+                    return shouldEmitBufferedCharacterToken(source);
             }
             notImplemented();
             // FIXME: We're still missing the bits about the insertion mode being in foreign content:
@@ -1226,7 +1226,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
                         m_state = AfterDOCTYPEPublicKeywordState;
                         continue;
                     } else if (result == SegmentedString::NotEnoughCharacters)
-                        return haveBufferedCharacterToken();
+                        return shouldEmitBufferedCharacterToken(source);
                 } else if (cc == 'S' || cc == 's') {
                     SegmentedString::LookAheadResult result = source.lookAheadIgnoringCase(systemString);
                     if (result == SegmentedString::DidMatch) {
@@ -1234,7 +1234,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
                         m_state = AfterDOCTYPESystemKeywordState;
                         continue;
                     } else if (result == SegmentedString::NotEnoughCharacters)
-                        return haveBufferedCharacterToken();
+                        return shouldEmitBufferedCharacterToken(source);
                 }
                 emitParseError();
                 notImplemented();
@@ -1463,7 +1463,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
     }
     // We've reached the end of the input stream.  If we have a character
     // token buffered, we should emit it.
-    return haveBufferedCharacterToken();
+    return shouldEmitBufferedCharacterToken(source);
 }
 
 inline bool HTML5Lexer::temporaryBufferIs(const String& expectedString)
@@ -1524,9 +1524,9 @@ inline void HTML5Lexer::emitCurrentToken()
         m_appropriateEndTagName = m_token->name();
 }
 
-inline bool HTML5Lexer::haveBufferedCharacterToken()
+inline bool HTML5Lexer::shouldEmitBufferedCharacterToken(const SegmentedString& source)
 {
-    return m_token->type() == HTML5Token::Character;
+    return source.isClosed() && m_token->type() == HTML5Token::Character;
 }
 
 }

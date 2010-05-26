@@ -22,9 +22,13 @@
 
 namespace WebCore {
 
-SegmentedString::SegmentedString(const SegmentedString &other) :
-    m_pushedChar1(other.m_pushedChar1), m_pushedChar2(other.m_pushedChar2), m_currentString(other.m_currentString),
-    m_substrings(other.m_substrings), m_composite(other.m_composite)
+SegmentedString::SegmentedString(const SegmentedString &other)
+    : m_pushedChar1(other.m_pushedChar1)
+    , m_pushedChar2(other.m_pushedChar2)
+    , m_currentString(other.m_currentString)
+    , m_substrings(other.m_substrings)
+    , m_composite(other.m_composite)
+    , m_closed(other.m_closed)
 {
     if (other.m_currentChar == &other.m_pushedChar1)
         m_currentChar = &m_pushedChar1;
@@ -86,10 +90,12 @@ void SegmentedString::clear()
     m_currentString.clear();
     m_substrings.clear();
     m_composite = false;
+    m_closed = false;
 }
 
 void SegmentedString::append(const SegmentedSubstring &s)
 {
+    ASSERT(!m_closed);
     if (s.m_length) {
         if (!m_currentString.m_length) {
             m_currentString = s;
@@ -117,6 +123,7 @@ void SegmentedString::prepend(const SegmentedSubstring &s)
 
 void SegmentedString::append(const SegmentedString &s)
 {
+    ASSERT(!m_closed);
     ASSERT(!s.escaped());
     append(s.m_currentString);
     if (s.m_composite) {

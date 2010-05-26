@@ -69,6 +69,35 @@
 
         Reviewed by Eric Seidel.
 
+        Fix webkit01.dat resumer tests in HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=39796
+
+        To match the old tokenizer, we should only flush character tokens when
+        we reach EOF.  Added a notion of a "closed" segmented string that
+        cannot be appended to, which models EOF.
+
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTML5Lexer::nextToken):
+        (WebCore::HTML5Lexer::shouldEmitBufferedCharacterToken):
+        * html/HTML5Lexer.h:
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::pumpLexer):
+        (WebCore::HTML5Tokenizer::write):
+        (WebCore::HTML5Tokenizer::end):
+        * html/HTML5Tokenizer.h:
+        * platform/text/SegmentedString.cpp:
+        (WebCore::SegmentedString::SegmentedString):
+        (WebCore::SegmentedString::clear):
+        (WebCore::SegmentedString::append):
+        * platform/text/SegmentedString.h:
+        (WebCore::SegmentedString::SegmentedString):
+        (WebCore::SegmentedString::close):
+        (WebCore::SegmentedString::isClosed):
+
+2010-05-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Make HTML5 lexer not ASSERT when resuming partial parses
         https://bugs.webkit.org/show_bug.cgi?id=39755
 
