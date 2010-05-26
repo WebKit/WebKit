@@ -1,3 +1,15 @@
+2010-05-26  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Style fix in JSEventCustom.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=39727
+
+        Conditional includes should be all together after the
+        unconditional includes.
+
+        * bindings/js/JSEventCustom.cpp:
+
 2010-05-24  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.

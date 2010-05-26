@@ -40,10 +40,6 @@
 #include "JSCompositionEvent.h"
 #include "JSDeviceOrientationEvent.h"
 #include "JSErrorEvent.h"
-#if ENABLE(INDEXED_DATABASE)
-#include "JSIDBErrorEvent.h"
-#include "JSIDBSuccessEvent.h"
-#endif
 #include "JSKeyboardEvent.h"
 #include "JSMessageEvent.h"
 #include "JSMouseEvent.h"
@@ -60,10 +56,6 @@
 #include "JSXMLHttpRequestProgressEvent.h"
 #include "BeforeLoadEvent.h"
 #include "ErrorEvent.h"
-#if ENABLE(INDEXED_DATABASE)
-#include "IDBErrorEvent.h"
-#include "IDBSuccessEvent.h"
-#endif
 #include "KeyboardEvent.h"
 #include "MessageEvent.h"
 #include "MouseEvent.h"
@@ -93,6 +85,13 @@
 #if ENABLE(TOUCH_EVENTS)
 #include "JSTouchEvent.h"
 #include "TouchEvent.h"
+#endif
+
+#if ENABLE(INDEXED_DATABASE)
+#include "IDBErrorEvent.h"
+#include "IDBSuccessEvent.h"
+#include "JSIDBErrorEvent.h"
+#include "JSIDBSuccessEvent.h"
 #endif
 
 using namespace JSC;
