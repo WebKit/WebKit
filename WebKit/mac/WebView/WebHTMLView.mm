@@ -3056,6 +3056,15 @@ WEBCORE_COMMAND(yankAndSelect)
         [[self _pluginController] startAllPlugins];
 
         _private->lastScrollPosition = NSZeroPoint;
+        
+#if USE(ACCELERATED_COMPOSITING) && !defined(BUILDING_ON_LEOPARD)
+        // We may have created the layer hosting view while outside the window. Update the scale factor
+        // now that we have a window to get it from.
+        if (_private->layerHostingView) {
+            CGFloat scaleFactor = [[self window] userSpaceScaleFactor];
+            [[_private->layerHostingView layer] setTransform:CATransform3DMakeScale(scaleFactor, scaleFactor, scaleFactor)];
+        }
+#endif
     }
 }
 
@@ -5559,6 +5568,13 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
                              nullValue, @"transform",
                              nil];
     [viewLayer setStyle:[NSDictionary dictionaryWithObject:actions forKey:@"actions"]];
+#endif
+
+#if !defined(BUILDING_ON_LEOPARD)
+    // If we aren't in the window yet, we'll use the screen's scale factor now, and reset the scale 
+    // via -viewDidMoveToWindow.
+    CGFloat scaleFactor = [self window] ? [[self window] userSpaceScaleFactor] : [[NSScreen mainScreen] userSpaceScaleFactor];
+    [viewLayer setTransform:CATransform3DMakeScale(scaleFactor, scaleFactor, scaleFactor)];
 #endif
 
     [_private->layerHostingView setLayer:viewLayer];

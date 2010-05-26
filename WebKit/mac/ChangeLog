@@ -1,3 +1,17 @@
+2010-05-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Beth Dakin and Darin Adler.
+
+        Fix for <rdar://problem/7464703> HiDPI: [Layers] Compositing layers 
+        do not scale properly when running with a resolution independent 
+        scale
+
+        Apply the userSpaceScaleFactor as a scale on the layerHostingView.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView viewDidMoveToWindow]):
+        (-[WebHTMLView attachRootLayer:]):
+
 2010-05-25  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
