@@ -1,3 +1,11 @@
+2010-05-26  Xan Lopez  <xlopez@igalia.com>
+
+        GTK+ build fix, strike two.
+
+        * bindings/gobject/WebKitDOMEventTarget.cpp:
+        (webkit_dom_event_target_get_type):
+        (webkit_dom_event_target_default_init):
+
 2010-05-26  Jeremy Orlow  <jorlow@chromium.org>
 
         Unreviewed build fix for Windows + clean up the Visual Studio project.

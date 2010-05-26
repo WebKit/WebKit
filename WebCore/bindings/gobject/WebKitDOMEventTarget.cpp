@@ -37,9 +37,9 @@ typedef WebKitDOMEventTargetIface WebKitDOMEventTargetInterface;
 #if GLIB_CHECK_VERSION(2, 24, 0)
 G_DEFINE_INTERFACE(WebKitDOMEventTarget, webkit_dom_event_target, G_TYPE_OBJECT)
 #else
-static void webkit_dom_event_target_default_init(gpointer, gpointer);
+static void webkit_dom_event_target_default_init(WebKitDOMEventTargetIface*);
 
-GType webkit_dom_event_target_get_type (void)
+GType webkit_dom_event_target_get_type(void)
 {
     static volatile gsize typeIdVolatile = 0;
 
@@ -47,7 +47,7 @@ GType webkit_dom_event_target_get_type (void)
         GType typeId = g_type_register_static_simple(G_TYPE_INTERFACE,
                                                      g_intern_static_string("WebKitDOMEventTarget"),
                                                      sizeof(WebKitDOMEventTargetInterface),
-                                                     static_cast<GClassInitFunc>(webkit_dom_event_target_default_init),
+                                                     (GClassInitFunc)webkit_dom_event_target_default_init,
                                                      0,
                                                      static_cast<GInstanceInitFunc>(0),
                                                      static_cast<GTypeFlags>(0));
@@ -59,7 +59,7 @@ GType webkit_dom_event_target_get_type (void)
 }
 #endif
 
-static void webkit_dom_event_target_default_init(gpointer, gpointer)
+static void webkit_dom_event_target_default_init(WebKitDOMEventTargetIface*)
 {
 }
 
