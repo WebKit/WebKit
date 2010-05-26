@@ -557,7 +557,7 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
     case gif_image_start:
     {
       if (*q == ';') { /* terminator */
-        state = gif_done;
+        GETN(0, gif_done);
         break;
       }
 
@@ -571,21 +571,10 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
        * between blocks. The GIF87a spec tells us to keep reading
        * until we find an image separator, but GIF89a says such
        * a file is corrupt. We follow GIF89a and bail out. */
-      if (*q != ',') {
-        if (images_decoded > 0) {
-          /* The file is corrupt, but one or more images have
-           * been decoded correctly. In this case, we proceed
-           * as if the file were correctly terminated and set
-           * the state to gif_done, so the GIF will display.
-           */
-          state = gif_done;
-        } else {
-          /* No images decoded, there is nothing to display. */
-          return clientptr ? clientptr->setFailed() : false;
-        }
-        break;
-      } else
-        GETN(9, gif_image_header);
+      if (*q != ',')
+        return clientptr ? clientptr->setFailed() : false;
+
+      GETN(9, gif_image_header);
     }
     break;
 

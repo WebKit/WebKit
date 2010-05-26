@@ -1,3 +1,17 @@
+2010-05-26  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39786
+        Properly reset |bytes_to_consume| when reaching the "gif_done" state in
+        the open-source GIF decoder.
+        
+        No tests, since there's no test harness support for checking the
+        internal ImageDecoder state values.
+
+        * platform/image-decoders/gif/GIFImageReader.cpp:
+        (GIFImageReader::read): Use a macro to perform the state change, like we do everywhere else in the file.  Also correctly return "failure" for certain corrupt GIFs, since that doesn't prevent their display (due to WebKit's different use of this code compared to Mozilla).
+
 2010-05-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r60251.
