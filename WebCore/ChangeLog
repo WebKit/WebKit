@@ -1,3 +1,21 @@
+2010-05-24  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        [Android] Add IndexedDB to the build
+        https://bugs.webkit.org/show_bug.cgi?id=39593
+
+        Add the current list of build files to Android's make files.  From now on,
+        I'll try to be sure to update these along with the rest.
+        Also, fix a nit in the gypi file.
+
+        No tests..just changing build files.
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * Android.mk:
+        * WebCore.gypi:
+
 2010-05-26  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
