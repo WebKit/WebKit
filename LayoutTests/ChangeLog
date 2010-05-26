@@ -1,5 +1,30 @@
 2010-05-25  Tony Chang  <tony@chromium.org>
 
+        Not reviewed, adding chromium-mac results.  They differ from
+        mac-leopard results because of scollbars.
+
+        [chromium] add layout test results for mac for fast/multicol/span tests
+        https://bugs.webkit.org/show_bug.cgi?id=39709
+
+        * platform/chromium-mac/fast/multicol/span/anonymous-style-inheritance-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/span/anonymous-style-inheritance-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-child-generated-content-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-child-generated-content-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-child-property-removal-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-child-property-removal-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-removal-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-removal-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/span/span-margin-collapsing-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/span/span-margin-collapsing-expected.png: Added.
+
+2010-05-25  Tony Chang  <tony@chromium.org>
+
         Not reviewed, just adding chromium and mac-leopard results.
 
         add chromium layout test results for fast/multicol/span tests added in r60201
