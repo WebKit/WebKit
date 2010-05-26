@@ -674,6 +674,11 @@ sub addIncludeInBody {
     }
 }
 
+# Some methods' body (only the body, since the public API can't be
+# conditional) should be guarded by #ifdefs depending on whether
+# certain features in WebKit are enabled.
+my %conditionalMethods = ("webkit_dom_geolocation_clear_watch" => "GEOLOCATION");
+
 sub GenerateFunction {
     my ($object, $interfaceName, $function, $prefix) = @_;
 
@@ -741,6 +746,10 @@ sub GenerateFunction {
 
     push(@hBody, "WEBKIT_API $returnType\n$functionName ($functionSig);\n\n");
     push(@cBody, "$returnType\n$functionName ($functionSig)\n{\n");
+
+    if ($conditionalMethods{$functionName}) {
+        push(@cBody, "#if ENABLE($conditionalMethods{$functionName})\n");
+    }
 
     if ($returnType ne "void") {
         # TODO: return proper default result
@@ -900,6 +909,11 @@ EOF
             push(@cBody, "    return res;\n");
         }
     }
+
+    if ($conditionalMethods{$functionName}) {
+        push(@cBody, "#endif\n");
+    }
+
     push(@cBody, "\n}\n\n");
 }
 
