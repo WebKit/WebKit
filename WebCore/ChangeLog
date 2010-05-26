@@ -1,5 +1,15 @@
 2010-05-25  Mark Rowe  <mrowe@apple.com>
 
+        Merge r60207.
+
+    2010-05-25  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.
+
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.cpp:
+
+2010-05-25  Mark Rowe  <mrowe@apple.com>
+
         Merge r60190.
 
     2010-05-22  Jer Noble  <jer.noble@apple.com>

@@ -24,13 +24,12 @@
  */
 
 #include "config.h"
-
 #include "MediaPlayerPrivateFullscreenWindow.h"
 
+#include "IntRect.h"
 #include "WebCoreInstanceHandle.h"
 #include <CoreGraphics/CGColor.h>
 #include <windows.h>
-#include <WebCore/IntRect.h>
 
 namespace WebCore {
 
