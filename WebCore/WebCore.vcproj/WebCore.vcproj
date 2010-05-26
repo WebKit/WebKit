@@ -44045,6 +44045,30 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\IDBAny.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBAny.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBCallbacks.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBDatabase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBDatabaseError.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBDatabaseException.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\IDBDatabaseImpl.cpp"
 				>
 			</File>
@@ -44053,15 +44077,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\storage\IDBAny.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\IDBDatabase.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\storage\IDBDatabaseRequest.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBDatabaseRequest.h"
 				>
 			</File>
 			<File
@@ -44069,7 +44089,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\IDBEvent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\IDBErrorEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBErrorEvent.h"
 				>
 			</File>
 			<File
@@ -44077,7 +44105,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\IDBObjectStore.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\IDBObjectStoreRequest.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBObjectStoreRequest.h"
 				>
 			</File>
 			<File
@@ -44085,7 +44121,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\IDBRequest.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\IDBSuccessEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBSuccessEvent.h"
 				>
 			</File>
 			<File
@@ -44093,11 +44137,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\IndexedDatabase.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\IndexedDatabaseImpl.cpp"
 				>
 			</File>
 			<File
+				RelativePath="..\storage\IndexedDatabaseImpl.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\IndexedDatabaseRequest.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IndexedDatabaseRequest.h"
 				>
 			</File>
 			<File
