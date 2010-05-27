@@ -686,7 +686,7 @@ v8::Handle<v8::Value> V8DOMWindow::openCallback(const v8::Arguments& args)
     windowFeatures.height = windowRect.height();
     windowFeatures.width = windowRect.width();
 
-    // If either of the origin coordinates weren't set in the original
+    // If either of the origin coordinates or dimensions weren't set in the original
     // string, make sure they aren't set now.
     if (!rawFeatures.xSet) {
         windowFeatures.x = 0;
@@ -695,6 +695,14 @@ v8::Handle<v8::Value> V8DOMWindow::openCallback(const v8::Arguments& args)
     if (!rawFeatures.ySet) {
         windowFeatures.y = 0;
         windowFeatures.ySet = false;
+    }
+    if (!rawFeatures.widthSet) {
+      windowFeatures.width = 0;
+      windowFeatures.widthSet = false;
+    }
+    if (!rawFeatures.heightSet) {
+      windowFeatures.height = 0;
+      windowFeatures.heightSet = false;
     }
 
     frame = V8BindingDOMWindow::createWindow(V8BindingState::Only(), callingFrame, enteredFrame, frame, urlString, frameName, windowFeatures, v8::Local<v8::Value>());
