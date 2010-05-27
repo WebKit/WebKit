@@ -2329,8 +2329,10 @@ static RenderObject* rendererForView(NSView* view)
         range = [(NSValue*)parameter rangeValue];
 
     } else {
-        // Default to super if the parameter type is unknown.
-        return [super accessibilityAttributeValue:attribute forParameter:parameter];
+        // got a parameter of a type we never use
+        // NOTE: No ASSERT_NOT_REACHED because this can happen accidentally
+        // while using accesstool (e.g.), forcing you to start over
+        return nil;
     }
     
     // Convert values to WebCore types
@@ -2542,8 +2544,7 @@ static RenderObject* rendererForView(NSView* view)
         }
     }
 
-    // Default to super if parameter is not supported.
-    return [super accessibilityAttributeValue:attribute forParameter:parameter];
+    return nil;
 }
 
 - (BOOL)accessibilityShouldUseUniqueId
