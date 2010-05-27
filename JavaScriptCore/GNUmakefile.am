@@ -66,6 +66,7 @@ javascriptcore_sources += \
 	JavaScriptCore/API/JSRetainPtr.h \
 	JavaScriptCore/API/JSStringRef.cpp \
 	JavaScriptCore/API/JSValueRef.cpp \
+	JavaScriptCore/API/JSWeakObjectMapRefInternal.h \
 	JavaScriptCore/API/OpaqueJSString.cpp \
 	JavaScriptCore/API/OpaqueJSString.h \
 	JavaScriptCore/ForwardingHeaders/JavaScriptCore/APICast.h \
@@ -185,6 +186,7 @@ javascriptcore_sources += \
 	JavaScriptCore/interpreter/CallFrame.cpp \
 	JavaScriptCore/interpreter/CallFrame.h \
 	JavaScriptCore/interpreter/CallFrameClosure.h \
+	JavaScriptCore/runtime/CachedTranscendentalFunction.h \
 	JavaScriptCore/runtime/ExceptionHelpers.cpp \
 	JavaScriptCore/runtime/ExceptionHelpers.h \
 	JavaScriptCore/runtime/Executable.cpp \
@@ -317,6 +319,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/text/StringHash.h \
 	JavaScriptCore/wtf/text/StringImpl.cpp \
 	JavaScriptCore/wtf/text/StringImpl.h \
+	JavaScriptCore/wtf/text/StringImplBase.h \
 	JavaScriptCore/wtf/text/StringStatics.cpp \
 	JavaScriptCore/wtf/text/WTFString.cpp \
 	JavaScriptCore/wtf/text/WTFString.h \
@@ -465,6 +468,7 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/JSNumberCell.h \
 	JavaScriptCore/runtime/JSObject.cpp \
 	JavaScriptCore/runtime/JSObjectWithGlobalObject.cpp \
+	JavaScriptCore/runtime/JSObjectWithGlobalObject.h \
 	JavaScriptCore/runtime/JSObject.h \
 	JavaScriptCore/runtime/JSStaticScopeObject.cpp \
 	JavaScriptCore/runtime/JSStaticScopeObject.h \
@@ -562,7 +566,7 @@ JavaScriptCore/%.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/%.cpp
 	$(PERL) $^ -i > $@
 
 JavaScriptCore/RegExpJitTables.h: $(srcdir)/JavaScriptCore/create_regex_tables
-	$(PYTHON) $(srcdir)/JavaScriptCore/create_regex_tables > $@
+	$(PYTHON) $(CREATE_REGEXP_TABLES) > $@
 
 JavaScriptCore/pcre/chartables.c: $(srcdir)/JavaScriptCore/pcre/dftables
 	$(PERL) $^ $@

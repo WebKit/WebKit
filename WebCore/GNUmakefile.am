@@ -136,7 +136,7 @@ IDL_BINDINGS += \
 	WebCore/dom/Clipboard.idl \
 	WebCore/dom/Comment.idl \
 	WebCore/dom/CompositionEvent.idl \
-	Webcore/dom/CustomEvent.idl \
+	WebCore/dom/CustomEvent.idl \
 	WebCore/dom/DOMCoreException.idl \
 	WebCore/dom/DOMImplementation.idl \
 	WebCore/dom/DOMStringList.idl \
@@ -589,6 +589,7 @@ webcore_sources += \
 	WebCore/bridge/npruntime_impl.h \
 	WebCore/bridge/npruntime_internal.h \
 	WebCore/bridge/npruntime_priv.h \
+	WebCore/bridge/nptypes.h \
 	WebCore/bridge/runtime_array.cpp \
 	WebCore/bridge/runtime_array.h \
 	WebCore/bridge/runtime_method.cpp \
@@ -1083,6 +1084,7 @@ webcore_sources += \
 	WebCore/html/FormDataList.h \
 	WebCore/html/HTML5Lexer.cpp \
 	WebCore/html/HTML5Lexer.h \
+	WebCore/html/HTML5Token.h \
 	WebCore/html/HTML5Tokenizer.cpp \
 	WebCore/html/HTML5Tokenizer.h \
 	WebCore/html/HTML5TreeBuilder.cpp \
@@ -1339,6 +1341,7 @@ webcore_sources += \
 	WebCore/loader/CachedFont.h \
 	WebCore/loader/CachedImage.cpp \
 	WebCore/loader/CachedImage.h \
+	WebCore/loader/CachedMetadata.h \
 	WebCore/loader/CachedResource.cpp \
 	WebCore/loader/CachedResource.h \
 	WebCore/loader/CachedResourceClient.h \
@@ -1617,7 +1620,6 @@ webcore_sources += \
 	WebCore/platform/SharedBuffer.h \
 	WebCore/platform/SharedTimer.h \
 	WebCore/platform/Sound.h \
-	WebCore/platform/StaticConstructors.h \
 	WebCore/platform/SuddenTermination.h \
 	WebCore/platform/SystemTime.h \
 	WebCore/platform/ThemeTypes.h \
@@ -1750,6 +1752,7 @@ webcore_sources += \
 	WebCore/platform/network/AuthenticationClient.h \
 	WebCore/platform/network/Credential.cpp \
 	WebCore/platform/network/Credential.h \
+	WebCore/platform/network/DNS.h \
 	WebCore/platform/network/FormData.cpp \
 	WebCore/platform/network/FormData.h \
 	WebCore/platform/network/FormDataBuilder.cpp \
@@ -1956,6 +1959,7 @@ webcore_sources += \
 	WebCore/rendering/RenderScrollbarPart.h \
 	WebCore/rendering/RenderScrollbarTheme.cpp \
 	WebCore/rendering/RenderScrollbarTheme.h \
+	WebCore/rendering/RenderSVGResourceContainer.h \
 	WebCore/rendering/RenderSelectionInfo.h \
 	WebCore/rendering/RenderSlider.cpp \
 	WebCore/rendering/RenderSlider.h \
@@ -2462,7 +2466,7 @@ if ENABLE_INDEXED_DATABASE
 FEATURE_DEFINES += ENABLE_INDEXED_DATABASE=1
 
 IDL_BINDINGS += \
-	WebCore/storage/IDBDAny.idl \
+	WebCore/storage/IDBAny.idl \
 	WebCore/storage/IDBDatabaseError.idl \
 	WebCore/storage/IDBDatabaseException.idl \
 	WebCore/storage/IDBDatabaseRequest.idl \
@@ -2477,10 +2481,8 @@ webcore_cppflags += \
 	-DENABLE_INDEXED_DATABASE=1
 
 webcore_sources += \
-	WebCore/bindings/js/JSIDBRequestCustom.cpp \
 	WebCore/storage/IDBAny.cpp \
 	WebCore/storage/IDBAny.h \
-	WebCore/storage/IDBCallbacks.cpp \
 	WebCore/storage/IDBCallbacks.h \
 	WebCore/storage/IDBDatabase.h \
 	WebCore/storage/IDBDatabaseImpl.cpp \

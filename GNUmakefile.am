@@ -41,6 +41,9 @@ GENPROGRAMS := $(top_builddir)/Programs
 # Script for creating hash tables
 CREATE_HASH_TABLE = $(srcdir)/JavaScriptCore/create_hash_table
 
+# Script for creating regexp tables
+CREATE_REGEXP_TABLES = $(srcdir)/JavaScriptCore/create_regex_tables
+
 # Programs to run the WebKitGtk unit tests
 GTESTER = gtester
 GTESTER_REPORT = gtester-report
@@ -345,8 +348,7 @@ webkitgtk_h_api += \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebview.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebdatabase.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitsecurityorigin.h \
-	$(top_builddir)/WebKit/gtk/webkit/webkitversion.h \
-	$(libgdom_h_api)
+	$(top_builddir)/WebKit/gtk/webkit/webkitversion.h
 
 webkitgtk_built_sources += \
 	DerivedSources/webkitenumtypes.cpp \
