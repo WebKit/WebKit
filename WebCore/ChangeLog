@@ -1,3 +1,14 @@
+2010-05-26  Jaime Yap  <jaimeyap@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        ScriptCallStack::callLocation() sometimes passed an empty handle to
+        toWebCoreString() causing a null pointer deref.
+        https://bugs.webkit.org/show_bug.cgi?id=39681
+
+        * bindings/v8/ScriptCallStack.cpp:
+        (WebCore::ScriptCallStack::callLocation):
+
 2010-05-26  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Mark Rowe.
