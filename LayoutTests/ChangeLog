@@ -1,3 +1,20 @@
+2010-05-27  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Mark some SVG tests as flaky on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=39790
+
+        The following SVG tests have been failing intermittently on the
+        chromium console for the past 2+ days.
+         - svg/clip-path/clip-path-childs-clipped.svg
+         - svg/clip-path/clip-path-evenodd-nonzero.svg
+         - svg/clip-path/clip-path-text-and-shape.svg
+         - svg/text/text-text-04-t.svg
+         - svg/text/text-text-05-t.svg
+
+        * platform/chromium/test_expectations.txt:
+
 2010-05-26  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
