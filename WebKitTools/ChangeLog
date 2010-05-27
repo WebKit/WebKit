@@ -1,3 +1,16 @@
+2010-05-27  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        check-webkit-style complains about use of NULL in GTK function calls that require sentinels
+        https://bugs.webkit.org/show_bug.cgi?id=39372
+
+        Don't warn about NULL in g_*() calls. Zero can't be used instead
+        for calls like g_build_filename and g_object_get/set.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+
 2010-05-27  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

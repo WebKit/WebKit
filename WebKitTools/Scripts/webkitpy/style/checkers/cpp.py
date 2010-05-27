@@ -1868,8 +1868,8 @@ def check_for_null(file_extension, clean_lines, line_number, error):
 
     line = clean_lines.elided[line_number]
 
-    # Don't warn about NULL usage in g_object_{get,set}(). See Bug 32858
-    if search(r'\bg_object_[sg]et\b', line):
+    # Don't warn about NULL usage in g_*(). See Bug 32858 and 39372.
+    if search(r'\bg(_[a-z]+)+\b', line):
         return
 
     # Don't warn about NULL usage in gst_*_many(). See Bug 39740

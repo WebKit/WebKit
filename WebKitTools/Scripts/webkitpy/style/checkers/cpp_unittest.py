@@ -3437,6 +3437,9 @@ class WebKitStyleTest(CppStyleTestBase):
             'g_object_set(foo, "prop", bar, NULL);',
             '')
         self.assert_lint(
+            'g_build_filename(foo, bar, NULL);',
+            '')
+        self.assert_lint(
             'gst_bin_add_many(foo, bar, boo, NULL);',
             '')
         self.assert_lint(
