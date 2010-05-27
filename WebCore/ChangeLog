@@ -1,3 +1,15 @@
+2010-05-27  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: WebKit doesn't call [super -accessibilityAttributeValue:attribute forParameter:] when it encounters a parameterized attribute that it doesn't handle.
+        https://bugs.webkit.org/show_bug.cgi?id=39324
+
+        Make sure that accessibilityAttributeValue:forParameter: will default to its super's implementation. This is how AppKit expects objects to behave.
+
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2010-05-27  Xan Lopez  <xlopez@igalia.com>
 
         More GTK+ distcheck fixes.
