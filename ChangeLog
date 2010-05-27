@@ -1,3 +1,11 @@
+2010-05-27  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Bump for 1.3.1 release.
+
+        * configure.ac:
+
 2010-05-27  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Xan Lopez.
