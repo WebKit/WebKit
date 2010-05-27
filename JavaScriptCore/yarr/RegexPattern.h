@@ -271,7 +271,7 @@ struct RegexPattern {
         , m_multiline(multiline)
         , m_numSubpatterns(0)
         , m_maxBackReference(0)
-        , m_shouldFallBack(false)
+        , m_containsBackreferences(false)
         , newlineCached(0)
         , digitsCached(0)
         , spacesCached(0)
@@ -293,7 +293,7 @@ struct RegexPattern {
         m_numSubpatterns = 0;
         m_maxBackReference = 0;
 
-        m_shouldFallBack = false;
+        m_containsBackreferences = false;
 
         newlineCached = 0;
         digitsCached = 0;
@@ -361,7 +361,7 @@ struct RegexPattern {
     bool m_multiline;
     unsigned m_numSubpatterns;
     unsigned m_maxBackReference;
-    bool m_shouldFallBack;
+    bool m_containsBackreferences;
     PatternDisjunction* m_body;
     Vector<PatternDisjunction*, 4> m_disjunctions;
     Vector<CharacterClass*> m_userCharacterClasses;

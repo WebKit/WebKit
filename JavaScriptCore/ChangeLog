@@ -1,3 +1,41 @@
+2010-05-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 39795 - Add support for YARR JIT generation of greedy quantified parens at the end of the main disjunction.
+
+        If the last item in a main disjunction is a quantified set of parentheses,
+        this is easier to code generate for than the general case for quantified
+        parentheses. This is because we never need to backtrack into the parentheses
+        - the first match will be the final and accepted match.
+
+        This patch also somewhat reverts a recent change to when fallback to PCRE
+        occurs. At the minute the compiler is tracking on patterns which will
+        require JIT fallback. This is handy from a performance perspective (it saves
+        the failed attempt at JIT compilation), but it means introducing knowledge
+        of the JITs capabilities into the other layers of the regex compilers. For
+        the specific feature of back-references, add a flag tracking their presence
+        on the pattern, and make these expressions fallback without attempting to
+        JIT. For parentheses, return to detecting which cases are have or have not
+        been handled during JIT compilation.
+
+        18% progression on tagcloud, ~1.5% overall on sunspidey.
+
+        * yarr/RegexCompiler.cpp:
+        (JSC::Yarr::RegexPatternConstructor::atomBackReference):
+        (JSC::Yarr::RegexPatternConstructor::quantifyAtom):
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::TermGenerationState::isLastTerm):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::isMainDisjunction):
+        (JSC::Yarr::RegexGenerator::generateParenthesesGreedyNoBacktrack):
+        (JSC::Yarr::RegexGenerator::generateTerm):
+        (JSC::Yarr::RegexGenerator::RegexGenerator):
+        (JSC::Yarr::RegexGenerator::shouldFallBack):
+        (JSC::Yarr::jitCompileRegex):
+        * yarr/RegexPattern.h:
+        (JSC::Yarr::RegexPattern::RegexPattern):
+        (JSC::Yarr::RegexPattern::reset):
+
 2010-05-26  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
