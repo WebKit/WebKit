@@ -1,3 +1,22 @@
+2010-05-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (revert).
+
+        Temporarily rolling out r60267, I appear to have hoesed perf at the last minute. :-/ Fixing.
+
+        * yarr/RegexCompiler.cpp:
+        (JSC::Yarr::RegexPatternConstructor::atomBackReference):
+        (JSC::Yarr::RegexPatternConstructor::quantifyAtom):
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::TermGenerationState::term):
+        (JSC::Yarr::RegexGenerator::generateParenthesesSingle):
+        (JSC::Yarr::RegexGenerator::generateTerm):
+        (JSC::Yarr::RegexGenerator::RegexGenerator):
+        (JSC::Yarr::jitCompileRegex):
+        * yarr/RegexPattern.h:
+        (JSC::Yarr::RegexPattern::RegexPattern):
+        (JSC::Yarr::RegexPattern::reset):
+
 2010-05-26  Gustavo Noronha Silva  <gns@gnome.org>
 
         Build fixes for make distcheck.
