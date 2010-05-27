@@ -31,6 +31,7 @@ var ideographicSpace = String.fromCharCode(0x3000);
 
 shouldBe("parseFloat()", "NaN");
 shouldBe("parseFloat('')", "NaN");
+shouldBe("parseFloat(' ')", "NaN");
 shouldBe("parseFloat(' 0')", "0");
 shouldBe("parseFloat('0 ')", "0");
 shouldBe("parseFloat('x0')", "NaN");

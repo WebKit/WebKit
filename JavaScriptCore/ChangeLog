@@ -1,3 +1,24 @@
+2010-05-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kent Tamura.
+
+        Null characters handled incorrectly in ToNumber conversion
+        https://bugs.webkit.org/show_bug.cgi?id=38088
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::parseInt): Changed code to use UTF8String().data() instead of
+        ascii() to fix the thread safety issue. Code path is covered by existing
+        tests in run-javascriptcore-tests.
+        (JSC::parseFloat): Moved comment to UString::toDouble since the issue
+        affects all clients, not just parseFloat. Specifically, this also affects
+        standard JavaScript numeric conversion, ToNumber.
+
+        * runtime/UString.cpp:
+        (JSC::UString::toDouble): Added a comment about incorrect space skipping.
+        Changed trailing junk check to use the length of the CString instead of
+        checking for a null character. Also got rid of a little unneeded logic
+        in the case where we tolerate trailing junk.
+
 2010-05-27  Nathan Lawrence  <nlawrence@apple.com>
 
         Reviewed by Geoffrey Garen.

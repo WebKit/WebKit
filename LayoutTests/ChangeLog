@@ -1,3 +1,16 @@
+2010-05-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kent Tamura.
+
+        Null characters handled incorrectly in ToNumber conversion
+        https://bugs.webkit.org/show_bug.cgi?id=38088
+
+        * fast/js/ToNumber-expected.txt: Updated for new tests and to
+        expect PASS for two null character tests.
+        * fast/js/ToNumber.js: Added more test cases.
+        * fast/js/parseFloat-expected.txt: Updated for new test case.
+        * fast/js/script-tests/parseFloat.js: Added a test case.
+
 2010-05-27  Julie Parent  <jparent@chromium.org>
 
         Unreviewed.
