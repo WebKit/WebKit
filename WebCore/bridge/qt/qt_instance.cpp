@@ -21,20 +21,20 @@
 #include "qt_instance.h"
 
 #include "ArgList.h"
+#include "Error.h"
 #include "JSDOMBinding.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
+#include "ObjectPrototype.h"
+#include "PropertyNameArray.h"
 #include "qt_class.h"
 #include "qt_runtime.h"
-#include "PropertyNameArray.h"
 #include "runtime_object.h"
-#include "ObjectPrototype.h"
-#include "Error.h"
 
-#include <qmetaobject.h>
 #include <qdebug.h>
-#include <qmetatype.h>
 #include <qhash.h>
+#include <qmetaobject.h>
+#include <qmetatype.h>
 
 namespace JSC {
 namespace Bindings {
@@ -119,7 +119,7 @@ PassRefPtr<QtInstance> QtInstance::getQtInstance(QObject* o, PassRefPtr<RootObje
 {
     JSLock lock(SilenceAssertionsOnly);
 
-    foreach(QtInstance* instance, cachedInstances.values(o))
+    foreach (QtInstance* instance, cachedInstances.values(o))
         if (instance->rootObject() == rootObject) {
             // The garbage collector removes instances, but it may happen that the wrapped
             // QObject dies before the gc kicks in. To handle that case we have to do an additional
@@ -152,7 +152,7 @@ void QtInstance::removeCachedMethod(JSObject* method)
     if (m_defaultMethod == method)
         m_defaultMethod = 0;
 
-    for(QHash<QByteArray, JSObject*>::Iterator it = m_methods.begin(),
+    for (QHash<QByteArray, JSObject*>::Iterator it = m_methods.begin(),
         end = m_methods.end(); it != end; ++it)
         if (it.value() == method) {
             m_methods.erase(it);
@@ -189,7 +189,7 @@ void QtInstance::markAggregate(MarkStack& markStack)
 {
     if (m_defaultMethod)
         markStack.append(m_defaultMethod);
-    foreach(JSObject* val, m_methods.values()) {
+    foreach (JSObject* val, m_methods.values()) {
         if (val)
             markStack.append(val);
     }
@@ -216,26 +216,23 @@ void QtInstance::getPropertyNames(ExecState* exec, PropertyNameArray& array)
         const QMetaObject* meta = obj->metaObject();
 
         int i;
-        for (i=0; i < meta->propertyCount(); i++) {
+        for (i = 0; i < meta->propertyCount(); i++) {
             QMetaProperty prop = meta->property(i);
-            if (prop.isScriptable()) {
+            if (prop.isScriptable())
                 array.add(Identifier(exec, prop.name()));
-            }
         }
 
 #ifndef QT_NO_PROPERTIES
         QList<QByteArray> dynProps = obj->dynamicPropertyNames();
-        foreach(const QByteArray& ba, dynProps) {
+        foreach (const QByteArray& ba, dynProps)
             array.add(Identifier(exec, ba.constData()));
-        }
 #endif
 
         const int methodCount = meta->methodCount();
         for (i = 0; i < methodCount; i++) {
             QMetaMethod method = meta->method(i);
-            if (method.access() != QMetaMethod::Private) {
+            if (method.access() != QMetaMethod::Private)
                 array.add(Identifier(exec, method.signature()));
-            }
         }
     }
 }
@@ -281,7 +278,7 @@ JSValue QtInstance::stringValue(ExecState* exec) const
             // Check to see how much we can call it
             if (m.access() != QMetaMethod::Private
                 && m.methodType() != QMetaMethod::Signal
-                && m.parameterTypes().count() == 0) {
+                && m.parameterTypes().isEmpty()) {
                 const char* retsig = m.typeName();
                 if (retsig && *retsig) {
                     QVariant ret(QMetaType::type(retsig), (void*)0);
@@ -334,10 +331,10 @@ QByteArray QtField::name() const
 {
     if (m_type == MetaProperty)
         return m_property.name();
-    else if (m_type == ChildObject && m_childObject)
+    if (m_type == ChildObject && m_childObject)
         return m_childObject->objectName().toLatin1();
 #ifndef QT_NO_PROPERTIES
-    else if (m_type == DynamicProperty)
+    if (m_type == DynamicProperty)
         return m_dynamicProperty;
 #endif
     return QByteArray(); // deleted child object
@@ -362,10 +359,9 @@ JSValue QtField::valueFromInstance(ExecState* exec, const Instance* inst) const
             val = obj->property(m_dynamicProperty);
 #endif
         return convertQVariantToValue(exec, inst->rootObject(), val);
-    } else {
-        QString msg = QString(QLatin1String("cannot access member `%1' of deleted QObject")).arg(QLatin1String(name()));
-        return throwError(exec, GeneralError, msg.toLatin1().constData());
     }
+    QString msg = QString(QLatin1String("cannot access member `%1' of deleted QObject")).arg(QLatin1String(name()));
+    return throwError(exec, GeneralError, msg.toLatin1().constData());
 }
 
 void QtField::setValueToInstance(ExecState* exec, const Instance* inst, JSValue aValue) const
