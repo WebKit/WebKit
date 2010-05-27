@@ -84,6 +84,8 @@ QTMovieVisualContextPriv::QTMovieVisualContextPriv(QTMovieVisualContext* parent,
 
 QTMovieVisualContextPriv::~QTMovieVisualContextPriv()
 {
+    if (m_visualContext)
+        QTVisualContextSetImageAvailableCallback(m_visualContext, 0, 0);
 }
 
 bool QTMovieVisualContextPriv::isImageAvailableForTime(const QTCVTimeStamp* timeStamp) const
@@ -206,6 +208,11 @@ CFDictionaryRef QTMovieVisualContext::getCGImageOptions()
     }
 
     return options;
+}
+
+PassRefPtr<QTMovieVisualContext> QTMovieVisualContext::create(QTMovieVisualContextClient* client, CFDictionaryRef options)
+{
+    return adoptRef(new QTMovieVisualContext(client, options));
 }
 
 QTMovieVisualContext::QTMovieVisualContext(QTMovieVisualContextClient* client, CFDictionaryRef options) 

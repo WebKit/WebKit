@@ -1,3 +1,31 @@
+2010-05-26  Jer Noble  <jer.noble@apple.com>
+
+        Patch edited by Adele Peterson and Mark Rowe.
+        Reviewed by Eric Carlson
+
+        Video elements show no video on Windows machines that do not support accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=39446
+        rdar://problem/7999794
+        
+        Create the visual context in setUpVideoRendering (as opposed to in load), and destroy it in
+        tearDownVideoRendering (as opposed to in the destructor.)
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::~MediaPlayerPrivateQuickTimeVisualContext):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::load): Moved creation of the visual context to setUpVideoRendering.
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::paint): Return early if the visual context isn't set up.
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::currentRenderingMode): If the visual context isn't set up,
+        return MediaRenderingNone.
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::setUpVideoRendering): Create the visual context.
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::tearDownVideoRendering): Destroy the visual context.
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::hasSetUpVideoRendering): For software rendering mode, 
+        make sure the visual context has been set up when saying the setup has been done.
+        * platform/graphics/win/QTMovieVisualContext.cpp:
+        (QTMovieVisualContextPriv::~QTMovieVisualContextPriv): Destruction moved to tearDownVideoRendering.
+        Also, make sure to cancel the visual context's newImageAvailable callback in the visual context's destructor.
+        (QTMovieVisualContext::create): Added.
+        * platform/graphics/win/QTMovieVisualContext.h:
+
 2010-05-26  Gustavo Noronha Silva  <gns@gnome.org>
 
         Build fixes for make distcheck.
