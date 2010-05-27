@@ -277,7 +277,7 @@ libwebkit_1_0_la_LIBADD = \
 	$(XT_LIBS)
 
 libgdom_ladir = $(prefix)/include/webkit-1.0/webkit
-libgdom_la_HEADERS = \
+nodist_libgdom_la_HEADERS = \
 	$(libgdom_h_api)
 
 #

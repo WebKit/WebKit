@@ -1,5 +1,11 @@
 2010-05-27  Xan Lopez  <xlopez@igalia.com>
 
+        More GTK+ distcheck fixes.
+
+        * GNUmakefile.am:
+
+2010-05-27  Xan Lopez  <xlopez@igalia.com>
+
         Reviewed by Gustavo Noronha.
 
         Bump for 1.3.1 release.

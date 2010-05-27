@@ -4096,6 +4096,7 @@ webcore_dist += \
 	WebCore/bindings/scripts/generate-bindings.pl \
 	WebCore/bindings/scripts/CodeGeneratorJS.pm \
 	WebCore/bindings/scripts/CodeGeneratorGObject.pm \
+	WebCore/bindings/scripts/gobject-generate-headers.pl \
 	WebCore/css/html.css \
 	WebCore/css/mathml.css \
 	WebCore/css/quirks.css \

@@ -1,3 +1,9 @@
+2010-05-27  Xan Lopez  <xlopez@igalia.com>
+
+        More GTK+ distcheck fixes.
+
+        * GNUmakefile.am:
+
 2010-05-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
