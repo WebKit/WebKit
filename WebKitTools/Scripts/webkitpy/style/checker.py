@@ -210,6 +210,7 @@ _SKIPPED_FILES_WITH_WARNING = [
     "WebKit/gtk/tests/",
     "WebKit/qt/Api/",
     "WebKit/qt/tests/",
+    "WebKit/qt/examples/",
     ]
 
 
