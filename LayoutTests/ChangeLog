@@ -1,3 +1,42 @@
+2010-05-26  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Clean up IndexedDB layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=39748
+
+        Split basics.js into a common library plus 2 other tests.  This
+        will make it easier to ensure good test coverage as we go forward
+        without too much cut and paste coding.  For the most part, each
+        IndexedDB idl file should have its own test in the future (at a
+        minimum).
+
+        Also switching the 'description' portion of the test expectation
+        to reflect the build fix from last night (which breaks the feature).
+
+        * storage/indexeddb/basics-expected.txt: Removed.
+        * storage/indexeddb/basics.html: Removed.
+        * storage/indexeddb/idb-database-request-expected.txt: Added.
+        * storage/indexeddb/idb-database-request.html: Added.
+        * storage/indexeddb/indexed-database-request-expected.txt: Added.
+        * storage/indexeddb/indexed-database-request.html: Added.
+        * storage/indexeddb/resources/shared.js: Added.
+        (init):
+        (done):
+        (verifyEventCommon):
+        (verifyErrorEvent):
+        (verifySuccessEvent):
+        (verifyResult):
+        (unexpectedErrorCallback):
+        * storage/indexeddb/script-tests/TEMPLATE.html:
+        * storage/indexeddb/script-tests/basics.js: Removed.
+        * storage/indexeddb/script-tests/idb-database-request.js: Added.
+        (openSuccess):
+        (test):
+        * storage/indexeddb/script-tests/indexed-database-request.js: Added.
+        (openCallback):
+        (test):
+
 2010-05-27  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Brady Eidson.

@@ -1,3 +1,18 @@
+2010-05-26  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Clean up IndexedDB layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=39748
+
+        Remove an assert that always fires.
+
+        Tests: storage/indexeddb/idb-database-request.html
+               storage/indexeddb/indexed-database-request.html
+
+        * storage/IDBDatabaseImpl.cpp:
+        (WebCore::IDBDatabaseImpl::objectStores):
+
 2010-05-27  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
