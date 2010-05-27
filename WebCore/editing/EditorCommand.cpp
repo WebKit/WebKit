@@ -41,13 +41,13 @@
 #include "EventHandler.h"
 #include "FormatBlockCommand.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "HTMLFontElement.h"
 #include "HTMLHRElement.h"
 #include "HTMLImageElement.h"
 #include "IndentOutdentCommand.h"
 #include "InsertListCommand.h"
 #include "Page.h"
-#include "RenderBox.h"
 #include "ReplaceSelectionCommand.h"
 #include "Scrollbar.h"
 #include "Settings.h"
@@ -259,7 +259,8 @@ static int verticalScrollDistance(Frame* frame)
         return 0;
     if (!(style->overflowY() == OSCROLL || style->overflowY() == OAUTO || focusedNode->isContentEditable()))
         return 0;
-    int height = toRenderBox(renderer)->clientHeight();
+    int height = std::min<int>(toRenderBox(renderer)->clientHeight(),
+                               frame->view()->visibleHeight());
     return max(max<int>(height * Scrollbar::minFractionToStepWhenPaging(), height - Scrollbar::maxOverlapBetweenPages()), 1);
 }
 
@@ -646,7 +647,7 @@ static bool executeMovePageDown(Frame* frame, Event*, EditorCommandSource, const
     int distance = verticalScrollDistance(frame);
     if (!distance)
         return false;
-    return frame->selection()->modify(SelectionController::MOVE, distance, true);
+    return frame->selection()->modify(SelectionController::MOVE, distance, true, SelectionController::AlignCursorOnScrollAlways);
 }
 
 static bool executeMovePageDownAndModifySelection(Frame* frame, Event*, EditorCommandSource, const String&)
@@ -654,7 +655,7 @@ static bool executeMovePageDownAndModifySelection(Frame* frame, Event*, EditorCo
     int distance = verticalScrollDistance(frame);
     if (!distance)
         return false;
-    return frame->selection()->modify(SelectionController::EXTEND, distance, true);
+    return frame->selection()->modify(SelectionController::EXTEND, distance, true, SelectionController::AlignCursorOnScrollAlways);
 }
 
 static bool executeMovePageUp(Frame* frame, Event*, EditorCommandSource, const String&)
@@ -662,7 +663,7 @@ static bool executeMovePageUp(Frame* frame, Event*, EditorCommandSource, const S
     int distance = verticalScrollDistance(frame);
     if (!distance)
         return false;
-    return frame->selection()->modify(SelectionController::MOVE, -distance, true);
+    return frame->selection()->modify(SelectionController::MOVE, -distance, true, SelectionController::AlignCursorOnScrollAlways);
 }
 
 static bool executeMovePageUpAndModifySelection(Frame* frame, Event*, EditorCommandSource, const String&)
@@ -670,7 +671,7 @@ static bool executeMovePageUpAndModifySelection(Frame* frame, Event*, EditorComm
     int distance = verticalScrollDistance(frame);
     if (!distance)
         return false;
-    return frame->selection()->modify(SelectionController::EXTEND, -distance, true);
+    return frame->selection()->modify(SelectionController::EXTEND, -distance, true, SelectionController::AlignCursorOnScrollAlways);
 }
 
 static bool executeMoveRight(Frame* frame, Event*, EditorCommandSource, const String&)

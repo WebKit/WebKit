@@ -45,6 +45,8 @@ class SelectionController : public Noncopyable {
 public:
     enum EAlteration { MOVE, EXTEND };
     enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT };
+    enum CursorAlignOnScroll { AlignCursorOnScrollIfNeeded,
+                               AlignCursorOnScrollAlways };
 
     SelectionController(Frame* = 0, bool isDragCaretController = false);
 
@@ -54,14 +56,14 @@ public:
     Node* shadowTreeRootNode() const { return m_selection.shadowTreeRootNode(); }
      
     void moveTo(const Range*, EAffinity, bool userTriggered = false);
-    void moveTo(const VisiblePosition&, bool userTriggered = false);
+    void moveTo(const VisiblePosition&, bool userTriggered = false, CursorAlignOnScroll = AlignCursorOnScrollIfNeeded);
     void moveTo(const VisiblePosition&, const VisiblePosition&, bool userTriggered = false);
     void moveTo(const Position&, EAffinity, bool userTriggered = false);
     void moveTo(const Position&, const Position&, EAffinity, bool userTriggered = false);
 
     const VisibleSelection& selection() const { return m_selection; }
-    void setSelection(const VisibleSelection&, bool closeTyping = true, bool clearTypingStyle = true, bool userTriggered = false, TextGranularity = CharacterGranularity);
-    void setSelection(const VisibleSelection& selection, TextGranularity granularity) { setSelection(selection, true, true, false, granularity); }
+    void setSelection(const VisibleSelection&, bool closeTyping = true, bool clearTypingStyle = true, bool userTriggered = false, CursorAlignOnScroll = AlignCursorOnScrollIfNeeded, TextGranularity = CharacterGranularity);
+    void setSelection(const VisibleSelection& selection, TextGranularity granularity) { setSelection(selection, true, true, false, AlignCursorOnScrollIfNeeded, granularity); }
     bool setSelectedRange(Range*, EAffinity, bool closeTyping);
     void selectAll();
     void clear();
@@ -76,7 +78,7 @@ public:
     EAffinity affinity() const { return m_selection.affinity(); }
 
     bool modify(EAlteration, EDirection, TextGranularity, bool userTriggered = false);
-    bool modify(EAlteration, int verticalDistance, bool userTriggered = false);
+    bool modify(EAlteration, int verticalDistance, bool userTriggered = false, CursorAlignOnScroll = AlignCursorOnScrollIfNeeded);
     TextGranularity granularity() const { return m_granularity; }
 
     void setStart(const VisiblePosition &, bool userTriggered = false);

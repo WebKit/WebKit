@@ -1,17 +1,43 @@
+<head>
+<style type="text/css">
+  .ahem { font: 20px Ahem; }
+</style>
 <script>
 if (window.layoutTestController)
     layoutTestController.dumpAsText();
 
-function runTest()
-{
+function runTest() {
+  runFrameCursorMoveTest();
+  runDivCursorMoveTest();
+}
+
+function generateContent() {
+    var content = "";
+    for (var i = 0; i < 10; ++i)
+        content += "<p>line " + i + "</p>\n";
+    return content;
+}
+
+function runFrameCursorMoveTest() {
     var frame = frames[0];
     var doc = frame.document;
     var body = doc.body;
-    for (var i = 0; i < 10; ++i)
-        body.innerHTML += "<p>line " + i + "</p>\n";
+    body.innerHTML = generateContent();
     frame.focus();
     frame.getSelection().setPosition(body.firstChild, 0);
+    runCursorMoveTest("iframe", frame, frame);
+}
 
+function runDivCursorMoveTest() {
+    var editable = document.getElementById('editable');
+    editable.innerHTML = generateContent();
+    editable.focus();
+    window.getSelection().setPosition(editable, 0);
+    runCursorMoveTest("div", editable, window);
+}
+
+function runCursorMoveTest(testName, frame, selectionSource)
+{
     var onMacPlatform = navigator.userAgent.search(/\bMac OS X\b/) != -1;
     var modifiers = onMacPlatform ? ["altKey"] : [];
 
@@ -19,26 +45,46 @@ function runTest()
         return;
 
     eventSender.keyDown("pageDown", modifiers);
-    var line = frame.getSelection().baseNode.nodeValue;
-    if (line != "line 8")
-        throw "cursor should be at line 8, not " + line;
+    var line = selectionSource.getSelection().baseNode.nodeValue;
+    if (line != "line 3")
+        throw "cursor should be at line 3, not " + line;
 
     eventSender.keyDown("pageDown", modifiers);
-    var line = frame.getSelection().baseNode.nodeValue;
-    if (line != "line 9")
-        throw "cursor should be at line 9, not " + line;
+    var line = selectionSource.getSelection().baseNode.nodeValue;
+    if (line != "line 6")
+        throw "cursor should be at line 6, not " + line;
 
     eventSender.keyDown("pageUp", modifiers);
-    var line = frame.getSelection().baseNode.nodeValue;
-    if (line != "line 1")
-        throw "cursor should be at line 1, not " + line;
+    var line = selectionSource.getSelection().baseNode.nodeValue;
+    if (line != "line 3")
+        throw "cursor should be at line 3, not " + line;
 
-    document.getElementById("results").innerText = "PASS";
+    // Test that on Mac pageDown/pageUp does not move the cursor at all.
+    if (onMacPlatform) {
+      eventSender.keyDown("pageDown", []);
+      var line = selectionSource.getSelection().baseNode.nodeValue;
+      if (line != "line 3") {
+          document.getElementById("results").innerText = "cursor should be at line 3, not " + line;
+          throw "cursor should be at line 3, not " + line;
+      }
+
+      eventSender.keyDown("pageUp", []);
+      var line = selectionSource.getSelection().baseNode.nodeValue;
+      if (line != "line 3") {
+          document.getElementById("results").innerText = "cursor should be at line 3, not " + line;
+          throw "cursor should be at line 3, not " + line;
+      }
+    }
+
+    document.getElementById("results").innerHTML += testName + " PASS<br/>";
 }
 </script>
-
-<div>On Mac, option+pagedown should move the mouse cursor and scroll in text areas.  On
-other platforms, pagedown should move the mouse cursor and scroll in text areas.  This
-test requires DRT to pass.</div>
-<iframe src="../resources/contenteditable-iframe-src.html" onload="runTest()"></iframe>
-<div id="results">FAIL</div>
+</head>
+<body>
+<div>Page up/down (option+page up/down on Mac) should move the move cursor and scroll the content
+in contenteditable elements. This sample covers cursor position move test of a) iframe element containing
+contenteditable body, and b) content editable div element.</div>
+<iframe src="../resources/contenteditable-iframe-fixed-size-src.html" onload="runTest()"></iframe>
+<div id="editable" contenteditable="true" class="ahem" style="height:150px; overflow:auto;"></div>
+<div id="results"></div>
+</body>

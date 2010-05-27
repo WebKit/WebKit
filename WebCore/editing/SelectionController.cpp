@@ -79,9 +79,9 @@ SelectionController::SelectionController(Frame* frame, bool isDragCaretControlle
     setIsDirectional(false);
 }
 
-void SelectionController::moveTo(const VisiblePosition &pos, bool userTriggered)
+void SelectionController::moveTo(const VisiblePosition &pos, bool userTriggered, CursorAlignOnScroll align)
 {
-    setSelection(VisibleSelection(pos.deepEquivalent(), pos.deepEquivalent(), pos.affinity()), true, true, userTriggered);
+    setSelection(VisibleSelection(pos.deepEquivalent(), pos.deepEquivalent(), pos.affinity()), true, true, userTriggered, align);
 }
 
 void SelectionController::moveTo(const VisiblePosition &base, const VisiblePosition &extent, bool userTriggered)
@@ -105,7 +105,7 @@ void SelectionController::moveTo(const Position &base, const Position &extent, E
     setSelection(VisibleSelection(base, extent, affinity), true, true, userTriggered);
 }
 
-void SelectionController::setSelection(const VisibleSelection& s, bool closeTyping, bool clearTypingStyle, bool userTriggered, TextGranularity granularity)
+void SelectionController::setSelection(const VisibleSelection& s, bool closeTyping, bool clearTypingStyle, bool userTriggered, CursorAlignOnScroll align, TextGranularity granularity)
 {
     m_granularity = granularity;
 
@@ -161,8 +161,16 @@ void SelectionController::setSelection(const VisibleSelection& s, bool closeTypi
     selectFrameElementInParentIfFullySelected();
     m_frame->notifyRendererOfSelectionChange(userTriggered);
     m_frame->respondToChangedSelection(oldSelection, closeTyping);
-    if (userTriggered)
-        m_frame->revealSelection(ScrollAlignment::alignToEdgeIfNeeded, true);
+    if (userTriggered) {
+        ScrollAlignment alignment;
+
+        if (m_frame->settings() && m_frame->settings()->editingBehavior() == EditingMacBehavior)
+            alignment = (align == AlignCursorOnScrollAlways) ? ScrollAlignment::alignCenterAlways : ScrollAlignment::alignCenterIfNeeded;
+        else
+            alignment = (align == AlignCursorOnScrollAlways) ? ScrollAlignment::alignTopAlways : ScrollAlignment::alignToEdgeIfNeeded;
+
+        m_frame->revealSelection(alignment, true);
+    }
 
     notifyAccessibilityForSelectionChange();
 }
@@ -714,7 +722,7 @@ static bool absoluteCaretY(const VisiblePosition &c, int &y)
     return true;
 }
 
-bool SelectionController::modify(EAlteration alter, int verticalDistance, bool userTriggered)
+bool SelectionController::modify(EAlteration alter, int verticalDistance, bool userTriggered, CursorAlignOnScroll align)
 {
     if (verticalDistance == 0)
         return false;
@@ -782,7 +790,7 @@ bool SelectionController::modify(EAlteration alter, int verticalDistance, bool u
 
     switch (alter) {
         case MOVE:
-            moveTo(result, userTriggered);
+            moveTo(result, userTriggered, align);
             break;
         case EXTEND:
             setExtent(result, userTriggered);

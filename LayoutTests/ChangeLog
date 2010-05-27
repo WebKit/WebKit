@@ -1,3 +1,22 @@
+2010-05-26  Zelidrag Hornung  <zelidrag@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Fixed frame page up/down scrolling calculation. Made sure that the
+        cursor moves with page up/down event. Please note that now for mac
+        editing behavior we will scroll the content to center the cursor on
+        page up/down while other platforms will align the cursor with the top of
+        displayed frame.
+        https://bugs.webkit.org/show_bug.cgi?id=38213
+        
+        * editing/input/option-page-up-down-expected.txt: Fixed page scroll calculation. Now scroll height is calculated only from the visible portion not the entire frame height.
+        * editing/input/option-page-up-down.html: Ditto.
+        * editing/input/scroll-viewport-page-up-down-expected.txt: Scrolling test of contenteditable iframe and div.
+        * editing/input/scroll-viewport-page-up-down.html: Ditto.
+        * editing/resources/contenteditable-iframe-fixed-size-src.html: Resource for the scrolling test above.
+        * platform/mac/editing/selection/25228.html: Change the test to have the cursor on the right edge of the screen.  The original test
+            wasn't testing the behavior anymore.
+
 2010-05-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

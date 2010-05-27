@@ -1,3 +1,32 @@
+2010-05-26  Zelidrag Hornung  <zelidrag@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Fixed frame page up/down scrolling calculation. Made sure that the
+        cursor moves with page up/down event. Please note that now for mac
+        editing behavior we will scroll the content to center the cursor on
+        page up/down while other platforms will align the cursor with the top of
+        displayed frame.
+        https://bugs.webkit.org/show_bug.cgi?id=38213
+
+        Tests: editing/input/option-page-up-down.html (fixed)
+               editing/input/scroll-viewport-page-up-down.html
+
+        * WebCore.base.exp:
+        * editing/EditorCommand.cpp:
+        (WebCore::verticalScrollDistance): Fixed page scroll calculation. Now scroll height is calculated only from the visible portion not the entire frame height.
+        (WebCore::executeMovePageDown): Now it can tell SelectionController to move the cursor with the page scroll up/down events.
+        (WebCore::executeMovePageDownAndModifySelection): Ditto.
+        (WebCore::executeMovePageUp): Ditto.
+        (WebCore::executeMovePageUpAndModifySelection): Ditto.
+        * editing/SelectionController.cpp:
+        * editing/SelectionController.cpp: Exposed an enum param that lets EditorCommand.cpp control how cursor position will be aligned when page moves.
+        (WebCore::SelectionController::setSelection): Ditto.
+        (WebCore::SelectionController::modify): Ditto.
+        * editing/SelectionController.h: Ditto.
+        (WebCore::SelectionController::): Ditto.
+        (WebCore::SelectionController::setSelection): Ditto.
+
 2010-05-26  Jaime Yap  <jaimeyap@google.com>
 
         Reviewed by Pavel Feldman.
