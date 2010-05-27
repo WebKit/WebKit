@@ -445,7 +445,7 @@ void webkit_web_back_forward_list_add_item(WebKitWebBackForwardList *webBackForw
  * Clears the @webBackForwardList by removing all its elements. Note that not even
  * the current page is kept in list when cleared so you would have to add it later.
  *
- * Since: 1.1.30
+ * Since: 1.3.1
  **/
 void webkit_web_back_forward_list_clear(WebKitWebBackForwardList* webBackForwardList)
 {
