@@ -1,3 +1,14 @@
+2010-05-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Resume script execution if user tries to navigate to another URL
+        https://bugs.webkit.org/show_bug.cgi?id=39842
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::):
+        (WebKit::WebDevToolsAgentImpl::didNavigate):
+
 2010-05-27  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.
