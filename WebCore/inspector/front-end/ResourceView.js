@@ -116,6 +116,7 @@ WebInspector.ResourceView = function(resource)
     resource.addEventListener("finished", this._refreshHTTPInformation, this);
 
     this._refreshURL();
+    this._refreshQueryString();
     this._refreshRequestHeaders();
     this._refreshResponseHeaders();
     this._refreshHTTPInformation();
@@ -245,8 +246,7 @@ WebInspector.ResourceView.prototype = {
     {
         this.requestPayloadTreeElement.removeChildren();
 
-        var title = "<div class=\"header-name\">&nbsp;</div>";
-        title += "<div class=\"raw-form-data header-value source-code\">" + formData.escapeHTML() + "</div>";
+        var title = "<div class=\"raw-form-data header-value source-code\">" + formData.escapeHTML() + "</div>";
         var parmTreeElement = new TreeElement(title, null, false);
         parmTreeElement.selectable = false;
         this.requestPayloadTreeElement.appendChild(parmTreeElement);
