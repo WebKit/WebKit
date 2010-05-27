@@ -1872,6 +1872,10 @@ def check_for_null(file_extension, clean_lines, line_number, error):
     if search(r'\bg_object_[sg]et\b', line):
         return
 
+    # Don't warn about NULL usage in gst_*_many(). See Bug 39740
+    if search(r'\bgst_\w+_many\b', line):
+        return
+
     # Don't warn about NULL usage in g_str{join,concat}(). See Bug 34834
     if search(r'\bg_str(join|concat)\b', line):
         return

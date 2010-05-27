@@ -3437,6 +3437,18 @@ class WebKitStyleTest(CppStyleTestBase):
             'g_object_set(foo, "prop", bar, NULL);',
             '')
         self.assert_lint(
+            'gst_bin_add_many(foo, bar, boo, NULL);',
+            '')
+        self.assert_lint(
+            'gst_bin_remove_many(foo, bar, boo, NULL);',
+            '')
+        self.assert_lint(
+            'gst_element_link_many(foo, bar, boo, NULL);',
+            '')
+        self.assert_lint(
+            'gst_element_unlink_many(foo, bar, boo, NULL);',
+            '')
+        self.assert_lint(
             'gchar* result = g_strconcat("part1", "part2", "part3", NULL);',
             '')
         self.assert_lint(
