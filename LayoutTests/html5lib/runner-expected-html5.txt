@@ -75,10 +75,6 @@ resources/tests2.dat:
 57
 
 resources/tests3.dat:
-5
-6
-7
-8
 16
 17
 18
@@ -126,7 +122,6 @@ resources/tests7.dat:
 5
 6
 9
-12
 14
 15
 16

@@ -1,3 +1,12 @@
+2010-05-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add <pre>/<listing> hack to HTML5Lexer to fix the last remaining HTML5 test suite regressions
+        https://bugs.webkit.org/show_bug.cgi?id=39818
+
+        * html5lib/runner-expected-html5.txt:
+
 2010-05-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

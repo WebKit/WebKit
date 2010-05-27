@@ -1,3 +1,23 @@
+2010-05-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add <pre>/<listing> hack to HTML5Lexer to fix the last remaining HTML5 test suite regressions
+        https://bugs.webkit.org/show_bug.cgi?id=39818
+
+        HTML parsers are supposed to ignore the first \n after a <pre> or <listing> tag
+        for authoring convenience.  Our new HTML5Lexer didn't have this hack yet
+        so there were 4 HTML5 tests failing.  Fixing this fixed the last of the HTML5
+        test suite regressions using the HTML5Lexer vs the old lexer.
+
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTML5Lexer::reset):
+        (WebCore::HTML5Lexer::nextToken):
+        * html/HTML5Lexer.h:
+        (WebCore::HTML5Lexer::skipLeadingNewLineForListing):
+        * html/HTML5TreeBuilder.cpp:
+        (WebCore::HTML5TreeBuilder::passTokenToLegacyParser):
+
 2010-05-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

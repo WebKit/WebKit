@@ -122,6 +122,10 @@ namespace WebCore {
 
         void setState(State state) { m_state = state; }
 
+        // Hack to skip leading newline in <pre>/<listing> for authoring ease.
+        // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#parsing-main-inbody
+        void skipLeadingNewLineForListing() { m_skipLeadingNewLineForListing = true; }
+
     private:
         inline void emitCharacter(UChar);
         inline void emitParseError();
@@ -149,6 +153,7 @@ namespace WebCore {
         // this member might be pointing to unallocated memory.
         HTML5Token* m_token;
 
+        bool m_skipLeadingNewLineForListing;
         bool m_emitPending;
 
         // http://www.whatwg.org/specs/web-apps/current-work/#temporary-buffer

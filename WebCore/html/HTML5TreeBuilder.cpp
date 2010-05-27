@@ -152,6 +152,8 @@ PassRefPtr<Node> HTML5TreeBuilder::passTokenToLegacyParser(HTML5Token& token)
             m_lexer->setState(HTML5Lexer::RAWTEXTState);
         } else if (token.name() == plaintextTag)
             m_lexer->setState(HTML5Lexer::PLAINTEXTState);
+        else if (token.name() == preTag || token.name() == listingTag)
+            m_lexer->skipLeadingNewLineForListing();
     }
     if (token.type() == HTML5Token::EndTag) {
         if (token.name() == scriptTag) {
