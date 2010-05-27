@@ -1,3 +1,16 @@
+2010-05-27  Nathan Lawrence  <nlawrence@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Search for the new allocation one word at a time.  Improves
+        performance on SunSpider by approximately 1%.
+        http://bugs.webkit.org/show_bug.cgi?id=39758
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::allocate):
+        * runtime/Collector.h:
+        (JSC::CollectorBitmap::advanceToNextPossibleFreeCell):
+
 2010-05-27  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fixes for Windows after recent changes.

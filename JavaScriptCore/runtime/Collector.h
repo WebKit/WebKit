@@ -220,6 +220,13 @@ namespace JSC {
         void set(size_t n) { bits[n >> 5] |= (1 << (n & 0x1F)); } 
         void clear(size_t n) { bits[n >> 5] &= ~(1 << (n & 0x1F)); } 
         void clearAll() { memset(bits, 0, sizeof(bits)); }
+        ALWAYS_INLINE void advanceToNextPossibleFreeCell(size_t& startCell)
+        {
+            if (!~bits[startCell >> 5])
+                startCell = (startCell & (~0x1F)) + 32;
+            else
+                ++startCell;
+        }
         size_t count(size_t startCell = 0)
         {
             size_t result = 0;
