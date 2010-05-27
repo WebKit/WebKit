@@ -1,3 +1,27 @@
+2010-05-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove bit-rotten INSTRUMENT_LAYOUT_SCHEDULING code from HTMLTokenizer
+        https://bugs.webkit.org/show_bug.cgi?id=39714
+
+        This came from a discussion on #webkit with Hyatt about this code
+        being old and no longer used to either of our knowledge.
+
+        No functional changes, thus no tests.
+
+        I also removed a bogus FIXME I had added in an earlier patch
+        before I understood what the HTMLTokenizer was trying to do.
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptHandler):
+        (WebCore::HTMLTokenizer::scriptExecution):
+        (WebCore::HTMLTokenizer::continueProcessing):
+        (WebCore::HTMLTokenizer::willWriteHTML):
+        (WebCore::HTMLTokenizer::didWriteHTML):
+        (WebCore::HTMLTokenizer::timerFired):
+        (WebCore::HTMLTokenizer::executeExternalScriptsIfReady):
+
 2010-05-27  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Adam Barth.

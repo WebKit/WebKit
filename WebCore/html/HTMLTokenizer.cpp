@@ -58,7 +58,6 @@
 #include "HTMLEntityNames.c"
 
 #define PRELOAD_SCANNER_ENABLED 1
-// #define INSTRUMENT_LAYOUT_SCHEDULING 1
 
 using namespace WTF;
 using namespace std;
@@ -436,10 +435,6 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
         if (!m_scriptTagSrcAttrValue.isEmpty() && m_doc->frame()) {
             // forget what we just got; load from src url instead
             if (!m_parser->skipMode() && !followingFrameset) {
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-                if (!m_doc->ownerElement())
-                    printf("Requesting script at time %d\n", m_doc->elapsedTime());
-#endif
                 // The parser might have been stopped by for example a window.close call in an earlier script.
                 // If so, we don't want to load scripts.
                 if (!m_parserStopped && m_scriptNode->dispatchBeforeLoadEvent(m_scriptTagSrcAttrValue) &&
@@ -563,22 +558,12 @@ HTMLTokenizer::State HTMLTokenizer::scriptExecution(const ScriptSourceCode& sour
     SegmentedString prependingSrc;
     m_currentPrependingSrc = &prependingSrc;
 
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-    if (!m_doc->ownerElement())
-        printf("beginning script execution at %d\n", m_doc->elapsedTime());
-#endif
-
     m_state = state;
     m_doc->frame()->script()->executeScript(sourceCode);
     state = m_state;
 
     state.setAllowYield(true);
 
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-    if (!m_doc->ownerElement())
-        printf("ending script execution at %d\n", m_doc->elapsedTime());
-#endif
-    
     m_executingScript--;
 
     if (!m_executingScript && !state.loadingExtScript()) {
@@ -1609,10 +1594,6 @@ inline bool HTMLTokenizer::continueProcessing(int& processedCount, double startT
                 (m_doc->documentElement()->id() != ID_HTML || m_doc->body()))) {*/
             // Schedule the timer to keep processing as soon as possible.
             m_timer.startOneShot(0);
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-            if (currentTime() - startTime > m_tokenizerTimeDelay)
-                printf("Deferring processing of data because 500ms elapsed away from event loop.\n");
-#endif
             return false;
         }
     }
@@ -1622,7 +1603,7 @@ inline bool HTMLTokenizer::continueProcessing(int& processedCount, double startT
 }
 
 // Turns the statemachine one crank using the passed in State object.
-// FIXME: Eventually this should modify m_state directly.
+// This does not modify m_state directly in order to be reentrant.
 ALWAYS_INLINE void HTMLTokenizer::advance(State& state)
 {
     // do we need to enlarge the buffer?
@@ -1733,11 +1714,6 @@ ALWAYS_INLINE void HTMLTokenizer::advance(State& state)
 
 void HTMLTokenizer::willWriteHTML(const SegmentedString& source)
 {
-    #ifdef INSTRUMENT_LAYOUT_SCHEDULING
-        if (!m_doc->ownerElement())
-            printf("Beginning write at time %d\n", m_doc->elapsedTime());
-    #endif
-
     #if ENABLE(INSPECTOR)
         if (InspectorTimelineAgent* timelineAgent = m_doc->inspectorTimelineAgent())
             timelineAgent->willWriteHTML(source.length(), m_lineNumber);
@@ -1746,11 +1722,6 @@ void HTMLTokenizer::willWriteHTML(const SegmentedString& source)
 
 void HTMLTokenizer::didWriteHTML()
 {
-    #ifdef INSTRUMENT_LAYOUT_SCHEDULING
-        if (!m_doc->ownerElement())
-            printf("Ending write at time %d\n", m_doc->elapsedTime());
-    #endif
-
     #if ENABLE(INSPECTOR)
         if (InspectorTimelineAgent* timelineAgent = m_doc->inspectorTimelineAgent())
             timelineAgent->didWriteHTML(m_lineNumber);
@@ -1843,11 +1814,6 @@ bool HTMLTokenizer::processingData() const
 
 void HTMLTokenizer::timerFired(Timer<HTMLTokenizer>*)
 {
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-    if (!m_doc->ownerElement())
-        printf("Beginning timer write at time %d\n", m_doc->elapsedTime());
-#endif
-
     if (m_doc->view() && m_doc->view()->layoutPending() && !m_doc->minimumLayoutDelay()) {
         // Restart the timer and let layout win.  This is basically a way of ensuring that the layout
         // timer has higher priority than our timer.
@@ -2030,11 +1996,6 @@ void HTMLTokenizer::notifyFinished(CachedResource*)
 
 void HTMLTokenizer::executeExternalScriptsIfReady()
 {
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-    if (!m_doc->ownerElement())
-        printf("script loaded at %d\n", m_doc->elapsedTime());
-#endif
-
     ASSERT(!m_pendingScripts.isEmpty());
 
     // Make external scripts wait for external stylesheets.
@@ -2064,11 +2025,6 @@ void HTMLTokenizer::executeExternalScriptsIfReady()
 
         RefPtr<Node> n = m_scriptNode.release();
 
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-        if (!m_doc->ownerElement())
-            printf("external script beginning execution at %d\n", m_doc->elapsedTime());
-#endif
-
         if (errorOccurred)
             n->dispatchEvent(Event::create(eventNames().errorEvent, true, false));
         else {
@@ -2087,10 +2043,6 @@ void HTMLTokenizer::executeExternalScriptsIfReady()
         if (finished) {
             ASSERT(!m_hasScriptsWaitingForStylesheets);
             m_state.setLoadingExtScript(false);
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-            if (!m_doc->ownerElement())
-                printf("external script finished execution at %d\n", m_doc->elapsedTime());
-#endif
         } else if (m_hasScriptsWaitingForStylesheets) {
             // m_hasScriptsWaitingForStylesheets flag might have changed during the script execution.
             // If it did we are now blocked waiting for stylesheets and should not execute more scripts until they arrive.
