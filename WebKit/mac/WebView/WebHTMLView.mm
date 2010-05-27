@@ -3062,7 +3062,7 @@ WEBCORE_COMMAND(yankAndSelect)
         // now that we have a window to get it from.
         if (_private->layerHostingView) {
             CGFloat scaleFactor = [[self window] userSpaceScaleFactor];
-            [[_private->layerHostingView layer] setTransform:CATransform3DMakeScale(scaleFactor, scaleFactor, scaleFactor)];
+            [[_private->layerHostingView layer] setTransform:CATransform3DMakeScale(scaleFactor, scaleFactor, 1)];
         }
 #endif
     }
@@ -5574,7 +5574,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     // If we aren't in the window yet, we'll use the screen's scale factor now, and reset the scale 
     // via -viewDidMoveToWindow.
     CGFloat scaleFactor = [self window] ? [[self window] userSpaceScaleFactor] : [[NSScreen mainScreen] userSpaceScaleFactor];
-    [viewLayer setTransform:CATransform3DMakeScale(scaleFactor, scaleFactor, scaleFactor)];
+    [viewLayer setTransform:CATransform3DMakeScale(scaleFactor, scaleFactor, 1)];
 #endif
 
     [_private->layerHostingView setLayer:viewLayer];

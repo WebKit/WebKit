@@ -1,3 +1,13 @@
+2010-05-27  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Change z-component to 1.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView viewDidMoveToWindow]):
+        (-[WebHTMLView attachRootLayer:]):
+
 2010-05-26  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Beth Dakin and Darin Adler.
