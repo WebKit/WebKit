@@ -61,7 +61,7 @@ void V8CustomPositionErrorCallback::handleEvent(PositionError* error)
     RefPtr<Frame> protector(m_frame);
 
     bool callbackReturnValue = false;
-    invokeCallback(m_callback, 1, argv, callbackReturnValue);
+    invokeCallback(m_callback, 1, argv, callbackReturnValue, m_frame->document());
 }
 
 } // namespace WebCore

@@ -34,6 +34,7 @@
 #include "V8WorkerContext.h"
 
 #if ENABLE(DATABASE)
+#include "Database.h"
 #include "V8Database.h"
 #include "V8DatabaseCallback.h"
 #include "V8DatabaseSync.h"
@@ -143,12 +144,33 @@ v8::Handle<v8::Value> toV8(WorkerContext* impl)
 }
 
 #if ENABLE(DATABASE)
-v8::Handle<v8::Value> V8WorkerContext::openDatabaseCallback(const v8::Arguments& args) 
-{ 
-    INC_STATS("DOM.WorkerContext.openDatabase()"); 
-    // Implementation coming soon.
-    return throwError(NOT_SUPPORTED_ERR);
-} 
+v8::Handle<v8::Value> V8WorkerContext::openDatabaseCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.V8WorkerContext.openDatabase()");
+    if (args.Length() < 4)
+        return throwError(SYNTAX_ERR);
+
+    EXCEPTION_BLOCK(String, name, toWebCoreString(args[0]));
+    EXCEPTION_BLOCK(String, version, toWebCoreString(args[1]));
+    EXCEPTION_BLOCK(String, displayName, toWebCoreString(args[2]));
+    EXCEPTION_BLOCK(unsigned long, estimatedSize, args[3]->Uint32Value());
+
+    WorkerContext* workerContext = V8WorkerContext::toNative(args.Holder());
+
+    RefPtr<DatabaseCallback> creationCallback;
+    if (args.Length() >= 5) {
+        if (!args[4]->IsObject())
+            return throwError(TYPE_MISMATCH_ERR);
+
+        creationCallback = V8DatabaseCallback::create(args[4]);
+    }
+
+    ExceptionCode ec = 0;
+    v8::Handle<v8::Value> result = toV8(workerContext->openDatabase(name, version, displayName, estimatedSize, creationCallback.release(), ec));
+
+    V8Proxy::setDOMException(ec);
+    return result;
+}
 
 v8::Handle<v8::Value> V8WorkerContext::openDatabaseSyncCallback(const v8::Arguments& args)
 {
@@ -168,7 +190,7 @@ v8::Handle<v8::Value> V8WorkerContext::openDatabaseSyncCallback(const v8::Argume
         if (!args[4]->IsObject())
             return throwError(TYPE_MISMATCH_ERR);
 
-        creationCallback = V8DatabaseCallback::create(args[4], 0);
+        creationCallback = V8DatabaseCallback::create(args[4]);
     }
 
     ExceptionCode ec = 0;

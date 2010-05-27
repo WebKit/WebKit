@@ -2154,15 +2154,14 @@ sub GenerateCallbackHeader
     push(@headerContent, "#include <wtf/Forward.h>\n");
     
     push(@headerContent, "\nnamespace WebCore {\n\n");
-    push(@headerContent, "class Frame;\n\n");
     push(@headerContent, "class $className : public $interfaceName {\n");
 
     push(@headerContent, <<END);
 public:
-    static PassRefPtr<${className}> create(v8::Local<v8::Value> value, Frame* frame)
+    static PassRefPtr<${className}> create(v8::Local<v8::Value> value)
     {
         ASSERT(value->IsObject());
-        return adoptRef(new ${className}(value->ToObject(), frame));
+        return adoptRef(new ${className}(value->ToObject()));
     }
 
     virtual ~${className}();
@@ -2192,10 +2191,9 @@ END
     push(@headerContent, <<END);
 
 private:
-    ${className}(v8::Local<v8::Object>, Frame*);
+    ${className}(v8::Local<v8::Object>);
 
     v8::Persistent<v8::Object> m_callback;
-    RefPtr<Frame> m_frame;
     WorldContextHandle m_worldContext;
 };
 
@@ -2218,15 +2216,13 @@ sub GenerateCallbackImplementation
     # - Add default header template
     push(@implFixedHeader, GenerateImplementationContentHeader($dataNode));
          
-    $implIncludes{"Frame.h"} = 1;
     $implIncludes{"ScriptExecutionContext.h"} = 1;
     $implIncludes{"V8CustomVoidCallback.h"} = 1;
 
     push(@implContent, "namespace WebCore {\n\n");
     push(@implContent, <<END);
-${className}::${className}(v8::Local<v8::Object> callback, Frame* frame)
+${className}::${className}(v8::Local<v8::Object> callback)
     : m_callback(v8::Persistent<v8::Object>::New(callback))
-    , m_frame(frame)
     , m_worldContext(UseCurrentWorld)
 {
 }
@@ -2274,9 +2270,8 @@ END
             push(@implContent, join(",\n", @argvs));
 
             push(@implContent, "\n    };\n\n");
-            push(@implContent, "    RefPtr<Frame> protect(m_frame);\n\n");
             push(@implContent, "    bool callbackReturnValue = false;\n");
-            push(@implContent, "    return !invokeCallback(m_callback, " . scalar(@params). ", argv, callbackReturnValue);\n");
+            push(@implContent, "    return !invokeCallback(m_callback, " . scalar(@params) . ", argv, callbackReturnValue, context);\n");
             push(@implContent, "}\n");
         }
     }

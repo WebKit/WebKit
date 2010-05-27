@@ -67,19 +67,19 @@ bool DatabaseObserver::canEstablishDatabase(ScriptExecutionContext* scriptExecut
 
 void DatabaseObserver::databaseOpened(Database* database)
 {
-    ASSERT(isMainThread());
+    ASSERT(database->scriptExecutionContext()->isContextThread());
     WebDatabase::observer()->databaseOpened(WebDatabase(database));
 }
 
 void DatabaseObserver::databaseModified(Database* database)
 {
-    ASSERT(isMainThread());
+    ASSERT(database->scriptExecutionContext()->isContextThread());
     WebDatabase::observer()->databaseModified(WebDatabase(database));
 }
 
 void DatabaseObserver::databaseClosed(Database* database)
 {
-    ASSERT(isMainThread());
+    ASSERT(database->scriptExecutionContext()->isContextThread());
     WebDatabase::observer()->databaseClosed(WebDatabase(database));
 }
 

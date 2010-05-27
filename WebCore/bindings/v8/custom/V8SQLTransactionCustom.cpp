@@ -89,24 +89,22 @@ v8::Handle<v8::Value> V8SQLTransaction::executeSqlCallback(const v8::Arguments& 
 
     SQLTransaction* transaction = V8SQLTransaction::toNative(args.Holder());
 
-    Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
+    ScriptExecutionContext* executionContext = getScriptExecutionContext();
+    if (!executionContext)
+        return v8::Undefined();
 
     RefPtr<SQLStatementCallback> callback;
     if (args.Length() > 2 && !isUndefinedOrNull(args[2])) {
         if (!args[2]->IsObject())
             return throwError(TYPE_MISMATCH_ERR);
-
-        if (frame)
-            callback = V8SQLStatementCallback::create(args[2], frame);
+        callback = V8SQLStatementCallback::create(args[2]);
     }
 
     RefPtr<SQLStatementErrorCallback> errorCallback;
     if (args.Length() > 3 && !isUndefinedOrNull(args[3])) {
         if (!args[3]->IsObject())
             return throwError(TYPE_MISMATCH_ERR);
-
-        if (frame)
-            errorCallback = V8SQLStatementErrorCallback::create(args[3], frame);
+        errorCallback = V8SQLStatementErrorCallback::create(args[3]);
     }
 
     ExceptionCode ec = 0;

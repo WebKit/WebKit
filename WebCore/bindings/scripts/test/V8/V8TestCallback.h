@@ -30,14 +30,12 @@
 
 namespace WebCore {
 
-class Frame;
-
 class V8TestCallback : public TestCallback {
 public:
-    static PassRefPtr<V8TestCallback> create(v8::Local<v8::Value> value, Frame* frame)
+    static PassRefPtr<V8TestCallback> create(v8::Local<v8::Value> value)
     {
         ASSERT(value->IsObject());
-        return adoptRef(new V8TestCallback(value->ToObject(), frame));
+        return adoptRef(new V8TestCallback(value->ToObject()));
     }
 
     virtual ~V8TestCallback();
@@ -49,10 +47,9 @@ public:
     virtual int customCallback(ScriptExecutionContext*, Class5* class5Param, Class6* class6Param);
 
 private:
-    V8TestCallback(v8::Local<v8::Object>, Frame*);
+    V8TestCallback(v8::Local<v8::Object>);
 
     v8::Persistent<v8::Object> m_callback;
-    RefPtr<Frame> m_frame;
     WorldContextHandle m_worldContext;
 };
 

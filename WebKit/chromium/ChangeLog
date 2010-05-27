@@ -1,3 +1,17 @@
+2010-05-27  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add v8 bindings for async DB API in workers
+        https://bugs.webkit.org/show_bug.cgi?id=39145
+        
+        * src/DatabaseObserver.cpp:
+        We should check that we're on the context thread now, not the main
+        thread.
+        (WebCore::DatabaseObserver::databaseOpened):
+        (WebCore::DatabaseObserver::databaseModified):
+        (WebCore::DatabaseObserver::databaseClosed):
+
 2010-05-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

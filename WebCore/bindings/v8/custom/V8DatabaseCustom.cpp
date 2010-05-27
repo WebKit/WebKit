@@ -55,8 +55,8 @@ v8::Handle<v8::Value> V8Database::changeVersionCallback(const v8::Arguments& arg
 
     Database* database = V8Database::toNative(args.Holder());
 
-    Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
-    if (!frame)
+    ScriptExecutionContext* scriptExecutionContext = getScriptExecutionContext();
+    if (!scriptExecutionContext)
         return v8::Undefined();
 
     RefPtr<V8SQLTransactionCallback> callback;
@@ -64,7 +64,7 @@ v8::Handle<v8::Value> V8Database::changeVersionCallback(const v8::Arguments& arg
         if (!args[2]->IsObject())
             return throwError(TYPE_MISMATCH_ERR);
 
-        callback = V8SQLTransactionCallback::create(args[2], frame);
+        callback = V8SQLTransactionCallback::create(args[2]);
     }
 
     RefPtr<V8SQLTransactionErrorCallback> errorCallback;
@@ -72,7 +72,7 @@ v8::Handle<v8::Value> V8Database::changeVersionCallback(const v8::Arguments& arg
         if (!args[3]->IsObject())
             return throwError(TYPE_MISMATCH_ERR);
 
-        errorCallback = V8SQLTransactionErrorCallback::create(args[3], frame);
+        errorCallback = V8SQLTransactionErrorCallback::create(args[3]);
     }
 
     RefPtr<V8CustomVoidCallback> successCallback;
@@ -80,7 +80,7 @@ v8::Handle<v8::Value> V8Database::changeVersionCallback(const v8::Arguments& arg
         if (!args[4]->IsObject())
             return throwError(TYPE_MISMATCH_ERR);
 
-        successCallback = V8CustomVoidCallback::create(args[4], frame);
+        successCallback = V8CustomVoidCallback::create(args[4], scriptExecutionContext);
     }
 
     database->changeVersion(oldVersion, newVersion, callback.release(), errorCallback.release(), successCallback.release());
@@ -98,18 +98,17 @@ static v8::Handle<v8::Value> createTransaction(const v8::Arguments& args, bool r
 
     Database* database = V8Database::toNative(args.Holder());
 
-    Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
-    if (!frame)
+    ScriptExecutionContext* scriptExecutionContext = getScriptExecutionContext();
+    if (!scriptExecutionContext)
         return v8::Undefined();
-
-    RefPtr<V8SQLTransactionCallback> callback = V8SQLTransactionCallback::create(args[0], frame);
+    RefPtr<V8SQLTransactionCallback> callback = V8SQLTransactionCallback::create(args[0]);
 
     RefPtr<V8SQLTransactionErrorCallback> errorCallback;
     if (args.Length() > 1 && !isUndefinedOrNull(args[1])) {
         if (!args[1]->IsObject())
             return throwError(TYPE_MISMATCH_ERR);
 
-        errorCallback = V8SQLTransactionErrorCallback::create(args[1], frame);
+        errorCallback = V8SQLTransactionErrorCallback::create(args[1]);
     }
 
     RefPtr<V8CustomVoidCallback> successCallback;
@@ -117,7 +116,7 @@ static v8::Handle<v8::Value> createTransaction(const v8::Arguments& args, bool r
         if (!args[2]->IsObject())
             return throwError(TYPE_MISMATCH_ERR);
 
-        successCallback = V8CustomVoidCallback::create(args[2], frame);
+        successCallback = V8CustomVoidCallback::create(args[2], scriptExecutionContext);
     }
 
     database->transaction(callback.release(), errorCallback.release(), successCallback.release(), readOnly);

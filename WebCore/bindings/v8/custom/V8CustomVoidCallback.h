@@ -38,28 +38,28 @@
 
 namespace WebCore {
 
-class Frame;
+class ScriptExecutionContext;
 
 class V8CustomVoidCallback : public VoidCallback {
 public:
-    static PassRefPtr<V8CustomVoidCallback> create(v8::Local<v8::Value> value, Frame* frame)
+    static PassRefPtr<V8CustomVoidCallback> create(v8::Local<v8::Value> value, ScriptExecutionContext* context)
     {
         ASSERT(value->IsObject());
-        return adoptRef(new V8CustomVoidCallback(value->ToObject(), frame));
+        return adoptRef(new V8CustomVoidCallback(value->ToObject(), context));
     }
     virtual ~V8CustomVoidCallback();
 
     virtual void handleEvent();
 
 private:
-    V8CustomVoidCallback(v8::Local<v8::Object>, Frame*);
+    V8CustomVoidCallback(v8::Local<v8::Object>, ScriptExecutionContext* context);
 
     v8::Persistent<v8::Object> m_callback;
-    RefPtr<Frame> m_frame;
+    RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
 };
 
 // Returns false if callback failed (null, wrong type, or threw exception).
-bool invokeCallback(v8::Persistent<v8::Object> callback, int argc, v8::Handle<v8::Value> argv[], bool& callbackReturnValue);
+bool invokeCallback(v8::Persistent<v8::Object> callback, int argc, v8::Handle<v8::Value> argv[], bool& callbackReturnValue, ScriptExecutionContext* scriptExecutionContext);
 
 } // namespace WebCore
 

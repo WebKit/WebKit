@@ -58,7 +58,7 @@ v8::Handle<v8::Value> V8DatabaseSync::changeVersionCallback(const v8::Arguments&
         if (!args[2]->IsObject())
             return throwError(TYPE_MISMATCH_ERR);
 
-        callback = V8SQLTransactionSyncCallback::create(args[2], 0);
+        callback = V8SQLTransactionSyncCallback::create(args[2]);
     }
 
     ExceptionCode ec = 0;
@@ -78,7 +78,7 @@ static v8::Handle<v8::Value> createTransaction(const v8::Arguments& args, bool r
 
     DatabaseSync* database = V8DatabaseSync::toNative(args.Holder());
 
-    RefPtr<V8SQLTransactionSyncCallback> callback = V8SQLTransactionSyncCallback::create(args[0], 0);
+    RefPtr<V8SQLTransactionSyncCallback> callback = V8SQLTransactionSyncCallback::create(args[0]);
 
     ExceptionCode ec = 0;
     database->transaction(callback.release(), readOnly, ec);
