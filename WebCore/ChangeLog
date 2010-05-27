@@ -1,3 +1,10 @@
+2010-05-27  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fixes for Windows after recent changes.
+
+        * platform/graphics/wx/FontWx.cpp:
+        * wscript:
+
 2010-05-27  Chris Fleizach  <cfleizach@apple.com>
 
         No review, build fixage.

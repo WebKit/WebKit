@@ -35,7 +35,7 @@
 
 #if OS(WINDOWS)
 #include "UniscribeController.h"
-typedef UniscribeController ComplexTextController
+typedef WebCore::UniscribeController ComplexTextController;
 #endif
 
 #if OS(DARWIN)

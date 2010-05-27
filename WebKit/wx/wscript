@@ -40,6 +40,9 @@ include_paths = webkit_dirs + common_includes + ['.', '..',
                 os.path.join(wk_root, 'WebCore', 'platform', 'graphics', 'wx'),
 ]
 
+if sys.platform.startswith("win"):
+    include_paths.append(os.path.join(wk_root, 'WebCore','platform','win'))
+
 windows_deps = [
                 'lib/pthreadVC2.dll',
                 'bin/icuuc40.dll', 'bin/icudt40.dll', 'bin/icuin40.dll',

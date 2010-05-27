@@ -1,3 +1,11 @@
+2010-05-27  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fixes for Windows after recent changes.
+
+        * WebView.cpp:
+        (wxWebView::Create):
+        * wscript:
+
 2010-05-26  Kevin Ollivier  <kevino@theolliviers.com>
 
         Build fix after new client added to Page constructor.

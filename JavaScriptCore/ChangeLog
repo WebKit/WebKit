@@ -1,3 +1,9 @@
+2010-05-27  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fixes for Windows after recent changes.
+
+        * wscript:
+
 2010-05-27  Gustavo Noronha Silva  <gns@gnome.org>
 
         More build fixage for make dist.

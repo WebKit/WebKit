@@ -31,6 +31,8 @@ webcore_sources = {}
 
 if build_port == "wx":
     if building_on_win32:
+        # make sure platform/wx comes after this so we get the right
+        # FontPlatformData.h
         webcore_dirs.extend(['platform/wx/wxcode/win', 'plugins/win'])
         webcore_sources['wx-win'] = [
                'platform/graphics/win/TransformationMatrixWin.cpp',
@@ -38,8 +40,8 @@ if build_port == "wx":
                # so we need to use the Win port's implementation until the wx bug fix is
                # widely available (it was fixed in 2.8.10).
                'platform/win/SharedTimerWin.cpp',
+               'platform/win/WebCoreInstanceHandle.cpp',
                # Use the Windows plugin architecture
-               'page/win/PageWin.cpp',
                'plugins/win/PluginDataWin.cpp',
                'plugins/win/PluginDatabaseWin.cpp',
                'plugins/win/PluginMessageThrottlerWin.cpp',
@@ -124,6 +126,7 @@ def build(bld):
                 os.path.join(wk_root, 'JavaScriptCore'),
                 os.path.join(wk_root, 'WebCore'),
                 'platform/image-decoders',
+                'platform/win',
                 'platform/wx/wxcode',
                 'workers',
         ]
