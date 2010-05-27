@@ -304,6 +304,8 @@ void ScriptDebugServer::handleV8DebugEvent(const v8::Debug::EventDetails& eventD
                 // Wait for continue or step command.
                 m_clientMessageLoop->run(m_pausedPage);
                 ASSERT(!m_pausedPage);
+
+                listener->didContinue();
             }
         }
     }
