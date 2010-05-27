@@ -1,3 +1,42 @@
+2010-05-26  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39783, clean up the moveChild functions on RenderBlock.
+        
+        Eliminate the need to pass the toChildrenList to the moveChild functions by tightening up the type of the
+        |to| argument to be a RenderBlock.
+        
+        Add a moveChildrenTo function that can move a range of children, and patch places that were doing this
+        by hand.
+
+        Make the append forms of the functions just use the insert forms with a beforeChild of 0.
+        
+        Patch insertChildNode in RenderObjectChildList so that it passes the fullInsert parameter through in the
+        case where it does an append.
+        
+        Add an assert to RenderLayer that catches bad structure built when the fullInsert/Remove parameters are
+        messed up when using append/insertChildNode.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::splitAnonymousBlocksAroundChild):
+        (WebCore::RenderBlock::makeChildrenAnonymousColumnBlocks):
+        (WebCore::RenderBlock::createAndAppendRootInlineBox):
+        (WebCore::RenderBlock::moveChildTo):
+        (WebCore::RenderBlock::moveChildrenTo):
+        (WebCore::RenderBlock::makeChildrenNonInline):
+        (WebCore::RenderBlock::removeChild):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::moveChildTo):
+        (WebCore::RenderBlock::moveAllChildrenTo):
+        (WebCore::RenderBlock::moveChildrenTo):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::addChild):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::insertChildNode):
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::moveInlineChildren):
+
 2010-05-26  Anders Carlsson  <andersca@apple.com>
 
         Fix GTK+ test failures.

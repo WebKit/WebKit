@@ -968,12 +968,14 @@ void RenderLayer::addChild(RenderLayer* child, RenderLayer* beforeChild)
     if (prevSibling) {
         child->setPreviousSibling(prevSibling);
         prevSibling->setNextSibling(child);
+        ASSERT(prevSibling != child);
     } else
         setFirstChild(child);
 
     if (beforeChild) {
         beforeChild->setPreviousSibling(child);
         child->setNextSibling(beforeChild);
+        ASSERT(beforeChild != child);
     } else
         setLastChild(child);
 
