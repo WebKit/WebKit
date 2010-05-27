@@ -305,7 +305,9 @@ void ScriptDebugServer::handleV8DebugEvent(const v8::Debug::EventDetails& eventD
                 m_clientMessageLoop->run(m_pausedPage);
                 ASSERT(!m_pausedPage);
 
-                listener->didContinue();
+                // The listener may have been removed in the nested loop.
+                if (ScriptDebugListener* listener = m_listenersMap.get(frame->page()))
+                    listener->didContinue();
             }
         }
     }
