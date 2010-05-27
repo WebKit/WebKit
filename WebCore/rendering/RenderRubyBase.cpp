@@ -103,8 +103,7 @@ void RenderRubyBase::moveInlineChildren(RenderRubyBase* toBase, RenderObject* fr
         }
     }
     // Move our inline children into the target block we determined above.
-    for (RenderObject* child = firstChild(); child != fromBeforeChild; child = firstChild())
-        moveChildTo(toBlock, toBlock->children(), child);
+    moveChildrenTo(toBlock, firstChild(), fromBeforeChild);
 }
 
 void RenderRubyBase::moveBlockChildren(RenderRubyBase* toBase, RenderObject* fromBeforeChild)
@@ -124,7 +123,7 @@ void RenderRubyBase::moveBlockChildren(RenderRubyBase* toBase, RenderObject* fro
                     anonBlock->destroy();
                 } else {
                     ASSERT(child->isFloatingOrPositioned());
-                    moveChildTo(toBase, toBase->children(), child);
+                    moveChildTo(toBase, child);
                 }
             }
         } else {
@@ -147,7 +146,7 @@ void RenderRubyBase::moveBlockChildren(RenderRubyBase* toBase, RenderObject* fro
                     ASSERT(anonBlock->childrenInline());
                     ASSERT(!anonBlock->inlineElementContinuation());
                     // Move inline children out of anonymous block.
-                    anonBlock->moveAllChildrenTo(this, children(), anonBlock);
+                    anonBlock->moveAllChildrenTo(this, anonBlock);
                     anonBlock->deleteLineBoxTree();
                     anonBlock->destroy();
                 }
@@ -181,8 +180,7 @@ void RenderRubyBase::mergeBlockChildren(RenderRubyBase* toBase, RenderObject* fr
         anonBlockHere->destroy();
     }
     // Move all remaining children normally.
-    for (RenderObject* child = firstChild(); child != fromBeforeChild; child = firstChild())
-        moveChildTo(toBase, toBase->children(), child);
+    moveChildrenTo(toBase, firstChild(), fromBeforeChild);
 }
 
 } // namespace WebCore
