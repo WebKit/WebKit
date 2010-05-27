@@ -1,3 +1,16 @@
+2010-05-27  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Dragging onto the desktop causes a critical GLib warning
+        https://bugs.webkit.org/show_bug.cgi?id=39718
+
+        Only increment the window reference count if it is not null during drag-end
+        signal processing.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_drag_end): Guard against null window values.
+
 2010-05-26  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

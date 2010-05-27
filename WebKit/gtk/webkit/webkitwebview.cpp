@@ -1257,7 +1257,11 @@ static void webkit_web_view_drag_end(GtkWidget* widget, GdkDragContext* context)
     GdkDisplay* display = gdk_display_get_default();
     gdk_display_get_pointer(display, 0, &xRoot, &yRoot, &modifiers);
 
-    event->button.window = static_cast<GdkWindow*>(g_object_ref(gdk_display_get_window_at_pointer(display, &x, &y)));
+    GdkWindow* window = gdk_display_get_window_at_pointer(display, &x, &y);
+    if (window) {
+        g_object_ref(window);
+        event->button.window = window;
+    }
     event->button.x = x;
     event->button.y = y;
     event->button.x_root = xRoot;
