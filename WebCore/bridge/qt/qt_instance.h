@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef BINDINGS_QT_INSTANCE_H_
-#define BINDINGS_QT_INSTANCE_H_
+#ifndef qt_instance_h
+#define qt_instance_h
 
 #include "Bridge.h"
 #include "runtime_root.h"
