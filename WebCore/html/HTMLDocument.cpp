@@ -315,17 +315,21 @@ PassRefPtr<Element> HTMLDocument::createElement(const AtomicString& name, Except
     return HTMLElementFactory::createHTMLElement(QualifiedName(nullAtom, name.lower(), xhtmlNamespaceURI), this, 0, false);
 }
 
-static void addItemToMap(HashCountedSet<AtomicStringImpl*>& map, const AtomicString& name)
+void HTMLDocument::addItemToMap(HashCountedSet<AtomicStringImpl*>& map, const AtomicString& name)
 {
     if (name.isEmpty())
         return;
     map.add(name.impl());
+    if (Frame* f = frame())
+        f->script()->namedItemAdded(this, name);
 }
 
-static void removeItemFromMap(HashCountedSet<AtomicStringImpl*>& map, const AtomicString& name)
+void HTMLDocument::removeItemFromMap(HashCountedSet<AtomicStringImpl*>& map, const AtomicString& name)
 {
     if (name.isEmpty())
         return;
+    if (Frame* f = frame())
+        f->script()->namedItemRemoved(this, name);
     map.remove(name.impl());
 }
 

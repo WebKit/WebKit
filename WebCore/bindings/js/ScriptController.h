@@ -142,6 +142,9 @@ public:
     void clearWindowShell(bool goingIntoPageCache = false);
     void updateDocument();
 
+    void namedItemAdded(HTMLDocument*, const AtomicString&) { }
+    void namedItemRemoved(HTMLDocument*, const AtomicString&) { }
+
     // Notifies the ScriptController that the securityOrigin of the current
     // document was modified.  For example, this method is called when
     // document.domain is set.  This method is *not* called when a new document

@@ -91,6 +91,9 @@ private:
     virtual Tokenizer* createTokenizer();
     virtual void determineParseMode();
 
+    void addItemToMap(HashCountedSet<AtomicStringImpl*>&, const AtomicString&);
+    void removeItemFromMap(HashCountedSet<AtomicStringImpl*>&, const AtomicString&);
+
     HashCountedSet<AtomicStringImpl*> m_namedItemCounts;
     HashCountedSet<AtomicStringImpl*> m_extraNamedItemCounts;
 };
