@@ -1,3 +1,15 @@
+2010-05-27  Anders Bakken  <agbakken@gmail.com>
+
+        Reviewed by David Levin.
+
+        qt_class.cpp has coding-style errors
+        https://bugs.webkit.org/show_bug.cgi?id=39741
+
+        Fix webkit coding style issues in qt_class.cpp
+
+        * bridge/qt/qt_class.cpp:
+        (JSC::Bindings::QtClass::fieldNamed):
+
 2010-05-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.
