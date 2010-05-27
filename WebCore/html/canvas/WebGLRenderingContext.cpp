@@ -238,6 +238,8 @@ void WebGLRenderingContext::bindFramebuffer(unsigned long target, WebGLFramebuff
     }
     m_framebufferBinding = buffer;
     m_context->bindFramebuffer(target, buffer);
+    if (m_framebufferBinding)
+        m_framebufferBinding->onBind();
     cleanupAfterGraphicsCall(false);
 }
 
@@ -431,29 +433,31 @@ void WebGLRenderingContext::compileShader(WebGLShader* shader, ExceptionCode& ec
 
 void WebGLRenderingContext::copyTexImage2D(unsigned long target, long level, unsigned long internalformat, long x, long y, unsigned long width, unsigned long height, long border)
 {
+    RefPtr<WebGLTexture> tex = 0;
+    switch (target) {
+    case GraphicsContext3D::TEXTURE_2D:
+        tex = m_textureUnits[m_activeTextureUnit].m_texture2DBinding;
+        break;
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_X:
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_X:
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Y:
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Y:
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Z:
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Z:
+        tex = m_textureUnits[m_activeTextureUnit].m_textureCubeMapBinding;
+        break;
+    }
     if (!isGLES2Compliant()) {
         if (level && WebGLTexture::isNPOT(width, height)) {
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
             return;
         }
-        RefPtr<WebGLTexture> tex = 0;
-        switch (target) {
-        case GraphicsContext3D::TEXTURE_2D:
-            tex = m_textureUnits[m_activeTextureUnit].m_texture2DBinding;
-            break;
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_X:
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_X:
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Y:
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Y:
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Z:
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Z:
-            tex = m_textureUnits[m_activeTextureUnit].m_textureCubeMapBinding;
-            break;
-        }
         if (tex && !level) // only for level 0
             tex->setSize(target, width, height);
     }
     m_context->copyTexImage2D(target, level, internalformat, x, y, width, height, border);
+    if (m_framebufferBinding && tex)
+        m_framebufferBinding->onAttachedObjectChange(tex.get());
     cleanupAfterGraphicsCall(false);
 }
 
@@ -547,6 +551,8 @@ void WebGLRenderingContext::deleteRenderbuffer(WebGLRenderbuffer* renderbuffer)
         return;
     
     renderbuffer->deleteObject();
+    if (m_framebufferBinding)
+        m_framebufferBinding->onAttachedObjectChange(renderbuffer);
 }
 
 void WebGLRenderingContext::deleteShader(WebGLShader* shader)
@@ -563,6 +569,8 @@ void WebGLRenderingContext::deleteTexture(WebGLTexture* texture)
         return;
     
     texture->deleteObject();
+    if (m_framebufferBinding)
+        m_framebufferBinding->onAttachedObjectChange(texture);
 }
 
 void WebGLRenderingContext::depthFunc(unsigned long func)
@@ -845,7 +853,6 @@ void WebGLRenderingContext::framebufferRenderbuffer(unsigned long target, unsign
     }
     if (buffer && buffer->object()) {
         bool isConflicted = false;
-        bool isDepthOrStencil = true;
         switch (attachment) {
         case GraphicsContext3D::DEPTH_ATTACHMENT:
             if (m_framebufferBinding->isDepthStencilAttached() || m_framebufferBinding->isStencilAttached())
@@ -865,24 +872,14 @@ void WebGLRenderingContext::framebufferRenderbuffer(unsigned long target, unsign
             if (buffer->getInternalformat() != GraphicsContext3D::DEPTH_STENCIL)
                 isConflicted = true;
             break;
-        default:
-            isDepthOrStencil = false;
         }
         if (isConflicted) {
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
             return;
         }
-        if (isDepthOrStencil)
-            m_framebufferBinding->setIsAttached(attachment, true);
-    } else { // Detach
-        switch (attachment) {
-        case GraphicsContext3D::DEPTH_ATTACHMENT:
-        case GraphicsContext3D::STENCIL_ATTACHMENT:
-        case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
-            m_framebufferBinding->setIsAttached(attachment, false);
-        }
     }
     m_context->framebufferRenderbuffer(target, attachment, renderbuffertarget, buffer);
+    m_framebufferBinding->setAttachment(attachment, buffer);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -901,6 +898,7 @@ void WebGLRenderingContext::framebufferTexture2D(unsigned long target, unsigned 
         return;
     }
     m_context->framebufferTexture2D(target, attachment, textarget, texture, level);
+    m_framebufferBinding->setAttachment(attachment, texture);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1734,8 +1732,11 @@ void WebGLRenderingContext::renderbufferStorage(unsigned long target, unsigned l
     case GraphicsContext3D::STENCIL_INDEX8:
     case GraphicsContext3D::DEPTH_STENCIL:
         m_context->renderbufferStorage(target, internalformat, width, height);
-        if (m_renderbufferBinding)
+        if (m_renderbufferBinding) {
             m_renderbufferBinding->setInternalformat(internalformat);
+            if (m_framebufferBinding)
+                m_framebufferBinding->onAttachedObjectChange(m_renderbufferBinding.get());
+        }
         cleanupAfterGraphicsCall(false);
         break;
     default:
@@ -1804,6 +1805,20 @@ void WebGLRenderingContext::texImage2DBase(unsigned target, unsigned level, unsi
                                            unsigned width, unsigned height, unsigned border,
                                            unsigned format, unsigned type, void* pixels, ExceptionCode& ec)
 {
+    RefPtr<WebGLTexture> tex = 0;
+    switch (target) {
+    case GraphicsContext3D::TEXTURE_2D:
+        tex = m_textureUnits[m_activeTextureUnit].m_texture2DBinding;
+        break;
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_X:
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_X:
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Y:
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Y:
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Z:
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Z:
+        tex = m_textureUnits[m_activeTextureUnit].m_textureCubeMapBinding;
+        break;
+    }
     // FIXME: For now we ignore any errors returned
     ec = 0;
     if (!isGLES2Compliant()) {
@@ -1811,25 +1826,13 @@ void WebGLRenderingContext::texImage2DBase(unsigned target, unsigned level, unsi
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
             return;
         }
-        RefPtr<WebGLTexture> tex = 0;
-        switch (target) {
-        case GraphicsContext3D::TEXTURE_2D:
-            tex = m_textureUnits[m_activeTextureUnit].m_texture2DBinding;
-            break;
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_X:
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_X:
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Y:
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Y:
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Z:
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Z:
-            tex = m_textureUnits[m_activeTextureUnit].m_textureCubeMapBinding;
-            break;
-        }
         if (tex && !level) // only for level 0
             tex->setSize(target, width, height);
     }
     m_context->texImage2D(target, level, internalformat, width, height,
                           border, format, type, pixels);
+    if (m_framebufferBinding && tex)
+        m_framebufferBinding->onAttachedObjectChange(tex.get());
     cleanupAfterGraphicsCall(false);
 }
 

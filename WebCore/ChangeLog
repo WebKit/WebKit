@@ -1,3 +1,41 @@
+2010-05-27  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement lazy clearing of renderbuffers
+        https://bugs.webkit.org/show_bug.cgi?id=36248
+
+        Test: fast/canvas/webgl/renderbuffer-initialization.html
+
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::WebGLFramebuffer): Init added members.
+        (WebCore::WebGLFramebuffer::setAttachment): Set attachment object.
+        (WebCore::WebGLFramebuffer::onBind): Perform buffer clearing if needed.
+        (WebCore::WebGLFramebuffer::onAttachedObjectChange): Ditto.
+        (WebCore::WebGLFramebuffer::isUninitialized): Check whether an attached object is uninitialized renderbuffer.
+        (WebCore::WebGLFramebuffer::setInitialized): After initialize a renderbuffer, set the flag.
+        (WebCore::WebGLFramebuffer::initializeRenderbuffers): Clear un-initialized renderbuffers if framebuffer is complete.
+        * html/canvas/WebGLFramebuffer.h:
+        (WebCore::WebGLFramebuffer::isDepthAttached): Changed to check object.
+        (WebCore::WebGLFramebuffer::isStencilAttached): Ditto.
+        (WebCore::WebGLFramebuffer::isDepthStencilAttached): Ditto.
+        * html/canvas/WebGLRenderbuffer.cpp:
+        (WebCore::WebGLRenderbuffer::WebGLRenderbuffer): Init added members.
+        * html/canvas/WebGLRenderbuffer.h:
+        (WebCore::WebGLRenderbuffer::isInitialized): As the function name.
+        (WebCore::WebGLRenderbuffer::setInitialized): Ditto.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::bindFramebuffer): Call onBind().
+        (WebCore::WebGLRenderingContext::copyTexImage2D): Call onAttachedObjectChange().
+        (WebCore::WebGLRenderingContext::deleteRenderbuffer): Ditto.
+        (WebCore::WebGLRenderingContext::deleteTexture): Ditto.
+        (WebCore::WebGLRenderingContext::framebufferRenderbuffer): Call setAttachment.
+        (WebCore::WebGLRenderingContext::framebufferTexture2D): Call onAttachedObjectChange().
+        (WebCore::WebGLRenderingContext::renderbufferStorage): Ditto.
+        (WebCore::WebGLRenderingContext::texImage2DBase): Ditto.
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::reshape): Initialize internal buffers.
+
 2010-05-27  Kristian Monsen  <kristianm@google.com>
 
         Reviewed by Darin Adler.

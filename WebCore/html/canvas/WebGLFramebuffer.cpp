@@ -39,31 +39,166 @@ PassRefPtr<WebGLFramebuffer> WebGLFramebuffer::create(WebGLRenderingContext* ctx
 
 WebGLFramebuffer::WebGLFramebuffer(WebGLRenderingContext* ctx)
     : CanvasObject(ctx)
-    , m_isDepthAttached(false)
-    , m_isStencilAttached(false)
-    , m_isDepthStencilAttached(false)
+    , m_colorAttachment(0)
+    , m_depthAttachment(0)
+    , m_stencilAttachment(0)
+    , m_depthStencilAttachment(0)
 {
     setObject(context()->graphicsContext3D()->createFramebuffer());
 }
 
-void WebGLFramebuffer::setIsAttached(unsigned long attachment, bool isAttached)
+void WebGLFramebuffer::setAttachment(unsigned long attachment, CanvasObject* attachedObject)
 {
+    if (!object())
+        return;
+    if (attachedObject && !attachedObject->object())
+        attachedObject = 0;
     switch (attachment) {
+    case GraphicsContext3D::COLOR_ATTACHMENT0:
+        m_colorAttachment = attachedObject;
+        break;
     case GraphicsContext3D::DEPTH_ATTACHMENT:
-        m_isDepthAttached = isAttached;
+        m_depthAttachment = attachedObject;
         break;
     case GraphicsContext3D::STENCIL_ATTACHMENT:
-        m_isStencilAttached = isAttached;
+        m_stencilAttachment = attachedObject;
         break;
     case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
-        m_isDepthStencilAttached = isAttached;
+        m_depthStencilAttachment = attachedObject;
         break;
+    default:
+        return;
     }
+    initializeRenderbuffers();
+}
+
+void WebGLFramebuffer::onBind()
+{
+    initializeRenderbuffers();
+}
+
+void WebGLFramebuffer::onAttachedObjectChange(CanvasObject* object)
+{
+    // Currently object == 0 is not considered, but this might change if the
+    // lifespan of CanvasObject changes.
+    if (object
+        && (object == m_colorAttachment || object == m_depthAttachment
+            || object == m_stencilAttachment || object == m_depthStencilAttachment))
+        initializeRenderbuffers();
 }
 
 void WebGLFramebuffer::_deleteObject(Platform3DObject object)
 {
     context()->graphicsContext3D()->deleteFramebuffer(object);
+}
+
+bool WebGLFramebuffer::isUninitialized(CanvasObject* attachedObject)
+{
+    if (attachedObject && attachedObject->object() && attachedObject->isRenderbuffer()
+        && !(reinterpret_cast<WebGLRenderbuffer*>(attachedObject))->isInitialized())
+        return true;
+    return false;
+}
+
+void WebGLFramebuffer::setInitialized(CanvasObject* attachedObject)
+{
+    if (attachedObject && attachedObject->object() && attachedObject->isRenderbuffer())
+        (reinterpret_cast<WebGLRenderbuffer*>(attachedObject))->setInitialized();
+}
+
+void WebGLFramebuffer::initializeRenderbuffers()
+{
+    if (!object())
+        return;
+    bool initColor = false, initDepth = false, initStencil = false;
+    unsigned long mask = 0;
+    if (isUninitialized(m_colorAttachment)) {
+        initColor = true;
+        mask |= GraphicsContext3D::COLOR_BUFFER_BIT;
+    }
+    if (isUninitialized(m_depthAttachment)) {
+        initDepth = true;
+        mask |= GraphicsContext3D::DEPTH_BUFFER_BIT;
+    }
+    if (isUninitialized(m_stencilAttachment)) {
+        initStencil = true;
+        mask |= GraphicsContext3D::STENCIL_BUFFER_BIT;
+    }
+    if (isUninitialized(m_depthStencilAttachment)) {
+        initDepth = true;
+        initStencil = true;
+        mask |= (GraphicsContext3D::DEPTH_BUFFER_BIT | GraphicsContext3D::STENCIL_BUFFER_BIT);
+    }
+    if (!initColor && !initDepth && !initStencil)
+        return;
+
+    // We only clear un-initialized renderbuffers when they are ready to be
+    // read, i.e., when the framebuffer is complete.
+    GraphicsContext3D* g3d = context()->graphicsContext3D();
+    if (g3d->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE)
+        return;
+
+    float colorClearValue[] = {0, 0, 0, 0}, depthClearValue = 0;
+    int stencilClearValue = 0;
+    unsigned char colorMask[] = {1, 1, 1, 1}, depthMask = 1, stencilMask = 1;
+    bool isScissorEnabled = false;
+    bool isDitherEnabled = false;
+    if (initColor) {
+        g3d->getFloatv(GraphicsContext3D::COLOR_CLEAR_VALUE, colorClearValue);
+        g3d->getBooleanv(GraphicsContext3D::COLOR_WRITEMASK, colorMask);
+        g3d->clearColor(0, 0, 0, 0);
+        g3d->colorMask(true, true, true, true);
+    }
+    if (initDepth) {
+        g3d->getFloatv(GraphicsContext3D::DEPTH_CLEAR_VALUE, &depthClearValue);
+        g3d->getBooleanv(GraphicsContext3D::DEPTH_WRITEMASK, &depthMask);
+        g3d->clearDepth(0);
+        g3d->depthMask(true);
+    }
+    if (initStencil) {
+        g3d->getIntegerv(GraphicsContext3D::STENCIL_CLEAR_VALUE, &stencilClearValue);
+        g3d->getBooleanv(GraphicsContext3D::STENCIL_WRITEMASK, &stencilMask);
+        g3d->clearStencil(0);
+        g3d->stencilMask(true);
+    }
+    isScissorEnabled = g3d->isEnabled(GraphicsContext3D::SCISSOR_TEST);
+    g3d->disable(GraphicsContext3D::SCISSOR_TEST);
+    isDitherEnabled = g3d->isEnabled(GraphicsContext3D::DITHER);
+    g3d->disable(GraphicsContext3D::DITHER);
+
+    g3d->clear(mask);
+
+    if (initColor) {
+        g3d->clearColor(colorClearValue[0], colorClearValue[1], colorClearValue[2], colorClearValue[3]);
+        g3d->colorMask(colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
+    }
+    if (initDepth) {
+        g3d->clearDepth(depthClearValue);
+        g3d->depthMask(depthMask);
+    }
+    if (initStencil) {
+        g3d->clearStencil(stencilClearValue);
+        g3d->stencilMask(stencilMask);
+    }
+    if (isScissorEnabled)
+        g3d->enable(GraphicsContext3D::SCISSOR_TEST);
+    else
+        g3d->disable(GraphicsContext3D::SCISSOR_TEST);
+    if (isDitherEnabled)
+        g3d->enable(GraphicsContext3D::DITHER);
+    else
+        g3d->disable(GraphicsContext3D::DITHER);
+
+    if (initColor)
+        setInitialized(m_colorAttachment);
+    if (initDepth && initStencil && m_depthStencilAttachment)
+        setInitialized(m_depthStencilAttachment);
+    else {
+        if (initDepth)
+            setInitialized(m_depthAttachment);
+        if (initStencil)
+            setInitialized(m_stencilAttachment);
+    }
 }
 
 }

@@ -593,6 +593,50 @@ void WebGraphicsContext3DDefaultImpl::reshape(int width, int height)
         notImplemented();
     }
 
+    if (m_attributes.antialias) {
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
+        if (m_boundFBO == m_multisampleFBO)
+            mustRestoreFBO = false;
+    }
+
+    // Initialize renderbuffers to 0.
+    GLboolean colorMask[] = {GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE}, depthMask = GL_TRUE, stencilMask = GL_TRUE;
+    GLboolean isScissorEnabled = GL_FALSE;
+    GLboolean isDitherEnabled = GL_FALSE;
+    GLbitfield clearMask = GL_COLOR_BUFFER_BIT;
+    glGetBooleanv(GL_COLOR_WRITEMASK, colorMask);
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    if (m_attributes.depth) {
+        glGetBooleanv(GL_DEPTH_WRITEMASK, &depthMask);
+        glDepthMask(GL_TRUE);
+        clearMask |= GL_DEPTH_BUFFER_BIT;
+    }
+    if (m_attributes.stencil) {
+        glGetBooleanv(GL_STENCIL_WRITEMASK, &stencilMask);
+        glStencilMask(GL_TRUE);
+        clearMask |= GL_STENCIL_BUFFER_BIT;
+    }
+    isScissorEnabled = glIsEnabled(GL_SCISSOR_TEST);
+    glDisable(GL_SCISSOR_TEST);
+    isDitherEnabled = glIsEnabled(GL_DITHER);
+    glDisable(GL_DITHER);
+
+    glClear(clearMask);
+
+    glColorMask(colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
+    if (m_attributes.depth)
+        glDepthMask(depthMask);
+    if (m_attributes.stencil)
+        glStencilMask(stencilMask);
+    if (isScissorEnabled)
+        glEnable(GL_SCISSOR_TEST);
+    else
+        glDisable(GL_SCISSOR_TEST);
+    if (isDitherEnabled)
+        glEnable(GL_DITHER);
+    else
+        glDisable(GL_DITHER);
+
     if (mustRestoreFBO)
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
 #endif // RENDER_TO_DEBUGGING_WINDOW
@@ -604,13 +648,6 @@ void WebGraphicsContext3DDefaultImpl::reshape(int width, int height)
     }
     m_scanline = new unsigned char[width * 4];
 #endif // FLIP_FRAMEBUFFER_VERTICALLY
-
-    GLbitfield clearMask = GL_COLOR_BUFFER_BIT;
-    if (m_attributes.stencil)
-        clearMask |= GL_STENCIL_BUFFER_BIT;
-    if (m_attributes.depth)
-        clearMask |= GL_DEPTH_BUFFER_BIT;
-    glClear(clearMask);
 }
 
 #ifdef FLIP_FRAMEBUFFER_VERTICALLY

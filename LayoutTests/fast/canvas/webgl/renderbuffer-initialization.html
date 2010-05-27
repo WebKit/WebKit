@@ -1,0 +1,81 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+<script src="resources/utils3d.js"></script>
+<script>
+function runTest()
+{
+    var canvas = document.getElementById("testbed");
+    var gl = canvas.getContext("experimental-webgl");
+    if (!gl) {
+        testFailed('canvas.getContext() failed');
+        return false;
+    }
+
+    debug('Test whether the WebGL internal buffers have been initialized to 0.');
+    var buf = gl.readPixels(0, 0, 500, 500, gl.RGBA, gl.UNSIGNED_BYTE);
+    if (gl.getError() != gl.NO_ERROR) {
+        testFailed('GL error detected after readPixels().');
+        return false;
+    }
+    var totalBytes = 500 * 500 * 4;
+    for (var i = 0; i < totalBytes; ++i) {
+        if (buf[i] != 0) {
+            testFailed('WebGL internal buffers are dirty.');
+            return false;
+        }
+    }
+    testPassed('Buffers have been initialized to 0.');
+
+    debug('Test whether user created buffers have been initialized to 0.');
+    var fbo = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+    var colorbuffer = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, colorbuffer);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGBA4, 500, 500);
+    if (gl.getError() != gl.NO_ERROR) {
+        testFailed('GL error detected after renderbufferStorage(internalformat = RGBA4).');
+        return false;
+    }
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, colorbuffer);
+    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE) {
+        testFailed('Framebuffer incomplete.');
+        return false;
+    }
+    buf = gl.readPixels(0, 0, 500, 500, gl.RGBA, gl.UNSIGNED_BYTE);
+    if (gl.getError() != gl.NO_ERROR) {
+        testFailed('GL error detected after readPixels().');
+        return false;
+    }
+    for (var i = 0; i < totalBytes; ++i) {
+        if (buf[i] != 0) {
+            testFailed('User created buffers are dirty.');
+            return false;
+        }
+    }
+
+    testPassed('Buffers have been initialized to 0.');
+    return true;
+}
+</script>
+</head>
+<body>
+<canvas id="testbed" width="500px" height="500px"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+var successfullyParsed = false;
+
+description('Verify renderbuffers are initialized to 0 before being read in WebGL');
+
+debug('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=36248">https://bugs.webkit.org/show_bug.cgi?id=36248</a> : <code>Implement lazy clearing of renderbuffers</code>');
+
+runTest();
+
+successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

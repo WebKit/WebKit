@@ -42,6 +42,9 @@ namespace WebCore {
         void setInternalformat(unsigned long internalformat) { m_internalformat = internalformat; }
         unsigned long getInternalformat() const { return m_internalformat; }
 
+        bool isInitialized() const { return m_initialized; }
+        void setInitialized() { m_initialized = true; }
+
     protected:
         WebGLRenderbuffer(WebGLRenderingContext*);
         
@@ -51,6 +54,7 @@ namespace WebCore {
         virtual bool isRenderbuffer() const { return true; }
 
         unsigned long m_internalformat;
+        bool m_initialized;
     };
     
 } // namespace WebCore
