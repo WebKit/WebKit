@@ -1,3 +1,18 @@
+2010-05-27  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Brady Eidson.
+
+        New Layout test for the history.pushState function.
+
+        The test checks if history.length property is correct after
+        a few pushState calls.
+
+        history.pushState doesn't work for the first page in a window.
+        https://bugs.webkit.org/show_bug.cgi?id=39418
+
+        * fast/loader/stateobjects/pushstate-without-history-expected.txt: Added.
+        * fast/loader/stateobjects/pushstate-without-history.html: Added.
+
 2010-05-27  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.
