@@ -1,3 +1,28 @@
+2010-05-26  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed, rolling out r60262.
+        http://trac.webkit.org/changeset/60262
+        https://bugs.webkit.org/show_bug.cgi?id=39783
+
+        Broke every build and is blocking me from working.  :(
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::splitAnonymousBlocksAroundChild):
+        (WebCore::RenderBlock::makeChildrenAnonymousColumnBlocks):
+        (WebCore::RenderBlock::moveChildTo):
+        (WebCore::RenderBlock::moveAllChildrenTo):
+        (WebCore::RenderBlock::makeChildrenNonInline):
+        (WebCore::RenderBlock::removeChild):
+        * rendering/RenderBlock.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::addChild):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::insertChildNode):
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::moveInlineChildren):
+        (WebCore::RenderRubyBase::moveBlockChildren):
+        (WebCore::RenderRubyBase::mergeBlockChildren):
+
 2010-05-26  Anders Carlsson  <andersca@apple.com>
 
         Unreviewed, rolling out r60256.
