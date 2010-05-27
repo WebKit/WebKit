@@ -111,7 +111,7 @@ void FileStream::openForRead(Blob* blob)
     if (m_totalBytesToRead == Blob::toEndOfFile)
         m_totalBytesToRead = blob->size() - blob->start();
 #else
-    m_total = blob->size();
+    m_totalBytesToRead = blob->size();
 #endif
 
     m_client->didGetSize(m_totalBytesToRead);
