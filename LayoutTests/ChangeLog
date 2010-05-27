@@ -1,3 +1,12 @@
+2010-05-27  Julie Parent  <jparent@chromium.org>
+
+        Unreviewed.
+
+        Update Chromium expectations for runner.html after r60278.
+
+        * platform/chromium-mac/html5lib/runner-expected.txt:
+        * platform/chromium-win/html5lib/runner-expected.txt:
+
 2010-05-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
