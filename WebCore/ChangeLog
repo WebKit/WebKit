@@ -1,3 +1,14 @@
+2010-05-27  Anders Bakken  <agbakken@gmail.com>
+
+        Reviewed by David Levin.
+
+        qt_pixmapruntime.cpp has coding-style errors
+        https://bugs.webkit.org/show_bug.cgi?id=39745
+
+        Fix webkit coding style issues in qt_pixmapruntime.cpp
+
+        * bridge/qt/qt_pixmapruntime.cpp:
+
 2010-05-26  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.

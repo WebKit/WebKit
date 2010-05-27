@@ -31,9 +31,9 @@
 #include <QImage>
 #include <QPixmap>
 #include <QVariant>
+#include <runtime_method.h>
 #include <runtime_object.h>
 #include <runtime_root.h>
-#include <runtime_method.h>
 
 using namespace WebCore;
 namespace JSC {
