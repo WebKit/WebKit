@@ -1,3 +1,18 @@
+2010-05-26  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by NOBODY (layout test crashing fix).
+
+        Bug 39811 - WebPluginListBuilderImpl::addMediaTypeToLastPlugin does not initialize pluginIndex
+        https://bugs.webkit.org/show_bug.cgi?id=39811
+
+        Initialize the pluginIndex field (quick fix).
+
+        Tests: covered by fast/dom/prototype-inheritance-2.html
+        (crashed under Chromium Linux and Windows)
+
+        * src/WebPluginListBuilderImpl.cpp:
+        (WebKit::WebPluginListBuilderImpl::addMediaTypeToLastPlugin):
+
 2010-05-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.
