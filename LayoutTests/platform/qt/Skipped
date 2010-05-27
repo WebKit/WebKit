@@ -5100,3 +5100,16 @@ fast/history/self-is-visited.html
 # [Qt] media/media-can-play-ogg.html crashes intermittently on the bot
 # https://bugs.webkit.org/show_bug.cgi?id=39481
 media/audio-only-video-intrinsic-size.html
+
+# [Qt] REGRESSION(r60258): It broke 10 tests.
+# https://bugs.webkit.org/show_bug.cgi?id=39819
+fast/events/xsl-onload.xhtml
+fast/xsl/document-function.xml
+fast/xsl/subframe-location.html
+fast/xsl/xslt-doc-noenc.xml
+fast/xsl/xslt-entity-enc.xml
+fast/xsl/xslt-recursion.xml
+plugins/plugin-javascript-access.html
+http/tests/misc/location-test-xsl-style-sheet.xml
+http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml
+http/tests/security/xss-DENIED-xsl-external-entity.xml
