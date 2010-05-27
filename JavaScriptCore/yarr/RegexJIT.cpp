@@ -345,6 +345,15 @@ class RegexGenerator : private MacroAssembler {
             ASSERT(alternativeValid());
             return alternative()->m_terms[t];
         }
+        bool isLastTerm()
+        {
+            ASSERT(alternativeValid());
+            return (t + 1) == alternative()->m_terms.size();
+        }
+        bool isMainDisjunction()
+        {
+            return !disjunction->m_parent;
+        }
 
         PatternTerm& lookaheadTerm()
         {
@@ -902,6 +911,11 @@ class RegexGenerator : private MacroAssembler {
         PatternDisjunction* disjunction = term.parentheses.disjunction;
         ASSERT(term.quantityCount == 1);
 
+        if (term.parentheses.isCopy) {
+            m_shouldFallBack = true;
+            return;
+        }
+
         unsigned preCheckedCount = ((term.quantityCount == 1) && (term.quantityType == QuantifierFixedCount)) ? disjunction->m_minimumSize : 0;
 
         unsigned parenthesesFrameLocation = term.frameLocation;
@@ -987,6 +1001,65 @@ class RegexGenerator : private MacroAssembler {
                 nonGreedySkipParentheses.link(this);
             success.link(this);
         }
+    }
+
+    void generateParenthesesGreedyNoBacktrack(TermGenerationState& state)
+    {
+        PatternTerm& parenthesesTerm = state.term();
+        PatternDisjunction* disjunction = parenthesesTerm.parentheses.disjunction;
+        ASSERT(parenthesesTerm.type == PatternTerm::TypeParenthesesSubpattern);
+        ASSERT(parenthesesTerm.quantityCount != 1); // Handled by generateParenthesesSingle.
+
+        // Capturing not yet implemented!
+        if (parenthesesTerm.invertOrCapture) {
+            m_shouldFallBack = true;
+            return;
+        }
+
+        // Quantification limit not yet implemented!
+        if (parenthesesTerm.quantityCount != 0xffffffff) {
+            m_shouldFallBack = true;
+            return;
+        }
+
+        // Need to reset nested subpatterns between iterations...
+        // for the minute this crude check rejects all patterns with any subpatterns!
+        if (m_pattern.m_numSubpatterns) {
+            m_shouldFallBack = true;
+            return;
+        }
+
+        TermGenerationState parenthesesState(disjunction, state.checkedTotal);
+
+        Label matchAgain(this);
+        for (parenthesesState.resetAlternative(); parenthesesState.alternativeValid(); parenthesesState.nextAlternative()) {
+
+            PatternAlternative* alternative = parenthesesState.alternative();
+            optimizeAlternative(alternative);
+
+            int countToCheck = alternative->m_minimumSize;
+            if (countToCheck) {
+                parenthesesState.addBacktrackJump(jumpIfNoAvailableInput(countToCheck));
+                parenthesesState.checkedTotal += countToCheck;
+            }
+
+            for (parenthesesState.resetTerm(); parenthesesState.termValid(); parenthesesState.nextTerm())
+                generateTerm(parenthesesState);
+
+            // If we get here, we matched! Limit not yet supported, so just try to match more!
+            jump(matchAgain);
+            
+            parenthesesState.linkAlternativeBacktracks(this);
+            // We get here if the alternative fails to match - fall through to the next iteration, or out of the loop.
+
+            if (countToCheck) {
+                sub32(Imm32(countToCheck), index);
+                parenthesesState.checkedTotal -= countToCheck;
+            }
+        }
+
+        // If the last alternative falls through to here, we have a failed match...
+        // Which means that we match whatever we have matched up to this point (even if nothing).
     }
 
     void generateParentheticalAssertion(TermGenerationState& state)
@@ -1100,15 +1173,24 @@ class RegexGenerator : private MacroAssembler {
             break;
 
         case PatternTerm::TypeBackReference:
-            ASSERT_NOT_REACHED();
+            m_shouldFallBack = true;
             break;
 
         case PatternTerm::TypeForwardReference:
             break;
 
         case PatternTerm::TypeParenthesesSubpattern:
-            ASSERT((term.quantityCount == 1) && !term.parentheses.isCopy); // must fallback to pcre before this point
-            generateParenthesesSingle(state);
+            if (term.quantityCount == 1) {
+                generateParenthesesSingle(state);
+                break;
+            } else if (state.isLastTerm() && state.isMainDisjunction()) { // Is this is the last term of the main disjunction?
+                // If this has a greedy quantifier, then it will never need to backtrack!
+                if (term.quantityType == QuantifierGreedy) {
+                    generateParenthesesGreedyNoBacktrack(state);
+                    break;
+                }
+            }
+            m_shouldFallBack = true;
             break;
 
         case PatternTerm::TypeParentheticalAssertion:
@@ -1361,6 +1443,7 @@ class RegexGenerator : private MacroAssembler {
 public:
     RegexGenerator(RegexPattern& pattern)
         : m_pattern(pattern)
+        , m_shouldFallBack(false)
     {
     }
 
@@ -1390,28 +1473,34 @@ public:
         jitObject.set(patchBuffer.finalizeCode());
     }
 
+    bool shouldFallBack()
+    {
+        return m_shouldFallBack;
+    }
+
 private:
     RegexPattern& m_pattern;
+    bool m_shouldFallBack;
     Vector<AlternativeBacktrackRecord> m_backtrackRecords;
 };
 
 void jitCompileRegex(JSGlobalData* globalData, RegexCodeBlock& jitObject, const UString& patternString, unsigned& numSubpatterns, const char*& error, bool ignoreCase, bool multiline)
 {
     RegexPattern pattern(ignoreCase, multiline);
-
     if ((error = compileRegex(patternString, pattern)))
         return;
-
     numSubpatterns = pattern.m_numSubpatterns;
 
-    if (pattern.m_shouldFallBack) {
-        JSRegExpIgnoreCaseOption ignoreCaseOption = ignoreCase ? JSRegExpIgnoreCase : JSRegExpDoNotIgnoreCase;
-        JSRegExpMultilineOption multilineOption = multiline ? JSRegExpMultiline : JSRegExpSingleLine;
-        jitObject.setFallback(jsRegExpCompile(reinterpret_cast<const UChar*>(patternString.data()), patternString.size(), ignoreCaseOption, multilineOption, &numSubpatterns, &error));
-    } else {
+    if (!pattern.m_containsBackreferences) {
         RegexGenerator generator(pattern);
         generator.compile(globalData, jitObject);
+        if (!generator.shouldFallBack())
+            return;
     }
+
+    JSRegExpIgnoreCaseOption ignoreCaseOption = ignoreCase ? JSRegExpIgnoreCase : JSRegExpDoNotIgnoreCase;
+    JSRegExpMultilineOption multilineOption = multiline ? JSRegExpMultiline : JSRegExpSingleLine;
+    jitObject.setFallback(jsRegExpCompile(reinterpret_cast<const UChar*>(patternString.data()), patternString.size(), ignoreCaseOption, multilineOption, &numSubpatterns, &error));
 }
 
 }}
