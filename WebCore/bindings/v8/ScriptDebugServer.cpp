@@ -315,9 +315,9 @@ void ScriptDebugServer::handleV8DebugEvent(const v8::Debug::EventDetails& eventD
 void ScriptDebugServer::dispatchDidParseSource(ScriptDebugListener* listener, v8::Handle<v8::Object> object)
 {
     listener->didParseSource(
-        toWebCoreStringWithNullCheck(object->Get(v8::String::New("id"))),
-        toWebCoreStringWithNullCheck(object->Get(v8::String::New("name"))),
-        toWebCoreStringWithNullCheck(object->Get(v8::String::New("source"))),
+        toWebCoreStringWithNullOrUndefinedCheck(object->Get(v8::String::New("id"))),
+        toWebCoreStringWithNullOrUndefinedCheck(object->Get(v8::String::New("name"))),
+        toWebCoreStringWithNullOrUndefinedCheck(object->Get(v8::String::New("source"))),
         object->Get(v8::String::New("lineOffset"))->ToInteger()->Value());
 }
 

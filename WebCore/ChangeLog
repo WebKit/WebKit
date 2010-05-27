@@ -1,3 +1,15 @@
+2010-05-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [v8] Web Inspector: undefined script URL value should be converted to an emtpy
+        WebCore::String instead of "undefined" string. Otherwise it's shown
+        in the Scripts panel with "undefined:<line no>" URL.
+        https://bugs.webkit.org/show_bug.cgi?id=39845
+
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::dispatchDidParseSource):
+
 2010-05-27  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
