@@ -79,6 +79,7 @@ GDOM_CLASSES :=
 GDOM_HEADERS_BUILT :=
 GDOM_HEADERS_FIXED :=
 libgdom_h_api :=
+libgdom_cleanfiles :=
 webkitgtk_h_api :=
 webkitgtk_sources :=
 webkitgtk_cppflags :=
@@ -279,6 +280,11 @@ libwebkit_1_0_la_LIBADD = \
 libgdom_ladir = $(prefix)/include/webkit-1.0/webkit
 nodist_libgdom_la_HEADERS = \
 	$(libgdom_h_api)
+
+libgdom_cleanfiles += \
+	$(top_builddir)/WebKit/gtk/webkit/webkitdomenumtypes.h \
+	$(top_builddir)/libgdom.la \
+	$(top_builddir)/stamp-webkitdomenumtypes.h
 
 #
 # Extra checks and flags
@@ -775,7 +781,8 @@ BUILT_SOURCES += \
 # Files that will be cleaned
 CLEANFILES += \
 	$(BUILT_SOURCES) \
-	$(webkitgtk_cleanfiles)
+	$(webkitgtk_cleanfiles) \
+	$(libgdom_cleanfiles)
 
 DISTCLEANFILES += \
 	$(CLEANFILES) \
