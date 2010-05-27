@@ -1,3 +1,12 @@
+2010-05-27  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        Build fix for introspection support - make sure DOM headers are
+        included by the GI scanner.
+
+        * GNUmakefile.am:
+
 2010-05-26  Gustavo Noronha Silva  <gns@gnome.org>
 
         Build fixes for make distcheck.
