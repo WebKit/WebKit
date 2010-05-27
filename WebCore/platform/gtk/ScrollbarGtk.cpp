@@ -20,6 +20,7 @@
 #include "config.h"
 #include "ScrollbarGtk.h"
 
+#include "GtkVersioning.h"
 #include "IntRect.h"
 #include "GraphicsContext.h"
 #include "FrameView.h"

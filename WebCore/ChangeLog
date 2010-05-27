@@ -1,3 +1,13 @@
+2010-05-27  Joone Hur  <joone@kldp.org>
+
+        Reviewed by Xan Lopez.
+
+        Add GtkVersioning.h in ScrollbackGtk.cpp for maintaining compatibility with the previous GTK+
+
+        https://bugs.webkit.org/show_bug.cgi?id=39567
+
+        * platform/gtk/ScrollbarGtk.cpp:
+
 2010-05-27  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
