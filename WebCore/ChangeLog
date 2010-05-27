@@ -1,3 +1,29 @@
+2010-05-27  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8016158> Crash in CVPixelBufferCreateResolvedAttributesDictionary with RLE
+        compressed movie.
+
+        Configure the visual context to generate Direct3D compatible pixel buffers when we are able to
+        use a CAImageQueue so there will be less conversion required before display. This change also  
+        works around the issue that causes the RLE compressed movie to crash.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::load): Pass enum to QTMovieVisualContext
+        constructor instead of CFDictionary.
+        * platform/graphics/win/QTMovieVisualContext.cpp:
+        (SetNumberValue):
+        (getPixelBufferCreationOptions): New, create options dictionary appropriate for the visual 
+        context type.
+        (pixelBufferCreationOptions): New, return options dictionary appropriate for the visual 
+        context type.
+        (QTMovieVisualContextPriv::QTMovieVisualContextPriv): Get the options dictionary from
+        getPixelBufferCreationOptions insteaad of taking it as a parameter.
+        (QTMovieVisualContext::QTMovieVisualContext): Take enum instead of CFDictionary for 
+        visual context configuration type.
+        * platform/graphics/win/QTMovieVisualContext.h:
+
 2010-05-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

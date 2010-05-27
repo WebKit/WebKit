@@ -992,13 +992,8 @@ void MediaPlayerPrivateQuickTimeVisualContext::setUpVideoRendering()
         m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);
 #endif
 
-    CFDictionaryRef options = 0;
-    // If CAImageQueue prerequisites are not satisfied, pass in visual context pixelbuffer
-    // options which will instruct the visual context to generate CGImage compatible 
-    // pixel buffers (i.e. RGBA).
-    if (!requiredDllsAvailable() || preferredMode != MediaRenderingMovieLayer)
-        options = QTMovieVisualContext::getCGImageOptions();
-    m_visualContext = QTMovieVisualContext::create(m_visualContextClient.get(), options);
+    QTMovieVisualContext::Type contextType = requiredDllsAvailable() && preferredMode == MediaRenderingMovieLayer ? QTMovieVisualContext::ConfigureForCAImageQueue : QTMovieVisualContext::ConfigureForCGImage;
+    m_visualContext = QTMovieVisualContext::create(m_visualContextClient.get(), contextType);
     m_visualContext->setMovie(m_movie.get());
 }
 
