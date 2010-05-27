@@ -1,3 +1,25 @@
+2010-05-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Implement SegmentedString::lookAheadSlowCase
+        https://bugs.webkit.org/show_bug.cgi?id=39802
+
+        The slow case is need by the resumer test suite.  Sadly, the resumer
+        test suite is really slow and produces infinite errors (many of which
+        are false positives).  I'll land more of the resumer test suite in a
+        future patch.
+
+        * platform/text/SegmentedString.cpp:
+        (WebCore::SegmentedString::advance):
+        * platform/text/SegmentedString.h:
+        (WebCore::SegmentedString::lookAhead):
+        (WebCore::SegmentedString::lookAheadIgnoringCase):
+        (WebCore::SegmentedString::equalsLiterally):
+        (WebCore::SegmentedString::equalsIgnoringCase):
+        (WebCore::SegmentedString::lookAheadInline):
+        (WebCore::SegmentedString::lookAheadSlowCase):
+
 2010-05-26  Jer Noble  <jer.noble@apple.com>
 
         Patch edited by Adele Peterson and Mark Rowe.

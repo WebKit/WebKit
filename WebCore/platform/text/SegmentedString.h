@@ -112,31 +112,8 @@ public:
         NotEnoughCharacters,
     };
 
-    // WARNING: This method is currently used only by the HTML5 parser and is incomplete.
-    LookAheadResult lookAhead(const String& string)
-    {
-        if (!m_pushedChar1 && string.length() <= (unsigned) m_currentString.m_length) {
-            if (memcmp(string.characters(), m_currentString.m_current, string.length() * sizeof(UChar)))
-                return DidNotMatch;
-            return DidMatch;
-        }
-        // We haven't implemented the slow case yet.
-        ASSERT_NOT_REACHED();
-        return DidNotMatch;
-    }
-
-    // WARNING: This method is currently used only by the HTML5 parser and is incomplete.
-    LookAheadResult lookAheadIgnoringCase(const String& string)
-    {
-        if (!m_pushedChar1 && string.length() <= (unsigned) m_currentString.m_length) {
-            if (WTF::Unicode::umemcasecmp(string.characters(), m_currentString.m_current, string.length()))
-                return DidNotMatch;
-            return DidMatch;
-        }
-        // We haven't implemented the slow case yet.
-        ASSERT_NOT_REACHED();
-        return DidNotMatch;
-    }
+    LookAheadResult lookAhead(const String& string) { return lookAheadInline<SegmentedString::equalsLiterally>(string); }
+    LookAheadResult lookAheadIgnoringCase(const String& string) { return lookAheadInline<SegmentedString::equalsIgnoringCase>(string); }
 
     void advance()
     {
@@ -193,9 +170,13 @@ public:
         }
         advanceSlowCase(lineNumber);
     }
-    
+
+    // Writes the consumed characters into consumedCharacters, which must
+    // have space for at least |count| characters.
+    void advance(unsigned count, UChar* consumedCharacters);
+
     bool escaped() const { return m_pushedChar1; }
-    
+
     String toString() const;
 
     const UChar& operator*() const { return *current(); }
@@ -209,6 +190,36 @@ private:
     void advanceSlowCase(int& lineNumber);
     void advanceSubstring();
     const UChar* current() const { return m_currentChar; }
+
+    static bool equalsLiterally(const UChar* str1, const UChar* str2, size_t count) { return !memcmp(str1, str2, count * sizeof(UChar)); }
+    static bool equalsIgnoringCase(const UChar* str1, const UChar* str2, size_t count) { return !WTF::Unicode::umemcasecmp(str1, str2, count); }
+
+    template<bool equals(const UChar* str1, const UChar* str2, size_t count)>
+    inline LookAheadResult lookAheadInline(const String& string)
+    {
+        if (!m_pushedChar1 && string.length() <= static_cast<unsigned>(m_currentString.m_length)) {
+            if (equals(string.characters(), m_currentString.m_current, string.length()))
+                return DidMatch;
+            return DidNotMatch;
+        }
+        return lookAheadSlowCase<equals>(string);
+    }
+
+    template<bool equals(const UChar* str1, const UChar* str2, size_t count)>
+    LookAheadResult lookAheadSlowCase(const String& string)
+    {
+        unsigned count = string.length();
+        if (count > length())
+            return NotEnoughCharacters;
+        UChar* consumedCharacters;
+        String consumedString = String::createUninitialized(count, consumedCharacters);
+        advance(count, consumedCharacters);
+        LookAheadResult result = DidNotMatch;
+        if (equals(string.characters(), consumedCharacters, count))
+            result = DidMatch;
+        prepend(SegmentedString(consumedString));
+        return result;
+    }
 
     UChar m_pushedChar1;
     UChar m_pushedChar2;

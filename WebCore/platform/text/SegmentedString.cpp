@@ -179,6 +179,15 @@ String SegmentedString::toString() const
     return result;
 }
 
+void SegmentedString::advance(unsigned count, UChar* consumedCharacters)
+{
+    ASSERT(count <= length());
+    for (unsigned i = 0; i < count; ++i) {
+        consumedCharacters[i] = *current();
+        advance();
+    }
+}
+
 void SegmentedString::advanceSlowCase()
 {
     if (m_pushedChar1) {
