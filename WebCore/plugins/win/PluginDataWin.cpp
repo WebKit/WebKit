@@ -58,7 +58,6 @@ void PluginData::initPlugins()
             }
 
             info.mimes.append(mime);
-
         }
 
         m_plugins.append(info);

@@ -1,3 +1,12 @@
+2010-05-26  Anders Carlsson  <andersca@apple.com>
+
+        Fix GTK+ test failures.
+
+        * plugins/gtk/PluginDataGtk.cpp:
+        (WebCore::PluginData::initPlugins):
+        * plugins/win/PluginDataWin.cpp:
+        (WebCore::PluginData::initPlugins):
+
 2010-05-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.
