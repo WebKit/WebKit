@@ -1,3 +1,15 @@
+2010-05-27  Kristian Monsen  <kristianm@google.com>
+
+        Reviewed by Darin Adler.
+
+        Compile fix for Android, added include for Refcounted.h, this did not get
+        included through Threading.h in Android.
+        https://bugs.webkit.org/show_bug.cgi?id=39678
+
+        Build fix only, no new tests.
+
+        * storage/SQLTransactionSyncCallback.h:
+
 2010-05-27  Joone Hur  <joone@kldp.org>
 
         Reviewed by Xan Lopez.
