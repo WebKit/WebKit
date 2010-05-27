@@ -1858,7 +1858,7 @@ DEFINE_STUB_FUNCTION(void*, op_call_arityCheck)
             // Rewind to the previous call frame because op_call already optimistically
             // moved the call frame forward.
             stackFrame.callFrame = oldCallFrame;
-            throwStackOverflowError(oldCallFrame, stackFrame.globalData, stackFrame.args[1].returnAddress(), STUB_RETURN_ADDRESS);
+            throwStackOverflowError(oldCallFrame, stackFrame.globalData, callFrame->returnPC(), STUB_RETURN_ADDRESS);
             return 0;
         }
 
@@ -1915,7 +1915,7 @@ DEFINE_STUB_FUNCTION(void*, op_construct_arityCheck)
             // Rewind to the previous call frame because op_call already optimistically
             // moved the call frame forward.
             stackFrame.callFrame = oldCallFrame;
-            throwStackOverflowError(oldCallFrame, stackFrame.globalData, stackFrame.args[1].returnAddress(), STUB_RETURN_ADDRESS);
+            throwStackOverflowError(oldCallFrame, stackFrame.globalData, callFrame->returnPC(), STUB_RETURN_ADDRESS);
             return 0;
         }
 
