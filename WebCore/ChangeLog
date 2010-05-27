@@ -1,3 +1,29 @@
+2010-05-27  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Eric Seidel
+
+        https://bugs.webkit.org/show_bug.cgi?id=39092
+
+        Add Yank support to chromium mac. Do this by moving WebKit Mac's
+        implementation of Editor::yankFromKillRing() into its own class and
+        then using that.
+
+        * editing/Editor.cpp:
+          Use new KillRing class.
+        * editing/Editor.h:
+        (WebCore::Editor::killRing):
+          Use new KillRing class.
+        * editing/EditorCommand.cpp:
+        (WebCore::executeYankAndSelect):
+          Use new KillRing class.
+        * platform/KillRing.h:
+          Add new KillRing class, which acts as null object.
+        (WebCore::KillRing::~KillRing):
+        * platform/mac/KillRingMac.h:
+          Add new KillRingMac class, which writes to the mac's kill ring.
+        * platform/mac/KillRingMac.mm:
+          Add new KillRingMac class, which writes to the mac's kill ring.
+
 2010-05-27  Ben Murdoch  <benm@google.com>
 
         Reviewed by Jian Li.

@@ -1159,6 +1159,8 @@
 		51EC92590CE90DB400F90308 /* SQLError.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EC92570CE90DB400F90308 /* SQLError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51EC92650CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51EC925D0CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp */; };
 		51FAFE340CECBF2D00BB3F24 /* DatabaseTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FAFE330CECBF2D00BB3F24 /* DatabaseTrackerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		521D46F611AEC98100514613 /* KillRingMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 521D46F511AEC98100514613 /* KillRingMac.mm */; };
+		521D46F811AEC9B100514613 /* KillRing.h in Headers */ = {isa = PBXBuildFile; fileRef = 521D46F711AEC9B100514613 /* KillRing.h */; };
 		54C50F7B0E801DF3009832A0 /* XMLTokenizerLibxml2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 54C50F7A0E801DF3009832A0 /* XMLTokenizerLibxml2.cpp */; };
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6786,6 +6788,8 @@
 		51F6A3D50663BF04004D2919 /* HTMLCanvasElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLCanvasElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51F6A3D60663BF04004D2919 /* HTMLCanvasElement.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLCanvasElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51FAFE330CECBF2D00BB3F24 /* DatabaseTrackerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseTrackerClient.h; sourceTree = "<group>"; };
+		521D46F511AEC98100514613 /* KillRingMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KillRingMac.mm; sourceTree = "<group>"; };
+		521D46F711AEC9B100514613 /* KillRing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KillRing.h; sourceTree = "<group>"; };
 		54C50F7A0E801DF3009832A0 /* XMLTokenizerLibxml2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLTokenizerLibxml2.cpp; sourceTree = "<group>"; };
 		550A0BC7085F6039007353D6 /* QualifiedName.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QualifiedName.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -11916,6 +11920,7 @@
 				BCE494A90F4F5E9E0084E319 /* GeolocationServiceMac.h */,
 				BCE494AA0F4F5E9E0084E319 /* GeolocationServiceMac.mm */,
 				935C476E09AC4D7300A6AAB4 /* KeyEventMac.mm */,
+				521D46F511AEC98100514613 /* KillRingMac.mm */,
 				6593923909AE435C002C531F /* KURLMac.mm */,
 				9352084409BD43B900F2038D /* Language.mm */,
 				06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */,
@@ -15847,6 +15852,7 @@
 				FEAB90100EA51B9C006348C3 /* GeolocationService.cpp */,
 				FEAB90110EA51B9C006348C3 /* GeolocationService.h */,
 				BC3BC29B0E91AB0F00835588 /* HostWindow.h */,
+				521D46F711AEC9B100514613 /* KillRing.h */,
 				6593923509AE4346002C531F /* KURL.cpp */,
 				6593923609AE4346002C531F /* KURL.h */,
 				BCBD21AA0E417AD400A070F2 /* KURLHash.h */,
@@ -19370,6 +19376,7 @@
 				B6693EEE11AD63E6003F2770 /* IDBObjectStoreRequest.h in Headers */,
 				B6693EF311AD6486003F2770 /* JSIDBObjectStoreRequest.h in Headers */,
 				A83B3AF111ADEFF500458809 /* HTML5ScriptRunner.h in Headers */,
+				521D46F811AEC9B100514613 /* KillRing.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21665,6 +21672,7 @@
 				B6693EF211AD6486003F2770 /* JSIDBObjectStoreRequest.cpp in Sources */,
 				B627FB2D11AD743500E97B72 /* IDBDatabaseImpl.cpp in Sources */,
 				A83B3AF011ADEFF500458809 /* HTML5ScriptRunner.cpp in Sources */,
+				521D46F611AEC98100514613 /* KillRingMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -22409,6 +22409,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\KillRing.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\KillRingNone.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\KURL.cpp"
 				>
 			</File>

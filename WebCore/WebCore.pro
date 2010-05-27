@@ -861,6 +861,7 @@ SOURCES += \
     platform/graphics/transforms/SkewTransformOperation.cpp \
     platform/graphics/transforms/TransformOperations.cpp \
     platform/graphics/transforms/TranslateTransformOperation.cpp \
+    platform/KillRingNone.cpp \
     platform/KURL.cpp \
     platform/Length.cpp \
     platform/LinkHash.cpp \
@@ -1620,6 +1621,7 @@ HEADERS += \
     platform/graphics/transforms/TransformationMatrix.h \
     platform/graphics/transforms/TransformOperations.h \
     platform/graphics/transforms/TranslateTransformOperation.h \
+    platform/KillRing.h \
     platform/KURL.h \
     platform/Length.h \
     platform/LinkHash.h \

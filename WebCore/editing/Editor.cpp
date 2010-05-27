@@ -55,6 +55,7 @@
 #include "IndentOutdentCommand.h"
 #include "InsertListCommand.h"
 #include "KeyboardEvent.h"
+#include "KillRing.h"
 #include "ModifySelectionListLevel.h"
 #include "Page.h"
 #include "Pasteboard.h"
@@ -928,6 +929,7 @@ Editor::Editor(Frame* frame)
     , m_shouldStartNewKillRingSequence(false)
     // This is off by default, since most editors want this behavior (this matches IE but not FF).
     , m_shouldStyleWithCSS(false)
+    , m_killRing(new KillRing)
 { 
 }
 
@@ -2707,40 +2709,15 @@ void Editor::transpose()
 void Editor::addToKillRing(Range* range, bool prepend)
 {
     if (m_shouldStartNewKillRingSequence)
-        startNewKillRingSequence();
+        killRing()->startNewSequence();
 
     String text = plainText(range);
     if (prepend)
-        prependToKillRing(text);
+        killRing()->prepend(text);
     else
-        appendToKillRing(text);
+        killRing()->append(text);
     m_shouldStartNewKillRingSequence = false;
 }
-
-#if !PLATFORM(MAC)
-
-void Editor::appendToKillRing(const String&)
-{
-}
-
-void Editor::prependToKillRing(const String&)
-{
-}
-
-String Editor::yankFromKillRing()
-{
-    return String();
-}
-
-void Editor::startNewKillRingSequence()
-{
-}
-
-void Editor::setKillRingToYankedState()
-{
-}
-
-#endif
 
 bool Editor::insideVisibleArea(const IntPoint& point) const
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,50 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "config.h"
-#import "Editor.h"
+#ifndef KillRing_h
+#define KillRing_h
 
-#import "ClipboardMac.h"
-#import "DocLoader.h"
-#import "Frame.h"
-#import "FrameView.h"
+#include "PlatformString.h"
 
 namespace WebCore {
 
-PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy)
-{
-    return ClipboardMac::create(false, [NSPasteboard generalPasteboard], policy, 0);
-}
-
-void Editor::showFontPanel()
-{
-    [[NSFontManager sharedFontManager] orderFrontFontPanel:nil];
-}
-
-void Editor::showStylesPanel()
-{
-    [[NSFontManager sharedFontManager] orderFrontStylesPanel:nil];
-}
-
-void Editor::showColorPanel()
-{
-    [[NSApplication sharedApplication] orderFrontColorPanel:nil];
-}
-
-// FIXME: We want to use the platform-independent code instead. But when we last
-// tried to do so it seemed that we first need to move more of the logic from
-// -[WebHTMLView.cpp _documentFragmentFromPasteboard] into PasteboardMac.
-
-void Editor::paste()
-{
-    ASSERT(m_frame->document());
-    FrameView* view = m_frame->view();
-    if (!view)
-        return;
-    DocLoader* loader = m_frame->document()->docLoader();
-    loader->setAllowStaleResources(true);
-    [view->documentView() tryToPerform:@selector(paste:) with:nil];
-    loader->setAllowStaleResources(false);
-}
+class KillRing {
+public:
+    void append(const String&);
+    void prepend(const String&);
+    String yank();
+    void startNewSequence();
+    void setToYankedState();
+};
 
 } // namespace WebCore
+
+#endif // KillRing_h

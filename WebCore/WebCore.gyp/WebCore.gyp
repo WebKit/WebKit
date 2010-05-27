@@ -1010,6 +1010,7 @@
             ['include', 'platform/graphics/mac/GraphicsContextMac\\.mm$'],
             ['include', 'platform/graphics/mac/IntRectMac\\.mm$'],
             ['include', 'platform/mac/BlockExceptions\\.mm$'],
+            ['include', 'platform/mac/KillRingMac\\.mm$'],
             ['include', 'platform/mac/LocalCurrentGraphicsContext\\.mm$'],
             ['include', 'platform/mac/PurgeableBufferMac\\.cpp$'],
             ['include', 'platform/mac/WebCoreSystemInterface\\.mm$'],
@@ -1022,6 +1023,10 @@
             ['include', 'WebKit/mac/WebCoreSupport/WebSystemInterface\\.m$'],
           ],
           'sources!': [
+            # The Mac uses platform/mac/KillRingMac.mm instead of the dummy
+            # implementation.
+            '../platform/KillRingNone.cpp',
+
             # The Mac currently uses FontCustomPlatformData.cpp from
             # platform/graphics/mac, included by regex above, instead.
             '../platform/graphics/chromium/FontCustomPlatformData.cpp',
