@@ -1,3 +1,16 @@
+2010-05-26  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Web Inspector: Tooltip on Pause on Exceptions doesn't show up until it is clicked.
+        https://bugs.webkit.org/show_bug.cgi?id=39804
+        
+        Initialize the title attribute of the Pause on Exceptions button when we initialize other information
+        about it. 
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+
 2010-05-26  Adam Barth  <abarth@webkit.org>
 
         Unreviewed, rolling out r60262.
