@@ -37,7 +37,28 @@ display: none;
 <p>Script did not run</p>
 <iframe></iframe>
 <script>
-var test_files = ['resources/tests1.dat', 'resources/tests2.dat', 'resources/tests3.dat', 'resources/tests4.dat', 'resources/tests5.dat', 'resources/tests6.dat', 'resources/tests7.dat', 'resources/tests8.dat', 'resources/tests9.dat', 'resources/tests10.dat', 'resources/tests11.dat', 'resources/tests12.dat', 'resources/tests14.dat', 'resources/tests15.dat', 'resources/tests16.dat'],
+var test_files = [
+        'resources/tests1.dat',
+        'resources/tests2.dat',
+        'resources/tests3.dat',
+        'resources/tests4.dat',
+        'resources/tests5.dat',
+        'resources/tests6.dat',
+        'resources/tests7.dat',
+        'resources/tests8.dat',
+        'resources/tests9.dat',
+        'resources/tests10.dat',
+        'resources/tests11.dat',
+        'resources/tests12.dat',
+        'resources/tests14.dat',
+        'resources/tests15.dat',
+        'resources/tests16.dat',
+        'resources/webkit01.dat',
+        'resources/doctype01.dat',
+        'resources/scriptdata01.dat',
+        'resources/entities01.dat',
+        'resources/comments01.dat'
+    ],
     tests = [],
     iframe = document.getElementsByTagName("iframe")[0],
     stat = document.getElementsByTagName("p")[0].firstChild,
@@ -118,7 +139,7 @@ function test()
         var overview = document.createElement("p");
         if (fail_list.length)
         {
-            overview.innerHTML = file + ": " + fail_list.join(", ");
+            overview.innerHTML = file + ":<br>" + fail_list.join("<br>");
             overview.className = "overview";
             overview.title = "Click for more details";
             overview.onclick = function()

@@ -1,3 +1,16 @@
+2010-05-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove custom webkit runner and update normal runner with our nifty
+        goodness.
+
+        * html5lib/runner-expected.txt:
+        * html5lib/runner.html:
+        * html5lib/webkit-runner-expected-html5.txt: Removed.
+        * html5lib/webkit-runner-expected.txt: Removed.
+        * html5lib/webkit-runner.html: Removed.
+
 2010-05-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
