@@ -1,3 +1,14 @@
+2010-05-27  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Darin Adler.
+
+        RVCT does not have strnstr.
+        https://bugs.webkit.org/show_bug.cgi?id=39719
+
+        Add COMPILER(RVCT) guard to strnstr in StringExtras.h as RVCT does not provide strnstr.
+
+        * wtf/StringExtras.h:
+
 2010-05-26  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
