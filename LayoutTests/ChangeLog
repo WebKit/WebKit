@@ -1,3 +1,17 @@
+2010-05-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39606
+        Land tests for <rdar://problem/3277733>: \ in JavaScript mishandled when encoding is Japanese
+
+        * fast/encoding/resources/yentestexternal.js: Added.
+        * fast/encoding/resources/yentestexternal2.js: Added.
+        * fast/encoding/yentest-expected.txt: Added.
+        * fast/encoding/yentest.html: Added.
+        * fast/encoding/yentest2-expected.txt: Added.
+        * fast/encoding/yentest2.html: Added.
+
 2010-05-27  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Ojan Vafai.
