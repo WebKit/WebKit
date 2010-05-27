@@ -1,3 +1,15 @@
+2010-05-27  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] writeToFile fails when length is large
+        https://bugs.webkit.org/show_bug.cgi?id=39666
+
+        writeToFile forgot to increment data pointer.
+
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::writeToFile):
+
 2010-05-26  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

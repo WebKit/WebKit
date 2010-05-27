@@ -258,6 +258,7 @@ int writeToFile(PlatformFileHandle handle, const char* data, int length)
         if (bytesWritten < 0)
             return -1;
         totalBytesWritten += bytesWritten;
+        data += bytesWritten;
     }
 
     return totalBytesWritten;
