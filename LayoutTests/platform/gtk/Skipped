@@ -5217,6 +5217,7 @@ webarchive/test-td-background.html
 webarchive/test-xml-stylesheet.xml
 
 # Tests that failed because we don't have an eventSender implementation
+editing/input/scroll-viewport-page-up-down.html
 editing/pasteboard/dataTransfer-setData-getData.html
 editing/pasteboard/files-during-page-drags.html
 editing/selection/extend-selection-after-double-click.html
