@@ -1190,11 +1190,6 @@ ScriptObject InspectorDOMAgent::buildObjectForRule(Document* ownerDocument, CSSS
     result.set("selectorText", rule->selectorText());
     result.set("cssText", rule->cssText());
     result.set("sourceLine", rule->sourceLine());
-    std::pair<unsigned, unsigned> startEnd = cssStore()->getStartEndOffsets(rule);
-    if (startEnd.second) {
-        result.set("bodyStartOffset", startEnd.first);
-        result.set("bodyEndOffset", startEnd.second);
-    }
     if (parentStyleSheet) {
         ScriptObject parentStyleSheetValue = m_frontend->newScriptObject();
         result.set("parentStyleSheet", parentStyleSheetValue);

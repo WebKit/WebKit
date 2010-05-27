@@ -123,7 +123,7 @@ SourceRange InspectorCSSStore::getStartEndOffsets(CSSStyleRule* rule)
         InspectorResource* resource = m_inspectorController->resourceForURL(parentStyleSheet->finalURL().string());
         if (resource) {
             offsetVector = new Vector<SourceRange>;
-            RefPtr<CSSStyleSheet> newStyleSheet = CSSStyleSheet::create();
+            RefPtr<CSSStyleSheet> newStyleSheet = CSSStyleSheet::create(parentStyleSheet->ownerNode());
             CSSParser p;
             p.parseSheet(newStyleSheet.get(), resource->sourceString(), offsetVector);
             m_styleSheetToOffsets.set(parentStyleSheet, offsetVector);

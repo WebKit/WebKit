@@ -1,3 +1,16 @@
+2010-05-27  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Get CSS rule offsets lazily.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39832
+
+        * inspector/InspectorCSSStore.cpp:
+        (WebCore::InspectorCSSStore::getStartEndOffsets):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForRule):
+
 2010-05-27  Anders Bakken  <agbakken@gmail.com>
 
         Reviewed by David Levin.
