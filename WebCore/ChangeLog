@@ -1,3 +1,14 @@
+2010-05-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        [Qt] REGRESSION(r60258): It broke 10 tests.
+        https://bugs.webkit.org/show_bug.cgi?id=39819
+
+        * plugins/qt/PluginDataQt.cpp:
+        (WebCore::PluginData::initPlugins):
+        Append the MimeClassInfo object after it's been initialized.
+
 2010-05-27  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fixes for Windows after recent changes.

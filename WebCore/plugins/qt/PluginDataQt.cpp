@@ -77,7 +77,6 @@ void PluginData::initPlugins()
         MIMEToDescriptionsMap::const_iterator end = mimeToDescriptions.end();
         for (MIMEToDescriptionsMap::const_iterator it = mimeToDescriptions.begin(); it != end; ++it) {
             MimeClassInfo mime;
-            info.mimes.append(mime);
 
             mime.type = it->first;
             mime.desc = it->second;
@@ -91,6 +90,8 @@ void PluginData::initPlugins()
 
                 mime.suffixes += extensions[i];
             }
+
+            info.mimes.append(mime);
         }
 
         m_plugins.append(info);
