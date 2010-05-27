@@ -97,15 +97,6 @@ void ScriptElement::finishParsingChildren(ScriptElementData& data, const String&
     // allow dynamic loading later.
     if (sourceUrl.isEmpty() && data.scriptContent().isEmpty())
         data.setCreatedByParser(false);
-    // HTML5 Requires that we execute scripts from the parser, not from
-    // HTMLTokenizer like we currently do.
-    // FIXME: It may not be safe to execute scripts from here if
-    // HTMLParser::popOneBlockCommon is not reentrant.
-    else if (useHTML5Parser(data.element()->document())) {
-        // This is currently an incomplete implementation, see:
-        // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#parsing-main-incdata
-        data.evaluateScript(ScriptSourceCode(data.scriptContent(), data.element()->document()->url())); // FIXME: Provide a real starting line number here
-    }
 }
 
 void ScriptElement::handleSourceAttribute(ScriptElementData& data, const String& sourceUrl)

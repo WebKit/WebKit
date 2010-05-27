@@ -26,7 +26,7 @@
 #include "config.h"
 #include "HTML5TreeBuilder.h"
 
-#include "Attribute.h"
+#include "Element.h"
 #include "HTML5Lexer.h"
 #include "HTML5Token.h"
 #include "HTMLDocument.h"
@@ -43,6 +43,7 @@ using namespace HTMLNames;
 HTML5TreeBuilder::HTML5TreeBuilder(HTML5Lexer* lexer, HTMLDocument* document, bool reportErrors)
     : m_document(document)
     , m_reportErrors(reportErrors)
+    , m_isPaused(false)
     , m_lexer(lexer)
     , m_legacyHTMLParser(new HTMLParser(document, reportErrors))
 {
@@ -93,23 +94,35 @@ static void convertToOldStyle(HTML5Token& token, Token& oldStyleToken)
     }
 }
 
+void HTML5TreeBuilder::handleScriptStartTag()
+{
+    notImplemented(); // The HTML frgment case?
+    m_lexer->setState(HTML5Lexer::ScriptDataState);
+    notImplemented(); // Save insertion mode.
+}
+
+void HTML5TreeBuilder::handleScriptEndTag(Element* scriptElement)
+{
+    ASSERT(!m_scriptToProcess); // Caller never called takeScriptToProcess!
+    notImplemented(); // Save insertion mode and insertion point?
+
+    // Pause ourselves so that parsing stops until the script can be processed by the caller.
+    m_isPaused = true;
+    m_scriptToProcess = scriptElement;
+}
+
+PassRefPtr<Element> HTML5TreeBuilder::takeScriptToProcess()
+{
+    // Unpause ourselves, callers may pause us again when processing the script.
+    // The HTML5 spec is written as though scripts are executed inside the tree
+    // builder.  We pause the parser to exit the tree builder, and then resume
+    // before running scripts.
+    m_isPaused = false;
+    return m_scriptToProcess.release();
+}
+
 PassRefPtr<Node> HTML5TreeBuilder::passTokenToLegacyParser(HTML5Token& token)
 {
-    if (token.type() == HTML5Token::StartTag) {
-        // This work is supposed to be done by the parser, but
-        // when using the old parser for we have to do this manually.
-        if (token.name() == scriptTag)
-            m_lexer->setState(HTML5Lexer::ScriptDataState);
-        else if (token.name() == textareaTag || token.name() == titleTag)
-            m_lexer->setState(HTML5Lexer::RCDATAState);
-        else if (token.name() == styleTag || token.name() == iframeTag
-                 || token.name() == xmpTag || token.name() == noembedTag) {
-            // FIXME: noscript and noframes may conditionally enter this state as well.
-            m_lexer->setState(HTML5Lexer::RAWTEXTState);
-        } else if (token.name() == plaintextTag)
-            m_lexer->setState(HTML5Lexer::PLAINTEXTState);
-    }
-
     if (token.type() == HTML5Token::DOCTYPE) {
         DoctypeToken doctypeToken;
         doctypeToken.m_name.append(token.name().characters(), token.name().length());
@@ -124,7 +137,31 @@ PassRefPtr<Node> HTML5TreeBuilder::passTokenToLegacyParser(HTML5Token& token)
     Token oldStyleToken;
     convertToOldStyle(token, oldStyleToken);
 
-    return m_legacyHTMLParser->parseToken(&oldStyleToken);
+    RefPtr<Node> result =  m_legacyHTMLParser->parseToken(&oldStyleToken);
+    if (token.type() == HTML5Token::StartTag) {
+        // This work is supposed to be done by the parser, but
+        // when using the old parser for we have to do this manually.
+        if (token.name() == scriptTag) {
+            handleScriptStartTag();
+            m_lastScriptElement = static_pointer_cast<Element>(result);
+        } else if (token.name() == textareaTag || token.name() == titleTag)
+            m_lexer->setState(HTML5Lexer::RCDATAState);
+        else if (token.name() == styleTag || token.name() == iframeTag
+                 || token.name() == xmpTag || token.name() == noembedTag) {
+            // FIXME: noscript and noframes may conditionally enter this state as well.
+            m_lexer->setState(HTML5Lexer::RAWTEXTState);
+        } else if (token.name() == plaintextTag)
+            m_lexer->setState(HTML5Lexer::PLAINTEXTState);
+    }
+    if (token.type() == HTML5Token::EndTag) {
+        if (token.name() == scriptTag) {
+            if (m_lastScriptElement) {
+                handleScriptEndTag(m_lastScriptElement.get());
+                m_lastScriptElement = 0;
+            }
+        }
+    }
+    return result.release();
 }
 
 PassRefPtr<Node> HTML5TreeBuilder::constructTreeFromToken(HTML5Token& token)

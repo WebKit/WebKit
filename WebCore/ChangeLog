@@ -1,3 +1,106 @@
+2010-05-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Teach the HTML5 parser how to handle external scripts
+        https://bugs.webkit.org/show_bug.cgi?id=39716
+
+        Make it possible for the HTML5Tokenizer to run external scripts.
+        I created a new class HTML5ScriptRunner to hold all of the
+        script-logic which is scattered throughout the old HTMLTokenizer.
+
+        The design is for the HTML5Tokenizer (the "controller") to hold
+        the Lexer, TreeBuilder and ScriptRunner.  The Lexer returns back
+        to the controller, which passes tokens to the TreeBuilder.  When the
+        treebuilder encounters a </script> tag it pauses itself and returns
+        back to the controller which calls the ScriptRunner.  The TreeBuilder
+        is un-paused when the HTML5Tokenizer calls takeScriptToProcess().
+
+        The ScriptRunner attempts to process the passed script, and additionally
+        any blocked scripts it can.  It returns to the controller indicating if
+        parsing should continue.  If not, callbacks when external scripts load
+        or when stylesheets are finished parsing will cause the controller to
+        kick off script execution and parsing again at a later point.
+
+        * WebCore.xcodeproj/project.pbxproj:
+         - Add HTML5ScriptRunner.*
+        * bindings/js/CachedScriptSourceProvider.h:
+         - Add missing include discovered while building.
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::finishParsingChildren):
+         - Remove previous hack for inline <script> execution.
+        * dom/ScriptElement.h:
+         - Explain the HTML5 spec names for m_evaluated and m_createdByParser.
+        * html/HTML5ScriptRunner.cpp: Added.
+        (WebCore::HTML5ScriptRunner::HTML5ScriptRunner):
+         - The HTML5Tokenizer is passed to the HTML5ScriptRunner as a
+           CachedResourceClient.  The HTML5ScriptRunner will register the
+           HTML5Tokenizer for notifyFinished callbacks when the scripts load.
+           The HTML5Tokenizer is expected to call the HTML5ScriptRunner to
+           execute any loaded scripts at that point.
+        (WebCore::HTML5ScriptRunner::~HTML5ScriptRunner):
+        (WebCore::HTML5ScriptRunner::frame): Helper method.
+        (WebCore::createScriptLoadEvent): Helper method.
+        (WebCore::createScriptErrorEvent): Helper method.
+        (WebCore::HTML5ScriptRunner::sourceFromPendingScript):
+         - Helper method for dealing with both inline and external script types.
+        (WebCore::HTML5ScriptRunner::isPendingScriptReady):
+         - Helper for dealing with both inline and external scripts.
+        (WebCore::HTML5ScriptRunner::executePendingScript):
+         - Execute one script.  Both external and inline scripts
+           can become m_parsingBlockingScript if they can't be executed
+           immediately after parsing.
+        (WebCore::HTML5ScriptRunner::execute):
+         - Takes a script element from the tree builder and tries
+           to process it.
+        (WebCore::HTML5ScriptRunner::executeParsingBlockingScripts):
+         - Runs the current parsing blocking script if ready.
+         - Running a script could add another parsing blocking script
+           so we loop until there is no ready-to-run parsing blocking script.
+        (WebCore::HTML5ScriptRunner::executeScriptsWaitingForLoad):
+         - Called by HTML5Tokenizer when a script loads.
+        (WebCore::HTML5ScriptRunner::executeScriptsWaitingForStylesheets):
+         - Called by HTML5Tokenizer when stylesheets complete.
+        (WebCore::HTML5ScriptRunner::requestScript):
+         - Transcription of the HTML5 spec.
+        (WebCore::HTML5ScriptRunner::runScript):
+         - Transcription of the HTML5 spec.
+        * html/HTML5ScriptRunner.h: Added.
+         - New class to handle script loading and execution for the HTML5 parser.
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::HTML5Tokenizer):
+         - Create a HTML5ScriptRunner and pass it "this" as the CachedResourceClient.
+        (WebCore::HTML5Tokenizer::pumpLexer):
+         - When the parser is paused, try to run scripts.
+        (WebCore::HTML5Tokenizer::write):
+         - Only pump the lexer when the parser is not paused.
+        (WebCore::HTML5Tokenizer::end):
+         - finish() tells us that we've reached EOF, not end()
+         - Only pump the lexer when the parser is not paused.
+        (WebCore::HTML5Tokenizer::finish):
+         - Mark EOF, and end() if we're not waiting on scripts.
+        (WebCore::HTML5Tokenizer::isWaitingForScripts):
+         - isPaused() seems to mean isPausedForExternalScripts().
+        (WebCore::HTML5Tokenizer::resumeParsingAfterScriptExecution):
+        (WebCore::HTML5Tokenizer::notifyFinished):
+        (WebCore::HTML5Tokenizer::executeScriptsWaitingForStylesheets):
+        * html/HTML5Tokenizer.h:
+        * html/HTML5TreeBuilder.cpp:
+        (WebCore::HTML5TreeBuilder::HTML5TreeBuilder):
+         - Add an m_isPaused flag.
+        (WebCore::HTML5TreeBuilder::handleScriptStartTag):
+        (WebCore::HTML5TreeBuilder::handleScriptEndTag):
+        (WebCore::HTML5TreeBuilder::takeScriptToProcess):
+         - Acknowledge that the caller has received the script element.
+           It is the caller's responsibility to execute the script if necessary
+           and re-pause the tree builder if necessary.
+        (WebCore::HTML5TreeBuilder::passTokenToLegacyParser):
+         - Save off the current script tag so that it can be passed to
+           the HTML5ScriptRunner when we're paused.
+        * html/HTML5TreeBuilder.h:
+        (WebCore::HTML5TreeBuilder::setPaused):
+        (WebCore::HTML5TreeBuilder::isPaused):
+
 2010-05-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

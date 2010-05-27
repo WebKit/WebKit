@@ -23,52 +23,56 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTML5Tokenizer_h
-#define HTML5Tokenizer_h
+#ifndef HTML5ScriptRunner_h
+#define HTML5ScriptRunner_h
 
 #include "CachedResourceClient.h"
-#include "HTML5Token.h"
-#include "SegmentedString.h"
-#include "Tokenizer.h"
-#include <wtf/OwnPtr.h>
+#include "CachedResourceHandle.h"
+#include <wtf/Noncopyable.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-class HTML5Lexer;
-class HTML5ScriptRunner;
-class HTML5TreeBuilder;
-class HTMLDocument;
+class CachedResourceClient;
+class CachedScript;
+class Document;
+class Element;
+class Frame;
+class ScriptSourceCode;
 
-// FIXME: The whole Tokenizer class system should be renamed "Parser"
-// or "ParserController" as the job of this class is to drive parsing process
-// but it does not itself Tokenize.
-class HTML5Tokenizer :  public Tokenizer, CachedResourceClient {
+class HTML5ScriptRunner : public Noncopyable {
 public:
-    HTML5Tokenizer(HTMLDocument*, bool reportErrors);
-    virtual ~HTML5Tokenizer();
+    HTML5ScriptRunner(Document*, CachedResourceClient*);
+    ~HTML5ScriptRunner();
 
-    virtual void begin();
-    virtual void write(const SegmentedString&, bool appendData);
-    virtual void end();
-    virtual void finish();
-    virtual bool isWaitingForScripts() const;
-    virtual void executeScriptsWaitingForStylesheets();
-
-    // CachedResourceClient
-    virtual void notifyFinished(CachedResource*);
+    // Processes the passed in script and any pending scripts if possible.
+    bool execute(PassRefPtr<Element> scriptToProcess);
+    // Processes any pending scripts.
+    bool executeScriptsWaitingForLoad(CachedResource*);
 
 private:
-    void pumpLexer();
-    void resumeParsingAfterScriptExecution();
+    struct PendingScript {
+        RefPtr<Element> element;
+        CachedResourceHandle<CachedScript> cachedScript;
+        // HTML5 has an isReady parameter, however isReady ends up equivalent to
+        // m_document->haveStylesheetsLoaded() && cachedScript->isLoaded()
+    };
 
-    SegmentedString m_source;
+    Frame* frame() const;
 
-    // We hold m_token here because it might be partially complete.
-    HTML5Token m_token;
+    bool executeParsingBlockingScripts();
+    void executePendingScript();
 
-    OwnPtr<HTML5Lexer> m_lexer;
-    OwnPtr<HTML5ScriptRunner> m_scriptRunner;
-    OwnPtr<HTML5TreeBuilder> m_treeBuilder;
+    void requestScript(Element*);
+    void runScript(Element*);
+
+    bool isPendingScriptReady(const PendingScript&);
+    ScriptSourceCode sourceFromPendingScript(const PendingScript&, bool& errorOccurred);
+
+    Document* m_document;
+    CachedResourceClient* m_loadNotifier;
+    PendingScript m_parsingBlockingScript;
+    unsigned m_scriptNestingLevel;
 };
 
 }

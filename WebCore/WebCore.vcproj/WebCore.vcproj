@@ -30957,6 +30957,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\HTML5ScriptRunner.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HTML5ScriptRunner.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\HTMLAllCollection.cpp"
 				>
 			</File>

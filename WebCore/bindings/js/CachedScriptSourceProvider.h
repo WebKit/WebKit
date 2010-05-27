@@ -29,6 +29,7 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "CachedScript.h"
+#include "JSDOMBinding.h" // for stringToUString
 #include "ScriptSourceProvider.h"
 #include <parser/SourceCode.h>
 

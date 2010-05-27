@@ -611,6 +611,7 @@ SOURCES += \
     html/HTML5Lexer.cpp \
     html/HTML5Tokenizer.cpp \
     html/HTML5TreeBuilder.cpp \
+    html/HTML5ScriptRunner.cpp \
     html/HTMLAllCollection.cpp \
     html/HTMLAnchorElement.cpp \
     html/HTMLAppletElement.cpp \

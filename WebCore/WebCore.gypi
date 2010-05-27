@@ -1474,6 +1474,8 @@
             'html/HTML5Tokenizer.h',
             'html/HTML5TreeBuilder.cpp',
             'html/HTML5TreeBuilder.h',
+            'html/HTML5ScriptRunner.cpp',
+            'html/HTML5ScriptRunner.h',
             'html/HTMLAllCollection.cpp',
             'html/HTMLAllCollection.h',
             'html/HTMLAnchorElement.cpp',

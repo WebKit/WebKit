@@ -29,10 +29,13 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 class Document;
+class Element;
+class Frame;
 class HTML5Lexer;
 class HTML5Token;
 class HTMLDocument;
@@ -44,23 +47,35 @@ public:
     HTML5TreeBuilder(HTML5Lexer*, HTMLDocument*, bool reportErrors);
     ~HTML5TreeBuilder();
 
+    void setPaused(bool paused) { m_isPaused = paused; }
+    bool isPaused() { return m_isPaused; }
+
     // The token really should be passed as a const& since it's never modified.
     PassRefPtr<Node> constructTreeFromToken(HTML5Token&);
+    // Must be called when parser is paused before calling the parser again.
+    PassRefPtr<Element> takeScriptToProcess();
+
+    // Done, close any open tags, etc.
     void finished();
 
 private:
     PassRefPtr<Node> passTokenToLegacyParser(HTML5Token&);
     PassRefPtr<Node> processToken(HTML5Token&, UChar currentCharacter = 0);
+    
+    void handleScriptStartTag();
+    void handleScriptEndTag(Element*);
 
-    // We could grab m_document off the lexer if we wanted to save space.
-    Document* m_document;
+    Document* m_document; // This is only used by the m_legacyParser for now.
     bool m_reportErrors;
+    bool m_isPaused;
     // HTML5 spec requires that we be able to change the state of the lexer
     // from within parser actions.
     HTML5Lexer* m_lexer;
 
     // We're re-using logic from the old HTMLParser while this class is being written.
     OwnPtr<HTMLParser> m_legacyHTMLParser;
+    RefPtr<Element> m_lastScriptElement; // FIXME: This is a hack for <script> support.
+    RefPtr<Element> m_scriptToProcess; // Set to a <script> tag which needs processing.
 };
 
 }

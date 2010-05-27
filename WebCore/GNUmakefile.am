@@ -1089,6 +1089,8 @@ webcore_sources += \
 	WebCore/html/HTML5Tokenizer.h \
 	WebCore/html/HTML5TreeBuilder.cpp \
 	WebCore/html/HTML5TreeBuilder.h \
+	WebCore/html/HTML5ScriptRunner.cpp \
+	WebCore/html/HTML5ScriptRunner.h \
 	WebCore/html/HTMLAllCollection.cpp \
 	WebCore/html/HTMLAllCollection.h \
 	WebCore/html/HTMLAnchorElement.cpp \
