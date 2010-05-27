@@ -126,6 +126,11 @@ String operator+(const char* cs, const String& s)
     return String(cs) + s;
 }
 
+int codePointCompare(const String& a, const String& b)
+{
+    return codePointCompare(a.impl(), b.impl());
+}
+
 void String::insert(const String& str, unsigned pos)
 {
     if (str.isEmpty()) {

@@ -1,3 +1,27 @@
+2010-05-27  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Darin Adler.
+
+        UTF-16 code points compare() for String objects
+        https://bugs.webkit.org/show_bug.cgi?id=39701
+
+        Moving compare() implementation from UString to StringImpl for it to be shared
+        with String. Adding overloaded free functions codePointCompare() in StringImpl
+        and WTFString. Renaming function compare in UString to codePointCompare to be
+        consistent.
+
+        * runtime/JSArray.cpp:
+        (JSC::compareByStringPairForQSort):
+        * runtime/UString.cpp:
+        * runtime/UString.h:
+        (JSC::codePointCompare):
+        * wtf/text/StringImpl.cpp:
+        (WebCore::codePointCompare):
+        * wtf/text/StringImpl.h:
+        * wtf/text/WTFString.cpp:
+        (WebCore::codePointCompare):
+        * wtf/text/WTFString.h:
+
 2010-05-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Kent Tamura.

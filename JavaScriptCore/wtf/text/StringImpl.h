@@ -352,6 +352,8 @@ inline bool equalIgnoringCase(const char* a, const UChar* b, unsigned length) { 
 
 bool equalIgnoringNullity(StringImpl*, StringImpl*);
 
+int codePointCompare(const StringImpl*, const StringImpl*);
+
 static inline bool isSpaceOrNewline(UChar c)
 {
     // Use isASCIISpace() for basic Latin-1.

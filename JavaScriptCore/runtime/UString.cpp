@@ -580,29 +580,6 @@ bool operator>(const UString& s1, const UString& s2)
     return (l1 > l2);
 }
 
-int compare(const UString& s1, const UString& s2)
-{
-    const unsigned l1 = s1.size();
-    const unsigned l2 = s2.size();
-    const unsigned lmin = l1 < l2 ? l1 : l2;
-    const UChar* c1 = s1.data();
-    const UChar* c2 = s2.data();
-    unsigned l = 0;
-    while (l < lmin && *c1 == *c2) {
-        c1++;
-        c2++;
-        l++;
-    }
-
-    if (l < lmin)
-        return (c1[0] > c2[0]) ? 1 : -1;
-
-    if (l1 == l2)
-        return 0;
-
-    return (l1 > l2) ? 1 : -1;
-}
-
 CString UString::UTF8String(bool strict) const
 {
     // Allocate a buffer big enough to hold all the characters.
