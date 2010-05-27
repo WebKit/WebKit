@@ -1,3 +1,17 @@
+2010-05-27  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Increase limit on number of (i)frames from 200 to 1000.
+        https://bugs.webkit.org/show_bug.cgi?id=39427
+
+        Add layout tests that test the possibility of generating 1000 iframes.
+
+        * compositing/iframes/lots-of-iframes-expected.txt: Added.
+        * compositing/iframes/lots-of-iframes.html: Added.
+        * compositing/iframes/lots-of-objects-expected.txt: Added.
+        * compositing/iframes/lots-of-objects.html: Added.
+
 2010-05-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed. Add failing tests to the Skipped list temporarily.

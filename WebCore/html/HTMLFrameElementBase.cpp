@@ -71,15 +71,8 @@ bool HTMLFrameElementBase::isURLAllowed() const
             return false;
     }
 
-    // Don't allow more than 200 total frames in a set. This seems
-    // like a reasonable upper bound, and otherwise mutually recursive
-    // frameset pages can quickly bring the program to its knees with
-    // exponential growth in the number of frames.
-    // FIXME: This limit could be higher, but because WebKit has some
-    // algorithms that happen while loading which appear to be N^2 or
-    // worse in the number of frames, we'll keep it at 200 for now.
     if (Frame* parentFrame = document()->frame()) {
-        if (parentFrame->page()->frameCount() > 200)
+        if (parentFrame->page()->frameCount() >= Page::maxNumberOfFrames)
             return false;
     }
 

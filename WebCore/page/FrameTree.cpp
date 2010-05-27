@@ -136,7 +136,7 @@ AtomicString FrameTree::uniqueChildName(const AtomicString& requestedName) const
 
     // Suffix buffer has more than enough space for:
     //     10 characters before the number
-    //     a number (3 digits for the highest this gets in practice, 20 digits for the largest 64-bit integer)
+    //     a number (20 digits for the largest 64-bit integer)
     //     6 characters after the number
     //     trailing null byte
     // But we still use snprintf just to be extra-safe.

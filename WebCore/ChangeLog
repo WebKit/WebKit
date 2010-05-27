@@ -1,3 +1,29 @@
+2010-05-27  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Increase limit on number of (i)frames from 200 to 1000.
+        https://bugs.webkit.org/show_bug.cgi?id=39427
+
+        The limit on number of iframes was introduced in r3707 back in 2003.
+        An example of a page that is broken because of this is:
+        http://vimcolorschemetest.googlecode.com/svn/html/index-c.html
+        Neither Firefox nor IE has such a limit.
+
+        It seems that WebKit can handle a significantly higher number of frames, and
+        the original reasons for imposing the limit are believed to be gone.
+
+        Tests: compositing/iframes/lots-of-iframes.html
+               compositing/iframes/lots-of-objects.html
+
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::isURLAllowed):
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::uniqueChildName):
+        * page/Page.h:
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::isURLAllowed):
+
 2010-05-27  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Xan Lopez.

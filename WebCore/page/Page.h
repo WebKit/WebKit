@@ -232,6 +232,12 @@ namespace WebCore {
 #if ENABLE(INSPECTOR)
         InspectorTimelineAgent* inspectorTimelineAgent() const;
 #endif
+
+        // Don't allow more than a certain number of frames in a page.
+        // This seems like a reasonable upper bound, and otherwise mutually
+        // recursive frameset pages can quickly bring the program to its knees
+        // with exponential growth in the number of frames.
+        static const int maxNumberOfFrames = 1000;
     private:
         void initGroup();
 
