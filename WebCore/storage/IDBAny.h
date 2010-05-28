@@ -10,9 +10,6 @@
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
- * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
- *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -38,6 +35,7 @@
 namespace WebCore {
 
 class IDBDatabaseRequest;
+class IDBIndexRequest;
 class IDBObjectStoreRequest;
 class IndexedDatabaseRequest;
 class SerializedScriptValue;
@@ -49,20 +47,26 @@ public:
 
     enum Type {
         UndefinedType = 0,
+        NullType,
         IDBDatabaseRequestType,
+        IDBIndexRequestType,
         IDBObjectStoreRequestType,
         IndexedDatabaseRequestType,
         SerializedScriptValueType
     };
 
     Type type() const { return m_type; }
-
+    // Use type() to figure out which one of these you're allowed to call.
     PassRefPtr<IDBDatabaseRequest> idbDatabaseRequest();
+    PassRefPtr<IDBIndexRequest> idbIndexRequest();
     PassRefPtr<IDBObjectStoreRequest> idbObjectStoreRequest();
     PassRefPtr<IndexedDatabaseRequest> indexedDatabaseRequest();
     PassRefPtr<SerializedScriptValue> serializedScriptValue();
 
+    // Set can only be called once.
+    void set(); // For "null".
     void set(PassRefPtr<IDBDatabaseRequest>);
+    void set(PassRefPtr<IDBIndexRequest>);
     void set(PassRefPtr<IDBObjectStoreRequest>);
     void set(PassRefPtr<IndexedDatabaseRequest>);
     void set(PassRefPtr<SerializedScriptValue>);
@@ -74,6 +78,7 @@ private:
 
     // Only one of the following should ever be in use at any given time.
     RefPtr<IDBDatabaseRequest> m_idbDatabaseRequest;
+    RefPtr<IDBIndexRequest> m_idbIndexRequest;
     RefPtr<IDBObjectStoreRequest> m_idbObjectStoreRequest;
     RefPtr<IndexedDatabaseRequest> m_indexedDatabaseRequest;
     RefPtr<SerializedScriptValue> m_serializedScriptValue;

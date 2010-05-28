@@ -37,7 +37,9 @@
 
 namespace WebCore {
 
+class DOMStringList;
 class IDBAny;
+class IDBIndexRequest;
 class ScriptExecutionContext;
 class SerializedScriptValue;
 
@@ -51,12 +53,17 @@ public:
 
     String name() const;
     String keyPath() const;
+    PassRefPtr<DOMStringList> indexNames() const;
 
     PassRefPtr<IDBRequest> get(PassRefPtr<SerializedScriptValue> key);
     PassRefPtr<IDBRequest> add(PassRefPtr<SerializedScriptValue> value, PassRefPtr<SerializedScriptValue> key = 0);
     PassRefPtr<IDBRequest> modify(PassRefPtr<SerializedScriptValue> value, PassRefPtr<SerializedScriptValue> key = 0);
     PassRefPtr<IDBRequest> addOrModify(PassRefPtr<SerializedScriptValue> value, PassRefPtr<SerializedScriptValue> key = 0);
     PassRefPtr<IDBRequest> remove(PassRefPtr<SerializedScriptValue> key);
+
+    PassRefPtr<IDBRequest> createIndex(const String& name, const String& keyPath, bool unique = false) const;
+    PassRefPtr<IDBIndexRequest> index(const String& name) const;
+    PassRefPtr<IDBRequest> removeIndex(const String& name) const;
 
 private:
     IDBObjectStoreRequest(ScriptExecutionContext*, PassRefPtr<IDBObjectStore>);

@@ -2343,6 +2343,9 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         storage/IDBDatabaseRequest.h \
         storage/IDBErrorEvent.h \
         storage/IDBEvent.h \
+        storage/IDBIndex.h \
+        storage/IDBIndexImpl.h \
+        storage/IDBIndexRequest.h \
         storage/IDBObjectStore.h \
         storage/IDBObjectStoreRequest.h \
         storage/IDBRequest.h \
@@ -2358,6 +2361,8 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         storage/IDBDatabaseRequest.cpp \
         storage/IDBErrorEvent.cpp \
         storage/IDBEvent.cpp \
+        storage/IDBIndexImpl.cpp \
+        storage/IDBIndexRequest.cpp \
         storage/IDBObjectStore.cpp \
         storage/IDBObjectStoreRequest.cpp \
         storage/IDBRequest.cpp \

@@ -23,25 +23,45 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBDatabase_h
-#define WebIDBDatabase_h
+#include "config.h"
+#include "IDBIndexProxy.h"
 
-#include "WebCommon.h"
-#include "WebDOMStringList.h"
+#include "WebIDBDatabaseError.h"
+#include "WebIDBIndex.h"
 
-namespace WebKit {
+#if ENABLE(INDEXED_DATABASE)
 
-// See comment in WebIndexedDatabase for a high level overview of these classes.
-class WebIDBDatabase {
-public:
-    virtual ~WebIDBDatabase() { }
+namespace WebCore {
 
-    virtual WebString name() { return WebString(); }
-    virtual WebString description() { return WebString(); }
-    virtual WebString version() { return WebString(); }
-    virtual WebDOMStringList objectStores() { return WebDOMStringList(); }
-};
+PassRefPtr<IDBIndex> IDBIndexProxy::create(PassOwnPtr<WebKit::WebIDBIndex> Index)
+{
+    return adoptRef(new IDBIndexProxy(Index));
+}
 
-} // namespace WebKit
+IDBIndexProxy::IDBIndexProxy(PassOwnPtr<WebKit::WebIDBIndex> Index)
+    : m_webIDBIndex(Index)
+{
+}
 
-#endif // WebIDBDatabase_h
+IDBIndexProxy::~IDBIndexProxy()
+{
+}
+
+String IDBIndexProxy::name()
+{
+    return m_webIDBIndex->name();
+}
+
+String IDBIndexProxy::keyPath()
+{
+    return m_webIDBIndex->keyPath();
+}
+
+bool IDBIndexProxy::unique()
+{
+    return m_webIDBIndex->unique();
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(INDEXED_DATABASE)

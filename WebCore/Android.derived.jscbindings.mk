@@ -364,6 +364,7 @@ GEN := \
     $(intermediates)/storage/JSIDBDatabaseRequest.h \
     $(intermediates)/storage/JSIDBErrorEvent.h \
     $(intermediates)/storage/JSIDBEvent.h \
+    $(intermediates)/storage/JSIDBIndexRequest.h \
     $(intermediates)/storage/JSIDBRequest.h \
     $(intermediates)/storage/JSIDBSuccessEvent.h \
     $(intermediates)/storage/JSIndexedDatabaseRequest.h

@@ -31,6 +31,7 @@
 
 #include "IDBDatabase.h"
 #include "IDBDatabaseError.h"
+#include "IDBIndex.h"
 #include "SerializedScriptValue.h"
 #include <wtf/RefCounted.h>
 
@@ -43,7 +44,9 @@ public:
     virtual ~IDBCallbacks() { }
 
     virtual void onError(PassRefPtr<IDBDatabaseError>) = 0;
+    virtual void onSuccess() = 0; // For "null".
     virtual void onSuccess(PassRefPtr<IDBDatabase>) = 0;
+    virtual void onSuccess(PassRefPtr<IDBIndex>) = 0;
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>) = 0;
 };
 

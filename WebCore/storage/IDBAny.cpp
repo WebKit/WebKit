@@ -10,9 +10,6 @@
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
- * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
- *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -32,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBDatabaseRequest.h"
+#include "IDBIndexRequest.h"
 #include "IDBObjectStoreRequest.h"
 #include "IndexedDatabaseRequest.h"
 #include "SerializedScriptValue.h"
@@ -58,6 +56,12 @@ PassRefPtr<IDBDatabaseRequest> IDBAny::idbDatabaseRequest()
     return m_idbDatabaseRequest;
 }
 
+PassRefPtr<IDBIndexRequest> IDBAny::idbIndexRequest()
+{
+    ASSERT(m_type == IDBIndexRequestType);
+    return m_idbIndexRequest;
+}
+
 PassRefPtr<IDBObjectStoreRequest> IDBAny::idbObjectStoreRequest()
 {
     ASSERT(m_type == IDBObjectStoreRequestType);
@@ -76,39 +80,44 @@ PassRefPtr<SerializedScriptValue> IDBAny::serializedScriptValue()
     return m_serializedScriptValue;
 }
 
+void IDBAny::set()
+{
+    ASSERT(m_type == UndefinedType);
+    m_type = NullType;
+}
+
 void IDBAny::set(PassRefPtr<IDBDatabaseRequest> value)
 {
+    ASSERT(m_type == UndefinedType);
     m_type = IDBDatabaseRequestType;
     m_idbDatabaseRequest = value;
-    m_idbObjectStoreRequest = 0;
-    m_indexedDatabaseRequest = 0;
-    m_serializedScriptValue = 0;
+}
+
+void IDBAny::set(PassRefPtr<IDBIndexRequest> value)
+{
+    ASSERT(m_type == UndefinedType);
+    m_type = IDBDatabaseRequestType;
+    m_idbIndexRequest = value;
 }
 
 void IDBAny::set(PassRefPtr<IDBObjectStoreRequest> value)
 {
+    ASSERT(m_type == UndefinedType);
     m_type = IDBObjectStoreRequestType;
-    m_idbDatabaseRequest = 0;
     m_idbObjectStoreRequest = value;
-    m_indexedDatabaseRequest = 0;
-    m_serializedScriptValue = 0;
 }
 
 void IDBAny::set(PassRefPtr<IndexedDatabaseRequest> value)
 {
+    ASSERT(m_type == UndefinedType);
     m_type = IndexedDatabaseRequestType;
-    m_idbDatabaseRequest = 0;
-    m_idbObjectStoreRequest = 0;
     m_indexedDatabaseRequest = value;
-    m_serializedScriptValue = 0;
 }
 
 void IDBAny::set(PassRefPtr<SerializedScriptValue> value)
 {
+    ASSERT(m_type == UndefinedType);
     m_type = SerializedScriptValueType;
-    m_idbDatabaseRequest = 0;
-    m_idbObjectStoreRequest = 0;
-    m_indexedDatabaseRequest = 0;
     m_serializedScriptValue = value;
 }
 

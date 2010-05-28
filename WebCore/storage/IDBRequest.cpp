@@ -36,6 +36,7 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "IDBDatabaseRequest.h"
+#include "IDBIndexRequest.h"
 #include "IDBErrorEvent.h"
 #include "IDBSuccessEvent.h"
 #include "ScriptExecutionContext.h"
@@ -65,10 +66,22 @@ void IDBRequest::onError(PassRefPtr<IDBDatabaseError> error)
     m_error = error;
 }
 
+void IDBRequest::onSuccess()
+{
+    onEventCommon();
+    m_result->set();
+}
+
 void IDBRequest::onSuccess(PassRefPtr<IDBDatabase> idbDatabase)
 {
     onEventCommon();
     m_result->set(IDBDatabaseRequest::create(idbDatabase));
+}
+
+void IDBRequest::onSuccess(PassRefPtr<IDBIndex> idbIndex)
+{
+    onEventCommon();
+    m_result->set(IDBIndexRequest::create(idbIndex));
 }
 
 void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> serializedScriptValue)

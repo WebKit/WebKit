@@ -345,6 +345,7 @@ GEN := \
     $(intermediates)/storage/V8IDBDatabaseRequest.h \
     $(intermediates)/storage/V8IDBErrorEvent.h \
     $(intermediates)/storage/V8IDBEvent.h \
+    $(intermediates)/storage/V8IDBIndexRequest.h \
     $(intermediates)/storage/V8IDBRequest.h \
     $(intermediates)/storage/V8IDBSuccessEvent.h \
     $(intermediates)/storage/V8IndexedDatabaseRequest.h

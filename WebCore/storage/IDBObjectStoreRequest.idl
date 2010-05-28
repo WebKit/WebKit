@@ -29,13 +29,18 @@ module storage {
         Conditional=INDEXED_DATABASE
     ] IDBObjectStoreRequest {
         IDBRequest get(in SerializedScriptValue key);
+        // FIXME: Come to concensus re getAll.
         IDBRequest add(in SerializedScriptValue value, in [Optional] SerializedScriptValue key);
         IDBRequest modify(in SerializedScriptValue value, in [Optional] SerializedScriptValue key);
         IDBRequest addOrModify(in SerializedScriptValue value, in [Optional] SerializedScriptValue key);
         IDBRequest remove(in SerializedScriptValue key);
+        // FIXME: write openCursor
+        IDBRequest createIndex(in DOMString name, in DOMString keyPath, in [Optional] boolean unique);
+        IDBIndexRequest index(in DOMString name);
+        IDBRequest removeIndex(in DOMString name);
 
         readonly attribute DOMString name;
         readonly attribute DOMString keyPath;
-        // FIXME: add indexNames property.
+        readonly attribute DOMStringList indexNames;
     };
 }

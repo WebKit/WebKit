@@ -10,9 +10,6 @@
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
- * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
- *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -30,7 +27,6 @@
 #define IDBDatabaseImpl_h
 
 #include "IDBDatabase.h"
-#include <wtf/PassRefPtr.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -63,4 +59,3 @@ private:
 #endif
 
 #endif // IDBDatabaseImpl_h
-

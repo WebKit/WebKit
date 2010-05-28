@@ -36,6 +36,7 @@
 
 #include "SerializedScriptValue.h"
 #include "V8IDBDatabaseRequest.h"
+#include "V8IDBIndexRequest.h"
 #include "V8IDBObjectStoreRequest.h"
 #include "V8IndexedDatabaseRequest.h"
 
@@ -49,8 +50,12 @@ v8::Handle<v8::Value> toV8(IDBAny* impl)
     switch (impl->type()) {
     case IDBAny::UndefinedType:
         return v8::Undefined();
+    case IDBAny::NullType:
+        return v8::Null();
     case IDBAny::IDBDatabaseRequestType:
         return toV8(impl->idbDatabaseRequest());
+    case IDBAny::IDBIndexRequestType:
+        return toV8(impl->idbIndexRequest());
     case IDBAny::IDBObjectStoreRequestType:
         return toV8(impl->idbObjectStoreRequest());
     case IDBAny::IndexedDatabaseRequestType:

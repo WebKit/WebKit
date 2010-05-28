@@ -23,25 +23,24 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBDatabase_h
-#define WebIDBDatabase_h
+#include "config.h"
+#include "IDBIndexImpl.h"
 
-#include "WebCommon.h"
-#include "WebDOMStringList.h"
+#if ENABLE(INDEXED_DATABASE)
 
-namespace WebKit {
+namespace WebCore {
 
-// See comment in WebIndexedDatabase for a high level overview of these classes.
-class WebIDBDatabase {
-public:
-    virtual ~WebIDBDatabase() { }
+IDBIndexImpl::IDBIndexImpl(const String& name, const String& keyPath, bool unique)
+    : m_name(name)
+    , m_keyPath(keyPath)
+    , m_unique(unique)
+{
+}
 
-    virtual WebString name() { return WebString(); }
-    virtual WebString description() { return WebString(); }
-    virtual WebString version() { return WebString(); }
-    virtual WebDOMStringList objectStores() { return WebDOMStringList(); }
-};
+IDBIndexImpl::~IDBIndexImpl()
+{
+}
 
-} // namespace WebKit
+} // namespace WebCore
 
-#endif // WebIDBDatabase_h
+#endif // ENABLE(INDEXED_DATABASE)

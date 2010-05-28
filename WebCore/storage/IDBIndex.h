@@ -23,25 +23,28 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBDatabase_h
-#define WebIDBDatabase_h
+#ifndef IDBIndex_h
+#define IDBIndex_h
 
-#include "WebCommon.h"
-#include "WebDOMStringList.h"
+#include "PlatformString.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/Threading.h>
 
-namespace WebKit {
+#if ENABLE(INDEXED_DATABASE)
 
-// See comment in WebIndexedDatabase for a high level overview of these classes.
-class WebIDBDatabase {
+namespace WebCore {
+
+class IDBIndex : public ThreadSafeShared<IDBIndex> {
 public:
-    virtual ~WebIDBDatabase() { }
+    virtual ~IDBIndex() { }
 
-    virtual WebString name() { return WebString(); }
-    virtual WebString description() { return WebString(); }
-    virtual WebString version() { return WebString(); }
-    virtual WebDOMStringList objectStores() { return WebDOMStringList(); }
+    virtual String name() = 0;
+    virtual String keyPath() = 0;
+    virtual bool unique() = 0;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
-#endif // WebIDBDatabase_h
+#endif
+
+#endif // IDBIndex_h

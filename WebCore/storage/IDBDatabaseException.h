@@ -10,9 +10,6 @@
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
- * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
- *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -25,6 +22,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef IDBDatabaseException_h
 #define IDBDatabaseException_h
 
@@ -43,7 +41,22 @@ public:
         return adoptRef(new IDBDatabaseException());
     }
     ~IDBDatabaseException() { }
-    
+
+    // Keep in sync with what's in the .idl file.
+    enum ErrorCode {
+        UNKNOWN_ERR = 0,
+        NON_TRANSIENT_ERR = 1,
+        NOT_FOUND_ERR = 2,
+        CONSTRAINT_ERR = 3,
+        DATA_ERR = 4,
+        NOT_ALLOWED_ERR = 5,
+        SERIAL_ERR = 11,
+        RECOVERABLE_ERR = 21,
+        TRANSIENT_ERR = 31,
+        TIMEOUT_ERR = 32,
+        DEADLOCK_ERR = 33
+    };
+   
     unsigned short code() const { return m_code; }
     void setCode(unsigned short value) { m_code = value; }
     String message() const { return m_message; }
@@ -61,4 +74,3 @@ private:
 #endif
 
 #endif // IDBDatabaseException_h
-

@@ -38580,6 +38580,62 @@
 					>
 				</File>
 				<File
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBIndexRequest.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Internal|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_All|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBIndexRequest.h"
+					>
+				</File>
+				<File
 					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBObjectStoreRequest.cpp"
 					>
 					<FileConfiguration
@@ -44114,6 +44170,26 @@
 			</File>
 			<File
 				RelativePath="..\storage\IDBErrorEvent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBIndex.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBIndexImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBIndexImpl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBIndexRequest.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBIndexRequest.h"
 				>
 			</File>
 			<File

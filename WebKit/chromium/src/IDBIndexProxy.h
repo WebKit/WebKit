@@ -23,25 +23,39 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBDatabase_h
-#define WebIDBDatabase_h
+#ifndef IDBIndexProxy_h
+#define IDBIndexProxy_h
 
-#include "WebCommon.h"
-#include "WebDOMStringList.h"
+#include "IDBIndex.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
 
-namespace WebKit {
+#if ENABLE(INDEXED_DATABASE)
 
-// See comment in WebIndexedDatabase for a high level overview of these classes.
-class WebIDBDatabase {
+namespace WebKit { class WebIDBIndex; }
+
+namespace WebCore {
+
+class IDBIndexProxy : public IDBIndex {
 public:
-    virtual ~WebIDBDatabase() { }
+    static PassRefPtr<IDBIndex> create(PassOwnPtr<WebKit::WebIDBIndex>);
+    virtual ~IDBIndexProxy();
 
-    virtual WebString name() { return WebString(); }
-    virtual WebString description() { return WebString(); }
-    virtual WebString version() { return WebString(); }
-    virtual WebDOMStringList objectStores() { return WebDOMStringList(); }
+    virtual String name();
+    virtual String keyPath();
+    virtual bool unique();
+
+    // FIXME: Add other methods.
+
+private:
+    IDBIndexProxy(PassOwnPtr<WebKit::WebIDBIndex>);
+
+    OwnPtr<WebKit::WebIDBIndex> m_webIDBIndex;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
-#endif // WebIDBDatabase_h
+#endif
+
+#endif // IDBIndexProxy_h

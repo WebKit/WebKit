@@ -22,10 +22,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 #include "IDBObjectStoreRequest.h"
 
+#include "DOMStringList.h"
 #include "IDBAny.h"
+#include "IDBIndexRequest.h"
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include <wtf/UnusedParam.h>
@@ -34,8 +37,8 @@
 
 namespace WebCore {
 
-IDBObjectStoreRequest::IDBObjectStoreRequest(ScriptExecutionContext* context, PassRefPtr<IDBObjectStore> idbStore) 
-    : m_objectStore(idbStore)
+IDBObjectStoreRequest::IDBObjectStoreRequest(ScriptExecutionContext* context, PassRefPtr<IDBObjectStore> idbObjectStore) 
+    : m_objectStore(idbObjectStore)
     , m_scriptExecutionContext(context)
 {
     m_this = IDBAny::create();
@@ -44,14 +47,17 @@ IDBObjectStoreRequest::IDBObjectStoreRequest(ScriptExecutionContext* context, Pa
 
 String IDBObjectStoreRequest::name() const
 {
-    ASSERT(m_objectStore);
     return m_objectStore->name();
 }
 
 String IDBObjectStoreRequest::keyPath() const
 {
-    ASSERT(m_objectStore);
     return m_objectStore->keyPath();
+}
+
+PassRefPtr<DOMStringList> IDBObjectStoreRequest::indexNames() const
+{
+    return m_objectStore->indexNames();
 }
 
 PassRefPtr<IDBRequest> IDBObjectStoreRequest::get(PassRefPtr<SerializedScriptValue> key)
@@ -89,6 +95,27 @@ PassRefPtr<IDBRequest> IDBObjectStoreRequest::remove(PassRefPtr<SerializedScript
 {
     // FIXME: implement
     UNUSED_PARAM(key);
+    return 0;
+}
+
+PassRefPtr<IDBRequest> IDBObjectStoreRequest::createIndex(const String& name, const String& keyPath, bool unique) const
+{
+    // FIXME: Implement.
+    UNUSED_PARAM(name);
+    UNUSED_PARAM(keyPath);
+    UNUSED_PARAM(unique);
+    return 0;
+}
+
+PassRefPtr<IDBIndexRequest> IDBObjectStoreRequest::index(const String& name) const
+{
+    return IDBIndexRequest::create(m_objectStore->index(name));
+}
+
+PassRefPtr<IDBRequest> IDBObjectStoreRequest::removeIndex(const String& name) const
+{
+    // FIXME: Implement.
+    UNUSED_PARAM(name);
     return 0;
 }
 

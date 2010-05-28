@@ -23,25 +23,22 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBDatabase_h
-#define WebIDBDatabase_h
+#include "config.h"
+#include "IDBIndexRequest.h"
 
-#include "WebCommon.h"
-#include "WebDOMStringList.h"
+#if ENABLE(INDEXED_DATABASE)
 
-namespace WebKit {
+namespace WebCore {
 
-// See comment in WebIndexedDatabase for a high level overview of these classes.
-class WebIDBDatabase {
-public:
-    virtual ~WebIDBDatabase() { }
+IDBIndexRequest::IDBIndexRequest(PassRefPtr<IDBIndex> idbIndex)
+    : m_idbIndex(idbIndex)
+{
+}
 
-    virtual WebString name() { return WebString(); }
-    virtual WebString description() { return WebString(); }
-    virtual WebString version() { return WebString(); }
-    virtual WebDOMStringList objectStores() { return WebDOMStringList(); }
-};
+IDBIndexRequest::~IDBIndexRequest()
+{
+}
 
-} // namespace WebKit
+} // namespace WebCore
 
-#endif // WebIDBDatabase_h
+#endif // ENABLE(INDEXED_DATABASE)

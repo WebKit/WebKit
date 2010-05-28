@@ -1,3 +1,92 @@
+2010-05-27  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Add IndexedDB's IDBIndex
+        https://bugs.webkit.org/show_bug.cgi?id=39850
+
+        Flesh out IDBIndex as much as possible until Andrei finishes
+        his patch to get around passing Frame*'s all around.  I also
+        cleaned up a bunch of existing files as I noticed style
+        violations (while basing my new files off of the old).
+
+        Not hooked up enough to test.  Will add tests soon.
+
+        * Android.derived.jscbindings.mk
+        * Android.derived.v8bindings.mk
+        * Android.mk
+        * CMakeLists.txt
+        * DerivedSources.cpp
+        * DerivedSources.make
+        * GNUmakefile.am
+        * WebCore.pri
+        * WebCore.pro
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj
+        * WebCore.xcodeproj/project.pbxproj
+        * bindings/js/JSIDBAnyCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8IDBAnyCustom.cpp:
+        (WebCore::toV8):
+        * storage/IDBAny.cpp:
+        (WebCore::IDBAny::idbIndexRequest):
+        (WebCore::IDBAny::set):
+        * storage/IDBAny.h:
+        (WebCore::IDBAny::):
+        * storage/IDBCallbacks.h:
+        * storage/IDBDatabase.h:
+        * storage/IDBDatabaseError.h:
+        (WebCore::IDBDatabaseError::):
+        * storage/IDBDatabaseError.idl:
+        * storage/IDBDatabaseException.h:
+        * storage/IDBDatabaseException.idl:
+        * storage/IDBDatabaseImpl.cpp:
+        * storage/IDBDatabaseImpl.h:
+        * storage/IDBDatabaseRequest.cpp:
+        * storage/IDBDatabaseRequest.h:
+        * storage/IDBDatabaseRequest.idl:
+        * storage/IDBIndex.h: Added.
+        (WebCore::IDBIndex::~IDBIndex):
+        * storage/IDBIndexImpl.cpp: Added.
+        (WebCore::IDBIndexImpl::IDBIndexImpl):
+        (WebCore::IDBIndexImpl::~IDBIndexImpl):
+        * storage/IDBIndexImpl.h: Added.
+        (WebCore::IDBIndexImpl::create):
+        (WebCore::IDBIndexImpl::name):
+        (WebCore::IDBIndexImpl::keyPath):
+        (WebCore::IDBIndexImpl::unique):
+        * storage/IDBIndexRequest.cpp: Added.
+        (WebCore::IDBIndexRequest::IDBIndexRequest):
+        (WebCore::IDBIndexRequest::~IDBIndexRequest):
+        * storage/IDBIndexRequest.h: Added.
+        (WebCore::IDBIndexRequest::create):
+        (WebCore::IDBIndexRequest::name):
+        (WebCore::IDBIndexRequest::keyPath):
+        (WebCore::IDBIndexRequest::unique):
+        * storage/IDBIndexRequest.idl: Added.
+        * storage/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::IDBObjectStore):
+        (WebCore::IDBObjectStore::~IDBObjectStore):
+        (WebCore::IDBObjectStore::indexNames):
+        (WebCore::IDBObjectStore::createIndex):
+        (WebCore::IDBObjectStore::index):
+        (WebCore::IDBObjectStore::removeIndex):
+        * storage/IDBObjectStore.h:
+        * storage/IDBObjectStoreRequest.cpp:
+        (WebCore::IDBObjectStoreRequest::IDBObjectStoreRequest):
+        (WebCore::IDBObjectStoreRequest::name):
+        (WebCore::IDBObjectStoreRequest::keyPath):
+        (WebCore::IDBObjectStoreRequest::indexNames):
+        (WebCore::IDBObjectStoreRequest::createIndex):
+        (WebCore::IDBObjectStoreRequest::index):
+        (WebCore::IDBObjectStoreRequest::removeIndex):
+        * storage/IDBObjectStoreRequest.h:
+        * storage/IDBObjectStoreRequest.idl:
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess):
+        * storage/IDBRequest.h:
+        * storage/IndexedDatabaseRequest.idl:
+
 2010-05-28  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

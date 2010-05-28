@@ -23,25 +23,40 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBDatabase_h
-#define WebIDBDatabase_h
+#ifndef IDBIndexRequest_h
+#define IDBIndexRequest_h
 
-#include "WebCommon.h"
-#include "WebDOMStringList.h"
+#include "IDBIndex.h"
+#include "PlatformString.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
-namespace WebKit {
+#if ENABLE(INDEXED_DATABASE)
 
-// See comment in WebIndexedDatabase for a high level overview of these classes.
-class WebIDBDatabase {
+namespace WebCore {
+
+class IDBIndexRequest : public RefCounted<IDBIndexRequest> {
 public:
-    virtual ~WebIDBDatabase() { }
+    static PassRefPtr<IDBIndexRequest> create(PassRefPtr<IDBIndex> idbIndex)
+    {
+        return adoptRef(new IDBIndexRequest(idbIndex));
+    }
+    ~IDBIndexRequest();
 
-    virtual WebString name() { return WebString(); }
-    virtual WebString description() { return WebString(); }
-    virtual WebString version() { return WebString(); }
-    virtual WebDOMStringList objectStores() { return WebDOMStringList(); }
+    // Implement the IDL
+    String name() const { return m_idbIndex->name(); }
+    String keyPath() const { return m_idbIndex->keyPath(); }
+    bool unique() const { return m_idbIndex->unique(); }
+
+private:
+    IDBIndexRequest(PassRefPtr<IDBIndex>);
+
+    RefPtr<IDBIndex> m_idbIndex;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
-#endif // WebIDBDatabase_h
+#endif
+
+#endif // IDBIndexRequest_h

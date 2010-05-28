@@ -63,7 +63,9 @@ public:
 
     // IDBCallbacks
     virtual void onError(PassRefPtr<IDBDatabaseError>);
+    virtual void onSuccess(); // For "null".
     virtual void onSuccess(PassRefPtr<IDBDatabase>);
+    virtual void onSuccess(PassRefPtr<IDBIndex>);
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>);
     // FIXME: Have one onSuccess function for each possible result type.
 

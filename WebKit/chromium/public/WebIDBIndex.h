@@ -23,25 +23,35 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBDatabase_h
-#define WebIDBDatabase_h
+#ifndef WebIDBIndex_h
+#define WebIDBIndex_h
 
-#include "WebCommon.h"
-#include "WebDOMStringList.h"
+#include "WebString.h"
 
 namespace WebKit {
 
 // See comment in WebIndexedDatabase for a high level overview of these classes.
-class WebIDBDatabase {
+class WebIDBIndex {
 public:
-    virtual ~WebIDBDatabase() { }
+    virtual ~WebIDBIndex() { }
 
-    virtual WebString name() { return WebString(); }
-    virtual WebString description() { return WebString(); }
-    virtual WebString version() { return WebString(); }
-    virtual WebDOMStringList objectStores() { return WebDOMStringList(); }
+    virtual WebString name() const
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return WebString();
+    }
+    virtual WebString keyPath() const
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return WebString();
+    }
+    virtual bool unique() const
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return false;
+    }
 };
 
 } // namespace WebKit
 
-#endif // WebIDBDatabase_h
+#endif // WebIDBIndex_h

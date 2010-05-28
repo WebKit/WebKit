@@ -23,25 +23,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBDatabase_h
-#define WebIDBDatabase_h
+#ifndef WebIDBIndexImpl_h
+#define WebIDBIndexImpl_h
 
 #include "WebCommon.h"
-#include "WebDOMStringList.h"
+#include "WebIDBIndex.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
+
+namespace WebCore { class IDBIndex; }
 
 namespace WebKit {
 
-// See comment in WebIndexedDatabase for a high level overview of these classes.
-class WebIDBDatabase {
+// See comment in WebIndexedDatabase for a high level overview these classes.
+class WebIDBIndexImpl : public WebIDBIndex {
 public:
-    virtual ~WebIDBDatabase() { }
+    WebIDBIndexImpl(WTF::PassRefPtr<WebCore::IDBIndex> idbIndex);
+    virtual ~WebIDBIndexImpl();
 
-    virtual WebString name() { return WebString(); }
-    virtual WebString description() { return WebString(); }
-    virtual WebString version() { return WebString(); }
-    virtual WebDOMStringList objectStores() { return WebDOMStringList(); }
+    virtual WebString name() const;
+    virtual WebString keyPath() const;
+    virtual bool unique() const;
+
+private:
+    WTF::RefPtr<WebCore::IDBIndex> m_idbIndex;
 };
 
 } // namespace WebKit
 
-#endif // WebIDBDatabase_h
+#endif // WebIDBIndexImpl_h

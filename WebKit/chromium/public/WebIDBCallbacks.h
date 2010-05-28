@@ -10,9 +10,6 @@
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
- * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
- *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -35,6 +32,7 @@ namespace WebKit {
 
 class WebIDBDatabase;
 class WebIDBDatabaseError;
+class WebIDBIndex;
 class WebSerializedScriptValue;
 
 class WebIDBCallbacks {
@@ -43,9 +41,11 @@ public:
 
     // For classes that follow the PImpl pattern, pass a const reference.
     // For the rest, pass ownership to the callee via a pointer.
-    virtual void onError(const WebIDBDatabaseError&) = 0;
-    virtual void onSuccess(WebIDBDatabase*) = 0;
-    virtual void onSuccess(const WebSerializedScriptValue&) = 0;
+    virtual void onError(const WebIDBDatabaseError&) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void onSuccess() { WEBKIT_ASSERT_NOT_REACHED(); } // For "null".
+    virtual void onSuccess(WebIDBDatabase*) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void onSuccess(WebIDBIndex*) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void onSuccess(const WebSerializedScriptValue&) { WEBKIT_ASSERT_NOT_REACHED(); }
 };
 
 } // namespace WebKit

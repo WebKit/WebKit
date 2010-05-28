@@ -23,25 +23,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBDatabase_h
-#define WebIDBDatabase_h
+module storage {
 
-#include "WebCommon.h"
-#include "WebDOMStringList.h"
+    interface [
+        Conditional=INDEXED_DATABASE
+    ] IDBIndexRequest {
+        // FIXME: Complete this file.
 
-namespace WebKit {
+        readonly attribute DOMString name;
+        readonly attribute DOMString keyPath;
+        readonly attribute boolean unique;
+    };
 
-// See comment in WebIndexedDatabase for a high level overview of these classes.
-class WebIDBDatabase {
-public:
-    virtual ~WebIDBDatabase() { }
-
-    virtual WebString name() { return WebString(); }
-    virtual WebString description() { return WebString(); }
-    virtual WebString version() { return WebString(); }
-    virtual WebDOMStringList objectStores() { return WebDOMStringList(); }
-};
-
-} // namespace WebKit
-
-#endif // WebIDBDatabase_h
+}
