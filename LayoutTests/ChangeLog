@@ -1,3 +1,17 @@
+2010-05-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        document.write does not work correctly in the HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=39828
+
+        Add two tests for document.write behavior and update
+        our expected results to remove two parse errors now that
+        document.write is functioning correctly.
+
+        * html5lib/resources/webkit01.dat:
+        * html5lib/runner-expected-html5.txt:
+
 2010-05-27  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ojan Vafai.

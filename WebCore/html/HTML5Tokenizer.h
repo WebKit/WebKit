@@ -27,6 +27,7 @@
 #define HTML5Tokenizer_h
 
 #include "CachedResourceClient.h"
+#include "HTML5ScriptRunnerHost.h"
 #include "HTML5Token.h"
 #include "SegmentedString.h"
 #include "Tokenizer.h"
@@ -38,21 +39,28 @@ class HTML5Lexer;
 class HTML5ScriptRunner;
 class HTML5TreeBuilder;
 class HTMLDocument;
+class ScriptSourceCode;
 
 // FIXME: The whole Tokenizer class system should be renamed "Parser"
 // or "ParserController" as the job of this class is to drive parsing process
 // but it does not itself Tokenize.
-class HTML5Tokenizer :  public Tokenizer, CachedResourceClient {
+class HTML5Tokenizer :  public Tokenizer, HTML5ScriptRunnerHost, CachedResourceClient {
 public:
     HTML5Tokenizer(HTMLDocument*, bool reportErrors);
     virtual ~HTML5Tokenizer();
 
+    // Tokenizer
     virtual void begin();
     virtual void write(const SegmentedString&, bool appendData);
     virtual void end();
     virtual void finish();
     virtual bool isWaitingForScripts() const;
     virtual void executeScriptsWaitingForStylesheets();
+
+    // HTML5ScriptRunnerHost
+    virtual void watchForLoad(CachedResource*);
+    virtual void stopWatchingForLoad(CachedResource*);
+    virtual void executeScript(const ScriptSourceCode&);
 
     // CachedResourceClient
     virtual void notifyFinished(CachedResource*);
@@ -66,6 +74,7 @@ private:
     // We hold m_token here because it might be partially complete.
     HTML5Token m_token;
 
+    HTMLDocument* m_document;
     OwnPtr<HTML5Lexer> m_lexer;
     OwnPtr<HTML5ScriptRunner> m_scriptRunner;
     OwnPtr<HTML5TreeBuilder> m_treeBuilder;

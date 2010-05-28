@@ -27,9 +27,9 @@
 #include "HTML5Tokenizer.h"
 
 #include "Element.h"
+#include "Frame.h"
 #include "HTML5Lexer.h"
 #include "HTML5ScriptRunner.h"
-#include "HTML5Token.h"
 #include "HTML5TreeBuilder.h"
 #include "HTMLDocument.h"
 #include "Node.h"
@@ -39,6 +39,7 @@ namespace WebCore {
 
 HTML5Tokenizer::HTML5Tokenizer(HTMLDocument* document, bool reportErrors)
     : Tokenizer()
+    , m_document(document)
     , m_lexer(new HTML5Lexer)
     , m_scriptRunner(new HTML5ScriptRunner(document, this))
     , m_treeBuilder(new HTML5TreeBuilder(m_lexer.get(), document, reportErrors))
@@ -67,19 +68,15 @@ void HTML5Tokenizer::pumpLexer()
         // The parser will pause itself when waiting on a script to load or run.
         // ScriptRunner executes scripts at the right times and handles reentrancy.
         bool shouldContinueParsing = m_scriptRunner->execute(m_treeBuilder->takeScriptToProcess());
-        if (!shouldContinueParsing) {
-            // ASSERT(m_source.isEmpty() || m_treeBuilder->isPaused());
-            // FIXME: the script runner should either make this call or return a special
-            // value to indicate we should pause.
-            m_treeBuilder->setPaused(true);
+        m_treeBuilder->setPaused(!shouldContinueParsing);
+        if (!shouldContinueParsing)
             return;
-        }
     }
 }
 
 void HTML5Tokenizer::write(const SegmentedString& source, bool)
 {
-    // FIXME: This does not yet correctly handle reentrant writes.
+    // HTML5Tokenizer::executeScript is responsible for handling saving m_source before re-entry.
     m_source.append(source);
     if (!m_treeBuilder->isPaused())
         pumpLexer();
@@ -113,6 +110,33 @@ void HTML5Tokenizer::resumeParsingAfterScriptExecution()
     pumpLexer();
     if (m_source.isEmpty() && m_source.isClosed())
         end(); // The document already finished parsing we were just waiting on scripts when finished() was called.
+}
+
+void HTML5Tokenizer::watchForLoad(CachedResource* cachedScript)
+{
+    ASSERT(!cachedScript->isLoaded());
+    // addClient would call notifyFinished if the load were complete.
+    // Callers do not expect to be re-entered from this call, so they should
+    // not an already-loaded CachedResource.
+    cachedScript->addClient(this);
+}
+
+void HTML5Tokenizer::stopWatchingForLoad(CachedResource* cachedScript)
+{
+    cachedScript->removeClient(this);
+}
+
+void HTML5Tokenizer::executeScript(const ScriptSourceCode& sourceCode)
+{
+    if (!m_document->frame())
+        return;
+
+    // FIXME: Is this expensive?  Should we use OwnPtr and swap?
+    SegmentedString oldInsertionPoint = m_source;
+    m_source = SegmentedString();
+    m_document->frame()->script()->executeScript(sourceCode);
+    oldInsertionPoint.prepend(m_source);
+    m_source = oldInsertionPoint;
 }
 
 void HTML5Tokenizer::notifyFinished(CachedResource* cachedResource)

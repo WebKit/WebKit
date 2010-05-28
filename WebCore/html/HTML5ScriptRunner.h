@@ -38,11 +38,12 @@ class CachedScript;
 class Document;
 class Element;
 class Frame;
+class HTML5ScriptRunnerHost;
 class ScriptSourceCode;
 
 class HTML5ScriptRunner : public Noncopyable {
 public:
-    HTML5ScriptRunner(Document*, CachedResourceClient*);
+    HTML5ScriptRunner(Document*, HTML5ScriptRunnerHost*);
     ~HTML5ScriptRunner();
 
     // Processes the passed in script and any pending scripts if possible.
@@ -52,8 +53,14 @@ public:
 
 private:
     struct PendingScript {
+        PendingScript()
+            : watchingForLoad(false)
+        {
+        }
+
         RefPtr<Element> element;
         CachedResourceHandle<CachedScript> cachedScript;
+        bool watchingForLoad; // Did we pass the cachedScript to the HTML5ScriptRunnerHost.
         // HTML5 has an isReady parameter, however isReady ends up equivalent to
         // m_document->haveStylesheetsLoaded() && cachedScript->isLoaded()
     };
@@ -66,11 +73,16 @@ private:
     void requestScript(Element*);
     void runScript(Element*);
 
+    // Helpers for dealing with HTML5ScriptRunnerHost
+    void watchForLoad(PendingScript&);
+    void stopWatchingForLoad(PendingScript&);
+    void executeScript(Element*, const ScriptSourceCode&);
+
     bool isPendingScriptReady(const PendingScript&);
     ScriptSourceCode sourceFromPendingScript(const PendingScript&, bool& errorOccurred);
 
     Document* m_document;
-    CachedResourceClient* m_loadNotifier;
+    HTML5ScriptRunnerHost* m_host;
     PendingScript m_parsingBlockingScript;
     unsigned m_scriptNestingLevel;
 };

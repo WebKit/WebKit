@@ -32,6 +32,7 @@
 #include "Element.h"
 #include "Event.h"
 #include "Frame.h"
+#include "HTML5ScriptRunnerHost.h"
 #include "HTMLNames.h"
 #include "NotImplemented.h"
 #include "ScriptElement.h"
@@ -41,20 +42,27 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTML5ScriptRunner::HTML5ScriptRunner(Document* document, CachedResourceClient* loadNotifier)
+HTML5ScriptRunner::HTML5ScriptRunner(Document* document, HTML5ScriptRunnerHost* host)
     : m_document(document)
-    , m_loadNotifier(loadNotifier)
+    , m_host(host)
     , m_scriptNestingLevel(0)
 {
 }
 
 HTML5ScriptRunner::~HTML5ScriptRunner()
 {
+    // FIXME: Should we be passed a "done loading/parsing" callback sooner than destruction?
+    if (m_parsingBlockingScript.cachedScript && m_parsingBlockingScript.watchingForLoad)
+        stopWatchingForLoad(m_parsingBlockingScript);
 }
 
-Frame* HTML5ScriptRunner::frame() const
+static KURL documentURLForScriptExecution(Document* document)
 {
-    return m_document->frame();
+    if (!document || !document->frame())
+        return KURL();
+
+    // Use the URL of the currently active document for this frame.
+    return document->frame()->document()->url();
 }
 
 inline PassRefPtr<Event> createScriptLoadEvent()
@@ -76,8 +84,7 @@ ScriptSourceCode HTML5ScriptRunner::sourceFromPendingScript(const PendingScript&
     }
     errorOccurred = false;
     // FIXME: Line numbers are wrong.
-    KURL documentURL = frame() ? frame()->document()->url() : KURL();
-    return ScriptSourceCode(script.element->textContent(), documentURL);
+    return ScriptSourceCode(script.element->textContent(), documentURLForScriptExecution(m_document));
 }
 
 bool HTML5ScriptRunner::isPendingScriptReady(const PendingScript& script)
@@ -101,24 +108,49 @@ void HTML5ScriptRunner::executePendingScript()
     ASSERT(isPendingScriptReady(m_parsingBlockingScript));
     ScriptSourceCode sourceCode = sourceFromPendingScript(m_parsingBlockingScript, errorOccurred);
 
-    RefPtr<Element> scriptElement = m_parsingBlockingScript.element.release();
-    CachedScript* cachedScript = m_parsingBlockingScript.cachedScript.get();
-    m_parsingBlockingScript.cachedScript = 0;
+    // Stop watching loads before executeScript to prevent recursion if the script reloads itself.
+    if (m_parsingBlockingScript.cachedScript && m_parsingBlockingScript.watchingForLoad)
+        stopWatchingForLoad(m_parsingBlockingScript);
 
-    // removeClient before execution to prevent recursion if the script reloads itself.
-    if (cachedScript)
-        cachedScript->removeClient(m_loadNotifier);
+    // Clear the pending script before possible rentrancy from executeScript()
+    RefPtr<Element> scriptElement = m_parsingBlockingScript.element.release();
+    m_parsingBlockingScript = PendingScript();
 
     m_scriptNestingLevel++;
     if (errorOccurred)
         scriptElement->dispatchEvent(createScriptErrorEvent());
     else {
-        if (toScriptElement(scriptElement.get())->shouldExecuteAsJavaScript())
-            frame()->script()->executeScript(sourceCode);
+        executeScript(scriptElement.get(), sourceCode);
         scriptElement->dispatchEvent(createScriptLoadEvent());
     }
     m_scriptNestingLevel--;
     ASSERT(!m_scriptNestingLevel);
+}
+
+void HTML5ScriptRunner::executeScript(Element* element, const ScriptSourceCode& sourceCode)
+{
+    ScriptElement* scriptElement = toScriptElement(element);
+    ASSERT(scriptElement);
+    if (!scriptElement->shouldExecuteAsJavaScript())
+        return;
+
+    // Always use the delegate to execute the script so that it can save any
+    // necessary state to prepare for rentrancy.
+    m_host->executeScript(sourceCode);
+}
+
+void HTML5ScriptRunner::watchForLoad(PendingScript& pendingScript)
+{
+    ASSERT(!pendingScript.watchingForLoad);
+    m_host->watchForLoad(pendingScript.cachedScript.get());
+    pendingScript.watchingForLoad = true;
+}
+
+void HTML5ScriptRunner::stopWatchingForLoad(PendingScript& pendingScript)
+{
+    ASSERT(pendingScript.watchingForLoad);
+    m_host->stopWatchingForLoad(pendingScript.cachedScript.get());
+    pendingScript.watchingForLoad = false;
 }
 
 // This function should match 10.2.5.11 "An end tag whose tag name is 'script'"
@@ -173,10 +205,16 @@ void HTML5ScriptRunner::requestScript(Element* script)
         return;
     }
     m_parsingBlockingScript.cachedScript = cachedScript;
-    // NOTE: This may cause immediate execution of the script.
-    cachedScript->addClient(m_loadNotifier);
+
+    // We only care about a load callback if cachedScript is not already
+    // in the cache.  Callers will attempt to run the m_parsingBlockingScript
+    // if possible before returning control to the parser.
+    if (!m_parsingBlockingScript.cachedScript->isLoaded())
+        watchForLoad(m_parsingBlockingScript);
 }
 
+// This method is meant to match the HTML5 definition of "running a script"
+// http://www.whatwg.org/specs/web-apps/current-work/multipage/scripting-1.html#running-a-script
 void HTML5ScriptRunner::runScript(Element* script)
 {
     ASSERT(!m_parsingBlockingScript.element);
@@ -190,10 +228,9 @@ void HTML5ScriptRunner::runScript(Element* script)
     } else if (!m_document->haveStylesheetsLoaded()) {
         m_parsingBlockingScript.element = script;
     } else {
-        KURL documentURL = frame() ? frame()->document()->url() : KURL();
         // FIXME: Need a line numbers implemenation.
-        ScriptSourceCode sourceCode = ScriptSourceCode(script->textContent(), documentURL, 0);
-        frame()->script()->executeScript(sourceCode);
+        ScriptSourceCode sourceCode(script->textContent(), documentURLForScriptExecution(m_document), 0);
+        executeScript(script, sourceCode);
     }
     m_scriptNestingLevel--;
 }

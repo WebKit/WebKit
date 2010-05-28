@@ -3017,6 +3017,7 @@
 		A871DFE50A15376B00B12A68 /* RenderWidget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DFE10A15376B00B12A68 /* RenderWidget.cpp */; };
 		A879C62511A9D1F70059237A /* HTML5TreeBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A879C62311A9D1F70059237A /* HTML5TreeBuilder.cpp */; };
 		A879C62611A9D1F70059237A /* HTML5TreeBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A879C62411A9D1F70059237A /* HTML5TreeBuilder.h */; };
+		A87F163511AE841300CBB2E5 /* HTML5ScriptRunnerHost.h in Headers */ = {isa = PBXBuildFile; fileRef = A87F163411AE841300CBB2E5 /* HTML5ScriptRunnerHost.h */; };
 		A883DF270F3D045D00F19BF6 /* VisibleSelection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A883DF250F3D045D00F19BF6 /* VisibleSelection.cpp */; };
 		A883DF280F3D045D00F19BF6 /* VisibleSelection.h in Headers */ = {isa = PBXBuildFile; fileRef = A883DF260F3D045D00F19BF6 /* VisibleSelection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A88AD52F09524B92001DD196 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */; };
@@ -8463,6 +8464,7 @@
 		A871DFE10A15376B00B12A68 /* RenderWidget.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderWidget.cpp; sourceTree = "<group>"; };
 		A879C62311A9D1F70059237A /* HTML5TreeBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTML5TreeBuilder.cpp; sourceTree = "<group>"; };
 		A879C62411A9D1F70059237A /* HTML5TreeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTML5TreeBuilder.h; sourceTree = "<group>"; };
+		A87F163411AE841300CBB2E5 /* HTML5ScriptRunnerHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTML5ScriptRunnerHost.h; sourceTree = "<group>"; };
 		A883DF250F3D045D00F19BF6 /* VisibleSelection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisibleSelection.cpp; sourceTree = "<group>"; };
 		A883DF260F3D045D00F19BF6 /* VisibleSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisibleSelection.h; sourceTree = "<group>"; };
 		A88DD4860B4629A300C02990 /* PathTraversalState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PathTraversalState.h; sourceTree = "<group>"; };
@@ -13381,6 +13383,7 @@
 				97E8B35511A23CE200169409 /* HTML5Lexer.h */,
 				A83B3AEE11ADEFF500458809 /* HTML5ScriptRunner.cpp */,
 				A83B3AEF11ADEFF500458809 /* HTML5ScriptRunner.h */,
+				A87F163411AE841300CBB2E5 /* HTML5ScriptRunnerHost.h */,
 				97E8B3C211A2890800169409 /* HTML5Token.h */,
 				A871038811A2947000DBD50E /* HTML5Tokenizer.cpp */,
 				A871038911A2947000DBD50E /* HTML5Tokenizer.h */,
@@ -19377,6 +19380,7 @@
 				B6693EF311AD6486003F2770 /* JSIDBObjectStoreRequest.h in Headers */,
 				A83B3AF111ADEFF500458809 /* HTML5ScriptRunner.h in Headers */,
 				521D46F811AEC9B100514613 /* KillRing.h in Headers */,
+				A87F163511AE841300CBB2E5 /* HTML5ScriptRunnerHost.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

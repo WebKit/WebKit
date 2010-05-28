@@ -1,3 +1,76 @@
+2010-05-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        document.write does not work correctly in the HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=39828
+
+        Added a new HTML5ScriptRunnerHost interface which
+        HTML5Tokenizer implements.  This allows HTML5ScriptController
+        to delegate the actual ScriptController::executeScript back to
+        HTML5Tokenizer.  HTML5Tokenizer saves off the current m_source
+        before calling ScriptController::executeScript to allow safe
+        reentrancy through document.write().
+
+        * WebCore.xcodeproj/project.pbxproj:
+         - Added HTML5ScriptRunnerHost.h
+        * html/HTML5ScriptRunner.cpp:
+        (WebCore::HTML5ScriptRunner::HTML5ScriptRunner):
+        (WebCore::HTML5ScriptRunner::~HTML5ScriptRunner):
+         - Unregister m_parsingBlockingScript if stopped before
+           load completion.  This was probably causing some of the
+           crashes on page navigation we saw during LayoutTest runs.
+        (WebCore::documentURLForScriptExecution):
+         - Unify our documentURL handling so all callsites get it right.
+        (WebCore::HTML5ScriptRunner::sourceFromPendingScript):
+         - Use documentURLForScriptExecution
+        (WebCore::HTML5ScriptRunner::executePendingScript):
+         - Call stopWatchingForLoad instead of removeClient()
+         - Call executeScript instead of ScriptController directly.
+        (WebCore::HTML5ScriptRunner::executeScript):
+         - Wraps calls to HTML5ScriptRunnerHost::executeScript
+        (WebCore::HTML5ScriptRunner::watchForLoad):
+         - Wraps calls to HTML5ScriptRunnerHost::watchForLoad
+        (WebCore::HTML5ScriptRunner::stopWatchingForLoad):
+         - Wraps calls to HTML5ScriptRunnerHost::stopWatchingForLoad
+        (WebCore::HTML5ScriptRunner::requestScript):
+         - Only watch for load if the CachedScript isn't already loaded.
+           This gets rid of rentrancy due to addClient calls, and as a result
+           also stops us from hitting ASSERT(m_scriptNestingLevel)
+           in executePendingScript.
+        (WebCore::HTML5ScriptRunner::runScript):
+         - Use the new fancy documentURLForScriptExecution and executeScript.
+        * html/HTML5ScriptRunner.h:
+        (WebCore::HTML5ScriptRunner::PendingScript::PendingScript):
+         - Add a watchingForLoad bool so we know if we ever called watchForLoad
+           with this CachedScript*.
+        * html/HTML5ScriptRunnerHost.h: Added.
+        (WebCore::HTML5ScriptRunnerHost::~HTML5ScriptRunnerHost):
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::HTML5Tokenizer):
+         - Store an m_document pointer since we need to access
+           m_document->frame()->script() for script execution.
+        (WebCore::HTML5Tokenizer::pumpLexer):
+         - Always pause or unpause the TreeBuilder after script execution.
+           Previously nested script execution would leave the TreeBuilder
+           paused even though the top-level loop wanted to resume parsing.
+           Now whenever m_scriptRunner->execute returns "continue parsing"
+           parsing will actually continue.  This fixed cases where we would
+           ignore the rest of the document after document.write() of a script tag.
+        (WebCore::HTML5Tokenizer::write):
+         - Explain how document.write() reentrancy is safe in the new world.
+        (WebCore::HTML5Tokenizer::watchForLoad):
+         - HTML5ScriptRunnerHost implementation.  We assert that this call will
+           never cause script execution since that's our current design.
+        (WebCore::HTML5Tokenizer::stopWatchingForLoad):
+         - HTML5ScriptRunnerHost implementation.
+        (WebCore::HTML5Tokenizer::executeScript):
+         - HTML5ScriptRunnerHost implementation. Save off the current source
+           before executing scripts in case document.write is called during
+           script execution.
+        * html/HTML5Tokenizer.h:
+         - Implement HTML5ScriptRunnerHost.
+
 2010-05-28  Nathan Lawrence  <nlawrence@apple.com>
 
         Reviewed by Geoffrey Garen.
