@@ -1,3 +1,13 @@
+2010-05-28  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Unreviewed. Revert 60353 -- immature.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39646
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+
 2010-05-28  Shu Chang  <chang.shu@nokia.com>
 
         Unreviewed.

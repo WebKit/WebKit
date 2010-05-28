@@ -55,13 +55,4 @@ JSValue JSConsole::profiles(ExecState* exec) const
 
 #endif
 
-#if ENABLE(INSPECTOR)
-
-JSValue JSConsole::memory(ExecState*) const
-{
-    return impl()->memory().jsValue();
-}
-
-#endif
-
 } // namespace WebCore

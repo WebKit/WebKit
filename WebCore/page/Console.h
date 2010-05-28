@@ -46,7 +46,6 @@ class Frame;
 class Page;
 class String;
 class ScriptCallStack;
-class ScriptObject;
 
 // Keep in sync with inspector/front-end/Console.js
 enum MessageSource {
@@ -114,10 +113,6 @@ public:
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     const ProfilesArray& profiles() const { return m_profiles; }
-#endif
-
-#if ENABLE(INSPECTOR)
-    ScriptObject memory() const;
 #endif
 
 private:
