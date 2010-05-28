@@ -1,10 +1,10 @@
-/**
+/*
  * Copyright (C) 1997 Martin Jones (mjones@kde.org)
  *           (C) 1997 Torben Weis (weis@kde.org)
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,10 +36,15 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLTableColElement::HTMLTableColElement(const QualifiedName& tagName, Document *doc)
-    : HTMLTablePartElement(tagName, doc)
+inline HTMLTableColElement::HTMLTableColElement(const QualifiedName& tagName, Document* document)
+    : HTMLTablePartElement(tagName, document)
+    , m_span(1)
 {
-    _span = 1;
+}
+
+PassRefPtr<HTMLTableColElement> HTMLTableColElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new HTMLTableColElement(tagName, document);
 }
 
 HTMLTagStatus HTMLTableColElement::endTagRequirement() const
@@ -75,7 +80,7 @@ bool HTMLTableColElement::mapToEntry(const QualifiedName& attrName, MappedAttrib
 void HTMLTableColElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == spanAttr) {
-        _span = !attr->isNull() ? attr->value().toInt() : 1;
+        m_span = !attr->isNull() ? attr->value().toInt() : 1;
         if (renderer() && renderer()->isTableCol())
             renderer()->updateFromElement();
     } else if (attr->name() == widthAttr) {

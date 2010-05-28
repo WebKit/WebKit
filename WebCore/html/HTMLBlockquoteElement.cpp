@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,6 +33,16 @@ HTMLBlockquoteElement::HTMLBlockquoteElement(const QualifiedName& tagName, Docum
     : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(blockquoteTag));
+}
+
+PassRefPtr<HTMLBlockquoteElement> HTMLBlockquoteElement::create(Document* document)
+{
+    return new HTMLBlockquoteElement(blockquoteTag, document);
+}
+
+PassRefPtr<HTMLBlockquoteElement> HTMLBlockquoteElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new HTMLBlockquoteElement(tagName, document);
 }
 
 }

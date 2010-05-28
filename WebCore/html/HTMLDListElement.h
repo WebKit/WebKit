@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,13 +29,16 @@ namespace WebCore {
 
 class HTMLDListElement : public HTMLElement {
 public:
+    static PassRefPtr<HTMLDListElement> create(const QualifiedName&, Document*);
+
+    bool compact() const;
+    void setCompact(bool);
+
+private:
     HTMLDListElement(const QualifiedName&, Document*);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 5; }
-
-    bool compact() const;
-    void setCompact(bool);
 };
 
 } //namespace

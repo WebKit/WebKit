@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,15 +30,19 @@
 #include "HTMLDataGridCellElement.h"
 
 #include "HTMLNames.h"
-#include "Text.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLDataGridCellElement::HTMLDataGridCellElement(const QualifiedName& name, Document* doc)
-    : HTMLElement(name, doc)
+inline HTMLDataGridCellElement::HTMLDataGridCellElement(const QualifiedName& name, Document* document)
+    : HTMLElement(name, document)
 {
+}
+
+PassRefPtr<HTMLDataGridCellElement> HTMLDataGridCellElement::create(const QualifiedName& name, Document* document)
+{
+    return new HTMLDataGridCellElement(name, document);
 }
 
 String HTMLDataGridCellElement::label() const

@@ -182,7 +182,7 @@ void RenderTextControl::setInnerTextValue(const String& innerTextValue)
         ASSERT(!ec);
 
         if (value.endsWith("\n") || value.endsWith("\r")) {
-            m_innerText->appendChild(new HTMLBRElement(brTag, document()), ec);
+            m_innerText->appendChild(HTMLBRElement::create(document()), ec);
             ASSERT(!ec);
         }
 

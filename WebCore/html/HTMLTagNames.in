@@ -10,38 +10,38 @@ applet
 area
 article interfaceName=HTMLElement
 aside interfaceName=HTMLElement
-audio wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, createWithNew
+audio wrapperOnlyIfMediaIsAvailable, conditional=VIDEO
 b interfaceName=HTMLElement
-base createWithNew
-basefont interfaceName=HTMLBaseFontElement, createWithNew
+base
+basefont interfaceName=HTMLBaseFontElement
 bdo interfaceName=HTMLElement
 big interfaceName=HTMLElement
-blockquote createWithNew
-body createWithNew
-br interfaceName=HTMLBRElement, createWithNew
-button constructorNeedsFormElement, createWithNew
-canvas createWithNew
-caption interfaceName=HTMLTableCaptionElement, createWithNew
+blockquote
+body
+br interfaceName=HTMLBRElement
+button constructorNeedsFormElement
+canvas
+caption interfaceName=HTMLTableCaptionElement
 center interfaceName=HTMLElement
 cite interfaceName=HTMLElement
 code interfaceName=HTMLElement
-col interfaceName=HTMLTableColElement, createWithNew
-colgroup interfaceName=HTMLTableColElement, createWithNew
-datagrid interfaceName=HTMLDataGridElement, conditional=DATAGRID, createWithNew
-datalist interfaceName=HTMLDataListElement, conditional=DATALIST, createWithNew
-dcell interfaceName=HTMLDataGridCellElement, conditional=DATAGRID, createWithNew
-dcol interfaceName=HTMLDataGridColElement, conditional=DATAGRID, createWithNew
-drow interfaceName=HTMLDataGridRowElement, conditional=DATAGRID, createWithNew
+col interfaceName=HTMLTableColElement
+colgroup interfaceName=HTMLTableColElement
+datagrid interfaceName=HTMLDataGridElement, conditional=DATAGRID
+datalist interfaceName=HTMLDataListElement, conditional=DATALIST
+dcell interfaceName=HTMLDataGridCellElement, conditional=DATAGRID
+dcol interfaceName=HTMLDataGridColElement, conditional=DATAGRID
+drow interfaceName=HTMLDataGridRowElement, conditional=DATAGRID
 dd interfaceName=HTMLElement
-del interfaceName=HTMLModElement, createWithNew
+del interfaceName=HTMLModElement
 dfn interfaceName=HTMLElement
-dir interfaceName=HTMLDirectoryElement, createWithNew
+dir interfaceName=HTMLDirectoryElement
 div createWithNew
-dl interfaceName=HTMLDListElement, createWithNew, createWithNew
+dl interfaceName=HTMLDListElement
 dt interfaceName=HTMLElement
 em interfaceName=HTMLElement
 embed
-fieldset interfaceName=HTMLFieldSetElement, constructorNeedsFormElement, createWithNew
+fieldset interfaceName=HTMLFieldSetElement, constructorNeedsFormElement
 font createWithNew
 footer interfaceName=HTMLElement
 form createWithNew

@@ -40,16 +40,17 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLButtonElement::HTMLButtonElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* form)
-    : HTMLFormControlElement(tagName, doc, form)
+inline HTMLButtonElement::HTMLButtonElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
+    : HTMLFormControlElement(tagName, document, form)
     , m_type(SUBMIT)
     , m_activeSubmit(false)
 {
     ASSERT(hasTagName(buttonTag));
 }
 
-HTMLButtonElement::~HTMLButtonElement()
+PassRefPtr<HTMLButtonElement> HTMLButtonElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
 {
+    return new HTMLButtonElement(tagName, document, form);
 }
 
 RenderObject* HTMLButtonElement::createRenderer(RenderArena* arena, RenderStyle*)

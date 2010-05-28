@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,13 +37,7 @@ class HTMLDataGridElement;
 
 class HTMLDataGridColElement : public HTMLElement {
 public:
-    HTMLDataGridColElement(const QualifiedName&, Document*);
-
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
-    virtual int tagPriority() const { return 0; }
-    virtual void insertedIntoTree(bool /*deep*/);
-    virtual void removedFromTree(bool /*deep*/);
-    virtual void parseMappedAttribute(Attribute*);
+    static PassRefPtr<HTMLDataGridColElement> create(const QualifiedName&, Document*);
 
     String label() const;
     void setLabel(const String&);
@@ -64,6 +58,14 @@ public:
     void setColumn(PassRefPtr<DataGridColumn> col) { m_column = col; }
 
 private:
+    HTMLDataGridColElement(const QualifiedName&, Document*);
+
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
+    virtual int tagPriority() const { return 0; }
+    virtual void insertedIntoTree(bool /*deep*/);
+    virtual void removedFromTree(bool /*deep*/);
+    virtual void parseMappedAttribute(Attribute*);
+
     HTMLDataGridElement* dataGrid() const { return m_dataGrid; }
     HTMLDataGridElement* findDataGridAncestor() const;
     void ensureColumn();

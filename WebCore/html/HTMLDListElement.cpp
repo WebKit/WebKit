@@ -1,6 +1,7 @@
-/**
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,6 +19,7 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #include "config.h"
 #include "HTMLDListElement.h"
 
@@ -27,10 +29,15 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLDListElement::HTMLDListElement(const QualifiedName& tagName, Document* doc)
-    : HTMLElement(tagName, doc)
+inline HTMLDListElement::HTMLDListElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(dlTag));
+}
+
+PassRefPtr<HTMLDListElement> HTMLDListElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new HTMLDListElement(tagName, document);
 }
 
 bool HTMLDListElement::compact() const

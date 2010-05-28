@@ -879,7 +879,7 @@ PassRefPtr<HTMLElement> createDefaultParagraphElement(Document* document)
 
 PassRefPtr<HTMLElement> createBreakElement(Document* document)
 {
-    return new HTMLBRElement(brTag, document);
+    return HTMLBRElement::create(document);
 }
 
 PassRefPtr<HTMLElement> createOrderedListElement(Document* document)

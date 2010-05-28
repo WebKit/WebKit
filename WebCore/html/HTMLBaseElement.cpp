@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,10 +34,15 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLBaseElement::HTMLBaseElement(const QualifiedName& qName, Document* document)
-    : HTMLElement(qName, document)
+inline HTMLBaseElement::HTMLBaseElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(baseTag));
+}
+
+PassRefPtr<HTMLBaseElement> HTMLBaseElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new HTMLBaseElement(tagName, document);
 }
 
 void HTMLBaseElement::parseMappedAttribute(Attribute* attr)

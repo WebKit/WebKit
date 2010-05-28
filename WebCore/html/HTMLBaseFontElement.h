@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,12 +29,14 @@ namespace WebCore {
 
 class HTMLBaseFontElement : public HTMLElement {
 public:
-    HTMLBaseFontElement(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLBaseFontElement> create(const QualifiedName&, Document*);
 
     int size() const;
     void setSize(int);
 
 private:
+    HTMLBaseFontElement(const QualifiedName&, Document*);
+
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual int tagPriority() const { return 0; }
 };

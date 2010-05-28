@@ -51,7 +51,7 @@ static String indentBlockquoteString()
 
 static PassRefPtr<HTMLBlockquoteElement> createIndentBlockquoteElement(Document* document)
 {
-    RefPtr<HTMLBlockquoteElement> element = new HTMLBlockquoteElement(blockquoteTag, document);
+    RefPtr<HTMLBlockquoteElement> element = HTMLBlockquoteElement::create(document);
     element->setAttribute(classAttr, indentBlockquoteString());
     element->setAttribute(styleAttr, "margin: 0 0 0 40px; border: none; padding: 0px;");
     return element.release();

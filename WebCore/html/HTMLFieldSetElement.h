@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,30 +27,23 @@
 #include "HTMLFormControlElement.h"
 
 namespace WebCore {
-    class RenderStyle;
-}
-
-namespace WebCore {
-
-class HTMLFormElement;
-class Document;
-class Node;
 
 class HTMLFieldSetElement : public HTMLFormControlElement {
 public:
-    HTMLFieldSetElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
-    virtual ~HTMLFieldSetElement();
-    
+    static PassRefPtr<HTMLFieldSetElement> create(const QualifiedName&, Document*, HTMLFormElement*);
+
+private:
+    HTMLFieldSetElement(const QualifiedName&, Document*, HTMLFormElement*);
+
     virtual int tagPriority() const { return 3; }
     virtual bool checkDTD(const Node* newChild);
 
     virtual bool supportsFocus() const;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual const AtomicString& formControlType() const;
-private:
     virtual bool recalcWillValidate() const { return false; }
 };
 
-} //namespace
+} // namespace
 
 #endif

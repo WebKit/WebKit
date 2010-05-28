@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,19 +31,13 @@
 #include "DataGridColumnList.h"
 #include "DataGridDataSource.h"
 #include "HTMLElement.h"
-#include "Timer.h"
 
 namespace WebCore {
 
 class HTMLDataGridElement : public HTMLElement {
 public:
-    HTMLDataGridElement(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLDataGridElement> create(const QualifiedName&, Document*);
     virtual ~HTMLDataGridElement();
-
-    virtual int tagPriority() const { return 6; } // Same as <select>s
-    virtual bool checkDTD(const Node*);
-
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
     bool autofocus() const;
     void setAutofocus(bool);
@@ -60,6 +54,13 @@ public:
     DataGridColumnList* columns() const { return m_columns.get(); }
 
 private:
+    HTMLDataGridElement(const QualifiedName&, Document*);
+
+    virtual int tagPriority() const { return 6; } // Same as <select>s
+    virtual bool checkDTD(const Node*);
+
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+
     RefPtr<DataGridDataSource> m_dataSource;
     RefPtr<DataGridColumnList> m_columns;
 };

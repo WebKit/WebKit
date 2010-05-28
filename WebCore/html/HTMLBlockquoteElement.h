@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2009 Apple Inc.
+ * Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,9 +29,12 @@ namespace WebCore {
 
 class HTMLBlockquoteElement : public HTMLElement {
 public:
-    HTMLBlockquoteElement(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLBlockquoteElement> create(Document*);
+    static PassRefPtr<HTMLBlockquoteElement> create(const QualifiedName&, Document*);
 
 private:
+    HTMLBlockquoteElement(const QualifiedName&, Document*);
+
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 5; }
 };

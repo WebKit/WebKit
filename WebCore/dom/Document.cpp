@@ -1819,7 +1819,7 @@ void Document::implicitClose()
                 documentElement->appendChild(new HTMLHeadElement(headTag, this), ec);
                 ASSERT(!ec);
             }
-            documentElement->appendChild(new HTMLBodyElement(bodyTag, this), ec);
+            documentElement->appendChild(HTMLBodyElement::create(this), ec);
             ASSERT(!ec);
         }
     }
@@ -4775,7 +4775,7 @@ HTMLCanvasElement* Document::getCSSCanvasElement(const String& name)
 {
     RefPtr<HTMLCanvasElement> result = m_cssCanvasElements.get(name).get();
     if (!result) {
-        result = new HTMLCanvasElement(canvasTag, this);
+        result = HTMLCanvasElement::create(this);
         m_cssCanvasElements.set(name, result);
     }
     return result.get();

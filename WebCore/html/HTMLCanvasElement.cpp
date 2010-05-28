@@ -54,13 +54,23 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document* doc)
-    : HTMLElement(tagName, doc)
-    , CanvasSurface(doc->frame() ? doc->frame()->page()->chrome()->scaleFactor() : 1)
+HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
+    , CanvasSurface(document->frame() ? document->frame()->page()->chrome()->scaleFactor() : 1)
     , m_observer(0)
     , m_ignoreReset(false)
 {
     ASSERT(hasTagName(canvasTag));
+}
+
+PassRefPtr<HTMLCanvasElement> HTMLCanvasElement::create(Document* document)
+{
+    return new HTMLCanvasElement(canvasTag, document);
+}
+
+PassRefPtr<HTMLCanvasElement> HTMLCanvasElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new HTMLCanvasElement(tagName, document);
 }
 
 HTMLCanvasElement::~HTMLCanvasElement()

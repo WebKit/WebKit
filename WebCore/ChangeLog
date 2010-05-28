@@ -1,3 +1,105 @@
+2010-05-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by David Levin.
+
+        Make more HTML DOM members private, especially constructors
+        https://bugs.webkit.org/show_bug.cgi?id=39697
+
+        Refactoring, so no new tests needed.
+
+        Working my way through HTMLTagNames.in from top to bottom, skipping any
+        that are non-trivial for some reason.
+
+        * html/HTMLTagNames.in: Removed createWithNew from audio, base, basefont,
+        blockquote, body, br, button, canvas, caption, col, colgroup, datagrid,
+        datalist, dcell, dcol, drow, del, dir, dl, and fieldset.
+
+        * mathml/mathtags.in: Removed createWithNew from msub, and msup.
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose): Use create function instead of new.
+        (WebCore::Document::getCSSCanvasElement): Ditto.
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::createIndentBlockquoteElement): Ditto.
+        * editing/htmlediting.cpp:
+        (WebCore::createBreakElement): Ditto.
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::createCaption): Ditto.
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createContainingTable): Ditto.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::setInnerTextValue): Ditto.
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleError): Use create function instead of new.
+        Required reordering the code slightly, but the new order works fine.
+
+        * html/HTMLAudioElement.cpp:
+        (WebCore::HTMLAudioElement::create):
+        * html/HTMLAudioElement.h:
+        * html/HTMLBRElement.cpp:
+        (WebCore::HTMLBRElement::create):
+        * html/HTMLBRElement.h:
+        * html/HTMLBaseElement.cpp:
+        (WebCore::HTMLBaseElement::create):
+        * html/HTMLBaseElement.h:
+        * html/HTMLBaseFontElement.cpp:
+        (WebCore::HTMLBaseFontElement::create):
+        * html/HTMLBaseFontElement.h:
+        * html/HTMLBlockquoteElement.cpp:
+        (WebCore::HTMLBlockquoteElement::create):
+        * html/HTMLBlockquoteElement.h:
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::create):
+        * html/HTMLBodyElement.h:
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::create):
+        * html/HTMLButtonElement.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::create):
+        * html/HTMLCanvasElement.h:
+        * html/HTMLDListElement.cpp:
+        (WebCore::HTMLDListElement::create):
+        * html/HTMLDListElement.h:
+        * html/HTMLDataGridCellElement.cpp:
+        (WebCore::HTMLDataGridCellElement::create):
+        * html/HTMLDataGridCellElement.h:
+        * html/HTMLDataGridColElement.cpp:
+        (WebCore::HTMLDataGridColElement::create):
+        * html/HTMLDataGridColElement.h:
+        * html/HTMLDataGridElement.cpp:
+        (WebCore::HTMLDataGridElement::create):
+        * html/HTMLDataGridElement.h:
+        * html/HTMLDataGridRowElement.cpp:
+        (WebCore::HTMLDataGridRowElement::create):
+        * html/HTMLDataGridRowElement.h:
+        * html/HTMLDataListElement.cpp:
+        (WebCore::HTMLDataListElement::create):
+        * html/HTMLDataListElement.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setInnerText):
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::create):
+        * html/HTMLFieldSetElement.h:
+        * html/HTMLModElement.cpp:
+        (WebCore::HTMLModElement::HTMLModElement):
+        (WebCore::HTMLModElement::create):
+        * html/HTMLModElement.h:
+        * html/HTMLTableCaptionElement.cpp:
+        (WebCore::HTMLTableCaptionElement::create):
+        * html/HTMLTableCaptionElement.h:
+        Made constructors and virtual function overrides private, added create functions.
+        Made constructors inline in cases where they were called in only one place.
+
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::HTMLTableColElement): Changed data member name
+        from _span to m_span.
+        (WebCore::HTMLTableColElement::create): Added.
+        (WebCore::HTMLTableColElement::parseMappedAttribute): Updated to use m_span.
+        * html/HTMLTableColElement.h:
+        Made constructor and virtual function overrides private, added create function.
+        Renamed _span to m_span.
+
 2010-05-27  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Darin Adler.

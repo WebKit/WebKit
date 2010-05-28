@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,10 +30,11 @@
 #include "CanvasSurface.h"
 #include "FloatRect.h"
 #include "HTMLElement.h"
+#include "IntSize.h"
+
 #if ENABLE(3D_CANVAS)    
 #include "GraphicsContext3D.h"
 #endif
-#include "IntSize.h"
 
 namespace WebCore {
 
@@ -54,7 +55,8 @@ public:
 
 class HTMLCanvasElement : public HTMLElement, public CanvasSurface {
 public:
-    HTMLCanvasElement(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLCanvasElement> create(Document*);
+    static PassRefPtr<HTMLCanvasElement> create(const QualifiedName&, Document*);
     virtual ~HTMLCanvasElement();
 
     void setWidth(int);
@@ -89,6 +91,8 @@ public:
 #endif
 
 private:
+    HTMLCanvasElement(const QualifiedName&, Document*);
+
 #if ENABLE(DASHBOARD_SUPPORT)
     virtual HTMLTagStatus endTagRequirement() const;
     virtual int tagPriority() const;

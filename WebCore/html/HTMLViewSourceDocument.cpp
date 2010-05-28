@@ -71,7 +71,7 @@ void HTMLViewSourceDocument::createContainingTable()
     RefPtr<HTMLHtmlElement> html = new HTMLHtmlElement(htmlTag, this);
     addChild(html);
     html->attach();
-    RefPtr<HTMLBodyElement> body = new HTMLBodyElement(bodyTag, this);
+    RefPtr<HTMLBodyElement> body = HTMLBodyElement::create(this);
     html->addChild(body);
     body->attach();
     

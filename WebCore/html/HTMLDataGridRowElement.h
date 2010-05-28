@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,10 +34,7 @@ namespace WebCore {
 
 class HTMLDataGridRowElement : public HTMLElement {
 public:
-    HTMLDataGridRowElement(const QualifiedName&, Document*);
-
-    virtual int tagPriority() const { return 2; } // Same as <option>s.
-    virtual bool checkDTD(const Node*);
+    static PassRefPtr<HTMLDataGridRowElement> create(const QualifiedName&, Document*);
 
     bool selected() const;
     void setSelected(bool);
@@ -47,6 +44,12 @@ public:
     
     bool expanded() const;
     void setExpanded(bool);
+
+private:
+    HTMLDataGridRowElement(const QualifiedName&, Document*);
+
+    virtual int tagPriority() const { return 2; } // Same as <option>s.
+    virtual bool checkDTD(const Node*);
 };
 
 } // namespace WebCore

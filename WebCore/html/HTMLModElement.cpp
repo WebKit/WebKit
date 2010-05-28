@@ -1,8 +1,8 @@
-/**
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2003, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2006, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,6 +19,7 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
 #include "config.h"
 #include "HTMLModElement.h"
 
@@ -28,9 +29,14 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLModElement::HTMLModElement(const QualifiedName& tagName, Document *doc)
-    : HTMLElement(tagName, doc)
+inline HTMLModElement::HTMLModElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
 {
+}
+
+PassRefPtr<HTMLModElement> HTMLModElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new HTMLModElement(tagName, document);
 }
 
 String HTMLModElement::cite() const
