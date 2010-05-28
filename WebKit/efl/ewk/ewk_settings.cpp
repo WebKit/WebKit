@@ -22,6 +22,9 @@
 #include "ewk_settings.h"
 
 #include "EWebKit.h"
+#if ENABLE(DATABASE)
+#include "DatabaseTracker.h"
+#endif
 #include "IconDatabase.h"
 #include "Image.h"
 #include "IntSize.h"
@@ -47,6 +50,38 @@ static uint64_t _ewk_default_web_database_quota = 1 * 1024;
 uint64_t ewk_settings_web_database_default_quota_get()
 {
     return _ewk_default_web_database_quota;
+}
+
+/**
+ * Sets the current path to the directory WebKit will write Web
+ * Database databases.
+ *
+ * @path: the new database directory path
+ *
+ */
+void ewk_settings_web_database_path_set(const char *path)
+{
+#if ENABLE(DATABASE)
+    WebCore::String corePath = WebCore::String::fromUTF8(path);
+    WebCore::DatabaseTracker::tracker().setDatabaseDirectoryPath(corePath);
+#endif
+}
+
+/**
+ * Return directory path where web database is stored.
+ *
+ * @return newly allocated string with database path. Note that return must be
+ * freed with free() as it's a strdup()ed copy of the string due reference
+ * counting.
+ */
+const char *ewk_settings_web_database_path_get()
+{
+#if ENABLE(DATABASE)
+    WebCore::String path = WebCore::DatabaseTracker::tracker().databaseDirectoryPath();
+    return strdup(path.utf8().data());
+#else
+    return 0;
+#endif
 }
 
 /**

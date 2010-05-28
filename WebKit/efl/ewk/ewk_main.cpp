@@ -26,6 +26,7 @@
 #include "PageCache.h"
 #include "PageGroup.h"
 #include "ewk_private.h"
+#include "ewk_settings.h"
 #include "runtime/InitializeThreading.h"
 #include "wtf/Threading.h"
 
@@ -34,6 +35,7 @@
 #include <Edje.h>
 #include <Eina.h>
 #include <Evas.h>
+#include <stdlib.h>
 
 #ifdef ENABLE_GLIB_SUPPORT
 #include <glib-object.h>
@@ -112,6 +114,9 @@ int ewk_init(void)
     // FIXME: Expose this with an API and/or calculate based on available resources
     WebCore::pageCache()->setCapacity(3);
     WebCore::PageGroup::setShouldTrackVisitedLinks(true);
+
+    // set default location of web database path
+    ewk_settings_web_database_path_set(getenv("HOME"));
 
     // TODO: this should move to WebCore, already reported to webkit-gtk folks:
     if (1) {

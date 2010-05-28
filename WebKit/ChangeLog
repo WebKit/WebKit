@@ -2,6 +2,24 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        [EFL] Add default path to web database and methods to set it.
+        If a default path is not set, it will default to "/", in which a
+        normal user usually does not have write permission.
+
+        * efl/EWebLauncher/main.c: overwrite default directory with another
+        one.
+        (main):
+        * efl/ewk/ewk_main.cpp:
+        (ewk_init): add default path
+        * efl/ewk/ewk_settings.cpp: add methods to set and get database path
+        (ewk_settings_web_database_path_set):
+        (ewk_settings_web_database_path_get):
+        * efl/ewk/ewk_settings.h:
+
+2010-05-28  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         [EFL] Fix wrongly set clipper. Now the scrollbars from main
         frame are shown even on a zoom level lower than 1.0.
 

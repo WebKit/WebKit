@@ -733,6 +733,7 @@ main(int argc, char *argv[])
     snprintf(path, sizeof(path), "%s/.ewebkit-%u", tmp, getuid());
     ecore_file_mkpath(path);
     ewk_settings_icon_database_path_set(path);
+    ewk_settings_web_database_path_set(path);
 
     browserCreate(url, theme, userAgent, geometry, engine, isFullscreen);
     ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, main_signal_exit, &windows);
