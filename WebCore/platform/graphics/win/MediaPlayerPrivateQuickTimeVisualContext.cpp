@@ -144,7 +144,6 @@ MediaPlayerPrivateQuickTimeVisualContext::MediaPlayerPrivateQuickTimeVisualConte
 MediaPlayerPrivateQuickTimeVisualContext::~MediaPlayerPrivateQuickTimeVisualContext()
 {
     tearDownVideoRendering();
-    m_visualContext->setMovie(0);
     cancelCallOnMainThread(&VisualContextClient::retrieveCurrentImageProc, this);
 }
 
@@ -290,15 +289,6 @@ void MediaPlayerPrivateQuickTimeVisualContext::load(const String& url)
     m_movie = adoptRef(new QTMovie(m_movieClient.get()));
     m_movie->load(url.characters(), url.length(), m_player->preservesPitch());
     m_movie->setVolume(m_player->volume());
-
-    CFDictionaryRef options = 0;
-    // If CAImageQueue prerequisites are not satisfied, pass in visual context pixelbuffer
-    // options which will instruct the visual context to generate CGImage compatible 
-    // pixel buffers (i.e. RGBA).
-    if (!requiredDllsAvailable())
-        options = QTMovieVisualContext::getCGImageOptions();
-    m_visualContext = adoptRef(new QTMovieVisualContext(m_visualContextClient.get(), options));
-    m_visualContext->setMovie(m_movie.get());
 }
 
 void MediaPlayerPrivateQuickTimeVisualContext::play()
@@ -640,6 +630,14 @@ void MediaPlayerPrivateQuickTimeVisualContext::setVisible(bool visible)
 
 void MediaPlayerPrivateQuickTimeVisualContext::paint(GraphicsContext* p, const IntRect& r)
 {
+    MediaRenderingMode currentMode = currentRenderingMode();
+ 
+    if (currentMode == MediaRenderingNone)
+        return;
+
+    if (currentMode == MediaRenderingSoftwareRenderer && !m_visualContext)
+        return;
+
 #if USE(ACCELERATED_COMPOSITING)
     if (m_qtVideoLayer)
         return;
@@ -955,7 +953,7 @@ MediaPlayerPrivateQuickTimeVisualContext::MediaRenderingMode MediaPlayerPrivateQ
         return MediaRenderingMovieLayer;
 #endif
 
-    return MediaRenderingSoftwareRenderer;
+    return m_visualContext ? MediaRenderingSoftwareRenderer : MediaRenderingNone;
 }
 
 MediaPlayerPrivateQuickTimeVisualContext::MediaRenderingMode MediaPlayerPrivateQuickTimeVisualContext::preferredRenderingMode() const
@@ -993,6 +991,15 @@ void MediaPlayerPrivateQuickTimeVisualContext::setUpVideoRendering()
     if (currentMode == MediaRenderingMovieLayer || preferredMode == MediaRenderingMovieLayer)
         m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);
 #endif
+
+    CFDictionaryRef options = 0;
+    // If CAImageQueue prerequisites are not satisfied, pass in visual context pixelbuffer
+    // options which will instruct the visual context to generate CGImage compatible 
+    // pixel buffers (i.e. RGBA).
+    if (!requiredDllsAvailable() || preferredMode != MediaRenderingMovieLayer)
+        options = QTMovieVisualContext::getCGImageOptions();
+    m_visualContext = QTMovieVisualContext::create(m_visualContextClient.get(), options);
+    m_visualContext->setMovie(m_movie.get());
 }
 
 void MediaPlayerPrivateQuickTimeVisualContext::tearDownVideoRendering()
@@ -1001,12 +1008,14 @@ void MediaPlayerPrivateQuickTimeVisualContext::tearDownVideoRendering()
     if (m_qtVideoLayer)
         destroyLayerForMovie();
 #endif
+
+    m_visualContext = 0;
 }
 
 bool MediaPlayerPrivateQuickTimeVisualContext::hasSetUpVideoRendering() const
 {
 #if USE(ACCELERATED_COMPOSITING)
-    return m_qtVideoLayer || currentRenderingMode() != MediaRenderingMovieLayer;
+    return m_qtVideoLayer || (currentRenderingMode() != MediaRenderingMovieLayer && m_visualContext);
 #else
     return true;
 #endif

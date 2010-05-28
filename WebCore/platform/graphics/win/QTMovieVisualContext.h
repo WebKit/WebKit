@@ -54,7 +54,7 @@ public:
 
 class QTMOVIEWIN_API QTMovieVisualContext : public RefCounted<QTMovieVisualContext> {
 public:
-    QTMovieVisualContext(QTMovieVisualContextClient*, CFDictionaryRef options = 0);
+    static PassRefPtr<QTMovieVisualContext> create(QTMovieVisualContextClient*, CFDictionaryRef options = 0);
     ~QTMovieVisualContext();
 
     bool isImageAvailableForTime(const QTCVTimeStamp*) const;
@@ -70,6 +70,7 @@ public:
     static double currentHostTime();
 
 protected:
+    QTMovieVisualContext(QTMovieVisualContextClient*, CFDictionaryRef options = 0);
     void setupVisualContext();
 
     friend class QTMovieVisualContextPriv;
