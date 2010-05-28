@@ -1,5 +1,13 @@
 2010-05-28  Chris Fleizach  <cfleizach@apple.com>
 
+        Reviewed by Beth Dakin.
+
+        Adding myself as a reviewer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
+2010-05-28  Chris Fleizach  <cfleizach@apple.com>
+
         Build fix. No review.
 
         AX: need to catch NSAccessibilityExceptions in DRT
