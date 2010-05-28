@@ -40,6 +40,7 @@
 #include <QSslError>
 #endif
 
+#include "../../../WebKit/qt/WebCoreSupport/DumpRenderTreeSupportQt.h"
 #include <qwebframe.h>
 #include <qwebinspector.h>
 #include <qwebpage.h>
@@ -113,6 +114,8 @@ public Q_SLOTS:
     void dumpDatabaseQuota(QWebFrame* frame, const QString& dbName);
     void statusBarMessage(const QString& message);
     void windowCloseRequested();
+    void checkPermission(const QUrl&, NotificationPermission&);
+    void requestPermission(QWebPage* page, const QString&);
 
 Q_SIGNALS:
     void quit();

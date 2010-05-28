@@ -30,6 +30,18 @@ class QWebElement;
 class QWebFrame;
 class QWebPage;
 
+enum NotificationPermission {
+    NotificationAllowed,
+    NotificationNotAllowed,
+    NotificationDenied
+};
+
+typedef void (CheckPermissionFunctionType) (QObject* receiver, const QUrl&, NotificationPermission&);
+typedef void (RequestPermissionFunctionType) (QObject* receiver, QWebPage* page, const QString&);
+
+extern CheckPermissionFunctionType* checkPermissionFunction;
+extern RequestPermissionFunctionType* requestPermissionFunction;
+
 class QWEBKIT_EXPORT DumpRenderTreeSupportQt {
 
 public:
@@ -100,7 +112,12 @@ public:
     static void dumpSetAcceptsEditing(bool b);
 
     static void dumpNotification(bool b);
-
+    // These functions should eventually turn into public API
+    // and the "receiver" concept would go away
+    static void setNotificationsReceiver(QWebPage* page, QObject* receiver);
+    static void allowNotificationForOrigin(QWebPage* page, const QString& origin);
+    static void setCheckPermissionFunction(CheckPermissionFunctionType*);
+    static void setRequestPermissionFunction(RequestPermissionFunctionType*);
 };
 
 #endif

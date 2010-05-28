@@ -1,3 +1,42 @@
+2010-05-28  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Pass all web notification layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=39146
+
+        Add support for multiple simultaneous notifications.
+        Add a private callback mechanism to the client for security checks. 
+        Notifications are disabled if the client does not set the callbacks. 
+        Support replaceId and cancel.
+        Send close and display events when needed.   
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::setNotificationsReceiver):
+        (DumpRenderTreeSupportQt::allowNotificationForOrigin):
+        (DumpRenderTreeSupportQt::setCheckPermissionFunction):
+        (DumpRenderTreeSupportQt::setRequestPermissionFunction):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidClearWindowObjectInWorld):
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        (NotificationIconWrapper::NotificationIconWrapper):
+        (NotificationIconWrapper::~NotificationIconWrapper):
+        (NotificationPresenterClientQt::NotificationPresenterClientQt):
+        (NotificationPresenterClientQt::show):
+        (NotificationPresenterClientQt::cancel):
+        (NotificationPresenterClientQt::notificationObjectDestroyed):
+        (NotificationPresenterClientQt::requestPermission):
+        (NotificationPresenterClientQt::checkPermission):
+        (NotificationPresenterClientQt::allowNotificationForOrigin):
+        (NotificationPresenterClientQt::clearNotificationsList):
+        (NotificationPresenterClientQt::sendEvent):
+        * WebCoreSupport/NotificationPresenterClientQt.h:
+        (WebCore::NotificationPresenterClientQt::~NotificationPresenterClientQt):
+        (WebCore::NotificationPresenterClientQt::setReceiver):
+
 2010-05-27  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

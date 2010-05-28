@@ -64,6 +64,8 @@ void LayoutTestController::reset()
     m_handleErrorPages = false;
     m_webHistory = 0;
     m_globalFlag = false;
+    m_desktopNotificationAllowedOrigins.clear();
+
     DumpRenderTreeSupportQt::dumpEditingCallbacks(false);
     DumpRenderTreeSupportQt::dumpFrameLoader(false);
     DumpRenderTreeSupportQt::dumpResourceLoadCallbacks(false);
@@ -71,6 +73,7 @@ void LayoutTestController::reset()
     DumpRenderTreeSupportQt::setWillSendRequestReturnsNull(false);
     DumpRenderTreeSupportQt::setWillSendRequestClearHeaders(QStringList());
     setIconDatabaseEnabled(false);
+
     emit hidePage();
 }
 
@@ -181,13 +184,12 @@ int LayoutTestController::windowCount()
 
 void LayoutTestController::grantDesktopNotificationPermission(const QString& origin)
 {
-    // FIXME: Implement for notification security
+    m_desktopNotificationAllowedOrigins.append(origin);
 }
 
 bool LayoutTestController::checkDesktopNotificationPermission(const QString& origin)
 {
-    // FIXME: Implement for notification security
-    return true;
+    return m_desktopNotificationAllowedOrigins.contains(origin);
 }
 
 void LayoutTestController::display()

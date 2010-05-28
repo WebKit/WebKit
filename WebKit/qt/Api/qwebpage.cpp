@@ -299,7 +299,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     PageGroup::setShouldTrackVisitedLinks(true);
     
 #if ENABLE(NOTIFICATIONS)    
-    notificationPresenterClient = new NotificationPresenterClientQt();
+    notificationPresenterClient = new NotificationPresenterClientQt(q);
 #endif
 }
 
