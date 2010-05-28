@@ -1,3 +1,14 @@
+2010-05-28  Chang Shu  <Chang.Shu@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Enable Philip's canvas tests on Qt and skip
+        the failed ones.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20553
+
+        * platform/qt/Skipped:
+
 2010-05-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
