@@ -43,7 +43,7 @@ bool PluginPackage::load()
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-uint16 PluginPackage::NPVersion() const
+uint16_t PluginPackage::NPVersion() const
 {
     return 0;
 }
