@@ -41,6 +41,8 @@
 #include "PlatformString.h"
 
 #include "ScriptCallStack.h"
+#include "ScriptGCEvent.h"
+#include "ScriptObject.h"
 #include "ScriptProfile.h"
 #include "ScriptProfiler.h"
 #include <stdio.h>
@@ -455,6 +457,24 @@ void Console::warn(ScriptCallStack* callStack)
 {
     addMessage(LogMessageType, WarningMessageLevel, callStack);
 }
+
+
+#if ENABLE(INSPECTOR)
+ScriptObject Console::memory() const
+{
+    Page* page = this->page();
+    if (!page)
+        return ScriptObject();
+
+    size_t usedHeapSize, totalHeapSize;
+    ScriptGCEvent::getHeapSize(usedHeapSize, totalHeapSize);
+    ScriptState* scriptState = scriptStateFromPage(debuggerWorld(), page);
+    ScriptObject result = ScriptObject::createNew(scriptState);
+    result.set("usedHeapSize", usedHeapSize);
+    result.set("totalHeapSize", totalHeapSize);
+    return result;
+}
+#endif
 
 static bool printExceptions = false;
 
