@@ -173,7 +173,7 @@ struct TransparencyLayer : FastAllocBase {
         , alphaMask(alphaMask)
         , saveCounter(1) // see the comment for saveCounter
     {
-        offset = p->transform().mapRect(rect).topLeft();
+        offset = rect.topLeft();
         pixmap.fill(Qt::transparent);
         painter.begin(&pixmap);
         painter.setRenderHint(QPainter::Antialiasing, p->testRenderHint(QPainter::Antialiasing));
@@ -1125,7 +1125,7 @@ void GraphicsContext::clipToImageBuffer(const FloatRect& floatRect, const ImageB
     if (alphaMask.width() != rect.width() || alphaMask.height() != rect.height())
         alphaMask = alphaMask.scaled(rect.width(), rect.height());
 
-    m_data->layers.push(new TransparencyLayer(m_data->p(), rect, 1.0, alphaMask));
+    m_data->layers.push(new TransparencyLayer(m_data->p(), m_data->p()->transform().mapRect(rect), 1.0, alphaMask));
 }
 
 void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect,
