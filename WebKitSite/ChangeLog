@@ -1,3 +1,18 @@
+2010-05-25  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Update the style guide re: static member variables and structs
+        https://bugs.webkit.org/show_bug.cgi?id=39663
+
+        Per Darin Adler's proposal on webkit-dev.
+
+        All static member variables should be prefixed with s_.
+        m_ should not be used for public data members in structs.
+        Only structs should have public data members.
+
+        * coding/coding-style.html:
+
 2010-05-24  David Levin  <levin@chromium.org>
 
         Reviewed by Maciej Stachowiak.

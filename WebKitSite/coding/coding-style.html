@@ -506,11 +506,14 @@ short tabulationIndex; // bizarre
 </pre>
 </li>
 
-<li>Prefix C++ data members with "m_".
+<li>Data members in C++ classes should be private.  Static data members should be prefixed by "s_".  Other data members should be prefixed by "m_".
 <h4 class="right">Right:</h4>
 <pre class="code">
 class String {
+public:
     ...
+
+private:
     short m_length;
 };
 </pre>
@@ -518,7 +521,9 @@ class String {
 <h4 class="wrong">Wrong:</h4>
 <pre class="code">
 class String {
+public:
     ...
+
     short length;
 };
 </pre>
