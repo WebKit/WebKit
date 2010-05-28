@@ -2,6 +2,23 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        [EFL] Allow client to override default database quota. We increase the
+        default database quota to 1MB (it was incorrectly set to 1KB, which is
+        too low) and add methods to allow client to iteratively database quota
+        when it becomes greater than the allowed value.
+        https://bugs.webkit.org/show_bug.cgi?id=39867
+
+        * efl/WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::exceededDatabaseQuota): reimplement method
+        to allow client to increase database quota iteratively.
+        * efl/ewk/ewk_private.h:
+        * efl/ewk/ewk_settings.cpp:
+        * efl/ewk/ewk_view.h:
+
+2010-05-28  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         [EFL] Add default path to web database and methods to set it.
         If a default path is not set, it will default to "/", in which a
         normal user usually does not have write permission.

@@ -79,7 +79,7 @@ void             ewk_view_run_javascript_alert(Evas_Object *o, Evas_Object *fram
 Eina_Bool        ewk_view_run_javascript_confirm(Evas_Object *o, Evas_Object *frame, const char *message);
 Eina_Bool        ewk_view_run_javascript_prompt(Evas_Object *o, Evas_Object *frame, const char *message, const char *defaultValue, char **value);
 Eina_Bool        ewk_view_should_interrupt_javascript(Evas_Object *o);
-void             ewk_view_exceeded_database_quota(Evas_Object *o, Evas_Object *frame, const char *databaseName);
+uint64_t         ewk_view_exceeded_database_quota(Evas_Object *o, Evas_Object *frame, const char *databaseName, uint64_t current_size, uint64_t expected_size);
 
 void             ewk_view_repaint(Evas_Object *o, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
 void             ewk_view_scroll(Evas_Object *o, Evas_Coord dx, Evas_Coord dy, Evas_Coord sx, Evas_Coord sy, Evas_Coord sw, Evas_Coord sh, Evas_Coord cx, Evas_Coord cy, Evas_Coord cw, Evas_Coord ch, Eina_Bool main_frame);

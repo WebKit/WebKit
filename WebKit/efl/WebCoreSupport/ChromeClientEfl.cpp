@@ -34,6 +34,7 @@
 #include "ChromeClientEfl.h"
 
 #if ENABLE(DATABASE)
+#include "DatabaseDetails.h"
 #include "DatabaseTracker.h"
 #endif
 #include "EWebKit.h"
@@ -355,12 +356,21 @@ void ChromeClientEfl::reachedMaxAppCacheSize(int64_t spaceNeeded)
 #if ENABLE(DATABASE)
 void ChromeClientEfl::exceededDatabaseQuota(Frame* frame, const String& databaseName)
 {
-    uint64_t quota = ewk_settings_web_database_default_quota_get();
+    uint64_t quota;
+    SecurityOrigin* origin = frame->document()->securityOrigin();
 
-    if (!DatabaseTracker::tracker().hasEntryForOrigin(frame->document()->securityOrigin()))
-        DatabaseTracker::tracker().setQuota(frame->document()->securityOrigin(), quota);
+    DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(databaseName, origin);
+    quota = ewk_view_exceeded_database_quota(m_view,
+            kit(frame), databaseName.utf8().data(),
+            details.currentUsage(), details.expectedUsage());
 
-    ewk_view_exceeded_database_quota(m_view, kit(frame), databaseName.utf8().data());
+    /* if client did not set quota, and database is being created now, the
+     * default quota is applied
+     */
+    if (!quota && !DatabaseTracker::tracker().hasEntryForOrigin(origin))
+        quota = ewk_settings_web_database_default_quota_get();
+
+    DatabaseTracker::tracker().setQuota(origin, quota);
 }
 #endif
 

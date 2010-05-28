@@ -39,7 +39,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-static uint64_t _ewk_default_web_database_quota = 1 * 1024;
+static uint64_t _ewk_default_web_database_quota = 1 * 1024 * 1024;
 
 /**
  * Returns the default quota for Web Database databases. By default
