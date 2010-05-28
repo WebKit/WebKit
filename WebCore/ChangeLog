@@ -1,3 +1,15 @@
+2010-05-28  Adam Treat  <atreat@rim.com>
+
+        Reviewed by Daniel Bates.
+
+        RIM Bug #293 and https://bugs.webkit.org/show_bug.cgi?id=39859
+
+        Layout is not dependent upon ScrollView::frameRect when useFixedLayout
+        is true.  No reason to set the needs layout flag in this case.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setFrameRect):
+
 2010-05-28  Mikhail Naganov  <mnaganov@chromium.org>
 
         Unreviewed. Revert 60353 -- immature.
