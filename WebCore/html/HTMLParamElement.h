@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,17 +28,8 @@
 namespace WebCore {
 
 class HTMLParamElement : public HTMLElement {
-    friend class HTMLAppletElement;
 public:
-    HTMLParamElement(const QualifiedName&, Document*);
-    ~HTMLParamElement();
-
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
-    virtual int tagPriority() const { return 0; }
-
-    virtual void parseMappedAttribute(Attribute*);
-
-    virtual bool isURLAttribute(Attribute*) const;
+    static PassRefPtr<HTMLParamElement> create(const QualifiedName&, Document*);
 
     String name() const { return m_name; }
     void setName(const String&);
@@ -52,9 +43,18 @@ public:
     String valueType() const;
     void setValueType(const String&);
 
+private:
+    HTMLParamElement(const QualifiedName&, Document*);
+
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
+    virtual int tagPriority() const { return 0; }
+
+    virtual void parseMappedAttribute(Attribute*);
+
+    virtual bool isURLAttribute(Attribute*) const;
+
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
- protected:
     AtomicString m_name;
     AtomicString m_value;
 };

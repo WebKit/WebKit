@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2010 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -37,11 +37,15 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLOptGroupElement::HTMLOptGroupElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
-    : HTMLFormControlElement(tagName, doc, f)
-    , m_style(0)
+inline HTMLOptGroupElement::HTMLOptGroupElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
+    : HTMLFormControlElement(tagName, document, form)
 {
     ASSERT(hasTagName(optgroupTag));
+}
+
+PassRefPtr<HTMLOptGroupElement> HTMLOptGroupElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
+{
+    return new HTMLOptGroupElement(tagName, document, form);
 }
 
 bool HTMLOptGroupElement::supportsFocus() const
@@ -59,36 +63,6 @@ const AtomicString& HTMLOptGroupElement::formControlType() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, optgroup, ("optgroup"));
     return optgroup;
-}
-
-bool HTMLOptGroupElement::insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode& ec, bool shouldLazyAttach)
-{
-    bool result = HTMLFormControlElement::insertBefore(newChild, refChild, ec, shouldLazyAttach);
-    return result;
-}
-
-bool HTMLOptGroupElement::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode& ec, bool shouldLazyAttach)
-{
-    bool result = HTMLFormControlElement::replaceChild(newChild, oldChild, ec, shouldLazyAttach);
-    return result;
-}
-
-bool HTMLOptGroupElement::removeChild(Node* oldChild, ExceptionCode& ec)
-{
-    bool result = HTMLFormControlElement::removeChild(oldChild, ec);
-    return result;
-}
-
-bool HTMLOptGroupElement::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bool shouldLazyAttach)
-{
-    bool result = HTMLFormControlElement::appendChild(newChild, ec, shouldLazyAttach);
-    return result;
-}
-
-bool HTMLOptGroupElement::removeChildren()
-{
-    bool result = HTMLFormControlElement::removeChildren();
-    return result;
 }
 
 void HTMLOptGroupElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,15 +40,16 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLSourceElement::HTMLSourceElement(const QualifiedName& tagName, Document* doc)
-    : HTMLElement(tagName, doc)
+inline HTMLSourceElement::HTMLSourceElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
     , m_errorEventTimer(this, &HTMLSourceElement::errorEventTimerFired)
 {
     ASSERT(hasTagName(sourceTag));
 }
 
-HTMLSourceElement::~HTMLSourceElement()
+PassRefPtr<HTMLSourceElement> HTMLSourceElement::create(const QualifiedName& tagName, Document* document)
 {
+    return new HTMLSourceElement(tagName, document);
 }
 
 void HTMLSourceElement::insertedIntoDocument()

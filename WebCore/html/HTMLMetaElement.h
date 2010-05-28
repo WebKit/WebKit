@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,6 +19,7 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #ifndef HTMLMetaElement_h
 #define HTMLMetaElement_h
 
@@ -28,16 +29,7 @@ namespace WebCore {
 
 class HTMLMetaElement : public HTMLElement {
 public:
-    HTMLMetaElement(const QualifiedName&, Document*);
-    ~HTMLMetaElement();
-
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
-    virtual int tagPriority() const { return 0; }
-
-    virtual void parseMappedAttribute(Attribute*);
-    virtual void insertedIntoDocument();
-
-    void process();
+    static PassRefPtr<HTMLMetaElement> create(const QualifiedName&, Document*);
 
     String content() const;
     void setContent(const String&);
@@ -51,7 +43,17 @@ public:
     String scheme() const;
     void setScheme(const String&);
 
-protected:
+private:
+    HTMLMetaElement(const QualifiedName&, Document*);
+
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
+    virtual int tagPriority() const { return 0; }
+
+    virtual void parseMappedAttribute(Attribute*);
+    virtual void insertedIntoDocument();
+
+    void process();
+
     String m_equiv;
     String m_content;
 };

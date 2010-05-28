@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,6 +29,16 @@ namespace WebCore {
 
 class HTMLUListElement : public HTMLElement {
 public:
+    static PassRefPtr<HTMLUListElement> create(Document*);
+    static PassRefPtr<HTMLUListElement> create(const QualifiedName&, Document*);
+
+    bool compact() const;
+    void setCompact(bool);
+
+    String type() const;
+    void setType(const String&);
+
+private:
     HTMLUListElement(const QualifiedName&, Document*);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
@@ -35,12 +46,6 @@ public:
 
     virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
     virtual void parseMappedAttribute(Attribute*);
-
-    bool compact() const;
-    void setCompact(bool);
-
-    String type() const;
-    void setType(const String&);
 };
 
 } //namespace

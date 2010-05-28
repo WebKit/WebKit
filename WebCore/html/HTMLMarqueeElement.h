@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,13 +32,7 @@ class RenderMarquee;
 
 class HTMLMarqueeElement : public HTMLElement, private ActiveDOMObject {
 public:
-    HTMLMarqueeElement(const QualifiedName&, Document*);
-    
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
-    virtual int tagPriority() const { return 3; }
-
-    virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
-    virtual void parseMappedAttribute(Attribute*);
+    static PassRefPtr<HTMLMarqueeElement> create(const QualifiedName&, Document*);
 
     int minimumDelay() const { return m_minimumDelay; }
 
@@ -48,6 +42,14 @@ public:
     void stop();
     
 private:
+    HTMLMarqueeElement(const QualifiedName&, Document*);
+    
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
+    virtual int tagPriority() const { return 3; }
+
+    virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
+    virtual void parseMappedAttribute(Attribute*);
+
     // ActiveDOMObject
     virtual bool canSuspend() const;
     virtual void suspend();

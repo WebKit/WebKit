@@ -44,9 +44,18 @@ using namespace HTMLNames;
 
 HTMLOptionElement::HTMLOptionElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
     : HTMLFormControlElement(tagName, document, form)
-    , m_style(0)
 {
     ASSERT(hasTagName(optionTag));
+}
+
+PassRefPtr<HTMLOptionElement> HTMLOptionElement::create(Document* document, HTMLFormElement* form)
+{
+    return new HTMLOptionElement(optionTag, document, form);
+}
+
+PassRefPtr<HTMLOptionElement> HTMLOptionElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
+{
+    return new HTMLOptionElement(tagName, document, form);
 }
 
 PassRefPtr<HTMLOptionElement> HTMLOptionElement::createForJSConstructor(Document* document, const String& data, const String& value,

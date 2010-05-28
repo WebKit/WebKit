@@ -36,7 +36,7 @@ class HTMLImageLoader;
 
 class HTMLVideoElement : public HTMLMediaElement {
 public:
-    HTMLVideoElement(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLVideoElement> create(const QualifiedName&, Document*);
 
     unsigned width() const;
     void setWidth(unsigned);
@@ -66,6 +66,8 @@ public:
     void paintCurrentFrameInContext(GraphicsContext*, const IntRect&);
 
 private:
+    HTMLVideoElement(const QualifiedName&, Document*);
+
     virtual int tagPriority() const { return 5; }
     virtual bool rendererIsNeeded(RenderStyle*);
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)

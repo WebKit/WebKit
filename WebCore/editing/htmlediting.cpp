@@ -884,12 +884,12 @@ PassRefPtr<HTMLElement> createBreakElement(Document* document)
 
 PassRefPtr<HTMLElement> createOrderedListElement(Document* document)
 {
-    return new HTMLOListElement(olTag, document);
+    return HTMLOListElement::create(document);
 }
 
 PassRefPtr<HTMLElement> createUnorderedListElement(Document* document)
 {
-    return new HTMLUListElement(ulTag, document);
+    return HTMLUListElement::create(document);
 }
 
 PassRefPtr<HTMLElement> createListItemElement(Document* document)

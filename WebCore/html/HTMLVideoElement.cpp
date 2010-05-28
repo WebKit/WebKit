@@ -45,11 +45,16 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLVideoElement::HTMLVideoElement(const QualifiedName& tagName, Document* doc)
-    : HTMLMediaElement(tagName, doc)
+inline HTMLVideoElement::HTMLVideoElement(const QualifiedName& tagName, Document* document)
+    : HTMLMediaElement(tagName, document)
     , m_shouldDisplayPosterImage(false)
 {
     ASSERT(hasTagName(videoTag));
+}
+
+PassRefPtr<HTMLVideoElement> HTMLVideoElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new HTMLVideoElement(tagName, document);
 }
 
 bool HTMLVideoElement::rendererIsNeeded(RenderStyle* style) 

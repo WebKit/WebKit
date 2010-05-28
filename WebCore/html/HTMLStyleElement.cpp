@@ -1,8 +1,8 @@
-/**
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2010 Apple Inc. All rights reserved.
  *           (C) 2007 Rob Buis (buis@kde.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -32,12 +32,17 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLStyleElement::HTMLStyleElement(const QualifiedName& tagName, Document* doc, bool createdByParser)
-    : HTMLElement(tagName, doc)
+inline HTMLStyleElement::HTMLStyleElement(const QualifiedName& tagName, Document* document, bool createdByParser)
+    : HTMLElement(tagName, document)
     , m_loading(false)
     , m_createdByParser(createdByParser)
 {
     ASSERT(hasTagName(styleTag));
+}
+
+PassRefPtr<HTMLStyleElement> HTMLStyleElement::create(const QualifiedName& tagName, Document* document, bool createdByParser)
+{
+    return new HTMLStyleElement(tagName, document, createdByParser);
 }
 
 // other stuff...

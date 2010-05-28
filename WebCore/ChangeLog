@@ -1,3 +1,147 @@
+2010-05-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by David Levin.
+
+        Make more HTML DOM members private, especially constructors, batch 2
+        https://bugs.webkit.org/show_bug.cgi?id=39706
+
+        Refactoring so no new tests.
+
+        Worked my way up from the bottom of HTMLTagNames.in.
+
+        * html/HTMLTagNames.in: Removed createWithNew from keygen, listing,
+        map, marquee, menu, meta, ol, optgroup, option, p, param, pre,
+        script, select, source, style, table, tbody, td, textarea, tfoot,
+        th, thead, title, tr, ul, video, xmp, and noscript.
+
+        * editing/htmlediting.cpp:
+        (WebCore::createOrderedListElement): Use create function instead of new.
+        (WebCore::createUnorderedListElement): Ditto.
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleError): Ditto.
+        (WebCore::HTMLParser::mapCreateErrorCheck): Ditto.
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createContainingTable): Ditto.
+        (WebCore::HTMLViewSourceDocument::addLine): Ditto.
+
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::HTMLKeygenElement): Use create function
+        instead of new.
+        (WebCore::HTMLKeygenElement::create): Added.
+        * html/HTMLKeygenElement.h: Made constructor and virtual function
+        overrides private, added create function.
+
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::HTMLMapElement):
+        (WebCore::HTMLMapElement::create):
+        * html/HTMLMapElement.h:
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::HTMLMarqueeElement):
+        (WebCore::HTMLMarqueeElement::create):
+        * html/HTMLMarqueeElement.h:
+        * html/HTMLMenuElement.cpp:
+        (WebCore::HTMLMenuElement::HTMLMenuElement):
+        (WebCore::HTMLMenuElement::create):
+        * html/HTMLMenuElement.h:
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::HTMLMetaElement):
+        (WebCore::HTMLMetaElement::create):
+        * html/HTMLMetaElement.h:
+        * html/HTMLNoScriptElement.cpp:
+        (WebCore::HTMLNoScriptElement::HTMLNoScriptElement):
+        (WebCore::HTMLNoScriptElement::create):
+        (WebCore::HTMLNoScriptElement::childShouldCreateRenderer):
+        * html/HTMLNoScriptElement.h:
+        * html/HTMLOListElement.cpp:
+        (WebCore::HTMLOListElement::HTMLOListElement):
+        (WebCore::HTMLOListElement::create):
+        * html/HTMLOListElement.h:
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::HTMLOptGroupElement):
+        (WebCore::HTMLOptGroupElement::create):
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::HTMLOptionElement):
+        (WebCore::HTMLOptionElement::create):
+        * html/HTMLOptionElement.h:
+        * html/HTMLParagraphElement.cpp:
+        (WebCore::HTMLParagraphElement::HTMLParagraphElement):
+        (WebCore::HTMLParagraphElement::create):
+        * html/HTMLParagraphElement.h:
+        * html/HTMLParamElement.cpp:
+        (WebCore::HTMLParamElement::HTMLParamElement):
+        (WebCore::HTMLParamElement::create):
+        * html/HTMLParamElement.h:
+        * html/HTMLPreElement.cpp:
+        (WebCore::HTMLPreElement::HTMLPreElement):
+        (WebCore::HTMLPreElement::create):
+        * html/HTMLPreElement.h:
+        * html/HTMLQuoteElement.cpp:
+        (WebCore::HTMLQuoteElement::HTMLQuoteElement):
+        (WebCore::HTMLQuoteElement::create):
+        * html/HTMLQuoteElement.h:
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::HTMLScriptElement):
+        (WebCore::HTMLScriptElement::create):
+        * html/HTMLScriptElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::create):
+        * html/HTMLSelectElement.h:
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::HTMLSourceElement):
+        (WebCore::HTMLSourceElement::create):
+        * html/HTMLSourceElement.h:
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::HTMLStyleElement):
+        (WebCore::HTMLStyleElement::create):
+        * html/HTMLStyleElement.h:
+        * html/HTMLTableRowElement.cpp:
+        (WebCore::HTMLTableRowElement::HTMLTableRowElement):
+        (WebCore::HTMLTableRowElement::create):
+        (WebCore::HTMLTableRowElement::insertCell):
+        * html/HTMLTableRowElement.h:
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::HTMLTableSectionElement):
+        (WebCore::HTMLTableSectionElement::create):
+        (WebCore::HTMLTableSectionElement::insertRow):
+        * html/HTMLTableSectionElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::create):
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::HTMLTitleElement):
+        (WebCore::HTMLTitleElement::create):
+        * html/HTMLTitleElement.h:
+        * html/HTMLUListElement.cpp:
+        (WebCore::HTMLUListElement::HTMLUListElement):
+        (WebCore::HTMLUListElement::create):
+        * html/HTMLUListElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::HTMLVideoElement):
+        (WebCore::HTMLVideoElement::create):
+        * html/HTMLVideoElement.h:
+        Made constructors and virtual function overrides private, added
+        create function.
+
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::HTMLTableCellElement): Updated
+        names of data members. Renamed _row to m_row, _col to m_col,
+        rSpan to m_rowSpan, cSpan to m_colSpan, and removed unused
+        rowHeight and m_solid.
+        (WebCore::HTMLTableCellElement::create): Added.
+        (WebCore::HTMLTableCellElement::parseMappedAttribute): Updated names.
+        * html/HTMLTableCellElement.h: Ditto.
+
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::create): Added.
+        (WebCore::HTMLTableElement::createTHead): Used create instead of new.
+        (WebCore::HTMLTableElement::createTFoot): Ditto.
+        (WebCore::HTMLTableElement::insertRow): Ditto.
+        * html/HTMLTableElement.h:
+
+        * html/HTMLTablePartElement.h: Made members protected instead of
+        public.
+
 2010-05-28  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

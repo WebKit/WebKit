@@ -1,10 +1,10 @@
-/**
+/*
  * Copyright (C) 1997 Martin Jones (mjones@kde.org)
  *           (C) 1997 Torben Weis (weis@kde.org)
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -42,19 +42,18 @@ static const int maxRowspan = 8190;
 
 using namespace HTMLNames;
 
-HTMLTableCellElement::HTMLTableCellElement(const QualifiedName& tagName, Document *doc)
-    : HTMLTablePartElement(tagName, doc)
-    , _row(-1)
-    , _col(-1)
-    , rSpan(1)
-    , cSpan(1)
-    , rowHeight(0)
-    , m_solid(false)
+inline HTMLTableCellElement::HTMLTableCellElement(const QualifiedName& tagName, Document* document)
+    : HTMLTablePartElement(tagName, document)
+    , m_row(-1)
+    , m_col(-1)
+    , m_rowSpan(1)
+    , m_colSpan(1)
 {
 }
 
-HTMLTableCellElement::~HTMLTableCellElement()
+PassRefPtr<HTMLTableCellElement> HTMLTableCellElement::create(const QualifiedName& tagName, Document* document)
 {
+    return new HTMLTableCellElement(tagName, document);
 }
 
 int HTMLTableCellElement::cellIndex() const
@@ -87,25 +86,26 @@ bool HTMLTableCellElement::mapToEntry(const QualifiedName& attrName, MappedAttri
 void HTMLTableCellElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == rowspanAttr) {
-        rSpan = !attr->isNull() ? attr->value().toInt() : 1;
-        rSpan = max(1, min(rSpan, maxRowspan));
+        m_rowSpan = max(1, min(attr->value().toInt(), maxRowspan));
         if (renderer() && renderer()->isTableCell())
             toRenderTableCell(renderer())->updateFromElement();
     } else if (attr->name() == colspanAttr) {
-        cSpan = !attr->isNull() ? attr->value().toInt() : 1;
-        cSpan = max(1, cSpan);
+        m_colSpan = max(1, attr->value().toInt());
         if (renderer() && renderer()->isTableCell())
             toRenderTableCell(renderer())->updateFromElement();
     } else if (attr->name() == nowrapAttr) {
+        // FIXME: What about removing the property when the attribute becomes null?
         if (!attr->isNull())
             addCSSProperty(attr, CSSPropertyWhiteSpace, CSSValueWebkitNowrap);
     } else if (attr->name() == widthAttr) {
+        // FIXME: What about removing the property when the attribute becomes empty, zero or negative?
         if (!attr->value().isEmpty()) {
             int widthInt = attr->value().toInt();
             if (widthInt > 0) // width="0" is ignored for compatibility with WinIE.
                 addCSSLength(attr, CSSPropertyWidth, attr->value());
         }
     } else if (attr->name() == heightAttr) {
+        // FIXME: What about removing the property when the attribute becomes empty, zero or negative?
         if (!attr->value().isEmpty()) {
             int heightInt = attr->value().toInt();
             if (heightInt > 0) // height="0" is ignored for compatibility with WinIE.

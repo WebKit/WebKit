@@ -1,7 +1,7 @@
-/**
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2007, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,12 +37,17 @@ using namespace HTMLNames;
 // WinIE uses 60ms as the minimum delay by default.
 const int defaultMinimumDelay = 60;
 
-HTMLMarqueeElement::HTMLMarqueeElement(const QualifiedName& tagName, Document* doc)
-    : HTMLElement(tagName, doc)
-    , ActiveDOMObject(doc, this)
+inline HTMLMarqueeElement::HTMLMarqueeElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
+    , ActiveDOMObject(document, this)
     , m_minimumDelay(defaultMinimumDelay)
 {
     ASSERT(hasTagName(marqueeTag));
+}
+
+PassRefPtr<HTMLMarqueeElement> HTMLMarqueeElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new HTMLMarqueeElement(tagName, document);
 }
 
 bool HTMLMarqueeElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const

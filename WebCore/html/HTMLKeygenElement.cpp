@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2010 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -40,19 +40,24 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
-    : HTMLSelectElement(tagName, doc, f)
+inline HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
+    : HTMLSelectElement(tagName, document, form)
 {
     ASSERT(hasTagName(keygenTag));
+
+    // Add one option element for each key size.
     Vector<String> keys;
     getSupportedKeySizes(keys);
-        
-    Vector<String>::const_iterator end = keys.end();
-    for (Vector<String>::const_iterator it = keys.begin(); it != end; ++it) {
-        HTMLOptionElement* o = new HTMLOptionElement(optionTag, doc, form());
-        addChild(o);
-        o->addChild(Text::create(doc, *it));
+    for (size_t i = 0; i < keys.size(); ++i) {
+        RefPtr<HTMLOptionElement> option = HTMLOptionElement::create(document, this->form());
+        addChild(option);
+        option->addChild(Text::create(document, keys[i]));
     }
+}
+
+PassRefPtr<HTMLKeygenElement> HTMLKeygenElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
+{
+    return new HTMLKeygenElement(tagName, document, form);
 }
 
 const AtomicString& HTMLKeygenElement::formControlType() const
@@ -67,9 +72,10 @@ void HTMLKeygenElement::parseMappedAttribute(Attribute* attr)
         m_challenge = attr->value();
     else if (attr->name() == keytypeAttr)
         m_keyType = attr->value();
-    else
-        // skip HTMLSelectElement parsing!
+    else {
+        // Skip HTMLSelectElement parsing.
         HTMLFormControlElement::parseMappedAttribute(attr);
+    }
 }
 
 bool HTMLKeygenElement::appendFormData(FormDataList& encoded_values, bool)

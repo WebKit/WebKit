@@ -35,16 +35,17 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLScriptElement::HTMLScriptElement(const QualifiedName& tagName, Document* doc, bool createdByParser)
-    : HTMLElement(tagName, doc)
+inline HTMLScriptElement::HTMLScriptElement(const QualifiedName& tagName, Document* document, bool createdByParser)
+    : HTMLElement(tagName, document)
     , m_data(this, this)
 {
     ASSERT(hasTagName(scriptTag));
     m_data.setCreatedByParser(createdByParser);
 }
 
-HTMLScriptElement::~HTMLScriptElement()
+PassRefPtr<HTMLScriptElement> HTMLScriptElement::create(const QualifiedName& tagName, Document* document, bool createdByParser)
 {
+    return new HTMLScriptElement(tagName, document, createdByParser);
 }
 
 bool HTMLScriptElement::isURLAttribute(Attribute* attr) const

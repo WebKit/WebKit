@@ -3,7 +3,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -34,11 +34,10 @@ namespace WebCore {
 
 class HTMLOptionElement;
 class HTMLOptionsCollection;
-class KeyboardEvent;
 
 class HTMLSelectElement : public HTMLFormControlElementWithState, public SelectElement {
 public:
-    HTMLSelectElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
+    static PassRefPtr<HTMLSelectElement> create(const QualifiedName&, Document*, HTMLFormElement*);
 
     virtual int selectedIndex() const;
     virtual void setSelectedIndex(int index, bool deselect = true);
@@ -82,6 +81,9 @@ public:
     void scrollToSelection();
 
     void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true);
+
+protected:
+    HTMLSelectElement(const QualifiedName&, Document*, HTMLFormElement*);
 
 private:
     virtual int tagPriority() const { return 6; }

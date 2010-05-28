@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2010 Apple Inc. ALl rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,14 +22,29 @@
 #ifndef HTMLStyleElement_h
 #define HTMLStyleElement_h
 
-#include "CSSStyleSheet.h"
 #include "HTMLElement.h"
 #include "StyleElement.h"
 
 namespace WebCore {
 
+class StyleSheet;
+
 class HTMLStyleElement : public HTMLElement, public StyleElement {
 public:
+    static PassRefPtr<HTMLStyleElement> create(const QualifiedName&, Document*, bool createdByParser);
+
+    bool disabled() const;
+    void setDisabled(bool);
+
+    virtual const AtomicString& media() const;
+    void setMedia(const AtomicString&);
+
+    virtual const AtomicString& type() const;
+    void setType(const AtomicString&);
+
+    StyleSheet* sheet();
+
+private:
     HTMLStyleElement(const QualifiedName&, Document*, bool createdByParser);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
@@ -47,22 +62,10 @@ public:
     virtual bool isLoading() const;
     virtual bool sheetLoaded();
 
-    bool disabled() const;
-    void setDisabled(bool);
-
-    virtual const AtomicString& media() const;
-    void setMedia(const AtomicString&);
-
-    virtual const AtomicString& type() const;
-    void setType(const AtomicString&);
-
-    StyleSheet* sheet();
-
     virtual void setLoading(bool loading) { m_loading = loading; }
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
-protected:
     String m_media;
     bool m_loading;
     bool m_createdByParser;

@@ -659,17 +659,15 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                 if (!ec) {
                     if (m_current->hasTagName(trTag)) {
                         reportError(TablePartRequiredError, &localName, &tdTag.localName());
-                        e = new HTMLTableCellElement(tdTag, m_document);
+                        insertNode(HTMLTableCellElement::create(tdTag, m_document).get());
                     } else if (m_current->hasTagName(tableTag)) {
                         // Don't report an error in this case, since making a <tbody> happens all the time when you have <table><tr>,
                         // and it isn't really a parse error per se.
-                        e = new HTMLTableSectionElement(tbodyTag, m_document);
+                        insertNode(HTMLTableSectionElement::create(tbodyTag, m_document).get());
                     } else {
                         reportError(TablePartRequiredError, &localName, &trTag.localName());
-                        e = new HTMLTableRowElement(trTag, m_document);
+                        insertNode(HTMLTableRowElement::create(m_document).get());
                     }
-
-                    insertNode(e);
                     handled = true;
                 }
             }
@@ -920,7 +918,7 @@ bool HTMLParser::pCloserStrictCreateErrorCheck(Token*, RefPtr<Node>&)
 
 bool HTMLParser::mapCreateErrorCheck(Token*, RefPtr<Node>& result)
 {
-    m_currentMapElement = new HTMLMapElement(mapTag, m_document);
+    m_currentMapElement = HTMLMapElement::create(m_document);
     result = m_currentMapElement;
     return false;
 }

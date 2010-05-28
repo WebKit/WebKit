@@ -66,17 +66,17 @@ input constructorNeedsFormElement, createWithNew
 ins interfaceName=HTMLModElement, createWithNew
 isindex interfaceName=HTMLIsIndexElement, constructorNeedsFormElement, createWithNew
 kbd interfaceName=HTMLElement
-keygen JSInterfaceName=HTMLSelectElement, constructorNeedsFormElement, createWithNew
+keygen JSInterfaceName=HTMLSelectElement, constructorNeedsFormElement
 label createWithNew
 layer interfaceName=HTMLElement
 legend constructorNeedsFormElement, createWithNew
 li interfaceName=HTMLLIElement, createWithNew
 link constructorNeedsCreatedByParser, createWithNew
-listing interfaceName=HTMLPreElement, createWithNew
-map createWithNew
-marquee createWithNew
-menu createWithNew
-meta createWithNew
+listing interfaceName=HTMLPreElement
+map
+marquee
+menu
+meta
 meter interfaceName=HTMLMeterElement, conditional=METER_TAG
 nav interfaceName=HTMLElement
 nobr interfaceName=HTMLElement
@@ -84,50 +84,50 @@ noembed interfaceName=HTMLElement
 noframes interfaceName=HTMLElement
 nolayer interfaceName=HTMLElement
 object constructorNeedsCreatedByParser
-ol interfaceName=HTMLOListElement, createWithNew
-optgroup interfaceName=HTMLOptGroupElement, constructorNeedsFormElement, createWithNew
-option constructorNeedsFormElement, createWithNew
-p interfaceName=HTMLParagraphElement, createWithNew
-param createWithNew
+ol interfaceName=HTMLOListElement
+optgroup interfaceName=HTMLOptGroupElement, constructorNeedsFormElement
+option constructorNeedsFormElement
+p interfaceName=HTMLParagraphElement
+param
 plaintext interfaceName=HTMLElement
-pre createWithNew
+pre
 progress interfaceName=HTMLProgressElement, conditional=PROGRESS_TAG
-q interfaceName=HTMLQuoteElement, createWithNew
+q interfaceName=HTMLQuoteElement
 rp interfaceName=HTMLElement, conditional=RUBY
 rt interfaceName=HTMLElement, conditional=RUBY
 ruby interfaceName=HTMLElement, conditional=RUBY
 s interfaceName=HTMLElement
 samp interfaceName=HTMLElement
-script constructorNeedsCreatedByParser, createWithNew
+script constructorNeedsCreatedByParser
 section interfaceName=HTMLElement
-select constructorNeedsFormElement, createWithNew
+select constructorNeedsFormElement
 small interfaceName=HTMLElement
-source wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, createWithNew
+source wrapperOnlyIfMediaIsAvailable, conditional=VIDEO
 span interfaceName=HTMLElement
 strike interfaceName=HTMLElement
 strong interfaceName=HTMLElement
-style constructorNeedsCreatedByParser, createWithNew
+style constructorNeedsCreatedByParser
 sub interfaceName=HTMLElement
 sup interfaceName=HTMLElement
-table createWithNew
-tbody interfaceName=HTMLTableSectionElement, createWithNew
-td interfaceName=HTMLTableCellElement, createWithNew
-textarea interfaceName=HTMLTextAreaElement, constructorNeedsFormElement, createWithNew
-tfoot interfaceName=HTMLTableSectionElement, createWithNew
-th interfaceName=HTMLTableCellElement, createWithNew
-thead interfaceName=HTMLTableSectionElement, createWithNew
-title createWithNew
-tr interfaceName=HTMLTableRowElement, createWithNew
+table
+tbody interfaceName=HTMLTableSectionElement
+td interfaceName=HTMLTableCellElement
+textarea interfaceName=HTMLTextAreaElement, constructorNeedsFormElement
+tfoot interfaceName=HTMLTableSectionElement
+th interfaceName=HTMLTableCellElement
+thead interfaceName=HTMLTableSectionElement
+title
+tr interfaceName=HTMLTableRowElement
 tt interfaceName=HTMLElement
 u interfaceName=HTMLElement
-ul interfaceName=HTMLUListElement, createWithNew
+ul interfaceName=HTMLUListElement
 var interfaceName=HTMLElement
-video wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, createWithNew
+video wrapperOnlyIfMediaIsAvailable, conditional=VIDEO
 wbr interfaceName=HTMLElement
-xmp interfaceName=HTMLPreElement, createWithNew
+xmp interfaceName=HTMLPreElement
 
 #if ENABLE_XHTMLMP
-noscript interfaceName=HTMLNoScriptElement, createWithNew
+noscript interfaceName=HTMLNoScriptElement
 #else
 noscript interfaceName=HTMLElement
 #endif

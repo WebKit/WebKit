@@ -84,10 +84,10 @@ void HTMLViewSourceDocument::createContainingTable()
     body->addChild(div);
     div->attach();
 
-    RefPtr<HTMLTableElement> table = new HTMLTableElement(tableTag, this);
+    RefPtr<HTMLTableElement> table = HTMLTableElement::create(this);
     body->addChild(table);
     table->attach();
-    m_tbody = new HTMLTableSectionElement(tbodyTag, this);
+    m_tbody = HTMLTableSectionElement::create(tbodyTag, this);
     table->addChild(m_tbody);
     m_tbody->attach();
     m_current = m_tbody;
@@ -222,12 +222,12 @@ PassRefPtr<Element> HTMLViewSourceDocument::addSpanWithClassName(const String& c
 void HTMLViewSourceDocument::addLine(const String& className)
 {
     // Create a table row.
-    RefPtr<HTMLTableRowElement> trow = new HTMLTableRowElement(trTag, this);
+    RefPtr<HTMLTableRowElement> trow = HTMLTableRowElement::create(this);
     m_tbody->addChild(trow);
     trow->attach();
     
     // Create a cell that will hold the line number (it is generated in the stylesheet using counters).
-    RefPtr<HTMLTableCellElement> td = new HTMLTableCellElement(tdTag, this);
+    RefPtr<HTMLTableCellElement> td = HTMLTableCellElement::create(tdTag, this);
     RefPtr<NamedNodeMap> attrs = NamedNodeMap::create();
     attrs->addAttribute(Attribute::createMapped(classAttr, "webkit-line-number"));
     td->setAttributeMap(attrs.release());
@@ -235,7 +235,7 @@ void HTMLViewSourceDocument::addLine(const String& className)
     td->attach();
 
     // Create a second cell for the line contents
-    td = new HTMLTableCellElement(tdTag, this);
+    td = HTMLTableCellElement::create(tdTag, this);
     attrs = NamedNodeMap::create();
     attrs->addAttribute(Attribute::createMapped(classAttr, "webkit-line-content"));
     td->setAttributeMap(attrs.release());

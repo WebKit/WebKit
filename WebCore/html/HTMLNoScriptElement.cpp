@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,14 +31,15 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLNoScriptElement::HTMLNoScriptElement(const QualifiedName& tagName, Document* doc)
-    : HTMLElement(tagName, doc)
+inline HTMLNoScriptElement::HTMLNoScriptElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(noscriptTag));
 }
 
-HTMLNoScriptElement::~HTMLNoScriptElement()
+PassRefPtr<HTMLNoScriptElement> HTMLNoScriptElement::create(const QualifiedName& tagName, Document* document)
 {
+    return new HTMLNoScriptElement(tagName, document);
 }
 
 bool HTMLNoScriptElement::checkDTD(const Node* newChild)
@@ -76,10 +78,11 @@ void HTMLNoScriptElement::recalcStyle(StyleChange change)
     }
 }
 
-bool HTMLNoScriptElement::childShouldCreateRenderer(Node* child) const
+bool HTMLNoScriptElement::childShouldCreateRenderer(Node*) const
 {
     return document()->shouldProcessNoscriptElement();
 }
 
 }
+
 #endif

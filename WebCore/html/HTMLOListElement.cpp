@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,11 +33,21 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLOListElement::HTMLOListElement(const QualifiedName& tagName, Document* doc)
-    : HTMLElement(tagName, doc)
+HTMLOListElement::HTMLOListElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
     , m_start(1)
 {
     ASSERT(hasTagName(olTag));
+}
+
+PassRefPtr<HTMLOListElement> HTMLOListElement::create(Document* document)
+{
+    return new HTMLOListElement(olTag, document);
+}
+
+PassRefPtr<HTMLOListElement> HTMLOListElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new HTMLOListElement(tagName, document);
 }
 
 bool HTMLOListElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
@@ -102,4 +113,5 @@ void HTMLOListElement::setType(const String& value)
 {
     setAttribute(typeAttr, value);
 }
+
 }

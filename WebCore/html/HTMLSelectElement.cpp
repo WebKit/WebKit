@@ -3,7 +3,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2009, 2010 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
@@ -50,6 +50,12 @@ HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document* doc
     : HTMLFormControlElementWithState(tagName, document, form)
 {
     ASSERT(hasTagName(selectTag) || hasTagName(keygenTag));
+}
+
+PassRefPtr<HTMLSelectElement> HTMLSelectElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
+{
+    ASSERT(tagName.matches(selectTag));
+    return new HTMLSelectElement(tagName, document, form);
 }
 
 bool HTMLSelectElement::checkDTD(const Node* newChild)

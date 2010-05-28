@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,10 +29,10 @@ namespace WebCore {
 
 class HTMLNoScriptElement : public HTMLElement {
 public:
-    HTMLNoScriptElement(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLNoScriptElement> create(const QualifiedName&, Document*);
 
 private:
-    virtual ~HTMLNoScriptElement();
+    HTMLNoScriptElement(const QualifiedName&, Document*);
 
     virtual bool checkDTD(const Node*);
     virtual void attach();

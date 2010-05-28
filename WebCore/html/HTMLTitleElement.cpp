@@ -1,8 +1,8 @@
-/**
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,6 +19,7 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
 #include "config.h"
 #include "HTMLTitleElement.h"
 
@@ -30,15 +31,16 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLTitleElement::HTMLTitleElement(const QualifiedName& tagName, Document* doc)
-    : HTMLElement(tagName, doc)
+inline HTMLTitleElement::HTMLTitleElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
     , m_title("")
 {
     ASSERT(hasTagName(titleTag));
 }
 
-HTMLTitleElement::~HTMLTitleElement()
+PassRefPtr<HTMLTitleElement> HTMLTitleElement::create(const QualifiedName& tagName, Document* document)
 {
+    return new HTMLTitleElement(tagName, document);
 }
 
 void HTMLTitleElement::insertedIntoDocument()
