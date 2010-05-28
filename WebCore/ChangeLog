@@ -1,5 +1,16 @@
 2010-05-27  Mark Rowe  <mrowe@apple.com>
 
+        Merge r60252.
+
+    2010-05-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Mac 32 bit build fix.
+
+        * platform/graphics/mac/SimpleFontDataMac.mm: (WebCore::SimpleFontData::platformInit):
+        Use static_cast instead of narrowPrecisionToFloat - the latter can't convert from float to float.
+
+2010-05-27  Mark Rowe  <mrowe@apple.com>
+
         Merge r60247.
 
     2010-05-26  Dan Bernstein  <mitz@apple.com>

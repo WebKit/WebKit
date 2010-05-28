@@ -32,7 +32,6 @@
 
 #import "BlockExceptions.h"
 #import "Color.h"
-#import "FloatConversion.h"
 #import "FloatRect.h"
 #import "Font.h"
 #import "FontCache.h"
@@ -271,7 +270,7 @@ void SimpleFontData::platformInit()
         // and web pages that foolishly use this metric for width will be laid out
         // poorly if we return an accurate height. Classic case is Times 13 point,
         // which has an "x" that is 7x6 pixels.
-        m_xHeight = narrowPrecisionToFloat(max(CGRectGetMaxX(xBox), CGRectGetMaxY(xBox)));
+        m_xHeight = static_cast<float>(max(CGRectGetMaxX(xBox), CGRectGetMaxY(xBox)));
     } else {
 #ifndef BUILDING_ON_TIGER
         m_xHeight = static_cast<float>(CGFontGetXHeight(m_platformData.cgFont())) / m_unitsPerEm;
