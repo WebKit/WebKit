@@ -220,7 +220,7 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
         case ProgressBarPart:
             return adjustProgressBarStyle(selector, style, e);
 #endif
-#if ENABLE(Meter_TAG)
+#if ENABLE(METER_TAG)
         case MeterPart:
             return adjustMeterStyle(selector, style, e);
 #endif

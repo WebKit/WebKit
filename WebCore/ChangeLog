@@ -1,3 +1,10 @@
+2010-05-27  MORITA Hajime  <morrita@google.com>
+
+        Not reviewed. Fixed typo
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+
 2010-05-27  Darin Adler  <darin@apple.com>
 
         Reviewed by David Levin.
