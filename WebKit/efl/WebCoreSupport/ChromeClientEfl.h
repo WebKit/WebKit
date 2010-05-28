@@ -25,6 +25,7 @@
 
 #include "ChromeClient.h"
 #include "KURL.h"
+#include "PopupMenu.h"
 #include <Evas.h>
 
 namespace WebCore {
@@ -68,6 +69,9 @@ public:
 
     virtual void setMenubarVisible(bool);
     virtual bool menubarVisible();
+
+    virtual void createSelectPopup(PopupMenuClient*, int selected, const IntRect& rect);
+    virtual bool destroySelectPopup();
 
     virtual void setResizable(bool);
 

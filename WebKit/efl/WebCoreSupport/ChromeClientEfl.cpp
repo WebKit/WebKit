@@ -188,6 +188,16 @@ bool ChromeClientEfl::menubarVisible()
     return visible;
 }
 
+void ChromeClientEfl::createSelectPopup(PopupMenuClient* client, int selected, const IntRect& rect)
+{
+    ewk_view_popup_new(m_view, client, selected, rect);
+}
+
+bool ChromeClientEfl::destroySelectPopup()
+{
+    return ewk_view_popup_destroy(m_view);
+}
+
 void ChromeClientEfl::setResizable(bool)
 {
     notImplemented();

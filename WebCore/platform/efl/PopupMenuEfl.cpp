@@ -24,6 +24,8 @@
 #include "config.h"
 #include "PopupMenu.h"
 
+#include "Chrome.h"
+#include "ChromeClientEfl.h"
 #include "FrameView.h"
 #include "NotImplemented.h"
 
@@ -31,6 +33,7 @@ namespace WebCore {
 
 PopupMenu::PopupMenu(PopupMenuClient* client)
     : m_popupClient(client)
+    , m_view(0)
 {
 }
 
@@ -40,13 +43,21 @@ PopupMenu::~PopupMenu()
 
 void PopupMenu::show(const IntRect& rect, FrameView* view, int index)
 {
-    ASSERT(client());
-    notImplemented();
+    ASSERT(m_popupClient);
+    ChromeClientEfl* chromeClient = static_cast<ChromeClientEfl*>(view->frame()->page()->chrome()->client());
+    ASSERT(chromeClient);
+
+    m_view = view;
+    chromeClient->createSelectPopup(m_popupClient, index, rect);
 }
 
 void PopupMenu::hide()
 {
-    notImplemented();
+    ASSERT(m_view);
+    ChromeClientEfl* chromeClient = static_cast<ChromeClientEfl*>(m_view->frame()->page()->chrome()->client());
+    ASSERT(chromeClient);
+
+    chromeClient->destroySelectPopup();
 }
 
 void PopupMenu::updateFromElement()

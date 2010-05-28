@@ -41,6 +41,11 @@ extern "C" {
 // If defined, ewk will do type checking to ensure objects are of correct type
 #define EWK_TYPE_CHECK 1
 
+// forward declarations
+namespace WebCore {
+struct PopupMenuClient;
+}
+
 void             ewk_view_ready(Evas_Object *o);
 void             ewk_view_title_set(Evas_Object *o, const char *title);
 void             ewk_view_uri_changed(Evas_Object *o);
@@ -83,6 +88,8 @@ WebCore::Page   *ewk_view_core_page_get(const Evas_Object *o);
 WTF::PassRefPtr<WebCore::Frame> ewk_view_frame_create(Evas_Object *o, Evas_Object *frame, const WebCore::String& name, WebCore::HTMLFrameOwnerElement* ownerElement, const WebCore::KURL& url, const WebCore::String& referrer);
 
 WTF::PassRefPtr<WebCore::Widget> ewk_view_plugin_create(Evas_Object* o, Evas_Object* frame, const WebCore::IntSize& pluginSize, WebCore::HTMLPlugInElement* element, const WebCore::KURL& url, const WTF::Vector<WebCore::String>& paramNames, const WTF::Vector<WebCore::String>& paramValues, const WebCore::String& mimeType, bool loadManually);
+
+void             ewk_view_popup_new(Evas_Object *o, WebCore::PopupMenuClient* client, int selected, const WebCore::IntRect& rect);
 
 Ewk_History      *ewk_history_new(WebCore::BackForwardList *history);
 void              ewk_history_free(Ewk_History *history);
