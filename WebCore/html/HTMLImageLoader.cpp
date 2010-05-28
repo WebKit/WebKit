@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,8 +27,13 @@
 #include "Element.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
+
+#if USE(JSC)
+#include "JSDOMWindowBase.h"
+#endif
 
 namespace WebCore {
 
@@ -60,6 +65,17 @@ void HTMLImageLoader::notifyFinished(CachedResource*)
 
     Element* elem = element();
     ImageLoader::notifyFinished(cachedImage);
+
+#if USE(JSC)
+    if (!cachedImage->errorOccurred() && !cachedImage->httpStatusCodeErrorOccurred()
+        && (elem->hasTagName(HTMLNames::imgTag) || elem->hasTagName(HTMLNames::imageTag)) ) {
+        HTMLImageElement* img = static_cast<HTMLImageElement*>(elem);
+        if (!img->inDocument()) {
+            JSC::JSGlobalData* globalData = JSDOMWindowBase::commonJSGlobalData();
+            globalData->heap.reportExtraMemoryCost(cachedImage->encodedSize());
+        }
+    }
+#endif
 
     if ((cachedImage->errorOccurred() || cachedImage->httpStatusCodeErrorOccurred()) && elem->hasTagName(HTMLNames::objectTag))
         static_cast<HTMLObjectElement*>(elem)->renderFallbackContent();

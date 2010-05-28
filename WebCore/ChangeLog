@@ -1,3 +1,19 @@
+2010-05-27  Nathan Lawrence  <nlawrence@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39460
+
+        Fixes the issue where images prefetched by JavaScript do not report
+        their memory usage to the GC.
+
+        There is a new test manual-tests/image-prefetch-stress.html that loads
+        a new 4MB image every half a second.
+
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::notifyFinished):
+        * manual-tests/image-prefetch-stress.html: Added.
+
 2010-05-27  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Adam Barth.
