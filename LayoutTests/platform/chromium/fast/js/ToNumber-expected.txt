@@ -9,6 +9,7 @@ PASS +false is 0
 PASS +true is 1
 PASS +2 is 2
 PASS +'' is 0
+PASS +' ' is 0
 PASS +' 1' is 1
 PASS +'1 ' is 1
 PASS +'x1' is NaN
@@ -44,6 +45,30 @@ PASS +'AB' is NaN
 PASS +'0xAB' is 171
 PASS +'1e1' is 10
 PASS +'1E1' is 10
+PASS +tab is 0
+PASS +nbsp is 0
+PASS +ff is 0
+PASS +vt is 0
+PASS +cr is 0
+PASS +lf is 0
+PASS +ls is 0
+PASS +ps is 0
+PASS +oghamSpaceMark is 0
+PASS +mongolianVowelSeparator is 0
+PASS +enQuad is 0
+PASS +emQuad is 0
+PASS +enSpace is 0
+PASS +emSpace is 0
+PASS +threePerEmSpace is 0
+PASS +fourPerEmSpace is 0
+PASS +sixPerEmSpace is 0
+PASS +figureSpace is 0
+PASS +punctuationSpace is 0
+PASS +thinSpace is 0
+PASS +hairSpace is 0
+PASS +narrowNoBreakSpace is 0
+PASS +mediumMathematicalSpace is 0
+PASS +ideographicSpace is 0
 PASS +(tab + '1') is 1
 PASS +(nbsp + '1') is 1
 PASS +(ff + '1') is 1
@@ -119,4 +144,3 @@ PASS +('1' + ideographicSpace + '1') is NaN
 PASS successfullyParsed is true
 
 TEST COMPLETE
-

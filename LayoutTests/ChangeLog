@@ -1,3 +1,15 @@
+2010-05-27  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Tamura Kent.
+
+        [Chromium] Update chromium test expectations for parseFloat & toNumber tests
+        https://bugs.webkit.org/show_bug.cgi?id=39861
+
+        Update expectation files.
+
+        * platform/chromium/fast/js/ToNumber-expected.txt:
+        * platform/chromium/fast/js/parseFloat-expected.txt:
+
 2010-05-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Kent Tamura.

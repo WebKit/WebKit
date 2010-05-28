@@ -5,6 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS parseFloat() is NaN
 PASS parseFloat('') is NaN
+PASS parseFloat(' ') is NaN
 PASS parseFloat(' 0') is 0
 PASS parseFloat('0 ') is 0
 PASS parseFloat('x0') is NaN
@@ -49,4 +50,3 @@ PASS parseFloat(ideographicSpace + '1') is 1
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
