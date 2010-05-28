@@ -91,7 +91,22 @@ typedef RefPtr<SharedBitmap> NativeImagePtr;
 #endif
 #endif
 
-const int cAnimationLoopOnce = -1;
+// Right now GIFs are the only recognized image format that supports animation.
+// The animation system and the constants below are designed with this in mind.
+// GIFs have an optional 16-bit unsigned loop count that describes how an
+// animated GIF should be cycled.  If the loop count is absent, the animation
+// cycles once; if it is 0, the animation cycles infinitely; otherwise the
+// animation plays n + 1 cycles (where n is the specified loop count).  If the
+// GIF decoder defaults to cAnimationLoopOnce in the absence of any loop count
+// and translates an explicit "0" loop count to cAnimationLoopInfinite, then we
+// get a couple of nice side effects:
+//   * By making cAnimationLoopOnce be 0, we allow the animation cycling code in
+//     BitmapImage.cpp to avoid special-casing it, and simply treat all
+//     non-negative loop counts identically.
+//   * By making the other two constants negative, we avoid conflicts with any
+//     real loop count values.
+const int cAnimationLoopOnce = 0;
+const int cAnimationLoopInfinite = -1;
 const int cAnimationNone = -2;
 
 class ImageSource : public Noncopyable {

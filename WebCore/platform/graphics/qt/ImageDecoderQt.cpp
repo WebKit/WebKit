@@ -115,24 +115,8 @@ size_t ImageDecoderQt::frameCount()
 
 int ImageDecoderQt::repetitionCount() const
 {
-    if (m_reader && m_reader->supportsAnimation()) {
+    if (m_reader && m_reader->supportsAnimation())
         m_repetitionCount = m_reader->loopCount();
-
-        // Qt and WebCore have a incompatible understanding of
-        // the loop count and we can not completely map everything.
-        //  Qt   |   WebCore          | description
-        //  -1   |     0              | infinite animation
-        //   0   | cAnimationLoopOnce | show every frame once
-        //   n   |     n+1            | Qt returns the # of iterations - 1
-        //  n/a  | cAnimationNone     | show only the first frame
-        if (m_repetitionCount == -1)
-            m_repetitionCount = 0;
-        else if (m_repetitionCount == 0)
-            m_repetitionCount = cAnimationLoopOnce;
-        else
-            ++m_repetitionCount;
-    }
-
     return m_repetitionCount;
 }
 

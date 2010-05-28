@@ -77,6 +77,7 @@ mailing address.
 
 #include <string.h>
 #include "GIFImageDecoder.h"
+#include "ImageSource.h"
 
 using WebCore::GIFImageDecoder;
 
@@ -687,6 +688,10 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
          loop count during the first iteration. */
       if (netscape_extension == 1) {
         loop_count = GETINT16(q + 1);
+
+        /* Zero loop count is infinite animation loop request */
+        if (loop_count == 0)
+          loop_count = WebCore::cAnimationLoopInfinite;
 
         GETN(1, gif_netscape_extension_block);
       }

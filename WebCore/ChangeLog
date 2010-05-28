@@ -1,3 +1,34 @@
+2010-05-28  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39857
+        Make GIFs loop the correct number of times.  Previously, everyone looped
+        one time too few for non-infinitely-looping GIFs.
+
+        Modified a Qt manual test to be correct and moved it to the general
+        manual test directory.
+
+        * manual-tests/animated-gif-looping.html: Copied from WebCore/manual-tests/qt/qt-gif-test.html.
+        * manual-tests/qt/qt-10loop-anim.gif: Removed.
+        * manual-tests/qt/qt-anim.gif: Removed.
+        * manual-tests/qt/qt-gif-test.html: Removed.
+        * manual-tests/qt/qt-noanim.gif: Removed.
+        * manual-tests/resources/animated-10x.gif: Copied from WebCore/manual-tests/qt/qt-10loop-anim.gif and modified.
+        * manual-tests/resources/animated-infinite.gif: Copied from WebCore/manual-tests/qt/qt-anim.gif.
+        * manual-tests/resources/non-animated.gif: Copied from WebCore/manual-tests/qt/qt-noanim.gif.
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::internalAdvanceAnimation): For a loop count of n, show a total of n + 1 animation cycles.
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::repetitionCount):
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::repetitionCount): Remove translation code now that WebCore matches Qt's internal handling of the loop count.  Qt itself may still have a bug here.
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::repetitionCount):
+        * platform/image-decoders/gif/GIFImageReader.cpp:
+        (GIFImageReader::read): Translate loop count 0 to "loop infinitely" (by restoring one piece of the Mozilla code we'd removed).
+
 2010-05-28  Ben Murdoch  <benm@google.com>
 
         Reviewed by Darin Adler.

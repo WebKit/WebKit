@@ -98,7 +98,7 @@ int GIFImageDecoder::repetitionCount() const
         // Added wrinkle: ImageSource::clear() may destroy the reader, making
         // the result from the reader _less_ authoritative on future calls.  To
         // detect this, the reader returns cLoopCountNotSeen (-2) instead of
-        // cAnimationLoopOnce (-1) when its current incarnation hasn't actually
+        // cAnimationLoopOnce (0) when its current incarnation hasn't actually
         // seen a loop count yet; in this case we return our previously-cached
         // value.
         const int repetitionCount = m_reader->loop_count;
