@@ -274,11 +274,13 @@ unsigned HTML5Lexer::consumeEntity(SegmentedString& source, bool& notEnoughChara
                     emitParseError();
                     break;
                 }
-                if (m_state == CharacterReferenceInAttributeValueState && (isAlphaNumeric(cc) || cc == '='))
-                    break;
                 if (!isAlphaNumeric(cc)) {
                     const Entity* entity = findEntity(entityName.data(), entityName.size());
                     if (entity) {
+                        // HTML5 tells us to ignore this entity, for historical reasons,
+                        // if the lookhead character is '='.
+                        if (m_state == CharacterReferenceInAttributeValueState && cc == '=')
+                            break;
                         emitParseError();
                         return entity->code;
                     }

@@ -444,6 +444,9 @@ resources/entities01.dat:
 67
 68
 
+resources/entities02.dat:
+5
+
 resources/comments01.dat:
 3
 6

@@ -2,6 +2,20 @@
 
         Reviewed by Eric Seidel.
 
+        Named entities in attributes aren't parsed correctly by HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=39873
+
+        I misplaced this if statement when writing this code originally.  Now
+        that we have test coverage for this paragraph in the spec, we can see
+        and fix the bug.
+
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTML5Lexer::consumeEntity):
+
+2010-05-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Handle edge cases in HTML5 entity parsing
         https://bugs.webkit.org/show_bug.cgi?id=39823
 

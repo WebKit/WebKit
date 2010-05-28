@@ -290,5 +290,7 @@ resources/entities01.dat:
 2
 5
 
+resources/entities02.dat: PASS
+
 resources/comments01.dat: PASS
 #EOF
