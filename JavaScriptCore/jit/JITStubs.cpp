@@ -1844,6 +1844,7 @@ DEFINE_STUB_FUNCTION(void*, op_call_arityCheck)
     ASSERT(!callee->isHostFunction());
     CodeBlock* newCodeBlock = &callee->jsExecutable()->generatedBytecodeForCall();
     int argCount = callFrame->argumentCount();
+    ReturnAddressPtr pc = callFrame->returnPC();
 
     ASSERT(argCount != newCodeBlock->m_numParameters);
 
@@ -1858,7 +1859,7 @@ DEFINE_STUB_FUNCTION(void*, op_call_arityCheck)
             // Rewind to the previous call frame because op_call already optimistically
             // moved the call frame forward.
             stackFrame.callFrame = oldCallFrame;
-            throwStackOverflowError(oldCallFrame, stackFrame.globalData, callFrame->returnPC(), STUB_RETURN_ADDRESS);
+            throwStackOverflowError(oldCallFrame, stackFrame.globalData, pc, STUB_RETURN_ADDRESS);
             return 0;
         }
 
@@ -1873,7 +1874,7 @@ DEFINE_STUB_FUNCTION(void*, op_call_arityCheck)
             // Rewind to the previous call frame because op_call already optimistically
             // moved the call frame forward.
             stackFrame.callFrame = oldCallFrame;
-            throwStackOverflowError(oldCallFrame, stackFrame.globalData, callFrame->returnPC(), STUB_RETURN_ADDRESS);
+            throwStackOverflowError(oldCallFrame, stackFrame.globalData, pc, STUB_RETURN_ADDRESS);
             return 0;
         }
 
@@ -1887,6 +1888,7 @@ DEFINE_STUB_FUNCTION(void*, op_call_arityCheck)
     callFrame->setArgumentCount(argCount);
     callFrame->setCallee(callee);
     callFrame->setScopeChain(callee->scope().node());
+    callFrame->setReturnPC(pc.value());
 
     ASSERT((void*)callFrame <= stackFrame.registerFile->end());
     return callFrame;
@@ -1901,6 +1903,7 @@ DEFINE_STUB_FUNCTION(void*, op_construct_arityCheck)
     ASSERT(!callee->isHostFunction());
     CodeBlock* newCodeBlock = &callee->jsExecutable()->generatedBytecodeForConstruct();
     int argCount = callFrame->argumentCount();
+    ReturnAddressPtr pc = callFrame->returnPC();
 
     ASSERT(argCount != newCodeBlock->m_numParameters);
 
@@ -1915,7 +1918,7 @@ DEFINE_STUB_FUNCTION(void*, op_construct_arityCheck)
             // Rewind to the previous call frame because op_call already optimistically
             // moved the call frame forward.
             stackFrame.callFrame = oldCallFrame;
-            throwStackOverflowError(oldCallFrame, stackFrame.globalData, callFrame->returnPC(), STUB_RETURN_ADDRESS);
+            throwStackOverflowError(oldCallFrame, stackFrame.globalData, pc, STUB_RETURN_ADDRESS);
             return 0;
         }
 
@@ -1930,7 +1933,7 @@ DEFINE_STUB_FUNCTION(void*, op_construct_arityCheck)
             // Rewind to the previous call frame because op_call already optimistically
             // moved the call frame forward.
             stackFrame.callFrame = oldCallFrame;
-            throwStackOverflowError(oldCallFrame, stackFrame.globalData, callFrame->returnPC(), STUB_RETURN_ADDRESS);
+            throwStackOverflowError(oldCallFrame, stackFrame.globalData, pc, STUB_RETURN_ADDRESS);
             return 0;
         }
 
@@ -1944,6 +1947,7 @@ DEFINE_STUB_FUNCTION(void*, op_construct_arityCheck)
     callFrame->setArgumentCount(argCount);
     callFrame->setCallee(callee);
     callFrame->setScopeChain(callee->scope().node());
+    callFrame->setReturnPC(pc.value());
 
     ASSERT((void*)callFrame <= stackFrame.registerFile->end());
     return callFrame;
@@ -1956,19 +1960,26 @@ DEFINE_STUB_FUNCTION(void*, vm_lazyLinkCall)
     CallFrame* callFrame = stackFrame.callFrame;
     JSFunction* callee = callFrame->callee();
     ExecutableBase* executable = callee->executable();
-    JITCode& jitCode = executable->generatedJITCodeForCall();
-    
+
+    MacroAssemblerCodePtr codePtr;
     CodeBlock* codeBlock = 0;
-    if (!executable->isHostFunction())
+    if (executable->isHostFunction())
+        codePtr = executable->generatedJITCodeForCall().addressForCall();
+    else {
         codeBlock = &static_cast<FunctionExecutable*>(executable)->bytecodeForCall(stackFrame.callFrame, callee->scope().node());
+        if (callFrame->argumentCount() == codeBlock->m_numParameters)
+            codePtr = static_cast<FunctionExecutable*>(executable)->generatedJITCodeForCall().addressForCall();
+        else
+            codePtr = static_cast<FunctionExecutable*>(executable)->generatedJITCodeForCallWithArityCheck();
+    }
     CallLinkInfo* callLinkInfo = &stackFrame.callFrame->callerFrame()->codeBlock()->getCallLinkInfo(callFrame->returnPC());
 
     if (!callLinkInfo->seenOnce())
         callLinkInfo->setSeen();
     else
-        JIT::linkCall(callee, stackFrame.callFrame->callerFrame()->codeBlock(), codeBlock, jitCode, callLinkInfo, callFrame->argumentCount(), stackFrame.globalData);
+        JIT::linkCall(callee, stackFrame.callFrame->callerFrame()->codeBlock(), codeBlock, codePtr, callLinkInfo, callFrame->argumentCount(), stackFrame.globalData);
 
-    return jitCode.addressForCall().executableAddress();
+    return codePtr.executableAddress();
 }
 
 DEFINE_STUB_FUNCTION(void*, vm_lazyLinkConstruct)
@@ -1977,19 +1988,26 @@ DEFINE_STUB_FUNCTION(void*, vm_lazyLinkConstruct)
     CallFrame* callFrame = stackFrame.callFrame;
     JSFunction* callee = callFrame->callee();
     ExecutableBase* executable = callee->executable();
-    JITCode& jitCode = executable->generatedJITCodeForConstruct();
-    
+
+    MacroAssemblerCodePtr codePtr;
     CodeBlock* codeBlock = 0;
-    if (!executable->isHostFunction())
+    if (executable->isHostFunction())
+        codePtr = executable->generatedJITCodeForConstruct().addressForCall();
+    else {
         codeBlock = &static_cast<FunctionExecutable*>(executable)->bytecodeForConstruct(stackFrame.callFrame, callee->scope().node());
+        if (callFrame->argumentCount() == codeBlock->m_numParameters)
+            codePtr = static_cast<FunctionExecutable*>(executable)->generatedJITCodeForConstruct().addressForCall();
+        else
+            codePtr = static_cast<FunctionExecutable*>(executable)->generatedJITCodeForConstructWithArityCheck();
+    }
     CallLinkInfo* callLinkInfo = &stackFrame.callFrame->callerFrame()->codeBlock()->getCallLinkInfo(callFrame->returnPC());
 
     if (!callLinkInfo->seenOnce())
         callLinkInfo->setSeen();
     else
-        JIT::linkConstruct(callee, stackFrame.callFrame->callerFrame()->codeBlock(), codeBlock, jitCode, callLinkInfo, callFrame->argumentCount(), stackFrame.globalData);
+        JIT::linkConstruct(callee, stackFrame.callFrame->callerFrame()->codeBlock(), codeBlock, codePtr, callLinkInfo, callFrame->argumentCount(), stackFrame.globalData);
 
-    return jitCode.addressForCall().executableAddress();
+    return codePtr.executableAddress();
 }
 #endif // !ENABLE(JIT_OPTIMIZE_CALL)
 

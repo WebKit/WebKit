@@ -125,7 +125,7 @@ namespace JSC  {
             setCodeBlock(codeBlock);
             setScopeChain(scopeChain);
             setCallerFrame(callerFrame);
-            static_cast<Register*>(this)[RegisterFile::ReturnPC] = vPC; // This is either an Instruction* or a pointer into JIT generated code stored as an Instruction*.
+            setReturnPC(vPC); // This is either an Instruction* or a pointer into JIT generated code stored as an Instruction*.
             setArgumentCount(argc); // original argument count (for the sake of the "arguments" object)
             setCallee(function);
         }
@@ -142,6 +142,7 @@ namespace JSC  {
         void setArgumentCount(int count) { static_cast<Register*>(this)[RegisterFile::ArgumentCount] = Register::withInt(count); }
         void setCallee(JSFunction* callee) { static_cast<Register*>(this)[RegisterFile::Callee] = callee; }
         void setCodeBlock(CodeBlock* codeBlock) { static_cast<Register*>(this)[RegisterFile::CodeBlock] = codeBlock; }
+        void setReturnPC(void* value) { static_cast<Register*>(this)[RegisterFile::ReturnPC] = (Instruction*)value; }
 
     private:
         static const intptr_t HostCallFrameFlag = 1;

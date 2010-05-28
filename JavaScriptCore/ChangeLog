@@ -1,3 +1,37 @@
+2010-05-28  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 39898 - Move arity check into callee.
+        
+        We can reduce the size of the virtual call trampolines by moving the arity check
+        into the callee functions.  As a following step we will be able to remove the
+        check for native function / codeblocks by performing translation in a lazy stub.
+        
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::init):
+        (JSC::ExecState::setReturnPC):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::linkCall):
+        (JSC::JIT::linkConstruct):
+        * jit/JIT.h:
+        (JSC::JIT::compile):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::generateJITCodeForCall):
+        (JSC::FunctionExecutable::generateJITCodeForConstruct):
+        (JSC::FunctionExecutable::reparseExceptionInfo):
+        * runtime/Executable.h:
+        (JSC::NativeExecutable::NativeExecutable):
+        (JSC::FunctionExecutable::generatedJITCodeForCallWithArityCheck):
+        (JSC::FunctionExecutable::generatedJITCodeForConstructWithArityCheck):
+
 2010-05-27  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Darin Adler.
