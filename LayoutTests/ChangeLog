@@ -1,3 +1,16 @@
+2010-05-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Handle edge cases in HTML5 entity parsing
+        https://bugs.webkit.org/show_bug.cgi?id=39823
+
+        Tests a bunch of the edge cases of entity handling in the HTML5
+        specification.
+
+        * html5lib/resources/entities01.dat:
+        * html5lib/runner-expected.txt:
+
 2010-05-28  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

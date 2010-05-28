@@ -1,3 +1,24 @@
+2010-05-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Handle edge cases in HTML5 entity parsing
+        https://bugs.webkit.org/show_bug.cgi?id=39823
+
+        The HTML5 specification tells us to handle HTML entities in a somewhat
+        complicated way.  This patch attempts to correctly handle numeric
+        entities.  Some of this code is duplicated from HTMLTokenizer.
+
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTMLNames::):
+        (WebCore::HTMLNames::adjustEntity):
+        (WebCore::HTMLNames::legalEntityFor):
+        (WebCore::HTML5Lexer::consumeEntity):
+        (WebCore::HTML5Lexer::processEntity):
+        (WebCore::HTML5Lexer::nextToken):
+        (WebCore::HTML5Lexer::emitCodePoint):
+        * html/HTML5Lexer.h:
+
 2010-05-28  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

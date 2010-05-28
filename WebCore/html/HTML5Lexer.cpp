@@ -59,6 +59,13 @@ using namespace HTMLNames;
 
 namespace {
 
+static const UChar windowsLatin1ExtensionArray[32] = {
+    0x20AC, 0x0081, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021, // 80-87
+    0x02C6, 0x2030, 0x0160, 0x2039, 0x0152, 0x008D, 0x017D, 0x008F, // 88-8F
+    0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, // 90-97
+    0x02DC, 0x2122, 0x0161, 0x203A, 0x0153, 0x009D, 0x017E, 0x0178, // 98-9F
+};
+
 inline UChar toLowerCase(UChar cc)
 {
     ASSERT(cc >= 'A' && cc <= 'Z');
@@ -82,11 +89,20 @@ inline bool vectorEqualsString(const Vector<UChar, 32>& vector, const String& st
     return !memcmp(stringData, vectorData, vector.size() * sizeof(UChar));
 }
 
-inline UChar legalEntityFor(unsigned value)
+inline UChar adjustEntity(unsigned value)
 {
-    // FIXME: There is a table with more exceptions in the HTML5 specification.
+    if ((value & ~0x1F) != 0x0080)
+        return value;
+    return windowsLatin1ExtensionArray[value - 0x80];
+}
+
+inline unsigned legalEntityFor(unsigned value)
+{
+    // FIXME: A number of specific entity values generate parse errors.
     if (value == 0 || value > 0x10FFFF || (value >= 0xD800 && value <= 0xDFFF))
         return 0xFFFD;
+    if (value < 0xFFFF)
+        return adjustEntity(value);
     return value;
 }
 
@@ -143,7 +159,7 @@ void HTML5Lexer::reset()
     m_additionalAllowedCharacter = '\0';
 }
 
-UChar HTML5Lexer::consumeEntity(SegmentedString& source, bool& notEnoughCharacters)
+unsigned HTML5Lexer::consumeEntity(SegmentedString& source, bool& notEnoughCharacters)
 {
     ASSERT(m_state != CharacterReferenceInAttributeValueState || m_additionalAllowedCharacter == '"' || m_additionalAllowedCharacter == '\'' || m_additionalAllowedCharacter == '>');
     ASSERT(!notEnoughCharacters);
@@ -286,6 +302,19 @@ UChar HTML5Lexer::consumeEntity(SegmentedString& source, bool& notEnoughCharacte
     return 0;
 }
 
+inline bool HTML5Lexer::processEntity(SegmentedString& source)
+{
+    bool notEnoughCharacters = false;
+    unsigned value = consumeEntity(source, notEnoughCharacters);
+    if (notEnoughCharacters)
+        return false;
+    if (!value)
+        emitCharacter('&');
+    else
+        emitCodePoint(value);
+    return true;
+}
+
 bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
 {
     // If we have a token in progress, then we're supposed to be called back
@@ -329,11 +358,8 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             break;
         }
         case CharacterReferenceInDataState: {
-            bool notEnoughCharacters = false;
-            UChar entity = consumeEntity(source, notEnoughCharacters);
-            if (notEnoughCharacters)
+            if (!processEntity(source))
                 return shouldEmitBufferedCharacterToken(source);
-            emitCharacter(entity ? entity : '&');
             m_state = DataState;
             continue;
         }
@@ -347,11 +373,8 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             break;
         }
         case CharacterReferenceInRCDATAState: {
-            bool notEnoughCharacters = false;
-            UChar entity = consumeEntity(source, notEnoughCharacters);
-            if (notEnoughCharacters)
+            if (!processEntity(source))
                 return shouldEmitBufferedCharacterToken(source);
-            emitCharacter(entity ? entity : '&');
             m_state = RCDATAState;
             continue;
         }
@@ -983,10 +1006,17 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
         }
         case CharacterReferenceInAttributeValueState: {
             bool notEnoughCharacters = false;
-            UChar entity = consumeEntity(source, notEnoughCharacters);
+            unsigned value = consumeEntity(source, notEnoughCharacters);
             if (notEnoughCharacters)
                 return shouldEmitBufferedCharacterToken(source);
-            m_token->appendToAttributeValue(entity ? entity : '&');
+            if (!value)
+                m_token->appendToAttributeValue('&');
+            else if (value < 0xFFFF)
+                m_token->appendToAttributeValue(value);
+            else {
+                m_token->appendToAttributeValue(U16_LEAD(value));
+                m_token->appendToAttributeValue(U16_TRAIL(value));
+            }
             // We're supposed to switch back to the attribute value state that
             // we were in when we were switched into this state.  Rather than
             // keeping track of this explictly, we observe that the previous
@@ -1495,6 +1525,16 @@ inline void HTML5Lexer::emitCharacter(UChar character)
         return;
     }
     m_token->appendToCharacter(character);
+}
+
+inline void HTML5Lexer::emitCodePoint(unsigned value)
+{
+    if (value < 0xFFFF) {
+        emitCharacter(value);
+        return;
+    }
+    emitCharacter(U16_LEAD(value));
+    emitCharacter(U16_TRAIL(value));
 }
 
 inline void HTML5Lexer::emitParseError()
