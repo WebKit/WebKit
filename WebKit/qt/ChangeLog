@@ -1,6 +1,15 @@
 2010-05-28  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Kenneth Rohde Christiansen.
+    
+        Add a missing #if ENABLE(), some null checking.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::dynamicPropertyChangeEvent):
+
+2010-05-28  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Kenneth Rohde Christiansen.
 
         https://bugs.webkit.org/show_bug.cgi?id=39874
         [Qt] Make tiled backing store more configurable
