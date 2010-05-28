@@ -189,11 +189,11 @@ static int windowsKeyCodeForEvasKeyName(String& keyName)
 
 PlatformKeyboardEvent::PlatformKeyboardEvent(const Evas_Event_Key_Down* ev)
     : m_type(KeyDown)
-    , m_metaKey(evas_key_modifier_is_set(ev->modifiers, "Meta"))
+    , m_text(String::fromUTF8(ev->string))
     , m_shiftKey(evas_key_modifier_is_set(ev->modifiers, "Shift"))
     , m_ctrlKey(evas_key_modifier_is_set(ev->modifiers, "Control"))
     , m_altKey(evas_key_modifier_is_set(ev->modifiers, "Alt"))
-    , m_text(String::fromUTF8(ev->string))
+    , m_metaKey(evas_key_modifier_is_set(ev->modifiers, "Meta"))
 {
     String keyName = String(ev->key);
     m_keyIdentifier = keyIdentifierForEvasKeyName(keyName);
@@ -206,11 +206,11 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(const Evas_Event_Key_Down* ev)
 
 PlatformKeyboardEvent::PlatformKeyboardEvent(const Evas_Event_Key_Up* ev)
     : m_type(KeyUp)
-    , m_metaKey(evas_key_modifier_is_set(ev->modifiers, "Meta"))
+    , m_text(String::fromUTF8(ev->string))
     , m_shiftKey(evas_key_modifier_is_set(ev->modifiers, "Shift"))
     , m_ctrlKey(evas_key_modifier_is_set(ev->modifiers, "Control"))
     , m_altKey(evas_key_modifier_is_set(ev->modifiers, "Alt"))
-    , m_text(String::fromUTF8(ev->string))
+    , m_metaKey(evas_key_modifier_is_set(ev->modifiers, "Meta"))
 {
     String keyName = String(ev->key);
     m_keyIdentifier = keyIdentifierForEvasKeyName(keyName);

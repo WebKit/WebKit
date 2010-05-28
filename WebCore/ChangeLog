@@ -1,3 +1,17 @@
+2010-05-28  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Reorder class initializers to remove compiler warnings.
+        https://bugs.webkit.org/show_bug.cgi?id=39596
+
+        * platform/efl/PlatformKeyboardEventEfl.cpp: ditto.
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent): ditto.
+        * platform/efl/PlatformMouseEventEfl.cpp: ditto.
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent): ditto.
+        * platform/efl/PlatformWheelEventEfl.cpp: ditto
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent): ditto.
+
 2010-05-27  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
