@@ -72,22 +72,10 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     // regT0 holds callee, regT1 holds argCount.  regT2 will hold the FunctionExecutable.
     Label virtualCallLinkBegin = align();
     compileOpCallInitializeCallFrame();
-
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
-
-    Jump hasCodeBlock1 = branch32(GreaterThanOrEqual, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForCall)), Imm32(0));
-    preserveReturnAddressAfterCall(regT3);
-    restoreArgumentReference();
-    Call callJSFunction1 = call();
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
-    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT1);
-    restoreReturnAddressBeforeReturn(regT3);
-    hasCodeBlock1.link(this);
-
     preserveReturnAddressAfterCall(regT3);
     emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
     restoreArgumentReference();
-    Call callLazyLinkCall1 = call();
+    Call callLazyLinkCall = call();
     restoreReturnAddressBeforeReturn(regT3);
     emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT1);
     jump(regT0);
@@ -96,22 +84,10 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     // regT0 holds callee, regT1 holds argCount.  regT2 will hold the FunctionExecutable.
     Label virtualConstructLinkBegin = align();
     compileOpCallInitializeCallFrame();
-
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
-
-    Jump hasCodeBlock2 = branch32(GreaterThanOrEqual, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForConstruct)), Imm32(0));
-    preserveReturnAddressAfterCall(regT3);
-    restoreArgumentReference();
-    Call callJSFunction2 = call();
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
-    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT1);
-    restoreReturnAddressBeforeReturn(regT3);
-    hasCodeBlock2.link(this);
-
     preserveReturnAddressAfterCall(regT3);
     emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
     restoreArgumentReference();
-    Call callLazyLinkCall2 = call();
+    Call callLazyLinkConstruct = call();
     restoreReturnAddressBeforeReturn(regT3);
     emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT1);
     jump(regT0);
@@ -127,7 +103,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     Jump hasCodeBlock3 = branch32(GreaterThanOrEqual, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForCall)), Imm32(0));
     preserveReturnAddressAfterCall(regT3);
     restoreArgumentReference();
-    Call callJSFunction3 = call();
+    Call callCompileCall = call();
     emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT1);
     restoreReturnAddressBeforeReturn(regT3);
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
@@ -146,7 +122,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     Jump hasCodeBlock4 = branch32(GreaterThanOrEqual, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForConstruct)), Imm32(0));
     preserveReturnAddressAfterCall(regT3);
     restoreArgumentReference();
-    Call callJSFunction4 = call();
+    Call callCompileCconstruct = call();
     emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT1);
     restoreReturnAddressBeforeReturn(regT3);
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
@@ -174,13 +150,11 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     patchBuffer.link(string_failureCases3Call, FunctionPtr(cti_op_get_by_id_string_fail));
 #endif
 #if ENABLE(JIT_OPTIMIZE_CALL)
-    patchBuffer.link(callJSFunction1, FunctionPtr(cti_op_call_jitCompile));
-    patchBuffer.link(callLazyLinkCall1, FunctionPtr(cti_vm_lazyLinkCall));
-    patchBuffer.link(callJSFunction2, FunctionPtr(cti_op_construct_jitCompile));
-    patchBuffer.link(callLazyLinkCall2, FunctionPtr(cti_vm_lazyLinkConstruct));
+    patchBuffer.link(callLazyLinkCall, FunctionPtr(cti_vm_lazyLinkCall));
+    patchBuffer.link(callLazyLinkConstruct, FunctionPtr(cti_vm_lazyLinkConstruct));
 #endif
-    patchBuffer.link(callJSFunction3, FunctionPtr(cti_op_call_jitCompile));
-    patchBuffer.link(callJSFunction4, FunctionPtr(cti_op_construct_jitCompile));
+    patchBuffer.link(callCompileCall, FunctionPtr(cti_op_call_jitCompile));
+    patchBuffer.link(callCompileCconstruct, FunctionPtr(cti_op_construct_jitCompile));
 
     CodeRef finalCode = patchBuffer.finalizeCode();
     *executablePool = finalCode.m_executablePool;

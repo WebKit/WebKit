@@ -1966,11 +1966,13 @@ DEFINE_STUB_FUNCTION(void*, vm_lazyLinkCall)
     if (executable->isHostFunction())
         codePtr = executable->generatedJITCodeForCall().addressForCall();
     else {
-        codeBlock = &static_cast<FunctionExecutable*>(executable)->bytecodeForCall(stackFrame.callFrame, callee->scope().node());
+        FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
+        codeBlock = &functionExecutable->bytecodeForCall(stackFrame.callFrame, callee->scope().node());
+        functionExecutable->jitCodeForCall(callFrame, callee->scope().node());
         if (callFrame->argumentCount() == codeBlock->m_numParameters)
-            codePtr = static_cast<FunctionExecutable*>(executable)->generatedJITCodeForCall().addressForCall();
+            codePtr = functionExecutable->generatedJITCodeForCall().addressForCall();
         else
-            codePtr = static_cast<FunctionExecutable*>(executable)->generatedJITCodeForCallWithArityCheck();
+            codePtr = functionExecutable->generatedJITCodeForCallWithArityCheck();
     }
     CallLinkInfo* callLinkInfo = &stackFrame.callFrame->callerFrame()->codeBlock()->getCallLinkInfo(callFrame->returnPC());
 
@@ -1994,11 +1996,13 @@ DEFINE_STUB_FUNCTION(void*, vm_lazyLinkConstruct)
     if (executable->isHostFunction())
         codePtr = executable->generatedJITCodeForConstruct().addressForCall();
     else {
-        codeBlock = &static_cast<FunctionExecutable*>(executable)->bytecodeForConstruct(stackFrame.callFrame, callee->scope().node());
+        FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
+        codeBlock = &functionExecutable->bytecodeForConstruct(stackFrame.callFrame, callee->scope().node());
+        functionExecutable->jitCodeForConstruct(callFrame, callee->scope().node());
         if (callFrame->argumentCount() == codeBlock->m_numParameters)
-            codePtr = static_cast<FunctionExecutable*>(executable)->generatedJITCodeForConstruct().addressForCall();
+            codePtr = functionExecutable->generatedJITCodeForConstruct().addressForCall();
         else
-            codePtr = static_cast<FunctionExecutable*>(executable)->generatedJITCodeForConstructWithArityCheck();
+            codePtr = functionExecutable->generatedJITCodeForConstructWithArityCheck();
     }
     CallLinkInfo* callLinkInfo = &stackFrame.callFrame->callerFrame()->codeBlock()->getCallLinkInfo(callFrame->returnPC());
 
