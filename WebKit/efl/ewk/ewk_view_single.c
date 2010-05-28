@@ -36,17 +36,28 @@ static void _ewk_view_single_on_del(void *data, Evas *e, Evas_Object *o, void *e
     evas_object_del(clip);
 }
 
-static Evas_Object *_ewk_view_single_smart_backing_store_add(Ewk_View_Smart_Data *sd)
+static void _ewk_view_single_smart_add(Evas_Object *o)
 {
-    Evas_Object *bs = evas_object_image_add(sd->base.evas);
+    Ewk_View_Smart_Data *sd;
+
+    _parent_sc.sc.add(o);
+
+    sd = (Ewk_View_Smart_Data *)evas_object_smart_data_get(o);
+
     Evas_Object *clip = evas_object_rectangle_add(sd->base.evas);
-    evas_object_image_alpha_set(bs, EINA_FALSE);
-    evas_object_image_smooth_scale_set(bs, sd->zoom_weak_smooth_scale);
-    evas_object_clip_set(bs, clip);
+    evas_object_clip_set(sd->backing_store, clip);
+    evas_object_smart_member_add(clip, o);
     evas_object_show(clip);
 
     evas_object_event_callback_add
-        (bs, EVAS_CALLBACK_DEL, _ewk_view_single_on_del, clip);
+        (sd->backing_store, EVAS_CALLBACK_DEL, _ewk_view_single_on_del, clip);
+}
+
+static Evas_Object *_ewk_view_single_smart_backing_store_add(Ewk_View_Smart_Data *sd)
+{
+    Evas_Object *bs = evas_object_image_add(sd->base.evas);
+    evas_object_image_alpha_set(bs, EINA_FALSE);
+    evas_object_image_smooth_scale_set(bs, sd->zoom_weak_smooth_scale);
 
     return bs;
 }
@@ -538,6 +549,7 @@ Eina_Bool ewk_view_single_smart_set(Ewk_View_Smart_Class *api)
     if (EINA_UNLIKELY(!_parent_sc.sc.add))
         ewk_view_base_smart_set(&_parent_sc);
 
+    api->sc.add = _ewk_view_single_smart_add;
     api->sc.resize = _ewk_view_single_smart_resize;
 
     api->backing_store_add = _ewk_view_single_smart_backing_store_add;
