@@ -1,3 +1,84 @@
+2010-05-28  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: need to catch NSAccessibilityExceptions in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=39881
+
+        Normally, accessibility exceptions are caught in the AX Runtime on the Mac, but 
+        because DRT is its own AX client, no one is there to catch these otherwise innocuous exceptions.
+  
+        So DRT should wrap exception handlers around its AX related calls.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (attributesOfElement):
+        (AccessibilityUIElement::getLinkedUIElements):
+        (AccessibilityUIElement::getDocumentLinks):
+        (AccessibilityUIElement::getChildren):
+        (AccessibilityUIElement::getChildrenWithRange):
+        (AccessibilityUIElement::ariaOwnsElementAtIndex):
+        (AccessibilityUIElement::ariaFlowToElementAtIndex):
+        (AccessibilityUIElement::disclosedRowAtIndex):
+        (AccessibilityUIElement::selectedRowAtIndex):
+        (AccessibilityUIElement::titleUIElement):
+        (AccessibilityUIElement::parentElement):
+        (AccessibilityUIElement::disclosedByRow):
+        (AccessibilityUIElement::stringAttributeValue):
+        (AccessibilityUIElement::boolAttributeValue):
+        (AccessibilityUIElement::isAttributeSettable):
+        (AccessibilityUIElement::isAttributeSupported):
+        (AccessibilityUIElement::role):
+        (AccessibilityUIElement::subrole):
+        (AccessibilityUIElement::roleDescription):
+        (AccessibilityUIElement::title):
+        (AccessibilityUIElement::description):
+        (AccessibilityUIElement::orientation):
+        (AccessibilityUIElement::stringValue):
+        (AccessibilityUIElement::language):
+        (AccessibilityUIElement::helpText):
+        (AccessibilityUIElement::x):
+        (AccessibilityUIElement::y):
+        (AccessibilityUIElement::width):
+        (AccessibilityUIElement::height):
+        (AccessibilityUIElement::clickPointX):
+        (AccessibilityUIElement::clickPointY):
+        (AccessibilityUIElement::intValue):
+        (AccessibilityUIElement::minValue):
+        (AccessibilityUIElement::maxValue):
+        (AccessibilityUIElement::valueDescription):
+        (AccessibilityUIElement::insertionPointLineNumber):
+        (AccessibilityUIElement::isActionSupported):
+        (AccessibilityUIElement::isEnabled):
+        (AccessibilityUIElement::isRequired):
+        (AccessibilityUIElement::isSelected):
+        (AccessibilityUIElement::isExpanded):
+        (AccessibilityUIElement::hierarchicalLevel):
+        (AccessibilityUIElement::ariaIsGrabbed):
+        (AccessibilityUIElement::ariaDropEffects):
+        (AccessibilityUIElement::lineForIndex):
+        (AccessibilityUIElement::boundsForRange):
+        (AccessibilityUIElement::stringForRange):
+        (AccessibilityUIElement::attributesOfColumnHeaders):
+        (AccessibilityUIElement::attributesOfRowHeaders):
+        (AccessibilityUIElement::attributesOfColumns):
+        (AccessibilityUIElement::attributesOfRows):
+        (AccessibilityUIElement::attributesOfVisibleCells):
+        (AccessibilityUIElement::attributesOfHeader):
+        (AccessibilityUIElement::rowCount):
+        (AccessibilityUIElement::columnCount):
+        (AccessibilityUIElement::indexInTable):
+        (AccessibilityUIElement::rowIndexRange):
+        (AccessibilityUIElement::columnIndexRange):
+        (AccessibilityUIElement::cellForColumnAndRow):
+        (AccessibilityUIElement::selectedTextRange):
+        (AccessibilityUIElement::setSelectedTextRange):
+        (AccessibilityUIElement::increment):
+        (AccessibilityUIElement::decrement):
+        (AccessibilityUIElement::showMenu):
+        (AccessibilityUIElement::press):
+        (AccessibilityUIElement::url):
+        (AccessibilityUIElement::hasPopup):
+
 2010-05-28  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Laszlo Gombos.

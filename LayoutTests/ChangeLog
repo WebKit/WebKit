@@ -1,3 +1,13 @@
+2010-05-28  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: need to catch NSAccessibilityExceptions in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=39881
+
+        * platform/mac/accessibility/unsupported-attribute-does-not-crash-expected.txt: Added.
+        * platform/mac/accessibility/unsupported-attribute-does-not-crash.html: Added.
+
 2010-05-28  Mikhail Naganov  <mnaganov@chromium.org>
 
         Unreviewed. Revert 60353 -- immature.

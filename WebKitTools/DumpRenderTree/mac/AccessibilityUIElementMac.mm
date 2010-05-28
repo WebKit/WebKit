@@ -53,6 +53,12 @@
 #define NSAccessibilityDropEffectsAttribute @"AXDropEffects"
 #endif
 
+// If an unsupported attribute is passed in, it will raise an accessibility exception. These are usually caught by the Accessibility Runtime to inform
+// the AX client app of the error. However, DRT is the AX client app, so it must catch these exceptions.
+#define BEGIN_AX_OBJC_EXCEPTIONS @try {
+#define END_AX_OBJC_EXCEPTIONS } @catch(NSException *e) { if (![[e name] isEqualToString:NSAccessibilityException]) @throw; }
+
+
 typedef void (*AXPostedNotificationCallback)(id element, NSString* notification, void* context);
 
 @interface NSObject (WebKitAccessibilityAdditions)
@@ -224,11 +230,11 @@ static NSString* attributesOfElement(id accessibilityObject)
         
         // accessibilityAttributeValue: can throw an if an attribute is not returned.
         // For DumpRenderTree's purpose, we should ignore those exceptions
-        @try {
-            id valueObject = [accessibilityObject accessibilityAttributeValue:attribute];
-            NSString* value = descriptionOfValue(valueObject, accessibilityObject);
-            [attributesString appendFormat:@"%@: %@\n", attribute, value];
-        } @catch (NSException* e) { }
+        BEGIN_AX_OBJC_EXCEPTIONS
+        id valueObject = [accessibilityObject accessibilityAttributeValue:attribute];
+        NSString* value = descriptionOfValue(valueObject, accessibilityObject);
+        [attributesString appendFormat:@"%@: %@\n", attribute, value];
+        END_AX_OBJC_EXCEPTIONS
     }
     
     return attributesString;
@@ -269,26 +275,34 @@ static JSStringRef descriptionOfElements(Vector<AccessibilityUIElement>& element
 
 void AccessibilityUIElement::getLinkedUIElements(Vector<AccessibilityUIElement>& elementVector)
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* linkedElements = [m_element accessibilityAttributeValue:NSAccessibilityLinkedUIElementsAttribute];
     convertNSArrayToVector(linkedElements, elementVector);
+    END_AX_OBJC_EXCEPTIONS
 }
 
 void AccessibilityUIElement::getDocumentLinks(Vector<AccessibilityUIElement>& elementVector)
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* linkElements = [m_element accessibilityAttributeValue:@"AXLinkUIElements"];
     convertNSArrayToVector(linkElements, elementVector);
+    END_AX_OBJC_EXCEPTIONS
 }
 
 void AccessibilityUIElement::getChildren(Vector<AccessibilityUIElement>& elementVector)
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* children = [m_element accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
     convertNSArrayToVector(children, elementVector);
+    END_AX_OBJC_EXCEPTIONS
 }
 
 void AccessibilityUIElement::getChildrenWithRange(Vector<AccessibilityUIElement>& elementVector, unsigned location, unsigned length)
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* children = [m_element accessibilityArrayAttributeValues:NSAccessibilityChildrenAttribute index:location maxCount:length];
     convertNSArrayToVector(children, elementVector);
+    END_AX_OBJC_EXCEPTIONS
 }
 
 int AccessibilityUIElement::childrenCount()
@@ -325,63 +339,77 @@ AccessibilityUIElement AccessibilityUIElement::getChildAtIndex(unsigned index)
 
 AccessibilityUIElement AccessibilityUIElement::ariaOwnsElementAtIndex(unsigned index)
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* objects = [m_element accessibilityAttributeValue:NSAccessibilityOwnsAttribute];
     if (index < [objects count])
         return [objects objectAtIndex:index];
+    END_AX_OBJC_EXCEPTIONS
     
     return 0;
 }
 
 AccessibilityUIElement AccessibilityUIElement::ariaFlowToElementAtIndex(unsigned index)
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* objects = [m_element accessibilityAttributeValue:NSAccessibilityLinkedUIElementsAttribute];
     if (index < [objects count])
         return [objects objectAtIndex:index];
+    END_AX_OBJC_EXCEPTIONS
     
     return 0;
 }
 
 AccessibilityUIElement AccessibilityUIElement::disclosedRowAtIndex(unsigned index)
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* rows = [m_element accessibilityAttributeValue:NSAccessibilityDisclosedRowsAttribute];
     if (index < [rows count])
         return [rows objectAtIndex:index];
+    END_AX_OBJC_EXCEPTIONS
 
     return 0;
 }
 
 AccessibilityUIElement AccessibilityUIElement::selectedRowAtIndex(unsigned index)
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* rows = [m_element accessibilityAttributeValue:NSAccessibilitySelectedRowsAttribute];
     if (index < [rows count])
         return [rows objectAtIndex:index];
+    END_AX_OBJC_EXCEPTIONS
     
     return 0;
 }
 
 AccessibilityUIElement AccessibilityUIElement::titleUIElement()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id accessibilityObject = [m_element accessibilityAttributeValue:NSAccessibilityTitleUIElementAttribute];
     if (accessibilityObject)
         return AccessibilityUIElement(accessibilityObject);
+    END_AX_OBJC_EXCEPTIONS
     
     return 0;
 }
 
 AccessibilityUIElement AccessibilityUIElement::parentElement()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id accessibilityObject = [m_element accessibilityAttributeValue:NSAccessibilityParentAttribute];
     if (accessibilityObject)
         return AccessibilityUIElement(accessibilityObject);
+    END_AX_OBJC_EXCEPTIONS
     
     return 0;
 }
 
 AccessibilityUIElement AccessibilityUIElement::disclosedByRow()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id accessibilityObject = [m_element accessibilityAttributeValue:NSAccessibilityDisclosedByRowAttribute];
     if (accessibilityObject)
         return AccessibilityUIElement(accessibilityObject);
+    END_AX_OBJC_EXCEPTIONS
     
     return 0;
 }
@@ -415,29 +443,42 @@ JSStringRef AccessibilityUIElement::allAttributes()
 
 JSStringRef AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id value = [m_element accessibilityAttributeValue:[NSString stringWithJSStringRef:attribute]];
-    if (![value isKindOfClass:[NSString class]])
-        return NULL;
-    return [value createJSStringRef];
+    if ([value isKindOfClass:[NSString class]])
+        return [value createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
+
+    return 0;
 }
 
 bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id value = [m_element accessibilityAttributeValue:[NSString stringWithJSStringRef:attribute]];
-    if (![value isKindOfClass:[NSNumber class]])
-        return NULL;
+    if ([value isKindOfClass:[NSNumber class]])
+        return [value boolValue];
+    END_AX_OBJC_EXCEPTIONS
     
-    return [value boolValue];
+    return false;
 }
 
 bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     return [m_element accessibilityIsAttributeSettable:[NSString stringWithJSStringRef:attribute]];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return false;
 }
 
 bool AccessibilityUIElement::isAttributeSupported(JSStringRef attribute)
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     return [[m_element accessibilityAttributeNames] containsObject:[NSString stringWithJSStringRef:attribute]];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return false;
 }
 
 JSStringRef AccessibilityUIElement::parameterizedAttributeNames()
@@ -454,169 +495,260 @@ JSStringRef AccessibilityUIElement::parameterizedAttributeNames()
 
 JSStringRef AccessibilityUIElement::role()
 {
-    NSString* role = descriptionOfValue([m_element accessibilityAttributeValue:NSAccessibilityRoleAttribute], m_element);
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSString *role = descriptionOfValue([m_element accessibilityAttributeValue:NSAccessibilityRoleAttribute], m_element);
     return concatenateAttributeAndValue(@"AXRole", role);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
 }
 
 JSStringRef AccessibilityUIElement::subrole()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSString* role = descriptionOfValue([m_element accessibilityAttributeValue:NSAccessibilitySubroleAttribute], m_element);
     return concatenateAttributeAndValue(@"AXSubrole", role);
+    END_AX_OBJC_EXCEPTIONS
+
+    return 0;
 }
 
 JSStringRef AccessibilityUIElement::roleDescription()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSString* role = descriptionOfValue([m_element accessibilityAttributeValue:NSAccessibilityRoleDescriptionAttribute], m_element);
     return concatenateAttributeAndValue(@"AXRoleDescription", role);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
 }
 
 JSStringRef AccessibilityUIElement::title()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSString* title = descriptionOfValue([m_element accessibilityAttributeValue:NSAccessibilityTitleAttribute], m_element);
     return concatenateAttributeAndValue(@"AXTitle", title);
+    END_AX_OBJC_EXCEPTIONS
+
+    return 0;
 }
 
 JSStringRef AccessibilityUIElement::description()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id description = descriptionOfValue([m_element accessibilityAttributeValue:NSAccessibilityDescriptionAttribute], m_element);
     return concatenateAttributeAndValue(@"AXDescription", description);
+    END_AX_OBJC_EXCEPTIONS
+
+    return 0;
 }
 
 JSStringRef AccessibilityUIElement::orientation() const
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id description = descriptionOfValue([m_element accessibilityAttributeValue:NSAccessibilityOrientationAttribute], m_element);
     return concatenateAttributeAndValue(@"AXOrientation", description);    
+    END_AX_OBJC_EXCEPTIONS
+
+    return 0;
 }
 
 JSStringRef AccessibilityUIElement::stringValue()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id description = descriptionOfValue([m_element accessibilityAttributeValue:NSAccessibilityValueAttribute], m_element);
     return concatenateAttributeAndValue(@"AXValue", description);
+    END_AX_OBJC_EXCEPTIONS
+
+    return 0;
 }
 
 JSStringRef AccessibilityUIElement::language()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id description = descriptionOfValue([m_element accessibilityAttributeValue:@"AXLanguage"], m_element);
     return concatenateAttributeAndValue(@"AXLanguage", description);
+    END_AX_OBJC_EXCEPTIONS
+
+    return 0;
 }
 
 JSStringRef AccessibilityUIElement::helpText() const
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id description = descriptionOfValue([m_element accessibilityAttributeValue:NSAccessibilityHelpAttribute], m_element);
     return concatenateAttributeAndValue(@"AXHelp", description);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
 }
 
 double AccessibilityUIElement::x()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSValue* positionValue = [m_element accessibilityAttributeValue:NSAccessibilityPositionAttribute];
     return static_cast<double>([positionValue pointValue].x);    
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0.0f;
 }
 
 double AccessibilityUIElement::y()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSValue* positionValue = [m_element accessibilityAttributeValue:NSAccessibilityPositionAttribute];
     return static_cast<double>([positionValue pointValue].y);    
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0.0f;
 }
 
 double AccessibilityUIElement::width()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSValue* sizeValue = [m_element accessibilityAttributeValue:NSAccessibilitySizeAttribute];
     return static_cast<double>([sizeValue sizeValue].width);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0.0f;
 }
 
 double AccessibilityUIElement::height()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSValue* sizeValue = [m_element accessibilityAttributeValue:NSAccessibilitySizeAttribute];
     return static_cast<double>([sizeValue sizeValue].height);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0.0f;
 }
 
 double AccessibilityUIElement::clickPointX()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSValue* positionValue = [m_element accessibilityAttributeValue:@"AXClickPoint"];
     return static_cast<double>([positionValue pointValue].x);        
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0.0f;
 }
 
 double AccessibilityUIElement::clickPointY()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSValue* positionValue = [m_element accessibilityAttributeValue:@"AXClickPoint"];
     return static_cast<double>([positionValue pointValue].y);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0.0f;
 }
 
 double AccessibilityUIElement::intValue() const
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id value = [m_element accessibilityAttributeValue:NSAccessibilityValueAttribute];
     if ([value isKindOfClass:[NSNumber class]])
         return [(NSNumber*)value doubleValue]; 
+    END_AX_OBJC_EXCEPTIONS
+
     return 0.0f;
 }
 
 double AccessibilityUIElement::minValue()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id value = [m_element accessibilityAttributeValue:NSAccessibilityMinValueAttribute];
     if ([value isKindOfClass:[NSNumber class]])
         return [(NSNumber*)value doubleValue]; 
+    END_AX_OBJC_EXCEPTIONS
+
     return 0.0f;
 }
 
 double AccessibilityUIElement::maxValue()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id value = [m_element accessibilityAttributeValue:NSAccessibilityMaxValueAttribute];
     if ([value isKindOfClass:[NSNumber class]])
         return [(NSNumber*)value doubleValue]; 
+    END_AX_OBJC_EXCEPTIONS
+
     return 0.0;
 }
 
 JSStringRef AccessibilityUIElement::valueDescription()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSString* valueDescription = [m_element accessibilityAttributeValue:NSAccessibilityValueDescriptionAttribute];
     if ([valueDescription isKindOfClass:[NSString class]])
          return [valueDescription createJSStringRef];
+
+    END_AX_OBJC_EXCEPTIONS
     return 0;
 }
 
 int AccessibilityUIElement::insertionPointLineNumber()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id value = [m_element accessibilityAttributeValue:NSAccessibilityInsertionPointLineNumberAttribute];
     if ([value isKindOfClass:[NSNumber class]])
         return [(NSNumber *)value intValue]; 
+    END_AX_OBJC_EXCEPTIONS
+    
     return -1;
 }
 
 bool AccessibilityUIElement::isActionSupported(JSStringRef action)
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* actions = [m_element accessibilityActionNames];
     return [actions containsObject:[NSString stringWithJSStringRef:action]];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return false;
 }
 
 bool AccessibilityUIElement::isEnabled()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id value = [m_element accessibilityAttributeValue:NSAccessibilityEnabledAttribute];
     if ([value isKindOfClass:[NSNumber class]])
         return [value boolValue];
+    END_AX_OBJC_EXCEPTIONS
+    
     return false;
 }
 
 bool AccessibilityUIElement::isRequired() const
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id value = [m_element accessibilityAttributeValue:@"AXRequired"];
     if ([value isKindOfClass:[NSNumber class]])
         return [value boolValue];
+    END_AX_OBJC_EXCEPTIONS
+    
     return false;
 }
 
 bool AccessibilityUIElement::isSelected() const
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id value = [m_element accessibilityAttributeValue:NSAccessibilitySelectedAttribute];
     if ([value isKindOfClass:[NSNumber class]])
         return [value boolValue];
+    END_AX_OBJC_EXCEPTIONS
+    
     return false;
 }
 
 bool AccessibilityUIElement::isExpanded() const
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id value = [m_element accessibilityAttributeValue:NSAccessibilityExpandedAttribute];
     if ([value isKindOfClass:[NSNumber class]])
         return [value boolValue];
+    END_AX_OBJC_EXCEPTIONS
+    
     return false;
 }
 
@@ -628,22 +760,29 @@ bool AccessibilityUIElement::isChecked() const
 
 int AccessibilityUIElement::hierarchicalLevel() const
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id value = [m_element accessibilityAttributeValue:NSAccessibilityDisclosureLevelAttribute];
     if ([value isKindOfClass:[NSNumber class]])
         return [value intValue];
+    END_AX_OBJC_EXCEPTIONS
+
     return 0;
 }
 
 bool AccessibilityUIElement::ariaIsGrabbed() const
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id value = [m_element accessibilityAttributeValue:NSAccessibilityGrabbedAttribute];
     if ([value isKindOfClass:[NSNumber class]])
         return [value boolValue];
+    END_AX_OBJC_EXCEPTIONS
+
     return false;
 }
 
 JSStringRef AccessibilityUIElement::ariaDropEffects() const
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id value = [m_element accessibilityAttributeValue:NSAccessibilityDropEffectsAttribute];
     if (![value isKindOfClass:[NSArray class]])
         return 0;
@@ -657,20 +796,27 @@ JSStringRef AccessibilityUIElement::ariaDropEffects() const
     }
     
     return [dropEffects createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
 }
 
 // parameterized attributes
 int AccessibilityUIElement::lineForIndex(int index)
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id value = [m_element accessibilityAttributeValue:NSAccessibilityLineForIndexParameterizedAttribute forParameter:[NSNumber numberWithInt:index]];
     if ([value isKindOfClass:[NSNumber class]])
         return [(NSNumber *)value intValue]; 
+    END_AX_OBJC_EXCEPTIONS
+
     return -1;
 }
 
 JSStringRef AccessibilityUIElement::boundsForRange(unsigned location, unsigned length)
 {
     NSRange range = NSMakeRange(location, length);
+    BEGIN_AX_OBJC_EXCEPTIONS
     id value = [m_element accessibilityAttributeValue:NSAccessibilityBoundsForRangeParameterizedAttribute forParameter:[NSValue valueWithRange:range]];
     NSRect rect = NSMakeRect(0,0,0,0);
     if ([value isKindOfClass:[NSValue class]])
@@ -679,61 +825,89 @@ JSStringRef AccessibilityUIElement::boundsForRange(unsigned location, unsigned l
     // don't return position information because it is platform dependent
     NSMutableString* boundsDescription = [NSMutableString stringWithFormat:@"{{%f, %f}, {%f, %f}}",-1.0f,-1.0f,rect.size.width,rect.size.height];
     return [boundsDescription createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
 }
 
 JSStringRef AccessibilityUIElement::stringForRange(unsigned location, unsigned length)
 {
     NSRange range = NSMakeRange(location, length);
+    BEGIN_AX_OBJC_EXCEPTIONS
     id string = [m_element accessibilityAttributeValue:NSAccessibilityStringForRangeParameterizedAttribute forParameter:[NSValue valueWithRange:range]];
     if (![string isKindOfClass:[NSString class]])
         return 0;
     
     return [string createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
 }
 
 JSStringRef AccessibilityUIElement::attributesOfColumnHeaders()
 {
     // not yet defined in AppKit... odd
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* columnHeadersArray = [m_element accessibilityAttributeValue:@"AXColumnHeaderUIElements"];
     Vector<AccessibilityUIElement> columnHeadersVector;
     convertNSArrayToVector(columnHeadersArray, columnHeadersVector);
     return descriptionOfElements(columnHeadersVector);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
 }
 
 JSStringRef AccessibilityUIElement::attributesOfRowHeaders()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* rowHeadersArray = [m_element accessibilityAttributeValue:@"AXRowHeaderUIElements"];
     Vector<AccessibilityUIElement> rowHeadersVector;
     convertNSArrayToVector(rowHeadersArray, rowHeadersVector);
     return descriptionOfElements(rowHeadersVector);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
 }
 
 JSStringRef AccessibilityUIElement::attributesOfColumns()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* columnsArray = [m_element accessibilityAttributeValue:NSAccessibilityColumnsAttribute];
     Vector<AccessibilityUIElement> columnsVector;
     convertNSArrayToVector(columnsArray, columnsVector);
     return descriptionOfElements(columnsVector);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
 }
 
 JSStringRef AccessibilityUIElement::attributesOfRows()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* rowsArray = [m_element accessibilityAttributeValue:NSAccessibilityRowsAttribute];
     Vector<AccessibilityUIElement> rowsVector;
     convertNSArrayToVector(rowsArray, rowsVector);
     return descriptionOfElements(rowsVector);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
 }
 
 JSStringRef AccessibilityUIElement::attributesOfVisibleCells()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* cellsArray = [m_element accessibilityAttributeValue:@"AXVisibleCells"];
     Vector<AccessibilityUIElement> cellsVector;
     convertNSArrayToVector(cellsArray, cellsVector);
     return descriptionOfElements(cellsVector);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
 }
 
 JSStringRef AccessibilityUIElement::attributesOfHeader()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id headerObject = [m_element accessibilityAttributeValue:NSAccessibilityHeaderAttribute];
     if (!headerObject)
         return [@"" createJSStringRef];
@@ -741,81 +915,121 @@ JSStringRef AccessibilityUIElement::attributesOfHeader()
     Vector<AccessibilityUIElement> headerVector;
     headerVector.append(headerObject);
     return descriptionOfElements(headerVector);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
 }
 
 int AccessibilityUIElement::rowCount()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     return [m_element accessibilityArrayAttributeCount:NSAccessibilityRowsAttribute];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
 }
 
 int AccessibilityUIElement::columnCount()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     return [m_element accessibilityArrayAttributeCount:NSAccessibilityColumnsAttribute];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
 }
 
 int AccessibilityUIElement::indexInTable()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSNumber* indexNumber = [m_element accessibilityAttributeValue:NSAccessibilityIndexAttribute];
-    if (!indexNumber)
-        return -1;
-    return [indexNumber intValue];
+    if (indexNumber)
+        return [indexNumber intValue];
+    END_AX_OBJC_EXCEPTIONS
+
+    return -1;
 }
 
 JSStringRef AccessibilityUIElement::rowIndexRange()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSValue* indexRange = [m_element accessibilityAttributeValue:@"AXRowIndexRange"];
     NSRange range = indexRange ? [indexRange rangeValue] : NSMakeRange(0,0);
     NSMutableString* rangeDescription = [NSMutableString stringWithFormat:@"{%d, %d}",range.location, range.length];
     return [rangeDescription createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
 }
 
 JSStringRef AccessibilityUIElement::columnIndexRange()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSNumber* indexRange = [m_element accessibilityAttributeValue:@"AXColumnIndexRange"];
     NSRange range = indexRange ? [indexRange rangeValue] : NSMakeRange(0,0);
     NSMutableString* rangeDescription = [NSMutableString stringWithFormat:@"{%d, %d}",range.location, range.length];
     return [rangeDescription createJSStringRef];    
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
 }
 
 AccessibilityUIElement AccessibilityUIElement::cellForColumnAndRow(unsigned col, unsigned row)
 {
     NSArray *colRowArray = [NSArray arrayWithObjects:[NSNumber numberWithUnsignedInt:col], [NSNumber numberWithUnsignedInt:row], nil];
+    BEGIN_AX_OBJC_EXCEPTIONS
     return [m_element accessibilityAttributeValue:@"AXCellForColumnAndRow" forParameter:colRowArray];
+    END_AX_OBJC_EXCEPTIONS    
+
+    return 0;
 }
 
 JSStringRef AccessibilityUIElement::selectedTextRange()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSNumber *indexRange = [m_element accessibilityAttributeValue:NSAccessibilitySelectedTextRangeAttribute];
     NSRange range = indexRange ? [indexRange rangeValue] : NSMakeRange(0,0);
     NSMutableString *rangeDescription = [NSMutableString stringWithFormat:@"{%d, %d}",range.location, range.length];
     return [rangeDescription createJSStringRef];    
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
 }
 
 void AccessibilityUIElement::setSelectedTextRange(unsigned location, unsigned length)
 {
     NSRange textRange = NSMakeRange(location, length);
     NSValue *textRangeValue = [NSValue valueWithRange:textRange];
+    BEGIN_AX_OBJC_EXCEPTIONS
     [m_element accessibilitySetValue:textRangeValue forAttribute:NSAccessibilitySelectedTextRangeAttribute];
+    END_AX_OBJC_EXCEPTIONS
 }
 
 void AccessibilityUIElement::increment()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     [m_element accessibilityPerformAction:NSAccessibilityIncrementAction];
+    END_AX_OBJC_EXCEPTIONS
 }
 
 void AccessibilityUIElement::decrement()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     [m_element accessibilityPerformAction:NSAccessibilityDecrementAction];
+    END_AX_OBJC_EXCEPTIONS
 }
 
 void AccessibilityUIElement::showMenu()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     [m_element accessibilityPerformAction:NSAccessibilityShowMenuAction];
+    END_AX_OBJC_EXCEPTIONS
 }
 
 void AccessibilityUIElement::press()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     [m_element accessibilityPerformAction:NSAccessibilityPressAction];
+    END_AX_OBJC_EXCEPTIONS
 }
 
 JSStringRef AccessibilityUIElement::accessibilityValue() const
@@ -836,8 +1050,12 @@ JSStringRef AccessibilityUIElement::documentURI()
 
 JSStringRef AccessibilityUIElement::url()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSURL *url = [m_element accessibilityAttributeValue:NSAccessibilityURLAttribute];
     return [[url absoluteString] createJSStringRef];    
+    END_AX_OBJC_EXCEPTIONS
+    
+    return nil;
 }
 
 bool AccessibilityUIElement::addNotificationListener(JSObjectRef functionCallback)
@@ -896,9 +1114,12 @@ bool AccessibilityUIElement::isCollapsed() const
 
 bool AccessibilityUIElement::hasPopup() const
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
     id value = [m_element accessibilityAttributeValue:@"AXHasPopup"];
     if ([value isKindOfClass:[NSNumber class]])
         return [value boolValue];
+    END_AX_OBJC_EXCEPTIONS
+
     return false;
 }
 
