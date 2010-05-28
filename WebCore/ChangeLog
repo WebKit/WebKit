@@ -1,5 +1,26 @@
 2010-05-27  MORITA Hajime  <morrita@google.com>
 
+        Reviewed by Ojan Vafai.
+
+        Cursor movement and text selection does not work well if a block is followed by an inline.
+        https://bugs.webkit.org/show_bug.cgi?id=32123
+
+        RenderInline::setSelectionState() missed selection state
+        propagation for ancestors.  This fix pulled
+        RenderBlock::setSelectionState() up to RenderBoxModelObject, to
+        share it with RenderInline.
+
+        Test: editing/selection/range-between-block-and-inline.html: Added.
+        
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlock.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::setSelectionState):
+        * rendering/RenderBoxModelObject.h:
+        Moved setSelectionState() from RenderBlock to RenderBoxModelObject.
+        
+2010-05-27  MORITA Hajime  <morrita@google.com>
+
         Not reviewed. Fixed typo
 
         * rendering/RenderTheme.cpp:

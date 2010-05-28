@@ -2113,25 +2113,6 @@ void RenderBlock::paintContinuationOutlines(PaintInfo& info, int tx, int ty)
     table->remove(this);
 }
 
-void RenderBlock::setSelectionState(SelectionState s)
-{
-    if (selectionState() == s)
-        return;
-    
-    if (s == SelectionInside && selectionState() != SelectionNone)
-        return;
-
-    if ((s == SelectionStart && selectionState() == SelectionEnd) ||
-        (s == SelectionEnd && selectionState() == SelectionStart))
-        RenderBox::setSelectionState(SelectionBoth);
-    else
-        RenderBox::setSelectionState(s);
-    
-    RenderBlock* cb = containingBlock();
-    if (cb && !cb->isRenderView())
-        cb->setSelectionState(s);
-}
-
 bool RenderBlock::shouldPaintSelectionGaps() const
 {
     return selectionState() != SelectionNone && style()->visibility() == VISIBLE && isSelectionRoot();

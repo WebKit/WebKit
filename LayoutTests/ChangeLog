@@ -1,3 +1,20 @@
+2010-05-27  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ojan Vafai.
+
+        Cursor movement and text selection does not work well if a block is followed by an inline.
+        https://bugs.webkit.org/show_bug.cgi?id=32123
+
+        RenderInline::setSelectionState() missed selection state
+        propagation for ancestors.  This fix pulled
+        RenderBlock::setSelectionState() up to RenderBoxModelObject, to
+        share it with RenderInline.
+
+        * editing/selection/range-between-block-and-inline.html: Added.
+        * platform/mac/editing/selection/range-between-block-and-inline-expected.checksum: Added.
+        * platform/mac/editing/selection/range-between-block-and-inline-expected.png: Added.
+        * platform/mac/editing/selection/range-between-block-and-inline-expected.txt: Added.
+
 2010-05-27  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Tamura Kent.

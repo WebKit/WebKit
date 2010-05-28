@@ -103,6 +103,7 @@ public:
 
     void highQualityRepaintTimerFired(Timer<RenderBoxModelObject>*);
 
+    virtual void setSelectionState(SelectionState s);
 protected:
     void calculateBackgroundImageGeometry(const FillLayer*, int tx, int ty, int w, int h, IntRect& destRect, IntPoint& phase, IntSize& tileSize);
 

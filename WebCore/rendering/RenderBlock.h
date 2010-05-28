@@ -111,8 +111,6 @@ public:
 
     bool containsNonZeroBidiLevel() const;
 
-    virtual void setSelectionState(SelectionState s);
-
     GapRects selectionGapRectsForRepaint(RenderBoxModelObject* repaintContainer);
     IntRect fillLeftSelectionGap(RenderObject* selObj, int xPos, int yPos, int height, RenderBlock* rootBlock, 
                                  int blockX, int blockY, int tx, int ty, const PaintInfo*);
