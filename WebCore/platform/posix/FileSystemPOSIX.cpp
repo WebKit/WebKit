@@ -69,12 +69,17 @@ bool deleteFile(const String& path)
 
 PlatformFileHandle openFile(const String& path, FileOpenMode mode)
 {
+    CString fsRep = fileSystemRepresentation(path);
+
+    if (fsRep.isNull())
+        return invalidPlatformFileHandle;
+
     int platformFlag = 0;
     if (mode == OpenForRead)
         platformFlag |= O_RDONLY;
     else if (mode == OpenForWrite)
         platformFlag |= (O_WRONLY | O_CREAT | O_TRUNC);
-    return open(path.utf8().data(), platformFlag, 0666);
+    return open(fsRep.data(), platformFlag, 0666);
 }
 
 void closeFile(PlatformFileHandle& handle)

@@ -1,3 +1,15 @@
+2010-05-28  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Darin Adler.
+
+        openFile(...) in FIleSystemPOSIX does not call fileSystemRepresentation
+        https://bugs.webkit.org/show_bug.cgi?id=39882
+
+        No new tests. Existing tests in fast/files should suffice.
+
+        * platform/posix/FileSystemPOSIX.cpp:
+        (WebCore::openFile): pass the path parameter through fileSystemRepresentation before using it.
+
 2010-05-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
