@@ -1,3 +1,12 @@
+2010-05-28  Shu Chang  <chang.shu@nokia.com>
+
+        Unreviewed.
+
+        Remove two junk files not supposed to be in.
+
+        * canvas/philip/tests/.reportgen.html.swp: Removed.
+        * canvas/philip/tests/.reportgen.js.swp: Removed.
+
 2010-05-28  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
