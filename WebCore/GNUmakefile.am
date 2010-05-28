@@ -1091,6 +1091,7 @@ webcore_sources += \
 	WebCore/html/HTML5TreeBuilder.h \
 	WebCore/html/HTML5ScriptRunner.cpp \
 	WebCore/html/HTML5ScriptRunner.h \
+	WebCore/html/HTML5ScriptRunnerHost.h \
 	WebCore/html/HTMLAllCollection.cpp \
 	WebCore/html/HTMLAllCollection.h \
 	WebCore/html/HTMLAnchorElement.cpp \

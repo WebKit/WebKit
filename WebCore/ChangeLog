@@ -1,3 +1,9 @@
+2010-05-28  Xan Lopez  <xlopez@igalia.com>
+
+        Add new file to the build system.
+
+        * GNUmakefile.am:
+
 2010-05-28  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Kenneth Rohde Christiansen.
