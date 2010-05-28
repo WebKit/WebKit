@@ -1,3 +1,13 @@
+2010-05-28  Darin Adler  <darin@apple.com>
+
+        Ignore more Python messiness.
+
+        * Scripts/webkitpy/layout_tests/data/platform/test: Added property svn:ignore.
+        * Scripts/webkitpy/layout_tests/layout_package: Added property svn:ignore.
+        * Scripts/webkitpy/layout_tests/test_types: Added property svn:ignore.
+        * Scripts/webkitpy/test: Added property svn:ignore.
+        * Scripts/webkitpy/thirdparty/simplejson: Added property svn:ignore.
+
 2010-05-28  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
