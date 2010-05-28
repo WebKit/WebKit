@@ -1,3 +1,13 @@
+2010-05-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add a using declaration for WKRetainPtr matching what we do for our
+        other smart pointers and fix the destructor.
+
+        * UIProcess/API/cpp/WKRetainPtr.h:
+        (WebKit::WKRetainPtr::~WKRetainPtr):
+
 2010-05-25  Ada Chan  <adachan@apple.com>
 
         Reviewed by Darin Adler.
