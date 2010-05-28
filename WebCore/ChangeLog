@@ -1,3 +1,23 @@
+2010-05-28  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39874
+        [Qt] Make tiled backing store more configurable
+    
+        Make tile size, tile creation delay and tiling area dynamically configurable.
+
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::TiledBackingStore):
+        (WebCore::TiledBackingStore::setTileSize):
+        (WebCore::TiledBackingStore::setTileCreationDelay):
+        (WebCore::TiledBackingStore::setKeepAndCoverAreaMultipliers):
+        (WebCore::TiledBackingStore::createTiles):
+        * platform/graphics/TiledBackingStore.h:
+        (WebCore::TiledBackingStore::tileSize):
+        (WebCore::TiledBackingStore::tileCreationDelay):
+        (WebCore::TiledBackingStore::getKeepAndCoverAreaMultipliers):
+
 2010-05-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

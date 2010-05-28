@@ -1220,6 +1220,30 @@ void QWebPagePrivate::dynamicPropertyChangeEvent(QDynamicPropertyChangeEvent* ev
     } else if (event->propertyName() == "_q_HTMLTokenizerTimeDelay") {
         double timeDelay = q->property("_q_HTMLTokenizerTimeDelay").toDouble();
         q->handle()->page->setCustomHTMLTokenizerTimeDelay(timeDelay);
+    } else if (event->propertyName() == "_q_TiledBackingStoreTileSize") {
+        QSize tileSize = q->property("_q_TiledBackingStoreTileSize").toSize();
+        WebCore::Frame* frame = QWebFramePrivate::core(q->mainFrame());
+        frame->tiledBackingStore()->setTileSize(tileSize);
+    } else if (event->propertyName() == "_q_TiledBackingStoreTileCreationDelay") {
+        int tileCreationDelay = q->property("_q_TiledBackingStoreTileCreationDelay").toInt();
+        WebCore::Frame* frame = QWebFramePrivate::core(q->mainFrame());
+        frame->tiledBackingStore()->setTileCreationDelay(static_cast<double>(tileCreationDelay) / 1000.);
+    } else if (event->propertyName() == "_q_TiledBackingStoreKeepAreaMultiplier") {
+        FloatSize keepMultiplier;
+        FloatSize coverMultiplier;
+        WebCore::Frame* frame = QWebFramePrivate::core(q->mainFrame());
+        frame->tiledBackingStore()->getKeepAndCoverAreaMultipliers(keepMultiplier, coverMultiplier);
+        QSizeF qSize = q->property("_q_TiledBackingStoreKeepAreaMultiplier").toSizeF();
+        keepMultiplier = FloatSize(qSize.width(), qSize.height());
+        frame->tiledBackingStore()->setKeepAndCoverAreaMultipliers(keepMultiplier, coverMultiplier);
+    } else if (event->propertyName() == "_q_TiledBackingStoreCoverAreaMultiplier") {
+        FloatSize keepMultiplier;
+        FloatSize coverMultiplier;
+        WebCore::Frame* frame = QWebFramePrivate::core(q->mainFrame());
+        frame->tiledBackingStore()->getKeepAndCoverAreaMultipliers(keepMultiplier, coverMultiplier);
+        QSizeF qSize = q->property("_q_TiledBackingStoreCoverAreaMultiplier").toSizeF();
+        coverMultiplier = FloatSize(qSize.width(), qSize.height());
+        frame->tiledBackingStore()->setKeepAndCoverAreaMultipliers(keepMultiplier, coverMultiplier);
     }
 }
 

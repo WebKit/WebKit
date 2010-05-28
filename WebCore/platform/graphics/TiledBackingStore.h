@@ -51,6 +51,20 @@ public:
 
     void invalidate(const IntRect& dirtyRect);
     void paint(GraphicsContext*, const IntRect&);
+    
+    IntSize tileSize() { return m_tileSize; }
+    void setTileSize(const IntSize&);
+    
+    double tileCreationDelay() const { return m_tileCreationDelay; }
+    void setTileCreationDelay(double delay);
+    
+    // Tiled are dropped outside the keep area, and created for cover area. The values a relative to the viewport size.
+    void getKeepAndCoverAreaMultipliers(FloatSize& keepMultiplier, FloatSize& coverMultiplier)
+    {
+        keepMultiplier = m_keepAreaMultiplier;
+        coverMultiplier = m_coverAreaMultiplier;
+    }
+    void setKeepAndCoverAreaMultipliers(const FloatSize& keepMultiplier, const FloatSize& coverMultiplier);    
 
 private:
     void startTileBufferUpdateTimer();
@@ -94,6 +108,9 @@ private:
     TileTimer* m_tileCreationTimer;
 
     IntSize m_tileSize;
+    double m_tileCreationDelay;
+    FloatSize m_keepAreaMultiplier;
+    FloatSize m_coverAreaMultiplier;
     
     IntRect m_previousVisibleRect;
     float m_contentsScale;

@@ -35,6 +35,9 @@ TiledBackingStore::TiledBackingStore(TiledBackingStoreClient* client)
     , m_tileBufferUpdateTimer(new TileTimer(this, &TiledBackingStore::tileBufferUpdateTimerFired))
     , m_tileCreationTimer(new TileTimer(this, &TiledBackingStore::tileCreationTimerFired))
     , m_tileSize(defaultTileWidth, defaultTileHeight)
+    , m_tileCreationDelay(0.01)
+    , m_keepAreaMultiplier(2.f, 3.5f)
+    , m_coverAreaMultiplier(1.5f, 2.5f)
     , m_contentsScale(1.f)
     , m_pendingScale(0)
     , m_contentsFrozen(false)
@@ -45,6 +48,25 @@ TiledBackingStore::~TiledBackingStore()
 {
     delete m_tileBufferUpdateTimer;
     delete m_tileCreationTimer;
+}
+    
+void TiledBackingStore::setTileSize(const IntSize& size)
+{
+    m_tileSize = size;
+    m_tiles.clear();
+    startTileCreationTimer();
+}
+
+void TiledBackingStore::setTileCreationDelay(double delay)
+{
+    m_tileCreationDelay = delay;
+}
+
+void TiledBackingStore::setKeepAndCoverAreaMultipliers(const FloatSize& keepMultiplier, const FloatSize& coverMultiplier)
+{
+    m_keepAreaMultiplier = keepMultiplier;
+    m_coverAreaMultiplier = coverMultiplier;
+    startTileCreationTimer();
 }
 
 void TiledBackingStore::invalidate(const IntRect& contentsDirtyRect)
@@ -188,17 +210,16 @@ void TiledBackingStore::createTiles()
     // Remove tiles that extend outside the current contents rect.
     dropOverhangingTiles();
 
-    // FIXME: Make configurable/adapt to memory.
     IntRect keepRect = visibleRect;
-    keepRect.inflateX(visibleRect.width());
-    keepRect.inflateY(3 * visibleRect.height());
+    keepRect.inflateX(visibleRect.width() * (m_keepAreaMultiplier.width() - 1.f));
+    keepRect.inflateY(visibleRect.height() * (m_keepAreaMultiplier.height() - 1.f));
     keepRect.intersect(contentsRect());
     
     dropTilesOutsideRect(keepRect);
     
     IntRect coverRect = visibleRect;
-    coverRect.inflateX(visibleRect.width() / 2);
-    coverRect.inflateY(2 * visibleRect.height());
+    coverRect.inflateX(visibleRect.width() * (m_coverAreaMultiplier.width() - 1.f));
+    coverRect.inflateY(visibleRect.height() * (m_coverAreaMultiplier.height() - 1.f));
     coverRect.intersect(contentsRect());
     
     // Search for the tile position closest to the viewport center that does not yet contain a tile. 
@@ -240,7 +261,7 @@ void TiledBackingStore::createTiles()
 
     // Keep creating tiles until the whole coverRect is covered.
     if (requiredTileCount)
-        m_tileCreationTimer->startOneShot(0);
+        m_tileCreationTimer->startOneShot(m_tileCreationDelay);
 }
 
 void TiledBackingStore::dropOverhangingTiles()
