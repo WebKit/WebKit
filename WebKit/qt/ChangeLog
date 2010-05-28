@@ -1,5 +1,12 @@
 2010-05-28  Yael Aharon  <yael.aharon@nokia.com>
 
+        Unreviewed build fix after r60348.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::setNotificationsReceiver):
+
+2010-05-28  Yael Aharon  <yael.aharon@nokia.com>
+
         Reviewed by Laszlo Gombos.
 
         [Qt] Pass all web notification layout tests

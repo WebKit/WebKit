@@ -539,7 +539,9 @@ void DumpRenderTreeSupportQt::dumpNotification(bool b)
 
 void DumpRenderTreeSupportQt::setNotificationsReceiver(QWebPage* page, QObject* receiver)
 {
+#if ENABLE(NOTIFICATIONS)
     page->d->notificationPresenterClient->setReceiver(receiver);
+#endif
 }
 
 void DumpRenderTreeSupportQt::allowNotificationForOrigin(QWebPage* page, const QString& origin)
