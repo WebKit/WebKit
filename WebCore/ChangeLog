@@ -1,3 +1,17 @@
+2010-05-28  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        AX: stop prepping value conversion in accessibilityAttributeValueForParameter
+        https://bugs.webkit.org/show_bug.cgi?id=39880
+
+        Cleaning up a FIXME so that all values are not converted before they're needed in accessibilityAttributeValue:forParameter:
+
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (visiblePositionForTextMarker):
+        (-[AccessibilityObjectWrapper visiblePositionRangeForTextMarkerRange:]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2010-05-28  Adam Treat  <atreat@rim.com>
 
         Reviewed by Daniel Bates.

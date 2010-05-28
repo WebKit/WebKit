@@ -220,6 +220,8 @@ static WebCoreTextMarker* textMarkerForVisiblePosition(const VisiblePosition& vi
 
 static VisiblePosition visiblePositionForTextMarker(WebCoreTextMarker* textMarker)
 {
+    if (!textMarker)
+        return VisiblePosition();
     TextMarkerData textMarkerData;
     if (![[WebCoreViewFactory sharedFactory] getBytes:&textMarkerData fromTextMarker:textMarker length:sizeof(textMarkerData)])
         return VisiblePosition();
@@ -978,6 +980,8 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
 
 - (VisiblePositionRange)visiblePositionRangeForTextMarkerRange:(WebCoreTextMarkerRange*) textMarkerRange
 {
+    if (!textMarkerRange)
+        return VisiblePositionRange();
     return VisiblePositionRange(visiblePositionForStartOfTextMarkerRange(textMarkerRange), visiblePositionForEndOfTextMarkerRange(textMarkerRange));
 }
 
@@ -2335,44 +2339,39 @@ static RenderObject* rendererForView(NSView* view)
         return nil;
     }
     
-    // Convert values to WebCore types
-    // FIXME: prepping all of these values as WebCore types is unnecessary in many 
-    // cases. Re-organization of this function or performing the conversion on a 
-    // need basis are possible improvements. 
-    VisiblePosition visiblePos;
-    if (textMarker)
-        visiblePos = visiblePositionForTextMarker(textMarker);
-    int intNumber = [number intValue];
-    VisiblePositionRange visiblePosRange;
-    if (textMarkerRange)
-        visiblePosRange = [self visiblePositionRangeForTextMarkerRange:textMarkerRange];
-    IntPoint webCorePoint = IntPoint(point);
-    PlainTextRange plainTextRange = PlainTextRange(range.location, range.length);
-
     // dispatch
-    if ([attribute isEqualToString: @"AXUIElementForTextMarker"])
+    if ([attribute isEqualToString: @"AXUIElementForTextMarker"]) {
+        VisiblePosition visiblePos = visiblePositionForTextMarker(textMarker);
         return m_object->accessibilityObjectForPosition(visiblePos)->wrapper();
+    }
 
     if ([attribute isEqualToString: @"AXTextMarkerRangeForUIElement"]) {
         VisiblePositionRange vpRange = uiElement.get()->visiblePositionRange();
         return (id)textMarkerRangeFromVisiblePositions(vpRange.start, vpRange.end);
     }
 
-    if ([attribute isEqualToString: @"AXLineForTextMarker"])
+    if ([attribute isEqualToString: @"AXLineForTextMarker"]) {
+        VisiblePosition visiblePos = visiblePositionForTextMarker(textMarker);
         return [NSNumber numberWithUnsignedInt:m_object->lineForPosition(visiblePos)];
+    }
 
     if ([attribute isEqualToString: @"AXTextMarkerRangeForLine"]) {
-        VisiblePositionRange vpRange = m_object->visiblePositionRangeForLine(intNumber);
+        VisiblePositionRange vpRange = m_object->visiblePositionRangeForLine([number intValue]);
         return (id)textMarkerRangeFromVisiblePositions(vpRange.start, vpRange.end);
     }
 
-    if ([attribute isEqualToString: @"AXStringForTextMarkerRange"])
+    if ([attribute isEqualToString: @"AXStringForTextMarkerRange"]) {
+        VisiblePositionRange visiblePosRange = [self visiblePositionRangeForTextMarkerRange:textMarkerRange];
         return m_object->stringForVisiblePositionRange(visiblePosRange);
+    }
 
-    if ([attribute isEqualToString: @"AXTextMarkerForPosition"])
+    if ([attribute isEqualToString: @"AXTextMarkerForPosition"]) {
+        IntPoint webCorePoint = IntPoint(point);
         return pointSet ? textMarkerForVisiblePosition(m_object->visiblePositionForPoint(webCorePoint)) : nil;
+    }
 
     if ([attribute isEqualToString: @"AXBoundsForTextMarkerRange"]) {
+        VisiblePositionRange visiblePosRange = [self visiblePositionRangeForTextMarkerRange:textMarkerRange];
         NSRect rect = m_object->boundsForVisiblePositionRange(visiblePosRange);
         return [NSValue valueWithRect:rect];
     }
@@ -2413,72 +2412,100 @@ static RenderObject* rendererForView(NSView* view)
         return (id)textMarkerRangeFromVisiblePositions(vpRange.start, vpRange.end);
     }
 
-    if ([attribute isEqualToString: @"AXNextTextMarkerForTextMarker"])
+    if ([attribute isEqualToString: @"AXNextTextMarkerForTextMarker"]) {
+        VisiblePosition visiblePos = visiblePositionForTextMarker(textMarker);
         return textMarkerForVisiblePosition(m_object->nextVisiblePosition(visiblePos));
+    }
 
-    if ([attribute isEqualToString: @"AXPreviousTextMarkerForTextMarker"])
+    if ([attribute isEqualToString: @"AXPreviousTextMarkerForTextMarker"]) {
+        VisiblePosition visiblePos = visiblePositionForTextMarker(textMarker);
         return textMarkerForVisiblePosition(m_object->previousVisiblePosition(visiblePos));
+    }
 
     if ([attribute isEqualToString: @"AXLeftWordTextMarkerRangeForTextMarker"]) {
+        VisiblePosition visiblePos = visiblePositionForTextMarker(textMarker);
         VisiblePositionRange vpRange = m_object->positionOfLeftWord(visiblePos);
         return (id)textMarkerRangeFromVisiblePositions(vpRange.start, vpRange.end);
     }
 
     if ([attribute isEqualToString: @"AXRightWordTextMarkerRangeForTextMarker"]) {
+        VisiblePosition visiblePos = visiblePositionForTextMarker(textMarker);
         VisiblePositionRange vpRange = m_object->positionOfRightWord(visiblePos);
         return (id)textMarkerRangeFromVisiblePositions(vpRange.start, vpRange.end);
     }
 
     if ([attribute isEqualToString: @"AXLeftLineTextMarkerRangeForTextMarker"]) {
+        VisiblePosition visiblePos = visiblePositionForTextMarker(textMarker);
         VisiblePositionRange vpRange = m_object->leftLineVisiblePositionRange(visiblePos);
         return (id)textMarkerRangeFromVisiblePositions(vpRange.start, vpRange.end);
     }
 
     if ([attribute isEqualToString: @"AXRightLineTextMarkerRangeForTextMarker"]) {
+        VisiblePosition visiblePos = visiblePositionForTextMarker(textMarker);
         VisiblePositionRange vpRange = m_object->rightLineVisiblePositionRange(visiblePos);
         return (id)textMarkerRangeFromVisiblePositions(vpRange.start, vpRange.end);
     }
 
     if ([attribute isEqualToString: @"AXSentenceTextMarkerRangeForTextMarker"]) {
+        VisiblePosition visiblePos = visiblePositionForTextMarker(textMarker);
         VisiblePositionRange vpRange = m_object->sentenceForPosition(visiblePos);
         return (id)textMarkerRangeFromVisiblePositions(vpRange.start, vpRange.end);
     }
 
     if ([attribute isEqualToString: @"AXParagraphTextMarkerRangeForTextMarker"]) {
+        VisiblePosition visiblePos = visiblePositionForTextMarker(textMarker);
         VisiblePositionRange vpRange = m_object->paragraphForPosition(visiblePos);
         return (id)textMarkerRangeFromVisiblePositions(vpRange.start, vpRange.end);
     }
 
-    if ([attribute isEqualToString: @"AXNextWordEndTextMarkerForTextMarker"])
+    if ([attribute isEqualToString: @"AXNextWordEndTextMarkerForTextMarker"]) {
+        VisiblePosition visiblePos = visiblePositionForTextMarker(textMarker);
         return textMarkerForVisiblePosition(m_object->nextWordEnd(visiblePos));
-
-    if ([attribute isEqualToString: @"AXPreviousWordStartTextMarkerForTextMarker"])
+    }
+    
+    if ([attribute isEqualToString: @"AXPreviousWordStartTextMarkerForTextMarker"]) {
+        VisiblePosition visiblePos = visiblePositionForTextMarker(textMarker);
         return textMarkerForVisiblePosition(m_object->previousWordStart(visiblePos));
+    }
 
-    if ([attribute isEqualToString: @"AXNextLineEndTextMarkerForTextMarker"])
+    if ([attribute isEqualToString: @"AXNextLineEndTextMarkerForTextMarker"]) {
+        VisiblePosition visiblePos = visiblePositionForTextMarker(textMarker);
         return textMarkerForVisiblePosition(m_object->nextLineEndPosition(visiblePos));
+    }
 
-    if ([attribute isEqualToString: @"AXPreviousLineStartTextMarkerForTextMarker"])
+    if ([attribute isEqualToString: @"AXPreviousLineStartTextMarkerForTextMarker"]) {
+        VisiblePosition visiblePos = visiblePositionForTextMarker(textMarker);
         return textMarkerForVisiblePosition(m_object->previousLineStartPosition(visiblePos));
+    }
 
-    if ([attribute isEqualToString: @"AXNextSentenceEndTextMarkerForTextMarker"])
+    if ([attribute isEqualToString: @"AXNextSentenceEndTextMarkerForTextMarker"]) {
+        VisiblePosition visiblePos = visiblePositionForTextMarker(textMarker);
         return textMarkerForVisiblePosition(m_object->nextSentenceEndPosition(visiblePos));
+    }
 
-    if ([attribute isEqualToString: @"AXPreviousSentenceStartTextMarkerForTextMarker"])
+    if ([attribute isEqualToString: @"AXPreviousSentenceStartTextMarkerForTextMarker"]) {
+        VisiblePosition visiblePos = visiblePositionForTextMarker(textMarker);
         return textMarkerForVisiblePosition(m_object->previousSentenceStartPosition(visiblePos));
+    }
 
-    if ([attribute isEqualToString: @"AXNextParagraphEndTextMarkerForTextMarker"])
+    if ([attribute isEqualToString: @"AXNextParagraphEndTextMarkerForTextMarker"]) {
+        VisiblePosition visiblePos = visiblePositionForTextMarker(textMarker);
         return textMarkerForVisiblePosition(m_object->nextParagraphEndPosition(visiblePos));
+    }
 
-    if ([attribute isEqualToString: @"AXPreviousParagraphStartTextMarkerForTextMarker"])
+    if ([attribute isEqualToString: @"AXPreviousParagraphStartTextMarkerForTextMarker"]) {
+        VisiblePosition visiblePos = visiblePositionForTextMarker(textMarker);
         return textMarkerForVisiblePosition(m_object->previousParagraphStartPosition(visiblePos));
+    }
 
     if ([attribute isEqualToString: @"AXStyleTextMarkerRangeForTextMarker"]) {
+        VisiblePosition visiblePos = visiblePositionForTextMarker(textMarker);
         VisiblePositionRange vpRange = m_object->styleRangeForPosition(visiblePos);
         return (id)textMarkerRangeFromVisiblePositions(vpRange.start, vpRange.end);
     }
 
     if ([attribute isEqualToString: @"AXLengthForTextMarkerRange"]) {
+        VisiblePositionRange visiblePosRange = [self visiblePositionRangeForTextMarkerRange:textMarkerRange];
         int length = m_object->lengthForVisiblePositionRange(visiblePosRange);
         if (length < 0)
             return nil;
@@ -2499,35 +2526,39 @@ static RenderObject* rendererForView(NSView* view)
 
     if (m_object->isTextControl()) {
         if ([attribute isEqualToString: (NSString *)kAXLineForIndexParameterizedAttribute]) {
-            int lineNumber = m_object->doAXLineForIndex(intNumber);
+            int lineNumber = m_object->doAXLineForIndex([number intValue]);
             if (lineNumber < 0)
                 return nil;
             return [NSNumber numberWithUnsignedInt:lineNumber];
         }
 
         if ([attribute isEqualToString: (NSString *)kAXRangeForLineParameterizedAttribute]) {
-            PlainTextRange textRange = m_object->doAXRangeForLine(intNumber);
+            PlainTextRange textRange = m_object->doAXRangeForLine([number intValue]);
             return [NSValue valueWithRange: NSMakeRange(textRange.start, textRange.length)];
         }
 
-        if ([attribute isEqualToString: (NSString*)kAXStringForRangeParameterizedAttribute])
+        if ([attribute isEqualToString: (NSString*)kAXStringForRangeParameterizedAttribute]) {
+            PlainTextRange plainTextRange = PlainTextRange(range.location, range.length);
             return rangeSet ? (id)(m_object->doAXStringForRange(plainTextRange)) : nil;
+        }
 
         if ([attribute isEqualToString: (NSString*)kAXRangeForPositionParameterizedAttribute]) {
             if (!pointSet)
                 return nil;
+            IntPoint webCorePoint = IntPoint(point);
             PlainTextRange textRange = m_object->doAXRangeForPosition(webCorePoint);
             return [NSValue valueWithRange: NSMakeRange(textRange.start, textRange.length)];
         }
 
         if ([attribute isEqualToString: (NSString*)kAXRangeForIndexParameterizedAttribute]) {
-            PlainTextRange textRange = m_object->doAXRangeForIndex(intNumber);
+            PlainTextRange textRange = m_object->doAXRangeForIndex([number intValue]);
             return [NSValue valueWithRange: NSMakeRange(textRange.start, textRange.length)];
         }
 
         if ([attribute isEqualToString: (NSString*)kAXBoundsForRangeParameterizedAttribute]) {
             if (!rangeSet)
                 return nil;
+            PlainTextRange plainTextRange = PlainTextRange(range.location, range.length);
             NSRect rect = m_object->doAXBoundsForRange(plainTextRange);
             return [NSValue valueWithRect:rect];
         }
@@ -2539,7 +2570,7 @@ static RenderObject* rendererForView(NSView* view)
             return rangeSet ? [self doAXAttributedStringForRange:range] : nil;
 
         if ([attribute isEqualToString: (NSString*)kAXStyleRangeForIndexParameterizedAttribute]) {
-            PlainTextRange textRange = m_object->doAXStyleRangeForIndex(intNumber);
+            PlainTextRange textRange = m_object->doAXStyleRangeForIndex([number intValue]);
             return [NSValue valueWithRange: NSMakeRange(textRange.start, textRange.length)];
         }
     }
