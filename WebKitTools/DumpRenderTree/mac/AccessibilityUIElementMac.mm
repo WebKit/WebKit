@@ -951,9 +951,11 @@ int AccessibilityUIElement::indexInTable()
 
 JSStringRef AccessibilityUIElement::rowIndexRange()
 {
+    NSRange range = NSMakeRange(0,0);
     BEGIN_AX_OBJC_EXCEPTIONS
     NSValue* indexRange = [m_element accessibilityAttributeValue:@"AXRowIndexRange"];
-    NSRange range = indexRange ? [indexRange rangeValue] : NSMakeRange(0,0);
+    if (indexRange)
+        range = [indexRange rangeValue];
     NSMutableString* rangeDescription = [NSMutableString stringWithFormat:@"{%d, %d}",range.location, range.length];
     return [rangeDescription createJSStringRef];
     END_AX_OBJC_EXCEPTIONS
@@ -963,9 +965,11 @@ JSStringRef AccessibilityUIElement::rowIndexRange()
 
 JSStringRef AccessibilityUIElement::columnIndexRange()
 {
+    NSRange range = NSMakeRange(0,0);
     BEGIN_AX_OBJC_EXCEPTIONS
     NSNumber* indexRange = [m_element accessibilityAttributeValue:@"AXColumnIndexRange"];
-    NSRange range = indexRange ? [indexRange rangeValue] : NSMakeRange(0,0);
+    if (indexRange)
+        range = [indexRange rangeValue];
     NSMutableString* rangeDescription = [NSMutableString stringWithFormat:@"{%d, %d}",range.location, range.length];
     return [rangeDescription createJSStringRef];    
     END_AX_OBJC_EXCEPTIONS
@@ -985,9 +989,11 @@ AccessibilityUIElement AccessibilityUIElement::cellForColumnAndRow(unsigned col,
 
 JSStringRef AccessibilityUIElement::selectedTextRange()
 {
+    NSRange range = NSMakeRange(0,0);
     BEGIN_AX_OBJC_EXCEPTIONS
     NSNumber *indexRange = [m_element accessibilityAttributeValue:NSAccessibilitySelectedTextRangeAttribute];
-    NSRange range = indexRange ? [indexRange rangeValue] : NSMakeRange(0,0);
+    if (indexRange)
+        range = [indexRange rangeValue];
     NSMutableString *rangeDescription = [NSMutableString stringWithFormat:@"{%d, %d}",range.location, range.length];
     return [rangeDescription createJSStringRef];    
     END_AX_OBJC_EXCEPTIONS

@@ -1,5 +1,19 @@
 2010-05-28  Chris Fleizach  <cfleizach@apple.com>
 
+        Build fix. No review.
+
+        AX: need to catch NSAccessibilityExceptions in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=39881
+
+        It looks like Tiger doesn't like seeing a NSMakeRange inside a @try.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::rowIndexRange):
+        (AccessibilityUIElement::columnIndexRange):
+        (AccessibilityUIElement::selectedTextRange):
+
+2010-05-28  Chris Fleizach  <cfleizach@apple.com>
+
         Reviewed by Darin Adler.
 
         AX: need to catch NSAccessibilityExceptions in DRT
