@@ -1,3 +1,15 @@
+2010-05-28  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: check that ClientMessageLoopAdapter is not 0 before
+        accessing its fileds from inspectedViewClosed method. It may be 0
+        if inspector frontend has not been open.
+        https://bugs.webkit.org/show_bug.cgi?id=39876
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::):
+
 2010-05-27  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Adam Barth.

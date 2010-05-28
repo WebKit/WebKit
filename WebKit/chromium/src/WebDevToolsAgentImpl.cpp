@@ -143,7 +143,8 @@ public:
 
     static void inspectedViewClosed(WebViewImpl* view)
     {
-        s_instance->m_frozenViews.remove(view);
+        if (s_instance)
+            s_instance->m_frozenViews.remove(view);
     }
 
     static void didNavigate()
