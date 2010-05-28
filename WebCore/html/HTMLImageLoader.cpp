@@ -27,7 +27,6 @@
 #include "Element.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 
@@ -60,17 +59,15 @@ String HTMLImageLoader::sourceURI(const AtomicString& attr) const
 }
 
 void HTMLImageLoader::notifyFinished(CachedResource*)
-{    
+{
     CachedImage* cachedImage = image();
 
     Element* elem = element();
     ImageLoader::notifyFinished(cachedImage);
 
 #if USE(JSC)
-    if (!cachedImage->errorOccurred() && !cachedImage->httpStatusCodeErrorOccurred()
-        && (elem->hasTagName(HTMLNames::imgTag) || elem->hasTagName(HTMLNames::imageTag)) ) {
-        HTMLImageElement* img = static_cast<HTMLImageElement*>(elem);
-        if (!img->inDocument()) {
+    if (!cachedImage->errorOccurred() && !cachedImage->httpStatusCodeErrorOccurred()) {
+        if (!elem->inDocument()) {
             JSC::JSGlobalData* globalData = JSDOMWindowBase::commonJSGlobalData();
             globalData->heap.reportExtraMemoryCost(cachedImage->encodedSize());
         }
