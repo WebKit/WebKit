@@ -177,6 +177,7 @@ InspectorController::~InspectorController()
     // These should have been cleared in inspectedPageDestroyed().
     ASSERT(!m_client);
     ASSERT(!m_inspectedPage);
+    ASSERT(!m_highlightedNode);
 
     deleteAllValues(m_frameResources);
     deleteAllValues(m_consoleMessages);
@@ -194,6 +195,8 @@ void InspectorController::inspectedPageDestroyed()
 {
     if (m_frontend)
         m_frontend->inspectedPageDestroyed();
+
+    hideHighlight();
 
     ASSERT(m_inspectedPage);
     m_inspectedPage = 0;
