@@ -54,6 +54,7 @@ public:
     virtual void write(const SegmentedString&, bool appendData);
     virtual void end();
     virtual void finish();
+    virtual int executingScript() const;
     virtual bool isWaitingForScripts() const;
     virtual void executeScriptsWaitingForStylesheets();
 
@@ -78,6 +79,7 @@ private:
     OwnPtr<HTML5Lexer> m_lexer;
     OwnPtr<HTML5ScriptRunner> m_scriptRunner;
     OwnPtr<HTML5TreeBuilder> m_treeBuilder;
+    bool m_wasWaitingOnScriptsDuringFinish;
 };
 
 }

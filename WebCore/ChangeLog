@@ -1,3 +1,70 @@
+2010-05-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTML5 parser should block script execution until stylesheets load
+        https://bugs.webkit.org/show_bug.cgi?id=39903
+
+        All <script> tag execution now blocks on stylesheet load, including
+        inline <script> content which the old parser doesn't support blocking.
+
+        Hyatt says we could now get rid of updateLayoutIgnorePendingStylesheets
+        once our primary parser knows how to wait for stylesheets
+        before executing inline <script> content.
+
+        All of http/tests/local passes in --html5-parser mode now.
+        Also fixed fast/parser/tokenizer-close-during-document-write.html.
+
+        * html/HTML5ScriptRunner.cpp:
+        (WebCore::HTML5ScriptRunner::HTML5ScriptRunner):
+         - Added a m_hasScriptsWaitingForStylesheets bool so that we can
+           detect when we're actually waiting on stylesheets or not.
+           If we're not waiting on stylesheets then we're still parsing and
+           executing scripts would cause parser/script reentrancy and bad news bears.
+        (WebCore::HTML5ScriptRunner::isPendingScriptReady):
+         - Re-enable the check that the stylesheets have loaded.
+        (WebCore::HTML5ScriptRunner::executePendingScript):
+         - ASSERT that stylesheets have loaded.
+        (WebCore::HTML5ScriptRunner::executeScriptsWaitingForLoad):
+         - ASSERT that this is never called reentrantly.
+        (WebCore::HTML5ScriptRunner::executeScriptsWaitingForStylesheets):
+         - Execute any scripts which were blocked on stylesheet loads.
+         - ASSERT (in two ways) that this is never called reentrantly.
+        * html/HTML5ScriptRunner.h:
+        (WebCore::HTML5ScriptRunner::hasScriptsWaitingForStylesheets):
+         - Callers need to check this before calling executeScriptsWaitingForLoad.
+        (WebCore::HTML5ScriptRunner::inScriptExecution):
+         - Used by callers to ASSERT that we're not called re-entrantly.
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::HTML5Tokenizer):
+         - Add m_hasScriptsWaitingForStylesheets for tracking if we've paused
+           due to stylesheets or not.  Callers need to know this to know if they
+           should ignore executeScriptsWaitingForStylesheets calls from
+           Document (which may be generated when parsing </script> tags).
+           We only care about executeScriptsWaitingForStylesheets calls when
+           we've actually blocked the parser due to waiting on a stylesheet load.
+        (WebCore::HTML5Tokenizer::end):
+         - Move m_source.close() back to this method now that I understand more
+           about when finish() is called.  This should fix several layout test ASSERTS.
+        (WebCore::HTML5Tokenizer::finish):
+         - This should not close m_source since scripts may still write to
+           the document.  Set m_wasWaitingOnScriptsDuringFinish to indicate
+           that we were not able to end parsing during finish.
+        (WebCore::HTML5Tokenizer::resumeParsingAfterScriptExecution):
+         - ASSERT that this is never caller re-entrantly.
+        (WebCore::HTML5Tokenizer::executeScript):
+         - ASSERT that the ScriptRunner always thinks we're running scripts when this is called.
+        (WebCore::HTML5Tokenizer::executingScript):
+         - Added implementation to fix fast/parser/tokenizer-close-during-document-write.html
+        (WebCore::HTML5Tokenizer::notifyFinished):
+         - ASSERT that this is never called re-entrantly.
+        (WebCore::HTML5Tokenizer::executeScriptsWaitingForStylesheets):
+         - Call the ScriptRunner to tell it that stylesheets have loaded if
+           it is blocked on stylesheet loads.
+         - ASSERT(m_hasScriptsWaitingForStylesheets).  We can't just assert
+           isPaused() since we may be paused for script loads.
+        * html/HTML5Tokenizer.h:
+
 2010-05-29  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Darin Adler.

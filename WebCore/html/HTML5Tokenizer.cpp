@@ -43,6 +43,7 @@ HTML5Tokenizer::HTML5Tokenizer(HTMLDocument* document, bool reportErrors)
     , m_lexer(new HTML5Lexer)
     , m_scriptRunner(new HTML5ScriptRunner(document, this))
     , m_treeBuilder(new HTML5TreeBuilder(m_lexer.get(), document, reportErrors))
+    , m_wasWaitingOnScriptsDuringFinish(false)
 {
     begin();
 }
@@ -84,6 +85,7 @@ void HTML5Tokenizer::write(const SegmentedString& source, bool)
 
 void HTML5Tokenizer::end()
 {
+    m_source.close();
     if (!m_treeBuilder->isPaused())
         pumpLexer();
     m_treeBuilder->finished();
@@ -93,9 +95,18 @@ void HTML5Tokenizer::finish()
 {
     // finish() indicates we will not receive any more data. If we are waiting on
     // an external script to load, we can't finish parsing quite yet.
-    m_source.close();
-    if (!m_treeBuilder->isPaused())
+    // We can't call m_source.close() yet as we may have a <script> execution
+    // pending which will call document.write().  No more data off the network though.
+    if (!m_treeBuilder->isPaused()) {
+        // FIXME: We might want to use real state enum instead of a bool here.
+        m_wasWaitingOnScriptsDuringFinish = true;
         end();
+    }
+}
+
+int HTML5Tokenizer::executingScript() const
+{
+    return m_scriptRunner->inScriptExecution();
 }
 
 bool HTML5Tokenizer::isWaitingForScripts() const
@@ -105,10 +116,11 @@ bool HTML5Tokenizer::isWaitingForScripts() const
 
 void HTML5Tokenizer::resumeParsingAfterScriptExecution()
 {
+    ASSERT(!m_scriptRunner->inScriptExecution());
     ASSERT(!m_treeBuilder->isPaused());
     // FIXME: This is the wrong write in the case of document.write re-entry.
     pumpLexer();
-    if (m_source.isEmpty() && m_source.isClosed())
+    if (m_source.isEmpty() && m_wasWaitingOnScriptsDuringFinish)
         end(); // The document already finished parsing we were just waiting on scripts when finished() was called.
 }
 
@@ -128,6 +140,7 @@ void HTML5Tokenizer::stopWatchingForLoad(CachedResource* cachedScript)
 
 void HTML5Tokenizer::executeScript(const ScriptSourceCode& sourceCode)
 {
+    ASSERT(m_scriptRunner->inScriptExecution());
     if (!m_document->frame())
         return;
 
@@ -141,17 +154,27 @@ void HTML5Tokenizer::executeScript(const ScriptSourceCode& sourceCode)
 
 void HTML5Tokenizer::notifyFinished(CachedResource* cachedResource)
 {
+    ASSERT(!m_scriptRunner->inScriptExecution());
+    ASSERT(m_treeBuilder->isPaused());
     bool shouldContinueParsing = m_scriptRunner->executeScriptsWaitingForLoad(cachedResource);
-    if (shouldContinueParsing) {
-        m_treeBuilder->setPaused(false);
+    m_treeBuilder->setPaused(!shouldContinueParsing);
+    if (shouldContinueParsing)
         resumeParsingAfterScriptExecution();
-    }
 }
 
 void HTML5Tokenizer::executeScriptsWaitingForStylesheets()
 {
-    // FIXME: We can't block for stylesheets yet, because that causes us to re-enter
-    // the parser from executeScriptsWaitingForStylesheets when parsing style tags.
+    // Ignore calls unless we have a script blocking the parser waiting on a
+    // stylesheet load.  Otherwise we are currently parsing and this
+    // is a re-entrant call from encountering a </ style> tag.
+    if (!m_scriptRunner->hasScriptsWaitingForStylesheets())
+        return;
+    ASSERT(!m_scriptRunner->inScriptExecution());
+    ASSERT(m_treeBuilder->isPaused());
+    bool shouldContinueParsing = m_scriptRunner->executeScriptsWaitingForStylesheets();
+    m_treeBuilder->setPaused(!shouldContinueParsing);
+    if (shouldContinueParsing)
+        resumeParsingAfterScriptExecution();
 }
 
 }
