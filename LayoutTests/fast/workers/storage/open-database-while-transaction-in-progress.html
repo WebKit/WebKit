@@ -1,12 +1,13 @@
 <html>
 <head>
-<script src="resources/database-common.js"></script>
-<script src="open-database-while-transaction-in-progress.js"></script>
+<script src="resources/database-worker-controller.js"></script>
 </head>
-<body onload="setupAndRunTest();">
+
+<body onload="runTest('open-database-while-transaction-in-progress.js')">
 This is a test to see if opening a database while a transaction is running on a different handle to the same database results in a deadlock.<br>
-<pre id="console">
+<pre id="console"> 
 FAILURE: test didn't run.
-</pre>
+</pre> 
 </body>
+
 </html>

@@ -27,3 +27,13 @@ onmessage = function(event) {
 };
 
 var DB_TEST_SUFFIX = "_worker";
+
+function openDatabaseWithSuffix(name, version, description, size, callback)
+{
+    if (arguments.length > 4) {
+        return openDatabase(name + DB_TEST_SUFFIX, version, description, size, callback);
+    } else {
+        return openDatabase(name + DB_TEST_SUFFIX, version, description, size);
+    }
+}
+

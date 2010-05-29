@@ -1,30 +1,13 @@
 <html>
-
 <head>
+<script src="resources/database-common.js"></script>
 <script src="execute-sql-args.js"></script>
-<script>
-
-var DB_TEST_SUFFIX = "_dom";
-
-function log(message)
-{
-    document.getElementById("console").innerText += message + "\n";
-}
-
-function setupAndRunTest()
-{
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-    }
-    runTest();
-}
-
-</script>
 </head>
 
 <body onload="setupAndRunTest()">
-<pre id="console"></pre>
+<pre id="console"> 
+FAILURE: test didn't run.
+</pre> 
 </body>
 
 </html>

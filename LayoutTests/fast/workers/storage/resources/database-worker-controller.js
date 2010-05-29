@@ -8,11 +8,15 @@ databaseWorker.onerror = function(event) {
 };
 
 databaseWorker.onmessage = function(event) {
-    if (event.data.indexOf('log:') == 0)
+    if (event.data.indexOf('log:') == 0) {
         log(event.data.substring(4));
-    else if (event.data == 'notifyDone') {
+    } else if (event.data == 'notifyDone') {
         if (window.layoutTestController)
             layoutTestController.notifyDone();
+    } else if (event.data.indexOf('setLocationHash:') == '0') {
+        location.hash = event.data.substring('setLocationHash:'.length);
+    } else if (event.data == 'back') {
+        history.back();
     } else
         throw new Error("Unrecognized message: " + event);
 };
@@ -21,3 +25,15 @@ function log(message)
 {
     document.getElementById("console").innerText += message + "\n";
 }
+
+function runTest(testFile)
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    document.getElementById("console").innerText = "";
+    databaseWorker.postMessage("importScripts:../../../storage/" + testFile);
+    databaseWorker.postMessage("runTest");
+}
+

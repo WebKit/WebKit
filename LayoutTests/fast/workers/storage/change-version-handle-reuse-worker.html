@@ -1,22 +1,8 @@
 <html> 
 <head>
 <script src="resources/database-worker-controller.js"></script> 
-<script> 
-
-function setupAndRunTest()
-{
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
-    }
- 
-    document.getElementById("console").innerText = "";
-    databaseWorker.postMessage("importScripts:../../../storage/change-version-handle-reuse.js");
-    databaseWorker.postMessage("runTest");
-}
-</script> 
 </head> 
-<body onload="setupAndRunTest()"> 
+<body onload="runTest('change-version-handle-reuse.js')"> 
 <div>This tests that a database can be accessed after changing its version. You should see an error about FooBar table below, not about mismatching versions.
 <pre id="console"> 
 FAILURE: test didn't run.

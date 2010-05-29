@@ -9,7 +9,7 @@ function finishTest()
 function runTest()
 {
     try {
-        db = openDatabase("ChangeVersion" + DB_TEST_SUFFIX, "", "Test that changing a database version doesn't kill our handle to it", 1);
+        db = openDatabaseWithSuffix("ChangeVersion", "", "Test that changing a database version doesn't kill our handle to it", 1);
         var version = db.version;
         var newVersion = version ? (parseInt(version) + 1).toString() : "1"; 
         db.changeVersion(version, newVersion, function(tx) {

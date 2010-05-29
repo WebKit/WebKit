@@ -2,6 +2,55 @@
 
         Reviewed by Dmitry Titov.
 
+        Refactor DB layout tests so that they work in Web Workers as well as Pages.
+        This is a big set of ports, but there are still more to come.
+        In general, this is all just trivial changes.  For each test file, I pull out the meat into a .js file [with no functional changes].  Then I include that from both the DOM test and a new worker test; in both cases, the .html files are trivial wrappers.  All boilerplate code is pulled out into the resource files.
+
+        In a couple of these tests, there were try/catch wrappers that suppressed errors.  I don't see why you'd want to do that in a test; let's let those errors cause test failures, then fix them.  I took out the wrappers and saw no difference in behavior.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34995
+
+        * fast/workers/storage/multiple-databases-garbage-collection-expected.txt: Added.
+        * fast/workers/storage/multiple-databases-garbage-collection.html: Added.
+        * fast/workers/storage/multiple-transactions-expected.txt: Added.
+        * fast/workers/storage/multiple-transactions.html: Added.
+        * fast/workers/storage/multiple-transactions-on-different-handles-expected.txt: Added.
+        * fast/workers/storage/multiple-transactions-on-different-handles.html: Added.
+        * fast/workers/storage/change-version-handle-reuse-worker.html: Pulled out even more boilerplate.
+        * fast/workers/storage/execute-sql-args-worker.html: Pulled out even more boilerplate.
+        * fast/workers/storage/resources/database-worker-controller: Here's where the boilerplate went.
+        * fast/workers/storage/resources/database-worker.js:
+        * storage/multiple-databases-garbage-collection.html:
+        * storage/multiple-databases-garbage-collection.js: Added.
+        * storage/multiple-transactions-on-different-handles.html:
+        * storage/multiple-transactions-on-different-handles.js: Added.
+        * storage/multiple-transactions.html:
+        * storage/multiple-transactions.js: Added.
+        * storage/hash-change-with-xhr-expected.txt: Trivial whitespace change.
+        * storage/hash-change-with-xhr.html:
+        * storage/hash-change-with-xhr.js: Added.
+        * storage/open-database-while-transaction-in-progress.html:
+        * storage/open-database-while-transaction-in-progress.js: Added.
+        * storage/read-and-write-transactions-dont-run-together.html:
+        * storage/read-and-write-transactions-dont-run-together.js: Added.
+        * storage/test-authorizer.html:
+        * storage/test-authorizer.js: Added.
+        I made a small common include for all the non-worker tests to remove a little boilerplate.
+        * storage/resources/database-common.js: Added.
+        These two tests had already been ported to workers; I updated them to use the common include file.
+        * storage/change-version-handle-reuse.html:
+        * storage/execute-sql-args.html:
+        * fast/workers/storage/open-database-while-transaction-in-progress-expected.txt: Added.
+        * fast/workers/storage/open-database-while-transaction-in-progress.html: Added.
+        * fast/workers/storage/read-and-write-transactions-dont-run-together-expected.txt: Added.
+        * fast/workers/storage/read-and-write-transactions-dont-run-together.html: Added.
+        * fast/workers/storage/test-authorizer-expected.txt: Added.
+        * fast/workers/storage/test-authorizer.html: Added.
+
+2010-05-28  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
         We don't test the async DB success callback in an isolated world.
         https://bugs.webkit.org/show_bug.cgi?id=39849
 

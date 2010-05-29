@@ -81,6 +81,6 @@ function runTransactionTests(transaction)
 function runTest()
 {
 
-    var db = openDatabase("ExecuteSQLArgsTest" + DB_TEST_SUFFIX, "1.0", "Test of handling of the arguments to SQLTransaction.executeSql", 1);
+    var db = openDatabaseWithSuffix("ExecuteSQLArgsTest", "1.0", "Test of handling of the arguments to SQLTransaction.executeSql", 1);
     db.transaction(runTransactionTests);
 }
