@@ -20,7 +20,6 @@
 #include "config.h"
 #include "qt_instance.h"
 
-#include "ArgList.h"
 #include "Error.h"
 #include "JSDOMBinding.h"
 #include "JSGlobalObject.h"
@@ -245,7 +244,7 @@ JSValue QtInstance::getMethod(ExecState* exec, const Identifier& propertyName)
     return new (exec) RuntimeMethod(exec, exec->lexicalGlobalObject(), propertyName, methodList);
 }
 
-JSValue QtInstance::invokeMethod(ExecState*, RuntimeMethod*, const ArgList&)
+JSValue QtInstance::invokeMethod(ExecState*, RuntimeMethod*)
 {
     // Implemented via fallbackMethod & QtRuntimeMetaMethod::callAsFunction
     return jsUndefined();
