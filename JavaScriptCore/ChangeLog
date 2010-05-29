@@ -1,5 +1,11 @@
 2010-05-28  Geoffrey Garen  <ggaren@apple.com>
 
+        Windows build fix: Updated exported symbols.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-05-28  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig, Gavin Barraclough, Oliver Hunt.
 
         Simplified the host calling convention.
