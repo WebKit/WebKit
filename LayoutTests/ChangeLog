@@ -1,3 +1,14 @@
+2010-05-28  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        We don't test the async DB success callback in an isolated world.
+        https://bugs.webkit.org/show_bug.cgi?id=39849
+
+        This pretty much a copy of transaction-error-callback-isolated-world.html.
+        * storage/transaction-success-callback-isolated-world-expected.txt: Added.
+        * storage/transaction-success-callback-isolated-world.html: Added.
+
 2010-05-28  Chang Shu  <Chang.Shu@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
