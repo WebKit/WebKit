@@ -46,7 +46,7 @@ namespace WebCore {
 
     class ScriptCallStack : public Noncopyable {
     public:
-        ScriptCallStack(JSC::ExecState*, const JSC::ArgList&, unsigned skipArgumentCount = 0);
+        ScriptCallStack(JSC::ExecState*, unsigned skipArgumentCount = 0);
         ~ScriptCallStack();
 
         ScriptState* state() const { return m_exec; }

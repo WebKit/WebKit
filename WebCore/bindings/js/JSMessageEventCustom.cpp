@@ -54,19 +54,19 @@ JSValue JSMessageEvent::ports(ExecState* exec) const
     return constructArray(exec, list);
 }
 
-JSC::JSValue JSMessageEvent::initMessageEvent(JSC::ExecState* exec, const JSC::ArgList& args)
+JSC::JSValue JSMessageEvent::initMessageEvent(JSC::ExecState* exec)
 {
-    const UString& typeArg = args.at(0).toString(exec);
-    bool canBubbleArg = args.at(1).toBoolean(exec);
-    bool cancelableArg = args.at(2).toBoolean(exec);
-    PassRefPtr<SerializedScriptValue> dataArg = SerializedScriptValue::create(exec, args.at(3));
-    const UString& originArg = args.at(4).toString(exec);
-    const UString& lastEventIdArg = args.at(5).toString(exec);
-    DOMWindow* sourceArg = toDOMWindow(args.at(6));
+    const UString& typeArg = exec->argument(0).toString(exec);
+    bool canBubbleArg = exec->argument(1).toBoolean(exec);
+    bool cancelableArg = exec->argument(2).toBoolean(exec);
+    PassRefPtr<SerializedScriptValue> dataArg = SerializedScriptValue::create(exec, exec->argument(3));
+    const UString& originArg = exec->argument(4).toString(exec);
+    const UString& lastEventIdArg = exec->argument(5).toString(exec);
+    DOMWindow* sourceArg = toDOMWindow(exec->argument(6));
     OwnPtr<MessagePortArray> messagePorts;
-    if (!args.at(7).isUndefinedOrNull()) {
+    if (!exec->argument(7).isUndefinedOrNull()) {
         messagePorts = new MessagePortArray();
-        fillMessagePortArray(exec, args.at(7), *messagePorts);
+        fillMessagePortArray(exec, exec->argument(7), *messagePorts);
         if (exec->hadException())
             return jsUndefined();
     }

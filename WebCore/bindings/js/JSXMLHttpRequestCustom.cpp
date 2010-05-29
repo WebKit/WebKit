@@ -62,23 +62,23 @@ void JSXMLHttpRequest::markChildren(MarkStack& markStack)
 }
 
 // Custom functions
-JSValue JSXMLHttpRequest::open(ExecState* exec, const ArgList& args)
+JSValue JSXMLHttpRequest::open(ExecState* exec)
 {
-    if (args.size() < 2)
+    if (exec->argumentCount() < 2)
         return throwError(exec, SyntaxError, "Not enough arguments");
 
-    const KURL& url = impl()->scriptExecutionContext()->completeURL(ustringToString(args.at(1).toString(exec)));
-    String method = ustringToString(args.at(0).toString(exec));
+    const KURL& url = impl()->scriptExecutionContext()->completeURL(ustringToString(exec->argument(1).toString(exec)));
+    String method = ustringToString(exec->argument(0).toString(exec));
 
     ExceptionCode ec = 0;
-    if (args.size() >= 3) {
-        bool async = args.at(2).toBoolean(exec);
+    if (exec->argumentCount() >= 3) {
+        bool async = exec->argument(2).toBoolean(exec);
 
-        if (args.size() >= 4 && !args.at(3).isUndefined()) {
-            String user = valueToStringWithNullCheck(exec, args.at(3));
+        if (exec->argumentCount() >= 4 && !exec->argument(3).isUndefined()) {
+            String user = valueToStringWithNullCheck(exec, exec->argument(3));
             
-            if (args.size() >= 5 && !args.at(4).isUndefined()) {
-                String password = valueToStringWithNullCheck(exec, args.at(4));
+            if (exec->argumentCount() >= 5 && !exec->argument(4).isUndefined()) {
+                String password = valueToStringWithNullCheck(exec, exec->argument(4));
                 impl()->open(method, url, async, user, password, ec);
             } else
                 impl()->open(method, url, async, user, ec);
@@ -91,13 +91,13 @@ JSValue JSXMLHttpRequest::open(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
-JSValue JSXMLHttpRequest::send(ExecState* exec, const ArgList& args)
+JSValue JSXMLHttpRequest::send(ExecState* exec)
 {
     ExceptionCode ec = 0;
-    if (args.isEmpty())
+    if (!exec->argumentCount())
         impl()->send(ec);
     else {
-        JSValue val = args.at(0);
+        JSValue val = exec->argument(0);
         if (val.isUndefinedOrNull())
             impl()->send(ec);
         else if (val.inherits(&JSDocument::s_info))

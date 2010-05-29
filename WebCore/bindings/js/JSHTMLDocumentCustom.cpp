@@ -100,10 +100,10 @@ void JSHTMLDocument::setAll(ExecState* exec, JSValue value)
 
 // Custom functions
 
-JSValue JSHTMLDocument::open(ExecState* exec, const ArgList& args)
+JSValue JSHTMLDocument::open(ExecState* exec)
 {
     // For compatibility with other browsers, pass open calls with more than 2 parameters to the window.
-    if (args.size() > 2) {
+    if (exec->argumentCount() > 2) {
         Frame* frame = static_cast<HTMLDocument*>(impl())->frame();
         if (frame) {
             JSDOMWindowShell* wrapper = toJSDOMWindowShell(frame, currentWorld(exec));
@@ -113,7 +113,7 @@ JSValue JSHTMLDocument::open(ExecState* exec, const ArgList& args)
                 CallType callType = function.getCallData(callData);
                 if (callType == CallTypeNone)
                     return throwError(exec, TypeError);
-                return JSC::call(exec, function, callType, callData, wrapper, args);
+                return JSC::call(exec, function, callType, callData, wrapper, ArgList(exec));
             }
         }
         return jsUndefined();
@@ -130,20 +130,20 @@ JSValue JSHTMLDocument::open(ExecState* exec, const ArgList& args)
 
 enum NewlineRequirement { DoNotAddNewline, DoAddNewline };
 
-static inline void documentWrite(ExecState* exec, const ArgList& args, HTMLDocument* document, NewlineRequirement addNewline)
+static inline void documentWrite(ExecState* exec, HTMLDocument* document, NewlineRequirement addNewline)
 {
     // DOM only specifies single string argument, but browsers allow multiple or no arguments.
 
-    size_t size = args.size();
+    size_t size = exec->argumentCount();
 
-    UString firstString = args.at(0).toString(exec);
+    UString firstString = exec->argument(0).toString(exec);
     SegmentedString segmentedString = ustringToString(firstString);
     if (size != 1) {
         if (!size)
             segmentedString.clear();
         else {
             for (size_t i = 1; i < size; ++i) {
-                UString subsequentString = args.at(i).toString(exec);
+                UString subsequentString = exec->argument(i).toString(exec);
                 segmentedString.append(SegmentedString(ustringToString(subsequentString)));
             }
         }
@@ -155,15 +155,15 @@ static inline void documentWrite(ExecState* exec, const ArgList& args, HTMLDocum
     document->write(segmentedString, activeDocument);
 }
 
-JSValue JSHTMLDocument::write(ExecState* exec, const ArgList& args)
+JSValue JSHTMLDocument::write(ExecState* exec)
 {
-    documentWrite(exec, args, static_cast<HTMLDocument*>(impl()), DoNotAddNewline);
+    documentWrite(exec, static_cast<HTMLDocument*>(impl()), DoNotAddNewline);
     return jsUndefined();
 }
 
-JSValue JSHTMLDocument::writeln(ExecState* exec, const ArgList& args)
+JSValue JSHTMLDocument::writeln(ExecState* exec)
 {
-    documentWrite(exec, args, static_cast<HTMLDocument*>(impl()), DoAddNewline);
+    documentWrite(exec, static_cast<HTMLDocument*>(impl()), DoAddNewline);
     return jsUndefined();
 }
 

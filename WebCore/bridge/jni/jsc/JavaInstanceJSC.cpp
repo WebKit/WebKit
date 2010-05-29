@@ -131,7 +131,7 @@ JSValue JavaInstance::getMethod(ExecState* exec, const Identifier& propertyName)
     return new (exec) JavaRuntimeMethod(exec, exec->lexicalGlobalObject(), propertyName, methodList);
 }
 
-JSValue JavaInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod, const ArgList &args)
+JSValue JavaInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
 {
     if (!asObject(runtimeMethod)->inherits(&JavaRuntimeMethod::s_info))
         return throwError(exec, TypeError, "Attempt to invoke non-Java method on Java object.");
@@ -139,7 +139,7 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod
     const MethodList& methodList = *runtimeMethod->methods();
 
     int i;
-    int count = args.size();
+    int count = exec->argumentCount();
     JSValue resultValue;
     Method* method = 0;
     size_t numMethods = methodList.size();
@@ -168,8 +168,8 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod
 
     for (i = 0; i < count; i++) {
         JavaParameter* aParameter = jMethod->parameterAt(i);
-        jArgs[i] = convertValueToJValue(exec, m_rootObject.get(), args.at(i), aParameter->getJNIType(), aParameter->type());
-        LOG(LiveConnect, "JavaInstance::invokeMethod arg[%d] = %s", i, args.at(i).toString(exec).ascii());
+        jArgs[i] = convertValueToJValue(exec, m_rootObject.get(), exec->argument(i), aParameter->getJNIType(), aParameter->type());
+        LOG(LiveConnect, "JavaInstance::invokeMethod arg[%d] = %s", i, exec->argument(i).toString(exec).ascii());
     }
 
     jvalue result;

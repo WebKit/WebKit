@@ -115,9 +115,9 @@ ConstructType NumberConstructor::getConstructData(ConstructData& constructData)
 }
 
 // ECMA 15.7.2
-static JSValue JSC_HOST_CALL callNumberConstructor(ExecState* exec, JSObject*, JSValue, const ArgList& args)
+static JSValue JSC_HOST_CALL callNumberConstructor(ExecState* exec)
 {
-    return jsNumber(exec, args.isEmpty() ? 0 : args.at(0).toNumber(exec));
+    return jsNumber(exec, !exec->argumentCount() ? 0 : exec->argument(0).toNumber(exec));
 }
 
 CallType NumberConstructor::getCallData(CallData& callData)

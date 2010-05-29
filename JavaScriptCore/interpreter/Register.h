@@ -39,7 +39,7 @@ namespace JSC {
     class CodeBlock;
     class ExecState;
     class JSActivation;
-    class JSFunction;
+    class JSObject;
     class JSPropertyNameIterator;
     class ScopeChainNode;
 
@@ -58,7 +58,6 @@ namespace JSC {
         Register& operator=(JSActivation*);
         Register& operator=(CallFrame*);
         Register& operator=(CodeBlock*);
-        Register& operator=(JSFunction*);
         Register& operator=(JSPropertyNameIterator*);
         Register& operator=(ScopeChainNode*);
         Register& operator=(Instruction*);
@@ -67,7 +66,7 @@ namespace JSC {
         JSActivation* activation() const;
         CallFrame* callFrame() const;
         CodeBlock* codeBlock() const;
-        JSFunction* function() const;
+        JSObject* function() const;
         JSPropertyNameIterator* propertyNameIterator() const;
         ScopeChainNode* scopeChain() const;
         Instruction* vPC() const;
@@ -79,6 +78,13 @@ namespace JSC {
             return r;
         }
 
+        static Register withCallee(JSObject* callee)
+        {
+            Register r;
+            r.u.function = callee;
+            return r;
+        }
+
     private:
         union {
             int32_t i;
@@ -87,7 +93,7 @@ namespace JSC {
             JSActivation* activation;
             CallFrame* callFrame;
             CodeBlock* codeBlock;
-            JSFunction* function;
+            JSObject* function;
             JSPropertyNameIterator* propertyNameIterator;
             ScopeChainNode* scopeChain;
             Instruction* vPC;
@@ -143,12 +149,6 @@ namespace JSC {
         return *this;
     }
 
-    ALWAYS_INLINE Register& Register::operator=(JSFunction* function)
-    {
-        u.function = function;
-        return *this;
-    }
-
     ALWAYS_INLINE Register& Register::operator=(Instruction* vPC)
     {
         u.vPC = vPC;
@@ -187,7 +187,7 @@ namespace JSC {
         return u.codeBlock;
     }
     
-    ALWAYS_INLINE JSFunction* Register::function() const
+    ALWAYS_INLINE JSObject* Register::function() const
     {
         return u.function;
     }

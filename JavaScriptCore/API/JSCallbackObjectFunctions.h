@@ -29,6 +29,7 @@
 #include "Error.h"
 #include "JSCallbackFunction.h"
 #include "JSClassRef.h"
+#include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "JSObjectRef.h"
@@ -370,18 +371,18 @@ CallType JSCallbackObject<Base>::getCallData(CallData& callData)
 }
 
 template <class Base>
-JSValue JSCallbackObject<Base>::call(ExecState* exec, JSObject* functionObject, JSValue thisValue, const ArgList& args)
+JSValue JSCallbackObject<Base>::call(ExecState* exec)
 {
     JSContextRef execRef = toRef(exec);
-    JSObjectRef functionRef = toRef(functionObject);
-    JSObjectRef thisObjRef = toRef(thisValue.toThisObject(exec));
+    JSObjectRef functionRef = toRef(exec->callee());
+    JSObjectRef thisObjRef = toRef(exec->hostThisValue().toThisObject(exec));
     
-    for (JSClassRef jsClass = static_cast<JSCallbackObject<Base>*>(functionObject)->classRef(); jsClass; jsClass = jsClass->parentClass) {
+    for (JSClassRef jsClass = static_cast<JSCallbackObject<Base>*>(toJS(functionRef))->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (JSObjectCallAsFunctionCallback callAsFunction = jsClass->callAsFunction) {
-            int argumentCount = static_cast<int>(args.size());
+            int argumentCount = static_cast<int>(exec->argumentCount());
             Vector<JSValueRef, 16> arguments(argumentCount);
             for (int i = 0; i < argumentCount; i++)
-                arguments[i] = toRef(exec, args.at(i));
+                arguments[i] = toRef(exec, exec->argument(i));
             JSValueRef exception = 0;
             JSValue result;
             {

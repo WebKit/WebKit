@@ -44,12 +44,12 @@ namespace WebCore {
 
 #if ENABLE(APPLICATION_CACHE_DYNAMIC_ENTRIES)
 
-JSValue JSDOMApplicationCache::hasItem(ExecState* exec, const ArgList& args)
+JSValue JSDOMApplicationCache::hasItem(ExecState* exec)
 {
     Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!frame)
         return jsUndefined();
-    const KURL& url = frame->loader()->completeURL(args.at(0).toString(exec));
+    const KURL& url = frame->loader()->completeURL(exec->argument(0).toString(exec));
 
     ExceptionCode ec = 0;
     bool result = impl()->hasItem(url, ec);
@@ -57,12 +57,12 @@ JSValue JSDOMApplicationCache::hasItem(ExecState* exec, const ArgList& args)
     return jsBoolean(result);
 }
 
-JSValue JSDOMApplicationCache::add(ExecState* exec, const ArgList& args)
+JSValue JSDOMApplicationCache::add(ExecState* exec)
 {
     Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!frame)
         return jsUndefined();
-    const KURL& url = frame->loader()->completeURL(args.at(0).toString(exec));
+    const KURL& url = frame->loader()->completeURL(exec->argument(0).toString(exec));
     
     ExceptionCode ec = 0;
     impl()->add(url, ec);
@@ -70,12 +70,12 @@ JSValue JSDOMApplicationCache::add(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
-JSValue JSDOMApplicationCache::remove(ExecState* exec, const ArgList& args)
+JSValue JSDOMApplicationCache::remove(ExecState* exec)
 {
     Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!frame)
         return jsUndefined();
-    const KURL& url = frame->loader()->completeURL(args.at(0).toString(exec));
+    const KURL& url = frame->loader()->completeURL(exec->argument(0).toString(exec));
     
     ExceptionCode ec = 0;
     impl()->remove(url, ec);

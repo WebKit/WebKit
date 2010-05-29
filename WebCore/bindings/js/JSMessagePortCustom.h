@@ -47,11 +47,11 @@ namespace WebCore {
 
     // Helper function to convert from JS postMessage arguments to WebCore postMessage arguments.
     template <typename T>
-    inline JSC::JSValue handlePostMessage(JSC::ExecState* exec, const JSC::ArgList& args, T* impl)
+    inline JSC::JSValue handlePostMessage(JSC::ExecState* exec, T* impl)
     {
-        PassRefPtr<SerializedScriptValue> message = SerializedScriptValue::create(exec, args.at(0));
+        PassRefPtr<SerializedScriptValue> message = SerializedScriptValue::create(exec, exec->argument(0));
         MessagePortArray portArray;
-        fillMessagePortArray(exec, args.at(1), portArray);
+        fillMessagePortArray(exec, exec->argument(1), portArray);
         if (exec->hadException())
             return JSC::jsUndefined();
 

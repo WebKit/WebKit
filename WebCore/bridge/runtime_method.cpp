@@ -87,15 +87,16 @@ bool RuntimeMethod::getOwnPropertyDescriptor(ExecState* exec, const Identifier& 
     return InternalFunction::getOwnPropertyDescriptor(exec, propertyName, descriptor);
 }
 
-static JSValue JSC_HOST_CALL callRuntimeMethod(ExecState* exec, JSObject* function, JSValue thisValue, const ArgList& args)
+static JSValue JSC_HOST_CALL callRuntimeMethod(ExecState* exec)
 {
-    RuntimeMethod* method = static_cast<RuntimeMethod*>(function);
+    RuntimeMethod* method = static_cast<RuntimeMethod*>(exec->callee());
 
     if (method->methods()->isEmpty())
         return jsUndefined();
 
     RefPtr<Instance> instance;
 
+    JSValue thisValue = exec->hostThisValue();
     if (thisValue.inherits(&RuntimeObject::s_info)) {
         RuntimeObject* runtimeObject = static_cast<RuntimeObject*>(asObject(thisValue));
         instance = runtimeObject->getInternalInstance();
@@ -113,7 +114,7 @@ static JSValue JSC_HOST_CALL callRuntimeMethod(ExecState* exec, JSObject* functi
     ASSERT(instance);
 
     instance->begin();
-    JSValue result = instance->invokeMethod(exec, method, args);
+    JSValue result = instance->invokeMethod(exec, method);
     instance->end();
     return result;
 }

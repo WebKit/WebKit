@@ -39,10 +39,10 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSSQLResultSetRowList::item(ExecState* exec, const ArgList& args)
+JSValue JSSQLResultSetRowList::item(ExecState* exec)
 {
     bool indexOk;
-    int index = args.at(0).toInt32(exec, indexOk);
+    int index = exec->argument(0).toInt32(exec, indexOk);
     if (!indexOk) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return jsUndefined();

@@ -35,13 +35,13 @@ JSValue JSSVGLength::value(ExecState* exec) const
     return jsNumber(exec, podImp.value(context));
 }
 
-JSValue JSSVGLength::convertToSpecifiedUnits(ExecState* exec, const ArgList& args)
+JSValue JSSVGLength::convertToSpecifiedUnits(ExecState* exec)
 {
     JSSVGPODTypeWrapper<SVGLength>* imp = impl();
     SVGElement* context = JSSVGContextCache::svgContextForDOMObject(this);
 
     SVGLength podImp(*imp);
-    podImp.convertToSpecifiedUnits(args.at(0).toInt32(exec), context);
+    podImp.convertToSpecifiedUnits(exec->argument(0).toInt32(exec), context);
 
     imp->commitChange(podImp, this);
     return jsUndefined();

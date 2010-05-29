@@ -31,15 +31,15 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSSVGMatrix::multiply(ExecState* exec, const ArgList& args)
+JSValue JSSVGMatrix::multiply(ExecState* exec)
 {
-    if (args.size() < 1)
+    if (exec->argumentCount() < 1)
         return throwError(exec, SyntaxError, "Not enough arguments");
 
-    if (!args.at(0).inherits(&JSSVGMatrix::s_info))
+    if (!exec->argument(0).inherits(&JSSVGMatrix::s_info))
         return throwError(exec, TypeError, "secondMatrix argument was not a SVGMatrix");
 
-    JSSVGMatrix* matrixObj = static_cast<JSSVGMatrix*>(asObject(args.at(0)));
+    JSSVGMatrix* matrixObj = static_cast<JSSVGMatrix*>(asObject(exec->argument(0)));
 
     AffineTransform m1(*impl());
     AffineTransform m2(*(matrixObj->impl()));
@@ -48,7 +48,7 @@ JSValue JSSVGMatrix::multiply(ExecState* exec, const ArgList& args)
     return toJS(exec, globalObject(), JSSVGStaticPODTypeWrapper<AffineTransform>::create(m1.multLeft(m2)).get(), context);
 }
 
-JSValue JSSVGMatrix::inverse(ExecState* exec, const ArgList&)
+JSValue JSSVGMatrix::inverse(ExecState* exec)
 {
     AffineTransform imp(*impl());
 
@@ -61,12 +61,12 @@ JSValue JSSVGMatrix::inverse(ExecState* exec, const ArgList&)
     return result;
 }
 
-JSValue JSSVGMatrix::rotateFromVector(ExecState* exec, const ArgList& args)
+JSValue JSSVGMatrix::rotateFromVector(ExecState* exec)
 {
     AffineTransform imp(*impl());
  
-    float x = args.at(0).toFloat(exec);
-    float y = args.at(1).toFloat(exec);
+    float x = exec->argument(0).toFloat(exec);
+    float y = exec->argument(1).toFloat(exec);
 
     SVGElement* context = JSSVGContextCache::svgContextForDOMObject(this);
     JSValue result = toJS(exec, globalObject(), JSSVGStaticPODTypeWrapper<AffineTransform>::create(imp.rotateFromVector(x, y)).get(), context);

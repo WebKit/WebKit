@@ -189,15 +189,15 @@ namespace JSC {
         return new (globalData) JSString(globalData, ropeBuilder.release());
     }
 
-    ALWAYS_INLINE JSValue jsString(ExecState* exec, JSValue thisValue, const ArgList& args)
+    ALWAYS_INLINE JSValue jsString(ExecState* exec, JSValue thisValue)
     {
         unsigned fiberCount = 0;
         if (LIKELY(thisValue.isString()))
             fiberCount += asString(thisValue)->size();
         else
             ++fiberCount;
-        for (unsigned i = 0; i < args.size(); ++i) {
-            JSValue v = args.at(i);
+        for (unsigned i = 0; i < exec->argumentCount(); ++i) {
+            JSValue v = exec->argument(i);
             if (LIKELY(v.isString()))
                 fiberCount += asString(v)->size();
             else
@@ -216,8 +216,8 @@ namespace JSC {
         unsigned length = 0;
         bool overflow = false;
 
-        for (unsigned i = 0; i < args.size(); ++i) {
-            JSValue v = args.at(i);
+        for (unsigned i = 0; i < exec->argumentCount(); ++i) {
+            JSValue v = exec->argument(i);
             if (LIKELY(v.isString()))
                 ropeBuilder.append(asString(v));
             else

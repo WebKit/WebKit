@@ -180,263 +180,29 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
     int executableOffsetToFunction = isConstruct ? OBJECT_OFFSETOF(NativeExecutable, m_constructor) : OBJECT_OFFSETOF(NativeExecutable, m_function);
 
     Label nativeCallThunk = align();
-    preserveReturnAddressAfterCall(regT0);
-    emitPutToCallFrameHeader(regT0, RegisterFile::ReturnPC); // Push return address
 
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
-    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT1);
-    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT1);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT0);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT0);
     emitPutToCallFrameHeader(regT1, RegisterFile::ScopeChain);
-    
+
+    peek(regT1);
+    emitPutToCallFrameHeader(regT1, RegisterFile::ReturnPC);
 
 #if CPU(X86_64)
-    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, X86Registers::ecx);
+    // Calling convention:      f(edi, esi, edx, ecx, ...);
+    // Host function signature: f(ExecState*);
+    move(callFrameRegister, X86Registers::edi);
 
-    // Allocate stack space for our arglist
-    subPtr(Imm32(sizeof(ArgList)), stackPointerRegister);
-    COMPILE_ASSERT((sizeof(ArgList) & 0xf) == 0, ArgList_should_by_16byte_aligned);
-    
-    // Set up arguments
-    subPtr(Imm32(1), X86Registers::ecx); // Don't include 'this' in argcount
+    subPtr(Imm32(16 - sizeof(void*)), stackPointerRegister); // Align stack after call.
 
-    // Push argcount
-    storePtr(X86Registers::ecx, Address(stackPointerRegister, OBJECT_OFFSETOF(ArgList, m_argCount)));
-
-    // Calculate the start of the callframe header, and store in edx
-    addPtr(Imm32(-RegisterFile::CallFrameHeaderSize * (int32_t)sizeof(Register)), callFrameRegister, X86Registers::edx);
-    
-    // Calculate start of arguments as callframe header - sizeof(Register) * argcount (ecx)
-    mul32(Imm32(sizeof(Register)), X86Registers::ecx, X86Registers::ecx);
-    subPtr(X86Registers::ecx, X86Registers::edx);
-
-    // push pointer to arguments
-    storePtr(X86Registers::edx, Address(stackPointerRegister, OBJECT_OFFSETOF(ArgList, m_args)));
-    
-    // ArgList is passed by reference so is stackPointerRegister
-    move(stackPointerRegister, X86Registers::ecx);
-    
-    // edx currently points to the first argument, edx-sizeof(Register) points to 'this'
-    loadPtr(Address(X86Registers::edx, -(int32_t)sizeof(Register)), X86Registers::edx);
-    
     emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, X86Registers::esi);
-
-    move(callFrameRegister, X86Registers::edi); 
-
     loadPtr(Address(X86Registers::esi, OBJECT_OFFSETOF(JSFunction, m_executable)), X86Registers::r9);
+    move(regT0, callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
     call(Address(X86Registers::r9, executableOffsetToFunction));
-    
-    addPtr(Imm32(sizeof(ArgList)), stackPointerRegister);
-#elif CPU(X86)
-    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT0);
 
-    /* We have two structs that we use to describe the stackframe we set up for our
-     * call to native code.  NativeCallFrameStructure describes the how we set up the stack
-     * in advance of the call.  NativeFunctionCalleeSignature describes the callframe
-     * as the native code expects it.  We do this as we are using the fastcall calling
-     * convention which results in the callee popping its arguments off the stack, but
-     * not the rest of the callframe so we need a nice way to ensure we increment the
-     * stack pointer by the right amount after the call.
-     */
-#if COMPILER(MSVC) || OS(LINUX)
-    struct NativeCallFrameStructure {
-      //  CallFrame* callFrame; // passed in EDX
-        JSObject* callee;
-        JSValue thisValue;
-        ArgList* argPointer;
-        ArgList args;
-        JSValue result;
-    };
-    struct NativeFunctionCalleeSignature {
-        JSObject* callee;
-        JSValue thisValue;
-        ArgList* argPointer;
-    };
-#else
-    struct NativeCallFrameStructure {
-      //  CallFrame* callFrame; // passed in ECX
-      //  JSObject* callee; // passed in EDX
-        JSValue thisValue;
-        ArgList* argPointer;
-        ArgList args;
-    };
-    struct NativeFunctionCalleeSignature {
-        JSValue thisValue;
-        ArgList* argPointer;
-    };
-#endif
-    const int NativeCallFrameSize = (sizeof(NativeCallFrameStructure) + 15) & ~15;
-    // Allocate system stack frame
-    subPtr(Imm32(NativeCallFrameSize), stackPointerRegister);
-
-    // Set up arguments
-    subPtr(Imm32(1), regT0); // Don't include 'this' in argcount
-
-    // push argcount
-    storePtr(regT0, Address(stackPointerRegister, OBJECT_OFFSETOF(NativeCallFrameStructure, args) + OBJECT_OFFSETOF(ArgList, m_argCount)));
-    
-    // Calculate the start of the callframe header, and store in regT1
-    addPtr(Imm32(-RegisterFile::CallFrameHeaderSize * (int)sizeof(Register)), callFrameRegister, regT1);
-    
-    // Calculate start of arguments as callframe header - sizeof(Register) * argcount (regT0)
-    mul32(Imm32(sizeof(Register)), regT0, regT0);
-    subPtr(regT0, regT1);
-    storePtr(regT1, Address(stackPointerRegister, OBJECT_OFFSETOF(NativeCallFrameStructure, args) + OBJECT_OFFSETOF(ArgList, m_args)));
-
-    // ArgList is passed by reference so is stackPointerRegister + 4 * sizeof(Register)
-    addPtr(Imm32(OBJECT_OFFSETOF(NativeCallFrameStructure, args)), stackPointerRegister, regT0);
-    storePtr(regT0, Address(stackPointerRegister, OBJECT_OFFSETOF(NativeCallFrameStructure, argPointer)));
-
-    // regT1 currently points to the first argument, regT1 - sizeof(Register) points to 'this'
-    loadPtr(Address(regT1, -(int)sizeof(Register)), regT1);
-    storePtr(regT1, Address(stackPointerRegister, OBJECT_OFFSETOF(NativeCallFrameStructure, thisValue)));
-
-#if COMPILER(MSVC) || OS(LINUX)
-    // ArgList is passed by reference so is stackPointerRegister + 4 * sizeof(Register)
-    addPtr(Imm32(OBJECT_OFFSETOF(NativeCallFrameStructure, result)), stackPointerRegister, X86Registers::ecx);
-
-    // Plant callee
-    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, X86Registers::eax);
-    storePtr(X86Registers::eax, Address(stackPointerRegister, OBJECT_OFFSETOF(NativeCallFrameStructure, callee)));
-
-    // Plant callframe
-    move(callFrameRegister, X86Registers::edx);
-
-    loadPtr(Address(X86Registers::eax, OBJECT_OFFSETOF(JSFunction, m_executable)), X86Registers::ebx);
-    call(Address(X86Registers::ebx, executableOffsetToFunction));
-
-    // JSValue is a non-POD type
-    loadPtr(Address(X86Registers::eax), X86Registers::eax);
-#else
-    // Plant callee
-    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, X86Registers::edx);
-
-    // Plant callframe
-    move(callFrameRegister, X86Registers::ecx);
-    loadPtr(Address(X86Registers::edx, OBJECT_OFFSETOF(JSFunction, m_executable)), X86Registers::ebx);
-    call(Address(X86Registers::ebx, executableOffsetToFunction));
-#endif
-
-    // We've put a few temporaries on the stack in addition to the actual arguments
-    // so pull them off now
-    addPtr(Imm32(NativeCallFrameSize - sizeof(NativeFunctionCalleeSignature)), stackPointerRegister);
-
-#elif CPU(ARM)
-    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT0);
-
-    // Allocate stack space for our arglist
-    COMPILE_ASSERT((sizeof(ArgList) & 0x7) == 0, ArgList_should_by_8byte_aligned);
-    subPtr(Imm32(sizeof(ArgList)), stackPointerRegister);
-
-    // Set up arguments
-    subPtr(Imm32(1), regT0); // Don't include 'this' in argcount
-
-    // Push argcount
-    storePtr(regT0, Address(stackPointerRegister, OBJECT_OFFSETOF(ArgList, m_argCount)));
-
-    // Calculate the start of the callframe header, and store in regT1
-    move(callFrameRegister, regT1);
-    sub32(Imm32(RegisterFile::CallFrameHeaderSize * (int32_t)sizeof(Register)), regT1);
-
-    // Calculate start of arguments as callframe header - sizeof(Register) * argcount (regT1)
-    mul32(Imm32(sizeof(Register)), regT0, regT0);
-    subPtr(regT0, regT1);
-
-    // push pointer to arguments
-    storePtr(regT1, Address(stackPointerRegister, OBJECT_OFFSETOF(ArgList, m_args)));
-
-    // regT1 currently points to the first argument, regT1-sizeof(Register) points to 'this'
-
-#if OS(WINCE)
-    // Setup arg3:
-    loadPtr(Address(regT1, -(int32_t)sizeof(Register)), ARMRegisters::r3);
-
-    // Setup arg2:
-    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, regT2);
-
-    // Setup arg1:
-    move(callFrameRegister, regT1);
-
-    // Setup arg0:
-    move(stackPointerRegister, regT0);
-    subPtr(Imm32(sizeof(Register)), stackPointerRegister);
-    storePtr(regT0, Address(stackPointerRegister));
-
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSFunction, m_executable)), regT3);
-    call(Address(regT3, executableOffsetToFunction));
-
-    loadPtr(Address(regT0), regT0);
-
-    addPtr(Imm32(sizeof(Register) + sizeof(ArgList)), stackPointerRegister);
-#else // OS(WINCE)
-    // Setup arg3:
-    loadPtr(Address(regT1, -(int32_t)sizeof(Register)), regT2);
-
-    // Setup arg2:
-    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, regT1);
-
-    // Setup arg1:
-    move(callFrameRegister, regT0);
-
-    // Setup arg4: This is a plain hack
-    move(stackPointerRegister, ARMRegisters::r3);
-
-    loadPtr(Address(regT1, OBJECT_OFFSETOF(JSFunction, m_executable)), regT3);
-    call(Address(regT3, executableOffsetToFunction));
-
-    addPtr(Imm32(sizeof(ArgList)), stackPointerRegister);
-#endif // OS(WINCE)
-
-#elif CPU(MIPS)
-    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT0);
-
-    // Allocate stack space for our arglist
-    COMPILE_ASSERT(!(sizeof(ArgList) & 0x7), ArgList_should_by_8byte_aligned);
-    subPtr(Imm32(sizeof(ArgList) + 24), stackPointerRegister);
-
-    // Set up arguments
-    subPtr(Imm32(1), regT0); // Don't include 'this' in argcount
-
-    // Push argcount to 24 + offset($sp)
-    storePtr(regT0, Address(stackPointerRegister, 24 + OBJECT_OFFSETOF(ArgList, m_argCount)));
-
-    // Calculate the start of the callframe header, and store in regT1
-    move(callFrameRegister, regT1);
-    sub32(Imm32(RegisterFile::CallFrameHeaderSize * (int32_t)sizeof(Register)), regT1);
-
-    // Calculate start of arguments as callframe header - sizeof(Register) * argcount (regT1)
-    mul32(Imm32(sizeof(Register)), regT0, regT0);
-    subPtr(regT0, regT1);
-
-    // push pointer to arguments to 24 + offset($sp)
-    storePtr(regT1, Address(stackPointerRegister, 24 + OBJECT_OFFSETOF(ArgList, m_args)));
-
-    // Setup arg3: regT1 currently points to the first argument, regT1-sizeof(Register) points to 'this'
-    loadPtr(Address(regT1, -(int32_t)sizeof(Register)), MIPSRegisters::a3);
-
-    // Setup arg2:
-    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, MIPSRegisters::a2);
-
-    // Setup arg1:
-    move(callFrameRegister, MIPSRegisters::a1);
-
-    // Setup arg4: ArgList is passed by reference.  At 16($sp), store ($sp + 24)
-    addPtr(Imm32(24), stackPointerRegister, regT2);
-    storePtr(regT2, Address(stackPointerRegister, 16));
-
-    // Setup arg0 as 20($sp) to hold the returned structure.
-    ASSERT(sizeof(JSValue) == 4);
-    addPtr(Imm32(20), stackPointerRegister, MIPSRegisters::a0);
-
-    // Call
-    loadPtr(Address(MIPSRegisters::a2, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
-    call(Address(regT2, executableOffsetToFunction));
-
-    // Get returned value from 0($v0) which is the same as 20($sp)
-    loadPtr(Address(returnValueRegister, 0), returnValueRegister);
-
-    // Restore stack space
-    addPtr(Imm32(sizeof(ArgList) + 24), stackPointerRegister);
+    addPtr(Imm32(16 - sizeof(void*)), stackPointerRegister);
 
 #elif ENABLE(JIT_OPTIMIZE_NATIVE_CALL)
 #error "JIT_OPTIMIZE_NATIVE_CALL not yet supported on this platform."
@@ -448,26 +214,17 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
     loadPtr(&(globalData->exception), regT2);
     Jump exceptionHandler = branchTestPtr(NonZero, regT2);
 
-    // Grab the return address.
-    emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, regT1);
-    
-    // Restore our caller's "r".
-    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
-    
     // Return.
-    restoreReturnAddressBeforeReturn(regT1);
     ret();
 
     // Handle an exception
     exceptionHandler.link(this);
     // Grab the return address.
-    emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, regT1);
+    peek(regT1);
     move(ImmPtr(&globalData->exceptionLocation), regT2);
     storePtr(regT1, regT2);
-    move(ImmPtr(FunctionPtr(ctiVMThrowTrampoline).value()), regT2);
-    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
-    poke(callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof (void*));
-    restoreReturnAddressBeforeReturn(regT2);
+    poke(callFrameRegister, 1 + OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof (void*));
+    poke(ImmPtr(FunctionPtr(ctiVMThrowTrampoline).value()));
     ret();
 
     return nativeCallThunk;

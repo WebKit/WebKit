@@ -45,12 +45,12 @@ using namespace JSC;
 namespace WebCore {
 
 // Custom functions
-JSValue JSWebSocket::send(ExecState* exec, const ArgList& args)
+JSValue JSWebSocket::send(ExecState* exec)
 {
-    if (args.size() < 1)
+    if (exec->argumentCount() < 1)
         return throwError(exec, SyntaxError, "Not enough arguments");
 
-    const String& msg = ustringToString(args.at(0).toString(exec));
+    const String& msg = ustringToString(exec->argument(0).toString(exec));
     if (exec->hadException())
         return throwError(exec, SyntaxError, "bad message data.");
     ExceptionCode ec = 0;

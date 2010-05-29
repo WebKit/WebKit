@@ -89,7 +89,7 @@ static JSC::JSValue finishSetterReadOnlyResult(JSC::ExecState* exec, ExceptionCo
 }
 
 template<typename JSPODListType, typename PODType>
-static JSC::JSValue clear(JSPODListType* wrapper, JSC::ExecState* exec, const JSC::ArgList&,
+static JSC::JSValue clear(JSPODListType* wrapper, JSC::ExecState* exec,
                           typename JSSVGPODListTraits<PODType>::ConversionCallback)
 {
     ExceptionCode ec = 0;
@@ -105,21 +105,21 @@ static JSC::JSValue clear(JSPODListType* wrapper, JSC::ExecState* exec, const JS
 }
 
 template<typename JSPODListType, typename PODType>
-static JSC::JSValue initialize(JSPODListType* wrapper, JSC::ExecState* exec, const JSC::ArgList& args,
+static JSC::JSValue initialize(JSPODListType* wrapper, JSC::ExecState* exec,
                                typename JSSVGPODListTraits<PODType>::ConversionCallback conversion)
 {
     ExceptionCode ec = 0;
     typename JSSVGPODListTraits<PODType>::PODList* listImp = wrapper->impl();
     return finishSetter<JSPODListType, PODType>(exec, ec, wrapper,
-                                                listImp->initialize(JSSVGPODListTraits<PODType>::PODListItem::copy(conversion(args.at(0))), ec));
+                                                listImp->initialize(JSSVGPODListTraits<PODType>::PODListItem::copy(conversion(exec->argument(0))), ec));
 }
 
 template<typename JSPODListType, typename PODType>
-static JSC::JSValue getItem(JSPODListType* wrapper, JSC::ExecState* exec, const JSC::ArgList& args,
+static JSC::JSValue getItem(JSPODListType* wrapper, JSC::ExecState* exec,
                             typename JSSVGPODListTraits<PODType>::ConversionCallback)
 {
     bool indexOk = false;
-    unsigned index = args.at(0).toUInt32(exec, indexOk);
+    unsigned index = exec->argument(0).toUInt32(exec, indexOk);
     if (!indexOk) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return JSC::jsUndefined();
@@ -132,11 +132,11 @@ static JSC::JSValue getItem(JSPODListType* wrapper, JSC::ExecState* exec, const 
 }
 
 template<typename JSPODListType, typename PODType>
-static JSC::JSValue insertItemBefore(JSPODListType* wrapper, JSC::ExecState* exec, const JSC::ArgList& args,
+static JSC::JSValue insertItemBefore(JSPODListType* wrapper, JSC::ExecState* exec,
                                      typename JSSVGPODListTraits<PODType>::ConversionCallback conversion)
 {
     bool indexOk = false;
-    unsigned index = args.at(1).toUInt32(exec, indexOk);
+    unsigned index = exec->argument(1).toUInt32(exec, indexOk);
     if (!indexOk) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return JSC::jsUndefined();
@@ -145,15 +145,15 @@ static JSC::JSValue insertItemBefore(JSPODListType* wrapper, JSC::ExecState* exe
     ExceptionCode ec = 0;
     typename JSSVGPODListTraits<PODType>::PODList* listImp = wrapper->impl();
     return finishSetter<JSPODListType, PODType>(exec, ec, wrapper,
-                                                listImp->insertItemBefore(JSSVGPODListTraits<PODType>::PODListItem::copy(conversion(args.at(0))), index, ec));
+                                                listImp->insertItemBefore(JSSVGPODListTraits<PODType>::PODListItem::copy(conversion(exec->argument(0))), index, ec));
 }
 
 template<typename JSPODListType, typename PODType>
-static JSC::JSValue replaceItem(JSPODListType* wrapper, JSC::ExecState* exec, const JSC::ArgList& args,
+static JSC::JSValue replaceItem(JSPODListType* wrapper, JSC::ExecState* exec,
                                 typename JSSVGPODListTraits<PODType>::ConversionCallback conversion)
 {
     bool indexOk = false;
-    unsigned index = args.at(1).toUInt32(exec, indexOk);
+    unsigned index = exec->argument(1).toUInt32(exec, indexOk);
     if (!indexOk) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return JSC::jsUndefined();
@@ -162,15 +162,15 @@ static JSC::JSValue replaceItem(JSPODListType* wrapper, JSC::ExecState* exec, co
     ExceptionCode ec = 0;
     typename JSSVGPODListTraits<PODType>::PODList* listImp = wrapper->impl();
     return finishSetter<JSPODListType, PODType>(exec, ec, wrapper,
-                                                listImp->replaceItem(JSSVGPODListTraits<PODType>::PODListItem::copy(conversion(args.at(0))), index, ec));
+                                                listImp->replaceItem(JSSVGPODListTraits<PODType>::PODListItem::copy(conversion(exec->argument(0))), index, ec));
 }
 
 template<typename JSPODListType, typename PODType>
-static JSC::JSValue removeItem(JSPODListType* wrapper, JSC::ExecState* exec, const JSC::ArgList& args,
+static JSC::JSValue removeItem(JSPODListType* wrapper, JSC::ExecState* exec,
                                typename JSSVGPODListTraits<PODType>::ConversionCallback)
 {
     bool indexOk = false;
-    unsigned index = args.at(0).toUInt32(exec, indexOk);
+    unsigned index = exec->argument(0).toUInt32(exec, indexOk);
     if (!indexOk) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return JSC::jsUndefined();
@@ -183,13 +183,13 @@ static JSC::JSValue removeItem(JSPODListType* wrapper, JSC::ExecState* exec, con
 }
 
 template<typename JSPODListType, typename PODType>
-static JSC::JSValue appendItem(JSPODListType* wrapper, JSC::ExecState* exec, const JSC::ArgList& args,
+static JSC::JSValue appendItem(JSPODListType* wrapper, JSC::ExecState* exec,
                                typename JSSVGPODListTraits<PODType>::ConversionCallback conversion)
 {
     ExceptionCode ec = 0;
     typename JSSVGPODListTraits<PODType>::PODList* listImp = wrapper->impl();
     return finishSetter<JSPODListType, PODType>(exec, ec, wrapper,
-                                                listImp->appendItem(JSSVGPODListTraits<PODType>::PODListItem::copy(conversion(args.at(0))), ec));
+                                                listImp->appendItem(JSSVGPODListTraits<PODType>::PODListItem::copy(conversion(exec->argument(0))), ec));
 }
 
 }

@@ -63,17 +63,17 @@ JSValue JSClipboard::types(ExecState* exec) const
     return constructArray(exec, list);
 }
 
-JSValue JSClipboard::clearData(ExecState* exec, const ArgList& args)
+JSValue JSClipboard::clearData(ExecState* exec)
 {
     Clipboard* clipboard = impl();
 
-    if (args.size() == 0) {
+    if (!exec->argumentCount()) {
         clipboard->clearAllData();
         return jsUndefined();
     }
 
-    if (args.size() == 1) {
-        clipboard->clearData(ustringToString(args.at(0).toString(exec)));
+    if (exec->argumentCount() == 1) {
+        clipboard->clearData(ustringToString(exec->argument(0).toString(exec)));
         return jsUndefined();
     }
 
@@ -81,23 +81,23 @@ JSValue JSClipboard::clearData(ExecState* exec, const ArgList& args)
     return throwError(exec, SyntaxError, "clearData: Invalid number of arguments");
 }
 
-JSValue JSClipboard::getData(ExecState* exec, const ArgList& args)
+JSValue JSClipboard::getData(ExecState* exec)
 {
     // FIXME: It does not match the rest of the JS bindings to throw on invalid number of arguments.
-    if (args.size() != 1)
+    if (exec->argumentCount() != 1)
         return throwError(exec, SyntaxError, "getData: Invalid number of arguments");
 
     Clipboard* clipboard = impl();
 
     bool success;
-    String result = clipboard->getData(ustringToString(args.at(0).toString(exec)), success);
+    String result = clipboard->getData(ustringToString(exec->argument(0).toString(exec)), success);
     if (!success)
         return jsUndefined();
 
     return jsString(exec, result);
 }
 
-JSValue JSClipboard::setDragImage(ExecState* exec, const ArgList& args)
+JSValue JSClipboard::setDragImage(ExecState* exec)
 {
     Clipboard* clipboard = impl();
 
@@ -105,14 +105,14 @@ JSValue JSClipboard::setDragImage(ExecState* exec, const ArgList& args)
         return jsUndefined();
 
     // FIXME: It does not match the rest of the JS bindings to throw on invalid number of arguments. 
-    if (args.size() != 3)
+    if (exec->argumentCount() != 3)
         return throwError(exec, SyntaxError, "setDragImage: Invalid number of arguments");
 
-    int x = args.at(1).toInt32(exec);
-    int y = args.at(2).toInt32(exec);
+    int x = exec->argument(1).toInt32(exec);
+    int y = exec->argument(2).toInt32(exec);
 
     // See if they passed us a node
-    Node* node = toNode(args.at(0));
+    Node* node = toNode(exec->argument(0));
     if (!node)
         return throwError(exec, TypeError);
 

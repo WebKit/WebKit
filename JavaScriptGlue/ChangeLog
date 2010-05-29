@@ -1,3 +1,26 @@
+2010-05-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig, Gavin Barraclough, Oliver Hunt.
+
+        Simplified the host calling convention.
+
+        PART ONE: Functional code changes.
+        
+        [ None in JavaScriptGlue ]
+        
+        PART TWO: Global search and replace.
+        
+        In the areas below, I used global search-and-replace to change
+            (ExecState*, JSObject*, JSValue, const ArgList&) => (ExecState*)
+            args.size() => exec->argumentCount()
+            args.at(i) => exec->argument(i)
+
+        * JSObject.cpp:
+        (nativeCallFunction):
+        * UserObjectImp.cpp:
+        (UserObjectImp::callAsFunction):
+        * UserObjectImp.h:
+
 2010-04-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by David Levin.

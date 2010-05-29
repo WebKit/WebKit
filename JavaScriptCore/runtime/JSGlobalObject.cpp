@@ -131,7 +131,7 @@ void JSGlobalObject::init(JSObject* thisValue)
     d()->globalData = Heap::heap(this)->globalData();
     d()->globalScopeChain = ScopeChain(this, d()->globalData.get(), this, thisValue);
 
-    JSGlobalObject::globalExec()->init(0, 0, d()->globalScopeChain.node(), CallFrame::noCaller(), 0, 0, 0);
+    JSGlobalObject::globalExec()->init(0, 0, d()->globalScopeChain.node(), CallFrame::noCaller(), 0, 0);
 
     if (JSGlobalObject*& headObject = head()) {
         d()->prev = headObject;

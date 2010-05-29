@@ -31,15 +31,15 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(ObjectPrototype);
 
-static JSValue JSC_HOST_CALL objectProtoFuncValueOf(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue JSC_HOST_CALL objectProtoFuncHasOwnProperty(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue JSC_HOST_CALL objectProtoFuncDefineGetter(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue JSC_HOST_CALL objectProtoFuncDefineSetter(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue JSC_HOST_CALL objectProtoFuncLookupGetter(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue JSC_HOST_CALL objectProtoFuncLookupSetter(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue JSC_HOST_CALL objectProtoFuncPropertyIsEnumerable(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue JSC_HOST_CALL objectProtoFuncToLocaleString(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL objectProtoFuncValueOf(ExecState*);
+static JSValue JSC_HOST_CALL objectProtoFuncHasOwnProperty(ExecState*);
+static JSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(ExecState*);
+static JSValue JSC_HOST_CALL objectProtoFuncDefineGetter(ExecState*);
+static JSValue JSC_HOST_CALL objectProtoFuncDefineSetter(ExecState*);
+static JSValue JSC_HOST_CALL objectProtoFuncLookupGetter(ExecState*);
+static JSValue JSC_HOST_CALL objectProtoFuncLookupSetter(ExecState*);
+static JSValue JSC_HOST_CALL objectProtoFuncPropertyIsEnumerable(ExecState*);
+static JSValue JSC_HOST_CALL objectProtoFuncToLocaleString(ExecState*);
 
 ObjectPrototype::ObjectPrototype(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> stucture, Structure* prototypeFunctionStructure)
     : JSObject(stucture)
@@ -81,74 +81,84 @@ bool ObjectPrototype::getOwnPropertySlot(ExecState* exec, unsigned propertyName,
 
 // ECMA 15.2.4.2, 15.2.4.4, 15.2.4.5, 15.2.4.7
 
-JSValue JSC_HOST_CALL objectProtoFuncValueOf(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
+JSValue JSC_HOST_CALL objectProtoFuncValueOf(ExecState* exec)
 {
+    JSValue thisValue = exec->hostThisValue();
     return thisValue.toThisObject(exec);
 }
 
-JSValue JSC_HOST_CALL objectProtoFuncHasOwnProperty(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL objectProtoFuncHasOwnProperty(ExecState* exec)
 {
-    return jsBoolean(thisValue.toThisObject(exec)->hasOwnProperty(exec, Identifier(exec, args.at(0).toString(exec))));
+    JSValue thisValue = exec->hostThisValue();
+    return jsBoolean(thisValue.toThisObject(exec)->hasOwnProperty(exec, Identifier(exec, exec->argument(0).toString(exec))));
 }
 
-JSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(ExecState* exec)
 {
+    JSValue thisValue = exec->hostThisValue();
     JSObject* thisObj = thisValue.toThisObject(exec);
 
-    if (!args.at(0).isObject())
+    if (!exec->argument(0).isObject())
         return jsBoolean(false);
 
-    JSValue v = asObject(args.at(0))->prototype();
+    JSValue v = asObject(exec->argument(0))->prototype();
 
     while (true) {
         if (!v.isObject())
             return jsBoolean(false);
-        if (v == thisObj)
+        if (v == thisObj)
             return jsBoolean(true);
         v = asObject(v)->prototype();
     }
 }
 
-JSValue JSC_HOST_CALL objectProtoFuncDefineGetter(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL objectProtoFuncDefineGetter(ExecState* exec)
 {
+    JSValue thisValue = exec->hostThisValue();
     CallData callData;
-    if (args.at(1).getCallData(callData) == CallTypeNone)
+    if (exec->argument(1).getCallData(callData) == CallTypeNone)
         return throwError(exec, SyntaxError, "invalid getter usage");
-    thisValue.toThisObject(exec)->defineGetter(exec, Identifier(exec, args.at(0).toString(exec)), asObject(args.at(1)));
+    thisValue.toThisObject(exec)->defineGetter(exec, Identifier(exec, exec->argument(0).toString(exec)), asObject(exec->argument(1)));
     return jsUndefined();
 }
 
-JSValue JSC_HOST_CALL objectProtoFuncDefineSetter(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL objectProtoFuncDefineSetter(ExecState* exec)
 {
+    JSValue thisValue = exec->hostThisValue();
     CallData callData;
-    if (args.at(1).getCallData(callData) == CallTypeNone)
+    if (exec->argument(1).getCallData(callData) == CallTypeNone)
         return throwError(exec, SyntaxError, "invalid setter usage");
-    thisValue.toThisObject(exec)->defineSetter(exec, Identifier(exec, args.at(0).toString(exec)), asObject(args.at(1)));
+    thisValue.toThisObject(exec)->defineSetter(exec, Identifier(exec, exec->argument(0).toString(exec)), asObject(exec->argument(1)));
     return jsUndefined();
 }
 
-JSValue JSC_HOST_CALL objectProtoFuncLookupGetter(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL objectProtoFuncLookupGetter(ExecState* exec)
 {
-    return thisValue.toThisObject(exec)->lookupGetter(exec, Identifier(exec, args.at(0).toString(exec)));
+    JSValue thisValue = exec->hostThisValue();
+    return thisValue.toThisObject(exec)->lookupGetter(exec, Identifier(exec, exec->argument(0).toString(exec)));
 }
 
-JSValue JSC_HOST_CALL objectProtoFuncLookupSetter(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL objectProtoFuncLookupSetter(ExecState* exec)
 {
-    return thisValue.toThisObject(exec)->lookupSetter(exec, Identifier(exec, args.at(0).toString(exec)));
+    JSValue thisValue = exec->hostThisValue();
+    return thisValue.toThisObject(exec)->lookupSetter(exec, Identifier(exec, exec->argument(0).toString(exec)));
 }
 
-JSValue JSC_HOST_CALL objectProtoFuncPropertyIsEnumerable(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL objectProtoFuncPropertyIsEnumerable(ExecState* exec)
 {
-    return jsBoolean(thisValue.toThisObject(exec)->propertyIsEnumerable(exec, Identifier(exec, args.at(0).toString(exec))));
+    JSValue thisValue = exec->hostThisValue();
+    return jsBoolean(thisValue.toThisObject(exec)->propertyIsEnumerable(exec, Identifier(exec, exec->argument(0).toString(exec))));
 }
 
-JSValue JSC_HOST_CALL objectProtoFuncToLocaleString(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
+JSValue JSC_HOST_CALL objectProtoFuncToLocaleString(ExecState* exec)
 {
+    JSValue thisValue = exec->hostThisValue();
     return thisValue.toThisJSString(exec);
 }
 
-JSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
+JSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
 {
+    JSValue thisValue = exec->hostThisValue();
     return jsMakeNontrivialString(exec, "[object ", thisValue.toThisObject(exec)->className(), "]");
 }
 

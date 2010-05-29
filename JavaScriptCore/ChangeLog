@@ -1,3 +1,383 @@
+2010-05-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig, Gavin Barraclough, Oliver Hunt.
+
+        Simplified the host calling convention.
+        
+        22.5% speedup on 32-bit host function calls. 9.5% speedup on 64-bit host
+        function calls.
+        
+        No change on SunSpider.
+        
+        All JS calls (but not constructs, yet) now go through the normal JS
+        calling convention via the RegisterFile. As a result, the host calling
+        convention, which used to be this
+
+            JSValue (JSC_HOST_CALL *NativeFunction)(ExecState*, JSObject*, JSValue thisValue, const ArgList&)
+            
+        is now this
+
+            JSValue (JSC_HOST_CALL *NativeFunction)(ExecState*)
+            
+        Callee, 'this', and argument access all hapen relative to the ExecState*,
+        which is a pointer into the RegisterFile.
+        
+        This patch comes in two parts.
+        
+        PART ONE: Functional code changes.
+        
+        * wtf/Platform.h: Disabled optimized calls on platforms I didn't test.
+        We can re-enable once we verify that host calls on these platforms are
+        correct.
+
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::functionName):
+        (JSC::DebuggerCallFrame::calculatedFunctionName): Updated for change to
+        ExecState::callee().
+
+        (JSC::DebuggerCallFrame::thisObject): Updated for removal of ExecState::thisValue().
+
+        * interpreter/CallFrame.cpp:
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::callee):
+        (JSC::ExecState::scopeChain):
+        (JSC::ExecState::init): Changed callee() to be JSObject* instead of
+        JSFunction* -- now, it might be some other callable host object.
+
+        (JSC::ExecState::hostThisRegister):
+        (JSC::ExecState::hostThisValue):
+        (JSC::ExecState::argumentCount):
+        (JSC::ExecState::argumentCountIncludingThis):
+        (JSC::ExecState::argument):
+        (JSC::ExecState::setArgumentCountIncludingThis):
+        (JSC::ExecState::setCallee): Added convenient accessors for arguments
+        from within a host function. Removed thisValue() because it was too
+        tempting to use incorrectly, and it only had one or two clients, anyway.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::callEval): Updated for removal of ExecState::thisValue().
+
+        (JSC::Interpreter::throwException): Be sure to shrink the register file
+        before invoking the exception handler, to reduce the chances that the
+        handler will re-throw in the case of stack overflow. (Re-throwing is now
+        more likely than it used to be, since standardizing the calling convention
+        implicitly added stack overflow checks to some places where they used to be missing.)
+
+        (JSC::Interpreter::execute): Clarified the scope of DynamicGlobalObjectScope.
+        Updated for CallFrame::init API change.
+
+        (JSC::Interpreter::executeCall): Clarified scope of DynamicGlobalObjectScope.
+        Updated for CallFrame::init API change. Added support for calling a host
+        function.
+
+        (JSC::Interpreter::executeConstruct): Clarified scope of DynamicGlobalObjectScope.
+        Updated for CallFrame::init API change. 
+
+        (JSC::Interpreter::prepareForRepeatCall): Updated for CallFrame::init API change. 
+
+        (JSC::Interpreter::privateExecute): Updated for CallFrame::init API change.
+        Added some explicit JSValue(JSObject*) initialization, since relaxing
+        the JSFunction* restriction on callee has made register types more ambiguous.
+        Removed toThisObject() conversion, since all callees do it themselves now.
+        Updated host function call for new host function signature. Updated for
+        change to ExecState::argumentCount() API.
+
+        * interpreter/Register.h:
+        (JSC::Register::):
+        (JSC::Register::operator=):
+        (JSC::Register::function): Changed callee() to be JSObject* instead of
+        JSFunction* -- now, it might be some other callable host object.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall): Deleted a bunch of code that
+        set up the arguments to host functions -- all but one of the arguments
+        are gone now. This is the actual optimization.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION): Updated for ExecState and Register API
+        changes noted above. Removed toThisObject() conversion, since all callees
+        do it themselves now.
+        
+        * runtime/ArgList.h:
+        (JSC::ArgList::ArgList): ArgList is getting close to unused. Added a
+        temporary shim for converting from ExecState* to ArgList where it's still
+        necessary.
+
+        * runtime/Arguments.h:
+        (JSC::Arguments::getArgumentsData):
+        (JSC::Arguments::Arguments): Updated for ExecState and Register API
+        changes noted above. 
+
+        * runtime/CallData.cpp:
+        (JSC::call): Changed call always to call Interpreter::executeCall, even
+        for host functions. This ensures that the normal calling convention is
+        set up in the RegsiterFile when calling from C++ to host function.
+
+        * runtime/CallData.h: Changed host function signature as described above.
+
+        * runtime/ConstructData.cpp:
+        (JSC::construct): Moved JSFunction::construct code here so I could nix
+        JSFunction::call and JSFunction::call. We want a JSFunction-agnostic
+        way to call and construct, so that everything works naturally for non-
+        JSFunction objects. 
+
+        * runtime/JSFunction.cpp:
+        (JSC::callHostFunctionAsConstructor):
+        * runtime/JSFunction.h: Updated for ExecState and Register API changes
+        noted above. Nixed JSFunction::call and JSFunction::construct, noted above.
+ 
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init): Ditto.
+
+        PART TWO: Global search and replace.
+        
+        In the areas below, I used global search-and-replace to change
+            (ExecState*, JSObject*, JSValue, const ArgList&) => (ExecState*)
+            args.size() => exec->argumentCount()
+            args.at(i) => exec->argument(i)
+
+        * API/JSCallbackFunction.cpp:
+        (JSC::JSCallbackFunction::call):
+        * API/JSCallbackFunction.h:
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::call):
+        * JavaScriptCore.exp:
+        * jsc.cpp:
+        (functionPrint):
+        (functionDebug):
+        (functionGC):
+        (functionVersion):
+        (functionRun):
+        (functionLoad):
+        (functionCheckSyntax):
+        (functionSetSamplingFlags):
+        (functionClearSamplingFlags):
+        (functionReadline):
+        (functionQuit):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::callArrayConstructor):
+        (JSC::arrayConstructorIsArray):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        (JSC::arrayProtoFuncToLocaleString):
+        (JSC::arrayProtoFuncJoin):
+        (JSC::arrayProtoFuncConcat):
+        (JSC::arrayProtoFuncPop):
+        (JSC::arrayProtoFuncPush):
+        (JSC::arrayProtoFuncReverse):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSort):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        (JSC::arrayProtoFuncFilter):
+        (JSC::arrayProtoFuncMap):
+        (JSC::arrayProtoFuncEvery):
+        (JSC::arrayProtoFuncForEach):
+        (JSC::arrayProtoFuncSome):
+        (JSC::arrayProtoFuncReduce):
+        (JSC::arrayProtoFuncReduceRight):
+        (JSC::arrayProtoFuncIndexOf):
+        (JSC::arrayProtoFuncLastIndexOf):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::callBooleanConstructor):
+        * runtime/BooleanPrototype.cpp:
+        (JSC::booleanProtoFuncToString):
+        (JSC::booleanProtoFuncValueOf):
+        * runtime/DateConstructor.cpp:
+        (JSC::callDate):
+        (JSC::dateParse):
+        (JSC::dateNow):
+        (JSC::dateUTC):
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate):
+        (JSC::fillStructuresUsingTimeArgs):
+        (JSC::fillStructuresUsingDateArgs):
+        (JSC::dateProtoFuncToString):
+        (JSC::dateProtoFuncToUTCString):
+        (JSC::dateProtoFuncToISOString):
+        (JSC::dateProtoFuncToDateString):
+        (JSC::dateProtoFuncToTimeString):
+        (JSC::dateProtoFuncToLocaleString):
+        (JSC::dateProtoFuncToLocaleDateString):
+        (JSC::dateProtoFuncToLocaleTimeString):
+        (JSC::dateProtoFuncGetTime):
+        (JSC::dateProtoFuncGetFullYear):
+        (JSC::dateProtoFuncGetUTCFullYear):
+        (JSC::dateProtoFuncToGMTString):
+        (JSC::dateProtoFuncGetMonth):
+        (JSC::dateProtoFuncGetUTCMonth):
+        (JSC::dateProtoFuncGetDate):
+        (JSC::dateProtoFuncGetUTCDate):
+        (JSC::dateProtoFuncGetDay):
+        (JSC::dateProtoFuncGetUTCDay):
+        (JSC::dateProtoFuncGetHours):
+        (JSC::dateProtoFuncGetUTCHours):
+        (JSC::dateProtoFuncGetMinutes):
+        (JSC::dateProtoFuncGetUTCMinutes):
+        (JSC::dateProtoFuncGetSeconds):
+        (JSC::dateProtoFuncGetUTCSeconds):
+        (JSC::dateProtoFuncGetMilliSeconds):
+        (JSC::dateProtoFuncGetUTCMilliseconds):
+        (JSC::dateProtoFuncGetTimezoneOffset):
+        (JSC::dateProtoFuncSetTime):
+        (JSC::setNewValueFromTimeArgs):
+        (JSC::setNewValueFromDateArgs):
+        (JSC::dateProtoFuncSetMilliSeconds):
+        (JSC::dateProtoFuncSetUTCMilliseconds):
+        (JSC::dateProtoFuncSetSeconds):
+        (JSC::dateProtoFuncSetUTCSeconds):
+        (JSC::dateProtoFuncSetMinutes):
+        (JSC::dateProtoFuncSetUTCMinutes):
+        (JSC::dateProtoFuncSetHours):
+        (JSC::dateProtoFuncSetUTCHours):
+        (JSC::dateProtoFuncSetDate):
+        (JSC::dateProtoFuncSetUTCDate):
+        (JSC::dateProtoFuncSetMonth):
+        (JSC::dateProtoFuncSetUTCMonth):
+        (JSC::dateProtoFuncSetFullYear):
+        (JSC::dateProtoFuncSetUTCFullYear):
+        (JSC::dateProtoFuncSetYear):
+        (JSC::dateProtoFuncGetYear):
+        (JSC::dateProtoFuncToJSON):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::callErrorConstructor):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::errorProtoFuncToString):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::callFunctionConstructor):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::callFunctionPrototype):
+        (JSC::functionProtoFuncToString):
+        (JSC::functionProtoFuncApply):
+        (JSC::functionProtoFuncCall):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::encode):
+        (JSC::decode):
+        (JSC::globalFuncEval):
+        (JSC::globalFuncParseInt):
+        (JSC::globalFuncParseFloat):
+        (JSC::globalFuncIsNaN):
+        (JSC::globalFuncIsFinite):
+        (JSC::globalFuncDecodeURI):
+        (JSC::globalFuncDecodeURIComponent):
+        (JSC::globalFuncEncodeURI):
+        (JSC::globalFuncEncodeURIComponent):
+        (JSC::globalFuncEscape):
+        (JSC::globalFuncUnescape):
+        (JSC::globalFuncJSCPrint):
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/JSONObject.cpp:
+        (JSC::JSONProtoFuncParse):
+        (JSC::JSONProtoFuncStringify):
+        * runtime/JSString.h:
+        * runtime/MathObject.cpp:
+        (JSC::mathProtoFuncAbs):
+        (JSC::mathProtoFuncACos):
+        (JSC::mathProtoFuncASin):
+        (JSC::mathProtoFuncATan):
+        (JSC::mathProtoFuncATan2):
+        (JSC::mathProtoFuncCeil):
+        (JSC::mathProtoFuncCos):
+        (JSC::mathProtoFuncExp):
+        (JSC::mathProtoFuncFloor):
+        (JSC::mathProtoFuncLog):
+        (JSC::mathProtoFuncMax):
+        (JSC::mathProtoFuncMin):
+        (JSC::mathProtoFuncPow):
+        (JSC::mathProtoFuncRandom):
+        (JSC::mathProtoFuncRound):
+        (JSC::mathProtoFuncSin):
+        (JSC::mathProtoFuncSqrt):
+        (JSC::mathProtoFuncTan):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::callNativeErrorConstructor):
+        * runtime/NumberConstructor.cpp:
+        (JSC::callNumberConstructor):
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToString):
+        (JSC::numberProtoFuncToLocaleString):
+        (JSC::numberProtoFuncValueOf):
+        (JSC::numberProtoFuncToFixed):
+        (JSC::numberProtoFuncToExponential):
+        (JSC::numberProtoFuncToPrecision):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::callObjectConstructor):
+        (JSC::objectConstructorGetPrototypeOf):
+        (JSC::objectConstructorGetOwnPropertyDescriptor):
+        (JSC::objectConstructorGetOwnPropertyNames):
+        (JSC::objectConstructorKeys):
+        (JSC::objectConstructorDefineProperty):
+        (JSC::objectConstructorDefineProperties):
+        (JSC::objectConstructorCreate):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncValueOf):
+        (JSC::objectProtoFuncHasOwnProperty):
+        (JSC::objectProtoFuncIsPrototypeOf):
+        (JSC::objectProtoFuncDefineGetter):
+        (JSC::objectProtoFuncDefineSetter):
+        (JSC::objectProtoFuncLookupGetter):
+        (JSC::objectProtoFuncLookupSetter):
+        (JSC::objectProtoFuncPropertyIsEnumerable):
+        (JSC::objectProtoFuncToLocaleString):
+        (JSC::objectProtoFuncToString):
+        * runtime/ObjectPrototype.h:
+        * runtime/Operations.h:
+        (JSC::jsString):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::callRegExpConstructor):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::test):
+        (JSC::RegExpObject::exec):
+        (JSC::callRegExpObject):
+        (JSC::RegExpObject::match):
+        * runtime/RegExpObject.h:
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncTest):
+        (JSC::regExpProtoFuncExec):
+        (JSC::regExpProtoFuncCompile):
+        (JSC::regExpProtoFuncToString):
+        * runtime/StringConstructor.cpp:
+        (JSC::stringFromCharCodeSlowCase):
+        (JSC::stringFromCharCode):
+        (JSC::callStringConstructor):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace):
+        (JSC::stringProtoFuncToString):
+        (JSC::stringProtoFuncCharAt):
+        (JSC::stringProtoFuncCharCodeAt):
+        (JSC::stringProtoFuncConcat):
+        (JSC::stringProtoFuncIndexOf):
+        (JSC::stringProtoFuncLastIndexOf):
+        (JSC::stringProtoFuncMatch):
+        (JSC::stringProtoFuncSearch):
+        (JSC::stringProtoFuncSlice):
+        (JSC::stringProtoFuncSplit):
+        (JSC::stringProtoFuncSubstr):
+        (JSC::stringProtoFuncSubstring):
+        (JSC::stringProtoFuncToLowerCase):
+        (JSC::stringProtoFuncToUpperCase):
+        (JSC::stringProtoFuncLocaleCompare):
+        (JSC::stringProtoFuncBig):
+        (JSC::stringProtoFuncSmall):
+        (JSC::stringProtoFuncBlink):
+        (JSC::stringProtoFuncBold):
+        (JSC::stringProtoFuncFixed):
+        (JSC::stringProtoFuncItalics):
+        (JSC::stringProtoFuncStrike):
+        (JSC::stringProtoFuncSub):
+        (JSC::stringProtoFuncSup):
+        (JSC::stringProtoFuncFontcolor):
+        (JSC::stringProtoFuncFontsize):
+        (JSC::stringProtoFuncAnchor):
+        (JSC::stringProtoFuncLink):
+        (JSC::stringProtoFuncTrim):
+        (JSC::stringProtoFuncTrimLeft):
+        (JSC::stringProtoFuncTrimRight):
+
 2010-05-28  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Geoffrey Garen.

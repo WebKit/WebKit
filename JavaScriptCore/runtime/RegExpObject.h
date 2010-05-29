@@ -37,8 +37,8 @@ namespace JSC {
         void setLastIndex(double lastIndex) { d->lastIndex = lastIndex; }
         double lastIndex() const { return d->lastIndex; }
 
-        JSValue test(ExecState*, const ArgList&);
-        JSValue exec(ExecState*, const ArgList&);
+        JSValue test(ExecState*);
+        JSValue exec(ExecState*);
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
@@ -56,7 +56,7 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObjectWithGlobalObject::StructureFlags;
         
     private:
-        bool match(ExecState*, const ArgList&);
+        bool match(ExecState*);
 
         virtual CallType getCallData(CallData&);
 

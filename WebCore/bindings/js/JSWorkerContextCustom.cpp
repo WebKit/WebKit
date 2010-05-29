@@ -105,14 +105,14 @@ JSValue JSWorkerContext::webSocket(ExecState* exec) const
 }
 #endif
 
-JSValue JSWorkerContext::importScripts(ExecState* exec, const ArgList& args)
+JSValue JSWorkerContext::importScripts(ExecState* exec)
 {
-    if (!args.size())
+    if (!exec->argumentCount())
         return jsUndefined();
 
     Vector<String> urls;
-    for (unsigned i = 0; i < args.size(); i++) {
-        urls.append(ustringToString(args.at(i).toString(exec)));
+    for (unsigned i = 0; i < exec->argumentCount(); i++) {
+        urls.append(ustringToString(exec->argument(i).toString(exec)));
         if (exec->hadException())
             return jsUndefined();
     }
@@ -123,21 +123,21 @@ JSValue JSWorkerContext::importScripts(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
-JSValue JSWorkerContext::setTimeout(ExecState* exec, const ArgList& args)
+JSValue JSWorkerContext::setTimeout(ExecState* exec)
 {
-    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, args, currentWorld(exec));
+    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, currentWorld(exec));
     if (exec->hadException())
         return jsUndefined();
-    int delay = args.at(1).toInt32(exec);
+    int delay = exec->argument(1).toInt32(exec);
     return jsNumber(exec, impl()->setTimeout(action.release(), delay));
 }
 
-JSValue JSWorkerContext::setInterval(ExecState* exec, const ArgList& args)
+JSValue JSWorkerContext::setInterval(ExecState* exec)
 {
-    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, args, currentWorld(exec));
+    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, currentWorld(exec));
     if (exec->hadException())
         return jsUndefined();
-    int delay = args.at(1).toInt32(exec);
+    int delay = exec->argument(1).toInt32(exec);
     return jsNumber(exec, impl()->setInterval(action.release(), delay));
 }
 
@@ -150,38 +150,38 @@ JSValue JSWorkerContext::messageChannel(ExecState* exec) const
 #endif
 
 #if ENABLE(DATABASE)
-JSValue JSWorkerContext::openDatabase(ExecState* exec, const ArgList& args) 
+JSValue JSWorkerContext::openDatabase(ExecState* exec) 
 { 
-    if (args.size() < 4) {
+    if (exec->argumentCount() < 4) {
         setDOMException(exec, SYNTAX_ERR);
         return jsUndefined();
     }
 
-    String name = ustringToString(args.at(0).toString(exec));
+    String name = ustringToString(exec->argument(0).toString(exec));
     if (exec->hadException())
         return jsUndefined();
 
-    String version = ustringToString(args.at(1).toString(exec));
+    String version = ustringToString(exec->argument(1).toString(exec));
     if (exec->hadException())
         return jsUndefined();
 
-    String displayName = ustringToString(args.at(2).toString(exec));
+    String displayName = ustringToString(exec->argument(2).toString(exec));
     if (exec->hadException())
         return jsUndefined();
 
-    // args.at(3) = estimated size
-    unsigned long estimatedSize = args.at(3).toUInt32(exec);
+    // exec->argument(3) = estimated size
+    unsigned long estimatedSize = exec->argument(3).toUInt32(exec);
     if (exec->hadException())
         return jsUndefined();
 
     RefPtr<DatabaseCallback> creationCallback;
-    if (args.size() >= 5) {
-        if (!args.at(4).isObject()) {
+    if (exec->argumentCount() >= 5) {
+        if (!exec->argument(4).isObject()) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();
         }
 
-        creationCallback = JSDatabaseCallback::create(asObject(args.at(4)), globalObject());
+        creationCallback = JSDatabaseCallback::create(asObject(exec->argument(4)), globalObject());
     }
  
     ExceptionCode ec = 0; 
@@ -190,38 +190,38 @@ JSValue JSWorkerContext::openDatabase(ExecState* exec, const ArgList& args)
     return result; 
 } 
  
-JSValue JSWorkerContext::openDatabaseSync(ExecState* exec, const ArgList& args)
+JSValue JSWorkerContext::openDatabaseSync(ExecState* exec)
 {
-    if (args.size() < 4) {
+    if (exec->argumentCount() < 4) {
         setDOMException(exec, SYNTAX_ERR);
         return jsUndefined();
     }
 
-    String name = ustringToString(args.at(0).toString(exec));
+    String name = ustringToString(exec->argument(0).toString(exec));
     if (exec->hadException())
         return jsUndefined();
 
-    String version = ustringToString(args.at(1).toString(exec));
+    String version = ustringToString(exec->argument(1).toString(exec));
     if (exec->hadException())
         return jsUndefined();
 
-    String displayName = ustringToString(args.at(2).toString(exec));
+    String displayName = ustringToString(exec->argument(2).toString(exec));
     if (exec->hadException())
         return jsUndefined();
 
-    // args.at(3) = estimated size
-    unsigned long estimatedSize = args.at(3).toUInt32(exec);
+    // exec->argument(3) = estimated size
+    unsigned long estimatedSize = exec->argument(3).toUInt32(exec);
     if (exec->hadException())
         return jsUndefined();
 
     RefPtr<DatabaseCallback> creationCallback;
-    if (args.size() >= 5) {
-        if (!args.at(4).isObject()) {
+    if (exec->argumentCount() >= 5) {
+        if (!exec->argument(4).isObject()) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();
         }
 
-        creationCallback = JSDatabaseCallback::create(asObject(args.at(4)), globalObject());
+        creationCallback = JSDatabaseCallback::create(asObject(exec->argument(4)), globalObject());
     }
 
     ExceptionCode ec = 0;

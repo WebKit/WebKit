@@ -119,10 +119,10 @@ namespace JSC {
 
     ALWAYS_INLINE void Arguments::getArgumentsData(CallFrame* callFrame, JSFunction*& function, ptrdiff_t& firstParameterIndex, Register*& argv, int& argc)
     {
-        function = callFrame->callee();
+        function = asFunction(callFrame->callee());
 
         int numParameters = function->jsExecutable()->parameterCount();
-        argc = callFrame->argumentCount();
+        argc = callFrame->argumentCountIncludingThis();
 
         if (argc <= numParameters)
             argv = callFrame->registers() - RegisterFile::CallFrameHeaderSize - numParameters;
@@ -174,9 +174,9 @@ namespace JSC {
         : JSObject(callFrame->lexicalGlobalObject()->argumentsStructure())
         , d(new ArgumentsData)
     {
-        ASSERT(!callFrame->callee()->jsExecutable()->parameterCount());
+        ASSERT(!asFunction(callFrame->callee())->jsExecutable()->parameterCount());
 
-        unsigned numArguments = callFrame->argumentCount() - 1;
+        unsigned numArguments = callFrame->argumentCount();
 
         d->numParameters = 0;
         d->numArguments = numArguments;
@@ -194,7 +194,7 @@ namespace JSC {
 
         d->extraArguments = extraArguments;
 
-        d->callee = callFrame->callee();
+        d->callee = asFunction(callFrame->callee());
         d->overrodeLength = false;
         d->overrodeCallee = false;
     }

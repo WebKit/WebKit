@@ -56,18 +56,18 @@ CallType UserObjectImp::getCallData(CallData& callData)
     return fJSUserObject ? fJSUserObject->getCallData(callData) : CallTypeNone;
 }
 
-JSValue UserObjectImp::callAsFunction(ExecState *exec, JSObject *thisObj, const ArgList &args)
+JSValue UserObjectImp::callAsFunction(ExecState *exec)
 {
     JSValue result = jsUndefined();
-    JSUserObject* jsThisObj = KJSValueToJSObject(thisObj, exec);
+    JSUserObject* jsThisObj = KJSValueToJSObject(exec->hostThisValue().toThisObject(exec), exec);
     if (jsThisObj) {
-        CFIndex argCount = args.size();
+        CFIndex argCount = exec->argumentCount();
         CFArrayCallBacks arrayCallBacks;
         JSTypeGetCFArrayCallBacks(&arrayCallBacks);
         CFMutableArrayRef jsArgs = CFArrayCreateMutable(0, 0, &arrayCallBacks);
         if (jsArgs) {
             for (CFIndex i = 0; i < argCount; i++) {
-                JSUserObject* jsArg = KJSValueToJSObject(args.at(i), exec);
+                JSUserObject* jsArg = KJSValueToJSObject(exec->argument(i), exec);
                 CFArrayAppendValue(jsArgs, (void*)jsArg);
                 jsArg->Release();
             }

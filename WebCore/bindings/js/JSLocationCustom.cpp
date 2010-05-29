@@ -301,13 +301,13 @@ void JSLocation::setHash(ExecState* exec, JSValue value)
     navigateIfAllowed(exec, frame, url, !frame->script()->anyPageIsProcessingUserGesture(), false);
 }
 
-JSValue JSLocation::replace(ExecState* exec, const ArgList& args)
+JSValue JSLocation::replace(ExecState* exec)
 {
     Frame* frame = impl()->frame();
     if (!frame)
         return jsUndefined();
 
-    KURL url = completeURL(exec, ustringToString(args.at(0).toString(exec)));
+    KURL url = completeURL(exec, ustringToString(exec->argument(0).toString(exec)));
     if (url.isNull())
         return jsUndefined();
 
@@ -318,7 +318,7 @@ JSValue JSLocation::replace(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
-JSValue JSLocation::reload(ExecState* exec, const ArgList&)
+JSValue JSLocation::reload(ExecState* exec)
 {
     Frame* frame = impl()->frame();
     if (!frame || !allowsAccessFromFrame(exec, frame))
@@ -329,13 +329,13 @@ JSValue JSLocation::reload(ExecState* exec, const ArgList&)
     return jsUndefined();
 }
 
-JSValue JSLocation::assign(ExecState* exec, const ArgList& args)
+JSValue JSLocation::assign(ExecState* exec)
 {
     Frame* frame = impl()->frame();
     if (!frame)
         return jsUndefined();
 
-    KURL url = completeURL(exec, ustringToString(args.at(0).toString(exec)));
+    KURL url = completeURL(exec, ustringToString(exec->argument(0).toString(exec)));
     if (url.isNull())
         return jsUndefined();
 
@@ -347,7 +347,7 @@ JSValue JSLocation::assign(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
-JSValue JSLocation::toString(ExecState* exec, const ArgList&)
+JSValue JSLocation::toString(ExecState* exec)
 {
     Frame* frame = impl()->frame();
     if (!frame || !allowsAccessFromFrame(exec, frame))

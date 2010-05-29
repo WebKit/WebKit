@@ -45,17 +45,17 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSNotificationCenter::requestPermission(ExecState* exec, const ArgList& args)
+JSValue JSNotificationCenter::requestPermission(ExecState* exec)
 {
     // Permission request is only valid from page context.
     ScriptExecutionContext* context = impl()->context();
     if (context->isWorkerContext())
         return throwError(exec, SyntaxError);
 
-    if (!args.at(0).isObject())
+    if (!exec->argument(0).isObject())
         return throwError(exec, TypeError);
 
-    PassRefPtr<JSCustomVoidCallback> callback = JSCustomVoidCallback::create(args.at(0).getObject(), toJSDOMGlobalObject(static_cast<Document*>(context), exec));
+    PassRefPtr<JSCustomVoidCallback> callback = JSCustomVoidCallback::create(exec->argument(0).getObject(), toJSDOMGlobalObject(static_cast<Document*>(context), exec));
 
     impl()->requestPermission(callback);
     return jsUndefined();

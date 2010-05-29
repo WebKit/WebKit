@@ -30,21 +30,21 @@
 
 namespace JSC {
 
-static NEVER_INLINE JSValue stringFromCharCodeSlowCase(ExecState* exec, const ArgList& args)
+static NEVER_INLINE JSValue stringFromCharCodeSlowCase(ExecState* exec)
 {
-    unsigned length = args.size();
+    unsigned length = exec->argumentCount();
     UChar* buf;
     PassRefPtr<UStringImpl> impl = UStringImpl::createUninitialized(length, buf);
     for (unsigned i = 0; i < length; ++i)
-        buf[i] = static_cast<UChar>(args.at(i).toUInt32(exec));
+        buf[i] = static_cast<UChar>(exec->argument(i).toUInt32(exec));
     return jsString(exec, impl);
 }
 
-static JSValue JSC_HOST_CALL stringFromCharCode(ExecState* exec, JSObject*, JSValue, const ArgList& args)
+static JSValue JSC_HOST_CALL stringFromCharCode(ExecState* exec)
 {
-    if (LIKELY(args.size() == 1))
-        return jsSingleCharacterString(exec, args.at(0).toUInt32(exec));
-    return stringFromCharCodeSlowCase(exec, args);
+    if (LIKELY(exec->argumentCount() == 1))
+        return jsSingleCharacterString(exec, exec->argument(0).toUInt32(exec));
+    return stringFromCharCodeSlowCase(exec);
 }
 
 ASSERT_CLASS_FITS_IN_CELL(StringConstructor);
@@ -80,11 +80,11 @@ ConstructType StringConstructor::getConstructData(ConstructData& constructData)
 }
 
 // ECMA 15.5.1
-static JSValue JSC_HOST_CALL callStringConstructor(ExecState* exec, JSObject*, JSValue, const ArgList& args)
+static JSValue JSC_HOST_CALL callStringConstructor(ExecState* exec)
 {
-    if (args.isEmpty())
+    if (!exec->argumentCount())
         return jsEmptyString(exec);
-    return jsString(exec, args.at(0).toString(exec));
+    return jsString(exec, exec->argument(0).toString(exec));
 }
 
 CallType StringConstructor::getCallData(CallData& callData)

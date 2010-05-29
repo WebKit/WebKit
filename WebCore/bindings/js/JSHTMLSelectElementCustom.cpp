@@ -32,16 +32,16 @@ namespace WebCore {
 using namespace JSC;
 using namespace HTMLNames;
 
-JSValue JSHTMLSelectElement::remove(ExecState* exec, const ArgList& args)
+JSValue JSHTMLSelectElement::remove(ExecState* exec)
 {
     HTMLSelectElement& select = *static_cast<HTMLSelectElement*>(impl());
 
     // we support both options index and options objects
-    HTMLElement* element = toHTMLElement(args.at(0));
+    HTMLElement* element = toHTMLElement(exec->argument(0));
     if (element && element->hasTagName(optionTag))
         select.remove(static_cast<HTMLOptionElement*>(element)->index());
     else
-        select.remove(args.at(0).toInt32(exec));
+        select.remove(exec->argument(0).toInt32(exec));
 
     return jsUndefined();
 }

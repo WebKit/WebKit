@@ -104,16 +104,16 @@ ScriptObject InjectedScriptHost::createInjectedScript(const String& source, Scri
 }
 
 #if ENABLE(DATABASE)
-JSValue JSInjectedScriptHost::databaseForId(ExecState* exec, const ArgList& args)
+JSValue JSInjectedScriptHost::databaseForId(ExecState* exec)
 {
-    if (args.size() < 1)
+    if (exec->argumentCount() < 1)
         return jsUndefined();
 
     InspectorController* ic = impl()->inspectorController();
     if (!ic)
         return jsUndefined();
 
-    Database* database = impl()->databaseForId(args.at(0).toInt32(exec));
+    Database* database = impl()->databaseForId(exec->argument(0).toInt32(exec));
     if (!database)
         return jsUndefined();
     return toJS(exec, database);
@@ -121,7 +121,7 @@ JSValue JSInjectedScriptHost::databaseForId(ExecState* exec, const ArgList& args
 #endif
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-JSValue JSInjectedScriptHost::currentCallFrame(ExecState* exec, const ArgList&)
+JSValue JSInjectedScriptHost::currentCallFrame(ExecState* exec)
 {
     JavaScriptCallFrame* callFrame = ScriptDebugServer::shared().currentCallFrame();
     if (!callFrame || !callFrame->isValid())
@@ -132,12 +132,12 @@ JSValue JSInjectedScriptHost::currentCallFrame(ExecState* exec, const ArgList&)
 }
 #endif
 
-JSValue JSInjectedScriptHost::nodeForId(ExecState* exec, const ArgList& args)
+JSValue JSInjectedScriptHost::nodeForId(ExecState* exec)
 {
-    if (args.size() < 1)
+    if (exec->argumentCount() < 1)
         return jsUndefined();
 
-    Node* node = impl()->nodeForId(args.at(0).toInt32(exec));
+    Node* node = impl()->nodeForId(exec->argument(0).toInt32(exec));
     if (!node)
         return jsUndefined();
 
@@ -149,27 +149,27 @@ JSValue JSInjectedScriptHost::nodeForId(ExecState* exec, const ArgList& args)
     return toJS(exec, node);
 }
 
-JSValue JSInjectedScriptHost::pushNodePathToFrontend(ExecState* exec, const ArgList& args)
+JSValue JSInjectedScriptHost::pushNodePathToFrontend(ExecState* exec)
 {
-    if (args.size() < 3)
+    if (exec->argumentCount() < 3)
         return jsUndefined();
 
-    Node* node = toNode(args.at(0));
+    Node* node = toNode(exec->argument(0));
     if (!node)
         return jsUndefined();
 
-    bool withChildren = args.at(1).toBoolean(exec);
-    bool selectInUI = args.at(2).toBoolean(exec);
+    bool withChildren = exec->argument(1).toBoolean(exec);
+    bool selectInUI = exec->argument(2).toBoolean(exec);
     return jsNumber(exec, impl()->pushNodePathToFrontend(node, withChildren, selectInUI));
 }
 
 #if ENABLE(DATABASE)
-JSValue JSInjectedScriptHost::selectDatabase(ExecState*, const ArgList& args)
+JSValue JSInjectedScriptHost::selectDatabase(ExecState* exec)
 {
-    if (args.size() < 1)
+    if (exec->argumentCount() < 1)
         return jsUndefined();
 
-    Database* database = toDatabase(args.at(0));
+    Database* database = toDatabase(exec->argument(0));
     if (database)
         impl()->selectDatabase(database);
     return jsUndefined();
@@ -177,34 +177,34 @@ JSValue JSInjectedScriptHost::selectDatabase(ExecState*, const ArgList& args)
 #endif
 
 #if ENABLE(DOM_STORAGE)
-JSValue JSInjectedScriptHost::selectDOMStorage(ExecState*, const ArgList& args)
+JSValue JSInjectedScriptHost::selectDOMStorage(ExecState* exec)
 {
-    if (args.size() < 1)
+    if (exec->argumentCount() < 1)
         return jsUndefined();
     InspectorController* ic = impl()->inspectorController();
     if (!ic)
         return jsUndefined();
 
-    Storage* storage = toStorage(args.at(0));
+    Storage* storage = toStorage(exec->argument(0));
     if (storage)
         impl()->selectDOMStorage(storage);
     return jsUndefined();
 }
 #endif
 
-JSValue JSInjectedScriptHost::reportDidDispatchOnInjectedScript(ExecState* exec, const ArgList& args)
+JSValue JSInjectedScriptHost::reportDidDispatchOnInjectedScript(ExecState* exec)
 {
-    if (args.size() < 3)
+    if (exec->argumentCount() < 3)
         return jsUndefined();
     
-    if (!args.at(0).isInt32())
+    if (!exec->argument(0).isInt32())
         return jsUndefined();
-    int callId = args.at(0).asInt32();
+    int callId = exec->argument(0).asInt32();
     
-    RefPtr<SerializedScriptValue> result(SerializedScriptValue::create(exec, args.at(1)));
+    RefPtr<SerializedScriptValue> result(SerializedScriptValue::create(exec, exec->argument(1)));
     
     bool isException;
-    if (!args.at(2).getBoolean(isException))
+    if (!exec->argument(2).getBoolean(isException))
         return jsUndefined();
     impl()->reportDidDispatchOnInjectedScript(callId, result.get(), isException);
     return jsUndefined();

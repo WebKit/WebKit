@@ -68,47 +68,47 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSNode::insertBefore(ExecState* exec, const ArgList& args)
+JSValue JSNode::insertBefore(ExecState* exec)
 {
     Node* imp = static_cast<Node*>(impl());
     ExceptionCode ec = 0;
-    bool ok = imp->insertBefore(toNode(args.at(0)), toNode(args.at(1)), ec, true);
+    bool ok = imp->insertBefore(toNode(exec->argument(0)), toNode(exec->argument(1)), ec, true);
     setDOMException(exec, ec);
     if (ok)
-        return args.at(0);
+        return exec->argument(0);
     return jsNull();
 }
 
-JSValue JSNode::replaceChild(ExecState* exec, const ArgList& args)
+JSValue JSNode::replaceChild(ExecState* exec)
 {
     Node* imp = static_cast<Node*>(impl());
     ExceptionCode ec = 0;
-    bool ok = imp->replaceChild(toNode(args.at(0)), toNode(args.at(1)), ec, true);
+    bool ok = imp->replaceChild(toNode(exec->argument(0)), toNode(exec->argument(1)), ec, true);
     setDOMException(exec, ec);
     if (ok)
-        return args.at(1);
+        return exec->argument(1);
     return jsNull();
 }
 
-JSValue JSNode::removeChild(ExecState* exec, const ArgList& args)
+JSValue JSNode::removeChild(ExecState* exec)
 {
     Node* imp = static_cast<Node*>(impl());
     ExceptionCode ec = 0;
-    bool ok = imp->removeChild(toNode(args.at(0)), ec);
+    bool ok = imp->removeChild(toNode(exec->argument(0)), ec);
     setDOMException(exec, ec);
     if (ok)
-        return args.at(0);
+        return exec->argument(0);
     return jsNull();
 }
 
-JSValue JSNode::appendChild(ExecState* exec, const ArgList& args)
+JSValue JSNode::appendChild(ExecState* exec)
 {
     Node* imp = static_cast<Node*>(impl());
     ExceptionCode ec = 0;
-    bool ok = imp->appendChild(toNode(args.at(0)), ec, true);
+    bool ok = imp->appendChild(toNode(exec->argument(0)), ec, true);
     setDOMException(exec, ec);
     if (ok)
-        return args.at(0);
+        return exec->argument(0);
     return jsNull();
 }
 

@@ -215,8 +215,9 @@ void ObjcFallbackObjectImp::put(ExecState*, const Identifier&, JSValue, PutPrope
 {
 }
 
-static JSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec, JSObject* function, JSValue thisValue, const ArgList& args)
+static JSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec)
 {
+    JSValue thisValue = exec->hostThisValue();
     if (!thisValue.inherits(&ObjCRuntimeObject::s_info))
         return throwError(exec, TypeError);
 
@@ -235,10 +236,10 @@ static JSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec, JSObject* f
     if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)]){
         ObjcClass* objcClass = static_cast<ObjcClass*>(objcInstance->getClass());
         OwnPtr<ObjcMethod> fallbackMethod(new ObjcMethod(objcClass->isa(), @selector(invokeUndefinedMethodFromWebScript:withArguments:)));
-        const Identifier& nameIdentifier = static_cast<ObjcFallbackObjectImp*>(function)->propertyName();
+        const Identifier& nameIdentifier = static_cast<ObjcFallbackObjectImp*>(exec->callee())->propertyName();
         RetainPtr<CFStringRef> name(AdoptCF, CFStringCreateWithCharacters(0, nameIdentifier.data(), nameIdentifier.size()));
         fallbackMethod->setJavaScriptName(name.get());
-        result = objcInstance->invokeObjcMethod(exec, fallbackMethod.get(), args);
+        result = objcInstance->invokeObjcMethod(exec, fallbackMethod.get());
     }
             
     objcInstance->end();

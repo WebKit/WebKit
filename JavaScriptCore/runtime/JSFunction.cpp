@@ -31,6 +31,7 @@
 #include "ExceptionHelpers.h"
 #include "FunctionPrototype.h"
 #include "JSGlobalObject.h"
+#include "JSNotAnObject.h"
 #include "Interpreter.h"
 #include "ObjectPrototype.h"
 #include "Parser.h"
@@ -42,11 +43,11 @@ using namespace Unicode;
 
 namespace JSC {
 
-JSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState* exec, JSObject* constructor, JSValue, const ArgList&)
+JSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState* exec)
 {
     CodeBlock* codeBlock = exec->callerFrame()->codeBlock();
     unsigned vPCIndex = codeBlock->bytecodeOffset(exec, exec->returnPC());
-    exec->setException(createNotAConstructorError(exec, constructor, vPCIndex, codeBlock));
+    exec->setException(createNotAConstructorError(exec, exec->callee(), vPCIndex, codeBlock));
     return JSValue();
 }
 
@@ -166,12 +167,6 @@ CallType JSFunction::getCallData(CallData& callData)
     callData.js.functionExecutable = jsExecutable();
     callData.js.scopeChain = scope().node();
     return CallTypeJS;
-}
-
-JSValue JSFunction::call(ExecState* exec, JSValue thisValue, const ArgList& args)
-{
-    ASSERT(!isHostFunction());
-    return exec->interpreter()->executeCall(jsExecutable(), exec, this, thisValue.toThisObject(exec), args, scope().node(), exec->exceptionSlot());
 }
 
 JSValue JSFunction::argumentsGetter(ExecState* exec, JSValue slotBase, const Identifier&)
@@ -299,23 +294,6 @@ ConstructType JSFunction::getConstructData(ConstructData& constructData)
     constructData.js.functionExecutable = jsExecutable();
     constructData.js.scopeChain = scope().node();
     return ConstructTypeJS;
-}
-
-JSObject* JSFunction::construct(ExecState* exec, const ArgList& args)
-{
-    ASSERT(!isHostFunction());
-    Structure* structure;
-    JSValue prototype = get(exec, exec->propertyNames().prototype);
-    if (prototype.isObject())
-        structure = asObject(prototype)->inheritorID();
-    else
-        structure = exec->lexicalGlobalObject()->emptyObjectStructure();
-    JSObject* thisObj = new (exec) JSObject(structure);
-
-    JSValue result = exec->interpreter()->executeConstruct(jsExecutable(), exec, this, thisObj, args, scope().node(), exec->exceptionSlot());
-    if (exec->hadException() || !result.isObject())
-        return thisObj;
-    return asObject(result);
 }
 
 } // namespace JSC

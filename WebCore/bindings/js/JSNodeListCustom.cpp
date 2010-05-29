@@ -36,13 +36,13 @@ using namespace JSC;
 namespace WebCore {
 
 // Need to support call so that list(0) works.
-static JSValue JSC_HOST_CALL callNodeList(ExecState* exec, JSObject* function, JSValue, const ArgList& args)
+static JSValue JSC_HOST_CALL callNodeList(ExecState* exec)
 {
     bool ok;
-    unsigned index = args.at(0).toString(exec).toUInt32(&ok);
+    unsigned index = exec->argument(0).toString(exec).toUInt32(&ok);
     if (!ok)
         return jsUndefined();
-    return toJS(exec, static_cast<JSNodeList*>(function)->impl()->item(index));
+    return toJS(exec, static_cast<JSNodeList*>(exec->callee())->impl()->item(index));
 }
 
 CallType JSNodeList::getCallData(CallData& callData)

@@ -35,10 +35,10 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSJavaScriptCallFrame::evaluate(ExecState* exec, const ArgList& args)
+JSValue JSJavaScriptCallFrame::evaluate(ExecState* exec)
 {
     JSValue exception;
-    JSValue result = impl()->evaluate(args.at(0).toString(exec), exception);
+    JSValue result = impl()->evaluate(exec->argument(0).toString(exec), exception);
 
     if (exception)
         exec->setException(exception);
@@ -85,14 +85,14 @@ JSValue JSJavaScriptCallFrame::scopeChain(ExecState* exec) const
     return constructArray(exec, list);
 }
 
-JSValue JSJavaScriptCallFrame::scopeType(ExecState* exec, const ArgList& args)
+JSValue JSJavaScriptCallFrame::scopeType(ExecState* exec)
 {
     if (!impl()->scopeChain())
         return jsUndefined();
 
-    if (!args.at(0).isInt32())
+    if (!exec->argument(0).isInt32())
         return jsUndefined();
-    int index = args.at(0).asInt32();
+    int index = exec->argument(0).asInt32();
 
     const ScopeChainNode* scopeChain = impl()->scopeChain();
     ScopeChainIterator end = scopeChain->end();

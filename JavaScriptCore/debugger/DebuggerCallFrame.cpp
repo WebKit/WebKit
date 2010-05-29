@@ -44,10 +44,10 @@ const UString* DebuggerCallFrame::functionName() const
     if (!m_callFrame->callee())
         return 0;
 
-    JSFunction* function = asFunction(m_callFrame->callee());
-    if (!function)
+    JSObject* function = m_callFrame->callee();
+    if (!function || !function->inherits(&JSFunction::info))
         return 0;
-    return &function->name(m_callFrame);
+    return &asFunction(function)->name(m_callFrame);
 }
     
 UString DebuggerCallFrame::calculatedFunctionName() const
@@ -55,13 +55,11 @@ UString DebuggerCallFrame::calculatedFunctionName() const
     if (!m_callFrame->codeBlock())
         return UString();
 
-    if (!m_callFrame->callee())
-        return UString();
+    JSObject* function = m_callFrame->callee();
+    if (!function || !function->inherits(&JSFunction::info))
+        return 0;
 
-    JSFunction* function = asFunction(m_callFrame->callee());
-    if (!function)
-        return UString();
-    return function->calculatedDisplayName(m_callFrame);
+    return asFunction(function)->calculatedDisplayName(m_callFrame);
 }
 
 DebuggerCallFrame::Type DebuggerCallFrame::type() const
@@ -74,10 +72,15 @@ DebuggerCallFrame::Type DebuggerCallFrame::type() const
 
 JSObject* DebuggerCallFrame::thisObject() const
 {
-    if (!m_callFrame->codeBlock())
+    CodeBlock* codeBlock = m_callFrame->codeBlock();
+    if (!codeBlock)
         return 0;
 
-    return asObject(m_callFrame->thisValue());
+    JSValue thisValue = m_callFrame->r(codeBlock->thisRegister()).jsValue();
+    if (!thisValue.isObject())
+        return 0;
+
+    return asObject(thisValue);
 }
 
 JSValue DebuggerCallFrame::evaluate(const UString& script, JSValue& exception) const

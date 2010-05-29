@@ -42,7 +42,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-ScriptCallStack::ScriptCallStack(ExecState* exec, const ArgList& args, unsigned skipArgumentCount)
+ScriptCallStack::ScriptCallStack(ExecState* exec, unsigned skipArgumentCount)
     : m_initialized(false)
     , m_exec(exec)
     , m_caller(0)
@@ -58,11 +58,11 @@ ScriptCallStack::ScriptCallStack(ExecState* exec, const ArgList& args, unsigned 
 
     if (function) {
         m_caller = asFunction(function);
-        m_frames.append(ScriptCallFrame(m_caller->name(m_exec), urlString, lineNumber, args, skipArgumentCount));
+        m_frames.append(ScriptCallFrame(m_caller->name(m_exec), urlString, lineNumber, m_exec, skipArgumentCount));
     } else {
         // Caller is unknown, but we should still add the frame, because
         // something called us, and gave us arguments.
-        m_frames.append(ScriptCallFrame(UString(), urlString, lineNumber, args, skipArgumentCount));
+        m_frames.append(ScriptCallFrame(UString(), urlString, lineNumber, m_exec, skipArgumentCount));
     }
 }
 
@@ -94,8 +94,7 @@ void ScriptCallStack::initialize()
     JSValue func = m_exec->interpreter()->retrieveCaller(m_exec, m_caller);
     while (!func.isNull()) {
         JSFunction* jsFunction = asFunction(func);
-        ArgList emptyArgList;
-        m_frames.append(ScriptCallFrame(jsFunction->name(m_exec), UString(), 0, emptyArgList, 0));
+        m_frames.append(ScriptCallFrame(jsFunction->name(m_exec), UString(), 0, 0, 0));
         func = m_exec->interpreter()->retrieveCaller(m_exec, jsFunction);
     }
     m_initialized = true;

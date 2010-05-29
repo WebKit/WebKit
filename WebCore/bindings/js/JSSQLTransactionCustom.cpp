@@ -42,21 +42,21 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSSQLTransaction::executeSql(ExecState* exec, const ArgList& args)
+JSValue JSSQLTransaction::executeSql(ExecState* exec)
 {
-    if (args.isEmpty()) {
+    if (!exec->argumentCount()) {
         setDOMException(exec, SYNTAX_ERR);
         return jsUndefined();
     }
 
-    String sqlStatement = ustringToString(args.at(0).toString(exec));
+    String sqlStatement = ustringToString(exec->argument(0).toString(exec));
     if (exec->hadException())
         return jsUndefined();
 
     // Now assemble the list of SQL arguments
     Vector<SQLValue> sqlValues;
-    if (!args.at(1).isUndefinedOrNull()) {
-        JSObject* object = args.at(1).getObject();
+    if (!exec->argument(1).isUndefinedOrNull()) {
+        JSObject* object = exec->argument(1).getObject();
         if (!object) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();
@@ -88,8 +88,8 @@ JSValue JSSQLTransaction::executeSql(ExecState* exec, const ArgList& args)
     }
 
     RefPtr<SQLStatementCallback> callback;
-    if (!args.at(2).isUndefinedOrNull()) {
-        JSObject* object = args.at(2).getObject();
+    if (!exec->argument(2).isUndefinedOrNull()) {
+        JSObject* object = exec->argument(2).getObject();
         if (!object) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();
@@ -99,8 +99,8 @@ JSValue JSSQLTransaction::executeSql(ExecState* exec, const ArgList& args)
     }
 
     RefPtr<SQLStatementErrorCallback> errorCallback;
-    if (!args.at(3).isUndefinedOrNull()) {
-        JSObject* object = args.at(3).getObject();
+    if (!exec->argument(3).isUndefinedOrNull()) {
+        JSObject* object = exec->argument(3).getObject();
         if (!object) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();

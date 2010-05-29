@@ -141,7 +141,7 @@ JSC::Bindings::Class* ProxyInstance::getClass() const
     return proxyClass();
 }
 
-JSValue ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t identifier, const JSC::ArgList& args)
+JSValue ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t identifier, const ArgList& args)
 {
     if (!m_instanceProxy)
         return jsUndefined();
@@ -196,7 +196,7 @@ JSValue ProxyInstance::getMethod(JSC::ExecState* exec, const JSC::Identifier& pr
     return new (exec) ProxyRuntimeMethod(exec, exec->lexicalGlobalObject(), propertyName, methodList);
 }
 
-JSValue ProxyInstance::invokeMethod(ExecState* exec, JSC::RuntimeMethod* runtimeMethod, const ArgList& args)
+JSValue ProxyInstance::invokeMethod(ExecState* exec, JSC::RuntimeMethod* runtimeMethod)
 {
     if (!asObject(runtimeMethod)->inherits(&ProxyRuntimeMethod::s_info))
         return throwError(exec, TypeError, "Attempt to invoke non-plug-in method on plug-in object.");
@@ -207,7 +207,7 @@ JSValue ProxyInstance::invokeMethod(ExecState* exec, JSC::RuntimeMethod* runtime
 
     ProxyMethod* method = static_cast<ProxyMethod*>(methodList[0]);
 
-    return invoke(exec, Invoke, method->serverIdentifier(), args);
+    return invoke(exec, Invoke, method->serverIdentifier(), ArgList(exec));
 }
 
 bool ProxyInstance::supportsInvokeDefaultMethod() const
@@ -228,10 +228,10 @@ bool ProxyInstance::supportsInvokeDefaultMethod() const
         
     return false;
 }
-    
-JSValue ProxyInstance::invokeDefaultMethod(ExecState* exec, const ArgList& args)
+
+JSValue ProxyInstance::invokeDefaultMethod(ExecState* exec)
 {
-    return invoke(exec, InvokeDefault, 0, args);
+    return invoke(exec, InvokeDefault, 0, ArgList(exec));
 }
 
 bool ProxyInstance::supportsConstruct() const

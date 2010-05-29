@@ -49,7 +49,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSInspectorFrontendHost::platform(ExecState* execState, const ArgList&)
+JSValue JSInspectorFrontendHost::platform(ExecState* execState)
 {
 #if PLATFORM(MAC)
     DEFINE_STATIC_LOCAL(const String, platform, ("mac"));
@@ -63,7 +63,7 @@ JSValue JSInspectorFrontendHost::platform(ExecState* execState, const ArgList&)
     return jsString(execState, platform);
 }
 
-JSValue JSInspectorFrontendHost::port(ExecState* execState, const ArgList&)
+JSValue JSInspectorFrontendHost::port(ExecState* execState)
 {
 #if PLATFORM(QT)
     DEFINE_STATIC_LOCAL(const String, port, ("qt"));
@@ -77,31 +77,29 @@ JSValue JSInspectorFrontendHost::port(ExecState* execState, const ArgList&)
     return jsString(execState, port);
 }
 
-JSValue JSInspectorFrontendHost::showContextMenu(ExecState* execState, const ArgList& args)
+JSValue JSInspectorFrontendHost::showContextMenu(ExecState* exec)
 {
-    if (args.size() < 2)
+    if (exec->argumentCount() < 2)
         return jsUndefined();
 #if ENABLE(CONTEXT_MENUS)
-    Event* event = toEvent(args.at(0));
+    Event* event = toEvent(exec->argument(0));
 
-    JSArray* array = asArray(args.at(1));
+    JSArray* array = asArray(exec->argument(1));
     Vector<ContextMenuItem*> items;
 
     for (size_t i = 0; i < array->length(); ++i) {
         JSObject* item = asObject(array->getIndex(i));
-        JSValue label = item->get(execState, Identifier(execState, "label"));
-        JSValue id = item->get(execState, Identifier(execState, "id"));
+        JSValue label = item->get(exec, Identifier(exec, "label"));
+        JSValue id = item->get(exec, Identifier(exec, "id"));
         if (label.isUndefined() || id.isUndefined())
             items.append(new ContextMenuItem(SeparatorType, ContextMenuItemTagNoAction, String()));
         else {
-            ContextMenuAction typedId = static_cast<ContextMenuAction>(ContextMenuItemBaseCustomTag + id.toInt32(execState));
-            items.append(new ContextMenuItem(ActionType, typedId, ustringToString(label.toString(execState))));
+            ContextMenuAction typedId = static_cast<ContextMenuAction>(ContextMenuItemBaseCustomTag + id.toInt32(exec));
+            items.append(new ContextMenuItem(ActionType, typedId, ustringToString(label.toString(exec))));
         }
     }
 
     impl()->showContextMenu(event, items);
-#else
-    UNUSED_PARAM(execState);
 #endif
     return jsUndefined();
 }

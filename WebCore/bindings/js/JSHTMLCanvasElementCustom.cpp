@@ -49,17 +49,17 @@ void JSHTMLCanvasElement::markChildren(MarkStack& markStack)
     markDOMObjectWrapper(markStack, globalData, canvas->renderingContext());
 }
 
-JSValue JSHTMLCanvasElement::getContext(ExecState* exec, const ArgList& args)
+JSValue JSHTMLCanvasElement::getContext(ExecState* exec)
 {
     HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(impl());
-    const UString& contextId = args.at(0).toString(exec);
+    const UString& contextId = exec->argument(0).toString(exec);
     RefPtr<CanvasContextAttributes> attrs;
 #if ENABLE(3D_CANVAS)
     if (contextId == "experimental-webgl" || contextId == "webkit-3d") {
         attrs = WebGLContextAttributes::create();
         WebGLContextAttributes* webGLAttrs = static_cast<WebGLContextAttributes*>(attrs.get());
-        if (args.size() > 1 && args.at(1).isObject()) {
-            JSObject* jsAttrs = args.at(1).getObject();
+        if (exec->argumentCount() > 1 && exec->argument(1).isObject()) {
+            JSObject* jsAttrs = exec->argument(1).getObject();
             Identifier alpha(exec, "alpha");
             if (jsAttrs->hasProperty(exec, alpha))
                 webGLAttrs->setAlpha(jsAttrs->get(exec, alpha).toBoolean(exec));

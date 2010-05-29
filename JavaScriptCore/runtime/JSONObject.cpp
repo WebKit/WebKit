@@ -41,8 +41,8 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSONObject);
 
-static JSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState*);
+static JSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState*);
 
 }
 
@@ -839,11 +839,11 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
 }
 
 // ECMA-262 v5 15.12.2
-JSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec, JSObject*, JSValue, const ArgList& args)
+JSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec)
 {
-    if (args.isEmpty())
+    if (!exec->argumentCount())
         return throwError(exec, GeneralError, "JSON.parse requires at least one parameter");
-    JSValue value = args.at(0);
+    JSValue value = exec->argument(0);
     UString source = value.toString(exec);
     if (exec->hadException())
         return jsNull();
@@ -853,10 +853,10 @@ JSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec, JSObject*, JSValue, co
     if (!unfiltered)
         return throwError(exec, SyntaxError, "Unable to parse JSON string");
     
-    if (args.size() < 2)
+    if (exec->argumentCount() < 2)
         return unfiltered;
     
-    JSValue function = args.at(1);
+    JSValue function = exec->argument(1);
     CallData callData;
     CallType callType = function.getCallData(callData);
     if (callType == CallTypeNone)
@@ -865,13 +865,13 @@ JSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec, JSObject*, JSValue, co
 }
 
 // ECMA-262 v5 15.12.3
-JSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState* exec, JSObject*, JSValue, const ArgList& args)
+JSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState* exec)
 {
-    if (args.isEmpty())
+    if (!exec->argumentCount())
         return throwError(exec, GeneralError, "No input to stringify");
-    JSValue value = args.at(0);
-    JSValue replacer = args.at(1);
-    JSValue space = args.at(2);
+    JSValue value = exec->argument(0);
+    JSValue replacer = exec->argument(1);
+    JSValue space = exec->argument(2);
     return Stringifier(exec, replacer, space).stringify(value);
 }
 

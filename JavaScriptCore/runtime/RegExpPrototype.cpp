@@ -38,10 +38,10 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(RegExpPrototype);
 
-static JSValue JSC_HOST_CALL regExpProtoFuncTest(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL regExpProtoFuncTest(ExecState*);
+static JSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState*);
+static JSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState*);
+static JSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState*);
 
 // ECMA 15.10.5
 
@@ -58,35 +58,38 @@ RegExpPrototype::RegExpPrototype(ExecState* exec, JSGlobalObject* globalObject, 
 
 // ------------------------------ Functions ---------------------------
     
-JSValue JSC_HOST_CALL regExpProtoFuncTest(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL regExpProtoFuncTest(ExecState* exec)
 {
+    JSValue thisValue = exec->hostThisValue();
     if (!thisValue.inherits(&RegExpObject::info))
         return throwError(exec, TypeError);
-    return asRegExpObject(thisValue)->test(exec, args);
+    return asRegExpObject(thisValue)->test(exec);
 }
 
-JSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState* exec)
 {
+    JSValue thisValue = exec->hostThisValue();
     if (!thisValue.inherits(&RegExpObject::info))
         return throwError(exec, TypeError);
-    return asRegExpObject(thisValue)->exec(exec, args);
+    return asRegExpObject(thisValue)->exec(exec);
 }
 
-JSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
 {
+    JSValue thisValue = exec->hostThisValue();
     if (!thisValue.inherits(&RegExpObject::info))
         return throwError(exec, TypeError);
 
     RefPtr<RegExp> regExp;
-    JSValue arg0 = args.at(0);
-    JSValue arg1 = args.at(1);
+    JSValue arg0 = exec->argument(0);
+    JSValue arg1 = exec->argument(1);
     
     if (arg0.inherits(&RegExpObject::info)) {
         if (!arg1.isUndefined())
             return throwError(exec, TypeError, "Cannot supply flags when constructing one RegExp from another.");
         regExp = asRegExpObject(arg0)->regExp();
     } else {
-        UString pattern = args.isEmpty() ? UString("") : arg0.toString(exec);
+        UString pattern = !exec->argumentCount() ? UString("") : arg0.toString(exec);
         UString flags = arg1.isUndefined() ? UString("") : arg1.toString(exec);
         regExp = RegExp::create(&exec->globalData(), pattern, flags);
     }
@@ -99,8 +102,9 @@ JSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec, JSObject*, JSValue
     return jsUndefined();
 }
 
-JSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
+JSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
 {
+    JSValue thisValue = exec->hostThisValue();
     if (!thisValue.inherits(&RegExpObject::info)) {
         if (thisValue.inherits(&RegExpPrototype::info))
             return jsNontrivialString(exec, "//");

@@ -32,7 +32,7 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(ErrorPrototype);
 
-static JSValue JSC_HOST_CALL errorProtoFuncToString(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL errorProtoFuncToString(ExecState*);
 
 // ECMA 15.9.4
 ErrorPrototype::ErrorPrototype(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, Structure* prototypeFunctionStructure)
@@ -46,9 +46,9 @@ ErrorPrototype::ErrorPrototype(ExecState* exec, JSGlobalObject* globalObject, No
     putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, globalObject, prototypeFunctionStructure, 0, exec->propertyNames().toString, errorProtoFuncToString), DontEnum);
 }
 
-JSValue JSC_HOST_CALL errorProtoFuncToString(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
+JSValue JSC_HOST_CALL errorProtoFuncToString(ExecState* exec)
 {
-    JSObject* thisObj = thisValue.toThisObject(exec);
+    JSObject* thisObj = exec->hostThisValue().toThisObject(exec);
     JSValue name = thisObj->get(exec, exec->propertyNames().name);
     JSValue message = thisObj->get(exec, exec->propertyNames().message);
 

@@ -41,21 +41,21 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSSQLTransactionSync::executeSql(ExecState* exec, const ArgList& args)
+JSValue JSSQLTransactionSync::executeSql(ExecState* exec)
 {
-    if (args.isEmpty()) {
+    if (!exec->argumentCount()) {
         setDOMException(exec, SYNTAX_ERR);
         return jsUndefined();
     }
 
-    String sqlStatement = ustringToString(args.at(0).toString(exec));
+    String sqlStatement = ustringToString(exec->argument(0).toString(exec));
     if (exec->hadException())
         return jsUndefined();
 
     // Now assemble the list of SQL arguments
     Vector<SQLValue> sqlValues;
-    if (!args.at(1).isUndefinedOrNull()) {
-        JSObject* object = args.at(1).getObject();
+    if (!exec->argument(1).isUndefinedOrNull()) {
+        JSObject* object = exec->argument(1).getObject();
         if (!object) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();

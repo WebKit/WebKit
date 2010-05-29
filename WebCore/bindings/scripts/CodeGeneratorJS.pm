@@ -177,10 +177,10 @@ END
     }
 
     push(@GenerateEventListenerImpl, <<END);
-    JSValue listener = args.at(1);
+    JSValue listener = exec->argument(1);
     if (!listener.isObject())
         return jsUndefined();
-    imp->${functionName}EventListener(ustringToAtomicString(args.at(0).toString(exec)), JSEventListener::create(asObject(listener), $wrapperObject, false, currentWorld(exec))$passRefPtrHandling, args.at(2).toBoolean(exec));
+    imp->${functionName}EventListener(ustringToAtomicString(exec->argument(0).toString(exec)), JSEventListener::create(asObject(listener), $wrapperObject, false, currentWorld(exec))$passRefPtrHandling, exec->argument(2).toBoolean(exec));
     return jsUndefined();
 END
     return @GenerateEventListenerImpl;
@@ -846,7 +846,7 @@ sub GenerateHeader
         foreach my $function (@{$dataNode->functions}) {
             if ($function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"JSCCustom"}) {
                 my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementationFunction"} || $codeGenerator->WK_lcfirst($function->signature->name);
-                push(@headerContent, "    JSC::JSValue " . $functionImplementationName . "(JSC::ExecState*, const JSC::ArgList&);\n");
+                push(@headerContent, "    JSC::JSValue " . $functionImplementationName . "(JSC::ExecState*);\n");
             }
         }
     }
@@ -989,7 +989,7 @@ sub GenerateHeader
         foreach my $function (@{$dataNode->functions}) {
             next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
             my $functionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
-            push(@headerContent, "JSC::JSValue JSC_HOST_CALL ${functionName}(JSC::ExecState*, JSC::JSObject*, JSC::JSValue, const JSC::ArgList&);\n");
+            push(@headerContent, "JSC::JSValue JSC_HOST_CALL ${functionName}(JSC::ExecState*);\n");
         }
     }
 
@@ -1103,11 +1103,11 @@ sub GenerateParametersCheckExpression
     my $function = shift;
 
     my @andExpression = ();
-    push(@andExpression, "args.size() == $numParameters");
+    push(@andExpression, "exec->argumentCount() == $numParameters");
     my $parameterIndex = 0;
     foreach $parameter (@{$function->parameters}) {
         last if $parameterIndex >= $numParameters;
-        my $value = "args.at($parameterIndex)";
+        my $value = "exec->argument($parameterIndex)";
         my $type = $codeGenerator->StripModule($parameter->type);
 
         # Only DOMString or wrapper types are checked.
@@ -1154,14 +1154,14 @@ sub GenerateOverloadedPrototypeFunction
 
     my $functionName = "js${implClassName}PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
 
-    push(@implContent, "JSValue JSC_HOST_CALL ${functionName}(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)\n");
+    push(@implContent, "JSValue JSC_HOST_CALL ${functionName}(ExecState* exec)\n");
     push(@implContent, <<END);
 {
 END
     foreach my $overload (@{$function->{overloads}}) {
         my $parametersCheck = GenerateFunctionParametersCheck($overload);
         push(@implContent, "    if ($parametersCheck)\n");
-        push(@implContent, "        return ${functionName}$overload->{overloadIndex}(exec, thisValue, args);\n");
+        push(@implContent, "        return ${functionName}$overload->{overloadIndex}(exec);\n");
     }
     push(@implContent, <<END);
     return throwError(exec, TypeError);
@@ -1790,21 +1790,21 @@ sub GenerateImplementation
             
             my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementationFunction"} || $codeGenerator->WK_lcfirst($function->signature->name);
 
-            push(@implContent, "JSValue JSC_HOST_CALL ${functionName}(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)\n");
+            push(@implContent, "JSValue JSC_HOST_CALL ${functionName}(ExecState* exec)\n");
             push(@implContent, "{\n");
-            push(@implContent, "    UNUSED_PARAM(args);\n");
 
             $implIncludes{"<runtime/Error.h>"} = 1;
 
             if ($interfaceName eq "DOMWindow") {
-                push(@implContent, "    $className* castedThis = toJSDOMWindow(thisValue.toThisObject(exec));\n");
+                push(@implContent, "    $className* castedThis = toJSDOMWindow(exec->hostThisValue().toThisObject(exec));\n");
                 push(@implContent, "    if (!castedThis)\n");
                 push(@implContent, "        return throwError(exec, TypeError);\n");
             } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
-                push(@implContent, "    $className* castedThis = to${className}(thisValue.toThisObject(exec));\n");
+                push(@implContent, "    $className* castedThis = to${className}(exec->hostThisValue().toThisObject(exec));\n");
                 push(@implContent, "    if (!castedThis)\n");
                 push(@implContent, "        return throwError(exec, TypeError);\n");
             } else {
+                push(@implContent, "    JSValue thisValue = exec->hostThisValue();\n");
                 push(@implContent, "    if (!thisValue.inherits(&${className}::s_info))\n");
                 push(@implContent, "        return throwError(exec, TypeError);\n");
                 push(@implContent, "    $className* castedThis = static_cast<$className*>(asObject(thisValue));\n");
@@ -1832,12 +1832,12 @@ sub GenerateImplementation
             }
 
             if ($function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"JSCCustom"}) {
-                push(@implContent, "    return castedThis->" . $functionImplementationName . "(exec, args);\n");
+                push(@implContent, "    return castedThis->" . $functionImplementationName . "(exec);\n");
             } elsif ($svgPODListType) {
                 $implIncludes{"JS${svgPODListType}.h"} = 1;
                 $implIncludes{"JSSVGPODListCustom.h"} = 1;
                 push(@implContent, "    return JSSVGPODListCustom::$functionImplementationName<$className, " . GetNativeType($svgPODListType)
-                                 . ">(castedThis, exec, args, to" . $svgPODListType . ");\n");
+                                 . ">(castedThis, exec, to" . $svgPODListType . ");\n");
             } else {
                 push(@implContent, "    $implType* imp = static_cast<$implType*>(castedThis->impl());\n");
                 push(@implContent, "    $podType podImp(*imp);\n") if $podType;
@@ -1846,7 +1846,7 @@ sub GenerateImplementation
 
                 my $requiresAllArguments = $function->signature->extendedAttributes->{"RequiresAllArguments"};
                 if ($requiresAllArguments) {
-                        push(@implContent, "    if (args.size() < $numParameters)\n");
+                        push(@implContent, "    if (exec->argumentCount() < $numParameters)\n");
                         if ($requiresAllArguments eq "Raise") {
                             push(@implContent, "        return throwError(exec, SyntaxError, \"Not enough arguments\");\n");
                         } else {
@@ -1875,7 +1875,7 @@ sub GenerateImplementation
                     my $hasOptionalArguments = 0;
 
                     if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
-                        push(@implContent, "    ScriptCallStack callStack(exec, args, $numParameters);\n");
+                        push(@implContent, "    ScriptCallStack callStack(exec, $numParameters);\n");
                         $implIncludes{"ScriptCallStack.h"} = 1;
                     }
 
@@ -1899,7 +1899,7 @@ sub GenerateImplementation
                         if ($parameter->extendedAttributes->{"Optional"}) {
                             # Generate early call if there are enough parameters.
                             if (!$hasOptionalArguments) {
-                                push(@implContent, "\n    int argsCount = args.size();\n");
+                                push(@implContent, "\n    int argsCount = exec->argumentCount();\n");
                                 $hasOptionalArguments = 1;
                             }
                             push(@implContent, "    if (argsCount < " . ($paramIndex + 1) . ") {\n");
@@ -1911,15 +1911,15 @@ sub GenerateImplementation
                     
                         if ($parameter->type eq "XPathNSResolver") {
                             push(@implContent, "    RefPtr<XPathNSResolver> customResolver;\n");
-                            push(@implContent, "    XPathNSResolver* resolver = toXPathNSResolver(args.at($paramIndex));\n");
+                            push(@implContent, "    XPathNSResolver* resolver = toXPathNSResolver(exec->argument($paramIndex));\n");
                             push(@implContent, "    if (!resolver) {\n");
-                            push(@implContent, "        customResolver = JSCustomXPathNSResolver::create(exec, args.at($paramIndex));\n");
+                            push(@implContent, "        customResolver = JSCustomXPathNSResolver::create(exec, exec->argument($paramIndex));\n");
                             push(@implContent, "        if (exec->hadException())\n");
                             push(@implContent, "            return jsUndefined();\n");
                             push(@implContent, "        resolver = customResolver.get();\n");
                             push(@implContent, "    }\n");
                         } else {
-                            push(@implContent, "    " . GetNativeTypeFromSignature($parameter) . " $name = " . JSValueToNative($parameter, "args.at($paramIndex)") . ";\n");
+                            push(@implContent, "    " . GetNativeTypeFromSignature($parameter) . " $name = " . JSValueToNative($parameter, "exec->argument($paramIndex)") . ";\n");
 
                             # If a parameter is "an index" and it's negative it should throw an INDEX_SIZE_ERR exception.
                             # But this needs to be done in the bindings, because the type is unsigned and the fact that it

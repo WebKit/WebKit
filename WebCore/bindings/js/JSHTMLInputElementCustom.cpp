@@ -103,14 +103,14 @@ void JSHTMLInputElement::setSelectionEnd(ExecState* exec, JSValue value)
     input->setSelectionEnd(value.toInt32(exec));
 }
 
-JSValue JSHTMLInputElement::setSelectionRange(ExecState* exec, const ArgList& args)
+JSValue JSHTMLInputElement::setSelectionRange(ExecState* exec)
 {
     HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
     if (!input->canHaveSelection())
         return throwError(exec, TypeError);
 
-    int start = args.at(0).toInt32(exec);
-    int end = args.at(1).toInt32(exec);
+    int start = exec->argument(0).toInt32(exec);
+    int end = exec->argument(1).toInt32(exec);
 
     input->setSelectionRange(start, end);
     return jsUndefined();

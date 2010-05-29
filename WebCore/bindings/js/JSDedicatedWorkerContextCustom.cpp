@@ -42,9 +42,9 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSC::JSValue JSDedicatedWorkerContext::postMessage(JSC::ExecState* exec, const JSC::ArgList& args)
+JSC::JSValue JSDedicatedWorkerContext::postMessage(JSC::ExecState* exec)
 {
-    return handlePostMessage(exec, args, impl());
+    return handlePostMessage(exec, impl());
 }
 
 } // namespace WebCore

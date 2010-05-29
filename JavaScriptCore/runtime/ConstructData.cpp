@@ -26,7 +26,10 @@
 #include "config.h"
 #include "ConstructData.h"
 
+#include "Executable.h"
+#include "Interpreter.h"
 #include "JSFunction.h"
+#include "JSGlobalObject.h"
 
 namespace JSC {
 
@@ -34,9 +37,23 @@ JSObject* construct(ExecState* exec, JSValue object, ConstructType constructType
 {
     if (constructType == ConstructTypeHost)
         return constructData.native.function(exec, asObject(object), args);
+
     ASSERT(constructType == ConstructTypeJS);
-    // FIXME: Can this be done more efficiently using the constructData?
-    return asFunction(object)->construct(exec, args);
+    JSFunction* jsFunction = asFunction(object);
+
+    ASSERT(!jsFunction->isHostFunction());
+    Structure* structure;
+    JSValue prototype = jsFunction->get(exec, exec->propertyNames().prototype);
+    if (prototype.isObject())
+        structure = asObject(prototype)->inheritorID();
+    else
+        structure = exec->lexicalGlobalObject()->emptyObjectStructure();
+    JSObject* thisObj = new (exec) JSObject(structure);
+
+    JSValue result = exec->interpreter()->executeConstruct(jsFunction->jsExecutable(), exec, jsFunction, thisObj, args, jsFunction->scope().node(), exec->exceptionSlot());
+    if (exec->hadException() || !result.isObject())
+        return thisObj;
+    return asObject(result);
 }
 
 } // namespace JSC

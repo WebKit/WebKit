@@ -1,3 +1,260 @@
+2010-05-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig, Gavin Barraclough, Oliver Hunt.
+
+        Simplified the host calling convention.
+
+        PART ONE: Functional code changes.
+        
+        [ None in WebCore ]
+        
+        PART TWO: Global search and replace.
+        
+        In the areas below, I used global search-and-replace to change
+            (ExecState*, JSObject*, JSValue, const ArgList&) => (ExecState*)
+            args.size() => exec->argumentCount()
+            args.at(i) => exec->argument(i)
+
+        * bindings/js/JSArrayBufferViewCustom.cpp:
+        (WebCore::JSArrayBufferView::slice):
+        * bindings/js/JSArrayBufferViewHelper.h:
+        (WebCore::setWebGLArrayHelper):
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::JSCanvasRenderingContext2D::setFillColor):
+        (WebCore::JSCanvasRenderingContext2D::setStrokeColor):
+        (WebCore::JSCanvasRenderingContext2D::strokeRect):
+        (WebCore::JSCanvasRenderingContext2D::drawImage):
+        (WebCore::JSCanvasRenderingContext2D::drawImageFromRect):
+        (WebCore::JSCanvasRenderingContext2D::setShadow):
+        (WebCore::JSCanvasRenderingContext2D::createPattern):
+        (WebCore::JSCanvasRenderingContext2D::createImageData):
+        (WebCore::JSCanvasRenderingContext2D::putImageData):
+        (WebCore::JSCanvasRenderingContext2D::fillText):
+        (WebCore::JSCanvasRenderingContext2D::strokeText):
+        * bindings/js/JSClipboardCustom.cpp:
+        (WebCore::JSClipboard::clearData):
+        (WebCore::JSClipboard::getData):
+        (WebCore::JSClipboard::setDragImage):
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        (WebCore::JSDOMApplicationCache::hasItem):
+        (WebCore::JSDOMApplicationCache::add):
+        (WebCore::JSDOMApplicationCache::remove):
+        * bindings/js/JSDOMFormDataCustom.cpp:
+        (WebCore::JSDOMFormData::append):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::open):
+        (WebCore::JSDOMWindow::showModalDialog):
+        (WebCore::JSDOMWindow::postMessage):
+        (WebCore::JSDOMWindow::setTimeout):
+        (WebCore::JSDOMWindow::setInterval):
+        (WebCore::JSDOMWindow::addEventListener):
+        (WebCore::JSDOMWindow::removeEventListener):
+        (WebCore::JSDOMWindow::openDatabase):
+        * bindings/js/JSDatabaseCustom.cpp:
+        (WebCore::JSDatabase::changeVersion):
+        (WebCore::createTransaction):
+        (WebCore::JSDatabase::transaction):
+        (WebCore::JSDatabase::readTransaction):
+        * bindings/js/JSDatabaseSyncCustom.cpp:
+        (WebCore::JSDatabaseSync::changeVersion):
+        (WebCore::createTransaction):
+        (WebCore::JSDatabaseSync::transaction):
+        (WebCore::JSDatabaseSync::readTransaction):
+        * bindings/js/JSDedicatedWorkerContextCustom.cpp:
+        (WebCore::JSDedicatedWorkerContext::postMessage):
+        * bindings/js/JSDesktopNotificationsCustom.cpp:
+        (WebCore::JSNotificationCenter::requestPermission):
+        * bindings/js/JSFloatArrayCustom.cpp:
+        (WebCore::JSFloatArray::set):
+        * bindings/js/JSGeolocationCustom.cpp:
+        (WebCore::JSGeolocation::getCurrentPosition):
+        (WebCore::JSGeolocation::watchPosition):
+        * bindings/js/JSHTMLAllCollectionCustom.cpp:
+        (WebCore::callHTMLAllCollection):
+        (WebCore::JSHTMLAllCollection::item):
+        (WebCore::JSHTMLAllCollection::namedItem):
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::JSHTMLCanvasElement::getContext):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::callHTMLCollection):
+        (WebCore::JSHTMLCollection::item):
+        (WebCore::JSHTMLCollection::namedItem):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::open):
+        (WebCore::documentWrite):
+        (WebCore::JSHTMLDocument::write):
+        (WebCore::JSHTMLDocument::writeln):
+        * bindings/js/JSHTMLInputElementCustom.cpp:
+        (WebCore::JSHTMLInputElement::setSelectionRange):
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::add):
+        (WebCore::JSHTMLOptionsCollection::remove):
+        * bindings/js/JSHTMLSelectElementCustom.cpp:
+        (WebCore::JSHTMLSelectElement::remove):
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::pushState):
+        (WebCore::JSHistory::replaceState):
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::databaseForId):
+        (WebCore::JSInjectedScriptHost::currentCallFrame):
+        (WebCore::JSInjectedScriptHost::nodeForId):
+        (WebCore::JSInjectedScriptHost::pushNodePathToFrontend):
+        (WebCore::JSInjectedScriptHost::selectDatabase):
+        (WebCore::JSInjectedScriptHost::selectDOMStorage):
+        (WebCore::JSInjectedScriptHost::reportDidDispatchOnInjectedScript):
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        (WebCore::JSInspectorFrontendHost::platform):
+        (WebCore::JSInspectorFrontendHost::port):
+        (WebCore::JSInspectorFrontendHost::showContextMenu):
+        * bindings/js/JSInt16ArrayCustom.cpp:
+        (WebCore::JSInt16Array::set):
+        * bindings/js/JSInt32ArrayCustom.cpp:
+        (WebCore::JSInt32Array::set):
+        * bindings/js/JSInt8ArrayCustom.cpp:
+        (WebCore::JSInt8Array::set):
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        (WebCore::JSJavaScriptCallFrame::evaluate):
+        (WebCore::JSJavaScriptCallFrame::scopeType):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::replace):
+        (WebCore::JSLocation::reload):
+        (WebCore::JSLocation::assign):
+        (WebCore::JSLocation::toString):
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::JSMessageEvent::initMessageEvent):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::postMessage):
+        * bindings/js/JSMessagePortCustom.h:
+        (WebCore::handlePostMessage):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::insertBefore):
+        (WebCore::JSNode::replaceChild):
+        (WebCore::JSNode::removeChild):
+        (WebCore::JSNode::appendChild):
+        * bindings/js/JSNodeListCustom.cpp:
+        (WebCore::callNodeList):
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::callPlugin):
+        * bindings/js/JSSQLResultSetRowListCustom.cpp:
+        (WebCore::JSSQLResultSetRowList::item):
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        (WebCore::JSSQLTransaction::executeSql):
+        * bindings/js/JSSQLTransactionSyncCustom.cpp:
+        (WebCore::JSSQLTransactionSync::executeSql):
+        * bindings/js/JSSVGLengthCustom.cpp:
+        (WebCore::JSSVGLength::convertToSpecifiedUnits):
+        * bindings/js/JSSVGMatrixCustom.cpp:
+        (WebCore::JSSVGMatrix::multiply):
+        (WebCore::JSSVGMatrix::inverse):
+        (WebCore::JSSVGMatrix::rotateFromVector):
+        * bindings/js/JSSVGPODListCustom.h:
+        (WebCore::JSSVGPODListCustom::clear):
+        (WebCore::JSSVGPODListCustom::initialize):
+        (WebCore::JSSVGPODListCustom::getItem):
+        (WebCore::JSSVGPODListCustom::insertItemBefore):
+        (WebCore::JSSVGPODListCustom::replaceItem):
+        (WebCore::JSSVGPODListCustom::removeItem):
+        (WebCore::JSSVGPODListCustom::appendItem):
+        * bindings/js/JSSVGPathSegListCustom.cpp:
+        (WebCore::JSSVGPathSegList::clear):
+        (WebCore::JSSVGPathSegList::initialize):
+        (WebCore::JSSVGPathSegList::getItem):
+        (WebCore::JSSVGPathSegList::insertItemBefore):
+        (WebCore::JSSVGPathSegList::replaceItem):
+        (WebCore::JSSVGPathSegList::removeItem):
+        (WebCore::JSSVGPathSegList::appendItem):
+        * bindings/js/JSUint16ArrayCustom.cpp:
+        (WebCore::JSUint16Array::set):
+        * bindings/js/JSUint32ArrayCustom.cpp:
+        (WebCore::JSUint32Array::set):
+        * bindings/js/JSUint8ArrayCustom.cpp:
+        (WebCore::JSUint8Array::set):
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::JSWebGLRenderingContext::bufferData):
+        (WebCore::JSWebGLRenderingContext::bufferSubData):
+        (WebCore::getObjectParameter):
+        (WebCore::JSWebGLRenderingContext::getBufferParameter):
+        (WebCore::JSWebGLRenderingContext::getFramebufferAttachmentParameter):
+        (WebCore::JSWebGLRenderingContext::getParameter):
+        (WebCore::JSWebGLRenderingContext::getProgramParameter):
+        (WebCore::JSWebGLRenderingContext::getRenderbufferParameter):
+        (WebCore::JSWebGLRenderingContext::getShaderParameter):
+        (WebCore::JSWebGLRenderingContext::getTexParameter):
+        (WebCore::JSWebGLRenderingContext::getUniform):
+        (WebCore::JSWebGLRenderingContext::getVertexAttrib):
+        (WebCore::JSWebGLRenderingContext::texImage2D):
+        (WebCore::JSWebGLRenderingContext::texSubImage2D):
+        (WebCore::dataFunctionf):
+        (WebCore::dataFunctioni):
+        (WebCore::dataFunctionMatrix):
+        (WebCore::JSWebGLRenderingContext::uniform1fv):
+        (WebCore::JSWebGLRenderingContext::uniform1iv):
+        (WebCore::JSWebGLRenderingContext::uniform2fv):
+        (WebCore::JSWebGLRenderingContext::uniform2iv):
+        (WebCore::JSWebGLRenderingContext::uniform3fv):
+        (WebCore::JSWebGLRenderingContext::uniform3iv):
+        (WebCore::JSWebGLRenderingContext::uniform4fv):
+        (WebCore::JSWebGLRenderingContext::uniform4iv):
+        (WebCore::JSWebGLRenderingContext::uniformMatrix2fv):
+        (WebCore::JSWebGLRenderingContext::uniformMatrix3fv):
+        (WebCore::JSWebGLRenderingContext::uniformMatrix4fv):
+        (WebCore::JSWebGLRenderingContext::vertexAttrib1fv):
+        (WebCore::JSWebGLRenderingContext::vertexAttrib2fv):
+        (WebCore::JSWebGLRenderingContext::vertexAttrib3fv):
+        (WebCore::JSWebGLRenderingContext::vertexAttrib4fv):
+        * bindings/js/JSWebSocketCustom.cpp:
+        (WebCore::JSWebSocket::send):
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::importScripts):
+        (WebCore::JSWorkerContext::setTimeout):
+        (WebCore::JSWorkerContext::setInterval):
+        (WebCore::JSWorkerContext::openDatabase):
+        (WebCore::JSWorkerContext::openDatabaseSync):
+        * bindings/js/JSWorkerCustom.cpp:
+        (WebCore::JSWorker::postMessage):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::open):
+        (WebCore::JSXMLHttpRequest::send):
+        * bindings/js/JSXSLTProcessorCustom.cpp:
+        (WebCore::JSXSLTProcessor::importStylesheet):
+        (WebCore::JSXSLTProcessor::transformToFragment):
+        (WebCore::JSXSLTProcessor::transformToDocument):
+        (WebCore::JSXSLTProcessor::setParameter):
+        (WebCore::JSXSLTProcessor::getParameter):
+        (WebCore::JSXSLTProcessor::removeParameter):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::create):
+        (WebCore::ScheduledAction::ScheduledAction):
+        * bindings/js/ScheduledAction.h:
+        * bindings/js/ScriptCallFrame.cpp:
+        (WebCore::ScriptCallFrame::ScriptCallFrame):
+        * bindings/js/ScriptCallFrame.h:
+        * bindings/js/ScriptCallStack.cpp:
+        (WebCore::ScriptCallStack::ScriptCallStack):
+        (WebCore::ScriptCallStack::initialize):
+        * bindings/js/ScriptCallStack.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CInstance::invokeMethod):
+        (JSC::Bindings::CInstance::invokeDefaultMethod):
+        * bridge/c/c_instance.h:
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaInstance::invokeMethod):
+        * bridge/jni/jsc/JavaInstanceJSC.h:
+        * bridge/jsc/BridgeJSC.h:
+        (JSC::Bindings::Instance::invokeDefaultMethod):
+        * bridge/objc/objc_instance.h:
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::invokeMethod):
+        (ObjcInstance::invokeObjcMethod):
+        (ObjcInstance::invokeDefaultMethod):
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::callObjCFallbackObject):
+        * bridge/runtime_method.cpp:
+        (JSC::callRuntimeMethod):
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::callRuntimeObject):
+
 2010-05-28  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -31,11 +31,6 @@
 
 namespace JSC {
 
-JSValue CallFrame::thisValue()
-{
-    return this[codeBlock()->thisRegister()].jsValue();
-}
-
 #ifndef NDEBUG
 void CallFrame::dumpCaller()
 {

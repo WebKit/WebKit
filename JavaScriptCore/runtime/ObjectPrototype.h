@@ -36,7 +36,7 @@ namespace JSC {
         bool m_hasNoPropertiesWithUInt32Names;
     };
 
-    JSValue JSC_HOST_CALL objectProtoFuncToString(ExecState*, JSObject*, JSValue, const ArgList&);
+    JSValue JSC_HOST_CALL objectProtoFuncToString(ExecState*);
 
 } // namespace JSC
 

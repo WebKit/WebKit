@@ -1,3 +1,26 @@
+2010-05-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig, Gavin Barraclough, Oliver Hunt.
+
+        Simplified the host calling convention.
+
+        PART ONE: Functional code changes.
+        
+        [ None in WebKit ]
+        
+        PART TWO: Global search and replace.
+        
+        In the areas below, I used global search-and-replace to change
+            (ExecState*, JSObject*, JSValue, const ArgList&) => (ExecState*)
+            args.size() => exec->argumentCount()
+            args.at(i) => exec->argument(i)
+
+        * Plugins/Hosted/ProxyInstance.h:
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::invoke):
+        (WebKit::ProxyInstance::invokeMethod):
+        (WebKit::ProxyInstance::invokeDefaultMethod):
+
 2010-05-27  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Simon Fraser.

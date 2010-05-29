@@ -67,23 +67,23 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, ArrayBu
     return jsUndefined();
 }
 
-JSValue JSArrayBufferView::slice(ExecState* exec, const ArgList& args)
+JSValue JSArrayBufferView::slice(ExecState* exec)
 {
     ArrayBufferView* array = reinterpret_cast<ArrayBufferView*>(impl());
 
     int start, end;
-    switch (args.size()) {
+    switch (exec->argumentCount()) {
     case 0:
         start = 0;
         end = array->length();
         break;
     case 1:
-        start = args.at(0).toInt32(exec);
+        start = exec->argument(0).toInt32(exec);
         end = array->length();
         break;
     default:
-        start = args.at(0).toInt32(exec);
-        end = args.at(1).toInt32(exec);
+        start = exec->argument(0).toInt32(exec);
+        end = exec->argument(1).toInt32(exec);
     }
     return toJS(exec, globalObject(), array->slice(start, end));
 }

@@ -32,8 +32,8 @@ namespace JSC {
 ASSERT_CLASS_FITS_IN_CELL(BooleanPrototype);
 
 // Functions
-static JSValue JSC_HOST_CALL booleanProtoFuncToString(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue JSC_HOST_CALL booleanProtoFuncValueOf(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL booleanProtoFuncToString(ExecState*);
+static JSValue JSC_HOST_CALL booleanProtoFuncValueOf(ExecState*);
 
 // ECMA 15.6.4
 
@@ -51,8 +51,9 @@ BooleanPrototype::BooleanPrototype(ExecState* exec, JSGlobalObject* globalObject
 
 // ECMA 15.6.4.2 + 15.6.4.3
 
-JSValue JSC_HOST_CALL booleanProtoFuncToString(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
+JSValue JSC_HOST_CALL booleanProtoFuncToString(ExecState* exec)
 {
+    JSValue thisValue = exec->hostThisValue();
     if (thisValue == jsBoolean(false))
         return jsNontrivialString(exec, "false");
 
@@ -69,8 +70,9 @@ JSValue JSC_HOST_CALL booleanProtoFuncToString(ExecState* exec, JSObject*, JSVal
     return jsNontrivialString(exec, "true");
 }
 
-JSValue JSC_HOST_CALL booleanProtoFuncValueOf(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
+JSValue JSC_HOST_CALL booleanProtoFuncValueOf(ExecState* exec)
 {
+    JSValue thisValue = exec->hostThisValue();
     if (thisValue.isBoolean())
         return thisValue;
 

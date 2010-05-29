@@ -433,7 +433,7 @@ namespace JSC {
         friend JSValue jsString(ExecState* exec, const UString& u1, JSString* s2);
         friend JSValue jsString(ExecState* exec, JSString* s1, const UString& u2);
         friend JSValue jsString(ExecState* exec, Register* strings, unsigned count);
-        friend JSValue jsString(ExecState* exec, JSValue thisValue, const ArgList& args);
+        friend JSValue jsString(ExecState* exec, JSValue thisValue);
         friend JSString* jsStringWithFinalizer(ExecState*, const UString&, JSStringFinalizerCallback callback, void* context);
     };
 

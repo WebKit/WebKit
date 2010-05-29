@@ -1,3 +1,21 @@
+2010-05-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig, Gavin Barraclough, Oliver Hunt.
+
+        Simplified the host calling convention.
+
+        Changed these results to expect to fail to stringify their exception
+        objects in the case of stack overflow. (Standardizing the calling
+        convention has implicitly added stack overflow checks to some places
+        where they used to be missing.)
+        
+        In a future patch, I plan to implement a more reliable way to stringify
+        exceptions without invoking a JS function. For now, though, it seems best
+        to match other test results, instead of silently overflowing the stack.
+
+        * fast/js/global-recursion-on-full-stack-expected.txt:
+        * fast/xmlhttprequest/xmlhttprequest-recursive-sync-event-expected.txt:
+
 2010-05-28  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Darin Fisher.
