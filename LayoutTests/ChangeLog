@@ -1,3 +1,17 @@
+2010-05-29  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Allow descendant frame navigation for file URLs when allowFileAccessFromFileURLs is false
+        https://bugs.webkit.org/show_bug.cgi?id=39750
+
+        Check that descendant file: frames can navigate each other.
+
+        * fast/frames/location-change-no-file-access-expected.txt: Added.
+        * fast/frames/location-change-no-file-access.html: Added.
+        * fast/frames/resources/no-file-access-frame-1.html: Added.
+        * fast/frames/resources/no-file-access-frame-2.html: Added.
+
 2010-05-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig, Gavin Barraclough, Oliver Hunt.

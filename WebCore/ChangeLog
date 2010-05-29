@@ -1,3 +1,19 @@
+2010-05-29  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Allow descendant frame navigation for file URLs when allowFileAccessFromFileURLs is false
+        https://bugs.webkit.org/show_bug.cgi?id=39750
+
+        Fix for local HTML package breakage when each file is its own origin. 
+        In this case we should allow descendant file: frames to navigate each 
+        other when they share the same top frame.
+
+        Test: fast/frames/location-change-no-file-access.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::shouldAllowNavigation):
+
 2010-05-29  Geoffrey Garen  <ggaren@apple.com>
 
         Qt build fix: Updated for ArgList changes.
