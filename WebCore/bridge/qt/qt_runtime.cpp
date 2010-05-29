@@ -1535,7 +1535,7 @@ JSValue QtRuntimeConnectionMethod::call(ExecState* exec)
 
         if (signalIndex != -1) {
             if (exec->argumentCount() == 1) {
-                funcObject = args.at(0).toObject(exec);
+                funcObject = exec->argument(0).toObject(exec);
                 CallData callData;
                 if (funcObject->getCallData(callData) == CallTypeNone) {
                     if (d->m_isConnect)
@@ -1544,18 +1544,18 @@ JSValue QtRuntimeConnectionMethod::call(ExecState* exec)
                         return throwError(exec, TypeError, "QtMetaMethod.disconnect: target is not a function");
                 }
             } else if (exec->argumentCount() >= 2) {
-                if (args.at(0).isObject()) {
-                    thisObject = args.at(0).toObject(exec);
+                if (exec->argument(0).isObject()) {
+                    thisObject = exec->argument(0).toObject(exec);
 
                     // Get the actual function to call
-                    JSObject *asObj = args.at(1).toObject(exec);
+                    JSObject *asObj = exec->argument(1).toObject(exec);
                     CallData callData;
                     if (asObj->getCallData(callData) != CallTypeNone) {
                         // Function version
                         funcObject = asObj;
                     } else {
                         // Convert it to a string
-                        UString funcName = args.at(1).toString(exec);
+                        UString funcName = exec->argument(1).toString(exec);
                         Identifier funcIdent(exec, funcName);
 
                         // ### DropAllLocks
