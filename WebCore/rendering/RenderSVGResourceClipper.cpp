@@ -184,9 +184,7 @@ bool RenderSVGResourceClipper::createClipData(ClipperData* clipperData, const Fl
     maskContext->translate(-repaintRect.x(), -repaintRect.y());
 
     // clipPath can also be clipped by another clipPath.
-    bool clipperGetsClipped = false;
     if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(this->document(), style()->svgStyle()->clipperResource())) {
-        clipperGetsClipped = true;
         if (!clipper->applyClippingToContext(this, objectBoundingBox, repaintRect, maskContext)) {
             maskContext->restore();
             return false;

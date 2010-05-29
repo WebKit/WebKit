@@ -4326,7 +4326,6 @@ void RenderBlock::calcInlinePrefWidths()
     InlineMinMaxIterator childIterator(this);
     bool addedTextIndent = false; // Only gets added in once.
     RenderObject* prevFloat = 0;
-    RenderObject* previousLeaf = 0;
     while (RenderObject* child = childIterator.next()) {
         autoWrap = child->isReplaced() ? child->parent()->style()->autoWrap() : 
             child->style()->autoWrap();
@@ -4554,8 +4553,6 @@ void RenderBlock::calcInlinePrefWidths()
         }
 
         oldAutoWrap = autoWrap;
-        if (!child->isRenderInline())
-            previousLeaf = child;
     }
 
     if (style()->collapseWhiteSpace())

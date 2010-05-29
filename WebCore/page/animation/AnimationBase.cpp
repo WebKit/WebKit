@@ -1226,10 +1226,6 @@ double AnimationBase::progress(double scale, double offset, const TimingFunction
 void AnimationBase::getTimeToNextEvent(double& time, bool& isLooping) const
 {
     // Decide when the end or loop event needs to fire
-    double totalDuration = -1;
-    if (m_animation->iterationCount() > 0)
-        totalDuration = m_animation->duration() * m_animation->iterationCount();
-
     const double elapsedDuration = max(beginAnimationUpdateTime() - m_startTime, 0.0);
     double durationLeft = 0;
     double nextIterationTime = m_totalDuration;

@@ -214,7 +214,6 @@ void InsertParagraphSeparatorCommand::doApply()
     // Handle case when position is in the last visible position in its block,
     // including when the block is empty. 
     if (isLastInBlock) {
-        bool shouldApplyStyleAfterInsertion = true;
         if (nestNewBlock) {
             if (isFirstInBlock && !lineBreakExistsAtVisiblePosition(visiblePos)) {
                 // The block is empty.  Create an empty block to
@@ -227,11 +226,8 @@ void InsertParagraphSeparatorCommand::doApply()
         } else {
             // We can get here if we pasted a copied portion of a blockquote with a newline at the end and are trying to paste it
             // into an unquoted area. We then don't want the newline within the blockquote or else it will also be quoted.
-            if (Node* highestBlockquote = highestEnclosingNodeOfType(canonicalPos, &isMailBlockquote)) {
+            if (Node* highestBlockquote = highestEnclosingNodeOfType(canonicalPos, &isMailBlockquote))
                 startBlock = static_cast<Element*>(highestBlockquote);
-                // When inserting the newline after the blockquote, we don't want to apply the original style after the insertion
-                shouldApplyStyleAfterInsertion = false;
-            }
 
             // Most of the time we want to stay at the nesting level of the startBlock (e.g., when nesting within lists).  However,
             // for div nodes, this can result in nested div tags that are hard to break out of.

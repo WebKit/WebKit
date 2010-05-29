@@ -171,8 +171,7 @@ void ApplicationCacheStorage::loadManifestHostHashes()
     if (statement.prepare() != SQLResultOk)
         return;
     
-    int result;
-    while ((result = statement.step()) == SQLResultRow)
+    while (statement.step() == SQLResultRow)
         m_cacheHostSet.add(static_cast<unsigned>(statement.getColumnInt64(0)));
 }    
 
