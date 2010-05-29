@@ -1,5 +1,15 @@
 2010-05-28  Geoffrey Garen  <ggaren@apple.com>
 
+        Qt build fix: disable a little more stuff when JIT_OPTIMIZE_NATIVE_CALL
+        is disabled.
+
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/Lookup.h:
+        * wtf/Platform.h:
+
+2010-05-28  Geoffrey Garen  <ggaren@apple.com>
+
         Windows build fix: Updated exported symbols.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:

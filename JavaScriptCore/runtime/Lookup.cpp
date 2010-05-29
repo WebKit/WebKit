@@ -79,7 +79,7 @@ void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
     if (!location) {
         NativeFunctionWrapper* function;
         JSGlobalObject* globalObject = asGlobalObject(thisObj->getAnonymousValue(0).asCell());
-#if ENABLE(JIT)
+#if ENABLE(JIT) && ENABLE(JIT_OPTIMIZE_NATIVE_CALL)
         if (entry->generator())
             function = new (exec) NativeFunctionWrapper(exec, globalObject, globalObject->prototypeFunctionStructure(), entry->functionLength(), propertyName, exec->globalData().getHostFunction(entry->function(), entry->generator()));
         else
