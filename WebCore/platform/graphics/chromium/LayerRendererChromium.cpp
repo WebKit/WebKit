@@ -358,10 +358,11 @@ void LayerRendererChromium::drawLayers(const IntRect& updateRect, const IntRect&
 
     checkGLError();
 
-    // FIXME: Need to prevent composited layers from drawing over the scroll
-    // bars.
-
     // FIXME: Sublayers need to be sorted in Z to get the correct transparency effect.
+
+    // Enable scissoring to avoid rendering composited layers over the scrollbars.
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, visibleRect.height() - contentRect.height(), contentRect.width(), contentRect.height());
 
     // Translate all the composited layers by the scroll position.
     TransformationMatrix matrix;
@@ -370,6 +371,8 @@ void LayerRendererChromium::drawLayers(const IntRect& updateRect, const IntRect&
     const Vector<RefPtr<LayerChromium> >& sublayers = m_rootLayer->getSublayers();
     for (size_t i = 0; i < sublayers.size(); i++)
         compositeLayersRecursive(sublayers[i].get(), matrix, opacity, visibleRect);
+
+    glDisable(GL_SCISSOR_TEST);
 
     glFlush();
     m_gles2Context->swapBuffers();

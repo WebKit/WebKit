@@ -1,3 +1,13 @@
+2010-05-28  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Prevent chromium composited layers from rendering on top of the scrollbars.
+        https://bugs.webkit.org/show_bug.cgi?id=39851
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawLayers):
+
 2010-05-28  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Darin Fisher.
