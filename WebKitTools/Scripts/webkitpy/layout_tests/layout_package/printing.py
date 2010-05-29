@@ -272,24 +272,35 @@ class Printer(object):
     def print_timing(self, msg):
         self.write(msg, 'timing')
 
-    def print_one_line_summary(self, total, expected):
+    def print_one_line_summary(self, total, expected, unexpected):
         """Print a one-line summary of the test run to stdout.
 
         Args:
           total: total number of tests run
           expected: number of expected results
+          unexpected: number of unexpected results
         """
         if self.disabled('one-line-summary'):
             return
 
-        unexpected = total - expected
-        if unexpected == 0:
-            self._write("All %d tests ran as expected." % expected)
-        elif expected == 1:
-            self._write("1 test ran as expected, %d didn't:" % unexpected)
+        incomplete = total - expected - unexpected
+        if incomplete:
+            self._write("")
+            incomplete_str = " (%d didn't run)" % incomplete
+            expected_str = str(expected)
         else:
-            self._write("%d tests ran as expected, %d didn't:" %
-                        (expected, unexpected))
+            incomplete_str = ""
+            expected_str = "All %d" % expected
+
+        if unexpected == 0:
+            self._write("%s tests ran as expected%s." %
+                        (expected_str, incomplete_str))
+        elif expected == 1:
+            self._write("1 test ran as expected, %d didn't%s:" %
+                        (unexpected, incomplete_str))
+        else:
+            self._write("%d tests ran as expected, %d didn't%s:" %
+                        (expected, unexpected, incomplete_str))
         self._write("")
 
     def print_test_result(self, result, expected, exp_str, got_str):

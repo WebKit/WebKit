@@ -58,6 +58,7 @@ import Queue
 import random
 import re
 import shutil
+import signal
 import sys
 import time
 import traceback
@@ -680,6 +681,7 @@ class TestRunner:
         test_timings = {}
         individual_test_timings = []
         thread_timings = []
+        keyboard_interrupted = False
         try:
             # Loop through all the threads waiting for them to finish.
             for thread in threads:
@@ -697,30 +699,30 @@ class TestRunner:
                     self._dump_thread_states_if_necessary()
                     self.update_summary(result_summary)
 
-                # This thread is done, save off the timing information.
-                thread_timings.append({'name': thread.getName(),
-                                       'num_tests': thread.get_num_tests(),
-                                       'total_time': thread.get_total_time()})
-                test_timings.update(thread.get_directory_timing_stats())
-                individual_test_timings.extend(thread.get_test_results())
         except KeyboardInterrupt:
+            keyboard_interrupted = True
             for thread in threads:
                 thread.cancel()
-            raise
-        for thread in threads:
-            # Check whether a TestShellThread died before normal completion.
-            exception_info = thread.get_exception_info()
-            if exception_info is not None:
-                # Re-raise the thread's exception here to make it clear that
-                # testing was aborted. Otherwise, the tests that did not run
-                # would be assumed to have passed.
-                raise exception_info[0], exception_info[1], exception_info[2]
 
-        # FIXME: This update_summary call seems unecessary.
-        # Calls are already made right after join() above,
-        # as well as from the individual threads themselves.
-        self.update_summary(result_summary)
-        return (thread_timings, test_timings, individual_test_timings)
+        if not keyboard_interrupted:
+            for thread in threads:
+                # Check whether a thread died before normal completion.
+                exception_info = thread.get_exception_info()
+                if exception_info is not None:
+                    # Re-raise the thread's exception here to make it clear
+                    # something went wrong. Otherwise, the tests that did not
+                    # run would be assumed to have passed.
+                    raise (exception_info[0], exception_info[1],
+                           exception_info[2])
+
+        for thread in threads:
+            thread_timings.append({'name': thread.getName(),
+                                   'num_tests': thread.get_num_tests(),
+                                   'total_time': thread.get_total_time()})
+            test_timings.update(thread.get_directory_timing_stats())
+            individual_test_timings.extend(thread.get_test_results())
+        return (keyboard_interrupted, thread_timings, test_timings,
+                individual_test_timings)
 
     def needs_http(self):
         """Returns whether the test runner needs an HTTP server."""
@@ -752,7 +754,8 @@ class TestRunner:
             self._port.start_websocket_server()
             # self._websocket_secure_server.Start()
 
-        thread_timings, test_timings, individual_test_timings = (
+        keyboard_interrupted, thread_timings, test_timings, \
+            individual_test_timings = (
             self._run_tests(self._test_files_list, result_summary))
 
         # We exclude the crashes from the list of results to retry, because
@@ -760,12 +763,13 @@ class TestRunner:
         failures = self._get_failures(result_summary, include_crashes=False)
         retry_summary = result_summary
         while (len(failures) and self._options.retry_failures and
-            not self._retrying):
+            not self._retrying and not keyboard_interrupted):
             _log.info('')
             _log.info("Retrying %d unexpected failure(s) ..." % len(failures))
             _log.info('')
             self._retrying = True
             retry_summary = ResultSummary(self._expectations, failures.keys())
+            # Note that we intentionally ignore the return value here.
             self._run_tests(failures.keys(), retry_summary)
             failures = self._get_failures(retry_summary, include_crashes=True)
 
@@ -782,7 +786,8 @@ class TestRunner:
         sys.stderr.flush()
 
         self._printer.print_one_line_summary(result_summary.total,
-                                             result_summary.expected)
+                                             result_summary.expected,
+                                             result_summary.unexpected)
 
         unexpected_results = summarize_unexpected_results(self._port,
             self._expectations, result_summary, retry_summary)
@@ -799,6 +804,11 @@ class TestRunner:
         wrote_results = self._write_results_html_file(result_summary)
         if self._options.show_results and wrote_results:
             self._show_results_html_file()
+
+        # Now that we've completed all the processing we can, we re-raise
+        # a KeyboardInterrupt if necessary so the caller can handle it.
+        if keyboard_interrupted:
+            raise KeyboardInterrupt
 
         # Ignore flaky failures and unexpected passes so we don't turn the
         # bot red for those.
@@ -1665,4 +1675,8 @@ def main():
     return run(port_obj, options, args)
 
 if '__main__' == __name__:
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except KeyboardInterrupt:
+        # this mirrors what the shell normally does
+        sys.exit(signal.SIGINT + 128)

@@ -28,9 +28,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """Wrapper around webkitpy/layout_tests/run_webkit_tests.py"""
+import signal
 import sys
 
 import webkitpy.layout_tests.run_webkit_tests as run_webkit_tests
 
 if __name__ == '__main__':
-    sys.exit(run_webkit_tests.main())
+    try:
+        sys.exit(run_webkit_tests.main())
+    except KeyboardInterrupt:
+        # this mirrors what the shell normally does
+        sys.exit(signal.SIGINT + 128)

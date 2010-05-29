@@ -258,6 +258,9 @@ class TestShellThread(threading.Thread):
             self._run(test_runner=None, result_summary=None)
             _log.debug('%s done (%d tests)' % (self.getName(),
                        self.get_num_tests()))
+        except KeyboardInterrupt:
+            self._exception_info = sys.exc_info()
+            _log.debug("%s interrupted" % self.getName())
         except:
             # Save the exception for our caller to see.
             self._exception_info = sys.exc_info()
@@ -298,7 +301,7 @@ class TestShellThread(threading.Thread):
 
         while True:
             if self._canceled:
-                _log.info('Testing canceled')
+                _log.debug('Testing cancelled')
                 tests_run_file.close()
                 return
 

@@ -215,26 +215,33 @@ class  Testprinter(unittest.TestCase):
 
     def test_print_one_line_summary(self):
         printer, err, out = self.get_printer(['--print', 'nothing'])
-        printer.print_one_line_summary(1, 1)
+        printer.print_one_line_summary(1, 1, 0)
         self.assertTrue(err.empty())
 
         printer, err, out = self.get_printer(['--print', 'one-line-summary'])
-        printer.print_one_line_summary(1, 1)
+        printer.print_one_line_summary(1, 1, 0)
         self.assertEquals(err.get(), ["All 1 tests ran as expected.\n", "\n"])
 
         printer, err, out = self.get_printer(['--print', 'everything'])
-        printer.print_one_line_summary(1, 1)
+        printer.print_one_line_summary(1, 1, 0)
         self.assertEquals(err.get(), ["All 1 tests ran as expected.\n", "\n"])
 
         err.reset()
-        printer.print_one_line_summary(2, 1)
+        printer.print_one_line_summary(2, 1, 1)
         self.assertEquals(err.get(),
                           ["1 test ran as expected, 1 didn't:\n", "\n"])
 
         err.reset()
-        printer.print_one_line_summary(3, 2)
+        printer.print_one_line_summary(3, 2, 1)
         self.assertEquals(err.get(),
                           ["2 tests ran as expected, 1 didn't:\n", "\n"])
+
+        err.reset()
+        printer.print_one_line_summary(3, 2, 0)
+        self.assertEquals(err.get(),
+                          ['\n', "2 tests ran as expected (1 didn't run).\n",
+                           '\n'])
+
 
     def test_print_test_result(self):
         result = get_result('foo.html')
