@@ -1,3 +1,11 @@
+2010-05-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Fixed Windows crash seen on buildbot.
+
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall): __fastcall puts the first
+        argument in ecx.
+
 2010-05-28  Geoffrey Garen  <ggaren@apple.com>
 
         Windows build fix: Updated exported symbols.
