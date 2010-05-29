@@ -1,5 +1,16 @@
 2010-05-29  Geoffrey Garen  <ggaren@apple.com>
 
+        Qt build fix: Updated for ArgList changes.
+
+        * bridge/qt/qt_pixmapruntime.cpp:
+        (JSC::Bindings::QtPixmapAssignToElementMethod::invoke):
+        (JSC::Bindings::QtPixmapToDataUrlMethod::invoke):
+        (JSC::Bindings::QtPixmapToStringMethod::invoke):
+        (JSC::Bindings::QtPixmapInstance::invokeMethod):
+        * bridge/qt/qt_pixmapruntime.h:
+
+2010-05-29  Geoffrey Garen  <ggaren@apple.com>
+
         Qt build fix: Keep this borken class limping along.
 
         * bridge/qt/qt_instance.cpp:

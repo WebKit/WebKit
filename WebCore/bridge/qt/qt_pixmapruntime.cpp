@@ -74,7 +74,7 @@ public:
     {
         return 0;
     }
-    virtual JSValue invoke(ExecState* exec, QtPixmapInstance*, const ArgList&) = 0;
+    virtual JSValue invoke(ExecState* exec, QtPixmapInstance*) = 0;
 
 };
 
@@ -82,12 +82,12 @@ public:
 class QtPixmapAssignToElementMethod : public QtPixmapRuntimeMethod {
 public:
     static const char* name() { return "assignToHTMLImageElement"; }
-    JSValue invoke(ExecState* exec, QtPixmapInstance* instance, const ArgList& args)
+    JSValue invoke(ExecState* exec, QtPixmapInstance* instance)
     {
-        if (!args.size())
+        if (!exec->argumentCount())
             return jsUndefined();
 
-        JSObject* objectArg = args.at(0).toObject(exec);
+        JSObject* objectArg = exec->argument(0).toObject(exec);
         if (!objectArg)
             return jsUndefined();
 
@@ -113,7 +113,7 @@ public:
 class QtPixmapToDataUrlMethod : public QtPixmapRuntimeMethod {
 public:
     static const char* name() { return "toDataUrl"; }
-    JSValue invoke(ExecState* exec, QtPixmapInstance* instance, const ArgList&)
+    JSValue invoke(ExecState* exec, QtPixmapInstance* instance)
     {
         QByteArray byteArray;
         QBuffer buffer(&byteArray);
@@ -127,7 +127,7 @@ public:
 class QtPixmapToStringMethod : public QtPixmapRuntimeMethod {
     public:
     static const char* name() { return "toString"; }
-    JSValue invoke(ExecState* exec, QtPixmapInstance* instance, const ArgList&)
+    JSValue invoke(ExecState* exec, QtPixmapInstance* instance)
     {
         return instance->valueOf(exec);
     }
@@ -184,7 +184,7 @@ JSValue QtPixmapInstance::getMethod(ExecState* exec, const Identifier& propertyN
     return new (exec) RuntimeMethod(exec, exec->lexicalGlobalObject(), propertyName, methodList);
 }
 
-JSValue QtPixmapInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod, const ArgList& args)
+JSValue QtPixmapInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
 {
     const MethodList& methods = *runtimeMethod->methods();
 
