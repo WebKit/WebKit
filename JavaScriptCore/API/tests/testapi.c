@@ -764,6 +764,59 @@ static void makeGlobalNumberValue(JSContextRef context) {
     v = NULL;
 }
 
+static bool assertTrue(bool value, const char* message)
+{
+    if (!value) {
+        if (message)
+            fprintf(stderr, "assertTrue failed: '%s'\n", message);
+        else
+            fprintf(stderr, "assertTrue failed.\n");
+        failed = 1;
+    }
+    return value;
+}
+
+static bool checkForCycleInPrototypeChain()
+{
+    bool result = true;
+    JSGlobalContextRef context = JSGlobalContextCreate(0);
+    JSObjectRef object1 = JSObjectMake(context, /* jsClass */ 0, /* data */ 0);
+    JSObjectRef object2 = JSObjectMake(context, /* jsClass */ 0, /* data */ 0);
+    JSObjectRef object3 = JSObjectMake(context, /* jsClass */ 0, /* data */ 0);
+
+    JSObjectSetPrototype(context, object1, JSValueMakeNull(context));
+    ASSERT(JSValueIsNull(context, JSObjectGetPrototype(context, object1)));
+
+    // object1 -> object1
+    JSObjectSetPrototype(context, object1, object1);
+    result &= assertTrue(JSValueIsNull(context, JSObjectGetPrototype(context, object1)), "It is possible to assign self as a prototype");
+
+    // object1 -> object2 -> object1
+    JSObjectSetPrototype(context, object2, object1);
+    ASSERT(JSValueIsStrictEqual(context, JSObjectGetPrototype(context, object2), object1));
+    JSObjectSetPrototype(context, object1, object2);
+    result &= assertTrue(JSValueIsNull(context, JSObjectGetPrototype(context, object1)), "It is possible to close a prototype chain cycle");
+
+    // object1 -> object2 -> object3 -> object1
+    JSObjectSetPrototype(context, object2, object3);
+    ASSERT(JSValueIsStrictEqual(context, JSObjectGetPrototype(context, object2), object3));
+    JSObjectSetPrototype(context, object1, object2);
+    ASSERT(JSValueIsStrictEqual(context, JSObjectGetPrototype(context, object1), object2));
+    JSObjectSetPrototype(context, object3, object1);
+    result &= assertTrue(!JSValueIsStrictEqual(context, JSObjectGetPrototype(context, object3), object1), "It is possible to close a prototype chain cycle");
+
+    JSValueRef exception;
+    JSStringRef code = JSStringCreateWithUTF8CString("o = { }; p = { }; o.__proto__ = p; p.__proto__ = o");
+    JSStringRef file = JSStringCreateWithUTF8CString("");
+    result &= assertTrue(!JSEvaluateScript(context, code, /* thisObject*/ 0, file, 1, &exception)
+                         , "An exception should be thrown");
+
+    JSStringRelease(code);
+    JSStringRelease(file);
+    JSGlobalContextRelease(context);
+    return result;
+}
+
 int main(int argc, char* argv[])
 {
     const char *scriptPath = "testapi.js";
@@ -1345,6 +1398,13 @@ int main(int argc, char* argv[])
     JSClassRelease(prototypeLoopClass);
 
     printf("PASS: Infinite prototype chain does not occur.\n");
+
+    if (checkForCycleInPrototypeChain())
+        printf("PASS: A cycle in a prototype chain can't be created.\n");
+    else {
+        printf("FAIL: A cycle in a prototype chain can be created.\n");
+        failed = true;
+    }
 
     if (failed) {
         printf("FAIL: Some tests failed.\n");

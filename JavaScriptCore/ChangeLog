@@ -1,3 +1,28 @@
+2010-05-28  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix the JSObjectSetPrototype function.
+
+        A cycle in a prototype chain can cause an application hang or
+        even crash.
+        A check for a prototype chain cycles was added to
+        the JSObjectSetPrototype.
+
+        JSObjectSetPrototype doesn't check for cycle in prototype chain.
+        https://bugs.webkit.org/show_bug.cgi?id=39360
+
+        * API/JSObjectRef.cpp:
+        (JSObjectSetPrototype):
+        * API/tests/testapi.c:
+        (assertTrue):
+        (checkForCycleInPrototypeChain):
+        (main):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        * runtime/JSObject.h:
+        (JSC::JSObject::setPrototypeWithCycleCheck):
+
 2010-05-28  Chao-ying Fu  <fu@mips.com>
 
         Reviewed by Eric Seidel.
