@@ -90,6 +90,7 @@ public:
     virtual void setExperimentalWebGLEnabled(bool) = 0;
     virtual void setShowDebugBorders(bool) = 0;
     virtual void setEditingBehavior(EditingBehavior) = 0;
+    virtual void setAcceleratedCompositingEnabled(bool) = 0;
 
 protected:
     ~WebSettings() { }

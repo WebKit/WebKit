@@ -1,3 +1,16 @@
+2010-05-29  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Adding support for a runtime flag to enable accelerated
+        compositing in chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=39917
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setAcceleratedCompositingEnabled):
+        * src/WebSettingsImpl.h:
+
 2010-05-28  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Darin Fisher.
