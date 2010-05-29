@@ -1,3 +1,18 @@
+2010-05-29  Dawit Alemayehu  <adawit@kde.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added a WebAction to stop all pending page refresh/redirect
+        requests set through the <meta http-equiv="refresh"...> tag.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29899
+
+        * Api/qwebpage.cpp:
+        (QWebPage::triggerAction):
+        * Api/qwebpage.h:
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::testStopScheduledPageRefresh):
+
 2010-05-28  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Kenneth Rohde Christiansen.

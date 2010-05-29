@@ -1578,6 +1578,7 @@ InspectorController* QWebPagePrivate::inspectorController()
     \value Back Navigate back in the history of navigated links.
     \value Forward Navigate forward in the history of navigated links.
     \value Stop Stop loading the current page.
+    \value StopScheduledPageRefresh Stop all pending page refresh/redirect requests.
     \value Reload Reload the current page.
     \value ReloadAndBypassCache Reload the current page, but do not use any local cache. (Added in Qt 4.6)
     \value Cut Cut the content currently selected into the clipboard.
@@ -1983,6 +1984,15 @@ static void openNewWindow(const QUrl& url, WebCore::Frame* frame)
     }
 }
 
+static void collectChildFrames(QWebFrame* frame, QList<QWebFrame*>& list)
+{
+    list << frame->childFrames();
+    QListIterator<QWebFrame*> it(frame->childFrames());
+    while (it.hasNext()) {
+        collectChildFrames(it.next(), list);
+    }
+}
+
 /*!
     This function can be called to trigger the specified \a action.
     It is also called by QtWebKit if the user triggers the action, for example
@@ -2077,6 +2087,16 @@ void QWebPage::triggerAction(WebAction action, bool)
                 d->page->inspectorController()->inspect(d->hitTestResult.d->innerNonSharedNode.get());
             }
 #endif
+            break;
+        }
+        case StopScheduledPageRefresh: {
+            QWebFrame* topFrame = mainFrame();
+            topFrame->d->frame->redirectScheduler()->cancel();
+            QList<QWebFrame*> childFrames;
+            collectChildFrames(topFrame, childFrames);
+            QListIterator<QWebFrame*> it(childFrames);
+            while (it.hasNext())
+                it.next()->d->frame->redirectScheduler()->cancel();
             break;
         }
         default:
