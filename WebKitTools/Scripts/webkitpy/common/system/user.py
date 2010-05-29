@@ -76,6 +76,19 @@ class User(object):
         # Note: Not thread safe: http://bugs.python.org/issue2320
         subprocess.call(args + files)
 
+    def edit_changelog(self, files):
+        edit_application = os.environ.get("CHANGE_LOG_EDIT_APPLICATION")
+        if edit_application and sys.platform == "darwin":
+            # On Mac we support editing ChangeLogs using an application.
+            args = shlex.split(edit_application)
+            print "Using editor in the CHANGE_LOG_EDIT_APPLICATION environment variable."
+            print "Please quit the editor application when done editing."
+            if edit_application.find("Xcode.app"):
+                print "Instead of using Xcode.app, consider using EDITOR=\"xed --wait\"."
+            subprocess.call(["open", "-W", "-n", "-a"] + args + files)
+            return
+        self.edit(files)
+
     def page(self, message):
         pager = os.environ.get("PAGER") or "less"
         try:

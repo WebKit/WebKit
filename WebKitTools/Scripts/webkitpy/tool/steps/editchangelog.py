@@ -34,4 +34,4 @@ from webkitpy.tool.steps.abstractstep import AbstractStep
 class EditChangeLog(AbstractStep):
     def run(self, state):
         os.chdir(self._tool.scm().checkout_root)
-        self._tool.user.edit(self.cached_lookup(state, "changelogs"))
+        self._tool.user.edit_changelog(self.cached_lookup(state, "changelogs"))
