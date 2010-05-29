@@ -1674,7 +1674,7 @@ public:
             return branchFalse(); // false
         }
         if (cond == DoubleGreaterThanOrEqual) {
-            m_assembler.cnged(right, left);
+            m_assembler.cnged(left, right);
             return branchFalse(); // false
         }
         if (cond == DoubleLessThan) {
