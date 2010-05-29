@@ -2,6 +2,19 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        [EF] Remove compiler warnings and add test for switching page
+        encoding.
+        https://bugs.webkit.org/show_bug.cgi?id=39871
+
+        * efl/EWebLauncher/main.c:
+        (print_history):
+        (on_key_down):
+        (main):
+
+2010-05-28  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         [EFL] Allow client to override default database quota. We increase the
         default database quota to 1MB (it was incorrectly set to 1KB, which is
         too low) and add methods to allow client to iteratively database quota

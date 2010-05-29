@@ -153,8 +153,8 @@ print_history(Eina_List *list)
        Ewk_History_Item *item = (Ewk_History_Item*)d;
        cairo_surface_t *cs = ewk_history_item_icon_surface_get(item);
        char buf[PATH_MAX];
-       ssize_t s = snprintf(buf, sizeof(buf), "/tmp/favicon-%s.png", ewk_history_item_uri_original_get(item));
-       for (s--; s >= sizeof("/tmp/favicon-"); s--) {
+       int s = snprintf(buf, sizeof(buf), "/tmp/favicon-%s.png", ewk_history_item_uri_original_get(item));
+       for (s--; s >= (int)sizeof("/tmp/favicon-"); s--) {
            if (!isalnum(buf[s]) && buf[s] != '.')
                buf[s] = '_';
        }
@@ -378,6 +378,12 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
     Evas_Event_Key_Down *ev = (Evas_Event_Key_Down*) event_info;
     ELauncher *app = data;
+    static const char *encodings[] = {
+        "ISO-8859-1",
+        "UTF-8",
+        NULL
+    };
+    static int currentEncoding = -1;
 
     if (!strcmp(ev->key, "Escape")) {
         closeWindow(app->ee);
@@ -401,6 +407,11 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
             ewk_view_forward(obj);
         } else
             info("Forward ignored: No forward history\n");
+    } else if (!strcmp(ev->key, "F3")) {
+        currentEncoding++;
+        currentEncoding %= (sizeof(encodings) / sizeof(encodings[0]));
+        info("Set encoding (F3) pressed. New encoding to %s", encodings[currentEncoding]);
+        ewk_view_setting_encoding_custom_set(obj, encodings[currentEncoding]);
     } else if (!strcmp(ev->key, "F4")) {
         Evas_Object *frame = ewk_view_frame_main_get(obj);
         Evas_Coord x, y;
@@ -672,7 +683,7 @@ main(int argc, char *argv[])
     Eina_Rectangle geometry = {0, 0, 0, 0};
     char *url = NULL;
     char *userAgent = NULL;
-    char *tmp;
+    const char *tmp;
     char path[PATH_MAX];
 
     char *engine = NULL;
