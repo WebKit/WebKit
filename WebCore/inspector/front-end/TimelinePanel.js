@@ -844,7 +844,10 @@ WebInspector.TimelinePanel.FormattedRecord = function(record, parentRecord, pane
     this._selfTime = this.endTime - this.startTime;
     this._lastChildEndTime = this.endTime;
     this.originalRecordForTests = record;
-    this.stackTrace = record.stackTrace;
+    if (record.stackTrace && record.stackTrace.length) {
+        this.callerScriptName = record.stackTrace[0].scriptName;
+        this.callerScriptLine = record.stackTrace[0].lineNumber;
+    }
     this.totalHeapSize = record.totalHeapSize;
     this.usedHeapSize = record.usedHeapSize;
 
@@ -877,11 +880,8 @@ WebInspector.TimelinePanel.FormattedRecord = function(record, parentRecord, pane
     } else if (record.type === recordTypes.TimerFire) {
         var timerInstalledRecord = panel._timerRecords[record.data.timerId];
         if (timerInstalledRecord) {
-            if (timerInstalledRecord.stackTrace) {
-                var callSite = timerInstalledRecord.stackTrace[0];            
-                this.callSiteScriptName = callSite.scriptName;
-                this.callSiteScriptLine = callSite.lineNumber;
-            }
+            this.callSiteScriptName = timerInstalledRecord.callerScriptName;
+            this.callSiteScriptLine = timerInstalledRecord.callerScriptLine;
             this.timeout = timerInstalledRecord.timeout;
             this.singleShot = timerInstalledRecord.singleShot;
         }
@@ -985,11 +985,6 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
         if (this.callerScriptName && this.type !== recordTypes.GCEvent)
             contentHelper._appendLinkRow(WebInspector.UIString("Caller"), this.callerScriptName, this.callerScriptLine);
 
-        if (this.stackTrace && this.type !== recordTypes.GCEvent) {
-            var callSite = this.stackTrace[0];
-            contentHelper._appendLinkRow(WebInspector.UIString("Caller"), this.callerScriptName, callSite.lineNumber);
-        }
-
         if (this.usedHeapSize)
             contentHelper._appendTextRow(WebInspector.UIString("Used Heap Size"), WebInspector.UIString("%s of %s", Number.bytesToString(this.usedHeapSize, WebInspector.UIString), Number.bytesToString(this.totalHeapSize, WebInspector.UIString)));
 
@@ -1011,8 +1006,7 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
                 return record.data.width + "\u2009\u00d7\u2009" + record.data.height;
             case WebInspector.TimelineAgent.RecordType.TimerInstall:
             case WebInspector.TimelineAgent.RecordType.TimerRemove:
-                var callSite = this.stackTrace;
-                return callSite ? WebInspector.linkifyResourceAsNode(callSite.scriptName, "scripts", callSite.lineNumber, "", "") : record.data.timerId;
+                return this.callerScriptName ? WebInspector.linkifyResourceAsNode(this.callerScriptName, "scripts", this.callerScriptLine, "", "") : record.data.timerId;
             case WebInspector.TimelineAgent.RecordType.ParseHTML:
             case WebInspector.TimelineAgent.RecordType.RecalculateStyles:
                 return this.callerScriptName ? WebInspector.linkifyResourceAsNode(this.callerScriptName, "scripts", this.callerScriptLine, "", "") : null;
