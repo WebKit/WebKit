@@ -10,6 +10,7 @@ EXPORTS
     ??0JSArray@JSC@@QAE@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@@Z
     ??0JSArray@JSC@@QAE@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@ABVArgList@1@@Z
     ??0JSByteArray@JSC@@QAE@PAVExecState@1@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@PAVByteArray@4@PBUClassInfo@1@@Z
+    ??0JSFunction@JSC@@QAE@PAVExecState@1@PAVJSGlobalObject@1@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@HABVIdentifier@1@P6I?AVJSValue@1@0@Z@Z
     ??0JSObjectWithGlobalObject@JSC@@IAE@PAVJSGlobalObject@1@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@@Z
     ??0MD5@WTF@@QAE@XZ
     ??0Mutex@WTF@@QAE@XZ
@@ -172,8 +173,8 @@ EXPORTS
     ?getUInt32@JSCell@JSC@@UBE_NAAI@Z
     ?getter@PropertyDescriptor@JSC@@QBE?AVJSValue@2@XZ
     ?globalExec@JSGlobalObject@JSC@@UAEPAVExecState@2@XZ
-    ?globalObjectCount@Heap@JSC@@QAEIXZ
     ?globalObject@JSObjectWithGlobalObject@JSC@@QBEPAVJSGlobalObject@2@XZ
+    ?globalObjectCount@Heap@JSC@@QAEIXZ
     ?hasInstance@JSObject@JSC@@UAE_NPAVExecState@2@VJSValue@2@1@Z
     ?hasProperty@JSObject@JSC@@QBE_NPAVExecState@2@ABVIdentifier@2@@Z
     ?hasProperty@JSObject@JSC@@QBE_NPAVExecState@2@I@Z
@@ -218,6 +219,7 @@ EXPORTS
     ?newUninitialized@CString@WTF@@SA?AV12@IAAPAD@Z
     ?nonInlineNaN@JSC@@YANXZ
     ?objectCount@Heap@JSC@@QBEIXZ
+    ?objectProtoFuncToString@JSC@@YI?AVJSValue@1@PAVExecState@1@@Z
     ?parse@Parser@JSC@@AAEXPAVJSGlobalData@2@PAHPAVUString@2@@Z
     ?parseDateFromNullTerminatedCharacters@WTF@@YANPBD@Z
     ?profiler@Profiler@JSC@@SAPAV12@XZ
