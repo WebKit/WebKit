@@ -976,7 +976,7 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #define ENABLE_JIT_OPTIMIZE_CALL 1
 #endif
 #ifndef ENABLE_JIT_OPTIMIZE_NATIVE_CALL
-#if PLATFORM(MAC) || (PLATFORM(WIN) && CPU(X86))
+#if PLATFORM(MAC)
 #define ENABLE_JIT_OPTIMIZE_NATIVE_CALL 1
 #endif
 #endif
