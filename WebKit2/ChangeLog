@@ -1,3 +1,11 @@
+2010-05-28  John Sullivan  <sullivan@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Add a using declaration for AdoptWK to match the one just added for WKRetainPtr.
+
+        * UIProcess/API/cpp/WKRetainPtr.h:
+
 2010-05-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

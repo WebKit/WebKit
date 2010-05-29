@@ -212,5 +212,6 @@ template <typename T, typename U> inline bool operator!=(T* a, const WKRetainPtr
 } // namespace WebKit
 
 using WebKit::WKRetainPtr;
+using WebKit::AdoptWK;
 
 #endif // WKRetainPtr_h
