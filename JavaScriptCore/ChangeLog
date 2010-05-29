@@ -1,5 +1,11 @@
 2010-05-29  Geoffrey Garen  <ggaren@apple.com>
 
+        Windows build fix: Updated exported symbols.
+        
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-05-29  Geoffrey Garen  <ggaren@apple.com>
+
         Disabled ENABLE_JIT_OPTIMIZE_NATIVE_CALL on Windows for now, until I
         can figure out why it's crashing.
 
