@@ -1,3 +1,10 @@
+2010-05-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Skip new test introduced in r60386, because of
+        missing layoutTestController.evaluateScriptInIsolatedWorld()
+
+        * platform/qt/Skipped: storage/transaction-success-callback-isolated-world.html skipped.
+
 2010-05-28  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Dmitry Titov.
