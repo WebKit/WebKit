@@ -67,6 +67,8 @@ function doTest() {
 }
 
 function doCopy() {
+    log("===== Copy/Scale/Rotate Tests =====");
+
     var copy =  document.getElementById("copy");
     copy.width = width;
     copy.height = height;
@@ -142,7 +144,95 @@ function doRotation() {
     log("Copy with rotate: " + time + "ms");
     shouldBe("document.getElementById('rotated').width", "height");
     shouldBe("document.getElementById('rotated').height", "width");
-    log("DONE!");
+    log("");
+    window.setTimeout(doStrokeTextTests, idleTimer);
+}
+
+function doStrokeTextTests() {
+    log("===== StrokeText Tests =====");
+    var strokeTextFunc = function(canvas, str, x, y) { canvas.strokeText(str, x, y); };
+    doNextTextTest(strokeTextFunc, doFillTextTests, 1);
+}
+
+function doFillTextTests() {
+    log("===== FillText Tests =====");
+    var fillTextFunc = function(obj, str, x, y) { obj.fillText(str, x, y); };
+    doNextTextTest(fillTextFunc, doSmallStrokeLineTests, 1);
+}
+
+function doNextTextTest(writeText, nextFunc, numStrings) {
+    var canvas = document.createElement('canvas');
+    canvas.width = 100;
+    canvas.height = 550;
+    document.body.appendChild(canvas);
+    var ctx = canvas.getContext('2d');
+
+    var time = timeCanvasOperation(ctx,
+        function () {
+            for (var i = 0; i < 10; i++)
+                for (var j = 0; j < numStrings; j++)
+                    writeText(ctx, "Printing text!", 25, 500 * j / numStrings + 25);
+        });
+    log(numStrings + " strings: " + (time / 10) + "ms");
+
+    numStrings *= 10;
+    if (numStrings < 1001)
+        window.setTimeout(function () {
+                              doNextTextTest(writeText, nextFunc, numStrings);
+                          }, idleTimer);
+    else {
+        log("");
+        window.setTimeout(nextFunc, idleTimer);
+    }
+}
+
+function doSmallStrokeLineTests() {
+    log("===== StrokeLine Tests =====");
+    doNextStrokeLineTest(doLargeStrokeLineTests, 1, 150, 150);
+}
+
+function doLargeStrokeLineTests() {
+    doNextStrokeLineTest(null, 1, 1000, 1000);
+}
+
+function doNextStrokeLineTest(nextFunc, numLines, xSize, ySize) {
+    var canvas = document.createElement('canvas');
+    canvas.width = xSize;
+    canvas.height = ySize;
+    document.body.appendChild(canvas);
+    var ctx = canvas.getContext('2d');
+
+    var time = timeCanvasOperation(ctx,
+        function() {
+            for (var i = 0; i < 10; i++) {
+                ctx.beginPath();
+                if (numLines == 1) {
+                    ctx.moveTo(5, 5);
+                    ctx.lineTo(xSize - 1, ySize - 1);
+                } else {
+                    for (var j = 0; j < numLines; j++) {
+                        ctx.moveTo(j * xSize / numLines, j * ySize / numLines);
+                        ctx.lineTo(xSize - 5, 5);
+                    }
+                }
+                ctx.stroke();
+                ctx.closePath();
+            }
+        });
+    log("Stroking " + numLines + " lines in " + xSize + "x" + ySize + ": " + (time / 10) + "ms");
+    
+    numLines *= 10;
+    if (numLines < 1001)
+        window.setTimeout(function () {
+                              doNextStrokeLineTest(nextFunc, numLines, xSize, ySize);
+                          }, idleTimer);
+    else {
+        log("");
+        if (nextFunc)
+            window.setTimeout(nextFunc, idleTimer);
+        else
+            log("DONE!");
+    }
 }
 </script>
 

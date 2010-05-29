@@ -1,3 +1,16 @@
+2010-05-29  Sterling Swigart  <sswigart@google.com>
+
+        Reviewed by David Levin.
+
+        Adding tests to canvas.html performance test
+        https://bugs.webkit.org/show_bug.cgi?id=39883
+
+        * demos/canvas-perf/canvas.html:
+        Added tests for:
+            strokeText
+            fillText
+            strokeLine
+
 2010-05-25  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Adler.
