@@ -190,7 +190,7 @@ JSValue QtPixmapInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMe
 
     if (methods.size() == 1) {
         QtPixmapRuntimeMethod* method = static_cast<QtPixmapRuntimeMethod*>(methods[0]);
-        return method->invoke(exec, this, args);
+        return method->invoke(exec, this);
     }
     return jsUndefined();
 }

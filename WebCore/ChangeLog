@@ -3,6 +3,18 @@
         Qt build fix: Updated for ArgList changes.
 
         * bridge/qt/qt_pixmapruntime.cpp:
+        (JSC::Bindings::QtPixmapInstance::invokeMethod):
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::findMethodIndex):
+        (JSC::Bindings::QtRuntimeMetaMethod::call):
+        (JSC::Bindings::QtRuntimeConnectionMethod::call):
+        * bridge/qt/qt_runtime.h:
+
+2010-05-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Qt build fix: Updated for ArgList changes.
+
+        * bridge/qt/qt_pixmapruntime.cpp:
         (JSC::Bindings::QtPixmapAssignToElementMethod::invoke):
         (JSC::Bindings::QtPixmapToDataUrlMethod::invoke):
         (JSC::Bindings::QtPixmapToStringMethod::invoke):
