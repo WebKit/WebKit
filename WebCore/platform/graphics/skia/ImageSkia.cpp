@@ -64,7 +64,7 @@ enum ResamplingMode {
     RESAMPLE_AWESOME,
 };
 
-static ResamplingMode computeResamplingMode(const NativeImageSkia& bitmap, int srcWidth, int srcHeight, float destWidth, float destHeight)
+static ResamplingMode computeResamplingMode(PlatformContextSkia* platformContext, const NativeImageSkia& bitmap, int srcWidth, int srcHeight, float destWidth, float destHeight)
 {
     int destIWidth = static_cast<int>(destWidth);
     int destIHeight = static_cast<int>(destHeight);
@@ -130,7 +130,11 @@ static ResamplingMode computeResamplingMode(const NativeImageSkia& bitmap, int s
         return RESAMPLE_LINEAR;
 
     // Everything else gets resampled.
-    return RESAMPLE_AWESOME;
+    // If the platform context permits high quality interpolation, use it.
+    if (platformContext->interpolationQuality() == InterpolationHigh)
+        return RESAMPLE_AWESOME;
+    
+    return RESAMPLE_LINEAR;
 }
 
 // Draws the given bitmap to the given canvas. The subset of the source bitmap
@@ -184,7 +188,7 @@ static void drawResampledBitmap(SkCanvas& canvas, SkPaint& paint, const NativeIm
     if (!destBitmapSubsetSkI.intersect(resizedImageRect))
         return;  // Resized image does not intersect.
 
-    if (srcIsFull && bitmap.shouldCacheResampling(
+    if (srcIsFull || bitmap.shouldCacheResampling(
             resizedImageRect.width(),
             resizedImageRect.height(),
             destBitmapSubsetSkI.width(),
@@ -230,7 +234,7 @@ static void paintSkBitmap(PlatformContextSkia* platformContext, const NativeImag
     skia::PlatformCanvas* canvas = platformContext->canvas();
 
     ResamplingMode resampling = platformContext->isPrinting() ? RESAMPLE_NONE :
-        computeResamplingMode(bitmap, srcRect.width(), srcRect.height(),
+        computeResamplingMode(platformContext, bitmap, srcRect.width(), srcRect.height(),
                               SkScalarToFloat(destRect.width()),
                               SkScalarToFloat(destRect.height()));
     if (resampling == RESAMPLE_AWESOME) {
@@ -336,7 +340,7 @@ void Image::drawPattern(GraphicsContext* context,
     if (context->platformContext()->isPrinting())
       resampling = RESAMPLE_LINEAR;
     else {
-      resampling = computeResamplingMode(*bitmap,
+      resampling = computeResamplingMode(context->platformContext(), *bitmap,
                                          srcRect.width(), srcRect.height(),
                                          destBitmapWidth, destBitmapHeight);
     }

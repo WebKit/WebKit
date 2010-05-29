@@ -875,9 +875,9 @@ void GraphicsContext::setCompositeOperation(CompositeOperator op)
     platformContext()->setXfermodeMode(WebCoreCompositeToSkiaComposite(op));
 }
 
-void GraphicsContext::setImageInterpolationQuality(InterpolationQuality)
+void GraphicsContext::setImageInterpolationQuality(InterpolationQuality q)
 {
-    notImplemented();
+    platformContext()->setInterpolationQuality(q);
 }
 
 void GraphicsContext::setLineCap(LineCap cap)

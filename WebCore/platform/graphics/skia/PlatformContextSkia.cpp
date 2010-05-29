@@ -99,6 +99,7 @@ struct PlatformContextSkia::State {
     // This is a list of clipping paths which are currently active, in the
     // order in which they were pushed.
     WTF::Vector<SkPath> m_antiAliasClipPaths;
+    WebCore::InterpolationQuality m_interpolationQuality;
 
 private:
     // Not supported.
@@ -123,6 +124,7 @@ PlatformContextSkia::State::State()
     , m_lineJoin(SkPaint::kDefault_Join)
     , m_dash(0)
     , m_textDrawingMode(WebCore::cTextFill)
+    , m_interpolationQuality(WebCore::InterpolationHigh)
 {
 }
 
@@ -147,6 +149,7 @@ PlatformContextSkia::State::State(const State& other)
     , m_imageBufferClip(other.m_imageBufferClip)
     , m_clip(other.m_clip)
 #endif
+    , m_interpolationQuality(other.m_interpolationQuality)
 {
     // Up the ref count of these. saveRef does nothing if 'this' is NULL.
     m_looper->safeRef();
@@ -537,6 +540,16 @@ void PlatformContextSkia::setFillShader(SkShader* fillShader)
         m_state->m_fillShader = fillShader;
         m_state->m_fillShader->safeRef();
     }
+}
+
+WebCore::InterpolationQuality PlatformContextSkia::interpolationQuality() const
+{
+    return m_state->m_interpolationQuality;
+}
+
+void PlatformContextSkia::setInterpolationQuality(WebCore::InterpolationQuality interpolationQuality)
+{
+    m_state->m_interpolationQuality = interpolationQuality;
 }
 
 void PlatformContextSkia::setDashPathEffect(SkDashPathEffect* dash)

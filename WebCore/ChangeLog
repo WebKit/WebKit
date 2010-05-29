@@ -1,3 +1,35 @@
+2010-05-28  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Implement GraphicsContext::setImageInterpolation() for the Chromium
+        port.  This is preparatory work for bug 38233.  A number of
+        background-resize tests will need a rebaseline, since the images are
+        taken during the initial "low quality" phase (<800ms).
+
+        [CHROMIUM] Chromium port should support image interpolation quality
+        https://bugs.webkit.org/show_bug.cgi?id=38686
+
+        Covered by fast/backgrounds/size/backgroundSize15.html, and others.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        Implement WebCore::GraphicsContext::setImageInterpolationQuality.
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::computeResamplingMode):  Only enable high quality
+        interpolation if it has been requested in the GraphicsContext.
+        (WebCore::drawResampledBitmap):  Enable cacheing of resampled images
+        even if the size is not full (fix from Brett Wilson).
+        (WebCore::paintSkBitmap):  Pass in the PlatformContextSkia to
+        computeResamplingMode, so it can query it for interpolation quality.
+        (WebCore::Image::drawPattern):  Ibid.
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::State::State):
+        (PlatformContextSkia::interpolationQuality):
+        (PlatformContextSkia::setInterpolationQuality):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        Add a member fn and accessors to retain the image interpolation quality
+        in the platform context, and to save/restore it with the state.
+
 2010-05-28  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.

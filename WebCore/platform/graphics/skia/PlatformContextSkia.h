@@ -147,6 +147,9 @@ public:
 
     skia::PlatformCanvas* canvas() { return m_canvas; }
 
+    WebCore::InterpolationQuality interpolationQuality() const;
+    void setInterpolationQuality(WebCore::InterpolationQuality interpolationQuality);
+
     // FIXME: This should be pushed down to GraphicsContext.
     void drawRect(SkRect rect);
 
