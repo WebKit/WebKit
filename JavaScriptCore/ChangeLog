@@ -1,3 +1,12 @@
+2010-05-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        * wtf/OwnArrayPtr.h:
+        (WTF::OwnArrayPtr::set): Fix the assertion in here to match the one in OwnPtr.
+        At some point someone fixed the "asserts when assigning to 0 and the pointer is
+        already 0" issue in OwnPtr but forgot to do it here.
+
 2010-05-29  Geoffrey Garen  <ggaren@apple.com>
 
         Windows build fix: Updated exported symbols.
