@@ -71,6 +71,9 @@ public:
 
     void setName(const AtomicString& name);
 
+    virtual bool isEnabledFormControl() const { return !disabled(); }
+    virtual bool isReadOnlyFormControl() const { return readOnly(); }
+
     virtual bool isRadioButton() const { return false; }
     virtual bool canTriggerImplicitSubmission() const { return false; }
 
@@ -129,8 +132,6 @@ private:
     virtual const AtomicString& formControlType() const = 0;
 
     virtual bool isFormControlElement() const { return true; }
-    virtual bool isEnabledFormControl() const { return !disabled(); }
-    virtual bool isReadOnlyFormControl() const { return readOnly(); }
 
     virtual bool supportsFocus() const;
 

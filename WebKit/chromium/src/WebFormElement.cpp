@@ -82,10 +82,13 @@ void WebFormElement::getFormControlElements(WebVector<WebFormControlElement>& re
 {
     const HTMLFormElement* form = constUnwrap<HTMLFormElement>();
     Vector<RefPtr<HTMLFormControlElement> > tempVector;
-    for (size_t i = 0; i < form->formElements.size(); i++) {
-        if (form->formElements[i]->hasLocalName(HTMLNames::inputTag)
-            || form->formElements[i]->hasLocalName(HTMLNames::selectTag))
-            tempVector.append(form->formElements[i]);
+    // FIXME: We should move the for-loop condition into a variable instead of
+    // re-evaluating size each time. Also, consider refactoring this code so that
+    // we don't call form->associatedElements() multiple times.
+    for (size_t i = 0; i < form->associatedElements().size(); i++) {
+        if (form->associatedElements()[i]->hasLocalName(HTMLNames::inputTag)
+            || form->associatedElements()[i]->hasLocalName(HTMLNames::selectTag))
+            tempVector.append(form->associatedElements()[i]);
     }
     result.assign(tempVector);
 }
