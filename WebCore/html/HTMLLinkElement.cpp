@@ -46,14 +46,18 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLLinkElement::HTMLLinkElement(const QualifiedName& qName, Document *doc, bool createdByParser)
-    : HTMLElement(qName, doc)
-    , m_cachedSheet(0)
+inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document* document, bool createdByParser)
+    : HTMLElement(tagName, document)
     , m_disabledState(Unset)
     , m_loading(false)
     , m_createdByParser(createdByParser)
 {
     ASSERT(hasTagName(linkTag));
+}
+
+PassRefPtr<HTMLLinkElement> HTMLLinkElement::create(const QualifiedName& tagName, Document* document, bool createdByParser)
+{
+    return new HTMLLinkElement(tagName, document, createdByParser);
 }
 
 HTMLLinkElement::~HTMLLinkElement()

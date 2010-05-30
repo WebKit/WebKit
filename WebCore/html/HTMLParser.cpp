@@ -431,7 +431,6 @@ bool HTMLParser::insertNode(Node* n, bool flat)
 bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, int tagPriority)
 {
     // Error handling code.  This is just ad hoc handling of specific parent/child combinations.
-    HTMLElement* e;
     bool handled = false;
 
     // 1. Check out the element's tag name to decide how to deal with errors.
@@ -559,7 +558,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                 elt->hasLocalName(titleTag) || elt->hasLocalName(isindexTag) ||
                 elt->hasLocalName(baseTag))) {
                 if (!m_head) {
-                    m_head = new HTMLHeadElement(headTag, m_document);
+                    m_head = HTMLHeadElement::create(m_document);
                     insertNode(m_head.get());
                     handled = true;
                 }
@@ -711,8 +710,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
         }
 
         if (!m_document->documentElement()) {
-            e = new HTMLHtmlElement(htmlTag, m_document);
-            insertNode(e);
+            insertNode(HTMLHtmlElement::create(m_document).get());
             handled = true;
         }
     }
@@ -743,7 +741,7 @@ bool HTMLParser::commentCreateErrorCheck(Token* t, RefPtr<Node>& result)
 bool HTMLParser::headCreateErrorCheck(Token*, RefPtr<Node>& result)
 {
     if (!m_head || m_current->localName() == htmlTag) {
-        m_head = new HTMLHeadElement(headTag, m_document);
+        m_head = HTMLHeadElement::create(m_document);
         result = m_head;
     } else
         reportError(MisplacedHeadError);
@@ -791,7 +789,7 @@ bool HTMLParser::formCreateErrorCheck(Token* t, RefPtr<Node>& result)
     // Only create a new form if we're not already inside one.
     // This is consistent with other browsers' behavior.
     if (!m_currentFormElement) {
-        m_currentFormElement = new HTMLFormElement(formTag, m_document);
+        m_currentFormElement = HTMLFormElement::create(m_document);
         result = m_currentFormElement;
         pCloserCreateErrorCheck(t, result);
     }
@@ -1568,11 +1566,11 @@ void HTMLParser::createHead()
         return;
 
     if (!m_document->documentElement() && !m_isParsingFragment) {
-        insertNode(new HTMLHtmlElement(htmlTag, m_document));
+        insertNode(HTMLHtmlElement::create(m_document).get());
         ASSERT(m_document->documentElement() || m_isParsingFragment);
     }
 
-    m_head = new HTMLHeadElement(headTag, m_document);
+    m_head = HTMLHeadElement::create(m_document);
 
     if (m_isParsingFragment)
         return;
@@ -1592,11 +1590,11 @@ void HTMLParser::createHead()
 
 PassRefPtr<Node> HTMLParser::handleIsindex(Token* t)
 {
-    RefPtr<Node> n = new HTMLDivElement(divTag, m_document);
+    RefPtr<Node> n = HTMLDivElement::create(m_document);
 
     NamedNodeMap* attrs = t->attrs.get();
 
-    RefPtr<HTMLIsIndexElement> isIndex = new HTMLIsIndexElement(isindexTag, m_document, m_currentFormElement.get());
+    RefPtr<HTMLIsIndexElement> isIndex = HTMLIsIndexElement::create(m_document, m_currentFormElement.get());
     isIndex->setAttributeMap(attrs);
     isIndex->setAttribute(typeAttr, "khtml_isindex");
 
@@ -1607,10 +1605,10 @@ PassRefPtr<Node> HTMLParser::handleIsindex(Token* t)
         t->attrs = 0;
     }
 
-    n->addChild(new HTMLHRElement(hrTag, m_document));
+    n->addChild(HTMLHRElement::create(m_document));
     n->addChild(Text::create(m_document, text));
     n->addChild(isIndex.release());
-    n->addChild(new HTMLHRElement(hrTag, m_document));
+    n->addChild(HTMLHRElement::create(m_document));
 
     return n.release();
 }
@@ -1632,7 +1630,7 @@ void HTMLParser::finished()
 {
     // In the case of a completely empty document, here's the place to create the HTML element.
     if (m_current && m_current->isDocumentNode() && !m_document->documentElement())
-        insertNode(new HTMLHtmlElement(htmlTag, m_document));
+        insertNode(HTMLHtmlElement::create(m_document).get());
 
     // This ensures that "current" is not left pointing to a node when the document is destroyed.
     freeBlock();

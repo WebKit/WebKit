@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -398,7 +398,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
     }
 
     if (HTMLInputElement* fileInput = asFileInput(element)) {
-        if (!fileInput->isEnabledFormControl())
+        if (fileInput->disabled())
             return false;
 
         if (!dragData->containsFiles())

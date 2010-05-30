@@ -1,7 +1,7 @@
-/**
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,14 +32,20 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLHRElement::HTMLHRElement(const QualifiedName& tagName, Document* doc)
-    : HTMLElement(tagName, doc)
+HTMLHRElement::HTMLHRElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(hrTag));
 }
 
-HTMLHRElement::~HTMLHRElement()
+PassRefPtr<HTMLHRElement> HTMLHRElement::create(Document* document)
 {
+    return new HTMLHRElement(hrTag, document);
+}
+
+PassRefPtr<HTMLHRElement> HTMLHRElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new HTMLHRElement(tagName, document);
 }
 
 bool HTMLHRElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const

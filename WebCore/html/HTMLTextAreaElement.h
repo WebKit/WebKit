@@ -40,8 +40,6 @@ public:
 
     bool shouldWrapText() const { return m_wrap != NoWrap; }
 
-    bool readOnly() const { return isReadOnlyFormControl(); }
-
     String value() const;
     void setValue(const String&);
     String defaultValue() const;

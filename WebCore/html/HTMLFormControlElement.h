@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,25 +36,13 @@ class VisibleSelection;
 
 class HTMLFormControlElement : public HTMLElement {
 public:
-    HTMLFormControlElement(const QualifiedName& tagName, Document*, HTMLFormElement*, ConstructionType = CreateHTMLElementZeroRefCount);
     virtual ~HTMLFormControlElement();
-
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
-    virtual int tagPriority() const { return 1; }
 
     HTMLFormElement* form() const { return m_form; }
     ValidityState* validity();
 
     bool formNoValidate() const;
     void setFormNoValidate(bool);
-
-    virtual bool isTextFormControl() const { return false; }
-    virtual bool isEnabledFormControl() const { return !disabled(); }
-
-    virtual void parseMappedAttribute(Attribute*);
-    virtual void attach();
-    virtual void insertedIntoTree(bool deep);
-    virtual void removedFromTree(bool deep);
 
     virtual void reset() {}
 
@@ -66,13 +54,9 @@ public:
     bool disabled() const { return m_disabled; }
     void setDisabled(bool);
 
-    virtual bool supportsFocus() const;
     virtual bool isFocusable() const;
-    virtual bool isKeyboardFocusable(KeyboardEvent*) const;
-    virtual bool isMouseFocusable() const;
     virtual bool isEnumeratable() const { return false; }
 
-    virtual bool isReadOnlyFormControl() const { return m_readOnly; }
     void setReadOnly(bool);
 
     // Determines whether or not a control will be automatically focused
@@ -82,17 +66,11 @@ public:
     bool required() const;
     void setRequired(bool);
 
-    virtual void recalcStyle(StyleChange);
-
-    virtual const AtomicString& formControlName() const;
-    virtual const AtomicString& formControlType() const = 0;
-
     const AtomicString& type() const { return formControlType(); }
     const AtomicString& name() const { return formControlName(); }
 
     void setName(const AtomicString& name);
 
-    virtual bool isFormControlElement() const { return true; }
     virtual bool isRadioButton() const { return false; }
     virtual bool canTriggerImplicitSubmission() const { return false; }
 
@@ -104,8 +82,6 @@ public:
     virtual bool isSuccessfulSubmitButton() const { return false; }
     virtual bool isActivatedSubmit() const { return false; }
     virtual void setActivatedSubmit(bool) { }
-
-    virtual short tabIndex() const;
 
     virtual bool willValidate() const;
     String validationMessage();
@@ -119,19 +95,47 @@ public:
 
     void formDestroyed() { m_form = 0; }
 
-    virtual void dispatchFocusEvent();
-    virtual void dispatchBlurEvent();
-
     bool isLabelable() const;
     PassRefPtr<NodeList> labels();
     
+    bool readOnly() const { return m_readOnly; }
+
 protected:
+    HTMLFormControlElement(const QualifiedName& tagName, Document*, HTMLFormElement*, ConstructionType = CreateHTMLElementZeroRefCount);
+
+    virtual void parseMappedAttribute(Attribute*);
+    virtual void attach();
+    virtual void insertedIntoTree(bool deep);
+    virtual void removedFromTree(bool deep);
+
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const;
+    virtual bool isMouseFocusable() const;
+
+    virtual void recalcStyle(StyleChange);
+
+    virtual void dispatchFocusEvent();
+    virtual void dispatchBlurEvent();
+
     void removeFromForm();
     // This must be called any time the result of willValidate() has changed.
     void setNeedsWillValidateCheck();
     virtual bool recalcWillValidate() const;
 
 private:
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
+    virtual int tagPriority() const { return 1; }
+
+    virtual const AtomicString& formControlName() const;
+    virtual const AtomicString& formControlType() const = 0;
+
+    virtual bool isFormControlElement() const { return true; }
+    virtual bool isEnabledFormControl() const { return !disabled(); }
+    virtual bool isReadOnlyFormControl() const { return readOnly(); }
+
+    virtual bool supportsFocus() const;
+
+    virtual short tabIndex() const;
+
     virtual HTMLFormElement* virtualForm() const;
     virtual bool isDefaultButtonForForm() const;
     virtual bool isValidFormControlElement();
@@ -154,25 +158,25 @@ private:
 
 class HTMLFormControlElementWithState : public HTMLFormControlElement {
 public:
-    HTMLFormControlElementWithState(const QualifiedName& tagName, Document*, HTMLFormElement*);
     virtual ~HTMLFormControlElementWithState();
 
-    virtual bool autoComplete() const;
-    virtual bool shouldSaveAndRestoreFormControlState() const;
-    virtual void finishParsingChildren();
-
 protected:
+    HTMLFormControlElementWithState(const QualifiedName& tagName, Document*, HTMLFormElement*);
+
+    virtual bool autoComplete() const;
+
     virtual void willMoveToNewOwnerDocument();
     virtual void didMoveToNewOwnerDocument();
     virtual void defaultEventHandler(Event*);
+
+private:
+    virtual bool shouldSaveAndRestoreFormControlState() const;
+    virtual void finishParsingChildren();
 };
 
 class HTMLTextFormControlElement : public HTMLFormControlElementWithState {
 public:
-    HTMLTextFormControlElement(const QualifiedName&, Document*, HTMLFormElement*);
     virtual ~HTMLTextFormControlElement();
-    virtual void dispatchFocusEvent();
-    virtual void dispatchBlurEvent();
 
     String strippedPlaceholder() const;
 
@@ -185,14 +189,22 @@ public:
     VisibleSelection selection() const;
 
 protected:
-    bool isPlaceholderEmpty() const;
+    HTMLTextFormControlElement(const QualifiedName&, Document*, HTMLFormElement*);
+
     bool placeholderShouldBeVisible() const;
     void updatePlaceholderVisibility(bool);
-    virtual int cachedSelectionStart() const = 0;
-    virtual int cachedSelectionEnd() const = 0;
+
     virtual void parseMappedAttribute(Attribute*);
 
 private:
+    virtual void dispatchFocusEvent();
+    virtual void dispatchBlurEvent();
+
+    bool isPlaceholderEmpty() const;
+
+    virtual int cachedSelectionStart() const = 0;
+    virtual int cachedSelectionEnd() const = 0;
+
     // A subclass should return true if placeholder processing is needed.
     virtual bool supportsPlaceholder() const = 0;
     // Returns true if user-editable value is empty.  This is used to check placeholder visibility.
@@ -204,6 +216,6 @@ private:
     RenderTextControl* textRendererAfterUpdateLayout();
 };
 
-} //namespace
+} // namespace
 
 #endif

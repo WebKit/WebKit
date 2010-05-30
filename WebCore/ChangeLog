@@ -1,3 +1,278 @@
+2010-05-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make more HTML DOM members private, especially constructors, third and final batch
+        https://bugs.webkit.org/show_bug.cgi?id=39916
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::createDeletionUI):
+        * editing/EditorCommand.cpp:
+        (WebCore::executeInsertHorizontalRule):
+        (WebCore::executeInsertImage):
+        * editing/htmlediting.cpp:
+        (WebCore::createDefaultParagraphElement):
+        (WebCore::createListItemElement):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleError):
+        (WebCore::HTMLParser::headCreateErrorCheck):
+        (WebCore::HTMLParser::formCreateErrorCheck):
+        (WebCore::HTMLParser::createHead):
+        (WebCore::HTMLParser::handleIsindex):
+        (WebCore::HTMLParser::finished):
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createContainingTable):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::createSubtreeIfNeeded):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::createSubtreeIfNeeded):
+        Use create instead of new to create HTML elements.
+
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::formCollectionInfo):
+        (WebCore::HTMLFormCollection::item):
+        (WebCore::HTMLFormCollection::getNamedFormItem):
+        (WebCore::HTMLFormCollection::updateNameCache):
+        * html/HTMLFormControlElement.h:
+        Updated for name and privacy changes in HTMLFormElement.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::HTMLFormElement):
+        (WebCore::HTMLFormElement::create):
+        (WebCore::HTMLFormElement::~HTMLFormElement):
+        (WebCore::HTMLFormElement::length):
+        (WebCore::HTMLFormElement::submitImplicitly):
+        (WebCore::HTMLFormElement::createFormData):
+        (WebCore::HTMLFormElement::submit):
+        (WebCore::HTMLFormElement::reset):
+        (WebCore::HTMLFormElement::formElementIndex):
+        (WebCore::HTMLFormElement::registerFormElement):
+        (WebCore::HTMLFormElement::removeFormElement):
+        (WebCore::HTMLFormElement::registerImgElement):
+        (WebCore::HTMLFormElement::removeImgElement):
+        (WebCore::HTMLFormElement::defaultButton):
+        (WebCore::HTMLFormElement::collectUnhandledInvalidControls):
+        (WebCore::HTMLFormElement::addElementAlias):
+        (WebCore::HTMLFormElement::documentDidBecomeActive):
+        * html/HTMLFormElement.h:
+        Added create functions. Made constructors and other members private.
+        Used an OwnPtr for m_elementAliases. Renamed collectionInfo to
+        m_collectionCache and used an OwnPtr for it. Renamed formElements to
+        m_associatedElements (since its contents are what HTML5 calls
+        "form-associated element", not form elements). Renamed imgElements to
+        m_imageElements.
+
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::HTMLFrameSetElement):
+        (WebCore::HTMLFrameSetElement::create):
+        (WebCore::HTMLFrameSetElement::parseMappedAttribute):
+        * html/HTMLFrameSetElement.h:
+        Added create functions. Made constructors and other members private.
+        Renamed m_rows and m_cols to m_rowLengths and m_colLengths and used
+        OwnArrayPtr for both.
+
+        * html/HTMLLabelElement.cpp:
+        (WebCore::nodeAsLabelableFormControl): Made this cast to Element instead
+        of HTMLElement, since isFormControlElement is available on Element.
+        (WebCore::HTMLLabelElement::HTMLLabelElement):
+        (WebCore::HTMLLabelElement::create):
+        * html/HTMLLabelElement.h:
+        Added create functions. Made constructors and other members private.
+
+        * html/HTMLLegendElement.cpp:
+        (WebCore::HTMLLegendElement::HTMLLegendElement):
+        (WebCore::HTMLLegendElement::create):
+        (WebCore::HTMLLegendElement::associatedControl):
+        (WebCore::HTMLLegendElement::focus):
+        (WebCore::HTMLLegendElement::accessKeyAction):
+        * html/HTMLLegendElement.h:
+        Added create functions. Made constructors and other members private.
+        Renamed formElement to associatedControl since hte control associated
+        with this legend is not a "form element".
+
+        * editing/DeleteButton.cpp:
+        (WebCore::DeleteButton::DeleteButton):
+        (WebCore::DeleteButton::create):
+        * editing/DeleteButton.h:
+        * html/HTMLDivElement.cpp:
+        (WebCore::HTMLDivElement::HTMLDivElement):
+        (WebCore::HTMLDivElement::create):
+        * html/HTMLDivElement.h:
+        * html/HTMLFontElement.cpp:
+        (WebCore::HTMLFontElement::create):
+        * html/HTMLFontElement.h:
+        * html/HTMLHRElement.cpp:
+        (WebCore::HTMLHRElement::HTMLHRElement):
+        (WebCore::HTMLHRElement::create):
+        * html/HTMLHRElement.h:
+        * html/HTMLHeadElement.cpp:
+        (WebCore::HTMLHeadElement::HTMLHeadElement):
+        (WebCore::HTMLHeadElement::create):
+        * html/HTMLHeadElement.h:
+        * html/HTMLHeadingElement.cpp:
+        (WebCore::HTMLHeadingElement::HTMLHeadingElement):
+        (WebCore::HTMLHeadingElement::create):
+        * html/HTMLHeadingElement.h:
+        * html/HTMLHtmlElement.cpp:
+        (WebCore::HTMLHtmlElement::HTMLHtmlElement):
+        (WebCore::HTMLHtmlElement::create):
+        * html/HTMLHtmlElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::HTMLImageElement):
+        (WebCore::HTMLImageElement::create):
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement):
+        (WebCore::HTMLInputElement::create):
+        (WebCore::HTMLInputElement::createTemporaryFormForIsIndex):
+        * html/HTMLInputElement.h:
+        * html/HTMLIsIndexElement.cpp:
+        (WebCore::HTMLIsIndexElement::HTMLIsIndexElement):
+        (WebCore::HTMLIsIndexElement::create):
+        * html/HTMLIsIndexElement.h:
+        * html/HTMLLIElement.cpp:
+        (WebCore::HTMLLIElement::HTMLLIElement):
+        (WebCore::HTMLLIElement::create):
+        * html/HTMLLIElement.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::HTMLLinkElement):
+        (WebCore::HTMLLinkElement::create):
+        * html/HTMLLinkElement.h:
+        Added create functions. Made constructors and other members private.
+
+        * html/HTMLTagNames.in: Removed the createWithNew flag from all the
+        tags that were still using it: div, font, form, frameset, h1, h2, h3,
+        h4, h5, h6, head, hr, html, image, img, input, ins, isindex, label,
+        legend, li, and link.
+
+        * html/HTMLTextAreaElement.h: Removed unneeded definition of the readOnly
+        function, since the one in HTMLFormElement does the same thing.
+
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocumentElement::ImageDocumentElement):
+        (WebCore::ImageDocumentElement::create):
+        (WebCore::ImageDocument::createDocumentStructure):
+        Added create functions. Made constructors and other members private.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag): Use the non-virtual disabled
+        function instead of the virtual isEnabledFormControl function, which just
+        turns around and calls the disabled function.
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlShadowRootElement::MediaControlShadowRootElement):
+        (WebCore::MediaControlShadowRootElement::create):
+        (WebCore::MediaControlElement::MediaControlElement):
+        (WebCore::MediaControlElement::create):
+        (WebCore::MediaControlTimelineContainerElement::MediaControlTimelineContainerElement):
+        (WebCore::MediaControlTimelineContainerElement::create):
+        (WebCore::MediaControlTimelineContainerElement::rendererIsNeeded):
+        (WebCore::MediaControlVolumeSliderContainerElement::MediaControlVolumeSliderContainerElement):
+        (WebCore::MediaControlVolumeSliderContainerElement::create):
+        (WebCore::MediaControlStatusDisplayElement::MediaControlStatusDisplayElement):
+        (WebCore::MediaControlStatusDisplayElement::create):
+        (WebCore::MediaControlStatusDisplayElement::update):
+        (WebCore::MediaControlStatusDisplayElement::rendererIsNeeded):
+        (WebCore::MediaControlInputElement::MediaControlInputElement):
+        (WebCore::MediaControlInputElement::styleForElement):
+        (WebCore::MediaControlInputElement::rendererIsNeeded):
+        (WebCore::MediaControlInputElement::attach):
+        (WebCore::MediaControlInputElement::updateStyle):
+        (WebCore::MediaControlMuteButtonElement::MediaControlMuteButtonElement):
+        (WebCore::MediaControlMuteButtonElement::create):
+        (WebCore::MediaControlMuteButtonElement::defaultEventHandler):
+        (WebCore::MediaControlMuteButtonElement::updateDisplayType):
+        (WebCore::MediaControlPlayButtonElement::MediaControlPlayButtonElement):
+        (WebCore::MediaControlPlayButtonElement::create):
+        (WebCore::MediaControlPlayButtonElement::defaultEventHandler):
+        (WebCore::MediaControlPlayButtonElement::updateDisplayType):
+        (WebCore::MediaControlSeekButtonElement::MediaControlSeekButtonElement):
+        (WebCore::MediaControlSeekButtonElement::create):
+        (WebCore::MediaControlSeekButtonElement::isForwardButton):
+        (WebCore::MediaControlSeekButtonElement::defaultEventHandler):
+        (WebCore::MediaControlSeekButtonElement::seekTimerFired):
+        (WebCore::MediaControlRewindButtonElement::MediaControlRewindButtonElement):
+        (WebCore::MediaControlRewindButtonElement::create):
+        (WebCore::MediaControlRewindButtonElement::defaultEventHandler):
+        (WebCore::MediaControlReturnToRealtimeButtonElement::MediaControlReturnToRealtimeButtonElement):
+        (WebCore::MediaControlReturnToRealtimeButtonElement::create):
+        (WebCore::MediaControlReturnToRealtimeButtonElement::defaultEventHandler):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::MediaControlToggleClosedCaptionsButtonElement):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::create):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::defaultEventHandler):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::updateDisplayType):
+        (WebCore::MediaControlTimelineElement::MediaControlTimelineElement):
+        (WebCore::MediaControlTimelineElement::create):
+        (WebCore::MediaControlTimelineElement::defaultEventHandler):
+        (WebCore::MediaControlTimelineElement::update):
+        (WebCore::MediaControlVolumeSliderElement::MediaControlVolumeSliderElement):
+        (WebCore::MediaControlVolumeSliderElement::create):
+        (WebCore::MediaControlVolumeSliderElement::defaultEventHandler):
+        (WebCore::MediaControlVolumeSliderElement::update):
+        (WebCore::MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement):
+        (WebCore::MediaControlFullscreenButtonElement::create):
+        (WebCore::MediaControlFullscreenButtonElement::defaultEventHandler):
+        (WebCore::MediaControlTimeDisplayElement::MediaControlTimeDisplayElement):
+        (WebCore::MediaControlTimeDisplayElement::create):
+        * rendering/MediaControlElements.h:
+        Added create functions. Made constructors and other members private.
+
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::ShadowInputElement::ShadowInputElement):
+        (WebCore::ShadowInputElement::create):
+        (WebCore::RenderFileUploadControl::updateFromElement):
+        Added create functions. Made constructors and other members private.
+
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::createControlsShadowRoot):
+        (WebCore::RenderMedia::createPanel):
+        (WebCore::RenderMedia::createMuteButton):
+        (WebCore::RenderMedia::createPlayButton):
+        (WebCore::RenderMedia::createSeekBackButton):
+        (WebCore::RenderMedia::createSeekForwardButton):
+        (WebCore::RenderMedia::createRewindButton):
+        (WebCore::RenderMedia::createReturnToRealtimeButton):
+        (WebCore::RenderMedia::createToggleClosedCaptionsButton):
+        (WebCore::RenderMedia::createStatusDisplay):
+        (WebCore::RenderMedia::createTimelineContainer):
+        (WebCore::RenderMedia::createTimeline):
+        (WebCore::RenderMedia::createVolumeSliderContainer):
+        (WebCore::RenderMedia::createVolumeSlider):
+        (WebCore::RenderMedia::createCurrentTimeDisplay):
+        (WebCore::RenderMedia::createTimeRemainingDisplay):
+        (WebCore::RenderMedia::createFullscreenButton):
+        Use create instead of new.
+
+        * rendering/RenderProgress.cpp:
+        (WebCore::ProgressValueElement::ProgressValueElement):
+        (WebCore::ProgressValueElement::create):
+        (WebCore::RenderProgress::updateValuePartState):
+        * rendering/RenderSlider.cpp:
+        (WebCore::SliderThumbElement::SliderThumbElement):
+        (WebCore::SliderThumbElement::create):
+        (WebCore::RenderSlider::updateFromElement):
+        Added create functions. Made constructors and other members private.
+
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::TextControlInnerElement):
+        (WebCore::TextControlInnerElement::create):
+        (WebCore::TextControlInnerTextElement::TextControlInnerTextElement):
+        (WebCore::TextControlInnerTextElement::create):
+        (WebCore::TextControlInnerTextElement::defaultEventHandler):
+        (WebCore::SearchFieldResultsButtonElement::SearchFieldResultsButtonElement):
+        (WebCore::SearchFieldResultsButtonElement::create):
+        (WebCore::SearchFieldResultsButtonElement::defaultEventHandler):
+        (WebCore::SearchFieldCancelButtonElement::SearchFieldCancelButtonElement):
+        (WebCore::SearchFieldCancelButtonElement::create):
+        (WebCore::SearchFieldCancelButtonElement::defaultEventHandler):
+        (WebCore::SpinButtonElement::SpinButtonElement):
+        (WebCore::SpinButtonElement::create):
+        (WebCore::SpinButtonElement::defaultEventHandler):
+        * rendering/TextControlInnerElements.h:
+        Added create functions. Made constructors and other members private.
+
 2010-05-30  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Darin Adler.

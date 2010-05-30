@@ -1816,7 +1816,7 @@ void Document::implicitClose()
             
             // The implicit <head> isn't expected in older versions of Mail - <rdar://problem/6863795>
             if (!head() && shouldCreateImplicitHead(this)) {
-                documentElement->appendChild(new HTMLHeadElement(headTag, this), ec);
+                documentElement->appendChild(HTMLHeadElement::create(this), ec);
                 ASSERT(!ec);
             }
             documentElement->appendChild(HTMLBodyElement::create(this), ec);

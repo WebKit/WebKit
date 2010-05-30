@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,8 +31,18 @@ namespace WebCore {
 
 class HTMLLabelElement : public HTMLElement {
 public:
+    static PassRefPtr<HTMLLabelElement> create(const QualifiedName&, Document*);
+
+    HTMLFormControlElement* control();
+
+    String accessKey() const;
+    void setAccessKey(const String&);
+    
+    String htmlFor() const;
+    void setHtmlFor(const String&);
+
+private:
     HTMLLabelElement(const QualifiedName&, Document*);
-    virtual ~HTMLLabelElement();
 
     virtual int tagPriority() const { return 5; }
 
@@ -47,20 +57,9 @@ public:
     // Overridden to either click() or focus() the corresponding control.
     virtual void defaultEventHandler(Event*);
 
-    HTMLFormControlElement* control();
-
-    String accessKey() const;
-    void setAccessKey(const String&);
-    
-    String htmlFor() const;
-    void setHtmlFor(const String&);
-
     void focus(bool restorePreviousSelection = true);
 
- private:
     virtual void parseMappedAttribute(Attribute*);
-
-    String m_formElementID;
 };
 
 } //namespace

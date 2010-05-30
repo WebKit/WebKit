@@ -104,8 +104,8 @@ static const double weekDefaultStepBase = -259200000.0; // The first day of 1970
 static const double msecPerMinute = 60 * 1000;
 static const double msecPerSecond = 1000;
 
-HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
-    : HTMLTextFormControlElement(tagName, doc, f)
+HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
+    : HTMLTextFormControlElement(tagName, document, form)
     , m_xPos(0)
     , m_yPos(0)
     , m_maxResults(-1)
@@ -121,6 +121,11 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* doc, 
     , m_inited(false)
 {
     ASSERT(hasTagName(inputTag) || hasTagName(isindexTag));
+}
+
+PassRefPtr<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
+{
+    return new HTMLInputElement(tagName, document, form);
 }
 
 HTMLInputElement::~HTMLInputElement()
@@ -2352,7 +2357,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
 
 PassRefPtr<HTMLFormElement> HTMLInputElement::createTemporaryFormForIsIndex()
 {
-    RefPtr<HTMLFormElement> form = new HTMLFormElement(formTag, document());
+    RefPtr<HTMLFormElement> form = HTMLFormElement::create(document());
     form->registerFormElement(this);
     form->setMethod("GET");
     if (!document()->baseURL().isEmpty()) {

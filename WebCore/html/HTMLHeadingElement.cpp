@@ -1,7 +1,7 @@
-/**
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,6 +19,7 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #include "config.h"
 #include "HTMLHeadingElement.h"
 
@@ -28,9 +29,14 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLHeadingElement::HTMLHeadingElement(const QualifiedName& tagName, Document *doc)
-    : HTMLElement(tagName, doc)
+inline HTMLHeadingElement::HTMLHeadingElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
 {
+}
+
+PassRefPtr<HTMLHeadingElement> HTMLHeadingElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new HTMLHeadingElement(tagName, document);
 }
 
 bool HTMLHeadingElement::checkDTD(const Node* newChild)

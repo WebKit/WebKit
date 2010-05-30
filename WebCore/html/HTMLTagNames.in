@@ -36,42 +36,42 @@ dd interfaceName=HTMLElement
 del interfaceName=HTMLModElement
 dfn interfaceName=HTMLElement
 dir interfaceName=HTMLDirectoryElement
-div createWithNew
+div
 dl interfaceName=HTMLDListElement
 dt interfaceName=HTMLElement
 em interfaceName=HTMLElement
 embed
 fieldset interfaceName=HTMLFieldSetElement, constructorNeedsFormElement
-font createWithNew
+font
 footer interfaceName=HTMLElement
-form createWithNew
+form
 frame
-frameset interfaceName=HTMLFrameSetElement, createWithNew
-h1 interfaceName=HTMLHeadingElement, createWithNew
-h2 interfaceName=HTMLHeadingElement, createWithNew
-h3 interfaceName=HTMLHeadingElement, createWithNew
-h4 interfaceName=HTMLHeadingElement, createWithNew
-h5 interfaceName=HTMLHeadingElement, createWithNew
-h6 interfaceName=HTMLHeadingElement, createWithNew
-head createWithNew
+frameset interfaceName=HTMLFrameSetElement
+h1 interfaceName=HTMLHeadingElement
+h2 interfaceName=HTMLHeadingElement
+h3 interfaceName=HTMLHeadingElement
+h4 interfaceName=HTMLHeadingElement
+h5 interfaceName=HTMLHeadingElement
+h6 interfaceName=HTMLHeadingElement
+head
 header interfaceName=HTMLElement
 hgroup interfaceName=HTMLElement
-hr interfaceName=HTMLHRElement, createWithNew
-html createWithNew
+hr interfaceName=HTMLHRElement
+html
 i interfaceName=HTMLElement
 iframe interfaceName=HTMLIFrameElement
-image mapToTagName=img, createWithNew
-img interfaceName=HTMLImageElement, constructorNeedsFormElement, createWithNew
-input constructorNeedsFormElement, createWithNew
-ins interfaceName=HTMLModElement, createWithNew
-isindex interfaceName=HTMLIsIndexElement, constructorNeedsFormElement, createWithNew
+image mapToTagName=img
+img interfaceName=HTMLImageElement, constructorNeedsFormElement
+input constructorNeedsFormElement
+ins interfaceName=HTMLModElement
+isindex interfaceName=HTMLIsIndexElement, constructorNeedsFormElement
 kbd interfaceName=HTMLElement
 keygen JSInterfaceName=HTMLSelectElement, constructorNeedsFormElement
-label createWithNew
+label
 layer interfaceName=HTMLElement
-legend constructorNeedsFormElement, createWithNew
-li interfaceName=HTMLLIElement, createWithNew
-link constructorNeedsCreatedByParser, createWithNew
+legend constructorNeedsFormElement
+li interfaceName=HTMLLIElement
+link constructorNeedsCreatedByParser
 listing interfaceName=HTMLPreElement
 map
 marquee

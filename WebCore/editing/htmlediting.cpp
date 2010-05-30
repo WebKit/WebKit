@@ -874,7 +874,7 @@ bool isEmptyTableCell(const Node* node)
 
 PassRefPtr<HTMLElement> createDefaultParagraphElement(Document* document)
 {
-    return new HTMLDivElement(divTag, document);
+    return HTMLDivElement::create(document);
 }
 
 PassRefPtr<HTMLElement> createBreakElement(Document* document)
@@ -894,7 +894,7 @@ PassRefPtr<HTMLElement> createUnorderedListElement(Document* document)
 
 PassRefPtr<HTMLElement> createListItemElement(Document* document)
 {
-    return new HTMLLIElement(liTag, document);
+    return HTMLLIElement::create(document);
 }
 
 PassRefPtr<HTMLElement> createHTMLElement(Document* document, const QualifiedName& name)

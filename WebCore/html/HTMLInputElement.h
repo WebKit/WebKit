@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -69,40 +69,11 @@ public:
     };
     static const int numberOfTypes = WEEK + 1;
 
-    enum AutoCompleteSetting {
-        Uninitialized,
-        On,
-        Off
-    };
-
-    HTMLInputElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
+    static PassRefPtr<HTMLInputElement> create(const QualifiedName&, Document*, HTMLFormElement*);
     virtual ~HTMLInputElement();
 
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
-    virtual int tagPriority() const { return 0; }
-
-    virtual bool isKeyboardFocusable(KeyboardEvent*) const;
-    virtual bool isMouseFocusable() const;
-    virtual bool isEnumeratable() const { return inputType() != IMAGE; }
-    virtual void updateFocusAppearance(bool restorePreviousSelection);
-    virtual void aboutToUnload();
-    virtual bool shouldUseInputMethod() const;
-
-    virtual const AtomicString& formControlName() const;
- 
     bool autoComplete() const;
 
-    // isChecked is used by the rendering tree/CSS while checked() is used by JS to determine checked state
-    virtual bool isChecked() const { return checked() && (inputType() == CHECKBOX || inputType() == RADIO); }
-    virtual bool isIndeterminate() const { return indeterminate(); }
-    
-    bool readOnly() const { return isReadOnlyFormControl(); }
-
-    virtual bool isTextFormControl() const { return isTextField(); }
-
-    virtual bool valueMissing() const;
-    virtual bool patternMismatch() const;
-    virtual bool tooLong() const;
     // For ValidityState
     bool rangeUnderflow() const;
     bool rangeOverflow() const;
@@ -129,24 +100,17 @@ public:
     virtual bool isTextField() const;
     virtual bool isSearchField() const { return m_type == SEARCH; }
     virtual bool isInputTypeHidden() const { return m_type == HIDDEN; }
-    virtual bool isPasswordField() const { return m_type == PASSWORD; }
-    virtual bool hasSpinButton() const { return m_type == NUMBER || m_type == DATE || m_type == DATETIME || m_type == DATETIMELOCAL || m_type == MONTH || m_type == TIME || m_type == WEEK; }
-    virtual bool canTriggerImplicitSubmission() const { return isTextField(); }
 
     bool checked() const { return m_checked; }
     void setChecked(bool, bool sendChangeEvent = false);
 
     // 'indeterminate' is a state independent of the checked state that causes the control to draw in a way that hides the actual state.
-    bool allowsIndeterminate() const { return inputType() == CHECKBOX || inputType() == RADIO; }
     bool indeterminate() const { return m_indeterminate; }
     void setIndeterminate(bool);
 
     virtual int size() const;
-    virtual const AtomicString& formControlType() const;
-    void setType(const String&);
 
-    virtual const String& suggestedValue() const;
-    void setSuggestedValue(const String&);
+    void setType(const String&);
 
     virtual String value() const;
     virtual void setValue(const String&, bool sendChangeEvent = false);
@@ -161,52 +125,22 @@ public:
     virtual String placeholder() const;
     virtual void setPlaceholder(const String&);
 
-    virtual bool searchEventsShouldBeDispatched() const;
-
     String valueWithDefault() const;
 
     virtual void setValueFromRenderer(const String&);
     void setFileListFromRenderer(const Vector<String>&);
 
-    virtual bool saveFormControlState(String& value) const;
-    virtual void restoreFormControlState(const String&);
-
-    virtual bool canStartSelection() const;
-    
     bool canHaveSelection() const;
     virtual void select() { HTMLTextFormControlElement::select(); }
 
-    virtual void accessKeyAction(bool sendToAnyElement);
-
-    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(Attribute*);
-
-    virtual void copyNonAttributeProperties(const Element* source);
-
-    virtual void attach();
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void detach();
-    virtual bool appendFormData(FormDataList&, bool);
-
-    virtual bool isSuccessfulSubmitButton() const;
-    virtual bool isActivatedSubmit() const;
-    virtual void setActivatedSubmit(bool flag);
 
     InputType inputType() const { return static_cast<InputType>(m_type); }
     void setInputType(const String&);
-    
-    // Report if this input type uses height & width attributes
-    bool respectHeightAndWidthAttrs() const { return inputType() == IMAGE || inputType() == HIDDEN; }
-
-    virtual void reset();
-
-    virtual void* preDispatchEventHandler(Event*);
-    virtual void postDispatchEventHandler(Event*, void* dataFromPreDispatch);
 
     String altText() const;
-    
-    virtual bool isURLAttribute(Attribute*) const;
 
     int maxResults() const { return m_maxResults; }
 
@@ -235,11 +169,6 @@ public:
     KURL src() const;
     void setSrc(const String&);
 
-#if ENABLE(DATALIST)
-    HTMLElement* list() const;
-    HTMLOptionElement* selectedOption() const;
-#endif
-
     int maxLength() const;
     void setMaxLength(int, ExceptionCode&);
 
@@ -254,32 +183,103 @@ public:
 
     FileList* files();
 
-    virtual void cacheSelection(int start, int end);
     void addSearchResult();
     void onSearch();
+
+    // Parses the specified string as the InputType, and returns true if it is successfully parsed.
+    // An instance pointed by the DateComponents* parameter will have parsed values and be
+    // modified even if the parsing fails.  The DateComponents* parameter may be 0.
+    static bool parseToDateComponents(InputType, const String&, DateComponents*);
+
+#if ENABLE(DATALIST)
+    HTMLElement* list() const;
+    HTMLOptionElement* selectedOption() const;
+#endif
+
+protected:
+    HTMLInputElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
+
+    virtual void defaultEventHandler(Event*);
+
+private:
+    enum AutoCompleteSetting { Uninitialized, On, Off };
+
+    virtual void willMoveToNewOwnerDocument();
+    virtual void didMoveToNewOwnerDocument();
+
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
+    virtual int tagPriority() const { return 0; }
+
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const;
+    virtual bool isMouseFocusable() const;
+    virtual bool isEnumeratable() const { return inputType() != IMAGE; }
+    virtual void updateFocusAppearance(bool restorePreviousSelection);
+    virtual void aboutToUnload();
+    virtual bool shouldUseInputMethod() const;
+
+    virtual const AtomicString& formControlName() const;
+ 
+    // isChecked is used by the rendering tree/CSS while checked() is used by JS to determine checked state
+    virtual bool isChecked() const { return checked() && (inputType() == CHECKBOX || inputType() == RADIO); }
+    virtual bool isIndeterminate() const { return indeterminate(); }
+    
+    virtual bool isTextFormControl() const { return isTextField(); }
+
+    virtual bool valueMissing() const;
+    virtual bool patternMismatch() const;
+    virtual bool tooLong() const;
+
+    virtual bool isPasswordField() const { return m_type == PASSWORD; }
+    virtual bool hasSpinButton() const { return m_type == NUMBER || m_type == DATE || m_type == DATETIME || m_type == DATETIMELOCAL || m_type == MONTH || m_type == TIME || m_type == WEEK; }
+    virtual bool canTriggerImplicitSubmission() const { return isTextField(); }
+
+    bool allowsIndeterminate() const { return inputType() == CHECKBOX || inputType() == RADIO; }
+
+    virtual const AtomicString& formControlType() const;
+
+    virtual const String& suggestedValue() const;
+    void setSuggestedValue(const String&);
+
+    virtual bool searchEventsShouldBeDispatched() const;
+
+    virtual bool saveFormControlState(String& value) const;
+    virtual void restoreFormControlState(const String&);
+
+    virtual bool canStartSelection() const;
+    
+    virtual void accessKeyAction(bool sendToAnyElement);
+
+    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
+    virtual void parseMappedAttribute(Attribute*);
+
+    virtual void copyNonAttributeProperties(const Element* source);
+
+    virtual void attach();
+
+    virtual bool appendFormData(FormDataList&, bool);
+
+    virtual bool isSuccessfulSubmitButton() const;
+    virtual bool isActivatedSubmit() const;
+    virtual void setActivatedSubmit(bool flag);
+
+    // Report if this input type uses height & width attributes
+    bool respectHeightAndWidthAttrs() const { return inputType() == IMAGE || inputType() == HIDDEN; }
+
+    virtual void reset();
+
+    virtual void* preDispatchEventHandler(Event*);
+    virtual void postDispatchEventHandler(Event*, void* dataFromPreDispatch);
+
+    virtual bool isURLAttribute(Attribute*) const;
+
+    virtual void cacheSelection(int start, int end);
 
     virtual String sanitizeValue(const String&) const;
 
     virtual void documentDidBecomeActive();
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
-    
-    // Parses the specified string as the InputType, and returns true if it is successfully parsed.
-    // An instance pointed by the DateComponents* parameter will have parsed values and be
-    // modified even if the parsing fails.  The DateComponents* parameter may be 0.
-    static bool parseToDateComponents(InputType, const String&, DateComponents*);
 
-#if ENABLE(WCSS)
-    void setWapInputFormat(String& mask);
-    virtual InputElementData data() const { return m_data; }
-#endif
-    
-protected:
-    virtual void willMoveToNewOwnerDocument();
-    virtual void didMoveToNewOwnerDocument();
-    virtual void defaultEventHandler(Event*);
-
-private:
     bool storesValueSeparateFromAttribute() const;
 
     bool needsActivationCallback();
@@ -323,6 +323,11 @@ private:
 
 #if ENABLE(DATALIST)
     HTMLDataListElement* dataList() const;
+#endif
+
+#if ENABLE(WCSS)
+    void setWapInputFormat(String& mask);
+    virtual InputElementData data() const { return m_data; }
 #endif
 
     InputElementData m_data;

@@ -50,16 +50,29 @@ const int iconFilenameSpacing = 2;
 const int defaultWidthNumChars = 34;
 const int buttonShadowHeight = 2;
 
-class HTMLFileUploadInnerButtonElement : public HTMLInputElement {
+class ShadowInputElement : public HTMLInputElement {
 public:
-    HTMLFileUploadInnerButtonElement(Document*, Node* shadowParent);
+    static PassRefPtr<ShadowInputElement> create(Node* shadowParent);
+
+private:
+    ShadowInputElement(Node* shadowParent);
 
     virtual bool isShadowNode() const { return true; }
     virtual Node* shadowParentNode() { return m_shadowParent; }
 
-private:
     Node* m_shadowParent;    
 };
+
+inline ShadowInputElement::ShadowInputElement(Node* shadowParent)
+    : HTMLInputElement(inputTag, shadowParent->document())
+    , m_shadowParent(shadowParent)
+{
+}
+
+inline PassRefPtr<ShadowInputElement> ShadowInputElement::create(Node* shadowParent)
+{
+    return new ShadowInputElement(shadowParent);
+}
 
 RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement* input)
     : RenderBlock(input)
@@ -143,7 +156,7 @@ void RenderFileUploadControl::updateFromElement()
     ASSERT(inputElement->inputType() == HTMLInputElement::FILE);
     
     if (!m_button) {
-        m_button = new HTMLFileUploadInnerButtonElement(document(), inputElement);
+        m_button = ShadowInputElement::create(inputElement);
         m_button->setInputType("button");
         m_button->setValue(fileButtonChooseFileLabel());
         RefPtr<RenderStyle> buttonStyle = createButtonStyle(style());
@@ -313,10 +326,4 @@ String RenderFileUploadControl::fileTextValue() const
     return m_fileChooser->basenameForWidth(style()->font(), maxFilenameWidth());
 }
     
-HTMLFileUploadInnerButtonElement::HTMLFileUploadInnerButtonElement(Document* doc, Node* shadowParent)
-    : HTMLInputElement(inputTag, doc)
-    , m_shadowParent(shadowParent)
-{
-}
-
 } // namespace WebCore

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. ALl rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2010 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -38,7 +38,7 @@ using namespace HTMLNames;
 
 static HTMLFormControlElement* nodeAsLabelableFormControl(Node* node)
 {
-    if (!node || !node->isHTMLElement() || !static_cast<HTMLElement*>(node)->isFormControlElement())
+    if (!node || !node->isElementNode() || !static_cast<Element*>(node)->isFormControlElement())
         return 0;
     
     HTMLFormControlElement* formControlElement = static_cast<HTMLFormControlElement*>(node);
@@ -48,14 +48,15 @@ static HTMLFormControlElement* nodeAsLabelableFormControl(Node* node)
     return formControlElement;
 }
 
-HTMLLabelElement::HTMLLabelElement(const QualifiedName& tagName, Document *doc)
-    : HTMLElement(tagName, doc)
+inline HTMLLabelElement::HTMLLabelElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(labelTag));
 }
 
-HTMLLabelElement::~HTMLLabelElement()
+PassRefPtr<HTMLLabelElement> HTMLLabelElement::create(const QualifiedName& tagName, Document* document)
 {
+    return new HTMLLabelElement(tagName, document);
 }
 
 bool HTMLLabelElement::isFocusable() const

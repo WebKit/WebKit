@@ -54,16 +54,19 @@ static double sliderPosition(HTMLInputElement* element)
     return range.proportionFromValue(range.valueFromElement(element));
 }
 
+// FIXME: Could share code with the SliderDivElement class in RenderProgress.
 class SliderThumbElement : public HTMLDivElement {
 public:
-    SliderThumbElement(Document*, Node* shadowParent);
-    
+    static PassRefPtr<SliderThumbElement> create(Node* shadowParent);
+
     bool inDragMode() const { return m_inDragMode; }
 
     virtual void defaultEventHandler(Event*);
     virtual void detach();
 
 private:        
+    SliderThumbElement(Node* shadowParent);
+    
     virtual bool isShadowNode() const { return true; }
     virtual Node* shadowParentNode() { return m_shadowParent; }
 
@@ -72,11 +75,16 @@ private:
     bool m_inDragMode;
 };
 
-SliderThumbElement::SliderThumbElement(Document* document, Node* shadowParent)
-    : HTMLDivElement(divTag, document)
+inline SliderThumbElement::SliderThumbElement(Node* shadowParent)
+    : HTMLDivElement(divTag, shadowParent->document())
     , m_shadowParent(shadowParent)
     , m_inDragMode(false)
 {
+}
+
+inline PassRefPtr<SliderThumbElement> SliderThumbElement::create(Node* shadowParent)
+{
+    return new SliderThumbElement(shadowParent);
 }
 
 void SliderThumbElement::defaultEventHandler(Event* event)
@@ -305,7 +313,7 @@ void RenderSlider::updateFromElement()
 {
     // Layout will take care of the thumb's size and position.
     if (!m_thumb) {
-        m_thumb = new SliderThumbElement(document(), node());
+        m_thumb = SliderThumbElement::create(node());
         RefPtr<RenderStyle> thumbStyle = createThumbStyle(style());
         m_thumb->setRenderer(m_thumb->createRenderer(renderArena(), thumbStyle.get()));
         m_thumb->renderer()->setStyle(thumbStyle.release());

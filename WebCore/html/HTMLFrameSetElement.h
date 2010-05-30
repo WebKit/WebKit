@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2004, 2006, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,29 +24,14 @@
 #ifndef HTMLFrameSetElement_h
 #define HTMLFrameSetElement_h
 
-#include "Color.h"
-#include "Document.h"
+#include <wtf/OwnArrayPtr.h>
 #include "HTMLElement.h"
 
 namespace WebCore {
 
 class HTMLFrameSetElement : public HTMLElement {
 public:
-    HTMLFrameSetElement(const QualifiedName&, Document*);
-    ~HTMLFrameSetElement();
-
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
-    virtual int tagPriority() const { return 10; }
-    virtual bool checkDTD(const Node* newChild);
-
-    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(Attribute*);
-
-    virtual void attach();
-    virtual bool rendererIsNeeded(RenderStyle*);
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    
-    virtual void defaultEventHandler(Event*);
+    static PassRefPtr<HTMLFrameSetElement> create(const QualifiedName&, Document*);
 
     bool hasFrameBorder() const { return frameborder; }
     bool noResize() const { return noresize; }
@@ -57,16 +42,14 @@ public:
 
     bool hasBorderColor() const { return m_borderColorSet; }
 
-    virtual void recalcStyle(StyleChange);
-    
     String cols() const;
     void setCols(const String&);
 
     String rows() const;
     void setRows(const String&);
 
-    const Length* rowLengths() const { return m_rows; }
-    const Length* colLengths() const { return m_cols; }
+    const Length* rowLengths() const { return m_rowLengths.get(); }
+    const Length* colLengths() const { return m_colLengths.get(); }
 
     // Declared virtual in Element
     DEFINE_WINDOW_ATTRIBUTE_EVENT_LISTENER(blur);
@@ -88,8 +71,25 @@ public:
 #endif
 
 private:
-    Length* m_rows;
-    Length* m_cols;
+    HTMLFrameSetElement(const QualifiedName&, Document*);
+
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
+    virtual int tagPriority() const { return 10; }
+    virtual bool checkDTD(const Node* newChild);
+
+    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
+    virtual void parseMappedAttribute(Attribute*);
+
+    virtual void attach();
+    virtual bool rendererIsNeeded(RenderStyle*);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    
+    virtual void defaultEventHandler(Event*);
+
+    virtual void recalcStyle(StyleChange);
+    
+    OwnArrayPtr<Length> m_rowLengths;
+    OwnArrayPtr<Length> m_colLengths;
 
     int m_totalRows;
     int m_totalCols;

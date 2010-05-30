@@ -1,9 +1,9 @@
-/**
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann (hausmann@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,10 +40,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLFrameSetElement::HTMLFrameSetElement(const QualifiedName& tagName, Document *doc)
-    : HTMLElement(tagName, doc)
-    , m_rows(0)
-    , m_cols(0)
+HTMLFrameSetElement::HTMLFrameSetElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
     , m_totalRows(1)
     , m_totalCols(1)
     , m_border(6)
@@ -56,12 +54,9 @@ HTMLFrameSetElement::HTMLFrameSetElement(const QualifiedName& tagName, Document 
     ASSERT(hasTagName(framesetTag));
 }
 
-HTMLFrameSetElement::~HTMLFrameSetElement()
+PassRefPtr<HTMLFrameSetElement> HTMLFrameSetElement::create(const QualifiedName& tagName, Document* document)
 {
-    if (m_rows)
-        delete [] m_rows;
-    if (m_cols)
-        delete [] m_cols;
+    return new HTMLFrameSetElement(tagName, document);
 }
 
 bool HTMLFrameSetElement::checkDTD(const Node* newChild)
@@ -87,14 +82,12 @@ void HTMLFrameSetElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == rowsAttr) {
         if (!attr->isNull()) {
-            if (m_rows) delete [] m_rows;
-            m_rows = newLengthArray(attr->value().string(), m_totalRows);
+            m_rowLengths.set(newLengthArray(attr->value().string(), m_totalRows));
             setNeedsStyleRecalc();
         }
     } else if (attr->name() == colsAttr) {
         if (!attr->isNull()) {
-            delete [] m_cols;
-            m_cols = newLengthArray(attr->value().string(), m_totalCols);
+            m_colLengths.set(newLengthArray(attr->value().string(), m_totalCols));
             setNeedsStyleRecalc();
         }
     } else if (attr->name() == frameborderAttr) {

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,25 +30,24 @@ namespace WebCore {
 
 class HTMLLegendElement : public HTMLFormControlElement {
 public:
-    HTMLLegendElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
-    virtual ~HTMLLegendElement();
+    static PassRefPtr<HTMLLegendElement> create(const QualifiedName&, Document*, HTMLFormElement*);
+
+    String accessKey() const;
+    void setAccessKey(const String&);
+
+    String align() const;
+    void setAlign(const String&);
+    
+private:
+    HTMLLegendElement(const QualifiedName&, Document*, HTMLFormElement*);
+
+    // Control in the legend's fieldset that gets focus and access key.
+    HTMLFormControlElement* associatedControl();
 
     virtual bool supportsFocus() const;
     virtual const AtomicString& formControlType() const;
     virtual void accessKeyAction(bool sendToAnyElement);
-
-    /**
-     * The first form element in the legend's fieldset 
-     */
-    Element* formElement();
-
-    String accessKey() const;
-    void setAccessKey(const String &);
-
-    String align() const;
-    void setAlign(const String &);
-    
-    void focus(bool restorePreviousSelection = true);
+    virtual void focus(bool restorePreviousSelection = true);
 };
 
 } //namespace

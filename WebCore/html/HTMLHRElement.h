@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,15 +29,9 @@ namespace WebCore {
 
 class HTMLHRElement : public HTMLElement {
 public:
-    HTMLHRElement(const QualifiedName&, Document*);
-    ~HTMLHRElement();
+    static PassRefPtr<HTMLHRElement> create(Document*);
+    static PassRefPtr<HTMLHRElement> create(const QualifiedName&, Document*);
     
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
-    virtual int tagPriority() const { return 0; }
-    
-    virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
-    virtual void parseMappedAttribute(Attribute*);
-
     String align() const;
     void setAlign(const String&);
 
@@ -48,6 +43,15 @@ public:
 
     String width() const;
     void setWidth(const String&);
+
+private:
+    HTMLHRElement(const QualifiedName&, Document*);
+    
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
+    virtual int tagPriority() const { return 0; }
+    
+    virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
+    virtual void parseMappedAttribute(Attribute*);
 };
 
 } // namespace WebCore

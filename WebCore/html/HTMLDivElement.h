@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,17 +29,21 @@ namespace WebCore {
 
 class HTMLDivElement : public HTMLElement {
 public:
-    HTMLDivElement(const QualifiedName&, Document*);
-    ~HTMLDivElement();
+    static PassRefPtr<HTMLDivElement> create(Document*);
+    static PassRefPtr<HTMLDivElement> create(const QualifiedName&, Document*);
 
+    String align() const;
+    void setAlign(const String&);
+
+protected:
+    HTMLDivElement(const QualifiedName&, Document*);
+
+private:
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 5; }
 
     virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
     virtual void parseMappedAttribute(Attribute*);
-
-    String align() const;
-    void setAlign(const String&);
 };
 
 } // namespace WebCore

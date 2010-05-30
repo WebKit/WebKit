@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,7 +68,7 @@ Tokenizer* HTMLViewSourceDocument::createTokenizer()
 
 void HTMLViewSourceDocument::createContainingTable()
 {
-    RefPtr<HTMLHtmlElement> html = new HTMLHtmlElement(htmlTag, this);
+    RefPtr<HTMLHtmlElement> html = HTMLHtmlElement::create(this);
     addChild(html);
     html->attach();
     RefPtr<HTMLBodyElement> body = HTMLBodyElement::create(this);
@@ -77,7 +77,7 @@ void HTMLViewSourceDocument::createContainingTable()
     
     // Create a line gutter div that can be used to make sure the gutter extends down the height of the whole
     // document.
-    RefPtr<HTMLDivElement> div = new HTMLDivElement(divTag, this);
+    RefPtr<HTMLDivElement> div = HTMLDivElement::create(this);
     RefPtr<NamedNodeMap> attrs = NamedNodeMap::create();
     attrs->addAttribute(Attribute::createMapped(classAttr, "webkit-line-gutter-backdrop"));
     div->setAttributeMap(attrs.release());

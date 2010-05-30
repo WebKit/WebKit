@@ -1,9 +1,9 @@
-/**
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann (hausmann@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,6 +20,7 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
 #include "config.h"
 #include "HTMLHtmlElement.h"
 
@@ -33,14 +34,20 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLHtmlElement::HTMLHtmlElement(const QualifiedName& tagName, Document* doc)
-    : HTMLElement(tagName, doc)
+HTMLHtmlElement::HTMLHtmlElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(htmlTag));
 }
 
-HTMLHtmlElement::~HTMLHtmlElement()
+PassRefPtr<HTMLHtmlElement> HTMLHtmlElement::create(Document* document)
 {
+    return new HTMLHtmlElement(htmlTag, document);
+}
+
+PassRefPtr<HTMLHtmlElement> HTMLHtmlElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new HTMLHtmlElement(tagName, document);
 }
 
 String HTMLHtmlElement::version() const

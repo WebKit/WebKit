@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -44,22 +44,13 @@ struct CollectionCache;
 
 class HTMLFormElement : public HTMLElement { 
 public:
-    HTMLFormElement(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLFormElement> create(Document*);
+    static PassRefPtr<HTMLFormElement> create(const QualifiedName&, Document*);
     virtual ~HTMLFormElement();
 
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
-    virtual int tagPriority() const { return 3; }
-
-    virtual void attach();
-    virtual bool rendererIsNeeded(RenderStyle*);
-    virtual void insertedIntoDocument();
-    virtual void removedFromDocument();
- 
-    virtual void handleLocalEvents(Event*);
-     
     PassRefPtr<HTMLCollection> elements();
     void getNamedElements(const AtomicString&, Vector<RefPtr<Node> >&);
-    
+
     unsigned length() const;
     Node* item(unsigned index);
 
@@ -71,8 +62,8 @@ public:
 
     bool autoComplete() const { return m_autocomplete; }
 
-    virtual void parseMappedAttribute(Attribute*);
-
+    // FIXME: Should rename these two functions to say "form control"
+    // or "form-associated element" instead of "form element".
     void registerFormElement(HTMLFormControlElement*);
     void removeFormElement(HTMLFormControlElement*);
     void registerImgElement(HTMLImageElement*);
@@ -89,8 +80,6 @@ public:
     void setDemoted(bool demoted) { m_demoted = demoted; }
     bool isDemoted() const { return m_demoted; }
 
-    virtual bool isURLAttribute(Attribute*) const;
-    
     void submitImplicitly(Event*, bool fromImplicitSubmissionTrigger);
     bool formWouldHaveSecureSubmission(const String& url);
 
@@ -119,18 +108,31 @@ public:
     PassRefPtr<HTMLFormControlElement> elementForAlias(const AtomicString&);
     void addElementAlias(HTMLFormControlElement*, const AtomicString& alias);
 
-    // FIXME: Change this to be private after getting rid of all the clients.
-    Vector<HTMLFormControlElement*> formElements;
-
     CheckedRadioButtons& checkedRadioButtons() { return m_checkedRadioButtons; }
-    
+
+    const Vector<HTMLFormControlElement*>& associatedElements() const { return m_associatedElements; }
+
+private:
+    HTMLFormElement(const QualifiedName&, Document*);
+
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
+    virtual int tagPriority() const { return 3; }
+
+    virtual bool rendererIsNeeded(RenderStyle*);
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
+ 
+    virtual void handleLocalEvents(Event*);
+
+    virtual void parseMappedAttribute(Attribute*);
+
+    virtual bool isURLAttribute(Attribute*) const;
+
     virtual void documentDidBecomeActive();
 
-protected:
     virtual void willMoveToNewOwnerDocument();
     virtual void didMoveToNewOwnerDocument();
 
-private:
     void submit(Event*, bool activateSubmitButton, bool lockHistory, FormSubmissionTrigger);
 
     bool isMailtoForm() const;
@@ -148,12 +150,14 @@ private:
     typedef HashMap<RefPtr<AtomicStringImpl>, RefPtr<HTMLFormControlElement> > AliasMap;
 
     FormDataBuilder m_formDataBuilder;
-    AliasMap* m_elementAliases;
-    CollectionCache* collectionInfo;
+    OwnPtr<AliasMap> m_elementAliases;
+    OwnPtr<CollectionCache> m_collectionCache;
 
     CheckedRadioButtons m_checkedRadioButtons;
     
-    Vector<HTMLImageElement*> imgElements;
+    Vector<HTMLFormControlElement*> m_associatedElements;
+    Vector<HTMLImageElement*> m_imageElements;
+
     String m_url;
     String m_target;
     bool m_autocomplete : 1;

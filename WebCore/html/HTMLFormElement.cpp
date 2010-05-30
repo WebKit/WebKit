@@ -72,10 +72,8 @@ static int64_t generateFormDataIdentifier()
     return ++nextIdentifier;
 }
 
-HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document* doc)
-    : HTMLElement(tagName, doc)
-    , m_elementAliases(0)
-    , collectionInfo(0)
+HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
     , m_autocomplete(true)
     , m_insubmit(false)
     , m_doingsubmit(false)
@@ -86,28 +84,30 @@ HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document* doc)
     ASSERT(hasTagName(formTag));
 }
 
+PassRefPtr<HTMLFormElement> HTMLFormElement::create(Document* document)
+{
+    return new HTMLFormElement(formTag, document);
+}
+
+PassRefPtr<HTMLFormElement> HTMLFormElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new HTMLFormElement(tagName, document);
+}
+
 HTMLFormElement::~HTMLFormElement()
 {
     if (!m_autocomplete)
         document()->unregisterForDocumentActivationCallbacks(this);
 
-    delete m_elementAliases;
-    delete collectionInfo;
-
-    for (unsigned i = 0; i < formElements.size(); ++i)
-        formElements[i]->formDestroyed();
-    for (unsigned i = 0; i < imgElements.size(); ++i)
-        imgElements[i]->m_form = 0;
+    for (unsigned i = 0; i < m_associatedElements.size(); ++i)
+        m_associatedElements[i]->formDestroyed();
+    for (unsigned i = 0; i < m_imageElements.size(); ++i)
+        m_imageElements[i]->m_form = 0;
 }
 
 bool HTMLFormElement::formWouldHaveSecureSubmission(const String& url)
 {
     return document()->completeURL(url).protocolIs("https");
-}
-
-void HTMLFormElement::attach()
-{
-    HTMLElement::attach();
 }
 
 bool HTMLFormElement::rendererIsNeeded(RenderStyle* style)
@@ -163,11 +163,10 @@ void HTMLFormElement::handleLocalEvents(Event* event)
 
 unsigned HTMLFormElement::length() const
 {
-    int len = 0;
-    for (unsigned i = 0; i < formElements.size(); ++i)
-        if (formElements[i]->isEnumeratable())
+    unsigned len = 0;
+    for (unsigned i = 0; i < m_associatedElements.size(); ++i)
+        if (m_associatedElements[i]->isEnumeratable())
             ++len;
-
     return len;
 }
 
@@ -179,8 +178,8 @@ Node* HTMLFormElement::item(unsigned index)
 void HTMLFormElement::submitImplicitly(Event* event, bool fromImplicitSubmissionTrigger)
 {
     int submissionTriggerCount = 0;
-    for (unsigned i = 0; i < formElements.size(); ++i) {
-        HTMLFormControlElement* formElement = formElements[i];
+    for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
+        HTMLFormControlElement* formElement = m_associatedElements[i];
         if (formElement->isSuccessfulSubmitButton()) {
             if (formElement->renderer()) {
                 formElement->dispatchSimulatedClick(event);
@@ -204,8 +203,8 @@ TextEncoding HTMLFormElement::dataEncoding() const
 PassRefPtr<FormData> HTMLFormElement::createFormData()
 {
     RefPtr<DOMFormData> domFormData = DOMFormData::create(dataEncoding().encodingForFormSubmission());
-    for (unsigned i = 0; i < formElements.size(); ++i) {
-        HTMLFormControlElement* control = formElements[i];
+    for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
+        HTMLFormControlElement* control = m_associatedElements[i];
         if (!control->disabled())
             control->appendFormData(*domFormData, m_formDataBuilder.isMultiPartForm());
     }
@@ -354,8 +353,8 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool lockH
     
     Vector<pair<String, String> > formValues;
 
-    for (unsigned i = 0; i < formElements.size(); ++i) {
-        HTMLFormControlElement* control = formElements[i];
+    for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
+        HTMLFormControlElement* control = m_associatedElements[i];
         if (control->hasLocalName(inputTag)) {
             HTMLInputElement* input = static_cast<HTMLInputElement*>(control);
             if (input->isTextField()) {
@@ -425,8 +424,8 @@ void HTMLFormElement::reset()
         return;
     }
 
-    for (unsigned i = 0; i < formElements.size(); ++i)
-        formElements[i]->reset();
+    for (unsigned i = 0; i < m_associatedElements.size(); ++i)
+        m_associatedElements[i]->reset();
 
     m_inreset = false;
 }
@@ -496,20 +495,20 @@ unsigned HTMLFormElement::formElementIndex(HTMLFormControlElement* e)
                 ++i;
         }
     }
-    return formElements.size();
+    return m_associatedElements.size();
 }
 
 void HTMLFormElement::registerFormElement(HTMLFormControlElement* e)
 {
     document()->checkedRadioButtons().removeButton(e);
     m_checkedRadioButtons.addButton(e);
-    formElements.insert(formElementIndex(e), e);
+    m_associatedElements.insert(formElementIndex(e), e);
 }
 
 void HTMLFormElement::removeFormElement(HTMLFormControlElement* e)
 {
     m_checkedRadioButtons.removeButton(e);
-    removeFromVector(formElements, e);
+    removeFromVector(m_associatedElements, e);
 }
 
 bool HTMLFormElement::isURLAttribute(Attribute* attr) const
@@ -519,14 +518,14 @@ bool HTMLFormElement::isURLAttribute(Attribute* attr) const
 
 void HTMLFormElement::registerImgElement(HTMLImageElement* e)
 {
-    ASSERT(imgElements.find(e) == notFound);
-    imgElements.append(e);
+    ASSERT(m_imageElements.find(e) == notFound);
+    m_imageElements.append(e);
 }
 
 void HTMLFormElement::removeImgElement(HTMLImageElement* e)
 {
-    ASSERT(imgElements.find(e) != notFound);
-    removeFromVector(imgElements, e);
+    ASSERT(m_imageElements.find(e) != notFound);
+    removeFromVector(m_imageElements, e);
 }
 
 PassRefPtr<HTMLCollection> HTMLFormElement::elements()
@@ -596,8 +595,8 @@ void HTMLFormElement::setTarget(const String &value)
 
 HTMLFormControlElement* HTMLFormElement::defaultButton() const
 {
-    for (unsigned i = 0; i < formElements.size(); ++i) {
-        HTMLFormControlElement* control = formElements[i];
+    for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
+        HTMLFormControlElement* control = m_associatedElements[i];
         if (control->isSuccessfulSubmitButton())
             return control;
     }
@@ -615,12 +614,12 @@ bool HTMLFormElement::checkValidity()
 void HTMLFormElement::collectUnhandledInvalidControls(Vector<RefPtr<HTMLFormControlElement> >& unhandledInvalidControls)
 {
     RefPtr<HTMLFormElement> protector(this);
-    // Copy formElements because event handlers called from
-    // HTMLFormControlElement::checkValidity() might change formElements.
+    // Copy m_associatedElements because event handlers called from
+    // HTMLFormControlElement::checkValidity() might change m_associatedElements.
     Vector<RefPtr<HTMLFormControlElement> > elements;
-    elements.reserveCapacity(formElements.size());
-    for (unsigned i = 0; i < formElements.size(); ++i)
-        elements.append(formElements[i]);
+    elements.reserveCapacity(m_associatedElements.size());
+    for (unsigned i = 0; i < m_associatedElements.size(); ++i)
+        elements.append(m_associatedElements[i]);
     for (unsigned i = 0; i < elements.size(); ++i) {
         if (elements[i]->form() == this)
             elements[i]->checkValidity(&unhandledInvalidControls);
@@ -639,7 +638,7 @@ void HTMLFormElement::addElementAlias(HTMLFormControlElement* element, const Ato
     if (alias.isEmpty())
         return;
     if (!m_elementAliases)
-        m_elementAliases = new AliasMap;
+        m_elementAliases.set(new AliasMap);
     m_elementAliases->set(alias.impl(), element);
 }
 
@@ -670,8 +669,8 @@ void HTMLFormElement::documentDidBecomeActive()
 {
     ASSERT(!m_autocomplete);
     
-    for (unsigned i = 0; i < formElements.size(); ++i)
-        formElements[i]->reset();
+    for (unsigned i = 0; i < m_associatedElements.size(); ++i)
+        m_associatedElements[i]->reset();
 }
 
 void HTMLFormElement::willMoveToNewOwnerDocument()

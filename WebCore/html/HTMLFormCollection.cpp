@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,9 +38,9 @@ using namespace HTMLNames;
 
 inline CollectionCache* HTMLFormCollection::formCollectionInfo(HTMLFormElement* form)
 {
-    if (!form->collectionInfo)
-        form->collectionInfo = new CollectionCache;
-    return form->collectionInfo;
+    if (!form->m_collectionCache)
+        form->m_collectionCache.set(new CollectionCache);
+    return form->m_collectionCache.get();
 }
 
 HTMLFormCollection::HTMLFormCollection(PassRefPtr<HTMLFormElement> form)
@@ -78,16 +78,17 @@ Node* HTMLFormCollection::item(unsigned index) const
         info()->elementsArrayPosition = 0;
     }
 
-    Vector<HTMLFormControlElement*>& l = static_cast<HTMLFormElement*>(base())->formElements;
+    Vector<HTMLFormControlElement*>& elementsArray = static_cast<HTMLFormElement*>(base())->m_associatedElements;
     unsigned currentIndex = info()->position;
     
-    for (unsigned i = info()->elementsArrayPosition; i < l.size(); i++) {
-        if (l[i]->isEnumeratable() ) {
+    for (unsigned i = info()->elementsArrayPosition; i < elementsArray.size(); i++) {
+        HTMLFormControlElement* element = elementsArray[i];
+        if (element->isEnumeratable()) {
             if (index == currentIndex) {
                 info()->position = index;
-                info()->current = l[i];
+                info()->current = element;
                 info()->elementsArrayPosition = i;
-                return l[i];
+                return element;
             }
 
             currentIndex++;
@@ -108,8 +109,8 @@ Element* HTMLFormCollection::getNamedFormItem(const QualifiedName& attrName, con
     HTMLFormElement* form = static_cast<HTMLFormElement*>(base());
 
     bool foundInputElements = false;
-    for (unsigned i = 0; i < form->formElements.size(); ++i) {
-        HTMLFormControlElement* e = form->formElements[i];
+    for (unsigned i = 0; i < form->m_associatedElements.size(); ++i) {
+        HTMLFormControlElement* e = form->m_associatedElements[i];
         const QualifiedName& attributeName = (attrName == idAttr) ? e->idAttributeName() : attrName;
         if (e->isEnumeratable() && e->getAttribute(attributeName) == name) {
             foundInputElements = true;
@@ -120,8 +121,8 @@ Element* HTMLFormCollection::getNamedFormItem(const QualifiedName& attrName, con
     }
 
     if (!foundInputElements) {
-        for (unsigned i = 0; i < form->imgElements.size(); ++i) {
-            HTMLImageElement* e = form->imgElements[i];
+        for (unsigned i = 0; i < form->m_imageElements.size(); ++i) {
+            HTMLImageElement* e = form->m_imageElements[i];
             const QualifiedName& attributeName = (attrName == idAttr) ? e->idAttributeName() : attrName;
             if (e->getAttribute(attributeName) == name) {
                 if (!duplicateNumber)
@@ -190,8 +191,8 @@ void HTMLFormCollection::updateNameCache() const
 
     HTMLFormElement* f = static_cast<HTMLFormElement*>(base());
 
-    for (unsigned i = 0; i < f->formElements.size(); ++i) {
-        HTMLFormControlElement* e = f->formElements[i];
+    for (unsigned i = 0; i < f->m_associatedElements.size(); ++i) {
+        HTMLFormControlElement* e = f->m_associatedElements[i];
         if (e->isEnumeratable()) {
             const AtomicString& idAttrVal = e->getAttribute(e->idAttributeName());
             const AtomicString& nameAttrVal = e->getAttribute(nameAttr);
@@ -218,8 +219,8 @@ void HTMLFormCollection::updateNameCache() const
         }
     }
 
-    for (unsigned i = 0; i < f->imgElements.size(); ++i) {
-        HTMLImageElement* e = f->imgElements[i];
+    for (unsigned i = 0; i < f->m_imageElements.size(); ++i) {
+        HTMLImageElement* e = f->m_imageElements[i];
         const AtomicString& idAttrVal = e->getAttribute(e->idAttributeName());
         const AtomicString& nameAttrVal = e->getAttribute(nameAttr);
         if (!idAttrVal.isEmpty() && !foundInputElements.contains(idAttrVal.impl())) {

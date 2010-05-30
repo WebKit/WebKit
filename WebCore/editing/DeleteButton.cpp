@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,17 +36,27 @@
 
 namespace WebCore {
 
-DeleteButton::DeleteButton(Document* document)
-    : HTMLImageElement(HTMLNames::imgTag, document)
+using namespace HTMLNames;
+
+inline DeleteButton::DeleteButton(Document* document)
+    : HTMLImageElement(imgTag, document)
 {
+}
+
+PassRefPtr<DeleteButton> DeleteButton::create(Document* document)
+{
+    return new DeleteButton(document);
 }
 
 void DeleteButton::defaultEventHandler(Event* event)
 {
+    // FIXME: Is it really import to check the type of the event?
+    // Seems OK to respond to any event named click even if it does not have the correct type.
     if (event->isMouseEvent()) {
         if (event->type() == eventNames().clickEvent) {
             document()->frame()->editor()->deleteButtonController()->deleteTarget();
             event->setDefaultHandled();
+            // FIXME: Shouldn't we return here instead of falling through?
         }
     }
 

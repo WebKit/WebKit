@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2010 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -32,14 +32,15 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLLegendElement::HTMLLegendElement(const QualifiedName& tagName, Document *doc, HTMLFormElement *f)
-    : HTMLFormControlElement(tagName, doc, f)
+inline HTMLLegendElement::HTMLLegendElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
+    : HTMLFormControlElement(tagName, document, form)
 {
     ASSERT(hasTagName(legendTag));
 }
 
-HTMLLegendElement::~HTMLLegendElement()
+PassRefPtr<HTMLLegendElement> HTMLLegendElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
 {
+    return new HTMLLegendElement(tagName, document, form);
 }
 
 bool HTMLLegendElement::supportsFocus() const
@@ -73,23 +74,23 @@ void HTMLLegendElement::setAlign(const String &value)
     setAttribute(alignAttr, value);
 }
 
-Element *HTMLLegendElement::formElement()
+HTMLFormControlElement* HTMLLegendElement::associatedControl()
 {
     // Check if there's a fieldset belonging to this legend.
-    Node *fieldset = parentNode();
+    Node* fieldset = parentNode();
     while (fieldset && !fieldset->hasTagName(fieldsetTag))
         fieldset = fieldset->parentNode();
     if (!fieldset)
         return 0;
 
-    // Find first form element inside the fieldset.
-    // FIXME: Should we care about tabindex?
-    Node *node = fieldset;
+    // Find first form element inside the fieldset that is not a legend element.
+    // FIXME: Should we consider tabindex?
+    Node* node = fieldset;
     while ((node = node->traverseNextNode(fieldset))) {
-        if (node->isHTMLElement()) {
-            HTMLElement *element = static_cast<HTMLElement *>(node);
+        if (node->isElementNode()) {
+            Element* element = static_cast<Element*>(node);
             if (!element->hasLocalName(legendTag) && element->isFormControlElement())
-                return element;
+                return static_cast<HTMLFormControlElement*>(element);
         }
     }
 
@@ -101,15 +102,15 @@ void HTMLLegendElement::focus(bool)
     if (isFocusable())
         Element::focus();
         
-    // to match other browsers, never restore previous selection
-    if (Element *element = formElement())
-        element->focus(false);
+    // To match other browsers' behavior, never restore previous selection.
+    if (HTMLFormControlElement* control = associatedControl())
+        control->focus(false);
 }
 
 void HTMLLegendElement::accessKeyAction(bool sendToAnyElement)
 {
-    if (Element *element = formElement())
-        element->accessKeyAction(sendToAnyElement);
+    if (HTMLFormControlElement* control = associatedControl())
+        control->accessKeyAction(sendToAnyElement);
 }
     
 } // namespace

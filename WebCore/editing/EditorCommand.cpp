@@ -472,10 +472,10 @@ static bool executeInsertBacktab(Frame* frame, Event* event, EditorCommandSource
 
 static bool executeInsertHorizontalRule(Frame* frame, Event*, EditorCommandSource, const String& value)
 {
-    RefPtr<HTMLHRElement> hr = new HTMLHRElement(hrTag, frame->document());
+    RefPtr<HTMLHRElement> rule = HTMLHRElement::create(frame->document());
     if (!value.isEmpty())
-        hr->setAttribute(hr->idAttributeName(), value);
-    return executeInsertNode(frame, hr.release());
+        rule->setAttribute(rule->idAttributeName(), value);
+    return executeInsertNode(frame, rule.release());
 }
 
 static bool executeInsertHTML(Frame* frame, Event*, EditorCommandSource, const String& value)
@@ -486,7 +486,7 @@ static bool executeInsertHTML(Frame* frame, Event*, EditorCommandSource, const S
 static bool executeInsertImage(Frame* frame, Event*, EditorCommandSource, const String& value)
 {
     // FIXME: If userInterface is true, we should display a dialog box and let the user choose a local image.
-    RefPtr<HTMLImageElement> image = new HTMLImageElement(imgTag, frame->document());
+    RefPtr<HTMLImageElement> image = HTMLImageElement::create(frame->document());
     image->setSrc(value);
     return executeInsertNode(frame, image.release());
 }
