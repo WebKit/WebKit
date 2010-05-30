@@ -1,3 +1,15 @@
+2010-05-30  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Darin Adler.
+
+        Incorrect build dependencies for GObject DOM Bindings
+        https://bugs.webkit.org/show_bug.cgi?id=39932
+
+        -include does not execute the implicit % expansion, we have to do
+        it manually.
+
+        * GNUmakefile.am:
+
 2010-05-30  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

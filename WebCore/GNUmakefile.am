@@ -4079,9 +4079,10 @@ DerivedSources/webkit/WebKitDOM%.cpp: %.idl $(SCRIPTS_BINDINGS) $(WebCore)/bindi
 gdom_built_nosources := $(GDOM_HEADERS_BUILT) $(GDOM_SOURCES_BUILT)
 
 libgdom_objects := $(subst .cpp,.lo,$(GDOM_SOURCES_BUILT))
+libgdom_depfiles := $(patsubst %.lo,$(top_builddir)/DerivedSources/webkit/$(DEPDIR)/%.Plo,$(notdir $(libgdom_objects)))
+libgdom_depfiles += $(patsubst %.h,$(WebCore)/bindings/gobject/$(DEPDIR)/%.Plo,$(notdir $(GDOM_HEADERS_FIXED)))
 
--include WebCore/bindings/gobject/$(DEPDIR)/%.Plo
--include DerivedSources/webkit/$(DEPDIR)/%.Plo
+-include $(libgdom_depfiles)
 
 $(libgdom_objects): AM_CPPFLAGS+=$(libwebkit_1_0_la_CPPFLAGS)
 $(libgdom_objects): AM_CXXFLAGS+=$(libwebkit_1_0_la_CXXFLAGS)
