@@ -56,6 +56,8 @@ devtools.InspectorBackendImpl = function()
     this.installInspectorControllerDelegate_("getEventListenersForNode");
     this.installInspectorControllerDelegate_("getProfile");
     this.installInspectorControllerDelegate_("getProfileHeaders");
+    this.installInspectorControllerDelegate_("removeProfile");
+    this.installInspectorControllerDelegate_("clearProfiles");
     this.installInspectorControllerDelegate_("getResourceContent");
     this.installInspectorControllerDelegate_("highlightDOMNode");
     this.installInspectorControllerDelegate_("hideDOMNodeHighlight");

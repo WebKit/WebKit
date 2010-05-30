@@ -46,10 +46,6 @@
     overflow: auto;
 }
 
-button.clear-audit-results-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/clearConsoleButtonGlyph.png);
-}
-
 .audit-launcher-view {
     z-index: 1000;
     position: absolute;

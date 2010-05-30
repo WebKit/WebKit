@@ -316,6 +316,7 @@ WebInspector.Panel.prototype = {
         this.sidebarElement.appendChild(this.sidebarTreeElement);
 
         this.sidebarTree = new TreeOutline(this.sidebarTreeElement);
+        this.sidebarTree.panel = this;
     },
 
     _startSidebarDragging: function(event)

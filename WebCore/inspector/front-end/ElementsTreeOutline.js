@@ -43,7 +43,6 @@ WebInspector.ElementsTreeOutline = function() {
     this.focusedDOMNode = null;
 
     this.element.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
-    this.element.addEventListener("keydown", this._keyDown.bind(this), true);
 }
 
 WebInspector.ElementsTreeOutline.prototype = {
@@ -115,6 +114,11 @@ WebInspector.ElementsTreeOutline.prototype = {
                 this._restorePreviousHighlightNodeTimeout = setTimeout(restoreHighlightToHoveredNode, 2000);
             }
         }
+    },
+
+    get editing()
+    {
+        return this._editing;
     },
 
     update: function()
@@ -224,41 +228,6 @@ WebInspector.ElementsTreeOutline.prototype = {
             element = this.treeElementFromPoint(x, y + 2);
 
         return element;
-    },
-
-    _keyDown: function(event)
-    {
-        if (event.target !== this.treeOutline.element)
-            return;
-
-        var selectedElement = this.selectedTreeElement;
-        if (!selectedElement)
-            return;
-
-        if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Backspace.code ||
-                event.keyCode === WebInspector.KeyboardShortcut.Keys.Delete.code) {
-            var startTagTreeElement = this.findTreeElement(selectedElement.representedObject);
-            if (selectedElement !== startTagTreeElement)
-                selectedElement = startTagTreeElement;
-            selectedElement.remove();
-            event.preventDefault();
-            event.stopPropagation();
-            return;
-        }
-
-        // On Enter or Return start editing the first attribute
-        // or create a new attribute on the selected element.
-        if (isEnterKey(event)) {
-            if (this._editing)
-                return;
-
-            selectedElement._startEditing();
-
-            // prevent a newline from being immediately inserted
-            event.preventDefault();
-            event.stopPropagation();
-            return;
-        }
     },
 
     _onmousedown: function(event)
@@ -684,6 +653,26 @@ WebInspector.ElementsTreeElement.prototype = {
         this.treeOutline.focusedDOMNode = this.representedObject;
         this.updateSelection();
         this.treeOutline.suppressRevealAndSelect = false;
+    },
+
+    ondelete: function()
+    {
+        var startTagTreeElement = this.treeOutline.findTreeElement(this.representedObject);
+        startTagTreeElement ? startTagTreeElement.remove() : this.remove();
+        return true;
+    },
+
+    onenter: function()
+    {
+        // On Enter or Return start editing the first attribute
+        // or create a new attribute on the selected element.
+        if (this.treeOutline.editing)
+            return false;
+
+        this._startEditing();
+
+        // prevent a newline from being immediately inserted
+        return true;
     },
 
     selectOnMouseDown: function(event)

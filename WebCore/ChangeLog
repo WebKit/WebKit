@@ -1,3 +1,79 @@
+2010-05-30  Jessie Berlin  <jberlin@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39224
+        Bug 39224 - Web Inspector: There should be a way to clean up profiles
+
+        Adds a button to clear the profiles from the profiles panel like that
+        used for the console, the audits panel, and the timeline panel.
+        Consolidates the css rules, since they all use the same image.
+        Also allows for individual profiles to be deleted via the keyboard
+        (U+0008 or U+007F) and uses this new schema for the Elements Tree.
+
+        * English.lproj/localizedStrings.js:
+        Add tooltip text for the button to clear the profiles pane.
+
+        * inspector/InspectorBackend.idl:
+        Add ability to remove the profiles from the backend when they are
+        deleted or cleared in the frontend.
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::removeProfile):
+        (WebCore::InspectorBackend::clearProfiles):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::removeProfile):
+        (WebCore::InspectorController::clearProfiles):
+        * inspector/InspectorController.h:
+
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel):
+        Use the 'clear-status-bar-item' class.
+        * inspector/front-end/ChangesView.js:
+        (WebInspector.ChangesView):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._createStatusbarButtons):
+        * inspector/front-end/audits.css:
+        * inspector/front-end/inspector.css:
+        (.clear-status-bar-item .glyph):
+        * inspector/front-end/inspector.html:
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        Replace the keyDown handler on the Outline with specific methods to
+        handle delete and enter on the TreeElements.
+        (WebInspector.ElementsTreeOutline):
+        (WebInspector.ElementsTreeOutline.prototype.get editing):
+        Return whether or not an element in the tree is currently being edited.
+        (WebInspector.ElementsTreeElement.prototype.ondelete):
+        (WebInspector.ElementsTreeElement.prototype.onenter):
+
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.createSidebar):
+        Make the TreeOutline for a Panel's sidebar aware of its enclosing Panel.
+
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel):
+        Add the clear button.
+        (WebInspector.ProfilesPanel.prototype.get statusBarItems):
+        (WebInspector.ProfilesPanel.prototype._clearProfiles):
+        Remove the profiles from the backend, the reset the frontend interface.
+        (WebInspector.ProfilesPanel.prototype.removeProfileHeader):
+        Remove the profile from both the frontend and the backend, and clear the
+        view when the last profile is removed.
+        (WebInspector.ProfilesPanel.prototype._updateInterface):
+        Hide the clear button when profiling is disabled.
+        (WebInspector.ProfileSidebarTreeElement.prototype.onselect):
+        Replace access to global variable with reference to the Panel held by the
+        TreeOutline.
+        (WebInspector.ProfileSidebarTreeElement.prototype.ondelete):
+        Remove the profile corresponding the tree element when the user deletes
+        that tree element.
+
+        * inspector/front-end/treeoutline.js:
+        (TreeOutline.prototype._treeKeyDown):
+        Allow the selected tree element to handle the user pressing a delete
+        key or enter key.
+
 2010-05-29  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Darin Adler.

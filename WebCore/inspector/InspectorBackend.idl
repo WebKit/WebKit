@@ -73,6 +73,9 @@ module core {
 
         void getProfileHeaders(in long callId);
         void getProfile(in long callId, in unsigned long uid);
+
+        void removeProfile(in unsigned long uid);
+        void clearProfiles();
 #endif
         void setInjectedScriptSource(in DOMString scriptSource);
         void dispatchOnInjectedScript(in long callId, in long injectedScriptId, in DOMString methodName, in DOMString arguments, in boolean async);

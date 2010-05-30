@@ -1,3 +1,13 @@
+2010-05-30  Jessie Berlin  <jberlin@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39224
+        Bug 39224 - Web Inspector: There should be a way to clean up profiles
+
+        * src/js/InspectorControllerImpl.js:
+        (devtools.InspectorBackendImpl):
+
 2010-05-29  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Darin Fisher.

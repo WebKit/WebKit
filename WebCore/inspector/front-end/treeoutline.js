@@ -389,6 +389,12 @@ TreeOutline.prototype._treeKeyDown = function(event)
                     this.selectedTreeElement.expand();
             }
         }
+    } else if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Backspace.code || event.keyCode === WebInspector.KeyboardShortcut.Keys.Delete.code) {
+        if (this.selectedTreeElement.ondelete)
+            handled = this.selectedTreeElement.ondelete();
+    } else if (isEnterKey(event)) {
+        if (this.selectedTreeElement.onenter)
+            handled = this.selectedTreeElement.onenter();
     }
 
     if (nextSelectedElement) {

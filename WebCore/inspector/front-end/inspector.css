@@ -420,16 +420,12 @@ body.port-qt #dock-status-bar-item {
     -webkit-mask-image: url(Images/consoleButtonGlyph.png);
 }
 
-#clear-console-status-bar-item .glyph {
+.clear-status-bar-item .glyph {
     -webkit-mask-image: url(Images/clearConsoleButtonGlyph.png);
 }
 
 #changes-status-bar-item .glyph {
     -webkit-mask-image: url(Images/consoleButtonGlyph.png); /* TODO: Needs Image for Changes Toggle Button */
-}
-
-#clear-changes-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/clearConsoleButtonGlyph.png);
 }
 
 #counters {
@@ -3429,10 +3425,6 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     border-right: 0 none transparent;
     overflow-y: auto;
     overflow-x: hidden;
-}
-
-.timeline-clear-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/clearConsoleButtonGlyph.png);
 }
 
 .timeline-category-statusbar-item {

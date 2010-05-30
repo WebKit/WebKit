@@ -204,7 +204,7 @@ WebInspector.TimelinePanel.prototype = {
         this.toggleTimelineButton = new WebInspector.StatusBarButton(WebInspector.UIString("Record"), "record-profile-status-bar-item");
         this.toggleTimelineButton.addEventListener("click", this._toggleTimelineButtonClicked.bind(this), false);
 
-        this.clearButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear"), "timeline-clear-status-bar-item");
+        this.clearButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear"), "clear-status-bar-item");
         this.clearButton.addEventListener("click", this._clearPanel.bind(this), false);
 
         this.toggleFilterButton = new WebInspector.StatusBarButton(this._hideShortRecordsTitleText, "timeline-filter-status-bar-item");

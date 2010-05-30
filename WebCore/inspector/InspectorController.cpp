@@ -1388,6 +1388,25 @@ void InspectorController::addStartProfilingMessageToConsole(const String& title,
     addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceURL);
 }
 
+void InspectorController::removeProfile(unsigned uid)
+{
+    if (!enabled())
+        return;
+
+    if (m_profiles.contains(uid))
+        m_profiles.remove(uid);
+}
+
+void InspectorController::clearProfiles()
+{
+    if (!enabled())
+        return;
+
+    m_profiles.clear();
+    m_currentUserInitiatedProfileNumber = 1;
+    m_nextUserInitiatedProfileNumber = 1;
+}
+
 void InspectorController::getProfileHeaders(long callId)
 {
     if (!m_frontend)

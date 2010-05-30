@@ -222,6 +222,8 @@ public:
     void addProfile(PassRefPtr<ScriptProfile>, unsigned lineNumber, const String& sourceURL);
     void addProfileFinishedMessageToConsole(PassRefPtr<ScriptProfile>, unsigned lineNumber, const String& sourceURL);
     void addStartProfilingMessageToConsole(const String& title, unsigned lineNumber, const String& sourceURL);
+    void removeProfile(unsigned);
+    void clearProfiles();
 
     bool isRecordingUserInitiatedProfile() const { return m_recordingUserInitiatedProfile; }
 

@@ -37,7 +37,7 @@ WebInspector.ChangesView = function(drawer)
     this.clearButton = document.createElement("button");
     this.clearButton.id = "clear-changes-status-bar-item";
     this.clearButton.title = WebInspector.UIString("Clear changes log.");
-    this.clearButton.className = "status-bar-item";
+    this.clearButton.className = "status-bar-item clear-status-bar-item";
     this.clearButton.addEventListener("click", this._clearButtonClicked.bind(this), false);
 
     this.toggleChangesButton = document.getElementById("changes-status-bar-item");
