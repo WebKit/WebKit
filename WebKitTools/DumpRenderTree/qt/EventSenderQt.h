@@ -57,6 +57,10 @@ public slots:
     void mouseDown(int button = 0);
     void mouseUp(int button = 0);
     void mouseMoveTo(int x, int y);
+#ifndef QT_NO_WHEELEVENT
+    void mouseScrollBy(int x, int y);
+    void continuousMouseScrollBy(int x, int y);
+#endif
     void leapForward(int ms);
     void keyDown(const QString& string, const QStringList& modifiers = QStringList(), unsigned int location = 0);
     void clearKillRing() {}

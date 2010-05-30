@@ -70,6 +70,9 @@ EventSender::EventSender(QWebPage* parent)
     m_currentButton = 0;
     resetClickCount();
     m_page->view()->installEventFilter(this);
+    // So that we can match Scrollbar::pixelsPerLineStep() in WheelEventQt.cpp and
+    // pass fast/events/platform-wheelevent-in-scrolling-div.html
+    QApplication::setWheelScrollLines(2);
 }
 
 void EventSender::mouseDown(int button)
@@ -154,6 +157,27 @@ void EventSender::mouseMoveTo(int x, int y)
     QMouseEvent* event = new QMouseEvent(QEvent::MouseMove, m_mousePos, m_mousePos, Qt::NoButton, m_mouseButtons, Qt::NoModifier);
     sendOrQueueEvent(event);
 }
+
+#ifndef QT_NO_WHEELEVENT
+void EventSender::mouseScrollBy(int x, int y)
+{
+    continuousMouseScrollBy((x*120), (y*120));
+}
+
+void EventSender::continuousMouseScrollBy(int x, int y)
+{
+    // continuousMouseScrollBy() mimics devices that send fine-grained scroll events where the 'delta' specified is not the usual
+    // multiple of 120. See http://doc.qt.nokia.com/4.6/qwheelevent.html#delta for a good explanation of this.
+    if (x) {
+        QWheelEvent* event = new QWheelEvent(m_mousePos, m_mousePos, x, m_mouseButtons, Qt::NoModifier, Qt::Horizontal);
+        sendOrQueueEvent(event);
+    }
+    if (y) {
+        QWheelEvent* event = new QWheelEvent(m_mousePos, m_mousePos, y, m_mouseButtons, Qt::NoModifier, Qt::Vertical);
+        sendOrQueueEvent(event);
+    }
+}
+#endif
 
 void EventSender::leapForward(int ms)
 {

@@ -31,12 +31,17 @@ namespace WebCore {
 
 void PlatformWheelEvent::applyDelta(int delta, Qt::Orientation orientation)
 {
+    // A delta that is not mod 120 indicates a device that is sending
+    // fine-resolution scroll events, so use the delta as number of wheel ticks
+    // and number of pixels to scroll.See also webkit.org/b/29601
+    bool fullTick = !(delta % 120);
+
     if (orientation == Qt::Horizontal) {
-        m_deltaX = (delta / 120.0f);
+        m_deltaX = (fullTick) ? delta / 120.0f : delta;
         m_deltaY = 0;
     } else {
         m_deltaX = 0;
-        m_deltaY = (delta / 120.0f);
+        m_deltaY = (fullTick) ? delta / 120.0f : delta;
     }
 
     m_wheelTicksX = m_deltaX;
@@ -46,8 +51,8 @@ void PlatformWheelEvent::applyDelta(int delta, Qt::Orientation orientation)
     // (in QTextEditPrivate::init [h,v]bar->setSingleStep)
     static const float cDefaultQtScrollStep = 20.f;
 #ifndef QT_NO_WHEELEVENT
-    m_deltaX *= QApplication::wheelScrollLines() * cDefaultQtScrollStep;
-    m_deltaY *= QApplication::wheelScrollLines() * cDefaultQtScrollStep;
+    m_deltaX *= (fullTick) ? QApplication::wheelScrollLines() * cDefaultQtScrollStep : 1;
+    m_deltaY *= (fullTick) ? QApplication::wheelScrollLines() * cDefaultQtScrollStep : 1;
 #endif
 }
 

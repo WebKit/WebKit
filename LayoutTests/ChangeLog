@@ -1,3 +1,42 @@
+2010-05-30  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Enhance Qt DRT implementation to support platform scroll wheel events.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36004
+
+        Unskip:
+
+        fast/events/remove-child-onscroll.html
+        fast/events/platform-wheelevent-in-scrolling-div.html
+        fast/events/continuous-platform-wheelevent-in-scrolling-div.html
+
+        Add platform-specific results for Qt. Required because QWheelEvent only supports sending an event
+        for scrolling movement one axis at a time. Naturally the test's check for the axis the event does
+        not pertain to will 'fail' in such cases. So we get 6 lines of output in total, i.e.:
+
+          FAIL event.wheelDeltaY should be -24000. Was 0.
+          PASS event.wheelDeltaX is window.expectedScrollLeft*-120
+          PASS event.wheelDelta is window.expectedScrollLeft*-120
+
+        and then:
+
+          PASS event.wheelDeltaY is window.expectedScrollTop*-120
+          FAIL event.wheelDeltaX should be -12000. Was 0.
+          PASS event.wheelDelta is window.expectedScrollTop*-120
+
+        instead of just 3 like Mac:
+
+          PASS event.wheelDeltaY is window.expectedScrollTop*-120
+          PASS event.wheelDeltaX is window.expectedScrollLeft*-120
+          PASS event.wheelDelta is window.expectedScrollTop*-120
+
+
+        * platform/qt-linux/fast/events/continuous-platform-wheelevent-in-scrolling-div-expected.txt: Added.
+        * platform/qt-linux/fast/events/platform-wheelevent-in-scrolling-div-expected.txt: Added.
+        * platform/qt/Skipped:
+
 2010-05-29  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Adam Barth.
