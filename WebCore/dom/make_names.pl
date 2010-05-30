@@ -49,7 +49,9 @@ my %parameters = ();
 my $extraDefines = 0;
 require Config;
 my $gccLocation = "";
-if (($Config::Config{'osname'}) =~ /solaris/i) {
+if ($ENV{CC}) {
+    $gccLocation = $ENV{CC};
+} elsif (($Config::Config{'osname'}) =~ /solaris/i) {
     $gccLocation = "/usr/sfw/bin/gcc";
 } else {
     $gccLocation = "/usr/bin/gcc";

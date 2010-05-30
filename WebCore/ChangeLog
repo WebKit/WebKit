@@ -1,3 +1,19 @@
+2010-05-29  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Darin Adler.
+
+        Check if a CC environment variable is defined before hard-coding gcc's
+        path. Simply hard-coding it breaks cross-compilation and Linux
+        distributions with more than one gcc installed (or not in the default
+        path).
+        https://bugs.webkit.org/show_bug.cgi?id=35551
+
+        No new functionality, so no new tests.
+
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * bindings/scripts/IDLParser.pm:
+        * dom/make_names.pl:
+
 2010-05-29  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
