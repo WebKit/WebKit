@@ -819,6 +819,9 @@ maintainer-clean-local: distclean-local
 distclean-local:
 	-rm -rf $(GENSOURCES) $(GENPROGRAMS)
 
+dist-hook:
+	cp $(srcdir)/WebKit/gtk/NEWS $(distdir)/
+
 install-data-local: po-install-data-local
 
 installdirs-data-local: po-installdirs-data-local

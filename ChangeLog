@@ -1,3 +1,12 @@
+2010-05-31  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Copy the NEWS file to the toplevel when creating the release
+        tarballs, otherwise it's a bit hard to find.
+
+        * GNUmakefile.am:
+
 2010-05-27  Gustavo Noronha Silva  <gns@gnome.org>
 
         Final make distcheck fix - clean up generated GDOM files on distclean.
