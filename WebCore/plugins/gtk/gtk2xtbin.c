@@ -73,7 +73,6 @@ static void            gtk_xtbin_init       (GtkXtBin      *xtbin);
 static void            gtk_xtbin_realize    (GtkWidget      *widget);
 static void            gtk_xtbin_unrealize    (GtkWidget      *widget);
 static void            gtk_xtbin_destroy    (GtkObject      *object);
-static void            gtk_xtbin_shutdown   (GtkObject      *object);
 
 /* Xt aware XEmbed */
 static void       xt_client_init      (XtClient * xtclient, 
@@ -159,7 +158,6 @@ xt_event_dispatch (GSource*  source_data,
                     GSourceFunc call_back,
                     gpointer  user_data)
 {
-  XEvent event;
   XtAppContext ac;
   int i = 0;
 
@@ -181,11 +179,13 @@ xt_event_dispatch (GSource*  source_data,
   return TRUE;  
 }
 
+typedef void (*GSourceFuncsFinalize) (GSource* source);
+
 static GSourceFuncs xt_event_funcs = {
   xt_event_prepare,
   xt_event_check,
   xt_event_dispatch,
-  g_free,
+  (GSourceFuncsFinalize)g_free,
   (GSourceFunc)NULL,
   (GSourceDummyMarshal)NULL
 };
@@ -230,11 +230,12 @@ gtk_xtbin_get_type (void)
         sizeof (GtkXtBin),
         0,
         (GInstanceInitFunc)gtk_xtbin_init,
+        NULL
       };
       xtbin_type = g_type_register_static (GTK_TYPE_SOCKET,
                                            "GtkXtBin",
-					   &xtbin_info,
-					   0);
+                                           &xtbin_info,
+                                           0);
   }
   return xtbin_type;
 }
@@ -402,7 +403,7 @@ gtk_xtbin_set_position (GtkXtBin *xtbin,
   xtbin->x = x;
   xtbin->y = y;
 
-  if (gtk_widget_get_realized (xtbin))
+  if (gtk_widget_get_realized (GTK_WIDGET(xtbin)))
     gdk_window_move (GTK_WIDGET (xtbin)->window, x, y);
 }
 
@@ -883,7 +884,6 @@ xt_add_focus_listener( Widget w, XtPointer user_data)
   XWindowAttributes attr;
   long eventmask;
   XtClient *xtclient = user_data;
-  int errorcode;
 
   trap_errors ();
   XGetWindowAttributes(XtDisplay(w), XtWindow(w), &attr);
@@ -903,8 +903,6 @@ xt_add_focus_listener( Widget w, XtPointer user_data)
 static void
 xt_remove_focus_listener(Widget w, XtPointer user_data)
 {
-  int errorcode;
-
   trap_errors ();
   XtRemoveEventHandler(w, SubstructureNotifyMask | ButtonReleaseMask, TRUE, 
                       (XtEventHandler)xt_client_focus_listener, user_data);

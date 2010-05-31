@@ -1,3 +1,16 @@
+2010-05-31  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Fix all compiler warnings.
+
+        * plugins/gtk/gtk2xtbin.c:
+        (xt_event_dispatch):
+        (gtk_xtbin_get_type):
+        (gtk_xtbin_set_position):
+        (xt_add_focus_listener):
+        (xt_remove_focus_listener):
+
 2010-05-31  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
 
         Reviewed by Simon Hausmann.
