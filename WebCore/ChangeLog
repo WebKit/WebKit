@@ -1,3 +1,15 @@
+2010-05-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix LayoutTests/fast/parser/xml-declaration-missing-ending-mark.html in HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=39939
+
+        Turns out we need to implement the bogus comment state.  :)
+
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTML5Lexer::nextToken):
+
 2010-05-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

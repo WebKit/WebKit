@@ -1,3 +1,15 @@
+2010-05-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix LayoutTests/fast/parser/xml-declaration-missing-ending-mark.html in HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=39939
+
+        Add some tests for the bogus comment state.
+
+        * html5lib/resources/comments01.dat:
+        * html5lib/runner-expected.txt:
+
 2010-05-30  Roland Steiner  <rolandsteiner@chromium.org>
 
         Unreviewed: rebaseline range-between-block-and-inline for Chromium.

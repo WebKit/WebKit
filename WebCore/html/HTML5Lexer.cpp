@@ -412,6 +412,10 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             } else if (cc == '?') {
                 emitParseError();
                 m_state = BogusCommentState;
+                // The spec consumes the current character before switching
+                // to the bogus comment state, but it's easier to implement
+                // if we reconsume the current character.
+                continue;
             } else {
                 emitParseError();
                 m_state = DataState;
@@ -1063,8 +1067,19 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             break;
         }
         case BogusCommentState: {
-            notImplemented();
+            m_token->beginComment();
+            while (!source.isEmpty()) {
+                cc = *source;
+                if (cc == '>')
+                    break;
+                m_token->appendToComment(cc);
+                source.advance();
+            }
+            emitCurrentToken();
             m_state = DataState;
+            if (source.isEmpty())
+                return true;
+            // FIXME: Handle EOF properly.
             break;
         }
         case MarkupDeclarationOpenState: {
