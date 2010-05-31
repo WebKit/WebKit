@@ -1,5 +1,15 @@
 2010-05-31  Alexander Pavlov  <apavlov@chromium.org>
 
+        Unreviewed, build fix.
+
+        Add references to inspector/front-end/TabbedPane.js wherever applicable.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/WebKit.qrc:
+
+2010-05-31  Alexander Pavlov  <apavlov@chromium.org>
+
         Unreviewed, add a file not added in r60445.
 
         * inspector/front-end/TabbedPane.js: Added

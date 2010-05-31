@@ -45048,6 +45048,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\TabbedPane.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\TestController.js"
 					>
 				</File>

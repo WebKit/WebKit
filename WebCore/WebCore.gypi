@@ -3940,6 +3940,7 @@
             'inspector/front-end/StoragePanel.js',
             'inspector/front-end/StylesSidebarPane.js',
             'inspector/front-end/SummaryBar.js',
+            'inspector/front-end/TabbedPane.js',
             'inspector/front-end/TestController.js',
             'inspector/front-end/TextEditorHighlighter.js',
             'inspector/front-end/TextEditorModel.js',
