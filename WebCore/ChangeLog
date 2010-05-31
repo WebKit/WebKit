@@ -1,3 +1,24 @@
+2010-05-31  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GStreamer] float variables misused
+        https://bugs.webkit.org/show_bug.cgi?id=38842
+
+        Use 0.0f for float variables instead of 0.0. Also added some
+        missing casts around GST_SECOND.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::playbackPosition):
+        (WebCore::MediaPlayerPrivateGStreamer::duration):
+        (WebCore::MediaPlayerPrivateGStreamer::currentTime):
+        (WebCore::MediaPlayerPrivateGStreamer::seek):
+        (WebCore::MediaPlayerPrivateGStreamer::naturalSize):
+        (WebCore::MediaPlayerPrivateGStreamer::setRate):
+        (WebCore::MediaPlayerPrivateGStreamer::maxTimeSeekable):
+        (WebCore::MediaPlayerPrivateGStreamer::maxTimeLoaded):
+        (WebCore::MediaPlayerPrivateGStreamer::totalBytes):
+
 2010-05-31  Steve Block  <steveblock@google.com>
 
         Unreviewed, rolling out r60069.

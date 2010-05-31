@@ -195,7 +195,7 @@ void mediaPlayerPrivateMuteChangedCallback(GObject *element, GParamSpec *pspec, 
 static float playbackPosition(GstElement* playbin)
 {
 
-    float ret = 0.0;
+    float ret = 0.0f;
 
     GstQuery* query = gst_query_new_position(GST_FORMAT_TIME);
     if (!gst_element_query(playbin, query)) {
@@ -417,10 +417,10 @@ void MediaPlayerPrivateGStreamer::pause()
 float MediaPlayerPrivateGStreamer::duration() const
 {
     if (!m_playBin)
-        return 0.0;
+        return 0.0f;
 
     if (m_errorOccured)
-        return 0.0;
+        return 0.0f;
 
     // Media duration query failed already, don't attempt new useless queries.
     if (!m_mediaDurationKnown)
@@ -446,13 +446,13 @@ float MediaPlayerPrivateGStreamer::duration() const
 float MediaPlayerPrivateGStreamer::currentTime() const
 {
     if (!m_playBin)
-        return 0;
+        return 0.0f;
 
     if (m_errorOccured)
-        return 0;
+        return 0.0f;
 
     if (m_seeking)
-        return m_seekTime;
+        return static_cast<float>(m_seekTime);
 
     return playbackPosition(m_playBin);
 
@@ -470,7 +470,7 @@ void MediaPlayerPrivateGStreamer::seek(float time)
     if (m_errorOccured)
         return;
 
-    GstClockTime sec = (GstClockTime)(time * GST_SECOND);
+    GstClockTime sec = (GstClockTime)(static_cast<float>(time * GST_SECOND));
     LOG_VERBOSE(Media, "Seek: %" GST_TIME_FORMAT, GST_TIME_ARGS(sec));
     if (!gst_element_seek(m_playBin, m_player->rate(),
             GST_FORMAT_TIME,
@@ -519,7 +519,7 @@ IntSize MediaPlayerPrivateGStreamer::naturalSize() const
     if (!pad)
         return IntSize();
 
-    int width = 0, height = 0;
+    guint64 width = 0, height = 0;
     GstCaps* caps = GST_PAD_CAPS(pad);
     int pixelAspectRatioNumerator, pixelAspectRatioDenominator;
     int displayWidth, displayHeight, displayAspectRatioGCD;
@@ -557,19 +557,19 @@ IntSize MediaPlayerPrivateGStreamer::naturalSize() const
     if (!(originalHeight % displayHeight)) {
         LOG_VERBOSE(Media, "Keeping video original height");
         width = gst_util_uint64_scale_int(originalHeight, displayWidth, displayHeight);
-        height = originalHeight;
+        height = static_cast<guint64>(originalHeight);
     } else if (!(originalWidth % displayWidth)) {
         LOG_VERBOSE(Media, "Keeping video original width");
         height = gst_util_uint64_scale_int(originalWidth, displayHeight, displayWidth);
-        width = originalWidth;
+        width = static_cast<guint64>(originalWidth);
     } else {
         LOG_VERBOSE(Media, "Approximating while keeping original video height");
         width = gst_util_uint64_scale_int(originalHeight, displayWidth, displayHeight);
-        height = originalHeight;
+        height = static_cast<guint64>(originalHeight);
     }
 
-    LOG_VERBOSE(Media, "Natural size: %dx%d", width, height);
-    return IntSize(width, height);
+    LOG_VERBOSE(Media, "Natural size: %" G_GUINT64_FORMAT "x%" G_GUINT64_FORMAT, width, height);
+    return IntSize(static_cast<int>(width), static_cast<int>(height));
 }
 
 bool MediaPlayerPrivateGStreamer::hasVideo() const
@@ -628,7 +628,7 @@ void MediaPlayerPrivateGStreamer::setRate(float rate)
 
     m_playbackRate = rate;
     m_changingRate = true;
-    float currentPosition = playbackPosition(m_playBin) * GST_SECOND;
+    float currentPosition = static_cast<float>(playbackPosition(m_playBin) * GST_SECOND);
     GstSeekFlags flags = (GstSeekFlags)(GST_SEEK_FLAG_FLUSH);
     gint64 start, end;
     bool mute = false;
@@ -647,7 +647,7 @@ void MediaPlayerPrivateGStreamer::setRate(float rate)
         // If we are at beginning of media, start from the end to
         // avoid immediate EOS.
         if (currentPosition <= 0)
-            end = duration() * GST_SECOND;
+            end = static_cast<gint64>(duration() * GST_SECOND);
         else
             end = currentPosition;
     }
@@ -761,12 +761,12 @@ void MediaPlayerPrivateGStreamer::fillTimerFired(Timer<MediaPlayerPrivateGStream
 float MediaPlayerPrivateGStreamer::maxTimeSeekable() const
 {
     if (m_errorOccured)
-        return 0.0;
+        return 0.0f;
 
     LOG_VERBOSE(Media, "maxTimeSeekable");
     // infinite duration means live stream
     if (isinf(duration()))
-        return 0.0;
+        return 0.0f;
 
     return maxTimeLoaded();
 }
@@ -774,7 +774,7 @@ float MediaPlayerPrivateGStreamer::maxTimeSeekable() const
 float MediaPlayerPrivateGStreamer::maxTimeLoaded() const
 {
     if (m_errorOccured)
-        return 0.0;
+        return 0.0f;
 
     float loaded = m_maxTimeLoaded;
     if (!loaded && !m_fillTimer.isActive())
@@ -809,7 +809,7 @@ unsigned MediaPlayerPrivateGStreamer::totalBytes() const
     gst_element_query_duration(m_source, &fmt, &length);
     LOG_VERBOSE(Media, "totalBytes %" G_GINT64_FORMAT, length);
 
-    return length;
+    return static_cast<unsigned>(length);
 }
 
 void MediaPlayerPrivateGStreamer::cancelLoad()
