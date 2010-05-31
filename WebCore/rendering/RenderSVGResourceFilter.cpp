@@ -55,8 +55,6 @@ RenderSVGResourceType RenderSVGResourceFilter::s_resourceType = FilterResourceTy
 
 RenderSVGResourceFilter::RenderSVGResourceFilter(SVGFilterElement* node)
     : RenderSVGResourceContainer(node)
-    , m_savedContext(0)
-    , m_sourceGraphicBuffer(0)
 {
 }
 
@@ -221,8 +219,8 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
     sourceGraphicContext->translate(-clippedSourceRect.x(), -clippedSourceRect.y());
     sourceGraphicContext->scale(scale);
     sourceGraphicContext->clearRect(FloatRect(FloatPoint(), paintRect.size()));
-    m_sourceGraphicBuffer.set(sourceGraphic.release());
-    m_savedContext = context;
+    filterData->sourceGraphicBuffer.set(sourceGraphic.release());
+    filterData->savedContext = context;
 
     context = sourceGraphicContext;
     m_filter.set(object, filterData.release());
@@ -245,15 +243,15 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
 
     FilterData* filterData = m_filter.get(object);
     if (!filterData->builded) {
-        if (!m_savedContext) {
+        if (!filterData->savedContext) {
             invalidateClient(object);
             return;
         }
 
-        context = m_savedContext;
-        m_savedContext = 0;
+        context = filterData->savedContext;
+        filterData->savedContext = 0;
 #if !PLATFORM(CG)
-        m_sourceGraphicBuffer->transformColorSpace(DeviceRGB, LinearRGB);
+        filterData->sourceGraphicBuffer->transformColorSpace(DeviceRGB, LinearRGB);
 #endif
     }
 
@@ -264,7 +262,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
         // initial filtering process. We just take the stored filter result on a
         // second drawing.
         if (!filterData->builded) {
-            filterData->filter->setSourceImage(m_sourceGraphicBuffer.release());
+            filterData->filter->setSourceImage(filterData->sourceGraphicBuffer.release());
             lastEffect->apply(filterData->filter.get());
             filterData->builded = true;
         }
@@ -278,7 +276,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
         }
     }
 
-    m_sourceGraphicBuffer.clear();
+    filterData->sourceGraphicBuffer.clear();
 }
 
 FloatRect RenderSVGResourceFilter::resourceBoundingBox(const FloatRect& objectBoundingBox)

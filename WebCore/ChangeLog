@@ -1,3 +1,23 @@
+2010-05-31  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG Filter: Crash if parent and child elements use the same filter
+        https://bugs.webkit.org/show_bug.cgi?id=39536
+
+        If a parent and a child used the same filter, the temporary saved
+        context reference got overwritten by the child. The reference is
+        stored in FilterData now. FilterData depends to the target object
+        and avoids overwriting any reference.
+
+        Test: svg/filters/parent-children-with-same-filter.svg
+
+        * rendering/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::RenderSVGResourceFilter):
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+        * rendering/RenderSVGResourceFilter.h:
+
 2010-05-31  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

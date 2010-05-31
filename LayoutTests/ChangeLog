@@ -1,3 +1,18 @@
+2010-05-31  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG Filter: Crash if parent and child elements use the same filter
+        https://bugs.webkit.org/show_bug.cgi?id=39536
+
+        Check, that parent and child nodes can take the same filter without
+        crashing webkit.
+
+        * platform/mac/svg/filters/parent-children-with-same-filter-expected.checksum: Added.
+        * platform/mac/svg/filters/parent-children-with-same-filter-expected.png: Added.
+        * platform/mac/svg/filters/parent-children-with-same-filter-expected.txt: Added.
+        * svg/filters/parent-children-with-same-filter.svg: Added.
+
 2010-05-31  Roland Steiner  <rolandsteiner@chromium.org>
 
         Unreviewed: update Chromium expectations for html5lib/runner.html

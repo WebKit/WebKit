@@ -48,6 +48,8 @@ struct FilterData {
 
     RefPtr<SVGFilter> filter;
     OwnPtr<SVGFilterBuilder> builder;
+    OwnPtr<ImageBuffer> sourceGraphicBuffer;
+    GraphicsContext* savedContext;
     FloatRect boundaries;
     FloatSize scale;
     bool builded;
@@ -80,10 +82,6 @@ public:
 
 private:
     bool fitsInMaximumImageSize(const FloatSize&, FloatSize&);
-
-    // Intermediate storage during 
-    GraphicsContext* m_savedContext;
-    OwnPtr<ImageBuffer> m_sourceGraphicBuffer;
 
     HashMap<RenderObject*, FilterData*> m_filter;
 };
