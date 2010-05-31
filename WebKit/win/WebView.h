@@ -66,7 +66,9 @@ class WebView
     , public IWebNotificationObserver
     , public IDropTarget
     , WebCore::WindowMessageListener
+#if USE(ACCELERATED_COMPOSITING)
     , WebCore::WKCACFLayerRendererClient
+#endif
 {
 public:
     static WebView* createInstance();
@@ -924,8 +926,10 @@ private:
     // (see https://bugs.webkit.org/show_bug.cgi?id=29264)
     DWORD m_lastDropEffect;
 
+#if USE(ACCELERATED_COMPOSITING)
     // WKCACFLayerRendererClient
     virtual bool shouldRender() const;
+#endif
 
 protected:
     static bool registerWebViewWindowClass();

@@ -1,5 +1,19 @@
 2010-05-30  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59912.
+
+    2010-05-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Build fix, no review.
+
+        Fix the non-accelerated-compositing Windows build with some
+        #if USE(ACCELERATED_COMPOSITING) loving.
+
+        * WebView.cpp:
+        * WebView.h:
+
+2010-05-30  Mark Rowe  <mrowe@apple.com>
+
         Merge r59910.
 
     2010-05-20  Simon Fraser  <simon.fraser@apple.com>

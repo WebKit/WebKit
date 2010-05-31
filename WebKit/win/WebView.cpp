@@ -6425,6 +6425,7 @@ HRESULT WebView::nextDisplayIsSynchronous()
     return S_OK;
 }
 
+#if USE(ACCELERATED_COMPOSITING)
 bool WebView::shouldRender() const
 {
     Frame* coreFrame = core(m_mainFrame);
@@ -6436,6 +6437,7 @@ bool WebView::shouldRender() const
 
     return !frameView->layoutPending();
 }
+#endif
 
 class EnumTextMatches : public IEnumTextMatches
 {
