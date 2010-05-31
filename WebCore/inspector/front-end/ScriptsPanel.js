@@ -171,6 +171,10 @@ WebInspector.ScriptsPanel = function()
     this._debuggerEnabled = Preferences.debuggerAlwaysEnabled;
     if (Preferences.debuggerAlwaysEnabled)
         this._attachDebuggerWhenShown = true;
+
+    WebInspector.breakpointManager.addEventListener("breakpoint-added", this._breakpointAdded, this);
+    WebInspector.breakpointManager.addEventListener("breakpoint-removed", this._breakpointRemoved, this);
+
     this.reset();
 }
 
@@ -285,12 +289,12 @@ WebInspector.ScriptsPanel.prototype = {
         delete resource._scriptsPendingResourceLoad;
     },
 
-    addBreakpoint: function(breakpoint)
+    _breakpointAdded: function(event)
     {
+        var breakpoint = event.data;
+
         if (!this.breakpointsActivated)
             this._toggleBreakpointsClicked();
-
-        this.sidebarPanes.breakpoints.addBreakpoint(breakpoint);
 
         var sourceFrame;
         if (breakpoint.url) {
@@ -308,9 +312,9 @@ WebInspector.ScriptsPanel.prototype = {
             sourceFrame.addBreakpoint(breakpoint);
     },
 
-    removeBreakpoint: function(breakpoint)
+    _breakpointRemoved: function(event)
     {
-        this.sidebarPanes.breakpoints.removeBreakpoint(breakpoint);
+        var breakpoint = event.data;
 
         var sourceFrame;
         if (breakpoint.url) {
@@ -339,22 +343,18 @@ WebInspector.ScriptsPanel.prototype = {
             return;
 
         // Need to clear breakpoints and re-create them later when editing source.
-        var breakpointsPanel = this.sidebarPanes.breakpoints;
-        var newBreakpoints = [];
-        for (var id in breakpointsPanel.breakpoints) {
-            var breakpoint = breakpointsPanel.breakpoints[id];
-            breakpointsPanel.removeBreakpoint(breakpoint);
-            newBreakpoints.push(breakpoint);
-        }
+        var breakpoints = WebInspector.breakpointManager.breakpointsForSourceID(sourceID);
+        for (var i = 0; i < breakpoints.length; ++i)
+            WebInspector.breakpointManager.removeBreakpoint(breakpoints[i]);
 
         function mycallback(newBody)
         {
             callback(newBody);
-            for (var i = 0; i < newBreakpoints.length; ++i) {
-                var breakpoint = newBreakpoints[i];
+            for (var i = 0; i < breakpoints.length; ++i) {
+                var breakpoint = breakpoints[i];
                 if (breakpoint.line >= line)
                     breakpoint.line += linesCountToShift;
-                this.addBreakpoint(breakpoint);
+                WebInspector.breakpointManager.addBreakpoint(breakpoint);
             }
         };
         var callbackId = WebInspector.Callback.wrap(mycallback.bind(this))
@@ -612,14 +612,10 @@ WebInspector.ScriptsPanel.prototype = {
                 return null;
             view = WebInspector.panels.resources.resourceViewForResource(scriptOrResource);
             view.headersVisible = false;
-            var breakpoints = this.sidebarPanes.breakpoints.breakpoints;
-            for (var breakpointId in breakpoints) {
-                var breakpoint = breakpoints[breakpointId];
-                if (breakpoint.url === scriptOrResource.url) {
-                    var sourceFrame = this._sourceFrameForScriptOrResource(scriptOrResource);
-                    sourceFrame.addBreakpoint(breakpoint);
-                }
-            }
+            var sourceFrame = this._sourceFrameForScriptOrResource(scriptOrResource);
+            var breakpoints = WebInspector.breakpointManager.breakpointsForURL(scriptOrResource.url);
+            for (var i = 0; i < breakpoints.length; ++i)
+                sourceFrame.addBreakpoint(breakpoints[i]);
         } else if (scriptOrResource instanceof WebInspector.Script)
             view = this.scriptViewForScript(scriptOrResource);
 

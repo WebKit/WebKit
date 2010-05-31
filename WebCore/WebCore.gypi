@@ -3871,7 +3871,7 @@
             'inspector/front-end/AuditRules.js',
             'inspector/front-end/AuditsPanel.js',
             'inspector/front-end/BottomUpProfileDataGridTree.js',
-            'inspector/front-end/Breakpoint.js',
+            'inspector/front-end/BreakpointManager.js',
             'inspector/front-end/BreakpointsSidebarPane.js',
             'inspector/front-end/Callback.js',
             'inspector/front-end/CallStackSidebarPane.js',

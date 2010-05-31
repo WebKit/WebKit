@@ -44768,7 +44768,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\Breakpoint.js"
+					RelativePath="..\inspector\front-end\BreakpointManager.js"
 					>
 				</File>
 				<File

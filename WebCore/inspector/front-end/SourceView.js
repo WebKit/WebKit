@@ -118,16 +118,12 @@ WebInspector.SourceView.prototype = {
     _addBreakpoint: function(line)
     {
         var sourceID = this._sourceIDForLine(line);
-        if (WebInspector.panels.scripts) {
-            var breakpoint = new WebInspector.Breakpoint(this.resource.url, line, sourceID);
-            WebInspector.panels.scripts.addBreakpoint(breakpoint);
-        }
+        WebInspector.breakpointManager.addBreakpoint(sourceID, this.resource.url, line, true, "");
     },
 
     _removeBreakpoint: function(breakpoint)
     {
-        if (WebInspector.panels.scripts)
-            WebInspector.panels.scripts.removeBreakpoint(breakpoint);
+        WebInspector.breakpointManager.removeBreakpoint(breakpoint);
     },
 
     _editLine: function(line, newContent)

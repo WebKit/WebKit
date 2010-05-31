@@ -1,3 +1,61 @@
+2010-05-31  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Moved breakpoints add/remove logic to the BreakpointManager.
+
+        https://bugs.webkit.org/show_bug.cgi?id=14190
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/Breakpoint.js:
+        * inspector/front-end/BreakpointManager.js: Added.
+        (WebInspector.BreakpointManager):
+        (WebInspector.BreakpointManager.prototype.addBreakpoint):
+        (WebInspector.BreakpointManager.prototype.removeBreakpoint):
+        (WebInspector.BreakpointManager.prototype.breakpointsForSourceID):
+        (WebInspector.BreakpointManager.prototype.breakpointsForURL):
+        (WebInspector.BreakpointManager.prototype.reset):
+        (WebInspector.BreakpointManager.prototype._saveBreakpointOnBackend):
+        (WebInspector.BreakpointManager.prototype._removeBreakpointFromBackend):
+        (WebInspector.Breakpoint):
+        (WebInspector.Breakpoint.prototype.get enabled):
+        (WebInspector.Breakpoint.prototype.set enabled):
+        (WebInspector.Breakpoint.prototype.get sourceText):
+        (WebInspector.Breakpoint.prototype.set sourceText):
+        (WebInspector.Breakpoint.prototype.get label):
+        (WebInspector.Breakpoint.prototype.get id):
+        (WebInspector.Breakpoint.prototype.get condition):
+        (WebInspector.Breakpoint.prototype.set condition):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.BreakpointsSidebarPane):
+        (WebInspector.BreakpointsSidebarPane.prototype.reset):
+        (WebInspector.BreakpointsSidebarPane.prototype._breakpointAdded):
+        (WebInspector.BreakpointsSidebarPane.prototype._breakpointRemoved):
+        (WebInspector.BreakpointsSidebarPane.prototype._breakpointEnableChanged):
+        * inspector/front-end/Object.js:
+        (WebInspector.Object.prototype.dispatchEventToListeners):
+        * inspector/front-end/ScriptView.js:
+        (WebInspector.ScriptView.prototype._addBreakpoint):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype._breakpointAdded):
+        (WebInspector.ScriptsPanel.prototype._breakpointRemoved):
+        (WebInspector.ScriptsPanel.prototype.editScriptSource.mycallback):
+        (WebInspector.ScriptsPanel.prototype.editScriptSource):
+        (WebInspector.ScriptsPanel.prototype._showScriptOrResource):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._contextMenu):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView.prototype._addBreakpoint):
+        (WebInspector.SourceView.prototype._removeBreakpoint):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+        (WebInspector.restoredBreakpoint):
+        (WebInspector.reset):
+
 2010-05-31  Alexander Pavlov  <apavlov@chromium.org>
 
         Unreviewed, build fix.

@@ -27,8 +27,6 @@ WebInspector.BreakpointsSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Breakpoints"));
 
-    this.breakpoints = {};
-
     this.listElement = document.createElement("ol");
     this.listElement.className = "breakpoint-list";
 
@@ -37,12 +35,14 @@ WebInspector.BreakpointsSidebarPane = function()
     this.emptyElement.textContent = WebInspector.UIString("No Breakpoints");
 
     this.bodyElement.appendChild(this.emptyElement);
+
+    WebInspector.breakpointManager.addEventListener("breakpoint-added", this._breakpointAdded, this);
+    WebInspector.breakpointManager.addEventListener("breakpoint-removed", this._breakpointRemoved, this);    
 }
 
 WebInspector.BreakpointsSidebarPane.prototype = {
     reset: function()
     {
-        this.breakpoints = {};
         this.listElement.removeChildren();
         if (this.listElement.parentElement) {
             this.bodyElement.removeChild(this.listElement);
@@ -50,12 +50,9 @@ WebInspector.BreakpointsSidebarPane.prototype = {
         }
     },
 
-    addBreakpoint: function(breakpoint)
+    _breakpointAdded: function(event)
     {
-        if (this.breakpoints[breakpoint.id])
-            return;
-
-        this.breakpoints[breakpoint.id] = breakpoint;
+        var breakpoint = event.data;
 
         breakpoint.addEventListener("enabled", this._breakpointEnableChanged, this);
         breakpoint.addEventListener("disabled", this._breakpointEnableChanged, this);
@@ -67,8 +64,6 @@ WebInspector.BreakpointsSidebarPane.prototype = {
             this.bodyElement.removeChild(this.emptyElement);
             this.bodyElement.appendChild(this.listElement);
         }
-
-        InspectorBackend.setBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.enabled, breakpoint.condition);
     },
 
     _appendBreakpointElement: function(breakpoint)
@@ -121,11 +116,9 @@ WebInspector.BreakpointsSidebarPane.prototype = {
         this.listElement.appendChild(breakpointElement);
     },
 
-    removeBreakpoint: function(breakpoint)
+    _breakpointRemoved: function(event)
     {
-        if (!this.breakpoints[breakpoint.id])
-            return;
-        delete this.breakpoints[breakpoint.id];
+        var breakpoint = event.data;
 
         breakpoint.removeEventListener("enabled", null, this);
         breakpoint.removeEventListener("disabled", null, this);
@@ -138,8 +131,6 @@ WebInspector.BreakpointsSidebarPane.prototype = {
             this.bodyElement.removeChild(this.listElement);
             this.bodyElement.appendChild(this.emptyElement);
         }
-
-        InspectorBackend.removeBreakpoint(breakpoint.sourceID, breakpoint.line);
     },
 
     _breakpointEnableChanged: function(event)
@@ -148,7 +139,6 @@ WebInspector.BreakpointsSidebarPane.prototype = {
 
         var checkbox = breakpoint._breakpointListElement.firstChild;
         checkbox.checked = breakpoint.enabled;
-        InspectorBackend.setBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.enabled, breakpoint.condition);
     },
 
     _breakpointTextChanged: function(event)

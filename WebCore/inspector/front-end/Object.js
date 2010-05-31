@@ -50,7 +50,7 @@ WebInspector.Object.prototype = {
             delete this._listeners[eventType];
     },
 
-    dispatchEventToListeners: function(eventType) {
+    dispatchEventToListeners: function(eventType, eventData) {
         if (!("_listeners" in this) || !(eventType in this._listeners))
             return;
 
@@ -66,7 +66,7 @@ WebInspector.Object.prototype = {
             this.defaultPrevented = true;
         }
 
-        var event = {target: this, type: eventType, defaultPrevented: false};
+        var event = {target: this, type: eventType, data: eventData, defaultPrevented: false};
         event.stopPropagation = stopPropagation;
         event.preventDefault = preventDefault;
 

@@ -465,6 +465,8 @@ WebInspector.loaded = function()
         other: new WebInspector.ResourceCategory("other", WebInspector.UIString("Other"), "rgb(186,186,186)")
     };
 
+    this.breakpointManager = new WebInspector.BreakpointManager();
+
     this.panels = {};
     this._createPanels();
     this._panelHistory = new WebInspector.PanelHistory();
@@ -1323,9 +1325,7 @@ WebInspector.parsedScriptSource = function(sourceID, sourceURL, source, starting
 
 WebInspector.restoredBreakpoint = function(sourceID, sourceURL, line, enabled, condition)
 {
-    var breakpoint = new WebInspector.Breakpoint(sourceURL, line, sourceID, condition);
-    breakpoint.enabled = enabled;
-    this.panels.scripts.addBreakpoint(breakpoint);
+    this.breakpointManager.addBreakpoint(sourceID, sourceURL, line, enabled, condition);
 }
 
 WebInspector.failedToParseScriptSource = function(sourceURL, source, startingLine, errorLine, errorMessage)
@@ -1359,6 +1359,8 @@ WebInspector.reset = function()
         if ("reset" in panel)
             panel.reset();
     }
+
+    this.breakpointManager.reset();
 
     for (var category in this.resourceCategories)
         this.resourceCategories[category].removeAllResources();

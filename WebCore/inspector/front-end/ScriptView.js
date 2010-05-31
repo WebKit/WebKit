@@ -73,8 +73,7 @@ WebInspector.ScriptView.prototype = {
 
     _addBreakpoint: function(line)
     {
-        var breakpoint = new WebInspector.Breakpoint(this.script.sourceURL, line, this.script.sourceID);
-        WebInspector.panels.scripts.addBreakpoint(breakpoint);
+        WebInspector.breakpointManager.addBreakpoint(this.script.sourceID, this.script.sourceURL, line, true, "");
     },
 
     _editLineComplete: function(newBody)
