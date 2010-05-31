@@ -2860,15 +2860,6 @@ BUG45106 WIN : svg/clip-path/clip-path-text-and-shape.svg = PASS CRASH
 BUG45106 WIN : svg/text/text-text-04-t.svg = PASS CRASH
 BUG45106 WIN : svg/text/text-text-05-t.svg = PASS CRASH
 
-// These test need to rebaselined after 38686 lands.
-BUG_WK38686 WIN LINUX : fast/backgrounds/size/backgroundSize15.html = IMAGE
-BUG_WK38686 WIN LINUX : fast/backgrounds/size/contain-and-cover.html = IMAGE
-BUG_WK38686 WIN LINUX : fast/borders/svg-as-border-image.html = IMAGE
-BUG_WK38686 WIN LINUX : fast/repaint/backgroundSizeRepaint.html = IMAGE
-BUG_WK38686 WIN LINUX : scrollbars/listbox-scrollbar-combinations.html = IMAGE
-BUG_WK38686 WIN LINUX : scrollbars/overflow-scrollbar-combinations.html = IMAGE
-BUG_WK38686 WIN LINUX : svg/W3C-SVG-1.1/coords-viewattr-02-b.svg = IMAGE
-
 // New storage test added in WK rev. 60386 fails in Chromium on all platforms
 // Filed as http://crbug.com/45462
 BUG45462 : storage/transaction-success-callback-isolated-world.html = FAIL
