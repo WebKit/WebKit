@@ -1,5 +1,19 @@
 2010-05-30  Roland Steiner  <rolandsteiner@chromium.org>
 
+        Unreviewed: rebaseline range-between-block-and-inline for Chromium.
+
+        Add rebaselined test expectations for Chromium Win & Linux for
+        editing/selection/range-between-block-and-inline.html
+
+        * platform/chromium-linux/editing/selection/range-between-block-and-inline-expected.checksum: Added.
+        * platform/chromium-linux/editing/selection/range-between-block-and-inline-expected.png: Added.
+        * platform/chromium-linux/editing/selection/range-between-block-and-inline-expected.txt: Added.
+        * platform/chromium-win/editing/selection/range-between-block-and-inline-expected.checksum: Added.
+        * platform/chromium-win/editing/selection/range-between-block-and-inline-expected.png: Added.
+        * platform/chromium-win/editing/selection/range-between-block-and-inline-expected.txt: Added.
+
+2010-05-30  Roland Steiner  <rolandsteiner@chromium.org>
+
         Unreviewed: fix Chromium test expectations.
 
         Fix Chromium test expectations for html5lib/runner.html
