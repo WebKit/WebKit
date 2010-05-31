@@ -222,7 +222,7 @@ namespace WebCore {
     {
         if (!node)
             return JSC::jsNull();
-        if (JSNode* wrapper = getCachedDOMNodeWrapper(exec, node->document(), node))
+        if (JSC::JSCell* wrapper = getCachedDOMNodeWrapper(exec, node->document(), node))
             return wrapper;
         return createDOMNodeWrapper<WrapperClass>(exec, globalObject, node);
     }

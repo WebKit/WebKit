@@ -1,3 +1,23 @@
+2010-05-31  Olivier Goffart <olivier.goffart@nokia.com>
+
+        Reviewed by Oliver Hunt.
+
+        [PATCH] compilation error with clang in JSDOMBinding.h
+        https://bugs.webkit.org/show_bug.cgi?id=39945
+
+        JSNode is only forward declared at this point. And since neither
+        "wrapper" nor JSValue are type-dependent. Compilers should report errors
+        at the first compilation pass.
+
+        The fix is to move the conversion the line above, as the call to the
+        function getCachedDOMNodeWrapper is type-dependent, the conversion will
+        happen at template-instantiation time.
+
+        See also http://llvm.org/bugs/show_bug.cgi?id=7244
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::getDOMNodeWrapper):
+
 2010-05-31  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
