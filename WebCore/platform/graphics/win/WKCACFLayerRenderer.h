@@ -49,12 +49,18 @@ namespace WebCore {
 
 class WKCACFRootLayer;
 
+class WKCACFLayerRendererClient {
+public:
+    virtual ~WKCACFLayerRendererClient() { }
+    virtual bool shouldRender() const = 0;
+};
+
 // FIXME: Currently there is a WKCACFLayerRenderer for each WebView and each
 // has its own CARenderOGLContext and Direct3DDevice9, which is inefficient.
 // (https://bugs.webkit.org/show_bug.cgi?id=31855)
 class WKCACFLayerRenderer : public Noncopyable {
 public:
-    static PassOwnPtr<WKCACFLayerRenderer> create();
+    static PassOwnPtr<WKCACFLayerRenderer> create(WKCACFLayerRendererClient*);
     ~WKCACFLayerRenderer();
 
     static bool acceleratedCompositingAvailable();
@@ -77,7 +83,7 @@ protected:
     WKCACFLayer* rootLayer() const;
 
 private:
-    WKCACFLayerRenderer();
+    WKCACFLayerRenderer(WKCACFLayerRendererClient*);
 
     void renderTimerFired(Timer<WKCACFLayerRenderer>*);
 
@@ -94,6 +100,7 @@ private:
     void render(const Vector<CGRect>& dirtyRects = Vector<CGRect>());
     void paint();
 
+    WKCACFLayerRendererClient* m_client;
     bool m_mightBeAbleToCreateDeviceLater;
     COMPtr<IDirect3DDevice9> m_d3dDevice;
     RefPtr<WKCACFRootLayer> m_rootLayer;
