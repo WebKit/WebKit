@@ -435,6 +435,17 @@ resources/scriptdata01.dat:
 resources/entities01.dat:
 2
 5
+21
+22
+59
+60
+61
+62
+67
+68
+
+resources/entities02.dat:
+5
 
 resources/comments01.dat:
 3

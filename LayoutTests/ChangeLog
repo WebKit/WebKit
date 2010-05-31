@@ -1,3 +1,14 @@
+2010-05-30  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed: fix Chromium test expectations.
+
+        Fix Chromium test expectations for html5lib/runner.html
+
+        * platform/chromium-mac/html5lib/runner-expected.txt: Removed.
+        * platform/chromium-win/html5lib/runner-expected.txt: Removed.
+        * platform/chromium/html5lib/runner-expected.txt: Added.
+        * platform/chromium/html5lib/webkit-runner-expected.txt: Removed.
+
 2010-05-30  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
