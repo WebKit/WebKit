@@ -51,6 +51,8 @@ WebInspector.SourceView.prototype = {
     {
         WebInspector.ResourceView.prototype.show.call(this, parentElement);
         this.sourceFrame.visible = true;
+        if (this.localSourceFrame)
+            this.localSourceFrame.visible = true;
         this.resize();
     },
 
@@ -58,6 +60,8 @@ WebInspector.SourceView.prototype = {
     {
         WebInspector.View.prototype.hide.call(this);
         this.sourceFrame.visible = false;
+        if (this.localSourceFrame)
+            this.localSourceFrame.visible = false;
         this._currentSearchResultIndex = -1;
     },
 
@@ -65,6 +69,8 @@ WebInspector.SourceView.prototype = {
     {
         if (this.sourceFrame)
             this.sourceFrame.resize();
+        if (this.localSourceFrame)
+            this.localSourceFrame.resize();
     },
 
     setupSourceFrameIfNeeded: function()
@@ -192,6 +198,25 @@ WebInspector.SourceView.prototype = {
         }
 
         findSearchMatches.call(this, query, finishedCallback);
+    },
+
+    updateLocalContent: function(content, mimeType)
+    {
+        if (!this.localContentElement) {
+            this.localContentElement = document.createElement("div");
+            this.localContentElement.className = "resource-view-content";
+            this.tabbedPane.appendTab("local", WebInspector.UIString("Local"), this.localContentElement, this.selectLocalContentTab.bind(this));
+            this.localSourceFrame = new WebInspector.SourceFrame(this.localContentElement, this._addBreakpoint.bind(this), this._removeBreakpoint.bind(this));
+        }
+        this.localSourceFrame.setContent(mimeType, content, "");
+    },
+
+    selectLocalContentTab: function()
+    {
+        this.tabbedPane.selectTabById("local");
+        this.localSourceFrame.visible = true;
+        if ("resize" in this)
+            this.resize();
     },
 
     jumpToFirstSearchResult: function()

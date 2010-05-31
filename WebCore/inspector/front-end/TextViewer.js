@@ -483,6 +483,9 @@ WebInspector.TextViewer.prototype = {
         if (selection.isCollapsed)
             return null;
         var selectionRange = selection.getRangeAt(0);
+        // Selection may be outside of the viewer.
+        if (!this.element.isAncestor(selectionRange.startContainer) || !this.element.isAncestor(selectionRange.endContainer))
+            return null;
         var start = this._selectionToPosition(selectionRange.startContainer, selectionRange.startOffset);
         var end = this._selectionToPosition(selectionRange.endContainer, selectionRange.endOffset);
         return new WebInspector.TextRange(start.line, start.column, end.line, end.column);

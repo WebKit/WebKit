@@ -2,6 +2,33 @@
 
         Reviewed by Pavel Feldman.
 
+        Web Inspector: Implement additional tabs support in ResourceView
+        https://bugs.webkit.org/show_bug.cgi?id=39822
+
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView):
+        (WebInspector.ResourceView.prototype._selectHeadersTab):
+        (WebInspector.ResourceView.prototype._innerSelectContentTab):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView.prototype.show):
+        (WebInspector.SourceView.prototype.hide):
+        (WebInspector.SourceView.prototype.resize):
+        (WebInspector.SourceView.prototype.updateLocalContent):
+        (WebInspector.SourceView.prototype.selectLocalContentTab):
+        * inspector/front-end/TabbedPane.js: Added.
+        (WebInspector.TabbedPane):
+        (WebInspector.TabbedPane.prototype.appendTab):
+        (WebInspector.TabbedPane.prototype.tabObjectForId):
+        (WebInspector.TabbedPane.prototype.hideTab):
+        (WebInspector.TabbedPane.prototype.selectTabById):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype._getSelection):
+        * inspector/front-end/inspector.html:
+
+2010-05-31  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
         Web Inspector: Implement retrieval of CSS stylesheets for source editing
         https://bugs.webkit.org/show_bug.cgi?id=39833
 
