@@ -156,7 +156,7 @@ defineTest(addExtraCompiler) {
 
     for(file,input) {
         base = $$basename(file)
-        base ~= s/\..+//
+        base ~= s/\\..+//
         newfile=$$replace(outputRule,\\$\\{QMAKE_FILE_BASE\\},$$base)
         SOURCES += $$newfile
     }

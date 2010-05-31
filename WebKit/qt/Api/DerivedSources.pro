@@ -28,7 +28,7 @@ qtheader_module.commands += echo $${QUOTE}$${LITERAL_HASH}define QT_QTWEBKIT_MOD
 qtheader_module.commands += echo $${QUOTE}$${LITERAL_HASH}include $${ESCAPE}<QtNetwork/QtNetwork$${ESCAPE}>$${QUOTE} >> $${qtheader_module.target} &&
 WEBKIT_CLASS_HEADERS = $${LITERAL_DOLLAR}$${LITERAL_DOLLAR}$${LITERAL_DOLLAR}$${LITERAL_DOLLAR}PWD/QtWebKit
 
-regex = ".*\sclass\sQWEBKIT_EXPORT\s(\w+)\s(.*)"
+regex = ".*\\sclass\\sQWEBKIT_EXPORT\\s(\\w+)\\s(.*)"
 
 for(HEADER, WEBKIT_API_HEADERS) {
     # 1. Append to QtWebKit header that includes all other header files
@@ -70,7 +70,7 @@ for(HEADER, WEBKIT_API_HEADERS) {
         res = $$find(src, $$regex)
         isEmpty(res):break()
 
-        exp = $$replace(src, $$regex, "EXPORTED_CLASS = \1")
+        exp = $$replace(src, $$regex, "EXPORTED_CLASS = \\1")
         eval($$exp)
 
         CLASS_TARGET = "qtheader_$${EXPORTED_CLASS}"
@@ -87,7 +87,7 @@ for(HEADER, WEBKIT_API_HEADERS) {
 
         # Qt's QRegExp does not support inline non-greedy matching,
         # so we'll have to work around it by updating the haystack
-        src = $$replace(src, $$regex, "\2")
+        src = $$replace(src, $$regex, "\\2")
         src_words = $$join(src, $${LITERAL_WHITESPACE})
     }
 }

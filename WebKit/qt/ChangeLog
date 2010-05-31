@@ -1,3 +1,14 @@
+2010-05-31  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Escape backslashes in the .pro files
+
+        qmake in Qt 4.7 warns about unescaped backspaces and deprecates them.
+
+        * Api/DerivedSources.pro:
+        * docs/docs.pri:
+
 2010-05-30  Lyon Chen  <liachen@rim.com>
 
         Reviewed by Kent Tamura.

@@ -3,7 +3,7 @@ include(../../../WebKit.pri)
 unix {
     QDOC = SRCDIR=$$PWD/../../.. OUTPUT_DIR=$$OUTPUT_DIR $$(QTDIR)/bin/qdoc3
 } else {
-    QDOC = $$(QTDIR)\bin\qdoc3.exe
+    QDOC = $$(QTDIR)\\bin\\qdoc3.exe
 }
 
 unix {
