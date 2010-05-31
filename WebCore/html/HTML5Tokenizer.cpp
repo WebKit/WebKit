@@ -144,12 +144,13 @@ void HTML5Tokenizer::executeScript(const ScriptSourceCode& sourceCode)
     if (!m_document->frame())
         return;
 
-    // FIXME: Is this expensive?  Should we use OwnPtr and swap?
     SegmentedString oldInsertionPoint = m_source;
     m_source = SegmentedString();
     m_document->frame()->script()->executeScript(sourceCode);
-    oldInsertionPoint.prepend(m_source);
-    m_source = oldInsertionPoint;
+    // Append oldInsertionPoint onto the new (likely empty) m_source instead of
+    // oldInsertionPoint.prepent(m_source) as that would ASSERT if
+    // m_source.escaped() (it had characters pushed back onto it).
+    m_source.append(oldInsertionPoint);
 }
 
 void HTML5Tokenizer::notifyFinished(CachedResource* cachedResource)
