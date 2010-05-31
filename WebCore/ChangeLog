@@ -1,3 +1,9 @@
+2010-05-31  Alexander Pavlov  <apavlov@chromium.org>
+
+        Unreviewed, add a file not added in r60445.
+
+        * inspector/front-end/TabbedPane.js: Added
+
 2010-05-31  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
