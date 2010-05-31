@@ -1,0 +1,90 @@
+<html>
+<head>
+
+<link rel="stylesheet" href="resources/styles-source-offsets.css" -->
+
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="elements-tests.js"></script>
+<script>
+
+function doit()
+{
+    function callback(result)
+    {
+        if (result === "refreshing")
+            return;
+        dumpArray(result);
+        notifyDone();
+    }
+    evaluateInWebInspector("frontend_runTest", callback);
+}
+
+
+// Frontend functions.
+
+function frontend_runTest(testController)
+{
+    if (!WebInspector.panels.resources.resourceTrackingEnabled) {
+        InspectorBackend.enableResourceTracking(false);
+        return "refreshing";
+    }
+
+    testController.waitUntilDone();
+    frontend_expandDOMSubtree(WebInspector.domAgent.document);
+    testController.runAfterPendingDispatches(function() {
+        function stylesCallback(testController, styles)
+        {
+            var matchedCSSRules = styles.matchedCSSRules;
+            var parentStyleSheetId = matchedCSSRules[0].style.parentStyleSheetId;
+            if (!parentStyleSheetId) {
+                testController.results.push("BAD STYLESHEET ID: " + parentStyleSheetId);
+                testController.notifyDone(testController.results);
+                return;
+            }
+            InspectorBackend.getRuleRangesForStyleSheetId(WebInspector.Callback.wrap(frontend_ruleRangesReceived.bind(null, testController, parentStyleSheetId, matchedCSSRules)), parentStyleSheetId);
+        }
+        InspectorBackend.getStyles(WebInspector.Callback.wrap(stylesCallback.bind(null, testController)), WebInspector.domAgent.document.body.id, true);
+    });
+}
+
+function frontend_ruleRangesReceived(testController, styleSheetId, matchedCSSRules, ruleRanges)
+{
+    for (var i = 0; i < matchedCSSRules.length; ++i) {
+        var rule = matchedCSSRules[i];
+        testController.results.push(rule.selectorText + ": [" + ruleRanges[rule.id].bodyRange.start + "-" + ruleRanges[rule.id].bodyRange.end + "]");
+    }
+    InspectorBackend.getStyleSheet(WebInspector.Callback.wrap(frontend_handleStyleSheet.bind(null, testController)), styleSheetId);
+}
+
+function frontend_handleStyleSheet(testController, styleSheet)
+{
+    var url = styleSheet.href;
+    if (url !== "") {
+        var resource = WebInspector.resourceURLMap[url];
+        if (!resource) {
+            testController.results.push("NO RESOURCE FOR URL: " + url);
+            testController.notifyDone(testController.results);
+            return;
+        }
+        WebInspector.getResourceContent(resource.identifier, frontend_styleSheetTextReceived.bind(null, testController));
+    } else {
+        testController.results.push("EMPTY STYLESHEET HREF");
+        testController.notifyDone(testController.results);
+    }
+}
+
+function frontend_styleSheetTextReceived(testController, styleSheetText)
+{
+    testController.results.push(styleSheetText.replace(/\n/g, "&"));
+    testController.notifyDone(testController.results);
+}
+</script>
+</head>
+
+<body class="main1 main2" onload="onload()">
+<p>
+Tests that proper start/end offset positions are reported for CSS rule bodies.
+</p>
+
+</body>
+</html>

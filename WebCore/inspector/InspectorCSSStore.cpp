@@ -108,47 +108,56 @@ CSSStyleSheet* InspectorCSSStore::inspectorStyleSheet(Document* ownerDocument, b
     return inspectorStyleSheet;
 }
 
-SourceRange InspectorCSSStore::getStartEndOffsets(CSSStyleRule* rule)
+HashMap<long, SourceRange> InspectorCSSStore::getRuleRangesForStyleSheet(CSSStyleSheet* styleSheet)
 {
-    CSSStyleSheet* parentStyleSheet = rule->parentStyleSheet();
-    if (!parentStyleSheet)
-        return std::pair<unsigned, unsigned>(0, 0);
-    RefPtr<CSSRuleList> originalRuleList = CSSRuleList::create(parentStyleSheet, false);
-    unsigned ruleIndex = getIndexInStyleRules(rule, originalRuleList.get());
-    if (ruleIndex == UINT_MAX)
-        return std::pair<unsigned, unsigned>(0, 0);
-    StyleSheetToOffsetsMap::iterator it = m_styleSheetToOffsets.find(parentStyleSheet);
+    if (!styleSheet)
+        return HashMap<long, SourceRange>();
+    RefPtr<CSSRuleList> originalRuleList = CSSRuleList::create(styleSheet, false);
+    StyleSheetToOffsetsMap::iterator it = m_styleSheetToOffsets.find(styleSheet);
+    HashMap<long, SourceRange> result;
     Vector<SourceRange>* offsetVector = 0;
     if (it == m_styleSheetToOffsets.end()) {
-        InspectorResource* resource = m_inspectorController->resourceForURL(parentStyleSheet->finalURL().string());
+        InspectorResource* resource = m_inspectorController->resourceForURL(styleSheet->finalURL().string());
         if (resource) {
             offsetVector = new Vector<SourceRange>;
-            RefPtr<CSSStyleSheet> newStyleSheet = CSSStyleSheet::create(parentStyleSheet->ownerNode());
+            RefPtr<CSSStyleSheet> newStyleSheet = CSSStyleSheet::create(styleSheet->ownerNode());
             CSSParser p;
-            p.parseSheet(newStyleSheet.get(), resource->sourceString(), offsetVector);
-            m_styleSheetToOffsets.set(parentStyleSheet, offsetVector);
+            CSSParser::StyleRuleRanges ruleRangeMap;
+            p.parseSheet(newStyleSheet.get(), resource->sourceString(), &ruleRangeMap);
+            for (unsigned i = 0, length = newStyleSheet->length(); i < length; ++i) {
+                CSSStyleRule* rule = asCSSStyleRule(newStyleSheet->item(i));
+                if (!rule)
+                    continue;
+                HashMap<CSSStyleRule*, std::pair<unsigned, unsigned> >::iterator it = ruleRangeMap.find(rule);
+                if (it != ruleRangeMap.end())
+                    offsetVector->append(it->second);
+            }
+            m_styleSheetToOffsets.set(styleSheet, offsetVector);
         }
     } else
         offsetVector = it->second;
     if (!offsetVector)
-        return std::pair<unsigned, unsigned>(0, 0);
-    ASSERT(offsetVector->size() > ruleIndex);
-    return offsetVector->at(ruleIndex);
+        return HashMap<long, SourceRange>();
+    unsigned ruleIndex = 0;
+    for (unsigned i = 0, length = styleSheet->length(); i < length; ++i) {
+        ASSERT(ruleIndex < offsetVector->size());
+        CSSStyleRule* rule = asCSSStyleRule(styleSheet->item(i));
+        if (!rule)
+            continue;
+        result.set(bindRule(rule), offsetVector->at(ruleIndex));
+        ruleIndex++;
+    }
+    return result;
 }
 
-unsigned InspectorCSSStore::getIndexInStyleRules(CSSStyleRule* rule, CSSRuleList* ruleList)
+CSSStyleRule* InspectorCSSStore::asCSSStyleRule(StyleBase* styleBase)
 {
-    unsigned i = 0;
-    unsigned ruleIndex = 0;
-    unsigned originalRuleListLength = ruleList->length();
-    while (i < originalRuleListLength) {
-        if (ruleList->item(i) == rule)
-            break;
-        if (ruleList->item(i)->type() == CSSRule::STYLE_RULE)
-            ++ruleIndex;
-        ++i;
-    }
-    return (i == originalRuleListLength) ? UINT_MAX : ruleIndex;
+    if (!styleBase->isStyleRule())
+        return 0;
+    CSSRule* rule = static_cast<CSSRule*>(styleBase);
+    if (rule->type() != CSSRule::STYLE_RULE)
+        return 0;
+    return static_cast<CSSStyleRule*>(rule);
 }
 
 DisabledStyleDeclaration* InspectorCSSStore::disabledStyleForId(long styleId, bool createIfAbsent)
@@ -163,6 +172,12 @@ CSSStyleDeclaration* InspectorCSSStore::styleForId(long styleId)
 {
     IdToStyleMap::iterator it = m_idToStyle.find(styleId);
     return it == m_idToStyle.end() ? 0 : it->second.get();
+}
+
+CSSStyleSheet* InspectorCSSStore::styleSheetForId(long styleSheetId)
+{
+    IdToStyleSheetMap::iterator it = m_idToStyleSheet.find(styleSheetId);
+    return it == m_idToStyleSheet.end() ? 0 : it->second.get();
 }
 
 CSSStyleRule* InspectorCSSStore::ruleForId(long ruleId)

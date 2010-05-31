@@ -45,6 +45,7 @@ class CSSRuleList;
 class CSSStyleRule;
 class CSSStyleSheet;
 class String;
+class StyleBase;
 
 typedef std::pair<String, String> PropertyValueAndPriority;
 typedef std::pair<unsigned, unsigned> SourceRange;
@@ -65,8 +66,9 @@ public:
     InspectorCSSStore(InspectorController* inspectorController);
     ~InspectorCSSStore();
     void reset();
-    SourceRange getStartEndOffsets(CSSStyleRule* rule);
+    HashMap<long, SourceRange> getRuleRangesForStyleSheet(CSSStyleSheet*);
     CSSStyleDeclaration* styleForId(long styleId);
+    CSSStyleSheet* styleSheetForId(long styleSheetId);
     CSSStyleRule* ruleForId(long styleRuleId);
     DisabledStyleDeclaration* disabledStyleForId(long styleId, bool createIfAbsent);
     CSSStyleSheet* inspectorStyleSheet(Document* ownerDocument, bool createIfAbsent, long callId);
@@ -77,7 +79,7 @@ public:
     long bindStyleSheet(CSSStyleSheet* styleSheet);
 
 private:
-    static unsigned getIndexInStyleRules(CSSStyleRule* rule, CSSRuleList* ruleList);
+    static CSSStyleRule* asCSSStyleRule(StyleBase*);
 
     StyleToIdMap m_styleToId;
     IdToStyleMap m_idToStyle;

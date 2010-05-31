@@ -98,6 +98,8 @@ module core {
         void getAllStyles(in long callId);
         void getInlineStyle(in long callId, in long nodeId);
         void getComputedStyle(in long callId, in long nodeId);
+        void getStyleSheet(in long callId, in long styleSheetId);
+        void getRuleRangesForStyleSheetId(in long callId, in long styleSheetId);
         void applyStyleText(in long callId, in long styleId, in DOMString styleText, in DOMString propertyName);
         void setStyleText(in long callId, in long styleId, in DOMString styleText);
         void setStyleProperty(in long callId, in long styleId, in DOMString name, in DOMString value);

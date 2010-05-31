@@ -1,3 +1,42 @@
+2010-05-31  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Implement retrieval of CSS stylesheets for source editing
+        https://bugs.webkit.org/show_bug.cgi?id=39833
+
+        Test: inspector/styles-source-offsets.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::parseSheet):
+        (WebCore::CSSParser::createStyleRule):
+        * css/CSSParser.h:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::getStyleSheet):
+        (WebCore::InspectorBackend::getRuleRangesForStyleSheetId):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorCSSStore.cpp:
+        (WebCore::InspectorCSSStore::getRuleRangesForStyleSheet):
+        (WebCore::InspectorCSSStore::asCSSStyleRule):
+        (WebCore::InspectorCSSStore::styleSheetForId):
+        * inspector/InspectorCSSStore.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getStyleSheet):
+        (WebCore::InspectorDOMAgent::getRuleRangesForStyleSheetId):
+        (WebCore::InspectorDOMAgent::buildObjectForStyle):
+        (WebCore::InspectorDOMAgent::populateObjectWithStyleProperties):
+        (WebCore::InspectorDOMAgent::buildObjectForStyleSheet):
+        (WebCore::InspectorDOMAgent::buildObjectForRule):
+        (WebCore::InspectorDOMAgent::getParentStyleSheet):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::didGetStyleSheet):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.CSSStyleDeclaration):
+
 2010-05-31  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Xan Lopez.

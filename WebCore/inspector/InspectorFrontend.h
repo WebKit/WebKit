@@ -7,13 +7,13 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -50,7 +50,7 @@ namespace WebCore {
     public:
         InspectorFrontend(ScriptObject webInspector);
         ~InspectorFrontend();
-        
+
         void close();
         void inspectedPageDestroyed();
 
@@ -75,7 +75,7 @@ namespace WebCore {
         void showPanel(int panel);
         void populateInterface();
         void reset();
-        
+
         void bringToFront();
         void inspectedURLChanged(const String&);
 
@@ -111,7 +111,7 @@ namespace WebCore {
         void selectDatabase(int databaseId);
         void didGetDatabaseTableNames(long callId, const ScriptArray& tableNames);
 #endif
-        
+
 #if ENABLE(DOM_STORAGE)
         bool addDOMStorage(const ScriptObject& domStorageObj);
         void selectDOMStorage(long storageId);
@@ -137,6 +137,7 @@ namespace WebCore {
         void didGetStyles(long callId, const ScriptValue& styles);
         void didGetAllStyles(long callId, const ScriptArray& styles);
         void didGetInlineStyle(long callId, const ScriptValue& style);
+        void didGetStyleSheet(long callId, const ScriptValue& styleSheet);
         void didGetComputedStyle(long callId, const ScriptValue& style);
         void didApplyStyleText(long callId, bool success, const ScriptValue& style, const ScriptArray& changedProperties);
         void didSetStyleText(long callId, bool success);

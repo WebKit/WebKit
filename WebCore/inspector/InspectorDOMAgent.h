@@ -107,6 +107,8 @@ namespace WebCore {
         void getAllStyles(long callId);
         void getInlineStyle(long callId, long nodeId);
         void getComputedStyle(long callId, long nodeId);
+        void getStyleSheet(long callId, long styleSheetId);
+        void getRuleRangesForStyleSheetId(long callId, long styleSheetId);
         void applyStyleText(long callId, long styleId, const String& styleText, const String& propertyName);
         void setStyleText(long callId, long styleId, const String& cssText);
         void setStyleProperty(long callId, long styleId, const String& name, const String& value);
@@ -128,6 +130,7 @@ namespace WebCore {
         void pushChildNodesToFrontend(long nodeId);
 
     private:
+        static CSSStyleSheet* getParentStyleSheet(CSSStyleDeclaration*);
         void startListening(Document* document);
         void stopListening(Document* document);
 

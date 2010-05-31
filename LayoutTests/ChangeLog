@@ -1,3 +1,13 @@
+2010-05-31  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Implement retrieval of CSS stylesheets for source editing
+        https://bugs.webkit.org/show_bug.cgi?id=39833
+
+        * inspector/styles-source-offsets-expected.txt: Added.
+        * inspector/styles-source-offsets.html: Added.
+
 2010-05-31  Steve Block  <steveblock@google.com>
 
         Unreviewed, rolling out r60069.
