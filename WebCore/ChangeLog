@@ -1,3 +1,17 @@
+2010-05-31  Olivier Tilloy  <olivier@tilloy.net>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [Gtk] Implement RenderThemeGtk::systemColor to apply the correct colors
+        from the current GTK theme.
+        https://bugs.webkit.org/show_bug.cgi?id=37779
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::RenderThemeGtk):
+        (WebCore::RenderThemeGtk::systemColor):
+        (WebCore::RenderThemeGtk::gtkButton):
+        * platform/gtk/RenderThemeGtk.h:
+
 2010-05-31  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

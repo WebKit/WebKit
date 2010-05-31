@@ -25,6 +25,7 @@
 #include "RenderThemeGtk.h"
 
 #include "AffineTransform.h"
+#include "CSSValueKeywords.h"
 #include "GOwnPtr.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
@@ -126,6 +127,7 @@ static int mozGtkRefCount = 0;
 RenderThemeGtk::RenderThemeGtk()
     : m_gtkWindow(0)
     , m_gtkContainer(0)
+    , m_gtkButton(0)
     , m_gtkEntry(0)
     , m_gtkTreeView(0)
     , m_panelColor(Color::white)
@@ -605,6 +607,18 @@ void RenderThemeGtk::systemFont(int, FontDescription&) const
     notImplemented();
 }
 
+Color RenderThemeGtk::systemColor(int cssValueId) const
+{
+    switch (cssValueId) {
+    case CSSValueButtontext:
+        return Color(gtkButton()->style->fg[GTK_STATE_NORMAL]);
+    case CSSValueCaptiontext:
+        return Color(gtkEntry()->style->fg[GTK_STATE_NORMAL]);
+    default:
+        return RenderTheme::systemColor(cssValueId);
+    }
+}
+
 static void gtkStyleSetCallback(GtkWidget* widget, GtkStyle* previous, RenderTheme* renderTheme)
 {
     // FIXME: Make sure this function doesn't get called many times for a single GTK+ style change signal.
@@ -623,6 +637,19 @@ GtkContainer* RenderThemeGtk::gtkContainer() const
     gtk_widget_realize(m_gtkWindow);
 
     return m_gtkContainer;
+}
+
+GtkWidget* RenderThemeGtk::gtkButton() const
+{
+    if (m_gtkButton)
+        return m_gtkButton;
+
+    m_gtkButton = gtk_button_new();
+    g_signal_connect(m_gtkButton, "style-set", G_CALLBACK(gtkStyleSetCallback), const_cast<RenderThemeGtk*>(this));
+    gtk_container_add(gtkContainer(), m_gtkButton);
+    gtk_widget_realize(m_gtkButton);
+
+    return m_gtkButton;
 }
 
 GtkWidget* RenderThemeGtk::gtkEntry() const

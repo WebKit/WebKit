@@ -82,8 +82,9 @@ public:
 
     virtual void platformColorsDidChange();
 
-    // System fonts.
+    // System fonts and colors.
     virtual void systemFont(int propId, FontDescription&) const;
+    virtual Color systemColor(int cssValueId) const;
 
 #if ENABLE(VIDEO)
     virtual String extraMediaControlsStyleSheet();
@@ -138,6 +139,7 @@ private:
     /*
      * hold the state
      */
+    GtkWidget* gtkButton() const;
     GtkWidget* gtkEntry() const;
     GtkWidget* gtkTreeView() const;
 
@@ -149,6 +151,7 @@ private:
 
     mutable GtkWidget* m_gtkWindow;
     mutable GtkContainer* m_gtkContainer;
+    mutable GtkWidget* m_gtkButton;
     mutable GtkWidget* m_gtkEntry;
     mutable GtkWidget* m_gtkTreeView;
 
