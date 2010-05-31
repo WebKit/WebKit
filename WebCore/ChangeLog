@@ -248,6 +248,17 @@
         (WebCore::EventHandler::handleKeyboardSelectionMovement):
         (WebCore::EventHandler::handleDrag):
 
+2010-05-30  Daniel Bates  <dbates@rim.com>
+
+        Unreviewed, attempt to fix the build after http://trac.webkit.org/changeset/60418.
+
+        * html/HTMLFormControlElement.h:
+        (WebCore::HTMLFormControlElement::isEnabledFormControl):
+        (WebCore::HTMLFormControlElement::isReadOnlyFormControl):
+        (WebCore::HTMLFormControlElement::isFormControlElement):
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::isPasswordField):
+
 2010-05-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

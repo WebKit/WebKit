@@ -45,6 +45,34 @@
         (WebKit::WebFrameImpl::createChildFrame):
         (WebKit::WebFrameImpl::shouldScopeMatches):
 
+2010-05-30  Daniel Bates  <dbates@rim.com>
+
+        Unreviewed, attempt to fix the build after http://trac.webkit.org/changeset/60418.
+
+        I missed a few call sites in the Chromium source when I
+        landed http://trac.webkit.org/changeset/60419.
+
+        Credit to Chris Jerdonek for looking over both this patch and the patch
+        committed in r60419.
+
+        * src/WebSearchableFormData.cpp:
+        (WebCore::GetButtonToActivate):
+        (WebCore::HasSuitableTextElement):
+
+2010-05-30  Daniel Bates  <dbates@rim.com>
+
+        Unreviewed, attempt to fix the build after http://trac.webkit.org/changeset/60418.
+
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::autofill):
+        * src/WebFormControlElement.cpp:
+        (WebKit::WebFormControlElement::formControlName):
+        (WebKit::WebFormControlElement::formControlType):
+        * src/WebFormElement.cpp:
+        (WebKit::WebFormElement::getFormControlElements):
+        * src/WebPasswordFormUtils.cpp:
+        (WebKit::findPasswordFormFields):
+
 2010-05-30  Jessie Berlin  <jberlin@webkit.org>
 
         Reviewed by Pavel Feldman.

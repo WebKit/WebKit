@@ -1,3 +1,11 @@
+2010-05-30  Daniel Bates  <dbates@rim.com>
+
+        Unreviewed, attempt to fix the build after http://trac.webkit.org/changeset/60418.
+
+        * WebFrame.cpp:
+        (WebFrame::elementWithName):
+        (WebFrame::controlsInForm):
+
 2010-05-22  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Adam Roben.
