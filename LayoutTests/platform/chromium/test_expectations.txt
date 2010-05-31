@@ -2868,3 +2868,7 @@ BUG_WK38686 WIN LINUX : fast/repaint/backgroundSizeRepaint.html = IMAGE
 BUG_WK38686 WIN LINUX : scrollbars/listbox-scrollbar-combinations.html = IMAGE
 BUG_WK38686 WIN LINUX : scrollbars/overflow-scrollbar-combinations.html = IMAGE
 BUG_WK38686 WIN LINUX : svg/W3C-SVG-1.1/coords-viewattr-02-b.svg = IMAGE
+
+// New storage test added in WK rev. 60386 fails in Chromium on all platforms
+// Filed as http://crbug.com/45462
+BUG45462 : storage/transaction-success-callback-isolated-world.html = FAIL
