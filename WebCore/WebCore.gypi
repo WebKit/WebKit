@@ -1696,6 +1696,8 @@
             'inspector/InspectorResource.h',
             'inspector/InspectorTimelineAgent.cpp',
             'inspector/InspectorTimelineAgent.h',
+            'inspector/InspectorValues.cpp',
+            'inspector/InspectorValues.h',
             'inspector/InspectorWorkerResource.h',
             'inspector/ScriptBreakpoint.h',
             'inspector/ScriptDebugListener.h',

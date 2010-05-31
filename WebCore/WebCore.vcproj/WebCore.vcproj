@@ -44713,6 +44713,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorValues.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorValues.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorWorkerResource.h"
 				>
 			</File>

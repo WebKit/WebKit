@@ -1329,6 +1329,8 @@ webcore_sources += \
 	WebCore/inspector/InspectorResource.h \
 	WebCore/inspector/InspectorTimelineAgent.cpp \
 	WebCore/inspector/InspectorTimelineAgent.h \
+	WebCore/inspector/InspectorValues.cpp \
+	WebCore/inspector/InspectorValues.h \
 	WebCore/inspector/InspectorWorkerResource.h \
 	WebCore/inspector/ScriptBreakpoint.h \
 	WebCore/inspector/ScriptDebugListener.h \

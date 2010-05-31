@@ -1,3 +1,52 @@
+2010-05-31  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: Classes for native serialization to JSON were implemented.
+        https://bugs.webkit.org/show_bug.cgi?id=34204
+
+        * GNUmakefile.am:
+        * WebCore.Inspector.exp:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorValues.cpp: Added.
+        (WebCore::escapeChar):
+        (WebCore::doubleQuoteString):
+        (WebCore::InspectorBaseValue::toJSONString):
+        (WebCore::InspectorBaseValue::writeJSON):
+        (WebCore::InspectorValue::writeJSON):
+        (WebCore::InspectorString::writeJSON):
+        (WebCore::InspectorObject::writeJSON):
+        (WebCore::InspectorArray::writeJSON):
+        * inspector/InspectorValues.h: Added.
+        (WebCore::InspectorBaseValue::InspectorBaseValue):
+        (WebCore::InspectorBaseValue::~InspectorBaseValue):
+        (WebCore::InspectorBaseValue::null):
+        (WebCore::InspectorBaseValue::):
+        (WebCore::InspectorBaseValue::type):
+        (WebCore::InspectorValue::create):
+        (WebCore::InspectorValue::InspectorValue):
+        (WebCore::InspectorValue::):
+        (WebCore::InspectorString::create):
+        (WebCore::InspectorString::InspectorString):
+        (WebCore::InspectorObject::create):
+        (WebCore::InspectorObject::~InspectorObject):
+        (WebCore::InspectorObject::InspectorObject):
+        (WebCore::InspectorArray::create):
+        (WebCore::InspectorArray::~InspectorArray):
+        (WebCore::InspectorArray::length):
+        (WebCore::InspectorArray::InspectorArray):
+        (WebCore::InspectorObject::setBool):
+        (WebCore::InspectorObject::setNumber):
+        (WebCore::InspectorObject::setString):
+        (WebCore::InspectorObject::set):
+        (WebCore::InspectorArray::pushBool):
+        (WebCore::InspectorArray::pushNumber):
+        (WebCore::InspectorArray::pushString):
+        (WebCore::InspectorArray::push):
+
 2010-05-31  Olivier Goffart <olivier.goffart@nokia.com>
 
         Reviewed by Oliver Hunt.
