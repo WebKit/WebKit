@@ -77,7 +77,8 @@ bool IsHTTPFormSubmit(const HTMLFormElement* form)
 HTMLFormControlElement* GetButtonToActivate(HTMLFormElement* form)
 {
     HTMLFormControlElement* firstSubmitButton = 0;
-    for (Vector<HTMLFormControlElement*>::const_iterator i(form->formElements.begin()); i != form->formElements.end(); ++i) {
+    // FIXME: Consider refactoring this code so that we don't call form->associatedElements() twice.
+    for (Vector<HTMLFormControlElement*>::const_iterator i(form->associatedElements().begin()); i != form->associatedElements().end(); ++i) {
       HTMLFormControlElement* formElement = *i;
       if (formElement->isActivatedSubmit())
           // There's a button that is already activated for submit, return 0.
@@ -154,7 +155,8 @@ bool HasSuitableTextElement(const HTMLFormElement* form, Vector<char>* encodedSt
     *encodingName = encoding.name();
 
     HTMLInputElement* textElement = 0;
-    for (Vector<HTMLFormControlElement*>::const_iterator i(form->formElements.begin()); i != form->formElements.end(); ++i) {
+    // FIXME: Consider refactoring this code so that we don't call form->associatedElements() twice.
+    for (Vector<HTMLFormControlElement*>::const_iterator i(form->associatedElements().begin()); i != form->associatedElements().end(); ++i) {
         HTMLFormControlElement* formElement = *i;
         if (formElement->disabled() || formElement->name().isNull())
             continue;
