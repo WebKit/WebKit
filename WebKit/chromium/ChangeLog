@@ -1,3 +1,18 @@
+2010-05-30  Lyon Chen  <liachen@rim.com>
+
+        Reviewed by Kent Tamura.
+
+        This is a coding style cleanup before fixing to bug 35530.
+
+        Enum value FORWARD, BACKWARD, RIGHT, LEFT are causing macro conflicts.
+        https://bugs.webkit.org/show_bug.cgi?id=35530
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::find):
+        (WebKit::WebFrameImpl::scopeStringMatches):
+        (WebKit::WebFrameImpl::createChildFrame):
+        (WebKit::WebFrameImpl::shouldScopeMatches):
+
 2010-05-30  Jessie Berlin  <jberlin@webkit.org>
 
         Reviewed by Pavel Feldman.

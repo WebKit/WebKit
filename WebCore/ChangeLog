@@ -1,3 +1,77 @@
+2010-05-30  Lyon Chen  <liachen@rim.com>
+
+        Reviewed by Kent Tamura.
+
+        This is a coding style cleanup before fixing to bug 35530.
+
+        Enum value FORWARD, BACKWARD, RIGHT, LEFT are causing macro conflicts.
+        https://bugs.webkit.org/show_bug.cgi?id=35530
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::deleteWithDirection):
+        (WebCore::Editor::fontForSelection):
+        (WebCore::Editor::applyStyle):
+        (WebCore::Editor::applyParagraphStyle):
+        (WebCore::Editor::applyStyleToSelection):
+        (WebCore::Editor::applyParagraphStyleToSelection):
+        (WebCore::triStateOfStyleInComputedStyle):
+        (WebCore::Editor::selectionStartHasStyle):
+        (WebCore::Editor::selectionHasStyle):
+        (WebCore::Editor::paste):
+        (WebCore::Editor::ignoreSpelling):
+        (WebCore::Editor::learnSpelling):
+        (WebCore::findFirstMisspellingInRange):
+        (WebCore::findFirstGrammarDetailInRange):
+        (WebCore::findFirstBadGrammarInRange):
+        (WebCore::findFirstMisspellingOrBadGrammarInRange):
+        (WebCore::Editor::advanceToNextMisspelling):
+        (WebCore::Editor::isSelectionMisspelled):
+        (WebCore::isRangeUngrammatical):
+        (WebCore::Editor::guessesForMisspelledSelection):
+        (WebCore::guessesForMisspelledOrUngrammaticalRange):
+        (WebCore::Editor::markMisspellingsAfterTypingToPosition):
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        * editing/EditorCommand.cpp:
+        (WebCore::applyCommandToFrame):
+        (WebCore::executeToggleStyleInList):
+        (WebCore::executeApplyParagraphStyle):
+        (WebCore::executeDelete):
+        (WebCore::executeForwardDelete):
+        (WebCore::executeInsertLineBreak):
+        (WebCore::supportedCopyCut):
+        (WebCore::supportedPaste):
+        (WebCore::enabledDelete):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modifyExtendingRight):
+        (WebCore::SelectionController::modifyExtendingForward):
+        (WebCore::SelectionController::modifyMovingRight):
+        (WebCore::SelectionController::modifyMovingForward):
+        (WebCore::SelectionController::modifyExtendingLeft):
+        (WebCore::SelectionController::modifyExtendingBackward):
+        (WebCore::SelectionController::modifyMovingLeft):
+        (WebCore::SelectionController::modifyMovingBackward):
+        (WebCore::SelectionController::modify):
+        (WebCore::SelectionController::xPosForVerticalArrowNavigation):
+        (WebCore::SelectionController::debugRenderer):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        (WebCore::TypingCommand::insertLineBreak):
+        (WebCore::TypingCommand::insertParagraphSeparatorInQuotedContent):
+        (WebCore::TypingCommand::insertParagraphSeparator):
+        (WebCore::TypingCommand::doApply):
+        (WebCore::TypingCommand::insertText):
+        (WebCore::TypingCommand::updatePreservesTypingStyle):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::selectCursor):
+        (WebCore::EventHandler::canHandleDragAndDropForTarget):
+        (WebCore::EventHandler::dispatchMouseEvent):
+        (WebCore::EventHandler::sendContextMenuEvent):
+        (WebCore::EventHandler::handleKeyboardSelectionMovement):
+        (WebCore::EventHandler::handleDrag):
+
 2010-05-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

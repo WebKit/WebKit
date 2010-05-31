@@ -26,6 +26,7 @@
  */
 
 #include "config.h"
+#include "Editor.h"
 
 #include "AtomicString.h"
 #include "CSSComputedStyleDeclaration.h"
@@ -35,7 +36,6 @@
 #include "Chrome.h"
 #include "CreateLinkCommand.h"
 #include "DocumentFragment.h"
-#include "Editor.h"
 #include "EditorClient.h"
 #include "Event.h"
 #include "EventHandler.h"
@@ -98,13 +98,13 @@ static bool applyCommandToFrame(Frame* frame, EditorCommandSource source, EditAc
 {
     // FIXME: We don't call shouldApplyStyle when the source is DOM; is there a good reason for that?
     switch (source) {
-        case CommandFromMenuOrKeyBinding:
-            frame->editor()->applyStyleToSelection(style, action);
-            return true;
-        case CommandFromDOM:
-        case CommandFromDOMWithUserInterface:
-            frame->editor()->applyStyle(style);
-            return true;
+    case CommandFromMenuOrKeyBinding:
+        frame->editor()->applyStyleToSelection(style, action);
+        return true;
+    case CommandFromDOM:
+    case CommandFromDOMWithUserInterface:
+        frame->editor()->applyStyle(style);
+        return true;
     }
     ASSERT_NOT_REACHED();
     return false;
@@ -144,15 +144,15 @@ static bool executeToggleStyleInList(Frame* frame, EditorCommandSource source, E
     } else if (selectedCSSValue->cssText() == "none")
         newStyle = value->cssText();
 
-    ASSERT(ec == 0);
+    ASSERT(!ec);
     if (nodeToRemove) {
         nodeToRemove->remove(ec);
-        ASSERT(ec == 0);
+        ASSERT(!ec);
     }
 
     // FIXME: We shouldn't be having to convert new style into text.  We should have setPropertyCSSValue.
     RefPtr<CSSMutableStyleDeclaration> newMutableStyle = CSSMutableStyleDeclaration::create();
-    newMutableStyle->setProperty(propertyID, newStyle,ec);
+    newMutableStyle->setProperty(propertyID, newStyle, ec);
     return applyCommandToFrame(frame, source, action, newMutableStyle.get());
 }
 
@@ -181,13 +181,13 @@ static bool executeApplyParagraphStyle(Frame* frame, EditorCommandSource source,
     style->setProperty(propertyID, propertyValue);
     // FIXME: We don't call shouldApplyStyle when the source is DOM; is there a good reason for that?
     switch (source) {
-        case CommandFromMenuOrKeyBinding:
-            frame->editor()->applyParagraphStyleToSelection(style.get(), action);
-            return true;
-        case CommandFromDOM:
-        case CommandFromDOMWithUserInterface:
-            frame->editor()->applyParagraphStyle(style.get());
-            return true;
+    case CommandFromMenuOrKeyBinding:
+        frame->editor()->applyParagraphStyleToSelection(style.get(), action);
+        return true;
+    case CommandFromDOM:
+    case CommandFromDOMWithUserInterface:
+        frame->editor()->applyParagraphStyle(style.get());
+        return true;
     }
     ASSERT_NOT_REACHED();
     return false;
@@ -307,16 +307,16 @@ static bool executeCut(Frame* frame, Event*, EditorCommandSource, const String&)
 static bool executeDelete(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
     switch (source) {
-        case CommandFromMenuOrKeyBinding:
-            // Doesn't modify the text if the current selection isn't a range.
-            frame->editor()->performDelete();
-            return true;
-        case CommandFromDOM:
-        case CommandFromDOMWithUserInterface:
-            // If the current selection is a caret, delete the preceding character. IE performs forwardDelete, but we currently side with Firefox.
-            // Doesn't scroll to make the selection visible, or modify the kill ring (this time, siding with IE, not Firefox).
-            TypingCommand::deleteKeyPressed(frame->document(), frame->selectionGranularity() == WordGranularity);
-            return true;
+    case CommandFromMenuOrKeyBinding:
+        // Doesn't modify the text if the current selection isn't a range.
+        frame->editor()->performDelete();
+        return true;
+    case CommandFromDOM:
+    case CommandFromDOMWithUserInterface:
+        // If the current selection is a caret, delete the preceding character. IE performs forwardDelete, but we currently side with Firefox.
+        // Doesn't scroll to make the selection visible, or modify the kill ring (this time, siding with IE, not Firefox).
+        TypingCommand::deleteKeyPressed(frame->document(), frame->selectionGranularity() == WordGranularity);
+        return true;
     }
     ASSERT_NOT_REACHED();
     return false;
@@ -438,16 +438,16 @@ static bool executeFormatBlock(Frame* frame, Event*, EditorCommandSource, const 
 static bool executeForwardDelete(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
     switch (source) {
-        case CommandFromMenuOrKeyBinding:
-            frame->editor()->deleteWithDirection(SelectionController::FORWARD, CharacterGranularity, false, true);
-            return true;
-        case CommandFromDOM:
-        case CommandFromDOMWithUserInterface:
-            // Doesn't scroll to make the selection visible, or modify the kill ring.
-            // ForwardDelete is not implemented in IE or Firefox, so this behavior is only needed for
-            // backward compatibility with ourselves, and for consistency with Delete.
-            TypingCommand::forwardDeleteKeyPressed(frame->document());
-            return true;
+    case CommandFromMenuOrKeyBinding:
+        frame->editor()->deleteWithDirection(SelectionController::FORWARD, CharacterGranularity, false, true);
+        return true;
+    case CommandFromDOM:
+    case CommandFromDOMWithUserInterface:
+        // Doesn't scroll to make the selection visible, or modify the kill ring.
+        // ForwardDelete is not implemented in IE or Firefox, so this behavior is only needed for
+        // backward compatibility with ourselves, and for consistency with Delete.
+        TypingCommand::forwardDeleteKeyPressed(frame->document());
+        return true;
     }
     ASSERT_NOT_REACHED();
     return false;
@@ -494,15 +494,15 @@ static bool executeInsertImage(Frame* frame, Event*, EditorCommandSource, const 
 static bool executeInsertLineBreak(Frame* frame, Event* event, EditorCommandSource source, const String&)
 {
     switch (source) {
-        case CommandFromMenuOrKeyBinding:
-            return targetFrame(frame, event)->eventHandler()->handleTextInputEvent("\n", event, true);
-        case CommandFromDOM:
-        case CommandFromDOMWithUserInterface:
-            // Doesn't scroll to make the selection visible, or modify the kill ring.
-            // InsertLineBreak is not implemented in IE or Firefox, so this behavior is only needed for
-            // backward compatibility with ourselves, and for consistency with other commands.
-            TypingCommand::insertLineBreak(frame->document());
-            return true;
+    case CommandFromMenuOrKeyBinding:
+        return targetFrame(frame, event)->eventHandler()->handleTextInputEvent("\n", event, true);
+    case CommandFromDOM:
+    case CommandFromDOMWithUserInterface:
+        // Doesn't scroll to make the selection visible, or modify the kill ring.
+        // InsertLineBreak is not implemented in IE or Firefox, so this behavior is only needed for
+        // backward compatibility with ourselves, and for consistency with other commands.
+        TypingCommand::insertLineBreak(frame->document());
+        return true;
     }
     ASSERT_NOT_REACHED();
     return false;
@@ -1074,13 +1074,13 @@ static bool supportedFromMenuOrKeyBinding(Frame*, EditorCommandSource source)
 static bool supportedCopyCut(Frame* frame, EditorCommandSource source)
 {
     switch (source) {
-        case CommandFromMenuOrKeyBinding:
-            return true;
-        case CommandFromDOM:
-        case CommandFromDOMWithUserInterface: {
-            Settings* settings = frame ? frame->settings() : 0;
-            return settings && settings->javaScriptCanAccessClipboard();
-        }
+    case CommandFromMenuOrKeyBinding:
+        return true;
+    case CommandFromDOM:
+    case CommandFromDOMWithUserInterface: {
+        Settings* settings = frame ? frame->settings() : 0;
+        return settings && settings->javaScriptCanAccessClipboard();
+    }
     }
     ASSERT_NOT_REACHED();
     return false;
@@ -1089,13 +1089,13 @@ static bool supportedCopyCut(Frame* frame, EditorCommandSource source)
 static bool supportedPaste(Frame* frame, EditorCommandSource source)
 {
     switch (source) {
-        case CommandFromMenuOrKeyBinding:
-            return true;
-        case CommandFromDOM:
-        case CommandFromDOMWithUserInterface: {
-            Settings* settings = frame ? frame->settings() : 0;
-            return settings && (settings->javaScriptCanAccessClipboard() ? settings->isDOMPasteAllowed() : 0);
-        }
+    case CommandFromMenuOrKeyBinding:
+        return true;
+    case CommandFromDOM:
+    case CommandFromDOMWithUserInterface: {
+        Settings* settings = frame ? frame->settings() : 0;
+        return settings && (settings->javaScriptCanAccessClipboard() ? settings->isDOMPasteAllowed() : 0);
+    }
     }
     ASSERT_NOT_REACHED();
     return false;
@@ -1154,14 +1154,14 @@ static bool enabledCut(Frame* frame, Event*, EditorCommandSource)
 static bool enabledDelete(Frame* frame, Event* event, EditorCommandSource source)
 {
     switch (source) {
-        case CommandFromMenuOrKeyBinding:
-            // "Delete" from menu only affects selected range, just like Cut but without affecting pasteboard
-            return frame->editor()->canDHTMLCut() || frame->editor()->canCut();
-        case CommandFromDOM:
-        case CommandFromDOMWithUserInterface:
-            // "Delete" from DOM is like delete/backspace keypress, affects selected range if non-empty,
-            // otherwise removes a character
-            return frame->editor()->selectionForCommand(event).isContentEditable();
+    case CommandFromMenuOrKeyBinding:
+        // "Delete" from menu only affects selected range, just like Cut but without affecting pasteboard
+        return frame->editor()->canDHTMLCut() || frame->editor()->canCut();
+    case CommandFromDOM:
+    case CommandFromDOMWithUserInterface:
+        // "Delete" from DOM is like delete/backspace keypress, affects selected range if non-empty,
+        // otherwise removes a character
+        return frame->editor()->selectionForCommand(event).isContentEditable();
     }
     ASSERT_NOT_REACHED();
     return false;
@@ -1309,7 +1309,10 @@ static String valueForeColor(Frame* frame, Event*)
 
 // Map of functions
 
-struct CommandEntry { const char* name; EditorInternalCommand command; };
+struct CommandEntry {
+    const char* name;
+    EditorInternalCommand command;
+};
 
 static const CommandMap& createCommandMap()
 {

@@ -1,3 +1,15 @@
+2010-05-30  Lyon Chen  <liachen@rim.com>
+
+        Reviewed by Kent Tamura.
+
+        This is a coding style cleanup before fixing to bug 35530.
+
+        Enum value FORWARD, BACKWARD, RIGHT, LEFT are causing macro conflicts.
+        https://bugs.webkit.org/show_bug.cgi?id=35530
+
+        * WebCoreSupport/EditorClientHaiku.cpp:
+        (WebCore::EditorClientHaiku::handleKeyboardEvent):
+
 2010-05-03  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Darin Fisher.

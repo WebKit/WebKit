@@ -75,21 +75,20 @@
 #include "ChromiumBridge.h"
 #include "ClipboardUtilitiesChromium.h"
 #include "Console.h"
+#include "DOMUtilitiesPrivate.h"
+#include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentFragment.h" // Only needed for ReplaceSelectionCommand.h :(
 #include "DocumentLoader.h"
 #include "DocumentMarker.h"
-#include "DOMUtilitiesPrivate.h"
-#include "DOMWindow.h"
 #include "Editor.h"
 #include "EventHandler.h"
 #include "FormState.h"
-#include "FrameLoader.h"
 #include "FrameLoadRequest.h"
+#include "FrameLoader.h"
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "HistoryItem.h"
 #include "HTMLCollection.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -97,8 +96,8 @@
 #include "HTMLInputElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLNames.h"
+#include "HistoryItem.h"
 #include "InspectorController.h"
-#include "markup.h"
 #include "Page.h"
 #include "PlatformContextSkia.h"
 #include "PluginDocument.h"
@@ -113,8 +112,8 @@
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
-#include "ScrollbarTheme.h"
 #include "ScrollTypes.h"
+#include "ScrollbarTheme.h"
 #include "SelectionController.h"
 #include "Settings.h"
 #include "SkiaUtils.h"
@@ -141,6 +140,7 @@
 #include "WebVector.h"
 #include "WebViewImpl.h"
 #include "XPathResult.h"
+#include "markup.h"
 
 #include <algorithm>
 #include <wtf/CurrentTime.h>
@@ -1290,7 +1290,7 @@ bool WebFrameImpl::find(int identifier,
     if (!options.findNext)
         frame()->page()->unmarkAllTextMatches();
     else
-        setMarkerActive(m_activeMatch.get(), false);  // Active match is changing.
+        setMarkerActive(m_activeMatch.get(), false); // Active match is changing.
 
     // Starts the search from the current selection.
     bool startInSelection = true;
@@ -1330,7 +1330,7 @@ bool WebFrameImpl::find(int identifier,
         else {
             m_activeMatch = newSelection.toNormalizedRange();
             currSelectionRect = m_activeMatch->boundingBox();
-            setMarkerActive(m_activeMatch.get(), true);  // Active.
+            setMarkerActive(m_activeMatch.get(), true); // Active.
             // WebKit draws the highlighting for all matches.
             executeCommand(WebString::fromUTF8("Unselect"));
         }
@@ -1425,7 +1425,7 @@ void WebFrameImpl::scopeStringMatches(int identifier,
             identifier,
             searchText,
             options,
-            false);  // false=we just reset, so don't do it again.
+            false); // false=we just reset, so don't do it again.
         return;
     }
 
@@ -1439,7 +1439,7 @@ void WebFrameImpl::scopeStringMatches(int identifier,
                               m_resumeScopingFromRange->startOffset(ec2) + 1,
                               ec);
         if (ec || ec2) {
-            if (ec2)  // A non-zero |ec| happens when navigating during search.
+            if (ec2) // A non-zero |ec| happens when navigating during search.
                 ASSERT_NOT_REACHED();
             return;
         }
@@ -1448,7 +1448,7 @@ void WebFrameImpl::scopeStringMatches(int identifier,
     // This timeout controls how long we scope before releasing control.  This
     // value does not prevent us from running for longer than this, but it is
     // periodically checked to see if we have exceeded our allocated time.
-    const double maxScopingDuration = 0.1;  // seconds
+    const double maxScopingDuration = 0.1; // seconds
 
     int matchCount = 0;
     bool timedOut = false;
@@ -1555,8 +1555,8 @@ void WebFrameImpl::scopeStringMatches(int identifier,
             identifier,
             searchText,
             options,
-            false);  // don't reset.
-        return;  // Done for now, resume work later.
+            false); // don't reset.
+        return; // Done for now, resume work later.
     }
 
     // This frame has no further scoping left, so it is done. Other frames might,
@@ -1738,7 +1738,7 @@ PassRefPtr<Frame> WebFrameImpl::createChildFrame(
     // it is necessary to check the value after calling init() and
     // return without loading URL.
     // (b:791612)
-    childFrame->init();      // create an empty document
+    childFrame->init(); // create an empty document
     if (!childFrame->tree()->parent())
         return 0;
 
@@ -2065,7 +2065,7 @@ bool WebFrameImpl::shouldScopeMatches(const String& searchText)
             searchText.substring(0, m_lastSearchString.length());
 
         if (previousSearchPrefix == m_lastSearchString)
-            return false;  // Don't search this frame, it will be fruitless.
+            return false; // Don't search this frame, it will be fruitless.
     }
 
     return true;

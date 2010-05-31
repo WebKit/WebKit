@@ -86,7 +86,7 @@ void TypingCommand::deleteKeyPressed(Document *document, bool smartDelete, TextG
 {
     ASSERT(document);
     
-    Frame *frame = document->frame();
+    Frame* frame = document->frame();
     ASSERT(frame);
     
     EditCommand* lastEditCommand = frame->editor()->lastEditCommand();
@@ -105,7 +105,7 @@ void TypingCommand::forwardDeleteKeyPressed(Document *document, bool smartDelete
     // FIXME: Forward delete in TextEdit appears to open and close a new typing command.
     ASSERT(document);
     
-    Frame *frame = document->frame();
+    Frame* frame = document->frame();
     ASSERT(frame);
     
     EditCommand* lastEditCommand = frame->editor()->lastEditCommand();
@@ -187,7 +187,7 @@ void TypingCommand::insertLineBreak(Document *document)
 {
     ASSERT(document);
     
-    Frame *frame = document->frame();
+    Frame* frame = document->frame();
     ASSERT(frame);
     
     EditCommand* lastEditCommand = frame->editor()->lastEditCommand();
@@ -203,7 +203,7 @@ void TypingCommand::insertParagraphSeparatorInQuotedContent(Document *document)
 {
     ASSERT(document);
     
-    Frame *frame = document->frame();
+    Frame* frame = document->frame();
     ASSERT(frame);
     
     EditCommand* lastEditCommand = frame->editor()->lastEditCommand();
@@ -219,7 +219,7 @@ void TypingCommand::insertParagraphSeparator(Document *document)
 {
     ASSERT(document);
     
-    Frame *frame = document->frame();
+    Frame* frame = document->frame();
     ASSERT(frame);
     
     EditCommand* lastEditCommand = frame->editor()->lastEditCommand();
@@ -252,27 +252,27 @@ void TypingCommand::doApply()
             m_openedByBackwardDelete = true;
 
     switch (m_commandType) {
-        case DeleteSelection:
-            deleteSelection(m_smartDelete);
-            return;
-        case DeleteKey:
-            deleteKeyPressed(m_granularity, m_killRing);
-            return;
-        case ForwardDeleteKey:
-            forwardDeleteKeyPressed(m_granularity, m_killRing);
-            return;
-        case InsertLineBreak:
-            insertLineBreak();
-            return;
-        case InsertParagraphSeparator:
-            insertParagraphSeparator();
-            return;
-        case InsertParagraphSeparatorInQuotedContent:
-            insertParagraphSeparatorInQuotedContent();
-            return;
-        case InsertText:
-            insertText(m_textToInsert, m_selectInsertedText);
-            return;
+    case DeleteSelection:
+        deleteSelection(m_smartDelete);
+        return;
+    case DeleteKey:
+        deleteKeyPressed(m_granularity, m_killRing);
+        return;
+    case ForwardDeleteKey:
+        forwardDeleteKeyPressed(m_granularity, m_killRing);
+        return;
+    case InsertLineBreak:
+        insertLineBreak();
+        return;
+    case InsertParagraphSeparator:
+        insertParagraphSeparator();
+        return;
+    case InsertParagraphSeparatorInQuotedContent:
+        insertParagraphSeparatorInQuotedContent();
+        return;
+    case InsertText:
+        insertText(m_textToInsert, m_selectInsertedText);
+        return;
     }
 
     ASSERT_NOT_REACHED();
@@ -340,13 +340,12 @@ void TypingCommand::insertText(const String &text, bool selectInsertedText)
         insertParagraphSeparator();
         offset = newline + 1;
     }
-    if (offset == 0)
+    if (!offset)
         insertTextRunWithoutNewlines(text, selectInsertedText);
     else {
         int length = text.length();
-        if (length != offset) {
+        if (length != offset)
             insertTextRunWithoutNewlines(text.substring(offset, length - offset), selectInsertedText);
-        }
     }
 }
 
@@ -418,75 +417,75 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
     VisibleSelection selectionAfterUndo;
     
     switch (endingSelection().selectionType()) {
-        case VisibleSelection::RangeSelection:
-            selectionToDelete = endingSelection();
-            selectionAfterUndo = selectionToDelete;
-            break;
-        case VisibleSelection::CaretSelection: {
-            // After breaking out of an empty mail blockquote, we still want continue with the deletion
-            // so actual content will get deleted, and not just the quote style.
-            if (breakOutOfEmptyMailBlockquotedParagraph())
-                typingAddedToOpenCommand(DeleteKey);
-        
-            m_smartDelete = false;
+    case VisibleSelection::RangeSelection:
+        selectionToDelete = endingSelection();
+        selectionAfterUndo = selectionToDelete;
+        break;
+    case VisibleSelection::CaretSelection: {
+        // After breaking out of an empty mail blockquote, we still want continue with the deletion
+        // so actual content will get deleted, and not just the quote style.
+        if (breakOutOfEmptyMailBlockquotedParagraph())
+            typingAddedToOpenCommand(DeleteKey);
 
-            SelectionController selection;
-            selection.setSelection(endingSelection());
-            selection.modify(SelectionController::EXTEND, SelectionController::BACKWARD, granularity);
-            if (killRing && selection.isCaret() && granularity != CharacterGranularity) 
-                selection.modify(SelectionController::EXTEND, SelectionController::BACKWARD, CharacterGranularity); 
-            
-            if (endingSelection().visibleStart().previous(true).isNull()) {
-                // When the caret is at the start of the editable area in an empty list item, break out of the list item.
-                if (breakOutOfEmptyListItem()) {
-                    typingAddedToOpenCommand(DeleteKey);
-                    return;
-                }
-                // When there are no visible positions in the editing root, delete its entire contents.
-                if (endingSelection().visibleStart().next(true).isNull() && makeEditableRootEmpty()) {
-                    typingAddedToOpenCommand(DeleteKey);
-                    return;
-                }
-            }
-            
-            VisiblePosition visibleStart(endingSelection().visibleStart());
-            // If we have a caret selection on an empty cell, we have nothing to do.
-            if (isEmptyTableCell(visibleStart.deepEquivalent().node()))
-                return;
+        m_smartDelete = false;
 
-            // If the caret is at the start of a paragraph after a table, move content into the last table cell.
-            if (isStartOfParagraph(visibleStart) && isFirstPositionAfterTable(visibleStart.previous(true))) {
-                // Unless the caret is just before a table.  We don't want to move a table into the last table cell.
-                if (isLastPositionBeforeTable(visibleStart))
-                    return;
-                // Extend the selection backward into the last cell, then deletion will handle the move.
-                selection.modify(SelectionController::EXTEND, SelectionController::BACKWARD, granularity);
-            // If the caret is just after a table, select the table and don't delete anything.
-            } else if (Node* table = isFirstPositionAfterTable(visibleStart)) {
-                setEndingSelection(VisibleSelection(Position(table, 0), endingSelection().start(), DOWNSTREAM));
+        SelectionController selection;
+        selection.setSelection(endingSelection());
+        selection.modify(SelectionController::EXTEND, SelectionController::BACKWARD, granularity);
+        if (killRing && selection.isCaret() && granularity != CharacterGranularity)
+            selection.modify(SelectionController::EXTEND, SelectionController::BACKWARD, CharacterGranularity);
+
+        if (endingSelection().visibleStart().previous(true).isNull()) {
+            // When the caret is at the start of the editable area in an empty list item, break out of the list item.
+            if (breakOutOfEmptyListItem()) {
                 typingAddedToOpenCommand(DeleteKey);
                 return;
             }
-
-            selectionToDelete = selection.selection();
-
-            if (granularity == CharacterGranularity && selectionToDelete.end().node() == selectionToDelete.start().node() && selectionToDelete.end().deprecatedEditingOffset() - selectionToDelete.start().deprecatedEditingOffset() > 1) {
-                // If there are multiple Unicode code points to be deleted, adjust the range to match platform conventions.
-                selectionToDelete.setWithoutValidation(selectionToDelete.end(), selectionToDelete.end().previous(BackwardDeletion));
+            // When there are no visible positions in the editing root, delete its entire contents.
+            if (endingSelection().visibleStart().next(true).isNull() && makeEditableRootEmpty()) {
+                typingAddedToOpenCommand(DeleteKey);
+                return;
             }
-
-            if (!startingSelection().isRange() || selectionToDelete.base() != startingSelection().start())
-                selectionAfterUndo = selectionToDelete;
-            else
-                // It's a little tricky to compute what the starting selection would have been in the original document.
-                // We can't let the VisibleSelection class's validation kick in or it'll adjust for us based on
-                // the current state of the document and we'll get the wrong result.
-                selectionAfterUndo.setWithoutValidation(startingSelection().end(), selectionToDelete.extent());
-            break;
         }
-        case VisibleSelection::NoSelection:
-            ASSERT_NOT_REACHED();
-            break;
+
+        VisiblePosition visibleStart(endingSelection().visibleStart());
+        // If we have a caret selection on an empty cell, we have nothing to do.
+        if (isEmptyTableCell(visibleStart.deepEquivalent().node()))
+            return;
+
+        // If the caret is at the start of a paragraph after a table, move content into the last table cell.
+        if (isStartOfParagraph(visibleStart) && isFirstPositionAfterTable(visibleStart.previous(true))) {
+            // Unless the caret is just before a table.  We don't want to move a table into the last table cell.
+            if (isLastPositionBeforeTable(visibleStart))
+                return;
+            // Extend the selection backward into the last cell, then deletion will handle the move.
+            selection.modify(SelectionController::EXTEND, SelectionController::BACKWARD, granularity);
+        // If the caret is just after a table, select the table and don't delete anything.
+        } else if (Node* table = isFirstPositionAfterTable(visibleStart)) {
+            setEndingSelection(VisibleSelection(Position(table, 0), endingSelection().start(), DOWNSTREAM));
+            typingAddedToOpenCommand(DeleteKey);
+            return;
+        }
+
+        selectionToDelete = selection.selection();
+
+        if (granularity == CharacterGranularity && selectionToDelete.end().node() == selectionToDelete.start().node() && selectionToDelete.end().deprecatedEditingOffset() - selectionToDelete.start().deprecatedEditingOffset() > 1) {
+            // If there are multiple Unicode code points to be deleted, adjust the range to match platform conventions.
+            selectionToDelete.setWithoutValidation(selectionToDelete.end(), selectionToDelete.end().previous(BackwardDeletion));
+        }
+
+        if (!startingSelection().isRange() || selectionToDelete.base() != startingSelection().start())
+            selectionAfterUndo = selectionToDelete;
+        else
+            // It's a little tricky to compute what the starting selection would have been in the original document.
+            // We can't let the VisibleSelection class's validation kick in or it'll adjust for us based on
+            // the current state of the document and we'll get the wrong result.
+            selectionAfterUndo.setWithoutValidation(startingSelection().end(), selectionToDelete.extent());
+        break;
+    }
+    case VisibleSelection::NoSelection:
+        ASSERT_NOT_REACHED();
+        break;
     }
     
     ASSERT(!selectionToDelete.isNone());
@@ -514,62 +513,62 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
     VisibleSelection selectionAfterUndo;
 
     switch (endingSelection().selectionType()) {
-        case VisibleSelection::RangeSelection:
-            selectionToDelete = endingSelection();
-            selectionAfterUndo = selectionToDelete;
-            break;
-        case VisibleSelection::CaretSelection: {
-            m_smartDelete = false;
+    case VisibleSelection::RangeSelection:
+        selectionToDelete = endingSelection();
+        selectionAfterUndo = selectionToDelete;
+        break;
+    case VisibleSelection::CaretSelection: {
+        m_smartDelete = false;
 
-            // Handle delete at beginning-of-block case.
-            // Do nothing in the case that the caret is at the start of a
-            // root editable element or at the start of a document.
-            SelectionController selection;
-            selection.setSelection(endingSelection());
-            selection.modify(SelectionController::EXTEND, SelectionController::FORWARD, granularity);
-            if (killRing && selection.isCaret() && granularity != CharacterGranularity) 
-                selection.modify(SelectionController::EXTEND, SelectionController::FORWARD, CharacterGranularity); 
-            
-            Position downstreamEnd = endingSelection().end().downstream();
-            VisiblePosition visibleEnd = endingSelection().visibleEnd();
-            if (visibleEnd == endOfParagraph(visibleEnd))
-                downstreamEnd = visibleEnd.next(true).deepEquivalent().downstream();
-            // When deleting tables: Select the table first, then perform the deletion
-            if (downstreamEnd.node() && downstreamEnd.node()->renderer() && downstreamEnd.node()->renderer()->isTable() && downstreamEnd.deprecatedEditingOffset() == 0) {
-                setEndingSelection(VisibleSelection(endingSelection().end(), lastDeepEditingPositionForNode(downstreamEnd.node()), DOWNSTREAM));
-                typingAddedToOpenCommand(ForwardDeleteKey);
-                return;
-            }
+        // Handle delete at beginning-of-block case.
+        // Do nothing in the case that the caret is at the start of a
+        // root editable element or at the start of a document.
+        SelectionController selection;
+        selection.setSelection(endingSelection());
+        selection.modify(SelectionController::EXTEND, SelectionController::FORWARD, granularity);
+        if (killRing && selection.isCaret() && granularity != CharacterGranularity)
+            selection.modify(SelectionController::EXTEND, SelectionController::FORWARD, CharacterGranularity);
 
-            // deleting to end of paragraph when at end of paragraph needs to merge the next paragraph (if any)
-            if (granularity == ParagraphBoundary && selection.selection().isCaret() && isEndOfParagraph(selection.selection().visibleEnd()))
-                selection.modify(SelectionController::EXTEND, SelectionController::FORWARD, CharacterGranularity);
-
-            selectionToDelete = selection.selection();
-            if (!startingSelection().isRange() || selectionToDelete.base() != startingSelection().start())
-                selectionAfterUndo = selectionToDelete;
-            else {
-                // It's a little tricky to compute what the starting selection would have been in the original document.
-                // We can't let the VisibleSelection class's validation kick in or it'll adjust for us based on
-                // the current state of the document and we'll get the wrong result.
-                Position extent = startingSelection().end();
-                if (extent.node() != selectionToDelete.end().node())
-                    extent = selectionToDelete.extent();
-                else {
-                    int extraCharacters;
-                    if (selectionToDelete.start().node() == selectionToDelete.end().node())
-                        extraCharacters = selectionToDelete.end().deprecatedEditingOffset() - selectionToDelete.start().deprecatedEditingOffset();
-                    else
-                        extraCharacters = selectionToDelete.end().deprecatedEditingOffset();
-                    extent = Position(extent.node(), extent.deprecatedEditingOffset() + extraCharacters);
-                }
-                selectionAfterUndo.setWithoutValidation(startingSelection().start(), extent);
-            }
-            break;
+        Position downstreamEnd = endingSelection().end().downstream();
+        VisiblePosition visibleEnd = endingSelection().visibleEnd();
+        if (visibleEnd == endOfParagraph(visibleEnd))
+            downstreamEnd = visibleEnd.next(true).deepEquivalent().downstream();
+        // When deleting tables: Select the table first, then perform the deletion
+        if (downstreamEnd.node() && downstreamEnd.node()->renderer() && downstreamEnd.node()->renderer()->isTable() && !downstreamEnd.deprecatedEditingOffset()) {
+            setEndingSelection(VisibleSelection(endingSelection().end(), lastDeepEditingPositionForNode(downstreamEnd.node()), DOWNSTREAM));
+            typingAddedToOpenCommand(ForwardDeleteKey);
+            return;
         }
-        case VisibleSelection::NoSelection:
-            ASSERT_NOT_REACHED();
-            break;
+
+        // deleting to end of paragraph when at end of paragraph needs to merge the next paragraph (if any)
+        if (granularity == ParagraphBoundary && selection.selection().isCaret() && isEndOfParagraph(selection.selection().visibleEnd()))
+            selection.modify(SelectionController::EXTEND, SelectionController::FORWARD, CharacterGranularity);
+
+        selectionToDelete = selection.selection();
+        if (!startingSelection().isRange() || selectionToDelete.base() != startingSelection().start())
+            selectionAfterUndo = selectionToDelete;
+        else {
+            // It's a little tricky to compute what the starting selection would have been in the original document.
+            // We can't let the VisibleSelection class's validation kick in or it'll adjust for us based on
+            // the current state of the document and we'll get the wrong result.
+            Position extent = startingSelection().end();
+            if (extent.node() != selectionToDelete.end().node())
+                extent = selectionToDelete.extent();
+            else {
+                int extraCharacters;
+                if (selectionToDelete.start().node() == selectionToDelete.end().node())
+                    extraCharacters = selectionToDelete.end().deprecatedEditingOffset() - selectionToDelete.start().deprecatedEditingOffset();
+                else
+                    extraCharacters = selectionToDelete.end().deprecatedEditingOffset();
+                extent = Position(extent.node(), extent.deprecatedEditingOffset() + extraCharacters);
+            }
+            selectionAfterUndo.setWithoutValidation(startingSelection().start(), extent);
+        }
+        break;
+    }
+    case VisibleSelection::NoSelection:
+        ASSERT_NOT_REACHED();
+        break;
     }
     
     ASSERT(!selectionToDelete.isNone());
@@ -597,17 +596,17 @@ void TypingCommand::deleteSelection(bool smartDelete)
 void TypingCommand::updatePreservesTypingStyle(ETypingCommand commandType)
 {
     switch (commandType) {
-        case DeleteSelection:
-        case DeleteKey:
-        case ForwardDeleteKey:
-        case InsertParagraphSeparator:
-        case InsertLineBreak:
-            m_preservesTypingStyle = true;
-            return;
-        case InsertParagraphSeparatorInQuotedContent:
-        case InsertText:
-            m_preservesTypingStyle = false;
-            return;
+    case DeleteSelection:
+    case DeleteKey:
+    case ForwardDeleteKey:
+    case InsertParagraphSeparator:
+    case InsertLineBreak:
+        m_preservesTypingStyle = true;
+        return;
+    case InsertParagraphSeparatorInQuotedContent:
+    case InsertText:
+        m_preservesTypingStyle = false;
+        return;
     }
     ASSERT_NOT_REACHED();
     m_preservesTypingStyle = false;
