@@ -65,8 +65,6 @@ public:
     void suspend();
     void resume();
 
-    void stop();
-
     void setIsAllowed(bool);
     Frame* frame() const { return m_frame; }
 

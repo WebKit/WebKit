@@ -1182,7 +1182,6 @@ fast/dom/frame-loading-via-document-write.html
 fast/dom/DeviceOrientation/window-property.html
 fast/dom/Geolocation/callback-exception.html
 fast/dom/Geolocation/error.html
-fast/dom/Geolocation/ongoing-request-leak.html
 fast/dom/Geolocation/permission-denied-already-clear-watch.html
 fast/dom/Geolocation/position-string.html
 fast/dom/Geolocation/reentrant-error.html

@@ -1,3 +1,17 @@
+2010-05-31  Steve Block  <steveblock@google.com>
+
+        Unreviewed, rolling out r60069.
+        http://trac.webkit.org/changeset/60069
+        https://bugs.webkit.org/show_bug.cgi?id=39288
+
+        Roll out r60069 while the need for Geolocation::stop() is
+        investigated.
+
+        * fast/dom/Geolocation/ongoing-request-leak-expected.txt: Removed.
+        * fast/dom/Geolocation/ongoing-request-leak.html: Removed.
+        * fast/dom/Geolocation/script-tests/ongoing-request-leak.js: Removed.
+        * platform/gtk/Skipped:
+
 2010-05-31  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

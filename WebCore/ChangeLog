@@ -1,3 +1,18 @@
+2010-05-31  Steve Block  <steveblock@google.com>
+
+        Unreviewed, rolling out r60069.
+        http://trac.webkit.org/changeset/60069
+        https://bugs.webkit.org/show_bug.cgi?id=39288
+
+        Roll out r60069 while the need for Geolocation::stop() is
+        investigated.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::disconnectFrame):
+        * page/Geolocation.h:
+
 2010-05-31  Olivier Tilloy  <olivier@tilloy.net>
 
         Reviewed by Gustavo Noronha Silva.

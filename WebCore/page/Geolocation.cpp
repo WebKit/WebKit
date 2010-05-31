@@ -218,17 +218,12 @@ Geolocation::~Geolocation()
 {
 }
 
-void Geolocation::stop()
-{
-    m_oneShots.clear();
-    m_watchers.clear();
-    stopUpdating();
-}
-
 void Geolocation::disconnectFrame()
 {
     if (m_frame && m_frame->page() && m_allowGeolocation == InProgress)
         m_frame->page()->chrome()->cancelGeolocationPermissionRequestForFrame(m_frame, this);
+    stopTimers();
+    stopUpdating();
     if (m_frame && m_frame->document())
         m_frame->document()->setUsingGeolocation(false);
     m_frame = 0;
@@ -672,8 +667,6 @@ Geolocation::Geolocation(Frame*) {}
 Geolocation::~Geolocation() {}
 
 void Geolocation::setIsAllowed(bool) {}
-
-void Geolocation::stop() {}
 
 }
                                                         
