@@ -22,30 +22,45 @@
 #include "config.h"
 #include "ContextMenu.h"
 
+#include "ContextMenuClient.h"
+#include "ContextMenuClientEfl.h"
+#include "ContextMenuController.h"
 #include "NotImplemented.h"
 
 namespace WebCore {
 
 ContextMenu::ContextMenu(const HitTestResult& result)
     : m_hitTestResult(result)
-    , m_platformDescription(0)
 {
-    notImplemented();
+    m_contextMenuClient = static_cast<ContextMenuClientEfl*>(controller()->client());
+    m_platformDescription = m_contextMenuClient->createPlatformDescription(this);
+}
+
+ContextMenu::ContextMenu(const HitTestResult& result, const PlatformMenuDescription menu)
+    : m_hitTestResult(result)
+    , m_platformDescription(menu)
+{
+    m_contextMenuClient = static_cast<ContextMenuClientEfl*>(controller()->client());
 }
 
 ContextMenu::~ContextMenu()
 {
-    notImplemented();
+    if (m_platformDescription)
+        m_contextMenuClient->freePlatformDescription(m_platformDescription);
 }
 
-void ContextMenu::appendItem(ContextMenuItem&)
+void ContextMenu::appendItem(ContextMenuItem& item)
 {
-    notImplemented();
+    checkOrEnableIfNeeded(item);
+    m_contextMenuClient->appendItem(m_platformDescription, item);
 }
 
 void ContextMenu::setPlatformDescription(PlatformMenuDescription menu)
 {
+    ASSERT(!m_platformDescription);
+
     m_platformDescription = menu;
+    m_contextMenuClient->show(m_platformDescription);
 }
 
 PlatformMenuDescription ContextMenu::platformDescription() const
@@ -55,8 +70,12 @@ PlatformMenuDescription ContextMenu::platformDescription() const
 
 PlatformMenuDescription ContextMenu::releasePlatformDescription()
 {
-    notImplemented();
-    return 0;
+    // Ref count remains the same, just pass it and remove our ref, so it
+    // will not be decremented when this object goes away.
+    PlatformMenuDescription description = m_platformDescription;
+    m_platformDescription = 0;
+
+    return description;
 }
 
 }

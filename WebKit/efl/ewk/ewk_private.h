@@ -44,6 +44,8 @@ extern "C" {
 // forward declarations
 namespace WebCore {
 struct PopupMenuClient;
+struct ContextMenu;
+struct ContextMenuItem;
 }
 
 void             ewk_view_ready(Evas_Object *o);
@@ -93,6 +95,12 @@ void             ewk_view_popup_new(Evas_Object *o, WebCore::PopupMenuClient* cl
 
 Ewk_History      *ewk_history_new(WebCore::BackForwardList *history);
 void              ewk_history_free(Ewk_History *history);
+
+Ewk_Context_Menu *ewk_context_menu_new(Evas_Object *view, WebCore::ContextMenuController *controller);
+Eina_Bool         ewk_context_menu_free(Ewk_Context_Menu *o);
+void              ewk_context_menu_item_append(Ewk_Context_Menu *o, WebCore::ContextMenuItem& core);
+Ewk_Context_Menu *ewk_context_menu_custom_get(Ewk_Context_Menu *o);
+void              ewk_context_menu_show(Ewk_Context_Menu *o);
 
 Evas_Object      *ewk_frame_add(Evas *e);
 Eina_Bool         ewk_frame_init(Evas_Object *o, Evas_Object *view, WebCore::Frame *frame);

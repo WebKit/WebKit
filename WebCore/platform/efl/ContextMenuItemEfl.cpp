@@ -37,82 +37,107 @@ namespace WebCore {
 
 ContextMenuItem::ContextMenuItem(PlatformMenuItemDescription)
 {
+    // It's inside WebKit that this initialization is done, as WebCore doesn't
+    // know how PlatformMenuItemDescription is implemented.
     notImplemented();
 }
 
-ContextMenuItem::ContextMenuItem(ContextMenu*)
+ContextMenuItem::ContextMenuItem(ContextMenu* submenu)
 {
-    notImplemented();
+    m_platformDescription.type = SubmenuType;
+    setSubMenu(submenu);
 }
 
-ContextMenuItem::ContextMenuItem(ContextMenuItemType, ContextMenuAction, const String&, ContextMenu*)
+ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, ContextMenu* subMenu)
 {
-    notImplemented();
+    m_platformDescription.type = type;
+    m_platformDescription.action = action;
+    m_platformDescription.title = String(title);
+
+    setSubMenu(subMenu);
 }
 
 ContextMenuItem::~ContextMenuItem()
 {
-    notImplemented();
+    if (m_platformDescription.subMenu)
+        delete m_platformDescription.subMenu;
 }
 
 PlatformMenuItemDescription ContextMenuItem::releasePlatformDescription()
 {
-    notImplemented();
     return m_platformDescription;
 }
 
 ContextMenuItemType ContextMenuItem::type() const
 {
-    notImplemented();
-    return ActionType;
+    return m_platformDescription.type;
 }
 
-void ContextMenuItem::setType(ContextMenuItemType)
+void ContextMenuItem::setType(ContextMenuItemType type)
 {
-    notImplemented();
+    m_platformDescription.type = type;
 }
 
 ContextMenuAction ContextMenuItem::action() const
 {
-    notImplemented();
-    return ContextMenuItemTagNoAction;
+    return m_platformDescription.action;
 }
 
-void ContextMenuItem::setAction(ContextMenuAction)
+void ContextMenuItem::setAction(ContextMenuAction action)
 {
-    notImplemented();
+    m_platformDescription.action = action;
 }
 
 String ContextMenuItem::title() const
 {
-    notImplemented();
-    return String();
+    return m_platformDescription.title;
 }
 
-void ContextMenuItem::setTitle(const String&)
+void ContextMenuItem::setTitle(const String& title)
 {
-    notImplemented();
+    m_platformDescription.title = String(title);
 }
 
 PlatformMenuDescription ContextMenuItem::platformSubMenu() const
 {
-    notImplemented();
-    return 0;
+    if (!m_platformDescription.subMenu)
+        return 0;
+
+    return m_platformDescription.subMenu->platformDescription();
+
 }
 
-void ContextMenuItem::setSubMenu(ContextMenu*)
+void ContextMenuItem::setSubMenu(ContextMenu* subMenu)
 {
-    notImplemented();
+    delete m_platformDescription.subMenu;
+    m_platformDescription.subMenu = 0;
+
+    if (!subMenu)
+        return;
+
+    m_platformDescription.type = SubmenuType;
+    m_platformDescription.subMenu = new ContextMenu(subMenu->hitTestResult(),
+            subMenu->releasePlatformDescription());
 }
 
-void ContextMenuItem::setChecked(bool)
+bool ContextMenuItem::checked() const
 {
-    notImplemented();
+    return m_platformDescription.checked;
 }
 
-void ContextMenuItem::setEnabled(bool)
+void ContextMenuItem::setChecked(bool shouldCheck)
 {
-    notImplemented();
+    m_platformDescription.checked = shouldCheck;
+}
+
+bool ContextMenuItem::enabled() const
+{
+    return m_platformDescription.enabled;
+}
+
+void ContextMenuItem::setEnabled(bool shouldEnable)
+{
+    m_platformDescription.enabled = shouldEnable;
 }
 
 }

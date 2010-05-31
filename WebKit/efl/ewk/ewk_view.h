@@ -305,6 +305,8 @@ EAPI Eina_Bool    ewk_view_select_sentence(Evas_Object *o);
 EAPI Eina_Bool    ewk_view_select_line(Evas_Object *o);
 EAPI Eina_Bool    ewk_view_select_word(Evas_Object *o);
 
+EAPI Eina_Bool    ewk_view_context_menu_forward_event(Evas_Object *o, const Evas_Event_Mouse_Down *ev);
+
 EAPI void         ewk_view_popup_selected_set(Evas_Object *o, int index);
 EAPI Eina_Bool    ewk_view_popup_destroy(Evas_Object *o);
 

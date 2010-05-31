@@ -23,15 +23,18 @@
 
 #include "ChromeClientEfl.h"
 #include "ContextMenuClientEfl.h"
+#include "ContextMenuController.h"
 #include "DocumentLoader.h"
 #include "DragClientEfl.h"
 #include "EWebKit.h"
 #include "EditorClientEfl.h"
+#include "EventHandler.h"
 #include "FocusController.h"
 #include "FrameLoaderClientEfl.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "InspectorClientEfl.h"
+#include "PlatformMouseEvent.h"
 #include "PopupMenuClient.h"
 #include "ProgressTracker.h"
 #include "ewk_private.h"
@@ -1474,6 +1477,46 @@ Eina_Bool ewk_view_select_word(Evas_Object* o)
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return _ewk_view_editor_command(priv, "SelectWord");
+}
+
+/**
+ * Forwards a request of new Context Menu to WebCore.
+ *
+ * @param o View.
+ * @param ev Event data.
+ *
+ * @return @c EINA_TRUE if operation was executed, @c EINA_FALSE otherwise.
+ */
+Eina_Bool ewk_view_context_menu_forward_event(Evas_Object* o, const Evas_Event_Mouse_Down* ev)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
+    Eina_Bool mouse_press_handled = EINA_FALSE;
+
+    priv->page->contextMenuController()->clearContextMenu();
+    WebCore::Frame* main_frame = priv->page->mainFrame();
+    Evas_Coord x, y;
+    evas_object_geometry_get(sd->self, &x, &y, 0, 0);
+
+    WebCore::PlatformMouseEvent event(ev, WebCore::IntPoint(x, y));
+
+    if (main_frame->view()) {
+        mouse_press_handled =
+            main_frame->eventHandler()->handleMousePressEvent(event);
+    }
+
+    if (main_frame->eventHandler()->sendContextMenuEvent(event))
+        return EINA_FALSE;
+
+    WebCore::ContextMenu* coreMenu =
+        priv->page->contextMenuController()->contextMenu();
+    if (!coreMenu) {
+        // WebCore decided not to create a context menu, return true if event
+        // was handled by handleMouseReleaseEvent
+        return mouse_press_handled;
+    }
+
+    return EINA_TRUE;
 }
 
 /**
@@ -3394,14 +3437,20 @@ Eina_Bool ewk_view_should_interrupt_javascript(Evas_Object* o)
  * @param o View.
  * @param frame The frame whose web page exceeded its database quota.
  * @param databaseName Database name.
+ * @param current_size Current size of this database
+ * @param expected_size The expected size of this database in order to fulfill
+ * site's requirement.
  */
-void ewk_view_exceeded_database_quota(Evas_Object* o, Evas_Object* frame, const char* databaseName)
+uint64_t ewk_view_exceeded_database_quota(Evas_Object* o, Evas_Object* frame, const char* databaseName, uint64_t current_size, uint64_t expected_size)
 {
     DBG("o=%p", o);
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
-    EINA_SAFETY_ON_NULL_RETURN(sd->api);
-    EINA_SAFETY_ON_NULL_RETURN(sd->api->exceeded_database_quota);
-    sd->api->exceeded_database_quota(sd, frame, databaseName);
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api, 0);
+    if (!sd->api->exceeded_database_quota)
+        return 0;
+
+    ERR("##### %lu %lu", current_size, expected_size);
+    return sd->api->exceeded_database_quota(sd, frame, databaseName, current_size, expected_size);
 }
 
 /**

@@ -50,6 +50,10 @@ class ContextMenuClientEfl : public ContextMenuClient {
     virtual bool isSpeaking();
     virtual void stopSpeaking();
 
+    PlatformMenuDescription createPlatformDescription(ContextMenu*);
+    void freePlatformDescription(PlatformMenuDescription);
+    void appendItem(PlatformMenuDescription, ContextMenuItem&);
+    void show(PlatformMenuDescription menu);
  private:
     Evas_Object* m_view;
 };
