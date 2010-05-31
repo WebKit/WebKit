@@ -149,13 +149,22 @@ class ChromiumWinPort(chromium.ChromiumPort):
     def _path_to_driver(self, configuration=None):
         if not configuration:
             configuration = self._options.configuration
-        return self._build_path(configuration, 'test_shell.exe')
+        binary_name = 'test_shell.exe'
+        if self._options.use_drt:
+            binary_name = 'DumpRenderTree.exe'
+        return self._build_path(configuration, binary_name)
 
     def _path_to_helper(self):
-        return self._build_path(self._options.configuration, 'layout_test_helper.exe')
+        binary_name = 'layout_test_helper.exe'
+        if self._options.use_drt:
+            binary_name = 'LayoutTestHelper.exe'
+        return self._build_path(self._options.configuration, binary_name)
 
     def _path_to_image_diff(self):
-        return self._build_path(self._options.configuration, 'image_diff.exe')
+        binary_name = 'image_diff.exe'
+        if self._options.use_drt:
+            binary_name = 'ImageDiff.exe'
+        return self._build_path(self._options.configuration, binary_name)
 
     def _path_to_wdiff(self):
         return self.path_from_chromium_base('third_party', 'cygwin', 'bin',

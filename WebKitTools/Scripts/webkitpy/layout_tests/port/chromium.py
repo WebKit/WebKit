@@ -46,10 +46,7 @@ import http_server
 
 from webkitpy.common.system.executive import Executive
 
-# FIXME: To use the DRT-based version of this file, we need to be able to
-# run the webkit code, which uses server_process, which requires UNIX-style
-# non-blocking I/O with selects(), which requires fcntl() which doesn't exist
-# on Windows.
+# Chromium DRT on non-Windows uses WebKitDriver.
 if sys.platform not in ('win32', 'cygwin'):
     import webkit
 
@@ -91,13 +88,6 @@ class ChromiumPort(base.Port):
 
     def check_build(self, needs_http):
         result = True
-
-        # FIXME: see comment above re: import webkit
-        if (sys.platform in ('win32', 'cygwin') and self._options and
-            hasattr(self._options, 'use_drt') and self._options.use_drt):
-            _log.error('--use-drt is not supported on Windows yet')
-            _log.error('')
-            result = False
 
         dump_render_tree_binary_path = self._path_to_driver()
         result = check_file_exists(dump_render_tree_binary_path,
@@ -143,10 +133,11 @@ class ChromiumPort(base.Port):
             abspath = os.path.abspath(__file__)
             offset = abspath.find('third_party')
             if offset == -1:
-                # FIXME: This seems like the wrong error to throw.
-                raise AssertionError('could not find Chromium base dir from ' +
-                                     abspath)
-            self._chromium_base_dir = abspath[0:offset]
+                self._chromium_base_dir = os.path.join(
+                    abspath[0:abspath.find('WebKitTools')],
+                    'WebKit', 'chromium')
+            else:
+                self._chromium_base_dir = abspath[0:offset]
         return os.path.join(self._chromium_base_dir, *comps)
 
     def path_to_test_expectations_file(self):
@@ -180,8 +171,12 @@ class ChromiumPort(base.Port):
 
     def create_driver(self, image_path, options):
         """Starts a new Driver and returns a handle to it."""
-        if self._options.use_drt:
+        if self._options.use_drt and sys.platform not in ('win32', 'cygwin'):
             return webkit.WebKitDriver(self, image_path, options, executive=self._executive)
+        if self._options.use_drt:
+            options += ['--test-shell']
+        else:
+            options += ['--layout-tests']
         return ChromiumDriver(self, image_path, options, executive=self._executive)
 
     def start_helper(self):
@@ -297,7 +292,7 @@ class ChromiumDriver(base.Driver):
         cmd = []
         # FIXME: We should not be grabbing at self._port._options.wrapper directly.
         cmd += self._command_wrapper(self._port._options.wrapper)
-        cmd += [self._port._path_to_driver(), '--layout-tests']
+        cmd += [self._port._path_to_driver()]
         if self._options:
             cmd += self._options
 

@@ -1,3 +1,43 @@
+2010-05-30  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        new-run-webkit-tests: Support DRT on Chromium-win
+        https://bugs.webkit.org/show_bug.cgi?id=39810
+
+        Add --test-shell flag to DRT/Chromium, and it changes DRT so that
+        it behaves like test_shell about command analysis, printing
+        format, pixel dumping, and timeout handling.
+
+        chromium.py and chromium_win.py supports the --test-shell flag and
+        DRT/Chromium-win binary names.
+        
+        * DumpRenderTree/DumpRenderTree.gypi: Add new files.
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (runTest): Support for test_shell-style command.
+        (main): Introduce --test-shell.
+        * DumpRenderTree/chromium/TestEventPrinter.cpp: Added.
+        * DumpRenderTree/chromium/TestEventPrinter.h: Added.
+          TestEventPrinter class manages stdio output and image output.
+          TestEventPrinter.cpp has two implementations; DRTPrinter and
+          TestShellPrinter.
+        * DumpRenderTree/chromium/TestShell.cpp:
+          Some changes for TestEventPrinter.
+        (TestShell::TestShell):
+        (TestShell::runFileTest):
+        (TestShell::testTimedOut):
+        (TestShell::dump):
+        (TestShell::dumpImage):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::printer):
+        (TestShell::layoutTestTimeout):
+        (TestShell::layoutTestTimeoutForWatchDog):
+        (TestShell::setLayoutTestTimeout):
+        * DumpRenderTree/chromium/TestShellWin.cpp:
+        (watchDogThread): Use TestShell::layoutTestTimeoutForWatchDog().
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+
 2010-05-30  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

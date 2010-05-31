@@ -20,6 +20,8 @@
             'chromium/NotificationPresenter.cpp',
             'chromium/PlainTextController.cpp',
             'chromium/PlainTextController.h',
+            'chromium/TestEventPrinter.h',
+            'chromium/TestEventPrinter.cpp',
             'chromium/TestNavigationController.cpp',
             'chromium/TestNavigationController.h',
             'chromium/TestShell.cpp',

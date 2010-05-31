@@ -33,6 +33,7 @@
 #include "LayoutTestController.h"
 #include "NotificationPresenter.h"
 #include "PlainTextController.h"
+#include "TestEventPrinter.h"
 #include "TextInputController.h"
 #include "WebViewHost.h"
 #include <string>
@@ -58,6 +59,7 @@ struct TestParams {
     bool dumpPixels;
     bool printSeparators;
     WebKit::WebURL testUrl;
+    // Resultant image file name. Reqruired only if the test_shell mode.
     std::string pixelFileName;
     std::string pixelHash;
 
@@ -69,7 +71,7 @@ struct TestParams {
 
 class TestShell {
 public:
-    TestShell();
+    TestShell(bool testShellMode);
     ~TestShell();
     // The main WebView.
     WebKit::WebView* webView() const { return m_webView; }
@@ -79,6 +81,7 @@ public:
     EventSender* eventSender() const { return m_eventSender.get(); }
     AccessibilityController* accessibilityController() const { return m_accessibilityController.get(); }
     NotificationPresenter* notificationPresenter() const { return m_notificationPresenter.get(); }
+    TestEventPrinter* printer() const { return m_printer.get(); }
 
     void bindJSObjectsToWindow(WebKit::WebFrame*);
     void runFileTest(const TestParams&);
@@ -110,8 +113,9 @@ public:
 #endif
 
     // Get the timeout for running a test in milliseconds.
-    static int layoutTestTimeout();
-    static int layoutTestTimeoutForWatchDog() { return layoutTestTimeout() + 1000; }
+    int layoutTestTimeout() { return m_timeout; }
+    int layoutTestTimeoutForWatchDog() { return layoutTestTimeout() + 1000; }
+    void setLayoutTestTimeout(int timeout) { m_timeout = timeout; }
 
     WebViewHost* createWebView();
     WebViewHost* createNewWindow(const WebKit::WebURL&);
@@ -127,13 +131,14 @@ private:
     static void resetWebSettings(WebKit::WebView&);
     void dump();
     std::string dumpAllBackForwardLists();
-    static std::string dumpImage(skia::PlatformCanvas*, const std::string& expectedHash);
+    void dumpImage(skia::PlatformCanvas*) const;
 
     bool m_testIsPending;
     bool m_testIsPreparing;
     bool m_isLoading;
     WebKit::WebView* m_webView;
     WebKit::WebWidget* m_focusedWidget;
+    bool m_testShellMode;
     WebViewHost* m_webViewHost;
     OwnPtr<AccessibilityController*> m_accessibilityController;
     OwnPtr<EventSender*> m_eventSender;
@@ -141,7 +146,9 @@ private:
     OwnPtr<PlainTextController*> m_plainTextController;
     OwnPtr<TextInputController*> m_textInputController;
     OwnPtr<NotificationPresenter*> m_notificationPresenter;
+    OwnPtr<TestEventPrinter*> m_printer;
     TestParams m_params;
+    int m_timeout; // timeout value in millisecond
 
     // List of all windows in this process.
     // The main window should be put into windowList[0].

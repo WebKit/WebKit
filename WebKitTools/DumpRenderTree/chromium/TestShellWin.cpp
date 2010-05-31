@@ -38,27 +38,23 @@
 #include <shlwapi.h>
 #include <sys/stat.h>
 
-// Default timeout in ms for file page loads when in layout test mode.
-const int kDefaultFileTestTimeoutMillisecs = 10 * 1000;
-const int kDefaultWatchDogTimeoutMillisecs = kDefaultFileTestTimeoutMillisecs + 1 * 1000;
-
 // Thread main to run for the thread which just tests for timeout.
-unsigned int __stdcall watchDogThread(void *arg)
+unsigned int __stdcall watchDogThread(void* arg)
 {
     // If we're debugging a layout test, don't timeout.
     if (::IsDebuggerPresent())
-    return 0;
+        return 0;
 
     TestShell* shell = static_cast<TestShell*>(arg);
     // FIXME: Do we need user-specified time settings as with the original
     // Chromium implementation?
-    DWORD timeout = static_cast<DWORD>(kDefaultWatchDogTimeoutMillisecs);
+    DWORD timeout = static_cast<DWORD>(shell->layoutTestTimeoutForWatchDog());
     DWORD rv = WaitForSingleObject(shell->finishedEvent(), timeout);
     if (rv == WAIT_TIMEOUT) {
         // Print a warning to be caught by the layout-test script.
         // Note: the layout test driver may or may not recognize
         // this as a timeout.
-        puts("#TEST_TIMED_OUT\n");
+        puts("\n#TEST_TIMED_OUT\n");
         puts("#EOF\n");
         fflush(stdout);
         TerminateProcess(GetCurrentProcess(), 0);
