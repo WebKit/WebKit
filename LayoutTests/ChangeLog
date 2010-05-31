@@ -1,3 +1,18 @@
+2010-05-31  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Accessibility tests shouldn't rely on crazy <title> parsing
+        https://bugs.webkit.org/show_bug.cgi?id=39940
+
+        We have a separate test for crazy <title> parsing already in
+        fast/tokenizer.  Also, this patch makes these tests pass with the HTML5
+        parser (and run in Firefox).
+
+        * accessibility/image-link-inline-cont.html:
+        * accessibility/image-link.html:
+        * accessibility/inline-continuations.html:
+
 2010-05-30  Roland Steiner  <rolandsteiner@chromium.org>
 
         Unreviewed: add failing test to Chromium test_expectations.txt
