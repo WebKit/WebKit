@@ -1,3 +1,12 @@
+2010-05-31  Darin Adler  <darin@apple.com>
+
+        Updated bindings test results for change in JavaScript host calling convention change
+        from 2 days ago.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp: Regenerated and inspected to see that the new
+        result is correct.
+        * bindings/scripts/test/JS/JSTestObj.h: Ditto.
+
 2010-05-31  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
