@@ -227,6 +227,8 @@ WebDevToolsAgentImpl::WebDevToolsAgentImpl(
     , m_resourceTrackingWasEnabled(false)
     , m_attached(false)
 {
+    DebuggerAgentManager::setExposeV8DebuggerProtocol(
+        client->exposeV8DebuggerProtocol());
     m_debuggerAgentDelegateStub.set(new DebuggerAgentDelegateStub(this));
     m_toolsAgentDelegateStub.set(new ToolsAgentDelegateStub(this));
     m_apuAgentDelegateStub.set(new ApuAgentDelegateStub(this));
@@ -255,7 +257,8 @@ void WebDevToolsAgentImpl::attach()
         return;
 
 #if ENABLE(V8_SCRIPT_DEBUG_SERVER)
-    ClientMessageLoopAdapter::ensureClientMessageLoopCreated(m_client);
+    if (!m_client->exposeV8DebuggerProtocol())
+        ClientMessageLoopAdapter::ensureClientMessageLoopCreated(m_client);
 #endif
 
     m_debuggerAgentImpl.set(

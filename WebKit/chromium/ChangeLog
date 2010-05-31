@@ -1,3 +1,35 @@
+2010-05-31  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: allow hiding Scripts panel from Chromium code. This
+        is needed to support v8 debugging protocol which has an implementation
+        that conflicts with debugger provided by the inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=39952
+
+        * public/WebDevToolsAgentClient.h:
+        (WebKit::WebDevToolsAgentClient::exposeV8DebuggerProtocol):
+        * public/WebDevToolsFrontendClient.h:
+        (WebKit::WebDevToolsFrontendClient::WebDevToolsFrontendClient):
+        (WebKit::WebDevToolsFrontendClient::sendMessageToAgent):
+        (WebKit::WebDevToolsFrontendClient::sendDebuggerCommandToAgent):
+        (WebKit::WebDevToolsFrontendClient::sendDebuggerPauseScript):
+        (WebKit::WebDevToolsFrontendClient::activateWindow):
+        (WebKit::WebDevToolsFrontendClient::closeWindow):
+        (WebKit::WebDevToolsFrontendClient::requestDockWindow):
+        (WebKit::WebDevToolsFrontendClient::requestUndockWindow):
+        (WebKit::WebDevToolsFrontendClient::hideScriptsPanel):
+        * src/DebuggerAgentManager.cpp:
+        (WebKit::DebuggerAgentManager::debugAttach):
+        (WebKit::DebuggerAgentManager::debugDetach):
+        (WebKit::DebuggerAgentManager::setExposeV8DebuggerProtocol):
+        * src/DebuggerAgentManager.h:
+        * src/InspectorFrontendClientImpl.cpp:
+        (WebKit::InspectorFrontendClientImpl::hiddenPanels):
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::WebDevToolsAgentImpl):
+        (WebKit::WebDevToolsAgentImpl::attach):
+
 2010-05-30  Lyon Chen  <liachen@rim.com>
 
         Reviewed by Kent Tamura.
