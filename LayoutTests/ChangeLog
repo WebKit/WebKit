@@ -1,3 +1,13 @@
+2010-06-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Update expected results after r60503.
+
+        Reviewed by Laszlo Gombos.
+
+        * platform/qt/fast/repaint/moving-shadow-on-path-expected.txt:
+        * platform/qt/svg/css/arrow-with-shadow-expected.txt:
+        * platform/qt/svg/css/stars-with-shadow-expected.txt:
+
 2010-06-01  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Nikolas Zimmermann.
