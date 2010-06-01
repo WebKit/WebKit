@@ -528,6 +528,7 @@ WebKitWebWindowFeaturesPrivate
 
 <SECTION>
 <FILE>webkit</FILE>
+<TITLE>Global functions</TITLE>
 webkit_init
 webkit_get_default_session
 webkit_get_default_web_database_quota
@@ -535,6 +536,11 @@ webkit_get_web_database_directory_path
 webkit_remove_all_web_databases
 webkit_set_default_web_database_quota
 webkit_set_web_database_directory_path
+<SUBSECTION CacheModel>
+WebKitCacheModel
+webkit_get_cache_model
+webkit_set_cache_model
+</SUBSECTION>
 </SECTION>
 
 <SECTION>
@@ -604,11 +610,4 @@ webkit_check_version
 webkit_major_version
 webkit_micro_version
 webkit_minor_version
-</SECTION>
-
-<SECTION>
-<FILE>webkitcachemodel</FILE>
-WebKitCacheModel
-webkit_get_cache_model
-webkit_set_cache_model
 </SECTION>

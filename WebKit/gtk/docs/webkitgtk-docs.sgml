@@ -10,6 +10,11 @@
   </bookinfo>
 
   <chapter>
+    <title>Global functions</title>
+    <xi:include href="xml/webkit.xml"/>
+  </chapter>
+
+  <chapter>
     <title>Class Overview</title>
     <xi:include href="xml/webkitwebview.xml"/>
     <xi:include href="xml/webkitwebframe.xml"/>
@@ -30,7 +35,6 @@
     <xi:include href="xml/webkitsoupauthdialog.xml"/>
     <xi:include href="xml/webkitsecurityorigin.xml"/>
     <xi:include href="xml/webkitwebwindowfeatures.xml"/>
-    <xi:include href="xml/webkitcachemodel.xml"/>
   </chapter>
 
   <chapter>
