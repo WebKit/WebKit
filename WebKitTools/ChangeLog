@@ -1,3 +1,18 @@
+2010-06-01  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] css1/color_and_background/background_attachment.html fails on the 32-bit debug bot
+        https://bugs.webkit.org/show_bug.cgi?id=39101
+
+        Work around timing issues for render tree dumps by pumping the
+        main loop before doing the dump. Resize events are asynchronous
+        in GTK+, so sometimes resize requests are still pending when DRT
+        dumps the tree.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (dump): Pump the main loop before dumping the render tree.
+
 2010-05-31  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
