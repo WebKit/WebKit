@@ -157,12 +157,11 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)webView:(WebView *)webView decidePolicyForGeolocationRequestFromOrigin:(WebSecurityOrigin *)origin frame:(WebFrame *)frame listener:(id<WebGeolocationPolicyListener>)listener
 {
-    if (gLayoutTestController->isGeolocationPermissionSet()) {
-        if (gLayoutTestController->geolocationPermission())
-            [listener allow];
-        else
-            [listener deny];
-    }
+    // FIXME: If mock permission isn't set yet, we should send the response asynchronously.
+    if (gLayoutTestController->isGeolocationPermissionSet() && gLayoutTestController->geolocationPermission())
+        [listener allow];
+    else
+        [listener deny];
 }
 
 - (BOOL)webView:(WebView *)sender shouldHaltPlugin:(DOMNode *)pluginNode

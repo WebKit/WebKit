@@ -4,7 +4,7 @@ var mockLatitude = 51.478;
 var mockLongitude = -0.166;
 var mockAccuracy = 100.0;
 
-var mockCode = 1;
+var mockCode = 2;
 var mockMessage = 'test';
 
 var position;

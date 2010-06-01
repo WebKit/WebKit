@@ -1,8 +1,9 @@
 description("Tests Geolocation error callback using the mock service.");
 
-var mockCode = 0;
+var mockCode = 2;
 var mockMessage = "debug";
 
+window.layoutTestController.setGeolocationPermission(true);
 window.layoutTestController.setMockGeolocationError(mockCode, mockMessage);
 
 var error;

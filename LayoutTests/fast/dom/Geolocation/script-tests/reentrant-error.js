@@ -3,6 +3,7 @@ description("Tests that reentrant calls to Geolocation methods from the error ca
 var mockCode = 0;
 var mockMessage = 'test';
 
+window.layoutTestController.setGeolocationPermission(true);
 window.layoutTestController.setMockGeolocationError(mockCode, mockMessage);
 
 var error;

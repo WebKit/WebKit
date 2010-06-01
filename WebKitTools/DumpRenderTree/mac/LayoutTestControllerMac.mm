@@ -31,6 +31,7 @@
 #import "LayoutTestController.h"
 
 #import "EditingDelegate.h"
+#import "MockGeolocationProvider.h"
 #import "PolicyDelegate.h"
 #import "WorkQueue.h"
 #import "WorkQueueItem.h"
@@ -47,7 +48,7 @@
 #import <WebKit/WebDatabaseManagerPrivate.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameViewPrivate.h>
-#import <WebKit/WebGeolocationMockPrivate.h>
+#import <WebKit/WebGeolocationPosition.h>
 #import <WebKit/WebHTMLRepresentation.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebHistory.h>
@@ -55,6 +56,7 @@
 #import <WebKit/WebIconDatabasePrivate.h>
 #import <WebKit/WebInspectorPrivate.h>
 #import <WebKit/WebNSURLExtras.h>
+#import <WebKit/WebKitErrors.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebScriptWorld.h>
@@ -298,14 +300,17 @@ void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool forbidd
 
 void LayoutTestController::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
 {
-    [WebGeolocationMock setPosition:latitude:longitude:accuracy];
+    WebGeolocationPosition *position = [[WebGeolocationPosition alloc] initWithTimestamp:0 latitude:latitude longitude:longitude accuracy:accuracy];
+    [[MockGeolocationProvider shared] setPosition:position];
+    [position release];
 }
 
 void LayoutTestController::setMockGeolocationError(int code, JSStringRef message)
 {
     RetainPtr<CFStringRef> messageCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, message));
     NSString *messageNS = (NSString *)messageCF.get();
-    [WebGeolocationMock setError:code:messageNS];
+    NSError *error = [NSError errorWithDomain:WebKitErrorDomain code:code userInfo:[NSDictionary dictionaryWithObject:messageNS forKey:NSLocalizedDescriptionKey]];
+    [[MockGeolocationProvider shared] setError:error];
 }
 
 void LayoutTestController::setIconDatabaseEnabled(bool iconDatabaseEnabled)

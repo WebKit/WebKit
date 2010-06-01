@@ -12,7 +12,6 @@
 .objc_class_name_WebFormDelegate
 .objc_class_name_WebFrame
 .objc_class_name_WebFrameView
-.objc_class_name_WebGeolocationMock
 .objc_class_name_WebGeolocationPosition
 .objc_class_name_WebHTMLRepresentation
 .objc_class_name_WebHTMLView

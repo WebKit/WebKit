@@ -1,3 +1,16 @@
+2010-06-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39434
+        REGRESSION (r59811): Geolocation callbacks cannot be created
+
+        Removing unused WebGeolocationMock.
+
+        * WebCoreSupport/WebGeolocationMock.mm: Removed.
+        * WebCoreSupport/WebGeolocationMockPrivate.h: Removed.
+        * WebKit.exp:
+
 2010-05-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

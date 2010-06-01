@@ -1183,8 +1183,6 @@
 		59B597731108656B007159E8 /* BridgeJSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59B597721108656B007159E8 /* BridgeJSC.cpp */; };
 		59B5977511086579007159E8 /* BridgeJSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59B5977411086579007159E8 /* BridgeJSC.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		59BC393F11054A1300FD85DB /* JavaStringJSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59BC393E11054A1300FD85DB /* JavaStringJSC.h */; };
-		59C77F2A10545B3B00506104 /* GeolocationServiceMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59C77F2810545B3B00506104 /* GeolocationServiceMock.cpp */; };
-		59C77F2B10545B3B00506104 /* GeolocationServiceMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 59C77F2910545B3B00506104 /* GeolocationServiceMock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		59E560A71105336600AA1258 /* JavaClassJSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59E560A61105336600AA1258 /* JavaClassJSC.h */; };
 		59E560A91105336F00AA1258 /* JavaClassJSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59E560A81105336F00AA1258 /* JavaClassJSC.cpp */; };
 		59E842661109E5A2000305AD /* JNIBridgeJSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59E842651109E5A2000305AD /* JNIBridgeJSC.h */; };
@@ -4691,8 +4689,6 @@
 		BCE1C4400D9830F4003B02F2 /* JSLocationCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */; };
 		BCE3BEC20D222B1D007E06E4 /* TagNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE3BEC00D222B1D007E06E4 /* TagNodeList.cpp */; };
 		BCE3BEC30D222B1D007E06E4 /* TagNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE3BEC10D222B1D007E06E4 /* TagNodeList.h */; };
-		BCE494AB0F4F5E9E0084E319 /* GeolocationServiceMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE494A90F4F5E9E0084E319 /* GeolocationServiceMac.h */; settings = {ATTRIBUTES = (); }; };
-		BCE494AC0F4F5E9E0084E319 /* GeolocationServiceMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCE494AA0F4F5E9E0084E319 /* GeolocationServiceMac.mm */; };
 		BCE658FF0EA9248A007E4533 /* Theme.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE658FE0EA9248A007E4533 /* Theme.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCE659A90EA927B9007E4533 /* ThemeTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE659A80EA927B9007E4533 /* ThemeTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCE659E60EA92FB2007E4533 /* ThemeMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE659E50EA92FB2007E4533 /* ThemeMac.h */; };
@@ -5105,8 +5101,6 @@
 		FE80DA660E9C4703000D6F75 /* JSGeoposition.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80DA620E9C4703000D6F75 /* JSGeoposition.h */; };
 		FE80DA710E9C472F000D6F75 /* JSPositionError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80DA6D0E9C472F000D6F75 /* JSPositionError.cpp */; };
 		FE80DA720E9C472F000D6F75 /* JSPositionError.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80DA6E0E9C472F000D6F75 /* JSPositionError.h */; };
-		FEAB90120EA51B9C006348C3 /* GeolocationService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEAB90100EA51B9C006348C3 /* GeolocationService.cpp */; };
-		FEAB90130EA51B9C006348C3 /* GeolocationService.h in Headers */ = {isa = PBXBuildFile; fileRef = FEAB90110EA51B9C006348C3 /* GeolocationService.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -6823,8 +6817,6 @@
 		59B597721108656B007159E8 /* BridgeJSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BridgeJSC.cpp; path = bridge/jsc/BridgeJSC.cpp; sourceTree = "<group>"; };
 		59B5977411086579007159E8 /* BridgeJSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BridgeJSC.h; path = bridge/jsc/BridgeJSC.h; sourceTree = "<group>"; };
 		59BC393E11054A1300FD85DB /* JavaStringJSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JavaStringJSC.h; path = jsc/JavaStringJSC.h; sourceTree = "<group>"; };
-		59C77F2810545B3B00506104 /* GeolocationServiceMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GeolocationServiceMock.cpp; path = mock/GeolocationServiceMock.cpp; sourceTree = "<group>"; };
-		59C77F2910545B3B00506104 /* GeolocationServiceMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeolocationServiceMock.h; path = mock/GeolocationServiceMock.h; sourceTree = "<group>"; };
 		59E560A61105336600AA1258 /* JavaClassJSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JavaClassJSC.h; path = jsc/JavaClassJSC.h; sourceTree = "<group>"; };
 		59E560A81105336F00AA1258 /* JavaClassJSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JavaClassJSC.cpp; path = jsc/JavaClassJSC.cpp; sourceTree = "<group>"; };
 		59E842651109E5A2000305AD /* JNIBridgeJSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JNIBridgeJSC.h; path = jsc/JNIBridgeJSC.h; sourceTree = "<group>"; };
@@ -10211,8 +10203,6 @@
 		BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSLocationCustom.cpp; sourceTree = "<group>"; };
 		BCE3BEC00D222B1D007E06E4 /* TagNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagNodeList.cpp; sourceTree = "<group>"; };
 		BCE3BEC10D222B1D007E06E4 /* TagNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagNodeList.h; sourceTree = "<group>"; };
-		BCE494A90F4F5E9E0084E319 /* GeolocationServiceMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeolocationServiceMac.h; sourceTree = "<group>"; };
-		BCE494AA0F4F5E9E0084E319 /* GeolocationServiceMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GeolocationServiceMac.mm; sourceTree = "<group>"; };
 		BCE658FE0EA9248A007E4533 /* Theme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Theme.h; sourceTree = "<group>"; };
 		BCE659A80EA927B9007E4533 /* ThemeTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThemeTypes.h; sourceTree = "<group>"; };
 		BCE659E50EA92FB2007E4533 /* ThemeMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThemeMac.h; sourceTree = "<group>"; };
@@ -10700,8 +10690,6 @@
 		FE80DA6D0E9C472F000D6F75 /* JSPositionError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPositionError.cpp; sourceTree = "<group>"; };
 		FE80DA6E0E9C472F000D6F75 /* JSPositionError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPositionError.h; sourceTree = "<group>"; };
 		FEA4133F105D67AE0007236F /* WebCore.DragSupport.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.DragSupport.exp; sourceTree = "<group>"; };
-		FEAB90100EA51B9C006348C3 /* GeolocationService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeolocationService.cpp; sourceTree = "<group>"; };
-		FEAB90110EA51B9C006348C3 /* GeolocationService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeolocationService.h; sourceTree = "<group>"; };
 		FEFD102C105C41470002855E /* WebCore.ContextMenus.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.ContextMenus.exp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -11765,8 +11753,6 @@
 		59C77F101054591C00506104 /* mock */ = {
 			isa = PBXGroup;
 			children = (
-				59C77F2810545B3B00506104 /* GeolocationServiceMock.cpp */,
-				59C77F2910545B3B00506104 /* GeolocationServiceMock.h */,
 			);
 			name = mock;
 			sourceTree = "<group>";
@@ -11946,8 +11932,6 @@
 				066C772C0AB603D200238CC4 /* FileChooserMac.mm */,
 				514B3F750C722055000530DF /* FileSystemMac.mm */,
 				935C476C09AC4D6300A6AAB4 /* FoundationExtras.h */,
-				BCE494A90F4F5E9E0084E319 /* GeolocationServiceMac.h */,
-				BCE494AA0F4F5E9E0084E319 /* GeolocationServiceMac.mm */,
 				935C476E09AC4D7300A6AAB4 /* KeyEventMac.mm */,
 				521D46F511AEC98100514613 /* KillRingMac.mm */,
 				6593923909AE435C002C531F /* KURLMac.mm */,
@@ -15881,8 +15865,6 @@
 				066C772A0AB603B700238CC4 /* FileChooser.h */,
 				514B3F720C722047000530DF /* FileSystem.h */,
 				BC073BA90C399B1F000F5979 /* FloatConversion.h */,
-				FEAB90100EA51B9C006348C3 /* GeolocationService.cpp */,
-				FEAB90110EA51B9C006348C3 /* GeolocationService.h */,
 				BC3BC29B0E91AB0F00835588 /* HostWindow.h */,
 				521D46F711AEC9B100514613 /* KillRing.h */,
 				6593923509AE4346002C531F /* KURL.cpp */,
@@ -17931,9 +17913,6 @@
 				BC56CB2410D5AC8000A77C64 /* GeolocationError.h in Headers */,
 				BC56CB2510D5AC8000A77C64 /* GeolocationPosition.h in Headers */,
 				5962297A1133EFE200DC4CBB /* GeolocationPositionCache.h in Headers */,
-				FEAB90130EA51B9C006348C3 /* GeolocationService.h in Headers */,
-				BCE494AB0F4F5E9E0084E319 /* GeolocationServiceMac.h in Headers */,
-				59C77F2B10545B3B00506104 /* GeolocationServiceMock.h in Headers */,
 				FE80D7C90E9C1F25000D6F75 /* Geoposition.h in Headers */,
 				B2C3DA6C0D006CD600EF6F26 /* GlyphBuffer.h in Headers */,
 				C5D4AA7A116BAFB60069CA93 /* GlyphMetricsMap.h in Headers */,
@@ -20257,9 +20236,6 @@
 				FE80D7C50E9C1F25000D6F75 /* Geolocation.cpp in Sources */,
 				BC56CB2110D5AC8000A77C64 /* GeolocationController.cpp in Sources */,
 				596229781133EFD700DC4CBB /* GeolocationPositionCache.cpp in Sources */,
-				FEAB90120EA51B9C006348C3 /* GeolocationService.cpp in Sources */,
-				BCE494AC0F4F5E9E0084E319 /* GeolocationServiceMac.mm in Sources */,
-				59C77F2A10545B3B00506104 /* GeolocationServiceMock.cpp in Sources */,
 				B2C3DA6D0D006CD600EF6F26 /* GlyphPageTreeNode.cpp in Sources */,
 				B2AFFC830D00A5C10030074D /* GlyphPageTreeNodeMac.cpp in Sources */,
 				BC53C6080DA56C570021EB5D /* Gradient.cpp in Sources */,

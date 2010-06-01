@@ -1,3 +1,38 @@
+2010-06-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39434
+        REGRESSION (r59811): Geolocation callbacks cannot be created
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Added MockGeolocationProvider.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow): Tell the view to use MockGeolocationProvider. 
+        (resetWebViewToConsistentStateBeforeTesting): Make sure that mock notifications don't leak
+        into subsequent tests.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setMockGeolocationPosition): Changed to use MockGeolocationProvider.
+        (LayoutTestController::setMockGeolocationError): Ditto.
+
+        * DumpRenderTree/mac/MockGeolocationProvider.h: Added.
+        * DumpRenderTree/mac/MockGeolocationProvider.mm: Added.
+        (+[MockGeolocationProvider shared]):
+        (-[MockGeolocationProvider dealloc]):
+        (-[MockGeolocationProvider setPosition:]):
+        (-[MockGeolocationProvider setError:]):
+        (-[MockGeolocationProvider registerWebView:]):
+        (-[MockGeolocationProvider unregisterWebView:]):
+        (-[MockGeolocationProvider lastPosition]):
+        (-[MockGeolocationProvider stopTimer]):
+        (-[MockGeolocationProvider timerFired]):
+
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:decidePolicyForGeolocationRequestFromOrigin:frame:listener:]):
+        This delegate method must send a response. I'm not sure what the two-stage check is supposed
+        to achieve, it seems unnecessary.
+
 2010-06-01  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

@@ -28,13 +28,16 @@
 #define Geolocation_h
 
 #include "GeolocationPositionCache.h"
-#include "GeolocationService.h"
 #include "Geoposition.h"
 #include "PositionCallback.h"
 #include "PositionError.h"
 #include "PositionErrorCallback.h"
 #include "PositionOptions.h"
 #include "Timer.h"
+
+#if !ENABLE(CLIENT_BASED_GEOLOCATION)
+#include "GeolocationService.h"
+#endif
 
 namespace WebCore {
 

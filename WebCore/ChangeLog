@@ -1,3 +1,26 @@
+2010-06-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39434
+        REGRESSION (r59811): Geolocation callbacks cannot be created
+
+        * DerivedSources.make: Don't append both WebCore.Geolocation.exp and WebCore.ClientBasedGeolocation.exp,
+        they are mutually exclusive.
+
+        * WebCore.Geolocation.exp: Touched to force .exp file rebuild.
+
+        * WebCore.xcodeproj/project.pbxproj: Removed GeolocationService related files.
+
+        * bindings/js/JSGeolocationCustom.cpp:
+        (WebCore::createPositionCallback): Functions defined in JavaScript code no longer inherit
+        from InternalFunction, they inherit from JSFunction. This check is still imperfect, because
+        it's not clear what definition of "function" should really be used, if any - other bindings
+        code never checks callback type.
+        (WebCore::createPositionErrorCallback): Ditto.
+
+        * page/Geolocation.h: Don't include GeolocationService.h unless it's going to be used.
+
 2010-06-01  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.

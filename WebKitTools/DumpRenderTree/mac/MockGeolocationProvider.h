@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,11 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <Foundation/Foundation.h>
+#ifndef MockGeolocationProvider_h
+#define MockGeolocationProvider_h
 
-@interface WebGeolocationMock : NSObject {
+#import <WebKit/WebViewPrivate.h>
+#import <wtf/HashSet.h>
+
+@interface MockGeolocationProvider : NSObject<WebGeolocationProvider> {
+    WebGeolocationPosition *_lastPosition;
+    NSError *_error;
+    NSTimer *_timer;
+    HashSet<WebView *> _registeredViews;
 }
 
-+ (void)setPosition:(double)latitude:(double)longitude:(double)accuracy;
-+ (void)setError:(int)code:(NSString *)message;
++ (MockGeolocationProvider *)shared;
+
+- (void)setPosition:(WebGeolocationPosition *)position;
+- (void)setError:(NSError *)error;
+
+- (void)stopTimer;
+
 @end
+#endif

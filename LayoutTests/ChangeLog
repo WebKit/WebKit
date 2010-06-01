@@ -1,3 +1,27 @@
+2010-06-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39434
+        REGRESSION (r59811): Geolocation callbacks cannot be created
+
+        * platform/mac/Skipped: All tests used to be disabled. Now only those that fal with an
+        assertion are.
+
+        * platform/gtk/Skipped: Unskipped tests that we affected by this bug.
+
+        * fast/dom/Geolocation/script-tests/error.js: The test checks what happens if resolving
+        position fails. So, it has to enable permission, and has to use an error code that actually
+        exists.
+
+        * fast/dom/Geolocation/script-tests/maximum-age.js: Error code 1 is permission denied,
+        but permission is not denied in this test. Use an error code that agrees with reality.
+
+        * fast/dom/Geolocation/script-tests/watch.js: Ditto.
+        
+        * fast/dom/Geolocation/script-tests/reentrant-error.js: The test checks what happens if
+        resolving position fails. So, it has to enable permission.
+
 2010-06-01  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

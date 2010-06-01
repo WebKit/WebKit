@@ -110,8 +110,6 @@
 		51FDC4D30B0AF5C100F84EB3 /* WebHistoryItemPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FDC4D20B0AF5C100F84EB3 /* WebHistoryItemPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5241ADF50B1BC48A004012BD /* WebCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 5241ADF30B1BC48A004012BD /* WebCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5241ADF60B1BC48A004012BD /* WebCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5241ADF40B1BC48A004012BD /* WebCache.mm */; };
-		59C77F3510545F7E00506104 /* WebGeolocationMock.mm in Sources */ = {isa = PBXBuildFile; fileRef = 59C77F3310545F7E00506104 /* WebGeolocationMock.mm */; };
-		59C77F4B105471E700506104 /* WebGeolocationMockPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 59C77F4A105471E700506104 /* WebGeolocationMockPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5D7BF8140C2A1D90008CE06D /* WebInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D7BF8120C2A1D90008CE06D /* WebInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5D7BF8150C2A1D90008CE06D /* WebInspector.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5D7BF8130C2A1D90008CE06D /* WebInspector.mm */; };
 		5DE83A7A0D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.nib in Resources */ = {isa = PBXBuildFile; fileRef = 5DE83A740D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.nib */; };
@@ -510,8 +508,6 @@
 		51FDC4D20B0AF5C100F84EB3 /* WebHistoryItemPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryItemPrivate.h; sourceTree = "<group>"; };
 		5241ADF30B1BC48A004012BD /* WebCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCache.h; sourceTree = "<group>"; };
 		5241ADF40B1BC48A004012BD /* WebCache.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCache.mm; sourceTree = "<group>"; };
-		59C77F3310545F7E00506104 /* WebGeolocationMock.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebGeolocationMock.mm; sourceTree = "<group>"; };
-		59C77F4A105471E700506104 /* WebGeolocationMockPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGeolocationMockPrivate.h; sourceTree = "<group>"; };
 		5D7BF8120C2A1D90008CE06D /* WebInspector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebInspector.h; sourceTree = "<group>"; };
 		5D7BF8130C2A1D90008CE06D /* WebInspector.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspector.mm; sourceTree = "<group>"; };
 		5DE83A750D0F7F9400CAD12A /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/WebJavaScriptTextInputPanel.nib; sourceTree = SOURCE_ROOT; };
@@ -1234,8 +1230,6 @@
 				931633EE0AEDFFAE0062B92D /* WebFrameLoaderClient.mm */,
 				BC7F884910C8775A00D6133D /* WebGeolocationControllerClient.h */,
 				BC7F884A10C8775A00D6133D /* WebGeolocationControllerClient.mm */,
-				59C77F3310545F7E00506104 /* WebGeolocationMock.mm */,
-				59C77F4A105471E700506104 /* WebGeolocationMockPrivate.h */,
 				51494CD40C7EBDE0004178C5 /* WebIconDatabaseClient.h */,
 				51494CD50C7EBDE0004178C5 /* WebIconDatabaseClient.mm */,
 				9CE1F8A302A5C6F30ECA2ACD /* WebImageRendererFactory.m */,
@@ -1414,7 +1408,6 @@
 				9398106F0824BF01008DF038 /* WebFrameViewInternal.h in Headers */,
 				939810AF0824BF01008DF038 /* WebFrameViewPrivate.h in Headers */,
 				BC7F884B10C8775A00D6133D /* WebGeolocationControllerClient.h in Headers */,
-				59C77F4B105471E700506104 /* WebGeolocationMockPrivate.h in Headers */,
 				BC7F889E10C9D30C00D6133D /* WebGeolocationPosition.h in Headers */,
 				BC7F88A510C9D88B00D6133D /* WebGeolocationPositionInternal.h in Headers */,
 				939810120824BF01008DF038 /* WebHistory.h in Headers */,
@@ -1813,7 +1806,6 @@
 				931633EF0AEDFFAE0062B92D /* WebFrameLoaderClient.mm in Sources */,
 				939811060824BF01008DF038 /* WebFrameView.mm in Sources */,
 				BC7F884C10C8775A00D6133D /* WebGeolocationControllerClient.mm in Sources */,
-				59C77F3510545F7E00506104 /* WebGeolocationMock.mm in Sources */,
 				BC7F889F10C9D30C00D6133D /* WebGeolocationPosition.mm in Sources */,
 				939811130824BF01008DF038 /* WebHistory.mm in Sources */,
 				939810BD0824BF01008DF038 /* WebHistoryItem.mm in Sources */,

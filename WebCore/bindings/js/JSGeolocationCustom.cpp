@@ -31,12 +31,15 @@
 #include "DOMWindow.h"
 #include "ExceptionCode.h"
 #include "Geolocation.h"
-#include "GeolocationService.h"
 #include "JSCustomPositionCallback.h"
 #include "JSCustomPositionErrorCallback.h"
 #include "JSDOMWindow.h"
 #include "PositionOptions.h"
-#include <runtime/InternalFunction.h>
+#include <runtime/JSFunction.h>
+
+#if !ENABLE(CLIENT_BASED_GEOLOCATION)
+#include "GeolocationService.h"
+#endif
 
 using namespace JSC;
 using namespace std;
@@ -46,7 +49,8 @@ namespace WebCore {
 static PassRefPtr<PositionCallback> createPositionCallback(ExecState* exec, JSDOMGlobalObject* globalObject, JSValue value)
 {
     // The spec specifies 'FunctionOnly' for this object.
-    if (!value.inherits(&InternalFunction::info)) {
+    // FIXME: This check disallows callable objects created via JSC API. It's not clear what exactly the specification intends to allow.
+    if (!value.inherits(&JSFunction::info)) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return 0;
     }
@@ -62,7 +66,8 @@ static PassRefPtr<PositionErrorCallback> createPositionErrorCallback(ExecState* 
         return 0;
 
     // The spec specifies 'FunctionOnly' for this object.
-    if (!value.inherits(&InternalFunction::info)) {
+    // FIXME: This check disallows callable objects created via JSC API. It's not clear what exactly the specification intends to allow.
+    if (!value.inherits(&JSFunction::info)) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return 0;
     }
