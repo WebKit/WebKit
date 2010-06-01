@@ -1,3 +1,16 @@
+2010-06-01  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        AX: WebKit doesn't call [super -accessibilityAttributeValue:attribute forParameter:] when it encounters a parameterized attribute that it doesn't handle.
+        https://bugs.webkit.org/show_bug.cgi?id=39324
+ 
+        There are some parameters that super handles that are not explicitly returned by the list of the element's attributes.
+        In those cases, super should handle.
+
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2010-05-28  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Beth Dakin.

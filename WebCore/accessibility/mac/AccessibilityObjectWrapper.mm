@@ -2331,12 +2331,9 @@ static RenderObject* rendererForView(NSView* view)
     } else if ([parameter isKindOfClass:[NSValue self]] && strcmp([(NSValue*)parameter objCType], @encode(NSRange)) == 0) {
         rangeSet = true;
         range = [(NSValue*)parameter rangeValue];
-
     } else {
-        // got a parameter of a type we never use
-        // NOTE: No ASSERT_NOT_REACHED because this can happen accidentally
-        // while using accesstool (e.g.), forcing you to start over
-        return nil;
+        // Attribute type is not supported. Allow super to handle.
+        return [super accessibilityAttributeValue:attribute forParameter:parameter];
     }
     
     // dispatch
@@ -2575,7 +2572,9 @@ static RenderObject* rendererForView(NSView* view)
         }
     }
 
-    return nil;
+    // There are some parameters that super handles that are not explicitly returned by the list of the element's attributes.
+    // In that case it must be passed to super. 
+    return [super accessibilityAttributeValue:attribute forParameter:parameter];
 }
 
 - (BOOL)accessibilityShouldUseUniqueId
