@@ -1,3 +1,14 @@
+2010-06-01  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40025
+        <rdar://problem/8046273> All Flash content crashes after installing CS5 Design Premium.
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView supportsSnapshotting]): Do not support snapshotting Flash 10.1 if
+        the version is less than 10.1.53.60.
+
 2010-06-01  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Sam Weinig.

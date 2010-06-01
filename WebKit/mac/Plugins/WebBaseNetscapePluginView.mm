@@ -584,8 +584,14 @@ String WebHaltablePlugin::pluginName() const
     
     // Flash has a bogus Info.plist entry for CFBundleVersionString, so use CFBundleShortVersionString.
     NSString *versionString = [pluginBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
-    // Flash 10.1d51 has a crashing bug if sent a drawRect event when using the CA rendering model: <rdar://problem/7739922>
-    return ![versionString isEqual:@"10.1.51.95"];
+    
+    static const NSString *flash10dotOnePrefix = @"10.1";
+    if (![versionString hasPrefix:flash10dotOnePrefix])
+        return YES;
+    
+    // Some prerelease versions of Flash 10.1 crash when sent a drawRect event using the CA drawing model: <rdar://problem/7739922>
+    static const CFStringRef knownGoodFlash10dot1Release = CFSTR("10.1.53.60");
+    return CFStringCompare((CFStringRef)versionString, knownGoodFlash10dot1Release, kCFCompareNumerically) != kCFCompareLessThan;
 }
 
 - (BOOL)hasBeenHalted
