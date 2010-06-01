@@ -1,3 +1,12 @@
+2010-06-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix.
+
+        Hopefully, touching WebCore.base.exp will actually rebuild the export file.
+
+        * WebCore.Geolocation.exp:
+        * WebCore.base.exp:
+
 2010-06-01  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.
