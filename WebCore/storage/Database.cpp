@@ -29,8 +29,6 @@
 #include "config.h"
 #include "Database.h"
 
-#include <wtf/StdLibExtras.h>
-
 #if ENABLE(DATABASE)
 #include "ChangeVersionWrapper.h"
 #include "DatabaseAuthorizer.h"
@@ -40,21 +38,25 @@
 #include "DatabaseTracker.h"
 #include "Document.h"
 #include "ExceptionCode.h"
-#include "Frame.h"
 #include "InspectorController.h"
 #include "Logging.h"
 #include "NotImplemented.h"
 #include "Page.h"
-#include "OriginQuotaManager.h"
-#include "ScriptController.h"
-#include "SQLiteDatabase.h"
-#include "SQLiteFileSystem.h"
-#include "SQLiteStatement.h"
-#include "SQLResultSet.h"
+#include "SQLTransactionCallback.h"
 #include "SQLTransactionClient.h"
 #include "SQLTransactionCoordinator.h"
-
-#endif // ENABLE(DATABASE)
+#include "SQLTransactionErrorCallback.h"
+#include "SQLiteStatement.h"
+#include "ScriptController.h"
+#include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
+#include "StringHash.h"
+#include "VoidCallback.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
+#include <wtf/StdLibExtras.h>
 
 #if USE(JSC)
 #include "JSDOMWindow.h"
@@ -70,8 +72,6 @@ const String& Database::databaseInfoTableName()
     DEFINE_STATIC_LOCAL(String, name, ("__WebKitDatabaseInfoTable__"));
     return name;
 }
-
-#if ENABLE(DATABASE)
 
 static bool isDatabaseAvailable = true;
 
@@ -213,8 +213,8 @@ Database::Database(ScriptExecutionContext* context, const String& name, const St
     , m_creationCallback(creationCallback)
 {
     ASSERT(m_scriptExecutionContext.get());
-    m_mainThreadSecurityOrigin = m_scriptExecutionContext->securityOrigin();
-    m_databaseThreadSecurityOrigin = m_mainThreadSecurityOrigin->threadsafeCopy();
+    m_contextThreadSecurityOrigin = m_scriptExecutionContext->securityOrigin();
+    m_databaseThreadSecurityOrigin = m_contextThreadSecurityOrigin->threadsafeCopy();
     if (m_name.isNull())
         m_name = "";
 
@@ -491,6 +491,18 @@ void Database::setAuthorizerReadOnly()
     m_databaseAuthorizer->setReadOnly();
 }
 
+bool Database::lastActionChangedDatabase()
+{
+    ASSERT(m_databaseAuthorizer);
+    return m_databaseAuthorizer->lastActionChangedDatabase();
+}
+
+bool Database::lastActionWasInsert()
+{
+    ASSERT(m_databaseAuthorizer);
+    return m_databaseAuthorizer->lastActionWasInsert();
+}
+
 static int guidForOriginAndName(const String& origin, const String& name)
 {
     String stringID;
@@ -643,6 +655,13 @@ void Database::transaction(PassRefPtr<SQLTransactionCallback> callback, PassRefP
         scheduleTransaction();
 }
 
+void Database::inProgressTransactionCompleted()
+{
+    MutexLocker locker(m_transactionInProgressMutex);
+    m_transactionInProgress = false;
+    scheduleTransaction();
+}
+
 void Database::scheduleTransaction()
 {
     ASSERT(!m_transactionInProgressMutex.tryLock()); // Locked by caller.
@@ -780,8 +799,8 @@ void Database::setExpectedVersion(const String& version)
 
 SecurityOrigin* Database::securityOrigin() const
 {
-    if (scriptExecutionContext()->isContextThread())
-        return m_mainThreadSecurityOrigin.get();
+    if (m_scriptExecutionContext->isContextThread())
+        return m_contextThreadSecurityOrigin.get();
     if (currentThread() == m_scriptExecutionContext->databaseThread()->getThreadID())
         return m_databaseThreadSecurityOrigin.get();
     return 0;
@@ -818,6 +837,6 @@ void Database::incrementalVacuumIfNeeded()
         m_sqliteDatabase.runIncrementalVacuumCommand();
 }
 
-#endif // ENABLE(DATABASE)
-
 } // namespace WebCore
+
+#endif // ENABLE(DATABASE)

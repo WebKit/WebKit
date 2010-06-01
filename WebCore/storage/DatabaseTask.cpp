@@ -143,11 +143,8 @@ DatabaseTransactionTask::~DatabaseTransactionTask()
 
 void DatabaseTransactionTask::doPerformTask()
 {
-    if (m_transaction->performNextStep()) {
-        // The transaction is complete, we can move on to the next one.
-        MutexLocker locker(m_transaction->database()->m_transactionInProgressMutex);
-        m_transaction->database()->scheduleTransaction();
-    }
+    if (m_transaction->performNextStep())
+        m_transaction->database()->inProgressTransactionCompleted();
 }
 
 #ifndef NDEBUG

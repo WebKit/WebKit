@@ -31,12 +31,10 @@
 #if ENABLE(DATABASE)
 
 #include "Database.h"
-#include "DatabaseAuthorizer.h"
 #include "Logging.h"
 #include "SQLError.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
-#include "SQLResultSet.h"
 #include "SQLStatementCallback.h"
 #include "SQLStatementErrorCallback.h"
 #include "SQLTransaction.h"
@@ -73,7 +71,7 @@ bool SQLStatement::execute(Database* db)
     if (m_readOnly)
         db->setAuthorizerReadOnly();
 
-    SQLiteDatabase* database = &db->m_sqliteDatabase;
+    SQLiteDatabase* database = &db->sqliteDatabase();
 
     SQLiteStatement statement(*database, m_statement);
     int result = statement.prepare();
@@ -130,7 +128,7 @@ bool SQLStatement::execute(Database* db)
         }
     } else if (result == SQLResultDone) {
         // Didn't find anything, or was an insert
-        if (db->m_databaseAuthorizer->lastActionWasInsert())
+        if (db->lastActionWasInsert())
             resultSet->setInsertId(database->lastInsertRowID());
     } else if (result == SQLResultFull) {
         // Return the Quota error - the delegate will be asked for more space and this statement might be re-run

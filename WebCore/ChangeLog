@@ -1,3 +1,37 @@
+2010-06-01  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Clean up the DB classes in preparation for a bigger refactoring.
+        https://bugs.webkit.org/show_bug.cgi?id=39041
+
+        * storage/ChangeVersionWrapper.cpp:
+        * storage/ChangeVersionWrapper.h:
+        * storage/Database.cpp:
+        (WebCore::Database::Database):
+        (WebCore::Database::lastActionChangedDatabase):
+        (WebCore::Database::lastActionWasInsert):
+        (WebCore::Database::inProgressTransactionCompleted):
+        (WebCore::Database::securityOrigin):
+        * storage/Database.h:
+        (WebCore::Database::sqliteDatabase):
+        (WebCore::Database::databaseDebugName):
+        * storage/DatabaseTask.cpp:
+        (WebCore::DatabaseTransactionTask::doPerformTask):
+        * storage/DatabaseTask.h:
+        * storage/SQLStatement.cpp:
+        (WebCore::SQLStatement::execute):
+        * storage/SQLStatement.h:
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::SQLTransaction):
+        (WebCore::SQLTransaction::openTransactionAndPreflight):
+        (WebCore::SQLTransaction::runStatements):
+        (WebCore::SQLTransaction::runCurrentStatement):
+        (WebCore::SQLTransaction::postflightAndCommit):
+        (WebCore::SQLTransaction::cleanupAfterSuccessCallback):
+        (WebCore::SQLTransaction::cleanupAfterTransactionErrorCallback):
+        * storage/SQLTransaction.h:
+
 2010-06-01  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Nikolas Zimmermann.

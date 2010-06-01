@@ -31,42 +31,31 @@
 
 #if ENABLE(DATABASE)
 #include "PlatformString.h"
-#include "SecurityOrigin.h"
 #include "SQLiteDatabase.h"
-#include "SQLTransaction.h"
-#include "StringHash.h"
-#include "Timer.h"
-#include "VoidCallback.h"
-
-#include <wtf/Forward.h>
-#include <wtf/HashSet.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Deque.h>
-#else
-#include "PlatformString.h"
+#ifndef NDEBUG
+#include "SecurityOrigin.h"
 #endif
 
-#if ENABLE(DATABASE)
+#include <wtf/Deque.h>
+#include <wtf/Forward.h>
+
 namespace WebCore {
 
 class DatabaseAuthorizer;
 class DatabaseCallback;
 class DatabaseThread;
 class ScriptExecutionContext;
-class SQLResultSet;
+class SecurityOrigin;
+class SQLTransaction;
 class SQLTransactionCallback;
 class SQLTransactionClient;
 class SQLTransactionCoordinator;
 class SQLTransactionErrorCallback;
-class SQLValue;
+class VoidCallback;
 
 typedef int ExceptionCode;
 
 class Database : public ThreadSafeShared<Database> {
-    friend class DatabaseTransactionTask;
-    friend class SQLStatement;
-    friend class SQLTransaction;
 public:
     static void setIsAvailable(bool);
     static bool isAvailable();
@@ -74,15 +63,12 @@ public:
     ~Database();
 
     // Direct support for the DOM API
-    static PassRefPtr<Database> openDatabase(ScriptExecutionContext* context, const String& name,
-                                             const String& expectedVersion, const String& displayName,
-                                             unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback,
-                                             ExceptionCode&);
+    static PassRefPtr<Database> openDatabase(ScriptExecutionContext*, const String& name, const String& expectedVersion, const String& displayName,
+                                             unsigned long estimatedSize, PassRefPtr<DatabaseCallback>, ExceptionCode&);
     String version() const;
-    void changeVersion(const String& oldVersion, const String& newVersion,
-                       PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
-                       PassRefPtr<VoidCallback> successCallback);
-    void transaction(PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
+    void changeVersion(const String& oldVersion, const String& newVersion, PassRefPtr<SQLTransactionCallback>,
+                       PassRefPtr<SQLTransactionErrorCallback>, PassRefPtr<VoidCallback> successCallback);
+    void transaction(PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>,
                      PassRefPtr<VoidCallback> successCallback, bool readOnly);
 
     // Internal engine support
@@ -91,11 +77,14 @@ public:
     void disableAuthorizer();
     void enableAuthorizer();
     void setAuthorizerReadOnly();
+    bool lastActionChangedDatabase();
+    bool lastActionWasInsert();
 
     Vector<String> tableNames();
 
     ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext.get(); }
     SecurityOrigin* securityOrigin() const;
+    SQLiteDatabase& sqliteDatabase() { return m_sqliteDatabase; }
     String stringIdentifier() const;
     String displayName() const;
     unsigned long estimatedSize() const;
@@ -127,6 +116,10 @@ public:
 
     bool performOpenAndVerify(ExceptionCode&);
 
+    void inProgressTransactionCompleted();
+    void scheduleTransactionCallback(SQLTransaction*);
+    void scheduleTransactionStep(SQLTransaction*, bool immediately = false);
+
     Vector<String> performGetTableNames();
     void performCreationCallback();
 
@@ -136,15 +129,12 @@ public:
     void incrementalVacuumIfNeeded();
 
 private:
-    Database(ScriptExecutionContext* context, const String& name,
-             const String& expectedVersion, const String& displayName,
-             unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback);
+    Database(ScriptExecutionContext*, const String& name, const String& expectedVersion,
+             const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback>);
 
     bool openAndVerifyVersion(ExceptionCode&);
 
     void scheduleTransaction();
-    void scheduleTransactionCallback(SQLTransaction*);
-    void scheduleTransactionStep(SQLTransaction* transaction, bool immediately = false);
 
     Deque<RefPtr<SQLTransaction> > m_transactionQueue;
     Mutex m_transactionInProgressMutex;
@@ -154,7 +144,7 @@ private:
     static void deliverPendingCallback(void*);
 
     RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
-    RefPtr<SecurityOrigin> m_mainThreadSecurityOrigin;
+    RefPtr<SecurityOrigin> m_contextThreadSecurityOrigin;
     RefPtr<SecurityOrigin> m_databaseThreadSecurityOrigin;
     String m_name;
     int m_guid;
@@ -177,19 +167,10 @@ private:
     RefPtr<DatabaseCallback> m_creationCallback;
 
 #ifndef NDEBUG
-    String databaseDebugName() const { return m_mainThreadSecurityOrigin->toString() + "::" + m_name; }
+    String databaseDebugName() const { return m_contextThreadSecurityOrigin->toString() + "::" + m_name; }
 #endif
 };
 
-} // namespace WebCore
-
-#else
-
-namespace WebCore {
-class Database : public ThreadSafeShared<Database> {
-public:
-    static const String& databaseInfoTableName();
-};
 } // namespace WebCore
 
 #endif // ENABLE(DATABASE)

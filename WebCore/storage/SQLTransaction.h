@@ -32,14 +32,9 @@
 
 #include <wtf/Threading.h>
 
-#include "SQLiteTransaction.h"
 #include "SQLStatement.h"
-#include "SQLTransactionCallback.h"
-#include "SQLTransactionErrorCallback.h"
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -48,9 +43,12 @@ typedef int ExceptionCode;
 
 class Database;
 class SQLError;
+class SQLiteTransaction;
 class SQLStatementCallback;
 class SQLStatementErrorCallback;
 class SQLTransaction;
+class SQLTransactionCallback;
+class SQLTransactionErrorCallback;
 class SQLValue;
 class String;
 class VoidCallback;
@@ -72,7 +70,7 @@ public:
     ~SQLTransaction();
 
     void executeSQL(const String& sqlStatement, const Vector<SQLValue>& arguments,
-                    PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> callbackError, ExceptionCode& e);
+                    PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>, ExceptionCode&);
 
     void lockAcquired();
     bool performNextStep();

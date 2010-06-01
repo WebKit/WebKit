@@ -31,23 +31,18 @@
 #if ENABLE(DATABASE)
 
 #include "PlatformString.h"
-
-#include "SQLError.h"
 #include "SQLResultSet.h"
-#include "SQLStatementCallback.h"
-#include "SQLStatementErrorCallback.h"
 #include "SQLValue.h"
-
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Threading.h>
+#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Database;
+class SQLError;
+class SQLStatementCallback;
+class SQLStatementErrorCallback;
 class SQLTransaction;
-class String;
 
 class SQLStatement : public ThreadSafeShared<SQLStatement> {
 public:
@@ -66,7 +61,7 @@ public:
 
     SQLError* sqlError() const { return m_error.get(); }
 private:
-    SQLStatement(const String& statement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> errorCallback, bool readOnly);
+    SQLStatement(const String& statement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>, bool readOnly);
 
     void setFailureDueToQuota();
     void clearFailureDueToQuota();

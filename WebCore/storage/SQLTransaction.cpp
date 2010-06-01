@@ -31,26 +31,26 @@
 
 #if ENABLE(DATABASE)
 
-#include "ChromeClient.h"
 #include "Database.h"
-#include "DatabaseAuthorizer.h"
-#include "DatabaseDetails.h"
 #include "DatabaseThread.h"
 #include "ExceptionCode.h"
 #include "Logging.h"
-#include "Page.h"
 #include "PlatformString.h"
 #include "ScriptExecutionContext.h"
-#include "Settings.h"
 #include "SQLError.h"
 #include "SQLiteTransaction.h"
-#include "SQLResultSet.h"
 #include "SQLStatement.h"
 #include "SQLStatementCallback.h"
 #include "SQLStatementErrorCallback.h"
+#include "SQLTransactionCallback.h"
 #include "SQLTransactionClient.h"
 #include "SQLTransactionCoordinator.h"
+#include "SQLTransactionErrorCallback.h"
 #include "SQLValue.h"
+#include "VoidCallback.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 // There's no way of knowing exactly how much more space will be required when a statement hits the quota limit.
 // For now, we'll arbitrarily choose currentQuota + 1mb.
@@ -65,8 +65,8 @@ PassRefPtr<SQLTransaction> SQLTransaction::create(Database* db, PassRefPtr<SQLTr
     return adoptRef(new SQLTransaction(db, callback, errorCallback, successCallback, wrapper, readOnly));
 }
 
-SQLTransaction::SQLTransaction(Database* db, PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback, PassRefPtr<VoidCallback> successCallback,
-                               PassRefPtr<SQLTransactionWrapper> wrapper, bool readOnly)
+SQLTransaction::SQLTransaction(Database* db, PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
+                               PassRefPtr<VoidCallback> successCallback, PassRefPtr<SQLTransactionWrapper> wrapper, bool readOnly)
     : m_nextStep(&SQLTransaction::acquireLock)
     , m_executeSqlAllowed(false)
     , m_database(db)
@@ -234,7 +234,7 @@ void SQLTransaction::lockAcquired()
 
 void SQLTransaction::openTransactionAndPreflight()
 {
-    ASSERT(!m_database->m_sqliteDatabase.transactionInProgress());
+    ASSERT(!m_database->sqliteDatabase().transactionInProgress());
     ASSERT(m_lockAcquired);
 
     LOG(StorageAPI, "Opening and preflighting transaction %p", this);
@@ -248,18 +248,18 @@ void SQLTransaction::openTransactionAndPreflight()
 
     // Set the maximum usage for this transaction if this transactions is not read-only
     if (!m_readOnly)
-        m_database->m_sqliteDatabase.setMaximumSize(m_database->maximumSize());
+        m_database->sqliteDatabase().setMaximumSize(m_database->maximumSize());
 
     ASSERT(!m_sqliteTransaction);
-    m_sqliteTransaction.set(new SQLiteTransaction(m_database->m_sqliteDatabase, m_readOnly));
+    m_sqliteTransaction.set(new SQLiteTransaction(m_database->sqliteDatabase(), m_readOnly));
 
-    m_database->m_databaseAuthorizer->disable();
+    m_database->disableAuthorizer();
     m_sqliteTransaction->begin();
-    m_database->m_databaseAuthorizer->enable();
+    m_database->enableAuthorizer();
 
     // Transaction Steps 1+2 - Open a transaction to the database, jumping to the error callback if that fails
     if (!m_sqliteTransaction->inProgress()) {
-        ASSERT(!m_database->m_sqliteDatabase.transactionInProgress());
+        ASSERT(!m_database->sqliteDatabase().transactionInProgress());
         m_sqliteTransaction.clear();
         m_transactionError = SQLError::create(0, "unable to open a transaction to the database");
         handleTransactionError(false);
@@ -268,7 +268,7 @@ void SQLTransaction::openTransactionAndPreflight()
 
     // Transaction Steps 3 - Peform preflight steps, jumping to the error callback if they fail
     if (m_wrapper && !m_wrapper->performPreflight(this)) {
-        ASSERT(!m_database->m_sqliteDatabase.transactionInProgress());
+        ASSERT(!m_database->sqliteDatabase().transactionInProgress());
         m_sqliteTransaction.clear();
         m_transactionError = m_wrapper->sqlError();
         if (!m_transactionError)
@@ -326,7 +326,7 @@ void SQLTransaction::runStatements()
             // m_shouldRetryCurrentStatement is set to true only when a statement exceeds
             // the quota, which can happen only in a read-write transaction. Therefore, there
             // is no need to check here if the transaction is read-write.
-            m_database->m_sqliteDatabase.setMaximumSize(m_database->maximumSize());
+            m_database->sqliteDatabase().setMaximumSize(m_database->maximumSize());
         } else {
             // If the current statement has already been run, failed due to quota constraints, and we're not retrying it,
             // that means it ended in an error.  Handle it now
@@ -363,10 +363,10 @@ bool SQLTransaction::runCurrentStatement()
     if (!m_currentStatement)
         return false;
 
-    m_database->m_databaseAuthorizer->reset();
+    m_database->resetAuthorizer();
 
     if (m_currentStatement->execute(m_database.get())) {
-        if (m_database->m_databaseAuthorizer->lastActionChangedDatabase()) {
+        if (m_database->lastActionChangedDatabase()) {
             // Flag this transaction as having changed the database for later delegate notification
             m_modifiedDatabase = true;
             // Also dirty the size of this database file for calculating quota usage
@@ -455,9 +455,9 @@ void SQLTransaction::postflightAndCommit()
     // Transacton Step 8+9 - Commit the transaction, jumping to the error callback if that fails
     ASSERT(m_sqliteTransaction);
 
-    m_database->m_databaseAuthorizer->disable();
+    m_database->disableAuthorizer();
     m_sqliteTransaction->commit();
-    m_database->m_databaseAuthorizer->enable();
+    m_database->enableAuthorizer();
 
     // If the commit failed, the transaction will still be marked as "in progress"
     if (m_sqliteTransaction->inProgress()) {
@@ -509,7 +509,7 @@ void SQLTransaction::cleanupAfterSuccessCallback()
     // Transaction Step 11 - End transaction steps
     // There is no next step
     LOG(StorageAPI, "Transaction %p is complete\n", this);
-    ASSERT(!m_database->m_sqliteDatabase.transactionInProgress());
+    ASSERT(!m_database->sqliteDatabase().transactionInProgress());
     m_sqliteTransaction.clear();
     m_nextStep = 0;
 
@@ -559,15 +559,15 @@ void SQLTransaction::cleanupAfterTransactionErrorCallback()
 {
     ASSERT(m_lockAcquired);
 
-    m_database->m_databaseAuthorizer->disable();
+    m_database->disableAuthorizer();
     if (m_sqliteTransaction) {
         // Transaction Step 12 - Rollback the transaction.
         m_sqliteTransaction->rollback();
 
-        ASSERT(!m_database->m_sqliteDatabase.transactionInProgress());
+        ASSERT(!m_database->sqliteDatabase().transactionInProgress());
         m_sqliteTransaction.clear();
     }
-    m_database->m_databaseAuthorizer->enable();
+    m_database->enableAuthorizer();
 
     // Transaction Step 12 - Any still-pending statements in the transaction are discarded.
     {
@@ -577,7 +577,7 @@ void SQLTransaction::cleanupAfterTransactionErrorCallback()
 
     // Transaction is complete!  There is no next step
     LOG(StorageAPI, "Transaction %p is complete with an error\n", this);
-    ASSERT(!m_database->m_sqliteDatabase.transactionInProgress());
+    ASSERT(!m_database->sqliteDatabase().transactionInProgress());
     m_nextStep = 0;
 
     // Now release our callbacks, to break reference cycles.

@@ -32,6 +32,7 @@
 #include "Database.h"
 #include "ExceptionCode.h"
 #include "PlatformString.h"
+#include "SQLTransaction.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -39,13 +40,6 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-
-class DatabaseTask;
-class DatabaseThread;
-class SQLValue;
-class SQLCallback;
-class SQLTransaction;
-class VersionChangeCallback;
 
 // Can be used to wait until DatabaseTask is completed.
 // Has to be passed into DatabaseTask::create to be associated with the task.
