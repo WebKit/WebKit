@@ -242,12 +242,12 @@ bool Editor::deleteWithDirection(SelectionController::EDirection direction, Text
         }
     } else {
         switch (direction) {
-        case SelectionController::FORWARD:
-        case SelectionController::RIGHT:
+        case SelectionController::DirectionForward:
+        case SelectionController::DirectionRight:
             TypingCommand::forwardDeleteKeyPressed(m_frame->document(), canSmartCopyOrDelete(), granularity, killRing);
             break;
-        case SelectionController::BACKWARD:
-        case SelectionController::LEFT:
+        case SelectionController::DirectionBackward:
+        case SelectionController::DirectionLeft:
             TypingCommand::deleteKeyPressed(m_frame->document(), canSmartCopyOrDelete(), granularity, killRing);
             break;
         }
@@ -2269,7 +2269,7 @@ void Editor::markMisspellingsAfterTypingToPosition(const VisiblePosition &p)
 
         // Reset the charet one character further.
         frame()->selection()->moveTo(frame()->selection()->end());
-        frame()->selection()->modify(SelectionController::MOVE, SelectionController::FORWARD, CharacterGranularity);
+        frame()->selection()->modify(SelectionController::AlterationMove, SelectionController::DirectionForward, CharacterGranularity);
     }
 
     if (!isGrammarCheckingEnabled())
@@ -2558,11 +2558,11 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(bool markSpelling, Range* 
             RefPtr<Range> selectionRange = TextIterator::subrange(paragraphRange.get(), 0, selectionOffset);
             m_frame->selection()->moveTo(selectionRange->endPosition(), DOWNSTREAM);
             if (adjustSelectionForParagraphBoundaries)
-                m_frame->selection()->modify(SelectionController::MOVE, SelectionController::FORWARD, CharacterGranularity);
+                m_frame->selection()->modify(SelectionController::AlterationMove, SelectionController::DirectionForward, CharacterGranularity);
         } else {
             // If this fails for any reason, the fallback is to go one position beyond the last replacement
             m_frame->selection()->moveTo(m_frame->selection()->end());
-            m_frame->selection()->modify(SelectionController::MOVE, SelectionController::FORWARD, CharacterGranularity);
+            m_frame->selection()->modify(SelectionController::AlterationMove, SelectionController::DirectionForward, CharacterGranularity);
         }
     }
 }

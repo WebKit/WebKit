@@ -1,3 +1,90 @@
+2010-05-31  Lyon Chen  <liachen@rim.com>
+
+        Reviewed by Kent Tamura.
+
+        Enum value FORWARD, BACKWARD, RIGHT, LEFT are causing macro conflicts.
+        https://bugs.webkit.org/show_bug.cgi?id=35530
+
+        Change enum EAlteration from { MOVE, EXTEND } to { AlterationMove, AlterationExtend } and enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT} to { DirectionForward, DirectionBackward, DirectionRight, DirectionLeft } to avoid macro conflict, and also better coding style conformance.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::visiblePositionRangeForLine):
+        (WebCore::AccessibilityRenderObject::doAXRangeForLine):
+        * editing/Editor.cpp:
+        (WebCore::Editor::deleteWithDirection):
+        (WebCore::Editor::markMisspellingsAfterTypingToPosition):
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        * editing/EditorCommand.cpp:
+        (WebCore::executeDeleteBackward):
+        (WebCore::executeDeleteBackwardByDecomposingPreviousCharacter):
+        (WebCore::executeDeleteForward):
+        (WebCore::executeDeleteToBeginningOfLine):
+        (WebCore::executeDeleteToBeginningOfParagraph):
+        (WebCore::executeDeleteToEndOfLine):
+        (WebCore::executeDeleteToEndOfParagraph):
+        (WebCore::executeDeleteWordBackward):
+        (WebCore::executeDeleteWordForward):
+        (WebCore::executeForwardDelete):
+        (WebCore::executeMoveBackward):
+        (WebCore::executeMoveBackwardAndModifySelection):
+        (WebCore::executeMoveDown):
+        (WebCore::executeMoveDownAndModifySelection):
+        (WebCore::executeMoveForward):
+        (WebCore::executeMoveForwardAndModifySelection):
+        (WebCore::executeMoveLeft):
+        (WebCore::executeMoveLeftAndModifySelection):
+        (WebCore::executeMovePageDown):
+        (WebCore::executeMovePageDownAndModifySelection):
+        (WebCore::executeMovePageUp):
+        (WebCore::executeMovePageUpAndModifySelection):
+        (WebCore::executeMoveRight):
+        (WebCore::executeMoveRightAndModifySelection):
+        (WebCore::executeMoveToBeginningOfDocument):
+        (WebCore::executeMoveToBeginningOfDocumentAndModifySelection):
+        (WebCore::executeMoveToBeginningOfLine):
+        (WebCore::executeMoveToBeginningOfLineAndModifySelection):
+        (WebCore::executeMoveToBeginningOfParagraph):
+        (WebCore::executeMoveToBeginningOfParagraphAndModifySelection):
+        (WebCore::executeMoveToBeginningOfSentence):
+        (WebCore::executeMoveToBeginningOfSentenceAndModifySelection):
+        (WebCore::executeMoveToEndOfDocument):
+        (WebCore::executeMoveToEndOfDocumentAndModifySelection):
+        (WebCore::executeMoveToEndOfSentence):
+        (WebCore::executeMoveToEndOfSentenceAndModifySelection):
+        (WebCore::executeMoveToEndOfLine):
+        (WebCore::executeMoveToEndOfLineAndModifySelection):
+        (WebCore::executeMoveToEndOfParagraph):
+        (WebCore::executeMoveToEndOfParagraphAndModifySelection):
+        (WebCore::executeMoveParagraphBackwardAndModifySelection):
+        (WebCore::executeMoveParagraphForwardAndModifySelection):
+        (WebCore::executeMoveUp):
+        (WebCore::executeMoveUpAndModifySelection):
+        (WebCore::executeMoveWordBackward):
+        (WebCore::executeMoveWordBackwardAndModifySelection):
+        (WebCore::executeMoveWordForward):
+        (WebCore::executeMoveWordForwardAndModifySelection):
+        (WebCore::executeMoveWordLeft):
+        (WebCore::executeMoveWordLeftAndModifySelection):
+        (WebCore::executeMoveWordRight):
+        (WebCore::executeMoveWordRightAndModifySelection):
+        (WebCore::executeMoveToLeftEndOfLine):
+        (WebCore::executeMoveToLeftEndOfLineAndModifySelection):
+        (WebCore::executeMoveToRightEndOfLine):
+        (WebCore::executeMoveToRightEndOfLineAndModifySelection):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::willBeModified):
+        (WebCore::SelectionController::modify):
+        * editing/SelectionController.h:
+        (WebCore::SelectionController::):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::modify):
+        (WebCore::DOMSelection::deleteFromDocument):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleKeyboardSelectionMovement):
+
 2010-05-31  Eric Seidel <eric@webkit.org>
 
         Reviewed by Adam Barth.

@@ -43,8 +43,8 @@ class VisiblePosition;
 
 class SelectionController : public Noncopyable {
 public:
-    enum EAlteration { MOVE, EXTEND };
-    enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT };
+    enum EAlteration { AlterationMove, AlterationExtend };
+    enum EDirection { DirectionForward, DirectionBackward, DirectionRight, DirectionLeft };
     enum CursorAlignOnScroll { AlignCursorOnScrollIfNeeded,
                                AlignCursorOnScrollAlways };
 

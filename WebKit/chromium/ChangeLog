@@ -1,3 +1,15 @@
+2010-05-31  Lyon Chen  <liachen@rim.com>
+
+        Reviewed by Kent Tamura.
+
+        Enum value FORWARD, BACKWARD, RIGHT, LEFT are causing macro conflicts.
+        https://bugs.webkit.org/show_bug.cgi?id=35530
+
+        Change enum EAlteration from { MOVE, EXTEND } to { AlterationMove, AlterationExtend } and enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT} to { DirectionForward, DirectionBackward, DirectionRight, DirectionLeft } to avoid macro conflict, and also better coding style conformance.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::executeCommand):
+
 2010-05-31  Roland Steiner  <rolandsteiner@chromium.org>
 
         Bug 39977 - Missing Chromium bindings for InspectorController methods introduced in r60443

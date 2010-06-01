@@ -2418,7 +2418,7 @@ VisiblePositionRange AccessibilityRenderObject::visiblePositionRangeForLine(unsi
     // will be a caret at visiblePos.
     SelectionController selection;
     selection.setSelection(VisibleSelection(visiblePos));
-    selection.modify(SelectionController::EXTEND, SelectionController::RIGHT, LineBoundary);
+    selection.modify(SelectionController::AlterationExtend, SelectionController::DirectionRight, LineBoundary);
     
     return VisiblePositionRange(selection.selection().visibleStart(), selection.selection().visibleEnd());
 }
@@ -2630,8 +2630,8 @@ PlainTextRange AccessibilityRenderObject::doAXRangeForLine(unsigned lineNumber) 
     // will be a caret at visiblePos.
     SelectionController selection;
     selection.setSelection(VisibleSelection(visiblePos));
-    selection.modify(SelectionController::EXTEND, SelectionController::LEFT, LineBoundary);
-    selection.modify(SelectionController::EXTEND, SelectionController::RIGHT, LineBoundary);
+    selection.modify(SelectionController::AlterationExtend, SelectionController::DirectionLeft, LineBoundary);
+    selection.modify(SelectionController::AlterationExtend, SelectionController::DirectionRight, LineBoundary);
     
     // calculate the indices for the selection start and end
     VisiblePosition startPosition = selection.selection().visibleStart();

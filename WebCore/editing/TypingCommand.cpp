@@ -431,9 +431,9 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
 
         SelectionController selection;
         selection.setSelection(endingSelection());
-        selection.modify(SelectionController::EXTEND, SelectionController::BACKWARD, granularity);
+        selection.modify(SelectionController::AlterationExtend, SelectionController::DirectionBackward, granularity);
         if (killRing && selection.isCaret() && granularity != CharacterGranularity)
-            selection.modify(SelectionController::EXTEND, SelectionController::BACKWARD, CharacterGranularity);
+            selection.modify(SelectionController::AlterationExtend, SelectionController::DirectionBackward, CharacterGranularity);
 
         if (endingSelection().visibleStart().previous(true).isNull()) {
             // When the caret is at the start of the editable area in an empty list item, break out of the list item.
@@ -459,7 +459,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
             if (isLastPositionBeforeTable(visibleStart))
                 return;
             // Extend the selection backward into the last cell, then deletion will handle the move.
-            selection.modify(SelectionController::EXTEND, SelectionController::BACKWARD, granularity);
+            selection.modify(SelectionController::AlterationExtend, SelectionController::DirectionBackward, granularity);
         // If the caret is just after a table, select the table and don't delete anything.
         } else if (Node* table = isFirstPositionAfterTable(visibleStart)) {
             setEndingSelection(VisibleSelection(Position(table, 0), endingSelection().start(), DOWNSTREAM));
@@ -525,9 +525,9 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
         // root editable element or at the start of a document.
         SelectionController selection;
         selection.setSelection(endingSelection());
-        selection.modify(SelectionController::EXTEND, SelectionController::FORWARD, granularity);
+        selection.modify(SelectionController::AlterationExtend, SelectionController::DirectionForward, granularity);
         if (killRing && selection.isCaret() && granularity != CharacterGranularity)
-            selection.modify(SelectionController::EXTEND, SelectionController::FORWARD, CharacterGranularity);
+            selection.modify(SelectionController::AlterationExtend, SelectionController::DirectionForward, CharacterGranularity);
 
         Position downstreamEnd = endingSelection().end().downstream();
         VisiblePosition visibleEnd = endingSelection().visibleEnd();
@@ -542,7 +542,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
 
         // deleting to end of paragraph when at end of paragraph needs to merge the next paragraph (if any)
         if (granularity == ParagraphBoundary && selection.selection().isCaret() && isEndOfParagraph(selection.selection().visibleEnd()))
-            selection.modify(SelectionController::EXTEND, SelectionController::FORWARD, CharacterGranularity);
+            selection.modify(SelectionController::AlterationExtend, SelectionController::DirectionForward, CharacterGranularity);
 
         selectionToDelete = selection.selection();
         if (!startingSelection().isRange() || selectionToDelete.base() != startingSelection().start())

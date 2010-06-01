@@ -1,3 +1,15 @@
+2010-05-31  Lyon Chen  <liachen@rim.com>
+
+        Reviewed by Kent Tamura.
+
+        Enum value FORWARD, BACKWARD, RIGHT, LEFT are causing macro conflicts.
+        https://bugs.webkit.org/show_bug.cgi?id=35530
+
+        Change enum EAlteration from { MOVE, EXTEND } to { AlterationMove, AlterationExtend } and enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT} to { DirectionForward, DirectionBackward, DirectionRight, DirectionLeft } to avoid macro conflict, and also better coding style conformance.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleKeyboardEvent):
+
 2010-05-31  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
 
         Reviewed by Simon Hausmann.
