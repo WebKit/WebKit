@@ -1214,11 +1214,9 @@ fast/events/autoscroll-in-textfield.html
 fast/events/autoscroll-nonscrollable-iframe-in-scrollable-div.html
 fast/events/autoscroll-with-non-scrollable-parent.html
 fast/events/blur-focus-window-should-blur-focus-element.html
-fast/events/click-count.html
 fast/events/content-changed-during-drop.html
 fast/events/context-onmousedown-event.html
 fast/events/crash-on-mutate-during-drop.html
-fast/events/dblclick-addEventListener.html
 fast/events/drag-in-frames.html
 fast/events/frame-tab-focus.html
 fast/events/js-keyboard-event-creation.html

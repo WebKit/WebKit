@@ -63,6 +63,7 @@
 #include "FrameView.h"
 #include <glib/gi18n-lib.h>
 #include <GOwnPtr.h>
+#include <GOwnPtrGtk.h>
 #include "GraphicsContext.h"
 #include "GtkVersioning.h"
 #include "HitTestRequest.h"
@@ -588,10 +589,51 @@ static gboolean webkit_web_view_key_release_event(GtkWidget* widget, GdkEventKey
 
 static gboolean webkit_web_view_button_press_event(GtkWidget* widget, GdkEventButton* event)
 {
+    // Eventually it may make sense for these to be per-view and per-device,
+    // but at this time the implementation matches the Windows port.
+    static int currentClickCount = 1;
+    static IntPoint previousPoint;
+    static guint previousButton;
+    static guint32 previousTime;
+
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
 
     // FIXME: need to keep track of subframe focus for key events
     gtk_widget_grab_focus(widget);
+
+    // For double and triple clicks GDK sends both a normal button press event
+    // and a specific type (like GDK_2BUTTON_PRESS). If we detect a special press
+    // coming up, ignore this event as it certainly generated the double or triple
+    // click. The consequence of not eating this event is two DOM button press events
+    // are generated.
+    GOwnPtr<GdkEvent> nextEvent(gdk_event_peek());
+    if (nextEvent && (nextEvent->any.type == GDK_2BUTTON_PRESS || nextEvent->any.type == GDK_3BUTTON_PRESS))
+        return TRUE;
+
+    gint doubleClickDistance = 250;
+    gint doubleClickTime = 5;
+    GtkSettings* settings = gtk_settings_get_for_screen(gdk_drawable_get_screen(widget->window));
+    g_object_get(settings, 
+        "gtk-double-click-distance", &doubleClickDistance,
+        "gtk-double-click-time", &doubleClickTime, NULL);
+
+    // GTK+ only counts up to triple clicks, but WebCore wants to know about
+    // quadruple clicks, quintuple clicks, ad infinitum. Here, we replicate the
+    // GDK logic for counting clicks.
+    if ((event->type == GDK_2BUTTON_PRESS || event->type == GDK_3BUTTON_PRESS)
+        || ((abs(event->x - previousPoint.x()) < doubleClickDistance)
+            && (abs(event->y - previousPoint.y()) < doubleClickDistance)
+            && (event->time - previousTime < static_cast<guint>(doubleClickTime))
+            && (event->button == previousButton)))
+        currentClickCount++;
+    else
+        currentClickCount = 1;
+
+    PlatformMouseEvent platformEvent(event);
+    platformEvent.setClickCount(currentClickCount);
+    previousPoint = platformEvent.pos();
+    previousButton = event->button;
+    previousTime = event->time;
 
     if (event->button == 3)
         return webkit_web_view_forward_context_menu_event(webView, PlatformMouseEvent(event));
@@ -600,7 +642,8 @@ static gboolean webkit_web_view_button_press_event(GtkWidget* widget, GdkEventBu
     if (!frame->view())
         return FALSE;
 
-    gboolean result = frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(event));
+
+    gboolean result = frame->eventHandler()->handleMousePressEvent(platformEvent);
 
 #if PLATFORM(X11)
     /* Copy selection to the X11 selection clipboard */

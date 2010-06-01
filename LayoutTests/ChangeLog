@@ -11,6 +11,16 @@
 
         Reviewed by Xan Lopez.
 
+        [GTK] Double clicks cause three button press events
+        https://bugs.webkit.org/show_bug.cgi?id=38853
+
+        * platform/gtk/Skipped: Unskip passing tests.
+        * platform/gtk/editing/selection/5057506-2-expected.txt: Rebaseline this test, as it's correct now.
+
+2010-06-01  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
         [GTK] css1/color_and_background/background_attachment.html fails on the 32-bit debug bot
         https://bugs.webkit.org/show_bug.cgi?id=39101
 

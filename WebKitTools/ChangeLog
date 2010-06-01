@@ -1,5 +1,20 @@
 2010-06-01  Martin Robinson  <mrobinson@igalia.com>
 
+        Reviewed by Xan Lopez.
+
+        [GTK] Double clicks cause three button press events
+        https://bugs.webkit.org/show_bug.cgi?id=38853
+
+        WebKit now filters the extra GDK_BUTTON_PRESS before GDK_2BUTTON_PRESS
+        and GDK_3BUTTON_PRESS via gdk_event_peek(). Since EventSender bypasses
+        the GDK event queue entirely, we simply do not send the extra event.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (mouseDownCallback): Do not send extra event. Send GDK_3BUTTON_PRESS appropriately.
+        (dispatchEvent): Properly handle GDK_3BUTTON_PRESS.
+
+2010-06-01  Martin Robinson  <mrobinson@igalia.com>
+
         Not reviewed. Build fix.
 
         Fix GTK+ build caused by a bad merge.

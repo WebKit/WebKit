@@ -193,16 +193,25 @@ static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, 
     if (!prepareMouseButtonEvent(&event, button))
         return JSValueMakeUndefined(context);
 
-    event.type = GDK_BUTTON_PRESS;
-    sendOrQueueEvent(event);
-
-    updateClickCount(event.button.button);
-    if (clickCount == 2) {
-        event.type = GDK_2BUTTON_PRESS;
-        sendOrQueueEvent(event);
-    }
-
     buttonCurrentlyDown = event.button.button;
+
+    // Normally GDK will send both GDK_BUTTON_PRESS and GDK_2BUTTON_PRESS for
+    // the second button press during double-clicks. WebKit GTK+ selectively
+    // ignores the first GDK_BUTTON_PRESS of that pair using gdk_event_peek.
+    // Since our events aren't ever going onto the GDK event queue, WebKit won't
+    // be able to filter out the first GDK_BUTTON_PRESS, so we just don't send
+    // it here. Eventually this code should probably figure out a way to get all
+    // appropriate events onto the event queue and this work-around should be
+    // removed.
+    updateClickCount(event.button.button);
+    if (clickCount == 2)
+        event.type = GDK_2BUTTON_PRESS;
+    else if (clickCount == 3)
+        event.type = GDK_3BUTTON_PRESS;
+    else
+        event.type = GDK_BUTTON_PRESS;
+
+    sendOrQueueEvent(event);
     return JSValueMakeUndefined(context);
 }
 
@@ -347,7 +356,7 @@ static void dispatchEvent(GdkEvent event)
         return;
 
     gboolean returnValue;
-    if (event.type == GDK_BUTTON_PRESS || event.type == GDK_2BUTTON_PRESS)
+    if (event.type == GDK_BUTTON_PRESS || event.type == GDK_2BUTTON_PRESS || event.type == GDK_3BUTTON_PRESS)
         g_signal_emit_by_name(view, "button_press_event", &event, &returnValue);
     else if (event.type == GDK_BUTTON_RELEASE)
         g_signal_emit_by_name(view, "button_release_event", &event, &returnValue);

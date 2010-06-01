@@ -1,3 +1,20 @@
+2010-06-01  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Double clicks cause three button press events
+        https://bugs.webkit.org/show_bug.cgi?id=38853
+
+        Add GOwnPtr wrapper for GdkEvent and expose a setter for
+        PlatformMouseEvent::m_clickCount.
+
+        * GNUmakefile.am: Add GOwnPtrGtk.{cpp,h} to the sources list.
+        * platform/PlatformMouseEvent.h: 
+        (WebCore::PlatformMouseEvent::setClickCount): Added.
+        * platform/gtk/GOwnPtrGtk.cpp: Added.
+        (WTF::GdkEvent):
+        * platform/gtk/GOwnPtrGtk.h: Added.
+
 2010-06-01  Adam Langley  <agl@chromium.org>
 
         Reviewed by Eric Seidel.
