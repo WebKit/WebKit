@@ -22,22 +22,24 @@
 #define WTF_dtoa_h
 
 namespace WTF {
-    class Mutex;
+class Mutex;
 }
 
 namespace WTF {
 
-    extern WTF::Mutex* s_dtoaP5Mutex;
+extern WTF::Mutex* s_dtoaP5Mutex;
 
-    double strtod(const char* s00, char** se);
+// s00: input string. Must not be 0 and must be terminated by 0.
+// se: *se will have the last consumed character position + 1.
+double strtod(const char* s00, char** se);
 
-    typedef char DtoaBuffer[80];
-    void dtoa(DtoaBuffer result, double d, int ndigits, int* decpt, int* sign, char** rve);
+typedef char DtoaBuffer[80];
+void dtoa(DtoaBuffer result, double d, int ndigits, int* decpt, int* sign, char** rve);
 
-    // dtoa() for ECMA-262 'ToString Applied to the Number Type.'
-    // The *resultLength will have the length of the resultant string in bufer.
-    // The resultant string isn't terminated by 0.
-    void doubleToStringInJavaScriptFormat(double, DtoaBuffer, unsigned* resultLength);
+// dtoa() for ECMA-262 'ToString Applied to the Number Type.'
+// The *resultLength will have the length of the resultant string in bufer.
+// The resultant string isn't terminated by 0.
+void doubleToStringInJavaScriptFormat(double, DtoaBuffer, unsigned* resultLength);
 
 } // namespace WTF
 
