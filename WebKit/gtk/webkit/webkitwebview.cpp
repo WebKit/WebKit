@@ -4177,7 +4177,7 @@ gboolean webkit_web_view_get_view_source_mode (WebKitWebView* webView)
 }
 
 // Internal subresource management
-void webkit_web_view_add_resource(WebKitWebView* webView, char* identifier, WebKitWebResource* webResource)
+void webkit_web_view_add_resource(WebKitWebView* webView, const char* identifier, WebKitWebResource* webResource)
 {
     WebKitWebViewPrivate* priv = webView->priv;
 
@@ -4187,7 +4187,7 @@ void webkit_web_view_add_resource(WebKitWebView* webView, char* identifier, WebK
         return;
     }
 
-    g_hash_table_insert(priv->subResources, identifier, webResource);
+    g_hash_table_insert(priv->subResources, g_strdup(identifier), webResource);
 }
 
 WebKitWebResource* webkit_web_view_get_resource(WebKitWebView* webView, char* identifier)

@@ -2,6 +2,16 @@
 
         Reviewed by Gustavo Noronha.
 
+        Fix-up for previous leak fix, the identifier was not always duped.
+
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_add_resource):
+
+2010-06-01  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
         Plug a small leak.
 
         * WebCoreSupport/FrameLoaderClientGtk.cpp:
