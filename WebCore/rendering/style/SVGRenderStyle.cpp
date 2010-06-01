@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2010 Rob Buis <buis@kde.org>
     Copyright (C) Research In Motion Limited 2010. All rights reserved.
 
     Based on khtml code by:
@@ -146,14 +146,14 @@ float SVGRenderStyle::cssPrimitiveToLength(const RenderObject* item, CSSValue* v
     return primitive->computeLengthFloat(const_cast<RenderStyle*>(item->style()), item->document()->documentElement()->renderStyle());
 }
 
-static void getSVGShadowExtent(ShadowData* shadow, int& top, int& right, int& bottom, int& left)
+static void getSVGShadowExtent(ShadowData* shadow, float& top, float& right, float& bottom, float& left)
 {
-    top = 0;
-    right = 0;
-    bottom = 0;
-    left = 0;
+    top = 0.0f;
+    right = 0.0f;
+    bottom = 0.0f;
+    left = 0.0f;
 
-    int blurAndSpread = shadow->blur() + shadow->spread();
+    float blurAndSpread = shadow->blur() + shadow->spread();
 
     top = min(top, shadow->y() - blurAndSpread);
     right = max(right, shadow->x() + blurAndSpread);
@@ -178,21 +178,14 @@ void SVGRenderStyle::inflateForShadow(FloatRect& repaintRect) const
     if (!svgShadow)
         return;
 
-    int shadowTop;
-    int shadowRight;
-    int shadowBottom;
-    int shadowLeft;
+    float shadowTop;
+    float shadowRight;
+    float shadowBottom;
+    float shadowLeft;
     getSVGShadowExtent(svgShadow, shadowTop, shadowRight, shadowBottom, shadowLeft);
 
-    int overflowLeft = repaintRect.x() + shadowLeft;
-    int overflowRight = repaintRect.right() + shadowRight;
-    int overflowTop = repaintRect.y() + shadowTop;
-    int overflowBottom = repaintRect.bottom() + shadowBottom;
-
-    repaintRect.setX(overflowLeft);
-    repaintRect.setY(overflowTop);
-    repaintRect.setWidth(overflowRight - overflowLeft);
-    repaintRect.setHeight(overflowBottom - overflowTop);
+    repaintRect.move(shadowLeft, shadowTop);
+    repaintRect.setSize(repaintRect.size() + FloatSize(shadowRight - shadowLeft, shadowBottom - shadowTop));
 }
 
 }

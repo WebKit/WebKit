@@ -1,5 +1,37 @@
 2010-06-01  Rob Buis  <rwlbuis@gmail.com>
 
+        Reviewed by Nikolas Zimmermann.
+
+        Large SVG rect with shadow fails to render
+        https://bugs.webkit.org/show_bug.cgi?id=38851
+
+        Add new test covering that large shadow rects get renderered now.
+        Update test results that show slight differences, after fixing the
+        repaintRect calculations.
+
+        * platform/mac-leopard/svg/css/composite-shadow-example-expected.checksum:
+        * platform/mac-leopard/svg/css/composite-shadow-example-expected.png:
+        * platform/mac-leopard/svg/css/composite-shadow-with-opacity-expected.checksum:
+        * platform/mac-leopard/svg/css/composite-shadow-with-opacity-expected.png:
+        * platform/mac-leopard/svg/css/group-with-shadow-expected.checksum:
+        * platform/mac-leopard/svg/css/group-with-shadow-expected.png:
+        * platform/mac/svg/css/arrow-with-shadow-expected.txt:
+        * platform/mac/svg/css/composite-shadow-example-expected.checksum:
+        * platform/mac/svg/css/composite-shadow-example-expected.png:
+        * platform/mac/svg/css/composite-shadow-with-opacity-expected.checksum:
+        * platform/mac/svg/css/composite-shadow-with-opacity-expected.png:
+        * platform/mac/svg/css/group-with-shadow-expected.checksum:
+        * platform/mac/svg/css/group-with-shadow-expected.png:
+        * platform/mac/svg/css/stars-with-shadow-expected.checksum:
+        * platform/mac/svg/css/stars-with-shadow-expected.png:
+        * platform/mac/svg/css/stars-with-shadow-expected.txt:
+        * platform/mac/svg/filters/shadow-on-rect-large-expected.checksum: Added.
+        * platform/mac/svg/filters/shadow-on-rect-large-expected.png: Added.
+        * platform/mac/svg/filters/shadow-on-rect-large-expected.txt: Added.
+        * svg/filters/shadow-on-rect-large.svg: Added.
+
+2010-06-01  Rob Buis  <rwlbuis@gmail.com>
+
         Reviewed by Dirk Schulze.
 
         Manipulating SVG element attributes in Javascript does not work as expected
