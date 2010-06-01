@@ -143,6 +143,7 @@ void FontPlatformData::setupPaint(SkPaint* paint) const
         break;
     }
 
+    paint->setEmbeddedBitmapText(m_style.useBitmaps);
     paint->setTextSize(SkFloatToScalar(ts));
     paint->setTypeface(m_typeface);
     paint->setFakeBoldText(m_fakeBold);
