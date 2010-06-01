@@ -1,3 +1,14 @@
+2010-06-01  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Fix Symbian package dependencies of apps against QtWebKit when installing into Qt
+
+        Install the versioning qt_webkit_version.pri into $$[QMAKE_MKSPECS]/modules, which is
+        where mkspecs/features/qt.prf expects it.
+
+        * WebCore.pro:
+
 2010-06-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r60470.

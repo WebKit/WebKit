@@ -1,3 +1,11 @@
+2010-06-01  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Rename versioning .pri file to what Qt's mkspecs/features/qt.pri expects.
+
+        * qt_webkit_version.pri: Renamed from WebKit/qt/qtwebkit_version.pri.
+
 2010-05-31  Lyon Chen  <liachen@rim.com>
 
         Reviewed by Kent Tamura.
