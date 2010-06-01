@@ -1,3 +1,17 @@
+2010-05-31  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Bug 39977 - Missing Chromium bindings for InspectorController methods introduced in r60443
+        https://bugs.webkit.org/show_bug.cgi?id=39977
+        
+        add missing InspectorController JS bindings:
+        - getStyleSheet
+        - getRuleRangesForStyleSheetId
+        
+        Tests: inspector/styles-source-offsets.html
+
+        * src/js/InspectorControllerImpl.js:
+        (devtools.InspectorBackendImpl):
+
 2010-05-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r60456.

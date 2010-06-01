@@ -82,6 +82,8 @@ devtools.InspectorBackendImpl = function()
     this.installInspectorControllerDelegate_("getStyles");
     this.installInspectorControllerDelegate_("getComputedStyle");
     this.installInspectorControllerDelegate_("getInlineStyle");
+    this.installInspectorControllerDelegate_("getStyleSheet");
+    this.installInspectorControllerDelegate_("getRuleRangesForStyleSheetId");
     this.installInspectorControllerDelegate_("applyStyleText");
     this.installInspectorControllerDelegate_("setStyleText");
     this.installInspectorControllerDelegate_("setStyleProperty");
