@@ -64,7 +64,7 @@ public:
         : m_ptr(ptr)
     {
         if (ptr)
-            retainWKPtr(ptr);
+            WKRetain(ptr);
     }
 
     WKRetainPtr(WKAdoptTag, PtrType ptr)

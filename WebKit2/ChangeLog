@@ -1,3 +1,13 @@
+2010-06-01  John Sullivan  <sullivan@apple.com>
+
+        Rubber-stamped by Anders Carlsson.
+
+        Fixed typo/wordo that prevented a certain flavor of constructor from compiling.
+
+        * UIProcess/API/cpp/WKRetainPtr.h:
+        (WebKit::WKRetainPtr::WKRetainPtr):
+        Changed the mysterious "retainWKPtr" to "WKRetain".
+
 2010-05-28  John Sullivan  <sullivan@apple.com>
 
         Rubber-stamped by Dan Bernstein.
