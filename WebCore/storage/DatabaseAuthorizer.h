@@ -90,19 +90,23 @@ public:
     void setReadOnly();
 
     void reset();
+    void resetDeletes();
 
     bool lastActionWasInsert() const { return m_lastActionWasInsert; }
     bool lastActionChangedDatabase() const { return m_lastActionChangedDatabase; }
+    bool hadDeletes() const { return m_hadDeletes; }
 
 private:
     DatabaseAuthorizer();
     void addWhitelistedFunctions();
     int denyBasedOnTableName(const String&);
+    int updateDeletesBasedOnTableName(const String&);
 
     bool m_securityEnabled : 1;
     bool m_lastActionWasInsert : 1;
     bool m_lastActionChangedDatabase : 1;
     bool m_readOnly : 1;
+    bool m_hadDeletes : 1;
 
     HashSet<String, CaseFoldingHash> m_whitelistedFunctions;
 };

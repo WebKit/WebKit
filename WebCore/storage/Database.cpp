@@ -503,6 +503,18 @@ bool Database::lastActionWasInsert()
     return m_databaseAuthorizer->lastActionWasInsert();
 }
 
+void Database::resetDeletes()
+{
+    ASSERT(m_databaseAuthorizer);
+    m_databaseAuthorizer->resetDeletes();
+}
+
+bool Database::hadDeletes()
+{
+    ASSERT(m_databaseAuthorizer);
+    return m_databaseAuthorizer->hadDeletes();
+}
+
 static int guidForOriginAndName(const String& origin, const String& name)
 {
     String stringID;

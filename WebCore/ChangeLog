@@ -1,3 +1,33 @@
+2010-06-01  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Check if a database needs to be auto-vacuumed only after transactions that have deleted something.
+        https://bugs.webkit.org/show_bug.cgi?id=39688
+
+        * storage/Database.cpp:
+        (WebCore::Database::resetDeletes):
+        (WebCore::Database::hadDeletes):
+        * storage/Database.h:
+        * storage/DatabaseAuthorizer.cpp:
+        (WebCore::DatabaseAuthorizer::resetDeletes):
+        (WebCore::DatabaseAuthorizer::dropTable):
+        (WebCore::DatabaseAuthorizer::dropTempTable):
+        (WebCore::DatabaseAuthorizer::dropIndex):
+        (WebCore::DatabaseAuthorizer::dropTempIndex):
+        (WebCore::DatabaseAuthorizer::dropTrigger):
+        (WebCore::DatabaseAuthorizer::dropTempTrigger):
+        (WebCore::DatabaseAuthorizer::dropView):
+        (WebCore::DatabaseAuthorizer::dropTempView):
+        (WebCore::DatabaseAuthorizer::dropVTable):
+        (WebCore::DatabaseAuthorizer::allowDelete):
+        (WebCore::DatabaseAuthorizer::updateDeletesBasedOnTableName): Added.
+        * storage/DatabaseAuthorizer.h:
+        (WebCore::DatabaseAuthorizer::hadDeletes):
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::openTransactionAndPreflight):
+        (WebCore::SQLTransaction::postflightAndCommit):
+
 2010-06-01  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Anders Carlsson.

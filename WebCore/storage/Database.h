@@ -79,6 +79,8 @@ public:
     void setAuthorizerReadOnly();
     bool lastActionChangedDatabase();
     bool lastActionWasInsert();
+    void resetDeletes();
+    bool hadDeletes();
 
     Vector<String> tableNames();
 
