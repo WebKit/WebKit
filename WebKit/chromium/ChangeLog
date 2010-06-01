@@ -1,3 +1,11 @@
+2010-06-01  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Rolling Chromium revision to bring recent changes to V8.
+
+        * DEPS:
+
 2010-06-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r60470.
