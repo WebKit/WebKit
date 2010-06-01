@@ -1248,6 +1248,16 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitHTML5ParserEnabledPreferenceKey];
 }
 
+- (BOOL)paginateDuringLayoutEnabled
+{
+    return [self _boolValueForKey:WebKitPaginateDuringLayoutEnabledPreferenceKey];
+}
+
+- (void)setPaginateDuringLayoutEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitPaginateDuringLayoutEnabledPreferenceKey];
+}
+
 - (WebKitEditingBehavior)editingBehavior
 {
     return static_cast<WebKitEditingBehavior>([self _integerValueForKey:WebKitEditingBehaviorPreferenceKey]);

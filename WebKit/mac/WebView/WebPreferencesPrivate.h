@@ -178,6 +178,9 @@ extern NSString *WebPreferencesRemovedNotification;
 - (BOOL)html5ParserEnabled;
 - (void)setHTML5ParserEnabled:(BOOL)flag;
 
+- (BOOL)paginateDuringLayoutEnabled;
+- (void)setPaginateDuringLayoutEnabled:(BOOL)flag;
+
 - (BOOL)usesProxiedOpenPanel;
 - (void)setUsesProxiedOpenPanel:(BOOL)enabled;
 

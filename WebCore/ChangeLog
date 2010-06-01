@@ -1,3 +1,15 @@
+2010-06-01  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Add a preference for paginating during layout (the new model for computing page breaks).
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setPaginateDuringLayoutEnabled):
+        (WebCore::Settings::paginateDuringLayoutEnabled):
+
 2010-06-01  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.

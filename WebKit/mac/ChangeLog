@@ -1,3 +1,17 @@
+2010-06-01  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Add a preference for paginating during layout (the new model for computing page breaks).
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences paginateDuringLayoutEnabled]):
+        (-[WebPreferences setPaginateDuringLayoutEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+
 2010-06-01  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Simon Fraser.
