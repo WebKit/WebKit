@@ -1,3 +1,15 @@
+2010-06-01  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix a QtWebKit.pc corruption problem.
+        https://bugs.webkit.org/show_bug.cgi?id=36826
+
+        The problem occurs while installing QtWebKit from trunk
+        or a source package.
+
+        * WebCore.pro:
+
 2010-06-01  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Laszlo Gombos.

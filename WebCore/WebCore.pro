@@ -3020,7 +3020,7 @@ HEADERS += $$WEBKIT_API_HEADERS
         QMAKE_PKGCONFIG_LIBDIR = $$target.path
         QMAKE_PKGCONFIG_INCDIR = $$headers.path
         QMAKE_PKGCONFIG_DESTDIR = pkgconfig
-        lib_replace.match = $$DESTDIR
+        lib_replace.match = $$re_escape($$DESTDIR)
         lib_replace.replace = $$[QT_INSTALL_LIBS]
         QMAKE_PKGCONFIG_INSTALL_REPLACE += lib_replace
     }
