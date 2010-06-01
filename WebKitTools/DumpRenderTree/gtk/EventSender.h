@@ -33,7 +33,7 @@
 typedef const struct OpaqueJSContext* JSContextRef;
 typedef struct OpaqueJSValue* JSObjectRef;
 
-JSObjectRef makeEventSender(JSContextRef context);
+JSObjectRef makeEventSender(JSContextRef context, bool isTopFrame);
 void replaySavedEvents();
 
 #endif

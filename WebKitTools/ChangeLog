@@ -2,6 +2,35 @@
 
         Reviewed by Xan Lopez.
 
+        [GTK] Double clicks cause three button press events
+        https://bugs.webkit.org/show_bug.cgi?id=38853
+
+        Add rudimentary leapForward support to the GTK+ DRT. leapForward allows a test
+        to pause for a specified amount of time. It is used in the processing of drag-
+        -and-drop data as well as to separate distinct mouse double-clicks in some tests.
+        This patch enables tests that rely on the latter behavior to pass.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (webViewWindowObjectCleared): Only initialize the EventSender when loading the top frame.
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (leapForwardCallback): Add support for adjusting the time offset on leapForward().
+        (contextClickCallback): Use sendOrQueueEvent.
+        (updateClickCount): Take the time offset into account when counting clicks.
+        (mouseDownCallback): Use sendOrQueueEvent.
+        (getStateFlags): Change down/currentEventButton into buttonCurrentlyDown/lastClickButton.
+        (mouseUpCallback): Use sendOrQueueEvent.
+        (mouseMoveToCallback): Ditto.
+        (mouseWheelToCallback): Ditto.
+        (sendOrQueueEvent): Added.
+        (dispatchEvent): Added.
+        (replaySavedEvents): Pause when an event has a delay and defer to dispatchEvent.
+        (makeEventSender): Only initialize the EventSender when loading the top frame.
+        * DumpRenderTree/gtk/EventSender.h: Ditto.
+
+2010-06-01  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
         [GTK] css1/color_and_background/background_attachment.html fails on the 32-bit debug bot
         https://bugs.webkit.org/show_bug.cgi?id=39101
 

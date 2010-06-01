@@ -673,7 +673,7 @@ static void webViewWindowObjectCleared(WebKitWebView* view, WebKitWebFrame* fram
     ASSERT(!exception);
 
     JSStringRef eventSenderStr = JSStringCreateWithUTF8CString("eventSender");
-    JSValueRef eventSender = makeEventSender(context);
+    JSValueRef eventSender = makeEventSender(context, !webkit_web_frame_get_parent(frame));
     JSObjectSetProperty(context, windowObject, eventSenderStr, eventSender, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, 0);
     JSStringRelease(eventSenderStr);
 }
