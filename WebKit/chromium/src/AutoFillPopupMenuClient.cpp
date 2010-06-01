@@ -75,6 +75,39 @@ void AutoFillPopupMenuClient::valueChanged(unsigned listIndex, bool fireEvents)
                                                    m_labels[listIndex]);
 }
 
+void AutoFillPopupMenuClient::selectionChanged(unsigned listIndex, bool fireEvents)
+{
+    ASSERT(listIndex >= 0 && listIndex < m_names.size());
+
+    WebViewImpl* webView = getWebView();
+    if (!webView)
+        return;
+
+    webView->client()->didSelectAutoFillSuggestion(WebNode(getTextField()),
+                                                   m_names[listIndex],
+                                                   m_labels[listIndex]);
+}
+
+void AutoFillPopupMenuClient::selectionCleared()
+{
+    WebViewImpl* webView = getWebView();
+    if (!webView)
+      return;
+
+    webView->client()->didClearAutoFillSelection(WebNode(getTextField()));
+}
+
+void AutoFillPopupMenuClient::popupDidHide()
+{
+    // FIXME: Refactor this method, as selectionCleared() and popupDidHide()
+    // share the exact same functionality.
+    WebViewImpl* webView = getWebView();
+    if (!webView)
+      return;
+
+    webView->client()->didClearAutoFillSelection(WebNode(getTextField()));
+}
+
 void AutoFillPopupMenuClient::initialize(
     HTMLInputElement* textField,
     const WebVector<WebString>& names,

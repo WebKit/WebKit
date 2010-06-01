@@ -1,3 +1,27 @@
+2010-05-24  James Hawkins  <jhawkins@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Added ability for PopupMenuClient to signal when
+        * selection changed, and
+        * selection cleared.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39639
+
+        No new tests because this functionality is intentionally hidden from
+        everything other than renderer.
+
+        * platform/PopupMenuClient.h:
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::selectIndex):
+        (WebCore::PopupListBox::clearSelection):
+        * rendering/RenderMenuList.h:
+        (WebCore::RenderMenuList::RenderMenuList::selectionChanged):
+        (WebCore::RenderMenuList::RenderMenuList::selectionCleared):
+        * rendering/RenderTextControlSingleLine.h:
+        (WebCore::RenderTextControlSingleLine::selectionChanged):
+        (WebCore::RenderTextControlSingleLine::selectionCleared):
+
 2010-06-01  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.

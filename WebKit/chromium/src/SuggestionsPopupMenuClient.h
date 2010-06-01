@@ -61,6 +61,8 @@ public:
 
     // WebCore::PopupMenuClient methods:
     virtual void valueChanged(unsigned listIndex, bool fireEvents = true);
+    virtual void selectionChanged(unsigned, bool) {}
+    virtual void selectionCleared() {}
     virtual WebCore::String itemText(unsigned listIndex) const;
     virtual WebCore::String itemToolTip(unsigned lastIndex) const { return WebCore::String(); }
     virtual WebCore::String itemAccessibilityText(unsigned lastIndex) const { return WebCore::String(); }

@@ -108,6 +108,8 @@ private:
 
     // PopupMenuClient methods
     virtual void valueChanged(unsigned listIndex, bool fireEvents = true);
+    virtual void selectionChanged(unsigned, bool) {}
+    virtual void selectionCleared() {}
     virtual String itemText(unsigned listIndex) const;
     virtual String itemToolTip(unsigned) const { return String(); }
     virtual String itemAccessibilityText(unsigned) const { return String(); }

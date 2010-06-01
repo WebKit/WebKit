@@ -38,6 +38,8 @@ class PopupMenuClient {
 public:
     virtual ~PopupMenuClient() {}
     virtual void valueChanged(unsigned listIndex, bool fireEvents = true) = 0;
+    virtual void selectionChanged(unsigned listIndex, bool fireEvents = true) = 0;
+    virtual void selectionCleared() = 0;
 
     virtual String itemText(unsigned listIndex) const = 0;
     virtual String itemToolTip(unsigned listIndex) const = 0;

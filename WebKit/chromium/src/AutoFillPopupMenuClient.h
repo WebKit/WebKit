@@ -52,6 +52,9 @@ public:
 
     // WebCore::PopupMenuClient implementation:
     virtual void valueChanged(unsigned listIndex, bool fireEvents = true);
+    virtual void selectionChanged(unsigned listIndex, bool fireEvents = true);
+    virtual void selectionCleared();
+    virtual void popupDidHide();
 
     void initialize(WebCore::HTMLInputElement*,
                     const WebVector<WebString>& names,

@@ -287,12 +287,24 @@ public:
     virtual void removeAutofillSuggestions(const WebString& name,
                                            const WebString& value) { }
 
-    // Informs the browser that the user has selected an AutoFill suggestion
-    // for a WebNode.  |name| and |label| form a key into the set of AutoFill
+    // Informs the browser that the user has accepted an AutoFill suggestion for
+    // a WebNode.  |name| and |label| form a key into the set of AutoFill
     // profiles.
     virtual void didAcceptAutoFillSuggestion(const WebNode&,
                                              const WebString& name,
                                              const WebString& label) { }
+
+    // Informs the browser that the user has selected an AutoFill suggestion for
+    // a WebNode.  This happens when the user hovers over a suggestion or uses
+    // the arrow keys to navigate to a suggestion.
+    virtual void didSelectAutoFillSuggestion(const WebNode&,
+                                             const WebString& name,
+                                             const WebString& label) { }
+
+    // Informs the browser that the user has cleared the selection from the
+    // AutoFill suggestions dropdown.  This happens when a user uses the arrow
+    // keys to navigate outside the range of possible selections.
+    virtual void didClearAutoFillSelection(const WebNode&) { }
 
     // Geolocation ---------------------------------------------------------
 

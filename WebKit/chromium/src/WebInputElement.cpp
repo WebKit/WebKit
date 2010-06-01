@@ -85,6 +85,21 @@ WebString WebInputElement::value() const
     return constUnwrap<HTMLInputElement>()->value();
 }
 
+void WebInputElement::setPlaceholder(const WebString& value)
+{
+    unwrap<HTMLInputElement>()->setPlaceholder(value);
+}
+
+WebString WebInputElement::placeholder() const
+{
+    return constUnwrap<HTMLInputElement>()->placeholder();
+}
+
+bool WebInputElement::isAutofilled() const
+{
+    return constUnwrap<HTMLInputElement>()->isAutofilled();
+}
+
 void WebInputElement::setAutofilled(bool autoFilled)
 {
     unwrap<HTMLInputElement>()->setAutofilled(autoFilled);

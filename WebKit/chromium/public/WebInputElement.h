@@ -86,8 +86,11 @@ namespace WebKit {
         WEBKIT_API bool isActivatedSubmit() const;
         WEBKIT_API void setActivatedSubmit(bool);
         WEBKIT_API int size() const;
-        WEBKIT_API void setValue(const WebString& value);
+        WEBKIT_API void setValue(const WebString&);
         WEBKIT_API WebString value() const;
+        WEBKIT_API void setPlaceholder(const WebString&);
+        WEBKIT_API WebString placeholder() const;
+        WEBKIT_API bool isAutofilled() const;
         WEBKIT_API void setAutofilled(bool);
         WEBKIT_API void dispatchFormControlChangeEvent();
         WEBKIT_API void setSelectionRange(int, int);
