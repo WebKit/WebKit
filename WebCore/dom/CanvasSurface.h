@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +29,7 @@
 
 #include "AffineTransform.h"
 #include "IntSize.h"
+#include "PlatformString.h"
 
 #include <wtf/OwnPtr.h>
 #include <wtf/Noncopyable.h>
@@ -41,7 +43,6 @@ class FloatSize;
 class GraphicsContext;
 class ImageBuffer;
 class IntPoint;
-class String;
 
 class CSSStyleSelector;
 class RenderBox;
@@ -58,7 +59,9 @@ public:
     int width() const { return m_size.width(); }
     int height() const { return m_size.height(); }
 
-    String toDataURL(const String& mimeType, ExceptionCode&);
+    String toDataURL(const String& mimeType, double quality, ExceptionCode&);
+
+    String toDataURL(const String& mimeType, ExceptionCode& ec) { return toDataURL(mimeType, 1.0, ec); }
 
     const IntSize& size() const { return m_size; }
 

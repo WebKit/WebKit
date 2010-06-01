@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,6 +83,24 @@ JSValue JSHTMLCanvasElement::getContext(ExecState* exec)
     if (!context)
         return jsNull();
     return toJS(exec, globalObject(), WTF::getPtr(context));
+}
+
+JSValue JSHTMLCanvasElement::toDataURL(ExecState* exec)
+{
+    const String& type = valueToStringWithUndefinedOrNullCheck(exec, exec->argument(0));
+    double quality = 1.0;
+    if (exec->argumentCount() > 1) {
+        JSValue v = exec->argument(1);
+        if (v.isNumber())
+            quality = v.toNumber(exec);
+        if (!(0.0 <= quality && quality <= 1.0))
+            quality = 1.0;
+    }
+    HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(impl());
+    ExceptionCode ec = 0;
+    JSC::JSValue result = jsString(exec, canvas->toDataURL(type, quality, ec));
+    setDOMException(exec, ec);
+    return result;
 }
 
 } // namespace WebCore

@@ -2,6 +2,7 @@
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2008 Holger Hans Peter Freyther
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -275,9 +276,10 @@ void ImageBuffer::putPremultipliedImageData(ImageData* source, const IntRect& so
 // We get a mimeType here but QImageWriter does not support mimetypes but
 // only formats (png, gif, jpeg..., xpm). So assume we get image/ as image
 // mimetypes and then remove the image/ to get the Qt format.
-String ImageBuffer::toDataURL(const String& mimeType) const
+String ImageBuffer::toDataURL(const String& mimeType, double quality) const
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
+    ASSERT(0.0 <= quality && quality <= 1.0);
 
     if (!mimeType.startsWith("image/"))
         return "data:,";
@@ -287,8 +289,10 @@ String ImageBuffer::toDataURL(const String& mimeType) const
     QBuffer buffer(&data);
     buffer.open(QBuffer::WriteOnly);
 
-    if (!m_data.m_pixmap.save(&buffer, mimeType.substring(sizeof "image").utf8().data()))
+    if (!m_data.m_pixmap.save(&buffer, mimeType.substring(sizeof "image").utf8().data(), quality * 100 + 0.5)) {
+        buffer.close();
         return "data:,";
+    }
 
     buffer.close();
     return String::format("data:%s;base64,%s", mimeType.utf8().data(), data.toBase64().data());

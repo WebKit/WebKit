@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007-2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -34,6 +35,7 @@
 #include "CanvasContextAttributes.h"
 #include "CanvasRenderingContext.h"
 #include "HTMLCanvasElement.h"
+#include "PlatformString.h"
 #include "WebGLContextAttributes.h"
 #include "V8Binding.h"
 #include "V8CanvasRenderingContext2D.h"
@@ -42,6 +44,7 @@
 #if ENABLE(3D_CANVAS)
 #include "V8WebGLRenderingContext.h"
 #endif
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -87,6 +90,24 @@ v8::Handle<v8::Value> V8HTMLCanvasElement::getContextCallback(const v8::Argument
 #endif
     ASSERT_NOT_REACHED();
     return v8::Null();
+}
+
+v8::Handle<v8::Value> V8HTMLCanvasElement::toDataURLCallback(const v8::Arguments& args)
+{
+    double quality = 1.0;
+    if (args.Length() > 1) {
+        if (args[1]->IsNumber())
+            quality = args[1]->NumberValue();
+        if (!(0.0 <= quality && quality <= 1.0))
+            quality = 1.0;
+    }
+    v8::Handle<v8::Object> holder = args.Holder();
+    HTMLCanvasElement* canvas = V8HTMLCanvasElement::toNative(holder);
+    String type = toWebCoreString(args[0]);
+    ExceptionCode ec = 0;
+    String result = canvas->toDataURL(type, quality, ec);
+    V8Proxy::setDOMException(ec);
+    return v8StringOrUndefined(result);
 }
 
 } // namespace WebCore

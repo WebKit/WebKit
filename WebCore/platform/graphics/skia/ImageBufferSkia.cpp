@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2008, Google Inc. All rights reserved.
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -260,7 +261,7 @@ void ImageBuffer::putPremultipliedImageData(ImageData* source, const IntRect& so
     putImageData<Premultiplied>(source, sourceRect, destPoint, *context()->platformContext()->bitmap(), m_size);
 }
 
-String ImageBuffer::toDataURL(const String&) const
+String ImageBuffer::toDataURL(const String&, double) const
 {
     // Encode the image into a vector.
     Vector<unsigned char> pngEncodedData;

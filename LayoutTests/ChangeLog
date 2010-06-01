@@ -1,3 +1,23 @@
+2010-05-31  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Reviewed by George Staikos.
+
+        Fix canvas.toDataURL(type, quality, ...) to let it support quality parameter. 
+        And implement it in Qt port. 
+        https://bugs.webkit.org/show_bug.cgi?id=37304
+
+        * platform/qt/fast/canvas/toDataURL-jpeg-alpha-expected.txt: Added.
+        * platform/qt/fast/canvas/toDataURL-jpeg-alpha.html: Added.
+        * platform/qt/fast/canvas/toDataURL-jpeg-primarycolors-expected.txt: Added.
+        * platform/qt/fast/canvas/toDataURL-jpeg-primarycolors.html: Added.
+        * platform/qt/fast/canvas/toDataURL-jpeg-quality-basic-expected.txt: Added.
+        * platform/qt/fast/canvas/toDataURL-jpeg-quality-basic.html: Added.
+        * platform/qt/fast/canvas/toDataURL-jpeg-quality-notnumber-expected.txt: Added.
+        * platform/qt/fast/canvas/toDataURL-jpeg-quality-notnumber.html: Added.
+        * platform/qt/fast/canvas/toDataURL-jpeg-quality-outsiderange-expected.txt: Added.
+        * platform/qt/fast/canvas/toDataURL-jpeg-quality-outsiderange.html: Added.
+        * platform/qt/fast/canvas/toDataURL-jpeg.js: Added.
+
 2010-05-31  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Dimitri Glazkov.

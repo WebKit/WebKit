@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,7 +83,7 @@ namespace WebCore {
         void putUnmultipliedImageData(ImageData*, const IntRect& sourceRect, const IntPoint& destPoint);
         void putPremultipliedImageData(ImageData*, const IntRect& sourceRect, const IntPoint& destPoint);
 
-        String toDataURL(const String& mimeType) const;
+        String toDataURL(const String& mimeType, double quality = 1.0) const;
 #if !PLATFORM(CG)
         AffineTransform baseTransform() const { return AffineTransform(); }
         void transformColorSpace(ImageColorSpace srcColorSpace, ImageColorSpace dstColorSpace);

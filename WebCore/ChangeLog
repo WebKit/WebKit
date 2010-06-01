@@ -1,3 +1,42 @@
+2010-05-31  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Reviewed by George Staikos.
+
+        Fix canvas.toDataURL(type, quality, ...) to let it support quality parameter. 
+        And implement it in Qt port. 
+        https://bugs.webkit.org/show_bug.cgi?id=37304
+
+        Tests: platform/qt/fast/canvas/toDataURL-jpeg-alpha.html
+               platform/qt/fast/canvas/toDataURL-jpeg-primarycolors.html
+               platform/qt/fast/canvas/toDataURL-jpeg-quality-basic.html
+               platform/qt/fast/canvas/toDataURL-jpeg-quality-notnumber.html
+               platform/qt/fast/canvas/toDataURL-jpeg-quality-outsiderange.html
+
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::JSHTMLCanvasElement::toDataURL):
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp:
+        (WebCore::V8HTMLCanvasElement::toDataURLCallback):
+        * dom/CanvasSurface.cpp:
+        (WebCore::CanvasSurface::toDataURL):
+        * dom/CanvasSurface.h:
+        (WebCore::CanvasSurface::toDataURL):
+        * html/HTMLCanvasElement.idl:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/haiku/ImageBufferHaiku.cpp:
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/wince/ImageBufferWince.cpp:
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/wx/ImageBufferWx.cpp:
+        (WebCore::ImageBuffer::toDataURL):
+
 2010-05-31  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.

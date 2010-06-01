@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Kevin Ollivier <kevino@theolliviers.com>
+ * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,7 +76,7 @@ void ImageBuffer::putPremultipliedImageData(ImageData* source, const IntRect& so
     notImplemented();
 }
 
-String ImageBuffer::toDataURL(const String&) const
+String ImageBuffer::toDataURL(const String&, double) const
 {
     notImplemented();
     return String();

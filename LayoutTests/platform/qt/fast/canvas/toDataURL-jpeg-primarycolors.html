@@ -1,0 +1,51 @@
+<html>
+<head>
+    <script src="toDataURL-jpeg.js"></script>
+    <script>
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+
+        window.notifyEndTest = function ()
+        {
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        };
+
+        function testToDataURL(canvas, ctx)
+        {
+            ctx.fillStyle = '#ff0';
+            ctx.fillRect(0, 0, 25, 40);
+            ctx.fillStyle = '#0ff';
+            ctx.fillRect(25, 0, 50, 40);
+            ctx.fillStyle = '#00f';
+            ctx.fillRect(75, 0, 25, 40);
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 40, 100, 10);
+            var data = canvas.toDataURL('image/jpeg'); // it is okay if this returns a PNG instead
+            ctx.fillStyle = '#f00';
+            ctx.fillRect(0, 0, 100, 50);
+            var img = new Image();
+            deferTest();
+
+            img.onload = wrapFunction(function ()
+            {
+                ctx.drawImage(img, 0, 0);
+                _assertPixelApprox(canvas, 12,20, 255,255,0,255, "12,20", "255,255,0,255", 8);
+                _assertPixelApprox(canvas, 50,20, 0,255,255,255, "50,20", "0,255,255,255", 8);
+                _assertPixelApprox(canvas, 87,20, 0,0,255,255, "87,20", "0,0,255,255", 8);
+                _assertPixelApprox(canvas, 50,45, 255,255,255,255, "50,45", "255,255,255,255", 8);
+            });
+
+            img.src = data;
+            if (window.layoutTestController)
+                layoutTestController.waitUntilDone();
+        }
+        _addTest(testToDataURL);
+    </script>
+</head>
+<body>
+    <p>To verify color compressing loss (when the quality is 1.0) is in a tolerable range</p>
+    <canvas id="c" width="100" height="50"></canvas>
+    <p id="d"></p>
+</body>
+</html>

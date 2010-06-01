@@ -1,0 +1,3 @@
+To verify basic jpeg compressing loss: 1) Low qulity URL's length should be shorter than high qulity URL's length, 2) Compress loss should be in a tolerable range
+
+Test result: passed
