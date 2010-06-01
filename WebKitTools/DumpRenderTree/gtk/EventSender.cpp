@@ -127,7 +127,7 @@ bool prepareMouseButtonEvent(GdkEvent* event, int button)
     // their time value, so that WebKit can detect where sequences of mouse
     // clicks begin and end. This should not interfere with GDK or GTK+ event
     // processing, because the event is only seen by the widget.
-    event.button.time = GDK_CURRENT_TIME + timeOffset;
+    event->button.time = GDK_CURRENT_TIME + timeOffset;
 
     int xRoot, yRoot;
 #if GTK_CHECK_VERSION(2, 17, 3)
