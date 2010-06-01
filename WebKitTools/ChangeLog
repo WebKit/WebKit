@@ -1,5 +1,12 @@
 2010-06-01  Alexey Proskuryakov  <ap@apple.com>
 
+        A real Tiger build fix.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Enable GCC_OBJC_CALL_CXX_CDTORS
+        for all configurations, not just debug.
+
+2010-06-01  Alexey Proskuryakov  <ap@apple.com>
+
         Tiger build fix.
 
         * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Enable GCC_OBJC_CALL_CXX_CDTORS.
