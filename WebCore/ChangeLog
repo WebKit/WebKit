@@ -1,3 +1,15 @@
+2010-06-01  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Execute void callbacks in the context they were created in.
+        https://bugs.webkit.org/show_bug.cgi?id=39145
+
+        * bindings/v8/custom/V8CustomVoidCallback.cpp:
+        (WebCore::V8CustomVoidCallback::V8CustomVoidCallback):
+        (WebCore::V8CustomVoidCallback::handleEvent):
+        * bindings/v8/custom/V8CustomVoidCallback.h:
+
 2010-06-01  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Sam Weinig.

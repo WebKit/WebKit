@@ -2860,8 +2860,4 @@ BUG45106 WIN : svg/clip-path/clip-path-text-and-shape.svg = PASS CRASH
 BUG45106 WIN : svg/text/text-text-04-t.svg = PASS CRASH
 BUG45106 WIN : svg/text/text-text-05-t.svg = PASS CRASH
 
-// New storage test added in WK rev. 60386 fails in Chromium on all platforms
-// Filed as http://crbug.com/45462
-BUG45462 : storage/transaction-success-callback-isolated-world.html = FAIL
-
 BUG45518: html5lib/runner.html = TEXT

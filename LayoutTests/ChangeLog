@@ -1,3 +1,12 @@
+2010-06-01  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        storage/transaction-success-callback-isolated-world.html is being fixed.
+        https://bugs.webkit.org/show_bug.cgi?id=39145
+
+        * platform/chromium/test_expectations.txt:
+
 2010-05-12  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
