@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2007 Rob Buis <buis@kde.org>
+    Copyright (C) 2007, 2010 Rob Buis <buis@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -48,14 +48,14 @@ void SVGViewSpec::setTransform(const String& transform)
     SVGTransformable::parseTransformAttribute(m_transform.get(), transform);
 }
 
-void SVGViewSpec::setViewBoxString(const String& viewBox)
+void SVGViewSpec::setViewBoxString(const String& viewBoxStr)
 {
-    float x, y, w, h;
-    const UChar* c = viewBox.characters();
-    const UChar* end = c + viewBox.length();
-    if (!parseViewBox(m_contextElement->document(), c, end, x, y, w, h, false))
-        return;
-    setViewBoxBaseValue(FloatRect(x, y, w, h));
+    FloatRect viewBox;
+    const UChar* c = viewBoxStr.characters();
+    const UChar* end = c + viewBoxStr.length();
+    if (!parseViewBox(m_contextElement->document(), c, end, viewBox, false))
+         return;
+    setViewBoxBaseValue(viewBox);
 }
 
 void SVGViewSpec::setPreserveAspectRatioString(const String& preserve)
@@ -101,10 +101,10 @@ bool SVGViewSpec::parseViewSpec(const String& viewSpec)
                 if (currViewSpec >= end || *currViewSpec != '(')
                     return false;
                 currViewSpec++;
-                float x, y, w, h;
-                if (!parseViewBox(m_contextElement->document(), currViewSpec, end, x, y, w, h, false))
+                FloatRect viewBox;
+                if (!parseViewBox(m_contextElement->document(), currViewSpec, end, viewBox, false))
                     return false;
-                setViewBoxBaseValue(FloatRect(x, y, w, h));
+                setViewBoxBaseValue(viewBox);
                 if (currViewSpec >= end || *currViewSpec != ')')
                     return false;
                 currViewSpec++;

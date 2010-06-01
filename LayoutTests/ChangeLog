@@ -1,3 +1,17 @@
+2010-06-01  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Dirk Schulze.
+
+        Manipulating SVG element attributes in Javascript does not work as expected
+        https://bugs.webkit.org/show_bug.cgi?id=34328
+
+        Add test to verify that after removeAttribute viewBox is set to be empty.
+
+        * platform/mac/svg/custom/use-modify-target-symbol-expected.txt:
+        * svg/custom/script-tests/svg-viewBox-dynamic.js: Added.
+        * svg/custom/svg-viewBox-dynamic-expected.txt: Added.
+        * svg/custom/svg-viewBox-dynamic.html: Added.
+
 2010-06-01  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.

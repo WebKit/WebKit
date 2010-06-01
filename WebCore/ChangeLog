@@ -1,3 +1,22 @@
+2010-06-01  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Dirk Schulze.
+
+        Manipulating SVG element attributes in Javascript does not work as expected
+        https://bugs.webkit.org/show_bug.cgi?id=34328
+
+        Reset the viewBox to be empty when removing the viewBox attribute.
+
+        Test: svg/custom/svg-viewBox-dynamic.html
+
+        * svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::parseViewBox):
+        (WebCore::SVGFitToViewBox::parseMappedAttribute):
+        * svg/SVGFitToViewBox.h:
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::setViewBoxString):
+        (WebCore::SVGViewSpec::parseViewSpec):
+
 2010-06-01  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
