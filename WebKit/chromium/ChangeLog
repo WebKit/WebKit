@@ -1,3 +1,15 @@
+2010-05-31  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Expose html5 parser enabled flag in WebSettings
+        https://bugs.webkit.org/show_bug.cgi?id=39913
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setHTML5ParserEnabled):
+        * src/WebSettingsImpl.h:
+
 2010-05-31  Lyon Chen  <liachen@rim.com>
 
         Reviewed by Kent Tamura.

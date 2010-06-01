@@ -87,6 +87,7 @@ public:
     virtual void setShowDebugBorders(bool);
     virtual void setEditingBehavior(EditingBehavior);
     virtual void setAcceleratedCompositingEnabled(bool);
+    virtual void setHTML5ParserEnabled(bool);
 
 private:
     WebCore::Settings* m_settings;
