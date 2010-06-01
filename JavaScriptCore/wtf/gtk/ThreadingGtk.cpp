@@ -36,17 +36,20 @@
 #include "HashMap.h"
 #include "MainThread.h"
 #include "RandomNumberSeed.h"
+#include <wtf/StdLibExtras.h>
 
 #include <glib.h>
 #include <limits.h>
 
 namespace WTF {
 
+typedef HashMap<ThreadIdentifier, GThread*> ThreadMap;
+
 static Mutex* atomicallyInitializedStaticMutex;
 
 static Mutex& threadMapMutex()
 {
-    static Mutex mutex;
+    DEFINE_STATIC_LOCAL(Mutex, mutex, ());
     return mutex;
 }
 
@@ -74,9 +77,9 @@ void unlockAtomicallyInitializedStaticMutex()
     atomicallyInitializedStaticMutex->unlock();
 }
 
-static HashMap<ThreadIdentifier, GThread*>& threadMap()
+static ThreadMap& threadMap()
 {
-    static HashMap<ThreadIdentifier, GThread*> map;
+    DEFINE_STATIC_LOCAL(ThreadMap, map, ());
     return map;
 }
 
@@ -84,7 +87,7 @@ static ThreadIdentifier identifierByGthreadHandle(GThread*& thread)
 {
     MutexLocker locker(threadMapMutex());
 
-    HashMap<ThreadIdentifier, GThread*>::iterator i = threadMap().begin();
+    ThreadMap::iterator i = threadMap().begin();
     for (; i != threadMap().end(); ++i) {
         if (i->second == thread)
             return i->first;

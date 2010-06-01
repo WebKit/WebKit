@@ -1,3 +1,17 @@
+2010-06-01  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Use DEFINE_STATIC_LOCAL for threadMapMutex and threadMap
+        https://bugs.webkit.org/show_bug.cgi?id=39831
+
+        Use DEFINE_STATIC_LOCAL for static local variables.
+
+        * wtf/gtk/ThreadingGtk.cpp:
+        (WTF::threadMapMutex):
+        (WTF::threadMap):
+        (WTF::identifierByGthreadHandle):
+
 2010-06-01  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Shinichiro Hamaji.
