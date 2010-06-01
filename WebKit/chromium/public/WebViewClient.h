@@ -270,6 +270,8 @@ public:
     // changed and should be saved.  See WebView::inspectorSettings.
     virtual void didUpdateInspectorSettings() { }
 
+    virtual void didUpdateInspectorSetting(const WebString& key, const WebString& value) { }
+
 
     // Autofill ------------------------------------------------------------
 

@@ -33,10 +33,8 @@
 
 #include "DOMWindow.h"
 #include "FloatRect.h"
-#include "InspectorController.h"
 #include "NotImplemented.h"
 #include "Page.h"
-#include "Settings.h"
 #include "WebRect.h"
 #include "WebURL.h"
 #include "WebURLRequest.h"
@@ -94,65 +92,14 @@ void InspectorClientImpl::hideHighlight()
 
 void InspectorClientImpl::populateSetting(const String& key, String* value)
 {
-    loadSettings();
-    if (m_settings->contains(key))
-        *value = m_settings->get(key);
+    WebString string;
+    m_inspectedWebView->inspectorSetting(key, &string);
+    *value = string;
 }
 
 void InspectorClientImpl::storeSetting(const String& key, const String& value)
 {
-    loadSettings();
-    m_settings->set(key, value);
-    saveSettings();
-}
-
-void InspectorClientImpl::loadSettings()
-{
-    if (m_settings)
-        return;
-
-    m_settings.set(new SettingsMap);
-    String data = m_inspectedWebView->inspectorSettings();
-    if (data.isEmpty())
-        return;
-
-    Vector<String> entries;
-    data.split("\n", entries);
-    for (Vector<String>::iterator it = entries.begin(); it != entries.end(); ++it) {
-        Vector<String> tokens;
-        it->split(":", tokens);
-        if (tokens.size() < 3)
-            continue;
-
-        String name = decodeURLEscapeSequences(tokens[0]);
-        String type = tokens[1];
-        String value = tokens[2];
-        for (size_t i = 3; i < tokens.size(); ++i)
-            value += ":" + tokens[i];
-
-        if (type == "string")
-            value = decodeURLEscapeSequences(value);
-
-        m_settings->set(name, value);
-    }
-}
-
-void InspectorClientImpl::saveSettings()
-{
-    String data;
-    for (SettingsMap::iterator it = m_settings->begin(); it != m_settings->end(); ++it) {
-        String name = encodeWithURLEscapeSequences(it->first);
-        String value = it->second;
-        String entry = String::format(
-            "%s:string:%s",
-            name.utf8().data(),
-            encodeWithURLEscapeSequences(value).utf8().data());
-        data.append(entry);
-        data.append("\n");
-    }
-    m_inspectedWebView->setInspectorSettings(data);
-    if (m_inspectedWebView->client())
-        m_inspectedWebView->client()->didUpdateInspectorSettings();
+    m_inspectedWebView->setInspectorSetting(key, value);
 }
 
 } // namespace WebKit

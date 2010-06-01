@@ -152,6 +152,9 @@ public:
     virtual void inspectElementAt(const WebPoint& point);
     virtual WebString inspectorSettings() const;
     virtual void setInspectorSettings(const WebString& settings);
+    virtual bool inspectorSetting(const WebString& key, WebString* value) const;
+    virtual void setInspectorSetting(const WebString& key,
+                                     const WebString& value);
     virtual WebDevToolsAgent* devToolsAgent();
     virtual void setDevToolsAgent(WebDevToolsAgent*);
     virtual WebAccessibilityObject accessibilityObject();
@@ -484,6 +487,9 @@ private:
 
     // Inspector settings.
     WebString m_inspectorSettings;
+
+    typedef HashMap<WebCore::String, WebCore::String> SettingsMap;
+    OwnPtr<SettingsMap> m_inspectorSettingsMap;
 
 #if ENABLE(NOTIFICATIONS)
     // The provider of desktop notifications;

@@ -257,6 +257,8 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 
     m_page->backForwardList()->setClient(&m_backForwardListClientImpl);
     m_page->setGroupName(pageGroupName);
+
+    m_inspectorSettingsMap.set(new SettingsMap);
 }
 
 WebViewImpl::~WebViewImpl()
@@ -1692,6 +1694,21 @@ WebString WebViewImpl::inspectorSettings() const
 void WebViewImpl::setInspectorSettings(const WebString& settings)
 {
     m_inspectorSettings = settings;
+}
+
+bool WebViewImpl::inspectorSetting(const WebString& key, WebString* value) const
+{
+    if (!m_inspectorSettingsMap->contains(key))
+        return false;
+    *value = m_inspectorSettingsMap->get(key);
+    return true;
+}
+
+void WebViewImpl::setInspectorSetting(const WebString& key,
+                                      const WebString& value)
+{
+    m_inspectorSettingsMap->set(key, value);
+    client()->didUpdateInspectorSetting(key, value);
 }
 
 WebDevToolsAgent* WebViewImpl::devToolsAgent()
