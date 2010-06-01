@@ -45,6 +45,10 @@ void PointLightSource::updatePaintingData(PaintingData& paintingData, int x, int
     paintingData.lightVector.normalize();
 }
 
+// spot-light edge darkening depends on an absolute treshold
+// according to the SVG 1.1 SE light regression tests
+static const float antiAliasTreshold = 0.016f;
+
 void SpotLightSource::initPaintingData(PaintingData& paintingData)
 {
     paintingData.privateColorVector = paintingData.colorVector;
@@ -55,18 +59,15 @@ void SpotLightSource::initPaintingData(PaintingData& paintingData)
 
     if (!m_limitingConeAngle) {
         paintingData.coneCutOffLimit = 0.0f;
-        paintingData.coneFullLight = cosf(deg2rad(92.0f));
+        paintingData.coneFullLight = -antiAliasTreshold;
     } else {
         float limitingConeAngle = m_limitingConeAngle;
         if (limitingConeAngle < 0.0f)
-            limitingConeAngle = 0.0f;
-        else if (limitingConeAngle > 90.0f)
+            limitingConeAngle = -limitingConeAngle;
+        if (limitingConeAngle > 90.0f)
             limitingConeAngle = 90.0f;
         paintingData.coneCutOffLimit = cosf(deg2rad(180.0f - limitingConeAngle));
-        limitingConeAngle -= 2.0f;
-        if (limitingConeAngle < 0.0f)
-            limitingConeAngle = 0.0f;
-        paintingData.coneFullLight = cosf(deg2rad(180.0f - limitingConeAngle));
+        paintingData.coneFullLight = paintingData.coneCutOffLimit - antiAliasTreshold;
     }
 
     // Optimization for common specularExponent values

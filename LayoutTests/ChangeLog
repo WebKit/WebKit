@@ -1,3 +1,20 @@
+2010-06-01  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Dirk Schulze.
+
+        Testing the anti-aliasing effect of the spot light edge
+        https://bugs.webkit.org/show_bug.cgi?id=39477
+
+        * platform/gtk/Skipped:
+        * platform/mac/svg/W3C-SVG-1.1/filters-light-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-light-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-light-04-f-expected.checksum: Added.
+        * platform/mac/svg/W3C-SVG-1.1/filters-light-04-f-expected.png: Added.
+        * platform/mac/svg/W3C-SVG-1.1/filters-light-04-f-expected.txt: Added.
+        * platform/qt/Skipped:
+        * svg/W3C-SVG-1.1/filters-light-04-f.png: Added.
+        * svg/W3C-SVG-1.1/filters-light-04-f.svg: Added.
+
 2010-05-31  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

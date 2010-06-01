@@ -1,3 +1,22 @@
+2010-06-01  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Dirk Schulze.
+
+        Make the spot light anti-alias effect look similar to SVG expected values.
+        https://bugs.webkit.org/show_bug.cgi?id=39477
+
+        The W3 standard only mention, that the edge of the spotlight should be
+        anti-aliased but it does not specify how. The provided expected values
+        gives some hint about their intentions. The algorithm uses a fixed
+        range, which computed as follows: let a = cos(spot light cutoff range)
+        the light fades off in the [a-0.016, a] range.
+
+        Test: svg/W3C-SVG-1.1/filters-light-04-f.svg
+        Updated pixel test: svg/W3C-SVG-1.1/filters-light-01-f.svg
+
+        * svg/graphics/filters/SVGLightSource.cpp:
+        (WebCore::SpotLightSource::initPaintingData):
+
 2010-05-31  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
