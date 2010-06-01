@@ -1,3 +1,11 @@
+2010-06-01  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Fix installation of the QtWebKit module .pri file when building inside of Qt
+
+        * WebCore.pro:
+
 2010-06-01  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.
