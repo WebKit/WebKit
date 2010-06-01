@@ -41,7 +41,7 @@ public:
     WebIndexedDatabaseImpl();
     virtual ~WebIndexedDatabaseImpl();
 
-    virtual void open(const WebString& name, const WebString& description, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, int& exceptionCode);
+    virtual void open(const WebString& name, const WebString& description, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*);
 
 private:
     WTF::RefPtr<WebCore::IndexedDatabase> m_indexedDatabase;

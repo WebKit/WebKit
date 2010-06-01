@@ -30,6 +30,8 @@ module storage {
     ] IDBObjectStoreRequest {
         IDBRequest get(in SerializedScriptValue key);
         // FIXME: Come to concensus re getAll.
+        // FIXME: SerializedScriptValue raises an exception if you pass in something that can't be serialized.
+        //        We need to instead "raise" this error via an error callback.
         IDBRequest add(in SerializedScriptValue value, in [Optional] SerializedScriptValue key);
         IDBRequest modify(in SerializedScriptValue value, in [Optional] SerializedScriptValue key);
         IDBRequest addOrModify(in SerializedScriptValue value, in [Optional] SerializedScriptValue key);

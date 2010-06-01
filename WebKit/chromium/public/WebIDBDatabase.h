@@ -36,10 +36,26 @@ class WebIDBDatabase {
 public:
     virtual ~WebIDBDatabase() { }
 
-    virtual WebString name() { return WebString(); }
-    virtual WebString description() { return WebString(); }
-    virtual WebString version() { return WebString(); }
-    virtual WebDOMStringList objectStores() { return WebDOMStringList(); }
+    virtual WebString name()
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return WebString();
+    }
+    virtual WebString description()
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return WebString();
+    }
+    virtual WebString version()
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return WebString();
+    }
+    virtual WebDOMStringList objectStores()
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return WebDOMStringList();
+    }
 };
 
 } // namespace WebKit

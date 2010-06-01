@@ -1,3 +1,23 @@
+2010-06-01  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        IndexedDB cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=40007
+
+        Remove the exception code parameter since this function can no longer
+        cause an exception.
+
+        * storage/IDBObjectStoreRequest.idl:
+        * storage/IndexedDatabase.h:
+        * storage/IndexedDatabaseImpl.cpp:
+        (WebCore::IndexedDatabaseImpl::open):
+        * storage/IndexedDatabaseImpl.h:
+        * storage/IndexedDatabaseRequest.cpp:
+        (WebCore::IndexedDatabaseRequest::open):
+        * storage/IndexedDatabaseRequest.h:
+        * storage/IndexedDatabaseRequest.idl:
+
 2010-06-01  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

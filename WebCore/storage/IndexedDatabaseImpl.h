@@ -41,7 +41,7 @@ public:
     static PassRefPtr<IndexedDatabaseImpl> create();
     virtual ~IndexedDatabaseImpl();
 
-    virtual void open(const String& name, const String& description, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, ExceptionCode&);
+    virtual void open(const String& name, const String& description, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*);
 
 private:
     IndexedDatabaseImpl();

@@ -51,7 +51,7 @@ IndexedDatabaseImpl::~IndexedDatabaseImpl()
 {
 }
 
-void IndexedDatabaseImpl::open(const String& name, const String& description, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin>, Frame*, ExceptionCode&)
+void IndexedDatabaseImpl::open(const String& name, const String& description, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin>, Frame*)
 {
     RefPtr<IDBDatabase> database;
     IDBDatabaseMap::iterator it = m_databaseMap.find(name);
