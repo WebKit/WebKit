@@ -1,3 +1,12 @@
+2010-06-01  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Plug a small leak.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::assignIdentifierToInitialRequest):
+
 2010-06-01  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
