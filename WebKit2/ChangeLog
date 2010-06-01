@@ -2,6 +2,18 @@
 
         Rubber-stamped by Anders Carlsson.
 
+        Added _WKRetainPtr to .exp file, and added .exp file to Xcode project.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Added mac/WebKit2.exp.
+        
+        * mac/WebKit2.exp:
+        Added _WKRetainPtr.
+
+2010-06-01  John Sullivan  <sullivan@apple.com>
+
+        Rubber-stamped by Anders Carlsson.
+
         Fixed typo/wordo that prevented a certain flavor of constructor from compiling.
 
         * UIProcess/API/cpp/WKRetainPtr.h:
