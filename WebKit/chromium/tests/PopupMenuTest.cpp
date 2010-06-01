@@ -59,6 +59,8 @@ public:
     {
         m_selectIndex = listIndex;
     }
+    virtual void selectionChanged(unsigned, bool) {}
+    virtual void selectionCleared() {}
 
     virtual String itemText(unsigned listIndex) const
     {

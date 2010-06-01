@@ -1,3 +1,14 @@
+2010-06-01  James Hawkins  <jhawkins@chromium.org>
+
+        UNREVIEWED: build fix.
+
+        Implement the added virtual methods from PopupMenuClient to
+        TestPopupMenuClient.
+
+        * tests/PopupMenuTest.cpp:
+        (WebKit::TestPopupMenuClient::selectionChanged):
+        (WebKit::TestPopupMenuClient::selectionCleared):
+
 2010-05-24  James Hawkins  <jhawkins@chromium.org>
 
         Reviewed by Darin Fisher.
