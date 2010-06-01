@@ -629,12 +629,9 @@ editing/deleting/delete-ligature-003.html
 editing/deleting/pruning-after-merge-1.html
 editing/deleting/skip-virama-001.html
 editing/deleting/smart-editing-disabled.html
-editing/deleting/type-delete-after-quote-2.html
-editing/execCommand/4128080-2.html
 editing/execCommand/createLink.html
 editing/execCommand/delete-image-in-anchor.html
 editing/execCommand/enabling-and-selection-2.html
-editing/execCommand/enabling-and-selection.html
 editing/execCommand/findString-diacriticals.html
 editing/execCommand/indent-nested-lists-1.html
 editing/execCommand/indent-nested-lists-2.html
@@ -660,7 +657,6 @@ editing/execCommand/unlink.html
 editing/inserting/5994480-2.html
 editing/inserting/insert-thai-characters-001.html
 editing/inserting/space-after-removeformat.html
-editing/inserting/typing-tab-designmode.html
 editing/pasteboard/4744008.html
 editing/pasteboard/5368833.html
 editing/pasteboard/5780697-2.html
@@ -686,10 +682,8 @@ editing/selection/drag-start-event-client-x-y.html
 editing/selection/drag-text-delay.html
 editing/selection/extend-selection-bidi.html
 editing/selection/getRangeAt.html
-editing/selection/hit-test-anonymous.html
 # home-end.html and extended-selection.html have some potential breakage, commenting for now: https://bugs.webkit.org/show_bug.cgi?id=30208
 editing/selection/home-end.html
-editing/selection/extend-selection.html
 editing/selection/legal-positions.html
 editing/selection/move-begin-end.html
 editing/selection/removeAllRanges.html
@@ -698,7 +692,6 @@ editing/selection/skip-non-editable-1.html
 editing/selection/skip-non-editable-2.html
 editing/selection/toString-1.html
 editing/selection/toString.html
-editing/selection/user-drag-element-and-user-select-none.html
 editing/style/apply-through-end-of-document.html
 editing/style/remove-underline-from-stylesheet.html
 editing/text-iterator/basic-iteration.html
@@ -1352,7 +1345,6 @@ fast/dom/HTMLFontElement/size-attribute.html
 fast/innerHTML/innerHTML-nbsp.xhtml
 editing/selection/14971.html
 editing/selection/inline-closest-leaf-child.html
-editing/pasteboard/crash-accessing-clipboardData-types.html
 http/tests/security/cookies/xmlhttprequest.html
 http/tests/xmlhttprequest/broken-xml-encoding.html
 http/tests/xmlhttprequest/web-apps/010.html
