@@ -1,3 +1,19 @@
+2010-05-31  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed: land new Chromium baselines to unblock WebKit roll
+
+        Bug 39980 - Add Chromium baselines for svg/filters/parent-children-with-same-filter
+        https://bugs.webkit.org/show_bug.cgi?id=39980
+
+        Add new baselines
+
+        * platform/chromium-linux/svg/filters/parent-children-with-same-filter-expected.checksum: Added.
+        * platform/chromium-linux/svg/filters/parent-children-with-same-filter-expected.png: Added.
+        * platform/chromium-mac/svg/filters/parent-children-with-same-filter-expected.checksum: Added.
+        * platform/chromium-mac/svg/filters/parent-children-with-same-filter-expected.png: Added.
+        * platform/chromium-win/svg/filters/parent-children-with-same-filter-expected.checksum: Added.
+        * platform/chromium-win/svg/filters/parent-children-with-same-filter-expected.png: Added.
+
 2010-05-31  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
