@@ -32,10 +32,9 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '48589',
+  'chromium_rev': '47248',
 
   'pthreads-win32_rev': '26716',
-  'lighttpd_rev': '33737',
 }
 
 deps = {
@@ -162,8 +161,6 @@ deps_os = {
       From('chromium_deps', 'src/third_party/ffmpeg/binaries/chromium/win/ia32'),
     'third_party/pthreads-win32':
       'http://src.chromium.org/svn/trunk/deps/third_party/pthreads-win32@'+Var('pthreads-win32_rev'),
-    'third_party/lighttpd':
-      'http://src.chromium.org/svn/trunk/deps/third_party/lighttpd@'+Var('lighttpd_rev'),
     # base.gypi depends on nss on Windows
     'third_party/nss':
       From('chromium_deps', 'src/third_party/nss'),
