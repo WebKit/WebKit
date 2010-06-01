@@ -1,3 +1,15 @@
+2010-05-31  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Checking out lighttpd
+        https://bugs.webkit.org/show_bug.cgi?id=39948
+
+        - Checking out lighttpd only on Windows. It is used by new-run-webkit-tests.
+        - Update Chromium revision to use Windows resource query code
+
+        * DEPS:
+
 2010-05-31  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
