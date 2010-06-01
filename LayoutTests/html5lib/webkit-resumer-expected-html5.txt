@@ -157,5 +157,10 @@ CONSOLE MESSAGE: line 2: FOO<span>BAR</span>BAZ
 CONSOLE MESSAGE: line 2: FOO<span>BAR</span>BAZ
 CONSOLE MESSAGE: line 2: FOO<span>BAR</span>BAZ
 Content-Type: text/plain
-resources/webkit01.dat: PASS
+resources/webkit01.dat:
+519.3
+520.4
+521.5
+522.6
+523.7
 #EOF

@@ -156,3 +156,12 @@ console.log("FOO<span>BAR</span>BAZ");
 |     <script>
 |       "document.write('3')"
 |     "34"
+
+#data
+</ tttt>
+#errors
+#document
+| <!--  tttt -->
+| <html>
+|   <head>
+|   <body>

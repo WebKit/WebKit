@@ -1,3 +1,21 @@
+2010-05-31  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix default action for EndTagOpenState
+        https://bugs.webkit.org/show_bug.cgi?id=39982
+
+        Add a test for a bogus end tag to webkit01.dat and update expected
+        results now that we pass some more tests.
+
+        Adding this test revealed a bug in resuming the bogus comment state.
+        I've left these broken expectations, but I'll fix the bug in a future
+        patch. (The bug existed prior to this patch, just not the test.)
+
+        * html5lib/resources/webkit01.dat:
+        * html5lib/runner-expected-html5.txt:
+        * html5lib/webkit-resumer-expected-html5.txt:
+
 2010-05-31  Lyon Chen  <liachen@rim.com>
 
         Reviewed by Kent Tamura.

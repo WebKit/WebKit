@@ -156,4 +156,11 @@ CONSOLE MESSAGE: line 3: FOO<span>BAR</span>BAZ
 CONSOLE MESSAGE: line 3: FOO<span>BAR</span>BAZ
 CONSOLE MESSAGE: line 3: FOO<span>BAR</span>BAZ
 CONSOLE MESSAGE: line 3: FOO<span>BAR</span>BAZ
-resources/webkit01.dat: PASS
+resources/webkit01.dat:
+517.1
+518.2
+519.3
+520.4
+521.5
+522.6
+523.7

@@ -436,7 +436,8 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
                 m_state = DataState;
             } else {
                 emitParseError();
-                m_state = DataState;
+                m_state = BogusCommentState;
+                continue;
             }
             // FIXME: Handle EOF properly.
             break;

@@ -397,7 +397,8 @@ resources/tests16.dat:
 184
 186
 
-resources/webkit01.dat: PASS
+resources/webkit01.dat:
+13
 
 resources/doctype01.dat:
 2
