@@ -931,7 +931,7 @@ void FrameLoaderClient::dispatchDidFinishLoading(WebCore::DocumentLoader* loader
         return;
 
     if (!coreResource)
-        coreResource = loader->mainResource().releaseRef();
+        coreResource = loader->mainResource();
 
     webkit_web_resource_init_with_core_resource(webResource, coreResource.get());
 

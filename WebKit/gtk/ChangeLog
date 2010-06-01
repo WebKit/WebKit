@@ -2,6 +2,18 @@
 
         Reviewed by Gustavo Noronha.
 
+        Memory Leak: The main resource of page is not free.
+        https://bugs.webkit.org/show_bug.cgi?id=39973
+
+        Fix refcount tracking of the main resource. Patch by Genhua Liu.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDidFinishLoading):
+
+2010-06-01  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
         Fix-up for previous leak fix, the identifier was not always duped.
 
         * webkit/webkitprivate.h:
