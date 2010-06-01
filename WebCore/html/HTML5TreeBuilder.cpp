@@ -196,6 +196,8 @@ PassRefPtr<Node> HTML5TreeBuilder::processToken(HTML5Token& token, UChar current
 
 void HTML5TreeBuilder::finished()
 {
+    // We should call m_document->finishedParsing() here, except
+    // m_legacyHTMLParser->finished() does it for us.
     m_legacyHTMLParser->finished();
 }
 

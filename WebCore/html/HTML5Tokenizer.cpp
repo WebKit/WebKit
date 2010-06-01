@@ -95,13 +95,14 @@ void HTML5Tokenizer::finish()
 {
     // finish() indicates we will not receive any more data. If we are waiting on
     // an external script to load, we can't finish parsing quite yet.
-    // We can't call m_source.close() yet as we may have a <script> execution
-    // pending which will call document.write().  No more data off the network though.
-    if (!m_treeBuilder->isPaused()) {
+    if (isWaitingForScripts()) {
         // FIXME: We might want to use real state enum instead of a bool here.
         m_wasWaitingOnScriptsDuringFinish = true;
-        end();
+        return;
     }
+    // We can't call m_source.close() yet as we may have a <script> execution
+    // pending which will call document.write().  No more data off the network though.
+    end();
 }
 
 int HTML5Tokenizer::executingScript() const
@@ -118,8 +119,8 @@ void HTML5Tokenizer::resumeParsingAfterScriptExecution()
 {
     ASSERT(!m_scriptRunner->inScriptExecution());
     ASSERT(!m_treeBuilder->isPaused());
-    // FIXME: This is the wrong write in the case of document.write re-entry.
     pumpLexer();
+    ASSERT(m_treeBuilder->isPaused() || m_source.isEmpty());
     if (m_source.isEmpty() && m_wasWaitingOnScriptsDuringFinish)
         end(); // The document already finished parsing we were just waiting on scripts when finished() was called.
 }

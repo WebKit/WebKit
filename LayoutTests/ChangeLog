@@ -1,3 +1,14 @@
+2010-05-31  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION(60409): window.onload never fires when using HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=39981
+
+        Now that we can actually run the tests again we pass 6 more.
+
+        * html5lib/runner-expected-html5.txt:
+
 2010-05-31  Tony Chang  <tony@chromium.org>
 
         Reviewed by Dan Bernstein.

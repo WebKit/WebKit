@@ -1,3 +1,21 @@
+2010-05-31  Eric Seidel <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION(60409): window.onload never fires when using HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=39981
+
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::finish):
+         - The logic was just wrong here.  We should only be setting
+           m_wasWaitingOnScriptsDuringFinish if isWaitingForScripts()
+           is true, and we should be calling end() when it is not.
+        (WebCore::HTML5Tokenizer::resumeParsingAfterScriptExecution):
+         - Add another ASSERT to catch cases like this.
+        * html/HTML5TreeBuilder.cpp:
+        (WebCore::HTML5TreeBuilder::finished):
+         - Add a comment about why we don't need to call m_document->finishedParsing()
+
 2010-05-31  Tony Chang  <tony@chromium.org>
 
         Reviewed by Dan Bernstein.
