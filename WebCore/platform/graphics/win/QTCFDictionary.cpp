@@ -52,11 +52,9 @@ CFDictionaryRef QTCFDictionaryCreateCopyWithDataCallback(CFAllocatorRef allocato
     ASSERT(callback);
 
     CFDataRef data = QTCFPropertyListCreateXMLData(kCFAllocatorDefault, dictionary);
-    if (!data)
-        return 0;
-
     CFDictionaryRef outputDictionary = callback(allocator, CFDataGetBytePtr(data), CFDataGetLength(data));
-    CFRelease(data);
+    if (data)
+        CFRelease(data);
 
     return outputDictionary;
 }
