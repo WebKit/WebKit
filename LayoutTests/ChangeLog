@@ -1,12 +1,3 @@
-2010-06-01  Sergio Villar Senin  <svillar@igalia.com>
-
-        Unskipping tests. No review necessary.
-
-        [GTK] unskip some editing tests that are actually working
-        https://bugs.webkit.org/show_bug.cgi?id=39999
-
-        * platform/gtk/Skipped:
-
 2010-06-01  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
@@ -16,6 +7,15 @@
 
         * platform/gtk/Skipped: Unskip passing tests.
         * platform/gtk/editing/selection/5057506-2-expected.txt: Rebaseline this test, as it's correct now.
+
+2010-06-01  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unskipping tests. No review necessary.
+
+        [GTK] unskip some editing tests that are actually working
+        https://bugs.webkit.org/show_bug.cgi?id=39999
+
+        * platform/gtk/Skipped:
 
 2010-06-01  Martin Robinson  <mrobinson@igalia.com>
 
