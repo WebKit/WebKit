@@ -1,3 +1,10 @@
+2010-06-01  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed. Update expected results for r60503
+        https://bugs.webkit.org/show_bug.cgi?id=38851
+
+        * platform/mac/fast/repaint/moving-shadow-on-path-expected.txt:
+
 2010-06-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Update expected results after r60503.
