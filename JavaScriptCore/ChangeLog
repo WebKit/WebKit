@@ -1,3 +1,34 @@
+2010-06-01  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 40021 - Refactor bytecode generation for calls so that register for this & args are allocated together
+
+        This is a useful stepping stone towards reversing argument order.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::addParameter):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitCallEval):
+        (JSC::BytecodeGenerator::emitConstruct):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::CallArguments::thisRegister):
+        (JSC::CallArguments::argumentRegister):
+        (JSC::CallArguments::callFrame):
+        (JSC::CallArguments::count):
+        (JSC::BytecodeGenerator::shouldEmitProfileHooks):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::NewExprNode::emitBytecode):
+        (JSC::CallArguments::CallArguments):
+        (JSC::EvalFunctionCallNode::emitBytecode):
+        (JSC::FunctionCallValueNode::emitBytecode):
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::FunctionCallBracketNode::emitBytecode):
+        (JSC::FunctionCallDotNode::emitBytecode):
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+
 2010-06-01  Yong Li  <yoli@rim.com>
 
         Reviewed by Darin Adler.

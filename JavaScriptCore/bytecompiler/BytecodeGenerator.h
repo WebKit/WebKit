@@ -51,6 +51,23 @@ namespace JSC {
     class ScopeChain;
     class ScopeNode;
 
+    class CallArguments {
+    public:
+        CallArguments(BytecodeGenerator& generator, ArgumentsNode* argumentsNode);
+
+        RegisterID* thisRegister() { return m_argv[0].get(); }
+        RegisterID* argumentRegister(unsigned i) { return m_argv[i + 1].get(); }
+        unsigned callFrame() { return thisRegister()->index() + count() + RegisterFile::CallFrameHeaderSize; }
+        unsigned count() { return m_argv.size(); }
+        RegisterID* profileHookRegister() { return m_profileHookRegister.get(); }
+        ArgumentsNode* argumentsNode() { return m_argumentsNode; }
+
+    private:
+        RefPtr<RegisterID> m_profileHookRegister;
+        ArgumentsNode* m_argumentsNode;
+        Vector<RefPtr<RegisterID>, 16> m_argv;
+    };
+
     struct FinallyContext {
         Label* finallyAddr;
         RegisterID* retAddrDst;
@@ -319,15 +336,15 @@ namespace JSC {
         RegisterID* emitPutGetter(RegisterID* base, const Identifier& property, RegisterID* value);
         RegisterID* emitPutSetter(RegisterID* base, const Identifier& property, RegisterID* value);
 
-        RegisterID* emitCall(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
-        RegisterID* emitCallEval(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
+        RegisterID* emitCall(RegisterID* dst, RegisterID* func, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset);
+        RegisterID* emitCallEval(RegisterID* dst, RegisterID* func, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset);
         RegisterID* emitCallVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* argCount, unsigned divot, unsigned startOffset, unsigned endOffset);
         RegisterID* emitLoadVarargs(RegisterID* argCountDst, RegisterID* args);
 
         RegisterID* emitReturn(RegisterID* src);
         RegisterID* emitEnd(RegisterID* src) { return emitUnaryNoDstOp(op_end, src); }
 
-        RegisterID* emitConstruct(RegisterID* dst, RegisterID* func, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
+        RegisterID* emitConstruct(RegisterID* dst, RegisterID* func, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset);
         RegisterID* emitStrcat(RegisterID* dst, RegisterID* src, int count);
         void emitToPrimitive(RegisterID* dst, RegisterID* src);
 
@@ -386,6 +403,8 @@ namespace JSC {
             m_codeBlockBeingRegeneratedFrom = originalCodeBlock;
         }
 
+        bool shouldEmitProfileHooks() { return m_shouldEmitProfileHooks; }
+
     private:
         void emitOpcode(OpcodeID);
         void retrieveLastBinaryOp(int& dstIndex, int& src1Index, int& src2Index);
@@ -410,7 +429,7 @@ namespace JSC {
         typedef HashMap<double, JSValue> NumberMap;
         typedef HashMap<UString::Rep*, JSString*, IdentifierRepHash> IdentifierStringMap;
         
-        RegisterID* emitCall(OpcodeID, RegisterID* dst, RegisterID* func, RegisterID* thisRegister, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
+        RegisterID* emitCall(OpcodeID, RegisterID* dst, RegisterID* func, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset);
         
         RegisterID* newRegister();
 
@@ -442,7 +461,7 @@ namespace JSC {
         // Returns true if a new RegisterID was added, false if a pre-existing RegisterID was re-used.
         bool addGlobalVar(const Identifier&, bool isConstant, RegisterID*&);
 
-        RegisterID* addParameter(const Identifier&);
+        void addParameter(const Identifier&, int parameterIndex);
         
         void preserveLastVar();
 
@@ -515,7 +534,6 @@ namespace JSC {
         Vector<ForInContext> m_forInContextStack;
 
         int m_nextGlobalIndex;
-        int m_nextParameterIndex;
         int m_firstConstantIndex;
         int m_nextConstantOffset;
         unsigned m_globalConstantIndex;
