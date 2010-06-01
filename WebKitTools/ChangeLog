@@ -1,5 +1,15 @@
 2010-06-01  Alexey Proskuryakov  <ap@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        A nicer Tiger build fix.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        Enable GCC_OBJC_CALL_CXX_CDTORS via .xcconfig.
+
+2010-06-01  Alexey Proskuryakov  <ap@apple.com>
+
         A real Tiger build fix.
 
         * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Enable GCC_OBJC_CALL_CXX_CDTORS

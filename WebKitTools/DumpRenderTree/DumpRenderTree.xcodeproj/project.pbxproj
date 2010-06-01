@@ -789,7 +789,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB282F40CFA7450007E533E /* DebugRelease.xcconfig */;
 			buildSettings = {
-				GCC_OBJC_CALL_CXX_CDTORS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 			};
 			name = Debug;
@@ -798,7 +797,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB282F40CFA7450007E533E /* DebugRelease.xcconfig */;
 			buildSettings = {
-				GCC_OBJC_CALL_CXX_CDTORS = YES;
 			};
 			name = Release;
 		};
@@ -827,7 +825,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB281EE0CFA713D007E533E /* Base.xcconfig */;
 			buildSettings = {
-				GCC_OBJC_CALL_CXX_CDTORS = YES;
 				WEBKIT_FRAMEWORK_RESOURCES_PATH = WebKit.framework/Versions/A/Resources;
 			};
 			name = Production;
