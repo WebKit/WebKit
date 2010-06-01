@@ -1,3 +1,20 @@
+2010-06-01  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Get more mouse tests passing
+        https://bugs.webkit.org/show_bug.cgi?id=39040
+
+        Reproduce the logic from the Windows EventSender for mapping
+        button numbers to GDK button numbers. Move this logic to the
+        prepareMouseButtonEvent helper.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (prepareMouseButtonEvent): Reproduce Windows logic.
+        (contextClickCallback): Move mapping logic to prepareMouseButtonEvent.
+        (mouseDownCallback): Ditto.
+        (mouseUpCallback): Ditto.
+
 2010-06-01  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Sam Weinig.
@@ -33,7 +50,7 @@
         This delegate method must send a response. I'm not sure what the two-stage check is supposed
         to achieve, it seems unnecessary.
 
-2010-06-01  Martin Robinson  <mrobinson@igalia.com>
+2010-05-12  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
 

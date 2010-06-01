@@ -1215,12 +1215,10 @@ fast/events/autoscroll-nonscrollable-iframe-in-scrollable-div.html
 fast/events/autoscroll-with-non-scrollable-parent.html
 fast/events/blur-focus-window-should-blur-focus-element.html
 fast/events/content-changed-during-drop.html
-fast/events/context-onmousedown-event.html
 fast/events/crash-on-mutate-during-drop.html
 fast/events/drag-in-frames.html
 fast/events/frame-tab-focus.html
 fast/events/js-keyboard-event-creation.html
-fast/events/mouse-click-events.html
 fast/events/mouseup-from-button2.html
 fast/events/offsetX-offsetY.html
 fast/events/onchange-passwordfield.html
@@ -2142,11 +2140,9 @@ fast/events/5056619.html
 fast/events/autoscroll.html
 fast/events/context-no-deselect.html
 fast/events/event-listener-on-link.html
-fast/events/event-sender-mouse-moved.html
 fast/events/focusingUnloadedFrame.html
 fast/events/keydown-1.html
 fast/events/label-focus.html
-fast/events/mouseout-dead-node.html
 fast/events/onload-re-entry.html
 fast/events/onloadFrameCrash.html
 fast/events/reveal-link-when-focused.html
