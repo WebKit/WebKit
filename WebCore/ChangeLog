@@ -1,3 +1,16 @@
+2010-06-01  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        QuickTime 7.6.4 + Safari Nightly = Crash
+        https://bugs.webkit.org/show_bug.cgi?id=40019
+        rdar://problem/8035443
+        
+        Check the return value of QTCFPropertyListCreateXMLData before calling CFDataGetLength().
+
+        * platform/graphics/win/QTCFDictionary.cpp:
+        (QTCFDictionaryCreateCopyWithDataCallback):
+
 2010-06-01  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Dirk Schulze.
