@@ -109,18 +109,43 @@ static JSValueRef leapForwardCallback(JSContextRef context, JSObjectRef function
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef contextClickCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+bool prepareMouseButtonEvent(GdkEvent* event, int button)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     if (!view)
-        return JSValueMakeUndefined(context);
+        return false;
 
+    memset(event, 0, sizeof(event));
+    event->button.button = button;
+    event->button.x = lastMousePositionX;
+    event->button.y = lastMousePositionY;
+    event->button.window = GTK_WIDGET(view)->window;
+    event->button.device = gdk_device_get_core_pointer();
+    event->button.state = getStateFlags();
+
+    // Mouse up & down events dispatched via g_signal_emit_by_name must offset
+    // their time value, so that WebKit can detect where sequences of mouse
+    // clicks begin and end. This should not interfere with GDK or GTK+ event
+    // processing, because the event is only seen by the widget.
+    event.button.time = GDK_CURRENT_TIME + timeOffset;
+
+    int xRoot, yRoot;
+#if GTK_CHECK_VERSION(2, 17, 3)
+    gdk_window_get_root_coords(GTK_WIDGET(view)->window, lastMousePositionX, lastMousePositionY, &xRoot, &yRoot);
+#else
+    getRootCoords(GTK_WIDGET(view), &xRoot, &yRoot);
+#endif
+    event->button.x_root = xRoot;
+    event->button.y_root = yRoot;
+
+    return true;
+}
+
+static JSValueRef contextClickCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
     GdkEvent event;
-    memset(&event, 0, sizeof(event));
-    event.button.button = 3;
-    event.button.x = lastMousePositionX;
-    event.button.y = lastMousePositionY;
-    event.button.window = GTK_WIDGET(view)->window;
+    if (!prepareMouseButtonEvent(&event, 3))
+        return JSValueMakeUndefined(context);
 
     event.type = GDK_BUTTON_PRESS;
     sendOrQueueEvent(event);
@@ -158,38 +183,15 @@ static void getRootCoords(GtkWidget* view, int* rootX, int* rootY)
 
 static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
-    if (!view)
-        return JSValueMakeUndefined(context);
-
-    GdkEvent event;
-    memset(&event, 0, sizeof(event));
-    event.button.button = 1;
-
+    int button = 1;
     if (argumentCount == 1) {
-        event.button.button = (int)(JSValueToNumber(context, arguments[0], exception)) + 1;
+        button = static_cast<int>(JSValueToNumber(context, arguments[0], exception)) + 1;
         g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
     }
 
-    event.button.x = lastMousePositionX;
-    event.button.y = lastMousePositionY;
-    event.button.window = GTK_WIDGET(view)->window;
-
-    // Mouse up & down events dispatched via g_signal_emit_by_name must offset
-    // their time value, so that WebKit can detect where sequences of mouse
-    // clicks begin and end. This should not interfere with GDK or GTK+ event
-    // processing, because the event is only seen by the widget.
-    event.motion.time = GDK_CURRENT_TIME + timeOffset;
-    event.button.device = gdk_device_get_core_pointer();
-
-    int x_root, y_root;
-#if GTK_CHECK_VERSION(2,17,3)
-    gdk_window_get_root_coords(GTK_WIDGET(view)->window, lastMousePositionX, lastMousePositionY, &x_root, &y_root);
-#else
-    getRootCoords(GTK_WIDGET(view), &x_root, &y_root);
-#endif
-    event.button.x_root = x_root;
-    event.button.y_root = y_root;
+    GdkEvent event;
+    if (!prepareMouseButtonEvent(&event, button))
+        return JSValueMakeUndefined(context);
 
     event.type = GDK_BUTTON_PRESS;
     sendOrQueueEvent(event);
@@ -217,41 +219,15 @@ static guint getStateFlags()
 
 static JSValueRef mouseUpCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-
-    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
-    if (!view)
-        return JSValueMakeUndefined(context);
-
-    GdkEvent event;
-    memset(&event, 0, sizeof(event));
-    event.button.button = 1;
-
+    int button = 1;
     if (argumentCount == 1) {
-        event.button.button = (int)JSValueToNumber(context, arguments[0], exception) + 1;
+        button = static_cast<int>(JSValueToNumber(context, arguments[0], exception)) + 1;
         g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
     }
 
-    event.button.x = lastMousePositionX;
-    event.button.y = lastMousePositionY;
-    event.button.window = GTK_WIDGET(view)->window;
-
-    // Mouse up & down events dispatched via g_signal_emit_by_name must offset
-    // their time value, so that WebKit can detect where sequences of mouse
-    // clicks begin and end. This should not interfere with GDK or GTK+ event
-    // processing, because the event is only seen by the widget.
-    event.button.time = GDK_CURRENT_TIME + timeOffset;
-    event.button.device = gdk_device_get_core_pointer();
-    event.button.state = getStateFlags();
-
-    int x_root, y_root;
-#if GTK_CHECK_VERSION(2,17,3)
-    gdk_window_get_root_coords(GTK_WIDGET(view)->window, lastMousePositionX, lastMousePositionY, &x_root, &y_root);
-#else
-    getRootCoords(GTK_WIDGET(view), &x_root, &y_root);
-#endif
-
-    event.button.x_root = x_root;
-    event.button.y_root = y_root;
+    GdkEvent event;
+    if (!prepareMouseButtonEvent(&event, button))
+        return JSValueMakeUndefined(context);
 
     lastClickPositionX = lastMousePositionX;
     lastClickPositionY = lastMousePositionY;
@@ -287,17 +263,16 @@ static JSValueRef mouseMoveToCallback(JSContextRef context, JSObjectRef function
     event.motion.time = GDK_CURRENT_TIME;
     event.motion.window = GTK_WIDGET(view)->window;
     event.motion.device = gdk_device_get_core_pointer();
-
-    int x_root, y_root;
-#if GTK_CHECK_VERSION(2,17,3)
-    gdk_window_get_root_coords(GTK_WIDGET(view)->window, lastMousePositionX, lastMousePositionY, &x_root, &y_root);
-#else
-    getRootCoords(GTK_WIDGET(view), &x_root, &y_root);
-#endif
-    event.motion.x_root = x_root;
-    event.motion.y_root = y_root;
-
     event.motion.state = getStateFlags();
+
+    int xRoot, yRoot;
+#if GTK_CHECK_VERSION(2,17,3)
+    gdk_window_get_root_coords(GTK_WIDGET(view)->window, lastMousePositionX, lastMousePositionY, &xRoot, &yRoot);
+#else
+    getRootCoords(GTK_WIDGET(view), &xRoot, &yRoot);
+#endif
+    event.motion.x_root = xRoot;
+    event.motion.y_root = yRoot;
 
     sendOrQueueEvent(event);
     return JSValueMakeUndefined(context);
