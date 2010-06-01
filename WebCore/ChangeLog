@@ -1,3 +1,38 @@
+2010-05-28  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=15550, complete implementation of column-span.  Add support for nested column
+        spans.  When a column span is nested inside multiple enclosing blocks, the blocks have to be split around the column-span.
+        We do this using block element continuations, the same kind of solution we employed for blocks inside inlines.
+        
+        The code for block continuations is very similar to the code for inline continuations.  It may be possible to refactor the
+        code into RenderBoxModelObject so that more of it can be shared, but this first pass avoids that so as not to risk
+        causing any regressions in core rendering.
+
+        Note also that - just as with inline continuations - you can't unsplit block continuations yet.  There is no technical limitation
+        here... the functions just need to be written to handle it.
+        
+        Added new tests in fast/multicol/span.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::RenderBlock::continuationBefore):
+        (WebCore::RenderBlock::addChildToContinuation):
+        (WebCore::RenderBlock::containingColumnsBlock):
+        (WebCore::RenderBlock::clone):
+        (WebCore::RenderBlock::splitBlocks):
+        (WebCore::RenderBlock::splitFlow):
+        (WebCore::RenderBlock::splitAnonymousBlocksAroundChild):
+        (WebCore::RenderBlock::makeChildrenAnonymousColumnBlocks):
+        (WebCore::RenderBlock::columnsBlockForSpanningElement):
+        (WebCore::RenderBlock::addChildIgnoringAnonymousColumnBlocks):
+        (WebCore::RenderBlock::addChild):
+        (WebCore::RenderBlock::addChildIgnoringContinuation):
+        (WebCore::RenderBlock::blockElementContinuation):
+        (WebCore::RenderBlock::layoutColumns):
+        * rendering/RenderBlock.h:
+
 2010-06-01  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix.

@@ -230,6 +230,16 @@ void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
 {
     RenderBox::styleDidChange(diff, oldStyle);
 
+    if (!isAnonymousBlock()) {
+        // Ensure that all of our continuation blocks pick up the new style.
+        for (RenderBlock* currCont = blockElementContinuation(); currCont; currCont = currCont->blockElementContinuation()) {
+            RenderBoxModelObject* nextCont = currCont->continuation();
+            currCont->setContinuation(0);
+            currCont->setStyle(style());
+            currCont->setContinuation(nextCont);
+        }
+    }
+
     // FIXME: We could save this call when the change only affected non-inherited properties
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isAnonymousBlock()) {
@@ -263,6 +273,68 @@ void RenderBlock::updateBeforeAfterContent(PseudoId pseudoId)
         return;
     return children()->updateBeforeAfterContent(this, pseudoId);
 }
+
+RenderBlock* RenderBlock::continuationBefore(RenderObject* beforeChild)
+{
+    if (beforeChild && beforeChild->parent() == this)
+        return this;
+
+    RenderBlock* curr = toRenderBlock(continuation());
+    RenderBlock* nextToLast = this;
+    RenderBlock* last = this;
+    while (curr) {
+        if (beforeChild && beforeChild->parent() == curr) {
+            if (curr->firstChild() == beforeChild)
+                return last;
+            return curr;
+        }
+
+        nextToLast = last;
+        last = curr;
+        curr = toRenderBlock(curr->continuation());
+    }
+
+    if (!beforeChild && !last->firstChild())
+        return nextToLast;
+    return last;
+}
+
+void RenderBlock::addChildToContinuation(RenderObject* newChild, RenderObject* beforeChild)
+{
+    RenderBlock* flow = continuationBefore(beforeChild);
+    ASSERT(!beforeChild || beforeChild->parent()->isAnonymousColumnSpanBlock() || beforeChild->parent()->isRenderBlock());
+    RenderBoxModelObject* beforeChildParent = 0;
+    if (beforeChild)
+        beforeChildParent = toRenderBoxModelObject(beforeChild->parent());
+    else {
+        RenderBoxModelObject* cont = flow->continuation();
+        if (cont)
+            beforeChildParent = cont;
+        else
+            beforeChildParent = flow;
+    }
+
+    if (newChild->isFloatingOrPositioned())
+        return beforeChildParent->addChildIgnoringContinuation(newChild, beforeChild);
+
+    // A continuation always consists of two potential candidates: a block or an anonymous
+    // column span box holding column span children.
+    bool childIsNormal = newChild->isInline() || !newChild->style()->columnSpan();
+    bool bcpIsNormal = beforeChildParent->isInline() || !beforeChildParent->style()->columnSpan();
+    bool flowIsNormal = flow->isInline() || !flow->style()->columnSpan();
+
+    if (flow == beforeChildParent)
+        return flow->addChildIgnoringContinuation(newChild, beforeChild);
+    
+    // The goal here is to match up if we can, so that we can coalesce and create the
+    // minimal # of continuations needed for the inline.
+    if (childIsNormal == bcpIsNormal)
+        return beforeChildParent->addChildIgnoringContinuation(newChild, beforeChild);
+    if (flowIsNormal == childIsNormal)
+        return flow->addChildIgnoringContinuation(newChild, 0); // Just treat like an append.
+    return beforeChildParent->addChildIgnoringContinuation(newChild, beforeChild);
+}
+
 
 void RenderBlock::addChildToAnonymousColumnBlocks(RenderObject* newChild, RenderObject* beforeChild)
 {
@@ -310,12 +382,158 @@ void RenderBlock::addChildToAnonymousColumnBlocks(RenderObject* newChild, Render
     return;
 }
 
+RenderBlock* RenderBlock::containingColumnsBlock(bool allowAnonymousColumnBlock)
+{
+    for (RenderObject* curr = this; curr; curr = curr->parent()) {
+        if (!curr->isRenderBlock() || curr->isFloatingOrPositioned() || curr->isTableCell() || curr->isRoot() || curr->isRenderView() || curr->hasOverflowClip()
+            || curr->isInlineBlockOrInlineTable())
+            return 0;
+        
+        RenderBlock* currBlock = toRenderBlock(curr);
+        if (currBlock->style()->specifiesColumns() && (allowAnonymousColumnBlock || !currBlock->isAnonymousColumnsBlock()))
+            return currBlock;
+            
+        if (currBlock->isAnonymousColumnSpanBlock())
+            return 0;
+    }
+    return 0;
+}
+
+RenderBlock* RenderBlock::clone() const
+{
+    RenderBlock* o = new (renderArena()) RenderBlock(node());
+    o->setStyle(style());
+    o->setChildrenInline(childrenInline());
+    return o;
+}
+
+void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
+                              RenderBlock* middleBlock,
+                              RenderObject* beforeChild, RenderBoxModelObject* oldCont)
+{
+    // Create a clone of this inline.
+    RenderBlock* cloneBlock = clone();
+    cloneBlock->setContinuation(oldCont);
+
+    // Now take all of the children from beforeChild to the end and remove
+    // them from |this| and place them in the clone.
+    if (!beforeChild && isAfterContent(lastChild()))
+        beforeChild = lastChild();
+    moveChildrenTo(cloneBlock, beforeChild, 0);
+    
+    // Hook |clone| up as the continuation of the middle block.
+    middleBlock->setContinuation(cloneBlock);
+
+    // We have been reparented and are now under the fromBlock.  We need
+    // to walk up our block parent chain until we hit the containing anonymous columns block.
+    // Once we hit the anonymous columns block we're done.
+    RenderBoxModelObject* curr = toRenderBoxModelObject(parent());
+    RenderBoxModelObject* currChild = this;
+    
+    while (curr && curr != fromBlock) {
+        ASSERT(curr->isRenderBlock() && !curr->isAnonymousBlock());
+        
+        RenderBlock* blockCurr = toRenderBlock(curr);
+        
+        // Create a new clone.
+        RenderBlock* cloneChild = cloneBlock;
+        cloneBlock = blockCurr->clone();
+
+        // Insert our child clone as the first child.
+        cloneBlock->children()->appendChildNode(cloneBlock, cloneChild);
+
+        // Hook the clone up as a continuation of |curr|.  Note we do encounter
+        // anonymous blocks possibly as we walk up the block chain.  When we split an
+        // anonymous block, there's no need to do any continuation hookup, since we haven't
+        // actually split a real element.
+        if (!blockCurr->isAnonymousBlock()) {
+            oldCont = blockCurr->continuation();
+            blockCurr->setContinuation(cloneBlock);
+            cloneBlock->setContinuation(oldCont);
+        }
+
+        // Someone may have indirectly caused a <q> to split.  When this happens, the :after content
+        // has to move into the inline continuation.  Call updateBeforeAfterContent to ensure that the inline's :after
+        // content gets properly destroyed.
+        if (document()->usesBeforeAfterRules())
+            blockCurr->children()->updateBeforeAfterContent(blockCurr, AFTER);
+
+        // Now we need to take all of the children starting from the first child
+        // *after* currChild and append them all to the clone.
+        RenderObject* afterContent = isAfterContent(cloneBlock->lastChild()) ? cloneBlock->lastChild() : 0;
+        blockCurr->moveChildrenTo(cloneBlock, currChild->nextSibling(), 0, afterContent);
+
+        // Keep walking up the chain.
+        currChild = curr;
+        curr = toRenderBoxModelObject(curr->parent());
+    }
+
+    // Now we are at the columns block level. We need to put the clone into the toBlock.
+    toBlock->children()->appendChildNode(toBlock, cloneBlock);
+
+    // Now take all the children after currChild and remove them from the fromBlock
+    // and put them in the toBlock.
+    fromBlock->moveChildrenTo(toBlock, currChild->nextSibling(), 0);
+}
+
+void RenderBlock::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
+                            RenderObject* newChild, RenderBoxModelObject* oldCont)
+{
+    RenderBlock* pre = 0;
+    RenderBlock* block = containingColumnsBlock();
+    
+    // Delete our line boxes before we do the inline split into continuations.
+    block->deleteLineBoxTree();
+    
+    bool madeNewBeforeBlock = false;
+    if (block->isAnonymousColumnsBlock()) {
+        // We can reuse this block and make it the preBlock of the next continuation.
+        pre = block;
+        pre->removePositionedObjects(0);
+        block = toRenderBlock(block->parent());
+    } else {
+        // No anonymous block available for use.  Make one.
+        pre = block->createAnonymousColumnsBlock();
+        pre->setChildrenInline(false);
+        madeNewBeforeBlock = true;
+    }
+
+    RenderBlock* post = block->createAnonymousColumnsBlock();
+    post->setChildrenInline(false);
+
+    RenderObject* boxFirst = madeNewBeforeBlock ? block->firstChild() : pre->nextSibling();
+    if (madeNewBeforeBlock)
+        block->children()->insertChildNode(block, pre, boxFirst);
+    block->children()->insertChildNode(block, newBlockBox, boxFirst);
+    block->children()->insertChildNode(block, post, boxFirst);
+    block->setChildrenInline(false);
+    
+    if (madeNewBeforeBlock)
+        block->moveChildrenTo(pre, boxFirst, 0);
+
+    splitBlocks(pre, post, newBlockBox, beforeChild, oldCont);
+
+    // We already know the newBlockBox isn't going to contain inline kids, so avoid wasting
+    // time in makeChildrenNonInline by just setting this explicitly up front.
+    newBlockBox->setChildrenInline(false);
+
+    // We delayed adding the newChild until now so that the |newBlockBox| would be fully
+    // connected, thus allowing newChild access to a renderArena should it need
+    // to wrap itself in additional boxes (e.g., table construction).
+    newBlockBox->addChild(newChild);
+
+    // Always just do a full layout in order to ensure that line boxes (especially wrappers for images)
+    // get deleted properly.  Because objects moves from the pre block into the post block, we want to
+    // make new line boxes instead of leaving the old line boxes around.
+    pre->setNeedsLayoutAndPrefWidthsRecalc();
+    block->setNeedsLayoutAndPrefWidthsRecalc();
+    post->setNeedsLayoutAndPrefWidthsRecalc();
+}
+
 RenderObject* RenderBlock::splitAnonymousBlocksAroundChild(RenderObject* beforeChild)
 {
     while (beforeChild->parent() != this) {
         RenderBlock* blockToSplit = toRenderBlock(beforeChild->parent());
-        ASSERT(blockToSplit->isAnonymousBlock() && !blockToSplit->continuation());
-        
         if (blockToSplit->firstChild() != beforeChild) {
             // We have to split the parentBlock into two blocks.
             RenderBlock* post = createAnonymousBlockWithSameTypeAs(blockToSplit);
@@ -329,7 +547,6 @@ RenderObject* RenderBlock::splitAnonymousBlocksAroundChild(RenderObject* beforeC
         } else
             beforeChild = blockToSplit;
     }
-
     return beforeChild;
 }
 
@@ -342,10 +559,10 @@ void RenderBlock::makeChildrenAnonymousColumnBlocks(RenderObject* beforeChild, R
     
     // Delete the block's line boxes before we do the split.
     block->deleteLineBoxTree();
-    
+
     if (beforeChild && beforeChild->parent() != this)
         beforeChild = splitAnonymousBlocksAroundChild(beforeChild);
-        
+
     if (beforeChild != firstChild()) {
         pre = block->createAnonymousColumnsBlock();
         pre->setChildrenInline(block->childrenInline());
@@ -387,19 +604,24 @@ void RenderBlock::makeChildrenAnonymousColumnBlocks(RenderObject* beforeChild, R
         post->setNeedsLayoutAndPrefWidthsRecalc();
 }
 
-static RenderBlock* columnsBlockForSpanningElement(RenderBlock* block, RenderObject* newChild)
+RenderBlock* RenderBlock::columnsBlockForSpanningElement(RenderObject* newChild)
 {
-    // FIXME: The style of this function may seem weird.
-    // This function is the gateway for the addition of column-span support.  Support will be added in three stages:
+    // FIXME: This function is the gateway for the addition of column-span support.  It will
+    // be added to in three stages:
     // (1) Immediate children of a multi-column block can span.
     // (2) Nested block-level children with only block-level ancestors between them and the multi-column block can span.
     // (3) Nested children with block or inline ancestors between them and the multi-column block can span (this is when we
     // cross the streams and have to cope with both types of continuations mixed together).
-    // This function currently only supports (1).
-    if (!newChild->isText() && newChild->style()->columnSpan() && !newChild->isFloatingOrPositioned() 
-        && !newChild->isInline() && !block->isAnonymousColumnSpanBlock() && block->style()->specifiesColumns())
-        return block;
-    return 0;
+    // This function currently supports (1) and (2).
+    RenderBlock* columnsBlockAncestor = 0;
+    if (!newChild->isText() && newChild->style()->columnSpan() && !newChild->isFloatingOrPositioned()
+        && !newChild->isInline() && !isAnonymousColumnSpanBlock()) {
+        if (style()->specifiesColumns())
+            columnsBlockAncestor = this;
+        else
+            columnsBlockAncestor = toRenderBlock(parent())->containingColumnsBlock(false);
+    }
+    return columnsBlockAncestor;
 }
 
 void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, RenderObject* beforeChild)
@@ -414,26 +636,34 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
     }
 
     // Check for a spanning element in columns.
-    RenderBlock* columnsBlockAncestor = columnsBlockForSpanningElement(this, newChild);
+    RenderBlock* columnsBlockAncestor = columnsBlockForSpanningElement(newChild);
     if (columnsBlockAncestor) {
-        ASSERT(columnsBlockAncestor == this);
-
-        // We are placing a column-span element inside a block. We have to perform a split of this
-        // block's children.  This involves creating an anonymous block box to hold
-        // the column-spanning |newChild|.  We take all of the children from before |newChild| and put them into
-        // one anonymous columns block, and all of the children after |newChild| go into another anonymous block.
+        // We are placing a column-span element inside a block. 
         RenderBlock* newBox = createAnonymousColumnSpanBlock();
         
-        // Someone may have put the spanning element inside an element with generated content, causing a split.  When this happens,
-        // the :after content has to move into the last anonymous block.  Call updateBeforeAfterContent to ensure that our :after
-        // content gets properly destroyed.
-        bool isLastChild = (beforeChild == lastChild());
-        if (document()->usesBeforeAfterRules())
-            children()->updateBeforeAfterContent(this, AFTER);
-        if (isLastChild && beforeChild != lastChild())
-            beforeChild = 0; // We destroyed the last child, so now we need to update our insertion
-                             // point to be 0.  It's just a straight append now.
+        if (columnsBlockAncestor != this) {
+            // We are nested inside a multi-column element and are being split by the span.  We have to break up
+            // our block into continuations.
+            RenderBoxModelObject* oldContinuation = continuation();
+            setContinuation(newBox);
 
+            // Someone may have put a <p> inside a <q>, causing a split.  When this happens, the :after content
+            // has to move into the inline continuation.  Call updateBeforeAfterContent to ensure that our :after
+            // content gets properly destroyed.
+            bool isLastChild = (beforeChild == lastChild());
+            if (document()->usesBeforeAfterRules())
+                children()->updateBeforeAfterContent(this, AFTER);
+            if (isLastChild && beforeChild != lastChild())
+                beforeChild = 0; // We destroyed the last child, so now we need to update our insertion
+                                 // point to be 0.  It's just a straight append now.
+
+            splitFlow(beforeChild, newBox, newChild, oldContinuation);
+            return;
+        }
+
+        // We have to perform a split of this block's children.  This involves creating an anonymous block box to hold
+        // the column-spanning |newChild|.  We take all of the children from before |newChild| and put them into
+        // one anonymous columns block, and all of the children after |newChild| go into another anonymous block.
         makeChildrenAnonymousColumnBlocks(beforeChild, newBox, newChild);
         return;
     }
@@ -517,7 +747,14 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
 
 void RenderBlock::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
-    if (!isAnonymous() && firstChild() && (firstChild()->isAnonymousColumnsBlock() || firstChild()->isAnonymousColumnSpanBlock()))
+    if (continuation() && !isAnonymousBlock())
+        return addChildToContinuation(newChild, beforeChild);
+    return addChildIgnoringContinuation(newChild, beforeChild);
+}
+
+void RenderBlock::addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild)
+{
+    if (!isAnonymousBlock() && firstChild() && (firstChild()->isAnonymousColumnsBlock() || firstChild()->isAnonymousColumnSpanBlock()))
         return addChildToAnonymousColumnBlocks(newChild, beforeChild);
     return addChildIgnoringAnonymousColumnBlocks(newChild, beforeChild);
 }
@@ -2059,7 +2296,7 @@ RenderBlock* RenderBlock::blockElementContinuation() const
     RenderBlock* nextContinuation = toRenderBlock(m_continuation);
     if (nextContinuation->isAnonymousBlock())
         return nextContinuation->blockElementContinuation();
-    return 0;
+    return nextContinuation;
 }
     
 static ContinuationOutlineTableMap* continuationOutlineTable()
@@ -3938,7 +4175,7 @@ int RenderBlock::layoutColumns(int endOfContent, int requestedColumnHeight)
     if (computeIntrinsicHeight && requestedColumnHeight >= 0)
         colHeight = requestedColumnHeight;
     else if (computeIntrinsicHeight)
-        colHeight = availableHeight / desiredColumnCount + columnSlop;
+        colHeight = min(availableHeight, availableHeight / desiredColumnCount + columnSlop);
     else
         colHeight = availableHeight;
     int originalColHeight = colHeight;
