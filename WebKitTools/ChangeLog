@@ -1,3 +1,17 @@
+2010-05-31  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Fix crash of a test after another test with multiple windows
+        https://bugs.webkit.org/show_bug.cgi?id=39942
+
+        If a test opens multiple windows, focuses on non-main window, and
+        the focused window is closed, TestShell::m_focusedWidget points a
+        deleted object.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::closeWindow): Clear m_focusedWidget.
+
 2010-05-30  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

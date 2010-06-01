@@ -597,6 +597,8 @@ void TestShell::closeWindow(WebViewHost* window)
         return;
     }
     m_windowList.remove(i);
+    if (window->webWidget() == m_focusedWidget)
+        m_focusedWidget = 0;
     window->webWidget()->close();
     delete window;
 }
