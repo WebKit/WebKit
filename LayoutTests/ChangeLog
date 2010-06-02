@@ -1,3 +1,46 @@
+2010-06-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Several layout tests needlessly use invalid HTML
+        https://bugs.webkit.org/show_bug.cgi?id=39985
+
+        This change does not change behavior or reduce test coverage.
+        It only makes our test suite more clear by making our non-parser
+        tests not bother to test parser quirks which are already covered
+        by our parsing test suites.
+
+        Two invalid cases which are already tested by
+        the html5lib tests as well as others.
+        - Unclosed <title> swallowing the document is covered by
+          <!doctype html><title>foo/title><link></head><body>X
+          and other subtests in html5lib/resources/tests16.dat
+          Missing </title> is also covered by the (invalid) test:
+          fast/js/missing-title-end-tag-js.html
+        - Unclosed <tag swallowing the next tag is covered by:
+          fast/invalid/016.html.  I suspect it's also covered by
+          various html5lib tests but proved difficult to grep for.
+
+        * css1/box_properties/float_elements_in_series.html:
+         - Unclosed <td> tags swallow the following <img> tags.
+           This parser quirk is tested by the HTML5 tests and is an
+           intentional behavior change as part of HTML5.  No need
+           for this test to depend on WebKit's old parser behavior.
+        * editing/selection/inactive-selection.html:
+         - Same as above. Here <div swallows the <script> tag.
+        * editing/selection/select-text-overflow-ellipsis.html:
+         - An unclosed <title> will swallow the whole document.
+           Intentional HTML5 change, tested by HTML5 test suite and
+           no need to depend on the old title behavior here.
+        * fast/dom/title-content-write-set.html:
+         - Again, no need to leave an unclosed title.
+        * fast/forms/select-set-inner.html:
+         - Unclosed <body swallows <p>
+        * fast/js/exception-linenums-in-html-2.html:
+         - Unclosed <title> swallows the document.
+        * html5lib/resources/webkit01.dat:
+         - Added a test for <img<img> to make sure it's covered.
+
 2010-06-02  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
