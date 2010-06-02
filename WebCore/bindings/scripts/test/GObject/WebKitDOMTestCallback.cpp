@@ -53,7 +53,7 @@ gpointer kit(WebCore::TestCallback* obj)
 } // namespace WebKit //
 
 gboolean
-webkit_dom_test_callback_callback_with_class1param (WebKitDOMTestCallback *self, WebKitDOMClass1*  class1param)
+webkit_dom_test_callback_callback_with_class1param(WebKitDOMTestCallback* self, WebKitDOMClass1*  class1param)
 {
     g_return_val_if_fail (self, 0);
     WebCore::TestCallback * item = WebKit::core(self);
@@ -62,11 +62,10 @@ webkit_dom_test_callback_callback_with_class1param (WebKitDOMTestCallback *self,
     g_return_val_if_fail (_g_class1param, 0);
     gboolean res = item->callbackWithClass1Param(_g_class1param);
     return res;
-
 }
 
 gboolean
-webkit_dom_test_callback_callback_with_class2param (WebKitDOMTestCallback *self, WebKitDOMClass2*  class2param, gchar*  str_arg)
+webkit_dom_test_callback_callback_with_class2param(WebKitDOMTestCallback* self, WebKitDOMClass2*  class2param, gchar*  str_arg)
 {
     g_return_val_if_fail (self, 0);
     WebCore::TestCallback * item = WebKit::core(self);
@@ -77,11 +76,10 @@ webkit_dom_test_callback_callback_with_class2param (WebKitDOMTestCallback *self,
     WebCore::String _g_str_arg = WebCore::String::fromUTF8(str_arg);
     gboolean res = item->callbackWithClass2Param(_g_class2param, _g_str_arg);
     return res;
-
 }
 
 glong
-webkit_dom_test_callback_callback_with_non_bool_return_type (WebKitDOMTestCallback *self, WebKitDOMClass3*  class3param)
+webkit_dom_test_callback_callback_with_non_bool_return_type(WebKitDOMTestCallback* self, WebKitDOMClass3*  class3param)
 {
     g_return_val_if_fail (self, 0);
     WebCore::TestCallback * item = WebKit::core(self);
@@ -90,7 +88,6 @@ webkit_dom_test_callback_callback_with_non_bool_return_type (WebKitDOMTestCallba
     g_return_val_if_fail (_g_class3param, 0);
     glong res = item->callbackWithNonBoolReturnType(_g_class3param);
     return res;
-
 }
 
 
@@ -132,8 +129,8 @@ static void webkit_dom_test_callback_finalize(GObject* object)
 
 static void webkit_dom_test_callback_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)
 {
-     switch (prop_id) {
-     default:
+    switch (prop_id) {
+    default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
     }
@@ -142,8 +139,8 @@ static void webkit_dom_test_callback_set_property(GObject* object, guint prop_id
 
 static void webkit_dom_test_callback_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec)
 {
-     switch (prop_id) {
-     default:
+    switch (prop_id) {
+    default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
     }

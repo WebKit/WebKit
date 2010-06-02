@@ -85,8 +85,8 @@ static void webkit_dom_test_interface_finalize(GObject* object)
 
 static void webkit_dom_test_interface_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)
 {
-     switch (prop_id) {
-     default:
+    switch (prop_id) {
+    default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
     }
@@ -95,8 +95,8 @@ static void webkit_dom_test_interface_set_property(GObject* object, guint prop_i
 
 static void webkit_dom_test_interface_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec)
 {
-     switch (prop_id) {
-     default:
+    switch (prop_id) {
+    default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
     }

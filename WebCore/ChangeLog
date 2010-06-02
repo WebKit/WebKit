@@ -1,3 +1,72 @@
+2010-06-02  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Style fixes for the generated code in DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=39949
+
+        Get rid of extra spaces and wrong indentation in the generated
+        code.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.cpp:
+        (webkit_dom_test_callback_callback_with_class1param):
+        (webkit_dom_test_callback_callback_with_class2param):
+        (webkit_dom_test_callback_callback_with_non_bool_return_type):
+        (webkit_dom_test_callback_set_property):
+        (webkit_dom_test_callback_get_property):
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp:
+        (webkit_dom_test_interface_set_property):
+        (webkit_dom_test_interface_get_property):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_void_method):
+        (webkit_dom_test_obj_void_method_with_args):
+        (webkit_dom_test_obj_int_method):
+        (webkit_dom_test_obj_int_method_with_args):
+        (webkit_dom_test_obj_obj_method):
+        (webkit_dom_test_obj_obj_method_with_args):
+        (webkit_dom_test_obj_method_that_requires_all_args):
+        (webkit_dom_test_obj_method_that_requires_all_args_and_throws):
+        (webkit_dom_test_obj_serialized_value):
+        (webkit_dom_test_obj_method_with_exception):
+        (webkit_dom_test_obj_with_dynamic_frame):
+        (webkit_dom_test_obj_with_dynamic_frame_and_arg):
+        (webkit_dom_test_obj_with_dynamic_frame_and_optional_arg):
+        (webkit_dom_test_obj_with_dynamic_frame_and_user_gesture):
+        (webkit_dom_test_obj_with_dynamic_frame_and_user_gesture_asad):
+        (webkit_dom_test_obj_with_script_state_void):
+        (webkit_dom_test_obj_with_script_state_obj):
+        (webkit_dom_test_obj_with_script_state_void_exception):
+        (webkit_dom_test_obj_with_script_state_obj_exception):
+        (webkit_dom_test_obj_method_with_optional_arg):
+        (webkit_dom_test_obj_method_with_non_optional_arg_and_optional_arg):
+        (webkit_dom_test_obj_method_with_non_optional_arg_and_two_optional_args):
+        (webkit_dom_test_obj_get_read_only_int_attr):
+        (webkit_dom_test_obj_get_read_only_string_attr):
+        (webkit_dom_test_obj_get_read_only_test_obj_attr):
+        (webkit_dom_test_obj_get_int_attr):
+        (webkit_dom_test_obj_set_int_attr):
+        (webkit_dom_test_obj_get_long_long_attr):
+        (webkit_dom_test_obj_set_long_long_attr):
+        (webkit_dom_test_obj_get_unsigned_long_long_attr):
+        (webkit_dom_test_obj_set_unsigned_long_long_attr):
+        (webkit_dom_test_obj_get_string_attr):
+        (webkit_dom_test_obj_set_string_attr):
+        (webkit_dom_test_obj_get_test_obj_attr):
+        (webkit_dom_test_obj_set_test_obj_attr):
+        (webkit_dom_test_obj_get_attr_with_exception):
+        (webkit_dom_test_obj_set_attr_with_exception):
+        (webkit_dom_test_obj_get_attr_with_setter_exception):
+        (webkit_dom_test_obj_set_attr_with_setter_exception):
+        (webkit_dom_test_obj_get_attr_with_getter_exception):
+        (webkit_dom_test_obj_set_attr_with_getter_exception):
+        (webkit_dom_test_obj_get_script_string_attr):
+        (webkit_dom_test_obj_set_property):
+        (webkit_dom_test_obj_get_property):
+        (webkit_dom_test_obj_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+
 2010-06-02  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

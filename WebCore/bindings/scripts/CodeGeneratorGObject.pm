@@ -362,7 +362,7 @@ sub GenerateProperty {
     }
 
     if (grep {$_ eq $attribute} @writeableProperties) {
-        push(@txtSetProps, "   case ${propEnum}:\n    {\n");
+        push(@txtSetProps, "    case ${propEnum}:\n    {\n");
         push(@txtSetProps, "        WebCore::ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
         push(@txtSetProps, "        ${setterContentHead}");
         push(@txtSetProps, ", ec") if @{$attribute->setterExceptions};
@@ -370,7 +370,7 @@ sub GenerateProperty {
         push(@txtSetProps, "        break;\n    }\n");
     }
 
-    push(@txtGetProps, "   case ${propEnum}:\n    {\n");
+    push(@txtGetProps, "    case ${propEnum}:\n    {\n");
 
     my $exception = "";
     if (@{$attribute->getterExceptions}) {
@@ -548,7 +548,7 @@ EOF
 
     if (scalar @writeableProperties > 0) {
         $txtSetProps = << "EOF";
-    ${className} *self = WEBKIT_DOM_${clsCaps}(object);
+    ${className}* self = WEBKIT_DOM_${clsCaps}(object);
     $privFunction
 EOF
         push(@txtSetProps, $txtSetProps);
@@ -586,6 +586,9 @@ EOF
 }
 EOF
     push(@txtSetProps, $txtSetProps);
+
+    # Do not insert extra spaces when interpolating array variables
+    $" = "";
 
     $implContent = << "EOF";
 
@@ -747,7 +750,7 @@ sub GenerateFunction {
     my $returnType = GetGlibTypeName($functionSigType);
     my $returnValueIsGDOMType = IsGDOMClassType($functionSigType);
 
-    my $functionSig = "$className *self";
+    my $functionSig = "${className}* self";
 
     my $callImplParams = "";
 
@@ -799,8 +802,8 @@ sub GenerateFunction {
         $functionSig .= ", GError **error";
     }
 
-    push(@hBody, "WEBKIT_API $returnType\n$functionName ($functionSig);\n\n");
-    push(@cBody, "$returnType\n$functionName ($functionSig)\n{\n");
+    push(@hBody, "WEBKIT_API $returnType\n$functionName($functionSig);\n\n");
+    push(@cBody, "$returnType\n$functionName($functionSig)\n{\n");
 
     if ($conditionalMethods{$functionName}) {
         push(@cBody, "#if ENABLE($conditionalMethods{$functionName})\n");
@@ -969,7 +972,7 @@ EOF
         push(@cBody, "#endif\n");
     }
 
-    push(@cBody, "\n}\n\n");
+    push(@cBody, "}\n\n");
 }
 
 sub ClassHasFunction {
