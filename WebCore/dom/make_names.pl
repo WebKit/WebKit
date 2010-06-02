@@ -868,7 +868,7 @@ static v8::Handle<v8::Value> create${JSInterfaceName}Wrapper($parameters{namespa
 {
     Settings* settings = element->document()->settings();
     if (!MediaPlayer::isAvailable() || (settings && !settings->isMediaEnabled()))
-        return toV8(static_cast<$parameters{namespace}Element*>(element));
+        return V8$parameters{namespace}Element::wrap(element);
     return toV8(static_cast<${JSInterfaceName}*>(element));
 }
 
