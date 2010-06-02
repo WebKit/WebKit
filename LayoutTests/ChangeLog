@@ -1,3 +1,14 @@
+2010-06-02  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed. Test expectation update.
+
+        Update Windows and Linux results of empty-clip-path.html and
+        empty-mask.html for r60541.
+
+        * platform/chromium-linux/svg/custom/empty-mask-expected.txt: Removed.
+        * platform/chromium-win/svg/custom/empty-clip-path-expected.txt:
+        * platform/chromium-win/svg/custom/empty-mask-expected.txt:
+
 2010-06-02  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Dirk Schulze.
