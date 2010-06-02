@@ -1,3 +1,9 @@
+2010-06-01  Alice Liu  <alice.liu@apple.com>
+
+        Build fix. Not reviewed
+
+        * win/WebKit2Generated.make: Added WKRetainPtr.h
+
 2010-06-01  John Sullivan  <sullivan@apple.com>
 
         Rubber-stamped by Anders Carlsson.
