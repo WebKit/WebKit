@@ -146,7 +146,20 @@ FloatRect RenderSVGContainer::strokeBoundingBox() const
 FloatRect RenderSVGContainer::repaintRectInLocalCoordinates() const
 {
     FloatRect repaintRect = computeContainerBoundingBox(this, true);
-    intersectRepaintRectWithResources(this, repaintRect);
+
+    FloatRect rect = filterBoundingBoxForRenderer(this);
+    if (!rect.isEmpty())
+        repaintRect = rect;
+
+    rect = clipperBoundingBoxForRenderer(this);
+    if (!rect.isEmpty())
+        repaintRect.intersect(rect);
+
+    rect = maskerBoundingBoxForRenderer(this);
+    if (!rect.isEmpty())
+        repaintRect.intersect(rect);
+
+    style()->svgStyle()->inflateForShadow(repaintRect);
 
     return repaintRect;
 }

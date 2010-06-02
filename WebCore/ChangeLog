@@ -1,3 +1,50 @@
+2010-06-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r60539.
+        http://trac.webkit.org/changeset/60539
+        https://bugs.webkit.org/show_bug.cgi?id=40043
+
+        Accidentally added an unreviewed and invalid change to the
+        patch. (Requested by krit on #webkit).
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::updateCachedBoundaries):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGResource.h:
+        * rendering/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::resourceBoundingBox):
+        * rendering/RenderSVGResourceClipper.h:
+        * rendering/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::resourceBoundingBox):
+        * rendering/RenderSVGResourceFilter.h:
+        * rendering/RenderSVGResourceGradient.h:
+        (WebCore::RenderSVGResourceGradient::resourceBoundingBox):
+        * rendering/RenderSVGResourceMarker.h:
+        (WebCore::RenderSVGResourceMarker::resourceBoundingBox):
+        * rendering/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::resourceBoundingBox):
+        * rendering/RenderSVGResourceMasker.h:
+        * rendering/RenderSVGResourcePattern.h:
+        (WebCore::RenderSVGResourcePattern::resourceBoundingBox):
+        * rendering/RenderSVGResourceSolidColor.h:
+        (WebCore::RenderSVGResourceSolidColor::resourceBoundingBox):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::strokeBoundingBox):
+        (WebCore::RenderSVGText::repaintRectInLocalCoordinates):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::filterBoundingBoxForRenderer):
+        (WebCore::SVGRenderBase::clipperBoundingBoxForRenderer):
+        (WebCore::SVGRenderBase::maskerBoundingBoxForRenderer):
+        * rendering/SVGRenderSupport.h:
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeResources):
+        * rendering/style/SVGRenderStyle.h:
+        * svg/SVGColor.cpp:
+        (WebCore::SVGColor::colorFromRGBColorString):
+
 2010-06-01  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

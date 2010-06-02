@@ -186,7 +186,7 @@ FloatRect RenderSVGText::objectBoundingBox() const
 
 FloatRect RenderSVGText::strokeBoundingBox() const
 {
-    FloatRect strokeRect = objectBoundingBox();
+    FloatRect repaintRect = objectBoundingBox();
 
     // SVG needs to include the strokeWidth(), not the textStrokeWidth().
     if (style()->svgStyle()->hasStroke()) {
@@ -202,16 +202,31 @@ FloatRect RenderSVGText::strokeBoundingBox() const
         }
 #endif
 
-        strokeRect.inflate(strokeWidth);
+        repaintRect.inflate(strokeWidth);
     }
 
-    return strokeRect;
+    return repaintRect;
 }
 
 FloatRect RenderSVGText::repaintRectInLocalCoordinates() const
 {
     FloatRect repaintRect = strokeBoundingBox();
-    intersectRepaintRectWithResources(this, repaintRect);
+
+    // FIXME: We need to be careful here. We assume that there is no filter,
+    // clipper or masker if the rects are empty.
+    FloatRect rect = filterBoundingBoxForRenderer(this);
+    if (!rect.isEmpty())
+        repaintRect = rect;
+
+    rect = clipperBoundingBoxForRenderer(this);
+    if (!rect.isEmpty())
+        repaintRect.intersect(rect);
+
+    rect = maskerBoundingBoxForRenderer(this);
+    if (!rect.isEmpty())
+        repaintRect.intersect(rect);
+
+    style()->svgStyle()->inflateForShadow(repaintRect);
 
     return repaintRect;
 }
