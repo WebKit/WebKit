@@ -34,7 +34,7 @@ WebInspector.ScriptView = function(script)
     this._frameNeedsSetup = true;
     this._sourceFrameSetup = false;
     var canEditScripts = WebInspector.panels.scripts.canEditScripts();
-    this.sourceFrame = new WebInspector.SourceFrame(this.element, this._addBreakpoint.bind(this), this._removeBreakpoint.bind(this), canEditScripts ? this._editLine.bind(this) : null);
+    this.sourceFrame = new WebInspector.SourceFrame(this.element, this._addBreakpoint.bind(this), this._removeBreakpoint.bind(this), canEditScripts ? this._editLine.bind(this) : null, this._continueToLine.bind(this));
 }
 
 WebInspector.ScriptView.prototype = {
@@ -69,6 +69,13 @@ WebInspector.ScriptView.prototype = {
     {
         if (!this.element.parentNode)
             document.getElementById("script-resource-views").appendChild(this.element);
+    },
+
+    _continueToLine: function(line)
+    {
+        var scriptsPanel = WebInspector.panels.scripts;
+        if (scriptsPanel)
+            scriptsPanel.continueToLine(this.script.sourceID, line);
     },
 
     _addBreakpoint: function(line)

@@ -1,3 +1,28 @@
+2010-06-02  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: support "Continue to Here" in debugger
+        https://bugs.webkit.org/show_bug.cgi?id=39953
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype.setOneTimeBreakpoint):
+        (WebInspector.BreakpointManager.prototype.removeOneTimeBreakpoint):
+        (WebInspector.BreakpointManager.prototype.addBreakpoint):
+        * inspector/front-end/ScriptView.js:
+        (WebInspector.ScriptView):
+        (WebInspector.ScriptView.prototype._continueToLine):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.continueToLine):
+        (WebInspector.ScriptsPanel.prototype.debuggerPaused):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView):
+        (WebInspector.SourceView.prototype._continueToLine):
+        (WebInspector.SourceView.prototype.updateLocalContent):
+
 2010-06-02  Mikhail Naganov  <mnaganov@chromium.org>
 
         Unreviewed, rolling out r60563.

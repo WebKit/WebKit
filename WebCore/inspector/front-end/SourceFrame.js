@@ -28,7 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceFrame = function(parentElement, addBreakpointDelegate, removeBreakpointDelegate, editDelegate)
+WebInspector.SourceFrame = function(parentElement, addBreakpointDelegate, removeBreakpointDelegate, editDelegate, continueToHereDelegate)
 {
     this._parentElement = parentElement;
 
@@ -42,6 +42,7 @@ WebInspector.SourceFrame = function(parentElement, addBreakpointDelegate, remove
 
     this._loaded = false;
 
+    this._continueToHereDelegate = continueToHereDelegate;
     this._addBreakpointDelegate = addBreakpointDelegate;
     this._removeBreakpointDelegate = removeBreakpointDelegate;
     this._editDelegate = editDelegate;
@@ -409,8 +410,13 @@ WebInspector.SourceFrame.prototype = {
             return;
         var row = target.parentElement;
 
+        if (!WebInspector.panels.scripts)
+            return;
+
         var lineNumber = row.lineNumber;
         var contextMenu = new WebInspector.ContextMenu();
+
+        contextMenu.appendItem(WebInspector.UIString("Continue to Here"), this._continueToHereDelegate.bind(this, lineNumber + 1));
 
         var breakpoint = this._textModel.getAttribute(lineNumber, "breakpoint");
         if (!breakpoint) {

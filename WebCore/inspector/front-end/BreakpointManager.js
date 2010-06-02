@@ -30,11 +30,32 @@ WebInspector.BreakpointManager = function()
 }
 
 WebInspector.BreakpointManager.prototype = {
+    setOneTimeBreakpoint: function(sourceID, line)
+    {
+        var breakpoint = new WebInspector.Breakpoint(this, sourceID, undefined, line, true, undefined);
+        if (this._breakpoints[breakpoint.id])
+            return;
+        if (this._oneTimeBreakpoint)
+            this._removeBreakpointFromBackend(this._oneTimeBreakpoint);
+        this._oneTimeBreakpoint = breakpoint;
+        this._saveBreakpointOnBackend(breakpoint);
+    },
+
+    removeOneTimeBreakpoint: function()
+    {
+        if (this._oneTimeBreakpoint) {
+            this._removeBreakpointFromBackend(this._oneTimeBreakpoint);
+            delete this._oneTimeBreakpoint;
+        }
+    },
+
     addBreakpoint: function(sourceID, sourceURL, line, enabled, condition)
     {
         var breakpoint = new WebInspector.Breakpoint(this, sourceID, sourceURL, line, enabled, condition);
         if (this._breakpoints[breakpoint.id])
             return;
+        if (this._oneTimeBreakpoint && (this._oneTimeBreakpoint.id == breakpoint.id))
+            delete this._oneTimeBreakpoint;
         this._breakpoints[breakpoint.id] = breakpoint;
         this._saveBreakpointOnBackend(breakpoint);
         this.dispatchEventToListeners("breakpoint-added", breakpoint);
@@ -72,6 +93,7 @@ WebInspector.BreakpointManager.prototype = {
     reset: function()
     {
         this._breakpoints = {};
+        delete this._oneTimeBreakpoint;
     },
 
     _saveBreakpointOnBackend: function(breakpoint)
