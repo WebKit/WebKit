@@ -1,3 +1,13 @@
+2010-06-01  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Fix broken code generation in GenerateParametersCheckExpression.
+        https://bugs.webkit.org/show_bug.cgi?id=39960
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/test/JS/JSTestObj.cpp: Updated baseline.
+
 2010-06-01  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Adam Roben.
