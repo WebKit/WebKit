@@ -703,7 +703,7 @@ class Bugzilla(object):
             self.browser["blocked"] = unicode(blocked)
         if assignee == None:
             assignee = self.username
-        if assignee:
+        if assignee and not self.browser.find_control("assigned_to").disabled:
             self.browser["assigned_to"] = assignee
         self.browser["short_desc"] = bug_title
         self.browser["comment"] = bug_description
