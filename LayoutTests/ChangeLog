@@ -1,3 +1,13 @@
+2010-06-01  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed.  Update test expectations.
+
+        - Mark input-search-padding.html flaky on Mac
+        - Remove function_arguments.html, styles-disable-then-enable.html,
+          notifications-replace.html and notifications-rtl.html. They pass recently.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-06-01  James Robinson  <jamesr@chromium.org>
 
         Unreviewed.  Update the chromium baselines.

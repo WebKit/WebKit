@@ -791,9 +791,6 @@ BUG33099 : media/video-timeupdate-reverse-play.html = TIMEOUT
 // We haven't implemented video preloading and it passing is a false positive.
 BUG16482 : media/video-preload.html = PASS FAIL
 
-// Function arguments object is copied for each access.
-BUG24194 : fast/js/kde/function_arguments.html = FAIL
-
 // We don't support dynamic fonts on Linux.
 // Once we have the sandbox working, we should re-evaluate this.
 BUG10278 LINUX : fast/css/font-face-implicit-local-font.html = FAIL
@@ -2785,7 +2782,7 @@ BUG43084 MAC DEBUG : media/video-empty-source.html = IMAGE
 BUG43963 WIN : fast/forms/searchfield-heights.html = IMAGE
 BUG43963 LINUX : fast/forms/searchfield-heights.html = IMAGE+TEXT
 BUG43960 WIN LINUX : fast/css/input-search-padding.html = IMAGE+TEXT
-BUG43960 MAC : fast/css/input-search-padding.html = IMAGE
+BUG43960 MAC : fast/css/input-search-padding.html = IMAGE+TEXT IMAGE PASS
 
 // GStreamer - disabled in Chromium
 WONTFIX : media/video-duration-known-after-eos.html = TEXT TIMEOUT
@@ -2819,9 +2816,6 @@ BUGJOHNNYG : fast/js/regexp-literals-arent-constants.html = TEXT
 BUG43890 WIN : http/tests/loading/basic.html = TEXT PASS
 BUG43890 MAC LINUX : fast/forms/implicit-submission.html = TEXT PASS
 
-// WebKit roll 59170:59267
-BUG44018 WIN : inspector/styles-disable-then-enable.html = TEXT
-
 // Flaky crashing test. Started crashing around Chromium r47220
 BUG44150 LINUX DEBUG : fast/forms/input-text-paste-maxlength.html = CRASH PASS
 
@@ -2847,11 +2841,6 @@ BUGWK24906 : fast/text/backslash-to-yen-sign.html = FAIL
 BUGWK24906 : fast/text/backslash-to-yen-sign-dynamic.html = FAIL
 
 BUGWK39655 : fast/dom/prototype-property.html = FAIL
-
-// temporarily mark these tests as failing until we can turn the feature
-// on in test_shell
-BUGWK39605 : fast/notifications/notifications-replace.html = FAIL
-BUGWK39605 : fast/notifications/notifications-rtl.html = FAIL
 
 // These SVG tests have been flaky on Win from quite some time.
 // Hard to pin down which roll introduced the flakiness.
