@@ -790,6 +790,7 @@ SOURCES += \
     page/GeolocationPositionCache.cpp \
     page/History.cpp \
     page/Location.cpp \
+    page/MemoryInfo.cpp \
     page/MouseEventWithHitTestResults.cpp \
     page/OriginAccessEntry.cpp \
     page/Page.cpp \

@@ -433,6 +433,7 @@ IDL_BINDINGS += \
     page/Geoposition.idl \
     page/History.idl \
     page/Location.idl \
+    page/MemoryInfo.idl \
     page/Navigator.idl \
     page/PositionError.idl \
     page/Screen.idl \

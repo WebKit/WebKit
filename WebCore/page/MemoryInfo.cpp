@@ -29,32 +29,19 @@
  */
 
 #include "config.h"
-
-#include "V8Console.h"
-
-#include "Console.h"
 #include "MemoryInfo.h"
-#include "ScriptProfile.h"
-#include "V8Binding.h"
-#include "V8MemoryInfo.h"
-#include "V8Proxy.h"
-#include "V8ScriptProfile.h"
+
+#include "ScriptGCEvent.h"
 
 namespace WebCore {
 
-typedef Vector<RefPtr<ScriptProfile> > ProfilesArray;
-
-v8::Handle<v8::Value> V8Console::profilesAccessorGetter(v8::Local<v8::String>, const v8::AccessorInfo&)
+MemoryInfo::MemoryInfo()
+        : m_totalJSHeapSize(0),
+          m_usedJSHeapSize(0)
 {
-    INC_STATS("DOM.Console.profilesAccessorGetter");
-    // FIXME: Provide a real implementation.
-    return v8::Array::New(0);
-}
-
-v8::Handle<v8::Value> V8Console::memoryAccessorGetter(v8::Local<v8::String>, const v8::AccessorInfo&)
-{
-    INC_STATS("DOM.Console.memoryAccessorGetter");
-    return toV8(MemoryInfo::create());
+#if ENABLE(INSPECTOR)
+    ScriptGCEvent::getHeapSize(m_usedJSHeapSize, m_totalJSHeapSize);
+#endif
 }
 
 } // namespace WebCore

@@ -133,6 +133,7 @@
 #include "JSXSLTProcessorConstructor.cpp"
 #include "JSXSLTProcessorCustom.cpp"
 #include "JavaScriptCallFrame.cpp"
+#include "MemoryInfo.cpp"
 #include "ScheduledAction.cpp"
 #include "ScriptArray.cpp"
 #include "ScriptCachedFrameData.cpp"

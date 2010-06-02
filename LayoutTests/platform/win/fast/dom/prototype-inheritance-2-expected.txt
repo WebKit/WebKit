@@ -148,6 +148,8 @@ PASS LocationPrototype from inner.document.location.__proto__
 PASS MediaList from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.media
 PASS MediaListConstructor from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.media.constructor
 PASS MediaListPrototype from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.media.__proto__
+FAIL MemoryInfo from inner.document.forms.testForm.0.ownerDocument.defaultView.console.memory
+FAIL MemoryInfoPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.console.memory.__proto__
 PASS MimeType from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0
 PASS MimeTypeArray from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes
 PASS MimeTypeArrayConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.constructor

@@ -60,6 +60,8 @@ module window {
         [CustomArgumentHandling] void group();
         [CustomArgumentHandling] void groupCollapsed();
         void groupEnd();
+
+        readonly attribute [CustomGetter] MemoryInfo memory;
     };
 
 }

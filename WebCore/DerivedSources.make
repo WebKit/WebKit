@@ -230,6 +230,7 @@ DOM_CLASSES = \
     Location \
     MediaError \
     MediaList \
+    MemoryInfo \
     MessageChannel \
     MessageEvent \
     MessagePort \
