@@ -20,8 +20,9 @@
     scripted with JavaScript.
 
     A bridge between the JavaScript execution environment and the Qt object
-    model makes it possible for custom QObjects to be scripted. Integration
-    with the Qt networking module enables Web pages to be transparently loaded
+    model makes it possible for custom QObjects to be scripted. For detailed
+    documentation see \l{The QtWebkit Bridge}.
+    Integration with the Qt networking module enables Web pages to be transparently loaded
     from Web servers, the local file system or even the Qt resource system.
 
     In addition to providing pure rendering features, HTML documents can be
