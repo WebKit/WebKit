@@ -55,8 +55,8 @@ namespace WebCore {
 
     class Notification : public RefCounted<Notification>, public ActiveDOMObject, public EventTarget { 
     public:
-        static PassRefPtr<Notification> create(const KURL& url, ScriptExecutionContext* context, ExceptionCode& ec, NotificationPresenter* provider) { return adoptRef(new Notification(url, context, ec, provider)); }
-        static PassRefPtr<Notification> create(const NotificationContents& contents, ScriptExecutionContext* context, ExceptionCode& ec, NotificationPresenter* provider) { return adoptRef(new Notification(contents, context, ec, provider)); }
+        static Notification* create(const KURL& url, ScriptExecutionContext* context, ExceptionCode& ec, NotificationPresenter* provider) { return new Notification(url, context, ec, provider); }
+        static Notification* create(const NotificationContents& contents, ScriptExecutionContext* context, ExceptionCode& ec, NotificationPresenter* provider) { return new Notification(contents, context, ec, provider); }
         
         virtual ~Notification();
 
