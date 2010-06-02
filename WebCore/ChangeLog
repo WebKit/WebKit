@@ -1,3 +1,46 @@
+2010-06-01  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: Added conversion of inspector's resource representation into HAR.
+        Moved common resource accessors from ResourceView to Resource.
+        https://bugs.webkit.org/show_bug.cgi?id=30567
+
+        Test: http/tests/inspector/resource-har-conversion.html
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/HAREntry.js: Added.
+        (WebInspector.HAREntry):
+        (WebInspector.HAREntry.prototype.build):
+        (WebInspector.HAREntry.prototype._buildRequest):
+        (WebInspector.HAREntry.prototype._buildResponse):
+        (WebInspector.HAREntry.prototype._buildContent):
+        (WebInspector.HAREntry.prototype._buildTimings):
+        (WebInspector.HAREntry.prototype._buildHeaders):
+        (WebInspector.HAREntry.prototype._buildPostData):
+        (WebInspector.HAREntry.prototype._buildParameters):
+        (WebInspector.HAREntry.prototype._buildParameter):
+        (WebInspector.HAREntry.prototype._toMilliseconds):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource):
+        (WebInspector.Resource.prototype.set url):
+        (WebInspector.Resource.prototype.get receiveDuration):
+        (WebInspector.Resource.prototype.requestHeaderValue):
+        (WebInspector.Resource.prototype.get requestFormData):
+        (WebInspector.Resource.prototype.set requestFormData):
+        (WebInspector.Resource.prototype.responseHeaderValue):
+        (WebInspector.Resource.prototype.get queryParameters):
+        (WebInspector.Resource.prototype.get formParameters):
+        (WebInspector.Resource.prototype._parseParameters):
+        (WebInspector.Resource.prototype._headerValue):
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView.prototype._refreshQueryString):
+        (WebInspector.ResourceView.prototype._refreshFormData):
+        (WebInspector.ResourceView.prototype._refreshParms):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2010-06-01  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

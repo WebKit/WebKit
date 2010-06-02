@@ -1,3 +1,16 @@
+2010-06-01  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: Added test for contents of resource record and HAR conversion results.
+        Added generic object dumper to inspector-tests.js.
+        https://bugs.webkit.org/show_bug.cgi?id=30567
+
+        * http/tests/inspector/inspector-test.js:
+        (dumpObject):
+        * http/tests/inspector/resource-har-conversion-expected.txt: Added.
+        * http/tests/inspector/resource-har-conversion.html: Added.
+
 2010-06-01  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed.  Update test expectations.

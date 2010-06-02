@@ -32,6 +32,7 @@
     <file>ElementsTreeOutline.js</file>
     <file>EventListenersSidebarPane.js</file>
     <file>FontView.js</file>
+    <file>HAREntry.js</file>
     <file>HelpScreen.js</file>
     <file>ImageView.js</file>
     <file>InjectedFakeWorker.js</file>

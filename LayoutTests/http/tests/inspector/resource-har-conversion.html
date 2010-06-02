@@ -1,0 +1,52 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script src="resource-tests.js"></script>
+
+<script>
+function doit()
+{
+    dumpResources();
+}
+
+var HARNondeterministicProperties = {
+    startedDateTime: 1,
+    time: 1,
+    wait: 1,
+    receive: 1,
+    headers: 1,
+};
+
+function dumpResources() {
+    function resourceComparer(r1, r2)
+    {
+        return r1.request.url.localeCompare(r2.request.url);
+    }
+    function callback(result)
+    {
+        dumpObject(result.sort(resourceComparer), HARNondeterministicProperties);
+        notifyDone();
+    }
+
+    evaluateInWebInspector("frontend_dumpResources", callback);
+}
+
+// Frontend functions.
+
+function frontend_dumpResources()
+{
+    var result = [];
+    for (var resource in WebInspector.resources)
+        result.push(new WebInspector.HAREntry(WebInspector.resources[resource]).build());
+    return result;
+}
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests conversion of Inspector's resource representation into HAR format.
+</p>
+
+</body>
+</html>
