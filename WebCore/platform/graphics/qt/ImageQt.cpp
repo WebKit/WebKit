@@ -187,6 +187,23 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
     if (!image->hasAlpha() && painter->compositionMode() == QPainter::CompositionMode_SourceOver)
         painter->setCompositionMode(QPainter::CompositionMode_Source);
 
+    IntSize shadowSize;
+    int shadowBlur;
+    Color shadowColor;
+    if (ctxt->getShadow(shadowSize, shadowBlur, shadowColor)) {
+        FloatRect shadowImageRect(dst);
+        shadowImageRect.move(shadowSize.width(), shadowSize.height());
+
+        QImage shadowImage(QSize(static_cast<int>(src.width()), static_cast<int>(src.height())), QImage::Format_ARGB32_Premultiplied);
+        QPainter p(&shadowImage);
+        p.setCompositionMode(QPainter::CompositionMode_Source);
+        p.fillRect(shadowImage.rect(), shadowColor);
+        p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+        p.drawPixmap(dst, *image, src);
+        p.end();
+        painter->drawImage(shadowImageRect, shadowImage, src);
+    }
+
     // Test using example site at
     // http://www.meyerweb.com/eric/css/edge/complexspiral/demo.html
     painter->drawPixmap(dst, *image, src);

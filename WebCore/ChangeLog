@@ -1,3 +1,15 @@
+2010-06-02  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Dirk Schulze.
+
+        [Qt] Image shadow doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=37804
+
+        Implement the code for image shadow
+
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::BitmapImage::draw):
+
 2010-06-02  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Darin Fisher.
