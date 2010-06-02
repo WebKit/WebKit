@@ -2,6 +2,15 @@
 
         Reviewed by Anders Carlsson.
 
+        Turn off unforced page breaking at paint time when the new page breaking model is being used.
+
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::paint):
+
+2010-06-02  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Anders Carlsson.
+
         Don't check page break properties at paint time if we're using the new page breaking model.
 
         * rendering/RenderBlock.cpp:
