@@ -1,3 +1,20 @@
+2010-06-01  Raine Makelainen  <raine.makelainen@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt]: REGRESSION(r58703): QWebSettings::JavascriptCanAccessClipboard has wrong case in "Javascript" part.
+        https://bugs.webkit.org/show_bug.cgi?id=39878        
+
+        QWebSettings::JavaScriptCanAccessClipboard reverted back to
+        QWebSettings::JavascriptCanAccessClipboard. QWebSettings::DOMPasteAllowed enum removed.
+
+        Value of QWebSettings::JavascriptCanAccessClipboard to setDOMPasteAllowed and 
+        setJavaScriptCanAccessClipboard of WebCore::Settings.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        * Api/qwebsettings.h:
+
 2010-06-01  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Laszlo Gombos.
