@@ -1,3 +1,41 @@
+2010-06-01  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed.  Update the chromium baselines.
+
+        * platform/chromium-linux/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/span/span-as-nested-columns-child-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/span/span-as-nested-columns-child-expected.png: Added.
+        * platform/chromium-linux/fast/repaint/moving-shadow-on-path-expected.checksum:
+        * platform/chromium-linux/fast/repaint/moving-shadow-on-path-expected.png:
+        * platform/chromium-linux/svg/css/group-with-shadow-expected.checksum:
+        * platform/chromium-linux/svg/css/group-with-shadow-expected.png:
+        * platform/chromium-linux/svg/css/stars-with-shadow-expected.checksum:
+        * platform/chromium-linux/svg/css/stars-with-shadow-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-nested-columns-child-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-nested-columns-child-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/moving-shadow-on-path-expected.checksum:
+        * platform/chromium-mac/fast/repaint/moving-shadow-on-path-expected.png:
+        * platform/chromium-mac/svg/css/stars-with-shadow-expected.checksum:
+        * platform/chromium-mac/svg/css/stars-with-shadow-expected.png: Removed.
+        * platform/chromium-win/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png: Added.
+        * platform/chromium-win/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/span/span-as-nested-columns-child-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/span/span-as-nested-columns-child-expected.png: Added.
+        * platform/chromium-win/fast/multicol/span/span-as-nested-columns-child-expected.txt: Added.
+        * platform/chromium-win/fast/repaint/moving-shadow-on-path-expected.checksum:
+        * platform/chromium-win/fast/repaint/moving-shadow-on-path-expected.png:
+        * platform/chromium-win/svg/css/group-with-shadow-expected.checksum:
+        * platform/chromium-win/svg/css/group-with-shadow-expected.png:
+        * platform/chromium-win/svg/css/group-with-shadow-expected.txt:
+        * platform/chromium-win/svg/css/stars-with-shadow-expected.checksum:
+        * platform/chromium-win/svg/css/stars-with-shadow-expected.png:
+        * platform/chromium-win/svg/custom/use-modify-target-symbol-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-06-01  Alexey Proskuryakov  <ap@apple.com>
 
         Fixes Gtk buildbot. Suggested by Gavin Barraclough.
