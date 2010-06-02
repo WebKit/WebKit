@@ -1,3 +1,14 @@
+2010-06-02  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Clamp dirtyRect updates of composited layer contents to the size
+        of the layer to avoid writing outside texture bounds.
+        https://bugs.webkit.org/show_bug.cgi?id=40030
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::updateTextureContents):
+
 2010-06-02  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Darin Adler.

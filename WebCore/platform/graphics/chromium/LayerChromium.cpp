@@ -118,6 +118,10 @@ void LayerChromium::updateTextureContents(unsigned int textureId)
         OwnPtr<PlatformContextSkia> skiaContext;
         OwnPtr<GraphicsContext> graphicsContext;
         if (drawsContent()) { // Layer contents must be drawn into a canvas.
+            // Clip the dirtyRect to the size of the layer to avoid drawing outside
+            // the bounds of the backing texture.
+            dirtyRect.intersect(IntRect(IntPoint(0, 0), m_bounds));
+
             canvas.set(new skia::PlatformCanvas(dirtyRect.width(), dirtyRect.height(), false));
             skiaContext.set(new PlatformContextSkia(canvas.get()));
 
@@ -135,8 +139,7 @@ void LayerChromium::updateTextureContents(unsigned int textureId)
             m_owner->paintGraphicsLayerContents(*graphicsContext, dirtyRect);
             const SkBitmap& bitmap = canvas->getDevice()->accessBitmap(false);
             skiaBitmap = &bitmap;
-            requiredTextureSize = IntSize(max(m_bounds.width(), dirtyRect.width()),
-                                          max(m_bounds.height(), dirtyRect.height()));
+            requiredTextureSize = m_bounds;
         } else { // Layer is a container.
             // The layer contains an Image.
             NativeImageSkia* skiaImage = static_cast<NativeImageSkia*>(contents());
