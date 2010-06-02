@@ -58,10 +58,8 @@ public:
     // strokeBoundingBox() includes the marker boundaries for a RenderPath object
     virtual FloatRect strokeBoundingBox() const { return FloatRect(); }
 
-    // returns the bounding box of filter, clipper, marker and masker (or the empty rect if no filter) in local coordinates
-    FloatRect filterBoundingBoxForRenderer(const RenderObject*) const;
-    FloatRect clipperBoundingBoxForRenderer(const RenderObject*) const;
-    FloatRect maskerBoundingBoxForRenderer(const RenderObject*) const;
+    // Calculates the repaintRect in combination with filter, clipper and masker in local coordinates.
+    void intersectRepaintRectWithResources(const RenderObject*, FloatRect&) const;
 
 protected:
     static IntRect clippedOverflowRectForRepaint(RenderObject*, RenderBoxModelObject* repaintContainer);

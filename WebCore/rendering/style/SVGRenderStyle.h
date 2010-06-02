@@ -108,6 +108,9 @@ public:
     SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(String, inheritedResources, markerEnd, MarkerEndResource, markerEndResource, String())
 
     // convenience
+    bool hasClipper() const { return !clipperResource().isEmpty(); }
+    bool hasMasker() const { return !maskerResource().isEmpty(); }
+    bool hasFilter() const { return !filterResource().isEmpty(); }
     bool hasMarkers() const { return !markerStartResource().isEmpty() || !markerMidResource().isEmpty() || !markerEndResource().isEmpty(); }
     bool hasStroke() const { return strokePaint()->paintType() != SVGPaint::SVG_PAINTTYPE_NONE; }
     bool hasFill() const { return fillPaint()->paintType() != SVGPaint::SVG_PAINTTYPE_NONE; }
