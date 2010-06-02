@@ -2,6 +2,16 @@
 
         Unreviewed. Test expectation update.
 
+        Remove Chromium-Mac expectation of mask-changes.html. The results
+        is now identical to platform/mac.
+
+        * platform/chromium-mac/svg/custom/mask-changes-expected.checksum: Removed.
+        * platform/chromium-mac/svg/custom/mask-changes-expected.png: Removed.
+
+2010-06-02  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed. Test expectation update.
+
         Update Windows and Linux results of empty-clip-path.html and
         empty-mask.html for r60541.
 
