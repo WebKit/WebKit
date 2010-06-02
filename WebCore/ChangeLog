@@ -1,3 +1,12 @@
+2010-06-01  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: Safari specific files InspectorFrontendClientLocal were removed from chromium project.
+        https://bugs.webkit.org/show_bug.cgi?id=39993
+
+        * WebCore.gypi:
+
 2010-06-01  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.

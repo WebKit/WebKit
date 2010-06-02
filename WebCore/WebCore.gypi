@@ -1688,8 +1688,6 @@
             'inspector/InspectorFrontend.cpp',
             'inspector/InspectorFrontend.h',
             'inspector/InspectorFrontendClient.h',
-            'inspector/InspectorFrontendClientLocal.cpp',
-            'inspector/InspectorFrontendClientLocal.h',
             'inspector/InspectorFrontendHost.cpp',
             'inspector/InspectorFrontendHost.h',
             'inspector/InspectorResource.cpp',
