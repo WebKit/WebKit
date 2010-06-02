@@ -1,3 +1,13 @@
+2010-06-02  Sterling Swigart  <sswigart@google.com>
+
+        Reviewed by David Levin.
+
+        Image Resizer Patch 0: Added compilation argument to conditionally compile pending patches.
+        https://bugs.webkit.org/show_bug.cgi?id=39906
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops:
+
 2010-05-24  Jer Noble  <jer.noble@apple.com>
 
         No review; build fix only.

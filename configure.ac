@@ -371,6 +371,14 @@ AC_ARG_ENABLE(icon_database,
               [],[enable_icon_database="yes"])
 AC_MSG_RESULT([$enable_icon_database])
 
+# check whether to build with image resizer API support
+AC_MSG_CHECKING([whether to enable image resizer API support])
+AC_ARG_ENABLE(image_resizer,
+              AC_HELP_STRING([--enable-image-resizer],
+                             [enable image resizer [default=no]]),
+              [],[enable_image_resizer="no"])
+AC_MSG_RESULT([$enable_image_resizer])
+
 # check whether to enable HTML5 datalist support
 AC_MSG_CHECKING([whether to enable HTML5 datalist support])
 AC_ARG_ENABLE(datalist,
@@ -813,6 +821,7 @@ AM_CONDITIONAL([ENABLE_DATALIST],[test "$enable_datalist" = "yes"])
 AM_CONDITIONAL([ENABLE_EVENTSOURCE],[test "$enable_eventsource" = "yes"])
 AM_CONDITIONAL([ENABLE_FAST_MOBILE_SCROLLING],[test "$enable_fast_mobile_scrolling" = "yes"])
 AM_CONDITIONAL([ENABLE_ICONDATABASE],[test "$enable_icon_database" = "yes"])
+AM_CONDITIONAL([ENABLE_IMAGE_RESIZER],[test "$enable_image_resizer" = "yes"])
 AM_CONDITIONAL([ENABLE_INDEXED_DATABASE],[test "$enable_indexed_database" = "yes"])
 AM_CONDITIONAL([ENABLE_XHTMLMP],[test "$enable_xhtmlmp" = "yes"])
 AM_CONDITIONAL([ENABLE_XPATH],[test "$enable_xpath" = "yes"])
@@ -887,6 +896,7 @@ Features:
  HTML5 server-sent events support                         : $enable_eventsource
  HTML5 video element support                              : $enable_video
  Icon database support                                    : $enable_icon_database
+ Image resizer support                                    : $enable_image_resizer
  SharedWorkers support                                    : $enable_shared_workers
  SVG support                                              : $enable_svg
  SVG animation support                                    : $enable_svg_animation

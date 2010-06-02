@@ -56,7 +56,7 @@ my $makeArgs;
 my $startTime = time();
 
 my ($threeDCanvasSupport, $threeDRenderingSupport, $channelMessagingSupport, $clientBasedGeolocationSupport, $databaseSupport, $datagridSupport, $datalistSupport,
-    $domStorageSupport, $eventsourceSupport, $filtersSupport, $geolocationSupport, $iconDatabaseSupport, $indexedDatabaseSupport,
+    $domStorageSupport, $eventsourceSupport, $filtersSupport, $geolocationSupport, $iconDatabaseSupport, $imageResizerSupport, $indexedDatabaseSupport,
     $javaScriptDebuggerSupport, $mathmlSupport, $offlineWebApplicationSupport, $rubySupport, $systemMallocSupport, $sandboxSupport, $sharedWorkersSupport,
     $svgSupport, $svgAnimationSupport, $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport,
     $svgForeignObjectSupport, $svgUseSupport, $videoSupport, $webSocketsSupport, $wmlSupport, $wcssSupport, $xhtmlmpSupport, $workersSupport,
@@ -105,6 +105,9 @@ my @features = (
 
     { option => "icon-database", desc => "Toggle Icon database support",
       define => "ENABLE_ICONDATABASE", default => 1, value => \$iconDatabaseSupport },
+      
+    { option => "image-resizer", desc => "Toggle Image Resizer API support",
+      define => "ENABLE_IMAGE_RESIZER", default => 0, value => \$imageResizerSupport },
 
     { option => "indexed-database", desc => "Toggle Indexed Database API support",
       define => "ENABLE_INDEXED_DATABASE", default => 0, value => \$indexedDatabaseSupport },
