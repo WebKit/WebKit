@@ -49,7 +49,7 @@ namespace WebCore {
     public:
         static PassRefPtr<NotificationCenter> create(ScriptExecutionContext* context, NotificationPresenter* presenter) { return adoptRef(new NotificationCenter(context, presenter)); }
 
-        Notification* createHTMLNotification(const String& URI, ExceptionCode& ec)
+        PassRefPtr<Notification> createHTMLNotification(const String& URI, ExceptionCode& ec)
         {
             if (!presenter()) {
                 ec = INVALID_STATE_ERR;
@@ -62,7 +62,7 @@ namespace WebCore {
             return Notification::create(m_scriptExecutionContext->completeURL(URI), context(), ec, presenter());
         }
 
-        Notification* createNotification(const String& iconURI, const String& title, const String& body, ExceptionCode& ec)
+        PassRefPtr<Notification> createNotification(const String& iconURI, const String& title, const String& body, ExceptionCode& ec)
         {
             if (!presenter()) {
                 ec = INVALID_STATE_ERR;
