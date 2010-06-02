@@ -1,3 +1,22 @@
+2010-06-02  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Notification object ref counting is not correct.
+        https://bugs.webkit.org/show_bug.cgi?id=39998
+
+        Return PassRefPtr<Notification> instead of a raw pointer from the create methods
+        for Web Notifications. 
+
+        No new tests are needed, as existing tests show the problem when sending the 
+        "display" event asynchronously.
+
+        * notifications/Notification.h:
+        (WebCore::Notification::create):
+        * notifications/NotificationCenter.h:
+        (WebCore::NotificationCenter::createHTMLNotification):
+        (WebCore::NotificationCenter::createNotification):
+
 2010-06-02  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
