@@ -1,3 +1,12 @@
+2010-06-02  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Don't check page break properties at paint time if we're using the new page breaking model.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintChildren):
+
 2010-06-02  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.
