@@ -487,7 +487,7 @@ void ChromeClientQt::reachedMaxAppCacheSize(int64_t)
 #if ENABLE(NOTIFICATIONS)
 NotificationPresenter* ChromeClientQt::notificationPresenter() const
 {
-    return m_webPage->d->notificationPresenterClient;
+    return NotificationPresenterClientQt::notificationPresenter();
 }
 #endif
 

@@ -37,7 +37,7 @@ enum NotificationPermission {
 };
 
 typedef void (CheckPermissionFunctionType) (QObject* receiver, const QUrl&, NotificationPermission&);
-typedef void (RequestPermissionFunctionType) (QObject* receiver, QWebPage* page, const QString&);
+typedef void (RequestPermissionFunctionType) (QObject* receiver, const QString&);
 
 extern CheckPermissionFunctionType* checkPermissionFunction;
 extern RequestPermissionFunctionType* requestPermissionFunction;
@@ -114,8 +114,8 @@ public:
     static void dumpNotification(bool b);
     // These functions should eventually turn into public API
     // and the "receiver" concept would go away
-    static void setNotificationsReceiver(QWebPage* page, QObject* receiver);
-    static void allowNotificationForOrigin(QWebPage* page, const QString& origin);
+    static void setNotificationsReceiver(QObject* receiver);
+    static void allowNotificationForOrigin(const QString& origin);
     static void setCheckPermissionFunction(CheckPermissionFunctionType*);
     static void setRequestPermissionFunction(RequestPermissionFunctionType*);
 };

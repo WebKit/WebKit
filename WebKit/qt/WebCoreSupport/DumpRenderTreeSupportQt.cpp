@@ -537,17 +537,17 @@ void DumpRenderTreeSupportQt::dumpNotification(bool b)
 #endif
 }
 
-void DumpRenderTreeSupportQt::setNotificationsReceiver(QWebPage* page, QObject* receiver)
+void DumpRenderTreeSupportQt::setNotificationsReceiver(QObject* receiver)
 {
 #if ENABLE(NOTIFICATIONS)
-    page->d->notificationPresenterClient->setReceiver(receiver);
+    NotificationPresenterClientQt::notificationPresenter()->setReceiver(receiver);
 #endif
 }
 
-void DumpRenderTreeSupportQt::allowNotificationForOrigin(QWebPage* page, const QString& origin)
+void DumpRenderTreeSupportQt::allowNotificationForOrigin(const QString& origin)
 {
 #if ENABLE(NOTIFICATIONS)
-    page->d->notificationPresenterClient->allowNotificationForOrigin(origin);
+    NotificationPresenterClientQt::notificationPresenter()->allowNotificationForOrigin(origin);
 #endif
 }
 

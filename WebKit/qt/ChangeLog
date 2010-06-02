@@ -1,3 +1,54 @@
+2010-06-01  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Fix the lifecycle of notification objects
+        https://bugs.webkit.org/show_bug.cgi?id=40003
+
+        Notification objects are not tightly related to the page that created them,
+        and should be decoupled from the page.
+        Create one NotificationPresenter that handles all notifications.
+        Add ref/deref to the notification objects when they are added/removed from
+        the queue of active notifications. The same technique is used for XMLHttpRequest.
+        Instead of deleting all notifications associated with a page when the page is navigated,
+        delete them on a timer, using the same timeout that QSystemTrayIcon is using.
+        Break up the show() method into smaller methods.
+        Use OwnPtr instead of raw pointer for QSystemTrayIcon.
+        Move creating the QIcon to just before showing it in the QSyetemTrayIcon.
+
+        No new tests as this is just a refactoring. Existing notifications test cover the code.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPagePrivate::~QWebPagePrivate):
+        * Api/qwebpage_p.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::notificationPresenter):
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::setNotificationsReceiver):
+        (DumpRenderTreeSupportQt::allowNotificationForOrigin):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidClearWindowObjectInWorld):
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        (WebCore::NotificationPresenterClientQt::notificationPresenter):
+        (WebCore::NotificationIconWrapper::NotificationIconWrapper):
+        (WebCore::NotificationIconWrapper::~NotificationIconWrapper):
+        (WebCore::NotificationIconWrapper::close):
+        (WebCore::NotificationPresenterClientQt::NotificationPresenterClientQt):
+        (WebCore::NotificationPresenterClientQt::removeClient):
+        (WebCore::NotificationPresenterClientQt::show):
+        (WebCore::NotificationPresenterClientQt::displayNotification):
+        (WebCore::NotificationPresenterClientQt::cancel):
+        (WebCore::NotificationPresenterClientQt::notificationObjectDestroyed):
+        (WebCore::NotificationPresenterClientQt::requestPermission):
+        (WebCore::NotificationPresenterClientQt::sendEvent):
+        (WebCore::NotificationPresenterClientQt::removeReplacedNotificationFromQueue):
+        (WebCore::NotificationPresenterClientQt::dumpReplacedIdText):
+        (WebCore::NotificationPresenterClientQt::dumpShowText):
+        * WebCoreSupport/NotificationPresenterClientQt.h:
+        (WebCore::NotificationPresenterClientQt::addClient):
+
 2010-06-01  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
