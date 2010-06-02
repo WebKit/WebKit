@@ -568,7 +568,7 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
         if (xmlDeclarationEnd == pEnd)
             return false;
         // No need for +1, because we have an extra "?" to lose at the end of XML declaration.
-        int len;
+        int len = 0;
         int pos = findXMLEncoding(ptr, xmlDeclarationEnd - ptr, len);
         if (pos != -1)
             setEncoding(findTextEncoding(ptr + pos, len), EncodingFromXMLHeader);
