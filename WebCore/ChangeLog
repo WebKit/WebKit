@@ -1,3 +1,38 @@
+2010-06-02  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add Console API for retrieving memory stats
+
+        Add 'console.memory' property which returns an object. Currently
+        it has two fields: totalJSHeapSize and usedJSHeapSize. Later, it can be
+        extended for reporting total browser's memory consumption.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39646
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSConsoleCustom.cpp:
+        (WebCore::JSConsole::memory):
+        * bindings/v8/custom/V8ConsoleCustom.cpp:
+        (WebCore::V8Console::memoryAccessorGetter):
+        * page/Console.h:
+        * page/Console.idl:
+        * page/MemoryInfo.cpp: Added.
+        (WebCore::MemoryInfo::MemoryInfo):
+        * page/MemoryInfo.h: Added.
+        (WebCore::MemoryInfo::create):
+        (WebCore::MemoryInfo::totalJSHeapSize):
+        (WebCore::MemoryInfo::usedJSHeapSize):
+        * page/MemoryInfo.idl: Added.
+
 2010-06-02  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

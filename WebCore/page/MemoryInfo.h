@@ -28,33 +28,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef MemoryInfo_h
+#define MemoryInfo_h
 
-#include "V8Console.h"
-
-#include "Console.h"
-#include "MemoryInfo.h"
-#include "ScriptProfile.h"
-#include "V8Binding.h"
-#include "V8MemoryInfo.h"
-#include "V8Proxy.h"
-#include "V8ScriptProfile.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-typedef Vector<RefPtr<ScriptProfile> > ProfilesArray;
+class MemoryInfo : public RefCounted<MemoryInfo> {
+public:
+    static PassRefPtr<MemoryInfo> create() { return adoptRef(new MemoryInfo()); }
 
-v8::Handle<v8::Value> V8Console::profilesAccessorGetter(v8::Local<v8::String>, const v8::AccessorInfo&)
-{
-    INC_STATS("DOM.Console.profilesAccessorGetter");
-    // FIXME: Provide a real implementation.
-    return v8::Array::New(0);
-}
+    size_t totalJSHeapSize() const { return m_totalJSHeapSize; }
+    size_t usedJSHeapSize() const { return m_usedJSHeapSize; }
 
-v8::Handle<v8::Value> V8Console::memoryAccessorGetter(v8::Local<v8::String>, const v8::AccessorInfo&)
-{
-    INC_STATS("DOM.Console.memoryAccessorGetter");
-    return toV8(MemoryInfo::create());
-}
+private:
+    MemoryInfo();
+
+    size_t m_totalJSHeapSize;
+    size_t m_usedJSHeapSize;
+};
 
 } // namespace WebCore
+
+#endif // MemoryInfo_h

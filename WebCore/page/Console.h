@@ -43,6 +43,7 @@ typedef Vector<RefPtr<ScriptProfile> > ProfilesArray;
 #endif
 
 class Frame;
+class MemoryInfo;
 class Page;
 class String;
 class ScriptCallStack;
