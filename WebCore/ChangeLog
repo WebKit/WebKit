@@ -1,5 +1,30 @@
 2010-06-02  Mikhail Naganov  <mnaganov@chromium.org>
 
+        Unreviewed, rolling out r60563.
+        http://trac.webkit.org/changeset/60563
+        https://bugs.webkit.org/show_bug.cgi?id=39646
+
+        windows build failed
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSConsoleCustom.cpp:
+        * bindings/v8/custom/V8ConsoleCustom.cpp:
+        * page/Console.h:
+        * page/Console.idl:
+        * page/MemoryInfo.cpp: Removed.
+        * page/MemoryInfo.h: Removed.
+        * page/MemoryInfo.idl: Removed.
+
+2010-06-02  Mikhail Naganov  <mnaganov@chromium.org>
+
         Reviewed by Yury Semikhatsky.
 
         Web Inspector: add Console API for retrieving memory stats

@@ -33,10 +33,8 @@
 #include "V8Console.h"
 
 #include "Console.h"
-#include "MemoryInfo.h"
 #include "ScriptProfile.h"
 #include "V8Binding.h"
-#include "V8MemoryInfo.h"
 #include "V8Proxy.h"
 #include "V8ScriptProfile.h"
 
@@ -49,12 +47,6 @@ v8::Handle<v8::Value> V8Console::profilesAccessorGetter(v8::Local<v8::String>, c
     INC_STATS("DOM.Console.profilesAccessorGetter");
     // FIXME: Provide a real implementation.
     return v8::Array::New(0);
-}
-
-v8::Handle<v8::Value> V8Console::memoryAccessorGetter(v8::Local<v8::String>, const v8::AccessorInfo&)
-{
-    INC_STATS("DOM.Console.memoryAccessorGetter");
-    return toV8(MemoryInfo::create());
 }
 
 } // namespace WebCore

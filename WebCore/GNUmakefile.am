@@ -296,7 +296,6 @@ IDL_BINDINGS += \
 	WebCore/page/Geoposition.idl \
 	WebCore/page/History.idl \
 	WebCore/page/Location.idl \
-	WebCore/page/MemoryInfo.idl \
 	WebCore/page/Navigator.idl \
 	WebCore/page/PositionError.idl \
 	WebCore/page/Screen.idl \
@@ -1497,8 +1496,6 @@ webcore_sources += \
 	WebCore/page/Location.cpp \
 	WebCore/page/Location.h \
 	WebCore/page/MediaCanStartListener.h \
-	WebCore/page/MemoryInfo.cpp \
-	WebCore/page/MemoryInfo.h \
 	WebCore/page/MouseEventWithHitTestResults.cpp \
 	WebCore/page/MouseEventWithHitTestResults.h \
 	WebCore/page/Navigator.cpp \
@@ -4045,7 +4042,6 @@ IDL_BINDINGS_GDOM += \
 	WebCore/page/Geolocation.idl \
 	WebCore/page/History.idl \
 	WebCore/page/Location.idl \
-	WebCore/page/MemoryInfo.idl \
 	WebCore/page/Navigator.idl \
 	WebCore/page/Screen.idl \
 	WebCore/page/WebKitPoint.idl \
