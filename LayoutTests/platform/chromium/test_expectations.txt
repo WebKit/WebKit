@@ -1733,6 +1733,7 @@ BUG23473 MAC : fast/repaint/layer-outline-horizontal.html = PASS
 BUG23473 MAC : fast/repaint/line-flow-with-floats-1.html = PASS
 BUG23473 MAC : fast/repaint/line-flow-with-floats-6.html = PASS
 BUG23473 MAC : fast/repaint/list-marker.html = PASS
+BUG23473 MAC : fast/repaint/moving-shadow-on-path.html = PASS
 BUG23473 MAC : fast/repaint/overflow-scroll-body-appear.html = PASS
 BUG23473 MAC : fast/repaint/repaint-during-scroll.html = PASS
 BUG23473 MAC : fast/repaint/selection-gap-overflow-scroll-2.html = PASS
@@ -2782,7 +2783,7 @@ BUG43084 MAC DEBUG : media/video-empty-source.html = IMAGE
 BUG43963 WIN : fast/forms/searchfield-heights.html = IMAGE
 BUG43963 LINUX : fast/forms/searchfield-heights.html = IMAGE+TEXT
 BUG43960 WIN LINUX : fast/css/input-search-padding.html = IMAGE+TEXT
-BUG43960 MAC : fast/css/input-search-padding.html = IMAGE+TEXT IMAGE PASS
+BUG43960 MAC : fast/css/input-search-padding.html = IMAGE
 
 // GStreamer - disabled in Chromium
 WONTFIX : media/video-duration-known-after-eos.html = TEXT TIMEOUT
@@ -2849,6 +2850,5 @@ BUG45106 WIN : svg/clip-path/clip-path-evenodd-nonzero.svg = PASS CRASH
 BUG45106 WIN : svg/clip-path/clip-path-text-and-shape.svg = PASS CRASH
 BUG45106 WIN : svg/text/text-text-04-t.svg = PASS CRASH
 BUG45106 WIN : svg/text/text-text-05-t.svg = PASS CRASH
-
 
 BUG45518: html5lib/runner.html = TEXT

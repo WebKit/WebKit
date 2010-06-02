@@ -1,3 +1,9 @@
+2010-06-01  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed.  Update test expectations.
+
+        * platform/chromium/test_expectations.txt: moving-shadow-on-path has been rebaselined.  input-search-padding may or may not be flaky.
+
 2010-06-01  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
