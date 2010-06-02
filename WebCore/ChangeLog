@@ -1,3 +1,68 @@
+2010-06-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTML5 parser does not track line numbers
+        https://bugs.webkit.org/show_bug.cgi?id=39984
+
+        This adds rudimentary line-number tracking to the HTML5Lexer.
+        We'll still need to handle \r\n cases eventually, but this
+        fixes the vast majority of our line-number related failures.
+
+        Fixes 268 layout tests. :)
+
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTML5Lexer::reset):
+         - Reset m_lineNumber to 0.
+        (WebCore::HTML5Lexer::consumeEntity):
+         - Pass m_lineNumber to advance().
+        (WebCore::HTML5Lexer::nextToken):
+         - Pass m_lineNumber to advance().
+        * html/HTML5Lexer.h:
+        (WebCore::HTML5Lexer::lineNumber):
+         - Expose m_lineNumber for HTML5Tokenizer.
+        (WebCore::HTML5Lexer::columnNumber):
+         - Mirrors the implementation in the old HTMLTokenizer.
+           we might some day support column number tracking in
+           the Lexer.  It certainly would be possible.
+        * html/HTML5ScriptRunner.cpp:
+        (WebCore::HTML5ScriptRunner::HTML5ScriptRunner):
+         - ASSERT we're passed a host.
+        (WebCore::HTML5ScriptRunner::sourceFromPendingScript):
+         - Use PendingScript.startingLineNumber when PendingScript is an inline script.
+        (WebCore::HTML5ScriptRunner::execute):
+         - Now expects a start line number passed from the TreeBuilder.
+        (WebCore::HTML5ScriptRunner::runScript):
+         - Now expects a start line number.
+        * html/HTML5ScriptRunner.h:
+        (WebCore::HTML5ScriptRunner::PendingScript::PendingScript):
+         - Track startingLineNumber for any inline script.
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::begin):
+         - Add a FIXME.  The old HTMLTokenizer resets its "lexer" state here.
+        (WebCore::HTML5Tokenizer::pumpLexer):
+         - Pass scriptStartLine to the HTML5ScriptRunner
+        (WebCore::HTML5Tokenizer::lineNumber):
+         - Implementation for Tokenizer.h
+        (WebCore::HTML5Tokenizer::columnNumber):
+         - Implementation for Tokenizer.h
+        * html/HTML5Tokenizer.h:
+        * html/HTML5TreeBuilder.cpp:
+        (WebCore::HTML5TreeBuilder::HTML5TreeBuilder):
+         - Initialize the new line number tracking variables.
+        (WebCore::HTML5TreeBuilder::handleScriptEndTag):
+         - Save off the line number from the start tag to pass to the ScriptRunner.
+        (WebCore::HTML5TreeBuilder::takeScriptToProcess):
+         - Return the line number from the start tag.
+        (WebCore::HTML5TreeBuilder::passTokenToLegacyParser):
+         - Save off the line number of ever script start tag we see.
+        * html/HTML5TreeBuilder.h:
+         - Keep both the line number of the last start tag, and the
+           line number of the script we know we're expecting our caller to
+           run before resuming parsing.  These are separate to keep the code
+           clean, especially since the last script start tag line number is
+           a hack specific to using the old HTMLParser.
+
 2010-06-02  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Pavel Feldman.

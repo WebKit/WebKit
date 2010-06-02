@@ -1,3 +1,16 @@
+2010-06-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTML5 parser does not track line numbers
+        https://bugs.webkit.org/show_bug.cgi?id=39984
+
+        Update our expectations to show the proper line numbers.
+        These new line numbers match what the old parser produces.
+
+        * html5lib/runner-expected-html5.txt:
+        * html5lib/webkit-resumer-expected-html5.txt:
+
 2010-06-02  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed. Test expectation update.

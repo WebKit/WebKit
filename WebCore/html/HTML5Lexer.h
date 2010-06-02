@@ -120,6 +120,9 @@ namespace WebCore {
         // they call reset() first).
         bool nextToken(SegmentedString&, HTML5Token&);
 
+        int lineNumber() const { return m_lineNumber; }
+        int columnNumber() const { return 1; } // Matches HTMLTokenizer.h behavior.
+
         void setState(State state) { m_state = state; }
 
         // Hack to skip leading newline in <pre>/<listing> for authoring ease.
@@ -154,6 +157,7 @@ namespace WebCore {
         // m_token is owned by the caller.  If nextToken is not on the stack,
         // this member might be pointing to unallocated memory.
         HTML5Token* m_token;
+        int m_lineNumber;
 
         bool m_skipLeadingNewLineForListing;
         bool m_emitPending;

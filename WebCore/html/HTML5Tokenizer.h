@@ -57,6 +57,8 @@ public:
     virtual int executingScript() const;
     virtual bool isWaitingForScripts() const;
     virtual void executeScriptsWaitingForStylesheets();
+    virtual int lineNumber() const;
+    virtual int columnNumber() const;
 
     // HTML5ScriptRunnerHost
     virtual void watchForLoad(CachedResource*);
