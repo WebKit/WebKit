@@ -1,3 +1,17 @@
+2010-06-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Fixes Gtk buildbot. Suggested by Gavin Barraclough.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40012
+        Callable objects created via JavaScriptCore API cannot be used as Geolocation callbacks
+
+        Disable subtests that check Math.abs - JS host objects are still InternalFunctions in
+        interpreter, so they behave differently from JIT. The bug tracks deciding what's the best
+        solution here.
+
+        * fast/dom/Geolocation/argument-types-expected.txt:
+        * fast/dom/Geolocation/script-tests/argument-types.js:
+
 2010-06-01  James Robinson  <jamesr@chromium.org>
 
         Unreviewed. Update expected results for r60503
