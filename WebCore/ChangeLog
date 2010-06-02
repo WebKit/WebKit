@@ -1,3 +1,17 @@
+2010-06-02  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix make install on Symbian for headers in package builds when INSTALL_HEADERS is not defined
+
+        First we wrote inst_headers.output with $$[QT_INSTALL_HEADERS] and then
+        overwrote it with the $$INSTALL_HEADERS variant without checking if the
+        variable was set.
+
+        Fixed and cleaned up the logic of falling back to $$[QT_INSTALL_HEADERS].
+
+        * WebCore.pro:
+
 2010-06-02  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

@@ -2981,11 +2981,11 @@ CONFIG(QTDIR_build) {
     !symbian {
         headers.files = $$WEBKIT_INSTALL_HEADERS
 
-        headers.path = $$INSTALL_HEADERS/QtWebKit
-        target.path = $$INSTALL_LIBS
+        !isEmpty(INSTALL_HEADERS): headers.path = $$INSTALL_HEADERS/QtWebKit
+        else: headers.path = $$[QT_INSTALL_HEADERS]/QtWebKit
 
-        isEmpty(INSTALL_HEADERS): headers.path = $$[QT_INSTALL_HEADERS]/QtWebKit
-        isEmpty(INSTALL_LIBS): target.path = $$[QT_INSTALL_LIBS]
+        !isEmpty(INSTALL_LIBS): target.path = $$INSTALL_LIBS
+        else: target.path = $$[QT_INSTALL_LIBS]
 
         modfile.files = $$moduleFile
         modfile.path = $$[QMAKE_MKSPECS]/modules
@@ -2996,8 +2996,8 @@ CONFIG(QTDIR_build) {
         inst_headers.commands = $$QMAKE_COPY ${QMAKE_FILE_NAME} ${QMAKE_FILE_OUT}
         inst_headers.input = WEBKIT_INSTALL_HEADERS
 
-        isEmpty(INSTALL_HEADERS): inst_headers.output = $$[QT_INSTALL_HEADERS]/QtWebKit/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
-        inst_headers.output = $$INSTALL_HEADERS/QtWebKit/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
+        !isEmpty(INSTALL_HEADERS): inst_headers.output = $$INSTALL_HEADERS/QtWebKit/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
+        else: inst_headers.output = $$[QT_INSTALL_HEADERS]/QtWebKit/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
 
         QMAKE_EXTRA_COMPILERS += inst_headers
 
