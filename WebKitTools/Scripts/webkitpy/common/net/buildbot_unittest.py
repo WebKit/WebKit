@@ -169,6 +169,10 @@ class BuildBotTest(unittest.TestCase):
     <td class="box"><a href="builders/Qt%20Linux%20Release">Qt Linux Release</a></td>
       <td align="center" class="LastBuild box failure"><a href="builders/Qt%20Linux%20Release/builds/654">47383</a><br />failed<br />compile-webkit</td>
       <td align="center" class="Activity idle">idle<br />3 pending</td>
+    <tr>
+    <td class="box"><a href="builders/Qt%20Windows%2032-bit%20Debug">Qt Windows 32-bit Debug</a></td>
+      <td align="center" class="LastBuild box failure"><a href="builders/Qt%20Windows%2032-bit%20Debug/builds/2090">60563</a><br />failed<br />failed<br />slave<br />lost</td>
+      <td align="center" class="Activity building">building<br />ETA in<br />~ 5 mins<br />at 08:25</td>
     </table>
 '''
     _expected_example_one_box_parsings = [
@@ -195,6 +199,14 @@ class BuildBotTest(unittest.TestCase):
             'built_revision': 47383,
             'activity': 'idle',
             'pending_builds': 3,
+        },
+        {
+            'is_green': True,
+            'build_number' : 2090,
+            'name': u'Qt Windows 32-bit Debug',
+            'built_revision': 60563,
+            'activity': 'building',
+            'pending_builds': 0,
         },
     ]
 

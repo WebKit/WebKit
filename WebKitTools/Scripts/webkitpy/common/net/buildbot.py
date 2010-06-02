@@ -333,7 +333,12 @@ class BuildBot(object):
             builder['built_revision'] = int(revision_string) \
                                         if not re.match('\D', revision_string) \
                                         else None
-            builder['is_green'] = not re.search('fail', cell.renderContents())
+
+            # FIXME: We treat slave lost as green even though it is not to
+            # work around the Qts bot being on a broken internet connection.
+            # The real fix is https://bugs.webkit.org/show_bug.cgi?id=37099
+            builder['is_green'] = not re.search('fail', cell.renderContents()) or \
+                                  not not re.search('lost', cell.renderContents())
 
             status_link_regexp = r"builders/(?P<builder_name>.*)/builds/(?P<build_number>\d+)"
             link_match = re.match(status_link_regexp, status_link['href'])
