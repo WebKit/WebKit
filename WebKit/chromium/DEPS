@@ -32,9 +32,7 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '47248',
-
-  'pthreads-win32_rev': '26716',
+  'chromium_rev': '48624',
 }
 
 deps = {
@@ -95,6 +93,10 @@ deps = {
     Var('chromium_svn')+'/third_party/glew@'+Var('chromium_rev'),
   'third_party/ffmpeg': # needed by webkit/media
     Var('chromium_svn')+'/third_party/ffmpeg@'+Var('chromium_rev'),
+  'third_party/libvpx/include':
+    From('chromium_deps', 'src/third_party/libvpx/include'),
+  'third_party/libvpx/lib':
+    From('chromium_deps', 'src/third_party/libvpx/lib'),
   'third_party/yasm': # needed by ffmpeg
     Var('chromium_svn')+'/third_party/yasm@'+Var('chromium_rev'),
   'third_party/openmax': # needed by webkit/media
@@ -159,8 +161,8 @@ deps_os = {
       From('chromium_deps', 'src/third_party/python_24'),
     'third_party/ffmpeg/binaries/chromium/win/ia32':
       From('chromium_deps', 'src/third_party/ffmpeg/binaries/chromium/win/ia32'),
-    'third_party/pthreads-win32':
-      'http://src.chromium.org/svn/trunk/deps/third_party/pthreads-win32@'+Var('pthreads-win32_rev'),
+    'third_party/lighttpd':
+      From('chromium_deps', 'src/third_party/lighttpd'),
     # base.gypi depends on nss on Windows
     'third_party/nss':
       From('chromium_deps', 'src/third_party/nss'),

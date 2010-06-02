@@ -1,3 +1,19 @@
+2010-06-01  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Checking out lighttpd
+        https://bugs.webkit.org/show_bug.cgi?id=39948
+
+        - Add lighttpd only on Windows. It is used by new-run-webkit-tests.
+        - Add libvpx.
+        - Remove pthreads-win32 from DEPS.
+          It has not been used since Chromium r28642.
+        - Update Chromium revision to use Windows resource query code and
+          webkit_glue dependency fix.
+
+        * DEPS:
+
 2010-06-01  James Hawkins  <jhawkins@chromium.org>
 
         UNREVIEWED: build fix.
