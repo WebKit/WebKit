@@ -1,3 +1,12 @@
+2010-06-02  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] tests failing with leftover unload handlers
+        https://bugs.webkit.org/show_bug.cgi?id=30585
+
+        * platform/gtk/Skipped:
+
 2010-06-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
