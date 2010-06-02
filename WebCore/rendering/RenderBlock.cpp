@@ -4110,7 +4110,8 @@ void RenderBlock::setDesiredColumnCountAndWidth(int count, int width)
     bool destroyColumns = !firstChild()
                           || (count == 1 && style()->hasAutoColumnWidth())
                           || firstChild()->isAnonymousColumnsBlock()
-                          || firstChild()->isAnonymousColumnSpanBlock();
+                          || firstChild()->isAnonymousColumnSpanBlock()
+                          || document()->settings()->paginateDuringLayoutEnabled();
     if (destroyColumns) {
         if (hasColumns()) {
             delete gColumnInfoMap->take(this);

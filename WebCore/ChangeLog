@@ -2,6 +2,16 @@
 
         Reviewed by Anders Carlsson.
 
+        Just disable the current version of multi-column layout completely when the new
+        pagination model is in effect.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::setDesiredColumnCountAndWidth):
+
+2010-06-02  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Anders Carlsson.
+
         Turn off unforced page breaking at paint time when the new page breaking model is being used.
 
         * rendering/RenderLineBoxList.cpp:
