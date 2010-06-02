@@ -1,3 +1,14 @@
+2010-06-02  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Adding the precision qualifier to fragment shaders used by the GL
+        compositor in chromium to turn them into valid GLSL ES.
+        https://bugs.webkit.org/show_bug.cgi?id=40022
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::initializeSharedGLObjects):
+
 2010-06-02  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by David Levin.

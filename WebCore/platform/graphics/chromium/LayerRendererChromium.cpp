@@ -590,8 +590,7 @@ bool LayerRendererChromium::initializeSharedGLObjects()
         "  v_texCoord = a_texCoord;   \n"
         "}                            \n";
     char fragmentShaderString[] =
-        // FIXME: Re-introduce precision qualifier when we need GL ES shaders.
-        "//precision mediump float;                            \n"
+        "precision mediump float;                            \n"
         "varying vec2 v_texCoord;                            \n"
         "uniform sampler2D s_texture;                        \n"
         "uniform float alpha;                                \n"
@@ -605,8 +604,7 @@ bool LayerRendererChromium::initializeSharedGLObjects()
     // from fragmentShaderString in that it doesn't swizzle the colors and doesn't
     // take an alpha value.
     char scrollFragmentShaderString[] =
-        // FIXME: Re-introduce precision qualifier when we need GL ES shaders.
-        "//precision mediump float;                            \n"
+        "precision mediump float;                            \n"
         "varying vec2 v_texCoord;                            \n"
         "uniform sampler2D s_texture;                        \n"
         "void main()                                         \n"
@@ -624,8 +622,7 @@ bool LayerRendererChromium::initializeSharedGLObjects()
         "   gl_Position = matrix * a_position; \n"
         "}                            \n";
     char borderFragmentShaderString[] =
-        // FIXME: Re-introduce precision qualifier when we need GL ES shaders.
-        "//precision mediump float;                            \n"
+        "precision mediump float;                            \n"
         "uniform vec4 color;                                 \n"
         "void main()                                         \n"
         "{                                                   \n"
