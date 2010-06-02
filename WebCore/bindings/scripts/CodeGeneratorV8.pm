@@ -430,38 +430,39 @@ sub GenerateHeaderNamedAndIndexedPropertyAccessors
 
     if ($hasCustomIndexedGetter || $isIndexerSpecialCase) {
         push(@headerContent, <<END);
-    static v8::Handle<v8::Value> indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info);
+    static v8::Handle<v8::Value> indexedPropertyGetter(uint32_t, const v8::AccessorInfo&);
 END
     }
 
     if ($isIndexerSpecialCase || $hasCustomIndexedSetter) {
         push(@headerContent, <<END);
-    static v8::Handle<v8::Value> indexedPropertySetter(uint32_t index, v8::Local<v8::Value> value, const v8::AccessorInfo& info);
+    static v8::Handle<v8::Value> indexedPropertySetter(uint32_t, v8::Local<v8::Value>, const v8::AccessorInfo&);
 END
     }
     if ($hasCustomDeleters) {
         push(@headerContent, <<END);
-    static v8::Handle<v8::Boolean> indexedPropertyDeleter(uint32_t index, const v8::AccessorInfo& info);
+    static v8::Handle<v8::Boolean> indexedPropertyDeleter(uint32_t, const v8::AccessorInfo&);
 END
     }
     if ($hasCustomNamedGetter) {
         push(@headerContent, <<END);
-    static v8::Handle<v8::Value> namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info);
+    static v8::Handle<v8::Value> namedPropertyGetter(v8::Local<v8::String>, const v8::AccessorInfo&);
 END
     }
     if ($hasCustomNamedSetter) {
         push(@headerContent, <<END);
-    static v8::Handle<v8::Value> namedPropertySetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info);
+    static v8::Handle<v8::Value> namedPropertySetter(v8::Local<v8::String>, v8::Local<v8::Value>, const v8::AccessorInfo&);
 END
     }
     if ($hasCustomDeleters || $interfaceName eq "HTMLDocument") {
         push(@headerContent, <<END);
-    static v8::Handle<v8::Boolean> namedPropertyDeleter(v8::Local<v8::String> name, const v8::AccessorInfo& info);
+    static v8::Handle<v8::Boolean> namedPropertyDeleter(v8::Local<v8::String>, const v8::AccessorInfo&);
 END
     }
     if ($hasCustomEnumerator) {
         push(@headerContent, <<END);
-    static v8::Handle<v8::Array> namedPropertyEnumerator(const v8::AccessorInfo& info);
+    static v8::Handle<v8::Array> namedPropertyEnumerator(const v8::AccessorInfo&);
+    static v8::Handle<v8::Boolean> namedPropertyQuery(v8::Local<v8::String>, const v8::AccessorInfo&);
 END
     }
 }
@@ -1536,7 +1537,8 @@ END
 
     push(@implContent, "    desc->${setOn}Template()->SetNamedPropertyHandler(V8${interfaceName}::namedPropertyGetter, ");
     push(@implContent, $hasSetter ? "V8${interfaceName}::namedPropertySetter, " : "0, ");
-    push(@implContent, "0, "); # NamedPropertyQuery -- not being used at the moment.
+    # If there is a custom enumerator, there MUST be custom query to properly communicate property attributes.
+    push(@implContent, $hasEnumerator ? "V8${interfaceName}::namedPropertyQuery," : "0, ");
     push(@implContent, $hasDeleter ? "V8${interfaceName}::namedPropertyDeleter, " : "0, ");
     push(@implContent, $hasEnumerator ? "V8${interfaceName}::namedPropertyEnumerator" : "0");
     push(@implContent, ");\n");

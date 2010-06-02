@@ -243,6 +243,12 @@ v8::Handle<v8::Value> npObjectGetIndexedProperty(v8::Local<v8::Object> self, uin
     return npObjectGetProperty(self, identifier, v8::Number::New(index));
 }
 
+v8::Handle<v8::Boolean> npObjectQueryProperty(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    NPIdentifier identifier = getStringIdentifier(name);
+    return npObjectGetProperty(info.Holder(), identifier, name).IsEmpty() ? v8::Handle<v8::Boolean>() : v8::True();
+}
+
 static v8::Handle<v8::Value> npObjectSetProperty(v8::Local<v8::Object> self, NPIdentifier identifier, v8::Local<v8::Value> value)
 {
     NPObject* npObject = v8ObjectToNPObject(self);
@@ -373,7 +379,7 @@ v8::Local<v8::Object> createV8ObjectForNPObject(NPObject* object, NPObject* root
     if (npObjectDesc.IsEmpty()) {
         npObjectDesc = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New());
         npObjectDesc->InstanceTemplate()->SetInternalFieldCount(npObjectInternalFieldCount);
-        npObjectDesc->InstanceTemplate()->SetNamedPropertyHandler(npObjectNamedPropertyGetter, npObjectNamedPropertySetter, 0, 0, npObjectNamedPropertyEnumerator);
+        npObjectDesc->InstanceTemplate()->SetNamedPropertyHandler(npObjectNamedPropertyGetter, npObjectNamedPropertySetter, npObjectQueryProperty, 0, npObjectNamedPropertyEnumerator);
         npObjectDesc->InstanceTemplate()->SetIndexedPropertyHandler(npObjectIndexedPropertyGetter, npObjectIndexedPropertySetter, 0, 0, npObjectIndexedPropertyEnumerator);
         npObjectDesc->InstanceTemplate()->SetCallAsFunctionHandler(npObjectInvokeDefaultHandler);
     }
