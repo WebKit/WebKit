@@ -1,3 +1,23 @@
+2010-06-01  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed. Test expectation update.
+
+        Add Chromium-win Chromium-linux results for backslash-to-yen-sign*.html tests.
+
+        * platform/chromium-linux/fast/text/backslash-to-yen-sign-dynamic-expected.checksum: Added.
+        * platform/chromium-linux/fast/text/backslash-to-yen-sign-dynamic-expected.png: Added.
+        * platform/chromium-linux/fast/text/backslash-to-yen-sign-dynamic-expected.txt: Added.
+        * platform/chromium-linux/fast/text/backslash-to-yen-sign-expected.checksum: Added.
+        * platform/chromium-linux/fast/text/backslash-to-yen-sign-expected.png: Added.
+        * platform/chromium-linux/fast/text/backslash-to-yen-sign-expected.txt: Added.
+        * platform/chromium-win/fast/text/backslash-to-yen-sign-dynamic-expected.checksum: Added.
+        * platform/chromium-win/fast/text/backslash-to-yen-sign-dynamic-expected.png: Added.
+        * platform/chromium-win/fast/text/backslash-to-yen-sign-dynamic-expected.txt: Added.
+        * platform/chromium-win/fast/text/backslash-to-yen-sign-expected.checksum: Added.
+        * platform/chromium-win/fast/text/backslash-to-yen-sign-expected.png: Added.
+        * platform/chromium-win/fast/text/backslash-to-yen-sign-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-06-01  Peter Kasting  <pkasting@google.com>
 
         Unreviewed.  Update test expectations.

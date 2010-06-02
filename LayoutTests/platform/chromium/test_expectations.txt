@@ -2837,10 +2837,6 @@ BUG44654 SKIP : fast/dom/Window/window-properties-on-device-orientation.html = T
 BUG44804 WIN DEBUG : websocket/tests/handshake-error.html = TEXT
 BUG44804 WIN DEBUG : websocket/tests/long-invalid-header.html = TEXT
 
-// Need rebaseline
-BUGWK24906 : fast/text/backslash-to-yen-sign.html = FAIL
-BUGWK24906 : fast/text/backslash-to-yen-sign-dynamic.html = FAIL
-
 BUGWK39655 : fast/dom/prototype-property.html = FAIL
 
 // These SVG tests have been flaky on Win from quite some time.
