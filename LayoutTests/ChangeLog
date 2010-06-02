@@ -1,3 +1,21 @@
+2010-06-02  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Just reverting part of r60556 as requested by Dave Hyatt on webkit-commits@list.webkit.org.
+
+        Several layout tests needlessly use invalid HTML
+        https://bugs.webkit.org/show_bug.cgi?id=39985
+
+        css1/box_properties/float_elements_in_series.html
+        remains invalid HTML, but we can't change it because
+        css1/ is meant to be a pristine copy of the CSS1 test suite.
+
+        * css1/box_properties/float_elements_in_series.html:
+         - Revert changes to this test.  Dave Hyatt points out
+           that although undocumented, this directory is meant
+           to contain a pristine copy of the CSS1 test suite.
+           It really should be documented and/or moved somewhere
+           special, but for now we'll just revert the changes.
+
 2010-06-02  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: added new inspector test to Skipped in Tiger for
