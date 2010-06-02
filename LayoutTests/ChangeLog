@@ -1,3 +1,15 @@
+2010-06-02  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed, layout test fix.
+
+        Web Inspector: disable resource tracking on exiting the inspector layout test.
+        This is a short-term fix while I am working on making sure DRT disables it
+        automatically on the test exit.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40083
+
+        * http/tests/inspector/resource-parameters.html:
+
 2010-06-02  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Just reverting part of r60556 as requested by Dave Hyatt on webkit-commits@list.webkit.org.

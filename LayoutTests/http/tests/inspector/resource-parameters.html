@@ -42,7 +42,9 @@ function frontend_enableResourceTracking(testController)
 function frontend_dumpFormData(testController)
 {
     var resource = WebInspector.resourceURLMap["http://localhost:8000/inspector/resources/resource-form-data-receiver-iframe.html?queryParam1=queryValue1&queryParam2="];
-    
+
+    InspectorBackend.disableResourceTracking(false);
+
     if (!resource) {
         testController.notifyDone("No resource found");
         return;
