@@ -940,7 +940,7 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
             case recordTypes.TimerRemove:
                 contentHelper._appendTextRow(WebInspector.UIString("Timer ID"), this.data.timerId);
                 if (typeof this.timeout === "number") {
-                    contentHelper._appendTextRow(WebInspector.UIString("Timeout"), this.timeout);
+                    contentHelper._appendTextRow(WebInspector.UIString("Timeout"), Number.secondsToString(this.timeout / 1000, WebInspector.UIString));
                     contentHelper._appendTextRow(WebInspector.UIString("Repeats"), !this.singleShot);
                 }
                 if (typeof this.callSiteScriptLine === "number")

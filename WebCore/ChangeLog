@@ -1,3 +1,13 @@
+2010-06-02  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Timeline should nicely format the Timer timeout
+        https://bugs.webkit.org/show_bug.cgi?id=40040
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generatePopupContent): Format the Timer's timeout time.
+
 2010-06-02  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Dimitri Glazkov.
