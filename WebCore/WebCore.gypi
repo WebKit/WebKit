@@ -3895,7 +3895,6 @@
             'inspector/front-end/ElementsTreeOutline.js',
             'inspector/front-end/EventListenersSidebarPane.js',
             'inspector/front-end/FontView.js',
-            'inspector/front-end/HAREntry.js',
             'inspector/front-end/HelpScreen.js',
             'inspector/front-end/ImageView.js',
             'inspector/front-end/InspectorBackendStub.js',

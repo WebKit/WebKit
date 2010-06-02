@@ -1,3 +1,16 @@
+2010-06-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r60530.
+        http://trac.webkit.org/changeset/60530
+        https://bugs.webkit.org/show_bug.cgi?id=40041
+
+        resource-har-conversion failed on GTK (Requested by abarth on
+        #webkit).
+
+        * http/tests/inspector/inspector-test.js:
+        * http/tests/inspector/resource-har-conversion-expected.txt: Removed.
+        * http/tests/inspector/resource-har-conversion.html: Removed.
+
 2010-06-01  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed. Test expectation update.
