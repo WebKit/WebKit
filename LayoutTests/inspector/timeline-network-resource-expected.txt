@@ -2,40 +2,46 @@ Tests the Timeline API instrumentation of a network resource load
 
 
 ResourceSendRequest Properties:
-+ startTime : * DEFINED *
-+ data : {
-+- identifier : * DEFINED *
-+- url : * DEFINED *
-+- requestMethod : GET
-+- isMainResource : false
-+ }
-+ type : 12
-+ usedHeapSize : * DEFINED *
-+ totalHeapSize : * DEFINED *
+{
+    startTime : <number>
+    data : {
+        identifier : <number>
+        url : <string>
+        requestMethod : "GET"
+        isMainResource : false
+    }
+    type : 12
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+}
 
 ResourceReceiveResponse Properties:
-+ startTime : * DEFINED *
-+ data : {
-+- identifier : * DEFINED *
-+- statusCode : 0
-+- mimeType : * DEFINED *
-+- expectedContentLength : 210
-+- url : * DEFINED *
-+ }
-+ children : * DEFINED *
-+ endTime : * DEFINED *
-+ type : 13
-+ usedHeapSize : * DEFINED *
-+ totalHeapSize : * DEFINED *
+{
+    startTime : <number>
+    data : {
+        identifier : <number>
+        statusCode : 0
+        mimeType : <string>
+        expectedContentLength : 210
+        url : <string>
+    }
+    children : <object>
+    endTime : <number>
+    type : 13
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+}
 
 ResourceFinish Properties:
-+ startTime : * DEFINED *
-+ data : {
-+- identifier : * DEFINED *
-+- didFail : false
-+- url : * DEFINED *
-+ }
-+ type : 14
-+ usedHeapSize : * DEFINED *
-+ totalHeapSize : * DEFINED *
+{
+    startTime : <number>
+    data : {
+        identifier : <number>
+        didFail : false
+        url : <string>
+    }
+    type : 14
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+}
 Script resource loaded

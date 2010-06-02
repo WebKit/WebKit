@@ -80,41 +80,7 @@ function printTimelineRecordProperties(record)
 {
     output(timelineAgentTypeToString(record.type) + " Properties:");
     // Use this recursive routine to print the properties
-    printProps(record, 0);
-}
-
-function isNonDeterministicProp(propName)
-{
-    if (timelineNonDeterministicProps[propName])
-        return true;
-    return false;
-}
-
-function printProps(record, level)
-{
-    var props = new Array();
-    for (var prop in record) {
-        props.push(prop);
-    }
-
-    var prefix = "+";
-    for (var i = 0; i < level ; i++) {
-        prefix = prefix + "-";
-    }
-
-    prefix = prefix + " ";
-    for (var prop in props) {
-        var propName = props[prop];
-        var propValue = record[propName];
-        if (isNonDeterministicProp(propName))
-            output(prefix + propName + " : " + (propValue === undefined ? "<undefined>" : " * DEFINED *"));
-        else if (typeof propValue === "object") {
-            output(prefix + propName + " : {");
-            printProps(propValue, level + 1);
-            output(prefix + "}");
-        } else
-            output(prefix + propName + " : " + propValue);
-    }
+    dumpObject(record, timelineNonDeterministicProps);
 }
 
 function timelineAgentTypeToString(numericType)

@@ -229,8 +229,8 @@ WebInspector.ResourceView.prototype = {
         parmsTreeElement.title = title + "<span class=\"header-count\">" + WebInspector.UIString(" (%d)", parms.length) + "</span>";
 
         for (var i = 0; i < parms.length; ++i) {
-            var key = parms[i][0];
-            var value = parms[i][1];
+            var name = parms[i].name;
+            var value = parms[i].value;
 
             var errorDecoding = false;
             if (this._decodeRequestParameters) {
@@ -249,7 +249,7 @@ WebInspector.ResourceView.prototype = {
             if (errorDecoding)
                 valueEscaped += " <span class=\"error-message\">" + WebInspector.UIString("(unable to decode value)").escapeHTML() + "</span>";
 
-            var title = "<div class=\"header-name\">" + key.escapeHTML() + ":</div>";
+            var title = "<div class=\"header-name\">" + name.escapeHTML() + ":</div>";
             title += "<div class=\"header-value source-code\">" + valueEscaped + "</div>";
 
             var parmTreeElement = new TreeElement(title, null, false);

@@ -1,3 +1,50 @@
+2010-06-02  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add test for resource parameters.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40026
+
+        * http/tests/inspector/inspector-test.js:
+        (onload):
+        (dumpObject):
+        (dumpArray):
+        * http/tests/inspector/resource-har-conversion-expected.txt:
+        * http/tests/inspector/resource-har-conversion.html:
+        * http/tests/inspector/resource-parameters-expected.txt: Added.
+        * http/tests/inspector/resource-parameters.html: Added.
+        * http/tests/inspector/resource-tests.js: Added.
+        (resourceURLComparer):
+        * http/tests/inspector/resources/resource-form-data-receiver-iframe.html: Copied from LayoutTests/fast/dom/Window/resources/blank.html.
+        * inspector/console-format-collections-expected.txt:
+        * inspector/console-format-expected.txt:
+        * inspector/console-log-before-inspector-open-expected.txt:
+        * inspector/console-tests-expected.txt:
+        * inspector/elements-panel-structure-expected.txt:
+        * inspector/elements-panel-styles-expected.txt:
+        * inspector/elements-panel-xhtml-structure-expected.txt:
+        * inspector/evaluate-in-frontend-expected.txt:
+        * inspector/styles-source-offsets-expected.txt:
+        * inspector/syntax-highlight-javascript-expected.txt:
+        * inspector/timeline-event-dispatch-expected.txt:
+        * inspector/timeline-layout-expected.txt:
+        * inspector/timeline-mark-timeline-expected.txt:
+        * inspector/timeline-network-resource-expected.txt:
+        * inspector/timeline-paint-expected.txt:
+        * inspector/timeline-parse-html-expected.txt:
+        * inspector/timeline-recalculate-styles-expected.txt:
+        * inspector/timeline-script-tag-1-expected.txt:
+        * inspector/timeline-script-tag-2-expected.txt:
+        * inspector/timeline-test.js:
+        (printTimelineRecordProperties):
+        * platform/chromium-win/inspector/console-log-before-inspector-open-expected.txt: Removed.
+        * platform/chromium-win/inspector/timeline-event-dispatch-expected.txt:
+        * platform/chromium-win/inspector/timeline-mark-timeline-expected.txt:
+        * platform/chromium-win/inspector/timeline-network-resource-expected.txt:
+        * platform/chromium-win/inspector/timeline-paint-expected.txt:
+        * platform/chromium-win/inspector/timeline-parse-html-expected.txt:
+
 2010-06-02  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Xan Lopez.

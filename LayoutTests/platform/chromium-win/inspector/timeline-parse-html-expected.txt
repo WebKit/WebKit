@@ -1,16 +1,19 @@
 Tests the Timeline API instrumentation of ParseHTML
 
 ParseHTML Properties:
-+ startTime : * DEFINED *
-+ stackTrace : * DEFINED *
-+ data : {
-+- length : 9
-+- startLine : 0
-+- endLine : 0
-+ }
-+ children : * DEFINED *
-+ endTime : * DEFINED *
-+ type : 4
-+ usedHeapSize : * DEFINED *
-+ totalHeapSize : * DEFINED *
+{
+    startTime : <number>
+    stackTrace : <object>
+    data : {
+        length : 9
+        startLine : 0
+        endLine : 0
+    }
+    children : <object>
+    endTime : <number>
+    type : 4
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+}
 Test data
+

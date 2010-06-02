@@ -470,10 +470,15 @@ WebInspector.Resource.prototype = {
     {
         function parseNameValue(pair)
         {
-            res = pair.split("=", 2);
-            if (res.length === 1)
-                res.push("");
-            return res;
+            var parameter = {};
+            var splitPair = pair.split("=", 2);
+
+            parameter.name = splitPair[0];
+            if (splitPair.length === 1)
+                parameter.value = "";
+            else
+                parameter.value = splitPair[1];
+            return parameter;
         }
         return queryString.split("&").map(parseNameValue);
     },

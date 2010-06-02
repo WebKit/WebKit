@@ -1,3 +1,20 @@
+2010-06-02  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add test for resource parameters.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40026
+        
+        Test: http/tests/inspector/resource-parameters.html
+
+        * inspector/front-end/HAREntry.js:
+        (WebInspector.HAREntry.prototype._buildParameters):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype._parseParameters):
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView.prototype._refreshParms):
+
 2010-06-02  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.

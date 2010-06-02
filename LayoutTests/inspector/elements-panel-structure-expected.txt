@@ -10,7 +10,7 @@ Tests that elements panel shows dom tree structure.
 </p>
 <pre id="outputPre">
 </pre>
-<div id="output">
+<div id="output" style="white-space: pre; ">
 </div>
 </body>
 </html>

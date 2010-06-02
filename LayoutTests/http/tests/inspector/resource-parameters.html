@@ -1,0 +1,66 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script src="resource-tests.js"></script>
+
+<script>
+function doit()
+{
+    function callback(result)
+    {
+        if (result === "enabling")
+            return;
+        window.submitCalled = true;
+        document.getElementById("submit").click();
+    }
+
+    evaluateInWebInspector("frontend_enableResourceTracking", callback);
+}
+
+function onIframeLoad()
+{
+    if (!window.submitCalled)
+        return;
+
+    function callback(result)
+    {
+        dumpObject(result, HARNondeterministicProperties);
+        notifyDone();
+    }
+    evaluateInWebInspector("frontend_dumpFormData", callback);
+}
+
+function frontend_enableResourceTracking(testController)
+{
+    if (!WebInspector.panels.resources.resourceTrackingEnabled) {
+        InspectorBackend.enableResourceTracking(false);
+        return "enabling";
+    }
+    return "enabled";
+}
+
+function frontend_dumpFormData(testController)
+{
+    var resource = WebInspector.resourceURLMap["http://localhost:8000/inspector/resources/resource-form-data-receiver-iframe.html?queryParam1=queryValue1&queryParam2="];
+    
+    if (!resource) {
+        testController.notifyDone("No resource found");
+        return;
+    }
+    testController.notifyDone(new WebInspector.HAREntry(resource).build());
+}
+
+</script>
+</head>
+<body onload="onload()">
+<p>
+Tests that resources panel shows form data parameters.
+</p>
+<form target="target-iframe" method="POST" action="http://localhost:8000/inspector/resources/resource-form-data-receiver-iframe.html?queryParam1=queryValue1&queryParam2=">
+<input name="formParam1" value="formValue1">
+<input name="formParam2">
+<input id="submit" type="submit">
+</form>
+<iframe name="target-iframe" onload="onIframeLoad();"></iframe>
+</body>
+</html>

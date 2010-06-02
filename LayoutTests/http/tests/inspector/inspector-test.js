@@ -10,6 +10,7 @@ function onload()
 {
     var outputElement = document.createElement("div");
     outputElement.id = "output";
+    outputElement.style.whiteSpace = "pre";
     document.body.appendChild(outputElement);
 
     var toInject = [];
@@ -36,25 +37,33 @@ function notifyDone()
     });
 }
 
-function dumpObject(record, nondeterministicProps, prefix)
+function dumpObject(object, nondeterministicProps, prefix, firstLinePrefix)
 {
-    if (!prefix) 
-        prefix = "+";
-
-    for (var prop in record) {
-        var prefixWithName = prefix + " " + prop + " : ";
-        var propValue = record[prop];
+    prefix = prefix || "";
+    firstLinePrefix = firstLinePrefix || prefix;
+    output(firstLinePrefix + "{");
+    for (var prop in object) {
+        var prefixWithName = prefix + "    " + prop + " : ";
+        var propValue = object[prop];
         if (nondeterministicProps && prop in nondeterministicProps)
-            output(prefixWithName + typeof propValue);
-        else if (typeof propValue === "object") {
-            output(prefixWithName + "{");
-            dumpObject(propValue, nondeterministicProps, prefix + "-");
-            output(prefix + " }");
-        } else if (typeof propValue === "string")
+            output(prefixWithName + "<" + typeof propValue + ">");
+        else if (typeof propValue === "object")
+            dumpObject(propValue, nondeterministicProps, prefix + "    ", prefixWithName);
+        else if (typeof propValue === "string")
             output(prefixWithName + "\"" + propValue + "\"");
         else
             output(prefixWithName + propValue);
     }
+    output(prefix + "}");
+}
+
+function dumpArray(result)
+{
+    if (result instanceof Array) {
+        for (var i = 0; i < result.length; ++i)
+            output(result[i]);
+    } else
+        output(result);
 }
 
 function output(text)

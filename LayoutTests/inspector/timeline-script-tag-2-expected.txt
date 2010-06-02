@@ -1,14 +1,16 @@
 Tests the Timeline API instrumentation of a script tag with an external script.
 
 EvaluateScript Properties:
-+ startTime : * DEFINED *
-+ data : {
-+- url : * DEFINED *
-+- lineNumber : 1
-+ }
-+ children : * DEFINED *
-+ endTime : * DEFINED *
-+ type : 10
-+ usedHeapSize : * DEFINED *
-+ totalHeapSize : * DEFINED *
+{
+    startTime : <number>
+    data : {
+        url : <string>
+        lineNumber : 1
+    }
+    children : <object>
+    endTime : <number>
+    type : 10
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+}
 

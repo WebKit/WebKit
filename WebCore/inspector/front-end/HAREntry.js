@@ -125,15 +125,7 @@ WebInspector.HAREntry.prototype = {
 
     _buildParameters: function(parameters)
     {
-        return parameters.map(this._buildParameter);
-    },
-
-    _buildParameter: function(parameter)
-    {
-        var res = { name: parameter[0] };
-        if (parameter.length > 1)
-            res.value = parameter[1];
-        return res;
+        return parameters.slice();
     },
 
     _toMilliseconds: function(time)

@@ -61,9 +61,13 @@ console-format.html:53[<body onload="onload()">…</body>]
 console-format.html:52function () { return 1; }
 console-format.html:53[function () { return 1; }]
 "function () { return 1; }"
-console-format.html:52function () { return 2; }
-console-format.html:53[function () { return 2; }]
-"function () {<br> return 2;<br> }"
+console-format.html:52function () {
+        return 2;
+    }
+console-format.html:53[function () {
+        return 2;
+    }]
+"function () {<br>        return 2;<br>    }"
 console-format.html:520.12
 console-format.html:53[0.12]
 "0.12"

@@ -9,22 +9,10 @@ function doit()
     dumpResources();
 }
 
-var HARNondeterministicProperties = {
-    startedDateTime: 1,
-    time: 1,
-    wait: 1,
-    receive: 1,
-    headers: 1,
-};
-
 function dumpResources() {
-    function resourceComparer(r1, r2)
-    {
-        return r1.request.url.localeCompare(r2.request.url);
-    }
     function callback(result)
     {
-        dumpObject(result.sort(resourceComparer), HARNondeterministicProperties);
+        dumpObject(result.sort(resourceURLComparer), HARNondeterministicProperties);
         notifyDone();
     }
 

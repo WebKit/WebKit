@@ -1,6 +1,6 @@
 Tests that elements panel shows proper styles in the sidebar panel.
 
-[expanded] ()
+[expanded]  ()
 color: blue;
 display: none;
 font-family: serif;
