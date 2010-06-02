@@ -1,3 +1,13 @@
+2010-06-01  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        Remove Breakpoint.js. It was emptied in r60450 but for some reason it was not
+        deleted at that time. The presence of empty files within the inspector's resource
+        folder causes Mac OS X production builds to fail.
+
+        * inspector/front-end/Breakpoint.js: Removed.
+
 2010-05-24  James Hawkins  <jhawkins@chromium.org>
 
         Reviewed by Darin Fisher.
