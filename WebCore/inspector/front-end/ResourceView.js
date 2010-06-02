@@ -187,17 +187,10 @@ WebInspector.ResourceView.prototype = {
 
     _refreshQueryString: function()
     {
-        var url = this.resource.url;
-        var hasQueryString = url.indexOf("?") >= 0;
-
-        if (!hasQueryString) {
-            this.queryStringTreeElement.hidden = true;
-            return;
-        }
-
-        this.queryStringTreeElement.hidden = false;
-        var parmString = url.split("?", 2)[1];
-        this._refreshParms(WebInspector.UIString("Query String Parameters"), parmString, this.queryStringTreeElement);
+        var queryParameters = this.resource.queryParameters;
+        this.queryStringTreeElement.hidden = !queryParameters;
+        if (queryParameters)
+            this._refreshParms(WebInspector.UIString("Query String Parameters"), queryParameters, this.queryStringTreeElement);
     },
 
     _refreshFormData: function()
@@ -205,21 +198,17 @@ WebInspector.ResourceView.prototype = {
         this.formDataTreeElement.hidden = true;
         this.requestPayloadTreeElement.hidden = true;
 
-        var isFormData = this.resource.requestFormData;
-        if (!isFormData)
+        var formData = this.resource.requestFormData;
+        if (!formData)
             return;
 
-        var isFormEncoded = false;
-        var requestContentType = this._getHeaderValue(this.resource.requestHeaders, "Content-Type");
-        if (requestContentType && requestContentType.match(/^application\/x-www-form-urlencoded\s*(;.*)?$/i))
-            isFormEncoded = true;
-
-        if (isFormEncoded) {
+        var formParameters = this.resource.formParameters;
+        if (formParameters) {
             this.formDataTreeElement.hidden = false;
-            this._refreshParms(WebInspector.UIString("Form Data"), this.resource.requestFormData, this.formDataTreeElement);
+            this._refreshParms(WebInspector.UIString("Form Data"), formParameters, this.formDataTreeElement);
         } else {
             this.requestPayloadTreeElement.hidden = false;
-            this._refreshRequestPayload(this.resource.requestFormData);
+            this._refreshRequestPayload(formData);
         }
     },
 
@@ -233,17 +222,8 @@ WebInspector.ResourceView.prototype = {
         this.requestPayloadTreeElement.appendChild(parmTreeElement);
     },
 
-    _refreshParms: function(title, parmString, parmsTreeElement)
+    _refreshParms: function(title, parms, parmsTreeElement)
     {
-        var parms = parmString.split("&");
-        for (var i = 0; i < parms.length; ++i) {
-            var parm = parms[i];
-            parm = parm.split("=", 2);
-            if (parm.length == 1)
-                parm.push("");
-            parms[i] = parm;
-        }
-
         parmsTreeElement.removeChildren();
 
         parmsTreeElement.title = title + "<span class=\"header-count\">" + WebInspector.UIString(" (%d)", parms.length) + "</span>";

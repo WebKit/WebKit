@@ -36,6 +36,27 @@ function notifyDone()
     });
 }
 
+function dumpObject(record, nondeterministicProps, prefix)
+{
+    if (!prefix) 
+        prefix = "+";
+
+    for (var prop in record) {
+        var prefixWithName = prefix + " " + prop + " : ";
+        var propValue = record[prop];
+        if (nondeterministicProps && prop in nondeterministicProps)
+            output(prefixWithName + typeof propValue);
+        else if (typeof propValue === "object") {
+            output(prefixWithName + "{");
+            dumpObject(propValue, nondeterministicProps, prefix + "-");
+            output(prefix + " }");
+        } else if (typeof propValue === "string")
+            output(prefixWithName + "\"" + propValue + "\"");
+        else
+            output(prefixWithName + propValue);
+    }
+}
+
 function output(text)
 {
     var output = document.getElementById("output");

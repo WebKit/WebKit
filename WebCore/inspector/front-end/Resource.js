@@ -33,7 +33,6 @@ WebInspector.Resource = function(identifier, url)
     this._startTime = -1;
     this._endTime = -1;
     this._requestMethod = "";
-    this._requestFormData = "";
     this._category = WebInspector.resourceCategories.other;
 }
 
@@ -88,7 +87,7 @@ WebInspector.Resource.prototype = {
 
         var oldURL = this._url;
         this._url = x;
-
+        delete this._parsedQueryParameters;
         // FIXME: We should make the WebInspector object listen for the "url changed" event.
         // Then resourceURLChanged can be removed.
         WebInspector.resourceURLChanged(this, oldURL);
@@ -213,6 +212,13 @@ WebInspector.Resource.prototype = {
         if (this._responseReceivedTime === -1 || this._startTime === -1)
             return -1;
         return this._responseReceivedTime - this._startTime;
+    },
+
+    get receiveDuration()
+    {
+        if (this._endTime === -1 || this._responseReceivedTime === -1)
+            return -1;
+        return this._endTime - this._responseReceivedTime;
     },
 
     get resourceSize()
@@ -384,6 +390,22 @@ WebInspector.Resource.prototype = {
         return this._sortedRequestHeaders;
     },
 
+    requestHeaderValue: function(headerName)
+    {
+        return this._headerValue(this.requestHeaders, headerName);
+    },
+
+    get requestFormData()
+    {
+        return this._requestFormData;
+    },
+
+    set requestFormData(x)
+    {
+        this._requestFormData = x;
+        delete this._parsedFormParameters;
+    },
+
     get responseHeaders()
     {
         if (this._responseHeaders === undefined)
@@ -413,6 +435,56 @@ WebInspector.Resource.prototype = {
         this._sortedResponseHeaders.sort(function(a,b) { return a.header.localeCompare(b.header) });
 
         return this._sortedResponseHeaders;
+    },
+
+    responseHeaderValue: function(headerName)
+    {
+        return this._headerValue(this.responseHeaders, headerName);
+    },
+
+    get queryParameters()
+    {
+        if (this._parsedQueryParameters)
+            return this._parsedQueryParameters;
+        var queryString = this.url.split("?", 2)[1];
+        if (!queryString)
+            return;
+        this._parsedQueryParameters = this._parseParameters(queryString);
+        return this._parsedQueryParameters;
+    },
+
+    get formParameters()
+    {
+        if (this._parsedFormParameters)
+            return this._parsedFormParameters;
+        if (!this.requestFormData)
+            return;
+        var requestContentType = this.requestHeaderValue("Content-Type");
+        if (!requestContentType || !requestContentType.match(/^application\/x-www-form-urlencoded\s*(;.*)?$/i))
+            return;
+        this._parsedFormParameters = this._parseParameters(this.requestFormData);
+        return this._parsedFormParameters;
+    },
+
+    _parseParameters: function(queryString)
+    {
+        function parseNameValue(pair)
+        {
+            res = pair.split("=", 2);
+            if (res.length === 1)
+                res.push("");
+            return res;
+        }
+        return queryString.split("&").map(parseNameValue);
+    },
+
+    _headerValue: function(headers, headerName)
+    {
+        headerName = headerName.toLowerCase();
+        for (var header in headers) {
+            if (header.toLowerCase() === headerName)
+                return headers[header];
+        }
     },
 
     get scripts()

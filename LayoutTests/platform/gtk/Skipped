@@ -5897,6 +5897,9 @@ fast/css/font-face-woff.html
 # https://bugs.webkit.org/show_bug.cgi?id=38956
 http/tests/xmlhttprequest/basic-auth-default.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=40049
+http/tests/inspector/resource-har-conversion.html
+
 # Some results are one pixel off on the 64-bit bot
 # https://bugs.webkit.org/show_bug.cgi?id=39022
 css1/box_properties/acid_test.html

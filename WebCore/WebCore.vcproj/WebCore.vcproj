@@ -44868,6 +44868,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\HAREntry.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\HelpScreen.js"
 					>
 				</File>

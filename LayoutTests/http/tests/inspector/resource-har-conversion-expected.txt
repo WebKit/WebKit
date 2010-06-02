@@ -1,0 +1,36 @@
+Tests conversion of Inspector's resource representation into HAR format.
+
++ 0 : {
++- pageref : "http://127.0.0.1:8000/inspector/resource-har-conversion.html"
++- startedDateTime : string
++- time : number
++- request : {
++-- method : "GET"
++-- url : "http://127.0.0.1:8000/inspector/resource-har-conversion.html"
++-- headers : object
++-- headersSize : -1
++-- bodySize : -1
++- }
++- response : {
++-- status : 200
++-- statusText : "OK"
++-- headers : object
++-- content : {
++--- size : 1010
++--- mimeType : "text/html"
++-- }
++-- redirectURL : ""
++-- headersSize : -1
++-- bodySize : 1010
++- }
++- timings : {
++-- blocked : -1
++-- dns : -1
++-- connect : -1
++-- send : -1
++-- wait : number
++-- receive : number
++-- ssl : -1
++- }
++ }
+
