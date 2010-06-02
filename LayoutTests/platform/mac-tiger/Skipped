@@ -194,3 +194,6 @@ canvas/philip/tests/2d.shadow.pattern.transparent.1.html
 
 # Cannot compute bounds of custom fonts on Tiger, see SimpleFontData::platformBoundsForGlyph().
 fast/css/custom-font-xheight.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=40049
+http/tests/inspector/resource-parameters.html
