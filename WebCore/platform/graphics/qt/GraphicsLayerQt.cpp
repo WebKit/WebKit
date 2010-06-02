@@ -59,7 +59,12 @@ public:
         // (a) We don't need the QBrush abstraction - we always end up using QGraphicsItem::paint
         //     from the mask layer.
         // (b) QGraphicsOpacityEffect detaches the pixmap, which is inefficient on OpenGL.
-        QPixmap maskPixmap(sourceBoundingRect().toAlignedRect().size());
+        const QSize maskSize = sourceBoundingRect().toAlignedRect().size();
+        if (!maskSize.isValid() || maskSize.isEmpty()) {
+            drawSource(painter);
+            return;
+        }
+        QPixmap maskPixmap(maskSize);
 
         // We need to do this so the pixmap would have hasAlpha().
         maskPixmap.fill(Qt::transparent);
@@ -334,7 +339,7 @@ const GraphicsLayerQtImpl* GraphicsLayerQtImpl::rootLayer() const
 
 QPixmap GraphicsLayerQtImpl::recache(const QRegion& regionToUpdate)
 {
-    if (!m_layer->drawsContent())
+    if (!m_layer->drawsContent() || m_size.isEmpty() ||!m_size.isValid())
         return QPixmap();
 
     QRegion region = regionToUpdate;
