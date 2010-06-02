@@ -1,3 +1,15 @@
+2010-06-02  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by ojan@chromium.org.
+
+        REGRESSION: Weird focus behavior affects quoting on University of Washington message board system
+        https://bugs.webkit.org/show_bug.cgi?id=38548
+
+        Test: editing/selection/click-in-focusable-link-should-not-clear-selection.html
+
+        * page/FocusController.cpp:
+        (WebCore::clearSelectionIfNeeded):
+
 2010-06-02  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Anders Carlsson.
