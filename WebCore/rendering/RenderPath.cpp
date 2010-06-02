@@ -297,23 +297,8 @@ void RenderPath::updateCachedBoundaries()
     }
 
     // Cache smallest possible repaint rectangle
-
-    // FIXME: We need to be careful here. We assume that there is no resource, if the rect is empty.
-    FloatRect rect = filterBoundingBoxForRenderer(this);
-    if (rect.isEmpty())
-        m_repaintBoundingBox = m_strokeAndMarkerBoundingBox;
-    else
-        m_repaintBoundingBox = rect;
-
-    rect = clipperBoundingBoxForRenderer(this);
-    if (!rect.isEmpty())
-        m_repaintBoundingBox.intersect(rect);
-
-    rect = maskerBoundingBoxForRenderer(this);
-    if (!rect.isEmpty())
-        m_repaintBoundingBox.intersect(rect);
-
-    svgStyle->inflateForShadow(m_repaintBoundingBox);
+    m_repaintBoundingBox = m_strokeAndMarkerBoundingBox;
+    intersectRepaintRectWithResources(this, m_repaintBoundingBox);
 }
 
 }

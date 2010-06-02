@@ -279,10 +279,10 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
     filterData->sourceGraphicBuffer.clear();
 }
 
-FloatRect RenderSVGResourceFilter::resourceBoundingBox(const FloatRect& objectBoundingBox)
+FloatRect RenderSVGResourceFilter::resourceBoundingBox(RenderObject* object)
 {
     if (SVGFilterElement* element = static_cast<SVGFilterElement*>(node()))
-        return element->filterBoundingBox(objectBoundingBox);
+        return element->filterBoundingBox(object->objectBoundingBox());
 
     return FloatRect();
 }
