@@ -96,6 +96,11 @@ class BugzillaTest(unittest.TestCase):
                 status="+"
                 setter="two@test.com"
            />
+          <flag name="in-rietveld"
+                id="17933"
+                status="+"
+                setter="three@test.com"
+           />
         </attachment>
 '''
     _expected_example_attachment_parsing = {
@@ -111,6 +116,8 @@ class BugzillaTest(unittest.TestCase):
         'reviewer_email' : 'one@test.com',
         'commit-queue' : '+',
         'committer_email' : 'two@test.com',
+        'in-rietveld': '+',
+        'rietveld_uploader_email': 'three@test.com',
         'attacher_email' : 'christian.plesner.hansen@gmail.com',
     }
 
@@ -191,12 +198,12 @@ removed-because-it-was-really-long
 ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
 </data>        
  
-              <flag name="review"
-                    id="27602"
-                    status="?"
-                    setter="mjs@apple.com"
-               /> 
-          </attachment> 
+            <flag name="review"
+                id="27602"
+                status="?"
+                setter="mjs@apple.com"
+            />
+        </attachment>
     </bug>
 </bugzilla>
 """

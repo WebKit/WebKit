@@ -86,6 +86,7 @@ _patch3 = {
     "name": "Patch3",
     "is_obsolete": False,
     "is_patch": True,
+    "in-rietveld": "?",
     "review": "?",
     "attacher_email": "eric@webkit.org",
 }
@@ -112,6 +113,7 @@ _patch5 = {
     "name": "Patch5",
     "is_obsolete": False,
     "is_patch": True,
+    "in-rietveld": "?",
     "review": "+",
     "reviewer_email": "foo@bar.com",
     "attacher_email": "eric@webkit.org",
@@ -125,6 +127,7 @@ _patch6 = { # Valid committer, but no reviewer.
     "name": "ROLLOUT of r3489",
     "is_obsolete": False,
     "is_patch": True,
+    "in-rietveld": "-",
     "commit-queue": "+",
     "committer_email": "foo@bar.com",
     "attacher_email": "eric@webkit.org",
@@ -138,6 +141,7 @@ _patch7 = { # Valid review, patch is marked obsolete.
     "name": "Patch7",
     "is_obsolete": True,
     "is_patch": True,
+    "in-rietveld": "+",
     "review": "+",
     "reviewer_email": "foo@bar.com",
     "attacher_email": "eric@webkit.org",
@@ -221,6 +225,8 @@ class MockBugzillaQueries(Mock):
     def fetch_patches_from_pending_commit_list(self):
         return sum([bug.reviewed_patches() for bug in self._all_bugs()], [])
 
+    def fetch_patches_from_rietveld_queue(self):
+        return sum([bug.in_rietveld_queue_patches() for bug in self._all_bugs()], [])
 
 # FIXME: Bugzilla is the wrong Mock-point.  Once we have a BugzillaNetwork
 #        class we should mock that instead.
@@ -513,6 +519,15 @@ class MockExecute(Mock):
         return "MOCK output of child process"
 
 
+class MockRietveld():
+
+    def __init__(self, executive, dryrun=False):
+        pass
+
+    def post(self, diff, message=None, codereview_issue=None, cc=None):
+        log("MOCK: Uploading patch to rietveld")
+
+
 class MockTool():
 
     def __init__(self, log_executive=False):
@@ -526,7 +541,7 @@ class MockTool():
         self._checkout = MockCheckout()
         self.status_server = MockStatusServer()
         self.irc_password = "MOCK irc password"
-        self.codereview = Rietveld(self.executive)
+        self.codereview = MockRietveld(self.executive)
 
     def scm(self):
         return self._scm

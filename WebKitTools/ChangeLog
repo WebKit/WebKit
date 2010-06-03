@@ -1,3 +1,29 @@
+2010-05-14  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        add a RietveldUploadQueue to upload in-rietveld? patches to rietveld
+        https://bugs.webkit.org/show_bug.cgi?id=38918
+
+        Patches with in-rietveld? get uploaded to rietveld and get marked
+        in-rietveld+. If the upload fails, they are marked in-rietveld-
+        and an error is logged to the bug, like the commit-queue.
+
+        Also, get rid of --fancy-review and the ability to upload to rietveld
+        using webkit-patch upload/post.
+
+        * Scripts/webkitpy/common/net/bugzilla.py:
+        * Scripts/webkitpy/common/net/bugzilla_unittest.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/options.py:
+        * Scripts/webkitpy/tool/steps/postcodereview.py:
+
 2010-05-24  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Chris Jerdonek.

@@ -290,18 +290,54 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
 
     # StepSequenceErrorHandler methods
 
-    @staticmethod
-    def _error_message_for_bug(tool, status_id, script_error):
-        if not script_error.output:
-            return script_error.message_with_output()
-        results_link = tool.status_server.results_url_for_status(status_id)
-        return "%s\nFull output: %s" % (script_error.message_with_output(), results_link)
-
     @classmethod
     def handle_script_error(cls, tool, state, script_error):
         status_id = cls._update_status_for_script_error(tool, state, script_error)
         validator = CommitterValidator(tool.bugs)
         validator.reject_patch_from_commit_queue(state["patch"].id(), cls._error_message_for_bug(tool, status_id, script_error))
+
+
+class RietveldUploadQueue(AbstractPatchQueue, StepSequenceErrorHandler):
+    name = "rietveld-upload-queue"
+
+    def __init__(self):
+        AbstractPatchQueue.__init__(self)
+
+    # AbstractPatchQueue methods
+
+    def next_work_item(self):
+        patches = self.tool.bugs.queries.fetch_patches_from_rietveld_queue()
+        if patches:
+            return patches[0]
+        self._update_status("Empty queue")
+
+    def should_proceed_with_work_item(self, patch):
+        self._update_status("Uploading patch", patch)
+        return True
+
+    def process_work_item(self, patch):
+        try:
+            self.run_webkit_patch(["post-attachment-to-rietveld", "--force-clean", "--non-interactive", "--parent-command=rietveld-upload-queue", patch.id()])
+            self._did_pass(patch)
+            return True
+        except ScriptError, e:
+            if e.exit_code != QueueEngine.handled_error_code:
+                self._did_fail(patch)
+            raise e
+
+    def _reject_patch(self, patch, message):
+        comment_text = "Could not upload patch %s to rietveld. Rietveld is down or there's a bug in the upload bot." % patch.id()
+        self.tool.bugs.set_flag_on_attachment(patch.id(), "in-rietveld", "-", comment_text, message)
+
+    def handle_unexpected_error(self, patch, message):
+        self._reject_patch(patch, message)
+
+    # StepSequenceErrorHandler methods
+
+    @classmethod
+    def handle_script_error(cls, tool, state, script_error):
+        status_id = cls._update_status_for_script_error(tool, state, script_error)
+        self._reject_patch(patch, cls._error_message_for_bug(tool, status_id, script_error))
 
 
 class AbstractReviewQueue(AbstractPatchQueue, PersistentPatchCollectionDelegate, StepSequenceErrorHandler):

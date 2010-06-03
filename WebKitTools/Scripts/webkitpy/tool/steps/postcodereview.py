@@ -36,33 +36,27 @@ class PostCodeReview(AbstractStep):
         return AbstractStep.options() + [
             Options.cc,
             Options.description,
-            Options.fancy_review,
         ]
 
     def run(self, state):
-        if not self._options.fancy_review:
-            return
+        patch = state.get("patch")
+        bug_id = patch.bug_id()
+        title = patch.name()
 
-        bug_id = state.get("bug_id")
-        if not bug_id:
-            raise ScriptError(message="Cannot upload a fancy review without a bug ID.")
-
-        message = self._options.description
-        if not message:
-            # If we have an issue number, then the message becomes the label
-            # of the new patch. Otherwise, it becomes the title of the whole
-            # issue.
-            if state.get("bug_title"):
-                # This is the common case for the the first "upload" command.
-                message = state.get("bug_title")
-            elif bug_id:
-                # This is the common case for the "post" command and
-                # subsequent runs of the "upload" command.
-                message = "Code review for %s" % self._tool.bugs.bug_url_for_bug_id(bug_id)
-            else:
-                # Unreachable with our current commands, but we might hit
-                # this case if we support bug-less code reviews.
-                message = "Code review"
+        # If the issue already exists, then the message becomes the label
+        # of the new patch. Otherwise, it becomes the title of the whole
+        # issue.
+        if title:
+            # This is the common case for the the first "upload" command.
+            message = title
+        elif bug_id:
+            # This is the common case for the "post" command and
+            # subsequent runs of the "upload" command.
+            message = "Code review for %s" % self._tool.bugs.bug_url_for_bug_id(bug_id)
+        else:
+            # Unreachable with our current commands, but we might hit
+            # this case if we support bug-less code reviews.
+            message = "Code review"
 
         # Use the bug ID as the rietveld issue number. This means rietveld code reviews
         # when there are multiple different patches on a bug will be a bit wonky, but
@@ -71,3 +65,5 @@ class PostCodeReview(AbstractStep):
                                                    message=message,
                                                    codereview_issue=bug_id,
                                                    cc=self._options.cc)
+
+        self._tool.bugs.set_flag_on_attachment(patch.id(), 'in-rietveld', '+')

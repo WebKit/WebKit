@@ -193,6 +193,16 @@ MOCK: update_status: commit-queue Builders ["Builder2"] are red. See http://buil
         self.assertEqual(attachments, expected_sort)
 
 
+class RietveldUploadQueueTest(QueuesTest):
+    def test_rietveld_upload_queue(self):
+        expected_stderr = {
+            "begin_work_queue": "CAUTION: rietveld-upload-queue will discard all local changes in \"%s\"\nRunning WebKit rietveld-upload-queue.\n" % MockSCM.fake_checkout_root,
+            "should_proceed_with_work_item": "MOCK: update_status: rietveld-upload-queue Uploading patch\n",
+            "process_work_item": "MOCK: update_status: rietveld-upload-queue Pass\n",
+        }
+        self.assert_queue_outputs(RietveldUploadQueue(), expected_stderr=expected_stderr)
+
+
 class StyleQueueTest(QueuesTest):
     def test_style_queue(self):
         expected_stderr = {
