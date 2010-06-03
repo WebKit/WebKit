@@ -299,6 +299,10 @@ module window {
         attribute [Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchend;
         attribute [Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchcancel;
 
+        attribute [Conditional=TRANSFORMACTION_EVENTS,EnabledAtRuntime] EventListener ontransformactionstart;
+        attribute [Conditional=TRANSFORMACTION_EVENTS,EnabledAtRuntime] EventListener ontransformactionupdate;
+        attribute [Conditional=TRANSFORMACTION_EVENTS,EnabledAtRuntime] EventListener ontransformactionend;
+
         attribute [Conditional=DEVICE_ORIENTATION] EventListener ondeviceorientation;
 
         // EventTarget interface
@@ -728,7 +732,7 @@ module window {
 #endif
 
         attribute [Conditional=TOUCH_EVENTS] TouchEventConstructor TouchEvent;
-
+        attribute [Conditional=TRANSFORMACTION_EVENTS] TransformActionEventConstructor TransformActionEvent;
         attribute DOMFormDataConstructor FormData;
 
         attribute [Conditional=FILE_READER|FILE_WRITER] FileErrorConstructor FileError;

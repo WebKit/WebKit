@@ -1,3 +1,17 @@
+2010-06-03  Kim Grönholm  <kim.1.gronholm@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Add TransformActionEvent support
+        https://bugs.webkit.org/show_bug.cgi?id=39757
+
+        * fast/events/transformaction/create-transformaction-event-expected.txt: Added.
+        * fast/events/transformaction/create-transformaction-event.html: Added.
+        * fast/events/transformaction/resources/create-transformaction-event.js: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
 2010-06-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: Rebaseline chromium tests as a follow up to r60611.

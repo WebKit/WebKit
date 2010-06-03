@@ -212,6 +212,9 @@ ontouchstart
 ontouchmove
 ontouchend
 ontouchcancel
+ontransformactionstart
+ontransformactionupdate
+ontransformactionend
 onunload
 onvolumechange
 onwaiting

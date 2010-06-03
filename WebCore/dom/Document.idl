@@ -310,6 +310,9 @@ module core {
         attribute [DontEnum,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchmove;
         attribute [DontEnum,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchend;
         attribute [DontEnum,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchcancel;
+        attribute [DontEnum,Conditional=TRANSFORMACTION_EVENTS,EnabledAtRuntime] EventListener ontransformactionstart;
+        attribute [DontEnum,Conditional=TRANSFORMACTION_EVENTS,EnabledAtRuntime] EventListener ontransformactionupdate;
+        attribute [DontEnum,Conditional=TRANSFORMACTION_EVENTS,EnabledAtRuntime] EventListener ontransformactionend;
 #endif
     };
 

@@ -432,6 +432,7 @@ DOM_CLASSES = \
     Touch \
     TouchEvent \
     TouchList \
+    TransformActionEvent \
     TreeWalker \
     UIEvent \
     ValidityState \

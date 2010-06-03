@@ -5916,3 +5916,6 @@ editing/spelling/context-menu-suggestions.html
 
 # IndexedDB is not yet enabled.
 storage/indexeddb
+
+# These tests require transformaction event support
+fast/events/transformaction

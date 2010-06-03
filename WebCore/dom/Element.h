@@ -98,6 +98,11 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(touchend);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(touchcancel);
 #endif
+#if ENABLE(TRANSFORMACTION_EVENTS)
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(transformactionstart);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(transformactionupdate);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(transformactionend);
+#endif
 
     virtual PassRefPtr<DocumentFragment> createContextualFragment(const String&, FragmentScriptingPermission = FragmentScriptingAllowed);
 

@@ -154,6 +154,10 @@ namespace WebCore {
     macro(touchend) \
     macro(touchcancel) \
     \
+    macro(transformactionstart) \
+    macro(transformactionupdate) \
+    macro(transformactionend) \
+    \
     macro(success) \
     \
     macro(loadend) \

@@ -1,3 +1,73 @@
+2010-06-03  Kim Grönholm  <kim.1.gronholm@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Add TransformActionEvent support
+        https://bugs.webkit.org/show_bug.cgi?id=39757
+
+        Added only the necessary TransformAction event interfaces and not e.g.
+        any eventhandler hooks that generate and dispatch them.
+
+        Test: fast/events/transformaction/create-transformaction-event.html
+        More tests will be added with the machinery that generates and
+        dispatches these events.
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * Android.mk:
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::transformactionEnabled):
+        (WebCore::RuntimeEnabledFeatures::setTransformActionEnabled):
+        (WebCore::RuntimeEnabledFeatures::ontransformactionstartEnabled):
+        (WebCore::RuntimeEnabledFeatures::ontransformactionupdateEnabled):
+        (WebCore::RuntimeEnabledFeatures::ontransformactionendEnabled):
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8EventCustom.cpp:
+        (WebCore::toV8):
+        * dom/Document.cpp:
+        (WebCore::Document::createEvent):
+        (WebCore::Document::addListenerTypeIfNeeded):
+        * dom/Document.h:
+        (WebCore::Document::):
+        * dom/Document.idl:
+        * dom/Element.h:
+        * dom/Element.idl:
+        * dom/Event.cpp:
+        (WebCore::Event::isTransformActionEvent):
+        (WebCore::Event::fromUserGesture):
+        * dom/Event.h:
+        * dom/EventNames.h:
+        * dom/TransformActionEvent.cpp: Added.
+        (WebCore::TransformActionEvent::TransformActionEvent):
+        (WebCore::TransformActionEvent::initTransformActionEvent):
+        * dom/TransformActionEvent.h: Added.
+        (WebCore::TransformActionEvent::create):
+        (WebCore::TransformActionEvent::translateX):
+        (WebCore::TransformActionEvent::translateY):
+        (WebCore::TransformActionEvent::translateSpeedX):
+        (WebCore::TransformActionEvent::translateSpeedY):
+        (WebCore::TransformActionEvent::scale):
+        (WebCore::TransformActionEvent::scaleSpeed):
+        (WebCore::TransformActionEvent::rotate):
+        (WebCore::TransformActionEvent::rotateSpeed):
+        (WebCore::TransformActionEvent::TransformActionEvent):
+        (WebCore::TransformActionEvent::isTransformActionEvent):
+        * dom/TransformActionEvent.idl: Added.
+        * html/HTMLAttributeNames.in:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
 2010-06-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Rolling out aggressive cache part of the r60391

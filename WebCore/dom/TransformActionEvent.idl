@@ -1,0 +1,66 @@
+/*
+    Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public License
+    along with this library; see the file COPYING.LIB.  If not, write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA 02110-1301, USA.
+*/
+
+module events {
+
+    interface [
+        Conditional=TRANSFORMACTION_EVENTS
+    ] TransformActionEvent : UIEvent {
+        readonly attribute long screenX;
+        readonly attribute long screenY;
+        readonly attribute long clientX;
+        readonly attribute long clientY;
+        readonly attribute long offsetX;
+        readonly attribute long offsetY;
+        readonly attribute boolean ctrlKey;
+        readonly attribute boolean altKey;
+        readonly attribute boolean shiftKey;
+        readonly attribute boolean metaKey;
+
+        readonly attribute long translateX;
+        readonly attribute long translateY;
+        readonly attribute long translateSpeedX;
+        readonly attribute long translateSpeedY;
+        readonly attribute float scale;
+        readonly attribute float scaleSpeed;
+        readonly attribute float rotate;
+        readonly attribute float rotateSpeed;
+
+        void initTransformActionEvent(in DOMString type,
+                                      in boolean canBubble,
+                                      in boolean cancelable,
+                                      in DOMWindow view,
+                                      in long screenX,
+                                      in long screenY,
+                                      in long clientX,
+                                      in long clientY,
+                                      in boolean ctrlKey,
+                                      in boolean altKey,
+                                      in boolean shiftKey,
+                                      in boolean metaKey,
+                                      in long translateX,
+                                      in long translateY,
+                                      in long translateSpeedX,
+                                      in long translateSpeedY,
+                                      in float scale,
+                                      in float scaleSpeed,
+                                      in float rotate,
+                                      in float rotateSpeed);
+   };
+}

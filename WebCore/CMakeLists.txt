@@ -175,6 +175,7 @@ SET(WebCore_IDL_FILES
     dom/TouchEvent.idl
     dom/Touch.idl
     dom/TouchList.idl
+    dom/TransformActionEvent.idl
     dom/TreeWalker.idl
     dom/UIEvent.idl
     dom/WebKitAnimationEvent.idl
