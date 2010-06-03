@@ -1,3 +1,19 @@
+2010-06-03  Damian Kaleta  <dkaleta@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Pixel cracks in border images when drawing with a scale factor > 1
+        <rdar://problem/7994266>pixel cracks in border images
+        https://bugs.webkit.org/show_bug.cgi?id=15720
+        
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawImage):
+        (WebCore::GraphicsContext::drawTiledImage):
+        * platform/graphics/GraphicsContext.h: Added two new methods to support drawing using FloatRect.
+        If the boolean flag roundToPixels is true, the pixels are adjusted with the pixel boundaries.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+
 2010-06-03  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Dan Bernstein.
