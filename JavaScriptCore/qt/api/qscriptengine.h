@@ -50,6 +50,7 @@ public:
 
     QScriptValue nullValue();
     QScriptValue undefinedValue();
+    QScriptValue newObject();
     QScriptValue globalObject() const;
 private:
     friend class QScriptEnginePrivate;

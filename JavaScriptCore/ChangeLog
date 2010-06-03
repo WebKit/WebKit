@@ -1,3 +1,24 @@
+2010-06-02  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        New function QScriptEngine::newObject.
+
+        The function creates a object of class Object and returns it
+        as a QScriptValue.
+
+        [Qt] QScriptEngine API should contain a newObject function
+        https://bugs.webkit.org/show_bug.cgi?id=39114
+
+        * qt/api/qscriptengine.cpp:
+        (QScriptEngine::newObject):
+        * qt/api/qscriptengine.h:
+        * qt/api/qscriptengine_p.cpp:
+        (QScriptEnginePrivate::newObject):
+        * qt/api/qscriptengine_p.h:
+        * qt/tests/qscriptengine/tst_qscriptengine.cpp:
+        (tst_QScriptEngine::newObject):
+
 2010-06-02  Gabor Loki  <loki@webkit.org>
 
         Reviewed by Gavin Barraclough.

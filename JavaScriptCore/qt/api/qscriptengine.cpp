@@ -193,6 +193,19 @@ QScriptValue QScriptEngine::undefinedValue()
 }
 
 /*!
+  Creates a QtScript object of class Object.
+
+  The prototype of the created object will be the Object
+  prototype object.
+
+  \sa newArray(), QScriptValue::setProperty()
+*/
+QScriptValue QScriptEngine::newObject()
+{
+    return QScriptValuePrivate::get(d_ptr->newObject());
+}
+
+/*!
   Returns this engine's Global Object.
 
   By default, the Global Object contains the built-in objects that are

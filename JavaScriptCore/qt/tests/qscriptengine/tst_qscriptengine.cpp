@@ -35,6 +35,7 @@ public slots:
     void cleanup() {}
 
 private slots:
+    void newObject();
     void globalObject();
     void evaluate();
     void collectGarbage();
@@ -54,6 +55,18 @@ void tst_QScriptEngine::evaluate()
     QScriptEngine engine;
     QVERIFY2(engine.evaluate("1+1").isValid(), "the expression should be evaluated and an valid result should be returned");
     QVERIFY2(engine.evaluate("ping").isValid(), "Script throwing an unhandled exception should return an exception value");
+}
+
+void tst_QScriptEngine::newObject()
+{
+    QScriptEngine engine;
+    QScriptValue object = engine.newObject();
+    QVERIFY(object.isObject());
+    QVERIFY(object.engine() == &engine);
+    QVERIFY(!object.isError());
+    QVERIFY(!object.equals(engine.newObject()));
+    QVERIFY(!object.strictlyEquals(engine.newObject()));
+    QCOMPARE(object.toString(), QString::fromAscii("[object Object]"));
 }
 
 void tst_QScriptEngine::globalObject()
