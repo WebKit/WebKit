@@ -1,3 +1,26 @@
+2010-06-03  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed.  Add chromium-specific baselines for new tests added by 60640
+
+        * platform/chromium-linux/fast/repaint/layout-state-scrolloffset-expected.checksum: Added.
+        * platform/chromium-linux/fast/repaint/layout-state-scrolloffset2-expected.checksum: Added.
+        * platform/chromium-linux/fast/repaint/layout-state-scrolloffset3-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/layout-state-scrolloffset-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/layout-state-scrolloffset-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/layout-state-scrolloffset2-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/layout-state-scrolloffset2-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/layout-state-scrolloffset3-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/layout-state-scrolloffset3-expected.png: Added.
+        * platform/chromium-win/fast/repaint/layout-state-scrolloffset-expected.checksum: Added.
+        * platform/chromium-win/fast/repaint/layout-state-scrolloffset-expected.png: Added.
+        * platform/chromium-win/fast/repaint/layout-state-scrolloffset-expected.txt: Added.
+        * platform/chromium-win/fast/repaint/layout-state-scrolloffset2-expected.checksum: Added.
+        * platform/chromium-win/fast/repaint/layout-state-scrolloffset2-expected.png: Added.
+        * platform/chromium-win/fast/repaint/layout-state-scrolloffset2-expected.txt: Added.
+        * platform/chromium-win/fast/repaint/layout-state-scrolloffset3-expected.checksum: Added.
+        * platform/chromium-win/fast/repaint/layout-state-scrolloffset3-expected.png: Added.
+        * platform/chromium-win/fast/repaint/layout-state-scrolloffset3-expected.txt: Added.
+
 2010-06-03  John Gregg  <johnnyg@google.com>
 
         Reviewed by David Levin.
