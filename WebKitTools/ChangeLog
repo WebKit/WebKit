@@ -1,3 +1,23 @@
+2010-06-02  Diego Gonzalez  <diegohcg@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Make possible run DRT with QGraphicsWebView
+        https://bugs.webkit.org/show_bug.cgi?id=40016
+
+        Make possible to use a environment variable for switching backend.
+        Usage: QT_DRT_WEBVIEW_MODE=graphics WebKitTools/Scripts/run-webkit-tests --qt
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebViewGraphicsBased::WebViewGraphicsBased):
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        (WebCore::DumpRenderTree::setGraphicsBased):
+        (WebCore::DumpRenderTree::isGraphicsBased):
+        (WebCore::WebViewGraphicsBased::graphicsView):
+        (WebCore::WebViewGraphicsBased::setPage):
+        * Scripts/old-run-webkit-tests:
+
 2010-06-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Eric Seidel.

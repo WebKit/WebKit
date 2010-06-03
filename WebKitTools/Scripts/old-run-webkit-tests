@@ -1358,6 +1358,7 @@ sub openDumpTool()
     # Port spesifics
     if (isQt()) {
         $CLEAN_ENV{QTWEBKIT_PLUGIN_PATH} = productDir() . "/lib/plugins";
+        $CLEAN_ENV{QT_DRT_WEBVIEW_MODE} = $ENV{"QT_DRT_WEBVIEW_MODE"};
     }
     
     my @args = ($dumpTool, @toolArgs);

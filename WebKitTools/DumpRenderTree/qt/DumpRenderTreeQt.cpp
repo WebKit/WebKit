@@ -348,24 +348,46 @@ QObject* WebPage::createPlugin(const QString& classId, const QUrl& url, const QS
 #endif
 }
 
+WebViewGraphicsBased::WebViewGraphicsBased(QWidget* parent)
+    : m_item(new QGraphicsWebView)
+{
+    setScene(new QGraphicsScene(this));
+    scene()->addItem(m_item);
+}
+
 DumpRenderTree::DumpRenderTree()
     : m_dumpPixels(false)
     , m_stdin(0)
     , m_enableTextOutput(false)
     , m_singleFileMode(false)
+    , m_graphicsBased(false)
     , m_persistentStoragePath(QString(getenv("DUMPRENDERTREE_TEMP")))
 {
+
+    QByteArray viewMode = getenv("QT_DRT_WEBVIEW_MODE");
+    if (viewMode == "graphics")
+        setGraphicsBased(true);
+
     DumpRenderTreeSupportQt::overwritePluginDirectories();
 
     QWebSettings::enablePersistentStorage(m_persistentStoragePath);
 
     m_networkAccessManager = new NetworkAccessManager(this);
     // create our primary testing page/view.
-    m_mainView = new QWebView(0);
-    m_mainView->resize(QSize(LayoutTestController::maxViewWidth, LayoutTestController::maxViewHeight));
-    m_page = new WebPage(m_mainView, this);
-    m_mainView->setPage(m_page);
+    if (isGraphicsBased()) {
+        WebViewGraphicsBased* view = new WebViewGraphicsBased(0);
+        m_page = new WebPage(view, this);
+        view->setPage(m_page);
+        m_mainView = view;
+    } else {
+        QWebView* view = new QWebView(0);
+        m_page = new WebPage(view, this);
+        view->setPage(m_page);
+        m_mainView = view;
+    }
+
     m_mainView->setContextMenuPolicy(Qt::NoContextMenu);
+    m_mainView->resize(QSize(LayoutTestController::maxViewWidth, LayoutTestController::maxViewHeight));
 
     // clean up cache by resetting quota.
     qint64 quota = webPage()->settings()->offlineWebApplicationCacheQuota();
