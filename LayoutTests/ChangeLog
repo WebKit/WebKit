@@ -1,3 +1,14 @@
+2010-06-03  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        4 websocket tests don't fail now.
+
+        * platform/chromium/test_expectations.txt:
+        - remove websocket/tests/unicode.html, websocket/tests/send.html,
+          websocket/tests/handshake-error.html and
+          websocket/tests/long-invalid-header.html
+
 2010-06-02  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Brady Eidson.

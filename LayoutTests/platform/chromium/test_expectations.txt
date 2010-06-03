@@ -2307,8 +2307,6 @@ BUG29239 LINUX WIN : fast/css/variables/misplaced-import-test.html = FAIL
 BUG29393 : fast/loader/stateobjects/pushstate-object-types.html = TEXT
 BUG29393 : fast/loader/stateobjects/state-api-on-detached-frame-crash.html = TEXT
 
-BUG29944 WIN : websocket/tests/unicode.html = TEXT PASS
-
 // Failures introduced by USE_NEW_BUILDER in Skia.
 BUG33287 WIN LINUX : fast/canvas/set-colors.html = TEXT
 
@@ -2316,7 +2314,6 @@ BUG33287 WIN LINUX : fast/canvas/set-colors.html = TEXT
 BUG32003 : fast/js/string-property-deletion.html = TEXT
 BUG31998 LINUX : svg/carto.net/selectionlist.svg = IMAGE PASS
 BUG31997 DEBUG WIN : fast/body-propagation/overflow/004-xhtml.xhtml = IMAGE+TEXT PASS
-BUG29943 WIN : websocket/tests/send.html = TEXT PASS
 
 // Regression from Webkit merge 51772 -> 51784
 BUG35329 WIN : http/tests/appcache/resource-redirect-2.html = TIMEOUT PASS
@@ -2832,9 +2829,6 @@ BUG44229 WIN LINUX : fast/loader/recursive-before-unload-crash.html = PASS TEXT
 // DeviceOrientation API not yet implemented.
 BUG44654 SKIP : fast/dom/DeviceOrientation = TEXT
 BUG44654 SKIP : fast/dom/Window/window-properties-on-device-orientation.html = TEXT
-
-BUG44804 WIN DEBUG : websocket/tests/handshake-error.html = TEXT
-BUG44804 WIN DEBUG : websocket/tests/long-invalid-header.html = TEXT
 
 BUGWK39655 : fast/dom/prototype-property.html = FAIL
 
