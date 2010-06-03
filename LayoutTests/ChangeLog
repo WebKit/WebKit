@@ -1,3 +1,12 @@
+2010-06-02  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        Add fixed-move-after-keyboard-scroll.html temporarily
+        https://bugs.webkit.org/show_bug.cgi?id=40101
+
+        * platform/chromium/test_expectations.txt:
+
 2010-06-02  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Simon Fraser.

@@ -2848,3 +2848,5 @@ BUG45106 WIN : svg/text/text-text-04-t.svg = PASS CRASH
 BUG45106 WIN : svg/text/text-text-05-t.svg = PASS CRASH
 
 BUG45518: html5lib/runner.html = TEXT
+
+BUGWK40101: fast/repaint/fixed-move-after-keyboard-scroll.html = IMAGE
