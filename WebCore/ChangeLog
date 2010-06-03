@@ -1,3 +1,28 @@
+2010-06-02  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] Support HTML5 <progress> element on Linux.
+        https://bugs.webkit.org/show_bug.cgi?id=37310
+        
+        Implemented RenderThemeChromiumSkia::paintProgressBar(), extracing
+        determinateProgressValueRectFor() from RenderThemeChromiumWin to
+        RenderThemeChromiumSkia
+        
+        No new tests. Expectations will come after ENABLE_PROGRESS_BAR get
+        enabled on chromium.
+
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::determinateProgressValueRectFor):
+        (WebCore::RenderThemeChromiumSkia::indeterminateProgressValueRectFor):
+        (WebCore::RenderThemeChromiumSkia::animationRepeatIntervalForProgressBar):
+        (WebCore::RenderThemeChromiumSkia::animationDurationForProgressBar):
+        (WebCore::RenderThemeChromiumSkia::paintProgressBar):
+        (WebCore::RenderThemeChromiumSkia::progressValueRectFor):
+        * rendering/RenderThemeChromiumSkia.h:
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::paintProgressBar):
+
 2010-06-02  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Simon Fraser.

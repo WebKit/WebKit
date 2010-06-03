@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+class RenderProgress;
+
     class RenderThemeChromiumSkia : public RenderTheme {
     public:
         RenderThemeChromiumSkia();
@@ -117,6 +119,12 @@ namespace WebCore {
         virtual bool paintSliderTrack(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
         virtual bool paintSliderThumb(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
+#if ENABLE(PROGRESS_TAG)
+        virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const;
+        virtual double animationDurationForProgressBar(RenderProgress*) const;
+        virtual bool paintProgressBar(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+#endif
+
         // These methods define the padding for the MenuList's inner block.
         virtual int popupInternalPaddingLeft(RenderStyle*) const;
         virtual int popupInternalPaddingRight(RenderStyle*) const;
@@ -144,6 +152,12 @@ namespace WebCore {
         static float defaultFontSize;
 
         virtual double caretBlinkIntervalInternal() const;
+
+#if ENABLE(PROGRESS_TAG)
+        IntRect determinateProgressValueRectFor(RenderProgress*, const IntRect&) const;
+        IntRect indeterminateProgressValueRectFor(RenderProgress*, const IntRect&) const;
+        IntRect progressValueRectFor(RenderProgress*, const IntRect&) const;
+#endif
 
     private:
         int menuListInternalPadding(RenderStyle*, int paddingType) const;

@@ -26,6 +26,7 @@
 
 #include "ChromiumBridge.h"
 #include "CSSValueKeywords.h"
+#include "CurrentTime.h"
 #include "GraphicsContext.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
@@ -35,6 +36,7 @@
 #include "RenderBox.h"
 #include "RenderMediaControlsChromium.h"
 #include "RenderObject.h"
+#include "RenderProgress.h"
 #include "RenderSlider.h"
 #include "ScrollbarTheme.h"
 #include "TimeRanges.h"
@@ -767,5 +769,109 @@ int RenderThemeChromiumSkia::menuListInternalPadding(RenderStyle* style, int pad
 
     return padding;
 }
+
+#if ENABLE(PROGRESS_TAG)
+
+//
+// Following values are come from default of GTK+
+//
+static const int progressDeltaPixelsPerSecond = 100;
+static const int progressActivityBlocks = 5;
+static const int progressAnimationFrmaes = 10;
+static const double progressAnimationInterval = 0.125;
+
+IntRect RenderThemeChromiumSkia::determinateProgressValueRectFor(RenderProgress* renderProgress, const IntRect& rect) const
+{
+    int dx = rect.width() * renderProgress->position();
+    if (renderProgress->style()->direction() == RTL)
+        return IntRect(rect.x() + rect.width() - dx, rect.y(), dx, rect.height());
+    return IntRect(rect.x(), rect.y(), dx, rect.height());
+}
+
+IntRect RenderThemeChromiumSkia::indeterminateProgressValueRectFor(RenderProgress* renderProgress, const IntRect& rect) const
+{
+
+    int valueWidth = rect.width() / progressActivityBlocks;
+    int movableWidth = rect.width() - valueWidth;
+    if (movableWidth <= 0)
+        return IntRect();
+    
+    double progress = renderProgress->animationProgress();
+    if (progress < 0.5)
+        return IntRect(rect.x() + progress * 2 * movableWidth, rect.y(), valueWidth, rect.height());
+    return IntRect(rect.x() + (1.0 - progress) * 2 * movableWidth, rect.y(), valueWidth, rect.height());
+}
+
+
+double RenderThemeChromiumSkia::animationRepeatIntervalForProgressBar(RenderProgress*) const
+{
+    return progressAnimationInterval;
+}
+
+double RenderThemeChromiumSkia::animationDurationForProgressBar(RenderProgress* renderProgress) const
+{
+    return progressAnimationInterval * progressAnimationFrmaes * 2; // "2" for back and forth
+}
+
+bool RenderThemeChromiumSkia::paintProgressBar(RenderObject* renderObject, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
+{
+    static Image* barImage = Image::loadPlatformResource("linuxProgressBar").releaseRef();
+    static Image* valueImage = Image::loadPlatformResource("linuxProgressValue").releaseRef();
+    static Image* leftBorderImage = Image::loadPlatformResource("linuxProgressBorderLeft").releaseRef();
+    static Image* rightBorderImage = Image::loadPlatformResource("linuxProgressBorderRight").releaseRef();
+    ASSERT(barImage->height() == valueImage->height());
+
+
+    RenderProgress* renderProgress = toRenderProgress(renderObject);
+    double tileScale = static_cast<double>(rect.height()) / barImage->height();
+    IntSize barTileSize(static_cast<int>(barImage->width() * tileScale), rect.height());
+    ColorSpace colorSpace = renderObject->style()->colorSpace();
+
+    paintInfo.context->drawTiledImage(barImage, colorSpace, rect, IntPoint(0, 0), barTileSize);
+
+    IntRect valueRect = progressValueRectFor(renderProgress, rect);
+    if (valueRect.width()) {
+
+        IntSize valueTileSize(static_cast<int>(valueImage->width() * tileScale), valueRect.height());
+        int leftOffset = valueRect.x() - rect.x();
+        int roundedLeftOffset= (leftOffset / valueTileSize.width()) * valueTileSize.width();
+        int dstLeftValueWidth = roundedLeftOffset - leftOffset + (leftOffset % valueImage->width()) ? valueTileSize.width() : 0;
+
+        IntRect dstLeftValueRect(valueRect.x(), valueRect.y(), dstLeftValueWidth, valueRect.height());
+        int srcLeftValueWidth = dstLeftValueWidth / tileScale;
+        IntRect srcLeftValueRect(valueImage->width() - srcLeftValueWidth, 0, srcLeftValueWidth, valueImage->height());
+        paintInfo.context->drawImage(valueImage, colorSpace, dstLeftValueRect, srcLeftValueRect);
+
+        int rightOffset = valueRect.right() - rect.x();
+        int roundedRightOffset = (rightOffset / valueTileSize.width()) * valueTileSize.width();
+        int dstRightValueWidth = rightOffset - roundedRightOffset;
+        IntRect dstRightValueRect(rect.x() + roundedRightOffset, valueRect.y(), dstRightValueWidth, valueTileSize.height());
+        int srcRightValueWidth = dstRightValueWidth / tileScale;
+        IntRect srcRightValueRect(0, 0, srcRightValueWidth, valueImage->height());
+        paintInfo.context->drawImage(valueImage, colorSpace, dstRightValueRect, srcRightValueRect);
+        
+        IntRect alignedValueRect(dstLeftValueRect.right(), dstLeftValueRect.y(), 
+                                 dstRightValueRect.x() - dstLeftValueRect.right(), dstLeftValueRect.height());
+        paintInfo.context->drawTiledImage(valueImage, colorSpace, alignedValueRect, IntPoint(0, 0), valueTileSize);
+    }
+
+    int dstLeftBorderWidth = leftBorderImage->width() * tileScale;
+    IntRect dstLeftBorderRect(rect.x(), rect.y(), dstLeftBorderWidth, rect.height());
+    paintInfo.context->drawImage(leftBorderImage, colorSpace, dstLeftBorderRect, leftBorderImage->rect());
+
+    int dstRightBorderWidth = rightBorderImage->width() * tileScale;
+    IntRect dstRightBorderRect(rect.right() - dstRightBorderWidth, rect.y(), dstRightBorderWidth, rect.height());
+    paintInfo.context->drawImage(rightBorderImage, colorSpace, dstRightBorderRect, rightBorderImage->rect());
+
+    return false;
+}
+
+
+IntRect RenderThemeChromiumSkia::progressValueRectFor(RenderProgress* renderProgress, const IntRect& rect) const
+{
+    return renderProgress->isDeterminate() ? determinateProgressValueRectFor(renderProgress, rect) : indeterminateProgressValueRectFor(renderProgress, rect);
+}
+
+#endif
 
 } // namespace WebCore

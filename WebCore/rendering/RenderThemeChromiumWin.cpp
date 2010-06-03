@@ -680,20 +680,9 @@ void RenderThemeChromiumWin::adjustProgressBarStyle(CSSStyleSelector*, RenderSty
 bool RenderThemeChromiumWin::paintProgressBar(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
     RenderProgress* renderProgress = toRenderProgress(o);
-
-    IntRect valueRect;
-    if (renderProgress->isDeterminate()) {
-        int dx = r.width() * renderProgress->position();
-        if (renderProgress->style()->direction() == RTL)
-            valueRect = IntRect(r.x() + r.width() - dx, r.y(), dx, r.height());
-        else
-            valueRect = IntRect(r.x(), r.y(), dx, r.height());
-    } else {
-        // For indeterminate bar, valueRect is ignored and it is computed by the theme engine
-        // because the animation is a platform detail and WebKit doesn't need to know how.
-        valueRect = IntRect(0, 0, 0, 0);
-    }
-
+    // For indeterminate bar, valueRect is ignored and it is computed by the theme engine
+    // because the animation is a platform detail and WebKit doesn't need to know how.
+    IntRect valueRect = renderProgress->isDeterminate() ? determianteProgressValueRectFor(renderProgress, r) : IntRect(0, 0, 0, 0);
     double animatedSeconds = renderProgress->animationStartTime() ?  WTF::currentTime() - renderProgress->animationStartTime() : 0;
     ThemePainter painter(i.context, r);
     ChromiumBridge::paintProgressBar(painter.context(), r, valueRect, renderProgress->isDeterminate(), animatedSeconds);
