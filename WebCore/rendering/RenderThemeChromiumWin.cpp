@@ -682,7 +682,7 @@ bool RenderThemeChromiumWin::paintProgressBar(RenderObject* o, const RenderObjec
     RenderProgress* renderProgress = toRenderProgress(o);
     // For indeterminate bar, valueRect is ignored and it is computed by the theme engine
     // because the animation is a platform detail and WebKit doesn't need to know how.
-    IntRect valueRect = renderProgress->isDeterminate() ? determianteProgressValueRectFor(renderProgress, r) : IntRect(0, 0, 0, 0);
+    IntRect valueRect = renderProgress->isDeterminate() ? determinateProgressValueRectFor(renderProgress, r) : IntRect(0, 0, 0, 0);
     double animatedSeconds = renderProgress->animationStartTime() ?  WTF::currentTime() - renderProgress->animationStartTime() : 0;
     ThemePainter painter(i.context, r);
     ChromiumBridge::paintProgressBar(painter.context(), r, valueRect, renderProgress->isDeterminate(), animatedSeconds);
