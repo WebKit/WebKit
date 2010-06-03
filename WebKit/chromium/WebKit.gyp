@@ -640,14 +640,38 @@
                         },
                     ], # actions
                 }],
-                ['OS=="linux"', {
+                ['OS=="linux" or OS=="freebsd" or OS=="openbsd" or OS=="solaris"', {
                     'copies': [{
                         'destination': '<(PRODUCT_DIR)',
                         'files': [
                             '<(ahem_path)',
                             '../../WebKitTools/DumpRenderTree/chromium/fonts.conf',
-                        ],
+                            '<(INTERMEDIATE_DIR)/repack/DumpRenderTree.pak',
+                        ]
                     }],
+                    'actions': [
+                        {
+                            'action_name': 'test_shell_repack',
+                            'variables': {
+                                'pak_inputs': [
+                                    '<(SHARED_INTERMEDIATE_DIR)/net/net_resources.pak',
+                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_chromium_resources.pak',
+                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_resources.pak',
+                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_strings_en-US.pak',
+                                ],
+                                'repack_path': './tools/data_pack/repack.py',
+                                'pak_path': '<(INTERMEDIATE_DIR)/repack/DumpRenderTree.pak',
+                            },
+                            'inputs': [
+                                '<(repack_path)',
+                                '<@(pak_inputs)',
+                            ],
+                            'outputs': [
+                                '<(pak_path)',
+                            ],
+                            'action': ['python', '<(repack_path)', '<@(_outputs)', '<@(pak_inputs)'],
+                        },
+                    ],
                 }],
                 ['OS!="linux" and OS!="freebsd" and OS!="openbsd"', {
                     'sources/': [
