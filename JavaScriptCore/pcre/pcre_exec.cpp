@@ -427,7 +427,7 @@ static inline void startNewGroup(MatchFrame* currentFrame)
 }
 
 // FIXME: "minimize" means "not greedy", we should invert the callers to ask for "greedy" to be less confusing
-static inline void repeatInformationFromInstructionOffset(short instructionOffset, bool& minimize, int& minimumRepeats, int& maximumRepeats)
+static inline void repeatInformationFromInstructionOffset(int instructionOffset, bool& minimize, int& minimumRepeats, int& maximumRepeats)
 {
     // Instruction offsets are based off of OP_CRSTAR, OP_STAR, OP_TYPESTAR, OP_NOTSTAR
     static const char minimumRepeatsFromInstructionOffset[] = { 0, 0, 1, 1, 0, 0 };

@@ -1,3 +1,13 @@
+2010-06-02  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        <rdar://problem/8054988> Work around an LLVM GCC code generation bug that results in crashes inside PCRE.
+
+        * pcre/pcre_exec.cpp:
+        (repeatInformationFromInstructionOffset): Change the type of instructionOffset to int.  There's no good
+        reason for it to be a short, and using int prevents this code from triggering the LLVM GCC bug.
+
 2010-06-02  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
