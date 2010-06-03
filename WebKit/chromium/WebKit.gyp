@@ -601,6 +601,32 @@
                         'destination': '<(PRODUCT_DIR)',
                         'files': ['<(ahem_path)'],
                     }],
+                },{ # OS!="win"
+                    'sources/': [
+                        ['exclude', 'Win\\.cpp$'],
+                    ],
+                    'actions': [
+                        {
+                            'action_name': 'repack_locale',
+                            'variables': {
+                                'repack_path': '<(chromium_src_dir)/tools/data_pack/repack.py',
+                                'pak_inputs': [
+                                    '<(SHARED_INTERMEDIATE_DIR)/net/net_resources.pak',
+                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_chromium_resources.pak',
+                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_strings_en-US.pak',
+                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_resources.pak',
+                            ]},
+                            'inputs': [
+                                '<(repack_path)',
+                                '<@(pak_inputs)',
+                            ],
+                            'outputs': [
+                                '<(INTERMEDIATE_DIR)/repack/DumpRenderTree.pak',
+                            ],
+                            'action': ['python', '<(repack_path)', '<@(_outputs)', '<@(pak_inputs)'],
+                            'process_outputs_as_mac_bundle_resources': 1,
+                        },
+                    ], # actions
                 }],
                 ['OS=="mac"', {
                     'dependencies': ['LayoutTestHelper'],
@@ -618,27 +644,11 @@
                         '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher900.ttf',
                         '<(SHARED_INTERMEDIATE_DIR)/webkit/textAreaResizeCorner.png',
                     ],
-                    'actions': [
-                        {
-                            'action_name': 'repack_locale',
-                            'variables': {
-                                'repack_path': '<(chromium_src_dir)/tools/data_pack/repack.py',
-                                'pak_inputs': [
-                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_chromium_resources.pak',
-                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_strings_en-US.pak',
-                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_resources.pak',
-                            ]},
-                            'inputs': [
-                                '<(repack_path)',
-                                '<@(pak_inputs)',
-                            ],
-                            'outputs': [
-                                '<(INTERMEDIATE_DIR)/repack/DumpRenderTree.pak',
-                            ],
-                            'action': ['python', '<(repack_path)', '<@(_outputs)', '<@(pak_inputs)'],
-                            'process_outputs_as_mac_bundle_resources': 1,
-                        },
-                    ], # actions
+                },{ # OS!="mac"
+                    'sources/': [
+                        # .mm is already excluded by common.gypi
+                        ['exclude', 'Mac\\.cpp$'],
+                    ]
                 }],
                 ['OS=="linux" or OS=="freebsd" or OS=="openbsd" or OS=="solaris"', {
                     'copies': [{
@@ -649,44 +659,9 @@
                             '<(INTERMEDIATE_DIR)/repack/DumpRenderTree.pak',
                         ]
                     }],
-                    'actions': [
-                        {
-                            'action_name': 'test_shell_repack',
-                            'variables': {
-                                'pak_inputs': [
-                                    '<(SHARED_INTERMEDIATE_DIR)/net/net_resources.pak',
-                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_chromium_resources.pak',
-                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_resources.pak',
-                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_strings_en-US.pak',
-                                ],
-                                'repack_path': '<(chromium_src_dir)/tools/data_pack/repack.py',
-                                'pak_path': '<(INTERMEDIATE_DIR)/repack/DumpRenderTree.pak',
-                            },
-                            'inputs': [
-                                '<(repack_path)',
-                                '<@(pak_inputs)',
-                            ],
-                            'outputs': [
-                                '<(pak_path)',
-                            ],
-                            'action': ['python', '<(repack_path)', '<@(_outputs)', '<@(pak_inputs)'],
-                        },
-                    ],
-                }],
-                ['OS!="linux" and OS!="freebsd" and OS!="openbsd"', {
+                },{ # OS!="linux" and OS!="freebsd" and OS!="openbsd" and OS!="solaris"
                     'sources/': [
                         ['exclude', '(Gtk|Linux)\\.cpp$']
-                    ]
-                }],
-                ['OS!="win"', {
-                    'sources/': [
-                        ['exclude', 'Win\\.cpp$'],
-                    ]
-                }],
-                ['OS!="mac"', {
-                    'sources/': [
-                        # .mm is already excluded by common.gypi
-                        ['exclude', 'Mac\\.cpp$'],
                     ]
                 }],
             ],

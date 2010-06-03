@@ -1,5 +1,14 @@
 2010-06-02  Tony Chang  <tony@chromium.org>
 
+        Reviewed by Kent Tamura.
+
+        [chromium] refactor WebKit.gyp's DRT section so the conditions are less messy
+        https://bugs.webkit.org/show_bug.cgi?id=40104
+
+        * WebKit.gyp:
+
+2010-06-02  Tony Chang  <tony@chromium.org>
+
         Not reviewed, build fix in downstream chromium.
 
         Fix the path to repack.py so it works in a chromium checkout too.
