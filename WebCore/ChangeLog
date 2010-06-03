@@ -1,3 +1,31 @@
+2010-06-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION(60409): document.write is not synchronous when using the HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=40047
+
+        The HTML5 spec states that we should "spin the event loop" while
+        waiting for stylesheets to load.  Currently we do that by yielding
+        out of the parser when stylesheets are loading.  Because it was easy
+        we made inline <scripts> yield for stylesheet loads as well.  However,
+        this caused document.write() to return after encountering the first
+        inline <script> tag in many cases which is incorrect.  document.write
+        is supposed to block until the entire document is parsed (including)
+        executing inline script tags.  To match the exiting parser, we'll just
+        make inline <script> tags not block on stylesheets for now.
+
+        This is tested by WebCore/benchmarks/html-parser.html as well
+        as likely several other tests in LayoutTests which we haven't
+        triaged yet.
+
+        * html/HTML5ScriptRunner.cpp:
+        (WebCore::HTML5ScriptRunner::executeScript):
+         - ASSERT that either stylesheets have loaded or we're executing an
+           inline <script> tag.
+        (WebCore::HTML5ScriptRunner::runScript):
+         - Remove the code to block inline <script> tags on stylesheet loads.
+
 2010-06-02  MORITA Hajime  <morrita@google.com>
 
         Unreviewd, Chromium windows build fix.

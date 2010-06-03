@@ -127,6 +127,10 @@ void HTML5ScriptRunner::executePendingScript()
 
 void HTML5ScriptRunner::executeScript(Element* element, const ScriptSourceCode& sourceCode)
 {
+    // FIXME: We do not block inline <script> tags on stylesheets for now.
+    // When we do,  || !element->hasAttribute(srcAttr) should be removed from
+    // the ASSERT below.  See https://bugs.webkit.org/show_bug.cgi?id=40047
+    ASSERT(m_document->haveStylesheetsLoaded() || !element->hasAttribute(srcAttr));
     ScriptElement* scriptElement = toScriptElement(element);
     ASSERT(scriptElement);
     if (!scriptElement->shouldExecuteAsJavaScript())
@@ -234,10 +238,9 @@ void HTML5ScriptRunner::runScript(Element* script, int startingLineNumber)
     if (script->hasAttribute(srcAttr)) {
         // FIXME: Handle defer and async
         requestScript(script);
-    } else if (!m_document->haveStylesheetsLoaded()) {
-        m_parsingBlockingScript.element = script;
-        m_parsingBlockingScript.startingLineNumber = startingLineNumber;
     } else {
+        // FIXME: We do not block inline <script> tags on stylesheets to match the
+        // old parser for now.  See https://bugs.webkit.org/show_bug.cgi?id=40047
         ScriptSourceCode sourceCode(script->textContent(), documentURLForScriptExecution(m_document), startingLineNumber);
         executeScript(script, sourceCode);
     }
