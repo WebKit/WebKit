@@ -1025,7 +1025,7 @@ InjectedScript._className = function(obj)
     // V8
     if (typeof obj !== "object")
         return "null";
-    return obj.constructor.name;
+    return obj.constructor.name || "Object";
 }
 
 InjectedScript._escapeCharacters = function(str, chars)

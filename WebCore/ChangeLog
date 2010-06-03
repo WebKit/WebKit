@@ -1,3 +1,13 @@
+2010-06-03  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [v8] Web Inspector: show "Object" as description for values with anonymous constructor
+        https://bugs.webkit.org/show_bug.cgi?id=40121
+
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor):
+
 2010-06-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

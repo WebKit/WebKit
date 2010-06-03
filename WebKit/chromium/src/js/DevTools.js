@@ -296,6 +296,21 @@ InjectedScriptAccess.prototype.getCompletions = function(expressionString, inclu
 };
 })();
 
+// Highlight extension content scripts in the scripts list.
+(function () {
+    var original = WebInspector.ScriptsPanel.prototype._addScriptToFilesMenu;
+    WebInspector.ScriptsPanel.prototype._addScriptToFilesMenu = function(script)
+    {
+        var result = original.apply(this, arguments);
+        var debuggerAgent = devtools.tools.getDebuggerAgent();
+        var type = debuggerAgent.getScriptContextType(script.sourceID);
+        var option = script.filesSelectOption;
+        if (type === "injected" && option)
+            option.addStyleClass("injected");
+        return result;
+    };
+})();
+
 }
 
 
@@ -345,22 +360,6 @@ WebInspector.UIString = function(string)
         var resource = this.resources[identifier];
         if (resource && resource.mainResource && resource.finished)
             document.title = WebInspector.UIString("Developer Tools - %s", resource.url);
-    };
-})();
-
-
-// Highlight extension content scripts in the scripts list.
-(function () {
-    var original = WebInspector.ScriptsPanel.prototype._addScriptToFilesMenu;
-    WebInspector.ScriptsPanel.prototype._addScriptToFilesMenu = function(script)
-    {
-        var result = original.apply(this, arguments);
-        var debuggerAgent = devtools.tools.getDebuggerAgent();
-        var type = debuggerAgent.getScriptContextType(script.sourceID);
-        var option = script.filesSelectOption;
-        if (type === "injected" && option)
-            option.addStyleClass("injected");
-        return result;
     };
 })();
 
