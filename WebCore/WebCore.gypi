@@ -2984,7 +2984,7 @@
             'plugins/gtk/xembed.h',
             'plugins/mac/PluginDataMac.mm',
             'plugins/mac/PluginPackageMac.cpp',
-            'plugins/mac/PluginViewMac.cpp',
+            'plugins/mac/PluginViewMac.mm',
             'plugins/qt/PluginDataQt.cpp',
             'plugins/qt/PluginPackageQt.cpp',
             'plugins/qt/PluginViewQt.cpp',

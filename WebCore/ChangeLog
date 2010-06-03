@@ -1,3 +1,21 @@
+2010-06-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix NPAPI support on Mac OS X/Cocoa-32
+
+        qt_mac_window_for() returns a NSWindow on Cocoa, so we were
+        passing in a NSWindow instead of a WindowRef as part of the
+        NP_CGContext.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38762
+
+        * WebCore.gypi: Reflect rename
+        * WebCore.pro: Reflect rename
+        * plugins/mac/PluginViewMac.cpp: Renamed to PluginViewMac.mm
+        and fix bug by getting the Carbon windowRef from the NSWindow.
+        * wscript: Reflect rename
+
 2010-06-03  Kim Grönholm  <kim.1.gronholm@nokia.com>
 
         Reviewed by Simon Hausmann.

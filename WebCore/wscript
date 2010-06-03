@@ -69,7 +69,7 @@ if build_port == "wx":
                'platform/wx/wxcode/mac/carbon/fontprops.mm',
                'plugins/wx/PluginDataWx.cpp',
                'plugins/mac/PluginPackageMac.cpp',
-               'plugins/mac/PluginViewMac.cpp'
+               'plugins/mac/PluginViewMac.mm'
         ]
     else:
         webcore_sources['wx-gtk'] = [
