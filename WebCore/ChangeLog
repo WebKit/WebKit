@@ -1,3 +1,24 @@
+2010-06-03  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Take container's scroll offset and clip into account when initializing LayoutState
+        https://bugs.webkit.org/show_bug.cgi?id=38506
+
+        When doing a subtree layout, the initial LayoutState creation needs to
+        take the layout root container's offset and its scroll offset into account
+        to create the initial offset.  Otherwise if a subtree layout occurs
+        for a layout root whose container has a non-zero scroll offset
+        the LayoutState's offset and clip are wrong, resulting in a mispaint.
+        See the test cases for examples.
+
+        Tests: fast/repaint/layout-state-scrolloffset.html
+               fast/repaint/layout-state-scrolloffset2.html
+               fast/repaint/layout-state-scrolloffset3.html
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+
 2010-06-03  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (speculative Qt build fix II).

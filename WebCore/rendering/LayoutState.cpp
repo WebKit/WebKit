@@ -90,6 +90,13 @@ LayoutState::LayoutState(RenderObject* root)
     RenderObject* container = root->container();
     FloatPoint absContentPoint = container->localToAbsolute(FloatPoint(), false, true);
     m_offset = IntSize(absContentPoint.x(), absContentPoint.y());
+
+    if (container->hasOverflowClip()) {
+        RenderLayer* layer = toRenderBoxModelObject(container)->layer();
+        m_clipped = true;
+        m_clipRect = IntRect(toPoint(m_offset), layer->size());
+        m_offset -= layer->scrolledContentOffset();
+    }
 }
 
 #ifndef NDEBUG

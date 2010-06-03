@@ -1,3 +1,36 @@
+2010-06-03  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Dan Bernstein.
+ 
+        Tests repainting a layout subtree with scroll offsets
+        https://bugs.webkit.org/show_bug.cgi?id=38506
+ 
+        Has to be run as a pixel test to be useful.
+        - layout-state-scrolloffset.html tests the layout root having a non-zero scroll offset.
+        - layout-state-scrolloffset2.html tests the layout root and its container having
+             non-zero scroll offsets.
+        - layout-state-scrolloffset3.html tests the layout root having non-zero a scroll offset
+             and clipping its descendants.
+
+        * fast/repaint/layout-state-scrolloffset.html: Added.
+        * fast/repaint/layout-state-scrolloffset2.html: Added.
+        * fast/repaint/layout-state-scrolloffset3.html: Added.
+        * platform/mac/fast/repaint/layout-state-scrolloffset-expected.checksum: Added.
+        * platform/mac/fast/repaint/layout-state-scrolloffset-expected.png: Added.
+        * platform/mac/fast/repaint/layout-state-scrolloffset-expected.txt: Added.
+        * platform/mac/fast/repaint/layout-state-scrolloffset2-expected.checksum: Added.
+        * platform/mac/fast/repaint/layout-state-scrolloffset2-expected.png: Added.
+        * platform/mac/fast/repaint/layout-state-scrolloffset2-expected.txt: Added.
+        * platform/mac/fast/repaint/layout-state-scrolloffset3-expected.checksum: Added.
+        * platform/mac/fast/repaint/layout-state-scrolloffset3-expected.png: Added.
+        * platform/mac/fast/repaint/layout-state-scrolloffset3-expected.txt: Added.
+        * platform/mac-leopard/fast/repaint/layout-state-scrolloffset-expected.checksum: Added.
+        * platform/mac-leopard/fast/repaint/layout-state-scrolloffset-expected.png: Added.
+        * platform/mac-leopard/fast/repaint/layout-state-scrolloffset2-expected.checksum: Added.
+        * platform/mac-leopard/fast/repaint/layout-state-scrolloffset2-expected.png: Added.
+        * platform/mac-leopard/fast/repaint/layout-state-scrolloffset3-expected.checksum: Added.
+        * platform/mac-leopard/fast/repaint/layout-state-scrolloffset3-expected.png: Added.
+
 2010-06-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Simon Hausmann.
