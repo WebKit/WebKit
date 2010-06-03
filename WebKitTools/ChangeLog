@@ -1,3 +1,19 @@
+2010-06-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: a number of fixes that make InspectorController
+        happy with null redirects.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40109
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (runTest):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (runTest):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest):
+
 2010-06-02  Tasuku Suzuki  <tasuku.suzuki@nokia.com>
 
         Reviewed by Shinichiro Hamaji.

@@ -535,8 +535,10 @@ static void runTest(const string& testPathOrURL)
     gtk_main();
 
     // If developer extras enabled Web Inspector may have been open by the test.
-    if (shouldEnableDeveloperExtras(pathOrURL.c_str()))
+    if (shouldEnableDeveloperExtras(pathOrURL.c_str())) {
         gLayoutTestController->closeWebInspector();
+        gLayoutTestController->setDeveloperExtrasEnabled(false);
+    }
 
     // Also check if we still have opened webViews and free them.
     if (gLayoutTestController->closeRemainingWindowsWhenComplete() || webViewList) {

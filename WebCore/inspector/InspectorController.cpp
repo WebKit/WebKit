@@ -875,6 +875,9 @@ bool InspectorController::isMainResourceLoader(DocumentLoader* loader, const KUR
 
 void InspectorController::willSendRequest(unsigned long identifier, const ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
+    if (!enabled())
+        return;
+
     bool isMainResource = (m_mainResource && m_mainResource->identifier() == identifier);
     if (m_timelineAgent)
         m_timelineAgent->willSendResourceRequest(identifier, isMainResource, request);
@@ -884,20 +887,24 @@ void InspectorController::willSendRequest(unsigned long identifier, const Resour
         return;
 
     if (!redirectResponse.isNull()) {
-        resource->markResponseReceivedTime();
-        resource->endTiming();
-        resource->updateResponse(redirectResponse);
+        // Redirect may have empty URL and we'd like to not crash with invalid HashMap entry.
+        // See http/tests/misc/will-send-request-returns-null-on-redirect.html
+        if (!request.url().isEmpty()) {
+            resource->markResponseReceivedTime();
+            resource->endTiming();
+            resource->updateResponse(redirectResponse);
 
-        // We always store last redirect by the original id key. Rest of the redirects are stored within the last one.
-        unsigned long id = m_inspectedPage->progress()->createUniqueIdentifier();
-        RefPtr<InspectorResource> withRedirect = resource->appendRedirect(id, request.url());
-        removeResource(resource.get());
-        addResource(withRedirect.get());
-        if (isMainResource) {
-            m_mainResource = withRedirect;
-            withRedirect->markMainResource();
+            // We always store last redirect by the original id key. Rest of the redirects are stored within the last one.
+            unsigned long id = m_inspectedPage->progress()->createUniqueIdentifier();
+            RefPtr<InspectorResource> withRedirect = resource->appendRedirect(id, request.url());
+            removeResource(resource.get());
+            addResource(withRedirect.get());
+            if (isMainResource) {
+                m_mainResource = withRedirect;
+                withRedirect->markMainResource();
+            }
+            resource = withRedirect;
         }
-        resource = withRedirect;
     }
 
     resource->startTiming();
@@ -909,6 +916,9 @@ void InspectorController::willSendRequest(unsigned long identifier, const Resour
 
 void InspectorController::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
 {
+    if (!enabled())
+        return;
+
     if (RefPtr<InspectorResource> resource = getTrackedResource(identifier)) {
         resource->updateResponse(response);
         resource->markResponseReceivedTime();
@@ -926,6 +936,9 @@ void InspectorController::didReceiveResponse(unsigned long identifier, const Res
 
 void InspectorController::didReceiveContentLength(unsigned long identifier, int lengthReceived)
 {
+    if (!enabled())
+        return;
+
     RefPtr<InspectorResource> resource = getTrackedResource(identifier);
     if (!resource)
         return;
@@ -938,6 +951,9 @@ void InspectorController::didReceiveContentLength(unsigned long identifier, int 
 
 void InspectorController::didFinishLoading(unsigned long identifier)
 {
+    if (!enabled())
+        return;
+
     if (m_timelineAgent)
         m_timelineAgent->didFinishLoadingResource(identifier, false);
 
@@ -954,6 +970,9 @@ void InspectorController::didFinishLoading(unsigned long identifier)
 
 void InspectorController::didFailLoading(unsigned long identifier, const ResourceError& error)
 {
+    if (!enabled())
+        return;
+
     if (m_timelineAgent)
         m_timelineAgent->didFinishLoadingResource(identifier, true);
 

@@ -70,6 +70,22 @@
 
 2010-06-03  Pavel Feldman  <pfeldman@chromium.org>
 
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: a number of fixes that make InspectorController
+        happy with null redirects.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40109
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::willSendRequest):
+        (WebCore::InspectorController::didReceiveResponse):
+        (WebCore::InspectorController::didReceiveContentLength):
+        (WebCore::InspectorController::didFinishLoading):
+        (WebCore::InspectorController::didFailLoading):
+
+2010-06-03  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed. Rolling out aggressive cache part of the r60391
         described in the bug below. It was orthogonal to the rest of
         the patch and caused regression.
