@@ -54,9 +54,9 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(DateConstructor);
 
-static JSValue JSC_HOST_CALL dateParse(ExecState*);
-static JSValue JSC_HOST_CALL dateNow(ExecState*);
-static JSValue JSC_HOST_CALL dateUTC(ExecState*);
+static EncodedJSValue JSC_HOST_CALL dateParse(ExecState*);
+static EncodedJSValue JSC_HOST_CALL dateNow(ExecState*);
+static EncodedJSValue JSC_HOST_CALL dateUTC(ExecState*);
 
 DateConstructor::DateConstructor(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, Structure* prototypeFunctionStructure, DatePrototype* datePrototype)
     : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, datePrototype->classInfo()->className))
@@ -128,7 +128,7 @@ ConstructType DateConstructor::getConstructData(ConstructData& constructData)
 }
 
 // ECMA 15.9.2
-static JSValue JSC_HOST_CALL callDate(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callDate(ExecState* exec)
 {
     time_t localTime = time(0);
     tm localTM;
@@ -138,7 +138,7 @@ static JSValue JSC_HOST_CALL callDate(ExecState* exec)
     DateConversionBuffer time;
     formatDate(ts, date);
     formatTime(ts, time);
-    return jsMakeNontrivialString(exec, date, " ", time);
+    return JSValue::encode(jsMakeNontrivialString(exec, date, " ", time));
 }
 
 CallType DateConstructor::getCallData(CallData& callData)
@@ -147,17 +147,17 @@ CallType DateConstructor::getCallData(CallData& callData)
     return CallTypeHost;
 }
 
-static JSValue JSC_HOST_CALL dateParse(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL dateParse(ExecState* exec)
 {
-    return jsNumber(exec, parseDate(exec, exec->argument(0).toString(exec)));
+    return JSValue::encode(jsNumber(exec, parseDate(exec, exec->argument(0).toString(exec))));
 }
 
-static JSValue JSC_HOST_CALL dateNow(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL dateNow(ExecState* exec)
 {
-    return jsNumber(exec, jsCurrentTime());
+    return JSValue::encode(jsNumber(exec, jsCurrentTime()));
 }
 
-static JSValue JSC_HOST_CALL dateUTC(ExecState* exec) 
+static EncodedJSValue JSC_HOST_CALL dateUTC(ExecState* exec) 
 {
     int n = exec->argumentCount();
     if (isnan(exec->argument(0).toNumber(exec))
@@ -167,7 +167,7 @@ static JSValue JSC_HOST_CALL dateUTC(ExecState* exec)
             || (n >= 5 && isnan(exec->argument(4).toNumber(exec)))
             || (n >= 6 && isnan(exec->argument(5).toNumber(exec)))
             || (n >= 7 && isnan(exec->argument(6).toNumber(exec))))
-        return jsNaN(exec);
+        return JSValue::encode(jsNaN(exec));
 
     GregorianDateTime t;
     int year = exec->argument(0).toInt32(exec);
@@ -178,7 +178,7 @@ static JSValue JSC_HOST_CALL dateUTC(ExecState* exec)
     t.minute = exec->argument(4).toInt32(exec);
     t.second = exec->argument(5).toInt32(exec);
     double ms = (n >= 7) ? exec->argument(6).toNumber(exec) : 0;
-    return jsNumber(exec, timeClip(gregorianDateTimeToMS(exec, t, ms, true)));
+    return JSValue::encode(jsNumber(exec, timeClip(gregorianDateTimeToMS(exec, t, ms, true))));
 }
 
 } // namespace JSC

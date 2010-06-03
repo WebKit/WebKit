@@ -34,6 +34,7 @@
 #include "JSNodeList.h"
 #include "Node.h"
 #include "StaticNodeList.h"
+#include <runtime/JSValue.h>
 #include <wtf/Vector.h>
 
 using namespace JSC;
@@ -58,10 +59,10 @@ static JSValue getNamedItems(ExecState* exec, JSHTMLAllCollection* collection, c
 
 // HTMLCollections are strange objects, they support both get and call,
 // so that document.forms.item(0) and document.forms(0) both work.
-static JSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
-        return jsUndefined();
+        return JSValue::encode(jsUndefined());
 
     // Do not use thisObj here. It can be the JSHTMLDocument, in the document.forms(i) case.
     JSHTMLAllCollection* jsCollection = static_cast<JSHTMLAllCollection*>(exec->callee());
@@ -75,10 +76,10 @@ static JSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
         UString string = exec->argument(0).toString(exec);
         unsigned index = string.toUInt32(&ok, false);
         if (ok)
-            return toJS(exec, jsCollection->globalObject(), collection->item(index));
+            return JSValue::encode(toJS(exec, jsCollection->globalObject(), collection->item(index)));
 
         // Support for document.images('<name>') etc.
-        return getNamedItems(exec, jsCollection, Identifier(exec, string));
+        return JSValue::encode(getNamedItems(exec, jsCollection, Identifier(exec, string)));
     }
 
     // The second arg, if set, is the index of the item we want
@@ -90,13 +91,13 @@ static JSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
         Node* node = collection->namedItem(pstr);
         while (node) {
             if (!index)
-                return toJS(exec, jsCollection->globalObject(), node);
+                return JSValue::encode(toJS(exec, jsCollection->globalObject(), node));
             node = collection->nextNamedItem(pstr);
             --index;
         }
     }
 
-    return jsUndefined();
+    return JSValue::encode(jsUndefined());
 }
 
 CallType JSHTMLAllCollection::getCallData(CallData& callData)

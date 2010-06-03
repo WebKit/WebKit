@@ -29,6 +29,7 @@
 #ifndef JITStubs_h
 #define JITStubs_h
 
+#include "CallData.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Register.h"
 #include "ThunkGenerators.h"

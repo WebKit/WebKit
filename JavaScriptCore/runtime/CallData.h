@@ -29,6 +29,7 @@
 #ifndef CallData_h
 #define CallData_h
 
+#include "JSValue.h"
 #include "NativeFunctionWrapper.h"
 
 namespace JSC {
@@ -37,7 +38,6 @@ namespace JSC {
     class ExecState;
     class FunctionExecutable;
     class JSObject;
-    class JSValue;
     class ScopeChainNode;
 
     enum CallType {
@@ -46,7 +46,7 @@ namespace JSC {
         CallTypeJS
     };
 
-    typedef JSValue (JSC_HOST_CALL *NativeFunction)(ExecState*);
+    typedef EncodedJSValue (JSC_HOST_CALL *NativeFunction)(ExecState*);
 
     union CallData {
         struct {

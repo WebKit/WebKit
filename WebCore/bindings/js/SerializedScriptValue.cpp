@@ -575,7 +575,7 @@ struct SerializingTreeWalker : public BaseWalker {
                 return SerializedScriptValueData(toImageData(obj));
                 
             CallData unusedData;
-            if (value.getCallData(unusedData) == CallTypeNone)
+            if (getCallData(value, unusedData) == CallTypeNone)
                 return SerializedScriptValueData();
         }
         // Any other types are expected to serialize as null.

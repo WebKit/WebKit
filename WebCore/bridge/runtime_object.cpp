@@ -253,14 +253,14 @@ JSValue RuntimeObject::defaultValue(ExecState* exec, PreferredPrimitiveType hint
     return result;
 }
 
-static JSValue JSC_HOST_CALL callRuntimeObject(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callRuntimeObject(ExecState* exec)
 {
     ASSERT(exec->callee()->inherits(&RuntimeObject::s_info));
     RefPtr<Instance> instance(static_cast<RuntimeObject*>(exec->callee())->getInternalInstance());
     instance->begin();
     JSValue result = instance->invokeDefaultMethod(exec);
     instance->end();
-    return result;
+    return JSValue::encode(result);
 }
 
 CallType RuntimeObject::getCallData(CallData& callData)

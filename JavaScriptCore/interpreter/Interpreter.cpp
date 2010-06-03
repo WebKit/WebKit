@@ -785,7 +785,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     JSValue result;
     {
         SamplingTool::HostCallRecord callRecord(m_sampler.get());
-        result = callData.native.function(newCallFrame);
+        result = JSValue::decode(callData.native.function(newCallFrame));
     }
 
     if (*profiler)

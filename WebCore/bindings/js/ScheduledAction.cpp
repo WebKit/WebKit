@@ -51,7 +51,7 @@ PassOwnPtr<ScheduledAction> ScheduledAction::create(ExecState* exec, DOMWrapperW
 {
     JSValue v = exec->argument(0);
     CallData callData;
-    if (v.getCallData(callData) == CallTypeNone) {
+    if (getCallData(v, callData) == CallTypeNone) {
         UString string = v.toString(exec);
         if (exec->hadException())
             return 0;
@@ -91,7 +91,7 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
     JSLock lock(SilenceAssertionsOnly);
 
     CallData callData;
-    CallType callType = m_function.get().getCallData(callData);
+    CallType callType = getCallData(m_function.get(), callData);
     if (callType == CallTypeNone)
         return;
 

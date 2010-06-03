@@ -143,7 +143,7 @@ ScriptValue ScriptFunctionCall::call(bool& hadException, bool reportExceptions)
     }
 
     CallData callData;
-    CallType callType = function.getCallData(callData);
+    CallType callType = getCallData(function, callData);
     if (callType == CallTypeNone)
         return ScriptValue();
 

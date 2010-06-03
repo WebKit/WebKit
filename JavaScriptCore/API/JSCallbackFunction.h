@@ -48,7 +48,7 @@ private:
     virtual CallType getCallData(CallData&);
     virtual const ClassInfo* classInfo() const { return &info; }
 
-    static JSValue JSC_HOST_CALL call(ExecState*);
+    static EncodedJSValue JSC_HOST_CALL call(ExecState*);
 
     JSObjectCallAsFunctionCallback m_callback;
 };

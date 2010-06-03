@@ -215,11 +215,11 @@ void ObjcFallbackObjectImp::put(ExecState*, const Identifier&, JSValue, PutPrope
 {
 }
 
-static JSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     if (!thisValue.inherits(&ObjCRuntimeObject::s_info))
-        return throwError(exec, TypeError);
+        return JSValue::encode(throwError(exec, TypeError));
 
     JSValue result = jsUndefined();
 
@@ -227,7 +227,7 @@ static JSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec)
     ObjcInstance* objcInstance = runtimeObject->getInternalObjCInstance();
 
     if (!objcInstance)
-        return RuntimeObject::throwInvalidAccessError(exec);
+        return JSValue::encode(RuntimeObject::throwInvalidAccessError(exec));
     
     objcInstance->begin();
 
@@ -244,7 +244,7 @@ static JSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec)
             
     objcInstance->end();
 
-    return result;
+    return JSValue::encode(result);
 }
 
 CallType ObjcFallbackObjectImp::getCallData(CallData& callData)

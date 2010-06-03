@@ -23,6 +23,8 @@
 #ifndef JSCell_h
 #define JSCell_h
 
+#include "CallData.h"
+#include "ConstructData.h"
 #include "Collector.h"
 #include "JSImmediate.h"
 #include "JSValue.h"
@@ -205,17 +207,17 @@ namespace JSC {
         return isCell() ? asCell()->getObject() : 0;
     }
 
-    inline CallType JSValue::getCallData(CallData& callData)
+    inline CallType getCallData(JSValue value, CallData& callData)
     {
-        CallType result = isCell() ? asCell()->getCallData(callData) : CallTypeNone;
-        ASSERT(result == CallTypeNone || isValidCallee());
+        CallType result = value.isCell() ? asCell(value)->getCallData(callData) : CallTypeNone;
+        ASSERT(result == CallTypeNone || value.isValidCallee());
         return result;
     }
 
-    inline ConstructType JSValue::getConstructData(ConstructData& constructData)
+    inline ConstructType getConstructData(JSValue value, ConstructData& constructData)
     {
-        ConstructType result = isCell() ? asCell()->getConstructData(constructData) : ConstructTypeNone;
-        ASSERT(result == ConstructTypeNone || isValidCallee());
+        ConstructType result = value.isCell() ? asCell(value)->getConstructData(constructData) : ConstructTypeNone;
+        ASSERT(result == ConstructTypeNone || value.isValidCallee());
         return result;
     }
 

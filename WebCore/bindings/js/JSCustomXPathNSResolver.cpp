@@ -73,7 +73,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
         
     JSValue function = m_customResolver->get(exec, Identifier(exec, "lookupNamespaceURI"));
     CallData callData;
-    CallType callType = function.getCallData(callData);
+    CallType callType = getCallData(function, callData);
     if (callType == CallTypeNone) {
         callType = m_customResolver->getCallData(callData);
         if (callType == CallTypeNone) {

@@ -294,7 +294,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
     JSValue function = [self _imp]->get(exec, Identifier(exec, stringToUString(String(name))));
     CallData callData;
-    CallType callType = function.getCallData(callData);
+    CallType callType = getCallData(function, callData);
     if (callType == CallTypeNone)
         return nil;
 

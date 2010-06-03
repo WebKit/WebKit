@@ -57,10 +57,10 @@ ConstructType ErrorConstructor::getConstructData(ConstructData& constructData)
     return ConstructTypeHost;
 }
 
-static JSValue JSC_HOST_CALL callErrorConstructor(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callErrorConstructor(ExecState* exec)
 {
     ArgList args(exec);
-    return constructError(exec, args);
+    return JSValue::encode(constructError(exec, args));
 }
 
 CallType ErrorConstructor::getCallData(CallData& callData)

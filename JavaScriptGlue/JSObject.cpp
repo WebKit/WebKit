@@ -73,10 +73,10 @@ void JSUserObject::SetProperty(CFStringRef propertyName, JSUserObject* value)
 
 }
 
-static JSValue JSC_HOST_CALL nativeCallFunction(ExecState* exec);
-static JSValue  nativeCallFunction(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL nativeCallFunction(ExecState* exec);
+static EncodedJSValue nativeCallFunction(ExecState* exec)
 {
-    return static_cast<UserObjectImp*>(exec->callee())->callAsFunction(exec);
+    return JSValue::encode(static_cast<UserObjectImp*>(exec->callee())->callAsFunction(exec));
 }
 
 CallType JSUserObject::getCallData(CallData& callData)

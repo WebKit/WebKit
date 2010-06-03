@@ -32,8 +32,8 @@ namespace JSC {
 ASSERT_CLASS_FITS_IN_CELL(BooleanPrototype);
 
 // Functions
-static JSValue JSC_HOST_CALL booleanProtoFuncToString(ExecState*);
-static JSValue JSC_HOST_CALL booleanProtoFuncValueOf(ExecState*);
+static EncodedJSValue JSC_HOST_CALL booleanProtoFuncToString(ExecState*);
+static EncodedJSValue JSC_HOST_CALL booleanProtoFuncValueOf(ExecState*);
 
 // ECMA 15.6.4
 
@@ -51,35 +51,35 @@ BooleanPrototype::BooleanPrototype(ExecState* exec, JSGlobalObject* globalObject
 
 // ECMA 15.6.4.2 + 15.6.4.3
 
-JSValue JSC_HOST_CALL booleanProtoFuncToString(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL booleanProtoFuncToString(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     if (thisValue == jsBoolean(false))
-        return jsNontrivialString(exec, "false");
+        return JSValue::encode(jsNontrivialString(exec, "false"));
 
     if (thisValue == jsBoolean(true))
-        return jsNontrivialString(exec, "true");
+        return JSValue::encode(jsNontrivialString(exec, "true"));
 
     if (!thisValue.inherits(&BooleanObject::info))
-        return throwError(exec, TypeError);
+        return JSValue::encode(throwError(exec, TypeError));
 
     if (asBooleanObject(thisValue)->internalValue() == jsBoolean(false))
-        return jsNontrivialString(exec, "false");
+        return JSValue::encode(jsNontrivialString(exec, "false"));
 
     ASSERT(asBooleanObject(thisValue)->internalValue() == jsBoolean(true));
-    return jsNontrivialString(exec, "true");
+    return JSValue::encode(jsNontrivialString(exec, "true"));
 }
 
-JSValue JSC_HOST_CALL booleanProtoFuncValueOf(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL booleanProtoFuncValueOf(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     if (thisValue.isBoolean())
-        return thisValue;
+        return JSValue::encode(thisValue);
 
     if (!thisValue.inherits(&BooleanObject::info))
-        return throwError(exec, TypeError);
+        return JSValue::encode(throwError(exec, TypeError));
 
-    return asBooleanObject(thisValue)->internalValue();
+    return JSValue::encode(asBooleanObject(thisValue)->internalValue());
 }
 
 } // namespace JSC

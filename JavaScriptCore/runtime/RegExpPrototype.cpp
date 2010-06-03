@@ -38,10 +38,10 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(RegExpPrototype);
 
-static JSValue JSC_HOST_CALL regExpProtoFuncTest(ExecState*);
-static JSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState*);
-static JSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState*);
-static JSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState*);
+static EncodedJSValue JSC_HOST_CALL regExpProtoFuncTest(ExecState*);
+static EncodedJSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState*);
+static EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState*);
+static EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState*);
 
 // ECMA 15.10.5
 
@@ -57,28 +57,28 @@ RegExpPrototype::RegExpPrototype(ExecState* exec, JSGlobalObject* globalObject, 
 }
 
 // ------------------------------ Functions ---------------------------
-    
-JSValue JSC_HOST_CALL regExpProtoFuncTest(ExecState* exec)
+
+EncodedJSValue JSC_HOST_CALL regExpProtoFuncTest(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     if (!thisValue.inherits(&RegExpObject::info))
-        return throwError(exec, TypeError);
-    return asRegExpObject(thisValue)->test(exec);
+        return JSValue::encode(throwError(exec, TypeError));
+    return JSValue::encode(asRegExpObject(thisValue)->test(exec));
 }
 
-JSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     if (!thisValue.inherits(&RegExpObject::info))
-        return throwError(exec, TypeError);
-    return asRegExpObject(thisValue)->exec(exec);
+        return JSValue::encode(throwError(exec, TypeError));
+    return JSValue::encode(asRegExpObject(thisValue)->exec(exec));
 }
 
-JSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     if (!thisValue.inherits(&RegExpObject::info))
-        return throwError(exec, TypeError);
+        return JSValue::encode(throwError(exec, TypeError));
 
     RefPtr<RegExp> regExp;
     JSValue arg0 = exec->argument(0);
@@ -86,7 +86,7 @@ JSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
     
     if (arg0.inherits(&RegExpObject::info)) {
         if (!arg1.isUndefined())
-            return throwError(exec, TypeError, "Cannot supply flags when constructing one RegExp from another.");
+            return JSValue::encode(throwError(exec, TypeError, "Cannot supply flags when constructing one RegExp from another."));
         regExp = asRegExpObject(arg0)->regExp();
     } else {
         UString pattern = !exec->argumentCount() ? UString("") : arg0.toString(exec);
@@ -95,20 +95,20 @@ JSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
     }
 
     if (!regExp->isValid())
-        return throwError(exec, SyntaxError, makeString("Invalid regular expression: ", regExp->errorMessage()));
+        return JSValue::encode(throwError(exec, SyntaxError, makeString("Invalid regular expression: ", regExp->errorMessage())));
 
     asRegExpObject(thisValue)->setRegExp(regExp.release());
     asRegExpObject(thisValue)->setLastIndex(0);
-    return jsUndefined();
+    return JSValue::encode(jsUndefined());
 }
 
-JSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     if (!thisValue.inherits(&RegExpObject::info)) {
         if (thisValue.inherits(&RegExpPrototype::info))
-            return jsNontrivialString(exec, "//");
-        return throwError(exec, TypeError);
+            return JSValue::encode(jsNontrivialString(exec, "//"));
+        return JSValue::encode(throwError(exec, TypeError));
     }
 
     char postfix[5] = { '/', 0, 0, 0, 0 };
@@ -121,7 +121,7 @@ JSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
         postfix[index] = 'm';
     UString source = asRegExpObject(thisValue)->get(exec, exec->propertyNames().source).toString(exec);
     // If source is empty, use "/(?:)/" to avoid colliding with comment syntax
-    return jsMakeNontrivialString(exec, "/", source.size() ? source : UString("(?:)"), postfix);
+    return JSValue::encode(jsMakeNontrivialString(exec, "/", source.size() ? source : UString("(?:)"), postfix));
 }
 
 } // namespace JSC

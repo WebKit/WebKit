@@ -105,13 +105,13 @@ bool runtimeObjectCustomPut(ExecState* exec, const Identifier& propertyName, JSV
     return true;
 }
 
-static JSValue JSC_HOST_CALL callPlugin(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callPlugin(ExecState* exec)
 {
     Instance* instance = pluginInstance(static_cast<JSHTMLElement*>(exec->callee())->impl());
     instance->begin();
     JSValue result = instance->invokeDefaultMethod(exec);
     instance->end();
-    return result;
+    return JSValue::encode(result);
 }
 
 CallType runtimeObjectGetCallData(HTMLElement* element, CallData& callData)

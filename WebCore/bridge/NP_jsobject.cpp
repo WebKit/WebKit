@@ -183,7 +183,7 @@ bool _NPN_InvokeDefault(NPP, NPObject* o, const NPVariant* args, uint32_t argCou
         // Call the function object.
         JSValue function = obj->imp;
         CallData callData;
-        CallType callType = function.getCallData(callData);
+        CallType callType = getCallData(function, callData);
         if (callType == CallTypeNone)
             return false;
         
@@ -232,7 +232,7 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
         JSLock lock(SilenceAssertionsOnly);
         JSValue function = obj->imp->get(exec, identifierFromNPIdentifier(exec, i->string()));
         CallData callData;
-        CallType callType = function.getCallData(callData);
+        CallType callType = getCallData(function, callData);
         if (callType == CallTypeNone)
             return false;
 
@@ -507,7 +507,7 @@ bool _NPN_Construct(NPP, NPObject* o, const NPVariant* args, uint32_t argCount, 
         // Call the constructor object.
         JSValue constructor = obj->imp;
         ConstructData constructData;
-        ConstructType constructType = constructor.getConstructData(constructData);
+        ConstructType constructType = getConstructData(constructor, constructData);
         if (constructType == ConstructTypeNone)
             return false;
         

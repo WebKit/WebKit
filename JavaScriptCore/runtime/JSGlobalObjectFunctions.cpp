@@ -272,84 +272,84 @@ static double parseFloat(const UString& s)
     return s.toDouble(true /*tolerant*/, false /* NaN for empty string */);
 }
 
-JSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
 {
     JSObject* thisObject = exec->hostThisValue().toThisObject(exec);
     JSObject* unwrappedObject = thisObject->unwrappedObject();
     if (!unwrappedObject->isGlobalObject() || static_cast<JSGlobalObject*>(unwrappedObject)->evalFunction() != exec->callee())
-        return throwError(exec, EvalError, "The \"this\" value passed to eval must be the global object from which eval originated");
+        return JSValue::encode(throwError(exec, EvalError, "The \"this\" value passed to eval must be the global object from which eval originated"));
 
     JSValue x = exec->argument(0);
     if (!x.isString())
-        return x;
+        return JSValue::encode(x);
 
     UString s = x.toString(exec);
 
     LiteralParser preparser(exec, s, LiteralParser::NonStrictJSON);
     if (JSValue parsedObject = preparser.tryLiteralParse())
-        return parsedObject;
+        return JSValue::encode(parsedObject);
 
     RefPtr<EvalExecutable> eval = EvalExecutable::create(exec, makeSource(s));
     JSObject* error = eval->compile(exec, static_cast<JSGlobalObject*>(unwrappedObject)->globalScopeChain().node());
     if (error)
-        return throwError(exec, error);
+        return JSValue::encode(throwError(exec, error));
 
-    return exec->interpreter()->execute(eval.get(), exec, thisObject, static_cast<JSGlobalObject*>(unwrappedObject)->globalScopeChain().node(), exec->exceptionSlot());
+    return JSValue::encode(exec->interpreter()->execute(eval.get(), exec, thisObject, static_cast<JSGlobalObject*>(unwrappedObject)->globalScopeChain().node(), exec->exceptionSlot()));
 }
 
-JSValue JSC_HOST_CALL globalFuncParseInt(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState* exec)
 {
     JSValue value = exec->argument(0);
     int32_t radix = exec->argument(1).toInt32(exec);
 
     if (radix != 0 && radix != 10)
-        return jsNumber(exec, parseInt(value.toString(exec), radix));
+        return JSValue::encode(jsNumber(exec, parseInt(value.toString(exec), radix)));
 
     if (value.isInt32())
-        return value;
+        return JSValue::encode(value);
 
     if (value.isDouble()) {
         double d = value.asDouble();
         if (isfinite(d))
-            return jsNumber(exec, (d > 0) ? floor(d) : ceil(d));
+            return JSValue::encode(jsNumber(exec, (d > 0) ? floor(d) : ceil(d)));
         if (isnan(d) || isinf(d))
-            return jsNaN(exec);
-        return jsNumber(exec, 0);
+            return JSValue::encode(jsNaN(exec));
+        return JSValue::encode(jsNumber(exec, 0));
     }
 
-    return jsNumber(exec, parseInt(value.toString(exec), radix));
+    return JSValue::encode(jsNumber(exec, parseInt(value.toString(exec), radix)));
 }
 
-JSValue JSC_HOST_CALL globalFuncParseFloat(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL globalFuncParseFloat(ExecState* exec)
 {
-    return jsNumber(exec, parseFloat(exec->argument(0).toString(exec)));
+    return JSValue::encode(jsNumber(exec, parseFloat(exec->argument(0).toString(exec))));
 }
 
-JSValue JSC_HOST_CALL globalFuncIsNaN(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL globalFuncIsNaN(ExecState* exec)
 {
-    return jsBoolean(isnan(exec->argument(0).toNumber(exec)));
+    return JSValue::encode(jsBoolean(isnan(exec->argument(0).toNumber(exec))));
 }
 
-JSValue JSC_HOST_CALL globalFuncIsFinite(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL globalFuncIsFinite(ExecState* exec)
 {
     double n = exec->argument(0).toNumber(exec);
-    return jsBoolean(!isnan(n) && !isinf(n));
+    return JSValue::encode(jsBoolean(!isnan(n) && !isinf(n)));
 }
 
-JSValue JSC_HOST_CALL globalFuncDecodeURI(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL globalFuncDecodeURI(ExecState* exec)
 {
     static const char do_not_unescape_when_decoding_URI[] =
         "#$&+,/:;=?@";
 
-    return decode(exec, do_not_unescape_when_decoding_URI, true);
+    return JSValue::encode(decode(exec, do_not_unescape_when_decoding_URI, true));
 }
 
-JSValue JSC_HOST_CALL globalFuncDecodeURIComponent(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL globalFuncDecodeURIComponent(ExecState* exec)
 {
-    return decode(exec, "", true);
+    return JSValue::encode(decode(exec, "", true));
 }
 
-JSValue JSC_HOST_CALL globalFuncEncodeURI(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL globalFuncEncodeURI(ExecState* exec)
 {
     static const char do_not_escape_when_encoding_URI[] =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -357,10 +357,10 @@ JSValue JSC_HOST_CALL globalFuncEncodeURI(ExecState* exec)
         "0123456789"
         "!#$&'()*+,-./:;=?@_~";
 
-    return encode(exec, do_not_escape_when_encoding_URI);
+    return JSValue::encode(encode(exec, do_not_escape_when_encoding_URI));
 }
 
-JSValue JSC_HOST_CALL globalFuncEncodeURIComponent(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL globalFuncEncodeURIComponent(ExecState* exec)
 {
     static const char do_not_escape_when_encoding_URI_component[] =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -368,10 +368,10 @@ JSValue JSC_HOST_CALL globalFuncEncodeURIComponent(ExecState* exec)
         "0123456789"
         "!'()*-._~";
 
-    return encode(exec, do_not_escape_when_encoding_URI_component);
+    return JSValue::encode(encode(exec, do_not_escape_when_encoding_URI_component));
 }
 
-JSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
 {
     static const char do_not_escape[] =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -397,10 +397,10 @@ JSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
         }
     }
 
-    return builder.build(exec);
+    return JSValue::encode(builder.build(exec));
 }
 
-JSValue JSC_HOST_CALL globalFuncUnescape(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState* exec)
 {
     StringBuilder builder;
     UString str = exec->argument(0).toString(exec);
@@ -424,15 +424,15 @@ JSValue JSC_HOST_CALL globalFuncUnescape(ExecState* exec)
         builder.append(*c);
     }
 
-    return jsString(exec, builder.build());
+    return JSValue::encode(jsString(exec, builder.build()));
 }
 
 #ifndef NDEBUG
-JSValue JSC_HOST_CALL globalFuncJSCPrint(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL globalFuncJSCPrint(ExecState* exec)
 {
     CString string = exec->argument(0).toString(exec).UTF8String();
     puts(string.data());
-    return jsUndefined();
+    return JSValue::encode(jsUndefined());
 }
 #endif
 

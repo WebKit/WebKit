@@ -172,16 +172,16 @@ sub GenerateEventListenerCall
         push(@GenerateEventListenerImpl, <<END);
     JSValue correspondingElementWrapper = toJS(exec, imp->correspondingElement());
     if (!correspondingElementWrapper.isObject())
-        return jsUndefined();
+        return JSValue::encode(jsUndefined());
 END
     }
 
     push(@GenerateEventListenerImpl, <<END);
     JSValue listener = exec->argument(1);
     if (!listener.isObject())
-        return jsUndefined();
+        return JSValue::encode(jsUndefined());
     imp->${functionName}EventListener(ustringToAtomicString(exec->argument(0).toString(exec)), JSEventListener::create(asObject(listener), $wrapperObject, false, currentWorld(exec))$passRefPtrHandling, exec->argument(2).toBoolean(exec));
-    return jsUndefined();
+    return JSValue::encode(jsUndefined());
 END
     return @GenerateEventListenerImpl;
 }
@@ -989,7 +989,7 @@ sub GenerateHeader
         foreach my $function (@{$dataNode->functions}) {
             next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
             my $functionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
-            push(@headerContent, "JSC::JSValue JSC_HOST_CALL ${functionName}(JSC::ExecState*);\n");
+            push(@headerContent, "JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::ExecState*);\n");
         }
     }
 
@@ -1154,7 +1154,7 @@ sub GenerateOverloadedPrototypeFunction
 
     my $functionName = "js${implClassName}PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
 
-    push(@implContent, "JSValue JSC_HOST_CALL ${functionName}(ExecState* exec)\n");
+    push(@implContent, "EncodedJSValue JSC_HOST_CALL ${functionName}(ExecState* exec)\n");
     push(@implContent, <<END);
 {
 END
@@ -1790,7 +1790,7 @@ sub GenerateImplementation
             
             my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementationFunction"} || $codeGenerator->WK_lcfirst($function->signature->name);
 
-            push(@implContent, "JSValue JSC_HOST_CALL ${functionName}(ExecState* exec)\n");
+            push(@implContent, "EncodedJSValue JSC_HOST_CALL ${functionName}(ExecState* exec)\n");
             push(@implContent, "{\n");
 
             $implIncludes{"<runtime/Error.h>"} = 1;
@@ -1798,22 +1798,22 @@ sub GenerateImplementation
             if ($interfaceName eq "DOMWindow") {
                 push(@implContent, "    $className* castedThis = toJSDOMWindow(exec->hostThisValue().toThisObject(exec));\n");
                 push(@implContent, "    if (!castedThis)\n");
-                push(@implContent, "        return throwError(exec, TypeError);\n");
+                push(@implContent, "        return JSValue::encode(throwError(exec, TypeError));\n");
             } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
                 push(@implContent, "    $className* castedThis = to${className}(exec->hostThisValue().toThisObject(exec));\n");
                 push(@implContent, "    if (!castedThis)\n");
-                push(@implContent, "        return throwError(exec, TypeError);\n");
+                push(@implContent, "        return JSValue::encode(throwError(exec, TypeError));\n");
             } else {
                 push(@implContent, "    JSValue thisValue = exec->hostThisValue();\n");
                 push(@implContent, "    if (!thisValue.inherits(&${className}::s_info))\n");
-                push(@implContent, "        return throwError(exec, TypeError);\n");
+                push(@implContent, "        return JSValue::encode(throwError(exec, TypeError));\n");
                 push(@implContent, "    $className* castedThis = static_cast<$className*>(asObject(thisValue));\n");
             }
 
             if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && 
                 !$function->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {
                 push(@implContent, "    if (!castedThis->allowsAccessFrom(exec))\n");
-                push(@implContent, "        return jsUndefined();\n");
+                push(@implContent, "        return JSValue::encode(jsUndefined());\n");
             }
 
             # Special case for JSSVGLengthList / JSSVGTransformList / JSSVGPointList / JSSVGNumberList
@@ -1832,12 +1832,12 @@ sub GenerateImplementation
             }
 
             if ($function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"JSCCustom"}) {
-                push(@implContent, "    return castedThis->" . $functionImplementationName . "(exec);\n");
+                push(@implContent, "    return JSValue::encode(castedThis->" . $functionImplementationName . "(exec));\n");
             } elsif ($svgPODListType) {
                 $implIncludes{"JS${svgPODListType}.h"} = 1;
                 $implIncludes{"JSSVGPODListCustom.h"} = 1;
-                push(@implContent, "    return JSSVGPODListCustom::$functionImplementationName<$className, " . GetNativeType($svgPODListType)
-                                 . ">(castedThis, exec, to" . $svgPODListType . ");\n");
+                push(@implContent, "    return JSValue::encode(JSSVGPODListCustom::$functionImplementationName<$className, " . GetNativeType($svgPODListType)
+                                 . ">(castedThis, exec, to" . $svgPODListType . "));\n");
             } else {
                 push(@implContent, "    $implType* imp = static_cast<$implType*>(castedThis->impl());\n");
                 push(@implContent, "    $podType podImp(*imp);\n") if $podType;
@@ -1848,9 +1848,9 @@ sub GenerateImplementation
                 if ($requiresAllArguments) {
                         push(@implContent, "    if (exec->argumentCount() < $numParameters)\n");
                         if ($requiresAllArguments eq "Raise") {
-                            push(@implContent, "        return throwError(exec, SyntaxError, \"Not enough arguments\");\n");
+                            push(@implContent, "        return JSValue::encode(throwError(exec, SyntaxError, \"Not enough arguments\"));\n");
                         } else {
-                            push(@implContent, "        return jsUndefined();\n");
+                            push(@implContent, "        return JSValue::encode(jsUndefined());\n");
                         }
                 }
 
@@ -1860,7 +1860,7 @@ sub GenerateImplementation
 
                 if ($function->signature->extendedAttributes->{"SVGCheckSecurityDocument"}) {
                     push(@implContent, "    if (!checkNodeSecurity(exec, imp->getSVGDocument(" . (@{$function->raisesExceptions} ? "ec" : "") .")))\n");
-                    push(@implContent, "        return jsUndefined();\n");
+                    push(@implContent, "        return JSValue::encode(jsUndefined());\n");
                     $implIncludes{"JSDOMBinding.h"} = 1;
                 }
 
@@ -1885,7 +1885,7 @@ sub GenerateImplementation
                         if ($callWith eq "DynamicFrame") {
                             push(@implContent, "    Frame* dynamicFrame = toDynamicFrame(exec);\n");
                             push(@implContent, "    if (!dynamicFrame)\n");
-                            push(@implContent, "        return jsUndefined();\n");
+                            push(@implContent, "        return JSValue::encode(jsUndefined());\n");
                             $callWithArg = "dynamicFrame";
                         } elsif ($callWith eq "ScriptState") {
                             $callWithArg = "exec";
@@ -1915,7 +1915,7 @@ sub GenerateImplementation
                             push(@implContent, "    if (!resolver) {\n");
                             push(@implContent, "        customResolver = JSCustomXPathNSResolver::create(exec, exec->argument($paramIndex));\n");
                             push(@implContent, "        if (exec->hadException())\n");
-                            push(@implContent, "            return jsUndefined();\n");
+                            push(@implContent, "            return JSValue::encode(jsUndefined());\n");
                             push(@implContent, "        resolver = customResolver.get();\n");
                             push(@implContent, "    }\n");
                         } else {
@@ -1928,7 +1928,7 @@ sub GenerateImplementation
                                 $implIncludes{"ExceptionCode.h"} = 1;
                                 push(@implContent, "    if ($name < 0) {\n");
                                 push(@implContent, "        setDOMException(exec, INDEX_SIZE_ERR);\n");
-                                push(@implContent, "        return jsUndefined();\n");
+                                push(@implContent, "        return JSValue::encode(jsUndefined());\n");
                                 push(@implContent, "    }\n");
                             }
                         }
@@ -2221,7 +2221,7 @@ sub GenerateImplementationFunctionCall()
         push(@implContent, $indent . "$functionString;\n");
         push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
         push(@implContent, $indent . "imp->commitChange(podImp, castedThis);\n") if $podType;
-        push(@implContent, $indent . "return jsUndefined();\n");
+        push(@implContent, $indent . "return JSValue::encode(jsUndefined());\n");
     } else {
         push(@implContent, "\n" . $indent . "JSC::JSValue result = " . NativeToJSValue($function->signature, 1, $implClassName, "", $functionString, "castedThis") . ";\n");
         push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
@@ -2229,7 +2229,7 @@ sub GenerateImplementationFunctionCall()
         $callWith = $function->signature->extendedAttributes->{"CallWith"};
         if ($callWith and $callWith eq "ScriptState") {
             push(@implContent, $indent . "if (exec->hadException())\n");
-            push(@implContent, $indent . "    return jsUndefined();\n");
+            push(@implContent, $indent . "    return JSValue::encode(jsUndefined());\n");
         }
 
         if ($podType and not $function->signature->extendedAttributes->{"Immutable"}) {
@@ -2238,7 +2238,7 @@ sub GenerateImplementationFunctionCall()
             push(@implContent, $indent . "imp->commitChange(podImp, castedThis);\n");
         }
 
-        push(@implContent, $indent . "return result;\n");
+        push(@implContent, $indent . "return JSValue::encode(result);\n");
     }
 }
 

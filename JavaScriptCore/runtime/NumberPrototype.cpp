@@ -38,12 +38,12 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(NumberPrototype);
 
-static JSValue JSC_HOST_CALL numberProtoFuncToString(ExecState*);
-static JSValue JSC_HOST_CALL numberProtoFuncToLocaleString(ExecState*);
-static JSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState*);
-static JSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState*);
-static JSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState*);
-static JSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState*);
+static EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState*);
+static EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(ExecState*);
+static EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState*);
+static EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState*);
+static EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState*);
+static EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState*);
 
 // ECMA 15.7.4
 
@@ -137,12 +137,12 @@ static double intPow10(int e)
     return static_cast<double>(result);
 }
 
-JSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     JSValue v = thisValue.getJSNumber();
     if (!v)
-        return throwError(exec, TypeError);
+        return JSValue::encode(throwError(exec, TypeError));
 
     JSValue radixValue = exec->argument(0);
     int radix;
@@ -154,7 +154,7 @@ JSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
         radix = static_cast<int>(radixValue.toInteger(exec)); // nan -> 0
 
     if (radix == 10)
-        return jsString(exec, v.toString(exec));
+        return JSValue::encode(jsString(exec, v.toString(exec)));
 
     static const char* const digits = "0123456789abcdefghijklmnopqrstuvwxyz";
 
@@ -164,13 +164,13 @@ JSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
             int x = v.asInt32();
             if (static_cast<unsigned>(x) < 36) { // Exclude negatives
                 JSGlobalData* globalData = &exec->globalData();
-                return globalData->smallStrings.singleCharacterString(globalData, digits[x]);
+                return JSValue::encode(globalData->smallStrings.singleCharacterString(globalData, digits[x]));
             }
         }
     }
 
     if (radix < 2 || radix > 36)
-        return throwError(exec, RangeError, "toString() radix argument must be between 2 and 36");
+        return JSValue::encode(throwError(exec, RangeError, "toString() radix argument must be between 2 and 36"));
 
     // INT_MAX results in 1024 characters left of the dot with radix 2
     // give the same space on the right side. safety checks are in place
@@ -179,7 +179,7 @@ JSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
     const char* lastCharInString = s + sizeof(s) - 1;
     double x = v.uncheckedGetNumber();
     if (isnan(x) || isinf(x))
-        return jsString(exec, UString::from(x));
+        return JSValue::encode(jsString(exec, UString::from(x)));
 
     bool isNegative = x < 0.0;
     if (isNegative)
@@ -218,47 +218,47 @@ JSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
     *p = '\0';
     ASSERT(p < s + sizeof(s));
 
-    return jsString(exec, startOfResultString);
+    return JSValue::encode(jsString(exec, startOfResultString));
 }
 
-JSValue JSC_HOST_CALL numberProtoFuncToLocaleString(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     // FIXME: Not implemented yet.
 
     JSValue v = thisValue.getJSNumber();
     if (!v)
-        return throwError(exec, TypeError);
+        return JSValue::encode(throwError(exec, TypeError));
 
-    return jsString(exec, v.toString(exec));
+    return JSValue::encode(jsString(exec, v.toString(exec)));
 }
 
-JSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     JSValue v = thisValue.getJSNumber();
     if (!v)
-        return throwError(exec, TypeError);
+        return JSValue::encode(throwError(exec, TypeError));
 
-    return v;
+    return JSValue::encode(v);
 }
 
-JSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     JSValue v = thisValue.getJSNumber();
     if (!v)
-        return throwError(exec, TypeError);
+        return JSValue::encode(throwError(exec, TypeError));
 
     JSValue fractionDigits = exec->argument(0);
     double df = fractionDigits.toInteger(exec);
     if (!(df >= 0 && df <= 20))
-        return throwError(exec, RangeError, "toFixed() digits argument must be between 0 and 20");
+        return JSValue::encode(throwError(exec, RangeError, "toFixed() digits argument must be between 0 and 20"));
     int f = static_cast<int>(df);
 
     double x = v.uncheckedGetNumber();
     if (isnan(x))
-        return jsNontrivialString(exec, "NaN");
+        return JSValue::encode(jsNontrivialString(exec, "NaN"));
 
     UString s;
     if (x < 0) {
@@ -271,7 +271,7 @@ JSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
     }
 
     if (x >= pow(10.0, 21.0))
-        return jsString(exec, makeString(s, UString::from(x)));
+        return JSValue::encode(jsString(exec, makeString(s, UString::from(x))));
 
     const double tenToTheF = pow(10.0, f);
     double n = floor(x * tenToTheF);
@@ -293,8 +293,8 @@ JSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
     int kMinusf = k - f;
 
     if (kMinusf < static_cast<int>(m.size()))
-        return jsString(exec, makeString(s, m.substr(0, kMinusf), ".", m.substr(kMinusf)));
-    return jsString(exec, makeString(s, m.substr(0, kMinusf)));
+        return JSValue::encode(jsString(exec, makeString(s, m.substr(0, kMinusf), ".", m.substr(kMinusf))));
+    return JSValue::encode(jsString(exec, makeString(s, m.substr(0, kMinusf))));
 }
 
 static void fractionalPartToString(char* buf, int& i, const char* result, int resultLength, int fractionalDigits)
@@ -335,22 +335,22 @@ static void exponentialPartToString(char* buf, int& i, int decimalPoint)
     buf[i++] = static_cast<char>('0' + exponential % 10);
 }
 
-JSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     JSValue v = thisValue.getJSNumber();
     if (!v)
-        return throwError(exec, TypeError);
+        return JSValue::encode(throwError(exec, TypeError));
 
     double x = v.uncheckedGetNumber();
 
     if (isnan(x) || isinf(x))
-        return jsString(exec, UString::from(x));
+        return JSValue::encode(jsString(exec, UString::from(x)));
 
     JSValue fractionalDigitsValue = exec->argument(0);
     double df = fractionalDigitsValue.toInteger(exec);
     if (!(df >= 0 && df <= 20))
-        return throwError(exec, RangeError, "toExponential() argument must between 0 and 20");
+        return JSValue::encode(throwError(exec, RangeError, "toExponential() argument must between 0 and 20"));
     int fractionalDigits = static_cast<int>(df);
     bool includeAllDigits = fractionalDigitsValue.isUndefined();
 
@@ -371,7 +371,7 @@ JSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
     }
 
     if (isnan(x))
-        return jsNontrivialString(exec, "NaN");
+        return JSValue::encode(jsNontrivialString(exec, "NaN"));
 
     if (x == -0.0) // (-0.0).toExponential() should print as 0 instead of -0
         x = 0;
@@ -405,20 +405,20 @@ JSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
     }
     ASSERT(i <= 80);
 
-    return jsString(exec, buf);
+    return JSValue::encode(jsString(exec, buf));
 }
 
-JSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     JSValue v = thisValue.getJSNumber();
     if (!v)
-        return throwError(exec, TypeError);
+        return JSValue::encode(throwError(exec, TypeError));
 
     double doublePrecision = exec->argument(0).toIntegerPreserveNaN(exec);
     double x = v.uncheckedGetNumber();
     if (exec->argument(0).isUndefined() || isnan(x) || isinf(x))
-        return jsString(exec, v.toString(exec));
+        return JSValue::encode(jsString(exec, v.toString(exec)));
 
     UString s;
     if (x < 0) {
@@ -428,7 +428,7 @@ JSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
         s = "";
 
     if (!(doublePrecision >= 1 && doublePrecision <= 21)) // true for NaN
-        return throwError(exec, RangeError, "toPrecision() argument must be between 1 and 21");
+        return JSValue::encode(throwError(exec, RangeError, "toPrecision() argument must be between 1 and 21"));
     int precision = static_cast<int>(doublePrecision);
 
     int e = 0;
@@ -458,8 +458,8 @@ JSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
             if (m.size() > 1)
                 m = makeString(m.substr(0, 1), ".", m.substr(1));
             if (e >= 0)
-                return jsMakeNontrivialString(exec, s, m, "e+", UString::from(e));
-            return jsMakeNontrivialString(exec, s, m, "e-", UString::from(-e));
+                return JSValue::encode(jsMakeNontrivialString(exec, s, m, "e+", UString::from(e)));
+            return JSValue::encode(jsMakeNontrivialString(exec, s, m, "e-", UString::from(-e)));
         }
     } else {
         m = charSequence('0', precision);
@@ -467,13 +467,13 @@ JSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
     }
 
     if (e == precision - 1)
-        return jsString(exec, makeString(s, m));
+        return JSValue::encode(jsString(exec, makeString(s, m)));
     if (e >= 0) {
         if (e + 1 < static_cast<int>(m.size()))
-            return jsString(exec, makeString(s, m.substr(0, e + 1), ".", m.substr(e + 1)));
-        return jsString(exec, makeString(s, m));
+            return JSValue::encode(jsString(exec, makeString(s, m.substr(0, e + 1), ".", m.substr(e + 1))));
+        return JSValue::encode(jsString(exec, makeString(s, m)));
     }
-    return jsMakeNontrivialString(exec, s, "0.", charSequence('0', -(e + 1)), m);
+    return JSValue::encode(jsMakeNontrivialString(exec, s, "0.", charSequence('0', -(e + 1)), m));
 }
 
 } // namespace JSC

@@ -88,7 +88,7 @@ ScriptObject InjectedScriptHost::createInjectedScript(const String& source, Scri
         return ScriptObject();
     JSValue functionValue = comp.value();
     CallData callData;
-    CallType callType = functionValue.getCallData(callData);
+    CallType callType = getCallData(functionValue, callData);
     if (callType == CallTypeNone)
         return ScriptObject();
 

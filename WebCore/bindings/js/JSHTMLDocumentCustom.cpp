@@ -42,6 +42,7 @@
 #include "SegmentedString.h"
 #include "Tokenizer.h"
 #include <runtime/Error.h>
+#include <runtime/JSCell.h>
 
 using namespace JSC;
 
@@ -110,7 +111,7 @@ JSValue JSHTMLDocument::open(ExecState* exec)
             if (wrapper) {
                 JSValue function = wrapper->get(exec, Identifier(exec, "open"));
                 CallData callData;
-                CallType callType = function.getCallData(callData);
+                CallType callType = ::getCallData(function, callData);
                 if (callType == CallTypeNone)
                     return throwError(exec, TypeError);
                 return JSC::call(exec, function, callType, callData, wrapper, ArgList(exec));

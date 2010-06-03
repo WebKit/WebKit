@@ -45,38 +45,38 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(StringPrototype);
 
-static JSValue JSC_HOST_CALL stringProtoFuncToString(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncCharAt(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncCharCodeAt(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncConcat(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncIndexOf(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncLastIndexOf(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncSlice(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncSubstr(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncSubstring(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncToLowerCase(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncToUpperCase(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncBig(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncSmall(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncBlink(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncBold(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncFixed(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncItalics(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncStrike(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncSub(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncSup(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncFontcolor(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncFontsize(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncAnchor(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncLink(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncTrim(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncTrimLeft(ExecState*);
-static JSValue JSC_HOST_CALL stringProtoFuncTrimRight(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncToString(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncCharAt(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncCharCodeAt(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncConcat(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncIndexOf(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncLastIndexOf(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncSlice(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstr(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstring(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncToLowerCase(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncToUpperCase(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncBig(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncSmall(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncBlink(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncBold(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncFixed(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncItalics(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncStrike(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncSub(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncSup(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncFontcolor(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncFontsize(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncAnchor(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncLink(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncTrim(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimLeft(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimRight(ExecState*);
 
 }
 
@@ -286,7 +286,7 @@ static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, J
     return jsString(exec, impl);
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     JSString* sourceVal = thisValue.toThisJSString(exec);
@@ -295,14 +295,14 @@ JSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
 
     UString replacementString;
     CallData callData;
-    CallType callType = replacement.getCallData(callData);
+    CallType callType = getCallData(replacement, callData);
     if (callType == CallTypeNone)
         replacementString = replacement.toString(exec);
 
     if (pattern.inherits(&RegExpObject::info)) {
         const UString& source = sourceVal->value(exec);
         if (exec->hadException())
-            return JSValue();
+            return JSValue::encode(JSValue());
         RegExp* reg = asRegExpObject(pattern)->regExp();
         bool global = reg->global();
 
@@ -321,7 +321,7 @@ JSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
             JSFunction* func = asFunction(replacement);
             CachedCall cachedCall(exec, func, argCount, exec->exceptionSlot());
             if (exec->hadException())
-                return jsNull();
+                return JSValue::encode(jsNull());
             while (true) {
                 int matchIndex;
                 int matchLen = 0;
@@ -413,25 +413,25 @@ JSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
         }
 
         if (!lastIndex && replacements.isEmpty())
-            return sourceVal;
+            return JSValue::encode(sourceVal);
 
         if (static_cast<unsigned>(lastIndex) < source.size())
             sourceRanges.append(StringRange(lastIndex, source.size() - lastIndex));
 
-        return jsSpliceSubstringsWithSeparators(exec, sourceVal, source, sourceRanges.data(), sourceRanges.size(), replacements.data(), replacements.size());
+        return JSValue::encode(jsSpliceSubstringsWithSeparators(exec, sourceVal, source, sourceRanges.data(), sourceRanges.size(), replacements.data(), replacements.size()));
     }
 
     // Not a regular expression, so treat the pattern as a string.
 
     UString patternString = pattern.toString(exec);
     if (patternString.size() == 1 && callType == CallTypeNone)
-        return sourceVal->replaceCharacter(exec, patternString[0], replacementString);
+        return JSValue::encode(sourceVal->replaceCharacter(exec, patternString[0], replacementString));
     
     const UString& source = sourceVal->value(exec);
     unsigned matchPos = source.find(patternString);
 
     if (matchPos == UString::NotFound)
-        return sourceVal;
+        return JSValue::encode(sourceVal);
 
     int matchLen = patternString.size();
     if (callType != CallTypeNone) {
@@ -445,24 +445,24 @@ JSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
     
     size_t matchEnd = matchPos + matchLen;
     int ovector[2] = { matchPos, matchEnd };
-    return jsString(exec, source.substr(0, matchPos), substituteBackreferences(replacementString, source, ovector, 0), source.substr(matchEnd));
+    return JSValue::encode(jsString(exec, source.substr(0, matchPos), substituteBackreferences(replacementString, source, ovector, 0), source.substr(matchEnd)));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncToString(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncToString(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     // Also used for valueOf.
 
     if (thisValue.isString())
-        return thisValue;
+        return JSValue::encode(thisValue);
 
     if (thisValue.inherits(&StringObject::info))
-        return asStringObject(thisValue)->internalValue();
+        return JSValue::encode(asStringObject(thisValue)->internalValue());
 
-    return throwError(exec, TypeError);
+    return JSValue::encode(throwError(exec, TypeError));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncCharAt(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncCharAt(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     UString s = thisValue.toThisString(exec);
@@ -471,16 +471,16 @@ JSValue JSC_HOST_CALL stringProtoFuncCharAt(ExecState* exec)
     if (a0.isUInt32()) {
         uint32_t i = a0.asUInt32();
         if (i < len)
-            return jsSingleCharacterSubstring(exec, s, i);
-        return jsEmptyString(exec);
+            return JSValue::encode(jsSingleCharacterSubstring(exec, s, i));
+        return JSValue::encode(jsEmptyString(exec));
     }
     double dpos = a0.toInteger(exec);
     if (dpos >= 0 && dpos < len)
-        return jsSingleCharacterSubstring(exec, s, static_cast<unsigned>(dpos));
-    return jsEmptyString(exec);
+        return JSValue::encode(jsSingleCharacterSubstring(exec, s, static_cast<unsigned>(dpos)));
+    return JSValue::encode(jsEmptyString(exec));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncCharCodeAt(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncCharCodeAt(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     UString s = thisValue.toThisString(exec);
@@ -489,29 +489,29 @@ JSValue JSC_HOST_CALL stringProtoFuncCharCodeAt(ExecState* exec)
     if (a0.isUInt32()) {
         uint32_t i = a0.asUInt32();
         if (i < len)
-            return jsNumber(exec, s.data()[i]);
-        return jsNaN(exec);
+            return JSValue::encode(jsNumber(exec, s.data()[i]));
+        return JSValue::encode(jsNaN(exec));
     }
     double dpos = a0.toInteger(exec);
     if (dpos >= 0 && dpos < len)
-        return jsNumber(exec, s[static_cast<int>(dpos)]);
-    return jsNaN(exec);
+        return JSValue::encode(jsNumber(exec, s[static_cast<int>(dpos)]));
+    return JSValue::encode(jsNaN(exec));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncConcat(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncConcat(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     if (thisValue.isString() && (exec->argumentCount() == 1)) {
         JSValue v = exec->argument(0);
-        return v.isString()
+        return JSValue::encode(v.isString()
             ? jsString(exec, asString(thisValue), asString(v))
-            : jsString(exec, asString(thisValue), v.toString(exec));
+            : jsString(exec, asString(thisValue), v.toString(exec)));
     }
 
-    return jsString(exec, thisValue);
+    return JSValue::encode(jsString(exec, thisValue));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncIndexOf(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncIndexOf(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     UString s = thisValue.toThisString(exec);
@@ -536,11 +536,11 @@ JSValue JSC_HOST_CALL stringProtoFuncIndexOf(ExecState* exec)
 
     unsigned result = s.find(u2, pos);
     if (result == UString::NotFound)
-        return jsNumber(exec, -1);
-    return jsNumber(exec, result);
+        return JSValue::encode(jsNumber(exec, -1));
+    return JSValue::encode(jsNumber(exec, result));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncLastIndexOf(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncLastIndexOf(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     UString s = thisValue.toThisString(exec);
@@ -563,11 +563,11 @@ JSValue JSC_HOST_CALL stringProtoFuncLastIndexOf(ExecState* exec)
 
     unsigned result = s.rfind(u2, static_cast<unsigned>(dpos));
     if (result == UString::NotFound)
-        return jsNumber(exec, -1);
-    return jsNumber(exec, result);
+        return JSValue::encode(jsNumber(exec, -1));
+    return JSValue::encode(jsNumber(exec, result));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     UString s = thisValue.toThisString(exec);
@@ -594,8 +594,8 @@ JSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
     if (!(reg->global())) {
         // case without 'g' flag is handled like RegExp.prototype.exec
         if (pos < 0)
-            return jsNull();
-        return regExpConstructor->arrayOfMatches(exec);
+            return JSValue::encode(jsNull());
+        return JSValue::encode(regExpConstructor->arrayOfMatches(exec));
     }
 
     // return array of matches
@@ -613,13 +613,13 @@ JSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
         // if there are no matches at all, it's important to return
         // Null instead of an empty array, because this matches
         // other browsers and because Null is a false value.
-        return jsNull();
+        return JSValue::encode(jsNull());
     }
 
-    return constructArray(exec, list);
+    return JSValue::encode(constructArray(exec, list));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     UString s = thisValue.toThisString(exec);
@@ -642,10 +642,10 @@ JSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState* exec)
     int pos;
     int matchLength = 0;
     regExpConstructor->performMatch(reg.get(), u, 0, pos, matchLength);
-    return jsNumber(exec, pos);
+    return JSValue::encode(jsNumber(exec, pos));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncSlice(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncSlice(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     UString s = thisValue.toThisString(exec);
@@ -664,13 +664,13 @@ JSValue JSC_HOST_CALL stringProtoFuncSlice(ExecState* exec)
             from = 0;
         if (to > len)
             to = len;
-        return jsSubstring(exec, s, static_cast<unsigned>(from), static_cast<unsigned>(to) - static_cast<unsigned>(from));
+        return JSValue::encode(jsSubstring(exec, s, static_cast<unsigned>(from), static_cast<unsigned>(to) - static_cast<unsigned>(from)));
     }
 
-    return jsEmptyString(exec);
+    return JSValue::encode(jsEmptyString(exec));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     UString s = thisValue.toThisString(exec);
@@ -686,7 +686,7 @@ JSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
         RegExp* reg = asRegExpObject(a0)->regExp();
         if (s.isEmpty() && reg->match(s, 0) >= 0) {
             // empty string matched by regexp -> empty array
-            return result;
+            return JSValue::encode(result);
         }
         unsigned pos = 0;
         while (i != limit && pos < s.size()) {
@@ -713,7 +713,7 @@ JSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
         if (u2.isEmpty()) {
             if (s.isEmpty()) {
                 // empty separator matches empty string -> empty array
-                return result;
+                return JSValue::encode(result);
             }
             while (i != limit && p0 < s.size() - 1)
                 result->put(exec, i++, jsSingleCharacterSubstring(exec, s, p0++));
@@ -731,10 +731,10 @@ JSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
     if (i != limit)
         result->put(exec, i++, jsSubstring(exec, s, p0, s.size() - p0));
 
-    return result;
+    return JSValue::encode(result);
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncSubstr(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstr(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     UString s = thisValue.toThisString(exec);
@@ -746,7 +746,7 @@ JSValue JSC_HOST_CALL stringProtoFuncSubstr(ExecState* exec)
     double start = a0.toInteger(exec);
     double length = a1.isUndefined() ? len : a1.toInteger(exec);
     if (start >= len || length <= 0)
-        return jsEmptyString(exec);
+        return JSValue::encode(jsEmptyString(exec));
     if (start < 0) {
         start += len;
         if (start < 0)
@@ -754,10 +754,10 @@ JSValue JSC_HOST_CALL stringProtoFuncSubstr(ExecState* exec)
     }
     if (start + length > len)
         length = len - start;
-    return jsSubstring(exec, s, static_cast<unsigned>(start), static_cast<unsigned>(length));
+    return JSValue::encode(jsSubstring(exec, s, static_cast<unsigned>(start), static_cast<unsigned>(length)));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncSubstring(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstring(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     UString s = thisValue.toThisString(exec);
@@ -786,10 +786,10 @@ JSValue JSC_HOST_CALL stringProtoFuncSubstring(ExecState* exec)
         end = start;
         start = temp;
     }
-    return jsSubstring(exec, s, static_cast<unsigned>(start), static_cast<unsigned>(end) - static_cast<unsigned>(start));
+    return JSValue::encode(jsSubstring(exec, s, static_cast<unsigned>(start), static_cast<unsigned>(end) - static_cast<unsigned>(start)));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncToLowerCase(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncToLowerCase(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     JSString* sVal = thisValue.toThisJSString(exec);
@@ -797,7 +797,7 @@ JSValue JSC_HOST_CALL stringProtoFuncToLowerCase(ExecState* exec)
 
     int sSize = s.size();
     if (!sSize)
-        return sVal;
+        return JSValue::encode(sVal);
 
     const UChar* sData = s.data();
     Vector<UChar> buffer(sSize);
@@ -809,7 +809,7 @@ JSValue JSC_HOST_CALL stringProtoFuncToLowerCase(ExecState* exec)
         buffer[i] = toASCIILower(c);
     }
     if (!(ored & ~0x7f))
-        return jsString(exec, UString::adopt(buffer));
+        return JSValue::encode(jsString(exec, UString::adopt(buffer)));
 
     bool error;
     int length = Unicode::toLower(buffer.data(), sSize, sData, sSize, &error);
@@ -817,17 +817,17 @@ JSValue JSC_HOST_CALL stringProtoFuncToLowerCase(ExecState* exec)
         buffer.resize(length);
         length = Unicode::toLower(buffer.data(), length, sData, sSize, &error);
         if (error)
-            return sVal;
+            return JSValue::encode(sVal);
     }
     if (length == sSize) {
         if (memcmp(buffer.data(), sData, length * sizeof(UChar)) == 0)
-            return sVal;
+            return JSValue::encode(sVal);
     } else
         buffer.resize(length);
-    return jsString(exec, UString::adopt(buffer));
+    return JSValue::encode(jsString(exec, UString::adopt(buffer)));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncToUpperCase(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncToUpperCase(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     JSString* sVal = thisValue.toThisJSString(exec);
@@ -835,7 +835,7 @@ JSValue JSC_HOST_CALL stringProtoFuncToUpperCase(ExecState* exec)
 
     int sSize = s.size();
     if (!sSize)
-        return sVal;
+        return JSValue::encode(sVal);
 
     const UChar* sData = s.data();
     Vector<UChar> buffer(sSize);
@@ -847,7 +847,7 @@ JSValue JSC_HOST_CALL stringProtoFuncToUpperCase(ExecState* exec)
         buffer[i] = toASCIIUpper(c);
     }
     if (!(ored & ~0x7f))
-        return jsString(exec, UString::adopt(buffer));
+        return JSValue::encode(jsString(exec, UString::adopt(buffer)));
 
     bool error;
     int length = Unicode::toUpper(buffer.data(), sSize, sData, sSize, &error);
@@ -855,99 +855,99 @@ JSValue JSC_HOST_CALL stringProtoFuncToUpperCase(ExecState* exec)
         buffer.resize(length);
         length = Unicode::toUpper(buffer.data(), length, sData, sSize, &error);
         if (error)
-            return sVal;
+            return JSValue::encode(sVal);
     }
     if (length == sSize) {
         if (memcmp(buffer.data(), sData, length * sizeof(UChar)) == 0)
-            return sVal;
+            return JSValue::encode(sVal);
     } else
         buffer.resize(length);
-    return jsString(exec, UString::adopt(buffer));
+    return JSValue::encode(jsString(exec, UString::adopt(buffer)));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     if (exec->argumentCount() < 1)
-      return jsNumber(exec, 0);
+      return JSValue::encode(jsNumber(exec, 0));
 
     UString s = thisValue.toThisString(exec);
     JSValue a0 = exec->argument(0);
-    return jsNumber(exec, localeCompare(s, a0.toString(exec)));
+    return JSValue::encode(jsNumber(exec, localeCompare(s, a0.toString(exec))));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncBig(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncBig(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     UString s = thisValue.toThisString(exec);
-    return jsMakeNontrivialString(exec, "<big>", s, "</big>");
+    return JSValue::encode(jsMakeNontrivialString(exec, "<big>", s, "</big>"));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncSmall(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncSmall(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     UString s = thisValue.toThisString(exec);
-    return jsMakeNontrivialString(exec, "<small>", s, "</small>");
+    return JSValue::encode(jsMakeNontrivialString(exec, "<small>", s, "</small>"));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncBlink(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncBlink(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     UString s = thisValue.toThisString(exec);
-    return jsMakeNontrivialString(exec, "<blink>", s, "</blink>");
+    return JSValue::encode(jsMakeNontrivialString(exec, "<blink>", s, "</blink>"));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncBold(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncBold(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     UString s = thisValue.toThisString(exec);
-    return jsMakeNontrivialString(exec, "<b>", s, "</b>");
+    return JSValue::encode(jsMakeNontrivialString(exec, "<b>", s, "</b>"));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncFixed(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncFixed(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     UString s = thisValue.toThisString(exec);
-    return jsMakeNontrivialString(exec, "<tt>", s, "</tt>");
+    return JSValue::encode(jsMakeNontrivialString(exec, "<tt>", s, "</tt>"));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncItalics(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncItalics(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     UString s = thisValue.toThisString(exec);
-    return jsMakeNontrivialString(exec, "<i>", s, "</i>");
+    return JSValue::encode(jsMakeNontrivialString(exec, "<i>", s, "</i>"));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncStrike(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncStrike(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     UString s = thisValue.toThisString(exec);
-    return jsMakeNontrivialString(exec, "<strike>", s, "</strike>");
+    return JSValue::encode(jsMakeNontrivialString(exec, "<strike>", s, "</strike>"));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncSub(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncSub(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     UString s = thisValue.toThisString(exec);
-    return jsMakeNontrivialString(exec, "<sub>", s, "</sub>");
+    return JSValue::encode(jsMakeNontrivialString(exec, "<sub>", s, "</sub>"));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncSup(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncSup(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     UString s = thisValue.toThisString(exec);
-    return jsMakeNontrivialString(exec, "<sup>", s, "</sup>");
+    return JSValue::encode(jsMakeNontrivialString(exec, "<sup>", s, "</sup>"));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncFontcolor(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncFontcolor(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     UString s = thisValue.toThisString(exec);
     JSValue a0 = exec->argument(0);
-    return jsMakeNontrivialString(exec, "<font color=\"", a0.toString(exec), "\">", s, "</font>");
+    return JSValue::encode(jsMakeNontrivialString(exec, "<font color=\"", a0.toString(exec), "\">", s, "</font>"));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncFontsize(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncFontsize(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     UString s = thisValue.toThisString(exec);
@@ -960,7 +960,7 @@ JSValue JSC_HOST_CALL stringProtoFuncFontsize(ExecState* exec)
         UChar* buffer;
         PassRefPtr<UStringImpl> impl = UStringImpl::tryCreateUninitialized(bufferSize, buffer);
         if (!impl)
-            return jsUndefined();
+            return JSValue::encode(jsUndefined());
         buffer[0] = '<';
         buffer[1] = 'f';
         buffer[2] = 'o';
@@ -984,21 +984,21 @@ JSValue JSC_HOST_CALL stringProtoFuncFontsize(ExecState* exec)
         buffer[19 + stringSize] = 'n';
         buffer[20 + stringSize] = 't';
         buffer[21 + stringSize] = '>';
-        return jsNontrivialString(exec, impl);
+        return JSValue::encode(jsNontrivialString(exec, impl));
     }
 
-    return jsMakeNontrivialString(exec, "<font size=\"", a0.toString(exec), "\">", s, "</font>");
+    return JSValue::encode(jsMakeNontrivialString(exec, "<font size=\"", a0.toString(exec), "\">", s, "</font>"));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncAnchor(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncAnchor(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     UString s = thisValue.toThisString(exec);
     JSValue a0 = exec->argument(0);
-    return jsMakeNontrivialString(exec, "<a name=\"", a0.toString(exec), "\">", s, "</a>");
+    return JSValue::encode(jsMakeNontrivialString(exec, "<a name=\"", a0.toString(exec), "\">", s, "</a>"));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncLink(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncLink(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     UString s = thisValue.toThisString(exec);
@@ -1011,7 +1011,7 @@ JSValue JSC_HOST_CALL stringProtoFuncLink(ExecState* exec)
     UChar* buffer;
     PassRefPtr<UStringImpl> impl = UStringImpl::tryCreateUninitialized(bufferSize, buffer);
     if (!impl)
-        return jsUndefined();
+        return JSValue::encode(jsUndefined());
     buffer[0] = '<';
     buffer[1] = 'a';
     buffer[2] = ' ';
@@ -1029,7 +1029,7 @@ JSValue JSC_HOST_CALL stringProtoFuncLink(ExecState* exec)
     buffer[12 + linkTextSize + stringSize] = '/';
     buffer[13 + linkTextSize + stringSize] = 'a';
     buffer[14 + linkTextSize + stringSize] = '>';
-    return jsNontrivialString(exec, impl);
+    return JSValue::encode(jsNontrivialString(exec, impl));
 }
 
 enum {
@@ -1063,22 +1063,22 @@ static inline JSValue trimString(ExecState* exec, JSValue thisValue, int trimKin
     return jsString(exec, str.substr(left, right - left));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncTrim(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncTrim(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    return trimString(exec, thisValue, TrimLeft | TrimRight);
+    return JSValue::encode(trimString(exec, thisValue, TrimLeft | TrimRight));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncTrimLeft(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimLeft(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    return trimString(exec, thisValue, TrimLeft);
+    return JSValue::encode(trimString(exec, thisValue, TrimLeft));
 }
 
-JSValue JSC_HOST_CALL stringProtoFuncTrimRight(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimRight(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    return trimString(exec, thisValue, TrimRight);
+    return JSValue::encode(trimString(exec, thisValue, TrimRight));
 }
     
     

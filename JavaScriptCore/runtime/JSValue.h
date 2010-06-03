@@ -23,8 +23,6 @@
 #ifndef JSValue_h
 #define JSValue_h
 
-#include "CallData.h"
-#include "ConstructData.h"
 #include <math.h>
 #include <stddef.h> // for size_t
 #include <stdint.h>
@@ -35,6 +33,7 @@
 
 namespace JSC {
 
+    class ExecState;
     class Identifier;
     class JSCell;
     class JSGlobalData;
@@ -142,9 +141,6 @@ namespace JSC {
         bool getString(ExecState* exec, UString&) const;
         UString getString(ExecState* exec) const; // null string if not a string
         JSObject* getObject() const; // 0 if not an object
-
-        CallType getCallData(CallData&);
-        ConstructType getConstructData(ConstructData&);
 
         // Extracting integer values.
         bool getUInt32(uint32_t&) const;

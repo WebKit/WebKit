@@ -55,10 +55,10 @@ ConstructType FunctionConstructor::getConstructData(ConstructData& constructData
     return ConstructTypeHost;
 }
 
-static JSValue JSC_HOST_CALL callFunctionConstructor(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callFunctionConstructor(ExecState* exec)
 {
     ArgList args(exec);
-    return constructFunction(exec, args);
+    return JSValue::encode(constructFunction(exec, args));
 }
 
 // ECMA 15.3.1 The Function Constructor Called as a Function

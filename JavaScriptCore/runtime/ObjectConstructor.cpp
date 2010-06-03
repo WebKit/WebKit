@@ -34,13 +34,13 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(ObjectConstructor);
 
-static JSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState*);
-static JSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState*);
-static JSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(ExecState*);
-static JSValue JSC_HOST_CALL objectConstructorKeys(ExecState*);
-static JSValue JSC_HOST_CALL objectConstructorDefineProperty(ExecState*);
-static JSValue JSC_HOST_CALL objectConstructorDefineProperties(ExecState*);
-static JSValue JSC_HOST_CALL objectConstructorCreate(ExecState*);
+static EncodedJSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState*);
+static EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState*);
+static EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(ExecState*);
+static EncodedJSValue JSC_HOST_CALL objectConstructorKeys(ExecState*);
+static EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperty(ExecState*);
+static EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperties(ExecState*);
+static EncodedJSValue JSC_HOST_CALL objectConstructorCreate(ExecState*);
 
 ObjectConstructor::ObjectConstructor(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, ObjectPrototype* objectPrototype, Structure* prototypeFunctionStructure)
 : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, "Object"))
@@ -80,10 +80,10 @@ ConstructType ObjectConstructor::getConstructData(ConstructData& constructData)
     return ConstructTypeHost;
 }
 
-static JSValue JSC_HOST_CALL callObjectConstructor(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callObjectConstructor(ExecState* exec)
 {
     ArgList args(exec);
-    return constructObject(exec, args);
+    return JSValue::encode(constructObject(exec, args));
 }
 
 CallType ObjectConstructor::getCallData(CallData& callData)
@@ -92,26 +92,26 @@ CallType ObjectConstructor::getCallData(CallData& callData)
     return CallTypeHost;
 }
 
-JSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState* exec)
 {
     if (!exec->argument(0).isObject())
-        return throwError(exec, TypeError, "Requested prototype of a value that is not an object.");
-    return asObject(exec->argument(0))->prototype();
+        return JSValue::encode(throwError(exec, TypeError, "Requested prototype of a value that is not an object."));
+    return JSValue::encode(asObject(exec->argument(0))->prototype());
 }
 
-JSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState* exec)
 {
     if (!exec->argument(0).isObject())
-        return throwError(exec, TypeError, "Requested property descriptor of a value that is not an object.");
+        return JSValue::encode(throwError(exec, TypeError, "Requested property descriptor of a value that is not an object."));
     UString propertyName = exec->argument(1).toString(exec);
     if (exec->hadException())
-        return jsNull();
+        return JSValue::encode(jsNull());
     JSObject* object = asObject(exec->argument(0));
     PropertyDescriptor descriptor;
     if (!object->getOwnPropertyDescriptor(exec, Identifier(exec, propertyName), descriptor))
-        return jsUndefined();
+        return JSValue::encode(jsUndefined());
     if (exec->hadException())
-        return jsUndefined();
+        return JSValue::encode(jsUndefined());
 
     JSObject* description = constructEmptyObject(exec);
     if (!descriptor.isAccessorDescriptor()) {
@@ -125,35 +125,35 @@ JSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState* exec)
     description->putDirect(exec->propertyNames().enumerable, jsBoolean(descriptor.enumerable()), 0);
     description->putDirect(exec->propertyNames().configurable, jsBoolean(descriptor.configurable()), 0);
 
-    return description;
+    return JSValue::encode(description);
 }
 
 // FIXME: Use the enumeration cache.
-JSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(ExecState* exec)
 {
     if (!exec->argument(0).isObject())
-        return throwError(exec, TypeError, "Requested property names of a value that is not an object.");
+        return JSValue::encode(throwError(exec, TypeError, "Requested property names of a value that is not an object."));
     PropertyNameArray properties(exec);
     asObject(exec->argument(0))->getOwnPropertyNames(exec, properties, IncludeDontEnumProperties);
     JSArray* names = constructEmptyArray(exec);
     size_t numProperties = properties.size();
     for (size_t i = 0; i < numProperties; i++)
         names->push(exec, jsOwnedString(exec, properties[i].ustring()));
-    return names;
+    return JSValue::encode(names);
 }
 
 // FIXME: Use the enumeration cache.
-JSValue JSC_HOST_CALL objectConstructorKeys(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL objectConstructorKeys(ExecState* exec)
 {
     if (!exec->argument(0).isObject())
-        return throwError(exec, TypeError, "Requested keys of a value that is not an object.");
+        return JSValue::encode(throwError(exec, TypeError, "Requested keys of a value that is not an object."));
     PropertyNameArray properties(exec);
     asObject(exec->argument(0))->getOwnPropertyNames(exec, properties);
     JSArray* keys = constructEmptyArray(exec);
     size_t numProperties = properties.size();
     for (size_t i = 0; i < numProperties; i++)
         keys->push(exec, jsOwnedString(exec, properties[i].ustring()));
-    return keys;
+    return JSValue::encode(keys);
 }
 
 // ES5 8.10.5 ToPropertyDescriptor
@@ -201,7 +201,7 @@ static bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor
             return false;
         if (!get.isUndefined()) {
             CallData callData;
-            if (get.getCallData(callData) == CallTypeNone) {
+            if (getCallData(get, callData) == CallTypeNone) {
                 throwError(exec, TypeError, "Getter must be a function.");
                 return false;
             }
@@ -217,7 +217,7 @@ static bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor
             return false;
         if (!set.isUndefined()) {
             CallData callData;
-            if (set.getCallData(callData) == CallTypeNone) {
+            if (getCallData(set, callData) == CallTypeNone) {
                 throwError(exec, TypeError, "Setter must be a function.");
                 return false;
             }
@@ -242,21 +242,21 @@ static bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor
     return true;
 }
 
-JSValue JSC_HOST_CALL objectConstructorDefineProperty(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperty(ExecState* exec)
 {
     if (!exec->argument(0).isObject())
-        return throwError(exec, TypeError, "Properties can only be defined on Objects.");
+        return JSValue::encode(throwError(exec, TypeError, "Properties can only be defined on Objects."));
     JSObject* O = asObject(exec->argument(0));
     UString propertyName = exec->argument(1).toString(exec);
     if (exec->hadException())
-        return jsNull();
+        return JSValue::encode(jsNull());
     PropertyDescriptor descriptor;
     if (!toPropertyDescriptor(exec, exec->argument(2), descriptor))
-        return jsNull();
+        return JSValue::encode(jsNull());
     ASSERT((descriptor.attributes() & (Getter | Setter)) || (!descriptor.isAccessorDescriptor()));
     ASSERT(!exec->hadException());
     O->defineOwnProperty(exec, Identifier(exec, propertyName), descriptor, true);
-    return O;
+    return JSValue::encode(O);
 }
 
 static JSValue defineProperties(ExecState* exec, JSObject* object, JSObject* properties)
@@ -293,26 +293,26 @@ static JSValue defineProperties(ExecState* exec, JSObject* object, JSObject* pro
     return object;
 }
 
-JSValue JSC_HOST_CALL objectConstructorDefineProperties(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperties(ExecState* exec)
 {
     if (!exec->argument(0).isObject())
-        return throwError(exec, TypeError, "Properties can only be defined on Objects.");
+        return JSValue::encode(throwError(exec, TypeError, "Properties can only be defined on Objects."));
     if (!exec->argument(1).isObject())
-        return throwError(exec, TypeError, "Property descriptor list must be an Object.");
-    return defineProperties(exec, asObject(exec->argument(0)), asObject(exec->argument(1)));
+        return JSValue::encode(throwError(exec, TypeError, "Property descriptor list must be an Object."));
+    return JSValue::encode(defineProperties(exec, asObject(exec->argument(0)), asObject(exec->argument(1))));
 }
 
-JSValue JSC_HOST_CALL objectConstructorCreate(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL objectConstructorCreate(ExecState* exec)
 {
     if (!exec->argument(0).isObject() && !exec->argument(0).isNull())
-        return throwError(exec, TypeError, "Object prototype may only be an Object or null.");
+        return JSValue::encode(throwError(exec, TypeError, "Object prototype may only be an Object or null."));
     JSObject* newObject = constructEmptyObject(exec);
     newObject->setPrototype(exec->argument(0));
     if (exec->argument(1).isUndefined())
-        return newObject;
+        return JSValue::encode(newObject);
     if (!exec->argument(1).isObject())
-        return throwError(exec, TypeError, "Property descriptor list must be an Object.");
-    return defineProperties(exec, newObject, asObject(exec->argument(1)));
+        return JSValue::encode(throwError(exec, TypeError, "Property descriptor list must be an Object."));
+    return JSValue::encode(defineProperties(exec, newObject, asObject(exec->argument(1))));
 }
 
 } // namespace JSC

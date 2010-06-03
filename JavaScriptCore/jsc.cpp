@@ -71,19 +71,19 @@ using namespace WTF;
 static void cleanupGlobalData(JSGlobalData*);
 static bool fillBufferWithContentsOfFile(const UString& fileName, Vector<char>& buffer);
 
-static JSValue JSC_HOST_CALL functionPrint(ExecState*);
-static JSValue JSC_HOST_CALL functionDebug(ExecState*);
-static JSValue JSC_HOST_CALL functionGC(ExecState*);
-static JSValue JSC_HOST_CALL functionVersion(ExecState*);
-static JSValue JSC_HOST_CALL functionRun(ExecState*);
-static JSValue JSC_HOST_CALL functionLoad(ExecState*);
-static JSValue JSC_HOST_CALL functionCheckSyntax(ExecState*);
-static JSValue JSC_HOST_CALL functionReadline(ExecState*);
-static NO_RETURN_WITH_VALUE JSValue JSC_HOST_CALL functionQuit(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionPrint(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionDebug(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionGC(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionVersion(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionRun(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionLoad(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionReadline(ExecState*);
+static NO_RETURN_WITH_VALUE EncodedJSValue JSC_HOST_CALL functionQuit(ExecState*);
 
 #if ENABLE(SAMPLING_FLAGS)
-static JSValue JSC_HOST_CALL functionSetSamplingFlags(ExecState*);
-static JSValue JSC_HOST_CALL functionClearSamplingFlags(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionSetSamplingFlags(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionClearSamplingFlags(ExecState*);
 #endif
 
 struct Script {
@@ -171,7 +171,7 @@ GlobalObject::GlobalObject(const Vector<UString>& arguments)
     putDirect(Identifier(globalExec(), "arguments"), array);
 }
 
-JSValue JSC_HOST_CALL functionPrint(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL functionPrint(ExecState* exec)
 {
     for (unsigned i = 0; i < exec->argumentCount(); ++i) {
         if (i)
@@ -182,36 +182,36 @@ JSValue JSC_HOST_CALL functionPrint(ExecState* exec)
 
     putchar('\n');
     fflush(stdout);
-    return jsUndefined();
+    return JSValue::encode(jsUndefined());
 }
 
-JSValue JSC_HOST_CALL functionDebug(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL functionDebug(ExecState* exec)
 {
     fprintf(stderr, "--> %s\n", exec->argument(0).toString(exec).UTF8String().data());
-    return jsUndefined();
+    return JSValue::encode(jsUndefined());
 }
 
-JSValue JSC_HOST_CALL functionGC(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL functionGC(ExecState* exec)
 {
     JSLock lock(SilenceAssertionsOnly);
     exec->heap()->collectAllGarbage();
-    return jsUndefined();
+    return JSValue::encode(jsUndefined());
 }
 
-JSValue JSC_HOST_CALL functionVersion(ExecState*)
+EncodedJSValue JSC_HOST_CALL functionVersion(ExecState*)
 {
     // We need this function for compatibility with the Mozilla JS tests but for now
     // we don't actually do any version-specific handling
-    return jsUndefined();
+    return JSValue::encode(jsUndefined());
 }
 
-JSValue JSC_HOST_CALL functionRun(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
 {
     StopWatch stopWatch;
     UString fileName = exec->argument(0).toString(exec);
     Vector<char> script;
     if (!fillBufferWithContentsOfFile(fileName, script))
-        return throwError(exec, GeneralError, "Could not open file.");
+        return JSValue::encode(throwError(exec, GeneralError, "Could not open file."));
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
 
@@ -219,60 +219,60 @@ JSValue JSC_HOST_CALL functionRun(ExecState* exec)
     evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script.data(), fileName));
     stopWatch.stop();
 
-    return jsNumber(globalObject->globalExec(), stopWatch.getElapsedMS());
+    return JSValue::encode(jsNumber(globalObject->globalExec(), stopWatch.getElapsedMS()));
 }
 
-JSValue JSC_HOST_CALL functionLoad(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL functionLoad(ExecState* exec)
 {
     UString fileName = exec->argument(0).toString(exec);
     Vector<char> script;
     if (!fillBufferWithContentsOfFile(fileName, script))
-        return throwError(exec, GeneralError, "Could not open file.");
+        return JSValue::encode(throwError(exec, GeneralError, "Could not open file."));
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     Completion result = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script.data(), fileName));
     if (result.complType() == Throw)
         exec->setException(result.value());
-    return result.value();
+    return JSValue::encode(result.value());
 }
 
-JSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec)
 {
     UString fileName = exec->argument(0).toString(exec);
     Vector<char> script;
     if (!fillBufferWithContentsOfFile(fileName, script))
-        return throwError(exec, GeneralError, "Could not open file.");
+        return JSValue::encode(throwError(exec, GeneralError, "Could not open file."));
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     Completion result = checkSyntax(globalObject->globalExec(), makeSource(script.data(), fileName));
     if (result.complType() == Throw)
         exec->setException(result.value());
-    return result.value();
+    return JSValue::encode(result.value());
 }
 
 #if ENABLE(SAMPLING_FLAGS)
-JSValue JSC_HOST_CALL functionSetSamplingFlags(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL functionSetSamplingFlags(ExecState* exec)
 {
     for (unsigned i = 0; i < exec->argumentCount(); ++i) {
         unsigned flag = static_cast<unsigned>(exec->argument(i).toNumber(exec));
         if ((flag >= 1) && (flag <= 32))
             SamplingFlags::setFlag(flag);
     }
-    return jsNull();
+    return JSValue::encode(jsNull());
 }
 
-JSValue JSC_HOST_CALL functionClearSamplingFlags(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL functionClearSamplingFlags(ExecState* exec)
 {
     for (unsigned i = 0; i < exec->argumentCount(); ++i) {
         unsigned flag = static_cast<unsigned>(exec->argument(i).toNumber(exec));
         if ((flag >= 1) && (flag <= 32))
             SamplingFlags::clearFlag(flag);
     }
-    return jsNull();
+    return JSValue::encode(jsNull());
 }
 #endif
 
-JSValue JSC_HOST_CALL functionReadline(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL functionReadline(ExecState* exec)
 {
     Vector<char, 256> line;
     int c;
@@ -283,10 +283,10 @@ JSValue JSC_HOST_CALL functionReadline(ExecState* exec)
         line.append(c);
     }
     line.append('\0');
-    return jsString(exec, line.data());
+    return JSValue::encode(jsString(exec, line.data()));
 }
 
-JSValue JSC_HOST_CALL functionQuit(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL functionQuit(ExecState* exec)
 {
     // Technically, destroying the heap in the middle of JS execution is a no-no,
     // but we want to maintain compatibility with the Mozilla test suite, so
@@ -298,7 +298,7 @@ JSValue JSC_HOST_CALL functionQuit(ExecState* exec)
 
 #if COMPILER(MSVC) && OS(WINCE)
     // Without this, Visual Studio will complain that this method does not return a value.
-    return jsUndefined();
+    return JSValue::encode(jsUndefined());
 #endif
 }
 

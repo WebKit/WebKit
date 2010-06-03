@@ -24,6 +24,7 @@
 #ifndef JSGlobalObjectFunctions_h
 #define JSGlobalObjectFunctions_h
 
+#include "JSValue.h"
 #include <wtf/unicode/Unicode.h>
 
 namespace JSC {
@@ -31,24 +32,23 @@ namespace JSC {
     class ArgList;
     class ExecState;
     class JSObject;
-    class JSValue;
 
     // FIXME: These functions should really be in JSGlobalObject.cpp, but putting them there
     // is a 0.5% reduction.
 
-    JSValue JSC_HOST_CALL globalFuncEval(ExecState*);
-    JSValue JSC_HOST_CALL globalFuncParseInt(ExecState*);
-    JSValue JSC_HOST_CALL globalFuncParseFloat(ExecState*);
-    JSValue JSC_HOST_CALL globalFuncIsNaN(ExecState*);
-    JSValue JSC_HOST_CALL globalFuncIsFinite(ExecState*);
-    JSValue JSC_HOST_CALL globalFuncDecodeURI(ExecState*);
-    JSValue JSC_HOST_CALL globalFuncDecodeURIComponent(ExecState*);
-    JSValue JSC_HOST_CALL globalFuncEncodeURI(ExecState*);
-    JSValue JSC_HOST_CALL globalFuncEncodeURIComponent(ExecState*);
-    JSValue JSC_HOST_CALL globalFuncEscape(ExecState*);
-    JSValue JSC_HOST_CALL globalFuncUnescape(ExecState*);
+    EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState*);
+    EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState*);
+    EncodedJSValue JSC_HOST_CALL globalFuncParseFloat(ExecState*);
+    EncodedJSValue JSC_HOST_CALL globalFuncIsNaN(ExecState*);
+    EncodedJSValue JSC_HOST_CALL globalFuncIsFinite(ExecState*);
+    EncodedJSValue JSC_HOST_CALL globalFuncDecodeURI(ExecState*);
+    EncodedJSValue JSC_HOST_CALL globalFuncDecodeURIComponent(ExecState*);
+    EncodedJSValue JSC_HOST_CALL globalFuncEncodeURI(ExecState*);
+    EncodedJSValue JSC_HOST_CALL globalFuncEncodeURIComponent(ExecState*);
+    EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState*);
+    EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState*);
 #ifndef NDEBUG
-    JSValue JSC_HOST_CALL globalFuncJSCPrint(ExecState*);
+    EncodedJSValue JSC_HOST_CALL globalFuncJSCPrint(ExecState*);
 #endif
 
     static const double mantissaOverflowLowerBound = 9007199254740992.0;

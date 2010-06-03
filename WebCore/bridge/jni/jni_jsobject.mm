@@ -289,7 +289,7 @@ jobject JavaJSObject::call(jstring methodName, jobjectArray args) const
     Identifier identifier(exec, JavaString(methodName));
     JSValue function = _imp->get(exec, identifier);
     CallData callData;
-    CallType callType = function.getCallData(callData);
+    CallType callType = getCallData(function, callData);
     if (callType == CallTypeNone)
         return 0;
 

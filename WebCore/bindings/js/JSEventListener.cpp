@@ -93,7 +93,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
     JSValue handleEventFunction = jsFunction->get(exec, Identifier(exec, "handleEvent"));
 
     CallData callData;
-    CallType callType = handleEventFunction.getCallData(callData);
+    CallType callType = getCallData(handleEventFunction, callData);
     if (callType == CallTypeNone) {
         handleEventFunction = JSValue();
         callType = jsFunction->getCallData(callData);

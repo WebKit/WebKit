@@ -46,7 +46,7 @@ short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) 
     JSLock lock(SilenceAssertionsOnly);
 
     CallData callData;
-    CallType callType = m_filter.getCallData(callData);
+    CallType callType = getCallData(m_filter, callData);
     if (callType == CallTypeNone)
         return NodeFilter::FILTER_ACCEPT;
 

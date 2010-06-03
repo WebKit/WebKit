@@ -40,11 +40,11 @@ static NEVER_INLINE JSValue stringFromCharCodeSlowCase(ExecState* exec)
     return jsString(exec, impl);
 }
 
-static JSValue JSC_HOST_CALL stringFromCharCode(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL stringFromCharCode(ExecState* exec)
 {
     if (LIKELY(exec->argumentCount() == 1))
-        return jsSingleCharacterString(exec, exec->argument(0).toUInt32(exec));
-    return stringFromCharCodeSlowCase(exec);
+        return JSValue::encode(jsSingleCharacterString(exec, exec->argument(0).toUInt32(exec)));
+    return JSValue::encode(stringFromCharCodeSlowCase(exec));
 }
 
 ASSERT_CLASS_FITS_IN_CELL(StringConstructor);
@@ -80,11 +80,11 @@ ConstructType StringConstructor::getConstructData(ConstructData& constructData)
 }
 
 // ECMA 15.5.1
-static JSValue JSC_HOST_CALL callStringConstructor(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callStringConstructor(ExecState* exec)
 {
     if (!exec->argumentCount())
-        return jsEmptyString(exec);
-    return jsString(exec, exec->argument(0).toString(exec));
+        return JSValue::encode(jsEmptyString(exec));
+    return JSValue::encode(jsString(exec, exec->argument(0).toString(exec)));
 }
 
 CallType StringConstructor::getCallData(CallData& callData)
