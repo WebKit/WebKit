@@ -46,20 +46,31 @@ function loaded()
 function statePopped()
 {
     alert("State popped - " + event.state + " (type " + typeof event.state + ")");
-    if (event.state == "FirstEntry") {
-        history.replaceState("FirstEntryWillLaterBeReactivated", null, "#FirstEntryWillLaterBeReactivated");
-        setTimeout("history.forward();", 0);
-    } else if (event.state == "SecondEntry") {
-        history.replaceState("SecondEntryWillLaterBeReactivated", null, "#SecondEntryWillLaterBeReactivated");
-        window.location = "resources/navigate-back.html";
-    } else if (event.state == "SecondEntryWillLaterBeReactivated")
-        history.back();
+
+    // FIXME: Once the popstate and hashchange events fire asynchronously, we
+    // can eliminate this setTimeout hack.  The hashchange event currently runs
+    // synchronously following the popstate event, but the calls to
+    // replaceState cause the location to change immediately.  That confuses
+    // our hashchange handler, which expects to see the "old" value of the
+    // location.
+
+    var state = event.state;
+    setTimeout(function() {
+        if (state == "FirstEntry") {
+            history.replaceState("FirstEntryWillLaterBeReactivated", null, "#FirstEntryWillLaterBeReactivated");
+            history.forward();
+        } else if (state == "SecondEntry") {
+            history.replaceState("SecondEntryWillLaterBeReactivated", null, "#SecondEntryWillLaterBeReactivated");
+            window.location = "resources/navigate-back.html";
+        } else if (state == "SecondEntryWillLaterBeReactivated")
+            history.back();
+    }, 0);
 }
 
 function hashChanged()
 {
     alert("hashChanged - Last path component of location is " + lastPathComponent());
-   if (window.location.hash == "#FirstEntryWillLaterBeReactivated") {
+    if (window.location.hash == "#FirstEntryWillLaterBeReactivated") {
         alert("Test complete");
         sessionStorage.clear();
         if (window.layoutTestController)
