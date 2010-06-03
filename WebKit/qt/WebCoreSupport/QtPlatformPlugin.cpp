@@ -85,45 +85,62 @@ void SelectInputMethodWrapper::didHide()
 
 // QtPlatformPlugin
 
-static QWebKitPlatformPlugin* getPluginObject()
+bool QtPlatformPlugin::load(const QString& file)
+{
+    m_loader.setFileName(file);
+    if (!m_loader.load())
+        return false;
+
+    QObject* obj = m_loader.instance();
+    if (obj) {
+        m_plugin = qobject_cast<QWebKitPlatformPlugin*>(obj);
+        if (m_plugin)
+            return true;
+    }
+
+    m_loader.unload();
+    return false;
+}
+
+bool QtPlatformPlugin::load()
 {
     const QLatin1String suffix("/webkit/");
     const QStringList paths = QCoreApplication::libraryPaths();
-    QObject* obj = 0;
-    for (int i = 0; !obj && i < paths.count(); ++i) {
+
+    for (int i = 0; i < paths.count(); ++i) {
         const QDir dir(paths[i] + suffix);
         if (!dir.exists())
             continue;
         const QStringList files = dir.entryList(QDir::Files);
-        for (int i = 0; i < files.count(); ++i) {
-            QPluginLoader pluginLoader(dir.absoluteFilePath(files.at(i)));
-            if (!pluginLoader.load())
-                continue;
-            obj = pluginLoader.instance();
-            if (obj) {
-                QWebKitPlatformPlugin* result = qobject_cast<QWebKitPlatformPlugin*>(obj);
-                if (result)
-                    return result;
-                delete obj;
-            }
-            pluginLoader.unload();
+        for (int j = 0; j < files.count(); ++j) {
+            if (load(dir.absoluteFilePath(files.at(j))))
+                return true;
         }
     }
-    return 0;
+    return false;
 }
 
 QtPlatformPlugin::~QtPlatformPlugin()
 {
-    delete m_plugin;
+    m_loader.unload();
 }
 
 QWebKitPlatformPlugin* QtPlatformPlugin::plugin()
 {
     if (m_loaded)
         return m_plugin;
-
     m_loaded = true;
-    m_plugin = getPluginObject();
+
+    // Plugin path is stored in a static variable to avoid searching for the plugin
+    // more then once.
+    static QString pluginPath;
+
+    if (pluginPath.isNull()) {
+        if (load())
+            pluginPath = m_loader.fileName();
+    } else
+        load(pluginPath);
+
     return m_plugin;
 }
 

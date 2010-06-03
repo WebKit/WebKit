@@ -23,6 +23,7 @@
 
 #include "QtAbstractWebPopup.h"
 #include <QObject>
+#include <QPluginLoader>
 
 class QWebSelectMethod;
 class QWebKitPlatformPlugin;
@@ -55,6 +56,9 @@ public:
 private:
     bool m_loaded;
     QWebKitPlatformPlugin* m_plugin;
+    QPluginLoader m_loader;
+    bool load();
+    bool load(const QString& file);
 
     QWebKitPlatformPlugin* plugin();
 };

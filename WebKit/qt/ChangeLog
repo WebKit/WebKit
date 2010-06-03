@@ -1,3 +1,25 @@
+2010-06-02  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Shared platform plugin
+        https://bugs.webkit.org/show_bug.cgi?id=39968
+
+        Allow several instances of class QtPlatformPlugin to share the QWebKitPlatformPlugin
+        object provided by a plugin.
+
+        Updated plugin interface version number due to ABI breaking change.
+
+        * Api/qwebkitplatformplugin.h:
+        (QWebKitPlatformPlugin::~QWebKitPlatformPlugin):
+        * WebCoreSupport/QtPlatformPlugin.cpp:
+        (WebCore::QtPlatformPlugin::load):
+        (WebCore::QtPlatformPlugin::~QtPlatformPlugin):
+        (WebCore::QtPlatformPlugin::plugin):
+        * WebCoreSupport/QtPlatformPlugin.h:
+        * examples/platformplugin/qwebkitplatformplugin.h:
+        (QWebKitPlatformPlugin::~QWebKitPlatformPlugin):
+
 2010-06-02  Raine Makelainen  <raine.makelainen@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
