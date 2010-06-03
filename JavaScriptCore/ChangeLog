@@ -1,5 +1,15 @@
 2010-06-03  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (Interpreter build fix).
+
+        * JavaScriptCore.JSVALUE32_64only.exp:
+        * JavaScriptCore.JSVALUE32only.exp:
+        * JavaScriptCore.JSVALUE64only.exp:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+
+2010-06-03  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by NOBODY (windows build fix II).
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
