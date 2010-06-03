@@ -1,3 +1,23 @@
+2010-06-03  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Drag gesture can take mouse grab indefinitely
+        https://bugs.webkit.org/show_bug.cgi?id=32840
+
+        Start GTK+ drags with the previous mouse button down event instead of
+        synthesizing the event. The synthesized event was not completely valid
+        and froze some drags indefinitely.
+
+        * WebCoreSupport/DragClientGtk.cpp:
+        (WebKit::buttonPressEvent): Added.
+        (WebKit::DragClient::DragClient):
+        Connect to the 'button-press-event' signal of the WebView.
+        (WebKit::DragClient::startDrag):
+        Instead of synthesizing a button press event use the last real one.
+        * WebCoreSupport/DragClientGtk.h:
+        (WebKit::DragClient::setLastButtonPressEvent): Added.
+
 2010-06-01  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
