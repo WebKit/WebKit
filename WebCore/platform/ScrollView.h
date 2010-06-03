@@ -298,7 +298,7 @@ private:
     void updateScrollbars(const IntSize& desiredOffset);
 
     // Called when the scroll position within this view changes.  FrameView overrides this to generate repaint invalidations.
-    virtual void scrollPositionChanged() {}
+    virtual void repaintFixedElementsAfterScrolling() {}
 
     void platformInit();
     void platformDestroy();

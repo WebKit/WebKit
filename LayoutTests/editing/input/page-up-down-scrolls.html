@@ -1,0 +1,42 @@
+<!DOCTYPE html> 
+<html>
+<head>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function scr()
+{
+    document.getElementById('log').innerText += 'x';
+}
+
+function runTest()
+{
+    if (!window.eventSender)
+        return;
+
+    window.addEventListener('scroll', scr, false);
+
+    eventSender.keyDown("pageDown");
+    var text = document.getElementById('log').innerText;
+    if (text != "x")
+        throw "log should contain x, not " + text;
+
+    eventSender.keyDown("pageUp");
+    var text = document.getElementById('log').innerText;
+    if (text != "xx")
+        throw "log should contain xx, not " + text;
+
+    document.getElementById("results").innerText = "PASS";
+}
+</script>
+</head>
+<body onload="runTest()"> 
+<span id="log" style="position:fixed"></span> 
+<div>This test simulates hitting page up and page down once each. Both keypresses should generate exactly one scroll event. This test requires DRT to pass.</div>
+<div id="results">FAIL</div>
+<div style="height:50000px">(just here to force scrollbars)</div> 
+<script> 
+</script>
+</body>
+</html>

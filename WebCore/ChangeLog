@@ -1,3 +1,23 @@
+2010-06-02  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Scroll events are sent twice per keypress for ports that don't have a platformWidget scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=39918
+
+        This was regressed by http://trac.webkit.org/changeset/58615 . Fix this by slightly tweaking
+        that patch.
+
+        Test: editing/input/page-up-down-scrolls.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollPositionChanged):
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::valueChanged):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::repaintFixedElementsAfterScrolling):
+
 2010-06-02  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
