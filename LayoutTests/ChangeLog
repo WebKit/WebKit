@@ -1,3 +1,14 @@
+2010-06-03  John Gregg  <johnnyg@google.com>
+
+        Reviewed by David Levin.
+
+        notifications: in display+close layout test, don't close the notification
+        until the display event has been received asynchronously; also don't use
+        an invalid icon URL, since that should generate an error event.
+        https://bugs.webkit.org/show_bug.cgi?id=39782
+
+        * fast/notifications/notifications-display-close-events.html:
+
 2010-06-03  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Dan Bernstein.
