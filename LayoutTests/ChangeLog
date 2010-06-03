@@ -1,3 +1,17 @@
+2010-06-03  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed. Test expectation update.
+
+        Rebaseline fixed-move-after-keyboard-scroll, and add an entry for
+        fast/events/transformaction.
+        https://bugs.webkit.org/show_bug.cgi?id=40101
+
+        * platform/chromium-mac/fast/repaint/fixed-move-after-keyboard-scroll-expected.checksum:
+        * platform/chromium-mac/fast/repaint/fixed-move-after-keyboard-scroll-expected.png:
+        * platform/chromium-win/fast/repaint/fixed-move-after-keyboard-scroll-expected.checksum:
+        * platform/chromium-win/fast/repaint/fixed-move-after-keyboard-scroll-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2010-06-03  Kim Grönholm  <kim.1.gronholm@nokia.com>
 
         Reviewed by Simon Hausmann.
