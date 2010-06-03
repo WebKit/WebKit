@@ -1,3 +1,16 @@
+2010-06-03  Steve Block  <steveblock@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Geolocation needs LayoutTest to test making callbacks to remote frames
+        https://bugs.webkit.org/show_bug.cgi?id=40129
+
+        * fast/dom/Geolocation/callback-to-remote-context-expected.txt: Added.
+        * fast/dom/Geolocation/callback-to-remote-context.html: Added.
+        * fast/dom/Geolocation/resources: Added.
+        * fast/dom/Geolocation/resources/callback-to-remote-context-inner.html: Added.
+        * fast/dom/Geolocation/script-tests/callback-to-remote-context.js: Added.
+
 2010-06-03  James Robinson  <jamesr@chromium.org>
 
         Unreviewed.  Add chromium-specific baselines for new tests added by 60640
