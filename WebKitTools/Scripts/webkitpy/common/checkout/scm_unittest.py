@@ -635,25 +635,63 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
 
 class GitTest(SCMTest):
 
-    def _setup_git_clone_of_svn_repository(self):
+    def setUp(self):
+        """Sets up fresh git repository with one commit. Then setups a second git
+        repo that tracks the first one."""
+        self.original_dir = os.getcwd()
+
+        self.untracking_checkout_path = tempfile.mkdtemp(suffix="git_test_checkout2")
+        run_command(['git', 'init', self.untracking_checkout_path])
+
+        os.chdir(self.untracking_checkout_path)
+        write_into_file_at_path('foo_file', 'foo')
+        run_command(['git', 'add', 'foo_file'])
+        run_command(['git', 'commit', '-am', 'dummy commit'])
+        self.untracking_scm = detect_scm_system(self.untracking_checkout_path)
+
+        self.tracking_git_checkout_path = tempfile.mkdtemp(suffix="git_test_checkout")
+        run_command(['git', 'clone', '--quiet', self.untracking_checkout_path, self.tracking_git_checkout_path])
+        os.chdir(self.tracking_git_checkout_path)
+        self.tracking_scm = detect_scm_system(self.tracking_git_checkout_path)
+
+    def tearDown(self):
+        # Change back to a valid directory so that later calls to os.getcwd() do not fail.
+        os.chdir(self.original_dir)
+        run_command(['rm', '-rf', self.tracking_git_checkout_path])
+        run_command(['rm', '-rf', self.untracking_checkout_path])
+
+    def test_remote_branch_ref(self):
+        self.assertEqual(self.tracking_scm.remote_branch_ref(), 'refs/remotes/origin/master')
+
+        os.chdir(self.untracking_checkout_path)
+        self.assertRaises(ScriptError, self.untracking_scm.remote_branch_ref)
+
+
+class GitSVNTest(SCMTest):
+
+    def _setup_git_checkout(self):
         self.git_checkout_path = tempfile.mkdtemp(suffix="git_test_checkout")
         # --quiet doesn't make git svn silent, so we use run_silent to redirect output
         run_silent(['git', 'svn', 'clone', '-T', 'trunk', self.svn_repo_url, self.git_checkout_path])
+        os.chdir(self.git_checkout_path)
 
-    def _tear_down_git_clone_of_svn_repository(self):
+    def _tear_down_git_checkout(self):
+        # Change back to a valid directory so that later calls to os.getcwd() do not fail.
+        os.chdir(self.original_dir)
         run_command(['rm', '-rf', self.git_checkout_path])
 
     def setUp(self):
+        self.original_dir = os.getcwd()
+
         SVNTestRepository.setup(self)
-        self._setup_git_clone_of_svn_repository()
-        os.chdir(self.git_checkout_path)
+        self._setup_git_checkout()
         self.scm = detect_scm_system(self.git_checkout_path)
         # For historical reasons, we test some checkout code here too.
         self.checkout = Checkout(self.scm)
 
     def tearDown(self):
         SVNTestRepository.tear_down(self)
-        self._tear_down_git_clone_of_svn_repository()
+        self._tear_down_git_checkout()
 
     def test_detection(self):
         scm = detect_scm_system(self.git_checkout_path)
@@ -683,25 +721,24 @@ class GitTest(SCMTest):
         self.assertEqual(len(self.scm.local_commits()), 0)
 
     def test_delete_branch(self):
-        old_branch = run_command(['git', 'symbolic-ref', 'HEAD']).strip()
         new_branch = 'foo'
 
         run_command(['git', 'checkout', '-b', new_branch])
         self.assertEqual(run_command(['git', 'symbolic-ref', 'HEAD']).strip(), 'refs/heads/' + new_branch)
 
-        run_command(['git', 'checkout', old_branch])
+        run_command(['git', 'checkout', '-b', 'bar'])
         self.scm.delete_branch(new_branch)
 
         self.assertFalse(re.search(r'foo', run_command(['git', 'branch'])))
 
-    def test_svn_merge_base(self):
+    def test_remote_merge_base(self):
         # Diff to merge-base should include working-copy changes,
         # which the diff to svn_branch.. doesn't.
         test_file = os.path.join(self.git_checkout_path, 'test_file')
         write_into_file_at_path(test_file, 'foo')
 
-        diff_to_common_base = _git_diff(self.scm.svn_branch_name() + '..')
-        diff_to_merge_base = _git_diff(self.scm.svn_merge_base())
+        diff_to_common_base = _git_diff(self.scm.remote_branch_ref() + '..')
+        diff_to_merge_base = _git_diff(self.scm.remote_merge_base())
 
         self.assertFalse(re.search(r'foo', diff_to_common_base))
         self.assertTrue(re.search(r'foo', diff_to_merge_base))
@@ -887,6 +924,9 @@ class GitTest(SCMTest):
         self._two_local_commits()
         scm = detect_scm_system(self.git_checkout_path)
         self.assertRaises(ScriptError, scm.commit_with_message, "another test commit", squash=True)
+
+    def test_remote_branch_ref(self):
+        self.assertEqual(self.scm.remote_branch_ref(), 'refs/remotes/trunk')
 
     def test_reverse_diff(self):
         self._shared_test_reverse_diff()

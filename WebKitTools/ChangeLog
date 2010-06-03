@@ -1,3 +1,19 @@
+2010-05-24  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Chris Jerdonek.
+
+        many webkit-patch commands fail in a non-svn tracking git checkout
+        https://bugs.webkit.org/show_bug.cgi?id=38156
+
+        If the svn-tracking-branch (trunk) doesn't exist, fallback to the git remote-tracking-branch (master).
+        If neither exists, then error out. This makes webkit-patch work
+        for anyone that follows the intructions at http://trac.webkit.org/wiki/UsingGitWithWebKit
+        to checkout webkit. The fallback to master is for people who don't
+        do the steps on that page for tracking svn.
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+
 2010-06-03  Mike Fenton  <mifenton@rim.com>
 
         Unreviewed.

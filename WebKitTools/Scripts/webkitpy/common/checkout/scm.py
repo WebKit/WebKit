@@ -240,7 +240,7 @@ class SCM:
     def supports_local_commits():
         raise NotImplementedError, "subclasses must implement"
 
-    def svn_merge_base():
+    def remote_merge_base():
         raise NotImplementedError, "subclasses must implement"
 
     def commit_locally_with_message(self, message):
@@ -465,11 +465,11 @@ class Git(SCM):
 
     def discard_local_commits(self):
         # FIXME: This should probably use cwd=self.checkout_root
-        self.run(['git', 'reset', '--hard', self.svn_branch_name()])
+        self.run(['git', 'reset', '--hard', self.remote_branch_ref()])
     
     def local_commits(self):
         # FIXME: This should probably use cwd=self.checkout_root
-        return self.run(['git', 'log', '--pretty=oneline', 'HEAD...' + self.svn_branch_name()]).splitlines()
+        return self.run(['git', 'log', '--pretty=oneline', 'HEAD...' + self.remote_branch_ref()]).splitlines()
 
     def rebase_in_progress(self):
         return os.path.exists(os.path.join(self.checkout_root, '.git/rebase-apply'))
@@ -507,7 +507,7 @@ class Git(SCM):
             return git_commit
 
         if self.should_squash(squash):
-            return self.svn_merge_base()
+            return self.remote_merge_base()
 
         # FIXME: Non-squash behavior should match commit_with_message. It raises an error
         # if there are working copy changes and --squash or --no-squash wasn't passed in.
@@ -602,14 +602,14 @@ class Git(SCM):
                 if num_local_commits > 1 or (num_local_commits > 0 and not self.working_directory_is_clean()):
                     raise ScriptError(message=self._get_squash_error_message(num_local_commits))
 
-        if squash and self._svn_branch_has_extra_commits():
+        if squash and self._remote_branch_has_extra_commits():
             raise ScriptError(message="Cannot use --squash when HEAD is not fully merged/rebased to %s. "
-                                      "This branch needs to be synced first." % self.svn_branch_name())
+                                      "This branch needs to be synced first." % self.remote_branch_ref())
 
         return squash
 
-    def _svn_branch_has_extra_commits(self):
-        return len(run_command(['git', 'rev-list', '--max-count=1', self.svn_branch_name(), '^HEAD']))
+    def _remote_branch_has_extra_commits(self):
+        return len(run_command(['git', 'rev-list', '--max-count=1', self.remote_branch_ref(), '^HEAD']))
 
     def commit_with_message(self, message, username=None, git_commit=None, squash=None):
         # Username is ignored during Git commits.
@@ -624,7 +624,7 @@ class Git(SCM):
 
         squash = self.should_squash(squash)
         if squash:
-            self.run(['git', 'reset', '--soft', self.svn_branch_name()])
+            self.run(['git', 'reset', '--soft', self.remote_branch_ref()])
             self.commit_locally_with_message(message)
         elif not self.working_directory_is_clean():
             if not len(self.local_commits()):
@@ -650,8 +650,8 @@ class Git(SCM):
 
         # We want to squash all this branch's commits into one commit with the proper description.
         # We do this by doing a "merge --squash" into a new commit branch, then dcommitting that.
-        MERGE_BRANCH = 'webkit-patch-land'
-        self.delete_branch(MERGE_BRANCH)
+        MERGE_BRANCH_NAME = 'webkit-patch-land'
+        self.delete_branch(MERGE_BRANCH_NAME)
 
         # We might be in a directory that's present in this branch but not in the
         # trunk.  Move up to the top of the tree so that git commands that expect a
@@ -662,7 +662,7 @@ class Git(SCM):
         # We wrap in a try...finally block so if anything goes wrong, we clean up the branches.
         commit_succeeded = True
         try:
-            self.run(['git', 'checkout', '-q', '-b', MERGE_BRANCH, self.svn_branch_name()])
+            self.run(['git', 'checkout', '-q', '-b', MERGE_BRANCH_NAME, self.remote_branch_ref()])
 
             for commit in commit_ids:
                 # We're on a different branch now, so convert "head" to the branch name.
@@ -681,7 +681,7 @@ class Git(SCM):
             # And then swap back to the original branch and clean up.
             self.clean_working_directory()
             self.run(['git', 'checkout', '-q', branch_name])
-            self.delete_branch(MERGE_BRANCH)
+            self.delete_branch(MERGE_BRANCH_NAME)
 
         return output
 
@@ -693,18 +693,31 @@ class Git(SCM):
         return self.run(['git', 'svn', 'log', '--limit=1'])
 
     # Git-specific methods:
+    def _branch_ref_exists(self, branch_ref):
+        return self.run(['git', 'show-ref', '--quiet', '--verify', branch_ref], return_exit_code=True) == 0
 
-    def delete_branch(self, branch):
-        if self.run(['git', 'show-ref', '--quiet', '--verify', 'refs/heads/' + branch], return_exit_code=True) == 0:
-            self.run(['git', 'branch', '-D', branch])
+    def delete_branch(self, branch_name):
+        if self._branch_ref_exists('refs/heads/' + branch_name):
+            self.run(['git', 'branch', '-D', branch_name])
 
-    def svn_merge_base(self):
-        return self.run(['git', 'merge-base', self.svn_branch_name(), 'HEAD']).strip()
+    def remote_merge_base(self):
+        return self.run(['git', 'merge-base', self.remote_branch_ref(), 'HEAD']).strip()
 
-    def svn_branch_name(self):
+    def remote_branch_ref(self):
+        # Use references so that we can avoid collisions, e.g. we don't want to operate on refs/heads/trunk if it exists.
+
         # FIXME: This should so something like: Git.read_git_config('svn-remote.svn.fetch').split(':')[1]
         # but that doesn't work if the git repo is tracking multiple svn branches.
-        return 'trunk'
+        remote_branch_refs = [
+            'refs/remotes/trunk',  # A git-svn checkout as per http://trac.webkit.org/wiki/UsingGitWithWebKit.
+            'refs/remotes/origin/master',  # A git clone of git://git.webkit.org/WebKit.git that is not tracking svn.
+        ]
+
+        for ref in remote_branch_refs:
+            if self._branch_ref_exists(ref):
+                return ref
+
+        raise ScriptError(message="Can't find a branch to diff against. %s branches do not exist." % " and ".join(remote_branch_refs))
 
     def commit_locally_with_message(self, message):
         self.run(['git', 'commit', '--all', '-F', '-'], input=message)
@@ -726,7 +739,7 @@ class Git(SCM):
     # A B     : [A, B]  (different from git diff, which would use "rev-list A..B")
     def commit_ids_from_commitish_arguments(self, args):
         if not len(args):
-            args.append('%s..HEAD' % self.svn_branch_name())
+            args.append('%s..HEAD' % self.remote_branch_ref())
 
         commit_ids = []
         for commitish in args:
