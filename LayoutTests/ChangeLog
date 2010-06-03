@@ -1,3 +1,12 @@
+2010-06-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Simon Hausmann.
+
+        fast/events/transformaction removed from expectations,
+        because these tests were rolled-out by r60624.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-06-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r60617.
