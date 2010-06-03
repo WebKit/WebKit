@@ -1512,7 +1512,7 @@ QtRuntimeConnectionMethod::QtRuntimeConnectionMethod(ExecState* exec, const Iden
     d->m_isConnect = isConnect;
 }
 
-JSValue QtRuntimeConnectionMethod::call(ExecState* exec)
+EncodedJSValue QtRuntimeConnectionMethod::call(ExecState* exec)
 {
     QtRuntimeConnectionMethodData* d = static_cast<QtRuntimeConnectionMethod *>(exec->callee())->d_func();
 
