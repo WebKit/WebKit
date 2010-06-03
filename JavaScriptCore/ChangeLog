@@ -2,6 +2,19 @@
 
         Reviewed by Gavin Barraclough.
 
+        Add value-representation specific sections to the mac export file.
+
+        * Configurations/JavaScriptCore.xcconfig:
+        * DerivedSources.make:
+        * JavaScriptCore.JSVALUE32_64only.exp: Added.
+        * JavaScriptCore.JSVALUE32only.exp: Added.
+        * JavaScriptCore.JSVALUE64only.exp: Added.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2010-06-02  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
         <rdar://problem/8054988> Work around an LLVM GCC code generation bug that results in crashes inside PCRE.
 
         * pcre/pcre_exec.cpp:

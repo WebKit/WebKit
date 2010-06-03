@@ -49,6 +49,9 @@ all : \
     StringPrototype.lut.h \
     docs/bytecode.html \
     RegExpJitTables.h \
+    JavaScriptCore.JSVALUE32.exp \
+    JavaScriptCore.JSVALUE32_64.exp \
+    JavaScriptCore.JSVALUE64.exp \
 #
 
 # lookup tables for classes
@@ -79,3 +82,12 @@ docs/bytecode.html: make-bytecode-docs.pl Interpreter.cpp
 #character tables for Yarr
 RegExpJitTables.h: create_regex_tables
 	python $^ > $@
+
+JavaScriptCore.JSVALUE32.exp: JavaScriptCore.exp JavaScriptCore.JSVALUE32only.exp
+	cat $^ > $@
+
+JavaScriptCore.JSVALUE32_64.exp: JavaScriptCore.exp JavaScriptCore.JSVALUE32_64only.exp
+	cat $^ > $@
+
+JavaScriptCore.JSVALUE64.exp: JavaScriptCore.exp JavaScriptCore.JSVALUE64only.exp
+	cat $^ > $@
