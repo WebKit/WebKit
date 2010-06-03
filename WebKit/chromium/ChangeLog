@@ -1,5 +1,13 @@
 2010-06-02  Tony Chang  <tony@chromium.org>
 
+        Not reviewed, build fix in downstream chromium.
+
+        Fix the path to repack.py so it works in a chromium checkout too.
+
+        * WebKit.gyp:
+
+2010-06-02  Tony Chang  <tony@chromium.org>
+
         Reviewed by Kent Tamura.
 
         [chromium] generate DumpRenderTree.pak on DRT linux

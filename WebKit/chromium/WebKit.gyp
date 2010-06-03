@@ -659,7 +659,7 @@
                                     '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_resources.pak',
                                     '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_strings_en-US.pak',
                                 ],
-                                'repack_path': './tools/data_pack/repack.py',
+                                'repack_path': '<(chromium_src_dir)/tools/data_pack/repack.py',
                                 'pak_path': '<(INTERMEDIATE_DIR)/repack/DumpRenderTree.pak',
                             },
                             'inputs': [
