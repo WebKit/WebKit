@@ -606,11 +606,11 @@ void EditorClientQt::setInputMethodState(bool active)
             }
         }
         webPageClient->setInputMethodHint(Qt::ImhHiddenText, isPasswordField);
-#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
         // disables auto-uppercase and predictive text for mobile devices
         webPageClient->setInputMethodHint(Qt::ImhNoAutoUppercase, true);
         webPageClient->setInputMethodHint(Qt::ImhNoPredictiveText, true);
-#endif // Q_WS_MAEMO_5 || Q_OS_SYMBIAN
+#endif // Q_WS_MAEMO_5 || Q_WS_MAEMO_6 || Q_OS_SYMBIAN
 #endif // QT_VERSION check
         webPageClient->setInputMethodEnabled(active);
     }
