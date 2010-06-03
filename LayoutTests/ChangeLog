@@ -1,3 +1,19 @@
+2010-06-03  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r60614.
+        http://trac.webkit.org/changeset/60614
+        https://bugs.webkit.org/show_bug.cgi?id=40123
+
+        It made fast/dom/Window/window-postmessage-clone.html fail on
+        Mac bots (Requested by Ossy on #webkit).
+
+        * fast/events/transformaction/create-transformaction-event-expected.txt: Removed.
+        * fast/events/transformaction/create-transformaction-event.html: Removed.
+        * fast/events/transformaction/resources/create-transformaction-event.js: Removed.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
 2010-06-03  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed. Test expectation update.

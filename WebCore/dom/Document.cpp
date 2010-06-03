@@ -180,10 +180,6 @@
 #include "TouchEvent.h"
 #endif
 
-#if ENABLE(TRANSFORMACTION_EVENTS)
-#include "TransformActionEvent.h"
-#endif
-
 #if ENABLE(WML)
 #include "WMLDocument.h"
 #include "WMLElement.h"
@@ -3212,15 +3208,6 @@ PassRefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& 
 #endif
         event = TouchEvent::create();
 #endif
-
-#if ENABLE(TRANSFORMACTION_EVENTS)
-#if USE(V8)
-    else if (eventType == "TransformActionEvent" && RuntimeEnabledFeatures::transformactionEnabled())
-#else
-    else if (eventType == "TransformActionEvent")
-#endif
-        event = TransformActionEvent::create();
-#endif
     if (event)
         return event.release();
 
@@ -3265,12 +3252,6 @@ void Document::addListenerTypeIfNeeded(const AtomicString& eventType)
         if (Page* page = this->page())
             page->chrome()->client()->needTouchEvents(true);
     }
-#endif
-#if ENABLE(TRANSFORMACTION_EVENTS)
-    else if (eventType == eventNames().transformactionstartEvent
-             || eventType == eventNames().transformactionupdateEvent
-             || eventType == eventNames().transformactionendEvent)
-        addListenerType(TRANSFORMACTION_LISTENER);
 #endif
 }
 

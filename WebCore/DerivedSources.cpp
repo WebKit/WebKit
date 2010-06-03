@@ -375,7 +375,6 @@
 #include "JSTouch.cpp"
 #include "JSTouchEvent.cpp"
 #include "JSTouchList.cpp"
-#include "JSTransformActionEvent.cpp"
 #include "JSTreeWalker.cpp"
 #include "JSUIEvent.cpp"
 #include "JSValidityState.cpp"

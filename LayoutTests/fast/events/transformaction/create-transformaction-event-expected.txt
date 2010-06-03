@@ -1,6 +1,0 @@
-This tests whether the DOM can create TransformActionEvents.
-PASS event is non-null.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

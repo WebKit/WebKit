@@ -56,7 +56,6 @@
 #include "V8StorageEvent.h"
 #include "V8TextEvent.h"
 #include "V8TouchEvent.h"
-#include "V8TransformActionEvent.h"
 #include "V8UIEvent.h"
 #include "V8WebKitAnimationEvent.h"
 #include "V8WebKitTransitionEvent.h"
@@ -117,10 +116,6 @@ v8::Handle<v8::Value> toV8(Event* impl)
 #if ENABLE(TOUCH_EVENTS)
         if (impl->isTouchEvent())
             return toV8(static_cast<TouchEvent*>(impl));
-#endif
-#if ENABLE(TRANSFORMACTION_EVENTS)
-        if (impl->isTransformActionEvent())
-            return toV8(static_cast<TransformActionEvent*>(impl));
 #endif
         return toV8(static_cast<UIEvent*>(impl));
     }

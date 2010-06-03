@@ -739,9 +739,6 @@ media/media-can-play-ogg.html
 # These tests require touch support
 fast/events/touch
 
-# These tests require transformaction event support
-fast/events/transformaction
-
 # XSS auditor tests intermittently time out <http://webkit.org/b/32528>
 http/tests/security/xss-DENIED-getSVGDocument-iframe.html
 http/tests/security/xss-DENIED-getSVGDocument-object.html

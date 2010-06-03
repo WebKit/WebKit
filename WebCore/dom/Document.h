@@ -270,11 +270,6 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(touchend);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(touchcancel);
 #endif
-#if ENABLE(TRANSFORMACTION_EVENTS)
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(transformactionstart);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(transformactionupdate);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(transformactionend);
-#endif
 
     DocumentType* doctype() const { return m_docType.get(); }
 
@@ -663,8 +658,7 @@ public:
         ANIMATIONITERATION_LISTENER          = 0x400,
         TRANSITIONEND_LISTENER               = 0x800,
         BEFORELOAD_LISTENER                  = 0x1000,
-        TOUCH_LISTENER                       = 0x2000,
-        TRANSFORMACTION_LISTENER             = 0x4000
+        TOUCH_LISTENER                       = 0x2000
     };
 
     bool hasListenerType(ListenerType listenerType) const { return (m_listenerTypes & listenerType); }

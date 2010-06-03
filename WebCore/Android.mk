@@ -170,7 +170,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/Touch.cpp \
 	dom/TouchEvent.cpp \
 	dom/TouchList.cpp \
-	dom/TransformActionEvent.cpp \
 	dom/Traversal.cpp \
 	dom/TreeWalker.cpp \
 	dom/UIEvent.cpp \
