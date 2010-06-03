@@ -143,7 +143,7 @@ void NotificationPresenterClientQt::displayNotification(Notification* notificati
 
 void NotificationPresenterClientQt::cancel(Notification* notification)
 {
-    if (dumpNotification) {
+    if (dumpNotification && notification->scriptExecutionContext()) {
         if (notification->isHTML())
             printf("DESKTOP NOTIFICATION CLOSED: %s\n", QString(notification->url().string()).toUtf8().constData());
         else
@@ -226,7 +226,8 @@ void NotificationPresenterClientQt::allowNotificationForOrigin(const QString& or
 
 void NotificationPresenterClientQt::sendEvent(Notification* notification, const AtomicString& eventName)
 {
-    notification->dispatchEvent(Event::create(eventName, false, true));
+    if (notification->scriptExecutionContext())
+        notification->dispatchEvent(Event::create(eventName, false, true));
 }
 
 void NotificationPresenterClientQt::removeReplacedNotificationFromQueue(Notification* notification)
