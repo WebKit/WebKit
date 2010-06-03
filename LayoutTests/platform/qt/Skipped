@@ -5239,3 +5239,6 @@ media/audio-only-video-intrinsic-size.html
 # https://bugs.webkit.org/show_bug.cgi?id=39852
 fast/encoding/yentest.html
 fast/encoding/yentest2.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=40102
+editing/input/page-up-down-scrolls.html
