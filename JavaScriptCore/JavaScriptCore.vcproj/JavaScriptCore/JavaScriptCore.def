@@ -13,6 +13,7 @@ EXPORTS
     ??0JSObjectWithGlobalObject@JSC@@IAE@PAVJSGlobalObject@1@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@@Z
     ??0MD5@WTF@@QAE@XZ
     ??0Mutex@WTF@@QAE@XZ
+    ??0PrototypeFunction@JSC@@QAE@PAVExecState@1@PAVJSGlobalObject@1@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@HABVIdentifier@1@P6I_J0@Z@Z
     ??0RefCountedLeakCounter@WTF@@QAE@PBD@Z
     ??0StringObject@JSC@@QAE@PAVExecState@1@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@ABVUString@1@@Z
     ??0Structure@JSC@@AAE@VJSValue@1@ABVTypeInfo@1@I@Z
@@ -218,6 +219,7 @@ EXPORTS
     ?newUninitialized@CString@WTF@@SA?AV12@IAAPAD@Z
     ?nonInlineNaN@JSC@@YANXZ
     ?objectCount@Heap@JSC@@QBEIXZ
+    ?objectProtoFuncToString@JSC@@YI_JPAVExecState@1@@Z
     ?parse@Parser@JSC@@AAEXPAVJSGlobalData@2@PAHPAVUString@2@@Z
     ?parseDateFromNullTerminatedCharacters@WTF@@YANPBD@Z
     ?profiler@Profiler@JSC@@SAPAV12@XZ
