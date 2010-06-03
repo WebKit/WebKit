@@ -108,7 +108,7 @@ public:
     inline QScriptValuePrivate* toObject();
 
     inline bool equals(QScriptValuePrivate* other);
-    inline bool strictlyEquals(const QScriptValuePrivate* other) const;
+    inline bool strictlyEquals(QScriptValuePrivate* other);
     inline bool assignEngine(QScriptEnginePrivate* engine);
 
     inline QScriptValuePrivate* call(const QScriptValuePrivate* , const QScriptValueList& args);
@@ -621,23 +621,41 @@ bool QScriptValuePrivate::equals(QScriptValuePrivate* other)
     return JSValueIsEqual(context(), value(), other->value(), /* exception */ 0);
 }
 
-bool QScriptValuePrivate::strictlyEquals(const QScriptValuePrivate* other) const
+bool QScriptValuePrivate::strictlyEquals(QScriptValuePrivate* other)
 {
-    if (m_state != other->m_state)
-        return false;
     if (isJSBased()) {
+        // We can't compare these two values without binding to the same engine.
+        if (!other->isJSBased()) {
+            if (other->assignEngine(engine()))
+                return JSValueIsStrictEqual(context(), value(), other->value());
+            return false;
+        }
         if (other->engine() != engine()) {
             qWarning("strictlyEquals(): Cannot compare to a value created in a different engine");
             return false;
         }
         return JSValueIsStrictEqual(context(), value(), other->value());
     }
-    if (isStringBased())
-        return m_string == other->m_string;
-    if (isNumberBased())
-        return m_number == other->m_number;
+    if (isStringBased()) {
+        if (other->isStringBased())
+            return m_string == other->m_string;
+        if (other->isJSBased()) {
+            assignEngine(other->engine());
+            return JSValueIsStrictEqual(context(), value(), other->value());
+        }
+    }
+    if (isNumberBased()) {
+        if (other->isNumberBased())
+            return m_number == other->m_number;
+        if (other->isJSBased()) {
+            assignEngine(other->engine());
+            return JSValueIsStrictEqual(context(), value(), other->value());
+        }
+    }
+    if (!isValid() && !other->isValid())
+        return true;
 
-    return false; // Invalid state.
+    return false;
 }
 
 /*!

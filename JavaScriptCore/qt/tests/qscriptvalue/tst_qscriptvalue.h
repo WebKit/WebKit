@@ -103,6 +103,9 @@ private slots:
     void toUInt16_data();
     void toUInt16();
 
+    void strictlyEquals_data();
+    void strictlyEquals();
+
 private:
     typedef void (tst_QScriptValue::*InitDataFunction)();
     typedef void (tst_QScriptValue::*DefineDataFunction)(const char*);
@@ -183,6 +186,10 @@ private:
     void toUInt16_initData();
     void toUInt16_makeData(const char*);
     void toUInt16_test(const char*, const QScriptValue&);
+
+    void strictlyEquals_initData();
+    void strictlyEquals_makeData(const char*);
+    void strictlyEquals_test(const char*, const QScriptValue&);
 
 private:
     QScriptEngine* engine;

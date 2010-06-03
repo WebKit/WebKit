@@ -583,5 +583,5 @@ bool QScriptValue::equals(const QScriptValue& other) const
 */
 bool QScriptValue::strictlyEquals(const QScriptValue& other) const
 {
-    return d_ptr == other.d_ptr || d_ptr->strictlyEquals(QScriptValuePrivate::get(other));
+    return d_ptr->strictlyEquals(QScriptValuePrivate::get(other));
 }
