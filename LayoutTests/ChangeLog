@@ -2,6 +2,16 @@
 
         Unreviewed. Test expectation update.
 
+        Rebaseline fixed-move-after-keyboard-scroll for Chromium-Linux
+        https://bugs.webkit.org/show_bug.cgi?id=40101
+
+        * platform/chromium-linux/fast/repaint/fixed-move-after-keyboard-scroll-expected.checksum:
+        * platform/chromium-linux/fast/repaint/fixed-move-after-keyboard-scroll-expected.png:
+
+2010-06-03  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed. Test expectation update.
+
         Rebaseline fixed-move-after-keyboard-scroll, and add an entry for
         fast/events/transformaction.
         https://bugs.webkit.org/show_bug.cgi?id=40101
