@@ -50,14 +50,14 @@ WebInspector.KeyboardShortcut.Modifiers = {
 
 WebInspector.KeyboardShortcut.Keys = {
     Backspace: { code: 8, name: "\u21a4" },
-    Tab: { code: 9, name: "<Tab>" },
-    Enter: { code: 13, name: "<Enter>" },
-    Esc: { code: 27, name: "<Esc>" },
+    Tab: { code: 9, name: { mac: "\u21e5", other: "<Tab>" } },
+    Enter: { code: 13, name: { mac: "\u21a9", other: "<Enter>" } },
+    Esc: { code: 27, name: { mac: "\u238b", other: "<Esc>" } },
     Space: { code: 32, name: "<Space>" },
-    PageUp: { code: 33,  name: "<PageUp>" },      // also NUM_NORTH_EAST
-    PageDown: { code: 34, name: "<PageDown>" },   // also NUM_SOUTH_EAST
-    End: { code: 35, name: "<End>" },             // also NUM_SOUTH_WEST
-    Home: { code: 36, name: "<Home>" },           // also NUM_NORTH_WEST
+    PageUp: { code: 33,  name: { mac: "\u21de", other: "<PageUp>" } },      // also NUM_NORTH_EAST
+    PageDown: { code: 34, name: { mac: "\u21df", other: "<PageDown>" } },   // also NUM_SOUTH_EAST
+    End: { code: 35, name: { mac: "\u2197", other: "<End>" } },             // also NUM_SOUTH_WEST
+    Home: { code: 36, name: { mac: "\u2196", other: "<Home>" } },           // also NUM_NORTH_WEST
     Left: { code: 37, name: "\u2190" },           // also NUM_WEST
     Up: { code: 38, name: "\u2191" },             // also NUM_NORTH
     Right: { code: 39, name: "\u2192" },          // also NUM_EAST
@@ -130,7 +130,16 @@ WebInspector.KeyboardShortcut.makeDescriptor = function(key, optModifiers)
 
 WebInspector.KeyboardShortcut.shortcutToString = function(key, modifiers)
 {
-    return WebInspector.KeyboardShortcut._modifiersToString(modifiers) + (typeof key === "string" ? key.toUpperCase() : key.name);
+    return WebInspector.KeyboardShortcut._modifiersToString(modifiers) + WebInspector.KeyboardShortcut._keyName(key);
+}
+
+WebInspector.KeyboardShortcut._keyName = function(key)
+{
+    if (typeof key === "string")
+        return key.toUpperCase();
+    if (typeof key.name === "string")
+        return key.name;
+    return key.name[WebInspector.platform] || key.name.other;
 }
 
 WebInspector.KeyboardShortcut._makeKeyFromCodeAndModifiers = function(keyCode, modifiers)
@@ -143,11 +152,12 @@ WebInspector.KeyboardShortcut._modifiersToString = function(modifiers)
     const cmdKey = "\u2318";
     const optKey = "\u2325";
     const shiftKey = "\u21e7";
+    const ctrlKey = "\u2303";
 
     var isMac = WebInspector.isMac();
     var res = "";
     if (modifiers & WebInspector.KeyboardShortcut.Modifiers.Ctrl)
-        res += "<Ctrl> + ";
+        res += isMac ? ctrlKey : "<Ctrl> + ";
     if (modifiers & WebInspector.KeyboardShortcut.Modifiers.Alt)
         res += isMac ? optKey : "<Alt> + ";
     if (modifiers & WebInspector.KeyboardShortcut.Modifiers.Shift)

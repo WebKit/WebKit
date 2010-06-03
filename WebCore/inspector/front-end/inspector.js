@@ -696,7 +696,7 @@ WebInspector._registerShortcuts = function()
         shortcut.shortcutToString("[", shortcut.Modifiers.CtrlOrMeta)
     ];
     section.addRelatedKeys(keys, WebInspector.UIString("Next/previous panel"));
-    section.addKey(shortcut.Keys.Esc.name, WebInspector.UIString("Toggle console"));
+    section.addKey(shortcut.shortcutToString(shortcut.Keys.Esc), WebInspector.UIString("Toggle console"));
     section.addKey(shortcut.shortcutToString("f", shortcut.Modifiers.CtrlOrMeta), WebInspector.UIString("Search"));
     keys = [
         shortcut.shortcutToString("g", shortcut.Modifiers.CtrlOrMeta),

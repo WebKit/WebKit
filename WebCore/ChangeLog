@@ -1,3 +1,17 @@
+2010-06-02  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: use platform-specific key designations in shortcuts help for mac
+        https://bugs.webkit.org/show_bug.cgi?id=39158
+
+        * inspector/front-end/KeyboardShortcut.js:
+        (WebInspector.KeyboardShortcut.shortcutToString):
+        (WebInspector.KeyboardShortcut._keyName):
+        (WebInspector.KeyboardShortcut._modifiersToString):
+        * inspector/front-end/inspector.js:
+        (WebInspector._registerShortcuts):
+
 2010-06-02  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.
