@@ -238,8 +238,10 @@ void LauncherWindow::init(bool useGraphicsView)
     connect(this, SIGNAL(enteredFullScreenMode(bool)), this, SLOT(toggleFullScreenMode(bool)));
 
     m_inspector = new WebInspector(splitter);
+#ifndef QT_NO_PROPERTIES
     if (!gInspectorUrl.isEmpty())
         m_inspector->setProperty("_q_inspectorUrl", gInspectorUrl);
+#endif
     m_inspector->setPage(page());
     m_inspector->hide();
     connect(this, SIGNAL(destroyed()), m_inspector, SLOT(deleteLater()));

@@ -93,7 +93,10 @@ void InspectorClientQt::openInspectorFrontend(WebCore::InspectorController*)
     // Web inspector. This is used for SDK purposes. Please keep this hook
     // around and don't remove it.
     // https://bugs.webkit.org/show_bug.cgi?id=35340
-    QUrl inspectorUrl = inspector->property("_q_inspectorUrl").toUrl();
+    QUrl inspectorUrl;
+#ifndef QT_NO_PROPERTIES
+    inspectorUrl = inspector->property("_q_inspectorUrl").toUrl();
+#endif
     if (!inspectorUrl.isValid())
         inspectorUrl = QUrl("qrc:/webkit/inspector/inspector.html");
     inspectorView->page()->mainFrame()->load(inspectorUrl);
