@@ -1,3 +1,10 @@
+2010-06-03  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed. Test expectation update.
+
+        * platform/chromium/test_expectations.txt:
+          Restore Mac expectation of fixed-move-after-keyboard-scroll.html.
+
 2010-06-03  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Not reviewed: Add TransformActionEvent to the window object tests, after r60614.
