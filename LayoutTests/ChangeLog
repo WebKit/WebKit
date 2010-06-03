@@ -1,3 +1,28 @@
+2010-06-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: Rebaseline chromium tests as a follow up to r60611.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37364
+
+        * platform/chromium-linux/fast/backgrounds/size/backgroundSize15-expected.checksum:
+        * platform/chromium-linux/fast/backgrounds/size/backgroundSize15-expected.png:
+        * platform/chromium-linux/fast/borders/svg-as-border-image-expected.checksum:
+        * platform/chromium-linux/scrollbars/listbox-scrollbar-combinations-expected.checksum:
+        * platform/chromium-linux/scrollbars/overflow-scrollbar-combinations-expected.checksum:
+        * platform/chromium-linux/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize15-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize15-expected.png:
+        * platform/chromium-win/fast/borders/svg-as-border-image-expected.checksum:
+        * platform/chromium-win/fast/borders/svg-as-border-image-expected.png:
+        * platform/chromium-win/scrollbars/listbox-scrollbar-combinations-expected.checksum:
+        * platform/chromium-win/scrollbars/listbox-scrollbar-combinations-expected.png:
+        * platform/chromium-win/scrollbars/overflow-scrollbar-combinations-expected.checksum:
+        * platform/chromium-win/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.png:
+
 2010-06-03  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed, test expectation update.
