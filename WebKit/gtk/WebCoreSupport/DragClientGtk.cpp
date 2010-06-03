@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Igalia S.L.
+ * Copyright (C) Igalia S.L.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -29,6 +29,7 @@
 #include "GRefPtrGtk.h"
 #include "NotImplemented.h"
 #include "PasteboardHelper.h"
+#include "RenderObject.h"
 #include "webkitprivate.h"
 #include "webkitwebview.h"
 
@@ -41,17 +42,10 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static gboolean buttonPressEvent(GtkWidget* widget, GdkEventButton* event, DragClient* client)
-{
-    client->setLastButtonPressEvent(gdk_event_copy(reinterpret_cast<GdkEvent*>(event)));
-    return FALSE;
-}
-
 DragClient::DragClient(WebKitWebView* webView)
     : m_webView(webView)
     , m_startPos(0, 0)
 {
-    g_signal_connect(webView, "button-press-event", G_CALLBACK(buttonPressEvent), this);
 }
 
 void DragClient::willPerformDragDestinationAction(DragDestinationAction, DragData*)
@@ -78,27 +72,25 @@ DragSourceAction DragClient::dragSourceActionMaskForPoint(const IntPoint&)
 void DragClient::startDrag(DragImageRef image, const IntPoint& dragImageOrigin, const IntPoint& eventPos, Clipboard* clipboard, Frame* frame, bool linkDrag)
 {
     ClipboardGtk* clipboardGtk = reinterpret_cast<ClipboardGtk*>(clipboard);
+
+    WebKitWebView* webView = webkit_web_frame_get_web_view(kit(frame));
     RefPtr<DataObjectGtk> dataObject = clipboardGtk->dataObject();
+
     GRefPtr<GtkTargetList> targetList(clipboardGtk->helper()->targetListForDataObject(dataObject.get()));
+    GdkEvent* event = gdk_event_new(GDK_BUTTON_PRESS);
+    // This will be decremented by gdk_event_free() below.
+    event->button.window = static_cast<GdkWindow*>(g_object_ref(gtk_widget_get_window(GTK_WIDGET(m_webView))));
+    event->button.time = GDK_CURRENT_TIME;
 
-    // The DRT does not use the GTK+ event queue for mouse down and motion
-    // events. Instead of using the gtk_get_current_event, we listen for mouse
-    // button-down-event signals on the WebView and use those events instead.
-    if (!m_lastButtonPressEvent)
-        return;
-
-    GdkDragContext* context = gtk_drag_begin(GTK_WIDGET(m_webView), targetList.get(), dragOperationToGdkDragActions(clipboard->sourceOperation()), 1, m_lastButtonPressEvent.get());
-    setLastButtonPressEvent(0);
-
-    if (!context)
-        return;
-
-    m_webView->priv->draggingDataObjects.set(context, dataObject);
+    GdkDragContext* context = gtk_drag_begin(GTK_WIDGET(m_webView), targetList.get(), dragOperationToGdkDragActions(clipboard->sourceOperation()), 1, event);
+    webView->priv->draggingDataObjects.set(context, dataObject);
 
     if (image)
         gtk_drag_set_icon_pixbuf(context, image, eventPos.x() - dragImageOrigin.x(), eventPos.y() - dragImageOrigin.y());
     else
         gtk_drag_set_icon_default(context);
+
+    gdk_event_free(event);
 }
 
 DragImageRef DragClient::createDragImageForLink(KURL&, const String&, Frame*)

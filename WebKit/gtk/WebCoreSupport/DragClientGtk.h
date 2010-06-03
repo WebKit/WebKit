@@ -1,7 +1,6 @@
 /*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2007 Holger Hans Peter Freyther
- * Copyright (C) 2010 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,10 +31,8 @@
 #define DragClientGtk_h
 
 #include "DragClient.h"
-#include "GOwnPtrGtk.h"
 
 typedef struct _WebKitWebView WebKitWebView;
-typedef union _GdkEvent GdkEvent;
 
 namespace WebKit {
 
@@ -53,12 +50,10 @@ namespace WebKit {
         virtual WebCore::DragImageRef createDragImageForLink(WebCore::KURL&, const WebCore::String& label, WebCore::Frame*);
 
         virtual void dragControllerDestroyed();
-        void setLastButtonPressEvent(GdkEvent* press) { m_lastButtonPressEvent.set(press); }
 
     private:
         WebKitWebView* m_webView;
         WebCore::IntPoint m_startPos;
-        GOwnPtr<GdkEvent> m_lastButtonPressEvent;
     };
 }
 

@@ -1,3 +1,17 @@
+2010-06-03  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r60632.
+        http://trac.webkit.org/changeset/60632
+        https://bugs.webkit.org/show_bug.cgi?id=40143
+
+        This change broke the 64-bit bots. (Requested by mrobinson on
+        #webkit).
+
+        * WebCoreSupport/DragClientGtk.cpp:
+        (WebKit::DragClient::DragClient):
+        (WebKit::DragClient::startDrag):
+        * WebCoreSupport/DragClientGtk.h:
+
 2010-06-03  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
