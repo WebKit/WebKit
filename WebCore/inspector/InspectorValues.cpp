@@ -108,7 +108,9 @@ void InspectorString::writeJSON(Vector<UChar>* output) const
 void InspectorObject::writeJSON(Vector<UChar>* output) const
 {
     output->append('{');
-    for (Dictionary::const_iterator it = m_data.begin(); it != m_data.end(); ++it) {
+    for (size_t i = 0; i < m_order.size(); ++i) {
+        Dictionary::const_iterator it = m_data.find(m_order[i]);
+        ASSERT(it != m_data.end());
         if (it != m_data.begin())
             output->append(',');
         doubleQuoteString(it->first, output);

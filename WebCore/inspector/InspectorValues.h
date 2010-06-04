@@ -145,6 +145,7 @@ private:
     InspectorObject() : InspectorValue(TypeObject) { }
     typedef HashMap<String, RefPtr<InspectorValue> > Dictionary;
     Dictionary m_data;
+    Vector<String> m_order;
 };
 
 class InspectorArray : public InspectorValue {
@@ -170,22 +171,23 @@ private:
 
 inline void InspectorObject::setBool(const String& name, bool value)
 {
-    m_data.set(name, InspectorBasicValue::create(value));
+    set(name, InspectorBasicValue::create(value));
 }
 
 inline void InspectorObject::setNumber(const String& name, double value)
 {
-    m_data.set(name, InspectorBasicValue::create(value));
+    set(name, InspectorBasicValue::create(value));
 }
 
 inline void InspectorObject::setString(const String& name, const String& value)
 {
-    m_data.set(name, InspectorString::create(value));
+    set(name, InspectorString::create(value));
 }
 
 inline void InspectorObject::set(const String& name, PassRefPtr<InspectorValue> value)
 {
-    m_data.set(name, value);
+    if (m_data.set(name, value).second)
+        m_order.append(name);
 }
 
 inline void InspectorArray::pushBool(bool value)
