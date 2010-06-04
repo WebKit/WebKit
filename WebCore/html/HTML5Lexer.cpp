@@ -321,6 +321,12 @@ inline bool HTML5Lexer::processEntity(SegmentedString& source)
 #define BEGIN_STATE(stateName) case stateName:
 #define END_STATE() ASSERT_NOT_REACHED(); break;
 
+#define EMIT_AND_RESUME_IN(stateName)                                       \
+    do {                                                                    \
+        emitCurrentToken();                                                 \
+        m_state = DataState;                                                \
+    } while (false)
+
 // We'd like to use the standard do { } while (false) pattern here, but it
 // doesn't play nicely with continue.
 #define RECONSUME_IN(stateName)                                             \
@@ -475,8 +481,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             else if (cc == '/')
                 m_state = SelfClosingStartTagState;
             else if (cc == '>') {
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else if (cc >= 'A' && cc <= 'Z')
                 m_token->appendToName(toLowerCase(cc));
             else
@@ -947,8 +952,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             else if (cc == '/')
                 m_state = SelfClosingStartTagState;
             else if (cc == '>') {
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else if (cc >= 'A' && cc <= 'Z') {
                 m_token->addNewAttribute();
                 m_token->appendToAttributeName(toLowerCase(cc));
@@ -973,8 +977,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             else if (cc == '=')
                 m_state = BeforeAttributeValueState;
             else if (cc == '>') {
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else if (cc >= 'A' && cc <= 'Z')
                 m_token->appendToAttributeName(toLowerCase(cc));
             else {
@@ -996,8 +999,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             else if (cc == '=')
                 m_state = BeforeAttributeValueState;
             else if (cc == '=') {
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else if (cc >= 'A' && cc <= 'Z') {
                 m_token->addNewAttribute();
                 m_token->appendToAttributeName(toLowerCase(cc));
@@ -1025,8 +1027,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
                 m_state = AttributeValueSingleQuotedState;
             else if (cc == '>') {
                 emitParseError();
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else {
                 if (cc == '<' || cc == '=' || cc == '`')
                     emitParseError();
@@ -1070,8 +1071,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
                 m_state = CharacterReferenceInAttributeValueState;
                 m_additionalAllowedCharacter = '>';
             } else if (cc == '>') {
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else {
                 if (cc == '"' || cc == '\'' || cc == '<' || cc == '=' || cc == '`')
                     emitParseError();
@@ -1117,8 +1117,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             else if (cc == '/')
                 m_state = SelfClosingStartTagState;
             else if (cc == '>') {
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else {
                 emitParseError();
                 RECONSUME_IN(BeforeAttributeNameState);
@@ -1131,8 +1130,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
         BEGIN_STATE(SelfClosingStartTagState) {
             if (cc == '>') {
                 notImplemented();
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else {
                 emitParseError();
                 RECONSUME_IN(BeforeAttributeNameState);
@@ -1151,8 +1149,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
                 m_token->appendToComment(cc);
                 source.advance(m_lineNumber);
             }
-            emitCurrentToken();
-            m_state = DataState;
+            EMIT_AND_RESUME_IN(DataState);
             if (source.isEmpty())
                 return true;
             // FIXME: Handle EOF properly.
@@ -1193,8 +1190,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
                 m_state = CommentStartDashState;
             else if (cc == '>') {
                 emitParseError();
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else {
                 m_token->appendToComment(cc);
                 m_state = CommentState;
@@ -1209,8 +1205,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
                 m_state = CommentEndState;
             else if (cc == '>') {
                 emitParseError();
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else {
                 m_token->appendToComment('-');
                 m_token->appendToComment(cc);
@@ -1246,8 +1241,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
 
         BEGIN_STATE(CommentEndState) {
             if (cc == '>') {
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
                 emitParseError();
                 m_token->appendToComment('-');
@@ -1280,8 +1274,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
                 m_token->appendToComment('!');
                 m_state = CommentEndDashState;
             } else if (cc == '>') {
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else {
                 m_token->appendToComment('-');
                 m_token->appendToComment('-');
@@ -1300,8 +1293,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             else if (cc == '-')
                 m_state = CommentEndDashState;
             else if (cc == '>') {
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else {
                 m_token->appendToComment(cc);
                 m_state = CommentState;
@@ -1333,8 +1325,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
                 emitParseError();
                 m_token->beginDOCTYPE();
                 notImplemented();
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else {
                 m_token->beginDOCTYPE(cc);
                 m_state = DOCTYPENameState;
@@ -1348,8 +1339,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
                 m_state = AfterDOCTYPENameState;
             else if (cc == '>') {
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else if (cc >= 'A' && cc <= 'Z')
                 m_token->appendToName(toLowerCase(cc));
             else
@@ -1363,8 +1353,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
                 break;
             if (cc == '>') {
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else {
                 DEFINE_STATIC_LOCAL(String, publicString, ("public"));
                 DEFINE_STATIC_LOCAL(String, systemString, ("system"));
@@ -1406,8 +1395,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             } else if (cc == '>') {
                 emitParseError();
                 notImplemented();
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else {
                 emitParseError();
                 notImplemented();
@@ -1430,8 +1418,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             } else if (cc == '>') {
                 emitParseError();
                 notImplemented();
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else {
                 emitParseError();
                 notImplemented();
@@ -1448,8 +1435,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             else if (cc == '>') {
                 emitParseError();
                 notImplemented();
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else
                 m_token->appendToPublicIdentifier(cc);
             // FIXME: Handle EOF properly.
@@ -1463,8 +1449,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             else if (cc == '>') {
                 emitParseError();
                 notImplemented();
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else
                 m_token->appendToPublicIdentifier(cc);
             // FIXME: Handle EOF properly.
@@ -1476,8 +1461,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
                 m_state = BetweenDOCTYPEPublicAndSystemIdentifiersState;
             else if (cc == '>') {
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else if (cc == '"') {
                 emitParseError();
                 m_token->setPublicIdentifierToEmptyString();
@@ -1500,8 +1484,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
                 m_state = BetweenDOCTYPEPublicAndSystemIdentifiersState;
             else if (cc == '>') {
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else if (cc == '"') {
                 m_token->setSystemIdentifierToEmptyString();
                 m_state = DOCTYPESystemIdentifierDoubleQuotedState;
@@ -1532,8 +1515,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             } else if (cc == '>') {
                 emitParseError();
                 notImplemented();
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else {
                 emitParseError();
                 notImplemented();
@@ -1556,8 +1538,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             } else if (cc == '>') {
                 emitParseError();
                 notImplemented();
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else {
                 emitParseError();
                 notImplemented();
@@ -1574,8 +1555,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             else if (cc == '>') {
                 emitParseError();
                 notImplemented();
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else
                 m_token->appendToSystemIdentifier(cc);
             // FIXME: Handle EOF properly.
@@ -1589,8 +1569,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             else if (cc == '>') {
                 emitParseError();
                 notImplemented();
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else
                 m_token->appendToSystemIdentifier(cc);
             // FIXME: Handle EOF properly.
@@ -1602,8 +1581,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
                 break;
             else if (cc == '>') {
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             } else {
                 emitParseError();
                 m_state = BogusDOCTYPEState;
@@ -1615,8 +1593,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
 
         BEGIN_STATE(BogusDOCTYPEState) {
             if (cc == '>') {
-                emitCurrentToken();
-                m_state = DataState;
+                EMIT_AND_RESUME_IN(DataState);
             }
             // FIXME: Handle EOF properly.
             break;
