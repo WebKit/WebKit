@@ -126,6 +126,7 @@ class JSONResultsGenerator(object):
             results_file.write(json)
             results_file.close()
 
+    # FIXME: Callers should use scm.py instead.
     def _get_svn_revision(self, in_directory):
         """Returns the svn revision for the given directory.
 
@@ -133,13 +134,19 @@ class JSONResultsGenerator(object):
           in_directory: The directory where svn is to be run.
         """
 
-        try:
-            scm_system = scm.detect_scm_system(in_directory)
-            return scm_system.__class__.value_from_svn_info(in_directory,
-                                                            'Revision')
-        except (AttributeError, ScriptError):
-            # We're not in a svn directory, that's ok.
-            return ""
+        if os.path.exists(os.path.join(in_directory, '.svn')):
+            # Note: Not thread safe: http://bugs.python.org/issue2320
+            output = subprocess.Popen(["svn", "info", "--xml"],
+                                      cwd=in_directory,
+                                      shell=(sys.platform == 'win32'),
+                                      stdout=subprocess.PIPE).communicate()[0]
+            try:
+                dom = xml.dom.minidom.parseString(output)
+                return dom.getElementsByTagName('entry')[0].getAttribute(
+                    'revision')
+            except xml.parsers.expat.ExpatError:
+                return ""
+        return ""
 
     def _get_archived_json_results(self):
         """Reads old results JSON file if it exists.

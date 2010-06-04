@@ -1,3 +1,11 @@
+2010-06-04  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Unreviewed.
+
+        Revert changes in json_results_generator.py's _get_svn_revision.
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+
 2010-06-04  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
