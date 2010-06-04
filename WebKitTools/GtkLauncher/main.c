@@ -25,6 +25,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <stdlib.h>
 #include <webkit/webkit.h>
 
 static GtkWidget* main_window;
@@ -186,6 +187,21 @@ create_window ()
     return window;
 }
 
+static gchar* filenameToURL(const char* filename)
+{
+    if (!g_file_test(filename, G_FILE_TEST_EXISTS))
+        return 0;
+
+    gchar *fullPath = realpath(filename, 0);
+    if (!fullPath)
+        return 0;
+
+    gchar *fileURL = g_filename_to_uri(fullPath, 0, 0);
+    free(fullPath);
+
+    return fileURL;
+}
+
 int
 main (int argc, char* argv[])
 {
@@ -201,8 +217,11 @@ main (int argc, char* argv[])
     main_window = create_window ();
     gtk_container_add (GTK_CONTAINER (main_window), vbox);
 
-    gchar* uri = (gchar*) (argc > 1 ? argv[1] : "http://www.google.com/");
-    webkit_web_view_load_uri (web_view, uri);
+    gchar *uri = (gchar*) (argc > 1 ? argv[1] : "http://www.google.com/");
+    gchar *fileURL = filenameToURL(uri);
+
+    webkit_web_view_load_uri(web_view, fileURL ? fileURL : uri);
+    g_free(fileURL);
 
     gtk_widget_grab_focus (GTK_WIDGET (web_view));
     gtk_widget_show_all (main_window);

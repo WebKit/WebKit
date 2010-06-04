@@ -2,6 +2,19 @@
 
         Reviewed by Xan Lopez.
 
+        [GTK] GtkLauncher should support relative file paths
+        https://bugs.webkit.org/show_bug.cgi?id=39944
+
+        Allow GtkLauncher to handle relative file paths passed via command-line arguments.
+
+        * GtkLauncher/main.c:
+        (filename_to_url): Added.
+        (main): Try to resolve arguments as relative file URLs first.
+
+2010-06-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
         [GTK] EventSender should call gtk_main_do_event instead of invoking signal handlers directly
         https://bugs.webkit.org/show_bug.cgi?id=40182
 
