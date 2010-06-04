@@ -5,6 +5,19 @@
         Make HTML5Lexer go fast
         https://bugs.webkit.org/show_bug.cgi?id=40048
 
+        This patch handles the FLUSH_AND_ADVANCE_TO case.  Again, this patch
+        introduces style errors that will be fixed shortly.
+
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTML5Lexer::nextToken):
+
+2010-06-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Make HTML5Lexer go fast
+        https://bugs.webkit.org/show_bug.cgi?id=40048
+
         This patch handles the FLUSH_EMIT_AND_RESUME_IN case.  This patch
         introduces some bad style w.r.t. one-line if statements, but we'll fix
         them all automatically in cleanup patch when we're done.
