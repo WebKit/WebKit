@@ -374,1232 +374,1237 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
     // Source: http://www.whatwg.org/specs/web-apps/current-work/#tokenisation0
     // FIXME: This while should stop as soon as we have a token to return.
     while (!source.isEmpty()) {
-        UChar cc = *source;
-        switch (m_state) {
-        BEGIN_STATE(DataState) {
-            if (cc == '&')
-                ADVANCE_TO(CharacterReferenceInDataState);
-            else if (cc == '<') {
-                if (m_token->type() == HTML5Token::Character) {
-                    // We have a bunch of character tokens queued up that we
-                    // are emitting lazily here.
-                    return true;
-                }
-                ADVANCE_TO(TagOpenState);
-            } else
-                emitCharacter(cc);
-            break;
-        }
-        END_STATE()
+    // FIXME: This is a purposeful style violation because this while loop is
+    // going to be removed soon.
 
-        BEGIN_STATE(CharacterReferenceInDataState) {
-            if (!processEntity(source))
-                return shouldEmitBufferedCharacterToken(source);
+    UChar cc = *source;
+    switch (m_state) {
+    BEGIN_STATE(DataState) {
+        if (cc == '&')
+            ADVANCE_TO(CharacterReferenceInDataState);
+        else if (cc == '<') {
+            if (m_token->type() == HTML5Token::Character) {
+                // We have a bunch of character tokens queued up that we
+                // are emitting lazily here.
+                return true;
+            }
+            ADVANCE_TO(TagOpenState);
+        } else
+            emitCharacter(cc);
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(CharacterReferenceInDataState) {
+        if (!processEntity(source))
+            return shouldEmitBufferedCharacterToken(source);
+        RECONSUME_IN(DataState);
+    }
+    END_STATE()
+
+    BEGIN_STATE(RCDATAState) {
+        if (cc == '&')
+            ADVANCE_TO(CharacterReferenceInRCDATAState);
+        else if (cc == '<')
+            ADVANCE_TO(RCDATALessThanSignState);
+        else
+            emitCharacter(cc);
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(CharacterReferenceInRCDATAState) {
+        if (!processEntity(source))
+            return shouldEmitBufferedCharacterToken(source);
+        RECONSUME_IN(RCDATAState);
+    }
+    END_STATE()
+
+    BEGIN_STATE(RAWTEXTState) {
+        if (cc == '<')
+            ADVANCE_TO(RAWTEXTLessThanSignState);
+        else
+            emitCharacter(cc);
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(ScriptDataState) {
+        if (cc == '<')
+            ADVANCE_TO(ScriptDataLessThanSignState);
+        else
+            emitCharacter(cc);
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(PLAINTEXTState) {
+        emitCharacter(cc);
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(TagOpenState) {
+        if (cc == '!')
+            ADVANCE_TO(MarkupDeclarationOpenState);
+        else if (cc == '/')
+            ADVANCE_TO(EndTagOpenState);
+        else if (cc >= 'A' && cc <= 'Z') {
+            m_token->beginStartTag(toLowerCase(cc));
+            ADVANCE_TO(TagNameState);
+        } else if (cc >= 'a' && cc <= 'z') {
+            m_token->beginStartTag(cc);
+            ADVANCE_TO(TagNameState);
+        } else if (cc == '?') {
+            emitParseError();
+            // The spec consumes the current character before switching
+            // to the bogus comment state, but it's easier to implement
+            // if we reconsume the current character.
+            RECONSUME_IN(BogusCommentState);
+        } else {
+            emitParseError();
+            emitCharacter('<');
             RECONSUME_IN(DataState);
         }
-        END_STATE()
+        break;
+    }
+    END_STATE()
 
-        BEGIN_STATE(RCDATAState) {
-            if (cc == '&')
-                ADVANCE_TO(CharacterReferenceInRCDATAState);
-            else if (cc == '<')
-                ADVANCE_TO(RCDATALessThanSignState);
-            else
-                emitCharacter(cc);
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(CharacterReferenceInRCDATAState) {
-            if (!processEntity(source))
-                return shouldEmitBufferedCharacterToken(source);
-            RECONSUME_IN(RCDATAState);
-        }
-        END_STATE()
-
-        BEGIN_STATE(RAWTEXTState) {
-            if (cc == '<')
-                ADVANCE_TO(RAWTEXTLessThanSignState);
-            else
-                emitCharacter(cc);
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(ScriptDataState) {
-            if (cc == '<')
-                ADVANCE_TO(ScriptDataLessThanSignState);
-            else
-                emitCharacter(cc);
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(PLAINTEXTState) {
-            emitCharacter(cc);
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(TagOpenState) {
-            if (cc == '!')
-                ADVANCE_TO(MarkupDeclarationOpenState);
-            else if (cc == '/')
-                ADVANCE_TO(EndTagOpenState);
-            else if (cc >= 'A' && cc <= 'Z') {
-                m_token->beginStartTag(toLowerCase(cc));
-                ADVANCE_TO(TagNameState);
-            } else if (cc >= 'a' && cc <= 'z') {
-                m_token->beginStartTag(cc);
-                ADVANCE_TO(TagNameState);
-            } else if (cc == '?') {
-                emitParseError();
-                // The spec consumes the current character before switching
-                // to the bogus comment state, but it's easier to implement
-                // if we reconsume the current character.
-                RECONSUME_IN(BogusCommentState);
-            } else {
-                emitParseError();
-                emitCharacter('<');
-                RECONSUME_IN(DataState);
-            }
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(EndTagOpenState) {
-            if (cc >= 'A' && cc <= 'Z') {
-                m_token->beginEndTag(toLowerCase(cc));
-                ADVANCE_TO(TagNameState);
-            } else if (cc >= 'a' && cc <= 'z') {
-                m_token->beginEndTag(cc);
-                ADVANCE_TO(TagNameState);
-            } else if (cc == '>') {
-                emitParseError();
-                ADVANCE_TO(DataState);
-            } else {
-                emitParseError();
-                RECONSUME_IN(BogusCommentState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(TagNameState) {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
-                ADVANCE_TO(BeforeAttributeNameState);
-            else if (cc == '/')
-                ADVANCE_TO(SelfClosingStartTagState);
-            else if (cc == '>') {
-                EMIT_AND_RESUME_IN(DataState);
-            } else if (cc >= 'A' && cc <= 'Z')
-                m_token->appendToName(toLowerCase(cc));
-            else
-                m_token->appendToName(cc);
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(RCDATALessThanSignState) {
-            if (cc == '/') {
-                m_temporaryBuffer.clear();
-                ASSERT(m_bufferedEndTagName.isEmpty());
-                ADVANCE_TO(RCDATAEndTagOpenState);
-            } else {
-                emitCharacter('<');
-                RECONSUME_IN(RCDATAState);
-            }
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(RCDATAEndTagOpenState) {
-            if (cc >= 'A' && cc <= 'Z') {
-                m_temporaryBuffer.append(cc);
-                addToPossibleEndTag(toLowerCase(cc));
-                ADVANCE_TO(RCDATAEndTagNameState);
-            } else if (cc >= 'a' && cc <= 'z') {
-                m_temporaryBuffer.append(cc);
-                addToPossibleEndTag(cc);
-                ADVANCE_TO(RCDATAEndTagNameState);
-            } else {
-                emitCharacter('<');
-                emitCharacter('/');
-                RECONSUME_IN(RCDATAState);
-            }
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(RCDATAEndTagNameState) {
-            if (cc >= 'A' && cc <= 'Z') {
-                m_temporaryBuffer.append(cc);
-                addToPossibleEndTag(toLowerCase(cc));
-            } else if (cc >= 'a' && cc <= 'z') {
-                m_temporaryBuffer.append(cc);
-                addToPossibleEndTag(cc);
-            } else {
-                if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
-                    if (isAppropriateEndTag()) {
-                        FLUSH_AND_ADVANCE_TO(BeforeAttributeNameState);
-                    }
-                } else if (cc == '/') {
-                    if (isAppropriateEndTag()) {
-                        FLUSH_AND_ADVANCE_TO(SelfClosingStartTagState);
-                    }
-                } else if (cc == '>') {
-                    if (isAppropriateEndTag()) {
-                        FLUSH_EMIT_AND_RESUME_IN(DataState);
-                    }
-                }
-                emitCharacter('<');
-                emitCharacter('/');
-                m_token->appendToCharacter(m_temporaryBuffer);
-                m_bufferedEndTagName.clear();
-                RECONSUME_IN(RCDATAState);
-            }
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(RAWTEXTLessThanSignState) {
-            if (cc == '/') {
-                m_temporaryBuffer.clear();
-                ASSERT(m_bufferedEndTagName.isEmpty());
-                ADVANCE_TO(RAWTEXTEndTagOpenState);
-            } else {
-                emitCharacter('<');
-                RECONSUME_IN(RAWTEXTState);
-            }
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(RAWTEXTEndTagOpenState) {
-            if (cc >= 'A' && cc <= 'Z') {
-                m_temporaryBuffer.append(cc);
-                addToPossibleEndTag(toLowerCase(cc));
-                ADVANCE_TO(RAWTEXTEndTagNameState);
-            } else if (cc >= 'a' && cc <= 'z') {
-                m_temporaryBuffer.append(cc);
-                addToPossibleEndTag(cc);
-                ADVANCE_TO(RAWTEXTEndTagNameState);
-            } else {
-                emitCharacter('<');
-                emitCharacter('/');
-                RECONSUME_IN(RAWTEXTState);
-            }
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(RAWTEXTEndTagNameState) {
-            if (cc >= 'A' && cc <= 'Z') {
-                m_temporaryBuffer.append(cc);
-                addToPossibleEndTag(toLowerCase(cc));
-            } else if (cc >= 'a' && cc <= 'z') {
-                m_temporaryBuffer.append(cc);
-                addToPossibleEndTag(cc);
-            } else {
-                if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
-                    if (isAppropriateEndTag()) {
-                        FLUSH_AND_ADVANCE_TO(BeforeAttributeNameState);
-                    }
-                } else if (cc == '/') {
-                    if (isAppropriateEndTag()) {
-                        FLUSH_AND_ADVANCE_TO(SelfClosingStartTagState);
-                    }
-                } else if (cc == '>') {
-                    if (isAppropriateEndTag()) {
-                        FLUSH_EMIT_AND_RESUME_IN(DataState);
-                    }
-                }
-                emitCharacter('<');
-                emitCharacter('/');
-                m_token->appendToCharacter(m_temporaryBuffer);
-                m_bufferedEndTagName.clear();
-                RECONSUME_IN(RAWTEXTState);
-            }
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(ScriptDataLessThanSignState) {
-            if (cc == '/') {
-                m_temporaryBuffer.clear();
-                ASSERT(m_bufferedEndTagName.isEmpty());
-                ADVANCE_TO(ScriptDataEndTagOpenState);
-            } else if (cc == '!') {
-                emitCharacter('<');
-                emitCharacter('!');
-                ADVANCE_TO(ScriptDataEscapeStartState);
-            } else {
-                emitCharacter('<');
-                RECONSUME_IN(ScriptDataState);
-            }
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(ScriptDataEndTagOpenState) {
-            if (cc >= 'A' && cc <= 'Z') {
-                m_temporaryBuffer.append(cc);
-                addToPossibleEndTag(toLowerCase(cc));
-                ADVANCE_TO(ScriptDataEndTagNameState);
-            } else if (cc >= 'a' && cc <= 'z') {
-                m_temporaryBuffer.append(cc);
-                addToPossibleEndTag(cc);
-                ADVANCE_TO(ScriptDataEndTagNameState);
-            } else {
-                emitCharacter('<');
-                emitCharacter('/');
-                RECONSUME_IN(ScriptDataState);
-            }
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(ScriptDataEndTagNameState) {
-            if (cc >= 'A' && cc <= 'Z') {
-                m_temporaryBuffer.append(cc);
-                addToPossibleEndTag(toLowerCase(cc));
-            } else if (cc >= 'a' && cc <= 'z') {
-                m_temporaryBuffer.append(cc);
-                addToPossibleEndTag(cc);
-            } else {
-                if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
-                    if (isAppropriateEndTag()) {
-                        FLUSH_AND_ADVANCE_TO(BeforeAttributeNameState);
-                    }
-                } else if (cc == '/') {
-                    if (isAppropriateEndTag()) {
-                        FLUSH_AND_ADVANCE_TO(SelfClosingStartTagState);
-                    }
-                } else if (cc == '>') {
-                    if (isAppropriateEndTag()) {
-                        FLUSH_EMIT_AND_RESUME_IN(DataState);
-                    }
-                }
-                emitCharacter('<');
-                emitCharacter('/');
-                m_token->appendToCharacter(m_temporaryBuffer);
-                m_bufferedEndTagName.clear();
-                RECONSUME_IN(ScriptDataState);
-            }
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(ScriptDataEscapeStartState) {
-            if (cc == '-') {
-                emitCharacter(cc);
-                ADVANCE_TO(ScriptDataEscapeStartDashState);
-            } else {
-                RECONSUME_IN(ScriptDataState);
-            }
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(ScriptDataEscapeStartDashState) {
-            if (cc == '-') {
-                emitCharacter(cc);
-                ADVANCE_TO(ScriptDataEscapedDashDashState);
-            } else {
-                RECONSUME_IN(ScriptDataState);
-            }
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(ScriptDataEscapedState) {
-            if (cc == '-') {
-                emitCharacter(cc);
-                ADVANCE_TO(ScriptDataEscapedDashState);
-            } else if (cc == '<')
-                ADVANCE_TO(ScriptDataEscapedLessThanSignState);
-            else
-                emitCharacter(cc);
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(ScriptDataEscapedDashState) {
-            if (cc == '-') {
-                emitCharacter(cc);
-                ADVANCE_TO(ScriptDataEscapedDashDashState);
-            } else if (cc == '<')
-                ADVANCE_TO(ScriptDataEscapedLessThanSignState);
-            else {
-                emitCharacter(cc);
-                ADVANCE_TO(ScriptDataEscapedState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(ScriptDataEscapedDashDashState) {
-            if (cc == '-')
-                emitCharacter(cc);
-            else if (cc == '<')
-                ADVANCE_TO(ScriptDataEscapedLessThanSignState);
-            else if (cc == '>') {
-                emitCharacter(cc);
-                ADVANCE_TO(ScriptDataState);
-            } else {
-                emitCharacter(cc);
-                ADVANCE_TO(ScriptDataEscapedState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(ScriptDataEscapedLessThanSignState) {
-            if (cc == '/') {
-                m_temporaryBuffer.clear();
-                ASSERT(m_bufferedEndTagName.isEmpty());
-                ADVANCE_TO(ScriptDataEscapedEndTagOpenState);
-            } else if (cc >= 'A' && cc <= 'Z') {
-                emitCharacter('<');
-                emitCharacter(cc);
-                m_temporaryBuffer.clear();
-                m_temporaryBuffer.append(toLowerCase(cc));
-                ADVANCE_TO(ScriptDataDoubleEscapeStartState);
-            } else if (cc >= 'a' && cc <= 'z') {
-                emitCharacter('<');
-                emitCharacter(cc);
-                m_temporaryBuffer.clear();
-                m_temporaryBuffer.append(cc);
-                ADVANCE_TO(ScriptDataDoubleEscapeStartState);
-            } else {
-                emitCharacter('<');
-                RECONSUME_IN(ScriptDataEscapedState);
-            }
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(ScriptDataEscapedEndTagOpenState) {
-            if (cc >= 'A' && cc <= 'Z') {
-                m_temporaryBuffer.append(cc);
-                addToPossibleEndTag(toLowerCase(cc));
-                ADVANCE_TO(ScriptDataEscapedEndTagNameState);
-            } else if (cc >= 'a' && cc <= 'z') {
-                m_temporaryBuffer.append(cc);
-                addToPossibleEndTag(cc);
-                ADVANCE_TO(ScriptDataEscapedEndTagNameState);
-            } else {
-                emitCharacter('<');
-                emitCharacter('/');
-                RECONSUME_IN(ScriptDataEscapedState);
-            }
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(ScriptDataEscapedEndTagNameState) {
-            if (cc >= 'A' && cc <= 'Z') {
-                m_temporaryBuffer.append(cc);
-                addToPossibleEndTag(toLowerCase(cc));
-            } else if (cc >= 'a' && cc <= 'z') {
-                m_temporaryBuffer.append(cc);
-                addToPossibleEndTag(cc);
-            } else {
-                if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
-                    if (isAppropriateEndTag()) {
-                        FLUSH_AND_ADVANCE_TO(BeforeAttributeNameState);
-                    }
-                } else if (cc == '/') {
-                    if (isAppropriateEndTag()) {
-                        FLUSH_AND_ADVANCE_TO(SelfClosingStartTagState);
-                    }
-                } else if (cc == '>') {
-                    if (isAppropriateEndTag()) {
-                        FLUSH_EMIT_AND_RESUME_IN(DataState);
-                    }
-                }
-                emitCharacter('<');
-                emitCharacter('/');
-                m_token->appendToCharacter(m_temporaryBuffer);
-                m_bufferedEndTagName.clear();
-                RECONSUME_IN(ScriptDataEscapedState);
-            }
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(ScriptDataDoubleEscapeStartState) {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ' || cc == '/' || cc == '>') {
-                emitCharacter(cc);
-                if (temporaryBufferIs(scriptTag.localName()))
-                    ADVANCE_TO(ScriptDataDoubleEscapedState);
-                else
-                    ADVANCE_TO(ScriptDataEscapedState);
-            } else if (cc >= 'A' && cc <= 'Z') {
-                emitCharacter(cc);
-                m_temporaryBuffer.append(toLowerCase(cc));
-            } else if (cc >= 'a' && cc <= 'z') {
-                emitCharacter(cc);
-                m_temporaryBuffer.append(cc);
-            } else {
-                RECONSUME_IN(ScriptDataEscapedState);
-            }
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(ScriptDataDoubleEscapedState) {
-            if (cc == '-') {
-                emitCharacter(cc);
-                ADVANCE_TO(ScriptDataDoubleEscapedDashState);
-            } else if (cc == '<') {
-                emitCharacter(cc);
-                ADVANCE_TO(ScriptDataDoubleEscapedLessThanSignState);
-            } else
-                emitCharacter(cc);
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(ScriptDataDoubleEscapedDashState) {
-            if (cc == '-') {
-                emitCharacter(cc);
-                ADVANCE_TO(ScriptDataDoubleEscapedDashDashState);
-            } else if (cc == '<') {
-                emitCharacter(cc);
-                ADVANCE_TO(ScriptDataDoubleEscapedLessThanSignState);
-            } else {
-                emitCharacter(cc);
-                ADVANCE_TO(ScriptDataDoubleEscapedState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(ScriptDataDoubleEscapedDashDashState) {
-            if (cc == '-')
-                emitCharacter(cc);
-            else if (cc == '<') {
-                emitCharacter(cc);
-                ADVANCE_TO(ScriptDataDoubleEscapedLessThanSignState);
-            } else if (cc == '>') {
-                emitCharacter(cc);
-                ADVANCE_TO(ScriptDataState);
-            } else {
-                emitCharacter(cc);
-                ADVANCE_TO(ScriptDataDoubleEscapedState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(ScriptDataDoubleEscapedLessThanSignState) {
-            if (cc == '/') {
-                emitCharacter(cc);
-                m_temporaryBuffer.clear();
-                ADVANCE_TO(ScriptDataDoubleEscapeEndState);
-            } else {
-                RECONSUME_IN(ScriptDataDoubleEscapedState);
-            }
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(ScriptDataDoubleEscapeEndState) {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ' || cc == '/' || cc == '>') {
-                emitCharacter(cc);
-                if (temporaryBufferIs(scriptTag.localName()))
-                    ADVANCE_TO(ScriptDataEscapedState);
-                else
-                    ADVANCE_TO(ScriptDataDoubleEscapedState);
-            } else if (cc >= 'A' && cc <= 'Z') {
-                emitCharacter(cc);
-                m_temporaryBuffer.append(toLowerCase(cc));
-            } else if (cc >= 'a' && cc <= 'z') {
-                emitCharacter(cc);
-                m_temporaryBuffer.append(cc);
-            } else {
-                RECONSUME_IN(ScriptDataDoubleEscapedState);
-            }
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(BeforeAttributeNameState) {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
-                break;
-            else if (cc == '/')
-                ADVANCE_TO(SelfClosingStartTagState);
-            else if (cc == '>') {
-                EMIT_AND_RESUME_IN(DataState);
-            } else if (cc >= 'A' && cc <= 'Z') {
-                m_token->addNewAttribute();
-                m_token->appendToAttributeName(toLowerCase(cc));
-                ADVANCE_TO(AttributeNameState);
-            } else {
-                if (cc == '"' || cc == '\'' || cc == '<' || cc == '=')
-                    emitParseError();
-                m_token->addNewAttribute();
-                m_token->appendToAttributeName(cc);
-                ADVANCE_TO(AttributeNameState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(AttributeNameState) {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
-                ADVANCE_TO(AfterAttributeNameState);
-            else if (cc == '/')
-                ADVANCE_TO(SelfClosingStartTagState);
-            else if (cc == '=')
-                ADVANCE_TO(BeforeAttributeValueState);
-            else if (cc == '>') {
-                EMIT_AND_RESUME_IN(DataState);
-            } else if (cc >= 'A' && cc <= 'Z')
-                m_token->appendToAttributeName(toLowerCase(cc));
-            else {
-                if (cc == '"' || cc == '\'' || cc == '<' || cc == '=')
-                    emitParseError();
-                m_token->appendToAttributeName(cc);
-                ADVANCE_TO(AttributeNameState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(AfterAttributeNameState) {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
-                break;
-            else if (cc == '/')
-                ADVANCE_TO(SelfClosingStartTagState);
-            else if (cc == '=')
-                ADVANCE_TO(BeforeAttributeValueState);
-            else if (cc == '=') {
-                EMIT_AND_RESUME_IN(DataState);
-            } else if (cc >= 'A' && cc <= 'Z') {
-                m_token->addNewAttribute();
-                m_token->appendToAttributeName(toLowerCase(cc));
-                ADVANCE_TO(AttributeNameState);
-            } else {
-                if (cc == '"' || cc == '\'' || cc == '<')
-                    emitParseError();
-                m_token->addNewAttribute();
-                m_token->appendToAttributeName(cc);
-                ADVANCE_TO(AttributeNameState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(BeforeAttributeValueState) {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
-                break;
-            else if (cc == '"')
-                ADVANCE_TO(AttributeValueDoubleQuotedState);
-            else if (cc == '&') {
-                RECONSUME_IN(AttributeValueUnquotedState);
-            } else if (cc == '\'')
-                ADVANCE_TO(AttributeValueSingleQuotedState);
-            else if (cc == '>') {
-                emitParseError();
-                EMIT_AND_RESUME_IN(DataState);
-            } else {
-                if (cc == '<' || cc == '=' || cc == '`')
-                    emitParseError();
-                m_token->appendToAttributeValue(cc);
-                ADVANCE_TO(AttributeValueUnquotedState);
-            }
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(AttributeValueDoubleQuotedState) {
-            if (cc == '"')
-                ADVANCE_TO(AfterAttributeValueQuotedState);
-            else if (cc == '&') {
-                m_additionalAllowedCharacter = '"';
-                ADVANCE_TO(CharacterReferenceInAttributeValueState);
-            } else
-                m_token->appendToAttributeValue(cc);
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(AttributeValueSingleQuotedState) {
-            if (cc == '\'')
-                ADVANCE_TO(AfterAttributeValueQuotedState);
-            else if (cc == '&') {
-                m_additionalAllowedCharacter = '\'';
-                ADVANCE_TO(CharacterReferenceInAttributeValueState);
-            } else
-                m_token->appendToAttributeValue(cc);
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(AttributeValueUnquotedState) {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
-                ADVANCE_TO(BeforeAttributeNameState);
-            else if (cc == '&') {
-                m_additionalAllowedCharacter = '>';
-                ADVANCE_TO(CharacterReferenceInAttributeValueState);
-            } else if (cc == '>') {
-                EMIT_AND_RESUME_IN(DataState);
-            } else {
-                if (cc == '"' || cc == '\'' || cc == '<' || cc == '=' || cc == '`')
-                    emitParseError();
-                m_token->appendToAttributeValue(cc);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(CharacterReferenceInAttributeValueState) {
-            bool notEnoughCharacters = false;
-            unsigned value = consumeEntity(source, notEnoughCharacters);
-            if (notEnoughCharacters)
-                return shouldEmitBufferedCharacterToken(source);
-            if (!value)
-                m_token->appendToAttributeValue('&');
-            else if (value < 0xFFFF)
-                m_token->appendToAttributeValue(value);
-            else {
-                m_token->appendToAttributeValue(U16_LEAD(value));
-                m_token->appendToAttributeValue(U16_TRAIL(value));
-            }
-            // We're supposed to switch back to the attribute value state that
-            // we were in when we were switched into this state.  Rather than
-            // keeping track of this explictly, we observe that the previous
-            // state can be determined by m_additionalAllowedCharacter.
-            if (m_additionalAllowedCharacter == '"')
-                RECONSUME_IN(AttributeValueDoubleQuotedState)
-            else if (m_additionalAllowedCharacter == '\'')
-                RECONSUME_IN(AttributeValueSingleQuotedState)
-            else if (m_additionalAllowedCharacter == '>')
-                RECONSUME_IN(AttributeValueUnquotedState)
-            else
-                ASSERT_NOT_REACHED();
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(AfterAttributeValueQuotedState) {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
-                ADVANCE_TO(BeforeAttributeNameState);
-            else if (cc == '/')
-                ADVANCE_TO(SelfClosingStartTagState);
-            else if (cc == '>') {
-                EMIT_AND_RESUME_IN(DataState);
-            } else {
-                emitParseError();
-                RECONSUME_IN(BeforeAttributeNameState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(SelfClosingStartTagState) {
-            if (cc == '>') {
-                notImplemented();
-                EMIT_AND_RESUME_IN(DataState);
-            } else {
-                emitParseError();
-                RECONSUME_IN(BeforeAttributeNameState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(BogusCommentState) {
-            m_token->beginComment();
-            while (!source.isEmpty()) {
-                cc = *source;
-                if (cc == '>')
-                    break;
-                m_token->appendToComment(cc);
-                source.advance(m_lineNumber);
-            }
-            EMIT_AND_RESUME_IN(DataState);
-            if (source.isEmpty())
-                return true;
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(MarkupDeclarationOpenState) {
-            DEFINE_STATIC_LOCAL(String, dashDashString, ("--"));
-            DEFINE_STATIC_LOCAL(String, doctypeString, ("doctype"));
-            if (cc == '-') {
-                SegmentedString::LookAheadResult result = source.lookAhead(dashDashString);
-                if (result == SegmentedString::DidMatch) {
-                    source.advanceAndASSERT('-');
-                    source.advanceAndASSERT('-');
-                    m_token->beginComment();
-                    RECONSUME_IN(CommentStartState);
-                } else if (result == SegmentedString::NotEnoughCharacters)
-                    return shouldEmitBufferedCharacterToken(source);
-            } else if (cc == 'D' || cc == 'd') {
-                SegmentedString::LookAheadResult result = source.lookAheadIgnoringCase(doctypeString);
-                if (result == SegmentedString::DidMatch) {
-                    advanceStringAndASSERTIgnoringCase(source, "doctype");
-                    RECONSUME_IN(DOCTYPEState);
-                } else if (result == SegmentedString::NotEnoughCharacters)
-                    return shouldEmitBufferedCharacterToken(source);
-            }
-            notImplemented();
-            // FIXME: We're still missing the bits about the insertion mode being in foreign content:
-            // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#markup-declaration-open-state
+    BEGIN_STATE(EndTagOpenState) {
+        if (cc >= 'A' && cc <= 'Z') {
+            m_token->beginEndTag(toLowerCase(cc));
+            ADVANCE_TO(TagNameState);
+        } else if (cc >= 'a' && cc <= 'z') {
+            m_token->beginEndTag(cc);
+            ADVANCE_TO(TagNameState);
+        } else if (cc == '>') {
+            emitParseError();
+            ADVANCE_TO(DataState);
+        } else {
             emitParseError();
             RECONSUME_IN(BogusCommentState);
         }
-        END_STATE()
-
-        BEGIN_STATE(CommentStartState) {
-            if (cc == '-')
-                ADVANCE_TO(CommentStartDashState);
-            else if (cc == '>') {
-                emitParseError();
-                EMIT_AND_RESUME_IN(DataState);
-            } else {
-                m_token->appendToComment(cc);
-                ADVANCE_TO(CommentState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(CommentStartDashState) {
-            if (cc == '-')
-                ADVANCE_TO(CommentEndState);
-            else if (cc == '>') {
-                emitParseError();
-                EMIT_AND_RESUME_IN(DataState);
-            } else {
-                m_token->appendToComment('-');
-                m_token->appendToComment(cc);
-                ADVANCE_TO(CommentState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(CommentState) {
-            if (cc == '-')
-                ADVANCE_TO(CommentEndDashState);
-            else
-                m_token->appendToComment(cc);
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(CommentEndDashState) {
-            if (cc == '-')
-                ADVANCE_TO(CommentEndState);
-            else {
-                m_token->appendToComment('-');
-                m_token->appendToComment(cc);
-                ADVANCE_TO(CommentState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(CommentEndState) {
-            if (cc == '>') {
-                EMIT_AND_RESUME_IN(DataState);
-            } else if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
-                emitParseError();
-                m_token->appendToComment('-');
-                m_token->appendToComment('-');
-                m_token->appendToComment(cc);
-                ADVANCE_TO(CommentEndSpaceState);
-            } else if (cc == '!') {
-                emitParseError();
-                ADVANCE_TO(CommentEndBangState);
-            } else if (cc == '-') {
-                emitParseError();
-                m_token->appendToComment('-');
-                m_token->appendToComment(cc);
-            } else {
-                emitParseError();
-                m_token->appendToComment('-');
-                m_token->appendToComment('-');
-                m_token->appendToComment(cc);
-                ADVANCE_TO(CommentState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(CommentEndBangState) {
-            if (cc == '-') {
-                m_token->appendToComment('-');
-                m_token->appendToComment('-');
-                m_token->appendToComment('!');
-                ADVANCE_TO(CommentEndDashState);
-            } else if (cc == '>') {
-                EMIT_AND_RESUME_IN(DataState);
-            } else {
-                m_token->appendToComment('-');
-                m_token->appendToComment('-');
-                m_token->appendToComment('!');
-                m_token->appendToComment(cc);
-                ADVANCE_TO(CommentState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(CommentEndSpaceState) {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
-                m_token->appendToComment(cc);
-            else if (cc == '-')
-                ADVANCE_TO(CommentEndDashState);
-            else if (cc == '>') {
-                EMIT_AND_RESUME_IN(DataState);
-            } else {
-                m_token->appendToComment(cc);
-                ADVANCE_TO(CommentState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(DOCTYPEState) {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
-                ADVANCE_TO(BeforeDOCTYPENameState);
-            else {
-                emitParseError();
-                RECONSUME_IN(BeforeDOCTYPENameState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(BeforeDOCTYPENameState) {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
-                break;
-            else if (cc >= 'A' && cc <= 'Z') {
-                m_token->beginDOCTYPE(toLowerCase(cc));
-                ADVANCE_TO(DOCTYPENameState);
-            } else if (cc == '>') {
-                emitParseError();
-                m_token->beginDOCTYPE();
-                notImplemented();
-                EMIT_AND_RESUME_IN(DataState);
-            } else {
-                m_token->beginDOCTYPE(cc);
-                ADVANCE_TO(DOCTYPENameState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(DOCTYPENameState) {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
-                ADVANCE_TO(AfterDOCTYPENameState);
-            else if (cc == '>') {
-                EMIT_AND_RESUME_IN(DataState);
-            } else if (cc >= 'A' && cc <= 'Z')
-                m_token->appendToName(toLowerCase(cc));
-            else
-                m_token->appendToName(cc);
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(AfterDOCTYPENameState) {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
-                break;
-            if (cc == '>') {
-                EMIT_AND_RESUME_IN(DataState);
-            } else {
-                DEFINE_STATIC_LOCAL(String, publicString, ("public"));
-                DEFINE_STATIC_LOCAL(String, systemString, ("system"));
-                if (cc == 'P' || cc == 'p') {
-                    SegmentedString::LookAheadResult result = source.lookAheadIgnoringCase(publicString);
-                    if (result == SegmentedString::DidMatch) {
-                        advanceStringAndASSERTIgnoringCase(source, "public");
-                        RECONSUME_IN(AfterDOCTYPEPublicKeywordState);
-                    } else if (result == SegmentedString::NotEnoughCharacters)
-                        return shouldEmitBufferedCharacterToken(source);
-                } else if (cc == 'S' || cc == 's') {
-                    SegmentedString::LookAheadResult result = source.lookAheadIgnoringCase(systemString);
-                    if (result == SegmentedString::DidMatch) {
-                        advanceStringAndASSERTIgnoringCase(source, "system");
-                        RECONSUME_IN(AfterDOCTYPESystemKeywordState);
-                    } else if (result == SegmentedString::NotEnoughCharacters)
-                        return shouldEmitBufferedCharacterToken(source);
-                }
-                emitParseError();
-                notImplemented();
-                ADVANCE_TO(BogusDOCTYPEState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(AfterDOCTYPEPublicKeywordState) {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
-                ADVANCE_TO(BeforeDOCTYPEPublicIdentifierState);
-            else if (cc == '"') {
-                emitParseError();
-                m_token->setPublicIdentifierToEmptyString();
-                ADVANCE_TO(DOCTYPEPublicIdentifierDoubleQuotedState);
-            } else if (cc == '\'') {
-                emitParseError();
-                m_token->setPublicIdentifierToEmptyString();
-                ADVANCE_TO(DOCTYPEPublicIdentifierSingleQuotedState);
-            } else if (cc == '>') {
-                emitParseError();
-                notImplemented();
-                EMIT_AND_RESUME_IN(DataState);
-            } else {
-                emitParseError();
-                notImplemented();
-                ADVANCE_TO(BogusDOCTYPEState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(BeforeDOCTYPEPublicIdentifierState) {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
-                break;
-            else if (cc == '"') {
-                m_token->setPublicIdentifierToEmptyString();
-                ADVANCE_TO(DOCTYPEPublicIdentifierDoubleQuotedState);
-            } else if (cc == '\'') {
-                m_token->setPublicIdentifierToEmptyString();
-                ADVANCE_TO(DOCTYPEPublicIdentifierSingleQuotedState);
-            } else if (cc == '>') {
-                emitParseError();
-                notImplemented();
-                EMIT_AND_RESUME_IN(DataState);
-            } else {
-                emitParseError();
-                notImplemented();
-                ADVANCE_TO(BogusDOCTYPEState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(DOCTYPEPublicIdentifierDoubleQuotedState) {
-            if (cc == '"')
-                ADVANCE_TO(AfterDOCTYPEPublicIdentifierState);
-            else if (cc == '>') {
-                emitParseError();
-                notImplemented();
-                EMIT_AND_RESUME_IN(DataState);
-            } else
-                m_token->appendToPublicIdentifier(cc);
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(DOCTYPEPublicIdentifierSingleQuotedState) {
-            if (cc == '\'')
-                ADVANCE_TO(AfterDOCTYPEPublicIdentifierState);
-            else if (cc == '>') {
-                emitParseError();
-                notImplemented();
-                EMIT_AND_RESUME_IN(DataState);
-            } else
-                m_token->appendToPublicIdentifier(cc);
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(AfterDOCTYPEPublicIdentifierState) {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
-                ADVANCE_TO(BetweenDOCTYPEPublicAndSystemIdentifiersState);
-            else if (cc == '>') {
-                EMIT_AND_RESUME_IN(DataState);
-            } else if (cc == '"') {
-                emitParseError();
-                m_token->setPublicIdentifierToEmptyString();
-                ADVANCE_TO(DOCTYPESystemIdentifierDoubleQuotedState);
-            } else if (cc == '\'') {
-                emitParseError();
-                m_token->setPublicIdentifierToEmptyString();
-                ADVANCE_TO(DOCTYPESystemIdentifierSingleQuotedState);
-            } else {
-                emitParseError();
-                notImplemented();
-                ADVANCE_TO(BogusDOCTYPEState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(BetweenDOCTYPEPublicAndSystemIdentifiersState) {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
-                ADVANCE_TO(BetweenDOCTYPEPublicAndSystemIdentifiersState);
-            else if (cc == '>') {
-                EMIT_AND_RESUME_IN(DataState);
-            } else if (cc == '"') {
-                m_token->setSystemIdentifierToEmptyString();
-                ADVANCE_TO(DOCTYPESystemIdentifierDoubleQuotedState);
-            } else if (cc == '\'') {
-                m_token->setSystemIdentifierToEmptyString();
-                ADVANCE_TO(DOCTYPESystemIdentifierSingleQuotedState);
-            } else {
-                emitParseError();
-                notImplemented();
-                ADVANCE_TO(BogusDOCTYPEState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(AfterDOCTYPESystemKeywordState) {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
-                ADVANCE_TO(BeforeDOCTYPESystemIdentifierState);
-            else if (cc == '"') {
-                emitParseError();
-                m_token->setSystemIdentifierToEmptyString();
-                ADVANCE_TO(DOCTYPESystemIdentifierDoubleQuotedState);
-            } else if (cc == '\'') {
-                emitParseError();
-                m_token->setSystemIdentifierToEmptyString();
-                ADVANCE_TO(DOCTYPESystemIdentifierSingleQuotedState);
-            } else if (cc == '>') {
-                emitParseError();
-                notImplemented();
-                EMIT_AND_RESUME_IN(DataState);
-            } else {
-                emitParseError();
-                notImplemented();
-                ADVANCE_TO(BogusDOCTYPEState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(BeforeDOCTYPESystemIdentifierState) {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
-                break;
-            if (cc == '"') {
-                m_token->setSystemIdentifierToEmptyString();
-                ADVANCE_TO(DOCTYPESystemIdentifierDoubleQuotedState);
-            } else if (cc == '\'') {
-                m_token->setSystemIdentifierToEmptyString();
-                ADVANCE_TO(DOCTYPESystemIdentifierSingleQuotedState);
-            } else if (cc == '>') {
-                emitParseError();
-                notImplemented();
-                EMIT_AND_RESUME_IN(DataState);
-            } else {
-                emitParseError();
-                notImplemented();
-                ADVANCE_TO(BogusDOCTYPEState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(DOCTYPESystemIdentifierDoubleQuotedState) {
-            if (cc == '"')
-                ADVANCE_TO(AfterDOCTYPESystemIdentifierState);
-            else if (cc == '>') {
-                emitParseError();
-                notImplemented();
-                EMIT_AND_RESUME_IN(DataState);
-            } else
-                m_token->appendToSystemIdentifier(cc);
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(DOCTYPESystemIdentifierSingleQuotedState) {
-            if (cc == '\'')
-                ADVANCE_TO(AfterDOCTYPESystemIdentifierState);
-            else if (cc == '>') {
-                emitParseError();
-                notImplemented();
-                EMIT_AND_RESUME_IN(DataState);
-            } else
-                m_token->appendToSystemIdentifier(cc);
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(AfterDOCTYPESystemIdentifierState) {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
-                break;
-            else if (cc == '>') {
-                EMIT_AND_RESUME_IN(DataState);
-            } else {
-                emitParseError();
-                ADVANCE_TO(BogusDOCTYPEState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(BogusDOCTYPEState) {
-            if (cc == '>') {
-                EMIT_AND_RESUME_IN(DataState);
-            }
-            // FIXME: Handle EOF properly.
-            break;
-        }
-        END_STATE()
-
-        BEGIN_STATE(CDATASectionState) {
-            notImplemented();
-            break;
-        }
-        END_STATE()
-
-        }
-        source.advance(m_lineNumber);
-        if (m_emitPending) {
-            m_emitPending = false;
-            return true;
-        }
+        // FIXME: Handle EOF properly.
+        break;
     }
+    END_STATE()
+
+    BEGIN_STATE(TagNameState) {
+        if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+            ADVANCE_TO(BeforeAttributeNameState);
+        else if (cc == '/')
+            ADVANCE_TO(SelfClosingStartTagState);
+        else if (cc == '>') {
+            EMIT_AND_RESUME_IN(DataState);
+        } else if (cc >= 'A' && cc <= 'Z')
+            m_token->appendToName(toLowerCase(cc));
+        else
+            m_token->appendToName(cc);
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(RCDATALessThanSignState) {
+        if (cc == '/') {
+            m_temporaryBuffer.clear();
+            ASSERT(m_bufferedEndTagName.isEmpty());
+            ADVANCE_TO(RCDATAEndTagOpenState);
+        } else {
+            emitCharacter('<');
+            RECONSUME_IN(RCDATAState);
+        }
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(RCDATAEndTagOpenState) {
+        if (cc >= 'A' && cc <= 'Z') {
+            m_temporaryBuffer.append(cc);
+            addToPossibleEndTag(toLowerCase(cc));
+            ADVANCE_TO(RCDATAEndTagNameState);
+        } else if (cc >= 'a' && cc <= 'z') {
+            m_temporaryBuffer.append(cc);
+            addToPossibleEndTag(cc);
+            ADVANCE_TO(RCDATAEndTagNameState);
+        } else {
+            emitCharacter('<');
+            emitCharacter('/');
+            RECONSUME_IN(RCDATAState);
+        }
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(RCDATAEndTagNameState) {
+        if (cc >= 'A' && cc <= 'Z') {
+            m_temporaryBuffer.append(cc);
+            addToPossibleEndTag(toLowerCase(cc));
+        } else if (cc >= 'a' && cc <= 'z') {
+            m_temporaryBuffer.append(cc);
+            addToPossibleEndTag(cc);
+        } else {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
+                if (isAppropriateEndTag()) {
+                    FLUSH_AND_ADVANCE_TO(BeforeAttributeNameState);
+                }
+            } else if (cc == '/') {
+                if (isAppropriateEndTag()) {
+                    FLUSH_AND_ADVANCE_TO(SelfClosingStartTagState);
+                }
+            } else if (cc == '>') {
+                if (isAppropriateEndTag()) {
+                    FLUSH_EMIT_AND_RESUME_IN(DataState);
+                }
+            }
+            emitCharacter('<');
+            emitCharacter('/');
+            m_token->appendToCharacter(m_temporaryBuffer);
+            m_bufferedEndTagName.clear();
+            RECONSUME_IN(RCDATAState);
+        }
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(RAWTEXTLessThanSignState) {
+        if (cc == '/') {
+            m_temporaryBuffer.clear();
+            ASSERT(m_bufferedEndTagName.isEmpty());
+            ADVANCE_TO(RAWTEXTEndTagOpenState);
+        } else {
+            emitCharacter('<');
+            RECONSUME_IN(RAWTEXTState);
+        }
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(RAWTEXTEndTagOpenState) {
+        if (cc >= 'A' && cc <= 'Z') {
+            m_temporaryBuffer.append(cc);
+            addToPossibleEndTag(toLowerCase(cc));
+            ADVANCE_TO(RAWTEXTEndTagNameState);
+        } else if (cc >= 'a' && cc <= 'z') {
+            m_temporaryBuffer.append(cc);
+            addToPossibleEndTag(cc);
+            ADVANCE_TO(RAWTEXTEndTagNameState);
+        } else {
+            emitCharacter('<');
+            emitCharacter('/');
+            RECONSUME_IN(RAWTEXTState);
+        }
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(RAWTEXTEndTagNameState) {
+        if (cc >= 'A' && cc <= 'Z') {
+            m_temporaryBuffer.append(cc);
+            addToPossibleEndTag(toLowerCase(cc));
+        } else if (cc >= 'a' && cc <= 'z') {
+            m_temporaryBuffer.append(cc);
+            addToPossibleEndTag(cc);
+        } else {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
+                if (isAppropriateEndTag()) {
+                    FLUSH_AND_ADVANCE_TO(BeforeAttributeNameState);
+                }
+            } else if (cc == '/') {
+                if (isAppropriateEndTag()) {
+                    FLUSH_AND_ADVANCE_TO(SelfClosingStartTagState);
+                }
+            } else if (cc == '>') {
+                if (isAppropriateEndTag()) {
+                    FLUSH_EMIT_AND_RESUME_IN(DataState);
+                }
+            }
+            emitCharacter('<');
+            emitCharacter('/');
+            m_token->appendToCharacter(m_temporaryBuffer);
+            m_bufferedEndTagName.clear();
+            RECONSUME_IN(RAWTEXTState);
+        }
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(ScriptDataLessThanSignState) {
+        if (cc == '/') {
+            m_temporaryBuffer.clear();
+            ASSERT(m_bufferedEndTagName.isEmpty());
+            ADVANCE_TO(ScriptDataEndTagOpenState);
+        } else if (cc == '!') {
+            emitCharacter('<');
+            emitCharacter('!');
+            ADVANCE_TO(ScriptDataEscapeStartState);
+        } else {
+            emitCharacter('<');
+            RECONSUME_IN(ScriptDataState);
+        }
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(ScriptDataEndTagOpenState) {
+        if (cc >= 'A' && cc <= 'Z') {
+            m_temporaryBuffer.append(cc);
+            addToPossibleEndTag(toLowerCase(cc));
+            ADVANCE_TO(ScriptDataEndTagNameState);
+        } else if (cc >= 'a' && cc <= 'z') {
+            m_temporaryBuffer.append(cc);
+            addToPossibleEndTag(cc);
+            ADVANCE_TO(ScriptDataEndTagNameState);
+        } else {
+            emitCharacter('<');
+            emitCharacter('/');
+            RECONSUME_IN(ScriptDataState);
+        }
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(ScriptDataEndTagNameState) {
+        if (cc >= 'A' && cc <= 'Z') {
+            m_temporaryBuffer.append(cc);
+            addToPossibleEndTag(toLowerCase(cc));
+        } else if (cc >= 'a' && cc <= 'z') {
+            m_temporaryBuffer.append(cc);
+            addToPossibleEndTag(cc);
+        } else {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
+                if (isAppropriateEndTag()) {
+                    FLUSH_AND_ADVANCE_TO(BeforeAttributeNameState);
+                }
+            } else if (cc == '/') {
+                if (isAppropriateEndTag()) {
+                    FLUSH_AND_ADVANCE_TO(SelfClosingStartTagState);
+                }
+            } else if (cc == '>') {
+                if (isAppropriateEndTag()) {
+                    FLUSH_EMIT_AND_RESUME_IN(DataState);
+                }
+            }
+            emitCharacter('<');
+            emitCharacter('/');
+            m_token->appendToCharacter(m_temporaryBuffer);
+            m_bufferedEndTagName.clear();
+            RECONSUME_IN(ScriptDataState);
+        }
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(ScriptDataEscapeStartState) {
+        if (cc == '-') {
+            emitCharacter(cc);
+            ADVANCE_TO(ScriptDataEscapeStartDashState);
+        } else {
+            RECONSUME_IN(ScriptDataState);
+        }
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(ScriptDataEscapeStartDashState) {
+        if (cc == '-') {
+            emitCharacter(cc);
+            ADVANCE_TO(ScriptDataEscapedDashDashState);
+        } else {
+            RECONSUME_IN(ScriptDataState);
+        }
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(ScriptDataEscapedState) {
+        if (cc == '-') {
+            emitCharacter(cc);
+            ADVANCE_TO(ScriptDataEscapedDashState);
+        } else if (cc == '<')
+            ADVANCE_TO(ScriptDataEscapedLessThanSignState);
+        else
+            emitCharacter(cc);
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(ScriptDataEscapedDashState) {
+        if (cc == '-') {
+            emitCharacter(cc);
+            ADVANCE_TO(ScriptDataEscapedDashDashState);
+        } else if (cc == '<')
+            ADVANCE_TO(ScriptDataEscapedLessThanSignState);
+        else {
+            emitCharacter(cc);
+            ADVANCE_TO(ScriptDataEscapedState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(ScriptDataEscapedDashDashState) {
+        if (cc == '-')
+            emitCharacter(cc);
+        else if (cc == '<')
+            ADVANCE_TO(ScriptDataEscapedLessThanSignState);
+        else if (cc == '>') {
+            emitCharacter(cc);
+            ADVANCE_TO(ScriptDataState);
+        } else {
+            emitCharacter(cc);
+            ADVANCE_TO(ScriptDataEscapedState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(ScriptDataEscapedLessThanSignState) {
+        if (cc == '/') {
+            m_temporaryBuffer.clear();
+            ASSERT(m_bufferedEndTagName.isEmpty());
+            ADVANCE_TO(ScriptDataEscapedEndTagOpenState);
+        } else if (cc >= 'A' && cc <= 'Z') {
+            emitCharacter('<');
+            emitCharacter(cc);
+            m_temporaryBuffer.clear();
+            m_temporaryBuffer.append(toLowerCase(cc));
+            ADVANCE_TO(ScriptDataDoubleEscapeStartState);
+        } else if (cc >= 'a' && cc <= 'z') {
+            emitCharacter('<');
+            emitCharacter(cc);
+            m_temporaryBuffer.clear();
+            m_temporaryBuffer.append(cc);
+            ADVANCE_TO(ScriptDataDoubleEscapeStartState);
+        } else {
+            emitCharacter('<');
+            RECONSUME_IN(ScriptDataEscapedState);
+        }
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(ScriptDataEscapedEndTagOpenState) {
+        if (cc >= 'A' && cc <= 'Z') {
+            m_temporaryBuffer.append(cc);
+            addToPossibleEndTag(toLowerCase(cc));
+            ADVANCE_TO(ScriptDataEscapedEndTagNameState);
+        } else if (cc >= 'a' && cc <= 'z') {
+            m_temporaryBuffer.append(cc);
+            addToPossibleEndTag(cc);
+            ADVANCE_TO(ScriptDataEscapedEndTagNameState);
+        } else {
+            emitCharacter('<');
+            emitCharacter('/');
+            RECONSUME_IN(ScriptDataEscapedState);
+        }
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(ScriptDataEscapedEndTagNameState) {
+        if (cc >= 'A' && cc <= 'Z') {
+            m_temporaryBuffer.append(cc);
+            addToPossibleEndTag(toLowerCase(cc));
+        } else if (cc >= 'a' && cc <= 'z') {
+            m_temporaryBuffer.append(cc);
+            addToPossibleEndTag(cc);
+        } else {
+            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
+                if (isAppropriateEndTag()) {
+                    FLUSH_AND_ADVANCE_TO(BeforeAttributeNameState);
+                }
+            } else if (cc == '/') {
+                if (isAppropriateEndTag()) {
+                    FLUSH_AND_ADVANCE_TO(SelfClosingStartTagState);
+                }
+            } else if (cc == '>') {
+                if (isAppropriateEndTag()) {
+                    FLUSH_EMIT_AND_RESUME_IN(DataState);
+                }
+            }
+            emitCharacter('<');
+            emitCharacter('/');
+            m_token->appendToCharacter(m_temporaryBuffer);
+            m_bufferedEndTagName.clear();
+            RECONSUME_IN(ScriptDataEscapedState);
+        }
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(ScriptDataDoubleEscapeStartState) {
+        if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ' || cc == '/' || cc == '>') {
+            emitCharacter(cc);
+            if (temporaryBufferIs(scriptTag.localName()))
+                ADVANCE_TO(ScriptDataDoubleEscapedState);
+            else
+                ADVANCE_TO(ScriptDataEscapedState);
+        } else if (cc >= 'A' && cc <= 'Z') {
+            emitCharacter(cc);
+            m_temporaryBuffer.append(toLowerCase(cc));
+        } else if (cc >= 'a' && cc <= 'z') {
+            emitCharacter(cc);
+            m_temporaryBuffer.append(cc);
+        } else {
+            RECONSUME_IN(ScriptDataEscapedState);
+        }
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(ScriptDataDoubleEscapedState) {
+        if (cc == '-') {
+            emitCharacter(cc);
+            ADVANCE_TO(ScriptDataDoubleEscapedDashState);
+        } else if (cc == '<') {
+            emitCharacter(cc);
+            ADVANCE_TO(ScriptDataDoubleEscapedLessThanSignState);
+        } else
+            emitCharacter(cc);
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(ScriptDataDoubleEscapedDashState) {
+        if (cc == '-') {
+            emitCharacter(cc);
+            ADVANCE_TO(ScriptDataDoubleEscapedDashDashState);
+        } else if (cc == '<') {
+            emitCharacter(cc);
+            ADVANCE_TO(ScriptDataDoubleEscapedLessThanSignState);
+        } else {
+            emitCharacter(cc);
+            ADVANCE_TO(ScriptDataDoubleEscapedState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(ScriptDataDoubleEscapedDashDashState) {
+        if (cc == '-')
+            emitCharacter(cc);
+        else if (cc == '<') {
+            emitCharacter(cc);
+            ADVANCE_TO(ScriptDataDoubleEscapedLessThanSignState);
+        } else if (cc == '>') {
+            emitCharacter(cc);
+            ADVANCE_TO(ScriptDataState);
+        } else {
+            emitCharacter(cc);
+            ADVANCE_TO(ScriptDataDoubleEscapedState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(ScriptDataDoubleEscapedLessThanSignState) {
+        if (cc == '/') {
+            emitCharacter(cc);
+            m_temporaryBuffer.clear();
+            ADVANCE_TO(ScriptDataDoubleEscapeEndState);
+        } else {
+            RECONSUME_IN(ScriptDataDoubleEscapedState);
+        }
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(ScriptDataDoubleEscapeEndState) {
+        if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ' || cc == '/' || cc == '>') {
+            emitCharacter(cc);
+            if (temporaryBufferIs(scriptTag.localName()))
+                ADVANCE_TO(ScriptDataEscapedState);
+            else
+                ADVANCE_TO(ScriptDataDoubleEscapedState);
+        } else if (cc >= 'A' && cc <= 'Z') {
+            emitCharacter(cc);
+            m_temporaryBuffer.append(toLowerCase(cc));
+        } else if (cc >= 'a' && cc <= 'z') {
+            emitCharacter(cc);
+            m_temporaryBuffer.append(cc);
+        } else {
+            RECONSUME_IN(ScriptDataDoubleEscapedState);
+        }
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(BeforeAttributeNameState) {
+        if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+            break;
+        else if (cc == '/')
+            ADVANCE_TO(SelfClosingStartTagState);
+        else if (cc == '>') {
+            EMIT_AND_RESUME_IN(DataState);
+        } else if (cc >= 'A' && cc <= 'Z') {
+            m_token->addNewAttribute();
+            m_token->appendToAttributeName(toLowerCase(cc));
+            ADVANCE_TO(AttributeNameState);
+        } else {
+            if (cc == '"' || cc == '\'' || cc == '<' || cc == '=')
+                emitParseError();
+            m_token->addNewAttribute();
+            m_token->appendToAttributeName(cc);
+            ADVANCE_TO(AttributeNameState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(AttributeNameState) {
+        if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+            ADVANCE_TO(AfterAttributeNameState);
+        else if (cc == '/')
+            ADVANCE_TO(SelfClosingStartTagState);
+        else if (cc == '=')
+            ADVANCE_TO(BeforeAttributeValueState);
+        else if (cc == '>') {
+            EMIT_AND_RESUME_IN(DataState);
+        } else if (cc >= 'A' && cc <= 'Z')
+            m_token->appendToAttributeName(toLowerCase(cc));
+        else {
+            if (cc == '"' || cc == '\'' || cc == '<' || cc == '=')
+                emitParseError();
+            m_token->appendToAttributeName(cc);
+            ADVANCE_TO(AttributeNameState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(AfterAttributeNameState) {
+        if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+            break;
+        else if (cc == '/')
+            ADVANCE_TO(SelfClosingStartTagState);
+        else if (cc == '=')
+            ADVANCE_TO(BeforeAttributeValueState);
+        else if (cc == '=') {
+            EMIT_AND_RESUME_IN(DataState);
+        } else if (cc >= 'A' && cc <= 'Z') {
+            m_token->addNewAttribute();
+            m_token->appendToAttributeName(toLowerCase(cc));
+            ADVANCE_TO(AttributeNameState);
+        } else {
+            if (cc == '"' || cc == '\'' || cc == '<')
+                emitParseError();
+            m_token->addNewAttribute();
+            m_token->appendToAttributeName(cc);
+            ADVANCE_TO(AttributeNameState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(BeforeAttributeValueState) {
+        if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+            break;
+        else if (cc == '"')
+            ADVANCE_TO(AttributeValueDoubleQuotedState);
+        else if (cc == '&') {
+            RECONSUME_IN(AttributeValueUnquotedState);
+        } else if (cc == '\'')
+            ADVANCE_TO(AttributeValueSingleQuotedState);
+        else if (cc == '>') {
+            emitParseError();
+            EMIT_AND_RESUME_IN(DataState);
+        } else {
+            if (cc == '<' || cc == '=' || cc == '`')
+                emitParseError();
+            m_token->appendToAttributeValue(cc);
+            ADVANCE_TO(AttributeValueUnquotedState);
+        }
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(AttributeValueDoubleQuotedState) {
+        if (cc == '"')
+            ADVANCE_TO(AfterAttributeValueQuotedState);
+        else if (cc == '&') {
+            m_additionalAllowedCharacter = '"';
+            ADVANCE_TO(CharacterReferenceInAttributeValueState);
+        } else
+            m_token->appendToAttributeValue(cc);
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(AttributeValueSingleQuotedState) {
+        if (cc == '\'')
+            ADVANCE_TO(AfterAttributeValueQuotedState);
+        else if (cc == '&') {
+            m_additionalAllowedCharacter = '\'';
+            ADVANCE_TO(CharacterReferenceInAttributeValueState);
+        } else
+            m_token->appendToAttributeValue(cc);
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(AttributeValueUnquotedState) {
+        if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+            ADVANCE_TO(BeforeAttributeNameState);
+        else if (cc == '&') {
+            m_additionalAllowedCharacter = '>';
+            ADVANCE_TO(CharacterReferenceInAttributeValueState);
+        } else if (cc == '>') {
+            EMIT_AND_RESUME_IN(DataState);
+        } else {
+            if (cc == '"' || cc == '\'' || cc == '<' || cc == '=' || cc == '`')
+                emitParseError();
+            m_token->appendToAttributeValue(cc);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(CharacterReferenceInAttributeValueState) {
+        bool notEnoughCharacters = false;
+        unsigned value = consumeEntity(source, notEnoughCharacters);
+        if (notEnoughCharacters)
+            return shouldEmitBufferedCharacterToken(source);
+        if (!value)
+            m_token->appendToAttributeValue('&');
+        else if (value < 0xFFFF)
+            m_token->appendToAttributeValue(value);
+        else {
+            m_token->appendToAttributeValue(U16_LEAD(value));
+            m_token->appendToAttributeValue(U16_TRAIL(value));
+        }
+        // We're supposed to switch back to the attribute value state that
+        // we were in when we were switched into this state.  Rather than
+        // keeping track of this explictly, we observe that the previous
+        // state can be determined by m_additionalAllowedCharacter.
+        if (m_additionalAllowedCharacter == '"')
+            RECONSUME_IN(AttributeValueDoubleQuotedState)
+        else if (m_additionalAllowedCharacter == '\'')
+            RECONSUME_IN(AttributeValueSingleQuotedState)
+        else if (m_additionalAllowedCharacter == '>')
+            RECONSUME_IN(AttributeValueUnquotedState)
+        else
+            ASSERT_NOT_REACHED();
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(AfterAttributeValueQuotedState) {
+        if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+            ADVANCE_TO(BeforeAttributeNameState);
+        else if (cc == '/')
+            ADVANCE_TO(SelfClosingStartTagState);
+        else if (cc == '>') {
+            EMIT_AND_RESUME_IN(DataState);
+        } else {
+            emitParseError();
+            RECONSUME_IN(BeforeAttributeNameState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(SelfClosingStartTagState) {
+        if (cc == '>') {
+            notImplemented();
+            EMIT_AND_RESUME_IN(DataState);
+        } else {
+            emitParseError();
+            RECONSUME_IN(BeforeAttributeNameState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(BogusCommentState) {
+        m_token->beginComment();
+        while (!source.isEmpty()) {
+            cc = *source;
+            if (cc == '>')
+                break;
+            m_token->appendToComment(cc);
+            source.advance(m_lineNumber);
+        }
+        EMIT_AND_RESUME_IN(DataState);
+        if (source.isEmpty())
+            return true;
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(MarkupDeclarationOpenState) {
+        DEFINE_STATIC_LOCAL(String, dashDashString, ("--"));
+        DEFINE_STATIC_LOCAL(String, doctypeString, ("doctype"));
+        if (cc == '-') {
+            SegmentedString::LookAheadResult result = source.lookAhead(dashDashString);
+            if (result == SegmentedString::DidMatch) {
+                source.advanceAndASSERT('-');
+                source.advanceAndASSERT('-');
+                m_token->beginComment();
+                RECONSUME_IN(CommentStartState);
+            } else if (result == SegmentedString::NotEnoughCharacters)
+                return shouldEmitBufferedCharacterToken(source);
+        } else if (cc == 'D' || cc == 'd') {
+            SegmentedString::LookAheadResult result = source.lookAheadIgnoringCase(doctypeString);
+            if (result == SegmentedString::DidMatch) {
+                advanceStringAndASSERTIgnoringCase(source, "doctype");
+                RECONSUME_IN(DOCTYPEState);
+            } else if (result == SegmentedString::NotEnoughCharacters)
+                return shouldEmitBufferedCharacterToken(source);
+        }
+        notImplemented();
+        // FIXME: We're still missing the bits about the insertion mode being in foreign content:
+        // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#markup-declaration-open-state
+        emitParseError();
+        RECONSUME_IN(BogusCommentState);
+    }
+    END_STATE()
+
+    BEGIN_STATE(CommentStartState) {
+        if (cc == '-')
+            ADVANCE_TO(CommentStartDashState);
+        else if (cc == '>') {
+            emitParseError();
+            EMIT_AND_RESUME_IN(DataState);
+        } else {
+            m_token->appendToComment(cc);
+            ADVANCE_TO(CommentState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(CommentStartDashState) {
+        if (cc == '-')
+            ADVANCE_TO(CommentEndState);
+        else if (cc == '>') {
+            emitParseError();
+            EMIT_AND_RESUME_IN(DataState);
+        } else {
+            m_token->appendToComment('-');
+            m_token->appendToComment(cc);
+            ADVANCE_TO(CommentState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(CommentState) {
+        if (cc == '-')
+            ADVANCE_TO(CommentEndDashState);
+        else
+            m_token->appendToComment(cc);
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(CommentEndDashState) {
+        if (cc == '-')
+            ADVANCE_TO(CommentEndState);
+        else {
+            m_token->appendToComment('-');
+            m_token->appendToComment(cc);
+            ADVANCE_TO(CommentState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(CommentEndState) {
+        if (cc == '>') {
+            EMIT_AND_RESUME_IN(DataState);
+        } else if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ') {
+            emitParseError();
+            m_token->appendToComment('-');
+            m_token->appendToComment('-');
+            m_token->appendToComment(cc);
+            ADVANCE_TO(CommentEndSpaceState);
+        } else if (cc == '!') {
+            emitParseError();
+            ADVANCE_TO(CommentEndBangState);
+        } else if (cc == '-') {
+            emitParseError();
+            m_token->appendToComment('-');
+            m_token->appendToComment(cc);
+        } else {
+            emitParseError();
+            m_token->appendToComment('-');
+            m_token->appendToComment('-');
+            m_token->appendToComment(cc);
+            ADVANCE_TO(CommentState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(CommentEndBangState) {
+        if (cc == '-') {
+            m_token->appendToComment('-');
+            m_token->appendToComment('-');
+            m_token->appendToComment('!');
+            ADVANCE_TO(CommentEndDashState);
+        } else if (cc == '>') {
+            EMIT_AND_RESUME_IN(DataState);
+        } else {
+            m_token->appendToComment('-');
+            m_token->appendToComment('-');
+            m_token->appendToComment('!');
+            m_token->appendToComment(cc);
+            ADVANCE_TO(CommentState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(CommentEndSpaceState) {
+        if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+            m_token->appendToComment(cc);
+        else if (cc == '-')
+            ADVANCE_TO(CommentEndDashState);
+        else if (cc == '>') {
+            EMIT_AND_RESUME_IN(DataState);
+        } else {
+            m_token->appendToComment(cc);
+            ADVANCE_TO(CommentState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(DOCTYPEState) {
+        if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+            ADVANCE_TO(BeforeDOCTYPENameState);
+        else {
+            emitParseError();
+            RECONSUME_IN(BeforeDOCTYPENameState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(BeforeDOCTYPENameState) {
+        if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+            break;
+        else if (cc >= 'A' && cc <= 'Z') {
+            m_token->beginDOCTYPE(toLowerCase(cc));
+            ADVANCE_TO(DOCTYPENameState);
+        } else if (cc == '>') {
+            emitParseError();
+            m_token->beginDOCTYPE();
+            notImplemented();
+            EMIT_AND_RESUME_IN(DataState);
+        } else {
+            m_token->beginDOCTYPE(cc);
+            ADVANCE_TO(DOCTYPENameState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(DOCTYPENameState) {
+        if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+            ADVANCE_TO(AfterDOCTYPENameState);
+        else if (cc == '>') {
+            EMIT_AND_RESUME_IN(DataState);
+        } else if (cc >= 'A' && cc <= 'Z')
+            m_token->appendToName(toLowerCase(cc));
+        else
+            m_token->appendToName(cc);
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(AfterDOCTYPENameState) {
+        if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+            break;
+        if (cc == '>') {
+            EMIT_AND_RESUME_IN(DataState);
+        } else {
+            DEFINE_STATIC_LOCAL(String, publicString, ("public"));
+            DEFINE_STATIC_LOCAL(String, systemString, ("system"));
+            if (cc == 'P' || cc == 'p') {
+                SegmentedString::LookAheadResult result = source.lookAheadIgnoringCase(publicString);
+                if (result == SegmentedString::DidMatch) {
+                    advanceStringAndASSERTIgnoringCase(source, "public");
+                    RECONSUME_IN(AfterDOCTYPEPublicKeywordState);
+                } else if (result == SegmentedString::NotEnoughCharacters)
+                    return shouldEmitBufferedCharacterToken(source);
+            } else if (cc == 'S' || cc == 's') {
+                SegmentedString::LookAheadResult result = source.lookAheadIgnoringCase(systemString);
+                if (result == SegmentedString::DidMatch) {
+                    advanceStringAndASSERTIgnoringCase(source, "system");
+                    RECONSUME_IN(AfterDOCTYPESystemKeywordState);
+                } else if (result == SegmentedString::NotEnoughCharacters)
+                    return shouldEmitBufferedCharacterToken(source);
+            }
+            emitParseError();
+            notImplemented();
+            ADVANCE_TO(BogusDOCTYPEState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(AfterDOCTYPEPublicKeywordState) {
+        if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+            ADVANCE_TO(BeforeDOCTYPEPublicIdentifierState);
+        else if (cc == '"') {
+            emitParseError();
+            m_token->setPublicIdentifierToEmptyString();
+            ADVANCE_TO(DOCTYPEPublicIdentifierDoubleQuotedState);
+        } else if (cc == '\'') {
+            emitParseError();
+            m_token->setPublicIdentifierToEmptyString();
+            ADVANCE_TO(DOCTYPEPublicIdentifierSingleQuotedState);
+        } else if (cc == '>') {
+            emitParseError();
+            notImplemented();
+            EMIT_AND_RESUME_IN(DataState);
+        } else {
+            emitParseError();
+            notImplemented();
+            ADVANCE_TO(BogusDOCTYPEState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(BeforeDOCTYPEPublicIdentifierState) {
+        if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+            break;
+        else if (cc == '"') {
+            m_token->setPublicIdentifierToEmptyString();
+            ADVANCE_TO(DOCTYPEPublicIdentifierDoubleQuotedState);
+        } else if (cc == '\'') {
+            m_token->setPublicIdentifierToEmptyString();
+            ADVANCE_TO(DOCTYPEPublicIdentifierSingleQuotedState);
+        } else if (cc == '>') {
+            emitParseError();
+            notImplemented();
+            EMIT_AND_RESUME_IN(DataState);
+        } else {
+            emitParseError();
+            notImplemented();
+            ADVANCE_TO(BogusDOCTYPEState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(DOCTYPEPublicIdentifierDoubleQuotedState) {
+        if (cc == '"')
+            ADVANCE_TO(AfterDOCTYPEPublicIdentifierState);
+        else if (cc == '>') {
+            emitParseError();
+            notImplemented();
+            EMIT_AND_RESUME_IN(DataState);
+        } else
+            m_token->appendToPublicIdentifier(cc);
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(DOCTYPEPublicIdentifierSingleQuotedState) {
+        if (cc == '\'')
+            ADVANCE_TO(AfterDOCTYPEPublicIdentifierState);
+        else if (cc == '>') {
+            emitParseError();
+            notImplemented();
+            EMIT_AND_RESUME_IN(DataState);
+        } else
+            m_token->appendToPublicIdentifier(cc);
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(AfterDOCTYPEPublicIdentifierState) {
+        if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+            ADVANCE_TO(BetweenDOCTYPEPublicAndSystemIdentifiersState);
+        else if (cc == '>') {
+            EMIT_AND_RESUME_IN(DataState);
+        } else if (cc == '"') {
+            emitParseError();
+            m_token->setPublicIdentifierToEmptyString();
+            ADVANCE_TO(DOCTYPESystemIdentifierDoubleQuotedState);
+        } else if (cc == '\'') {
+            emitParseError();
+            m_token->setPublicIdentifierToEmptyString();
+            ADVANCE_TO(DOCTYPESystemIdentifierSingleQuotedState);
+        } else {
+            emitParseError();
+            notImplemented();
+            ADVANCE_TO(BogusDOCTYPEState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(BetweenDOCTYPEPublicAndSystemIdentifiersState) {
+        if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+            ADVANCE_TO(BetweenDOCTYPEPublicAndSystemIdentifiersState);
+        else if (cc == '>') {
+            EMIT_AND_RESUME_IN(DataState);
+        } else if (cc == '"') {
+            m_token->setSystemIdentifierToEmptyString();
+            ADVANCE_TO(DOCTYPESystemIdentifierDoubleQuotedState);
+        } else if (cc == '\'') {
+            m_token->setSystemIdentifierToEmptyString();
+            ADVANCE_TO(DOCTYPESystemIdentifierSingleQuotedState);
+        } else {
+            emitParseError();
+            notImplemented();
+            ADVANCE_TO(BogusDOCTYPEState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(AfterDOCTYPESystemKeywordState) {
+        if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+            ADVANCE_TO(BeforeDOCTYPESystemIdentifierState);
+        else if (cc == '"') {
+            emitParseError();
+            m_token->setSystemIdentifierToEmptyString();
+            ADVANCE_TO(DOCTYPESystemIdentifierDoubleQuotedState);
+        } else if (cc == '\'') {
+            emitParseError();
+            m_token->setSystemIdentifierToEmptyString();
+            ADVANCE_TO(DOCTYPESystemIdentifierSingleQuotedState);
+        } else if (cc == '>') {
+            emitParseError();
+            notImplemented();
+            EMIT_AND_RESUME_IN(DataState);
+        } else {
+            emitParseError();
+            notImplemented();
+            ADVANCE_TO(BogusDOCTYPEState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(BeforeDOCTYPESystemIdentifierState) {
+        if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+            break;
+        if (cc == '"') {
+            m_token->setSystemIdentifierToEmptyString();
+            ADVANCE_TO(DOCTYPESystemIdentifierDoubleQuotedState);
+        } else if (cc == '\'') {
+            m_token->setSystemIdentifierToEmptyString();
+            ADVANCE_TO(DOCTYPESystemIdentifierSingleQuotedState);
+        } else if (cc == '>') {
+            emitParseError();
+            notImplemented();
+            EMIT_AND_RESUME_IN(DataState);
+        } else {
+            emitParseError();
+            notImplemented();
+            ADVANCE_TO(BogusDOCTYPEState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(DOCTYPESystemIdentifierDoubleQuotedState) {
+        if (cc == '"')
+            ADVANCE_TO(AfterDOCTYPESystemIdentifierState);
+        else if (cc == '>') {
+            emitParseError();
+            notImplemented();
+            EMIT_AND_RESUME_IN(DataState);
+        } else
+            m_token->appendToSystemIdentifier(cc);
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(DOCTYPESystemIdentifierSingleQuotedState) {
+        if (cc == '\'')
+            ADVANCE_TO(AfterDOCTYPESystemIdentifierState);
+        else if (cc == '>') {
+            emitParseError();
+            notImplemented();
+            EMIT_AND_RESUME_IN(DataState);
+        } else
+            m_token->appendToSystemIdentifier(cc);
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(AfterDOCTYPESystemIdentifierState) {
+        if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ')
+            break;
+        else if (cc == '>') {
+            EMIT_AND_RESUME_IN(DataState);
+        } else {
+            emitParseError();
+            ADVANCE_TO(BogusDOCTYPEState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(BogusDOCTYPEState) {
+        if (cc == '>') {
+            EMIT_AND_RESUME_IN(DataState);
+        }
+        // FIXME: Handle EOF properly.
+        break;
+    }
+    END_STATE()
+
+    BEGIN_STATE(CDATASectionState) {
+        notImplemented();
+        break;
+    }
+    END_STATE()
+
+    }
+    source.advance(m_lineNumber);
+    if (m_emitPending) {
+        m_emitPending = false;
+        return true;
+    }
+
+    } // Matches the "while" above.
+
     // We've reached the end of the input stream.  If we have a character
     // token buffered, we should emit it.
     return shouldEmitBufferedCharacterToken(source);
