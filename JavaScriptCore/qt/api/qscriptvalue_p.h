@@ -602,14 +602,21 @@ QScriptValuePrivate* QScriptValuePrivate::toObject()
 
 bool QScriptValuePrivate::equals(QScriptValuePrivate* other)
 {
-    if (!isValid() || !other->isValid())
+    if (!isValid())
+        return !other->isValid();
+
+    if (!other->isValid())
         return false;
 
     if ((m_state == other->m_state) && !isJSBased()) {
         if (isNumberBased())
             return m_number == other->m_number;
+        Q_ASSERT(isStringBased());
         return m_string == other->m_string;
     }
+
+    if (!isJSBased() && !other->isJSBased())
+        return false;
 
     if (isJSBased() && !other->isJSBased()) {
         if (!other->assignEngine(engine())) {
@@ -617,7 +624,7 @@ bool QScriptValuePrivate::equals(QScriptValuePrivate* other)
             return false;
         }
     } else if (!isJSBased() && other->isJSBased()) {
-        if (!other->assignEngine(other->engine())) {
+        if (!assignEngine(other->engine())) {
             qWarning("equals(): Cannot compare to a value created in a different engine");
             return false;
         }

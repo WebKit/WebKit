@@ -556,7 +556,7 @@ QScriptValue& QScriptValue::operator=(const QScriptValue& other)
 */
 bool QScriptValue::equals(const QScriptValue& other) const
 {
-    return d_ptr == other.d_ptr || d_ptr->equals(QScriptValuePrivate::get(other));
+    return d_ptr->equals(QScriptValuePrivate::get(other));
 }
 
 /*!
