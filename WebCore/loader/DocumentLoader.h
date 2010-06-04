@@ -196,7 +196,11 @@ namespace WebCore {
         void setDeferMainResourceDataLoad(bool defer) { m_deferMainResourceDataLoad = defer; }
         bool deferMainResourceDataLoad() const { return m_deferMainResourceDataLoad; }
         
-        void didTellClientAboutLoad(const String& url) { m_resourcesClientKnowsAbout.add(url); }
+        void didTellClientAboutLoad(const String& url)
+        { 
+            if (!url.isEmpty())
+                m_resourcesClientKnowsAbout.add(url);
+        }
         bool haveToldClientAboutLoad(const String& url) { return m_resourcesClientKnowsAbout.contains(url); }
         void recordMemoryCacheLoadForFutureClientNotification(const String& url);
         void takeMemoryCacheLoadsForClientNotification(Vector<String>& loads);

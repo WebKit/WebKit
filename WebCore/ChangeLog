@@ -1,3 +1,21 @@
+2010-06-03  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Fix a crash when trying to use an invalid media src url by
+        moving the isValid url checks to a central location in
+        isSafeToLoadURL function. Also added an empty string check
+        in DocumentLoader::didTellClientAboutLoad.
+
+        Test: media/invalid-media-url-crash.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::isSafeToLoadURL):
+        (WebCore::HTMLMediaElement::selectNextSourceChild):
+        (WebCore::HTMLMediaElement::getPluginProxyParams):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::didTellClientAboutLoad):
+
 2010-06-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r60642.

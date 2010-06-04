@@ -3423,6 +3423,7 @@ media/video-seek-past-end-playing.html
 media/video-source-error.html
 
 #   Tests timing out
+media/invalid-media-url-crash.html
 media/unsupported-rtsp.html
 #   Tests generating new results
 media/audio-controls-rendering.html

@@ -151,6 +151,7 @@ media/controls-strict.html
 media/controls-styling.html
 media/event-attributes.html
 media/fallback.html
+media/invalid-media-url-crash.html
 media/media-captions.html
 media/media-constants.html
 media/media-fullscreen-inline.html
