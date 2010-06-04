@@ -207,12 +207,13 @@ class PyWebSocket(http_server.Lighttpd):
             url = 'http'
         url = url + '://127.0.0.1:%d/' % self._port
         if not url_is_alive(url):
-            fp = codecs.open(output_log, "utf-8")
-            try:
+            if self._process.returncode == None:
+                # FIXME: We should use a non-static Executive for easier
+                # testing.
+                Executive().kill_process(self._process.pid)
+            with codecs.open(output_log, "r", "utf-8") as fp:
                 for line in fp:
                     _log.error(line)
-            finally:
-                fp.close()
             raise PyWebSocketNotStarted(
                 'Failed to start %s server on port %s.' %
                     (self._server_name, self._port))

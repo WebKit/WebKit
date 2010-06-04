@@ -1,5 +1,17 @@
 2010-06-03  Fumitoshi Ukai  <ukai@chromium.org>
 
+        Reviewed by David Levin.
+
+        bad codecs.open in webkitpy/layout_tests/ports/websocket_server.py
+        https://bugs.webkit.org/show_bug.cgi?id=40105
+
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py:
+        - kill pywebsocket process when url is not alive and the process is not
+          terminated, not to leave pywebsocket server running.
+        - fix codecs.open parameters.
+
+2010-06-03  Fumitoshi Ukai  <ukai@chromium.org>
+
         Reviewed by Alexey Proskuryakov.
 
         old-run-webkit-tests should use ensure-valid-python to check if it can run the websockets tests
