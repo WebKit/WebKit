@@ -1,3 +1,15 @@
+2010-06-04  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] failed at http://philip.html5.org/tests/canvas/suite/tests/2d.path.arc.angle.3.html
+        https://bugs.webkit.org/show_bug.cgi?id=38537
+
+        Remove canvas/philip/tests/2d.path.arcTo.2d.path.arc.angle.3.html and
+        canvas/philip/tests/2d.path.arcTo.2d.path.arc.angle.5.html from Skipped.
+
+        * platform/qt/Skipped:
+
 2010-06-04  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.
