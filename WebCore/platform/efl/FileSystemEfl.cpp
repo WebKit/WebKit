@@ -56,14 +56,17 @@ CString fileSystemRepresentation(const String& path)
     return path.utf8();
 }
 
-char* filenameFromString(const String& string)
+CString filenameFromString(const String& string)
 {
 // WARNING: this is just used by platform/network/soup, thus must be GLIB!!!
 // TODO: move this to CString and use it instead in both, being more standard
 #if PLATFORM(WIN_OS)
-    return g_strdup(string.utf8().data());
+    return string.utf8();
 #else
-    return g_uri_unescape_string(string.utf8().data(), 0);
+    char* filename = g_uri_unescape_string(string.utf8().data(), 0);
+    CString cfilename(filename);
+    g_free(filename);
+    return cfilename;
 #endif
 }
 

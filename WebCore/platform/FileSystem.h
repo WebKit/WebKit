@@ -172,7 +172,7 @@ String roamingUserSpecificStorageDirectory();
 bool safeCreateFile(const String&, CFDataRef);
 #endif
 
-char* filenameFromString(const String&);
+CString filenameFromString(const String&);
 
 #if PLATFORM(GTK)
 String filenameToString(const char*);

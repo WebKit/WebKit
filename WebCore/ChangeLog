@@ -1,3 +1,42 @@
+2010-06-04  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        Change filenameFromString to return CString
+        https://bugs.webkit.org/show_bug.cgi?id=39494
+
+        filenameFromString returns a newly allocated string and the caller must
+        free the string. GTK and EFL ports use g_free while all others ports use
+        fastFree. This is confusing because the same function behaves
+        differently with respect to ports. Change filenameFromString to return
+        CString.
+
+        * platform/FileSystem.cpp:
+        (WebCore::filenameFromString):
+        * platform/FileSystem.h:
+        * platform/efl/FileSystemEfl.cpp:
+        (WebCore::filenameFromString):
+        * platform/gtk/FileChooserGtk.cpp:
+        (WebCore::FileChooser::basenameForWidth):
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::filenameFromString):
+        (WebCore::filenameForDisplay):
+        (WebCore::fileExists):
+        (WebCore::deleteFile):
+        (WebCore::deleteEmptyDirectory):
+        (WebCore::getFileSize):
+        (WebCore::getFileModificationTime):
+        (WebCore::makeAllDirectories):
+        (WebCore::pathGetFileName):
+        (WebCore::directoryName):
+        (WebCore::listDirectory):
+        * platform/gtk/SharedBufferGtk.cpp:
+        (WebCore::SharedBuffer::createWithContentsOfFile):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::startHttp):
+        * platform/posix/SharedBufferPOSIX.cpp:
+        (WebCore::SharedBuffer::createWithContentsOfFile):
+
 2010-06-04  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
