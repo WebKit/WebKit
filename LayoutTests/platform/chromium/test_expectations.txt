@@ -2845,3 +2845,5 @@ BUG45106 WIN : svg/text/text-text-04-t.svg = PASS CRASH
 BUG45106 WIN : svg/text/text-text-05-t.svg = PASS CRASH
 
 BUG45518: html5lib/runner.html = TEXT
+
+BUG45720 WIN LINUX : websocket/tests/reload-crash.html = PASS CRASH
