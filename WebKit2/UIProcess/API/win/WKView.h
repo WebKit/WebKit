@@ -43,6 +43,9 @@ WK_EXPORT WKPageRef WKViewGetPage(WKViewRef view);
 WK_EXPORT WKViewRef WKViewRetain(WKViewRef view);
 WK_EXPORT void WKViewRelease(WKViewRef view);
 
+WK_EXPORT void WKViewSetHostWindow(WKViewRef view, HWND hostWindow);
+WK_EXPORT void WKViewWindowAncestryDidChange(WKViewRef view);
+
 #ifdef __cplusplus
 }
 #endif

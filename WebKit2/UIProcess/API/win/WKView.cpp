@@ -61,3 +61,13 @@ void WKViewRelease(WKViewRef viewRef)
 {
     toWK(viewRef)->deref();
 }
+
+void WKViewSetHostWindow(WKViewRef viewRef, HWND hostWindow)
+{
+    toWK(viewRef)->setHostWindow(hostWindow);
+}
+
+void WKViewWindowAncestryDidChange(WKViewRef viewRef)
+{
+    toWK(viewRef)->windowAncestryDidChange();
+}

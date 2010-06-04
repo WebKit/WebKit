@@ -1,3 +1,23 @@
+2010-06-03  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40152
+        
+        Need to remove the WebView from WindowMessageBroadcaster's listeners list when the WebView is destroyed.
+
+        * UIProcess/API/win/WKView.cpp:
+        (WKViewSetHostWindow): Expose API to change the host window of a WKView.
+        (WKViewWindowAncestryDidChange): Expose API to allow clients to notify WebKit when a WKView's window ancestry has changed.
+        * UIProcess/API/win/WKView.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::wndProc): Set the WebView's host window to 0 when it's destroyed.  setHostWindow() will call 
+        windowAncestryDidChange(), which will remove this WebView from the WindowMessageBroadcaster's listeners list.
+        (WebKit::WebView::WebView): Initialize m_isBeingDestroyed.
+        (WebKit::WebView::setHostWindow): Update the window's parent window and call windowAncestryDidChange().
+        (WebKit::WebView::close): Set the host window to 0.
+        * UIProcess/win/WebView.h:
+
 2010-06-04  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.

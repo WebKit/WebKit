@@ -54,9 +54,7 @@ public:
 
     HWND window() const { return m_window; }
     HWND hostWindow() const { return m_hostWindow; }
-
-    // FIXME: This needs to be exposed as API in WKView along with a way
-    // to change the hostWindow.
+    void setHostWindow(HWND);
     void windowAncestryDidChange();
 
     WebPageProxy* page() const { return m_page.get(); }
@@ -88,6 +86,8 @@ private:
     void startTrackingMouseLeave();
     void stopTrackingMouseLeave();
 
+    void close();
+
     // PageClient
     virtual void processDidExit();
     virtual void processDidRevive();
@@ -104,6 +104,7 @@ private:
     HWND m_toolTipWindow;
 
     bool m_trackingMouseLeave;
+    bool m_isBeingDestroyed;
 
     RefPtr<WebPageProxy> m_page;
 };

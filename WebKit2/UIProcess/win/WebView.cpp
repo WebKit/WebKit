@@ -76,6 +76,10 @@ LRESULT WebView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     bool handled = true;
 
     switch (message) {
+        case WM_DESTROY:
+            m_isBeingDestroyed = true;
+            close();
+            break;
         case WM_ERASEBKGND:
             lResult = 1;
             break;
@@ -167,6 +171,7 @@ WebView::WebView(RECT rect, WebPageNamespace* pageNamespace, HWND hostWindow)
     , m_topLevelParentWindow(0)
     , m_toolTipWindow(0)
     , m_trackingMouseLeave(false)
+    , m_isBeingDestroyed(false)
 {
     registerWebViewWindowClass();
 
@@ -193,6 +198,28 @@ WebView::~WebView()
     // Tooltip window needs to be explicitly destroyed since it isn't a WS_CHILD.
     if (::IsWindow(m_toolTipWindow))
         ::DestroyWindow(m_toolTipWindow);
+}
+
+void WebView::setHostWindow(HWND hostWindow)
+{
+    if (m_window) {
+        // If the host window hasn't changed, bail.
+        if (GetParent(m_window) == hostWindow)
+            return;
+        if (hostWindow)
+            SetParent(m_window, hostWindow);
+        else if (!m_isBeingDestroyed) {
+            // Turn the WebView into a message-only window so it will no longer be a child of the
+            // old host window and will be hidden from screen. We only do this when
+            // isBeingDestroyed() is false because doing this while handling WM_DESTROY can leave
+            // m_window in a weird state (see <http://webkit.org/b/29337>).
+            SetParent(m_window, HWND_MESSAGE);
+        }
+    }
+
+    m_hostWindow = hostWindow;
+    
+    windowAncestryDidChange();
 }
 
 static HWND findTopLevelParentWindow(HWND window)
@@ -464,6 +491,11 @@ void WebView::stopTrackingMouseLeave()
     trackMouseEvent.hwndTrack = m_window;
 
     ::TrackMouseEvent(&trackMouseEvent);
+}
+
+void WebView::close()
+{
+    setHostWindow(0);
 }
 
 // PageClient
