@@ -2,6 +2,17 @@
 
         Reviewed by Laszlo Gombos.
 
+        [Qt] Failed at http://philip.html5.org/tests/canvas/suite/tests/2d.path.arcTo.ensuresubpath.1.html
+        https://bugs.webkit.org/show_bug.cgi?id=38645
+
+        Remove 2d.path.arcTo.ensuresubpath.1.html from Skipped.
+
+        * platform/qt/Skipped:
+
+2010-06-04  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
         [Qt] failed at http://philip.html5.org/tests/canvas/suite/tests/2d.path.arc.angle.3.html
         https://bugs.webkit.org/show_bug.cgi?id=38537
 
