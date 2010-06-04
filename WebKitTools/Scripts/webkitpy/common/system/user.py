@@ -104,5 +104,14 @@ class User(object):
         response = raw_input("%s [Y/n]: " % message)
         return not response or response.lower() == "y"
 
+    def can_open_url(self):
+        try:
+            webbrowser.get()
+            return True
+        except webbrowser.Error, e:
+            return False
+
     def open_url(self, url):
+        if not self.can_open_url():
+            _log.warn("Failed to open %s" % url)
         webbrowser.open(url)

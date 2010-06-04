@@ -459,6 +459,9 @@ class MockUser(object):
     def confirm(self, message=None):
         return True
 
+    def can_open_url(self):
+        return True
+
     def open_url(self, url):
         if url.startswith("file://"):
             log("MOCK: user.open_url: file://...")

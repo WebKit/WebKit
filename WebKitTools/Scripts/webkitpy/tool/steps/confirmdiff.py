@@ -46,6 +46,9 @@ class ConfirmDiff(AbstractStep):
         ]
 
     def _show_pretty_diff(self, diff):
+        if not self._tool.user.can_open_url():
+            return None
+
         try:
             pretty_patch = PrettyPatch(self._tool.executive,
                                        self._tool.scm().checkout_root)
