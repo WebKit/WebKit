@@ -366,15 +366,7 @@ static void dispatchEvent(GdkEvent event)
     if (!view)
         return;
 
-    gboolean returnValue;
-    if (event.type == GDK_BUTTON_PRESS || event.type == GDK_2BUTTON_PRESS || event.type == GDK_3BUTTON_PRESS)
-        g_signal_emit_by_name(view, "button_press_event", &event, &returnValue);
-    else if (event.type == GDK_BUTTON_RELEASE)
-        g_signal_emit_by_name(view, "button_release_event", &event, &returnValue);
-    else if (event.type == GDK_MOTION_NOTIFY)
-        g_signal_emit_by_name(view, "motion_notify_event", &event, &returnValue);
-    else if (event.type == GDK_SCROLL)
-        gtk_main_do_event(&event);
+    gtk_main_do_event(&event);
 }
 
 void replaySavedEvents()
@@ -534,13 +526,11 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
         g_free(keys);
     }
 
-    gboolean return_val;
     event.key.type = GDK_KEY_PRESS;
-
-    g_signal_emit_by_name(view, "key-press-event", &event.key, &return_val);
+    dispatchEvent(event);
 
     event.key.type = GDK_KEY_RELEASE;
-    g_signal_emit_by_name(view, "key-release-event", &event.key, &return_val);
+    dispatchEvent(event);
 
     return JSValueMakeUndefined(context);
 }

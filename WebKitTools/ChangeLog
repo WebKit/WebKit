@@ -1,3 +1,18 @@
+2010-06-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] EventSender should call gtk_main_do_event instead of invoking signal handlers directly
+        https://bugs.webkit.org/show_bug.cgi?id=40182
+
+        Instead of invoking signal handlers directly via g_signal_emit_by_name, call
+        gtk_main_do_event. This will allow us to call gtk_get_current_event() in WebKit
+        without breaking DRT.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (dispatchEvent): Use gtk_main_do_event instead of invoking signal handlers directly.
+        (keyDownCallback): Use dispatchEvent here which now uses gtk_main_do_event.
+
 2010-06-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by David Hyatt.
