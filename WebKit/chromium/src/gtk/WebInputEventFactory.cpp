@@ -151,6 +151,60 @@ static int gdkEventToWindowsKeyCode(const GdkEventKey* event)
         GDK_period,        // 0x3C: GDK_period
         GDK_slash,         // 0x3D: GDK_slash
         0,                 // 0x3E: GDK_Shift_R
+        0,                 // 0x3F:
+        0,                 // 0x40:
+        0,                 // 0x41:
+        0,                 // 0x42:
+        0,                 // 0x43:
+        0,                 // 0x44:
+        0,                 // 0x45:
+        0,                 // 0x46:
+        0,                 // 0x47:
+        0,                 // 0x48:
+        0,                 // 0x49:
+        0,                 // 0x4A:
+        0,                 // 0x4B:
+        0,                 // 0x4C:
+        0,                 // 0x4D:
+        0,                 // 0x4E:
+        0,                 // 0x4F:
+        0,                 // 0x50:
+        0,                 // 0x51:
+        0,                 // 0x52:
+        0,                 // 0x53:
+        0,                 // 0x54:
+        0,                 // 0x55:
+        0,                 // 0x56:
+        0,                 // 0x57:
+        0,                 // 0x58:
+        0,                 // 0x59:
+        0,                 // 0x5A:
+        0,                 // 0x5B:
+        0,                 // 0x5C:
+        0,                 // 0x5D:
+        0,                 // 0x5E:
+        0,                 // 0x5F:
+        0,                 // 0x60:
+        0,                 // 0x61:
+        0,                 // 0x62:
+        0,                 // 0x63:
+        0,                 // 0x64:
+        0,                 // 0x65:
+        0,                 // 0x66:
+        0,                 // 0x67:
+        0,                 // 0x68:
+        0,                 // 0x69:
+        0,                 // 0x6A:
+        0,                 // 0x6B:
+        0,                 // 0x6C:
+        0,                 // 0x6D:
+        0,                 // 0x6E:
+        0,                 // 0x6F:
+        0,                 // 0x70:
+        0,                 // 0x71:
+        0,                 // 0x72:
+        GDK_Super_L,       // 0x73: GDK_Super_L
+        GDK_Super_R,       // 0x74: GDK_Super_R
     };
 
     // |windowsKeyCode| has to include a valid virtual-key code even when we
