@@ -1,5 +1,13 @@
 2010-06-04  Stephen White  <senorblanco@chromium.org>
 
+        Unreviewed; expectations fix.
+
+        Fix chromium test expectations, post-r60693.  We are still failing the test in the same way, but since there are now fallback results, our results are no longer MISSING, but TEXT.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-06-04  Stephen White  <senorblanco@chromium.org>
+
         Unreviewed; build fix.
 
         [CHROMIUM] Add new chromium test results for new layout test svg/filters/filter-on-filter-for-text.svg

@@ -2824,8 +2824,7 @@ BUG44150 LINUX DEBUG : fast/forms/input-text-paste-maxlength.html = CRASH PASS
 BUG20553 SKIP DEFER : canvas/philip = TEXT
 
 // Need to dump context menu items on eventSender.contextClick(true).
-BUGWK39105 MAC : editing/spelling/context-menu-suggestions.html = TEXT
-BUGWK39105 WIN LINUX : editing/spelling/context-menu-suggestions.html = MISSING
+BUGWK39105 : editing/spelling/context-menu-suggestions.html = TEXT
 
 // Flaky tests
 BUG44229 WIN LINUX : fast/loader/recursive-before-unload-crash.html = PASS TEXT
