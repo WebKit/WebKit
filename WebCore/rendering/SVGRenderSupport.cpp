@@ -81,7 +81,7 @@ void SVGRenderBase::mapLocalToContainer(const RenderObject* object, RenderBoxMod
     object->parent()->mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState);
 }
 
-bool SVGRenderBase::prepareToRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& paintInfo, const FloatRect& repaintRect, RenderSVGResourceFilter*& filter, RenderSVGResourceFilter* rootFilter)
+bool SVGRenderBase::prepareToRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& paintInfo, const FloatRect& repaintRect, RenderSVGResourceFilter*& filter)
 {
 #if !ENABLE(FILTERS)
     UNUSED_PARAM(filter);
@@ -99,7 +99,7 @@ bool SVGRenderBase::prepareToRenderSVGContent(RenderObject* object, RenderObject
     const SVGRenderStyle* svgStyle = style->svgStyle();
     ASSERT(svgStyle);
 
-    // Setup transparency layers before setting up filters!
+    // Setup transparency layers before setting up SVG resources!
     float opacity = style->opacity(); 
     if (opacity < 1.0f) {
         paintInfo.context->clip(repaintRect);
@@ -112,43 +112,35 @@ bool SVGRenderBase::prepareToRenderSVGContent(RenderObject* object, RenderObject
         paintInfo.context->beginTransparencyLayer(1.0f);
     }
 
-#if ENABLE(FILTERS)
-    AtomicString filterId(svgStyle->filterResource());
-#endif
-
-    AtomicString clipperId(svgStyle->clipperResource());
-    AtomicString maskerId(svgStyle->maskerResource());
-
     Document* document = object->document();
 
-#if ENABLE(FILTERS)
-    RenderSVGResourceFilter* newFilter = getRenderSVGResourceById<RenderSVGResourceFilter>(document, filterId);
-    if (newFilter == rootFilter) {
-        // Catch <text filter="url(#foo)">Test<tspan filter="url(#foo)">123</tspan></text>.
-        // The filter is NOT meant to be applied twice in that case!
-        filter = 0;
-        filterId = String();
-    } else
-        filter = newFilter;
-#endif
+    if (svgStyle->hasMasker()) {
+        AtomicString maskerId(svgStyle->maskerResource());
+        if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(document, maskerId)) {
+            if (!masker->applyResource(object, style, paintInfo.context, ApplyToDefaultMode))
+                return false;
+        } else
+            svgElement->document()->accessSVGExtensions()->addPendingResource(maskerId, styledElement);
+    }
 
-    if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(document, maskerId)) {
-        if (!masker->applyResource(object, style, paintInfo.context, ApplyToDefaultMode))
-            return false;
-    } else if (!maskerId.isEmpty())
-        svgElement->document()->accessSVGExtensions()->addPendingResource(maskerId, styledElement);
-
-    if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(document, clipperId))
-        clipper->applyResource(object, style, paintInfo.context, ApplyToDefaultMode);
-    else if (!clipperId.isEmpty())
-        svgElement->document()->accessSVGExtensions()->addPendingResource(clipperId, styledElement);
+    if (svgStyle->hasClipper()) {
+        AtomicString clipperId(svgStyle->clipperResource());
+        if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(document, clipperId))
+            clipper->applyResource(object, style, paintInfo.context, ApplyToDefaultMode);
+        else
+            svgElement->document()->accessSVGExtensions()->addPendingResource(clipperId, styledElement);
+    }
 
 #if ENABLE(FILTERS)
-    if (filter) {
-        if (!filter->applyResource(object, style, paintInfo.context, ApplyToDefaultMode))
-            return false;
-    } else if (!filterId.isEmpty())
-        svgElement->document()->accessSVGExtensions()->addPendingResource(filterId, styledElement);
+    if (svgStyle->hasFilter()) {
+        AtomicString filterId(svgStyle->filterResource());
+        filter = getRenderSVGResourceById<RenderSVGResourceFilter>(document, filterId);
+        if (filter) {
+            if (!filter->applyResource(object, style, paintInfo.context, ApplyToDefaultMode))
+                return false;
+        } else
+            svgElement->document()->accessSVGExtensions()->addPendingResource(filterId, styledElement);
+    }
 #endif
 
     return true;

@@ -1,3 +1,26 @@
+2010-06-04  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG filter on filter don't work
+        https://bugs.webkit.org/show_bug.cgi?id=32708
+        
+        Any child of <text> was not allowed to use the same filter as the text root. 
+        I couldn't found any reason in the SVG specification that legimitate this.
+        Only batik also doesn't allow the same filter on the text root as on it's childs,
+        while any other effect is still allowed.
+        I removed this limitation so that the result looks like the result on Firefox.
+
+        Test: svg/filters/filter-on-filter-for-text.svg
+
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::prepareToRenderSVGContent):
+        * rendering/SVGRenderSupport.h:
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBoxPaintWalker::SVGRootInlineBoxPaintWalker):
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkStartCallback):
+        (WebCore::SVGRootInlineBox::paint):
+
 2010-06-04  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.
