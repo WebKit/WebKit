@@ -1,3 +1,9 @@
+2010-06-03  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed.  Add exceptions for some newly-passing tests in Chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-06-03  Steve Block  <steveblock@google.com>
 
         Reviewed by Alexey Proskuryakov.
