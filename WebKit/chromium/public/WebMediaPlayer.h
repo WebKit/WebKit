@@ -95,7 +95,7 @@ public:
     virtual void setVisible(bool) = 0;
     virtual bool setAutoBuffer(bool) = 0;
     virtual bool totalBytesKnown() = 0;
-    virtual const WebTimeRanges& buffered() const = 0;
+    virtual const WebTimeRanges& buffered() = 0;
     virtual float maxTimeSeekable() const = 0;
 
     virtual void setSize(const WebSize&) = 0;
