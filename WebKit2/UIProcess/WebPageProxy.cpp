@@ -60,7 +60,8 @@ PassRefPtr<WebPageProxy> WebPageProxy::create(WebPageNamespace* pageNamespace, u
 }
 
 WebPageProxy::WebPageProxy(WebPageNamespace* pageNamespace, uint64_t pageID)
-    : m_pageNamespace(pageNamespace)
+    : m_pageClient(0)
+    , m_pageNamespace(pageNamespace)
     , m_mainFrame(0)
     , m_canGoBack(false)
     , m_canGoForward(false)
@@ -92,7 +93,11 @@ bool WebPageProxy::isValid()
 
 void WebPageProxy::setPageClient(PageClient* pageClient)
 {
+#if PLATFORM(WIN)
+    m_pageClient = pageClient;
+#else
     m_pageClient.set(pageClient);
+#endif
 }
 
 void WebPageProxy::initializeLoaderClient(WKPageLoaderClient* loadClient)
