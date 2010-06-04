@@ -1,5 +1,15 @@
 2010-06-04  Alexander Pavlov  <apavlov@chromium.org>
 
+        Unreviewed, fix Qt build.
+
+        Add references to a new file.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/WebKit.qrc:
+
+2010-06-04  Alexander Pavlov  <apavlov@chromium.org>
+
         Reviewed by Pavel Feldman.
 
         Web Inspector: Eliminate direct dependency of StylesSidebarPane on InspectorBackend
