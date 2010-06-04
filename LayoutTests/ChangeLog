@@ -2,6 +2,22 @@
 
         Reviewed by Jeremy Orlow.
 
+        Geolocation needs more LayoutTests to test making callbacks to remote frames
+        https://bugs.webkit.org/show_bug.cgi?id=40146
+
+        This test is similar to callback-to-remote-context.html in that it test making a callback
+        from a Geolocation object to a remote frame. In callback-to-remote-context.html, the call
+        chain to the Geolocation method is started from the owning frame. In this test, however,
+        the call chain is started from the remote frame.
+
+        * fast/dom/Geolocation/callback-to-remote-context2-expected.txt: Added.
+        * fast/dom/Geolocation/callback-to-remote-context2.html: Added.
+        * fast/dom/Geolocation/script-tests/callback-to-remote-context2.js: Added.
+
+2010-06-04  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
         Geolocation LayoutTests should make more careful use of LayoutTestController
         https://bugs.webkit.org/show_bug.cgi?id=39994
 
