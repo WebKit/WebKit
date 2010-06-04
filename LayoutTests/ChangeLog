@@ -1,3 +1,12 @@
+2010-06-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Unreviewed.
+
+        Unskip fast/dom/Window/window-properties-geolocation.html - a comment says it should be
+        enabled once bug 34025 is fixed, which happened long ago. The test passes for me.
+
+        * platform/mac/Skipped:
+
 2010-06-04  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Darin Adler.
