@@ -205,10 +205,10 @@ Vector<String> listDirectory(const String& path, const String& filter)
         if (!g_pattern_match_string(pspec, name))
             continue;
 
-        gchar* entry = g_build_filename(filename.data(), name, NULL);
-        entries.append(filenameToString(entry));
-        g_free(entry);
+        GOwnPtr<gchar> entry(g_build_filename(filename.data(), name, NULL));
+        entries.append(filenameToString(entry.get()));
     }
+    g_pattern_spec_free(pspec);
     g_dir_close(dir);
 
     return entries;
