@@ -321,7 +321,7 @@ inline bool HTML5Lexer::processEntity(SegmentedString& source)
 #if COMPILER(MSVC)
 // We need to disable the "unreachable code" warning because we want to assert
 // that some code points aren't reached in the state machine.
-#pragma warning(disable: 4705)
+#pragma warning(disable: 4702)
 #endif
 
 #define BEGIN_STATE(stateName) case stateName:
