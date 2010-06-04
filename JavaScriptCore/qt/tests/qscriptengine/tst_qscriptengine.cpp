@@ -76,7 +76,6 @@ void tst_QScriptEngine::globalObject()
     QScriptValue self = engine.evaluate("this");
     QVERIFY(global.isObject());
     QVERIFY(engine.globalObject().equals(engine.evaluate("this")));
-    QEXPECT_FAIL("", "strictlyEquals is broken - bug 36600 in bugs.webkit.org", Continue);
     QVERIFY(engine.globalObject().strictlyEquals(self));
 }
 

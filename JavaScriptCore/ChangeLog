@@ -2,6 +2,21 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        Remove a QEXPECT_FAIL flag from an autotest.
+
+        Test tst_QScriptEngine::globalObject pass after 36600 bug
+        fix have been applied.
+
+        [Qt] Expected fail in the tst_QScriptEngine::globalObject should be removed.
+        https://bugs.webkit.org/show_bug.cgi?id=40114
+
+        * qt/tests/qscriptengine/tst_qscriptengine.cpp:
+        (tst_QScriptEngine::globalObject):
+
+2010-06-04  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         Fix QScriptValue::equals.
 
         Handling for a few edge cases were added. Now comparison between
