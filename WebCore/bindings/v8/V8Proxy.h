@@ -285,7 +285,7 @@ namespace WebCore {
 
         static v8::Handle<v8::Value> checkNewLegal(const v8::Arguments&);
 
-        static v8::Handle<v8::Script> compileScript(v8::Handle<v8::String> code, const String& fileName, int baseLine);
+        static v8::Handle<v8::Script> compileScript(v8::Handle<v8::String> code, const String& fileName, int baseLine, v8::ScriptData* scriptData = 0);
 
         // If the exception code is different from zero, a DOM exception is
         // schedule to be thrown.
@@ -336,6 +336,8 @@ namespace WebCore {
         void releaseStorageMutex();
 
         void resetIsolatedWorlds();
+
+        PassOwnPtr<v8::ScriptData> precompileScript(const ScriptSourceCode& source);
 
         // Returns false when we're out of memory in V8.
         bool setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetContext);
