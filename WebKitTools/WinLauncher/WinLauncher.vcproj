@@ -56,7 +56,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="comctl32.lib shlwapi.lib user32.lib ole32.lib oleaut32.lib WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib"
+				AdditionalDependencies="comdlg32.lib gdi32.lib comctl32.lib shlwapi.lib user32.lib ole32.lib oleaut32.lib WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(ProjectDir)\..\..\..\&quot;"
 				GenerateDebugInformation="true"
@@ -134,7 +134,7 @@
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
 				AdditionalOptions="&#x0D;&#x0A;"
-				AdditionalDependencies="comctl32.lib shlwapi.lib user32.lib ole32.lib oleaut32.lib WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib"
+				AdditionalDependencies="comdlg32.lib gdi32.lib comctl32.lib shlwapi.lib user32.lib ole32.lib oleaut32.lib WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(ProjectDir)\..\..\..\&quot;"
 				GenerateDebugInformation="true"
@@ -212,7 +212,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="comctl32.lib shlwapi.lib user32.lib ole32.lib oleaut32.lib WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib"
+				AdditionalDependencies="comdlg32.lib gdi32.lib comctl32.lib shlwapi.lib user32.lib ole32.lib oleaut32.lib WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(ProjectDir)\..\..\..\&quot;"
 				GenerateDebugInformation="true"
@@ -288,7 +288,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="comctl32.lib shlwapi.lib user32.lib ole32.lib oleaut32.lib WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib"
+				AdditionalDependencies="comdlg32.lib gdi32.lib comctl32.lib shlwapi.lib user32.lib ole32.lib oleaut32.lib WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(ProjectDir)\..\..\..\&quot;"
 				GenerateDebugInformation="true"

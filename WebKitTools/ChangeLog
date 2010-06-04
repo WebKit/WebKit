@@ -1,3 +1,16 @@
+2010-06-03  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add dependencies required to link with VS Express 2005.
+        https://bugs.webkit.org/show_bug.cgi?id=40038
+
+        Visual Studio implicitly links against these libs.
+        VC++ Express does not.
+
+        * WebKitAPITest/WebKitAPITestCommon.vsprops:
+        * WinLauncher/WinLauncher.vcproj:
+
 2010-06-03  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by David Levin.
