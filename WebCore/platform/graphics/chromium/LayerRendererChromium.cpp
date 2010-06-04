@@ -173,6 +173,7 @@ LayerRendererChromium::LayerRendererChromium(Page* page)
     , m_page(page)
     , m_rootLayerTextureWidth(0)
     , m_rootLayerTextureHeight(0)
+    , m_scrollPosition(IntPoint(-1, -1))
 {
     m_quadVboIds[Vertices] = m_quadVboIds[LayerElements] = 0;
     m_hardwareCompositing = (initGL() && initializeSharedGLObjects());
@@ -283,6 +284,9 @@ void LayerRendererChromium::drawLayers(const IntRect& updateRect, const IntRect&
     glActiveTexture(GL_TEXTURE0);
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
+
+    if (m_scrollPosition == IntPoint(-1, -1))
+        m_scrollPosition = scrollPosition;
 
     IntPoint scrollDelta = toPoint(scrollPosition - m_scrollPosition);
     // Scroll only when the updateRect contains pixels for the newly uncovered region to avoid flashing.
