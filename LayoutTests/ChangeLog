@@ -1,5 +1,14 @@
 2010-06-04  Steve Block  <steveblock@google.com>
 
+        Unreviewed. Test expectation fix.
+
+        Skip fast/dom/Geolocation/callback-to-remote-context2.html on GTK.
+        https://bugs.webkit.org/show_bug.cgi?id=40153
+
+        * platform/gtk/Skipped:
+
+2010-06-04  Steve Block  <steveblock@google.com>
+
         Reviewed by Jeremy Orlow.
 
         Geolocation needs more LayoutTests to test making callbacks to remote frames
