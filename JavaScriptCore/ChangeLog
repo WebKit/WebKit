@@ -1,5 +1,15 @@
 2010-06-03  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        Bug 40150 - ENABLE_JIT_OPTIMIZE_NATIVE_CALL on all x86/x86_64 platforms
+        This was fixed in bug #40094.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * wtf/Platform.h:
+
+2010-06-03  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by NOBODY (Interpreter build fix).
 
         * JavaScriptCore.JSVALUE32_64only.exp:
