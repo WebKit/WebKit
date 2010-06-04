@@ -76,6 +76,7 @@ use POSIX;
 
 sub buildPlatformResultHierarchy();
 sub buildPlatformTestHierarchy(@);
+sub checkPythonVersion();
 sub closeCygpaths();
 sub closeDumpTool();
 sub closeWebSocketServer();
@@ -149,6 +150,7 @@ my $shouldCheckLeaks = 0;
 my $showHelp = 0;
 my $stripEditingCallbacks = isCygwin();
 my $testHTTP = 1;
+my $testWebSocket = 1;
 my $testMedia = 1;
 my $tmpDir = "/tmp";
 my $testResultsDirectory = File::Spec->catfile($tmpDir, "layout-test-results");
@@ -222,6 +224,11 @@ if (isAppleMacWebKit()) {
 if (!defined($platform)) {
     print "WARNING: Your platform is not recognized. Any platform-specific results will be generated in platform/undefined.\n";
     $platform = "undefined";
+}
+
+if (!checkPythonVersion()) {
+    print "WARNING: Your platform does not have Python 2.5+, which is required to run websocket server, so disabling websocket/tests.\n";
+    $testWebSocket = 0;
 }
 
 my $programName = basename($0);
@@ -455,6 +462,9 @@ if (checkWebCoreFeatureSupport("SVG", 0)) {
 
 if (!$testHTTP) {
     $ignoredDirectories{'http'} = 1;
+    $ignoredDirectories{'websocket'} = 1;
+}
+if (!$testWebSocket) {
     $ignoredDirectories{'websocket'} = 1;
 }
 
@@ -1424,6 +1434,12 @@ sub configureAndOpenHTTPDIfNeeded()
 
     waitForHTTPDLock() if $shouldWaitForHTTPD;
     $isHttpdOpen = openHTTPD(@args);
+}
+
+sub checkPythonVersion()
+{
+    system "WebKitTools/Scripts/ensure-valid-python", "--check-only";
+    return exitStatus($?) == 0;
 }
 
 sub openWebSocketServerIfNeeded()

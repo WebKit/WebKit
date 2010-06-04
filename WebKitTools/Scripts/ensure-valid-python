@@ -31,6 +31,7 @@ use File::Basename;
 use File::Spec;
 use File::Temp qw(tempdir);
 use FindBin;
+use Getopt::Long;
 
 use lib $FindBin::Bin;
 use webkitdirs;
@@ -41,7 +42,7 @@ my $macPythonMD5 = "84489bba813fdbb6041b69d4310a86da";
 my $macPythonInstallerName = "Python.mpkg";
 
 # We could use a consistent download location, like the source or build directory.
-my $tempDirectory = File::Temp->newdir();
+my $tempDirectory = File::Temp->tempdir("WebKitPythonXXXX");
 my $downloadDirectory = $tempDirectory;
 my $mountPoint = File::Spec->join($tempDirectory, "mount");
 
@@ -117,11 +118,27 @@ sub installMacPython()
 
 sub main()
 {
+    my $checkOnly = 0;
+    my $showHelp = 0;
+    my $getOptionsResult = GetOptions(
+        'check-only!' => \$checkOnly,
+        'help|h' => \$showHelp,
+    );
+    if (!$getOptionsResult || $showHelp) {
+        print STDERR <<HELP;
+Usage: $0 [options]
+  --check-only        Check python version only.
+  -h|--help           Show this help message.
+HELP
+        return 1;
+    }
     # Congrats, your Python is fine.
     return 0 if checkPythonVersion();
-    
+
+    return 1 if $checkOnly;
+
     if (!isTiger()) {
-        print "Your Python version is insuficient to run WebKit's Python code.  Please update.\n";
+        print "Your Python version is insufficient to run WebKit's Python code.  Please update.\n";
         print "See http://trac.webkit.org/wiki/PythonGuidelines for more info.\n";
         return 1;
     }

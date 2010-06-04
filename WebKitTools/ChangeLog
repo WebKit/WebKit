@@ -1,3 +1,18 @@
+2010-06-03  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        old-run-webkit-tests should use ensure-valid-python to check if it can run the websockets tests
+        https://bugs.webkit.org/show_bug.cgi?id=39058
+
+        * Scripts/ensure-valid-python:
+          - Perl 5.8 doesn't have File::Temp->newdir().  Use File::Temp->tempdir() instead.
+          - Add --check-only and --help option.
+          - --check-only option only checks python version and don't try to install Python 2.5.
+          - Set executable bit.
+        * Scripts/old-run-webkit-tests:
+          - Check if it can run the websocket tests by calling ensure-valid-python --check-only.
+
 2010-05-14  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.

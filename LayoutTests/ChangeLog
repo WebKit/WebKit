@@ -1,3 +1,13 @@
+2010-06-03  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        old-run-webkit-tests should use ensure-valid-python to check if it can run the websockets tests
+        https://bugs.webkit.org/show_bug.cgi?id=39058
+
+        * platform/mac-tiger/Skipped:
+        - remove websocket/tests from skipped list.
+
 2010-06-03  Peter Kasting  <pkasting@google.com>
 
         Unreviewed.  Add exceptions for some newly-passing tests in Chromium.
