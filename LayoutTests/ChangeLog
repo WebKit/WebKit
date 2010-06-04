@@ -2,6 +2,15 @@
 
         Unreviewed.
 
+        Skipping another test which shows 1-pixel differences between the
+        32-bit and 64-bit bot.
+
+        * platform/gtk/Skipped:
+
+2010-06-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
         Adding baselines for new tests. They all seem to be working fine.
 
         * platform/gtk/editing/selection/range-between-block-and-inline-expected.txt: Added.
