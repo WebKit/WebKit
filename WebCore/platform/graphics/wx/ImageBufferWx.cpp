@@ -76,7 +76,7 @@ void ImageBuffer::putPremultipliedImageData(ImageData* source, const IntRect& so
     notImplemented();
 }
 
-String ImageBuffer::toDataURL(const String&, double) const
+String ImageBuffer::toDataURL(const String&, const double*) const
 {
     notImplemented();
     return String();

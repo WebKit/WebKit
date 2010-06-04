@@ -276,10 +276,9 @@ void ImageBuffer::putPremultipliedImageData(ImageData* source, const IntRect& so
 // We get a mimeType here but QImageWriter does not support mimetypes but
 // only formats (png, gif, jpeg..., xpm). So assume we get image/ as image
 // mimetypes and then remove the image/ to get the Qt format.
-String ImageBuffer::toDataURL(const String& mimeType, double quality) const
+String ImageBuffer::toDataURL(const String& mimeType, const double* quality) const
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
-    ASSERT(0.0 <= quality && quality <= 1.0);
 
     if (!mimeType.startsWith("image/"))
         return "data:,";
@@ -289,9 +288,16 @@ String ImageBuffer::toDataURL(const String& mimeType, double quality) const
     QBuffer buffer(&data);
     buffer.open(QBuffer::WriteOnly);
 
-    if (!m_data.m_pixmap.save(&buffer, mimeType.substring(sizeof "image").utf8().data(), quality * 100 + 0.5)) {
-        buffer.close();
-        return "data:,";
+    if (quality && *quality >= 0.0 && *quality <= 1.0) {
+        if (!m_data.m_pixmap.save(&buffer, mimeType.substring(sizeof "image").utf8().data(), *quality * 100 + 0.5)) {
+            buffer.close();
+            return "data:,";
+        }
+    } else {
+        if (!m_data.m_pixmap.save(&buffer, mimeType.substring(sizeof "image").utf8().data(), 100)) {
+            buffer.close();
+            return "data:,";
+        }
     }
 
     buffer.close();

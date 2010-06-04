@@ -105,7 +105,7 @@ v8::Handle<v8::Value> V8HTMLCanvasElement::toDataURLCallback(const v8::Arguments
     HTMLCanvasElement* canvas = V8HTMLCanvasElement::toNative(holder);
     String type = toWebCoreString(args[0]);
     ExceptionCode ec = 0;
-    String result = canvas->toDataURL(type, quality, ec);
+    String result = canvas->toDataURL(type, &quality, ec);
     V8Proxy::setDOMException(ec);
     return v8StringOrUndefined(result);
 }

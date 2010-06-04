@@ -289,7 +289,6 @@ canvas/philip/tests/security.reset.html
 canvas/philip/tests/size.attributes.parse.minus.html
 canvas/philip/tests/size.attributes.setAttribute.minus.html
 canvas/philip/tests/toDataURL.jpeg.alpha.html
-canvas/philip/tests/toDataURL.jpeg.quality.basic.html
 canvas/philip/tests/type.prototype.html
 
 # IndexedDB is not yet enabled.

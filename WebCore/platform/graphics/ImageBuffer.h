@@ -43,7 +43,7 @@ namespace WebCore {
     class IntPoint;
     class IntRect;
     class String;
-
+    
     enum ImageColorSpace {
         Unknown,
         DeviceRGB, // like sRGB
@@ -82,8 +82,8 @@ namespace WebCore {
 
         void putUnmultipliedImageData(ImageData*, const IntRect& sourceRect, const IntPoint& destPoint);
         void putPremultipliedImageData(ImageData*, const IntRect& sourceRect, const IntPoint& destPoint);
-
-        String toDataURL(const String& mimeType, double quality = 1.0) const;
+        
+        String toDataURL(const String& mimeType, const double* quality = 0) const;
 #if !PLATFORM(CG)
         AffineTransform baseTransform() const { return AffineTransform(); }
         void transformColorSpace(ImageColorSpace srcColorSpace, ImageColorSpace dstColorSpace);

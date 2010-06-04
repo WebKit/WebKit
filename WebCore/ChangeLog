@@ -1,3 +1,47 @@
+2010-06-04  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Darin Adler.
+
+        CG implementation needed for compression quality in canvas.toDataURL
+        https://bugs.webkit.org/show_bug.cgi?id=38492
+
+        Took toDataURL.jpeg.quality.basic.html test off of Skipped list. Passes.
+
+        Went the route of avoiding in-band signaling to flag the use of a quality 
+        parameter or not. So, instead of simply passing the quality down as a
+        double, instead I pass a reference to the quality parameter from where
+        it comes in just after the JS bindings. Thus, no need for any global
+        constants to signify when the quality is not specified. Updated the other 
+        platforms to support this (qt was on the only one currently with any
+        implementation). 
+
+        * bindings/js/JSHTMLCanvasElementCustom.cpp: Moved range check logic for quality parameter down lower. Updated
+        call to toDataURL to use double* instead of just passing the quality directly.
+        (WebCore::JSHTMLCanvasElement::toDataURL):
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp: Updated toDataURL call to pass double*
+        (WebCore::V8HTMLCanvasElement::toDataURLCallback):
+        * dom/CanvasSurface.cpp: Updated method prototype.
+        (WebCore::CanvasSurface::toDataURL):
+        * dom/CanvasSurface.h: Updated method prototype.
+        (WebCore::CanvasSurface::toDataURL):
+        * platform/graphics/ImageBuffer.h: Updated method signature to use double* for quality param.
+        * platform/graphics/cairo/ImageBufferCairo.cpp: Updated prototype for consistency.
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/cg/ImageBufferCG.cpp: Implemented support for quality parametejr when jpeg MIME type used.
+        (WebCore::jpegUTI):
+        (WebCore::utiFromMIMEType):
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/haiku/ImageBufferHaiku.cpp: Updated prototype for consistency.
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/qt/ImageBufferQt.cpp: Updated prototype for consistency.
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/skia/ImageBufferSkia.cpp: Updated prototype for consistency.
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/wince/ImageBufferWince.cpp: Updated prototype for consistency.
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/wx/ImageBufferWx.cpp: Updated prototype for consistency.
+        (WebCore::ImageBuffer::toDataURL):
+
 2010-06-04  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.

@@ -284,7 +284,7 @@ static cairo_status_t writeFunction(void* closure, const unsigned char* data, un
     return CAIRO_STATUS_SUCCESS;
 }
 
-String ImageBuffer::toDataURL(const String& mimeType, double) const
+String ImageBuffer::toDataURL(const String& mimeType, const double*) const
 {
     cairo_surface_t* image = cairo_get_target(context()->platformContext());
     if (!image)

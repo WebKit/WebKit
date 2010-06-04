@@ -216,7 +216,7 @@ void ImageBuffer::putPremultipliedImageData(ImageData* source, const IntRect& so
     putImageData<true>(source, sourceRect, destPoint, m_data.m_bitmap.get());
 }
 
-String ImageBuffer::toDataURL(const String& mimeType, double) const
+String ImageBuffer::toDataURL(const String& mimeType, const double*) const
 {
     if (!m_data.m_bitmap->bytes())
         return "data:,";
