@@ -335,6 +335,13 @@ inline bool HTML5Lexer::processEntity(SegmentedString& source)
         continue;                                                           \
     }
 
+#define FLUSH_EMIT_AND_RESUME_IN(stateName)                                 \
+    {                                                                       \
+        m_state = stateName;                                                \
+        maybeFlushBufferedEndTag();                                         \
+        break;                                                              \
+    }
+
 bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
 {
     // If we have a token in progress, then we're supposed to be called back
@@ -544,9 +551,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
                     }
                 } else if (cc == '>') {
                     if (isAppropriateEndTag()) {
-                        m_state = DataState;
-                        maybeFlushBufferedEndTag();
-                        break;
+                        FLUSH_EMIT_AND_RESUME_IN(DataState);
                     }
                 }
                 emitCharacter('<');
@@ -612,9 +617,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
                     }
                 } else if (cc == '>') {
                     if (isAppropriateEndTag()) {
-                        m_state = DataState;
-                        maybeFlushBufferedEndTag();
-                        break;
+                        FLUSH_EMIT_AND_RESUME_IN(DataState);
                     }
                 }
                 emitCharacter('<');
@@ -684,9 +687,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
                     }
                 } else if (cc == '>') {
                     if (isAppropriateEndTag()) {
-                        m_state = DataState;
-                        maybeFlushBufferedEndTag();
-                        break;
+                        FLUSH_EMIT_AND_RESUME_IN(DataState);
                     }
                 }
                 emitCharacter('<');
@@ -831,9 +832,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
                     }
                 } else if (cc == '>') {
                     if (isAppropriateEndTag()) {
-                        m_state = DataState;
-                        maybeFlushBufferedEndTag();
-                        break;
+                        FLUSH_EMIT_AND_RESUME_IN(DataState);
                     }
                 }
                 emitCharacter('<');
