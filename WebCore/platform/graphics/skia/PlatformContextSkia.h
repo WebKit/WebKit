@@ -170,6 +170,11 @@ public:
     // possible quality.
     bool isPrinting();
 
+    void getImageResamplingHint(WebCore::IntSize* srcSize, WebCore::FloatSize* dstSize) const;
+    void setImageResamplingHint(const WebCore::IntSize& srcSize, const WebCore::FloatSize& dstSize);
+    void clearImageResamplingHint();
+    bool hasImageResamplingHint() const;
+
 private:
 #if OS(LINUX) || OS(WINDOWS)
     // Used when restoring and the state has an image clip. Only shows the pixels in
@@ -194,6 +199,10 @@ private:
     // Current path in global coordinates.
     SkPath m_path;
 
+    // Stores image sizes for a hint to compute image resampling modes. 
+    // Values are used in ImageSkia.cpp
+    WebCore::IntSize m_imageResamplingHintSrcSize;
+    WebCore::FloatSize m_imageResamplingHintDstSize;
 #if OS(WINDOWS)
     bool m_drawingToImageBuffer;
 #endif

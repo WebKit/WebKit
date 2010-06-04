@@ -821,6 +821,7 @@ bool RenderThemeChromiumSkia::paintProgressBar(RenderObject* renderObject, const
     static Image* rightBorderImage = Image::loadPlatformResource("linuxProgressBorderRight").releaseRef();
     ASSERT(barImage->height() == valueImage->height());
 
+    paintInfo.context->platformContext()->setImageResamplingHint(barImage->size(), rect.size());
 
     RenderProgress* renderProgress = toRenderProgress(renderObject);
     double tileScale = static_cast<double>(rect.height()) / barImage->height();
@@ -862,6 +863,8 @@ bool RenderThemeChromiumSkia::paintProgressBar(RenderObject* renderObject, const
     int dstRightBorderWidth = rightBorderImage->width() * tileScale;
     IntRect dstRightBorderRect(rect.right() - dstRightBorderWidth, rect.y(), dstRightBorderWidth, rect.height());
     paintInfo.context->drawImage(rightBorderImage, colorSpace, dstRightBorderRect, rightBorderImage->rect());
+
+    paintInfo.context->platformContext()->clearImageResamplingHint();
 
     return false;
 }

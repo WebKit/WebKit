@@ -369,6 +369,41 @@
 2010-06-02  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.
+        
+        [Chromium] Linux: progress bar image pieces should be painted with same resampling mode
+        https://bugs.webkit.org/show_bug.cgi?id=40045
+
+        computeResamplingMode(), used by Image::drawPattern() and
+        BitmapImage::draw(), chooses an image resampling mode based on the
+        size of given image and the destination rectangle. But when
+        painting single component (i.e. a progress bar) from multiple
+        images, it can choose different resampling modes for images of
+        same component. That difference creates unexpected visual artifacts
+        like seams between images of single component.
+        
+        This change introduced "image resampling hint" to allow callers to
+        control the resampling mode. Using the hint,
+        RenderThemeChromiumSkia now able to hold same resampling mode
+        during draw a progress bar.
+        
+        No new tests. Expectations will come after ENABLE_PROGRESS_BAR get
+        enabled on chromium.
+        
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::computeResamplingMode):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::save):        
+        (PlatformContextSkia::setImageResamplingHint): Added
+        (PlatformContextSkia::clearImageResamplingHint): Added
+        (PlatformContextSkia::hasImageResamplingHint): Added
+        (PlatformContextSkia::imageResamplingHint): Added
+        * platform/graphics/skia/PlatformContextSkia.h:
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::paintProgressBar):
+
+2010-06-03  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
 
         [Chromium] Support HTML5 <progress> element on Linux.
         https://bugs.webkit.org/show_bug.cgi?id=37310
