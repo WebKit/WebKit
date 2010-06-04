@@ -1,3 +1,13 @@
+2010-06-03  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Add UIProcess\API\cpp to the list of additional include directories.
+        Allow WKViewRef to work with WKRetainPtr on Windows.
+
+        * UIProcess/API/cpp/WKRetainPtr.h:
+        * win/WebKit2.vcproj:
+
 2010-06-01  Alice Liu  <alice.liu@apple.com>
 
         Build fix. Not reviewed
