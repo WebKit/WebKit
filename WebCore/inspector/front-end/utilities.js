@@ -55,7 +55,14 @@ Function.prototype.bind = function(thisObject)
 {
     var func = this;
     var args = Array.prototype.slice.call(arguments, 1);
-    return function() { return func.apply(thisObject, args.concat(Array.prototype.slice.call(arguments, 0))) };
+    function bound()
+    {
+        return func.apply(thisObject, args.concat(Array.prototype.slice.call(arguments, 0)));
+    }
+    bound.toString = function() {
+        return "bound: " + func;
+    };
+    return bound;
 }
 
 Node.prototype.rangeOfWord = function(offset, stopCharacters, stayWithinNode, direction)

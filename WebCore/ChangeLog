@@ -1,3 +1,18 @@
+2010-06-04  Nikita Vasilyev  <me@elv1s.ru>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: better Function.prototype.bind for the internal code.
+
+        In the "Event Listeners" pane show handler function instead of Function.prototype.bind.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40080
+
+        * inspector/front-end/utilities.js:
+        (Function.prototype.bind.bound):
+        (Function.prototype.bind.bound.toString):
+        (Function.prototype.bind):
+
 2010-06-04  Alexander Pavlov  <apavlov@chromium.org>
 
         Unreviewed, fix Qt build.
