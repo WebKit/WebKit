@@ -5,6 +5,8 @@ _WKContextGetStatistics
 _WKContextRelease
 _WKContextRetain
 _WKFrameGetURL
+_WKFrameRelease
+_WKFrameRetain
 _WKFramePolicyListenerUse
 _WKNavigationDataGetTitle
 _WKNavigationDataGetURL
