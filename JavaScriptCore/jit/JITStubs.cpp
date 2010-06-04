@@ -2163,31 +2163,36 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_construct_NotJSConstruct)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    CallFrame* callFrame = stackFrame.callFrame;
-
     JSValue constrVal = stackFrame.args[0].jsValue();
-    int argCount = stackFrame.args[2].int32();
 
     ConstructData constructData;
     ConstructType constructType = getConstructData(constrVal, constructData);
 
+    ASSERT(constructType != ConstructTypeJS);
+
     if (constructType == ConstructTypeHost) {
         int registerOffset = stackFrame.args[1].int32();
-        Register* thisRegister = callFrame->registers() + registerOffset - RegisterFile::CallFrameHeaderSize - argCount;
-        ArgList argList(thisRegister + 1, argCount - 1);
+        int argCount = stackFrame.args[2].int32();
+        CallFrame* previousCallFrame = stackFrame.callFrame;
+        CallFrame* callFrame = CallFrame::create(previousCallFrame->registers() + registerOffset);
 
-        JSValue returnValue;
+        callFrame->init(0, static_cast<Instruction*>((STUB_RETURN_ADDRESS).value()), previousCallFrame->scopeChain(), previousCallFrame, argCount, asObject(constrVal));
+        stackFrame.callFrame = callFrame;
+
+        EncodedJSValue returnValue;
         {
             SamplingTool::HostCallRecord callRecord(CTI_SAMPLER);
-            returnValue = constructData.native.function(callFrame, asObject(constrVal), argList);
+            returnValue = constructData.native.function(callFrame);
         }
+        stackFrame.callFrame = previousCallFrame;
         CHECK_FOR_EXCEPTION();
 
-        return JSValue::encode(returnValue);
+        return returnValue;
     }
 
     ASSERT(constructType == ConstructTypeNone);
 
+    CallFrame* callFrame = stackFrame.callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
     unsigned vPCIndex = codeBlock->bytecodeOffset(callFrame, STUB_RETURN_ADDRESS);
     stackFrame.globalData->exception = createNotAConstructorError(callFrame, constrVal, vPCIndex, codeBlock);

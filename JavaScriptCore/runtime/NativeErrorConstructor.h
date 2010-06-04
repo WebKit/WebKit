@@ -37,6 +37,8 @@ namespace JSC {
 
         ErrorInstance* construct(ExecState*, const ArgList&);
 
+        Structure* errorStructure() { return m_errorStructure.get(); }
+
     private:
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);

@@ -49,15 +49,16 @@ JSInt32ArrayConstructor::JSInt32ArrayConstructor(ExecState* exec, JSDOMGlobalObj
     putDirect(exec->propertyNames().length, jsNumber(exec, 2), ReadOnly|DontDelete|DontEnum);
 }
 
-static JSObject* constructCanvasIntArray(ExecState* exec, JSObject* constructor, const ArgList& args)
+static EncodedJSValue JSC_HOST_CALL constructCanvasIntArray(ExecState* exec)
 {
-    JSInt32ArrayConstructor* jsConstructor = static_cast<JSInt32ArrayConstructor*>(constructor);
+    ArgList args(exec);
+    JSInt32ArrayConstructor* jsConstructor = static_cast<JSInt32ArrayConstructor*>(exec->callee());
     RefPtr<Int32Array> array = static_cast<Int32Array*>(construct<Int32Array, int>(exec, args).get());
     if (!array.get()) {
         setDOMException(exec, INDEX_SIZE_ERR);
-        return 0;
+        return JSValue::encode(JSValue());
     }
-    return asObject(toJS(exec, jsConstructor->globalObject(), array.get()));
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), array.get())));
 }
 
 JSC::ConstructType JSInt32ArrayConstructor::getConstructData(JSC::ConstructData& constructData)

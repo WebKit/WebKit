@@ -54,32 +54,32 @@ JSWebSocketConstructor::JSWebSocketConstructor(ExecState* exec, JSDOMGlobalObjec
     putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontDelete | DontEnum);
 }
 
-static JSObject* constructWebSocket(ExecState* exec, JSObject* constructor, const ArgList& args)
+static EncodedJSValue JSC_HOST_CALL constructWebSocket(ExecState* exec)
 {
-    JSWebSocketConstructor* jsConstructor = static_cast<JSWebSocketConstructor*>(constructor);
+    JSWebSocketConstructor* jsConstructor = static_cast<JSWebSocketConstructor*>(exec->callee());
     ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();
     if (!context)
-        return throwError(exec, ReferenceError, "WebSocket constructor associated document is unavailable");
+        return JSValue::encode(throwError(exec, ReferenceError, "WebSocket constructor associated document is unavailable"));
 
-    if (args.size() == 0)
-        return throwError(exec, SyntaxError, "Not enough arguments");
+    if (!exec->argumentCount())
+        return JSValue::encode(throwError(exec, SyntaxError, "Not enough arguments"));
 
-    const String& urlString = ustringToString(args.at(0).toString(exec));
+    const String& urlString = ustringToString(exec->argument(0).toString(exec));
     if (exec->hadException())
-        return throwError(exec, SyntaxError, "wrong URL");
+        return JSValue::encode(throwError(exec, SyntaxError, "wrong URL"));
     const KURL& url = context->completeURL(urlString);
     RefPtr<WebSocket> webSocket = WebSocket::create(context);
     ExceptionCode ec = 0;
-    if (args.size() < 2)
+    if (exec->argumentCount() < 2)
         webSocket->connect(url, ec);
     else {
-        const String& protocol = ustringToString(args.at(1).toString(exec));
+        const String& protocol = ustringToString(exec->argument(1).toString(exec));
         if (exec->hadException())
-            return 0;
+            return JSValue::encode(JSValue());
         webSocket->connect(url, protocol, ec);
     }
     setDOMException(exec, ec);
-    return CREATE_DOM_OBJECT_WRAPPER(exec, jsConstructor->globalObject(), WebSocket, webSocket.get());
+    return JSValue::encode(CREATE_DOM_OBJECT_WRAPPER(exec, jsConstructor->globalObject(), WebSocket, webSocket.get()));
 }
 
 ConstructType JSWebSocketConstructor::getConstructData(ConstructData& constructData)

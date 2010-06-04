@@ -307,9 +307,10 @@ JSObject* constructRegExp(ExecState* exec, const ArgList& args)
     return new (exec) RegExpObject(exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->regExpStructure(), regExp.release());
 }
 
-static JSObject* constructWithRegExpConstructor(ExecState* exec, JSObject*, const ArgList& args)
+static EncodedJSValue JSC_HOST_CALL constructWithRegExpConstructor(ExecState* exec)
 {
-    return constructRegExp(exec, args);
+    ArgList args(exec);
+    return JSValue::encode(constructRegExp(exec, args));
 }
 
 ConstructType RegExpConstructor::getConstructData(ConstructData& constructData)

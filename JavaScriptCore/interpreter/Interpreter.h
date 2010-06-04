@@ -96,7 +96,7 @@ namespace JSC {
         
         JSValue execute(ProgramExecutable*, CallFrame*, ScopeChainNode*, JSObject* thisObj, JSValue* exception);
         JSValue executeCall(CallFrame*, JSObject* function, CallType, const CallData&, JSValue thisValue, const ArgList&, JSValue* exception);
-        JSValue executeConstruct(FunctionExecutable*, CallFrame*, JSFunction*, JSObject* thisObj, const ArgList& args, ScopeChainNode*, JSValue* exception);
+        JSObject* executeConstruct(CallFrame*, JSObject* function, ConstructType, const ConstructData&, const ArgList&, JSValue* exception);
         JSValue execute(EvalExecutable* evalNode, CallFrame* exec, JSObject* thisObj, ScopeChainNode* scopeChain, JSValue* exception);
 
         JSValue retrieveArguments(CallFrame*, JSFunction*) const;

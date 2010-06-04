@@ -29,13 +29,14 @@
 #ifndef ConstructData_h
 #define ConstructData_h
 
+#include "JSValue.h"
+
 namespace JSC {
 
     class ArgList;
     class ExecState;
     class FunctionExecutable;
     class JSObject;
-    class JSValue;
     class ScopeChainNode;
 
     enum ConstructType {
@@ -44,7 +45,7 @@ namespace JSC {
         ConstructTypeJS
     };
 
-    typedef JSObject* (*NativeConstructor)(ExecState*, JSObject*, const ArgList&);
+    typedef EncodedJSValue (JSC_HOST_CALL *NativeConstructor)(ExecState*);
 
     union ConstructData {
         struct {

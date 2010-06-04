@@ -66,11 +66,11 @@ StringConstructor::StringConstructor(ExecState* exec, JSGlobalObject* globalObje
 }
 
 // ECMA 15.5.2
-static JSObject* constructWithStringConstructor(ExecState* exec, JSObject*, const ArgList& args)
+static EncodedJSValue JSC_HOST_CALL constructWithStringConstructor(ExecState* exec)
 {
-    if (args.isEmpty())
-        return new (exec) StringObject(exec, exec->lexicalGlobalObject()->stringObjectStructure());
-    return new (exec) StringObject(exec, exec->lexicalGlobalObject()->stringObjectStructure(), args.at(0).toString(exec));
+    if (!exec->argumentCount())
+        return JSValue::encode(new (exec) StringObject(exec, exec->lexicalGlobalObject()->stringObjectStructure()));
+    return JSValue::encode(new (exec) StringObject(exec, exec->lexicalGlobalObject()->stringObjectStructure(), exec->argument(0).toString(exec)));
 }
 
 ConstructType StringConstructor::getConstructData(ConstructData& constructData)

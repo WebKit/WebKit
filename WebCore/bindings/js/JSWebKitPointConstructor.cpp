@@ -43,21 +43,21 @@ JSWebKitPointConstructor::JSWebKitPointConstructor(ExecState* exec, JSDOMGlobalO
     putDirect(exec->propertyNames().length, jsNumber(exec, 2), ReadOnly|DontDelete|DontEnum);
 }
 
-static JSObject* constructWebKitPoint(ExecState* exec, JSObject* constructor, const ArgList& args)
+static EncodedJSValue JSC_HOST_CALL constructWebKitPoint(ExecState* exec)
 {
-    JSWebKitPointConstructor* jsConstructor = static_cast<JSWebKitPointConstructor*>(constructor);
+    JSWebKitPointConstructor* jsConstructor = static_cast<JSWebKitPointConstructor*>(exec->callee());
 
     float x = 0;
     float y = 0;
-    if (args.size() >= 2) {
-        x = (float)args.at(0).toNumber(exec);
-        y = (float)args.at(1).toNumber(exec);
+    if (exec->argumentCount() >= 2) {
+        x = (float)exec->argument(0).toNumber(exec);
+        y = (float)exec->argument(1).toNumber(exec);
         if (isnan(x))
             x = 0;
         if (isnan(y))
             y = 0;
     }
-    return asObject(toJS(exec, jsConstructor->globalObject(), WebKitPoint::create(x, y)));
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), WebKitPoint::create(x, y))));
 }
 
 JSC::ConstructType JSWebKitPointConstructor::getConstructData(JSC::ConstructData& constructData)

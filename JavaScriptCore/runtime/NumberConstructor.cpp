@@ -100,12 +100,12 @@ static JSValue numberConstructorMinValue(ExecState* exec, JSValue, const Identif
 }
 
 // ECMA 15.7.1
-static JSObject* constructWithNumberConstructor(ExecState* exec, JSObject*, const ArgList& args)
+static EncodedJSValue JSC_HOST_CALL constructWithNumberConstructor(ExecState* exec)
 {
     NumberObject* object = new (exec) NumberObject(exec->lexicalGlobalObject()->numberObjectStructure());
-    double n = args.isEmpty() ? 0 : args.at(0).toNumber(exec);
+    double n = exec->argumentCount() ? exec->argument(0).toNumber(exec) : 0;
     object->setInternalValue(jsNumber(exec, n));
-    return object;
+    return JSValue::encode(object);
 }
 
 ConstructType NumberConstructor::getConstructData(ConstructData& constructData)

@@ -40,12 +40,12 @@ JSImageConstructor::JSImageConstructor(ExecState* exec, JSDOMGlobalObject* globa
     putDirect(exec->propertyNames().prototype, JSHTMLImageElementPrototype::self(exec, globalObject), None);
 }
 
-static JSObject* constructImage(ExecState* exec, JSObject* constructor, const ArgList& args)
+static EncodedJSValue JSC_HOST_CALL constructImage(ExecState* exec)
 {
-    JSImageConstructor* jsConstructor = static_cast<JSImageConstructor*>(constructor);
+    JSImageConstructor* jsConstructor = static_cast<JSImageConstructor*>(exec->callee());
     Document* document = jsConstructor->document();
     if (!document)
-        return throwError(exec, ReferenceError, "Image constructor associated document is unavailable");
+        return JSValue::encode(throwError(exec, ReferenceError, "Image constructor associated document is unavailable"));
 
     // Calling toJS on the document causes the JS document wrapper to be
     // added to the window object. This is done to ensure that JSDocument::markChildren
@@ -55,17 +55,17 @@ static JSObject* constructImage(ExecState* exec, JSObject* constructor, const Ar
     int height;
     int* optionalWidth = 0;
     int* optionalHeight = 0;
-    if (args.size() > 0) {
-        width = args.at(0).toInt32(exec);
+    if (exec->argumentCount() > 0) {
+        width = exec->argument(0).toInt32(exec);
         optionalWidth = &width;
     }
-    if (args.size() > 1) {
-        height = args.at(1).toInt32(exec);
+    if (exec->argumentCount() > 1) {
+        height = exec->argument(1).toInt32(exec);
         optionalHeight = &height;
     }
 
-    return asObject(toJS(exec, jsConstructor->globalObject(),
-        HTMLImageElement::createForJSConstructor(document, optionalWidth, optionalHeight)));
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(),
+        HTMLImageElement::createForJSConstructor(document, optionalWidth, optionalHeight))));
 }
 
 ConstructType JSImageConstructor::getConstructData(ConstructData& constructData)

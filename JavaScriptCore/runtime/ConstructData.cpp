@@ -33,27 +33,10 @@
 
 namespace JSC {
 
-JSObject* construct(ExecState* exec, JSValue object, ConstructType constructType, const ConstructData& constructData, const ArgList& args)
+JSObject* construct(ExecState* exec, JSValue constructorObject, ConstructType constructType, const ConstructData& constructData, const ArgList& args)
 {
-    if (constructType == ConstructTypeHost)
-        return constructData.native.function(exec, asObject(object), args);
-
-    ASSERT(constructType == ConstructTypeJS);
-    JSFunction* jsFunction = asFunction(object);
-
-    ASSERT(!jsFunction->isHostFunction());
-    Structure* structure;
-    JSValue prototype = jsFunction->get(exec, exec->propertyNames().prototype);
-    if (prototype.isObject())
-        structure = asObject(prototype)->inheritorID();
-    else
-        structure = exec->lexicalGlobalObject()->emptyObjectStructure();
-    JSObject* thisObj = new (exec) JSObject(structure);
-
-    JSValue result = exec->interpreter()->executeConstruct(jsFunction->jsExecutable(), exec, jsFunction, thisObj, args, jsFunction->scope().node(), exec->exceptionSlot());
-    if (exec->hadException() || !result.isObject())
-        return thisObj;
-    return asObject(result);
+    ASSERT(constructType == ConstructTypeJS || constructType == ConstructTypeHost);
+    return exec->interpreter()->executeConstruct(exec, asObject(constructorObject), constructType, constructData, args, exec->exceptionSlot());
 }
 
 } // namespace JSC

@@ -1,3 +1,51 @@
+2010-06-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 40187 - Change function signature of NativeConstructor to match NativeFunction
+
+        Mostly for consistency, but constructor & args arguments are redundant,
+        and this will help if we wish to be able to JIT calls to more constructors.
+
+        * API/JSCallbackConstructor.cpp:
+        (JSC::constructJSCallback):
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::construct):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeConstruct):
+        * interpreter/Interpreter.h:
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::constructWithArrayConstructor):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::constructWithBooleanConstructor):
+        * runtime/ConstructData.cpp:
+        (JSC::construct):
+        * runtime/ConstructData.h:
+        * runtime/DateConstructor.cpp:
+        (JSC::constructWithDateConstructor):
+        * runtime/Error.cpp:
+        (JSC::constructNativeError):
+        (JSC::Error::create):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::constructWithErrorConstructor):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructWithFunctionConstructor):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::constructWithNativeErrorConstructor):
+        * runtime/NativeErrorConstructor.h:
+        (JSC::NativeErrorConstructor::errorStructure):
+        * runtime/NumberConstructor.cpp:
+        (JSC::constructWithNumberConstructor):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::constructWithObjectConstructor):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::constructWithRegExpConstructor):
+        * runtime/StringConstructor.cpp:
+        (JSC::constructWithStringConstructor):
+
 2010-06-04  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.

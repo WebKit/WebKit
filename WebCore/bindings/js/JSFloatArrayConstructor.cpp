@@ -49,15 +49,16 @@ JSFloatArrayConstructor::JSFloatArrayConstructor(ExecState* exec, JSDOMGlobalObj
     putDirect(exec->propertyNames().length, jsNumber(exec, 2), ReadOnly|DontDelete|DontEnum);
 }
 
-static JSObject* constructCanvasFloatArray(ExecState* exec, JSObject* constructor, const ArgList& args)
+static EncodedJSValue JSC_HOST_CALL constructCanvasFloatArray(ExecState* exec)
 {
-    JSFloatArrayConstructor* jsConstructor = static_cast<JSFloatArrayConstructor*>(constructor);
+    ArgList args(exec);
+    JSFloatArrayConstructor* jsConstructor = static_cast<JSFloatArrayConstructor*>(exec->callee());
     RefPtr<FloatArray> array = static_cast<FloatArray*>(construct<FloatArray, float>(exec, args).get());
     if (!array.get()) {
         setDOMException(exec, INDEX_SIZE_ERR);
-        return 0;
+        return JSValue::encode(JSValue());
     }
-    return asObject(toJS(exec, jsConstructor->globalObject(), array.get()));
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), array.get())));
 }
 
 JSC::ConstructType JSFloatArrayConstructor::getConstructData(JSC::ConstructData& constructData)

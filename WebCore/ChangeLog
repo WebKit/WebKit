@@ -1,3 +1,57 @@
+2010-06-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 40187 - Change function signature of NativeConstructor to match NativeFunction
+
+        Mostly for consistency, but constructor & args arguments are redundant,
+        and this will help if we wish to be able to JIT calls to more constructors.
+
+        * bindings/js/JSArrayBufferConstructor.cpp:
+        (WebCore::constructCanvasArrayBuffer):
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::constructAudio):
+        * bindings/js/JSEventSourceConstructor.cpp:
+        (WebCore::constructEventSource):
+        * bindings/js/JSFloatArrayConstructor.cpp:
+        (WebCore::constructCanvasFloatArray):
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::constructImage):
+        * bindings/js/JSInt16ArrayConstructor.cpp:
+        (WebCore::constructCanvasShortArray):
+        * bindings/js/JSInt32ArrayConstructor.cpp:
+        (WebCore::constructCanvasIntArray):
+        * bindings/js/JSInt8ArrayConstructor.cpp:
+        (WebCore::constructCanvasByteArray):
+        * bindings/js/JSMessageChannelConstructor.cpp:
+        (WebCore::JSMessageChannelConstructor::construct):
+        * bindings/js/JSMessageChannelConstructor.h:
+        * bindings/js/JSOptionConstructor.cpp:
+        (WebCore::constructHTMLOptionElement):
+        * bindings/js/JSSharedWorkerConstructor.cpp:
+        (WebCore::constructSharedWorker):
+        * bindings/js/JSUint16ArrayConstructor.cpp:
+        (WebCore::constructCanvasUnsignedShortArray):
+        * bindings/js/JSUint32ArrayConstructor.cpp:
+        (WebCore::constructCanvasUnsignedIntArray):
+        * bindings/js/JSUint8ArrayConstructor.cpp:
+        (WebCore::constructCanvasUnsignedByteArray):
+        * bindings/js/JSWebKitCSSMatrixConstructor.cpp:
+        (WebCore::constructWebKitCSSMatrix):
+        * bindings/js/JSWebKitPointConstructor.cpp:
+        (WebCore::constructWebKitPoint):
+        * bindings/js/JSWebSocketConstructor.cpp:
+        (WebCore::constructWebSocket):
+        * bindings/js/JSWorkerConstructor.cpp:
+        (WebCore::constructWorker):
+        * bindings/js/JSXMLHttpRequestConstructor.cpp:
+        (WebCore::constructXMLHttpRequest):
+        * bindings/js/JSXSLTProcessorConstructor.cpp:
+        (WebCore::constructXSLTProcessor):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::callRuntimeConstructor):
+
 2010-06-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

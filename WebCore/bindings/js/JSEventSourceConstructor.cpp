@@ -56,28 +56,28 @@ JSEventSourceConstructor::JSEventSourceConstructor(ExecState* exec, JSDOMGlobalO
     putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly|DontDelete|DontEnum);
 }
 
-static JSObject* constructEventSource(ExecState* exec, JSObject* constructor, const ArgList& args)
+static EncodedJSValue JSC_HOST_CALL constructEventSource(ExecState* exec)
 {
-    if (args.size() < 1)
-        return throwError(exec, SyntaxError, "Not enough arguments");
+    if (exec->argumentCount() < 1)
+        return JSValue::encode(throwError(exec, SyntaxError, "Not enough arguments"));
 
-    UString url = args.at(0).toString(exec);
+    UString url = exec->argument(0).toString(exec);
     if (exec->hadException())
-        return 0;
+        return JSValue::encode(JSValue());
 
-    JSEventSourceConstructor* jsConstructor =  static_cast<JSEventSourceConstructor*>(constructor);
+    JSEventSourceConstructor* jsConstructor =  static_cast<JSEventSourceConstructor*>(exec->callee());
     ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();
     if (!context)
-        return throwError(exec, ReferenceError, "EventSource constructor associated document is unavailable");
+        return JSValue::encode(throwError(exec, ReferenceError, "EventSource constructor associated document is unavailable"));
 
     ExceptionCode ec = 0;
     RefPtr<EventSource> eventSource = EventSource::create(ustringToString(url), context, ec);
     if (ec) {
         setDOMException(exec, ec);
-        return 0;
+        return JSValue::encode(JSValue());
     }
 
-    return asObject(toJS(exec, jsConstructor->globalObject(), eventSource.release()));
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), eventSource.release())));
 }
 
 ConstructType JSEventSourceConstructor::getConstructData(ConstructData& constructData)

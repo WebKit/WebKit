@@ -38,7 +38,7 @@ namespace WebCore {
         static const JSC::ClassInfo s_info;
 
         virtual bool implementsHasInstance() const { return true; }
-        static JSC::JSObject* construct(JSC::ExecState*, JSC::JSObject*, const JSC::ArgList&);
+        static JSC::EncodedJSValue JSC_HOST_CALL construct(JSC::ExecState*);
         virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
     };
 

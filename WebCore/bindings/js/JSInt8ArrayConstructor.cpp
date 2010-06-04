@@ -49,15 +49,16 @@ JSInt8ArrayConstructor::JSInt8ArrayConstructor(ExecState* exec, JSDOMGlobalObjec
     putDirect(exec->propertyNames().length, jsNumber(exec, 2), ReadOnly|DontDelete|DontEnum);
 }
 
-static JSObject* constructCanvasByteArray(ExecState* exec, JSObject* constructor, const ArgList& args)
+static EncodedJSValue JSC_HOST_CALL constructCanvasByteArray(ExecState* exec)
 {
-    JSInt8ArrayConstructor* jsConstructor = static_cast<JSInt8ArrayConstructor*>(constructor);
+    ArgList args(exec);
+    JSInt8ArrayConstructor* jsConstructor = static_cast<JSInt8ArrayConstructor*>(exec->callee());
     RefPtr<Int8Array> array = static_cast<Int8Array*>(construct<Int8Array, signed char>(exec, args).get());
     if (!array.get()) {
         setDOMException(exec, INDEX_SIZE_ERR);
-        return 0;
+        return JSValue::encode(JSValue());
     }
-    return asObject(toJS(exec, jsConstructor->globalObject(), array.get()));
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), array.get())));
 }
 
 JSC::ConstructType JSInt8ArrayConstructor::getConstructData(JSC::ConstructData& constructData)

@@ -44,9 +44,10 @@ FunctionConstructor::FunctionConstructor(ExecState* exec, JSGlobalObject* global
     putDirectWithoutTransition(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontDelete | DontEnum);
 }
 
-static JSObject* constructWithFunctionConstructor(ExecState* exec, JSObject*, const ArgList& args)
+static EncodedJSValue JSC_HOST_CALL constructWithFunctionConstructor(ExecState* exec)
 {
-    return constructFunction(exec, args);
+    ArgList args(exec);
+    return JSValue::encode(constructFunction(exec, args));
 }
 
 ConstructType FunctionConstructor::getConstructData(ConstructData& constructData)

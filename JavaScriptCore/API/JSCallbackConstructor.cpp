@@ -52,17 +52,18 @@ JSCallbackConstructor::~JSCallbackConstructor()
         JSClassRelease(m_class);
 }
 
-static JSObject* constructJSCallback(ExecState* exec, JSObject* constructor, const ArgList& args)
+static EncodedJSValue JSC_HOST_CALL constructJSCallback(ExecState* exec)
 {
+    JSObject* constructor = exec->callee();
     JSContextRef ctx = toRef(exec);
     JSObjectRef constructorRef = toRef(constructor);
 
     JSObjectCallAsConstructorCallback callback = static_cast<JSCallbackConstructor*>(constructor)->callback();
     if (callback) {
-        int argumentCount = static_cast<int>(args.size());
+        int argumentCount = static_cast<int>(exec->argumentCount());
         Vector<JSValueRef, 16> arguments(argumentCount);
         for (int i = 0; i < argumentCount; i++)
-            arguments[i] = toRef(exec, args.at(i));
+            arguments[i] = toRef(exec, exec->argument(i));
 
         JSValueRef exception = 0;
         JSObjectRef result;
@@ -72,10 +73,10 @@ static JSObject* constructJSCallback(ExecState* exec, JSObject* constructor, con
         }
         if (exception)
             exec->setException(toJS(exec, exception));
-        return toJS(result);
+        return JSValue::encode(toJS(result));
     }
     
-    return toJS(JSObjectMake(ctx, static_cast<JSCallbackConstructor*>(constructor)->classRef(), 0));
+    return JSValue::encode(toJS(JSObjectMake(ctx, static_cast<JSCallbackConstructor*>(constructor)->classRef(), 0)));
 }
 
 ConstructType JSCallbackConstructor::getConstructData(ConstructData& constructData)

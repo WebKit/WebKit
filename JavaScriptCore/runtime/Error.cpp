@@ -38,49 +38,49 @@ const char* expressionBeginOffsetPropertyName = "expressionBeginOffset";
 const char* expressionCaretOffsetPropertyName = "expressionCaretOffset";
 const char* expressionEndOffsetPropertyName = "expressionEndOffset";
 
+static JSObject* constructNativeError(ExecState* exec, const UString& message, NativeErrorConstructor* constructor, const char* name)
+{
+    ErrorInstance* object = new (exec) ErrorInstance(constructor->errorStructure());
+    JSString* messageString = message.isEmpty() ? jsString(exec, name) : jsString(exec, message);
+    object->putDirect(exec->propertyNames().message, messageString);
+    return object;
+}
+
 JSObject* Error::create(ExecState* exec, ErrorType type, const UString& message, int lineNumber, intptr_t sourceID, const UString& sourceURL)
 {
-    JSObject* constructor;
-    const char* name;
+    JSObject* error;
+
     switch (type) {
         case EvalError:
-            constructor = exec->lexicalGlobalObject()->evalErrorConstructor();
-            name = "Evaluation error";
+            error = constructNativeError(exec, message, exec->lexicalGlobalObject()->evalErrorConstructor(), "Evaluation error");
             break;
         case RangeError:
-            constructor = exec->lexicalGlobalObject()->rangeErrorConstructor();
-            name = "Range error";
+            error = constructNativeError(exec, message, exec->lexicalGlobalObject()->rangeErrorConstructor(), "Range error");
             break;
         case ReferenceError:
-            constructor = exec->lexicalGlobalObject()->referenceErrorConstructor();
-            name = "Reference error";
+            error = constructNativeError(exec, message, exec->lexicalGlobalObject()->referenceErrorConstructor(), "Reference error");
             break;
         case SyntaxError:
-            constructor = exec->lexicalGlobalObject()->syntaxErrorConstructor();
-            name = "Syntax error";
+            error = constructNativeError(exec, message, exec->lexicalGlobalObject()->syntaxErrorConstructor(), "Syntax error");
             break;
         case TypeError:
-            constructor = exec->lexicalGlobalObject()->typeErrorConstructor();
-            name = "Type error";
+            error = constructNativeError(exec, message, exec->lexicalGlobalObject()->typeErrorConstructor(), "Type error");
             break;
         case URIError:
-            constructor = exec->lexicalGlobalObject()->URIErrorConstructor();
-            name = "URI error";
+            error = constructNativeError(exec, message, exec->lexicalGlobalObject()->URIErrorConstructor(), "URI error");
             break;
         default:
-            constructor = exec->lexicalGlobalObject()->errorConstructor();
-            name = "Error";
-            break;
+            JSObject* constructor = exec->lexicalGlobalObject()->errorConstructor();
+            const char* name = "Error";
+            MarkedArgumentBuffer args;
+            if (message.isEmpty())
+                args.append(jsString(exec, name));
+            else
+                args.append(jsString(exec, message));
+            ConstructData constructData;
+            ConstructType constructType = constructor->getConstructData(constructData);
+            error = construct(exec, constructor, constructType, constructData, args);
     }
-
-    MarkedArgumentBuffer args;
-    if (message.isEmpty())
-        args.append(jsString(exec, name));
-    else
-        args.append(jsString(exec, message));
-    ConstructData constructData;
-    ConstructType constructType = constructor->getConstructData(constructData);
-    JSObject* error = construct(exec, constructor, constructType, constructData, args);
 
     if (lineNumber != -1)
         error->putWithAttributes(exec, Identifier(exec, "line"), jsNumber(exec, lineNumber), ReadOnly | DontDelete);

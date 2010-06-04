@@ -46,22 +46,22 @@ JSArrayBufferConstructor::JSArrayBufferConstructor(ExecState* exec, JSDOMGlobalO
     putDirect(exec->propertyNames().length, jsNumber(exec, 2), ReadOnly|DontDelete|DontEnum);
 }
 
-static JSObject* constructCanvasArrayBuffer(ExecState* exec, JSObject* constructor, const ArgList& args)
+static EncodedJSValue JSC_HOST_CALL constructCanvasArrayBuffer(ExecState* exec)
 {
-    JSArrayBufferConstructor* jsConstructor = static_cast<JSArrayBufferConstructor*>(constructor);
+    JSArrayBufferConstructor* jsConstructor = static_cast<JSArrayBufferConstructor*>(exec->callee());
 
     unsigned int size = 0;
-    if (args.size() == 1) {
-        size = (unsigned int)args.at(0).toInt32(exec);
+    if (exec->argumentCount() == 1) {
+        size = (unsigned int)exec->argument(0).toInt32(exec);
         if (isnan(size))
             size = 0;
     }
     RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(size, 1);
     if (!buffer.get()){
         setDOMException(exec, INDEX_SIZE_ERR);
-        return 0;
+        return JSValue::encode(JSValue());
     }
-    return asObject(toJS(exec, jsConstructor->globalObject(), buffer.get()));
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), buffer.get())));
 }
 
 JSC::ConstructType JSArrayBufferConstructor::getConstructData(JSC::ConstructData& constructData)

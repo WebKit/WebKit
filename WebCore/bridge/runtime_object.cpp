@@ -276,16 +276,18 @@ CallType RuntimeObject::getCallData(CallData& callData)
     return CallTypeHost;
 }
 
-static JSObject* callRuntimeConstructor(ExecState* exec, JSObject* constructor, const ArgList& args)
+static EncodedJSValue JSC_HOST_CALL callRuntimeConstructor(ExecState* exec)
 {
+    JSObject* constructor = exec->callee();
     ASSERT(constructor->inherits(&RuntimeObject::s_info));
-    RefPtr<Instance> instance(static_cast<RuntimeObject*>(constructor)->getInternalInstance());
+    RefPtr<Instance> instance(static_cast<RuntimeObject*>(exec->callee())->getInternalInstance());
     instance->begin();
+    ArgList args(exec);
     JSValue result = instance->invokeConstruct(exec, args);
     instance->end();
     
     ASSERT(result);
-    return result.isObject() ? static_cast<JSObject*>(result.asCell()) : constructor;
+    return JSValue::encode(result.isObject() ? static_cast<JSObject*>(result.asCell()) : constructor);
 }
 
 ConstructType RuntimeObject::getConstructData(ConstructData& constructData)

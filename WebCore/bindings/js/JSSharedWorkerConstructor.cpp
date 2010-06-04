@@ -53,20 +53,20 @@ JSSharedWorkerConstructor::JSSharedWorkerConstructor(ExecState* exec, JSDOMGloba
     putDirect(exec->propertyNames().length, jsNumber(exec, 2), ReadOnly|DontDelete|DontEnum);
 }
 
-static JSObject* constructSharedWorker(ExecState* exec, JSObject* constructor, const ArgList& args)
+static EncodedJSValue JSC_HOST_CALL constructSharedWorker(ExecState* exec)
 {
-    JSSharedWorkerConstructor* jsConstructor = static_cast<JSSharedWorkerConstructor*>(constructor);
+    JSSharedWorkerConstructor* jsConstructor = static_cast<JSSharedWorkerConstructor*>(exec->callee());
 
-    if (args.size() < 1)
-        return throwError(exec, SyntaxError, "Not enough arguments");
+    if (exec->argumentCount() < 1)
+        return JSValue::encode(throwError(exec, SyntaxError, "Not enough arguments"));
 
-    UString scriptURL = args.at(0).toString(exec);
+    UString scriptURL = exec->argument(0).toString(exec);
     UString name;
-    if (args.size() > 1)
-        name = args.at(1).toString(exec);
+    if (exec->argumentCount() > 1)
+        name = exec->argument(1).toString(exec);
 
     if (exec->hadException())
-        return 0;
+        return JSValue::encode(JSValue());
 
     // FIXME: We need to use both the dynamic scope and the lexical scope (dynamic scope for resolving the worker URL)
     DOMWindow* window = asJSDOMWindow(exec->lexicalGlobalObject())->impl();
@@ -74,7 +74,7 @@ static JSObject* constructSharedWorker(ExecState* exec, JSObject* constructor, c
     RefPtr<SharedWorker> worker = SharedWorker::create(ustringToString(scriptURL), ustringToString(name), window->document(), ec);
     setDOMException(exec, ec);
 
-    return asObject(toJS(exec, jsConstructor->globalObject(), worker.release()));
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), worker.release())));
 }
 
 ConstructType JSSharedWorkerConstructor::getConstructData(ConstructData& constructData)

@@ -64,9 +64,10 @@ static inline JSObject* constructArrayWithSizeQuirk(ExecState* exec, const ArgLi
     return new (exec) JSArray(exec->lexicalGlobalObject()->arrayStructure(), args);
 }
 
-static JSObject* constructWithArrayConstructor(ExecState* exec, JSObject*, const ArgList& args)
+static EncodedJSValue JSC_HOST_CALL constructWithArrayConstructor(ExecState* exec)
 {
-    return constructArrayWithSizeQuirk(exec, args);
+    ArgList args(exec);
+    return JSValue::encode(constructArrayWithSizeQuirk(exec, args));
 }
 
 // ECMA 15.4.2

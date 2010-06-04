@@ -49,16 +49,16 @@ JSWorkerConstructor::JSWorkerConstructor(ExecState* exec, JSDOMGlobalObject* glo
     putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly|DontDelete|DontEnum);
 }
 
-static JSObject* constructWorker(ExecState* exec, JSObject* constructor, const ArgList& args)
+static EncodedJSValue JSC_HOST_CALL constructWorker(ExecState* exec)
 {
-    JSWorkerConstructor* jsConstructor = static_cast<JSWorkerConstructor*>(constructor);
+    JSWorkerConstructor* jsConstructor = static_cast<JSWorkerConstructor*>(exec->callee());
 
-    if (args.size() == 0)
-        return throwError(exec, SyntaxError, "Not enough arguments");
+    if (!exec->argumentCount())
+        return JSValue::encode(throwError(exec, SyntaxError, "Not enough arguments"));
 
-    UString scriptURL = args.at(0).toString(exec);
+    UString scriptURL = exec->argument(0).toString(exec);
     if (exec->hadException())
-        return 0;
+        return JSValue::encode(JSValue());
 
     // See section 4.8.2 step 14 of WebWorkers for why this is the lexicalGlobalObject. 
     DOMWindow* window = asJSDOMWindow(exec->lexicalGlobalObject())->impl();
@@ -67,10 +67,10 @@ static JSObject* constructWorker(ExecState* exec, JSObject* constructor, const A
     RefPtr<Worker> worker = Worker::create(ustringToString(scriptURL), window->document(), ec);
     if (ec) {
         setDOMException(exec, ec);
-        return 0;
+        return JSValue::encode(JSValue());
     }
 
-    return asObject(toJS(exec, jsConstructor->globalObject(), worker.release()));
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), worker.release())));
 }
 
 ConstructType JSWorkerConstructor::getConstructData(ConstructData& constructData)

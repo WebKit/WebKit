@@ -39,15 +39,15 @@ JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor(ExecState* exec, JSDOMG
     putDirect(exec->propertyNames().prototype, JSXMLHttpRequestPrototype::self(exec, globalObject), None);
 }
 
-static JSObject* constructXMLHttpRequest(ExecState* exec, JSObject* constructor, const ArgList&)
+static EncodedJSValue JSC_HOST_CALL constructXMLHttpRequest(ExecState* exec)
 {
-    JSXMLHttpRequestConstructor* jsConstructor = static_cast<JSXMLHttpRequestConstructor*>(constructor);
+    JSXMLHttpRequestConstructor* jsConstructor = static_cast<JSXMLHttpRequestConstructor*>(exec->callee());
     ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();
     if (!context)
-        return throwError(exec, ReferenceError, "XMLHttpRequest constructor associated document is unavailable");
+        return JSValue::encode(throwError(exec, ReferenceError, "XMLHttpRequest constructor associated document is unavailable"));
 
     RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(context);
-    return CREATE_DOM_OBJECT_WRAPPER(exec, jsConstructor->globalObject(), XMLHttpRequest, xmlHttpRequest.get());
+    return JSValue::encode(CREATE_DOM_OBJECT_WRAPPER(exec, jsConstructor->globalObject(), XMLHttpRequest, xmlHttpRequest.get()));
 }
 
 ConstructType JSXMLHttpRequestConstructor::getConstructData(ConstructData& constructData)

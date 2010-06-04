@@ -2737,7 +2737,7 @@ EOF
 
     if ($canConstruct) {
 $implContent .= << "EOF";
-    static JSObject* construct${interfaceName}(ExecState* exec, JSObject* constructor, const ArgList&)
+    static EncodedJSValue JSC_HOST_CALL construct${interfaceName}(ExecState* exec)
     {
 EOF
 
@@ -2745,14 +2745,14 @@ EOF
     if ($callWith and $callWith eq "ScriptExecutionContext") {
         $constructorArg = "context";
 $implContent .= << "EOF";
-        ScriptExecutionContext* context = static_cast<${constructorClassName}*>(constructor)->scriptExecutionContext();
+        ScriptExecutionContext* context = static_cast<${constructorClassName}*>(exec->callee())->scriptExecutionContext();
         if (!context)
-            return throwError(exec, ReferenceError);
+            return JSValue::encode(throwError(exec, ReferenceError));
 EOF
     }
 
 $implContent .= << "EOF";
-        return asObject(toJS(exec, static_cast<${constructorClassName}*>(constructor)->globalObject(), ${interfaceName}::create(${constructorArg})));
+        return JSValue::encode(asObject(toJS(exec, static_cast<${constructorClassName}*>(exec->callee())->globalObject(), ${interfaceName}::create(${constructorArg}))));
     }
     virtual ConstructType getConstructData(ConstructData& constructData)
     {
