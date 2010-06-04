@@ -1,3 +1,28 @@
+2010-06-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
+        Adding baselines for new tests. They all seem to be working fine.
+
+        * platform/gtk/editing/selection/range-between-block-and-inline-expected.txt: Added.
+        * platform/gtk/fast/css/font-face-in-shadow-DOM-expected.txt: Added.
+        * platform/gtk/fast/lists/alpha-boundary-values-expected.txt: Added.
+        * platform/gtk/fast/multicol/span/anonymous-style-inheritance-expected.txt: Added.
+        * platform/gtk/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.txt: Added.
+        * platform/gtk/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt: Added.
+        * platform/gtk/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt: Added.
+        * platform/gtk/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt: Added.
+        * platform/gtk/fast/multicol/span/span-as-immediate-columns-child-expected.txt: Added.
+        * platform/gtk/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt: Added.
+        * platform/gtk/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt: Added.
+        * platform/gtk/fast/multicol/span/span-as-nested-columns-child-expected.txt: Added.
+        * platform/gtk/fast/multicol/span/span-margin-collapsing-expected.txt: Added.
+        * platform/gtk/fast/repaint/layout-state-scrolloffset-expected.txt: Added.
+        * platform/gtk/fast/repaint/layout-state-scrolloffset2-expected.txt: Added.
+        * platform/gtk/fast/repaint/layout-state-scrolloffset3-expected.txt: Added.
+        * platform/gtk/svg/filters/feLighting-crash-expected.txt: Copied from LayoutTests/platform/mac/svg/filters/feLighting-crash-expected.txt.
+        * platform/gtk/svg/filters/parent-children-with-same-filter-expected.txt: Copied from LayoutTests/platform/mac/svg/filters/parent-children-with-same-filter-expected.txt.
+
 2010-06-04  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; expectations fix.
