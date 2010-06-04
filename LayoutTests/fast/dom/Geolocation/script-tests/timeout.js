@@ -4,10 +4,13 @@ var mockLatitude = 51.478;
 var mockLongitude = -0.166;
 var mockAccuracy = 100.0;
 
-window.layoutTestController.setGeolocationPermission(true);
-window.layoutTestController.setMockGeolocationPosition(mockLatitude,
-                                                       mockLongitude,
-                                                       mockAccuracy);
+if (window.layoutTestController) {
+    layoutTestController.setGeolocationPermission(true);
+    layoutTestController.setMockGeolocationPosition(mockLatitude,
+                                                    mockLongitude,
+                                                    mockAccuracy);
+} else
+    debug('This test can not be run without the LayoutTestController');
 
 var position;
 navigator.geolocation.getCurrentPosition(function(p) {
@@ -22,7 +25,6 @@ navigator.geolocation.getCurrentPosition(function(p) {
 }, {
     timeout: 1000
 });
-window.layoutTestController.waitUntilDone();
 
 window.jsTestIsAsync = true;
 window.successfullyParsed = true;

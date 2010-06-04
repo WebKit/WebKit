@@ -17,5 +17,3 @@ document.body.onunload = function() {
 
 window.jsTestIsAsync = true;
 window.successfullyParsed = true;
-
-if (window.layoutTestController) layoutTestController.waitUntilDone();

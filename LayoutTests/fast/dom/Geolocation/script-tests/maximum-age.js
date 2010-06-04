@@ -25,8 +25,11 @@ function checkError(e) {
     shouldBe('error.message', 'mockMessage');
 }
 
-window.layoutTestController.setGeolocationPermission(true);
-window.layoutTestController.setMockGeolocationPosition(mockLatitude, mockLongitude, mockAccuracy);
+if (window.layoutTestController) {
+    layoutTestController.setGeolocationPermission(true);
+    layoutTestController.setMockGeolocationPosition(mockLatitude, mockLongitude, mockAccuracy);
+} else
+    debug('This test can not be run without the LayoutTestController');
 
 // Initialize the cached Position
 navigator.geolocation.getCurrentPosition(function(p) {
@@ -39,7 +42,8 @@ navigator.geolocation.getCurrentPosition(function(p) {
 
 function testZeroMaximumAge() {
     // Update the position provided by the mock service.
-    window.layoutTestController.setMockGeolocationPosition(++mockLatitude, ++mockLongitude, ++mockAccuracy);
+    if (window.layoutTestController)
+        layoutTestController.setMockGeolocationPosition(++mockLatitude, ++mockLongitude, ++mockAccuracy);
     // The default maximumAge is zero, so we expect the updated position from the service.
     navigator.geolocation.getCurrentPosition(function(p) {
         checkPosition(p);
@@ -52,7 +56,8 @@ function testZeroMaximumAge() {
 
 function testNonZeroMaximumAge() {
     // Update the mock service to report an error.
-    window.layoutTestController.setMockGeolocationError(mockCode, mockMessage);
+    if (window.layoutTestController)
+        layoutTestController.setMockGeolocationError(mockCode, mockMessage);
     // The maximumAge is non-zero, so we expect the cached position, not the error from the service.
     navigator.geolocation.getCurrentPosition(function(p) {
         checkPosition(p);
@@ -73,8 +78,6 @@ function testZeroMaximumAgeError() {
         finishJSTest();
     });
 }
-
-window.layoutTestController.waitUntilDone();
 
 window.jsTestIsAsync = true;
 window.successfullyParsed = true;

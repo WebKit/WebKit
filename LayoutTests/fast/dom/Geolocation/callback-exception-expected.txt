@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 22: Error: Exception in success callback
+CONSOLE MESSAGE: line 25: Error: Exception in success callback
 Tests that when an exception is thrown in the success callback, the error callback is not invoked. Note that this test throws an exception which is not caught.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
