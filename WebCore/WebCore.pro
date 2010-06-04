@@ -2621,8 +2621,12 @@ contains(DEFINES, ENABLE_QT_BEARER=1) {
     SOURCES += \
         platform/network/qt/NetworkStateNotifierQt.cpp
 
-    CONFIG += mobility
-    MOBILITY += bearer
+    # Bearer management is part of Qt 4.7, so don't accidentially
+    # pull in Qt Mobility when building against >= 4.7
+    !greaterThan(QT_MINOR_VERSION, 6) {
+        CONFIG += mobility
+        MOBILITY += bearer
+    }
 }
 
 contains(DEFINES, ENABLE_SVG=1) {
