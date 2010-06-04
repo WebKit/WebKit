@@ -1,3 +1,10 @@
+2010-06-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (interpreter build fix).
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+
 2010-06-04  Mark Rowe  <mrowe@apple.com>
 
         Silence some warnings seen on the build bot.
