@@ -245,8 +245,7 @@ void CSSStyleSheet::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
     styleSheetQueue.append(this);
 
     while (!styleSheetQueue.isEmpty()) {
-        CSSStyleSheet* styleSheet = styleSheetQueue.first();
-        styleSheetQueue.removeFirst();
+        CSSStyleSheet* styleSheet = styleSheetQueue.takeFirst();
 
         for (unsigned i = 0; i < styleSheet->length(); ++i) {
             StyleBase* styleBase = styleSheet->item(i);

@@ -57,8 +57,7 @@ void SQLTransactionCoordinator::processPendingTransactions(CoordinationInfo& inf
     RefPtr<SQLTransaction> firstPendingTransaction = info.pendingTransactions.first();
     if (firstPendingTransaction->isReadOnly()) {
         do {
-            firstPendingTransaction = info.pendingTransactions.first();
-            info.pendingTransactions.removeFirst();
+            firstPendingTransaction = info.pendingTransactions.takeFirst();
             info.activeReadTransactions.add(firstPendingTransaction);
             firstPendingTransaction->lockAcquired();
         } while (!info.pendingTransactions.isEmpty() && info.pendingTransactions.first()->isReadOnly());

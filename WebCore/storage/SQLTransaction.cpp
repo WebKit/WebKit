@@ -354,8 +354,7 @@ void SQLTransaction::getNextStatement()
 
     MutexLocker locker(m_statementMutex);
     if (!m_statementQueue.isEmpty()) {
-        m_currentStatement = m_statementQueue.first();
-        m_statementQueue.removeFirst();
+        m_currentStatement = m_statementQueue.takeFirst();
     }
 }
 

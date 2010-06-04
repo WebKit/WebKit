@@ -201,8 +201,7 @@ void LayoutTestController::WorkQueue::processWork()
     // Quit doing work once a load is in progress.
     while (!m_queue.isEmpty()) {
         bool startedLoad = m_queue.first()->run(shell);
-        delete m_queue.first();
-        m_queue.removeFirst();
+        delete m_queue.takeFirst();
         if (startedLoad)
             return;
     }
@@ -215,8 +214,7 @@ void LayoutTestController::WorkQueue::reset()
 {
     m_frozen = false;
     while (!m_queue.isEmpty()) {
-        delete m_queue.first();
-        m_queue.removeFirst();
+        delete m_queue.takeFirst();
     }
 }
 

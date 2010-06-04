@@ -163,9 +163,7 @@ namespace WTF {
         if (m_queue.isEmpty())
             return 0;
 
-        DataType* message = m_queue.first();
-        m_queue.removeFirst();
-        return message;
+        return m_queue.takeFirst();
     }
 
     template<typename DataType>

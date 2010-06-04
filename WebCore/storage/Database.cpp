@@ -680,8 +680,7 @@ void Database::scheduleTransaction()
     RefPtr<SQLTransaction> transaction;
 
     if (m_isTransactionQueueEnabled && !m_transactionQueue.isEmpty()) {
-        transaction = m_transactionQueue.first();
-        m_transactionQueue.removeFirst();
+        transaction = m_transactionQueue.takeFirst();
     }
 
     if (transaction && m_scriptExecutionContext->databaseThread()) {

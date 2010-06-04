@@ -214,8 +214,7 @@ void HTMLTokenizer::reset()
     ASSERT(m_executingScript == 0);
 
     while (!m_pendingScripts.isEmpty()) {
-        CachedScript* cs = m_pendingScripts.first().get();
-        m_pendingScripts.removeFirst();
+        CachedScript* cs = m_pendingScripts.takeFirst().get();
         ASSERT(cache()->disabled() || cs->accessCount() > 0);
         cs->removeClient(this);
     }
@@ -2011,8 +2010,7 @@ void HTMLTokenizer::executeExternalScriptsIfReady()
         if (!continueExecutingExternalScripts(startTime))
             break;
 
-        CachedScript* cs = m_pendingScripts.first().get();
-        m_pendingScripts.removeFirst();
+        CachedScript* cs = m_pendingScripts.takeFirst().get();
         ASSERT(cache()->disabled() || cs->accessCount() > 0);
 
         setSrc(SegmentedString());

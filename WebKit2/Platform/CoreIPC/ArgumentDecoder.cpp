@@ -185,8 +185,7 @@ bool ArgumentDecoder::removeAttachment(Attachment& attachment)
     if (m_attachments.isEmpty())
         return false;
 
-    attachment = m_attachments.first();
-    m_attachments.removeFirst();
+    attachment = m_attachments.takeFirst();
     return true;
 }
 

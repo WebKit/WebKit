@@ -716,8 +716,7 @@ void EventSender::replaySavedEvents()
 {
     replayingSavedEvents = true;
     while (!mouseEventQueue.isEmpty()) {
-        SavedEvent e = mouseEventQueue.first();
-        mouseEventQueue.removeFirst();
+        SavedEvent e = mouseEventQueue.takeFirst();
 
         switch (e.type) {
         case SavedEvent::MouseMove: {

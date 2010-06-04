@@ -152,8 +152,7 @@ void SegmentedString::prepend(const SegmentedString &s)
 void SegmentedString::advanceSubstring()
 {
     if (m_composite) {
-        m_currentString = m_substrings.first();
-        m_substrings.removeFirst();
+        m_currentString = m_substrings.takeFirst();
         if (m_substrings.isEmpty())
             m_composite = false;
     } else {
