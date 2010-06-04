@@ -1,3 +1,13 @@
+2010-06-04  Mark Rowe  <mrowe@apple.com>
+
+        Silence some warnings seen on the build bot.
+
+        * JavaScriptCore.JSVALUE32_64only.exp: Add a trailing newline.
+        * JavaScriptCore.JSVALUE32only.exp: Ditto.
+        * JavaScriptCore.JSVALUE64only.exp: Ditto.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Remove the .exp files from all targets so that Xcode doesn't
+        complain about not knowing how to compile them.
+
 2010-06-04  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

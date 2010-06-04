@@ -203,9 +203,6 @@
 		86565742115BE3DA00291F40 /* CString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86565740115BE3DA00291F40 /* CString.cpp */; };
 		86565743115BE3DA00291F40 /* CString.h in Headers */ = {isa = PBXBuildFile; fileRef = 86565741115BE3DA00291F40 /* CString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		865F408810E7D56300947361 /* APIShims.h in Headers */ = {isa = PBXBuildFile; fileRef = 865F408710E7D56300947361 /* APIShims.h */; };
-		867FC36211B763950025105E /* JavaScriptCore.JSVALUE32_64only.exp in Sources */ = {isa = PBXBuildFile; fileRef = 867FC35F11B763950025105E /* JavaScriptCore.JSVALUE32_64only.exp */; };
-		867FC36311B763950025105E /* JavaScriptCore.JSVALUE32only.exp in Sources */ = {isa = PBXBuildFile; fileRef = 867FC36011B763950025105E /* JavaScriptCore.JSVALUE32only.exp */; };
-		867FC36411B763950025105E /* JavaScriptCore.JSVALUE64only.exp in Sources */ = {isa = PBXBuildFile; fileRef = 867FC36111B763950025105E /* JavaScriptCore.JSVALUE64only.exp */; };
 		868BFA08117CEFD100B908B1 /* AtomicString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 868BFA00117CEFD100B908B1 /* AtomicString.cpp */; };
 		868BFA09117CEFD100B908B1 /* AtomicString.h in Headers */ = {isa = PBXBuildFile; fileRef = 868BFA01117CEFD100B908B1 /* AtomicString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		868BFA0A117CEFD100B908B1 /* AtomicStringImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 868BFA02117CEFD100B908B1 /* AtomicStringImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2608,9 +2605,6 @@
 				146FE51211A710430087AE66 /* JITCall32_64.cpp in Sources */,
 				A783A2AB11A5BE8400563D20 /* JSObjectWithGlobalObject.cpp in Sources */,
 				BC01D4F111A8F1FF00A54B2A /* JSZombie.cpp in Sources */,
-				867FC36211B763950025105E /* JavaScriptCore.JSVALUE32_64only.exp in Sources */,
-				867FC36311B763950025105E /* JavaScriptCore.JSVALUE32only.exp in Sources */,
-				867FC36411B763950025105E /* JavaScriptCore.JSVALUE64only.exp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
