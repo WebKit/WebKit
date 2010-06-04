@@ -827,6 +827,45 @@ bool WebViewImpl::mapKeyCodeForScroll(int keyCode,
     return true;
 }
 
+// Computes the distance from a point outside a rect to the nearest edge of the rect.
+static IntSize distanceToRect(const IntPoint& point, const IntRect& rect)
+{
+    int dx = 0, dy = 0;
+    if (point.x() < rect.x())
+        dx = point.x() - rect.x();
+    else if (rect.right() < point.x())
+        dx = point.x() - rect.right();
+    if (point.y() < rect.y())
+        dy = point.y() - rect.y();
+    else if (rect.bottom() < point.y())
+        dy = point.y() - rect.bottom();
+    return IntSize(dx, dy);
+}
+
+void WebViewImpl::scrollForDragging(const WebPoint& clientPoint)
+{
+    // This margin approximates Safari behavior, derived from an observation.
+    static const int scrollMargin = 30;
+
+    FrameView* view = mainFrameImpl()->frameView();
+    if (!view)
+        return;
+
+    IntRect bounds(0, 0, view->visibleWidth(), view->visibleHeight());
+    bounds.setY(bounds.y() + scrollMargin);
+    bounds.setHeight(bounds.height() - scrollMargin * 2);
+    bounds.setX(bounds.x() + scrollMargin);
+    bounds.setWidth(bounds.width() - scrollMargin * 2);
+
+    IntPoint point = clientPoint;
+    if (bounds.contains(point))
+        return;    
+
+    IntSize toScroll = distanceToRect(point, bounds);
+    if (!toScroll.isZero())
+        view->scrollBy(toScroll);
+}
+
 void WebViewImpl::hideSelectPopup()
 {
     if (m_selectPopup.get())
@@ -1539,6 +1578,14 @@ void WebViewImpl::dragSourceEndedAt(
         static_cast<DragOperation>(operation));
 }
 
+void WebViewImpl::dragSourceMovedTo(
+    const WebPoint& clientPoint,
+    const WebPoint& screenPoint,
+    WebDragOperation operation)
+{
+    scrollForDragging(clientPoint);
+}
+
 void WebViewImpl::dragSourceSystemDragEnded()
 {
     // It's possible for us to get this callback while not doing a drag if
@@ -1658,6 +1705,9 @@ WebDragOperation WebViewImpl::dragTargetDragEnterOrOver(const WebPoint& clientPo
                                                            : WebDragOperationNone;
     } else
         m_dragOperation = static_cast<WebDragOperation>(effect);
+
+    if (dragAction == DragOver)
+        scrollForDragging(clientPoint);
 
     return m_dragOperation;
 }

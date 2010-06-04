@@ -1,3 +1,20 @@
+2010-05-26  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Jian Li.
+
+        [Chromium] Dragging over an element with scrollbars should scroll the element when dragging near edges
+        https://bugs.webkit.org/show_bug.cgi?id=39725
+
+        Added WebViewImpl::scrollForDragging() to handle scroll-on-drag.
+        Note that this change handes both source and destination cases.
+        
+        * public/WebView.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::dragSourceMovedTo):
+        (WebKit::WebViewImpl::dragTargetDragEnterOrOver):
+        (WebKit::WebViewImpl::scrollForDragging):
+        * src/WebViewImpl.h:
+
 2010-06-03  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
