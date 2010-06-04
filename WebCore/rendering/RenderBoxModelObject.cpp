@@ -888,20 +888,21 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
         // The top left corner rect is (tx, ty, leftWidth, topWidth)
         // The rect to use from within the image is obtained from our slice, and is (0, 0, leftSlice, topSlice)
         if (drawTop)
-            graphicsContext->drawImage(image, colorSpace, FloatRect(tx, ty, leftWidth, topWidth),
-                                       FloatRect(0, 0, leftSlice, topSlice), op, false, true);
+            graphicsContext->drawImage(image, colorSpace, IntRect(tx, ty, leftWidth, topWidth),
+                                       IntRect(0, 0, leftSlice, topSlice), op);
 
         // The bottom left corner rect is (tx, ty + h - bottomWidth, leftWidth, bottomWidth)
         // The rect to use from within the image is (0, imageHeight - bottomSlice, leftSlice, botomSlice)
         if (drawBottom)
-            graphicsContext->drawImage(image, colorSpace, FloatRect(tx, ty + h - bottomWidth, leftWidth, bottomWidth),
-                                       FloatRect(0, imageHeight - bottomSlice, leftSlice, bottomSlice), op, false, true);
+            graphicsContext->drawImage(image, colorSpace, IntRect(tx, ty + h - bottomWidth, leftWidth, bottomWidth),
+                                       IntRect(0, imageHeight - bottomSlice, leftSlice, bottomSlice), op);
 
         // Paint the left edge.
         // Have to scale and tile into the border rect.
-        graphicsContext->drawTiledImage(image, colorSpace, FloatRect(tx, ty + topWidth, leftWidth, h - topWidth - bottomWidth),
-                                        FloatRect(0, topSlice, leftSlice, imageHeight - topSlice - bottomSlice),
-                                        Image::StretchTile, (Image::TileRule)vRule, op, false, true);
+        graphicsContext->drawTiledImage(image, colorSpace, IntRect(tx, ty + topWidth, leftWidth,
+                                        h - topWidth - bottomWidth),
+                                        IntRect(0, topSlice, leftSlice, imageHeight - topSlice - bottomSlice),
+                                        Image::StretchTile, (Image::TileRule)vRule, op);
     }
 
     if (drawRight) {
@@ -909,38 +910,41 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
         // The top right corner rect is (tx + w - rightWidth, ty, rightWidth, topWidth)
         // The rect to use from within the image is obtained from our slice, and is (imageWidth - rightSlice, 0, rightSlice, topSlice)
         if (drawTop)
-            graphicsContext->drawImage(image, colorSpace, FloatRect(tx + w - rightWidth, ty, rightWidth, topWidth),
-                                       FloatRect(imageWidth - rightSlice, 0, rightSlice, topSlice), op, false, true);
+            graphicsContext->drawImage(image, colorSpace, IntRect(tx + w - rightWidth, ty, rightWidth, topWidth),
+                                       IntRect(imageWidth - rightSlice, 0, rightSlice, topSlice), op);
 
         // The bottom right corner rect is (tx + w - rightWidth, ty + h - bottomWidth, rightWidth, bottomWidth)
         // The rect to use from within the image is (imageWidth - rightSlice, imageHeight - bottomSlice, rightSlice, bottomSlice)
         if (drawBottom)
-            graphicsContext->drawImage(image, colorSpace, FloatRect(tx + w - rightWidth, ty + h - bottomWidth, rightWidth, bottomWidth),
-                                       FloatRect(imageWidth - rightSlice, imageHeight - bottomSlice, rightSlice, bottomSlice), op, false, true);
+            graphicsContext->drawImage(image, colorSpace, IntRect(tx + w - rightWidth, ty + h - bottomWidth, rightWidth, bottomWidth),
+                                       IntRect(imageWidth - rightSlice, imageHeight - bottomSlice, rightSlice, bottomSlice), op);
 
         // Paint the right edge.
-        graphicsContext->drawTiledImage(image, colorSpace, graphicsContext->roundToDevicePixels(FloatRect(tx + w - rightWidth, ty + topWidth, rightWidth, h - topWidth - bottomWidth)),
-                                        FloatRect(imageWidth - rightSlice, topSlice, rightSlice, imageHeight - topSlice - bottomSlice),
-                                        Image::StretchTile, (Image::TileRule)vRule, op, false, true);
+        graphicsContext->drawTiledImage(image, colorSpace, IntRect(tx + w - rightWidth, ty + topWidth, rightWidth,
+                                        h - topWidth - bottomWidth),
+                                        IntRect(imageWidth - rightSlice, topSlice, rightSlice, imageHeight - topSlice - bottomSlice),
+                                        Image::StretchTile, (Image::TileRule)vRule, op);
     }
 
     // Paint the top edge.
     if (drawTop)
-        graphicsContext->drawTiledImage(image, colorSpace, FloatRect(tx + leftWidth, ty, w - leftWidth - rightWidth, topWidth),
-                                        FloatRect(leftSlice, 0, imageWidth - rightSlice - leftSlice, topSlice),
-                                        (Image::TileRule)hRule, Image::StretchTile, op, false, true);
+        graphicsContext->drawTiledImage(image, colorSpace, IntRect(tx + leftWidth, ty, w - leftWidth - rightWidth, topWidth),
+                                        IntRect(leftSlice, 0, imageWidth - rightSlice - leftSlice, topSlice),
+                                        (Image::TileRule)hRule, Image::StretchTile, op);
 
     // Paint the bottom edge.
     if (drawBottom)
-        graphicsContext->drawTiledImage(image, colorSpace, FloatRect(tx + leftWidth, ty + h - bottomWidth, w - leftWidth - rightWidth, bottomWidth),
-                                        FloatRect(leftSlice, imageHeight - bottomSlice, imageWidth - rightSlice - leftSlice, bottomSlice),
-                                        (Image::TileRule)hRule, Image::StretchTile, op, false, true);
+        graphicsContext->drawTiledImage(image, colorSpace, IntRect(tx + leftWidth, ty + h - bottomWidth,
+                                        w - leftWidth - rightWidth, bottomWidth),
+                                        IntRect(leftSlice, imageHeight - bottomSlice, imageWidth - rightSlice - leftSlice, bottomSlice),
+                                        (Image::TileRule)hRule, Image::StretchTile, op);
 
     // Paint the middle.
     if (drawMiddle)
-        graphicsContext->drawTiledImage(image, colorSpace, FloatRect(tx + leftWidth, ty + topWidth, w - leftWidth - rightWidth, h - topWidth - bottomWidth),
-                                        FloatRect(leftSlice, topSlice, imageWidth - rightSlice - leftSlice, imageHeight - topSlice - bottomSlice),
-                                        (Image::TileRule)hRule, (Image::TileRule)vRule, op, false, true);
+        graphicsContext->drawTiledImage(image, colorSpace, IntRect(tx + leftWidth, ty + topWidth, w - leftWidth - rightWidth,
+                                        h - topWidth - bottomWidth),
+                                        IntRect(leftSlice, topSlice, imageWidth - rightSlice - leftSlice, imageHeight - topSlice - bottomSlice),
+                                        (Image::TileRule)hRule, (Image::TileRule)vRule, op);
 
     return true;
 }
