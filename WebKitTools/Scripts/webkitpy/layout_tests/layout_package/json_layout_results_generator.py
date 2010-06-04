@@ -77,6 +77,7 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGenerator):
         self._test_timings = dict(
             (path_to_name(test_tuple.filename), test_tuple.test_run_time)
             for test_tuple in test_timings)
+        self._svn_repositories = port.test_repository_paths()
 
         self._generate_json_output()
 

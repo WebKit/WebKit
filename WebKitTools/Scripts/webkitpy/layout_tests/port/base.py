@@ -537,6 +537,14 @@ class Port(object):
         expectations, determining search paths, and logging information."""
         raise NotImplementedError('Port.version')
 
+    def test_repository_paths(self):
+        """Returns a list of (repository_name, repository_path) tuples
+        of its depending code base.  By default it returns a list that only
+        contains a ('webkit', <webkitRepossitoryPath>) tuple.
+        """
+        return [('webkit', self.layout_tests_dir())]
+
+
     _WDIFF_DEL = '##WDIFF_DEL##'
     _WDIFF_ADD = '##WDIFF_ADD##'
     _WDIFF_END = '##WDIFF_END##'

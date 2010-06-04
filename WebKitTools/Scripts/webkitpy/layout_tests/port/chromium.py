@@ -232,6 +232,13 @@ class ChromiumPort(base.Port):
         raise ValueError('Unsupported test_platform_name: %s' %
                          test_platform_name)
 
+    def test_repository_paths(self):
+        # Note: for JSON file's backward-compatibility we use 'chrome' rather
+        # than 'chromium' here.
+        repos = super(ChromiumPort, self).test_repository_paths()
+        repos.append(('chrome', self.path_from_chromium_base()))
+        return repos
+
     #
     # PROTECTED METHODS
     #
