@@ -1,3 +1,14 @@
+2010-06-04  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; build fix.
+
+        [CHROMIUM] Add new chromium test results for new layout test svg/filters/filter-on-filter-for-text.svg
+
+        * platform/chromium-linux/svg/filters/filter-on-filter-for-text-expected.checksum: Added.
+        * platform/chromium-win/svg/filters/filter-on-filter-for-text-expected.checksum: Added.
+        * platform/chromium-win/svg/filters/filter-on-filter-for-text-expected.png: Added.
+        * platform/chromium-win/svg/filters/filter-on-filter-for-text-expected.txt: Added.
+
 2010-06-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by David Hyatt.
