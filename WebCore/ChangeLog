@@ -1,5 +1,17 @@
 2010-06-04  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Gavin Barraclough.
+
+        Try to fix the windows build
+        https://bugs.webkit.org/show_bug.cgi?id=40189
+
+        Suppress the "unreachable code" warning because we want to assert that
+        we don't reach certain code points.
+
+        * html/HTML5Lexer.cpp:
+
+2010-06-04  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Make HTML5Lexer go fast
