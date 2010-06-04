@@ -1,5 +1,11 @@
 2010-06-03  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (Qt build fix).
+
+        * wtf/Platform.h:
+
+2010-06-03  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Mark Rowe.
 
         Bug 40150 - ENABLE_JIT_OPTIMIZE_NATIVE_CALL on all x86/x86_64 platforms
