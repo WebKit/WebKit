@@ -1,3 +1,13 @@
+2010-06-04  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Set attributes.stencil to false by default at context creation
+        https://bugs.webkit.org/show_bug.cgi?id=40090
+
+        * platform/graphics/GraphicsContext3D.h: Set default attributes.stencil to false.
+        (WebCore::GraphicsContext3D::Attributes::Attributes):
+
 2010-06-03  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Eric Carlson.

@@ -18,7 +18,7 @@ shouldBeNonNull("context = create3DContext()");
 shouldBeNonNull("attribs = context.getContextAttributes()");
 shouldBe("attribs.depth", "true");
 shouldBe("attribs.alpha", "true");
-shouldBe("attribs.stencil == true || attribs.stencil == false", "true");
+shouldBe("attribs.stencil", "false");
 // Antialias is requested by default, but might or might not be supported.
 shouldBe("attribs.antialias == true || attribs.antialias == false", "true");
 shouldBe("attribs.premultipliedAlpha", "true");
