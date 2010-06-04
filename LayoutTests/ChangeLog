@@ -1,3 +1,22 @@
+2010-06-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Make the editing/spelling/context-menu-suggestions.html test more robust
+        https://bugs.webkit.org/show_bug.cgi?id=40178
+
+        * editing/spelling/context-menu-suggestions-expected.txt: Added.
+        Add new expected test result.
+        
+        * editing/spelling/context-menu-suggestions.html:
+        Instead of dumping the menu item titles, check the length and check that the number of items is greater when
+        there are spell checker suggestions.
+
+        * platform/mac-leopard/editing/spelling/context-menu-suggestions-expected.txt: Removed.
+        * platform/mac-snowleopard/editing/spelling/context-menu-suggestions-expected.txt: Removed.
+        * platform/mac-tiger/editing/spelling/context-menu-suggestions-expected.txt: Removed.
+        Remove platform specific versions.
+
 2010-06-04  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

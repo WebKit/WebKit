@@ -1,3 +1,17 @@
+2010-06-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Make the editing/spelling/context-menu-suggestions.html test more robust
+        https://bugs.webkit.org/show_bug.cgi?id=40178
+
+        Change the contextClick method to return an array of strings describing the context menu items.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (+[EventSendingController isSelectorExcludedFromWebScript:]):
+        (+[EventSendingController webScriptNameForSelector:]):
+        (-[EventSendingController contextClick]):
+
 2010-06-03  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Shinichiro Hamaji.

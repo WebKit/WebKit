@@ -122,7 +122,7 @@ BOOL replayingSavedEvents;
 {
     if (aSelector == @selector(beginDragWithFiles:)
             || aSelector == @selector(clearKillRing)
-            || aSelector == @selector(contextClick:)
+            || aSelector == @selector(contextClick)
             || aSelector == @selector(enableDOMUIEventLogging:)
             || aSelector == @selector(fireKeyboardEventsToElement:)
             || aSelector == @selector(keyDown:withModifiers:withLocation:)
@@ -152,7 +152,7 @@ BOOL replayingSavedEvents;
 {
     if (aSelector == @selector(beginDragWithFiles:))
         return @"beginDragWithFiles";
-    if (aSelector == @selector(contextClick:))
+    if (aSelector == @selector(contextClick))
         return @"contextClick";
     if (aSelector == @selector(enableDOMUIEventLogging:))
         return @"enableDOMUIEventLogging";
@@ -494,7 +494,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     [self mouseScrollByX:x andY:y continuously:NO];
 }
 
-- (void)contextClick:(BOOL)shouldPrintMenuItems
+- (NSArray *)contextClick
 {
     [[[mainFrame frameView] documentView] layout];
     [self updateClickCountForButton:RightMouseButton];
@@ -510,21 +510,24 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
                                         pressure:0.0];
 
     NSView *subView = [[mainFrame webView] hitTest:[event locationInWindow]];
+    NSMutableArray *menuItemStrings = [NSMutableArray array];
+    
     if (subView) {
         NSMenu* menu = [subView menuForEvent:event];
-        if (shouldPrintMenuItems) {
-            printf("ContextMenuItems: ");
-            for (int i = 0; i < [menu numberOfItems]; ++i) {
-                NSMenuItem* menuItem = [menu itemAtIndex:i];
-                if (!strcmp("Inspect Element", [[menuItem title] UTF8String]))
-                    continue;
-                if (i > 0)
-                    printf(", ");
-                fputs([menuItem isSeparatorItem] ? "<separator>" : [[menuItem title] UTF8String], stdout);
-            }
-            printf("\n");
+
+        for (int i = 0; i < [menu numberOfItems]; ++i) {
+            NSMenuItem* menuItem = [menu itemAtIndex:i];
+            if (!strcmp("Inspect Element", [[menuItem title] UTF8String]))
+                continue;
+
+            if ([menuItem isSeparatorItem])
+                [menuItemStrings addObject:@"<separator>"];
+            else
+                [menuItemStrings addObject:[menuItem title]];
         }
     }
+    
+    return menuItemStrings;
 }
 
 - (void)scheduleAsynchronousClick

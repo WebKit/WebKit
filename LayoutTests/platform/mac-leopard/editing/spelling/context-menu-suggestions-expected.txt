@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 24: Spelling suggestings should NOT be here
-ContextMenuItems: Search in Spotlight, Search in Google, <separator>, Look Up in Dictionary, <separator>, Cut, Copy, Paste, <separator>, Spelling and Grammar, Font, Speech, Writing Direction
-CONSOLE MESSAGE: line 30: Spelling suggestings SHOULD be here
-ContextMenuItems: wow, <separator>, Ignore Spelling, Learn Spelling, <separator>, Search in Spotlight, Search in Google, <separator>, Look Up in Dictionary, <separator>, Cut, Copy, Paste, <separator>, Spelling and Grammar, Font, Speech, Writing Direction
-This test checks that spelling suggestions in the context menu are not show when spellcheck="false". To test manually, right click on the text in the input box.
-
-
