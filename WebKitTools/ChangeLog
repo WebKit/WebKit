@@ -1,3 +1,16 @@
+2010-06-04  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] QtTestLauncher should allow notifications by default.
+        https://bugs.webkit.org/show_bug.cgi?id=40078
+
+        * QtTestBrowser/main.cpp:
+        (NotificationsPermissionController::NotificationsPermissionController):
+        (NotificationsPermissionController::checkPermission):
+        (NotificationsPermissionController::requestPermission):
+        (LauncherWindow::LauncherWindow):
+
 2010-06-04  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.
