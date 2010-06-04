@@ -1,3 +1,14 @@
+2010-06-04  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Create resource for DebuggerScript.js.
+        https://bugs.webkit.org/show_bug.cgi?id=40122
+
+        * WebKit.grd:
+        * public/WebDevToolsAgentClient.h:
+        (WebKit::WebDevToolsAgentClient::debuggerScriptSource):
+
 2010-05-26  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Jian Li.
