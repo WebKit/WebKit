@@ -1,3 +1,20 @@
+2010-06-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Make HTML5Lexer go fast
+        https://bugs.webkit.org/show_bug.cgi?id=40048
+
+        Make all the state transitions in the machine explicit.  This allows us
+        to remove all the break statements, which won't work correctly after we
+        change the macro definitions.
+
+        Also, while I was looking at every line of code, I fixed a bunch of the
+        one-line-if style errors introduces in my previous patches.
+
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTML5Lexer::nextToken):
+
 2010-06-04  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
