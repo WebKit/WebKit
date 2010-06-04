@@ -466,6 +466,7 @@ WebInspector.loaded = function()
     };
 
     this.breakpointManager = new WebInspector.BreakpointManager();
+    this.cssModel = new WebInspector.CSSStyleModel();
 
     this.panels = {};
     this._createPanels();

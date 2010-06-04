@@ -1,3 +1,36 @@
+2010-06-04  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Eliminate direct dependency of StylesSidebarPane on InspectorBackend
+        https://bugs.webkit.org/show_bug.cgi?id=40069
+
+        No new tests are needed, as this is a refactoring.
+
+        * inspector/front-end/CSSStyleModel.js: Added.
+        (WebInspector.CSSStyleModel):
+        (WebInspector.CSSStyleModel.prototype.getStylesAsync):
+        (WebInspector.CSSStyleModel.prototype.getComputedStyleAsync):
+        (WebInspector.CSSStyleModel.prototype.setRuleSelector):
+        (WebInspector.CSSStyleModel.prototype.addRule):
+        (WebInspector.CSSStyleModel.prototype.toggleStyleEnabled):
+        (WebInspector.CSSStyleModel.prototype.setCSSText):
+        (WebInspector.CSSStyleModel.prototype.applyStyleText):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype.update.stylesCallback):
+        (WebInspector.StylesSidebarPane.prototype.update.computedStyleCallback):
+        (WebInspector.StylesSidebarPane.prototype.update):
+        (WebInspector.StylesSidebarPane.prototype._arrayContainsInheritedProperty):
+        (WebInspector.StylePropertiesSection.prototype.editingSelectorCommitted.successCallback):
+        (WebInspector.StylePropertiesSection.prototype.editingSelectorCommitted):
+        (WebInspector.BlankStylePropertiesSection.prototype.editingSelectorCommitted.successCallback):
+        (WebInspector.BlankStylePropertiesSection.prototype.editingSelectorCommitted):
+        (WebInspector.StylePropertyTreeElement.prototype.):
+        (WebInspector.StylePropertyTreeElement.prototype):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+
 2010-06-04  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
