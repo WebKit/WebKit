@@ -21,8 +21,8 @@
 #include "config.h"
 #include "FileChooser.h"
 
-#include "LocalizedStrings.h"
 #include "Font.h"
+#include "LocalizedStrings.h"
 #include <QCoreApplication>
 #include <QFontMetrics>
 
