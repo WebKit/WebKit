@@ -319,6 +319,10 @@ void Path::addArc(const FloatPoint& p, float r, float sar, float ear, bool antic
     // NOTE: QPainterPath::isEmpty() won't work here since it ignores a lone MoveToElement
     if (!m_path.elementCount())
         m_path.arcMoveTo(xs, ys, width, height, sa);
+    else if (!radius) {
+        m_path.lineTo(xc, yc);
+        return;
+    }
 
     m_path.arcTo(xs, ys, width, height, sa, span);
 
