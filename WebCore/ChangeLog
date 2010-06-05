@@ -2,6 +2,16 @@
 
         Reviewed by Eric Seidel.
 
+        [Qt] PlatformScreenQt.cpp has coding-style errors
+        https://bugs.webkit.org/show_bug.cgi?id=39768
+
+        * platform/qt/PlatformMouseEventQt.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+
+2010-06-05  Anders Bakken  <agbakken@gmail.com>
+
+        Reviewed by Eric Seidel.
+
         [Qt] RenderThemeQt.cpp has coding-style errors
         https://bugs.webkit.org/show_bug.cgi?id=39767
 

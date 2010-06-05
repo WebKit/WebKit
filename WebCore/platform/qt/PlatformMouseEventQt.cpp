@@ -28,10 +28,9 @@
 #include "config.h"
 #include "PlatformMouseEvent.h"
 
-#include <wtf/CurrentTime.h>
-
-#include <QMouseEvent>
 #include <QGraphicsSceneMouseEvent>
+#include <QMouseEvent>
+#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
@@ -65,10 +64,10 @@ PlatformMouseEvent::PlatformMouseEvent(QGraphicsSceneMouseEvent* event, int clic
         m_button = NoButton;
 
     m_clickCount = clickCount;
-    m_shiftKey =  (event->modifiers() & Qt::ShiftModifier) != 0;
-    m_ctrlKey = (event->modifiers() & Qt::ControlModifier) != 0;
-    m_altKey =  (event->modifiers() & Qt::AltModifier) != 0;
-    m_metaKey = (event->modifiers() & Qt::MetaModifier) != 0;
+    m_shiftKey =  (event->modifiers() & Qt::ShiftModifier);
+    m_ctrlKey = (event->modifiers() & Qt::ControlModifier);
+    m_altKey =  (event->modifiers() & Qt::AltModifier);
+    m_metaKey = (event->modifiers() & Qt::MetaModifier);
 }
 
 PlatformMouseEvent::PlatformMouseEvent(QInputEvent* event, int clickCount)
@@ -94,7 +93,7 @@ PlatformMouseEvent::PlatformMouseEvent(QInputEvent* event, int clickCount)
 #ifndef QT_NO_CONTEXTMENU
     case QEvent::ContextMenu: {
         m_eventType = MouseEventPressed;
-        QContextMenuEvent *ce = static_cast<QContextMenuEvent *>(event);
+        QContextMenuEvent* ce = static_cast<QContextMenuEvent*>(event);
         m_position = IntPoint(ce->pos());
         m_globalPosition = IntPoint(ce->globalPos());
         m_button = RightButton;
@@ -120,10 +119,10 @@ PlatformMouseEvent::PlatformMouseEvent(QInputEvent* event, int clickCount)
     }
 
     m_clickCount = clickCount;
-    m_shiftKey =  (event->modifiers() & Qt::ShiftModifier) != 0;
-    m_ctrlKey = (event->modifiers() & Qt::ControlModifier) != 0;
-    m_altKey =  (event->modifiers() & Qt::AltModifier) != 0;
-    m_metaKey = (event->modifiers() & Qt::MetaModifier) != 0;
+    m_shiftKey =  (event->modifiers() & Qt::ShiftModifier);
+    m_ctrlKey = (event->modifiers() & Qt::ControlModifier);
+    m_altKey =  (event->modifiers() & Qt::AltModifier);
+    m_metaKey = (event->modifiers() & Qt::MetaModifier);
 }
 
 }
