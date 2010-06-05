@@ -19,11 +19,11 @@
  */
 #include "config.h"
 #include "KURL.h"
-#include "TextEncoding.h"
-#include <wtf/text/CString.h>
 
 #include "NotImplemented.h"
+#include "TextEncoding.h"
 #include "qurl.h"
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
