@@ -179,6 +179,8 @@ RenderThemeGtk::~RenderThemeGtk()
     for (guint i = 0; i < g_list_length(values); i++)
         moz_gtk_destroy_theme_parts_widgets(
             static_cast<GtkThemeParts*>(g_list_nth_data(values, i)));
+
+    gtk_widget_destroy(m_gtkWindow);
 }
 
 GtkThemeParts* RenderThemeGtk::partsForDrawable(GdkDrawable* drawable) const

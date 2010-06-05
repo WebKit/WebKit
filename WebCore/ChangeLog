@@ -5,6 +5,21 @@
         [GTK] RenderThemeGtk leaks memory
         https://bugs.webkit.org/show_bug.cgi?id=40168
 
+        Call gtk_widget_destroy in the RenderThemeGtk destructor. This cleans
+        up all widget resources when a theme is destroyed.
+
+        No new tests, because functionality has not changed.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::~RenderThemeGtk): Call gtk_widget_destroy on m_gtkWindow.
+
+2010-06-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] RenderThemeGtk leaks memory
+        https://bugs.webkit.org/show_bug.cgi?id=40168
+
         Remove the use of releaseRef to assign a value to a RefPtr. This results in
         the original pointer taking an extra reference.
 
