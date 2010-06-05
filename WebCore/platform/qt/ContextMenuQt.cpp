@@ -21,19 +21,17 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
 #include "ContextMenu.h"
 
-#include <wtf/Assertions.h>
-
-#include <QAction>
-
 #include <Document.h>
 #include <Frame.h>
 #include <FrameView.h>
+#include <QAction>
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 
