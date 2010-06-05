@@ -1,3 +1,13 @@
+2010-06-04  Anders Bakken  <agbakken@gmail.com>
+
+        Reviewed by David Levin.
+
+        [Qt] Localizations.cpp has coding-style errors
+        https://bugs.webkit.org/show_bug.cgi?id=39773
+
+        * platform/qt/Localizations.cpp:
+        (WebCore::localizedMediaTimeDescription):
+
 2010-06-04  Lyon Chen  <liachen@rim.com>
 
         Reviewed by Darin Adler.

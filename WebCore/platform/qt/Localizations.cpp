@@ -27,15 +27,15 @@
  */
 
 #include "config.h"
+#include "LocalizedStrings.h"
 
 #include "IntSize.h"
-#include "LocalizedStrings.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
-#include <wtf/MathExtras.h>
-
 #include <QCoreApplication>
 #include <QLocale>
+#include <wtf/MathExtras.h>
+
 
 namespace WebCore {
 
@@ -350,7 +350,7 @@ String AXMenuListActionVerb()
 {
     return String();
 }
-    
+
 String missingPluginText()
 {
     return QCoreApplication::translate("QWebPage", "Missing Plug-in", "Label text to be used when a plug-in is missing");
@@ -477,21 +477,18 @@ String localizedMediaTimeDescription(float time)
     int minutes = (seconds / 60) % 60;
     seconds %= 60;
 
-    if (days) {
+    if (days)
         return QCoreApplication::translate("QWebPage", "%1 days %2 hours %3 minutes %4 seconds", "Media time description").arg(days).arg(hours).arg(minutes).arg(seconds);
-    }
 
-    if (hours) {
+    if (hours)
         return QCoreApplication::translate("QWebPage", "%1 hours %2 minutes %3 seconds", "Media time description").arg(hours).arg(minutes).arg(seconds);
-    }
 
-    if (minutes) {
+    if (minutes)
         return QCoreApplication::translate("QWebPage", "%1 minutes %2 seconds", "Media time description").arg(minutes).arg(seconds);
-    }
 
     return QCoreApplication::translate("QWebPage", "%1 seconds", "Media time description").arg(seconds);
 }
-#endif  // ENABLE(VIDEO)
+#endif // ENABLE(VIDEO)
 
 String validationMessageValueMissingText()
 {
