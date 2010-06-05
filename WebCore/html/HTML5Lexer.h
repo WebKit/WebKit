@@ -145,8 +145,6 @@ namespace WebCore {
         // functions help manage these state.
         inline void addToPossibleEndTag(UChar cc);
         inline bool isAppropriateEndTag();
-        inline void maybeFlushBufferedEndTag();
-        inline void flushBufferedEndTag();
 
         inline bool shouldEmitBufferedCharacterToken(const SegmentedString&);
 
@@ -160,7 +158,6 @@ namespace WebCore {
         int m_lineNumber;
 
         bool m_skipLeadingNewLineForListing;
-        bool m_emitPending;
 
         // http://www.whatwg.org/specs/web-apps/current-work/#temporary-buffer
         Vector<UChar, 32> m_temporaryBuffer;

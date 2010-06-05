@@ -156,7 +156,6 @@ void HTML5Lexer::reset()
     m_token = 0;
     m_lineNumber = 0;
     m_skipLeadingNewLineForListing = false;
-    m_emitPending = false;
     m_additionalAllowedCharacter = '\0';
 }
 
@@ -324,37 +323,61 @@ inline bool HTML5Lexer::processEntity(SegmentedString& source)
 #pragma warning(disable: 4702)
 #endif
 
-#define BEGIN_STATE(stateName) case stateName:
+#define BEGIN_STATE(stateName) case stateName: stateName:
 #define END_STATE() ASSERT_NOT_REACHED(); break;
 
-#define EMIT_AND_RESUME_IN(stateName)                                       \
-    do {                                                                    \
-        emitCurrentToken();                                                 \
-        m_state = DataState;                                                \
-        goto breakLabel;                                                    \
+#define RECONSUME_IN(stateName)                                            \
+    do {                                                                   \
+        m_state = stateName;                                               \
+        cc = *source;                                                      \
+        goto stateName;                                                    \
     } while (false)
 
-#define ADVANCE_TO(stateName)                                               \
-    do {                                                                    \
-        m_state = stateName;                                                \
-        goto breakLabel;                                                    \
+#define ADVANCE_TO(stateName)                                              \
+    do {                                                                   \
+        m_state = stateName;                                               \
+        source.advance(m_lineNumber);                                      \
+        if (source.isEmpty())                                              \
+            return shouldEmitBufferedCharacterToken(source);               \
+        cc = *source;                                                      \
+        goto stateName;                                                    \
     } while (false)
 
-#define RECONSUME_IN(stateName)                                             \
-    do {                                                                    \
-        m_state = stateName;                                                \
-        goto continueLabel;                                                 \
+#define EMIT_AND_RESUME_IN(stateName)                                      \
+    do {                                                                   \
+        m_state = stateName;                                               \
+        source.advance(m_lineNumber);                                      \
+        emitCurrentToken();                                                \
+        return true;                                                       \
     } while (false)
 
-#define FLUSH_EMIT_AND_RESUME_IN(stateName)                                 \
-    do {                                                                    \
-        m_state = stateName;                                                \
-        maybeFlushBufferedEndTag();                                         \
-        goto breakLabel;                                                    \
+#define _FLUSH_BUFFERED_END_TAG()                                          \
+    do {                                                                   \
+        ASSERT(m_token->type() == HTML5Token::Character ||                 \
+               m_token->type() == HTML5Token::Uninitialized);              \
+        source.advance(m_lineNumber);                                      \
+        if (m_token->type() == HTML5Token::Character)                      \
+            return true;                                                   \
+        m_token->beginEndTag(m_bufferedEndTagName);                        \
+        m_bufferedEndTagName.clear();                                      \
     } while (false)
 
-// When we move away from using a jump table, these macros will be different.
-#define FLUSH_AND_ADVANCE_TO(stateName) FLUSH_EMIT_AND_RESUME_IN(stateName)
+#define FLUSH_AND_ADVANCE_TO(stateName)                                    \
+    do {                                                                   \
+        m_state = stateName;                                               \
+        _FLUSH_BUFFERED_END_TAG();                                         \
+        if (source.isEmpty())                                              \
+            return shouldEmitBufferedCharacterToken(source);               \
+        cc = *source;                                                      \
+        goto stateName;                                                    \
+    } while (false)
+
+#define FLUSH_EMIT_AND_RESUME_IN(stateName)                                \
+    do {                                                                   \
+        m_state = stateName;                                               \
+        _FLUSH_BUFFERED_END_TAG();                                         \
+        return true;                                                       \
+    } while (false)
 
 bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
 {
@@ -379,12 +402,10 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
         source.advanceAndASSERT('\x0A');
     m_skipLeadingNewLineForListing = false;
 
-    // Source: http://www.whatwg.org/specs/web-apps/current-work/#tokenisation0
-    // FIXME: This while should stop as soon as we have a token to return.
-    while (!source.isEmpty()) {
-    // FIXME: This is a purposeful style violation because this while loop is
-    // going to be removed soon.
+    if (source.isEmpty())
+        return shouldEmitBufferedCharacterToken(source);
 
+    // Source: http://www.whatwg.org/specs/web-apps/current-work/#tokenisation0
     UChar cc = *source;
     switch (m_state) {
     BEGIN_STATE(DataState) {
@@ -1117,19 +1138,19 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
     END_STATE()
 
     BEGIN_STATE(BogusCommentState) {
+        // FIXME: This state isn't correct because we'll terminate the
+        // comment early if we don't have the whole input stream available.
         m_token->beginComment();
         while (!source.isEmpty()) {
             cc = *source;
             if (cc == '>')
-                break;
+                EMIT_AND_RESUME_IN(DataState);
             m_token->appendToComment(cc);
             source.advance(m_lineNumber);
         }
-        EMIT_AND_RESUME_IN(DataState);
-        if (source.isEmpty())
-            return true;
+        m_state = DataState;
+        return true;
         // FIXME: Handle EOF properly.
-        break;
     }
     END_STATE()
 
@@ -1576,20 +1597,8 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
 
     }
 
-breakLabel:
-    source.advance(m_lineNumber);
-    if (m_emitPending) {
-        m_emitPending = false;
-        return true;
-    }
-
-continueLabel:
-    ; // We need an empty statement here to make continueLabel happy.
-    } // Matches the "while" above.
-
-    // We've reached the end of the input stream.  If we have a character
-    // token buffered, we should emit it.
-    return shouldEmitBufferedCharacterToken(source);
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 inline bool HTML5Lexer::temporaryBufferIs(const String& expectedString)
@@ -1632,30 +1641,9 @@ inline void HTML5Lexer::emitParseError()
     notImplemented();
 }
 
-inline void HTML5Lexer::maybeFlushBufferedEndTag()
-{
-    ASSERT(m_token->type() == HTML5Token::Character || m_token->type() == HTML5Token::Uninitialized);
-    if (m_token->type() == HTML5Token::Character) {
-        // We have a character token queued up.  We need to emit it before we
-        // can start begin the buffered end tag token.
-        emitCurrentToken();
-        return;
-    }
-    flushBufferedEndTag();
-}
-
-inline void HTML5Lexer::flushBufferedEndTag()
-{
-    m_token->beginEndTag(m_bufferedEndTagName);
-    m_bufferedEndTagName.clear();
-    if (m_state == DataState)
-        emitCurrentToken();
-}
-
 inline void HTML5Lexer::emitCurrentToken()
 {
     ASSERT(m_token->type() != HTML5Token::Uninitialized);
-    m_emitPending = true;
     if (m_token->type() == HTML5Token::StartTag)
         m_appropriateEndTagName = m_token->name();
 }
