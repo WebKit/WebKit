@@ -1265,10 +1265,8 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageEleme
     if (ec)
         return 0;
 
-    if (!image->complete()) {
-        ec = INVALID_STATE_ERR;
+    if (!image->complete())
         return 0;
-    }
 
     CachedImage* cachedImage = image->cachedImage();
     if (!cachedImage || !image->cachedImage()->image())

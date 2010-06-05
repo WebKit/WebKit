@@ -1,3 +1,4 @@
+Tests that incomplete (not fully loaded/decoded) images cannot be used to create a CanvasPattern.<br/><br/>
 <script>
 if (window.layoutTestController)
     layoutTestController.dumpAsText();
@@ -10,12 +11,16 @@ img.src = 'resources/image-slow.pl';
 var ptrn
 try {
     ptrn = ctx.createPattern(img, 'repeat');
-    document.write("FAIL");
+    if (!img.complete)
+        document.write("PASS - image is not complete");
+    else
+        document.write("FAIL - image is complete");
+    document.write("<br/>");
+    if (!ptrn)
+        document.write("PASS - createPattern() failed for incomplete image");
+    else
+        document.write("FAIL - createPattern() succeeded for incomplete image");
 } catch (e) {
-    if (e.code == DOMException.INVALID_STATE_ERR) {
-        document.write("PASS");
-    } else {
-        document.write("FAIL " + e);
-    }
+    document.write("FAIL - caught exception: " + e);
 }
 </script>
