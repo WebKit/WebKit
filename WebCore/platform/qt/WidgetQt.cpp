@@ -37,19 +37,18 @@
 #include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "IntRect.h"
-#include "ScrollView.h"
 #include "NotImplemented.h"
 #include "QWebPageClient.h"
+#include "ScrollView.h"
 
 #include "qwebframe.h"
 #include "qwebframe_p.h"
 #include "qwebpage.h"
 
 #include <QCoreApplication>
-#include <QPainter>
-#include <QPaintEngine>
-
 #include <QDebug>
+#include <QPaintEngine>
+#include <QPainter>
 
 namespace WebCore {
 
