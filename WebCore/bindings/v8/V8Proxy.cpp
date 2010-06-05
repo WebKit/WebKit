@@ -31,7 +31,6 @@
 #include "config.h"
 #include "V8Proxy.h"
 
-#include "CachedMetadata.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "DateExtension.h"
 #include "DocumentLoader.h"
@@ -71,7 +70,6 @@
 #include <v8.h>
 #include <wtf/Assertions.h>
 #include <wtf/OwnArrayPtr.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/UnusedParam.h>
@@ -235,13 +233,13 @@ V8Proxy::~V8Proxy()
     windowShell()->destroyGlobal();
 }
 
-v8::Handle<v8::Script> V8Proxy::compileScript(v8::Handle<v8::String> code, const String& fileName, int baseLine, v8::ScriptData* scriptData)
+v8::Handle<v8::Script> V8Proxy::compileScript(v8::Handle<v8::String> code, const String& fileName, int baseLine)
 {
     const uint16_t* fileNameString = fromWebCoreString(fileName);
     v8::Handle<v8::String> name = v8::String::New(fileNameString, fileName.length());
     v8::Handle<v8::Integer> line = v8::Integer::New(baseLine);
     v8::ScriptOrigin origin(name, line);
-    v8::Handle<v8::Script> script = v8::Script::Compile(code, &origin, scriptData);
+    v8::Handle<v8::Script> script = v8::Script::Compile(code, &origin);
     return script;
 }
 
@@ -340,33 +338,6 @@ bool V8Proxy::setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetCont
     return true;
 }
 
-PassOwnPtr<v8::ScriptData> V8Proxy::precompileScript(const ScriptSourceCode& source)
-{
-    // A pseudo-randomly chosen ID used to store and retrieve V8 ScriptData from
-    // the CachedScript. If the format changes, this ID should be changed too.
-    static const unsigned dataTypeID = 0xECC13BD7;
-
-    // Very small scripts are not worth the effort to preparse.
-    static const unsigned minPreparseLength = 1024;
-
-    CachedScript* cachedScript = source.cachedScript();
-    if (!cachedScript)
-        return 0;
-
-    CachedMetadata* cachedMetadata = cachedScript->cachedMetadata(dataTypeID);
-    if (cachedMetadata)
-        return v8::ScriptData::New(cachedMetadata->data(), cachedMetadata->size());
-
-    const CString& utf8Source = source.source().utf8();
-    if (utf8Source.length() < minPreparseLength)
-        return 0;
-
-    v8::ScriptData* scriptData = v8::ScriptData::PreCompile(utf8Source.data(), utf8Source.length());
-    cachedScript->setCachedMetadata(dataTypeID, scriptData->Data(), scriptData->Length());
-
-    return scriptData;
-}
-
 v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* node)
 {
     ASSERT(v8::Context::InContext());
@@ -392,11 +363,10 @@ v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* nod
 #if PLATFORM(CHROMIUM)
         PlatformBridge::traceEventBegin("v8.compile", node, "");
 #endif
-        OwnPtr<v8::ScriptData> scriptData = precompileScript(source);
 
         // NOTE: For compatibility with WebCore, ScriptSourceCode's line starts at
         // 1, whereas v8 starts at 0.
-        v8::Handle<v8::Script> script = compileScript(code, source.url(), source.startLine() - 1, scriptData.get());
+        v8::Handle<v8::Script> script = compileScript(code, source.url(), source.startLine() - 1);
 #if PLATFORM(CHROMIUM)
         PlatformBridge::traceEventEnd("v8.compile", node, "");
 
