@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        [Qt] ScrollbarThemeQt.cpp has coding-style errors
+        https://bugs.webkit.org/show_bug.cgi?id=39764
+
+        * platform/qt/ScrollbarThemeQt.cpp:
+        (WebCore::scPart):
+        (WebCore::scrollbarPart):
+        (WebCore::styleOptionSlider):
+
+2010-06-04  Anders Bakken  <agbakken@gmail.com>
+
+        Reviewed by Eric Seidel.
+
         [Qt] SharedTimerQt.cpp has coding-style errors
         https://bugs.webkit.org/show_bug.cgi?id=39763
 
