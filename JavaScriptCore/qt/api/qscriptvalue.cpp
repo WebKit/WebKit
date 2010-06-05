@@ -585,3 +585,17 @@ bool QScriptValue::strictlyEquals(const QScriptValue& other) const
 {
     return d_ptr->strictlyEquals(QScriptValuePrivate::get(other));
 }
+
+/*!
+    Returns true if this QScriptValue is an instance of
+    \a other; otherwise returns false.
+
+    This QScriptValue is considered to be an instance of \a other if
+    \a other is a function and the value of the \c{prototype}
+    property of \a other is in the prototype chain of this
+    QScriptValue.
+*/
+bool QScriptValue::instanceOf(const QScriptValue& other) const
+{
+    return d_ptr->instanceOf(QScriptValuePrivate::get(other));
+}

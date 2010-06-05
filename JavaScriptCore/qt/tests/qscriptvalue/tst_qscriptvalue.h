@@ -109,6 +109,9 @@ private slots:
     void strictlyEquals_data();
     void strictlyEquals();
 
+    void instanceOf_data();
+    void instanceOf();
+
 private:
     typedef void (tst_QScriptValue::*InitDataFunction)();
     typedef void (tst_QScriptValue::*DefineDataFunction)(const char*);
@@ -197,6 +200,10 @@ private:
     void strictlyEquals_initData();
     void strictlyEquals_makeData(const char*);
     void strictlyEquals_test(const char*, const QScriptValue&);
+
+    void instanceOf_initData();
+    void instanceOf_makeData(const char*);
+    void instanceOf_test(const char*, const QScriptValue&);
 
 private:
     QScriptEngine* engine;

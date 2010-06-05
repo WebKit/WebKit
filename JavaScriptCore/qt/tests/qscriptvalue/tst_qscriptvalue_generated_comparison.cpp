@@ -1677,3 +1677,66 @@ void tst_QScriptValue::strictlyEquals_test(const char*, const QScriptValue& valu
 }
 
 DEFINE_TEST_FUNCTION(strictlyEquals)
+
+
+void tst_QScriptValue::instanceOf_initData()
+{
+    QTest::addColumn<QScriptValue>("other");
+    QTest::addColumn<bool>("expected");
+    initScriptValues();
+}
+
+static QString instanceOf_array[] = {
+    "engine->evaluate(\"[]\") <=> engine->evaluate(\"Object\")",
+    "engine->evaluate(\"[]\") <=> engine->evaluate(\"Array\")",
+    "engine->evaluate(\"Date.prototype\") <=> engine->evaluate(\"Object\")",
+    "engine->evaluate(\"Array.prototype\") <=> engine->evaluate(\"Object\")",
+    "engine->evaluate(\"Function.prototype\") <=> engine->evaluate(\"Object\")",
+    "engine->evaluate(\"Error.prototype\") <=> engine->evaluate(\"Object\")",
+    "engine->evaluate(\"Object\") <=> engine->evaluate(\"Object\")",
+    "engine->evaluate(\"Object\") <=> engine->evaluate(\"Function\")",
+    "engine->evaluate(\"Array\") <=> engine->evaluate(\"Object\")",
+    "engine->evaluate(\"Array\") <=> engine->evaluate(\"Function\")",
+    "engine->evaluate(\"Number\") <=> engine->evaluate(\"Object\")",
+    "engine->evaluate(\"Number\") <=> engine->evaluate(\"Function\")",
+    "engine->evaluate(\"Function\") <=> engine->evaluate(\"Object\")",
+    "engine->evaluate(\"Function\") <=> engine->evaluate(\"Function\")",
+    "engine->evaluate(\"(function() { return 1; })\") <=> engine->evaluate(\"Object\")",
+    "engine->evaluate(\"(function() { return 1; })\") <=> engine->evaluate(\"Function\")",
+    "engine->evaluate(\"(function() { return 'ciao'; })\") <=> engine->evaluate(\"Object\")",
+    "engine->evaluate(\"(function() { return 'ciao'; })\") <=> engine->evaluate(\"Function\")",
+    "engine->evaluate(\"(function() { throw new Error('foo' })\") <=> engine->evaluate(\"Object\")",
+    "engine->evaluate(\"/foo/\") <=> engine->evaluate(\"Object\")",
+    "engine->evaluate(\"new Object()\") <=> engine->evaluate(\"Object\")",
+    "engine->evaluate(\"new Array()\") <=> engine->evaluate(\"Object\")",
+    "engine->evaluate(\"new Array()\") <=> engine->evaluate(\"Array\")",
+    "engine->evaluate(\"new Error()\") <=> engine->evaluate(\"Object\")",
+    "engine->evaluate(\"a = new Object( a.foo = 22; a.foo\") <=> engine->evaluate(\"Object\")",
+    "engine->evaluate(\"Undefined\") <=> engine->evaluate(\"Object\")",
+    "engine->evaluate(\"Null\") <=> engine->evaluate(\"Object\")",
+    "engine->evaluate(\"True\") <=> engine->evaluate(\"Object\")",
+    "engine->evaluate(\"False\") <=> engine->evaluate(\"Object\")"};
+
+void tst_QScriptValue::instanceOf_makeData(const char *expr)
+{
+    static QSet<QString> equals;
+    if (equals.isEmpty()) {
+        equals.reserve(29);
+        for (unsigned i = 0; i < 29; ++i)
+            equals.insert(instanceOf_array[i]);
+    }
+    QHash<QString, QScriptValue>::const_iterator it;
+    for (it = m_values.constBegin(); it != m_values.constEnd(); ++it) {
+        QString tag = QString::fromLatin1("%20 <=> %21").arg(expr).arg(it.key());
+        newRow(tag.toLatin1()) << it.value() << equals.contains(tag);
+    }
+}
+
+void tst_QScriptValue::instanceOf_test(const char *, const QScriptValue& value)
+{
+    QFETCH(QScriptValue, other);
+    QFETCH(bool, expected);
+    QCOMPARE(value.instanceOf(other), expected);
+}
+
+DEFINE_TEST_FUNCTION(instanceOf)
