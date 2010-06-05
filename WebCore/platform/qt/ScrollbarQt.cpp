@@ -29,8 +29,8 @@
 #include "Scrollbar.h"
 
 #include "EventHandler.h"
-#include "FrameView.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "PlatformMouseEvent.h"
@@ -38,9 +38,9 @@
 
 #include <QApplication>
 #include <QDebug>
+#include <QMenu>
 #include <QPainter>
 #include <QStyle>
-#include <QMenu>
 
 using namespace std;
 

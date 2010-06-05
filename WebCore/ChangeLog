@@ -1,3 +1,12 @@
+2010-06-05  Anders Bakken  <agbakken@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] ScrollbarQt.cpp has coding-style errors
+        https://bugs.webkit.org/show_bug.cgi?id=39765
+
+        * platform/qt/ScrollbarQt.cpp:
+
 2010-06-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
