@@ -697,7 +697,7 @@ public:
         /* [in] */ RECT rect,
         /* [in] */ OLE_HANDLE dc);
 
-    virtual HRESULT STDMETHODCALLTYPE paintDocumentRectToContextAtPoint(
+    virtual HRESULT STDMETHODCALLTYPE paintScrollViewRectToContextAtPoint(
         /* [in] */ RECT rect,
         /* [in] */ POINT pt,
         /* [in] */ OLE_HANDLE dc);

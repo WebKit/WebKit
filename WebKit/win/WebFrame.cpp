@@ -359,7 +359,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::paintDocumentRectToContext(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebFrame::paintDocumentRectToContextAtPoint(
+HRESULT STDMETHODCALLTYPE WebFrame::paintScrollViewRectToContextAtPoint(
     /* [in] */ RECT rect,
     /* [in] */ POINT pt,
     /* [in] */ OLE_HANDLE deviceContext)
@@ -380,9 +380,8 @@ HRESULT STDMETHODCALLTYPE WebFrame::paintDocumentRectToContextAtPoint(
     gc.setShouldIncludeChildWindows(true);
     gc.save();
     IntRect dirtyRect(rect);
-    gc.translate(-pt.x, -pt.y);
-    gc.clip(dirtyRect);
-    view->paintContents(&gc, rect);
+    dirtyRect.move(-pt.x, -pt.y);
+    view->paint(&gc, dirtyRect);
     gc.restore();
 
     return S_OK;

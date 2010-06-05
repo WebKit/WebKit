@@ -234,7 +234,7 @@ interface IWebViewPrivate : IUnknown
 
     HRESULT nextDisplayIsSynchronous();
 
-    HRESULT paintDocumentRectToContextAtPoint([in] RECT rect, [in] POINT pt, [in] OLE_HANDLE dc);
+    HRESULT paintScrollViewRectToContextAtPoint([in] RECT rect, [in] POINT pt, [in] OLE_HANDLE dc);
 
     [local] HRESULT reportException([in] JSContextRef context, [in] JSValueRef exception);
 }

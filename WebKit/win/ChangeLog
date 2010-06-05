@@ -1,3 +1,25 @@
+2010-06-04  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        WebFrame::paintDocumentRectToContextAtPoint doesn't paint scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=40034
+        <rdar://problem/7799848>
+
+        * WebFrame.cpp:
+        (WebFrame::paintScrollViewRectToContextAtPoint): Renamed from paintDocumentRectToContextAtPoint. 
+        Call paint() instead of paintContents(). Also move the dirtyRect to counteract the moving that happens in paint().
+
+        Just renaming changes:
+        * Interfaces/IWebFramePrivate.idl:
+        * Interfaces/IWebViewPrivate.idl:
+        * WebFrame.h:
+        * WebView.cpp:
+        (WebView::paintScrollViewRectToContextAtPoint):
+        * WebView.h:
+
+        * Interfaces/WebKit.idl: Touched for rebuild.
+
 2010-05-30  Daniel Bates  <dbates@rim.com>
 
         Unreviewed, attempt to fix the build after http://trac.webkit.org/changeset/60418.

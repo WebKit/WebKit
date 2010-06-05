@@ -111,5 +111,5 @@ interface IWebFramePrivate : IUnknown
 
     HRESULT layerTreeAsText([out, retval] BSTR* result);
 
-    HRESULT paintDocumentRectToContextAtPoint([in] RECT rect, [in] POINT pt, [in] OLE_HANDLE deviceContext);
+    HRESULT paintScrollViewRectToContextAtPoint([in] RECT rect, [in] POINT pt, [in] OLE_HANDLE deviceContext);
 }
