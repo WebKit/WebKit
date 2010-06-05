@@ -19,8 +19,8 @@
 
 #include "config.h"
 #include "Logging.h"
-#include "PlatformString.h"
 
+#include "PlatformString.h"
 #include <QDebug>
 #include <QStringList>
 
