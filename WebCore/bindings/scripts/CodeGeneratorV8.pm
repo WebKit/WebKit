@@ -2236,6 +2236,7 @@ sub GenerateCallbackImplementation
     $implIncludes{"ScriptExecutionContext.h"} = 1;
     $implIncludes{"V8CustomVoidCallback.h"} = 1;
 
+    push(@implContent, "#include <wtf/Assertions.h>\n\n");
     push(@implContent, "namespace WebCore {\n\n");
     push(@implContent, <<END);
 ${className}::${className}(v8::Local<v8::Object> callback)
@@ -2277,15 +2278,20 @@ END
             push(@implContent, "    if (v8Context.IsEmpty())\n");
             push(@implContent, "        return true;\n\n");
             push(@implContent, "    v8::Context::Scope scope(v8Context);\n\n");
-            push(@implContent, "    v8::Handle<v8::Value> argv[] = {\n");
 
             my @argvs = ();
             foreach my $param (@params) {
                 my $paramName = $param->name;
-                push(@argvs, "        toV8(${paramName})");
+                push(@implContent, "    v8::Handle<v8::Value> ${paramName}Handle = toV8(${paramName});\n");
+                push(@implContent, "    if (${paramName}Handle.IsEmpty()) {\n");
+                push(@implContent, "        CRASH();\n");
+                push(@implContent, "        return true;\n");
+                push(@implContent, "    }\n");
+                push(@argvs, "        ${paramName}Handle");
             }
-            push(@implContent, join(",\n", @argvs));
 
+            push(@implContent, "\n    v8::Handle<v8::Value> argv[] = {\n");
+            push(@implContent, join(",\n", @argvs));
             push(@implContent, "\n    };\n\n");
             push(@implContent, "    bool callbackReturnValue = false;\n");
             push(@implContent, "    return !invokeCallback(m_callback, " . scalar(@params) . ", argv, callbackReturnValue, context);\n");

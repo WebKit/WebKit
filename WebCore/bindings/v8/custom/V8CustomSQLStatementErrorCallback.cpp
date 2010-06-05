@@ -39,6 +39,7 @@
 #include "V8Proxy.h"
 #include "V8SQLError.h"
 #include "V8SQLTransaction.h"
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 
@@ -52,9 +53,16 @@ bool V8SQLStatementErrorCallback::handleEvent(ScriptExecutionContext* context, S
 
     v8::Context::Scope scope(v8Context);
 
+    v8::Handle<v8::Value> transactionHandle = toV8(transaction);
+    v8::Handle<v8::Value> errorHandle = toV8(error);
+    if (transactionHandle.IsEmpty() || errorHandle.isEmpty()) {
+        CRASH();
+        return true;
+    }
+
     v8::Handle<v8::Value> argv[] = {
-        toV8(transaction),
-        toV8(error)
+        transactionHandle,
+        errorHandle
     };
 
     // Protect the context until the callback returns.
