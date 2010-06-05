@@ -699,13 +699,17 @@ namespace WTF {
         return *this;
     }
 
+    inline bool typelessPointersAreEqual(const void* a, const void* b) { return a == b; }
+
     template<typename T, size_t inlineCapacity>
     template<size_t otherCapacity> 
     Vector<T, inlineCapacity>& Vector<T, inlineCapacity>::operator=(const Vector<T, otherCapacity>& other)
     {
-        if (&other == this)
-            return *this;
-        
+        // If the inline capacities match, we should call the more specific
+        // template.  If the inline capacities don't match, the two objects
+        // shouldn't be allocated the same address.
+        ASSERT(!typelessPointersAreEqual(&other, this));
+
         if (size() > other.size())
             shrink(other.size());
         else if (other.size() > capacity()) {

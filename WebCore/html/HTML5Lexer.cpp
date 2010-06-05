@@ -1605,7 +1605,7 @@ inline void HTML5Lexer::addToPossibleEndTag(UChar cc)
 
 inline bool HTML5Lexer::isAppropriateEndTag()
 {
-    return vectorEqualsString(m_bufferedEndTagName, m_appropriateEndTagName);
+    return m_bufferedEndTagName == m_appropriateEndTagName;
 }
 
 inline void HTML5Lexer::emitCharacter(UChar character)

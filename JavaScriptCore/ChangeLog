@@ -1,3 +1,16 @@
+2010-06-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        HTML5 parser should be within 1% of old parser performance
+        https://bugs.webkit.org/show_bug.cgi?id=40172
+
+        Fix cast in this operator= to allow for assignment between vectors with
+        different inline capacities (as clearly intended by its author).
+
+        * wtf/Vector.h:
+        (WTF::::operator):
+
 2010-06-04  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

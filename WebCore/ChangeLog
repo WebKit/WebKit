@@ -1,3 +1,31 @@
+2010-06-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        HTML5 parser should be within 1% of old parser performance
+        https://bugs.webkit.org/show_bug.cgi?id=40172
+
+        Stop using adopt().  I think this function is cause us to do extra
+        mallocs that are hurting performance.  Instead of caching AtomicString
+        on HTML5Token, just use the AtomicString on the old token.  Also,
+        reserve inline capacity for 10 attributes.
+
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTML5Lexer::isAppropriateEndTag):
+        * html/HTML5Lexer.h:
+        * html/HTML5Token.h:
+        (WebCore::HTML5Token::beginStartTag):
+        (WebCore::HTML5Token::beginEndTag):
+        (WebCore::HTML5Token::beginCharacter):
+        (WebCore::HTML5Token::beginComment):
+        (WebCore::HTML5Token::beginDOCTYPE):
+        (WebCore::HTML5Token::name):
+        (WebCore::HTML5Token::characters):
+        (WebCore::HTML5Token::comment):
+        * html/HTML5TreeBuilder.cpp:
+        (WebCore::convertToOldStyle):
+        (WebCore::HTML5TreeBuilder::passTokenToLegacyParser):
+
 2010-06-04  Anders Bakken  <agbakken@gmail.com>
 
         Reviewed by Eric Seidel.

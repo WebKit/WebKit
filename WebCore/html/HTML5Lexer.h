@@ -152,7 +152,7 @@ namespace WebCore {
 
         State m_state;
 
-        AtomicString m_appropriateEndTagName;
+        Vector<UChar, 32> m_appropriateEndTagName;
 
         // m_token is owned by the caller.  If nextToken is not on the stack,
         // this member might be pointing to unallocated memory.
