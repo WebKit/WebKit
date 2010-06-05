@@ -370,8 +370,8 @@ void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
     GraphicsContext* context = paintInfo.context;
 
     // Determine whether or not we have composition underlines to draw.
-    bool containsComposition = renderer()->node() && renderer()->document()->frame()->editor()->compositionNode() == renderer()->node();
-    bool useCustomUnderlines = containsComposition && renderer()->document()->frame()->editor()->compositionUsesCustomUnderlines();
+    bool containsComposition = renderer()->node() && renderer()->frame()->editor()->compositionNode() == renderer()->node();
+    bool useCustomUnderlines = containsComposition && renderer()->frame()->editor()->compositionUsesCustomUnderlines();
 
     // Set our font.
     RenderStyle* styleToUse = renderer()->style(m_firstLine);
@@ -389,8 +389,8 @@ void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
 
         if (containsComposition && !useCustomUnderlines)
             paintCompositionBackground(context, tx, ty, styleToUse, font,
-                renderer()->document()->frame()->editor()->compositionStart(),
-                renderer()->document()->frame()->editor()->compositionEnd());
+                renderer()->frame()->editor()->compositionStart(),
+                renderer()->frame()->editor()->compositionEnd());
 
         paintDocumentMarkers(context, tx, ty, styleToUse, font, true);
 
@@ -519,7 +519,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
         paintDocumentMarkers(context, tx, ty, styleToUse, font, false);
 
         if (useCustomUnderlines) {
-            const Vector<CompositionUnderline>& underlines = renderer()->document()->frame()->editor()->customCompositionUnderlines();
+            const Vector<CompositionUnderline>& underlines = renderer()->frame()->editor()->customCompositionUnderlines();
             size_t numUnderlines = underlines.size();
 
             for (size_t index = 0; index < numUnderlines; ++index) {
@@ -622,7 +622,7 @@ void InlineTextBox::paintCompositionBackground(GraphicsContext* context, int tx,
 
 void InlineTextBox::paintCustomHighlight(int tx, int ty, const AtomicString& type)
 {
-    Frame* frame = renderer()->document()->frame();
+    Frame* frame = renderer()->frame();
     if (!frame)
         return;
     Page* page = frame->page();
@@ -806,7 +806,7 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, int tx, int ty, co
     renderer()->document()->setRenderedRectForMarker(renderer()->node(), marker, markerRect);
      
     // Optionally highlight the text
-    if (renderer()->document()->frame()->markedTextMatchesAreHighlighted()) {
+    if (renderer()->frame()->markedTextMatchesAreHighlighted()) {
         Color color = marker.activeMatch ?
             renderer()->theme()->platformActiveTextSearchHighlightColor() :
             renderer()->theme()->platformInactiveTextSearchHighlightColor();

@@ -649,7 +649,7 @@ bool AccessibilityRenderObject::isOffScreen() const
 {
     ASSERT(m_renderer);
     IntRect contentRect = m_renderer->absoluteClippedOverflowRect();
-    FrameView* view = m_renderer->document()->frame()->view();
+    FrameView* view = m_renderer->frame()->view();
     FloatRect viewRect = view->visibleContentRect();
     viewRect.intersect(contentRect);
     return viewRect.isEmpty();
@@ -1130,7 +1130,7 @@ String AccessibilityRenderObject::stringValue() const
         return toRenderButton(m_renderer)->text();
 
     if (isWebArea()) {
-        if (m_renderer->document()->frame())
+        if (m_renderer->frame())
             return String();
         
         // FIXME: should use startOfDocument and endOfDocument (or rangeForDocument?) here
@@ -1972,7 +1972,7 @@ const AtomicString& AccessibilityRenderObject::accessKey() const
 
 VisibleSelection AccessibilityRenderObject::selection() const
 {
-    return m_renderer->document()->frame()->selection()->selection();
+    return m_renderer->frame()->selection()->selection();
 }
 
 PlainTextRange AccessibilityRenderObject::selectedTextRange() const
@@ -2525,10 +2525,10 @@ void AccessibilityRenderObject::setSelectedVisiblePositionRange(const VisiblePos
     
     // make selection and tell the document to use it. if it's zero length, then move to that position
     if (range.start == range.end)
-        m_renderer->document()->frame()->selection()->moveTo(range.start, true);
+        m_renderer->frame()->selection()->moveTo(range.start, true);
     else {
         VisibleSelection newSelection = VisibleSelection(range.start, range.end);
-        m_renderer->document()->frame()->selection()->setSelection(newSelection);
+        m_renderer->frame()->selection()->setSelection(newSelection);
     }    
 }
 

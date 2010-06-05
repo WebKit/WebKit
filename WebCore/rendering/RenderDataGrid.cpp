@@ -182,7 +182,7 @@ void RenderDataGrid::invalidateScrollbarRect(Scrollbar*, const IntRect&)
 
 bool RenderDataGrid::isActive() const
 {
-    Page* page = document()->frame()->page();
+    Page* page = frame()->page();
     return page && page->focusController()->isActive();
 }
 

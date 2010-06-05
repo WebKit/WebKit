@@ -836,7 +836,7 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
 
 void RenderBox::paintCustomHighlight(int tx, int ty, const AtomicString& type, bool behindText)
 {
-    Frame* frame = document()->frame();
+    Frame* frame = this->frame();
     if (!frame)
         return;
     Page* page = frame->page();

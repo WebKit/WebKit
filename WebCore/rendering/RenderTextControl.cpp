@@ -169,7 +169,7 @@ void RenderTextControl::setInnerTextValue(const String& innerTextValue)
     String value = innerTextValue;
     if (value != text() || !m_innerText->hasChildNodes()) {
         if (value != text()) {
-            if (Frame* frame = document()->frame()) {
+            if (Frame* frame = this->frame()) {
                 frame->editor()->clearUndoRedoOperations();
                 
                 if (AXObjectCache::accessibilityEnabled())
@@ -201,7 +201,7 @@ void RenderTextControl::setLastChangeWasUserEdit(bool lastChangeWasUserEdit)
 
 int RenderTextControl::selectionStart()
 {
-    Frame* frame = document()->frame();
+    Frame* frame = this->frame();
     if (!frame)
         return 0;
     return indexForVisiblePosition(frame->selection()->start());
@@ -209,7 +209,7 @@ int RenderTextControl::selectionStart()
 
 int RenderTextControl::selectionEnd()
 {
-    Frame* frame = document()->frame();
+    Frame* frame = this->frame();
     if (!frame)
         return 0;
     return indexForVisiblePosition(frame->selection()->end());
@@ -255,7 +255,7 @@ void RenderTextControl::setSelectionRange(int start, int end)
     }
     VisibleSelection newSelection = VisibleSelection(startPosition, endPosition);
 
-    if (Frame* frame = document()->frame())
+    if (Frame* frame = this->frame())
         frame->selection()->setSelection(newSelection);
 }
 
@@ -545,7 +545,7 @@ void RenderTextControl::selectionChanged(bool userTriggered)
 {
     cacheSelection(selectionStart(), selectionEnd());
 
-    if (Frame* frame = document()->frame()) {
+    if (Frame* frame = this->frame()) {
         if (frame->selection()->isRange() && userTriggered)
             node()->dispatchEvent(Event::create(eventNames().selectEvent, true, false));
     }

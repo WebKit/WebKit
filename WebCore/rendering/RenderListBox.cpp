@@ -314,7 +314,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, int tx, int ty, in
     
     Color textColor = element->renderStyle() ? element->renderStyle()->visitedDependentColor(CSSPropertyColor) : style()->visitedDependentColor(CSSPropertyColor);
     if (optionElement && optionElement->selected()) {
-        if (document()->frame()->selection()->isFocusedAndActive() && document()->focusedNode() == node())
+        if (frame()->selection()->isFocusedAndActive() && document()->focusedNode() == node())
             textColor = theme()->activeListBoxSelectionForegroundColor();
         // Honor the foreground color for disabled items
         else if (!element->disabled())
@@ -350,7 +350,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, int tx, int ty, in
 
     Color backColor;
     if (optionElement && optionElement->selected()) {
-        if (document()->frame()->selection()->isFocusedAndActive() && document()->focusedNode() == node())
+        if (frame()->selection()->isFocusedAndActive() && document()->focusedNode() == node())
             backColor = theme()->activeListBoxSelectionBackgroundColor();
         else
             backColor = theme()->inactiveListBoxSelectionBackgroundColor();
@@ -408,7 +408,7 @@ void RenderListBox::panScroll(const IntPoint& panStartMousePosition)
     // FIXME: This doesn't work correctly with transforms.
     FloatPoint absOffset = localToAbsolute();
 
-    IntPoint currentMousePosition = document()->frame()->eventHandler()->currentMousePosition();
+    IntPoint currentMousePosition = frame()->eventHandler()->currentMousePosition();
     // We need to check if the current mouse position is out of the window. When the mouse is out of the window, the position is incoherent
     static IntPoint previousMousePosition;
     if (currentMousePosition.y() < 0)
@@ -466,7 +466,7 @@ int RenderListBox::scrollToward(const IntPoint& destination)
 
 void RenderListBox::autoscroll()
 {
-    IntPoint pos = document()->frame()->view()->windowToContents(document()->frame()->eventHandler()->currentMousePosition());
+    IntPoint pos = frame()->view()->windowToContents(frame()->eventHandler()->currentMousePosition());
 
     int endIndex = scrollToward(pos);
     if (endIndex >= 0) {
@@ -613,7 +613,7 @@ IntRect RenderListBox::controlClipRect(int tx, int ty) const
 
 bool RenderListBox::isActive() const
 {
-    Page* page = document()->frame()->page();
+    Page* page = frame()->page();
     return page && page->focusController()->isActive();
 }
 

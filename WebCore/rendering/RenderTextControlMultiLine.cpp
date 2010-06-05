@@ -54,7 +54,7 @@ void RenderTextControlMultiLine::subtreeHasChanged()
 
     node()->dispatchEvent(Event::create(eventNames().inputEvent, true, false));
 
-    if (Frame* frame = document()->frame())
+    if (Frame* frame = this->frame())
         frame->textDidChangeInTextArea(textArea);
 }
 

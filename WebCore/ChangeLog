@@ -1,3 +1,65 @@
+2010-05-30  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add a convenient helper getter for Frame* to RenderObject
+        https://bugs.webkit.org/show_bug.cgi?id=39928
+
+        document()->frame() is being called enough from RenderObject derivated classes
+        that it worth adding a helper Frame getter as a shortcut.
+
+        No behavior change, so no new tests.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isOffScreen):
+        (WebCore::AccessibilityRenderObject::stringValue):
+        (WebCore::AccessibilityRenderObject::selection):
+        (WebCore::AccessibilityRenderObject::setSelectedVisiblePositionRange):
+        * page/EventHandler.cpp:
+        (WebCore::canAutoscroll):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintCustomHighlight):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintCaret):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintCustomHighlight):
+        * rendering/RenderDataGrid.cpp:
+        (WebCore::RenderDataGrid::isActive):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::flattenFrameSet):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintFocusRings):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addDashboardRegions):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::~RenderLayer):
+        (WebCore::RenderLayer::panScrollFromPoint):
+        (WebCore::RenderLayer::scrollByRecursively):
+        (WebCore::RenderLayer::scrollToOffset):
+        (WebCore::RenderLayer::autoscroll):
+        (WebCore::RenderLayer::isActive):
+        (showLayerTree):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::inspectorTimelineAgent):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::paintItemBackground):
+        (WebCore::RenderListBox::panScroll):
+        (WebCore::RenderListBox::autoscroll):
+        (WebCore::RenderListBox::isActive):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::~RenderObject):
+        (WebCore::RenderObject::selectionBackgroundColor):
+        (WebCore::RenderObject::selectionForegroundColor):
+        (WebCore::RenderObject::destroy):
+        (WebCore::RenderObject::addDashboardRegions):
+        (WebCore::RenderObject::animation):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::document):
+        (WebCore::RenderObject::frame):
+
 2010-06-05  Jonathan Kliegman  <kliegs@chromium.org>
 
         Reviewed by Dirk Schulze.

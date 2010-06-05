@@ -171,7 +171,7 @@ void RenderTextControlSingleLine::subtreeHasChanged()
         startSearchEventTimer();
 
     if (!wasChanged && node()->focused()) {
-        if (Frame* frame = document()->frame())
+        if (Frame* frame = this->frame())
             frame->textFieldDidBeginEditing(static_cast<Element*>(node()));
     }
 

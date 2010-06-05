@@ -489,7 +489,7 @@ static bool canAutoscroll(RenderObject* renderer)
     // The code for this is in RenderLayer::scrollRectToVisible.
     if (renderer->node() != renderer->document())
         return false;
-    Frame* frame = renderer->document()->frame();
+    Frame* frame = renderer->frame();
     if (!frame)
         return false;
     Page* page = frame->page();

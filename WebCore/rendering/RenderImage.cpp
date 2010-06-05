@@ -441,7 +441,7 @@ void RenderImage::paint(PaintInfo& paintInfo, int tx, int ty)
 void RenderImage::paintFocusRings(PaintInfo& paintInfo, const RenderStyle* style)
 {
     // Don't draw focus rings if printing.
-    if (document()->printing() || !document()->frame()->selection()->isFocusedAndActive())
+    if (document()->printing() || !frame()->selection()->isFocusedAndActive())
         return;
     
     if (paintInfo.context->paintingDisabled() && !paintInfo.context->updatingControlTints())

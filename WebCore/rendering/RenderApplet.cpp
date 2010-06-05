@@ -70,7 +70,7 @@ void RenderApplet::createWidgetIfNecessary()
         }
     }
 
-    Frame* frame = document()->frame();
+    Frame* frame = this->frame();
     ASSERT(frame);
     setWidget(frame->loader()->createJavaAppletWidget(IntSize(contentWidth, contentHeight), element, m_args));
 }

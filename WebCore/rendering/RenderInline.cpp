@@ -1114,8 +1114,8 @@ void RenderInline::addDashboardRegions(Vector<DashboardRegionValue>& regions)
         region.bounds.setX(absPos.x() + region.bounds.x());
         region.bounds.setY(absPos.y() + region.bounds.y());
 
-        if (document()->frame()) {
-            float pageScaleFactor = document()->frame()->page()->chrome()->scaleFactor();
+        if (frame()) {
+            float pageScaleFactor = frame()->page()->chrome()->scaleFactor();
             if (pageScaleFactor != 1.0f) {
                 region.bounds.scale(pageScaleFactor);
                 region.clip.scale(pageScaleFactor);
