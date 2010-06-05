@@ -1,3 +1,17 @@
+2010-06-04  Lyon Chen  <liachen@rim.com>
+
+        Reviewed by Darin Adler.
+
+        ApplicationCacheStorage::storeNewestCache() Crash WebKit when openDatabase(true) failed
+        https://bugs.webkit.org/show_bug.cgi?id=40074
+
+        Adding m_database.isOpen() check for every openDatabase(true) call, this is needed because
+        openDatabase(true) could still fail, for example when cacheStorage is full or no longer available.
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::store):
+        (WebCore::ApplicationCacheStorage::storeNewestCache):
+
 2010-06-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r60684.
