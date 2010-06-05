@@ -1,3 +1,29 @@
+2010-06-05  Jonathan Kliegman  <kliegs@chromium.org>
+
+        Reviewed by Dirk Schulze.
+
+        SVG doesn't support rgba colors
+        https://bugs.webkit.org/show_bug.cgi?id=16183
+
+        Enabled processing of rgba, hsl and hsla color specifications
+        for SVG files.  SVG spec calls for CSS2 but common usage and
+        other browsers suppor CSS3 colors being used in SVG files
+
+        Removed unused svg paramater from CSSParser::parseColorFromValue
+
+        Tests: svg/custom/fill-opacity-hsl.svg
+               svg/custom/fill-opacity-rgba.svg
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseColorFromValue):
+        * css/CSSParser.h:
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        (WebCore::CSSParser::parseSVGPaint):
+        (WebCore::CSSParser::parseSVGColor):
+        * svg/SVGColor.cpp:
+        (WebCore::SVGColor::colorFromRGBColorString):
+
 2010-06-05  Anders Bakken  <agbakken@gmail.com>
 
         Reviewed by Eric Seidel.

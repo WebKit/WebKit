@@ -183,7 +183,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
                 parsedValue = SVGPaint::create(SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR);
             else if (value->unit == CSSPrimitiveValue::CSS_URI) {
                 RGBA32 c = Color::transparent;
-                if (m_valueList->next() && parseColorFromValue(m_valueList->current(), c, true)) {
+                if (m_valueList->next() && parseColorFromValue(m_valueList->current(), c)) {
                     parsedValue = SVGPaint::create(value->string, c);
                 } else
                     parsedValue = SVGPaint::create(SVGPaint::SVG_PAINTTYPE_URI, value->string);
@@ -330,7 +330,7 @@ PassRefPtr<CSSValue> CSSParser::parseSVGStrokeDasharray()
 PassRefPtr<CSSValue> CSSParser::parseSVGPaint()
 {
     RGBA32 c = Color::transparent;
-    if (!parseColorFromValue(m_valueList->current(), c, true))
+    if (!parseColorFromValue(m_valueList->current(), c))
         return SVGPaint::create();
     return SVGPaint::create(Color(c));
 }
@@ -338,7 +338,7 @@ PassRefPtr<CSSValue> CSSParser::parseSVGPaint()
 PassRefPtr<CSSValue> CSSParser::parseSVGColor()
 {
     RGBA32 c = Color::transparent;
-    if (!parseColorFromValue(m_valueList->current(), c, true))
+    if (!parseColorFromValue(m_valueList->current(), c))
         return 0;
     return SVGColor::create(Color(c));
 }

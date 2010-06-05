@@ -126,7 +126,7 @@ namespace WebCore {
         bool parseColorParameters(CSSParserValue*, int* colorValues, bool parseAlpha);
         bool parseHSLParameters(CSSParserValue*, double* colorValues, bool parseAlpha);
         PassRefPtr<CSSPrimitiveValue> parseColor(CSSParserValue* = 0);
-        bool parseColorFromValue(CSSParserValue*, RGBA32&, bool = false);
+        bool parseColorFromValue(CSSParserValue*, RGBA32&);
         void parseSelector(const String&, Document* doc, CSSSelectorList&);
 
         static bool parseColor(const String&, RGBA32& rgb, bool strict);
