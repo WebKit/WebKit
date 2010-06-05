@@ -2,6 +2,15 @@
 
         Reviewed by Eric Seidel.
 
+        [Qt] ContextMenuItemQt.cpp has coding-style errors
+        https://bugs.webkit.org/show_bug.cgi?id=39780
+
+        * platform/qt/ContextMenuItemQt.cpp:
+
+2010-06-05  Anders Bakken  <agbakken@gmail.com>
+
+        Reviewed by Eric Seidel.
+
         [Qt] ContextMenuQt.cpp has coding-style errors
         https://bugs.webkit.org/show_bug.cgi?id=39779
 
