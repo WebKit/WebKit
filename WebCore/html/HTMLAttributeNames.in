@@ -24,6 +24,7 @@ aria-expanded
 aria-flowto
 aria-grabbed
 aria-haspopup
+aria-help
 aria-hidden
 aria-label
 aria-labeledby
