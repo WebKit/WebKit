@@ -1,3 +1,10 @@
+2010-06-05  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, typo/build fix.
+
+        * bindings/v8/custom/V8CustomSQLStatementErrorCallback.cpp:
+        (WebCore::V8SQLStatementErrorCallback::handleEvent):
+
 2010-05-28  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.
