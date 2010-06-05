@@ -1,3 +1,16 @@
+2010-06-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] RenderThemeGtk leaks memory
+        https://bugs.webkit.org/show_bug.cgi?id=40168
+
+        Remove the use of releaseRef to assign a value to a RefPtr. This results in
+        the original pointer taking an extra reference.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::initMediaStyling): Remove the use of releaseRef here.
+
 2010-06-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Gavin Barraclough.

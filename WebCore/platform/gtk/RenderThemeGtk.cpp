@@ -99,7 +99,7 @@ void RenderThemeGtk::initMediaStyling(GtkStyle* style, bool force)
         m_muteButton = Image::loadPlatformThemeIcon("audio-volume-high", m_mediaIconSize);
         m_unmuteButton = Image::loadPlatformThemeIcon("audio-volume-muted", m_mediaIconSize);
         m_playButton = Image::loadPlatformThemeIcon(reinterpret_cast<const char*>(playButtonIconName), m_mediaIconSize);
-        m_pauseButton = Image::loadPlatformThemeIcon("gtk-media-pause", m_mediaIconSize).releaseRef();
+        m_pauseButton = Image::loadPlatformThemeIcon("gtk-media-pause", m_mediaIconSize);
         m_seekBackButton = Image::loadPlatformThemeIcon(reinterpret_cast<const char*>(seekBackButtonIconName), m_mediaIconSize);
         m_seekForwardButton = Image::loadPlatformThemeIcon(reinterpret_cast<const char*>(seekForwardButtonIconName), m_mediaIconSize);
 
