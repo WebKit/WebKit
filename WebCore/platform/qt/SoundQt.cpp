@@ -26,10 +26,9 @@
  */
 
 #include "config.h"
+#include "Sound.h"
 
 #include <QApplication>
-
-#include "Sound.h"
 
 namespace WebCore {
 
