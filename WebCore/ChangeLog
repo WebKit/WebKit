@@ -1,3 +1,31 @@
+2010-06-06  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG Pattern/Gradient clean-up
+        https://bugs.webkit.org/show_bug.cgi?id=40205
+
+        Transformations of SVG Patterns and Gradients can be bundeled.
+        This calculation also needs just to be calculated once. It's not a great speed-up for most platforms,
+        but a clean-up and preparation for new features like vectorEffects and others.
+        Now, that we don't recalucluate the gradient and its transformations, it was necessary to add a way
+        to transform alreday existing gradients on Cairo. This is done in the same way like Skia transforms
+        gradients after they were created.
+        
+        This patch doesn't change functionality, so no new tests added.
+
+        * platform/graphics/Gradient.cpp:
+        * platform/graphics/cairo/GradientCairo.cpp:
+        (WebCore::Gradient::setPlatformGradientSpaceTransform):
+        * rendering/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::applyResource):
+        * rendering/RenderSVGResourceGradient.h:
+        * rendering/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::applyResource):
+        (WebCore::RenderSVGResourcePattern::createTileImage):
+        (WebCore::RenderSVGResourcePattern::buildPattern):
+        * rendering/RenderSVGResourcePattern.h:
+
 2010-06-05  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, typo/build fix.

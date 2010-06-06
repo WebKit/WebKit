@@ -39,6 +39,7 @@ struct GradientData {
     RefPtr<Gradient> gradient;
 
     bool boundingBoxMode;
+    AffineTransform userspaceTransform;
     AffineTransform transform;
 };
 
