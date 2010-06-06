@@ -2,6 +2,38 @@
 
         Reviewed by Nikolas Zimmermann.
 
+        hit testing does not respect clip paths
+        https://bugs.webkit.org/show_bug.cgi?id=15162
+
+        Test: svg/dynamic-updates/SVGClipPath-influences-hitTesting.html
+        
+        Added a check, if a float point is not only in the shape/object boundaries
+        but also is not in the clipped away area of a clipPath.
+
+        * rendering/HitTestRequest.h:
+        (WebCore::HitTestRequest::):
+        (WebCore::HitTestRequest::svgClipContent):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::fillContains):
+        (WebCore::RenderPath::nodeAtFloatPoint):
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::nodeAtFloatPoint):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::nodeAtFloatPoint):
+        * rendering/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::hitTestClipContent):
+        * rendering/RenderSVGResourceClipper.h:
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::nodeAtFloatPoint):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::pointInClippingArea):
+        * rendering/SVGRenderSupport.h:
+
+2010-06-06  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
         SVG Pattern/Gradient clean-up
         https://bugs.webkit.org/show_bug.cgi?id=40205
 

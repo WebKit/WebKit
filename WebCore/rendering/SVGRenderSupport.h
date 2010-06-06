@@ -79,6 +79,8 @@ void applyTransformToPaintInfo(RenderObject::PaintInfo&, const AffineTransform& 
 // This offers a way to render parts of a WebKit rendering tree into a ImageBuffer.
 void renderSubtreeToImage(ImageBuffer*, RenderObject*);
 
+bool pointInClippingArea(const RenderObject*, const FloatPoint&);
+
 void deregisterFromResources(RenderObject*);
 void clampImageBufferSizeToViewport(FrameView*, IntSize& imageBufferSize);
 

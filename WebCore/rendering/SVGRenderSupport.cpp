@@ -314,6 +314,27 @@ static inline void invalidatePaintingResource(SVGPaint* paint, RenderObject* obj
         paintingResource->invalidateClient(object);
 }
 
+bool pointInClippingArea(const RenderObject* object, const FloatPoint& point)
+{
+    ASSERT(object);
+    ASSERT(object->style());
+
+    Document* document = object->document();
+    ASSERT(document);
+
+    const SVGRenderStyle* svgStyle = object->style()->svgStyle();
+    ASSERT(svgStyle);
+
+    // We just take clippers into account to determine if a point is on the node. The Specification may
+    // change later and we also need to check maskers.
+    if (svgStyle->hasClipper()) {
+        if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(document, svgStyle->clipperResource()))
+            return clipper->hitTestClipContent(object->objectBoundingBox(), point);
+    }
+
+    return true;
+}
+
 void deregisterFromResources(RenderObject* object)
 {
     ASSERT(object);

@@ -1,3 +1,26 @@
+2010-06-06  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        hit testing does not respect clip paths
+        https://bugs.webkit.org/show_bug.cgi?id=15162
+        
+        Two tests were incorrect, because of the assumption, that clipPath doesn't
+        influence hit testing. They needed an update.
+        The new test checks, that clipped areas don't throw a hit.
+
+        * svg/dynamic-updates/SVGClipPath-influences-hitTesting-expected.txt: Added.
+        * svg/dynamic-updates/SVGClipPath-influences-hitTesting.html: Added.
+        * svg/dynamic-updates/SVGClipPathElement-dom-clipPathUnits-attr-expected.txt:
+        * svg/dynamic-updates/SVGClipPathElement-svgdom-clipPathUnits-prop-expected.txt:
+        * svg/dynamic-updates/script-tests/SVGClipPath-influences-hitTesting.js: Added.
+        (executeBackgroundTest):
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGClipPathElement-dom-clipPathUnits-attr.js:
+        (shouldBeEqualToString.executeTest):
+        * svg/dynamic-updates/script-tests/SVGClipPathElement-svgdom-clipPathUnits-prop.js:
+        (executeTest):
+
 2010-06-06  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation fix.

@@ -27,6 +27,8 @@
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
+#include "HitTestRequest.h"
+#include "HitTestResult.h"
 #include "ImageBuffer.h"
 #include "IntRect.h"
 #include "RenderObject.h"
@@ -264,6 +266,34 @@ void RenderSVGResourceClipper::calculateClipContentRepaintRect()
              continue;
         m_clipBoundaries.unite(renderer->localToParentTransform().mapRect(renderer->repaintRectInLocalCoordinates()));
     }
+}
+
+bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundingBox, const FloatPoint& nodeAtPoint)
+{
+    FloatPoint point = nodeAtPoint;
+    if (!pointInClippingArea(this, point))
+        return false;
+
+    if (static_cast<SVGClipPathElement*>(node())->clipPathUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+        AffineTransform transform;
+        transform.translate(objectBoundingBox.x(), objectBoundingBox.y());
+        transform.scaleNonUniform(objectBoundingBox.width(), objectBoundingBox.height());
+        point = transform.inverse().mapPoint(point);
+    }
+
+    for (Node* childNode = node()->firstChild(); childNode; childNode = childNode->nextSibling()) {
+        RenderObject* renderer = childNode->renderer();
+        if (!childNode->isSVGElement() || !static_cast<SVGElement*>(childNode)->isStyled() || !renderer)
+            continue;
+        if (!renderer->isRenderPath() && !renderer->isSVGText() && !renderer->isSVGShadowTreeRootContainer())
+            continue;
+        IntPoint hitPoint;
+        HitTestResult result(hitPoint);
+        if (renderer->nodeAtFloatPoint(HitTestRequest(HitTestRequest::SVGClipContent), result, point, HitTestForeground))
+            return true;
+    }
+
+    return false;
 }
 
 FloatRect RenderSVGResourceClipper::resourceBoundingBox(RenderObject* object)

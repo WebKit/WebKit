@@ -27,11 +27,12 @@ namespace WebCore {
 class HitTestRequest {
 public:
     enum RequestType {
-        ReadOnly = 0x1,
-        Active = 0x2,
-        MouseMove = 0x4,
-        MouseUp = 0x8,
-        IgnoreClipping = 0x10
+        ReadOnly = 1 << 1,
+        Active = 1 << 2,
+        MouseMove = 1 << 3,
+        MouseUp = 1 << 4,
+        IgnoreClipping = 1 << 5,
+        SVGClipContent = 1 << 6
     };
 
     HitTestRequest(int requestType)
@@ -44,6 +45,7 @@ public:
     bool mouseMove() const { return m_requestType & MouseMove; }
     bool mouseUp() const { return m_requestType & MouseUp; }
     bool ignoreClipping() const { return m_requestType & IgnoreClipping; }
+    bool svgClipContent() const { return m_requestType & SVGClipContent; }
 
 private:
     int m_requestType;

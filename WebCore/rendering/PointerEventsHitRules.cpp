@@ -22,13 +22,16 @@
 
 namespace WebCore {
 
-PointerEventsHitRules::PointerEventsHitRules(EHitTesting hitTesting, EPointerEvents pointerEvents)
+PointerEventsHitRules::PointerEventsHitRules(EHitTesting hitTesting, const HitTestRequest& request, EPointerEvents pointerEvents)
     : requireVisible(false)
     , requireFill(false)
     , requireStroke(false)
     , canHitStroke(false)
     , canHitFill(false)
 {
+    if (request.svgClipContent())
+        pointerEvents = PE_FILL;
+
     if (hitTesting == SVG_PATH_HITTESTING) {
         switch (pointerEvents)
         {

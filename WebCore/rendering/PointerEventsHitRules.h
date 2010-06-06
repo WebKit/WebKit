@@ -20,6 +20,7 @@
 #ifndef PointerEventsHitRules_h
 #define PointerEventsHitRules_h
 
+#include "HitTestRequest.h"
 #include "RenderStyleConstants.h"
 
 namespace WebCore {
@@ -32,7 +33,7 @@ public:
         SVG_TEXT_HITTESTING
     };
 
-    PointerEventsHitRules(EHitTesting, EPointerEvents);
+    PointerEventsHitRules(EHitTesting, const HitTestRequest&, EPointerEvents);
 
     bool requireVisible;
     bool requireFill;

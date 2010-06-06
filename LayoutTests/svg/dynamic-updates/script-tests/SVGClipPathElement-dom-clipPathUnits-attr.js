@@ -9,32 +9,31 @@ rootSVGElement.appendChild(defsElement);
 
 var clipPathElement = createSVGElement("clipPath");
 clipPathElement.setAttribute("id", "clipper");
-clipPathElement.setAttribute("clipPathUnits", "objectBoundingBox");
+clipPathElement.setAttribute("clipPathUnits", "userSpaceOnUse");
 
-var circleElement = createSVGElement("circle");
-circleElement.setAttribute("cx", "150");
-circleElement.setAttribute("cy", "150");
-circleElement.setAttribute("r", "150");
-clipPathElement.appendChild(circleElement);
+var rectElementA = createSVGElement("rect");
+rectElementA.setAttribute("width", "10");
+rectElementA.setAttribute("height", "10");
+clipPathElement.appendChild(rectElementA);
 
 defsElement.appendChild(clipPathElement);
 
-var rectElement = createSVGElement("rect");
-rectElement.setAttribute("width", "300");
-rectElement.setAttribute("height", "300");
-rectElement.setAttribute("fill", "green");
-rectElement.setAttribute("clip-path", "url(#clipper)");
-rootSVGElement.appendChild(rectElement);
+var rectElementB = createSVGElement("rect");
+rectElementB.setAttribute("width", "100");
+rectElementB.setAttribute("height", "100");
+rectElementB.setAttribute("fill", "green");
+rectElementB.setAttribute("clip-path", "url(#clipper)");
+rootSVGElement.appendChild(rectElementB);
 
-shouldBeEqualToString("clipPathElement.getAttribute('clipPathUnits')", "objectBoundingBox")
+shouldBeEqualToString("clipPathElement.getAttribute('clipPathUnits')", "userSpaceOnUse")
 
 function executeTest() {
-    clipPathElement.setAttribute("clipPathUnits", "userSpaceOnUse");
-    shouldBeEqualToString("clipPathElement.getAttribute('clipPathUnits')", "userSpaceOnUse");
+    clipPathElement.setAttribute("clipPathUnits", "objectBoundingBox");
+    shouldBeEqualToString("clipPathElement.getAttribute('clipPathUnits')", "objectBoundingBox");
 
     completeTest();
 }
 
-startTest(rectElement, 150, 150);
+startTest(rectElementB, 5, 5);
 
 var successfullyParsed = true;
