@@ -82,12 +82,10 @@ EXPORTS
     ?createInterruptedExecutionException@JSC@@YA?AVJSValue@1@PAVJSGlobalData@1@@Z
     ?createLeaked@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@W4ThreadStackType@2@@Z
     ?createSingleCharacterString@SmallStrings@JSC@@AAEXPAVJSGlobalData@2@E@Z
-    ?createStackOverflowError@JSC@@YA?AVJSValue@1@PAVExecState@1@@Z
     ?createStructure@JSByteArray@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@VJSValue@2@@Z
     ?createTable@HashTable@JSC@@ABEXPAVJSGlobalData@2@@Z
     ?createThread@WTF@@YAIP6APAXPAX@Z0@Z
     ?createThread@WTF@@YAIP6APAXPAX@Z0PBD@Z
-    ?createTypeError@JSC@@YA?AVJSValue@1@PAVExecState@1@PBD@Z
     ?currentThread@WTF@@YAIXZ
     ?currentTime@WTF@@YANXZ
     ?data@CString@WTF@@QBEPBDXZ
@@ -280,9 +278,6 @@ EXPORTS
     ?symbolTableGet@JSVariableObject@JSC@@IAE_NABVIdentifier@2@AAVPropertyDescriptor@2@@Z
     ?synthesizePrototype@JSValue@JSC@@ABEPAVJSObject@2@PAVExecState@2@@Z
     ?thisObject@DebuggerCallFrame@JSC@@QBEPAVJSObject@2@XZ
-    ?throwError@JSC@@YAPAVJSObject@1@PAVExecState@1@W4ErrorType@1@@Z
-    ?throwError@JSC@@YAPAVJSObject@1@PAVExecState@1@W4ErrorType@1@ABVUString@1@@Z
-    ?throwError@JSC@@YAPAVJSObject@1@PAVExecState@1@W4ErrorType@1@PBD@Z
     ?timedWait@ThreadCondition@WTF@@QAE_NAAVMutex@2@N@Z
     ?tlsKeyCount@WTF@@YAAAJXZ
     ?tlsKeys@WTF@@YAPAKXZ
