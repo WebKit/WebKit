@@ -4,6 +4,17 @@
 
         Add image results of tests added by r60752 for Chromium.
 
+        * platform/chromium-linux/svg/custom/fill-opacity-hsl-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/fill-opacity-hsl-expected.png: Added.
+        * platform/chromium-linux/svg/custom/fill-opacity-rgba-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/fill-opacity-rgba-expected.png: Added.
+
+2010-06-06  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation fix.
+
+        Add image results of tests added by r60752 for Chromium.
+
         * platform/chromium-win/svg/custom/fill-opacity-hsl-expected.checksum: Added.
         * platform/chromium-win/svg/custom/fill-opacity-hsl-expected.png: Added.
         * platform/chromium-win/svg/custom/fill-opacity-rgba-expected.checksum: Added.
