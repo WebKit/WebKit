@@ -1,3 +1,14 @@
+2010-06-05  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation fix.
+
+        Add image results of tests added by r60752 for Chromium.
+
+        * platform/chromium-mac/svg/custom/fill-opacity-hsl-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/fill-opacity-hsl-expected.png: Added.
+        * platform/chromium-mac/svg/custom/fill-opacity-rgba-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/fill-opacity-rgba-expected.png: Added.
+
 2010-06-05  Jonathan Kliegman  <kliegs@chromium.org>
 
         Reviewed by Dirk Schulze.
