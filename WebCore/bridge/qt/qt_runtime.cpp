@@ -1567,9 +1567,9 @@ EncodedJSValue QtRuntimeConnectionMethod::call(ExecState* exec)
                             funcObject = asFuncObj;
                         } else {
                             if (d->m_isConnect)
-                                return throwError(exec, createTypeError(exec, "QtMetaMethod.connect: target is not a function"));
+                                return throwVMError(exec, createTypeError(exec, "QtMetaMethod.connect: target is not a function"));
                             else
-                                return throwError(exec, createTypeError(exec, "QtMetaMethod.disconnect: target is not a function"));
+                                return throwVMError(exec, createTypeError(exec, "QtMetaMethod.disconnect: target is not a function"));
                         }
                     }
                 } else {

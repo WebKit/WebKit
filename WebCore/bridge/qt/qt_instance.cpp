@@ -360,7 +360,7 @@ JSValue QtField::valueFromInstance(ExecState* exec, const Instance* inst) const
         return convertQVariantToValue(exec, inst->rootObject(), val);
     }
     QString msg = QString(QLatin1String("cannot access member `%1' of deleted QObject")).arg(QLatin1String(name()));
-    return throwError(exec, GeneralError, msg.toLatin1().constData());
+    return throwError(exec, createError(exec, msg.toLatin1().constData()));
 }
 
 void QtField::setValueToInstance(ExecState* exec, const Instance* inst, JSValue aValue) const
@@ -387,7 +387,7 @@ void QtField::setValueToInstance(ExecState* exec, const Instance* inst, JSValue 
 #endif
     } else {
         QString msg = QString(QLatin1String("cannot access member `%1' of deleted QObject")).arg(QLatin1String(name()));
-        throwError(exec, GeneralError, msg.toLatin1().constData());
+        throwError(exec, createError(exec, msg.toLatin1().constData()));
     }
 }
 

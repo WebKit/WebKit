@@ -1,5 +1,14 @@
 2010-06-06  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (Qt build fix pt 2).
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::findMethodIndex):
+        (JSC::Bindings::QtRuntimeMetaMethod::call):
+        (JSC::Bindings::QtRuntimeConnectionMethod::call):
+
+2010-06-06  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by NOBODY (Qt build fix).
 
         * bridge/qt/qt_runtime.cpp:
