@@ -25,4 +25,4 @@
 
 PRODUCT_NAME = WebProcess;
 INFOPLIST_FILE = WebProcess/Info.plist;
-INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks/WebKit2.framework/Versions/A/Resources;
+INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks/WebKit2.framework;
