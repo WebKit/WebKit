@@ -564,27 +564,15 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
             exception = createNotAnObjectError(callFrame, static_cast<JSNotAnObjectErrorStub*>(exception), bytecodeOffset, codeBlock);
             exceptionValue = exception;
         } else {
-            if (!exception->hasProperty(callFrame, Identifier(callFrame, "line")) && 
-                !exception->hasProperty(callFrame, Identifier(callFrame, "sourceId")) && 
-                !exception->hasProperty(callFrame, Identifier(callFrame, "sourceURL")) && 
-                !exception->hasProperty(callFrame, Identifier(callFrame, expressionBeginOffsetPropertyName)) && 
-                !exception->hasProperty(callFrame, Identifier(callFrame, expressionCaretOffsetPropertyName)) && 
-                !exception->hasProperty(callFrame, Identifier(callFrame, expressionEndOffsetPropertyName))) {
+            if (!hasErrorInfo(callFrame, exception)) {
                 if (explicitThrow) {
                     int startOffset = 0;
                     int endOffset = 0;
                     int divotPoint = 0;
                     int line = codeBlock->expressionRangeForBytecodeOffset(callFrame, bytecodeOffset, divotPoint, startOffset, endOffset);
-                    exception->putWithAttributes(callFrame, Identifier(callFrame, "line"), jsNumber(callFrame, line), ReadOnly | DontDelete);
-                    
-                    // We only hit this path for error messages and throw statements, which don't have a specific failure position
-                    // So we just give the full range of the error/throw statement.
-                    exception->putWithAttributes(callFrame, Identifier(callFrame, expressionBeginOffsetPropertyName), jsNumber(callFrame, divotPoint - startOffset), ReadOnly | DontDelete);
-                    exception->putWithAttributes(callFrame, Identifier(callFrame, expressionEndOffsetPropertyName), jsNumber(callFrame, divotPoint + endOffset), ReadOnly | DontDelete);
+                    addErrorInfo(callFrame, exception, line, codeBlock->ownerExecutable()->source(), divotPoint, startOffset, endOffset, false);
                 } else
-                    exception->putWithAttributes(callFrame, Identifier(callFrame, "line"), jsNumber(callFrame, codeBlock->lineNumberForBytecodeOffset(callFrame, bytecodeOffset)), ReadOnly | DontDelete);
-                exception->putWithAttributes(callFrame, Identifier(callFrame, "sourceId"), jsNumber(callFrame, codeBlock->ownerExecutable()->sourceID()), ReadOnly | DontDelete);
-                exception->putWithAttributes(callFrame, Identifier(callFrame, "sourceURL"), jsOwnedString(callFrame, codeBlock->ownerExecutable()->sourceURL()), ReadOnly | DontDelete);
+                    addErrorInfo(callFrame, exception, codeBlock->lineNumberForBytecodeOffset(callFrame, bytecodeOffset), codeBlock->ownerExecutable()->source());
             }
 
             ComplType exceptionType = exception->exceptionType();
@@ -4338,10 +4326,12 @@ skip_id_custom_self:
            written to register dst.
         */
         int dst = vPC[1].u.operand;
-        int type = vPC[2].u.operand;
-        int message = vPC[3].u.operand;
+        int isReference = vPC[2].u.operand;
+        UString message = callFrame->r(vPC[3].u.operand).jsValue().toString(callFrame);
 
-        callFrame->r(dst) = JSValue(Error::create(callFrame, (ErrorType)type, callFrame->r(message).jsValue().toString(callFrame), codeBlock->lineNumberForBytecodeOffset(callFrame, vPC - codeBlock->instructions().begin()), codeBlock->ownerExecutable()->sourceID(), codeBlock->ownerExecutable()->sourceURL()));
+        JSObject* error = isReference ? createReferenceError(callFrame, message) : createSyntaxError(callFrame, message);
+        addErrorInfo(globalData, error, codeBlock->lineNumberForBytecodeOffset(callFrame, vPC - codeBlock->instructions().begin()), codeBlock->ownerExecutable()->source());
+        callFrame->r(dst) = JSValue(error);
 
         vPC += OPCODE_LENGTH(op_new_error);
         NEXT_INSTRUCTION();

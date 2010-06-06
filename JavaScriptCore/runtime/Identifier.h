@@ -57,6 +57,9 @@ namespace JSC {
         static Identifier from(ExecState* exec, unsigned y);
         static Identifier from(ExecState* exec, int y);
         static Identifier from(ExecState* exec, double y);
+        static Identifier from(JSGlobalData*, unsigned y);
+        static Identifier from(JSGlobalData*, int y);
+        static Identifier from(JSGlobalData*, double y);
         
         bool isNull() const { return _ustring.isNull(); }
         bool isEmpty() const { return _ustring.isEmpty(); }

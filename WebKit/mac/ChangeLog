@@ -1,3 +1,35 @@
+2010-06-06  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 40214 - Clean up error construction / throwing in JSC.
+        
+        The one egregious insanity here is that creating an error requires
+        a VM-entry-esqe-host call (the string argument is wrapped as a JS
+        object & pushed on the RegisterFile, then unwrapped back to a
+        UString).  Changing this also means you only require a global
+        object, not an ExecState, to create an error.
+
+        The methods to create error objects are also parameterized
+        requiring a switch on the type, which can be made cleaner and
+        faster by moving to a separate method per error type.  Code to add
+        divot information to error had been duplicated, and is coalesced
+        back into a single function.
+
+        Convenience methods added to create & throw type & syntax error
+        with a default error message, since this is a common case.
+
+        Also, errors are currently thrown either using
+        "throwError(exec, error)" or "exec->setException(error)" - unify
+        on the former, since this is more commonly used.  Add
+        "throwVMError(exec, error)" equivalents, as a convenience for
+        cases where the result was being wrapped in "JSValue::encode(...)".
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::moveGlobalExceptionToExecState):
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::invokeMethod):
+
 2010-06-02  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

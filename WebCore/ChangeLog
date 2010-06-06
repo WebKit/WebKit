@@ -1,3 +1,142 @@
+2010-06-06  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 40214 - Clean up error construction / throwing in JSC.
+        
+        The one egregious insanity here is that creating an error requires
+        a VM-entry-esqe-host call (the string argument is wrapped as a JS
+        object & pushed on the RegisterFile, then unwrapped back to a
+        UString).  Changing this also means you only require a global
+        object, not an ExecState, to create an error.
+
+        The methods to create error objects are also parameterized
+        requiring a switch on the type, which can be made cleaner and
+        faster by moving to a separate method per error type.  Code to add
+        divot information to error had been duplicated, and is coalesced
+        back into a single function.
+
+        Convenience methods added to create & throw type & syntax error
+        with a default error message, since this is a common case.
+
+        Also, errors are currently thrown either using
+        "throwError(exec, error)" or "exec->setException(error)" - unify
+        on the former, since this is more commonly used.  Add
+        "throwVMError(exec, error)" equivalents, as a convenience for
+        cases where the result was being wrapped in "JSValue::encode(...)".
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSArrayBufferConstructor.h:
+        (WebCore::construct):
+        * bindings/js/JSArrayBufferViewHelper.h:
+        (WebCore::setWebGLArrayHelper):
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::constructAudio):
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::JSCanvasRenderingContext2D::setFillColor):
+        (WebCore::JSCanvasRenderingContext2D::setStrokeColor):
+        (WebCore::JSCanvasRenderingContext2D::drawImage):
+        (WebCore::JSCanvasRenderingContext2D::drawImageFromRect):
+        (WebCore::JSCanvasRenderingContext2D::setShadow):
+        (WebCore::JSCanvasRenderingContext2D::createPattern):
+        (WebCore::JSCanvasRenderingContext2D::fillText):
+        (WebCore::JSCanvasRenderingContext2D::strokeText):
+        * bindings/js/JSClipboardCustom.cpp:
+        (WebCore::JSClipboard::clearData):
+        (WebCore::JSClipboard::getData):
+        (WebCore::JSClipboard::setDragImage):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::setDOMException):
+        (WebCore::toJSSequence):
+        * bindings/js/JSDOMWrapper.cpp:
+        (WebCore::DOMObject::defineOwnProperty):
+        * bindings/js/JSDesktopNotificationsCustom.cpp:
+        (WebCore::JSNotificationCenter::requestPermission):
+        * bindings/js/JSEventSourceConstructor.cpp:
+        (WebCore::constructEventSource):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::open):
+        * bindings/js/JSHTMLInputElementCustom.cpp:
+        (WebCore::JSHTMLInputElement::selectionStart):
+        (WebCore::JSHTMLInputElement::setSelectionStart):
+        (WebCore::JSHTMLInputElement::selectionEnd):
+        (WebCore::JSHTMLInputElement::setSelectionEnd):
+        (WebCore::JSHTMLInputElement::setSelectionRange):
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::constructImage):
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        (WebCore::JSJavaScriptCallFrame::evaluate):
+        * bindings/js/JSMessageChannelConstructor.cpp:
+        (WebCore::JSMessageChannelConstructor::construct):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::fillMessagePortArray):
+        * bindings/js/JSOptionConstructor.cpp:
+        (WebCore::constructHTMLOptionElement):
+        * bindings/js/JSSVGMatrixCustom.cpp:
+        (WebCore::JSSVGMatrix::multiply):
+        * bindings/js/JSSharedWorkerConstructor.cpp:
+        (WebCore::constructSharedWorker):
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::JSWebGLRenderingContext::bufferData):
+        (WebCore::JSWebGLRenderingContext::bufferSubData):
+        (WebCore::getObjectParameter):
+        (WebCore::JSWebGLRenderingContext::getFramebufferAttachmentParameter):
+        (WebCore::JSWebGLRenderingContext::getParameter):
+        (WebCore::JSWebGLRenderingContext::getProgramParameter):
+        (WebCore::JSWebGLRenderingContext::getShaderParameter):
+        (WebCore::JSWebGLRenderingContext::getUniform):
+        (WebCore::JSWebGLRenderingContext::texImage2D):
+        (WebCore::JSWebGLRenderingContext::texSubImage2D):
+        (WebCore::dataFunctionf):
+        (WebCore::dataFunctioni):
+        (WebCore::dataFunctionMatrix):
+        * bindings/js/JSWebSocketConstructor.cpp:
+        (WebCore::constructWebSocket):
+        * bindings/js/JSWebSocketCustom.cpp:
+        (WebCore::JSWebSocket::send):
+        * bindings/js/JSWorkerConstructor.cpp:
+        (WebCore::constructWorker):
+        * bindings/js/JSXMLHttpRequestConstructor.cpp:
+        (WebCore::constructXMLHttpRequest):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::open):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::BaseWalker::throwStackOverflow):
+        (WebCore::BaseWalker::throwInterruptedException):
+        (WebCore::SerializingTreeWalker::startArray):
+        (WebCore::SerializingTreeWalker::startObject):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::setException):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CInstance::moveGlobalExceptionToExecState):
+        (JSC::Bindings::CInstance::invokeMethod):
+        (JSC::Bindings::CInstance::invokeDefaultMethod):
+        (JSC::Bindings::CInstance::invokeConstruct):
+        * bridge/jni/jsc/JNIBridgeJSC.cpp:
+        (JavaField::dispatchValueFromInstance):
+        (JavaField::dispatchSetValueToInstance):
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaInstance::invokeMethod):
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::moveGlobalExceptionToExecState):
+        (ObjcInstance::invokeMethod):
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcField::valueFromInstance):
+        (JSC::Bindings::ObjcField::setValueToInstance):
+        (JSC::Bindings::ObjcArray::setValueAt):
+        (JSC::Bindings::ObjcArray::valueAt):
+        (JSC::Bindings::callObjCFallbackObject):
+        * bridge/objc/objc_utility.h:
+        * bridge/objc/objc_utility.mm:
+        (JSC::Bindings::throwError):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::put):
+        * bridge/runtime_method.cpp:
+        (JSC::callRuntimeMethod):
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::throwInvalidAccessError):
+
 2010-06-06  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

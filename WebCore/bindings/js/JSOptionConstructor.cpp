@@ -47,7 +47,7 @@ static EncodedJSValue JSC_HOST_CALL constructHTMLOptionElement(ExecState* exec)
     JSOptionConstructor* jsConstructor = static_cast<JSOptionConstructor*>(exec->callee());
     Document* document = jsConstructor->document();
     if (!document)
-        return JSValue::encode(throwError(exec, ReferenceError, "Option constructor associated document is unavailable"));
+        return throwVMError(exec, createReferenceError(exec, "Option constructor associated document is unavailable"));
 
     String data;
     if ((exec->argumentCount() >= 1) && !exec->argument(0).isUndefined())

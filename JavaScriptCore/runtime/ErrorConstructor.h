@@ -37,8 +37,6 @@ namespace JSC {
         virtual CallType getCallData(CallData&);
     };
 
-    ErrorInstance* constructError(ExecState*, const ArgList&);
-
 } // namespace JSC
 
 #endif // ErrorConstructor_h

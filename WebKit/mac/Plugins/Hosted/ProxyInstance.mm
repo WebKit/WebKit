@@ -199,7 +199,7 @@ JSValue ProxyInstance::getMethod(JSC::ExecState* exec, const JSC::Identifier& pr
 JSValue ProxyInstance::invokeMethod(ExecState* exec, JSC::RuntimeMethod* runtimeMethod)
 {
     if (!asObject(runtimeMethod)->inherits(&ProxyRuntimeMethod::s_info))
-        return throwError(exec, TypeError, "Attempt to invoke non-plug-in method on plug-in object.");
+        return throwError(exec, createTypeError(exec, "Attempt to invoke non-plug-in method on plug-in object."));
 
     const MethodList& methodList = *runtimeMethod->methods();
 

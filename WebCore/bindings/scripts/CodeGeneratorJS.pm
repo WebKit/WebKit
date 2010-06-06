@@ -1164,7 +1164,7 @@ END
         push(@implContent, "        return ${functionName}$overload->{overloadIndex}(exec);\n");
     }
     push(@implContent, <<END);
-    return throwError(exec, TypeError);
+    return throwTypeError(exec);
 }
 
 END
@@ -1798,15 +1798,15 @@ sub GenerateImplementation
             if ($interfaceName eq "DOMWindow") {
                 push(@implContent, "    $className* castedThis = toJSDOMWindow(exec->hostThisValue().toThisObject(exec));\n");
                 push(@implContent, "    if (!castedThis)\n");
-                push(@implContent, "        return JSValue::encode(throwError(exec, TypeError));\n");
+                push(@implContent, "        return throwVMTypeError(exec);\n");
             } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
                 push(@implContent, "    $className* castedThis = to${className}(exec->hostThisValue().toThisObject(exec));\n");
                 push(@implContent, "    if (!castedThis)\n");
-                push(@implContent, "        return JSValue::encode(throwError(exec, TypeError));\n");
+                push(@implContent, "        return throwVMTypeError(exec);\n");
             } else {
                 push(@implContent, "    JSValue thisValue = exec->hostThisValue();\n");
                 push(@implContent, "    if (!thisValue.inherits(&${className}::s_info))\n");
-                push(@implContent, "        return JSValue::encode(throwError(exec, TypeError));\n");
+                push(@implContent, "        return throwVMTypeError(exec);\n");
                 push(@implContent, "    $className* castedThis = static_cast<$className*>(asObject(thisValue));\n");
             }
 
@@ -1848,7 +1848,7 @@ sub GenerateImplementation
                 if ($requiresAllArguments) {
                         push(@implContent, "    if (exec->argumentCount() < $numParameters)\n");
                         if ($requiresAllArguments eq "Raise") {
-                            push(@implContent, "        return JSValue::encode(throwError(exec, SyntaxError, \"Not enough arguments\"));\n");
+                            push(@implContent, "        return throwVMError(exec, createSyntaxError(exec, \"Not enough arguments\"));\n");
                         } else {
                             push(@implContent, "        return JSValue::encode(jsUndefined());\n");
                         }
@@ -2747,7 +2747,7 @@ EOF
 $implContent .= << "EOF";
         ScriptExecutionContext* context = static_cast<${constructorClassName}*>(exec->callee())->scriptExecutionContext();
         if (!context)
-            return JSValue::encode(throwError(exec, ReferenceError));
+            return throwVMError(exec, createReferenceError(exec, "Reference error"));
 EOF
     }
 

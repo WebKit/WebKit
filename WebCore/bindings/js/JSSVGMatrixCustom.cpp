@@ -34,10 +34,10 @@ namespace WebCore {
 JSValue JSSVGMatrix::multiply(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
-        return throwError(exec, SyntaxError, "Not enough arguments");
+        return throwError(exec, createSyntaxError(exec, "Not enough arguments"));
 
     if (!exec->argument(0).inherits(&JSSVGMatrix::s_info))
-        return throwError(exec, TypeError, "secondMatrix argument was not a SVGMatrix");
+        return throwError(exec, createTypeError(exec, "secondMatrix argument was not a SVGMatrix"));
 
     JSSVGMatrix* matrixObj = static_cast<JSSVGMatrix*>(asObject(exec->argument(0)));
 

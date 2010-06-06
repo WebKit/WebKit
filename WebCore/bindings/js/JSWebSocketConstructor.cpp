@@ -59,14 +59,14 @@ static EncodedJSValue JSC_HOST_CALL constructWebSocket(ExecState* exec)
     JSWebSocketConstructor* jsConstructor = static_cast<JSWebSocketConstructor*>(exec->callee());
     ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();
     if (!context)
-        return JSValue::encode(throwError(exec, ReferenceError, "WebSocket constructor associated document is unavailable"));
+        return throwVMError(exec, createReferenceError(exec, "WebSocket constructor associated document is unavailable"));
 
     if (!exec->argumentCount())
-        return JSValue::encode(throwError(exec, SyntaxError, "Not enough arguments"));
+        return throwVMError(exec, createSyntaxError(exec, "Not enough arguments"));
 
     const String& urlString = ustringToString(exec->argument(0).toString(exec));
     if (exec->hadException())
-        return JSValue::encode(throwError(exec, SyntaxError, "wrong URL"));
+        return throwVMError(exec, createSyntaxError(exec, "wrong URL"));
     const KURL& url = context->completeURL(urlString);
     RefPtr<WebSocket> webSocket = WebSocket::create(context);
     ExceptionCode ec = 0;

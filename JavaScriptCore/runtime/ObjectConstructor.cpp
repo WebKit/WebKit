@@ -22,6 +22,7 @@
 #include "ObjectConstructor.h"
 
 #include "Error.h"
+#include "ExceptionHelpers.h"
 #include "JSFunction.h"
 #include "JSArray.h"
 #include "JSGlobalObject.h"
@@ -96,14 +97,14 @@ CallType ObjectConstructor::getCallData(CallData& callData)
 EncodedJSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState* exec)
 {
     if (!exec->argument(0).isObject())
-        return JSValue::encode(throwError(exec, TypeError, "Requested prototype of a value that is not an object."));
+        return throwVMError(exec, createTypeError(exec, "Requested prototype of a value that is not an object."));
     return JSValue::encode(asObject(exec->argument(0))->prototype());
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState* exec)
 {
     if (!exec->argument(0).isObject())
-        return JSValue::encode(throwError(exec, TypeError, "Requested property descriptor of a value that is not an object."));
+        return throwVMError(exec, createTypeError(exec, "Requested property descriptor of a value that is not an object."));
     UString propertyName = exec->argument(1).toString(exec);
     if (exec->hadException())
         return JSValue::encode(jsNull());
@@ -133,7 +134,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState
 EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(ExecState* exec)
 {
     if (!exec->argument(0).isObject())
-        return JSValue::encode(throwError(exec, TypeError, "Requested property names of a value that is not an object."));
+        return throwVMError(exec, createTypeError(exec, "Requested property names of a value that is not an object."));
     PropertyNameArray properties(exec);
     asObject(exec->argument(0))->getOwnPropertyNames(exec, properties, IncludeDontEnumProperties);
     JSArray* names = constructEmptyArray(exec);
@@ -147,7 +148,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(ExecState* exe
 EncodedJSValue JSC_HOST_CALL objectConstructorKeys(ExecState* exec)
 {
     if (!exec->argument(0).isObject())
-        return JSValue::encode(throwError(exec, TypeError, "Requested keys of a value that is not an object."));
+        return throwVMError(exec, createTypeError(exec, "Requested keys of a value that is not an object."));
     PropertyNameArray properties(exec);
     asObject(exec->argument(0))->getOwnPropertyNames(exec, properties);
     JSArray* keys = constructEmptyArray(exec);
@@ -161,7 +162,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorKeys(ExecState* exec)
 static bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor& desc)
 {
     if (!in.isObject()) {
-        throwError(exec, TypeError, "Property description must be an object.");
+        throwError(exec, createTypeError(exec, "Property description must be an object."));
         return false;
     }
     JSObject* description = asObject(in);
@@ -203,7 +204,7 @@ static bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor
         if (!get.isUndefined()) {
             CallData callData;
             if (getCallData(get, callData) == CallTypeNone) {
-                throwError(exec, TypeError, "Getter must be a function.");
+                throwError(exec, createTypeError(exec, "Getter must be a function."));
                 return false;
             }
         } else
@@ -219,7 +220,7 @@ static bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor
         if (!set.isUndefined()) {
             CallData callData;
             if (getCallData(set, callData) == CallTypeNone) {
-                throwError(exec, TypeError, "Setter must be a function.");
+                throwError(exec, createTypeError(exec, "Setter must be a function."));
                 return false;
             }
         } else
@@ -232,12 +233,12 @@ static bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor
         return true;
 
     if (desc.value()) {
-        throwError(exec, TypeError, "Invalid property.  'value' present on property with getter or setter.");
+        throwError(exec, createTypeError(exec, "Invalid property.  'value' present on property with getter or setter."));
         return false;
     }
 
     if (desc.writablePresent()) {
-        throwError(exec, TypeError, "Invalid property.  'writable' present on property with getter or setter.");
+        throwError(exec, createTypeError(exec, "Invalid property.  'writable' present on property with getter or setter."));
         return false;
     }
     return true;
@@ -246,7 +247,7 @@ static bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor
 EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperty(ExecState* exec)
 {
     if (!exec->argument(0).isObject())
-        return JSValue::encode(throwError(exec, TypeError, "Properties can only be defined on Objects."));
+        return throwVMError(exec, createTypeError(exec, "Properties can only be defined on Objects."));
     JSObject* O = asObject(exec->argument(0));
     UString propertyName = exec->argument(1).toString(exec);
     if (exec->hadException())
@@ -297,22 +298,22 @@ static JSValue defineProperties(ExecState* exec, JSObject* object, JSObject* pro
 EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperties(ExecState* exec)
 {
     if (!exec->argument(0).isObject())
-        return JSValue::encode(throwError(exec, TypeError, "Properties can only be defined on Objects."));
+        return throwVMError(exec, createTypeError(exec, "Properties can only be defined on Objects."));
     if (!exec->argument(1).isObject())
-        return JSValue::encode(throwError(exec, TypeError, "Property descriptor list must be an Object."));
+        return throwVMError(exec, createTypeError(exec, "Property descriptor list must be an Object."));
     return JSValue::encode(defineProperties(exec, asObject(exec->argument(0)), asObject(exec->argument(1))));
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorCreate(ExecState* exec)
 {
     if (!exec->argument(0).isObject() && !exec->argument(0).isNull())
-        return JSValue::encode(throwError(exec, TypeError, "Object prototype may only be an Object or null."));
+        return throwVMError(exec, createTypeError(exec, "Object prototype may only be an Object or null."));
     JSObject* newObject = constructEmptyObject(exec);
     newObject->setPrototype(exec->argument(0));
     if (exec->argument(1).isUndefined())
         return JSValue::encode(newObject);
     if (!exec->argument(1).isObject())
-        return JSValue::encode(throwError(exec, TypeError, "Property descriptor list must be an Object."));
+        return throwVMError(exec, createTypeError(exec, "Property descriptor list must be an Object."));
     return JSValue::encode(defineProperties(exec, newObject, asObject(exec->argument(1))));
 }
 

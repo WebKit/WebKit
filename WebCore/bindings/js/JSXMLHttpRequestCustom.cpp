@@ -65,7 +65,7 @@ void JSXMLHttpRequest::markChildren(MarkStack& markStack)
 JSValue JSXMLHttpRequest::open(ExecState* exec)
 {
     if (exec->argumentCount() < 2)
-        return throwError(exec, SyntaxError, "Not enough arguments");
+        return throwError(exec, createSyntaxError(exec, "Not enough arguments"));
 
     const KURL& url = impl()->scriptExecutionContext()->completeURL(ustringToString(exec->argument(1).toString(exec)));
     String method = ustringToString(exec->argument(0).toString(exec));

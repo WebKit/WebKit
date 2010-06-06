@@ -45,7 +45,7 @@ static EncodedJSValue JSC_HOST_CALL constructImage(ExecState* exec)
     JSImageConstructor* jsConstructor = static_cast<JSImageConstructor*>(exec->callee());
     Document* document = jsConstructor->document();
     if (!document)
-        return JSValue::encode(throwError(exec, ReferenceError, "Image constructor associated document is unavailable"));
+        return throwVMError(exec, createReferenceError(exec, "Image constructor associated document is unavailable"));
 
     // Calling toJS on the document causes the JS document wrapper to be
     // added to the window object. This is done to ensure that JSDocument::markChildren

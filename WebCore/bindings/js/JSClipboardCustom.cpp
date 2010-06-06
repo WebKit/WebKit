@@ -78,14 +78,14 @@ JSValue JSClipboard::clearData(ExecState* exec)
     }
 
     // FIXME: It does not match the rest of the JS bindings to throw on invalid number of arguments. 
-    return throwError(exec, SyntaxError, "clearData: Invalid number of arguments");
+    return throwError(exec, createSyntaxError(exec, "clearData: Invalid number of arguments"));
 }
 
 JSValue JSClipboard::getData(ExecState* exec)
 {
     // FIXME: It does not match the rest of the JS bindings to throw on invalid number of arguments.
     if (exec->argumentCount() != 1)
-        return throwError(exec, SyntaxError, "getData: Invalid number of arguments");
+        return throwError(exec, createSyntaxError(exec, "getData: Invalid number of arguments"));
 
     Clipboard* clipboard = impl();
 
@@ -106,7 +106,7 @@ JSValue JSClipboard::setDragImage(ExecState* exec)
 
     // FIXME: It does not match the rest of the JS bindings to throw on invalid number of arguments. 
     if (exec->argumentCount() != 3)
-        return throwError(exec, SyntaxError, "setDragImage: Invalid number of arguments");
+        return throwError(exec, createSyntaxError(exec, "setDragImage: Invalid number of arguments"));
 
     int x = exec->argument(1).toInt32(exec);
     int y = exec->argument(2).toInt32(exec);
@@ -114,11 +114,11 @@ JSValue JSClipboard::setDragImage(ExecState* exec)
     // See if they passed us a node
     Node* node = toNode(exec->argument(0));
     if (!node)
-        return throwError(exec, TypeError);
+        return throwTypeError(exec);
 
     // FIXME: This should probably be a TypeError. 
     if (!node->isElementNode())
-        return throwError(exec, SyntaxError, "setDragImageFromElement: Invalid first argument");
+        return throwError(exec, createSyntaxError(exec, "setDragImageFromElement: Invalid first argument"));
 
     if (static_cast<Element*>(node)->hasLocalName(imgTag) && !node->inDocument())
         clipboard->setDragImage(static_cast<HTMLImageElement*>(node)->cachedImage(), IntPoint(x, y));

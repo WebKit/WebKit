@@ -62,7 +62,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncTest(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     if (!thisValue.inherits(&RegExpObject::info))
-        return JSValue::encode(throwError(exec, TypeError));
+        return throwVMTypeError(exec);
     return JSValue::encode(asRegExpObject(thisValue)->test(exec));
 }
 
@@ -70,7 +70,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     if (!thisValue.inherits(&RegExpObject::info))
-        return JSValue::encode(throwError(exec, TypeError));
+        return throwVMTypeError(exec);
     return JSValue::encode(asRegExpObject(thisValue)->exec(exec));
 }
 
@@ -78,7 +78,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     if (!thisValue.inherits(&RegExpObject::info))
-        return JSValue::encode(throwError(exec, TypeError));
+        return throwVMTypeError(exec);
 
     RefPtr<RegExp> regExp;
     JSValue arg0 = exec->argument(0);
@@ -86,7 +86,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
     
     if (arg0.inherits(&RegExpObject::info)) {
         if (!arg1.isUndefined())
-            return JSValue::encode(throwError(exec, TypeError, "Cannot supply flags when constructing one RegExp from another."));
+            return throwVMError(exec, createTypeError(exec, "Cannot supply flags when constructing one RegExp from another."));
         regExp = asRegExpObject(arg0)->regExp();
     } else {
         UString pattern = !exec->argumentCount() ? UString("") : arg0.toString(exec);
@@ -95,7 +95,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
     }
 
     if (!regExp->isValid())
-        return JSValue::encode(throwError(exec, SyntaxError, makeString("Invalid regular expression: ", regExp->errorMessage())));
+        return throwVMError(exec, createSyntaxError(exec, makeString("Invalid regular expression: ", regExp->errorMessage())));
 
     asRegExpObject(thisValue)->setRegExp(regExp.release());
     asRegExpObject(thisValue)->setLastIndex(0);
@@ -108,7 +108,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
     if (!thisValue.inherits(&RegExpObject::info)) {
         if (thisValue.inherits(&RegExpPrototype::info))
             return JSValue::encode(jsNontrivialString(exec, "//"));
-        return JSValue::encode(throwError(exec, TypeError));
+        return throwVMTypeError(exec);
     }
 
     char postfix[5] = { '/', 0, 0, 0, 0 };

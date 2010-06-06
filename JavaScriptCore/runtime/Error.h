@@ -23,43 +23,55 @@
 #ifndef Error_h
 #define Error_h
 
+#include "JSObject.h"
 #include <stdint.h>
 
 namespace JSC {
 
     class ExecState;
+    class JSGlobalData;
+    class JSGlobalObject;
     class JSObject;
+    class SourceCode;
+    class Structure;
     class UString;
 
-    /**
-     * Types of Native Errors available. For custom errors, GeneralError
-     * should be used.
-     */
-    enum ErrorType {
-        GeneralError   = 0,
-        EvalError      = 1,
-        RangeError     = 2,
-        ReferenceError = 3,
-        SyntaxError    = 4,
-        TypeError      = 5,
-        URIError       = 6
-    };
-    
-    extern const char* expressionBeginOffsetPropertyName;
-    extern const char* expressionCaretOffsetPropertyName;
-    extern const char* expressionEndOffsetPropertyName;
-    
-    class Error {
-    public:
-        static JSObject* create(ExecState*, ErrorType, const UString& message, int lineNumber, intptr_t sourceID, const UString& sourceURL);
-        static JSObject* create(ExecState*, ErrorType, const char* message);
-    };
+    // Methods to create a range of internal errors.
+    JSObject* createError(JSGlobalObject*, const UString&);
+    JSObject* createEvalError(JSGlobalObject*, const UString&);
+    JSObject* createRangeError(JSGlobalObject*, const UString&);
+    JSObject* createReferenceError(JSGlobalObject*, const UString&);
+    JSObject* createSyntaxError(JSGlobalObject*, const UString&);
+    JSObject* createTypeError(JSGlobalObject*, const UString&);
+    JSObject* createURIError(JSGlobalObject*, const UString&);
+    // ExecState wrappers.
+    JSObject* createError(ExecState*, const UString&);
+    JSObject* createEvalError(ExecState*, const UString&);
+    JSObject* createRangeError(ExecState*, const UString&);
+    JSObject* createReferenceError(ExecState*, const UString&);
+    JSObject* createSyntaxError(ExecState*, const UString&);
+    JSObject* createTypeError(ExecState*, const UString&);
+    JSObject* createURIError(ExecState*, const UString&);
 
-    JSObject* throwError(ExecState*, ErrorType, const UString& message, int lineNumber, intptr_t sourceID, const UString& sourceURL);
-    JSObject* throwError(ExecState*, ErrorType, const UString& message);
-    JSObject* throwError(ExecState*, ErrorType, const char* message);
-    JSObject* throwError(ExecState*, ErrorType);
+    // Methods to add 
+    bool hasErrorInfo(ExecState*, JSObject* error);
+    JSObject* addErrorInfo(JSGlobalData*, JSObject* error, int line, const SourceCode&);
+    JSObject* addErrorInfo(JSGlobalData*, JSObject* error, int line, const SourceCode&, int divotPoint, int startOffset, int endOffset, bool withCaret = true);
+    // ExecState wrappers.
+    JSObject* addErrorInfo(ExecState*, JSObject* error, int line, const SourceCode&);
+    JSObject* addErrorInfo(ExecState*, JSObject* error, int line, const SourceCode&, int divotPoint, int startOffset, int endOffset, bool withCaret = true);
+
+    // Methods to throw Errors.
+    JSValue throwError(ExecState*, JSValue);
     JSObject* throwError(ExecState*, JSObject*);
+
+    // Convenience wrappers, create an throw an exception with a default message.
+    JSObject* throwTypeError(ExecState*);
+    JSObject* throwSyntaxError(ExecState*);
+
+    // Convenience wrappers, wrap result as an EncodedJSValue.
+    inline EncodedJSValue throwVMError(ExecState* exec, JSValue error) { return JSValue::encode(throwError(exec, error)); }
+    inline EncodedJSValue throwVMTypeError(ExecState* exec) { return JSValue::encode(throwTypeError(exec)); }
 
 } // namespace JSC
 

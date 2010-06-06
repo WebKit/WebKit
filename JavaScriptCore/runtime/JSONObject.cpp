@@ -425,7 +425,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
 
     // Handle cycle detection, and put the holder on the stack.
     if (!m_holderCycleDetector.add(object).second) {
-        throwError(m_exec, TypeError, "JSON.stringify cannot serialize cyclic structures.");
+        throwError(m_exec, createTypeError(m_exec, "JSON.stringify cannot serialize cyclic structures."));
         return StringifyFailed;
     }
     bool holderStackWasEmpty = m_holderStack.isEmpty();
@@ -443,7 +443,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
                 return StringifyFailed;
             if (!--tickCount) {
                 if (localTimeoutChecker.didTimeOut(m_exec)) {
-                    m_exec->setException(createInterruptedExecutionException(&m_exec->globalData()));
+                    throwError(m_exec, createInterruptedExecutionException(&m_exec->globalData()));
                     return StringifyFailed;
                 }
                 tickCount = localTimeoutChecker.ticksUntilNextCheck();
@@ -679,10 +679,8 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             case ArrayStartState: {
                 ASSERT(inValue.isObject());
                 ASSERT(isJSArray(&m_exec->globalData(), asObject(inValue)) || asObject(inValue)->inherits(&JSArray::info));
-                if (objectStack.size() + arrayStack.size() > maximumFilterRecursion) {
-                    m_exec->setException(createStackOverflowError(m_exec));
-                    return jsUndefined();
-                }
+                if (objectStack.size() + arrayStack.size() > maximumFilterRecursion)
+                    return throwError(m_exec, createStackOverflowError(m_exec));
 
                 JSArray* array = asArray(inValue);
                 arrayStack.append(array);
@@ -692,10 +690,8 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             arrayStartVisitMember:
             case ArrayStartVisitMember: {
                 if (!--tickCount) {
-                    if (localTimeoutChecker.didTimeOut(m_exec)) {
-                        m_exec->setException(createInterruptedExecutionException(&m_exec->globalData()));
-                        return jsUndefined();
-                    }
+                    if (localTimeoutChecker.didTimeOut(m_exec))
+                        return throwError(m_exec, createInterruptedExecutionException(&m_exec->globalData()));
                     tickCount = localTimeoutChecker.ticksUntilNextCheck();
                 }
 
@@ -744,10 +740,8 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             case ObjectStartState: {
                 ASSERT(inValue.isObject());
                 ASSERT(!isJSArray(&m_exec->globalData(), asObject(inValue)) && !asObject(inValue)->inherits(&JSArray::info));
-                if (objectStack.size() + arrayStack.size() > maximumFilterRecursion) {
-                    m_exec->setException(createStackOverflowError(m_exec));
-                    return jsUndefined();
-                }
+                if (objectStack.size() + arrayStack.size() > maximumFilterRecursion)
+                    return throwError(m_exec, createStackOverflowError(m_exec));
 
                 JSObject* object = asObject(inValue);
                 objectStack.append(object);
@@ -759,10 +753,8 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             objectStartVisitMember:
             case ObjectStartVisitMember: {
                 if (!--tickCount) {
-                    if (localTimeoutChecker.didTimeOut(m_exec)) {
-                        m_exec->setException(createInterruptedExecutionException(&m_exec->globalData()));
-                        return jsUndefined();
-                    }
+                    if (localTimeoutChecker.didTimeOut(m_exec))
+                        return throwError(m_exec, createInterruptedExecutionException(&m_exec->globalData()));
                     tickCount = localTimeoutChecker.ticksUntilNextCheck();
                 }
 
@@ -825,10 +817,8 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
         stateStack.removeLast();
 
         if (!--tickCount) {
-            if (localTimeoutChecker.didTimeOut(m_exec)) {
-                m_exec->setException(createInterruptedExecutionException(&m_exec->globalData()));
-                return jsUndefined();
-            }
+            if (localTimeoutChecker.didTimeOut(m_exec))
+                return throwError(m_exec, createInterruptedExecutionException(&m_exec->globalData()));
             tickCount = localTimeoutChecker.ticksUntilNextCheck();
         }
     }
@@ -842,7 +832,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
 EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec)
 {
     if (!exec->argumentCount())
-        return JSValue::encode(throwError(exec, GeneralError, "JSON.parse requires at least one parameter"));
+        return throwVMError(exec, createError(exec, "JSON.parse requires at least one parameter"));
     JSValue value = exec->argument(0);
     UString source = value.toString(exec);
     if (exec->hadException())
@@ -851,7 +841,7 @@ EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec)
     LiteralParser jsonParser(exec, source, LiteralParser::StrictJSON);
     JSValue unfiltered = jsonParser.tryLiteralParse();
     if (!unfiltered)
-        return JSValue::encode(throwError(exec, SyntaxError, "Unable to parse JSON string"));
+        return throwVMError(exec, createSyntaxError(exec, "Unable to parse JSON string"));
     
     if (exec->argumentCount() < 2)
         return JSValue::encode(unfiltered);
@@ -868,7 +858,7 @@ EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState* exec)
 {
     if (!exec->argumentCount())
-        return JSValue::encode(throwError(exec, GeneralError, "No input to stringify"));
+        return throwVMError(exec, createError(exec, "No input to stringify"));
     JSValue value = exec->argument(0);
     JSValue replacer = exec->argument(1);
     JSValue space = exec->argument(2);

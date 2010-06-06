@@ -1,3 +1,249 @@
+2010-06-06  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 40214 - Clean up error construction / throwing in JSC.
+        
+        The one egregious insanity here is that creating an error requires
+        a VM-entry-esqe-host call (the string argument is wrapped as a JS
+        object & pushed on the RegisterFile, then unwrapped back to a
+        UString).  Changing this also means you only require a global
+        object, not an ExecState, to create an error.
+
+        The methods to create error objects are also parameterized
+        requiring a switch on the type, which can be made cleaner and
+        faster by moving to a separate method per error type.  Code to add
+        divot information to error had been duplicated, and is coalesced
+        back into a single function.
+
+        Convenience methods added to create & throw type & syntax error
+        with a default error message, since this is a common case.
+
+        Also, errors are currently thrown either using
+        "throwError(exec, error)" or "exec->setException(error)" - unify
+        on the former, since this is more commonly used.  Add
+        "throwVMError(exec, error)" equivalents, as a convenience for
+        cases where the result was being wrapped in "JSValue::encode(...)".
+
+        * API/JSCallbackConstructor.cpp:
+        (JSC::constructJSCallback):
+        * API/JSCallbackFunction.cpp:
+        (JSC::JSCallbackFunction::call):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::getOwnPropertySlot):
+        (JSC::::put):
+        (JSC::::deleteProperty):
+        (JSC::::construct):
+        (JSC::::hasInstance):
+        (JSC::::call):
+        (JSC::::toNumber):
+        (JSC::::toString):
+        (JSC::::staticValueGetter):
+        (JSC::::staticFunctionGetter):
+        (JSC::::callbackGetter):
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeError):
+        * JavaScriptCore.exp:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitNewError):
+        (JSC::BytecodeGenerator::emitThrowExpressionTooDeepException):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ThrowableExpressionData::emitThrowError):
+        (JSC::RegExpNode::emitBytecode):
+        (JSC::PostfixErrorNode::emitBytecode):
+        (JSC::PrefixErrorNode::emitBytecode):
+        (JSC::AssignErrorNode::emitBytecode):
+        (JSC::ForInNode::emitBytecode):
+        (JSC::ContinueNode::emitBytecode):
+        (JSC::BreakNode::emitBytecode):
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::LabelNode::emitBytecode):
+        * interpreter/CallFrame.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jsc.cpp:
+        (functionRun):
+        (functionLoad):
+        (functionCheckSyntax):
+        * parser/Nodes.h:
+        * runtime/ArrayConstructor.cpp:
+        (JSC::constructArrayWithSizeQuirk):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        (JSC::arrayProtoFuncToLocaleString):
+        (JSC::arrayProtoFuncJoin):
+        (JSC::arrayProtoFuncFilter):
+        (JSC::arrayProtoFuncMap):
+        (JSC::arrayProtoFuncEvery):
+        (JSC::arrayProtoFuncForEach):
+        (JSC::arrayProtoFuncSome):
+        (JSC::arrayProtoFuncReduce):
+        (JSC::arrayProtoFuncReduceRight):
+        * runtime/BooleanPrototype.cpp:
+        (JSC::booleanProtoFuncToString):
+        (JSC::booleanProtoFuncValueOf):
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncToString):
+        (JSC::dateProtoFuncToUTCString):
+        (JSC::dateProtoFuncToISOString):
+        (JSC::dateProtoFuncToDateString):
+        (JSC::dateProtoFuncToTimeString):
+        (JSC::dateProtoFuncToLocaleString):
+        (JSC::dateProtoFuncToLocaleDateString):
+        (JSC::dateProtoFuncToLocaleTimeString):
+        (JSC::dateProtoFuncGetTime):
+        (JSC::dateProtoFuncGetFullYear):
+        (JSC::dateProtoFuncGetUTCFullYear):
+        (JSC::dateProtoFuncToGMTString):
+        (JSC::dateProtoFuncGetMonth):
+        (JSC::dateProtoFuncGetUTCMonth):
+        (JSC::dateProtoFuncGetDate):
+        (JSC::dateProtoFuncGetUTCDate):
+        (JSC::dateProtoFuncGetDay):
+        (JSC::dateProtoFuncGetUTCDay):
+        (JSC::dateProtoFuncGetHours):
+        (JSC::dateProtoFuncGetUTCHours):
+        (JSC::dateProtoFuncGetMinutes):
+        (JSC::dateProtoFuncGetUTCMinutes):
+        (JSC::dateProtoFuncGetSeconds):
+        (JSC::dateProtoFuncGetUTCSeconds):
+        (JSC::dateProtoFuncGetMilliSeconds):
+        (JSC::dateProtoFuncGetUTCMilliseconds):
+        (JSC::dateProtoFuncGetTimezoneOffset):
+        (JSC::dateProtoFuncSetTime):
+        (JSC::setNewValueFromTimeArgs):
+        (JSC::setNewValueFromDateArgs):
+        (JSC::dateProtoFuncSetMilliSeconds):
+        (JSC::dateProtoFuncSetUTCMilliseconds):
+        (JSC::dateProtoFuncSetSeconds):
+        (JSC::dateProtoFuncSetUTCSeconds):
+        (JSC::dateProtoFuncSetMinutes):
+        (JSC::dateProtoFuncSetUTCMinutes):
+        (JSC::dateProtoFuncSetHours):
+        (JSC::dateProtoFuncSetUTCHours):
+        (JSC::dateProtoFuncSetDate):
+        (JSC::dateProtoFuncSetUTCDate):
+        (JSC::dateProtoFuncSetMonth):
+        (JSC::dateProtoFuncSetUTCMonth):
+        (JSC::dateProtoFuncSetFullYear):
+        (JSC::dateProtoFuncSetUTCFullYear):
+        (JSC::dateProtoFuncSetYear):
+        (JSC::dateProtoFuncGetYear):
+        (JSC::dateProtoFuncToJSON):
+        * runtime/Error.cpp:
+        (JSC::createError):
+        (JSC::createEvalError):
+        (JSC::createRangeError):
+        (JSC::createReferenceError):
+        (JSC::createSyntaxError):
+        (JSC::createTypeError):
+        (JSC::createURIError):
+        (JSC::addErrorSourceInfo):
+        (JSC::addErrorDivotInfo):
+        (JSC::addErrorInfo):
+        (JSC::hasErrorInfo):
+        (JSC::throwError):
+        (JSC::throwTypeError):
+        (JSC::throwSyntaxError):
+        * runtime/Error.h:
+        (JSC::throwVMError):
+        (JSC::throwVMTypeError):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::constructWithErrorConstructor):
+        (JSC::callErrorConstructor):
+        * runtime/ErrorConstructor.h:
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::ErrorInstance):
+        (JSC::ErrorInstance::create):
+        * runtime/ErrorInstance.h:
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::ErrorPrototype):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createStackOverflowError):
+        (JSC::createUndefinedVariableError):
+        (JSC::createInvalidParamError):
+        (JSC::createNotAConstructorError):
+        (JSC::createNotAFunctionError):
+        (JSC::createNotAnObjectError):
+        (JSC::throwOutOfMemoryError):
+        * runtime/ExceptionHelpers.h:
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compile):
+        (JSC::ProgramExecutable::checkSyntax):
+        (JSC::ProgramExecutable::compile):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString):
+        (JSC::functionProtoFuncApply):
+        (JSC::functionProtoFuncCall):
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::from):
+        * runtime/Identifier.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::put):
+        * runtime/JSFunction.cpp:
+        (JSC::callHostFunctionAsConstructor):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::encode):
+        (JSC::decode):
+        (JSC::globalFuncEval):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendStringifiedValue):
+        (JSC::Walker::walk):
+        (JSC::JSONProtoFuncParse):
+        (JSC::JSONProtoFuncStringify):
+        * runtime/JSObject.cpp:
+        (JSC::throwSetterError):
+        (JSC::JSObject::put):
+        (JSC::JSObject::putWithAttributes):
+        (JSC::JSObject::defaultValue):
+        (JSC::JSObject::hasInstance):
+        (JSC::JSObject::defineOwnProperty):
+        * runtime/JSObject.h:
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::toObjectSlowCase):
+        (JSC::JSValue::synthesizeObject):
+        (JSC::JSValue::synthesizePrototype):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::constructWithNativeErrorConstructor):
+        (JSC::callNativeErrorConstructor):
+        * runtime/NativeErrorConstructor.h:
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToString):
+        (JSC::numberProtoFuncToLocaleString):
+        (JSC::numberProtoFuncValueOf):
+        (JSC::numberProtoFuncToFixed):
+        (JSC::numberProtoFuncToExponential):
+        (JSC::numberProtoFuncToPrecision):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetPrototypeOf):
+        (JSC::objectConstructorGetOwnPropertyDescriptor):
+        (JSC::objectConstructorGetOwnPropertyNames):
+        (JSC::objectConstructorKeys):
+        (JSC::toPropertyDescriptor):
+        (JSC::objectConstructorDefineProperty):
+        (JSC::objectConstructorDefineProperties):
+        (JSC::objectConstructorCreate):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncDefineGetter):
+        (JSC::objectProtoFuncDefineSetter):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::constructRegExp):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::match):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncTest):
+        (JSC::regExpProtoFuncExec):
+        (JSC::regExpProtoFuncCompile):
+        (JSC::regExpProtoFuncToString):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncToString):
+
 2010-06-05  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.

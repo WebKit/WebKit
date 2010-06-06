@@ -121,7 +121,7 @@ JSValue JSCanvasRenderingContext2D::setFillColor(ExecState* exec)
                                   exec->argument(2).toFloat(exec), exec->argument(3).toFloat(exec), exec->argument(4).toFloat(exec));
             break;
         default:
-            return throwError(exec, SyntaxError);
+            return throwSyntaxError(exec);
     }
     return jsUndefined();
 }    
@@ -158,7 +158,7 @@ JSValue JSCanvasRenderingContext2D::setStrokeColor(ExecState* exec)
                                     exec->argument(2).toFloat(exec), exec->argument(3).toFloat(exec), exec->argument(4).toFloat(exec));
             break;
         default:
-            return throwError(exec, SyntaxError);
+            return throwSyntaxError(exec);
     }
     
     return jsUndefined();
@@ -190,7 +190,7 @@ JSValue JSCanvasRenderingContext2D::drawImage(ExecState* exec)
     // The img parameter can be a <img> or <canvas> element.
     JSValue value = exec->argument(0);
     if (!value.isObject())
-        return throwError(exec, TypeError);
+        return throwTypeError(exec);
     JSObject* o = asObject(value);
     
     ExceptionCode ec = 0;
@@ -213,7 +213,7 @@ JSValue JSCanvasRenderingContext2D::drawImage(ExecState* exec)
                 setDOMException(exec, ec);
                 break;
             default:
-                return throwError(exec, SyntaxError);
+                return throwSyntaxError(exec);
         }
     } else if (o->inherits(&JSHTMLCanvasElement::s_info)) {
         HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(static_cast<JSHTMLElement*>(o)->impl());
@@ -234,7 +234,7 @@ JSValue JSCanvasRenderingContext2D::drawImage(ExecState* exec)
                 setDOMException(exec, ec);
                 break;
             default:
-                return throwError(exec, SyntaxError);
+                return throwSyntaxError(exec);
         }
 #if ENABLE(VIDEO)
     } else if (o->inherits(&JSHTMLVideoElement::s_info)) {
@@ -256,7 +256,7 @@ JSValue JSCanvasRenderingContext2D::drawImage(ExecState* exec)
                     setDOMException(exec, ec);
                     break;
                 default:
-                    return throwError(exec, SyntaxError);
+                    return throwSyntaxError(exec);
         }
 #endif
     } else {
@@ -272,11 +272,11 @@ JSValue JSCanvasRenderingContext2D::drawImageFromRect(ExecState* exec)
     
     JSValue value = exec->argument(0);
     if (!value.isObject())
-        return throwError(exec, TypeError);
+        return throwTypeError(exec);
     JSObject* o = asObject(value);
     
     if (!o->inherits(&JSHTMLImageElement::s_info))
-        return throwError(exec, TypeError);
+        return throwTypeError(exec);
     context->drawImageFromRect(static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(o)->impl()),
                                exec->argument(1).toFloat(exec), exec->argument(2).toFloat(exec),
                                exec->argument(3).toFloat(exec), exec->argument(4).toFloat(exec),
@@ -326,7 +326,7 @@ JSValue JSCanvasRenderingContext2D::setShadow(ExecState* exec)
                                exec->argument(6).toFloat(exec), exec->argument(7).toFloat(exec));
             break;
         default:
-            return throwError(exec, SyntaxError);
+            return throwSyntaxError(exec);
     }
     
     return jsUndefined();    
@@ -338,7 +338,7 @@ JSValue JSCanvasRenderingContext2D::createPattern(ExecState* exec)
 
     JSValue value = exec->argument(0);
     if (!value.isObject())
-        return throwError(exec, TypeError);
+        return throwTypeError(exec);
     JSObject* o = asObject(value);
 
     if (o->inherits(&JSHTMLImageElement::s_info)) {
@@ -406,7 +406,7 @@ JSValue JSCanvasRenderingContext2D::fillText(ExecState* exec)
     // number arg = y
     // optional number arg = maxWidth
     if (exec->argumentCount() < 3 || exec->argumentCount() > 4)
-        return throwError(exec, SyntaxError);
+        return throwSyntaxError(exec);
     
     if (exec->argumentCount() == 4)
         context->fillText(ustringToString(exec->argument(0).toString(exec)), exec->argument(1).toFloat(exec), exec->argument(2).toFloat(exec), exec->argument(3).toFloat(exec));
@@ -424,7 +424,7 @@ JSValue JSCanvasRenderingContext2D::strokeText(ExecState* exec)
     // number arg = y
     // optional number arg = maxWidth
     if (exec->argumentCount() < 3 || exec->argumentCount() > 4)
-        return throwError(exec, SyntaxError);
+        return throwSyntaxError(exec);
     
     if (exec->argumentCount() == 4)
         context->strokeText(ustringToString(exec->argument(0).toString(exec)), exec->argument(1).toFloat(exec), exec->argument(2).toFloat(exec), exec->argument(3).toFloat(exec));

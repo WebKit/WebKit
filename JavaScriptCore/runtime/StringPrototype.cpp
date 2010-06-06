@@ -459,7 +459,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToString(ExecState* exec)
     if (thisValue.inherits(&StringObject::info))
         return JSValue::encode(asStringObject(thisValue)->internalValue());
 
-    return JSValue::encode(throwError(exec, TypeError));
+    return throwVMTypeError(exec);
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncCharAt(ExecState* exec)

@@ -142,7 +142,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     JSValue v = thisValue.getJSNumber();
     if (!v)
-        return JSValue::encode(throwError(exec, TypeError));
+        return throwVMTypeError(exec);
 
     JSValue radixValue = exec->argument(0);
     int radix;
@@ -170,7 +170,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
     }
 
     if (radix < 2 || radix > 36)
-        return JSValue::encode(throwError(exec, RangeError, "toString() radix argument must be between 2 and 36"));
+        return throwVMError(exec, createRangeError(exec, "toString() radix argument must be between 2 and 36"));
 
     // INT_MAX results in 1024 characters left of the dot with radix 2
     // give the same space on the right side. safety checks are in place
@@ -228,7 +228,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(ExecState* exec)
 
     JSValue v = thisValue.getJSNumber();
     if (!v)
-        return JSValue::encode(throwError(exec, TypeError));
+        return throwVMTypeError(exec);
 
     return JSValue::encode(jsString(exec, v.toString(exec)));
 }
@@ -238,7 +238,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     JSValue v = thisValue.getJSNumber();
     if (!v)
-        return JSValue::encode(throwError(exec, TypeError));
+        return throwVMTypeError(exec);
 
     return JSValue::encode(v);
 }
@@ -248,12 +248,12 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     JSValue v = thisValue.getJSNumber();
     if (!v)
-        return JSValue::encode(throwError(exec, TypeError));
+        return throwVMTypeError(exec);
 
     JSValue fractionDigits = exec->argument(0);
     double df = fractionDigits.toInteger(exec);
     if (!(df >= 0 && df <= 20))
-        return JSValue::encode(throwError(exec, RangeError, "toFixed() digits argument must be between 0 and 20"));
+        return throwVMError(exec, createRangeError(exec, "toFixed() digits argument must be between 0 and 20"));
     int f = static_cast<int>(df);
 
     double x = v.uncheckedGetNumber();
@@ -340,7 +340,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     JSValue v = thisValue.getJSNumber();
     if (!v)
-        return JSValue::encode(throwError(exec, TypeError));
+        return throwVMTypeError(exec);
 
     double x = v.uncheckedGetNumber();
 
@@ -350,7 +350,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
     JSValue fractionalDigitsValue = exec->argument(0);
     double df = fractionalDigitsValue.toInteger(exec);
     if (!(df >= 0 && df <= 20))
-        return JSValue::encode(throwError(exec, RangeError, "toExponential() argument must between 0 and 20"));
+        return throwVMError(exec, createRangeError(exec, "toExponential() argument must between 0 and 20"));
     int fractionalDigits = static_cast<int>(df);
     bool includeAllDigits = fractionalDigitsValue.isUndefined();
 
@@ -413,7 +413,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     JSValue v = thisValue.getJSNumber();
     if (!v)
-        return JSValue::encode(throwError(exec, TypeError));
+        return throwVMTypeError(exec);
 
     double doublePrecision = exec->argument(0).toIntegerPreserveNaN(exec);
     double x = v.uncheckedGetNumber();
@@ -428,7 +428,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
         s = "";
 
     if (!(doublePrecision >= 1 && doublePrecision <= 21)) // true for NaN
-        return JSValue::encode(throwError(exec, RangeError, "toPrecision() argument must be between 1 and 21"));
+        return throwVMError(exec, createRangeError(exec, "toPrecision() argument must be between 1 and 21"));
     int precision = static_cast<int>(doublePrecision);
 
     int e = 0;

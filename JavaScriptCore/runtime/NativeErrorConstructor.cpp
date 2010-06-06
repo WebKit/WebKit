@@ -42,19 +42,11 @@ NativeErrorConstructor::NativeErrorConstructor(ExecState* exec, JSGlobalObject* 
     m_errorStructure = ErrorInstance::createStructure(prototype);
 }
 
-
-ErrorInstance* NativeErrorConstructor::construct(ExecState* exec, const ArgList& args)
-{
-    ErrorInstance* object = new (exec) ErrorInstance(m_errorStructure);
-    if (!args.at(0).isUndefined())
-        object->putDirect(exec->propertyNames().message, jsString(exec, args.at(0).toString(exec)));
-    return object;
-}
-
 static EncodedJSValue JSC_HOST_CALL constructWithNativeErrorConstructor(ExecState* exec)
 {
-    ArgList args(exec);
-    return JSValue::encode(static_cast<NativeErrorConstructor*>(exec->callee())->construct(exec, args));
+    JSValue message = exec->argumentCount() ? exec->argument(0) : jsUndefined();
+    Structure* errorStructure = static_cast<NativeErrorConstructor*>(exec->callee())->errorStructure();
+    return JSValue::encode(ErrorInstance::create(exec, errorStructure, message));
 }
 
 ConstructType NativeErrorConstructor::getConstructData(ConstructData& constructData)
@@ -65,8 +57,9 @@ ConstructType NativeErrorConstructor::getConstructData(ConstructData& constructD
     
 static EncodedJSValue JSC_HOST_CALL callNativeErrorConstructor(ExecState* exec)
 {
-    ArgList args(exec);
-    return JSValue::encode(static_cast<NativeErrorConstructor*>(exec->callee())->construct(exec, args));
+    JSValue message = exec->argumentCount() ? exec->argument(0) : jsUndefined();
+    Structure* errorStructure = static_cast<NativeErrorConstructor*>(exec->callee())->errorStructure();
+    return JSValue::encode(ErrorInstance::create(exec, errorStructure, message));
 }
 
 CallType NativeErrorConstructor::getCallData(CallData& callData)

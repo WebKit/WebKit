@@ -1750,7 +1750,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_instanceof)
             return JSValue::encode(jsBoolean(false));
 
         if (!proto.isObject()) {
-            throwError(callFrame, TypeError, "instanceof called on an object with an invalid prototype property.");
+            throwError(callFrame, createTypeError(callFrame, "instanceof called on an object with an invalid prototype property."));
             VM_THROW_EXCEPTION();
         }
     }
@@ -3394,12 +3394,13 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_error)
 
     CallFrame* callFrame = stackFrame.callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
-    unsigned type = stackFrame.args[0].int32();
-    JSValue message = stackFrame.args[1].jsValue();
+    unsigned isReference = stackFrame.args[0].int32();
+    UString message = stackFrame.args[1].jsValue().toString(callFrame);
     unsigned bytecodeOffset = stackFrame.args[2].int32();
 
+    JSObject* error = isReference ? createReferenceError(callFrame, message) : createSyntaxError(callFrame, message);
     unsigned lineNumber = codeBlock->lineNumberForBytecodeOffset(callFrame, bytecodeOffset);
-    return Error::create(callFrame, static_cast<ErrorType>(type), message.toString(callFrame), lineNumber, codeBlock->ownerExecutable()->sourceID(), codeBlock->ownerExecutable()->sourceURL());
+    return addErrorInfo(stackFrame.globalData, error, lineNumber, codeBlock->ownerExecutable()->source());
 }
 
 DEFINE_STUB_FUNCTION(void, op_debug)

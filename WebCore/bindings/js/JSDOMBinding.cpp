@@ -603,7 +603,7 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
     }
 
     ASSERT(errorObject);
-    exec->setException(errorObject);
+    throwError(exec, errorObject);
 }
 
 bool checkNodeSecurity(ExecState* exec, Node* node)
@@ -729,7 +729,7 @@ JSC::JSObject* toJSSequence(ExecState* exec, JSValue value, unsigned& length)
 {
     JSObject* object = value.getObject();
     if (!object) {
-        throwError(exec, TypeError);
+        throwTypeError(exec);
         return 0;
     }
     JSValue lengthValue = object->get(exec, exec->propertyNames().length);
@@ -737,7 +737,7 @@ JSC::JSObject* toJSSequence(ExecState* exec, JSValue value, unsigned& length)
         return 0;
 
     if (lengthValue.isUndefinedOrNull()) {
-        throwError(exec, TypeError);
+        throwTypeError(exec);
         return 0;
     }
 

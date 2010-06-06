@@ -35,8 +35,6 @@ namespace JSC {
 
         static const ClassInfo info;
 
-        ErrorInstance* construct(ExecState*, const ArgList&);
-
         Structure* errorStructure() { return m_errorStructure.get(); }
 
     private:

@@ -44,7 +44,7 @@ DOMObject::~DOMObject()
 
 bool DOMObject::defineOwnProperty(ExecState* exec, const Identifier&, PropertyDescriptor&, bool)
 {
-    throwError(exec, TypeError, "defineProperty is not supported on DOM Objects");
+    throwError(exec, createTypeError(exec, "defineProperty is not supported on DOM Objects"));
     return false;
 }
 

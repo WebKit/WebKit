@@ -41,7 +41,7 @@ template <class T>
 JSC::JSValue setWebGLArrayHelper(JSC::ExecState* exec, T* impl, T* (*conversionFunc)(JSC::JSValue))
 {
     if (exec->argumentCount() < 1)
-        return throwError(exec, JSC::SyntaxError);
+        return JSC::throwSyntaxError(exec);
 
     T* array = (*conversionFunc)(exec->argument(0));
     if (array) {
@@ -78,7 +78,7 @@ JSC::JSValue setWebGLArrayHelper(JSC::ExecState* exec, T* impl, T* (*conversionF
         return JSC::jsUndefined();
     }
 
-    return JSC::throwError(exec, JSC::SyntaxError);
+    return JSC::throwSyntaxError(exec);
 }
 
 }

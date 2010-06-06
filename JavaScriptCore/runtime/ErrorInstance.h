@@ -27,10 +27,16 @@ namespace JSC {
 
     class ErrorInstance : public JSObject {
     public:
-        explicit ErrorInstance(NonNullPassRefPtr<Structure>);
 
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
+
+        static ErrorInstance* create(JSGlobalData*, NonNullPassRefPtr<Structure>, const UString&);
+        static ErrorInstance* create(ExecState* exec, NonNullPassRefPtr<Structure>, JSValue message);
+
+    protected:
+        explicit ErrorInstance(NonNullPassRefPtr<Structure>);
+        explicit ErrorInstance(JSGlobalData*, NonNullPassRefPtr<Structure>, const UString&);
     };
 
 } // namespace JSC

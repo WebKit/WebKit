@@ -109,7 +109,7 @@ static EncodedJSValue JSC_HOST_CALL callRuntimeMethod(ExecState* exec)
             instance = pluginInstance(element);
         }
         if (!instance)
-            return JSValue::encode(throwError(exec, TypeError));
+            return throwVMTypeError(exec);
     }
     ASSERT(instance);
 

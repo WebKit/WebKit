@@ -81,27 +81,27 @@ static void substitute(UString& string, const UString& substring)
     string = makeString(string.substr(0, position), substring, string.substr(position + 2));
 }
 
-RegisterID* ThrowableExpressionData::emitThrowError(BytecodeGenerator& generator, ErrorType type, const char* message)
+RegisterID* ThrowableExpressionData::emitThrowError(BytecodeGenerator& generator, bool isReferenceError, const char* message)
 {
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
-    RegisterID* exception = generator.emitNewError(generator.newTemporary(), type, jsString(generator.globalData(), message));
+    RegisterID* exception = generator.emitNewError(generator.newTemporary(), isReferenceError, jsString(generator.globalData(), message));
     generator.emitThrow(exception);
     return exception;
 }
 
-RegisterID* ThrowableExpressionData::emitThrowError(BytecodeGenerator& generator, ErrorType type, const char* messageTemplate, const UString& label)
+RegisterID* ThrowableExpressionData::emitThrowError(BytecodeGenerator& generator, bool isReferenceError, const char* messageTemplate, const UString& label)
 {
     UString message = messageTemplate;
     substitute(message, label);
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
-    RegisterID* exception = generator.emitNewError(generator.newTemporary(), type, jsString(generator.globalData(), message));
+    RegisterID* exception = generator.emitNewError(generator.newTemporary(), isReferenceError, jsString(generator.globalData(), message));
     generator.emitThrow(exception);
     return exception;
 }
 
-inline RegisterID* ThrowableExpressionData::emitThrowError(BytecodeGenerator& generator, ErrorType type, const char* messageTemplate, const Identifier& label)
+inline RegisterID* ThrowableExpressionData::emitThrowError(BytecodeGenerator& generator, bool isReferenceError, const char* messageTemplate, const Identifier& label)
 {
-    return emitThrowError(generator, type, messageTemplate, label.ustring());
+    return emitThrowError(generator, isReferenceError, messageTemplate, label.ustring());
 }
 
 // ------------------------------ NullNode -------------------------------------
@@ -146,7 +146,7 @@ RegisterID* RegExpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
 {
     RefPtr<RegExp> regExp = RegExp::create(generator.globalData(), m_pattern.ustring(), m_flags.ustring());
     if (!regExp->isValid())
-        return emitThrowError(generator, SyntaxError, "Invalid regular expression: %s", regExp->errorMessage());
+        return emitThrowError(generator, false, "Invalid regular expression: %s", regExp->errorMessage());
     if (dst == generator.ignoredResult())
         return 0;
     return generator.emitNewRegExp(generator.finalDestination(dst), regExp.get());
@@ -642,7 +642,7 @@ RegisterID* PostfixDotNode::emitBytecode(BytecodeGenerator& generator, RegisterI
 
 RegisterID* PostfixErrorNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
-    return emitThrowError(generator, ReferenceError, m_operator == OpPlusPlus
+    return emitThrowError(generator, true, m_operator == OpPlusPlus
         ? "Postfix ++ operator applied to value that is not a reference."
         : "Postfix -- operator applied to value that is not a reference.");
 }
@@ -807,7 +807,7 @@ RegisterID* PrefixDotNode::emitBytecode(BytecodeGenerator& generator, RegisterID
 
 RegisterID* PrefixErrorNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
-    return emitThrowError(generator, ReferenceError, m_operator == OpPlusPlus
+    return emitThrowError(generator, true, m_operator == OpPlusPlus
         ? "Prefix ++ operator applied to value that is not a reference."
         : "Prefix -- operator applied to value that is not a reference.");
 }
@@ -1250,7 +1250,7 @@ RegisterID* ReadModifyDotNode::emitBytecode(BytecodeGenerator& generator, Regist
 
 RegisterID* AssignErrorNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
-    return emitThrowError(generator, ReferenceError, "Left side of assignment is not a reference.");
+    return emitThrowError(generator, true, "Left side of assignment is not a reference.");
 }
 
 // ------------------------------ AssignBracketNode -----------------------------------
@@ -1555,7 +1555,7 @@ RegisterID* ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
     RefPtr<LabelScope> scope = generator.newLabelScope(LabelScope::Loop);
 
     if (!m_lexpr->isLocation())
-        return emitThrowError(generator, ReferenceError, "Left side of for-in statement is not a reference.");
+        return emitThrowError(generator, true, "Left side of for-in statement is not a reference.");
 
     generator.emitDebugHook(WillExecuteStatement, firstLine(), lastLine());
 
@@ -1634,8 +1634,8 @@ RegisterID* ContinueNode::emitBytecode(BytecodeGenerator& generator, RegisterID*
 
     if (!scope)
         return m_ident.isEmpty()
-            ? emitThrowError(generator, SyntaxError, "Invalid continue statement.")
-            : emitThrowError(generator, SyntaxError, "Undefined label: '%s'.", m_ident);
+            ? emitThrowError(generator, false, "Invalid continue statement.")
+            : emitThrowError(generator, false, "Undefined label: '%s'.", m_ident);
 
     generator.emitJumpScopes(scope->continueTarget(), scope->scopeDepth());
     return dst;
@@ -1652,8 +1652,8 @@ RegisterID* BreakNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
     
     if (!scope)
         return m_ident.isEmpty()
-            ? emitThrowError(generator, SyntaxError, "Invalid break statement.")
-            : emitThrowError(generator, SyntaxError, "Undefined label: '%s'.", m_ident);
+            ? emitThrowError(generator, false, "Invalid break statement.")
+            : emitThrowError(generator, false, "Undefined label: '%s'.", m_ident);
 
     generator.emitJumpScopes(scope->breakTarget(), scope->scopeDepth());
     return dst;
@@ -1665,7 +1665,7 @@ RegisterID* ReturnNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
 {
     generator.emitDebugHook(WillExecuteStatement, firstLine(), lastLine());
     if (generator.codeType() != FunctionCode)
-        return emitThrowError(generator, SyntaxError, "Invalid return statement.");
+        return emitThrowError(generator, false, "Invalid return statement.");
 
     if (dst == generator.ignoredResult())
         dst = 0;
@@ -1871,7 +1871,7 @@ RegisterID* LabelNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
     generator.emitDebugHook(WillExecuteStatement, firstLine(), lastLine());
 
     if (generator.breakTarget(m_name))
-        return emitThrowError(generator, SyntaxError, "Duplicate label: %s.", m_name);
+        return emitThrowError(generator, false, "Duplicate label: %s.", m_name);
 
     RefPtr<LabelScope> scope = generator.newLabelScope(LabelScope::NamedLabel, &m_name);
     RegisterID* r0 = generator.emitNode(dst, m_statement);

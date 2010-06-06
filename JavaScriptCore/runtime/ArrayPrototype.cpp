@@ -154,13 +154,13 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     bool isRealArray = isJSArray(&exec->globalData(), thisValue);
     if (!isRealArray && !thisValue.inherits(&JSArray::info))
-        return JSValue::encode(throwError(exec, TypeError));
+        return throwVMTypeError(exec);
     JSArray* thisObj = asArray(thisValue);
     
     HashSet<JSObject*>& arrayVisitedElements = exec->globalData().arrayVisitedElements;
     if (arrayVisitedElements.size() >= MaxSmallThreadReentryDepth) {
         if (arrayVisitedElements.size() >= exec->globalData().maxReentryDepth)
-            return JSValue::encode(throwError(exec, RangeError, "Maximum call stack size exceeded."));    
+            return throwVMError(exec, createStackOverflowError(exec));
     }
 
     bool alreadyVisited = !arrayVisitedElements.add(thisObj).second;
@@ -213,13 +213,13 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     if (!thisValue.inherits(&JSArray::info))
-        return JSValue::encode(throwError(exec, TypeError));
+        return throwVMTypeError(exec);
     JSObject* thisObj = asArray(thisValue);
 
     HashSet<JSObject*>& arrayVisitedElements = exec->globalData().arrayVisitedElements;
     if (arrayVisitedElements.size() >= MaxSmallThreadReentryDepth) {
         if (arrayVisitedElements.size() >= exec->globalData().maxReentryDepth)
-            return JSValue::encode(throwError(exec, RangeError, "Maximum call stack size exceeded."));
+            return throwVMError(exec, createStackOverflowError(exec));
     }
 
     bool alreadyVisited = !arrayVisitedElements.add(thisObj).second;
@@ -258,7 +258,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
     HashSet<JSObject*>& arrayVisitedElements = exec->globalData().arrayVisitedElements;
     if (arrayVisitedElements.size() >= MaxSmallThreadReentryDepth) {
         if (arrayVisitedElements.size() >= exec->globalData().maxReentryDepth)
-            return JSValue::encode(throwError(exec, RangeError, "Maximum call stack size exceeded."));
+            return throwVMError(exec, createStackOverflowError(exec));
     }
 
     bool alreadyVisited = !arrayVisitedElements.add(thisObj).second;
@@ -637,7 +637,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncFilter(ExecState* exec)
     CallData callData;
     CallType callType = getCallData(function, callData);
     if (callType == CallTypeNone)
-        return JSValue::encode(throwError(exec, TypeError));
+        return throwVMTypeError(exec);
 
     JSObject* applyThis = exec->argument(1).isUndefinedOrNull() ? exec->globalThisValue() : exec->argument(1).toObject(exec);
     JSArray* resultArray = constructEmptyArray(exec);
@@ -696,7 +696,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncMap(ExecState* exec)
     CallData callData;
     CallType callType = getCallData(function, callData);
     if (callType == CallTypeNone)
-        return JSValue::encode(throwError(exec, TypeError));
+        return throwVMTypeError(exec);
 
     JSObject* applyThis = exec->argument(1).isUndefinedOrNull() ? exec->globalThisValue() : exec->argument(1).toObject(exec);
 
@@ -754,7 +754,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncEvery(ExecState* exec)
     CallData callData;
     CallType callType = getCallData(function, callData);
     if (callType == CallTypeNone)
-        return JSValue::encode(throwError(exec, TypeError));
+        return throwVMTypeError(exec);
 
     JSObject* applyThis = exec->argument(1).isUndefinedOrNull() ? exec->globalThisValue() : exec->argument(1).toObject(exec);
 
@@ -811,7 +811,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncForEach(ExecState* exec)
     CallData callData;
     CallType callType = getCallData(function, callData);
     if (callType == CallTypeNone)
-        return JSValue::encode(throwError(exec, TypeError));
+        return throwVMTypeError(exec);
 
     JSObject* applyThis = exec->argument(1).isUndefinedOrNull() ? exec->globalThisValue() : exec->argument(1).toObject(exec);
 
@@ -857,7 +857,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSome(ExecState* exec)
     CallData callData;
     CallType callType = getCallData(function, callData);
     if (callType == CallTypeNone)
-        return JSValue::encode(throwError(exec, TypeError));
+        return throwVMTypeError(exec);
 
     JSObject* applyThis = exec->argument(1).isUndefinedOrNull() ? exec->globalThisValue() : exec->argument(1).toObject(exec);
 
@@ -911,13 +911,13 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReduce(ExecState* exec)
     CallData callData;
     CallType callType = getCallData(function, callData);
     if (callType == CallTypeNone)
-        return JSValue::encode(throwError(exec, TypeError));
+        return throwVMTypeError(exec);
 
     unsigned i = 0;
     JSValue rv;
     unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
     if (!length && exec->argumentCount() == 1)
-        return JSValue::encode(throwError(exec, TypeError));
+        return throwVMTypeError(exec);
     JSArray* array = 0;
     if (isJSArray(&exec->globalData(), thisObj))
         array = asArray(thisObj);
@@ -934,7 +934,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReduce(ExecState* exec)
                 break;
         }
         if (!rv)
-            return JSValue::encode(throwError(exec, TypeError));
+            return throwVMTypeError(exec);
         i++;
     }
 
@@ -982,13 +982,13 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReduceRight(ExecState* exec)
     CallData callData;
     CallType callType = getCallData(function, callData);
     if (callType == CallTypeNone)
-        return JSValue::encode(throwError(exec, TypeError));
+        return throwVMTypeError(exec);
     
     unsigned i = 0;
     JSValue rv;
     unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
     if (!length && exec->argumentCount() == 1)
-        return JSValue::encode(throwError(exec, TypeError));
+        return throwVMTypeError(exec);
     JSArray* array = 0;
     if (isJSArray(&exec->globalData(), thisObj))
         array = asArray(thisObj);
@@ -1005,7 +1005,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReduceRight(ExecState* exec)
                 break;
         }
         if (!rv)
-            return JSValue::encode(throwError(exec, TypeError));
+            return throwVMTypeError(exec);
         i++;
     }
     

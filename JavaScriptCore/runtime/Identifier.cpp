@@ -228,6 +228,21 @@ Identifier Identifier::from(ExecState* exec, double value)
     return Identifier(exec, exec->globalData().numericStrings.add(value));
 }
 
+Identifier Identifier::from(JSGlobalData* globalData, unsigned value)
+{
+    return Identifier(globalData, globalData->numericStrings.add(value));
+}
+
+Identifier Identifier::from(JSGlobalData* globalData, int value)
+{
+    return Identifier(globalData, globalData->numericStrings.add(value));
+}
+
+Identifier Identifier::from(JSGlobalData* globalData, double value)
+{
+    return Identifier(globalData, globalData->numericStrings.add(value));
+}
+
 #ifndef NDEBUG
 
 void Identifier::checkCurrentIdentifierTable(JSGlobalData* globalData)

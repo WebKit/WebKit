@@ -70,7 +70,7 @@ namespace WebCore {
 JSValue JSWebGLRenderingContext::bufferData(JSC::ExecState* exec)
 {
     if (exec->argumentCount() != 3)
-        return throwError(exec, SyntaxError);
+        return throwSyntaxError(exec);
 
     unsigned target = exec->argument(0).toInt32(exec);
     unsigned usage = exec->argument(2).toInt32(exec);
@@ -92,7 +92,7 @@ JSValue JSWebGLRenderingContext::bufferData(JSC::ExecState* exec)
 JSValue JSWebGLRenderingContext::bufferSubData(JSC::ExecState* exec)
 {
     if (exec->argumentCount() != 3)
-        return throwError(exec, SyntaxError);
+        return throwSyntaxError(exec);
 
     unsigned target = exec->argument(0).toInt32(exec);
     unsigned offset = exec->argument(1).toInt32(exec);
@@ -152,7 +152,7 @@ enum ObjectType {
 static JSValue getObjectParameter(JSWebGLRenderingContext* obj, ExecState* exec, ObjectType objectType)
 {
     if (exec->argumentCount() != 2)
-        return throwError(exec, SyntaxError);
+        return throwSyntaxError(exec);
 
     ExceptionCode ec = 0;
     WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(obj->impl());
@@ -200,7 +200,7 @@ JSValue JSWebGLRenderingContext::getBufferParameter(ExecState* exec)
 JSValue JSWebGLRenderingContext::getFramebufferAttachmentParameter(ExecState* exec)
 {
     if (exec->argumentCount() != 3)
-        return throwError(exec, SyntaxError);
+        return throwSyntaxError(exec);
 
     ExceptionCode ec = 0;
     WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(impl());
@@ -224,7 +224,7 @@ JSValue JSWebGLRenderingContext::getFramebufferAttachmentParameter(ExecState* ex
 JSValue JSWebGLRenderingContext::getParameter(ExecState* exec)
 {
     if (exec->argumentCount() != 1)
-        return throwError(exec, SyntaxError);
+        return throwSyntaxError(exec);
 
     ExceptionCode ec = 0;
     WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(impl());
@@ -242,7 +242,7 @@ JSValue JSWebGLRenderingContext::getParameter(ExecState* exec)
 JSValue JSWebGLRenderingContext::getProgramParameter(ExecState* exec)
 {
     if (exec->argumentCount() != 2)
-        return throwError(exec, SyntaxError);
+        return throwSyntaxError(exec);
 
     ExceptionCode ec = 0;
     WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(impl());
@@ -266,7 +266,7 @@ JSValue JSWebGLRenderingContext::getRenderbufferParameter(ExecState* exec)
 JSValue JSWebGLRenderingContext::getShaderParameter(ExecState* exec)
 {
     if (exec->argumentCount() != 2)
-        return throwError(exec, SyntaxError);
+        return throwSyntaxError(exec);
 
     ExceptionCode ec = 0;
     WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(impl());
@@ -290,7 +290,7 @@ JSValue JSWebGLRenderingContext::getTexParameter(ExecState* exec)
 JSValue JSWebGLRenderingContext::getUniform(ExecState* exec)
 {
     if (exec->argumentCount() != 2)
-        return throwError(exec, SyntaxError);
+        return throwSyntaxError(exec);
 
     ExceptionCode ec = 0;
     WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(impl());
@@ -319,7 +319,7 @@ JSValue JSWebGLRenderingContext::getVertexAttrib(ExecState* exec)
 JSValue JSWebGLRenderingContext::texImage2D(ExecState* exec)
 { 
     if (exec->argumentCount() < 3 || exec->argumentCount() > 9)
-        return throwError(exec, SyntaxError);
+        return throwSyntaxError(exec);
 
     ExceptionCode ec = 0;
     
@@ -339,7 +339,7 @@ JSValue JSWebGLRenderingContext::texImage2D(ExecState* exec)
         JSValue value = exec->argument(2);
     
         if (!value.isObject())
-            return throwError(exec, TypeError);
+            return throwTypeError(exec);
         
         o = asObject(value);
         
@@ -364,7 +364,7 @@ JSValue JSWebGLRenderingContext::texImage2D(ExecState* exec)
             ec = TYPE_MISMATCH_ERR;
     } else {
         if (exec->argumentCount() != 9)
-            return throwError(exec, SyntaxError);
+            return throwSyntaxError(exec);
 
         // This must be the ArrayBufferView case
         unsigned internalformat = exec->argument(2).toInt32(exec);
@@ -405,9 +405,9 @@ JSValue JSWebGLRenderingContext::texImage2D(ExecState* exec)
                 ArrayBufferView* obj = static_cast<ArrayBufferView*>(static_cast<JSArrayBufferView*>(o)->impl());
                 context->texImage2D(target, level, internalformat, width, height, border, format, type, obj, ec);
             } else
-                return throwError(exec, TypeError);
+                return throwTypeError(exec);
         } else 
-            return throwError(exec, TypeError);
+            return throwTypeError(exec);
     }
     
     setDOMException(exec, ec);
@@ -422,7 +422,7 @@ JSValue JSWebGLRenderingContext::texImage2D(ExecState* exec)
 JSValue JSWebGLRenderingContext::texSubImage2D(ExecState* exec)
 { 
     if (exec->argumentCount() < 5 || exec->argumentCount() > 9)
-        return throwError(exec, SyntaxError);
+        return throwSyntaxError(exec);
 
     ExceptionCode ec = 0;
 
@@ -450,7 +450,7 @@ JSValue JSWebGLRenderingContext::texSubImage2D(ExecState* exec)
         JSValue value = exec->argument(4);
 
         if (!value.isObject())
-            return throwError(exec, SyntaxError);
+            return throwSyntaxError(exec);
 
         o = asObject(value);
 
@@ -476,7 +476,7 @@ JSValue JSWebGLRenderingContext::texSubImage2D(ExecState* exec)
     } else {
         // This must be the ArrayBufferView form
         if (exec->argumentCount() != 9)
-            return throwError(exec, SyntaxError);
+            return throwSyntaxError(exec);
 
         unsigned width = exec->argument(4).toInt32(exec);
         if (exec->hadException())    
@@ -504,7 +504,7 @@ JSValue JSWebGLRenderingContext::texSubImage2D(ExecState* exec)
                 ArrayBufferView* obj = static_cast<ArrayBufferView*>(static_cast<JSArrayBufferView*>(o)->impl());
                 context->texSubImage2D(target, level, xoff, yoff, width, height, format, type, obj, ec);
             } else
-                return throwError(exec, TypeError);
+                return throwTypeError(exec);
         }
     }
     
@@ -558,7 +558,7 @@ static bool functionForUniform(DataFunctionToCall f)
 static JSC::JSValue dataFunctionf(DataFunctionToCall f, JSC::ExecState* exec, WebGLRenderingContext* context)
 {
     if (exec->argumentCount() != 2)
-        return throwError(exec, SyntaxError);
+        return throwSyntaxError(exec);
     
     WebGLUniformLocation* location = 0;
     long index = -1;
@@ -610,7 +610,7 @@ static JSC::JSValue dataFunctionf(DataFunctionToCall f, JSC::ExecState* exec, We
 
     Vector<float, 64> array;
     if (!toVector(exec, exec->argument(1), array))
-        return throwError(exec, TypeError);
+        return throwTypeError(exec);
 
     switch (f) {
     case f_uniform1v:
@@ -646,7 +646,7 @@ static JSC::JSValue dataFunctionf(DataFunctionToCall f, JSC::ExecState* exec, We
 static JSC::JSValue dataFunctioni(DataFunctionToCall f, JSC::ExecState* exec, WebGLRenderingContext* context)
 {
     if (exec->argumentCount() != 2)
-        return throwError(exec, SyntaxError);
+        return throwSyntaxError(exec);
 
     WebGLUniformLocation* location = toWebGLUniformLocation(exec->argument(0));
   
@@ -683,7 +683,7 @@ static JSC::JSValue dataFunctioni(DataFunctionToCall f, JSC::ExecState* exec, We
 
     Vector<int, 64> array;
     if (!toVector(exec, exec->argument(1), array))
-        return throwError(exec, TypeError);
+        return throwTypeError(exec);
 
     switch (f) {
     case f_uniform1v:
@@ -709,7 +709,7 @@ static JSC::JSValue dataFunctioni(DataFunctionToCall f, JSC::ExecState* exec, We
 static JSC::JSValue dataFunctionMatrix(DataFunctionMatrixToCall f, JSC::ExecState* exec, WebGLRenderingContext* context)
 {
     if (exec->argumentCount() != 3)
-        return throwError(exec, SyntaxError);
+        return throwSyntaxError(exec);
 
     WebGLUniformLocation* location = toWebGLUniformLocation(exec->argument(0));
 
@@ -744,7 +744,7 @@ static JSC::JSValue dataFunctionMatrix(DataFunctionMatrixToCall f, JSC::ExecStat
 
     Vector<float, 64> array;
     if (!toVector(exec, exec->argument(2), array))
-        return throwError(exec, TypeError);
+        return throwTypeError(exec);
 
     switch (f) {
     case f_uniformMatrix2fv:

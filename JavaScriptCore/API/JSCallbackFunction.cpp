@@ -29,6 +29,7 @@
 #include "APIShims.h"
 #include "APICast.h"
 #include "CodeBlock.h"
+#include "ExceptionHelpers.h"
 #include "JSFunction.h"
 #include "FunctionPrototype.h"
 #include <runtime/JSGlobalObject.h>
@@ -65,7 +66,7 @@ EncodedJSValue JSCallbackFunction::call(ExecState* exec)
         result = static_cast<JSCallbackFunction*>(toJS(functionRef))->m_callback(execRef, functionRef, thisObjRef, argumentCount, arguments.data(), &exception);
     }
     if (exception)
-        exec->setException(toJS(exec, exception));
+        throwError(exec, toJS(exec, exception));
 
     return JSValue::encode(toJS(exec, result));
 }

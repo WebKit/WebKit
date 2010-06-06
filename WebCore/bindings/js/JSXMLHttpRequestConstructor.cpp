@@ -44,7 +44,7 @@ static EncodedJSValue JSC_HOST_CALL constructXMLHttpRequest(ExecState* exec)
     JSXMLHttpRequestConstructor* jsConstructor = static_cast<JSXMLHttpRequestConstructor*>(exec->callee());
     ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();
     if (!context)
-        return JSValue::encode(throwError(exec, ReferenceError, "XMLHttpRequest constructor associated document is unavailable"));
+        return throwVMError(exec, createReferenceError(exec, "XMLHttpRequest constructor associated document is unavailable"));
 
     RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(context);
     return JSValue::encode(CREATE_DOM_OBJECT_WRAPPER(exec, jsConstructor->globalObject(), XMLHttpRequest, xmlHttpRequest.get()));

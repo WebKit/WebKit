@@ -73,7 +73,7 @@ void CInstance::moveGlobalExceptionToExecState(ExecState* exec)
 
     {
         JSLock lock(SilenceAssertionsOnly);
-        throwError(exec, GeneralError, globalExceptionString());
+        throwError(exec, createError(exec, globalExceptionString()));
     }
 
     globalExceptionString() = UString();
@@ -131,7 +131,7 @@ JSValue CInstance::getMethod(ExecState* exec, const Identifier& propertyName)
 JSValue CInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
 {
     if (!asObject(runtimeMethod)->inherits(&CRuntimeMethod::s_info))
-        return throwError(exec, TypeError, "Attempt to invoke non-plug-in method on plug-in object.");
+        return throwError(exec, createTypeError(exec, "Attempt to invoke non-plug-in method on plug-in object."));
 
     const MethodList& methodList = *runtimeMethod->methods();
 
@@ -165,7 +165,7 @@ JSValue CInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
     }
     
     if (!retval)
-        throwError(exec, GeneralError, "Error calling method on NPObject!");
+        throwError(exec, createError(exec, "Error calling method on NPObject!"));
 
     for (i = 0; i < count; i++)
         _NPN_ReleaseVariantValue(&cArgs[i]);
@@ -200,7 +200,7 @@ JSValue CInstance::invokeDefaultMethod(ExecState* exec)
     }
     
     if (!retval)
-        throwError(exec, GeneralError, "Error calling method on NPObject!");
+        throwError(exec, createError(exec, "Error calling method on NPObject!"));
 
     for (i = 0; i < count; i++)
         _NPN_ReleaseVariantValue(&cArgs[i]);
@@ -239,7 +239,7 @@ JSValue CInstance::invokeConstruct(ExecState* exec, const ArgList& args)
     }
     
     if (!retval)
-        throwError(exec, GeneralError, "Error calling method on NPObject!");
+        throwError(exec, createError(exec, "Error calling method on NPObject!"));
 
     for (i = 0; i < count; i++)
         _NPN_ReleaseVariantValue(&cArgs[i]);

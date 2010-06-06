@@ -86,7 +86,7 @@ void ObjcInstance::moveGlobalExceptionToExecState(ExecState* exec)
 
     if (!s_exceptionEnvironment || s_exceptionEnvironment == exec->dynamicGlobalObject()) {
         JSLock lock(SilenceAssertionsOnly);
-        throwError(exec, GeneralError, s_exception);
+        throwError(exec, s_exception);
     }
 
     HardRelease(s_exception);
@@ -197,7 +197,7 @@ JSValue ObjcInstance::getMethod(ExecState* exec, const Identifier& propertyName)
 JSValue ObjcInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
 {
     if (!asObject(runtimeMethod)->inherits(&ObjCRuntimeMethod::s_info))
-        return throwError(exec, TypeError, "Attempt to invoke non-plug-in method on plug-in object.");
+        return throwError(exec, createTypeError(exec, "Attempt to invoke non-plug-in method on plug-in object."));
 
     const MethodList& methodList = *runtimeMethod->methods();
 

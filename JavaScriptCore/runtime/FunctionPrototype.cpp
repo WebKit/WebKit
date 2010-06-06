@@ -101,7 +101,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
         return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(exec), "() {\n    [native code]\n}"));
     }
 
-    return JSValue::encode(throwError(exec, TypeError));
+    return throwVMTypeError(exec);
 }
 
 EncodedJSValue JSC_HOST_CALL functionProtoFuncApply(ExecState* exec)
@@ -110,14 +110,14 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncApply(ExecState* exec)
     CallData callData;
     CallType callType = getCallData(thisValue, callData);
     if (callType == CallTypeNone)
-        return JSValue::encode(throwError(exec, TypeError));
+        return throwVMTypeError(exec);
 
     JSValue array = exec->argument(1);
 
     MarkedArgumentBuffer applyArgs;
     if (!array.isUndefinedOrNull()) {
         if (!array.isObject())
-            return JSValue::encode(throwError(exec, TypeError));
+            return throwVMTypeError(exec);
         if (asObject(array)->classInfo() == &Arguments::info)
             asArguments(array)->fillArgList(exec, applyArgs);
         else if (isJSArray(&exec->globalData(), array))
@@ -127,7 +127,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncApply(ExecState* exec)
             for (unsigned i = 0; i < length; ++i)
                 applyArgs.append(asArray(array)->get(exec, i));
         } else
-            return JSValue::encode(throwError(exec, TypeError));
+            return throwVMTypeError(exec);
     }
 
     return JSValue::encode(call(exec, thisValue, callType, callData, exec->argument(0), applyArgs));
@@ -139,7 +139,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncCall(ExecState* exec)
     CallData callData;
     CallType callType = getCallData(thisValue, callData);
     if (callType == CallTypeNone)
-        return JSValue::encode(throwError(exec, TypeError));
+        return throwVMTypeError(exec);
 
     ArgList args(exec);
     ArgList callArgs;

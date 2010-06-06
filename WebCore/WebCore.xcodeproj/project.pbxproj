@@ -2270,6 +2270,7 @@
 		85F74E0A0AA8DF8C000DC284 /* DOMCSSUnknownRule.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85032DD50AA8C9BE007D3B7D /* DOMCSSUnknownRule.h */; };
 		85FF315A0AAFBFCB00374F38 /* DOMKeyboardEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85FF31580AAFBFCB00374F38 /* DOMKeyboardEvent.h */; };
 		85FF315B0AAFBFCB00374F38 /* DOMKeyboardEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85FF31590AAFBFCB00374F38 /* DOMKeyboardEvent.mm */; };
+		86243D0111BC31F700CC006A /* JSArrayBufferViewHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 86243D0011BC31F700CC006A /* JSArrayBufferViewHelper.h */; };
 		8952535211641B3400CABF00 /* FileThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8952535011641B3400CABF00 /* FileThread.cpp */; };
 		8952535311641B3400CABF00 /* FileThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 8952535111641B3400CABF00 /* FileThread.h */; };
 		895253D7116C4C6800CABF00 /* FileStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 895253D4116C4C6800CABF00 /* FileStream.cpp */; };
@@ -7875,6 +7876,7 @@
 		85F56A790A98CE3700ADB60A /* DOMProcessingInstruction.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMProcessingInstruction.mm; sourceTree = "<group>"; };
 		85FF31580AAFBFCB00374F38 /* DOMKeyboardEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMKeyboardEvent.h; sourceTree = "<group>"; };
 		85FF31590AAFBFCB00374F38 /* DOMKeyboardEvent.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMKeyboardEvent.mm; sourceTree = "<group>"; };
+		86243D0011BC31F700CC006A /* JSArrayBufferViewHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSArrayBufferViewHelper.h; sourceTree = "<group>"; };
 		8952535011641B3400CABF00 /* FileThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileThread.cpp; sourceTree = "<group>"; };
 		8952535111641B3400CABF00 /* FileThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileThread.h; sourceTree = "<group>"; };
 		895253D4116C4C6800CABF00 /* FileStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileStream.cpp; sourceTree = "<group>"; };
@@ -15432,6 +15434,7 @@
 			isa = PBXGroup;
 			children = (
 				492273A21083B3B100EE5C84 /* JSArrayBufferViewCustom.cpp */,
+				86243D0011BC31F700CC006A /* JSArrayBufferViewHelper.h */,
 				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
 				49EED14B1051971900099FAB /* JSCanvasRenderingContext2DCustom.cpp */,
 				49EED14D1051971A00099FAB /* JSCanvasRenderingContextCustom.cpp */,
@@ -19410,6 +19413,7 @@
 				4F3289B611A42AAB005ABE7E /* InspectorValues.h in Headers */,
 				9FFE3E7B11B59C5D0037874E /* MemoryInfo.h in Headers */,
 				9FFE3EA611B5A4390037874E /* JSMemoryInfo.h in Headers */,
+				86243D0111BC31F700CC006A /* JSArrayBufferViewHelper.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -134,7 +134,7 @@ JSValue JavaInstance::getMethod(ExecState* exec, const Identifier& propertyName)
 JSValue JavaInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
 {
     if (!asObject(runtimeMethod)->inherits(&JavaRuntimeMethod::s_info))
-        return throwError(exec, TypeError, "Attempt to invoke non-Java method on Java object.");
+        return throwError(exec, createTypeError(exec, "Attempt to invoke non-Java method on Java object."));
 
     const MethodList& methodList = *runtimeMethod->methods();
 
@@ -188,7 +188,7 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod
         const char *callingURL = 0; // FIXME, need to propagate calling URL to Java
         handled = dispatchJNICall(exec, rootObject->nativeHandle(), obj, jMethod->isStatic(), jMethod->JNIReturnType(), jMethod->methodID(obj), jArgs.data(), result, callingURL, exceptionDescription);
         if (exceptionDescription) {
-            throwError(exec, GeneralError, exceptionDescription.toString(exec));
+            throwError(exec, createError(exec, exceptionDescription.toString(exec)));
             return jsUndefined();
         }
     }

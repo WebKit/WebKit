@@ -27,6 +27,7 @@
 #include "APIShims.h"
 #include "APICast.h"
 #include "Error.h"
+#include "ExceptionHelpers.h"
 #include "JSCallbackFunction.h"
 #include "JSClassRef.h"
 #include "JSFunction.h"
@@ -134,7 +135,7 @@ bool JSCallbackObject<Base>::getOwnPropertySlot(ExecState* exec, const Identifie
                 value = getProperty(ctx, thisRef, propertyNameRef.get(), &exception);
             }
             if (exception) {
-                exec->setException(toJS(exec, exception));
+                throwError(exec, toJS(exec, exception));
                 slot.setValue(jsUndefined());
                 return true;
             }
@@ -206,7 +207,7 @@ void JSCallbackObject<Base>::put(ExecState* exec, const Identifier& propertyName
                 result = setProperty(ctx, thisRef, propertyNameRef.get(), valueRef, &exception);
             }
             if (exception)
-                exec->setException(toJS(exec, exception));
+                throwError(exec, toJS(exec, exception));
             if (result || exception)
                 return;
         }
@@ -225,11 +226,11 @@ void JSCallbackObject<Base>::put(ExecState* exec, const Identifier& propertyName
                         result = setProperty(ctx, thisRef, propertyNameRef.get(), valueRef, &exception);
                     }
                     if (exception)
-                        exec->setException(toJS(exec, exception));
+                        throwError(exec, toJS(exec, exception));
                     if (result || exception)
                         return;
                 } else
-                    throwError(exec, ReferenceError, "Attempt to set a property that is not settable.");
+                    throwError(exec, createReferenceError(exec, "Attempt to set a property that is not settable."));
             }
         }
         
@@ -264,7 +265,7 @@ bool JSCallbackObject<Base>::deleteProperty(ExecState* exec, const Identifier& p
                 result = deleteProperty(ctx, thisRef, propertyNameRef.get(), &exception);
             }
             if (exception)
-                exec->setException(toJS(exec, exception));
+                throwError(exec, toJS(exec, exception));
             if (result || exception)
                 return true;
         }
@@ -327,7 +328,7 @@ EncodedJSValue JSCallbackObject<Base>::construct(ExecState* exec)
                 result = toJS(callAsConstructor(execRef, constructorRef, argumentCount, arguments.data(), &exception));
             }
             if (exception)
-                exec->setException(toJS(exec, exception));
+                throwError(exec, toJS(exec, exception));
             return JSValue::encode(result);
         }
     }
@@ -352,7 +353,7 @@ bool JSCallbackObject<Base>::hasInstance(ExecState* exec, JSValue value, JSValue
                 result = hasInstance(execRef, thisRef, valueRef, &exception);
             }
             if (exception)
-                exec->setException(toJS(exec, exception));
+                throwError(exec, toJS(exec, exception));
             return result;
         }
     }
@@ -391,7 +392,7 @@ EncodedJSValue JSCallbackObject<Base>::call(ExecState* exec)
                 result = toJS(exec, callAsFunction(execRef, functionRef, thisObjRef, argumentCount, arguments.data(), &exception));
             }
             if (exception)
-                exec->setException(toJS(exec, exception));
+                throwError(exec, toJS(exec, exception));
             return JSValue::encode(result);
         }
     }
@@ -458,7 +459,7 @@ double JSCallbackObject<Base>::toNumber(ExecState* exec) const
                 value = convertToType(ctx, thisRef, kJSTypeNumber, &exception);
             }
             if (exception) {
-                exec->setException(toJS(exec, exception));
+                throwError(exec, toJS(exec, exception));
                 return 0;
             }
 
@@ -485,7 +486,7 @@ UString JSCallbackObject<Base>::toString(ExecState* exec) const
                 value = convertToType(ctx, thisRef, kJSTypeString, &exception);
             }
             if (exception) {
-                exec->setException(toJS(exec, exception));
+                throwError(exec, toJS(exec, exception));
                 return "";
             }
             if (value)
@@ -538,14 +539,14 @@ JSValue JSCallbackObject<Base>::staticValueGetter(ExecState* exec, JSValue slotB
                         value = getProperty(toRef(exec), thisRef, propertyNameRef.get(), &exception);
                     }
                     if (exception) {
-                        exec->setException(toJS(exec, exception));
+                        throwError(exec, toJS(exec, exception));
                         return jsUndefined();
                     }
                     if (value)
                         return toJS(exec, value);
                 }
 
-    return throwError(exec, ReferenceError, "Static value property defined with NULL getProperty callback.");
+    return throwError(exec, createReferenceError(exec, "Static value property defined with NULL getProperty callback."));
 }
 
 template <class Base>
@@ -571,7 +572,7 @@ JSValue JSCallbackObject<Base>::staticFunctionGetter(ExecState* exec, JSValue sl
         }
     }
     
-    return throwError(exec, ReferenceError, "Static function property defined with NULL callAsFunction callback.");
+    return throwError(exec, createReferenceError(exec, "Static function property defined with NULL callAsFunction callback."));
 }
 
 template <class Base>
@@ -593,14 +594,14 @@ JSValue JSCallbackObject<Base>::callbackGetter(ExecState* exec, JSValue slotBase
                 value = getProperty(toRef(exec), thisRef, propertyNameRef.get(), &exception);
             }
             if (exception) {
-                exec->setException(toJS(exec, exception));
+                throwError(exec, toJS(exec, exception));
                 return jsUndefined();
             }
             if (value)
                 return toJS(exec, value);
         }
             
-    return throwError(exec, ReferenceError, "hasProperty callback returned true for a property that doesn't exist.");
+    return throwError(exec, createReferenceError(exec, "hasProperty callback returned true for a property that doesn't exist."));
 }
 
 } // namespace JSC

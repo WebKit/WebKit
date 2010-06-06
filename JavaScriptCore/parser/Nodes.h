@@ -265,9 +265,9 @@ namespace JSC {
         uint16_t endOffset() const { return m_endOffset; }
 
     protected:
-        RegisterID* emitThrowError(BytecodeGenerator&, ErrorType, const char* message);
-        RegisterID* emitThrowError(BytecodeGenerator&, ErrorType, const char* message, const UString&);
-        RegisterID* emitThrowError(BytecodeGenerator&, ErrorType, const char* message, const Identifier&);
+        RegisterID* emitThrowError(BytecodeGenerator&, bool isReferenceError, const char* message);
+        RegisterID* emitThrowError(BytecodeGenerator&, bool isReferenceError, const char* message, const UString&);
+        RegisterID* emitThrowError(BytecodeGenerator&, bool isReferenceError, const char* message, const Identifier&);
 
     private:
         uint32_t m_divot;

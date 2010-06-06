@@ -117,7 +117,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineGetter(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     CallData callData;
     if (getCallData(exec->argument(1), callData) == CallTypeNone)
-        return JSValue::encode(throwError(exec, SyntaxError, "invalid getter usage"));
+        return throwVMError(exec, createSyntaxError(exec, "invalid getter usage"));
     thisValue.toThisObject(exec)->defineGetter(exec, Identifier(exec, exec->argument(0).toString(exec)), asObject(exec->argument(1)));
     return JSValue::encode(jsUndefined());
 }
@@ -127,7 +127,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineSetter(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     CallData callData;
     if (getCallData(exec->argument(1), callData) == CallTypeNone)
-        return JSValue::encode(throwError(exec, SyntaxError, "invalid setter usage"));
+        return throwVMError(exec, createSyntaxError(exec, "invalid setter usage"));
     thisValue.toThisObject(exec)->defineSetter(exec, Identifier(exec, exec->argument(0).toString(exec)), asObject(exec->argument(1)));
     return JSValue::encode(jsUndefined());
 }

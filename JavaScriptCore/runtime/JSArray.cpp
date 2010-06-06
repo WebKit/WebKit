@@ -283,7 +283,7 @@ void JSArray::put(ExecState* exec, const Identifier& propertyName, JSValue value
     if (propertyName == exec->propertyNames().length) {
         unsigned newLength = value.toUInt32(exec);
         if (value.toNumber(exec) != static_cast<double>(newLength)) {
-            throwError(exec, RangeError, "Invalid array length.");
+            throwError(exec, createRangeError(exec, "Invalid array length."));
             return;
         }
         setLength(newLength);

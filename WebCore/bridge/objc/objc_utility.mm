@@ -358,13 +358,13 @@ ObjcValueType objcValueTypeForType(const char *type)
     return objcValueType;
 }
 
-JSObject *throwError(ExecState *exec, ErrorType type, NSString *message)
+JSObject *throwError(ExecState *exec, NSString *message)
 {
     ASSERT(message);
     size_t length = [message length];
     unichar *buffer = new unichar[length];
     [message getCharacters:buffer];
-    JSObject *error = throwError(exec, type, UString(buffer, length));
+    JSObject *error = JSC::throwError(exec, JSC::createError(exec, UString(buffer, length)));
     delete [] buffer;
     return error;
 }

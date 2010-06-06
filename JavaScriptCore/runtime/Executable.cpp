@@ -65,9 +65,11 @@ JSObject* EvalExecutable::compile(ExecState* exec, ScopeChainNode* scopeChainNod
 {
     int errLine;
     UString errMsg;
-    RefPtr<EvalNode> evalNode = exec->globalData().parser->parse<EvalNode>(&exec->globalData(), exec->lexicalGlobalObject()->debugger(), exec, m_source, &errLine, &errMsg);
+    JSGlobalData* globalData = &exec->globalData();
+    JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
+    RefPtr<EvalNode> evalNode = globalData->parser->parse<EvalNode>(globalData, lexicalGlobalObject->debugger(), exec, m_source, &errLine, &errMsg);
     if (!evalNode)
-        return Error::create(exec, SyntaxError, errMsg, errLine, m_source.provider()->asID(), m_source.provider()->url());
+        return addErrorInfo(globalData, createSyntaxError(lexicalGlobalObject, errMsg), errLine, m_source);
     recordParse(evalNode->features(), evalNode->lineNo(), evalNode->lastLine());
 
     ScopeChain scopeChain(scopeChainNode);
@@ -86,9 +88,11 @@ JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
 {
     int errLine;
     UString errMsg;
-    RefPtr<ProgramNode> programNode = exec->globalData().parser->parse<ProgramNode>(&exec->globalData(), exec->lexicalGlobalObject()->debugger(), exec, m_source, &errLine, &errMsg);
+    JSGlobalData* globalData = &exec->globalData();
+    JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
+    RefPtr<ProgramNode> programNode = globalData->parser->parse<ProgramNode>(globalData, lexicalGlobalObject->debugger(), exec, m_source, &errLine, &errMsg);
     if (!programNode)
-        return Error::create(exec, SyntaxError, errMsg, errLine, m_source.provider()->asID(), m_source.provider()->url());
+        return addErrorInfo(globalData, createSyntaxError(lexicalGlobalObject, errMsg), errLine, m_source);
     return 0;
 }
 
@@ -96,9 +100,11 @@ JSObject* ProgramExecutable::compile(ExecState* exec, ScopeChainNode* scopeChain
 {
     int errLine;
     UString errMsg;
-    RefPtr<ProgramNode> programNode = exec->globalData().parser->parse<ProgramNode>(&exec->globalData(), exec->lexicalGlobalObject()->debugger(), exec, m_source, &errLine, &errMsg);
+    JSGlobalData* globalData = &exec->globalData();
+    JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
+    RefPtr<ProgramNode> programNode = globalData->parser->parse<ProgramNode>(globalData, lexicalGlobalObject->debugger(), exec, m_source, &errLine, &errMsg);
     if (!programNode)
-        return Error::create(exec, SyntaxError, errMsg, errLine, m_source.provider()->asID(), m_source.provider()->url());
+        return addErrorInfo(globalData, createSyntaxError(lexicalGlobalObject, errMsg), errLine, m_source);
     recordParse(programNode->features(), programNode->lineNo(), programNode->lastLine());
 
     ScopeChain scopeChain(scopeChainNode);

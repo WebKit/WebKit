@@ -59,7 +59,7 @@ JSEventSourceConstructor::JSEventSourceConstructor(ExecState* exec, JSDOMGlobalO
 static EncodedJSValue JSC_HOST_CALL constructEventSource(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
-        return JSValue::encode(throwError(exec, SyntaxError, "Not enough arguments"));
+        return throwVMError(exec, createSyntaxError(exec, "Not enough arguments"));
 
     UString url = exec->argument(0).toString(exec);
     if (exec->hadException())
@@ -68,7 +68,7 @@ static EncodedJSValue JSC_HOST_CALL constructEventSource(ExecState* exec)
     JSEventSourceConstructor* jsConstructor =  static_cast<JSEventSourceConstructor*>(exec->callee());
     ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();
     if (!context)
-        return JSValue::encode(throwError(exec, ReferenceError, "EventSource constructor associated document is unavailable"));
+        return throwVMError(exec, createReferenceError(exec, "EventSource constructor associated document is unavailable"));
 
     ExceptionCode ec = 0;
     RefPtr<EventSource> eventSource = EventSource::create(ustringToString(url), context, ec);

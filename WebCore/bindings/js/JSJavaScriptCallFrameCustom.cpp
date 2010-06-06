@@ -30,6 +30,7 @@
 
 #include "JavaScriptCallFrame.h"
 #include <runtime/ArrayPrototype.h>
+#include <runtime/Error.h>
 
 using namespace JSC;
 
@@ -41,7 +42,7 @@ JSValue JSJavaScriptCallFrame::evaluate(ExecState* exec)
     JSValue result = impl()->evaluate(exec->argument(0).toString(exec), exception);
 
     if (exception)
-        exec->setException(exception);
+        throwError(exec, exception);
 
     return result;
 }

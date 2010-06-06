@@ -41,6 +41,7 @@
 #include <interpreter/Interpreter.h>
 #include <runtime/Completion.h>
 #include <runtime/Completion.h>
+#include <runtime/Error.h>
 #include <runtime/JSLock.h>
 
 using namespace JSC;
@@ -137,7 +138,7 @@ ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode,
 
 void WorkerScriptController::setException(ScriptValue exception)
 {
-    m_workerContextWrapper->globalExec()->setException(exception.jsValue());
+    throwError(m_workerContextWrapper->globalExec(), exception.jsValue());
 }
 
 void WorkerScriptController::forbidExecution(ForbidExecutionOption option)

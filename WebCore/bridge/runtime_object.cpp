@@ -319,7 +319,7 @@ void RuntimeObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& prop
 
 JSObject* RuntimeObject::throwInvalidAccessError(ExecState* exec)
 {
-    return throwError(exec, ReferenceError, "Trying to access object from destroyed plug-in.");
+    return throwError(exec, createReferenceError(exec, "Trying to access object from destroyed plug-in."));
 }
 
 }
