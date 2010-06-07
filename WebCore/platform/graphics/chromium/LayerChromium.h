@@ -158,7 +158,15 @@ public:
     void setContents(NativeImagePtr contents);
     NativeImagePtr contents() const { return m_contents; }
 
+    void setDrawTransform(const TransformationMatrix& transform) { m_drawTransform = transform; }
+    const TransformationMatrix& drawTransform() const { return m_drawTransform; }
+
+    void setDrawOpacity(float opacity) { m_drawOpacity = opacity; }
+    float drawOpacity() const { return m_drawOpacity; }
+
     bool drawsContent() { return m_owner && m_owner->drawsContent(); }
+
+    bool preserves3D() { return m_owner && m_owner->preserves3D(); }
 
     void setLayerRenderer(LayerRendererChromium*);
 
@@ -203,11 +211,15 @@ private:
     TransformationMatrix m_transform;
     TransformationMatrix m_sublayerTransform;
 
+    TransformationMatrix m_drawTransform;
+
     uint32_t m_edgeAntialiasingMask;
     float m_opacity;
     float m_zPosition;
     float m_anchorPointZ;
     float m_borderWidth;
+
+    float m_drawOpacity;
 
     unsigned int m_allocatedTextureId;
     IntSize m_allocatedTextureSize;

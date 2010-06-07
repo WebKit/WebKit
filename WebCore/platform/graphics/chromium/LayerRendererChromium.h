@@ -74,7 +74,9 @@ public:
     GraphicsContext* rootLayerGraphicsContext() const { return m_rootLayerGraphicsContext.get(); }
 
 private:
-    void compositeLayersRecursive(LayerChromium*, const TransformationMatrix&, float opacity, const IntRect& visibleRect);
+    void updateLayersRecursive(LayerChromium* layer, const TransformationMatrix& parentMatrix, float opacity, const IntRect& visibleRect);
+
+    void drawLayer(LayerChromium*);
 
     void drawDebugBorder(LayerChromium*, const TransformationMatrix&);
 
@@ -119,6 +121,8 @@ private:
     TransformationMatrix m_projectionMatrix;
 
     RefPtr<LayerChromium> m_rootLayer;
+
+    Vector<LayerChromium*> m_layerList;
 
     bool m_needsDisplay;
     IntPoint m_scrollPosition;

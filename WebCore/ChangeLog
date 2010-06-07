@@ -1,3 +1,27 @@
+2010-06-07  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] Decoupled transform matrix update of composited layers from
+        drawing and interposed a sorting step so that the layers are now composited
+        back to front to get transparency working correctly. Also added missing code
+        for the preserves3D CSS property.
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::updateLayerPreserves3D):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::setDrawTransform):
+        (WebCore::LayerChromium::drawTransform):
+        (WebCore::LayerChromium::setDrawOpacity):
+        (WebCore::LayerChromium::drawOpacity):
+        (WebCore::LayerChromium::preserves3D):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::compareLayerZ):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::updateLayersRecursive):
+        (WebCore::LayerRendererChromium::drawLayer):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+
 2010-06-07  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Nate Chapin.

@@ -474,7 +474,50 @@ void GraphicsLayerChromium::updateBackfaceVisibility()
 
 void GraphicsLayerChromium::updateLayerPreserves3D()
 {
-    // FIXME: implement
+    if (m_preserves3D && !m_transformLayer) {
+        // Create the transform layer.
+        m_transformLayer = LayerChromium::create(LayerChromium::TransformLayer, this);
+
+        // Copy the position from this layer.
+        updateLayerPosition();
+        updateLayerSize();
+        updateAnchorPoint();
+        updateTransform();
+        updateChildrenTransform();
+
+        m_layer->setPosition(FloatPoint(m_size.width() / 2.0f, m_size.height() / 2.0f));
+
+        m_layer->setAnchorPoint(FloatPoint(0.5f, 0.5f));
+        TransformationMatrix identity;
+        m_layer->setTransform(identity);
+        
+        // Set the old layer to opacity of 1. Further down we will set the opacity on the transform layer.
+        m_layer->setOpacity(1);
+
+        // Move this layer to be a child of the transform layer.
+        if (m_layer->superlayer())
+            m_layer->superlayer()->replaceSublayer(m_layer.get(), m_transformLayer.get());
+        m_transformLayer->addSublayer(m_layer.get());
+
+        updateSublayerList();
+    } else if (!m_preserves3D && m_transformLayer) {
+        // Relace the transformLayer in the parent with this layer.
+        m_layer->removeFromSuperlayer();
+        m_transformLayer->superlayer()->replaceSublayer(m_transformLayer.get(), m_layer.get());
+
+        // Release the transform layer.
+        m_transformLayer = 0;
+
+        updateLayerPosition();
+        updateLayerSize();
+        updateAnchorPoint();
+        updateTransform();
+        updateChildrenTransform();
+
+        updateSublayerList();
+    }
+
+    updateOpacityOnLayer();
 }
 
 void GraphicsLayerChromium::updateLayerDrawsContent()
