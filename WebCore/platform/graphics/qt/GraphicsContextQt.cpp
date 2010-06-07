@@ -1011,7 +1011,8 @@ void GraphicsContext::clipOut(const Path& path)
         newClip.addPath(clippedOut);
         p->setClipPath(newClip, Qt::IntersectClip);
     } else {
-        newClip.addRect(p->window());
+        QRect windowRect = p->transform().inverted().mapRect(p->window());
+        newClip.addRect(windowRect);
         newClip.addPath(clippedOut.intersected(newClip));
         p->setClipPath(newClip);
     }

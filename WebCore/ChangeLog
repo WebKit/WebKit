@@ -1,3 +1,12 @@
+2010-06-07  Ariya Hidayat  <ariya.hidayat@codeaurora.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Fix GraphicsContext::clipOut to take the transformation matrix into account.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::clipOut):
+
 2010-06-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.
