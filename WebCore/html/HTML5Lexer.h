@@ -130,6 +130,53 @@ namespace WebCore {
         void skipLeadingNewLineForListing() { m_skipLeadingNewLineForListing = true; }
 
     private:
+        // http://www.whatwg.org/specs/web-apps/current-work/#preprocessing-the-input-stream
+        class InputStreamPreprocessor : public Noncopyable {
+        public:
+            InputStreamPreprocessor()
+                : m_nextInputCharacter('\0')
+                , m_skipNextNewLine(false)
+            {
+            }
+
+            UChar nextInputCharacter() const { return m_nextInputCharacter; }
+
+            // Returns whether we succeeded in peeking at the next character.
+            // The only way we can fail to peek is if there are no more
+            // characters in |source| (after collapsing \r\n, etc).
+            bool peek(SegmentedString& source, int& lineNumber)
+            {
+                m_nextInputCharacter = *source;
+                if (m_nextInputCharacter == '\n' && m_skipNextNewLine) {
+                    m_skipNextNewLine = false;
+                    source.advancePastNewline(lineNumber);
+                    if (source.isEmpty())
+                        return false;
+                    m_nextInputCharacter = *source;
+                }
+                if (m_nextInputCharacter == '\r') {
+                    m_nextInputCharacter = '\n';
+                    m_skipNextNewLine = true;
+                } else
+                    m_skipNextNewLine = false;
+                return true;
+            }
+
+            // Returns whether there are more characters in |source| after advancing.
+            bool advance(SegmentedString& source, int& lineNumber)
+            {
+                source.advance(lineNumber);
+                if (source.isEmpty())
+                    return false;
+                return peek(source, lineNumber);
+            }
+
+        private:
+            // http://www.whatwg.org/specs/web-apps/current-work/#next-input-character
+            UChar m_nextInputCharacter;
+            bool m_skipNextNewLine;
+        };
+
         inline void emitCharacter(UChar);
         inline void emitParseError();
         inline void emitCurrentToken();
@@ -169,6 +216,9 @@ namespace WebCore {
 
         // http://www.whatwg.org/specs/web-apps/current-work/#additional-allowed-character
         UChar m_additionalAllowedCharacter;
+
+        // http://www.whatwg.org/specs/web-apps/current-work/#preprocessing-the-input-stream
+        InputStreamPreprocessor m_inputStreamPreprocessor;
     };
 
 }
