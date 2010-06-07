@@ -1,76 +1,50 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <body>
-<p>Output of this test should match HTML5 (no strict SGML comment parsing).</p>
+<p>Output of this test should match WinIE (no strict SGML comment parsing).</p>
 
 <script>
 if (window.layoutTestController)
     layoutTestController.dumpAsText();
 </script>
-<p>Basic comments (2 PASSED):<br>
+<p>Basic comments (1 PASSED):<br>
 <!-- basic comment -->PASSED
-<!-- basic comment with spaces after comment end --    >PASSED
-<!-- basic comment with spaces after comment end - -    >FAILED--></p>
-<p>Comment series (3 PASSED):<br>
+<!-- basic comment with spaces after comment end --    >FAILED--></p>
+<p>Comment series (1 PASSED):<br>
 <!-- comment -- -- series-->PASSED
-<!-- comment -- -- series with space after comment end-- >PASSED
-<!-- comment -- -- series with spaces after comment end--  >PASSED</p>
-<!-- comment -- -- series with spaces after comment end- -  >FAILED--></p>
-<p>Dash runs (5 PASSED):<br>
+<!-- comment -- -- series with spaces after comment end-- >FAILED--></p>
+<p>Dash runs (3 PASSED):<br>
 <!------ Hello -->PASSED
-<!------ Hello -- >PASSED
-<!------ Hello --  >PASSED
-<!------ Hello - -  >FAILED
+<!------ Hello -- >FAILED
 <!-- --- Hello -->PASSED
 <!-- Hello --->PASSED</p>
-<p>Empty comments (5 PASSED):<br>
+<p>Empty comments (2 PASSED):<br>
 <!---->PASSED
-<!---- >PASSED
-<!>PASSED
-<!-->PASSED
-<!--->PASSED</p>
-<p>Multiple lines (4 PASSED):<br>
+<!---- >FAILED-->
+<!>PASSED</p>
+<p>Multiple lines (1 PASSED):<br>
 <!-- here's a comment, a little longer,
     which occupies more than one line -->PASSED
 <!-- here's a comment, a little longer,
-    which occupies more than one line -- >PASSED
-<!-- here's a comment, a little longer,
-    which occupies more than one line --	 >PASSED
-<!-- here's a comment, a little longer,
-    which occupies more than one line --	 
-    >PASSED
-<!-- here's a comment, a little longer,
-    which occupies more than one line - -	 >FAILED-->
+    which occupies more than one line -- >FAILED-->
 </p>
 
-<p>Compatibility (7 PASSED):<br>
+<p>Compatibility (2 PASSED):<br>
 <!-- Compatibility: comment series with --extraneous-- text -- between -- the comments -->PASSED
-<!-- Compatibility: comment series with --extraneous-- text -- between -- the comments -- >PASSED
-<!-- Compatibility: comment series with --extraneous-- text -- between -- the comments --  >PASSED
-<!-- Compatibility: comment series with --extraneous-- text -- between -- the comments - -  >FAILED-->
+<!-- Compatibility: comment series with --extraneous-- text -- between -- the comments -- >FAILED-->
 <!-- Compatibility: <!--extra comment start like www.the-leaky-cauldron.com has <rdar://problem/4226539>-->PASSED
-<!-- Compatibility: <!--extra comment start like www.the-leaky-cauldron.com has <rdar://problem/4226539>-- >PASSED
-<!-- Compatibility: <!--extra comment start like www.the-leaky-cauldron.com has <rdar://problem/4226539> --  >PASSED
-<!-- Compatibility: <!--extra comment start like www.the-leaky-cauldron.com has <rdar://problem/4226539> --  >PASSED
-<!-- Compatibility: <!--extra comment start like www.the-leaky-cauldron.com has <rdar://problem/4226539> - -  >FAILED-->
+<!-- Compatibility: <!--extra comment start like www.the-leaky-cauldron.com has <rdar://problem/4226539> -- >FAILED-->
 </p>
 
-<p>White space after comment close (4 PASSED):<br>
-<!-- tab after comment close--	>PASSED
-<!-- LF after comment close-->PASSED
-<!-- CR after comment close--
->PASSED
-<!-- tab after comment close--	>PASSED</p>
-
-
+<p>Tab after comment close:<br>
+<!-- tab after comment close--	>FAILED: should be part of the comment --></p>
 <p>Text after comment close:<br>
 <!-- text after comment close--ouch>FAILED: should be part of the comment --></p>
 
 
-<p>Extra comment after markup declaration close (2 PASSED):<br>
+<p>Extra comment after markup declaration close:<br>
 <!-- Comment --> FAILED: extra comment end and markup declaration close --><br>
-<!-- Comment with a whitespace in markup declaration close -- >PASSED
-<!-- Comment with a whitespace in markup declaration close --    >PASSED</p>
+<!-- Comment with a whitespace in markup declaration close -- > FAILED: extra comment end w/space and markup declaration close --></p>
 
 <p>Nested comment (1 PASSED):<br>
 <!-- nested: <!--FAILED (inner comment)--> PASSED (outer nested comment) --></p>

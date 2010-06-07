@@ -1,3 +1,36 @@
+2010-06-07  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed, reverting my HTML comment parsing change as it
+        breaks Gtk and Qt.
+
+        * fast/css/word-space-extra.html:
+        * fast/parser/broken-comment-1-expected.txt: Removed.
+        * fast/parser/broken-comment-1.html: Removed.
+        * fast/parser/broken-comment-2-expected.txt: Removed.
+        * fast/parser/broken-comment-2.html: Removed.
+        * fast/parser/broken-comment-3-expected.txt: Removed.
+        * fast/parser/broken-comment-3.html: Removed.
+        * fast/parser/broken-comment-4-expected.txt: Removed.
+        * fast/parser/broken-comment-4.html: Removed.
+        * fast/parser/broken-comment-5-expected.txt: Removed.
+        * fast/parser/broken-comment-5.html: Removed.
+        * fast/parser/broken-comment-6-expected.txt: Removed.
+        * fast/parser/broken-comment-6.html: Removed.
+        * fast/parser/broken-comment-in-head-1-expected.txt: Removed.
+        * fast/parser/broken-comment-in-head-1.html: Removed.
+        * fast/parser/broken-comment-in-head-2-expected.txt: Removed.
+        * fast/parser/broken-comment-in-head-2.html: Removed.
+        * fast/parser/broken-comment-in-head-3-expected.txt: Removed.
+        * fast/parser/broken-comment-in-head-3.html: Removed.
+        * fast/parser/broken-comment-in-head-4-expected.txt: Removed.
+        * fast/parser/broken-comment-in-head-4.html: Removed.
+        * fast/parser/broken-comment-in-head-5-expected.txt: Removed.
+        * fast/parser/broken-comment-in-head-5.html: Removed.
+        * fast/parser/broken-comments-vs-parsing-mode.html:
+        * fast/parser/comments-expected.txt:
+        * fast/parser/comments.html:
+        * html5lib/runner-expected.txt:
+
 2010-06-07  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

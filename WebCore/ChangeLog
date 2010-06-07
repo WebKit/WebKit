@@ -1,3 +1,13 @@
+2010-06-07  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed, reverting my HTML comment parsing change as it
+        breaks Gtk and Qt.
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseComment):
+        (WebCore::HTMLTokenizer::parseTag):
+        * html/HTMLTokenizer.h:
+
 2010-06-07  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

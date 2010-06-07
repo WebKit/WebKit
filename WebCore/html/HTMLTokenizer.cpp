@@ -607,148 +607,43 @@ HTMLTokenizer::State HTMLTokenizer::parseComment(SegmentedString& src, State sta
 {
     // FIXME: Why does this code even run for comments inside <script> and <style>? This seems bogus.
     checkScriptBuffer(src.length());
-    CommentParserState commentState = CommentStartState;
     while (!src.isEmpty()) {
         UChar ch = *src;
-        switch (commentState) {
-        case CommentStartState:
-            if (ch == '>') {
-                // FIXME: We should emit a parse error.
-                return emitCommentToken(src, state, commentState);
+        m_scriptCode[m_scriptCodeSize++] = ch;
+        if (ch == '>') {
+            bool handleBrokenComments = m_brokenComments && !(state.inScript() || state.inStyle());
+            int endCharsCount = 1; // start off with one for the '>' character
+            if (m_scriptCodeSize > 2 && m_scriptCode[m_scriptCodeSize-3] == '-' && m_scriptCode[m_scriptCodeSize-2] == '-') {
+                endCharsCount = 3;
+            } else if (m_scriptCodeSize > 3 && m_scriptCode[m_scriptCodeSize-4] == '-' && m_scriptCode[m_scriptCodeSize-3] == '-' && 
+                m_scriptCode[m_scriptCodeSize-2] == '!') {
+                // Other browsers will accept --!> as a close comment, even though it's
+                // not technically valid.
+                endCharsCount = 4;
             }
-            if (ch == '-')
-                commentState = CommentStartDashState;
-            else {
-                m_scriptCode[m_scriptCodeSize++] = ch;
-                commentState = CommentState;
+            if (handleBrokenComments || endCharsCount > 1) {
+                src.advancePastNonNewline();
+                if (!(state.inTitle() || state.inScript() || state.inXmp() || state.inTextArea() || state.inStyle() || state.inIFrame())) {
+                    checkScriptBuffer();
+                    m_scriptCode[m_scriptCodeSize] = 0;
+                    m_scriptCode[m_scriptCodeSize + 1] = 0;
+                    m_currentToken.tagName = commentAtom;
+                    m_currentToken.beginTag = true;
+                    state = processListing(SegmentedString(m_scriptCode, m_scriptCodeSize - endCharsCount), state);
+                    processToken();
+                    m_currentToken.tagName = commentAtom;
+                    m_currentToken.beginTag = false;
+                    processToken();
+                    m_scriptCodeSize = 0;
+                }
+                state.setInComment(false);
+                return state; // Finished parsing comment
             }
-            break;
-        case CommentStartDashState:
-            if (ch == '>') {
-                // FIXME: We should emit a parse error.
-                return emitCommentToken(src, state, commentState);
-            }
-            if (ch == '-')
-                commentState = CommentEndState;
-            else {
-                m_scriptCode[m_scriptCodeSize++] = '-';
-                m_scriptCode[m_scriptCodeSize++] = ch;
-                commentState = CommentState;
-            }
-            break;
-        case CommentState:
-            if (ch == '-')
-                commentState = CommentEndDashState;
-            else
-                m_scriptCode[m_scriptCodeSize++] = ch;
-            break;
-        case CommentEndDashState:
-            if (ch == '-')
-                commentState = CommentEndState;
-            else {
-                m_scriptCode[m_scriptCodeSize++] = '-';
-                m_scriptCode[m_scriptCodeSize++] = ch;
-                commentState = CommentState;
-            }
-            break;
-        case CommentEndState:
-            if (ch == '>')
-                return emitCommentToken(src, state, commentState);
-
-            if (ch == '\t' || ch == '\n' || ch == '\f' || ch == ' ') {
-                // FIXME: We should emit a parse error.
-                m_scriptCode[m_scriptCodeSize++] = '-';
-                m_scriptCode[m_scriptCodeSize++] = '-';
-                m_scriptCode[m_scriptCodeSize++] = ch;
-                commentState = CommentEndSpaceState;
-            } else if (ch == '!') {
-                // FIXME: We should emit a parse error.
-                commentState = CommentEndBangState;
-            } else if (ch == '-')
-                m_scriptCode[m_scriptCodeSize++] = ch;
-            else {
-                // FIXME: We should emit a parse error.
-                m_scriptCode[m_scriptCodeSize++] = '-';
-                m_scriptCode[m_scriptCodeSize++] = '-';
-                m_scriptCode[m_scriptCodeSize++] = ch;
-                commentState = CommentState;
-            }
-            break;
-        case CommentEndBangState:
-            if (ch == '>')
-                return emitCommentToken(src, state, commentState);
-            if (ch == '-') {
-                m_scriptCode[m_scriptCodeSize++] = '-';
-                m_scriptCode[m_scriptCodeSize++] = '-';
-                m_scriptCode[m_scriptCodeSize++] = '!';
-                commentState = CommentEndState;
-            } else {
-                m_scriptCode[m_scriptCodeSize++] = '-';
-                m_scriptCode[m_scriptCodeSize++] = '-';
-                m_scriptCode[m_scriptCodeSize++] = '!';
-                commentState = CommentState;
-            }
-            break;
-        case CommentEndSpaceState:
-            if (ch == '>')
-                return emitCommentToken(src, state, commentState);
-            if (ch == '\t' || ch == '\n' || ch == '\f' || ch == ' ')
-                m_scriptCode[m_scriptCodeSize++] = ch;
-            else if (ch == '-')
-                commentState = CommentEndDashState;
-            else {
-                m_scriptCode[m_scriptCodeSize++] = ch;
-                commentState = CommentState;
-            }
-            break;
         }
         src.advance(m_lineNumber);
     }
-    ASSERT(src.isEmpty());
-    // FIXME: We should emit a parse error.
-    return emitCommentToken(src, state, commentState);
-}
 
-HTMLTokenizer::State HTMLTokenizer::emitCommentToken(SegmentedString& src, State state, CommentParserState commentState)
-{
-    if (!src.isEmpty())
-        src.advancePastNonNewline();
-
-    // FIXME: We should not be parsing HTML comments in these states in the first place. The else statement is trying to recover
-    // from this broken behaviour.
-    if (!(state.inTitle() || state.inScript() || state.inXmp() || state.inTextArea() || state.inStyle() || state.inIFrame())) {
-        checkScriptBuffer();
-        m_scriptCode[m_scriptCodeSize] = 0;
-        m_scriptCode[m_scriptCodeSize + 1] = 0;
-        m_currentToken.tagName = commentAtom;
-        m_currentToken.beginTag = true;
-        state = processListing(SegmentedString(m_scriptCode, m_scriptCodeSize), state);
-        processToken();
-        m_currentToken.tagName = commentAtom;
-        m_currentToken.beginTag = false;
-        processToken();
-        m_scriptCodeSize = 0;
-    } else {
-        // This behaviour is needed to properly parse broken comments.
-        if (src.isEmpty())
-            return state;
-
-        // We need to properly reconstruct the original comment.
-        // FIXME: Drop the commentState parameter from the method when this code is removed.
-        checkScriptBuffer();
-        if (commentState != CommentStartState) {
-            m_scriptCode[m_scriptCodeSize++] = '-';
-            if (commentState != CommentStartDashState)
-                m_scriptCode[m_scriptCodeSize++] = '-';
-        }
-        if (commentState == CommentEndBangState)
-            m_scriptCode[m_scriptCodeSize++] = '!';
-
-        m_scriptCode[m_scriptCodeSize++] = '>';
-    }
-
-    state.setInComment(false);
-    return state; // Finished parsing comment
+    return state;
 }
 
 HTMLTokenizer::State HTMLTokenizer::parseServer(SegmentedString& src, State state)
@@ -1243,7 +1138,18 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
                         m_dest = m_buffer; // ignore the previous part of this tag
                         state.setInComment(true);
                         state.setTagState(NoTag);
-                        state = parseComment(src, state);
+
+                        // Fix bug 34302 at kde.bugs.org.  Go ahead and treat
+                        // <!--> as a valid comment, since both mozilla and IE on windows
+                        // can handle this case.  Only do this in quirks mode. -dwh
+                        if (!src.isEmpty() && *src == '>' && m_doc->inCompatMode()) {
+                            state.setInComment(false);
+                            src.advancePastNonNewline();
+                            if (!src.isEmpty())
+                                m_cBuffer[cBufferPos++] = *src;
+                        } else
+                          state = parseComment(src, state);
+
                         m_cBufferPos = cBufferPos;
                         return state; // Finished parsing tag!
                     }
