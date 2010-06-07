@@ -1,3 +1,18 @@
+2010-06-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Oliver Hunt.
+
+        [GTK] Mouse movement should not trigger a replay of saved events in the event sender
+        https://bugs.webkit.org/show_bug.cgi?id=40267
+
+        When a mouse button is down, automatically queue mouse motion events and
+        do not play them back until the mouse button is released. This matches the
+        behavior of other ports' EventSenders.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (mouseMoveToCallback): Don't automatically replaySavedEvents for mouse motion.
+        (sendOrQueueEvent): Add a shouldReplaySavedEvents argument defaulting to true.
+
 2010-06-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Sam Weinig.

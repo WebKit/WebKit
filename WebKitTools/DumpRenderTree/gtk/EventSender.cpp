@@ -83,7 +83,7 @@ enum KeyLocationCode {
     DOM_KEY_LOCATION_NUMPAD        = 0x03
 };
 
-static void sendOrQueueEvent(GdkEvent event);
+static void sendOrQueueEvent(GdkEvent, bool = true);
 static void dispatchEvent(GdkEvent event);
 static guint getStateFlags();
 
@@ -294,7 +294,7 @@ static JSValueRef mouseMoveToCallback(JSContextRef context, JSObjectRef function
     event.motion.x_root = xRoot;
     event.motion.y_root = yRoot;
 
-    sendOrQueueEvent(event);
+    sendOrQueueEvent(event, false);
     return JSValueMakeUndefined(context);
 }
 
@@ -346,13 +346,16 @@ static JSValueRef beginDragWithFilesCallback(JSContextRef context, JSObjectRef f
     return JSValueMakeUndefined(context);
 }
 
-static void sendOrQueueEvent(GdkEvent event)
+static void sendOrQueueEvent(GdkEvent event, bool shouldReplaySavedEvents)
 {
     // Mouse move events are queued if the previous event was queued or if a
     // delay was set up by leapForward().
-    if (endOfQueue != startOfQueue || msgQueue[endOfQueue].delay) {
+    if (buttonCurrentlyDown || endOfQueue != startOfQueue || msgQueue[endOfQueue].delay) {
         msgQueue[endOfQueue++].event = event;
-        replaySavedEvents();
+
+        if (shouldReplaySavedEvents)
+            replaySavedEvents();
+
         return;
     }
 
