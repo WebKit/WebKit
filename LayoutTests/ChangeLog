@@ -1,3 +1,49 @@
+2010-06-07  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Tests for:
+        Space should be allowed between -- and > in comment end
+        https://bugs.webkit.org/show_bug.cgi?id=21945
+
+        * fast/css/word-space-extra.html: Tweaked the comment as -- > is now
+        a valid comment end.
+
+        * fast/parser/broken-comment-1-expected.txt: Added.
+        * fast/parser/broken-comment-1.html: Added.
+        * fast/parser/broken-comment-2-expected.txt: Added.
+        * fast/parser/broken-comment-2.html: Added.
+        * fast/parser/broken-comment-3-expected.txt: Added.
+        * fast/parser/broken-comment-3.html: Added.
+        * fast/parser/broken-comment-4-expected.txt: Added.
+        * fast/parser/broken-comment-4.html: Added.
+        * fast/parser/broken-comment-5-expected.txt: Added.
+        * fast/parser/broken-comment-5.html: Added.
+        * fast/parser/broken-comment-6-expected.txt: Added.
+        * fast/parser/broken-comment-6.html: Added.
+        Those test checks that broken comments in body are correctly parsed.
+        * fast/parser/broken-comment-in-head-1-expected.txt: Added.
+        * fast/parser/broken-comment-in-head-1.html: Added.
+        * fast/parser/broken-comment-in-head-2-expected.txt: Added.
+        * fast/parser/broken-comment-in-head-2.html: Added.
+        * fast/parser/broken-comment-in-head-3-expected.txt: Added.
+        * fast/parser/broken-comment-in-head-3.html: Added.
+        * fast/parser/broken-comment-in-head-4-expected.txt: Added.
+        * fast/parser/broken-comment-in-head-4.html: Added.
+        * fast/parser/broken-comment-in-head-5-expected.txt: Added.
+        * fast/parser/broken-comment-in-head-5.html: Added.
+        Those test checks that broken comments in head are correctly parsed.
+
+        * fast/parser/broken-comments-vs-parsing-mode.html: Needed to wrap the broken comment
+        in a title as we match FF here and would not recover from it.
+
+        * fast/parser/comments-expected.txt:
+        * fast/parser/comments.html:
+        Added more tests for comment parsing. Made sure that we close empty comments
+        <!--> and <!---> as is specified in HTML5.
+
+        * html5lib/runner-expected.txt: Removed the test that we now pass.
+
 2010-06-06  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.

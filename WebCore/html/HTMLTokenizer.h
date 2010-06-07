@@ -193,6 +193,19 @@ private:
     State scriptExecution(const ScriptSourceCode&, State);
     void setSrc(const SegmentedString&);
  
+    // HTML5 Comment state.
+    enum CommentParserState {
+        CommentStartState,
+        CommentStartDashState,
+        CommentState,
+        CommentEndDashState,
+        CommentEndState,
+        CommentEndBangState,
+        CommentEndSpaceState
+    };
+
+    State emitCommentToken(SegmentedString&, State, CommentParserState);
+
     // check if we have enough space in the buffer.
     // if not enlarge it
     inline void checkBuffer(int len = 10)
