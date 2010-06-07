@@ -339,21 +339,21 @@ $(patsubst %.h,%.cpp,$(GEN)): $(intermediates)/bindings/%.cpp : $(intermediates)
 
 # Indexed Database
 GEN := \
-    $(intermediates)/storage/V8IDBAny.h \
-    $(intermediates)/storage/V8IDBDatabaseError.h \
-    $(intermediates)/storage/V8IDBDatabaseException.h \
-    $(intermediates)/storage/V8IDBDatabaseRequest.h \
-    $(intermediates)/storage/V8IDBErrorEvent.h \
-    $(intermediates)/storage/V8IDBEvent.h \
-    $(intermediates)/storage/V8IDBIndexRequest.h \
-    $(intermediates)/storage/V8IDBRequest.h \
-    $(intermediates)/storage/V8IDBSuccessEvent.h \
-    $(intermediates)/storage/V8IndexedDatabaseRequest.h
+    $(intermediates)/bindings/V8IDBAny.h \
+    $(intermediates)/bindings/V8IDBDatabaseError.h \
+    $(intermediates)/bindings/V8IDBDatabaseException.h \
+    $(intermediates)/bindings/V8IDBDatabaseRequest.h \
+    $(intermediates)/bindings/V8IDBErrorEvent.h \
+    $(intermediates)/bindings/V8IDBEvent.h \
+    $(intermediates)/bindings/V8IDBIndexRequest.h \
+    $(intermediates)/bindings/V8IDBRequest.h \
+    $(intermediates)/bindings/V8IDBSuccessEvent.h \
+    $(intermediates)/bindings/V8IndexedDatabaseRequest.h
 
 $(GEN): PRIVATE_PATH := $(LOCAL_PATH)
-$(GEN): PRIVATE_CUSTOM_TOOL = SOURCE_ROOT=$(PRIVATE_PATH) perl -I$(PRIVATE_PATH)/bindings/scripts $(PRIVATE_PATH)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator V8 --include dom --include html --outputdir $(dir $@) $<
+$(GEN): PRIVATE_CUSTOM_TOOL = SOURCE_ROOT=$(PRIVATE_PATH) perl -I$(PRIVATE_PATH)/bindings/scripts $(PRIVATE_PATH)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator V8 --include dom --include html --include storage --outputdir $(dir $@) $<
 $(GEN): $(intermediates)/bindings/V8%.h : $(LOCAL_PATH)/storage/%.idl $(js_binding_scripts)
-        $(transform-generated-source)
+	$(transform-generated-source)
 LOCAL_GENERATED_SOURCES += $(GEN)
 
 # We also need the .cpp files, which are generated as side effects of the

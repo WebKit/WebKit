@@ -1,3 +1,14 @@
+2010-06-07  Leon Clarke  <leonclarke@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Fix indexeddb idls in android makefile
+        https://bugs.webkit.org/show_bug.cgi?id=40169
+
+        No new tests. Android-specific build fix.
+
+        * Android.derived.v8bindings.mk:
+
 2010-06-07  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.
