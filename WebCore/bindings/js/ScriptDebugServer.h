@@ -32,6 +32,7 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
+#include "ScriptDebugListener.h"
 #include "PlatformString.h"
 #include "ScriptBreakpoint.h"
 #include "Timer.h"
@@ -96,8 +97,7 @@ private:
     ~ScriptDebugServer();
 
     bool hasBreakpoint(intptr_t sourceID, unsigned lineNumber) const;
-    bool hasListeners() const { return !m_listeners.isEmpty() || !m_pageListenersMap.isEmpty(); }
-    bool hasGlobalListeners() const { return !m_listeners.isEmpty(); }
+    bool hasListeners() const { return !m_pageListenersMap.isEmpty(); }
     bool hasListenersInterestedInPage(Page*);
 
     void setJavaScriptPaused(const PageGroup&, bool paused);
@@ -109,7 +109,7 @@ private:
     void dispatchFunctionToListeners(const ListenerSet& listeners, JavaScriptExecutionCallback callback);
     void dispatchDidPause(ScriptDebugListener*);
     void dispatchDidContinue(ScriptDebugListener*);
-    void dispatchDidParseSource(const ListenerSet& listeners, const JSC::SourceCode& source);
+    void dispatchDidParseSource(const ListenerSet& listeners, const JSC::SourceCode& source, enum ScriptWorldType);
     void dispatchFailedToParseSource(const ListenerSet& listeners, const JSC::SourceCode& source, int errorLine, const String& errorMessage);
 
     void pauseIfNeeded(Page*);
@@ -133,7 +133,6 @@ private:
     typedef HashMap<intptr_t, SourceBreakpoints> BreakpointsMap;
 
     PageListenersMap m_pageListenersMap;
-    ListenerSet m_listeners;
     bool m_callingListeners;
     PauseOnExceptionsState m_pauseOnExceptionsState;
     bool m_pauseOnNextStatement;

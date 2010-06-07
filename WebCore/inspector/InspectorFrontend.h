@@ -92,7 +92,7 @@ namespace WebCore {
         void debuggerWasEnabled();
         void debuggerWasDisabled();
 
-        void parsedScriptSource(const String& sourceID, const String& url, const String& data, int firstLine);
+        void parsedScriptSource(const String& sourceID, const String& url, const String& data, int firstLine, int scriptWorldType);
         void restoredBreakpoint(const String& sourceID, const String& url, int line, bool enabled, const String& condition);
         void failedToParseScriptSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage);
         void pausedScript(SerializedScriptValue* callFrames);

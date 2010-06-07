@@ -181,7 +181,7 @@ devtools.DebuggerAgent.prototype.initUI = function()
         // pending addition into the UI.
         for (var scriptId in this.parsedScripts_) {
           var script = this.parsedScripts_[scriptId];
-          WebInspector.parsedScriptSource(scriptId, script.getUrl(), undefined /* script source */, script.getLineOffset() + 1);
+          WebInspector.parsedScriptSource(scriptId, script.getUrl(), undefined /* script source */, script.getLineOffset() + 1, script.worldType());
           this.restoreBreakpoints_(scriptId, script.getUrl());
         }
         return;
@@ -948,17 +948,17 @@ devtools.DebuggerAgent.prototype.handleAfterCompileEvent_ = function(msg)
 devtools.DebuggerAgent.prototype.addScriptInfo_ = function(script, msg)
 {
     var context = msg.lookup(script.context.ref);
-    var contextType;
     // Find the type from context data. The context data has the format
     // "type,id".
     var comma = context.data.indexOf(",");
     if (comma < 0)
-        return
-    contextType = context.data.substring(0, comma);
-    this.parsedScripts_[script.id] = new devtools.ScriptInfo(script.id, script.name, script.lineOffset, contextType);
+        return;
+    var contextType = context.data.substring(0, comma);
+    var info = new devtools.ScriptInfo(script.id, script.name, script.lineOffset, contextType);
+    this.parsedScripts_[script.id] = info;
     if (this.scriptsPanelInitialized_) {
         // Only report script as parsed after scripts panel has been shown.
-        WebInspector.parsedScriptSource(script.id, script.name, script.source, script.lineOffset + 1);
+        WebInspector.parsedScriptSource(script.id, script.name, script.source, script.lineOffset + 1, info.worldType());
         this.restoreBreakpoints_(script.id, script.name);
     }
 };
@@ -1044,7 +1044,7 @@ devtools.DebuggerAgent.prototype.formatCallFrame_ = function(stackFrame)
     var existingScript = this.parsedScripts_[sourceId];
     if (!existingScript) {
         this.parsedScripts_[sourceId] = new devtools.ScriptInfo(sourceId, null /* name */, 0 /* line */, "unknown" /* type */, true /* unresolved */);
-        WebInspector.parsedScriptSource(sourceId, null, null, 0);
+        WebInspector.parsedScriptSource(sourceId, null, null, 0, WebInspector.Script.WorldType.MAIN_WORLD);
     }
 
     var funcName = func.name || func.inferredName || "(anonymous function)";
@@ -1254,6 +1254,14 @@ devtools.ScriptInfo.prototype.getUrl = function()
 devtools.ScriptInfo.prototype.isUnresolved = function()
 {
     return this.isUnresolved_;
+};
+
+
+devtools.ScriptInfo.prototype.worldType = function()
+{
+    if (this.contextType_ === "injected")
+        return WebInspector.Script.WorldType.EXTENSIONS_WORLD;
+    return WebInspector.Script.WorldType.MAIN_WORLD;
 };
 
 

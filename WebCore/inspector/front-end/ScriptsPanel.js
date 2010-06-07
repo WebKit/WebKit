@@ -241,9 +241,9 @@ WebInspector.ScriptsPanel.prototype = {
         return this.toggleBreakpointsButton.toggled;
     },
 
-    addScript: function(sourceID, sourceURL, source, startingLine, errorLine, errorMessage)
+    addScript: function(sourceID, sourceURL, source, startingLine, errorLine, errorMessage, scriptWorldType)
     {
-        var script = new WebInspector.Script(sourceID, sourceURL, source, startingLine, errorLine, errorMessage);
+        var script = new WebInspector.Script(sourceID, sourceURL, source, startingLine, errorLine, errorMessage, scriptWorldType);
         this._sourceIDMap[sourceID] = script;
 
         var resource = WebInspector.resourceURLMap[sourceURL];
@@ -737,6 +737,9 @@ WebInspector.ScriptsPanel.prototype = {
             if (url && url === lastURL)
                 this._showScriptOrResource(option.representedObject, {initialLoad: true});
         }
+
+        if (script.worldType === WebInspector.Script.WorldType.EXTENSIONS_WORLD)
+            script.filesSelectOption.addStyleClass("extension-script");
     },
 
     _clearCurrentExecutionLine: function()

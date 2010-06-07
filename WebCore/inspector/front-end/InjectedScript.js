@@ -1017,15 +1017,15 @@ InjectedScript._className = function(obj)
     // Both of the methods below result in "Object" names on the foreign engine bindings.
     // I gave up and am using a check below to distinguish between the egine bingings.
 
-    if (typeof Document === "object") {
-        // JSC
+    if (jsEngine == "JSC") {
         var str = inspectedWindow.Object ? inspectedWindow.Object.prototype.toString.call(obj) : InjectedScript._toString(obj);
         return str.replace(/^\[object (.*)\]$/i, "$1");
+    } else {
+        // V8
+        if (typeof obj !== "object")
+            return "null";
+        return obj.constructor.name || "Object";
     }
-    // V8
-    if (typeof obj !== "object")
-        return "null";
-    return obj.constructor.name || "Object";
 }
 
 InjectedScript._escapeCharacters = function(str, chars)

@@ -1,3 +1,37 @@
+2010-06-07  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: should be possible to distinguish extension scripts from main world scripts
+        https://bugs.webkit.org/show_bug.cgi?id=40220
+
+        * bindings/js/ScriptDebugServer.cpp: remove global listeners set which is not used anymore.
+        (WebCore::ScriptDebugServer::dispatchDidParseSource): pass script wrold type to the listeners.
+        (WebCore::currentWorldType):
+        (WebCore::ScriptDebugServer::sourceParsed):
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::dispatchDidParseSource):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didParseSource):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::parsedScriptSource):
+        * inspector/InspectorFrontend.h:
+        * inspector/ScriptDebugListener.h: pass type of the isolated world where the script was compiled to didParseSource.
+        (WebCore::):
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.addScript):
+        (WebInspector.ScriptsPanel.prototype._addScriptToFilesMenu): use different style to highlight content scripts.
+        * inspector/front-end/inspector.css:
+        (#scripts-files option.extension-script):
+        * inspector/front-end/inspector.js:
+        (WebInspector.parsedScriptSource):
+
 2010-06-06  MORITA Hajime  <morrita@google.com>
 
         Unreviewd, Chromium windows build fix.

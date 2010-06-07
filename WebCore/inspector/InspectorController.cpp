@@ -1653,9 +1653,9 @@ void InspectorController::removeBreakpoint(const String& sourceID, unsigned line
 
 // JavaScriptDebugListener functions
 
-void InspectorController::didParseSource(const String& sourceID, const String& url, const String& data, int firstLine)
+void InspectorController::didParseSource(const String& sourceID, const String& url, const String& data, int firstLine, ScriptWorldType worldType)
 {
-    m_frontend->parsedScriptSource(sourceID, url, data, firstLine);
+    m_frontend->parsedScriptSource(sourceID, url, data, firstLine, worldType);
 
     if (url.isEmpty())
         return;

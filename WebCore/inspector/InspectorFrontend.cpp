@@ -305,7 +305,7 @@ void InspectorFrontend::debuggerWasDisabled()
     callSimpleFunction("debuggerWasDisabled");
 }
 
-void InspectorFrontend::parsedScriptSource(const String& sourceID, const String& url, const String& data, int firstLine)
+void InspectorFrontend::parsedScriptSource(const String& sourceID, const String& url, const String& data, int firstLine, int scriptWorldType)
 {
     ScriptFunctionCall function(m_webInspector, "dispatch"); 
     function.appendArgument("parsedScriptSource");
@@ -313,6 +313,7 @@ void InspectorFrontend::parsedScriptSource(const String& sourceID, const String&
     function.appendArgument(url);
     function.appendArgument(data);
     function.appendArgument(firstLine);
+    function.appendArgument(scriptWorldType);
     function.call();
 }
 

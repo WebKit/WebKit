@@ -2351,6 +2351,10 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     max-width: 250px;
 }
 
+#scripts-files option.extension-script {
+    color: rgb(70, 134, 240);
+}
+
 #scripts-functions {
     max-width: 150px;
 }

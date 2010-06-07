@@ -1319,9 +1319,9 @@ WebInspector.profilerWasDisabled = function()
     this.panels.profiles.profilerWasDisabled();
 }
 
-WebInspector.parsedScriptSource = function(sourceID, sourceURL, source, startingLine)
+WebInspector.parsedScriptSource = function(sourceID, sourceURL, source, startingLine, scriptWorldType)
 {
-    this.panels.scripts.addScript(sourceID, sourceURL, source, startingLine);
+    this.panels.scripts.addScript(sourceID, sourceURL, source, startingLine, undefined, undefined, scriptWorldType);
 }
 
 WebInspector.restoredBreakpoint = function(sourceID, sourceURL, line, enabled, condition)
