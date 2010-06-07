@@ -78,12 +78,12 @@ public:
     
 protected:
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | DOMConstructorObject::StructureFlags;
-    static JSObject* constructTestInterface(ExecState* exec, JSObject* constructor, const ArgList&)
+    static EncodedJSValue JSC_HOST_CALL constructTestInterface(ExecState* exec)
     {
-        ScriptExecutionContext* context = static_cast<JSTestInterfaceConstructor*>(constructor)->scriptExecutionContext();
+        ScriptExecutionContext* context = static_cast<JSTestInterfaceConstructor*>(exec->callee())->scriptExecutionContext();
         if (!context)
-            return throwError(exec, ReferenceError);
-        return asObject(toJS(exec, static_cast<JSTestInterfaceConstructor*>(constructor)->globalObject(), TestInterface::create(context)));
+            return throwVMError(exec, createReferenceError(exec, "Reference error"));
+        return JSValue::encode(asObject(toJS(exec, static_cast<JSTestInterfaceConstructor*>(exec->callee())->globalObject(), TestInterface::create(context))));
     }
     virtual ConstructType getConstructData(ConstructData& constructData)
     {
