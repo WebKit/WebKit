@@ -231,6 +231,7 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
 
 JIT::CodePtr JIT::privateCompileCTINativeCall(PassRefPtr<ExecutablePool> executablePool, JSGlobalData* globalData, NativeFunction func)
 {
+    Call nativeCall;
     Label nativeCallThunk = align();
 
 #if CPU(X86)
@@ -252,7 +253,7 @@ JIT::CodePtr JIT::privateCompileCTINativeCall(PassRefPtr<ExecutablePool> executa
     move(regT0, callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
 
     // call the function
-    Call nativeCall = call();
+    nativeCall = call();
 
     addPtr(Imm32(16 - sizeof(void*)), stackPointerRegister);
 
