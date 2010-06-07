@@ -21,7 +21,9 @@
 #include "config.h"
 #include "FontCache.h"
 
+#include "CString.h"
 #include "Font.h"
+#include "GOwnPtrCairo.h"
 #include "SimpleFontData.h"
 #include <wtf/Assertions.h>
 
@@ -81,8 +83,57 @@ void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigne
 {
 }
 
+static bool isWellKnownFontName(const AtomicString family)
+{
+    // Fonts that are used by layout tests included. The fact that
+    // they are used in Layout Tests indicate web compatibility issues
+    // if we do not handle them correctly.
+    if (equalIgnoringCase(family, "sans-serif") || equalIgnoringCase(family, "serif")
+        || equalIgnoringCase(family, "monospace") || equalIgnoringCase(family, "cursive")
+        || equalIgnoringCase(family, "fantasy") || equalIgnoringCase(family, "Times")
+        || equalIgnoringCase(family, "Courier") || equalIgnoringCase(family, "Helvetica")
+        || equalIgnoringCase(family, "Arial") || equalIgnoringCase(family, "Lucida Grande")
+        || equalIgnoringCase(family, "Ahem") || equalIgnoringCase(family, "Georgia")
+        || equalIgnoringCase(family, "Times New Roman"))
+        return true;
+
+    return false;
+}
+
 FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
 {
+#if defined(USE_FREETYPE)
+    // Handle generic family types specially, because fontconfig does not know them, but we have
+    // code to fallback correctly in our platform data implementation.
+    if (!family.length() || family.startsWith("-webkit-")
+        || (fontDescription.genericFamily() != FontDescription::NoFamily)
+        || isWellKnownFontName(family))
+        return new FontPlatformData(fontDescription, family);
+
+    // First check the font exists.
+    CString familyNameString = family.string().utf8();
+    const char* fcfamily = familyNameString.data();
+
+    GOwnPtr<FcPattern> pattern(FcPatternCreate());
+    if (!FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(fcfamily)))
+        return 0;
+
+    FcConfigSubstitute(0, pattern.get(), FcMatchPattern);
+    FcDefaultSubstitute(pattern.get());
+
+    GOwnPtr<FcObjectSet> objectSet(FcObjectSetCreate());
+    if (!FcObjectSetAdd(objectSet.get(), FC_FAMILY))
+        return 0;
+
+    GOwnPtr<FcFontSet> fontSet(FcFontList(0, pattern.get(), objectSet.get()));
+
+    if (!fontSet)
+        return 0;
+
+    if (!fontSet->fonts)
+        return 0;
+#endif
+
     return new FontPlatformData(fontDescription, family);
 }
 

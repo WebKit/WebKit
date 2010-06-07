@@ -2117,6 +2117,8 @@ webcoregtk_sources += \
 	WebCore/platform/graphics/cairo/GradientCairo.cpp \
 	WebCore/platform/graphics/cairo/GraphicsContextCairo.cpp \
 	WebCore/platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h \
+	WebCore/platform/graphics/cairo/GOwnPtrCairo.cpp \
+	WebCore/platform/graphics/cairo/GOwnPtrCairo.h \
 	WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
 	WebCore/platform/graphics/cairo/ImageBufferData.h \
 	WebCore/platform/graphics/cairo/ImageCairo.cpp \

@@ -1,3 +1,15 @@
+2010-06-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        [gtk] web fonts not loaded properly in scribd html5 reader
+        https://bugs.webkit.org/show_bug.cgi?id=38758
+
+        Reset expected result for test that uses fonts we do not really
+        support, and are not "web fonts".
+
+        * platform/gtk/fast/text/backslash-to-yen-sign-expected.txt:
+
 2010-06-07  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed, reverting my HTML comment parsing change as it
