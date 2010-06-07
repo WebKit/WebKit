@@ -146,6 +146,7 @@ void Font::drawComplexText(GraphicsContext* ctx, const TextRun& run, const Float
             line.draw(p, pt);
             p->restore();
         }
+        p->setPen(textFillPen);
         line.draw(p, pt);
         p->restore();
         return;

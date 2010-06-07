@@ -1,3 +1,15 @@
+2010-06-07  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix text selection drawing.
+        https://bugs.webkit.org/show_bug.cgi?id=40221
+
+        The regression was introduced in r60169.
+
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::drawTextCommon):
+
 2010-06-07  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
