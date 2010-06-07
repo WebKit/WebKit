@@ -1,4 +1,54 @@
 # =========================================================================== #
+#       Permanently Skipped Tests.                                            #
+# =========================================================================== #
+
+# ----- tests that use Objective-C so can never be supported
+plugins/call-as-function-test.html
+plugins/jsobjc-dom-wrappers.html
+plugins/jsobjc-simple.html
+plugins/root-object-premature-delete-crash.html
+plugins/throw-on-dealloc.html
+plugins/undefined-property-crash.html
+editing/pasteboard/paste-RTFD.html
+editing/pasteboard/paste-TIFF.html
+
+# Skip mac API specific tests
+fast/loader/stop-provisional-loads.html
+
+# =========================================================================== #
+#       No Support for Feature planned.                                       #
+# =========================================================================== #
+# ----- webarchive format not supported
+svg/custom/image-with-prefix-in-webarchive.svg
+http/tests/webarchive
+webarchive
+svg/webarchive
+
+# =========================================================================== #
+#       Feature not supported yet..
+# =========================================================================== #
+# ----- This port doesn't support Geolocation.. yet
+fast/dom/Geolocation
+fast/dom/Window/window-properties-geolocation.html
+
+# ----- This port doesn't support Notification permissions.. yet
+
+# ----- No User Scripts
+userscripts
+
+# ------ Doesn't support WOFF yet.
+fast/css/font-face-woff.html
+
+# accessibility support
+accessibility
+
+# Tests requiring 3D_RENDERING and ACCELERATED_COMPOSITING support
+transforms/3d
+compositing
+
+fast/loader/subframe-navigate-during-main-frame-load.html
+
+# =========================================================================== #
 #      Failing tests introduced by changing the default font sizes to         #
 #      conform other platforms. Probably caused by previously hidden bugs.    #
 # =========================================================================== #
@@ -8,16 +58,96 @@ fast/history/history_reload.html
 svg/batik/filters/feTile.svg
 
 # =========================================================================== #
-#       HTTP tests.                                                           #
+#       Failing HTTP tests.                                                   #
 # =========================================================================== #
+http/tests/misc/acid2-pixel.html
+http/tests/misc/acid2.html
+http/tests/misc/favicon-as-image.html
+http/tests/multipart/invalid-image-data.html
+http/tests/misc/bubble-drag-events.html
+
+# Missing forward entries when dumping back/forward list.
+# https://bugs.webkit.org/show_bug.cgi?id=32470
+http/tests/navigation/dynamic-iframe-dynamic-form-back-entry.html
+http/tests/navigation/parsed-iframe-dynamic-form-back-entry.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=34004
+# [Qt] http/tests/misc/slow-loading-mask.html timed out.
+http/tests/misc/slow-loading-mask.html
+
+# skip failing history tests
+# https://bugs.webkit.org/show_bug.cgi?id=34167
+http/tests/history/redirect-301.pl
+http/tests/history/redirect-302.pl
+http/tests/history/redirect-303.pl
+http/tests/history/redirect-307.pl
+
+# Qt may want to follow GTK+ in adding a default Accept header for
+# subresources. See https://bugs.webkit.org/show_bug.cgi?id=33242.
+http/tests/misc/image-checks-for-accept.html
+
+# Needs to make sure the redirect-chain scenario in https://bugs.webkit.org/show_bug.cgi?id=31410 works
+# See https://bugs.webkit.org/show_bug.cgi?id=35301
+http/tests/loading/307-after-303-after-post.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=35824 - Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy
+http/tests/cookies/third-party-cookie-relaxing.html
+
+# [Qt] http/tests/security/cross-frame-access-name-getter.html timed out
+# https://bugs.webkit.org/show_bug.cgi?id=38540
+http/tests/security/cross-frame-access-name-getter.html
+
+# No authentication challenge handling
+http/tests/loading/basic-credentials-sent-automatically.html
+http/tests/loading/basic-auth-resend-wrong-credentials.html
+
+# This port doesn't have a global history delegate yet
+http/tests/globalhistory
+
+# Skip failing http/tests/misc tests
+http/tests/misc/acid3.html
+http/tests/misc/isindex-with-no-form-base-href.html
+http/tests/misc/isindex-with-no-form.html
+http/tests/misc/refresh-headers.php
+http/tests/misc/timer-vs-loading.html
+
+# Have an additional line in results for GET of favicon.ico. Probably innocuous.
+# https://bugs.webkit.org/show_bug.cgi?id=37382
+
+# Skip failing http/tests/security tests
+http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html
+http/tests/security/cross-frame-access-put.html
+http/tests/security/dataTransfer-set-data-file-url.html
+http/tests/security/drag-over-remote-content-iframe.html
+http/tests/security/host-compare-case-insensitive.html
+http/tests/security/xss-DENIED-xsl-document-redirect.xml
+http/tests/security/xss-DENIED-xsl-document.xml
+http/tests/security/aboutBlank/security-context-alias.html
+http/tests/security/aboutBlank/security-context-window-open.html
+http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html
+http/tests/security/frameNavigation/not-opener.html
+http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
+http/tests/security/frameNavigation/xss-DENIED-targeted-link-navigation.html
+http/tests/security/originHeader/origin-header-for-empty.html
+# XSSAuditor test that times out. See https://bugs.webkit.org/show_bug.cgi?id=33460.
+#http/tests/security/xssAuditor/malformed-HTML.html
 
 # Disabled HTTP subdirs for now, needs investigation.
-http/tests/webarchive
 http/tests/globalhistory
 http/tests/incremental
 http/tests/media
-http/tests/webarchive
 http/tests/wml
+
+# Evaluate expected results for frame loader callbacks
+# https://bugs.webkit.org/show_bug.cgi?id=34839
+http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html
+http/tests/security/mixedContent/data-url-iframe-in-main-frame.html
+http/tests/security/mixedContent/insecure-css-in-main-frame.html
+http/tests/security/mixedContent/insecure-iframe-in-main-frame.html
+http/tests/security/mixedContent/insecure-image-in-main-frame.html
+http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html
+http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html
 
 # Skip failed appcache test cases
 http/tests/appcache/auth.html
@@ -31,10 +161,6 @@ http/tests/loading/gmail-assert-on-load.html
 http/tests/loading/redirect-methods.html
 http/tests/loading/simple-subframe.html
 http/tests/loading/text-content-type-with-binary-extension.html
-
-# Added by https://bugs.webkit.org/show_bug.cgi?id=36675
-# See https://bugs.webkit.org/show_bug.cgi?id=36702
-plugins/reentrant-update-widget-positions.html
 
 # Failing Local tests
 http/tests/local/drag-over-remote-content.html
@@ -88,22 +214,324 @@ http/tests/navigation/timerredirect-subframeload.html
 # Failing http multipart test
 http/tests/multipart/invalid-image-data-standalone.html
 
-# ------- missing features
-accessibility
-webarchive
-svg/webarchive
+# =========================================================================== #
+#       http/tests/xmlhttprequest                                             #
+# =========================================================================== #
 
-editing/selection/4975120.html
-editing/selection/5109817.html
-editing/selection/5354455-1.html
-editing/selection/5354455-2.html
-editing/selection/caret-and-focus-ring.html
-fast/loader/subframe-navigate-during-main-frame-load.html
+# Skip xmlhttprequest tests - NETWORK_ERR: XMLHttpRequest Exception 101: A network error occured in synchronous requests.
+http/tests/xmlhttprequest/logout.html
+http/tests/xmlhttprequest/methods-async.html
+http/tests/xmlhttprequest/workers/shared-worker-methods.html
 
-# Plain text controller currently in Mac DumpRenderTree only.
-editing/text-iterator/basic-iteration.html
+# --- Fixed in Qt 4.7. Unskip when buildbot is upgraded.
+# Many of these tests exercise preflighted requests, which are not supported with Qt older than 4.7.
+http/tests/xmlhttprequest/cross-origin-authorization.html
+http/tests/xmlhttprequest/cross-origin-no-authorization.html
+http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
+http/tests/xmlhttprequest/simple-cross-origin-denied-events-post.html
+http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache.html
+http/tests/xmlhttprequest/access-control-basic-get-fail-non-simple.html
+http/tests/xmlhttprequest/access-control-response-with-body.html
+http/tests/xmlhttprequest/access-control-basic-denied-preflight-cache.html
+http/tests/xmlhttprequest/XMLHttpRequestException.html
+http/tests/xmlhttprequest/access-control-and-redirects.html
+http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-header.html
+http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-method.html
+http/tests/xmlhttprequest/access-control-basic-non-simple-allow-async.html
+http/tests/xmlhttprequest/access-control-basic-non-simple-allow.html
+http/tests/xmlhttprequest/access-control-basic-non-simple-deny-cached.html
+http/tests/xmlhttprequest/access-control-basic-post-fail-non-simple-content-type.html
+http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html
+http/tests/xmlhttprequest/access-control-preflight-async-header-denied.html
+http/tests/xmlhttprequest/access-control-preflight-async-method-denied.html
+http/tests/xmlhttprequest/access-control-preflight-credential-async.html
+http/tests/xmlhttprequest/access-control-preflight-credential-sync.html
+http/tests/xmlhttprequest/access-control-preflight-headers-async.html
+http/tests/xmlhttprequest/access-control-preflight-headers-sync.html
+http/tests/xmlhttprequest/access-control-preflight-sync-header-denied.html
+http/tests/xmlhttprequest/access-control-preflight-sync-method-denied.html
+http/tests/xmlhttprequest/access-control-response-with-body-sync.html
+http/tests/xmlhttprequest/cache-override.html
+# --- http://bugreports.qt.nokia.com/browse/QTBUG-9618
+http/tests/xmlhttprequest/cookies.html
+http/tests/xmlhttprequest/methods-lower-case.html
+http/tests/xmlhttprequest/methods.html
+http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
+http/tests/xmlhttprequest/state-after-network-error.html
+http/tests/xmlhttprequest/workers/methods-async.html
+http/tests/xmlhttprequest/workers/methods.html
+http/tests/xmlhttprequest/workers/shared-worker-methods-async.html
 
+# Caused by the way Qt caches network connections using user@hostname as the key
+# See https://bugs.webkit.org/show_bug.cgi?id=37084 and http://bugreports.qt.nokia.com/browse/QTBUG-9619
+http/tests/xmlhttprequest/re-login-async.html
+http/tests/xmlhttprequest/re-login.html
+
+# DRT sideeffect - this test make http/tests/xmlhttprequest/null-auth.php fail:
+# https://bugs.webkit.org/show_bug.cgi?id=32961
+http/tests/xmlhttprequest/failed-auth.html
+
+# [Qt] fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html fails (DRT sideeffect)
+# https://bugs.webkit.org/show_bug.cgi?id=35086
+fast/xmlhttprequest/xmlhttprequest-no-file-access.html
+
+# Missing DRT ability to set accept cookie policy
+http/tests/xmlhttprequest/cross-origin-cookie-storage.html
+
+# =========================================================================== #
+#       Failing inserting tests.                                              #
+# =========================================================================== #
+# ---- rendertree results OK but suspicious diffs.
+editing/inserting/4960120-1.html
+editing/inserting/5607069-2.html
+editing/inserting/5607069-3.html
+editing/inserting/before-after-input-element.html
+
+# ---- rendertree results OK but diff in editing delegate msgs.
+editing/inserting/insert-tab-003.html
+editing/inserting/insert-text-with-newlines.html
+# Missing textInputController.firstRectForCharacterRange()
+editing/inserting/caret-position.html
+
+# ---- to be reviewed
+editing/inserting/4278698.html
+editing/inserting/editable-html-element.html
+editing/inserting/editing-empty-divs.html
+editing/inserting/insert-div-023.html
+editing/inserting/multiple-lines-selected.html
+editing/inserting/typing-tab-designmode-forms.html
+editing/inserting/typing-tab-designmode.html
+editing/inserting/5803706-1.html
+editing/inserting/5994480-2.html
+editing/inserting/insert-bg-font.html
+
+# =========================================================================== #
+#       Failing pasteboard tests.                                             #
+# =========================================================================== #
+#------ Not selecting all of text.
+#------ sel.modify("move", "forward", "word"); does not select the last character in the word
+editing/pasteboard/4242293-1.html
+editing/pasteboard/smart-paste-008.html
+#------ safe to skip. Qt results same as chromium's. Mac drops the 'b' in the final bar,
+#------ that looks like a bug.
+editing/pasteboard/interchange-newline-2.html
+# ----- Whitespace instead of tab?
+# ----- https://bugs.webkit.org/show_bug.cgi?id=38437
+editing/pasteboard/5761530-1.html
+# ----- Results appear correct but have suspicious rendertree differences.
+editing/pasteboard/pasting-tabs.html
+editing/pasteboard/nested-blocks-with-text-area.html
+editing/pasteboard/nested-blocks-with-text-field.html
+editing/pasteboard/input-field-1.html
+editing/pasteboard/4806874.html
+# ----- These are actually safe to unskip. x/y differences only.
+editing/pasteboard/5387578.html
+editing/pasteboard/bad-placeholder.html
+# ----- Rendertree results OK but differences in message from editing delegate.
+editing/pasteboard/4076267-2.html
+editing/pasteboard/4076267.html
+editing/pasteboard/block-wrappers-necessary.html
+editing/pasteboard/paste-text-001.html
+editing/pasteboard/paste-text-008.html
+# ----- Rendertree results OK but differences in editing delegate message due to rendering.
+# ----- This looks safe to unskip.
+editing/pasteboard/paste-xml.xhtml
+# ----- Rendertree results match but width of tabs field is suspicious.
+editing/pasteboard/paste-text-at-tabspan-001.html
+# ----- Drag and drop support.
+editing/pasteboard/drag-image-in-about-blank-frame.html
+editing/pasteboard/files-during-page-drags.html
+editing/pasteboard/4861080.html
+editing/pasteboard/4947130.html
+editing/pasteboard/copy-standalone-image.html
+editing/pasteboard/drag-drop-dead-frame.html
+editing/pasteboard/drag-drop-input-textarea.html
+editing/pasteboard/drag-drop-iframe-refresh-crash.html
+editing/pasteboard/drag-drop-modifies-page.html
+editing/pasteboard/drag-drop-url-text.html
+editing/pasteboard/drag-image-to-contenteditable-in-iframe.html
+editing/pasteboard/drag-selected-image-to-contenteditable.html
+editing/pasteboard/drop-link.html
+editing/pasteboard/drop-text-without-selection.html
+editing/pasteboard/emacs-ctrl-a-k-y.html
+editing/pasteboard/emacs-ctrl-k-y-001.html
+editing/pasteboard/smart-drag-drop.html
+editing/pasteboard/subframe-dragndrop-1.html
+editing/pasteboard/get-data-text-plain-drop.html
+
+# =========================================================================== #
+#       Failing plugins tests.                                                #
+# =========================================================================== #
+
+# ---- https://bugs.webkit.org/show_bug.cgi?id=33344
+plugins/get-url-that-the-resource-load-delegate-will-disallow.html
+# ---- https://bugs.webkit.org/show_bug.cgi?id=36721
+plugins/get-url-with-blank-target.html
+# ---- https://bugs.webkit.org/show_bug.cgi?id=33333
+plugins/open-and-close-window-with-plugin.html
+# ---- https://bugs.webkit.org/show_bug.cgi?id=36702
+plugins/reentrant-update-widget-positions.html
+# ---- plugins rendered in incorrect position
+plugins/embed-attributes-style.html
+# ---- depends on QuickTime support
+plugins/embed-attributes-setting.html
+fast/dom/object-embed-plugin-scripting.html
+# ---- events not getting to plugin
+plugins/mouse-events.html
+plugins/keyboard-events.html
+plugins/mouse-events-fixedpos.html
+# ---- to be reviewed
+http/tests/plugins/plugin-document-has-focus.html
+
+# =========================================================================== #
+#       Failing execCommand tests.                                            #
+# =========================================================================== #
+
+# It fails in DRT, but passes in QtLauncher
+# https://bugs.webkit.org/show_bug.cgi?id=35921
+editing/execCommand/move-selection-back-line.html
+
+# -- passes
+editing/execCommand/indent-paragraphs.html
+
+# ---- simple x/y diffs
+editing/execCommand/4580583-1.html
+editing/execCommand/nsresponder-indent.html
+editing/execCommand/nsresponder-outdent.html
+editing/execCommand/4641880-2.html
+editing/execCommand/4747450.html
+editing/execCommand/4786404-1.html
+editing/execCommand/4786404-2.html
+editing/execCommand/4916402.html
+editing/execCommand/4916541.html
+editing/execCommand/4924441.html
+editing/execCommand/5049671.html
+editing/execCommand/5062376.html
+editing/execCommand/5080333-1.html
+editing/execCommand/5080333-2.html
+editing/execCommand/5136770.html
+editing/execCommand/5138441.html
+editing/execCommand/5142012-1.html
+editing/execCommand/5190926.html
+editing/execCommand/5481523.html
+editing/execCommand/5569741.html
+editing/execCommand/5573879.html
+editing/execCommand/create-list-from-range-selection.html
+editing/execCommand/findString-2.html
+editing/execCommand/format-block-from-range-selection.html
+editing/execCommand/format-block.html
+editing/execCommand/format-block-with-braces.html
+editing/execCommand/format-block-with-trailing-br.html
+editing/execCommand/hilitecolor.html
+editing/execCommand/indent-empty-root.html
+editing/execCommand/indent-list-item.html
+editing/execCommand/indent-selection.html
+editing/execCommand/insertHorizontalRule.html
+editing/execCommand/insertImage.html
+editing/execCommand/insert-list-and-stitch.html
+editing/execCommand/insert-list-empty-div.html
+editing/execCommand/insert-list-with-id.html
+editing/execCommand/outdent-blockquote-test1.html
+editing/execCommand/outdent-blockquote-test2.html
+editing/execCommand/outdent-blockquote-test3.html
+editing/execCommand/outdent-blockquote-test4.html
+editing/execCommand/outdent-selection.html
+editing/execCommand/remove-list-from-range-selection.html
+editing/execCommand/remove-list-item-1.html
+editing/execCommand/4920488.html
+editing/execCommand/4920742-1.html
+editing/execCommand/create-list-with-hr.html
+editing/execCommand/remove-formatting-2.html
+editing/execCommand/remove-formatting.html
+
+
+# ---- fine, but not a simple diff
+editing/execCommand/4580583-2.html
+editing/execCommand/4641880-1.html
+# ---- rendertree results OK but suspicious diffs.
+editing/execCommand/print.html
+editing/execCommand/selectAll.html
+editing/execCommand/5142012-2.html
+editing/execCommand/5482023.html
+
+# -- text selection is incorrect
+editing/execCommand/findString.html
+editing/execCommand/find-after-replace.html
+editing/execCommand/paste-1.html
+editing/execCommand/paste-2.html
+
+# =========================================================================== #
+# Failing Sputnik tests                                                       #
+# =========================================================================== #
+fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code
+fast/js/sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.12_Array_prototype_splice/S15.4.4.12_A2.1_T3.html
+fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T1.html
+fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T2.html
+fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T3.html
+fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T4.html
+fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T5.html
+fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T6.html
+fast/js/sputnik/Unicode/Unicode_500/S7.6_A3.1.html
+fast/js/sputnik/Unicode/Unicode_500/S7.6_A3.2.html
+fast/js/sputnik/Unicode/Unicode_500/S7.6_A5.3_T1.html
+fast/js/sputnik/Unicode/Unicode_500/S7.6_A5.3_T2.html
+fast/js/sputnik/Unicode/Unicode_510/S15.5.4.16_A1.html
+fast/js/sputnik/Unicode/Unicode_510/S15.5.4.18_A1.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A1.1_T1.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A1.1_T2.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A1.1_T4.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A2.2_T1.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A2.2_T2.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A2.3.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A3.1.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A3.2.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T1.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T2.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T4.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T7.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T8.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T9.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
+
+# Failing Sputnik tests on 32 bit
+fast/js/sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html
+fast/js/sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html
+
+# Failing Sputnik test on 64 bit
+fast/js/sputnik/Conformance/11_Expressions/11.5_Multiplicative_Operators/11.5.3_Applying_the_percent_Operator/S11.5.3_A4_T2.html
+
+# Timed out Sputnik tests on ARM
+fast/js/sputnik/Unicode/Unicode_218/S7.6_A3.1.html
+fast/js/sputnik/Unicode/Unicode_218/S7.6_A3.2.html
+fast/js/sputnik/Unicode/Unicode_218/S7.6_A5.3_T1.html
+fast/js/sputnik/Unicode/Unicode_218/S7.6_A5.3_T2.html
+
+# =========================================================================== #
+#       JS Context bug.                                                       #
+#       https://bugs.webkit.org/show_bug.cgi?id=37725                         #
+#       https://bugs.webkit.org/show_bug.cgi?id=31626                         #
+# =========================================================================== #
+# https://bugs.webkit.org/show_bug.cgi?id=31626
+fast/dom/javascript-url-crash-function.html
+fast/dom/location-new-window-no-crash.html
+http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html
+media/restore-from-page-cache.html
+# https://bugs.webkit.org/show_bug.cgi?id=37725
+# Related failure to https://bugs.webkit.org/show_bug.cgi?id=31626
+# Navigating to a cached page with javascript history.back() does not restore the JS context.
+# CONSOLE MESSAGE: line 28: ReferenceError: Trying to access object from destroyed plug-in.
+# media/restore-from-page-cache.html is also affected by this issue in addition to the issue
+# in bug 31626.
+fast/events/pageshow-pagehide-on-back-cached.html
+fast/events/pageshow-pagehide-on-back-cached-with-frames.html
+fast/loader/input-element-page-cache-crash.html
+fast/dom/Window/timer-resume-on-navigation-back.html
+loader/go-back-to-different-window-size.html
+
+# =========================================================================== #
 # Fluctuating/flakey tests
+# =========================================================================== #
 animations/3d/transform-origin-vs-functions.html
 animations/change-one-anim.html
 fast/frames/sandboxed-iframe-plugins.html
@@ -121,6 +549,10 @@ storage/execute-sql-args.html
 storage/hash-change-with-xhr.html
 transitions/change-values-during-transition.html
 
+# [Qt] fast/frames/flattening/frameset-flattening-subframesets.html fails intermittently on Qt bot
+# Fails caused by layoutTestController.display() in fast/frames/flattening/frameset-flattening-subframe-resize.html
+# https://bugs.webkit.org/show_bug.cgi?id=37334
+
 # https://bugs.webkit.org/show_bug.cgi?id=34281
 fast/workers/shared-worker-frame-lifecycle.html
 
@@ -128,7 +560,25 @@ fast/workers/shared-worker-frame-lifecycle.html
 svg/custom/path-getTotalLength.svg
 svg/custom/glyph-setting-d-attribute.svg
 
+# ---- crashes - https://bugs.webkit.org/show_bug.cgi?id=32922
+
+# Tests that currently fail but perhaps used to work at some point.
+fast/dom/open-and-close-by-DOM.html
+fast/dom/Window/new-window-opener.html
+fast/forms/001.html
+fast/forms/focus2.html
+fast/forms/search-cancel-button-mouseup.html
+fast/frames/001.html
+fast/text/monospace-width-cache.html
+
+# Tests that fail randomly. Is this style related?
+fast/forms/listbox-width-change.html
+fast/forms/plaintext-mode-2.html
+fast/forms/menulist-width-change.html
+
+# =========================================================================== #
 # failing media tests
+# =========================================================================== #
 media/adopt-node-crash.html
 media/audio-constructor.html
 media/audio-constructor-preload.html
@@ -151,7 +601,6 @@ media/controls-strict.html
 media/controls-styling.html
 media/event-attributes.html
 media/fallback.html
-media/invalid-media-url-crash.html
 media/media-captions.html
 media/media-constants.html
 media/media-fullscreen-inline.html
@@ -160,7 +609,6 @@ media/media-load-event.html
 media/media-startTime.html
 media/remove-from-document.html
 media/remove-from-document-no-load.html
-media/restore-from-page-cache.html
 media/unsupported-rtsp.html
 media/unsupported-tracks.html
 media/video-append-source.html
@@ -241,10 +689,10 @@ media/video-width-height.html
 media/video-zoom-controls.html
 media/video-zoom.html
 
-# ========================================================================= #
-# Crashing tests due to re-enabled Phonon support in Buildbot's Qt          #
-# Skip these until a proper solution for the Phonon related craches found.  #
-# ========================================================================= #
+# ============================================================================= #
+# Crashing tests due to re-enabled Phonon support in Buildbot's Qt              #
+# Skip these until a proper solution for the Phonon related crashes found.      #
+# ============================================================================= #
 #reproducible command: WebKitTools/Scripts/run-webkit-tests fast/runin/nonblock-runin.html fast/table/
 #crashed: fast/table/"random_test"
 #crasher:
@@ -259,8 +707,19 @@ http/tests/security/local-video-source-from-remote.html
 #            Missing features in our DumpRenderTree implementation              #
 # ============================================================================= #
 
-# Missing textInputController.firstRectForCharacterRange()
-editing/inserting/caret-position.html
+# DumpRenderTree code to enable Java is currently a no-op
+java
+
+# Missing DRT ability to override 'standard' preferences.
+fast/dom/Window/timer-resume-on-navigation-back.html
+loader/go-back-to-different-window-size.html
+
+# Plain text controller currently in Mac DumpRenderTree only.
+# https://bugs.webkit.org/show_bug.cgi?id=38805
+editing/text-iterator/basic-iteration.html
+
+# Implement LayoutTestController::callShouldCloseOnWebView()
+fast/events/onbeforeunload-focused-iframe.html
 
 # Missing layoutTestController.overridePreference()
 fast/events/pageshow-pagehide-on-back-cached.html
@@ -276,6 +735,8 @@ http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.htm
 http/tests/xmlhttprequest/default-content-type-dashboard.html
 http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
 
+# Missing layoutTestController.setIconDatabaseEnabled()
+
 # Missing layoutTestController.setCustomPolicyDelegate()
 fast/loader/onload-policy-ignore-for-frame.html
 http/tests/misc/policy-delegate-called-twice.html
@@ -288,17 +749,8 @@ storage/statement-error-callback-isolated-world.html
 storage/statement-success-callback-isolated-world.html
 storage/transaction-callback-isolated-world.html
 storage/transaction-error-callback-isolated-world.html
-storage/transaction-success-callback-isolated-world.html
 
-# Evaluate expected results for frame loader callbacks
-# https://bugs.webkit.org/show_bug.cgi?id=34839
-http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html
-http/tests/security/mixedContent/data-url-iframe-in-main-frame.html
-http/tests/security/mixedContent/insecure-css-in-main-frame.html
-http/tests/security/mixedContent/insecure-iframe-in-main-frame.html
-http/tests/security/mixedContent/insecure-image-in-main-frame.html
-http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html
-http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html
+# Missing layoutTestController.removeOriginAccessWhitelistEntry()
 
 http/tests/cache/subresource-failover-to-network.html
 
@@ -314,9 +766,11 @@ http/tests/plugins/third-party-cookie-accept-policy.html
 # Missing layoutTestController.evaluateScriptInIsolatedWorld()
 storage/open-database-creation-callback-isolated-world.html
 
+# Missing layoutTestController.computedStyleIncludingVisitedInfo()
+fast/history/self-is-visited.html
+
 # Missing layoutTestController.dumpWillCacheResponse
 http/tests/misc/willCacheResponse-delegate-callback.html
-# ============================================================================= #
 
 # ------- missing eventSender.beginDragWithFiles
 editing/pasteboard/dataTransfer-setData-getData.html
@@ -328,7 +782,6 @@ fast/forms/get-file-upload.html
 fast/forms/input-file-re-render.html
 fast/events/drag-file-crash.html
 http/tests/security/clipboard/clipboard-file-access.html
-fast/files/file-reader.html
 
 # Missing drag & drop functionality in DRT
 editing/pasteboard/drop-inputtext-acquires-style.html
@@ -373,218 +826,196 @@ fast/ruby/rubyDOM-remove-rt2.html
 fast/ruby/rubyDOM-remove-text1.html
 fast/ruby/rubyDOM-remove-text2.html
 
-# ------- failing editing tests
-editing/deleting/delete-to-end-of-paragraph.html
-editing/execCommand/nsresponder-indent.html
-editing/execCommand/nsresponder-outdent.html
+# ============================================================================= #
+# ------- failing editing/input tests
+# ============================================================================= #
 editing/input/emacs-ctrl-o.html
-editing/inserting/multiple-lines-selected.html
-editing/inserting/typing-tab-designmode-forms.html
-editing/inserting/typing-tab-designmode.html
-editing/selection/14971.html
-editing/selection/4895428-1.html
-editing/selection/4895428-4.html
-editing/selection/4947387.html
-editing/selection/5057506-2.html
-editing/selection/5057506.html
-editing/selection/5232159.html
-editing/selection/5333725.html
-editing/selection/anchor-focus1.html
-editing/selection/click-start-of-line.html
-editing/selection/contains-boundaries.html
-editing/selection/designmode-no-caret.html
-editing/selection/doubleclick-crash.html
-editing/selection/drag-select-1.html
-editing/selection/drag-to-contenteditable-iframe.html
-editing/selection/editable-links.html
-editing/selection/expanding-selections2.html
-editing/selection/expanding-selections.html
-editing/selection/fake-doubleclick.html
-editing/selection/fake-drag.html
-editing/selection/inline-closest-leaf-child.html
-editing/selection/mixed-editability-1.html
-editing/selection/paragraph-granularity.html
-editing/selection/select-from-textfield-outwards.html
-editing/selection/selection-actions.html
-editing/selection/selection-background.html
-editing/selection/triple-click-in-pre.html
-editing/selection/word-granularity.html
-editing/style/style-3681552-fix-002.html
 
-# ------- failures due to missing support for particular XSLT features
-# xsl:output
-fast/xsl/xslt-doc-enc.xml
-fast/xsl/xslt-url.xml
-fast/xsl/default-html.html
-fast/xsl/xslt-text.html
-fast/xsl/xslt-entity.xml
-fast/xsl/xslt-extra-content-at-end.xml
-# external entities support
-fast/xsl/dtd-in-source-document.xml
-fast/xsl/xslt-second-level-import.xml
-fast/parser/external-entities-in-xslt.xml
-# exslt:node-set() function
-fast/xsl/exslt-node-set.xml
-# xsl:import
-fast/xsl/import-after-comment.xml
-fast/xsl/xslt-import-depth.xml
-fast/xsl/xslt-nested-stylesheets.xml
-# xsl:attribute-set
-fast/xsl/mozilla-tests.xml
-# xsl:sort: lang and case-order
-fast/xsl/sort-locale.xml
-fast/xsl/sort-unicode.xml
-# output formatting issues (might be related to the lack of xsl:output support)
-fast/xsl/xslt-processor.html
-# to be investigated
-fast/xsl/xslt-enc16.xml
-fast/xsl/xslt-enc16to16.xml
-fast/xsl/xslt-enc-cyr.xml
-fast/xsl/xslt-enc.xml
-fast/xsl/xslt-relative-path.xml
-fast/xsl/xslt-missing-namespace-in-xslt.xml
-fast/xsl/xslt_unicode.xml
+# ============================================================================= #
+# Failing SVG tests
+# ============================================================================= #
+svg/custom/svg-fonts-in-text-controls.html
+svg/custom/text-dom-removal.svg
+svg/custom/use-clipped-transform.svg
+svg/dom/length-list-parser.html
+svg/css/group-with-shadow.svg
+svg/filters/big-sized-filter-2.svg
+svg/filters/big-sized-filter.svg
+svg/filters/feDisplacementMap.svg
+svg/filters/filterRes.svg
+svg/css/composite-shadow-example.html
+svg/css/composite-shadow-with-opacity.html
+# Missing variables:
+# SVGAltGlyphElement, SVGAnimateElement, SVGAnimateColorElement, SVGAnimateTransformElement
+# SVGFontElement, SVGGlyphElement, SVGMissingGlyphElement, SVGFontFaceElement, SVGFontFaceSrcElement
+# SVGFontFaceUriElement, SVGFontFaceFormatElement, SVGFontFaceNameElement, SVGForeignObjectElement
+# https://bugs.webkit.org/show_bug.cgi?id=32941
+svg/custom/global-constructors.html
+# new test without expected file introduced by http://trac.webkit.org/changeset/51496
+svg/custom/mask-with-all-units.svg
 
-# ------- failures for tests with results
-fast/forms/drag-out-of-textarea.html
-fast/frames/frame-src-attribute.html
-fast/overflow/003.xml
-fast/text/international/bidi-menulist.html
-fast/text/international/wrap-CJK-001.html
-fast/xpath/string-value.html
+# [Qt] lacks clipToImageBuffer()
+# https://bugs.webkit.org/show_bug.cgi?id=24289
+svg/clip-path
+svg/custom/clip-path-child-changes.svg
+svg/custom/clip-path-href-changes.svg
+svg/custom/clip-path-units-changes.svg
+svg/custom/clip-path-with-transform.svg
+svg/custom/recursive-clippath.svg
+svg/custom/marker-overflow-clip.svg
 
-# ------- plugin tests that use Objective-C
-plugins/call-as-function-test.html
-plugins/jsobjc-dom-wrappers.html
-plugins/jsobjc-simple.html
-plugins/root-object-premature-delete-crash.html
-plugins/throw-on-dealloc.html
-plugins/undefined-property-crash.html
-editing/pasteboard/paste-RTFD.html
-editing/pasteboard/paste-TIFF.html
-
-# ------- all other failures (not looked at)
-fast/box-sizing/percentage-height.html
-fast/css/acid2-pixel.html
-fast/css/acid2.html
-fast/css/ignore-text-zoom.html
-fast/dom/clientWidthAfterDocumentIsRemoved.html
-fast/dom/focus-contenteditable.html
-fast/dom/gc-10.html
-fast/dom/isindex-002.html
-fast/dom/object-embed-plugin-scripting.html
-fast/dom/replaceChild.html
-fast/dynamic/layer-hit-test-crash.html
-# seems to trigger some bugs/missing features in QTextCodec
-fast/encoding/char-encoding.html
-# QUrl::from/toACE seems to be stricter than what ICU does.
-fast/encoding/idn-security.html
-fast/encoding/invalid-UTF-8.html
-fast/encoding/xmacroman-encoding-test.html
-fast/encoding/GBK/EUC-CN.html
-fast/encoding/GBK/chinese.html
-fast/encoding/GBK/cn-gb.html
-fast/encoding/GBK/csgb2312.html
-fast/encoding/GBK/csgb231280.html
-fast/encoding/GBK/gb2312.html
-fast/encoding/GBK/gb_2312-80.html
-fast/encoding/GBK/gbk.html
-fast/encoding/GBK/iso-ir-58.html
-fast/encoding/GBK/x-euc-cn.html
-fast/encoding/GBK/x-gbk.html
-fast/events/5056619.html
-fast/events/autoscroll.html
-fast/events/click-count.html
-fast/events/content-changed-during-drop.html
-fast/events/drag-in-frames.html
-fast/events/focusingUnloadedFrame.html
-fast/events/js-keyboard-event-creation.html
-fast/events/keydown-1.html
-fast/events/keypress-insert-tab.html
-fast/events/mouseout-dead-node.html
-fast/events/ondragenter.html
-fast/events/reveal-link-when-focused.html
-fast/events/standalone-image-drag-to-editable.html
-fast/events/updateLayoutForHitTest.html
-fast/forms/input-selectedoption.html
-fast/forms/button-cannot-be-nested.html
-fast/forms/control-restrict-line-height.html
-fast/forms/drag-into-textarea.html
-fast/forms/focus-selection-input.html
-fast/forms/input-readonly-autoscroll.html
-fast/forms/input-text-click-outside.html
-fast/forms/input-text-double-click.html
-fast/forms/input-text-drag-down.html
-fast/forms/input-text-scroll-left-on-blur.html
-fast/forms/listbox-onchange.html
-fast/forms/listbox-selection-2.html
-fast/forms/listbox-selection.html
-fast/forms/onchange-enter-submit.html
-fast/forms/onselect-textarea.html
-fast/forms/onselect-textfield.html
-fast/forms/password-doubleclick-selection.html
-fast/forms/search-rtl.html
-fast/forms/select-accesskey.html
-fast/forms/select-writing-direction-natural.html
-fast/forms/tabbing-input-iframe.html
-fast/forms/textAreaLineHeight.html
-fast/forms/textarea-scroll-height.html
-fast/forms/textarea-scrollbar.html
-fast/forms/textarea-scrolled-type.html
-fast/frames/iframe-window-focus.html
-fast/html/keygen.html
-fast/invalid/missing-end-tag.xhtml
-fast/invalid/residual-style.html
-fast/js/string-capitalization.html
-fast/lists/drag-into-marker.html
-fast/overflow/007.html
-fast/overflow/clip-rects-fixed-ancestor.html
-fast/overflow/hidden-scrollbar-resize.html
-fast/overflow/overflow-rtl.html
-fast/overflow/overflow-x-y.html
-fast/overflow/scroll-nested-positioned-layer-in-overflow.html
-fast/overflow/scrollRevealButton.html
-fast/parser/external-entities.xml
-fast/parser/xhtml-alternate-entities.xml
-fast/repaint/box-shadow-h.html
-fast/repaint/box-shadow-v.html
-fast/repaint/fixed.html
-fast/repaint/flexible-box-overflow-horizontal.html
-fast/repaint/flexible-box-overflow.html
-fast/repaint/inline-block-overflow.html
-fast/repaint/layer-child-outline.html
-fast/repaint/layer-outline-horizontal.html
-fast/repaint/layer-outline.html
-fast/repaint/list-marker.html
-fast/repaint/overflow-outline-repaint.html
-fast/repaint/overflow-scroll-delete.html
-fast/repaint/selection-gap-overflow-scroll.html
-fast/repaint/table-cell-vertical-overflow.html
-fast/repaint/text-selection-rect-in-overflow-2.html
-fast/repaint/text-selection-rect-in-overflow.html
-fast/repaint/text-shadow-horizontal.html
-fast/repaint/text-shadow.html
-fast/replaced/width100percent-textarea.html
-fast/table/giantCellspacing.html
-fast/text/atsui-pointtooffset-calls-cg.html
-fast/text/atsui-rtl-override-selection.html
-fast/text/in-rendered-text-rtl.html
-fast/text/large-text-composed-char-dos.html
-fast/text/midword-break-after-breakable-char.html
-fast/text/textIteratorNilRenderer.html
-fast/text/international/002.html
-
-plugins/embed-attributes-setting.html
-plugins/get-url-that-the-resource-load-delegate-will-disallow.html
-plugins/get-url-with-blank-target.html
-plugins/mouse-events.html
-plugins/mouse-events-fixedpos.html
-plugins/open-and-close-window-with-plugin.html
-plugins/keyboard-events.html
-plugins/geturlnotify-during-document-teardown.html
-http/tests/plugins/plugin-document-has-focus.html
-
-security/block-test.html
+# --- to be reviewed
+svg/batik/filters/filterRegions.svg
+svg/batik/masking/maskRegions.svg
+svg/batik/paints/gradientLimit.svg
+svg/batik/paints/patternPreserveAspectRatioA.svg
+svg/batik/paints/patternRegionA.svg
+svg/batik/paints/patternRegions.svg
+svg/batik/text/longTextOnPath.svg
+svg/batik/text/smallFonts.svg
+svg/batik/text/textAnchor2.svg
+svg/batik/text/textAnchor3.svg
+svg/batik/text/textAnchor.svg
+svg/batik/text/textDecoration2.svg
+svg/batik/text/textEffect2.svg
+svg/batik/text/textEffect3.svg
+svg/batik/text/textEffect.svg
+svg/batik/text/textFeatures.svg
+svg/batik/text/textGlyphOrientationHorizontal.svg
+svg/batik/text/textLayout2.svg
+svg/batik/text/textLayout.svg
+svg/batik/text/textLength.svg
+svg/batik/text/textOnPath2.svg
+svg/batik/text/textOnPath3.svg
+svg/batik/text/textOnPathSpaces.svg
+svg/batik/text/textOnPath.svg
+svg/batik/text/textPCDATA.svg
+svg/batik/text/textPosition2.svg
+svg/batik/text/textPosition.svg
+svg/batik/text/textProperties2.svg
+svg/batik/text/textProperties.svg
+svg/batik/text/textStyles.svg
+svg/batik/text/verticalTextOnPath.svg
+svg/batik/text/verticalText.svg
+svg/batik/text/xmlSpace.svg
+svg/css/css-box-min-width.html
+svg/custom/absolute-sized-svg-in-xhtml.xhtml
+svg/custom/alignment-baseline-modes.svg
+svg/custom/altglyph.svg
+svg/custom/animate-path-discrete.svg
+svg/custom/animate-path-morphing.svg
+svg/custom/circle-move-invalidation.svg
+svg/custom/class-baseValue.svg
+svg/custom/clip-path-referencing-use2.svg
+svg/custom/clip-path-referencing-use.svg
+svg/custom/container-opacity-clip-viewBox.svg
+svg/custom/dominant-baseline-hanging.svg
+svg/custom/dominant-baseline-modes.svg
+svg/custom/empty-clip-path.svg
+svg/custom/fill-fallback.svg
+svg/custom/fill-SVGPaint-interface.svg
+svg/custom/focus-ring.svg
+svg/custom/font-face-cascade-order.svg
+svg/custom/font-face-simple.svg
+svg/custom/foreignObject-crash-on-hover.xml
+svg/custom/getPresentationAttribute.svg
+svg/custom/glyph-selection-lang-attribute.svg
+svg/custom/gradient-rotated-bbox.svg
+svg/custom/group-opacity.svg
+svg/custom/hit-test-path.svg
+svg/custom/hit-test-unclosed-subpaths.svg
+svg/custom/hit-test-with-br.xhtml
+svg/custom/image-parent-translation.xhtml
+svg/custom/image-small-width-height.svg
+svg/custom/image-with-aspect-ratio-stretch.svg
+svg/custom/inline-svg-in-xhtml.xml
+svg/custom/invalid-lengthlist.svg
+svg/custom/js-update-image.svg
+svg/custom/js-update-transform-addition.svg
+svg/custom/js-update-transform-changes.svg
+svg/custom/linking-a-03-b-all.svg
+svg/custom/linking-a-03-b-preserveAspectRatio.svg
+svg/custom/linking-a-03-b-transform.svg
+svg/custom/linking-a-03-b-viewBox.svg
+svg/custom/linking-a-03-b-viewBox-transform.svg
+svg/custom/linking-a-03-b-viewTarget.svg
+svg/custom/linking-a-03-b-zoomAndPan.svg
+svg/custom/no-inherited-dashed-stroke.xhtml
+svg/custom/pattern-rotate.svg
+svg/custom/pattern-with-transformation.svg
+svg/custom/percentage-of-html-parent.xhtml
+svg/custom/repaint-on-image-bounds-change.svg
+svg/custom/resource-client-removal.svg
+svg/custom/root-container-opacity-clip-viewBox.svg
+svg/custom/scroll-hit-test.xhtml
+svg/custom/shape-rendering.svg
+svg/custom/stroked-pattern.svg
+svg/custom/stroke-fallback.svg
+svg/custom/style-attribute-font-size.svg
+svg/custom/svg-fonts-in-html.html
+svg/custom/SVGMatrix-interface.svg
+svg/custom/text-decoration-visibility.svg
+svg/custom/text-dom-01-f.svg
+svg/custom/text-letter-spacing.svg
+svg/custom/text-linking.svg
+svg/custom/text-x-dx-lists.svg
+svg/custom/text-x-override-in-tspan-child.svg
+svg/custom/text-xy-updates.svg
+svg/custom/transform-removeAttributeNS.svg
+svg/custom/use-css-no-effect-on-shadow-tree.svg
+svg/custom/use-detach.svg
+svg/custom/use-dynamic-append.svg
+svg/custom/use-on-disallowed-foreign-object-1.svg
+svg/custom/use-on-disallowed-foreign-object-2.svg
+svg/custom/use-on-disallowed-foreign-object-3.svg
+svg/custom/use-on-disallowed-foreign-object-4.svg
+svg/custom/use-on-disallowed-foreign-object-5.svg
+svg/custom/use-on-disallowed-foreign-object-6.svg
+svg/custom/use-on-g-containing-foreignObject-and-image.svg
+svg/custom/use-on-g-containing-symbol.svg
+svg/custom/use-on-non-svg-namespaced-element.svg
+svg/custom/use-setAttribute-crash.svg
+svg/hixie/dynamic/005.xml
+svg/hixie/error/004.xml
+svg/hixie/error/005.xml
+svg/hixie/error/013.xml
+svg/hixie/processing-model/003.xml
+svg/hixie/processing-model/004.xml
+svg/text/foreignObject-repaint.xml
+svg/text/kerning.svg
+svg/text/multichar-glyph.svg
+svg/text/text-align-01-b.svg
+svg/text/text-align-02-b.svg
+svg/text/text-align-03-b.svg
+svg/text/text-align-04-b.svg
+svg/text/text-align-05-b.svg
+svg/text/text-align-06-b.svg
+svg/text/text-altglyph-01-b.svg
+svg/text/text-deco-01-b.svg
+svg/text/text-fonts-01-t.svg
+svg/text/text-fonts-02-t.svg
+svg/text/text-gradient-positioning.svg
+svg/text/text-intro-05-t.svg
+svg/text/text-path-01-b.svg
+svg/text/textPathBoundsBug.svg
+svg/text/text-repaint-rects.xhtml
+svg/text/text-spacing-01-b.svg
+svg/text/text-text-01-b.svg
+svg/text/text-text-03-b.svg
+svg/text/text-text-04-t.svg
+svg/text/text-text-05-t.svg
+svg/text/text-text-06-t.svg
+svg/text/text-text-07-t.svg
+svg/text/text-text-08-b.svg
+svg/text/text-tref-01-b.svg
+svg/text/text-tselect-01-b.svg
+svg/text/text-tselect-02-f.svg
+svg/text/text-tspan-01-b.svg
+svg/text/text-ws-01-t.svg
+svg/text/text-ws-02-t.svg
+svg/transforms/animated-path-inside-transformed-html.xhtml
+svg/transforms/text-with-pattern-inside-transformed-html.xhtml
+svg/transforms/text-with-pattern-with-svg-transform.svg
 svg/W3C-SVG-1.1/animate-elem-02-t.svg
 svg/W3C-SVG-1.1/animate-elem-03-t.svg
 svg/W3C-SVG-1.1/animate-elem-04-t.svg
@@ -676,7 +1107,6 @@ svg/W3C-SVG-1.1/filters-felem-01-b.svg
 svg/W3C-SVG-1.1/filters-gauss-01-b.svg
 svg/W3C-SVG-1.1/filters-image-01-b.svg
 svg/W3C-SVG-1.1/filters-light-01-f.svg
-svg/W3C-SVG-1.1/filters-light-04-f.svg
 svg/W3C-SVG-1.1/filters-morph-01-f.svg
 svg/W3C-SVG-1.1/filters-offset-01-b.svg
 svg/W3C-SVG-1.1/filters-specular-01-f.svg
@@ -1100,112 +1530,6 @@ svg/hixie/viewbox/003.xml
 svg/hixie/viewbox/004.xml
 svg/hixie/viewbox/preserveAspectRatio/001.xml
 svg/hixie/viewbox/preserveAspectRatio/002.xml
-
-# ------ web archive support
-svg/custom/image-with-prefix-in-webarchive.svg
-
-# Tests that currently fail but perhaps used to work at some point.
-fast/dom/open-and-close-by-DOM.html
-fast/dom/Window/new-window-opener.html
-fast/forms/001.html
-fast/forms/focus2.html
-fast/forms/search-cancel-button-mouseup.html
-fast/frames/001.html
-fast/text/monospace-width-cache.html
-
-# Tests that fail randomly. Is this style related?
-fast/forms/listbox-width-change.html
-fast/forms/plaintext-mode-2.html
-fast/forms/menulist-width-change.html
-
-# Tests that fail and probably are real bugs, but that were
-# put into the skipped list for now to have some kind of
-# reference, so we don't introduce regressions.
-editing/deleting/5144139-2.html
-editing/deleting/delete-block-merge-contents-001.html
-editing/deleting/delete-block-merge-contents-019.html
-editing/deleting/delete-block-merge-contents-020.html
-editing/deleting/delete-block-table.html
-editing/deleting/delete-by-word-001.html
-editing/deleting/delete-by-word-002.html
-editing/deleting/delete-line-end-ws-001.html
-editing/deleting/delete-line-end-ws-002.html
-editing/deleting/delete-to-select-table.html
-editing/deleting/deletionUI-single-instance.html
-editing/execCommand/4920488.html
-editing/execCommand/4920742-1.html
-editing/execCommand/create-list-with-hr.html
-editing/execCommand/print.html
-editing/execCommand/remove-formatting-2.html
-editing/execCommand/remove-formatting.html
-editing/execCommand/selectAll.html
-editing/inserting/4278698.html
-editing/inserting/editable-html-element.html
-editing/inserting/editing-empty-divs.html
-editing/inserting/insert-div-023.html
-editing/selection/4983858.html
-editing/selection/5136696.html
-editing/selection/after-line-wrap.html
-editing/selection/end-of-document.html
-editing/selection/move-left-right.html
-editing/selection/select-all-001.html
-editing/selection/select-all-002.html
-editing/selection/select-all-003.html
-editing/style/apple-style-editable-mix.html
-editing/style/create-block-for-style-012.html
-editing/style/font-family-with-space.html
-fast/clip/outline-overflowClip.html
-fast/css-generated-content/012.html
-fast/css-generated-content/hover-style-change.html
-fast/css-generated-content/wbr-with-before-content.html
-fast/css/css2-system-fonts.html
-fast/css/namespaces/003.xml
-fast/css/namespaces/007.xml
-fast/doctypes/003.html
-fast/dom/frame-loading-via-document-write.html
-fast/dom/set-frame-src-while-running-script-in-frame.html
-fast/dom/wrapper-classes.html
-fast/dom/HTMLDocument/hasFocus.html
-fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.html
-fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html
-fast/dom/Range/range-expand.html
-fast/dynamic/move-node-with-selection.html
-fast/dynamic/selection-highlight-adjust.html
-fast/encoding/char-decoding.html
-fast/encoding/frame-default-enc.html
-fast/encoding/invalid-xml.html
-fast/events/attempt-scroll-with-no-scrollbars.html
-fast/events/key-events-in-input-button.html
-fast/forms/input-align-image.html
-fast/forms/input-align.html
-fast/forms/input-double-click-selection-gap-bug.html
-fast/forms/input-radio-checked-tab.html
-fast/forms/input-text-option-delete.html
-fast/forms/textarea-rows-cols.html
-fast/frames/onlyCommentInIFrame.html
-fast/inline/positionedLifetime.html
-fast/invalid/junk-data.xml
-fast/layers/layer-visibility.html
-fast/lists/003.html
-fast/lists/markers-in-selection.html
-fast/lists/w3-list-styles.html
-fast/loader/text-document-wrapping.html
-fast/media/mq-js-stylesheet-media-03.html
-fast/media/mq-js-stylesheet-media-04.html
-fast/overflow/005.html
-fast/regex/test1.html
-fast/regex/test4.html
-fast/repaint/inline-outline-repaint.html
-fast/selectors/159.html
-fast/selectors/177a.html
-fast/text/cg-fallback-bolding.html
-fast/text/find-case-folding.html
-fast/text/large-text-composed-char.html
-fast/text/basic/013.html
-fast/text/basic/014.html
-fast/text/international/rtl-white-space-pre-wrap.html
-fast/text/whitespace/001.html
-fast/text/whitespace/pre-wrap-overflow-selection.html
 svg/W3C-SVG-1.1/struct-frag-01-t.svg
 svg/css/getComputedStyle-basic.xhtml
 svg/custom/SVGPoint-matrixTransform.svg
@@ -1220,43 +1544,27 @@ svg/custom/use-recursion-2.svg
 svg/dom/SVGRectElement/rect-modify-rx.svg
 svg/hixie/dynamic/002.xml
 svg/hixie/mixed/007.xml
-tables/mozilla/bugs/bug51140.html
-tables/mozilla/bugs/bug103533.html
-tables/mozilla/marvin/backgr_index.html
-tables/mozilla/marvin/backgr_layers-opacity.html
-tables/mozilla/marvin/backgr_position-table.html
-tables/mozilla/marvin/backgr_simple-table-cell.html
-tables/mozilla/marvin/backgr_simple-table-column-group.html
-tables/mozilla/marvin/backgr_simple-table-column.html
-tables/mozilla/marvin/backgr_simple-table-row-group.html
-tables/mozilla/marvin/backgr_simple-table-row.html
-tables/mozilla/marvin/backgr_simple-table.html
-tables/mozilla_expected_failures/marvin/backgr_border-table-cell.html
-tables/mozilla_expected_failures/marvin/backgr_border-table-column-group.html
-tables/mozilla_expected_failures/marvin/backgr_border-table-column.html
-tables/mozilla_expected_failures/marvin/backgr_border-table-quirks.html
-tables/mozilla_expected_failures/marvin/backgr_border-table-row-group.html
-tables/mozilla_expected_failures/marvin/backgr_border-table-row.html
-tables/mozilla_expected_failures/marvin/backgr_border-table.html
-tables/mozilla_expected_failures/marvin/backgr_fixed-bg.html
-tables/mozilla_expected_failures/marvin/backgr_layers-hide.html
-tables/mozilla_expected_failures/marvin/backgr_layers-show.html
-tables/mozilla_expected_failures/marvin/backgr_position-table-cell.html
-tables/mozilla_expected_failures/marvin/backgr_position-table-column-group.html
-tables/mozilla_expected_failures/marvin/backgr_position-table-column.html
-tables/mozilla_expected_failures/marvin/backgr_position-table-row-group.html
-tables/mozilla_expected_failures/marvin/backgr_position-table-row.html
 
-# This test fails because Qt does not support conditionals in unicode special casing.
-# See also http://trolltech.com/developer/task-tracker/index_html?id=212870&method=entry
-fast/css/case-transform.html
-
-# Skip mac API specific tests
-fast/loader/stop-provisional-loads.html
-
+# ============================================================================= #
+# failing animations tests
+# ============================================================================= #
 # Skip tests with metrics for now
 animations/animation-drt-api.html
 animations/animation-drt-api-multiple-keyframes.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37381
+
+# ============================================================================= #
+# Failing CSS Tests
+# ============================================================================= #
+css1/classification/white_space.html
+# REGRESSION (r53450) - skipped until fix
+# https://bugs.webkit.org/show_bug.cgi?id=33834
+css1/box_properties/acid_test.html
+# small caps vs. normal text
+# https://bugs.webkit.org/show_bug.cgi?id=34286
+css2.1/t1505-c524-font-var-00-b.html
+
 css2.1/t010403-shand-border-00-c.html
 css2.1/t010403-shand-font-00-b.html
 css2.1/t010403-shand-font-01-b.html
@@ -1568,6 +1876,12 @@ css3/css3-modsel-33.html
 css3/css3-modsel-35.html
 css3/css3-modsel-36.html
 css3/css3-modsel-37.html
+
+# ============================================================================= #
+# Failing dom/xhtml tests
+# ============================================================================= #
+dom/xhtml/level3/core/canonicalform08.xhtml
+dom/xhtml/level3/core/canonicalform09.xhtml
 dom/xhtml/level3/core/documentgetinputencoding03.xhtml
 dom/xhtml/level3/core/entitygetinputencoding02.xhtml
 dom/xhtml/level3/core/entitygetxmlversion02.xhtml
@@ -1581,6 +1895,54 @@ dom/xhtml/level3/core/nodegetbaseuri17.xhtml
 dom/xhtml/level3/core/nodegetbaseuri18.xhtml
 dom/xhtml/level3/core/nodelookupnamespaceuri01.xhtml
 dom/xhtml/level3/core/nodelookupprefix19.xhtml
+
+# ============================================================================= #
+# Failing editing/deleting tests
+# ============================================================================= #
+
+# -- fail with --platform mac --ignore-metrics
+editing/deleting/delete-ligature-001.html
+editing/deleting/delete-ligature-002.html
+editing/deleting/delete-ligature-003.html
+editing/deleting/delete-block-table.html
+editing/deleting/delete-line-end-ws-002.html
+editing/deleting/deletionUI-single-instance.html
+editing/deleting/collapse-whitespace-3587601-fix.html
+editing/deleting/delete-3608430-fix.html
+editing/deleting/delete-3608462-fix.html
+editing/deleting/delete-3800834-fix.html
+editing/deleting/delete-4083333-fix.html
+editing/deleting/delete-and-undo.html
+editing/deleting/delete-at-paragraph-boundaries-008.html
+editing/deleting/delete-block-merge-contents-018.html
+editing/deleting/delete-block-merge-contents-021.html
+editing/deleting/delete-block-merge-contents-022.html
+editing/deleting/delete-br-007.html
+editing/deleting/delete-contiguous-ws-001.html
+editing/deleting/delete-leading-ws-001.html
+editing/deleting/delete-listitem-001.html
+editing/deleting/delete-listitem-002.html
+editing/deleting/delete-tab-001.html
+editing/deleting/delete-tab-002.html
+editing/deleting/delete-tab-003.html
+editing/deleting/delete-tab-004.html
+editing/deleting/delete-ws-fixup-001.html
+editing/deleting/delete-ws-fixup-002.html
+editing/deleting/delete-ws-fixup-003.html
+editing/deleting/delete-ws-fixup-004.html
+editing/deleting/forward-delete.html
+editing/deleting/smart-delete-002.html
+
+# -- pass with --platform mac --ignore-metrics
+editing/deleting/delete-to-end-of-paragraph.html
+editing/deleting/5144139-2.html
+editing/deleting/delete-block-merge-contents-001.html
+editing/deleting/delete-block-merge-contents-019.html
+editing/deleting/delete-block-merge-contents-020.html
+editing/deleting/delete-by-word-001.html
+editing/deleting/delete-by-word-002.html
+editing/deleting/delete-line-end-ws-001.html
+editing/deleting/delete-to-select-table.html
 editing/deleting/4845371.html
 editing/deleting/4922367.html
 editing/deleting/5026848-1.html
@@ -1601,22 +1963,16 @@ editing/deleting/5390681-2.html
 editing/deleting/5390681.html
 editing/deleting/5433862-2.html
 editing/deleting/5483370.html
-editing/deleting/collapse-whitespace-3587601-fix.html
-editing/deleting/delete-3608430-fix.html
 editing/deleting/delete-3608445-fix.html
-editing/deleting/delete-3608462-fix.html
 editing/deleting/delete-3775172-fix.html
-editing/deleting/delete-3800834-fix.html
 editing/deleting/delete-3857753-fix.html
 editing/deleting/delete-3865854-fix.html
 editing/deleting/delete-3928305-fix.html
 editing/deleting/delete-3959464-fix.html
 editing/deleting/delete-4038408-fix.html
-editing/deleting/delete-4083333-fix.html
 editing/deleting/delete-after-span-ws-001.html
 editing/deleting/delete-after-span-ws-002.html
 editing/deleting/delete-after-span-ws-003.html
-editing/deleting/delete-and-undo.html
 editing/deleting/delete-at-paragraph-boundaries-001.html
 editing/deleting/delete-at-paragraph-boundaries-002.html
 editing/deleting/delete-at-paragraph-boundaries-003.html
@@ -1624,7 +1980,6 @@ editing/deleting/delete-at-paragraph-boundaries-004.html
 editing/deleting/delete-at-paragraph-boundaries-005.html
 editing/deleting/delete-at-paragraph-boundaries-006.html
 editing/deleting/delete-at-paragraph-boundaries-007.html
-editing/deleting/delete-at-paragraph-boundaries-008.html
 editing/deleting/delete-at-paragraph-boundaries-009.html
 editing/deleting/delete-at-paragraph-boundaries-010.html
 editing/deleting/delete-at-paragraph-boundaries-011.html
@@ -1648,9 +2003,6 @@ editing/deleting/delete-block-merge-contents-014.html
 editing/deleting/delete-block-merge-contents-015.html
 editing/deleting/delete-block-merge-contents-016.html
 editing/deleting/delete-block-merge-contents-017.html
-editing/deleting/delete-block-merge-contents-018.html
-editing/deleting/delete-block-merge-contents-021.html
-editing/deleting/delete-block-merge-contents-022.html
 editing/deleting/delete-block-merge-contents-023.html
 editing/deleting/delete-block-merge-contents-024.html
 editing/deleting/delete-br-001.html
@@ -1659,7 +2011,6 @@ editing/deleting/delete-br-003.html
 editing/deleting/delete-br-004.html
 editing/deleting/delete-br-005.html
 editing/deleting/delete-br-006.html
-editing/deleting/delete-br-007.html
 editing/deleting/delete-br-008.html
 editing/deleting/delete-br-009.html
 editing/deleting/delete-br-010.html
@@ -1667,14 +2018,12 @@ editing/deleting/delete-br-011.html
 editing/deleting/delete-br-012.html
 editing/deleting/delete-br-013.html
 editing/deleting/delete-character-001.html
-editing/deleting/delete-contiguous-ws-001.html
 editing/deleting/delete-first-list-item.html
 editing/deleting/delete-hr.html
 editing/deleting/delete-image-001.html
 editing/deleting/delete-image-002.html
 editing/deleting/delete-image-003.html
 editing/deleting/delete-image-004.html
-editing/deleting/delete-leading-ws-001.html
 editing/deleting/delete-line-001.html
 editing/deleting/delete-line-002.html
 editing/deleting/delete-line-003.html
@@ -1692,24 +2041,13 @@ editing/deleting/delete-line-014.html
 editing/deleting/delete-line-015.html
 editing/deleting/delete-line-016.html
 editing/deleting/delete-line-017.html
-editing/deleting/delete-listitem-001.html
-editing/deleting/delete-listitem-002.html
 editing/deleting/delete-mixed-editable-content-001.html
 editing/deleting/delete-select-all-001.html
 editing/deleting/delete-select-all-002.html
 editing/deleting/delete-select-all-003.html
 editing/deleting/delete-selection-001.html
-editing/deleting/delete-tab-001.html
-editing/deleting/delete-tab-002.html
-editing/deleting/delete-tab-003.html
-editing/deleting/delete-tab-004.html
 editing/deleting/delete-trailing-ws-001.html
 editing/deleting/delete-trailing-ws-002.html
-editing/deleting/delete-ws-fixup-001.html
-editing/deleting/delete-ws-fixup-002.html
-editing/deleting/delete-ws-fixup-003.html
-editing/deleting/delete-ws-fixup-004.html
-editing/deleting/forward-delete.html
 editing/deleting/list-item-1.html
 editing/deleting/merge-different-styles.html
 editing/deleting/merge-endOfParagraph.html
@@ -1722,143 +2060,92 @@ editing/deleting/move-nodes-001.html
 editing/deleting/paragraph-in-preserveNewline.html
 editing/deleting/pruning-after-merge-2.html
 editing/deleting/smart-delete-001.html
-editing/deleting/smart-delete-002.html
 editing/deleting/table-cells.html
 editing/deleting/type-delete-after-quote.html
 editing/deleting/whitespace-pre-1.html
-
-# =========================================================================== #
-#       Failing execCommand tests.                                            #
-# =========================================================================== #
-# ---- simple x/y diffs
-editing/execCommand/4580583-1.html
-# ---- fine, but not a simple diff
-editing/execCommand/4580583-2.html
-editing/execCommand/4641880-1.html
-# ---- rendertree results OK but suspicious diffs.
-
-# ---- to be reviewed
-editing/execCommand/4641880-2.html
-editing/execCommand/4747450.html
-editing/execCommand/4786404-1.html
-editing/execCommand/4786404-2.html
-editing/execCommand/4916402.html
-editing/execCommand/4916541.html
-editing/execCommand/4924441.html
-editing/execCommand/5049671.html
-editing/execCommand/5062376.html
-editing/execCommand/5080333-1.html
-editing/execCommand/5080333-2.html
-editing/execCommand/5136770.html
-editing/execCommand/5138441.html
-editing/execCommand/5142012-1.html
-editing/execCommand/5142012-2.html
-editing/execCommand/5190926.html
-editing/execCommand/5481523.html
-editing/execCommand/5482023.html
-editing/execCommand/5569741.html
-editing/execCommand/5573879.html
-editing/execCommand/create-list-from-range-selection.html
-editing/execCommand/find-after-replace.html
-editing/execCommand/findString-2.html
-editing/execCommand/findString.html
-editing/execCommand/format-block-from-range-selection.html
-editing/execCommand/format-block.html
-editing/execCommand/format-block-with-braces.html
-editing/execCommand/format-block-with-trailing-br.html
-editing/execCommand/hilitecolor.html
-editing/execCommand/indent-empty-root.html
-editing/execCommand/indent-list-item.html
-editing/execCommand/indent-selection.html
-editing/execCommand/insertHorizontalRule.html
-editing/execCommand/insertImage.html
-editing/execCommand/insert-list-and-stitch.html
-editing/execCommand/insert-list-empty-div.html
-editing/execCommand/insert-list-with-id.html
-editing/execCommand/outdent-blockquote-test1.html
-editing/execCommand/outdent-blockquote-test2.html
-editing/execCommand/outdent-blockquote-test3.html
-editing/execCommand/outdent-blockquote-test4.html
-editing/execCommand/outdent-selection.html
-editing/execCommand/paste-1.html
-editing/execCommand/paste-2.html
-editing/execCommand/remove-list-from-range-selection.html
-editing/execCommand/remove-list-item-1.html
-
-# =========================================================================== #
-#       Failing inserting tests.                                              #
-# =========================================================================== #
-# ---- rendertree results OK but suspicious diffs.
-editing/inserting/4960120-1.html
-editing/inserting/5607069-2.html
-editing/inserting/5607069-3.html
-editing/inserting/before-after-input-element.html
-
-# ---- rendertree results OK but diff in editing delegate msgs.
-editing/inserting/insert-tab-003.html
-editing/inserting/insert-text-with-newlines.html
-
-
-
-
-# =========================================================================== #
-#       Failing pasteboard tests.                                             #
-# =========================================================================== #
-#------ Not selecting all of text.
-#------ sel.modify("move", "forward", "word"); does not select the last character in the word
-editing/pasteboard/4242293-1.html
-editing/pasteboard/smart-paste-008.html
-#------ safe to skip. Qt results same as chromium's. Mac drops the 'b' in the final bar,
-#------ that looks like a bug.
-editing/pasteboard/interchange-newline-2.html
-# ----- Whitespace instead of tab?
-# ----- https://bugs.webkit.org/show_bug.cgi?id=38437
-editing/pasteboard/5761530-1.html
-# ----- Results appear correct but have suspicious rendertree differences.
-editing/pasteboard/pasting-tabs.html
-editing/pasteboard/nested-blocks-with-text-area.html
-editing/pasteboard/nested-blocks-with-text-field.html
-editing/pasteboard/input-field-1.html
-editing/pasteboard/4806874.html
-# ----- These are actually safe to unskip. x/y differences only.
-editing/pasteboard/5387578.html
-editing/pasteboard/bad-placeholder.html
-# ----- Rendertree results OK but differences in message from editing delegate.
-editing/pasteboard/4076267-2.html
-editing/pasteboard/4076267.html
-editing/pasteboard/block-wrappers-necessary.html
-editing/pasteboard/paste-text-001.html
-editing/pasteboard/paste-text-008.html
-# ----- Rendertree results OK but differences in editing delegate message due to rendering.
-# ----- This looks safe to unskip.
-editing/pasteboard/paste-xml.xhtml
-# ----- Rendertree results match but width of tabs field is suspicious.
-editing/pasteboard/paste-text-at-tabspan-001.html
-# ----- Drag and drop support.
-editing/pasteboard/drag-image-in-about-blank-frame.html
-editing/pasteboard/files-during-page-drags.html
-editing/pasteboard/4861080.html
-editing/pasteboard/4947130.html
-editing/pasteboard/copy-standalone-image.html
-editing/pasteboard/drag-drop-dead-frame.html
-editing/pasteboard/drag-drop-input-textarea.html
-editing/pasteboard/drag-drop-iframe-refresh-crash.html
-editing/pasteboard/drag-drop-modifies-page.html
-editing/pasteboard/drag-drop-url-text.html
-editing/pasteboard/drag-image-to-contenteditable-in-iframe.html
-editing/pasteboard/drag-selected-image-to-contenteditable.html
-editing/pasteboard/drop-link.html
-editing/pasteboard/drop-text-without-selection.html
-editing/pasteboard/emacs-ctrl-a-k-y.html
-editing/pasteboard/emacs-ctrl-k-y-001.html
-editing/pasteboard/smart-drag-drop.html
-editing/pasteboard/subframe-dragndrop-1.html
-editing/pasteboard/get-data-text-plain-drop.html
 
 
 # =========================================================================== #
 #       Failing editing/selection tests.                                      #
 # =========================================================================== #
+
+# -- fail with --platform mac --ignore-metrics
+editing/selection/drag-start-event-client-x-y.html
+editing/selection/hit-test-anonymous.html
+editing/selection/4895428-1.html
+editing/selection/4895428-4.html
+editing/selection/5057506-2.html
+editing/selection/5057506.html
+editing/selection/5232159.html
+editing/selection/5333725.html
+editing/selection/click-start-of-line.html
+editing/selection/contains-boundaries.html
+editing/selection/designmode-no-caret.html
+editing/selection/drag-to-contenteditable-iframe.html
+editing/selection/fake-drag.html
+editing/selection/inline-closest-leaf-child.html
+editing/selection/mixed-editability-1.html
+editing/selection/select-from-textfield-outwards.html
+editing/selection/extend-selection.html
+editing/selection/extend-after-mouse-selection.html
+editing/selection/4983858.html
+editing/selection/end-of-document.html
+editing/selection/move-left-right.html
+editing/selection/select-all-001.html
+editing/selection/select-all-002.html
+editing/selection/select-all-003.html
+editing/selection/5081257-1.html
+editing/selection/5081257-2.html
+editing/selection/5234383-1.html
+editing/selection/5234383-2.html
+editing/selection/7152-1.html
+editing/selection/7152-2.html
+editing/selection/drag-in-iframe.html
+editing/selection/editable-html-element.html
+editing/selection/editable-non-editable-crash.html
+editing/selection/move-between-blocks-no-001.html
+editing/selection/move-past-trailing-space.html
+editing/selection/replace-selection-1.html
+editing/selection/select-all-005.html
+editing/selection/select-all-006.html
+editing/selection/select-box.html
+
+# stderr
+editing/selection/editable-links.html
+editing/selection/drag-text-delay.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=38656
+editing/selection/shift-click.html
+
+# -- pass with --platform mac --ignore-metrics
+# [Qt] REGRESSION: editing/selection/shrink-selection-after-shift-pagedown.html fails after 56567
+# https://bugs.webkit.org/show_bug.cgi?id=36628
+editing/selection/shrink-selection-after-shift-pagedown.html
+editing/selection/drag-start-event-client-x-y.html
+editing/selection/extend-selection-bidi.html
+editing/selection/user-drag-element-and-user-select-none.html
+editing/selection/14971.html
+editing/selection/4947387.html
+editing/selection/anchor-focus1.html
+editing/selection/doubleclick-crash.html
+editing/selection/drag-select-1.html
+editing/selection/expanding-selections2.html
+editing/selection/expanding-selections.html
+editing/selection/fake-doubleclick.html
+editing/selection/paragraph-granularity.html
+editing/selection/selection-actions.html
+editing/selection/selection-background.html
+editing/selection/triple-click-in-pre.html
+editing/selection/word-granularity.html
+editing/selection/4975120.html
+editing/selection/5109817.html
+editing/selection/5354455-1.html
+editing/selection/5354455-2.html
+editing/selection/caret-and-focus-ring.html
+# [Qt] editing tests fails after r54980
+# https://bugs.webkit.org/show_bug.cgi?id=35145
+editing/selection/5136696.html
+editing/selection/after-line-wrap.html
 editing/selection/13804.html
 editing/selection/3690703-2.html
 editing/selection/3690703.html
@@ -1881,19 +2168,13 @@ editing/selection/5007143.html
 editing/selection/5076323-1.html
 editing/selection/5076323-2.html
 editing/selection/5076323-3.html
-editing/selection/5081257-1.html
-editing/selection/5081257-2.html
 editing/selection/5099303.html
 editing/selection/5131716-1.html
 editing/selection/5131716-2.html
 editing/selection/5131716-3.html
 editing/selection/5131716-4.html
-editing/selection/5234383-1.html
-editing/selection/5234383-2.html
 editing/selection/5240265.html
 editing/selection/6476.html
-editing/selection/7152-1.html
-editing/selection/7152-2.html
 editing/selection/addRange.html
 editing/selection/caret-before-select.html
 editing/selection/caret-rtl-2.html
@@ -1901,10 +2182,6 @@ editing/selection/caret-rtl.html
 editing/selection/clear-selection.html
 editing/selection/contenteditable-click-inside.html
 editing/selection/display-table-text.html
-editing/selection/drag-in-iframe.html
-editing/selection/drag-text-delay.html
-editing/selection/editable-html-element.html
-editing/selection/editable-non-editable-crash.html
 editing/selection/extend-by-character-001.html
 editing/selection/extend-by-character-002.html
 editing/selection/extend-by-character-003.html
@@ -1933,7 +2210,6 @@ editing/selection/mixed-editability-9.html
 editing/selection/move-3875618-fix.html
 editing/selection/move-3875641-fix.html
 editing/selection/move-backwords-by-word-001.html
-editing/selection/move-between-blocks-no-001.html
 editing/selection/move-between-blocks-yes-001.html
 editing/selection/move-by-character-001.html
 editing/selection/move-by-character-002.html
@@ -1946,19 +2222,14 @@ editing/selection/move-by-line-002.html
 editing/selection/move-by-sentence-001.html
 editing/selection/move-by-sentence-linebreak.html
 editing/selection/move-by-word-001.html
-editing/selection/move-past-trailing-space.html
 editing/selection/node-removal-1.html
 editing/selection/node-removal-2.html
 editing/selection/previous-line-position.html
 editing/selection/replaced-boundaries-1.html
 editing/selection/replaced-boundaries-2.html
 editing/selection/replaced-boundaries-3.html
-editing/selection/replace-selection-1.html
 editing/selection/select-all-004.html
-editing/selection/select-all-005.html
-editing/selection/select-all-006.html
 editing/selection/select-all-iframe.html
-editing/selection/select-box.html
 editing/selection/select-element-paragraph-boundary.html
 editing/selection/selection-3748164-fix.html
 editing/selection/select-missing-image.html
@@ -1977,10 +2248,47 @@ editing/selection/wrapped-line-caret-1.html
 editing/selection/wrapped-line-caret-2.html
 
 
+# ============================================================================= #
+# Failing editing/spelling tests
+# ============================================================================= #
+# -- fail with --platform mac --ignore-metrics
 editing/spelling/inline_spelling_markers.html
+editing/spelling/spelling-linebreak.html
+
+# -- pass with --platform mac --ignore-metrics
 editing/spelling/spellcheck-attribute.html
 editing/spelling/spelling.html
-editing/spelling/spelling-linebreak.html
+
+# ============================================================================= #
+# failing editing/style tests
+# ============================================================================= #
+
+# -- fail with --platform mac --ignore-metrics
+editing/style/style-3681552-fix-002.html
+editing/style/apple-style-editable-mix.html
+editing/style/create-block-for-style-012.html
+editing/style/5279521.html
+editing/style/create-block-for-style-001.html
+editing/style/create-block-for-style-002.html
+editing/style/create-block-for-style-003.html
+editing/style/create-block-for-style-004.html
+editing/style/create-block-for-style-005.html
+editing/style/create-block-for-style-006.html
+editing/style/create-block-for-style-009.html
+editing/style/create-block-for-style-010.html
+editing/style/create-block-for-style-011.html
+editing/style/create-block-for-style-013.html
+editing/style/relative-font-size-change-001.html
+editing/style/relative-font-size-change-002.html
+editing/style/relative-font-size-change-003.html
+editing/style/relative-font-size-change-004.html
+editing/style/style-3681552-fix-001.html
+editing/style/typing-style-001.html
+editing/style/typing-style-002.html
+editing/style/unbold-in-bold.html
+
+# -- pass with --platform mac --ignore-metrics
+editing/style/font-family-with-space.html
 editing/style/4916887.html
 editing/style/5017613-1.html
 editing/style/5017613-2.html
@@ -1989,7 +2297,6 @@ editing/style/5046875-2.html
 editing/style/5065910.html
 editing/style/5084241.html
 editing/style/5228141.html
-editing/style/5279521.html
 editing/style/block-style-001.html
 editing/style/block-style-002.html
 editing/style/block-style-003.html
@@ -1997,29 +2304,14 @@ editing/style/block-style-004.html
 editing/style/block-style-005.html
 editing/style/block-style-006.html
 editing/style/block-styles-007.html
-editing/style/create-block-for-style-001.html
-editing/style/create-block-for-style-002.html
-editing/style/create-block-for-style-003.html
-editing/style/create-block-for-style-004.html
-editing/style/create-block-for-style-005.html
-editing/style/create-block-for-style-006.html
 editing/style/create-block-for-style-007.html
 editing/style/create-block-for-style-008.html
-editing/style/create-block-for-style-009.html
-editing/style/create-block-for-style-010.html
-editing/style/create-block-for-style-011.html
-editing/style/create-block-for-style-013.html
 editing/style/designmode.html
 editing/style/fontsize-1.html
 editing/style/highlight.html
 editing/style/non-inheritable-styles.html
-editing/style/relative-font-size-change-001.html
-editing/style/relative-font-size-change-002.html
-editing/style/relative-font-size-change-003.html
-editing/style/relative-font-size-change-004.html
 editing/style/smoosh-styles-001.html
 editing/style/smoosh-styles-003.html
-editing/style/style-3681552-fix-001.html
 editing/style/style-3690704-fix.html
 editing/style/style-3998892-fix.html
 editing/style/style-boundary-001.html
@@ -2028,21 +2320,31 @@ editing/style/style-boundary-003.html
 editing/style/style-boundary-004.html
 editing/style/style-boundary-005.html
 editing/style/table-selection.html
-editing/style/typing-style-001.html
-editing/style/typing-style-002.html
 editing/style/typing-style-003.html
-editing/style/unbold-in-bold.html
-editing/undo/4063751.html
+
+# ============================================================================= #
+# failing undo tests
+# ============================================================================= #
+
+# -- pass with --platform mac --ignore-metrics
 editing/undo/5378473.html
 editing/undo/redo-typing-001.html
+editing/undo/undo-misspellings.html
+editing/undo/undo-typing-001.html
+
+# -- fail with --platform mac --ignore-metrics
+editing/undo/4063751.html
 editing/undo/undo-combined-delete-boundary.html
 editing/undo/undo-combined-delete.html
 editing/undo/undo-delete-boundary.html
 editing/undo/undo-delete.html
 editing/undo/undo-forward-delete-boundary.html
 editing/undo/undo-forward-delete.html
-editing/undo/undo-misspellings.html
-editing/undo/undo-typing-001.html
+
+# ============================================================================= #
+# failing unsupported-content tests
+# ============================================================================= #
+# -- pass with --platform mac --ignore-metrics
 editing/unsupported-content/list-delete-001.html
 editing/unsupported-content/list-delete-003.html
 editing/unsupported-content/list-type-after.html
@@ -2052,6 +2354,338 @@ editing/unsupported-content/table-delete-002.html
 editing/unsupported-content/table-delete-003.html
 editing/unsupported-content/table-type-after.html
 editing/unsupported-content/table-type-before.html
+
+
+# ============================================================================= #
+# failing fast tests
+# ============================================================================= #
+# This test fails because Qt does not support conditionals in unicode special casing.
+# See also http://trolltech.com/developer/task-tracker/index_html?id=212870&method=entry
+fast/css/case-transform.html
+
+# REGRESSION (r53450) - skipped until fix
+# https://bugs.webkit.org/show_bug.cgi?id=33834
+fast/forms/textarea-scrollbar-height.html
+# Final four tests before Qt buildbot is green
+# https://bugs.webkit.org/show_bug.cgi?id=27914
+fast/css/positioned-overflow-scroll.html
+fast/dom/prototype-inheritance-2.html
+# DOM exceptions don't seem to have a custom toString() handler
+# https://bugs.webkit.org/show_bug.cgi?id=28952
+fast/workers/worker-multi-port.html
+fast/workers/worker-context-multi-port.html
+# This port doesn't support detecting slow unload handlers.
+fast/dom/Window/slow-unload-handler.html
+fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
+# Need rebaseline: https://bugs.webkit.org/show_bug.cgi?id=26830
+fast/multicol/single-line.html
+# validationMessage: https://bugs.webkit.org/show_bug.cgi?id=27959
+fast/forms/validationMessage.html
+fast/css/color-correction-backgrounds-and-text.html
+fast/css/color-correction-on-background-image.html
+fast/css/color-correction-on-backgrounds.html
+fast/css/color-correction-on-box-shadow.html
+fast/css/color-correction-on-text-shadow.html
+fast/css/color-correction-on-text.html
+fast/css/color-correction-untagged-images.html
+fast/css/color-correction.html
+
+fast/block/positioning/relative-positioned-inline-container.html
+fast/repaint/block-selection-gap-in-composited-layer.html
+fast/repaint/block-selection-gap-in-table-cell.html
+fast/repaint/block-selection-gap-stale-cache-2.html
+fast/repaint/block-selection-gap-stale-cache.html
+fast/repaint/inline-overflow.html
+fast/repaint/inline-relative-positioned.html
+# new test without expected file introduced by http://trac.webkit.org/changeset/51549
+fast/css/namespaces/namespaces-comments.xml
+# new test without expected file introduced by http://trac.webkit.org/changeset/51556
+fast/css/namespaces/namespaces-empty.xml
+# eventSender missing touchCancel() and cancelTouchPoint()
+fast/events/touch/send-oncancel-event.html
+
+# r58712 made fast/workers/worker-gc2.html crash. It seems to be a DRT sideeffect,
+# skipping worker-event-listener.html solve the problem until we find a real fix.
+# https://bugs.webkit.org/show_bug.cgi?id=38502
+fast/workers/worker-event-listener.html
+
+# Relies on WebKit API [WebView _loadBackForwardListFromOtherView:]
+fast/loader/crash-copying-backforwardlist.html
+
+# Because ENABLE_DASHBOARD_SUPPORT=0 is the default option. (Apple's dashboard support in OS X)
+fast/css/dashboard-regions-attr-crash.html
+
+# Needs platform specific API implemented in DRT, maybe not relevant for non-Mac and non-Windows ports
+fast/loader/api-test-new-window-data-load-base-url.html
+fast/loader/api-test-go-to-current-back-forward-item.html
+
+# Slider tests that need new results
+fast/forms/slider-padding.html
+fast/forms/slider-thumb-shared-style.html
+fast/forms/slider-thumb-stylability.html
+fast/forms/slider-zoomed.html
+fast/forms/slider-mouse-events.html
+
+# Just needs pixel and rendering results generated by someone with this platform:
+fast/css/non-standard-checkbox-size.html
+
+# For some reason crashes when run with all tests. Passes individually.
+fast/forms/multiple-form-submission-protection-mouse.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=36004
+# mouseScrollBy() and continuousMouseScrollBy() are not yet implemented in the Qt EventSender API.
+
+# https://bugs.webkit.org/show_bug.cgi?id=35973
+fast/multicol/hit-test-above-or-below.html
+
+# [Qt] Back-forward list dumping is incorrect
+# https://bugs.webkit.org/show_bug.cgi?id=36392
+fast/loader/frame-src-change-added-to-history.html
+fast/loader/frame-src-change-not-added-to-history.html
+fast/loader/frame-location-change-not-added-to-history.html
+
+# fast/loader/stateobjects/replacestate-in-iframe.html caused infinite loop
+# https://bugs.webkit.org/show_bug.cgi?id=36467
+fast/loader/stateobjects/replacestate-in-iframe.html
+
+# Not sure why this is failing on Qt.
+# https://bugs.webkit.org/show_bug.cgi?id=37697
+fast/url/host.html
+
+# -- fail with --platform mac --ignore-metrics
+fast/box-sizing/percentage-height.html
+fast/css/acid2-pixel.html
+fast/css/acid2.html
+fast/dom/focus-contenteditable.html
+fast/dom/gc-10.html
+fast/dom/isindex-002.html
+# seems to trigger some bugs/missing features in QTextCodec
+fast/encoding/char-encoding.html
+# QUrl::from/toACE seems to be stricter than what ICU does.
+fast/encoding/idn-security.html
+fast/encoding/xmacroman-encoding-test.html
+fast/encoding/GBK/EUC-CN.html
+fast/encoding/GBK/chinese.html
+fast/encoding/GBK/cn-gb.html
+fast/encoding/GBK/csgb2312.html
+fast/encoding/GBK/csgb231280.html
+fast/encoding/GBK/gb2312.html
+fast/encoding/GBK/gb_2312-80.html
+fast/encoding/GBK/gbk.html
+fast/encoding/GBK/iso-ir-58.html
+fast/encoding/GBK/x-euc-cn.html
+fast/encoding/GBK/x-gbk.html
+fast/events/autoscroll.html
+fast/events/click-count.html
+fast/events/content-changed-during-drop.html
+fast/events/js-keyboard-event-creation.html
+fast/events/keydown-1.html
+fast/events/keypress-insert-tab.html
+fast/events/ondragenter.html
+fast/events/reveal-link-when-focused.html
+fast/events/standalone-image-drag-to-editable.html
+fast/events/updateLayoutForHitTest.html
+fast/forms/input-selectedoption.html
+fast/forms/drag-into-textarea.html
+fast/forms/input-readonly-autoscroll.html
+fast/forms/input-text-click-outside.html
+fast/forms/input-text-drag-down.html
+fast/forms/input-text-scroll-left-on-blur.html
+fast/forms/listbox-onchange.html
+fast/forms/listbox-selection-2.html
+fast/forms/listbox-selection.html
+fast/forms/onselect-textarea.html
+fast/forms/search-rtl.html
+fast/forms/select-writing-direction-natural.html
+fast/forms/tabbing-input-iframe.html
+fast/forms/textAreaLineHeight.html
+fast/forms/textarea-scroll-height.html
+fast/forms/textarea-scrollbar.html
+fast/forms/textarea-scrolled-type.html
+fast/frames/iframe-window-focus.html
+fast/html/keygen.html
+fast/invalid/missing-end-tag.xhtml
+fast/invalid/residual-style.html
+fast/js/string-capitalization.html
+fast/lists/drag-into-marker.html
+fast/overflow/clip-rects-fixed-ancestor.html
+fast/overflow/overflow-rtl.html
+fast/overflow/overflow-x-y.html
+fast/overflow/scroll-nested-positioned-layer-in-overflow.html
+fast/overflow/scrollRevealButton.html
+fast/parser/external-entities.xml
+fast/parser/xhtml-alternate-entities.xml
+fast/repaint/box-shadow-h.html
+fast/repaint/box-shadow-v.html
+fast/repaint/fixed.html
+fast/repaint/flexible-box-overflow-horizontal.html
+fast/repaint/flexible-box-overflow.html
+fast/repaint/inline-block-overflow.html
+fast/repaint/layer-child-outline.html
+fast/repaint/layer-outline-horizontal.html
+fast/repaint/layer-outline.html
+fast/repaint/list-marker.html
+fast/repaint/overflow-outline-repaint.html
+fast/repaint/selection-gap-overflow-scroll.html
+fast/repaint/table-cell-vertical-overflow.html
+fast/repaint/text-selection-rect-in-overflow-2.html
+fast/repaint/text-selection-rect-in-overflow.html
+fast/repaint/text-shadow-horizontal.html
+fast/repaint/text-shadow.html
+fast/replaced/width100percent-textarea.html
+fast/table/giantCellspacing.html
+fast/text/atsui-pointtooffset-calls-cg.html
+fast/text/atsui-rtl-override-selection.html
+fast/text/in-rendered-text-rtl.html
+fast/text/large-text-composed-char-dos.html
+fast/text/international/002.html
+fast/block/positioning/absolute-in-inline-rtl-4.html
+fast/canvas/canvas-composite-alpha.html
+fast/canvas/canvas-gradient-addStop-error.html
+fast/css/zoom-body-scroll.html
+fast/dom/Element/getBoundingClientRect.html
+fast/dom/Element/getClientRects.html
+fast/dom/Range/getBoundingClientRect.html
+fast/dom/Range/getClientRects.html
+fast/dom/tabindex-clamp.html
+fast/dom/HTMLScriptElement/nested-execution.html
+fast/dom/Window/webkitConvertPoint.html
+fast/encoding/char-encoding-mac.html
+fast/encoding/hebrew/8859-8-e.html
+fast/encoding/hebrew/8859-8-i.html
+fast/encoding/hebrew/logical.html
+fast/events/crash-on-mutate-during-drop.html
+fast/forms/option-mouseevents.html
+fast/forms/search-abs-pos-cancel-button.html
+fast/forms/text-control-intrinsic-widths.html
+fast/forms/textarea-metrics.html
+fast/history/window-open.html
+fast/loader/javascript-url-hierarchical-execution.html
+fast/loader/policy-delegate-action-hit-test-zoomed.html
+fast/loader/reload-policy-delegate.html
+fast/dom/set-frame-src-while-running-script-in-frame.html
+fast/dom/HTMLDocument/hasFocus.html
+fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.html
+fast/dom/Range/range-expand.html
+fast/encoding/char-decoding.html
+fast/encoding/frame-default-enc.html
+fast/encoding/invalid-xml.html
+fast/events/attempt-scroll-with-no-scrollbars.html
+fast/events/key-events-in-input-button.html
+fast/forms/input-radio-checked-tab.html
+fast/frames/onlyCommentInIFrame.html
+fast/invalid/junk-data.xml
+fast/loader/text-document-wrapping.html
+fast/overflow/005.html
+fast/regex/test1.html
+fast/regex/test4.html
+fast/repaint/inline-outline-repaint.html
+fast/text/find-case-folding.html
+fast/text/large-text-composed-char.html
+fast/text/basic/014.html
+fast/text/international/rtl-white-space-pre-wrap.html
+fast/text/whitespace/pre-wrap-overflow-selection.html
+fast/block/basic/text-indent-rtl.html
+fast/block/float/026.html
+fast/block/float/028.html
+fast/block/float/editable-text-overlapping-float.html
+fast/block/margin-collapse/103.html
+fast/block/positioning/auto/006.html
+fast/css/disabled-author-styles.html
+fast/css/MarqueeLayoutTest.html
+fast/css/resize-corner-tracking.html
+fast/css/text-overflow-ellipsis-bidi.html
+fast/css/text-overflow-ellipsis.html
+fast/css/text-overflow-ellipsis-strict.html
+fast/dom/HTMLTextAreaElement/reset-textarea.html
+fast/dom/icon-url-property.html
+fast/dynamic/008.html
+fast/encoding/char-decoding-mac.html
+fast/encoding/hebrew/csISO88598I.html
+fast/events/offsetX-offsetY.html
+fast/forms/basic-textareas.html
+fast/forms/box-shadow-override.html
+fast/forms/button-white-space.html
+fast/forms/disabled-select-change-index.html
+fast/forms/file-input-direction.html
+fast/forms/file-input-disabled.html
+fast/forms/form-element-geometry.html
+fast/forms/hidden-input-file.html
+fast/forms/input-appearance-height.html
+fast/forms/input-appearance-width.html
+fast/forms/input-disabled-color.html
+fast/forms/input-table.html
+fast/forms/input-value.html
+fast/forms/listbox-deselect-scroll.html
+fast/forms/listbox-hit-test-zoomed.html
+fast/forms/negativeLineHeight.html
+fast/forms/placeholder-pseudo-style.html
+fast/forms/search-styled.html
+fast/forms/search-transformed.html
+fast/forms/search-zoomed.html
+fast/forms/textarea-align.html
+fast/forms/textarea-setinnerhtml.html
+fast/forms/textarea-width.html
+fast/inline/inline-borders-with-bidi-override.html
+fast/layers/scroll-rect-to-visible.html
+fast/layers/video-layer.html
+fast/media/mq-transform-02.html
+fast/media/mq-transform-03.html
+fast/overflow/image-selection-highlight.html
+fast/overflow/infiniteRecursionGuard.html
+fast/overflow/overflow_hidden.html
+fast/overflow/overflow-text-hit-testing.html
+fast/overflow/unreachable-overflow-rtl-bug.html
+fast/parser/entity-comment-in-textarea.html
+fast/parser/open-comment-in-textarea.html
+fast/repaint/focus-ring.html
+fast/repaint/selection-after-delete.html
+fast/repaint/selection-after-remove.html
+fast/repaint/shadow-multiple-horizontal.html
+fast/repaint/shadow-multiple-strict-horizontal.html
+fast/repaint/shadow-multiple-strict-vertical.html
+fast/repaint/shadow-multiple-vertical.html
+fast/replaced/border-radius-clip.html
+fast/table/003.html
+fast/table/cell-pref-width-invalidation.html
+fast/text/atsui-spacing-features.html
+fast/text/basic/015.html
+fast/text/capitalize-boundaries.html
+fast/text/complex-text-opacity.html
+fast/text/embed-at-end-of-pre-wrap-line.html
+fast/text/international/003.html
+fast/text/international/bidi-AN-after-empty-run.html
+fast/text/international/bidi-layout-across-linebreak.html
+fast/text/international/bidi-LDB-2-formatting-characters.html
+fast/text/international/bidi-LDB-2-HTML.html
+fast/text/international/bidi-listbox-atsui.html
+fast/text/international/bidi-listbox.html
+fast/text/international/bidi-override.html
+fast/text/line-breaks-after-white-space.html
+fast/text/trailing-white-space-2.html
+fast/text/trailing-white-space.html
+fast/text/whitespace/normal-after-nowrap-breaking.html
+fast/text/whitespace/pre-break-word.html
+fast/text/whitespace/pre-wrap-line-test.html
+fast/text/whitespace/pre-wrap-spaces-after-newline.html
+fast/text/whitespace/tab-character-basics.html
+fast/text/word-break.html
+fast/text/word-break-run-rounding.html
+fast/transforms/transform-positioned-ancestor.html
+
+# -- timedout with --platform mac --ignore-metrics
+fast/events/5056619.html
+fast/events/drag-in-frames.html
+fast/dom/cssTarget-crash.html
+fast/loader/null-request-after-willSendRequest.html
+fast/text/international/thai-line-breaks.html
+
+# --crashed with --platform mac --ignore-metrics
+fast/text/midword-break-after-breakable-char.html
+fast/dom/set-frame-src-while-running-script-in-frame.html
+
+
+# -- pass with --platform mac --ignore-metrics
 fast/backgrounds/animated-gif-as-background.html
 fast/backgrounds/animated-svg-as-mask.html
 fast/backgrounds/background-clip-text.html
@@ -2081,11 +2715,10 @@ fast/block/basic/020.html
 fast/block/basic/021.html
 fast/block/basic/adding-near-anonymous-block.html
 fast/block/basic/fieldset-stretch-to-legend.html
-fast/block/basic/minheight.html
 fast/block/basic/min-pref-width-nowrap-floats.html
+fast/block/basic/minheight.html
 fast/block/basic/quirk-height.html
 fast/block/basic/quirk-percent-height-grandchild.html
-fast/block/basic/text-indent-rtl.html
 fast/block/basic/white-space-pre-wraps.html
 fast/block/float/001.html
 fast/block/float/002.html
@@ -2109,9 +2742,7 @@ fast/block/float/022.html
 fast/block/float/023.html
 fast/block/float/024.html
 fast/block/float/025.html
-fast/block/float/026.html
 fast/block/float/027.html
-fast/block/float/028.html
 fast/block/float/029.html
 fast/block/float/030.html
 fast/block/float/031.html
@@ -2120,7 +2751,6 @@ fast/block/float/br-with-clear-2.html
 fast/block/float/br-with-clear.html
 fast/block/float/clamped-right-float.html
 fast/block/float/dynamic-unfloat-pref-width.html
-fast/block/float/editable-text-overlapping-float.html
 fast/block/float/float-avoidance.html
 fast/block/float/float-in-float-hit-testing.html
 fast/block/float/float-in-float-painting.html
@@ -2130,13 +2760,13 @@ fast/block/float/intruding-painted-twice.html
 fast/block/float/marquee-shrink-to-avoid-floats.html
 fast/block/float/multiple-float-positioning.html
 fast/block/float/narrow-after-wide.html
-fast/block/float/nestedAnonymousBlocks2.html
-fast/block/float/nestedAnonymousBlocks.html
 fast/block/float/nested-clearance.html
-fast/block/float/nopaint-after-layer-destruction2.html
+fast/block/float/nestedAnonymousBlocks.html
+fast/block/float/nestedAnonymousBlocks2.html
 fast/block/float/nopaint-after-layer-destruction.html
-fast/block/float/overhanging-after-height-decrease.html
+fast/block/float/nopaint-after-layer-destruction2.html
 fast/block/float/overhanging-after-height-decrease-offsets.html
+fast/block/float/overhanging-after-height-decrease.html
 fast/block/float/overlapping-floats-with-overflow-hidden.html
 fast/block/float/relative-painted-twice.html
 fast/block/float/shrink-to-fit-width.html
@@ -2191,7 +2821,6 @@ fast/block/margin-collapse/063.html
 fast/block/margin-collapse/100.html
 fast/block/margin-collapse/101.html
 fast/block/margin-collapse/102.html
-fast/block/margin-collapse/103.html
 fast/block/margin-collapse/104.html
 fast/block/margin-collapse/empty-clear-blocks.html
 fast/block/margin-collapse/negative-margins.html
@@ -2224,14 +2853,13 @@ fast/block/positioning/absolute-position-direction-strict.html
 fast/block/positioning/absolute-positioned-overconstrained.html
 fast/block/positioning/absolute-with-html-border-quirks.html
 fast/block/positioning/absolute-with-html-border-strict.html
+fast/block/positioning/auto-height-with-top-and-bottom.html
 fast/block/positioning/auto/001.html
 fast/block/positioning/auto/002.html
 fast/block/positioning/auto/003.html
 fast/block/positioning/auto/004.html
 fast/block/positioning/auto/005.html
-fast/block/positioning/auto/006.html
 fast/block/positioning/auto/007.html
-fast/block/positioning/auto-height-with-top-and-bottom.html
 fast/block/positioning/child-of-absolute-with-auto-height.html
 fast/block/positioning/fixed-positioning-scrollbar-bug.html
 fast/block/positioning/height-change.html
@@ -2249,71 +2877,71 @@ fast/block/positioning/relative-overflow-replaced.html
 fast/block/positioning/relayout-on-position-change.html
 fast/block/positioning/replaced-inside-fixed-top-bottom.html
 fast/block/positioning/window-height-change.html
-fast/body-propagation/background-color/001.html
 fast/body-propagation/background-color/001-xhtml.xhtml
-fast/body-propagation/background-color/002.html
+fast/body-propagation/background-color/001.html
 fast/body-propagation/background-color/002-xhtml.xhtml
+fast/body-propagation/background-color/002.html
 fast/body-propagation/background-color/003-declarative.xhtml
-fast/body-propagation/background-color/003.html
 fast/body-propagation/background-color/003-xhtml.xhtml
+fast/body-propagation/background-color/003.html
 fast/body-propagation/background-color/004-declarative.xhtml
-fast/body-propagation/background-color/004.html
 fast/body-propagation/background-color/004-xhtml.xhtml
+fast/body-propagation/background-color/004.html
 fast/body-propagation/background-color/005-declarative.xhtml
-fast/body-propagation/background-color/005.html
 fast/body-propagation/background-color/005-xhtml.xhtml
+fast/body-propagation/background-color/005.html
 fast/body-propagation/background-color/006-declarative.xhtml
-fast/body-propagation/background-color/006.html
 fast/body-propagation/background-color/006-xhtml.xhtml
+fast/body-propagation/background-color/006.html
 fast/body-propagation/background-color/007-declarative.xhtml
-fast/body-propagation/background-color/007.html
 fast/body-propagation/background-color/007-xhtml.xhtml
-fast/body-propagation/background-color/008.html
+fast/body-propagation/background-color/007.html
 fast/body-propagation/background-color/008-xhtml.xhtml
-fast/body-propagation/background-image/001.html
+fast/body-propagation/background-color/008.html
 fast/body-propagation/background-image/001-xhtml.xhtml
-fast/body-propagation/background-image/002.html
+fast/body-propagation/background-image/001.html
 fast/body-propagation/background-image/002-xhtml.xhtml
+fast/body-propagation/background-image/002.html
 fast/body-propagation/background-image/003-declarative.xhtml
-fast/body-propagation/background-image/003.html
 fast/body-propagation/background-image/003-xhtml.xhtml
+fast/body-propagation/background-image/003.html
 fast/body-propagation/background-image/004-declarative.xhtml
-fast/body-propagation/background-image/004.html
 fast/body-propagation/background-image/004-xhtml.xhtml
+fast/body-propagation/background-image/004.html
 fast/body-propagation/background-image/005-declarative.xhtml
-fast/body-propagation/background-image/005.html
 fast/body-propagation/background-image/005-xhtml.xhtml
+fast/body-propagation/background-image/005.html
 fast/body-propagation/background-image/006-declarative.xhtml
-fast/body-propagation/background-image/006.html
 fast/body-propagation/background-image/006-xhtml.xhtml
+fast/body-propagation/background-image/006.html
 fast/body-propagation/background-image/007-declarative.xhtml
-fast/body-propagation/background-image/007.html
 fast/body-propagation/background-image/007-xhtml.xhtml
-fast/body-propagation/background-image/008.html
+fast/body-propagation/background-image/007.html
 fast/body-propagation/background-image/008-xhtml.xhtml
-fast/body-propagation/background-image/009.html
+fast/body-propagation/background-image/008.html
 fast/body-propagation/background-image/009-xhtml.xhtml
-fast/body-propagation/background-image/010.html
+fast/body-propagation/background-image/009.html
 fast/body-propagation/background-image/010-xhtml.xhtml
-fast/body-propagation/overflow/001.html
+fast/body-propagation/background-image/010.html
 fast/body-propagation/overflow/001-xhtml.xhtml
-fast/body-propagation/overflow/002.html
+fast/body-propagation/overflow/001.html
 fast/body-propagation/overflow/002-xhtml.xhtml
+fast/body-propagation/overflow/002.html
 fast/body-propagation/overflow/003-declarative.xhtml
-fast/body-propagation/overflow/003.html
 fast/body-propagation/overflow/003-xhtml.xhtml
+fast/body-propagation/overflow/003.html
 fast/body-propagation/overflow/004-declarative.xhtml
-fast/body-propagation/overflow/004.html
 fast/body-propagation/overflow/004-xhtml.xhtml
+fast/body-propagation/overflow/004.html
 fast/body-propagation/overflow/005-declarative.xhtml
-fast/body-propagation/overflow/005.html
 fast/body-propagation/overflow/005-xhtml.xhtml
+fast/body-propagation/overflow/005.html
 fast/body-propagation/overflow/006-declarative.xhtml
-fast/body-propagation/overflow/006.html
 fast/body-propagation/overflow/006-xhtml.xhtml
+fast/body-propagation/overflow/006.html
 fast/body-propagation/overflow/007-declarative.xhtml
-fast/body-propagation/overflow/007.html
 fast/body-propagation/overflow/007-xhtml.xhtml
+fast/body-propagation/overflow/007.html
 fast/borders/block-mask-overlay-image.html
 fast/borders/border-color-inherit.html
 fast/borders/border-fit.html
@@ -2322,6 +2950,7 @@ fast/borders/border-image-border-radius.html
 fast/borders/border-image-omit-right-slice.html
 fast/borders/border-image-rotate-transform.html
 fast/borders/border-image-scale-transform.html
+fast/borders/border-radius-huge-assert.html
 fast/borders/borderRadiusAllStylesAllCorners.html
 fast/borders/borderRadiusArcs01.html
 fast/borders/borderRadiusDashed01.html
@@ -2335,7 +2964,6 @@ fast/borders/borderRadiusDouble02.html
 fast/borders/borderRadiusDouble03.html
 fast/borders/borderRadiusGroove01.html
 fast/borders/borderRadiusGroove02.html
-fast/borders/border-radius-huge-assert.html
 fast/borders/borderRadiusInset01.html
 fast/borders/borderRadiusInvalidColor.html
 fast/borders/borderRadiusOutset01.html
@@ -2370,10 +2998,39 @@ fast/clip/014.html
 fast/clip/015.html
 fast/clip/016.html
 fast/clip/nestedTransparencyClip.html
+fast/clip/outline-overflowClip.html
 fast/clip/overflow-border-radius-clip.html
 fast/compact/001.html
 fast/compact/002.html
 fast/compact/003.html
+fast/css-generated-content/001.html
+fast/css-generated-content/002.html
+fast/css-generated-content/003.html
+fast/css-generated-content/004.html
+fast/css-generated-content/005.html
+fast/css-generated-content/007.html
+fast/css-generated-content/008.html
+fast/css-generated-content/009.html
+fast/css-generated-content/010.html
+fast/css-generated-content/011.html
+fast/css-generated-content/012.html
+fast/css-generated-content/013.html
+fast/css-generated-content/014.html
+fast/css-generated-content/015.html
+fast/css-generated-content/016.html
+fast/css-generated-content/after-order.html
+fast/css-generated-content/before-with-first-letter.html
+fast/css-generated-content/beforeAfter-interdocument.html
+fast/css-generated-content/hover-style-change.html
+fast/css-generated-content/inline-display-types.html
+fast/css-generated-content/no-openclose-quote.html
+fast/css-generated-content/table-cell-before-content.html
+fast/css-generated-content/table-row-group-to-inline.html
+fast/css-generated-content/table-row-group-with-before.html
+fast/css-generated-content/table-row-with-before.html
+fast/css-generated-content/table-with-before.html
+fast/css-generated-content/visibleContentHiddenParent.html
+fast/css-generated-content/wbr-with-before-content.html
 fast/css/001.html
 fast/css/002.html
 fast/css/003.html
@@ -2381,6 +3038,8 @@ fast/css/004.html
 fast/css/005.html
 fast/css/007.html
 fast/css/008.html
+fast/css/ZeroOpacityLayers.html
+fast/css/ZeroOpacityLayers2.html
 fast/css/absolute-poition-in-rtl-parent.html
 fast/css/affected-by-hover-after-style-change.html
 fast/css/apple-prefix.html
@@ -2399,11 +3058,11 @@ fast/css/continuationCrash.html
 fast/css/counters/counter-text-security.html
 fast/css/counters/counter-text-transform.html
 fast/css/create_element_align.xhtml
+fast/css/css-imports.html
 fast/css/css1_forward_compatible_parsing.html
+fast/css/css2-system-fonts.html
 fast/css/css3-modsel-22.html
 fast/css/css3-nth-child.html
-fast/css/css-imports.html
-fast/css/disabled-author-styles.html
 fast/css/dynamic-sibling-selector.html
 fast/css/empty-body-test.html
 fast/css/empty-generated-content.html
@@ -2431,69 +3090,46 @@ fast/css/font-face-multiple-faces.html
 fast/css/font-face-multiple-remote-sources.html
 fast/css/font-face-remote.html
 fast/css/font-face-unicode-range.html
-fast/css/font_property_normal.html
 fast/css/font-shorthand-weight-only.html
 fast/css/font-size-negative.html
 fast/css/font-weight-1.html
-fast/css-generated-content/001.html
-fast/css-generated-content/002.html
-fast/css-generated-content/003.html
-fast/css-generated-content/004.html
-fast/css-generated-content/005.html
-fast/css-generated-content/007.html
-fast/css-generated-content/008.html
-fast/css-generated-content/009.html
-fast/css-generated-content/010.html
-fast/css-generated-content/011.html
-fast/css-generated-content/013.html
-fast/css-generated-content/014.html
-fast/css-generated-content/015.html
-fast/css-generated-content/016.html
-fast/css-generated-content/after-order.html
-fast/css-generated-content/beforeAfter-interdocument.html
-fast/css-generated-content/before-with-first-letter.html
-fast/css-generated-content/inline-display-types.html
-fast/css-generated-content/no-openclose-quote.html
-fast/css-generated-content/table-cell-before-content.html
-fast/css-generated-content/table-row-group-to-inline.html
-fast/css-generated-content/table-row-group-with-before.html
-fast/css-generated-content/table-row-with-before.html
-fast/css-generated-content/table-with-before.html
-fast/css-generated-content/visibleContentHiddenParent.html
+fast/css/font_property_normal.html
 fast/css/getFloatValueForUnit.html
 fast/css/hover-subselector.html
-fast/css/hsla-color.html
 fast/css/hsl-color.html
+fast/css/hsla-color.html
+fast/css/ignore-text-zoom.html
 fast/css/imageTileOpacity.html
 fast/css/import-rule-regression-11590.html
 fast/css/import_with_baseurl.html
 fast/css/inline-properties-important.html
+fast/css/invalid-percentage-property.html
+fast/css/invalid-pseudo-classes.html
 fast/css/invalidation-errors-2.html
 fast/css/invalidation-errors-3.html
 fast/css/invalidation-errors.html
-fast/css/invalid-percentage-property.html
-fast/css/invalid-pseudo-classes.html
 fast/css/last-child-pseudo-class.html
 fast/css/last-child-style-sharing.html
 fast/css/last-of-type-pseudo-class.html
 fast/css/layerZOrderCrash.html
 fast/css/line-height-font-order.html
-fast/css/line-height.html
 fast/css/line-height-negative.html
 fast/css/line-height-overflow.html
+fast/css/line-height.html
 fast/css/link-outside-head.html
 fast/css/list-outline.html
 fast/css/live-cssrules.html
 fast/css/margin-bottom-form-element-quirk.html
 fast/css/margin-bottom-form-element-strict.html
 fast/css/margin-top-bottom-dynamic.html
-fast/css/MarqueeLayoutTest.html
 fast/css/max-height-none.html
 fast/css/namespaces/001.xml
 fast/css/namespaces/002.xml
+fast/css/namespaces/003.xml
 fast/css/namespaces/004.xml
 fast/css/namespaces/005.xml
 fast/css/namespaces/006.xml
+fast/css/namespaces/007.xml
 fast/css/negative-nth-child.html
 fast/css/nested-layers-with-hover.html
 fast/css/only-child-pseudo-class.html
@@ -2501,11 +3137,10 @@ fast/css/only-of-type-pseudo-class.html
 fast/css/outline-auto-empty-rects.html
 fast/css/outline-auto-location.html
 fast/css/pendingStylesheetFontSize.html
-fast/css/percentage-non-integer.html
 fast/css/percent-top-value-with-relative-position.html
+fast/css/percentage-non-integer.html
 fast/css/position-negative-top-margin.html
 fast/css/quirk-orphaned-units.html
-fast/css/resize-corner-tracking.html
 fast/css/resize-corner-tracking-transformed.html
 fast/css/rgb-float.html
 fast/css/rtl-ordering.html
@@ -2518,11 +3153,8 @@ fast/css/table-text-align-quirk.html
 fast/css/table-text-align-strict.html
 fast/css/target-fragment-match.html
 fast/css/text-align.html
-fast/css/textCapitalizeEdgeCases.html
-fast/css/text-overflow-ellipsis-bidi.html
-fast/css/text-overflow-ellipsis.html
-fast/css/text-overflow-ellipsis-strict.html
 fast/css/text-security.html
+fast/css/textCapitalizeEdgeCases.html
 fast/css/transform-default-parameter.html
 fast/css/transition-color-unspecified.html
 fast/css/universal-hover-quirk.html
@@ -2550,23 +3182,10 @@ fast/css/vertical-align-lengths.html
 fast/css/visibility-hit-test.html
 fast/css/word-space-extra.html
 fast/css/xml-stylesheet-pi-not-in-prolog.xml
-fast/css/ZeroOpacityLayers2.html
-fast/css/ZeroOpacityLayers.html
 fast/css/zoom-font-size.html
 fast/css/zoom-property-parsing.html
-fast/dom/anchor-text.html
-fast/dom/blur-contenteditable.html
-fast/dom/children-nodes.html
-fast/dom/clone-contents-0-end-offset.html
-fast/dom/clone-node-dynamic-style.html
-fast/dom/comment-not-documentElement.html
-fast/dom/createDocumentType.html
-fast/dom/css-inline-style-important.html
-fast/dom/css-mediarule-deleteRule-update.html
-fast/dom/css-mediarule-insertRule-update.html
-fast/dom/css-rule-functions.html
-fast/dom/dom-parse-serialize-display.html
-fast/dom/dom-parse-serialize.html
+fast/doctypes/003.html
+fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html
 fast/dom/Element/class-attribute-whitespace.html
 fast/dom/Element/null-offset-parent.html
 fast/dom/HTMLDocument/frameless-location-bugzilla10837.html
@@ -2584,25 +3203,39 @@ fast/dom/HTMLObjectElement/vspace-hspace-as-number.html
 fast/dom/HTMLStyleElement/insert-parser-generated.html
 fast/dom/HTMLTableElement/colSpan.html
 fast/dom/HTMLTableElement/createCaption.html
-fast/dom/HTMLTextAreaElement/reset-textarea.html
-fast/dom/icon-url-property.html
+fast/dom/Range/create-contextual-fragment.html
+fast/dom/Range/surroundContents-1.html
+fast/dom/Window/btoa-pnglet.html
+fast/dom/Window/open-existing-pop-up-blocking.html
+fast/dom/anchor-text.html
+fast/dom/blur-contenteditable.html
+fast/dom/children-nodes.html
+fast/dom/clientWidthAfterDocumentIsRemoved.html
+fast/dom/clone-contents-0-end-offset.html
+fast/dom/clone-node-dynamic-style.html
+fast/dom/comment-not-documentElement.html
+fast/dom/createDocumentType.html
+fast/dom/css-inline-style-important.html
+fast/dom/css-mediarule-deleteRule-update.html
+fast/dom/css-mediarule-insertRule-update.html
+fast/dom/css-rule-functions.html
+fast/dom/dom-parse-serialize-display.html
+fast/dom/dom-parse-serialize.html
+fast/dom/frame-loading-via-document-write.html
 fast/dom/importNodeHTML.html
 fast/dom/importNodeXML.xhtml
 fast/dom/inner-text.html
 fast/dom/jsDevicePixelRatio.html
 fast/dom/outerText.html
-fast/dom/Range/create-contextual-fragment.html
-fast/dom/Range/surroundContents-1.html
+fast/dom/replaceChild.html
 fast/dom/row-inner-text.html
 fast/dom/setPrimitiveValue.html
 fast/dom/stripNullFromTextNodes.html
-fast/dom/Window/btoa-pnglet.html
-fast/dom/Window/open-existing-pop-up-blocking.html
+fast/dom/wrapper-classes.html
 fast/dynamic/002.html
 fast/dynamic/004.html
 fast/dynamic/006.html
 fast/dynamic/007.html
-fast/dynamic/008.html
 fast/dynamic/009.html
 fast/dynamic/010.html
 fast/dynamic/011.html
@@ -2614,28 +3247,30 @@ fast/dynamic/anonymous-block-orphaned-lines.html
 fast/dynamic/containing-block-change.html
 fast/dynamic/create-renderer-for-whitespace-only-text.html
 fast/dynamic/flash-replacement-test.html
-fast/dynamic/floating-to-positioned-2.html
-fast/dynamic/floating-to-positioned.html
 fast/dynamic/float-in-trailing-whitespace-after-last-line-break.html
 fast/dynamic/float-no-longer-overhanging.html
 fast/dynamic/float-withdrawal-2.html
 fast/dynamic/float-withdrawal.html
-fast/dynamic/insertAdjacentElement.html
+fast/dynamic/floating-to-positioned-2.html
+fast/dynamic/floating-to-positioned.html
 fast/dynamic/insert-before-table-part-in-continuation.html
+fast/dynamic/insertAdjacentElement.html
+fast/dynamic/layer-hit-test-crash.html
 fast/dynamic/link-href-change.html
+fast/dynamic/move-node-with-selection.html
 fast/dynamic/noninlinebadness.html
 fast/dynamic/outerHTML-doc.html
 fast/dynamic/outerHTML-img.html
 fast/dynamic/positioned-movement-with-positioned-children.html
+fast/dynamic/selection-highlight-adjust.html
 fast/dynamic/staticY-marking-parents-regression.html
 fast/dynamic/subtree-boundary-percent-height.html
 fast/dynamic/subtree-no-common-root-static-y.html
 fast/dynamic/subtree-parent-static-y.html
 fast/dynamic/subtree-table-cell-height.html
 fast/dynamic/view-overflow.html
-fast/encoding/char-decoding-mac.html
 fast/encoding/denormalised-voiced-japanese-chars.html
-fast/encoding/hebrew/csISO88598I.html
+fast/encoding/invalid-UTF-8.html
 fast/encoding/preload-encoding.html
 fast/encoding/utf-16-big-endian.html
 fast/encoding/utf-16-little-endian.html
@@ -2643,10 +3278,12 @@ fast/encoding/utf-16-no-bom.xml
 fast/events/context-no-deselect.html
 fast/events/event-listener-on-link.html
 fast/events/event-sender-mouse-moved.html
+fast/events/focusingUnloadedFrame.html
 fast/events/label-focus.html
 fast/events/mouse-click-events.html
-fast/events/offsetX-offsetY.html
+fast/events/mouseout-dead-node.html
 fast/events/onload-re-entry.html
+fast/events/pointer-events-2.html
 fast/flexbox/001.html
 fast/flexbox/002.html
 fast/flexbox/003.html
@@ -2677,10 +3314,16 @@ fast/forms/003.html
 fast/forms/004.html
 fast/forms/006.html
 fast/forms/007.html
-fast/forms/basic-textareas.html
+fast/forms/HTMLOptionElement_label01.html
+fast/forms/HTMLOptionElement_label02.html
+fast/forms/HTMLOptionElement_label03.html
+fast/forms/HTMLOptionElement_label04.html
+fast/forms/HTMLOptionElement_label05.html
+fast/forms/HTMLOptionElement_label06.html
+fast/forms/HTMLOptionElement_label07.html
 fast/forms/blankbuttons.html
-fast/forms/box-shadow-override.html
 fast/forms/button-align.html
+fast/forms/button-cannot-be-nested.html
 fast/forms/button-default-title.html
 fast/forms/button-generated-content.html
 fast/forms/button-inner-block-reuse.html
@@ -2689,49 +3332,38 @@ fast/forms/button-sizes.html
 fast/forms/button-submit.html
 fast/forms/button-table-styles.html
 fast/forms/button-text-transform.html
-fast/forms/button-white-space.html
 fast/forms/caret-rtl.html
 fast/forms/checkbox-radio-onchange.html
-fast/forms/control-clip.html
 fast/forms/control-clip-overflow.html
-fast/forms/disabled-select-change-index.html
+fast/forms/control-clip.html
+fast/forms/control-restrict-line-height.html
 fast/forms/encoding-test.html
 fast/forms/fieldset-align.html
 fast/forms/fieldset-with-float.html
-fast/forms/file-input-direction.html
-fast/forms/file-input-disabled.html
 fast/forms/float-before-fieldset.html
 fast/forms/floating-textfield-relayout.html
+fast/forms/focus-selection-input.html
 fast/forms/form-added-to-table.html
-fast/forms/form-element-geometry.html
 fast/forms/form-hides-table.html
 fast/forms/form-in-malformed-markup.html
+fast/forms/formmove.html
 fast/forms/formmove2.html
 fast/forms/formmove3.html
-fast/forms/formmove.html
-fast/forms/hidden-input-file.html
 fast/forms/hidden-listbox.html
-fast/forms/HTMLOptionElement_label01.html
-fast/forms/HTMLOptionElement_label02.html
-fast/forms/HTMLOptionElement_label03.html
-fast/forms/HTMLOptionElement_label04.html
-fast/forms/HTMLOptionElement_label05.html
-fast/forms/HTMLOptionElement_label06.html
-fast/forms/HTMLOptionElement_label07.html
 fast/forms/image-border.html
 fast/forms/indeterminate.html
+fast/forms/input-align-image.html
+fast/forms/input-align.html
 fast/forms/input-appearance-bkcolor.html
 fast/forms/input-appearance-default-bkcolor.html
 fast/forms/input-appearance-disabled.html
 fast/forms/input-appearance-focus.html
-fast/forms/input-appearance-height.html
 fast/forms/input-appearance-preventDefault.html
 fast/forms/input-appearance-readonly.html
 fast/forms/input-appearance-selection.html
 fast/forms/input-appearance-visibility.html
-fast/forms/input-appearance-width.html
 fast/forms/input-baseline.html
-fast/forms/input-disabled-color.html
+fast/forms/input-double-click-selection-gap-bug.html
 fast/forms/input-field-text-truncated.html
 fast/forms/input-first-letter.html
 fast/forms/input-no-renderer.html
@@ -2739,19 +3371,17 @@ fast/forms/input-paste-undo.html
 fast/forms/input-readonly-dimmed.html
 fast/forms/input-readonly-empty.html
 fast/forms/input-spaces.html
-fast/forms/input-table.html
 fast/forms/input-text-click-inside.html
+fast/forms/input-text-double-click.html
+fast/forms/input-text-option-delete.html
 fast/forms/input-text-self-emptying-click.html
 fast/forms/input-text-word-wrap.html
-fast/forms/input-type-change2.html
 fast/forms/input-type-change.html
+fast/forms/input-type-change2.html
 fast/forms/input-type-text-min-width.html
-fast/forms/input-value.html
 fast/forms/input-width.html
 fast/forms/linebox-overflow-in-textarea-padding.html
 fast/forms/listbox-clip.html
-fast/forms/listbox-deselect-scroll.html
-fast/forms/listbox-hit-test-zoomed.html
 fast/forms/listbox-scrollbar-incremental-load.html
 fast/forms/menulist-clip.html
 fast/forms/menulist-deselect-update.html
@@ -2761,29 +3391,28 @@ fast/forms/menulist-option-wrap.html
 fast/forms/menulist-restrict-line-height.html
 fast/forms/menulist-separator-painting.html
 fast/forms/minWidthPercent.html
-fast/forms/negativeLineHeight.html
+fast/forms/onchange-enter-submit.html
+fast/forms/onselect-textfield.html
 fast/forms/option-index.html
 fast/forms/option-script.html
 fast/forms/option-strip-whitespace.html
 fast/forms/option-text-clip.html
-fast/forms/password-placeholder.html
+fast/forms/password-doubleclick-selection.html
 fast/forms/password-placeholder-text-security.html
-fast/forms/placeholder-pseudo-style.html
+fast/forms/password-placeholder.html
 fast/forms/placeholder-set-attribute.html
 fast/forms/placeholder-set-value.html
 fast/forms/preserveFormDuringResidualStyle.html
 fast/forms/radio-attr-order.html
-fast/forms/radio_checked_dynamic.html
-fast/forms/radio_checked.html
 fast/forms/radio-nested-labels.html
+fast/forms/radio_checked.html
+fast/forms/radio_checked_dynamic.html
 fast/forms/range-thumb-height-percentage.html
 fast/forms/search-cancel-button-style-sharing.html
 fast/forms/search-display-none-cancel-button.html
-fast/forms/searchfield-heights.html
 fast/forms/search-placeholder-value-changed.html
-fast/forms/search-styled.html
-fast/forms/search-transformed.html
-fast/forms/search-zoomed.html
+fast/forms/searchfield-heights.html
+fast/forms/select-accesskey.html
 fast/forms/select-align.html
 fast/forms/select-baseline.html
 fast/forms/select-block-background.html
@@ -2803,9 +3432,7 @@ fast/forms/select-style.html
 fast/forms/select-visual-hebrew.html
 fast/forms/stuff-on-my-optgroup.html
 fast/forms/targeted-frame-submission.html
-fast/forms/textarea-align.html
-fast/forms/textarea-setinnerhtml.html
-fast/forms/textarea-width.html
+fast/forms/textarea-rows-cols.html
 fast/forms/textfield-outline.html
 fast/forms/textfield-overflow.html
 fast/forms/thumbslider-crash.html
@@ -2813,16 +3440,16 @@ fast/forms/thumbslider-no-parent-slider.html
 fast/forms/visual-hebrew-text-field.html
 fast/frames/contentWindow_Frame.html
 fast/frames/contentWindow_iFrame.html
+fast/frames/frame-element-name.html
 fast/frames/frameElement-frame.html
 fast/frames/frameElement-iframe.html
-fast/frames/frame-element-name.html
 fast/frames/iframe-option-crash.xhtml
 fast/frames/iframe-with-frameborder.html
 fast/frames/inline-object-inside-frameset.html
 fast/frames/viewsource-attribute.html
 fast/gradients/background-clipped.html
-fast/gradients/border-image-gradient.html
 fast/gradients/border-image-gradient-sides-and-corners.html
+fast/gradients/border-image-gradient.html
 fast/gradients/generated-gradients.html
 fast/gradients/list-item-gradient.html
 fast/gradients/simple-gradients.html
@@ -2836,10 +3463,6 @@ fast/images/pdf-as-background.html
 fast/images/pdf-as-image-landscape.html
 fast/images/pdf-as-tiled-background.html
 fast/images/svg-as-tiled-background.html
-fast/inline/001.html
-fast/inline/002.html
-fast/inline/25277-2.html
-fast/inline/25277.html
 fast/inline-block/001.html
 fast/inline-block/002.html
 fast/inline-block/003.html
@@ -2849,19 +3472,23 @@ fast/inline-block/contenteditable-baseline.html
 fast/inline-block/inline-block-vertical-align.html
 fast/inline-block/overflow-clip.html
 fast/inline-block/tricky-baseline.html
+fast/inline/001.html
+fast/inline/002.html
+fast/inline/25277-2.html
+fast/inline/25277.html
 fast/inline/br-text-decoration.html
-fast/inline/continuation-outlines.html
 fast/inline/continuation-outlines-with-layers.html
+fast/inline/continuation-outlines.html
 fast/inline/drawStyledEmptyInlines.html
 fast/inline/drawStyledEmptyInlinesWithWS.html
 fast/inline/emptyInlinesWithinLists.html
-fast/inline/inline-borders-with-bidi-override.html
 fast/inline/inline-continuation-borders.html
 fast/inline/inline-padding-disables-text-quirk.html
 fast/inline/inline-text-quirk-bpm.html
 fast/inline/long-wrapped-line.html
 fast/inline/outline-continuations.html
 fast/inline/percentage-margins.html
+fast/inline/positionedLifetime.html
 fast/inline/styledEmptyInlinesWithBRs.html
 fast/inline/vertical-align-text-bottom.html
 fast/innerHTML/001.html
@@ -2902,6 +3529,7 @@ fast/layers/add-layer-with-nested-stacking.html
 fast/layers/inline-dirty-z-order-lists.html
 fast/layers/layer-content-visibility-change.html
 fast/layers/layer-visibility-sublayer.html
+fast/layers/layer-visibility.html
 fast/layers/normal-flow-hit-test.html
 fast/layers/opacity-outline.html
 fast/layers/opacity-stacking.html
@@ -2910,12 +3538,11 @@ fast/layers/overflow-scroll-auto-switch.html
 fast/layers/positioned-inside-root-with-margins.html
 fast/layers/remove-layer-with-nested-stacking.html
 fast/layers/remove-only-this-layer-update.html
-fast/layers/scroll-rect-to-visible.html
 fast/layers/self-painting-outline.html
-fast/layers/video-layer.html
 fast/layers/zindex-inherit.html
 fast/lists/001.html
 fast/lists/002.html
+fast/lists/003.html
 fast/lists/004.html
 fast/lists/005.html
 fast/lists/006.html
@@ -2928,20 +3555,23 @@ fast/lists/decimal-leading-zero.html
 fast/lists/dynamic-marker-crash.html
 fast/lists/inlineBoxWrapperNullCheck.html
 fast/lists/li-br.html
+fast/lists/li-style-alpha-huge-value-crash.html
+fast/lists/li-values.html
 fast/lists/list-item-line-height.html
 fast/lists/list-marker-with-line-height.html
 fast/lists/list-style-none-crash.html
 fast/lists/list-style-type-dynamic-change.html
-fast/lists/li-style-alpha-huge-value-crash.html
-fast/lists/li-values.html
 fast/lists/marker-before-empty-inline.html
 fast/lists/marker-image-error.html
+fast/lists/markers-in-selection.html
 fast/lists/numeric-markers-outside-list.html
 fast/lists/ol-display-types.html
 fast/lists/ol-start-dynamic.html
 fast/lists/olstart.html
 fast/lists/ordered-list-with-no-ol-tag.html
 fast/lists/scrolled-marker-paint.html
+fast/lists/w3-list-styles.html
+fast/loader/cancel-load-during-port-block-timer.html
 fast/loader/start-load-in-unload.html
 fast/media/implicit-media-all.html
 fast/media/media-descriptor-syntax-01.html
@@ -2977,6 +3607,8 @@ fast/media/mq-js-media-except-03.html
 fast/media/mq-js-media-forward-syntax.html
 fast/media/mq-js-stylesheet-media-01.html
 fast/media/mq-js-stylesheet-media-02.html
+fast/media/mq-js-stylesheet-media-03.html
+fast/media/mq-js-stylesheet-media-04.html
 fast/media/mq-max-pixel-ratio.html
 fast/media/mq-min-constraint.html
 fast/media/mq-orientation.html
@@ -3000,8 +3632,6 @@ fast/media/mq-simple-query-03.html
 fast/media/mq-simple-query-04.html
 fast/media/mq-simple-query-05.html
 fast/media/mq-transform-01.html
-fast/media/mq-transform-02.html
-fast/media/mq-transform-03.html
 fast/media/mq-transform-04.html
 fast/media/mq-transition.html
 fast/media/mq-valueless.html
@@ -3010,8 +3640,8 @@ fast/media/mq-width-absolute-02.html
 fast/media/mq-width-absolute-03.html
 fast/media/mq-width-absolute-04.html
 fast/media/viewport-media-query.html
-fast/multicol/column-rules.html
 fast/multicol/column-rules-stacking.html
+fast/multicol/column-rules.html
 fast/multicol/columns-shorthand-parsing.html
 fast/multicol/float-avoidance.html
 fast/multicol/float-multicol.html
@@ -3019,26 +3649,23 @@ fast/overflow/001.html
 fast/overflow/002.html
 fast/overflow/004.html
 fast/overflow/006.html
+fast/overflow/007.html
 fast/overflow/008.html
 fast/overflow/border-radius-clipping.html
 fast/overflow/childFocusRingClip.html
 fast/overflow/dynamic-hidden.html
 fast/overflow/float-in-relpositioned.html
+fast/overflow/hidden-scrollbar-resize.html
 fast/overflow/hit-test-overflow-controls.html
-fast/overflow/image-selection-highlight.html
-fast/overflow/infiniteRecursionGuard.html
 fast/overflow/infiniteRecursion.html
 fast/overflow/overflow-auto-position-absolute.html
 fast/overflow/overflow-auto-table.html
 fast/overflow/overflow-float-stacking.html
 fast/overflow/overflow-focus-ring.html
-fast/overflow/overflow_hidden.html
 fast/overflow/overflow-rtl-inline-scrollbar.html
 fast/overflow/overflow-stacking.html
-fast/overflow/overflow-text-hit-testing.html
 fast/overflow/scrollbar-position-update.html
 fast/overflow/table-overflow-float.html
-fast/overflow/unreachable-overflow-rtl-bug.html
 fast/parser/001.html
 fast/parser/bad-xml-slash.html
 fast/parser/broken-comments-vs-parsing-mode.html
@@ -3046,11 +3673,9 @@ fast/parser/comment-in-style.html
 fast/parser/comments.html
 fast/parser/document-write-option.html
 fast/parser/entity-comment-in-style.html
-fast/parser/entity-comment-in-textarea.html
 fast/parser/fonts.html
 fast/parser/nofoo-tags-inside-paragraph.html
 fast/parser/open-comment-in-style.html
-fast/parser/open-comment-in-textarea.html
 fast/parser/parseCommentsInTitles.html
 fast/parser/remove-block-in-residual-style.html
 fast/parser/style-script-head-test.html
@@ -3058,8 +3683,8 @@ fast/parser/tabs-in-scripts.html
 fast/parser/title-error-test.html
 fast/reflections/inline-crash.html
 fast/reflections/reflection-direction.html
-fast/reflections/reflection-masks.html
 fast/reflections/reflection-masks-opacity.html
+fast/reflections/reflection-masks.html
 fast/reflections/reflection-nesting.html
 fast/reflections/reflection-overflow-hidden.html
 fast/reflections/table-cell.html
@@ -3080,8 +3705,8 @@ fast/repaint/bugzilla-7235.html
 fast/repaint/button-spurious-layout-hint.html
 fast/repaint/caret-outside-block.html
 fast/repaint/change-transform.html
-fast/repaint/clipped-relative.html
 fast/repaint/clip-with-layout-delta.html
+fast/repaint/clipped-relative.html
 fast/repaint/containing-block-position-change.html
 fast/repaint/continuation-after-outline.html
 fast/repaint/control-clip.html
@@ -3089,16 +3714,15 @@ fast/repaint/create-layer-repaint.html
 fast/repaint/delete-into-nested-block.html
 fast/repaint/dynamic-table-vertical-alignment-change.html
 fast/repaint/float-move-during-layout.html
-fast/repaint/float-overflow.html
 fast/repaint/float-overflow-right.html
+fast/repaint/float-overflow.html
 fast/repaint/focus-layers.html
-fast/repaint/focus-ring.html
 fast/repaint/inline-color-change.html
 fast/repaint/invisible-objects.html
 fast/repaint/layout-state-only-positioned.html
 fast/repaint/layout-state-relative.html
-fast/repaint/line-flow-with-floats-10.html
 fast/repaint/line-flow-with-floats-1.html
+fast/repaint/line-flow-with-floats-10.html
 fast/repaint/line-flow-with-floats-2.html
 fast/repaint/line-flow-with-floats-3.html
 fast/repaint/line-flow-with-floats-4.html
@@ -3119,19 +3743,14 @@ fast/repaint/outline-shrinking.html
 fast/repaint/overflow-clip-subtree-layout.html
 fast/repaint/overflow-delete-line.html
 fast/repaint/overflow-scroll-body-appear.html
+fast/repaint/overflow-scroll-delete.html
 fast/repaint/reflection-redraw.html
 fast/repaint/reflection-repaint-test.html
 fast/repaint/renderer-destruction-by-invalidateSelection-crash.html
 fast/repaint/repaint-resized-overflow.html
 fast/repaint/search-field-cancel.html
 fast/repaint/selected-replaced.html
-fast/repaint/selection-after-delete.html
-fast/repaint/selection-after-remove.html
 fast/repaint/selection-clear.html
-fast/repaint/shadow-multiple-horizontal.html
-fast/repaint/shadow-multiple-strict-horizontal.html
-fast/repaint/shadow-multiple-strict-vertical.html
-fast/repaint/shadow-multiple-vertical.html
 fast/repaint/static-to-positioned.html
 fast/repaint/subtree-root-clip-2.html
 fast/repaint/subtree-root-clip-3.html
@@ -3166,16 +3785,15 @@ fast/replaced/absolute-position-with-auto-width-and-left-and-right.html
 fast/replaced/applet-disabled-positioned.html
 fast/replaced/applet-display-none.html
 fast/replaced/applet-rendering-java-disabled.html
-fast/replaced/border-radius-clip.html
 fast/replaced/embed-display-none.html
 fast/replaced/image-onload.html
 fast/replaced/image-resize-width.html
 fast/replaced/image-sizing.html
 fast/replaced/image-solid-color-with-alpha.html
 fast/replaced/inline-box-wrapper-handover.html
+fast/replaced/max-width-percent.html
 fast/replaced/maxheight-percent.html
 fast/replaced/maxheight-pxs.html
-fast/replaced/max-width-percent.html
 fast/replaced/maxwidth-percent.html
 fast/replaced/maxwidth-pxs.html
 fast/replaced/minheight-percent.html
@@ -3185,11 +3803,11 @@ fast/replaced/minwidth-pxs.html
 fast/replaced/object-align-hspace-vspace.html
 fast/replaced/object-display-none.html
 fast/replaced/pdf-as-image.html
-fast/replaced/percent-height-in-anonymous-block.html
 fast/replaced/percent-height-in-anonymous-block-in-table.html
 fast/replaced/percent-height-in-anonymous-block-widget.html
-fast/replaced/replaced-breaking.html
+fast/replaced/percent-height-in-anonymous-block.html
 fast/replaced/replaced-breaking-mixture.html
+fast/replaced/replaced-breaking.html
 fast/replaced/replaced-child-of-absolute-with-auto-height.html
 fast/replaced/selection-rect-in-table-cell.html
 fast/replaced/selection-rect-transform.html
@@ -3222,30 +3840,30 @@ fast/selectors/014.html
 fast/selectors/015.html
 fast/selectors/016.html
 fast/selectors/017.html
-fast/selectors/018b.html
 fast/selectors/018.html
+fast/selectors/018b.html
 fast/selectors/019.html
 fast/selectors/020.html
-fast/selectors/021b.html
 fast/selectors/021.html
+fast/selectors/021b.html
 fast/selectors/027.html
 fast/selectors/032.html
 fast/selectors/034.html
 fast/selectors/038.html
-fast/selectors/039b.html
 fast/selectors/039.html
+fast/selectors/039b.html
 fast/selectors/040.html
 fast/selectors/041.html
 fast/selectors/042.html
-fast/selectors/043b.html
 fast/selectors/043.html
+fast/selectors/043b.html
+fast/selectors/044.html
 fast/selectors/044b.html
 fast/selectors/044c.html
 fast/selectors/044d.html
-fast/selectors/044.html
+fast/selectors/045.html
 fast/selectors/045b.html
 fast/selectors/045c.html
-fast/selectors/045.html
 fast/selectors/046.html
 fast/selectors/054.html
 fast/selectors/056.html
@@ -3257,12 +3875,12 @@ fast/selectors/062.html
 fast/selectors/063.html
 fast/selectors/064.html
 fast/selectors/065.html
-fast/selectors/066b.html
 fast/selectors/066.html
-fast/selectors/072b.html
+fast/selectors/066b.html
 fast/selectors/072.html
-fast/selectors/077b.html
+fast/selectors/072b.html
 fast/selectors/077.html
+fast/selectors/077b.html
 fast/selectors/078b.html
 fast/selectors/083.html
 fast/selectors/087b.html
@@ -3270,42 +3888,43 @@ fast/selectors/088b.html
 fast/selectors/089.html
 fast/selectors/090b.html
 fast/selectors/154.html
+fast/selectors/155.html
 fast/selectors/155a.html
 fast/selectors/155b.html
 fast/selectors/155c.html
 fast/selectors/155d.html
-fast/selectors/155.html
 fast/selectors/156b.html
 fast/selectors/157.html
 fast/selectors/158.html
+fast/selectors/159.html
 fast/selectors/160.html
-fast/selectors/166a.html
 fast/selectors/166.html
-fast/selectors/167a.html
+fast/selectors/166a.html
 fast/selectors/167.html
-fast/selectors/168a.html
+fast/selectors/167a.html
 fast/selectors/168.html
-fast/selectors/169a.html
+fast/selectors/168a.html
 fast/selectors/169.html
+fast/selectors/169a.html
+fast/selectors/170.html
 fast/selectors/170a.html
 fast/selectors/170b.html
 fast/selectors/170c.html
 fast/selectors/170d.html
-fast/selectors/170.html
 fast/selectors/175a.html
 fast/selectors/175b.html
 fast/selectors/175c.html
+fast/selectors/177a.html
 fast/selectors/177b.html
-fast/selectors/lang-inheritance2.html
 fast/selectors/lang-inheritance.html
-fast/selectors/lang-vs-xml-lang.html
+fast/selectors/lang-inheritance2.html
 fast/selectors/lang-vs-xml-lang-xhtml.xhtml
+fast/selectors/lang-vs-xml-lang.html
 fast/selectors/nondeterministic-combinators.html
 fast/selectors/unqualified-hover-quirks.html
 fast/selectors/unqualified-hover-strict.html
 fast/table/001.html
 fast/table/002.html
-fast/table/003.html
 fast/table/004.html
 fast/table/005.html
 fast/table/006.html
@@ -3343,8 +3962,8 @@ fast/table/041.html
 fast/table/100-percent-cell-width.html
 fast/table/absolute-table-at-bottom.html
 fast/table/add-before-anonymous-child.html
-fast/table/append-cells2.html
 fast/table/append-cells.html
+fast/table/append-cells2.html
 fast/table/auto-with-percent-height.html
 fast/table/border-collapsing/001.html
 fast/table/border-collapsing/002.html
@@ -3355,9 +3974,8 @@ fast/table/border-collapsing/equal-precedence-resolution.html
 fast/table/border-collapsing/rtl-border-collapsing.html
 fast/table/cell-absolute-child.html
 fast/table/cell-coalescing.html
-fast/table/cellindex.html
-fast/table/cell-pref-width-invalidation.html
 fast/table/cell-width-auto.html
+fast/table/cellindex.html
 fast/table/click-near-anonymous-table.html
 fast/table/colgroup-preceded-by-caption.html
 fast/table/colgroup-spanning-groups-rules.html
@@ -3372,8 +3990,8 @@ fast/table/fixed-granular-cols.html
 fast/table/fixed-nested.html
 fast/table/fixed-table-non-cell-in-row.html
 fast/table/fixed-with-auto-with-colspan.html
-fast/table/floatingTablePaintBackground.html
 fast/table/floating-th.html
+fast/table/floatingTablePaintBackground.html
 fast/table/form-with-table-style.html
 fast/table/frame-and-rules.html
 fast/table/generated-caption.html
@@ -3400,8 +4018,8 @@ fast/table/rules-attr-dynchange1.html
 fast/table/rules-attr-dynchange2.html
 fast/table/spanOverlapRepaint.html
 fast/table/stale-grid-crash.html
-fast/table/table-display-types.html
 fast/table/table-display-types-strict.html
+fast/table/table-display-types.html
 fast/table/table-hspace-align-center.html
 fast/table/tableInsideCaption.html
 fast/table/text-field-baseline.html
@@ -3414,7 +4032,6 @@ fast/text/atsui-kerning-and-ligatures.html
 fast/text/atsui-multiple-renderers.html
 fast/text/atsui-partial-selection.html
 fast/text/atsui-small-caps-punctuation-size.html
-fast/text/atsui-spacing-features.html
 fast/text/basic/001.html
 fast/text/basic/002.html
 fast/text/basic/003.html
@@ -3426,57 +4043,45 @@ fast/text/basic/008.html
 fast/text/basic/009.html
 fast/text/basic/011.html
 fast/text/basic/012.html
-fast/text/basic/015.html
+fast/text/basic/013.html
 fast/text/basic/generic-family-changes.html
 fast/text/basic/generic-family-reset.html
 fast/text/bidi-embedding-pop-and-push-same.html
 fast/text/break-word.html
-fast/text/capitalize-boundaries.html
 fast/text/capitalize-empty-generated-string.html
 fast/text/capitalize-preserve-nbsp.html
+fast/text/cg-fallback-bolding.html
 fast/text/cg-vs-atsui.html
-fast/text/complex-text-opacity.html
 fast/text/delete-hard-break-character.html
 fast/text/drawBidiText.html
-fast/text/embed-at-end-of-pre-wrap-line.html
 fast/text/firstline/001.html
 fast/text/firstline/002.html
 fast/text/firstline/003.html
 fast/text/fixed-pitch-control-characters.html
 fast/text/font-initial.html
 fast/text/international/001.html
-fast/text/international/003.html
-fast/text/international/bidi-AN-after-empty-run.html
 fast/text/international/bidi-AN-after-L.html
-fast/text/international/bidi-control-chars-treated-as-ZWS.html
 fast/text/international/bidi-CS-after-AN.html
+fast/text/international/bidi-L2-run-reordering.html
+fast/text/international/bidi-LDB-2-CSS.html
+fast/text/international/bidi-control-chars-treated-as-ZWS.html
 fast/text/international/bidi-european-terminators.html
 fast/text/international/bidi-explicit-embedding.html
 fast/text/international/bidi-ignored-for-first-child-inline.html
 fast/text/international/bidi-innertext.html
-fast/text/international/bidi-L2-run-reordering.html
-fast/text/international/bidi-layout-across-linebreak.html
-fast/text/international/bidi-LDB-2-CSS.html
-fast/text/international/bidi-LDB-2-formatting-characters.html
-fast/text/international/bidi-LDB-2-HTML.html
 fast/text/international/bidi-linebreak-001.html
 fast/text/international/bidi-linebreak-002.html
 fast/text/international/bidi-linebreak-003.html
-fast/text/international/bidi-listbox-atsui.html
-fast/text/international/bidi-listbox.html
 fast/text/international/bidi-neutral-directionality-paragraph-start.html
 fast/text/international/bidi-neutral-run.html
-fast/text/international/bidi-override.html
 fast/text/international/complex-character-based-fallback.html
 fast/text/international/danda-space.html
 fast/text/international/hindi-spacing.html
 fast/text/international/rtl-caret.html
 fast/text/international/thai-baht-space.html
-fast/text/international/thai-line-breaks.html
 fast/text/justified-selection-at-edge.html
 fast/text/justified-selection.html
 fast/text/letter-spacing-negative-opacity.html
-fast/text/line-breaks-after-white-space.html
 fast/text/line-breaks.html
 fast/text/midword-break-hang.html
 fast/text/reset-emptyRun.html
@@ -3489,13 +4094,13 @@ fast/text/soft-hyphen-3.html
 fast/text/softHyphen.html
 fast/text/stroking-decorations.html
 fast/text/stroking.html
-fast/text/trailing-white-space-2.html
-fast/text/trailing-white-space.html
+fast/text/textIteratorNilRenderer.html
 fast/text/updateNewFont.html
-fast/text/wbr.html
 fast/text/wbr-in-pre-crash.html
 fast/text/wbr-pre.html
 fast/text/wbr-styled.html
+fast/text/wbr.html
+fast/text/whitespace/001.html
 fast/text/whitespace/002.html
 fast/text/whitespace/003.html
 fast/text/whitespace/004.html
@@ -3526,25 +4131,18 @@ fast/text/whitespace/028.html
 fast/text/whitespace/029.html
 fast/text/whitespace/030.html
 fast/text/whitespace/nbsp-mode-and-linewraps.html
-fast/text/whitespace/normal-after-nowrap-breaking.html
 fast/text/whitespace/nowrap-clear-float.html
-fast/text/whitespace/pre-break-word.html
 fast/text/whitespace/pre-newline-box-test.html
 fast/text/whitespace/pre-wrap-last-char.html
-fast/text/whitespace/pre-wrap-line-test.html
-fast/text/whitespace/pre-wrap-spaces-after-newline.html
 fast/text/whitespace/span-in-word-space-causes-overflow.html
-fast/text/whitespace/tab-character-basics.html
 fast/text/wide-zero-width-space.html
-fast/text/word-break.html
-fast/text/word-break-run-rounding.html
 fast/text/word-break-soft-hyphen.html
 fast/text/word-space.html
 fast/tokenizer/001.html
 fast/tokenizer/002.html
 fast/tokenizer/003.html
-fast/tokenizer/external-script-document-write_2.html
 fast/tokenizer/external-script-document-write.html
+fast/tokenizer/external-script-document-write_2.html
 fast/tokenizer/missing-title-end-tag-1.html
 fast/tokenizer/missing-title-end-tag-2.html
 fast/tokenizer/script_extra_close.html
@@ -3555,181 +4153,125 @@ fast/transforms/matrix-02.html
 fast/transforms/overflow-with-transform.html
 fast/transforms/shadows.html
 fast/transforms/skew-with-unitless-zero.html
+fast/transforms/transform-on-inline.html
+fast/transforms/transform-overflow.html
+fast/transforms/transform-table-row.html
 fast/transforms/transformed-caret.html
 fast/transforms/transformed-document-element.html
 fast/transforms/transformed-focused-text-input.html
-fast/transforms/transform-on-inline.html
-fast/transforms/transform-overflow.html
-fast/transforms/transform-positioned-ancestor.html
 fast/transforms/transforms-with-opacity.html
 fast/transforms/transforms-with-zoom.html
-fast/transforms/transform-table-row.html
+
+# ------- failures due to missing support for particular XSLT features
+# xsl:output
+fast/xsl/xslt-doc-enc.xml
+fast/xsl/xslt-url.xml
+fast/xsl/default-html.html
+fast/xsl/xslt-text.html
+fast/xsl/xslt-entity.xml
+fast/xsl/xslt-extra-content-at-end.xml
+# external entities support
+fast/xsl/dtd-in-source-document.xml
+fast/xsl/xslt-second-level-import.xml
+fast/parser/external-entities-in-xslt.xml
+# exslt:node-set() function
+fast/xsl/exslt-node-set.xml
+# xsl:import
+fast/xsl/import-after-comment.xml
+fast/xsl/xslt-import-depth.xml
+fast/xsl/xslt-nested-stylesheets.xml
+# xsl:attribute-set
+fast/xsl/mozilla-tests.xml
+# xsl:sort: lang and case-order
+fast/xsl/sort-locale.xml
+fast/xsl/sort-unicode.xml
+# output formatting issues (might be related to the lack of xsl:output support)
+fast/xsl/xslt-processor.html
+# to be investigated
+fast/xsl/xslt-enc16.xml
+fast/xsl/xslt-enc16to16.xml
+fast/xsl/xslt-enc-cyr.xml
+fast/xsl/xslt-enc.xml
+fast/xsl/xslt-relative-path.xml
+fast/xsl/xslt-missing-namespace-in-xslt.xml
+fast/xsl/xslt_unicode.xml
+
+fast/forms/drag-out-of-textarea.html
+fast/frames/frame-src-attribute.html
+fast/overflow/003.xml
+fast/text/international/bidi-menulist.html
+fast/text/international/wrap-CJK-001.html
+fast/xpath/string-value.html
+
+# ============================================================================= #
+# failing fonts tests
+# ============================================================================= #
 fonts/cursive.html
 fonts/default.html
 fonts/fantasy.html
 fonts/monospace.html
 fonts/sans-serif.html
 fonts/serif.html
-plugins/embed-attributes-style.html
 printing/return-from-printing-mode.html
+
+# ============================================================================= #
+# failing scrollbars tests
+# ============================================================================= #
 scrollbars/basic-scrollbar.html
 scrollbars/disabled-scrollbar.html
 scrollbars/listbox-scrollbar-combinations.html
 scrollbars/overflow-scrollbar-combinations.html
 scrollbars/scrollbar-buttons.html
 scrollbars/scrollbar-orientation.html
+
+# ============================================================================= #
+# failing security tests
+# ============================================================================= #
 security/block-test-no-port.html
-svg/batik/filters/filterRegions.svg
-svg/batik/masking/maskRegions.svg
-svg/batik/paints/gradientLimit.svg
-svg/batik/paints/patternPreserveAspectRatioA.svg
-svg/batik/paints/patternRegionA.svg
-svg/batik/paints/patternRegions.svg
-svg/batik/text/longTextOnPath.svg
-svg/batik/text/smallFonts.svg
-svg/batik/text/textAnchor2.svg
-svg/batik/text/textAnchor3.svg
-svg/batik/text/textAnchor.svg
-svg/batik/text/textDecoration2.svg
-svg/batik/text/textEffect2.svg
-svg/batik/text/textEffect3.svg
-svg/batik/text/textEffect.svg
-svg/batik/text/textFeatures.svg
-svg/batik/text/textGlyphOrientationHorizontal.svg
-svg/batik/text/textLayout2.svg
-svg/batik/text/textLayout.svg
-svg/batik/text/textLength.svg
-svg/batik/text/textOnPath2.svg
-svg/batik/text/textOnPath3.svg
-svg/batik/text/textOnPathSpaces.svg
-svg/batik/text/textOnPath.svg
-svg/batik/text/textPCDATA.svg
-svg/batik/text/textPosition2.svg
-svg/batik/text/textPosition.svg
-svg/batik/text/textProperties2.svg
-svg/batik/text/textProperties.svg
-svg/batik/text/textStyles.svg
-svg/batik/text/verticalTextOnPath.svg
-svg/batik/text/verticalText.svg
-svg/batik/text/xmlSpace.svg
-svg/css/css-box-min-width.html
-svg/custom/absolute-sized-svg-in-xhtml.xhtml
-svg/custom/alignment-baseline-modes.svg
-svg/custom/altglyph.svg
-svg/custom/animate-path-discrete.svg
-svg/custom/animate-path-morphing.svg
-svg/custom/circle-move-invalidation.svg
-svg/custom/class-baseValue.svg
-svg/custom/clip-path-referencing-use2.svg
-svg/custom/clip-path-referencing-use.svg
-svg/custom/container-opacity-clip-viewBox.svg
-svg/custom/dominant-baseline-hanging.svg
-svg/custom/dominant-baseline-modes.svg
-svg/custom/empty-clip-path.svg
-svg/custom/fill-fallback.svg
-svg/custom/fill-SVGPaint-interface.svg
-svg/custom/focus-ring.svg
-svg/custom/font-face-cascade-order.svg
-svg/custom/font-face-simple.svg
-svg/custom/foreignObject-crash-on-hover.xml
-svg/custom/getPresentationAttribute.svg
-svg/custom/glyph-selection-lang-attribute.svg
-svg/custom/gradient-rotated-bbox.svg
-svg/custom/group-opacity.svg
-svg/custom/hit-test-path.svg
-svg/custom/hit-test-unclosed-subpaths.svg
-svg/custom/hit-test-with-br.xhtml
-svg/custom/image-parent-translation.xhtml
-svg/custom/image-small-width-height.svg
-svg/custom/image-with-aspect-ratio-stretch.svg
-svg/custom/inline-svg-in-xhtml.xml
-svg/custom/invalid-lengthlist.svg
-svg/custom/js-update-image.svg
-svg/custom/js-update-transform-addition.svg
-svg/custom/js-update-transform-changes.svg
-svg/custom/linking-a-03-b-all.svg
-svg/custom/linking-a-03-b-preserveAspectRatio.svg
-svg/custom/linking-a-03-b-transform.svg
-svg/custom/linking-a-03-b-viewBox.svg
-svg/custom/linking-a-03-b-viewBox-transform.svg
-svg/custom/linking-a-03-b-viewTarget.svg
-svg/custom/linking-a-03-b-zoomAndPan.svg
-svg/custom/no-inherited-dashed-stroke.xhtml
-svg/custom/pattern-rotate.svg
-svg/custom/pattern-with-transformation.svg
-svg/custom/percentage-of-html-parent.xhtml
-svg/custom/repaint-on-image-bounds-change.svg
-svg/custom/resource-client-removal.svg
-svg/custom/root-container-opacity-clip-viewBox.svg
-svg/custom/scroll-hit-test.xhtml
-svg/custom/shape-rendering.svg
-svg/custom/stroked-pattern.svg
-svg/custom/stroke-fallback.svg
-svg/custom/style-attribute-font-size.svg
-svg/custom/svg-fonts-in-html.html
-svg/custom/SVGMatrix-interface.svg
-svg/custom/text-decoration-visibility.svg
-svg/custom/text-dom-01-f.svg
-svg/custom/text-letter-spacing.svg
-svg/custom/text-linking.svg
-svg/custom/text-x-dx-lists.svg
-svg/custom/text-x-override-in-tspan-child.svg
-svg/custom/text-xy-updates.svg
-svg/custom/transform-removeAttributeNS.svg
-svg/custom/use-css-no-effect-on-shadow-tree.svg
-svg/custom/use-detach.svg
-svg/custom/use-dynamic-append.svg
-svg/custom/use-on-disallowed-foreign-object-1.svg
-svg/custom/use-on-disallowed-foreign-object-2.svg
-svg/custom/use-on-disallowed-foreign-object-3.svg
-svg/custom/use-on-disallowed-foreign-object-4.svg
-svg/custom/use-on-disallowed-foreign-object-5.svg
-svg/custom/use-on-disallowed-foreign-object-6.svg
-svg/custom/use-on-g-containing-foreignObject-and-image.svg
-svg/custom/use-on-g-containing-symbol.svg
-svg/custom/use-on-non-svg-namespaced-element.svg
-svg/custom/use-setAttribute-crash.svg
-svg/hixie/dynamic/005.xml
-svg/hixie/error/004.xml
-svg/hixie/error/005.xml
-svg/hixie/error/013.xml
-svg/hixie/processing-model/003.xml
-svg/hixie/processing-model/004.xml
-svg/text/foreignObject-repaint.xml
-svg/text/kerning.svg
-svg/text/multichar-glyph.svg
-svg/text/text-align-01-b.svg
-svg/text/text-align-02-b.svg
-svg/text/text-align-03-b.svg
-svg/text/text-align-04-b.svg
-svg/text/text-align-05-b.svg
-svg/text/text-align-06-b.svg
-svg/text/text-altglyph-01-b.svg
-svg/text/text-deco-01-b.svg
-svg/text/text-fonts-01-t.svg
-svg/text/text-fonts-02-t.svg
-svg/text/text-gradient-positioning.svg
-svg/text/text-intro-05-t.svg
-svg/text/text-path-01-b.svg
-svg/text/textPathBoundsBug.svg
-svg/text/text-repaint-rects.xhtml
-svg/text/text-spacing-01-b.svg
-svg/text/text-text-01-b.svg
-svg/text/text-text-03-b.svg
-svg/text/text-text-04-t.svg
-svg/text/text-text-05-t.svg
-svg/text/text-text-06-t.svg
-svg/text/text-text-07-t.svg
-svg/text/text-text-08-b.svg
-svg/text/text-tref-01-b.svg
-svg/text/text-tselect-01-b.svg
-svg/text/text-tselect-02-f.svg
-svg/text/text-tspan-01-b.svg
-svg/text/text-ws-01-t.svg
-svg/text/text-ws-02-t.svg
-svg/transforms/animated-path-inside-transformed-html.xhtml
-svg/transforms/text-with-pattern-inside-transformed-html.xhtml
-svg/transforms/text-with-pattern-with-svg-transform.svg
+security/block-test.html
+
+# ============================================================================= #
+# failing tables tests
+# ============================================================================= #
+
+# -- fail with --platform mac --ignore-metrics
+tables/mozilla/bugs/bug194024.html
+tables/mozilla/bugs/bug2479-3.html
+tables/mozilla/bugs/bug2479-4.html
+tables/mozilla/bugs/bug30559.html
+tables/mozilla/bugs/bug30692.html
+tables/mozilla/bugs/bug46623-1.html
+tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html
+tables/mozilla_expected_failures/collapsing_borders/bug41262-6.html
+tables/mozilla/other/wa_table_tr_align.html
+
+# -- pass with --platform mac --ignore-metrics
+tables/mozilla/bugs/bug51140.html
+tables/mozilla/bugs/bug103533.html
+tables/mozilla/marvin/backgr_index.html
+tables/mozilla/marvin/backgr_layers-opacity.html
+tables/mozilla/marvin/backgr_position-table.html
+tables/mozilla/marvin/backgr_simple-table-cell.html
+tables/mozilla/marvin/backgr_simple-table-column-group.html
+tables/mozilla/marvin/backgr_simple-table-column.html
+tables/mozilla/marvin/backgr_simple-table-row-group.html
+tables/mozilla/marvin/backgr_simple-table-row.html
+tables/mozilla/marvin/backgr_simple-table.html
+tables/mozilla_expected_failures/marvin/backgr_border-table-cell.html
+tables/mozilla_expected_failures/marvin/backgr_border-table-column-group.html
+tables/mozilla_expected_failures/marvin/backgr_border-table-column.html
+tables/mozilla_expected_failures/marvin/backgr_border-table-quirks.html
+tables/mozilla_expected_failures/marvin/backgr_border-table-row-group.html
+tables/mozilla_expected_failures/marvin/backgr_border-table-row.html
+tables/mozilla_expected_failures/marvin/backgr_border-table.html
+tables/mozilla_expected_failures/marvin/backgr_fixed-bg.html
+tables/mozilla_expected_failures/marvin/backgr_layers-hide.html
+tables/mozilla_expected_failures/marvin/backgr_layers-show.html
+tables/mozilla_expected_failures/marvin/backgr_position-table-cell.html
+tables/mozilla_expected_failures/marvin/backgr_position-table-column-group.html
+tables/mozilla_expected_failures/marvin/backgr_position-table-column.html
+tables/mozilla_expected_failures/marvin/backgr_position-table-row-group.html
+tables/mozilla_expected_failures/marvin/backgr_position-table-row.html
 tables/mozilla/bugs/45621.html
 tables/mozilla/bugs/bug10009.html
 tables/mozilla/bugs/bug100334.html
@@ -3844,7 +4386,6 @@ tables/mozilla/bugs/bug18955.html
 tables/mozilla/bugs/bug19061-1.html
 tables/mozilla/bugs/bug19061-2.html
 tables/mozilla/bugs/bug19356.html
-tables/mozilla/bugs/bug194024.html
 tables/mozilla/bugs/bug19599.html
 tables/mozilla/bugs/bug2050.html
 tables/mozilla/bugs/bug20579.html
@@ -3881,8 +4422,6 @@ tables/mozilla/bugs/bug24661.html
 tables/mozilla/bugs/bug2469.html
 tables/mozilla/bugs/bug2479-1.html
 tables/mozilla/bugs/bug2479-2.html
-tables/mozilla/bugs/bug2479-3.html
-tables/mozilla/bugs/bug2479-4.html
 tables/mozilla/bugs/bug24880.html
 tables/mozilla/bugs/bug25004.html
 tables/mozilla/bugs/bug25074.html
@@ -3926,8 +4465,6 @@ tables/mozilla/bugs/bug30332-2.html
 tables/mozilla/bugs/bug3037-1.html
 tables/mozilla/bugs/bug3037-2.html
 tables/mozilla/bugs/bug30418.html
-tables/mozilla/bugs/bug30559.html
-tables/mozilla/bugs/bug30692.html
 tables/mozilla/bugs/bug30985.html
 tables/mozilla/bugs/bug3103.html
 tables/mozilla/bugs/bug3191.html
@@ -3986,7 +4523,6 @@ tables/mozilla/bugs/bug46368-1.html
 tables/mozilla/bugs/bug46368-2.html
 tables/mozilla/bugs/bug46480-1.html
 tables/mozilla/bugs/bug46480-2.html
-tables/mozilla/bugs/bug46623-1.html
 tables/mozilla/bugs/bug46623-2.html
 tables/mozilla/bugs/bug46924.html
 tables/mozilla/bugs/bug46944.html
@@ -4237,8 +4773,6 @@ tables/mozilla_expected_failures/bugs/bug92647-1.html
 tables/mozilla_expected_failures/bugs/bug92868_1.html
 tables/mozilla_expected_failures/bugs/bug9879-1.html
 tables/mozilla_expected_failures/collapsing_borders/bug41262-1.html
-tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html
-tables/mozilla_expected_failures/collapsing_borders/bug41262-6.html
 tables/mozilla_expected_failures/core/backgrounds.html
 tables/mozilla_expected_failures/core/captions1.html
 tables/mozilla_expected_failures/core/captions2.html
@@ -4625,449 +5159,67 @@ tables/mozilla/other/padding.html
 tables/mozilla/other/test3.html
 tables/mozilla/other/test6.html
 tables/mozilla/other/wa_table_thtd_rowspan.html
-tables/mozilla/other/wa_table_tr_align.html
+
+# ============================================================================= #
+# failing transforms tests
+# ============================================================================= #
+# -- fail with --platform mac --ignore-metrics
+transforms/2d/zoom-menulist.html
+# -- pass with --platform mac --ignore-metrics
 transforms/2d/compound-transforms-vs-containers.html
 transforms/2d/transform-borderbox.html
 transforms/2d/transform-origin-borderbox.html
-transforms/2d/zoom-menulist.html
 transforms/no_transform_hit_testing.html
-transitions/transition-drt-api.html
+transforms/2d/hindi-rotated.html
 
-# new skipped tests that need to be fixed/investigated
-
-dom/xhtml/level3/core/canonicalform08.xhtml
-dom/xhtml/level3/core/canonicalform09.xhtml
-editing/deleting/delete-ligature-001.html
-editing/deleting/delete-ligature-002.html
-editing/deleting/delete-ligature-003.html
-editing/inserting/5803706-1.html
-editing/inserting/5994480-2.html
-editing/selection/drag-start-event-client-x-y.html
-editing/selection/extend-selection-bidi.html
-editing/selection/hit-test-anonymous.html
-editing/selection/user-drag-element-and-user-select-none.html
-editing/style/apply-through-end-of-document.html
-fast/block/positioning/absolute-in-inline-rtl-4.html
-fast/canvas/canvas-composite-alpha.html
-fast/canvas/canvas-gradient-addStop-error.html
-fast/css/zoom-body-scroll.html
-fast/dom/cssTarget-crash.html
-fast/dom/Element/getBoundingClientRect.html
-fast/dom/Element/getClientRects.html
-fast/dom/Range/getBoundingClientRect.html
-fast/dom/Range/getClientRects.html
-fast/dom/tabindex-clamp.html
-fast/dom/HTMLScriptElement/nested-execution.html
-fast/dom/Window/webkitConvertPoint.html
-fast/encoding/char-encoding-mac.html
-fast/encoding/hebrew/8859-8-e.html
-fast/encoding/hebrew/8859-8-i.html
-fast/encoding/hebrew/logical.html
-fast/events/crash-on-mutate-during-drop.html
-fast/events/pointer-events-2.html
-fast/forms/option-mouseevents.html
-fast/forms/search-abs-pos-cancel-button.html
-fast/forms/text-control-intrinsic-widths.html
-fast/forms/textarea-metrics.html
-fast/history/window-open.html
-fast/loader/cancel-load-during-port-block-timer.html
-fast/loader/javascript-url-hierarchical-execution.html
-fast/loader/null-request-after-willSendRequest.html
-fast/loader/policy-delegate-action-hit-test-zoomed.html
-fast/loader/reload-policy-delegate.html
-platform/qt/fast/events/event-sender-keydown-frame.html
-svg/custom/svg-fonts-in-text-controls.html
-svg/custom/text-dom-removal.svg
-svg/custom/use-clipped-transform.svg
-svg/dom/length-list-parser.html
-editing/selection/extend-selection-after-double-click.html
-
+# ============================================================================= #
+# failing printing tests
+# ============================================================================= #
+printing/compositing-layer-printing.html
 # Printing related layout test failure has no results, but obvious error message
 # https://bugs.webkit.org/show_bug.cgi?id=27913
 printing/media-queries-print.html
 
-# Final four tests before Qt buildbot is green
-# https://bugs.webkit.org/show_bug.cgi?id=27914
-fast/css/positioned-overflow-scroll.html
-fast/dom/prototype-inheritance-2.html
-
-# Missing DRT ability to override 'standard' preferences.
-fast/dom/Window/timer-resume-on-navigation-back.html
-loader/go-back-to-different-window-size.html
-
-# This port doesn't support Geolocation.
-fast/dom/Geolocation
-
-# Missing DRT ability to set accept cookie policy
-http/tests/xmlhttprequest/cross-origin-cookie-storage.html
-
-# DOM exceptions don't seem to have a custom toString() handler
-# https://bugs.webkit.org/show_bug.cgi?id=28952
-fast/workers/worker-multi-port.html
-fast/workers/worker-context-multi-port.html
-
-# No User Scripts
-userscripts
-
-# No authentication challenge handling
-http/tests/loading/basic-credentials-sent-automatically.html
-http/tests/loading/basic-auth-resend-wrong-credentials.html
-
-# This port doesn't support detecting slow unload handlers.
-fast/dom/Window/slow-unload-handler.html
-fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
-
-# This port doesn't have a global history delegate yet
-http/tests/globalhistory
-
-# Skip xmlhttprequest tests - NETWORK_ERR: XMLHttpRequest Exception 101: A network error occured in synchronous requests.
-http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache.html
-http/tests/xmlhttprequest/access-control-basic-get-fail-non-simple.html
-http/tests/xmlhttprequest/access-control-response-with-body.html
-http/tests/xmlhttprequest/cross-origin-authorization.html
-http/tests/xmlhttprequest/cross-origin-no-authorization.html
-http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
-http/tests/xmlhttprequest/logout.html
-http/tests/xmlhttprequest/methods-async.html
-http/tests/xmlhttprequest/simple-cross-origin-denied-events-post.html
-http/tests/xmlhttprequest/workers/shared-worker-methods.html
-
-# Skip failing http/tests/misc tests
-http/tests/misc/acid3.html
-http/tests/misc/isindex-with-no-form-base-href.html
-http/tests/misc/isindex-with-no-form.html
-http/tests/misc/refresh-headers.php
-http/tests/misc/timer-vs-loading.html
-
-
-# Skip failing http/tests/security tests
-http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html
-http/tests/security/cross-frame-access-put.html
-http/tests/security/dataTransfer-set-data-file-url.html
-http/tests/security/drag-over-remote-content-iframe.html
-http/tests/security/host-compare-case-insensitive.html
-http/tests/security/xss-DENIED-xsl-document-redirect.xml
-http/tests/security/xss-DENIED-xsl-document.xml
-http/tests/security/aboutBlank/security-context-alias.html
-http/tests/security/aboutBlank/security-context-window-open.html
-http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
-http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html
-http/tests/security/frameNavigation/not-opener.html
-http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
-http/tests/security/frameNavigation/xss-DENIED-targeted-link-navigation.html
-http/tests/security/originHeader/origin-header-for-empty.html
-
-# XSSAuditor test that times out. See https://bugs.webkit.org/show_bug.cgi?id=33460.
-http/tests/security/xssAuditor/malformed-HTML.html
-
-# Caused by the way Qt caches network connections using user@hostname as the key
-# See https://bugs.webkit.org/show_bug.cgi?id=37084
-http/tests/xmlhttprequest/re-login-async.html
-http/tests/xmlhttprequest/re-login.html
-
-# Skip xmlhttprequest tests
-# Many of these tests exercise preflighted requests, which are not supported with Qt older than 4.7.
-http/tests/xmlhttprequest/XMLHttpRequestException.html
-http/tests/xmlhttprequest/access-control-and-redirects.html
-http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-header.html
-http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-method.html
-http/tests/xmlhttprequest/access-control-basic-non-simple-allow-async.html
-http/tests/xmlhttprequest/access-control-basic-non-simple-allow.html
-http/tests/xmlhttprequest/access-control-basic-non-simple-deny-cached.html
-http/tests/xmlhttprequest/access-control-basic-post-fail-non-simple-content-type.html
-http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html
-http/tests/xmlhttprequest/access-control-preflight-async-header-denied.html
-http/tests/xmlhttprequest/access-control-preflight-async-method-denied.html
-http/tests/xmlhttprequest/access-control-preflight-credential-async.html
-http/tests/xmlhttprequest/access-control-preflight-credential-sync.html
-http/tests/xmlhttprequest/access-control-preflight-headers-async.html
-http/tests/xmlhttprequest/access-control-preflight-headers-sync.html
-http/tests/xmlhttprequest/access-control-preflight-sync-header-denied.html
-http/tests/xmlhttprequest/access-control-preflight-sync-method-denied.html
-http/tests/xmlhttprequest/access-control-response-with-body-sync.html
-http/tests/xmlhttprequest/cache-override.html
-http/tests/xmlhttprequest/cookies.html
-http/tests/xmlhttprequest/methods-lower-case.html
-http/tests/xmlhttprequest/methods.html
-http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
-http/tests/xmlhttprequest/state-after-network-error.html
-http/tests/xmlhttprequest/workers/methods-async.html
-http/tests/xmlhttprequest/workers/methods.html
-http/tests/xmlhttprequest/workers/shared-worker-methods-async.html
-
-# Need rebaseline: https://bugs.webkit.org/show_bug.cgi?id=26830
-fast/multicol/single-line.html
-
-# Tests requiring 3D_RENDERING and ACCELERATED_COMPOSITING support
-transforms/3d
-compositing
-
-# validationMessage: https://bugs.webkit.org/show_bug.cgi?id=27959
-fast/forms/validationMessage.html
-
-# new tests without expected files
-editing/execCommand/indent-paragraphs.html
-editing/inserting/insert-bg-font.html
-editing/selection/transformed-selection-rects.html
-fast/css/color-correction-backgrounds-and-text.html
-fast/css/color-correction-on-background-image.html
-fast/css/color-correction-on-backgrounds.html
-fast/css/color-correction-on-box-shadow.html
-fast/css/color-correction-on-text-shadow.html
-fast/css/color-correction-on-text.html
-fast/css/color-correction-untagged-images.html
-fast/css/color-correction.html
-http/tests/misc/acid2-pixel.html
-http/tests/misc/acid2.html
-http/tests/misc/favicon-as-image.html
-http/tests/multipart/invalid-image-data.html
-svg/css/group-with-shadow.svg
-svg/filters/big-sized-filter-2.svg
-svg/filters/big-sized-filter.svg
-svg/filters/feDisplacementMap.svg
-svg/filters/filterRes.svg
-transforms/2d/hindi-rotated.html
+# ============================================================================= #
+# failing transitions tests
+# ============================================================================= #
 transitions/move-after-transition.html
 transitions/transition-end-event-rendering.html
+transitions/transition-drt-api.html
 
-# new test without expected file introduced by http://trac.webkit.org/changeset/51496
-svg/custom/mask-with-all-units.svg
+# ============================================================================= #
+# new skipped tests yet to be sorted
+# ============================================================================= #
 
-# new test without expected file introduced by http://trac.webkit.org/changeset/51549
-fast/css/namespaces/namespaces-comments.xml
+# new skipped tests that need to be fixed/investigated
+editing/style/apply-through-end-of-document.html
+platform/qt/fast/events/event-sender-keydown-frame.html
 
-# new test without expected file introduced by http://trac.webkit.org/changeset/51556
-fast/css/namespaces/namespaces-empty.xml
-
-# Failing tests due to
-# layoutTestController.notifyDone() bug
-# https://bugs.webkit.org/show_bug.cgi?id=31626
-fast/dom/javascript-url-crash-function.html
-fast/dom/location-new-window-no-crash.html
-http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html
-
-# Bunch of tests failing since a while on the Qt slave. Please investigate.
-css1/classification/white_space.html
-fast/block/positioning/relative-positioned-inline-container.html
-fast/repaint/block-selection-gap-in-composited-layer.html
-fast/repaint/block-selection-gap-in-table-cell.html
-fast/repaint/block-selection-gap-stale-cache-2.html
-fast/repaint/block-selection-gap-stale-cache.html
-fast/repaint/inline-overflow.html
-fast/repaint/inline-relative-positioned.html
-http/tests/misc/bubble-drag-events.html
-printing/compositing-layer-printing.html
-svg/css/composite-shadow-example.html
-svg/css/composite-shadow-with-opacity.html
-
-# CONSOLE MESSAGE: line 28: ReferenceError: Trying to access object from destroyed plug-in.
-# This test introduced in r51877
-fast/loader/input-element-page-cache-crash.html
-
-# Missing forward entries when dumping back/forward list.
-# https://bugs.webkit.org/show_bug.cgi?id=32470
-http/tests/navigation/dynamic-iframe-dynamic-form-back-entry.html
-http/tests/navigation/parsed-iframe-dynamic-form-back-entry.html
-
-# This test actually fails in manual testing.
-# It only passed automatic testing due to a bug in Qt's DRT, filed
-# under https://bugs.webkit.org/show_bug.cgi?id=32437.
-# The bug with this test is tracked under https://bugs.webkit.org/show_bug.cgi?id=32521
-http/tests/xmlhttprequest/access-control-basic-denied-preflight-cache.html
-
-# Missing variables:
-# SVGAltGlyphElement, SVGAnimateElement, SVGAnimateColorElement, SVGAnimateTransformElement
-# SVGFontElement, SVGGlyphElement, SVGMissingGlyphElement, SVGFontFaceElement, SVGFontFaceSrcElement
-# SVGFontFaceUriElement, SVGFontFaceFormatElement, SVGFontFaceNameElement, SVGForeignObjectElement
-# https://bugs.webkit.org/show_bug.cgi?id=32941
-svg/custom/global-constructors.html
-
-# DRT sideeffect - this test make http/tests/xmlhttprequest/null-auth.php fail:
-# https://bugs.webkit.org/show_bug.cgi?id=32961
-http/tests/xmlhttprequest/basic-auth-default.html 
-http/tests/xmlhttprequest/failed-auth.html
-
-# Slider tests that need new results
-fast/forms/slider-padding.html
-fast/forms/slider-thumb-shared-style.html
-fast/forms/slider-thumb-stylability.html
-fast/forms/slider-zoomed.html
-fast/forms/slider-mouse-events.html
-
-# Just needs pixel and rendering results generated by someone with this platform:
-fast/css/non-standard-checkbox-size.html
-
-# eventSender missing touchCancel() and cancelTouchPoint()
-fast/events/touch/send-oncancel-event.html
-
-# REGRESSION (r53450) - skipped until fix
-# https://bugs.webkit.org/show_bug.cgi?id=33834
-css1/box_properties/acid_test.html
-fast/forms/textarea-scrollbar-height.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=34004
-# [Qt] http/tests/misc/slow-loading-mask.html timed out.
-http/tests/misc/slow-loading-mask.html
-
-# skip Geolocation tests
-fast/dom/Window/window-properties-geolocation.html
-
-# skip failing history tests
-# https://bugs.webkit.org/show_bug.cgi?id=34167
-http/tests/history/redirect-301.pl
-http/tests/history/redirect-302.pl
-http/tests/history/redirect-303.pl
-http/tests/history/redirect-307.pl
-
-# small caps vs. normal text
-# https://bugs.webkit.org/show_bug.cgi?id=34286
-css2.1/t1505-c524-font-var-00-b.html
-
-# Relies on WebKit API [WebView _loadBackForwardListFromOtherView:]
-fast/loader/crash-copying-backforwardlist.html
-
-# Because ENABLE_DASHBOARD_SUPPORT=0 is the default option. (Apple's dashboard support in OS X)
-fast/css/dashboard-regions-attr-crash.html
-
-# Implement LayoutTestController::callShouldCloseOnWebView()
-fast/events/onbeforeunload-focused-iframe.html
-
-# Qt may want to follow GTK+ in adding a default Accept header for
-# subresources. See https://bugs.webkit.org/show_bug.cgi?id=33242.
-http/tests/misc/image-checks-for-accept.html
-
-# [Qt] fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html fails (DRT sideeffect)
-# https://bugs.webkit.org/show_bug.cgi?id=35086
-fast/xmlhttprequest/xmlhttprequest-no-file-access.html
-
-# Needs platform specific API implemented in DRT, maybe not relevant for non-Mac and non-Windows ports
-fast/loader/api-test-new-window-data-load-base-url.html
-fast/loader/api-test-go-to-current-back-forward-item.html
-
-# [Qt] editing tests fails after r54980
-# https://bugs.webkit.org/show_bug.cgi?id=35145
-editing/selection/extend-selection.html
-editing/selection/extend-after-mouse-selection.html
-
-# Needs to make sure the redirect-chain scenario in https://bugs.webkit.org/show_bug.cgi?id=31410 works
-# See https://bugs.webkit.org/show_bug.cgi?id=35301
-http/tests/loading/307-after-303-after-post.html
-
-# DumpRenderTree code to enable Java is currently a no-op
-java
-
-# https://bugs.webkit.org/show_bug.cgi?id=35824 - Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy
-http/tests/cookies/third-party-cookie-relaxing.html
-
-# For some reason crashes when run with all tests. Passes individually.
-fast/forms/multiple-form-submission-protection-mouse.html
-
-# It fails in DRT, but passes in QtLauncher
-# https://bugs.webkit.org/show_bug.cgi?id=35921
-editing/execCommand/move-selection-back-line.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=35973
-fast/multicol/hit-test-above-or-below.html
-
-# [Qt] Back-forward list dumping is incorrect
-# https://bugs.webkit.org/show_bug.cgi?id=36392
-fast/loader/frame-src-change-added-to-history.html
-fast/loader/frame-src-change-not-added-to-history.html
-fast/loader/frame-location-change-not-added-to-history.html
-
-# fast/loader/stateobjects/replacestate-in-iframe.html caused infinite loop
-# https://bugs.webkit.org/show_bug.cgi?id=36467
-fast/loader/stateobjects/replacestate-in-iframe.html
+# new tests without expected files
+editing/inserting/insert-bg-font.html
+editing/selection/transformed-selection-rects.html
 
 # [Qt] websocket/tests/long-invalid-header.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=36492
 websocket/tests/long-invalid-header.html
 
-# [Qt] REGRESSION: editing/selection/shrink-selection-after-shift-pagedown.html fails after 56567
-# https://bugs.webkit.org/show_bug.cgi?id=36628
-editing/selection/shrink-selection-after-shift-pagedown.html
-
-# Not sure why this is failing on Qt.
-# https://bugs.webkit.org/show_bug.cgi?id=37697
-fast/url/host.html
-
-# [Qt] lacks clipToImageBuffer()
-# https://bugs.webkit.org/show_bug.cgi?id=24289
-svg/clip-path
-svg/custom/clip-path-child-changes.svg
-svg/custom/clip-path-href-changes.svg
-svg/custom/clip-path-units-changes.svg
-svg/custom/clip-path-with-transform.svg
-svg/custom/recursive-clippath.svg
-svg/custom/marker-overflow-clip.svg
-
-# Doesn't support WOFF yet.
-fast/css/font-face-woff.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=38376
 media/media-document-audio-size.html
 
-# r58712 made fast/workers/worker-gc2.html crash. It seems to be a DRT sideeffect,
-# skipping worker-event-listener.html solve the problem until we find a real fix.
-# https://bugs.webkit.org/show_bug.cgi?id=38502
-fast/workers/worker-event-listener.html
-
-# [Qt] http/tests/security/cross-frame-access-name-getter.html timed out
-# https://bugs.webkit.org/show_bug.cgi?id=38540
-http/tests/security/cross-frame-access-name-getter.html
-
-# Failing Sputnik tests
-fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code
-fast/js/sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.12_Array_prototype_splice/S15.4.4.12_A2.1_T3.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T1.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T2.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T3.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T4.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T5.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T6.html
-fast/js/sputnik/Unicode/Unicode_500/S7.6_A3.1.html
-fast/js/sputnik/Unicode/Unicode_500/S7.6_A3.2.html
-fast/js/sputnik/Unicode/Unicode_500/S7.6_A5.3_T1.html
-fast/js/sputnik/Unicode/Unicode_500/S7.6_A5.3_T2.html
-fast/js/sputnik/Unicode/Unicode_510/S15.5.4.16_A1.html
-fast/js/sputnik/Unicode/Unicode_510/S15.5.4.18_A1.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A1.1_T1.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A1.1_T2.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A1.1_T4.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A2.2_T1.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A2.2_T2.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A2.3.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A3.1.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A3.2.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T1.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T2.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T4.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T7.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T8.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T9.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
-
-# Failing Sputnik tests on 32 bit
-fast/js/sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html
-
-# Failing Sputnik test on 64 bit
-fast/js/sputnik/Conformance/11_Expressions/11.5_Multiplicative_Operators/11.5.3_Applying_the_percent_Operator/S11.5.3_A4_T2.html
-
-# Timed out Sputnik tests on ARM
-fast/js/sputnik/Unicode/Unicode_218/S7.6_A3.1.html
-fast/js/sputnik/Unicode/Unicode_218/S7.6_A3.2.html
-fast/js/sputnik/Unicode/Unicode_218/S7.6_A5.3_T1.html
-fast/js/sputnik/Unicode/Unicode_218/S7.6_A5.3_T2.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=38656
-editing/selection/shift-click.html
-
+media/invalid-media-url-crash.html
+storage/transaction-success-callback-isolated-world.html
+fast/files/file-reader.html
+plugins/geturlnotify-during-document-teardown.html
+svg/W3C-SVG-1.1/filters-light-04-f.svg
+editing/selection/extend-selection-after-double-click.html
+# XSSAuditor test that times out. See https://bugs.webkit.org/show_bug.cgi?id=33460.
+http/tests/security/xssAuditor/malformed-HTML.html
+# DRT sideeffect - this test make http/tests/xmlhttprequest/null-auth.php fail:
+# https://bugs.webkit.org/show_bug.cgi?id=32961
+http/tests/xmlhttprequest/basic-auth-default.html
 # New test hangs QT bot
 # Discussed in https://bugs.webkit.org/show_bug.cgi?id=38928
 fast/loader/recursive-before-unload-crash.html 
-
 # Failed canvas tests from http://philip.html5.org/tests/canvas/suite/tests/
 canvas/philip/tests/2d.composite.operation.clear.html
 canvas/philip/tests/2d.composite.operation.darker.html
@@ -5213,29 +5365,19 @@ canvas/philip/tests/security.pattern.image.strokeStyle.html
 canvas/philip/tests/security.reset.html
 canvas/philip/tests/2d.drawImage.nonfinite.html
 canvas/philip/tests/2d.drawImage.broken.html
-
 # Need to dump context menu items on eventSender.contextClick(true).
 # https://bugs.webkit.org/show_bug.cgi?id=39103
 editing/spelling/context-menu-suggestions.html
-
 # IndexedDB is not yet enabled.
 storage/indexeddb
-
 # This port doesn't support DeviceOrientation.
 fast/dom/DeviceOrientation
 fast/dom/Window/window-properties-on-device-orientation.html
-
-# [Qt] need an implementation of LayoutTestController::computedStyleIncludingVisitedInfo
-# https://bugs.webkit.org/show_bug.cgi?id=37759
-fast/history/self-is-visited.html
-
 # [Qt] media/media-can-play-ogg.html crashes intermittently on the bot
 # https://bugs.webkit.org/show_bug.cgi?id=39481
 media/audio-only-video-intrinsic-size.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=39852
 fast/encoding/yentest.html
 fast/encoding/yentest2.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=40102
 editing/input/page-up-down-scrolls.html
