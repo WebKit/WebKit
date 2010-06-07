@@ -2553,6 +2553,11 @@ sub GenerateFunctionCallString()
             $result .= $indent . "EmptyScriptState state;\n";
             $callWithArg = "&state";
             $hasScriptState = 1;
+        } elsif ($callWith eq "ScriptExecutionContext") {
+            $result .= $indent . "ScriptExecutionContext* scriptContext = getScriptExecutionContext();\n";
+            $result .= $indent . "if (!scriptContext)\n";
+            $result .= $indent . "    return v8::Undefined();\n";
+            $callWithArg = "scriptContext";
         }
         $functionString .= ", " if $index;
         $functionString .= $callWithArg;

@@ -44249,11 +44249,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\storage\IDBObjectStore.cpp"
+				RelativePath="..\storage\IDBObjectStore.h"
 				>
 			</File>
 			<File
-				RelativePath="..\storage\IDBObjectStore.h"
+				RelativePath="..\storage\IDBObjectStoreImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBObjectStoreImpl.h"
 				>
 			</File>
 			<File

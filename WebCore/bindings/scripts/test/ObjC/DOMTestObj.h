@@ -80,6 +80,7 @@
 - (DOMTestObj *)withScriptStateObj;
 - (void)withScriptStateVoidException;
 - (DOMTestObj *)withScriptStateObjException;
+- (void)withScriptExecutionContext;
 - (void)methodWithOptionalArg:(int)opt;
 - (void)methodWithNonOptionalArgAndOptionalArg:(int)nonOpt opt:(int)opt;
 - (void)methodWithNonOptionalArgAndTwoOptionalArgs:(int)nonOpt opt1:(int)opt1 opt2:(int)opt2;

@@ -273,6 +273,14 @@ webkit_dom_test_obj_with_script_state_obj_exception(WebKitDOMTestObj* self, GErr
 }
 
 void
+webkit_dom_test_obj_with_script_execution_context(WebKitDOMTestObj* self)
+{
+    g_return_if_fail (self);
+    WebCore::TestObj * item = WebKit::core(self);
+    item->withScriptExecutionContext();
+}
+
+void
 webkit_dom_test_obj_method_with_optional_arg(WebKitDOMTestObj* self, glong opt)
 {
     g_return_if_fail (self);

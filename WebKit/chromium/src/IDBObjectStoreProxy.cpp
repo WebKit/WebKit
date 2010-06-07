@@ -24,63 +24,73 @@
  */
 
 #include "config.h"
-#include "IDBObjectStore.h"
+#include "IDBObjectStoreProxy.h"
 
 #include "DOMStringList.h"
 #include "IDBCallbacks.h"
-#include "IDBDatabaseException.h"
-#include "IDBIndexImpl.h"
+#include "WebIDBCallbacksImpl.h"
+#include "WebIDBObjectStore.h"
+#include <wtf/UnusedParam.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-IDBObjectStore::IDBObjectStore()
+PassRefPtr<IDBObjectStore> IDBObjectStoreProxy::create(PassOwnPtr<WebKit::WebIDBObjectStore> objectStore)
+{
+    return adoptRef(new IDBObjectStoreProxy(objectStore));
+}
+
+IDBObjectStoreProxy::IDBObjectStoreProxy(PassOwnPtr<WebKit::WebIDBObjectStore> objectStore)
+    : m_webIDBObjectStore(objectStore)
 {
 }
 
-IDBObjectStore::~IDBObjectStore()
+IDBObjectStoreProxy::~IDBObjectStoreProxy()
 {
 }
 
-PassRefPtr<DOMStringList> IDBObjectStore::indexNames() const
+String IDBObjectStoreProxy::name() const
 {
-    RefPtr<DOMStringList> indexNames = DOMStringList::create();
-    for (IndexMap::const_iterator it = m_indexes.begin(); it != m_indexes.end(); ++it)
-        indexNames->append(it->first);
-    return indexNames.release();
+    return m_webIDBObjectStore->name();
 }
 
-void IDBObjectStore::createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks> callbacks)
+String IDBObjectStoreProxy::keyPath() const
 {
-    if (m_indexes.contains(name)) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "Index name already exists."));
-        return;
-    }
-
-    RefPtr<IDBIndex> index = IDBIndexImpl::create(name, keyPath, unique);
-    ASSERT(index->name() == name);
-    m_indexes.set(name, index);
-    callbacks->onSuccess(index.release());
+    return m_webIDBObjectStore->keyPath();
 }
 
-PassRefPtr<IDBIndex> IDBObjectStore::index(const String& name)
+PassRefPtr<DOMStringList> IDBObjectStoreProxy::indexNames() const
 {
-    return m_indexes.get(name);
+    // FIXME: implement.
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
-void IDBObjectStore::removeIndex(const String& name, PassRefPtr<IDBCallbacks> callbacks)
+void IDBObjectStoreProxy::createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks>)
 {
-    if (!m_indexes.contains(name)) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_FOUND_ERR, "Index name does not exist."));
-        return;
-    }
+    // FIXME: implement.
+    UNUSED_PARAM(name);
+    UNUSED_PARAM(keyPath);
+    UNUSED_PARAM(unique);
+    ASSERT_NOT_REACHED();
+}
 
-    m_indexes.remove(name);
-    callbacks->onSuccess();
+PassRefPtr<IDBIndex> IDBObjectStoreProxy::index(const String& name)
+{
+    // FIXME: implement.
+    UNUSED_PARAM(name);
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+void IDBObjectStoreProxy::removeIndex(const String& name, PassRefPtr<IDBCallbacks>)
+{
+    // FIXME: implement.
+    UNUSED_PARAM(name);
+    ASSERT_NOT_REACHED();
 }
 
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-

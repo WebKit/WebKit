@@ -40,14 +40,13 @@ namespace WebCore {
 class DOMStringList;
 class IDBAny;
 class IDBIndexRequest;
-class ScriptExecutionContext;
 class SerializedScriptValue;
 
 class IDBObjectStoreRequest : public RefCounted<IDBObjectStoreRequest> {
 public:
-    static PassRefPtr<IDBObjectStoreRequest> create(ScriptExecutionContext* context, PassRefPtr<IDBObjectStore> idbObjectStore)
+    static PassRefPtr<IDBObjectStoreRequest> create(PassRefPtr<IDBObjectStore> idbObjectStore)
     {
-        return adoptRef(new IDBObjectStoreRequest(context, idbObjectStore));
+        return adoptRef(new IDBObjectStoreRequest(idbObjectStore));
     }
     ~IDBObjectStoreRequest() { }
 
@@ -66,10 +65,9 @@ public:
     PassRefPtr<IDBRequest> removeIndex(const String& name) const;
 
 private:
-    IDBObjectStoreRequest(ScriptExecutionContext*, PassRefPtr<IDBObjectStore>);
+    IDBObjectStoreRequest(PassRefPtr<IDBObjectStore>);
 
     RefPtr<IDBObjectStore> m_objectStore;
-    RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
     RefPtr<IDBAny> m_this;
 };
 

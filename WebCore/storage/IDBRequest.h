@@ -66,8 +66,8 @@ public:
     virtual void onSuccess(); // For "null".
     virtual void onSuccess(PassRefPtr<IDBDatabase>);
     virtual void onSuccess(PassRefPtr<IDBIndex>);
+    virtual void onSuccess(PassRefPtr<IDBObjectStore>);
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>);
-    // FIXME: Have one onSuccess function for each possible result type.
 
     // EventTarget
     virtual IDBRequest* toIDBRequest() { return this; }

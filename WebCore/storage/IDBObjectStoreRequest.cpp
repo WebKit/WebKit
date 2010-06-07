@@ -29,7 +29,6 @@
 #include "DOMStringList.h"
 #include "IDBAny.h"
 #include "IDBIndexRequest.h"
-#include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include <wtf/UnusedParam.h>
 
@@ -37,9 +36,8 @@
 
 namespace WebCore {
 
-IDBObjectStoreRequest::IDBObjectStoreRequest(ScriptExecutionContext* context, PassRefPtr<IDBObjectStore> idbObjectStore) 
+IDBObjectStoreRequest::IDBObjectStoreRequest(PassRefPtr<IDBObjectStore> idbObjectStore) 
     : m_objectStore(idbObjectStore)
-    , m_scriptExecutionContext(context)
 {
     m_this = IDBAny::create();
     m_this->set(this);

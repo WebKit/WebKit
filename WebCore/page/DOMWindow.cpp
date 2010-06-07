@@ -472,8 +472,6 @@ void DOMWindow::clear()
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
-    if (m_indexedDatabaseRequest)
-        m_indexedDatabaseRequest->disconnectFrame();
     m_indexedDatabaseRequest = 0;
 #endif
 }
@@ -673,7 +671,7 @@ IndexedDatabaseRequest* DOMWindow::indexedDB() const
 
     // FIXME: See if indexedDatabase access is allowed.
 
-    m_indexedDatabaseRequest = IndexedDatabaseRequest::create(page->group().indexedDatabase(), m_frame);
+    m_indexedDatabaseRequest = IndexedDatabaseRequest::create(page->group().indexedDatabase());
     return m_indexedDatabaseRequest.get();
 }
 #endif

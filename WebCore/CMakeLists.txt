@@ -1370,7 +1370,7 @@ SET(WebCore_SOURCES
     storage/IDBErrorEvent.cpp
     storage/IDBEvent.cpp
     storage/IDBRequest.cpp
-    storage/IDBObjectStore.cpp
+    storage/IDBObjectStoreImpl.cpp
     storage/IDBObjectStoreRequest.cpp
     storage/IDBSuccessEvent.cpp
     storage/IndexedDatabase.cpp

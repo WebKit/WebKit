@@ -27,7 +27,9 @@
 #include "WebIDBDatabaseImpl.h"
 
 #include "DOMStringList.h"
+#include "IDBCallbacksProxy.h"
 #include "IDBDatabase.h"
+#include "WebIDBCallbacks.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -62,6 +64,11 @@ WebString WebIDBDatabaseImpl::version()
 WebDOMStringList WebIDBDatabaseImpl::objectStores()
 {
     return m_idbDatabase->objectStores();
+}
+
+void WebIDBDatabaseImpl::createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, WebIDBCallbacks* callbacks)
+{
+    m_idbDatabase->createObjectStore(name, keyPath, autoIncrement, IDBCallbacksProxy::create(callbacks));
 }
 
 } // namespace WebCore

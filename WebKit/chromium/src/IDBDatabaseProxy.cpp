@@ -27,6 +27,9 @@
 #include "IDBDatabaseProxy.h"
 
 #include "DOMStringList.h"
+#include "IDBCallbacks.h"
+#include "WebFrameImpl.h"
+#include "WebIDBCallbacksImpl.h"
 #include "WebIDBDatabase.h"
 #include "WebIDBDatabaseError.h"
 
@@ -66,6 +69,11 @@ String IDBDatabaseProxy::version()
 PassRefPtr<DOMStringList> IDBDatabaseProxy::objectStores()
 {
     return m_webIDBDatabase->objectStores();
+}
+
+void IDBDatabaseProxy::createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks> callbacks)
+{
+    m_webIDBDatabase->createObjectStore(name, keyPath, autoIncrement, new WebIDBCallbacksImpl(callbacks));
 }
 
 } // namespace WebCore

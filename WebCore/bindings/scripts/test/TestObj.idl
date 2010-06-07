@@ -87,6 +87,7 @@ module test {
             raises(DOMException);
         [CallWith=ScriptState] TestObj withScriptStateObjException()
             raises(DOMException);
+        [CallWith=ScriptExecutionContext] void withScriptExecutionContext();
 
         // 'Optional' extended attribute
         void    methodWithOptionalArg(in [Optional] long opt);

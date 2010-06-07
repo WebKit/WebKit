@@ -110,6 +110,9 @@ WEBKIT_API WebKitDOMTestObj*
 webkit_dom_test_obj_with_script_state_obj_exception(WebKitDOMTestObj* self, GError **error);
 
 WEBKIT_API void
+webkit_dom_test_obj_with_script_execution_context(WebKitDOMTestObj* self);
+
+WEBKIT_API void
 webkit_dom_test_obj_method_with_optional_arg(WebKitDOMTestObj* self, glong opt);
 
 WEBKIT_API void

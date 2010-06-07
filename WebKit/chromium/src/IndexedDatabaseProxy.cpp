@@ -59,8 +59,6 @@ IndexedDatabaseProxy::~IndexedDatabaseProxy()
 
 void IndexedDatabaseProxy::open(const String& name, const String& description, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> origin, Frame* frame)
 {
-    if (!frame || !frame->document())
-        return;
     WebKit::WebFrame* webFrame = WebKit::WebFrameImpl::fromFrame(frame);
     m_webIndexedDatabase->open(name, description, new WebIDBCallbacksImpl(callbacks), origin, webFrame);
 }

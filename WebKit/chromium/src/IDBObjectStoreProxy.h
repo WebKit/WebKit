@@ -23,33 +23,44 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBCallbacks_h
-#define WebIDBCallbacks_h
+#ifndef IDBObjectStoreProxy_h
+#define IDBObjectStoreProxy_h
 
-#include "WebCommon.h"
+#include "IDBObjectStore.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
 
-namespace WebKit {
+#if ENABLE(INDEXED_DATABASE)
 
-class WebIDBDatabase;
-class WebIDBDatabaseError;
-class WebIDBIndex;
-class WebIDBObjectStore;
-class WebSerializedScriptValue;
+namespace WebKit { class WebIDBObjectStore; }
 
-class WebIDBCallbacks {
+namespace WebCore {
+
+class DOMStringList;
+class IDBIndex;
+
+class IDBObjectStoreProxy : public IDBObjectStore {
 public:
-    virtual ~WebIDBCallbacks() { }
+    static PassRefPtr<IDBObjectStore> create(PassOwnPtr<WebKit::WebIDBObjectStore>);
+    virtual ~IDBObjectStoreProxy();
 
-    // For classes that follow the PImpl pattern, pass a const reference.
-    // For the rest, pass ownership to the callee via a pointer.
-    virtual void onError(const WebIDBDatabaseError&) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void onSuccess() { WEBKIT_ASSERT_NOT_REACHED(); } // For "null".
-    virtual void onSuccess(WebIDBDatabase*) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void onSuccess(WebIDBIndex*) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void onSuccess(WebIDBObjectStore*) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void onSuccess(const WebSerializedScriptValue&) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual String name() const;
+    virtual String keyPath() const;
+    virtual PassRefPtr<DOMStringList> indexNames() const;
+    virtual void createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks>);
+    virtual PassRefPtr<IDBIndex> index(const String& name);
+    virtual void removeIndex(const String& name, PassRefPtr<IDBCallbacks>);
+
+private:
+    IDBObjectStoreProxy(PassOwnPtr<WebKit::WebIDBObjectStore>);
+
+    OwnPtr<WebKit::WebIDBObjectStore> m_webIDBObjectStore;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
-#endif // WebIDBCallbacks_h
+#endif
+
+#endif // IDBObjectStoreProxy_h
+

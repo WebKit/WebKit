@@ -716,7 +716,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	storage/IDBEvent.cpp \
 	storage/IDBIndexImpl.cpp \
 	storage/IDBIndexRequest.cpp \
-	storage/IDBObjectStore.cpp \
+	storage/IDBObjectStoreImpl.cpp \
 	storage/IDBObjectStoreRequest.cpp \
 	storage/IDBRequest.cpp \
 	storage/IDBSuccessEvent.cpp \

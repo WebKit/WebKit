@@ -35,7 +35,8 @@
 namespace WebCore {
 
 class DOMStringList;
-
+class Frame;
+class IDBCallbacks;
 // This class is shared by IDBDatabaseRequest (async) and IDBDatabaseSync (sync).
 // This is implemented by IDBDatabaseImpl and optionally others (in order to proxy
 // calls across process barriers). All calls to these classes should be non-blocking and
@@ -48,6 +49,7 @@ public:
     virtual String description() = 0;
     virtual String version() = 0;
     virtual PassRefPtr<DOMStringList> objectStores() = 0;
+    virtual void createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks>) = 0;
 };
 
 } // namespace WebCore

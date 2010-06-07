@@ -2513,8 +2513,9 @@ webcore_sources += \
 	WebCore/storage/IDBIndexImpl.h \
 	WebCore/storage/IDBIndexRequest.cpp \
 	WebCore/storage/IDBIndexRequest.h \
-	WebCore/storage/IDBObjectStore.cpp \
 	WebCore/storage/IDBObjectStore.h \
+	WebCore/storage/IDBObjectStoreImpl.cpp \
+	WebCore/storage/IDBObjectStoreImpl.h \
 	WebCore/storage/IDBObjectStoreRequest.cpp \
 	WebCore/storage/IDBObjectStoreRequest.h \
 	WebCore/storage/IDBRequest.cpp \

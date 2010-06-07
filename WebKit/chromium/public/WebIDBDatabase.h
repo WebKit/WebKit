@@ -31,6 +31,9 @@
 
 namespace WebKit {
 
+class WebFrame;
+class WebIDBCallbacks;
+
 // See comment in WebIndexedDatabase for a high level overview of these classes.
 class WebIDBDatabase {
 public:
@@ -55,6 +58,10 @@ public:
     {
         WEBKIT_ASSERT_NOT_REACHED();
         return WebDOMStringList();
+    }
+    virtual void createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, WebIDBCallbacks*)
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
     }
 };
 

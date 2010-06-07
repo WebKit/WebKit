@@ -23,33 +23,37 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBCallbacks_h
-#define WebIDBCallbacks_h
+#include "config.h"
+#include "WebIDBObjectStoreImpl.h"
 
-#include "WebCommon.h"
+#include "IDBCallbacksProxy.h"
+#include "IDBObjectStore.h"
+
+#if ENABLE(INDEXED_DATABASE)
+
+using namespace WebCore;
 
 namespace WebKit {
 
-class WebIDBDatabase;
-class WebIDBDatabaseError;
-class WebIDBIndex;
-class WebIDBObjectStore;
-class WebSerializedScriptValue;
+WebIDBObjectStoreImpl::WebIDBObjectStoreImpl(PassRefPtr<IDBObjectStore> idbObjectStore)
+    : m_idbObjectStore(idbObjectStore)
+{
+}
 
-class WebIDBCallbacks {
-public:
-    virtual ~WebIDBCallbacks() { }
+WebIDBObjectStoreImpl::~WebIDBObjectStoreImpl()
+{
+}
 
-    // For classes that follow the PImpl pattern, pass a const reference.
-    // For the rest, pass ownership to the callee via a pointer.
-    virtual void onError(const WebIDBDatabaseError&) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void onSuccess() { WEBKIT_ASSERT_NOT_REACHED(); } // For "null".
-    virtual void onSuccess(WebIDBDatabase*) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void onSuccess(WebIDBIndex*) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void onSuccess(WebIDBObjectStore*) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void onSuccess(const WebSerializedScriptValue&) { WEBKIT_ASSERT_NOT_REACHED(); }
-};
+WebString WebIDBObjectStoreImpl::name() const
+{
+    return m_idbObjectStore->name();
+}
 
-} // namespace WebKit
+WebString WebIDBObjectStoreImpl::keyPath() const
+{
+    return m_idbObjectStore->keyPath();
+}
 
-#endif // WebIDBCallbacks_h
+} // namespace WebCore
+
+#endif // ENABLE(INDEXED_DATABASE)

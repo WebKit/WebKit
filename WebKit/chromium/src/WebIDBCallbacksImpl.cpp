@@ -30,10 +30,12 @@
 #include "IDBDatabaseError.h"
 #include "IDBDatabaseProxy.h"
 #include "IDBIndexProxy.h"
+#include "IDBObjectStoreProxy.h"
 #include "WebIDBCallbacks.h"
 #include "WebIDBDatabase.h"
 #include "WebIDBDatabaseError.h"
 #include "WebIDBIndex.h"
+#include "WebIDBObjectStore.h"
 #include "WebSerializedScriptValue.h"
 
 #if ENABLE(INDEXED_DATABASE)
@@ -70,6 +72,12 @@ void WebIDBCallbacksImpl::onSuccess(WebKit::WebIDBDatabase* webKitInstance)
 void WebIDBCallbacksImpl::onSuccess(WebKit::WebIDBIndex* webKitInstance)
 {
     m_callbacks->onSuccess(IDBIndexProxy::create(webKitInstance));
+    m_callbacks.clear();
+}
+
+void WebIDBCallbacksImpl::onSuccess(WebKit::WebIDBObjectStore* webKitInstance)
+{
+    m_callbacks->onSuccess(IDBObjectStoreProxy::create(webKitInstance));
     m_callbacks.clear();
 }
 

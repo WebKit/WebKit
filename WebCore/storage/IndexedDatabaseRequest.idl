@@ -28,7 +28,7 @@ module storage {
     interface [
         Conditional=INDEXED_DATABASE
     ] IndexedDatabaseRequest {
-        IDBRequest open(in DOMString name, in DOMString description);
+        [CallWith=ScriptExecutionContext] IDBRequest open(in DOMString name, in DOMString description);
     };
 
 }

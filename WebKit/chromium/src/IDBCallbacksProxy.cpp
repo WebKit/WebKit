@@ -35,6 +35,7 @@
 #include "WebIDBDatabaseImpl.h"
 #include "WebIDBDatabaseError.h"
 #include "WebIDBIndexImpl.h"
+#include "WebIDBObjectStoreImpl.h"
 #include "WebSerializedScriptValue.h"
 
 #if ENABLE(INDEXED_DATABASE)
@@ -76,6 +77,12 @@ void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBDatabase> idbDatabase)
 void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBIndex> idbIndex)
 {
     m_callbacks->onSuccess(new WebKit::WebIDBIndexImpl(idbIndex));
+    m_callbacks.clear();
+}
+
+void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBObjectStore> idbObjectStore)
+{
+    m_callbacks->onSuccess(new WebKit::WebIDBObjectStoreImpl(idbObjectStore));
     m_callbacks.clear();
 }
 

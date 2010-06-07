@@ -34,6 +34,8 @@ module storage {
         // readonly attribute DOMString description;
         readonly attribute DOMString version;
         readonly attribute DOMStringList objectStores;
+
+        [CallWith=ScriptExecutionContext] IDBRequest createObjectStore(in DOMString name, in [Optional] DOMString path, in [Optional] boolean autoIncrement);
     };
 
 }

@@ -23,33 +23,46 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBCallbacks_h
-#define WebIDBCallbacks_h
+#ifndef IDBObjectStoreImpl_h
+#define IDBObjectStoreImpl_h
 
-#include "WebCommon.h"
+#include "IDBObjectStore.h"
+#include "PlatformString.h"
+#include <wtf/Threading.h>
 
-namespace WebKit {
+#if ENABLE(INDEXED_DATABASE)
 
-class WebIDBDatabase;
-class WebIDBDatabaseError;
-class WebIDBIndex;
-class WebIDBObjectStore;
-class WebSerializedScriptValue;
+namespace WebCore {
 
-class WebIDBCallbacks {
+class IDBObjectStoreImpl : public IDBObjectStore {
 public:
-    virtual ~WebIDBCallbacks() { }
+    static PassRefPtr<IDBObjectStore> create(const String& name, const String& keyPath, bool autoIncrement)
+    {
+        return adoptRef(new IDBObjectStoreImpl(name, keyPath, autoIncrement));
+    }
+    virtual ~IDBObjectStoreImpl();
 
-    // For classes that follow the PImpl pattern, pass a const reference.
-    // For the rest, pass ownership to the callee via a pointer.
-    virtual void onError(const WebIDBDatabaseError&) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void onSuccess() { WEBKIT_ASSERT_NOT_REACHED(); } // For "null".
-    virtual void onSuccess(WebIDBDatabase*) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void onSuccess(WebIDBIndex*) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void onSuccess(WebIDBObjectStore*) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void onSuccess(const WebSerializedScriptValue&) { WEBKIT_ASSERT_NOT_REACHED(); }
+    String name() const { return m_name; }
+    String keyPath() const { return m_keyPath; }
+    PassRefPtr<DOMStringList> indexNames() const;
+
+    void createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks>);
+    PassRefPtr<IDBIndex> index(const String& name);
+    void removeIndex(const String& name, PassRefPtr<IDBCallbacks>);
+
+private:
+    IDBObjectStoreImpl(const String& name, const String& keyPath, bool autoIncrement);
+
+    String m_name;
+    String m_keyPath;
+    bool m_autoIncrement;
+
+    typedef HashMap<String, RefPtr<IDBIndex> > IndexMap;
+    IndexMap m_indexes;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
-#endif // WebIDBCallbacks_h
+#endif
+
+#endif // IDBObjectStoreImpl_h

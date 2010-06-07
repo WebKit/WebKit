@@ -1,3 +1,76 @@
+2010-06-07  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [indexedDB] It is impossible to create object stores
+        https://bugs.webkit.org/show_bug.cgi?id=40054
+
+        No new tests. Layout tests will be added separately.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_with_script_execution_context):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContext):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj withScriptExecutionContext]):
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::withScriptExecutionContextCallback):
+        (WebCore::):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::clear):
+        (WebCore::DOMWindow::indexedDB):
+        * storage/IDBCallbacks.h:
+        * storage/IDBDatabase.h:
+        * storage/IDBDatabaseImpl.cpp:
+        (WebCore::IDBDatabaseImpl::createObjectStore):
+        * storage/IDBDatabaseImpl.h:
+        * storage/IDBDatabaseRequest.cpp:
+        (WebCore::IDBDatabaseRequest::IDBDatabaseRequest):
+        (WebCore::IDBDatabaseRequest::createObjectStore):
+        * storage/IDBDatabaseRequest.h:
+        * storage/IDBDatabaseRequest.idl:
+        * storage/IDBObjectStore.cpp: Removed.
+        * storage/IDBObjectStore.h:
+        (WebCore::IDBObjectStore::~IDBObjectStore):
+        * storage/IDBObjectStoreImpl.cpp: Added.
+        (WebCore::IDBObjectStoreImpl::~IDBObjectStoreImpl):
+        (WebCore::IDBObjectStoreImpl::IDBObjectStoreImpl):
+        (WebCore::IDBObjectStoreImpl::indexNames):
+        (WebCore::IDBObjectStoreImpl::createIndex):
+        (WebCore::IDBObjectStoreImpl::index):
+        (WebCore::IDBObjectStoreImpl::removeIndex):
+        * storage/IDBObjectStoreImpl.h: Added.
+        (WebCore::IDBObjectStoreImpl::create):
+        (WebCore::IDBObjectStoreImpl::name):
+        (WebCore::IDBObjectStoreImpl::keyPath):
+        * storage/IDBObjectStoreRequest.cpp:
+        (WebCore::IDBObjectStoreRequest::IDBObjectStoreRequest):
+        * storage/IDBObjectStoreRequest.h:
+        (WebCore::IDBObjectStoreRequest::create):
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess):
+        * storage/IDBRequest.h:
+        * storage/IndexedDatabaseRequest.cpp:
+        (WebCore::IndexedDatabaseRequest::IndexedDatabaseRequest):
+        (WebCore::IndexedDatabaseRequest::open):
+        * storage/IndexedDatabaseRequest.h:
+        (WebCore::IndexedDatabaseRequest::create):
+        * storage/IndexedDatabaseRequest.idl:
+
 2010-06-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Updated run-bindings-tests results.

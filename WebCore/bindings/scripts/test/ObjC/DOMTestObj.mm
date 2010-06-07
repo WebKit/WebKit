@@ -370,6 +370,12 @@
     return result;
 }
 
+- (void)withScriptExecutionContext
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->withScriptExecutionContext();
+}
+
 - (void)methodWithOptionalArg:(int)opt
 {
     WebCore::JSMainThreadNullState state;

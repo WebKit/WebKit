@@ -24,46 +24,66 @@
  */
 
 #include "config.h"
-#include "IDBDatabaseImpl.h"
+#include "IDBObjectStoreImpl.h"
 
 #include "DOMStringList.h"
+#include "IDBCallbacks.h"
 #include "IDBDatabaseException.h"
-#include "IDBObjectStoreImpl.h"
+#include "IDBIndexImpl.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-IDBDatabaseImpl::IDBDatabaseImpl(const String& name, const String& description, const String& version)
+IDBObjectStoreImpl::~IDBObjectStoreImpl()
+{
+}
+
+IDBObjectStoreImpl::IDBObjectStoreImpl(const String& name, const String& keyPath, bool autoIncrement)
     : m_name(name)
-    , m_description(description)
-    , m_version(version)
+    , m_keyPath(keyPath)
+    , m_autoIncrement(autoIncrement)
 {
 }
 
-IDBDatabaseImpl::~IDBDatabaseImpl()
+PassRefPtr<DOMStringList> IDBObjectStoreImpl::indexNames() const
 {
+    RefPtr<DOMStringList> indexNames = DOMStringList::create();
+    for (IndexMap::const_iterator it = m_indexes.begin(); it != m_indexes.end(); ++it)
+        indexNames->append(it->first);
+    return indexNames.release();
 }
 
-PassRefPtr<DOMStringList> IDBDatabaseImpl::objectStores()
+void IDBObjectStoreImpl::createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks> callbacks)
 {
-    // FIXME: This should return the actual list.
-    return DOMStringList::create();
-}
-
-void IDBDatabaseImpl::createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks> callbacks)
-{
-    if (m_objectStores.contains(name)) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "ObjectStore name already exists."));
+    if (m_indexes.contains(name)) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "Index name already exists."));
         return;
     }
 
-    RefPtr<IDBObjectStore> objectStore = IDBObjectStoreImpl::create(name, keyPath, autoIncrement);
-    m_objectStores.set(name, objectStore);
-    callbacks->onSuccess(objectStore.release());
+    RefPtr<IDBIndex> index = IDBIndexImpl::create(name, keyPath, unique);
+    ASSERT(index->name() == name);
+    m_indexes.set(name, index);
+    callbacks->onSuccess(index.release());
+}
+
+PassRefPtr<IDBIndex> IDBObjectStoreImpl::index(const String& name)
+{
+    return m_indexes.get(name);
+}
+
+void IDBObjectStoreImpl::removeIndex(const String& name, PassRefPtr<IDBCallbacks> callbacks)
+{
+    if (!m_indexes.contains(name)) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_FOUND_ERR, "Index name does not exist."));
+        return;
+    }
+
+    m_indexes.remove(name);
+    callbacks->onSuccess();
 }
 
 
 } // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE)
+#endif
