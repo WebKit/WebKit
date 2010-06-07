@@ -32,8 +32,8 @@
 #include "config.h"
 #include "NotificationPresenterClientQt.h"
 
-#include "DumpRenderTreeSupportQt.h"
 #include "Document.h"
+#include "DumpRenderTreeSupportQt.h"
 #include "EventNames.h"
 #include "KURL.h"
 #include "SecurityOrigin.h"
@@ -97,9 +97,8 @@ bool NotificationPresenterClientQt::show(Notification* notification)
     if (notification->scriptExecutionContext()->isWorkerContext())
         return false;
     notification->setPendingActivity(notification);
-    if (!notification->replaceId().isEmpty()) {
+    if (!notification->replaceId().isEmpty())
         removeReplacedNotificationFromQueue(notification);
-    }
     if (dumpNotification)
         dumpShowText(notification);
     displayNotification(notification, QByteArray());
