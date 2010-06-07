@@ -1892,7 +1892,7 @@ sub GenerateImplementation
                         } elsif ($callWith eq "ScriptExecutionContext") {
                             push(@implContent, "    ScriptExecutionContext* scriptContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();\n");
                             push(@implContent, "    if (!scriptContext)\n");
-                            push(@implContent, "        return jsUndefined();\n");
+                            push(@implContent, "        return JSValue::encode(jsUndefined());\n");
                             $callWithArg = "scriptContext"; 
                         }
                         $functionString .= ", " if $paramIndex;

@@ -1,3 +1,28 @@
+2010-06-07  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        run-bindings-tests results broken by Changeset 60776
+        https://bugs.webkit.org/show_bug.cgi?id=40230
+
+        The change to CodeGeneratorJS.pm in 
+        http://trac.webkit.org/changeset/60776/trunk/WebCore/bindings/scripts/CodeGeneratorJS.pm
+        added the possibility to use [CallWith=ScriptExecutionContext] in idl files.
+
+        Before the above change was submitted, CodeGeneratorJS.pm was modified so that native
+        functions return EncodedJSValue instead of JSValues. This was done in
+        http://trac.webkit.org/changeset/60631/trunk/WebCore/bindings/scripts/CodeGeneratorJS.pm
+
+        This CL updates the CodeGeneratorJS.pm to correctly return an EncodedJSValue in the case
+        where the ScriptExecutionContext pointer is 0 at the time when the native function is invoked.
+
+        No new tests, just fixing run-bindings-tests.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContext):
+        * bindings/scripts/test/JS/JSTestObj.h:
+
 2010-06-07  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.

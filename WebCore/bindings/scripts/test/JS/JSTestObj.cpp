@@ -760,17 +760,16 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObjExcepti
     return JSValue::encode(result);
 }
 
-
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContext(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     if (!thisValue.inherits(&JSTestObj::s_info))
-        return throwError(exec, TypeError);
+        return throwVMTypeError(exec);
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
     ScriptExecutionContext* scriptContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
-        return jsUndefined();
+        return JSValue::encode(jsUndefined());
 
     imp->withScriptExecutionContext(scriptContext);
     return JSValue::encode(jsUndefined());
