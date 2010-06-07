@@ -1,3 +1,35 @@
+2010-06-07  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Implement JSON parsing for InspectorValue.
+        https://bugs.webkit.org/show_bug.cgi?id=40064
+
+        * inspector/InspectorValues.cpp:
+        (WebCore::):
+        (WebCore::InspectorValue::asBool):
+        (WebCore::InspectorValue::asNumber):
+        (WebCore::InspectorValue::asString):
+        (WebCore::InspectorValue::asObject):
+        (WebCore::InspectorValue::asArray):
+        (WebCore::InspectorValue::readJSON):
+        (WebCore::InspectorValue::writeJSON):
+        (WebCore::InspectorBasicValue::asBool):
+        (WebCore::InspectorBasicValue::asNumber):
+        (WebCore::InspectorBasicValue::writeJSON):
+        (WebCore::InspectorString::asString):
+        (WebCore::InspectorObject::asObject):
+        (WebCore::InspectorObject::getBool):
+        (WebCore::InspectorObject::getNumber):
+        (WebCore::InspectorObject::getString):
+        (WebCore::InspectorObject::getObject):
+        (WebCore::InspectorObject::getArray):
+        (WebCore::InspectorObject::get):
+        (WebCore::InspectorArray::asArray):
+        * inspector/InspectorValues.h:
+        (WebCore::InspectorObject::begin):
+        (WebCore::InspectorObject::end):
+
 2010-06-07  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.

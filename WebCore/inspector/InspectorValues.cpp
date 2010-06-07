@@ -35,6 +35,407 @@
 
 namespace WebCore {
 
+namespace {
+
+static const int stackLimit = 1000;
+
+enum Token {
+    OBJECT_BEGIN,
+    OBJECT_END,
+    ARRAY_BEGIN,
+    ARRAY_END,
+    STRING,
+    NUMBER,
+    BOOL_TRUE,
+    BOOL_FALSE,
+    NULL_TOKEN,
+    LIST_SEPARATOR,
+    OBJECT_PAIR_SEPARATOR,
+    INVALID_TOKEN,
+};
+    
+const char* const nullString = "null";
+const char* const trueString = "true";
+const char* const falseString = "false";
+
+bool parseConstToken(const UChar* start, const UChar* end, const UChar** tokenEnd, const char* token)
+{
+    while (start < end && *token != '\0' && *start++ == *token++) { }
+    if (*token != '\0')
+        return false;
+    *tokenEnd = start;
+    return true;
+}
+
+bool readInt(const UChar* start, const UChar* end, const UChar** tokenEnd, bool canHaveLeadingZeros)
+{
+    if (start == end)
+        return false;
+    bool haveLeadingZero = '0' == *start;
+    int length = 0;
+    while (start < end && '0' <= *start && *start <= '9') {
+        ++start;
+        ++length;
+    }
+    if (!length)
+        return false;
+    if (!canHaveLeadingZeros && length > 1 && haveLeadingZero)
+        return false;
+    *tokenEnd = start;
+    return true;
+}
+
+bool parseNumberToken(const UChar* start, const UChar* end, const UChar** tokenEnd)
+{
+    // We just grab the number here.  We validate the size in DecodeNumber.
+    // According   to RFC4627, a valid number is: [minus] int [frac] [exp]
+    if (start == end)
+        return false;
+    UChar c = *start;
+    if ('-' == c)
+        ++start;
+
+    if (!readInt(start, end, &start, false))
+        return false;
+    if (start == end) {
+        *tokenEnd = start;
+        return true;
+    }
+
+    // Optional fraction part
+    c = *start;
+    if ('.' == c) {
+        ++start;
+        if (!readInt(start, end, &start, true))
+            return false;
+        if (start == end) {
+            *tokenEnd = start;
+            return true;
+        }
+        c = *start;
+    }
+
+    // Optional exponent part
+    if ('e' == c || 'E' == c) {
+        ++start;
+        if (start == end)
+            return false;
+        c = *start;
+        if ('-' == c || '+' == c) {
+            ++start;
+            if (start == end)
+                return false;
+        }
+        if (!readInt(start, end, &start, true))
+            return false;
+    }
+
+    *tokenEnd = start;
+    return true;
+}
+
+bool readHexDigits(const UChar* start, const UChar* end, const UChar** tokenEnd, int digits)
+{
+    if (end - start < digits)
+        return false;
+    for (int i = 0; i < digits; ++i) {
+        UChar c = *start++;
+        if (!(('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')))
+            return false;
+    }
+    *tokenEnd = start;
+    return true;
+}
+
+bool parseStringToken(const UChar* start, const UChar* end, const UChar** tokenEnd)
+{
+    while (start < end) {
+        UChar c = *start++;
+        if ('\\' == c) {
+            c = *start++;
+            // Make sure the escaped char is valid.
+            switch (c) {
+            case 'x':
+                if (!readHexDigits(start, end, &start, 2))
+                    return false;
+                break;
+            case 'u':
+                if (!readHexDigits(start, end, &start, 4))
+                    return false;
+                break;
+            case '\\':
+            case '/':
+            case 'b':
+            case 'f':
+            case 'n':
+            case 'r':
+            case 't':
+            case 'v':
+            case '"':
+                break;
+            default:
+                return false;
+            }
+        } else if ('"' == c) {
+            *tokenEnd = start;
+            return true;
+        }
+    }
+    return false;
+}
+
+Token parseToken(const UChar* start, const UChar* end, const UChar** tokenEnd)
+{
+    if (start == end)
+        return INVALID_TOKEN;
+
+    switch (*start) {
+    case 'n':
+        if (parseConstToken(start, end, tokenEnd, nullString))
+            return NULL_TOKEN;
+        break;
+    case 't':
+        if (parseConstToken(start, end, tokenEnd, trueString))
+            return BOOL_TRUE;
+        break;
+    case 'f':
+        if (parseConstToken(start, end, tokenEnd, falseString))
+            return BOOL_FALSE;
+        break;
+    case '[':
+        *tokenEnd = start + 1;
+        return ARRAY_BEGIN;
+    case ']':
+        *tokenEnd = start + 1;
+        return ARRAY_END;
+    case ',':
+        *tokenEnd = start + 1;
+        return LIST_SEPARATOR;
+    case '{':
+        *tokenEnd = start + 1;
+        return OBJECT_BEGIN;
+    case '}':
+        *tokenEnd = start + 1;
+        return OBJECT_END;
+    case ':':
+        *tokenEnd = start + 1;
+        return OBJECT_PAIR_SEPARATOR;
+    case '0':
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9':
+    case '-':
+        if (parseNumberToken(start, end, tokenEnd)) 
+            return NUMBER;
+        break;            
+    case '"':
+        if (parseStringToken(start + 1, end, tokenEnd)) 
+            return STRING;
+        break;
+    }
+    return INVALID_TOKEN;
+}
+
+inline int hexToInt(UChar c)
+{
+    if ('0' <= c && c <= '9')
+        return c - '0';
+    if ('A' <= c && c <= 'F')
+        return c - 'A' + 10;
+    if ('a' <= c && c <= 'f')
+        return c - 'a' + 10;
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+bool decodeString(const UChar* start, const UChar* end, Vector<UChar>* output)
+{
+    while (start < end) {
+        UChar c = *start++;
+        if ('\\' != c) {
+            output->append(c);
+            continue;
+        }
+        c = *start++;
+        switch (c) {
+        case '"':
+        case '/':
+        case '\\':
+            break;
+        case 'b':
+            c = '\b';
+            break;
+        case 'f':
+            c = '\f';
+            break;
+        case 'n':
+            c = '\n';
+            break;
+        case 'r':
+            c = '\r';
+            break;
+        case 't':
+            c = '\t';
+            break;
+        case 'v':
+            c = '\v';
+            break;
+        case 'x':
+            c = (hexToInt(*start) << 4) +
+                hexToInt(*(start + 1));
+            start += 2;
+            break;
+        case 'u':
+            c = (hexToInt(*start) << 12) +
+                (hexToInt(*(start + 1)) << 8) +
+                (hexToInt(*(start + 2)) << 4) +
+                hexToInt(*(start + 3));
+            start += 4;
+            break;
+        default:
+            return false;
+        }
+        output->append(c);
+    }
+    return true;
+}
+
+bool decodeString(const UChar* start, const UChar* end, String* output)
+{
+    if (start == end) {
+        *output = "";
+        return true;
+    }
+    if (start > end)
+        return false;
+    Vector<UChar> buffer;
+    buffer.reserveCapacity(end - start);
+    if (!decodeString(start, end, &buffer))
+        return false;
+    *output = String(buffer.data(), buffer.size());    
+    return true;
+}
+
+PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, const UChar** valueTokenEnd, int depth)
+{
+    if (depth > stackLimit)
+        return 0;
+
+    RefPtr<InspectorValue> result;
+    const UChar* tokenEnd;
+    Token token = parseToken(start, end, &tokenEnd);
+    switch (token) {
+    case INVALID_TOKEN:
+        return 0;
+    case NULL_TOKEN:
+        result = InspectorValue::null();
+        break;
+    case BOOL_TRUE:
+        result = InspectorBasicValue::create(true);
+        break;
+    case BOOL_FALSE:
+        result = InspectorBasicValue::create(false);
+        break;
+    case NUMBER: {
+        bool ok;
+        double value = charactersToDouble(start, tokenEnd - start, &ok);
+        if (!ok)
+            return 0;
+        result = InspectorBasicValue::create(value);
+        break;
+    }
+    case STRING: {
+        String value;
+        bool ok = decodeString(start + 1, tokenEnd - 1, &value);
+        if (!ok)
+            return 0;
+        result = InspectorString::create(value);
+        break;
+    }
+    case ARRAY_BEGIN: {
+        RefPtr<InspectorArray> array = InspectorArray::create();
+        start = tokenEnd;
+        token = parseToken(start, end, &tokenEnd);
+        while (token != ARRAY_END) {
+            RefPtr<InspectorValue> arrayNode = buildValue(start, end, &tokenEnd, depth + 1);
+            if (!arrayNode)
+                return 0;
+            array->push(arrayNode);
+
+            // After a list value, we expect a comma or the end of the list.
+            start = tokenEnd;
+            token = parseToken(start, end, &tokenEnd);
+            if (token == LIST_SEPARATOR) {
+                start = tokenEnd;
+                token = parseToken(start, end, &tokenEnd);
+                if (token == ARRAY_END)
+                    return 0;
+            } else if (token != ARRAY_END) {
+                // Unexpected value after list value.  Bail out.
+                return 0;
+            }
+        }
+        if (token != ARRAY_END)
+            return 0;
+        result = array.release();
+        break;
+    }
+    case OBJECT_BEGIN: {
+        RefPtr<InspectorObject> object = InspectorObject::create();
+        start = tokenEnd;
+        token = parseToken(start, end, &tokenEnd);
+        while (token != OBJECT_END) {
+            if (token != STRING)
+                return 0;
+            String key;
+            if (!decodeString(start + 1, tokenEnd - 1, &key))
+                return 0;
+            start = tokenEnd;
+
+            token = parseToken(start, end, &tokenEnd);
+            if (token != OBJECT_PAIR_SEPARATOR)
+                return 0;
+            start = tokenEnd;
+
+            RefPtr<InspectorValue> value = buildValue(start, end, &tokenEnd, depth + 1);
+            if (!value)
+                return 0;
+            object->set(key, value);
+            start = tokenEnd;
+
+            // After a key/value pair, we expect a comma or the end of the
+            // object.
+            token = parseToken(start, end, &tokenEnd);
+            if (token == LIST_SEPARATOR) {
+                start = tokenEnd;
+                token = parseToken(start, end, &tokenEnd);
+                 if (token == OBJECT_END)
+                    return 0;
+            } else if (token != OBJECT_END) {
+                // Unexpected value after last object value.  Bail out.
+                return 0;
+            }
+        }
+        if (token != OBJECT_END)
+            return 0;
+        result = object.release();
+        break;
+    }
+
+    default:
+        // We got a token that's not a value.
+        return 0;
+    }
+    *valueTokenEnd = tokenEnd;
+    return result.release();
+}
+
 inline bool escapeChar(UChar c, Vector<UChar>* dst)
 {
     switch (c) {
@@ -71,6 +472,44 @@ inline void doubleQuoteString(const String& str, Vector<UChar>* dst)
     dst->append('"');
 }
 
+} // anonymous namespace
+
+bool InspectorValue::asBool(bool*) const
+{
+    return false;
+}
+
+bool InspectorValue::asNumber(double*) const
+{
+    return false;
+}
+
+bool InspectorValue::asString(String*) const
+{
+    return false;
+}
+
+PassRefPtr<InspectorObject> InspectorValue::asObject()
+{
+    return 0;
+}
+
+PassRefPtr<InspectorArray> InspectorValue::asArray()
+{
+    return 0;
+}
+
+PassRefPtr<InspectorValue> InspectorValue::readJSON(const String& json)
+{
+    const UChar* start = json.characters();
+    const UChar* end = json.characters() + json.length();
+    const UChar *tokenEnd;
+    RefPtr<InspectorValue> value = buildValue(start, end, &tokenEnd, 0);
+    if (!value || tokenEnd != end)
+        return 0;
+    return value.release();
+}
+
 String InspectorValue::toJSONString() const
 {
     Vector<UChar> result;
@@ -82,7 +521,23 @@ String InspectorValue::toJSONString() const
 void InspectorValue::writeJSON(Vector<UChar>* output) const
 {
     ASSERT(m_type == TypeNull);
-    output->append("null", 4);
+    output->append(nullString, 4);
+}
+
+bool InspectorBasicValue::asBool(bool* output) const
+{
+    if (type() != TypeBoolean)
+        return false;
+    *output = m_boolValue;
+    return true;
+}
+
+bool InspectorBasicValue::asNumber(double* output) const
+{
+    if (type() != TypeDouble)
+        return false;
+    *output = m_doubleValue;
+    return true;
 }
 
 void InspectorBasicValue::writeJSON(Vector<UChar>* output) const
@@ -90,19 +545,78 @@ void InspectorBasicValue::writeJSON(Vector<UChar>* output) const
     ASSERT(type() == TypeBoolean || type() == TypeDouble);
     if (type() == TypeBoolean) {
         if (m_boolValue)
-            output->append("true", 4);
+            output->append(trueString, 4);
         else
-            output->append("false", 5);
+            output->append(falseString, 5);
     } else if (type() == TypeDouble) {
         String value = String::format("%f", m_doubleValue);
         output->append(value.characters(), value.length());
     }
 }
 
+bool InspectorString::asString(String* output) const
+{
+    *output = m_stringValue;
+    return true;
+}
+
 void InspectorString::writeJSON(Vector<UChar>* output) const
 {
     ASSERT(type() == TypeString);
     doubleQuoteString(m_stringValue, output);
+}
+
+PassRefPtr<InspectorObject> InspectorObject::asObject()
+{
+    return this;
+}
+
+bool InspectorObject::getBool(const String& name, bool* output) const
+{
+    RefPtr<InspectorValue> value = get(name);
+    if (!value)
+        return false;
+    return value->asBool(output);
+}
+
+bool InspectorObject::getNumber(const String& name, double* output) const
+{
+    RefPtr<InspectorValue> value = get(name);
+    if (!value)
+        return false;
+    return value->asNumber(output);
+}
+
+bool InspectorObject::getString(const String& name, String* output) const
+{
+    RefPtr<InspectorValue> value = get(name);
+    if (!value)
+        return false;
+    return value->asString(output);
+}
+
+PassRefPtr<InspectorObject> InspectorObject::getObject(const String& name) const
+{
+    PassRefPtr<InspectorValue> value = get(name);
+    if (!value)
+        return false;
+    return value->asObject();
+}
+
+PassRefPtr<InspectorArray> InspectorObject::getArray(const String& name) const
+{
+    PassRefPtr<InspectorValue> value = get(name);
+    if (!value)
+        return false;
+    return value->asArray();
+}
+
+PassRefPtr<InspectorValue> InspectorObject::get(const String& name) const
+{
+    Dictionary::const_iterator it = m_data.find(name);
+    if (it == m_data.end())
+        return 0;
+    return it->second;
 }
 
 void InspectorObject::writeJSON(Vector<UChar>* output) const
@@ -118,6 +632,11 @@ void InspectorObject::writeJSON(Vector<UChar>* output) const
         it->second->writeJSON(output);
     }
     output->append('}');
+}
+
+PassRefPtr<InspectorArray> InspectorArray::asArray()
+{
+    return this;
 }
 
 void InspectorArray::writeJSON(Vector<UChar>* output) const
