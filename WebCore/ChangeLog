@@ -1,5 +1,12 @@
 2010-06-06  MORITA Hajime  <morrita@google.com>
 
+        Unreviewd, Chromium windows build fix.
+
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::paintProgressBar):
+
+2010-06-06  MORITA Hajime  <morrita@google.com>
+
         Reviewed by Kent Tamura.
 
         ASSERTION FAILED with -webkit-appearance:progress-bar for non <progress> elements
