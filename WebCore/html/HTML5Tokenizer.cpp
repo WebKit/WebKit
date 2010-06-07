@@ -37,19 +37,42 @@
 
 namespace WebCore {
 
+namespace {
+
+class NestingLevelIncrementer : public Noncopyable {
+public:
+    NestingLevelIncrementer(int& counter)
+        : m_counter(&counter)
+    {
+        ++(*m_counter);
+    }
+    
+    ~NestingLevelIncrementer()
+    {
+        --(*m_counter);
+    }
+
+private:
+    int* m_counter;
+};
+
+} // namespace
+
 HTML5Tokenizer::HTML5Tokenizer(HTMLDocument* document, bool reportErrors)
     : Tokenizer()
     , m_document(document)
     , m_lexer(new HTML5Lexer)
     , m_scriptRunner(new HTML5ScriptRunner(document, this))
     , m_treeBuilder(new HTML5TreeBuilder(m_lexer.get(), document, reportErrors))
-    , m_wasWaitingOnScriptsDuringFinish(false)
+    , m_endWasDelayed(false)
+    , m_writeNestingLevel(0)
 {
     begin();
 }
 
 HTML5Tokenizer::~HTML5Tokenizer()
 {
+    ASSERT(!m_endWasDelayed);
 }
 
 void HTML5Tokenizer::begin()
@@ -80,10 +103,14 @@ void HTML5Tokenizer::pumpLexer()
 
 void HTML5Tokenizer::write(const SegmentedString& source, bool)
 {
+    NestingLevelIncrementer nestingLevelIncrementer(m_writeNestingLevel);
+
     // HTML5Tokenizer::executeScript is responsible for handling saving m_source before re-entry.
     m_source.append(source);
     if (!m_treeBuilder->isPaused())
         pumpLexer();
+
+    endIfDelayed();
 }
 
 void HTML5Tokenizer::end()
@@ -94,18 +121,33 @@ void HTML5Tokenizer::end()
     m_treeBuilder->finished();
 }
 
-void HTML5Tokenizer::finish()
+void HTML5Tokenizer::attemptToEnd()
 {
     // finish() indicates we will not receive any more data. If we are waiting on
     // an external script to load, we can't finish parsing quite yet.
-    if (isWaitingForScripts()) {
-        // FIXME: We might want to use real state enum instead of a bool here.
-        m_wasWaitingOnScriptsDuringFinish = true;
+
+    if (inWrite() || isWaitingForScripts()) {
+        m_endWasDelayed = true;
         return;
     }
+
     // We can't call m_source.close() yet as we may have a <script> execution
     // pending which will call document.write().  No more data off the network though.
     end();
+}
+
+void HTML5Tokenizer::endIfDelayed()
+{
+    if (!m_endWasDelayed || !m_source.isEmpty() || isWaitingForScripts() || executingScript())
+        return;
+
+    m_endWasDelayed = false;
+    end();
+}
+
+void HTML5Tokenizer::finish()
+{
+    attemptToEnd();
 }
 
 int HTML5Tokenizer::executingScript() const
@@ -134,8 +176,8 @@ void HTML5Tokenizer::resumeParsingAfterScriptExecution()
     ASSERT(!m_treeBuilder->isPaused());
     pumpLexer();
     ASSERT(m_treeBuilder->isPaused() || m_source.isEmpty());
-    if (m_source.isEmpty() && m_wasWaitingOnScriptsDuringFinish)
-        end(); // The document already finished parsing we were just waiting on scripts when finished() was called.
+    // The document already finished parsing we were just waiting on scripts when finished() was called.
+    endIfDelayed();
 }
 
 void HTML5Tokenizer::watchForLoad(CachedResource* cachedScript)

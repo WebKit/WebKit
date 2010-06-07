@@ -1,3 +1,37 @@
+2010-06-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix XFrameOptions and xssAuditor crashes in HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=40265
+
+        We're not supposed to call end() while the tokenizer's write() method.
+        This causes a bunch of LayoutTests to crash.  In particular, this patch
+        fixes crashes in the following tests:
+
+        Tests:
+          * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html
+          * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html
+          * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html
+          * http/tests/security/xssAuditor/full-block-base-href.html
+          * http/tests/security/xssAuditor/full-block-get-from-iframe.html
+          * http/tests/security/xssAuditor/full-block-iframe-javascript-url.html
+          * http/tests/security/xssAuditor/full-block-link-onclick.html
+          * http/tests/security/xssAuditor/full-block-post-from-iframe.html
+          * http/tests/security/xssAuditor/full-block-script-tag.html
+          * http/tests/security/xssAuditor/xss-protection-parsing-01.html
+
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::):
+        (WebCore::HTML5Tokenizer::HTML5Tokenizer):
+        (WebCore::HTML5Tokenizer::write):
+        (WebCore::HTML5Tokenizer::attemptToEnd):
+        (WebCore::HTML5Tokenizer::endIfDelayed):
+        (WebCore::HTML5Tokenizer::finish):
+        (WebCore::HTML5Tokenizer::resumeParsingAfterScriptExecution):
+        * html/HTML5Tokenizer.h:
+        (WebCore::HTML5Tokenizer::inWrite):
+
 2010-06-07  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

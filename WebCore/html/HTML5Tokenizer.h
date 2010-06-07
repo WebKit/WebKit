@@ -72,6 +72,10 @@ private:
     void pumpLexer();
     void resumeParsingAfterScriptExecution();
 
+    void attemptToEnd();
+    void endIfDelayed();
+    bool inWrite() const { return m_writeNestingLevel > 0; }
+
     SegmentedString m_source;
 
     // We hold m_token here because it might be partially complete.
@@ -81,7 +85,8 @@ private:
     OwnPtr<HTML5Lexer> m_lexer;
     OwnPtr<HTML5ScriptRunner> m_scriptRunner;
     OwnPtr<HTML5TreeBuilder> m_treeBuilder;
-    bool m_wasWaitingOnScriptsDuringFinish;
+    bool m_endWasDelayed;
+    int m_writeNestingLevel;
 };
 
 }
