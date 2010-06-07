@@ -1,5 +1,22 @@
 2010-06-07  Martin Robinson  <mrobinson@igalia.com>
 
+        Reviewed by Oliver Hunt.
+
+        [GTK] HTML5 input type=range is not drawn
+        https://bugs.webkit.org/show_bug.cgi?id=39561
+
+        Uncomment and add baselines for slider tests which are now passing. Group
+        remaining failing slider tests by their type of failure.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/fast/forms/range-thumb-height-percentage-expected.txt: Added.
+        * platform/gtk/fast/forms/slider-thumb-shared-style-expected.txt: Added.
+        * platform/gtk/fast/forms/slider-thumb-stylability-expected.txt: Added.
+        * platform/gtk/fast/forms/thumbslider-crash-expected.txt: Added.
+        * platform/gtk/fast/forms/thumbslider-no-parent-slider-expected.txt: Added.
+
+2010-06-07  Martin Robinson  <mrobinson@igalia.com>
+
         Unreviewed.
 
         [GTK] r60803 broke media/controls-drag-timebar.html

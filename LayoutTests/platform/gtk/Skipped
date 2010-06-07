@@ -1262,10 +1262,6 @@ fast/forms/select-dirty-parent-pref-widths.html
 fast/forms/select-double-onchange.html
 fast/forms/search-styled.html
 fast/forms/select-script-onchange.html
-fast/forms/slider-mouse-events.html
-fast/forms/slider-onchange-event.html
-fast/forms/slider-transformed.html
-fast/forms/slider-zoomed.html
 fast/forms/text-control-intrinsic-widths.html
 fast/forms/textarea-paste-newline.html
 fast/forms/textarea-placeholder-pseudo-style.html
@@ -2301,7 +2297,6 @@ fast/forms/radio-attr-order.html
 fast/forms/radio-nested-labels.html
 fast/forms/radio_checked.html
 fast/forms/radio_checked_dynamic.html
-fast/forms/range-thumb-height-percentage.html
 fast/forms/search-cancel-button-style-sharing.html
 fast/forms/search-display-none-cancel-button.html
 fast/forms/search-placeholder-value-changed.html
@@ -2326,9 +2321,6 @@ fast/forms/select-size.html
 fast/forms/select-style.html
 fast/forms/select-visual-hebrew.html
 fast/forms/select-writing-direction-natural.html
-fast/forms/slider-padding.html
-fast/forms/slider-thumb-shared-style.html
-fast/forms/slider-thumb-stylability.html
 fast/forms/stuff-on-my-optgroup.html
 fast/forms/tabbing-input-iframe.html
 fast/forms/targeted-frame-submission.html
@@ -2342,8 +2334,6 @@ fast/forms/textarea-setinnerhtml.html
 fast/forms/textarea-width.html
 fast/forms/textfield-outline.html
 fast/forms/textfield-overflow.html
-fast/forms/thumbslider-crash.html
-fast/forms/thumbslider-no-parent-slider.html
 fast/forms/visual-hebrew-text-field.html
 fast/frames/001.html
 fast/frames/002.html
@@ -5212,7 +5202,6 @@ editing/selection/extend-selection-after-double-click.html
 fast/events/drag-to-navigate.html
 fast/events/ondrop-text-html.html
 fast/events/prevent-drag-to-navigate.html
-fast/forms/slider-delete-while-dragging-thumb.html
 fast/events/tab-focus-anchor.html
 http/tests/local/drag-over-remote-content.html
 http/tests/misc/slow-loading-mask.html
@@ -5926,3 +5915,13 @@ fast/dom/Geolocation/callback-to-remote-context2.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=40269
 media/controls-drag-timebar.html
+
+# GTK+ theme-rendered widgets do not support CSS transforms
+# https://bugs.webkit.org/show_bug.cgi?id=40139
+fast/forms/slider-transformed.html
+fast/forms/slider-transformed.html
+
+# Some input type=range tests fail because of the size 
+# of the slider thumb in GTK+ themes.
+fast/forms/slider-mouse-events.html
+fast/forms/slider-zoomed.html

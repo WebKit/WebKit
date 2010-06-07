@@ -295,6 +295,28 @@
 
 2010-06-07  Martin Robinson  <mrobinson@igalia.com>
 
+        Reviewed by Oliver Hunt.
+
+        [GTK] HTML5 input type=range is not drawn
+        https://bugs.webkit.org/show_bug.cgi?id=39561
+
+        Support HTML5 range widgets. They are now drawn using the standard
+        GTK+ theme drawing mechanism.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::supportsFocus): Add focus support for parts of sliders.
+        (WebCore::setMozillaState):
+        Add the GtkThemeWidgetType argument and honor depressed states for slider thumbs.
+        (WebCore::paintMozillaGtkWidget): Pass in the widget type to setMozillaState.
+        (WebCore::RenderThemeGtk::paintSliderTrack): Added.
+        (WebCore::RenderThemeGtk::adjustSliderTrackStyle): Added.
+        (WebCore::RenderThemeGtk::paintSliderThumb): Added.
+        (WebCore::RenderThemeGtk::adjustSliderThumbStyle): Added.
+        (WebCore::RenderThemeGtk::adjustSliderThumbSize): Added support for non-media sliders.
+        * platform/gtk/RenderThemeGtk.h: Added new method declarations.
+
+2010-06-07  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Xan Lopez.
 
         [GTK] gtk_widget_get_window should replace widget->window
