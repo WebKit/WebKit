@@ -2,6 +2,22 @@
 
         Reviewed by Eric Seidel.
 
+        "Fix" fast/dom/stripNullFromTextNodes.html in HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=40200
+
+        The proper handling of null characters is to replace them with U+FFFD.
+        This patch "fixes" fast/dom/stripNullFromTextNodes.html in the sense
+        that it makes it give the proper output w.r.t. HTML5.  However, that
+        doesn't match the behavior of the old parser, which just stripped the
+        nulls.
+
+        * html/HTML5Lexer.h:
+        (WebCore::HTML5Lexer::InputStreamPreprocessor::peek):
+
+2010-06-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         HTML5 parser should normalize line endings
         https://bugs.webkit.org/show_bug.cgi?id=40199
 

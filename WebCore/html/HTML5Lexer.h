@@ -157,8 +157,11 @@ namespace WebCore {
                 if (m_nextInputCharacter == '\r') {
                     m_nextInputCharacter = '\n';
                     m_skipNextNewLine = true;
-                } else
+                } else {
                     m_skipNextNewLine = false;
+                    if (m_nextInputCharacter == '\0' || (m_nextInputCharacter >= 0xD800 && m_nextInputCharacter <= 0xDFFF))
+                        m_nextInputCharacter = 0xFFFD;
+                }
                 return true;
             }
 
