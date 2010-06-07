@@ -820,6 +820,9 @@ void RenderThemeMac::adjustProgressBarStyle(CSSStyleSelector*, RenderStyle*, Ele
 
 bool RenderThemeMac::paintProgressBar(RenderObject* renderObject, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
 {
+    if (!renderObject->isProgress())
+        return true;
+
     RenderProgress* renderProgress = toRenderProgress(renderObject);
     HIThemeTrackDrawInfo trackInfo;
     trackInfo.version = 0;

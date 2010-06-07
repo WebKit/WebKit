@@ -727,6 +727,9 @@ void RenderThemeQt::adjustProgressBarStyle(CSSStyleSelector*, RenderStyle* style
 
 bool RenderThemeQt::paintProgressBar(RenderObject* o, const RenderObject::PaintInfo& pi, const IntRect& r)
 {
+    if (!o->isProgress())
+        return true;
+
     StylePainter p(this, pi);
     if (!p.isValid())
        return true;

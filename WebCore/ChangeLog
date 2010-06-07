@@ -1,3 +1,27 @@
+2010-06-06  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        ASSERTION FAILED with -webkit-appearance:progress-bar for non <progress> elements
+        https://bugs.webkit.org/show_bug.cgi?id=40158
+
+        paintProgressBar() and paintMeter() assumed given RenderObject is
+        RenderProgress or RenderMeter respectively, but arbitrary elements
+        can have -webkit-appearance: progress-bar and such elements
+        violates that assumption. So this change added type check before
+        downcasting the RenderObject.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintProgressBar):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paintMeter):
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::paintProgressBar):
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::paintProgressBar):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintProgressBar):
+
 2010-06-06  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (Qt build fix pt 2).

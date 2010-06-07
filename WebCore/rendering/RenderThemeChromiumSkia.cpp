@@ -802,7 +802,6 @@ IntRect RenderThemeChromiumSkia::indeterminateProgressValueRectFor(RenderProgres
     return IntRect(rect.x() + (1.0 - progress) * 2 * movableWidth, rect.y(), valueWidth, rect.height());
 }
 
-
 double RenderThemeChromiumSkia::animationRepeatIntervalForProgressBar(RenderProgress*) const
 {
     return progressAnimationInterval;
@@ -820,6 +819,9 @@ bool RenderThemeChromiumSkia::paintProgressBar(RenderObject* renderObject, const
     static Image* leftBorderImage = Image::loadPlatformResource("linuxProgressBorderLeft").releaseRef();
     static Image* rightBorderImage = Image::loadPlatformResource("linuxProgressBorderRight").releaseRef();
     ASSERT(barImage->height() == valueImage->height());
+
+    if (!renderObject->isProgress())
+        return true;
 
     paintInfo.context->platformContext()->setImageResamplingHint(barImage->size(), rect.size());
 

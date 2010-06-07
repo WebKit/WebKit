@@ -679,6 +679,9 @@ void RenderThemeChromiumWin::adjustProgressBarStyle(CSSStyleSelector*, RenderSty
 
 bool RenderThemeChromiumWin::paintProgressBar(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
+    if (!renderObject->isProgress())
+        return true;
+
     RenderProgress* renderProgress = toRenderProgress(o);
     // For indeterminate bar, valueRect is ignored and it is computed by the theme engine
     // because the animation is a platform detail and WebKit doesn't need to know how.

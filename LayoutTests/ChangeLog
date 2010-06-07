@@ -1,3 +1,14 @@
+2010-06-06  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        ASSERTION FAILED with -webkit-appearance:progress-bar for non-progress bar elements
+        https://bugs.webkit.org/show_bug.cgi?id=40158
+
+        * fast/css/invalid-appearance-progress-bar-meter-expected.txt: Added.
+        * fast/css/invalid-appearance-progress-bar-meter.html: Added.
+        * fast/css/script-tests/invalid-appearance-progress-bar-meter.js: Added.
+
 2010-06-06  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
