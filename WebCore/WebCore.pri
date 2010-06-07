@@ -109,17 +109,18 @@ greaterThan(QT_MINOR_VERSION, 5) {
     else:DEFINES += ENABLE_XSLT=0
 }
 
-!CONFIG(QTDIR_build):!contains(DEFINES, ENABLE_QT_BEARER=.) {
-    symbian: {
-        exists($${EPOCROOT}epoc32/release/winscw/udeb/QtBearer.lib)| \
-        exists($${EPOCROOT}epoc32/release/armv5/lib/QtBearer.lib) {
+# Bearer management is part of Qt 4.7
+# for older version, check for mobility with bearer 
+!contains(DEFINES, ENABLE_QT_BEARER=.) {
+     !lessThan(QT_MINOR_VERSION, 7) {
+        DEFINES += ENABLE_QT_BEARER=1
+     } else {
+        load(mobilityconfig)
+        contains(MOBILITY_CONFIG, bearer) {
             DEFINES += ENABLE_QT_BEARER=1
         }
     }
 }
-
-# Bearer management is part of Qt 4.7
-!lessThan(QT_MINOR_VERSION, 7):!contains(DEFINES, ENABLE_QT_BEARER=.):DEFINES += ENABLE_QT_BEARER=1
 
 # Enable touch event support with Qt 4.6
 !lessThan(QT_MINOR_VERSION, 6): DEFINES += ENABLE_TOUCH_EVENTS=1

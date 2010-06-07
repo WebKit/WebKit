@@ -1,3 +1,15 @@
+2010-06-07  Mahesh Kulakrni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [QT] QT_BEARER flag is not enabled on S60 properly
+        https://bugs.webkit.org/show_bug.cgi?id=39357
+
+        enable QT_BEARER for all platform based on qtmobility + 
+        bearer module availability or for qt 4.7+
+
+        * WebCore.pri: 
+
 2010-06-07  Leon Clarke  <leonclarke@google.com>
 
         Reviewed by Jeremy Orlow.
