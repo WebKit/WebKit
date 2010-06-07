@@ -1,3 +1,18 @@
+2010-06-07  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Add dummy SearchPopupMenu implementation
+        https://bugs.webkit.org/show_bug.cgi?id=40224
+
+        Add dummy implementation of SearchPopupMenu.
+
+        * platform/brew/SearchPopupMenuBrew.cpp: Added.
+        (WebCore::SearchPopupMenu::saveRecentSearches):
+        (WebCore::SearchPopupMenu::loadRecentSearches):
+        (WebCore::SearchPopupMenu::SearchPopupMenu):
+        (WebCore::SearchPopupMenu::enabled):
+
 2010-06-07  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed, reverting my HTML comment parsing change as it
