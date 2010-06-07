@@ -39,7 +39,7 @@ namespace WebCore {
 #if ENABLE(BLOB_SLICE)
 static const double invalidModificationTime = 0;
 
-double getFileSnapshotModificationTime(const String& path)
+static double getFileSnapshotModificationTime(const String& path)
 {
     // FIXME: synchronized file call
     time_t modificationTime;

@@ -1,5 +1,13 @@
 2010-06-07  Kinuko Yasuda  <kinuko@chromium.org>
 
+        Unreviewed.
+
+        Avoid "warning: no previous prototype for" in Snow Leopard compilation.
+
+        * platform/BlobItem.cpp: Added static to getFileSnapshotModificationTime().
+
+2010-06-07  Kinuko Yasuda  <kinuko@chromium.org>
+
         Reviewed by Jian Li.
 
         Refactor FormData and Blob for better support of Blobs synthesized by BlobBuilder.
