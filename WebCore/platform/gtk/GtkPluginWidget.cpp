@@ -47,7 +47,7 @@ void GtkPluginWidget::invalidateRect(const IntRect& _rect)
     if (!gtk_widget_get_has_window(platformWidget()))
         return;
 
-    GdkWindow* window = platformWidget()->window;
+    GdkWindow* window = gtk_widget_get_window(platformWidget());
     if (!window)
         return;
 

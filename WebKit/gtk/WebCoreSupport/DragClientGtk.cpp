@@ -28,16 +28,13 @@
 #include "Frame.h"
 #include "GOwnPtrGtk.h"
 #include "GRefPtrGtk.h"
+#include "GtkVersioning.h"
 #include "NotImplemented.h"
 #include "PasteboardHelper.h"
 #include "RenderObject.h"
 #include "webkitprivate.h"
 #include "webkitwebview.h"
-
 #include <gtk/gtk.h>
-#if !GTK_CHECK_VERSION(2, 14, 0)
-#define gtk_widget_get_window(widget) (widget)->window
-#endif
 
 using namespace WebCore;
 

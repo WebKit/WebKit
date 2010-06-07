@@ -61,7 +61,7 @@ void Widget::setFocus(bool focused)
 
 static GdkDrawable* gdkDrawable(PlatformWidget widget)
 {
-    return widget ? widget->window : 0;
+    return widget ? gtk_widget_get_window(widget) : 0;
 }
     
 void Widget::setCursor(const Cursor& cursor)
@@ -77,7 +77,7 @@ void Widget::setCursor(const Cursor& cursor)
     if (platformCursor == lastSetCursor)
         return;
 
-    gdk_window_set_cursor(gdkDrawable(platformWidget()) ? GDK_WINDOW(gdkDrawable(platformWidget())) : GTK_WIDGET(root()->hostWindow()->platformPageClient())->window, platformCursor);
+    gdk_window_set_cursor(gdkDrawable(platformWidget()) ? GDK_WINDOW(gdkDrawable(platformWidget())) : gtk_widget_get_window(GTK_WIDGET(root()->hostWindow()->platformPageClient())), platformCursor);
     lastSetCursor = platformCursor;
 }
 

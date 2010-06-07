@@ -31,4 +31,8 @@
 #define gtk_widget_is_sensitive(widget) GTK_WIDGET_IS_SENSITIVE(widget)
 #endif // GTK_CHECK_VERSION(2, 19, 0)
 
+#if !GTK_CHECK_VERSION(2, 14, 0)
+#define gtk_widget_get_window(widget) (widget)->window
+#endif
+
 #endif // GtkVersioning_h

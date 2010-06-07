@@ -336,7 +336,7 @@ void ChromeClient::invalidateWindow(const IntRect&, bool)
 void ChromeClient::invalidateContentsAndWindow(const IntRect& updateRect, bool immediate)
 {
     GdkRectangle rect = updateRect;
-    GdkWindow* window = GTK_WIDGET(m_webView)->window;
+    GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(m_webView));
 
     if (window) {
         gdk_window_invalidate_rect(window, &rect, FALSE);
@@ -353,7 +353,7 @@ void ChromeClient::invalidateContentsForSlowScroll(const IntRect& updateRect, bo
 
 void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, const IntRect& clipRect)
 {
-    GdkWindow* window = GTK_WIDGET(m_webView)->window;
+    GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(m_webView));
     if (!window)
         return;
 
@@ -391,7 +391,7 @@ static IntPoint widgetScreenPosition(GtkWidget* widget)
 
     IntPoint result(widgetX, widgetY);
     int originX, originY;
-    gdk_window_get_origin(window->window, &originX, &originY);
+    gdk_window_get_origin(gtk_widget_get_window(window), &originX, &originY);
     result.move(originX, originY);
 
     return result;

@@ -1,3 +1,27 @@
+2010-06-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] gtk_widget_get_window should replace widget->window
+        https://bugs.webkit.org/show_bug.cgi?id=40180
+
+        Replace all uses of widget->window with gtk_widget_get_window. For older
+        GTK+ versions, #define gtk_widget_get_window in GtkVersioning.h.
+
+        No tests necessary as functionality has not changed.
+
+        * platform/gtk/GtkPluginWidget.cpp:
+        (WebCore::GtkPluginWidget::invalidateRect): Replace widget->window use.
+        * platform/gtk/GtkVersioning.h: Add gtk_widget_get_window for old GTK+ versions.
+        * platform/gtk/PlatformScreenGtk.cpp: 
+        (WebCore::getVisual): Replace widget->window use.
+        (WebCore::screenRect): Ditto.
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenu::show): Ditto.
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::gdkDrawable): Ditto.
+        (WebCore::Widget::setCursor): Ditto.
+
 2010-06-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Sam Weinig.

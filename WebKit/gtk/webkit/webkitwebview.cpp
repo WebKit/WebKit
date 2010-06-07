@@ -371,7 +371,7 @@ static gboolean webkit_web_view_popup_menu_handler(GtkWidget* widget)
     }
 
     int x, y;
-    gdk_window_get_origin(GTK_WIDGET(view->hostWindow()->platformPageClient())->window, &x, &y);
+    gdk_window_get_origin(gtk_widget_get_window(GTK_WIDGET(view->hostWindow()->platformPageClient())), &x, &y);
 
     // FIXME: The IntSize(0, -1) is a hack to get the hit-testing to result in the selected element.
     // Ideally we'd have the position of a context menu event be separate from its target node.
@@ -612,7 +612,7 @@ static gboolean webkit_web_view_button_press_event(GtkWidget* widget, GdkEventBu
 
     gint doubleClickDistance = 250;
     gint doubleClickTime = 5;
-    GtkSettings* settings = gtk_settings_get_for_screen(gdk_drawable_get_screen(widget->window));
+    GtkSettings* settings = gtk_settings_get_for_screen(gdk_drawable_get_screen(gtk_widget_get_window(widget)));
     g_object_get(settings, 
         "gtk-double-click-distance", &doubleClickDistance,
         "gtk-double-click-time", &doubleClickTime, NULL);
