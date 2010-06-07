@@ -482,6 +482,10 @@ void DumpRenderTreeSupportQt::setEditingBehavior(QWebPage* page, const QString& 
         coreEditingBehavior = EditingWindowsBehavior;
     else if (editingBehavior == "mac")
         coreEditingBehavior = EditingMacBehavior;
+    else {
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
     Page* corePage = QWebPagePrivate::core(page);
     if (!corePage)

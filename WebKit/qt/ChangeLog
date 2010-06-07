@@ -1,3 +1,16 @@
+2010-06-06  Antonio Gomes  <tonikitoo@webkit.org>, Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kenneth Christiansen, Eric Seidel.
+
+        [Qt] Expose the editing behavior setting in DRT to test all editing code paths
+        https://bugs.webkit.org/show_bug.cgi?id=39680
+
+        Make setEditingBehavior() a no-operation if the editingBehavior
+        argument is not recognized to avoid using an uninitialized variable.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::setEditingBehavior):
+
 2010-06-04  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Symbian build fix.
