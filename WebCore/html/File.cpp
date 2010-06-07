@@ -33,12 +33,17 @@ namespace WebCore {
 
 File::File(const String& path)
     : Blob(path)
-    , m_name(pathGetFileName(path))
 {
     // We don't use MIMETypeRegistry::getMIMETypeForPath() because it returns "application/octet-stream" upon failure.
-    int index = m_name.reverseFind('.');
+    const String& fileName = name();
+    int index = fileName.reverseFind('.');
     if (index != -1)
-        m_type = MIMETypeRegistry::getMIMETypeForExtension(m_name.substring(index + 1));
+        m_type = MIMETypeRegistry::getMIMETypeForExtension(fileName.substring(index + 1));
+}
+
+const String& File::name() const
+{
+    return items().at(0)->toFileBlobItem()->name();
 }
 
 } // namespace WebCore

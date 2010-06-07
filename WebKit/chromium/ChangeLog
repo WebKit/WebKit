@@ -1,3 +1,16 @@
+2010-06-07  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Jian Li.
+
+        Refactor FormData and Blob for better support of Blobs synthesized by BlobBuilder.
+        https://bugs.webkit.org/show_bug.cgi?id=39083
+
+        Replace FormDataList::Item list with BlobItemList to get it compiled
+        with the refactoring in FormDataList.
+
+        * src/WebSearchableFormData.cpp:
+        (WebCore::HasSuitableTextElement):
+
 2010-06-07  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.

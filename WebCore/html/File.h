@@ -41,18 +41,14 @@ public:
 
     virtual bool isFile() const { return true; }
 
-    const String& name() const { return m_name; }
-    const String& type() const { return m_type; }
+    const String& name() const;
 
     // FIXME: obsolete attributes. To be removed.
-    const String& fileName() const { return m_name; }
+    const String& fileName() const { return name(); }
     unsigned long long fileSize() const { return size(); }
 
 private:
     File(const String& path);
-
-    String m_name;
-    String m_type;
 };
 
 } // namespace WebCore

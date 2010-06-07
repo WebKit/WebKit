@@ -187,8 +187,8 @@ bool HasSuitableTextElement(const HTMLFormElement* form, Vector<char>* encodedSt
       if (!formElement->appendFormData(dataList, false))
           continue;
 
-      const Vector<FormDataList::Item>& itemList = dataList.list();
-      if (isTextElement && !itemList.isEmpty()) {
+      const BlobItemList& items = dataList.items();
+      if (isTextElement && !items.isEmpty()) {
           if (textElement) {
               // The auto-complete bar only knows how to fill in one value.
               // This form has multiple fields; don't treat it as searchable.
@@ -196,20 +196,22 @@ bool HasSuitableTextElement(const HTMLFormElement* form, Vector<char>* encodedSt
           }
           textElement = static_cast<HTMLInputElement*>(formElement);
       }
-      for (Vector<FormDataList::Item>::const_iterator j(itemList.begin()); j != itemList.end(); ++j) {
+      for (BlobItemList::const_iterator j(items.begin()); j != items.end(); ++j) {
+          const StringBlobItem* item = (*j)->toStringBlobItem();
+          ASSERT(item);
           // Handle ISINDEX / <input name=isindex> specially, but only if it's
           // the first entry.
-          if (!encodedString->isEmpty() || j->data() != "isindex") {
+          if (!encodedString->isEmpty() || item->cstr() != "isindex") {
               if (!encodedString->isEmpty())
                   encodedString->append('&');
-              FormDataBuilder::encodeStringAsFormData(*encodedString, j->data());
+              FormDataBuilder::encodeStringAsFormData(*encodedString, item->cstr());
               encodedString->append('=');
           }
           ++j;
           if (formElement == textElement)
               encodedString->append("{searchTerms}", 13);
           else
-              FormDataBuilder::encodeStringAsFormData(*encodedString, j->data());
+              FormDataBuilder::encodeStringAsFormData(*encodedString, item->cstr());
       }
     }
 

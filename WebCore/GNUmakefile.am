@@ -1559,6 +1559,8 @@ webcore_sources += \
 	WebCore/platform/Arena.cpp \
 	WebCore/platform/Arena.h \
 	WebCore/platform/AutodrainedPool.h \
+	WebCore/platform/BlobItem.cpp \
+	WebCore/platform/BlobItem.h \
 	WebCore/platform/ContentType.cpp \
 	WebCore/platform/ContentType.h \
 	WebCore/platform/ContextMenu.cpp \

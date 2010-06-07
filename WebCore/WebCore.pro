@@ -815,6 +815,7 @@ SOURCES += \
     platform/animation/Animation.cpp \
     platform/animation/AnimationList.cpp \
     platform/Arena.cpp \
+    platform/BlobItem.cpp \
     platform/text/Base64.cpp \
     platform/text/BidiContext.cpp \
     platform/ContentType.cpp \
@@ -1564,6 +1565,7 @@ HEADERS += \
     platform/animation/Animation.h \
     platform/animation/AnimationList.h \
     platform/Arena.h \
+    platform/BlobItem.h \
     platform/ContentType.h \
     platform/ContextMenu.h \
     platform/CrossThreadCopier.h \

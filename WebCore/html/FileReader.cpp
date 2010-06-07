@@ -85,6 +85,7 @@ void FileReader::stop()
 
 void FileReader::readAsBinaryString(Blob* fileBlob)
 {
+    // FIXME: needs to handle non-file blobs.
     LOG(FileAPI, "FileReader: reading as binary: %s\n", fileBlob->path().utf8().data());
 
     readInternal(fileBlob, ReadFileAsBinaryString);
@@ -92,6 +93,7 @@ void FileReader::readAsBinaryString(Blob* fileBlob)
 
 void FileReader::readAsText(Blob* fileBlob, const String& encoding)
 {
+    // FIXME: needs to handle non-file blobs.
     LOG(FileAPI, "FileReader: reading as text: %s\n", fileBlob->path().utf8().data());
 
     if (!encoding.isEmpty())

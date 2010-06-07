@@ -1122,6 +1122,7 @@ SET(WebCore_SOURCES
     page/animation/KeyframeAnimation.cpp
 
     platform/Arena.cpp
+    platform/BlobItem.cpp
     platform/ContentType.cpp
     platform/ContextMenu.cpp
     platform/CrossThreadCopier.cpp

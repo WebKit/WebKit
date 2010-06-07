@@ -19,22 +19,25 @@
  */
 
 #include "config.h"
+
 #include "FormData.h"
 
-#include "Blob.h"
+#include "BlobItem.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "DOMFormData.h"
 #include "Document.h"
-#include "File.h"
 #include "FileSystem.h"
 #include "FormDataBuilder.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "TextEncoding.h"
-#include "UUID.h"
 
 namespace WebCore {
+
+#if ENABLE(BLOB_SLICE)
+const long long FormDataElement::toEndOfFile = -1;
+const double FormDataElement::doNotCheckFileChange = 0;
+#endif
 
 inline FormData::FormData()
     : m_identifier(0)
@@ -96,17 +99,17 @@ PassRefPtr<FormData> FormData::create(const Vector<char>& vector)
     return result.release();
 }
 
-PassRefPtr<FormData> FormData::create(const DOMFormData& domFormData)
+PassRefPtr<FormData> FormData::create(const BlobItemList& items, const TextEncoding& encoding)
 {
     RefPtr<FormData> result = create();
-    result->appendDOMFormData(domFormData, false, 0);
+    result->appendKeyValuePairItems(items, encoding, false, 0);
     return result.release();
 }
 
-PassRefPtr<FormData> FormData::createMultiPart(const DOMFormData& domFormData, Document* document)
+PassRefPtr<FormData> FormData::createMultiPart(const BlobItemList& items, const TextEncoding& encoding, Document* document)
 {
     RefPtr<FormData> result = create();
-    result->appendDOMFormData(domFormData, true, document);
+    result->appendKeyValuePairItems(items, encoding, true, document);
     return result.release();
 }
 
@@ -154,10 +157,42 @@ void FormData::appendData(const void* data, size_t size)
 void FormData::appendFile(const String& filename, bool shouldGenerateFile)
 {
 #if ENABLE(BLOB_SLICE)
-    m_elements.append(FormDataElement(filename, 0, Blob::toEndOfFile, Blob::doNotCheckFileChange, shouldGenerateFile));
+    m_elements.append(FormDataElement(filename, 0, FormDataElement::toEndOfFile, FormDataElement::doNotCheckFileChange, shouldGenerateFile));
 #else
     m_elements.append(FormDataElement(filename, shouldGenerateFile));
 #endif
+}
+
+void FormData::appendItems(const BlobItemList& items)
+{
+    for (BlobItemList::const_iterator iter(items.begin()); iter != items.end(); ++iter)
+        appendItem(iter->get(), false);
+}
+
+void FormData::appendItem(const BlobItem* item, bool shouldGenerateFile)
+{
+    const DataBlobItem* dataItem = item->toDataBlobItem();
+    if (dataItem) {
+        appendData(dataItem->data(), static_cast<size_t>(dataItem->size()));
+        return;
+    }
+
+    const FileBlobItem* fileItem = item->toFileBlobItem();
+    ASSERT(fileItem);
+    if (fileItem->path().isEmpty()) {
+        // If the path is empty do not add the item.
+        return;
+    }
+
+#if ENABLE(BLOB_SLICE)
+    const FileRangeBlobItem* fileRangeItem = item->toFileRangeBlobItem();
+    if (fileRangeItem) {
+        appendFileRange(fileItem->path(), fileRangeItem->start(), fileRangeItem->size(), fileRangeItem->snapshotModificationTime(), shouldGenerateFile);
+        return;
+    }
+#endif
+
+    appendFile(fileItem->path(), shouldGenerateFile);
 }
 
 #if ENABLE(BLOB_SLICE)
@@ -167,42 +202,30 @@ void FormData::appendFileRange(const String& filename, long long start, long lon
 }
 #endif
 
-void FormData::appendDOMFormData(const DOMFormData& domFormData, bool isMultiPartForm, Document* document)
+void FormData::appendKeyValuePairItems(const BlobItemList& items, const TextEncoding& encoding, bool isMultiPartForm, Document* document)
 {
     FormDataBuilder formDataBuilder;
     if (isMultiPartForm)
         m_boundary = formDataBuilder.generateUniqueBoundaryString();
 
     Vector<char> encodedData;
-    TextEncoding encoding = domFormData.encoding();
 
-    const Vector<FormDataList::Item>& list = domFormData.list();
-    size_t formDataListSize = list.size();
+    size_t formDataListSize = items.size();
     ASSERT(!(formDataListSize % 2));
     for (size_t i = 0; i < formDataListSize; i += 2) {
-        const FormDataList::Item& key = list[i];
-        const FormDataList::Item& value = list[i + 1];
+        const StringBlobItem* key = items[i]->toStringBlobItem();
+        const BlobItem* value = items[i + 1].get();
+        ASSERT(key);
         if (isMultiPartForm) {
             Vector<char> header;
-            formDataBuilder.beginMultiPartHeader(header, m_boundary.data(), key.data());
+            formDataBuilder.beginMultiPartHeader(header, m_boundary.data(), key->cstr());
 
             bool shouldGenerateFile = false;
             // If the current type is FILE, then we also need to include the filename
-            if (value.blob()) {
-                const String& path = value.blob()->path();
-#if ENABLE(BLOB_SLICE)
-                String fileName;
-                if (value.blob()->isFile())
-                    fileName = static_cast<File*>(value.blob())->fileName();
-                else {
-                    // If a blob is sliced from a file, it does not have the filename. In this case, let's produce a unique filename.
-                    fileName = "Blob" + createCanonicalUUIDString();
-                    fileName.replace("-", ""); // For safty, remove '-' from the filename snce some servers may not like it.
-                }
-#else
-                ASSERT(value.blob()->isFile());
-                String fileName = static_cast<File*>(value.blob())->fileName();
-#endif
+            const FileBlobItem* fileItem = value->toFileBlobItem();
+            if (fileItem) {
+                const String& path = fileItem->path();
+                String fileName = fileItem->name();
 
                 // Let the application specify a filename if it's going to generate a replacement file for the upload.
                 if (!path.isEmpty()) {
@@ -217,9 +240,9 @@ void FormData::appendDOMFormData(const DOMFormData& domFormData, bool isMultiPar
                 // We have to include the filename=".." part in the header, even if the filename is empty
                 formDataBuilder.addFilenameToMultiPartHeader(header, encoding, fileName);
 
-                // If a blob is sliced from a file, do not add the content type. 
+                // If the item is sliced from a file, do not add the content type.
 #if ENABLE(BLOB_SLICE)
-                if (!fileName.isEmpty() && value.blob()->isFile()) {
+                if (!fileName.isEmpty() && !value->toFileRangeBlobItem()) {
 #else
                 if (!fileName.isEmpty()) {
 #endif
@@ -237,25 +260,20 @@ void FormData::appendDOMFormData(const DOMFormData& domFormData, bool isMultiPar
 
             // Append body
             appendData(header.data(), header.size());
-            if (size_t dataSize = value.data().length())
-                appendData(value.data().data(), dataSize);
-            else if (value.blob() && !value.blob()->path().isEmpty())
-#if ENABLE(BLOB_SLICE)
-                appendFileRange(value.blob()->path(), value.blob()->start(), value.blob()->length(), value.blob()->modificationTime(), shouldGenerateFile);
-#else
-                appendFile(value.blob()->path(), shouldGenerateFile);
-#endif
-
+            appendItem(value, shouldGenerateFile);
             appendData("\r\n", 2);
         } else {
             // Omit the name "isindex" if it's the first form data element.
             // FIXME: Why is this a good rule? Is this obsolete now?
-            if (encodedData.isEmpty() && key.data() == "isindex")
-                FormDataBuilder::encodeStringAsFormData(encodedData, value.data());
+            const StringBlobItem* stringValue = value->toStringBlobItem();
+            if (!stringValue)
+                continue;
+            if (encodedData.isEmpty() && key->cstr() == "isindex")
+                FormDataBuilder::encodeStringAsFormData(encodedData, stringValue->cstr());
             else
-                formDataBuilder.addKeyValuePairAsFormData(encodedData, key.data(), value.data());
+                formDataBuilder.addKeyValuePairAsFormData(encodedData, key->cstr(), stringValue->cstr());
         }
-    } 
+    }
 
     if (isMultiPartForm)
         formDataBuilder.addBoundaryToMultiPartHeader(encodedData, m_boundary.data(), true);
@@ -270,12 +288,8 @@ void FormData::flatten(Vector<char>& data) const
     size_t n = m_elements.size();
     for (size_t i = 0; i < n; ++i) {
         const FormDataElement& e = m_elements[i];
-        if (e.m_type == FormDataElement::data) {
-            size_t oldSize = data.size();
-            size_t delta = e.m_data.size();
-            data.grow(oldSize + delta);
-            memcpy(data.data() + oldSize, e.m_data.data(), delta);
-        }
+        if (e.m_type == FormDataElement::data)
+            data.append(e.m_data.data(), static_cast<size_t>(e.m_data.size()));
     }
 }
 
@@ -289,10 +303,10 @@ String FormData::flattenToString() const
 void FormData::generateFiles(Document* document)
 {
     ASSERT(!m_hasGeneratedFiles);
-    
+
     if (m_hasGeneratedFiles)
         return;
-    
+
     Page* page = document->page();
     if (!page)
         return;
@@ -312,7 +326,7 @@ void FormData::removeGeneratedFilesIfNeeded()
 {
     if (!m_hasGeneratedFiles)
         return;
-        
+
     size_t n = m_elements.size();
     for (size_t i = 0; i < n; ++i) {
         FormDataElement& e = m_elements[i];

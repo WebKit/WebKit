@@ -72,48 +72,53 @@ void FileStream::openForRead(Blob* blob)
     if (isHandleValid(m_handle))
         return;
 
+    // FIXME: Need to handle multiple items that may include non-file ones when BlobBuilder is introduced.
+    ASSERT(blob->items().size() >= 1);
+    const FileBlobItem* fileItem = blob->items().at(0)->toFileBlobItem();
+    if (!fileItem) {
+        ASSERT(false);
+        m_client->didFail(NOT_READABLE_ERR);
+        return;
+    }
+
     // Check if the file exists by querying its modification time. We choose not to call fileExists() in order to save an
     // extra file system call when the modification time is needed to check the validity of the sliced file blob.
     // Per the spec, we need to return different error codes to differentiate between non-existent file and permission error.
     // openFile() could not tell use the failure reason.
     time_t currentModificationTime;
-    if (!getFileModificationTime(blob->path(), currentModificationTime)) {
+    if (!getFileModificationTime(fileItem->path(), currentModificationTime)) {
         m_client->didFail(NOT_FOUND_ERR);
         return;
     }
 
     // Open the file blob.
-    m_handle = openFile(blob->path(), OpenForRead);
+    m_handle = openFile(fileItem->path(), OpenForRead);
     if (!isHandleValid(m_handle)) {
         m_client->didFail(NOT_READABLE_ERR);
         return;
     }
 
 #if ENABLE(BLOB_SLICE)
-    // Check the modificationt time for the possible file change.
-    if (blob->modificationTime() != Blob::doNotCheckFileChange && static_cast<time_t>(blob->modificationTime()) != currentModificationTime) {
-        m_client->didFail(NOT_READABLE_ERR);
-        return;
-    }
-
-    // Jump to the beginning position if the file has been sliced.
-    if (blob->start() > 0) {
-        if (!seekFile(m_handle, blob->start(), SeekFromBeginning)) {
+    const FileRangeBlobItem* fileRangeItem = fileItem->toFileRangeBlobItem();
+    if (fileRangeItem) {
+        // Check the modificationt time for the possible file change.
+        if (static_cast<time_t>(fileRangeItem->snapshotModificationTime()) != currentModificationTime) {
             m_client->didFail(NOT_READABLE_ERR);
             return;
+        }
+
+        // Jump to the beginning position if the file has been sliced.
+        if (fileRangeItem->start() > 0) {
+            if (seekFile(m_handle, fileRangeItem->start(), SeekFromBeginning) < 0) {
+                m_client->didFail(NOT_READABLE_ERR);
+                return;
+            }
         }
     }
 #endif
 
     // Get the size.
-#if ENABLE(BLOB_SLICE)
-    m_totalBytesToRead = blob->length();
-    if (m_totalBytesToRead == Blob::toEndOfFile)
-        m_totalBytesToRead = blob->size() - blob->start();
-#else
     m_totalBytesToRead = blob->size();
-#endif
-
     m_client->didGetSize(m_totalBytesToRead);
 }
 

@@ -31,7 +31,6 @@
 #import "config.h"
 #import "FormDataStreamMac.h"
 
-#import "Blob.h"
 #import "FileSystem.h"
 #import "FormData.h"
 #import "ResourceHandle.h"
@@ -142,7 +141,7 @@ static void closeCurrentStream(FormStreamFields *form)
         CFRelease(form->currentStream);
         form->currentStream = NULL;
 #if ENABLE(BLOB_SLICE)
-        form->currentStreamRangeLength = Blob::toEndOfFile;
+        form->currentStreamRangeLength = FormDataElement::toEndOfFile;
 #endif
     }
     if (form->currentData) {
@@ -151,7 +150,7 @@ static void closeCurrentStream(FormStreamFields *form)
     }
 }
 
-// Return false if we cannot advance the stream. Currently the only possible failure is that the underlying file has been changed since File.slice. 
+// Return false if we cannot advance the stream. Currently the only possible failure is that the underlying file has been removed or changed since File.slice.
 static bool advanceCurrentStream(FormStreamFields* form)
 {
     closeCurrentStream(form);
@@ -161,6 +160,7 @@ static bool advanceCurrentStream(FormStreamFields* form)
 
     // Create the new stream.
     FormDataElement& nextInput = form->remainingElements.last();
+
     if (nextInput.m_type == FormDataElement::data) {
         size_t size = nextInput.m_data.size();
         char* data = nextInput.m_data.releaseBuffer();
@@ -169,17 +169,20 @@ static bool advanceCurrentStream(FormStreamFields* form)
     } else {
 #if ENABLE(BLOB_SLICE)
         // Check if the file has been changed or not if required.
-        if (nextInput.m_expectedFileModificationTime != Blob::doNotCheckFileChange) {
+        if (nextInput.m_expectedFileModificationTime != FormDataElement::doNotCheckFileChange) {
             time_t fileModificationTime;
             if (!getFileModificationTime(nextInput.m_filename, fileModificationTime) || fileModificationTime != static_cast<time_t>(nextInput.m_expectedFileModificationTime))
                 return false;
         }
 #endif
-
         const String& path = nextInput.m_shouldGenerateFile ? nextInput.m_generatedFilename : nextInput.m_filename;
         RetainPtr<CFStringRef> filename(AdoptCF, path.createCFString());
         RetainPtr<CFURLRef> fileURL(AdoptCF, CFURLCreateWithFileSystemPath(0, filename.get(), kCFURLPOSIXPathStyle, FALSE));
         form->currentStream = CFReadStreamCreateWithFile(0, fileURL.get());
+        if (!form->currentStream) {
+            // The file must have been removed or become unreadable.
+            return false;
+        }
 #if ENABLE(BLOB_SLICE)
         if (nextInput.m_fileStart > 0) {
             CFNumberRef position = CFNumberCreate(0, kCFNumberLongLongType, &nextInput.m_fileStart);
@@ -222,7 +225,7 @@ static void* formCreate(CFReadStreamRef stream, void* context)
     FormStreamFields* newInfo = new FormStreamFields;
     newInfo->currentStream = NULL;
 #if ENABLE(BLOB_SLICE)
-    newInfo->currentStreamRangeLength = Blob::toEndOfFile;
+    newInfo->currentStreamRangeLength = FormDataElement::toEndOfFile;
 #endif
     newInfo->currentData = 0;
     newInfo->formStream = stream; // Don't retain. That would create a reference cycle.
@@ -270,7 +273,7 @@ static CFIndex formRead(CFReadStreamRef stream, UInt8* buffer, CFIndex bufferLen
     while (form->currentStream) {
         CFIndex bytesToRead = bufferLength;
 #if ENABLE(BLOB_SLICE)
-        if (form->currentStreamRangeLength != Blob::toEndOfFile && form->currentStreamRangeLength < bytesToRead)
+        if (form->currentStreamRangeLength != FormDataElement::toEndOfFile && form->currentStreamRangeLength < bytesToRead)
             bytesToRead = static_cast<CFIndex>(form->currentStreamRangeLength);
 #endif
         CFIndex bytesRead = CFReadStreamRead(form->currentStream, buffer, bytesToRead);
@@ -283,7 +286,7 @@ static CFIndex formRead(CFReadStreamRef stream, UInt8* buffer, CFIndex bufferLen
             *atEOF = FALSE;
             form->bytesSent += bytesRead;
 #if ENABLE(BLOB_SLICE)
-            if (form->currentStreamRangeLength != Blob::toEndOfFile)
+            if (form->currentStreamRangeLength != FormDataElement::toEndOfFile)
                 form->currentStreamRangeLength -= bytesRead;
 #endif
 
@@ -400,7 +403,7 @@ void setHTTPBody(NSMutableURLRequest *request, PassRefPtr<FormData> formData)
         else {
 #if ENABLE(BLOB_SLICE)
             // If we're sending the file range, use the existing range length for now. We will detect if the file has been changed right before we read the file and abort the operation if necessary.
-            if (element.m_fileLength != Blob::toEndOfFile) {
+            if (element.m_fileLength != FormDataElement::toEndOfFile) {
                 length += element.m_fileLength;
                 continue;
             }

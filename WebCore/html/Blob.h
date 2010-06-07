@@ -31,21 +31,24 @@
 #ifndef Blob_h
 #define Blob_h
 
-#include "ExceptionCode.h"
+#include "BlobItem.h"
 #include "PlatformString.h"
-#include <time.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Blob : public RefCounted<Blob> {
 public:
-#if ENABLE(BLOB_SLICE)
-    static const int toEndOfFile;
-    static const double doNotCheckFileChange;
-#endif
+    static PassRefPtr<Blob> create()
+    {
+        return adoptRef(new Blob());
+    }
 
+    // FIXME: Deprecated method.  This is called only from
+    // bindings/v8/SerializedScriptValue.cpp and the usage in it will become invalid once
+    // BlobBuilder is introduced.
     static PassRefPtr<Blob> create(const String& path)
     {
         return adoptRef(new Blob(path));
@@ -53,47 +56,28 @@ public:
 
     virtual ~Blob() { }
 
+    unsigned long long size() const;
+    const String& type() const { return m_type; }
     virtual bool isFile() const { return false; }
+
+    // FIXME: Deprecated method.
+    const String& path() const;
+
+    void append(PassRefPtr<BlobItem>);
+    const BlobItemList& items() const { return m_items; }
 
 #if ENABLE(BLOB_SLICE)
     PassRefPtr<Blob> slice(long long start, long long length) const;
 #endif
 
-    const String& path() const { return m_path; }
-    unsigned long long size() const;
-#if ENABLE(BLOB_SLICE)
-    long long start() const { return m_start; }
-    long long length() const { return m_length; }
-    double modificationTime() const { return m_snapshotModificationTime; }
-#endif
-
 protected:
+    Blob() { }
+
+    // FIXME: Deprecated constructor.  See also the comment for Blob::create(path).
     Blob(const String& path);
 
-private:
-#if ENABLE(BLOB_SLICE)
-    Blob(const String& path, long long start, long long length, long long snapshotSize, double snapshotModificationTime);
-#endif
-
-    // The underlying path of the file-based blob. 
-    String m_path;
-
-#if ENABLE(BLOB_SLICE)
-    // The starting position of the file-based blob.
-    long long m_start;
-
-    // The length of the file-based blob. The value of -1 means to the end of the file.
-    long long m_length;
-
-    // A flag to tell if a snapshot has been captured.
-    bool m_snapshotCaptured;
-
-    // The size of the file when a snapshot is captured. It can be 0 if the file is empty.
-    long long m_snapshotSize;
-
-    // The last modification time of the file when a snapshot is captured. The value of 0 also means that the snapshot is not captured.
-    double m_snapshotModificationTime;
-#endif
+    BlobItemList m_items;
+    String m_type;
 };
 
 } // namespace WebCore

@@ -24,6 +24,7 @@
 
 #include "Attribute.h"
 #include "EventNames.h"
+#include "ExceptionCode.h"
 #include "FormDataList.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"

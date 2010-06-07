@@ -26,13 +26,16 @@
 
 namespace WebCore {
 
-class DOMFormData;
+class BlobItem;
 class Document;
+class TextEncoding;
+typedef Vector<RefPtr<BlobItem> > BlobItemList;
 
 class FormDataElement {
 public:
     FormDataElement() : m_type(data) { }
     FormDataElement(const Vector<char>& array) : m_type(data), m_data(array) { }
+
 #if ENABLE(BLOB_SLICE)
     FormDataElement(const String& filename, long long fileStart, long long fileLength, double expectedFileModificationTime, bool shouldGenerateFile) : m_type(encodedFile), m_filename(filename), m_fileStart(fileStart), m_fileLength(fileLength), m_expectedFileModificationTime(expectedFileModificationTime), m_shouldGenerateFile(shouldGenerateFile) { }
 #else
@@ -49,13 +52,18 @@ public:
 #endif
     String m_generatedFilename;
     bool m_shouldGenerateFile;
+
+#if ENABLE(BLOB_SLICE)
+    static const long long toEndOfFile;
+    static const double doNotCheckFileChange;
+#endif
 };
 
 inline bool operator==(const FormDataElement& a, const FormDataElement& b)
 {
     if (&a == &b)
         return true;
-    
+
     if (a.m_type != b.m_type)
         return false;
     if (a.m_data != b.m_data)
@@ -69,25 +77,26 @@ inline bool operator==(const FormDataElement& a, const FormDataElement& b)
 
     return true;
 }
- 
+
 inline bool operator!=(const FormDataElement& a, const FormDataElement& b)
 {
     return !(a == b);
 }
- 
+
 class FormData : public RefCounted<FormData> {
 public:
     static PassRefPtr<FormData> create();
     static PassRefPtr<FormData> create(const void*, size_t);
     static PassRefPtr<FormData> create(const WTF::CString&);
     static PassRefPtr<FormData> create(const Vector<char>&);
-    static PassRefPtr<FormData> create(const DOMFormData&);
-    static PassRefPtr<FormData> createMultiPart(const DOMFormData&, Document*);
+    static PassRefPtr<FormData> create(const BlobItemList&, const TextEncoding&);
+    static PassRefPtr<FormData> createMultiPart(const BlobItemList&, const TextEncoding&, Document*);
     PassRefPtr<FormData> copy() const;
     PassRefPtr<FormData> deepCopy() const;
     ~FormData();
-    
+
     void appendData(const void* data, size_t);
+    void appendItems(const BlobItemList&);
     void appendFile(const String& filename, bool shouldGenerateFile = false);
 #if ENABLE(BLOB_SLICE)
     void appendFileRange(const String& filename, long long start, long long length, double expectedModificationTime, bool shouldGenerateFile = false);
@@ -115,9 +124,11 @@ private:
     FormData();
     FormData(const FormData&);
 
-    void appendDOMFormData(const DOMFormData& domFormData, bool isMultiPartForm, Document* document);
+    void appendItem(const BlobItem*, bool shouldGenerateFile);
+    void appendKeyValuePairItems(const BlobItemList&, const TextEncoding&, bool isMultiPartForm, Document*);
 
     Vector<FormDataElement> m_elements;
+
     int64_t m_identifier;
     bool m_hasGeneratedFiles;
     bool m_alwaysStream;
@@ -131,7 +142,7 @@ inline bool operator==(const FormData& a, const FormData& b)
 
 inline bool operator!=(const FormData& a, const FormData& b)
 {
-    return a.elements() != b.elements();
+    return !(a == b);
 }
 
 } // namespace WebCore

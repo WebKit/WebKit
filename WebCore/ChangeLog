@@ -1,3 +1,80 @@
+2010-06-07  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Jian Li.
+
+        Refactor FormData and Blob for better support of Blobs synthesized by BlobBuilder.
+        https://bugs.webkit.org/show_bug.cgi?id=39083
+
+        - Introduces a new class BlobItem as a basic component of Blob and FormDataList.
+        - File would become a special type of Blob that contains only one FileBlobItem.
+        - Fix the dependency violation in FormData so that the files under platform/ do not include any html/ files.
+
+        The patch doesn't support the latest File API changes (e.g. type,
+        url and slice's type parameters) and should not change any of its
+        existing behaviors.
+
+        The existing tests should be able to be used for regression.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/Blob.cpp:
+        (WebCore::Blob::Blob):
+        (WebCore::Blob::size):
+        (WebCore::Blob::path):
+        (WebCore::Blob::append):
+        (WebCore::Blob::slice):
+        * html/Blob.h:
+        (WebCore::Blob::create):
+        (WebCore::Blob::type):
+        (WebCore::Blob::items):
+        (WebCore::Blob::Blob):
+        * html/File.cpp:
+        (WebCore::File::File):
+        (WebCore::File::name):
+        * html/File.h:
+        (WebCore::File::fileName):
+        * html/FileReader.cpp:
+        (WebCore::FileReader::readAsBinaryString):
+        (WebCore::FileReader::readAsText):
+        * html/FileStream.cpp:
+        (WebCore::FileStream::openForRead):
+        * html/FormDataList.cpp:
+        (WebCore::FormDataList::appendString): Moved the line ending fix logic to StringBlobItem::convertToCString.
+        (WebCore::FormDataList::appendBlob):
+        * html/FormDataList.h:
+        (WebCore::FormDataList::items):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::createFormData):
+        * html/HTMLProgressElement.cpp:
+        * platform/BlobItem.cpp: Added.
+        * platform/BlobItem.h: Added.
+        * platform/network/FormData.cpp:
+        (WebCore::FormDataElement::FormDataElement):
+        (WebCore::FormData::create):
+        (WebCore::FormData::createMultiPart):
+        (WebCore::FormData::deepCopy):
+        (WebCore::FormData::appendData):
+        (WebCore::FormData::appendString):
+        (WebCore::FormData::appendFile):
+        (WebCore::FormData::appendFileRange):
+        (WebCore::FormData::appendItems):
+        (WebCore::FormData::appendItem):
+        (WebCore::FormData::appendKeyValuePairItems):
+        * platform/network/FormData.h:
+        (WebCore::operator!=):
+        * platform/network/mac/FormDataStreamMac.mm:
+        (WebCore::closeCurrentStream):
+        (WebCore::advanceCurrentStream):
+        (WebCore::formCreate):
+        (WebCore::formRead):
+        (WebCore::setHTTPBody):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
 2010-06-07  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Dimitri Glazkov.
