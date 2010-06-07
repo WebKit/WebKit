@@ -1,3 +1,13 @@
+2010-06-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTML5 parser hits ASSERT in http/tests/misc/window-dot-stop.html
+        https://bugs.webkit.org/show_bug.cgi?id=40264
+
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::executeScript):
+
 2010-06-07  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed.

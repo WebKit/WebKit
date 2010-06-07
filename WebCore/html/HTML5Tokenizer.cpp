@@ -164,7 +164,10 @@ void HTML5Tokenizer::executeScript(const ScriptSourceCode& sourceCode)
     // Append oldInsertionPoint onto the new (likely empty) m_source instead of
     // oldInsertionPoint.prepent(m_source) as that would ASSERT if
     // m_source.escaped() (it had characters pushed back onto it).
-    m_source.append(oldInsertionPoint);
+    // If m_source was closed, then the tokenizer was stopped, and we discard
+    // any pending data as though an EOF character was inserted into the stream.
+    if (!m_source.isClosed())
+        m_source.append(oldInsertionPoint);
 }
 
 void HTML5Tokenizer::notifyFinished(CachedResource* cachedResource)
