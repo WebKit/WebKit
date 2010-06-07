@@ -28,6 +28,8 @@
 
 #include <AEEBitmap.h>
 #include <AEEFile.h>
+#include <AEENet.h>
+#include <AEESSL.h>
 #include <AEEStdLib.h>
 
 namespace WTF {
@@ -48,6 +50,18 @@ void deleteOwnedPtr(IBitmap* ptr)
 {
     if (ptr)
         IBitmap_Release(ptr);
+}
+
+void deleteOwnedPtr(ISSL* ptr)
+{
+    if (ptr)
+        ISSL_Release(ptr);
+}
+
+void deleteOwnedPtr(ISocket* ptr)
+{
+    if (ptr)
+        ISOCKET_Release(ptr);
 }
 
 }

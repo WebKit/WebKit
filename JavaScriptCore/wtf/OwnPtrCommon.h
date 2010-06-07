@@ -41,9 +41,11 @@ typedef struct HRGN__* HRGN;
 #if PLATFORM(BREWMP)
 // Forward delcarations at this point avoid the need to include BREW includes
 // in WTF headers.
+typedef struct _ISocket ISocket;
 typedef struct _IFileMgr IFileMgr;
 typedef struct _IFile IFile;
 typedef struct IBitmap IBitmap;
+typedef struct ISSL ISSL;
 #endif
 
 namespace WTF {
@@ -69,6 +71,8 @@ namespace WTF {
     void deleteOwnedPtr(IFileMgr*);
     void deleteOwnedPtr(IFile*);
     void deleteOwnedPtr(IBitmap*);
+    void deleteOwnedPtr(ISSL*);
+    void deleteOwnedPtr(ISocket*);
 #endif
 
 } // namespace WTF
