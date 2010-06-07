@@ -26,6 +26,7 @@
 #ifndef TextMetrics_h
 #define TextMetrics_h
 
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

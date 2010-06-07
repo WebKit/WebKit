@@ -36,9 +36,11 @@ module html {
         [Custom] DOMString toDataURL(in [ConvertUndefinedOrNullToNullString] DOMString type)
             raises(DOMException);
 
+#if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
         // The custom binding is needed to handle context creation attributes.
         [Custom] DOMObject getContext(in DOMString contextId);
+#endif
 #endif
 
     };

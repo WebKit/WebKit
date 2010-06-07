@@ -36,14 +36,17 @@ namespace WebCore {
 
     class EventListener : public RefCounted<EventListener> {
     public:
-        enum Type { JSEventListenerType, 
-                    ImageEventListenerType, 
-                    InspectorDOMAgentType,
-                    InspectorDOMStorageResourceType,
-                    ObjCEventListenerType, 
-                    ConditionEventListenerType,
-                    GObjectEventListenerType };
-                    
+        enum Type {
+            JSEventListenerType, 
+            ImageEventListenerType, 
+            InspectorDOMAgentType,
+            InspectorDOMStorageResourceType,
+            ObjCEventListenerType,
+            CPPEventListenerType,
+            ConditionEventListenerType,
+            GObjectEventListenerType
+        };
+
         virtual ~EventListener() { }
         virtual bool operator==(const EventListener&) = 0;
         virtual void handleEvent(ScriptExecutionContext*, Event*) = 0;

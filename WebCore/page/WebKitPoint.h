@@ -26,6 +26,7 @@
 #ifndef WebKitPoint_h
 #define WebKitPoint_h
 
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

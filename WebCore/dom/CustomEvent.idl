@@ -25,6 +25,7 @@
 
 module events {
 
+#if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
     // Introduced in DOM Level 3:
     interface CustomEvent : Event {
 
@@ -35,5 +36,6 @@ module events {
                             in boolean cancelableArg, 
                             in DOMObject detailArg);
     };
+#endif
 
 }

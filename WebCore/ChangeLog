@@ -1,3 +1,184 @@
+2010-06-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Sam Weinig.
+
+        Add CPP bindings generator
+        https://bugs.webkit.org/show_bug.cgi?id=38279
+
+        Add CPP bindings generator used in Olympia platform.
+        We can succesfully generate cpp bindings for all IDLs except:
+        - DOMWindow.idl / EventTarget.idl (filtered out in the IDL list in DerivedSources.make for non-jsc/v8 generators anyways, so no problem at all)
+        - inspector/ (not needed for us at all)
+        - svg/ (needs custom handling, related to animated attributes)
+
+        All generated files are free of style issues: "Total errors found: 0 in 510 files"
+        Not integrated in any build system so far, though I've successfully tested on Mac and inside Olympia, of course.
+
+        * bindings/cpp: Added.
+        * bindings/cpp/WebDOMCString.cpp: Added.
+        (WebDOMCString::reset):
+        (WebDOMCString::assign):
+        (WebDOMCString::length):
+        (WebDOMCString::data):
+        (WebDOMCString::utf16):
+        (WebDOMCString::fromUTF16):
+        (WebDOMCString::WebDOMCString):
+        (WebDOMCString::operator=):
+        (WebDOMCString::operator WTF::CString):
+        * bindings/cpp/WebDOMCString.h: Added.
+        (WebDOMCString::~WebDOMCString):
+        (WebDOMCString::WebDOMCString):
+        (WebDOMCString::operator=):
+        (WebDOMCString::isEmpty):
+        (WebDOMCString::isNull):
+        * bindings/cpp/WebDOMEventListenerCustom.cpp: Added.
+        (WebDOMEventListener::handleEvent):
+        (toWebKit):
+        * bindings/cpp/WebDOMEventTarget.cpp: Added.
+        (WebDOMEventTarget::WebDOMEventTargetPrivate::WebDOMEventTargetPrivate):
+        (WebDOMEventTarget::WebDOMEventTarget):
+        (WebDOMEventTarget::~WebDOMEventTarget):
+        (WebDOMEventTarget::impl):
+        (toWebCore):
+        (toWebKit):
+        * bindings/cpp/WebDOMEventTarget.h: Added.
+        * bindings/cpp/WebDOMHTMLDocumentCustom.cpp: Added.
+        (documentWrite):
+        (WebDOMHTMLDocument::write):
+        (WebDOMHTMLDocument::writeln):
+        * bindings/cpp/WebDOMNodeCustom.cpp: Added.
+        (WebDOMNode::insertBefore):
+        (WebDOMNode::replaceChild):
+        (WebDOMNode::removeChild):
+        (WebDOMNode::appendChild):
+        (WebDOMNode::addEventListener):
+        (WebDOMNode::removeEventListener):
+        * bindings/cpp/WebDOMObject.h: Added.
+        (WebDOMObject::WebDOMObject):
+        (WebDOMObject::~WebDOMObject):
+        * bindings/cpp/WebDOMString.cpp: Added.
+        (WebDOMString::reset):
+        (WebDOMString::assign):
+        (WebDOMString::length):
+        (WebDOMString::data):
+        (WebDOMString::utf8):
+        (WebDOMString::fromUTF8):
+        (WebDOMString::WebDOMString):
+        (WebDOMString::operator=):
+        (WebDOMString::operator WebCore::String):
+        (WebDOMString::operator WebCore::AtomicString):
+        (WebDOMString::equals):
+        * bindings/cpp/WebDOMString.h: Added.
+        (WebDOMString::~WebDOMString):
+        (WebDOMString::WebDOMString):
+        (WebDOMString::operator=):
+        (WebDOMString::isEmpty):
+        (WebDOMString::isNull):
+        * bindings/cpp/WebExceptionHandler.cpp: Added.
+        (globalExceptionHandler):
+        (webInstallExceptionHandler):
+        (webRaiseDOMException):
+        * bindings/cpp/WebExceptionHandler.h: Added.
+        (webDOMRaiseError):
+        * bindings/cpp/WebNativeEventListener.cpp: Added.
+        (WebNativeEventListener::WebNativeEventListener):
+        (WebNativeEventListener::~WebNativeEventListener):
+        (WebNativeEventListener::handleEvent):
+        (WebNativeEventListener::reportError):
+        (WebNativeEventListener::operator==):
+        * bindings/cpp/WebNativeEventListener.h: Added.
+        (WebNativeEventListener::create):
+        (WebNativeEventListener::cast):
+        * bindings/scripts/CodeGeneratorCPP.pm: Added.
+        * bindings/scripts/test/CPP: Added.
+        * bindings/scripts/test/CPP/WebDOMTestCallback.cpp: Added.
+        (WebDOMTestCallback::WebDOMTestCallbackPrivate::WebDOMTestCallbackPrivate):
+        (WebDOMTestCallback::WebDOMTestCallback):
+        (WebDOMTestCallback::impl):
+        (WebDOMTestCallback::~WebDOMTestCallback):
+        (WebDOMTestCallback::callbackWithClass1Param):
+        (WebDOMTestCallback::callbackWithClass2Param):
+        (WebDOMTestCallback::callbackWithNonBoolReturnType):
+        (toWebCore):
+        (toWebKit):
+        * bindings/scripts/test/CPP/WebDOMTestCallback.h: Added.
+        * bindings/scripts/test/CPP/WebDOMTestInterface.cpp: Added.
+        (WebDOMTestInterface::WebDOMTestInterfacePrivate::WebDOMTestInterfacePrivate):
+        (WebDOMTestInterface::WebDOMTestInterface):
+        (WebDOMTestInterface::impl):
+        (WebDOMTestInterface::~WebDOMTestInterface):
+        (toWebCore):
+        (toWebKit):
+        * bindings/scripts/test/CPP/WebDOMTestInterface.h: Added.
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp: Added.
+        (WebDOMTestObj::WebDOMTestObjPrivate::WebDOMTestObjPrivate):
+        (WebDOMTestObj::WebDOMTestObj):
+        (WebDOMTestObj::impl):
+        (WebDOMTestObj::~WebDOMTestObj):
+        (WebDOMTestObj::readOnlyIntAttr):
+        (WebDOMTestObj::readOnlyStringAttr):
+        (WebDOMTestObj::readOnlyTestObjAttr):
+        (WebDOMTestObj::intAttr):
+        (WebDOMTestObj::setIntAttr):
+        (WebDOMTestObj::longLongAttr):
+        (WebDOMTestObj::setLongLongAttr):
+        (WebDOMTestObj::unsignedLongLongAttr):
+        (WebDOMTestObj::setUnsignedLongLongAttr):
+        (WebDOMTestObj::stringAttr):
+        (WebDOMTestObj::setStringAttr):
+        (WebDOMTestObj::testObjAttr):
+        (WebDOMTestObj::setTestObjAttr):
+        (WebDOMTestObj::attrWithException):
+        (WebDOMTestObj::setAttrWithException):
+        (WebDOMTestObj::attrWithSetterException):
+        (WebDOMTestObj::setAttrWithSetterException):
+        (WebDOMTestObj::attrWithGetterException):
+        (WebDOMTestObj::setAttrWithGetterException):
+        (WebDOMTestObj::scriptStringAttr):
+        (WebDOMTestObj::voidMethod):
+        (WebDOMTestObj::voidMethodWithArgs):
+        (WebDOMTestObj::intMethod):
+        (WebDOMTestObj::intMethodWithArgs):
+        (WebDOMTestObj::objMethod):
+        (WebDOMTestObj::objMethodWithArgs):
+        (WebDOMTestObj::methodThatRequiresAllArgs):
+        (WebDOMTestObj::methodThatRequiresAllArgsAndThrows):
+        (WebDOMTestObj::serializedValue):
+        (WebDOMTestObj::methodWithException):
+        (WebDOMTestObj::addEventListener):
+        (WebDOMTestObj::removeEventListener):
+        (WebDOMTestObj::withDynamicFrame):
+        (WebDOMTestObj::withDynamicFrameAndArg):
+        (WebDOMTestObj::withDynamicFrameAndOptionalArg):
+        (WebDOMTestObj::withScriptStateVoid):
+        (WebDOMTestObj::withScriptStateObj):
+        (WebDOMTestObj::withScriptStateVoidException):
+        (WebDOMTestObj::withScriptStateObjException):
+        (WebDOMTestObj::methodWithOptionalArg):
+        (WebDOMTestObj::methodWithNonOptionalArgAndOptionalArg):
+        (WebDOMTestObj::methodWithNonOptionalArgAndTwoOptionalArgs):
+        (toWebCore):
+        (toWebKit):
+        * bindings/scripts/test/CPP/WebDOMTestObj.h: Added.
+        * css/StyleSheet.idl: Export helper method isCSSStyleSheet() for cpp bindings only.
+        * dom/CustomEvent.idl: Disabled for cpp bindings, needs arbitary input parameter handling support ('DOMObject' type).
+        * dom/Document.idl: Ignore getCSSCanvasContext() for cpp bindings and export helper method isHTMLDocument() (cpp bindings only).
+        * dom/Event.idl: Export isMutationEvent()/isMouseEvent()/isUIEvent() helpers for cpp bindings only.
+        * dom/EventListener.h: Add CPPEventListenerType.
+        * dom/Node.idl: addEventListener/removeEventListener need [Custom] flag for cpp bindings.
+        * dom/PopStateEvent.idl: Disabled just like CustomEvent, for the same reason ("any" argument type handling).
+        * html/HTMLCanvasElement.idl: Disable getContext() method for cpp bindings, as it's done for objc bindings.
+        * html/HTMLDocument.idl: Add [NoCPPCustom] marker for open(), as we're just autogenerating it.
+        * html/HTMLInputElement.idl: Disable valueAsDate() method for cpp bindings, as we're missing native 'Date' type support.
+        * html/TextMetrics.h: Add missing PassRefPtr.h include.
+        * html/canvas/CanvasRenderingContext2D.idl: Disable methods (setLineCap, etc..) for cpp bindings whose names clash with property setters.
+        * page/AbstractView.idl: Rename 'Media' type to 'StyleMedia' - this should have been done before.
+        * page/Location.idl: Disable several methods which would need a custom implementation for the cpp bindings.
+        * page/WebKitPoint.h: Add missing PassRefPtr.h include.
+        * storage/SQLResultSet.idl: Correct type from 'long' to 'long long', for cpp bindings only though as it wouldn't build on Chromium/V8.
+        * workers/DedicatedWorkerContext.idl: Disable postMessage() for now when using cpp bindings, would need custom code for us.
+        * workers/WorkerContext.idl: Hide constructors from cpp bindings.
+
 2010-06-07  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

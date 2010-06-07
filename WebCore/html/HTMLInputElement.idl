@@ -57,7 +57,9 @@ module html {
                  attribute [ConvertNullToNullString, JSCCustomGetter] DOMString type; // readonly dropped as part of DOM level 2
                  attribute [ConvertNullToNullString] DOMString useMap;
                  attribute [ConvertNullToNullString] DOMString value;
+#if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
                  attribute Date            valueAsDate setter raises(DOMException);
+#endif
                  attribute double          valueAsNumber setter raises(DOMException);
 #if defined(ENABLE_DATALIST) && ENABLE_DATALIST
         readonly attribute HTMLOptionElement selectedOption;

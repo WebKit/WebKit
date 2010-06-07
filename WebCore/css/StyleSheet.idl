@@ -33,6 +33,12 @@ module stylesheets {
         readonly attribute [ConvertNullStringTo=Null] DOMString        href;
         readonly attribute [ConvertNullStringTo=Null] DOMString        title;
         readonly attribute MediaList        media;
+
+#if defined(LANGUAGE_CPP) && LANGUAGE_CPP
+        // Extra WebCore methods exposed to allowe compile-time casting in C++
+        boolean isCSSStyleSheet();
+#endif
+
     };
 
 }

@@ -41,13 +41,16 @@ module window {
         CustomPrototypeDefineGetter,
         OmitConstructor
     ] Location {
+#if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
                  attribute [DoNotCheckDomainSecurityOnSet, CustomSetter, V8DisallowShadowing] DOMString href;
+#endif
 
         [Custom, V8OnInstance] void assign(in DOMString url);
         [Custom, V8OnInstance] void replace(in DOMString url);
         [Custom, V8OnInstance] void reload();
 
         // URI decomposition attributes
+#if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
                  attribute [CustomSetter] DOMString protocol;
                  attribute [CustomSetter] DOMString host;
                  attribute [CustomSetter] DOMString hostname;
@@ -55,6 +58,7 @@ module window {
                  attribute [CustomSetter] DOMString pathname;
                  attribute [CustomSetter] DOMString search;
                  attribute [CustomSetter] DOMString hash;
+#endif
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         [DontEnum, Custom, V8OnInstance, V8ReadOnly] DOMString toString();

@@ -1,3 +1,14 @@
+2010-06-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Sam Weinig.
+
+        Add CPP bindings generator
+        https://bugs.webkit.org/show_bug.cgi?id=38279
+
+        Integrate CPP bindings in run-bindings-tests.
+
+        * Scripts/run-bindings-tests:
+
 2010-06-04  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Ojan Vafai.

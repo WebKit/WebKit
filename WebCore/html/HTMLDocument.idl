@@ -23,7 +23,7 @@ module html {
     interface [
         HasOverridingNameGetter
     ] HTMLDocument : Document {
-        [Custom] void open();
+        [Custom, NoCPPCustom] void open();
         void close();
         [Custom] void write(in DOMString text);
         [Custom] void writeln(in DOMString text);

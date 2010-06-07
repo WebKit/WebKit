@@ -116,6 +116,7 @@ def main(argv):
         'V8',
         'ObjC',
         'GObject',
+        'CPP'
     ]
 
     for generator in generators:

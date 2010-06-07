@@ -26,6 +26,7 @@
 
 module events {
 
+#if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
     interface PopStateEvent : Event {
         void initPopStateEvent(in DOMString typeArg, 
                                in boolean canBubbleArg, 
@@ -34,5 +35,6 @@ module events {
 
         readonly attribute [V8CustomGetter] any state;
     };
+#endif
 
 }

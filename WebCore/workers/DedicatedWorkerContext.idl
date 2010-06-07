@@ -39,6 +39,7 @@ module threads {
         OmitConstructor
     ] DedicatedWorkerContext : WorkerContext {
 
+#if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         [Custom] void postMessage(in any message, in [Optional] Array messagePorts)
             raises(DOMException);
@@ -47,6 +48,8 @@ module threads {
         void postMessage(in DOMString message, in [Optional] MessagePort messagePort)
             raises(DOMException);
 #endif
+#endif
+
                  attribute EventListener onmessage;
 
     };

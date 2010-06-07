@@ -90,10 +90,12 @@ module html {
         void setAlpha(in float alpha);
         void setCompositeOperation(in DOMString compositeOperation);
 
+#if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
         void setLineWidth(in float width);
         void setLineCap(in DOMString cap);
         void setLineJoin(in DOMString join);
         void setMiterLimit(in float limit);
+#endif
 
         void clearShadow();
 
