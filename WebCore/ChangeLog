@@ -1,3 +1,14 @@
+2010-06-08  Andras Becsi  <abecsi@webkit.org>
+
+        Unreviewed build fix after r60785.
+
+        [GTK] Add missing GtkVersioning.h include to fix the build
+        on older GTK+ versions.
+
+        No new tests needed.
+
+        * platform/gtk/WidgetGtk.cpp:
+
 2010-06-08  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
