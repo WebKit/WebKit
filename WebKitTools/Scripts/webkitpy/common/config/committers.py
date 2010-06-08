@@ -134,6 +134,7 @@ committers_unable_to_review = [
     Committer("Krzysztof Kowalczyk", "kkowalczyk@gmail.com"),
     Committer("Levi Weintraub", "lweintraub@apple.com"),
     Committer("Mads Ager", "ager@chromium.org"),
+    Committer("Marcus Voltis Bulach", "bulach@chromium.org"),
     Committer("Matt Lilek", ["webkit@mattlilek.com", "pewtermoose@webkit.org"]),
     Committer("Matt Perry", "mpcomplete@chromium.org"),
     Committer("Maxime Britto", ["maxime.britto@gmail.com", "britto@apple.com"]),
