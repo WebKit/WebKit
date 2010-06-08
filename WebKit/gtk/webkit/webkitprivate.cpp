@@ -129,9 +129,9 @@ WebCore::ResourceResponse core(WebKitNetworkResponse* response)
     return ResourceResponse();
 }
 
-WebCore::EditingBehaviorType core(WebKitEditingBehavior type)
+WebCore::EditingBehavior core(WebKitEditingBehavior type)
 {
-    return (WebCore::EditingBehaviorType)type;
+    return (WebCore::EditingBehavior)type;
 }
 
 WebKitHitTestResult* kit(const WebCore::HitTestResult& result)

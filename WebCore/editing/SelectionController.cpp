@@ -164,7 +164,7 @@ void SelectionController::setSelection(const VisibleSelection& s, bool closeTypi
     if (userTriggered) {
         ScrollAlignment alignment;
 
-        if (m_frame->editor()->behavior().shouldCenterAlignWhenSelectionIsRevealed())
+        if (m_frame->settings() && m_frame->settings()->editingBehavior() == EditingMacBehavior)
             alignment = (align == AlignCursorOnScrollAlways) ? ScrollAlignment::alignCenterAlways : ScrollAlignment::alignCenterIfNeeded;
         else
             alignment = (align == AlignCursorOnScrollAlways) ? ScrollAlignment::alignTopAlways : ScrollAlignment::alignToEdgeIfNeeded;
@@ -243,7 +243,8 @@ void SelectionController::nodeWillBeRemoved(Node *node)
     
 void SelectionController::setIsDirectional(bool isDirectional)
 {
-    m_isDirectional = !m_frame || m_frame->editor()->behavior().shouldConsiderSelectionAsDirectional() || isDirectional;
+    Settings* settings = m_frame ? m_frame->settings() : 0;
+    m_isDirectional = !settings || settings->editingBehavior() != EditingMacBehavior || isDirectional;
 }
 
 void SelectionController::willBeModified(EAlteration alter, EDirection direction)
@@ -298,7 +299,7 @@ VisiblePosition SelectionController::positionForPlatform(bool isGetStart) const
 {
     Position pos;
     Settings* settings = m_frame ? m_frame->settings() : 0;
-    if (settings && settings->editingBehaviorType() == EditingMacBehavior)
+    if (settings && settings->editingBehavior() == EditingMacBehavior)
         pos = isGetStart ? m_selection.start() : m_selection.end();
     else {
         // Linux and Windows always extend selections from the extent endpoint.
@@ -684,7 +685,7 @@ bool SelectionController::modify(EAlteration alter, EDirection direction, TextGr
         moveTo(position, userTriggered);
         break;
     case AlterationExtend:
-        if (!settings || settings->editingBehaviorType() != EditingMacBehavior || m_selection.isCaret() || !isBoundary(granularity))
+        if (!settings || settings->editingBehavior() != EditingMacBehavior || m_selection.isCaret() || !isBoundary(granularity))
             setExtent(position, userTriggered);
         else {
             // Standard Mac behavior when extending to a boundary is grow the selection rather

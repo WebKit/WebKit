@@ -29,7 +29,6 @@
 #include "ClipboardAccessPolicy.h"
 #include "Color.h"
 #include "EditAction.h"
-#include "EditingBehavior.h"
 #include "EditorDeleteAction.h"
 #include "EditorInsertAction.h"
 #include "SelectionController.h"
@@ -281,8 +280,6 @@ public:
     VisibleSelection selectionForCommand(Event*);
 
     KillRing* killRing() const { return m_killRing.get(); }
-
-    EditingBehavior behavior() const;
 
     PassRefPtr<Range> selectedRange();
     

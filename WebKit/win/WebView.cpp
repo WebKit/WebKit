@@ -4654,7 +4654,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = preferences->editingBehavior(&editingBehavior);
     if (FAILED(hr))
         return hr;
-    settings->setEditingBehaviorType((EditingBehaviorType)editingBehavior);
+    settings->setEditingBehavior((EditingBehavior)editingBehavior);
 
     hr = preferences->usesPageCache(&enabled);
     if (FAILED(hr))

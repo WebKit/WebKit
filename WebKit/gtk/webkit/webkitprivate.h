@@ -95,7 +95,7 @@ namespace WebKit {
 
     WebCore::ResourceResponse core(WebKitNetworkResponse* response);
 
-    WebCore::EditingBehaviorType core(WebKitEditingBehavior type);
+    WebCore::EditingBehavior core(WebKitEditingBehavior type);
 
     WebKitSecurityOrigin* kit(WebCore::SecurityOrigin*);
     WebCore::SecurityOrigin* core(WebKitSecurityOrigin*);

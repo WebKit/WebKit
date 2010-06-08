@@ -166,7 +166,7 @@ static bool executeToggleStyle(Frame* frame, EditorCommandSource source, EditAct
     // other: present throughout the selection
     Settings* settings = frame->document()->settings();
     bool styleIsPresent;
-    if (settings && settings->editingBehaviorType() == EditingMacBehavior)
+    if (settings && settings->editingBehavior() == EditingMacBehavior)
         styleIsPresent = frame->editor()->selectionStartHasStyle(style.get());
     else
         styleIsPresent = frame->editor()->selectionHasStyle(style.get()) == TrueTriState;

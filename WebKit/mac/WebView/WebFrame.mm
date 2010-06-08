@@ -196,7 +196,7 @@ EditableLinkBehavior core(WebKitEditableLinkBehavior editableLinkBehavior)
     return EditableLinkDefaultBehavior;
 }
 
-WebCore::EditingBehaviorType core(WebKitEditingBehavior behavior)
+WebCore::EditingBehavior core(WebKitEditingBehavior behavior)
 {
     switch (behavior) {
         case WebKitEditingMacBehavior:

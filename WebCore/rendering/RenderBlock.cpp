@@ -3955,15 +3955,16 @@ VisiblePosition RenderBlock::positionForPointWithInlineChildren(const IntPoint& 
         }
     }
 
-    bool moveCaretToBoundary = document()->frame()->editor()->behavior().shouldMoveCaretToHorizontalBoundaryWhenPastTopOrBottom();
+    Settings* settings = document()->settings();
+    bool useWindowsBehavior = settings && settings->editingBehavior() == EditingWindowsBehavior;
 
-    if (!moveCaretToBoundary && !closestBox && lastRootBoxWithChildren) {
+    if (useWindowsBehavior && !closestBox && lastRootBoxWithChildren) {
         // y coordinate is below last root line box, pretend we hit it
         closestBox = lastRootBoxWithChildren->closestLeafChildForXPos(pointInContents.x());
     }
 
     if (closestBox) {
-        if (moveCaretToBoundary && pointInContents.y() < firstRootBoxWithChildren->lineTop() - verticalLineClickFudgeFactor) {
+        if (!useWindowsBehavior && pointInContents.y() < firstRootBoxWithChildren->lineTop() - verticalLineClickFudgeFactor) {
             // y coordinate is above first root line box, so return the start of the first
             return VisiblePosition(positionForBox(firstRootBoxWithChildren->firstLeafChild(), true), DOWNSTREAM);
         }
@@ -3974,7 +3975,7 @@ VisiblePosition RenderBlock::positionForPointWithInlineChildren(const IntPoint& 
 
     if (lastRootBoxWithChildren) {
         // We hit this case for Mac behavior when the Y coordinate is below the last box.
-        ASSERT(moveCaretToBoundary);
+        ASSERT(!useWindowsBehavior);
         return VisiblePosition(positionForBox(lastRootBoxWithChildren->lastLeafChild(), false), DOWNSTREAM);
     }
 

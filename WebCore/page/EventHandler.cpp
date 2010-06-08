@@ -370,7 +370,7 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
         m_frame->selection()->setIsDirectional(false);
         
         ASSERT(m_frame->settings());
-        if (m_frame->settings()->editingBehaviorType() == EditingMacBehavior) {
+        if (m_frame->settings()->editingBehavior() == EditingMacBehavior) {
             // See <rdar://problem/3668157> REGRESSION (Mail): shift-click deselects when selection
             // was created right-to-left
             Position start = newSelection.start();

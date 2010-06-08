@@ -949,8 +949,6 @@ webcore_sources += \
 	WebCore/editing/EditAction.h \
 	WebCore/editing/EditCommand.cpp \
 	WebCore/editing/EditCommand.h \
-	WebCore/editing/EditingBehavior.h \
-	WebCore/editing/EditingBehaviorTypes.h \
 	WebCore/editing/Editor.cpp \
 	WebCore/editing/Editor.h \
 	WebCore/editing/EditorCommand.cpp \
