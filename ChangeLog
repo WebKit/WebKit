@@ -1,3 +1,14 @@
+2010-06-08  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Unit testing for WebKitDOMNode hierarchy walk
+        https://bugs.webkit.org/show_bug.cgi?id=40171
+
+        Add DOM node test to the build system.
+
+        * GNUmakefile.am:
+
 2010-06-02  Sterling Swigart  <sswigart@google.com>
 
         Reviewed by David Levin.

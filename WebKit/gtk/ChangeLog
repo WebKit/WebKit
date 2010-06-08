@@ -1,3 +1,19 @@
+2010-06-08  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Unit testing for WebKitDOMNode hierarchy walk
+        https://bugs.webkit.org/show_bug.cgi?id=40171
+
+        Add some DOM node unit testing.
+
+        * tests/testdomnode.c: Added.
+        (finish_loading):
+        (dom_node_fixture_setup):
+        (dom_node_fixture_teardown):
+        (test_dom_node_hierarchy_navigation):
+        (main):
+
 2010-06-08  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Ojan Vafai and Darin Adler.
