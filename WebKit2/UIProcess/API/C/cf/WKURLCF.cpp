@@ -29,6 +29,7 @@
 #include <WebCore/PlatformString.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
 
 using namespace WebCore;
 using namespace WebKit;
@@ -42,5 +43,10 @@ WKURLRef WKURLCreateWithCFURL(CFURLRef cfURL)
 
 CFURLRef WKURLCopyCFURL(CFAllocatorRef allocatorRef, WKURLRef URLRef)
 {
-    return CFURLCreateWithBytes(allocatorRef, reinterpret_cast<const UInt8*>(toWK(URLRef)->characters()), toWK(URLRef)->length() * 2, kCFStringEncodingUTF16, 0);
+    // We first create a CFString and then create the CFURL from it. This will ensure that the CFURL is stored in 
+    // UTF-8 which uses less memory and is what WebKit clients might expect.
+    RetainPtr<CFStringRef> urlString(AdoptCF, CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(toWK(URLRef)->characters()), 
+                                                                                toWK(URLRef)->length(), kCFAllocatorNull));
+
+    return CFURLCreateWithString(allocatorRef, urlString.get(), 0);
 }

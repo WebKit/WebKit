@@ -1,3 +1,14 @@
+2010-06-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/8071268> WebKit2 URLs are displayed as 1-character strings in log statements
+
+        Create a CFString from our WebCore string and then create the CFURL from the CFString.
+
+        * UIProcess/API/C/cf/WKURLCF.cpp:
+        (WKURLCopyCFURL):
+
 2010-06-08  John Sullivan  <sullivan@apple.com>
 
         Rubber-stamped by Anders Carlsson.
