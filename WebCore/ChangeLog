@@ -1,3 +1,9 @@
+2010-06-08  MORITA Hajime  <morrita@google.com>
+
+        Unreviewd. Touched the file to force rebuild.
+
+        * html/HTMLMeterElement.idl:
+
 2010-06-08  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Dimitri Glazkov.

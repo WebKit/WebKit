@@ -1,5 +1,15 @@
 2010-06-08  MORITA Hajime  <morrita@google.com>
 
+        Unreviewd. Update expectations to follow r60820, r60821
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-property-descriptors-expected.txt:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+
+2010-06-08  MORITA Hajime  <morrita@google.com>
+
         Unreviewd. Updated test_expectations.txt to follow r60822
 
         * platform/chromium/test_expectations.txt:
