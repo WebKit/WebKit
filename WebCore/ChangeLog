@@ -1,3 +1,15 @@
+2010-06-08  Daniel Bates  <dbates@rim.com>
+
+        Unreviewed, fix Xcode project file after change-set 60841.
+
+        Xcode is not happy about the entries for files EditingBehavior.h and
+        EditingBehaviorTypes.h that were added in change-set 60841 (Bug # 39854).
+        Lets make Xcode happy.
+
+        Also, lets place these entries in alphabetic order.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2010-06-08  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by ojan@chromium.org.
