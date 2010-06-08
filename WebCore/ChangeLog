@@ -1,3 +1,17 @@
+2010-06-08  Enrico Ros  <eros@codeaurora.org>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Crashfix on Path::contains
+        https://bugs.webkit.org/show_bug.cgi?id=40253
+
+        Fix accessing the first item of an empty vector, that happens when
+        CanvasRenderingContext2D::isPointInPath is invoked over a borderless
+        path (e.g. a path made of just a MoveTo operation).
+
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::isPointOnPathBorder):
+
 2010-06-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r60859.

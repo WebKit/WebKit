@@ -72,6 +72,10 @@ Path& Path::operator=(const Path& other)
 // Check whether a point is on the border
 bool isPointOnPathBorder(const QPolygonF& border, const QPointF& p)
 {
+    // null border doesn't contain points
+    if (border.isEmpty())
+        return false;
+
     QPointF p1 = border.at(0);
     QPointF p2;
 
