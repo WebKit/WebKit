@@ -1,3 +1,25 @@
+2010-06-08  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Antti Koivisto.
+
+        [Qt] TextBreakIterator Qt performance
+        https://bugs.webkit.org/show_bug.cgi?id=39958
+
+        Rework TextBreakIteratorQt to be more in line with the ICU version.
+
+        We now reuse iterators where ever possible. The string data is compared
+        with memcmp, which should be faster than using a hash, as you need
+        to traverse the full buffer in the case the strings don't match,
+        where as the compare would fail quickly.
+
+        * platform/text/qt/TextBreakIteratorQt.cpp:
+        (WebCore::TextBreakIterator::TextBreakIterator):
+        (WebCore::setUpIterator):
+        (WebCore::wordBreakIterator):
+        (WebCore::characterBreakIterator):
+        (WebCore::lineBreakIterator):
+        (WebCore::sentenceBreakIterator):
+
 2010-06-08  Andras Becsi  <abecsi@webkit.org>
 
         Unreviewed build fix after r60785.
