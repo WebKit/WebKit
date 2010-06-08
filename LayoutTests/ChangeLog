@@ -1,3 +1,14 @@
+2010-06-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Not reviewed.
+
+        Adding baselines for new tests.
+
+        * platform/gtk/fast/forms/slider-padding-expected.txt: Added.
+        * platform/gtk/svg/custom/fill-opacity-hsl-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/fill-opacity-hsl-expected.txt.
+        * platform/gtk/svg/custom/fill-opacity-rgba-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/fill-opacity-rgba-expected.txt.
+        * platform/gtk/svg/filters/filter-on-filter-for-text-expected.txt: Added.
+
 2010-06-08  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; expectations fix.
