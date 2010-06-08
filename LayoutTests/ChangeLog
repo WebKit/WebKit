@@ -1,3 +1,17 @@
+2010-06-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Ojan Vafai.
+
+        editingBehavior settings needs to be set back to a reasonable default between tests
+        https://bugs.webkit.org/show_bug.cgi?id=39433
+
+        This is a re-land of r59840 rolled out in r59857 due to DRT limitations.
+
+        * editing/selection/extend-selection-after-double-click-expected.txt:
+        Updated expectations.
+        * editing/selection/extend-selection-after-double-click.html:
+        Use the new DRT support for changing editing behavior.
+
 2010-06-08  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; expectations fix.
