@@ -52,6 +52,11 @@ WebInspector.Script.WorldType = {
     EXTENSIONS_WORLD: 1
 }
 
+WebInspector.Script.WorldType = {
+    MAIN_WORLD: 0,
+    EXTENSIONS_WORLD: 1
+}
+
 WebInspector.Script.prototype = {
     get linesCount()
     {

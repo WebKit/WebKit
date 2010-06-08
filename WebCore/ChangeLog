@@ -1,3 +1,45 @@
+2010-06-08  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: extend ScriptDebugServer to support script source editing
+        https://bugs.webkit.org/show_bug.cgi?id=40297
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::editScriptSource):
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::editScriptSource):
+        * bindings/v8/ScriptDebugServer.h:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::editScriptSource):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::disableDebugger):
+        (WebCore::InspectorController::editScriptSource):
+        (WebCore::InspectorController::currentCallFrames):
+        (WebCore::InspectorController::didPause):
+        (WebCore::InspectorController::didContinue):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::didEditScriptSource):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/Script.js:
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.canEditScripts):
+        (WebInspector.ScriptsPanel.prototype.editScriptSource.mycallback):
+        (WebInspector.ScriptsPanel.prototype.editScriptSource):
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView.prototype._editLine):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype._handleDoubleClick):
+        (WebInspector.TextViewer.prototype._commitEditingLine):
+        * inspector/front-end/inspector.css:
+        (#scripts-files option.extension-script):
+
 2010-06-08  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Ojan Vafai and Darin Adler.

@@ -260,12 +260,14 @@ WebInspector.TextViewer.prototype = {
             return;  // Do not trigger editing from line numbers.
 
         var oldContent = lineRow.lastChild.innerHTML;
-        this._editingLine = WebInspector.startEditing(lineRow.lastChild, this._commitEditingLine.bind(this, lineRow.lineNumber, lineRow.lastChild), this._cancelEditingLine.bind(this, lineRow.lastChild, oldContent), null, true);
+        var cancelEditingCallback = this._cancelEditingLine.bind(this, lineRow.lastChild, oldContent);
+        var commitEditingCallback = this._commitEditingLine.bind(this, lineRow.lineNumber, lineRow.lastChild, cancelEditingCallback);
+        this._editingLine = WebInspector.startEditing(lineRow.lastChild, commitEditingCallback, cancelEditingCallback, null, true);
     },
 
-    _commitEditingLine: function(lineNumber, element)
+    _commitEditingLine: function(lineNumber, element, cancelEditingCallback)
     {
-        this._editCallback(lineNumber, element.textContent)
+        this._editCallback(lineNumber, element.textContent, cancelEditingCallback);
         delete this._editingLine;
     },
 

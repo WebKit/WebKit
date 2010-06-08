@@ -158,8 +158,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_debuggerEnabled(false)
     , m_attachDebuggerWhenShown(false)
-#endif
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+    , m_pausedScriptState(0)
     , m_profilerEnabled(!WTF_USE_JSC)
     , m_recordingUserInitiatedProfile(false)
     , m_currentUserInitiatedProfileNumber(-1)
@@ -1612,9 +1611,20 @@ void InspectorController::disableDebugger(bool always)
 
     m_debuggerEnabled = false;
     m_attachDebuggerWhenShown = false;
+    m_pausedScriptState = 0;
 
     if (m_frontend)
         m_frontend->debuggerWasDisabled();
+}
+
+void InspectorController::editScriptSource(long callId, const String& sourceID, const String& newContent)
+{
+    String result;
+    bool success = ScriptDebugServer::shared().editScriptSource(sourceID, newContent, result);
+    RefPtr<SerializedScriptValue> callFrames;
+    if (success)
+        callFrames = currentCallFrames();
+    m_frontend->didEditScriptSource(callId, success, result, callFrames.get());
 }
 
 void InspectorController::resumeDebugger()
@@ -1622,6 +1632,18 @@ void InspectorController::resumeDebugger()
     if (!m_debuggerEnabled)
         return;
     ScriptDebugServer::shared().continueProgram();
+}
+
+PassRefPtr<SerializedScriptValue> InspectorController::currentCallFrames()
+{
+    if (!m_pausedScriptState)
+        return 0;
+    InjectedScript injectedScript = m_injectedScriptHost->injectedScriptFor(m_pausedScriptState);
+    if (injectedScript.hasNoValue()) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+    return injectedScript.callFrames();
 }
 
 void InspectorController::setBreakpoint(const String& sourceID, unsigned lineNumber, bool enabled, const String& condition)
@@ -1680,14 +1702,15 @@ void InspectorController::failedToParseSource(const String& url, const String& d
 
 void InspectorController::didPause(ScriptState* scriptState)
 {
-    ASSERT(scriptState);
-    InjectedScript injectedScript = m_injectedScriptHost->injectedScriptFor(scriptState);
-    RefPtr<SerializedScriptValue> callFrames = injectedScript.callFrames();
+    ASSERT(scriptState && !m_pausedScriptState);
+    m_pausedScriptState = scriptState;
+    RefPtr<SerializedScriptValue> callFrames = currentCallFrames();
     m_frontend->pausedScript(callFrames.get());
 }
 
 void InspectorController::didContinue()
 {
+    m_pausedScriptState = 0;
     m_frontend->resumedScript();
 }
 

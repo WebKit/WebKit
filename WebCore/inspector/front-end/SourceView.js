@@ -135,7 +135,7 @@ WebInspector.SourceView.prototype = {
         WebInspector.breakpointManager.removeBreakpoint(breakpoint);
     },
 
-    _editLine: function(line, newContent)
+    _editLine: function(line, newContent, cancelEditingCallback)
     {
         var lines = [];
         var textModel = this.sourceFrame.textModel;
@@ -147,7 +147,7 @@ WebInspector.SourceView.prototype = {
         }
 
         var linesCountToShift = newContent.split("\n").length - 1;
-        WebInspector.panels.scripts.editScriptSource(this._sourceIDForLine(line), lines.join("\n"), line, linesCountToShift, this._editLineComplete.bind(this));
+        WebInspector.panels.scripts.editScriptSource(this._sourceIDForLine(line), lines.join("\n"), line, linesCountToShift, this._editLineComplete.bind(this), cancelEditingCallback);
     },
 
     _editLineComplete: function(newBody)

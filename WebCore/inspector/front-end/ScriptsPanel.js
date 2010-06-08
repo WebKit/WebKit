@@ -341,10 +341,10 @@ WebInspector.ScriptsPanel.prototype = {
 
     canEditScripts: function()
     {
-        return !!InspectorBackend.editScriptSource;
+        return Preferences.canEditScriptSource;
     },
 
-    editScriptSource: function(sourceID, newContent, line, linesCountToShift, callback)
+    editScriptSource: function(sourceID, newContent, line, linesCountToShift, commitEditingCallback, cancelEditingCallback)
     {
         if (!this.canEditScripts())
             return;
@@ -354,12 +354,19 @@ WebInspector.ScriptsPanel.prototype = {
         for (var i = 0; i < breakpoints.length; ++i)
             WebInspector.breakpointManager.removeBreakpoint(breakpoints[i]);
 
-        function mycallback(newBody)
+        function mycallback(success, newBodyOrErrorMessage, callFrames)
         {
-            callback(newBody);
+            if (success) {
+                commitEditingCallback(newBodyOrErrorMessage);
+                if (callFrames && callFrames.length)
+                    this.debuggerPaused(callFrames);
+            } else {
+                cancelEditingCallback();
+                WebInspector.log(newBodyOrErrorMessage, WebInspector.ConsoleMessage.MessageLevel.Warning);
+            }
             for (var i = 0; i < breakpoints.length; ++i) {
                 var breakpoint = breakpoints[i];
-                if (breakpoint.line >= line)
+                if (success && breakpoint.line >= line)
                     breakpoint.line += linesCountToShift;
                 WebInspector.breakpointManager.addBreakpoint(breakpoint);
             }

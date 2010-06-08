@@ -65,6 +65,8 @@ module core {
 
         void setPauseOnExceptionsState(in long pauseOnExceptionsState);
 
+        void editScriptSource(in long callId, in DOMString sourceID, in DOMString newContent);
+
         void enableProfiler(in boolean always);
         void disableProfiler(in boolean always);
 

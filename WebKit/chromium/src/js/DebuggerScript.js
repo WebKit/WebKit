@@ -170,6 +170,24 @@ DebuggerScript.stepOutOfFunction = function(execState)
     execState.prepareStep(Debug.StepAction.StepOut, 1);
 }
 
+DebuggerScript.editScriptSource = function(scriptId, newSource)
+{
+    var scripts = Debug.scripts();
+    var scriptToEdit = null;
+    for (var i = 0; i < scripts.length; i++) {
+        if (scripts[i].id == scriptId) {
+            scriptToEdit = scripts[i];
+            break;
+        }
+    }
+    if (!scriptToEdit)
+        throw("Script not found");
+
+    var changeLog = [];
+    Debug.LiveEdit.SetScriptSource(scriptToEdit, newSource, changeLog);
+    return scriptToEdit.source;
+}
+
 DebuggerScript.clearBreakpoints = function(execState, args)
 {
     for (var key in DebuggerScript._breakpoints) {

@@ -93,6 +93,7 @@ devtools.InspectorBackendImpl = function()
 
     if (window.v8ScriptDebugServerEnabled) {
     this.installInspectorControllerDelegate_("disableDebugger");
+    this.installInspectorControllerDelegate_("editScriptSource");
     this.installInspectorControllerDelegate_("enableDebugger");
     this.installInspectorControllerDelegate_("setBreakpoint");
     this.installInspectorControllerDelegate_("removeBreakpoint");
