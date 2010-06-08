@@ -2107,6 +2107,7 @@ SOURCES += \
     platform/network/qt/QNetworkReplyHandler.cpp \
     editing/qt/EditorQt.cpp \
     editing/qt/SmartReplaceQt.cpp \
+    platform/Cursor.cpp \
     platform/qt/ClipboardQt.cpp \
     platform/qt/ContextMenuItemQt.cpp \
     platform/qt/ContextMenuQt.cpp \

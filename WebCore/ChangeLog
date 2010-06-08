@@ -1,3 +1,9 @@
+2010-06-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed buildfix after r60849.
+
+        * WebCore.pro: platform/Cursor.cpp is added to Qt build system.
+
 2010-06-08  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Unreviewed Buildbot fix.
