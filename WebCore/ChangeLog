@@ -1,3 +1,10 @@
+2010-06-07  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Unreviewed attempt to fix crashy bots (Mac,Win,Qt,Gtk) after r60816.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::behavior):
+
 2010-05-31  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Ojan Vafai and Darin Adler.
