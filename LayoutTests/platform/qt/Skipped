@@ -1,4 +1,56 @@
 # =========================================================================== #
+# Categories of Skipped Tests                                                 #
+# =========================================================================== #
+#
+# Note:Try to add newly skipped tests to the appropriate category. If you create
+#      a new category, be sure to list it here. If all else fails you can just
+#      add to the 'unsorted' category at the bottom.
+#      Where a test is a layout test, rather than plaintext, it can help to run
+#      it with '--platform mac --ignore-metrics'  and add or create a section
+#      in the category to indicate whether it still failed.
+#
+# List of Categories:
+#
+# - Permanently Skipped Tests.
+# - No Support for Feature planned.
+# - Feature not supported yet.
+# - Failing HTTP tests.
+# - Failing xmlhttprequest tests
+# - Failing inserting tests.
+# - Failing pasteboard tests.
+# - Failing plugins tests.
+# - Failing execCommand tests.
+# - Failing Sputnik tests
+# - Fluctuating/flakey tests
+# - failing media tests
+# - Crashing tests due to re-enabled Phonon support in Buildbot's Qt
+# - Missing features in our DumpRenderTree implementation
+# - failing editing/input tests
+# - Failing SVG tests
+# - failing animations tests
+# - Failing CSS Tests
+# - Failing dom/xhtml tests
+# - Failing editing/deleting tests
+# - Failing editing/selection tests.
+# - Failing editing/spelling tests
+# - failing editing/style tests
+# - failing undo tests
+# - failing unsupported-content tests
+# - failing fast tests
+# - failing fonts tests
+# - failing scrollbars tests
+# - failing security tests
+# - failing tables tests
+# - Failed canvas tests from http://philip.html5.org/tests/canvas/suite/tests/
+# - failing transforms tests
+# - failing printing tests
+# - failing transitions tests
+# - failing websocket tests
+# - new tests without expected results
+# - new skipped tests yet to be sorted
+
+
+# =========================================================================== #
 #       Permanently Skipped Tests.                                            #
 # =========================================================================== #
 
@@ -25,13 +77,18 @@ webarchive
 svg/webarchive
 
 # =========================================================================== #
-#       Feature not supported yet..
+#       Feature not supported... yet
 # =========================================================================== #
 # ----- This port doesn't support Geolocation.. yet
 fast/dom/Geolocation
 fast/dom/Window/window-properties-geolocation.html
 
-# ----- This port doesn't support Notification permissions.. yet
+# This port doesn't support DeviceOrientation.
+fast/dom/DeviceOrientation
+fast/dom/Window/window-properties-on-device-orientation.html
+
+# IndexedDB is not yet enabled.
+storage/indexeddb
 
 # ----- No User Scripts
 userscripts
@@ -48,18 +105,13 @@ compositing
 
 fast/loader/subframe-navigate-during-main-frame-load.html
 
-# =========================================================================== #
-#      Failing tests introduced by changing the default font sizes to         #
-#      conform other platforms. Probably caused by previously hidden bugs.    #
-# =========================================================================== #
-fast/css/getComputedStyle/computed-style-without-renderer.html
-fast/css/getComputedStyle/computed-style.html
-fast/history/history_reload.html
-svg/batik/filters/feTile.svg
 
 # =========================================================================== #
 #       Failing HTTP tests.                                                   #
 # =========================================================================== #
+# This seems to pass now!
+http/tests/cache/subresource-failover-to-network.html
+
 http/tests/misc/acid2-pixel.html
 http/tests/misc/acid2.html
 http/tests/misc/favicon-as-image.html
@@ -111,9 +163,6 @@ http/tests/misc/isindex-with-no-form.html
 http/tests/misc/refresh-headers.php
 http/tests/misc/timer-vs-loading.html
 
-# Have an additional line in results for GET of favicon.ico. Probably innocuous.
-# https://bugs.webkit.org/show_bug.cgi?id=37382
-
 # Skip failing http/tests/security tests
 http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html
 http/tests/security/cross-frame-access-put.html
@@ -130,8 +179,9 @@ http/tests/security/frameNavigation/not-opener.html
 http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
 http/tests/security/frameNavigation/xss-DENIED-targeted-link-navigation.html
 http/tests/security/originHeader/origin-header-for-empty.html
+
 # XSSAuditor test that times out. See https://bugs.webkit.org/show_bug.cgi?id=33460.
-#http/tests/security/xssAuditor/malformed-HTML.html
+http/tests/security/xssAuditor/malformed-HTML.html
 
 # Disabled HTTP subdirs for now, needs investigation.
 http/tests/globalhistory
@@ -215,8 +265,12 @@ http/tests/navigation/timerredirect-subframeload.html
 http/tests/multipart/invalid-image-data-standalone.html
 
 # =========================================================================== #
-#       http/tests/xmlhttprequest                                             #
+#       Failing xmlhttprequest tests                                          #
 # =========================================================================== #
+
+# DRT sideeffect - this test make http/tests/xmlhttprequest/null-auth.php fail:
+# https://bugs.webkit.org/show_bug.cgi?id=32961
+http/tests/xmlhttprequest/basic-auth-default.html
 
 # Skip xmlhttprequest tests - NETWORK_ERR: XMLHttpRequest Exception 101: A network error occured in synchronous requests.
 http/tests/xmlhttprequest/logout.html
@@ -579,6 +633,16 @@ fast/forms/menulist-width-change.html
 # =========================================================================== #
 # failing media tests
 # =========================================================================== #
+
+# https://bugs.webkit.org/show_bug.cgi?id=38376
+media/media-document-audio-size.html
+
+media/invalid-media-url-crash.html
+
+# [Qt] media/media-can-play-ogg.html crashes intermittently on the bot
+# https://bugs.webkit.org/show_bug.cgi?id=39481
+media/audio-only-video-intrinsic-size.html
+
 media/adopt-node-crash.html
 media/audio-constructor.html
 media/audio-constructor-preload.html
@@ -720,6 +784,7 @@ editing/text-iterator/basic-iteration.html
 
 # Implement LayoutTestController::callShouldCloseOnWebView()
 fast/events/onbeforeunload-focused-iframe.html
+plugins/geturlnotify-during-document-teardown.html
 
 # Missing layoutTestController.overridePreference()
 fast/events/pageshow-pagehide-on-back-cached.html
@@ -735,39 +800,29 @@ http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.htm
 http/tests/xmlhttprequest/default-content-type-dashboard.html
 http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
 
-# Missing layoutTestController.setIconDatabaseEnabled()
-
 # Missing layoutTestController.setCustomPolicyDelegate()
+# https://bugs.webkit.org/show_bug.cgi?id=39564
 fast/loader/onload-policy-ignore-for-frame.html
 http/tests/misc/policy-delegate-called-twice.html
 http/tests/misc/redirect-to-external-url.html
 http/tests/security/feed-urls-from-remote.html
 
 # Missing layoutTestController.evaluateScriptInIsolatedWorld()
+# https://bugs.webkit.org/show_bug.cgi?id=40079
 http/tests/security/isolatedWorld
 storage/statement-error-callback-isolated-world.html
 storage/statement-success-callback-isolated-world.html
 storage/transaction-callback-isolated-world.html
 storage/transaction-error-callback-isolated-world.html
-
-# Missing layoutTestController.removeOriginAccessWhitelistEntry()
-
-http/tests/cache/subresource-failover-to-network.html
-
-# Missing layoutTestController.setSmartInsertDeleteEnabled()
-editing/selection/doubleclick-beside-cr-span.html
+storage/transaction-success-callback-isolated-world.html
+storage/open-database-creation-callback-isolated-world.html
 
 # Missing eventSender.beginDragWithFiles()
 fast/dom/Window/window-postmessage-clone-frames.html
+fast/files/file-reader.html
 
 # Missing layoutTestController.setAlwaysAcceptCookies()
 http/tests/plugins/third-party-cookie-accept-policy.html
-
-# Missing layoutTestController.evaluateScriptInIsolatedWorld()
-storage/open-database-creation-callback-isolated-world.html
-
-# Missing layoutTestController.computedStyleIncludingVisitedInfo()
-fast/history/self-is-visited.html
 
 # Missing layoutTestController.dumpWillCacheResponse
 http/tests/misc/willCacheResponse-delegate-callback.html
@@ -829,11 +884,18 @@ fast/ruby/rubyDOM-remove-text2.html
 # ============================================================================= #
 # ------- failing editing/input tests
 # ============================================================================= #
+
+# https://bugs.webkit.org/show_bug.cgi?id=40102
+editing/input/page-up-down-scrolls.html
+
 editing/input/emacs-ctrl-o.html
 
 # ============================================================================= #
 # Failing SVG tests
 # ============================================================================= #
+
+svg/batik/filters/feTile.svg
+
 svg/custom/svg-fonts-in-text-controls.html
 svg/custom/text-dom-removal.svg
 svg/custom/use-clipped-transform.svg
@@ -856,6 +918,8 @@ svg/custom/mask-with-all-units.svg
 
 # [Qt] lacks clipToImageBuffer()
 # https://bugs.webkit.org/show_bug.cgi?id=24289
+# Has http://trac.webkit.org/changeset/59668 fixed?
+# There are no expected results
 svg/clip-path
 svg/custom/clip-path-child-changes.svg
 svg/custom/clip-path-href-changes.svg
@@ -1548,11 +1612,9 @@ svg/hixie/mixed/007.xml
 # ============================================================================= #
 # failing animations tests
 # ============================================================================= #
-# Skip tests with metrics for now
+# Needs expected results
 animations/animation-drt-api.html
 animations/animation-drt-api-multiple-keyframes.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37381
 
 # ============================================================================= #
 # Failing CSS Tests
@@ -2069,7 +2131,11 @@ editing/deleting/whitespace-pre-1.html
 #       Failing editing/selection tests.                                      #
 # =========================================================================== #
 
+# This seems to pass now!
+editing/selection/extend-selection-after-double-click.html
+
 # -- fail with --platform mac --ignore-metrics
+editing/selection/doubleclick-beside-cr-span.html
 editing/selection/drag-start-event-client-x-y.html
 editing/selection/hit-test-anonymous.html
 editing/selection/4895428-1.html
@@ -2251,6 +2317,10 @@ editing/selection/wrapped-line-caret-2.html
 # ============================================================================= #
 # Failing editing/spelling tests
 # ============================================================================= #
+# Need to dump context menu items on eventSender.contextClick(true).
+# https://bugs.webkit.org/show_bug.cgi?id=39103
+editing/spelling/context-menu-suggestions.html
+
 # -- fail with --platform mac --ignore-metrics
 editing/spelling/inline_spelling_markers.html
 editing/spelling/spelling-linebreak.html
@@ -2288,6 +2358,7 @@ editing/style/typing-style-002.html
 editing/style/unbold-in-bold.html
 
 # -- pass with --platform mac --ignore-metrics
+editing/style/apply-through-end-of-document.html
 editing/style/font-family-with-space.html
 editing/style/4916887.html
 editing/style/5017613-1.html
@@ -2359,9 +2430,23 @@ editing/unsupported-content/table-type-before.html
 # ============================================================================= #
 # failing fast tests
 # ============================================================================= #
+
+# Possible bug in layoutTestController.computedStyleIncludingVisitedInfo()
+fast/history/self-is-visited.html
+
+# Failing tests introduced by changing the default font sizes to
+# conform other platforms. Probably caused by previously hidden bugs.
+fast/css/getComputedStyle/computed-style-without-renderer.html
+fast/css/getComputedStyle/computed-style.html
+fast/history/history_reload.html
+
 # This test fails because Qt does not support conditionals in unicode special casing.
 # See also http://trolltech.com/developer/task-tracker/index_html?id=212870&method=entry
 fast/css/case-transform.html
+
+# New test hangs QT bot
+# Discussed in https://bugs.webkit.org/show_bug.cgi?id=38928
+fast/loader/recursive-before-unload-crash.html
 
 # REGRESSION (r53450) - skipped until fix
 # https://bugs.webkit.org/show_bug.cgi?id=33834
@@ -2432,9 +2517,6 @@ fast/css/non-standard-checkbox-size.html
 # For some reason crashes when run with all tests. Passes individually.
 fast/forms/multiple-form-submission-protection-mouse.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=36004
-# mouseScrollBy() and continuousMouseScrollBy() are not yet implemented in the Qt EventSender API.
-
 # https://bugs.webkit.org/show_bug.cgi?id=35973
 fast/multicol/hit-test-above-or-below.html
 
@@ -2451,6 +2533,10 @@ fast/loader/stateobjects/replacestate-in-iframe.html
 # Not sure why this is failing on Qt.
 # https://bugs.webkit.org/show_bug.cgi?id=37697
 fast/url/host.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=39852
+fast/encoding/yentest.html
+fast/encoding/yentest2.html
 
 # -- fail with --platform mac --ignore-metrics
 fast/box-sizing/percentage-height.html
@@ -4227,6 +4313,7 @@ scrollbars/scrollbar-orientation.html
 # ============================================================================= #
 # failing security tests
 # ============================================================================= #
+# https://bugs.webkit.org/show_bug.cgi?id=39160
 security/block-test-no-port.html
 security/block-test.html
 
@@ -5160,67 +5247,10 @@ tables/mozilla/other/test3.html
 tables/mozilla/other/test6.html
 tables/mozilla/other/wa_table_thtd_rowspan.html
 
-# ============================================================================= #
-# failing transforms tests
-# ============================================================================= #
-# -- fail with --platform mac --ignore-metrics
-transforms/2d/zoom-menulist.html
-# -- pass with --platform mac --ignore-metrics
-transforms/2d/compound-transforms-vs-containers.html
-transforms/2d/transform-borderbox.html
-transforms/2d/transform-origin-borderbox.html
-transforms/no_transform_hit_testing.html
-transforms/2d/hindi-rotated.html
 
 # ============================================================================= #
-# failing printing tests
-# ============================================================================= #
-printing/compositing-layer-printing.html
-# Printing related layout test failure has no results, but obvious error message
-# https://bugs.webkit.org/show_bug.cgi?id=27913
-printing/media-queries-print.html
-
-# ============================================================================= #
-# failing transitions tests
-# ============================================================================= #
-transitions/move-after-transition.html
-transitions/transition-end-event-rendering.html
-transitions/transition-drt-api.html
-
-# ============================================================================= #
-# new skipped tests yet to be sorted
-# ============================================================================= #
-
-# new skipped tests that need to be fixed/investigated
-editing/style/apply-through-end-of-document.html
-platform/qt/fast/events/event-sender-keydown-frame.html
-
-# new tests without expected files
-editing/inserting/insert-bg-font.html
-editing/selection/transformed-selection-rects.html
-
-# [Qt] websocket/tests/long-invalid-header.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=36492
-websocket/tests/long-invalid-header.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=38376
-media/media-document-audio-size.html
-
-media/invalid-media-url-crash.html
-storage/transaction-success-callback-isolated-world.html
-fast/files/file-reader.html
-plugins/geturlnotify-during-document-teardown.html
-svg/W3C-SVG-1.1/filters-light-04-f.svg
-editing/selection/extend-selection-after-double-click.html
-# XSSAuditor test that times out. See https://bugs.webkit.org/show_bug.cgi?id=33460.
-http/tests/security/xssAuditor/malformed-HTML.html
-# DRT sideeffect - this test make http/tests/xmlhttprequest/null-auth.php fail:
-# https://bugs.webkit.org/show_bug.cgi?id=32961
-http/tests/xmlhttprequest/basic-auth-default.html
-# New test hangs QT bot
-# Discussed in https://bugs.webkit.org/show_bug.cgi?id=38928
-fast/loader/recursive-before-unload-crash.html 
 # Failed canvas tests from http://philip.html5.org/tests/canvas/suite/tests/
+# ============================================================================= #
 canvas/philip/tests/2d.composite.operation.clear.html
 canvas/philip/tests/2d.composite.operation.darker.html
 canvas/philip/tests/2d.composite.operation.highlight.html
@@ -5365,19 +5395,56 @@ canvas/philip/tests/security.pattern.image.strokeStyle.html
 canvas/philip/tests/security.reset.html
 canvas/philip/tests/2d.drawImage.nonfinite.html
 canvas/philip/tests/2d.drawImage.broken.html
-# Need to dump context menu items on eventSender.contextClick(true).
-# https://bugs.webkit.org/show_bug.cgi?id=39103
-editing/spelling/context-menu-suggestions.html
-# IndexedDB is not yet enabled.
-storage/indexeddb
-# This port doesn't support DeviceOrientation.
-fast/dom/DeviceOrientation
-fast/dom/Window/window-properties-on-device-orientation.html
-# [Qt] media/media-can-play-ogg.html crashes intermittently on the bot
-# https://bugs.webkit.org/show_bug.cgi?id=39481
-media/audio-only-video-intrinsic-size.html
-# https://bugs.webkit.org/show_bug.cgi?id=39852
-fast/encoding/yentest.html
-fast/encoding/yentest2.html
-# https://bugs.webkit.org/show_bug.cgi?id=40102
-editing/input/page-up-down-scrolls.html
+
+# ============================================================================= #
+# failing transforms tests
+# ============================================================================= #
+# -- fail with --platform mac --ignore-metrics
+transforms/2d/zoom-menulist.html
+# -- pass with --platform mac --ignore-metrics
+transforms/2d/compound-transforms-vs-containers.html
+transforms/2d/transform-borderbox.html
+transforms/2d/transform-origin-borderbox.html
+transforms/no_transform_hit_testing.html
+transforms/2d/hindi-rotated.html
+
+# ============================================================================= #
+# failing printing tests
+# ============================================================================= #
+printing/compositing-layer-printing.html
+# Printing related layout test failure has no results, but obvious error message
+# https://bugs.webkit.org/show_bug.cgi?id=27913
+printing/media-queries-print.html
+
+# ============================================================================= #
+# failing transitions tests
+# ============================================================================= #
+transitions/move-after-transition.html
+transitions/transition-end-event-rendering.html
+transitions/transition-drt-api.html
+
+# ============================================================================= #
+# failing websocket tests
+# ============================================================================= #
+
+# [Qt] websocket/tests/long-invalid-header.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=36492
+websocket/tests/long-invalid-header.html
+
+
+# ============================================================================= #
+# new tests without expected results
+# ============================================================================= #
+editing/inserting/insert-bg-font.html
+editing/selection/transformed-selection-rects.html
+svg/W3C-SVG-1.1/filters-light-04-f.svg
+
+# ============================================================================= #
+# new skipped tests yet to be sorted
+# ============================================================================= #
+
+# new skipped tests that need to be fixed/investigated
+
+# expects a plaintext result but produces a rendertree
+platform/qt/fast/events/event-sender-keydown-frame.html
+
