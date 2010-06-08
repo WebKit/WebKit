@@ -1,3 +1,9 @@
+2010-06-08  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed. An attempt to fix test break.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2010-06-08  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Adam Barth.
