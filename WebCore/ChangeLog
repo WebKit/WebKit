@@ -1,3 +1,15 @@
+2010-06-08  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Avoid duplicated signals in DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=40170
+
+        Do not create duplicated event signals between a class and its
+        ancestor.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+
 2010-06-08  MORITA Hajime  <morrita@google.com>
 
         Unreviewd. Touched the file to force rebuild.

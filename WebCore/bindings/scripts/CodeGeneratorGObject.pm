@@ -471,6 +471,16 @@ sub GenerateEventListener {
     my $object = shift;
     my $interfaceName = shift;
 
+    # This marks event listeners in some subclasses of Element. We
+    # cannot add them, otherwise we'll get runtime errors because of
+    # duplicated signal definitions between a class and some ancestor.
+
+    # FIXME: it would be very good to be a lot more precise in how we
+    # do this...
+    if ($attribute->signature->extendedAttributes->{"WindowEventListener"}) {
+        return;
+    }
+
     my $name = $attribute->signature->name;
     my $domSignalName = substr($name, 2);
     my $gobjectSignalName = EventSignalName($domSignalName);
