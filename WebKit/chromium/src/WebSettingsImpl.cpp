@@ -271,7 +271,7 @@ void WebSettingsImpl::setShowDebugBorders(bool show)
 
 void WebSettingsImpl::setEditingBehavior(EditingBehavior behavior)
 {
-    m_settings->setEditingBehavior(static_cast<WebCore::EditingBehavior>(behavior));
+    m_settings->setEditingBehaviorType(static_cast<WebCore::EditingBehaviorType>(behavior));
 }
 
 void WebSettingsImpl::setAcceleratedCompositingEnabled(bool enabled)

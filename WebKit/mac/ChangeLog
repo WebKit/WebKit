@@ -1,3 +1,19 @@
+2010-05-31  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Ojan Vafai and Darin Adler.
+
+        Refactor platform dependent editing behavior code out of Settings
+        https://bugs.webkit.org/show_bug.cgi?id=39854
+
+        EditingBehavior enum was renamed to EditingBehaviorTypes and moved out from Settings.h to
+        EditingBehaviorTypes.h . Call sites in WebKit/ adjusted accordingly.
+
+        * WebView/WebFrame.mm:
+        (core):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+
 2010-06-06  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

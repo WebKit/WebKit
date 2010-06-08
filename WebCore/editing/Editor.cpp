@@ -63,6 +63,7 @@
 #include "RenderBlock.h"
 #include "RenderPart.h"
 #include "ReplaceSelectionCommand.h"
+#include "Settings.h"
 #include "Sound.h"
 #include "Text.h"
 #include "TextIterator.h"
@@ -95,6 +96,15 @@ VisibleSelection Editor::selectionForCommand(Event* event)
             return static_cast<HTMLTextAreaElement*>(target)->selection();
     }
     return selection;
+}
+
+// Function considers Mac editing behavior a fallback when Page or Settings is not available.
+EditingBehavior Editor::behavior() const
+{
+    if (!m_frame || !m_frame->settings())
+        return EditingBehavior(EditingMacBehavior);
+
+    return EditingBehavior(m_frame->settings()->editingBehaviorType());
 }
 
 EditorClient* Editor::client() const

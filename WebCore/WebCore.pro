@@ -1281,6 +1281,7 @@ HEADERS += \
     editing/DeleteFromTextNodeCommand.h \
     editing/DeleteSelectionCommand.h \
     editing/EditCommand.h \
+    editing/EditingBehavior.h \
     editing/Editor.h \
     editing/FormatBlockCommand.h \
     editing/htmlediting.h \

@@ -1369,7 +1369,7 @@ static bool fastDocumentTeardownEnabled()
     settings->setTextAreasAreResizable([preferences textAreasAreResizable]);
     settings->setShrinksStandaloneImagesToFit([preferences shrinksStandaloneImagesToFit]);
     settings->setEditableLinkBehavior(core([preferences editableLinkBehavior]));
-    settings->setEditingBehavior(core([preferences editingBehavior]));
+    settings->setEditingBehaviorType(core([preferences editingBehavior]));
     settings->setTextDirectionSubmenuInclusionBehavior(core([preferences textDirectionSubmenuInclusionBehavior]));
     settings->setDOMPasteAllowed([preferences isDOMPasteAllowed]);
     settings->setUsesPageCache([self usesPageCache]);
