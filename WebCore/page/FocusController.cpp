@@ -511,19 +511,14 @@ static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Frame* newFocusedFram
     if (selectionStartNode == newFocusedNode || selectionStartNode->isDescendantOf(newFocusedNode) || selectionStartNode->shadowAncestorNode() == newFocusedNode)
         return;
         
-    if (Node* mousePressNode = newFocusedFrame->eventHandler()->mousePressNode()) {
-        if (mousePressNode->renderer() && !mousePressNode->canStartSelection()) {
-            // Don't clear the selection for contentEditable elements, but do clear it for input and textarea. See bug 38696.
-            Node * root = s->rootEditableElement();
-            if (!root)
-                 return;
-
-            if (Node* shadowAncestorNode = root->shadowAncestorNode()) {
-                if (!shadowAncestorNode->hasTagName(inputTag) && !shadowAncestorNode->hasTagName(textareaTag))
-                    return;
-            }
-        }
-    }
+    if (Node* mousePressNode = newFocusedFrame->eventHandler()->mousePressNode())
+        if (mousePressNode->renderer() && !mousePressNode->canStartSelection())
+            if (Node* root = s->rootEditableElement())
+                if (Node* shadowAncestorNode = root->shadowAncestorNode())
+                    // Don't do this for textareas and text fields, when they lose focus their selections should be cleared
+                    // and then restored when they regain focus, to match other browsers.
+                    if (!shadowAncestorNode->hasTagName(inputTag) && !shadowAncestorNode->hasTagName(textareaTag))
+                        return;
     
     s->clear();
 }

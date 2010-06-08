@@ -1,5 +1,17 @@
 2010-06-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r60859.
+        http://trac.webkit.org/changeset/60859
+        https://bugs.webkit.org/show_bug.cgi?id=40334
+
+        Included debugging statements. Caused a test to fail.
+        (Requested by ojan on #webkit).
+
+        * page/FocusController.cpp:
+        (WebCore::clearSelectionIfNeeded):
+
+2010-06-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r60858.
         http://trac.webkit.org/changeset/60858
         https://bugs.webkit.org/show_bug.cgi?id=40325

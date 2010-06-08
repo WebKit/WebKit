@@ -45,15 +45,11 @@ function dragLink(srcId, targetId)
     var x = anchorToDrag.offsetLeft + anchorToDrag.offsetWidth / 2;
     var y = anchorToDrag.offsetTop + anchorToDrag.offsetHeight / 2;
 
-    console.log(window.getSelection().anchorNode.parentNode.outerHTML);
-
     eventSender.mouseMoveTo(x, y);
 
     eventSender.mouseDown();
     // Wait a moment so that the mouseDown will kick off a drag instead of navigating to the link
     eventSender.leapForward(400);
-
-    console.log(window.getSelection().anchorNode.parentNode.outerHTML);
 
     var destinationObject = document.getElementById(targetId);
     var x = destinationObject.offsetLeft + destinationObject.offsetWidth / 2;
@@ -61,7 +57,6 @@ function dragLink(srcId, targetId)
 
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseUp();
-    console.log(window.getSelection().anchorNode.parentNode.outerHTML);
 }
 
 function verifier() {
