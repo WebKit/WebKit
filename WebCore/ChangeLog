@@ -2,6 +2,32 @@
 
         Reviewed by Adam Barth.
 
+        HTML5 Parser fails script-tests which use document.write
+        https://bugs.webkit.org/show_bug.cgi?id=40276
+
+        We were leaving the TreeBuilder paused when executing the scripts
+        resulting in document.write() calls being ignored.
+
+        I don't see a good way to ASSERT this correct behavior, since
+        the HTML5ScriptRunner and the HTML5TreeBuilder do not know about
+        each other.  We should never have document.write() called while
+        the HTML5TreeBuilder is paused, however both document.write and
+        the network call the same HTML5Tokenizer::write method.  It's OK
+        to be paused when the network writes, but during document.write
+        (or any other script execution).
+
+        Tested by all of fast/url and numerous other tests.
+
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::notifyFinished):
+         - Unpause the treebuilder before executing scripts.
+        (WebCore::HTML5Tokenizer::executeScriptsWaitingForStylesheets):
+         - Unpause the treebuilder before executing scripts.
+
+2010-06-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         HTML5 Parser hits ASSERT in fast/events/stop-load-in-unload-handler-using-document-write.html
         https://bugs.webkit.org/show_bug.cgi?id=40268
 

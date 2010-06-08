@@ -225,6 +225,9 @@ void HTML5Tokenizer::notifyFinished(CachedResource* cachedResource)
 {
     ASSERT(!m_scriptRunner->inScriptExecution());
     ASSERT(m_treeBuilder->isPaused());
+    // Note: We only ever wait on one script at a time, so we always know this
+    // is the one we were waiting on and can un-pause the tree builder.
+    m_treeBuilder->setPaused(false);
     bool shouldContinueParsing = m_scriptRunner->executeScriptsWaitingForLoad(cachedResource);
     m_treeBuilder->setPaused(!shouldContinueParsing);
     if (shouldContinueParsing)
@@ -240,6 +243,9 @@ void HTML5Tokenizer::executeScriptsWaitingForStylesheets()
         return;
     ASSERT(!m_scriptRunner->inScriptExecution());
     ASSERT(m_treeBuilder->isPaused());
+    // Note: We only ever wait on one script at a time, so we always know this
+    // is the one we were waiting on and can un-pause the tree builder.
+    m_treeBuilder->setPaused(false);
     bool shouldContinueParsing = m_scriptRunner->executeScriptsWaitingForStylesheets();
     m_treeBuilder->setPaused(!shouldContinueParsing);
     if (shouldContinueParsing)
