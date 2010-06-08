@@ -1,3 +1,18 @@
+2010-06-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove ASSERT in ~HTML5Tokenizer
+        https://bugs.webkit.org/show_bug.cgi?id=40282
+
+        We thought this ASSERT would be a good idea, but the problem is that
+        this object is deleted without warning in some circumstances, so
+        there's no way to know whether it has reached the end of its state
+        machine.
+
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::~HTML5Tokenizer):
+
 2010-06-07  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.

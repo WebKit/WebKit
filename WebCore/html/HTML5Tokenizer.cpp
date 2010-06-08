@@ -72,7 +72,10 @@ HTML5Tokenizer::HTML5Tokenizer(HTMLDocument* document, bool reportErrors)
 
 HTML5Tokenizer::~HTML5Tokenizer()
 {
-    ASSERT(!m_endWasDelayed);
+    // FIXME: We'd like to ASSERT that normal operation of this class clears
+    // out any delayed actions, but we can't because we're unceremoniously
+    // deleted.  If there were a required call to some sort of cancel function,
+    // then we could ASSERT some invariants here.
 }
 
 void HTML5Tokenizer::begin()
