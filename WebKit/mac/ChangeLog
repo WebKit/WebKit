@@ -1,3 +1,14 @@
+2010-06-06  MORITA Hajime  <morrita@google.com>
+
+        Unreviewd, follow up to r60820
+
+        https://bugs.webkit.org/show_bug.cgi?id=40219
+        [Mac] ENABLE_METER_TAG should be enabled
+        
+        Added ENABLE_METER_TAG.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2010-06-06  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
