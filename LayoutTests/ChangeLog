@@ -1,3 +1,23 @@
+2010-06-08  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by ojan@chromium.org.
+
+        REGRESSION: Weird focus behavior affects quoting on University of Washington message board system
+        https://bugs.webkit.org/show_bug.cgi?id=38548
+
+        We should not clear the selection when canStartSelection returns false.
+
+        * editing/pasteboard/drop-link-expected.txt: Mouse down on an element where canStartSelection returns
+                                                     false no longer clears the selection so we get one less
+                                                     notification from the editing delegate.
+        * editing/selection/click-in-focusable-link-should-not-clear-selection-expected.txt: Added.
+        * editing/selection/click-in-focusable-link-should-not-clear-selection.html: Added.
+        * editing/selection/script-tests/click-in-focusable-link-should-not-clear-selection.js: Added.
+        (description.getElementCenter):
+        (doubleClickOnElement):
+        (mouseDownOnElement):
+        (selectionShouldBe):
+
 2010-06-08  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
