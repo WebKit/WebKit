@@ -212,6 +212,18 @@ public:
         m_doctypeData->m_systemIdentifier.clear();
     }
 
+    bool forceQuirks()
+    {
+        ASSERT(m_type == DOCTYPE);
+        return m_doctypeData->m_forceQuirks;
+    }
+
+    void setForceQuirks()
+    {
+        ASSERT(m_type == DOCTYPE);
+        m_doctypeData->m_forceQuirks = true;
+    }
+
     void appendToPublicIdentifier(UChar character)
     {
         ASSERT(m_type == DOCTYPE);

@@ -343,9 +343,11 @@ void HTMLParser::parseDoctypeToken(DoctypeToken* t)
     // Ignore any doctype after the first.  Ignore doctypes in fragments.
     if (m_document->doctype() || m_isParsingFragment || m_current != m_document)
         return;
-        
+
     // Make a new doctype node and set it as our doctype.
     m_document->addChild(DocumentType::create(m_document, String::adopt(t->m_name), String::adopt(t->m_publicID), String::adopt(t->m_systemID)));
+    if (t->m_forceQuirks)
+        m_document->setParseMode(Document::Compat);
 }
 
 static bool isTableSection(const Node* n)

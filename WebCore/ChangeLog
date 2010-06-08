@@ -2,6 +2,34 @@
 
         Reviewed by Eric Seidel.
 
+        Implement HTML5's forceQuirks flag
+        https://bugs.webkit.org/show_bug.cgi?id=40284
+
+        I didn't implement this before because I didn't know how to test it,
+        but now I do.
+        
+        Tests:
+          * fast/doctypes/doctype-parsing.html.
+
+        When we actually implement the quirks mode handling in the tree
+        builder, we'll probably want to add to this test.
+
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTML5Lexer::nextToken):
+        * html/HTML5Token.h:
+        (WebCore::HTML5Token::forceQuirks):
+        (WebCore::HTML5Token::setForceQuirks):
+        * html/HTML5TreeBuilder.cpp:
+        (WebCore::HTML5TreeBuilder::passTokenToLegacyParser):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::parseDoctypeToken):
+        * html/HTMLTokenizer.h:
+        (WebCore::DoctypeToken::reset):
+
+2010-06-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Remove ASSERT in ~HTML5Tokenizer
         https://bugs.webkit.org/show_bug.cgi?id=40282
 

@@ -138,6 +138,7 @@ PassRefPtr<Node> HTML5TreeBuilder::passTokenToLegacyParser(HTML5Token& token)
         doctypeToken.m_name.append(token.name().data(), token.name().size());
         doctypeToken.m_publicID = token.publicIdentifier();
         doctypeToken.m_systemID = token.systemIdentifier();
+        doctypeToken.m_forceQuirks = token.forceQuirks();
 
         m_legacyHTMLParser->parseDoctypeToken(&doctypeToken);
         return 0;

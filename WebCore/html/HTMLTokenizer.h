@@ -117,6 +117,7 @@ public:
         m_systemID.clear();
         m_state = DoctypeBegin;
         m_source.clear();
+        m_forceQuirks = false;
     }
 
     DoctypeState state() { return m_state; }
@@ -126,8 +127,10 @@ public:
     Vector<UChar> m_publicID;
     Vector<UChar> m_systemID;
     DoctypeState m_state;
-    
+
     Vector<UChar> m_source;
+
+    bool m_forceQuirks; // Used by the HTML5 parser.
 };
 
 //-----------------------------------------------------------------------------
