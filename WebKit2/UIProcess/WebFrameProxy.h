@@ -61,6 +61,7 @@ public:
     };
 
     uint64_t frameID() const { return m_frameID; }
+    WebPageProxy* page() { return m_page; }
 
     void disconnect();
 

@@ -64,6 +64,12 @@ WKURLRef WKFrameGetURL(WKFrameRef frameRef)
     return toURLRef(frame->url().impl());
 }
 
+WKPageRef WKFrameGetPage(WKFrameRef frameRef)
+{
+    WebFrameProxy* frame = toWK(frameRef);
+    return toRef(frame->page());
+}
+
 WKFrameRef WKFrameRetain(WKFrameRef frameRef)
 {
     WebFrameProxy* frame = toWK(frameRef);
