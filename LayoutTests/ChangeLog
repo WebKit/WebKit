@@ -1,3 +1,18 @@
+2010-06-08  Steve Block  <steveblock@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Geolocation should have a LayoutTest for reentrant calls that cause a PERMISSION_DENIED error
+        https://bugs.webkit.org/show_bug.cgi?id=40174
+
+        Tests for reentrant calls with success and POSITION_UNAVAILABLE responses already exist,
+        but the code path for PERMISSION_DENIED is different.
+
+        * fast/dom/Geolocation/reentrant-permission-denied-expected.txt: Added.
+        * fast/dom/Geolocation/reentrant-permission-denied.html: Added.
+        * fast/dom/Geolocation/script-tests/reentrant-permission-denied.js: Added.
+        * platform/gtk/Skipped: Modified.
+
 2010-06-08  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Unreviewed. fast/js/large-expressions is failing only in debug mode.

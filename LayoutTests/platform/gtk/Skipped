@@ -1179,6 +1179,7 @@ fast/dom/Geolocation/error.html
 fast/dom/Geolocation/permission-denied-already-clear-watch.html
 fast/dom/Geolocation/position-string.html
 fast/dom/Geolocation/reentrant-error.html
+fast/dom/Geolocation/reentrant-permission-denied.html
 fast/dom/Geolocation/reentrant-success.html
 fast/dom/Geolocation/success.html
 fast/dom/Geolocation/timeout-clear-watch.html
