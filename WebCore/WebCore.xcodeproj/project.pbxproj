@@ -19432,7 +19432,7 @@
 				9FFE3E7B11B59C5D0037874E /* MemoryInfo.h in Headers */,
 				9FFE3EA611B5A4390037874E /* JSMemoryInfo.h in Headers */,
 				86243D0111BC31F700CC006A /* JSArrayBufferViewHelper.h in Headers */,
- 				A7BBE26711AFB3F20005EA03 /* JSHTMLMeterElement.h in Headers */,
+				A7BBE26711AFB3F20005EA03 /* JSHTMLMeterElement.h in Headers */,
 				B6B0540A11B68F10002564C5 /* IDBObjectStoreImpl.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -21733,7 +21733,7 @@
 				4F3289B511A42AAB005ABE7E /* InspectorValues.cpp in Sources */,
 				9FFE3E7A11B59C5D0037874E /* MemoryInfo.cpp in Sources */,
 				9FFE3EA511B5A4390037874E /* JSMemoryInfo.cpp in Sources */,
- 				A7BBE26611AFB3F20005EA03 /* JSHTMLMeterElement.cpp in Sources */,				
+				A7BBE26611AFB3F20005EA03 /* JSHTMLMeterElement.cpp in Sources */,
 				B6B0540911B68F10002564C5 /* IDBObjectStoreImpl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

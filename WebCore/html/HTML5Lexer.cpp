@@ -1030,7 +1030,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             ADVANCE_TO(SelfClosingStartTagState);
         else if (cc == '=')
             ADVANCE_TO(BeforeAttributeValueState);
-        else if (cc == '=')
+        else if (cc == '>')
             EMIT_AND_RESUME_IN(DataState);
         else if (cc >= 'A' && cc <= 'Z') {
             m_token->addNewAttribute();

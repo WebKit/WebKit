@@ -1,3 +1,13 @@
+2010-06-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTML5Lexer does not handle <div FOO ><img><img></div> correctly
+        https://bugs.webkit.org/show_bug.cgi?id=40283
+
+        * html5lib/resources/webkit01.dat:
+         - Add another test for this failure case.
+
 2010-06-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
