@@ -39,6 +39,9 @@ namespace WebCore {
 class Element;
 class PopupMenu;
 class RenderMenuList;
+#if ENABLE(METER_TAG)
+class RenderMeter;
+#endif
 #if ENABLE(PROGRESS_TAG)
 class RenderProgress;
 #endif
@@ -188,6 +191,10 @@ public:
     virtual String formatMediaControlsTime(float time) const;
     virtual String formatMediaControlsCurrentTime(float currentTime, float duration) const;
     virtual String formatMediaControlsRemainingTime(float currentTime, float duration) const;
+#endif
+
+#if ENABLE(METER_TAG)
+    virtual IntSize meterSizeForBounds(const RenderMeter*, const IntRect&) const;
 #endif
 
 protected:

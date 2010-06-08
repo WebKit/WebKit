@@ -1,3 +1,30 @@
+2010-06-07  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        [Mac] <meter> elements should be rendered as level indicators.        
+        https://bugs.webkit.org/show_bug.cgi?id=40217
+
+        * fast/dom/HTMLMeterElement/meter-appearances-capacity.html: Added.
+        * fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html: Added.
+        * fast/dom/HTMLMeterElement/meter-optimums.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped: removed <meter> related tests.
+        * platform/mac/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.checksum: Added.
+        * platform/mac/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.png: Added.
+        * platform/mac/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt: Added.
+        * platform/mac/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.checksum: Added.
+        * platform/mac/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.png: Added.
+        * platform/mac/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.txt: Added.
+        * platform/mac/fast/dom/HTMLMeterElement/meter-element-expected.checksum: Added.
+        * platform/mac/fast/dom/HTMLMeterElement/meter-element-expected.png: Added.
+        * platform/mac/fast/dom/HTMLMeterElement/meter-element-expected.txt: Copied from LayoutTests/platform/qt/fast/dom/HTMLMeterElement/meter-element-expected.txt.
+        * platform/mac/fast/dom/HTMLMeterElement/meter-optimums-expected.checksum: Added.
+        * platform/mac/fast/dom/HTMLMeterElement/meter-optimums-expected.png: Added.
+        * platform/mac/fast/dom/HTMLMeterElement/meter-optimums-expected.txt: Added.
+        * platform/win/Skipped:
+
 2010-06-07  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Oliver Hunt.

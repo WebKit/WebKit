@@ -163,5 +163,38 @@ void HTMLMeterElement::setOptimum(double optimum, ExceptionCode& ec)
     setAttribute(optimumAttr, String::number(optimum));
 }
 
+HTMLMeterElement::GaugeRegion HTMLMeterElement::gaugeRegion() const
+{
+    double lowValue = low();
+    double highValue = high();
+    double theValue = value();
+    double optimumValue = optimum();
+
+    if (optimumValue <= lowValue) {
+        // The optimum range stays under low
+        if (theValue <= lowValue)
+            return GaugeRegionOptimum;
+        if (theValue <= highValue)
+            return GaugeRegionSuboptimal;
+        return GaugeRegionEvenLessGood;
+    }
+    
+    if (highValue <= optimumValue) {
+        // The optimum range stays over high
+        if (highValue <= theValue)
+            return GaugeRegionOptimum;
+        if (lowValue <= theValue)
+            return GaugeRegionSuboptimal;
+        return GaugeRegionEvenLessGood;
+    }
+
+    // The optimum range stays between high and low
+    if (lowValue < highValue && theValue < highValue)
+        return GaugeRegionOptimum;
+    if (theValue == min() || max() == theValue)
+        return GaugeRegionEvenLessGood;
+    return GaugeRegionSuboptimal;
+}
+
 } // namespace
 #endif

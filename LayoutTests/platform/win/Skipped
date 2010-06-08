@@ -835,6 +835,9 @@ fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html
 # meter element is not supported
 fast/dom/HTMLMeterElement/meter-element.html
 fast/dom/HTMLMeterElement/set-meter-properties.html
+fast/dom/HTMLMeterElement/meter-appearances-capacity.html
+fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html
+fast/dom/HTMLMeterElement/meter-optimums.html
 
 # No Widgets 1.0 support
 fast/media/media-feature-wgt-view-mode.html

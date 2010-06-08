@@ -1,4 +1,55 @@
 2010-06-07  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        [Mac] <meter> elements should be rendered as level indicators.        
+        https://bugs.webkit.org/show_bug.cgi?id=40217
+
+        Implemented RenderThemeMac::paintMeter() using NSLevelIndicatorCell.
+        
+        This change also added new -webkit-appearance values to select the
+        style of level indicators:
+        
+        - relevancy-level-indicator,
+        - continuous-capacity-level-indicator,
+        - discrete-capacity-level-indicator, and 
+        - rating-level-indicator.
+        
+        The size of elements are adjusted based on the bounds of the indicator
+        to make room for painting whole indicator cells.
+
+        Tests: fast/dom/HTMLMeterElement/meter-appearances-capacity.html
+               fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html
+               fast/dom/HTMLMeterElement/meter-optimums.html
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSValueKeywords.in:
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::gaugeRegion):
+        * html/HTMLMeterElement.h:
+        (WebCore::HTMLMeterElement::):
+        * platform/ThemeTypes.h:
+        (WebCore::):
+        * rendering/RenderMeter.cpp:
+        (WebCore::RenderMeter::calcWidth):
+        (WebCore::RenderMeter::calcHeight):
+        * rendering/RenderMeter.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::paintBorderOnly):
+        (WebCore::RenderTheme::paintDecorations):
+        (WebCore::RenderTheme::meterSizeForBounds):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::meterSizeForBounds):
+        (WebCore::RenderThemeMac::paintMeter):
+        (WebCore::RenderThemeMac::levelIndicatorStyleFor):
+        (WebCore::RenderThemeMac::levelIndicatorFor):
+
+2010-06-07  MORITA Hajime  <morrita@google.com>
         
         Reviewed by Kent Tamura.
         

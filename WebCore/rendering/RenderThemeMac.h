@@ -80,6 +80,11 @@ public:
     
     virtual bool paintCapsLockIndicator(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
+#if ENABLE(METER_TAG)
+    virtual IntSize meterSizeForBounds(const RenderMeter*, const IntRect&) const;
+    virtual bool paintMeter(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+#endif
+
 #if ENABLE(PROGRESS_TAG)
     // Returns the repeat interval of the animation for the progress bar.
     virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const;
@@ -201,12 +206,18 @@ private:
     NSSliderCell* sliderThumbHorizontal() const;
     NSSliderCell* sliderThumbVertical() const;
 
+#if ENABLE(METER_TAG)
+    NSLevelIndicatorStyle levelIndicatorStyleFor(ControlPart) const;
+    NSLevelIndicatorCell* levelIndicatorFor(const RenderMeter*) const;
+#endif
+
 private:
     mutable RetainPtr<NSPopUpButtonCell> m_popupButton;
     mutable RetainPtr<NSSearchFieldCell> m_search;
     mutable RetainPtr<NSMenu> m_searchMenuTemplate;
     mutable RetainPtr<NSSliderCell> m_sliderThumbHorizontal;
     mutable RetainPtr<NSSliderCell> m_sliderThumbVertical;
+    mutable RetainPtr<NSLevelIndicatorCell> m_levelIndicator;
 
     bool m_isSliderThumbHorizontalPressed;
     bool m_isSliderThumbVerticalPressed;

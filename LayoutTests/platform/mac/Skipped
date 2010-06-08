@@ -136,10 +136,6 @@ fast/forms/multiple-form-submission-protection-mouse.html
 # The animation causes the result of this test to depend on the speed of executing it, and that will cause it to be flaky
 fast/dom/HTMLProgressElement/progress-element.html
 
-# meter element is not supported
-fast/dom/HTMLMeterElement/meter-element.html
-fast/dom/HTMLMeterElement/set-meter-properties.html
-
 # event.dataTransfer.setData('text/uri-list') not correctly implemented on Mac
 editing/pasteboard/dataTransfer-setData-getData.html
 

@@ -604,8 +604,12 @@ searchfield-results-decoration
 searchfield-results-button
 searchfield-cancel-button
 textfield
-textarea
 caps-lock-indicator
+relevancy-level-indicator
+continuous-capacity-level-indicator
+discrete-capacity-level-indicator
+rating-level-indicator
+textarea
 
 #
 # CSS_PROP_BORDER_IMAGE

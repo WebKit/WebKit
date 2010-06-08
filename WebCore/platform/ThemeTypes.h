@@ -56,7 +56,9 @@ enum ControlPart {
     SliderHorizontalPart, SliderVerticalPart, SliderThumbHorizontalPart,
     SliderThumbVerticalPart, CaretPart, SearchFieldPart, SearchFieldDecorationPart,
     SearchFieldResultsDecorationPart, SearchFieldResultsButtonPart,
-    SearchFieldCancelButtonPart, TextFieldPart, TextAreaPart, CapsLockIndicatorPart
+    SearchFieldCancelButtonPart, TextFieldPart, CapsLockIndicatorPart,
+    RelevancyLevelIndicatorPart, ContinuousCapacityLevelIndicatorPart, DiscreteCapacityLevelIndicatorPart, RatingLevelIndicatorPart,
+    TextAreaPart
 };
 
 enum SelectionPart {

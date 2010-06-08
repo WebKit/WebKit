@@ -2627,6 +2627,9 @@ BUG38227 SKIP : fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.h
 // HTMLMeterElement related tests deferred due to https://bugs.webkit.org/show_bug.cgi?id=37074.
 BUGWK37074 DEFER : fast/dom/HTMLMeterElement/meter-element.html = MISSING
 BUGWK37074 DEFER : fast/dom/HTMLMeterElement/set-meter-properties.html = TEXT
+BUGWK37074 DEFER : fast/dom/HTMLMeterElement/meter-appearances-capacity.html = MISSING
+BUGWK37074 DEFER : fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html = MISSING
+BUGWK37074 DEFER : fast/dom/HTMLMeterElement/meter-optimums.html = MISSING
 
 // WebKit roll 56004 -> 56026
 BUG38278 : fast/events/continuous-platform-wheelevent-in-scrolling-div.html = TIMEOUT

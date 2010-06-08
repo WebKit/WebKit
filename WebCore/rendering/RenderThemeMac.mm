@@ -51,6 +51,11 @@
 
 #import "RenderProgress.h"
 
+#if ENABLE(METER_TAG)
+#include "RenderMeter.h"
+#include "HTMLMeterElement.h"
+#endif
+
 #ifdef BUILDING_ON_TIGER
 typedef int NSInteger;
 typedef unsigned NSUInteger;
@@ -801,7 +806,100 @@ bool RenderThemeMac::paintMenuList(RenderObject* o, const RenderObject::PaintInf
 
     return false;
 }
-   
+
+#if ENABLE(METER_TAG)
+
+IntSize RenderThemeMac::meterSizeForBounds(const RenderMeter* renderMeter, const IntRect& bounds) const
+{
+    if (NoControlPart == renderMeter->style()->appearance())
+        return bounds.size();
+
+    NSLevelIndicatorCell* cell = levelIndicatorFor(renderMeter);
+    // Makes enough room for cell's intrinsic size.
+    NSSize cellSize = [cell cellSizeForBounds:IntRect(IntPoint(), bounds.size())];
+    return IntSize(bounds.width() < cellSize.width ? cellSize.width : bounds.width(),
+                   bounds.height() < cellSize.height ? cellSize.height : bounds.height());
+}
+
+bool RenderThemeMac::paintMeter(RenderObject* renderObject, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
+{
+    if (!renderObject->isMeter())
+        return true;
+
+    // Becaue NSLevelIndicatorCell doesn't support vertical gauge, we use a portable version 
+    if (rect.width() < rect.height())
+        return RenderTheme::paintMeter(renderObject, paintInfo, rect);
+
+    NSLevelIndicatorCell* cell = levelIndicatorFor(toRenderMeter(renderObject));
+    paintInfo.context->save();
+    [cell drawWithFrame:rect inView:documentViewFor(renderObject)];
+    [cell setControlView:nil];
+    paintInfo.context->restore();
+
+    return false;
+}
+
+NSLevelIndicatorStyle RenderThemeMac::levelIndicatorStyleFor(ControlPart part) const
+{
+    switch (part) {
+    case RelevancyLevelIndicatorPart:
+        return NSRelevancyLevelIndicatorStyle;
+    case DiscreteCapacityLevelIndicatorPart:
+        return NSDiscreteCapacityLevelIndicatorStyle;
+    case RatingLevelIndicatorPart:
+        return NSRatingLevelIndicatorStyle;
+    case MeterPart:
+    case ContinuousCapacityLevelIndicatorPart:
+    default:
+        return NSContinuousCapacityLevelIndicatorStyle;
+    }
+    
+}
+
+NSLevelIndicatorCell* RenderThemeMac::levelIndicatorFor(const RenderMeter* renderMeter) const
+{
+    RenderStyle* style = renderMeter->style();
+    ASSERT(style->appearance() != NoControlPart);
+
+    if (!m_levelIndicator)
+        m_levelIndicator.adoptNS([[NSLevelIndicatorCell alloc] initWithLevelIndicatorStyle:NSContinuousCapacityLevelIndicatorStyle]);
+    NSLevelIndicatorCell* cell = m_levelIndicator.get();
+
+    HTMLMeterElement* element = static_cast<HTMLMeterElement*>(renderMeter->node());
+    double value = element->value();
+
+    // Because NSLevelIndicatorCell does not support optimum-in-the-middle type coloring,
+    // we explicitly control the color instead giving low and high value to NSLevelIndicatorCell as is.
+    switch (element->gaugeRegion()) {
+    case HTMLMeterElement::GaugeRegionOptimum:
+        // Make meter the green
+        [cell setWarningValue:value + 1];
+        [cell setCriticalValue:value + 2];
+        break;
+    case HTMLMeterElement::GaugeRegionSuboptimal:
+        // Make the meter yellow
+        [cell setWarningValue:value - 1];
+        [cell setCriticalValue:value + 1];
+        break;
+    case HTMLMeterElement::GaugeRegionEvenLessGood:
+        // Make the meter red
+        [cell setWarningValue:value - 2];
+        [cell setCriticalValue:value - 1];
+        break;
+    }
+
+    [cell setLevelIndicatorStyle:levelIndicatorStyleFor(style->appearance())];
+    [cell setBaseWritingDirection:style->direction() == LTR ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft];
+    [cell setMinValue:element->min()];
+    [cell setMaxValue:element->max()];
+    RetainPtr<NSNumber> valueObject = [NSNumber numberWithDouble:value];
+    [cell setObjectValue:valueObject.get()];
+
+    return cell;
+}
+
+#endif
+
 #if ENABLE(PROGRESS_TAG)
 
 double RenderThemeMac::animationRepeatIntervalForProgressBar(RenderProgress*) const

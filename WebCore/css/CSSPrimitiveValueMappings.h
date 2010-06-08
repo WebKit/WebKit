@@ -278,6 +278,18 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
         case MeterPart:
             m_value.ident = CSSValueMeter;
             break;
+        case RelevancyLevelIndicatorPart:
+            m_value.ident = CSSValueRelevancyLevelIndicator;
+            break;
+        case ContinuousCapacityLevelIndicatorPart:
+            m_value.ident = CSSValueContinuousCapacityLevelIndicator;
+            break;
+        case DiscreteCapacityLevelIndicatorPart:
+            m_value.ident = CSSValueDiscreteCapacityLevelIndicator;
+            break;
+        case RatingLevelIndicatorPart:
+            m_value.ident = CSSValueRatingLevelIndicator;
+            break;
         case OuterSpinButtonPart:
             m_value.ident = CSSValueOuterSpinButton;
             break;
