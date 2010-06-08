@@ -1,3 +1,15 @@
+2010-06-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove another unterminated <title> element
+        https://bugs.webkit.org/show_bug.cgi?id=40281
+
+        We're already testing untermianted <title> element behavior in specific
+        tests for that beheavior.  We don't need to test it redudantly here.
+
+        * http/tests/security/frame-loading-via-document-write.html:
+
 2010-06-07  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.
