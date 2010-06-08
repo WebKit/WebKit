@@ -56,8 +56,10 @@ namespace WebCore {
             return 0;
 
         if (iterator.isValid() && type == iterator.type() && length == iterator.length
-            && memcmp(string, iterator.string, length) == 0)
+            && memcmp(string, iterator.string, length) == 0) {
+            iterator.toStart();
             return &iterator;
+        }
 
         iterator = TextBreakIterator(type, string, length);
 

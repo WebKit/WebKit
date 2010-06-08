@@ -1,3 +1,12 @@
+2010-06-08  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Unreviewed Buildbot fix.
+
+        Reset the Qt TextBreakIterator when reusing it.
+
+        * platform/text/qt/TextBreakIteratorQt.cpp:
+        (WebCore::setUpIterator):
+
 2010-06-04  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by John Sullivan.
