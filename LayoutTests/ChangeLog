@@ -1,3 +1,11 @@
+2010-06-08  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed, expectations fix.
+
+        [CHROMIUM] Remove expectations for editing/pasteboard/drop-link.html on mac, since the change was reverted.  Mark http/tests/multipart/invalid-image-data.html as flaky on linux/dbg.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-06-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r60864.

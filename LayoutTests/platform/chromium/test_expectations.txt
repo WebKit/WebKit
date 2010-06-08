@@ -1205,6 +1205,8 @@ BUG10361 WIN : http/tests/misc/single-character-pi-stylesheet.xhtml = FAIL
 // Windows is missing the green box. Started to pass in roll to WebKit r50313
 BUG8729 WIN DEBUG : http/tests/multipart/invalid-image-data.html = FAIL
 BUG8729 SLOW WIN RELEASE : http/tests/multipart/invalid-image-data.html = FAIL
+// Flaky on Linux dbg.
+BUG8729 LINUX DEBUG : http/tests/multipart/invalid-image-data.html = IMAGE PASS
 
 // -----------------------------------------------------------------
 // MAC PORT TESTS
@@ -2844,9 +2846,6 @@ BUG45106 WIN : svg/text/text-text-05-t.svg = PASS CRASH
 BUG45518: html5lib/runner.html = TEXT
 
 BUG45720 WIN LINUX : websocket/tests/reload-crash.html = PASS CRASH
-
-// Failing since http://trac.webkit.org/changeset/60859
-BUG46098 MAC : editing/pasteboard/drop-link.html = TEXT
 
 // Failing since http://trac.webkit.org/changeset/60865
 BUG46096 : editing/selection/extend-selection-after-double-click.html = TEXT
