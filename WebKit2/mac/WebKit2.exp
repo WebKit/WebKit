@@ -4,13 +4,17 @@ _WKContextCreateWithProcessModel
 _WKContextGetStatistics
 _WKContextRelease
 _WKContextRetain
+_WKFrameGetFrameLoadState
+_WKFrameGetProvisionalURL
 _WKFrameGetURL
+_WKFrameIsMainFrame
 _WKFrameRelease
 _WKFrameRetain
 _WKFramePolicyListenerUse
 _WKNavigationDataGetTitle
 _WKNavigationDataGetURL
 _WKPageClose
+_WKPageGetMainFrame
 _WKPageGetPageNamespace
 _WKPageLoadURL
 _WKPageNamespaceCreate
@@ -26,6 +30,8 @@ _WKPageSetPagePolicyClient
 _WKPageSetPageUIClient
 _WKPageTryClose
 _WKStringCopyCFString
+_WKStringRelease
+_WKStringRetain
 _WKURLCopyCFURL
 _WKURLCreateWithCFURL
 _WKURLRelease

@@ -1,3 +1,10 @@
+2010-06-08  John Sullivan  <sullivan@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        * mac/WebKit2.exp:
+        Added a few more symbols needed by Mac clients.
+
 2010-06-08  MORITA Hajime  <morrita@google.com>
 
         Unreviewed. An attempt to fix test break.
