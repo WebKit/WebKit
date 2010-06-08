@@ -109,6 +109,21 @@ static JSValueRef leapForwardCallback(JSContextRef context, JSObjectRef function
     return JSValueMakeUndefined(context);
 }
 
+#if !GTK_CHECK_VERSION(2,17,3)
+static void getRootCoords(GtkWidget* view, int* rootX, int* rootY)
+{
+    GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(view));
+    int tmpX, tmpY;
+
+    gtk_widget_translate_coordinates(view, window, lastMousePositionX, lastMousePositionY, &tmpX, &tmpY);
+
+    gdk_window_get_origin(window->window, rootX, rootY);
+
+    *rootX += tmpX;
+    *rootY += tmpY;
+}
+#endif
+
 bool prepareMouseButtonEvent(GdkEvent* event, int eventSenderButtonNumber)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
@@ -176,21 +191,6 @@ static void updateClickCount(int button)
     else
         clickCount++;
 }
-
-#if !GTK_CHECK_VERSION(2,17,3)
-static void getRootCoords(GtkWidget* view, int* rootX, int* rootY)
-{
-    GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(view));
-    int tmpX, tmpY;
-
-    gtk_widget_translate_coordinates(view, window, lastMousePositionX, lastMousePositionY, &tmpX, &tmpY);
-
-    gdk_window_get_origin(window->window, rootX, rootY);
-
-    *rootX += tmpX;
-    *rootY += tmpY;
-}
-#endif
 
 static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
