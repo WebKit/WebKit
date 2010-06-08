@@ -1,3 +1,7 @@
+2010-06-08  Alexey Proskuryakov  <ap@apple.com>
+
+        * GNUmakefile.am: Also adding platform/Cursor.cpp to Gtk build.
+
 2010-06-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed buildfix after r60849.

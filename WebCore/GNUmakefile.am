@@ -1572,6 +1572,7 @@ webcore_sources += \
 	WebCore/platform/CookieJar.h \
 	WebCore/platform/CrossThreadCopier.cpp \
 	WebCore/platform/CrossThreadCopier.h \
+	WebCore/platform/Cursor.cpp \
 	WebCore/platform/Cursor.h \
 	WebCore/platform/DeprecatedPtrList.h \
 	WebCore/platform/DeprecatedPtrListImpl.cpp \
