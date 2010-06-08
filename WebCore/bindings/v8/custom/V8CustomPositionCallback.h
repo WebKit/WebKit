@@ -27,6 +27,7 @@
 #define V8CustomPositionCallback_h
 
 #include "PositionCallback.h"
+
 #include <v8.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -35,23 +36,23 @@ namespace WebCore {
 
 class Frame;
 class Geoposition;
+class ScriptExecutionContext;
 
 class V8CustomPositionCallback : public PositionCallback {
 public:
-    static PassRefPtr<V8CustomPositionCallback> create(v8::Local<v8::Value> value, Frame* frame)
+    static PassRefPtr<V8CustomPositionCallback> create(v8::Local<v8::Value> value, ScriptExecutionContext* context)
     {
         ASSERT(value->IsObject());
-        return adoptRef(new V8CustomPositionCallback(value->ToObject(), frame));
+        return adoptRef(new V8CustomPositionCallback(value->ToObject(), context));
     }
     virtual ~V8CustomPositionCallback();
 
     virtual void handleEvent(Geoposition*);
 
 private:
-    V8CustomPositionCallback(v8::Local<v8::Object>, Frame*);
+    V8CustomPositionCallback(v8::Local<v8::Object>, ScriptExecutionContext*);
 
     v8::Persistent<v8::Object> m_callback;
-    RefPtr<Frame> m_frame;
 };
 
 } // namespace WebCore

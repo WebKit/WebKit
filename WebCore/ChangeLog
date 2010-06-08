@@ -1,3 +1,47 @@
+2010-06-08  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Prevent Geolocation making callbacks to a ScriptExecutionContext that no longer exists
+        https://bugs.webkit.org/show_bug.cgi?id=40162
+
+        Before making callbacks, we check that the relevant ScriptExecutionContext still exists.
+        To achieve this, the callbacks inherit from ActiveDOMObject.
+
+        The ScriptExecutionContext is ref'ed from script, so may not be GC'ed for some time after
+        it is disconnected from its frame. Making the callback currently involves accessing the
+        Frame, so an additional check for the Frame is required.
+
+        This change also prevents the V8 bindings from incorrectly holding a reference to the Frame.
+
+        Test: fast/dom/Geolocation/callback-to-deleted-context.html
+
+        * bindings/js/JSCallbackData.cpp:
+        (WebCore::JSCallbackData::invokeCallback):
+        * bindings/js/JSCustomPositionCallback.cpp:
+        (WebCore::JSCustomPositionCallback::JSCustomPositionCallback):
+        (WebCore::JSCustomPositionCallback::handleEvent):
+        * bindings/js/JSCustomPositionErrorCallback.cpp:
+        (WebCore::JSCustomPositionErrorCallback::JSCustomPositionErrorCallback):
+        (WebCore::JSCustomPositionErrorCallback::handleEvent):
+        * bindings/v8/custom/V8CustomPositionCallback.cpp:
+        (WebCore::V8CustomPositionCallback::V8CustomPositionCallback):
+        (WebCore::V8CustomPositionCallback::handleEvent):
+        * bindings/v8/custom/V8CustomPositionCallback.h:
+        (WebCore::V8CustomPositionCallback::create):
+        * bindings/v8/custom/V8CustomPositionErrorCallback.cpp:
+        (WebCore::V8CustomPositionErrorCallback::V8CustomPositionErrorCallback):
+        (WebCore::V8CustomPositionErrorCallback::handleEvent):
+        * bindings/v8/custom/V8CustomPositionErrorCallback.h:
+        (WebCore::V8CustomPositionErrorCallback::create):
+        * bindings/v8/custom/V8GeolocationCustom.cpp:
+        (WebCore::createPositionCallback):
+        (WebCore::createPositionErrorCallback):
+        * page/PositionCallback.h:
+        (WebCore::PositionCallback::PositionCallback):
+        * page/PositionErrorCallback.h:
+        (WebCore::PositionErrorCallback::PositionErrorCallback):
+
 2010-06-08  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

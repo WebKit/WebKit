@@ -26,15 +26,16 @@
 #include "config.h"
 #include "V8CustomPositionCallback.h"
 
-#include "Frame.h"
+#include "ScriptExecutionContext.h"
 #include "V8CustomVoidCallback.h"  // For invokeCallback
 #include "V8Geoposition.h"
+#include "V8Proxy.h"
 
 namespace WebCore {
 
-V8CustomPositionCallback::V8CustomPositionCallback(v8::Local<v8::Object> callback, Frame* frame)
-    : m_callback(v8::Persistent<v8::Object>::New(callback))
-    , m_frame(frame)
+V8CustomPositionCallback::V8CustomPositionCallback(v8::Local<v8::Object> callback, ScriptExecutionContext* context)
+    : PositionCallback(context)
+    , m_callback(v8::Persistent<v8::Object>::New(callback))
 {
 }
 
@@ -47,7 +48,17 @@ void V8CustomPositionCallback::handleEvent(Geoposition* position)
 {
     v8::HandleScope handleScope;
 
-    v8::Handle<v8::Context> context = V8Proxy::context(m_frame.get());
+    // ActiveDOMObject will null our pointer to the ScriptExecutionContext when it goes away.
+    ScriptExecutionContext* scriptContext = scriptExecutionContext();
+    if (!scriptContext)
+        return;
+
+    // The lookup of the proxy will fail if the Frame has been detached.
+    V8Proxy* proxy = V8Proxy::retrieve(scriptContext);
+    if (!proxy)
+        return;
+
+    v8::Handle<v8::Context> context = proxy->context();
     if (context.IsEmpty())
         return;
 
@@ -57,11 +68,11 @@ void V8CustomPositionCallback::handleEvent(Geoposition* position)
         toV8(position)
     };
 
-    // Protect the frame until the callback returns.
-    RefPtr<Frame> protector(m_frame);
+    // Protect the script context until the callback returns.
+    RefPtr<ScriptExecutionContext> protector(scriptContext);
 
     bool callbackReturnValue = false;
-    invokeCallback(m_callback, 1, argv, callbackReturnValue, m_frame->document());
+    invokeCallback(m_callback, 1, argv, callbackReturnValue, scriptContext);
 }
 
 } // namespace WebCore

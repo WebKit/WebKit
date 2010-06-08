@@ -38,12 +38,17 @@ namespace WebCore {
 using namespace JSC;
 
 JSCustomPositionCallback::JSCustomPositionCallback(JSObject* callback, JSDOMGlobalObject* globalObject)
-    : m_data(callback, globalObject)
+    : PositionCallback(globalObject->scriptExecutionContext())
+    , m_data(callback, globalObject)
 {
 }
 
 void JSCustomPositionCallback::handleEvent(Geoposition* geoposition)
 {
+    // ActiveDOMObject will null our pointer to the ScriptExecutionContext when it goes away.
+    if (!scriptExecutionContext())
+        return;
+
     RefPtr<JSCustomPositionCallback> protect(this);
 
     JSC::JSLock lock(SilenceAssertionsOnly);

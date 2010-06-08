@@ -5916,6 +5916,7 @@ storage/indexeddb
 # https://bugs.webkit.org/show_bug.cgi?id=40153
 fast/dom/Geolocation/callback-to-remote-context.html
 fast/dom/Geolocation/callback-to-remote-context2.html
+fast/dom/Geolocation/callback-to-deleted-context.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=40269
 media/controls-drag-timebar.html

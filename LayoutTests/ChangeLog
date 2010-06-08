@@ -1,5 +1,19 @@
 2010-06-08  Steve Block  <steveblock@google.com>
 
+        Reviewed by Jeremy Orlow.
+
+        Prevent Geolocation making callbacks to a ScriptExecutionContext that no longer exists
+        https://bugs.webkit.org/show_bug.cgi?id=40162
+
+        * fast/dom/Geolocation/callback-to-deleted-context-expected.txt: Added.
+        * fast/dom/Geolocation/callback-to-deleted-context.html: Added.
+        * fast/dom/Geolocation/resources/callback-to-deleted-context-inner1.html: Added.
+        * fast/dom/Geolocation/resources/callback-to-deleted-context-inner2.html: Added.
+        * fast/dom/Geolocation/script-tests/callback-to-deleted-context.js: Added.
+        * platform/gtk/Skipped: Modified.
+
+2010-06-08  Steve Block  <steveblock@google.com>
+
         Reviewed by Alexey Proskuryakov.
 
         Geolocation should have a LayoutTest for reentrant calls that cause a PERMISSION_DENIED error
