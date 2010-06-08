@@ -1,3 +1,16 @@
+2010-06-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r60830.
+        http://trac.webkit.org/changeset/60830
+        https://bugs.webkit.org/show_bug.cgi?id=40305
+
+        Broke the Windows build (Requested by abarth on #webkit).
+
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * wtf/OwnPtrCommon.h:
+        * wtf/brew/OwnPtrBrew.h: Removed.
+        * wtf/win/OwnPtrWin.h: Removed.
+
 2010-06-08  MORITA Hajime  <morrita@google.com>
 
         Unreviewed. An attempt to fix test break.
