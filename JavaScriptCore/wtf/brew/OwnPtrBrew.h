@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2009 Torch Mobile, Inc.
- * Copyright (C) 2010 Company 100 Inc.
+ * Copyright (C) 2010 Company 100 Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WTF_OwnPtrCommon_h
-#define WTF_OwnPtrCommon_h
+#ifndef OwnPtrBrew_h
+#define OwnPtrBrew_h
+
+// Forward delcarations at this point avoid the need to include BREW includes
+// in WTF headers.
+typedef struct _ISocket ISocket;
+typedef struct _IFileMgr IFileMgr;
+typedef struct _IFile IFile;
+typedef struct IBitmap IBitmap;
+typedef struct ISSL ISSL;
 
 namespace WTF {
 
-    template <typename T> inline void deleteOwnedPtr(T* ptr)
-    {
-        typedef char known[sizeof(T) ? 1 : -1];
-        if (sizeof(known))
-            delete ptr;
-    }
+void deleteOwnedPtr(IFileMgr*);
+void deleteOwnedPtr(IFile*);
+void deleteOwnedPtr(IBitmap*);
+void deleteOwnedPtr(ISSL*);
+void deleteOwnedPtr(ISocket*);
 
 } // namespace WTF
 
-#if PLATFORM(BREWMP)
-#include <wtf/brew/OwnPtrBrew.h>
-#elif PLATFORM(WIN)
-#include <wtf/win/OwnPtrWin.h>
-#endif
-
-#endif // WTF_OwnPtrCommon_h
+#endif // OwnPtrBrew_h
