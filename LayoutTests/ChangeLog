@@ -1,3 +1,9 @@
+2010-06-08  MORITA Hajime  <morrita@google.com>
+
+        Unreviewd. Updated test_expectations.txt to follow r60822
+
+        * platform/chromium/test_expectations.txt:
+
 2010-06-07  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
