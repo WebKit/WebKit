@@ -118,6 +118,7 @@ public:
 
     virtual IntSize size() const;
     IntSize currentFrameSize() const;
+    virtual bool getHotSpot(IntPoint&) const;
 
     virtual bool dataChanged(bool allDataReceived);
     virtual String filenameExtension() const; 

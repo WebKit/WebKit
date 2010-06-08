@@ -22409,6 +22409,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\Cursor.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\Cursor.h"
 				>
 			</File>

@@ -842,17 +842,17 @@ bool CSSParser::parseValue(int propId, bool important)
                 coords.append(int(value->fValue));
                 value = m_valueList->next();
             }
-            IntPoint hotspot;
+            IntPoint hotSpot(-1, -1);
             int nrcoords = coords.size();
             if (nrcoords > 0 && nrcoords != 2)
                 return false;
             if (nrcoords == 2)
-                hotspot = IntPoint(coords[0], coords[1]);
+                hotSpot = IntPoint(coords[0], coords[1]);
 
             if (!uri.isNull() && m_styleSheet) {
                 // FIXME: The completeURL call should be done when using the CSSCursorImageValue,
                 // not when creating it.
-                list->append(CSSCursorImageValue::create(m_styleSheet->completeURL(uri), hotspot));
+                list->append(CSSCursorImageValue::create(m_styleSheet->completeURL(uri), hotSpot));
             }
 
             if ((m_strict && !value) || (value && !(value->unit == CSSParserValue::Operator && value->iValue == ',')))

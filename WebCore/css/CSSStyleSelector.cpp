@@ -3393,7 +3393,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                     // StyleImage.
                     RefPtr<StyleCachedImage> styleCachedImage(image->cachedImage(m_element->document()->docLoader()));
                     if (styleCachedImage)
-                        m_style->addCursor(styleCachedImage->cachedImage(), image->hotspot());
+                        m_style->addCursor(styleCachedImage->cachedImage(), image->hotSpot());
                 } else if (type == CSSPrimitiveValue::CSS_IDENT)
                     m_style->setCursor(*primitiveValue);
             }

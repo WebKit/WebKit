@@ -55,6 +55,7 @@ class BBitmap;
 
 namespace WebCore {
 
+class IntPoint;
 class IntSize;
 class SharedBuffer;
 class String;
@@ -148,6 +149,7 @@ public:
     bool isSizeAvailable();
     IntSize size() const;
     IntSize frameSizeAtIndex(size_t) const;
+    bool getHotSpot(IntPoint&) const;
 
     int repetitionCount();
 

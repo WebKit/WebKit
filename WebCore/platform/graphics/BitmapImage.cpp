@@ -155,6 +155,11 @@ IntSize BitmapImage::currentFrameSize() const
     return m_source.frameSizeAtIndex(m_currentFrame);
 }
 
+bool BitmapImage::getHotSpot(IntPoint& hotSpot) const
+{
+    return m_source.getHotSpot(hotSpot);
+}
+
 bool BitmapImage::dataChanged(bool allDataReceived)
 {
     // Because we're modifying the current frame, clear its (now possibly

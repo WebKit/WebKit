@@ -1,3 +1,71 @@
+2010-06-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by John Sullivan.
+
+        https://bugs.webkit.org/show_bug.cgi?id=15779
+        <rdar://problem/8002964> Custom CSS .cur cursor anchor point is ignored
+
+        Test: manual-tests/cur-hotspot.html
+
+        Currently, this patch only has effect in Safari 5 on Windows. Other platforms will need
+        to implement getting hot spot information from .cur files.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Added Cursor.cpp. Looks like TextWrangler fixed line endings in vcproj file.
+
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::CSSCursorImageValue): Renamed "hotspot" to "hotSpot" to match
+        other code.
+        (WebCore::CSSCursorImageValue::updateIfSVGCursorIsUsed): Ditto. Added a FIXME about possibly
+        incorrect code for resolving differences with CSS specified hotspot.
+
+        * css/CSSCursorImageValue.h:
+        (WebCore::CSSCursorImageValue::create):
+        (WebCore::CSSCursorImageValue::hotSpot):
+        Renamed "hotspot" to "hotSpot" to match other code.
+
+        * css/CSSParser.cpp: (WebCore::CSSParser::parseValue): Start with an invalid value for hot
+        spot, so that we can differentiate between missing and (0, 0) CSS hot spots. Missing and
+        invalid (-1, -1) are treated identically by Firefox, so we don't need to differentiate these.
+
+        * css/CSSStyleSelector.cpp: (WebCore::CSSStyleSelector::applyProperty): Renamed "hotspot" to
+        "hotSpot" to match other code.
+
+        * page/EventHandler.cpp: (WebCore::EventHandler::selectCursor): Don't ignore cursors with
+        invalid CSS hot spots. Firefox ignores only the hot spot, not the whole cursor in this case
+        (and IE doesn't support CSS3 cursor declarations).
+
+        * platform/Cursor.cpp: Added. (WebCore::determineHotSpot): Added a function that decides
+        where hot spot is, provided an image and a possible out of band coordinate specification.
+
+        * platform/Cursor.h: Added determineHotSpot().
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::getHotSpot):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Image.h:
+        (WebCore::Image::getHotSpot):
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::getHotSpot):
+        * platform/graphics/ImageSource.h:
+        Added plumbing to get hot spot data from an image provider.
+
+        * platform/graphics/cg/ImageSourceCG.cpp: (WebCore::ImageSource::getHotSpot): CG implemantation.
+
+        * platform/mac/CursorMac.mm: (WebCore::createCustomCursor): Call determineHotSpot() to 
+        determine where hot spot should be.
+        (WebCore::Cursor::Cursor): Renamed "hotspot" to "hotSpot" to match other code.
+
+        * platform/win/CursorWin.cpp: (WebCore::Cursor::Cursor): Call determineHotSpot() to determine
+        where hot spot should be.
+
+        * platform/gtk/CursorGtk.cpp: (WebCore::Cursor::Cursor): Ditto. This must be done despite
+        this platform not having an implementation for ImageSource::getHotSpot(), because we no longer
+        check for out of bounds hot spots in EventHandler::selectCursor().
+
+        * platform/qt/CursorQt.cpp: (WebCore::Cursor::Cursor): Ditto.
+
 2010-06-08  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Antti Koivisto.

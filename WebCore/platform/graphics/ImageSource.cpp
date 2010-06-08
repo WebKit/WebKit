@@ -107,6 +107,11 @@ IntSize ImageSource::frameSizeAtIndex(size_t index) const
     return m_decoder ? m_decoder->frameSizeAtIndex(index) : IntSize();
 }
 
+bool ImageSource::getHotSpot(IntPoint&) const
+{
+    return false;
+}
+
 int ImageSource::repetitionCount()
 {
     return m_decoder ? m_decoder->repetitionCount() : cAnimationNone;

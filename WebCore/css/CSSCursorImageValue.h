@@ -32,14 +32,14 @@ class SVGElement;
 
 class CSSCursorImageValue : public CSSImageValue {
 public:
-    static PassRefPtr<CSSCursorImageValue> create(const String& url, const IntPoint& hotspot)
+    static PassRefPtr<CSSCursorImageValue> create(const String& url, const IntPoint& hotSpot)
     {
-        return adoptRef(new CSSCursorImageValue(url, hotspot));
+        return adoptRef(new CSSCursorImageValue(url, hotSpot));
     }
 
     virtual ~CSSCursorImageValue();
 
-    IntPoint hotspot() const { return m_hotspot; }
+    IntPoint hotSpot() const { return m_hotSpot; }
 
     bool updateIfSVGCursorIsUsed(Element*);
     virtual StyleCachedImage* cachedImage(DocLoader*);
@@ -49,9 +49,9 @@ public:
 #endif
 
 private:
-    CSSCursorImageValue(const String& url, const IntPoint& hotspot);
+    CSSCursorImageValue(const String& url, const IntPoint& hotSpot);
 
-    IntPoint m_hotspot;
+    IntPoint m_hotSpot;
 
 #if ENABLE(SVG)
     HashSet<SVGElement*> m_referencedElements;

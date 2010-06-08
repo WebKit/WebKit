@@ -52,9 +52,9 @@ static inline SVGCursorElement* resourceReferencedByCursorElement(const String& 
 }
 #endif
 
-CSSCursorImageValue::CSSCursorImageValue(const String& url, const IntPoint& hotspot)
+CSSCursorImageValue::CSSCursorImageValue(const String& url, const IntPoint& hotSpot)
     : CSSImageValue(url)
-    , m_hotspot(hotspot)
+    , m_hotSpot(hotSpot)
 {
 }
 
@@ -90,11 +90,12 @@ bool CSSCursorImageValue::updateIfSVGCursorIsUsed(Element* element)
         return false;
 
     if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, element->document())) {
+        // FIXME: This will override hot spot specified in CSS, which is probably incorrect.
         float x = roundf(cursorElement->x().value(0));
-        m_hotspot.setX(static_cast<int>(x));
+        m_hotSpot.setX(static_cast<int>(x));
 
         float y = roundf(cursorElement->y().value(0));
-        m_hotspot.setY(static_cast<int>(y));
+        m_hotSpot.setY(static_cast<int>(y));
 
         if (cachedImageURL() != element->document()->completeURL(cursorElement->href()))
             clearCachedImage();

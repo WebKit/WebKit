@@ -109,6 +109,7 @@ public:
     IntRect rect() const { return IntRect(IntPoint(), size()); }
     int width() const { return size().width(); }
     int height() const { return size().height(); }
+    virtual bool getHotSpot(IntPoint&) const { return false; }
 
     bool setData(PassRefPtr<SharedBuffer> data, bool allDataReceived);
     virtual bool dataChanged(bool /*allDataReceived*/) { return false; }

@@ -43,14 +43,14 @@ namespace WebCore {
 // Simple NSCursor calls shouldn't need protection,
 // but creating a cursor with a bad image might throw.
 
-static NSCursor* createCustomCursor(Image* image, const IntPoint& hotspot)
+static NSCursor* createCustomCursor(Image* image, const IntPoint& hotSpot)
 {
     // FIXME: The cursor won't animate.  Not sure if that's a big deal.
     NSImage* img = image->getNSImage();
     if (!img)
         return 0;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[NSCursor alloc] initWithImage:img hotSpot:hotspot];
+    return [[NSCursor alloc] initWithImage:img hotSpot:determineHotSpot(image, hotSpot)];
     END_BLOCK_OBJC_EXCEPTIONS;
     return 0;
 }
@@ -76,8 +76,8 @@ static NSCursor* leakNamedCursor(const char* name, int x, int y)
     return nil;
 }
 
-Cursor::Cursor(Image* image, const IntPoint& hotspot)
-    : m_impl(HardRetainWithNSRelease(createCustomCursor(image, hotspot)))
+Cursor::Cursor(Image* image, const IntPoint& hotSpot)
+    : m_impl(HardRetainWithNSRelease(createCustomCursor(image, hotSpot)))
 {
 }
 

@@ -1077,9 +1077,6 @@ Cursor EventHandler::selectCursor(const MouseEventWithHitTestResults& event, Scr
             IntSize size = cimage->image()->size();
             if (size.width() > 128 || size.height() > 128)
                 continue;
-            // Do not let the hotspot be outside the bounds of the image. 
-            if (hotSpot.x() < 0 || hotSpot.y() < 0 || hotSpot.x() > size.width() || hotSpot.y() > size.height())
-                continue;
             if (cimage->image()->isNull())
                 break;
             if (!cimage->errorOccurred())

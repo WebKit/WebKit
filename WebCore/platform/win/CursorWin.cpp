@@ -52,8 +52,9 @@ static inline bool supportsAlphaCursors()
     return osinfo.dwMajorVersion > 5 || (osinfo.dwMajorVersion == 5 && osinfo.dwMinorVersion > 0);
 }
 
-Cursor::Cursor(Image* img, const IntPoint& hotspot) 
-{ 
+Cursor::Cursor(Image* img, const IntPoint& hotSpot)
+{
+    IntPoint effectiveHotSpot = determineHotSpot(img, hotSpot);
     static bool doAlpha = supportsAlphaCursors();
     BitmapInfo cursorImage = BitmapInfo::create(IntSize(img->width(), img->height()));
 
@@ -74,8 +75,8 @@ Cursor::Cursor(Image* img, const IntPoint& hotspot)
 
         ICONINFO ii;
         ii.fIcon = FALSE;
-        ii.xHotspot = hotspot.x();
-        ii.yHotspot = hotspot.y();
+        ii.xHotspot = effectiveHotSpot.x();
+        ii.yHotspot = effectiveHotSpot.y();
         ii.hbmMask = hMask.get();
         ii.hbmColor = hCursor.get();
 
@@ -110,8 +111,8 @@ Cursor::Cursor(Image* img, const IntPoint& hotspot)
 
         ICONINFO icon = {0};
         icon.fIcon = FALSE;
-        icon.xHotspot = hotspot.x();
-        icon.yHotspot = hotspot.y();
+        icon.xHotspot = effectiveHotSpot.x();
+        icon.yHotspot = effectiveHotSpot.y();
         icon.hbmMask = andMask.get();
         icon.hbmColor = xorMask.get();
         m_impl = SharedCursor::create(CreateIconIndirect(&icon));

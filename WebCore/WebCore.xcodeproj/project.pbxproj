@@ -4903,6 +4903,7 @@
 		E10B9B6D0B747599003ED890 /* NativeXPathNSResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E10B9B6B0B747599003ED890 /* NativeXPathNSResolver.cpp */; };
 		E10B9CCC0B747A44003ED890 /* DOMCustomXPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E10B9CCA0B747A44003ED890 /* DOMCustomXPathNSResolver.h */; };
 		E10B9CCD0B747A44003ED890 /* DOMCustomXPathNSResolver.mm in Sources */ = {isa = PBXBuildFile; fileRef = E10B9CCB0B747A44003ED890 /* DOMCustomXPathNSResolver.mm */; };
+		E11AF15111B9A1A300805103 /* Cursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E11AF15011B9A1A300805103 /* Cursor.cpp */; };
 		E11C9D9B0EB3681200E409DB /* ScriptExecutionContext.h in Headers */ = {isa = PBXBuildFile; fileRef = E11C9D9A0EB3681200E409DB /* ScriptExecutionContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E11C9DB00EB3699500E409DB /* ScriptExecutionContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E11C9DAF0EB3699500E409DB /* ScriptExecutionContext.cpp */; };
 		E124748410AA161D00B79493 /* AuthenticationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E124748310AA161D00B79493 /* AuthenticationClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10451,6 +10452,7 @@
 		E10B9B6B0B747599003ED890 /* NativeXPathNSResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NativeXPathNSResolver.cpp; sourceTree = "<group>"; };
 		E10B9CCA0B747A44003ED890 /* DOMCustomXPathNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMCustomXPathNSResolver.h; sourceTree = "<group>"; };
 		E10B9CCB0B747A44003ED890 /* DOMCustomXPathNSResolver.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMCustomXPathNSResolver.mm; sourceTree = "<group>"; };
+		E11AF15011B9A1A300805103 /* Cursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cursor.cpp; sourceTree = "<group>"; };
 		E11C9D9A0EB3681200E409DB /* ScriptExecutionContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptExecutionContext.h; sourceTree = "<group>"; };
 		E11C9DAF0EB3699500E409DB /* ScriptExecutionContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptExecutionContext.cpp; sourceTree = "<group>"; };
 		E124748310AA161D00B79493 /* AuthenticationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthenticationClient.h; sourceTree = "<group>"; };
@@ -15892,6 +15894,7 @@
 				9352088109BD45E900F2038D /* CookieJar.h */,
 				2E4346560F546A9900B0F1BA /* CrossThreadCopier.cpp */,
 				2E4346570F546A9900B0F1BA /* CrossThreadCopier.h */,
+				E11AF15011B9A1A300805103 /* Cursor.cpp */,
 				F587868402DE3B8601EA4122 /* Cursor.h */,
 				F587869902DE3B8601EA4122 /* DeprecatedPtrList.h */,
 				F587851602DE375901EA4122 /* DeprecatedPtrListImpl.cpp */,
@@ -21741,6 +21744,7 @@
 				4F3289B511A42AAB005ABE7E /* InspectorValues.cpp in Sources */,
 				9FFE3E7A11B59C5D0037874E /* MemoryInfo.cpp in Sources */,
 				9FFE3EA511B5A4390037874E /* JSMemoryInfo.cpp in Sources */,
+				E11AF15111B9A1A300805103 /* Cursor.cpp in Sources */,
 				A7BBE26611AFB3F20005EA03 /* JSHTMLMeterElement.cpp in Sources */,
 				B6B0540911B68F10002564C5 /* IDBObjectStoreImpl.cpp in Sources */,
 			);

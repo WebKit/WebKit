@@ -57,11 +57,12 @@ Cursor::~Cursor()
 {
 }
 
-Cursor::Cursor(Image* image, const IntPoint& hotspot)
-#ifndef QT_NO_CURSOR
-    : m_impl(*(image->nativeImageForCurrentFrame()), hotspot.x(), hotspot.y())
-#endif
+Cursor::Cursor(Image* image, const IntPoint& hotSpot)
 {
+#ifndef QT_NO_CURSOR
+    IntPoint effectiveHotSpot = determineHotSpot(image, hotSpot);
+    m_impl = QCursor(*(image->nativeImageForCurrentFrame()), effectiveHotSpot.x(), effectiveHotSpot.y());
+#endif
 }
 
 Cursor& Cursor::operator=(const Cursor& other)
