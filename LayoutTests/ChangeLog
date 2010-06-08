@@ -1,3 +1,11 @@
+2010-06-08  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; expectations fix.
+
+        Restore expectations for media/video-duration-known-after-eos.html, since it's still failing.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-06-08  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
