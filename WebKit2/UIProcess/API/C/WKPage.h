@@ -50,7 +50,7 @@ typedef void (*WKPageDidFirstVisuallyNonEmptyLayoutForFrame)(WKPageRef page, WKF
 
 // Progress Client
 typedef void (*WKPageDidStartProgressCallback)(WKPageRef page, const void *clientInfo);
-typedef void (*WKPageDidChangeProgressCallback)(WKPageRef page, double value, const void *clientInfo);
+typedef void (*WKPageDidChangeProgressCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageDidFinishProgressCallback)(WKPageRef page, const void *clientInfo);
 
 // WebPageNamespace Client
@@ -147,7 +147,8 @@ WK_EXPORT bool WKPageCanGoBack(WKPageRef page);
 WK_EXPORT WKStringRef WKPageGetTitle(WKPageRef page);
 
 WK_EXPORT WKFrameRef WKPageGetMainFrame(WKPageRef page);
-
+WK_EXPORT double WKPageGetEstimatedProgress(WKPageRef page);
+    
 WK_EXPORT void WKPageTerminate(WKPageRef page);
 
 WK_EXPORT void WKPageSetPageLoaderClient(WKPageRef page, WKPageLoaderClient * client);

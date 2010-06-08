@@ -2,6 +2,33 @@
 
         Reviewed by John Sullivan.
 
+        Would like a way to query WKPageRef for the current progress value
+        https://bugs.webkit.org/show_bug.cgi?id=40310
+        <rdar://problem/8071299>
+
+        Add WKPageGetEstimatedProgress. Remove the progress parameter from the didChangeProgress
+        loader client callback function.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetEstimatedProgress):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::didChangeProgress):
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::didStartProgress):
+        (WebKit::WebPageProxy::didChangeProgress):
+        (WebKit::WebPageProxy::didFinishProgress):
+        (WebKit::WebPageProxy::processDidExit):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::estimatedProgress):
+
+2010-06-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
         Would like a way to tell which WKPageRef a WKFrameRef is part of
         https://bugs.webkit.org/show_bug.cgi?id=40308
         <rdar://problem/8071251>

@@ -102,10 +102,10 @@ void WebLoaderClient::didStartProgress(WebPageProxy* page)
         m_pageLoaderClient.didStartProgress(toRef(page), m_pageLoaderClient.clientInfo);
 }
 
-void WebLoaderClient::didChangeProgress(WebPageProxy* page, double value)
+void WebLoaderClient::didChangeProgress(WebPageProxy* page)
 {
     if (m_pageLoaderClient.didChangeProgress)
-        m_pageLoaderClient.didChangeProgress(toRef(page), value, m_pageLoaderClient.clientInfo);
+        m_pageLoaderClient.didChangeProgress(toRef(page), m_pageLoaderClient.clientInfo);
 }
 
 void WebLoaderClient::didFinishProgress(WebPageProxy* page)

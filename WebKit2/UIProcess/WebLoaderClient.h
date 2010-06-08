@@ -52,7 +52,7 @@ public:
     void didFirstLayoutForFrame(WebPageProxy*, WebFrameProxy*);
     void didFirstVisuallyNonEmptyLayoutForFrame(WebPageProxy*, WebFrameProxy*);
     void didStartProgress(WebPageProxy*);
-    void didChangeProgress(WebPageProxy*, double);
+    void didChangeProgress(WebPageProxy*);
     void didFinishProgress(WebPageProxy*);
 
     // FIXME: These two methods should not be part of this client. 

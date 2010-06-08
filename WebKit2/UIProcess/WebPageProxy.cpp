@@ -63,6 +63,7 @@ WebPageProxy::WebPageProxy(WebPageNamespace* pageNamespace, uint64_t pageID)
     : m_pageClient(0)
     , m_pageNamespace(pageNamespace)
     , m_mainFrame(0)
+    , m_estimatedProgress(0.0)
     , m_canGoBack(false)
     , m_canGoForward(false)
     , m_valid(true)
@@ -182,6 +183,8 @@ void WebPageProxy::close()
     m_canGoForward = false;
     m_canGoBack = false;
 
+    m_estimatedProgress = 0.0;
+    
     m_loaderClient.initialize(0);
     m_policyClient.initialize(0);
     m_uiClient.initialize(0);
@@ -613,16 +616,22 @@ void WebPageProxy::didCreateSubFrame(uint64_t frameID)
 
 void WebPageProxy::didStartProgress()
 {
+    m_estimatedProgress = 0.0;
+    
     m_loaderClient.didStartProgress(this);
 }
 
 void WebPageProxy::didChangeProgress(double value)
 {
-    m_loaderClient.didChangeProgress(this, value);
+    m_estimatedProgress = value;
+    
+    m_loaderClient.didChangeProgress(this);
 }
 
 void WebPageProxy::didFinishProgress()
 {
+    m_estimatedProgress = 1.0;
+
     m_loaderClient.didFinishProgress(this);
 }
 
@@ -845,6 +854,8 @@ void WebPageProxy::processDidExit()
     m_canGoForward = false;
     m_canGoBack = false;
 
+    m_estimatedProgress = 0.0;
+    
     m_pageClient->processDidExit();
 }
 

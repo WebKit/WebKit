@@ -116,6 +116,8 @@ public:
     const WebCore::String& pageTitle() const { return m_pageTitle; }
     const WebCore::String& toolTip() const { return m_toolTip; }
 
+    double estimatedProgress() const { return m_estimatedProgress; }
+
     void terminateProcess();
 
     void runJavaScriptInMainFrame(const WebCore::String&, PassRefPtr<ScriptReturnValueCallback>);
@@ -205,6 +207,8 @@ private:
     HashMap<uint64_t, RefPtr<ScriptReturnValueCallback> > m_scriptReturnValueCallbacks;
     HashMap<uint64_t, RefPtr<RenderTreeExternalRepresentationCallback> > m_renderTreeExternalRepresentationCallbacks;
 
+    double m_estimatedProgress;
+    
     bool m_canGoBack;
     bool m_canGoForward;
 

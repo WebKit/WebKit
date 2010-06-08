@@ -100,6 +100,11 @@ WKFrameRef WKPageGetMainFrame(WKPageRef pageRef)
     return toRef(toWK(pageRef)->mainFrame());
 }
 
+double WKPageGetEstimatedProgress(WKPageRef pageRef)
+{
+    return toWK(pageRef)->estimatedProgress();
+}
+
 void WKPageTerminate(WKPageRef pageRef)
 {
     toWK(pageRef)->terminateProcess();
