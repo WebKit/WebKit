@@ -1,5 +1,11 @@
 2010-06-08  Shinichiro Hamaji  <hamaji@chromium.org>
 
+        Unreviewed. fast/js/large-expressions is failing only in debug mode.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-06-08  Shinichiro Hamaji  <hamaji@chromium.org>
+
         Unreviewed. Remove passing tests from expectations.txt.
 
         * platform/chromium/test_expectations.txt:

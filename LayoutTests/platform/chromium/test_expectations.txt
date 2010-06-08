@@ -1869,7 +1869,7 @@ BUG10441 MAC WIN RELEASE : transitions/transition-end-event-transform.html = FAI
 //
 //   http://code.google.com/p/v8/issues/detail?id=277
 BUG10457 RELEASE LINUX : fast/js/large-expressions.html = FAIL PASS
-BUG10457 MAC : fast/js/large-expressions.html = FAIL
+BUG10457 RELEASE MAC : fast/js/large-expressions.html = FAIL
 BUG10457 DEBUG WIN SLOW : fast/js/large-expressions.html = FAIL
 
 
