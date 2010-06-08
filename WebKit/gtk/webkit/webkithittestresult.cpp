@@ -22,6 +22,7 @@
 #include "webkithittestresult.h"
 
 #include "GOwnPtr.h"
+#include "WebKitDOMNode.h"
 #include "webkitenumtypes.h"
 #include "webkitprivate.h"
 #include <wtf/text/CString.h>
@@ -43,6 +44,7 @@ struct _WebKitHitTestResultPrivate {
     char* linkURI;
     char* imageURI;
     char* mediaURI;
+    WebKitDOMNode* innerNode;
 };
 
 #define WEBKIT_HIT_TEST_RESULT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_HIT_TEST_RESULT, WebKitHitTestResultPrivate))
@@ -53,7 +55,8 @@ enum {
     PROP_CONTEXT,
     PROP_LINK_URI,
     PROP_IMAGE_URI,
-    PROP_MEDIA_URI
+    PROP_MEDIA_URI,
+    PROP_INNER_NODE
 };
 
 static void webkit_hit_test_result_finalize(GObject* object)
@@ -86,6 +89,9 @@ static void webkit_hit_test_result_get_property(GObject* object, guint propertyI
     case PROP_MEDIA_URI:
         g_value_set_string(value, priv->mediaURI);
         break;
+    case PROP_INNER_NODE:
+        g_value_set_object(value, priv->innerNode);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyID, pspec);
     }
@@ -111,6 +117,9 @@ static void webkit_hit_test_result_set_property(GObject* object, guint propertyI
     case PROP_MEDIA_URI:
         g_free (priv->mediaURI);
         priv->mediaURI = g_value_dup_string(value);
+        break;
+    case PROP_INNER_NODE:
+        priv->innerNode = static_cast<WebKitDOMNode*>(g_value_get_object(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyID, pspec);
@@ -183,6 +192,28 @@ static void webkit_hit_test_result_class_init(WebKitHitTestResultClass* webHitTe
                                                         _("The URI of the media that is part of the target that received the event, if any."),
                                                         NULL,
                                                         static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE|G_PARAM_CONSTRUCT_ONLY)));
+
+    /**
+     * WebKitHitTestResult:inner-node:
+     *
+     * The DOM node at the coordinates where the hit test
+     * happened. Keep in mind that the node might not be
+     * representative of the information given in the context
+     * property, since WebKit uses a series of heuristics to figure
+     * out that information. One common example is inner-node having
+     * the text node inside the anchor (<a>) tag; WebKit knows the
+     * whole context and will put WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK
+     * in the 'context' property, but the user might be confused by
+     * the lack of any link tag in 'inner-node'.
+     *
+     * Since: 1.3.2
+     */
+    g_object_class_install_property(objectClass, PROP_INNER_NODE,
+                                    g_param_spec_object("inner-node",
+                                                        _("Inner node"),
+                                                        _("The inner DOM node associated with the hit test result."),
+                                                        WEBKIT_TYPE_DOM_NODE,
+                                                        static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
     g_type_class_add_private(webHitTestResultClass, sizeof(WebKitHitTestResultPrivate));
 }

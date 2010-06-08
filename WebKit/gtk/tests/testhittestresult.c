@@ -82,6 +82,8 @@ load_status_cb(WebKitWebView* webView,
         WebKitHitTestResult* result;
         guint context;
         GdkEventButton event;
+        WebKitDOMNode* node;
+
         event.type = GDK_BUTTON_PRESS;
         /* Close enough to 0,0 */
         event.x = 5;
@@ -89,8 +91,28 @@ load_status_cb(WebKitWebView* webView,
 
         result = webkit_web_view_get_hit_test_result(webView, &event);
         g_assert(result);
+
         g_object_get(result, "context", &context, NULL);
         g_assert(context & info->flag);
+
+        g_object_get(result, "inner-node", &node, NULL);
+        g_assert(node);
+        g_assert(WEBKIT_DOM_IS_NODE(node));
+        /* We can only test these node types at the moment. In the
+         * input case there seems to be an extra layer with a DIV on
+         * top of the input, which gets assigned to the inner-node.
+         * tag */
+        if (info->flag == WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT)
+            g_assert(WEBKIT_DOM_IS_HTML_HTML_ELEMENT(node));
+        else if (info->flag == WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE)
+            g_assert(WEBKIT_DOM_IS_HTML_IMAGE_ELEMENT(node));
+        else if (info->flag == WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK) {
+            /* The hit test will give us the inner text node, we want
+             * the A tag */
+            WebKitDOMNode* parent = webkit_dom_node_get_parent_node(node);
+            g_assert(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(parent));
+        }
+
         g_object_unref(result);
         g_main_loop_quit(loop);
     }
