@@ -570,8 +570,7 @@ void GraphicsLayerChromium::updateContentsRect()
     if (!m_contentsLayer)
         return;
 
-    // The position of the layer is the center of quad.
-    m_contentsLayer->setPosition(FloatPoint(m_contentsRect.x() + m_contentsRect.width() / 2, m_contentsRect.y() + m_contentsRect.height() / 2));
+    m_contentsLayer->setPosition(FloatPoint(m_contentsRect.x(), m_contentsRect.y()));
     m_contentsLayer->setBounds(IntSize(m_contentsRect.width(), m_contentsRect.height()));
 }
 

@@ -487,35 +487,41 @@ bool LayerRendererChromium::isLayerVisible(LayerChromium* layer, const Transform
 void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const TransformationMatrix& parentMatrix, float opacity, const IntRect& visibleRect)
 {
     // Compute the new matrix transformation that will be applied to this layer and
-    // all its sublayers.
-    // The basic transformation chain for the layer is (using the Matrix x Vector order):
-    // M = M[p] * T[l] * T[a] * M[l] * T[-a]
+    // all its sublayers. It's important to remember that the layer's position
+    // is the position of the layer's anchor point. Also, the coordinate system used
+    // assumes that the origin is at the lower left even though the coordinates the browser
+    // gives us for the layers are for the upper left corner. The Y flip happens via
+    // the orthographic projection applied at render time.
+    // The transformation chain for the layer is (using the Matrix x Vector order):
+    // M = M[p] * Tr[l] * M[l] * Tr[c]
     // Where M[p] is the parent matrix passed down to the function
-    //       T[l] is the translation of the layer's center
-    //       T[a] and T[-a] is a translation/inverse translation by the anchor point
-    //       M[l] is the layer's matrix
+    //       Tr[l] is the translation matrix locating the layer's anchor point
+    //       Tr[c] is the translation offset between the anchor point and the center of the layer
+    //       M[l] is the layer's matrix (applied at the anchor point)
+    // This transform creates a coordinate system whose origin is the center of the layer.
     // Note that the final matrix used by the shader for the layer is P * M * S . This final product
-    // is effectively computed in drawTexturedQuad().
+    // is computed in drawTexturedQuad().
     // Where: P is the projection matrix
     //        M is the layer's matrix computed above
     //        S is the scale adjustment (to scale up to the layer size)
     IntSize bounds = layer->bounds();
     FloatPoint anchorPoint = layer->anchorPoint();
     FloatPoint position = layer->position();
-    float anchorX = (anchorPoint.x() - 0.5) * bounds.width();
-    float anchorY = (0.5 - anchorPoint.y()) * bounds.height();
+
+    // Offset between anchor point and the center of the quad.
+    float centerOffsetX = (0.5 - anchorPoint.x()) * bounds.width();
+    float centerOffsetY = (0.5 - anchorPoint.y()) * bounds.height();
 
     // M = M[p]
     TransformationMatrix localMatrix = parentMatrix;
-    // M = M[p] * T[l]
+    // M = M[p] * Tr[l]
     localMatrix.translate3d(position.x(), position.y(), layer->anchorPointZ());
-    // M = M[p] * T[l] * T[a]
-    localMatrix.translate3d(anchorX, anchorY, 0);
-    // M = M[p] * T[l] * T[a] * M[l]
+    // M = M[p] * Tr[l] * M[l]
     localMatrix.multLeft(layer->transform());
-    // M = M[p] * T[l] * T[a] * M[l] * T[-a]
-    localMatrix.translate3d(-anchorX, -anchorY, -layer->anchorPointZ());
+    // M = M[p] * Tr[l] * M[l] * Tr[c]
+    localMatrix.translate3d(centerOffsetX, centerOffsetY, -layer->anchorPointZ());
 
+    // Check if the layer falls within the visible bounds of the page.
     bool layerVisible = isLayerVisible(layer, localMatrix, visibleRect);
 
     bool layerHasContent = layer->drawsContent() || layer->contents();
@@ -549,9 +555,10 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
     // Apply the sublayer transform at the center of the layer.
     localMatrix.multLeft(layer->sublayerTransform());
 
-    // The origin of the sublayers is actually the left top corner of the layer
-    // instead of the center. The matrix passed down to the sublayers is therefore:
-    // M[s] = M * T[-center]
+    // The origin of the sublayers is actually the bottom left corner of the layer
+    // (or top left when looking it it from the browser's pespective) instead of the center.
+    // The matrix passed down to the sublayers is therefore:
+    // M[s] = M * Tr[-center]
     localMatrix.translate3d(-bounds.width() * 0.5, -bounds.height() * 0.5, 0);
 
     const Vector<RefPtr<LayerChromium> >& sublayers = layer->getSublayers();
@@ -565,8 +572,9 @@ void LayerRendererChromium::drawLayer(LayerChromium* layer)
     IntSize bounds = layer->bounds();
 
     // Note that there are two types of layers:
-    // 1. Layers that have their own GraphicsContext and can draw their contents on demand (layer->drawsContent() == true).
-    // 2. Layers that are just containers of images/video/etc that don't own a GraphicsContext (layer->contents() == true).
+    // 1. Layers that draw their own content via the GraphicsContext (layer->drawsContent() == true).
+    // 2. Layers that are pure containers of images/video/etc whose content is simply
+    //    copied into the backing texture (layer->contents() == true).
     if (layer->drawsContent() || layer->contents()) {
         int textureId = getTextureId(layer);
         // If no texture has been created for the layer yet then create one now.
@@ -574,10 +582,8 @@ void LayerRendererChromium::drawLayer(LayerChromium* layer)
             textureId = assignTextureForLayer(layer);
 
         // Redraw the contents of the layer if necessary.
-        if ((layer->drawsContent() || layer->contents()) && layer->contentsDirty()) {
-            // Update the contents of the layer before taking a snapshot. For layers that
-            // are simply containers, the following call just clears the dirty flag but doesn't
-            // actually do any draws/copies.
+        if (layer->contentsDirty()) {
+            // Update the backing texture contents for any dirty portion of the layer.
             layer->updateTextureContents(textureId);
         }
 

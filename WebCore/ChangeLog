@@ -1,3 +1,19 @@
+2010-06-08  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Fix the math for transform matrices of composited layers. There
+        were problems both with how content layers were setting their position and
+        how the overal matrix stack was computed when the layer anchor isn't at the
+        center of the layer.
+        https://bugs.webkit.org/post_bug.cgi
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::updateContentsRect):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::updateLayersRecursive):
+        (WebCore::LayerRendererChromium::drawLayer):
+
 2010-06-07  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
