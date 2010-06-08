@@ -1,5 +1,13 @@
 2010-06-07  Eric Seidel  <eric@webkit.org>
 
+        Unreviewed.  Just commit an edit XCode keeps making automatically.
+
+        It appears someone hand-edited the file, XCode no-like.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2010-06-07  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         HTML5 Parser fails script-tests which use document.write
