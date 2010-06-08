@@ -1,3 +1,10 @@
+2010-06-08  John Sullivan  <sullivan@apple.com>
+
+        Rubber-stamped by Anders Carlsson.
+
+        * mac/WebKit2.exp:
+        Added _WKPageGetEstimatedProgress and _WKFrameGetPage
+
 2010-06-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan.

@@ -6,6 +6,7 @@ _WKContextRelease
 _WKContextRetain
 _WKFrameGetFrameLoadState
 _WKFrameGetProvisionalURL
+_WKFrameGetPage
 _WKFrameGetURL
 _WKFrameIsMainFrame
 _WKFrameRelease
@@ -14,6 +15,7 @@ _WKFramePolicyListenerUse
 _WKNavigationDataGetTitle
 _WKNavigationDataGetURL
 _WKPageClose
+_WKPageGetEstimatedProgress
 _WKPageGetMainFrame
 _WKPageGetPageNamespace
 _WKPageLoadURL
