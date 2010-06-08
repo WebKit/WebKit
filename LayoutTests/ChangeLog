@@ -1,3 +1,11 @@
+2010-06-08  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; expectations fix.
+
+        Update chromium expectations for r60865, r60859.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-06-08  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Ojan Vafai.

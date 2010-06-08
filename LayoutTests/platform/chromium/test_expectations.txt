@@ -2844,3 +2844,9 @@ BUG45106 WIN : svg/text/text-text-05-t.svg = PASS CRASH
 BUG45518: html5lib/runner.html = TEXT
 
 BUG45720 WIN LINUX : websocket/tests/reload-crash.html = PASS CRASH
+
+// Failing since http://trac.webkit.org/changeset/60859
+BUG46098 MAC : editing/pasteboard/drop-link.html = TEXT
+
+// Failing since http://trac.webkit.org/changeset/60865
+BUG46096 : editing/selection/extend-selection-after-double-click.html = TEXT
