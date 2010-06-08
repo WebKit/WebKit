@@ -552,6 +552,14 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             svgstyle->setShadow(shadowData);
             return;
         }
+        case CSSPropertyVectorEffect: {
+            HANDLE_INHERIT_AND_INITIAL(vectorEffect, VectorEffect)
+            if (!primitiveValue)
+                break;
+
+            svgstyle->setVectorEffect(*primitiveValue);
+            break;
+        }
         default:
             // If you crash here, it's because you added a css property and are not handling it
             // in either this switch statement or the one in CSSStyleSelector::applyProperty

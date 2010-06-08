@@ -121,6 +121,11 @@ namespace WebCore {
         DB_IDEOGRAPHIC, DB_ALPHABETIC, DB_HANGING, DB_MATHEMATICAL,
         DB_CENTRAL, DB_MIDDLE, DB_TEXT_AFTER_EDGE, DB_TEXT_BEFORE_EDGE
     };
+    
+    enum EVectorEffect {
+        VE_NONE,
+        VE_NON_SCALING_STROKE
+    };
 
     class CSSValue;
     class CSSValueList;
