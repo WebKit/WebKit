@@ -32,7 +32,7 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '48624',
+  'chromium_rev': '49129',
 }
 
 deps = {
@@ -92,7 +92,7 @@ deps = {
   'third_party/glew':  # webgl related
     Var('chromium_svn')+'/third_party/glew@'+Var('chromium_rev'),
   'third_party/ffmpeg': # needed by webkit/media
-    Var('chromium_svn')+'/third_party/ffmpeg@'+Var('chromium_rev'),
+    From('chromium_deps', 'src/third_party/ffmpeg'),
   'third_party/libvpx/include':
     From('chromium_deps', 'src/third_party/libvpx/include'),
   'third_party/libvpx/lib':
@@ -149,8 +149,8 @@ deps = {
   'third_party/zlib':
     Var('chromium_svn')+'/third_party/zlib@'+Var('chromium_rev'),
 
-  'third_party/ffmpeg/source/patched-ffmpeg-mt':
-    From('chromium_deps', 'src/third_party/ffmpeg/source/patched-ffmpeg-mt'),
+  'third_party/mozilla':
+    Var('chromium_svn')+'/third_party/mozilla@'+Var('chromium_rev'),
 }
 
 deps_os = {
@@ -163,7 +163,6 @@ deps_os = {
       From('chromium_deps', 'src/third_party/ffmpeg/binaries/chromium/win/ia32'),
     'third_party/lighttpd':
       From('chromium_deps', 'src/third_party/lighttpd'),
-    # base.gypi depends on nss on Windows
     'third_party/nss':
       From('chromium_deps', 'src/third_party/nss'),
     'third_party/wtl':
@@ -173,6 +172,8 @@ deps_os = {
     # needed by ffmpeg
     'third_party/yasm/source/patched-yasm':
       From('chromium_deps', 'src/third_party/yasm/source/patched-yasm'),
+    'third_party/nss':
+      From('chromium_deps', 'src/third_party/nss'),
   },
   'unix': {
     # Linux, actually.
