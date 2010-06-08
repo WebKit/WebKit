@@ -264,8 +264,7 @@ static const int computedProperties[] = {
     CSSPropertyWritingMode,
     CSSPropertyGlyphOrientationHorizontal,
     CSSPropertyGlyphOrientationVertical,
-    CSSPropertyWebkitSvgShadow,
-    CSSPropertyVectorEffect
+    CSSPropertyWebkitSvgShadow
 #endif
 };
 

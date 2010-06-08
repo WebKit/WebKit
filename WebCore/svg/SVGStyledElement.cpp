@@ -185,7 +185,6 @@ int SVGStyledElement::cssPropertyIdForSVGAttributeName(const QualifiedName& attr
         mapAttributeToCSSProperty(propertyNameToIdMap, text_decorationAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, text_renderingAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, unicode_bidiAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, vector_effectAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, visibilityAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, word_spacingAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, writing_modeAttr);

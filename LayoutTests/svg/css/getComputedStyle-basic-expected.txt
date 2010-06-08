@@ -416,8 +416,6 @@ rect: style.getPropertyValue(glyph-orientation-vertical) : auto
 rect: style.getPropertyCSSValue(glyph-orientation-vertical) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-svg-shadow) : none
 rect: style.getPropertyCSSValue(-webkit-svg-shadow) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(vector-effect) : none
-rect: style.getPropertyCSSValue(vector-effect) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(background-attachment) : scroll
 g: style.getPropertyCSSValue(background-attachment) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(background-clip) : border-box
@@ -836,6 +834,4 @@ g: style.getPropertyValue(glyph-orientation-vertical) : auto
 g: style.getPropertyCSSValue(glyph-orientation-vertical) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-svg-shadow) : none
 g: style.getPropertyCSSValue(-webkit-svg-shadow) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(vector-effect) : none
-g: style.getPropertyCSSValue(vector-effect) : [object CSSPrimitiveValue]
 

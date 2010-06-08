@@ -2,8 +2,6 @@
  * Copyright (C) 2007 Alexey Proskuryakov <ap@nypop.com>.
  * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
- * Copyright (C) 2009 Jeff Schiller <codedread@gmail.com>
- * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2599,33 +2597,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EWritingMode e)
 template<> inline CSSPrimitiveValue::operator EWritingMode() const
 {
     return static_cast<EWritingMode>(m_value.ident - CSSValueLrTb);
-}
-
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EVectorEffect e)
-    : m_type(CSS_IDENT)
-    , m_hasCachedCSSText(false)
-{
-    switch (e) {
-    case VE_NONE:
-        m_value.ident = CSSValueNone;
-        break;
-    case VE_NON_SCALING_STROKE:
-        m_value.ident = CSSValueNonScalingStroke;
-        break;
-    }
-}
-
-template<> inline CSSPrimitiveValue::operator EVectorEffect() const
-{
-    switch (m_value.ident) {
-    case CSSValueNone:
-        return VE_NONE;
-    case CSSValueNonScalingStroke:
-        return VE_NON_SCALING_STROKE;
-    default:
-        ASSERT_NOT_REACHED();
-        return VE_NONE;
-    }
 }
 
 #endif

@@ -221,11 +221,6 @@ bool CSSParser::parseSVGValue(int propId, bool important)
             m_valueList->next();
 
         break;
-        
-    case CSSPropertyVectorEffect: // none | non-scaling-stroke | inherit
-        if (id == CSSValueNone || id == CSSValueNonScalingStroke)
-            valid_primitive = true;
-        break;
 
     case CSSPropertyWritingMode:
     // lr-tb | rl_tb | tb-rl | lr | rl | tb | inherit

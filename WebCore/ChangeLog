@@ -1,3 +1,41 @@
+2010-06-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r60858.
+        http://trac.webkit.org/changeset/60858
+        https://bugs.webkit.org/show_bug.cgi?id=40325
+
+        Qt needs a clean build. Rolling out the patch for now and fix
+        it tomorrow (Requested by krit on #webkit).
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        * css/CSSPrimitiveValueMappings.h:
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getSVGPropertyCSSValue):
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        * css/SVGCSSPropertyNames.in:
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * css/SVGCSSValueKeywords.in:
+        * rendering/RenderPath.cpp:
+        (WebCore::fillAndStrokePath):
+        * rendering/RenderSVGResourceContainer.h:
+        * rendering/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::applyResource):
+        * rendering/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::applyResource):
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::NonInheritedFlags::):
+        (WebCore::SVGRenderStyle::setBitDefaults):
+        * rendering/style/SVGRenderStyleDefs.h:
+        (WebCore::):
+        * svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::computeCTM):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::cssPropertyIdForSVGAttributeName):
+        * svg/svgattrs.in:
+
 2010-06-08  Daniel Bates  <dbates@rim.com>
 
         Unreviewed, fix Xcode project file after change-set 60841.
