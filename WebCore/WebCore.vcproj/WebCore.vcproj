@@ -30513,6 +30513,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\editing\EditingBehavior.h"
+				>
+			</File>
+			<File
+				RelativePath="..\editing\EditingBehaviorTypes.h"
+				>
+			</File>
+			<File
 				RelativePath="..\editing\Editor.cpp"
 				>
 			</File>

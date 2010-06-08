@@ -1292,6 +1292,8 @@
             'editing/EditAction.h',
             'editing/EditCommand.cpp',
             'editing/EditCommand.h',
+            'editing/EditingBehavior.h',
+            'editing/EditingBehaviorTypes.h',
             'editing/Editor.cpp',
             'editing/Editor.h',
             'editing/EditorCommand.cpp',

@@ -1,3 +1,56 @@
+2010-06-08  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Ojan Vafai and Darin Adler.
+
+        Refactor platform dependent editing behavior code out of Settings
+        https://bugs.webkit.org/show_bug.cgi?id=39854
+
+        As per discussion in bug 36627, Darin Adler suggested: "before the addition of any new EditingBehavior,
+        I think we to add functions to translate the overall behavior policy into specific behaviors rather than
+        directly saying 'behavior == Mac' or 'behavior == Windows'. Helper functions that expression the different
+        rules in plain language.". Patch addresses this request.
+
+        No behavior change, so no new tests.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore/WebCore.vcproj/WebCore.vcproj
+        * WebCore/WebCore.xcodeproj/project.pbxproj
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h: Moved out EditingBehavior enum to WebCore/editing/EditingBehaviorTypes.h,
+        and renamed to EditingBehaviorTypes.
+        (WebCore::Settings::setEditingBehaviorType): Renamed from setEditingBehavior.
+        (WebCore::Settings::editingBehaviorType): Renamed from editingBehavior.
+        * editing/EditingBehavior.h: Added.
+        (WebCore::EditingBehavior::EditingBehavior): Class to work as a central point for
+        editing behavior that might have to be handled differently in the different platforms/ports.
+        Class should be not used or instantiated directly, but rather implicitly constructed
+        through the Editor class.
+        (WebCore::EditingBehavior::shouldMoveCaretToHorizontalBoundaryWhenPastTopOrBottom):
+        (WebCore::EditingBehavior::shouldConsiderSelectionAsDirectional):
+        (WebCore::EditingBehavior::shouldCenterAlignWhenSelectionIsRevealed):
+        * editing/EditingBehaviorTypes.h: Added.
+        (WebCore::):
+        * editing/Editor.cpp:
+        (WebCore::Editor::behavior): Getter for EditingBehavior class.
+        * editing/Editor.h:
+        * editing/EditorCommand.cpp:
+        (WebCore::executeToggleStyle):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelection):
+        (WebCore::SelectionController::setIsDirectional):
+        (WebCore::SelectionController::positionForPlatform):
+        (WebCore::SelectionController::modify):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionForPointWithInlineChildren):
+
+        - Call sites will look like:
+        if (frame->editor()->behavior().shouldThisIfThat()))
+           // do something
+
 2010-06-08  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

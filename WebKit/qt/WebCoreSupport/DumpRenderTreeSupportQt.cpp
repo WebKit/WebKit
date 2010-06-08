@@ -476,7 +476,7 @@ bool DumpRenderTreeSupportQt::elementDoesAutoCompleteForElementWithId(QWebFrame*
 
 void DumpRenderTreeSupportQt::setEditingBehavior(QWebPage* page, const QString& editingBehavior)
 {
-    WebCore::EditingBehavior coreEditingBehavior;
+    WebCore::EditingBehaviorType coreEditingBehavior;
 
     if (editingBehavior == "win")
         coreEditingBehavior = EditingWindowsBehavior;
@@ -491,7 +491,7 @@ void DumpRenderTreeSupportQt::setEditingBehavior(QWebPage* page, const QString& 
     if (!corePage)
         return;
 
-    corePage->settings()->setEditingBehavior(coreEditingBehavior);
+    corePage->settings()->setEditingBehaviorType(coreEditingBehavior);
 }
 
 void DumpRenderTreeSupportQt::dumpFrameLoader(bool b)
