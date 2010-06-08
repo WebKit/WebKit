@@ -57,7 +57,6 @@ public:
         
 private:
     virtual void write(const SegmentedString&, bool appendData);
-    virtual void stopParsing();
     virtual void finish();
     virtual bool isWaitingForScripts() const;
         
@@ -115,12 +114,7 @@ bool MediaTokenizer::writeRawData(const char*, int)
     finish();
     return false;
 }
-    
-void MediaTokenizer::stopParsing()
-{
-    Tokenizer::stopParsing();        
-}
-    
+
 void MediaTokenizer::finish()
 {
     if (!m_parserStopped) 

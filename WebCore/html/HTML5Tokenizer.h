@@ -70,6 +70,7 @@ public:
 
 private:
     void pumpLexer();
+    void pumpLexerIfPossible();
     void resumeParsingAfterScriptExecution();
 
     void attemptToEnd();

@@ -244,8 +244,6 @@ public:
 
     KURL baseURL() const;
 
-    void tokenizerProcessedData();
-
     void handledOnloadEvents();
     String userAgent(const KURL&) const;
 

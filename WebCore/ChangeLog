@@ -1,3 +1,60 @@
+2010-06-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTML5 Parser hits ASSERT in fast/events/stop-load-in-unload-handler-using-document-write.html
+        https://bugs.webkit.org/show_bug.cgi?id=40268
+
+        Teach HTML5Tokenizer about m_parserStopped.
+
+        While tracking down how m_parserStopped was used, I found
+        several useless implementations of stopParsing() which I removed.
+
+        I also found a comment in HTMLTokenizer which still talks about the
+        "part" (an old class now split into Frame, Page, FrameLoader, etc.)
+        and an nearly empty FrameLoader::tokenizerProcessedData which I just
+        inlined into its one caller.
+
+        Tests:
+         fast/events/stop-load-in-unload-handler-using-document-write.html
+         http/tests/security/xssAuditor/full-block-base-href.html
+
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::pumpLexerIfPossible):
+         - New method used instead of direct calls to pumpLexer for when
+           callers would like to pump the lexer if possible, but don't want
+           to check if the parser is stopped, etc.
+        (WebCore::HTML5Tokenizer::pumpLexer):
+         - Added an ASSERT that the parser is not stopped.
+         - Stop pumping if the parser is stopped.
+        (WebCore::HTML5Tokenizer::write):
+         - Ignore the write if the parser is already stopped.
+        (WebCore::HTML5Tokenizer::end):
+        (WebCore::HTML5Tokenizer::attemptToEnd):
+         - Move comment back to finish() which was incorrectly moved here.
+        (WebCore::HTML5Tokenizer::endIfDelayed):
+        (WebCore::HTML5Tokenizer::finish):
+         - Move comment back here from attemptToEnd()
+        (WebCore::HTML5Tokenizer::resumeParsingAfterScriptExecution):
+         - Remove a bogus ASSERT.  The lexer will stop when it needs
+           more data, which may not necessarily mean m_source.isEmpty().
+        * html/HTML5Tokenizer.h:
+         - Add pumpLexerIfPossible().
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::stopParsing):
+         - Add a FIXME about if we really should call checkCompleted() here.
+         - Inline FrameLoader::tokenizerProcessedData() since this was the only caller.
+        * loader/FrameLoader.cpp:
+         - Remove tokenizerProcessedData()
+        * loader/FrameLoader.h:
+         - Remove tokenizerProcessedData()
+        * loader/MediaDocument.cpp:
+         - Remove unneeded Tokenizer::stopParsing() override.
+        * loader/PluginDocument.cpp:
+         - Remove unneeded Tokenizer::stopParsing() override.
+        * loader/SinkDocument.cpp:
+         - Remove unneeded Tokenizer::stopParsing() override.
+
 2010-06-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

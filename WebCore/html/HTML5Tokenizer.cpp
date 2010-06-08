@@ -80,10 +80,18 @@ void HTML5Tokenizer::begin()
     // FIXME: Should we reset the lexer?
 }
 
+void HTML5Tokenizer::pumpLexerIfPossible()
+{
+    if (m_parserStopped || m_treeBuilder->isPaused())
+        return;
+    pumpLexer();
+}
+
 void HTML5Tokenizer::pumpLexer()
 {
+    ASSERT(!m_parserStopped);
     ASSERT(!m_treeBuilder->isPaused());
-    while (m_lexer->nextToken(m_source, m_token)) {
+    while (!m_parserStopped && m_lexer->nextToken(m_source, m_token)) {
         m_treeBuilder->constructTreeFromToken(m_token);
         m_token.clear();
 
@@ -103,21 +111,22 @@ void HTML5Tokenizer::pumpLexer()
 
 void HTML5Tokenizer::write(const SegmentedString& source, bool)
 {
+    if (m_parserStopped)
+        return;
+
     NestingLevelIncrementer nestingLevelIncrementer(m_writeNestingLevel);
 
     // HTML5Tokenizer::executeScript is responsible for handling saving m_source before re-entry.
     m_source.append(source);
-    if (!m_treeBuilder->isPaused())
-        pumpLexer();
-
+    pumpLexerIfPossible();
     endIfDelayed();
 }
 
 void HTML5Tokenizer::end()
 {
     m_source.close();
-    if (!m_treeBuilder->isPaused())
-        pumpLexer();
+    pumpLexerIfPossible();
+    // Informs the the rest of WebCore that parsing is really finished.
     m_treeBuilder->finished();
 }
 
@@ -130,15 +139,12 @@ void HTML5Tokenizer::attemptToEnd()
         m_endWasDelayed = true;
         return;
     }
-
-    // We can't call m_source.close() yet as we may have a <script> execution
-    // pending which will call document.write().  No more data off the network though.
     end();
 }
 
 void HTML5Tokenizer::endIfDelayed()
 {
-    if (!m_endWasDelayed || !m_source.isEmpty() || isWaitingForScripts() || executingScript())
+    if (!m_endWasDelayed || isWaitingForScripts() || executingScript())
         return;
 
     m_endWasDelayed = false;
@@ -147,6 +153,9 @@ void HTML5Tokenizer::endIfDelayed()
 
 void HTML5Tokenizer::finish()
 {
+    // We can't call m_source.close() yet as we may have a <script> execution
+    // pending which will call document.write().  No more data off the network though.
+    // end() calls Document::finishedParsing() once we're actually done parsing.
     attemptToEnd();
 }
 
@@ -174,8 +183,8 @@ void HTML5Tokenizer::resumeParsingAfterScriptExecution()
 {
     ASSERT(!m_scriptRunner->inScriptExecution());
     ASSERT(!m_treeBuilder->isPaused());
-    pumpLexer();
-    ASSERT(m_treeBuilder->isPaused() || m_source.isEmpty());
+    pumpLexerIfPossible();
+
     // The document already finished parsing we were just waiting on scripts when finished() was called.
     endIfDelayed();
 }

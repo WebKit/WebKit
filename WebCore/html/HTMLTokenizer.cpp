@@ -1800,10 +1800,11 @@ void HTMLTokenizer::stopParsing()
     Tokenizer::stopParsing();
     m_timer.stop();
 
-    // The part needs to know that the tokenizer has finished with its data,
+    // FIXME: Why is HTMLTokenizer the only Tokenizer which calls checkCompleted?
+    // The FrameLoader needs to know that the tokenizer has finished with its data,
     // regardless of whether it happened naturally or due to manual intervention.
     if (!m_fragment && m_doc->frame())
-        m_doc->frame()->loader()->tokenizerProcessedData();
+        m_doc->frame()->loader()->checkCompleted();
 }
 
 bool HTMLTokenizer::processingData() const
