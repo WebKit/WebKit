@@ -183,7 +183,7 @@ IDL_BINDINGS += \
 	WebCore/html/canvas/ArrayBufferView.idl \
 	WebCore/html/canvas/ArrayBuffer.idl \
 	WebCore/html/canvas/Int8Array.idl \
-	WebCore/html/canvas/FloatArray.idl \
+	WebCore/html/canvas/Float32Array.idl \
 	WebCore/html/canvas/CanvasGradient.idl \
 	WebCore/html/canvas/Int32Array.idl \
 	WebCore/html/canvas/CanvasPattern.idl \

@@ -932,8 +932,8 @@
 		49EECDE010503C2400099FAB /* ArrayBufferView.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECDC810503C2300099FAB /* ArrayBufferView.h */; };
 		49EECDE210503C2400099FAB /* ArrayBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECDCA10503C2300099FAB /* ArrayBuffer.cpp */; };
 		49EECDE310503C2400099FAB /* ArrayBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECDCB10503C2300099FAB /* ArrayBuffer.h */; };
-		49EECDE510503C2400099FAB /* FloatArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECDCD10503C2300099FAB /* FloatArray.cpp */; };
-		49EECDE610503C2400099FAB /* FloatArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECDCE10503C2300099FAB /* FloatArray.h */; };
+		49EECDE510503C2400099FAB /* Float32Array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECDCD10503C2300099FAB /* Float32Array.cpp */; };
+		49EECDE610503C2400099FAB /* Float32Array.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECDCE10503C2300099FAB /* Float32Array.h */; };
 		49EECDE810503C2400099FAB /* Int32Array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECDD010503C2300099FAB /* Int32Array.cpp */; };
 		49EECDE910503C2400099FAB /* Int32Array.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECDD110503C2300099FAB /* Int32Array.h */; };
 		49EECDEB10503C2400099FAB /* Int16Array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECDD310503C2300099FAB /* Int16Array.cpp */; };
@@ -946,8 +946,8 @@
 		49EECDF510503C2400099FAB /* Uint16Array.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECDDD10503C2400099FAB /* Uint16Array.h */; };
 		49EECF00105070C400099FAB /* JSArrayBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECEF2105070C400099FAB /* JSArrayBuffer.cpp */; };
 		49EECF01105070C400099FAB /* JSArrayBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECEF3105070C400099FAB /* JSArrayBuffer.h */; };
-		49EECF02105070C400099FAB /* JSFloatArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECEF4105070C400099FAB /* JSFloatArray.cpp */; };
-		49EECF03105070C400099FAB /* JSFloatArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECEF5105070C400099FAB /* JSFloatArray.h */; };
+		49EECF02105070C400099FAB /* JSFloat32Array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECEF4105070C400099FAB /* JSFloat32Array.cpp */; };
+		49EECF03105070C400099FAB /* JSFloat32Array.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECEF5105070C400099FAB /* JSFloat32Array.h */; };
 		49EECF04105070C400099FAB /* JSInt32Array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECEF6105070C400099FAB /* JSInt32Array.cpp */; };
 		49EECF05105070C400099FAB /* JSInt32Array.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECEF7105070C400099FAB /* JSInt32Array.h */; };
 		49EECF06105070C400099FAB /* JSInt16Array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECEF8105070C400099FAB /* JSInt16Array.cpp */; };
@@ -961,7 +961,7 @@
 		49EECF1B105072F300099FAB /* JSArrayBufferView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF19105072F300099FAB /* JSArrayBufferView.cpp */; };
 		49EECF1C105072F300099FAB /* JSArrayBufferView.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECF1A105072F300099FAB /* JSArrayBufferView.h */; };
 		49EECF7810508D9C00099FAB /* JSInt8ArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF7110508D9C00099FAB /* JSInt8ArrayCustom.cpp */; };
-		49EECF7910508D9C00099FAB /* JSFloatArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF7210508D9C00099FAB /* JSFloatArrayCustom.cpp */; };
+		49EECF7910508D9C00099FAB /* JSFloat32ArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF7210508D9C00099FAB /* JSFloat32ArrayCustom.cpp */; };
 		49EECF7A10508D9C00099FAB /* JSInt32ArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF7310508D9C00099FAB /* JSInt32ArrayCustom.cpp */; };
 		49EECF7B10508D9C00099FAB /* JSInt16ArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF7410508D9C00099FAB /* JSInt16ArrayCustom.cpp */; };
 		49EECF7C10508D9C00099FAB /* JSUint8ArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF7510508D9C00099FAB /* JSUint8ArrayCustom.cpp */; };
@@ -971,8 +971,8 @@
 		49EECFAC1050938200099FAB /* JSArrayBufferConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECF9A1050938200099FAB /* JSArrayBufferConstructor.h */; };
 		49EECFAD1050938200099FAB /* JSInt8ArrayConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF9B1050938200099FAB /* JSInt8ArrayConstructor.cpp */; };
 		49EECFAE1050938200099FAB /* JSInt8ArrayConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECF9C1050938200099FAB /* JSInt8ArrayConstructor.h */; };
-		49EECFAF1050938200099FAB /* JSFloatArrayConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF9D1050938200099FAB /* JSFloatArrayConstructor.cpp */; };
-		49EECFB01050938200099FAB /* JSFloatArrayConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECF9E1050938200099FAB /* JSFloatArrayConstructor.h */; };
+		49EECFAF1050938200099FAB /* JSFloat32ArrayConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF9D1050938200099FAB /* JSFloat32ArrayConstructor.cpp */; };
+		49EECFB01050938200099FAB /* JSFloat32ArrayConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECF9E1050938200099FAB /* JSFloat32ArrayConstructor.h */; };
 		49EECFB11050938200099FAB /* JSInt32ArrayConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF9F1050938200099FAB /* JSInt32ArrayConstructor.cpp */; };
 		49EECFB21050938200099FAB /* JSInt32ArrayConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECFA01050938200099FAB /* JSInt32ArrayConstructor.h */; };
 		49EECFB51050938200099FAB /* JSInt16ArrayConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECFA31050938200099FAB /* JSInt16ArrayConstructor.cpp */; };
@@ -6544,9 +6544,9 @@
 		49EECDCA10503C2300099FAB /* ArrayBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ArrayBuffer.cpp; path = canvas/ArrayBuffer.cpp; sourceTree = "<group>"; };
 		49EECDCB10503C2300099FAB /* ArrayBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArrayBuffer.h; path = canvas/ArrayBuffer.h; sourceTree = "<group>"; };
 		49EECDCC10503C2300099FAB /* ArrayBuffer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ArrayBuffer.idl; path = canvas/ArrayBuffer.idl; sourceTree = "<group>"; };
-		49EECDCD10503C2300099FAB /* FloatArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FloatArray.cpp; path = canvas/FloatArray.cpp; sourceTree = "<group>"; };
-		49EECDCE10503C2300099FAB /* FloatArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FloatArray.h; path = canvas/FloatArray.h; sourceTree = "<group>"; };
-		49EECDCF10503C2300099FAB /* FloatArray.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = FloatArray.idl; path = canvas/FloatArray.idl; sourceTree = "<group>"; };
+		49EECDCD10503C2300099FAB /* Float32Array.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Float32Array.cpp; path = canvas/Float32Array.cpp; sourceTree = "<group>"; };
+		49EECDCE10503C2300099FAB /* Float32Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Float32Array.h; path = canvas/Float32Array.h; sourceTree = "<group>"; };
+		49EECDCF10503C2300099FAB /* Float32Array.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Float32Array.idl; path = canvas/Float32Array.idl; sourceTree = "<group>"; };
 		49EECDD010503C2300099FAB /* Int32Array.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Int32Array.cpp; path = canvas/Int32Array.cpp; sourceTree = "<group>"; };
 		49EECDD110503C2300099FAB /* Int32Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Int32Array.h; path = canvas/Int32Array.h; sourceTree = "<group>"; };
 		49EECDD210503C2300099FAB /* Int32Array.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Int32Array.idl; path = canvas/Int32Array.idl; sourceTree = "<group>"; };
@@ -6564,8 +6564,8 @@
 		49EECDDE10503C2400099FAB /* Uint16Array.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Uint16Array.idl; path = canvas/Uint16Array.idl; sourceTree = "<group>"; };
 		49EECEF2105070C400099FAB /* JSArrayBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSArrayBuffer.cpp; sourceTree = "<group>"; };
 		49EECEF3105070C400099FAB /* JSArrayBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSArrayBuffer.h; sourceTree = "<group>"; };
-		49EECEF4105070C400099FAB /* JSFloatArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFloatArray.cpp; sourceTree = "<group>"; };
-		49EECEF5105070C400099FAB /* JSFloatArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFloatArray.h; sourceTree = "<group>"; };
+		49EECEF4105070C400099FAB /* JSFloat32Array.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFloat32Array.cpp; sourceTree = "<group>"; };
+		49EECEF5105070C400099FAB /* JSFloat32Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFloat32Array.h; sourceTree = "<group>"; };
 		49EECEF6105070C400099FAB /* JSInt32Array.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInt32Array.cpp; sourceTree = "<group>"; };
 		49EECEF7105070C400099FAB /* JSInt32Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInt32Array.h; sourceTree = "<group>"; };
 		49EECEF8105070C400099FAB /* JSInt16Array.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInt16Array.cpp; sourceTree = "<group>"; };
@@ -6579,7 +6579,7 @@
 		49EECF19105072F300099FAB /* JSArrayBufferView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSArrayBufferView.cpp; sourceTree = "<group>"; };
 		49EECF1A105072F300099FAB /* JSArrayBufferView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSArrayBufferView.h; sourceTree = "<group>"; };
 		49EECF7110508D9C00099FAB /* JSInt8ArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInt8ArrayCustom.cpp; sourceTree = "<group>"; };
-		49EECF7210508D9C00099FAB /* JSFloatArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFloatArrayCustom.cpp; sourceTree = "<group>"; };
+		49EECF7210508D9C00099FAB /* JSFloat32ArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFloat32ArrayCustom.cpp; sourceTree = "<group>"; };
 		49EECF7310508D9C00099FAB /* JSInt32ArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInt32ArrayCustom.cpp; sourceTree = "<group>"; };
 		49EECF7410508D9C00099FAB /* JSInt16ArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInt16ArrayCustom.cpp; sourceTree = "<group>"; };
 		49EECF7510508D9C00099FAB /* JSUint8ArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSUint8ArrayCustom.cpp; sourceTree = "<group>"; };
@@ -6589,8 +6589,8 @@
 		49EECF9A1050938200099FAB /* JSArrayBufferConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSArrayBufferConstructor.h; sourceTree = "<group>"; };
 		49EECF9B1050938200099FAB /* JSInt8ArrayConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInt8ArrayConstructor.cpp; sourceTree = "<group>"; };
 		49EECF9C1050938200099FAB /* JSInt8ArrayConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInt8ArrayConstructor.h; sourceTree = "<group>"; };
-		49EECF9D1050938200099FAB /* JSFloatArrayConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFloatArrayConstructor.cpp; sourceTree = "<group>"; };
-		49EECF9E1050938200099FAB /* JSFloatArrayConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFloatArrayConstructor.h; sourceTree = "<group>"; };
+		49EECF9D1050938200099FAB /* JSFloat32ArrayConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFloat32ArrayConstructor.cpp; sourceTree = "<group>"; };
+		49EECF9E1050938200099FAB /* JSFloat32ArrayConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFloat32ArrayConstructor.h; sourceTree = "<group>"; };
 		49EECF9F1050938200099FAB /* JSInt32ArrayConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInt32ArrayConstructor.cpp; sourceTree = "<group>"; };
 		49EECFA01050938200099FAB /* JSInt32ArrayConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInt32ArrayConstructor.h; sourceTree = "<group>"; };
 		49EECFA31050938200099FAB /* JSInt16ArrayConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInt16ArrayConstructor.cpp; sourceTree = "<group>"; };
@@ -11471,9 +11471,9 @@
 				49484FBE102CF23C00187DD3 /* CanvasRenderingContext2D.idl */,
 				49484FBF102CF23C00187DD3 /* CanvasStyle.cpp */,
 				49484FC0102CF23C00187DD3 /* CanvasStyle.h */,
-				49EECDCD10503C2300099FAB /* FloatArray.cpp */,
-				49EECDCE10503C2300099FAB /* FloatArray.h */,
-				49EECDCF10503C2300099FAB /* FloatArray.idl */,
+				49EECDCD10503C2300099FAB /* Float32Array.cpp */,
+				49EECDCE10503C2300099FAB /* Float32Array.h */,
+				49EECDCF10503C2300099FAB /* Float32Array.idl */,
 				49EECDD310503C2300099FAB /* Int16Array.cpp */,
 				49EECDD410503C2300099FAB /* Int16Array.h */,
 				49EECDD510503C2300099FAB /* Int16Array.idl */,
@@ -13789,8 +13789,8 @@
 				BC00F0130E0A189500FD04E3 /* JSFileList.h */,
 				2E94F439119207DA00B7F75D /* JSFileReader.cpp */,
 				2E94F43A119207DA00B7F75D /* JSFileReader.h */,
-				49EECEF4105070C400099FAB /* JSFloatArray.cpp */,
-				49EECEF5105070C400099FAB /* JSFloatArray.h */,
+				49EECEF4105070C400099FAB /* JSFloat32Array.cpp */,
+				49EECEF5105070C400099FAB /* JSFloat32Array.h */,
 				BC97E410109154FA0010D361 /* JSHTMLAllCollection.cpp */,
 				BC97E411109154FA0010D361 /* JSHTMLAllCollection.h */,
 				1A4A2DEB0A1B852A00C807F8 /* JSHTMLAnchorElement.cpp */,
@@ -15485,7 +15485,7 @@
 				652FBBBB0DE27CB60001D386 /* JSDOMWindowCustom.h */,
 				BC2ED5540C6B9BD300920BFF /* JSElementCustom.cpp */,
 				BCEFAF4D0C317E6900FA81F6 /* JSEventCustom.cpp */,
-				49EECF7210508D9C00099FAB /* JSFloatArrayCustom.cpp */,
+				49EECF7210508D9C00099FAB /* JSFloat32ArrayCustom.cpp */,
 				FE80D7A60E9C1ED2000D6F75 /* JSGeolocationCustom.cpp */,
 				BCE7B1920D4E86960075A539 /* JSHistoryCustom.cpp */,
 				BC97E42B10915B060010D361 /* JSHTMLAllCollectionCustom.cpp */,
@@ -15822,8 +15822,8 @@
 				E4EEFFC70D34550C00469A58 /* JSAudioConstructor.h */,
 				E0FEF371B77C53EAC1C1FBEE /* JSEventSourceConstructor.cpp */,
 				E0FEF371B67C53EAC1C1FBEE /* JSEventSourceConstructor.h */,
-				49EECF9D1050938200099FAB /* JSFloatArrayConstructor.cpp */,
-				49EECF9E1050938200099FAB /* JSFloatArrayConstructor.h */,
+				49EECF9D1050938200099FAB /* JSFloat32ArrayConstructor.cpp */,
+				49EECF9E1050938200099FAB /* JSFloat32ArrayConstructor.h */,
 				BC6C49F10D7DBA0500FFA558 /* JSImageConstructor.cpp */,
 				BC6C49F20D7DBA0500FFA558 /* JSImageConstructor.h */,
 				49EECFA31050938200099FAB /* JSInt16ArrayConstructor.cpp */,
@@ -17912,7 +17912,7 @@
 				845E72F80FD261EE00A87D79 /* Filter.h in Headers */,
 				08C9251A0FCC7C4A00480DEC /* FilterEffect.h in Headers */,
 				A8CFF04F0A154F09000A4234 /* FixedTableLayout.h in Headers */,
-				49EECDE610503C2400099FAB /* FloatArray.h in Headers */,
+				49EECDE610503C2400099FAB /* Float32Array.h in Headers */,
 				BC073BAA0C399B1F000F5979 /* FloatConversion.h in Headers */,
 				B27535690B053814002CE64F /* FloatPoint.h in Headers */,
 				B2E27CA00B0F2B0900F17C7B /* FloatPoint3D.h in Headers */,
@@ -18247,8 +18247,8 @@
 				2E3BC0CB117D3E0800B9409A /* JSFileError.h in Headers */,
 				BC00F0170E0A189500FD04E3 /* JSFileList.h in Headers */,
 				2E94F43C119207DA00B7F75D /* JSFileReader.h in Headers */,
-				49EECF03105070C400099FAB /* JSFloatArray.h in Headers */,
-				49EECFB01050938200099FAB /* JSFloatArrayConstructor.h in Headers */,
+				49EECF03105070C400099FAB /* JSFloat32Array.h in Headers */,
+				49EECFB01050938200099FAB /* JSFloat32ArrayConstructor.h in Headers */,
 				FE80DA640E9C4703000D6F75 /* JSGeolocation.h in Headers */,
 				FE80DA660E9C4703000D6F75 /* JSGeoposition.h in Headers */,
 				BC94D14F0C275C68006BC617 /* JSHistory.h in Headers */,
@@ -20249,7 +20249,7 @@
 				BC5EB69E0E81DAEB00B25965 /* FillLayer.cpp in Sources */,
 				08C925190FCC7C4A00480DEC /* FilterEffect.cpp in Sources */,
 				A8CFF04D0A154F09000A4234 /* FixedTableLayout.cpp in Sources */,
-				49EECDE510503C2400099FAB /* FloatArray.cpp in Sources */,
+				49EECDE510503C2400099FAB /* Float32Array.cpp in Sources */,
 				B27535680B053814002CE64F /* FloatPoint.cpp in Sources */,
 				B2E27C9F0B0F2B0900F17C7B /* FloatPoint3D.cpp in Sources */,
 				B27535590B053814002CE64F /* FloatPointCG.cpp in Sources */,
@@ -20590,9 +20590,9 @@
 				2E3BC0CA117D3E0800B9409A /* JSFileError.cpp in Sources */,
 				BC00F0160E0A189500FD04E3 /* JSFileList.cpp in Sources */,
 				2E94F43B119207DA00B7F75D /* JSFileReader.cpp in Sources */,
-				49EECF02105070C400099FAB /* JSFloatArray.cpp in Sources */,
-				49EECFAF1050938200099FAB /* JSFloatArrayConstructor.cpp in Sources */,
-				49EECF7910508D9C00099FAB /* JSFloatArrayCustom.cpp in Sources */,
+				49EECF02105070C400099FAB /* JSFloat32Array.cpp in Sources */,
+				49EECFAF1050938200099FAB /* JSFloat32ArrayConstructor.cpp in Sources */,
+				49EECF7910508D9C00099FAB /* JSFloat32ArrayCustom.cpp in Sources */,
 				FE80DA630E9C4703000D6F75 /* JSGeolocation.cpp in Sources */,
 				FE80D7AB0E9C1ED2000D6F75 /* JSGeolocationCustom.cpp in Sources */,
 				FE80DA650E9C4703000D6F75 /* JSGeoposition.cpp in Sources */,

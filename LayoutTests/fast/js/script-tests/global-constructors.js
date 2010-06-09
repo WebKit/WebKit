@@ -33,7 +33,7 @@ for (var x in constructorNames) {
         name == "Uint16Array" ||
         name == "Int32Array" ||
         name == "Uint32Array" ||
-        name == "FloatArray" ||
+        name == "Float32Array" ||
         name == "FileError" ||
         name == "FileReader")
         continue;

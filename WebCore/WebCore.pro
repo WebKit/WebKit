@@ -2896,7 +2896,7 @@ HEADERS += \
 	bindings/js/JSArrayBufferConstructor.h \
 	bindings/js/JSArrayBufferViewHelper.h \
 	bindings/js/JSInt8ArrayConstructor.h \
-	bindings/js/JSFloatArrayConstructor.h \
+	bindings/js/JSFloat32ArrayConstructor.h \
 	bindings/js/JSInt32ArrayConstructor.h \
 	bindings/js/JSInt16ArrayConstructor.h \
 	bindings/js/JSUint8ArrayConstructor.h \
@@ -2910,7 +2910,7 @@ HEADERS += \
 	html/canvas/WebGLBuffer.h \
 	html/canvas/Int8Array.h \
 	html/canvas/WebGLContextAttributes.h \
-	html/canvas/FloatArray.h \
+	html/canvas/Float32Array.h \
 	html/canvas/WebGLFramebuffer.h \
 	html/canvas/WebGLGetInfo.h \
 	html/canvas/Int32Array.h \
@@ -2931,8 +2931,8 @@ SOURCES += \
 	bindings/js/JSArrayBufferViewCustom.cpp \
 	bindings/js/JSInt8ArrayConstructor.cpp \
 	bindings/js/JSInt8ArrayCustom.cpp \
-	bindings/js/JSFloatArrayConstructor.cpp \
-	bindings/js/JSFloatArrayCustom.cpp \
+	bindings/js/JSFloat32ArrayConstructor.cpp \
+	bindings/js/JSFloat32ArrayCustom.cpp \
 	bindings/js/JSInt32ArrayConstructor.cpp \
 	bindings/js/JSInt32ArrayCustom.cpp \
 	bindings/js/JSWebGLRenderingContextCustom.cpp \
@@ -2951,7 +2951,7 @@ SOURCES += \
 	html/canvas/WebGLBuffer.cpp \
 	html/canvas/Int8Array.cpp \
 	html/canvas/WebGLContextAttributes.cpp \
-	html/canvas/FloatArray.cpp \
+	html/canvas/Float32Array.cpp \
 	html/canvas/WebGLFramebuffer.cpp \
 	html/canvas/WebGLGetInfo.cpp \
 	html/canvas/Int32Array.cpp \

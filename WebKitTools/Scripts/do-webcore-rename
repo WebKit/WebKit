@@ -72,26 +72,9 @@ sub wanted
 # below to handle custom JavaScript bindings.
 my $isDOMTypeRename = 1;
 my %renames = (
-    "WebGLArray" => "ArrayBufferView",
-    "WebGLArrayBuffer" => "ArrayBuffer",
-    "WebGLByteArray" => "Int8Array",
-    "WebGLFloatArray" => "FloatArray",
-    "WebGLIntArray" => "Int32Array",
-    "WebGLIntegralTypedArrayBase" => "IntegralTypedArrayBase",
-    "WebGLShortArray" => "Int16Array",
-    "WebGLUnsignedByteArray" => "Uint8Array",
-    "WebGLUnsignedIntArray" => "Uint32Array",
-    "WebGLUnsignedShortArray" => "Uint16Array",
-    "WebGLTypedArrayBase" => "TypedArrayBase",
+    "FloatArray" => "Float32Array",
     # JSDOMWindow constructors.
-    "webGLArrayBuffer" => "arrayBuffer",
-    "webGLByteArray" => "int8Array",
-    "webGLFloatArray" => "floatArray",
-    "webGLIntArray" => "int32Array",
-    "webGLShortArray" => "int16Array",
-    "webGLUnsignedByteArray" => "uint8Array",
-    "webGLUnsignedIntArray" => "uint32Array",
-    "webGLUnsignedShortArray" => "uint16Array",
+    "floatArray" => "float32Array",
 );
 
 my %renamesContemplatedForTheFuture = (

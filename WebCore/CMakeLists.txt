@@ -277,7 +277,7 @@ SET(WebCore_IDL_FILES
 
     html/canvas/ArrayBuffer.idl
     html/canvas/ArrayBufferView.idl
-    html/canvas/FloatArray.idl
+    html/canvas/Float32Array.idl
     html/canvas/Int16Array.idl
     html/canvas/Int32Array.idl
     html/canvas/Int8Array.idl

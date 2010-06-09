@@ -36,7 +36,7 @@
 #include "JSHTMLImageElement.h"
 #include "JSImageData.h"
 #include "JSWebGLBuffer.h"
-#include "JSFloatArray.h"
+#include "JSFloat32Array.h"
 #include "JSWebGLFramebuffer.h"
 #include "JSInt32Array.h"
 #include "JSWebGLProgram.h"
@@ -48,7 +48,7 @@
 #include "JSWebKitCSSMatrix.h"
 #include "NotImplemented.h"
 #include "WebGLBuffer.h"
-#include "FloatArray.h"
+#include "Float32Array.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLGetInfo.h"
 #include "Int32Array.h"
@@ -571,7 +571,7 @@ static JSC::JSValue dataFunctionf(DataFunctionToCall f, JSC::ExecState* exec, We
     if (exec->hadException())
         return jsUndefined();
         
-    RefPtr<FloatArray> webGLArray = toFloatArray(exec->argument(1));
+    RefPtr<Float32Array> webGLArray = toFloat32Array(exec->argument(1));
     if (exec->hadException())    
         return jsUndefined();
         
@@ -720,7 +720,7 @@ static JSC::JSValue dataFunctionMatrix(DataFunctionMatrixToCall f, JSC::ExecStat
     if (exec->hadException())    
         return jsUndefined();
         
-    RefPtr<FloatArray> webGLArray = toFloatArray(exec->argument(2));
+    RefPtr<Float32Array> webGLArray = toFloat32Array(exec->argument(2));
     if (exec->hadException())    
         return jsUndefined();
         

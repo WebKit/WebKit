@@ -310,7 +310,7 @@ IDL_BINDINGS += \
     html/canvas/ArrayBufferView.idl \
     html/canvas/ArrayBuffer.idl \
     html/canvas/Int8Array.idl \
-    html/canvas/FloatArray.idl \
+    html/canvas/Float32Array.idl \
     html/canvas/CanvasGradient.idl \
     html/canvas/Int32Array.idl \
     html/canvas/CanvasPattern.idl \

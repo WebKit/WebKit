@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,39 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#ifndef JSFloat32ArrayConstructor_h
+#define JSFloat32ArrayConstructor_h
 
-#if ENABLE(3D_CANVAS)
-
-#include "FloatArray.h"
+#include "JSDOMBinding.h"
+#include "JSDocument.h"
 
 namespace WebCore {
 
-PassRefPtr<FloatArray> FloatArray::create(unsigned length)
-{
-    return TypedArrayBase<float>::create<FloatArray>(length);
-}
+    class JSFloat32ArrayConstructor : public DOMConstructorObject {
+    public:
+        JSFloat32ArrayConstructor(JSC::ExecState*, JSDOMGlobalObject*);
+        static const JSC::ClassInfo s_info;
 
-PassRefPtr<FloatArray> FloatArray::create(float* array, unsigned length)
-{
-    return TypedArrayBase<float>::create<FloatArray>(array, length);
-}
-
-PassRefPtr<FloatArray> FloatArray::create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
-{
-    return TypedArrayBase<float>::create<FloatArray>(buffer, byteOffset, length);
-}
-
-FloatArray::FloatArray(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
-    : TypedArrayBase<float>(buffer, byteOffset, length)
-{
-}
-
-PassRefPtr<ArrayBufferView> FloatArray::slice(int start, int end) const
-{
-    return sliceImpl<FloatArray>(start, end);
-}
+    private:
+        virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
+        virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
+    };
 
 }
 
-#endif // ENABLE(3D_CANVAS)
+#endif // JSFloat32ArrayConstructor_h

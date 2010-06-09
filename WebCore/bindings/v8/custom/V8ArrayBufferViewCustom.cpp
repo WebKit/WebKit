@@ -36,7 +36,7 @@
 #include "V8Binding.h"
 #include "V8Proxy.h"
 #include "V8Int8Array.h"
-#include "V8FloatArray.h"
+#include "V8Float32Array.h"
 #include "V8Int32Array.h"
 #include "V8Int16Array.h"
 #include "V8Uint8Array.h"
@@ -52,7 +52,7 @@ v8::Handle<v8::Value> toV8(ArrayBufferView* impl)
     if (impl->isByteArray())
         return toV8(static_cast<Int8Array*>(impl));
     if (impl->isFloatArray())
-        return toV8(static_cast<FloatArray*>(impl));
+        return toV8(static_cast<Float32Array*>(impl));
     if (impl->isIntArray())
         return toV8(static_cast<Int32Array*>(impl));
     if (impl->isShortArray())

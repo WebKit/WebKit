@@ -41,7 +41,7 @@
 #include "ImageData.h"
 #include "WebGLBuffer.h"
 #include "Int8Array.h"
-#include "FloatArray.h"
+#include "Float32Array.h"
 #include "WebGLFramebuffer.h"
 #include "Int32Array.h"
 #include "WebGLProgram.h"

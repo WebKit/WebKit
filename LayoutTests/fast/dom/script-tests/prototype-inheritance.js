@@ -17,7 +17,7 @@ var skippedProperties = [
     "WebGLRenderingContext", "WebGLArrayBuffer", 
     "WebGLByteArray", "WebGLFloatArray", "WebGLIntArray", "WebGLShortArray", "WebGLUnsignedByteArray", "WebGLUnsignedIntArray", "WebGLUnsignedShortArray", 
     "ArrayBuffer",
-    "Int8Array", "Uint8Array", "Int16Array", "Uint16Array", "Int32Array", "Uint32Array", "FloatArray",
+    "Int8Array", "Uint8Array", "Int16Array", "Uint16Array", "Int32Array", "Uint32Array", "Float32Array",
     "FileError", "FileReader",
     "indexedDB"
 ];

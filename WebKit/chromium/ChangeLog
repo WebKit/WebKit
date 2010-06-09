@@ -1,3 +1,19 @@
+2010-06-09  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Rename FloatArray to Float32Array
+        https://bugs.webkit.org/show_bug.cgi?id=40323
+
+        Used do-webcore-rename to perform renaming. Manually undid
+        incorrect changes to WebCore/bridge/jni/jsc/JNIBridgeJSC.cpp,
+        WebCore/manual-tests/resources/ArrayParameterTestApplet.java and
+        ArrayParameterTestApplet.class. Updated LayoutTests. Built and ran
+        all layout tests on Safari; built Chromium and ran selected WebGL
+        tests.
+
+        * src/GraphicsContext3D.cpp:
+
 2010-06-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r60889.

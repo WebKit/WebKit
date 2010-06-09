@@ -1,3 +1,28 @@
+2010-06-09  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Rename FloatArray to Float32Array
+        https://bugs.webkit.org/show_bug.cgi?id=40323
+
+        Used do-webcore-rename to perform renaming. Manually undid
+        incorrect changes to WebCore/bridge/jni/jsc/JNIBridgeJSC.cpp,
+        WebCore/manual-tests/resources/ArrayParameterTestApplet.java and
+        ArrayParameterTestApplet.class. Updated LayoutTests. Built and ran
+        all layout tests on Safari; built Chromium and ran selected WebGL
+        tests.
+
+        * fast/canvas/webgl/array-unit-tests-expected.txt:
+        * fast/canvas/webgl/array-unit-tests.html:
+        * fast/dom/Window/script-tests/window-property-descriptors.js:
+        * fast/dom/Window/window-properties.html:
+        * fast/dom/script-tests/constructed-objects-prototypes.js:
+        (constructorPropertiesOnWindow):
+        * fast/dom/script-tests/prototype-inheritance-2.js:
+        (constructorNamesForWindow):
+        * fast/dom/script-tests/prototype-inheritance.js:
+        * fast/js/script-tests/global-constructors.js:
+
 2010-06-09  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.

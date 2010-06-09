@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,20 +20,37 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module html {
-    interface [
-        Conditional=3D_CANVAS,
-        HasNumericIndexGetter,
-        HasCustomIndexSetter,
-        GenerateNativeConverter,
-        CustomConstructor,
-        CustomToJS
-    ] FloatArray : ArrayBufferView {
-        // void set(in FloatArray array, [Optional] in unsigned long offset);
-        // void set(in sequence<long> array, [Optional] in unsigned long offset);
-        [Custom] void set();
-    };
+#include "config.h"
+
+#if ENABLE(3D_CANVAS)
+
+#include "JSArrayBufferViewHelper.h"
+#include "JSFloat32Array.h"
+
+#include "Float32Array.h"
+
+using namespace JSC;
+
+namespace WebCore {
+
+void JSFloat32Array::indexSetter(JSC::ExecState* exec, unsigned index, JSC::JSValue value)
+{
+    impl()->set(index, static_cast<float>(value.toNumber(exec)));
 }
+
+JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Float32Array* object)
+{
+    return getDOMObjectWrapper<JSFloat32Array>(exec, globalObject, object);
+}
+
+JSC::JSValue JSFloat32Array::set(JSC::ExecState* exec)
+{
+    return setWebGLArrayHelper(exec, impl(), toFloat32Array);
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(3D_CANVAS)

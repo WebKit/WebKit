@@ -27,33 +27,33 @@
 
 #if ENABLE(3D_CANVAS)
 
-#include "JSFloatArrayConstructor.h"
+#include "JSFloat32ArrayConstructor.h"
 
 #include "Document.h"
-#include "FloatArray.h"
+#include "Float32Array.h"
 #include "JSArrayBuffer.h"
 #include "JSArrayBufferConstructor.h"
-#include "JSFloatArray.h"
+#include "JSFloat32Array.h"
 #include <runtime/Error.h>
 
 namespace WebCore {
 
 using namespace JSC;
 
-const ClassInfo JSFloatArrayConstructor::s_info = { "FloatArrayConstructor", &JSArrayBufferView::s_info, 0, 0 };
+const ClassInfo JSFloat32ArrayConstructor::s_info = { "Float32ArrayConstructor", &JSArrayBufferView::s_info, 0, 0 };
 
-JSFloatArrayConstructor::JSFloatArrayConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
-    : DOMConstructorObject(JSFloatArrayConstructor::createStructure(globalObject->objectPrototype()), globalObject)
+JSFloat32ArrayConstructor::JSFloat32ArrayConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
+    : DOMConstructorObject(JSFloat32ArrayConstructor::createStructure(globalObject->objectPrototype()), globalObject)
 {
-    putDirect(exec->propertyNames().prototype, JSFloatArrayPrototype::self(exec, globalObject), None);
+    putDirect(exec->propertyNames().prototype, JSFloat32ArrayPrototype::self(exec, globalObject), None);
     putDirect(exec->propertyNames().length, jsNumber(exec, 2), ReadOnly|DontDelete|DontEnum);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructCanvasFloatArray(ExecState* exec)
 {
     ArgList args(exec);
-    JSFloatArrayConstructor* jsConstructor = static_cast<JSFloatArrayConstructor*>(exec->callee());
-    RefPtr<FloatArray> array = static_cast<FloatArray*>(construct<FloatArray, float>(exec, args).get());
+    JSFloat32ArrayConstructor* jsConstructor = static_cast<JSFloat32ArrayConstructor*>(exec->callee());
+    RefPtr<Float32Array> array = static_cast<Float32Array*>(construct<Float32Array, float>(exec, args).get());
     if (!array.get()) {
         setDOMException(exec, INDEX_SIZE_ERR);
         return JSValue::encode(JSValue());
@@ -61,7 +61,7 @@ static EncodedJSValue JSC_HOST_CALL constructCanvasFloatArray(ExecState* exec)
     return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), array.get())));
 }
 
-JSC::ConstructType JSFloatArrayConstructor::getConstructData(JSC::ConstructData& constructData)
+JSC::ConstructType JSFloat32ArrayConstructor::getConstructData(JSC::ConstructData& constructData)
 {
     constructData.native.function = constructCanvasFloatArray;
     return ConstructTypeHost;

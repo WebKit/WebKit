@@ -72,7 +72,7 @@
 #if ENABLE(3D_CANVAS)
 #include "V8ArrayBuffer.h"
 #include "V8Int8Array.h"
-#include "V8FloatArray.h"
+#include "V8Float32Array.h"
 #include "V8Int32Array.h"
 #include "V8Int16Array.h"
 #include "V8Uint8Array.h"
@@ -308,7 +308,7 @@ v8::Handle<v8::Value> V8DOMWindow::WebGLUnsignedIntArrayAccessorGetter(v8::Local
 v8::Handle<v8::Value> V8DOMWindow::WebGLFloatArrayAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     DOMWindow* window = V8DOMWindow::toNative(info.Holder());
-    return V8DOMWrapper::getConstructor(&V8FloatArray::info, window);
+    return V8DOMWrapper::getConstructor(&V8Float32Array::info, window);
 }
 
 #endif

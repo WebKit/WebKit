@@ -32,7 +32,7 @@
 #include "PlatformString.h"
 
 #include "WebGLBuffer.h"
-#include "FloatArray.h"
+#include "Float32Array.h"
 #include "WebGLFramebuffer.h"
 #include "Int32Array.h"
 // FIXME: implement WebGLObjectArray
@@ -77,7 +77,7 @@ public:
     WebGLGetInfo(const String& value);
     WebGLGetInfo(unsigned long value);
     WebGLGetInfo(PassRefPtr<WebGLBuffer> value);
-    WebGLGetInfo(PassRefPtr<FloatArray> value);
+    WebGLGetInfo(PassRefPtr<Float32Array> value);
     WebGLGetInfo(PassRefPtr<WebGLFramebuffer> value);
     WebGLGetInfo(PassRefPtr<Int32Array> value);
     // FIXME: implement WebGLObjectArray
@@ -97,7 +97,7 @@ public:
     const String& getString() const;
     unsigned long getUnsignedLong() const;
     PassRefPtr<WebGLBuffer> getWebGLBuffer() const;
-    PassRefPtr<FloatArray> getWebGLFloatArray() const;
+    PassRefPtr<Float32Array> getWebGLFloatArray() const;
     PassRefPtr<WebGLFramebuffer> getWebGLFramebuffer() const;
     PassRefPtr<Int32Array> getWebGLIntArray() const;
     // FIXME: implement WebGLObjectArray
@@ -115,7 +115,7 @@ private:
     String m_string;
     unsigned long m_unsignedLong;
     RefPtr<WebGLBuffer> m_webglBuffer;
-    RefPtr<FloatArray> m_webglFloatArray;
+    RefPtr<Float32Array> m_webglFloatArray;
     RefPtr<WebGLFramebuffer> m_webglFramebuffer;
     RefPtr<Int32Array> m_webglIntArray;
     // FIXME: implement WebGLObjectArray

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,30 +28,35 @@
 
 #if ENABLE(3D_CANVAS)
 
-#include "JSArrayBufferViewHelper.h"
-#include "JSFloatArray.h"
-
-#include "FloatArray.h"
-
-using namespace JSC;
+#include "Float32Array.h"
 
 namespace WebCore {
 
-void JSFloatArray::indexSetter(JSC::ExecState* exec, unsigned index, JSC::JSValue value)
+PassRefPtr<Float32Array> Float32Array::create(unsigned length)
 {
-    impl()->set(index, static_cast<float>(value.toNumber(exec)));
+    return TypedArrayBase<float>::create<Float32Array>(length);
 }
 
-JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, FloatArray* object)
+PassRefPtr<Float32Array> Float32Array::create(float* array, unsigned length)
 {
-    return getDOMObjectWrapper<JSFloatArray>(exec, globalObject, object);
+    return TypedArrayBase<float>::create<Float32Array>(array, length);
 }
 
-JSC::JSValue JSFloatArray::set(JSC::ExecState* exec)
+PassRefPtr<Float32Array> Float32Array::create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
 {
-    return setWebGLArrayHelper(exec, impl(), toFloatArray);
+    return TypedArrayBase<float>::create<Float32Array>(buffer, byteOffset, length);
 }
 
-} // namespace WebCore
+Float32Array::Float32Array(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
+    : TypedArrayBase<float>(buffer, byteOffset, length)
+{
+}
+
+PassRefPtr<ArrayBufferView> Float32Array::slice(int start, int end) const
+{
+    return sliceImpl<Float32Array>(start, end);
+}
+
+}
 
 #endif // ENABLE(3D_CANVAS)

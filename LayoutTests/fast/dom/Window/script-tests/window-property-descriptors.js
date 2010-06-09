@@ -34,7 +34,7 @@ var __skip__ = {
     "Uint16Array" : 1,
     "Int32Array" : 1,
     "Uint32Array" : 1,
-    "FloatArray" : 1,
+    "Float32Array" : 1,
     "FileError" : 1,
     "FileReader" : 1,
     "ondeviceorientation" : 1,

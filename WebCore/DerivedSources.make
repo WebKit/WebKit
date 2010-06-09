@@ -77,7 +77,7 @@ DOM_CLASSES = \
     WebGLBuffer \
     Int8Array \
     WebGLContextAttributes \
-    FloatArray \
+    Float32Array \
     WebGLFramebuffer \
     CanvasGradient \
     Int32Array \

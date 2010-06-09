@@ -1,3 +1,94 @@
+2010-06-09  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Rename FloatArray to Float32Array
+        https://bugs.webkit.org/show_bug.cgi?id=40323
+
+        Used do-webcore-rename to perform renaming. Manually undid
+        incorrect changes to WebCore/bridge/jni/jsc/JNIBridgeJSC.cpp,
+        WebCore/manual-tests/resources/ArrayParameterTestApplet.java and
+        ArrayParameterTestApplet.class. Updated LayoutTests. Built and ran
+        all layout tests on Safari; built Chromium and ran selected WebGL
+        tests.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::float32ArrayEnabled):
+        * bindings/js/JSArrayBufferViewCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::float32Array):
+        (WebCore::JSDOMWindow::webGLFloatArray):
+        * bindings/js/JSFloat32ArrayConstructor.cpp: Copied from WebCore/bindings/js/JSFloatArrayConstructor.cpp.
+        (WebCore::):
+        (WebCore::JSFloat32ArrayConstructor::JSFloat32ArrayConstructor):
+        (WebCore::constructCanvasFloatArray):
+        (WebCore::JSFloat32ArrayConstructor::getConstructData):
+        * bindings/js/JSFloat32ArrayConstructor.h: Copied from WebCore/bindings/js/JSFloatArrayConstructor.h.
+        * bindings/js/JSFloat32ArrayCustom.cpp: Copied from WebCore/bindings/js/JSFloatArrayCustom.cpp.
+        (WebCore::JSFloat32Array::indexSetter):
+        (WebCore::toJS):
+        (WebCore::JSFloat32Array::set):
+        * bindings/js/JSFloatArrayConstructor.cpp: Removed.
+        * bindings/js/JSFloatArrayConstructor.h: Removed.
+        * bindings/js/JSFloatArrayCustom.cpp: Removed.
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::dataFunctionf):
+        (WebCore::dataFunctionMatrix):
+        * bindings/v8/custom/V8ArrayBufferViewCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::WebGLFloatArrayAccessorGetter):
+        * bindings/v8/custom/V8Float32ArrayCustom.cpp: Copied from WebCore/bindings/v8/custom/V8FloatArrayCustom.cpp.
+        (WebCore::V8Float32Array::constructorCallback):
+        (WebCore::V8Float32Array::setCallback):
+        (WebCore::toV8):
+        * bindings/v8/custom/V8FloatArrayCustom.cpp: Removed.
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::vertexAttribAndUniformHelperf):
+        (WebCore::uniformMatrixHelper):
+        * html/canvas/Float32Array.cpp: Copied from WebCore/html/canvas/FloatArray.cpp.
+        (WebCore::Float32Array::create):
+        (WebCore::Float32Array::Float32Array):
+        (WebCore::Float32Array::slice):
+        * html/canvas/Float32Array.h: Copied from WebCore/html/canvas/FloatArray.h.
+        * html/canvas/Float32Array.idl: Copied from WebCore/html/canvas/FloatArray.idl.
+        * html/canvas/FloatArray.cpp: Removed.
+        * html/canvas/FloatArray.h: Removed.
+        * html/canvas/FloatArray.idl: Removed.
+        * html/canvas/WebGLGetInfo.cpp:
+        (WebCore::WebGLGetInfo::WebGLGetInfo):
+        (WebCore::WebGLGetInfo::getWebGLFloatArray):
+        * html/canvas/WebGLGetInfo.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getUniform):
+        (WebCore::WebGLRenderingContext::getVertexAttrib):
+        (WebCore::WebGLRenderingContext::uniform1fv):
+        (WebCore::WebGLRenderingContext::uniform2fv):
+        (WebCore::WebGLRenderingContext::uniform3fv):
+        (WebCore::WebGLRenderingContext::uniform4fv):
+        (WebCore::WebGLRenderingContext::uniformMatrix2fv):
+        (WebCore::WebGLRenderingContext::uniformMatrix3fv):
+        (WebCore::WebGLRenderingContext::uniformMatrix4fv):
+        (WebCore::WebGLRenderingContext::vertexAttrib1fv):
+        (WebCore::WebGLRenderingContext::vertexAttrib2fv):
+        (WebCore::WebGLRenderingContext::vertexAttrib3fv):
+        (WebCore::WebGLRenderingContext::vertexAttrib4fv):
+        (WebCore::WebGLRenderingContext::getWebGLFloatArrayParameter):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContext.idl:
+        * page/DOMWindow.idl:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+
 2010-06-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

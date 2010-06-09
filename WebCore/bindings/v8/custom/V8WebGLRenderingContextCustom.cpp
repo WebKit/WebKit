@@ -44,7 +44,7 @@
 #include "V8ArrayBufferView.h"
 #include "V8WebGLBuffer.h"
 #include "V8Int8Array.h"
-#include "V8FloatArray.h"
+#include "V8Float32Array.h"
 #include "V8WebGLFramebuffer.h"
 #include "V8Int32Array.h"
 #include "V8WebGLProgram.h"
@@ -392,21 +392,21 @@ static v8::Handle<v8::Value> vertexAttribAndUniformHelperf(const v8::Arguments& 
                                                            FunctionToCall functionToCall) {
     // Forms:
     // * glUniform1fv(WebGLUniformLocation location, Array data);
-    // * glUniform1fv(WebGLUniformLocation location, FloatArray data);
+    // * glUniform1fv(WebGLUniformLocation location, Float32Array data);
     // * glUniform2fv(WebGLUniformLocation location, Array data);
-    // * glUniform2fv(WebGLUniformLocation location, FloatArray data);
+    // * glUniform2fv(WebGLUniformLocation location, Float32Array data);
     // * glUniform3fv(WebGLUniformLocation location, Array data);
-    // * glUniform3fv(WebGLUniformLocation location, FloatArray data);
+    // * glUniform3fv(WebGLUniformLocation location, Float32Array data);
     // * glUniform4fv(WebGLUniformLocation location, Array data);
-    // * glUniform4fv(WebGLUniformLocation location, FloatArray data);
+    // * glUniform4fv(WebGLUniformLocation location, Float32Array data);
     // * glVertexAttrib1fv(GLint index, Array data);
-    // * glVertexAttrib1fv(GLint index, FloatArray data);
+    // * glVertexAttrib1fv(GLint index, Float32Array data);
     // * glVertexAttrib2fv(GLint index, Array data);
-    // * glVertexAttrib2fv(GLint index, FloatArray data);
+    // * glVertexAttrib2fv(GLint index, Float32Array data);
     // * glVertexAttrib3fv(GLint index, Array data);
-    // * glVertexAttrib3fv(GLint index, FloatArray data);
+    // * glVertexAttrib3fv(GLint index, Float32Array data);
     // * glVertexAttrib4fv(GLint index, Array data);
-    // * glVertexAttrib4fv(GLint index, FloatArray data);
+    // * glVertexAttrib4fv(GLint index, Float32Array data);
 
     if (args.Length() != 2) {
         V8Proxy::setDOMException(SYNTAX_ERR);
@@ -424,8 +424,8 @@ static v8::Handle<v8::Value> vertexAttribAndUniformHelperf(const v8::Arguments& 
 
     WebGLRenderingContext* context = V8WebGLRenderingContext::toNative(args.Holder());
 
-    if (V8FloatArray::HasInstance(args[1])) {
-        FloatArray* array = V8FloatArray::toNative(args[1]->ToObject());
+    if (V8Float32Array::HasInstance(args[1])) {
+        Float32Array* array = V8Float32Array::toNative(args[1]->ToObject());
         ASSERT(array != NULL);
         ExceptionCode ec = 0;
         switch (functionToCall) {
@@ -592,13 +592,13 @@ static v8::Handle<v8::Value> uniformMatrixHelper(const v8::Arguments& args,
 {
     // Forms:
     // * glUniformMatrix2fv(GLint location, GLboolean transpose, Array data);
-    // * glUniformMatrix2fv(GLint location, GLboolean transpose, FloatArray data);
+    // * glUniformMatrix2fv(GLint location, GLboolean transpose, Float32Array data);
     // * glUniformMatrix3fv(GLint location, GLboolean transpose, Array data);
-    // * glUniformMatrix3fv(GLint location, GLboolean transpose, FloatArray data);
+    // * glUniformMatrix3fv(GLint location, GLboolean transpose, Float32Array data);
     // * glUniformMatrix4fv(GLint location, GLboolean transpose, Array data);
-    // * glUniformMatrix4fv(GLint location, GLboolean transpose, FloatArray data);
+    // * glUniformMatrix4fv(GLint location, GLboolean transpose, Float32Array data);
     //
-    // FIXME: need to change to accept FloatArray as well.
+    // FIXME: need to change to accept Float32Array as well.
     if (args.Length() != 3) {
         V8Proxy::setDOMException(SYNTAX_ERR);
         return notHandledByInterceptor();
@@ -610,8 +610,8 @@ static v8::Handle<v8::Value> uniformMatrixHelper(const v8::Arguments& args,
     WebGLUniformLocation* location = toWebGLUniformLocation(args[0], ok);
     
     bool transpose = args[1]->BooleanValue();
-    if (V8FloatArray::HasInstance(args[2])) {
-        FloatArray* array = V8FloatArray::toNative(args[2]->ToObject());
+    if (V8Float32Array::HasInstance(args[2])) {
+        Float32Array* array = V8Float32Array::toNative(args[2]->ToObject());
         ASSERT(array != NULL);
         ExceptionCode ec = 0;
         switch (matrixSize) {

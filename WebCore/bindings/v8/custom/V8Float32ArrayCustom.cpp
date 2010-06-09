@@ -33,34 +33,34 @@
 #if ENABLE(3D_CANVAS)
 
 #include "ArrayBuffer.h"
-#include "FloatArray.h"
+#include "Float32Array.h"
 
 #include "V8Binding.h"
 #include "V8ArrayBuffer.h"
 #include "V8ArrayBufferViewCustom.h"
-#include "V8FloatArray.h"
+#include "V8Float32Array.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8FloatArray::constructorCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8Float32Array::constructorCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.FloatArray.Contructor");
+    INC_STATS("DOM.Float32Array.Contructor");
 
-    return constructWebGLArray<FloatArray, float>(args, &info, v8::kExternalFloatArray);
+    return constructWebGLArray<Float32Array, float>(args, &info, v8::kExternalFloatArray);
 }
 
-v8::Handle<v8::Value> V8FloatArray::setCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8Float32Array::setCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.FloatArray.set()");
-    return setWebGLArrayHelper<FloatArray, V8FloatArray>(args);
+    INC_STATS("DOM.Float32Array.set()");
+    return setWebGLArrayHelper<Float32Array, V8Float32Array>(args);
 }
 
-v8::Handle<v8::Value> toV8(FloatArray* impl)
+v8::Handle<v8::Value> toV8(Float32Array* impl)
 {
     if (!impl)
         return v8::Null();
-    v8::Handle<v8::Object> wrapper = V8FloatArray::wrap(impl);
+    v8::Handle<v8::Object> wrapper = V8Float32Array::wrap(impl);
     if (!wrapper.IsEmpty())
         wrapper->SetIndexedPropertiesToExternalArrayData(impl->baseAddress(), v8::kExternalFloatArray, impl->length());
     return wrapper;

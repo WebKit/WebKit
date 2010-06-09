@@ -24,19 +24,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FloatArray_h
-#define FloatArray_h
+#ifndef Float32Array_h
+#define Float32Array_h
 
 #include "TypedArrayBase.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
 
-class FloatArray : public TypedArrayBase<float> {
+class Float32Array : public TypedArrayBase<float> {
   public:
-    static PassRefPtr<FloatArray> create(unsigned length);
-    static PassRefPtr<FloatArray> create(float* array, unsigned length);
-    static PassRefPtr<FloatArray> create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length);
+    static PassRefPtr<Float32Array> create(unsigned length);
+    static PassRefPtr<Float32Array> create(float* array, unsigned length);
+    static PassRefPtr<Float32Array> create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length);
 
     using TypedArrayBase<float>::set;
 
@@ -63,7 +63,7 @@ class FloatArray : public TypedArrayBase<float> {
     }
 
   private:
-    FloatArray(PassRefPtr<ArrayBuffer> buffer,
+    Float32Array(PassRefPtr<ArrayBuffer> buffer,
                     unsigned byteOffset,
                     unsigned length);
     // Make constructor visible to superclass.
@@ -76,4 +76,4 @@ class FloatArray : public TypedArrayBase<float> {
 
 } // namespace WebCore
 
-#endif // FloatArray_h
+#endif // Float32Array_h

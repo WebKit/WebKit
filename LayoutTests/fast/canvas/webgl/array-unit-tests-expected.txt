@@ -2,39 +2,39 @@ Verifies the functionality of the new array-like objects in the TypedArray spec
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASS test FloatArray SetAndGetPos10ToNeg10
-PASS test FloatArray ConstructWithArrayOfSignedValues
-PASS test FloatArray ConstructWithTypedArrayOfSignedValues
-Testing FloatArray GetWithOutOfRangeIndices
+PASS test Float32Array SetAndGetPos10ToNeg10
+PASS test Float32Array ConstructWithArrayOfSignedValues
+PASS test Float32Array ConstructWithTypedArrayOfSignedValues
+Testing Float32Array GetWithOutOfRangeIndices
 PASS array[2] is undefined.
 PASS array[-1] is undefined.
 PASS array[0x20000000] is undefined.
-PASS test FloatArray OffsetsAndSizes
-PASS test FloatArray SetFromTypedArray
-PASS negativeTest FloatArray SetFromTypedArray
-PASS test FloatArray SetFromArray
-PASS negativeTest FloatArray SetFromArray
-PASS test FloatArray Slice
-PASS negativeTest FloatArray Slice
-PASS test FloatArray BoundaryConditions(-500.5, -500.5, 500.5, 500.5)
-PASS Construction of FloatArray with null buffer threw exception
-PASS Construction of FloatArray with out-of-range values threw exception
-PASS Construction of FloatArray with negative out-of-range values threw exception
-PASS Construction of huge FloatArray threw exception
-Testing slicing of FloatArray
+PASS test Float32Array OffsetsAndSizes
+PASS test Float32Array SetFromTypedArray
+PASS negativeTest Float32Array SetFromTypedArray
+PASS test Float32Array SetFromArray
+PASS negativeTest Float32Array SetFromArray
+PASS test Float32Array Slice
+PASS negativeTest Float32Array Slice
+PASS test Float32Array BoundaryConditions(-500.5, -500.5, 500.5, 500.5)
+PASS Construction of Float32Array with null buffer threw exception
+PASS Construction of Float32Array with out-of-range values threw exception
+PASS Construction of Float32Array with negative out-of-range values threw exception
+PASS Construction of huge Float32Array threw exception
+Testing slicing of Float32Array
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
 PASS array.slice(4, -2147483648).length is 0
 PASS array.length is 0
-Testing slicing with default inputs of FloatArray
+Testing slicing with default inputs of Float32Array
 PASS array.length is 32 / typeSize
 PASS array.slice().length is (32 / typeSize)
 PASS array.slice(2).length is (32 / typeSize) - 2
 PASS array.slice(-2).length is 2
 PASS array.slice(-2147483648).length is (32 / typeSize)
-PASS Setting FloatArray from array with out-of-range offset was caught
-PASS Setting FloatArray from fake array with invalid length was caught
-PASS Setting FloatArray from FloatArray with out-of-range offset was caught
+PASS Setting Float32Array from array with out-of-range offset was caught
+PASS Setting Float32Array from fake array with invalid length was caught
+PASS Setting Float32Array from Float32Array with out-of-range offset was caught
 PASS array.get is undefined.
 PASS array.set(0, 1) threw exception.
 PASS test Int8Array SetAndGetPos10ToNeg10
