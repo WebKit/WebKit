@@ -58,4 +58,11 @@ void InspectorClientEfl::storeSetting(const String&, const String&)
     notImplemented();
 }
 
+bool InspectorClientEfl::sendMessageToFrontend(const String&)
+{
+    notImpelemented();
+    return false;
+}
+
+
 }

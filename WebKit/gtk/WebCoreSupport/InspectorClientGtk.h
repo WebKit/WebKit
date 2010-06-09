@@ -56,13 +56,18 @@ namespace WebKit {
         virtual void populateSetting(const WebCore::String& key, WebCore::String* value);
         virtual void storeSetting(const WebCore::String& key, const WebCore::String& value);
 
+        virtual bool sendMessageToFrontend(const WebCore::String&);
+
+        void releaseFrontendPage();
+
     private:
         WebKitWebView* m_inspectedWebView;
+        WebCore::Page* m_frontendPage;
     };
 
     class InspectorFrontendClient : public WebCore::InspectorFrontendClientLocal {
     public:
-        InspectorFrontendClient(WebKitWebView* inspectedWebView, WebKitWebView* inspectorWebView, WebKitWebInspector* webInspector, WebCore::Page* inspectorPage);
+        InspectorFrontendClient(WebKitWebView* inspectedWebView, WebKitWebView* inspectorWebView, WebKitWebInspector* webInspector, WebCore::Page* inspectorPage, InspectorClient* inspectorClient);
 
         void destroyInspectorWindow();
 
@@ -86,6 +91,7 @@ namespace WebKit {
         WebKitWebView* m_inspectorWebView;
         WebKitWebView* m_inspectedWebView;
         WebKitWebInspector* m_webInspector;
+        InspectorClient* m_inspectorClient;
     };
 }
 

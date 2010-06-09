@@ -1,3 +1,18 @@
+2010-06-07  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: On the way to Remote Debugging we want to transfer dom/timeline/etc
+        data from inspected page to WebInspector as JSON string via http. The native
+        serialization to JSON string is supported by InspectorValue's classes. This patch
+        has the implementation of sendMessageToFrontend function. WebKit version of it still
+        uses ScriptFunctionCall and will be switched to another transport a little bit later.
+        https://bugs.webkit.org/show_bug.cgi?id=40134
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (WebInspectorClient::releaseFrontendPage):
+        (WebInspectorClient::sendMessageToFrontend):
+
 2010-01-07  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Geoffrey Garen.

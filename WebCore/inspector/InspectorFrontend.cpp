@@ -36,6 +36,7 @@
 #include "Frame.h"
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
+#include "InspectorClient.h"
 #include "InspectorController.h"
 #include "InspectorWorkerResource.h"
 #include "Node.h"
@@ -49,8 +50,8 @@
 
 namespace WebCore {
 
-InspectorFrontend::InspectorFrontend(ScriptObject webInspector)
-    : m_webInspector(webInspector)
+InspectorFrontend::InspectorFrontend(ScriptObject webInspector, InspectorClient* inspectorClient)
+    : m_webInspector(webInspector), m_inspectorClient(inspectorClient)
 {
 }
 
