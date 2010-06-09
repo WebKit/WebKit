@@ -293,6 +293,15 @@ class MockBugzilla(Mock):
             action_param = "&action=%s" % action
         return "%s/%s%s" % (self.bug_server_url, attachment_id, action_param)
 
+    def set_flag_on_attachment(self,
+                               attachment_id,
+                               flag_name,
+                               flag_value,
+                               comment_text=None,
+                               additional_comment_text=None):
+        log("MOCK setting flag '%s' to '%s' on attachment '%s' with comment '%s' and additional comment '%s'" % (
+            flag_name, flag_value, attachment_id, comment_text, additional_comment_text))
+
     def post_comment_to_bug(self, bug_id, comment_text, cc=None):
         log("MOCK bug comment: bug_id=%s, cc=%s\n--- Begin comment ---\%s\n--- End comment ---\n" % (
             bug_id, cc, comment_text))

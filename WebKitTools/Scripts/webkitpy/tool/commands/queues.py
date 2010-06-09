@@ -337,7 +337,7 @@ class RietveldUploadQueue(AbstractPatchQueue, StepSequenceErrorHandler):
     @classmethod
     def handle_script_error(cls, tool, state, script_error):
         status_id = cls._update_status_for_script_error(tool, state, script_error)
-        self._reject_patch(patch, cls._error_message_for_bug(tool, status_id, script_error))
+        cls._reject_patch(patch, cls._error_message_for_bug(tool, status_id, script_error))
 
 
 class AbstractReviewQueue(AbstractPatchQueue, PersistentPatchCollectionDelegate, StepSequenceErrorHandler):

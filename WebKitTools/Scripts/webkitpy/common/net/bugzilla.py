@@ -788,8 +788,8 @@ class Bugzilla(object):
                                attachment_id,
                                flag_name,
                                flag_value,
-                               comment_text,
-                               additional_comment_text):
+                               comment_text=None,
+                               additional_comment_text=None):
         # FIXME: We need a way to test this function on a live bugzilla
         # instance.
 
@@ -805,7 +805,8 @@ class Bugzilla(object):
         self.browser.open(self.attachment_url_for_id(attachment_id, 'edit'))
         self.browser.select_form(nr=1)
 
-        self.browser.set_value(comment_text, name='comment', nr=0)
+        if comment_text:
+            self.browser.set_value(comment_text, name='comment', nr=0)
 
         self._find_select_element_for_flag(flag_name).value = (flag_value,)
         self.browser.submit()
