@@ -1434,15 +1434,16 @@ sub buildGtkProject($$@)
     return buildAutotoolsProject($clean, @buildArgs);
 }
 
-sub buildChromiumMakefile($$)
+sub buildChromiumMakefile($$$)
 {
-    my ($target, $clean) = @_;
+    my ($dir, $target, $clean) = @_;
+    chdir $dir;
     if ($clean) {
         return system qw(rm -rf out);
     }
     my $config = configuration();
     my $numCpus = (grep /processor/, `cat /proc/cpuinfo`) || 1;
-    my @command = ("make", "-fMakefile.chromium", "-j$numCpus", "BUILDTYPE=$config", $target);
+    my @command = ("make", "-j$numCpus", "BUILDTYPE=$config", $target);
     print join(" ", @command) . "\n";
     return system @command;
 }
@@ -1500,7 +1501,7 @@ sub buildChromium($@)
         $result = buildChromiumVisualStudioProject("WebKit/chromium/WebKit.sln", $clean);
     } elsif (isLinux()) {
         # Linux build - build using make.
-        $ result = buildChromiumMakefile("all", $clean);
+        $ result = buildChromiumMakefile("WebKit/chromium/", "all", $clean);
     } else {
         print STDERR "This platform is not supported by chromium.\n";
     }

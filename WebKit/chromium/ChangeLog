@@ -1,3 +1,14 @@
+2010-06-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r60878.
+        http://trac.webkit.org/changeset/60878
+        https://bugs.webkit.org/show_bug.cgi?id=40349
+
+        broke linux build (Requested by tony^work on #webkit).
+
+        * DEPS:
+        * gyp_webkit:
+
 2010-06-08  Tony Chang  <tony@chromium.org>
 
         Reviewed by David Levin.
