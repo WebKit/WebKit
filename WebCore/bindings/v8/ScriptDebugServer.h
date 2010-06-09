@@ -94,6 +94,8 @@ public:
 
     PassRefPtr<JavaScriptCallFrame> currentCallFrame();
 
+    bool isDebuggerAlwaysEnabled();
+
 private:
     ScriptDebugServer();
     ~ScriptDebugServer() { }

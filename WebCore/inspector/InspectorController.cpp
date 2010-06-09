@@ -433,13 +433,19 @@ void InspectorController::connectFrontend(const ScriptObject& webInspector)
     m_domAgent = InspectorDOMAgent::create(m_cssStore.get(), m_frontend.get());
     if (m_timelineAgent)
         m_timelineAgent->resetFrontendProxyObject(m_frontend.get());
-#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
-    String debuggerEnabled = setting(debuggerEnabledSettingName);
-    if (debuggerEnabled == "true")
-        enableDebugger();
-    String profilerEnabled = setting(profilerEnabledSettingName);
-    if (profilerEnabled == "true")
-        enableProfiler();
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (ScriptDebugServer::shared().isDebuggerAlwaysEnabled()) {
+        // FIXME (40364): This will force pushing script sources to frontend even if script
+        // panel is inactive.
+        enableDebuggerFromFrontend(false);
+    } else {
+        String debuggerEnabled = setting(debuggerEnabledSettingName);
+        if (debuggerEnabled == "true")
+            enableDebugger();
+        String profilerEnabled = setting(profilerEnabledSettingName);
+        if (profilerEnabled == "true")
+            enableProfiler();
+    }
 #endif
 
     // Initialize Web Inspector title.

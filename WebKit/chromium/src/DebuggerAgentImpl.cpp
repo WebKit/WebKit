@@ -79,11 +79,6 @@ void DebuggerAgentImpl::processDebugCommands()
     v8::Debug::ProcessDebugMessages();
 }
 
-void DebuggerAgentImpl::setDebuggerScriptSource(const String& source)
-{
-    WebCore::ScriptDebugServer::shared().setDebuggerScriptSource(source);
-}
-
 void DebuggerAgentImpl::debuggerOutput(const String& command)
 {
     m_delegate->debuggerOutput(command);

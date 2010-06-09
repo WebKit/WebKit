@@ -126,6 +126,11 @@ void ScriptDebugServer::pageCreated(Page* page)
     page->setDebugger(this);
 }
 
+bool ScriptDebugServer::isDebuggerAlwaysEnabled()
+{
+    return false;
+}
+
 bool ScriptDebugServer::hasListenersInterestedInPage(Page* page)
 {
     ASSERT_ARG(page, page);

@@ -185,8 +185,6 @@ WebInspector.loaded = function()
     Preferences.profilerAlwaysEnabled = true;
     Preferences.canEditScriptSource = true;
 
-    RemoteDebuggerAgent.setDebuggerScriptSource("(" + debuggerScriptConstructor + ")();");
- 
     oldLoaded.call(this);
 
     InspectorFrontendHost.loaded();

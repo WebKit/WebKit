@@ -28,7 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function debuggerScriptConstructor() {
+(function () {
 
 var DebuggerScript = {};
 DebuggerScript._breakpoints = {};
@@ -275,4 +275,4 @@ DebuggerScript._v8ToWebkitLineNumber = function(line)
 
 return DebuggerScript;
 
-}
+})();

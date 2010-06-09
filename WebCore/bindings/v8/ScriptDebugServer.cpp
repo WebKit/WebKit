@@ -301,6 +301,11 @@ PassRefPtr<JavaScriptCallFrame> ScriptDebugServer::currentCallFrame()
     return m_currentCallFrame;
 }
 
+bool ScriptDebugServer::isDebuggerAlwaysEnabled()
+{
+    return true;
+}
+
 #if ENABLE(V8_SCRIPT_DEBUG_SERVER)
 void ScriptDebugServer::v8DebugEventCallback(const v8::Debug::EventDetails& eventDetails)
 {
