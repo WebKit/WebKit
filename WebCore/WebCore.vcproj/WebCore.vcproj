@@ -27473,6 +27473,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\CSSOMUtils.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSOMUtils.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\CSSNamespace.h"
 				>
 			</File>

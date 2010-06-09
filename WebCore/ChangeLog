@@ -1,3 +1,31 @@
+2010-05-18  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Fix for Bug 34529 -  [CSSOM] issues with cssText and selectorText
+        Serialize selector as per http://dev.w3.org/csswg/cssom/#serializing-selectors
+        Without this patch, for example, selectors containing ':' or '.' are not properly serialized.
+        https://bugs.webkit.org/show_bug.cgi?id=34529
+
+        Test: fast/css/selector-text-escape.html
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSOMUtils.cpp: Added.
+        (WebCore::appendCharacter):
+        (WebCore::serializeCharacter):
+        (WebCore::serializeCharacterAsCodePoint):
+        (WebCore::serializeIdentifier):
+        (WebCore::serializeString):
+        * css/CSSOMUtils.h: Added.
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText):
+
 2010-06-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Justin Garcia

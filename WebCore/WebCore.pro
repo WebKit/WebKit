@@ -405,6 +405,7 @@ SOURCES += \
     css/CSSInitialValue.cpp \
     css/CSSMediaRule.cpp \
     css/CSSMutableStyleDeclaration.cpp \
+    css/CSSOMUtils.cpp \
     css/CSSPageRule.cpp \
     css/CSSParser.cpp \
     css/CSSParserValues.cpp \
@@ -1141,6 +1142,7 @@ HEADERS += \
     css/CSSInitialValue.h \
     css/CSSMediaRule.h \
     css/CSSMutableStyleDeclaration.h \
+    css/CSSOMUtils.h \
     css/CSSPageRule.h \
     css/CSSParser.h \
     css/CSSParserValues.h \

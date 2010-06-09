@@ -965,6 +965,8 @@
             'css/CSSMutableStyleDeclaration.cpp',
             'css/CSSMutableStyleDeclaration.h',
             'css/CSSNamespace.h',
+            'css/CSSOMUtils.cpp',
+            'css/CSSOMUtils.h',
             'css/CSSPageRule.cpp',
             'css/CSSPageRule.h',
             'css/CSSParser.cpp',
