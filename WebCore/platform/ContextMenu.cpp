@@ -570,6 +570,7 @@ void ContextMenu::addInspectElementItem()
         return;
 
     ContextMenuItem InspectElementItem(ActionType, ContextMenuItemTagInspectElement, contextMenuItemTagInspectElement());
+    appendItem(*separatorItem());
     appendItem(InspectElementItem);
 }
 #endif // ENABLE(INSPECTOR)

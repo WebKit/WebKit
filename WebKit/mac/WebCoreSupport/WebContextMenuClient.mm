@@ -213,6 +213,8 @@ static void fixMenusReceivedFromOldClients(NSMutableArray *newMenuItems, NSMutab
                 modernTag = WebMenuItemTagLeftToRight;
             else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagRightToLeft]])
                 modernTag = WebMenuItemTagRightToLeft;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagInspectElement]])
+                modernTag = WebMenuItemTagInspectElement;
             else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagCorrectSpellingAutomatically]])
                 modernTag = WebMenuItemTagCorrectSpellingAutomatically;
             else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagSubstitutionsMenu]])

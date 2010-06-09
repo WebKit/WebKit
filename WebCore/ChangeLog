@@ -1,3 +1,17 @@
+2010-06-08  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/8072136> REGRESSION (r56051): Inspect Element context menu does nothing in applications linked against 10.4 SDK
+
+        Revert the change to ContextMenu::addInspectElementItem from r56051. It was made without
+        explanation and broke a reliance that WebKit has on the presence of a separator before the
+        Inspect Element menu item. This also restores the context menu item to the correct location
+        at the bottom of the context menu in applications built against the Mac OS X 10.4 SDK.
+
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::addInspectElementItem):
+
 2010-06-08  Roland Steiner  <rolandsteiner@chromium.org>
 
         Unreviewed build fix
