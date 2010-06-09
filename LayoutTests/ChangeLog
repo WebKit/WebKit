@@ -2,6 +2,20 @@
 
         Reviewed by Eric Seidel.
 
+        Make invalid comment in fast/css/word-space-extra.html really invalid
+        https://bugs.webkit.org/show_bug.cgi?id=40388
+
+        This test tries to have a comment inside a comment.  To make that work
+        in the old parser, the author added a space between the -- and the >.
+        However, that's a valid end-of-comment in the new parser.  I've change
+        the space to a * to really make it not a valid end of comment.
+
+        * fast/css/word-space-extra.html:
+
+2010-06-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Test how XML directives get attached to the DOM
         https://bugs.webkit.org/show_bug.cgi?id=40384
 
