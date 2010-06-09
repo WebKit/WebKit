@@ -1,3 +1,13 @@
+2010-06-09  Anders Bakken  <agbakken@gmail.com>
+
+        Reviewed by David Levin.
+
+        [Qt] ClipboardQt.cpp has coding-style errors
+        https://bugs.webkit.org/show_bug.cgi?id=39781
+
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::declareAndWriteDragImage):
+
 2010-06-09  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.

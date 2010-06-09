@@ -22,14 +22,14 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
 #include "ClipboardQt.h"
 
-#include "CachedImage.h"
 #include "CSSHelper.h"
+#include "CachedImage.h"
 #include "Document.h"
 #include "Element.h"
 #include "FileList.h"
@@ -38,19 +38,19 @@
 #include "Image.h"
 #include "IntPoint.h"
 #include "KURL.h"
-#include "markup.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
 #include "Range.h"
 #include "RenderImage.h"
 #include "StringHash.h"
+#include "markup.h"
 
+#include <QApplication>
+#include <QClipboard>
 #include <QList>
 #include <QMimeData>
 #include <QStringList>
 #include <QUrl>
-#include <QApplication>
-#include <QClipboard>
 #include <qdebug.h>
 
 #define methodDebug() qDebug("ClipboardQt: %s", __FUNCTION__)
@@ -226,14 +226,14 @@ void ClipboardQt::declareAndWriteDragImage(Element* element, const KURL& url, co
 {
     ASSERT(frame);
 
-    //WebCore::writeURL(m_writableDataObject.get(), url, title, true, false);
+    // WebCore::writeURL(m_writableDataObject.get(), url, title, true, false);
     if (!m_writableData)
         m_writableData = new QMimeData;
 
     CachedImage* cachedImage = getCachedImage(element);
     if (!cachedImage || !cachedImage->image() || !cachedImage->isLoaded())
         return;
-    QPixmap *pixmap = cachedImage->image()->nativeImageForCurrentFrame();
+    QPixmap* pixmap = cachedImage->image()->nativeImageForCurrentFrame();
     if (pixmap)
         m_writableData->setImageData(*pixmap);
 
