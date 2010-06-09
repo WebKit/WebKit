@@ -437,7 +437,7 @@ QVariantList DumpRenderTreeSupportQt::firstRectForCharacterRange(QWebPage* page,
     WebCore::Frame* frame = page->handle()->page->focusController()->focusedOrMainFrame();
     QVariantList rect;
 
-    if ((location + length < location) && (location + length != 0))
+    if ((location + length < location) && (location + length))
         length = 0;
 
     Element* selectionRoot = frame->selection()->rootEditableElement();
