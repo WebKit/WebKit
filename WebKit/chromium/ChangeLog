@@ -1,3 +1,12 @@
+2010-06-08  Tony Chang  <tony@chromium.org>
+
+        Not reviewed, build fix.
+
+        [chromium] fix linux compile
+        https://bugs.webkit.org/show_bug.cgi?id=40343
+
+        * DEPS:
+
 2010-06-08  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
