@@ -625,7 +625,7 @@ void InspectorObject::writeJSON(Vector<UChar>* output) const
     for (size_t i = 0; i < m_order.size(); ++i) {
         Dictionary::const_iterator it = m_data.find(m_order[i]);
         ASSERT(it != m_data.end());
-        if (i)
+        if (it != m_data.begin())
             output->append(',');
         doubleQuoteString(it->first, output);
         output->append(':');

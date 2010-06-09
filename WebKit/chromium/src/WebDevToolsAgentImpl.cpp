@@ -475,7 +475,8 @@ void WebDevToolsAgentImpl::setInspectorFrontendProxyToInspectorController()
     ScriptState* state = ScriptState::forContext(
         v8::Local<v8::Context>::New(m_utilityContext));
     InspectorController* ic = inspectorController();
-    ic->connectFrontend(ScriptObject(state, m_utilityContext->Global()));
+    ic->setFrontend(new InspectorFrontend(
+        ScriptObject(state, m_utilityContext->Global())));
 }
 
 void WebDevToolsAgentImpl::setApuAgentEnabled(bool enabled)

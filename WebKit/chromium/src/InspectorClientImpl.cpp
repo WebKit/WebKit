@@ -35,8 +35,6 @@
 #include "FloatRect.h"
 #include "NotImplemented.h"
 #include "Page.h"
-#include "WebDevToolsAgentImpl.h"
-#include "WebDevToolsMessageData.h"
 #include "WebRect.h"
 #include "WebURL.h"
 #include "WebURLRequest.h"
@@ -102,22 +100,6 @@ void InspectorClientImpl::populateSetting(const String& key, String* value)
 void InspectorClientImpl::storeSetting(const String& key, const String& value)
 {
     m_inspectedWebView->setInspectorSetting(key, value);
-}
-
-bool InspectorClientImpl::sendMessageToFrontend(const WebCore::String& message)
-{
-    WebDevToolsAgentImpl* devToolsAgent = static_cast<WebDevToolsAgentImpl*>(m_inspectedWebView->devToolsAgent());
-    if (!devToolsAgent)
-        return false;
-
-    WebVector<WebString> arguments(size_t(1));
-    arguments[0] = message;
-    WebDevToolsMessageData data;
-    data.className = "ToolsAgentDelegate";
-    data.methodName = "dispatchOnClient";
-    data.arguments.swap(arguments);
-    devToolsAgent->sendRpcMessage(data);
-    return true;
 }
 
 } // namespace WebKit

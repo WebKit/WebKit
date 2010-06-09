@@ -30,7 +30,6 @@
 #ifndef InspectorFrontend_h
 #define InspectorFrontend_h
 
-#include "InspectorValues.h"
 #include "ScriptArray.h"
 #include "ScriptObject.h"
 #include "ScriptState.h"
@@ -40,20 +39,16 @@ namespace WebCore {
     class ConsoleMessage;
     class Database;
     class Frame;
-    class InspectorClient;
     class InspectorResource;
-    class InspectorWorkerResource;
     class Node;
     class ScriptString;
     class SerializedScriptValue;
     class Storage;
+    class InspectorWorkerResource;
 
     class InspectorFrontend : public Noncopyable {
     public:
-        // We are in transition from JS transport via webInspector to native
-        // transport via inspectorClient. After migration, webInspector parameter should
-        // be removed.
-        InspectorFrontend(ScriptObject webInspector, InspectorClient* inspectorClient);
+        InspectorFrontend(ScriptObject webInspector);
         ~InspectorFrontend();
 
         void close();
@@ -176,7 +171,6 @@ namespace WebCore {
     private:
         void callSimpleFunction(const String& functionName);
         ScriptObject m_webInspector;
-        InspectorClient* m_inspectorClient;
     };
 
 } // namespace WebCore

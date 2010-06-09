@@ -67,11 +67,5 @@ void InspectorClientHaiku::storeSetting(const String& key, const String& value)
     notImplemented();
 }
 
-bool InspectorClientHaiku::sendMessageToFrontend(const String&)
-{
-    notImplemented();
-    return false;
-}
-
 } // namespace WebCore
 

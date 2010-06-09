@@ -37,12 +37,6 @@
 #include <wtf/OwnPtr.h>
 #include <windows.h>
 
-namespace WebCore {
-
-class Page;
-
-}
-
 class WebNodeHighlight;
 class WebView;
 
@@ -61,21 +55,13 @@ public:
     virtual void populateSetting(const WebCore::String& key, WebCore::String* value);
     virtual void storeSetting(const WebCore::String& key, const WebCore::String& value);
 
-    virtual bool sendMessageToFrontend(const WebCore::String&);
-
     void updateHighlight();
-    void frontendClosing()
-    {
-        m_frontendHwnd = 0;
-        releaseFrontendPage();
-    }
+    void frontendClosing() { m_frontendHwnd = 0; }
 
-    void releaseFrontendPage();
 private:
     ~WebInspectorClient();
 
     WebView* m_inspectedWebView;
-    WebCore::Page* m_frontendPage;
     HWND m_inspectedWebViewHwnd;
     HWND m_frontendHwnd;
 

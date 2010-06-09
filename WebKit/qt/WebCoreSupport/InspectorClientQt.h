@@ -58,18 +58,13 @@ public:
     virtual void populateSetting(const String& key, String* value);
     virtual void storeSetting(const String& key, const String& value);
 
-    virtual bool sendMessageToFrontend(const String&);
-
-    void releaseFrontendPage();
-
 private:
     QWebPage* m_inspectedWebPage;
-    QWebPage* m_frontendWebPage;
 };
 
 class InspectorFrontendClientQt : public InspectorFrontendClientLocal {
 public:
-    InspectorFrontendClientQt(QWebPage* inspectedWebPage, PassOwnPtr<QWebView> inspectorView, InspectorClientQt* inspectorClient);
+    InspectorFrontendClientQt(QWebPage* inspectedWebPage, PassOwnPtr<QWebView> inspectorView);
 
     virtual void frontendLoaded();
 
@@ -93,7 +88,6 @@ private:
     OwnPtr<QWebView> m_inspectorView;
     QString m_inspectedURL;
     bool m_destroyingInspectorView;
-    InspectorClientQt* m_inspectorClient;
 };
 }
 

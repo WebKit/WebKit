@@ -89,7 +89,7 @@ void InspectorFrontendClientLocal::frontendLoaded()
         ASSERT_NOT_REACHED();
         return;
     }
-    m_inspectorController->connectFrontend(webInspectorObj);
+    m_inspectorController->setFrontend(new InspectorFrontend(webInspectorObj));
 }
 
 void InspectorFrontendClientLocal::requestAttachWindow()

@@ -36,8 +36,6 @@
 #include <wtf/OwnPtr.h>
 
 namespace WebKit {
-
-class WebDevToolsAgentClient;
 class WebViewImpl;
 
 class InspectorClientImpl : public WebCore::InspectorClient {
@@ -48,14 +46,15 @@ public:
     // InspectorClient methods:
     virtual void inspectorDestroyed();
     virtual void openInspectorFrontend(WebCore::InspectorController*);
-
     virtual void highlight(WebCore::Node*);
     virtual void hideHighlight();
+    virtual void populateSetting(
+        const WebCore::String& key,
+        WebCore::String* value);
+    virtual void storeSetting(
+        const WebCore::String& key,
+        const WebCore::String& value);
 
-    virtual void populateSetting(const WebCore::String& key, WebCore::String* value);
-    virtual void storeSetting(const WebCore::String& key, const WebCore::String& value);
-
-    virtual bool sendMessageToFrontend(const WebCore::String&);
 private:
 
     // The WebViewImpl of the page being inspected; gets passed to the constructor
