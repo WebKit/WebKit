@@ -1070,6 +1070,12 @@ or deleted.
 sub notify {
     my ($flag, $bug, $attachment) = @_;
 
+    #if WEBKIT_CHANGES
+    # Don't send a notification when the flag is in-rietveld,
+    # since it isn't a user visible flag, and that mail is spammy.
+    return if ($flag->type->name eq 'in-rietveld');
+    #endif // WEBKIT_CHANGES
+
     # There is nobody to notify.
     return unless ($flag->{'addressee'} || $flag->type->cc_list);
 

@@ -1,3 +1,13 @@
+2010-06-09  Julie Parent  <jparent@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        Bugzilla: Don't send mail for cancel/deny/granted for in-rietveld.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40345
+
+        * Bugzilla/Flag.pm:
+
 2010-05-17  Julie Parent  <jparent@chromium.org>
 
         Reviewed by Ojan Vafai.
