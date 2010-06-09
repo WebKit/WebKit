@@ -1,3 +1,13 @@
+2010-06-08  Tony Chang  <tony@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] compile linux chromium in WebKit/out instead of WebKit/WebKit/chromium/out
+        https://bugs.webkit.org/show_bug.cgi?id=40285
+
+        * Scripts/webkitdirs.pm:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+
 2010-06-08  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, build fix.
