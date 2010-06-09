@@ -1,3 +1,54 @@
+2010-06-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        LayoutTests needlessly depend on old parser quirks covered by other tests
+        https://bugs.webkit.org/show_bug.cgi?id=40354
+
+        There are two quirks of the old HTMLTokenizer which I'm removing
+        from various tests in this change.
+         - <tag<tag> parsing is a quirk unique to WebKit's old tokenizer
+           and is already tested by fast/invalid/016.html and
+           html5lib/runner.html.
+         - <script/> is another quirk unique to WebKit's old tokenizer and
+           is covered by fast/parser/script-tag-with-trailing-slash.html
+
+        * fast/block/float/4145535Crash.html:
+         - The test tests a CSS crasher.  Changed the html to
+           be explicit about how it should be parsed instead of
+           depending on the <tag<tag> quirk of the old parser.
+        * fast/dom/HTMLScriptElement/script-load-events.html:
+         - Remove testing of <script/> since that's already covered
+           by fast/parser/script-tag-with-trailing-slash.html
+        * fast/dom/HTMLScriptElement/script-set-src-expected.txt:
+         - Same as above.
+        * fast/dom/HTMLScriptElement/script-set-src.html:
+         - Same as above.
+        * fast/events/pageshow-pagehide.html:
+         - Remove dependence on <tag<tag> quirk.
+        * fast/events/resources/pageshow-pagehide-subframe-cachable.html:
+         - <tag<tag> quirk.
+        * fast/events/resources/pageshow-pagehide-subframe.html:
+         - <tag<tag> quirk.
+        * fast/frames/sandboxed-iframe-navigation-parent.html:
+         - <tag<tag> quirk.
+        * fast/lists/w3-css3-list-styles-alphabetic.html:
+         - <tag<tag> quirk.
+        * fast/multicol/negativeColumnWidth.html:
+         - <tag<tag> quirk.
+        * fast/ruby/ruby-illegal-2.html:
+         - The original fix (https://trac.webkit.org/changeset/53525) was
+           a fix to rendering code.  I've simply corrected the test to be
+           explicit about how it should be parsed so that it can test the
+           rendering code path without depending on the <tag<tag> quirk
+           of the old HTMLTokenizer.
+        * fast/ruby/ruby-illegal-3.html:
+         - Same as above.
+        * http/tests/misc/generated-content-inside-table.html:
+         - Remove dependence on the <script/> quirk.
+        * svg/custom/svg-fonts-in-html-linebreaks.html:
+         - <tag<tag> quirk.
+
 2010-06-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.

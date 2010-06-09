@@ -8,8 +8,6 @@ Already specifying valid source: PASS
 
 No text and no source: PASS
 
-Self-closing <script> tag: PASS
-
 Using setAttribute: PASS
 
 Dynamically-inserted script elements:

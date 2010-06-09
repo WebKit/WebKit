@@ -16,7 +16,6 @@ function test()
     document.getElementById("s2").src = "resources/script-set-src-p2fail.js";
     document.getElementById("s5").src = "resources/script-set-src-p5fail.js";
     document.getElementById("s3").src = "resources/script-set-src-p3pass.js";
-    document.getElementById("s4").src = "resources/script-set-src-p4pass.js";
     document.getElementById("s6").setAttribute("src", "resources/script-set-src-p6pass.js");
     
     var e1 = document.createElement( "script" );
@@ -45,7 +44,7 @@ function test()
 <script type="text/javascript" id="s2" src="resources/thisShouldNotExist.null"></script>
 <script type="text/javascript" id="s5" src="resources/script-set-src-p5pass.js"></script>
 <script type="text/javascript" id="s3"></script>
-<script type="text/javascript" id="s4"/>
+<!-- s4 was a self-closing script tag, however that is covered by fast/parser/script-tag-with-trailing-slash.html -->
 <script type="text/javascript" id="s6"></script>
 </head>
 <body onload="test();">
@@ -54,7 +53,6 @@ function test()
 <p>Already specifying missing source: <span id="p2">PASS</span></p>
 <p>Already specifying valid source: <span id="p5">FAIL</span></p>
 <p>No text and no source: <span id="p3">FAIL</span></p>
-<p>Self-closing &lt;script&gt; tag: <span id="p4">FAIL</span></p>
 <p>Using setAttribute: <span id="p6">FAIL</span></p>
 <hr>
 <p>Dynamically-inserted script elements:</p>

@@ -24,8 +24,6 @@ function endTest()
 
     if (status_[2] != "L")
         failures += "2 ";
-    if (status_[3] != "L")
-        failures += "3 ";
     if (status_[4] != "L")
         failures += "4 ";
     if (status_[5] != "L")
@@ -63,7 +61,7 @@ function test()
 <script type="text/javascript" onload="loaded(0)" onerror="erred(0)" src="resources/certainlydoesnotexist.js"></script>
 <script type="text/javascript" onload="loaded(1)" onerror="erred(1)" src="resources/certainlydoesnotexist.js"></script>
 <script type="text/javascript" onload="loaded(2)" onerror="erred(2)" src="resources/script-load.js"></script>
-<script type="text/javascript" onload="loaded(3)" onerror="erred(3)" src="resources/script-load.js"/>
+<!-- 3 was a self-closing script tag, however that is covered by fast/parser/script-tag-with-trailing-slash.html -->
 <script type="text/javascript">
     document.write('<script type="text/javascript" onload="loaded(4)" onerror="erred(4)" src="resources/script-load.js"></script'+'>');
 </script>
