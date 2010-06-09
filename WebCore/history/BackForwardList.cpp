@@ -82,13 +82,15 @@ void BackForwardList::addItem(PassRefPtr<HistoryItem> prpItem)
         m_entryHash.remove(item);
         pageCache()->remove(item.get());
         m_current--;
-        m_page->mainFrame()->loader()->client()->dispatchDidRemoveBackForwardItem(item.get());
+        if (m_page)
+            m_page->mainFrame()->loader()->client()->dispatchDidRemoveBackForwardItem(item.get());
     }
-    
+
     m_entryHash.add(prpItem.get());
     m_entries.insert(m_current + 1, prpItem);
     m_current++;
-    m_page->mainFrame()->loader()->client()->dispatchDidAddBackForwardItem(currentItem());
+    if (m_page)
+        m_page->mainFrame()->loader()->client()->dispatchDidAddBackForwardItem(currentItem());
 }
 
 void BackForwardList::goBack()
@@ -96,7 +98,8 @@ void BackForwardList::goBack()
     ASSERT(m_current > 0);
     if (m_current > 0) {
         m_current--;
-        m_page->mainFrame()->loader()->client()->dispatchDidChangeBackForwardIndex();
+        if (m_page)
+            m_page->mainFrame()->loader()->client()->dispatchDidChangeBackForwardIndex();
     }
 }
 
@@ -105,7 +108,8 @@ void BackForwardList::goForward()
     ASSERT(m_current < m_entries.size() - 1);
     if (m_current < m_entries.size() - 1) {
         m_current++;
-        m_page->mainFrame()->loader()->client()->dispatchDidChangeBackForwardIndex();
+        if (m_page)
+            m_page->mainFrame()->loader()->client()->dispatchDidChangeBackForwardIndex();
     }
 }
 
@@ -120,7 +124,8 @@ void BackForwardList::goToItem(HistoryItem* item)
             break;
     if (index < m_entries.size()) {
         m_current = index;
-        m_page->mainFrame()->loader()->client()->dispatchDidChangeBackForwardIndex();
+        if (m_page)
+            m_page->mainFrame()->loader()->client()->dispatchDidChangeBackForwardIndex();
     }
 }
 
@@ -189,7 +194,8 @@ void BackForwardList::setCapacity(int size)
         m_current = NoCurrentItemIndex;
     else if (m_current > m_entries.size() - 1) {
         m_current = m_entries.size() - 1;
-        m_page->mainFrame()->loader()->client()->dispatchDidChangeBackForwardIndex();
+        if (m_page)
+            m_page->mainFrame()->loader()->client()->dispatchDidChangeBackForwardIndex();
     }
     m_capacity = size;
 }

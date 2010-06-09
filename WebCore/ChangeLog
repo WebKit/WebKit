@@ -1,3 +1,19 @@
+2010-06-09  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/8070662> REGRESSION (r51629): WebBackForwardList created via -init crashes when -addItem: is called.
+
+        A WebBackForwardList created via -init results in a BackForwardList being created with a null m_page.
+        BackForwardList needs to be careful not to dereference m_page without first ensuring it's not null.
+
+        * history/BackForwardList.cpp:
+        (WebCore::BackForwardList::addItem): Null-check m_page.
+        (WebCore::BackForwardList::goBack): Ditto.
+        (WebCore::BackForwardList::goForward): Ditto.
+        (WebCore::BackForwardList::goToItem): Ditto.
+        (WebCore::BackForwardList::setCapacity): Ditto.
+
 2010-06-09  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kent Tamura.
