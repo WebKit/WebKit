@@ -1,3 +1,16 @@
+2010-06-08  Tony Chang  <tony@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] compile linux chromium in WebKit/out instead of WebKit/WebKit/chromium/out
+        https://bugs.webkit.org/show_bug.cgi?id=40285
+
+        Take 2 at landing this patch, this time rolling DEPS just a bit
+        further to pick up some chromium fixes.
+
+        * DEPS
+        * gyp_webkit:
+
 2010-06-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r60878.

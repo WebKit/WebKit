@@ -82,8 +82,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
 
     def _build_path(self, *comps):
         if self._options.use_drt:
-            base = os.path.join(self.path_from_webkit_base(), 'WebKit',
-                                'chromium')
+            base = os.path.join(self.path_from_webkit_base())
         else:
             base = self.path_from_chromium_base()
         if os.path.exists(os.path.join(base, 'sconsbuild')):

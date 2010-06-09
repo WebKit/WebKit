@@ -78,7 +78,11 @@ if __name__ == '__main__':
 
   # On linux, we want gyp to output a makefile (default is scons).
   if sys.platform == 'linux2':
-    args.extend(['-fmake'])
+    args.extend(['-fmake',
+                 '--suffix=.chromium',
+                 '--toplevel-dir=../..',
+                 # auto_regeneration doesn't work with toplevel-dir
+                 '-Gauto_regeneration=0'])
 
   # Other command args:
   args.extend([
@@ -90,7 +94,7 @@ if __name__ == '__main__':
                # gyp hack: otherwise gyp assumes its in chromium's src/ dir.
                '--depth=./',
 
-               # gyp files to execute.
+               # gyp file to execute.
                'WebKit.gyp'])
 
   print 'Updating webkit projects from gyp files...'
