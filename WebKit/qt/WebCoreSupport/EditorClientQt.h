@@ -27,8 +27,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EditorClientQt_H
-#define EditorClientQt_H
+#ifndef EditorClientQt_h
+#define EditorClientQt_h
 
 #include "EditorClient.h"
 #include "RefCounted.h"
