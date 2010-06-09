@@ -29,11 +29,15 @@ find_library(Glib_LIBRARY
   NAMES glib-2.0
   PATHS ${Glib_PKGCONF_LIBRARY_DIRS}
 )
+find_library(Gobject_LIBRARY
+  NAMES gobject-2.0
+  PATHS ${Glib_PKGCONF_LIBRARY_DIRS}
+)
 
 # Set the include dir variables and the libraries and let libfind_process do the rest.
 # NOTE: Singular variables for this library, plural for libraries this this lib depends on.
 set(Glib_PROCESS_INCLUDES Glib_INCLUDE_DIR GlibConfig_INCLUDE_DIR)
-set(Glib_PROCESS_LIBS Glib_LIBRARY)
+set(Glib_PROCESS_LIBS Glib_LIBRARY Gobject_LIBRARY)
 libfind_process(Glib)
 
 

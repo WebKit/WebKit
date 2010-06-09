@@ -1,3 +1,18 @@
+2010-06-09  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Adam Treat.
+
+        [EFL] Allow building core libraries as shared objects to speed up
+        linking time on machines with small amounts of memory.
+        http://webkit.org/b/39899
+
+        * CMakeLists.txt: Add SHARED_CORE option.
+        * cmake/FindGlib.cmake: Add GObject to the list of GLib libraries to
+        search.
+        * cmake/OptionsEfl.cmake: Remove default library type definitions.
+        * cmake/WebKitHelpers.cmake: -fvisibility=hidden did not behave well
+        when SHARED_CORE is used.
+
 2010-06-08  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

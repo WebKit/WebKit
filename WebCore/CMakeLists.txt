@@ -1260,7 +1260,6 @@ SET(WebCore_SOURCES
     plugins/PluginDataNone.cpp
     plugins/PluginMainThreadScheduler.cpp
     plugins/PluginViewNone.cpp
-    plugins/npapi.cpp
 
     rendering/AutoTableLayout.cpp
     rendering/BidiRun.cpp
@@ -1732,11 +1731,16 @@ SOURCE_GROUP(wml "wml/")
 SOURCE_GROUP(workers "workers/")
 SOURCE_GROUP(xml "xml/")
 
+SET(WebCore_LINK_FLAGS "")
 INCLUDE_IF_EXISTS(${WEBCORE_DIR}/CMakeLists${PORT}.txt)
 
 ADD_DEFINITIONS(-DBUILDING_WebCore)
 INCLUDE_DIRECTORIES(${WebCore_INCLUDE_DIRECTORIES})
 ADD_LIBRARY(${WebCore_LIBRARY_NAME} ${WebCore_LIBRARY_TYPE} ${WebCore_SOURCES})
 TARGET_LINK_LIBRARIES(${WebCore_LIBRARY_NAME} ${WebCore_LIBRARIES})
+ADD_TARGET_PROPERTIES(${WebCore_LIBRARY_NAME} LINK_FLAGS ${WebCore_LINK_FLAGS})
 
-INSTALL(TARGETS ${WebCore_LIBRARY_NAME} DESTINATION lib)
+
+IF (SHARED_CORE)
+    INSTALL(TARGETS ${WebCore_LIBRARY_NAME} DESTINATION lib)
+ENDIF ()

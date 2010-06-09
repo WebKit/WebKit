@@ -65,11 +65,20 @@ SET(WebCore_LIBRARY_NAME WebCore)
 SET(WebKit_LIBRARY_NAME WebKit)
 
 # -----------------------------------------------------------------------------
-# Default library types (can be overrriden in Options${PORT}.cmake file)
+# Default library types
 # -----------------------------------------------------------------------------
-SET(WTF_LIBRARY_TYPE STATIC)
-SET(JavaScriptCore_LIBRARY_TYPE STATIC)
-SET(WebCore_LIBRARY_TYPE STATIC)
+OPTION(SHARED_CORE "build WTF, JavaScriptCore and WebCore as shared libraries")
+
+IF (SHARED_CORE)
+    SET(WTF_LIBRARY_TYPE SHARED)
+    SET(JavaScriptCore_LIBRARY_TYPE SHARED)
+    SET(WebCore_LIBRARY_TYPE SHARED)
+ELSE ()
+    SET(WTF_LIBRARY_TYPE STATIC)
+    SET(JavaScriptCore_LIBRARY_TYPE STATIC)
+    SET(WebCore_LIBRARY_TYPE STATIC)
+ENDIF ()
+
 SET(WebKit_LIBRARY_TYPE SHARED)
 
 # -----------------------------------------------------------------------------

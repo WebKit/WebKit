@@ -1,3 +1,15 @@
+2010-06-09  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Adam Treat.
+
+        [EFL] Allow building core libraries as shared objects to speed up
+        linking time on machines with small amounts of memory.
+        http://webkit.org/b/39899
+
+        * CMakeLists.txt: If building with shared core, install the lib.
+        * jsc/CMakeListsEfl.txt: Needs Glib and Ecore to link dynamically.
+        * wtf/CMakeLists.txt: If building with shared core, install the lib.
+
 2010-06-09  Gabor Loki  <loki@webkit.org>
 
         Reviewed by David Levin.
