@@ -399,6 +399,7 @@ resources/tests16.dat:
 
 resources/webkit01.dat:
 13
+15
 
 resources/doctype01.dat:
 2

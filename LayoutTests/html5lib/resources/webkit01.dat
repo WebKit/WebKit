@@ -177,3 +177,14 @@ console.log("FOO<span>BAR</span>BAZ");
 |       foo=""
 |       <img>
 |       <img>
+
+#data
+<p>Test</p<p>Test2</p>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       "Test"
+|       "Test2"

@@ -1,3 +1,17 @@
+2010-06-09  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        video-timeupdate-duringplayback.html missing closing angle
+        https://bugs.webkit.org/show_bug.cgi?id=40311
+
+        This patch removes invalid markup from video-timeupdate-during-playback.html
+        because that is not the point of that test. It adds a new test with
+        the same markup to webkit01.dat. New test fails with --html5-parser.
+
+        * html5lib/resources/webkit01.dat:
+        * media/video-timeupdate-during-playback.html:
+
 2010-06-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
