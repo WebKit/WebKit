@@ -1,3 +1,20 @@
+2010-06-09  Anders Bakken  <agbakken@gmail.com>
+
+        Reviewed by David Levin.
+
+        [Qt] ChromeClientQt.cpp has coding-style errors
+        https://bugs.webkit.org/show_bug.cgi?id=40240
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::pageRect):
+        (WebCore::ChromeClientQt::createWindow):
+        (WebCore::ChromeClientQt::runJavaScriptAlert):
+        (WebCore::ChromeClientQt::runJavaScriptConfirm):
+        (WebCore::ChromeClientQt::runJavaScriptPrompt):
+        (WebCore::ChromeClientQt::print):
+        (WebCore::ChromeClientQt::attachRootGraphicsLayer):
+        (WebCore::ChromeClientQt::visibleRectForTiledBackingStore):
+
 2010-06-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r60889.
