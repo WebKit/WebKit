@@ -88,12 +88,14 @@ namespace WebCore {
 
         void getColor(float value, float* r, float* g, float* b, float* a) const;
 
+        bool isRadial() const { return m_radial; }
+        bool isZeroSize() const { return m_p0.x() == m_p1.x() && m_p0.y() == m_p1.y(); }
+
 #if OS(WINCE) && !PLATFORM(QT)
         const FloatPoint& p0() const { return m_p0; }
         const FloatPoint& p1() const { return m_p1; }
         float r0() const { return m_r0; }
         float r1() const { return m_r1; }
-        bool isRadial() const { return m_radial; }
         const Vector<ColorStop>& getStops() const;
 #else
         PlatformGradient platformGradient();

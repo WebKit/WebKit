@@ -1,3 +1,22 @@
+2010-06-09  Enrico Ros  <eros@codeaurora.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Fix drawing zero-sized gradients on Canvas.
+        https://bugs.webkit.org/show_bug.cgi?id=40340
+
+        HTML5 draft says that nothing must be painted if the gradient start
+        point equals the stop point.
+
+        This commit fixes the following canvas test:
+        http://philip.html5.org/tests/canvas/suite/tests/2d.gradient.interpolate.zerosize.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::fillRect): skip zero-sized linear gradients
+        * platform/graphics/Gradient.h:
+        (WebCore::Gradient::isRadial): made public
+        (WebCore::Gradient::isZeroSize): true if start == stop
+
 2010-06-09  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Adam Treat.

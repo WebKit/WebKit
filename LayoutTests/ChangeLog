@@ -1,3 +1,13 @@
+2010-06-09  Enrico Ros  <eros@codeaurora.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Fixed zero-sized gradients on canvas.
+        https://bugs.webkit.org/show_bug.cgi?id=40340
+
+        * platform/mac/Skipped: Unskip the test that is passing now.
+        * platform/qt/Skipped: Unskip the test that is passing now.
+
 2010-06-09  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
