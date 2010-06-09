@@ -54,7 +54,8 @@ bool GraphicsContext3D::extractImageData(Image* image,
                      image->height(),
                      flipY,
                      alphaOp);
-    *internalFormat = (hasAlphaChannel ? RGBA : RGB);
+    // For GLES2 tex functions, internalformat has to match format.
+    *internalFormat = *format;
     return true;
 }
 

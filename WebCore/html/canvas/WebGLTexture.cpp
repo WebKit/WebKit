@@ -45,6 +45,7 @@ WebGLTexture::WebGLTexture(WebGLRenderingContext* ctx)
     , m_magFilter(GraphicsContext3D::LINEAR)
     , m_wrapS(GraphicsContext3D::REPEAT)
     , m_wrapT(GraphicsContext3D::REPEAT)
+    , m_internalformat(0)
     , m_isNPOT(false)
     , m_needToUseBlackTexture(false)
 {

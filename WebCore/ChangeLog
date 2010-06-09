@@ -1,3 +1,38 @@
+2010-06-08  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Validate *tex* functions input parameters according to ES2 conformance
+        https://bugs.webkit.org/show_bug.cgi?id=38145
+
+        Test: fast/canvas/webgl/tex-input-validation.html
+
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::getColorBufferFormat): Get color buffer internalformat.
+        * html/canvas/WebGLFramebuffer.h: Ditto.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::WebGLRenderingContext): Deal with max tex units and max texture size.
+        (WebCore::WebGLRenderingContext::copyTexImage2D): Validate input parameters.
+        (WebCore::WebGLRenderingContext::copyTexSubImage2D): Ditto.
+        (WebCore::WebGLRenderingContext::texImage2DBase): Ditto.
+        (WebCore::WebGLRenderingContext::texParameterf): Ditto.
+        (WebCore::WebGLRenderingContext::texParameteri): Ditto.
+        (WebCore::WebGLRenderingContext::texSubImage2DBase): Ditto.
+        (WebCore::WebGLRenderingContext::handleNPOTTextures): Deal with max tex units.
+        (WebCore::WebGLRenderingContext::isTexInternalformatColorBufferCombinationValid): Check whether the texture format and framebuffer color buffer internalformat combination is valid.
+        (WebCore::WebGLRenderingContext::getTextureBinding): get the current bound texture for given target.
+        (WebCore::WebGLRenderingContext::validateTexFuncFormatAndType): Validate input format/type for *tex* functions.
+        (WebCore::WebGLRenderingContext::validateTexFuncParameters): Validate input parameters for *tex* functions.
+        (WebCore::WebGLRenderingContext::texParameter): Base function for texParameteri and texParameterf.
+        * html/canvas/WebGLRenderingContext.h: Deal with max tex units.
+        * html/canvas/WebGLTexture.cpp:
+        (WebCore::WebGLTexture::WebGLTexture): Cache internalformat.
+        * html/canvas/WebGLTexture.h: Ditto.
+        (WebCore::WebGLTexture::setInternalformat):
+        (WebCore::WebGLTexture::getInternalformat):
+        * platform/graphics/GraphicsContext3D.cpp: internalformat and format need to be the same.
+        (WebCore::GraphicsContext3D::extractImageData):
+
 2010-06-08  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Ojan Vafai.

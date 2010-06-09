@@ -87,6 +87,24 @@ void WebGLFramebuffer::onAttachedObjectChange(CanvasObject* object)
         initializeRenderbuffers();
 }
 
+unsigned long WebGLFramebuffer::getColorBufferFormat()
+{
+    if (object() && m_colorAttachment && m_colorAttachment->object()) {
+        if (m_colorAttachment->isRenderbuffer()) {
+            unsigned long format = (reinterpret_cast<WebGLRenderbuffer*>(m_colorAttachment))->getInternalformat();
+            switch (format) {
+            case GraphicsContext3D::RGBA4:
+            case GraphicsContext3D::RGB5_A1:
+                return GraphicsContext3D::RGBA;
+            case GraphicsContext3D::RGB565:
+                return GraphicsContext3D::RGB;
+            }
+        } else if (m_colorAttachment->isTexture())
+            return (reinterpret_cast<WebGLTexture*>(m_colorAttachment))->getInternalformat();
+    }
+    return 0;
+}
+
 void WebGLFramebuffer::_deleteObject(Platform3DObject object)
 {
     context()->graphicsContext3D()->deleteFramebuffer(object);

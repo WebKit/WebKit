@@ -52,6 +52,9 @@ namespace WebCore {
         void setParameterf(unsigned long pname, float param);
         void setSize(unsigned long target, unsigned width, unsigned height);
 
+        void setInternalformat(unsigned long internalformat) { m_internalformat = internalformat; }
+        unsigned long getInternalformat() const { return m_internalformat; }
+
         static bool isNPOT(unsigned, unsigned);
 
         bool isNPOT() const { return m_isNPOT; }
@@ -76,6 +79,8 @@ namespace WebCore {
         int m_magFilter;
         int m_wrapS;
         int m_wrapT;
+
+        unsigned long m_internalformat;
 
         unsigned m_width[6];
         unsigned m_height[6];

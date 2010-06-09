@@ -1,0 +1,59 @@
+Validate tex functions input parameters
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS gl = create3DContext() is non-null.
+PASS tex = gl.createTexture() is non-null.
+PASS gl.getError() is gl.NO_ERROR
+Checking TexImage2D: a set of inputs that are valid in GL but invalid in GLES2
+PASS gl.getError() is error
+PASS gl.getError() is error
+PASS gl.getError() is error
+PASS gl.getError() is error
+PASS gl.getError() is error
+PASS gl.getError() is error
+Checking TexSubImage2D: a set of inputs that are valid in GL but invalid in GLES2
+PASS gl.getError() is error
+PASS gl.getError() is error
+PASS gl.getError() is error
+Checking TexParameter: a set of inputs that are valid in GL but invalid in GLES2
+PASS gl.getError() is error
+PASS gl.getError() is error
+PASS gl.getError() is error
+PASS gl.getError() is error
+PASS gl.getError() is error
+PASS gl.getError() is error
+PASS gl.getError() is error
+PASS gl.getError() is error
+Checking GetTexParameter: a set of inputs that are valid in GL but invalid in GLES2
+PASS gl.getError() is error
+PASS gl.getError() is error
+PASS gl.getError() is error
+Checking CopyTexImage2D: a set of inputs that are valid in GL but invalid in GLES2
+PASS fbo = gl.createFramebuffer() is non-null.
+PASS colorBuffer = gl.createRenderbuffer() is non-null.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+PASS gl.getError() is error
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+PASS gl.getError() is error
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+PASS gl.getError() is error
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+PASS gl.getError() is error
+Checking CopyTexSubImage2D: a set of inputs that are valid in GL but invalid in GLES2
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is error
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+PASS gl.getError() is error
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

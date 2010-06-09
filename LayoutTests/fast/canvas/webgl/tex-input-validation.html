@@ -1,0 +1,265 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+
+var gl = null;
+var tex = null;
+var error = 0;
+
+function testTexImage2D(testCase)
+{
+    var level = 0;
+    var width = 16;
+    var height = 16;
+    gl.texImage2D(testCase.target, level, testCase.internalformat, width, height, testCase.border, testCase.format, testCase.type, null);
+    error = testCase.expectedError;
+    shouldBe("gl.getError()", "error");
+}
+
+function testTexSubImage2D(testCase)
+{
+    var level = 0;
+    var xoffset = 0;
+    var yoffset = 0;
+    var width = 16;
+    var height = 16;
+    var array = new WebGLUnsignedByteArray(width * height * 4);
+    gl.texSubImage2D(testCase.target, level, xoffset, yoffset, width, height, testCase.format, testCase.type, array);
+    error = testCase.expectedError;
+    shouldBe("gl.getError()", "error");
+}
+
+function testTexParameter(testCase)
+{
+    error = testCase.expectedError;
+    gl.texParameteri(testCase.target, testCase.pname, testCase.param);
+    shouldBe("gl.getError()", "error");
+    gl.texParameterf(testCase.target, testCase.pname, testCase.param);
+    shouldBe("gl.getError()", "error");
+}
+
+function testGetTexParameter(testCase)
+{
+    error = testCase.expectedError;
+    gl.getTexParameter(testCase.target, testCase.pname);
+    shouldBe("gl.getError()", "error");
+}
+
+function testCopyTexImage2D(testCase)
+{
+    var level = 0;
+    var x = 0;
+    var y = 0;
+    var width = 16;
+    var height = 16;
+
+    gl.renderbufferStorage(gl.RENDERBUFFER, testCase.colorBufferFormat, width, height);
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    shouldBe("gl.checkFramebufferStatus(gl.FRAMEBUFFER)", "gl.FRAMEBUFFER_COMPLETE");
+
+    gl.copyTexImage2D(testCase.target, level, testCase.internalformat, x, y, width, height, testCase.border);
+    error = testCase.expectedError;
+    shouldBe("gl.getError()", "error");
+}
+
+function testCopyTexSubImage2D(testCase)
+{
+    var level = 0;
+    var x = 0;
+    var y = 0;
+    var width = 16;
+    var height = 16;
+    var xoffset = 0;
+    var yoffset = 0;
+    var border = 0;
+
+    gl.renderbufferStorage(gl.RENDERBUFFER, testCase.colorBufferFormat, width, height);
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    shouldBe("gl.checkFramebufferStatus(gl.FRAMEBUFFER)", "gl.FRAMEBUFFER_COMPLETE");
+
+    if (testCase.initTex) {
+        gl.copyTexImage2D(testCase.target, level, testCase.internalformat, x, y, width, height, border);
+        shouldBe("gl.getError()", "gl.NO_ERROR");
+    }
+
+    gl.copyTexSubImage2D(testCase.target, level, xoffset, yoffset, x, y, width, height);
+    error = testCase.expectedError;
+    shouldBe("gl.getError()", "error");
+}
+
+description("Validate tex functions input parameters");
+
+shouldBeNonNull("gl = create3DContext()");
+shouldBeNonNull("tex = gl.createTexture()");
+gl.bindTexture(gl.TEXTURE_2D, tex);
+shouldBe("gl.getError()", "gl.NO_ERROR");
+
+debug("Checking TexImage2D: a set of inputs that are valid in GL but invalid in GLES2");
+
+var testCases =
+  [ {target: 0x8064, // GL_PROXY_TEXTURE_2D
+     internalformat: gl.RGBA,
+     border: 0,
+     format: gl.RGBA,
+     type: gl.UNSIGNED_BYTE,
+     expectedError: gl.INVALID_ENUM},
+    {target: gl.TEXTURE_2D,
+     internalformat: 0x1903, // GL_RED
+     border: 0,
+     format: 0x1903, // GL_RED
+     type: gl.UNSIGNED_BYTE,
+     expectedError: gl.INVALID_ENUM},
+    {target: gl.TEXTURE_2D,
+     internalformat: gl.RGBA,
+     border: 1,
+     format: gl.RGBA,
+     type: gl.UNSIGNED_BYTE,
+     expectedError: gl.INVALID_VALUE},
+    {target: gl.TEXTURE_2D,
+     internalformat: gl.RGBA,
+     border: 0,
+     format: gl.RGB,
+     type: gl.UNSIGNED_BYTE,
+     expectedError: gl.INVALID_OPERATION},
+    {target: gl.TEXTURE_2D,
+     internalformat: gl.RGBA,
+     border: 0,
+     format: gl.RGBA,
+     type: gl.BYTE,
+     expectedError: gl.INVALID_ENUM},
+    {target: gl.TEXTURE_2D,
+     internalformat: gl.RGBA,
+     border: 0,
+     format: gl.RGBA,
+     type: gl.UNSIGNED_BYTE,
+     expectedError: gl.NO_ERROR} ];
+
+for (var ii = 0; ii < testCases.length; ++ii)
+    testTexImage2D(testCases[ii]);
+
+debug("Checking TexSubImage2D: a set of inputs that are valid in GL but invalid in GLES2");
+
+testCases =
+  [ {target: gl.TEXTURE_2D,
+     format: 0x1903, // GL_RED
+     type: gl.UNSIGNED_BYTE,
+     expectedError: gl.INVALID_ENUM},
+    {target: gl.TEXTURE_2D,
+     format: gl.RGBA,
+     type: gl.BYTE,
+     expectedError: gl.INVALID_ENUM},
+    {target: gl.TEXTURE_2D,
+     format: gl.RGBA,
+     type: gl.UNSIGNED_BYTE,
+     expectedError: gl.NO_ERROR} ];
+
+for (var ii = 0; ii < testCases.length; ++ii)
+    testTexSubImage2D(testCases[ii]);
+
+debug("Checking TexParameter: a set of inputs that are valid in GL but invalid in GLES2");
+
+testCases =
+  [ {target: 0x0DE0, // GL_TEXTURE_1D
+     pname: gl.TEXTURE_WRAP_T,
+     param: gl.REPEAT,
+     expectedError: gl.INVALID_ENUM},
+    {target: gl.TEXTURE_2D,
+     pname: 0x813A, // GL_TEXTURE_MIN_LOD
+     param: 0,
+     expectedError: gl.INVALID_ENUM},
+    {target: gl.TEXTURE_2D,
+     pname: gl.TEXTURE_WRAP_T,
+     param: 0x2900, // GL_CLAMP
+     expectedError: gl.INVALID_ENUM},
+    {target: gl.TEXTURE_2D,
+     pname: gl.TEXTURE_WRAP_T,
+     param: gl.REPEAT,
+     expectedError: gl.NO_ERROR} ];
+
+for (var ii = 0; ii < testCases.length; ++ii)
+    testTexParameter(testCases[ii]);
+
+debug("Checking GetTexParameter: a set of inputs that are valid in GL but invalid in GLES2");
+
+testCases =
+  [ {target: 0x0DE0, // GL_TEXTURE_1D
+     pname: gl.TEXTURE_WRAP_T,
+     expectedError: gl.INVALID_ENUM},
+    {target: gl.TEXTURE_2D,
+     pname: 0x813A, // GL_TEXTURE_MIN_LOD
+     expectedError: gl.INVALID_ENUM},
+    {target: gl.TEXTURE_2D,
+     pname: gl.TEXTURE_WRAP_T,
+     expectedError: gl.NO_ERROR} ];
+
+for (var ii = 0; ii < testCases.length; ++ii)
+    testGetTexParameter(testCases[ii]);
+
+debug("Checking CopyTexImage2D: a set of inputs that are valid in GL but invalid in GLES2");
+
+var colorBuffer = null;
+var fbo = null;
+
+shouldBeNonNull("fbo = gl.createFramebuffer()");
+gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+shouldBeNonNull("colorBuffer = gl.createRenderbuffer()");
+gl.bindRenderbuffer(gl.RENDERBUFFER, colorBuffer);
+gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, colorBuffer);
+shouldBe("gl.getError()", "gl.NO_ERROR");
+
+testCases =
+  [ {target: gl.TEXTURE_2D,
+     colorBufferFormat: gl.RGB565,
+     internalformat: 0x8054, // GL_RGB16
+     border: 0,
+     expectedError: gl.INVALID_ENUM},
+    {target: gl.TEXTURE_2D,
+     colorBufferFormat: gl.RGB565,
+     internalformat: gl.RGBA,
+     border: 1,
+     expectedError: gl.INVALID_VALUE},
+    {target: gl.TEXTURE_2D,
+     colorBufferFormat: gl.RGB565,
+     internalformat: gl.RGBA,
+     border: 0,
+     expectedError: gl.INVALID_OPERATION},
+    {target: gl.TEXTURE_2D,
+     colorBufferFormat: gl.RGB565,
+     internalformat: gl.RGB,
+     border: 0,
+     expectedError: gl.NO_ERROR} ];
+
+for (var ii = 0; ii < testCases.length; ++ii)
+    testCopyTexImage2D(testCases[ii]);
+
+debug("Checking CopyTexSubImage2D: a set of inputs that are valid in GL but invalid in GLES2");
+
+testCases =
+  [ {target: gl.TEXTURE_2D,
+     colorBufferFormat: gl.RGB5_A1,
+     internalformat: gl.RGBA,
+     initTex: true,
+     expectedError: gl.NO_ERROR},
+    {target: gl.TEXTURE_2D,
+     colorBufferFormat: gl.RGB565,
+     internalformat: gl.RGBA,
+     initTex: false,
+     expectedError: gl.INVALID_OPERATION} ];
+
+for (var ii = 0; ii < testCases.length; ++ii)
+    testCopyTexSubImage2D(testCases[ii]);
+
+successfullyParsed = true;
+</script>
+
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

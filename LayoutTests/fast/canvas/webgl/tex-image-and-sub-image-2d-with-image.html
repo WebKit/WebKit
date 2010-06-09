@@ -117,7 +117,7 @@ function runOneIteration(image, useTexSubImage2D, flipY, topColor, bottomColor)
     // Upload the image into the texture
     if (useTexSubImage2D) {
         // Initialize the texture to black first
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, image.width, image.height, 0,
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, image.width, image.height, 0,
                       gl.RGBA, gl.UNSIGNED_BYTE, null);
         gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, image, flipY, false);
     } else {
@@ -128,7 +128,6 @@ function runOneIteration(image, useTexSubImage2D, flipY, topColor, bottomColor)
     gl.uniform1i(textureLoc, 0);
     // Draw the triangles
     gl.drawArrays(gl.TRIANGLES, 0, 6);
-
     // Read back the rendering results
     var width = 32;
     var height = 32;

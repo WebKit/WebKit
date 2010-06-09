@@ -353,11 +353,14 @@ class WebKitCSSMatrix;
             RefPtr<WebGLTexture> m_texture2DBinding;
             RefPtr<WebGLTexture> m_textureCubeMapBinding;
         };
-        TextureUnitState m_textureUnits[32];
+        Vector<TextureUnitState> m_textureUnits;
         unsigned long m_activeTextureUnit;
 
         RefPtr<WebGLTexture> m_blackTexture2D;
         RefPtr<WebGLTexture> m_blackTextureCubeMap;
+
+        long m_maxTextureSize;
+        long m_maxCubeMapTextureSize;
 
         int m_packAlignment;
         int m_unpackAlignment;
@@ -388,6 +391,29 @@ class WebKitCSSMatrix;
         void handleNPOTTextures(bool prepareToDraw);
 
         void createFallbackBlackTextures1x1();
+
+        // Helper function for copyTex{Sub}Image, check whether the internalformat
+        // and the color buffer format of the current bound framebuffer combination
+        // is valid.
+        bool isTexInternalformatColorBufferCombinationValid(unsigned long texInternalformat,
+                                                            unsigned long colorBufferFormat);
+
+        // Helper function to get the current bound texture.
+        WebGLTexture* getTextureBinding(unsigned long target);
+
+        // Helper function to check input format/type for functions {copy}Tex{Sub}Image.
+        // Generate GL error and return false if parameters are invalid.
+        bool validateTexFuncFormatAndType(unsigned long format, unsigned long type);
+
+        // Helper function to check input parameters for functions {copy}Tex{Sub}Image.
+        // Generate GL error and return false if parameters are invalid.
+        bool validateTexFuncParameters(unsigned long target, long level,
+                                       unsigned long internalformat,
+                                       long width, long height, long border,
+                                       unsigned long format, unsigned long type);
+
+        // Helper function for texParameterf and texParameteri.
+        void texParameter(unsigned long target, unsigned long pname, float parami, int paramf, bool isFloat);
 
         friend class WebGLStateRestorer;
     };

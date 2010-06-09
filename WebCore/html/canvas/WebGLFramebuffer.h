@@ -57,6 +57,8 @@ namespace WebCore {
         // clear un-initialized renderbuffers.
         void onAttachedObjectChange(CanvasObject*);
 
+        unsigned long getColorBufferFormat();
+
     protected:
         WebGLFramebuffer(WebGLRenderingContext*);
         
