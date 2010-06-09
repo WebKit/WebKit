@@ -1,3 +1,20 @@
+2010-06-09  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix fast/parser/hex-entities-length.html for HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=40385
+
+        Stripping surrogate pair values appears to be a problem with the spec
+        in "Preprocessing the input stream." Minefield doesn't appear to
+        implement the part in question. So this patch removes that guard and
+        adds a FIXME to track the issue.
+
+        No new tests because covered by fast/parser/hex-entities-length.html
+
+        * html/HTML5Lexer.h:
+        (WebCore::HTML5Lexer::InputStreamPreprocessor::peek):
+
 2010-06-09  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
