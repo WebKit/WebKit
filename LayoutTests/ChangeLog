@@ -2,6 +2,23 @@
 
         Reviewed by Eric Seidel.
 
+        Fix typo in fast/lists/ordered-list-with-no-ol-tag.html
+        https://bugs.webkit.org/show_bug.cgi?id=40391
+
+        This test contains an untermianted end tag, which parses differently in
+        the HTML5 parser than in the legacy parser.  Having read the bug that
+        caused this test to be added, making the text valid HTML seems to
+        respect the intent of the test (which is about numbering).
+
+        As discussed in other patches, we have the parsing behavior covered in
+        parsing tests.
+
+        * fast/lists/ordered-list-with-no-ol-tag.html:
+
+2010-06-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Make invalid comment in fast/css/word-space-extra.html really invalid
         https://bugs.webkit.org/show_bug.cgi?id=40388
 
