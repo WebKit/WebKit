@@ -1438,7 +1438,8 @@ sub configureAndOpenHTTPDIfNeeded()
 
 sub checkPythonVersion()
 {
-    system "WebKitTools/Scripts/ensure-valid-python", "--check-only";
+    # we have not chdir to sourceDir yet.
+    system sourceDir() . "/WebKitTools/Scripts/ensure-valid-python", "--check-only";
     return exitStatus($?) == 0;
 }
 

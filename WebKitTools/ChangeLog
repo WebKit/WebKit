@@ -1,3 +1,13 @@
+2010-06-08  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        old-run-webkit-tests should use ensure-valid-python to check if it can run the websockets tests
+        https://bugs.webkit.org/show_bug.cgi?id=39058
+
+        * Scripts/old-run-webkit-tests:
+         use sourceDir() to find ensure-valid-python in checkPythonVersion()
+
 2010-06-08  Andras Becsi  <abecsi@webkit.org>
 
         Unreviewed buildfix after r60479.
