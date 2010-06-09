@@ -53,7 +53,8 @@ gl.useProgram(gl.program);
 gl.drawArrays(gl.TRIANGLES, 0, 6);
 
 // Ensure that the frame buffer is red at the sampled pixel
-var buf = gl.readPixels(2, 2, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE);
+var buf = new Uint8Array(1 * 1 * 4);
+gl.readPixels(2, 2, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, buf);
 var passed = true;
 if (buf[0] != 255 ||
     buf[1] != 0 ||
@@ -75,7 +76,8 @@ if (passed) {
   // This time, because we did not change the viewport, it should
   // still be (0, 0, 4, 4), so only the lower-left quadrant should
   // have been filled.
-  var buf = gl.readPixels(6, 6, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE);
+  var buf = new Uint8Array(1 * 1 * 4);
+  gl.readPixels(6, 6, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, buf);
   var passed = true;
   if (buf[0] != 0 ||
       buf[1] != 0 ||

@@ -106,7 +106,8 @@
 
             // Test several locations
             // Each line should be all red 
-            var buf = gl.readPixels(0, 0, 64, 64, gl.RGBA, gl.UNSIGNED_BYTE);
+            var buf = new Uint8Array(64 * 64 * 4);
+            gl.readPixels(0, 0, 64, 64, gl.RGBA, gl.UNSIGNED_BYTE, buf);
             
             var offset15 = 3840; // (15*64) * 4
             var offset40 = 10240; // (40*64) * 4

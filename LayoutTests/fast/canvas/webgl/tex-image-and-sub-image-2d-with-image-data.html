@@ -133,7 +133,8 @@ function runOneIteration(useTexSubImage2D, flipY, premultiplyAlpha, topColor, bo
     gl.drawArrays(gl.TRIANGLES, 0, 6);
 
     // Read back the rendering results
-    buf = gl.readPixels(0, 0, 1, 2, gl.RGBA, gl.UNSIGNED_BYTE);
+    buf = new Uint8Array(1 * 2 * 4);
+    gl.readPixels(0, 0, 1, 2, gl.RGBA, gl.UNSIGNED_BYTE, buf);
     // Check the top pixel and bottom pixel and make sure they have
     // the right color.
     debug("Checking bottom pixel");

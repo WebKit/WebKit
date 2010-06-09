@@ -35,7 +35,6 @@ var successfullyParsed = false;
 // The below declarations need to be global for "shouldBe" to see them
 var gl = null;
 var array = null;
-var expectedSize = 0;
 var pixel = [ 0, 0, 0, 0 ];
 var expectedColor = [ 0, 0, 0, 0 ];
 var pixelFormat = 0;
@@ -159,11 +158,9 @@ function runTestIteration(format, type, packAlignment, width, height)
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.pixelStorei(gl.PACK_ALIGNMENT, packAlignment);
     shouldBe("gl.getError()", "gl.NO_ERROR");
-    array = gl.readPixels(0, 0, width, height, format, type);
-    shouldBe("gl.getError()", "gl.NO_ERROR");
     var bytesPerPixel = calculatePixelBytes(format, type);
     var padding = calculatePaddingBytes(bytesPerPixel, packAlignment, width);
-    expectedSize = bytesPerPixel * width * height + padding * (height - 1);
+    var size = bytesPerPixel * width * height + padding * (height - 1);
     var isShort = false;
     switch (type) {
     case gl.UNSIGNED_SHORT_5_6_5:
@@ -172,8 +169,13 @@ function runTestIteration(format, type, packAlignment, width, height)
         isShort = true;
     }
     if (isShort)
-        expectedSize /= 2;
-    shouldBe("array.length", "expectedSize");
+        size /= 2;
+    if (type == gl.UNSIGNED_BYTE)
+        array = new Uint8Array(size);
+    else
+        array = new Uint16Array(size);
+    gl.readPixels(0, 0, width, height, format, type, array);
+    shouldBe("gl.getError()", "gl.NO_ERROR");
     // Check the last pixel of the last row.
     var bytesPerRow = width * bytesPerPixel + padding;
     var pos = bytesPerRow * (height - 1) + (width - 1) * bytesPerPixel;

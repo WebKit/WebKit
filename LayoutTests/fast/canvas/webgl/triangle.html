@@ -49,7 +49,8 @@
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
             gl.drawArrays(gl.TRIANGLES, 0, 3);
             
-            var buf = gl.readPixels(0, 0, 50, 50, gl.RGBA, gl.UNSIGNED_BYTE);
+            var buf = new Uint8Array(50 * 50 * 4);
+            gl.readPixels(0, 0, 50, 50, gl.RGBA, gl.UNSIGNED_BYTE, buf);
             
             // Test several locations
             // First line should be all black

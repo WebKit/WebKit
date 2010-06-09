@@ -127,7 +127,8 @@
               gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
               gl.drawArrays(gl.TRIANGLES, 0, 6);
               gl.flush();
-              var buf = gl.readPixels(0, 0, 4, 4, gl.RGBA, gl.UNSIGNED_BYTE);
+              var buf = new Uint8Array(4 * 4 * 4);
+              gl.readPixels(0, 0, 4, 4, gl.RGBA, gl.UNSIGNED_BYTE, buf);
               for (var i = 0; i < 4 * 4; ++i) {
                 var offset = i * 4;
                 if (buf[offset + 0] != r ||

@@ -130,7 +130,9 @@ function drawAndReadPixel(gl, vertices, colors, x, y)
 
     gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 3);
 
-    return gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE);
+    var buf = new Uint8Array(1 * 1 * 4);
+    gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+    return buf;
 }
 
 function testAlpha(alpha)
@@ -147,7 +149,8 @@ function testAlpha(alpha)
     shouldBe("contextAttribs.antialias", "false");
     shouldBe("contextAttribs.premultipliedAlpha", "true");
 
-    var buf = webGL.readPixels(0, 0, 1, 1, webGL.RGBA, webGL.UNSIGNED_BYTE);
+    var buf = new Uint8Array(1 * 1 * 4);
+    webGL.readPixels(0, 0, 1, 1, webGL.RGBA, webGL.UNSIGNED_BYTE, buf);
     pixel[0] = buf[0];
     pixel[1] = buf[1];
     pixel[2] = buf[2];

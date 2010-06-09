@@ -112,7 +112,8 @@ function runTest()
     // Read back the rendering results
     var width = 32;
     var height = 32;
-    buf = gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE);
+    buf = new Uint8Array(width * height * 4);
+    gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, buf);
     // Spot check a couple of 2x2 regions in the upper and lower left
     // corners; they should be the background color rather than
     // garbage

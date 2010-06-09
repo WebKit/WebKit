@@ -97,7 +97,8 @@ gl.uniform1i(textureLoc, 0);
 gl.drawArrays(gl.TRIANGLES, 0, 6);
 
 // Read back the frame buffer
-var buf = gl.readPixels(0, 0, textureWidth, textureHeight, gl.RGBA, gl.UNSIGNED_BYTE);
+var buf = new Uint8Array(textureWidth * textureHeight * 4);
+gl.readPixels(0, 0, textureWidth, textureHeight, gl.RGBA, gl.UNSIGNED_BYTE, buf);
 
 // Verify the frame buffer's contents
 var passed = true;

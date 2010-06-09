@@ -11,194 +11,162 @@ Testing format = RGBA and type = UNSIGNED_BYTE
 Testing PACK_ALIGNMENT = 1, width = 1, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 2, width = 1, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 4, width = 1, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 1, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 4, width = 2, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 2, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 4, width = 3, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 3, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 4, width = 4, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 4, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 5, height = 1
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 4, width = 5, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 5, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 6, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 7, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 8, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing the other supported format/type combination
 Testing PACK_ALIGNMENT = 1, width = 1, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,0 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 2, width = 1, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,0 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 4, width = 1, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,0 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 1, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,0 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 4, width = 2, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,0 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 2, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,0 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 4, width = 3, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,0 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 3, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,0 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 4, width = 4, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,0 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 4, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,0 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 5, height = 1
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,0 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 4, width = 5, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,0 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 5, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,0 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 6, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,0 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 7, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,0 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 8, height = 2
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
-PASS array.length is expectedSize
 PASS 255,102,0,0 is non-null.
 PASS pixel is expectedColor
 PASS successfullyParsed is true

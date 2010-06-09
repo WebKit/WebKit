@@ -595,7 +595,7 @@ module html {
         void         pixelStorei(in unsigned long pname, in long param);
         void         polygonOffset(in double factor, in double units);
 
-        ArrayBufferView readPixels(in long x, in long y, in unsigned long width, in unsigned long height, in unsigned long format, in unsigned long type);
+        void         readPixels(in long x, in long y, in unsigned long width, in unsigned long height, in unsigned long format, in unsigned long type, in ArrayBufferView pixels);
         
         void         releaseShaderCompiler();
         void         renderbufferStorage(in unsigned long target, in unsigned long internalformat, in unsigned long width, in unsigned long height);

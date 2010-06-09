@@ -1,3 +1,17 @@
+2010-06-09  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Update readPixels to take ArrayBufferView rather than returning it
+        https://bugs.webkit.org/show_bug.cgi?id=40322
+
+        No new tests; covered by existing tests, which have been modified.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::readPixels):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContext.idl:
+
 2010-06-09  Enrico Ros  <eros@codeaurora.org>
 
         Reviewed by Ariya Hidayat.

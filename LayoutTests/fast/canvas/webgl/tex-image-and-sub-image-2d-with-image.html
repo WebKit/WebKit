@@ -131,7 +131,8 @@ function runOneIteration(image, useTexSubImage2D, flipY, topColor, bottomColor)
     // Read back the rendering results
     var width = 32;
     var height = 32;
-    buf = gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE);
+    buf = new Uint8Array(width * height * 4);
+    gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, buf);
     // Check a few pixels near the top and bottom and make sure they have
     // the right color.
     var queryWidth = 2;

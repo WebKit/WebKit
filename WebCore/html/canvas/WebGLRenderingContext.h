@@ -182,7 +182,7 @@ class WebKitCSSMatrix;
         void pixelStorei(unsigned long pname, long param);
         void polygonOffset(double factor, double units);
         
-        PassRefPtr<ArrayBufferView> readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type);
+        void readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type, ArrayBufferView* pixels);
         
         void releaseShaderCompiler();
         void renderbufferStorage(unsigned long target, unsigned long internalformat, unsigned long width, unsigned long height);

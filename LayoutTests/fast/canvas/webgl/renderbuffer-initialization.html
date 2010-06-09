@@ -15,7 +15,8 @@ function runTest()
     }
 
     debug('Test whether the WebGL internal buffers have been initialized to 0.');
-    var buf = gl.readPixels(0, 0, 500, 500, gl.RGBA, gl.UNSIGNED_BYTE);
+    var buf = new Uint8Array(500 * 500 * 4);
+    gl.readPixels(0, 0, 500, 500, gl.RGBA, gl.UNSIGNED_BYTE, buf);
     if (gl.getError() != gl.NO_ERROR) {
         testFailed('GL error detected after readPixels().');
         return false;
@@ -44,7 +45,7 @@ function runTest()
         testFailed('Framebuffer incomplete.');
         return false;
     }
-    buf = gl.readPixels(0, 0, 500, 500, gl.RGBA, gl.UNSIGNED_BYTE);
+    gl.readPixels(0, 0, 500, 500, gl.RGBA, gl.UNSIGNED_BYTE, buf);
     if (gl.getError() != gl.NO_ERROR) {
         testFailed('GL error detected after readPixels().');
         return false;

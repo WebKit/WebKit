@@ -116,7 +116,8 @@ function runTestIteration(antialias)
     gl.drawArrays(gl.TRIANGLES, 0, 6);
 
     // Read back the rendering results, should be red
-    var buf = gl.readPixels(0, 0, 2, 2, gl.RGBA, gl.UNSIGNED_BYTE);
+    var buf = new Uint8Array(2 * 2 * 4);
+    gl.readPixels(0, 0, 2, 2, gl.RGBA, gl.UNSIGNED_BYTE, buf);
     var idx = 0;
     correctColor = [255, 0, 0];
     for (var y = 0; y < 2; y++) {
@@ -147,7 +148,7 @@ function runTestIteration(antialias)
     gl.drawArrays(gl.TRIANGLES, 0, 6);
 
     // Read back the rendering results, should be green
-    buf = gl.readPixels(0, 0, 2, 2, gl.RGBA, gl.UNSIGNED_BYTE);
+    gl.readPixels(0, 0, 2, 2, gl.RGBA, gl.UNSIGNED_BYTE, buf);
     correctColor = [0, 255, 0];
     for (var y = 0; y < 2; y++) {
         for (var x = 0; x < 2; x++) {
