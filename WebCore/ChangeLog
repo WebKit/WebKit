@@ -1,3 +1,15 @@
+2010-06-09  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        [BREWMP] Add EventLoop
+        https://bugs.webkit.org/show_bug.cgi?id=39401
+
+        BREW MP does not have an explicit event loop. Add dummy EventLoop::cycle.
+
+        * platform/brew/EventLoopBrew.cpp: Added.
+        (WebCore::EventLoop::cycle):
+
 2010-06-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r60889.
