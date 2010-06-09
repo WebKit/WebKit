@@ -34,6 +34,7 @@
 #include "HTMLDocument.h"
 #include "Node.h"
 #include "NotImplemented.h"
+#include "XSSAuditor.h"
 
 namespace WebCore {
 
@@ -204,6 +205,15 @@ void HTML5Tokenizer::watchForLoad(CachedResource* cachedScript)
 void HTML5Tokenizer::stopWatchingForLoad(CachedResource* cachedScript)
 {
     cachedScript->removeClient(this);
+}
+
+bool HTML5Tokenizer::shouldLoadExternalScriptFromSrc(const AtomicString& srcValue)
+{
+    if (!m_XSSAuditor)
+        return true;
+    // FIXME: We have no easy way to provide the XSSAuditor with the original
+    // un-processed attribute source, so for now we pass nullAtom.
+    return m_XSSAuditor->canLoadExternalScriptFromSrc(nullAtom, srcValue);
 }
 
 void HTML5Tokenizer::executeScript(const ScriptSourceCode& sourceCode)

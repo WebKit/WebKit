@@ -207,6 +207,10 @@ void HTML5ScriptRunner::requestScript(Element* script)
 {
     ASSERT(!m_parsingBlockingScript.element);
     AtomicString srcValue = script->getAttribute(srcAttr);
+    // Allow the host to disllow script loads (using the XSSAuditor, etc.)
+    if (!m_host->shouldLoadExternalScriptFromSrc(srcValue))
+        return;
+
     // FIXME: We need to resolve the url relative to the element.
     m_parsingBlockingScript.element = script;
     if (!script->dispatchBeforeLoadEvent(srcValue)) // Part of HTML5?

@@ -63,6 +63,7 @@ public:
     // HTML5ScriptRunnerHost
     virtual void watchForLoad(CachedResource*);
     virtual void stopWatchingForLoad(CachedResource*);
+    virtual bool shouldLoadExternalScriptFromSrc(const AtomicString&);
     virtual void executeScript(const ScriptSourceCode&);
 
     // CachedResourceClient

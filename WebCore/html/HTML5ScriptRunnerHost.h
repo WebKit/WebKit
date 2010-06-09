@@ -28,6 +28,7 @@
 
 namespace WebCore {
 
+class AtomicString;
 class CachedResource;
 class ScriptSourceCode;
 
@@ -40,6 +41,8 @@ public:
     // Implementors must call cachedResource->removeClient() immediately.
     virtual void stopWatchingForLoad(CachedResource*) = 0;
 
+    // Implementors can block certain script loads (for XSSAuditor, etc.)
+    virtual bool shouldLoadExternalScriptFromSrc(const AtomicString&) = 0;
     // Implementors should handle possible rentry before/after calling ScriptController::executeScript
     virtual void executeScript(const ScriptSourceCode&) = 0;
 };

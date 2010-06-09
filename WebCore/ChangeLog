@@ -1,3 +1,30 @@
+2010-06-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTML5 Parser needs to integrate with the XSSAuditor
+        https://bugs.webkit.org/show_bug.cgi?id=40287
+
+        This fixes most of the XSSAuditor tests, except for the ones
+        which rely on the srcValue "context".  The previous HTMLTokenizer
+        implementation was both Lexer and ScriptRunner and thus could
+        provide the XSSAuditor with the un-modified attribute source.
+        This naive implementation will fail the context-sensitive tests
+        but Adam Barth says he'll just have to find a new way to provide
+        the required information to the XSSAuditor in a later patch.
+
+        Covered by numerous http/tests/security/xssAuditor tests.
+
+        * html/HTML5ScriptRunner.cpp:
+        (WebCore::HTML5ScriptRunner::requestScript):
+         - Ask the HTML5ScriptRunner host before running any scripts.
+        * html/HTML5ScriptRunnerHost.h:
+         - Add a shouldLoadExternalScriptFromSrc declaration.
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::shouldLoadExternalScriptFromSrc):
+         - Ask the XSSAuditor if we're allowed to run the passed script.
+        * html/HTML5Tokenizer.h:
+
 2010-06-09  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.
