@@ -208,6 +208,7 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
 #elif ENABLE(JIT_OPTIMIZE_NATIVE_CALL)
 #error "JIT_OPTIMIZE_NATIVE_CALL not yet supported on this platform."
 #else
+    UNUSED_PARAM(executableOffsetToFunction);
     breakpoint();
 #endif // CPU(X86)
 
