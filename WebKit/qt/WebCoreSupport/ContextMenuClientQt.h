@@ -31,23 +31,22 @@
 #include <RefCounted.h>
 
 namespace WebCore {
-    class ContextMenu;
+class ContextMenu;
 
-    class ContextMenuClientQt : public ContextMenuClient
-    {
-    public:
-        virtual void contextMenuDestroyed();
+class ContextMenuClientQt : public ContextMenuClient {
+public:
+    virtual void contextMenuDestroyed();
 
-        virtual PlatformMenuDescription getCustomMenuFromDefaultItems(ContextMenu*);
-        virtual void contextMenuItemSelected(ContextMenuItem*, const ContextMenu*);
+    virtual PlatformMenuDescription getCustomMenuFromDefaultItems(ContextMenu*);
+    virtual void contextMenuItemSelected(ContextMenuItem*, const ContextMenu*);
 
-        virtual void downloadURL(const KURL& url);
-        virtual void lookUpInDictionary(Frame*);
-        virtual void speak(const String&);
-        virtual bool isSpeaking();
-        virtual void stopSpeaking();
-        virtual void searchWithGoogle(const Frame*);
-    };
+    virtual void downloadURL(const KURL& url);
+    virtual void lookUpInDictionary(Frame*);
+    virtual void speak(const String&);
+    virtual bool isSpeaking();
+    virtual void stopSpeaking();
+    virtual void searchWithGoogle(const Frame*);
+};
 }
 
 #endif
