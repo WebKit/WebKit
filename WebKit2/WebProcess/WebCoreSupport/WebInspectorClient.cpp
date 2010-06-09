@@ -109,6 +109,13 @@ void WebInspectorClient::storeSetting(const String&, const String&)
     notImplemented();
 }
 
+bool WebInspectorClient::sendMessageToFrontend(const String&)
+{
+    notImplemented();
+    return false;
+}
+
+
 void WebInspectorClient::inspectorWindowObjectCleared()
 {
     notImplemented();

@@ -66,6 +66,8 @@ private:
     virtual void populateSetting(const WebCore::String& key, WebCore::String* value);
     virtual void storeSetting(const WebCore::String& key, const WebCore::String& value);
 
+    virtual bool sendMessageToFrontend(const String&);
+
     virtual void inspectorWindowObjectCleared();
     
     WebPage* m_page;
