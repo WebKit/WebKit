@@ -647,6 +647,7 @@ contains(DEFINES, ENABLE_SVG=1) {
     # GENERATOR 5-C:
     svgnames.output = $${WC_GENERATED_SOURCES_DIR}/SVGNames.cpp
     svgnames.input = SVG_NAMES
+    svgnames.depends = $$PWD/svg/svgattrs.in
     svgnames.wkScript = $$PWD/dom/make_names.pl
     svgnames.commands = perl -I$$PWD/bindings/scripts $$svgnames.wkScript --tags $$PWD/svg/svgtags.in --attrs $$PWD/svg/svgattrs.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\" --factory --wrapperFactory --outputDir $$WC_GENERATED_SOURCES_DIR
     svgnames.wkExtraSources = $${WC_GENERATED_SOURCES_DIR}/SVGElementFactory.cpp $${WC_GENERATED_SOURCES_DIR}/JSSVGElementWrapperFactory.cpp

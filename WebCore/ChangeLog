@@ -1,3 +1,12 @@
+2010-06-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Dirk Schulze.
+
+        [Qt] Imperfect dependency for generated SVGNames.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=40359
+
+        * WebCore.pri: Missing dependency added.
+
 2010-06-08  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
