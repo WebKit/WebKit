@@ -207,6 +207,8 @@ bool RenderSVGResourceGradient::applyResource(RenderObject* object, RenderStyle*
         context->setFillGradient(gradientData->gradient);
         context->setFillRule(svgStyle->fillRule());
     } else if (resourceMode & ApplyToStrokeMode) {
+        if (svgStyle->vectorEffect() == VE_NON_SCALING_STROKE)
+            gradientData->gradient->setGradientSpaceTransform(transformOnNonScalingStroke(object, gradientData->userspaceTransform));
         context->setAlpha(svgStyle->strokeOpacity());
         context->setStrokeGradient(gradientData->gradient);
         applyStrokeStyleToContext(context, style, object);

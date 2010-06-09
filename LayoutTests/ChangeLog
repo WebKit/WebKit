@@ -1,3 +1,25 @@
+2010-06-08  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Implement non-scaling-stroke (from SVG Tiny 1.2, also in Opera)
+        https://bugs.webkit.org/show_bug.cgi?id=31438
+        
+        Test for SVG property vector-effect. The stroke-width should not get influenced by
+        any transformation on the object or its parrent.
+        Some ports needed platform specific test results for getComputedStyle.
+
+        * platform/gtk/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac/svg/custom/non-scaling-stroke-expected.checksum: Added.
+        * platform/mac/svg/custom/non-scaling-stroke-expected.png: Added.
+        * platform/mac/svg/custom/non-scaling-stroke-expected.txt: Added.
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+        * svg/custom/non-scaling-stroke.svg: Added.
+
 2010-05-18  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Shinichiro Hamaji.

@@ -45,6 +45,7 @@ glyph-orientation-horizontal
 glyph-orientation-vertical
 kerning
 text-anchor
+vector-effect
 writing-mode
 
 -webkit-svg-shadow

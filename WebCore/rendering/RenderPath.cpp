@@ -5,6 +5,7 @@
                   2009 Google, Inc.
                   2009 Dirk Schulze <krit@webkit.org>
     Copyright (C) Research In Motion Limited 2010. All rights reserved.
+                  2009 Jeff Schiller <codedread@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -131,16 +132,28 @@ void RenderPath::layout()
 static inline void fillAndStrokePath(const Path& path, GraphicsContext* context, RenderPath* object)
 {
     context->beginPath();
+    RenderStyle* style = object->style();
 
-    if (RenderSVGResource* fillPaintingResource = RenderSVGResource::fillPaintingResource(object, object->style())) {
+    if (RenderSVGResource* fillPaintingResource = RenderSVGResource::fillPaintingResource(object, style)) {
         context->addPath(path);
-        if (fillPaintingResource->applyResource(object, object->style(), context, ApplyToFillMode))
+        if (fillPaintingResource->applyResource(object, style, context, ApplyToFillMode))
             fillPaintingResource->postApplyResource(object, context, ApplyToFillMode);
     }
 
-    if (RenderSVGResource* strokePaintingResource = RenderSVGResource::strokePaintingResource(object, object->style())) {
-        context->addPath(path);
-        if (strokePaintingResource->applyResource(object, object->style(), context, ApplyToStrokeMode))
+    if (RenderSVGResource* strokePaintingResource = RenderSVGResource::strokePaintingResource(object, style)) {
+        if (style->svgStyle()->vectorEffect() == VE_NON_SCALING_STROKE) {
+            SVGStyledTransformableElement* element = static_cast<SVGStyledTransformableElement*>(object->node());
+            AffineTransform transform = element->getScreenCTM();
+            if (!transform.isInvertible())
+                return;
+
+            Path transformedPath = path;
+            context->concatCTM(transform.inverse());
+            transformedPath.transform(transform);
+            context->addPath(transformedPath);
+        } else
+            context->addPath(path);
+        if (strokePaintingResource->applyResource(object, style, context, ApplyToStrokeMode))
             strokePaintingResource->postApplyResource(object, context, ApplyToStrokeMode);
     }
 }

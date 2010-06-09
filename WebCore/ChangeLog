@@ -1,3 +1,51 @@
+2010-06-08  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Implement non-scaling-stroke (from SVG Tiny 1.2, also in Opera)
+        https://bugs.webkit.org/show_bug.cgi?id=31438
+        
+        This is the implementation of the SVG property vector-effect according
+        to the specification of SVG Tiny 1.2.
+        getScreenCTM() was not able to calculate the transformation matrix in
+        comparison to the host coordinate system for objects, that get refereced
+        by a use element. This is fixed and covered by the the new test as well.
+        This patch is based upon a patch of Jeff Schiller.
+
+        Test: svg/custom/non-scaling-stroke.svg
+
+        * css/CSSComputedStyleDeclaration.cpp: Added CSSPropertyVectorEffect.
+        (WebCore::):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EVectorEffect):
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getSVGPropertyCSSValue):
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        * css/SVGCSSPropertyNames.in:
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * css/SVGCSSValueKeywords.in: Add vector-effect value non-scaling-stroke.
+        * rendering/RenderPath.cpp: Revert transformations to ctm and transform path instead.
+        (WebCore::fillAndStrokePath):
+        * rendering/RenderSVGResourceContainer.h:
+        (WebCore::RenderSVGResourceContainer::transformOnNonScalingStroke):
+        * rendering/RenderSVGResourceGradient.cpp: Transform the gradient with the screenCTM.
+        (WebCore::RenderSVGResourceGradient::applyResource):
+        * rendering/RenderSVGResourcePattern.cpp: Transform the pattern with the screenCTM.
+        (WebCore::RenderSVGResourcePattern::applyResource):
+        * rendering/style/SVGRenderStyle.h: Added vector-effect property, not interited.
+        (WebCore::SVGRenderStyle::NonInheritedFlags::):
+        (WebCore::SVGRenderStyle::setBitDefaults):
+        * rendering/style/SVGRenderStyleDefs.h: Added enums for vector-effect.
+        (WebCore::):
+        * svg/SVGLocatable.cpp: Calculate screenCTM for <use> referenced objects.
+        (WebCore::SVGLocatable::computeCTM):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::cssPropertyIdForSVGAttributeName):
+        * svg/svgattrs.in:
+
 2010-06-08  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Adele Peterson.
