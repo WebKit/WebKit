@@ -1,3 +1,20 @@
+2010-06-09  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; expectations fix.
+
+        Add new expectations for layout tests post-r60885 ("Implement non-scaling stroke").  Mark one test flaky.
+
+        * platform/chromium-linux/svg/custom/non-scaling-stroke-expected.checksum: Added.
+        * platform/chromium-mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-mac/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-win/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-win/svg/custom/non-scaling-stroke-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/non-scaling-stroke-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-06-08  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

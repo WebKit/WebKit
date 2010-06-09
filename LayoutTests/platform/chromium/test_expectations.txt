@@ -2849,3 +2849,6 @@ BUG45720 WIN LINUX : websocket/tests/reload-crash.html = PASS CRASH
 
 // Failing since http://trac.webkit.org/changeset/60865
 BUG46096 : editing/selection/extend-selection-after-double-click.html = TEXT
+
+// Flaky since at least r60276
+BUG46157 WIN RELEASE : transforms/2d/transform-value-types.html = PASS TEXT
