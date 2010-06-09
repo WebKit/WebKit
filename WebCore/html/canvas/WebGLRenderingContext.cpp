@@ -3224,7 +3224,7 @@ bool WebGLRenderingContext::validateTexFuncParameters(unsigned long target, long
 
     switch (target) {
     case GraphicsContext3D::TEXTURE_2D:
-        if (width > m_maxTextureSize || height > m_maxTextureSize || level > log2(m_maxTextureSize)) {
+        if (width > m_maxTextureSize || height > m_maxTextureSize || level > log(m_maxTextureSize) / log(2)) {
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
             return false;
         }
@@ -3235,7 +3235,7 @@ bool WebGLRenderingContext::validateTexFuncParameters(unsigned long target, long
     case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Y:
     case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Z:
     case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Z:
-        if (width != height || width > m_maxCubeMapTextureSize || level > log2(m_maxCubeMapTextureSize)) {
+        if (width != height || width > m_maxCubeMapTextureSize || level > log(m_maxCubeMapTextureSize) / log(2)) {
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
             return false;
         }

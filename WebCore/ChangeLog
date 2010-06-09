@@ -1,3 +1,19 @@
+2010-06-08  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, build fix.
+
+        Fix build breakage from 38145
+        https://bugs.webkit.org/show_bug.cgi?id=40346
+
+        The fix for bug 38145 broke the Chromium Win build because
+        Microsoft's cmath doesn't define log2. Suggested fix by zmo is to
+        change log2(x) to log(x) / log(2). Built and ran WebGL layout
+        tests in Safari on Mac OS X. Changed download mirrors for
+        python-irclib to working ones.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateTexFuncParameters):
+
 2010-06-08  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.
