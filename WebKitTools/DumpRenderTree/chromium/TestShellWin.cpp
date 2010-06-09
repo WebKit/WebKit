@@ -31,12 +31,16 @@
 #include "config.h"
 #include "TestShell.h"
 
+#include "WebThemeEngineDRT.h"
 #include "webkit/support/webkit_support.h"
 #include <fcntl.h>
 #include <io.h>
 #include <process.h>
 #include <shlwapi.h>
 #include <sys/stat.h>
+
+// Theme engine
+static WebThemeEngineDRT themeEngine;
 
 // Thread main to run for the thread which just tests for timeout.
 unsigned int __stdcall watchDogThread(void* arg)
@@ -104,6 +108,9 @@ void platformInit()
     // Set stdout/stderr binary mode.
     _setmode(_fileno(stdout), _O_BINARY);
     _setmode(_fileno(stderr), _O_BINARY);
+
+    // Set theme engine.
+    webkit_support::SetThemeEngine(&themeEngine);
 
     // Load Ahem font.
     // AHEM____.TTF is copied to the directory of DumpRenderTree.exe by WebKit.gyp.

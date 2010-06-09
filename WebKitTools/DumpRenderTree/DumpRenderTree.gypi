@@ -34,5 +34,15 @@
             'chromium/WebViewHost.cpp',
             'chromium/WebViewHost.h',
         ],
+        'conditions': [
+            ['OS=="win"', {
+                'drt_files': [
+                    'chromium/WebThemeControlDRT.cpp',
+                    'chromium/WebThemeControlDRT.h',
+                    'chromium/WebThemeEngineDRT.cpp',
+                    'chromium/WebThemeEngineDRT.h',
+                ],
+            }],
+        ],
     }
 }
