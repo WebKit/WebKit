@@ -1,3 +1,25 @@
+2010-06-09  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix script-after-frameset test in HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=40274
+
+        The old HTMLTokenizer enforced this in scriptHandler(). We don't use
+        that code anymore, so it needs to be implemented. The spec does this
+        as a part of "insertion mode"->"after frameset", so this adds an
+        InsertionMode enum instead of a one-off boolean.
+
+        No new tests because covered by fast/tokenizer/script-after-frameset.html
+
+        * html/HTML5TreeBuilder.cpp:
+        (WebCore::HTML5TreeBuilder::HTML5TreeBuilder):
+        (WebCore::HTML5TreeBuilder::passTokenToLegacyParser):
+        * html/HTML5TreeBuilder.h:
+        (WebCore::HTML5TreeBuilder::):
+        (WebCore::HTML5TreeBuilder::setInsertionMode):
+        (WebCore::HTML5TreeBuilder::insertionMode):
+
 2010-06-09  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kent Tamura.

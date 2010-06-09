@@ -46,6 +46,7 @@ HTML5TreeBuilder::HTML5TreeBuilder(HTML5Lexer* lexer, HTMLDocument* document, bo
     : m_document(document)
     , m_reportErrors(reportErrors)
     , m_isPaused(false)
+    , m_insertionMode(Initial)
     , m_lexer(lexer)
     , m_legacyHTMLParser(new HTMLParser(document, reportErrors))
     , m_lastScriptElementStartLine(uninitializedLineNumberValue)
@@ -168,14 +169,15 @@ PassRefPtr<Node> HTML5TreeBuilder::passTokenToLegacyParser(HTML5Token& token)
             m_lexer->skipLeadingNewLineForListing();
     }
     if (token.type() == HTML5Token::EndTag) {
-        if (oldStyleToken.tagName == scriptTag) {
+        if (oldStyleToken.tagName == scriptTag && insertionMode() != AfterFrameset) {
             if (m_lastScriptElement) {
                 ASSERT(m_lastScriptElementStartLine != uninitializedLineNumberValue);
                 handleScriptEndTag(m_lastScriptElement.get(), m_lastScriptElementStartLine);
                 m_lastScriptElement = 0;
                 m_lastScriptElementStartLine = uninitializedLineNumberValue;
             }
-        }
+        } else if (oldStyleToken.tagName == framesetTag)
+            setInsertionMode(AfterFrameset);
     }
     return result.release();
 }

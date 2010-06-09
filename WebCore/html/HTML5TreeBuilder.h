@@ -59,15 +59,29 @@ public:
     void finished();
 
 private:
+    // Represents HTML5 "insertion mode"
+    // http://www.w3.org/TR/html5/syntax.html#insertion-mode
+    // FIXME: Implement remainder of states.
+    enum InsertionMode {
+        Initial,
+        AfterFrameset,
+    };
+
     PassRefPtr<Node> passTokenToLegacyParser(HTML5Token&);
     PassRefPtr<Node> processToken(HTML5Token&, UChar currentCharacter = 0);
     
     void handleScriptStartTag();
     void handleScriptEndTag(Element*, int scriptStartLine);
 
+    void setInsertionMode(InsertionMode value) { m_insertionMode = value; }
+    InsertionMode insertionMode() const { return m_insertionMode; }
+
     Document* m_document; // This is only used by the m_legacyParser for now.
     bool m_reportErrors;
     bool m_isPaused;
+
+    InsertionMode m_insertionMode;
+
     // HTML5 spec requires that we be able to change the state of the lexer
     // from within parser actions.
     HTML5Lexer* m_lexer;
