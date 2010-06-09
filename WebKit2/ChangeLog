@@ -2,6 +2,12 @@
 
         Unreviewed build fix.
 
+        * WebProcess/WebCoreSupport/WebInspectorClient.h:
+
+2010-06-09  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed build fix.
+
         WebInspector: On the way to Remote Debugging we want to transfer dom/timeline/etc
         data from inspected page to WebInspector as JSON string via http. The native
         serialization to JSON string is supported by InspectorValue's classes. This patch
