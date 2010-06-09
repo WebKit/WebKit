@@ -17,16 +17,12 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef EDITCOMMANDQT_H
-#define EDITCOMMANDQT_H
+#ifndef EditCommandQt_h
+#define EditCommandQt_h
 
-#include <qglobal.h>
-QT_BEGIN_NAMESPACE
-class QUndoCommand;
-QT_END_NAMESPACE
-
-#include <QUndoCommand>
 #include <EditCommand.h>
+#include <QUndoCommand>
+#include <qglobal.h>
 
 class EditCommandQt
 #ifndef QT_NO_UNDOCOMMAND
@@ -41,8 +37,8 @@ class EditCommandQt
         void undo();
 
     private:
-        WTF::RefPtr<WebCore::EditCommand> _cmd;
-        bool _first;
+        WTF::RefPtr<WebCore::EditCommand> m_cmd;
+        bool m_first;
 };
 
 #endif
