@@ -5396,6 +5396,10 @@ canvas/philip/tests/security.reset.html
 canvas/philip/tests/2d.drawImage.nonfinite.html
 canvas/philip/tests/2d.drawImage.broken.html
 
+# [Qt] canvas/philip/tests/2d.path.stroke.overlap.html fails with Qt-4.6.2 or higher
+# https://bugs.webkit.org/show_bug.cgi?id=40362
+canvas/philip/tests/2d.path.stroke.overlap.html
+
 # ============================================================================= #
 # failing transforms tests
 # ============================================================================= #
