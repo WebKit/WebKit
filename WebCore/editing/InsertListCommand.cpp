@@ -143,134 +143,153 @@ void InsertListCommand::doApply()
         if (!listNode->hasTagName(listTag))
             // listChildNode will be removed from the list and a list of type m_type will be created.
             switchListType = true;
-        Node* nextListChild;
-        Node* previousListChild;
-        VisiblePosition start;
-        VisiblePosition end;
-        if (listChildNode->hasTagName(liTag)) {
-            start = firstDeepEditingPositionForNode(listChildNode);
-            end = lastDeepEditingPositionForNode(listChildNode);
-            nextListChild = listChildNode->nextSibling();
-            previousListChild = listChildNode->previousSibling();
-        } else {
-            // A paragraph is visually a list item minus a list marker.  The paragraph will be moved.
-            start = startOfParagraph(endingSelection().visibleStart());
-            end = endOfParagraph(endingSelection().visibleEnd());
-            nextListChild = enclosingListChild(end.next().deepEquivalent().node());
-            ASSERT(nextListChild != listChildNode);
-            if (enclosingList(nextListChild) != listNode)
-                nextListChild = 0;
-            previousListChild = enclosingListChild(start.previous().deepEquivalent().node());
-            ASSERT(previousListChild != listChildNode);
-            if (enclosingList(previousListChild) != listNode)
-                previousListChild = 0;
-        }
-        // When removing a list, we must always create a placeholder to act as a point of insertion
-        // for the list content being removed.
-        RefPtr<Element> placeholder = createBreakElement(document());
-        RefPtr<Element> nodeToInsert = placeholder;
-        // If the content of the list item will be moved into another list, put it in a list item
-        // so that we don't create an orphaned list child.
-        if (enclosingList(listNode)) {
-            nodeToInsert = createListItemElement(document());
-            appendNode(placeholder, nodeToInsert);
-        }
-        
-        if (nextListChild && previousListChild) {
-            // We want to pull listChildNode out of listNode, and place it before nextListChild 
-            // and after previousListChild, so we split listNode and insert it between the two lists.  
-            // But to split listNode, we must first split ancestors of listChildNode between it and listNode,
-            // if any exist.
-            // FIXME: We appear to split at nextListChild as opposed to listChildNode so that when we remove
-            // listChildNode below in moveParagraphs, previousListChild will be removed along with it if it is 
-            // unrendered. But we ought to remove nextListChild too, if it is unrendered.
-            splitElement(listNode, splitTreeToNode(nextListChild, listNode));
-            insertNodeBefore(nodeToInsert, listNode);
-        } else if (nextListChild || listChildNode->parentNode() != listNode) {
-            // Just because listChildNode has no previousListChild doesn't mean there isn't any content
-            // in listNode that comes before listChildNode, as listChildNode could have ancestors
-            // between it and listNode. So, we split up to listNode before inserting the placeholder
-            // where we're about to move listChildNode to.
-            if (listChildNode->parentNode() != listNode)
-                splitElement(listNode, splitTreeToNode(listChildNode, listNode).get());
-            insertNodeBefore(nodeToInsert, listNode);
-        } else
-            insertNodeAfter(nodeToInsert, listNode);
-        
-        VisiblePosition insertionPoint = VisiblePosition(Position(placeholder.get(), 0));
-        moveParagraphs(start, end, insertionPoint, true);
-    }
-    if (!listChildNode || switchListType || m_forceCreateList) {
-        // Create list.
-        VisiblePosition originalStart = endingSelection().visibleStart();
-        VisiblePosition start = startOfParagraph(originalStart);
-        VisiblePosition end = endOfParagraph(endingSelection().visibleEnd());
-        
-        // Check for adjoining lists.
-        VisiblePosition previousPosition = start.previous(true);
-        VisiblePosition nextPosition = end.next(true);
-        RefPtr<HTMLElement> listItemElement = createListItemElement(document());
-        RefPtr<HTMLElement> placeholder = createBreakElement(document());
-        appendNode(placeholder, listItemElement);
-        Element* previousList = outermostEnclosingList(previousPosition.deepEquivalent().node());
-        Element* nextList = outermostEnclosingList(nextPosition.deepEquivalent().node());
-        Node* startNode = start.deepEquivalent().node();
-        Node* previousCell = enclosingTableCell(previousPosition.deepEquivalent());
-        Node* nextCell = enclosingTableCell(nextPosition.deepEquivalent());
-        Node* currentCell = enclosingTableCell(start.deepEquivalent());
-        if (previousList && (!previousList->hasTagName(listTag) || startNode->isDescendantOf(previousList) || previousCell != currentCell))
-            previousList = 0;
-        if (nextList && (!nextList->hasTagName(listTag) || startNode->isDescendantOf(nextList) || nextCell != currentCell))
-            nextList = 0;
-        // Place list item into adjoining lists.
-        if (previousList)
-            appendNode(listItemElement, previousList);
-        else if (nextList)
-            insertNodeAt(listItemElement, Position(nextList, 0));
-        else {
-            // Create the list.
-            RefPtr<HTMLElement> listElement = m_type == OrderedList ? createOrderedListElement(document()) : createUnorderedListElement(document());
-            m_listElement = listElement;
-            appendNode(listItemElement, listElement);
-            
-            if (start == end && isBlock(start.deepEquivalent().node())) {
-                // Inserting the list into an empty paragraph that isn't held open 
-                // by a br or a '\n', will invalidate start and end.  Insert 
-                // a placeholder and then recompute start and end.
-                RefPtr<Node> placeholder = insertBlockPlaceholder(start.deepEquivalent());
-                start = VisiblePosition(Position(placeholder.get(), 0));
-                end = start;
-            }
-            
-            // Insert the list at a position visually equivalent to start of the
-            // paragraph that is being moved into the list. 
-            // Try to avoid inserting it somewhere where it will be surrounded by 
-            // inline ancestors of start, since it is easier for editing to produce 
-            // clean markup when inline elements are pushed down as far as possible.
-            Position insertionPos(start.deepEquivalent().upstream());
-            // Also avoid the containing list item.
-            Node* listChild = enclosingListChild(insertionPos.node());
-            if (listChild && listChild->hasTagName(liTag))
-                insertionPos = positionInParentBeforeNode(listChild);
 
-            insertNodeAt(listElement, insertionPos);
-
-            // We inserted the list at the start of the content we're about to move
-            // Update the start of content, so we don't try to move the list into itself.  bug 19066
-            if (insertionPos == start.deepEquivalent())
-                start = startOfParagraph(originalStart);
-            previousList = outermostEnclosingList(previousPosition.deepEquivalent().node(), enclosingList(listElement.get()));
-            nextList = outermostEnclosingList(nextPosition.deepEquivalent().node(), enclosingList(listElement.get()));
-        }
-        moveParagraph(start, end, VisiblePosition(Position(placeholder.get(), 0)), true);
-        if (m_listElement) {
-            if (canMergeLists(previousList, m_listElement.get()))
-                mergeIdenticalElements(previousList, m_listElement.get());
-            if (canMergeLists(m_listElement.get(), nextList))
-                mergeIdenticalElements(m_listElement.get(), nextList);
-        } else if (canMergeLists(nextList, previousList))
-            mergeIdenticalElements(previousList, nextList);
+        unlistifyParagraph(endingSelection().visibleStart(), listNode, listChildNode);
     }
+
+    if (!listChildNode || switchListType || m_forceCreateList)
+        m_listElement = listifyParagraph(endingSelection().visibleStart(), listTag);
+}
+
+void InsertListCommand::unlistifyParagraph(const VisiblePosition& originalStart, HTMLElement* listNode, Node* listChildNode)
+{
+    Node* nextListChild;
+    Node* previousListChild;
+    VisiblePosition start;
+    VisiblePosition end;
+    if (listChildNode->hasTagName(liTag)) {
+        start = firstDeepEditingPositionForNode(listChildNode);
+        end = lastDeepEditingPositionForNode(listChildNode);
+        nextListChild = listChildNode->nextSibling();
+        previousListChild = listChildNode->previousSibling();
+    } else {
+        // A paragraph is visually a list item minus a list marker.  The paragraph will be moved.
+        start = startOfParagraph(originalStart);
+        end = endOfParagraph(start);
+        nextListChild = enclosingListChild(end.next().deepEquivalent().node());
+        ASSERT(nextListChild != listChildNode);
+        if (enclosingList(nextListChild) != listNode)
+            nextListChild = 0;
+        previousListChild = enclosingListChild(start.previous().deepEquivalent().node());
+        ASSERT(previousListChild != listChildNode);
+        if (enclosingList(previousListChild) != listNode)
+            previousListChild = 0;
+    }
+    // When removing a list, we must always create a placeholder to act as a point of insertion
+    // for the list content being removed.
+    RefPtr<Element> placeholder = createBreakElement(document());
+    RefPtr<Element> nodeToInsert = placeholder;
+    // If the content of the list item will be moved into another list, put it in a list item
+    // so that we don't create an orphaned list child.
+    if (enclosingList(listNode)) {
+        nodeToInsert = createListItemElement(document());
+        appendNode(placeholder, nodeToInsert);
+    }
+
+    if (nextListChild && previousListChild) {
+        // We want to pull listChildNode out of listNode, and place it before nextListChild 
+        // and after previousListChild, so we split listNode and insert it between the two lists.  
+        // But to split listNode, we must first split ancestors of listChildNode between it and listNode,
+        // if any exist.
+        // FIXME: We appear to split at nextListChild as opposed to listChildNode so that when we remove
+        // listChildNode below in moveParagraphs, previousListChild will be removed along with it if it is 
+        // unrendered. But we ought to remove nextListChild too, if it is unrendered.
+        splitElement(listNode, splitTreeToNode(nextListChild, listNode));
+        insertNodeBefore(nodeToInsert, listNode);
+    } else if (nextListChild || listChildNode->parentNode() != listNode) {
+        // Just because listChildNode has no previousListChild doesn't mean there isn't any content
+        // in listNode that comes before listChildNode, as listChildNode could have ancestors
+        // between it and listNode. So, we split up to listNode before inserting the placeholder
+        // where we're about to move listChildNode to.
+        if (listChildNode->parentNode() != listNode)
+            splitElement(listNode, splitTreeToNode(listChildNode, listNode).get());
+        insertNodeBefore(nodeToInsert, listNode);
+    } else
+        insertNodeAfter(nodeToInsert, listNode);
+
+    VisiblePosition insertionPoint = VisiblePosition(Position(placeholder.get(), 0));
+    moveParagraphs(start, end, insertionPoint, true);
+}
+
+PassRefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& originalStart, const QualifiedName& listTag)
+{
+    VisiblePosition start = startOfParagraph(originalStart);
+    VisiblePosition end = endOfParagraph(start);
+
+    // Check for adjoining lists.
+    VisiblePosition previousPosition = start.previous(true);
+    VisiblePosition nextPosition = end.next(true);
+    RefPtr<HTMLElement> listItemElement = createListItemElement(document());
+    RefPtr<HTMLElement> placeholder = createBreakElement(document());
+    appendNode(placeholder, listItemElement);
+    Element* previousList = outermostEnclosingList(previousPosition.deepEquivalent().node());
+    Element* nextList = outermostEnclosingList(nextPosition.deepEquivalent().node());
+    Node* startNode = start.deepEquivalent().node();
+    Node* previousCell = enclosingTableCell(previousPosition.deepEquivalent());
+    Node* nextCell = enclosingTableCell(nextPosition.deepEquivalent());
+    Node* currentCell = enclosingTableCell(start.deepEquivalent());
+    if (previousList && (!previousList->hasTagName(listTag) || startNode->isDescendantOf(previousList) || previousCell != currentCell))
+        previousList = 0;
+    if (nextList && (!nextList->hasTagName(listTag) || startNode->isDescendantOf(nextList) || nextCell != currentCell))
+        nextList = 0;
+    // Place list item into adjoining lists.
+    RefPtr<HTMLElement> listElement;
+    if (previousList)
+        appendNode(listItemElement, previousList);
+    else if (nextList)
+        insertNodeAt(listItemElement, Position(nextList, 0));
+    else {
+        // Create the list.
+        listElement = createHTMLElement(document(), listTag);
+        appendNode(listItemElement, listElement);
+
+        if (start == end && isBlock(start.deepEquivalent().node())) {
+            // Inserting the list into an empty paragraph that isn't held open 
+            // by a br or a '\n', will invalidate start and end.  Insert 
+            // a placeholder and then recompute start and end.
+            RefPtr<Node> placeholder = insertBlockPlaceholder(start.deepEquivalent());
+            start = VisiblePosition(Position(placeholder.get(), 0));
+            end = start;
+        }
+
+        // Insert the list at a position visually equivalent to start of the
+        // paragraph that is being moved into the list. 
+        // Try to avoid inserting it somewhere where it will be surrounded by 
+        // inline ancestors of start, since it is easier for editing to produce 
+        // clean markup when inline elements are pushed down as far as possible.
+        Position insertionPos(start.deepEquivalent().upstream());
+        // Also avoid the containing list item.
+        Node* listChild = enclosingListChild(insertionPos.node());
+        if (listChild && listChild->hasTagName(liTag))
+            insertionPos = positionInParentBeforeNode(listChild);
+
+        insertNodeAt(listElement, insertionPos);
+
+        // We inserted the list at the start of the content we're about to move
+        // Update the start of content, so we don't try to move the list into itself.  bug 19066
+        if (insertionPos == start.deepEquivalent())
+            start = startOfParagraph(originalStart);
+        previousList = outermostEnclosingList(previousPosition.deepEquivalent().node(), enclosingList(listElement.get()));
+        nextList = outermostEnclosingList(nextPosition.deepEquivalent().node(), enclosingList(listElement.get()));
+    }
+
+    moveParagraph(start, end, VisiblePosition(Position(placeholder.get(), 0)), true);
+
+    // FIXME: listifyParagraph should not depend on a member variable.
+    // Since fixOrphanedListChild is the only other method that updates m_listElement,
+    // we should fix unlistifyParagraph to support orphaned list child to get rid of this assignment.
+    if (!listElement && m_listElement)
+        listElement = m_listElement;
+
+    if (listElement) {
+        if (canMergeLists(previousList, listElement.get()))
+            mergeIdenticalElements(previousList, listElement.get());
+        if (canMergeLists(listElement.get(), nextList))
+            mergeIdenticalElements(listElement.get(), nextList);
+    } else if (canMergeLists(nextList, previousList))
+        mergeIdenticalElements(previousList, nextList);
+
+    return listElement;
 }
 
 }

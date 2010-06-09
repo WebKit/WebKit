@@ -1,3 +1,21 @@
+2010-06-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Justin Garcia
+
+        InsertListCommand needs cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=36430
+
+        Separated code for listifying and unlistifying paragraphs.
+        Also isolated the dependency on the selection in doApply.
+
+        No test is added since this is a cleanup.
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply): isolated code to listify / unlistify paragraphs
+        (WebCore::InsertListCommand::unlistifyParagraph): ditto
+        (WebCore::InsertListCommand::listifyParagraph): ditto
+        * editing/InsertListCommand.h:
+
 2010-06-08  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, build fix.
