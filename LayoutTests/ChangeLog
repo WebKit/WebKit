@@ -1,3 +1,27 @@
+2010-06-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Test how XML directives get attached to the DOM
+        https://bugs.webkit.org/show_bug.cgi?id=40384
+
+        In the old parser, the XML directive doesn't get added to the DOM.  In
+        new parser (and in Minefield), it gets added as a comment, which shows
+        up in this test.
+
+        This behavior was tested more obliquely by
+        fast/css-generated-content/hover-style-change.html in some
+        DumpRenderTree output.  I've removed that coverage from the CSS test
+        and moved it to a new parser test that can actually be run in other
+        browsers.
+
+        * fast/css-generated-content/hover-style-change.html:
+            - Remove XML directive that was causing this test to depend on
+              out-of-spec parser behavior w.r.t. whether to attach the XML
+              directive to the DOM.
+        * fast/parser/xml-directive-in-dom-expected.txt: Added.
+        * fast/parser/xml-directive-in-dom.html: Added.
+
 2010-06-09  Enrico Ros  <eros@codeaurora.org>
 
         Reviewed by Ariya Hidayat.
