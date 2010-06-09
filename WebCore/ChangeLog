@@ -2,6 +2,42 @@
 
         Reviewed by Kent Tamura.
 
+        [BREWMP] Add dummy Context Menu implementation
+        https://bugs.webkit.org/show_bug.cgi?id=40223
+
+        Brew MP does not use Context Menu. Add dummy implementation.
+
+        * platform/brew/ContextMenuBrew.cpp: Added.
+        (WebCore::ContextMenu::ContextMenu):
+        (WebCore::ContextMenu::~ContextMenu):
+        (WebCore::ContextMenu::itemCount):
+        (WebCore::ContextMenu::insertItem):
+        (WebCore::ContextMenu::appendItem):
+        (WebCore::ContextMenu::itemWithAction):
+        (WebCore::ContextMenu::itemAtIndex):
+        (WebCore::ContextMenu::setPlatformDescription):
+        (WebCore::ContextMenu::platformDescription):
+        (WebCore::ContextMenu::releasePlatformDescription):
+        * platform/brew/ContextMenuItemBrew.cpp: Added.
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        (WebCore::ContextMenuItem::~ContextMenuItem):
+        (WebCore::ContextMenuItem::releasePlatformDescription):
+        (WebCore::ContextMenuItem::type):
+        (WebCore::ContextMenuItem::action):
+        (WebCore::ContextMenuItem::title):
+        (WebCore::ContextMenuItem::platformSubMenu):
+        (WebCore::ContextMenuItem::setType):
+        (WebCore::ContextMenuItem::setAction):
+        (WebCore::ContextMenuItem::setTitle):
+        (WebCore::ContextMenuItem::setSubMenu):
+        (WebCore::ContextMenuItem::setChecked):
+        (WebCore::ContextMenuItem::setEnabled):
+        (WebCore::ContextMenuItem::enabled):
+
+2010-06-09  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
         [BREWMP] Port Clipboard
         https://bugs.webkit.org/show_bug.cgi?id=35734
 
