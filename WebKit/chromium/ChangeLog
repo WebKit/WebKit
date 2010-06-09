@@ -1,3 +1,23 @@
+2010-06-09  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: update stack trace after script source editing
+        https://bugs.webkit.org/show_bug.cgi?id=40357
+
+        * src/js/DebuggerAgent.js:
+        (devtools.DebuggerAgent.prototype.editScriptSource.this.requestSeqToCallback_.cmd.getSequenceNumber):
+        (devtools.DebuggerAgent.prototype.editScriptSource.requestBacktrace):
+        (devtools.DebuggerAgent.prototype.editScriptSource.handleBacktraceResponse):
+        (devtools.DebuggerAgent.prototype.editScriptSource.reportDidCommitEditing):
+        (devtools.DebuggerAgent.prototype.editScriptSource):
+        (devtools.DebuggerAgent.prototype.requestBacktrace_):
+        (devtools.DebuggerAgent.prototype.handleDebuggerOutput_):
+        (devtools.DebuggerAgent.prototype.doHandleBacktraceResponse_):
+        (devtools.DebuggerAgent.prototype.updateCallFramesFromBacktraceResponse_):
+        * src/js/InspectorControllerImpl.js:
+        (.devtools.InspectorBackendImpl.prototype.editScriptSource):
+
 2010-06-08  Tony Chang  <tony@chromium.org>
 
         Reviewed by David Levin.

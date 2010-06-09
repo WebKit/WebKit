@@ -144,8 +144,8 @@ devtools.InspectorBackendImpl.prototype.removeBreakpoint = function(sourceID, li
 
 devtools.InspectorBackendImpl.prototype.editScriptSource = function(callID, sourceID, newContent)
 {
-    devtools.tools.getDebuggerAgent().editScriptSource(sourceID, newContent, function(newFullBody) {
-        WebInspector.didEditScriptSource(callID, newFullBody);
+    devtools.tools.getDebuggerAgent().editScriptSource(sourceID, newContent, function(success, newBodyOrErrorMessage, callFrames) {
+        WebInspector.didEditScriptSource(callID, success, newBodyOrErrorMessage, callFrames);
     });
 };
 
