@@ -1,3 +1,11 @@
+2010-06-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Export StringImpl::ascii(). It might be not very useful, but it's a public function.
+
+        * JavaScriptCore.exp:
+
 2010-06-09  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Adam Treat.
