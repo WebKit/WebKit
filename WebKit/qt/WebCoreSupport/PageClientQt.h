@@ -24,12 +24,12 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
+#include "QWebPageClient.h"
+#include "TiledBackingStore.h"
 #include "qwebframe.h"
 #include "qwebframe_p.h"
 #include "qwebpage.h"
 #include "qwebpage_p.h"
-#include "QWebPageClient.h"
-#include "TiledBackingStore.h"
 
 #include <QtCore/qmetaobject.h>
 #include <QtCore/qsharedpointer.h>
