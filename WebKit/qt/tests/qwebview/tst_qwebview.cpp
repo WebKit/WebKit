@@ -30,8 +30,6 @@
 #include <qwebkitversion.h>
 #include <qwebframe.h>
 
-#include <QDebug>
-
 class tst_QWebView : public QObject
 {
     Q_OBJECT
@@ -49,8 +47,23 @@ private slots:
     void reusePage_data();
     void reusePage();
     void microFocusCoordinates();
+    void focusInputTypes();
 
     void crashTests();
+};
+
+class WebView : public QWebView
+{
+    Q_OBJECT
+
+public:
+    void fireMouseClick(QPoint point) {
+        QMouseEvent presEv(QEvent::MouseButtonPress, point, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+        QMouseEvent relEv(QEvent::MouseButtonRelease, point, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+        QWebView::mousePressEvent(&presEv);
+        QWebView::mousePressEvent(&relEv);
+    }
+
 };
 
 // This will be called before the first test function is executed.
@@ -228,6 +241,52 @@ void tst_QWebView::microFocusCoordinates()
     QVERIFY(currentMicroFocus.isValid());
 
     QCOMPARE(initialMicroFocus.toRect().translated(QPoint(0,-50)), currentMicroFocus.toRect());
+}
+
+void tst_QWebView::focusInputTypes()
+{
+    QWebPage* page = new QWebPage;
+    WebView* webView = new WebView;
+    webView->setPage( page );
+
+    QCoreApplication::processEvents();
+    QUrl url("qrc:///resources/input_types.html");
+    page->mainFrame()->load(url);
+    page->mainFrame()->setFocus();
+
+    QVERIFY(waitForSignal(page, SIGNAL(loadFinished(bool))));
+
+    // 'text' type
+    webView->fireMouseClick(QPoint(20, 10));
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
+    QVERIFY(webView->inputMethodHints() & Qt::ImhNoAutoUppercase);
+    QVERIFY(webView->inputMethodHints() & Qt::ImhNoPredictiveText);
+#else
+    QVERIFY(webView->inputMethodHints() == Qt::ImhNone);
+#endif
+
+    // 'password' field
+    webView->fireMouseClick(QPoint(20, 60));
+    QVERIFY(webView->inputMethodHints() & Qt::ImhHiddenText);
+
+    // 'tel' field
+    webView->fireMouseClick(QPoint(20, 110));
+    QVERIFY(webView->inputMethodHints() & Qt::ImhDialableCharactersOnly);
+
+    // 'number' field
+    webView->fireMouseClick(QPoint(20, 160));
+    QVERIFY(webView->inputMethodHints() & Qt::ImhDigitsOnly);
+
+    // 'email' field
+    webView->fireMouseClick(QPoint(20, 210));
+    QVERIFY(webView->inputMethodHints() & Qt::ImhEmailCharactersOnly);
+
+    // 'url' field
+    webView->fireMouseClick(QPoint(20, 260));
+    QVERIFY(webView->inputMethodHints() & Qt::ImhUrlCharactersOnly);
+
+    delete webView;
+
 }
 
 QTEST_MAIN(tst_QWebView)

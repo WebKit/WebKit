@@ -1,3 +1,19 @@
+2010-06-10  Raine Makelainen  <raine.makelainen@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Impossible to set input method hints based HTML5 input types
+        https://bugs.webkit.org/show_bug.cgi?id=40107
+
+        Helper methods for checking "tel", "number", "email",
+        and "url" input element types.
+
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::isTelephoneField):
+        (WebCore::HTMLInputElement::isNumberField):
+        (WebCore::HTMLInputElement::isEmailField):
+        (WebCore::HTMLInputElement::isUrlField):
+
 2010-06-10  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Jian Li.

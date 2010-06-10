@@ -1,3 +1,30 @@
+2010-06-10  Raine Makelainen  <raine.makelainen@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Impossible to set input method hints based HTML5 input types
+        https://bugs.webkit.org/show_bug.cgi?id=40107
+
+        EditorClientQt to set input method hints for "number", "tel",
+        "email", and "url" HTML input elements.
+
+        Tests for HTML input elements and input method hints added for
+        QGraphicsWebView and QWebView.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::setInputMethodState):
+        * tests/qgraphicswebview/resources/input_types.html: Added.
+        * tests/qgraphicswebview/tst_qgraphicswebview.cpp:
+        (GraphicsWebView::GraphicsWebView):
+        (GraphicsWebView::fireMouseClick):
+        (tst_QGraphicsWebView::focusInputTypes):
+        * tests/qgraphicswebview/tst_qgraphicswebview.qrc: Added.
+        * tests/qwebview/resources/input_types.html: Added.
+        * tests/qwebview/tst_qwebview.cpp:
+        (WebView::fireMouseClick):
+        (tst_QWebView::focusInputTypes):
+        * tests/qwebview/tst_qwebview.qrc:
+
 2010-06-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
