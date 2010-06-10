@@ -123,6 +123,7 @@ private slots:
     void testJSPrompt();
     void showModalDialog();
     void testStopScheduledPageRefresh();
+    void findText();
     
 private:
     QWebView* m_view;
@@ -2114,6 +2115,22 @@ void tst_QWebPage::testStopScheduledPageRefresh()
     page2.triggerAction(QWebPage::StopScheduledPageRefresh);
     QTest::qWait(1500);
     QCOMPARE(page2.mainFrame()->url().toString(), QString("about:blank"));
+}
+
+void tst_QWebPage::findText()
+{
+    m_view->setHtml(QString("<html><head></head><body><div>foo bar</div></body></html>"));
+    m_page->triggerAction(QWebPage::SelectAll);
+    QVERIFY(!m_page->selectedText().isEmpty());
+    m_page->findText("");
+    QVERIFY(m_page->selectedText().isEmpty());
+    QStringList words = (QStringList() << "foo" << "bar");
+    foreach (QString subString, words) {
+        m_page->findText(subString, QWebPage::FindWrapsAroundDocument);
+        QCOMPARE(m_page->selectedText(), subString);
+        m_page->findText("");
+        QVERIFY(m_page->selectedText().isEmpty());
+    }
 }
 
 QTEST_MAIN(tst_QWebPage)

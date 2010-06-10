@@ -3099,6 +3099,14 @@ bool QWebPage::findText(const QString &subString, FindFlags options)
         } else
             return d->page->markAllMatchesForText(subString, caseSensitivity, true, 0);
     } else {
+        if (subString.isEmpty()) {
+            d->page->mainFrame()->selection()->clear();
+            Frame* frame = d->page->mainFrame()->tree()->firstChild();
+            while (frame) {
+                frame->selection()->clear();
+                frame = frame->tree()->traverseNextWithWrap(false);
+            }
+        }
         ::FindDirection direction = ::FindDirectionForward;
         if (options & FindBackward)
             direction = ::FindDirectionBackward;

@@ -1,3 +1,15 @@
+2010-06-09  Pierre Rossi  <pierre.rossi@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        QWebPage::findText() does not clear selection when passed empty string
+        https://bugs.webkit.org/show_bug.cgi?id=31779
+
+        * Api/qwebpage.cpp:
+        (QWebPage::findText):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::findText):
+
 2010-06-09  Anders Bakken  <agbakken@gmail.com>
 
         Reviewed by David Levin.
