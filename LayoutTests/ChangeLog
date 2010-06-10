@@ -1,3 +1,28 @@
+2010-06-09  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Adam Barth.
+
+        CodeGeneratorJS.pm incorrectly increments $paramIndex when a method is declared with [CallWith]
+        https://bugs.webkit.org/show_bug.cgi?id=40372
+
+        Use two variables to keep track of the number of arguments passed from JavaScript vs the number
+        of arguments passed to the corresponding C++ method. These numbers can be different since
+        the parameter declared via [CallWith] is generated in the bindings instead of being passed
+        from JavaScript.
+        
+        The layout tests added here test both that the parameters are read correctly as well as
+        tests some basic indexed database functionality. There are also bindings specific
+        tests added in TestObj.idl. 
+
+        * storage/indexeddb/idb-objectstore-request-expected.txt: Added.
+        * storage/indexeddb/idb-objectstore-request.html: Added.
+        * storage/indexeddb/script-tests/idb-objectstore-request.js: Added.
+        (openSuccess):
+        (createSuccess):
+        (createObjectStore):
+        (doCreateOrOpen):
+        (test):
+
 2010-06-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

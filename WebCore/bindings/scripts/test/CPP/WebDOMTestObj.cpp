@@ -398,6 +398,14 @@ WebDOMTestObj WebDOMTestObj::withScriptStateObjException()
     return result;
 }
 
+void WebDOMTestObj::withScriptExecutionContext()
+{
+    if (!impl())
+        return;
+
+    impl()->withScriptExecutionContext();
+}
+
 void WebDOMTestObj::methodWithOptionalArg(int opt)
 {
     if (!impl())

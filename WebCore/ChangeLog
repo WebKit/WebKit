@@ -1,3 +1,27 @@
+2010-06-09  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Adam Barth.
+
+        CodeGeneratorJS.pm incorrectly increments $paramIndex when a method is declared with [CallWith]
+        https://bugs.webkit.org/show_bug.cgi?id=40372
+
+        Use two variables to keep track of the number of arguments passed from JavaScript vs the number
+        of arguments passed to the corresponding C++ method. These numbers can be different since
+        the parameter declared via [CallWith] is generated in the bindings instead of being passed
+        from JavaScript.
+
+        Test: storage/indexeddb/idb-objectstore-request.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp:
+        (WebDOMTestObj::withScriptExecutionContext):
+        * bindings/scripts/test/CPP/WebDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndArg):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndUserGesture):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndUserGestureASAD):
+
 2010-06-09  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.

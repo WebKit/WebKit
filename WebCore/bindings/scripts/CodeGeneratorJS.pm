@@ -1869,6 +1869,7 @@ sub GenerateImplementation
                 } elsif ($function->signature->name eq "removeEventListener") {
                     push(@implContent, GenerateEventListenerCall($className, "remove"));
                 } else {
+                    my $argsIndex = 0;
                     my $paramIndex = 0;
                     my $functionString = ($podType ? "podImp." : "imp->") . $functionImplementationName . "(";
 
@@ -1907,7 +1908,7 @@ sub GenerateImplementation
                                 push(@implContent, "\n    int argsCount = exec->argumentCount();\n");
                                 $hasOptionalArguments = 1;
                             }
-                            push(@implContent, "    if (argsCount < " . ($paramIndex + 1) . ") {\n");
+                            push(@implContent, "    if (argsCount < " . ($argsIndex + 1) . ") {\n");
                             GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    " x 2, $podType, $implClassName);
                             push(@implContent, "    }\n\n");
                         }
@@ -1916,15 +1917,15 @@ sub GenerateImplementation
                     
                         if ($parameter->type eq "XPathNSResolver") {
                             push(@implContent, "    RefPtr<XPathNSResolver> customResolver;\n");
-                            push(@implContent, "    XPathNSResolver* resolver = toXPathNSResolver(exec->argument($paramIndex));\n");
+                            push(@implContent, "    XPathNSResolver* resolver = toXPathNSResolver(exec->argument($argsIndex));\n");
                             push(@implContent, "    if (!resolver) {\n");
-                            push(@implContent, "        customResolver = JSCustomXPathNSResolver::create(exec, exec->argument($paramIndex));\n");
+                            push(@implContent, "        customResolver = JSCustomXPathNSResolver::create(exec, exec->argument($argsIndex));\n");
                             push(@implContent, "        if (exec->hadException())\n");
                             push(@implContent, "            return JSValue::encode(jsUndefined());\n");
                             push(@implContent, "        resolver = customResolver.get();\n");
                             push(@implContent, "    }\n");
                         } else {
-                            push(@implContent, "    " . GetNativeTypeFromSignature($parameter) . " $name = " . JSValueToNative($parameter, "exec->argument($paramIndex)") . ";\n");
+                            push(@implContent, "    " . GetNativeTypeFromSignature($parameter) . " $name = " . JSValueToNative($parameter, "exec->argument($argsIndex)") . ";\n");
 
                             # If a parameter is "an index" and it's negative it should throw an INDEX_SIZE_ERR exception.
                             # But this needs to be done in the bindings, because the type is unsigned and the fact that it
@@ -1945,6 +1946,7 @@ sub GenerateImplementation
                         } else {
                             $functionString .= $name;
                         }
+                        $argsIndex++;
                         $paramIndex++;
                     }
 
