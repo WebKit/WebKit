@@ -1,3 +1,29 @@
+2010-06-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move HTML5 entity parser to its own file
+        https://bugs.webkit.org/show_bug.cgi?id=40406
+
+        Moving this algorithm to its own file better encapsulates its
+        dependencies and makes it callable from other parts of WebCore.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTML5EntityParser.cpp: Copied from WebCore/html/HTML5Lexer.cpp.
+        (WebCore::):
+        (WebCore::consumeHTML5Entity):
+        * html/HTML5EntityParser.h: Copied from WebCore/html/HTML5Lexer.h.
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTML5Lexer::processEntity):
+        (WebCore::HTML5Lexer::nextToken):
+        * html/HTML5Lexer.h:
+
 2010-06-09  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.

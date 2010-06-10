@@ -1474,6 +1474,8 @@
             'html/FileThreadTask.h',
             'html/FormDataList.cpp',
             'html/FormDataList.h',
+            'html/HTML5EntityParser.cpp',
+            'html/HTML5EntityParser.h',
             'html/HTML5Lexer.cpp',
             'html/HTML5Lexer.h',
             'html/HTML5Tokenizer.cpp',

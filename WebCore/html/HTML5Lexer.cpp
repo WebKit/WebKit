@@ -29,6 +29,7 @@
 #include "HTML5Lexer.h"
 
 #include "AtomicString.h"
+#include "HTML5EntityParser.h"
 #include "HTML5Token.h"
 #include "HTMLNames.h"
 #include "NotImplemented.h"
@@ -37,20 +38,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/unicode/Unicode.h>
 
-
-// Use __GNUC__ instead of PLATFORM(GCC) to stay consistent with the gperf generated c file
-#ifdef __GNUC__
-// The main tokenizer includes this too so we are getting two copies of the data. However, this way the code gets inlined.
-#include "HTMLEntityNames.c"
-#else
-// Not inlined for non-GCC compilers
-struct Entity {
-    const char* name;
-    int code;
-};
-const struct Entity* findEntity(register const char* str, register unsigned int len);
-#endif
-
 using namespace WTF;
 
 namespace WebCore {
@@ -58,13 +45,6 @@ namespace WebCore {
 using namespace HTMLNames;
 
 namespace {
-
-static const UChar windowsLatin1ExtensionArray[32] = {
-    0x20AC, 0x0081, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021, // 80-87
-    0x02C6, 0x2030, 0x0160, 0x2039, 0x0152, 0x008D, 0x017D, 0x008F, // 88-8F
-    0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, // 90-97
-    0x02DC, 0x2122, 0x0161, 0x203A, 0x0153, 0x009D, 0x017E, 0x0178, // 98-9F
-};
 
 inline UChar toLowerCase(UChar cc)
 {
@@ -87,44 +67,6 @@ inline bool vectorEqualsString(const Vector<UChar, 32>& vector, const String& st
     const UChar* vectorData = vector.data();
     // FIXME: Is there a higher-level function we should be calling here?
     return !memcmp(stringData, vectorData, vector.size() * sizeof(UChar));
-}
-
-inline UChar adjustEntity(unsigned value)
-{
-    if ((value & ~0x1F) != 0x0080)
-        return value;
-    return windowsLatin1ExtensionArray[value - 0x80];
-}
-
-inline unsigned legalEntityFor(unsigned value)
-{
-    // FIXME: A number of specific entity values generate parse errors.
-    if (value == 0 || value > 0x10FFFF || (value >= 0xD800 && value <= 0xDFFF))
-        return 0xFFFD;
-    if (value < 0xFFFF)
-        return adjustEntity(value);
-    return value;
-}
-
-inline bool isHexDigit(UChar cc)
-{
-    return (cc >= '0' && cc <= '9') || (cc >= 'a' && cc <= 'f') || (cc >= 'A' && cc <= 'F');
-}
-
-inline bool isAlphaNumeric(UChar cc)
-{
-    return (cc >= '0' && cc <= '9') || (cc >= 'a' && cc <= 'z') || (cc >= 'A' && cc <= 'Z');
-}
-
-void unconsumeCharacters(SegmentedString& source, const Vector<UChar, 10>& consumedCharacters)
-{
-    if (consumedCharacters.size() == 1)
-        source.push(consumedCharacters[0]);
-    else if (consumedCharacters.size() == 2) {
-        source.push(consumedCharacters[0]);
-        source.push(consumedCharacters[1]);
-    } else
-        source.prepend(SegmentedString(String(consumedCharacters.data(), consumedCharacters.size())));
 }
 
 inline bool isEndTagBufferingState(HTML5Lexer::State state)
@@ -159,155 +101,10 @@ void HTML5Lexer::reset()
     m_additionalAllowedCharacter = '\0';
 }
 
-unsigned HTML5Lexer::consumeEntity(SegmentedString& source, bool& notEnoughCharacters)
-{
-    ASSERT(m_state != CharacterReferenceInAttributeValueState || m_additionalAllowedCharacter == '"' || m_additionalAllowedCharacter == '\'' || m_additionalAllowedCharacter == '>');
-    ASSERT(!notEnoughCharacters);
-
-    enum EntityState {
-        Initial,
-        NumberType,
-        MaybeHexLowerCaseX,
-        MaybeHexUpperCaseX,
-        Hex,
-        Decimal,
-        Named
-    };
-    EntityState entityState = Initial;
-    unsigned result = 0;
-    Vector<UChar, 10> consumedCharacters;
-    Vector<char, 10> entityName;
-
-    while (!source.isEmpty()) {
-        UChar cc = *source;
-        switch (entityState) {
-        case Initial: {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ' || cc == '<' || cc == '&')
-                return 0;
-            if (m_state == CharacterReferenceInAttributeValueState && cc == m_additionalAllowedCharacter)
-                return 0;
-            if (cc == '#') {
-                entityState = NumberType;
-                break;
-            }
-            if ((cc >= 'a' && cc <= 'z') || (cc >= 'A' && cc <= 'Z')) {
-                entityState = Named;
-                continue;
-            }
-            return 0;
-        }
-        case NumberType: {
-            if (cc == 'x') {
-                entityState = MaybeHexLowerCaseX;
-                break;
-            }
-            if (cc == 'X') {
-                entityState = MaybeHexUpperCaseX;
-                break;
-            }
-            if (cc >= '0' && cc <= '9') {
-                entityState = Decimal;
-                continue;
-            }
-            source.push('#');
-            return 0;
-        }
-        case MaybeHexLowerCaseX: {
-            if (isHexDigit(cc)) {
-                entityState = Hex;
-                continue;
-            }
-            source.push('#');
-            source.push('x');
-            return 0;
-        }
-        case MaybeHexUpperCaseX: {
-            if (isHexDigit(cc)) {
-                entityState = Hex;
-                continue;
-            }
-            source.push('#');
-            source.push('X');
-            return 0;
-        }
-        case Hex: {
-            if (cc >= '0' && cc <= '9')
-                result = result * 16 + cc - '0';
-            else if (cc >= 'a' && cc <= 'f')
-                result = result * 16 + 10 + cc - 'a';
-            else if (cc >= 'A' && cc <= 'F')
-                result = result * 16 + 10 + cc - 'A';
-            else if (cc == ';') {
-                source.advancePastNonNewline();
-                return legalEntityFor(result);
-            } else 
-                return legalEntityFor(result);
-            break;
-        }
-        case Decimal: {
-            if (cc >= '0' && cc <= '9')
-                result = result * 10 + cc - '0';
-            else if (cc == ';') {
-                source.advancePastNonNewline();
-                return legalEntityFor(result);
-            } else
-                return legalEntityFor(result);
-            break;
-        }
-        case Named: {
-            // FIXME: This code is wrong. We need to find the longest matching entity.
-            //        The examples from the spec are:
-            //            I'm &notit; I tell you
-            //            I'm &notin; I tell you
-            //        In the first case, "&not" is the entity.  In the second
-            //        case, "&notin;" is the entity.
-            // FIXME: Our list of HTML entities is incomplete.
-            // FIXME: The number 8 below is bogus.
-            while (!source.isEmpty() && entityName.size() <= 8) {
-                cc = *source;
-                if (cc == ';') {
-                    const Entity* entity = findEntity(entityName.data(), entityName.size());
-                    if (entity) {
-                        source.advanceAndASSERT(';');
-                        return entity->code;
-                    }
-                    emitParseError();
-                    break;
-                }
-                if (!isAlphaNumeric(cc)) {
-                    const Entity* entity = findEntity(entityName.data(), entityName.size());
-                    if (entity) {
-                        // HTML5 tells us to ignore this entity, for historical reasons,
-                        // if the lookhead character is '='.
-                        if (m_state == CharacterReferenceInAttributeValueState && cc == '=')
-                            break;
-                        emitParseError();
-                        return entity->code;
-                    }
-                    break;
-                }
-                entityName.append(cc);
-                consumedCharacters.append(cc);
-                source.advanceAndASSERT(cc);
-            }
-            notEnoughCharacters = source.isEmpty();
-            unconsumeCharacters(source, consumedCharacters);
-            return 0;
-        }
-        }
-        consumedCharacters.append(cc);
-        source.advanceAndASSERT(cc);
-    }
-    ASSERT(source.isEmpty());
-    notEnoughCharacters = true;
-    unconsumeCharacters(source, consumedCharacters);
-    return 0;
-}
-
 inline bool HTML5Lexer::processEntity(SegmentedString& source)
 {
     bool notEnoughCharacters = false;
-    unsigned value = consumeEntity(source, notEnoughCharacters);
+    unsigned value = consumeHTML5Entity(source, notEnoughCharacters);
     if (notEnoughCharacters)
         return false;
     if (!value)
@@ -1116,7 +913,7 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
 
     BEGIN_STATE(CharacterReferenceInAttributeValueState) {
         bool notEnoughCharacters = false;
-        unsigned value = consumeEntity(source, notEnoughCharacters);
+        unsigned value = consumeHTML5Entity(source, notEnoughCharacters, m_additionalAllowedCharacter);
         if (notEnoughCharacters)
             return shouldEmitBufferedCharacterToken(source);
         if (!value)

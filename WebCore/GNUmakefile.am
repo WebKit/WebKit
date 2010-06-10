@@ -1087,6 +1087,8 @@ webcore_sources += \
 	WebCore/html/FileThreadTask.h \
 	WebCore/html/FormDataList.cpp \
 	WebCore/html/FormDataList.h \
+	WebCore/html/HTML5EntityParser.cpp \
+	WebCore/html/HTML5EntityParser.h \
 	WebCore/html/HTML5Lexer.cpp \
 	WebCore/html/HTML5Lexer.h \
 	WebCore/html/HTML5Token.h \

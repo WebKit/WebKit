@@ -189,7 +189,6 @@ namespace WebCore {
         inline void emitCurrentToken();
         inline void emitCodePoint(unsigned);
 
-        unsigned consumeEntity(SegmentedString&, bool& notEnoughCharacters);
         inline bool processEntity(SegmentedString& source);
 
         inline bool temporaryBufferIs(const String&);

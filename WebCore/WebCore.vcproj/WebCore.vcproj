@@ -31025,6 +31025,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\HTML5EntityParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HTML5EntityParser.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\HTML5Lexer.cpp"
 				>
 			</File>
