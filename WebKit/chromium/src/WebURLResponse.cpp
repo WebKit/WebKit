@@ -287,6 +287,16 @@ void WebURLResponse::setWasNpnNegotiated(bool value)
     m_private->m_resourceResponse->setWasNpnNegotiated(value);
 }
 
+bool WebURLResponse::wasFetchedViaProxy() const
+{
+    return m_private->m_resourceResponse->wasFetchedViaProxy();
+}
+
+void WebURLResponse::setWasFetchedViaProxy(bool value)
+{
+    m_private->m_resourceResponse->setWasFetchedViaProxy(value);
+}
+
 bool WebURLResponse::isMultipartPayload() const
 {
     return m_private->m_resourceResponse->isMultipartPayload();

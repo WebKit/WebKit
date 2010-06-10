@@ -131,6 +131,10 @@ public:
     WEBKIT_API bool wasNpnNegotiated() const;
     WEBKIT_API void setWasNpnNegotiated(bool);
 
+    // Flag whether this request was loaded via an explicit proxy (HTTP, SOCKS, etc).
+    WEBKIT_API bool wasFetchedViaProxy() const;
+    WEBKIT_API void setWasFetchedViaProxy(bool);
+
     // Flag whether this request is part of a multipart response.
     WEBKIT_API bool isMultipartPayload() const;
     WEBKIT_API void setIsMultipartPayload(bool);
