@@ -638,8 +638,11 @@ class Bugzilla(object):
         else:
             self.browser['flag_type-3'] = ('X',)
 
-        # Add all patches to the rietveld upload queue.
-        self.browser['flag_type-4'] = ('?',)
+        try:
+            # Add all patches to the rietveld upload queue.
+            self.browser['flag_type-4'] = ('?',)
+        except ControlNotFoundError, e:
+            pass  # If there is no rietveld flag, we can't set it.
 
         if bug_id:
             patch_name = "bug-%s-%s.patch" % (bug_id, timestamp())
