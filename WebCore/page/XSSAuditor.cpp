@@ -170,7 +170,7 @@ bool XSSAuditor::canCreateInlineEventListener(const String&, const String& code)
     return true;
 }
 
-bool XSSAuditor::canLoadExternalScriptFromSrc(const String& context, const String& url) const
+bool XSSAuditor::canLoadExternalScriptFromSrc(const String& url) const
 {
     if (!isEnabled())
         return true;
@@ -179,8 +179,8 @@ bool XSSAuditor::canLoadExternalScriptFromSrc(const String& context, const Strin
         return true;
 
     FindTask task;
-    task.context = context;
     task.string = url;
+    task.allowRequestIfNoIllegalURICharacters = true;
 
     if (findInRequest(task)) {
         DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute a JavaScript script. Source code of script found within request.\n"));

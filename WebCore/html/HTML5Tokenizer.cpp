@@ -225,9 +225,7 @@ bool HTML5Tokenizer::shouldLoadExternalScriptFromSrc(const AtomicString& srcValu
 {
     if (!m_XSSAuditor)
         return true;
-    // FIXME: We have no easy way to provide the XSSAuditor with the original
-    // un-processed attribute source, so for now we pass nullAtom.
-    return m_XSSAuditor->canLoadExternalScriptFromSrc(nullAtom, srcValue);
+    return m_XSSAuditor->canLoadExternalScriptFromSrc(srcValue);
 }
 
 void HTML5Tokenizer::executeScript(const ScriptSourceCode& sourceCode)

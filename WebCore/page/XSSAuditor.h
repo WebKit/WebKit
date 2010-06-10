@@ -90,7 +90,7 @@ namespace WebCore {
 
         // Determines whether the external script should be loaded based on the
         // content of any user-submitted data.
-        bool canLoadExternalScriptFromSrc(const String& context, const String& url) const;
+        bool canLoadExternalScriptFromSrc(const String& url) const;
 
         // Determines whether object should be loaded based on the content of
         // any user-submitted data.

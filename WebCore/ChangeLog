@@ -1,3 +1,41 @@
+2010-06-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Use allowRequestIfNoIllegalURICharacters instead of context for XSSAuditor::canLoadExternalScriptFromSrc
+        https://bugs.webkit.org/show_bug.cgi?id=40404
+
+        We originally added the context parameter to
+        canLoadExternalScriptFromSrc to work around some false positives caused
+        by folks checking external script URLs on the server.  Our thought was
+        that we could tell these were not real XSS attacks because the
+        surrounding context wouldn't match in the URL and the document.
+
+        Implementing this feature in the HTML5 parser is hard because it
+        pierces a layer of abstraction (the token abstraction of the input
+        stream).  We could hack this into the new parser, but instead I think
+        it's better to switch to using the allowRequestIfNoIllegalURICharacters
+        heuristic.
+
+        We designed the allowRequestIfNoIllegalURICharacters after the context
+        heuristic to deal with other cases where the server was validating
+        input before echoing it.  However, we never tried applying it to
+        canLoadExternalScriptFromSrc.
+
+        It's possible that this will cause false positives and will need to be
+        reverted, which is why I've left in some of the infrustructure for
+        computing context.  We don't have a good way to know if that will
+        happen except to try.  We do know, however, that this heuristic will
+        work for the original false positives we saw.
+
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::shouldLoadExternalScriptFromSrc):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseTag):
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::canLoadExternalScriptFromSrc):
+        * page/XSSAuditor.h:
+
 2010-06-10  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kent Tamura.

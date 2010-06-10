@@ -1395,7 +1395,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
 
                         if (m_currentToken.beginTag && m_currentToken.tagName == scriptTag && !inViewSourceMode() && !m_parser->skipMode() && m_attrName == srcAttr) {
                             String context(m_rawAttributeBeforeValue.data(), m_rawAttributeBeforeValue.size());
-                            if (m_XSSAuditor && !m_XSSAuditor->canLoadExternalScriptFromSrc(context, attributeValue))
+                            if (m_XSSAuditor && !m_XSSAuditor->canLoadExternalScriptFromSrc(attributeValue))
                                 attributeValue = blankURL().string();
                         }
 
@@ -1432,7 +1432,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
 
                         if (m_currentToken.beginTag && m_currentToken.tagName == scriptTag && !inViewSourceMode() && !m_parser->skipMode() && m_attrName == srcAttr) {
                             String context(m_rawAttributeBeforeValue.data(), m_rawAttributeBeforeValue.size());
-                            if (m_XSSAuditor && !m_XSSAuditor->canLoadExternalScriptFromSrc(context, attributeValue))
+                            if (m_XSSAuditor && !m_XSSAuditor->canLoadExternalScriptFromSrc(attributeValue))
                                 attributeValue = blankURL().string();
                         }
 
