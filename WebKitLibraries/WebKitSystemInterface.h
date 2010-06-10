@@ -29,9 +29,9 @@ NSString *WKGetPreferredExtensionForMIMEType(NSString *type);
 NSArray *WKGetExtensionsForMIMEType(NSString *type);
 NSString *WKGetMIMETypeForExtension(NSString *extension);
 
-NSDate *WKGetNSURLResponseLastModifiedDate(NSURLResponse *);
-NSTimeInterval WKGetNSURLResponseFreshnessLifetime(NSURLResponse *);
-NSString *WKCopyNSURLResponseStatusLine(NSURLResponse *);
+NSDate *WKGetNSURLResponseLastModifiedDate(NSURLResponse *response);
+NSTimeInterval WKGetNSURLResponseFreshnessLifetime(NSURLResponse *response);
+NSString *WKCopyNSURLResponseStatusLine(NSURLResponse *response);
 
 CFStringEncoding WKGetWebDefaultCFStringEncoding(void);
 
@@ -177,7 +177,7 @@ BOOL WKSupportsMultipartXMixedReplace(NSMutableURLRequest *request);
 
 BOOL WKCGContextIsBitmapContext(CGContextRef context);
 
-void WKGetWheelEventDeltas(NSEvent *, float *deltaX, float *deltaY, float *wheelTicksX, float *wheelTicksY, BOOL *continuous);
+void WKGetWheelEventDeltas(NSEvent *, float *deltaX, float *deltaY, BOOL *continuous);
 
 BOOL WKAppVersionCheckLessThan(NSString *, int, double);
 
