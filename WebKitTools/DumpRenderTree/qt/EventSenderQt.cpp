@@ -29,8 +29,7 @@
 #include "config.h"
 #include "EventSenderQt.h"
 
-//#include <QtDebug>
-
+#include <QGraphicsSceneMouseEvent>
 #include <QtTest/QtTest>
 
 #define KEYCODE_DEL         127
@@ -111,10 +110,16 @@ void EventSender::mouseDown(int button)
     m_mouseButtons |= mouseButton;
 
 //     qDebug() << "EventSender::mouseDown" << frame;
-    QMouseEvent* event;
-    event = new QMouseEvent((m_clickCount == 2) ? QEvent::MouseButtonDblClick :
+    QEvent* event;
+    if (isGraphicsBased()) {
+        event = createGraphicsSceneMouseEvent((m_clickCount == 2) ?
+                    QEvent::GraphicsSceneMouseDoubleClick : QEvent::GraphicsSceneMousePress,
+                    m_mousePos, m_mousePos, mouseButton, m_mouseButtons, Qt::NoModifier);
+    } else {
+        event = new QMouseEvent((m_clickCount == 2) ? QEvent::MouseButtonDblClick :
                     QEvent::MouseButtonPress, m_mousePos, m_mousePos,
                     mouseButton, m_mouseButtons, Qt::NoModifier);
+    }
 
     sendOrQueueEvent(event);
 
@@ -146,7 +151,15 @@ void EventSender::mouseUp(int button)
     m_mouseButtons &= ~mouseButton;
 
 //     qDebug() << "EventSender::mouseUp" << frame;
-    QMouseEvent* event = new QMouseEvent(QEvent::MouseButtonRelease, m_mousePos, m_mousePos, mouseButton, m_mouseButtons, Qt::NoModifier);
+    QEvent* event;
+    if (isGraphicsBased()) {
+        event = createGraphicsSceneMouseEvent(QEvent::GraphicsSceneMouseRelease,
+                    m_mousePos, m_mousePos, mouseButton, m_mouseButtons, Qt::NoModifier);
+    } else {
+        event = new QMouseEvent(QEvent::MouseButtonRelease,
+                    m_mousePos, m_mousePos, mouseButton, m_mouseButtons, Qt::NoModifier);
+    }
+
     sendOrQueueEvent(event);
 }
 
@@ -154,7 +167,16 @@ void EventSender::mouseMoveTo(int x, int y)
 {
 //     qDebug() << "EventSender::mouseMoveTo" << x << y;
     m_mousePos = QPoint(x, y);
-    QMouseEvent* event = new QMouseEvent(QEvent::MouseMove, m_mousePos, m_mousePos, Qt::NoButton, m_mouseButtons, Qt::NoModifier);
+
+    QEvent* event;
+    if (isGraphicsBased()) {
+        event = createGraphicsSceneMouseEvent(QEvent::GraphicsSceneMouseMove,
+                    m_mousePos, m_mousePos, Qt::NoButton, m_mouseButtons, Qt::NoModifier);
+    } else {
+        event = new QMouseEvent(QEvent::MouseMove,
+                    m_mousePos, m_mousePos, Qt::NoButton, m_mouseButtons, Qt::NoModifier);
+    }
+
     sendOrQueueEvent(event);
 }
 
@@ -306,19 +328,19 @@ void EventSender::keyDown(const QString& string, const QStringList& modifiers, u
         }
     }
     QKeyEvent event(QEvent::KeyPress, code, modifs, s);
-    QApplication::sendEvent(m_page, &event);
+    sendEvent(m_page, &event);
     QKeyEvent event2(QEvent::KeyRelease, code, modifs, s);
-    QApplication::sendEvent(m_page, &event2);
+    sendEvent(m_page, &event2);
 }
 
 void EventSender::contextClick()
 {
     QMouseEvent event(QEvent::MouseButtonPress, m_mousePos, Qt::RightButton, Qt::RightButton, Qt::NoModifier);
-    QApplication::sendEvent(m_page, &event);
+    sendEvent(m_page, &event);
     QMouseEvent event2(QEvent::MouseButtonRelease, m_mousePos, Qt::RightButton, Qt::RightButton, Qt::NoModifier);
-    QApplication::sendEvent(m_page, &event2);
+    sendEvent(m_page, &event2);
     QContextMenuEvent event3(QContextMenuEvent::Mouse, m_mousePos);
-    QApplication::sendEvent(m_page->view(), &event3);
+    sendEvent(m_page->view(), &event3);
 }
 
 void EventSender::scheduleAsynchronousClick()
@@ -431,7 +453,7 @@ void EventSender::sendTouchEvent(QEvent::Type type)
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     QTouchEvent event(type, QTouchEvent::TouchScreen, m_touchModifiers);
     event.setTouchPoints(m_touchPoints);
-    QApplication::sendEvent(m_page, &event);
+    sendEvent(m_page, &event);
     QList<QTouchEvent::TouchPoint>::Iterator it = m_touchPoints.begin();
     while (it != m_touchPoints.end()) {
         if (it->state() == Qt::TouchPointReleased)
@@ -493,7 +515,7 @@ void EventSender::sendOrQueueEvent(QEvent* event)
     // 3. A call to mouseMoveTo while the mouse button is pressed could initiate a drag operation, and that does not return until mouseUp is processed. 
     // To be safe and avoid a deadlock, this event is queued.
     if (endOfQueue == startOfQueue && !eventQueue[endOfQueue].m_delay && (!(m_mouseButtonPressed && (m_eventLoop && event->type() == QEvent::MouseButtonRelease)))) {
-        QApplication::sendEvent(m_page->view(), event);
+        sendEvent(m_page->view(), event);
         delete event;
         return;
     }
@@ -541,13 +563,16 @@ bool EventSender::eventFilter(QObject* watched, QEvent* event)
     case QEvent::Leave:
         return true;
     case QEvent::MouseButtonPress:
+    case QEvent::GraphicsSceneMousePress:
         m_mouseButtonPressed = true;
         break;
     case QEvent::MouseMove:
+    case QEvent::GraphicsSceneMouseMove:
         if (m_mouseButtonPressed)
             m_drag = true;
         break;
     case QEvent::MouseButtonRelease:
+    case QEvent::GraphicsSceneMouseRelease:
         m_mouseButtonPressed = false;
         m_drag = false;
         break;
@@ -561,4 +586,25 @@ bool EventSender::eventFilter(QObject* watched, QEvent* event)
 void EventSender::timerEvent(QTimerEvent* ev)
 {
     m_clickTimer.stop();
+}
+
+QGraphicsSceneMouseEvent* EventSender::createGraphicsSceneMouseEvent(QEvent::Type type, const QPoint& pos, const QPoint& screenPos, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
+{
+    QGraphicsSceneMouseEvent* event;
+    event = new QGraphicsSceneMouseEvent(type);
+    event->setPos(pos);
+    event->setScreenPos(screenPos);
+    event->setButton(button);
+    event->setButtons(buttons);
+    event->setModifiers(modifiers);
+
+    return event;
+}
+
+void EventSender::sendEvent(QObject* receiver, QEvent* event)
+{
+    if (WebCore::WebViewGraphicsBased* view = qobject_cast<WebCore::WebViewGraphicsBased*>(receiver))
+        view->scene()->sendEvent(view->graphicsView(), event);
+    else
+        QApplication::sendEvent(receiver, event);
 }

@@ -29,6 +29,9 @@
 #ifndef EventSenderQt_h
 #define EventSenderQt_h
 
+
+#include "DumpRenderTreeQt.h"
+
 #include <QApplication>
 #include <QBasicTimer>
 #include <QEvent>
@@ -81,6 +84,11 @@ public slots:
 
 protected:
     void timerEvent(QTimerEvent*);
+
+private:
+    bool isGraphicsBased() const { return qobject_cast<WebCore::WebViewGraphicsBased*>(m_page->view()); }
+    QGraphicsSceneMouseEvent* createGraphicsSceneMouseEvent(QEvent::Type, const QPoint& pos, const QPoint& screenPos, Qt::MouseButton, Qt::MouseButtons, Qt::KeyboardModifiers);
+    void sendEvent(QObject* receiver, QEvent* event);
 
 private:
     void sendTouchEvent(QEvent::Type);
