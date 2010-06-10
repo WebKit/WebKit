@@ -1,3 +1,15 @@
+2010-06-10  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by John Sullivan.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40441, back out the original fix for 29601, since it has broken continuous
+        wheel delta values.
+
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        * platform/mac/WheelEventMac.mm:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2010-06-10  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dimitri Glazkov.

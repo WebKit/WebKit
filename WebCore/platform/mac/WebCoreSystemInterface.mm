@@ -52,7 +52,7 @@ NSString* (*wkGetMIMETypeForExtension)(NSString*);
 NSTimeInterval (*wkGetNSURLResponseCalculatedExpiration)(NSURLResponse *response);
 NSDate *(*wkGetNSURLResponseLastModifiedDate)(NSURLResponse *response);
 BOOL (*wkGetNSURLResponseMustRevalidate)(NSURLResponse *response);
-void (*wkGetWheelEventDeltas)(NSEvent*, float* deltaX, float* deltaY, float* wheelTicksX, float* wheelTicksY, BOOL* continuous);
+void (*wkGetWheelEventDeltas)(NSEvent*, float* deltaX, float* deltaY, BOOL* continuous);
 void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*);
 unsigned (*wkQTIncludeOnlyModernMediaFileTypes)(void);
 int (*wkQTMovieDataRate)(QTMovie*);

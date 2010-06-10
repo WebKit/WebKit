@@ -43,12 +43,18 @@ PlatformWheelEvent::PlatformWheelEvent(NSEvent* event, NSView *windowView)
     , m_metaKey([event modifierFlags] & NSCommandKeyMask)
 {
     BOOL continuous;
-    wkGetWheelEventDeltas(event, &m_deltaX, &m_deltaY, &m_wheelTicksX, &m_wheelTicksY, &continuous);
-
-    if (!continuous) {
-        m_deltaX *= static_cast<float>(Scrollbar::pixelsPerLineStep());
-        m_deltaY *= static_cast<float>(Scrollbar::pixelsPerLineStep());
+    
+    wkGetWheelEventDeltas(event, &m_deltaX, &m_deltaY, &continuous);
+    if (continuous) {
+        m_wheelTicksX = m_deltaX / static_cast<float>(Scrollbar::pixelsPerLineStep());
+        m_wheelTicksY = m_deltaY / static_cast<float>(Scrollbar::pixelsPerLineStep());
+    } else {
+        m_wheelTicksX = m_deltaX;
+        m_wheelTicksY = m_deltaY;
     }
+
+    m_deltaX *= static_cast<float>(Scrollbar::pixelsPerLineStep());
+    m_deltaY *= static_cast<float>(Scrollbar::pixelsPerLineStep());
 }
 
 } // namespace WebCore

@@ -470,10 +470,8 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
 {
     float deltaX;
     float deltaY;
-    float wheelTicksX;
-    float wheelTicksY;
     BOOL isContinuous;
-    WKGetWheelEventDeltas(event, &deltaX, &deltaY, &wheelTicksX, &wheelTicksY, &isContinuous);
+    WKGetWheelEventDeltas(event, &deltaX, &deltaY, &isContinuous);
 
     BOOL isLatchingEvent = WKIsLatchingWheelEvent(event);
 

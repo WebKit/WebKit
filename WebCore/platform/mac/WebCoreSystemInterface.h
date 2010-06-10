@@ -117,7 +117,7 @@ extern ATSUFontID (*wkGetNSFontATSUFontId)(NSFont*);
 extern double (*wkGetNSURLResponseCalculatedExpiration)(NSURLResponse *response);
 extern NSDate *(*wkGetNSURLResponseLastModifiedDate)(NSURLResponse *response);
 extern BOOL (*wkGetNSURLResponseMustRevalidate)(NSURLResponse *response);
-extern void (*wkGetWheelEventDeltas)(NSEvent*, float* deltaX, float* deltaY, float* wheelTicksX, float* wheelTicksY, BOOL* continuous);
+extern void (*wkGetWheelEventDeltas)(NSEvent*, float* deltaX, float* deltaY, BOOL* continuous);
 extern BOOL (*wkHitTestMediaUIPart)(int part, int themeStyle, CGRect bounds, CGPoint point);
 extern void (*wkMeasureMediaUIPart)(int part, int themeStyle, CGRect *bounds, CGSize *naturalSize);
 extern BOOL (*wkMediaControllerThemeAvailable)(int themeStyle);
