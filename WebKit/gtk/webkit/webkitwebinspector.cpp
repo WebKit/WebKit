@@ -30,6 +30,7 @@
 #include "InspectorClientGtk.h"
 #include "IntPoint.h"
 #include "Page.h"
+#include "RenderLayer.h"
 #include "RenderView.h"
 #include "webkitmarshal.h"
 #include "webkitprivate.h"

@@ -64,6 +64,7 @@ typedef struct HBITMAP__* HBITMAP;
 
 namespace WebCore {
 
+    class CSSMutableStyleDeclaration;
     class HTMLTableCellElement;
     class RegularExpression;
     class RenderPart;
