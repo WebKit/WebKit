@@ -24,7 +24,10 @@
  */
 
 module html {
-    interface [Conditional=VIDEO] HTMLVideoElement : HTMLMediaElement {
+    interface [
+        Conditional=VIDEO,
+        GenerateNativeConverter
+    ] HTMLVideoElement : HTMLMediaElement {
         attribute unsigned long width;
         attribute unsigned long height;
         readonly attribute unsigned long videoWidth;

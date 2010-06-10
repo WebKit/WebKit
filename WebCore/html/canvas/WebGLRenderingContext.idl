@@ -474,15 +474,9 @@ module html {
         void         blendFunc(in unsigned long sfactor, in unsigned long dfactor);
         void         blendFuncSeparate(in unsigned long srcRGB, in unsigned long dstRGB, in unsigned long srcAlpha, in unsigned long dstAlpha);
 
-#if defined(V8_BINDING) && V8_BINDING
         void         bufferData(in unsigned long target, in ArrayBufferView data, in unsigned long usage) raises (DOMException);
         void         bufferData(in unsigned long target, in long size, in unsigned long usage) raises (DOMException);
         void         bufferSubData(in unsigned long target, in long offset, in ArrayBufferView data) raises (DOMException);
-#else
-        // FIXME: Unfork once JSC supports overload generation too.
-        [Custom] void bufferData() raises(DOMException);
-        [Custom] void bufferSubData() raises(DOMException);
-#endif
 
         unsigned long checkFramebufferStatus(in unsigned long target);
         void         clear(in unsigned long mask);
@@ -613,7 +607,6 @@ module html {
         void         texParameteri(in unsigned long target, in unsigned long pname, in long param);
 
         // Supported forms:
-#if defined(V8_BINDING) && V8_BINDING
         void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat, in long width, in long height, 
                                 in long border, in unsigned long format, in unsigned long type, in ArrayBufferView pixels) raises (DOMException);
         void         texImage2D(in unsigned long target, in long level, in ImageData pixels,
@@ -636,11 +629,7 @@ module html {
                                    in HTMLCanvasElement canvas, in [Optional] boolean flipY, in [Optional] boolean premultiplyAlpha) raises (DOMException);
         void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, 
                                    in HTMLVideoElement video, in [Optional] boolean flipY, in [Optional] boolean premultiplyAlpha) raises (DOMException);
-#else
-        // FIXME: Unfork once JSC supports overload generation too.
-        [Custom] void texImage2D();
-        [Custom] void texSubImage2D();
-#endif
+
         void uniform1f(in WebGLUniformLocation location, in float x) raises(DOMException);
         [Custom] void uniform1fv(in WebGLUniformLocation location, in Float32Array v) raises(DOMException);
         void uniform1i(in WebGLUniformLocation location, in long x) raises(DOMException);

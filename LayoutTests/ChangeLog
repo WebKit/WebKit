@@ -1,3 +1,19 @@
+2010-06-10  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Delete custom JSC bindings for bufferData, texImage2D and texSubImage2D
+        https://bugs.webkit.org/show_bug.cgi?id=40443
+
+        Deleted custom JSC bindings for bufferData, texImage2D and
+        texSubImage2D and fixed minor associated issues in code generator
+        and IDL. Updated fast/canvas/webgl/texImageTest-expected.txt,
+        which now runs as intended. Ran all layout tests, including WebGL
+        tests, in Safari.
+
+        * fast/canvas/webgl/script-tests/texImageTest.js:
+        * fast/canvas/webgl/texImageTest-expected.txt:
+
 2010-06-10  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
