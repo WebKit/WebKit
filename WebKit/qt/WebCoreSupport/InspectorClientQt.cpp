@@ -31,19 +31,17 @@
 #include "config.h"
 #include "InspectorClientQt.h"
 
+#include "InspectorController.h"
+#include "NotImplemented.h"
+#include "Page.h"
+#include "PlatformString.h"
 #include "qwebinspector.h"
 #include "qwebinspector_p.h"
 #include "qwebpage.h"
 #include "qwebpage_p.h"
 #include "qwebview.h"
-
-#include <QtCore/QSettings>
 #include <QtCore/QCoreApplication>
-
-#include "InspectorController.h"
-#include "NotImplemented.h"
-#include "Page.h"
-#include "PlatformString.h"
+#include <QtCore/QSettings>
 
 namespace WebCore {
 
