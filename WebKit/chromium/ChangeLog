@@ -1,3 +1,13 @@
+2010-06-10  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] Adding the ANGLE project to the DEPS file as it's required
+        by the gpu-accelerated compositor.
+        https://bugs.webkit.org/show_bug.cgi?id=40379
+
+        * DEPS:
+
 2010-06-09  Bo Liu  <boliu@chromium.org>
 
         Reviewed by David Levin.

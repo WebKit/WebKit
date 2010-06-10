@@ -80,7 +80,7 @@ deps = {
   'googleurl':
     From('chromium_deps', 'src/googleurl'),
 
-  # webkit dependencis
+  # webkit dependencies
   'webkit': Var('chromium_svn')+'/webkit@'+Var('chromium_rev'),
 
   'app':
@@ -89,6 +89,8 @@ deps = {
     Var('chromium_svn')+'/gpu@'+Var('chromium_rev'),
   'media':
     Var('chromium_svn')+'/media@'+Var('chromium_rev'),
+  'third_party/angle':  # needed by the gpu process
+    From('chromium_deps', 'src/third_party/angle'),
   'third_party/glew':  # webgl related
     Var('chromium_svn')+'/third_party/glew@'+Var('chromium_rev'),
   'third_party/ffmpeg': # needed by webkit/media
