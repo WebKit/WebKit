@@ -35,6 +35,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "IntRect.h"
 #include "Node.h"
+#include "RenderLayer.h"
 #include "Page.h"
 
 namespace WebCore {

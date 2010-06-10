@@ -59,6 +59,7 @@
 #include "PlatformWheelEvent.h"
 #include "PluginDocument.h"
 #include "RenderFrameSet.h"
+#include "RenderLayer.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderView.h"
 #include "RenderWidget.h"

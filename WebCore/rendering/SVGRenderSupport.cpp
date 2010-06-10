@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "ImageBuffer.h"
 #include "NodeRenderStyle.h"
+#include "RenderLayer.h"
 #include "RenderObject.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGResource.h"

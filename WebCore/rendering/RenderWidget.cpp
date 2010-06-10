@@ -27,6 +27,7 @@
 #include "AnimationController.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
+#include "RenderLayer.h"
 #include "RenderView.h"
 #include "RenderWidgetProtector.h"
 

@@ -25,10 +25,10 @@
 #ifndef FrameView_h
 #define FrameView_h
 
-#include "Frame.h"
+#include "Frame.h" // Only used by FrameView::inspectorTimelineAgent()
 #include "IntSize.h"
-#include "Page.h"
-#include "RenderLayer.h"
+#include "Page.h" // Only used by FrameView::inspectorTimelineAgent()
+#include "RenderObject.h" // For PaintBehavior
 #include "ScrollView.h"
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
@@ -37,7 +37,6 @@ namespace WebCore {
 
 class Color;
 class Event;
-class Frame;
 class FrameViewPrivate;
 class InspectorTimelineAgent;
 class IntRect;
@@ -46,6 +45,7 @@ class PlatformMouseEvent;
 class RenderLayer;
 class RenderObject;
 class RenderEmbeddedObject;
+class RenderScrollbarPart;
 class ScheduledEvent;
 class String;
 

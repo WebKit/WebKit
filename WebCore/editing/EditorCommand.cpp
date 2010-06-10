@@ -49,6 +49,7 @@
 #include "InsertListCommand.h"
 #include "KillRing.h"
 #include "Page.h"
+#include "RenderBox.h"
 #include "ReplaceSelectionCommand.h"
 #include "Scrollbar.h"
 #include "Settings.h"

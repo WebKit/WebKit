@@ -1,3 +1,46 @@
+2010-06-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Reduce FrameView.h includes to speed up build times
+        https://bugs.webkit.org/show_bug.cgi?id=40408
+
+        Cleaned up FrameView.h includes and then propagated the
+        cascade of includes to the necessary .cpp files.
+        This should reduce the set of files rebuilt every
+        time FrameView.h changes, and should also reduce the size
+        of some .o files.
+
+        No functional changes, thus no tests.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        * dom/ContainerNode.cpp:
+        * dom/Document.cpp:
+        * dom/Element.cpp:
+        * dom/EventTarget.h:
+        * dom/Node.cpp:
+        * editing/EditorCommand.cpp:
+        * editing/SelectionController.cpp:
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::script):
+         - No need for this to be inline.  Being inline required
+           Frame.h in the header, which causes huge include cascade.
+        * html/HTML5Tokenizer.h:
+        * page/DragController.cpp:
+        * page/EventHandler.cpp:
+        * page/Frame.h:
+        * page/FrameView.h:
+        * page/PrintContext.cpp:
+        * page/SpatialNavigation.cpp:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlockLineLayout.cpp:
+        * rendering/RenderImage.cpp:
+        * rendering/RenderInline.cpp:
+        * rendering/RenderObject.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        * rendering/RenderWidget.cpp:
+        * rendering/SVGRenderSupport.cpp:
+
 2010-06-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

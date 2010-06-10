@@ -36,6 +36,7 @@
 #include "InspectorController.h"
 #include "MutationEvent.h"
 #include "Page.h"
+#include "RenderBox.h"
 #include "RenderTheme.h"
 #include "RootInlineBox.h"
 #include "loader.h"

@@ -66,7 +66,7 @@
 #include "ProcessingInstruction.h"
 #include "ProgressEvent.h"
 #include "RegisteredEventListener.h"
-#include "RenderObject.h"
+#include "RenderBox.h"
 #include "ScriptController.h"
 #include "SelectorNodeList.h"
 #include "StringBuilder.h"

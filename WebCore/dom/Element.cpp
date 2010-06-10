@@ -47,6 +47,7 @@
 #include "NodeList.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
+#include "RenderLayer.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "TextIterator.h"

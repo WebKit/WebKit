@@ -30,6 +30,7 @@
 #include "Page.h"
 #include "RenderArena.h"
 #include "RenderBlock.h"
+#include "RenderLayer.h"
 #include "RenderView.h"
 #include "TransformState.h"
 #include "VisiblePosition.h"
