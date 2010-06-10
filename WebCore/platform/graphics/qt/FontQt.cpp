@@ -105,7 +105,7 @@ void Font::drawComplexText(GraphicsContext* ctx, const TextRun& run, const Float
 
     // text shadow
     IntSize shadowSize;
-    int shadowBlur;
+    float shadowBlur;
     Color shadowColor;
     bool hasShadow = ctx->textDrawingMode() == cTextFill && ctx->getShadow(shadowSize, shadowBlur, shadowColor);
 

@@ -136,7 +136,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
 
 
     IntSize shadowSize;
-    int shadowBlur;
+    float shadowBlur;
     Color shadowColor;
     ColorSpace fillColorSpace = context->fillColorSpace();
     context->getShadow(shadowSize, shadowBlur, shadowColor);

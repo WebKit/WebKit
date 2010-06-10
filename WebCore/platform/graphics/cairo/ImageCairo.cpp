@@ -135,7 +135,7 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
     // Draw the shadow
 #if ENABLE(FILTERS)
     IntSize shadowSize;
-    int shadowBlur;
+    float shadowBlur;
     Color shadowColor;
     if (context->getShadow(shadowSize, shadowBlur, shadowColor)) {
         IntSize shadowBufferSize;

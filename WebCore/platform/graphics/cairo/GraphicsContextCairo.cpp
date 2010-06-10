@@ -143,7 +143,7 @@ static inline void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr)
     cairo_set_fill_rule(dstCr, cairo_get_fill_rule(srcCr));
 }
 
-void GraphicsContext::calculateShadowBufferDimensions(IntSize& shadowBufferSize, FloatRect& shadowRect, float& kernelSize, const FloatRect& sourceRect, const IntSize& shadowSize, int shadowBlur)
+void GraphicsContext::calculateShadowBufferDimensions(IntSize& shadowBufferSize, FloatRect& shadowRect, float& kernelSize, const FloatRect& sourceRect, const IntSize& shadowSize, float shadowBlur)
 {
 #if ENABLE(FILTERS)
     // calculate the kernel size according to the HTML5 canvas shadow specification
@@ -162,7 +162,7 @@ static inline void drawPathShadow(GraphicsContext* context, GraphicsContextPriva
 {
 #if ENABLE(FILTERS)
     IntSize shadowSize;
-    int shadowBlur;
+    float shadowBlur;
     Color shadowColor;
     if (!context->getShadow(shadowSize, shadowBlur, shadowColor))
         return;
@@ -560,7 +560,7 @@ static void drawBorderlessRectShadow(GraphicsContext* context, const FloatRect& 
 {
 #if ENABLE(FILTERS)
     IntSize shadowSize;
-    int shadowBlur;
+    float shadowBlur;
     Color shadowColor;
 
     if (!context->getShadow(shadowSize, shadowBlur, shadowColor))
@@ -841,7 +841,7 @@ void GraphicsContext::clipToImageBuffer(const FloatRect& rect, const ImageBuffer
     notImplemented();
 }
 
-void GraphicsContext::setPlatformShadow(IntSize const& size, int, Color const&, ColorSpace)
+void GraphicsContext::setPlatformShadow(IntSize const& size, float, Color const&, ColorSpace)
 {
     // Cairo doesn't support shadows natively, they are drawn manually in the draw*
     // functions

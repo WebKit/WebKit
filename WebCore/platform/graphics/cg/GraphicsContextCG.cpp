@@ -764,7 +764,7 @@ void GraphicsContext::endTransparencyLayer()
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-void GraphicsContext::setPlatformShadow(const IntSize& offset, int blur, const Color& color, ColorSpace colorSpace)
+void GraphicsContext::setPlatformShadow(const IntSize& offset, float blur, const Color& color, ColorSpace colorSpace)
 {
     if (paintingDisabled())
         return;

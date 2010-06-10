@@ -223,7 +223,7 @@ void SkiaWinOutlineCache::removePathsForFont(HFONT hfont)
 bool windowsCanHandleDrawTextShadow(WebCore::GraphicsContext *context)
 {
     IntSize shadowSize;
-    int shadowBlur;
+    float shadowBlur;
     Color shadowColor;
 
     bool hasShadow = context->getShadow(shadowSize, shadowBlur, shadowColor);
