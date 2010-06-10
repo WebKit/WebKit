@@ -1,3 +1,18 @@
+2010-06-10  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add null pointer checks for nativeImageForCurrentFrame
+        function calls.
+        https://bugs.webkit.org/show_bug.cgi?id=39797
+
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::writeImage):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::getImageData):
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writeImage):
+
 2010-06-09  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
