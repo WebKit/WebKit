@@ -1,3 +1,14 @@
+2010-06-10  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        Add ENABLE(DATABASE) guard for DatabaseAuthorizer.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=40399
+
+        Build fix for ENABLE(DATABASE)=0.
+
+        * storage/DatabaseAuthorizer.cpp:
+
 2010-06-10  Shu Chang  <chang.shu@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
