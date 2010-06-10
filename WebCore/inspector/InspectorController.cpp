@@ -667,6 +667,7 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
         m_counts.clear();
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         m_sourceIDToURL.clear();
+        m_scriptIDToContent.clear();
 #endif
 #if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
         m_profiles.clear();
@@ -1633,6 +1634,14 @@ void InspectorController::editScriptSource(long callId, const String& sourceID, 
     m_frontend->didEditScriptSource(callId, success, result, callFrames.get());
 }
 
+void InspectorController::getScriptSource(long callId, const String& sourceID)
+{
+    if (!m_frontend)
+        return;
+    String scriptSource = m_scriptIDToContent.get(sourceID);
+    m_frontend->didGetScriptSource(callId, scriptSource);
+}
+
 void InspectorController::resumeDebugger()
 {
     if (!m_debuggerEnabled)
@@ -1683,7 +1692,8 @@ void InspectorController::removeBreakpoint(const String& sourceID, unsigned line
 
 void InspectorController::didParseSource(const String& sourceID, const String& url, const String& data, int firstLine, ScriptWorldType worldType)
 {
-    m_frontend->parsedScriptSource(sourceID, url, data, firstLine, worldType);
+    // Don't send script content to the front end until it's realy needed.
+    m_frontend->parsedScriptSource(sourceID, url, "", firstLine, worldType);
 
     if (url.isEmpty())
         return;
@@ -1699,6 +1709,7 @@ void InspectorController::didParseSource(const String& sourceID, const String& u
     }
 
     m_sourceIDToURL.set(sourceID, url);
+    m_scriptIDToContent.set(sourceID, data);
 }
 
 void InspectorController::failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage)

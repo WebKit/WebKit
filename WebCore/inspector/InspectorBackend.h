@@ -91,6 +91,7 @@ public:
     void setPauseOnExceptionsState(long pauseState);
 
     void editScriptSource(long callId, const String& sourceID, const String& newContent);
+    void getScriptSource(long callId, const String& sourceID);
 
     void enableProfiler(bool always);
     void disableProfiler(bool always);

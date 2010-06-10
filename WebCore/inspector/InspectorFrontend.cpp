@@ -370,6 +370,15 @@ void InspectorFrontend::didEditScriptSource(long callId, bool success, const Str
     function.call();
 }
 
+void InspectorFrontend::didGetScriptSource(long callId, const String& result)
+{
+    ScriptFunctionCall function(m_webInspector, "dispatch");
+    function.appendArgument("didGetScriptSource");
+    function.appendArgument(callId);
+    function.appendArgument(result);
+    function.call();
+}
+
 void InspectorFrontend::profilerWasEnabled()
 {
     callSimpleFunction("profilerWasEnabled");

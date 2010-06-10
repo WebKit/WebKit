@@ -99,6 +99,7 @@ namespace WebCore {
         void resumedScript();
 
         void didEditScriptSource(long callId, bool success, const String& result, SerializedScriptValue* newCallFrames);
+        void didGetScriptSource(long callId, const String& result);
 
         void profilerWasEnabled();
         void profilerWasDisabled();

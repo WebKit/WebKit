@@ -1,3 +1,21 @@
+2010-06-10  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: to reduce the front end start up time don't push script
+        sources to frontend if debugger is always enabled, instead request
+        script content lazily at the moment it should be displyed. It is critical for
+        always enabled debugger because in that case lots of script may have
+        already been parsed when the front end is opening and pushing all
+        of them at once may slow things down(even though the script sources will never
+        be used if scripts panel isn't open).
+        https://bugs.webkit.org/show_bug.cgi?id=40364
+
+        * src/js/DevTools.js:
+        * src/js/InspectorControllerImpl.js:
+        (devtools.InspectorBackendImpl):
+        (.devtools.InspectorBackendImpl.prototype.getScriptSource):
+
 2010-06-10  Mike Belshe  <mbelshe@google.com>
 
         Reviewed by David Levin

@@ -94,6 +94,7 @@ devtools.InspectorBackendImpl = function()
     if (window.v8ScriptDebugServerEnabled) {
     this.installInspectorControllerDelegate_("disableDebugger");
     this.installInspectorControllerDelegate_("editScriptSource");
+    this.installInspectorControllerDelegate_("getScriptSource");
     this.installInspectorControllerDelegate_("enableDebugger");
     this.installInspectorControllerDelegate_("setBreakpoint");
     this.installInspectorControllerDelegate_("removeBreakpoint");
@@ -147,6 +148,16 @@ devtools.InspectorBackendImpl.prototype.editScriptSource = function(callID, sour
     devtools.tools.getDebuggerAgent().editScriptSource(sourceID, newContent, function(success, newBodyOrErrorMessage, callFrames) {
         WebInspector.didEditScriptSource(callID, success, newBodyOrErrorMessage, callFrames);
     });
+};
+
+
+devtools.InspectorBackendImpl.prototype.getScriptSource = function(callID, sourceID)
+{
+    devtools.tools.getDebuggerAgent().resolveScriptSource(
+        sourceID,
+        function(source) {
+             WebInspector.didGetScriptSource(callID, source);
+        });
 };
 
 

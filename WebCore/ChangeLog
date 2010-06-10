@@ -1,3 +1,36 @@
+2010-06-10  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: to reduce the front end start up time don't push script
+        sources to frontend if debugger is always enabled, instead request
+        script content lazily at the moment it should be displyed. It is critical for
+        always enabled debugger because in that case lots of script may have
+        already been parsed when the front end is opening and pushing all
+        of them at once may slow things down(even though the script sources will never
+        be used if scripts panel isn't open).
+        https://bugs.webkit.org/show_bug.cgi?id=40364
+
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::getScriptSource):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::getScriptSource):
+        (WebCore::InspectorController::didParseSource):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::didGetScriptSource):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/InspectorBackendStub.js:
+        (.WebInspector.InspectorBackendStub.prototype.editScriptSource):
+        (.WebInspector.InspectorBackendStub.prototype.getScriptSource):
+        * inspector/front-end/ScriptView.js:
+        (WebInspector.ScriptView.prototype.setupSourceFrameIfNeeded):
+        (WebInspector.ScriptView.prototype._didGetScriptSource):
+        (WebInspector.ScriptView.prototype._sourceFrameSetupFinished):
+
 2010-06-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -210,42 +210,6 @@ document.addEventListener("DOMContentLoaded", devtools.domContentLoaded, false);
 
 if (!window.v8ScriptDebugServerEnabled) {
 
-/**
- * This override is necessary for adding script source asynchronously.
- * @override
- */
-WebInspector.ScriptView.prototype.setupSourceFrameIfNeeded = function()
-{
-    if (!this._frameNeedsSetup)
-        return;
-
-    this.attach();
-
-    if (this.script.source)
-        this.didResolveScriptSource_();
-    else {
-        var self = this;
-        devtools.tools.getDebuggerAgent().resolveScriptSource(
-            this.script.sourceID,
-            function(source) {
-                self.script.source = source || WebInspector.UIString("<source is not available>");
-                self.didResolveScriptSource_();
-            });
-    }
-};
-
-
-/**
- * Performs source frame setup when script source is aready resolved.
- */
-WebInspector.ScriptView.prototype.didResolveScriptSource_ = function()
-{
-    this.sourceFrame.setContent("text/javascript", this._prependWhitespace(this.script.source));
-    this._sourceFrameSetup = true;
-    delete this._frameNeedsSetup;
-};
-
-
 (function()
 {
     var oldShow = WebInspector.ScriptsPanel.prototype.show;

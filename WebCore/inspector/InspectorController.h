@@ -242,6 +242,7 @@ public:
     bool debuggerEnabled() const { return m_debuggerEnabled; }
 
     void editScriptSource(long callId, const String& sourceID, const String& newContent);
+    void getScriptSource(long callId, const String& sourceID);
 
     void resumeDebugger();
     PassRefPtr<SerializedScriptValue> currentCallFrames();
@@ -361,6 +362,7 @@ private:
     bool m_attachDebuggerWhenShown;
     ScriptState* m_pausedScriptState;
     HashMap<String, String> m_sourceIDToURL;
+    HashMap<String, String> m_scriptIDToContent;
     HashMap<String, SourceBreakpoints> m_stickyBreakpoints;
 
     bool m_profilerEnabled;
