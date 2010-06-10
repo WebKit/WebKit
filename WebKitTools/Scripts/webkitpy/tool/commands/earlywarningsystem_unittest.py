@@ -43,17 +43,23 @@ class EarlyWarningSytemTest(QueuesTest):
         string_replacemnts = {
             "name": ews.name,
             "checkout_dir": os.getcwd(),  # FIXME: Use of os.getcwd() is wrong, should be scm.checkout_root
+            "port": ews.port_name,
+            "watchers": ews.watchers,
         }
         expected_stderr = {
             "begin_work_queue": "CAUTION: %(name)s will discard all local changes in \"%(checkout_dir)s\"\nRunning WebKit %(name)s.\n" % string_replacemnts,
             "handle_unexpected_error": "Mock error message\n",
             "next_work_item": "MOCK: update_work_items: %(name)s [103]\n" % string_replacemnts,
             "process_work_item": "MOCK: update_status: %(name)s Pass\n" % string_replacemnts,
+            "handle_script_error": "MOCK: update_status: %(name)s ScriptError error message\nMOCK bug comment: bug_id=345, cc=%(watchers)s\n--- Begin comment ---\\Attachment 1234 did not build on %(port)s:\nBuild output: http://dummy_url\n--- End comment ---\n\n" % string_replacemnts,
         }
         return expected_stderr
 
     def _test_ews(self, ews):
-        self.assert_queue_outputs(ews, expected_stderr=self._default_expected_stderr(ews))
+        expected_exceptions = {
+            "handle_script_error": SystemExit,
+        }
+        self.assert_queue_outputs(ews, expected_stderr=self._default_expected_stderr(ews), expected_exceptions=expected_exceptions)
 
     # FIXME: If all EWSes are going to output the same text, we
     # could test them all in one method with a for loop over an array.
@@ -73,4 +79,7 @@ class EarlyWarningSytemTest(QueuesTest):
         ews = MacEWS()
         expected_stderr = self._default_expected_stderr(ews)
         expected_stderr["process_work_item"] = "MOCK: update_status: mac-ews Error: mac-ews cannot process patches from non-committers :(\n"
-        self.assert_queue_outputs(ews, expected_stderr=expected_stderr)
+        expected_exceptions = {
+            "handle_script_error": SystemExit,
+        }
+        self.assert_queue_outputs(ews, expected_stderr=expected_stderr, expected_exceptions=expected_exceptions)

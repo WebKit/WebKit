@@ -331,18 +331,21 @@ class RietveldUploadQueue(AbstractPatchQueue, StepSequenceErrorHandler):
                 self._did_fail(patch)
             raise e
 
-    def _reject_patch(self, patch_id, message):
-        self.tool.bugs.set_flag_on_attachment(patch_id, "in-rietveld", "-")
+    @classmethod
+    def _reject_patch(cls, tool, patch_id):
+        tool.bugs.set_flag_on_attachment(patch_id, "in-rietveld", "-")
 
     def handle_unexpected_error(self, patch, message):
-        self._reject_patch(patch.id(), message)
+        log(message)
+        self._reject_patch(self.tool, patch.id())
 
     # StepSequenceErrorHandler methods
 
     @classmethod
     def handle_script_error(cls, tool, state, script_error):
-        status_id = cls._update_status_for_script_error(tool, state, script_error)
-        cls._reject_patch(state["patch"].id())
+        log(script_error.message_with_output())
+        cls._update_status_for_script_error(tool, state, script_error)
+        cls._reject_patch(tool, state["patch"].id())
 
 
 class AbstractReviewQueue(AbstractPatchQueue, PersistentPatchCollectionDelegate, StepSequenceErrorHandler):

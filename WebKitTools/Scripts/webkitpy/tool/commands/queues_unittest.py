@@ -128,6 +128,7 @@ MOCK: update_work_items: commit-queue [106, 197]
 """,
             "process_work_item" : "MOCK: update_status: commit-queue Pass\n",
             "handle_unexpected_error" : "MOCK setting flag 'commit-queue' to '-' on attachment '1234' with comment 'Rejecting patch 1234 from commit-queue.' and additional comment 'Mock error message'\n",
+            "handle_script_error": "MOCK: update_status: commit-queue ScriptError error message\nMOCK setting flag 'commit-queue' to '-' on attachment '1234' with comment 'Rejecting patch 1234 from commit-queue.' and additional comment 'ScriptError error message'\n",
         }
         self.assert_queue_outputs(CommitQueue(), expected_stderr=expected_stderr)
 
@@ -147,6 +148,7 @@ MOCK: update_status: commit-queue Builders ["Builder2"] are red. See http://buil
 """,
             "process_work_item" : "MOCK: update_status: commit-queue Builders [\"Builder2\"] are red. See http://build.webkit.org\n",
             "handle_unexpected_error" : "MOCK setting flag 'commit-queue' to '-' on attachment '1234' with comment 'Rejecting patch 1234 from commit-queue.' and additional comment 'Mock error message'\n",
+            "handle_script_error": "MOCK: update_status: commit-queue ScriptError error message\nMOCK setting flag 'commit-queue' to '-' on attachment '1234' with comment 'Rejecting patch 1234 from commit-queue.' and additional comment 'ScriptError error message'\n",
         }
         self.assert_queue_outputs(CommitQueue(), tool=tool, expected_stderr=expected_stderr)
 
@@ -167,6 +169,7 @@ MOCK: update_status: commit-queue Builders ["Builder2"] are red. See http://buil
 """,
             "process_work_item": "MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--build', '--non-interactive', '--ignore-builders', '--build-style=both', '--quiet', 76543]\nMOCK: update_status: commit-queue Pass\n",
             "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '76543' with comment 'Rejecting patch 76543 from commit-queue.' and additional comment 'Mock error message'\n",
+            "handle_script_error": "MOCK: update_status: commit-queue ScriptError error message\nMOCK setting flag 'commit-queue' to '-' on attachment '1234' with comment 'Rejecting patch 1234 from commit-queue.' and additional comment 'ScriptError error message'\n",
         }
         self.assert_queue_outputs(CommitQueue(), tool=tool, work_item=rollout_patch, expected_stderr=expected_stderr)
 
@@ -205,7 +208,8 @@ class RietveldUploadQueueTest(QueuesTest):
             "begin_work_queue": "CAUTION: rietveld-upload-queue will discard all local changes in \"%s\"\nRunning WebKit rietveld-upload-queue.\n" % MockSCM.fake_checkout_root,
             "should_proceed_with_work_item": "MOCK: update_status: rietveld-upload-queue Uploading patch\n",
             "process_work_item": "MOCK: update_status: rietveld-upload-queue Pass\n",
-            "handle_unexpected_error": "MOCK setting flag 'in-rietveld' to '-' on attachment '1234' with comment 'None' and additional comment 'None'\n",
+            "handle_unexpected_error": "Mock error message\nMOCK setting flag 'in-rietveld' to '-' on attachment '1234' with comment 'None' and additional comment 'None'\n",
+            "handle_script_error": "ScriptError error message\nMOCK: update_status: rietveld-upload-queue ScriptError error message\nMOCK setting flag 'in-rietveld' to '-' on attachment '1234' with comment 'None' and additional comment 'None'\n",
         }
         self.assert_queue_outputs(RietveldUploadQueue(), expected_stderr=expected_stderr)
 
@@ -218,5 +222,9 @@ class StyleQueueTest(QueuesTest):
             "should_proceed_with_work_item": "MOCK: update_status: style-queue Checking style\n",
             "process_work_item" : "MOCK: update_status: style-queue Pass\n",
             "handle_unexpected_error" : "Mock error message\n",
+            "handle_script_error": "MOCK: update_status: style-queue ScriptError error message\nMOCK bug comment: bug_id=345, cc=[]\n--- Begin comment ---\\Attachment 1234 did not pass style-queue:\n\nScriptError error message\n\nIf any of these errors are false positives, please file a bug against check-webkit-style.\n--- End comment ---\n\n",
         }
-        self.assert_queue_outputs(StyleQueue(), expected_stderr=expected_stderr)
+        expected_exceptions = {
+            "handle_script_error": SystemExit,
+        }
+        self.assert_queue_outputs(StyleQueue(), expected_stderr=expected_stderr, expected_exceptions=expected_exceptions)

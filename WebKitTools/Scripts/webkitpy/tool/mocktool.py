@@ -512,6 +512,8 @@ class MockStatusServer(object):
     def update_svn_revision(self, svn_revision, broken_bot):
         return 191
 
+    def results_url_for_status(self, status_id):
+        return "http://dummy_url"
 
 class MockExecute(Mock):
     def __init__(self, should_log):

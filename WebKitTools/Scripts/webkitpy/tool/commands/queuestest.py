@@ -30,6 +30,7 @@ import unittest
 
 from webkitpy.common.net.bugzilla import Attachment
 from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockTool
 
@@ -42,6 +43,14 @@ class MockQueueEngine(object):
         pass
 
 
+class MockPatch():
+    def id(self):
+        return 1234
+
+    def bug_id(self):
+        return 345
+
+
 class QueuesTest(unittest.TestCase):
     mock_work_item = Attachment({
         "id": 1234,
@@ -50,7 +59,19 @@ class QueuesTest(unittest.TestCase):
         "attacher_email": "adam@example.com",
     }, None)
 
-    def assert_queue_outputs(self, queue, args=None, work_item=None, expected_stdout=None, expected_stderr=None, options=Mock(), tool=MockTool()):
+    def assert_outputs(self, func, func_name, args, expected_stdout, expected_stderr, expected_exceptions):
+        exception = None
+        if expected_exceptions and func_name in expected_exceptions:
+            exception = expected_exceptions[func_name]
+
+        OutputCapture().assert_outputs(self,
+                func,
+                args=args,
+                expected_stdout=expected_stdout.get(func_name, ""),
+                expected_stderr=expected_stderr.get(func_name, ""),
+                expected_exception=exception)
+
+    def assert_queue_outputs(self, queue, args=None, work_item=None, expected_stdout=None, expected_stderr=None, expected_exceptions=None, options=Mock(), tool=MockTool()):
         if not expected_stdout:
             expected_stdout = {}
         if not expected_stderr:
@@ -63,38 +84,12 @@ class QueuesTest(unittest.TestCase):
 
         queue.execute(options, args, tool, engine=MockQueueEngine)
 
-        OutputCapture().assert_outputs(self,
-                queue.queue_log_path,
-                expected_stdout=expected_stdout.get("queue_log_path", ""),
-                expected_stderr=expected_stderr.get("queue_log_path", ""))
-        OutputCapture().assert_outputs(self,
-                queue.work_item_log_path,
-                args=[work_item],
-                expected_stdout=expected_stdout.get("work_item_log_path", ""),
-                expected_stderr=expected_stderr.get("work_item_log_path", ""))
-        OutputCapture().assert_outputs(self,
-                queue.begin_work_queue,
-                expected_stdout=expected_stdout.get("begin_work_queue", ""),
-                expected_stderr=expected_stderr.get("begin_work_queue", ""))
-        OutputCapture().assert_outputs(self,
-                queue.should_continue_work_queue,
-                expected_stdout=expected_stdout.get("should_continue_work_queue", ""), expected_stderr=expected_stderr.get("should_continue_work_queue", ""))
-        OutputCapture().assert_outputs(self,
-                queue.next_work_item,
-                expected_stdout=expected_stdout.get("next_work_item", ""),
-                expected_stderr=expected_stderr.get("next_work_item", ""))
-        OutputCapture().assert_outputs(self,
-                queue.should_proceed_with_work_item,
-                args=[work_item],
-                expected_stdout=expected_stdout.get("should_proceed_with_work_item", ""),
-                expected_stderr=expected_stderr.get("should_proceed_with_work_item", ""))
-        OutputCapture().assert_outputs(self,
-                queue.process_work_item,
-                args=[work_item],
-                expected_stdout=expected_stdout.get("process_work_item", ""),
-                expected_stderr=expected_stderr.get("process_work_item", ""))
-        OutputCapture().assert_outputs(self,
-                queue.handle_unexpected_error,
-                args=[work_item, "Mock error message"],
-                expected_stdout=expected_stdout.get("handle_unexpected_error", ""),
-                expected_stderr=expected_stderr.get("handle_unexpected_error", ""))
+        self.assert_outputs(queue.queue_log_path, "queue_log_path", [], expected_stdout, expected_stderr, expected_exceptions)
+        self.assert_outputs(queue.work_item_log_path, "work_item_log_path", [work_item], expected_stdout, expected_stderr, expected_exceptions)
+        self.assert_outputs(queue.begin_work_queue, "begin_work_queue", [], expected_stdout, expected_stderr, expected_exceptions)
+        self.assert_outputs(queue.should_continue_work_queue, "should_continue_work_queue", [], expected_stdout, expected_stderr, expected_exceptions)
+        self.assert_outputs(queue.next_work_item, "next_work_item", [], expected_stdout, expected_stderr, expected_exceptions)
+        self.assert_outputs(queue.should_proceed_with_work_item, "should_proceed_with_work_item", [work_item], expected_stdout, expected_stderr, expected_exceptions)
+        self.assert_outputs(queue.process_work_item, "process_work_item", [work_item], expected_stdout, expected_stderr, expected_exceptions)
+        self.assert_outputs(queue.handle_unexpected_error, "handle_unexpected_error", [work_item, "Mock error message"], expected_stdout, expected_stderr, expected_exceptions)
+        self.assert_outputs(queue.handle_script_error, "handle_script_error", [tool, {"patch": MockPatch()}, ScriptError(message="ScriptError error message", script_args="MockErrorCommand")], expected_stdout, expected_stderr, expected_exceptions)

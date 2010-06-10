@@ -52,9 +52,12 @@ class OutputCapture(object):
     def restore_output(self):
         return (self._restore_output_with_name("stdout"), self._restore_output_with_name("stderr"))
 
-    def assert_outputs(self, testcase, function, args=[], kwargs={}, expected_stdout="", expected_stderr=""):
+    def assert_outputs(self, testcase, function, args=[], kwargs={}, expected_stdout="", expected_stderr="", expected_exception=None):
         self.capture_output()
-        return_value = function(*args, **kwargs)
+        if expected_exception:
+            return_value = testcase.assertRaises(expected_exception, function, *args, **kwargs)
+        else:
+            return_value = function(*args, **kwargs)
         (stdout_string, stderr_string) = self.restore_output()
         testcase.assertEqual(stdout_string, expected_stdout)
         testcase.assertEqual(stderr_string, expected_stderr)

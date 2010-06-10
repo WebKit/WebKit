@@ -1,3 +1,17 @@
+2010-06-10  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        fix handle_script_error in rietveld upload queue and add testing for handle_script_error
+        https://bugs.webkit.org/show_bug.cgi?id=40436
+
+        * Scripts/webkitpy/common/system/outputcapture.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/commands/queuestest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
 2010-06-10  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
 
         Reviewed by Simon Hausmann.
