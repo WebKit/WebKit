@@ -729,4 +729,23 @@ void ChromeClientImpl::scheduleCompositingLayerSync()
 }
 #endif
 
+bool ChromeClientImpl::supportsFullscreenForNode(const WebCore::Node* node)
+{
+    if (m_webView->client() && node->hasTagName(WebCore::HTMLNames::videoTag))
+        return m_webView->client()->supportsFullscreen();
+    return false;
+}
+
+void ChromeClientImpl::enterFullscreenForNode(WebCore::Node* node)
+{
+    if (m_webView->client())
+        m_webView->client()->enterFullscreenForNode(WebNode(node));
+}
+
+void ChromeClientImpl::exitFullscreenForNode(WebCore::Node* node)
+{
+    if (m_webView->client())
+        m_webView->client()->exitFullscreenForNode(WebNode(node));
+}
+
 } // namespace WebKit

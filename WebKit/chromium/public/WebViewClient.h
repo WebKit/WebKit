@@ -202,6 +202,9 @@ public:
     virtual bool runModalBeforeUnloadDialog(
         WebFrame*, const WebString& message) { return true; }
 
+    virtual bool supportsFullscreen() { return false; }
+    virtual void enterFullscreenForNode(const WebNode&) { }
+    virtual void exitFullscreenForNode(const WebNode&) { }
 
     // UI ------------------------------------------------------------------
 
