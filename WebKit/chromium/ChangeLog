@@ -1,3 +1,11 @@
+2010-06-10  Dmitry Titov  <dimich@chromium.org>
+
+        Not reviewed, Chromium build fix from Abhishek Arya.
+
+        * src/WebImageCG.cpp:
+        (WebKit::WebImage::WebImage):
+        (WebKit::WebImage::operator=):
+
 2010-06-10  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dimitri Glazkov.
