@@ -38,6 +38,7 @@
 #include "RenderBR.h"
 #include "RenderFileUploadControl.h"
 #include "RenderInline.h"
+#include "RenderLayer.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderPart.h"

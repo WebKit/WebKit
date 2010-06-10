@@ -47,6 +47,7 @@
 #include "InspectorTimelineAgent.h"
 #include "OverflowEvent.h"
 #include "RenderEmbeddedObject.h"
+#include "RenderLayer.h"
 #include "RenderPart.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarPart.h"

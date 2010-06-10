@@ -42,6 +42,7 @@
 #include "RenderFlexibleBox.h"
 #include "RenderImageGeneratedContent.h"
 #include "RenderInline.h"
+#include "RenderLayer.h"
 #include "RenderListItem.h"
 #include "RenderRuby.h"
 #include "RenderRubyText.h"
