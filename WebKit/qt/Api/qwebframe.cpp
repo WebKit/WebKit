@@ -48,6 +48,7 @@
 #include "PlatformWheelEvent.h"
 #include "PrintContext.h"
 #include "PutPropertySlot.h"
+#include "RenderLayer.h"
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
 #include "ResourceRequest.h"

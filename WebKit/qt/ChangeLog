@@ -1,3 +1,13 @@
+2010-06-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Reduce FrameView.h includes to speed up build times
+        https://bugs.webkit.org/show_bug.cgi?id=40408
+
+        * Api/qwebframe.cpp:
+         - Include RenderLayer.h since it's used in this file.
+
 2010-06-10  Andy Shaw  <andy.shaw@nokia.com>
 
         Reviewed by Simon Hausmann.
