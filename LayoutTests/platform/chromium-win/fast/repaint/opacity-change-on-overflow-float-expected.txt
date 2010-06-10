@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x60
         RenderText {#text} at (0,0) size 96x19
           text run at (0,0) width 96: "Repaint test for "
-        RenderInline {RDAR://PROBLEM/6869687} at (0,0) size 765x59
+        RenderInline {RDAR} at (0,0) size 765x59
           RenderText {#text} at (96,0) size 765x59
             text run at (96,0) width 469: "REGRESSION (r41203): Facebook friend suggestions disappear on update. "
             text run at (565,0) width 200: "Make sure when a layer switches"
