@@ -157,7 +157,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
 #if ENABLE(3D_CANVAS)    
     Settings* settings = document()->settings();
     if (settings && settings->webGLEnabled()
-#if !PLATFORM(CHROMIUM)
+#if !PLATFORM(CHROMIUM) && !PLATFORM(QT)
         && settings->acceleratedCompositingEnabled()
 #endif
         ) {
