@@ -56,7 +56,6 @@ PassRefPtr<HTMLMapElement> HTMLMapElement::create(const QualifiedName& tagName, 
 
 HTMLMapElement::~HTMLMapElement()
 {
-    document()->removeImageMap(this);
 }
 
 bool HTMLMapElement::checkDTD(const Node* newChild)
@@ -116,12 +115,14 @@ void HTMLMapElement::parseMappedAttribute(Attribute* attr)
             if (doc->isHTMLDocument())
                 return;
         }
-        doc->removeImageMap(this);
+        if (inDocument())
+            doc->removeImageMap(this);
         String mapName = attr->value();
         if (mapName[0] == '#')
             mapName = mapName.substring(1);
         m_name = doc->isHTMLDocument() ? mapName.lower() : mapName;
-        doc->addImageMap(this);
+        if (inDocument())
+            doc->addImageMap(this);
     } else
         HTMLElement::parseMappedAttribute(attr);
 }
@@ -139,6 +140,18 @@ String HTMLMapElement::name() const
 void HTMLMapElement::setName(const String& value)
 {
     setAttribute(nameAttr, value);
+}
+
+void HTMLMapElement::insertedIntoDocument()
+{
+    document()->addImageMap(this);
+    HTMLElement::insertedIntoDocument();
+}
+
+void HTMLMapElement::removedFromDocument()
+{
+    document()->removeImageMap(this);
+    HTMLElement::removedFromDocument();
 }
 
 }

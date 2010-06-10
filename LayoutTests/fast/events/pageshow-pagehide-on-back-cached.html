@@ -15,6 +15,7 @@ window.onpageshow = function(evt) {
     if (evt.persisted) {
         // Returned back.
         window.onpagehide = null;
+        eventSender.keyDown('a');
         setTimeout(function() { if (window.layoutTestController) layoutTestController.notifyDone(); }, 0);
     } else {
         setTimeout('window.location.href = "data:text/html,<script>history.back();</scr" + "ipt>"', 0);

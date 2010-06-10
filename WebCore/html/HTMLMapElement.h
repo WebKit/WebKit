@@ -56,6 +56,9 @@ private:
 
     virtual void parseMappedAttribute(Attribute*);
 
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
+
     AtomicString m_name;
 };
 

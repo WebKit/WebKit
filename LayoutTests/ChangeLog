@@ -1,3 +1,13 @@
+2010-06-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=9504
+        img tag rewritten by innerHTML doesn't use image map
+
+        * fast/dom/replaced-image-map-expected.txt: Added.
+        * fast/dom/replaced-image-map.html: Added.
+
 2010-06-09  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Ojan Vafai.

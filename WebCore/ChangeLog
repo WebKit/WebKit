@@ -1,3 +1,23 @@
+2010-06-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=9504
+        img tag rewritten by innerHTML doesn't use image map
+
+        Test: fast/dom/replaced-image-map.html
+
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::~HTMLMapElement): Destructor is not a good place to make changes
+        that affect page behavior, because destructors are called by garbage collector. Don't
+        undregister the image map from here.
+        (WebCore::HTMLMapElement::parseMappedAttribute): Only tell document about the map if it's
+        actually in document. A map in a detached subtree isn't used by Firefox at least.
+        (WebCore::HTMLMapElement::insertedIntoDocument): Register the map.
+        (WebCore::HTMLMapElement::removedFromDocument): Unregister the map.
+
+        * html/HTMLMapElement.h: Added insertedIntoDocument/removedFromDocument overrides.
+
 2010-06-09  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Ojan Vafai.
