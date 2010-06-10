@@ -1,3 +1,50 @@
+2010-06-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix handling of bytes received from the network while in document.write
+        https://bugs.webkit.org/show_bug.cgi?id=40356
+
+        The old tokenizer has specially logic for handling the case of
+        receiving bytes from the network while in a nested call to
+        document.write.  This patch implements similar logic for the HTML5
+        tokenizer.  Also, this patch abstracts the tricky shuffling of
+        SegmentedStrings behind a simple API.
+
+        I'm not sure how to trigger this case.  My guess is we can trigger it
+        using a nested event loop, e.g., via alert(), but I'm not sure how to
+        test that in a LayoutTest.  There don't appear to be any LayoutTests
+        that currently test this behavior despite it being present in the old
+        tokenizer.
+
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::pumpLexer):
+        (WebCore::HTML5Tokenizer::write):
+            - Added a branch for the |append| argument.
+        (WebCore::HTML5Tokenizer::end):
+        (WebCore::HTML5Tokenizer::finish):
+        (WebCore::HTML5Tokenizer::executeScript):
+            - Switch over to using a RAII pattern for recording and restoring
+              insertion points.
+        * html/HTML5Tokenizer.h:
+        (WebCore::HTML5Tokenizer::InputStream::InputStream):
+        (WebCore::HTML5Tokenizer::InputStream::appendToEnd):
+        (WebCore::HTML5Tokenizer::InputStream::insertAtCurrentInsertionPoint):
+        (WebCore::HTML5Tokenizer::InputStream::close):
+            - Putting the close() method on InputStream makes it much easier to
+              handle EOF.  We now just close the last buffer in the stream when
+              the network says it's done.
+        (WebCore::HTML5Tokenizer::InputStream::current):
+            - This class could be moved to its own file, but it shouldn't be
+              used outside of the tokenizer.
+        (WebCore::HTML5Tokenizer::InsertionPointRecord::InsertionPointRecord):
+        (WebCore::HTML5Tokenizer::InsertionPointRecord::~InsertionPointRecord):
+            - A simple RAII class for managing saved insertion points.
+        * platform/text/SegmentedString.cpp:
+        (WebCore::SegmentedString::operator=):
+            - Fix a related bug where m_closed was not being copied properly in
+              the assignment operator.
+
 2010-06-09  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.

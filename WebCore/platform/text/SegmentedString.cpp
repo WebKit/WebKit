@@ -51,6 +51,7 @@ const SegmentedString& SegmentedString::operator=(const SegmentedString &other)
         m_currentChar = &m_pushedChar2;
     else
         m_currentChar = other.m_currentChar;
+    m_closed = other.m_closed;
     return *this;
 }
 

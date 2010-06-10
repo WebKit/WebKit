@@ -95,7 +95,7 @@ void HTML5Tokenizer::pumpLexer()
 {
     ASSERT(!m_parserStopped);
     ASSERT(!m_treeBuilder->isPaused());
-    while (!m_parserStopped && m_lexer->nextToken(m_source, m_token)) {
+    while (!m_parserStopped && m_lexer->nextToken(m_input.current(), m_token)) {
         m_treeBuilder->constructTreeFromToken(m_token);
         m_token.clear();
 
@@ -113,22 +113,30 @@ void HTML5Tokenizer::pumpLexer()
     }
 }
 
-void HTML5Tokenizer::write(const SegmentedString& source, bool)
+void HTML5Tokenizer::write(const SegmentedString& source, bool appendData)
 {
     if (m_parserStopped)
         return;
 
     NestingLevelIncrementer nestingLevelIncrementer(m_writeNestingLevel);
 
-    // HTML5Tokenizer::executeScript is responsible for handling saving m_source before re-entry.
-    m_source.append(source);
+    if (appendData) {
+        m_input.appendToEnd(source);
+        if (m_writeNestingLevel > 1) {
+            // We've gotten data off the network in a nested call to write().
+            // We don't want to consume any more of the input stream now.  Do
+            // not worry.  We'll consume this data in a less-nested write().
+            return;
+        }
+    } else
+        m_input.insertAtCurrentInsertionPoint(source);
+
     pumpLexerIfPossible();
     endIfDelayed();
 }
 
 void HTML5Tokenizer::end()
 {
-    m_source.close();
     pumpLexerIfPossible();
     // Informs the the rest of WebCore that parsing is really finished.
     m_treeBuilder->finished();
@@ -157,9 +165,9 @@ void HTML5Tokenizer::endIfDelayed()
 
 void HTML5Tokenizer::finish()
 {
-    // We can't call m_source.close() yet as we may have a <script> execution
-    // pending which will call document.write().  No more data off the network though.
-    // end() calls Document::finishedParsing() once we're actually done parsing.
+    // We're not going to get any more data off the network, so we close the
+    // input stream to indicate EOF.
+    m_input.close();
     attemptToEnd();
 }
 
@@ -221,17 +229,8 @@ void HTML5Tokenizer::executeScript(const ScriptSourceCode& sourceCode)
     ASSERT(m_scriptRunner->inScriptExecution());
     if (!m_document->frame())
         return;
-
-    SegmentedString oldInsertionPoint = m_source;
-    m_source = SegmentedString();
+    InsertionPointRecord savedInsertionPoint(m_input);
     m_document->frame()->script()->executeScript(sourceCode);
-    // Append oldInsertionPoint onto the new (likely empty) m_source instead of
-    // oldInsertionPoint.prepent(m_source) as that would ASSERT if
-    // m_source.escaped() (it had characters pushed back onto it).
-    // If m_source was closed, then the tokenizer was stopped, and we discard
-    // any pending data as though an EOF character was inserted into the stream.
-    if (!m_source.isClosed())
-        m_source.append(oldInsertionPoint);
 }
 
 void HTML5Tokenizer::notifyFinished(CachedResource* cachedResource)
