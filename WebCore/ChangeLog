@@ -1,3 +1,28 @@
+2010-06-10  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Kent Tamura
+
+        Bug 38224 - [chromium] Enable rendering of Ethiopic, Lao, Tibetan 
+                    and a few other scripts on Win XP
+
+        https://bugs.webkit.org/show_bug.cgi?id=38224
+
+        Make it possible to specify a list of fonts for per-script
+        fallback instead of a single font per script. This is
+        necessary for Malayalam (for which Windows font doesn't
+        support Unicode 5.x fully on Vista or earlier), Ethiopic 
+        (we want to support on XP with a 3rd party font because XP
+        doesn't have any Ethiopic font out of the box) and some other
+        scripts. This is a short-term 'fix' until we have per-script
+        font preferences.
+
+        No layout test is added because the test results would be
+        dependent on which fonts are present. 
+
+        * platform/graphics/chromium/FontUtilsChromiumWin.cpp:
+        (WebCore::):
+        (WebCore::FontMap::ScriptToFontFamilies::):
+
 2010-06-09  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Adam Barth.
