@@ -1,3 +1,65 @@
+2010-06-09  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement TypedArray BYTES_PER_ELEMENT
+        https://bugs.webkit.org/show_bug.cgi?id=39100
+
+        Implemented BYTES_PER_ELEMENT on all ArrayBufferView subclasses.
+        Required bug fixes to JSC bindings' custom constructors. Updated
+        fast/canvas/webgl/array-unit-tests.html to verify. Ran all WebGL
+        layout tests in Safari and Chromium.
+
+        * bindings/js/JSFloat32ArrayConstructor.cpp:
+        (WebCore::JSFloat32ArrayConstructor::JSFloat32ArrayConstructor):
+        (WebCore::JSFloat32ArrayConstructor::getOwnPropertySlot):
+        (WebCore::JSFloat32ArrayConstructor::getOwnPropertyDescriptor):
+        * bindings/js/JSFloat32ArrayConstructor.h:
+        (WebCore::JSFloat32ArrayConstructor::createStructure):
+        * bindings/js/JSInt16ArrayConstructor.cpp:
+        (WebCore::JSInt16ArrayConstructor::JSInt16ArrayConstructor):
+        (WebCore::JSInt16ArrayConstructor::getOwnPropertySlot):
+        (WebCore::JSInt16ArrayConstructor::getOwnPropertyDescriptor):
+        * bindings/js/JSInt16ArrayConstructor.h:
+        (WebCore::JSInt16ArrayConstructor::createStructure):
+        * bindings/js/JSInt32ArrayConstructor.cpp:
+        (WebCore::JSInt32ArrayConstructor::JSInt32ArrayConstructor):
+        (WebCore::JSInt32ArrayConstructor::getOwnPropertySlot):
+        (WebCore::JSInt32ArrayConstructor::getOwnPropertyDescriptor):
+        * bindings/js/JSInt32ArrayConstructor.h:
+        (WebCore::JSInt32ArrayConstructor::createStructure):
+        * bindings/js/JSInt8ArrayConstructor.cpp:
+        (WebCore::JSInt8ArrayConstructor::JSInt8ArrayConstructor):
+        (WebCore::JSInt8ArrayConstructor::getOwnPropertySlot):
+        (WebCore::JSInt8ArrayConstructor::getOwnPropertyDescriptor):
+        * bindings/js/JSInt8ArrayConstructor.h:
+        (WebCore::JSInt8ArrayConstructor::createStructure):
+        * bindings/js/JSUint16ArrayConstructor.cpp:
+        (WebCore::JSUint16ArrayConstructor::JSUint16ArrayConstructor):
+        (WebCore::JSUint16ArrayConstructor::getOwnPropertySlot):
+        (WebCore::JSUint16ArrayConstructor::getOwnPropertyDescriptor):
+        * bindings/js/JSUint16ArrayConstructor.h:
+        (WebCore::JSUint16ArrayConstructor::createStructure):
+        * bindings/js/JSUint32ArrayConstructor.cpp:
+        (WebCore::JSUint32ArrayConstructor::JSUint32ArrayConstructor):
+        (WebCore::JSUint32ArrayConstructor::getOwnPropertySlot):
+        (WebCore::JSUint32ArrayConstructor::getOwnPropertyDescriptor):
+        * bindings/js/JSUint32ArrayConstructor.h:
+        (WebCore::JSUint32ArrayConstructor::createStructure):
+        * bindings/js/JSUint8ArrayConstructor.cpp:
+        (WebCore::JSUint8ArrayConstructor::JSUint8ArrayConstructor):
+        (WebCore::JSUint8ArrayConstructor::getOwnPropertySlot):
+        (WebCore::JSUint8ArrayConstructor::getOwnPropertyDescriptor):
+        * bindings/js/JSUint8ArrayConstructor.h:
+        (WebCore::JSUint8ArrayConstructor::createStructure):
+        * html/canvas/Float32Array.idl:
+        * html/canvas/Int16Array.idl:
+        * html/canvas/Int32Array.idl:
+        * html/canvas/Int8Array.idl:
+        * html/canvas/Uint16Array.idl:
+        * html/canvas/Uint32Array.idl:
+        * html/canvas/Uint8Array.idl:
+
 2010-06-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

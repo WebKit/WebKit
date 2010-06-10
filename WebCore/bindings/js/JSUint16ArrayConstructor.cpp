@@ -45,8 +45,22 @@ const ClassInfo JSUint16ArrayConstructor::s_info = { "Uint16ArrayConstructor", &
 JSUint16ArrayConstructor::JSUint16ArrayConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(JSUint16ArrayConstructor::createStructure(globalObject->objectPrototype()), globalObject)
 {
-    putDirect(exec->propertyNames().prototype, JSUint16ArrayPrototype::self(exec, globalObject), None);
-    putDirect(exec->propertyNames().length, jsNumber(exec, 2), ReadOnly|DontDelete|DontEnum);
+    putDirect(exec->propertyNames().prototype, JSUint16ArrayPrototype::self(exec, globalObject), DontDelete | ReadOnly);
+}
+
+JSObject* JSUint16ArrayConstructor::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
+{
+    return new (exec) JSUint16ArrayPrototype(globalObject, JSUint16ArrayPrototype::createStructure(globalObject->objectPrototype()));
+}
+
+bool JSUint16ArrayConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    return getStaticValueSlot<JSUint16ArrayConstructor, DOMObject>(exec, JSUint16ArrayPrototype::s_info.staticPropHashTable, this, propertyName, slot);
+}
+
+bool JSUint16ArrayConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    return getStaticValueDescriptor<JSUint16ArrayConstructor, DOMObject>(exec, JSUint16ArrayPrototype::s_info.staticPropHashTable, this, propertyName, descriptor);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructCanvasUnsignedShortArray(ExecState* exec)

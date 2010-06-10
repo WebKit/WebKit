@@ -32,13 +32,24 @@
 namespace WebCore {
 
     class JSInt16ArrayConstructor : public DOMConstructorObject {
+        typedef DOMConstructorObject Base;
     public:
         JSInt16ArrayConstructor(JSC::ExecState*, JSDOMGlobalObject*);
+        static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);
+        virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
+        virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);
         static const JSC::ClassInfo s_info;
+
+        static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)
+        {
+            return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount);
+        }
 
     private:
         virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
         virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
+    protected:
+        static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
     };
 
 }

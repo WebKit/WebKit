@@ -33,6 +33,8 @@ module html {
         CustomConstructor,
         CustomToJS
     ] Float32Array : ArrayBufferView {
+        const unsigned int BYTES_PER_ELEMENT = 4;
+
         // void set(in Float32Array array, [Optional] in unsigned long offset);
         // void set(in sequence<long> array, [Optional] in unsigned long offset);
         [Custom] void set();

@@ -33,6 +33,8 @@ module html {
         GenerateNativeConverter,
         CustomToJS
     ] Uint16Array : ArrayBufferView {
+        const unsigned int BYTES_PER_ELEMENT = 2;
+
         // void set(in Uint16Array array, [Optional] in unsigned long offset);
         // void set(in sequence<long> array, [Optional] in unsigned long offset);
         [Custom] void set();

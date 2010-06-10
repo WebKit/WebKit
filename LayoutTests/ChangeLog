@@ -1,3 +1,17 @@
+2010-06-09  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement TypedArray BYTES_PER_ELEMENT
+        https://bugs.webkit.org/show_bug.cgi?id=39100
+
+        Implemented BYTES_PER_ELEMENT on all ArrayBufferView subclasses.
+        Required bug fixes to JSC bindings' custom constructors. Updated
+        fast/canvas/webgl/array-unit-tests.html to verify. Ran all WebGL
+        layout tests in Safari and Chromium.
+
+        * fast/canvas/webgl/array-unit-tests.html:
+
 2010-06-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

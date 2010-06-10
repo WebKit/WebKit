@@ -173,16 +173,17 @@ function testOffsetsAndSizes(type, name, elementSizeInBytes) {
   running('test ' + name + ' OffsetsAndSizes');
   try {
     var len = 10;
+    assertEq('type.BYTES_PER_ELEMENT', elementSizeInBytes, type.BYTES_PER_ELEMENT);
     var array = new type(len);
     assert('array.buffer', array.buffer);
-    assertEq('array.byteOffset', array.byteOffset, 0);
-    assertEq('array.length', array.length, len);
-    assertEq('array.byteLength', array.byteLength, len * elementSizeInBytes);
+    assertEq('array.byteOffset', 0, array.byteOffset);
+    assertEq('array.length', len, array.length);
+    assertEq('array.byteLength', len * elementSizeInBytes, array.byteLength);
     array = new type(array.buffer, elementSizeInBytes, len - 1);
     assert('array.buffer', array.buffer);
-    assertEq('array.byteOffset', array.byteOffset, elementSizeInBytes);
-    assertEq('array.length', array.length, len - 1);
-    assertEq('array.byteLength', array.byteLength, (len - 1) * elementSizeInBytes);
+    assertEq('array.byteOffset', elementSizeInBytes, array.byteOffset);
+    assertEq('array.length', len - 1, array.length);
+    assertEq('array.byteLength', (len - 1) * elementSizeInBytes, array.byteLength);
     pass();
   } catch (e) {
     fail(e);

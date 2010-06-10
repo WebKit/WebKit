@@ -32,6 +32,8 @@ module html {
         CustomConstructor,
         CustomToJS
     ] Int16Array : ArrayBufferView {
+        const unsigned int BYTES_PER_ELEMENT = 2;
+
         // void set(in Int16Array array, [Optional] in unsigned long offset);
         // void set(in sequence<long> array, [Optional] in unsigned long offset);
         [Custom] void set();

@@ -45,8 +45,22 @@ const ClassInfo JSFloat32ArrayConstructor::s_info = { "Float32ArrayConstructor",
 JSFloat32ArrayConstructor::JSFloat32ArrayConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(JSFloat32ArrayConstructor::createStructure(globalObject->objectPrototype()), globalObject)
 {
-    putDirect(exec->propertyNames().prototype, JSFloat32ArrayPrototype::self(exec, globalObject), None);
-    putDirect(exec->propertyNames().length, jsNumber(exec, 2), ReadOnly|DontDelete|DontEnum);
+    putDirect(exec->propertyNames().prototype, JSFloat32ArrayPrototype::self(exec, globalObject), DontDelete | ReadOnly);
+}
+
+JSObject* JSFloat32ArrayConstructor::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
+{
+    return new (exec) JSFloat32ArrayPrototype(globalObject, JSFloat32ArrayPrototype::createStructure(globalObject->objectPrototype()));
+}
+
+bool JSFloat32ArrayConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    return getStaticValueSlot<JSFloat32ArrayConstructor, DOMObject>(exec, JSFloat32ArrayPrototype::s_info.staticPropHashTable, this, propertyName, slot);
+}
+
+bool JSFloat32ArrayConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    return getStaticValueDescriptor<JSFloat32ArrayConstructor, DOMObject>(exec, JSFloat32ArrayPrototype::s_info.staticPropHashTable, this, propertyName, descriptor);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructCanvasFloatArray(ExecState* exec)

@@ -45,8 +45,22 @@ const ClassInfo JSInt8ArrayConstructor::s_info = { "Int8ArrayConstructor", &JSAr
 JSInt8ArrayConstructor::JSInt8ArrayConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(JSInt8ArrayConstructor::createStructure(globalObject->objectPrototype()), globalObject)
 {
-    putDirect(exec->propertyNames().prototype, JSInt8ArrayPrototype::self(exec, globalObject), None);
-    putDirect(exec->propertyNames().length, jsNumber(exec, 2), ReadOnly|DontDelete|DontEnum);
+    putDirect(exec->propertyNames().prototype, JSInt8ArrayPrototype::self(exec, globalObject), DontDelete | ReadOnly);
+}
+
+JSObject* JSInt8ArrayConstructor::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
+{
+    return new (exec) JSInt8ArrayPrototype(globalObject, JSInt8ArrayPrototype::createStructure(globalObject->objectPrototype()));
+}
+
+bool JSInt8ArrayConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    return getStaticValueSlot<JSInt8ArrayConstructor, DOMObject>(exec, JSInt8ArrayPrototype::s_info.staticPropHashTable, this, propertyName, slot);
+}
+
+bool JSInt8ArrayConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    return getStaticValueDescriptor<JSInt8ArrayConstructor, DOMObject>(exec, JSInt8ArrayPrototype::s_info.staticPropHashTable, this, propertyName, descriptor);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructCanvasByteArray(ExecState* exec)
