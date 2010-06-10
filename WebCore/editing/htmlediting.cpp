@@ -869,7 +869,35 @@ bool isTableCell(const Node* node)
 
 bool isEmptyTableCell(const Node* node)
 {
-    return node && node->renderer() && (node->renderer()->isTableCell() || (node->renderer()->isBR() && node->parentNode()->renderer() && node->parentNode()->renderer()->isTableCell()));     
+    // Returns true IFF the passed in node is one of:
+    //   .) a table cell with no children,
+    //   .) a table cell with a single BR child, and which has no other child renderers, including :before and :after renderers
+    //   .) the BR child of such a table cell
+
+    // Find rendered node
+    while (node && !node->renderer())
+        node = node->parent();
+    if (!node)
+        return false;
+
+    // Make sure the rendered node is a table cell or <br>.
+    // If it's a <br>, then the parent node has to be a table cell.
+    RenderObject* renderer = node->renderer();
+    if (renderer->isBR()) {
+        renderer = renderer->parent();
+        if (!renderer)
+            return false;
+    }
+    if (!renderer->isTableCell())
+        return false;
+
+    // Check that the table cell contains no child renderers except for perhaps a single <br>.
+    RenderObject* childRenderer = renderer->firstChild();
+    if (!childRenderer)
+        return true;
+    if (!childRenderer->isBR())
+        return false;
+    return !childRenderer->nextSibling();
 }
 
 PassRefPtr<HTMLElement> createDefaultParagraphElement(Document* document)
