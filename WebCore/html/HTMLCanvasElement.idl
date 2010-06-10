@@ -27,8 +27,7 @@
 module html {
 
     interface [
-        CustomMarkFunction,
-        GenerateNativeConverter
+        CustomMarkFunction
     ] HTMLCanvasElement : HTMLElement {
 
         attribute long width;

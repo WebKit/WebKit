@@ -1115,7 +1115,7 @@ sub GenerateParametersCheckExpression
         # these are acceptable values for a DOMString argument (any Object can
         # be converted to a string via .toString).
         push(@andExpression, "(${value}.isNull() || ${value}.isUndefined() || ${value}.isString() || ${value}.isObject())") if $codeGenerator->IsStringType($type);
-        push(@andExpression, "(${value}.isNull() || ${value}.isObject() && asObject(${value})->inherits(&JS${type}::s_info))") unless IsNativeType($type);
+        push(@andExpression, "(${value}.isNull() || asObject(${value})->inherits(&JS${type}::s_info))") unless IsNativeType($type);
 
         $parameterIndex++;
     }
@@ -1786,9 +1786,6 @@ sub GenerateImplementation
             if ($function->{overloads} && @{$function->{overloads}} > 1) {
                 # Append a number to an overloaded method's name to make it unique:
                 $functionName = $functionName . $function->{overloadIndex};
-                # Make this function static to avoid compiler warnings, since we
-                # don't generate a prototype for it in the header.
-                push(@implContent, "static ");
             }
             
             my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementationFunction"} || $codeGenerator->WK_lcfirst($function->signature->name);

@@ -20,9 +20,7 @@
 
 module html {
 
-    interface [
-        GenerateNativeConverter
-    ] HTMLImageElement : HTMLElement {
+    interface HTMLImageElement : HTMLElement {
                  attribute [ConvertNullToNullString, Reflect] DOMString name;
                  attribute [ConvertNullToNullString, Reflect] DOMString align;
                  attribute [ConvertNullToNullString, Reflect] DOMString alt;

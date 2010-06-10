@@ -67,6 +67,45 @@ using namespace JSC;
 
 namespace WebCore {
 
+JSValue JSWebGLRenderingContext::bufferData(JSC::ExecState* exec)
+{
+    if (exec->argumentCount() != 3)
+        return throwSyntaxError(exec);
+
+    unsigned target = exec->argument(0).toInt32(exec);
+    unsigned usage = exec->argument(2).toInt32(exec);
+    ExceptionCode ec = 0;
+
+    // If argument 1 is a number, we are initializing this buffer to that size
+    if (!exec->argument(1).isObject()) {
+        unsigned int count = exec->argument(1).toInt32(exec);
+        static_cast<WebGLRenderingContext*>(impl())->bufferData(target, count, usage, ec);
+    } else {
+        ArrayBufferView* array = toArrayBufferView(exec->argument(1));
+        static_cast<WebGLRenderingContext*>(impl())->bufferData(target, array, usage, ec);
+    }
+
+    setDOMException(exec, ec);
+    return jsUndefined();
+}
+
+JSValue JSWebGLRenderingContext::bufferSubData(JSC::ExecState* exec)
+{
+    if (exec->argumentCount() != 3)
+        return throwSyntaxError(exec);
+
+    unsigned target = exec->argument(0).toInt32(exec);
+    unsigned offset = exec->argument(1).toInt32(exec);
+    ExceptionCode ec = 0;
+    
+    ArrayBufferView* array = toArrayBufferView(exec->argument(2));
+    
+    static_cast<WebGLRenderingContext*>(impl())->bufferSubData(target, offset, array, ec);
+
+    setDOMException(exec, ec);
+    return jsUndefined();
+}
+
 static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebGLGetInfo& info)
 {
     switch (info.getType()) {
@@ -270,6 +309,207 @@ JSValue JSWebGLRenderingContext::getUniform(ExecState* exec)
 JSValue JSWebGLRenderingContext::getVertexAttrib(ExecState* exec)
 {
     return getObjectParameter(this, exec, kVertexAttrib);
+}
+
+//   void texImage2D(in GLenum target, in GLint level, in GLenum internalformat, in GLsizei width, in GLsizei height, in GLint border, in GLenum format, in GLenum type, in ArrayBufferView pixels);
+//   void texImage2D(in GLenum target, in GLint level, in ImageData pixels, [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
+//   void texImage2D(in GLenum target, in GLint level, in HTMLImageElement image, [Optional] in GLboolean flipY, [Optional] in premultiplyAlpha);
+//   void texImage2D(in GLenum target, in GLint level, in HTMLCanvasElement canvas, [Optional] in GLboolean flipY, [Optional] in premultiplyAlpha);
+//   void texImage2D(in GLenum target, in GLint level, in HTMLVideoElement video, [Optional] in GLboolean flipY, [Optional] in premultiplyAlpha);
+JSValue JSWebGLRenderingContext::texImage2D(ExecState* exec)
+{ 
+    if (exec->argumentCount() < 3 || exec->argumentCount() > 9)
+        return throwSyntaxError(exec);
+
+    ExceptionCode ec = 0;
+    
+    WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(impl());    
+    unsigned target = exec->argument(0).toInt32(exec);
+    if (exec->hadException())    
+        return jsUndefined();
+    
+    unsigned level = exec->argument(1).toInt32(exec);
+    if (exec->hadException())    
+        return jsUndefined();
+
+    JSObject* o = 0;
+    
+    if (exec->argumentCount() <= 5) {
+        // This is one of the last 4 forms. Param 2 can be ImageData or <img>, <canvas> or <video> element.
+        JSValue value = exec->argument(2);
+    
+        if (!value.isObject())
+            return throwTypeError(exec);
+        
+        o = asObject(value);
+        
+        bool flipY = exec->argument(3).toBoolean(exec);
+        bool premultiplyAlpha = exec->argument(4).toBoolean(exec);
+        
+        if (o->inherits(&JSImageData::s_info)) {
+            ImageData* data = static_cast<ImageData*>(static_cast<JSImageData*>(o)->impl());
+            context->texImage2D(target, level, data, flipY, premultiplyAlpha, ec);
+        } else if (o->inherits(&JSHTMLImageElement::s_info)) {
+            HTMLImageElement* element = static_cast<HTMLImageElement*>(static_cast<JSHTMLImageElement*>(o)->impl());
+            context->texImage2D(target, level, element, flipY, premultiplyAlpha, ec);
+        } else if (o->inherits(&JSHTMLCanvasElement::s_info)) {
+            HTMLCanvasElement* element = static_cast<HTMLCanvasElement*>(static_cast<JSHTMLCanvasElement*>(o)->impl());
+            context->texImage2D(target, level, element, flipY, premultiplyAlpha, ec);
+#if ENABLE(VIDEO)
+        } else if (o->inherits(&JSHTMLVideoElement::s_info)) {
+            HTMLVideoElement* element = static_cast<HTMLVideoElement*>(static_cast<JSHTMLVideoElement*>(o)->impl());
+            context->texImage2D(target, level, element, flipY, premultiplyAlpha, ec);
+#endif
+        } else
+            ec = TYPE_MISMATCH_ERR;
+    } else {
+        if (exec->argumentCount() != 9)
+            return throwSyntaxError(exec);
+
+        // This must be the ArrayBufferView case
+        unsigned internalformat = exec->argument(2).toInt32(exec);
+        if (exec->hadException())    
+            return jsUndefined();
+
+        unsigned width = exec->argument(3).toInt32(exec);
+        if (exec->hadException())    
+            return jsUndefined();
+
+        unsigned height = exec->argument(4).toInt32(exec);
+        if (exec->hadException())    
+            return jsUndefined();
+
+        unsigned border = exec->argument(5).toInt32(exec);
+        if (exec->hadException())    
+            return jsUndefined();
+
+        unsigned format = exec->argument(6).toInt32(exec);
+        if (exec->hadException())    
+            return jsUndefined();
+
+        unsigned type = exec->argument(7).toInt32(exec);
+        if (exec->hadException())    
+            return jsUndefined();
+
+        JSValue value = exec->argument(8);
+            
+        // For this case passing 0 (for a null array) is allowed
+        if (value.isNull())
+            context->texImage2D(target, level, internalformat, width, height, border, format, type, 0, ec);
+        else if (value.isObject()) {
+            o = asObject(value);
+            
+            if (o->inherits(&JSArrayBufferView::s_info)) {
+                // FIXME: Need to check to make sure ArrayBufferView is a Int8Array or Int16Array,
+                // depending on the passed type parameter.
+                ArrayBufferView* obj = static_cast<ArrayBufferView*>(static_cast<JSArrayBufferView*>(o)->impl());
+                context->texImage2D(target, level, internalformat, width, height, border, format, type, obj, ec);
+            } else
+                return throwTypeError(exec);
+        } else 
+            return throwTypeError(exec);
+    }
+    
+    setDOMException(exec, ec);
+    return jsUndefined();    
+}
+
+//   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, in GLsizei width, in GLsizei height, in GLenum format, in GLenum type, in ArrayBufferView pixels);
+//   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, in ImageData pixels, [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
+//   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, in HTMLImageElement image, [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
+//   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, in HTMLCanvasElement canvas, [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
+//   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, in HTMLVideoElement video, [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
+JSValue JSWebGLRenderingContext::texSubImage2D(ExecState* exec)
+{ 
+    if (exec->argumentCount() < 5 || exec->argumentCount() > 9)
+        return throwSyntaxError(exec);
+
+    ExceptionCode ec = 0;
+
+    WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(impl());    
+    unsigned target = exec->argument(0).toInt32(exec);
+    if (exec->hadException())    
+        return jsUndefined();
+
+    unsigned level = exec->argument(1).toInt32(exec);
+    if (exec->hadException())    
+        return jsUndefined();
+    
+    unsigned xoff = exec->argument(2).toInt32(exec);
+    if (exec->hadException())    
+        return jsUndefined();
+    
+    unsigned yoff = exec->argument(3).toInt32(exec);
+    if (exec->hadException())    
+        return jsUndefined();
+    
+    JSObject* o = 0;
+        
+    if (exec->argumentCount() <= 7) {
+        // This is one of the last 4 forms. Param 4 can be <img>, <canvas> or <video> element, of the format param.
+        JSValue value = exec->argument(4);
+
+        if (!value.isObject())
+            return throwSyntaxError(exec);
+
+        o = asObject(value);
+
+        bool flipY = exec->argument(5).toBoolean(exec);
+        bool premultiplyAlpha = exec->argument(6).toBoolean(exec);
+        
+        if (o->inherits(&JSImageData::s_info)) {
+            ImageData* data = static_cast<ImageData*>(static_cast<JSImageData*>(o)->impl());
+            context->texSubImage2D(target, level, xoff, yoff, data, flipY, premultiplyAlpha, ec);
+        } else if (o->inherits(&JSHTMLImageElement::s_info)) {
+            HTMLImageElement* element = static_cast<HTMLImageElement*>(static_cast<JSHTMLImageElement*>(o)->impl());
+            context->texSubImage2D(target, level, xoff, yoff, element, flipY, premultiplyAlpha, ec);
+        } else if (o->inherits(&JSHTMLCanvasElement::s_info)) {
+            HTMLCanvasElement* element = static_cast<HTMLCanvasElement*>(static_cast<JSHTMLCanvasElement*>(o)->impl());
+            context->texSubImage2D(target, level, xoff, yoff, element, flipY, premultiplyAlpha, ec);
+#if ENABLE(VIDEO)
+        } else if (o->inherits(&JSHTMLVideoElement::s_info)) {
+            HTMLVideoElement* element = static_cast<HTMLVideoElement*>(static_cast<JSHTMLVideoElement*>(o)->impl());
+            context->texSubImage2D(target, level, xoff, yoff, element, flipY, premultiplyAlpha, ec);
+#endif
+        } else
+            ec = TYPE_MISMATCH_ERR;
+    } else {
+        // This must be the ArrayBufferView form
+        if (exec->argumentCount() != 9)
+            return throwSyntaxError(exec);
+
+        unsigned width = exec->argument(4).toInt32(exec);
+        if (exec->hadException())    
+            return jsUndefined();
+        
+        unsigned height = exec->argument(5).toInt32(exec);
+        if (exec->hadException())    
+            return jsUndefined();
+        
+        unsigned format = exec->argument(6).toInt32(exec);
+        if (exec->hadException())    
+            return jsUndefined();
+        
+        unsigned type = exec->argument(7).toInt32(exec);
+        if (exec->hadException())    
+            return jsUndefined();
+        
+        JSValue value = exec->argument(8);
+        if (!value.isObject())
+            context->texSubImage2D(target, level, xoff, yoff, width, height, format, type, 0, ec);
+        else {
+            o = asObject(value);
+        
+            if (o->inherits(&JSArrayBufferView::s_info)) {
+                ArrayBufferView* obj = static_cast<ArrayBufferView*>(static_cast<JSArrayBufferView*>(o)->impl());
+                context->texSubImage2D(target, level, xoff, yoff, width, height, format, type, obj, ec);
+            } else
+                return throwTypeError(exec);
+        }
+    }
+    
+    setDOMException(exec, ec);
+    return jsUndefined();
 }
 
 template<typename T, size_t inlineCapacity>
