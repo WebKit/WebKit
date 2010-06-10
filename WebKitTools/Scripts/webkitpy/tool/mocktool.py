@@ -225,8 +225,12 @@ class MockBugzillaQueries(Mock):
     def fetch_patches_from_pending_commit_list(self):
         return sum([bug.reviewed_patches() for bug in self._all_bugs()], [])
 
-    def fetch_patches_from_rietveld_queue(self):
-        return sum([bug.in_rietveld_queue_patches() for bug in self._all_bugs()], [])
+    def fetch_first_patch_from_rietveld_queue(self):
+        for bug in self._all_bugs():
+            patches = bug.in_rietveld_queue_patches()
+            if len(patches):
+                return patches[0]
+        raise Exception('No patches in the rietveld queue')
 
 # FIXME: Bugzilla is the wrong Mock-point.  Once we have a BugzillaNetwork
 #        class we should mock that instead.

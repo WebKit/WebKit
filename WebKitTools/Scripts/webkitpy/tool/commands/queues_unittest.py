@@ -205,7 +205,7 @@ class RietveldUploadQueueTest(QueuesTest):
             "begin_work_queue": "CAUTION: rietveld-upload-queue will discard all local changes in \"%s\"\nRunning WebKit rietveld-upload-queue.\n" % MockSCM.fake_checkout_root,
             "should_proceed_with_work_item": "MOCK: update_status: rietveld-upload-queue Uploading patch\n",
             "process_work_item": "MOCK: update_status: rietveld-upload-queue Pass\n",
-            "handle_unexpected_error": "MOCK setting flag 'in-rietveld' to '-' on attachment '1234' with comment 'Could not upload patch 1234 to rietveld. Rietveld is down or there's a bug in the upload bot.' and additional comment 'Mock error message'\n",
+            "handle_unexpected_error": "MOCK setting flag 'in-rietveld' to '-' on attachment '1234' with comment 'None' and additional comment 'None'\n",
         }
         self.assert_queue_outputs(RietveldUploadQueue(), expected_stderr=expected_stderr)
 

@@ -205,7 +205,8 @@ class Bug(object):
         return filter(lambda patch: patch.committer(), patches)
 
     def in_rietveld_queue_patches(self):
-        return [patch for patch in self.patches() if patch.in_rietveld() == "?"]
+        return [patch for patch in self.patches() if (
+            patch.in_rietveld() == "?" or patch.in_rietveld() == None and patch.review() == "?")]
 
 
 # A container for all of the logic for making and parsing buzilla queries.
@@ -270,21 +271,29 @@ class BugzillaQueries(object):
         return sum([self._fetch_bug(bug_id).commit_queued_patches()
                     for bug_id in self.fetch_bug_ids_from_commit_queue()], [])
 
-    def _fetch_bug_ids_from_rietveld_queue(self):
+    def _fetch_rietveld_queue_patch(self, query_url):
+        bugs = self._fetch_bug_ids_advanced_query(query_url)
+        if not len(bugs):
+            return None
+
+        patches = self._fetch_bug(bugs[0]).in_rietveld_queue_patches()
+        return patches[0] if len(patches) else None
+
+    def fetch_first_patch_from_rietveld_queue(self):
         # rietveld-queue processes in-rietveld? patches and then marks them in-rietveld-/+.
         # in-rietveld? patches
         rietveld_queue_url = "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=in-rietveld%3F&order=Last+Changed"
-        in_rietveld_bugs = self._fetch_bug_ids_advanced_query(rietveld_queue_url)
+        patch = self._fetch_rietveld_queue_patch(rietveld_queue_url)
+        if patch:
+            return patch
 
         # review? patches that don't have an in-rietveld flag.
         review_queue_url = "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review%3F&field0-1-0=flagtypes.name&type0-1-0=notsubstring&value0-1-0=in-rietveld&order=Last+Changed"
-        in_rietveld_bugs.extend(self._fetch_bug_ids_advanced_query(review_queue_url))
+        patch = self._fetch_rietveld_queue_patch(review_queue_url)
+        if patch:
+            return patch
 
-        return in_rietveld_bugs
-
-    def fetch_patches_from_rietveld_queue(self):
-        return sum([self._fetch_bug(bug_id).in_rietveld_queue_patches()
-                    for bug_id in self._fetch_bug_ids_from_rietveld_queue()], [])
+        return None
 
     def _fetch_bug_ids_from_review_queue(self):
         review_queue_url = "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review?"

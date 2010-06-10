@@ -35,17 +35,6 @@ from webkitpy.common.system.deprecated_logging import log
 
 
 class StepSequenceErrorHandler():
-    # FIXME: StepSequenceErrorHandler is just an interface definition.
-    # It shouldn't have any implementations.
-    # Create an intermediate class that inherits from StepSequenceErrorHandler
-    # that the appropriate queues inherit from.
-    @staticmethod
-    def _error_message_for_bug(tool, status_id, script_error):
-        if not script_error.output:
-            return script_error.message_with_output()
-        results_link = tool.status_server.results_url_for_status(status_id)
-        return "%s\nFull output: %s" % (script_error.message_with_output(), results_link)
-
     @classmethod
     def handle_script_error(cls, tool, patch, script_error):
         raise NotImplementedError, "subclasses must implement"
