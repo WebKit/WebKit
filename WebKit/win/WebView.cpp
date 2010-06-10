@@ -110,6 +110,7 @@
 #include <WebCore/PluginView.h>
 #include <WebCore/PopupMenu.h>
 #include <WebCore/ProgressTracker.h>
+#include <WebCore/RenderLayer.h>
 #include <WebCore/RenderTheme.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/RenderWidget.h>

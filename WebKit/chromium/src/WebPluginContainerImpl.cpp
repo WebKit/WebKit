@@ -60,6 +60,7 @@
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "Page.h"
+#include "RenderBox.h"
 #include "ScrollView.h"
 #include "WheelEvent.h"
 
