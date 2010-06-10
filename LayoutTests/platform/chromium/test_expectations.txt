@@ -704,10 +704,6 @@ BUG27697 SKIP : storage/hash-change-with-xhr.html = PASS
 // We do not use Safari's private browsing
 WONTFIX SKIP : storage/private-browsing-readonly.html = PASS
 
-// Implement HTML5 Geolocation API.
-BUG11246 DEFER SKIP : fast/dom/Geolocation = FAIL
-BUG11246 DEFER SKIP : fast/dom/Window/window-properties-geolocation.html = TEXT
-
 // HTML5 datalist element. We don't enable it because WebKit implementation
 // is incomplete.
 BUG20226 DEFER : fast/forms/datalist-nonoption-child.html = TEXT

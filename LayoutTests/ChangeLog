@@ -1,3 +1,14 @@
+2010-06-10  Marcus Bulach  <bulach@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [chromium] Upstream layout tests expectations for Geolocation.
+        Rebaseline fast/dom/Geolocation/callback-exception-expected.html due to JSC x V8 messages.
+        https://bugs.webkit.org/show_bug.cgi?id=39721
+
+        * platform/chromium/fast/dom/Geolocation/callback-exception-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-06-09  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Adam Barth.
