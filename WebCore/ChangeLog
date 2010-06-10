@@ -5,6 +5,18 @@
         Reduce FrameView.h includes to speed up build times
         https://bugs.webkit.org/show_bug.cgi?id=40408
 
+        Another fix for Qt.
+
+        * page/Frame.h:
+         - Include CSSMutableStyleDeclaration.h since it's used by m_typingStyle = 0;
+
+2010-06-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Reduce FrameView.h includes to speed up build times
+        https://bugs.webkit.org/show_bug.cgi?id=40408
+
         More attempted build fixes for Tiger and Qt.
 
         * page/Frame.cpp:
