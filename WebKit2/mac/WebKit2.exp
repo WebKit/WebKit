@@ -18,6 +18,7 @@ _WKPageClose
 _WKPageGetEstimatedProgress
 _WKPageGetMainFrame
 _WKPageGetPageNamespace
+_WKPageGetTitle
 _WKPageLoadURL
 _WKPageNamespaceCreate
 _WKPageNamespaceGetContext

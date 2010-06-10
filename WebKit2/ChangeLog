@@ -1,3 +1,10 @@
+2010-06-10  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        * mac/WebKit2.exp:
+        Added another symbol needed by Mac clients.
+
 2010-06-09  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed build fix.
