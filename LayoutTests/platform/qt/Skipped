@@ -5444,8 +5444,4 @@ svg/W3C-SVG-1.1/filters-light-04-f.svg
 # new skipped tests yet to be sorted
 # ============================================================================= #
 
-# new skipped tests that need to be fixed/investigated
-
-# expects a plaintext result but produces a rendertree
-platform/qt/fast/events/event-sender-keydown-frame.html
 

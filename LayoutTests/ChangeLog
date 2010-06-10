@@ -1,3 +1,17 @@
+2010-06-10  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Fix Qt-specific event-sender-keydown-frame.html test
+
+        It looks like this test was added without elements required for it work.
+
+        http://bugs.webkit.org/show_bug.cgi?id=20303
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/events/event-sender-keydown-frame.html:
+        * platform/qt/fast/events/resources/divs.html: Added.
+
 2010-06-10  Dmitry Titov  <dimich@chromium.org>
 
         Unreviewed, update Chromium test expectations.
