@@ -222,8 +222,9 @@ void tst_QWebPage::infiniteLoopJS()
 {
     JSTestPage* newPage = new JSTestPage(m_view);
     m_view->setPage(newPage);
-    m_view->setHtml(QString("<html><bodytest</body></html>"), QUrl());
+    m_view->setHtml(QString("<html><body>test</body></html>"), QUrl());
     m_view->page()->mainFrame()->evaluateJavaScript("var run = true;var a = 1;while(run){a++;}");
+    delete newPage;
 }
 
 void tst_QWebPage::loadFinished()
