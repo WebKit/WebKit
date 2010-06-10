@@ -2852,3 +2852,8 @@ BUG46157 WIN RELEASE : transforms/2d/transform-value-types.html = PASS TEXT
 // Chromium does not use the icon loader in WebCore for loading notifications.
 WONTFIX SKIP : http/tests/notifications = FAIL
 
+BUG46276 WIN : fast/text/international/khmer-selection.html = IMAGE+TEXT
+
+// HTML5 Geolocation API does not use window.clientInformation.
+BUG11246 DEFER SKIP : fast/dom/Window/window-properties-geolocation.html = TEXT
+

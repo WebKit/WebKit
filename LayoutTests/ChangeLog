@@ -1,3 +1,11 @@
+2010-06-10  Dmitry Titov  <dimich@chromium.org>
+
+        Unreviewed, update Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+        Disable fast/text/international/khmer-selection.html on Windows regressed by http://trac.webkit.org/changeset/60953
+        Skip fast/dom/Window/window-properties-geolocation.html unnecessarily enabled by http://trac.webkit.org/changeset/60956
+
 2010-06-09  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
