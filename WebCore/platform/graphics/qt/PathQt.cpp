@@ -438,7 +438,16 @@ void Path::apply(void* info, PathApplierFunction function) const
 
 void Path::transform(const AffineTransform& transform)
 {
-    m_path = QTransform(transform).map(m_path);
+    QTransform qTransform(transform);
+#if QT_VERSION < QT_VERSION_CHECK(4, 7, 0)
+    // Workaround for http://bugreports.qt.nokia.com/browse/QTBUG-11264
+    // QTransform.map doesn't handle the MoveTo element because of the isEmpty issue
+    if (m_path.isEmpty() && m_path.elementCount()) {
+        QPointF point = qTransform.map(m_path.currentPosition());
+        m_path.moveTo(point);
+    } else 
+#endif
+        m_path = qTransform.map(m_path);
 }
 
 }

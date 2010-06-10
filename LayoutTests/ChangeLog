@@ -1,3 +1,15 @@
+2010-06-09  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Failed at http://philip.html5.org/tests/canvas/suite/tests/2d.path.arcTo.transformation.html
+        https://bugs.webkit.org/show_bug.cgi?id=38598
+
+        Remove canvas/philip/tests/2d.path.arcTo.scale.html, canvas/philip/tests/2d.path.arcTo.transformation.html
+        and canvas/philip/tests/2d.path.transformation.changing.html from Skipped.
+
+        * platform/qt/Skipped:
+
 2010-06-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

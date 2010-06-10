@@ -5319,8 +5319,6 @@ canvas/philip/tests/2d.missingargs.html
 canvas/philip/tests/2d.path.arc.twopie.3.html
 canvas/philip/tests/2d.path.arcTo.collinear.2.html
 canvas/philip/tests/2d.path.arcTo.collinear.3.html
-canvas/philip/tests/2d.path.arcTo.scale.html
-canvas/philip/tests/2d.path.arcTo.transformation.html
 canvas/philip/tests/2d.path.bezierCurveTo.ensuresubpath.2.html
 canvas/philip/tests/2d.path.quadraticCurveTo.ensuresubpath.2.html
 canvas/philip/tests/2d.path.quadraticCurveTo.scaled.html
@@ -5330,7 +5328,6 @@ canvas/philip/tests/2d.path.rect.zero.4.html
 canvas/philip/tests/2d.path.rect.zero.6.html
 canvas/philip/tests/2d.path.stroke.prune.arc.html
 canvas/philip/tests/2d.path.stroke.scale2.html
-canvas/philip/tests/2d.path.transformation.changing.html
 canvas/philip/tests/2d.pattern.basic.type.html
 canvas/philip/tests/2d.pattern.image.broken.html
 canvas/philip/tests/2d.pattern.image.incomplete.html
