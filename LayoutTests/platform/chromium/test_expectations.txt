@@ -2848,3 +2848,7 @@ BUG46096 : editing/selection/extend-selection-after-double-click.html = TEXT
 
 // Flaky since at least r60276
 BUG46157 WIN RELEASE : transforms/2d/transform-value-types.html = PASS TEXT
+
+// Chromium does not use the icon loader in WebCore for loading notifications.
+WONTFIX SKIP : http/tests/notifications = FAIL
+

@@ -1,3 +1,29 @@
+2010-06-10  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Support for loading notification icons
+        https://bugs.webkit.org/show_bug.cgi?id=40396
+
+        * http/tests/notifications: Added.
+        * http/tests/notifications/icon-does-not-exist-expected.txt: Added.
+        * http/tests/notifications/icon-does-not-exist.html: Added.
+        * http/tests/notifications/icon-exists-cancel-expected.txt: Added.
+        * http/tests/notifications/icon-exists-cancel.html: Added.
+        * http/tests/notifications/icon-exists-expected.txt: Added.
+        * http/tests/notifications/icon-exists-show-alert-during-load-expected.txt: Added.
+        * http/tests/notifications/icon-exists-show-alert-during-load.html: Added.
+        * http/tests/notifications/icon-exists.html: Added.
+        * http/tests/notifications/icon-requires-auth-expected.txt: Added.
+        * http/tests/notifications/icon-requires-auth.html: Added.
+        * http/tests/notifications/resources: Added.
+        * http/tests/notifications/resources/icon-exists.png: Added.
+        * http/tests/notifications/resources/icon-requires-auth.php: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
 2010-06-10  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Jian Li.

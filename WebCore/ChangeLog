@@ -1,3 +1,47 @@
+2010-06-10  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Support for loading notification icons
+        https://bugs.webkit.org/show_bug.cgi?id=40396
+
+        Make notification objects download the icon needed for displaying the
+        notification before calling the NotificationPresenter to display the
+        notification.
+
+        An error during the download would cause the notification to be displayed
+        without an icon.
+
+        If a notification is in the process of download, and a new notification
+        is created with the same ReplaceId, the download is not cancelled
+        immediately and the notification is removed only after the download is
+        complete.
+  
+        Tests: http/tests/notifications/icon-does-not-exist.html
+               http/tests/notifications/icon-exists-cancel.html
+               http/tests/notifications/icon-exists-show-alert-during-load.html
+               http/tests/notifications/icon-exists.html
+               http/tests/notifications/icon-requires-auth.html
+
+        * notifications/Notification.cpp:
+        (WebCore::Notification::Notification):
+        (WebCore::Notification::~Notification):
+        (WebCore::Notification::show):
+        (WebCore::Notification::cancel):
+        (WebCore::Notification::startLoading):
+        (WebCore::Notification::stopLoading):
+        (WebCore::Notification::didReceiveResponse):
+        (WebCore::Notification::didReceiveData):
+        (WebCore::Notification::didFinishLoading):
+        (WebCore::Notification::didFail):
+        (WebCore::Notification::didFailRedirectCheck):
+        (WebCore::Notification::didReceiveAuthenticationCancellation):
+        (WebCore::Notification::finishLoading):
+        * notifications/Notification.h:
+        (WebCore::Notification::iconData):
+        (WebCore::Notification::releaseIconData):
+        (WebCore::Notification::):
+
 2010-06-10  Raine Makelainen  <raine.makelainen@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

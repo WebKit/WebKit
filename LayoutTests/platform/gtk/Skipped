@@ -1289,6 +1289,7 @@ fast/loading/subframe-removes-itself.html
 fast/fast-mobile-scrolling/fixed-position-element.html
 fast/fast-mobile-scrolling/no-fixed-position-elements.html
 fast/notifications
+http/tests/notifications
 fast/regex/test1.html
 fast/regex/test4.html
 fast/replaced/table-percent-height-text-controls.html
