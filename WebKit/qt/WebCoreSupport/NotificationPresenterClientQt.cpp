@@ -101,7 +101,11 @@ bool NotificationPresenterClientQt::show(Notification* notification)
         removeReplacedNotificationFromQueue(notification);
     if (dumpNotification)
         dumpShowText(notification);
-    displayNotification(notification, QByteArray());
+    QByteArray iconData;
+    if (notification->iconData())
+        iconData = QByteArray::fromRawData(notification->iconData()->data(), notification->iconData()->size());
+    displayNotification(notification, iconData);
+    notification->releaseIconData();
     return true;
 }
 
