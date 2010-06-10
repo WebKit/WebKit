@@ -96,8 +96,14 @@ void HTML5Tokenizer::pumpLexer()
     ASSERT(!m_parserStopped);
     ASSERT(!m_treeBuilder->isPaused());
     while (!m_parserStopped && m_lexer->nextToken(m_input.current(), m_token)) {
+        if (ScriptController* scriptController = script())
+            scriptController->setEventHandlerLineNumber(lineNumber() + 1);
+
         m_treeBuilder->constructTreeFromToken(m_token);
         m_token.clear();
+
+        if (ScriptController* scriptController = script())
+            scriptController->setEventHandlerLineNumber(0);
 
         if (!m_treeBuilder->isPaused())
             continue;

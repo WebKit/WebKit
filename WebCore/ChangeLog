@@ -1,3 +1,21 @@
+2010-06-09  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        HTML5 Parser: Fix fast/profiler tests that depend on event handler line numbers
+        https://bugs.webkit.org/show_bug.cgi?id=40393
+
+        This emulated the old behavior in HTMLTokenizer:processToken()
+
+        No new tests because covered by:
+         - fast/profiler/dead-time.html
+         - fast/profiler/inline-event-handler.html
+         - fast/profiler/stop-profiling-after-setTimeout.html
+         - fast/profiler/throw-exception-from-eval.html
+
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::pumpLexer):
+
 2010-06-09  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.

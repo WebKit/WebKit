@@ -27,8 +27,10 @@
 #define HTML5Tokenizer_h
 
 #include "CachedResourceClient.h"
+#include "Frame.h"
 #include "HTML5ScriptRunnerHost.h"
 #include "HTML5Token.h"
+#include "HTMLDocument.h"
 #include "SegmentedString.h"
 #include "Tokenizer.h"
 #include <wtf/OwnPtr.h>
@@ -38,7 +40,7 @@ namespace WebCore {
 class HTML5Lexer;
 class HTML5ScriptRunner;
 class HTML5TreeBuilder;
-class HTMLDocument;
+class ScriptController;
 class ScriptSourceCode;
 
 // FIXME: The whole Tokenizer class system should be renamed "Parser"
@@ -166,6 +168,8 @@ private:
     void attemptToEnd();
     void endIfDelayed();
     bool inWrite() const { return m_writeNestingLevel > 0; }
+
+    ScriptController* script() const { return m_document->frame() ? m_document->frame()->script() : 0; }
 
     InputStream m_input;
 
