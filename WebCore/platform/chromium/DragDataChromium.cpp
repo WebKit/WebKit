@@ -56,17 +56,17 @@ PassRefPtr<Clipboard> DragData::createClipboard(ClipboardAccessPolicy policy) co
     return clipboard.release();
 }
 
-bool DragData::containsURL() const
+bool DragData::containsURL(FilenameConversionPolicy filenamePolicy) const
 {
-    return !asURL().isEmpty();
+    return !asURL(filenamePolicy).isEmpty();
 }
 
-String DragData::asURL(String* title) const
+String DragData::asURL(FilenameConversionPolicy filenamePolicy, String* title) const
 {
     String url;
     if (m_platformDragData->hasValidURL())
         url = m_platformDragData->getURL().string();
-    else if (!m_platformDragData->filenames.isEmpty()) {
+    else if (filenamePolicy == ConvertFilenames && !m_platformDragData->filenames.isEmpty()) {
         String fileName = m_platformDragData->filenames[0];
         fileName = ChromiumBridge::getAbsolutePath(fileName);
         url = ChromiumBridge::filePathToURL(fileName).string();

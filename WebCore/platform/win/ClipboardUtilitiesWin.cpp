@@ -289,7 +289,7 @@ static bool urlFromPath(CFStringRef path, String& url)
     return true;
 }
 
-String getURL(IDataObject* dataObject, bool& success, String* title)
+String getURL(IDataObject* dataObject, DragData::FilenameConversionPolicy filenamePolicy, bool& success, String* title)
 {
     STGMEDIUM store;
     String url;
@@ -311,32 +311,34 @@ String getURL(IDataObject* dataObject, bool& success, String* title)
         GlobalUnlock(store.hGlobal);      
         ReleaseStgMedium(&store);
         success = true;
-    } else if (SUCCEEDED(dataObject->GetData(filenameWFormat(), &store))) {
-        //file using unicode
-        wchar_t* data = (wchar_t*)GlobalLock(store.hGlobal);
-        if (data && data[0] && (PathFileExists(data) || PathIsUNC(data))) {
-            RetainPtr<CFStringRef> pathAsCFString(AdoptCF, CFStringCreateWithCharacters(kCFAllocatorDefault, (const UniChar*)data, wcslen(data)));
-            if (urlFromPath(pathAsCFString.get(), url)) {
-                if (title)
-                    *title = url;
-                success = true;
+    } else if (filenamePolicy == DragData::ConvertFilenames) {
+        if (SUCCEEDED(dataObject->GetData(filenameWFormat(), &store))) {
+            // file using unicode
+            wchar_t* data = (wchar_t*)GlobalLock(store.hGlobal);
+            if (data && data[0] && (PathFileExists(data) || PathIsUNC(data))) {
+                RetainPtr<CFStringRef> pathAsCFString(AdoptCF, CFStringCreateWithCharacters(kCFAllocatorDefault, (const UniChar*)data, wcslen(data)));
+                if (urlFromPath(pathAsCFString.get(), url)) {
+                    if (title)
+                        *title = url;
+                    success = true;
+                }
             }
-        }
-        GlobalUnlock(store.hGlobal);      
-        ReleaseStgMedium(&store);
-    } else if (SUCCEEDED(dataObject->GetData(filenameFormat(), &store))) {
-        //filename using ascii
-        char* data = (char*)GlobalLock(store.hGlobal);       
-        if (data && data[0] && (PathFileExistsA(data) || PathIsUNCA(data))) {
-            RetainPtr<CFStringRef> pathAsCFString(AdoptCF, CFStringCreateWithCString(kCFAllocatorDefault, data, kCFStringEncodingASCII));
-            if (urlFromPath(pathAsCFString.get(), url)) {
-                if (title)
-                    *title = url;
-                success = true;
+            GlobalUnlock(store.hGlobal);
+            ReleaseStgMedium(&store);
+        } else if (SUCCEEDED(dataObject->GetData(filenameFormat(), &store))) {
+            // filename using ascii
+            char* data = (char*)GlobalLock(store.hGlobal);
+            if (data && data[0] && (PathFileExistsA(data) || PathIsUNCA(data))) {
+                RetainPtr<CFStringRef> pathAsCFString(AdoptCF, CFStringCreateWithCString(kCFAllocatorDefault, data, kCFStringEncodingASCII));
+                if (urlFromPath(pathAsCFString.get(), url)) {
+                    if (title)
+                        *title = url;
+                    success = true;
+                }
             }
+            GlobalUnlock(store.hGlobal);
+            ReleaseStgMedium(&store);
         }
-        GlobalUnlock(store.hGlobal);      
-        ReleaseStgMedium(&store);
     }
     return url;
 }
@@ -350,20 +352,21 @@ String getPlainText(IDataObject* dataObject, bool& success)
         //unicode text
         UChar* data = (UChar*)GlobalLock(store.hGlobal);
         text = String(data);
-        GlobalUnlock(store.hGlobal);      
+        GlobalUnlock(store.hGlobal);
         ReleaseStgMedium(&store);
         success = true;
     } else if (SUCCEEDED(dataObject->GetData(plainTextFormat(), &store))) {
         //ascii text
         char* data = (char*)GlobalLock(store.hGlobal);
         text = String(data);
-        GlobalUnlock(store.hGlobal);      
+        GlobalUnlock(store.hGlobal);
         ReleaseStgMedium(&store);
         success = true;
     } else {
-        //If a file is dropped on the window, it does not provide either of the 
-        //plain text formats, so here we try to forcibly get a url.
-        text = getURL(dataObject, success);
+        // FIXME: Originally, we called getURL() here because dragging and dropping files doesn't
+        // populate the drag with text data. Per https://bugs.webkit.org/show_bug.cgi?id=38826, this
+        // is undesirable, so maybe this line can be removed.
+        text = getURL(dataObject, DragData::DoNotConvertFilenames, success);
         success = true;
     }
     return text;

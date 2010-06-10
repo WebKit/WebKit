@@ -1,3 +1,57 @@
+2010-06-10  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Jian Li.
+
+        Don't convert filenames to URLs in edit drags.
+        https://bugs.webkit.org/show_bug.cgi?id=38826
+
+        For security reasons, we don't want to expose file system paths to web
+        content, so we filter them out of edit drags.
+
+        Test: editing/pasteboard/file-drag-to-editable.html
+
+        * page/DragController.cpp:
+        (WebCore::documentFragmentFromDragData):
+        * platform/DragData.h:
+        (WebCore::DragData::):
+        * platform/android/DragDataAndroid.cpp:
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        * platform/chromium/DragDataChromium.cpp:
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        * platform/efl/DragDataEfl.cpp:
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        * platform/gtk/DragDataGtk.cpp:
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        * platform/haiku/DragDataHaiku.cpp:
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        * platform/qt/DragDataQt.cpp:
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::getURL):
+        (WebCore::getPlainText):
+        * platform/win/ClipboardUtilitiesWin.h:
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::ClipboardWin::getData):
+        * platform/win/DragDataWin.cpp:
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        * platform/wince/DragDataWince.cpp:
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        * platform/wx/DragDataWx.cpp:
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+
 2010-06-10  Mike Belshe  <mbelshe@chromium.org>
 
         Reviewed by David Levin

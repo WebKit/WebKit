@@ -78,6 +78,8 @@ namespace WebCore {
     
     class DragData {
     public:
+        enum FilenameConversionPolicy { DoNotConvertFilenames, ConvertFilenames };
+
 #if PLATFORM(MAC)
         //FIXME: In the future the WebKit functions provided by the helper class should be moved into WebCore, 
         //after which this constructor should be removed
@@ -92,10 +94,10 @@ namespace WebCore {
         DragDataRef platformData() const { return m_platformDragData; }
         DragOperation draggingSourceOperationMask() const { return m_draggingSourceOperationMask; }
         PassRefPtr<Clipboard> createClipboard(ClipboardAccessPolicy) const;
-        bool containsURL() const;
+        bool containsURL(FilenameConversionPolicy filenamePolicy = ConvertFilenames) const;
         bool containsPlainText() const;
         bool containsCompatibleContent() const;
-        String asURL(String* title = 0) const;
+        String asURL(FilenameConversionPolicy filenamePolicy = ConvertFilenames, String* title = 0) const;
         String asPlainText() const;
         void asFilenames(Vector<String>&) const;
         Color asColor() const;

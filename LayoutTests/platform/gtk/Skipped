@@ -665,6 +665,7 @@ editing/pasteboard/drag-drop-input-textarea.html
 editing/pasteboard/drag-drop-url-text.html
 editing/pasteboard/copy-in-password-field.html
 editing/pasteboard/drag-image-in-about-blank-frame.html
+editing/pasteboard/file-drag-to-editable.html
 editing/pasteboard/file-input-files-access.html
 editing/pasteboard/get-data-text-plain-drop.html
 editing/pasteboard/paste-into-anchor-text.html

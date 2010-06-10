@@ -499,7 +499,7 @@ String ClipboardWin::getData(const String& type, bool& success) const
     if (dataType == ClipboardDataTypeText)
         return getPlainText(m_dataObject.get(), success);
     else if (dataType == ClipboardDataTypeURL) 
-        return getURL(m_dataObject.get(), success);
+        return getURL(m_dataObject.get(), DragData::DoNotConvertFilenames, success);
     
     return "";
 }

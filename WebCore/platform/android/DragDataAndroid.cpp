@@ -68,12 +68,12 @@ bool DragData::containsCompatibleContent() const
     return false;
 }
     
-bool DragData::containsURL() const
+bool DragData::containsURL(FilenameConversionPolicy) const
 {
     return false;
 }
     
-String DragData::asURL(String*) const
+String DragData::asURL(FilenameConversionPolicy, String*) const
 {
     return String();
 }

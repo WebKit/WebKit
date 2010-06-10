@@ -113,13 +113,15 @@ bool DragData::containsCompatibleContent() const
     return [types count] != 0;
 }
     
-bool DragData::containsURL() const
+bool DragData::containsURL(FilenameConversionPolicy filenamePolicy) const
 {
-    return !asURL().isEmpty();
+    return !asURL(filenamePolicy).isEmpty();
 }
     
-String DragData::asURL(String* title) const
+String DragData::asURL(FilenameConversionPolicy filenamePolicy, String* title) const
 {
+    // FIXME: Use filenamePolicy.
+    (void)filenamePolicy;
     return m_pasteboardHelper->urlFromPasteboard([m_platformDragData draggingPasteboard], title);
 }
 

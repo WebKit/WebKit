@@ -86,13 +86,13 @@ bool DragData::containsCompatibleContent() const
     return containsColor() || containsURL() || containsPlainText();
 }
 
-bool DragData::containsURL() const
+bool DragData::containsURL(FilenameConversionPolicy filenamePolicy) const
 {
     notImplemented();
     return false;
 }
 
-String DragData::asURL(String* title) const
+String DragData::asURL(FilenameConversionPolicy filenamePolicy, String* title) const
 {
     notImplemented();
     return String();
