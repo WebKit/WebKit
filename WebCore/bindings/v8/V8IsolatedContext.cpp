@@ -38,7 +38,6 @@
 #include "ScriptController.h"
 #include "V8DOMWindow.h"
 #include "V8HiddenPropertyName.h"
-#include <v8.h>
 
 namespace WebCore {
 

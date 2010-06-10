@@ -49,7 +49,6 @@
 #endif
 
 #include <stdio.h>
-#include <v8.h>
 #include <wtf/StringExtras.h>
 
 using namespace WebCore;

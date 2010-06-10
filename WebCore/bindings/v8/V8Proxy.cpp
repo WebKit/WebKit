@@ -67,7 +67,6 @@
 #include <algorithm>
 #include <stdio.h>
 #include <utility>
-#include <v8.h>
 #include <wtf/Assertions.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/StdLibExtras.h>

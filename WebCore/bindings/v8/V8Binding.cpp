@@ -44,8 +44,6 @@
 #include "V8Proxy.h"
 #include <wtf/text/CString.h>
 
-#include <v8.h>
-
 namespace WebCore {
 
 // WebCoreStringResource is a helper class for v8ExternalString. It is used

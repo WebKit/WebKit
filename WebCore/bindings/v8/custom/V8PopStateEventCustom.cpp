@@ -35,8 +35,6 @@
 #include "SerializedScriptValue.h"
 #include "V8Proxy.h"
 
-#include <v8.h>
-
 namespace WebCore {
 
 v8::Handle<v8::Value> V8PopStateEvent::stateAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)

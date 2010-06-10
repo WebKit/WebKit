@@ -223,3 +223,7 @@ typedef float CGFloat;
 #if PLATFORM(WIN) && PLATFORM(CG)
 #define WTF_USE_SAFARI_THEME 1
 #endif
+
+#if defined(WTF_USE_V8)
+#define USE_NEW_QUERY_CALLBACKS
+#endif

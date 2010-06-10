@@ -469,7 +469,7 @@ END
     if ($hasCustomEnumerator) {
         push(@headerContent, <<END);
     static v8::Handle<v8::Array> namedPropertyEnumerator(const v8::AccessorInfo&);
-    static v8::Handle<v8::Boolean> namedPropertyQuery(v8::Local<v8::String>, const v8::AccessorInfo&);
+    static v8::Handle<v8::Integer> namedPropertyQuery(v8::Local<v8::String>, const v8::AccessorInfo&);
 END
     }
 }
@@ -1548,7 +1548,7 @@ END
     push(@implContent, "    desc->${setOn}Template()->SetNamedPropertyHandler(V8${interfaceName}::namedPropertyGetter, ");
     push(@implContent, $hasSetter ? "V8${interfaceName}::namedPropertySetter, " : "0, ");
     # If there is a custom enumerator, there MUST be custom query to properly communicate property attributes.
-    push(@implContent, $hasEnumerator ? "V8${interfaceName}::namedPropertyQuery," : "0, ");
+    push(@implContent, $hasEnumerator ? "V8${interfaceName}::namedPropertyQuery, " : "0, ");
     push(@implContent, $hasDeleter ? "V8${interfaceName}::namedPropertyDeleter, " : "0, ");
     push(@implContent, $hasEnumerator ? "V8${interfaceName}::namedPropertyEnumerator" : "0");
     push(@implContent, ");\n");

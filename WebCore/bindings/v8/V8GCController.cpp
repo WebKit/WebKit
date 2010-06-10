@@ -46,7 +46,6 @@
 
 #include <algorithm>
 #include <utility>
-#include <v8.h>
 #include <v8-debug.h>
 #include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>

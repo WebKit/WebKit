@@ -82,7 +82,6 @@
 
 #include <algorithm>
 #include <utility>
-#include <v8.h>
 #include <v8-debug.h>
 #include <wtf/Assertions.h>
 #include <wtf/OwnArrayPtr.h>

@@ -44,7 +44,6 @@
 #include "V8ImageData.h"
 #include "V8Proxy.h"
 
-#include <v8.h>
 #include <wtf/Assertions.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>

@@ -1,3 +1,33 @@
+2010-06-09  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        [v8] First phase of switching to new named property query API
+        https://bugs.webkit.org/show_bug.cgi?id=40303
+
+        To allow better management of attributes of intercepted properties,
+        we're starting to switch to new named property query API which
+        now could return attributes instead of simple property present/absent
+        flag.  The next step would remove USE_NEW_QUERY_CALLBACK, then
+        v8 would have them enabled by default.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/NPV8Object.cpp:
+        * bindings/v8/ScriptArray.cpp:
+        * bindings/v8/ScriptCallStack.cpp:
+        * bindings/v8/SerializedScriptValue.cpp:
+        * bindings/v8/V8Binding.cpp:
+        * bindings/v8/V8DOMWrapper.cpp:
+        * bindings/v8/V8GCController.cpp:
+        * bindings/v8/V8IsolatedContext.cpp:
+        * bindings/v8/V8NPObject.cpp:
+        (WebCore::npObjectQueryProperty):
+        * bindings/v8/V8Proxy.cpp:
+        * bindings/v8/custom/V8PopStateEventCustom.cpp:
+        * bindings/v8/custom/V8StorageCustom.cpp:
+        (WebCore::V8Storage::namedPropertyQuery):
+        * config.h:
+
 2010-06-09  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
