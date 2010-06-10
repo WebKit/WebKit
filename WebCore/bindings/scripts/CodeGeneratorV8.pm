@@ -2235,6 +2235,7 @@ sub GenerateCallbackImplementation
          
     $implIncludes{"ScriptExecutionContext.h"} = 1;
     $implIncludes{"V8CustomVoidCallback.h"} = 1;
+    $implIncludes{"V8Proxy.h"} = 1;
 
     push(@implContent, "#include <wtf/Assertions.h>\n\n");
     push(@implContent, "namespace WebCore {\n\n");

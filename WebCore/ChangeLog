@@ -1,3 +1,14 @@
+2010-06-09  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Need to include V8Proxy.h in V8 generated bindings for toV8Context()
+        https://bugs.webkit.org/show_bug.cgi?id=40290
+
+        No new tests, build fix only.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+
 2010-06-09  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
