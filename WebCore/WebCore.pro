@@ -987,6 +987,7 @@ SOURCES += \
     rendering/RootInlineBox.cpp \
     rendering/SVGRenderTreeAsText.cpp \
     rendering/ScrollBehavior.cpp \
+    rendering/ShadowElement.cpp \
     rendering/TextControlInnerElements.cpp \
     rendering/TransformState.cpp \
     rendering/style/BindingURI.cpp \
@@ -1801,6 +1802,7 @@ HEADERS += \
     rendering/RenderWordBreak.h \
     rendering/RootInlineBox.h \
     rendering/ScrollBehavior.h \
+    rendering/ShadowElement.h \
     rendering/style/BindingURI.h \
     rendering/style/ContentData.h \
     rendering/style/CounterDirectives.h \

@@ -2017,6 +2017,8 @@ webcore_sources += \
 	WebCore/rendering/RootInlineBox.h \
 	WebCore/rendering/ScrollBehavior.cpp \
 	WebCore/rendering/ScrollBehavior.h \
+	WebCore/rendering/ShadowElement.cpp \
+	WebCore/rendering/ShadowElement.h \
 	WebCore/rendering/TableLayout.h \
 	WebCore/rendering/TextControlInnerElements.cpp \
 	WebCore/rendering/TextControlInnerElements.h \

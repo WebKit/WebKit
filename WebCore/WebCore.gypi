@@ -3313,6 +3313,8 @@
             'rendering/RootInlineBox.h',
             'rendering/ScrollBehavior.cpp',
             'rendering/ScrollBehavior.h',
+            'rendering/ShadowElement.cpp',
+            'rendering/ShadowElement.h',
             'rendering/SVGCharacterData.cpp',
             'rendering/SVGCharacterData.h',
             'rendering/SVGCharacterLayoutInfo.cpp',

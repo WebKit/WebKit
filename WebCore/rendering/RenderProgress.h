@@ -27,7 +27,7 @@
 namespace WebCore {
 
 class HTMLProgressElement;
-class ProgressValueElement;
+class ShadowBlockElement;
 
 class RenderProgress : public RenderBlock {
 public:
@@ -63,7 +63,7 @@ private:
     double m_animationDuration;
     bool m_animating;
     Timer<RenderProgress> m_animationTimer;
-    RefPtr<ProgressValueElement> m_valuePart;
+    RefPtr<ShadowBlockElement> m_valuePart;
 };
 
 inline RenderProgress* toRenderProgress(RenderObject* object)

@@ -28855,6 +28855,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\ShadowElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\ShadowElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\SVGCharacterData.cpp"
 				>
 			</File>

@@ -1333,6 +1333,7 @@ SET(WebCore_SOURCES
     rendering/RenderWordBreak.cpp
     rendering/RootInlineBox.cpp
     rendering/ScrollBehavior.cpp
+    rendering/ShadowElement.cpp
     rendering/TextControlInnerElements.cpp
     rendering/TransformState.cpp
     rendering/break_lines.cpp

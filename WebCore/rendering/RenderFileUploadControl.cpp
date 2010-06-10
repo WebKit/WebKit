@@ -27,7 +27,7 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
-#include "HTMLNames.h"
+#include "ShadowElement.h"
 #include "Icon.h"
 #include "LocalizedStrings.h"
 #include "Page.h"
@@ -49,30 +49,6 @@ const int iconWidth = 16;
 const int iconFilenameSpacing = 2;
 const int defaultWidthNumChars = 34;
 const int buttonShadowHeight = 2;
-
-class ShadowInputElement : public HTMLInputElement {
-public:
-    static PassRefPtr<ShadowInputElement> create(Node* shadowParent);
-
-private:
-    ShadowInputElement(Node* shadowParent);
-
-    virtual bool isShadowNode() const { return true; }
-    virtual Node* shadowParentNode() { return m_shadowParent; }
-
-    Node* m_shadowParent;    
-};
-
-inline ShadowInputElement::ShadowInputElement(Node* shadowParent)
-    : HTMLInputElement(inputTag, shadowParent->document())
-    , m_shadowParent(shadowParent)
-{
-}
-
-inline PassRefPtr<ShadowInputElement> ShadowInputElement::create(Node* shadowParent)
-{
-    return new ShadowInputElement(shadowParent);
-}
 
 RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement* input)
     : RenderBlock(input)

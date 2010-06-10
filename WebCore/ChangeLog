@@ -1,3 +1,40 @@
+2010-06-09  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Refactoring: Simple shadow elements should be factored out .
+        https://bugs.webkit.org/show_bug.cgi?id=40400
+        
+        Pulled ShadowElement class up from SliderThumbElement,
+        ProgressValueElement, ShadowInputElement. 
+        And renamed ProgressValueElement to ShadowBlockElement.
+
+        No new tests. Because there is no functional change.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderFileUploadControl.cpp:
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::updateValuePartState):
+        * rendering/RenderProgress.h:
+        * rendering/RenderSlider.cpp:
+        (WebCore::SliderThumbElement::SliderThumbElement):
+        (WebCore::SliderThumbElement::defaultEventHandler):
+        (WebCore::SliderThumbElement::detach):
+        * rendering/ShadowElement.cpp: Added.
+        (WebCore::ShadowBlockElement::create):
+        (WebCore::ShadowBlockElement::ShadowBlockElement):
+        (WebCore::ShadowInputElement::create):
+        (WebCore::ShadowInputElement::ShadowInputElement):
+        * rendering/ShadowElement.h: Added.
+        (WebCore::ShadowElement::ShadowElement):
+        (WebCore::ShadowElement::isShadowNode):
+        (WebCore::ShadowElement::shadowParentNode):
+
 2010-06-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
