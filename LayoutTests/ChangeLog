@@ -1,5 +1,11 @@
 2010-06-09  Alexey Proskuryakov  <ap@apple.com>
 
+        Undo an accidentally committed change.
+
+        * fast/events/pageshow-pagehide-on-back-cached.html:
+
+2010-06-09  Alexey Proskuryakov  <ap@apple.com>
+
         Reviewed by Dan Bernstein.
 
         https://bugs.webkit.org/show_bug.cgi?id=9504
