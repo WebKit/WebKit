@@ -1008,7 +1008,7 @@ void QWebPagePrivate::dragEnterEvent(QGraphicsSceneDragDropEvent* ev)
     Qt::DropAction action = dragOpToDropAction(page->dragController()->dragEntered(&dragData));
     ev->setDropAction(action);
     if (action != Qt::IgnoreAction)
-        ev->accept();
+        ev->acceptProposedAction();
 #endif
 }
 
@@ -1021,7 +1021,7 @@ void QWebPagePrivate::dragEnterEvent(QDragEnterEvent* ev)
     ev->setDropAction(action);
     // We must accept this event in order to receive the drag move events that are sent
     // while the drag and drop action is in progress.
-    ev->accept();
+    ev->acceptProposedAction();
 #endif
 }
 
@@ -1051,7 +1051,7 @@ void QWebPagePrivate::dragMoveEvent(QGraphicsSceneDragDropEvent* ev)
     Qt::DropAction action = dragOpToDropAction(page->dragController()->dragUpdated(&dragData));
     ev->setDropAction(action);
     if (action != Qt::IgnoreAction)
-        ev->accept();
+        ev->acceptProposedAction();
 #endif
 }
 
@@ -1065,7 +1065,7 @@ void QWebPagePrivate::dragMoveEvent(QDragMoveEvent* ev)
     ev->setDropAction(action);
     // We must accept this event in order to receive the drag move events that are sent
     // while the drag and drop action is in progress.
-    ev->accept();
+    ev->acceptProposedAction();
 #endif
 }
 
@@ -1075,7 +1075,7 @@ void QWebPagePrivate::dropEvent(QGraphicsSceneDragDropEvent* ev)
     DragData dragData(ev->mimeData(), ev->pos().toPoint(),
             QCursor::pos(), dropActionToDragOp(ev->possibleActions()));
     if (page->dragController()->performDrag(&dragData))
-        ev->accept();
+        ev->acceptProposedAction();
 #endif
 }
 
@@ -1087,7 +1087,7 @@ void QWebPagePrivate::dropEvent(QDropEvent* ev)
     DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(),
                       dropActionToDragOp(Qt::DropAction(ev->dropAction())));
     if (page->dragController()->performDrag(&dragData))
-        ev->accept();
+        ev->acceptProposedAction();
 #endif
 }
 
