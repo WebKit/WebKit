@@ -164,19 +164,24 @@ bool HTML5ScriptRunner::execute(PassRefPtr<Element> scriptElement, int startLine
 
     // Try to execute the script given to us.
     runScript(scriptElement.get(), startLine);
-    if (m_scriptNestingLevel)
-        return false; // Don't continue parsing.
-    if (!executeParsingBlockingScripts())
-        return false;
 
-    notImplemented(); // Restore insertion point?
-    // FIXME: Handle re-entrant scripts and m_pendingParsingBlockinScript.
-    return true;
+    if (haveParsingBlockingScript()) {
+        if (m_scriptNestingLevel)
+            return false; // Block the parser.  Unwind to the outermost HTML5ScriptRunner::execute before continuing parsing.
+        if (!executeParsingBlockingScripts())
+            return false; // We still have a parsing blocking script, block the parser.
+    }
+    return true; // Scripts executed as expected, continue parsing.
+}
+
+bool HTML5ScriptRunner::haveParsingBlockingScript() const
+{
+    return !!m_parsingBlockingScript.element;
 }
 
 bool HTML5ScriptRunner::executeParsingBlockingScripts()
 {
-    while (m_parsingBlockingScript.element) {
+    while (haveParsingBlockingScript()) {
         // We only really need to check once.
         if (!isPendingScriptReady(m_parsingBlockingScript))
             return false;
@@ -188,7 +193,7 @@ bool HTML5ScriptRunner::executeParsingBlockingScripts()
 bool HTML5ScriptRunner::executeScriptsWaitingForLoad(CachedResource*)
 {
     ASSERT(!m_scriptNestingLevel);
-    ASSERT(m_parsingBlockingScript.element);
+    ASSERT(haveParsingBlockingScript());
     ASSERT(m_parsingBlockingScript.cachedScript->isLoaded());
     return executeParsingBlockingScripts();
 }
@@ -234,7 +239,7 @@ void HTML5ScriptRunner::requestScript(Element* script)
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/scripting-1.html#running-a-script
 void HTML5ScriptRunner::runScript(Element* script, int startingLineNumber)
 {
-    ASSERT(!m_parsingBlockingScript.element);
+    ASSERT(!haveParsingBlockingScript());
     m_scriptNestingLevel++;
     // Check script type and language, current code uses ScriptElement::shouldExecuteAsJavaScript(), but that may not be HTML5 compliant.
     notImplemented(); // event for support

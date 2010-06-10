@@ -73,6 +73,7 @@ private:
 
     Frame* frame() const;
 
+    bool haveParsingBlockingScript() const;
     bool executeParsingBlockingScripts();
     void executePendingScript();
 

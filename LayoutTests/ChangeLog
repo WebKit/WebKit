@@ -1,3 +1,16 @@
+2010-06-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTML5 Parser should continue parsing after script execution
+        https://bugs.webkit.org/show_bug.cgi?id=40416
+
+        Test the ordering of script execution with multiple calls to
+        document.write().
+
+        * fast/tokenizer/write-multiple-scripts-expected.txt: Added.
+        * fast/tokenizer/write-multiple-scripts.html: Added.
+
 2010-06-10  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

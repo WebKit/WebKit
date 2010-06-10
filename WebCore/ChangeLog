@@ -1,3 +1,37 @@
+2010-06-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTML5 Parser should continue parsing after script execution
+        https://bugs.webkit.org/show_bug.cgi?id=40416
+
+        The previous code was just wrong.  We were always blocking
+        the parser after any script execution.  Now we correctly continue
+        parsing after a successful script execution and only block the
+        parser when we weren't able to execute the script immediately.
+
+        Added a new haveParsingBlockingScript() function to HTML5ScriptRunner
+        to make some of the code more self-documenting.
+
+       Test: fast/tokenizer/write-multiple-scripts.html
+             fast/js/implicit-call-with-global-reentry.html
+
+        * html/HTML5ScriptRunner.cpp:
+        (WebCore::HTML5ScriptRunner::execute):
+         - Remove some old (now bogus) FIXMEs and notImplemented() calls.
+         - Fix the logic to match the HTML5 spec by continuing parsing
+           after script execution and only blocking the parser when the
+           script wasn't able to immediately run.
+        (WebCore::HTML5ScriptRunner::haveParsingBlockingScript):
+         - New function to make some of the code read better.
+        (WebCore::HTML5ScriptRunner::executeParsingBlockingScripts):
+         - Use haveParsingBlockingScript().
+        (WebCore::HTML5ScriptRunner::executeScriptsWaitingForLoad):
+         - Use haveParsingBlockingScript().
+        (WebCore::HTML5ScriptRunner::runScript):
+         - Use haveParsingBlockingScript().
+        * html/HTML5ScriptRunner.h:
+
 2010-06-10  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
