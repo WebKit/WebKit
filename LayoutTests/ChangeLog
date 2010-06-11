@@ -1,3 +1,36 @@
+2010-06-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        tables/mozilla/bugs/bug1188.html needlessly depends on HTML Parser text node handling
+        https://bugs.webkit.org/show_bug.cgi?id=40485
+
+        The old HTMLTokenizer handled invalid close tags like "< /A>" as part
+        of the lexing step.  The HTML5 parser specification dictates that
+        the tokenization/lexing step is to output each character token in sequence
+        and that the parser is to insert emitted character tokens into the last
+        parser-created text node.  In our current HTML5Lexer-with-old-HTMLParser
+        setup, we gather up character tokens and output them all in one bunch
+        (to match the expectations of the old parser).
+        
+        In the case of "foo< /A>" the HTML5Lexer sees the '<', switched out of the
+        "data" state and emits all pending characters assuming the start of a close tag.
+        When it sees the ' ' it switches back to the "data" state.  The HTML5Lexer
+        expects that the parser will coalesce the separate characters it emitted
+        into one text node.  Since we haven't implemented the parser side of the
+        HTML5 spec, for now we don't.  This is a known issue we will address after
+        enabling the HTML5Lexer, as we start to write an HTML5-compliant parser.
+
+        This text-node-coalescing behavior is already tested by numerous html5lib
+        tests, however this was the only layout test which hit this quirk.  I've
+        added yet another html5lib test of this exact case just for good measure.
+
+        * html5lib/resources/webkit01.dat:
+         - Add a test of this exact case to make sure we don't miss it when implementing
+           an HTML5-compliant parser.
+        * tables/mozilla/bugs/bug1188.html:
+         - Replace "< /A>" with "&lt /A>" to avoid hitting this lexing quirk.
+
 2010-06-11  Dmitry Titov  <dimich@chromium.org>
 
         Unreviewed, update Chromium test expectations.

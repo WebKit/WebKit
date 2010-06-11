@@ -199,3 +199,13 @@ console.log("FOO<span>BAR</span>BAZ");
 |     <rdar:>
 |       6869687=""
 |       problem=""
+
+#data
+<A>test< /A>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       "test< /A>"
