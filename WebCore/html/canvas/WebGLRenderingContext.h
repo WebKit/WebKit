@@ -181,9 +181,7 @@ class WebKitCSSMatrix;
         void linkProgram(WebGLProgram*, ExceptionCode&);
         void pixelStorei(unsigned long pname, long param);
         void polygonOffset(double factor, double units);
-        
-        void readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type, ArrayBufferView* pixels);
-        
+        void readPixels(long x, long y, long width, long height, unsigned long format, unsigned long type, ArrayBufferView* pixels);
         void releaseShaderCompiler();
         void renderbufferStorage(unsigned long target, unsigned long internalformat, unsigned long width, unsigned long height);
         void sampleCoverage(double value, bool invert);

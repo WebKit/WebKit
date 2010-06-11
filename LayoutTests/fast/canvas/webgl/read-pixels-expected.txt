@@ -88,6 +88,30 @@ PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
+Testing PACK_ALIGNMENT = 1, width = 0, height = 0
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+Testing PACK_ALIGNMENT = 2, width = 0, height = 0
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+Testing PACK_ALIGNMENT = 4, width = 0, height = 0
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+Testing PACK_ALIGNMENT = 8, width = 0, height = 0
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+Testing PACK_ALIGNMENT = 1, width = -1, height = 1
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.INVALID_VALUE
+Testing PACK_ALIGNMENT = 2, width = 1, height = -1
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.INVALID_VALUE
+Testing PACK_ALIGNMENT = 4, width = 0, height = -1
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.INVALID_VALUE
+Testing PACK_ALIGNMENT = 8, width = -1, height = -1
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.INVALID_VALUE
 Testing the other supported format/type combination
 Testing PACK_ALIGNMENT = 1, width = 1, height = 2
 PASS gl.getError() is gl.NO_ERROR
@@ -169,6 +193,30 @@ PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.NO_ERROR
 PASS 255,102,0,0 is non-null.
 PASS pixel is expectedColor
+Testing PACK_ALIGNMENT = 1, width = 0, height = 0
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+Testing PACK_ALIGNMENT = 2, width = 0, height = 0
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+Testing PACK_ALIGNMENT = 4, width = 0, height = 0
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+Testing PACK_ALIGNMENT = 8, width = 0, height = 0
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+Testing PACK_ALIGNMENT = 1, width = -1, height = 1
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.INVALID_VALUE
+Testing PACK_ALIGNMENT = 2, width = 1, height = -1
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.INVALID_VALUE
+Testing PACK_ALIGNMENT = 4, width = 0, height = -1
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.INVALID_VALUE
+Testing PACK_ALIGNMENT = 8, width = -1, height = -1
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.INVALID_VALUE
 PASS successfullyParsed is true
 
 TEST COMPLETE

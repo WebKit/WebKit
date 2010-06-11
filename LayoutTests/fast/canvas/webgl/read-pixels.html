@@ -170,12 +170,21 @@ function runTestIteration(format, type, packAlignment, width, height)
     }
     if (isShort)
         size /= 2;
+    if (size < 0)
+        size = 0;
     if (type == gl.UNSIGNED_BYTE)
         array = new Uint8Array(size);
     else
         array = new Uint16Array(size);
     gl.readPixels(0, 0, width, height, format, type, array);
-    shouldBe("gl.getError()", "gl.NO_ERROR");
+    if (width < 0 || height < 0) {
+        shouldBe("gl.getError()", "gl.INVALID_VALUE");
+        return;
+    } else {
+        shouldBe("gl.getError()", "gl.NO_ERROR");
+        if (!array.length)
+            return;
+    }
     // Check the last pixel of the last row.
     var bytesPerRow = width * bytesPerPixel + padding;
     var pos = bytesPerRow * (height - 1) + (width - 1) * bytesPerPixel;
@@ -227,6 +236,14 @@ runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 8, 5, 2);
 runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 8, 6, 2);
 runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 8, 7, 2);
 runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 8, 8, 2);
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 1, 0, 0);
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 2, 0, 0);
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 4, 0, 0);
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 8, 0, 0);
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 1, -1, 1);
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 2, 1, -1);
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 4, 0, -1);
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 8, -1, -1);
 
 debug("Testing the other supported format/type combination");
 runTestIteration(pixelFormat, pixelType, 1, 1, 2);
@@ -245,6 +262,14 @@ runTestIteration(pixelFormat, pixelType, 8, 5, 2);
 runTestIteration(pixelFormat, pixelType, 8, 6, 2);
 runTestIteration(pixelFormat, pixelType, 8, 7, 2);
 runTestIteration(pixelFormat, pixelType, 8, 8, 2);
+runTestIteration(pixelFormat, pixelType, 1, 0, 0);
+runTestIteration(pixelFormat, pixelType, 2, 0, 0);
+runTestIteration(pixelFormat, pixelType, 4, 0, 0);
+runTestIteration(pixelFormat, pixelType, 8, 0, 0);
+runTestIteration(pixelFormat, pixelType, 1, -1, 1);
+runTestIteration(pixelFormat, pixelType, 2, 1, -1);
+runTestIteration(pixelFormat, pixelType, 4, 0, -1);
+runTestIteration(pixelFormat, pixelType, 8, -1, -1);
 
 successfullyParsed = true;
 </script>
