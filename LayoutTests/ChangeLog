@@ -1,3 +1,16 @@
+2010-06-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dr Dan Bernstein.
+
+        REGRESSION: crash when unloading an iFrame with Flash from the DOM
+        https://bugs.webkit.org/show_bug.cgi?id=40161
+        <rdar://problem/7994710>
+        
+        Layout test for dynamically removing an iframe whose compositing layers are connected to those of the parent document.
+
+        * compositing/iframes/remove-iframe-crash-expected.txt: Added.
+        * compositing/iframes/remove-iframe-crash.html: Added.
+
 2010-06-11  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by David Hyatt.

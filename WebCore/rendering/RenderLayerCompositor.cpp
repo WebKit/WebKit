@@ -1343,7 +1343,8 @@ void RenderLayerCompositor::detachRootPlatformLayer()
             else
                 m_rootPlatformLayer->removeFromParent();
 
-            m_renderView->document()->ownerElement()->setNeedsStyleRecalc(SyntheticStyleChange);
+            if (Element* ownerElement = m_renderView->document()->ownerElement())
+                ownerElement->setNeedsStyleRecalc(SyntheticStyleChange);
             break;
         }
         case RootLayerAttachedViaChromeClient: {
