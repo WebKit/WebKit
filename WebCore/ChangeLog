@@ -1,3 +1,9 @@
+2010-06-11  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix, add KillRingNone.cpp until we can implement it.
+
+        * wscript:
+
 2010-06-11  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Jeremy Orlow.

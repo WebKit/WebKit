@@ -30,6 +30,7 @@ from settings import *
 webcore_sources = {}
 
 if build_port == "wx":
+    webcore_sources['wx'] = ['platform/KillRingNone.cpp']
     if building_on_win32:
         # make sure platform/wx comes after this so we get the right
         # FontPlatformData.h
