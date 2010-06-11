@@ -1042,10 +1042,6 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #define WTF_USE_QXMLQUERY 1
 #endif
 
-#if !PLATFORM(QT)
-#define WTF_USE_FONT_FAST_PATH 1
-#endif
-
 /* Accelerated compositing */
 #if PLATFORM(MAC)
 #if !defined(BUILDING_ON_TIGER)

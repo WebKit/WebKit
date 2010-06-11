@@ -1,3 +1,25 @@
+2010-05-31  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Implement the simple text code path.
+        https://bugs.webkit.org/show_bug.cgi?id=40077
+
+        Remove the FONT_FAST_PATH macro and use the Qt's
+        fast text implementation instead of the one of WebKit.
+
+        The Qt::TextBypassShaping flag is used to tell Qt to
+        only use the glyph advances.
+
+        Qt 4.7 is needed to get this flag thus the complex path is always
+        used if QtWebKit is compiled against an earlier version.
+
+        Contrary to the WebKit's implementation, the complex code path
+        is taken if the text is RightToLeft, justified or is formatted
+        with non-zero letter or word spacing.
+
+        * wtf/Platform.h:
+
 2010-06-11  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

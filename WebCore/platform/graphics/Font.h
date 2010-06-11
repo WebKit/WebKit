@@ -162,7 +162,6 @@ private:
     int offsetForPositionForTextUsingSVGFont(const TextRun&, int position, bool includePartialGlyphs) const;
 #endif
 
-#if USE(FONT_FAST_PATH)
     void drawSimpleText(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
     void drawGlyphs(GraphicsContext*, const SimpleFontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const;
     void drawGlyphBuffer(GraphicsContext*, const GlyphBuffer&, const TextRun&, const FloatPoint&) const;
@@ -171,7 +170,6 @@ private:
     FloatRect selectionRectForSimpleText(const TextRun&, const IntPoint&, int h, int from, int to) const;
 
     static bool canReturnFallbackFontsForComplexText();
-#endif
 
     CodePath codePath(const TextRun&) const;
     void drawComplexText(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
@@ -187,13 +185,11 @@ public:
     static CodePath codePath();
     static CodePath s_codePath;
 
-#if USE(FONT_FAST_PATH)
     static const uint8_t gRoundingHackCharacterTable[256];
     static bool isRoundingHackCharacter(UChar32 c)
     {
         return (((c & ~0xFF) == 0 && gRoundingHackCharacterTable[c]));
     }
-#endif
 
     FontSelector* fontSelector() const;
     static bool treatAsSpace(UChar c) { return c == ' ' || c == '\t' || c == '\n' || c == 0x00A0; }
