@@ -21,6 +21,8 @@
 
 package IDLStructure;
 
+use strict;
+
 use Class::Struct;
 
 # Used to represent a parsed IDL document
@@ -70,36 +72,36 @@ struct( domConstant => {
 });
 
 # Helpers
-$idlId = '[a-zA-Z0-9]';        # Generic identifier
-$idlIdNs = '[a-zA-Z0-9:]';      # Generic identifier including namespace
-$idlIdNsList = '[a-zA-Z0-9:,\ ]';  # List of Generic identifiers including namespace
+our $idlId = '[a-zA-Z0-9]';        # Generic identifier
+our $idlIdNs = '[a-zA-Z0-9:]';      # Generic identifier including namespace
+our $idlIdNsList = '[a-zA-Z0-9:,\ ]';  # List of Generic identifiers including namespace
 
-$idlType = '[a-zA-Z0-9_]';      # Generic type/"value string" identifier
-$idlDataType = '[a-zA-Z0-9\ ]';   # Generic data type identifier
+our $idlType = '[a-zA-Z0-9_]';      # Generic type/"value string" identifier
+our $idlDataType = '[a-zA-Z0-9\ ]';   # Generic data type identifier
 
 # Magic IDL parsing regular expressions
 my $supportedTypes = "((?:unsigned )?(?:int|short|(?:long )?long)|(?:$idlIdNs*))";
 
 # Special IDL notations
-$extendedAttributeSyntax = '\[[^]]*\]'; # Used for extended attributes
+our $extendedAttributeSyntax = '\[[^]]*\]'; # Used for extended attributes
 
 # Regular expression based IDL 'syntactical tokenizer' used in the IDLParser
-$moduleSelector = 'module\s*(' . $idlId . '*)\s*{';
-$moduleNSSelector = 'module\s*(' . $idlId . '*)\s*\[ns\s*(' . $idlIdNs . '*)\s*(' . $idlIdNs . '*)\]\s*;';
-$constantSelector = 'const\s*' . $supportedTypes . '\s*(' . $idlType . '*)\s*=\s*(' . $idlType . '*)';
-$raisesSelector = 'raises\s*\((' . $idlIdNsList . '*)\s*\)';
-$getterRaisesSelector = '\bgetter\s+raises\s*\((' . $idlIdNsList . '*)\s*\)';
-$setterRaisesSelector = '\bsetter\s+raises\s*\((' . $idlIdNsList . '*)\s*\)';
+our $moduleSelector = 'module\s*(' . $idlId . '*)\s*{';
+our $moduleNSSelector = 'module\s*(' . $idlId . '*)\s*\[ns\s*(' . $idlIdNs . '*)\s*(' . $idlIdNs . '*)\]\s*;';
+our $constantSelector = 'const\s*' . $supportedTypes . '\s*(' . $idlType . '*)\s*=\s*(' . $idlType . '*)';
+our $raisesSelector = 'raises\s*\((' . $idlIdNsList . '*)\s*\)';
+our $getterRaisesSelector = '\bgetter\s+raises\s*\((' . $idlIdNsList . '*)\s*\)';
+our $setterRaisesSelector = '\bsetter\s+raises\s*\((' . $idlIdNsList . '*)\s*\)';
 
-$typeNamespaceSelector = '((?:' . $idlId . '*::)*)\s*(' . $idlDataType . '*)';
+our $typeNamespaceSelector = '((?:' . $idlId . '*::)*)\s*(' . $idlDataType . '*)';
 
-$exceptionSelector = 'exception\s*(' . $idlIdNs . '*)\s*([a-zA-Z\s{;]*};)';
-$exceptionSubSelector = '{\s*' . $supportedTypes . '\s*(' . $idlType . '*)\s*;\s*}';
+our $exceptionSelector = 'exception\s*(' . $idlIdNs . '*)\s*([a-zA-Z\s{;]*};)';
+our $exceptionSubSelector = '{\s*' . $supportedTypes . '\s*(' . $idlType . '*)\s*;\s*}';
 
-$interfaceSelector = 'interface\s*((?:' . $extendedAttributeSyntax . ' )?)(' . $idlIdNs . '*)\s*(?::(\s*[^{]*))?{([a-zA-Z0-9_=\s(),;:\[\]&\|]*)';
-$interfaceMethodSelector = '\s*((?:' . $extendedAttributeSyntax . ' )?)' . $supportedTypes . '\s*(' . $idlIdNs . '*)\s*\(\s*([a-zA-Z0-9:\s,=\[\]]*)';
-$interfaceParameterSelector = 'in\s*((?:' . $extendedAttributeSyntax . ' )?)' . $supportedTypes . '\s*(' . $idlIdNs . '*)';
+our $interfaceSelector = 'interface\s*((?:' . $extendedAttributeSyntax . ' )?)(' . $idlIdNs . '*)\s*(?::(\s*[^{]*))?{([a-zA-Z0-9_=\s(),;:\[\]&\|]*)';
+our $interfaceMethodSelector = '\s*((?:' . $extendedAttributeSyntax . ' )?)' . $supportedTypes . '\s*(' . $idlIdNs . '*)\s*\(\s*([a-zA-Z0-9:\s,=\[\]]*)';
+our $interfaceParameterSelector = 'in\s*((?:' . $extendedAttributeSyntax . ' )?)' . $supportedTypes . '\s*(' . $idlIdNs . '*)';
 
-$interfaceAttributeSelector = '\s*(readonly attribute|attribute)\s*(' . $extendedAttributeSyntax . ' )?' . $supportedTypes . '\s*(' . $idlType . '*)';
+our $interfaceAttributeSelector = '\s*(readonly attribute|attribute)\s*(' . $extendedAttributeSyntax . ' )?' . $supportedTypes . '\s*(' . $idlType . '*)';
 
 1;

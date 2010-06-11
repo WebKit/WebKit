@@ -21,6 +21,8 @@
 
 package IDLParser;
 
+use strict;
+
 use IPC::Open2;
 use IDLStructure;
 
@@ -82,7 +84,7 @@ sub Parse
 
     print " | *** Starting to parse $fileName...\n |\n" unless $beQuiet;
 
-    $pid = open2(\*PP_OUT, \*PP_IN, split(' ', $preprocessor), (map { "-D$_" } split(' ', $defines)), $fileName);
+    my $pid = open2(\*PP_OUT, \*PP_IN, split(' ', $preprocessor), (map { "-D$_" } split(' ', $defines)), $fileName);
     close PP_IN;
     my @documentContent = <PP_OUT>;
     close PP_OUT;
@@ -148,7 +150,7 @@ sub dumpExtendedAttributes
     }
 
     my @temp;
-    while (($name, $value) = each(%{$attrs})) {
+    while ((my $name, my $value) = each(%{$attrs})) {
         push(@temp, "$name=$value");
     }
 
@@ -163,11 +165,11 @@ sub parseExtendedAttributes
     my %attrs = ();
 
     foreach my $value (split(/\s*,\s*/, $str)) {
-        ($name,$value) = split(/\s*=\s*/, $value, 2);
+        (my $name, my $val) = split(/\s*=\s*/, $value, 2);
 
         # Attributes with no value are set to be true
-        $value = 1 unless defined $value;
-        $attrs{$name} = $value;
+        $val = 1 unless defined $val;
+        $attrs{$name} = $val;
         die("Invalid extended attribute name: '$name'\n") if $name =~ /\s/;
     }
 
@@ -232,9 +234,9 @@ sub ParseInterface
         # Match identifier of the interface, and enclosed data...
         $data =~ /$IDLStructure::interfaceSelector/;
 
-        $interfaceExtendedAttributes = (defined($1) ? $1 : " "); chop($interfaceExtendedAttributes);
+        my $interfaceExtendedAttributes = (defined($1) ? $1 : " "); chop($interfaceExtendedAttributes);
         $interfaceName = (defined($2) ? $2 : die("Parsing error!\nSource:\n$data\n)"));
-        $interfaceBase = (defined($3) ? $3 : "");
+        my $interfaceBase = (defined($3) ? $3 : "");
         $interfaceData = (defined($4) ? $4 : die("Parsing error!\nSource:\n$data\n)"));
 
         # Fill in known parts of the domClass datastructure now...

@@ -1,3 +1,15 @@
+2010-06-11  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Perl scripts for bindings don't use strict keyword.
+        As result some problems in the script code were not detected at compile stage.
+        https://bugs.webkit.org/show_bug.cgi?id=40468
+
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/IDLParser.pm:
+        * bindings/scripts/IDLStructure.pm:
+
 2010-06-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

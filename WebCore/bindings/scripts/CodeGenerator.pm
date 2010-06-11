@@ -24,6 +24,8 @@
 
 package CodeGenerator;
 
+use strict;
+
 use File::Find;
 
 my $useDocument = "";
@@ -272,7 +274,7 @@ sub ParseInterface
         return $interface if $interface->name eq $interfaceName;
     }
 
-    die("Could NOT find interface definition for $interface in $filename");
+    die("Could NOT find interface definition for $interfaceName in $filename");
 }
 
 # Helpers for all CodeGenerator***.pm modules
