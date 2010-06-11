@@ -1,3 +1,11 @@
+2010-06-11  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Unreviewed.
+
+        Skip re-enabled SVG test (svg/W3C-SVG-1.1/fonts-glyph-02-t)
+
+        * platform/chromium/test_expectations.txt:
+
 2010-06-10  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Shinichiro Hamaji.

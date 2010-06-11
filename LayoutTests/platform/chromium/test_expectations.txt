@@ -2858,3 +2858,6 @@ BUG46276 WIN : fast/text/international/khmer-selection.html = IMAGE+TEXT
 // HTML5 Geolocation API does not use window.clientInformation.
 BUG11246 DEFER SKIP : fast/dom/Window/window-properties-geolocation.html = TEXT
 
+// Re-enabled in http://trac.webkit.org/changeset/60983
+// Maybe we just need rebaseline.
+BUG_HAMAJI WIN LINUX : svg/W3C-SVG-1.1/fonts-glyph-02-t.svg = IMAGE+TEXT
