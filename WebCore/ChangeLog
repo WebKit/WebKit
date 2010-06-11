@@ -1,3 +1,37 @@
+2010-06-11  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Antti Koivisto.
+
+        CSS3 Media Queries are not serialized according to CSSOM
+        https://bugs.webkit.org/show_bug.cgi?id=39220
+
+        MediaQuery serialization according to specification
+        http://dev.w3.org/csswg/cssom/#serializing-media-queries.
+
+        MediaQuery objects now ignore duplicated expressions. MediaQueryEvaluator::eval()
+        now does not proccess MediaQuery objects that are known to be invalid.
+
+        Test: fast/media/media-query-serialization.html
+
+        * css/MediaQuery.cpp:
+        (WebCore::stringCompare):
+        (WebCore::MediaQuery::serialize):
+        (WebCore::MediaQuery::MediaQuery):
+        (WebCore::MediaQuery::~MediaQuery):
+        (WebCore::MediaQuery::operator==):
+        (WebCore::MediaQuery::cssText):
+        (WebCore::MediaQuery::append):
+        * css/MediaQuery.h:
+        (WebCore::MediaQuery::ignored):
+        (WebCore::MediaQuery::begin):
+        (WebCore::MediaQuery::end):
+        * css/MediaQueryExp.cpp:
+        (WebCore::MediaQueryExp::serialize):
+        * css/MediaQueryExp.h:
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::eval):
+
+
 2010-06-10  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.

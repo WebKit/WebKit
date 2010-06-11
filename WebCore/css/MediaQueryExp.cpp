@@ -2,6 +2,7 @@
  * CSS Media Query
  *
  * Copyright (C) 2006 Kimmo Kinnunen <kimmo.t.kinnunen@nokia.com>.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +32,7 @@
 #include "CSSParser.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValueList.h"
+#include "StringBuilder.h"
 
 namespace WebCore {
 
@@ -80,6 +82,24 @@ MediaQueryExp::MediaQueryExp(const AtomicString& mediaFeature, CSSParserValueLis
 
 MediaQueryExp::~MediaQueryExp()
 {
+}
+
+String MediaQueryExp::serialize() const
+{
+    if (!m_serializationCache.isNull())
+        return m_serializationCache;
+
+    StringBuilder result;
+    result.append("(");
+    result.append(m_mediaFeature.lower());
+    if (m_value) {
+        result.append(": ");
+        result.append(m_value->cssText());
+    }
+    result.append(")");
+
+    const_cast<MediaQueryExp*>(this)->m_serializationCache = result.toString();
+    return m_serializationCache;
 }
 
 } // namespace

@@ -2,6 +2,7 @@
  * CSS Media Query
  *
  * Copyright (C) 2005, 2006 Kimmo Kinnunen <kimmo.t.kinnunen@nokia.com>.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,69 +30,100 @@
 #include "MediaQuery.h"
 
 #include "MediaQueryExp.h"
+#include "StringBuilder.h"
+
+#include <algorithm>
 
 namespace WebCore {
 
-MediaQuery::MediaQuery(Restrictor r, const String& mediaType, Vector<MediaQueryExp*>* exprs)
-    : m_restrictor(r)
-    , m_mediaType(mediaType)
-    , m_expressions(exprs)
+// http://dev.w3.org/csswg/cssom/#serialize-a-media-query
+String MediaQuery::serialize() const
 {
-    if (!m_expressions)
+    StringBuilder result;
+
+    switch (m_restrictor) {
+    case MediaQuery::Only:
+        result.append("only ");
+        break;
+    case MediaQuery::Not:
+        result.append("not ");
+        break;
+    case MediaQuery::None:
+        break;
+    }
+
+    if (m_expressions->isEmpty()) {
+        result.append(m_mediaType);
+        return result.toString();
+    }
+
+    if (m_mediaType != "all" || m_restrictor != None) {
+        result.append(m_mediaType);
+        result.append(" and ");
+    }
+
+    result.append(m_expressions->at(0)->serialize());
+    for (size_t i = 1; i < m_expressions->size(); ++i) {
+        result.append(" and ");
+        result.append(m_expressions->at(i)->serialize());
+    }
+    return result.toString();
+}
+
+static bool expressionCompare(const MediaQueryExp* a, const MediaQueryExp* b)
+{
+    return codePointCompare(a->serialize(), b->serialize()) < 0;
+}
+
+MediaQuery::MediaQuery(Restrictor r, const String& mediaType, PassOwnPtr<Vector<MediaQueryExp*> > exprs)
+    : m_restrictor(r)
+    , m_mediaType(mediaType.lower())
+    , m_expressions(exprs.release())
+    , m_ignored(false)
+{
+    if (!m_expressions) {
         m_expressions = new Vector<MediaQueryExp*>;
+        return;
+    }
+
+    std::sort(m_expressions->begin(), m_expressions->end(), expressionCompare);
+
+    // remove all duplicated expressions
+    String key;
+    for (int i = m_expressions->size() - 1; i >= 0; --i) {
+
+        // if not all of the expressions is valid the media query must be ignored.
+        if (!m_ignored)
+            m_ignored = !m_expressions->at(i)->isValid();
+
+        if (m_expressions->at(i)->serialize() == key) {
+            MediaQueryExp* item = m_expressions->at(i);
+            m_expressions->remove(i);
+            delete item;
+        } else
+            key = m_expressions->at(i)->serialize();
+    }
 }
 
 MediaQuery::~MediaQuery()
 {
-    if (m_expressions) {
-        deleteAllValues(*m_expressions);
-        delete m_expressions;
-    }
+    deleteAllValues(*m_expressions);
+    delete m_expressions;
 }
 
+// http://dev.w3.org/csswg/cssom/#compare-media-queries
 bool MediaQuery::operator==(const MediaQuery& other) const
 {
-    if (m_restrictor != other.m_restrictor
-        || m_mediaType != other.m_mediaType
-        || m_expressions->size() != other.m_expressions->size())
-        return false;
-
-    for (size_t i = 0; i < m_expressions->size(); ++i) {
-        MediaQueryExp* exp = m_expressions->at(i);
-        MediaQueryExp* oexp = other.m_expressions->at(i);
-        if (!(*exp == *oexp))
-            return false;
-    }
-
-    return true;
+    return cssText() == other.cssText();
 }
 
+// http://dev.w3.org/csswg/cssom/#serialize-a-list-of-media-queries
 String MediaQuery::cssText() const
 {
-    String text;
-    switch (m_restrictor) {
-        case MediaQuery::Only:
-            text += "only ";
-            break;
-        case MediaQuery::Not:
-            text += "not ";
-            break;
-        case MediaQuery::None:
-        default:
-            break;
-    }
-    text += m_mediaType;
-    for (size_t i = 0; i < m_expressions->size(); ++i) {
-        MediaQueryExp* exp = m_expressions->at(i);
-        text += " and (";
-        text += exp->mediaFeature();
-        if (exp->value()) {
-            text += ": ";
-            text += exp->value()->cssText();
-        }
-        text += ")";
-    }
-    return text;
+    if (m_serializationCache.isNull())
+        const_cast<MediaQuery*>(this)->m_serializationCache = serialize();
+
+    return m_serializationCache;
 }
 
 } //namespace
