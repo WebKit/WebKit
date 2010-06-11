@@ -1,3 +1,20 @@
+2010-06-11  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [v8] Introduce single element caches for WebCore::String to v8::String conversions
+        https://bugs.webkit.org/show_bug.cgi?id=40435
+        Measurements show that for some web apps (GMail, Wave) and some scenarios
+        (intensive reading and/or keeping a tab open for a long time),
+        hit rate lies in 30--50% interval.
+        Inlining fast case gives another minor performance win.
+
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::getStringCache):
+        (WebCore::v8ExternalStringSlow):
+        * bindings/v8/V8Binding.h:
+        (WebCore::v8ExternalString):
+
 2010-06-11  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Gustavo Noronha Silva.
