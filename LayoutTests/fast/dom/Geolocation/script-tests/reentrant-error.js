@@ -1,6 +1,6 @@
 description("Tests that reentrant calls to Geolocation methods from the error callback are OK.");
 
-var mockCode = 0;
+var mockCode = 2;
 var mockMessage = 'test';
 
 if (window.layoutTestController) {
@@ -29,7 +29,6 @@ navigator.geolocation.getCurrentPosition(function(p) {
 });
 
 function continueTest() {
-    mockCode += 1;
     mockMessage += ' repeat';
 
     if (window.layoutTestController)

@@ -293,8 +293,6 @@ fast/dom/Window/window-properties-on-device-orientation.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=39908
 fast/dom/Geolocation/maximum-age.html
-fast/dom/Geolocation/reentrant-error.html
-fast/dom/Geolocation/reentrant-success.html
 
 # Filenames aren't filtered out from edit drags yet, see https://bugs.wekit.org/show_bug.cgi?id=38826
 editing/pasteboard/file-drag-to-editable.html

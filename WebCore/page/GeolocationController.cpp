@@ -47,7 +47,10 @@ GeolocationController::~GeolocationController()
 
 void GeolocationController::addObserver(Geolocation* observer)
 {
-    ASSERT(!m_observers.contains(observer));
+    // This may be called multiple times with the same observer, though removeObserver()
+    // is called only once with each.
+    if (m_observers.contains(observer))
+        return;
 
     bool wasEmpty = m_observers.isEmpty();
     m_observers.add(observer);

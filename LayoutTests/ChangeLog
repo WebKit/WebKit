@@ -1,3 +1,25 @@
+2010-06-11  Steve Block  <steveblock@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Client-based Geolocation does not handle multiple simultaneous requests
+        https://bugs.webkit.org/show_bug.cgi?id=40148
+
+        The change to the GeolocationController is explicitly tested with multiple-requests.html.
+
+        This change also fixes reentrant-error.html and reentrant-success.html which were previously
+        on the mac skipped list. reentrant-error.html required a minor tweak as the mac
+        GeolocationController can only provide an error code of 2 (POSITION_UNAVAILABLE).
+
+        Added to GTK skipped list.
+
+        * fast/dom/Geolocation/multiple-requests-expected.txt: Added.
+        * fast/dom/Geolocation/multiple-requests.html: Added.
+        * fast/dom/Geolocation/script-tests/multiple-requests.js: Added.
+        * fast/dom/Geolocation/script-tests/reentrant-error.js:
+        * platform/mac/Skipped:
+        * platform/gtk/Skipped:
+
 2010-06-11  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Unreviewed.

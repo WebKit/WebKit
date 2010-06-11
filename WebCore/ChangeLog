@@ -1,3 +1,17 @@
+2010-06-11  Steve Block  <steveblock@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Client-based Geolocation does not handle multiple simultaneous requests
+        https://bugs.webkit.org/show_bug.cgi?id=40148
+
+        Test: fast/dom/Geolocation/multiple-requests.html
+
+        The Geolocation must handle multiple calls to addObserver() from the same Geolocation object.
+
+        * page/GeolocationController.cpp:
+        (WebCore::GeolocationController::addObserver):
+
 2010-06-11  Nikita Vasilyev  <me@elv1s.ru>
 
         Reviewed by Pavel Feldman.
