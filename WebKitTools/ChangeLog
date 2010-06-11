@@ -1,3 +1,14 @@
+2010-06-11  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] There should be a way to enable popups in QtTestBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=40427
+
+        * QtTestBrowser/main.cpp:
+        (LauncherWindow::toggleJavascriptCanOpenWindows):
+        (LauncherWindow::createChrome):
+
 2010-06-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Daniel Bates.

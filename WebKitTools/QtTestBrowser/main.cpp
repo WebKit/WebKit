@@ -166,6 +166,7 @@ protected slots:
     void changeViewportUpdateMode(int mode);
     void toggleFrameFlattening(bool toggle);
     void toggleInterruptingJavaScriptEnabled(bool enable);
+    void toggleJavascriptCanOpenWindows(bool enable);
 
 #if defined(QT_CONFIGURED_WITH_OPENGL)
     void toggleQGLWidgetViewport(bool enable);
@@ -731,6 +732,11 @@ void LauncherWindow::toggleInterruptingJavaScriptEnabled(bool enable)
     page()->setInterruptingJavaScriptEnabled(enable);
 }
 
+void LauncherWindow::toggleJavascriptCanOpenWindows(bool enable)
+{
+    page()->settings()->setAttribute(QWebSettings::JavascriptCanOpenWindows, enable);
+}
+
 #if defined(QT_CONFIGURED_WITH_OPENGL)
 void LauncherWindow::toggleQGLWidgetViewport(bool enable)
 {
@@ -929,6 +935,10 @@ void LauncherWindow::createChrome()
     QAction* toggleInterruptingJavaScripteEnabled = toolsMenu->addAction("Enable interrupting js scripts", this, SLOT(toggleInterruptingJavaScriptEnabled(bool)));
     toggleInterruptingJavaScripteEnabled->setCheckable(true);
     toggleInterruptingJavaScripteEnabled->setChecked(false);
+
+    QAction* toggleJavascriptCanOpenWindows = toolsMenu->addAction("Enable js popup windows", this, SLOT(toggleJavascriptCanOpenWindows(bool)));
+    toggleJavascriptCanOpenWindows->setCheckable(true);
+    toggleJavascriptCanOpenWindows->setChecked(false);
 
 #if defined(QT_CONFIGURED_WITH_OPENGL)
     QAction* toggleQGLWidgetViewport = graphicsViewMenu->addAction("Toggle use of QGLWidget Viewport", this, SLOT(toggleQGLWidgetViewport(bool)));
