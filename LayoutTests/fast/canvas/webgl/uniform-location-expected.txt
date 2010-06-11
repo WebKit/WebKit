@@ -6,7 +6,7 @@ PASS contextA.useProgram(programA2) is undefined.
 PASS contextA.uniformMatrix4fv(locationA, false, mat) threw exception GL error 1282 in uniformMatrix4fv.
 PASS contextA.useProgram(programA1) is undefined.
 PASS contextA.uniformMatrix4fv(locationA, false, mat) is undefined.
-PASS contextA.uniformMatrix4fv(0, false, mat) threw exception GL error 1281 in uniformMatrix4fv.
+PASS contextA.uniformMatrix4fv(null, false, mat) is undefined.
 PASS contextA.useProgram(programS) is undefined.
 PASS contextA.uniform1i(locationSx, 3) is undefined.
 PASS contextA.uniform1f(locationArray0, 4.0) is undefined.

@@ -20,7 +20,7 @@ shouldBeUndefined("contextA.useProgram(programA2)");
 shouldThrow("contextA.uniformMatrix4fv(locationA, false, mat)");
 shouldBeUndefined("contextA.useProgram(programA1)");
 shouldBeUndefined("contextA.uniformMatrix4fv(locationA, false, mat)");
-shouldThrow("contextA.uniformMatrix4fv(0, false, mat)");
+shouldBeUndefined("contextA.uniformMatrix4fv(null, false, mat)");
 
 shouldBeUndefined("contextA.useProgram(programS)");
 shouldBeUndefined("contextA.uniform1i(locationSx, 3)");

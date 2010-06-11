@@ -47,7 +47,7 @@ var funcs = [ "uniform1f", "uniform1fv", "uniform1i", "uniform1iv",
 for (var i = 0; i < funcs.length; i++) {
     callString = "callUniformFunction('" + funcs[i] + "')";
     shouldBeUndefined(callString);
-    shouldBe("gl.getError()", "gl.INVALID_VALUE");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
 }
 
 successfullyParsed = true;

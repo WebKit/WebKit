@@ -2,6 +2,18 @@
 
         Reviewed by Dimitri Glazkov.
 
+        uniform* entry points must ignore the call if a null WebGLUniformLocation is passed
+        https://bugs.webkit.org/show_bug.cgi?id=38707
+
+        * fast/canvas/webgl/null-uniform-location-expected.txt: No error is generated if a null WebGLUniformLocation is passed to uniform*().
+        * fast/canvas/webgl/script-tests/null-uniform-location.js: Ditto.
+        * fast/canvas/webgl/script-tests/uniform-location.js: Ditto.
+        * fast/canvas/webgl/uniform-location-expected.txt: Ditto.
+
+2010-06-11  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
         drawElements/drawArrays should validate input parameters according to GLES2 spec
         https://bugs.webkit.org/show_bug.cgi?id=38700
 
