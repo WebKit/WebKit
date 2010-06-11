@@ -1,3 +1,53 @@
+2010-06-11  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Explicit conversions from QtScript types to JSC opaque types were removed.
+        https://bugs.webkit.org/show_bug.cgi?id=40412
+
+        Conversion between a JSC C types and a QtScript private types, takes
+        main part of the source code. In most cases a mapping between the types
+        is one to one. New cast operators were added to simplify the code.
+
+        The QScriptValuePrivate could be casted to the JSValueRef and the JSObjectRef.
+        The QScriptEnginePrivate could be casted to the JSGlobalContext.
+        The QScriptProgramPrivate could be casted to the JSStringRef.
+
+        * qt/api/qscriptengine_p.cpp:
+        (QScriptEnginePrivate::evaluate):
+        (QScriptEnginePrivate::newObject):
+        (QScriptEnginePrivate::globalObject):
+        * qt/api/qscriptengine_p.h:
+        (QScriptEnginePrivate::operator JSGlobalContextRef):
+        * qt/api/qscriptprogram_p.h:
+        (QScriptProgramPrivate::operator JSStringRef):
+        * qt/api/qscriptsyntaxcheckresult.cpp:
+        (QScriptSyntaxCheckResultPrivate::~QScriptSyntaxCheckResultPrivate):
+        (QScriptSyntaxCheckResultPrivate::errorMessage):
+        (QScriptSyntaxCheckResultPrivate::errorLineNumber):
+        * qt/api/qscriptvalue_p.h:
+        (QScriptValuePrivate::~QScriptValuePrivate):
+        (QScriptValuePrivate::QScriptValuePrivate):
+        (QScriptValuePrivate::isBool):
+        (QScriptValuePrivate::isNumber):
+        (QScriptValuePrivate::isNull):
+        (QScriptValuePrivate::isString):
+        (QScriptValuePrivate::isUndefined):
+        (QScriptValuePrivate::isFunction):
+        (QScriptValuePrivate::toString):
+        (QScriptValuePrivate::toNumber):
+        (QScriptValuePrivate::toBool):
+        (QScriptValuePrivate::toObject):
+        (QScriptValuePrivate::equals):
+        (QScriptValuePrivate::strictlyEquals):
+        (QScriptValuePrivate::instanceOf):
+        (QScriptValuePrivate::call):
+        (QScriptValuePrivate::operator JSValueRef):
+        (QScriptValuePrivate::operator JSObjectRef):
+        (QScriptValuePrivate::setValue):
+        (QScriptValuePrivate::inherits):
+        (QScriptValuePrivate::refinedJSValue):
+
 2010-05-31  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.

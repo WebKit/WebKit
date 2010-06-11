@@ -52,7 +52,7 @@ public:
     inline bool operator==(const QScriptProgramPrivate& other) const;
     inline bool operator!=(const QScriptProgramPrivate& other) const;
 
-    inline JSStringRef program() const;
+    inline operator JSStringRef() const;
     inline JSStringRef file() const;
     inline int line() const;
 private:
@@ -122,7 +122,11 @@ bool QScriptProgramPrivate::operator!=(const QScriptProgramPrivate& other) const
             || !JSStringIsEqual(m_program, other.m_program);
 }
 
-JSStringRef QScriptProgramPrivate::program() const { return m_program; }
+QScriptProgramPrivate::operator JSStringRef() const
+{
+    return m_program;
+}
+
 JSStringRef QScriptProgramPrivate::file() const {return m_fileName; }
 int QScriptProgramPrivate::line() const { return m_line; }
 

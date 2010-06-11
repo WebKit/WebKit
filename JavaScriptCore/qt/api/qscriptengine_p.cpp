@@ -74,16 +74,16 @@ QScriptValuePrivate* QScriptEnginePrivate::evaluate(const QScriptProgramPrivate*
 {
     if (program->isNull())
         return new QScriptValuePrivate;
-    return new QScriptValuePrivate(this, evaluate(program->program(), program->file(), program->line()));
+    return new QScriptValuePrivate(this, evaluate(*program, program->file(), program->line()));
 }
 
 QScriptValuePrivate* QScriptEnginePrivate::newObject() const
 {
-    return new QScriptValuePrivate(this, JSObjectMake(context(), /* jsClass */ 0, /* userData */ 0));
+    return new QScriptValuePrivate(this, JSObjectMake(m_context, /* jsClass */ 0, /* userData */ 0));
 }
 
 QScriptValuePrivate* QScriptEnginePrivate::globalObject() const
 {
-    JSObjectRef globalObject = JSContextGetGlobalObject(context());
+    JSObjectRef globalObject = JSContextGetGlobalObject(m_context);
     return new QScriptValuePrivate(this, globalObject, globalObject);
 }
