@@ -192,11 +192,6 @@ int HTML5Tokenizer::columnNumber() const
     return m_lexer->columnNumber();
 }
 
-HTMLParser* HTML5Tokenizer::htmlParser() const
-{
-    return m_treeBuilder->htmlParser();
-}
-
 bool HTML5Tokenizer::isWaitingForScripts() const
 {
     return m_treeBuilder->isPaused();

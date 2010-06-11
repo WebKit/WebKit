@@ -58,10 +58,6 @@ public:
     // Done, close any open tags, etc.
     void finished();
 
-    // FIXME: This is a dirty, rotten hack to keep HTMLFormControlElement happy
-    // until we stop using the legacy parser. DO NOT CALL THIS METHOD.
-    HTMLParser* htmlParser() const { return m_legacyHTMLParser.get(); }
-
 private:
     // Represents HTML5 "insertion mode"
     // http://www.w3.org/TR/html5/syntax.html#insertion-mode

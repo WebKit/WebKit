@@ -1,3 +1,22 @@
+2010-06-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r60989.
+        http://trac.webkit.org/changeset/60989
+        https://bugs.webkit.org/show_bug.cgi?id=40462
+
+        It makes things crash (Requested by abarth on #webkit).
+
+        * dom/Tokenizer.h:
+        (WebCore::Tokenizer::isHTMLTokenizer):
+        * html/HTML5Tokenizer.cpp:
+        * html/HTML5Tokenizer.h:
+        * html/HTML5TreeBuilder.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::removedFromTree):
+        * html/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::isHTMLTokenizer):
+        (WebCore::HTMLTokenizer::htmlParser):
+
 2010-06-10  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Eric Seidel.
