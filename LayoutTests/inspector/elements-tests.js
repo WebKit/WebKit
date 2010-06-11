@@ -112,5 +112,5 @@ function frontend_dumpStyleTreeItem(treeItem, result, prefix)
     treeItem.expand();
     var children = treeItem.children;
     for (var i = 0; children && i < children.length; ++i)
-        frontend_dumpStyleTreeItem(children[i], result, prefix + "> ");
+        frontend_dumpStyleTreeItem(children[i], result, prefix + "    ");
 }

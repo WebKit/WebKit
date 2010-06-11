@@ -1,0 +1,58 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="../http/tests/inspector/console-tests.js"></script>
+<script>
+
+function doit()
+{
+    console.dir(window);
+
+    function callback(result)
+    {
+        dumpObject(result);
+        notifyDone();
+    }
+
+    evaluateInWebInspector("frontend_expandAndDumpConsoleMessages", callback);
+}
+
+function frontend_expandAndDumpConsoleMessages(testController)
+{
+    // Need test to be async to expand console objects.
+    testController.waitUntilDone();
+
+    InjectedScriptAccess.getDefault().evaluate("window", "console", evalCallback);
+
+    function evalCallback(result)
+    {
+        if (result.isException)
+            testController.notifyDone("Exception:" + result.value);
+        var objectProxy = result.value;
+        InjectedScriptAccess.getDefault().getProperties(objectProxy, false, true, getPropertiesCallback);
+    }
+
+    function getPropertiesCallback(properties)
+    {
+        properties.sort(WebInspector.ObjectPropertiesSection.CompareProperties);
+        var result = {};
+        var golden = { "window": 1, "document": 1, "eval": 1, "console": 1, "frames": 1, "Array": 1, "doit": 1 }; 
+        for (var i = 0; i < properties.length; ++i) {
+            var name = properties[i].name;
+            if (golden[name])
+                result[name] = 1;
+        }
+        testController.notifyDone(result);
+    }
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests that console dumps global object with properties.
+</p>
+
+</body>
+</html>

@@ -1,3 +1,19 @@
+2010-06-07  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add a test for dumping global object in the console.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40241
+
+        * http/tests/inspector/inspector-test.js:
+        (frontend_dumpTreeOutline):
+        (frontend_dumpTreeItem):
+        * inspector/console-dir-global-expected.txt: Added.
+        * inspector/console-dir-global.html: Added.
+        * inspector/elements-tests.js:
+        (frontend_dumpStyleTreeItem):
+
 2010-06-11  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.

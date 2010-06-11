@@ -23,10 +23,10 @@ content: '[before Foo]';
 [expanded] .foo { (resources/elements-panel-styles.css:10)
 /-- overloaded --/ color: black;
 margin: 10px 0px 2px;
-> margin-top: 10px;
-> margin-right: 0px;
-> margin-bottom: 2px;
-> margin-left: 0px;
+    margin-top: 10px;
+    margin-right: 0px;
+    margin-bottom: 2px;
+    margin-left: 0px;
 
 [expanded] div { (user agent stylesheet)
 /-- overloaded --/ display: block;

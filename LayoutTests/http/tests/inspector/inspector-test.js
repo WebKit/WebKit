@@ -80,3 +80,22 @@ function didEvaluateForTestInFrontend(callId, jsonResult)
         delete callbacks[callId];
     }
 }
+
+// Front-end utilities.
+
+function frontend_dumpTreeOutline(treeItem, result)
+{
+    var children = treeItem.children;
+    for (var i = 0; i < children.length; ++i)
+        frontend_dumpTreeItem(children[i], result);
+}
+
+function frontend_dumpTreeItem(treeItem, result, prefix)
+{
+    prefix = prefix || "";
+    result.push(prefix + treeItem.listItemElement.textContent);
+    treeItem.expand();
+    var children = treeItem.children;
+    for (var i = 0; children && i < children.length; ++i)
+        frontend_dumpTreeItem(children[i], result, prefix + "    ");
+}
