@@ -61,6 +61,7 @@ devtools.InspectorBackendImpl = function()
     this.installInspectorControllerDelegate_("getResourceContent");
     this.installInspectorControllerDelegate_("highlightDOMNode");
     this.installInspectorControllerDelegate_("hideDOMNodeHighlight");
+    this.installInspectorControllerDelegate_("performSearch");
     this.installInspectorControllerDelegate_("releaseWrapperObjectGroup");
     this.installInspectorControllerDelegate_("removeAllScriptsToEvaluateOnLoad");
     this.installInspectorControllerDelegate_("reloadPage");
@@ -68,6 +69,7 @@ devtools.InspectorBackendImpl = function()
     this.installInspectorControllerDelegate_("removeDOMStorageItem");
     this.installInspectorControllerDelegate_("removeNode");
     this.installInspectorControllerDelegate_("saveFrontendSettings");
+    this.installInspectorControllerDelegate_("searchCanceled");
     this.installInspectorControllerDelegate_("setAttribute");
     this.installInspectorControllerDelegate_("setDOMStorageItem");
     this.installInspectorControllerDelegate_("setInjectedScriptSource");

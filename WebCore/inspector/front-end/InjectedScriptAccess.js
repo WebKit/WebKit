@@ -71,29 +71,18 @@ InjectedScriptAccess._installHandler = function(methodName, async)
 // - Make sure last parameter of all the InjectedSriptAccess.* calls is a callback function.
 // We keep these sorted.
 InjectedScriptAccess._installHandler("addInspectedNode");
-InjectedScriptAccess._installHandler("addStyleSelector");
-InjectedScriptAccess._installHandler("applyStyleRuleText");
-InjectedScriptAccess._installHandler("applyStyleText");
 InjectedScriptAccess._installHandler("clearConsoleMessages");
 InjectedScriptAccess._installHandler("evaluate");
 InjectedScriptAccess._installHandler("evaluateInCallFrame");
 InjectedScriptAccess._installHandler("getCompletions");
-InjectedScriptAccess._installHandler("getComputedStyle");
-InjectedScriptAccess._installHandler("getInlineStyle");
 InjectedScriptAccess._installHandler("getNodePropertyValue");
 InjectedScriptAccess._installHandler("getProperties");
 InjectedScriptAccess._installHandler("getPrototypes");
-InjectedScriptAccess._installHandler("getStyles");
 InjectedScriptAccess._installHandler("openInInspectedWindow");
-InjectedScriptAccess._installHandler("performSearch");
 InjectedScriptAccess._installHandler("pushNodeToFrontend");
 InjectedScriptAccess._installHandler("nodeByPath");
-InjectedScriptAccess._installHandler("searchCanceled");
 InjectedScriptAccess._installHandler("setOuterHTML");
 InjectedScriptAccess._installHandler("setPropertyValue");
-InjectedScriptAccess._installHandler("setStyleProperty");
-InjectedScriptAccess._installHandler("setStyleText");
-InjectedScriptAccess._installHandler("toggleStyleEnabled");
 InjectedScriptAccess._installHandler("evaluateOnSelf");
 
 // Some methods can't run synchronously even on the injected script side (such as DB transactions).

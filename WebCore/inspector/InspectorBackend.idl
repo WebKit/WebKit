@@ -94,6 +94,9 @@ module core {
         void copyNode(in long nodeId);
         void removeNode(in long callId, in long nodeId);
         void changeTagName(in long callId, in long nodeId, in DOMString newTagName, in boolean expanded);
+        void performSearch(in DOMString query, in boolean runSynchronously);
+        void searchCanceled();
+
         void highlightDOMNode(in long nodeId);
         void hideDOMNodeHighlight();
 

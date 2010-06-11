@@ -110,12 +110,6 @@ long InjectedScriptHost::pushNodePathToFrontend(Node* node, bool withChildren, b
     return id;
 }
 
-void InjectedScriptHost::addNodesToSearchResult(const String& nodeIds)
-{
-    if (InspectorFrontend* frontend = inspectorFrontend())
-        frontend->addNodesToSearchResult(nodeIds);
-}
-
 long InjectedScriptHost::pushNodeByPathToFrontend(const String& path)
 {
     InspectorDOMAgent* domAgent = inspectorDOMAgent();

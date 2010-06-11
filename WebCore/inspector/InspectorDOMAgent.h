@@ -31,13 +31,17 @@
 #define InspectorDOMAgent_h
 
 #include "AtomicString.h"
+#include "Document.h"
 #include "EventListener.h"
 #include "EventTarget.h"
 #include "InspectorCSSStore.h"
+#include "NodeList.h"
 #include "ScriptArray.h"
 #include "ScriptObject.h"
 #include "ScriptState.h"
+#include "Timer.h"
 
+#include <wtf/Deque.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -53,8 +57,8 @@ namespace WebCore {
     class CSSStyleSheet;
     class Element;
     class Event;
-    class Document;
     class InspectorFrontend;
+    class MatchJob;
     class NameNodeMap;
     class Node;
     class Page;
@@ -101,6 +105,8 @@ namespace WebCore {
         void changeTagName(long callId, long nodeId, const AtomicString& tagName, bool expanded);
         void setTextNodeValue(long callId, long nodeId, const String& value);
         void getEventListenersForNode(long callId, long nodeId);
+        void performSearch(const String& whitespaceTrimmedQuery, bool runSynchronously);
+        void searchCanceled();
 
         // Methods called from the frontend for CSS styles inspection.
         void getStyles(long callId, long nodeId, bool authorOnly);
@@ -165,6 +171,9 @@ namespace WebCore {
         String documentURLString(Document* document) const;
         InspectorCSSStore* cssStore() { return m_cssStore; }
 
+        void onMatchJobsTimer(Timer<InspectorDOMAgent>*);
+        void reportNodesAsSearchResults(ListHashSet<Node*>& resultCollector);
+
         ScriptObject buildObjectForStyle(CSSStyleDeclaration*, bool bind);
         void populateObjectWithStyleProperties(CSSStyleDeclaration*, ScriptObject& result);
         ScriptArray buildArrayForDisabledStyleProperties(DisabledStyleDeclaration*);
@@ -188,8 +197,10 @@ namespace WebCore {
         HashSet<long> m_childrenRequested;
         long m_lastNodeId;
         ListHashSet<RefPtr<Document> > m_documents;
+        Deque<MatchJob*> m_pendingMatchJobs;
+        Timer<InspectorDOMAgent> m_matchJobsTimer;
+        HashSet<RefPtr<Node> > m_searchResults;
     };
-
 
 } // namespace WebCore
 

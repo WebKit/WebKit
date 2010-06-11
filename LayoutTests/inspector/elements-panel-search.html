@@ -31,7 +31,6 @@ function frontend_performSearch(testController)
 
     WebInspector.addNodesToSearchResult = function(nodeIds)
     {
-        var nodeIds = nodeIds.split(",");
         for (var i = 0; i < nodeIds.length; ++i) {
             var node = WebInspector.domAgent.nodeForId(nodeIds[i]);
             if (node.nodeType === Node.TEXT_NODE)
@@ -41,19 +40,19 @@ function frontend_performSearch(testController)
         }
     }
     // Plain text.
-    InjectedScriptAccess.getDefault().performSearch("Foo" + "Bar", true, function() {});
+    InspectorBackend.performSearch("Foo" + "Bar", true);
     // Partial text.
-    InjectedScriptAccess.getDefault().performSearch("oo" + "Ba", true, function() {});
+    InspectorBackend.performSearch("oo" + "Ba", true);
     // Start tag.
-    InjectedScriptAccess.getDefault().performSearch("<inpu" + "t", true, function() {});
+    InspectorBackend.performSearch("<inpu" + "t", true);
     // Partial tag.
-    InjectedScriptAccess.getDefault().performSearch("npu" + "t", true, function() {});
+    InspectorBackend.performSearch("npu" + "t", true);
     // Exact attribute name.
-    InjectedScriptAccess.getDefault().performSearch("valu" + "e", true, function() {});
+    InspectorBackend.performSearch("valu" + "e", true);
     // Exact attribute val<>ue.
-    InjectedScriptAccess.getDefault().performSearch("In" + "putVa" + "l", true, function() {});
+    InspectorBackend.performSearch("In" + "putVa" + "l", true);
     // Partial attribute val<>ue.
-    InjectedScriptAccess.getDefault().performSearch("n" + "putVa" + "l", true, function() {});
+    InspectorBackend.performSearch("n" + "putVa" + "l", true);
 
     testController.runAfterPendingDispatches(function() {
         testController.notifyDone(searchResults);

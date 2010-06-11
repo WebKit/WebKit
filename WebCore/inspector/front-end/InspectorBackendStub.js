@@ -269,6 +269,14 @@ WebInspector.InspectorBackendStub.prototype = {
 
     removeAllScriptsToEvaluateOnLoad: function()
     {
+    },
+
+    performSearch: function()
+    {
+    },
+
+    searchCanceled: function()
+    {
     }
 }
 

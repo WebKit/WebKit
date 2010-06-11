@@ -169,7 +169,6 @@ void InspectorResource::updateScriptObject(InspectorFrontend* frontend)
         jsonObject.set("expectedContentLength", m_expectedContentLength);
         jsonObject.set("statusCode", m_responseStatusCode);
         jsonObject.set("statusText", m_responseStatusText);
-        jsonObject.set("suggestedFilename", m_suggestedFilename);
         ScriptObject responseHeaders = frontend->newScriptObject();
         populateHeadersObject(&responseHeaders, m_responseHeaderFields);
         jsonObject.set("responseHeaders", responseHeaders);

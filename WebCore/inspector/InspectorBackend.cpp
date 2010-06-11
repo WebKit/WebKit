@@ -359,6 +359,18 @@ void InspectorBackend::changeTagName(long callId, long nodeId, const AtomicStrin
         domAgent->changeTagName(callId, nodeId, tagName, expanded);
 }
 
+void InspectorBackend::performSearch(const String& query, bool runSynchronously)
+{
+    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
+        domAgent->performSearch(query, runSynchronously);
+}
+
+void InspectorBackend::searchCanceled()
+{
+    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
+        domAgent->searchCanceled();
+}
+
 void InspectorBackend::getStyles(long callId, long nodeId, bool authorOnly)
 {
     if (InspectorDOMAgent* domAgent = inspectorDOMAgent())

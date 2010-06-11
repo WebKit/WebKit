@@ -38,7 +38,6 @@ module core {
         [Custom] DOMObject nodeForId(in long nodeId);
         [Custom] int pushNodePathToFrontend(in DOMObject node, in boolean withChildren, in boolean selectInUI);
 
-        void addNodesToSearchResult(in DOMString nodeIds);
         long pushNodeByPathToFrontend(in DOMString path);
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER

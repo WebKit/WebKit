@@ -240,7 +240,7 @@ WebInspector.ElementsPanel.prototype = {
 
         this._currentSearchResultIndex = 0;
         this._searchResults = [];
-        InjectedScriptAccess.getDefault().searchCanceled(function() {});
+        InspectorBackend.searchCanceled();
     },
 
     performSearch: function(query)
@@ -256,7 +256,7 @@ WebInspector.ElementsPanel.prototype = {
         this._matchesCountUpdateTimeout = null;
         this._searchQuery = query;
 
-        InjectedScriptAccess.getDefault().performSearch(whitespaceTrimmedQuery, false, function() {});
+        InspectorBackend.performSearch(whitespaceTrimmedQuery);
     },
 
     searchingForNodeWasEnabled: function()
@@ -288,12 +288,11 @@ WebInspector.ElementsPanel.prototype = {
 
     addNodesToSearchResult: function(nodeIds)
     {
-        if (!nodeIds)
+        if (!nodeIds.length)
             return;
 
-        var nodeIdsArray = nodeIds.split(",");
-        for (var i = 0; i < nodeIdsArray.length; ++i) {
-            var nodeId = nodeIdsArray[i];
+        for (var i = 0; i < nodeIds.length; ++i) {
+            var nodeId = nodeIds[i];
             var node = WebInspector.domAgent.nodeForId(nodeId);
             if (!node)
                 continue;

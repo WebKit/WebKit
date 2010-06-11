@@ -161,7 +161,7 @@ namespace WebCore {
         void didGetCookies(long callId, const ScriptArray& cookies, const String& cookiesString);
         void didDispatchOnInjectedScript(long callId, SerializedScriptValue* result, bool isException);
 
-        void addNodesToSearchResult(const String& nodeIds);
+        void addNodesToSearchResult(const ScriptArray& nodeIds);
 
         void contextMenuItemSelected(int itemId);
         void contextMenuCleared();

@@ -119,6 +119,8 @@ public:
     void copyNode(long nodeId);
     void removeNode(long callId, long nodeId);
     void changeTagName(long callId, long nodeId, const AtomicString& tagName, bool expanded);
+    void performSearch(const String& query, bool runSynchronously);
+    void searchCanceled();
 
     void getStyles(long callId, long nodeId, bool authOnly);
     void getAllStyles(long callId);

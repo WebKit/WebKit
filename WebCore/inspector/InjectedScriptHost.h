@@ -69,7 +69,6 @@ public:
     Node* nodeForId(long nodeId);
     long pushNodePathToFrontend(Node* node, bool withChildren, bool selectInUI);
 
-    void addNodesToSearchResult(const String& nodeIds);
     long pushNodeByPathToFrontend(const String& path);
 
 #if ENABLE(DATABASE)

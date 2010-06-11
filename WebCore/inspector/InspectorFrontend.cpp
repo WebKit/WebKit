@@ -763,7 +763,7 @@ void InspectorFrontend::updateDOMStorage(long storageId)
 }
 #endif
 
-void InspectorFrontend::addNodesToSearchResult(const String& nodeIds)
+void InspectorFrontend::addNodesToSearchResult(const ScriptArray& nodeIds)
 {
     ScriptFunctionCall function(m_webInspector, "dispatch"); 
     function.appendArgument("addNodesToSearchResult");
