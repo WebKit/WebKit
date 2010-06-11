@@ -1,3 +1,38 @@
+2010-06-11  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] Skia mispaints pages with border-radius
+        https://bugs.webkit.org/show_bug.cgi?id=40456
+
+        Skia mispaints pages that have border radius set in some cases. The bug is in the anti aliased
+        clip path logic used to implement anti aliased curves in Skia.  Since Skia internally only supports
+        1-bit clips, anti aliased clipping is emulated by creating a new alpha layer, storing a set of
+        clip paths on the side, and then 'erasing' the regions outside the clip.  See r49641.
+        PlatformContextSkia maintains a stack of PlatformContextSkia::State objects that preserve information
+        like fill color, drawing mode, etc that is manipulated by GraphicsContext::save() / 
+        GraphicsContext::restore() calls as well some internal functions.  Whenever a new State object is pushed
+        a new copy of the current State object is pushed onto the top of this stack using the copy c'tor.  The
+        set of anti alias clip paths is also stored on the State object, but not copied when new entries are
+        added as the paths only apply to that entry on the stack.
+
+        The bug is that the state stack is stored in a WTF::Vector.  When this vector exceeds its capacity
+        (by default at 16 elements) all of the existing State entries are copied into the new buffer using
+        State's copy constructor.  This does not preserve the anti alias clip paths, so when the State entries
+        are popped the anti aliasing info is lost.  This corrupts all further paint operations since it results
+        in inbalanced save/restore calls to the underlying SkCanvas.
+
+        The fix is to make the PlatformContextSkia::State copy constructor copy all fields and to add a new
+        function PlatformContextSkia::State::cloneInheritedProperties to use when pushing new State entries
+        that copies everything except for the anti aliased clip paths.
+
+        Test: fast/css/nested-rounded-corners.html
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::State::State):
+        (PlatformContextSkia::State::cloneInheritedProperties):
+        (PlatformContextSkia::save):
+
 2010-06-11  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -101,6 +101,7 @@ struct PlatformContextSkia::State {
     WTF::Vector<SkPath> m_antiAliasClipPaths;
     WebCore::InterpolationQuality m_interpolationQuality;
 
+    PlatformContextSkia::State cloneInheritedProperties();
 private:
     // Not supported.
     void operator=(const State&);
@@ -149,6 +150,7 @@ PlatformContextSkia::State::State(const State& other)
     , m_imageBufferClip(other.m_imageBufferClip)
     , m_clip(other.m_clip)
 #endif
+    , m_antiAliasClipPaths(other.m_antiAliasClipPaths)
     , m_interpolationQuality(other.m_interpolationQuality)
 {
     // Up the ref count of these. saveRef does nothing if 'this' is NULL.
@@ -164,6 +166,17 @@ PlatformContextSkia::State::~State()
     m_dash->safeUnref();
     m_fillShader->safeUnref();
     m_strokeShader->safeUnref();
+}
+
+// Returns a new State with all of this object's inherited properties copied.
+PlatformContextSkia::State PlatformContextSkia::State::cloneInheritedProperties()
+{
+    PlatformContextSkia::State state(*this);
+
+    // Everything is inherited except for the clip paths.
+    state.m_antiAliasClipPaths.clear();  
+
+    return state;
 }
 
 SkColor PlatformContextSkia::State::applyAlpha(SkColor c) const
@@ -216,7 +229,7 @@ void PlatformContextSkia::save()
 {
     ASSERT(!hasImageResamplingHint());
 
-    m_stateStack.append(*m_state);
+    m_stateStack.append(m_state->cloneInheritedProperties());
     m_state = &m_stateStack.last();
 
 #if OS(LINUX) || OS(WINDOWS)
