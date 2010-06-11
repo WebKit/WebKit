@@ -1,3 +1,34 @@
+2010-06-11  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add texImage2D and texSubImage2D signatures with internal format, etc.
+        https://bugs.webkit.org/show_bug.cgi?id=40318
+
+        Added new texImage2D and texSubImage2D entry points following
+        WebGL specification changes. Added UNPACK_FLIP_Y_WEBGL and
+        UNPACK_PREMULTIPLY_ALPHA_WEBGL pixelStorei parameters, honored
+        them for the new entry points taking HTML elements, and added
+        support to getParameter. Added warnings to the console for calls
+        to the obsolete entry points, which will be removed in a few
+        weeks.  Updated all layout tests to use the new entry points and
+        pixelStorei parameters, and associated expectations. No other new
+        tests.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::WebGLRenderingContext):
+        (WebCore::WebGLRenderingContext::getParameter):
+        (WebCore::WebGLRenderingContext::pixelStorei):
+        (WebCore::WebGLRenderingContext::texImage2DImpl):
+        (WebCore::WebGLRenderingContext::texImage2D):
+        (WebCore::WebGLRenderingContext::texSubImage2DImpl):
+        (WebCore::WebGLRenderingContext::texSubImage2D):
+        (WebCore::WebGLRenderingContext::printWarningToConsole):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContext.idl:
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::):
+
 2010-06-11  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Dimitri Glazkov.

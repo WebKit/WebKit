@@ -390,7 +390,11 @@ namespace WebCore {
             FRAMEBUFFER_BINDING = 0x8CA6,
             RENDERBUFFER_BINDING = 0x8CA7,
             MAX_RENDERBUFFER_SIZE = 0x84E8,
-            INVALID_FRAMEBUFFER_OPERATION = 0x0506
+            INVALID_FRAMEBUFFER_OPERATION = 0x0506,
+
+            // WebGL-specific enums
+            UNPACK_FLIP_Y_WEBGL = 0x9240,
+            UNPACK_PREMULTIPLY_ALPHA_WEBGL = 0x9241
         };
         
         // Context creation attributes.

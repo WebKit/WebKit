@@ -41,7 +41,7 @@ function init()
         layoutTestController.waitUntilDone();
     }
 
-    description('Verify texImage2D and texSubImage2D code paths taking ImageData, in particular flipY and premultiplyAlpha argument');
+    description('Verify texImage2D and texSubImage2D code paths taking ImageData');
 
     debug('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=34459">https://bugs.webkit.org/show_bug.cgi?id=34459</a> : <code>Refactor texImage2D and texSubImage2D taking ImageData to use common code</code>');
 
@@ -115,16 +115,17 @@ function runOneIteration(useTexSubImage2D, flipY, premultiplyAlpha, topColor, bo
     // Set up texture parameters
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    // Set up pixel store parameters
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, flipY);
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, premultiplyAlpha);
     // Upload the image into the texture
     if (useTexSubImage2D) {
         // Initialize the texture to black first
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 2, 0,
                       gl.RGBA, gl.UNSIGNED_BYTE, null);
-        gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, imageData,
-                         flipY, premultiplyAlpha);
+        gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
     } else {
-        gl.texImage2D(gl.TEXTURE_2D, 0, imageData,
-                      flipY, premultiplyAlpha);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
     }
 
     // Point the uniform sampler to texture unit 0

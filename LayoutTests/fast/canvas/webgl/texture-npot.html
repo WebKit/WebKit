@@ -82,6 +82,9 @@
             // Check that an NPOT texture not on level 0 generates INVALID_VALUE
             gl.texImage2D(gl.TEXTURE_2D,
                           1,                 // level
+                          gl.RGBA,
+                          gl.RGBA,
+                          gl.UNSIGNED_BYTE,
                           canvas2d);
             assertMsg(gl.getError() == gl.INVALID_VALUE,
                       "gl.texImage2D with NPOT texture with level > 0 should return INVALID_VALUE");
@@ -89,6 +92,9 @@
             // Check that an NPOT texture on level 0 succeeds
             gl.texImage2D(gl.TEXTURE_2D,
                           0,                 // level
+                          gl.RGBA,
+                          gl.RGBA,
+                          gl.UNSIGNED_BYTE,
                           canvas2d);
             assertMsg(gl.getError() == gl.NO_ERROR,
                       "gl.texImage2D with NPOT texture at level 0 should succeed");

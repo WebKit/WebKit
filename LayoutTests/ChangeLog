@@ -1,3 +1,36 @@
+2010-06-11  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add texImage2D and texSubImage2D signatures with internal format, etc.
+        https://bugs.webkit.org/show_bug.cgi?id=40318
+
+        Added new texImage2D and texSubImage2D entry points following
+        WebGL specification changes. Added UNPACK_FLIP_Y_WEBGL and
+        UNPACK_PREMULTIPLY_ALPHA_WEBGL pixelStorei parameters, honored
+        them for the new entry points taking HTML elements, and added
+        support to getParameter. Added warnings to the console for calls
+        to the obsolete entry points, which will be removed in a few
+        weeks. Updated all layout tests to use the new entry points and
+        pixelStorei parameters, and associated expectations. No other new
+        tests.
+
+        * fast/canvas/webgl/bug-32364-expected.txt:
+        * fast/canvas/webgl/bug-32364.html:
+        * fast/canvas/webgl/bug-32888.html:
+        * fast/canvas/webgl/gl-get-calls-expected.txt:
+        * fast/canvas/webgl/gl-get-calls.html:
+        * fast/canvas/webgl/resources/utils3d.js:
+        (doLoadImageTexture):
+        * fast/canvas/webgl/script-tests/texImageTest.js:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-expected.txt:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-expected.txt:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image.html:
+        * fast/canvas/webgl/texImage2DImageDataTest.html:
+        * fast/canvas/webgl/texImageTest-expected.txt:
+        * fast/canvas/webgl/texture-npot.html:
+
 2010-06-11  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, roll out the failing part of a test.

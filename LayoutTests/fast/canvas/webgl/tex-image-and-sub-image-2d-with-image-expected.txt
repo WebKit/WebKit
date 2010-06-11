@@ -1,4 +1,4 @@
-Verify texImage2D and texSubImage2D code paths taking Images, in particular flipY argument
+Verify texImage2D and texSubImage2D code paths taking Images
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

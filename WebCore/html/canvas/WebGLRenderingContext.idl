@@ -459,6 +459,10 @@ module html {
 
         const unsigned int INVALID_FRAMEBUFFER_OPERATION  = 0x0506;
 
+        /* WebGL-specific enums */
+        const unsigned int UNPACK_FLIP_Y_WEBGL            = 0x9240;
+        const unsigned int UNPACK_PREMULTIPLY_ALPHA_WEBGL = 0x9241;
+
         long sizeInBytes(in unsigned long type) raises(DOMException);
 
         void         activeTexture(in unsigned long texture) raises(DOMException);
@@ -609,6 +613,15 @@ module html {
         // Supported forms:
         void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat, in long width, in long height, 
                                 in long border, in unsigned long format, in unsigned long type, in ArrayBufferView pixels) raises (DOMException);
+        void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat,
+                                in unsigned long format, in unsigned long type, in ImageData pixels) raises (DOMException);
+        void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat,
+                                in unsigned long format, in unsigned long type, in HTMLImageElement image) raises (DOMException);
+        void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat,
+                                in unsigned long format, in unsigned long type, in HTMLCanvasElement canvas) raises (DOMException);
+        void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat,
+                                in unsigned long format, in unsigned long type, in HTMLVideoElement video) raises (DOMException);
+        // Obsolete entry points -- to be removed shortly. (FIXME)
         void         texImage2D(in unsigned long target, in long level, in ImageData pixels,
                                 in [Optional] boolean flipY, in [Optional] boolean premultiplyAlpha) raises (DOMException);
         void         texImage2D(in unsigned long target, in long level, in HTMLImageElement image,
@@ -621,6 +634,15 @@ module html {
         void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, 
                                    in long width, in long height, 
                                    in unsigned long format, in unsigned long type, in ArrayBufferView pixels) raises (DOMException);
+        void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset,
+                                   in unsigned long format, in unsigned long type, in ImageData pixels) raises (DOMException);
+        void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset,
+                                   in unsigned long format, in unsigned long type, in HTMLImageElement image) raises (DOMException);
+        void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset,
+                                   in unsigned long format, in unsigned long type, in HTMLCanvasElement canvas) raises (DOMException);
+        void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset,
+                                   in unsigned long format, in unsigned long type, in HTMLVideoElement video) raises (DOMException);
+        // Obsolete entry points -- to be removed shortly. (FIXME)
         void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset,
                                    in ImageData pixels, in [Optional] boolean flipY, in [Optional] boolean premultiplyAlpha) raises (DOMException);
         void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, 
