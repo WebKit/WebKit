@@ -1,3 +1,19 @@
+2010-06-03  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Move the text code path detection code from FontFastPath.cpp to Font.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=40077
+
+        This is a patch preliminary to the implementation of the
+        simple font code path for the Qt port.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::setCodePath):
+        (WebCore::Font::codePath):
+        * platform/graphics/Font.h:
+        * platform/graphics/FontFastPath.cpp:
+
 2010-06-11  Sterling Swigart  <sswigart@google.com>
 
         Reviewed by Dmitry Titov.
