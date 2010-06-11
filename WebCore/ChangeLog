@@ -1,3 +1,20 @@
+2010-06-11  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        drawElements/drawArrays should validate input parameters according to GLES2 spec
+        https://bugs.webkit.org/show_bug.cgi?id=38700
+
+        Tests: fast/canvas/webgl/draw-arrays-out-of-bounds.html
+               fast/canvas/webgl/draw-elements-out-of-bounds.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::drawArrays): Validate input parameters.
+        (WebCore::WebGLRenderingContext::drawElements): Ditto.
+        (WebCore::WebGLRenderingContext::validateDrawMode): Validate mode for draw{Arrays/Elements}.
+        * html/canvas/WebGLRenderingContext.h: Add validateDrawMode, fix incorrect parameter types.
+        * html/canvas/WebGLRenderingContext.idl: Fix incorrect parameter types.
+
 2010-06-11  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Antti Koivisto.

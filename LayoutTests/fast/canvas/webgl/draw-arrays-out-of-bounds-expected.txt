@@ -1,0 +1,27 @@
+Test of drawArrays with out-of-bounds parameters
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Test empty buffer
+PASS context.drawArrays(context.TRIANGLES, 0, 10000) generated expected GL error: INVALID_OPERATION.
+PASS context.drawArrays(context.TRIANGLES, 0, -1) generated expected GL error: INVALID_VALUE.
+PASS context.drawArrays(context.TRIANGLES, -1, 0) generated expected GL error: INVALID_VALUE.
+PASS context.drawArrays(context.TRIANGLES, 0, 0) generated expected GL error: NO_ERROR.
+PASS context.drawArrays(context.TRIANGLES, 100, 0) generated expected GL error: NO_ERROR.
+
+Test buffer with 3 float vectors
+PASS context.checkFramebufferStatus(context.FRAMEBUFFER) is context.FRAMEBUFFER_COMPLETE
+PASS context.drawArrays(context.TRIANGLES, 0, 3) is undefined
+PASS context.drawArrays(context.TRIANGLES, 0, 3) generated expected GL error: NO_ERROR.
+PASS context.drawArrays(0x0009, 0, 3) generated expected GL error: INVALID_ENUM.
+PASS context.drawArrays(context.TRIANGLES, 3, 2) generated expected GL error: INVALID_OPERATION.
+PASS context.drawArrays(context.TRIANGLES, 0, 10000) generated expected GL error: INVALID_OPERATION.
+PASS context.drawArrays(context.TRIANGLES, 0, -1) generated expected GL error: INVALID_VALUE.
+PASS context.drawArrays(context.TRIANGLES, -1, 0) generated expected GL error: INVALID_VALUE.
+PASS context.drawArrays(context.TRIANGLES, 0, 0) generated expected GL error: NO_ERROR.
+PASS context.drawArrays(context.TRIANGLES, 100, 0) generated expected GL error: NO_ERROR.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

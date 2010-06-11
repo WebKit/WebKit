@@ -521,8 +521,8 @@ module html {
         void         detachShader(in WebGLProgram program, in WebGLShader shader) raises(DOMException);
         void         disable(in unsigned long cap);
         void         disableVertexAttribArray(in unsigned long index) raises(DOMException);
-        void         drawArrays(in unsigned long mode, in long first, in unsigned long count) raises(DOMException);
-        void         drawElements(in unsigned long mode, in long count, in unsigned long type, in unsigned long offset) raises(DOMException);
+        void         drawArrays(in unsigned long mode, in long first, in long count) raises(DOMException);
+        void         drawElements(in unsigned long mode, in long count, in unsigned long type, in long offset) raises(DOMException);
 
         void         enable(in unsigned long cap);
         void         enableVertexAttribArray(in unsigned long index) raises(DOMException);

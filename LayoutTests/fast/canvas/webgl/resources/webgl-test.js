@@ -84,3 +84,31 @@ function loadFragmentShader(context, path) {
     context.compileShader(fragmentShader);
     return fragmentShader;
 }
+
+function getGLErrorAsString(ctx, err) {
+    if (err === ctx.NO_ERROR)
+        return "NO_ERROR";
+    for (var name in ctx) {
+        if (ctx[name] === err)
+            return name;
+    }
+    return err.toString();
+}
+
+function shouldGenerateGLError(ctx, glError, evalStr) {
+    var exception;
+    try {
+        eval(evalStr);
+    } catch (e) {
+        exception = e;
+    }
+    if (exception) {
+        testFailed(evalStr + " threw exception " + exception);
+    } else {
+        var err = ctx.getError();
+        if (err != glError)
+            testFailed(evalStr + " expected GL error: " + getGLErrorAsString(ctx, glError) + ". Generated: " + getGLErrorAsString(ctx, err) + ".");
+        else
+            testPassed(evalStr + " generated expected GL error: " + getGLErrorAsString(ctx, glError) + ".");
+    }
+}

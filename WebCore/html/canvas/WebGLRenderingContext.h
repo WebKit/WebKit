@@ -117,7 +117,7 @@ class WebKitCSSMatrix;
         void disable(unsigned long cap);
         void disableVertexAttribArray(unsigned long index, ExceptionCode&);
         void drawArrays(unsigned long mode, long first, long count, ExceptionCode&);
-        void drawElements(unsigned long mode, unsigned long count, unsigned long type, long offset, ExceptionCode&);
+        void drawElements(unsigned long mode, long count, unsigned long type, long offset, ExceptionCode&);
 
         void enable(unsigned long cap);
         void enableVertexAttribArray(unsigned long index, ExceptionCode&);
@@ -412,6 +412,9 @@ class WebKitCSSMatrix;
                                        unsigned long internalformat,
                                        long width, long height, long border,
                                        unsigned long format, unsigned long type);
+
+        // Helper function to validate mode for draw{Arrays/Elements}.
+        bool validateDrawMode(unsigned long);
 
         // Helper function for texParameterf and texParameteri.
         void texParameter(unsigned long target, unsigned long pname, float parami, int paramf, bool isFloat);

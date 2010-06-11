@@ -797,8 +797,20 @@ bool WebGLRenderingContext::validateWebGLObject(CanvasObject* object)
 void WebGLRenderingContext::drawArrays(unsigned long mode, long first, long count, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
+
+    if (!validateDrawMode(mode))
+        return;
+
+    if (first < 0 || count < 0) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        return;
+    }
+
+    if (!count)
+        return;
+
     // Ensure we have a valid rendering state
-    if (first < 0 || count < 0 || !validateRenderingState(first + count)) {
+    if (!validateRenderingState(first + count)) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }
@@ -809,13 +821,34 @@ void WebGLRenderingContext::drawArrays(unsigned long mode, long first, long coun
     cleanupAfterGraphicsCall(true);
 }
 
-void WebGLRenderingContext::drawElements(unsigned long mode, unsigned long count, unsigned long type, long offset, ExceptionCode& ec)
+void WebGLRenderingContext::drawElements(unsigned long mode, long count, unsigned long type, long offset, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
+
+    if (!validateDrawMode(mode))
+        return;
+
+    switch (type) {
+    case GraphicsContext3D::UNSIGNED_BYTE:
+    case GraphicsContext3D::UNSIGNED_SHORT:
+        break;
+    default:
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        return;
+    }
+
+    if (count < 0 || offset < 0) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        return;
+    }
+
+    if (!count)
+        return;
+
     // Ensure we have a valid rendering state
     long numElements;
     
-    if (offset < 0 || !validateElementArraySize(count, type, offset)) {
+    if (!validateElementArraySize(count, type, offset)) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }
@@ -3276,6 +3309,23 @@ bool WebGLRenderingContext::validateTexFuncParameters(unsigned long target, long
     }
 
     return validateTexFuncFormatAndType(format, type);
+}
+
+bool WebGLRenderingContext::validateDrawMode(unsigned long mode)
+{
+    switch (mode) {
+    case GraphicsContext3D::POINTS:
+    case GraphicsContext3D::LINE_STRIP:
+    case GraphicsContext3D::LINE_LOOP:
+    case GraphicsContext3D::LINES:
+    case GraphicsContext3D::TRIANGLE_STRIP:
+    case GraphicsContext3D::TRIANGLE_FAN:
+    case GraphicsContext3D::TRIANGLES:
+        return true;
+    default:
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        return false;
+    }
 }
 
 } // namespace WebCore

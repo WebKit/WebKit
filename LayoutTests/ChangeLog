@@ -1,3 +1,22 @@
+2010-06-11  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        drawElements/drawArrays should validate input parameters according to GLES2 spec
+        https://bugs.webkit.org/show_bug.cgi?id=38700
+
+        * fast/canvas/webgl/draw-arrays-out-of-bounds-expected.txt: Copied from LayoutTests/fast/canvas/webgl/drawArraysOutOfBounds-expected.txt, and fix a few test cases.
+        * fast/canvas/webgl/draw-arrays-out-of-bounds.html: Copied from LayoutTests/fast/canvas/webgl/drawArraysOutOfBounds.html, and fix a few test cases.
+        * fast/canvas/webgl/draw-elements-out-of-bounds-expected.txt: Copied from LayoutTests/fast/canvas/webgl/drawElementssOutOfBounds-expected.txt, and fix a few test cases.
+        * fast/canvas/webgl/draw-elements-out-of-bounds.html: Copied from LayoutTests/fast/canvas/webgl/drawElementssOutOfBounds.html, and fix a few test cases.
+        * fast/canvas/webgl/drawArraysOutOfBounds-expected.txt: Removed.
+        * fast/canvas/webgl/drawArraysOutOfBounds.html: Removed.
+        * fast/canvas/webgl/drawElementssOutOfBounds-expected.txt: Removed.
+        * fast/canvas/webgl/drawElementssOutOfBounds.html: Removed.
+        * fast/canvas/webgl/resources/webgl-test.js: Add helper functions for easy test of gl function errors.
+        (getGLErrorAsString):
+        (shouldGenerateGLError):
+
 2010-06-11  Luiz Agostini  <luiz.agostini@openbossa.org>, Kenneth Rohde Christiansen <kenneth@webkit.org>
 
         Reviewed by Antti Koivisto.
