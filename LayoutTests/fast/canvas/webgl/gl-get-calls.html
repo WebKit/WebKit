@@ -95,8 +95,7 @@ else {
     //shouldBe('context.getParameter(context.STENCIL_WRITEMASK)', '0xFFFFFFFF');
     shouldBe('context.getParameter(context.TEXTURE_BINDING_2D)', 'null');
     shouldBe('context.getParameter(context.TEXTURE_BINDING_CUBE_MAP)', 'null');
-    // FIXME: this is apparently failing on some of the bots
-    // shouldBe('context.getParameter(context.UNPACK_ALIGNMENT)', '4');
+    shouldBe('context.getParameter(context.UNPACK_ALIGNMENT)', '4');
     shouldBe('context.getParameter(context.UNPACK_FLIP_Y_WEBGL)', 'false');
     shouldBe('context.getParameter(context.UNPACK_PREMULTIPLY_ALPHA_WEBGL)', 'false');
     shouldBe('context.getParameter(context.VIEWPORT)', '[0, 0, 2, 2]');

@@ -1273,9 +1273,9 @@ WebGLGetInfo WebGLRenderingContext::getParameter(unsigned long pname, ExceptionC
         // FIXME: should this be "long" in the spec?
         return getIntParameter(pname);
     case GraphicsContext3D::UNPACK_FLIP_Y_WEBGL:
-        return getBooleanParameter(pname);
+        return WebGLGetInfo(m_unpackFlipY);
     case GraphicsContext3D::UNPACK_PREMULTIPLY_ALPHA_WEBGL:
-        return getBooleanParameter(pname);
+        return WebGLGetInfo(m_unpackPremultiplyAlpha);
     case GraphicsContext3D::VIEWPORT:
         return getWebGLIntArrayParameter(pname);
     default:
