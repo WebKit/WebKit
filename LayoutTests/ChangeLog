@@ -1,3 +1,11 @@
+2010-06-11  Dmitry Titov  <dimich@chromium.org>
+
+        Unreviewed, update Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+        http://trac.webkit.org/changeset/60999 regressed acid3.html image match on Chromium Mac.
+        http://trac.webkit.org/changeset/61020 modified get-active-test.html that now fails on Chromium Mac.
+
 2010-06-11  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
