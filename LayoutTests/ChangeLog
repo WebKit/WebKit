@@ -1,3 +1,30 @@
+2010-06-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Written by Dave Moore <davemoore@google.com>.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22741
+        innerHTML, forms and images don't play well together
+
+        This was fixed already (in bug 34076), just landing an additional test.
+
+        * fast/forms/form-image-access-by-name-expected.txt: Added.
+        * fast/forms/form-image-access-by-name.html: Added.
+
+2010-06-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18830
+        Assertion failure (using HashMap empty value) in svg/W3C-SVG-1.1/fonts-glyph-02-t.svg
+
+        This doesn't happen any more, the code has changed a lot since 2008. Re-enabling the test.
+
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.txt:
+        * svg/W3C-SVG-1.1/fonts-glyph-02-t.svg: Copied from LayoutTests/svg/W3C-SVG-1.1/fonts-glyph-02-t.svg-disabled.
+        * svg/W3C-SVG-1.1/fonts-glyph-02-t.svg-disabled: Removed.
+
 2010-06-11  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.
