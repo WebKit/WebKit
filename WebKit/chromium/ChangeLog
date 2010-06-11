@@ -1,3 +1,14 @@
+2010-06-11  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] Adding a build dependency to the gles2 C library to the webkit_unit_tests
+        project to allow it to link when WebCore is compiled with the ACCELERATED_COMPOSITING
+        flag.
+        https://bugs.webkit.org/show_bug.cgi?id=40341
+
+        * WebKit.gyp:
+
 2010-06-10  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

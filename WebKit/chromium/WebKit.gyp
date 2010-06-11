@@ -523,6 +523,7 @@
                 '<(chromium_src_dir)/testing/gtest.gyp:gtest',
                 '<(chromium_src_dir)/base/base.gyp:base',
                 '<(chromium_src_dir)/base/base.gyp:base_i18n',
+                '<(chromium_src_dir)/gpu/gpu.gyp:gles2_c_lib',
             ],
             'include_dirs': [
                 'public',
@@ -577,6 +578,7 @@
                 '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:npapi_layout_test_plugin',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
+                '<(chromium_src_dir)/gpu/gpu.gyp:gles2_c_lib'
             ],
             'include_dirs': [
                 '.',
