@@ -2,6 +2,21 @@
 
         Reviewed by Dimitri Glazkov.
 
+        getActiveUniform must ensure names of arrays end in "[0]"
+        https://bugs.webkit.org/show_bug.cgi?id=38709
+
+        * fast/canvas/webgl/get-active-test-expected.txt: Copied from LayoutTests/fast/canvas/webgl/getActiveTest-expected.txt, modified to test array names.
+        * fast/canvas/webgl/get-active-test.html: Copied from LayoutTests/fast/canvas/webgl/getActiveTest.html.
+        * fast/canvas/webgl/getActiveTest-expected.txt: Removed.
+        * fast/canvas/webgl/getActiveTest.html: Removed.
+        * fast/canvas/webgl/resources/intArrayUniformShader.vert: Added, with array uniform.
+        * fast/canvas/webgl/script-tests/get-active-test.js: Copied from LayoutTests/fast/canvas/webgl/script-tests/getActiveTest.js, modified to test array names.
+        * fast/canvas/webgl/script-tests/getActiveTest.js: Removed.
+
+2010-06-11  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
         readPixels with negative width/height should generate INVALID_VALUE and return
         https://bugs.webkit.org/show_bug.cgi?id=39704
 

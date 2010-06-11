@@ -1010,6 +1010,10 @@ PassRefPtr<WebGLActiveInfo> WebGLRenderingContext::getActiveUniform(WebGLProgram
     if (!m_context->getActiveUniform(program, index, info)) {
         return 0;
     }
+    if (!isGLES2Compliant()) {
+        if (info.size > 1 && !info.name.endsWith("[0]"))
+            info.name.append("[0]");
+    }
     return WebGLActiveInfo::create(info.name, info.type, info.size);
 }
 

@@ -2,6 +2,18 @@
 
         Reviewed by Dimitri Glazkov.
 
+        getActiveUniform must ensure names of arrays end in "[0]"
+        https://bugs.webkit.org/show_bug.cgi?id=38709
+
+        Test: fast/canvas/webgl/get-active-test.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getActiveAttrib): Append "[0]" to the name if needed.
+
+2010-06-11  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
         readPixels with negative width/height should generate INVALID_VALUE and return
         https://bugs.webkit.org/show_bug.cgi?id=39704
 
