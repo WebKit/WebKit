@@ -1,3 +1,14 @@
+2010-06-11  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: localize missing script source message
+        https://bugs.webkit.org/show_bug.cgi?id=40467
+
+        * English.lproj/localizedStrings.js:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didParseSource): fixed typo in comment.
+
 2010-06-11  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.
