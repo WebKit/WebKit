@@ -44,11 +44,17 @@ namespace WebCore {
 
 typedef Vector<RefPtr<ScriptProfile> > ProfilesArray;
 
-v8::Handle<v8::Value> V8Console::profilesAccessorGetter(v8::Local<v8::String>, const v8::AccessorInfo&)
+v8::Handle<v8::Value> V8Console::profilesAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Console.profilesAccessorGetter");
-    // FIXME: Provide a real implementation.
-    return v8::Array::New(0);
+    Console* imp = V8Console::toNative(info.Holder());
+    const ProfilesArray& profiles = imp->profiles();
+    v8::Handle<v8::Array> result = v8::Array::New(profiles.size());
+    int index = 0;
+    ProfilesArray::const_iterator end = profiles.end();
+    for (ProfilesArray::const_iterator iter = profiles.begin(); iter != end; ++iter)
+        result->Set(v8::Integer::New(index++), toV8(iter->get()));
+    return result;
 }
 
 v8::Handle<v8::Value> V8Console::memoryAccessorGetter(v8::Local<v8::String>, const v8::AccessorInfo&)

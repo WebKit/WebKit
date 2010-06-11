@@ -1,3 +1,18 @@
+2010-06-11  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [Chromium] Restore 'console.profiles' access.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39840
+
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::stop):
+        * bindings/v8/custom/V8ConsoleCustom.cpp:
+        (WebCore::V8Console::profilesAccessorGetter):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::stopUserInitiatedProfiling):
+
 2010-06-10  Nikita Vasilyev  <me@elv1s.ru>
 
         Reviewed by Pavel Feldman.
