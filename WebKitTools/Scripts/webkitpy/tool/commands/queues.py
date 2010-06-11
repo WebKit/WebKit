@@ -121,7 +121,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
 
     @classmethod
     def _update_status_for_script_error(cls, tool, state, script_error, is_error=False):
-        message = script_error.message
+        message = str(script_error)
         if is_error:
             message = "Error: %s" % message
         output = script_error.message_with_output(output_limit=1024*1024) # 1MB

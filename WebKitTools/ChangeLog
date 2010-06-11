@@ -1,5 +1,14 @@
 2010-06-10  Ojan Vafai  <ojan@chromium.org>
 
+        Reviewed by Alexey Proskuryakov.
+
+        don't use Exception.message as it's deprecated in python 2.6+
+        https://bugs.webkit.org/show_bug.cgi?id=40449
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+
+2010-06-10  Ojan Vafai  <ojan@chromium.org>
+
         Reviewed by Adam Barth.
 
         fix handle_script_error in rietveld upload queue and add testing for handle_script_error
