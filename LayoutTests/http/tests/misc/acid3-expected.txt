@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (20,20) size 644x457
-  RenderBlock {HTML} at (20,20) size 644x457 [bgcolor=#C0C0C0] [border: none (4px solid #808080) none]
-    RenderBody {BODY} at (-4,-4) size 644x457 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (20,20) size 644x433
+  RenderBlock {HTML} at (20,20) size 644x433 [bgcolor=#C0C0C0] [border: none (4px solid #808080) none]
+    RenderBody {BODY} at (-4,-4) size 644x433 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
       RenderBlock {H1} at (41,41) size 562x120
         RenderText {#text} at (0,4) size 273x112
           text run at (0,4) width 273: "Acid3"
@@ -201,14 +201,8 @@ layer at (20,20) size 644x457
                 RenderBlock {P} at (0,0) size 1x0
       RenderBlock (anonymous) at (41,334) size 562x0
         RenderInline {MAP} at (0,0) size 0x0
-      RenderBlock (anonymous) at (41,334) size 562x24
-        RenderBlock {A} at (0,0) size 562x24 [color=#FF0000]
-          RenderText {#text} at (196,1) size 169x22
-            text run at (196,1) width 169: "LINKTEST FAILED"
-      RenderBlock (anonymous) at (41,358) size 562x0
-        RenderInline {MAP} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (41,358) size 582x98 [color=#808080]
+      RenderBlock {P} at (41,334) size 582x98 [color=#808080]
         RenderText {#text} at (0,1) size 116x17
           text run at (0,1) width 116: "To pass the test,"
         RenderBlock (floating) {SPAN} at (562,0) size 20x20 [bgcolor=#FFFFFF]
@@ -221,8 +215,8 @@ layer at (20,20) size 644x457
             text run at (131,39) width 168: "this reference rendering"
         RenderText {#text} at (299,39) size 4x17
           text run at (299,39) width 4: "."
-layer at (639,17) size 20x20
-  RenderBlock (positioned) at (639,17) size 20x20 [color=#FFFFFF] [bgcolor=#FF00FF]
+layer at (638,18) size 20x20
+  RenderBlock (positioned) at (638,18) size 20x20 [color=#FFFFFF] [bgcolor=#FF00FF]
     RenderText at (0,0) size 20x20
       text run at (0,0) width 20: "X"
 layer at (130,84) size 300x150
@@ -233,8 +227,14 @@ layer at (130,84) size 300x150
       RenderBlock {HTML} at (0,0) size 300x16
         RenderBody {BODY} at (8,16) size 284x0
           RenderBlock {P} at (0,0) size 284x0
-layer at (639,17) size 20x20
-  RenderBlock (positioned) at (639,17) size 20x20 [color=#FFFFFF] [bgcolor=#FF00FF]
+layer at (17,18) size 80x36
+  RenderBlock (positioned) {A} at (17,18) size 80x36 [color=#FF0000]
+    RenderText {#text} at (0,0) size 71x36
+      text run at (0,0) width 67: "YOU SHOULD"
+      text run at (0,12) width 71: "NOT SEE THIS"
+      text run at (0,24) width 35: "AT ALL"
+layer at (638,18) size 20x20
+  RenderBlock (positioned) at (638,18) size 20x20 [color=#FFFFFF] [bgcolor=#FF00FF]
     RenderText at (0,0) size 20x20
       text run at (0,0) width 20: "X"
 layer at (10,10) size 84x45

@@ -1,3 +1,23 @@
+2010-06-11  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Update acid3 test with latest from acid3.acidtests.org
+        https://bugs.webkit.org/show_bug.cgi?id=40428
+
+        This is a straight copy from "curl http://acid3.acidtests.org/" with
+        LayoutTest specific bits reapplied:
+         - Rename resources to resources/acid3/...
+         - Add window.layoutTestController bits to start and end.
+
+        We still fail the same link test. The difference is that its error
+        changed from "LINKTEST FAILED" to "YOU SHOULD NOT SEE THIS AT ALL".
+
+        * http/tests/misc/acid3-expected.checksum:
+        * http/tests/misc/acid3-expected.png:
+        * http/tests/misc/acid3-expected.txt:
+        * http/tests/misc/acid3.html:
+
 2010-06-11  Steve Block  <steveblock@google.com>
 
         Reviewed by Alexey Proskuryakov.

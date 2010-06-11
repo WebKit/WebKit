@@ -4,7 +4,7 @@
  <script type="text/javascript">
   if (window.layoutTestController)
     layoutTestController.waitUntilDone();
-  
+
   var startTime = new Date();
  </script>
  <style type="text/css">
@@ -16,7 +16,7 @@
   /* header and general layout */
   html { font: 20px Arial, sans-serif; border: 2cm solid gray; width: 32em; margin: 1em; }
   :root { background: silver; color: black; border-width: 0 0.2em 0.2em 0; } /* left and top content edges: 1*20px = 20px */
-  body { padding: 2em 2em 0; background: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAIAAAAC64paAAAABGdBTUEAAK%2FINwWK6QAAAAlwSFlzAAAASAAAAEgARslrPgAAABtJREFUOMtj%2FM9APmCiQO%2Bo5lHNo5pHNVNBMwAinAEnIWw89gAAACJ6VFh0U29mdHdhcmUAAHjac0zJT0pV8MxNTE8NSk1MqQQAL5wF1K4MqU0AAAAASUVORK5CYII%3D) no-repeat top right white; border: solid 1px black; margin: -0.2em 0 0 -0.2em; } /* left and top content edges: 20px-0.2*20px+1px+2*20px = 57px */
+  body { padding: 2em 2em 0; background: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAIAAAAC64paAAAABGdBTUEAAK%2FINwWK6QAAAAlwSFlzAAAASAAAAEgARslrPgAAABtJREFUOMtj%2FM9APmCiQO%2Bo5lHNo5pHNVNBMwAinAEnIWw89gAAACJ6VFh0U29mdHdhcmUAAHjac0zJT0pV8MxNTE8NSk1MqQQAL5wF1K4MqU0AAAAASUVORK5CYII%3D) no-repeat 99.8392283% 1px white; border: solid 1px black; margin: -0.2em 0 0 -0.2em; } /* left and top content edges: 20px-0.2*20px+1px+2*20px = 57px */
   h1:first-child { cursor: help; font-size: 5em; font-weight: bolder; margin-bottom: -0.4em; text-shadow: rgba(192, 192, 192, 1.0) 3px 3px; } /* (left:57px, top:57px) */
   #result { font-weight: bolder; width: 5.68em; text-align: right; }
   #result { font-size: 5em; margin: -2.19em 0 0; } /* (right:57px+5.2*5*20px = 577px, top:57px+1.2*5*20px-0.4*5*20px+1px+1*40px+1*40px+1px+2*40px+150px-2.19*5*20px = 230px) */
@@ -26,7 +26,7 @@
   #instructions { margin-right: -20px; padding-right: 20px; background: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAIAAAAC64paAAAABGdBTUEAAK%2FINwWK6QAAAAlwSFlzAAAASAAAAEgARslrPgAAABtJREFUOMtj%2FM9APmCiQO%2Bo5lHNo5pHNVNBMwAinAEnIWw89gAAACJ6VFh0U29mdHdhcmUAAHjac0zJT0pV8MxNTE8NSk1MqQQAL5wF1K4MqU0AAAAASUVORK5CYII%3D) no-repeat top right; }
   #instructions span { float: right; width: 20px; margin-right: -20px; background: white; height: 20px; }
   @font-face { font-family: "AcidAhemTest"; src: url(resources/acid3/font.ttf); }
-  map::after { position: absolute; top: 17px; left: 639px; content: "X"; background: fuchsia; color: white; font: 20px/1 AcidAhemTest; }
+  map::after { position: absolute; top: 18px; left: 638px; content: "X"; background: fuchsia; color: white; font: 20px/1 AcidAhemTest; }
   iframe { float: left; height: 0; width: 0; } /* hide iframes but don't make them display: none */
   object { position: fixed; left: 130.5px; top: 84.3px; background: transparent; } /* show objects if they have content */
   .removed { position: absolute; top: 80px; left: 380px; height: 100px; width: 100px; opacity: 0; }
@@ -132,8 +132,12 @@
 
   /* rules specific to the tests below */
   #instructions:last-child { white-space: pre-wrap; white-space: x-bogus; }
-  #linktest:link { display: block; color: red; text-align: center; text-decoration: none; }
-  #linktest.pending, #linktest:visited { display: none; }
+  /* replaced for http://dbaron.org/mozilla/visited-privacy with the three rules after it:
+     #linktest:link { display: block; color: red; text-align: center; text-decoration: none; }
+     #linktest.pending, #linktest:visited { display: none; } */
+  #linktest { position: absolute; left: 17px; top: 18px; color: red; width: 80px; text-decoration: none; font: 900 small-caps 10px sans-serif; }
+  #linktest:link { color: red; }
+  #linktest.pending, #linktest:visited { color: white; }
   #\ { color: transparent; color: hsla(0, 0, 0, 1); position: fixed; top: 10px; left: 10px; font: 40px Arial, sans-serif; }
   #\  #result, #\  #score { position: fixed; top: 10%; left: 10%; width: 4em; z-index: 1; color: yellow; font-size: 50px; background: fuchsia; border: solid 1em purple; }
  </style>
@@ -533,7 +537,9 @@
       assertEquals(r.compareBoundaryPoints(r.START_TO_END, r.cloneRange()), 0, "starting boundary point of range wasn't the same as the end boundary point of the clone range");
       r.deleteContents(); // no effect
       assertEquals(r.extractContents().childNodes.length, 0, "nothing removed was more than nothing");
+      var endOffset = r.endOffset;
       r.insertNode(document.createComment("commented inserted to test ranges"));
+      r.setEnd(r.endContainer, endOffset + 1); // added to work around spec bug that smaug is blocking the errata for
       try {
         assert(!r.collapsed, "range with inserted comment is collapsed");
         assertEquals(r.commonAncestorContainer, document, "range with inserted comment has common ancestor that isn't the document");
@@ -999,7 +1005,7 @@
       assert(e1.parentNode.ownerDocument, "e1 - document doesn't exist after dropping reference to document");
       assert(e2.parentNode, "e2 - parent element doesn't exist after dropping reference to document");
       assert(e2.parentNode.ownerDocument, "e2 - document doesn't exist after dropping reference to document");
-      var loops = new Date().valueOf() * 5e-9 - 4250; // increases linearly over time
+      var loops = new Date().valueOf() * 2.813435e-9 - 2412; // increases linearly over time
       for (var i = 0; i < loops; i += 1) {
         // we want to force a GC here, so we use up lots of memory
         // we take the opportunity to sneak in a perf test to make DOM and JS stuff faster...
@@ -1761,7 +1767,7 @@
       style.appendChild(doc.createTextNode('@media only all and (min-color: 0) { #c { text-transform: uppercase; } }'));                    // matches
       style.appendChild(doc.createTextNode('@media (bogus) { #d { text-transform: uppercase; } }'));
       style.appendChild(doc.createTextNode('@media all and (bogus) { #e { text-transform: uppercase; } }'));
-      style.appendChild(doc.createTextNode('@media not all and (bogus) { #f { text-transform: uppercase; } }'));                            // matches
+      style.appendChild(doc.createTextNode('@media not all and (bogus) { #f { text-transform: uppercase; } }'));                         // commentd out but should not match
       style.appendChild(doc.createTextNode('@media only all and (bogus) { #g { text-transform: uppercase; } }'));
       style.appendChild(doc.createTextNode('@media (bogus), all { #h { text-transform: uppercase; } }'));                                   // matches
       style.appendChild(doc.createTextNode('@media all and (bogus), all { #i { text-transform: uppercase; } }'));                           // matches
@@ -1773,9 +1779,9 @@
       style.appendChild(doc.createTextNode('@media all, only all and (bogus) { #o { text-transform: uppercase; } }'));                      // matches
       style.appendChild(doc.createTextNode('@media all and color { #p { text-transform: uppercase; } }'));
       style.appendChild(doc.createTextNode('@media all and min-color: 0 { #q { text-transform: uppercase; } }'));
-      style.appendChild(doc.createTextNode('@media all, all and color { #r { text-transform: uppercase; } }'));
-      style.appendChild(doc.createTextNode('@media all, all and min-color: 0 { #s { text-transform: uppercase; } }'));
-      style.appendChild(doc.createTextNode('@media all and min-color: 0, all { #t { text-transform: uppercase; } }'));
+      style.appendChild(doc.createTextNode('@media all, all and color { #r { text-transform: uppercase; } }'));                          // commented out but should match
+      style.appendChild(doc.createTextNode('@media all, all and min-color: 0 { #s { text-transform: uppercase; } }'));                   // commented out but should match
+      style.appendChild(doc.createTextNode('@media all and min-color: 0, all { #t { text-transform: uppercase; } }'));                   // commented out but should match
       style.appendChild(doc.createTextNode('@media (max-color: 0) and (max-monochrome: 0) { #u { text-transform: uppercase; } }'));
       style.appendChild(doc.createTextNode('@media (min-color: 1), (min-monochrome: 1) { #v { text-transform: uppercase; } }'));            // matches
       style.appendChild(doc.createTextNode('@media all and (min-color: 0) and (min-monochrome: 0) { #w { text-transform: uppercase; } }')); // matches
@@ -1802,7 +1808,9 @@
       check('c', true);
       check('d', false);
       check('e', false);
-      check('f', true);
+/* COMMENTED OUT BECAUSE THE CSSWG KEEP CHANGING THE RIGHT ANSWER FOR THIS CASE
+ *      check('f', false);
+ */
       check('g', false);
       check('h', true);
       check('i', true);
@@ -1814,9 +1822,11 @@
       check('o', true);
       check('p', false);
       check('q', false);
-      check('r', false);
-      check('s', false);
-      check('t', false); // 20
+/* COMMENTED OUT BECAUSE THE CSSWG KEEP CHANGING THE RIGHT ANSWER FOR THESE TOO APPARENTLY
+ *      check('r', true);
+ *      check('s', true);
+ *      check('t', true); // 20
+ */
       check('u', false);
       check('v', true);
       check('w', true);
@@ -1866,7 +1876,7 @@
       var iframe = document.getElementById("selectors");
       var number = (new Date()).valueOf();
       var a = document.createElement('a');
-      a.appendChild(document.createTextNode('LINKTEST FAILED'));
+      a.appendChild(document.createTextNode('YOU SHOULD NOT SEE THIS AT ALL')); // changed text when fixing http://dbaron.org/mozilla/visited-privacy
       a.setAttribute('id', 'linktest');
       a.setAttribute('class', 'pending');
       a.setAttribute('href', iframe.getAttribute('src') + "?" + number);
@@ -2464,11 +2474,12 @@
         doc.write("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\"><title><\/title><span><\/span><script type=\"text/javascript\"><\/script>");
         doc.close();
         assertEquals(doc.childNodes.length, 2, "wrong number of children in #document (first test)");
-        assertEquals(doc.firstChild.name, "HTML", "name wrong (first test)");
+        assertEquals(doc.firstChild.name.toUpperCase(), "HTML", "name wrong (first test)"); // changed 2009-08-13 to add .toUpperCase() for HTML5 compat
         assertEquals(doc.firstChild.publicId, "-//W3C//DTD HTML 4.0 Transitional//EN", "publicId wrong (first test)");
         if ((doc.firstChild.systemId != null) && (doc.firstChild.systemId != ""))
           fail("systemId wrong (first test)");
-        assertEquals(doc.firstChild.internalSubset, null, "internalSubset wrong (first test)");
+        if (('internalSubset' in doc.firstChild) || doc.firstChild.internalSubset)
+          assertEquals(doc.firstChild.internalSubset, null, "internalSubset wrong (first test)");
         assertEquals(doc.documentElement.childNodes.length, 2, "wrong number of children in HTML (first test)");
         assertEquals(doc.documentElement.firstChild.nodeName, "HEAD", "misplaced HEAD element (first test)");
         assertEquals(doc.documentElement.firstChild.childNodes.length, 1, "wrong number of children in HEAD (first test)");
@@ -2481,11 +2492,12 @@
         doc.open();
         doc.write("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\"><title><\/title><span><script type=\"text/javascript\"><\/script><\/span>");
         doc.close();
-        assertEquals(doc.childNodes.length, 2, "wrong number of children in #document (first test)");
-        assertEquals(doc.firstChild.name, "HTML", "name wrong (second test)");
+        assertEquals(doc.childNodes.length, 2, "wrong number of children in #document (second test)");
+        assertEquals(doc.firstChild.name.toUpperCase(), "HTML", "name wrong (second test)"); // changed 2009-08-13 to add .toUpperCase() for HTML5 compat
         assertEquals(doc.firstChild.publicId, "-//W3C//DTD HTML 4.01 Transitional//EN", "publicId wrong (second test)");
         assertEquals(doc.firstChild.systemId, "http://www.w3.org/TR/html4/loose.dtd", "systemId wrong (second test)");
-        assertEquals(doc.firstChild.internalSubset, null, "internalSubset wrong (second test)");
+        if (('internalSubset' in doc.firstChild) || doc.firstChild.internalSubset)
+          assertEquals(doc.firstChild.internalSubset, null, "internalSubset wrong (second test)");
         assertEquals(doc.documentElement.childNodes.length, 2, "wrong number of children in HTML (second test)");
         assertEquals(doc.documentElement.firstChild.nodeName, "HEAD", "misplaced HEAD element (second test)");
         assertEquals(doc.documentElement.firstChild.childNodes.length, 1, "wrong number of children in HEAD (second test)");
@@ -2530,7 +2542,7 @@
       var down = 0;
       var button = doc.createElement("button");
       button.type = "button";
-      button.onclick = function () { up += 1; if (up < 10) button.click(); down += up; };
+      button.onclick = function () { up += 1; if (up < 10) button.click(); down += up; }; // not called
       button.addEventListener('test', function () { up += 1; var e = doc.createEvent("HTMLEvents"); e.initEvent('test', false, false); if (up < 20) button.dispatchEvent(e); down += up; }, false);
       var evt = doc.createEvent("HTMLEvents");
       evt.initEvent('test', false, false);
@@ -3101,23 +3113,25 @@
     },
     function () {
       // test 80: remove the iframes and the object
+      // (when fixing the test for http://dbaron.org/mozilla/visited-privacy,
+      // this section was flipped around so the linktest check is done first;
+      // this is to prevent the 'retry' from failing the second time since by
+      // then the kungFuDeathGrip has been nullified, if we do it first)
+      // first, check that the linktest is loaded
+      var a = document.links[1];
+      assert(!(a == null), "linktest was null");
+      assert(a.textContent == "YOU SHOULD NOT SEE THIS AT ALL", "linktest link couldn't be found"); // changed text when fixing http://dbaron.org/mozilla/visited-privacy
+      if (a.hasAttribute('class'))
+        return "retry"; // linktest onload didn't fire -- could be a networking issue, check that first
       assert(!(kungFuDeathGrip == null), "kungFuDeathGrip was null");
       assert(!(kungFuDeathGrip.parentNode == null), "kungFuDeathGrip.parentNode was null");
+      // ok, now remove the iframes
       kungFuDeathGrip.parentNode.removeChild(kungFuDeathGrip);
       kungFuDeathGrip = null;
       // check that the xhtml files worked right
       assert(notifications['xhtml.1'], "Script in XHTML didn't execute");
       assert(!notifications['xhtml.2'], "XML well-formedness error didn't stop script from executing");
       assert(!notifications['xhtml.3'], "Script executed despite having wrong namespace");
-      // while we're at it, check that the linktest is loaded
-      // since the other iframes have forcibly loaded by now, we assume that
-      // there's no way this can't have loaded by now
-      // (probably a safe bet)
-      var a = document.links[1];
-      assert(!(a == null), "linktest was null");
-      assert(a.textContent == "LINKTEST FAILED", "linktest link couldn't be found");
-      if (a.hasAttribute('class'))
-        return "retry"; // linktest onload didn't fire -- could be a networking issue, check that first
       return 5;
     },
 
@@ -3442,8 +3456,8 @@
       var elapsedTime = ((endTime - startTime) - (delay * tests.length)) / 1000;
       log += "Total elapsed time: " + elapsedTime.toFixed(2) + "s";
       if (errors == 0)
-        log += "No JS errors and no timing issues. Was the rendering pixel-for-pixel perfect too?";
-      
+        log += "\nNo JS errors and no timing issues.\nWas the rendering pixel-for-pixel perfect too?";
+
       if (window.layoutTestController) {
         if (score < 100)
           alert(log);
@@ -3477,7 +3491,7 @@
   <p id="result"><span id="score">JS</span><span id="slash" class="hidden">/</span><span>?</span></p>
   <!-- The following line is used in a number of the tests. It is done using document.write() to sidestep complaints of validity. -->
   <script type="text/javascript">document.write('<map name=""><area href="" shape="rect" coords="2,2,4,4" alt="<\'>"><iframe src="resources/acid3/empty.png">FAIL<\/iframe><iframe src="resources/acid3/empty.txt">FAIL<\/iframe><iframe src="resources/acid3/empty.html" id="selectors"><\/iframe><form action="" name="form"><input type=HIDDEN><\/form><table><tr><td><p><\/tbody> <\/table><\/map>');</script>
-  <p id="instructions"><!--#include virtual="resources/acid3/instructions.inc"--></p>
+  <p id="instructions">To pass the test,<span></span> a browser must use its default settings, the animation has to be smooth, the score has to end on 100/100, and the final page has to look exactly, pixel for pixel, like <a href="resources/acid3/reference.html">this reference rendering</a>.</p>
   <p id="remove-last-child-test">Scripting must be enabled to use this test.</p>
  </body>
 </html>
