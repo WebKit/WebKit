@@ -1,3 +1,28 @@
+2010-06-10  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix fast/forms/preserveFormDuringResidualStyle.html for HTML5 Parser.
+        https://bugs.webkit.org/show_bug.cgi?id=40454
+
+        This required exposing the HTMLParser which we definitely don't want to
+        do, but the good news is that it can go away when the HTMLParser goes
+        away.
+
+        No new tests because covered by fast/forms/preserve/FormDuringResidualStyle.html.
+
+        * dom/Tokenizer.h:
+        (WebCore::Tokenizer::htmlParser):
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::htmlParser):
+        * html/HTML5Tokenizer.h:
+        * html/HTML5TreeBuilder.h:
+        (WebCore::HTML5TreeBuilder::htmlParser):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::removedFromTree):
+        * html/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::htmlParser):
+
 2010-06-10  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.

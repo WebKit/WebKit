@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class HTMLDocument;
+class HTMLParser;
 class HTML5Lexer;
 class HTML5ScriptRunner;
 class HTML5TreeBuilder;
@@ -60,6 +61,9 @@ public:
     virtual void executeScriptsWaitingForStylesheets();
     virtual int lineNumber() const;
     virtual int columnNumber() const;
+    // FIXME: HTMLFormControlElement accesses the HTMLParser via this method.
+    // Remove this when the HTMLParser is no longer used.
+    virtual HTMLParser* htmlParser() const;
 
     // HTML5ScriptRunnerHost
     virtual void watchForLoad(CachedResource*);
