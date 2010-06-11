@@ -50,9 +50,9 @@ class SheriffIRCBotTest(unittest.TestCase):
         expected_stderr = 'MOCK: irc.post: "Only you can prevent forest fires." -- Smokey the Bear\n'
         OutputCapture().assert_outputs(self, run, args=["hi"], expected_stderr=expected_stderr)
 
-    def test_bogus(self):
-        expected_stderr = "MOCK: irc.post: mock_nick: Available commands: rollout, hi, restart, last-green-revision\n"
-        OutputCapture().assert_outputs(self, run, args=["bogus"], expected_stderr=expected_stderr)
+    def test_help(self):
+        expected_stderr = "MOCK: irc.post: mock_nick: Available commands: rollout, hi, help, restart, last-green-revision\n"
+        OutputCapture().assert_outputs(self, run, args=["help"], expected_stderr=expected_stderr)
 
     def test_lgr(self):
         expected_stderr = "MOCK: irc.post: mock_nick: http://trac.webkit.org/changeset/9479\n"

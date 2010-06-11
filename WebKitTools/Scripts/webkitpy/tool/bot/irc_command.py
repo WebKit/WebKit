@@ -75,8 +75,35 @@ class Rollout(IRCCommand):
                     tool.bugs.bug_url_for_bug_id(bug_id))
 
 
+class Help(IRCCommand):
+    def execute(self, nick, args, tool, sheriff):
+        return "%s: Available commands: %s" % (nick, ", ".join(commands.keys()))
+
+
 class Hi(IRCCommand):
     def execute(self, nick, args, tool, sheriff):
         quips = tool.bugs.quips()
         quips.append('"Only you can prevent forest fires." -- Smokey the Bear')
         return random.choice(quips)
+
+
+class Eliza(IRCCommand):
+    therapist = None
+
+    def __init__(self):
+        if not self.therapist:
+            import webkitpy.thirdparty.autoinstalled.eliza as eliza
+            Eliza.therapist = eliza.eliza()
+
+    def execute(self, nick, args, tool, sheriff):
+        return "%s: %s" % (nick, self.therapist.respond(" ".join(args)))
+
+
+# FIXME: Lame.  We should have an auto-registering CommandCenter.
+commands = {
+    "last-green-revision": LastGreenRevision,
+    "restart": Restart,
+    "rollout": Rollout,
+    "help": Help,
+    "hi": Hi,
+}

@@ -52,14 +52,6 @@ class _IRCThreadTearoff(IRCBotDelegate):
 
 
 class SheriffIRCBot(object):
-    # FIXME: Lame.  We should have an auto-registering CommandCenter.
-    commands = {
-        "last-green-revision": irc_command.LastGreenRevision,
-        "restart": irc_command.Restart,
-        "rollout": irc_command.Rollout,
-        "hi": irc_command.Hi,
-    }
-
     def __init__(self, tool, sheriff):
         self._tool = tool
         self._sheriff = sheriff
@@ -75,15 +67,13 @@ class SheriffIRCBot(object):
         tokenized_request = request.strip().split(" ")
         if not tokenized_request:
             return
-        command = self.commands.get(tokenized_request[0])
+        command = irc_command.commands.get(tokenized_request[0])
+        args = tokenized_request[1:]
         if not command:
-            self._tool.irc().post("%s: Available commands: %s" % (
-                                  nick, ", ".join(self.commands.keys())))
-            return
-        response = command().execute(nick,
-                                     tokenized_request[1:],
-                                     self._tool,
-                                     self._sheriff)
+            # Give the peoples someone to talk with.
+            command = irc_command.Eliza
+            args = tokenized_request
+        response = command().execute(nick, args, self._tool, self._sheriff)
         if response:
             self._tool.irc().post(response)
 

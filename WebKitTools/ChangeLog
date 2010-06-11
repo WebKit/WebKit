@@ -1,3 +1,18 @@
+2010-06-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        Make SheriffBot more chatty
+        https://bugs.webkit.org/show_bug.cgi?id=40463
+
+        People seem to like to talk to SheriffBot, so let's make him chat back.
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py: Added.
+        * Scripts/webkitpy/tool/bot/sheriffircbot.py:
+        * Scripts/webkitpy/tool/bot/sheriffircbot_unittest.py:
+
 2010-06-10  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Darin Adler.
