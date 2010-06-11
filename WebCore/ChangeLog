@@ -1,3 +1,29 @@
+2010-06-11  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Delete custom JSC bindings for bufferData, texImage2D and texSubImage2D
+        https://bugs.webkit.org/show_bug.cgi?id=40443
+
+        Deleted custom JSC bindings for bufferData, texImage2D and
+        texSubImage2D and fixed minor associated issues in code generator
+        and IDL. Updated fast/canvas/webgl/texImageTest-expected.txt,
+        which now runs as intended. Ran all layout tests, including WebGL
+        tests, in Safari.
+
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+         - Deleted custom bindings.
+        * bindings/scripts/CodeGeneratorJS.pm:
+         - Made overload helper functions static to fix compiler warnings.
+         - Added needed isObject check for overloads between object and non-object arguments.
+         - Added JSValue::encode to exception return path, needed on Leopard in particular.
+        * html/HTMLCanvasElement.idl:
+        * html/HTMLImageElement.idl:
+        * html/HTMLVideoElement.idl:
+         - Added GenerateNativeConverter extended attribute.
+        * html/canvas/WebGLRenderingContext.idl:
+         - Deleted #ifdefs for custom JSC bindings.
+
 2010-06-11  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, add KillRingNone.cpp until we can implement it.
