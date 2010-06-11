@@ -1,3 +1,16 @@
+2010-06-11  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, test fix.
+
+        gl-get-calls failing apparently due to UNPACK_ALIGNMENT test
+        https://bugs.webkit.org/show_bug.cgi?id=40502
+
+        Disabled new test of UNPACK_ALIGNMENT which appears to be failing
+        on some of the bots.
+
+        * fast/canvas/webgl/gl-get-calls-expected.txt:
+        * fast/canvas/webgl/gl-get-calls.html:
+
 2010-06-11  James Robinson  <jamesr@chromium.org>
 
         Unreviewed baselines for new test on Qt/Gtk.

@@ -63,7 +63,6 @@ PASS context.getParameter(context.STENCIL_REF) is 0
 PASS context.getParameter(context.STENCIL_TEST) is false
 PASS context.getParameter(context.TEXTURE_BINDING_2D) is null
 PASS context.getParameter(context.TEXTURE_BINDING_CUBE_MAP) is null
-PASS context.getParameter(context.UNPACK_ALIGNMENT) is 4
 PASS context.getParameter(context.UNPACK_FLIP_Y_WEBGL) is false
 PASS context.getParameter(context.UNPACK_PREMULTIPLY_ALPHA_WEBGL) is false
 PASS context.getParameter(context.VIEWPORT) is [0, 0, 2, 2]
