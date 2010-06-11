@@ -1,3 +1,10 @@
+2010-06-11  Dmitry Titov  <dimich@chromium.org>
+
+        Unreviewed, fixing Chromium test bots.
+
+        * platform/chromium/test_expectations.txt:
+        Adding MISSING expectation for the fast/css/nested-rounded-corners.html
+
 2010-06-11  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, test fix.
