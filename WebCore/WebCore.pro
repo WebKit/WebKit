@@ -590,6 +590,7 @@ SOURCES += \
     history/HistoryItem.cpp \
     history/qt/HistoryItemQt.cpp \
     history/PageCache.cpp \
+    html/AsyncImageResizer.cpp \
     html/Blob.cpp \
     html/canvas/CanvasGradient.cpp \
     html/canvas/CanvasPattern.cpp \
@@ -699,6 +700,7 @@ SOURCES += \
     html/HTMLUListElement.cpp \
     html/HTMLViewSourceDocument.cpp \
     html/ImageData.cpp \
+    html/ImageResizerThread.cpp \
     html/LabelsNodeList.cpp \
     html/PreloadScanner.cpp \
     html/StepRange.cpp \
@@ -1326,6 +1328,7 @@ HEADERS += \
     history/CachedPage.h \
     history/HistoryItem.h \
     history/PageCache.h \
+    html/AsyncImageResizer.h \
     html/Blob.h \
     html/canvas/CanvasGradient.h \
     html/canvas/CanvasPattern.h \
@@ -1437,6 +1440,7 @@ HEADERS += \
     html/HTMLVideoElement.h \
     html/HTMLViewSourceDocument.h \
     html/ImageData.h \
+    html/ImageResizerThread.h \
     html/LabelsNodeList.h \
     html/PreloadScanner.h \
     html/StepRange.h \

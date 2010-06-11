@@ -3513,6 +3513,10 @@
 		ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */; };
 		ABFE7E120D32FAF60066F4D2 /* MediaControlElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABFE7E100D32FAF50066F4D2 /* MediaControlElements.cpp */; };
 		ABFE7E130D32FAF60066F4D2 /* MediaControlElements.h in Headers */ = {isa = PBXBuildFile; fileRef = ABFE7E110D32FAF50066F4D2 /* MediaControlElements.h */; };
+		B0149E7D11A4B21500196A7B /* AsyncImageResizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0149E7911A4B21500196A7B /* AsyncImageResizer.cpp */; };
+		B0149E7E11A4B21500196A7B /* AsyncImageResizer.h in Headers */ = {isa = PBXBuildFile; fileRef = B0149E7A11A4B21500196A7B /* AsyncImageResizer.h */; };
+		B0149E7F11A4B21500196A7B /* ImageResizerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0149E7B11A4B21500196A7B /* ImageResizerThread.cpp */; };
+		B0149E8011A4B21500196A7B /* ImageResizerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = B0149E7C11A4B21500196A7B /* ImageResizerThread.h */; };
 		B20111070AB7740500DB0E68 /* JSSVGAElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B20111050AB7740500DB0E68 /* JSSVGAElement.cpp */; };
 		B20111080AB7740500DB0E68 /* JSSVGAElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B20111060AB7740500DB0E68 /* JSSVGAElement.h */; };
 		B21127A60B3186770009BE53 /* JSSVGPODTypeWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = B21127A50B3186770009BE53 /* JSSVGPODTypeWrapper.h */; };
@@ -8863,6 +8867,10 @@
 		ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderMenuList.h; sourceTree = "<group>"; };
 		ABFE7E100D32FAF50066F4D2 /* MediaControlElements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaControlElements.cpp; sourceTree = "<group>"; };
 		ABFE7E110D32FAF50066F4D2 /* MediaControlElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControlElements.h; sourceTree = "<group>"; };
+		B0149E7911A4B21500196A7B /* AsyncImageResizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncImageResizer.cpp; sourceTree = "<group>"; };
+		B0149E7A11A4B21500196A7B /* AsyncImageResizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncImageResizer.h; sourceTree = "<group>"; };
+		B0149E7B11A4B21500196A7B /* ImageResizerThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageResizerThread.cpp; sourceTree = "<group>"; };
+		B0149E7C11A4B21500196A7B /* ImageResizerThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageResizerThread.h; sourceTree = "<group>"; };
 		B20111050AB7740500DB0E68 /* JSSVGAElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAElement.cpp; sourceTree = "<group>"; };
 		B20111060AB7740500DB0E68 /* JSSVGAElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGAElement.h; sourceTree = "<group>"; };
 		B21127A50B3186770009BE53 /* JSSVGPODTypeWrapper.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGPODTypeWrapper.h; sourceTree = "<group>"; };
@@ -13395,6 +13403,8 @@
 			isa = PBXGroup;
 			children = (
 				49484FAE102CF01E00187DD3 /* canvas */,
+				B0149E7911A4B21500196A7B /* AsyncImageResizer.cpp */,
+				B0149E7A11A4B21500196A7B /* AsyncImageResizer.h */,
 				2EAFAF0B10E2AF2D007ED3D6 /* Blob.cpp */,
 				2EAFAF0C10E2AF2D007ED3D6 /* Blob.h */,
 				2EAFAF0D10E2AF2D007ED3D6 /* Blob.idl */,
@@ -13702,6 +13712,8 @@
 				A77979130D6B9D0C003851B9 /* ImageData.cpp */,
 				A77979140D6B9D0C003851B9 /* ImageData.h */,
 				A77979150D6B9D0C003851B9 /* ImageData.idl */,
+				B0149E7B11A4B21500196A7B /* ImageResizerThread.cpp */,
+				B0149E7C11A4B21500196A7B /* ImageResizerThread.h */,
 				A456FA2411AD4A830020B420 /* LabelsNodeList.cpp */,
 				A456FA2511AD4A830020B420 /* LabelsNodeList.h */,
 				E446139B0CD6331000FADA75 /* MediaError.h */,
@@ -16915,6 +16927,7 @@
 				BCFB2F77097A2E1A00BA703D /* Arena.h in Headers */,
 				49EECDE310503C2400099FAB /* ArrayBuffer.h in Headers */,
 				49EECDE010503C2400099FAB /* ArrayBufferView.h in Headers */,
+				B0149E7E11A4B21500196A7B /* AsyncImageResizer.h in Headers */,
 				B2C3DA1F0D006C1D00EF6F26 /* AtomicString.h in Headers */,
 				0FC705210EB1815600B90AD8 /* AtomicStringHash.h in Headers */,
 				B2C3DA200D006C1D00EF6F26 /* AtomicStringImpl.h in Headers */,
@@ -18133,6 +18146,7 @@
 				1A820D920A13EBA600AF843C /* ImageDocument.h in Headers */,
 				089582560E857A7E00F82C83 /* ImageLoader.h in Headers */,
 				BC7F44A80B9E324E00A9D081 /* ImageObserver.h in Headers */,
+				B0149E8011A4B21500196A7B /* ImageResizerThread.h in Headers */,
 				B27535710B053814002CE64F /* ImageSource.h in Headers */,
 				4B3480940EEF50D400AC1B41 /* ImageSourceCG.h in Headers */,
 				316FE1180E6E1DA700BF6088 /* ImplicitAnimation.h in Headers */,
@@ -19761,6 +19775,7 @@
 				BCFB2F76097A2E1A00BA703D /* Arena.cpp in Sources */,
 				49EECDE210503C2400099FAB /* ArrayBuffer.cpp in Sources */,
 				49EECDDF10503C2400099FAB /* ArrayBufferView.cpp in Sources */,
+				B0149E7D11A4B21500196A7B /* AsyncImageResizer.cpp in Sources */,
 				A8C4A80E09D563270003AC8D /* Attr.cpp in Sources */,
 				A8C4A80C09D563270003AC8D /* Attribute.cpp in Sources */,
 				934F71380D5A6EFF00018D69 /* AuthenticationChallengeBase.cpp in Sources */,
@@ -20454,6 +20469,7 @@
 				1A820D910A13EBA600AF843C /* ImageDocument.cpp in Sources */,
 				089582550E857A7E00F82C83 /* ImageLoader.cpp in Sources */,
 				B275357B0B053814002CE64F /* ImageMac.mm in Sources */,
+				B0149E7F11A4B21500196A7B /* ImageResizerThread.cpp in Sources */,
 				B275355F0B053814002CE64F /* ImageSourceCG.cpp in Sources */,
 				4B3480930EEF50D400AC1B41 /* ImageSourceCGMac.mm in Sources */,
 				316FE1170E6E1DA700BF6088 /* ImplicitAnimation.cpp in Sources */,

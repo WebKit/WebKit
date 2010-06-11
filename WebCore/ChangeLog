@@ -1,3 +1,37 @@
+2010-06-11  Sterling Swigart  <sswigart@google.com>
+
+        Reviewed by Dmitry Titov.
+
+        Added AsyncImageResizer and ImageResizerThread classes, which after further
+        patches will be capable of resizing images.
+        https://bugs.webkit.org/show_bug.cgi?id=40018
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/AsyncImageResizer.cpp: Added.
+        (WebCore::AsyncImageResizer::create):
+        (WebCore::AsyncImageResizer::AsyncImageResizer):
+        (WebCore::AsyncImageResizer::~AsyncImageResizer):
+        (WebCore::AsyncImageResizer::notifyFinished):
+        * html/AsyncImageResizer.h: Added.
+        (WebCore::AsyncImageResizer::CallbackInfo::CallbackInfo):
+        (WebCore::AsyncImageResizer::):
+        (WebCore::AsyncImageResizer::resizeComplete):
+        (WebCore::AsyncImageResizer::resizeError):
+        * html/ImageResizerThread.cpp: Added.
+        (WebCore::returnBlobOrError):
+        (WebCore::ImageResizerThread::start):
+        (WebCore::ImageResizerThread::ImageResizerThread):
+        (WebCore::ImageResizerThread::~ImageResizerThread):
+        (WebCore::ImageResizerThread::imageResizerThreadStart):
+        (WebCore::ImageResizerThread::imageResizerThread):
+        * html/ImageResizerThread.h: Added.
+
 2010-06-11  Steve Block  <steveblock@google.com>
 
         Reviewed by Alexey Proskuryakov.

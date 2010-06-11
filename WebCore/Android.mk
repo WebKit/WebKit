@@ -241,6 +241,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	\
 	history/android/HistoryItemAndroid.cpp \
 	\
+	html/AsyncImageResizer.cpp \
 	html/Blob.cpp \
 	html/CollectionCache.cpp \
 	html/DOMFormData.cpp \
@@ -267,6 +268,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/HTMLTokenizer.cpp \
 	html/HTMLViewSourceDocument.cpp \
 	html/ImageData.cpp \
+	html/ImageResizerThread.cpp \
 	html/PreloadScanner.cpp \
 	html/TimeRanges.cpp \
 	html/ValidityState.cpp \

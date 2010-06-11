@@ -30845,6 +30845,14 @@
 			Name="html"
 			>
 			<File
+				RelativePath="..\html\AsyncImageResizer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\AsyncImageResizer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\Blob.cpp"
 				>
 			</File>
@@ -35346,6 +35354,14 @@
 			</File>
 			<File
 				RelativePath="..\html\ImageData.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\ImageResizerThread.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\ImageResizerThread.h"
 				>
 			</File>
 			<File
