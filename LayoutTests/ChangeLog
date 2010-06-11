@@ -1,3 +1,16 @@
+2010-06-10  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Fix Bug 40452: REGRESSION: printing is broken if stylesheet has @page
+        https://bugs.webkit.org/show_bug.cgi?id=40452
+
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/printing/page-rule-in-media-query-expected.checksum: Added.
+        * platform/mac/printing/page-rule-in-media-query-expected.png: Added.
+        * platform/mac/printing/page-rule-in-media-query-expected.txt: Added.
+        * printing/page-rule-in-media-query.html: Added.
+
 2010-06-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

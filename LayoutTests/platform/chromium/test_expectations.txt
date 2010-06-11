@@ -310,8 +310,9 @@ WONTFIX LINUX WIN : fast/replaced/pdf-as-image.html = FAIL
 
 // These tests try to print a PDF file as the expected result.  I don't think
 // we plan on supporting this anytime soon.
-WONTFIX SKIP : printing/media-queries-print.html = PASS
 WONTFIX SKIP : printing/compositing-layer-printing.html = PASS
+WONTFIX SKIP : printing/media-queries-print.html = PASS
+WONTFIX SKIP : printing/page-rule-in-media-query.html = PASS
 
 // Chrome doesn't call the willCacheResponse callback (a method
 // of ResourceHandleClient).  That function is Mac-specific.
