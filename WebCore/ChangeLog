@@ -1,3 +1,15 @@
+2010-06-10  Nikita Vasilyev  <me@elv1s.ru>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Make a close brace in Styles pane selectable.
+        https://bugs.webkit.org/show_bug.cgi?id=40157
+
+        * inspector/front-end/inspector.css:
+        (.styles-selector):
+        (.styles-section .properties li):
+        (.styles-section):
+
 2010-06-11  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
