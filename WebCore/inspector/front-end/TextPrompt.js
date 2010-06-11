@@ -242,7 +242,7 @@ WebInspector.TextPrompt.prototype = {
                 wordPrefixLength = commonPrefix.length;
 
                 if (selection.isCollapsed)
-                    var completionText = completions[1];
+                    var completionText = completions[0];
                 else {
                     var currentText = fullWordRange.toString();
 

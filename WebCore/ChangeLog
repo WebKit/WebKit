@@ -1,3 +1,13 @@
+2010-06-11  Nikita Vasilyev  <me@elv1s.ru>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: When completing using a tab key, select very first value, not a second.
+        https://bugs.webkit.org/show_bug.cgi?id=40409
+
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt.prototype._completionsReady):
+
 2010-06-10  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Shinichiro Hamaji.
