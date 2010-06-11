@@ -153,7 +153,7 @@ void HTML5Tokenizer::attemptToEnd()
     // finish() indicates we will not receive any more data. If we are waiting on
     // an external script to load, we can't finish parsing quite yet.
 
-    if (inWrite() || isWaitingForScripts()) {
+    if (inWrite() || isWaitingForScripts() || executingScript()) {
         m_endWasDelayed = true;
         return;
     }
