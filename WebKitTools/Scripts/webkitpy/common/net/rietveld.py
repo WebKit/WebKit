@@ -51,6 +51,10 @@ class Rietveld(object):
         if not message:
             raise ScriptError("Rietveld requires a message.")
 
+        # Rietveld has a 100 character limit on message length.
+        if len(message) > 100:
+            message = message[:100]
+
         args = [
             # First argument is empty string to mimic sys.argv.
             "",
