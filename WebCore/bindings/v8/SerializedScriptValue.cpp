@@ -38,6 +38,7 @@
 #include "FileList.h"
 #include "ImageData.h"
 #include "SharedBuffer.h"
+#include "V8Binding.h"
 #include "V8Blob.h"
 #include "V8File.h"
 #include "V8FileList.h"
@@ -1010,6 +1011,52 @@ private:
 };
 
 } // namespace
+
+void SerializedScriptValue::deserializeAndSetProperty(v8::Handle<v8::Object> object, const char* propertyName,
+                                                      v8::PropertyAttribute attribute, SerializedScriptValue* value)
+{
+    if (!value)
+        return;
+    v8::Handle<v8::Value> deserialized = value->deserialize();
+    object->ForceSet(v8::String::NewSymbol(propertyName), deserialized, attribute);
+}
+
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(v8::Handle<v8::Value> value, bool& didThrow)
+{
+    return adoptRef(new SerializedScriptValue(value, didThrow));
+}
+
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(v8::Handle<v8::Value> value)
+{
+    bool didThrow;
+    return adoptRef(new SerializedScriptValue(value, didThrow));
+}
+
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::createFromWire(String data)
+{
+    return adoptRef(new SerializedScriptValue(data, WireData));
+}
+
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(String data)
+{
+    return adoptRef(new SerializedScriptValue(data, StringValue));
+}
+
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create()
+{
+    return adoptRef(new SerializedScriptValue());
+}
+
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::release()
+{
+    RefPtr<SerializedScriptValue> result = adoptRef(new SerializedScriptValue(m_data, WireData));
+    m_data = String();
+    return result.release();
+}
+
+SerializedScriptValue::SerializedScriptValue()
+{
+}
 
 SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value, bool& didThrow)
 {
