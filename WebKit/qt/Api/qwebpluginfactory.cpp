@@ -63,7 +63,7 @@
 /*!
     \class QWebPluginFactory::Plugin
     \since 4.4
-    \brief the QWebPluginFactory::Plugin structure describes the properties of a plugin a QWebPluginFactory can create.
+    \brief The QWebPluginFactory::Plugin structure describes the properties of a plugin a QWebPluginFactory can create.
 
     \inmodule QtWebKit
 */
@@ -147,7 +147,7 @@ QWebPluginFactory::~QWebPluginFactory()
     supported plugins the factory can create.
 
     \note Currently, this function is only called when JavaScript programs
-    access the global \c plugins or \c mimetypes objects. 
+    access the global \c plugins or \c mimetypes objects.
 */
 
 /*!
