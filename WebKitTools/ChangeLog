@@ -1,3 +1,15 @@
+2010-06-10  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix the Windows buildbot when WebKitAuxiliaryLibs.zip cannot be found on our server.
+        
+        Robustify update-webkit-auxiliary-libs to be able to handle the case when WebKitAuxiliaryLibs.zip doesn't exist,
+        and allow the script to fall back to an existing file, only failing if there is no fallback file. Also switch to checking
+        WEXITSTATUS on $result instead of just comparing $result to 0.
+
+        * Scripts/update-webkit-auxiliary-libs:
+
 2010-06-10  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

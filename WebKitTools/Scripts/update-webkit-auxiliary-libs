@@ -31,11 +31,12 @@
 use strict;
 use warnings;
 
-use HTTP::Date qw(str2time);
 use File::Find;
-use File::Temp ();
 use File::Spec;
+use File::Temp ();
 use FindBin;
+use HTTP::Date qw(str2time);
+use POSIX;
 use lib $FindBin::Bin;
 use webkitdirs;
 
@@ -58,9 +59,21 @@ my $tmpDir = File::Spec->rel2abs(File::Temp::tempdir("webkitlibsXXXXXXX", TMPDIR
 print "Checking Last-Modified date of $zipFile...\n";
 
 my $result = system "curl -s -I $auxiliaryLibsURL | grep Last-Modified > \"$tmpDir/$file.headers\"";
-print STDERR "Couldn't check Last-Modified date of new $zipFile.\n" if $result;
 
-if (!$result && open NEW, "$tmpDir/$file.headers") {
+if (WEXITSTATUS($result)) {
+    print STDERR "Couldn't check Last-Modified date of new $zipFile.\n";
+    print STDERR "Please ensure that $auxiliaryLibsURL is reachable.\n";
+
+    if (! -f "$webkitLibrariesDir/$file.headers") {
+        print STDERR "Unable to check Last-Modified date and no version of $file to fall back to.\n";
+        exit 1;
+    }
+
+    print STDERR "Falling back to existing version of $file.\n";
+    exit 0;
+}
+
+if (open NEW, "$tmpDir/$file.headers") {
     my $new = lastModifiedToUnixTime(<NEW>);
     close NEW;
 
