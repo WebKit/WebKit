@@ -1100,6 +1100,7 @@ SET(WebCore_SOURCES
     page/GeolocationPositionCache.cpp
     page/History.cpp
     page/Location.cpp
+    page/MemoryInfo.cpp
     page/MouseEventWithHitTestResults.cpp
     page/Navigator.cpp
     page/NavigatorBase.cpp
@@ -1136,6 +1137,7 @@ SET(WebCore_SOURCES
     platform/FileChooser.cpp
     platform/GeolocationService.cpp
     platform/KURL.cpp
+    platform/KillRingNone.cpp
     platform/Length.cpp
     platform/LinkHash.cpp
     platform/Logging.cpp
@@ -1370,7 +1372,7 @@ SET(WebCore_SOURCES
     storage/DatabaseThread.cpp
     storage/DatabaseTracker.cpp
     storage/IDBAny.cpp
-    storage/IDBDatabase.cpp
+    storage/IDBDatabaseImpl.cpp
     storage/IDBDatabaseRequest.cpp
     storage/IDBErrorEvent.cpp
     storage/IDBEvent.cpp

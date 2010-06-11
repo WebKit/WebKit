@@ -1,3 +1,14 @@
+2010-06-11  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [EFL] Build fix: remove unneeded file (npapi.cpp) and add
+        other files that got added to the tree.
+        http://webkit.org/b/40331
+
+        * CMakeLists.txt:
+        * CMakeListsEfl.txt:
+
 2010-06-11  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Eric Seidel.

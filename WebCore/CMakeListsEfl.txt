@@ -10,7 +10,7 @@ LIST(APPEND WebCore_INCLUDE_DIRECTORIES
   "${WEBCORE_DIR}/platform/text/efl"
   "${WEBCORE_DIR}/platform/graphics/efl"
   "${WEBCORE_DIR}/page/efl"
-  "${WEBCORE_DIR}/acessibility/efl"
+  "${WEBCORE_DIR}/accessibility/efl"
   "${WEBKIT_DIR}/efl/WebCoreSupport"
   "${WEBKIT_DIR}/efl/ewk"
 )
@@ -70,6 +70,7 @@ IF (WTF_PLATFORM_CAIRO)
     platform/graphics/cairo/FontCairo.cpp
     platform/graphics/cairo/FontCustomPlatformData.cpp
     platform/graphics/cairo/FontPlatformDataCairo.cpp
+    platform/graphics/cairo/GOwnPtrCairo.cpp
     platform/graphics/cairo/GlyphPageTreeNodeCairo.cpp
     platform/graphics/cairo/GradientCairo.cpp
     platform/graphics/cairo/GraphicsContextCairo.cpp
