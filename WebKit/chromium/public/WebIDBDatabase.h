@@ -33,33 +33,44 @@ namespace WebKit {
 
 class WebFrame;
 class WebIDBCallbacks;
+class WebIDBObjectStore;
 
 // See comment in WebIndexedDatabase for a high level overview of these classes.
 class WebIDBDatabase {
 public:
     virtual ~WebIDBDatabase() { }
 
-    virtual WebString name()
+    virtual WebString name() const
     {
         WEBKIT_ASSERT_NOT_REACHED();
         return WebString();
     }
-    virtual WebString description()
+    virtual WebString description() const
     {
         WEBKIT_ASSERT_NOT_REACHED();
         return WebString();
     }
-    virtual WebString version()
+    virtual WebString version() const
     {
         WEBKIT_ASSERT_NOT_REACHED();
         return WebString();
     }
-    virtual WebDOMStringList objectStores()
+    virtual WebDOMStringList objectStores() const
     {
         WEBKIT_ASSERT_NOT_REACHED();
         return WebDOMStringList();
     }
     virtual void createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, WebIDBCallbacks*)
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+    }
+    // Transfers ownership of the WebIDBObjectStore to the caller.
+    virtual WebIDBObjectStore* objectStore(const WebString& name, unsigned short mode)
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return 0;
+    }
+    virtual void removeObjectStore(const WebString& name, WebIDBCallbacks* callbacks)
     {
         WEBKIT_ASSERT_NOT_REACHED();
     }

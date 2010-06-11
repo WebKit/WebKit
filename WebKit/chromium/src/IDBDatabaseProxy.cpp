@@ -28,10 +28,12 @@
 
 #include "DOMStringList.h"
 #include "IDBCallbacks.h"
+#include "IDBObjectStoreProxy.h"
 #include "WebFrameImpl.h"
 #include "WebIDBCallbacksImpl.h"
 #include "WebIDBDatabase.h"
 #include "WebIDBDatabaseError.h"
+#include "WebIDBObjectStore.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -51,22 +53,22 @@ IDBDatabaseProxy::~IDBDatabaseProxy()
 {
 }
 
-String IDBDatabaseProxy::name()
+String IDBDatabaseProxy::name() const
 {
     return m_webIDBDatabase->name();
 }
 
-String IDBDatabaseProxy::description()
+String IDBDatabaseProxy::description() const
 {
     return m_webIDBDatabase->description();
 }
 
-String IDBDatabaseProxy::version()
+String IDBDatabaseProxy::version() const
 {
     return m_webIDBDatabase->version();
 }
 
-PassRefPtr<DOMStringList> IDBDatabaseProxy::objectStores()
+PassRefPtr<DOMStringList> IDBDatabaseProxy::objectStores() const
 {
     return m_webIDBDatabase->objectStores();
 }
@@ -74,6 +76,19 @@ PassRefPtr<DOMStringList> IDBDatabaseProxy::objectStores()
 void IDBDatabaseProxy::createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks> callbacks)
 {
     m_webIDBDatabase->createObjectStore(name, keyPath, autoIncrement, new WebIDBCallbacksImpl(callbacks));
+}
+
+PassRefPtr<IDBObjectStore> IDBDatabaseProxy::objectStore(const String& name, unsigned short mode)
+{
+    WebKit::WebIDBObjectStore* objectStore = m_webIDBDatabase->objectStore(name, mode);
+    if (!objectStore)
+        return 0;
+    return IDBObjectStoreProxy::create(objectStore);
+}
+
+void IDBDatabaseProxy::removeObjectStore(const String& name, PassRefPtr<IDBCallbacks> callbacks)
+{
+    m_webIDBDatabase->removeObjectStore(name, new WebIDBCallbacksImpl(callbacks));
 }
 
 } // namespace WebCore

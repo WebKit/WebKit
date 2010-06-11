@@ -58,63 +58,68 @@ PassRefPtr<DOMStringList> IDBObjectStoreRequest::indexNames() const
     return m_objectStore->indexNames();
 }
 
-PassRefPtr<IDBRequest> IDBObjectStoreRequest::get(PassRefPtr<SerializedScriptValue> key)
+PassRefPtr<IDBRequest> IDBObjectStoreRequest::get(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> key)
 {
     // FIXME: implement
+    UNUSED_PARAM(context);
     UNUSED_PARAM(key);
     return 0;
 }
 
-PassRefPtr<IDBRequest> IDBObjectStoreRequest::add(PassRefPtr<SerializedScriptValue> value, PassRefPtr<SerializedScriptValue> key)
+PassRefPtr<IDBRequest> IDBObjectStoreRequest::add(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, PassRefPtr<SerializedScriptValue> key)
 {
     // FIXME: implement
+    UNUSED_PARAM(context);
     UNUSED_PARAM(value);
     UNUSED_PARAM(key);
     return 0;
 }
 
-PassRefPtr<IDBRequest> IDBObjectStoreRequest::modify(PassRefPtr<SerializedScriptValue> value, PassRefPtr<SerializedScriptValue> key)
+PassRefPtr<IDBRequest> IDBObjectStoreRequest::modify(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, PassRefPtr<SerializedScriptValue> key)
 {
     // FIXME: implement
+    UNUSED_PARAM(context);
     UNUSED_PARAM(value);
     UNUSED_PARAM(key);
     return 0;
 }
 
-PassRefPtr<IDBRequest> IDBObjectStoreRequest::addOrModify(PassRefPtr<SerializedScriptValue> value, PassRefPtr<SerializedScriptValue> key)
+PassRefPtr<IDBRequest> IDBObjectStoreRequest::addOrModify(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, PassRefPtr<SerializedScriptValue> key)
 {
     // FIXME: implement
+    UNUSED_PARAM(context);
     UNUSED_PARAM(value);
     UNUSED_PARAM(key);
     return 0;
 }
 
-PassRefPtr<IDBRequest> IDBObjectStoreRequest::remove(PassRefPtr<SerializedScriptValue> key)
+PassRefPtr<IDBRequest> IDBObjectStoreRequest::remove(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> key)
 {
     // FIXME: implement
+    UNUSED_PARAM(context);
     UNUSED_PARAM(key);
     return 0;
 }
 
-PassRefPtr<IDBRequest> IDBObjectStoreRequest::createIndex(const String& name, const String& keyPath, bool unique) const
+PassRefPtr<IDBRequest> IDBObjectStoreRequest::createIndex(ScriptExecutionContext* context, const String& name, const String& keyPath, bool unique)
 {
-    // FIXME: Implement.
-    UNUSED_PARAM(name);
-    UNUSED_PARAM(keyPath);
-    UNUSED_PARAM(unique);
-    return 0;
+    RefPtr<IDBRequest> request = IDBRequest::create(context, m_this);
+    m_objectStore->createIndex(name, keyPath, unique, request);
+    return request;
 }
 
-PassRefPtr<IDBIndexRequest> IDBObjectStoreRequest::index(const String& name) const
+PassRefPtr<IDBIndexRequest> IDBObjectStoreRequest::index(const String& name)
 {
-    return IDBIndexRequest::create(m_objectStore->index(name));
+    RefPtr<IDBIndex> index = m_objectStore->index(name);
+    ASSERT(index); // FIXME: If this is null, we should raise a NOT_FOUND_ERR.
+    return IDBIndexRequest::create(index.release());
 }
 
-PassRefPtr<IDBRequest> IDBObjectStoreRequest::removeIndex(const String& name) const
+PassRefPtr<IDBRequest> IDBObjectStoreRequest::removeIndex(ScriptExecutionContext* context, const String& name)
 {
-    // FIXME: Implement.
-    UNUSED_PARAM(name);
-    return 0;
+    RefPtr<IDBRequest> request = IDBRequest::create(context, m_this);
+    m_objectStore->removeIndex(name, request);
+    return request;
 }
 
 } // namespace WebCore

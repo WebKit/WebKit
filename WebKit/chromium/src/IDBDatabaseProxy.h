@@ -42,12 +42,16 @@ public:
     static PassRefPtr<IDBDatabase> create(PassOwnPtr<WebKit::WebIDBDatabase>);
     virtual ~IDBDatabaseProxy();
 
-    virtual String name();
-    virtual String description();
-    virtual String version();
-    virtual PassRefPtr<DOMStringList> objectStores();
+    virtual String name() const;
+    virtual String description() const;
+    virtual String version() const;
+    virtual PassRefPtr<DOMStringList> objectStores() const;
+
+    // FIXME: Add transaction and setVersion.
+
     virtual void createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks>);
-    // FIXME: Add other methods.
+    virtual PassRefPtr<IDBObjectStore> objectStore(const String& name, unsigned short mode);
+    virtual void removeObjectStore(const String& name, PassRefPtr<IDBCallbacks>);
 
 private:
     IDBDatabaseProxy(PassOwnPtr<WebKit::WebIDBDatabase>);

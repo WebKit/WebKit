@@ -27,8 +27,6 @@
 #define IDBObjectStore_h
 
 #include "PlatformString.h"
-#include "StringHash.h"
-#include <wtf/HashMap.h>
 #include <wtf/Threading.h>
 
 #if ENABLE(INDEXED_DATABASE)
@@ -46,6 +44,7 @@ public:
     virtual String name() const = 0;
     virtual String keyPath() const = 0;
     virtual PassRefPtr<DOMStringList> indexNames() const = 0;
+
     virtual void createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks>) = 0;
     virtual PassRefPtr<IDBIndex> index(const String& name) = 0;
     virtual void removeIndex(const String& name, PassRefPtr<IDBCallbacks>) = 0;

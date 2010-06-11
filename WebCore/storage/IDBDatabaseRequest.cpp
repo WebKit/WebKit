@@ -27,6 +27,7 @@
 #include "IDBDatabaseRequest.h"
 
 #include "IDBAny.h"
+#include "IDBObjectStoreRequest.h"
 #include "IDBRequest.h"
 #include "IndexedDatabase.h"
 #include "ScriptExecutionContext.h"
@@ -35,8 +36,8 @@
 
 namespace WebCore {
 
-IDBDatabaseRequest::IDBDatabaseRequest(PassRefPtr<IDBDatabase> idbDatabase)
-    : m_idbDatabase(idbDatabase)
+IDBDatabaseRequest::IDBDatabaseRequest(PassRefPtr<IDBDatabase> database)
+    : m_database(database)
 {
     m_this = IDBAny::create();
     m_this->set(this);
@@ -48,13 +49,22 @@ IDBDatabaseRequest::~IDBDatabaseRequest()
 
 PassRefPtr<IDBRequest> IDBDatabaseRequest::createObjectStore(ScriptExecutionContext* context, const String& name, const String& keyPath, bool autoIncrement)
 {
-    if (!context->isDocument()) {
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-
     RefPtr<IDBRequest> request = IDBRequest::create(context, m_this);
-    m_idbDatabase->createObjectStore(name, keyPath, autoIncrement, request);
+    m_database->createObjectStore(name, keyPath, autoIncrement, request);
+    return request;
+}
+
+PassRefPtr<IDBObjectStoreRequest> IDBDatabaseRequest::objectStore(const String& name, unsigned short mode)
+{
+    RefPtr<IDBObjectStore> objectStore = m_database->objectStore(name, mode);
+    ASSERT(objectStore); // FIXME: If this is null, we should raise a NOT_FOUND_ERR.
+    return IDBObjectStoreRequest::create(objectStore.release());
+}
+
+PassRefPtr<IDBRequest> IDBDatabaseRequest::removeObjectStore(ScriptExecutionContext* context, const String& name)
+{
+    RefPtr<IDBRequest> request = IDBRequest::create(context, m_this);
+    m_database->removeObjectStore(name, request);
     return request;
 }
 

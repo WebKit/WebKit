@@ -35,18 +35,24 @@ namespace WebCore { class IDBObjectStore; }
 
 namespace WebKit {
 
+class WebIDBIndex;
+
 // See comment in WebIndexedObjectStore for a high level overview these classes.
 class WebIDBObjectStoreImpl : public WebIDBObjectStore {
 public:
-    WebIDBObjectStoreImpl(WTF::PassRefPtr<WebCore::IDBObjectStore> idbObjectStore);
+    WebIDBObjectStoreImpl(WTF::PassRefPtr<WebCore::IDBObjectStore> objectStore);
     virtual ~WebIDBObjectStoreImpl();
 
     virtual WebString name() const;
     virtual WebString keyPath() const;
-    // FIXME: add index methods.
+    virtual WebDOMStringList indexNames() const;
+
+    virtual void createIndex(const WebString& name, const WebString& keyPath, bool unique, WebIDBCallbacks* callbacks);
+    virtual WebIDBIndex* index(const WebString& name);
+    virtual void removeIndex(const WebString& name, WebIDBCallbacks* callbacks);
 
  private:
-    WTF::RefPtr<WebCore::IDBObjectStore> m_idbObjectStore;
+    WTF::RefPtr<WebCore::IDBObjectStore> m_objectStore;
 };
 
 } // namespace WebKit

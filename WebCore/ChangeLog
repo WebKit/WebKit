@@ -1,3 +1,51 @@
+2010-06-10  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Implement more of IndexedDB's Indexes and ObjectStores
+        https://bugs.webkit.org/show_bug.cgi?id=40424
+
+        Clean up both of these classes a bit and add create/open/remove
+        methods as needed.
+
+        Tests in a future patch (promise).
+
+        * storage/IDBDatabase.h:
+        * storage/IDBDatabaseImpl.cpp:
+        (WebCore::IDBDatabaseImpl::objectStores):
+        (WebCore::IDBDatabaseImpl::createObjectStore):
+        (WebCore::IDBDatabaseImpl::objectStore):
+        (WebCore::IDBDatabaseImpl::removeObjectStore):
+        * storage/IDBDatabaseImpl.h:
+        (WebCore::IDBDatabaseImpl::name):
+        (WebCore::IDBDatabaseImpl::description):
+        (WebCore::IDBDatabaseImpl::version):
+        * storage/IDBDatabaseRequest.cpp:
+        (WebCore::IDBDatabaseRequest::IDBDatabaseRequest):
+        (WebCore::IDBDatabaseRequest::createObjectStore):
+        (WebCore::IDBDatabaseRequest::objectStore):
+        (WebCore::IDBDatabaseRequest::removeObjectStore):
+        * storage/IDBDatabaseRequest.h:
+        (WebCore::IDBDatabaseRequest::create):
+        (WebCore::IDBDatabaseRequest::name):
+        (WebCore::IDBDatabaseRequest::description):
+        (WebCore::IDBDatabaseRequest::version):
+        (WebCore::IDBDatabaseRequest::objectStores):
+        * storage/IDBDatabaseRequest.idl:
+        * storage/IDBObjectStore.h:
+        * storage/IDBObjectStoreImpl.h:
+        * storage/IDBObjectStoreRequest.cpp:
+        (WebCore::IDBObjectStoreRequest::get):
+        (WebCore::IDBObjectStoreRequest::add):
+        (WebCore::IDBObjectStoreRequest::modify):
+        (WebCore::IDBObjectStoreRequest::addOrModify):
+        (WebCore::IDBObjectStoreRequest::remove):
+        (WebCore::IDBObjectStoreRequest::createIndex):
+        (WebCore::IDBObjectStoreRequest::index):
+        (WebCore::IDBObjectStoreRequest::removeIndex):
+        * storage/IDBObjectStoreRequest.h:
+        * storage/IDBObjectStoreRequest.idl:
+
 2010-06-11  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

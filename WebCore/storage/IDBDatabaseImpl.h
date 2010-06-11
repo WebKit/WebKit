@@ -42,11 +42,14 @@ public:
     virtual ~IDBDatabaseImpl();
 
     // Implements IDBDatabase
-    virtual String name() { return m_name; }
-    virtual String description() { return m_description; }
-    virtual String version() { return m_version; }
-    virtual PassRefPtr<DOMStringList> objectStores();
+    virtual String name() const { return m_name; }
+    virtual String description() const { return m_description; }
+    virtual String version() const { return m_version; }
+    virtual PassRefPtr<DOMStringList> objectStores() const;
+
     virtual void createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks>);
+    virtual PassRefPtr<IDBObjectStore> objectStore(const String& name, unsigned short mode);
+    virtual void removeObjectStore(const String& name, PassRefPtr<IDBCallbacks>);
 
 private:
     IDBDatabaseImpl(const String& name, const String& description, const String& version);

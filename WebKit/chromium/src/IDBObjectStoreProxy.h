@@ -48,6 +48,7 @@ public:
     virtual String name() const;
     virtual String keyPath() const;
     virtual PassRefPtr<DOMStringList> indexNames() const;
+
     virtual void createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks>);
     virtual PassRefPtr<IDBIndex> index(const String& name);
     virtual void removeIndex(const String& name, PassRefPtr<IDBCallbacks>);

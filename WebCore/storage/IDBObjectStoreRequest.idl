@@ -28,18 +28,20 @@ module storage {
     interface [
         Conditional=INDEXED_DATABASE
     ] IDBObjectStoreRequest {
-        IDBRequest get(in SerializedScriptValue key);
+        [CallWith=ScriptExecutionContext] IDBRequest get(in SerializedScriptValue key);
+        
         // FIXME: Come to concensus re getAll.
         // FIXME: SerializedScriptValue raises an exception if you pass in something that can't be serialized.
         //        We need to instead "raise" this error via an error callback.
-        IDBRequest add(in SerializedScriptValue value, in [Optional] SerializedScriptValue key);
-        IDBRequest modify(in SerializedScriptValue value, in [Optional] SerializedScriptValue key);
-        IDBRequest addOrModify(in SerializedScriptValue value, in [Optional] SerializedScriptValue key);
-        IDBRequest remove(in SerializedScriptValue key);
+        [CallWith=ScriptExecutionContext] IDBRequest add(in SerializedScriptValue value, in [Optional] SerializedScriptValue key);
+        [CallWith=ScriptExecutionContext] IDBRequest modify(in SerializedScriptValue value, in [Optional] SerializedScriptValue key);
+        [CallWith=ScriptExecutionContext] IDBRequest addOrModify(in SerializedScriptValue value, in [Optional] SerializedScriptValue key);
+        [CallWith=ScriptExecutionContext] IDBRequest remove(in SerializedScriptValue key);
         // FIXME: write openCursor
-        IDBRequest createIndex(in DOMString name, in DOMString keyPath, in [Optional] boolean unique);
+        [CallWith=ScriptExecutionContext] IDBRequest createIndex(in DOMString name, in DOMString keyPath, in [Optional] boolean unique);
+        // FIXME: This needs to raise an IDBDatabaseException on errors.
         IDBIndexRequest index(in DOMString name);
-        IDBRequest removeIndex(in DOMString name);
+        [CallWith=ScriptExecutionContext] IDBRequest removeIndex(in DOMString name);
 
         readonly attribute DOMString name;
         readonly attribute DOMString keyPath;

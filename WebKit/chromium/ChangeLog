@@ -1,3 +1,58 @@
+2010-06-10  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Implement more of IndexedDB's Indexes and ObjectStores
+        https://bugs.webkit.org/show_bug.cgi?id=40424
+
+        Add plumbing for both of these classes.
+
+        * public/WebIDBDatabase.h:
+        (WebKit::WebIDBDatabase::name):
+        (WebKit::WebIDBDatabase::description):
+        (WebKit::WebIDBDatabase::version):
+        (WebKit::WebIDBDatabase::objectStores):
+        (WebKit::WebIDBDatabase::objectStore):
+        (WebKit::WebIDBDatabase::removeObjectStore):
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::indexNames):
+        (WebKit::WebIDBObjectStore::createIndex):
+        (WebKit::WebIDBObjectStore::index):
+        (WebKit::WebIDBObjectStore::removeIndex):
+        * src/IDBDatabaseProxy.cpp:
+        (WebCore::IDBDatabaseProxy::name):
+        (WebCore::IDBDatabaseProxy::description):
+        (WebCore::IDBDatabaseProxy::version):
+        (WebCore::IDBDatabaseProxy::objectStores):
+        (WebCore::IDBDatabaseProxy::objectStore):
+        (WebCore::IDBDatabaseProxy::removeObjectStore):
+        * src/IDBDatabaseProxy.h:
+        * src/IDBObjectStoreProxy.cpp:
+        (WebCore::IDBObjectStoreProxy::indexNames):
+        (WebCore::IDBObjectStoreProxy::createIndex):
+        (WebCore::IDBObjectStoreProxy::index):
+        (WebCore::IDBObjectStoreProxy::removeIndex):
+        * src/IDBObjectStoreProxy.h:
+        * src/WebIDBDatabaseImpl.cpp:
+        (WebKit::WebIDBDatabaseImpl::WebIDBDatabaseImpl):
+        (WebKit::WebIDBDatabaseImpl::name):
+        (WebKit::WebIDBDatabaseImpl::description):
+        (WebKit::WebIDBDatabaseImpl::version):
+        (WebKit::WebIDBDatabaseImpl::objectStores):
+        (WebKit::WebIDBDatabaseImpl::createObjectStore):
+        (WebKit::WebIDBDatabaseImpl::objectStore):
+        (WebKit::WebIDBDatabaseImpl::removeObjectStore):
+        * src/WebIDBDatabaseImpl.h:
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::WebIDBObjectStoreImpl):
+        (WebKit::WebIDBObjectStoreImpl::name):
+        (WebKit::WebIDBObjectStoreImpl::keyPath):
+        (WebKit::WebIDBObjectStoreImpl::indexNames):
+        (WebKit::WebIDBObjectStoreImpl::createIndex):
+        (WebKit::WebIDBObjectStoreImpl::index):
+        (WebKit::WebIDBObjectStoreImpl::removeIndex):
+        * src/WebIDBObjectStoreImpl.h:
+
 2010-06-11  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

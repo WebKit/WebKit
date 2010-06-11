@@ -37,29 +37,32 @@
 namespace WebCore {
 
 class IDBAny;
+class IDBObjectStoreRequest;
 class IDBRequest;
 class ScriptExecutionContext;
 
 class IDBDatabaseRequest : public RefCounted<IDBDatabaseRequest> {
 public:
-    static PassRefPtr<IDBDatabaseRequest> create(PassRefPtr<IDBDatabase> idbDatabase)
+    static PassRefPtr<IDBDatabaseRequest> create(PassRefPtr<IDBDatabase> database)
     {
-        return adoptRef(new IDBDatabaseRequest(idbDatabase));
+        return adoptRef(new IDBDatabaseRequest(database));
     }
     ~IDBDatabaseRequest();
 
     // Implement the IDL
-    String name() const { return m_idbDatabase->name(); }
-    String description() const { return m_idbDatabase->description(); }
-    String version() const { return m_idbDatabase->version(); }
-    PassRefPtr<DOMStringList> objectStores() const { return m_idbDatabase->objectStores(); }
+    String name() const { return m_database->name(); }
+    String description() const { return m_database->description(); }
+    String version() const { return m_database->version(); }
+    PassRefPtr<DOMStringList> objectStores() const { return m_database->objectStores(); }
 
     PassRefPtr<IDBRequest> createObjectStore(ScriptExecutionContext*, const String& name, const String& keyPath = "", bool autoIncrement = false);
+    PassRefPtr<IDBObjectStoreRequest> objectStore(const String& name, unsigned short mode = 0); // FIXME: Use constant rather than 0.
+    PassRefPtr<IDBRequest> removeObjectStore(ScriptExecutionContext*, const String& name);
 
 private:
     IDBDatabaseRequest(PassRefPtr<IDBDatabase>);
 
-    RefPtr<IDBDatabase> m_idbDatabase;
+    RefPtr<IDBDatabase> m_database;
     RefPtr<IDBAny> m_this;
 };
 

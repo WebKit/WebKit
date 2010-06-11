@@ -27,8 +27,8 @@
 #define IDBObjectStoreImpl_h
 
 #include "IDBObjectStore.h"
-#include "PlatformString.h"
-#include <wtf/Threading.h>
+#include "StringHash.h"
+#include <wtf/HashMap.h>
 
 #if ENABLE(INDEXED_DATABASE)
 

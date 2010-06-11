@@ -54,15 +54,15 @@ public:
     String keyPath() const;
     PassRefPtr<DOMStringList> indexNames() const;
 
-    PassRefPtr<IDBRequest> get(PassRefPtr<SerializedScriptValue> key);
-    PassRefPtr<IDBRequest> add(PassRefPtr<SerializedScriptValue> value, PassRefPtr<SerializedScriptValue> key = 0);
-    PassRefPtr<IDBRequest> modify(PassRefPtr<SerializedScriptValue> value, PassRefPtr<SerializedScriptValue> key = 0);
-    PassRefPtr<IDBRequest> addOrModify(PassRefPtr<SerializedScriptValue> value, PassRefPtr<SerializedScriptValue> key = 0);
-    PassRefPtr<IDBRequest> remove(PassRefPtr<SerializedScriptValue> key);
+    PassRefPtr<IDBRequest> get(ScriptExecutionContext*, PassRefPtr<SerializedScriptValue> key);
+    PassRefPtr<IDBRequest> add(ScriptExecutionContext*, PassRefPtr<SerializedScriptValue> value, PassRefPtr<SerializedScriptValue> key = 0);
+    PassRefPtr<IDBRequest> modify(ScriptExecutionContext*, PassRefPtr<SerializedScriptValue> value, PassRefPtr<SerializedScriptValue> key = 0);
+    PassRefPtr<IDBRequest> addOrModify(ScriptExecutionContext*, PassRefPtr<SerializedScriptValue> value, PassRefPtr<SerializedScriptValue> key = 0);
+    PassRefPtr<IDBRequest> remove(ScriptExecutionContext*, PassRefPtr<SerializedScriptValue> key);
 
-    PassRefPtr<IDBRequest> createIndex(const String& name, const String& keyPath, bool unique = false) const;
-    PassRefPtr<IDBIndexRequest> index(const String& name) const;
-    PassRefPtr<IDBRequest> removeIndex(const String& name) const;
+    PassRefPtr<IDBRequest> createIndex(ScriptExecutionContext*, const String& name, const String& keyPath, bool unique = false);
+    PassRefPtr<IDBIndexRequest> index(const String& name);
+    PassRefPtr<IDBRequest> removeIndex(ScriptExecutionContext*, const String& name);
 
 private:
     IDBObjectStoreRequest(PassRefPtr<IDBObjectStore>);
@@ -75,5 +75,5 @@ private:
 
 #endif
 
-#endif // IDBDatabaseRequest_h
+#endif // IDBObjectStoreRequest_h
 

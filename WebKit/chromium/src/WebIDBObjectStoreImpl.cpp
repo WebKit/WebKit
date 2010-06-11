@@ -26,8 +26,10 @@
 #include "config.h"
 #include "WebIDBObjectStoreImpl.h"
 
+#include "DOMStringList.h"
 #include "IDBCallbacksProxy.h"
 #include "IDBObjectStore.h"
+#include "WebIDBIndexImpl.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -35,8 +37,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebIDBObjectStoreImpl::WebIDBObjectStoreImpl(PassRefPtr<IDBObjectStore> idbObjectStore)
-    : m_idbObjectStore(idbObjectStore)
+WebIDBObjectStoreImpl::WebIDBObjectStoreImpl(PassRefPtr<IDBObjectStore> objectStore)
+    : m_objectStore(objectStore)
 {
 }
 
@@ -46,12 +48,35 @@ WebIDBObjectStoreImpl::~WebIDBObjectStoreImpl()
 
 WebString WebIDBObjectStoreImpl::name() const
 {
-    return m_idbObjectStore->name();
+    return m_objectStore->name();
 }
 
 WebString WebIDBObjectStoreImpl::keyPath() const
 {
-    return m_idbObjectStore->keyPath();
+    return m_objectStore->keyPath();
+}
+
+WebDOMStringList WebIDBObjectStoreImpl::indexNames() const
+{
+    return m_objectStore->indexNames();
+}
+
+void WebIDBObjectStoreImpl::createIndex(const WebString& name, const WebString& keyPath, bool unique, WebIDBCallbacks* callbacks)
+{
+    m_objectStore->createIndex(name, keyPath, unique, IDBCallbacksProxy::create(callbacks));
+}
+
+WebIDBIndex* WebIDBObjectStoreImpl::index(const WebString& name)
+{
+    RefPtr<IDBIndex> index = m_objectStore->index(name);
+    if (!index)
+        return 0;
+    return new WebIDBIndexImpl(index);
+}
+
+void WebIDBObjectStoreImpl::removeIndex(const WebString& name, WebIDBCallbacks* callbacks)
+{
+    m_objectStore->removeIndex(name, IDBCallbacksProxy::create(callbacks));
 }
 
 } // namespace WebCore

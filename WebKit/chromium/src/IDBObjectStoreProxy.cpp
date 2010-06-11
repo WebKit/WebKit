@@ -28,9 +28,10 @@
 
 #include "DOMStringList.h"
 #include "IDBCallbacks.h"
+#include "IDBIndexProxy.h"
 #include "WebIDBCallbacksImpl.h"
+#include "WebIDBIndex.h"
 #include "WebIDBObjectStore.h"
-#include <wtf/UnusedParam.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -62,33 +63,25 @@ String IDBObjectStoreProxy::keyPath() const
 
 PassRefPtr<DOMStringList> IDBObjectStoreProxy::indexNames() const
 {
-    // FIXME: implement.
-    ASSERT_NOT_REACHED();
-    return 0;
+    return m_webIDBObjectStore->indexNames();
 }
 
-void IDBObjectStoreProxy::createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks>)
+void IDBObjectStoreProxy::createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks> callbacks)
 {
-    // FIXME: implement.
-    UNUSED_PARAM(name);
-    UNUSED_PARAM(keyPath);
-    UNUSED_PARAM(unique);
-    ASSERT_NOT_REACHED();
+    m_webIDBObjectStore->createIndex(name, keyPath, unique, new WebIDBCallbacksImpl(callbacks));
 }
 
 PassRefPtr<IDBIndex> IDBObjectStoreProxy::index(const String& name)
 {
-    // FIXME: implement.
-    UNUSED_PARAM(name);
-    ASSERT_NOT_REACHED();
-    return 0;
+    WebKit::WebIDBIndex* index = m_webIDBObjectStore->index(name);
+    if (!index)
+        return 0;
+    return IDBIndexProxy::create(index);
 }
 
-void IDBObjectStoreProxy::removeIndex(const String& name, PassRefPtr<IDBCallbacks>)
+void IDBObjectStoreProxy::removeIndex(const String& name, PassRefPtr<IDBCallbacks> callbacks)
 {
-    // FIXME: implement.
-    UNUSED_PARAM(name);
-    ASSERT_NOT_REACHED();
+    m_webIDBObjectStore->removeIndex(name, new WebIDBCallbacksImpl(callbacks));
 }
 
 } // namespace WebCore

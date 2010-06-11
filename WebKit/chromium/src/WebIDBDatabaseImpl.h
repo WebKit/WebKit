@@ -35,20 +35,25 @@ namespace WebCore { class IDBDatabase; }
 
 namespace WebKit {
 
+class WebIDBObjectStore;
+
 // See comment in WebIndexedDatabase for a high level overview these classes.
 class WebIDBDatabaseImpl : public WebIDBDatabase {
 public:
-    WebIDBDatabaseImpl(WTF::PassRefPtr<WebCore::IDBDatabase> idbDatabase);
+    WebIDBDatabaseImpl(WTF::PassRefPtr<WebCore::IDBDatabase> database);
     virtual ~WebIDBDatabaseImpl();
 
-    virtual WebString name();
-    virtual WebString description();
-    virtual WebString version();
-    virtual WebDOMStringList objectStores();
+    virtual WebString name() const;
+    virtual WebString description() const;
+    virtual WebString version() const;
+    virtual WebDOMStringList objectStores() const;
+
     virtual void createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, WebIDBCallbacks* callbacks);
+    virtual WebIDBObjectStore* objectStore(const WebString& name, unsigned short mode);
+    virtual void removeObjectStore(const WebString& name, WebIDBCallbacks* callbacks);
 
 private:
-    WTF::RefPtr<WebCore::IDBDatabase> m_idbDatabase;
+    WTF::RefPtr<WebCore::IDBDatabase> m_database;
 };
 
 } // namespace WebKit

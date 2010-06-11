@@ -27,6 +27,7 @@
 #define WebIDBObjectStore_h
 
 #include "WebCommon.h"
+#include "WebDOMStringList.h"
 #include "WebIDBCallbacks.h"
 #include "WebString.h"
 
@@ -46,6 +47,25 @@ public:
     {
         WEBKIT_ASSERT_NOT_REACHED();
         return WebString();
+    }
+    virtual WebDOMStringList indexNames() const
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return WebDOMStringList();
+    }
+    void createIndex(const WebString& name, const WebString& keyPath, bool unique, WebIDBCallbacks*)
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+    }
+    // Transfers ownership of the WebIDBIndex to the caller.
+    WebIDBIndex* index(const WebString& name)
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return 0;
+    }
+    void removeIndex(const WebString& name, WebIDBCallbacks*)
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
     }
     // FIXME: finish.
 };
