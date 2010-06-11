@@ -1,3 +1,12 @@
+2010-06-11  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Roll chromium DEPS 49376:49521
+        https://bugs.webkit.org/show_bug.cgi?id=40488
+
+        * DEPS:
+
 2010-06-10  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
