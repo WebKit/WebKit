@@ -32,7 +32,7 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '49224',
+  'chromium_rev': '49376',
 }
 
 deps = {
@@ -99,6 +99,8 @@ deps = {
     From('chromium_deps', 'src/third_party/libvpx/include'),
   'third_party/libvpx/lib':
     From('chromium_deps', 'src/third_party/libvpx/lib'),
+  'third_party/mesa':
+    Var('chromium_svn')+'/third_party/mesa@'+Var('chromium_rev'),
   'third_party/yasm': # needed by ffmpeg
     Var('chromium_svn')+'/third_party/yasm@'+Var('chromium_rev'),
   'third_party/openmax': # needed by webkit/media

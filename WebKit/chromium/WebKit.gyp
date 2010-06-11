@@ -575,6 +575,7 @@
                 'webkit',
                 '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf_config',
                 '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
+                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:npapi_layout_test_plugin',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
             ],
             'include_dirs': [
@@ -605,6 +606,16 @@
                     'copies': [{
                         'destination': '<(PRODUCT_DIR)',
                         'files': ['<(ahem_path)'],
+                    }, {
+                        # This should really be done in the 'npapi_layout_test_plugin'
+                        # target, but the current VS generator handles 'copies'
+                        # settings as AdditionalDependencies, which means that
+                        # when it's over there, it tries to do the copy *before*
+                        # the file is built, instead of after.  We work around this
+                        # by attaching the copy here, since it depends on that
+                        # target.
+                        'destination': '<(PRODUCT_DIR)/plugins',
+                        'files': ['<(PRODUCT_DIR)/npapi_layout_test_plugin.dll'],
                     }],
                 },{ # OS!="win"
                     'sources/': [
@@ -649,6 +660,10 @@
                         '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher900.ttf',
                         '<(SHARED_INTERMEDIATE_DIR)/webkit/textAreaResizeCorner.png',
                     ],
+                    'copies': [{
+                        'destination': '<(PRODUCT_DIR)/DumpRenderTree.app/Contents/PlugIns/',
+                        'files': ['<(PRODUCT_DIR)/TestNetscapePlugIn.plugin/'],
+                    }],
                 },{ # OS!="mac"
                     'sources/': [
                         # .mm is already excluded by common.gypi
@@ -663,6 +678,9 @@
                             '../../WebKitTools/DumpRenderTree/chromium/fonts.conf',
                             '<(INTERMEDIATE_DIR)/repack/DumpRenderTree.pak',
                         ]
+                    }, {
+                        'destination': '<(PRODUCT_DIR)/plugins',
+                        'files': ['<(PRODUCT_DIR)/libnpapi_layout_test_plugin.so'],
                     }],
                 },{ # OS!="linux" and OS!="freebsd" and OS!="openbsd" and OS!="solaris"
                     'sources/': [

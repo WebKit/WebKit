@@ -1,3 +1,18 @@
+2010-06-10  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Support plugin tests
+        https://bugs.webkit.org/show_bug.cgi?id=40413
+
+        * DEPS:
+         Bump the Chromium revision to r49376 to have a npapi_layout_test_plugin
+         change and Linux <progress> resources.
+         Add third_party/mesa because app/ depends on them
+         since r49332.
+        * WebKit.gyp:
+          Copy a plugin binary for DRT to recognize it.
+
 2010-06-10  James Hawkins  <jhawkins@chromium.org>
 
         Not reviwed.
