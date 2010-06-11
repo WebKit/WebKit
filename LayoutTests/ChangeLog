@@ -1,3 +1,13 @@
+2010-06-11  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Tests that we do not crash when clearing floats during SVG load.
+        https://bugs.webkit.org/show_bug.cgi?id=40033
+
+        * svg/text/clear-floats-crash-expected.txt: Added.
+        * svg/text/clear-floats-crash.svg: Added.
+
 2010-06-11  Dmitry Titov  <dimich@chromium.org>
 
         Unreviewed, fixing Chromium test bots.

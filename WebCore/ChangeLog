@@ -1,3 +1,15 @@
+2010-06-11  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Don't process floats if parent node is not a RenderBlock.
+        https://bugs.webkit.org/show_bug.cgi?id=40033
+
+        Test: svg/text/clear-floats-crash.svg
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::clearFloats):
+
 2010-06-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r61036.
