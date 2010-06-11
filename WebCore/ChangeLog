@@ -1,3 +1,19 @@
+2010-06-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r61036.
+        http://trac.webkit.org/changeset/61036
+        https://bugs.webkit.org/show_bug.cgi?id=40499
+
+        broke chromium compile (Requested by jamesr on #webkit).
+
+        * bindings/v8/SerializedScriptValue.cpp:
+        * bindings/v8/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValue::deserializeAndSetProperty):
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::createFromWire):
+        (WebCore::SerializedScriptValue::release):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+
 2010-06-11  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
