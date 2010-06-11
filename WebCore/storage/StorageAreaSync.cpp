@@ -29,6 +29,7 @@
 #if ENABLE(DOM_STORAGE)
 
 #include "EventNames.h"
+#include "FileSystem.h"
 #include "HTMLElement.h"
 #include "SecurityOrigin.h"
 #include "SQLiteStatement.h"
@@ -62,6 +63,7 @@ StorageAreaSync::StorageAreaSync(PassRefPtr<StorageSyncManager> storageSyncManag
     , m_clearItemsWhileSyncing(false)
     , m_syncScheduled(false)
     , m_syncInProgress(false)
+    , m_databaseOpenFailed(false)
     , m_importComplete(false)
 {
     ASSERT(isMainThread());
@@ -198,27 +200,46 @@ void StorageAreaSync::syncTimerFired(Timer<StorageAreaSync>*)
     }
 }
 
-void StorageAreaSync::performImport()
+void StorageAreaSync::openDatabase(OpenDatabaseParamType openingStrategy)
 {
     ASSERT(!isMainThread());
     ASSERT(!m_database.isOpen());
+    ASSERT(!m_databaseOpenFailed);
 
     String databaseFilename = m_syncManager->fullDatabaseFilename(m_databaseIdentifier);
+
+    if (!fileExists(databaseFilename) && openingStrategy == SkipIfNonExistent)
+        return;
 
     if (databaseFilename.isEmpty()) {
         LOG_ERROR("Filename for local storage database is empty - cannot open for persistent storage");
         markImported();
+        m_databaseOpenFailed = true;
         return;
     }
 
     if (!m_database.open(databaseFilename)) {
         LOG_ERROR("Failed to open database file %s for local storage", databaseFilename.utf8().data());
         markImported();
+        m_databaseOpenFailed = true;
         return;
     }
 
     if (!m_database.executeCommand("CREATE TABLE IF NOT EXISTS ItemTable (key TEXT UNIQUE ON CONFLICT REPLACE, value TEXT NOT NULL ON CONFLICT FAIL)")) {
         LOG_ERROR("Failed to create table ItemTable for local storage");
+        markImported();
+        m_databaseOpenFailed = true;
+        return;
+    }
+}
+
+void StorageAreaSync::performImport()
+{
+    ASSERT(!isMainThread());
+    ASSERT(!m_database.isOpen());
+
+    openDatabase(SkipIfNonExistent);
+    if (!m_database.isOpen()) {
         markImported();
         return;
     }
@@ -285,6 +306,10 @@ void StorageAreaSync::sync(bool clearItems, const HashMap<String, String>& items
 {
     ASSERT(!isMainThread());
 
+    if (m_databaseOpenFailed)
+        return;
+    if (!m_database.isOpen())
+        openDatabase(CreateIfNonExistent);
     if (!m_database.isOpen())
         return;
 

@@ -75,7 +75,13 @@ namespace WebCore {
         void performSync();
 
     private:
+        enum OpenDatabaseParamType {
+          CreateIfNonExistent,
+          SkipIfNonExistent
+        };
+
         void syncTimerFired(Timer<StorageAreaSync>*);
+        void openDatabase(OpenDatabaseParamType openingStrategy);
         void sync(bool clearItems, const HashMap<String, String>& items);
 
         const String m_databaseIdentifier;
@@ -85,6 +91,7 @@ namespace WebCore {
         bool m_clearItemsWhileSyncing;
         bool m_syncScheduled;
         bool m_syncInProgress;
+        bool m_databaseOpenFailed;
 
         mutable Mutex m_importLock;
         mutable ThreadCondition m_importCondition;
