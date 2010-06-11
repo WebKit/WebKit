@@ -1,3 +1,13 @@
+2010-06-11  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, roll out the failing part of a test.
+
+        fast/canvas/webgl/get-active-test.html failed in Chrome Mac
+        https://bugs.webkit.org/show_bug.cgi?id=40496
+
+        * fast/canvas/webgl/get-active-test-expected.txt: Roll out the failing part.
+        * fast/canvas/webgl/script-tests/get-active-test.js: Ditto.
+
 2010-06-11  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Dimitri Glazkov.
