@@ -1,3 +1,15 @@
+2010-06-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Math Javascript Bug on Safari 5 (webkit 533.16) under "32bit" mode
+        https://bugs.webkit.org/show_bug.cgi?id=40367
+
+        Add some tests to ensure correct behaviour of right shift.
+
+        * fast/js/bitops-type-tag.html: Added.
+        * fast/js/script-tests/bitops-type-tag.js: Added.
+
 2010-06-10  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.

@@ -1,3 +1,17 @@
+2010-06-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Math Javascript Bug on Safari 5 (webkit 533.16) under "32bit" mode
+        https://bugs.webkit.org/show_bug.cgi?id=40367
+
+        If we're in the slow case of right shift we must write the type tag as
+        the only reason we hit this code path is because we know we're working
+        with a double.  eg. we are guaranteed that the tag cannot be reused.
+
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emitRightShiftSlowCase):
+
 2010-06-10  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.
