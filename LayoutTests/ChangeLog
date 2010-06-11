@@ -1,3 +1,17 @@
+2010-06-11  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed baselines for new test on Qt/Gtk.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40456
+
+        Qt and Gtk appear to produce layers of slightly different sizes
+        for blocks with rounded corners, probably due to roundoff difference
+        in the graphics layers.  Since the diffs are +/- 1 pixel, just
+        rebaselining.
+
+        * platform/gtk/fast/css/nested-rounded-corners-expected.txt: Added.
+        * platform/qt/fast/css/nested-rounded-corners-expected.txt: Added.
+
 2010-06-11  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
