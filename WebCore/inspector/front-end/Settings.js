@@ -45,16 +45,39 @@ var Preferences = {
     auditsPanelEnabled: true
 }
 
-WebInspector.populateFrontendSettings = function(settingsString)
+WebInspector.populateApplicationSettings = function(settingsString)
 {
-    WebInspector.settings._load(settingsString);
+    WebInspector.applicationSettings._load(settingsString);
+    WebInspector.applicationSettings._installSetting("eventListenersFilter", "event-listeners-filter", "all");
+    WebInspector.applicationSettings._installSetting("colorFormat", "color-format", "hex");
+    WebInspector.applicationSettings._installSetting("resourcesLargeRows", "resources-large-rows", true);
+    WebInspector.applicationSettings._installSetting("watchExpressions", "watch-expressions", []);
+    WebInspector.applicationSettings._installSetting("lastViewedScriptFile", "last-viewed-script-file");
+    WebInspector.applicationSettings._installSetting("showInheritedComputedStyleProperties", "show-inherited-computed-style-properties", false);
+    WebInspector.applicationSettings._installSetting("showUserAgentStyles", "show-user-agent-styles", true);
+    WebInspector.applicationSettings._installSetting("resourceViewTab", "resource-view-tab", "content");
+    WebInspector.applicationSettings._installSetting("consoleHistory", "console-history", []);
+    WebInspector.applicationSettings.dispatchEventToListeners("loaded");
 }
 
-WebInspector.Settings = function()
+WebInspector.populateSessionSettings = function(settingsString)
 {
+    WebInspector.sessionSettings._load(settingsString);
+    WebInspector.sessionSettings.dispatchEventToListeners("loaded");
+}
+
+WebInspector.Settings = function(sessionScope)
+{
+    this._sessionScope = sessionScope;
 }
 
 WebInspector.Settings.prototype = {
+    reset: function()
+    {
+        this._store = {};
+        this.dispatchEventToListeners("loaded");
+    },
+
     _load: function(settingsString)
     {
         try {
@@ -63,17 +86,6 @@ WebInspector.Settings.prototype = {
             // May fail;
             this._store = {};
         }
-
-        this._installSetting("eventListenersFilter", "event-listeners-filter", "all");
-        this._installSetting("colorFormat", "color-format", "hex");
-        this._installSetting("resourcesLargeRows", "resources-large-rows", true);
-        this._installSetting("watchExpressions", "watch-expressions", []);
-        this._installSetting("lastViewedScriptFile", "last-viewed-script-file");
-        this._installSetting("showInheritedComputedStyleProperties", "show-inherited-computed-style-properties", false);
-        this._installSetting("showUserAgentStyles", "show-user-agent-styles", true);
-        this._installSetting("resourceViewTab", "resource-view-tab", "content");
-        this._installSetting("consoleHistory", "console-history", []);
-        this.dispatchEventToListeners("loaded");
     },
 
     _installSetting: function(name, propertyName, defaultValue)
@@ -94,7 +106,11 @@ WebInspector.Settings.prototype = {
     {
         this._store[propertyName] = newValue;
         try {
-            InspectorBackend.saveFrontendSettings(JSON.stringify(this._store));
+            var store = JSON.stringify(this._store);
+            if (this._sessionScope)
+                InspectorBackend.saveSessionSettings(store);
+            else
+                InspectorBackend.saveApplicationSettings(store);
         } catch (e) {
             // May fail;
         }

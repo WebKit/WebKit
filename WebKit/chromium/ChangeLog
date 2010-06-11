@@ -1,3 +1,13 @@
+2010-06-11  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Enable serialization/deserialization of the frontend state
+        https://bugs.webkit.org/show_bug.cgi?id=40228
+
+        * src/js/InspectorControllerImpl.js:
+        (devtools.InspectorBackendImpl):
+
 2010-06-10  Søren Gjesse  <sgjesse@chromium.org>
 
         Reviewed by Pavel Feldman.

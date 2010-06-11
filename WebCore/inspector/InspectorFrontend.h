@@ -59,7 +59,8 @@ namespace WebCore {
 
         void didCommitLoad();
 
-        void populateFrontendSettings(const String& settings);
+        void populateApplicationSettings(const String& settings);
+        void populateSessionSettings(const String& settings);
 
         void updateConsoleMessageExpiredCount(unsigned count);
         void addConsoleMessage(const ScriptObject& messageObj, const Vector<ScriptString>& frames, const Vector<RefPtr<SerializedScriptValue> >& arguments, const String& message);

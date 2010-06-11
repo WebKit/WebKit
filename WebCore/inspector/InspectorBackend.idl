@@ -34,7 +34,8 @@ module core {
     interface [Conditional=INSPECTOR] InspectorBackend {
         void storeLastActivePanel(in DOMString panelName);
 
-        void saveFrontendSettings(in DOMString settings);
+        void saveApplicationSettings(in DOMString settings);
+        void saveSessionSettings(in DOMString settings);
 
         void enableSearchingForNode();
         void disableSearchingForNode();

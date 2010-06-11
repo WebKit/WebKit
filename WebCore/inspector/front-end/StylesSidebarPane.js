@@ -60,7 +60,7 @@ WebInspector.StylesSidebarPane = function(computedStylePane)
 
     this.settingsSelectElement.addEventListener("click", function(event) { event.stopPropagation() }, false);
     this.settingsSelectElement.addEventListener("change", this._changeSetting.bind(this), false);
-    WebInspector.settings.addEventListener("loaded", this._settingsLoaded, this);
+    WebInspector.applicationSettings.addEventListener("loaded", this._settingsLoaded, this);
 
     this.titleElement.appendChild(this.settingsSelectElement);
     this._computedStylePane = computedStylePane;
@@ -96,7 +96,7 @@ WebInspector.StylesSidebarPane.PseudoIdNames = [
 WebInspector.StylesSidebarPane.prototype = {
     _settingsLoaded: function()
     {
-        var format = WebInspector.settings.colorFormat;
+        var format = WebInspector.applicationSettings.colorFormat;
         if (format === "hex")
             this.settingsSelectElement[0].selected = true;
         if (format === "rgb")
@@ -148,7 +148,7 @@ WebInspector.StylesSidebarPane.prototype = {
         if (refresh)
             WebInspector.cssModel.getComputedStyleAsync(node.id, computedStyleCallback.bind(this));
         else
-            WebInspector.cssModel.getStylesAsync(node.id, !WebInspector.settings.showUserAgentStyles, stylesCallback.bind(this));
+            WebInspector.cssModel.getStylesAsync(node.id, !WebInspector.applicationSettings.showUserAgentStyles, stylesCallback.bind(this));
     },
 
     _refreshUpdate: function(node, computedStyle, editedSection)
@@ -482,7 +482,7 @@ WebInspector.StylesSidebarPane.prototype = {
         // Select the correct color format setting again, since it needs to be selected.
         var selectedIndex = 0;
         for (var i = 0; i < options.length; ++i) {
-            if (options[i].value === WebInspector.settings.colorFormat) {
+            if (options[i].value === WebInspector.applicationSettings.colorFormat) {
                 selectedIndex = i;
                 break;
             }
@@ -494,7 +494,7 @@ WebInspector.StylesSidebarPane.prototype = {
     _changeColorFormat: function(event)
     {
         var selectedOption = this.settingsSelectElement[this.settingsSelectElement.selectedIndex];
-        WebInspector.settings.colorFormat = selectedOption.value;
+        WebInspector.applicationSettings.colorFormat = selectedOption.value;
 
         for (var pseudoId in this.sections) {
             var sections = this.sections[pseudoId];
@@ -581,18 +581,18 @@ WebInspector.ComputedStyleSidebarPane = function()
 
     function settingsLoaded()
     {
-        if (WebInspector.settings.showInheritedComputedStyleProperties) {
+        if (WebInspector.applicationSettings.showInheritedComputedStyleProperties) {
             this.bodyElement.addStyleClass("show-inherited");
             showInheritedCheckbox.checked = true;
         }
     }
 
-    WebInspector.settings.addEventListener("loaded", settingsLoaded.bind(this));
+    WebInspector.applicationSettings.addEventListener("loaded", settingsLoaded.bind(this));
 
     function showInheritedToggleFunction(event)
     {
-        WebInspector.settings.showInheritedComputedStyleProperties = showInheritedCheckbox.checked;
-        if (WebInspector.settings.showInheritedComputedStyleProperties)
+        WebInspector.applicationSettings.showInheritedComputedStyleProperties = showInheritedCheckbox.checked;
+        if (WebInspector.applicationSettings.showInheritedComputedStyleProperties)
             this.bodyElement.addStyleClass("show-inherited");
         else
             this.bodyElement.removeStyleClass("show-inherited");
@@ -1122,9 +1122,9 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 var format;
                 if (Preferences.showColorNicknames && color.nickname)
                     format = "nickname";
-                else if (WebInspector.settings.colorFormat === "rgb")
+                else if (WebInspector.applicationSettings.colorFormat === "rgb")
                     format = (color.simple ? "rgb" : "rgba");
-                else if (WebInspector.settings.colorFormat === "hsl")
+                else if (WebInspector.applicationSettings.colorFormat === "hsl")
                     format = (color.simple ? "hsl" : "hsla");
                 else if (color.simple)
                     format = (color.hasShortHex() ? "shorthex" : "hex");

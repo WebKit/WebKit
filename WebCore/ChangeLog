@@ -1,3 +1,71 @@
+2010-06-11  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Enable serialization/deserialization of the frontend state
+        https://bugs.webkit.org/show_bug.cgi?id=40228
+
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::saveApplicationSettings):
+        (WebCore::InspectorBackend::saveSessionSettings):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::setSessionSettings):
+        (WebCore::InspectorController::populateScriptObjects):
+        (WebCore::InspectorController::didCommitLoad):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::populateApplicationSettings):
+        (WebCore::InspectorFrontend::populateSessionSettings):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._settingsLoaded):
+        (WebInspector.ConsoleView.prototype._enterKeyPressed.printResult):
+        (WebInspector.ConsoleView.prototype._enterKeyPressed):
+        * inspector/front-end/EventListenersSidebarPane.js:
+        (WebInspector.EventListenersSidebarPane.prototype._settingsLoaded):
+        (WebInspector.EventListenersSidebarPane.prototype):
+        ():
+        * inspector/front-end/InspectorBackendStub.js:
+        (.WebInspector.InspectorBackendStub.prototype.saveApplicationSettings):
+        (.WebInspector.InspectorBackendStub.prototype.saveSessionSettings):
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView.prototype._selectTab):
+        (WebInspector.ResourceView.prototype._selectHeadersTab):
+        (WebInspector.ResourceView.prototype.selectContentTab):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._createStatusbarButtons):
+        (WebInspector.ResourcesPanel.prototype._settingsLoaded):
+        (WebInspector.ResourcesPanel.prototype._toggleLargerResources):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._showScriptOrResource):
+        (WebInspector.ScriptsPanel.prototype._addScriptToFilesMenu):
+        * inspector/front-end/Settings.js:
+        (WebInspector.populateApplicationSettings):
+        (WebInspector.populateSessionSettings):
+        (WebInspector.Settings):
+        (WebInspector.Settings.prototype.reset):
+        (WebInspector.Settings.prototype._load):
+        (WebInspector.Settings.prototype._set):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._settingsLoaded):
+        (WebInspector.StylesSidebarPane.prototype.update):
+        (WebInspector.StylesSidebarPane.prototype._changeSetting):
+        (WebInspector.StylesSidebarPane.prototype._changeColorFormat):
+        (WebInspector.ComputedStyleSidebarPane.settingsLoaded):
+        (WebInspector.ComputedStyleSidebarPane.showInheritedToggleFunction):
+        (WebInspector.ComputedStyleSidebarPane):
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionsSidebarPane):
+        (WebInspector.WatchExpressionsSidebarPane.prototype._settingsLoaded):
+        (WebInspector.WatchExpressionsSection):
+        (WebInspector.WatchExpressionsSection.prototype.saveExpressions):
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+        (WebInspector.reset):
+
 2010-06-10  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

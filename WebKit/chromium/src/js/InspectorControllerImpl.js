@@ -68,7 +68,8 @@ devtools.InspectorBackendImpl = function()
     this.installInspectorControllerDelegate_("removeAttribute");
     this.installInspectorControllerDelegate_("removeDOMStorageItem");
     this.installInspectorControllerDelegate_("removeNode");
-    this.installInspectorControllerDelegate_("saveFrontendSettings");
+    this.installInspectorControllerDelegate_("saveApplicationSettings");
+    this.installInspectorControllerDelegate_("saveSessionSettings");
     this.installInspectorControllerDelegate_("searchCanceled");
     this.installInspectorControllerDelegate_("setAttribute");
     this.installInspectorControllerDelegate_("setDOMStorageItem");

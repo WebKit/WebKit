@@ -148,6 +148,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_cssStore(new InspectorCSSStore(this))
     , m_expiredConsoleMessageCount(0)
     , m_showAfterVisible(CurrentPanel)
+    , m_sessionSettings(InspectorObject::create())
     , m_groupLevel(0)
     , m_searchingForNode(false)
     , m_previousMessage(0)
@@ -227,6 +228,11 @@ void InspectorController::setSetting(const String& key, const String& value)
 {
     m_settings.set(key, value);
     m_client->storeSetting(key, value);
+}
+
+void InspectorController::setSessionSettings(const String& settingsJSON)
+{
+    m_sessionSettings = InspectorValue::readJSON(settingsJSON);
 }
 
 void InspectorController::inspect(Node* node)
@@ -555,7 +561,7 @@ void InspectorController::populateScriptObjects()
     if (!m_frontend)
         return;
 
-    m_frontend->populateFrontendSettings(setting(frontendSettingsSettingName()));
+    m_frontend->populateApplicationSettings(setting(frontendSettingsSettingName()));
 
     if (m_resourceTrackingEnabled)
         m_frontend->resourceTrackingWasEnabled();
@@ -602,6 +608,7 @@ void InspectorController::populateScriptObjects()
         m_frontend->didCreateWorker(*it->second);
 #endif
 
+    m_frontend->populateSessionSettings(m_sessionSettings->toJSONString());
     m_frontend->populateInterface();
 
     // Dispatch pending frontend commands
@@ -679,6 +686,7 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
         unbindAllResources();
 
         m_cssStore->reset();
+        m_sessionSettings = InspectorObject::create();
         if (m_frontend) {
             m_frontend->reset();
             m_domAgent->reset();

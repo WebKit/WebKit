@@ -247,7 +247,11 @@ WebInspector.InspectorBackendStub.prototype = {
     {
     },
 
-    saveFrontendSettings: function()
+    saveApplicationSettings: function()
+    {
+    },
+
+    saveSessionSettings: function()
     {
     },
 

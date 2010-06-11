@@ -143,7 +143,7 @@ WebInspector.ResourceView.prototype = {
     _selectTab: function()
     {
         if (this._headersVisible) {
-            if (!this.hasContentTab() || WebInspector.settings.resourceViewTab === "headers")
+            if (!this.hasContentTab() || WebInspector.applicationSettings.resourceViewTab === "headers")
                 this._selectHeadersTab();
             else
                 this.selectContentTab();
@@ -154,14 +154,14 @@ WebInspector.ResourceView.prototype = {
     _selectHeadersTab: function(updatePrefs)
     {
         if (updatePrefs)
-            WebInspector.settings.resourceViewTab = "headers";
+            WebInspector.applicationSettings.resourceViewTab = "headers";
         this.tabbedPane.selectTabById("headers");
     },
 
     selectContentTab: function(updatePrefs)
     {
         if (updatePrefs)
-            WebInspector.settings.resourceViewTab = "content";
+            WebInspector.applicationSettings.resourceViewTab = "content";
         this._innerSelectContentTab();
     },
 

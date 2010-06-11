@@ -86,10 +86,18 @@ void InspectorFrontend::didCommitLoad()
     callSimpleFunction("didCommitLoad");
 }
 
-void InspectorFrontend::populateFrontendSettings(const String& settings)
+void InspectorFrontend::populateApplicationSettings(const String& settings)
 {
     ScriptFunctionCall function(m_webInspector, "dispatch");
-    function.appendArgument("populateFrontendSettings");
+    function.appendArgument("populateApplicationSettings");
+    function.appendArgument(settings);
+    function.call();
+}
+
+void InspectorFrontend::populateSessionSettings(const String& settings)
+{
+    ScriptFunctionCall function(m_webInspector, "dispatch");
+    function.appendArgument("populateSessionSettings");
     function.appendArgument(settings);
     function.call();
 }

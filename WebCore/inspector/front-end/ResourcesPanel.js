@@ -151,7 +151,7 @@ WebInspector.ResourcesPanel.prototype = {
     {
         this.largerResourcesButton = new WebInspector.StatusBarButton(WebInspector.UIString("Use small resource rows."), "resources-larger-resources-status-bar-item");
 
-        WebInspector.settings.addEventListener("loaded", this._settingsLoaded, this);
+        WebInspector.applicationSettings.addEventListener("loaded", this._settingsLoaded, this);
         this.largerResourcesButton.addEventListener("click", this._toggleLargerResources.bind(this), false);
         this.sortingSelectElement = document.createElement("select");
         this.sortingSelectElement.className = "status-bar-item";
@@ -160,9 +160,9 @@ WebInspector.ResourcesPanel.prototype = {
 
     _settingsLoaded: function()
     {
-        this.largerResourcesButton.toggled = WebInspector.settings.resourcesLargeRows;
-        if (!WebInspector.settings.resourcesLargeRows)
-            this._setLargerResources(WebInspector.settings.resourcesLargeRows);
+        this.largerResourcesButton.toggled = WebInspector.applicationSettings.resourcesLargeRows;
+        if (!WebInspector.applicationSettings.resourcesLargeRows)
+            this._setLargerResources(WebInspector.applicationSettings.resourcesLargeRows);
     },
 
     get mainResourceLoadTime()
@@ -637,7 +637,7 @@ WebInspector.ResourcesPanel.prototype = {
         if (!this.itemsTreeElement._childrenListNode)
             return;
 
-        WebInspector.settings.resourcesLargeRows = !WebInspector.settings.resourcesLargeRows;
+        WebInspector.applicationSettings.resourcesLargeRows = !WebInspector.applicationSettings.resourcesLargeRows;
         this._setLargerResources(this.itemsTreeElement.smallChildren);
     },
 

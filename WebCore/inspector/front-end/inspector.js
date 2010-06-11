@@ -440,7 +440,8 @@ WebInspector.loaded = function()
     var port = WebInspector.port;
     document.body.addStyleClass("port-" + port);
 
-    this.settings = new WebInspector.Settings();
+    this.applicationSettings = new WebInspector.Settings(false);
+    this.sessionSettings = new WebInspector.Settings(true);
     this._registerShortcuts();
 
     // set order of some sections explicitly
@@ -1361,6 +1362,7 @@ WebInspector.reset = function()
             panel.reset();
     }
 
+    this.sessionSettings.reset();
     this.breakpointManager.reset();
 
     for (var category in this.resourceCategories)

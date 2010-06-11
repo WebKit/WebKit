@@ -79,10 +79,16 @@ InspectorBackend::~InspectorBackend()
 {
 }
 
-void InspectorBackend::saveFrontendSettings(const String& settings)
+void InspectorBackend::saveApplicationSettings(const String& settings)
 {
     if (m_inspectorController)
         m_inspectorController->setSetting(InspectorController::frontendSettingsSettingName(), settings);
+}
+
+void InspectorBackend::saveSessionSettings(const String& settings)
+{
+    if (m_inspectorController)
+        m_inspectorController->setSessionSettings(settings);
 }
 
 void InspectorBackend::storeLastActivePanel(const String& panelName)

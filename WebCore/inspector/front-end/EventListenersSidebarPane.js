@@ -46,7 +46,7 @@ WebInspector.EventListenersSidebarPane = function()
     option.label = WebInspector.UIString("Selected Node Only");
     this.settingsSelectElement.appendChild(option);
 
-    WebInspector.settings.addEventListener("loaded", this._settingsLoaded, this);
+    WebInspector.applicationSettings.addEventListener("loaded", this._settingsLoaded, this);
     this.settingsSelectElement.addEventListener("click", function(event) { event.stopPropagation() }, false);
     this.settingsSelectElement.addEventListener("change", this._changeSetting.bind(this), false);
 
@@ -56,7 +56,7 @@ WebInspector.EventListenersSidebarPane = function()
 WebInspector.EventListenersSidebarPane.prototype = {
     _settingsLoaded: function()
     {
-        var filter = WebInspector.settings.eventListenersFilter;
+        var filter = WebInspector.applicationSettings.eventListenersFilter;
         if (filter === "all")
             this.settingsSelectElement[0].selected = true;
         if (filter === "selected")
@@ -112,7 +112,7 @@ WebInspector.EventListenersSidebarPane.prototype = {
     _changeSetting: function(event)
     {
         var selectedOption = this.settingsSelectElement[this.settingsSelectElement.selectedIndex];
-        WebInspector.settings.eventListenersFilter = selectedOption.value;
+        WebInspector.applicationSettings.eventListenersFilter = selectedOption.value;
 
         for (var i = 0; i < this.sections.length; ++i)
             this.sections[i].update();
@@ -142,7 +142,7 @@ WebInspector.EventListenersSection.prototype = {
     {
         // A Filtered Array simplifies when to create connectors
         var filteredEventListeners = this.eventListeners;
-        if (WebInspector.settings.eventListenersFilter === "selected") {
+        if (WebInspector.applicationSettings.eventListenersFilter === "selected") {
             filteredEventListeners = [];
             for (var i = 0; i < this.eventListeners.length; ++i) {
                 var eventListener = this.eventListeners[i];

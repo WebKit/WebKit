@@ -48,7 +48,7 @@ WebInspector.ConsoleView = function(drawer)
     this.promptElement.className = "source-code";
     this.promptElement.addEventListener("keydown", this._promptKeyDown.bind(this), true);
     this.prompt = new WebInspector.TextPrompt(this.promptElement, this.completions.bind(this), ExpressionStopCharacters + ".");
-    WebInspector.settings.addEventListener("loaded", this._settingsLoaded, this);
+    WebInspector.applicationSettings.addEventListener("loaded", this._settingsLoaded, this);
 
     this.topGroup = new WebInspector.ConsoleGroup(null, 0);
     this.messagesElement.insertBefore(this.topGroup.element, this.promptElement);
@@ -104,7 +104,7 @@ WebInspector.ConsoleView = function(drawer)
 WebInspector.ConsoleView.prototype = {
     _settingsLoaded: function()
     {
-        this.prompt.history = WebInspector.settings.consoleHistory;
+        this.prompt.history = WebInspector.applicationSettings.consoleHistory;
     },
     
     _updateFilter: function(e)
@@ -536,7 +536,7 @@ WebInspector.ConsoleView.prototype = {
             self.prompt.historyOffset = 0;
             self.prompt.text = "";
 
-            WebInspector.settings.consoleHistory = self.prompt.history.slice(-30);
+            WebInspector.applicationSettings.consoleHistory = self.prompt.history.slice(-30);
 
             self.addMessage(new WebInspector.ConsoleCommandResult(result, exception, commandMessage));
         }
