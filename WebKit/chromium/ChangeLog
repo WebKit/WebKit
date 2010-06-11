@@ -1,3 +1,15 @@
+2010-06-10  James Hawkins  <jhawkins@chromium.org>
+
+        Not reviwed.
+
+        Build fix for Chromium Mac Release.
+
+        * src/AutoFillPopupMenuClient.cpp:
+        (WebKit::AutoFillPopupMenuClient::getSuggestion):
+        (WebKit::AutoFillPopupMenuClient::valueChanged):
+        (WebKit::AutoFillPopupMenuClient::selectionChanged):
+        (WebKit::AutoFillPopupMenuClient::itemIsSeparator):
+
 2010-06-09  James Hawkins  <jhawkins@chromium.org>
 
         Reviewed by Darin Fisher.
