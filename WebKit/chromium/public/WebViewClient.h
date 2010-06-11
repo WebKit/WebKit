@@ -276,7 +276,7 @@ public:
     virtual void didUpdateInspectorSetting(const WebString& key, const WebString& value) { }
 
 
-    // Autofill ------------------------------------------------------------
+    // AutoFill ------------------------------------------------------------
 
     // Queries the browser for suggestions to be shown for the form text
     // field named |name|.  |value| is the text entered by the user so
@@ -285,17 +285,20 @@ public:
                                           const WebString& name,
                                           const WebString& value) { }
 
-    // Instructs the browser to remove the autofill entry specified from
+    // Instructs the browser to remove the Autocomplete entry specified from
     // its DB.
+    // FIXME: This method should be named removeAutocompleteSugestion.
     virtual void removeAutofillSuggestions(const WebString& name,
                                            const WebString& value) { }
 
     // Informs the browser that the user has accepted an AutoFill suggestion for
     // a WebNode.  |name| and |label| form a key into the set of AutoFill
-    // profiles.
+    // profiles.  |index| is an index of the selected suggestion in the list of
+    // suggestions provided by the client
     virtual void didAcceptAutoFillSuggestion(const WebNode&,
                                              const WebString& name,
-                                             const WebString& label) { }
+                                             const WebString& label,
+                                             unsigned index) { }
 
     // Informs the browser that the user has selected an AutoFill suggestion for
     // a WebNode.  This happens when the user hovers over a suggestion or uses

@@ -55,18 +55,23 @@ public:
     virtual void selectionChanged(unsigned listIndex, bool fireEvents = true);
     virtual void selectionCleared();
     virtual void popupDidHide();
+    virtual bool itemIsSeparator(unsigned listIndex) const;
 
     void initialize(WebCore::HTMLInputElement*,
                     const WebVector<WebString>& names,
                     const WebVector<WebString>& labels,
-                    int defaultSuggestionIndex);
+                    int separatorIndex);
 
     void setSuggestions(const WebVector<WebString>& names,
-                        const WebVector<WebString>& labels);
+                        const WebVector<WebString>& labels,
+                        int separatorIndex);
 
 private:
     Vector<WebCore::String> m_names;
     Vector<WebCore::String> m_labels;
+
+    // The index of the separator.  -1 if there is no separator.
+    int m_separatorIndex;
 };
 
 } // namespace WebKit
