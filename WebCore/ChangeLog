@@ -1,3 +1,15 @@
+2010-06-11  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Vertex attributes enabled as arrays but not bound to buffers must generate INVALID_OPERATION
+        https://bugs.webkit.org/show_bug.cgi?id=40315
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateRenderingState): Check if an enabled vertext attribs is bound to a buffer.
+        (WebCore::WebGLRenderingContext::vertexAttribPointer): Set bound buffer in vertex attrib state.
+        * html/canvas/WebGLRenderingContext.h: Add a member in vertex attrib state to track bound buffer.
+
 2010-05-31  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.

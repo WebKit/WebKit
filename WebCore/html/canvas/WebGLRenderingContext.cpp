@@ -755,7 +755,14 @@ bool WebGLRenderingContext::validateRenderingState(long numElementsRequired)
     if (!m_currentProgram)
         return false;
 
-    // Look in each enabled vertex attrib and find the smallest buffer size
+    // Look in each enabled vertex attrib and check if they've been bound to a buffer.
+    for (size_t i = 0; i < m_vertexAttribState.size(); ++i) {
+        if (m_vertexAttribState[i].enabled
+            && (!m_vertexAttribState[i].bufferBinding || !m_vertexAttribState[i].bufferBinding->object()))
+            return false;
+    }
+
+    // Look in each consumed vertex attrib (by the current program) and find the smallest buffer size
     long smallestNumElements = LONG_MAX;
     int numActiveAttribLocations = m_currentProgram->numActiveAttribLocations();
     int numAttribStates = static_cast<int>(m_vertexAttribState.size());
@@ -2925,7 +2932,8 @@ void WebGLRenderingContext::vertexAttribPointer(unsigned long indx, long size, u
         
         validatedStride = stride;
     }
-        
+
+    m_vertexAttribState[indx].bufferBinding = m_boundArrayBuffer;
     // Avoid off-by-one errors in numElements computation.
     // For the last element, we will only touch the data for the
     // element and nothing beyond it.

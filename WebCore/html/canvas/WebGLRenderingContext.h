@@ -340,6 +340,7 @@ class WebKitCSSMatrix;
             VertexAttribState() : enabled(false), numElements(0) { }
             bool enabled;
             long numElements;
+            RefPtr<WebGLBuffer> bufferBinding;
         };
         
         Vector<VertexAttribState> m_vertexAttribState;

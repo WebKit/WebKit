@@ -64,7 +64,7 @@ gl.enableVertexAttribArray(extraLoc);
 debug("Enable an extra attribute with null");
 shouldBe('gl.getError()', '0');
 shouldBeUndefined('gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0)');
-shouldBe('gl.getError()', '0');
+shouldBe('gl.getError()', 'gl.INVALID_OPERATION');
 debug("Enable an extra attribute with insufficient data buffer");
 gl.vertexAttribPointer(extraLoc, 3, gl.FLOAT, false, 7 * gl.sizeInBytes(gl.FLOAT), 4 * gl.sizeInBytes(gl.FLOAT));
 shouldBe('gl.getError()', '0');
