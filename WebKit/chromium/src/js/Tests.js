@@ -1279,8 +1279,8 @@ TestSuite.prototype.testStepIn = function()
         },
         {
             functionsOnStack: ["fact","d","a","(anonymous function)"],
-            lineNumber: 15,
-            lineText: "  return r;"
+            lineNumber: 10,
+            lineText: "  var r = 1;"
         },
         function() {
             test.releaseControl();
