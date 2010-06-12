@@ -1239,7 +1239,7 @@
             'dom/TouchEvent.cpp',
             'dom/TouchList.cpp',
             'dom/TouchList.h',
-            'dom/Tokenizer.h',
+            'dom/DocumentParser.h',
             'dom/TransformSourceLibxslt.cpp',
             'dom/TransformSource.h',
             'dom/Traversal.cpp',

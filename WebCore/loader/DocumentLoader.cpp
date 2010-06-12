@@ -393,7 +393,7 @@ bool DocumentLoader::isLoadingInAPISense() const
         Document* doc = m_frame->document();
         if (doc->docLoader()->requestCount())
             return true;
-        if (Tokenizer* tok = doc->tokenizer())
+        if (DocumentParser* tok = doc->tokenizer())
             if (tok->processingData())
                 return true;
     }

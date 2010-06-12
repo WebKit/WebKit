@@ -442,7 +442,7 @@ FTPDirectoryDocument::FTPDirectoryDocument(Frame* frame)
 #endif
 }
 
-Tokenizer* FTPDirectoryDocument::createTokenizer()
+DocumentParser* FTPDirectoryDocument::createTokenizer()
 {
     return new FTPDirectoryTokenizer(this);
 }

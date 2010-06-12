@@ -30,7 +30,7 @@
 #include "HTML5ScriptRunnerHost.h"
 #include "HTML5Token.h"
 #include "SegmentedString.h"
-#include "Tokenizer.h"
+#include "DocumentParser.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -43,15 +43,12 @@ class HTML5TreeBuilder;
 class ScriptController;
 class ScriptSourceCode;
 
-// FIXME: The whole Tokenizer class system should be renamed "Parser"
-// or "ParserController" as the job of this class is to drive parsing process
-// but it does not itself Tokenize.
-class HTML5Tokenizer :  public Tokenizer, HTML5ScriptRunnerHost, CachedResourceClient {
+class HTML5Tokenizer :  public DocumentParser, HTML5ScriptRunnerHost, CachedResourceClient {
 public:
     HTML5Tokenizer(HTMLDocument*, bool reportErrors);
     virtual ~HTML5Tokenizer();
 
-    // Tokenizer
+    // DocumentParser
     virtual void begin();
     virtual void write(const SegmentedString&, bool appendData);
     virtual void end();

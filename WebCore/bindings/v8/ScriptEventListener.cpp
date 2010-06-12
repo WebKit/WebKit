@@ -36,7 +36,7 @@
 #include "EventListener.h"
 #include "Frame.h"
 #include "ScriptScope.h"
-#include "Tokenizer.h"
+#include "DocumentParser.h"
 #include "V8AbstractEventListener.h"
 #include "V8Binding.h"
 #include "XSSAuditor.h"

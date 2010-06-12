@@ -1,5 +1,99 @@
 2010-06-12  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by David Levin.
+
+        Rename Tokenizer to DocumentParser to match what it actually does
+        https://bugs.webkit.org/show_bug.cgi?id=40504
+
+        The rename was entirely done by do-webcore-rename.
+        The only manual changes were removing out-dated comments
+        and fixing Tokenizer_h to DocumentParser_h in the header guards.
+
+        I'll do all the rest of the renames (like the tokenizer subclasses
+        and the tokenizer() createTokenizer() methods) in separate changes.
+
+        No functional change, thus no tests.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        * bindings/v8/ScriptEventListener.cpp:
+        * dom/Document.cpp:
+        (WebCore::Document::createTokenizer):
+        * dom/Document.h:
+        (WebCore::Document::tokenizer):
+        * dom/DocumentParser.h: Added.
+        (WebCore::DocumentParser::~DocumentParser):
+        (WebCore::DocumentParser::stopParsing):
+        (WebCore::DocumentParser::processingData):
+        (WebCore::DocumentParser::executingScript):
+        (WebCore::DocumentParser::wantsRawData):
+        (WebCore::DocumentParser::writeRawData):
+        (WebCore::DocumentParser::inViewSourceMode):
+        (WebCore::DocumentParser::setInViewSourceMode):
+        (WebCore::DocumentParser::wellFormed):
+        (WebCore::DocumentParser::lineNumber):
+        (WebCore::DocumentParser::columnNumber):
+        (WebCore::DocumentParser::executeScriptsWaitingForStylesheets):
+        (WebCore::DocumentParser::htmlParser):
+        (WebCore::DocumentParser::asHTMLTokenizer):
+        (WebCore::DocumentParser::xssAuditor):
+        (WebCore::DocumentParser::setXSSAuditor):
+        (WebCore::DocumentParser::DocumentParser):
+        * dom/Tokenizer.h: Removed.
+        * dom/ViewportArguments.cpp:
+        (WebCore::reportViewportWarning):
+        * dom/XMLTokenizer.h:
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::XMLTokenizer::stopParsing):
+        * dom/XMLTokenizerQt.cpp:
+        (WebCore::XMLTokenizer::stopParsing):
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::HTML5Tokenizer):
+        * html/HTML5Tokenizer.h:
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::createTokenizer):
+        * html/HTMLDocument.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::removedFromTree):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::HTMLTokenizer):
+        (WebCore::HTMLTokenizer::stopParsing):
+        * html/HTMLTokenizer.h:
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createTokenizer):
+        * html/HTMLViewSourceDocument.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::isLoadingInAPISense):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::addData):
+        * loader/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocument::createTokenizer):
+        * loader/FTPDirectoryDocument.h:
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocument::createTokenizer):
+        * loader/ImageDocument.h:
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaDocument::createTokenizer):
+        * loader/MediaDocument.h:
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginDocument::createTokenizer):
+        * loader/PluginDocument.h:
+        * loader/SinkDocument.cpp:
+        (WebCore::SinkDocument::createTokenizer):
+        * loader/SinkDocument.h:
+        * loader/TextDocument.cpp:
+        (WebCore::TextTokenizer::TextTokenizer):
+        (WebCore::TextDocument::createTokenizer):
+        (WebCore::createTextTokenizer):
+        * loader/TextDocument.h:
+        * wml/WMLDocument.cpp:
+        (WebCore::WMLDocument::finishedParsing):
+
+2010-06-12  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         HTML5Tokenizer needs to tell the InspectorTimelineAgent before and after it writes

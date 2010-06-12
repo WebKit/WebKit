@@ -42,7 +42,7 @@
 #include "Settings.h"
 #include "SinkDocument.h"
 #include "TextResourceDecoder.h"
-#include "Tokenizer.h"
+#include "DocumentParser.h"
 
 namespace WebCore {
 
@@ -136,7 +136,7 @@ void DocumentWriter::addData(const char* str, int len, bool flush)
     if (len == -1)
         len = strlen(str);
 
-    Tokenizer* tokenizer = m_frame->document()->tokenizer();
+    DocumentParser* tokenizer = m_frame->document()->tokenizer();
     if (tokenizer && tokenizer->wantsRawData()) {
         if (len > 0)
             tokenizer->writeRawData(str, len);
@@ -202,7 +202,7 @@ void DocumentWriter::addData(const String& str)
         m_frame->document()->setParseMode(Document::Strict);
     }
 
-    if (Tokenizer* tokenizer = m_frame->document()->tokenizer())
+    if (DocumentParser* tokenizer = m_frame->document()->tokenizer())
         tokenizer->write(str, true);
 }
 

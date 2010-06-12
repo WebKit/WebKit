@@ -232,7 +232,7 @@ int XMLTokenizer::columnNumber() const
 
 void XMLTokenizer::stopParsing()
 {
-    Tokenizer::stopParsing();
+    DocumentParser::stopParsing();
 }
 
 void XMLTokenizer::resumeParsing()

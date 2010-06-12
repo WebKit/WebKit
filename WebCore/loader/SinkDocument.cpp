@@ -26,11 +26,11 @@
 #include "config.h"
 #include "SinkDocument.h"
 
-#include "Tokenizer.h"
+#include "DocumentParser.h"
 
 namespace WebCore {
 
-class SinkTokenizer : public Tokenizer {
+class SinkTokenizer : public DocumentParser {
 public:
     SinkTokenizer(Document* document) : m_document(document) { }
         
@@ -57,7 +57,7 @@ SinkDocument::SinkDocument(Frame* frame)
     setParseMode(Compat);
 }
     
-Tokenizer* SinkDocument::createTokenizer()
+DocumentParser* SinkDocument::createTokenizer()
 {
     return new SinkTokenizer(this);
 }

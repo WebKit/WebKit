@@ -46,7 +46,7 @@ public:
 private:
     PluginDocument(Frame*);
 
-    virtual Tokenizer* createTokenizer();
+    virtual DocumentParser* createTokenizer();
 };
     
 }

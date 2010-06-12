@@ -40,7 +40,7 @@
 #include "JSDOMWindowShell.h"
 #include "JSHTMLCollection.h"
 #include "SegmentedString.h"
-#include "Tokenizer.h"
+#include "DocumentParser.h"
 #include <runtime/Error.h>
 #include <runtime/JSCell.h>
 

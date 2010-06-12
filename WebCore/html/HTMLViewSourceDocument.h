@@ -50,7 +50,7 @@ private:
     HTMLViewSourceDocument(Frame*, const String& mimeType);
 
     // Returns HTMLTokenizer or TextTokenizer based on m_type.
-    virtual Tokenizer* createTokenizer();
+    virtual DocumentParser* createTokenizer();
 
     void createContainingTable();
     PassRefPtr<Element> addSpanWithClassName(const String&);

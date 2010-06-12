@@ -45,7 +45,7 @@ namespace WebCore {
     
 using namespace HTMLNames;
     
-class PluginTokenizer : public Tokenizer {
+class PluginTokenizer : public DocumentParser {
 public:
     PluginTokenizer(Document* doc) : m_doc(doc), m_embedElement(0) {}
     static Widget* pluginWidgetFromDocument(Document* doc);
@@ -152,7 +152,7 @@ PluginDocument::PluginDocument(Frame* frame)
     setParseMode(Compat);
 }
     
-Tokenizer* PluginDocument::createTokenizer()
+DocumentParser* PluginDocument::createTokenizer()
 {
     return new PluginTokenizer(this);
 }

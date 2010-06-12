@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef Tokenizer_h
-#define Tokenizer_h
+#ifndef DocumentParser_h
+#define DocumentParser_h
 
 namespace WebCore {
 
@@ -30,12 +30,9 @@ namespace WebCore {
     class SegmentedString;
     class XSSAuditor;
 
-    // FIXME: This class should renamed DocumentParser or similar to express
-    // that it does more than tokenizing.  It manages the lifetime of of the
-    // parser as well as handles various tag-handling hacks for HTML/XML.
-    class Tokenizer : public Noncopyable {
+    class DocumentParser : public Noncopyable {
     public:
-        virtual ~Tokenizer() { }
+        virtual ~DocumentParser() { }
 
         // Script output must be prepended, while new data
         // received during executing a script must be appended, hence the
@@ -58,17 +55,17 @@ namespace WebCore {
 
         virtual int lineNumber() const { return -1; }
         virtual int columnNumber() const { return -1; }
-        
+
         virtual void executeScriptsWaitingForStylesheets() {}
 
         virtual HTMLParser* htmlParser() const { return 0; }
         virtual HTMLTokenizer* asHTMLTokenizer() { return 0; }
-        
+
         XSSAuditor* xssAuditor() const { return m_XSSAuditor; }
         void setXSSAuditor(XSSAuditor* auditor) { m_XSSAuditor = auditor; }
 
     protected:
-        Tokenizer(bool viewSourceMode = false) 
+        DocumentParser(bool viewSourceMode = false)
             : m_parserStopped(false)
             , m_inViewSourceMode(viewSourceMode)
             , m_XSSAuditor(0)
@@ -80,11 +77,11 @@ namespace WebCore {
         // even when it has buffered data.
         bool m_parserStopped;
         bool m_inViewSourceMode;
-        
-        // The XSSAuditor associated with this tokenizer.
+
+        // The XSSAuditor associated with this document parser.
         XSSAuditor* m_XSSAuditor;
     };
 
 } // namespace WebCore
 
-#endif // Tokenizer_h
+#endif // DocumentParser_h

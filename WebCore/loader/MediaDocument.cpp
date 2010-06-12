@@ -51,7 +51,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-class MediaTokenizer : public Tokenizer {
+class MediaTokenizer : public DocumentParser {
 public:
     MediaTokenizer(Document* doc) : m_doc(doc), m_mediaElement(0) {}
         
@@ -139,7 +139,7 @@ MediaDocument::~MediaDocument()
     ASSERT(!m_replaceMediaElementTimer.isActive());
 }
 
-Tokenizer* MediaDocument::createTokenizer()
+DocumentParser* MediaDocument::createTokenizer()
 {
     return new MediaTokenizer(this);
 }

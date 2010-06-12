@@ -903,7 +903,7 @@ webcore_sources += \
 	WebCore/dom/Text.h \
 	WebCore/dom/TextEvent.cpp \
 	WebCore/dom/TextEvent.h \
-	WebCore/dom/Tokenizer.h \
+	WebCore/dom/DocumentParser.h \
 	WebCore/dom/Traversal.cpp \
 	WebCore/dom/Traversal.h \
 	WebCore/dom/TreeDepthLimit.h \

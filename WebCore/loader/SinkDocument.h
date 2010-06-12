@@ -40,7 +40,7 @@ public:
 private:
     SinkDocument(Frame*);
     
-    virtual Tokenizer* createTokenizer();
+    virtual DocumentParser* createTokenizer();
 };
 
 

@@ -30,7 +30,7 @@
 #include "MappedAttributeEntry.h"
 #include "SegmentedString.h"
 #include "StringHash.h"
-#include "Tokenizer.h"
+#include "DocumentParser.h"
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 
@@ -70,7 +70,7 @@ namespace WebCore {
     };
 #endif
 
-    class XMLTokenizer : public Tokenizer, public CachedResourceClient {
+    class XMLTokenizer : public DocumentParser, public CachedResourceClient {
     public:
         XMLTokenizer(Document*, FrameView* = 0);
         XMLTokenizer(DocumentFragment*, Element*, FragmentScriptingPermission);
@@ -78,7 +78,7 @@ namespace WebCore {
 
         enum ErrorType { warning, nonFatal, fatal };
 
-        // from Tokenizer
+        // from DocumentParser
         virtual void write(const SegmentedString&, bool appendData);
         virtual void finish();
         virtual bool isWaitingForScripts() const;

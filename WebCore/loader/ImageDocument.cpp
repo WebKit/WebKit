@@ -76,7 +76,7 @@ private:
     ImageDocument* m_doc;
 };
     
-class ImageTokenizer : public Tokenizer {
+class ImageTokenizer : public DocumentParser {
 public:
     ImageTokenizer(ImageDocument* doc) : m_doc(doc) {}
 
@@ -192,7 +192,7 @@ ImageDocument::ImageDocument(Frame* frame)
     setParseMode(Compat);
 }
     
-Tokenizer* ImageDocument::createTokenizer()
+DocumentParser* ImageDocument::createTokenizer()
 {
     return new ImageTokenizer(this);
 }

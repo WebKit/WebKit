@@ -108,7 +108,7 @@ namespace WebCore {
     class StyleSheetList;
     class Text;
     class TextResourceDecoder;
-    class Tokenizer;
+    class DocumentParser;
     class TreeWalker;
     class XMLHttpRequest;
 
@@ -535,8 +535,8 @@ public:
     CSSStyleSheet* elementSheet();
     CSSStyleSheet* mappedElementSheet();
     
-    virtual Tokenizer* createTokenizer();
-    Tokenizer* tokenizer() { return m_tokenizer.get(); }
+    virtual DocumentParser* createTokenizer();
+    DocumentParser* tokenizer() { return m_tokenizer.get(); }
     
     bool printing() const { return m_printing; }
     void setPrinting(bool p) { m_printing = p; }
@@ -1030,7 +1030,7 @@ private:
 
     Frame* m_frame;
     OwnPtr<DocLoader> m_docLoader;
-    OwnPtr<Tokenizer> m_tokenizer;
+    OwnPtr<DocumentParser> m_tokenizer;
     bool m_wellFormed;
 
     // Document URLs.
