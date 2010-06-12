@@ -1,3 +1,23 @@
+2010-06-12  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Animation keyframe timing functions are applying incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=38963
+        
+        When copying RenderStyles, we have to clone the AnimationList so that each keyframe
+        can have its own timing function.
+
+        Tests: animations/keyframe-timing-functions-transform.html
+               animations/keyframe-timing-functions2.html
+
+        * platform/animation/Animation.h:
+        (WebCore::Animation::create):
+        * platform/animation/AnimationList.cpp:
+        (WebCore::AnimationList::AnimationList):
+        * platform/animation/AnimationList.h:
+        (WebCore::AnimationList::AnimationList):
+
 2010-06-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

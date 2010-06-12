@@ -1,3 +1,17 @@
+2010-06-12  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Animation keyframe timing functions are applying incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=38963
+        
+        Testcases for timing functions inside keyframes on 'left' and '-webkit-transform'.
+
+        * animations/keyframe-timing-functions-transform-expected.txt: Added.
+        * animations/keyframe-timing-functions-transform.html: Added.
+        * animations/keyframe-timing-functions2-expected.txt: Added.
+        * animations/keyframe-timing-functions2.html: Added.
+
 2010-06-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
