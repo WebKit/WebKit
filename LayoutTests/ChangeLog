@@ -1,3 +1,15 @@
+2010-06-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r61052.
+        http://trac.webkit.org/changeset/61052
+        https://bugs.webkit.org/show_bug.cgi?id=40517
+
+        "Broke fast/forms/caret-rtl.html on Mac bots" (Requested by
+        eseidel on #webkit).
+
+        * fast/html/hidden-attr-expected.txt: Removed.
+        * fast/html/hidden-attr.html: Removed.
+
 2010-06-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ojan Vafai.
