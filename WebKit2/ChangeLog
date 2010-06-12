@@ -1,5 +1,14 @@
 2010-06-11  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Mark Rowe.
+
+        Use -Os for optimized builds instead of -02. -02 wasn't giving the 
+        right trade off at this time.
+
+        * Configurations/Base.xcconfig:
+
+2010-06-11  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Move WKRetain and WKRelease overloaded functions out of WKRetainPtr
