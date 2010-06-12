@@ -1,3 +1,9 @@
+2010-06-12  Dmitry Titov  <dimich@chromium.org>
+
+        Not reviewed, update for Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-06-12  Dean Jackson  <dino@apple.com>
 
         Reviewed by Darin Adler.

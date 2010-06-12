@@ -2869,3 +2869,4 @@ BUG46375 MAC : http/tests/misc/acid3.html = IMAGE
 
 // Fails since WebKit r61020.
 BUG46377 MAC : fast/canvas/webgl/get-active-test.html = TEXT
+BUG46435 MAC : fast/canvas/webgl/texImageTest.html = TEXT
