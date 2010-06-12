@@ -39,4 +39,6 @@ WK_EXPORT void WKStringRelease(WKStringRef string);
 }
 #endif
 
+WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKString)
+
 #endif /* WKString_h */

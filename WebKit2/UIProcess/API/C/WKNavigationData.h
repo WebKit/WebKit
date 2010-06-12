@@ -42,4 +42,6 @@ WK_EXPORT void WKNavigationDataRelease(WKNavigationDataRef navigationData);
 }
 #endif
 
+WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKNavigationData)
+
 #endif /* WKNavigationData_h */

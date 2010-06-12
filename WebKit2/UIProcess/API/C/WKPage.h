@@ -26,7 +26,6 @@
 #ifndef WKPage_h
 #define WKPage_h
 
-#include <CoreFoundation/CoreFoundation.h>
 #include <WebKit2/WKBase.h>
 
 #ifndef __cplusplus
@@ -171,5 +170,7 @@ WK_EXPORT void WKPageRelease(WKPageRef page);
 #ifdef __cplusplus
 }
 #endif
+
+WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKPage)
 
 #endif /* WKPage_h */

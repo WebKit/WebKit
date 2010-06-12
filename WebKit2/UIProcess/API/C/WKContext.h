@@ -50,4 +50,6 @@ WK_EXPORT void WKContextRelease(WKContextRef context);
 }
 #endif
 
+WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKContext)
+
 #endif /* WKContext_h */

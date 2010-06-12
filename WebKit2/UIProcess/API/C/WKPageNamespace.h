@@ -43,4 +43,6 @@ WK_EXPORT void WKPageNamespaceRelease(WKPageNamespaceRef pageNamespace);
 }
 #endif
 
+WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKPageNamespace)
+
 #endif /* WKPageNamespace_h */

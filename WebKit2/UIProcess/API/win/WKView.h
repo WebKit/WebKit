@@ -50,4 +50,6 @@ WK_EXPORT void WKViewWindowAncestryDidChange(WKViewRef view);
 }
 #endif
 
+WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKView)
+
 #endif /* WKView_h */

@@ -1,3 +1,24 @@
+2010-06-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Move WKRetain and WKRelease overloaded functions out of WKRetainPtr
+        and into the files of the type they overload (eg, WKRetain(WKFrameRef 
+        moves to WKFrame.h)).
+
+        * UIProcess/API/C/WKBase.h:
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKFrame.h:
+        * UIProcess/API/C/WKFramePolicyListener.h:
+        * UIProcess/API/C/WKNavigationData.h:
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/C/WKPageNamespace.h:
+        * UIProcess/API/C/WKPreferences.h:
+        * UIProcess/API/C/WKString.h:
+        * UIProcess/API/C/WKURL.h:
+        * UIProcess/API/cpp/WKRetainPtr.h:
+        * UIProcess/API/win/WKView.h:
+
 2010-06-10  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Dan Bernstein.

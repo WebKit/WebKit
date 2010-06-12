@@ -51,4 +51,6 @@ WK_EXPORT void WKPreferencesRelease(WKPreferencesRef preferences);
 }
 #endif
 
+WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKPreferences)
+
 #endif /* WKPreferences_h */

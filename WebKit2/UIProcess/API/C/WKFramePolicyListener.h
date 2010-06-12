@@ -43,4 +43,6 @@ WK_EXPORT void WKFramePolicyListenerRelease(WKFramePolicyListenerRef policyListe
 }
 #endif
 
+WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKFramePolicyListener)
+
 #endif /* WKFramePolicyListener_h */

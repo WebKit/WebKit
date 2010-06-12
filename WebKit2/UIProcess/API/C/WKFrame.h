@@ -58,4 +58,6 @@ WK_EXPORT void WKFrameRelease(WKFrameRef frame);
 }
 #endif
 
+WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKFrame)
+
 #endif /* WKFrame_h */

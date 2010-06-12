@@ -39,4 +39,6 @@ WK_EXPORT void WKURLRelease(WKURLRef URL);
 }
 #endif
 
+WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKURL)
+
 #endif /* WKURL_h */

@@ -26,30 +26,7 @@
 #ifndef WKRetainPtr_h
 #define WKRetainPtr_h
 
-#include <WebKit2/WebKit2.h>
-
 namespace WebKit {
-
-// FIXME: Consider moving these to their respective headers instead of putting
-// them all here.
-#define DECLARE_RETAIN_RELEASE_OVERLOADS(WKType) \
-    inline void WKRetain(WKType##Ref p) { WKType##Retain(p); } \
-    inline void WKRelease(WKType##Ref p) { WKType##Release(p); } \
-    // end of macro
-
-DECLARE_RETAIN_RELEASE_OVERLOADS(WKContext)
-DECLARE_RETAIN_RELEASE_OVERLOADS(WKFrame)
-DECLARE_RETAIN_RELEASE_OVERLOADS(WKFramePolicyListener)
-DECLARE_RETAIN_RELEASE_OVERLOADS(WKPage)
-DECLARE_RETAIN_RELEASE_OVERLOADS(WKPageNamespace)
-DECLARE_RETAIN_RELEASE_OVERLOADS(WKPreferences)
-DECLARE_RETAIN_RELEASE_OVERLOADS(WKString)
-DECLARE_RETAIN_RELEASE_OVERLOADS(WKURL)
-#if PLATFORM(WIN)
-DECLARE_RETAIN_RELEASE_OVERLOADS(WKView)
-#endif
-
-#undef DECLARE_RETAIN_RELEASE_OVERLOADS
 
 enum WKAdoptTag { AdoptWK };
 
