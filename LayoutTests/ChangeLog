@@ -1,3 +1,13 @@
+2010-06-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/8025267> REGRESSION (Safari 4-TOT): Crash when a frame’s resize handler removes the frame
+        https://bugs.webkit.org/show_bug.cgi?id=40534
+
+        * fast/replaced/frame-removed-during-resize-expected.txt: Added.
+        * fast/replaced/frame-removed-during-resize.html: Added.
+
 2010-06-12  Dmitry Titov  <dimich@chromium.org>
 
         Not reviewed, update for Chromium test expectations.

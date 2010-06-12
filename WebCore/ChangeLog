@@ -1,3 +1,16 @@
+2010-06-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/8025267> REGRESSION (Safari 4-TOT): Crash when a frame’s resize handler removes the frame
+        https://bugs.webkit.org/show_bug.cgi?id=40534
+
+        Test: fast/replaced/frame-removed-during-resize.html
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::updateWidgetPosition): Null-check m_widget, since resizing the widget
+        may trigger an iframe’s resize handler, which may destroy the widget.
+
 2010-06-12  Dean Jackson  <dino@apple.com>
 
         Reviewed by Darin Adler.
