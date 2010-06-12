@@ -1,3 +1,36 @@
+2010-06-13  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        FrameLoader::clear() clears JS objects that cached pages later rely on
+
+        https://bugs.webkit.org/show_bug.cgi?id=37725
+        https://bugs.webkit.org/show_bug.cgi?id=31626
+
+        Fix the following tests for Qt:
+
+        fast/events/pageshow-pagehide-on-back-cached.html
+        fast/events/pageshow-pagehide-on-back-cached-with-frames.html
+        fast/loader/input-element-page-cache-crash.html
+        fast/dom/Window/timer-resume-on-navigation-back.html
+        loader/go-back-to-different-window-size.html
+        fast/dom/javascript-url-crash-function.html
+        fast/dom/location-new-window-no-crash.html
+        http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html
+
+        which currently fail because the page's Qt-bindings runtime objects are
+        cleared when navigating away from the page containing them.
+
+        Track Qt-bindings objects in a separate ScriptController::cacheableRootBindingObject().
+        RuntimeObjects tracked by this root object will not get invalidated on page navigations,
+        so they will still be available when the pages containing them are retrieved from the
+        b/f cache.
+
+        This means the Qt bindings objects will only get cleared on Frame::pageDestroyed().
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::addToJavaScriptWindowObject):
+
 2010-06-12  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -562,28 +562,6 @@ fast/js/sputnik/Unicode/Unicode_218/S7.6_A5.3_T1.html
 fast/js/sputnik/Unicode/Unicode_218/S7.6_A5.3_T2.html
 
 # =========================================================================== #
-#       JS Context bug.                                                       #
-#       https://bugs.webkit.org/show_bug.cgi?id=37725                         #
-#       https://bugs.webkit.org/show_bug.cgi?id=31626                         #
-# =========================================================================== #
-# https://bugs.webkit.org/show_bug.cgi?id=31626
-fast/dom/javascript-url-crash-function.html
-fast/dom/location-new-window-no-crash.html
-http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html
-media/restore-from-page-cache.html
-# https://bugs.webkit.org/show_bug.cgi?id=37725
-# Related failure to https://bugs.webkit.org/show_bug.cgi?id=31626
-# Navigating to a cached page with javascript history.back() does not restore the JS context.
-# CONSOLE MESSAGE: line 28: ReferenceError: Trying to access object from destroyed plug-in.
-# media/restore-from-page-cache.html is also affected by this issue in addition to the issue
-# in bug 31626.
-fast/events/pageshow-pagehide-on-back-cached.html
-fast/events/pageshow-pagehide-on-back-cached-with-frames.html
-fast/loader/input-element-page-cache-crash.html
-fast/dom/Window/timer-resume-on-navigation-back.html
-loader/go-back-to-different-window-size.html
-
-# =========================================================================== #
 # Fluctuating/flakey tests
 # =========================================================================== #
 animations/3d/transform-origin-vs-functions.html
@@ -2645,7 +2623,6 @@ fast/history/window-open.html
 fast/loader/javascript-url-hierarchical-execution.html
 fast/loader/policy-delegate-action-hit-test-zoomed.html
 fast/loader/reload-policy-delegate.html
-fast/dom/set-frame-src-while-running-script-in-frame.html
 fast/dom/HTMLDocument/hasFocus.html
 fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.html
 fast/dom/Range/range-expand.html
@@ -2764,7 +2741,6 @@ fast/text/international/thai-line-breaks.html
 
 # --crashed with --platform mac --ignore-metrics
 fast/text/midword-break-after-breakable-char.html
-fast/dom/set-frame-src-while-running-script-in-frame.html
 
 
 # -- pass with --platform mac --ignore-metrics

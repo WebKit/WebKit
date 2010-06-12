@@ -158,6 +158,7 @@ public:
 
     PassScriptInstance createScriptInstanceForWidget(Widget*);
     JSC::Bindings::RootObject* bindingRootObject();
+    JSC::Bindings::RootObject* cacheableBindingRootObject();
 
     PassRefPtr<JSC::Bindings::RootObject> createRootObject(void* nativeHandle);
 
@@ -195,8 +196,13 @@ private:
     bool m_paused;
     bool m_allowPopupsFromPlugin;
 
-    // The root object used for objects bound outside the context of a plugin.
+    // The root object used for objects bound outside the context of a plugin, such
+    // as NPAPI plugins. The plugins using these objects prevent a page from being cached so they
+    // are safe to invalidate() when WebKit navigates away from the page that contains them.
     RefPtr<JSC::Bindings::RootObject> m_bindingRootObject;
+    // Unlike m_bindingRootObject these objects are used in pages that are cached, so they are not invalidate()'d.
+    // This ensures they are still available when the page is restored.
+    RefPtr<JSC::Bindings::RootObject> m_cacheableBindingRootObject;
     RootObjectMap m_rootObjects;
 #if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* m_windowScriptNPObject;
