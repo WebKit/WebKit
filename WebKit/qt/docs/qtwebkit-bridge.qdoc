@@ -7,25 +7,26 @@
     \section2 The technology
 
     The QtWebKit bridge is a mechanism that extends WebKit's JavaScript environment to access native
-    objects that are represented as QObjects. It takes advantage of the inherent introspection of the
-    \l{Qt Object Model}, which has a natural alignment to the way JavaScript worked.
+    objects that are represented as \l{QObject}s. It takes advantage of the \l{QObject} introspection,
+    a part of the \l{Qt Object Model}, which makes it easy to integrate with the dynamic JavaScript environment,
+    for example \l{QObject} properties map directly to JavaScript properties.
 
     For example, both JavaScript and QObjects have properties: a construct that represent a getter/setter
     pair under one name.
 
     \section2 Use Cases
 
-    There are two main use cases for the QtWebKit bridge. Web content in a native application, and Thin Client.
+    There are two main use cases for the QtWebKit bridge. Web content in a native application, and Thin Clients.
 
     \section3 Web Content in a Native Application
 
     This is a common use case in classic Qt application, and a design pattern used by several modern
-    applications. For example, an application that contains both a media-player, playlist manager, and
-    a music store. The playlist manager is usually best authored as a classic desktop application,
+    applications. For example, an application that contains a media-player, playlist manager, and music store.
+    The playlist manager is usually best authored as a classic desktop application,
     with the native-looking robust \l{QWidget}s helping with producing that application.
     The media-player control, which usually looks custom, can be written using \l{The Graphics View framework}
     or with in a declarative way with \l{QtDeclarative}. The music store, which shows dynamic content
-    from the internet, and gets modified rapidly, is best authored in HTML and maintained on the server.
+    from the internet and gets modified rapidly, is best authored in HTML and maintained on the server.
 
     With the QtWebKit bridge, that music store component can interact with native parts of the application,
     for example, if a file needs to be saved to a specific location.
@@ -38,7 +39,7 @@
     access to native features not usually exposed to the web, or to enable helper components that
     are best written with C++.
 
-    An example for such client is a UI for a video-on-demand service on a TV. The entire content and
+    An example for such a client is a UI for a video-on-demand service on a TV. The entire content and
     UI can be kept on the server, served dynamically through HTTP and rendered with WebKit, with additional
     native components for accessing hardware-specific features like extracting the list of images
     out of the video.
@@ -67,7 +68,7 @@
     \section2 Creating the link via QWebFrame
 
     By default, no QObjects are accessible through the web environment, for security reasons.
-    To enable web content access to a native QObject, the application has to explicitly grant it access,
+    To enable web content access for a native QObject, the application must explicitly grant it access,
     using the following call:
 
     \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 0
@@ -76,13 +77,13 @@
 
     \section2 Using Signals and Slots
 
-    Qt Script adapts Qt's central \l{Signals and Slots} feature for
+    The QtWebKit bridge adapts Qt's central \l{Signals and Slots} feature for
     scripting. There are three principal ways to use signals and slots
-    with Qt Script:
+    with the QtWebKit bridge:
 
     \list
     \i \bold{Hybrid C++/script}: C++ application code connects a
-    signal to a script function. The script function can, for example, be
+    signal to a script function. For example, the script function can be
     a function that the user has typed in, or one that you have read from a
     file. This approach is useful if you have a QObject but don't want
     to expose the object itself to the scripting environment; you just
@@ -97,7 +98,7 @@
     the connections is fully dynamic (script-defined).
 
     \i \bold{Purely script-defined}: A script can both define signal
-    handler functions (effectively "slots written in Qt Script"),
+    handler functions (effectively "slots written in JavaScript"),
     \e{and} set up the connections that utilize those handlers. For
     example, a script can define a function that will handle the
     QLineEdit::returnPressed() signal, and then connect that signal to the
@@ -108,36 +109,36 @@
 
     \section3 Signal to Function Connections
 
-    \c{connect(function)}
+    \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 6
 
     In this form of connection, the argument to \c{connect()} is the
     function to connect to the signal.
 
-    \snippet webkitsnippets/doc_src_qtscript.qdoc 2
+    \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 7
 
-    The argument can be a Qt Script function, as in the above
+    The argument can be a JavaScript function, as in the above
     example, or it can be a QObject slot, as in
     the following example:
 
-    \snippet webkitsnippets/doc_src_qtscript.qdoc 3
+    \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 8
 
     When the argument is a QObject slot, the argument types of the
     signal and slot do not necessarily have to be compatible;
-    the QtWebKit bridge will, if necessary, perform conversion of the signal
+    If necessary, the QtWebKit bridge will, perform conversion of the signal
     arguments to match the argument types of the slot.
 
     To disconnect from a signal, you invoke the signal's
     \c{disconnect()} function, passing the function to disconnect
     as argument:
 
-    \snippet webkitsnippets/doc_src_qtscript.qdoc 4
+    \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 9
 
     When a script function is invoked in response to a signal, the
     \c this object will be the Global Object.
 
     \section3 Signal to Member Function Connections
 
-    \c{connect(thisObject, function)}
+    \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 10
 
     In this form of the \c{connect()} function, the first argument
     is the object that will be bound to the variable, \c this, when
@@ -148,31 +149,31 @@
     \c{clicked} signal; passing the form as the \c this object
     makes sense in such a case.
 
-    \snippet webkitsnippets/doc_src_qtscript.qdoc 5
+    \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 11
 
     To disconnect from the signal, pass the same arguments to \c{disconnect()}:
 
-    \snippet webkitsnippets/doc_src_qtscript.qdoc 6
+    \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 12
 
     \section3 Signal to Named Member Function Connections
 
-    \c{connect(thisObject, functionName)}
+    \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 14
 
-    In this form of the \c{connect()} function, the first argument is
-    the object that will be bound to the variable, \c this, when
-    a function is invoked in response to the signal. The second argument
-    specifies the name of a function that is connected to the signal,
-    and this refers to a member function of the object passed as the
-    first argument (\c thisObject in the above scheme).
+    This form of the \c{connect()} function requires that the first argument is
+    the object that will be bound to the variable \c{this} when a function is
+    invoked in response to the signal. The second argument specifies the
+    name of a function that is connected to the signal, and this refers to a
+    member function of the object passed as the first argument (thisObject
+    in the above scheme).
 
     Note that the function is resolved when the connection is made, not
     when the signal is emitted.
 
-    \snippet webkitsnippets/doc_src_qtscript.qdoc 7
+    \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 15
 
     To disconnect from the signal, pass the same arguments to \c{disconnect()}:
 
-    \snippet webkitsnippets/doc_src_qtscript.qdoc 8
+    \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 17
 
     \section3 Error Handling
 
@@ -181,14 +182,14 @@
     You can obtain an error message from the resulting \c{Error} object.
     Example:
 
-    \snippet webkitsnippets/doc_src_qtscript.qdoc 9
+    \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 18
 
     \section3 Emitting Signals from Scripts
 
     To emit a signal from script code, you simply invoke the signal
     function, passing the relevant arguments:
 
-    \snippet webkitsnippets/doc_src_qtscript.qdoc 10
+    \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 19
 
     It is currently not possible to define a new signal in a script;
     i.e., all signals must be defined by C++ classes.
@@ -201,13 +202,13 @@
     \c{myOverloadedSlot(int)} and \c{myOverloadedSlot(QString)}, the following
     script code will behave reasonably:
 
-    \snippet webkitsnippets/doc_src_qtscript.qdoc 11
+    \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 20
 
     You can specify a particular overload by using array-style property access
     with the \l{QMetaObject::normalizedSignature()}{normalized signature} of
     the C++ function as the property name:
 
-    \snippet webkitsnippets/doc_src_qtscript.qdoc 12
+    \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 21
 
     If the overloads have different number of arguments, the QtWebKit bridge will
     pick the overload with the argument count that best matches the
@@ -225,7 +226,7 @@
     (it would be meaningless to return values from a slot, as the connected signals don't handle the returned data).
     To make a non-slot method invokable, simply add the Q_INVOKABLE macro before its definition:
 
-    \snippet webkitsnippets/doc_src_qtscript.qdoc 20
+    \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 22
 
     \section2 Accessing Properties
 
@@ -235,11 +236,11 @@
     property will automatically be invoked. For example, if your
     C++ class has a property declared as follows:
 
-    \snippet webkitsnippets/doc_src_qtscript.qdoc 13
+    \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 23
 
     then script code can do things like the following:
 
-    \snippet webkitsnippets/doc_src_qtscript.qdoc 14
+    \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 24
 
     \section2 Accessing Child QObjects
 
@@ -250,12 +251,12 @@
     \c{"okButton"}, you can access this object in script code through
     the expression
 
-    \snippet webkitsnippets/doc_src_qtscript.qdoc 15
+    \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 25
 
     Since \c{objectName} is itself a Q_PROPERTY, you can manipulate
     the name in script code to, for example, rename an object:
 
-    \snippet webkitsnippets/doc_src_qtscript.qdoc 16
+    \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 26
 
     \section2 Data types
 
@@ -283,7 +284,7 @@
     \section3 Strings
 
     When JavaScript accesses methods or properties that expect a \l{QString}, the QtWebKit bridge
-    will automatically convert the value to a string (if it's not already a string), using the
+    will automatically convert the value to a string (if it is not already a string), using the
     built-in JavaScript toString method.
 
     When a QString is passed to JavaScript from a signal or a property, The QtWebKit bridge will
@@ -292,7 +293,7 @@
     \section3 Date & Time
 
     Both \l{QDate}, \l{QTime} and \l{QDateTime} are automatically translated to or from the JavaScript
-    Date object. If a number is passed as an argument to a method that expects one of the date/time
+    Date object. If a number were passed as an argument to a method that expects one of the date/time
     types, the QtWebKit bridge would treat it as a timestamp. If a sting is passed, QtWebKit would
     try different Qt date parsing functions to find the right one.
 
@@ -314,7 +315,7 @@
 
     \section3 Compound (JSON) objects
 
-    JavaScript compound objects, also known as JSON objects, are variables which hold a list
+    JavaScript compound objects, also known as JSON objects, are variables that hold a list
     of key-value pairs, where all the keys are strings and the values can have any type.
     This translates very well to \l{QVariantMap}, which is nothing more than a \l{QMap} of \l{QString}
     to \l{QVariant}.
@@ -334,7 +335,7 @@
     a normal JSON object would become a \l{QVariantMap}, and a JavaScript array would become a \l{QVariantList}.
 
     Using \l{QVariant}s generously in C++ in that way makes C++ programming feel a bit more like JavaScript programming,
-    as it adds another level of indirection - passing \l{QVariant}s around is very flexible, as the program can figure out
+    as it adds another level of indirection. Passing \l{QVariant}s around like this q   is very flexible, as the program can figure out
     the type of argument in runtime just like JavaScript would do, but it also takes away from the type-safety and robust
     nature of C++. It's recommended to use \l{QVariant}s only for convenience high-level functions, and to keep most of your
     \l{QObject}s somewhat type-safe.
@@ -348,7 +349,7 @@
     a \l{QObject}.
 
     In general its advised to use care when passing \l{QObject}s as arguments, as those objects don't become owned by
-    the Javascipt engine; That means that the application developer has to be extra careful not to try to access
+    the JavaScript engine; That means that the application developer has to be extra careful not to try to access
     \l{QObject}s that have already been deleted by the native environment.
 
     \section3 Pixmaps and Images
@@ -401,25 +402,26 @@
 
     \section2 Limiting the Scope of the Hybrid Layer
 
-    When using QtWebKit's hybrid features, it's a common pitfall to make the API exposed to JavaScript very rich and
+    When using QtWebKit's hybrid features, it is a common pitfall to make the API exposed to JavaScript very rich and
     use all its features. This, however, leads to complexity and can create bugs that are hard to trace.
-    Instead, it's advisable to keep the hybrid layer small and manageable: create a gate only when
+    Instead, it is advisable to keep the hybrid layer small and manageable: create a gate only when
     there's an actual need for it, i.e. there's a new native enabler that requires a direct interface
     to the application layer. Sometimes new functionality is better handled internally in the native layer
     or in the web layer; simplicity is your friend.
 
     This usually becomes more apparent when the hybrid layer can create or destroy objects, or uses
-    signals slots or properties with a \l{QObject}* argument. It's advised to be very careful and to treat
+    signals slots or properties with a \l{QObject}* argument. It is advised to be very careful and to treat
     an exposed \l{QObject} as a system - with careful attention to memory management and object ownership.
 
     \section2 Internet Security
 
-    When exposing native object to an open web environment, it's important to understand the security
+    When exposing native object to an open web environment, it is importwhichant to understand the security
     implications. Think whether the exposed object enables the web environment access to things that
     shouldn't be open, and whether the web content loaded by that web page comes from a trusted. In general, when
     exposing native QObjects that give the web environment access to private information or to functionality
     that's potentially harmful to the client, such exposure should be balanced by limiting the web page's
-    access to trusted URLs only with HTTPS and other security measures.
+    access to trusted URLs only with HTTPS, and by utilizing other measures as part of a security strategy.
+
 
 
 */
