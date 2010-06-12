@@ -1,3 +1,13 @@
+2010-06-11  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Tests that we do not crash while rendering SVG text with CSS styles :first-letter and :first-line.
+        https://bugs.webkit.org/show_bug.cgi?id=40031
+
+        * svg/text/text-style-invalid-expected.txt: Added.
+        * svg/text/text-style-invalid.svg: Added.
+
 2010-06-11  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
