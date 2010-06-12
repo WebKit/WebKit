@@ -246,6 +246,10 @@ void QWebSettingsPrivate::apply()
         settings->setTiledBackingStoreEnabled(value);
 #endif
 
+        value = attributes.value(QWebSettings::SiteSpecificQuirksEnabled,
+                                      global->attributes.value(QWebSettings::SiteSpecificQuirksEnabled));
+        settings->setNeedsSiteSpecificQuirks(value);
+
         settings->setUsesPageCache(WebCore::pageCache()->capacity());
     } else {
         QList<QWebSettingsPrivate*> settings = *::allSettings();
@@ -428,6 +432,8 @@ QWebSettings* QWebSettings::globalSettings()
         and at other times scrolling the page itself. For this reason iframes and framesets are
         barely usable on touch devices. This will flatten all the frames to become one scrollable page.
         This is disabled by default.
+    \value SiteSpecificQuirksEnabled This setting enables WebKit's workaround for broken sites. It is
+        enabled by default.
 */
 
 /*!
@@ -464,6 +470,7 @@ QWebSettings::QWebSettings()
     d->attributes.insert(QWebSettings::WebGLEnabled, false);
     d->attributes.insert(QWebSettings::TiledBackingStoreEnabled, false);
     d->attributes.insert(QWebSettings::FrameFlatteningEnabled, false);
+    d->attributes.insert(QWebSettings::SiteSpecificQuirksEnabled, true);
     d->offlineStorageDefaultQuota = 5 * 1024 * 1024;
     d->defaultTextEncoding = QLatin1String("iso-8859-1");
 }

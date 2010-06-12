@@ -1,3 +1,17 @@
+2010-06-12  Dawit Alemayehu  <adawit@kde.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added an attribute to enable/disable site specific quirks mode in WebKit. 
+        The attribute is enabled by default.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40073
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        (QWebSettings::QWebSettings):
+        * Api/qwebsettings.h:
+
 2010-06-12  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
