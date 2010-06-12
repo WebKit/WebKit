@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+ "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<form id=f action="interactive-validation-compat-mode.html">
+<input type=hidden name=submitted value="true">
+<input name=i0 required id="i0">
+<input type=submit id="s">
+</form>
+<script>
+description('Test if an invalid form in a document with HTML4.01 DOCTYPE is submitted.');
+
+function startOrVerify() {
+    var query = window.location.search;
+    if (query.indexOf('submitted=true') != -1) {
+        testPassed('The form should be submitted.');
+        shouldBeTrue('location.search.indexOf("i0=") != -1');
+        debug('TEST COMPLETE');
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    } else {
+        // HTMLFormElement::submit() skips validation. Use the submit button.
+        document.getElementById('s').click();
+        testFailed('The form was not submitted.');
+    }
+}
+
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+window.onload = startOrVerify;
+</script>
+</body>
+</html>

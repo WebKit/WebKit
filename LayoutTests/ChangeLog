@@ -1,3 +1,15 @@
+2010-06-12  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Disable interactive form validation in non-strict modes
+        https://bugs.webkit.org/show_bug.cgi?id=40218
+
+        * fast/forms/interactive-validation-compat-mode-expected.txt: Added.
+        * fast/forms/interactive-validation-compat-mode.html: Added.
+        * fast/forms/interactive-validation-html4-expected.txt: Added.
+        * fast/forms/interactive-validation-html4.html: Added.
+
 2010-06-12  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
