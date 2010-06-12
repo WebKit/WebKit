@@ -1,3 +1,17 @@
+2010-06-11  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Just updating expectations.
+
+        tables/mozilla/bugs/bug1188.html needlessly depends on HTML Parser text node handling
+        https://bugs.webkit.org/show_bug.cgi?id=40485
+
+        The current HTML5 parser is expected to fail the new webkit01 test.
+        It will be fixed when we fix text-node coalescing as discussed in
+        the previous commit.
+
+        * html5lib/runner-expected-html5.txt:
+        * html5lib/webkit-resumer-expected-html5.txt:
+
 2010-06-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r61052.
