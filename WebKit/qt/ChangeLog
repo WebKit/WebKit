@@ -1,3 +1,16 @@
+2010-06-12  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Fix tst_qwebframe regression from http://trac.webkit.org/changeset/61062
+
+        Only use cacheableBindingRootObject() if the object has QtOwnership.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40527
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::addToJavaScriptWindowObject):
+
 2010-06-13  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
