@@ -1,3 +1,13 @@
+2010-06-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ojan Vafai.
+
+        Implement HTML5 hidden attribute
+        https://bugs.webkit.org/show_bug.cgi?id=40511
+
+        * fast/html/hidden-attr-expected.txt: Added.
+        * fast/html/hidden-attr.html: Added. Test static and dynamic cases of hidden attribute.
+
 2010-06-11  Simon Fraser  <simon.fraser@apple.com>
 
         Add expected result missing from the previous commit.
