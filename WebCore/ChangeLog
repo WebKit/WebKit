@@ -1,3 +1,42 @@
+2010-06-12  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTML5Tokenizer needs to tell the InspectorTimelineAgent before and after it writes
+        https://bugs.webkit.org/show_bug.cgi?id=40417
+
+        This "fixes" inspector/timeline-script-tag-1.html.  HTML5 results
+        differ from the old parser for expected reasons.
+
+        HTML5Tokenizer calls InspectorTimelineAgent::will/didWriteHTML every
+        time we pump the lexer instead of every write() call.
+        We end up pumping the lexer slightly more often than the old code called
+        write() in order to cleanly handle unclosed-entities, unclosed tags,
+        buffered characters, etc. at the end of a document.
+
+        I discussed this extensively with James Robinson in #webkit and we decided
+        that it was better for the HTML5Tokenizer to call for every pump and
+        that the Inspector should later filter out empty pumps.
+
+        We can't filter out empty pumps yet, because the number of parsed
+        characters is passed in willWrite instead of didWrite and thus is
+        speculative (and wrong).  This is a problem independent of this change
+        as willWrite's "length" argument is wrong in different ways for the old
+        parser, including always being 0 when the old parser resumes.
+
+        Tested by inspector/timeline-script-tag-1.html
+
+        * html/HTML5Tokenizer.cpp:
+        (WebCore::HTML5Tokenizer::willPumpLexer):
+         - Notify the InspectorTimelineAgent we're about to process input.
+        (WebCore::HTML5Tokenizer::didPumpLexer):
+         - Notify the InspectorTimelineAgent we did process tokens.
+        (WebCore::HTML5Tokenizer::pumpLexer):
+         - Call willPump and didPump
+        * html/HTML5Tokenizer.h:
+        * inspector/InspectorTimelineAgent.h:
+         - Add a FIXME about passing length to didWrite instead of willWrite.
+
 2010-06-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r61052.

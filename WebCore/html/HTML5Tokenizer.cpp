@@ -36,6 +36,10 @@
 #include "NotImplemented.h"
 #include "XSSAuditor.h"
 
+#if ENABLE(INSPECTOR)
+#include "InspectorTimelineAgent.h"
+#endif
+
 namespace WebCore {
 
 namespace {
@@ -93,6 +97,10 @@ void HTML5Tokenizer::pumpLexerIfPossible()
 
 void HTML5Tokenizer::pumpLexer()
 {
+    // We tell the InspectorTimelineAgent about every pump, even if we
+    // end up pumping nothing.  It can filter out empty pumps itself.
+    willPumpLexer();
+
     ASSERT(!m_parserStopped);
     ASSERT(!m_treeBuilder->isPaused());
     while (!m_parserStopped && m_lexer->nextToken(m_input.current(), m_token)) {
@@ -117,6 +125,27 @@ void HTML5Tokenizer::pumpLexer()
         if (!shouldContinueParsing)
             return;
     }
+
+    didPumpLexer();
+}
+
+void HTML5Tokenizer::willPumpLexer()
+{
+#if ENABLE(INSPECTOR)
+    // FIXME: m_input.current().length() is only accurate if we end up pumping
+    // the end up parsing the whole buffer in this pump.  We should pass how
+    // much we parsed as part of didWriteHTML instead of willWriteHTML.
+    if (InspectorTimelineAgent* timelineAgent = m_document->inspectorTimelineAgent())
+        timelineAgent->willWriteHTML(m_input.current().length(), m_lexer->lineNumber());
+#endif
+}
+
+void HTML5Tokenizer::didPumpLexer()
+{
+#if ENABLE(INSPECTOR)
+    if (InspectorTimelineAgent* timelineAgent = m_document->inspectorTimelineAgent())
+        timelineAgent->didWriteHTML(m_lexer->lineNumber());
+#endif
 }
 
 void HTML5Tokenizer::write(const SegmentedString& source, bool appendData)

@@ -97,9 +97,11 @@ public:
     void willPaint(const IntRect&);
     void didPaint();
 
+    // FIXME: |length| should be passed in didWrite instead willWrite
+    // as the parser can not know how much it will process until it tries.
     void willWriteHTML(unsigned int length, unsigned int startLine);
     void didWriteHTML(unsigned int endLine);
-        
+
     void didInstallTimer(int timerId, int timeout, bool singleShot);
     void didRemoveTimer(int timerId);
     void willFireTimer(int timerId);
