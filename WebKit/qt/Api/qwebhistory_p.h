@@ -45,6 +45,8 @@ public:
             item->deref();
     }
 
+    static WebCore::HistoryItem* core(QWebHistoryItem* q);
+
     WebCore::HistoryItem* item;
 };
 

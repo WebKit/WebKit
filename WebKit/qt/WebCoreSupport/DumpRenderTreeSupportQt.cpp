@@ -35,6 +35,7 @@
 #include "FrameLoaderClientQt.h"
 #include "FrameView.h"
 #include "GCController.h"
+#include "HistoryItem.h"
 #include "HTMLInputElement.h"
 #include "InspectorController.h"
 #include "NotificationPresenterClientQt.h"
@@ -55,6 +56,8 @@
 #include "qwebelement.h"
 #include "qwebframe.h"
 #include "qwebframe_p.h"
+#include "qwebhistory.h"
+#include "qwebhistory_p.h"
 #include "qwebpage.h"
 #include "qwebpage_p.h"
 
@@ -563,6 +566,35 @@ void DumpRenderTreeSupportQt::setCheckPermissionFunction(CheckPermissionFunction
 void DumpRenderTreeSupportQt::setRequestPermissionFunction(RequestPermissionFunctionType* f)
 {
     requestPermissionFunction = f;
+}
+
+bool DumpRenderTreeSupportQt::isTargetItem(const QWebHistoryItem& historyItem)
+{
+    QWebHistoryItem it = historyItem;
+    if (QWebHistoryItemPrivate::core(&it)->isTargetItem())
+        return true;
+    return false;
+}
+
+QString DumpRenderTreeSupportQt::historyItemTarget(const QWebHistoryItem& historyItem)
+{
+    QWebHistoryItem it = historyItem;
+    return (QWebHistoryItemPrivate::core(&it)->target());
+}
+
+QList<QWebHistoryItem> DumpRenderTreeSupportQt::getChildHistoryItems(const QWebHistoryItem& historyItem)
+{
+    QWebHistoryItem it = historyItem;
+    HistoryItem* item = QWebHistoryItemPrivate::core(&it);
+    const WebCore::HistoryItemVector& children = item->children();
+
+    unsigned size = children.size();
+    QList<QWebHistoryItem> kids;
+    for (unsigned i = 0; i < size; ++i) {
+        QWebHistoryItem kid(new QWebHistoryItemPrivate(children[i].get()));
+        kids.prepend(kid);
+    }
+    return kids;
 }
 
 // Provide a backward compatibility with previously exported private symbols as of QtWebKit 4.6 release

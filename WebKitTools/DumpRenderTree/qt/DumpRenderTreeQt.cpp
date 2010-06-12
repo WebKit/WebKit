@@ -708,9 +708,17 @@ static QString dumpHistoryItem(const QWebHistoryItem& item, int indent, bool cur
         result.append(url);
     }
 
-    // FIXME: Wrong, need (private?) API for determining this.
-    result.append(QLatin1String("  **nav target**"));
+    QString target = DumpRenderTreeSupportQt::historyItemTarget(item);
+    if (!target.isEmpty())
+        result.append(QString(QLatin1String(" (in frame \"%1\")")).arg(target));
+
+    if (DumpRenderTreeSupportQt::isTargetItem(item))
+        result.append(QLatin1String("  **nav target**"));
     result.append(QLatin1String("\n"));
+
+    QList<QWebHistoryItem> children = DumpRenderTreeSupportQt::getChildHistoryItems(item);
+    for (int i = 0; i < children.size(); ++i)
+        result += dumpHistoryItem(children.at(i), 12, false);
 
     return result;
 }

@@ -1,3 +1,21 @@
+2010-06-12  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Back-forward list dumping is incorrect
+
+        https://bugs.webkit.org/show_bug.cgi?id=36392
+
+        Support dumping child history items in DRT.
+
+        Unskip:
+
+        fast/loader/frame-src-change-added-to-history.html
+        fast/loader/frame-src-change-not-added-to-history.html
+        fast/loader/frame-location-change-not-added-to-history.html
+
+        * platform/qt/Skipped:
+
 2010-06-11  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Just updating expectations.

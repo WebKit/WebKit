@@ -61,6 +61,7 @@ private:
     friend class QWebPage;
     friend class WebCore::FrameLoaderClientQt;
     friend class QWebHistoryItemPrivate;
+    friend class DumpRenderTreeSupportQt;
     //friend QDataStream & operator<<(QDataStream& out,const QWebHistoryItem& hist);
     //friend QDataStream & operator>>(QDataStream& in,QWebHistoryItem& hist);
     QExplicitlySharedDataPointer<QWebHistoryItemPrivate> d;
