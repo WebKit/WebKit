@@ -1,5 +1,26 @@
 2010-06-12  Kent Tamura  <tkent@chromium.org>
 
+        Reviewed by Darin Adler.
+
+        REGRESSION: Can't submit a form with <input type=radio required>
+        https://bugs.webkit.org/show_bug.cgi?id=40429
+
+        Validity state was not updated correctly for radio buttons, and it
+        prevents form submission even if a radio button group has a
+        checked radio button.
+
+        Test: fast/forms/interactive-validation-required-radio.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateCheckedRadioButtons):
+         Call setNeedsValidityCheck() for all of radio buttons in the same group
+         to update validity state.
+        (WebCore::HTMLInputElement::setChecked):
+         Remove setNeedsValidityCheck() call because it is called in
+         updateCheckedRadioButtons().
+
+2010-06-12  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         Disable interactive form validation in non-strict modes

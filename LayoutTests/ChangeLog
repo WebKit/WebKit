@@ -1,5 +1,22 @@
 2010-06-12  Kent Tamura  <tkent@chromium.org>
 
+        Reviewed by Darin Adler.
+
+        REGRESSION: Can't submit a form with <input type=radio required>
+        https://bugs.webkit.org/show_bug.cgi?id=40429
+
+        * fast/forms/ValidityState-valueMissing-radio-expected.txt:
+        * fast/forms/interactive-validation-required-radio-expected.txt: Added.
+        * fast/forms/interactive-validation-required-radio.html: Added.
+        * fast/forms/script-tests/ValidityState-valueMissing-radio.js:
+          We need to test against a radio group with at least three radio buttons
+          because we should test behaviors of
+          - checked
+          - unchecked
+          - neither checked nor unchecked
+
+2010-06-12  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         Disable interactive form validation in non-strict modes
