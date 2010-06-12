@@ -81,14 +81,15 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
     #
 
     def _build_path(self, *comps):
-        if self._options.use_drt:
-            base = os.path.join(self.path_from_webkit_base())
-        else:
-            base = self.path_from_chromium_base()
+        base = self.path_from_chromium_base()
         if os.path.exists(os.path.join(base, 'sconsbuild')):
             return os.path.join(base, 'sconsbuild', *comps)
-        else:
+        if os.path.exists(os.path.join(base, 'out', *comps)) or not self._options.use_drt:
             return os.path.join(base, 'out', *comps)
+        base = self.path_from_webkit_base()
+        if os.path.exists(os.path.join(base, 'sconsbuild')):
+            return os.path.join(base, 'sconsbuild', *comps)
+        return os.path.join(base, 'out', *comps)
 
     def _check_apache_install(self):
         result = chromium.check_file_exists(self._path_to_apache(),

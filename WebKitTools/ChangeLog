@@ -1,3 +1,18 @@
+2010-06-12  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] new-run-webkit-tests --use-drt should work with Chromium checkout
+        https://bugs.webkit.org/show_bug.cgi?id=40402
+
+        _build_path() of each Chromium port check existence of build path
+        of Chromium checkout first, then check existence of build path of
+        WebKit-only checkout.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+
 2010-06-12  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

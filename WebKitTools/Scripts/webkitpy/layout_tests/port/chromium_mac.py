@@ -102,10 +102,11 @@ class ChromiumMacPort(chromium.ChromiumPort):
     #
 
     def _build_path(self, *comps):
-        if self._options.use_drt:
-            return self.path_from_webkit_base('WebKit', 'chromium',
-                                              'xcodebuild', *comps)
-        return self.path_from_chromium_base('xcodebuild', *comps)
+        path = self.path_from_chromium_base('xcodebuild', *comps)
+        if os.path.exists(path) or not self._options.use_drt:
+            return path
+        return self.path_from_webkit_base('WebKit', 'chromium', 'xcodebuild',
+                                          *comps)
 
     def _check_wdiff_install(self):
         try:
