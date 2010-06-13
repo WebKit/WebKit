@@ -1,3 +1,9 @@
+2010-06-12  Dmitry Titov  <dimich@chromium.org>
+
+        Not reviewed, update Chromium expected result following r61071.
+
+        * platform/chromium/fast/dom/prototype-inheritance-expected.txt:
+
 2010-06-12  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.
