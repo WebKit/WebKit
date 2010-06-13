@@ -1,3 +1,15 @@
+2010-06-12  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        [BREWMP] Don't include POSIX headers in WebCorePrefix.h
+        https://bugs.webkit.org/show_bug.cgi?id=39411
+
+        When building for BREW MP, don't include POSIX headers:
+        <fcntl.h>, <pthread.h> and <sys/types.h>.
+
+        * WebCorePrefix.h:
+
 2010-06-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
