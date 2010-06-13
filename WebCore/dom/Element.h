@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,19 +25,14 @@
 #ifndef Element_h
 #define Element_h
 
-#include "ContainerNode.h"
 #include "Document.h"
-#include "HTMLNames.h"
 #include "MappedAttributeEntry.h"
 #include "NamedNodeMap.h"
-#include "QualifiedName.h"
 #include "ScrollTypes.h"
 
 namespace WebCore {
 
-class Attr;
 class Attribute;
-class CSSStyleDeclaration;
 class ClientRect;
 class ClientRectList;
 class ElementRareData;
@@ -111,9 +106,6 @@ public:
     bool fastHasAttribute(const QualifiedName&) const;
     const AtomicString& fastGetAttribute(const QualifiedName&) const;
 
-    // Call this to get the value of the id attribute. Faster than calling fastGetAttribute.
-    const AtomicString& getIDAttribute() const;
-
     bool hasAttributes() const;
 
     bool hasAttribute(const String& name) const;
@@ -125,7 +117,14 @@ public:
     void setAttribute(const AtomicString& name, const AtomicString& value, ExceptionCode&);
     void setAttributeNS(const AtomicString& namespaceURI, const AtomicString& qualifiedName, const AtomicString& value, ExceptionCode&, FragmentScriptingPermission = FragmentScriptingAllowed);
 
-    const QualifiedName& idAttributeName() const;
+    bool isIdAttributeName(const QualifiedName&) const;
+    const AtomicString& getIdAttribute() const;
+    void setIdAttribute(const AtomicString&);
+
+    // Call this to get the value of the id attribute for style resolution purposes.
+    // The value will already be lowercased if the document is in compatibility mode,
+    // so this function is not suitable for non-style uses.
+    const AtomicString& idForStyleResolution() const;
 
     void scrollIntoView(bool alignToTop = true);
     void scrollIntoViewIfNeeded(bool centerIfNeeded = true);
@@ -304,7 +303,6 @@ private:
     virtual bool childTypeAllowed(NodeType);
 
     virtual PassRefPtr<Attribute> createAttribute(const QualifiedName&, const AtomicString& value);
-    const QualifiedName& rareIDAttributeName() const;
     
 #ifndef NDEBUG
     virtual void formatForDebugger(char* buffer, unsigned length) const;
@@ -362,11 +360,6 @@ inline Element* Node::parentElement() const
     return parent && parent->isElementNode() ? static_cast<Element*>(parent) : 0;
 }
 
-inline const QualifiedName& Element::idAttributeName() const
-{
-    return hasRareData() ? rareIDAttributeName() : HTMLNames::idAttr;
-}
-
 inline NamedNodeMap* Element::attributes(bool readonly) const
 {
     if (!isStyleAttributeValid())
@@ -411,6 +404,31 @@ inline const AtomicString& Element::fastGetAttribute(const QualifiedName& name) 
     return nullAtom;
 }
 
-} //namespace
+inline const AtomicString& Element::idForStyleResolution() const
+{
+    ASSERT(hasID());
+    return namedAttrMap->idForStyleResolution();
+}
+
+inline bool Element::isIdAttributeName(const QualifiedName& attributeName) const
+{
+    // FIXME: This check is probably not correct for the case where the document has an id attribute
+    // with a non-null namespace, because it will return false, a false negative, if the prefixes
+    // don't match but the local name and namespace both do. However, since this has been like this
+    // for a while and the code paths may be hot, we'll have to measure performance if we fix it.
+    return attributeName == document()->idAttributeName();
+}
+
+inline const AtomicString& Element::getIdAttribute() const
+{
+    return fastGetAttribute(document()->idAttributeName());
+}
+
+inline void Element::setIdAttribute(const AtomicString& value)
+{
+    setAttribute(document()->idAttributeName(), value);
+}
+
+} // namespace
 
 #endif

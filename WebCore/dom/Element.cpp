@@ -207,21 +207,6 @@ Node::NodeType Element::nodeType() const
     return ELEMENT_NODE;
 }
 
-const AtomicString& Element::getIDAttribute() const
-{
-    // FIXME: There are two problems with this function for general purpose use.
-    //
-    // 1) If this is not a StyledElement, then the result will always be null.
-    // 2) If the document this element is part of is in compatibility mode
-    // (inCompatMode), then the ID will be lowercased.
-    //
-    // See StyledElement::parseMappedAttribute for details. Because of these issues,
-    // this function and NamedNodeMap::id should both probably be renamed to make it
-    // clear this does not give the same result as getAttribute.
-
-    return namedAttrMap ? namedAttrMap->id() : nullAtom;
-}
-
 bool Element::hasAttribute(const QualifiedName& name) const
 {
     return hasAttributeNS(name.namespaceURI(), name.localName());
@@ -542,10 +527,11 @@ const AtomicString& Element::getAttribute(const String& name) const
     }
 #endif
 
-    if (namedAttrMap)
+    if (namedAttrMap) {
         if (Attribute* attribute = namedAttrMap->getAttributeItem(name, ignoreCase))
             return attribute->value();
-    
+    }
+
     return nullAtom;
 }
 
@@ -563,12 +549,15 @@ void Element::setAttribute(const AtomicString& name, const AtomicString& value, 
 
     const AtomicString& localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
 
-    // allocate attributemap if necessary
+    // Allocate attribute map if necessary.
     Attribute* old = attributes(false)->getAttributeItem(localName, false);
 
     document()->incDOMTreeVersion();
 
-    if (localName == idAttributeName().localName())
+    // FIXME: This check is probably not correct for the case where the document has an id attribute
+    // with a non-null namespace, because it will return true if the local name happens to match
+    // but the namespace does not.
+    if (localName == document()->idAttributeName().localName())
         updateId(old ? old->value() : nullAtom, value);
 
     if (old && value.isNull())
@@ -594,10 +583,10 @@ void Element::setAttribute(const QualifiedName& name, const AtomicString& value,
 {
     document()->incDOMTreeVersion();
 
-    // allocate attributemap if necessary
+    // Allocate attribute map if necessary.
     Attribute* old = attributes(false)->getAttributeItem(name);
 
-    if (name == idAttributeName())
+    if (isIdAttributeName(name))
         updateId(old ? old->value() : nullAtom, value);
 
     if (old && value.isNull())
@@ -679,7 +668,7 @@ void Element::setAttributeMap(PassRefPtr<NamedNodeMap> list, FragmentScriptingPe
 
     // If setting the whole map changes the id attribute, we need to call updateId.
 
-    const QualifiedName& idName = idAttributeName();
+    const QualifiedName& idName = document()->idAttributeName();
     Attribute* oldId = namedAttrMap ? namedAttrMap->getAttributeItem(idName) : 0;
     Attribute* newId = list ? list->getAttributeItem(idName) : 0;
 
@@ -803,7 +792,7 @@ void Element::insertedIntoDocument()
 
     if (hasID()) {
         if (NamedNodeMap* attrs = namedAttrMap.get()) {
-            Attribute* idItem = attrs->getAttributeItem(idAttributeName());
+            Attribute* idItem = attrs->getAttributeItem(document()->idAttributeName());
             if (idItem && !idItem->isNull())
                 updateId(nullAtom, idItem->value());
         }
@@ -814,7 +803,7 @@ void Element::removedFromDocument()
 {
     if (hasID()) {
         if (NamedNodeMap* attrs = namedAttrMap.get()) {
-            Attribute* idItem = attrs->getAttributeItem(idAttributeName());
+            Attribute* idItem = attrs->getAttributeItem(document()->idAttributeName());
             if (idItem && !idItem->isNull())
                 updateId(idItem->value(), nullAtom);
         }
@@ -1163,7 +1152,7 @@ void Element::formatForDebugger(char* buffer, unsigned length) const
         result += s;
     }
           
-    s = getAttribute(idAttributeName());
+    s = getIdAttribute();
     if (s.length() > 0) {
         if (result.length() > 0)
             result += "; ";
@@ -1540,11 +1529,6 @@ KURL Element::getURLAttribute(const QualifiedName& name) const
     }
 #endif
     return document()->completeURL(deprecatedParseURL(getAttribute(name)));
-}
-
-const QualifiedName& Element::rareIDAttributeName() const
-{
-    return rareData()->m_idAttributeName;
 }
 
 } // namespace WebCore

@@ -44,7 +44,7 @@ PassRefPtr<HTMLParamElement> HTMLParamElement::create(const QualifiedName& tagNa
 
 void HTMLParamElement::parseMappedAttribute(Attribute* attr)
 {
-    if (attr->name() == idAttributeName()) {
+    if (isIdAttributeName(attr->name())) {
         // Must call base class so that hasID bit gets set.
         HTMLElement::parseMappedAttribute(attr);
         if (document()->isHTMLDocument())

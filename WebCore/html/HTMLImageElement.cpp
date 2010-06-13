@@ -152,7 +152,7 @@ void HTMLImageElement::parseMappedAttribute(Attribute* attr)
             document->addNamedItem(newName);
         }
         m_name = newName;
-    } else if (attr->name() == idAttributeName()) {
+    } else if (isIdAttributeName(attr->name())) {
         const AtomicString& newId = attr->value();
         if (inDocument() && document()->isHTMLDocument()) {
             HTMLDocument* document = static_cast<HTMLDocument*>(this->document());

@@ -24,6 +24,7 @@
 
 #include "RenderProgress.h"
 #include "ShadowElement.h"
+#include "HTMLNames.h"
 #include "HTMLProgressElement.h"
 #include "RenderTheme.h"
 #include "RenderView.h"

@@ -280,7 +280,7 @@ void SVGElement::insertedIntoDocument()
     StyledElement::insertedIntoDocument();
     SVGDocumentExtensions* extensions = document()->accessSVGExtensions();
 
-    String resourceId = getAttribute(idAttributeName());
+    String resourceId = getIdAttribute();
     if (extensions->isPendingResource(resourceId)) {
         OwnPtr<HashSet<SVGStyledElement*> > clients(extensions->removePendingResource(resourceId));
         if (clients->isEmpty())

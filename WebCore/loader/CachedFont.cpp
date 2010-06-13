@@ -176,11 +176,9 @@ SVGFontElement* CachedFont::getSVGFontById(const String& fontName) const
         return static_cast<SVGFontElement*>(list->item(0));
 
     for (unsigned i = 0; i < listLength; ++i) {
-        Node* node = list->item(i);
-        if (static_cast<Element*>(node)->getAttribute(static_cast<Element*>(node)->idAttributeName()) != fontName)
-            continue;
-
-        return static_cast<SVGFontElement*>(node);
+        SVGFontElement* element = static_cast<SVGFontElement*>(list->item(i));
+        if (element->getIdAttribute() == fontName)
+            return element;
     }
 
     return 0;

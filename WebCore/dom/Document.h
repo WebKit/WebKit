@@ -34,6 +34,7 @@
 #include "Color.h"
 #include "Document.h"
 #include "DocumentMarker.h"
+#include "QualifiedName.h"
 #include "ScriptExecutionContext.h"
 #include "Timer.h"
 #include <wtf/HashCountedSet.h>
@@ -980,6 +981,8 @@ public:
     void removeMediaCanStartListener(MediaCanStartListener*);
     MediaCanStartListener* takeAnyMediaCanStartListener();
 
+    const QualifiedName& idAttributeName() const { return m_idAttributeName; }
+
 protected:
     Document(Frame*, bool isXHTML, bool isHTML);
 
@@ -1256,6 +1259,8 @@ private:
     RefPtr<DocumentWeakReference> m_weakReference;
 
     HashSet<MediaCanStartListener*> m_mediaCanStartListeners;
+
+    QualifiedName m_idAttributeName;
 };
 
 inline bool Document::hasElementWithId(AtomicStringImpl* id) const

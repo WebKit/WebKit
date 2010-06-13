@@ -27,6 +27,7 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
+#include "HTMLNames.h"
 #include "ShadowElement.h"
 #include "Icon.h"
 #include "LocalizedStrings.h"

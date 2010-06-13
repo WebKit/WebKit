@@ -29,19 +29,16 @@
 #include "RenderLayerCompositor.h"
 
 #include "AnimationController.h"
+#include "CSSPropertyNames.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "CSSPropertyNames.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsLayer.h"
-#include "HitTestResult.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLIFrameElement.h"
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-#include "HTMLMediaElement.h"
 #include "HTMLNames.h"
-#endif
+#include "HitTestResult.h"
 #include "NodeList.h"
 #include "Page.h"
 #include "RenderEmbeddedObject.h"
@@ -51,6 +48,10 @@
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "Settings.h"
+
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+#include "HTMLMediaElement.h"
+#endif
 
 #if PROFILE_LAYER_REBUILD
 #include <wtf/CurrentTime.h>

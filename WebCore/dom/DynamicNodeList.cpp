@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -137,7 +137,8 @@ Node* DynamicNodeList::itemWithName(const AtomicString& elementId) const
     unsigned length = this->length();
     for (unsigned i = 0; i < length; i++) {
         Node* node = item(i);
-        if (node->isElementNode() && static_cast<Element*>(node)->getIDAttribute() == elementId)
+        // FIXME: This should probably be using getIdAttribute instead of idForStyleResolution.
+        if (node->hasID() && static_cast<Element*>(node)->idForStyleResolution() == elementId)
             return node;
     }
 

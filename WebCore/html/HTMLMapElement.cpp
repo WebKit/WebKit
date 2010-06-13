@@ -103,28 +103,33 @@ HTMLImageElement* HTMLMapElement::imageElement() const
     
     return 0;    
 }
-    
-void HTMLMapElement::parseMappedAttribute(Attribute* attr)
+
+void HTMLMapElement::parseMappedAttribute(Attribute* attribute)
 {
-    const QualifiedName& attrName = attr->name();
-    if (attrName == idAttributeName() || attrName == nameAttr) {
-        Document* doc = document();
-        if (attrName == idAttributeName()) {
+    // FIXME: This logic seems wrong for XML documents.
+    // Either the id or name will be used depending on the order the attributes are parsed.
+
+    const QualifiedName& attrName = attribute->name();
+    if (isIdAttributeName(attrName) || attrName == nameAttr) {
+        Document* document = this->document();
+        if (isIdAttributeName(attrName)) {
             // Call base class so that hasID bit gets set.
-            HTMLElement::parseMappedAttribute(attr);
-            if (doc->isHTMLDocument())
+            HTMLElement::parseMappedAttribute(attribute);
+            if (document->isHTMLDocument())
                 return;
         }
         if (inDocument())
-            doc->removeImageMap(this);
-        String mapName = attr->value();
+            document->removeImageMap(this);
+        String mapName = attribute->value();
         if (mapName[0] == '#')
             mapName = mapName.substring(1);
-        m_name = doc->isHTMLDocument() ? mapName.lower() : mapName;
+        m_name = document->isHTMLDocument() ? mapName.lower() : mapName;
         if (inDocument())
-            doc->addImageMap(this);
-    } else
-        HTMLElement::parseMappedAttribute(attr);
+            document->addImageMap(this);
+        return;
+    }
+
+    HTMLElement::parseMappedAttribute(attribute);
 }
 
 PassRefPtr<HTMLCollection> HTMLMapElement::areas()

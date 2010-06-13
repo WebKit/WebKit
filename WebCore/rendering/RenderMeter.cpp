@@ -19,11 +19,13 @@
  */
 
 #include "config.h"
+
 #if ENABLE(METER_TAG)
 
 #include "RenderMeter.h"
 
 #include "HTMLMeterElement.h"
+#include "HTMLNames.h"
 #include "RenderTheme.h"
 
 using namespace std;
@@ -71,4 +73,5 @@ void RenderMeter::updateFromElement()
 }
 
 } // namespace WebCore
+
 #endif

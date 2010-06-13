@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -667,7 +667,7 @@ void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& l
     // We need to collect the rules for id, class, tag, and everything else into a buffer and
     // then sort the buffer.
     if (m_element->hasID())
-        matchRulesForList(rules->getIDRules(m_element->getIDAttribute().impl()), firstRuleIndex, lastRuleIndex);
+        matchRulesForList(rules->getIDRules(m_element->idForStyleResolution().impl()), firstRuleIndex, lastRuleIndex);
     if (m_element->hasClass()) {
         ASSERT(m_styledElement);
         const SpaceSplitString& classNames = m_styledElement->classNames();
@@ -2038,7 +2038,7 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
             return e->hasClass() && static_cast<StyledElement*>(e)->classNames().contains(sel->m_value);
 
         if (sel->m_match == CSSSelector::Id)
-            return e->hasID() && e->getIDAttribute() == sel->m_value;
+            return e->hasID() && e->idForStyleResolution() == sel->m_value;
         
         const QualifiedName& attr = sel->attribute();
 

@@ -111,8 +111,7 @@ Element* HTMLFormCollection::getNamedFormItem(const QualifiedName& attrName, con
     bool foundInputElements = false;
     for (unsigned i = 0; i < form->m_associatedElements.size(); ++i) {
         HTMLFormControlElement* e = form->m_associatedElements[i];
-        const QualifiedName& attributeName = (attrName == idAttr) ? e->idAttributeName() : attrName;
-        if (e->isEnumeratable() && e->getAttribute(attributeName) == name) {
+        if (e->isEnumeratable() && e->getAttribute(attrName) == name) {
             foundInputElements = true;
             if (!duplicateNumber)
                 return e;
@@ -123,8 +122,7 @@ Element* HTMLFormCollection::getNamedFormItem(const QualifiedName& attrName, con
     if (!foundInputElements) {
         for (unsigned i = 0; i < form->m_imageElements.size(); ++i) {
             HTMLImageElement* e = form->m_imageElements[i];
-            const QualifiedName& attributeName = (attrName == idAttr) ? e->idAttributeName() : attrName;
-            if (e->getAttribute(attributeName) == name) {
+            if (e->getAttribute(attrName) == name) {
                 if (!duplicateNumber)
                     return e;
                 --duplicateNumber;
@@ -176,9 +174,10 @@ Node* HTMLFormCollection::nextNamedItem(const AtomicString& name) const
     // checks if we are on the nameAttr half of the iteration and skips over any
     // that also have the same idAttributeName.
     Element* impl = nextNamedItemInternal(name);
-    if (m_idsDone)
-        while (impl && impl->getAttribute(impl->idAttributeName()) == name)
+    if (m_idsDone) {
+        while (impl && impl->getIdAttribute() == name)
             impl = nextNamedItemInternal(name);
+    }
     return impl;
 }
 
@@ -194,7 +193,7 @@ void HTMLFormCollection::updateNameCache() const
     for (unsigned i = 0; i < f->m_associatedElements.size(); ++i) {
         HTMLFormControlElement* e = f->m_associatedElements[i];
         if (e->isEnumeratable()) {
-            const AtomicString& idAttrVal = e->getAttribute(e->idAttributeName());
+            const AtomicString& idAttrVal = e->getIdAttribute();
             const AtomicString& nameAttrVal = e->getAttribute(nameAttr);
             if (!idAttrVal.isEmpty()) {
                 // add to id cache
@@ -221,7 +220,7 @@ void HTMLFormCollection::updateNameCache() const
 
     for (unsigned i = 0; i < f->m_imageElements.size(); ++i) {
         HTMLImageElement* e = f->m_imageElements[i];
-        const AtomicString& idAttrVal = e->getAttribute(e->idAttributeName());
+        const AtomicString& idAttrVal = e->getIdAttribute();
         const AtomicString& nameAttrVal = e->getAttribute(nameAttr);
         if (!idAttrVal.isEmpty() && !foundInputElements.contains(idAttrVal.impl())) {
             // add to id cache

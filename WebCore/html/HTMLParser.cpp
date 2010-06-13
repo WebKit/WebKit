@@ -55,7 +55,6 @@
 #include "HTMLDocumentParser.h"
 #include "LocalizedStrings.h"
 #include "Page.h"
-#include "QualifiedName.h"
 #include "Settings.h"
 #include "Text.h"
 #include "TreeDepthLimit.h"

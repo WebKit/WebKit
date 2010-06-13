@@ -144,7 +144,7 @@ bool HTMLElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry
     
 void HTMLElement::parseMappedAttribute(Attribute* attr)
 {
-    if (attr->name() == idAttributeName() || attr->name() == classAttr || attr->name() == styleAttr)
+    if (isIdAttributeName(attr->name()) || attr->name() == classAttr || attr->name() == styleAttr)
         return StyledElement::parseMappedAttribute(attr);
 
     String indexstring;

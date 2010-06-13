@@ -342,7 +342,7 @@ void dumpInstanceTree(unsigned int& depth, String& text, SVGElementInstance* tar
     SVGElement* shadowTreeElement = targetInstance->shadowTreeElement();
     ASSERT(shadowTreeElement);
 
-    String elementId = element->getIDAttribute();
+    String elementId = element->getIdAttribute();
     String elementNodeName = element->nodeName();
     String shadowTreeElementNodeName = shadowTreeElement->nodeName();
     String parentNodeName = element->parentNode() ? element->parentNode()->nodeName() : "null";
@@ -681,7 +681,8 @@ void SVGUseElement::handleDeepUseReferencing(SVGUseElement* use, SVGElementInsta
     while (instance) {
         SVGElement* element = instance->correspondingElement();
 
-        if (element->getIDAttribute() == id) {
+        // FIXME: This should probably be using getIdAttribute instead of idForStyleResolution.
+        if (element->hasID() && element->idForStyleResolution() == id) {
             foundProblem = true;
             return;
         }

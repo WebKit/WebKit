@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,8 @@ Node* StaticNodeList::itemWithName(const AtomicString& elementId) const
     size_t length = m_nodes.size();
     for (size_t i = 0; i < length; ++i) {
         Node* node = m_nodes[i].get();
-        if (node->isElementNode() && static_cast<Element*>(node)->getIDAttribute() == elementId)
+        // FIXME: This should probably be using getIdAttribute instead of idForStyleResolution.
+        if (node->hasID() && static_cast<Element*>(node)->getIdAttribute() == elementId)
             return node;
     }
 

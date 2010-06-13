@@ -35,7 +35,8 @@ public:
     RenderSVGResourceContainer(SVGStyledElement* node)
         : RenderSVGHiddenContainer(node)
         , RenderSVGResource()
-        , m_id(node->getIDAttribute())
+        // FIXME: Should probably be using getIdAttribute rather than idForStyleResolution.
+        , m_id(node->hasID() ? node->idForStyleResolution() : nullAtom)
     {
         ASSERT(node->document());
         node->document()->accessSVGExtensions()->addResource(m_id, this);
@@ -57,7 +58,8 @@ public:
         // Remove old id, that is guaranteed to be present in cache
         extensions->removeResource(m_id);
 
-        m_id = static_cast<Element*>(node())->getIDAttribute();
+        // FIXME: Should probably be using getIdAttribute rather than idForStyleResolution.
+        m_id = node()->hasID() ? static_cast<Element*>(node())->idForStyleResolution() : nullAtom;
 
         // It's possible that an element is referencing us with the new id, and has to be notified that we're existing now
         if (extensions->isPendingResource(m_id)) {

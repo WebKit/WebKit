@@ -36,6 +36,7 @@
 #include "Element.h"
 #include "GenericBinding.h"
 #include "HTMLFrameElementBase.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
 

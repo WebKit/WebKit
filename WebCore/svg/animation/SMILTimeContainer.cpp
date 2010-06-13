@@ -236,7 +236,8 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed)
             ASSERT(animation->timeContainer() == this);
 
             SVGElement* targetElement = animation->targetElement();
-            if (!targetElement || targetElement->getIDAttribute() != m_nextSamplingTarget)
+            // FIXME: This should probably be using getIdAttribute instead of idForStyleResolution.
+            if (!targetElement || !targetElement->hasID() || targetElement->idForStyleResolution() != m_nextSamplingTarget)
                 continue;
 
             samplingDiff = animation->intervalBegin();

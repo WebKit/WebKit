@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2008 David Smith <catfish.man@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -27,8 +27,6 @@
 
 namespace WebCore {
 
-using namespace HTMLNames;
-
 class ElementRareData : public NodeRareData {
 public:
     ElementRareData();
@@ -40,7 +38,6 @@ public:
 
     IntSize m_minimumSizeForResizing;
     RefPtr<RenderStyle> m_computedStyle;
-    QualifiedName m_idAttributeName;
 };
 
 inline IntSize defaultMinimumSizeForResizing()
@@ -50,7 +47,6 @@ inline IntSize defaultMinimumSizeForResizing()
 
 inline ElementRareData::ElementRareData()
     : m_minimumSizeForResizing(defaultMinimumSizeForResizing())
-    , m_idAttributeName(idAttr)
 {
 }
 

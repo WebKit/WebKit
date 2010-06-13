@@ -1,3 +1,141 @@
+2010-06-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Partly done support for alternate ID attributes should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=39692
+
+        Removed the include of "HTMLNames.h" from "Element.h". This prevents
+        near-world-rebuilds every time you change HTMLTagNames.in.
+
+        Renamed the getIDAttribute function in the Element class to
+        idForStyleResolution, since it returns a value of the id attribute
+        that has been lowercased as appropriate for style matching, not the
+        actual value of the attribute. With the old name it was easy to
+        misuse it in non-style contexts.
+
+        Got rid of the idAttributeName function on Element, since it is
+        easy to use it wrong. Replace it with isIdAttributeName, getIdAttribute,
+        and setIdAttribute functions, which are a good fit for the needs of
+        most call sites that were dealing with the id attribute.
+
+        Added an idAttributeName function to Document. This is for a future
+        where a document can have a custom id attribute name specified in its
+        doctype. It's possible this will be insufficient because the same
+        document might have XHTML or SVG elements in it, and it's possible
+        that on those elements we will want the attribute named "id" with
+        no namespace to still work. We can deal with that when we implement
+        the actual feature, though. For now, it seems OK to fetch the name
+        of the id attribute from the document.
+
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicNodeList::itemWithName):
+        * dom/StaticNodeList.cpp:
+        (WebCore::StaticNodeList::itemWithName):
+        * rendering/RenderSVGResourceContainer.h:
+        (WebCore::RenderSVGResourceContainer::RenderSVGResourceContainer):
+        (WebCore::RenderSVGResourceContainer::idChanged):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::handleDeepUseReferencing):
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::updateAnimations):
+        Use the new idForStyleResolution function, which is the new name of
+        the getIDAttribute function. There's a good chance these call sites are
+        incorrect, which is something we should investigate later, so there's
+        a FIXME at each call site.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Initialize m_idAttributeName to the
+        standard id attribute from HTML.
+        (WebCore::Document::getElementById): Use Element::getIdAttribute.
+        * dom/Document.h: Added Document::idAttributeName.
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttribute): Use Document::idAttributeName.
+        (WebCore::Element::setAttributeMap): Use Element::isIdAttributeName.
+        (WebCore::Element::insertedIntoDocument): Use Document::idAttributeName.
+        (WebCore::Element::removedFromDocument): Ditto.
+        (WebCore::Element::formatForDebugger): Use Element::getIdAttribute.
+        * dom/Element.h: Added isIdAttributeName, getIdAttribute, setIdAttribute,
+        idForStyleResolution. Removed rareIDAttributeName.
+
+        * dom/ElementRareData.h: Removed m_idAttributeName.
+
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::setAttributes): Use Document::idAttributeName.
+        * dom/NamedNodeMap.h: Renamed id, setID, and m_id to idForStyleResolution,
+        setIdForStyleResolution, and m_idForStyleResolution since this is not the
+        value of the id attribute because it gets lowercased for compatibility-mode
+        documents.
+
+        * rendering/RenderIFrame.cpp:
+        * rendering/RenderLayerCompositor.cpp:
+        * rendering/RenderProgress.cpp:
+        Added include of HTMLNames.h now that Element.h no longer includes it.
+
+        * editing/SetNodeAttributeCommand.h:
+        * editing/markup.cpp:
+        * html/HTMLParser.cpp:
+        Removed unneeded includes.
+
+        * html/HTMLParser.h: Sorted includes.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchRules): Use idForStyleResolution.
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector): Use idForStyleResolution.
+        * dom/Attr.cpp:
+        (WebCore::Attr::isId): Use Document::idAttributeName.
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::parseMappedAttribute): Use isIdAttributeName,
+        and setIdForStyleResolution.
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::createDeletionUI): Use setIdAttribute.
+        * editing/EditorCommand.cpp:
+        (WebCore::executeInsertHorizontalRule): Ditto.
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::parseMappedAttribute): Use isIdAttributeName.
+        (WebCore::HTMLAppletElement::createRenderer): Use getIdAttribute.
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::checkForNameMatch): Use getIdAttribute.
+        (WebCore::HTMLCollection::updateNameCache): Use getIdAttribute.
+        * html/HTMLDataGridColElement.cpp:
+        (WebCore::HTMLDataGridColElement::ensureColumn): Use getIdAttribute.
+        (WebCore::HTMLDataGridColElement::parseMappedAttribute): Use isIdAttributeName.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute): Use isIdAttributeName.
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::nextNamedItem): Added missing braces.
+        (WebCore::HTMLFormCollection::updateNameCache): Use getIdAttribute.
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::parseMappedAttribute): Use isIdAttributeName.
+        (WebCore::HTMLFrameElementBase::setName): Use getIdAttribute.
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute): Use isIdAttributeName.
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::parseMappedAttribute): Use isIdAttributeName.
+        Also restructured the function a bit to make its structure clearer and added
+        a comment pointing out that it can't be quite right.
+        * html/HTMLNameCollection.cpp:
+        (WebCore::HTMLNameCollection::itemAfter): Use getIdAttribute.
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseMappedAttribute): Use isIdAttributeName.
+        * html/HTMLParamElement.cpp:
+        (WebCore::HTMLParamElement::parseMappedAttribute): Use isIdAttributeName.
+        * loader/CachedFont.cpp:
+        (WebCore::CachedFont::getSVGFontById): Use getIdAttribute.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::nameForLayer): Use getIdAttribute.
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGPaintingResource): Use getIdAttribute.
+        (WebCore::writeSVGResourceContainer): Ditto.
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::insertedIntoDocument): Use getIdAttribute.
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::isKnownAttribute): Use isIdAttributeName.
+        (WebCore::SVGStyledElement::svgAttributeChanged): Use isIdAttributeName.
+        * wml/WMLElement.cpp:
+        (WebCore::WMLElement::parseMappedAttribute): Use isIdAttributeName.
+
 2010-06-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

@@ -27,6 +27,7 @@
 #include "RenderIFrame.h"
 
 #include "FrameView.h"
+#include "HTMLNames.h"
 #include "HTMLIFrameElement.h"
 #include "RenderView.h"
 #include "Settings.h"

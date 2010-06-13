@@ -233,7 +233,7 @@ bool SVGStyledElement::isKnownAttribute(const QualifiedName& attrName)
     if (propId > 0)
         return true;
 
-    return (attrName == idAttributeName() || attrName == HTMLNames::styleAttr); 
+    return isIdAttributeName(attrName) || attrName == HTMLNames::styleAttr; 
 }
 
 void SVGStyledElement::svgAttributeChanged(const QualifiedName& attrName)
@@ -245,7 +245,7 @@ void SVGStyledElement::svgAttributeChanged(const QualifiedName& attrName)
 
     RenderObject* object = renderer();
 
-    if (attrName == idAttributeName()) {
+    if (isIdAttributeName(attrName)) {
         // Notify resources about id changes, this is important as we cache resources by id in SVGDocumentExtensions
         if (object && object->isSVGResourceContainer())
             object->toRenderSVGResourceContainer()->idChanged();

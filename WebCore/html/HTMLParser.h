@@ -24,12 +24,12 @@
 #ifndef HTMLParser_h
 #define HTMLParser_h
 
+#include "HTMLParserErrorCodes.h"
+#include "MappedAttributeEntry.h"
 #include "QualifiedName.h"
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
-#include "HTMLParserErrorCodes.h"
-#include "MappedAttributeEntry.h"
 
 namespace WebCore {
 
