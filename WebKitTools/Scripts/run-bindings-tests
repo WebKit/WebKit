@@ -129,7 +129,7 @@ def main(argv):
         print 'All tests passed!'
         return 0
     else:
-        print '(To update the reference files, execute "run-bindings-test --reset-results")'
+        print '(To update the reference files, execute "run-bindings-tests --reset-results")'
         return -1
 
 
