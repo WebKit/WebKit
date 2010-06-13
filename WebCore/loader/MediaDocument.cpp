@@ -45,7 +45,7 @@
 #include "SegmentedString.h"
 #include "Settings.h"
 #include "Text.h"
-#include "XMLTokenizer.h"
+#include "XMLDocumentParser.h"
 
 namespace WebCore {
 

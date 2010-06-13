@@ -64,11 +64,11 @@
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "FrameView.h"
-#include "HTML5Tokenizer.h"
+#include "HTML5DocumentParser.h"
 #include "HTMLBodyElement.h"
 #include "HTMLElementFactory.h"
 #include "HTMLNames.h"
-#include "HTMLTokenizer.h"
+#include "HTMLDocumentParser.h"
 #include "InspectorController.h"
 #include "KURL.h"
 #include "Page.h"
@@ -292,9 +292,9 @@ DocumentParser* HTMLDocument::createTokenizer()
 #endif
 
     if (settings() && settings()->html5ParserEnabled())
-        return new HTML5Tokenizer(this, reportErrors);
+        return new HTML5DocumentParser(this, reportErrors);
 
-    return new HTMLTokenizer(this, reportErrors);
+    return new HTMLDocumentParser(this, reportErrors);
 }
 
 // --------------------------------------------------------------------------

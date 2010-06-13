@@ -1,3 +1,13 @@
+2010-06-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Rename the rest of the *Tokenizer classes to *DocumentParser
+        https://bugs.webkit.org/show_bug.cgi?id=40507
+
+        * src/WebEntities.cpp:
+         - Fix a comment to match new class names.
+
 2010-06-12  Evan Stade  <estade@chromium.org>
 
         Reviewed by Eric Seidel.

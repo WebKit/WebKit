@@ -52,7 +52,7 @@
 #include "HTMLTableCellElement.h"
 #include "HTMLTableRowElement.h"
 #include "HTMLTableSectionElement.h"
-#include "HTMLTokenizer.h"
+#include "HTMLDocumentParser.h"
 #include "LocalizedStrings.h"
 #include "Page.h"
 #include "QualifiedName.h"
@@ -1649,7 +1649,7 @@ void HTMLParser::reportErrorToConsole(HTMLParserErrorCode errorCode, const Atomi
     if (!frame)
         return;
     
-    HTMLTokenizer* htmlTokenizer = static_cast<HTMLTokenizer*>(m_document->tokenizer());
+    HTMLDocumentParser* htmlTokenizer = static_cast<HTMLDocumentParser*>(m_document->tokenizer());
     int lineNumber = htmlTokenizer->lineNumber() + 1;
 
     AtomicString tag1;

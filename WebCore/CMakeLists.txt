@@ -834,9 +834,9 @@ SET(WebCore_SOURCES
     dom/WebKitAnimationEvent.cpp
     dom/WebKitTransitionEvent.cpp
     dom/WheelEvent.cpp
-    dom/XMLTokenizer.cpp
-    dom/XMLTokenizerLibxml2.cpp
-    dom/XMLTokenizerScope.cpp
+    dom/XMLDocumentParser.cpp
+    dom/XMLDocumentParserLibxml2.cpp
+    dom/XMLDocumentParserScope.cpp
 
     dom/default/PlatformMessagePortChannel.cpp
 
@@ -906,7 +906,7 @@ SET(WebCore_SOURCES
     html/FormDataList.cpp
     html/HTML5EntityParser.cpp
     html/HTML5Lexer.cpp
-    html/HTML5Tokenizer.cpp
+    html/HTML5DocumentParser.cpp
     html/HTML5TreeBuilder.cpp
     html/HTML5ScriptRunner.cpp
     html/HTMLAllCollection.cpp
@@ -989,7 +989,7 @@ SET(WebCore_SOURCES
     html/HTMLTableSectionElement.cpp
     html/HTMLTextAreaElement.cpp
     html/HTMLTitleElement.cpp
-    html/HTMLTokenizer.cpp
+    html/HTMLDocumentParser.cpp
     html/HTMLUListElement.cpp
     html/HTMLViewSourceDocument.cpp
     html/ImageData.cpp

@@ -20,11 +20,11 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
-#include "HTML5Tokenizer.h"
+#include "HTML5DocumentParser.h"
 
 #include "Element.h"
 #include "Frame.h"
@@ -51,7 +51,7 @@ public:
     {
         ++(*m_counter);
     }
-    
+
     ~NestingLevelIncrementer()
     {
         --(*m_counter);
@@ -63,7 +63,7 @@ private:
 
 } // namespace
 
-HTML5Tokenizer::HTML5Tokenizer(HTMLDocument* document, bool reportErrors)
+HTML5DocumentParser::HTML5DocumentParser(HTMLDocument* document, bool reportErrors)
     : DocumentParser()
     , m_document(document)
     , m_lexer(new HTML5Lexer)
@@ -75,7 +75,7 @@ HTML5Tokenizer::HTML5Tokenizer(HTMLDocument* document, bool reportErrors)
     begin();
 }
 
-HTML5Tokenizer::~HTML5Tokenizer()
+HTML5DocumentParser::~HTML5DocumentParser()
 {
     // FIXME: We'd like to ASSERT that normal operation of this class clears
     // out any delayed actions, but we can't because we're unceremoniously
@@ -83,19 +83,19 @@ HTML5Tokenizer::~HTML5Tokenizer()
     // then we could ASSERT some invariants here.
 }
 
-void HTML5Tokenizer::begin()
+void HTML5DocumentParser::begin()
 {
     // FIXME: Should we reset the lexer?
 }
 
-void HTML5Tokenizer::pumpLexerIfPossible()
+void HTML5DocumentParser::pumpLexerIfPossible()
 {
     if (m_parserStopped || m_treeBuilder->isPaused())
         return;
     pumpLexer();
 }
 
-void HTML5Tokenizer::pumpLexer()
+void HTML5DocumentParser::pumpLexer()
 {
     // We tell the InspectorTimelineAgent about every pump, even if we
     // end up pumping nothing.  It can filter out empty pumps itself.
@@ -129,18 +129,18 @@ void HTML5Tokenizer::pumpLexer()
     didPumpLexer();
 }
 
-void HTML5Tokenizer::willPumpLexer()
+void HTML5DocumentParser::willPumpLexer()
 {
 #if ENABLE(INSPECTOR)
-    // FIXME: m_input.current().length() is only accurate if we end up pumping
-    // the end up parsing the whole buffer in this pump.  We should pass how
+    // FIXME: m_input.current().length() is only accurate if we
+    // end up parsing the whole buffer in this pump.  We should pass how
     // much we parsed as part of didWriteHTML instead of willWriteHTML.
     if (InspectorTimelineAgent* timelineAgent = m_document->inspectorTimelineAgent())
         timelineAgent->willWriteHTML(m_input.current().length(), m_lexer->lineNumber());
 #endif
 }
 
-void HTML5Tokenizer::didPumpLexer()
+void HTML5DocumentParser::didPumpLexer()
 {
 #if ENABLE(INSPECTOR)
     if (InspectorTimelineAgent* timelineAgent = m_document->inspectorTimelineAgent())
@@ -148,7 +148,7 @@ void HTML5Tokenizer::didPumpLexer()
 #endif
 }
 
-void HTML5Tokenizer::write(const SegmentedString& source, bool appendData)
+void HTML5DocumentParser::write(const SegmentedString& source, bool appendData)
 {
     if (m_parserStopped)
         return;
@@ -170,14 +170,14 @@ void HTML5Tokenizer::write(const SegmentedString& source, bool appendData)
     endIfDelayed();
 }
 
-void HTML5Tokenizer::end()
+void HTML5DocumentParser::end()
 {
     pumpLexerIfPossible();
     // Informs the the rest of WebCore that parsing is really finished.
     m_treeBuilder->finished();
 }
 
-void HTML5Tokenizer::attemptToEnd()
+void HTML5DocumentParser::attemptToEnd()
 {
     // finish() indicates we will not receive any more data. If we are waiting on
     // an external script to load, we can't finish parsing quite yet.
@@ -189,7 +189,7 @@ void HTML5Tokenizer::attemptToEnd()
     end();
 }
 
-void HTML5Tokenizer::endIfDelayed()
+void HTML5DocumentParser::endIfDelayed()
 {
     if (!m_endWasDelayed || isWaitingForScripts() || executingScript())
         return;
@@ -198,7 +198,7 @@ void HTML5Tokenizer::endIfDelayed()
     end();
 }
 
-void HTML5Tokenizer::finish()
+void HTML5DocumentParser::finish()
 {
     // We're not going to get any more data off the network, so we close the
     // input stream to indicate EOF.
@@ -206,32 +206,32 @@ void HTML5Tokenizer::finish()
     attemptToEnd();
 }
 
-int HTML5Tokenizer::executingScript() const
+int HTML5DocumentParser::executingScript() const
 {
     return m_scriptRunner->inScriptExecution();
 }
 
-int HTML5Tokenizer::lineNumber() const
+int HTML5DocumentParser::lineNumber() const
 {
     return m_lexer->lineNumber();
 }
 
-int HTML5Tokenizer::columnNumber() const
+int HTML5DocumentParser::columnNumber() const
 {
     return m_lexer->columnNumber();
 }
 
-HTMLParser* HTML5Tokenizer::htmlParser() const
+HTMLParser* HTML5DocumentParser::htmlParser() const
 {
     return m_treeBuilder->htmlParser();
 }
 
-bool HTML5Tokenizer::isWaitingForScripts() const
+bool HTML5DocumentParser::isWaitingForScripts() const
 {
     return m_treeBuilder->isPaused();
 }
 
-void HTML5Tokenizer::resumeParsingAfterScriptExecution()
+void HTML5DocumentParser::resumeParsingAfterScriptExecution()
 {
     ASSERT(!m_scriptRunner->inScriptExecution());
     ASSERT(!m_treeBuilder->isPaused());
@@ -241,7 +241,7 @@ void HTML5Tokenizer::resumeParsingAfterScriptExecution()
     endIfDelayed();
 }
 
-void HTML5Tokenizer::watchForLoad(CachedResource* cachedScript)
+void HTML5DocumentParser::watchForLoad(CachedResource* cachedScript)
 {
     ASSERT(!cachedScript->isLoaded());
     // addClient would call notifyFinished if the load were complete.
@@ -250,19 +250,19 @@ void HTML5Tokenizer::watchForLoad(CachedResource* cachedScript)
     cachedScript->addClient(this);
 }
 
-void HTML5Tokenizer::stopWatchingForLoad(CachedResource* cachedScript)
+void HTML5DocumentParser::stopWatchingForLoad(CachedResource* cachedScript)
 {
     cachedScript->removeClient(this);
 }
 
-bool HTML5Tokenizer::shouldLoadExternalScriptFromSrc(const AtomicString& srcValue)
+bool HTML5DocumentParser::shouldLoadExternalScriptFromSrc(const AtomicString& srcValue)
 {
     if (!m_XSSAuditor)
         return true;
     return m_XSSAuditor->canLoadExternalScriptFromSrc(srcValue);
 }
 
-void HTML5Tokenizer::executeScript(const ScriptSourceCode& sourceCode)
+void HTML5DocumentParser::executeScript(const ScriptSourceCode& sourceCode)
 {
     ASSERT(m_scriptRunner->inScriptExecution());
     if (!m_document->frame())
@@ -271,7 +271,7 @@ void HTML5Tokenizer::executeScript(const ScriptSourceCode& sourceCode)
     m_document->frame()->script()->executeScript(sourceCode);
 }
 
-void HTML5Tokenizer::notifyFinished(CachedResource* cachedResource)
+void HTML5DocumentParser::notifyFinished(CachedResource* cachedResource)
 {
     ASSERT(!m_scriptRunner->inScriptExecution());
     ASSERT(m_treeBuilder->isPaused());
@@ -284,7 +284,7 @@ void HTML5Tokenizer::notifyFinished(CachedResource* cachedResource)
         resumeParsingAfterScriptExecution();
 }
 
-void HTML5Tokenizer::executeScriptsWaitingForStylesheets()
+void HTML5DocumentParser::executeScriptsWaitingForStylesheets()
 {
     // Ignore calls unless we have a script blocking the parser waiting on a
     // stylesheet load.  Otherwise we are currently parsing and this
@@ -302,7 +302,7 @@ void HTML5Tokenizer::executeScriptsWaitingForStylesheets()
         resumeParsingAfterScriptExecution();
 }
 
-ScriptController* HTML5Tokenizer::script() const
+ScriptController* HTML5DocumentParser::script() const
 {
     return m_document->frame() ? m_document->frame()->script() : 0;
 }

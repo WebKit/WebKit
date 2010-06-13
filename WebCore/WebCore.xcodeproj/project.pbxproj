@@ -1165,7 +1165,7 @@
 		51FAFE340CECBF2D00BB3F24 /* DatabaseTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FAFE330CECBF2D00BB3F24 /* DatabaseTrackerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		521D46F611AEC98100514613 /* KillRingMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 521D46F511AEC98100514613 /* KillRingMac.mm */; };
 		521D46F811AEC9B100514613 /* KillRing.h in Headers */ = {isa = PBXBuildFile; fileRef = 521D46F711AEC9B100514613 /* KillRing.h */; };
-		54C50F7B0E801DF3009832A0 /* XMLTokenizerLibxml2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 54C50F7A0E801DF3009832A0 /* XMLTokenizerLibxml2.cpp */; };
+		54C50F7B0E801DF3009832A0 /* XMLDocumentParserLibxml2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 54C50F7A0E801DF3009832A0 /* XMLDocumentParserLibxml2.cpp */; };
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5913953B110758450083EC55 /* JNIBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 5913953A110758450083EC55 /* JNIBridge.h */; };
@@ -1193,8 +1193,8 @@
 		59EE122E1106080F00885116 /* JNIUtilityPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 59EE122D1106080F00885116 /* JNIUtilityPrivate.h */; };
 		59EE12301106081F00885116 /* JNIUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59EE122F1106081F00885116 /* JNIUtility.cpp */; };
 		59EE12321106082900885116 /* JNIUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 59EE12311106082900885116 /* JNIUtility.h */; };
-		5D15E3AB0F9E6AC1009E0E3F /* XMLTokenizerScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D15E3A90F9E6AC1009E0E3F /* XMLTokenizerScope.cpp */; };
-		5D15E3AC0F9E6AC1009E0E3F /* XMLTokenizerScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D15E3AA0F9E6AC1009E0E3F /* XMLTokenizerScope.h */; };
+		5D15E3AB0F9E6AC1009E0E3F /* XMLDocumentParserScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D15E3A90F9E6AC1009E0E3F /* XMLDocumentParserScope.cpp */; };
+		5D15E3AC0F9E6AC1009E0E3F /* XMLDocumentParserScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D15E3AA0F9E6AC1009E0E3F /* XMLDocumentParserScope.h */; };
 		5D874F130D161D3200796C3B /* NetscapePlugInStreamLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E227DD0AF589AD00D48324 /* NetscapePlugInStreamLoader.cpp */; };
 		5D88EE9111407FD300BC3ABC /* DOMSVGFEMorphologyElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 84224189107E786F00766A87 /* DOMSVGFEMorphologyElement.h */; };
 		5D88EE9211407FF400BC3ABC /* DOMSVGFEMorphologyElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 8422418B107E786F00766A87 /* DOMSVGFEMorphologyElementInternal.h */; };
@@ -2485,10 +2485,10 @@
 		93F198E508245E59001E9ABC /* HTMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23C02DE4396018635CA /* HTMLDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F198E608245E59001E9ABC /* HTMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23F02DE4396018635CA /* HTMLElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F198EF08245E59001E9ABC /* HTMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D25102DE4396018635CA /* HTMLParser.h */; };
-		93F198F008245E59001E9ABC /* HTMLTokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D25302DE4396018635CA /* HTMLTokenizer.h */; };
+		93F198F008245E59001E9ABC /* HTMLDocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D25302DE4396018635CA /* HTMLDocumentParser.h */; };
 		93F198F608245E59001E9ABC /* TextResourceDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D27902DE43D7018635CA /* TextResourceDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F1991808245E59001E9ABC /* Range.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30402DE4476018635CA /* Range.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F1992108245E59001E9ABC /* XMLTokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30A02DE4476018635CA /* XMLTokenizer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93F1992108245E59001E9ABC /* XMLDocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30A02DE4476018635CA /* XMLDocumentParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F1992F08245E59001E9ABC /* Cursor.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868402DE3B8601EA4122 /* Cursor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F1994F08245E59001E9ABC /* Settings.h in Headers */ = {isa = PBXBuildFile; fileRef = F587863A02DE3A1401EA4122 /* Settings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F1995008245E59001E9ABC /* CachePolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864902DE3A9A01EA4122 /* CachePolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2515,10 +2515,10 @@
 		93F19A9108245E59001E9ABC /* HTMLDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23B02DE4396018635CA /* HTMLDocument.cpp */; };
 		93F19A9208245E59001E9ABC /* HTMLElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23E02DE4396018635CA /* HTMLElement.cpp */; };
 		93F19A9B08245E59001E9ABC /* HTMLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D25002DE4396018635CA /* HTMLParser.cpp */; };
-		93F19A9C08245E59001E9ABC /* HTMLTokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D25202DE4396018635CA /* HTMLTokenizer.cpp */; };
+		93F19A9C08245E59001E9ABC /* HTMLDocumentParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D25202DE4396018635CA /* HTMLDocumentParser.cpp */; };
 		93F19A9D08245E59001E9ABC /* TextResourceDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D27802DE43D7018635CA /* TextResourceDecoder.cpp */; };
 		93F19AB908245E59001E9ABC /* Range.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D30302DE4476018635CA /* Range.cpp */; };
-		93F19ABC08245E59001E9ABC /* XMLTokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D30902DE4476018635CA /* XMLTokenizer.cpp */; };
+		93F19ABC08245E59001E9ABC /* XMLDocumentParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D30902DE4476018635CA /* XMLDocumentParser.cpp */; };
 		93F19AD508245E59001E9ABC /* RenderTreeAsText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93955A4203D72932008635CE /* RenderTreeAsText.cpp */; };
 		93F19AE108245E59001E9ABC /* BlockExceptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65F80697054D9F86008BF776 /* BlockExceptions.mm */; };
 		93F19AE508245E59001E9ABC /* WebCoreKeyGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B2B1F8056BEF3A00D2B771 /* WebCoreKeyGenerator.m */; };
@@ -2970,8 +2970,8 @@
 		A86629D209DA2B48009633A5 /* JSMouseEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A86629CC09DA2B47009633A5 /* JSMouseEvent.cpp */; };
 		A86629D309DA2B48009633A5 /* JSKeyboardEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A86629CD09DA2B47009633A5 /* JSKeyboardEvent.h */; };
 		A86629D409DA2B48009633A5 /* JSKeyboardEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */; };
-		A871038A11A2947000DBD50E /* HTML5Tokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871038811A2947000DBD50E /* HTML5Tokenizer.cpp */; };
-		A871038B11A2947000DBD50E /* HTML5Tokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = A871038911A2947000DBD50E /* HTML5Tokenizer.h */; };
+		A871038A11A2947000DBD50E /* HTML5DocumentParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871038811A2947000DBD50E /* HTML5DocumentParser.cpp */; };
+		A871038B11A2947000DBD50E /* HTML5DocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = A871038911A2947000DBD50E /* HTML5DocumentParser.h */; };
 		A871D4560A127CBC00B12A68 /* HTMLPlugInElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871D44C0A127CBC00B12A68 /* HTMLPlugInElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A871D4570A127CBC00B12A68 /* HTMLPlugInElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871D44D0A127CBC00B12A68 /* HTMLPlugInElement.cpp */; };
 		A871D4580A127CBC00B12A68 /* HTMLParamElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871D44E0A127CBC00B12A68 /* HTMLParamElement.h */; };
@@ -6821,7 +6821,7 @@
 		51FAFE330CECBF2D00BB3F24 /* DatabaseTrackerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseTrackerClient.h; sourceTree = "<group>"; };
 		521D46F511AEC98100514613 /* KillRingMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KillRingMac.mm; sourceTree = "<group>"; };
 		521D46F711AEC9B100514613 /* KillRing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KillRing.h; sourceTree = "<group>"; };
-		54C50F7A0E801DF3009832A0 /* XMLTokenizerLibxml2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLTokenizerLibxml2.cpp; sourceTree = "<group>"; };
+		54C50F7A0E801DF3009832A0 /* XMLDocumentParserLibxml2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLDocumentParserLibxml2.cpp; sourceTree = "<group>"; };
 		550A0BC7085F6039007353D6 /* QualifiedName.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QualifiedName.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5913953A110758450083EC55 /* JNIBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JNIBridge.h; sourceTree = "<group>"; };
@@ -6850,8 +6850,8 @@
 		59EE122D1106080F00885116 /* JNIUtilityPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JNIUtilityPrivate.h; path = jsc/JNIUtilityPrivate.h; sourceTree = "<group>"; };
 		59EE122F1106081F00885116 /* JNIUtility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JNIUtility.cpp; sourceTree = "<group>"; };
 		59EE12311106082900885116 /* JNIUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JNIUtility.h; sourceTree = "<group>"; };
-		5D15E3A90F9E6AC1009E0E3F /* XMLTokenizerScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLTokenizerScope.cpp; sourceTree = "<group>"; };
-		5D15E3AA0F9E6AC1009E0E3F /* XMLTokenizerScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLTokenizerScope.h; sourceTree = "<group>"; };
+		5D15E3A90F9E6AC1009E0E3F /* XMLDocumentParserScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLDocumentParserScope.cpp; sourceTree = "<group>"; };
+		5D15E3AA0F9E6AC1009E0E3F /* XMLDocumentParserScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLDocumentParserScope.h; sourceTree = "<group>"; };
 		5D925B650F64D4DD00B847F0 /* ScrollBehavior.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollBehavior.cpp; sourceTree = "<group>"; };
 		5D925B660F64D4DD00B847F0 /* ScrollBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollBehavior.h; sourceTree = "<group>"; };
 		5DA5E0FA102B953800088CF9 /* JSWebSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebSocket.cpp; sourceTree = "<group>"; };
@@ -8445,8 +8445,8 @@
 		A86629CC09DA2B47009633A5 /* JSMouseEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSMouseEvent.cpp; sourceTree = "<group>"; };
 		A86629CD09DA2B47009633A5 /* JSKeyboardEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSKeyboardEvent.h; sourceTree = "<group>"; };
 		A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSKeyboardEvent.cpp; sourceTree = "<group>"; };
-		A871038811A2947000DBD50E /* HTML5Tokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTML5Tokenizer.cpp; sourceTree = "<group>"; };
-		A871038911A2947000DBD50E /* HTML5Tokenizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTML5Tokenizer.h; sourceTree = "<group>"; };
+		A871038811A2947000DBD50E /* HTML5DocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTML5DocumentParser.cpp; sourceTree = "<group>"; };
+		A871038911A2947000DBD50E /* HTML5DocumentParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTML5DocumentParser.h; sourceTree = "<group>"; };
 		A871D44C0A127CBC00B12A68 /* HTMLPlugInElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLPlugInElement.h; sourceTree = "<group>"; };
 		A871D44D0A127CBC00B12A68 /* HTMLPlugInElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLPlugInElement.cpp; sourceTree = "<group>"; };
 		A871D44E0A127CBC00B12A68 /* HTMLParamElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLParamElement.h; sourceTree = "<group>"; };
@@ -10641,14 +10641,14 @@
 		F523D23F02DE4396018635CA /* HTMLElement.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D25002DE4396018635CA /* HTMLParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLParser.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D25102DE4396018635CA /* HTMLParser.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLParser.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D25202DE4396018635CA /* HTMLTokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTokenizer.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D25302DE4396018635CA /* HTMLTokenizer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLTokenizer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F523D25202DE4396018635CA /* HTMLDocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDocumentParser.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F523D25302DE4396018635CA /* HTMLDocumentParser.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDocumentParser.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D27802DE43D7018635CA /* TextResourceDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextResourceDecoder.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D27902DE43D7018635CA /* TextResourceDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = TextResourceDecoder.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D30302DE4476018635CA /* Range.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Range.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D30402DE4476018635CA /* Range.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Range.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D30902DE4476018635CA /* XMLTokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLTokenizer.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D30A02DE4476018635CA /* XMLTokenizer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = XMLTokenizer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F523D30902DE4476018635CA /* XMLDocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLDocumentParser.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F523D30A02DE4476018635CA /* XMLDocumentParser.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = XMLDocumentParser.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784F002DE375901EA4122 /* CursorMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CursorMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587851502DE375901EA4122 /* DeprecatedPtrListImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedPtrListImpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587851602DE375901EA4122 /* DeprecatedPtrListImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeprecatedPtrListImpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -13454,8 +13454,8 @@
 				A83B3AEF11ADEFF500458809 /* HTML5ScriptRunner.h */,
 				A87F163411AE841300CBB2E5 /* HTML5ScriptRunnerHost.h */,
 				97E8B3C211A2890800169409 /* HTML5Token.h */,
-				A871038811A2947000DBD50E /* HTML5Tokenizer.cpp */,
-				A871038911A2947000DBD50E /* HTML5Tokenizer.h */,
+				A871038811A2947000DBD50E /* HTML5DocumentParser.cpp */,
+				A871038911A2947000DBD50E /* HTML5DocumentParser.h */,
 				A879C62311A9D1F70059237A /* HTML5TreeBuilder.cpp */,
 				A879C62411A9D1F70059237A /* HTML5TreeBuilder.h */,
 				BC97E239109144950010D361 /* HTMLAllCollection.cpp */,
@@ -13699,8 +13699,8 @@
 				A871DC1D0A15205700B12A68 /* HTMLTitleElement.cpp */,
 				A871DC1C0A15205700B12A68 /* HTMLTitleElement.h */,
 				A80E7AAE0A19D1F1007FB8C5 /* HTMLTitleElement.idl */,
-				F523D25202DE4396018635CA /* HTMLTokenizer.cpp */,
-				F523D25302DE4396018635CA /* HTMLTokenizer.h */,
+				F523D25202DE4396018635CA /* HTMLDocumentParser.cpp */,
+				F523D25302DE4396018635CA /* HTMLDocumentParser.h */,
 				A8EA79E70A1916DF00A8EF5F /* HTMLUListElement.cpp */,
 				A8EA79E60A1916DF00A8EF5F /* HTMLUListElement.h */,
 				1A85B1D50A1B236C00D8C87C /* HTMLUListElement.idl */,
@@ -16830,11 +16830,11 @@
 				85031B3A0A44EFC700F992E0 /* WheelEvent.cpp */,
 				85031B3B0A44EFC700F992E0 /* WheelEvent.h */,
 				93EEC1F709C2877700C515D1 /* WheelEvent.idl */,
-				F523D30902DE4476018635CA /* XMLTokenizer.cpp */,
-				F523D30A02DE4476018635CA /* XMLTokenizer.h */,
-				54C50F7A0E801DF3009832A0 /* XMLTokenizerLibxml2.cpp */,
-				5D15E3A90F9E6AC1009E0E3F /* XMLTokenizerScope.cpp */,
-				5D15E3AA0F9E6AC1009E0E3F /* XMLTokenizerScope.h */,
+				F523D30902DE4476018635CA /* XMLDocumentParser.cpp */,
+				F523D30A02DE4476018635CA /* XMLDocumentParser.h */,
+				54C50F7A0E801DF3009832A0 /* XMLDocumentParserLibxml2.cpp */,
+				5D15E3A90F9E6AC1009E0E3F /* XMLDocumentParserScope.cpp */,
+				5D15E3AA0F9E6AC1009E0E3F /* XMLDocumentParserScope.h */,
 			);
 			path = dom;
 			sourceTree = "<group>";
@@ -18018,7 +18018,7 @@
 				A83B3AF111ADEFF500458809 /* HTML5ScriptRunner.h in Headers */,
 				A87F163511AE841300CBB2E5 /* HTML5ScriptRunnerHost.h in Headers */,
 				97E8B3C311A2890800169409 /* HTML5Token.h in Headers */,
-				A871038B11A2947000DBD50E /* HTML5Tokenizer.h in Headers */,
+				A871038B11A2947000DBD50E /* HTML5DocumentParser.h in Headers */,
 				A879C62611A9D1F70059237A /* HTML5TreeBuilder.h in Headers */,
 				BC97E23A109144950010D361 /* HTMLAllCollection.h in Headers */,
 				A8CFF7AB0A156978000A4234 /* HTMLAnchorElement.h in Headers */,
@@ -18108,7 +18108,7 @@
 				A871DB250A150BD600B12A68 /* HTMLTableSectionElement.h in Headers */,
 				A81369D6097374F600D74463 /* HTMLTextAreaElement.h in Headers */,
 				A871DC280A15205700B12A68 /* HTMLTitleElement.h in Headers */,
-				93F198F008245E59001E9ABC /* HTMLTokenizer.h in Headers */,
+				93F198F008245E59001E9ABC /* HTMLDocumentParser.h in Headers */,
 				A8EA79F20A1916DF00A8EF5F /* HTMLUListElement.h in Headers */,
 				E44613AB0CD6331000FADA75 /* HTMLVideoElement.h in Headers */,
 				BCCD74DC0A4C8D35005FDA6D /* HTMLViewSourceDocument.h in Headers */,
@@ -19454,8 +19454,8 @@
 				A833C80D0A2CF25600D57664 /* XMLNames.h in Headers */,
 				E15A36D71104572000B7B639 /* XMLNSNames.h in Headers */,
 				1ACE53EB0A8D18E70022947D /* XMLSerializer.h in Headers */,
-				93F1992108245E59001E9ABC /* XMLTokenizer.h in Headers */,
-				5D15E3AC0F9E6AC1009E0E3F /* XMLTokenizerScope.h in Headers */,
+				93F1992108245E59001E9ABC /* XMLDocumentParser.h in Headers */,
+				5D15E3AC0F9E6AC1009E0E3F /* XMLDocumentParserScope.h in Headers */,
 				1AB7FC690A8B92EC00D9D37B /* XPathEvaluator.h in Headers */,
 				BC60DA5B0D2A31F700B9918F /* XPathException.h in Headers */,
 				1AB7FC6C0A8B92EC00D9D37B /* XPathExpression.h in Headers */,
@@ -20348,7 +20348,7 @@
 				976E896011C0CA3A00EA9CA9 /* HTML5EntityParser.cpp in Sources */,
 				97E8B35611A23CE200169409 /* HTML5Lexer.cpp in Sources */,
 				A83B3AF011ADEFF500458809 /* HTML5ScriptRunner.cpp in Sources */,
-				A871038A11A2947000DBD50E /* HTML5Tokenizer.cpp in Sources */,
+				A871038A11A2947000DBD50E /* HTML5DocumentParser.cpp in Sources */,
 				A879C62511A9D1F70059237A /* HTML5TreeBuilder.cpp in Sources */,
 				BC97E23B109144950010D361 /* HTMLAllCollection.cpp in Sources */,
 				A8CFF7A40A156978000A4234 /* HTMLAnchorElement.cpp in Sources */,
@@ -20438,7 +20438,7 @@
 				A871DB260A150BD600B12A68 /* HTMLTableSectionElement.cpp in Sources */,
 				A81369D7097374F600D74463 /* HTMLTextAreaElement.cpp in Sources */,
 				A871DC290A15205700B12A68 /* HTMLTitleElement.cpp in Sources */,
-				93F19A9C08245E59001E9ABC /* HTMLTokenizer.cpp in Sources */,
+				93F19A9C08245E59001E9ABC /* HTMLDocumentParser.cpp in Sources */,
 				A8EA79F30A1916DF00A8EF5F /* HTMLUListElement.cpp in Sources */,
 				E44613AA0CD6331000FADA75 /* HTMLVideoElement.cpp in Sources */,
 				BCCD74E50A4C8DDF005FDA6D /* HTMLViewSourceDocument.cpp in Sources */,
@@ -21761,9 +21761,9 @@
 				A833C80C0A2CF25600D57664 /* XMLNames.cpp in Sources */,
 				E15A36D91104572700B7B639 /* XMLNSNames.cpp in Sources */,
 				1ACE53EA0A8D18E70022947D /* XMLSerializer.cpp in Sources */,
-				93F19ABC08245E59001E9ABC /* XMLTokenizer.cpp in Sources */,
-				54C50F7B0E801DF3009832A0 /* XMLTokenizerLibxml2.cpp in Sources */,
-				5D15E3AB0F9E6AC1009E0E3F /* XMLTokenizerScope.cpp in Sources */,
+				93F19ABC08245E59001E9ABC /* XMLDocumentParser.cpp in Sources */,
+				54C50F7B0E801DF3009832A0 /* XMLDocumentParserLibxml2.cpp in Sources */,
+				5D15E3AB0F9E6AC1009E0E3F /* XMLDocumentParserScope.cpp in Sources */,
 				1AB7FC680A8B92EC00D9D37B /* XPathEvaluator.cpp in Sources */,
 				1AB7FC6B0A8B92EC00D9D37B /* XPathExpression.cpp in Sources */,
 				1AB7FC6E0A8B92EC00D9D37B /* XPathExpressionNode.cpp in Sources */,

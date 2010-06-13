@@ -180,9 +180,9 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/WebKitAnimationEvent.cpp \
 	dom/WebKitTransitionEvent.cpp \
 	dom/WheelEvent.cpp \
-	dom/XMLTokenizer.cpp \
-	dom/XMLTokenizerLibxml2.cpp \
-	dom/XMLTokenizerScope.cpp \
+	dom/XMLDocumentParser.cpp \
+	dom/XMLDocumentParserLibxml2.cpp \
+	dom/XMLDocumentParserScope.cpp \
 	dom/default/PlatformMessagePortChannel.cpp \
 	\
 	editing/AppendNodeCommand.cpp \
@@ -250,7 +250,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/FormDataList.cpp \
 	html/HTML5EntityParser.cpp \
 	html/HTML5Lexer.cpp \
-	html/HTML5Tokenizer.cpp \
+	html/HTML5DocumentParser.cpp \
 	html/HTML5TreeBuilder.cpp \
 	html/HTML5ScriptRunner.cpp \
 	html/HTMLAllCollection.cpp \
@@ -265,7 +265,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/HTMLParser.cpp \
 	html/HTMLParserErrorCodes.cpp \
 	html/HTMLTableRowsCollection.cpp \
-	html/HTMLTokenizer.cpp \
+	html/HTMLDocumentParser.cpp \
 	html/HTMLViewSourceDocument.cpp \
 	html/ImageData.cpp \
 	html/ImageResizerThread.cpp \

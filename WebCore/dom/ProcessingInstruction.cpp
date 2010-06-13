@@ -30,7 +30,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "XSLStyleSheet.h"
-#include "XMLTokenizer.h" // for parseAttributes()
+#include "XMLDocumentParser.h" // for parseAttributes()
 #include "MediaList.h"
 
 namespace WebCore {

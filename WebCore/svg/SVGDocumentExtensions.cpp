@@ -37,7 +37,7 @@
 #include "SVGSMILElement.h"
 #include "SVGSVGElement.h"
 #include "SMILTimeContainer.h"
-#include "XMLTokenizer.h"
+#include "XMLDocumentParser.h"
 #include "ScriptController.h"
 
 namespace WebCore {

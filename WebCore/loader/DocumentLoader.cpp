@@ -46,7 +46,7 @@
 #include "PlatformString.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
-#include "XMLTokenizer.h"
+#include "XMLDocumentParser.h"
 
 #include <wtf/Assertions.h>
 #include <wtf/unicode/Unicode.h>

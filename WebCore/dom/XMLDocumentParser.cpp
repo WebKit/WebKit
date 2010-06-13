@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "XMLTokenizer.h"
+#include "XMLDocumentParser.h"
 
 #include "CDATASection.h"
 #include "CachedScript.h"
@@ -70,7 +70,7 @@ using namespace HTMLNames;
 const int maxErrors = 25;
 
 #if ENABLE(WML)
-bool XMLTokenizer::isWMLDocument() const
+bool XMLDocumentParser::isWMLDocument() const
 {
     if (m_doc)
         return m_doc->isWMLDocument();
@@ -79,7 +79,7 @@ bool XMLTokenizer::isWMLDocument() const
 }
 #endif
 
-void XMLTokenizer::pushCurrentNode(Node* n)
+void XMLDocumentParser::pushCurrentNode(Node* n)
 {
     ASSERT(n);
     ASSERT(m_currentNode);
@@ -91,7 +91,7 @@ void XMLTokenizer::pushCurrentNode(Node* n)
         handleError(fatal, "Excessive node nesting.", lineNumber(), columnNumber());
 }
 
-void XMLTokenizer::popCurrentNode()
+void XMLDocumentParser::popCurrentNode()
 {
     if (!m_currentNode)
         return;
@@ -104,7 +104,7 @@ void XMLTokenizer::popCurrentNode()
     m_currentNodeStack.removeLast();
 }
 
-void XMLTokenizer::clearCurrentNodeStack()
+void XMLDocumentParser::clearCurrentNodeStack()
 {
     if (m_currentNode && m_currentNode != m_doc)
         m_currentNode->deref();
@@ -119,28 +119,28 @@ void XMLTokenizer::clearCurrentNodeStack()
     }
 }
 
-void XMLTokenizer::write(const SegmentedString& s, bool /*appendData*/)
+void XMLDocumentParser::write(const SegmentedString& s, bool /*appendData*/)
 {
     String parseString = s.toString();
-    
+
     if (m_sawXSLTransform || !m_sawFirstElement)
         m_originalSourceForTransform += parseString;
 
     if (m_parserStopped || m_sawXSLTransform)
         return;
-    
+
     if (m_parserPaused) {
         m_pendingSrc.append(s);
         return;
     }
-    
+
     doWrite(s.toString());
-    
+
     // After parsing, go ahead and dispatch image beforeload events.
     ImageLoader::dispatchPendingBeforeLoadEvents();
 }
 
-void XMLTokenizer::handleError(ErrorType type, const char* m, int lineNumber, int columnNumber)
+void XMLDocumentParser::handleError(ErrorType type, const char* m, int lineNumber, int columnNumber)
 {
     if (type == fatal || (m_errorCount < maxErrors && m_lastErrorLine != lineNumber && m_lastErrorColumn != columnNumber)) {
         switch (type) {
@@ -151,20 +151,20 @@ void XMLTokenizer::handleError(ErrorType type, const char* m, int lineNumber, in
             case nonFatal:
                 m_errorMessages += String::format("error on line %d at column %d: %s", lineNumber, columnNumber, m);
         }
-        
+
         m_lastErrorLine = lineNumber;
         m_lastErrorColumn = columnNumber;
         ++m_errorCount;
     }
-    
+
     if (type != warning)
         m_sawError = true;
-    
+
     if (type == fatal)
-        stopParsing();    
+        stopParsing();
 }
 
-bool XMLTokenizer::enterText()
+bool XMLDocumentParser::enterText()
 {
 #if !USE(QXMLSTREAM)
     ASSERT(m_bufferedText.size() == 0);
@@ -184,7 +184,7 @@ static inline String toString(const xmlChar* str, unsigned len)
 #endif
 
 
-void XMLTokenizer::exitText()
+void XMLDocumentParser::exitText()
 {
     if (m_parserStopped)
         return;
@@ -205,7 +205,7 @@ void XMLTokenizer::exitText()
     popCurrentNode();
 }
 
-void XMLTokenizer::end()
+void XMLDocumentParser::end()
 {
     doEnd();
 
@@ -219,13 +219,13 @@ void XMLTokenizer::end()
         exitText();
         m_doc->updateStyleSelector();
     }
-    
+
     clearCurrentNodeStack();
     if (!m_parsingFragment)
-        m_doc->finishedParsing();    
+        m_doc->finishedParsing();
 }
 
-void XMLTokenizer::finish()
+void XMLDocumentParser::finish()
 {
     if (m_parserPaused)
         m_finishCalled = true;
@@ -233,11 +233,11 @@ void XMLTokenizer::finish()
         end();
 }
 
-static inline RefPtr<Element> createXHTMLParserErrorHeader(Document* doc, const String& errorMessages) 
+static inline RefPtr<Element> createXHTMLParserErrorHeader(Document* doc, const String& errorMessages)
 {
     RefPtr<Element> reportElement = doc->createElement(QualifiedName(nullAtom, "parsererror", xhtmlNamespaceURI), false);
     reportElement->setAttribute(styleAttr, "display: block; white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black");
-    
+
     ExceptionCode ec = 0;
     RefPtr<Element> h3 = doc->createElement(h3Tag, false);
     reportElement->appendChild(h3.get(), ec);
@@ -251,18 +251,18 @@ static inline RefPtr<Element> createXHTMLParserErrorHeader(Document* doc, const 
     h3 = doc->createElement(h3Tag, false);
     reportElement->appendChild(h3.get(), ec);
     h3->appendChild(doc->createTextNode("Below is a rendering of the page up to the first error."), ec);
-    
+
     return reportElement;
 }
 
-void XMLTokenizer::insertErrorMessageBlock()
+void XMLDocumentParser::insertErrorMessageBlock()
 {
 #if USE(QXMLSTREAM)
     if (m_parsingFragment)
         return;
 #endif
     // One or more errors occurred during parsing of the code. Display an error block to the user above
-    // the normal content (the DOM tree is created manually and includes line/col info regarding 
+    // the normal content (the DOM tree is created manually and includes line/col info regarding
     // where the errors are located)
 
     // Create elements for display
@@ -310,24 +310,24 @@ void XMLTokenizer::insertErrorMessageBlock()
     doc->updateStyleIfNeeded();
 }
 
-void XMLTokenizer::notifyFinished(CachedResource* unusedResource)
+void XMLDocumentParser::notifyFinished(CachedResource* unusedResource)
 {
     ASSERT_UNUSED(unusedResource, unusedResource == m_pendingScript);
     ASSERT(m_pendingScript->accessCount() > 0);
-        
+
     ScriptSourceCode sourceCode(m_pendingScript.get());
     bool errorOccurred = m_pendingScript->errorOccurred();
 
     m_pendingScript->removeClient(this);
     m_pendingScript = 0;
-    
+
     RefPtr<Element> e = m_scriptElement;
     m_scriptElement = 0;
 
     ScriptElement* scriptElement = toScriptElement(e.get());
     ASSERT(scriptElement);
 
-    if (errorOccurred) 
+    if (errorOccurred)
         scriptElement->dispatchErrorEvent();
     else {
         m_view->frame()->script()->executeScript(sourceCode);
@@ -335,21 +335,21 @@ void XMLTokenizer::notifyFinished(CachedResource* unusedResource)
     }
 
     m_scriptElement = 0;
-    
+
     if (!m_requestingScript)
         resumeParsing();
 }
 
-bool XMLTokenizer::isWaitingForScripts() const
+bool XMLDocumentParser::isWaitingForScripts() const
 {
     return m_pendingScript;
 }
 
-void XMLTokenizer::pauseParsing()
+void XMLDocumentParser::pauseParsing()
 {
     if (m_parsingFragment)
         return;
-    
+
     m_parserPaused = true;
 }
 

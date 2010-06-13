@@ -30257,23 +30257,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\XMLTokenizer.cpp"
+				RelativePath="..\dom\XMLDocumentParser.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\dom\XMLTokenizer.h"
+				RelativePath="..\dom\XMLDocumentParser.h"
 				>
 			</File>
 			<File
-				RelativePath="..\dom\XMLTokenizerLibxml2.cpp"
+				RelativePath="..\dom\XMLDocumentParserLibxml2.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\dom\XMLTokenizerScope.cpp"
+				RelativePath="..\dom\XMLDocumentParserScope.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\dom\XMLTokenizerScope.h"
+				RelativePath="..\dom\XMLDocumentParserScope.h"
 				>
 			</File>
 		</Filter>
@@ -31057,11 +31057,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTML5Tokenizer.cpp"
+				RelativePath="..\html\HTML5DocumentParser.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTML5Tokenizer.h"
+				RelativePath="..\html\HTML5DocumentParser.h"
 				>
 			</File>
 			<File
@@ -35221,11 +35221,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTMLTokenizer.cpp"
+				RelativePath="..\html\HTMLDocumentParser.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTMLTokenizer.h"
+				RelativePath="..\html\HTMLDocumentParser.h"
 				>
 			</File>
 			<File

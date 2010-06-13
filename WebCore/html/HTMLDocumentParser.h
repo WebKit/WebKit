@@ -109,7 +109,7 @@ enum DoctypeState {
 class DoctypeToken {
 public:
     DoctypeToken() {}
-    
+
     void reset()
     {
         m_name.clear();
@@ -140,12 +140,12 @@ public:
 // (like dealing with <script> tags).  The HTML lexer bits should be pushed
 // down into a separate HTML lexer class.
 
-class HTMLTokenizer : public DocumentParser, public CachedResourceClient {
+class HTMLDocumentParser : public DocumentParser, public CachedResourceClient {
 public:
-    HTMLTokenizer(HTMLDocument*, bool reportErrors);
-    HTMLTokenizer(HTMLViewSourceDocument*);
-    HTMLTokenizer(DocumentFragment*, FragmentScriptingPermission = FragmentScriptingAllowed);
-    virtual ~HTMLTokenizer();
+    HTMLDocumentParser(HTMLDocument*, bool reportErrors);
+    HTMLDocumentParser(HTMLViewSourceDocument*);
+    HTMLDocumentParser(DocumentFragment*, FragmentScriptingPermission = FragmentScriptingAllowed);
+    virtual ~HTMLDocumentParser();
 
     virtual void write(const SegmentedString&, bool appendData);
     virtual void finish();
@@ -160,11 +160,11 @@ public:
     virtual int columnNumber() const { return 1; }
 
     bool processingContentWrittenByScript() const { return m_src.excludeLineNumbers(); }
-    
+
     virtual void executeScriptsWaitingForStylesheets();
-    
+
     virtual HTMLParser* htmlParser() const { return m_parser.get(); }
-    virtual HTMLTokenizer* asHTMLTokenizer() { return this; }
+    virtual HTMLDocumentParser* asHTMLTokenizer() { return this; }
 
 private:
     class State;
@@ -194,7 +194,7 @@ private:
     State scriptHandler(State);
     State scriptExecution(const ScriptSourceCode&, State);
     void setSrc(const SegmentedString&);
- 
+
     // check if we have enough space in the buffer.
     // if not enlarge it
     inline void checkBuffer(int len = 10)
@@ -213,14 +213,14 @@ private:
     void enlargeScriptBuffer(int len);
 
     bool continueProcessing(int& processedCount, double startTime, State&);
-    void timerFired(Timer<HTMLTokenizer>*);
+    void timerFired(Timer<HTMLDocumentParser>*);
     void allDataProcessed();
 
     // from CachedResourceClient
     void notifyFinished(CachedResource*);
 
     void executeExternalScriptsIfReady();
-    void executeExternalScriptsTimerFired(Timer<HTMLTokenizer>*);
+    void executeExternalScriptsTimerFired(Timer<HTMLDocumentParser>*);
     bool continueExecutingExternalScripts(double startTime);
 
     // Internal buffers
@@ -355,7 +355,7 @@ private:
     };
 
     State m_state;
-    
+
     DoctypeToken m_doctypeToken;
     int m_doctypeSearchCount;
     int m_doctypeSecondarySearchCount;
@@ -376,13 +376,13 @@ private:
 
     // Stores characters if we are scanning for a string like "</script>"
     UChar searchBuffer[10];
-    
+
     // Counts where we are in the string we are scanning for
     int searchCount;
     // the stopper string
     const char* m_searchStopper;
     int m_searchStopperLength;
-    
+
     // if no more data is coming, just parse what we have (including ext scripts that
     // may be still downloading) and finish
     bool m_noMoreData;
@@ -417,10 +417,10 @@ private:
     int m_tokenizerChunkSize;
 
     // The timer for continued processing.
-    Timer<HTMLTokenizer> m_timer;
+    Timer<HTMLDocumentParser> m_timer;
 
     // The timer for continued executing external scripts.
-    Timer<HTMLTokenizer> m_externalScriptsTimer;
+    Timer<HTMLDocumentParser> m_externalScriptsTimer;
 
 // This buffer can hold arbitrarily long user-defined attribute names, such as in EMBED tags.
 // So any fixed number might be too small, but rather than rewriting all usage of this buffer

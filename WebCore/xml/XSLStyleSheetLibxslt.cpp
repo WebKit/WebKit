@@ -31,8 +31,8 @@
 #include "Frame.h"
 #include "Node.h"
 #include "TransformSource.h"
-#include "XMLTokenizer.h"
-#include "XMLTokenizerScope.h"
+#include "XMLDocumentParser.h"
+#include "XMLDocumentParserScope.h"
 #include "XSLImportRule.h"
 #include "XSLTProcessor.h"
 #include "loader.h"
@@ -148,7 +148,7 @@ bool XSLStyleSheet::parseString(const String& string, bool)
     if (Frame* frame = ownerDocument()->frame())
         console = frame->domWindow()->console();
 
-    XMLTokenizerScope scope(docLoader(), XSLTProcessor::genericErrorFunc, XSLTProcessor::parseErrorFunc, console);
+    XMLDocumentParserScope scope(docLoader(), XSLTProcessor::genericErrorFunc, XSLTProcessor::parseErrorFunc, console);
 
     const char* buffer = reinterpret_cast<const char*>(string.characters());
     int size = string.length() * sizeof(UChar);

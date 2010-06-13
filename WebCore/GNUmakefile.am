@@ -923,11 +923,11 @@ webcore_sources += \
 	WebCore/dom/WebKitTransitionEvent.h \
 	WebCore/dom/WheelEvent.cpp \
 	WebCore/dom/WheelEvent.h \
-	WebCore/dom/XMLTokenizer.cpp \
-	WebCore/dom/XMLTokenizer.h \
-	WebCore/dom/XMLTokenizerLibxml2.cpp \
-	WebCore/dom/XMLTokenizerScope.cpp \
-	WebCore/dom/XMLTokenizerScope.h \
+	WebCore/dom/XMLDocumentParser.cpp \
+	WebCore/dom/XMLDocumentParser.h \
+	WebCore/dom/XMLDocumentParserLibxml2.cpp \
+	WebCore/dom/XMLDocumentParserScope.cpp \
+	WebCore/dom/XMLDocumentParserScope.h \
 	WebCore/dom/default/PlatformMessagePortChannel.cpp \
 	WebCore/dom/default/PlatformMessagePortChannel.h \
 	WebCore/editing/AppendNodeCommand.cpp \
@@ -1094,8 +1094,8 @@ webcore_sources += \
 	WebCore/html/HTML5Lexer.cpp \
 	WebCore/html/HTML5Lexer.h \
 	WebCore/html/HTML5Token.h \
-	WebCore/html/HTML5Tokenizer.cpp \
-	WebCore/html/HTML5Tokenizer.h \
+	WebCore/html/HTML5DocumentParser.cpp \
+	WebCore/html/HTML5DocumentParser.h \
 	WebCore/html/HTML5TreeBuilder.cpp \
 	WebCore/html/HTML5TreeBuilder.h \
 	WebCore/html/HTML5ScriptRunner.cpp \
@@ -1262,8 +1262,8 @@ webcore_sources += \
 	WebCore/html/HTMLTextAreaElement.h \
 	WebCore/html/HTMLTitleElement.cpp \
 	WebCore/html/HTMLTitleElement.h \
-	WebCore/html/HTMLTokenizer.cpp \
-	WebCore/html/HTMLTokenizer.h \
+	WebCore/html/HTMLDocumentParser.cpp \
+	WebCore/html/HTMLDocumentParser.h \
 	WebCore/html/HTMLUListElement.cpp \
 	WebCore/html/HTMLUListElement.h \
 	WebCore/html/HTMLViewSourceDocument.cpp \

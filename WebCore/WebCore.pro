@@ -535,8 +535,8 @@ SOURCES += \
     dom/WebKitAnimationEvent.cpp \
     dom/WebKitTransitionEvent.cpp \
     dom/WheelEvent.cpp \
-    dom/XMLTokenizer.cpp \
-    dom/XMLTokenizerQt.cpp \
+    dom/XMLDocumentParser.cpp \
+    dom/XMLDocumentParserQt.cpp \
     dom/default/PlatformMessagePortChannel.cpp \
     editing/AppendNodeCommand.cpp \
     editing/ApplyStyleCommand.cpp \
@@ -613,7 +613,7 @@ SOURCES += \
     html/FormDataList.cpp \
     html/HTML5EntityParser.cpp \
     html/HTML5Lexer.cpp \
-    html/HTML5Tokenizer.cpp \
+    html/HTML5DocumentParser.cpp \
     html/HTML5TreeBuilder.cpp \
     html/HTML5ScriptRunner.cpp \
     html/HTMLAllCollection.cpp \
@@ -696,7 +696,7 @@ SOURCES += \
     html/HTMLTableSectionElement.cpp \
     html/HTMLTextAreaElement.cpp \
     html/HTMLTitleElement.cpp \
-    html/HTMLTokenizer.cpp \
+    html/HTMLDocumentParser.cpp \
     html/HTMLUListElement.cpp \
     html/HTMLViewSourceDocument.cpp \
     html/ImageData.cpp \
@@ -1276,7 +1276,7 @@ HEADERS += \
     dom/WebKitAnimationEvent.h \
     dom/WebKitTransitionEvent.h \
     dom/WheelEvent.h \
-    dom/XMLTokenizer.h \
+    dom/XMLDocumentParser.h \
     editing/AppendNodeCommand.h \
     editing/ApplyStyleCommand.h \
     editing/BreakBlockquoteCommand.h \
@@ -1435,7 +1435,7 @@ HEADERS += \
     html/HTMLTableSectionElement.h \
     html/HTMLTextAreaElement.h \
     html/HTMLTitleElement.h \
-    html/HTMLTokenizer.h \
+    html/HTMLDocumentParser.h \
     html/HTMLUListElement.h \
     html/HTMLVideoElement.h \
     html/HTMLViewSourceDocument.h \

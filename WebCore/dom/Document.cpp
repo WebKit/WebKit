@@ -79,7 +79,7 @@
 #include "HTMLParser.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTitleElement.h"
-#include "HTMLTokenizer.h"
+#include "HTMLDocumentParser.h"
 #include "HTTPParsers.h"
 #include "HistoryItem.h"
 #include "HitTestRequest.h"
@@ -135,7 +135,7 @@
 #include "XMLHttpRequest.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
-#include "XMLTokenizer.h"
+#include "XMLDocumentParser.h"
 #include "htmlediting.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/HashFunctions.h>
@@ -1664,7 +1664,7 @@ void Document::setVisuallyOrdered()
 DocumentParser* Document::createTokenizer()
 {
     // FIXME: this should probably pass the frame instead
-    return new XMLTokenizer(this, view());
+    return new XMLDocumentParser(this, view());
 }
 
 void Document::open(Document* ownerDocument)
@@ -1958,7 +1958,7 @@ void Document::write(const SegmentedString& text, Document* ownerDocument)
 
     ASSERT(m_tokenizer);
     bool wasForcedSynchronous = false;
-    HTMLTokenizer* tokenizer = m_tokenizer->asHTMLTokenizer();
+    HTMLDocumentParser* tokenizer = m_tokenizer->asHTMLTokenizer();
     if (tokenizer) {
         wasForcedSynchronous = tokenizer->forceSynchronous();
         tokenizer->setForceSynchronous(true);

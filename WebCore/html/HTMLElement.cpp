@@ -39,13 +39,13 @@
 #include "HTMLElementFactory.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
-#include "HTMLTokenizer.h"
+#include "HTMLDocumentParser.h"
 #include "RenderWordBreak.h"
 #include "ScriptEventListener.h"
 #include "Settings.h"
 #include "Text.h"
 #include "TextIterator.h"
-#include "XMLTokenizer.h"
+#include "XMLDocumentParser.h"
 #include "markup.h"
 #include <wtf/StdLibExtras.h>
 

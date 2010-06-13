@@ -26,7 +26,7 @@
 namespace WebCore {
 
     class HTMLParser;
-    class HTMLTokenizer;
+    class HTMLDocumentParser;
     class SegmentedString;
     class XSSAuditor;
 
@@ -59,7 +59,7 @@ namespace WebCore {
         virtual void executeScriptsWaitingForStylesheets() {}
 
         virtual HTMLParser* htmlParser() const { return 0; }
-        virtual HTMLTokenizer* asHTMLTokenizer() { return 0; }
+        virtual HTMLDocumentParser* asHTMLTokenizer() { return 0; }
 
         XSSAuditor* xssAuditor() const { return m_XSSAuditor; }
         void setXSSAuditor(XSSAuditor* auditor) { m_XSSAuditor = auditor; }

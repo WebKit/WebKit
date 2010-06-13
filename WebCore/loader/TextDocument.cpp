@@ -30,7 +30,7 @@
 #include "HTMLViewSourceDocument.h"
 #include "SegmentedString.h"
 #include "Text.h"
-#include "XMLTokenizer.h"
+#include "XMLDocumentParser.h"
 
 using namespace std;
 

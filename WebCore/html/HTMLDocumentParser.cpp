@@ -26,7 +26,7 @@
 */
 
 #include "config.h"
-#include "HTMLTokenizer.h"
+#include "HTMLDocumentParser.h"
 
 #include "Attribute.h"
 #include "CSSHelper.h"
@@ -66,7 +66,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-// This value is used to define how many characters the tokenizer will process before 
+// This value is used to define how many characters the tokenizer will process before
 // yeilding control.
 // To increase responsivness reduce the tokenizer chunk size.
 static const int defaultTokenizerChunkSize = 4096;
@@ -74,7 +74,7 @@ static const int defaultTokenizerChunkSize = 4096;
 // FIXME: We would like this constant to be 200ms.
 // Yielding more aggressively results in increased responsiveness and better incremental rendering.
 // It slows down overall page-load on slower machines, though, so for now we set a value of 500.
-// For smaller chunks (above) decrease the value of TimerDelay as the the tokenizer should not 
+// For smaller chunks (above) decrease the value of TimerDelay as the the tokenizer should not
 // yield for as long a period otherwise it will take way to long to load a page.
 static const double defaultTokenizerTimeDelay = 0.500;
 
@@ -141,13 +141,13 @@ inline void Token::addAttribute(AtomicString& attrName, const AtomicString& attr
         }
         attrs->insertAttribute(a.release(), viewSourceMode);
     }
-    
+
     attrName = emptyAtom;
 }
 
 // ----------------------------------------------------------------------------
 
-HTMLTokenizer::HTMLTokenizer(HTMLDocument* doc, bool reportErrors)
+HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* doc, bool reportErrors)
     : DocumentParser()
     , m_buffer(0)
     , m_scriptCode(0)
@@ -157,8 +157,8 @@ HTMLTokenizer::HTMLTokenizer(HTMLDocument* doc, bool reportErrors)
     , m_executingScript(0)
     , m_requestingScript(false)
     , m_hasScriptsWaitingForStylesheets(false)
-    , m_timer(this, &HTMLTokenizer::timerFired)
-    , m_externalScriptsTimer(this, &HTMLTokenizer::executeExternalScriptsTimerFired)
+    , m_timer(this, &HTMLDocumentParser::timerFired)
+    , m_externalScriptsTimer(this, &HTMLDocumentParser::executeExternalScriptsTimerFired)
     , m_doc(doc)
     , m_parser(new HTMLParser(doc, reportErrors))
     , m_inWrite(false)
@@ -168,7 +168,7 @@ HTMLTokenizer::HTMLTokenizer(HTMLDocument* doc, bool reportErrors)
     begin();
 }
 
-HTMLTokenizer::HTMLTokenizer(HTMLViewSourceDocument* doc)
+HTMLDocumentParser::HTMLDocumentParser(HTMLViewSourceDocument* doc)
     : DocumentParser(true)
     , m_buffer(0)
     , m_scriptCode(0)
@@ -178,8 +178,8 @@ HTMLTokenizer::HTMLTokenizer(HTMLViewSourceDocument* doc)
     , m_executingScript(0)
     , m_requestingScript(false)
     , m_hasScriptsWaitingForStylesheets(false)
-    , m_timer(this, &HTMLTokenizer::timerFired)
-    , m_externalScriptsTimer(this, &HTMLTokenizer::executeExternalScriptsTimerFired)
+    , m_timer(this, &HTMLDocumentParser::timerFired)
+    , m_externalScriptsTimer(this, &HTMLDocumentParser::executeExternalScriptsTimerFired)
     , m_doc(doc)
     , m_parser(0)
     , m_inWrite(false)
@@ -189,7 +189,7 @@ HTMLTokenizer::HTMLTokenizer(HTMLViewSourceDocument* doc)
     begin();
 }
 
-HTMLTokenizer::HTMLTokenizer(DocumentFragment* frag, FragmentScriptingPermission scriptingPermission)
+HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* frag, FragmentScriptingPermission scriptingPermission)
     : m_buffer(0)
     , m_scriptCode(0)
     , m_scriptCodeSize(0)
@@ -198,8 +198,8 @@ HTMLTokenizer::HTMLTokenizer(DocumentFragment* frag, FragmentScriptingPermission
     , m_executingScript(0)
     , m_requestingScript(false)
     , m_hasScriptsWaitingForStylesheets(false)
-    , m_timer(this, &HTMLTokenizer::timerFired)
-    , m_externalScriptsTimer(this, &HTMLTokenizer::executeExternalScriptsTimerFired)
+    , m_timer(this, &HTMLDocumentParser::timerFired)
+    , m_externalScriptsTimer(this, &HTMLDocumentParser::executeExternalScriptsTimerFired)
     , m_doc(frag->document())
     , m_parser(new HTMLParser(frag, scriptingPermission))
     , m_inWrite(false)
@@ -209,7 +209,7 @@ HTMLTokenizer::HTMLTokenizer(DocumentFragment* frag, FragmentScriptingPermission
     begin();
 }
 
-void HTMLTokenizer::reset()
+void HTMLDocumentParser::reset()
 {
     ASSERT(m_executingScript == 0);
 
@@ -240,7 +240,7 @@ void HTMLTokenizer::reset()
     m_hasScriptsWaitingForStylesheets = false;
 }
 
-void HTMLTokenizer::begin()
+void HTMLDocumentParser::begin()
 {
     m_executingScript = 0;
     m_requestingScript = false;
@@ -276,12 +276,12 @@ void HTMLTokenizer::begin()
         m_tokenizerChunkSize = defaultTokenizerChunkSize;
 }
 
-void HTMLTokenizer::setForceSynchronous(bool force)
+void HTMLDocumentParser::setForceSynchronous(bool force)
 {
     m_state.setForceSynchronous(force);
 }
 
-HTMLTokenizer::State HTMLTokenizer::processListing(SegmentedString list, State state)
+HTMLDocumentParser::State HTMLDocumentParser::processListing(SegmentedString list, State state)
 {
     // This function adds the listing 'list' as
     // preformatted text-tokens to the token-collection
@@ -318,7 +318,7 @@ HTMLTokenizer::State HTMLTokenizer::processListing(SegmentedString list, State s
     return state;
 }
 
-HTMLTokenizer::State HTMLTokenizer::parseNonHTMLText(SegmentedString& src, State state)
+HTMLDocumentParser::State HTMLDocumentParser::parseNonHTMLText(SegmentedString& src, State state)
 {
     ASSERT(state.inTextArea() || state.inTitle() || state.inIFrame() || !state.hasEntityState());
     ASSERT(!state.hasTagState());
@@ -326,7 +326,7 @@ HTMLTokenizer::State HTMLTokenizer::parseNonHTMLText(SegmentedString& src, State
     if (state.inScript() && !m_currentScriptTagStartLineNumber)
         m_currentScriptTagStartLineNumber = m_lineNumber;
 
-    if (state.inComment()) 
+    if (state.inComment())
         state = parseComment(src, state);
 
     int lastDecodedEntityPosition = -1;
@@ -352,13 +352,13 @@ HTMLTokenizer::State HTMLTokenizer::parseNonHTMLText(SegmentedString& src, State
             else {
                 state = processListing(SegmentedString(m_scriptCode, m_scriptCodeSize), state);
                 processToken();
-                if (state.inStyle()) { 
+                if (state.inStyle()) {
                     m_currentToken.tagName = styleTag.localName();
                     m_currentToken.beginTag = false;
-                } else if (state.inTextArea()) { 
+                } else if (state.inTextArea()) {
                     m_currentToken.tagName = textareaTag.localName();
                     m_currentToken.beginTag = false;
-                } else if (state.inTitle()) { 
+                } else if (state.inTitle()) {
                     m_currentToken.tagName = titleTag.localName();
                     m_currentToken.beginTag = false;
                 } else if (state.inXmp()) {
@@ -414,20 +414,20 @@ HTMLTokenizer::State HTMLTokenizer::parseNonHTMLText(SegmentedString& src, State
 
     return state;
 }
-    
-HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
+
+HTMLDocumentParser::State HTMLDocumentParser::scriptHandler(State state)
 {
     // We are inside a <script>
     bool doScriptExec = false;
     int startLine = m_currentScriptTagStartLineNumber + 1; // Script line numbers are 1 based, HTMLTokenzier line numbers are 0 based
-    
+
     // Reset m_currentScriptTagStartLineNumber to indicate that we've finished parsing the current script element
     m_currentScriptTagStartLineNumber = 0;
 
-    // (Bugzilla 3837) Scripts following a frameset element should not execute or, 
+    // (Bugzilla 3837) Scripts following a frameset element should not execute or,
     // in the case of extern scripts, even load.
     bool followingFrameset = (m_doc->body() && m_doc->body()->hasTagName(framesetTag));
-  
+
     CachedScript* cs = 0;
     // don't load external scripts for standalone documents (for now)
     if (!inViewSourceMode()) {
@@ -457,13 +457,13 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
 
     state = processListing(SegmentedString(m_scriptCode, m_scriptCodeSize), state);
     RefPtr<Node> node = processToken();
-    
+
     if (node && m_scriptingPermission == FragmentScriptingNotAllowed) {
         ExceptionCode ec;
         node->remove(ec);
         node = 0;
     }
-    
+
     String scriptString = node ? node->textContent() : "";
     m_currentToken.tagName = scriptTag.localName();
     m_currentToken.beginTag = false;
@@ -471,7 +471,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
 
     state.setInScript(false);
     m_scriptCodeSize = m_scriptCodeResync = 0;
-    
+
     // FIXME: The script should be syntax highlighted.
     if (inViewSourceMode())
         return state;
@@ -531,7 +531,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
             state = m_state;
         }
     }
-    
+
 #if PRELOAD_SCANNER_ENABLED
     if (!m_pendingScripts.isEmpty() && !m_executingScript) {
         if (!m_preloadScanner)
@@ -547,12 +547,12 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
     return state;
 }
 
-HTMLTokenizer::State HTMLTokenizer::scriptExecution(const ScriptSourceCode& sourceCode, State state)
+HTMLDocumentParser::State HTMLDocumentParser::scriptExecution(const ScriptSourceCode& sourceCode, State state)
 {
     if (m_fragment || !m_doc->frame())
         return state;
     m_executingScript++;
-    
+
     SegmentedString* savedPrependingSrc = m_currentPrependingSrc;
     SegmentedString prependingSrc;
     m_currentPrependingSrc = &prependingSrc;
@@ -566,7 +566,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptExecution(const ScriptSourceCode& sour
     m_executingScript--;
 
     if (!m_executingScript && !state.loadingExtScript()) {
-        m_pendingSrc.prepend(prependingSrc);        
+        m_pendingSrc.prepend(prependingSrc);
         m_src.append(m_pendingSrc);
         m_pendingSrc.clear();
     } else if (!prependingSrc.isEmpty()) {
@@ -582,7 +582,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptExecution(const ScriptSourceCode& sour
                 m_currentPrependingSrc->append(prependingSrc);
             else
                 m_pendingSrc.prepend(prependingSrc);
-            
+
 #if PRELOAD_SCANNER_ENABLED
             // We are stuck waiting for another script. Lets check the source that
             // was just document.write()n for anything to load.
@@ -599,11 +599,11 @@ HTMLTokenizer::State HTMLTokenizer::scriptExecution(const ScriptSourceCode& sour
     }
 
     m_currentPrependingSrc = savedPrependingSrc;
-    
+
     return state;
 }
 
-HTMLTokenizer::State HTMLTokenizer::parseComment(SegmentedString& src, State state)
+HTMLDocumentParser::State HTMLDocumentParser::parseComment(SegmentedString& src, State state)
 {
     // FIXME: Why does this code even run for comments inside <script> and <style>? This seems bogus.
     checkScriptBuffer(src.length());
@@ -615,7 +615,7 @@ HTMLTokenizer::State HTMLTokenizer::parseComment(SegmentedString& src, State sta
             int endCharsCount = 1; // start off with one for the '>' character
             if (m_scriptCodeSize > 2 && m_scriptCode[m_scriptCodeSize-3] == '-' && m_scriptCode[m_scriptCodeSize-2] == '-') {
                 endCharsCount = 3;
-            } else if (m_scriptCodeSize > 3 && m_scriptCode[m_scriptCodeSize-4] == '-' && m_scriptCode[m_scriptCodeSize-3] == '-' && 
+            } else if (m_scriptCodeSize > 3 && m_scriptCode[m_scriptCodeSize-4] == '-' && m_scriptCode[m_scriptCodeSize-3] == '-' &&
                 m_scriptCode[m_scriptCodeSize-2] == '!') {
                 // Other browsers will accept --!> as a close comment, even though it's
                 // not technically valid.
@@ -646,7 +646,7 @@ HTMLTokenizer::State HTMLTokenizer::parseComment(SegmentedString& src, State sta
     return state;
 }
 
-HTMLTokenizer::State HTMLTokenizer::parseServer(SegmentedString& src, State state)
+HTMLDocumentParser::State HTMLDocumentParser::parseServer(SegmentedString& src, State state)
 {
     checkScriptBuffer(src.length());
     while (!src.isEmpty()) {
@@ -663,7 +663,7 @@ HTMLTokenizer::State HTMLTokenizer::parseServer(SegmentedString& src, State stat
     return state;
 }
 
-HTMLTokenizer::State HTMLTokenizer::parseProcessingInstruction(SegmentedString& src, State state)
+HTMLDocumentParser::State HTMLDocumentParser::parseProcessingInstruction(SegmentedString& src, State state)
 {
     UChar oldchar = 0;
     while (!src.isEmpty()) {
@@ -685,11 +685,11 @@ HTMLTokenizer::State HTMLTokenizer::parseProcessingInstruction(SegmentedString& 
         src.advance(m_lineNumber);
         oldchar = chbegin;
     }
-    
+
     return state;
 }
 
-HTMLTokenizer::State HTMLTokenizer::parseText(SegmentedString& src, State state)
+HTMLDocumentParser::State HTMLDocumentParser::parseText(SegmentedString& src, State state)
 {
     while (!src.isEmpty()) {
         UChar cc = *src;
@@ -717,7 +717,7 @@ HTMLTokenizer::State HTMLTokenizer::parseText(SegmentedString& src, State state)
 }
 
 
-HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString& src, UChar*& dest, State state, unsigned& cBufferPos, bool start, bool parsingTag)
+HTMLDocumentParser::State HTMLDocumentParser::parseEntity(SegmentedString& src, UChar*& dest, State state, unsigned& cBufferPos, bool start, bool parsingTag)
 {
     if (start) {
         cBufferPos = 0;
@@ -731,7 +731,7 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString& src, UChar*& de
         case NoEntity:
             ASSERT(state.entityState() != NoEntity);
             return state;
-        
+
         case SearchEntity:
             if (cc == '#') {
                 m_cBuffer[cBufferPos++] = cc;
@@ -769,7 +769,7 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString& src, UChar*& de
                 m_cBuffer[cBufferPos++] = cc;
                 src.advancePastNonNewline();
             }
-            if (cBufferPos == 10)  
+            if (cBufferPos == 10)
                 state.setEntityState(SearchSemicolon);
             break;
         }
@@ -788,7 +788,7 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString& src, UChar*& de
                 m_cBuffer[cBufferPos++] = cc;
                 src.advancePastNonNewline();
             }
-            if (cBufferPos == 9)  
+            if (cBufferPos == 9)
                 state.setEntityState(SearchSemicolon);
             break;
         }
@@ -806,7 +806,7 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString& src, UChar*& de
                 m_cBuffer[cBufferPos++] = cc;
                 src.advancePastNonNewline();
             }
-            if (cBufferPos == 9) 
+            if (cBufferPos == 9)
                 state.setEntityState(SearchSemicolon);
             if (state.entityState() == SearchSemicolon) {
                 if (cBufferPos > 1) {
@@ -891,7 +891,7 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString& src, UChar*& de
     return state;
 }
 
-HTMLTokenizer::State HTMLTokenizer::parseDoctype(SegmentedString& src, State state)
+HTMLDocumentParser::State HTMLDocumentParser::parseDoctype(SegmentedString& src, State state)
 {
     ASSERT(state.inDoctype());
     while (!src.isEmpty() && state.inDoctype()) {
@@ -1107,7 +1107,7 @@ HTMLTokenizer::State HTMLTokenizer::parseDoctype(SegmentedString& src, State sta
     return state;
 }
 
-HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
+HTMLDocumentParser::State HTMLDocumentParser::parseTag(SegmentedString& src, State state)
 {
     ASSERT(!state.hasEntityState());
 
@@ -1159,7 +1159,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
                 } else
                     searchCount = 0; // Stop looking for '<!--' sequence
             }
-            
+
             if (m_doctypeSearchCount > 0) {
                 if (toASCIILower(*src) == doctypeStart[m_doctypeSearchCount]) {
                     m_doctypeSearchCount++;
@@ -1189,7 +1189,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
                     finish = true;
                     break;
                 }
-                
+
                 // tolower() shows up on profiles. This is faster!
                 if (curchar >= 'A' && curchar <= 'Z' && !inViewSourceMode())
                     m_cBuffer[cBufferPos++] = curchar + ('a' - 'A');
@@ -1255,7 +1255,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
             int ll = min(src.length(), CBUFLEN - cBufferPos);
             while (ll--) {
                 UChar curchar = *src;
-                // If we encounter a "/" when scanning an attribute name, treat it as a delimiter.  This allows the 
+                // If we encounter a "/" when scanning an attribute name, treat it as a delimiter.  This allows the
                 // cases like <input type=checkbox checked/> to work (and accommodates XML-style syntax as per HTML5).
                 if (curchar <= '>' && (curchar >= '<' || isASCIISpace(curchar) || curchar == '/')) {
                     m_cBuffer[cBufferPos] = '\0';
@@ -1267,13 +1267,13 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
                         m_currentToken.addViewSourceChar('a');
                     break;
                 }
-                
+
                 // tolower() shows up on profiles. This is faster!
                 if (curchar >= 'A' && curchar <= 'Z' && !inViewSourceMode())
                     m_cBuffer[cBufferPos++] = curchar + ('a' - 'A');
                 else
                     m_cBuffer[cBufferPos++] = curchar;
-                    
+
                 m_rawAttributeBeforeValue.append(curchar);
                 src.advance(m_lineNumber);
             }
@@ -1374,7 +1374,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
                         tquote = NoQuote;
                         break;
                     }
-                    
+
                     if (curchar == '&') {
                         src.advancePastNonNewline();
                         state = parseEntity(src, m_dest, state, cBufferPos, true, true);
@@ -1577,7 +1577,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
     return state;
 }
 
-inline bool HTMLTokenizer::continueProcessing(int& processedCount, double startTime, State &state)
+inline bool HTMLDocumentParser::continueProcessing(int& processedCount, double startTime, State &state)
 {
     // We don't want to be checking elapsed time with every character, so we only check after we've
     // processed a certain number of characters.
@@ -1589,21 +1589,21 @@ inline bool HTMLTokenizer::continueProcessing(int& processedCount, double startT
             /* FIXME: We'd like to yield aggressively to give stylesheets the opportunity to
                load, but this hurts overall performance on slower machines.  For now turn this
                off.
-            || (!m_doc->haveStylesheetsLoaded() && 
+            || (!m_doc->haveStylesheetsLoaded() &&
                 (m_doc->documentElement()->id() != ID_HTML || m_doc->body()))) {*/
             // Schedule the timer to keep processing as soon as possible.
             m_timer.startOneShot(0);
             return false;
         }
     }
-    
+
     processedCount++;
     return true;
 }
 
 // Turns the statemachine one crank using the passed in State object.
 // This does not modify m_state directly in order to be reentrant.
-ALWAYS_INLINE void HTMLTokenizer::advance(State& state)
+ALWAYS_INLINE void HTMLDocumentParser::advance(State& state)
 {
     // do we need to enlarge the buffer?
     checkBuffer();
@@ -1636,7 +1636,7 @@ ALWAYS_INLINE void HTMLTokenizer::advance(State& state)
             state = parseTag(m_src, state);
         else if (state.startTag()) {
             state.setStartTag(false);
-            
+
             switch (cc) {
             case '/':
                 break;
@@ -1711,7 +1711,7 @@ ALWAYS_INLINE void HTMLTokenizer::advance(State& state)
     }
 }
 
-void HTMLTokenizer::willWriteHTML(const SegmentedString& source)
+void HTMLDocumentParser::willWriteHTML(const SegmentedString& source)
 {
     #if ENABLE(INSPECTOR)
         if (InspectorTimelineAgent* timelineAgent = m_doc->inspectorTimelineAgent())
@@ -1719,7 +1719,7 @@ void HTMLTokenizer::willWriteHTML(const SegmentedString& source)
     #endif
 }
 
-void HTMLTokenizer::didWriteHTML()
+void HTMLDocumentParser::didWriteHTML()
 {
     #if ENABLE(INSPECTOR)
         if (InspectorTimelineAgent* timelineAgent = m_doc->inspectorTimelineAgent())
@@ -1727,11 +1727,11 @@ void HTMLTokenizer::didWriteHTML()
     #endif
 }
 
-void HTMLTokenizer::write(const SegmentedString& str, bool appendData)
+void HTMLDocumentParser::write(const SegmentedString& str, bool appendData)
 {
     if (!m_buffer)
         return;
-    
+
     if (m_parserStopped)
         return;
 
@@ -1752,7 +1752,7 @@ void HTMLTokenizer::write(const SegmentedString& str, bool appendData)
         }
         return;
     }
-    
+
 #if PRELOAD_SCANNER_ENABLED
     if (m_preloadScanner && m_preloadScanner->inProgress() && appendData)
         m_preloadScanner->end();
@@ -1790,29 +1790,29 @@ void HTMLTokenizer::write(const SegmentedString& str, bool appendData)
 
     if (m_noMoreData && !m_inWrite && !state.loadingExtScript() && !m_executingScript && !m_timer.isActive())
         end(); // this actually causes us to be deleted
-    
+
     // After parsing, go ahead and dispatch image beforeload events.
     ImageLoader::dispatchPendingBeforeLoadEvents();
 }
 
-void HTMLTokenizer::stopParsing()
+void HTMLDocumentParser::stopParsing()
 {
     DocumentParser::stopParsing();
     m_timer.stop();
 
-    // FIXME: Why is HTMLTokenizer the only DocumentParser which calls checkCompleted?
+    // FIXME: Why is HTMLDocumentParser the only DocumentParser which calls checkCompleted?
     // The FrameLoader needs to know that the tokenizer has finished with its data,
     // regardless of whether it happened naturally or due to manual intervention.
     if (!m_fragment && m_doc->frame())
         m_doc->frame()->loader()->checkCompleted();
 }
 
-bool HTMLTokenizer::processingData() const
+bool HTMLDocumentParser::processingData() const
 {
     return m_timer.isActive() || m_inWrite;
 }
 
-void HTMLTokenizer::timerFired(Timer<HTMLTokenizer>*)
+void HTMLDocumentParser::timerFired(Timer<HTMLDocumentParser>*)
 {
     if (m_doc->view() && m_doc->view()->layoutPending() && !m_doc->minimumLayoutDelay()) {
         // Restart the timer and let layout win.  This is basically a way of ensuring that the layout
@@ -1825,7 +1825,7 @@ void HTMLTokenizer::timerFired(Timer<HTMLTokenizer>*)
     write(SegmentedString(), true);
 }
 
-void HTMLTokenizer::end()
+void HTMLDocumentParser::end()
 {
     ASSERT(!m_timer.isActive());
     m_timer.stop(); // Only helps if assertion above fires, but do it anyway.
@@ -1849,7 +1849,7 @@ void HTMLTokenizer::end()
         m_doc->finishedParsing();
 }
 
-void HTMLTokenizer::finish()
+void HTMLDocumentParser::finish()
 {
     // do this as long as we don't find matching comment ends
     while ((m_state.inComment() || m_state.inServer()) && m_scriptCode && m_scriptCodeSize) {
@@ -1887,7 +1887,7 @@ void HTMLTokenizer::finish()
         end(); // this actually causes us to be deleted
 }
 
-PassRefPtr<Node> HTMLTokenizer::processToken()
+PassRefPtr<Node> HTMLDocumentParser::processToken()
 {
     ScriptController* scriptController = (!m_fragment && m_doc->frame()) ? m_doc->frame()->script() : 0;
     if (scriptController && scriptController->canExecuteScripts(NotAboutToExecuteScript))
@@ -1907,7 +1907,7 @@ PassRefPtr<Node> HTMLTokenizer::processToken()
     m_dest = m_buffer;
 
     RefPtr<Node> n;
-    
+
     if (!m_parserStopped) {
         if (NamedNodeMap* map = m_currentToken.attrs.get())
             map->shrinkToLength();
@@ -1924,7 +1924,7 @@ PassRefPtr<Node> HTMLTokenizer::processToken()
     return n.release();
 }
 
-void HTMLTokenizer::processDoctypeToken()
+void HTMLDocumentParser::processDoctypeToken()
 {
     if (inViewSourceMode())
         static_cast<HTMLViewSourceDocument*>(m_doc)->addViewSourceDoctypeToken(&m_doctypeToken);
@@ -1932,14 +1932,14 @@ void HTMLTokenizer::processDoctypeToken()
         m_parser->parseDoctypeToken(&m_doctypeToken);
 }
 
-HTMLTokenizer::~HTMLTokenizer()
+HTMLDocumentParser::~HTMLDocumentParser()
 {
     ASSERT(!m_inWrite);
     reset();
 }
 
 
-void HTMLTokenizer::enlargeBuffer(int len)
+void HTMLDocumentParser::enlargeBuffer(int len)
 {
     // Resize policy: Always at least double the size of the buffer each time.
     int delta = max(len, m_bufferSize);
@@ -1957,7 +1957,7 @@ void HTMLTokenizer::enlargeBuffer(int len)
     m_bufferSize = newSize;
 }
 
-void HTMLTokenizer::enlargeScriptBuffer(int len)
+void HTMLDocumentParser::enlargeScriptBuffer(int len)
 {
     // Resize policy: Always at least double the size of the buffer each time.
     int delta = max(len, m_scriptCodeCapacity);
@@ -1980,8 +1980,8 @@ void HTMLTokenizer::enlargeScriptBuffer(int len)
     m_scriptCode = static_cast<UChar*>(fastRealloc(m_scriptCode, newSize * sizeof(UChar)));
     m_scriptCodeCapacity = newSize;
 }
-    
-void HTMLTokenizer::executeScriptsWaitingForStylesheets()
+
+void HTMLDocumentParser::executeScriptsWaitingForStylesheets()
 {
     ASSERT(m_doc->haveStylesheetsLoaded());
 
@@ -1989,12 +1989,12 @@ void HTMLTokenizer::executeScriptsWaitingForStylesheets()
         notifyFinished(0);
 }
 
-void HTMLTokenizer::notifyFinished(CachedResource*)
+void HTMLDocumentParser::notifyFinished(CachedResource*)
 {
     executeExternalScriptsIfReady();
 }
 
-void HTMLTokenizer::executeExternalScriptsIfReady()
+void HTMLDocumentParser::executeExternalScriptsIfReady()
 {
     ASSERT(!m_pendingScripts.isEmpty());
 
@@ -2005,7 +2005,7 @@ void HTMLTokenizer::executeExternalScriptsIfReady()
         return;
 
     bool finished = false;
-    
+
     double startTime = currentTime();
     while (!finished && m_pendingScripts.first()->isLoaded()) {
         if (!continueExecutingExternalScripts(startTime))
@@ -2060,7 +2060,7 @@ void HTMLTokenizer::executeExternalScriptsIfReady()
     }
 }
 
-void HTMLTokenizer::executeExternalScriptsTimerFired(Timer<HTMLTokenizer>*)
+void HTMLDocumentParser::executeExternalScriptsTimerFired(Timer<HTMLDocumentParser>*)
 {
     if (m_doc->view() && m_doc->view()->layoutPending() && !m_doc->minimumLayoutDelay()) {
         // Restart the timer and do layout first.
@@ -2072,7 +2072,7 @@ void HTMLTokenizer::executeExternalScriptsTimerFired(Timer<HTMLTokenizer>*)
     executeExternalScriptsIfReady();
 }
 
-bool HTMLTokenizer::continueExecutingExternalScripts(double startTime)
+bool HTMLDocumentParser::continueExecutingExternalScripts(double startTime)
 {
     if (m_externalScriptsTimer.isActive())
         return false;
@@ -2085,19 +2085,19 @@ bool HTMLTokenizer::continueExecutingExternalScripts(double startTime)
     return true;
 }
 
-bool HTMLTokenizer::isWaitingForScripts() const
+bool HTMLDocumentParser::isWaitingForScripts() const
 {
     return m_state.loadingExtScript();
 }
 
-void HTMLTokenizer::setSrc(const SegmentedString& source)
+void HTMLDocumentParser::setSrc(const SegmentedString& source)
 {
     m_src = source;
 }
 
 void parseHTMLDocumentFragment(const String& source, DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
 {
-    HTMLTokenizer tok(fragment, scriptingPermission);
+    HTMLDocumentParser tok(fragment, scriptingPermission);
     tok.setForceSynchronous(true);
     tok.write(source, true);
     tok.finish();

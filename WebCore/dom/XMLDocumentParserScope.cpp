@@ -20,43 +20,49 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XMLTokenizerScope_h
-#define XMLTokenizerScope_h
-
-#include <wtf/Noncopyable.h>
-
-#if ENABLE(XSLT)
-#include <libxml/tree.h>
-#endif
+#include "config.h"
+#include "XMLDocumentParserScope.h"
 
 namespace WebCore {
 
-    class DocLoader;
+DocLoader* XMLDocumentParserScope::currentDocLoader = 0;
 
-    class XMLTokenizerScope : public Noncopyable {
-    public:
-        XMLTokenizerScope(DocLoader* docLoader);
-        ~XMLTokenizerScope();
-
-        static DocLoader* currentDocLoader;
+XMLDocumentParserScope::XMLDocumentParserScope(DocLoader* docLoader)
+    : m_oldDocLoader(currentDocLoader)
+#if ENABLE(XSLT)
+    , m_oldGenericErrorFunc(xmlGenericError)
+    , m_oldStructuredErrorFunc(xmlStructuredError)
+    , m_oldErrorContext(xmlGenericErrorContext)
+#endif
+{
+    currentDocLoader = docLoader;
+}
 
 #if ENABLE(XSLT)
-        XMLTokenizerScope(DocLoader* docLoader, xmlGenericErrorFunc genericErrorFunc, xmlStructuredErrorFunc structuredErrorFunc = 0, void* errorContext = 0);
+XMLDocumentParserScope::XMLDocumentParserScope(DocLoader* docLoader, xmlGenericErrorFunc genericErrorFunc, xmlStructuredErrorFunc structuredErrorFunc, void* errorContext)
+    : m_oldDocLoader(currentDocLoader)
+    , m_oldGenericErrorFunc(xmlGenericError)
+    , m_oldStructuredErrorFunc(xmlStructuredError)
+    , m_oldErrorContext(xmlGenericErrorContext)
+{
+    currentDocLoader = docLoader;
+    if (genericErrorFunc)
+        xmlSetGenericErrorFunc(errorContext, genericErrorFunc);
+    if (structuredErrorFunc)
+        xmlSetStructuredErrorFunc(errorContext, structuredErrorFunc);
+}
 #endif
 
-    private:
-        DocLoader* m_oldDocLoader;
-
+XMLDocumentParserScope::~XMLDocumentParserScope()
+{
+    currentDocLoader = m_oldDocLoader;
 #if ENABLE(XSLT)
-        xmlGenericErrorFunc m_oldGenericErrorFunc;
-        xmlStructuredErrorFunc m_oldStructuredErrorFunc;
-        void* m_oldErrorContext;
+    xmlSetGenericErrorFunc(m_oldErrorContext, m_oldGenericErrorFunc);
+    xmlSetStructuredErrorFunc(m_oldErrorContext, m_oldStructuredErrorFunc);
 #endif
-    };
+}
 
-} // namespace WebCore
-
-#endif // XMLTokenizerScope_h
+}

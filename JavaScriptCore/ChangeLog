@@ -1,3 +1,13 @@
+2010-06-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Rename the rest of the *Tokenizer classes to *DocumentParser
+        https://bugs.webkit.org/show_bug.cgi?id=40507
+
+        * wtf/Platform.h:
+         - fixed a comment to match new names.
+
 2010-06-11  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Simon Hausmann.

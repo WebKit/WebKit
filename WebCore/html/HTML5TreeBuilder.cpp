@@ -32,7 +32,7 @@
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
 #include "HTMLParser.h"
-#include "HTMLTokenizer.h"
+#include "HTMLDocumentParser.h"
 #include "NotImplemented.h"
 #include <wtf/UnusedParam.h>
 

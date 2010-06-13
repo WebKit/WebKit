@@ -1,3 +1,377 @@
+2010-06-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Rename the rest of the *Tokenizer classes to *DocumentParser
+        https://bugs.webkit.org/show_bug.cgi?id=40507
+
+        This search/replace was done by do-webcore-rename.
+        Just looking for a rubber stamp.
+        
+        XMLTokenizer => XMLDocumentParser
+        XMLTokenizerLibxml2 => XMLDocumentParserLibxml2
+        XMLTokenizerQt => XMLDocumentParserQt
+        XMLTokenizerScope => XMLDocumentParserScope
+        HTML5Tokenizer => HTML5DocumentParser
+        HTMLTokenizer => HTMLDocumentParser
+
+        No functional change, thus no tests.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::checkLoaded):
+        * dom/Document.cpp:
+        (WebCore::Document::createTokenizer):
+        (WebCore::Document::write):
+        * dom/Document.h:
+        (WebCore::Document::setXMLEncoding):
+        * dom/DocumentParser.h:
+        (WebCore::DocumentParser::asHTMLTokenizer):
+        * dom/Element.cpp:
+        * dom/ProcessingInstruction.cpp:
+        * dom/XMLDocumentParser.cpp: Added.
+        (WebCore::XMLDocumentParser::isWMLDocument):
+        (WebCore::XMLDocumentParser::pushCurrentNode):
+        (WebCore::XMLDocumentParser::popCurrentNode):
+        (WebCore::XMLDocumentParser::clearCurrentNodeStack):
+        (WebCore::XMLDocumentParser::write):
+        (WebCore::XMLDocumentParser::handleError):
+        (WebCore::XMLDocumentParser::enterText):
+        (WebCore::toString):
+        (WebCore::XMLDocumentParser::exitText):
+        (WebCore::XMLDocumentParser::end):
+        (WebCore::XMLDocumentParser::finish):
+        (WebCore::createXHTMLParserErrorHeader):
+        (WebCore::XMLDocumentParser::insertErrorMessageBlock):
+        (WebCore::XMLDocumentParser::notifyFinished):
+        (WebCore::XMLDocumentParser::isWaitingForScripts):
+        (WebCore::XMLDocumentParser::pauseParsing):
+        * dom/XMLDocumentParser.h: Added.
+        (WebCore::XMLParserContext::context):
+        (WebCore::XMLParserContext::XMLParserContext):
+        (WebCore::XMLDocumentParser::):
+        (WebCore::XMLDocumentParser::setIsXHTMLDocument):
+        (WebCore::XMLDocumentParser::isXHTMLDocument):
+        (WebCore::XMLDocumentParser::setIsXHTMLMPDocument):
+        (WebCore::XMLDocumentParser::isXHTMLMPDocument):
+        (WebCore::XMLDocumentParser::wellFormed):
+        (WebCore::XMLDocumentParser::context):
+        * dom/XMLDocumentParserLibxml2.cpp: Added.
+        (WebCore::PendingCallbacks::~PendingCallbacks):
+        (WebCore::PendingCallbacks::appendStartElementNSCallback):
+        (WebCore::PendingCallbacks::appendEndElementNSCallback):
+        (WebCore::PendingCallbacks::appendCharactersCallback):
+        (WebCore::PendingCallbacks::appendProcessingInstructionCallback):
+        (WebCore::PendingCallbacks::appendCDATABlockCallback):
+        (WebCore::PendingCallbacks::appendCommentCallback):
+        (WebCore::PendingCallbacks::appendInternalSubsetCallback):
+        (WebCore::PendingCallbacks::appendErrorCallback):
+        (WebCore::PendingCallbacks::callAndRemoveFirstCallback):
+        (WebCore::PendingCallbacks::isEmpty):
+        (WebCore::PendingCallbacks::PendingCallback::~PendingCallback):
+        (WebCore::PendingCallbacks::PendingStartElementNSCallback::~PendingStartElementNSCallback):
+        (WebCore::PendingCallbacks::PendingStartElementNSCallback::call):
+        (WebCore::PendingCallbacks::PendingEndElementNSCallback::call):
+        (WebCore::PendingCallbacks::PendingCharactersCallback::~PendingCharactersCallback):
+        (WebCore::PendingCallbacks::PendingCharactersCallback::call):
+        (WebCore::PendingCallbacks::PendingProcessingInstructionCallback::~PendingProcessingInstructionCallback):
+        (WebCore::PendingCallbacks::PendingProcessingInstructionCallback::call):
+        (WebCore::PendingCallbacks::PendingCDATABlockCallback::~PendingCDATABlockCallback):
+        (WebCore::PendingCallbacks::PendingCDATABlockCallback::call):
+        (WebCore::PendingCallbacks::PendingCommentCallback::~PendingCommentCallback):
+        (WebCore::PendingCallbacks::PendingCommentCallback::call):
+        (WebCore::PendingCallbacks::PendingInternalSubsetCallback::~PendingInternalSubsetCallback):
+        (WebCore::PendingCallbacks::PendingInternalSubsetCallback::call):
+        (WebCore::PendingCallbacks::):
+        (WebCore::matchFunc):
+        (WebCore::OffsetBuffer::OffsetBuffer):
+        (WebCore::OffsetBuffer::readOutBytes):
+        (WebCore::shouldAllowExternalLoad):
+        (WebCore::openFunc):
+        (WebCore::readFunc):
+        (WebCore::writeFunc):
+        (WebCore::closeFunc):
+        (WebCore::errorFunc):
+        (WebCore::XMLParserContext::createStringParser):
+        (WebCore::XMLParserContext::createMemoryParser):
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+        (WebCore::XMLParserContext::~XMLParserContext):
+        (WebCore::XMLDocumentParser::~XMLDocumentParser):
+        (WebCore::XMLDocumentParser::doWrite):
+        (WebCore::toString):
+        (WebCore::handleElementNamespaces):
+        (WebCore::handleElementAttributes):
+        (WebCore::XMLDocumentParser::startElementNs):
+        (WebCore::XMLDocumentParser::endElementNs):
+        (WebCore::XMLDocumentParser::characters):
+        (WebCore::XMLDocumentParser::error):
+        (WebCore::XMLDocumentParser::processingInstruction):
+        (WebCore::XMLDocumentParser::cdataBlock):
+        (WebCore::XMLDocumentParser::comment):
+        (WebCore::XMLDocumentParser::startDocument):
+        (WebCore::XMLDocumentParser::endDocument):
+        (WebCore::XMLDocumentParser::internalSubset):
+        (WebCore::getTokenizer):
+        (WebCore::hackAroundLibXMLEntityBug):
+        (WebCore::startElementNsHandler):
+        (WebCore::endElementNsHandler):
+        (WebCore::charactersHandler):
+        (WebCore::processingInstructionHandler):
+        (WebCore::cdataBlockHandler):
+        (WebCore::commentHandler):
+        (WebCore::warningHandler):
+        (WebCore::fatalErrorHandler):
+        (WebCore::normalErrorHandler):
+        (WebCore::):
+        (WebCore::sharedXHTMLEntity):
+        (WebCore::getXHTMLEntity):
+        (WebCore::getEntityHandler):
+        (WebCore::startDocumentHandler):
+        (WebCore::endDocumentHandler):
+        (WebCore::internalSubsetHandler):
+        (WebCore::externalSubsetHandler):
+        (WebCore::ignorableWhitespaceHandler):
+        (WebCore::XMLDocumentParser::initializeParserContext):
+        (WebCore::XMLDocumentParser::doEnd):
+        (WebCore::xmlDocPtrForString):
+        (WebCore::XMLDocumentParser::lineNumber):
+        (WebCore::XMLDocumentParser::columnNumber):
+        (WebCore::XMLDocumentParser::stopParsing):
+        (WebCore::XMLDocumentParser::resumeParsing):
+        (WebCore::parseXMLDocumentFragment):
+        (WebCore::attributesStartElementNsHandler):
+        (WebCore::parseAttributes):
+        * dom/XMLDocumentParserQt.cpp: Added.
+        (WebCore::EntityResolver::resolveUndeclaredEntity):
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+        (WebCore::XMLDocumentParser::~XMLDocumentParser):
+        (WebCore::XMLDocumentParser::doWrite):
+        (WebCore::XMLDocumentParser::initializeParserContext):
+        (WebCore::XMLDocumentParser::doEnd):
+        (WebCore::XMLDocumentParser::lineNumber):
+        (WebCore::XMLDocumentParser::columnNumber):
+        (WebCore::XMLDocumentParser::stopParsing):
+        (WebCore::XMLDocumentParser::resumeParsing):
+        (WebCore::parseXMLDocumentFragment):
+        (WebCore::attributesStartElementNsHandler):
+        (WebCore::parseAttributes):
+        (WebCore::prefixFromQName):
+        (WebCore::handleElementNamespaces):
+        (WebCore::handleElementAttributes):
+        (WebCore::XMLDocumentParser::parse):
+        (WebCore::XMLDocumentParser::startDocument):
+        (WebCore::XMLDocumentParser::parseStartElement):
+        (WebCore::XMLDocumentParser::parseEndElement):
+        (WebCore::XMLDocumentParser::parseCharacters):
+        (WebCore::XMLDocumentParser::parseProcessingInstruction):
+        (WebCore::XMLDocumentParser::parseCdata):
+        (WebCore::XMLDocumentParser::parseComment):
+        (WebCore::XMLDocumentParser::endDocument):
+        (WebCore::XMLDocumentParser::hasError):
+        (WebCore::XMLDocumentParser::parseDtd):
+        * dom/XMLDocumentParserScope.cpp: Added.
+        (WebCore::XMLDocumentParserScope::XMLDocumentParserScope):
+        (WebCore::XMLDocumentParserScope::~XMLDocumentParserScope):
+        * dom/XMLDocumentParserScope.h: Added.
+        * dom/XMLTokenizer.cpp: Removed.
+        * dom/XMLTokenizer.h: Removed.
+        * dom/XMLTokenizerLibxml2.cpp: Removed.
+        * dom/XMLTokenizerQt.cpp: Removed.
+        * dom/XMLTokenizerScope.cpp: Removed.
+        * dom/XMLTokenizerScope.h: Removed.
+        * html/HTML5DocumentParser.cpp: Added.
+        (WebCore::):
+        (WebCore::HTML5DocumentParser::HTML5DocumentParser):
+        (WebCore::HTML5DocumentParser::~HTML5DocumentParser):
+        (WebCore::HTML5DocumentParser::begin):
+        (WebCore::HTML5DocumentParser::pumpLexerIfPossible):
+        (WebCore::HTML5DocumentParser::pumpLexer):
+        (WebCore::HTML5DocumentParser::write):
+        (WebCore::HTML5DocumentParser::end):
+        (WebCore::HTML5DocumentParser::attemptToEnd):
+        (WebCore::HTML5DocumentParser::endIfDelayed):
+        (WebCore::HTML5DocumentParser::finish):
+        (WebCore::HTML5DocumentParser::executingScript):
+        (WebCore::HTML5DocumentParser::lineNumber):
+        (WebCore::HTML5DocumentParser::columnNumber):
+        (WebCore::HTML5DocumentParser::htmlParser):
+        (WebCore::HTML5DocumentParser::isWaitingForScripts):
+        (WebCore::HTML5DocumentParser::resumeParsingAfterScriptExecution):
+        (WebCore::HTML5DocumentParser::watchForLoad):
+        (WebCore::HTML5DocumentParser::stopWatchingForLoad):
+        (WebCore::HTML5DocumentParser::shouldLoadExternalScriptFromSrc):
+        (WebCore::HTML5DocumentParser::executeScript):
+        (WebCore::HTML5DocumentParser::notifyFinished):
+        (WebCore::HTML5DocumentParser::executeScriptsWaitingForStylesheets):
+        (WebCore::HTML5DocumentParser::script):
+        * html/HTML5DocumentParser.h: Added.
+        (WebCore::HTML5DocumentParser::InputStream::InputStream):
+        (WebCore::HTML5DocumentParser::InputStream::appendToEnd):
+        (WebCore::HTML5DocumentParser::InputStream::insertAtCurrentInsertionPoint):
+        (WebCore::HTML5DocumentParser::InputStream::close):
+        (WebCore::HTML5DocumentParser::InputStream::current):
+        (WebCore::HTML5DocumentParser::InputStream::splitInto):
+        (WebCore::HTML5DocumentParser::InputStream::mergeFrom):
+        (WebCore::HTML5DocumentParser::InsertionPointRecord::InsertionPointRecord):
+        (WebCore::HTML5DocumentParser::InsertionPointRecord::~InsertionPointRecord):
+        (WebCore::HTML5DocumentParser::inWrite):
+        * html/HTML5Lexer.h:
+        (WebCore::HTML5Lexer::columnNumber):
+        * html/HTML5Tokenizer.cpp: Removed.
+        * html/HTML5Tokenizer.h: Removed.
+        * html/HTML5TreeBuilder.cpp:
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::createTokenizer):
+        * html/HTMLDocumentParser.cpp: Added.
+        (WebCore::):
+        (WebCore::fixUpChar):
+        (WebCore::tagMatch):
+        (WebCore::Token::addAttribute):
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser):
+        (WebCore::HTMLDocumentParser::reset):
+        (WebCore::HTMLDocumentParser::begin):
+        (WebCore::HTMLDocumentParser::setForceSynchronous):
+        (WebCore::HTMLDocumentParser::processListing):
+        (WebCore::HTMLDocumentParser::parseNonHTMLText):
+        (WebCore::HTMLDocumentParser::scriptHandler):
+        (WebCore::HTMLDocumentParser::scriptExecution):
+        (WebCore::HTMLDocumentParser::parseComment):
+        (WebCore::HTMLDocumentParser::parseServer):
+        (WebCore::HTMLDocumentParser::parseProcessingInstruction):
+        (WebCore::HTMLDocumentParser::parseText):
+        (WebCore::HTMLDocumentParser::parseEntity):
+        (WebCore::HTMLDocumentParser::parseDoctype):
+        (WebCore::HTMLDocumentParser::parseTag):
+        (WebCore::HTMLDocumentParser::continueProcessing):
+        (WebCore::HTMLDocumentParser::advance):
+        (WebCore::HTMLDocumentParser::willWriteHTML):
+        (WebCore::HTMLDocumentParser::didWriteHTML):
+        (WebCore::HTMLDocumentParser::write):
+        (WebCore::HTMLDocumentParser::stopParsing):
+        (WebCore::HTMLDocumentParser::processingData):
+        (WebCore::HTMLDocumentParser::timerFired):
+        (WebCore::HTMLDocumentParser::end):
+        (WebCore::HTMLDocumentParser::finish):
+        (WebCore::HTMLDocumentParser::processToken):
+        (WebCore::HTMLDocumentParser::processDoctypeToken):
+        (WebCore::HTMLDocumentParser::~HTMLDocumentParser):
+        (WebCore::HTMLDocumentParser::enlargeBuffer):
+        (WebCore::HTMLDocumentParser::enlargeScriptBuffer):
+        (WebCore::HTMLDocumentParser::executeScriptsWaitingForStylesheets):
+        (WebCore::HTMLDocumentParser::notifyFinished):
+        (WebCore::HTMLDocumentParser::executeExternalScriptsIfReady):
+        (WebCore::HTMLDocumentParser::executeExternalScriptsTimerFired):
+        (WebCore::HTMLDocumentParser::continueExecutingExternalScripts):
+        (WebCore::HTMLDocumentParser::isWaitingForScripts):
+        (WebCore::HTMLDocumentParser::setSrc):
+        (WebCore::parseHTMLDocumentFragment):
+        (WebCore::decodeNamedEntity):
+        * html/HTMLDocumentParser.h: Added.
+        (WebCore::Token::Token):
+        (WebCore::Token::~Token):
+        (WebCore::Token::isOpenTag):
+        (WebCore::Token::isCloseTag):
+        (WebCore::Token::reset):
+        (WebCore::Token::addViewSourceChar):
+        (WebCore::):
+        (WebCore::DoctypeToken::DoctypeToken):
+        (WebCore::DoctypeToken::reset):
+        (WebCore::DoctypeToken::state):
+        (WebCore::DoctypeToken::setState):
+        (WebCore::HTMLDocumentParser::forceSynchronous):
+        (WebCore::HTMLDocumentParser::executingScript):
+        (WebCore::HTMLDocumentParser::lineNumber):
+        (WebCore::HTMLDocumentParser::columnNumber):
+        (WebCore::HTMLDocumentParser::processingContentWrittenByScript):
+        (WebCore::HTMLDocumentParser::htmlParser):
+        (WebCore::HTMLDocumentParser::asHTMLTokenizer):
+        (WebCore::HTMLDocumentParser::checkBuffer):
+        (WebCore::HTMLDocumentParser::checkScriptBuffer):
+        (WebCore::HTMLDocumentParser::):
+        (WebCore::HTMLDocumentParser::State::State):
+        (WebCore::HTMLDocumentParser::State::tagState):
+        (WebCore::HTMLDocumentParser::State::setTagState):
+        (WebCore::HTMLDocumentParser::State::entityState):
+        (WebCore::HTMLDocumentParser::State::setEntityState):
+        (WebCore::HTMLDocumentParser::State::inScript):
+        (WebCore::HTMLDocumentParser::State::setInScript):
+        (WebCore::HTMLDocumentParser::State::inStyle):
+        (WebCore::HTMLDocumentParser::State::setInStyle):
+        (WebCore::HTMLDocumentParser::State::inXmp):
+        (WebCore::HTMLDocumentParser::State::setInXmp):
+        (WebCore::HTMLDocumentParser::State::inTitle):
+        (WebCore::HTMLDocumentParser::State::setInTitle):
+        (WebCore::HTMLDocumentParser::State::inIFrame):
+        (WebCore::HTMLDocumentParser::State::setInIFrame):
+        (WebCore::HTMLDocumentParser::State::inPlainText):
+        (WebCore::HTMLDocumentParser::State::setInPlainText):
+        (WebCore::HTMLDocumentParser::State::inProcessingInstruction):
+        (WebCore::HTMLDocumentParser::State::setInProcessingInstruction):
+        (WebCore::HTMLDocumentParser::State::inComment):
+        (WebCore::HTMLDocumentParser::State::setInComment):
+        (WebCore::HTMLDocumentParser::State::inDoctype):
+        (WebCore::HTMLDocumentParser::State::setInDoctype):
+        (WebCore::HTMLDocumentParser::State::inTextArea):
+        (WebCore::HTMLDocumentParser::State::setInTextArea):
+        (WebCore::HTMLDocumentParser::State::escaped):
+        (WebCore::HTMLDocumentParser::State::setEscaped):
+        (WebCore::HTMLDocumentParser::State::inServer):
+        (WebCore::HTMLDocumentParser::State::setInServer):
+        (WebCore::HTMLDocumentParser::State::skipLF):
+        (WebCore::HTMLDocumentParser::State::setSkipLF):
+        (WebCore::HTMLDocumentParser::State::startTag):
+        (WebCore::HTMLDocumentParser::State::setStartTag):
+        (WebCore::HTMLDocumentParser::State::discardLF):
+        (WebCore::HTMLDocumentParser::State::setDiscardLF):
+        (WebCore::HTMLDocumentParser::State::allowYield):
+        (WebCore::HTMLDocumentParser::State::setAllowYield):
+        (WebCore::HTMLDocumentParser::State::loadingExtScript):
+        (WebCore::HTMLDocumentParser::State::setLoadingExtScript):
+        (WebCore::HTMLDocumentParser::State::forceSynchronous):
+        (WebCore::HTMLDocumentParser::State::setForceSynchronous):
+        (WebCore::HTMLDocumentParser::State::inAnyNonHTMLText):
+        (WebCore::HTMLDocumentParser::State::hasTagState):
+        (WebCore::HTMLDocumentParser::State::hasEntityState):
+        (WebCore::HTMLDocumentParser::State::needsSpecialWriteHandling):
+        (WebCore::HTMLDocumentParser::State::):
+        (WebCore::HTMLDocumentParser::State::setBit):
+        (WebCore::HTMLDocumentParser::State::testBit):
+        * html/HTMLElement.cpp:
+        * html/HTMLFormControlElement.cpp:
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::reportErrorToConsole):
+        * html/HTMLParser.h:
+        * html/HTMLTokenizer.cpp: Removed.
+        * html/HTMLTokenizer.h: Removed.
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createTokenizer):
+        (WebCore::HTMLViewSourceDocument::addViewSourceToken):
+        * html/HTMLViewSourceDocument.h:
+        * loader/DocumentLoader.cpp:
+        * loader/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryTokenizer::FTPDirectoryTokenizer):
+        (WebCore::FTPDirectoryTokenizer::loadDocumentTemplate):
+        (WebCore::FTPDirectoryTokenizer::finish):
+        * loader/FrameLoader.cpp:
+        * loader/ImageDocument.cpp:
+        * loader/MediaDocument.cpp:
+        * loader/PluginDocument.cpp:
+        * loader/TextDocument.cpp:
+        * page/XSSAuditor.h:
+        * svg/SVGDocumentExtensions.cpp:
+        * wml/WMLErrorHandling.cpp:
+        (WebCore::reportWMLError):
+        * xml/XSLStyleSheetLibxslt.cpp:
+        (WebCore::XSLStyleSheet::parseString):
+        * xml/XSLTProcessor.cpp:
+        * xml/XSLTProcessorLibxslt.cpp:
+
 2010-06-12  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.

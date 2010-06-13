@@ -42,7 +42,7 @@
 using namespace WebCore;
 
 namespace {
-// Note that this file is also included by HTMLTokenizer.cpp so we are getting
+// Note that this file is also included by HTMLDocumentParser.cpp so we are getting
 // two copies of the data in memory.  We can fix this by changing the script
 // that generated the array to create a static const that is its length, but
 // this is low priority since the data is less than 4K. We use anonymous

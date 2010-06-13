@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "XMLTokenizer.h"
+#include "XMLDocumentParser.h"
 
 #include "CDATASection.h"
 #include "CachedScript.h"
@@ -38,7 +38,7 @@
 #include "FrameView.h"
 #include "HTMLLinkElement.h"
 #include "HTMLStyleElement.h"
-#include "HTMLTokenizer.h"
+#include "HTMLDocumentParser.h"
 #include "ProcessingInstruction.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
@@ -77,7 +77,7 @@ QString EntityResolver::resolveUndeclaredEntity(const QString &name)
 
 // --------------------------------
 
-XMLTokenizer::XMLTokenizer(Document* _doc, FrameView* _view)
+XMLDocumentParser::XMLDocumentParser(Document* _doc, FrameView* _view)
     : m_doc(_doc)
     , m_view(_view)
     , m_wroteText(false)
@@ -104,7 +104,7 @@ XMLTokenizer::XMLTokenizer(Document* _doc, FrameView* _view)
     m_stream.setEntityResolver(new EntityResolver);
 }
 
-XMLTokenizer::XMLTokenizer(DocumentFragment* fragment, Element* parentElement, FragmentScriptingPermission permission)
+XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parentElement, FragmentScriptingPermission permission)
     : m_doc(fragment->document())
     , m_view(0)
     , m_wroteText(false)
@@ -131,21 +131,21 @@ XMLTokenizer::XMLTokenizer(DocumentFragment* fragment, Element* parentElement, F
     fragment->ref();
     if (m_doc)
         m_doc->ref();
-          
+
     // Add namespaces based on the parent node
     Vector<Element*> elemStack;
     while (parentElement) {
         elemStack.append(parentElement);
-        
+
         Node* n = parentElement->parentNode();
         if (!n || !n->isElementNode())
             break;
         parentElement = static_cast<Element*>(n);
     }
-    
+
     if (elemStack.isEmpty())
         return;
-    
+
     QXmlStreamNamespaceDeclarations namespaces;
     for (Element* element = elemStack.last(); !elemStack.isEmpty(); elemStack.removeLast()) {
         if (NamedNodeMap* attrs = element->attributes()) {
@@ -166,7 +166,7 @@ XMLTokenizer::XMLTokenizer(DocumentFragment* fragment, Element* parentElement, F
         m_defaultNamespaceURI = parentElement->namespaceURI();
 }
 
-XMLTokenizer::~XMLTokenizer()
+XMLDocumentParser::~XMLDocumentParser()
 {
     clearCurrentNodeStack();
     if (m_parsingFragment && m_doc)
@@ -176,7 +176,7 @@ XMLTokenizer::~XMLTokenizer()
     delete m_stream.entityResolver();
 }
 
-void XMLTokenizer::doWrite(const String& parseString)
+void XMLDocumentParser::doWrite(const String& parseString)
 {
     m_wroteText = true;
 
@@ -195,7 +195,7 @@ void XMLTokenizer::doWrite(const String& parseString)
     return;
 }
 
-void XMLTokenizer::initializeParserContext(const char*)
+void XMLDocumentParser::initializeParserContext(const char*)
 {
     m_parserStopped = false;
     m_sawError = false;
@@ -203,7 +203,7 @@ void XMLTokenizer::initializeParserContext(const char*)
     m_sawFirstElement = false;
 }
 
-void XMLTokenizer::doEnd()
+void XMLDocumentParser::doEnd()
 {
 #if ENABLE(XSLT)
     if (m_sawXSLTransform) {
@@ -214,31 +214,31 @@ void XMLTokenizer::doEnd()
         m_parserStopped = true;
     }
 #endif
-    
+
     if (m_stream.error() == QXmlStreamReader::PrematureEndOfDocumentError
         || (m_wroteText && !m_sawFirstElement && !m_sawXSLTransform && !m_sawError))
         handleError(fatal, qPrintable(m_stream.errorString()), lineNumber(), columnNumber());
 }
 
-int XMLTokenizer::lineNumber() const
+int XMLDocumentParser::lineNumber() const
 {
     return m_stream.lineNumber();
 }
 
-int XMLTokenizer::columnNumber() const
+int XMLDocumentParser::columnNumber() const
 {
     return m_stream.columnNumber();
 }
 
-void XMLTokenizer::stopParsing()
+void XMLDocumentParser::stopParsing()
 {
     DocumentParser::stopParsing();
 }
 
-void XMLTokenizer::resumeParsing()
+void XMLDocumentParser::resumeParsing()
 {
     ASSERT(m_parserPaused);
-    
+
     m_parserPaused = false;
 
     // First, execute any pending callbacks
@@ -262,8 +262,8 @@ bool parseXMLDocumentFragment(const String& chunk, DocumentFragment* fragment, E
     if (!chunk.length())
         return true;
 
-    XMLTokenizer tokenizer(fragment, parent, scriptingPermission);
-    
+    XMLDocumentParser tokenizer(fragment, parent, scriptingPermission);
+
     tokenizer.write(String("<qxmlstreamdummyelement>"), false);
     tokenizer.write(chunk, false);
     tokenizer.write(String("</qxmlstreamdummyelement>"), false);
@@ -350,7 +350,7 @@ static inline void handleElementAttributes(Element* newElement, const QXmlStream
     }
 }
 
-void XMLTokenizer::parse()
+void XMLDocumentParser::parse()
 {
     while (!m_parserStopped && !m_parserPaused && !m_stream.atEnd()) {
         m_stream.readNext();
@@ -369,7 +369,7 @@ void XMLTokenizer::parse()
                 handleError(fatal, "DOCTYPE declaration lost.", lineNumber(), columnNumber());
                 break;
             }
-#endif 
+#endif
             parseStartElement();
         }
             break;
@@ -438,7 +438,7 @@ void XMLTokenizer::parse()
     }
 }
 
-void XMLTokenizer::startDocument()
+void XMLDocumentParser::startDocument()
 {
     initializeParserContext();
     ExceptionCode ec = 0;
@@ -455,7 +455,7 @@ void XMLTokenizer::startDocument()
     }
 }
 
-void XMLTokenizer::parseStartElement()
+void XMLDocumentParser::parseStartElement()
 {
     if (!m_sawFirstElement && m_parsingFragment) {
         // skip dummy element for fragments
@@ -483,17 +483,17 @@ void XMLTokenizer::parseStartElement()
 
 #if ENABLE(XHTMLMP)
     if (!m_sawFirstElement && isXHTMLMPDocument()) {
-        // As per 7.1 section of OMA-WAP-XHTMLMP-V1_1-20061020-A.pdf, 
-        // we should make sure that the root element MUST be 'html' and 
-        // ensure the name of the default namespace on the root elment 'html' 
+        // As per 7.1 section of OMA-WAP-XHTMLMP-V1_1-20061020-A.pdf,
+        // we should make sure that the root element MUST be 'html' and
+        // ensure the name of the default namespace on the root elment 'html'
         // MUST be 'http://www.w3.org/1999/xhtml'
         if (localName != HTMLNames::htmlTag.localName()) {
             handleError(fatal, "XHTMLMP document expects 'html' as root element.", lineNumber(), columnNumber());
             return;
-        } 
+        }
 
         if (uri.isNull()) {
-            m_defaultNamespaceURI = HTMLNames::xhtmlNamespaceURI; 
+            m_defaultNamespaceURI = HTMLNames::xhtmlNamespaceURI;
             uri = m_defaultNamespaceURI;
             m_stream.addExtraNamespaceDeclaration(QXmlStreamNamespaceDeclaration(prefix, HTMLNames::xhtmlNamespaceURI));
         }
@@ -533,7 +533,7 @@ void XMLTokenizer::parseStartElement()
         m_doc->frame()->loader()->dispatchDocumentElementAvailable();
 }
 
-void XMLTokenizer::parseEndElement()
+void XMLDocumentParser::parseEndElement()
 {
     exitText();
 
@@ -580,7 +580,7 @@ void XMLTokenizer::parseEndElement()
     {
         String scriptHref = scriptElement->sourceAttributeValue();
         if (!scriptHref.isEmpty()) {
-            // we have a src attribute 
+            // we have a src attribute
             String scriptCharset = scriptElement->scriptCharset();
             if (element->dispatchBeforeLoadEvent(scriptHref) &&
                 (m_pendingScript = m_doc->docLoader()->requestScript(scriptHref, scriptCharset))) {
@@ -590,7 +590,7 @@ void XMLTokenizer::parseEndElement()
                 // m_pendingScript will be 0 if script was already loaded and ref() executed it
                 if (m_pendingScript)
                     pauseParsing();
-            } else 
+            } else
                 m_scriptElement = 0;
         } else
             m_view->frame()->script()->executeScript(ScriptSourceCode(scriptElement->scriptContent(), m_doc->url(), m_scriptStartLine));
@@ -599,7 +599,7 @@ void XMLTokenizer::parseEndElement()
     popCurrentNode();
 }
 
-void XMLTokenizer::parseCharacters()
+void XMLDocumentParser::parseCharacters()
 {
     if (m_currentNode->isTextNode() || enterText()) {
         ExceptionCode ec = 0;
@@ -607,7 +607,7 @@ void XMLTokenizer::parseCharacters()
     }
 }
 
-void XMLTokenizer::parseProcessingInstruction()
+void XMLDocumentParser::parseProcessingInstruction()
 {
     exitText();
 
@@ -635,7 +635,7 @@ void XMLTokenizer::parseProcessingInstruction()
 #endif
 }
 
-void XMLTokenizer::parseCdata()
+void XMLDocumentParser::parseCdata()
 {
     exitText();
 
@@ -646,7 +646,7 @@ void XMLTokenizer::parseCdata()
         newNode->attach();
 }
 
-void XMLTokenizer::parseComment()
+void XMLDocumentParser::parseComment()
 {
     exitText();
 
@@ -656,19 +656,19 @@ void XMLTokenizer::parseComment()
         newNode->attach();
 }
 
-void XMLTokenizer::endDocument()
+void XMLDocumentParser::endDocument()
 {
 #if ENABLE(XHTMLMP)
     m_hasDocTypeDeclaration = false;
 #endif
 }
 
-bool XMLTokenizer::hasError() const
+bool XMLDocumentParser::hasError() const
 {
     return m_stream.hasError();
 }
 
-void XMLTokenizer::parseDtd()
+void XMLDocumentParser::parseDtd()
 {
     QStringRef name = m_stream.dtdName();
     QStringRef publicId = m_stream.dtdPublicId();
@@ -693,7 +693,7 @@ void XMLTokenizer::parseDtd()
         if (AtomicString(name) != HTMLNames::htmlTag.localName()) {
             handleError(fatal, "Invalid DOCTYPE declaration, expected 'html' as root element.", lineNumber(), columnNumber());
             return;
-        } 
+        }
 
         if (m_doc->isXHTMLMPDocument()) // check if the MIME type is correct with this method
             setIsXHTMLMPDocument(true);
@@ -711,7 +711,7 @@ void XMLTokenizer::parseDtd()
 #endif
     if (!m_parsingFragment)
         m_doc->addChild(DocumentType::create(m_doc, name, publicId, systemId));
-    
+
 }
 }
 

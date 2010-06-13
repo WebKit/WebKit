@@ -33,11 +33,11 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "HTMLDocument.h"
-#include "HTMLTokenizer.h" // for parseHTMLDocumentFragment
+#include "HTMLDocumentParser.h" // for parseHTMLDocumentFragment
 #include "Page.h"
 #include "Text.h"
 #include "TextResourceDecoder.h"
-#include "XMLTokenizer.h"
+#include "XMLDocumentParser.h"
 #include "loader.h"
 #include "markup.h"
 #include <wtf/Assertions.h>

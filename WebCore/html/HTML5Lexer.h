@@ -121,7 +121,7 @@ namespace WebCore {
         bool nextToken(SegmentedString&, HTML5Token&);
 
         int lineNumber() const { return m_lineNumber; }
-        int columnNumber() const { return 1; } // Matches HTMLTokenizer.h behavior.
+        int columnNumber() const { return 1; } // Matches HTMLDocumentParser.h behavior.
 
         void setState(State state) { m_state = state; }
 

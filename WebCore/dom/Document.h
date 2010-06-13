@@ -319,7 +319,7 @@ public:
     String xmlVersion() const { return m_xmlVersion; }
     bool xmlStandalone() const { return m_xmlStandalone; }
 
-    void setXMLEncoding(const String& encoding) { m_xmlEncoding = encoding; } // read-only property, only to be set from XMLTokenizer
+    void setXMLEncoding(const String& encoding) { m_xmlEncoding = encoding; } // read-only property, only to be set from XMLDocumentParser
     void setXMLVersion(const String&, ExceptionCode&);
     void setXMLStandalone(bool, ExceptionCode&);
 

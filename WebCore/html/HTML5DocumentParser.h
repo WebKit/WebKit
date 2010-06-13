@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef HTML5Tokenizer_h
@@ -43,10 +43,10 @@ class HTML5TreeBuilder;
 class ScriptController;
 class ScriptSourceCode;
 
-class HTML5Tokenizer :  public DocumentParser, HTML5ScriptRunnerHost, CachedResourceClient {
+class HTML5DocumentParser :  public DocumentParser, HTML5ScriptRunnerHost, CachedResourceClient {
 public:
-    HTML5Tokenizer(HTMLDocument*, bool reportErrors);
-    virtual ~HTML5Tokenizer();
+    HTML5DocumentParser(HTMLDocument*, bool reportErrors);
+    virtual ~HTML5DocumentParser();
 
     // DocumentParser
     virtual void begin();

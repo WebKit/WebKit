@@ -29,7 +29,7 @@
 #include "CharacterNames.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
-#include "HTMLTokenizer.h"
+#include "HTMLDocumentParser.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
 #include "FTPDirectoryParser.h"
@@ -48,7 +48,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
     
-class FTPDirectoryTokenizer : public HTMLTokenizer {
+class FTPDirectoryTokenizer : public HTMLDocumentParser {
 public:
     FTPDirectoryTokenizer(HTMLDocument*);
 
@@ -95,7 +95,7 @@ private:
 };
 
 FTPDirectoryTokenizer::FTPDirectoryTokenizer(HTMLDocument* doc)
-    : HTMLTokenizer(doc, false)
+    : HTMLDocumentParser(doc, false)
     , m_doc(doc)
     , m_skipLF(false)
     , m_parsedTemplate(false)
@@ -306,7 +306,7 @@ bool FTPDirectoryTokenizer::loadDocumentTemplate()
     
     // Tokenize the template as an HTML document synchronously
     setForceSynchronous(true);
-    HTMLTokenizer::write(String(templateDocumentData->data(), templateDocumentData->size()), true);
+    HTMLDocumentParser::write(String(templateDocumentData->data(), templateDocumentData->size()), true);
     setForceSynchronous(false);
     
     RefPtr<Element> tableElement = m_doc->getElementById("ftpDirectoryTable");
@@ -431,7 +431,7 @@ void FTPDirectoryTokenizer::finish()
     m_tableElement = 0;
     fastFree(m_buffer);
         
-    HTMLTokenizer::finish();
+    HTMLDocumentParser::finish();
 }
 
 FTPDirectoryDocument::FTPDirectoryDocument(Frame* frame)

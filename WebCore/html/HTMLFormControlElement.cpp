@@ -39,7 +39,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParser.h"
-#include "HTMLTokenizer.h"
+#include "HTMLDocumentParser.h"
 #include "LabelsNodeList.h"
 #include "Page.h"
 #include "RenderBox.h"

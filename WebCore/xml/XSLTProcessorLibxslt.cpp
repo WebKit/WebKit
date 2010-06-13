@@ -35,7 +35,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "TransformSource.h"
-#include "XMLTokenizer.h"
+#include "XMLDocumentParser.h"
 #include "XSLStyleSheet.h"
 #include "XSLTExtensions.h"
 #include "XSLTUnicodeSort.h"

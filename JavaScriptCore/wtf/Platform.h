@@ -1035,7 +1035,7 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #define ENABLE_PAN_SCROLLING 1
 #endif
 
-/* Use the QXmlStreamReader implementation for XMLTokenizer */
+/* Use the QXmlStreamReader implementation for XMLDocumentParser */
 /* Use the QXmlQuery implementation for XSLTProcessor */
 #if PLATFORM(QT)
 #define WTF_USE_QXMLSTREAM 1

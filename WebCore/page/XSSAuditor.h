@@ -66,7 +66,7 @@ namespace WebCore {
     // * ScriptController::executeIfJavaScriptURL - used to evaluate JavaScript URLs.
     // * ScriptEventListener::createAttributeEventListener - used to create JavaScript event handlers.
     // * HTMLBaseElement::process - used to set the document base URL.
-    // * HTMLTokenizer::parseTag - used to load external JavaScript scripts.
+    // * HTMLDocumentParser::parseTag - used to load external JavaScript scripts.
     // * FrameLoader::requestObject - used to load <object>/<embed> elements.
     //
     class XSSAuditor : public Noncopyable {

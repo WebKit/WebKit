@@ -27,7 +27,7 @@
 #include "Frame.h"
 #include "Document.h"
 #include "DOMWindow.h"
-#include "XMLTokenizer.h"
+#include "XMLDocumentParser.h"
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -38,7 +38,7 @@ void reportWMLError(Document* doc, WMLErrorCode error)
         return;
 
     String errorMessage = errorMessageForErrorCode(error);
-    XMLTokenizer* tokenizer = static_cast<XMLTokenizer*>(doc->tokenizer());
+    XMLDocumentParser* tokenizer = static_cast<XMLDocumentParser*>(doc->tokenizer());
     if (tokenizer && error != WMLErrorDeckNotAccessible) {
         // Some errors are reported as result of an insertedIntoDocument() call.
         // If this happened, parsing has been stopped, and the document fragment
@@ -48,7 +48,7 @@ void reportWMLError(Document* doc, WMLErrorCode error)
         if (!tokenizer->wellFormed())
             return;
 
-        tokenizer->handleError(XMLTokenizer::fatal, errorMessage.latin1().data(), tokenizer->lineNumber(), tokenizer->columnNumber());
+        tokenizer->handleError(XMLDocumentParser::fatal, errorMessage.latin1().data(), tokenizer->lineNumber(), tokenizer->columnNumber());
     } else {
         Frame* frame = doc->frame();
         if (!frame)

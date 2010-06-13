@@ -70,11 +70,11 @@ namespace WebCore {
     };
 #endif
 
-    class XMLTokenizer : public DocumentParser, public CachedResourceClient {
+    class XMLDocumentParser : public DocumentParser, public CachedResourceClient {
     public:
-        XMLTokenizer(Document*, FrameView* = 0);
-        XMLTokenizer(DocumentFragment*, Element*, FragmentScriptingPermission);
-        ~XMLTokenizer();
+        XMLDocumentParser(Document*, FrameView* = 0);
+        XMLDocumentParser(DocumentFragment*, Element*, FragmentScriptingPermission);
+        ~XMLDocumentParser();
 
         enum ErrorType { warning, nonFatal, fatal };
 
@@ -126,7 +126,7 @@ private:
 #else
 public:
         // callbacks from parser SAX
-        void error(ErrorType, const char* message, va_list args) WTF_ATTRIBUTE_PRINTF(3, 0); 
+        void error(ErrorType, const char* message, va_list args) WTF_ATTRIBUTE_PRINTF(3, 0);
         void startElementNs(const xmlChar* xmlLocalName, const xmlChar* xmlPrefix, const xmlChar* xmlURI, int nb_namespaces,
                             const xmlChar** namespaces, int nb_attributes, int nb_defaulted, const xmlChar** libxmlAttributes);
         void endElementNs();
