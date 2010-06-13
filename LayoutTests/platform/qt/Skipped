@@ -5300,7 +5300,6 @@ canvas/philip/tests/2d.path.rect.zero.4.html
 canvas/philip/tests/2d.path.rect.zero.6.html
 canvas/philip/tests/2d.path.stroke.prune.arc.html
 canvas/philip/tests/2d.path.stroke.scale2.html
-canvas/philip/tests/2d.pattern.basic.type.html
 canvas/philip/tests/2d.pattern.image.broken.html
 canvas/philip/tests/2d.pattern.image.incomplete.html
 canvas/philip/tests/2d.pattern.image.null.html

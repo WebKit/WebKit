@@ -1,3 +1,31 @@
+2010-06-12  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Window object should have CanvasGradient and CanvasPattern
+        https://bugs.webkit.org/show_bug.cgi?id=40394
+
+        Unskipped 2 tests that are now working properly.
+
+        * canvas/philip/tests/2d.gradient.object.return-expected.txt:
+        * canvas/philip/tests/2d.pattern.basic.type-expected.txt:
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-property-descriptors-expected.txt:
+        * fast/dom/dom-constructors-expected.txt:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/gtk/fast/dom/prototype-inheritance-expected.txt:
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt:
+        * platform/qt/fast/js/global-constructors-expected.txt:
+
 2010-06-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.

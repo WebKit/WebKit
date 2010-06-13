@@ -48,6 +48,7 @@ PASS CSSValueListConstructor from inner.getComputedStyle(inner.document.body).ge
 PASS CSSValueListPrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(-webkit-transition-timing-function).__proto__
 PASS CSSValuePrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(background-clip).__proto__.__proto__
 FAIL CanvasPattern from inner.document.getElementsByTagName("canvas")[0].getContext("2d").createPattern(inner.document.getElementsByTagName("img")[0], "")
+FAIL CanvasPatternConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").createPattern(inner.document.getElementsByTagName("img")[0], "").constructor
 FAIL CanvasPatternPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").createPattern(inner.document.getElementsByTagName("img")[0], "").__proto__
 PASS CanvasRenderingContext2D from inner.document.getElementsByTagName("canvas")[0].getContext("2d")
 PASS CanvasRenderingContext2DConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").constructor
@@ -214,6 +215,7 @@ Never found CDATASection
 Never found CSSRule
 Never found CSSVariablesDeclaration
 Never found CSSVariablesRule
+Never found CanvasGradient
 Never found CharacterData
 Never found Clipboard
 Never found DOMParser

@@ -448,6 +448,8 @@ module window {
         attribute [CustomGetter] HTMLImageElementConstructor Image; // Usable with new operator
         attribute [CustomGetter] HTMLOptionElementConstructor Option; // Usable with new operator
 
+        attribute CanvasPatternConstructor CanvasPattern;
+        attribute CanvasGradientConstructor CanvasGradient;
         attribute CanvasRenderingContext2DConstructor CanvasRenderingContext2D;
         attribute ImageDataConstructor ImageData;
         attribute [Conditional=3D_CANVAS,EnabledAtRuntime] WebGLRenderingContextConstructor WebGLRenderingContext;
