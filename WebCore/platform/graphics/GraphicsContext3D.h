@@ -45,8 +45,8 @@ const  PlatformGraphicsContext3D NullPlatformGraphicsContext3D = 0;
 typedef GLuint Platform3DObject;
 const Platform3DObject NullPlatform3DObject = 0;
 #elif PLATFORM(QT)
-#include <QtOpenGL/QtOpenGL>
-
+class QPainter;
+class QRect;
 typedef void* PlatformGraphicsContext3D;
 const  PlatformGraphicsContext3D NullPlatformGraphicsContext3D = 0;
 typedef int Platform3DObject;

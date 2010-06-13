@@ -40,6 +40,7 @@
 #include "WebGLTexture.h"
 #include "Uint8Array.h"
 #include <QAbstractScrollArea>
+#include <QGLContext>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 

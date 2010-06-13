@@ -1,5 +1,19 @@
 2010-06-13  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
+        Reviewed by Darin Adler.
+
+        GraphicsContext3D.h in the Qt port includes too many unnecessary files
+        https://bugs.webkit.org/show_bug.cgi?id=40536
+
+        Removed unncessary includes.
+
+        No new tests; Compilation improvement.
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+
+2010-06-13  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
         Reviewed by Eric Seidel.
 
         [Qt] GraphicsLayer: recaching images creates an unnecessary deep copy
