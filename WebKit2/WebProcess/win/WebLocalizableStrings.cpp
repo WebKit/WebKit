@@ -38,7 +38,7 @@ class LocalizedString;
 
 using namespace WebCore;
 
-WebLocalizableStringsBundle WebKitLocalizableStringsBundle = { "com.apple.WebKit", 0 };
+WebLocalizableStringsBundle WebKit2LocalizableStringsBundle = { "com.apple.WebKit2", 0 };
 
 typedef HashMap<String, LocalizedString*> LocalizedStringMap;
 
@@ -179,7 +179,7 @@ static LocalizedString* findCachedString(WebLocalizableStringsBundle* stringsBun
         return mainBundleLocStrings().get(key);
     }
 
-    if (stringsBundle->bundle == WebKitLocalizableStringsBundle.bundle) {
+    if (stringsBundle->bundle == WebKit2LocalizableStringsBundle.bundle) {
         MutexLocker lock(frameworkLocStringsMutex());
         return frameworkLocStrings().get(key);
     }

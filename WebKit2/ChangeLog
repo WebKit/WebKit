@@ -1,3 +1,10 @@
+2010-06-12  Ada Chan  <adachan@apple.com>
+
+        Unreviewed fix for a linking error with WebKit2LocalizableStringsBundle for Windows release build.
+
+        * WebProcess/win/WebLocalizableStrings.cpp:
+        (findCachedString):
+
 2010-06-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

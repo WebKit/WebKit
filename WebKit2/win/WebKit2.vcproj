@@ -191,7 +191,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\private&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(ProjectDir)\..\Platform&quot;;&quot;$(ProjectDir)\..\Platform\CoreIPC&quot;;&quot;$(ProjectDir)\..\Shared&quot;;&quot;$(ProjectDir)\..\Shared\win&quot;;&quot;$(ProjectDir)\..\Shared\CoreIPCSupport&quot;;&quot;$(ProjectDir)\..\UIProcess&quot;;&quot;$(ProjectDir)\..\UIProcess\API\C&quot;;&quot;$(ProjectDir)\..\UIProcess\API\cpp&quot;;&quot;$(ProjectDir)\..\UIProcess\API\win&quot;;&quot;$(ProjectDir)\..\UIProcess\Launcher&quot;;&quot;$(ProjectDir)\..\UIProcess\win&quot;;&quot;$(ProjectDir)\..\WebProcess&quot;;&quot;$(ProjectDir)\..\WebProcess\WebCoreSupport&quot;;&quot;$(ProjectDir)\..\WebProcess\WebPage&quot;;&quot;$(ProjectDir)\..\WebProcess\WebPage\win&quot;;&quot;$(ProjectDir)\..\WebProcess\win&quot;"
-				PreprocessorDefinitions="_USRDLL;WEBKIT_EXPORTS;FRAMEWORK_NAME=WebKit;BUILDING_WEBKIT2"
+				PreprocessorDefinitions="_USRDLL;WEBKIT_EXPORTS;FRAMEWORK_NAME=WebKit2;BUILDING_WEBKIT2"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="WebKit2Prefix.h"
 				Detect64BitPortabilityProblems="false"
@@ -267,7 +267,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\private&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(ProjectDir)\..\Platform&quot;;&quot;$(ProjectDir)\..\Platform\CoreIPC&quot;;&quot;$(ProjectDir)\..\Shared&quot;;&quot;$(ProjectDir)\..\Shared\win&quot;;&quot;$(ProjectDir)\..\Shared\CoreIPCSupport&quot;;&quot;$(ProjectDir)\..\UIProcess&quot;;&quot;$(ProjectDir)\..\UIProcess\API\C&quot;;&quot;$(ProjectDir)\..\UIProcess\API\cpp&quot;;&quot;$(ProjectDir)\..\UIProcess\API\win&quot;;&quot;$(ProjectDir)\..\UIProcess\Launcher&quot;;&quot;$(ProjectDir)\..\UIProcess\win&quot;;&quot;$(ProjectDir)\..\WebProcess&quot;;&quot;$(ProjectDir)\..\WebProcess\WebCoreSupport&quot;;&quot;$(ProjectDir)\..\WebProcess\WebPage&quot;;&quot;$(ProjectDir)\..\WebProcess\WebPage\win&quot;;&quot;$(ProjectDir)\..\WebProcess\win&quot;"
-				PreprocessorDefinitions="_USRDLL;WEBKIT_EXPORTS;FRAMEWORK_NAME=WebKit;BUILDING_WEBKIT2"
+				PreprocessorDefinitions="_USRDLL;WEBKIT_EXPORTS;FRAMEWORK_NAME=WebKit2;BUILDING_WEBKIT2"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="WebKit2Prefix.h"
 				DisableSpecificWarnings="4819"
@@ -346,7 +346,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\private&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(ProjectDir)\..\Platform&quot;;&quot;$(ProjectDir)\..\Platform\CoreIPC&quot;;&quot;$(ProjectDir)\..\Shared&quot;;&quot;$(ProjectDir)\..\Shared\win&quot;;&quot;$(ProjectDir)\..\Shared\CoreIPCSupport&quot;;&quot;$(ProjectDir)\..\UIProcess&quot;;&quot;$(ProjectDir)\..\UIProcess\API\C&quot;;&quot;$(ProjectDir)\..\UIProcess\API\cpp&quot;;&quot;$(ProjectDir)\..\UIProcess\API\win&quot;;&quot;$(ProjectDir)\..\UIProcess\Launcher&quot;;&quot;$(ProjectDir)\..\UIProcess\win&quot;;&quot;$(ProjectDir)\..\WebProcess&quot;;&quot;$(ProjectDir)\..\WebProcess\WebCoreSupport&quot;;&quot;$(ProjectDir)\..\WebProcess\WebPage&quot;;&quot;$(ProjectDir)\..\WebProcess\WebPage\win&quot;;&quot;$(ProjectDir)\..\WebProcess\win&quot;"
-				PreprocessorDefinitions="_USRDLL;WEBKIT_EXPORTS;FRAMEWORK_NAME=WebKit;BUILDING_WEBKIT2"
+				PreprocessorDefinitions="_USRDLL;WEBKIT_EXPORTS;FRAMEWORK_NAME=WebKit2;BUILDING_WEBKIT2"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="WebKit2Prefix.h"
 				DisableSpecificWarnings="4819"
@@ -421,7 +421,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\private&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(ProjectDir)\..\Platform&quot;;&quot;$(ProjectDir)\..\Platform\CoreIPC&quot;;&quot;$(ProjectDir)\..\Shared&quot;;&quot;$(ProjectDir)\..\Shared\win&quot;;&quot;$(ProjectDir)\..\Shared\CoreIPCSupport&quot;;&quot;$(ProjectDir)\..\UIProcess&quot;;&quot;$(ProjectDir)\..\UIProcess\API\C&quot;;&quot;$(ProjectDir)\..\UIProcess\API\cpp&quot;;&quot;$(ProjectDir)\..\UIProcess\API\win&quot;;&quot;$(ProjectDir)\..\UIProcess\Launcher&quot;;&quot;$(ProjectDir)\..\UIProcess\win&quot;;&quot;$(ProjectDir)\..\WebProcess&quot;;&quot;$(ProjectDir)\..\WebProcess\WebCoreSupport&quot;;&quot;$(ProjectDir)\..\WebProcess\WebPage&quot;;&quot;$(ProjectDir)\..\WebProcess\WebPage\win&quot;;&quot;$(ProjectDir)\..\WebProcess\win&quot;"
-				PreprocessorDefinitions="_USRDLL;WEBKIT_EXPORTS;FRAMEWORK_NAME=WebKit;BUILDING_WEBKIT2"
+				PreprocessorDefinitions="_USRDLL;WEBKIT_EXPORTS;FRAMEWORK_NAME=WebKit2;BUILDING_WEBKIT2"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="WebKit2Prefix.h"
 				Detect64BitPortabilityProblems="false"
