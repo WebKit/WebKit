@@ -1,6 +1,6 @@
 FAIL event.wheelDeltaY should be -24000. Was -600.
 FAIL event.wheelDeltaX should be -12000. Was -300.
 FAIL event.wheelDelta should be -24000. Was -600.
-FAIL div.scrollTop should be 200. Was 415.
-FAIL div.scrollLeft should be 100. Was 215.
+PASS div.scrollTop is window.expectedScrollTop
+PASS div.scrollLeft is window.expectedScrollLeft
 

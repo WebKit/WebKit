@@ -1,3 +1,9 @@
+2010-06-13  Dan Bernstein  <mitz@apple.com>
+
+        Updated results after r61092.
+
+        * fast/events/continuous-platform-wheelevent-in-scrolling-div-expected.txt:
+
 2010-06-08  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Eric Seidel.
