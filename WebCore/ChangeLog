@@ -1,5 +1,26 @@
 2010-06-13  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] tests/hybridPixmap fails
+        https://bugs.webkit.org/show_bug.cgi?id=37316
+
+        The problem was that JSC::Instance::createRuntimeObject was never called.
+        This is fixed by overloading newRuntimeObject and calling Instance::createRuntimeObject
+        in between, instead of creating the runtime object directly inside the static function
+        QtPixmapInstance::createRuntimeObject, which had to be renamed as to not overshadow the virtual function.
+
+        This fixes an existing test, tests/hybridPixmap
+
+        * bridge/qt/qt_pixmapruntime.cpp:
+        (JSC::Bindings::QtPixmapInstance::newRuntimeObject):
+        (JSC::Bindings::QtPixmapInstance::createPixmapRuntimeObject):
+        * bridge/qt/qt_pixmapruntime.h:
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertQVariantToValue):
+
+2010-06-13  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
         Reviewed by Darin Adler.
 
         GraphicsContext3D.h in the Qt port includes too many unnecessary files

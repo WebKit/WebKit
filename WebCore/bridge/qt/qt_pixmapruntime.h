@@ -42,7 +42,8 @@ public:
     int height() const;
     QPixmap toPixmap();
     QImage toImage();
-    static JSObject* createRuntimeObject(ExecState*, PassRefPtr<RootObject>, const QVariant&);
+    RuntimeObject* newRuntimeObject(ExecState* exec);
+    static JSObject* createPixmapRuntimeObject(ExecState*, PassRefPtr<RootObject>, const QVariant&);
     static QVariant variantFromObject(JSObject*, QMetaType::Type hint);
     static bool canHandle(QMetaType::Type hint);
 };

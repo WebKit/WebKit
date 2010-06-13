@@ -346,10 +346,17 @@ returnEmptyVariant:
         return QVariant::fromValue<QImage>(QImage());
     return QVariant();
 }
-JSObject* QtPixmapInstance::createRuntimeObject(ExecState* exec, PassRefPtr<RootObject> root, const QVariant& data)
+
+RuntimeObject* QtPixmapInstance::newRuntimeObject(ExecState* exec)
+{
+    return new(exec) QtPixmapRuntimeObject(exec, exec->lexicalGlobalObject(), this);
+}
+
+JSObject* QtPixmapInstance::createPixmapRuntimeObject(ExecState* exec, PassRefPtr<RootObject> root, const QVariant& data)
 {
     JSLock lock(SilenceAssertionsOnly);
-    return new(exec) QtPixmapRuntimeObject(exec, exec->lexicalGlobalObject(), new QtPixmapInstance(root, data));
+    QtPixmapInstance* instance = new QtPixmapInstance(root, data);
+    return instance->createRuntimeObject(exec);
 }
 
 bool QtPixmapInstance::canHandle(QMetaType::Type hint)

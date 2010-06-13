@@ -877,7 +877,7 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
     }
 
     if (QtPixmapInstance::canHandle(static_cast<QMetaType::Type>(variant.type())))
-        return QtPixmapInstance::createRuntimeObject(exec, root, variant);
+        return QtPixmapInstance::createPixmapRuntimeObject(exec, root, variant);
 
     if (type == qMetaTypeId<QWebElement>()) {
         if (!root->globalObject()->inherits(&JSDOMWindow::s_info))
