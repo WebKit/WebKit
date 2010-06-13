@@ -1,3 +1,17 @@
+2010-06-13  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] GraphicsLayer: recaching images creates an unnecessary deep copy
+        https://bugs.webkit.org/show_bug.cgi?id=40535
+
+        Made sure the painter ends its operation before copying the pixmap.
+
+        No new tests: this is an optimization.
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQtImpl::recache):
+
 2010-06-13  Clemmitt Sigler  <cmsigler@gmail.com>
 
         Reviewed by Eric Seidel.

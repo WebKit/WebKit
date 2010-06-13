@@ -366,6 +366,7 @@ QPixmap GraphicsLayerQtImpl::recache(const QRegion& regionToUpdate)
     // Render the actual contents into the cache
     painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
     m_layer->paintGraphicsLayerContents(gc, region.boundingRect());
+    painter.end();
 
     m_backingStoreKey = QPixmapCache::insert(pixmap);
     return pixmap;
