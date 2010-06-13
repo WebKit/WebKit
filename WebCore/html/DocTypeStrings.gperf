@@ -1,3 +1,4 @@
+%struct-type
 struct PubIDInfo {
     enum eMode { 
         eQuirks,         
@@ -9,6 +10,15 @@ struct PubIDInfo {
     eMode mode_if_no_sysid;
     eMode mode_if_sysid;
 }
+%language=ANSI-C
+%readonly-tables
+%global-table
+%compare-strncmp
+%define initializer-suffix ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards
+%define lookup-function-name findDoctypeEntry
+%define hash-function-name doctype_hash_function
+%includes
+%enum
 %%
 "+//silmaril//dtd html pro v0r11 19970101//en", PubIDInfo::eQuirks3, PubIDInfo::eQuirks3
 "-//advasoft ltd//dtd html 3.0 aswedit + extensions//en", PubIDInfo::eQuirks3, PubIDInfo::eQuirks3

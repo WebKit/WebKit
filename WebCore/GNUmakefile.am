@@ -83,7 +83,7 @@ webcoregtk_cppflags += \
 webcore_built_nosources += \
 	DerivedSources/DocTypeStrings.cpp \
 	DerivedSources/tokenizer.cpp \
-	DerivedSources/ColorData.c \
+	DerivedSources/ColorData.cpp \
 	DerivedSources/webkit/webkitdomdummy.c
 
 webcore_built_sources += \
@@ -92,7 +92,7 @@ webcore_built_sources += \
 	DerivedSources/CSSPropertyNames.h \
 	DerivedSources/CSSValueKeywords.h \
 	DerivedSources/HTMLElementFactory.cpp \
-	DerivedSources/HTMLEntityNames.c \
+	DerivedSources/HTMLEntityNames.cpp \
 	DerivedSources/HTMLNames.cpp \
 	DerivedSources/JSHTMLElementWrapperFactory.cpp \
 	DerivedSources/UserAgentStyleSheets.h \
@@ -3806,17 +3806,16 @@ DerivedSources/CSSValueKeywords.h : $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/css
 	mv CSSValueKeywords.* $(GENSOURCES)
 
 # DOCTYPE strings
-DerivedSources/DocTypeStrings.cpp : $(WebCore)/html/DocTypeStrings.gperf
-	$(AM_V_GEN)$(GPERF) -CEot -I -L ANSI-C -k "*" -N findDoctypeEntry -F ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards $(WebCore)/html/DocTypeStrings.gperf > $@
+DerivedSources/DocTypeStrings.cpp : $(WebCore)/html/DocTypeStrings.gperf $(WebCore)/make-hash-tools.pl
+	$(PERL) $(WebCore)/make-hash-tools.pl $(GENSOURCES) $(WebCore)/html/DocTypeStrings.gperf
 
 # HTML entity names
-DerivedSources/HTMLEntityNames.c : $(WebCore)/html/HTMLEntityNames.gperf
-	$(AM_V_GEN)$(GPERF) -a -I -L ANSI-C -C -G -c -o -t -k '*' -N findEntity -D -s 2 \
-	$(WebCore)/html/HTMLEntityNames.gperf > $@
+DerivedSources/HTMLEntityNames.cpp : $(WebCore)/html/HTMLEntityNames.gperf $(WebCore)/make-hash-tools.pl
+	$(PERL) $(WebCore)/make-hash-tools.pl $(GENSOURCES) $(WebCore)/html/HTMLEntityNames.gperf
 
 # color names
-DerivedSources/ColorData.c: $(WebCore)/platform/ColorData.gperf
-	$(AM_V_GEN)$(GPERF) -CDEot -L ANSI-C -k '*' -N findColor -D -s 2 $< > $@
+DerivedSources/ColorData.cpp: $(WebCore)/platform/ColorData.gperf $(WebCore)/make-hash-tools.pl
+	$(PERL) $(WebCore)/make-hash-tools.pl $(GENSOURCES) $(WebCore)/platform/ColorData.gperf
 
 # CSS tokenizer
 DerivedSources/tokenizer.cpp : $(WebCore)/css/tokenizer.flex $(WebCore)/css/maketokenizer

@@ -1,4 +1,16 @@
-struct NamedColor { const char *name; int RGBValue; };
+%struct-type
+struct NamedColor {
+    const char *name;
+    int RGBValue;
+};
+%language=ANSI-C
+%readonly-tables
+%global-table
+%compare-strncmp
+%define lookup-function-name findColor
+%define hash-function-name colordata_hash_function
+%includes
+%enum
 %%
 aliceblue, 0xf0f8ff
 antiquewhite, 0xfaebd7

@@ -31,7 +31,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 
-#include "ColorData.c"
+#include "ColorData.cpp"
 
 using namespace std;
 using namespace WTF;

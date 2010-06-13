@@ -55,7 +55,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/CurrentTime.h>
 
-#include "HTMLEntityNames.c"
+#include "HTMLEntityNames.cpp"
 
 #define PRELOAD_SCANNER_ENABLED 1
 

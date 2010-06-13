@@ -181,7 +181,7 @@ XLINK_NAMES = $$PWD/svg/xlinkattrs.in
 
 TOKENIZER = $$PWD/css/tokenizer.flex
 
-DOCTYPESTRINGS = $$PWD/html/DocTypeStrings.gperf
+DOCTYPESTRINGS_GPERF = $$PWD/html/DocTypeStrings.gperf
 
 CSSBISON = $$PWD/css/CSSGrammar.y
 
@@ -193,7 +193,7 @@ XMLNS_NAMES = $$PWD/xml/xmlnsattrs.in
 
 ENTITIES_GPERF = $$PWD/html/HTMLEntityNames.gperf
 
-COLORDAT_GPERF = $$PWD/platform/ColorData.gperf
+COLORDATA_GPERF = $$PWD/platform/ColorData.gperf
 
 WALDOCSSPROPS = $$PWD/css/CSSPropertyNames.in
 
@@ -662,17 +662,17 @@ xlinknames.input = XLINK_NAMES
 addExtraCompiler(xlinknames)
 
 # GENERATOR 6-A:
-cssprops.output = $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}.cpp
-cssprops.input = WALDOCSSPROPS
 cssprops.wkScript = $$PWD/css/makeprop.pl
+cssprops.output = $${WC_GENERATED_SOURCES_DIR}/CSSPropertyNames.cpp
+cssprops.input = WALDOCSSPROPS
 cssprops.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $${DASHBOARDSUPPORTCSSPROPERTIES} $${EXTRACSSPROPERTIES} > $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}.in && cd $$WC_GENERATED_SOURCES_DIR && perl $$cssprops.wkScript && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
 cssprops.depends = ${QMAKE_FILE_NAME} $${DASHBOARDSUPPORTCSSPROPERTIES} $${EXTRACSSPROPERTIES}
 addExtraCompiler(cssprops)
 
 # GENERATOR 6-B:
-cssvalues.output = $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}.c
-cssvalues.input = WALDOCSSVALUES
 cssvalues.wkScript = $$PWD/css/makevalues.pl
+cssvalues.output = $${WC_GENERATED_SOURCES_DIR}/CSSValueKeywords.cpp
+cssvalues.input = WALDOCSSVALUES
 cssvalues.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$EXTRACSSVALUES > $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}.in && cd $$WC_GENERATED_SOURCES_DIR && perl $$cssvalues.wkScript && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
 cssvalues.depends = ${QMAKE_FILE_NAME} $${EXTRACSSVALUES}
 cssvalues.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}.h
@@ -729,23 +729,30 @@ xmlnames.commands = perl -I$$PWD/bindings/scripts $$xmlnames.wkScript --attrs $$
 addExtraCompiler(xmlnames)
 
 # GENERATOR 8-A:
-entities.output = $${WC_GENERATED_SOURCES_DIR}/HTMLEntityNames.c
+entities.output = $${WC_GENERATED_SOURCES_DIR}/HTMLEntityNames.cpp
 entities.input = ENTITIES_GPERF
-entities.commands = gperf -a -L ANSI-C -C -G -c -o -t --includes --key-positions="*" -N findEntity -D -s 2 < $$PWD/html/HTMLEntityNames.gperf > $${WC_GENERATED_SOURCES_DIR}/HTMLEntityNames.c
+entities.wkScript = $$PWD/make-hash-tools.pl
+entities.commands = perl $$entities.wkScript $${WC_GENERATED_SOURCES_DIR} $$ENTITIES_GPERF
 entities.clean = ${QMAKE_FILE_OUT}
+entities.depends = $$PWD/make-hash-tools.pl
 addExtraCompiler(entities)
 
 # GENERATOR 8-B:
-doctypestrings.output = $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}.cpp
-doctypestrings.input = DOCTYPESTRINGS
-doctypestrings.commands = gperf -CEot -L ANSI-C --includes --key-positions="*" -N findDoctypeEntry -F ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards < ${QMAKE_FILE_NAME} >> ${QMAKE_FILE_OUT}
+doctypestrings.output = $${WC_GENERATED_SOURCES_DIR}/DocTypeStrings.cpp
+doctypestrings.input = DOCTYPESTRINGS_GPERF
+doctypestrings.wkScript = $$PWD/make-hash-tools.pl
+doctypestrings.commands = perl $$doctypestrings.wkScript $${WC_GENERATED_SOURCES_DIR} $$DOCTYPESTRINGS_GPERF
 doctypestrings.clean = ${QMAKE_FILE_OUT}
+doctypestrings.depends = $$PWD/make-hash-tools.pl
 addExtraCompiler(doctypestrings)
 
 # GENERATOR 8-C:
-colordata.output = $${WC_GENERATED_SOURCES_DIR}/ColorData.c
-colordata.input = COLORDAT_GPERF
-colordata.commands = gperf -CDEot -L ANSI-C --includes --key-positions="*" -N findColor -D -s 2 < ${QMAKE_FILE_NAME} >> ${QMAKE_FILE_OUT}
+colordata.output = $${WC_GENERATED_SOURCES_DIR}/ColorData.cpp
+colordata.input = COLORDATA_GPERF
+colordata.wkScript = $$PWD/make-hash-tools.pl
+colordata.commands = perl $$colordata.wkScript $${WC_GENERATED_SOURCES_DIR} $$COLORDATA_GPERF
+colordata.clean = ${QMAKE_FILE_OUT}
+colordata.depends = $$PWD/make-hash-tools.pl
 addExtraCompiler(colordata)
 
 # GENERATOR 9:

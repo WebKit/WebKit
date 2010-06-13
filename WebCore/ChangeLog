@@ -1,3 +1,36 @@
+2010-06-13  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Centralize the gperf code generation commands into make-hash-tools.pl
+        to avoid redundancy across multiple build systems.
+        Do this in preparation of refactoring the usage of these generated
+        sources to fix the debug linking error on Linux with gcc >= 4.4.0.
+
+        webkit.org/b/29244
+
+        No functionality change, so no new tests needed.
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gyp/scripts/rule_gperf.py: Removed.
+        * WebCore.pri:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSParser.cpp:
+        (WebCore::cssPropertyID):
+        (WebCore::cssValueKeywordID):
+        * css/makeprop.pl:
+        * css/makevalues.pl:
+        * html/DocTypeStrings.gperf:
+        * html/HTML5EntityParser.cpp:
+        * html/HTMLDocumentParser.cpp:
+        * html/HTMLEntityNames.gperf:
+        * html/PreloadScanner.cpp:
+        * make-hash-tools.pl: Added.
+        * platform/ColorData.gperf:
+        * platform/graphics/Color.cpp:
+
 2010-06-13  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

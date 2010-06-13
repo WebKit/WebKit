@@ -6892,18 +6892,13 @@
 		65653F2A0D9727D200CA9723 /* SVGAltGlyphElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAltGlyphElement.cpp; sourceTree = "<group>"; };
 		65653F2B0D9727D200CA9723 /* SVGAltGlyphElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAltGlyphElement.h; sourceTree = "<group>"; };
 		65653F2C0D9727D200CA9723 /* SVGAltGlyphElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGAltGlyphElement.idl; sourceTree = "<group>"; };
-		656580ED09D12B20000E61D7 /* CSSPropertyNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPropertyNames.cpp; sourceTree = "<group>"; };
 		656580EE09D12B20000E61D7 /* CSSPropertyNames.gperf */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSPropertyNames.gperf; sourceTree = "<group>"; };
 		656580EF09D12B20000E61D7 /* CSSPropertyNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSPropertyNames.h; sourceTree = "<group>"; };
-		6565811C09D12DB2000E61D7 /* DocTypeStrings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DocTypeStrings.cpp; sourceTree = "<group>"; };
 		6565814409D13043000E61D7 /* CSSGrammar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSGrammar.cpp; sourceTree = "<group>"; };
-		6565814609D13043000E61D7 /* CSSValueKeywords.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = CSSValueKeywords.c; sourceTree = "<group>"; };
 		6565814709D13043000E61D7 /* CSSValueKeywords.gperf */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSValueKeywords.gperf; sourceTree = "<group>"; };
 		6565814809D13043000E61D7 /* CSSValueKeywords.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSValueKeywords.h; sourceTree = "<group>"; };
-		6565814B09D13043000E61D7 /* HTMLEntityNames.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = HTMLEntityNames.c; sourceTree = "<group>"; };
 		6565814C09D13043000E61D7 /* tokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = tokenizer.cpp; sourceTree = "<group>"; };
 		656581AC09D14EE6000E61D7 /* CharsetData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CharsetData.cpp; sourceTree = "<group>"; };
-		656581AD09D14EE6000E61D7 /* ColorData.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = ColorData.c; sourceTree = "<group>"; };
 		656581AE09D14EE6000E61D7 /* UserAgentStyleSheets.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = UserAgentStyleSheets.h; sourceTree = "<group>"; };
 		656581AF09D14EE6000E61D7 /* UserAgentStyleSheetsData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = UserAgentStyleSheetsData.cpp; sourceTree = "<group>"; };
 		656581E609D1508D000E61D7 /* SVGElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGElementFactory.cpp; sourceTree = "<group>"; };
@@ -10550,6 +10545,11 @@
 		E1F1E82E0C3C2BB9006DB391 /* XSLTExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSLTExtensions.h; sourceTree = "<group>"; };
 		E1FF57A20F01255B00891EBB /* ThreadGlobalData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadGlobalData.h; sourceTree = "<group>"; };
 		E1FF57A50F01256B00891EBB /* ThreadGlobalData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadGlobalData.cpp; sourceTree = "<group>"; };
+		E406F3FA1198304D009D59D6 /* DocTypeStrings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DocTypeStrings.cpp; path = DocTypeStrings.cpp; sourceTree = "<group>"; };
+		E406F3FB1198307D009D59D6 /* ColorData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ColorData.cpp; path = ColorData.cpp; sourceTree = "<group>"; };
+		E406F4021198329A009D59D6 /* HTMLEntityNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLEntityNames.cpp; path = HTMLEntityNames.cpp; sourceTree = "<group>"; };
+		E41EA038119836DB00710BC5 /* CSSPropertyNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CSSPropertyNames.cpp; path = CSSPropertyNames.cpp; sourceTree = "<group>"; };
+		E41EA0391198374900710BC5 /* CSSValueKeywords.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CSSValueKeywords.cpp; path = CSSValueKeywords.cpp; sourceTree = "<group>"; };
 		E415F10C0D9A05870033CE97 /* ElementTimeControl.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ElementTimeControl.idl; sourceTree = "<group>"; };
 		E415F1680D9A165D0033CE97 /* DOMElementTimeControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMElementTimeControl.h; sourceTree = "<group>"; };
 		E415F1830D9A1A830033CE97 /* ElementTimeControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementTimeControl.h; sourceTree = "<group>"; };
@@ -11846,20 +11846,20 @@
 		656580EC09D12B20000E61D7 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
+				E41EA0391198374900710BC5 /* CSSValueKeywords.cpp */,
+				E41EA038119836DB00710BC5 /* CSSPropertyNames.cpp */,
+				E406F4021198329A009D59D6 /* HTMLEntityNames.cpp */,
+				E406F3FB1198307D009D59D6 /* ColorData.cpp */,
+				E406F3FA1198304D009D59D6 /* DocTypeStrings.cpp */,
 				656581AC09D14EE6000E61D7 /* CharsetData.cpp */,
-				656581AD09D14EE6000E61D7 /* ColorData.c */,
 				6565814409D13043000E61D7 /* CSSGrammar.cpp */,
 				650F53DB09D15DDA00C9B0C8 /* CSSGrammar.h */,
-				656580ED09D12B20000E61D7 /* CSSPropertyNames.cpp */,
 				656580EE09D12B20000E61D7 /* CSSPropertyNames.gperf */,
 				656580EF09D12B20000E61D7 /* CSSPropertyNames.h */,
-				6565814609D13043000E61D7 /* CSSValueKeywords.c */,
 				6565814709D13043000E61D7 /* CSSValueKeywords.gperf */,
 				6565814809D13043000E61D7 /* CSSValueKeywords.h */,
-				6565811C09D12DB2000E61D7 /* DocTypeStrings.cpp */,
 				A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */,
 				A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */,
-				6565814B09D13043000E61D7 /* HTMLEntityNames.c */,
 				A8D06B380A265DCD005E7203 /* HTMLNames.cpp */,
 				A8D06B370A265DCD005E7203 /* HTMLNames.h */,
 				938E65F609F0985D008A48EC /* JSHTMLElementWrapperFactory.cpp */,

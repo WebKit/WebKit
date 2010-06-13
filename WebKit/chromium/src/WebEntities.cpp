@@ -47,7 +47,7 @@ namespace {
 // that generated the array to create a static const that is its length, but
 // this is low priority since the data is less than 4K. We use anonymous
 // namespace to prevent name collisions.
-#include "HTMLEntityNames.c" // NOLINT
+#include "HTMLEntityNames.cpp" // NOLINT
 }
 
 namespace WebKit {

@@ -89,7 +89,7 @@ using namespace std;
 using namespace WTF;
 
 #include "CSSPropertyNames.cpp"
-#include "CSSValueKeywords.c"
+#include "CSSValueKeywords.cpp"
 
 namespace WebCore {
 
@@ -5560,7 +5560,7 @@ static int cssPropertyID(const UChar* propertyName, unsigned length)
         }
     }
 
-    const props* hashTableEntry = findProp(name, length);
+    const Property* hashTableEntry = findProperty(name, length);
     return hashTableEntry ? hashTableEntry->id : 0;
 }
 
@@ -5602,7 +5602,7 @@ int cssValueKeywordID(const CSSParserString& string)
         }
     }
 
-    const css_value* hashTableEntry = findValue(buffer, length);
+    const Value* hashTableEntry = findValue(buffer, length);
     return hashTableEntry ? hashTableEntry->id : 0;
 }
 
