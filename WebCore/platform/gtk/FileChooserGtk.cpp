@@ -57,7 +57,7 @@ String FileChooser::basenameForWidth(const Font& font, int width) const
     String string = fileButtonNoFileSelectedLabel();
 
     if (m_filenames.size() == 1) {
-        CString systemFilename = filenameFromString(m_filenames[0]);
+        CString systemFilename = fileSystemRepresentation(m_filenames[0]);
         gchar* systemBasename = g_path_get_basename(systemFilename.data());
         stringByAdoptingFileSystemRepresentation(systemBasename, string);
     } else if (m_filenames.size() > 1)

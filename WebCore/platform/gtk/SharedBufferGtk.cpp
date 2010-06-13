@@ -32,7 +32,7 @@ PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& fi
     if (filePath.isEmpty())
         return 0;
 
-    CString filename = filenameFromString(filePath);
+    CString filename = fileSystemRepresentation(filePath);
     gchar* contents;
     gsize size;
     GError* error = 0;

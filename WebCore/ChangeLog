@@ -1,3 +1,38 @@
+2010-06-12  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Darin Adler.
+
+        Unify fileSystemRepresentation and filenameFromString
+        https://bugs.webkit.org/show_bug.cgi?id=40201
+
+        Remove filenameFromString and use fileSystemRepresentation instead
+        as they do the same job.
+
+        * platform/FileSystem.cpp: Removed.
+        * platform/FileSystem.h:
+        * platform/efl/FileSystemEfl.cpp:
+        (WebCore::fileSystemRepresentation):
+        * platform/gtk/FileChooserGtk.cpp:
+        (WebCore::FileChooser::basenameForWidth):
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::fileSystemRepresentation):
+        (WebCore::filenameForDisplay):
+        (WebCore::fileExists):
+        (WebCore::deleteFile):
+        (WebCore::deleteEmptyDirectory):
+        (WebCore::getFileSize):
+        (WebCore::getFileModificationTime):
+        (WebCore::makeAllDirectories):
+        (WebCore::pathGetFileName):
+        (WebCore::directoryName):
+        (WebCore::listDirectory):
+        * platform/gtk/SharedBufferGtk.cpp:
+        (WebCore::SharedBuffer::createWithContentsOfFile):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::startHttp):
+        * platform/posix/SharedBufferPOSIX.cpp:
+        (WebCore::SharedBuffer::createWithContentsOfFile):
+
 2010-06-12  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Eric Seidel.

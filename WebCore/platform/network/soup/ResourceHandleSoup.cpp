@@ -533,7 +533,7 @@ static bool startHttp(ResourceHandle* handle)
                      * libsoup's simple-httpd test
                      */
                     GError* error = 0;
-                    CString fileName = filenameFromString(element.m_filename);
+                    CString fileName = fileSystemRepresentation(element.m_filename);
                     GMappedFile* fileMapping = g_mapped_file_new(fileName.data(), false, &error);
 
                     if (error) {

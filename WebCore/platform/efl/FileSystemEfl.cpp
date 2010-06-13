@@ -53,17 +53,12 @@ namespace WebCore {
 
 CString fileSystemRepresentation(const String& path)
 {
-    return path.utf8();
-}
-
-CString filenameFromString(const String& string)
-{
 // WARNING: this is just used by platform/network/soup, thus must be GLIB!!!
 // TODO: move this to CString and use it instead in both, being more standard
 #if PLATFORM(WIN_OS)
-    return string.utf8();
+    return path.utf8();
 #else
-    char* filename = g_uri_unescape_string(string.utf8().data(), 0);
+    char* filename = g_uri_unescape_string(path.utf8().data(), 0);
     CString cfilename(filename);
     g_free(filename);
     return cfilename;

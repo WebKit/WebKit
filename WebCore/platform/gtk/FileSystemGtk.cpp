@@ -52,12 +52,12 @@ String filenameToString(const char* filename)
 #endif
 }
 
-CString filenameFromString(const String& string)
+CString fileSystemRepresentation(const String& path)
 {
 #if OS(WINDOWS)
-    return string.utf8();
+    return path.utf8();
 #else
-    char* filename = g_uri_unescape_string(string.utf8().data(), 0);
+    char* filename = g_uri_unescape_string(path.utf8().data(), 0);
     CString cfilename(filename);
     g_free(filename);
     return cfilename;
@@ -70,7 +70,7 @@ String filenameForDisplay(const String& string)
 #if OS(WINDOWS)
     return string;
 #else
-    CString filename = filenameFromString(string);
+    CString filename = fileSystemRepresentation(string);
     gchar* display = g_filename_to_utf8(filename.data(), 0, 0, 0, 0);
     if (!display)
         return string;
@@ -85,7 +85,7 @@ String filenameForDisplay(const String& string)
 bool fileExists(const String& path)
 {
     bool result = false;
-    CString filename = filenameFromString(path);
+    CString filename = fileSystemRepresentation(path);
 
     if (!filename.isNull())
         result = g_file_test(filename.data(), G_FILE_TEST_EXISTS);
@@ -96,7 +96,7 @@ bool fileExists(const String& path)
 bool deleteFile(const String& path)
 {
     bool result = false;
-    CString filename = filenameFromString(path);
+    CString filename = fileSystemRepresentation(path);
 
     if (!filename.isNull())
         result = g_remove(filename.data()) == 0;
@@ -107,7 +107,7 @@ bool deleteFile(const String& path)
 bool deleteEmptyDirectory(const String& path)
 {
     bool result = false;
-    CString filename = filenameFromString(path);
+    CString filename = fileSystemRepresentation(path);
 
     if (!filename.isNull())
         result = g_rmdir(filename.data()) == 0;
@@ -117,7 +117,7 @@ bool deleteEmptyDirectory(const String& path)
 
 bool getFileSize(const String& path, long long& resultSize)
 {
-    CString filename = filenameFromString(path);
+    CString filename = fileSystemRepresentation(path);
     if (filename.isNull())
         return false;
 
@@ -132,7 +132,7 @@ bool getFileSize(const String& path, long long& resultSize)
 
 bool getFileModificationTime(const String& path, time_t& modifiedTime)
 {
-    CString filename = filenameFromString(path);
+    CString filename = fileSystemRepresentation(path);
     if (filename.isNull())
         return false;
 
@@ -156,7 +156,7 @@ String pathByAppendingComponent(const String& path, const String& component)
 
 bool makeAllDirectories(const String& path)
 {
-    CString filename = filenameFromString(path);
+    CString filename = fileSystemRepresentation(path);
     if (filename.isNull())
         return false;
 
@@ -175,7 +175,7 @@ String pathGetFileName(const String& pathName)
     if (pathName.isEmpty())
         return pathName;
 
-    CString tmpFilename = filenameFromString(pathName);
+    CString tmpFilename = fileSystemRepresentation(pathName);
     char* baseName = g_path_get_basename(tmpFilename.data());
     String fileName = String::fromUTF8(baseName);
     g_free(baseName);
@@ -186,7 +186,7 @@ String pathGetFileName(const String& pathName)
 String directoryName(const String& path)
 {
     /* No null checking needed */
-    GOwnPtr<char> tmpFilename(const_cast<char*>(filenameFromString(path).data()));
+    GOwnPtr<char> tmpFilename(const_cast<char*>(fileSystemRepresentation(path).data()));
     GOwnPtr<char> dirname(g_path_get_dirname(tmpFilename.get()));
     return String::fromUTF8(dirname.get());
 }
@@ -195,7 +195,7 @@ Vector<String> listDirectory(const String& path, const String& filter)
 {
     Vector<String> entries;
 
-    CString filename = filenameFromString(path);
+    CString filename = fileSystemRepresentation(path);
     GDir* dir = g_dir_open(filename.data(), 0, 0);
     if (!dir)
         return entries;

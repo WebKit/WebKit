@@ -40,7 +40,7 @@ PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& fi
     if (filePath.isEmpty())
         return 0;
 
-    CString filename = filenameFromString(filePath);
+    CString filename = fileSystemRepresentation(filePath);
     int fd = open(filename.data(), O_RDONLY);
     if (fd == -1)
         return 0;
