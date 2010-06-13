@@ -29,16 +29,42 @@
 # Script to do a rename in JavaScriptCore, WebCore, and WebKit.
 
 use strict;
+
+use File::Find;
 use FindBin;
+use Getopt::Long qw(:config pass_through);
+
 use lib $FindBin::Bin;
 use webkitdirs;
-use File::Find;
 use VCSUtils;
 
 setConfiguration();
 chdirWebKit();
 
-my %words;
+my $showHelp;
+my $verbose;
+
+my $programName = basename($0);
+my $usage = <<EOF;
+Usage: $programName [options]
+  -h|--help                       Show this help message
+  -v|--verbose                    More verbose output
+EOF
+
+my $getOptionsResult = GetOptions(
+    'help|h' => \$showHelp,
+    'verbose|v' => \$verbose,
+);
+
+if (!$getOptionsResult || $showHelp) {
+    print STDERR $usage;
+    exit 1;
+}
+
+my @directoriesToIgnoreList = (
+    "icu",
+);
+my %directoriesToIgnore = map { $_ => 1 } @directoriesToIgnoreList;
 
 # find all files we want to process
 
@@ -52,17 +78,13 @@ sub wanted
 {
     my $file = $_;
 
-    if ($file eq "icu") {
+    # Ignore excluded and hidden files/directories.
+    if ($directoriesToIgnore{$file} or $file =~ /^\../ or $file =~ /^ChangeLog/) {
+        print "Ignoring $File::Find::name\n" if $verbose;
         $File::Find::prune = 1;
         return;
     }
 
-    if ($file =~ /^\../) {
-        $File::Find::prune = 1;
-        return;
-    }
-
-    return if $file =~ /^ChangeLog/;
     return if -d $file;
 
     push @paths, $File::Find::name;
@@ -70,11 +92,10 @@ sub wanted
 
 # Setting isDOMTypeRename to 1 rather than 0 expands the regexps used
 # below to handle custom JavaScript bindings.
-my $isDOMTypeRename = 1;
+my $isDOMTypeRename = 0;
 my %renames = (
-    "FloatArray" => "Float32Array",
-    # JSDOMWindow constructors.
-    "floatArray" => "float32Array",
+    # Renames go here in the form of:
+    # "Tokenizer" => "DocumentParser",
 );
 
 my %renamesContemplatedForTheFuture = (
@@ -207,7 +228,7 @@ for my $file (sort @paths) {
     my $contents;
     {
         local $/;
-        open FILE, $file or die;
+        open FILE, $file or die "Failed to open $file";
         $contents = <FILE>;
         close FILE;
     }
@@ -225,7 +246,7 @@ for my $file (sort @paths) {
     }
 
     if ($newContents ne $contents) {
-        open FILE, ">", $file or die;
+        open FILE, ">", $file or die "Failed to open $file";
         print FILE $newContents;
         close FILE;
     }

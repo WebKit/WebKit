@@ -1,3 +1,16 @@
+2010-06-12  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        do-webcore-rename should have a --verbose option
+        https://bugs.webkit.org/show_bug.cgi?id=40497
+
+        * Scripts/do-webcore-rename:
+         - Unified how we handle skipping files/directories
+           this will allow us to "black list" certain files and
+           directories when performing renames.
+         - Made do-webcore-rename log what it's skipping when passed --verbose.
+
 2010-06-12  Darin Adler  <darin@apple.com>
 
         * Scripts/run-bindings-tests: Fixed a typo in a message.
