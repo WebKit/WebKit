@@ -681,7 +681,7 @@ bool WebViewImpl::sendContextMenuEvent(const WebKeyboardEvent& event)
     Node* focusedNode = focusedFrame->document()->focusedNode();
     Position start = mainFrameImpl->selection()->selection().start();
 
-    if (focusedFrame->editor() && focusedFrame->editor()->canEdit() && start.node()) {
+    if (start.node()) {
         RenderObject* renderer = start.node()->renderer();
         if (!renderer)
             return false;

@@ -1,3 +1,15 @@
+2010-06-12  Evan Stade  <estade@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] Menu key should act on current selection even if it is not editable
+        https://bugs.webkit.org/show_bug.cgi?id=40348
+
+        Allow the menu key to act on non-editable selections.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::sendContextMenuEvent):
+
 2010-06-11  James Hawkins  <jhawkins@chromium.org>
 
         Reviewed by Darin Fisher.
