@@ -1,3 +1,16 @@
+2010-06-12  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Dan Bernstein.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=40538
+        
+        Some machines have started to see the return of the dreaded: WebCore.lib : fatal error LNK1106: invalid 
+        file or disk full. Since we don't have the hotfix for VS2005, work around this in the meantime
+        by creating an EditingAllInOne file, that includes all of the cpp files in the editing subdirectory.
+        
+        * WebCore.vcproj/WebCore.vcproj: Prevnt the editing cpp from building, so we only compile EditingAllInOne.
+        * editing/EditingAllInOne.cpp: Added. Includes all of the editing cpp files.
+
 2010-06-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r61031.
