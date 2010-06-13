@@ -18,14 +18,15 @@
 */
 
 #include "config.h"
-#include "PlatformWheelEvent.h"
+#include "WheelEvent.h"
 
 #include "PlatformMouseEvent.h"
+#include "PlatformWheelEvent.h"
 #include "Scrollbar.h"
 
-#include <qapplication.h>
-#include <QWheelEvent>
 #include <QGraphicsSceneWheelEvent>
+#include <QWheelEvent>
+#include <qapplication.h>
 
 namespace WebCore {
 
@@ -57,11 +58,7 @@ void PlatformWheelEvent::applyDelta(int delta, Qt::Orientation orientation)
 }
 
 PlatformWheelEvent::PlatformWheelEvent(QGraphicsSceneWheelEvent* e)
-#ifdef QT_NO_WHEELEVENT
-{
-    Q_UNUSED(e);
-}
-#else
+#ifndef QT_NO_WHEELEVENT
     : m_position(e->pos().toPoint())
     , m_globalPosition(e->screenPos())
     , m_granularity(ScrollByPixelWheelEvent)
@@ -70,17 +67,17 @@ PlatformWheelEvent::PlatformWheelEvent(QGraphicsSceneWheelEvent* e)
     , m_ctrlKey(e->modifiers() & Qt::ControlModifier)
     , m_altKey(e->modifiers() & Qt::AltModifier)
     , m_metaKey(e->modifiers() & Qt::MetaModifier)
+#endif
 {
+#ifndef QT_NO_WHEELEVENT
     applyDelta(e->delta(), e->orientation());
+#else
+    Q_UNUSED(e);
+#endif
 }
-#endif // QT_NO_WHEELEVENT
 
 PlatformWheelEvent::PlatformWheelEvent(QWheelEvent* e)
-#ifdef QT_NO_WHEELEVENT
-{
-    Q_UNUSED(e);
-}
-#else
+#ifndef QT_NO_WHEELEVENT
     : m_position(e->pos())
     , m_globalPosition(e->globalPos())
     , m_granularity(ScrollByPixelWheelEvent)
@@ -89,9 +86,13 @@ PlatformWheelEvent::PlatformWheelEvent(QWheelEvent* e)
     , m_ctrlKey(e->modifiers() & Qt::ControlModifier)
     , m_altKey(e->modifiers() & Qt::AltModifier)
     , m_metaKey(e->modifiers() & Qt::MetaModifier)
+#endif
 {
+#ifndef QT_NO_WHEELEVENT
     applyDelta(e->delta(), e->orientation());
+#else
+    Q_UNUSED(e);
+#endif
 }
-#endif // QT_NO_WHEELEVENT
 
 } // namespace WebCore

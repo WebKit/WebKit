@@ -1,3 +1,13 @@
+2010-06-12  Anders Bakken  <agbakken@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] WheelEventQt.cpp has coding-style errors
+        https://bugs.webkit.org/show_bug.cgi?id=39760
+
+        * platform/qt/WheelEventQt.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2010-06-12  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kent Tamura.
