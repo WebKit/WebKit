@@ -1,3 +1,14 @@
+2010-06-13  Darin Adler  <darin@apple.com>
+
+        Updated Windows-platform results for the fix for bug 40394.
+        The patch fixed the cross-platform results, GTK results, and Qt results,
+        but there were Windows results too.
+
+        * platform/win/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/win/fast/dom/prototype-inheritance-2-expected.txt:
+        * platform/win/fast/dom/prototype-inheritance-expected.txt:
+        * platform/win/fast/js/global-constructors-expected.txt:
+
 2010-06-13  Dan Bernstein  <mitz@apple.com>
 
         Updated results after r61092.
