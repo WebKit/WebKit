@@ -1,3 +1,15 @@
+2010-06-12  Anders Bakken  <agbakken@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] EventHandlerQt.cpp has coding-style errors
+        https://bugs.webkit.org/show_bug.cgi?id=40259
+
+        Coding style change only.
+
+        * page/qt/EventHandlerQt.cpp:
+        (WebCore::EventHandler::eventActivatedView):
+
 2010-06-12  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Darin Adler.

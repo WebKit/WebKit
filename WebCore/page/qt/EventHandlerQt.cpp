@@ -43,12 +43,12 @@
 #include "HitTestResult.h"
 #include "KeyboardEvent.h"
 #include "MouseEventWithHitTestResults.h"
+#include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
 #include "RenderWidget.h"
 #include "Scrollbar.h"
-#include "NotImplemented.h"
 
 QT_BEGIN_NAMESPACE
 Q_GUI_EXPORT extern bool qt_tab_all_widgets; // from qapplication.cpp
@@ -96,7 +96,7 @@ bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestR
 
 bool EventHandler::eventActivatedView(const PlatformMouseEvent&) const
 {
-    //Qt has an activation event which is sent independently
+    // Qt has an activation event which is sent independently
     //   of mouse event so this thing will be a snafu to implement
     //   correctly
     return false;
