@@ -1,3 +1,15 @@
+2010-06-13  Clemmitt Sigler  <cmsigler@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Patch to fix missing references to RenderMathMLRoot,
+        RenderMathMLSquareRoot when building GtkLauncher.
+        https://bugs.webkit.org/show_bug.cgi?id=40326
+
+        No change in functionality so no new tests.
+
+        * GNUmakefile.am:
+
 2010-06-12  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Dan Bernstein.

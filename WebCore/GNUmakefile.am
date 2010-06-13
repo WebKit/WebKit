@@ -3028,8 +3028,12 @@ webcore_sources += \
 	WebCore/mathml/RenderMathMLMath.h \
 	WebCore/mathml/RenderMathMLOperator.cpp \
 	WebCore/mathml/RenderMathMLOperator.h \
+	WebCore/mathml/RenderMathMLRoot.cpp \
+	WebCore/mathml/RenderMathMLRoot.h \
 	WebCore/mathml/RenderMathMLRow.cpp \
 	WebCore/mathml/RenderMathMLRow.h \
+	WebCore/mathml/RenderMathMLSquareRoot.cpp \
+	WebCore/mathml/RenderMathMLSquareRoot.h \
 	WebCore/mathml/RenderMathMLSubSup.cpp \
 	WebCore/mathml/RenderMathMLSubSup.h \
 	WebCore/mathml/RenderMathMLUnderOver.cpp \
