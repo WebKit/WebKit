@@ -49,7 +49,7 @@ public:
 private:
     HTMLViewSourceDocument(Frame*, const String& mimeType);
 
-    // Returns HTMLDocumentParser or TextTokenizer based on m_type.
+    // Returns HTMLDocumentParser or TextDocumentParser based on m_type.
     virtual DocumentParser* createTokenizer();
 
     void createContainingTable();

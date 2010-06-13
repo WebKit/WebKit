@@ -38,11 +38,11 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-class TextTokenizer : public DocumentParser {
+class TextDocumentParser : public DocumentParser {
 public:
-    TextTokenizer(Document*);
-    virtual ~TextTokenizer();
-    TextTokenizer(HTMLViewSourceDocument*);
+    TextDocumentParser(Document*);
+    virtual ~TextDocumentParser();
+    TextDocumentParser(HTMLViewSourceDocument*);
 
     virtual void write(const SegmentedString&, bool appendData);
     virtual void finish();
@@ -71,7 +71,7 @@ private:
     UChar* m_dest;
 };
 
-TextTokenizer::TextTokenizer(Document* doc)
+TextDocumentParser::TextDocumentParser(Document* doc)
     : m_doc(doc)
     , m_preElement(0)
     , m_skipLF(false)
@@ -82,7 +82,7 @@ TextTokenizer::TextTokenizer(Document* doc)
     m_dest = m_buffer;
 }    
 
-TextTokenizer::TextTokenizer(HTMLViewSourceDocument* doc)
+TextDocumentParser::TextDocumentParser(HTMLViewSourceDocument* doc)
     : DocumentParser(true)
     , m_doc(doc)
     , m_preElement(0)
@@ -94,13 +94,13 @@ TextTokenizer::TextTokenizer(HTMLViewSourceDocument* doc)
     m_dest = m_buffer;
 }
 
-TextTokenizer::~TextTokenizer()
+TextDocumentParser::~TextDocumentParser()
 {
     // finish() should have been called to prevent any leaks
     ASSERT(!m_buffer);
 }
 
-void TextTokenizer::write(const SegmentedString& s, bool)
+void TextDocumentParser::write(const SegmentedString& s, bool)
 {
     ExceptionCode ec;
 
@@ -160,7 +160,7 @@ void TextTokenizer::write(const SegmentedString& s, bool)
     }
 }
 
-void TextTokenizer::finish()
+void TextDocumentParser::finish()
 {
     if (!m_preElement)
         write(SegmentedString(), true); // Create document structure for an empty text document.
@@ -172,7 +172,7 @@ void TextTokenizer::finish()
     m_doc->finishedParsing();
 }
 
-bool TextTokenizer::isWaitingForScripts() const
+bool TextDocumentParser::isWaitingForScripts() const
 {
     // A text document is never waiting for scripts
     return false;
@@ -185,12 +185,12 @@ TextDocument::TextDocument(Frame* frame)
 
 DocumentParser* TextDocument::createTokenizer()
 {
-    return new TextTokenizer(this);
+    return new TextDocumentParser(this);
 }
 
 DocumentParser* createTextTokenizer(HTMLViewSourceDocument* document)
 {
-    return new TextTokenizer(document);
+    return new TextDocumentParser(document);
 }
 
 }

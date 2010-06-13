@@ -45,9 +45,9 @@ namespace WebCore {
     
 using namespace HTMLNames;
     
-class PluginTokenizer : public DocumentParser {
+class PluginDocumentParser : public DocumentParser {
 public:
-    PluginTokenizer(Document* doc) : m_doc(doc), m_embedElement(0) {}
+    PluginDocumentParser(Document* doc) : m_doc(doc), m_embedElement(0) {}
     static Widget* pluginWidgetFromDocument(Document* doc);
         
 private:
@@ -64,7 +64,7 @@ private:
     HTMLEmbedElement* m_embedElement;
 };
 
-Widget* PluginTokenizer::pluginWidgetFromDocument(Document* doc)
+Widget* PluginDocumentParser::pluginWidgetFromDocument(Document* doc)
 {
     ASSERT(doc);
     RefPtr<Element> body = doc->body();
@@ -78,12 +78,12 @@ Widget* PluginTokenizer::pluginWidgetFromDocument(Document* doc)
     return 0;
 }
 
-void PluginTokenizer::write(const SegmentedString&, bool)
+void PluginDocumentParser::write(const SegmentedString&, bool)
 {
     ASSERT_NOT_REACHED();
 }
     
-void PluginTokenizer::createDocumentStructure()
+void PluginDocumentParser::createDocumentStructure()
 {
     ExceptionCode ec;
     RefPtr<Element> rootElement = m_doc->createElement(htmlTag, false);
@@ -109,7 +109,7 @@ void PluginTokenizer::createDocumentStructure()
     body->appendChild(embedElement, ec);    
 }
     
-bool PluginTokenizer::writeRawData(const char*, int)
+bool PluginDocumentParser::writeRawData(const char*, int)
 {
     ASSERT(!m_embedElement);
     if (m_embedElement)
@@ -134,13 +134,13 @@ bool PluginTokenizer::writeRawData(const char*, int)
     return false;
 }
 
-void PluginTokenizer::finish()
+void PluginDocumentParser::finish()
 {
     if (!m_parserStopped) 
         m_doc->finishedParsing();            
 }
     
-bool PluginTokenizer::isWaitingForScripts() const
+bool PluginDocumentParser::isWaitingForScripts() const
 {
     // A plugin document is never waiting for scripts
     return false;
@@ -154,12 +154,12 @@ PluginDocument::PluginDocument(Frame* frame)
     
 DocumentParser* PluginDocument::createTokenizer()
 {
-    return new PluginTokenizer(this);
+    return new PluginDocumentParser(this);
 }
 
 Widget* PluginDocument::pluginWidget()
 {
-    return PluginTokenizer::pluginWidgetFromDocument(this);
+    return PluginDocumentParser::pluginWidgetFromDocument(this);
 }
 
 Node* PluginDocument::pluginNode()

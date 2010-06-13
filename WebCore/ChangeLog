@@ -1,3 +1,64 @@
+2010-06-12  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Rename the last few *Tokenizer classes (which don't have their own files) to *DocumentParser
+        https://bugs.webkit.org/show_bug.cgi?id=40508
+
+        This was a very simple do-webcore-rename-generated patch.
+
+        PluginTokenizer => PluginDocumentParser
+        TextTokenizer => TextDocumentParser
+        SinkTokenizer => SinkDocumentParser
+        MediaTokenizer => MediaDocumentParser
+        FTPDirectoryTokenizer => FTPDirectoryDocumentParser
+
+        No functional changes, thus no tests.
+
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createTokenizer):
+        * html/HTMLViewSourceDocument.h:
+        * loader/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocumentParser::FTPDirectoryDocumentParser):
+        (WebCore::FTPDirectoryDocumentParser::appendEntry):
+        (WebCore::FTPDirectoryDocumentParser::createTDForFilename):
+        (WebCore::FTPDirectoryDocumentParser::parseAndAppendOneLine):
+        (WebCore::FTPDirectoryDocumentParser::loadDocumentTemplate):
+        (WebCore::FTPDirectoryDocumentParser::createBasicDocument):
+        (WebCore::FTPDirectoryDocumentParser::write):
+        (WebCore::FTPDirectoryDocumentParser::finish):
+        (WebCore::FTPDirectoryDocument::createTokenizer):
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::MediaDocumentParser):
+        (WebCore::MediaDocumentParser::write):
+        (WebCore::MediaDocumentParser::createDocumentStructure):
+        (WebCore::MediaDocumentParser::writeRawData):
+        (WebCore::MediaDocumentParser::finish):
+        (WebCore::MediaDocumentParser::isWaitingForScripts):
+        (WebCore::MediaDocument::createTokenizer):
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::PluginDocumentParser):
+        (WebCore::PluginDocumentParser::pluginWidgetFromDocument):
+        (WebCore::PluginDocumentParser::write):
+        (WebCore::PluginDocumentParser::createDocumentStructure):
+        (WebCore::PluginDocumentParser::writeRawData):
+        (WebCore::PluginDocumentParser::finish):
+        (WebCore::PluginDocumentParser::isWaitingForScripts):
+        (WebCore::PluginDocument::createTokenizer):
+        (WebCore::PluginDocument::pluginWidget):
+        * loader/SinkDocument.cpp:
+        (WebCore::SinkDocumentParser::SinkDocumentParser):
+        (WebCore::SinkDocumentParser::finish):
+        (WebCore::SinkDocument::createTokenizer):
+        * loader/TextDocument.cpp:
+        (WebCore::TextDocumentParser::TextDocumentParser):
+        (WebCore::TextDocumentParser::~TextDocumentParser):
+        (WebCore::TextDocumentParser::write):
+        (WebCore::TextDocumentParser::finish):
+        (WebCore::TextDocumentParser::isWaitingForScripts):
+        (WebCore::TextDocument::createTokenizer):
+        (WebCore::createTextTokenizer):
+
 2010-06-12  Anders Bakken  <agbakken@gmail.com>
 
         Reviewed by Eric Seidel.
