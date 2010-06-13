@@ -1,3 +1,14 @@
+2010-06-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8087385> REGRESSION (r60974): Continuous wheel scrolling is too fast in list boxes and in Safari Reader
+        https://bugs.webkit.org/show_bug.cgi?id=40537
+
+        * platform/mac/WheelEventMac.mm:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent): Only multiply by pixelsPerLineStep() if the
+        event is not continuous, as was before r56012.
+
 2010-06-13  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Darin Adler.
