@@ -1,3 +1,15 @@
+2010-06-08  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Add support for callShouldCloseOnWebView() to DRT
+        https://bugs.webkit.org/show_bug.cgi?id=40330
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::callShouldCloseOnWebView):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        (LayoutTestController::setCallCloseOnWebViews):
+
 2010-06-12  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Daniel Bates.

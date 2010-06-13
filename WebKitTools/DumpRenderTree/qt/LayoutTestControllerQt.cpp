@@ -566,8 +566,7 @@ int LayoutTestController::numberOfPages(float width, float height)
 
 bool LayoutTestController::callShouldCloseOnWebView()
 {
-    // FIXME: Implement for testing fix for https://bugs.webkit.org/show_bug.cgi?id=27481
-    return false;
+    return DumpRenderTreeSupportQt::shouldClose(m_drt->webPage()->mainFrame());
 }
 
 void LayoutTestController::setScrollbarPolicy(const QString& orientation, const QString& policy)

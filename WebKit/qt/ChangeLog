@@ -1,3 +1,14 @@
+2010-06-08  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Add support for callShouldCloseOnWebView() to DRT
+        https://bugs.webkit.org/show_bug.cgi?id=40330
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::shouldClose):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2010-06-12  Dawit Alemayehu  <adawit@kde.org>
 
         Reviewed by Kenneth Rohde Christiansen.

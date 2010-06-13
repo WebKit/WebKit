@@ -1,3 +1,12 @@
+2010-06-08  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Add support for callShouldCloseOnWebView() to DRT
+        https://bugs.webkit.org/show_bug.cgi?id=40330
+
+        * platform/qt/Skipped: Unskip fast/events/onbeforeunload-focused-iframe.html
+
 2010-06-12  Dmitry Titov  <dimich@chromium.org>
 
         Not reviewed, update Chromium expected result following r61071.

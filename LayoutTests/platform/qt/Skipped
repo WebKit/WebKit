@@ -421,8 +421,12 @@ editing/pasteboard/get-data-text-plain-drop.html
 plugins/get-url-that-the-resource-load-delegate-will-disallow.html
 # ---- https://bugs.webkit.org/show_bug.cgi?id=36721
 plugins/get-url-with-blank-target.html
+
+# plugin logdestroy message reaches destroyed webpage
 # ---- https://bugs.webkit.org/show_bug.cgi?id=33333
 plugins/open-and-close-window-with-plugin.html
+plugins/geturlnotify-during-document-teardown.html
+
 # ---- https://bugs.webkit.org/show_bug.cgi?id=36702
 plugins/reentrant-update-widget-positions.html
 # ---- plugins rendered in incorrect position
@@ -759,10 +763,6 @@ loader/go-back-to-different-window-size.html
 # Plain text controller currently in Mac DumpRenderTree only.
 # https://bugs.webkit.org/show_bug.cgi?id=38805
 editing/text-iterator/basic-iteration.html
-
-# Implement LayoutTestController::callShouldCloseOnWebView()
-fast/events/onbeforeunload-focused-iframe.html
-plugins/geturlnotify-during-document-teardown.html
 
 # Missing layoutTestController.overridePreference()
 fast/events/pageshow-pagehide-on-back-cached.html
