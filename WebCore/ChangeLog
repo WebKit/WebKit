@@ -1,5 +1,12 @@
 2010-06-13  Sam Weinig  <sam@webkit.org>
 
+        Try and fix the chrome build.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * xml/XMLHttpRequest.idl:
+
+2010-06-13  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Fix for https://bugs.webkit.org/show_bug.cgi?id=40550

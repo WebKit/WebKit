@@ -296,7 +296,7 @@ END
         }
     }
 
-    if ($dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"CanBeConstructed"}) {
+    if ($dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CanBeConstructed"}) {
         push(@headerContent, <<END);
     static v8::Handle<v8::Value> constructorCallback(const v8::Arguments& args);
 END
@@ -1792,7 +1792,7 @@ END
     push(@implContentDecls, "} // namespace ${interfaceName}Internal\n\n");
 
     # In namespace WebCore, add generated implementation for 'CanBeConstructed'.
-    if ($dataNode->extendedAttributes->{"CanBeConstructed"} && !$dataNode->extendedAttributes->{"CustomConstructor"}) {
+    if ($dataNode->extendedAttributes->{"CanBeConstructed"} && !$dataNode->extendedAttributes->{"CustomConstructor"} && !$dataNode->extendedAttributes->{"V8CustomConstructor"}) {
         my $v8ConstructFunction;
         my $callWith = $dataNode->extendedAttributes->{"CallWith"};
         if ($callWith and $callWith eq "ScriptExecutionContext") {
@@ -1870,7 +1870,7 @@ END
 END
     }
 
-    if ($dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"CanBeConstructed"}) {
+    if ($dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CanBeConstructed"}) {
         push(@implContent, <<END);
         desc->SetCallHandler(V8${interfaceName}::constructorCallback);
 END
