@@ -60,7 +60,7 @@ public:
 
     // FIXME: This is a dirty, rotten hack to keep HTMLFormControlElement happy
     // until we stop using the legacy parser. DO NOT CALL THIS METHOD.
-    HTMLParser* htmlParser() const { return m_legacyHTMLParser.get(); }
+    HTMLParser* legacyTreeConstructor() const { return m_legacyTreeConstructor.get(); }
 
 private:
     // Represents HTML5 "insertion mode"
@@ -91,7 +91,7 @@ private:
     HTML5Lexer* m_lexer;
 
     // We're re-using logic from the old HTMLParser while this class is being written.
-    OwnPtr<HTMLParser> m_legacyHTMLParser;
+    OwnPtr<HTMLParser> m_legacyTreeConstructor;
 
     // These members are intentionally duplicated as the first set is a hack
     // on top of the legacy parser which will eventually be removed.

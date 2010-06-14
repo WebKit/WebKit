@@ -163,7 +163,7 @@ public:
 
     virtual void executeScriptsWaitingForStylesheets();
 
-    virtual HTMLParser* htmlParser() const { return m_parser.get(); }
+    virtual HTMLParser* htmlTreeConstructor() const { return m_treeConstructor.get(); }
     virtual HTMLDocumentParser* asHTMLDocumentParser() { return this; }
 
 private:
@@ -431,7 +431,7 @@ private:
 
     SegmentedString m_src;
     Document* m_doc;
-    OwnPtr<HTMLParser> m_parser;
+    OwnPtr<HTMLParser> m_treeConstructor;
     bool m_inWrite;
     bool m_fragment;
     FragmentScriptingPermission m_scriptingPermission;

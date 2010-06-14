@@ -68,7 +68,7 @@ HTML5DocumentParser::HTML5DocumentParser(HTMLDocument* document, bool reportErro
     , m_document(document)
     , m_lexer(new HTML5Lexer)
     , m_scriptRunner(new HTML5ScriptRunner(document, this))
-    , m_treeBuilder(new HTML5TreeBuilder(m_lexer.get(), document, reportErrors))
+    , m_treeConstructor(new HTML5TreeBuilder(m_lexer.get(), document, reportErrors))
     , m_endWasDelayed(false)
     , m_writeNestingLevel(0)
 {
@@ -90,7 +90,7 @@ void HTML5DocumentParser::begin()
 
 void HTML5DocumentParser::pumpLexerIfPossible()
 {
-    if (m_parserStopped || m_treeBuilder->isPaused())
+    if (m_parserStopped || m_treeConstructor->isPaused())
         return;
     pumpLexer();
 }
@@ -102,26 +102,26 @@ void HTML5DocumentParser::pumpLexer()
     willPumpLexer();
 
     ASSERT(!m_parserStopped);
-    ASSERT(!m_treeBuilder->isPaused());
+    ASSERT(!m_treeConstructor->isPaused());
     while (!m_parserStopped && m_lexer->nextToken(m_input.current(), m_token)) {
         if (ScriptController* scriptController = script())
             scriptController->setEventHandlerLineNumber(lineNumber() + 1);
 
-        m_treeBuilder->constructTreeFromToken(m_token);
+        m_treeConstructor->constructTreeFromToken(m_token);
         m_token.clear();
 
         if (ScriptController* scriptController = script())
             scriptController->setEventHandlerLineNumber(0);
 
-        if (!m_treeBuilder->isPaused())
+        if (!m_treeConstructor->isPaused())
             continue;
 
         // The parser will pause itself when waiting on a script to load or run.
         // ScriptRunner executes scripts at the right times and handles reentrancy.
         int scriptStartLine = 0;
-        RefPtr<Element> scriptElement = m_treeBuilder->takeScriptToProcess(scriptStartLine);
+        RefPtr<Element> scriptElement = m_treeConstructor->takeScriptToProcess(scriptStartLine);
         bool shouldContinueParsing = m_scriptRunner->execute(scriptElement.release(), scriptStartLine);
-        m_treeBuilder->setPaused(!shouldContinueParsing);
+        m_treeConstructor->setPaused(!shouldContinueParsing);
         if (!shouldContinueParsing)
             return;
     }
@@ -174,7 +174,7 @@ void HTML5DocumentParser::end()
 {
     pumpLexerIfPossible();
     // Informs the the rest of WebCore that parsing is really finished.
-    m_treeBuilder->finished();
+    m_treeConstructor->finished();
 }
 
 void HTML5DocumentParser::attemptToEnd()
@@ -221,20 +221,20 @@ int HTML5DocumentParser::columnNumber() const
     return m_lexer->columnNumber();
 }
 
-HTMLParser* HTML5DocumentParser::htmlParser() const
+HTMLParser* HTML5DocumentParser::htmlTreeConstructor() const
 {
-    return m_treeBuilder->htmlParser();
+    return m_treeConstructor->legacyTreeConstructor();
 }
 
 bool HTML5DocumentParser::isWaitingForScripts() const
 {
-    return m_treeBuilder->isPaused();
+    return m_treeConstructor->isPaused();
 }
 
 void HTML5DocumentParser::resumeParsingAfterScriptExecution()
 {
     ASSERT(!m_scriptRunner->inScriptExecution());
-    ASSERT(!m_treeBuilder->isPaused());
+    ASSERT(!m_treeConstructor->isPaused());
     pumpLexerIfPossible();
 
     // The document already finished parsing we were just waiting on scripts when finished() was called.
@@ -274,12 +274,12 @@ void HTML5DocumentParser::executeScript(const ScriptSourceCode& sourceCode)
 void HTML5DocumentParser::notifyFinished(CachedResource* cachedResource)
 {
     ASSERT(!m_scriptRunner->inScriptExecution());
-    ASSERT(m_treeBuilder->isPaused());
+    ASSERT(m_treeConstructor->isPaused());
     // Note: We only ever wait on one script at a time, so we always know this
     // is the one we were waiting on and can un-pause the tree builder.
-    m_treeBuilder->setPaused(false);
+    m_treeConstructor->setPaused(false);
     bool shouldContinueParsing = m_scriptRunner->executeScriptsWaitingForLoad(cachedResource);
-    m_treeBuilder->setPaused(!shouldContinueParsing);
+    m_treeConstructor->setPaused(!shouldContinueParsing);
     if (shouldContinueParsing)
         resumeParsingAfterScriptExecution();
 }
@@ -292,12 +292,12 @@ void HTML5DocumentParser::executeScriptsWaitingForStylesheets()
     if (!m_scriptRunner->hasScriptsWaitingForStylesheets())
         return;
     ASSERT(!m_scriptRunner->inScriptExecution());
-    ASSERT(m_treeBuilder->isPaused());
+    ASSERT(m_treeConstructor->isPaused());
     // Note: We only ever wait on one script at a time, so we always know this
     // is the one we were waiting on and can un-pause the tree builder.
-    m_treeBuilder->setPaused(false);
+    m_treeConstructor->setPaused(false);
     bool shouldContinueParsing = m_scriptRunner->executeScriptsWaitingForStylesheets();
-    m_treeBuilder->setPaused(!shouldContinueParsing);
+    m_treeConstructor->setPaused(!shouldContinueParsing);
     if (shouldContinueParsing)
         resumeParsingAfterScriptExecution();
 }

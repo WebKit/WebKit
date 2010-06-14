@@ -2,6 +2,49 @@
 
         Reviewed by Darin Adler.
 
+        Rename m_parser, htmlParser() to m_treeConstructor, htmlTreeConstructor() in preparation for renaming HTMLParser
+        https://bugs.webkit.org/show_bug.cgi?id=40514
+
+        This rename was done by hand.  I realize now I should have
+        renamed HTMLParser to HTMLTreeConstructor before renaming HTMLTokenizer.
+
+        No functional changes, thus no tests.
+
+        * dom/DocumentParser.h:
+        (WebCore::DocumentParser::htmlTreeConstructor):
+        * html/HTML5DocumentParser.cpp:
+        (WebCore::HTML5DocumentParser::HTML5DocumentParser):
+        (WebCore::HTML5DocumentParser::pumpLexerIfPossible):
+        (WebCore::HTML5DocumentParser::pumpLexer):
+        (WebCore::HTML5DocumentParser::end):
+        (WebCore::HTML5DocumentParser::htmlTreeConstructor):
+        (WebCore::HTML5DocumentParser::isWaitingForScripts):
+        (WebCore::HTML5DocumentParser::resumeParsingAfterScriptExecution):
+        (WebCore::HTML5DocumentParser::notifyFinished):
+        (WebCore::HTML5DocumentParser::executeScriptsWaitingForStylesheets):
+        * html/HTML5DocumentParser.h:
+        * html/HTML5TreeBuilder.cpp:
+        (WebCore::HTML5TreeBuilder::HTML5TreeBuilder):
+        (WebCore::HTML5TreeBuilder::passTokenToLegacyParser):
+        (WebCore::HTML5TreeBuilder::finished):
+        * html/HTML5TreeBuilder.h:
+        (WebCore::HTML5TreeBuilder::legacyTreeConstructor):
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser):
+        (WebCore::HTMLDocumentParser::scriptHandler):
+        (WebCore::HTMLDocumentParser::parseTag):
+        (WebCore::HTMLDocumentParser::end):
+        (WebCore::HTMLDocumentParser::processToken):
+        (WebCore::HTMLDocumentParser::processDoctypeToken):
+        * html/HTMLDocumentParser.h:
+        (WebCore::HTMLDocumentParser::htmlTreeConstructor):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::removedFromTree):
+
+2010-06-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
         Rename tok, asHTMLTokenizer to parser, asHTMLDocumentParser
         https://bugs.webkit.org/show_bug.cgi?id=40513
 

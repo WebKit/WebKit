@@ -48,7 +48,7 @@ HTML5TreeBuilder::HTML5TreeBuilder(HTML5Lexer* lexer, HTMLDocument* document, bo
     , m_isPaused(false)
     , m_insertionMode(Initial)
     , m_lexer(lexer)
-    , m_legacyHTMLParser(new HTMLParser(document, reportErrors))
+    , m_legacyTreeConstructor(new HTMLParser(document, reportErrors))
     , m_lastScriptElementStartLine(uninitializedLineNumberValue)
     , m_scriptToProcessStartLine(uninitializedLineNumberValue)
 {
@@ -141,7 +141,7 @@ PassRefPtr<Node> HTML5TreeBuilder::passTokenToLegacyParser(HTML5Token& token)
         doctypeToken.m_systemID = token.systemIdentifier();
         doctypeToken.m_forceQuirks = token.forceQuirks();
 
-        m_legacyHTMLParser->parseDoctypeToken(&doctypeToken);
+        m_legacyTreeConstructor->parseDoctypeToken(&doctypeToken);
         return 0;
     }
 
@@ -149,7 +149,7 @@ PassRefPtr<Node> HTML5TreeBuilder::passTokenToLegacyParser(HTML5Token& token)
     Token oldStyleToken;
     convertToOldStyle(token, oldStyleToken);
 
-    RefPtr<Node> result =  m_legacyHTMLParser->parseToken(&oldStyleToken);
+    RefPtr<Node> result =  m_legacyTreeConstructor->parseToken(&oldStyleToken);
     if (token.type() == HTML5Token::StartTag) {
         // This work is supposed to be done by the parser, but
         // when using the old parser for we have to do this manually.
@@ -213,8 +213,8 @@ PassRefPtr<Node> HTML5TreeBuilder::processToken(HTML5Token& token, UChar current
 void HTML5TreeBuilder::finished()
 {
     // We should call m_document->finishedParsing() here, except
-    // m_legacyHTMLParser->finished() does it for us.
-    m_legacyHTMLParser->finished();
+    // m_legacyTreeConstructor->finished() does it for us.
+    m_legacyTreeConstructor->finished();
 }
 
 }

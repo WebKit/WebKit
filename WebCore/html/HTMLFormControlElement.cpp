@@ -178,11 +178,11 @@ void HTMLFormControlElement::removedFromTree(bool deep)
 {
     // If the form and element are both in the same tree, preserve the connection to the form.
     // Otherwise, null out our form and remove ourselves from the form's list of elements.
-    HTMLParser* treeBuilder = 0;
+    HTMLParser* treeConstructor = 0;
     if (DocumentParser* parser = document()->parser())
-        treeBuilder = parser->htmlParser();
+        treeConstructor = parser->htmlTreeConstructor();
 
-    if (m_form && !(treeBuilder && treeBuilder->isHandlingResidualStyleAcrossBlocks()) && findRoot(this) != findRoot(m_form)) {
+    if (m_form && !(treeConstructor && treeConstructor->isHandlingResidualStyleAcrossBlocks()) && findRoot(this) != findRoot(m_form)) {
         m_form->removeFormElement(this);
         m_form = 0;
     }

@@ -58,7 +58,7 @@ namespace WebCore {
 
         virtual void executeScriptsWaitingForStylesheets() {}
 
-        virtual HTMLParser* htmlParser() const { return 0; }
+        virtual HTMLParser* htmlTreeConstructor() const { return 0; }
         virtual HTMLDocumentParser* asHTMLDocumentParser() { return 0; }
 
         XSSAuditor* xssAuditor() const { return m_XSSAuditor; }
