@@ -137,7 +137,7 @@ private:
 
     bool isMailtoForm() const;
     TextEncoding dataEncoding() const;
-    PassRefPtr<FormData> createFormData();
+    PassRefPtr<FormData> prepareFormData();
     unsigned formElementIndex(HTMLFormControlElement*);
     // Returns true if the submission should be proceeded.
     bool validateInteractively(Event*);

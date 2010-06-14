@@ -1,3 +1,20 @@
+2010-06-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Refactor form submission code in HTMLFormElement to add clarity.
+        https://bugs.webkit.org/show_bug.cgi?id=39430
+
+        Covered by existing tests in fast/forms/mailto.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::appendMailtoPostFormDataToURL): Renamed from transferMailtoPostFormDataToUrl,
+            removed clearing out of the FormData and moved it to a new place (next to the call site).
+        (WebCore::HTMLFormElement::prepareFormData): Renamed from createFormData, moved the logic of
+            prepareing FormData here, including the use of appendMailtoPostFormDataToURL.
+        (WebCore::HTMLFormElement::submit): Consolidated multiple invocations of submitForm().
+        * html/HTMLFormElement.h: Renamed createFormData to prepareFormData.
+
 2010-06-14  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

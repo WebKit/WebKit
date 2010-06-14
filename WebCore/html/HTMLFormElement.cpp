@@ -200,8 +200,38 @@ TextEncoding HTMLFormElement::dataEncoding() const
     return m_formDataBuilder.dataEncoding(document());
 }
 
-PassRefPtr<FormData> HTMLFormElement::createFormData()
+static void appendMailtoPostFormDataToURL(KURL& url, const FormData& data, const String& encodingType)
 {
+    String body = data.flattenToString();
+
+    if (equalIgnoringCase(encodingType, "text/plain")) {
+        // Convention seems to be to decode, and s/&/\r\n/. Also, spaces are encoded as %20.
+        body = decodeURLEscapeSequences(body.replace('&', "\r\n").replace('+', ' ') + "\r\n");
+    }
+
+    Vector<char> bodyData;
+    bodyData.append("body=", 5);
+    FormDataBuilder::encodeStringAsFormData(bodyData, body.utf8());
+    body = String(bodyData.data(), bodyData.size()).replace('+', "%20");
+
+    String query = url.query();
+    if (!query.isEmpty())
+        query.append('&');
+    query.append(body);
+    url.setQuery(query);
+}
+
+PassRefPtr<FormData> HTMLFormElement::prepareFormData()
+{
+    if (m_formDataBuilder.isPostMethod()) {
+        if (m_formDataBuilder.isMultiPartForm() && isMailtoForm()) {
+            // FIXME: This may fire a DOM Mutation Event. Do we really want this here?
+            setEnctype("application/x-www-form-urlencoded");
+            ASSERT(!m_formDataBuilder.isMultiPartForm());
+        }
+    } else
+        m_formDataBuilder.setIsMultiPartForm(false);
+
     RefPtr<DOMFormData> domFormData = DOMFormData::create(dataEncoding().encodingForFormSubmission());
     for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
         HTMLFormControlElement* control = m_associatedElements[i];
@@ -209,10 +239,24 @@ PassRefPtr<FormData> HTMLFormElement::createFormData()
             control->appendFormData(*domFormData, m_formDataBuilder.isMultiPartForm());
     }
 
-    RefPtr<FormData> result = (m_formDataBuilder.isMultiPartForm()) ? FormData::createMultiPart(domFormData->items(), domFormData->encoding(), document()) : FormData::create(domFormData->items(), domFormData->encoding());
+    RefPtr<FormData> result;
+
+    if (m_formDataBuilder.isMultiPartForm())
+        result = FormData::createMultiPart(domFormData->items(), domFormData->encoding(), document());
+    else {
+        result = FormData::FormData::create(domFormData->items(), domFormData->encoding());
+        if (m_formDataBuilder.isPostMethod() && isMailtoForm()) {
+            // Convert the form data into a string that we put into the URL.
+            KURL url = document()->completeURL(m_url);
+            appendMailtoPostFormDataToURL(url, *result, m_formDataBuilder.encodingType());
+            m_url = url.string();
+
+            result = FormData::create();
+        }
+    }
 
     result->setIdentifier(generateFormDataIdentifier());
-    return result;
+    return result.release();
 }
 
 bool HTMLFormElement::isMailtoForm() const
@@ -304,28 +348,6 @@ bool HTMLFormElement::prepareSubmit(Event* event)
     return m_doingsubmit;
 }
 
-static void transferMailtoPostFormDataToURL(RefPtr<FormData>& data, KURL& url, const String& encodingType)
-{
-    String body = data->flattenToString();
-    data = FormData::create();
-
-    if (equalIgnoringCase(encodingType, "text/plain")) {
-        // Convention seems to be to decode, and s/&/\r\n/. Also, spaces are encoded as %20.
-        body = decodeURLEscapeSequences(body.replace('&', "\r\n").replace('+', ' ') + "\r\n");
-    }
-
-    Vector<char> bodyData;
-    bodyData.append("body=", 5);
-    FormDataBuilder::encodeStringAsFormData(bodyData, body.utf8());
-    body = String(bodyData.data(), bodyData.size()).replace('+', "%20");
-
-    String query = url.query();
-    if (!query.isEmpty())
-        query.append('&');
-    query.append(body);
-    url.setQuery(query);
-}
-
 void HTMLFormElement::submit(Frame* javaScriptActiveFrame)
 {
     if (javaScriptActiveFrame)
@@ -379,29 +401,10 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool lockH
     if (m_url.isEmpty())
         m_url = document()->url().string();
 
-    if (m_formDataBuilder.isPostMethod()) {
-        if (m_formDataBuilder.isMultiPartForm() && isMailtoForm()) {
-            setEnctype("application/x-www-form-urlencoded");
-            ASSERT(!m_formDataBuilder.isMultiPartForm());
-        }
-
-        RefPtr<FormData> data = createFormData();
-        if (!m_formDataBuilder.isMultiPartForm()) {
-
-            if (isMailtoForm()) {
-                // Convert the form data into a string that we put into the URL.
-                KURL url = document()->completeURL(m_url);
-                transferMailtoPostFormDataToURL(data, url, m_formDataBuilder.encodingType());
-                m_url = url.string();
-            }
-
-            frame->loader()->submitForm("POST", m_url, data.release(), m_target, m_formDataBuilder.encodingType(), String(), lockHistory, event, formState.release());
-        } else
-            frame->loader()->submitForm("POST", m_url, data.get(), m_target, m_formDataBuilder.encodingType(), data->boundary().data(), lockHistory, event, formState.release());
-    } else {
-        m_formDataBuilder.setIsMultiPartForm(false);
-        frame->loader()->submitForm("GET", m_url, createFormData(), m_target, String(), String(), lockHistory, event, formState.release());
-    }
+    RefPtr<FormData> data = prepareFormData();
+    String boundary = m_formDataBuilder.isMultiPartForm() ? data->boundary().data() : String();
+    const char* method = m_formDataBuilder.isPostMethod() ? "POST" : "GET";
+    frame->loader()->submitForm(method, m_url, data.release(), m_target, m_formDataBuilder.encodingType(), boundary, lockHistory, event, formState.release());
 
     if (needButtonActivation && firstSuccessfulSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(false);
