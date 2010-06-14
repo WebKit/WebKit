@@ -1,3 +1,57 @@
+2010-06-14  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Reenable IDBDatabaseRequest's description attribute
+        https://bugs.webkit.org/show_bug.cgi?id=39826
+
+        On the 26th, Beth commented out the description attribute in
+        IDBDatabaseRequest because it was causing problems with the
+        objective c bindings.  Turns out that this is the same bug as
+        in http://trac.webkit.org/changeset/19486.  (Thanks for the
+        pointer, Mark!)
+ 
+        The solution is to change the objective C bindings generator
+        to change the name in the generated code.  id and hash both
+        just appended "Name" to them in the past.  I couldn't think
+        of anything else particularly better to append, so I just
+        went with name as well.
+
+        Test: building the world works on the first try.  Layout
+              test verifies description works again.
+
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_get_description):
+        (webkit_dom_test_obj_get_id):
+        (webkit_dom_test_obj_set_id):
+        (webkit_dom_test_obj_get_hash):
+        (webkit_dom_test_obj_set_property):
+        (webkit_dom_test_obj_get_property):
+        (webkit_dom_test_obj_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::):
+        (WebCore::jsTestObjDescription):
+        (WebCore::jsTestObjId):
+        (WebCore::jsTestObjHash):
+        (WebCore::setJSTestObjId):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj descriptionName]):
+        (-[DOMTestObj idName]):
+        (-[DOMTestObj setIdName:]):
+        (-[DOMTestObj hashName]):
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::descriptionAttrGetter):
+        (WebCore::TestObjInternal::idAttrGetter):
+        (WebCore::TestObjInternal::idAttrSetter):
+        (WebCore::TestObjInternal::hashAttrGetter):
+        (WebCore::):
+        * storage/IDBDatabaseRequest.idl:
+
 2010-06-13  Anders Bakken  <agbakken@gmail.com>
 
         Reviewed by Eric Seidel.

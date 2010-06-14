@@ -29,7 +29,7 @@ module storage {
         Conditional=INDEXED_DATABASE
     ] IDBDatabaseRequest {
         readonly attribute DOMString name;
-        // readonly attribute DOMString description;
+        readonly attribute DOMString description;
         readonly attribute DOMString version;
         readonly attribute DOMStringList objectStores;
 

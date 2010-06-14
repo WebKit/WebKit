@@ -104,5 +104,10 @@ module test {
         void    overloadedMethod(in DOMString strArg);
         void    overloadedMethod(in long intArg);
 #endif
+
+        // ObjectiveC reserved words.
+        readonly attribute long      description;
+        attribute long               id;
+        readonly attribute DOMString hash;
     };
 }

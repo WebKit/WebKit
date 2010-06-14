@@ -5,6 +5,7 @@
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
 # Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
+# Copyright (C) 2010 Google Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -740,8 +741,8 @@ sub GenerateHeader
         foreach my $attribute (@{$dataNode->attributes}) {
             my $attributeName = $attribute->signature->name;
 
-            if ($attributeName eq "id" or $attributeName eq "hash") {
-                # Special case attributes id and hash to be idName and hashName to avoid ObjC naming conflict.
+            if ($attributeName eq "id" or $attributeName eq "hash" or $attributeName eq "description") {
+                # Special case some attributes (like id and hash) to have a "Name" suffix to avoid ObjC naming conflicts.
                 $attributeName .= "Name";
             } elsif ($attributeName eq "frame") {
                 # Special case attribute frame to be frameBorders.
@@ -1157,8 +1158,8 @@ sub GenerateImplementation
             my $attributeClassName = GetClassName($attribute->signature->type);
 
             my $attributeInterfaceName = $attributeName;
-            if ($attributeName eq "id" or $attributeName eq "hash") {
-                # Special case attributes id and hash to be idName and hashName to avoid ObjC naming conflict.
+            if ($attributeName eq "id" or $attributeName eq "hash" or $attributeName eq "description") {
+                # Special case some attributes (like id and hash) to have a "Name" suffix to avoid ObjC naming conflicts.
                 $attributeInterfaceName .= "Name";
             } elsif ($attributeName eq "frame") {
                 # Special case attribute frame to be frameBorders.
