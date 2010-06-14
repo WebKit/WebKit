@@ -58,14 +58,14 @@
 #endif
 
 #if ENABLE(3D_CANVAS)
-#include "JSArrayBufferConstructor.h"
-#include "JSInt8ArrayConstructor.h"
-#include "JSUint8ArrayConstructor.h"
-#include "JSInt32ArrayConstructor.h"
-#include "JSUint32ArrayConstructor.h"
-#include "JSInt16ArrayConstructor.h"
-#include "JSUint16ArrayConstructor.h"
-#include "JSFloat32ArrayConstructor.h"
+#include "JSArrayBuffer.h"
+#include "JSInt8Array.h"
+#include "JSUint8Array.h"
+#include "JSInt32Array.h"
+#include "JSUint32Array.h"
+#include "JSInt16Array.h"
+#include "JSUint16Array.h"
+#include "JSFloat32Array.h"
 #endif
 #include "JSWebKitCSSMatrix.h"
 #include "JSWebKitPoint.h"
