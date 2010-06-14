@@ -143,7 +143,7 @@ static inline void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr)
     cairo_set_fill_rule(dstCr, cairo_get_fill_rule(srcCr));
 }
 
-void GraphicsContext::calculateShadowBufferDimensions(IntSize& shadowBufferSize, FloatRect& shadowRect, float& kernelSize, const FloatRect& sourceRect, const IntSize& shadowSize, float shadowBlur)
+void GraphicsContext::calculateShadowBufferDimensions(IntSize& shadowBufferSize, FloatRect& shadowRect, float& kernelSize, const FloatRect& sourceRect, const FloatSize& shadowSize, float shadowBlur)
 {
 #if ENABLE(FILTERS)
     // calculate the kernel size according to the HTML5 canvas shadow specification
@@ -161,7 +161,7 @@ void GraphicsContext::calculateShadowBufferDimensions(IntSize& shadowBufferSize,
 static inline void drawPathShadow(GraphicsContext* context, GraphicsContextPrivate* gcp, bool fillShadow, bool strokeShadow)
 {
 #if ENABLE(FILTERS)
-    IntSize shadowSize;
+    FloatSize shadowSize;
     float shadowBlur;
     Color shadowColor;
     if (!context->getShadow(shadowSize, shadowBlur, shadowColor))
@@ -559,7 +559,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
 static void drawBorderlessRectShadow(GraphicsContext* context, const FloatRect& rect, const Color& rectColor)
 {
 #if ENABLE(FILTERS)
-    IntSize shadowSize;
+    FloatSize shadowSize;
     float shadowBlur;
     Color shadowColor;
 
@@ -841,7 +841,7 @@ void GraphicsContext::clipToImageBuffer(const FloatRect& rect, const ImageBuffer
     notImplemented();
 }
 
-void GraphicsContext::setPlatformShadow(IntSize const& size, float, Color const&, ColorSpace)
+void GraphicsContext::setPlatformShadow(FloatSize const& size, float, Color const&, ColorSpace)
 {
     // Cairo doesn't support shadows natively, they are drawn manually in the draw*
     // functions
@@ -849,7 +849,7 @@ void GraphicsContext::setPlatformShadow(IntSize const& size, float, Color const&
     if (m_common->state.shadowsIgnoreTransforms) {
         // Meaning that this graphics context is associated with a CanvasRenderingContext
         // We flip the height since CG and HTML5 Canvas have opposite Y axis
-        m_common->state.shadowSize = IntSize(size.width(), -size.height());
+        m_common->state.shadowSize = FloatSize(size.width(), -size.height());
     }
 }
 

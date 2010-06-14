@@ -1,3 +1,70 @@
+2010-06-14  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Change the type of ShadowSize from IntSize to FloatSize in GraphicsContext.
+        Using IntSize loses precision and fails the test.
+        Note: This code change fixes Qt port but Mac is still failing due to
+        platform issue.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40434
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::applyShadow):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setShadow):
+        (WebCore::GraphicsContext::getShadow):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContextPrivate.h:
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::calculateShadowBufferDimensions):
+        (WebCore::drawPathShadow):
+        (WebCore::drawBorderlessRectShadow):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareGlyphPainter::drawGlyphs):
+        (WebCore::Font::drawComplexText):
+        * platform/graphics/gtk/FontGtk.cpp:
+        (WebCore::Font::drawComplexText):
+        * platform/graphics/haiku/GraphicsContextHaiku.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/openvg/GraphicsContextOpenVG.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::drawTextCommon):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::strokeArc):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::drawFilledShadowPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::drawBorderlessRectShadow):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::windowsCanHandleDrawTextShadow):
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::drawGDIGlyphs):
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/wince/GraphicsContextWince.cpp:
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        (WebCore::GraphicsContext::drawText):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+
 2010-06-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

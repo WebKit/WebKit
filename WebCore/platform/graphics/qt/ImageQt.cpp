@@ -187,7 +187,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
     if (!image->hasAlpha() && painter->compositionMode() == QPainter::CompositionMode_SourceOver)
         painter->setCompositionMode(QPainter::CompositionMode_Source);
 
-    IntSize shadowSize;
+    FloatSize shadowSize;
     float shadowBlur;
     Color shadowColor;
     if (ctxt->getShadow(shadowSize, shadowBlur, shadowColor)) {

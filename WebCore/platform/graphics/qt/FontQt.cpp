@@ -109,7 +109,7 @@ static void drawTextCommon(GraphicsContext* ctx, const TextRun& run, const Float
     QPointF pt(point.x(), point.y());
 
     // text shadow
-    IntSize shadowSize;
+    FloatSize shadowSize;
     float shadowBlur;
     Color shadowColor;
     bool hasShadow = ctx->textDrawingMode() == cTextFill && ctx->getShadow(shadowSize, shadowBlur, shadowColor);

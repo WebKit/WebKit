@@ -977,7 +977,7 @@ void GraphicsContext::setPlatformFillPattern(Pattern* pattern)
     platformContext()->setFillShader(pattern->platformPattern(getCTM()));
 }
 
-void GraphicsContext::setPlatformShadow(const IntSize& size,
+void GraphicsContext::setPlatformShadow(const FloatSize& size,
                                         float blurFloat,
                                         const Color& color,
                                         ColorSpace colorSpace)

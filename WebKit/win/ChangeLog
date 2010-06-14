@@ -1,3 +1,14 @@
+2010-06-14  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [win] Make windows compile after API changes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40434
+
+        * WebKitGraphics.cpp:
+        (WebDrawText):
+
 2010-06-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -70,7 +70,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     }
 
     // Text shadow, inspired by FontMac
-    IntSize shadowSize;
+    FloatSize shadowSize;
     float shadowBlur = 0;
     Color shadowColor;
     bool hasShadow = context->textDrawingMode() == cTextFill &&

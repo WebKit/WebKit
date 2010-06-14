@@ -273,7 +273,7 @@ bool TransparencyAwareGlyphPainter::drawGlyphs(int numGlyphs,
 
     // If there is a non-blur shadow and both the fill color and shadow color 
     // are opaque, handle without skia. 
-    IntSize shadowSize;
+    FloatSize shadowSize;
     float shadowBlur;
     Color shadowColor;
     if (m_graphicsContext->getShadow(shadowSize, shadowBlur, shadowColor)) {
@@ -483,7 +483,7 @@ void Font::drawComplexText(GraphicsContext* graphicsContext,
 
     // If there is a non-blur shadow and both the fill color and shadow color 
     // are opaque, handle without skia. 
-    IntSize shadowSize;
+    FloatSize shadowSize;
     float shadowBlur;
     Color shadowColor;
     if (graphicsContext->getShadow(shadowSize, shadowBlur, shadowColor) && windowsCanHandleDrawTextShadow(graphicsContext)) {

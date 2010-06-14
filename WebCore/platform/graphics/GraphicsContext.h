@@ -263,8 +263,8 @@ namespace WebCore {
         void beginTransparencyLayer(float opacity);
         void endTransparencyLayer();
 
-        void setShadow(const IntSize&, float blur, const Color&, ColorSpace);
-        bool getShadow(IntSize&, float&, Color&) const;
+        void setShadow(const FloatSize&, float blur, const Color&, ColorSpace);
+        bool getShadow(FloatSize&, float&, Color&) const;
         void clearShadow();
 
         void drawFocusRing(const Vector<IntRect>&, int width, int offset, const Color&);
@@ -279,7 +279,7 @@ namespace WebCore {
 #if PLATFORM(CAIRO)
         float getAlpha();
         void createPlatformShadow(PassOwnPtr<ImageBuffer> buffer, const Color& shadowColor, const FloatRect& shadowRect, float kernelSize);
-        static void calculateShadowBufferDimensions(IntSize& shadowBufferSize, FloatRect& shadowRect, float& kernelSize, const FloatRect& sourceRect, const IntSize& shadowSize, float shadowBlur);
+        static void calculateShadowBufferDimensions(IntSize& shadowBufferSize, FloatRect& shadowRect, float& kernelSize, const FloatRect& sourceRect, const FloatSize& shadowSize, float shadowBlur);
 #endif
 
         void setCompositeOperation(CompositeOperator);
@@ -409,7 +409,7 @@ namespace WebCore {
 
         void setPlatformShouldAntialias(bool b);
 
-        void setPlatformShadow(const IntSize&, float blur, const Color&, ColorSpace);
+        void setPlatformShadow(const FloatSize&, float blur, const Color&, ColorSpace);
         void clearPlatformShadow();
 
         static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, const StrokeStyle&);

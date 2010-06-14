@@ -333,7 +333,7 @@ void GraphicsContext::drawRect(const IntRect& rect)
     p->setRenderHint(QPainter::Antialiasing, m_data->antiAliasingForRectsAndLines);
 
     if (m_common->state.shadowColor.isValid()) {
-        IntSize shadowSize;
+        FloatSize shadowSize;
         float shadowBlur;
         Color shadowColor;
         if (getShadow(shadowSize, shadowBlur, shadowColor)) {
@@ -371,7 +371,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     p->setRenderHint(QPainter::Antialiasing, m_data->antiAliasingForRectsAndLines);
     adjustLineToPixelBoundaries(p1, p2, width, style);
 
-    IntSize shadowSize;
+    FloatSize shadowSize;
     float shadowBlur;
     Color shadowColor;
     if (textDrawingMode() == cTextFill && getShadow(shadowSize, shadowBlur, shadowColor)) {
@@ -473,7 +473,7 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
     const bool antiAlias = p->testRenderHint(QPainter::Antialiasing);
     p->setRenderHint(QPainter::Antialiasing, true);
 
-    IntSize shadowSize;
+    FloatSize shadowSize;
     float shadowBlur;
     Color shadowColor;
     startAngle *= 16;
@@ -508,7 +508,7 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
     QPainter* p = m_data->p();
     p->save();
     p->setRenderHint(QPainter::Antialiasing, shouldAntialias);
-    IntSize shadowSize;
+    FloatSize shadowSize;
     float shadowBlur;
     Color shadowColor;
     if (getShadow(shadowSize, shadowBlur, shadowColor)) {
@@ -539,7 +539,7 @@ QPen GraphicsContext::pen()
 
 static void inline drawFilledShadowPath(GraphicsContext* context, QPainter* p, const QPainterPath& path)
 {
-    IntSize shadowSize;
+    FloatSize shadowSize;
     float shadowBlur;
     Color shadowColor;
     if (context->getShadow(shadowSize, shadowBlur, shadowColor)) {
@@ -586,7 +586,7 @@ void GraphicsContext::strokePath()
     path.setFillRule(toQtFillRule(fillRule()));
 
     if (m_common->state.strokePattern || m_common->state.strokeGradient || strokeColor().alpha()) {
-        IntSize shadowSize;
+        FloatSize shadowSize;
         float shadowBlur;
         Color shadowColor;
         if (getShadow(shadowSize, shadowBlur, shadowColor)) {
@@ -618,7 +618,7 @@ void GraphicsContext::strokePath()
 
 static inline void drawBorderlessRectShadow(GraphicsContext* context, QPainter* p, const FloatRect& rect)
 {
-    IntSize shadowSize;
+    FloatSize shadowSize;
     float shadowBlur;
     Color shadowColor;
     if (context->getShadow(shadowSize, shadowBlur, shadowColor)) {
@@ -820,7 +820,7 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect)
     return FloatRect(roundedOrigin, roundedLowerRight - roundedOrigin);
 }
 
-void GraphicsContext::setPlatformShadow(const IntSize& size, float, const Color&, ColorSpace)
+void GraphicsContext::setPlatformShadow(const FloatSize& size, float, const Color&, ColorSpace)
 {
     // Qt doesn't support shadows natively, they are drawn manually in the draw*
     // functions
@@ -828,7 +828,7 @@ void GraphicsContext::setPlatformShadow(const IntSize& size, float, const Color&
     if (m_common->state.shadowsIgnoreTransforms) {
         // Meaning that this graphics context is associated with a CanvasRenderingContext
         // We flip the height since CG and HTML5 Canvas have opposite Y axis
-        m_common->state.shadowSize = IntSize(size.width(), -size.height());
+        m_common->state.shadowSize = FloatSize(size.width(), -size.height());
     }
 }
 

@@ -929,7 +929,7 @@ void CanvasRenderingContext2D::applyShadow()
 
     float width = state().m_shadowOffset.width();
     float height = state().m_shadowOffset.height();
-    c->setShadow(IntSize(width, -height), state().m_shadowBlur, state().m_shadowColor, DeviceColorSpace);
+    c->setShadow(FloatSize(width, -height), state().m_shadowBlur, state().m_shadowColor, DeviceColorSpace);
 }
 
 static IntSize size(HTMLImageElement* image)

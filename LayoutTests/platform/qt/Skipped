@@ -5309,8 +5309,6 @@ canvas/philip/tests/2d.shadow.alpha.5.html
 canvas/philip/tests/2d.shadow.canvas.alpha.html
 canvas/philip/tests/2d.shadow.canvas.basic.html
 canvas/philip/tests/2d.shadow.canvas.transparent.2.html
-canvas/philip/tests/2d.shadow.enable.x.html
-canvas/philip/tests/2d.shadow.enable.y.html
 canvas/philip/tests/2d.shadow.gradient.alpha.html
 canvas/philip/tests/2d.shadow.gradient.transparent.1.html
 canvas/philip/tests/2d.shadow.image.alpha.html
