@@ -1,3 +1,24 @@
+2010-06-14  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [V8] Clean up SerializedScriptValue
+        https://bugs.webkit.org/show_bug.cgi?id=40482
+
+        SerializedScriptValue doesn't follow WebKit's style guidelines very well
+        and needlessly inlines quite a bit within the .h file. This change cleans
+        things up. No funcitonal changes.
+
+        No change in behavior.
+
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::deserializeAndSetProperty):
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::createFromWire):
+        (WebCore::SerializedScriptValue::release):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        * bindings/v8/SerializedScriptValue.h:
+
 2010-06-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -32,7 +32,6 @@
 #define SerializedScriptValue_h
 
 #include "ScriptValue.h"
-#include "V8Binding.h"
 #include <v8.h>
 #include <wtf/RefCounted.h>
 
@@ -40,63 +39,21 @@ namespace WebCore {
 
 class SerializedScriptValue : public RefCounted<SerializedScriptValue> {
 public:
-    // Deserializes the given value and sets it as a property on the
-    // object.
-    static void deserializeAndSetProperty(v8::Handle<v8::Object> object,
-                                          const char* propertyName,
-                                          v8::PropertyAttribute attribute,
-                                          SerializedScriptValue* value)
-    {
-        if (!value)
-            return;
-        v8::Handle<v8::Value> deserialized = value->deserialize();
-        object->ForceSet(v8::String::NewSymbol(propertyName), deserialized, attribute);
-    }
+    static void deserializeAndSetProperty(v8::Handle<v8::Object> object, const char* propertyName,
+                                          v8::PropertyAttribute, SerializedScriptValue*);
 
-    // Creates a serialized representation of the given V8 value.
-    static PassRefPtr<SerializedScriptValue> create(v8::Handle<v8::Value> value)
-    {
-        bool didThrow;
-        return adoptRef(new SerializedScriptValue(value, didThrow));
-    }
-
-    // Creates a serialized representation of the given V8 value.
-    //
     // If a serialization error occurs (e.g., cyclic input value) this
     // function returns an empty representation, schedules a V8 exception to
     // be thrown using v8::ThrowException(), and sets |didThrow|. In this case
     // the caller must not invoke any V8 operations until control returns to
     // V8. When serialization is successful, |didThrow| is false.
-    static PassRefPtr<SerializedScriptValue> create(v8::Handle<v8::Value> value, bool& didThrow)
-    {
-        return adoptRef(new SerializedScriptValue(value, didThrow));
-    }
+    static PassRefPtr<SerializedScriptValue> create(v8::Handle<v8::Value> value, bool& didThrow);
+    static PassRefPtr<SerializedScriptValue> create(v8::Handle<v8::Value>);
+    static PassRefPtr<SerializedScriptValue> createFromWire(String data);
+    static PassRefPtr<SerializedScriptValue> create(String data);
+    static PassRefPtr<SerializedScriptValue> create();
 
-    // Creates a serialized value with the given data obtained from a
-    // prior call to toWireString().
-    static PassRefPtr<SerializedScriptValue> createFromWire(String data)
-    {
-        return adoptRef(new SerializedScriptValue(data, WireData));
-    }
-
-    // Creates a serialized representation of WebCore string.
-    static PassRefPtr<SerializedScriptValue> create(String data)
-    {
-        return adoptRef(new SerializedScriptValue(data, StringValue));
-    }
-
-    // Creates an empty serialized value.
-    static PassRefPtr<SerializedScriptValue> create()
-    {
-        return adoptRef(new SerializedScriptValue());
-    }
-
-    PassRefPtr<SerializedScriptValue> release()
-    {
-        RefPtr<SerializedScriptValue> result = adoptRef(new SerializedScriptValue(m_data, WireData));
-        m_data = String();
-        return result.release();
-    }
+    PassRefPtr<SerializedScriptValue> release();
 
     String toWireString() const { return m_data; }
 
@@ -110,10 +67,8 @@ private:
         WireData
     };
 
-    SerializedScriptValue() { }
-
+    SerializedScriptValue();
     SerializedScriptValue(v8::Handle<v8::Value>, bool& didThrow);
-
     SerializedScriptValue(String data, StringDataMode mode);
 
     String m_data;
