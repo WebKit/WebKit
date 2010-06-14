@@ -244,7 +244,7 @@ PassRefPtr<FormData> HTMLFormElement::prepareFormData()
     if (m_formDataBuilder.isMultiPartForm())
         result = FormData::createMultiPart(domFormData->items(), domFormData->encoding(), document());
     else {
-        result = FormData::FormData::create(domFormData->items(), domFormData->encoding());
+        result = FormData::create(domFormData->items(), domFormData->encoding());
         if (m_formDataBuilder.isPostMethod() && isMailtoForm()) {
             // Convert the form data into a string that we put into the URL.
             KURL url = document()->completeURL(m_url);
