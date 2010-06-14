@@ -891,6 +891,7 @@ SET(WebCore_SOURCES
 
     html/AsyncImageResizer.cpp
     html/Blob.cpp
+    html/BlobBuilder.cpp
     html/CollectionCache.cpp
     html/DOMDataGridDataSource.cpp
     html/DOMFormData.cpp

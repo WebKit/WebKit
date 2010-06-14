@@ -129,6 +129,14 @@ CString StringBlobItem::convertToCString(const String& text, LineEnding ending, 
     if (ending == EndingTransparent)
         return result;
 
+    if (ending == EndingNative) {
+#if OS(WINDOWS)
+        ending = EndingCRLF;
+#else
+        ending = EndingLF;
+#endif
+    }
+
     const char* endingChars = (ending == EndingCRLF) ? "\r\n" : ((ending == EndingCR) ? "\r" : "\n");
 
     int endingLength = (ending == EndingCRLF) ? 2 : 1;

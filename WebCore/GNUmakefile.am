@@ -1036,6 +1036,8 @@ webcore_sources += \
 	WebCore/html/AsyncImageResizer.h \
 	WebCore/html/Blob.cpp \
 	WebCore/html/Blob.h \
+	WebCore/html/BlobBuilder.cpp \
+	WebCore/html/BlobBuilder.h \
 	WebCore/html/canvas/CanvasContextAttributes.h \
 	WebCore/html/canvas/CanvasGradient.cpp \
 	WebCore/html/canvas/CanvasGradient.h \

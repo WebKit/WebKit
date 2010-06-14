@@ -590,6 +590,7 @@ SOURCES += \
     history/PageCache.cpp \
     html/AsyncImageResizer.cpp \
     html/Blob.cpp \
+    html/BlobBuilder.cpp \
     html/canvas/CanvasGradient.cpp \
     html/canvas/CanvasPattern.cpp \
     html/canvas/CanvasPixelArray.cpp \
@@ -1320,6 +1321,7 @@ HEADERS += \
     history/PageCache.h \
     html/AsyncImageResizer.h \
     html/Blob.h \
+    html/BlobBuilder.h \
     html/canvas/CanvasGradient.h \
     html/canvas/CanvasPattern.h \
     html/canvas/CanvasPixelArray.h \

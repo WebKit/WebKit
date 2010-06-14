@@ -44,6 +44,7 @@ namespace WebCore {
 // String ending types.
 enum LineEnding {
     EndingTransparent = 0,
+    EndingNative,
     EndingLF,
     EndingCR,
     EndingCRLF,

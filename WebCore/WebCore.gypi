@@ -1378,6 +1378,8 @@
             'html/AsyncImageResizer.h',
             'html/Blob.cpp',
             'html/Blob.h',
+            'html/BlobBuilder.cpp',
+            'html/BlobBuilder.h',
             'html/canvas/ArrayBufferView.cpp',
             'html/canvas/ArrayBufferView.h',
             'html/canvas/ArrayBuffer.cpp',

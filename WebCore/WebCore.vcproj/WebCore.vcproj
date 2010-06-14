@@ -33121,6 +33121,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\BlobBuilder.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\BlobBuilder.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\canvas\CanvasGradient.cpp"
 				>
 			</File>

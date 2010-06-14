@@ -28,57 +28,62 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_h
-#define Blob_h
+#include "config.h"
 
-#include "BlobItem.h"
-#include "PlatformString.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+#if ENABLE(FILE_WRITER)
+
+#include "BlobBuilder.h"
+
+#include "AtomicString.h"
+#include "Blob.h"
+#include "TextEncoding.h"
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
-class Blob : public RefCounted<Blob> {
-public:
-    static PassRefPtr<Blob> create(const String& type, const BlobItemList& items)
-    {
-        return adoptRef(new Blob(type, items));
+static bool getLineEndingTypeFromString(const AtomicString& typeString, LineEnding& endingType)
+{
+    DEFINE_STATIC_LOCAL(AtomicString, transparent, ("transparent"));
+    DEFINE_STATIC_LOCAL(AtomicString, native, ("native"));
+
+    if (typeString.isEmpty() || typeString == transparent) {
+        endingType = EndingTransparent;
+        return true;
     }
-
-    // FIXME: Deprecated method.  This is called only from
-    // bindings/v8/SerializedScriptValue.cpp and the usage in it will become invalid once
-    // BlobBuilder is introduced.
-    static PassRefPtr<Blob> create(const String& path)
-    {
-        return adoptRef(new Blob(path));
+    if (typeString == native) {
+        endingType = EndingNative;
+        return true;
     }
+    return false;
+}
 
-    virtual ~Blob() { }
+bool BlobBuilder::appendString(const String& text, const String& type, ExceptionCode& ec)
+{
+    ec = 0;
+    LineEnding endingType;
+    if (!getLineEndingTypeFromString(type, endingType)) {
+        ec = SYNTAX_ERR;
+        return false;
+    }
+    m_items.append(StringBlobItem::create(text, endingType, UTF8Encoding()));
+    return true;
+}
 
-    unsigned long long size() const;
-    const String& type() const { return m_type; }
-    virtual bool isFile() const { return false; }
+bool BlobBuilder::appendBlob(PassRefPtr<Blob> blob)
+{
+    if (blob) {
+        for (size_t i = 0; i < blob->items().size(); ++i)
+            m_items.append(blob->items()[i]);
+        return true;
+    }
+    return false;
+}
 
-    // FIXME: Deprecated method.
-    const String& path() const;
-
-    const BlobItemList& items() const { return m_items; }
-
-#if ENABLE(BLOB_SLICE)
-    PassRefPtr<Blob> slice(long long start, long long length) const;
-#endif
-
-protected:
-    Blob(const String& type, const BlobItemList&);
-
-    // FIXME: Deprecated constructor.  See also the comment for Blob::create(path).
-    Blob(const String& path);
-
-    BlobItemList m_items;
-    String m_type;
-};
+PassRefPtr<Blob> BlobBuilder::getBlob(const String& contentType) const
+{
+    return Blob::create(contentType, m_items);
+}
 
 } // namespace WebCore
 
-#endif // Blob_h
+#endif // ENABLE(FILE_WRITER)

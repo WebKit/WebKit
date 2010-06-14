@@ -1,3 +1,26 @@
+2010-06-14  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Jian Li.
+
+        Implement BlobBuilder internal class for BlobBuilder support as defined in FileWriter
+        https://bugs.webkit.org/show_bug.cgi?id=36903
+
+        No new tests; they will be added when we add jsc bindings.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/BlobBuilder.cpp: Added.
+        * html/BlobBuilder.h: Added.
+        (WebCore::BlobBuilder::create):
+        * platform/BlobItem.cpp:
+        (WebCore::StringBlobItem::convertToCString): Added EndingNative support.
+        * platform/BlobItem.h: Added EndingNative line-ending type.
+        (WebCore::):
+
 2010-06-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

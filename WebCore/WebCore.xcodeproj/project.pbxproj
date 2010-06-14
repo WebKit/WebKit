@@ -2263,6 +2263,8 @@
 		895253DF116C4F0600CABF00 /* FileThreadTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 895253DE116C4F0600CABF00 /* FileThreadTask.h */; };
 		8988E10E11A3508B00DB732E /* BlobItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8988E10C11A3508B00DB732E /* BlobItem.cpp */; };
 		8988E10F11A3508B00DB732E /* BlobItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 8988E10D11A3508B00DB732E /* BlobItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		89BED5EB11BE11CE00448492 /* BlobBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89BED5E911BE11CE00448492 /* BlobBuilder.cpp */; };
+		89BED5EC11BE11CE00448492 /* BlobBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 89BED5EA11BE11CE00448492 /* BlobBuilder.h */; };
 		8FAC774D119872CB0015AE94 /* JSMainThreadExecState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */; };
 		9302B0BD0D79F82900C7EE83 /* PageGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */; };
 		9302B0BF0D79F82C00C7EE83 /* PageGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 9302B0BE0D79F82C00C7EE83 /* PageGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7857,6 +7859,8 @@
 		895253DE116C4F0600CABF00 /* FileThreadTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileThreadTask.h; sourceTree = "<group>"; };
 		8988E10C11A3508B00DB732E /* BlobItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobItem.cpp; sourceTree = "<group>"; };
 		8988E10D11A3508B00DB732E /* BlobItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobItem.h; sourceTree = "<group>"; };
+		89BED5E911BE11CE00448492 /* BlobBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobBuilder.cpp; sourceTree = "<group>"; };
+		89BED5EA11BE11CE00448492 /* BlobBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobBuilder.h; sourceTree = "<group>"; };
 		8F934D831189F1EE00508D5D /* JSMainThreadExecState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMainThreadExecState.h; sourceTree = "<group>"; };
 		8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMainThreadExecState.cpp; sourceTree = "<group>"; };
 		9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageGroup.cpp; sourceTree = "<group>"; };
@@ -13366,6 +13370,8 @@
 				2EAFAF0B10E2AF2D007ED3D6 /* Blob.cpp */,
 				2EAFAF0C10E2AF2D007ED3D6 /* Blob.h */,
 				2EAFAF0D10E2AF2D007ED3D6 /* Blob.idl */,
+				89BED5E911BE11CE00448492 /* BlobBuilder.cpp */,
+				89BED5EA11BE11CE00448492 /* BlobBuilder.h */,
 				93C441ED0F813A1A00C1A634 /* CollectionCache.cpp */,
 				93C441EE0F813A1A00C1A634 /* CollectionCache.h */,
 				93C441FF0F813AE100C1A634 /* CollectionType.h */,
@@ -16881,6 +16887,7 @@
 				BC5EB9200E82040800B25965 /* BindingURI.h in Headers */,
 				A89943280B42338800D7C802 /* BitmapImage.h in Headers */,
 				2EAFAF0F10E2AF2D007ED3D6 /* Blob.h in Headers */,
+				89BED5EC11BE11CE00448492 /* BlobBuilder.h in Headers */,
 				8988E10F11A3508B00DB732E /* BlobItem.h in Headers */,
 				93F199BE08245E59001E9ABC /* BlockExceptions.h in Headers */,
 				BC5EB5E10E81BE8700B25965 /* BorderData.h in Headers */,
@@ -19716,6 +19723,7 @@
 				BC5EB91F0E82040800B25965 /* BindingURI.cpp in Sources */,
 				A89943290B42338800D7C802 /* BitmapImage.cpp in Sources */,
 				2EAFAF0E10E2AF2D007ED3D6 /* Blob.cpp in Sources */,
+				89BED5EB11BE11CE00448492 /* BlobBuilder.cpp in Sources */,
 				8988E10E11A3508B00DB732E /* BlobItem.cpp in Sources */,
 				93F19AE108245E59001E9ABC /* BlockExceptions.mm in Sources */,
 				BCEA4854097D93020094C9E4 /* break_lines.cpp in Sources */,

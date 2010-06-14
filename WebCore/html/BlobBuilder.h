@@ -28,57 +28,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_h
-#define Blob_h
+#ifndef BlobBuilder_h
+#define BlobBuilder_h
+
+#if ENABLE(FILE_WRITER)
 
 #include "BlobItem.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class Blob : public RefCounted<Blob> {
+class ExceptionCode;
+class Blob;
+
+class BlobBuilder : public RefCounted<BlobBuilder> {
 public:
-    static PassRefPtr<Blob> create(const String& type, const BlobItemList& items)
-    {
-        return adoptRef(new Blob(type, items));
-    }
+    static PassRefPtr<BlobBuilder> create() { return adoptRef(new BlobBuilder()); }
 
-    // FIXME: Deprecated method.  This is called only from
-    // bindings/v8/SerializedScriptValue.cpp and the usage in it will become invalid once
-    // BlobBuilder is introduced.
-    static PassRefPtr<Blob> create(const String& path)
-    {
-        return adoptRef(new Blob(path));
-    }
+    bool appendString(const String& text, const String& ending, ExceptionCode&);
+    bool appendBlob(PassRefPtr<Blob>);
 
-    virtual ~Blob() { }
+    PassRefPtr<Blob> getBlob(const String& contentType) const;
 
-    unsigned long long size() const;
-    const String& type() const { return m_type; }
-    virtual bool isFile() const { return false; }
-
-    // FIXME: Deprecated method.
-    const String& path() const;
-
-    const BlobItemList& items() const { return m_items; }
-
-#if ENABLE(BLOB_SLICE)
-    PassRefPtr<Blob> slice(long long start, long long length) const;
-#endif
-
-protected:
-    Blob(const String& type, const BlobItemList&);
-
-    // FIXME: Deprecated constructor.  See also the comment for Blob::create(path).
-    Blob(const String& path);
-
+private:
     BlobItemList m_items;
-    String m_type;
 };
 
 } // namespace WebCore
 
-#endif // Blob_h
+
+#endif // ENABLE(FILE_WRITER)
+
+#endif // BlobBuilder_h
