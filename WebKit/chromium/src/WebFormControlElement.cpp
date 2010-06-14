@@ -59,7 +59,7 @@ WebString WebFormControlElement::nameForAutofill() const
     String trimmedName = name.stripWhiteSpace();
     if (!trimmedName.isEmpty())
         return trimmedName;
-    name = constUnwrap<HTMLFormControlElement>()->getAttribute(HTMLNames::idAttr);
+    name = constUnwrap<HTMLFormControlElement>()->getIdAttribute();
     trimmedName = name.stripWhiteSpace();
     if (!trimmedName.isEmpty())
         return trimmedName;

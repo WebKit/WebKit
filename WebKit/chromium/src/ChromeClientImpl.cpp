@@ -48,6 +48,7 @@
 #include "WebGeolocationService.h"
 #include "GeolocationServiceChromium.h"
 #include "GraphicsLayer.h"
+#include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "IntRect.h"
 #include "Node.h"
