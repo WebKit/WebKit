@@ -1,3 +1,29 @@
+2010-06-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=40550
+        XMLHttpRequest constructor object should expose the constants from the IDL.
+
+        Test: fast/dom/XMLHttpRequest-constants.html
+
+        * Android.jscbindings.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/js/JSWorkerContextCustom.cpp:
+        * bindings/js/JSXMLHttpRequestConstructor.cpp: Removed.
+        * bindings/js/JSXMLHttpRequestConstructor.h: Removed.
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequestConstructor::constructJSXMLHttpRequest):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * xml/XMLHttpRequest.idl:
+
 2010-06-13  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -127,4 +127,15 @@ JSValue JSXMLHttpRequest::responseText(ExecState* exec) const
     return jsOwnedStringOrNull(exec, impl()->responseText());
 }
 
+EncodedJSValue JSC_HOST_CALL JSXMLHttpRequestConstructor::constructJSXMLHttpRequest(ExecState* exec)
+{
+    JSXMLHttpRequestConstructor* jsConstructor = static_cast<JSXMLHttpRequestConstructor*>(exec->callee());
+    ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();
+    if (!context)
+        return throwVMError(exec, createReferenceError(exec, "XMLHttpRequest constructor associated document is unavailable"));
+
+    RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(context);
+    return JSValue::encode(CREATE_DOM_OBJECT_WRAPPER(exec, jsConstructor->globalObject(), XMLHttpRequest, xmlHttpRequest.get()));
+}
+
 } // namespace WebCore

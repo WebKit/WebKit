@@ -339,7 +339,6 @@ SOURCES += \
     bindings/js/JSTreeWalkerCustom.cpp \
     bindings/js/JSWebKitCSSMatrixConstructor.cpp \
     bindings/js/JSWebKitPointConstructor.cpp \
-    bindings/js/JSXMLHttpRequestConstructor.cpp \
     bindings/js/JSXMLHttpRequestCustom.cpp \
     bindings/js/JSXMLHttpRequestUploadCustom.cpp \
     bindings/js/JSPluginCustom.cpp \
@@ -1083,7 +1082,6 @@ HEADERS += \
     bindings/js/JSWorkerConstructor.h \
     bindings/js/JSWorkerContextBase.h \
     bindings/js/JSWorkerContextErrorHandler.h \
-    bindings/js/JSXMLHttpRequestConstructor.h \
     bindings/js/JSXSLTProcessorConstructor.h \
     bindings/js/JavaScriptCallFrame.h \
     bindings/js/ScheduledAction.h \

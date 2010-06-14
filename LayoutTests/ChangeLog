@@ -1,3 +1,15 @@
+2010-06-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Update tests for https://bugs.webkit.org/show_bug.cgi?id=40550
+        XMLHttpRequest constructor object should expose the constants from the IDL.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/XMLHttpRequest-constants-expected.txt: Added.
+        * fast/dom/XMLHttpRequest-constants.html: Added.
+        * fast/dom/script-tests/XMLHttpRequest-constants.js: Added.
+
 2010-06-13  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

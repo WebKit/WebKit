@@ -73,7 +73,7 @@
 #include "JSWebSocketConstructor.h"
 #endif
 #include "JSWorkerConstructor.h"
-#include "JSXMLHttpRequestConstructor.h"
+#include "JSXMLHttpRequest.h"
 #include "JSXSLTProcessorConstructor.h"
 #include "Location.h"
 #include "MediaPlayer.h"

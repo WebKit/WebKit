@@ -45,7 +45,7 @@
 #include "JSWebSocketConstructor.h"
 #include "JSWorkerLocation.h"
 #include "JSWorkerNavigator.h"
-#include "JSXMLHttpRequestConstructor.h"
+#include "JSXMLHttpRequest.h"
 #include "ScheduledAction.h"
 #include "WorkerContext.h"
 #include "WorkerLocation.h"

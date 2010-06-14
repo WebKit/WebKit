@@ -984,6 +984,12 @@ sub GenerateHeader
 
     push(@headerContent, "};\n\n");
 
+    # Conditionally emit the constructor object's declaration
+    if ($dataNode->extendedAttributes->{"CustomConstructFunction"}) {
+        GenerateConstructorDeclaration(\@headerContent, $className, $dataNode);
+    }
+
+
     if ($numFunctions > 0) {
         push(@headerContent,"// Functions\n\n");
         foreach my $function (@{$dataNode->functions}) {
@@ -1231,10 +1237,10 @@ sub GenerateImplementation
                                    \@hashKeys, \@hashSpecials,
                                    \@hashValue1, \@hashValue2);
 
-        my $protoClassName;
-        $protoClassName = "${className}Prototype";
+        my $protoClassName = "${className}Prototype";
 
-        push(@implContent, constructorFor($className, $protoClassName, $interfaceName, $visibleClassName, $dataNode));
+        GenerateConstructorDeclaration(\@implContent, $className, $dataNode) unless $dataNode->extendedAttributes->{"CustomConstructFunction"};
+        GenerateConstructorDefinition(\@implContent, $className, $protoClassName, $interfaceName, $visibleClassName, $dataNode);
     }
 
     # - Add functions and constants to a hashtable definition
@@ -2712,86 +2718,94 @@ sub WriteData
     }
 }
 
-sub constructorFor
+sub GenerateConstructorDeclaration
 {
+    my $outputArray = shift;
+    my $className = shift;
+    my $dataNode = shift;
+
+    my $constructorClassName = "${className}Constructor";
+    my $canConstruct = $dataNode->extendedAttributes->{"CanBeConstructed"};
+    my $callWith = $dataNode->extendedAttributes->{"CallWith"};
+
+    push(@$outputArray, "class ${constructorClassName} : public DOMConstructorObject {\n");
+    push(@$outputArray, "public:\n");
+    push(@$outputArray, "    ${constructorClassName}(JSC::ExecState*, JSDOMGlobalObject*);\n\n");
+
+    push(@$outputArray, "    virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n");
+    push(@$outputArray, "    virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);\n");
+    push(@$outputArray, "    virtual const JSC::ClassInfo* classInfo() const { return &s_info; }\n");
+    push(@$outputArray, "    static const JSC::ClassInfo s_info;\n");
+
+    push(@$outputArray, "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)\n");
+    push(@$outputArray, "    {\n");
+    push(@$outputArray, "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount);\n");
+    push(@$outputArray, "    }\n");
+
+    push(@$outputArray, "protected:\n");
+    push(@$outputArray, "    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::ImplementsHasInstance | DOMConstructorObject::StructureFlags;\n");
+
+    if ($canConstruct) {
+        push(@$outputArray, "    static JSC::EncodedJSValue JSC_HOST_CALL construct${className}(JSC::ExecState*);\n");
+        push(@$outputArray, "    virtual JSC::ConstructType getConstructData(JSC::ConstructData&);\n");
+    }
+    push(@$outputArray, "};\n\n");
+}
+
+sub GenerateConstructorDefinition
+{
+    my $outputArray = shift;
+
     my $className = shift;
     my $protoClassName = shift;
     my $interfaceName = shift;
     my $visibleClassName = shift;
     my $dataNode = shift;
+
     my $constructorClassName = "${className}Constructor";
     my $canConstruct = $dataNode->extendedAttributes->{"CanBeConstructed"};
+    my $customConstructFunction = $dataNode->extendedAttributes->{"CustomConstructFunction"};
     my $callWith = $dataNode->extendedAttributes->{"CallWith"};
 
-my $implContent = << "EOF";
-class ${constructorClassName} : public DOMConstructorObject {
-public:
-    ${constructorClassName}(ExecState* exec, JSDOMGlobalObject* globalObject)
-        : DOMConstructorObject(${constructorClassName}::createStructure(globalObject->objectPrototype()), globalObject)
-    {
-        putDirect(exec->propertyNames().prototype, ${protoClassName}::self(exec, globalObject), DontDelete | ReadOnly);
-    }
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
-    virtual const ClassInfo* classInfo() const { return &s_info; }
-    static const ClassInfo s_info;
+    push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleClassName}Constructor\", 0, &${constructorClassName}Table, 0 };\n\n");
 
-    static PassRefPtr<Structure> createStructure(JSValue proto) 
-    { 
-        return Structure::create(proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount); 
-    }
-    
-protected:
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | DOMConstructorObject::StructureFlags;
-EOF
+    push(@$outputArray, "${constructorClassName}::${constructorClassName}(ExecState* exec, JSDOMGlobalObject* globalObject)\n");
+    push(@$outputArray, "    : DOMConstructorObject(${constructorClassName}::createStructure(globalObject->objectPrototype()), globalObject)\n");
+    push(@$outputArray, "{\n");
+    push(@$outputArray, "    putDirect(exec->propertyNames().prototype, ${protoClassName}::self(exec, globalObject), DontDelete | ReadOnly);\n");
+    push(@$outputArray, "}\n\n");
+
+    push(@$outputArray, "bool ${constructorClassName}::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");
+    push(@$outputArray, "{\n");
+    push(@$outputArray, "    return getStaticValueSlot<${constructorClassName}, DOMObject>(exec, &${constructorClassName}Table, this, propertyName, slot);\n");
+    push(@$outputArray, "}\n\n");
+
+    push(@$outputArray, "bool ${constructorClassName}::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)\n");
+    push(@$outputArray, "{\n");
+    push(@$outputArray, "    return getStaticValueDescriptor<${constructorClassName}, DOMObject>(exec, &${constructorClassName}Table, this, propertyName, descriptor);\n");
+    push(@$outputArray, "}\n\n");
 
     if ($canConstruct) {
-$implContent .= << "EOF";
-    static EncodedJSValue JSC_HOST_CALL construct${interfaceName}(ExecState* exec)
-    {
-EOF
+        if (!$customConstructFunction) {
+            push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}(ExecState* exec)\n");
+            push(@$outputArray, "{\n");
+            my $constructorArg = "";
+            if ($callWith and $callWith eq "ScriptExecutionContext") {
+                $constructorArg = "context";
+                push(@$outputArray, "    ScriptExecutionContext* context = static_cast<${constructorClassName}*>(exec->callee())->scriptExecutionContext();\n");
+                push(@$outputArray, "    if (!context)\n");
+                push(@$outputArray, "        return throwVMError(exec, createReferenceError(exec, \"Reference error\"));\n");
+            }
+            push(@$outputArray, "    return JSValue::encode(asObject(toJS(exec, static_cast<${constructorClassName}*>(exec->callee())->globalObject(), ${interfaceName}::create(${constructorArg}))));\n");
+            push(@$outputArray, "}\n\n");
+        }
 
-    my $constructorArg = "";
-    if ($callWith and $callWith eq "ScriptExecutionContext") {
-        $constructorArg = "context";
-$implContent .= << "EOF";
-        ScriptExecutionContext* context = static_cast<${constructorClassName}*>(exec->callee())->scriptExecutionContext();
-        if (!context)
-            return throwVMError(exec, createReferenceError(exec, "Reference error"));
-EOF
+        push(@$outputArray, "ConstructType ${constructorClassName}::getConstructData(ConstructData& constructData)\n");
+        push(@$outputArray, "{\n");
+        push(@$outputArray, "    constructData.native.function = construct${className};\n");
+        push(@$outputArray, "    return ConstructTypeHost;\n");
+        push(@$outputArray, "}\n\n");
     }
-
-$implContent .= << "EOF";
-        return JSValue::encode(asObject(toJS(exec, static_cast<${constructorClassName}*>(exec->callee())->globalObject(), ${interfaceName}::create(${constructorArg}))));
-    }
-    virtual ConstructType getConstructData(ConstructData& constructData)
-    {
-        constructData.native.function = construct${interfaceName};
-        return ConstructTypeHost;
-    }
-EOF
-    }
-
-$implContent .= << "EOF";
-};
-
-const ClassInfo ${constructorClassName}::s_info = { "${visibleClassName}Constructor", 0, &${constructorClassName}Table, 0 };
-
-bool ${constructorClassName}::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getStaticValueSlot<${constructorClassName}, DOMObject>(exec, &${constructorClassName}Table, this, propertyName, slot);
-}
-
-bool ${constructorClassName}::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
-{
-    return getStaticValueDescriptor<${constructorClassName}, DOMObject>(exec, &${constructorClassName}Table, this, propertyName, descriptor);
-}
-
-EOF
-
-    $implJSCInclude{"JSNumberCell.h"} = 1; # FIXME: What is this for?
-
-    return $implContent;
 }
 
 1;

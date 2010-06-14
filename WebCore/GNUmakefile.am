@@ -512,8 +512,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSWebKitPointConstructor.h \
 	WebCore/bindings/js/JSWorkerContextErrorHandler.cpp \
 	WebCore/bindings/js/JSWorkerContextErrorHandler.h \
-	WebCore/bindings/js/JSXMLHttpRequestConstructor.cpp \
-	WebCore/bindings/js/JSXMLHttpRequestConstructor.h \
 	WebCore/bindings/js/JSXMLHttpRequestCustom.cpp \
 	WebCore/bindings/js/JSXMLHttpRequestUploadCustom.cpp \
 	WebCore/bindings/js/JSXSLTProcessorConstructor.cpp \

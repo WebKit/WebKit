@@ -650,8 +650,6 @@
             'bindings/js/JSWorkerContextErrorHandler.cpp',
             'bindings/js/JSWorkerContextErrorHandler.h',
             'bindings/js/JSWorkerCustom.cpp',
-            'bindings/js/JSXMLHttpRequestConstructor.cpp',
-            'bindings/js/JSXMLHttpRequestConstructor.h',
             'bindings/js/JSXMLHttpRequestCustom.cpp',
             'bindings/js/JSXMLHttpRequestUploadCustom.cpp',
             'bindings/js/JSXSLTProcessorConstructor.cpp',

@@ -158,7 +158,6 @@ LOCAL_SRC_FILES += \
 	bindings/js/JSWorkerContextCustom.cpp \
 	bindings/js/JSWorkerContextErrorHandler.cpp \
 	bindings/js/JSWorkerCustom.cpp \
-	bindings/js/JSXMLHttpRequestConstructor.cpp \
 	bindings/js/JSXMLHttpRequestCustom.cpp \
 	bindings/js/JSXMLHttpRequestUploadCustom.cpp \
 	bindings/js/JSXSLTProcessorConstructor.cpp \
