@@ -1,3 +1,11 @@
+2010-06-14  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Small GtkLauncher build fix for some systems.
+
+        * GtkLauncher/main.c: Add <limit.h> include.
+
 2010-06-14  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Laszlo Gombos.

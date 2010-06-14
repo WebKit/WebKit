@@ -25,6 +25,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <limits.h>
 #include <stdlib.h>
 #include <webkit/webkit.h>
 
