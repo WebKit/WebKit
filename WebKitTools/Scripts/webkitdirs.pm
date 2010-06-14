@@ -115,7 +115,9 @@ sub determineBaseProductDir
     return if defined $baseProductDir;
     determineSourceDir();
 
-    if (isAppleMacWebKit()) {
+    $baseProductDir = $ENV{"WEBKITOUTPUTDIR"};
+
+    if (!defined($baseProductDir) and isAppleMacWebKit()) {
         # Silently remove ~/Library/Preferences/xcodebuild.plist which can
         # cause build failure. The presence of
         # ~/Library/Preferences/xcodebuild.plist can prevent xcodebuild from
@@ -148,7 +150,7 @@ sub determineBaseProductDir
     }
 
     if (!defined($baseProductDir)) { # Port-spesific checks failed, use default
-        $baseProductDir = $ENV{"WEBKITOUTPUTDIR"} || "$sourceDir/WebKitBuild";
+        $baseProductDir = "$sourceDir/WebKitBuild";
     }
 
     if (isGit() && isGitBranchBuild()) {

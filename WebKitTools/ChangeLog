@@ -1,3 +1,14 @@
+2010-06-13  Nathan Lawrence  <nlawrence@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Outside of Xcode (make or WebKitTools/Scripts), there doesn't seem to
+        be a way of overwriting the Xcode system path.  Making
+        $WEBKITOUTPUTDIR take precedence over the system default would make
+        this possible.
+
+        * Scripts/webkitdirs.pm:
+
 2010-06-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
