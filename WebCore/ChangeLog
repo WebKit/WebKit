@@ -3945,7 +3945,7 @@
 
 2010-06-08  Erik Arvidsson  <arv@chromium.org>
 
-        Reviewed by ojan@chromium.org.
+        Reviewed by Ojan Vafai.
 
         REGRESSION: Weird focus behavior affects quoting on University of Washington message board system
         https://bugs.webkit.org/show_bug.cgi?id=38548
@@ -4424,9 +4424,9 @@
         
 2010-06-07  Eric Seidel  <eric@webkit.org>
 
-        Unreviewed.  Just commit an edit XCode keeps making automatically.
+        Unreviewed.  Just commit an edit Xcode keeps making automatically.
 
-        It appears someone hand-edited the file, XCode no-like.
+        It appears someone hand-edited the file, Xcode no-like.
 
         * WebCore.xcodeproj/project.pbxproj:
 
@@ -7042,7 +7042,7 @@
 
 2010-06-02  Erik Arvidsson  <arv@chromium.org>
 
-        Reviewed by ojan@chromium.org.
+        Reviewed by Ojan Vafai.
 
         REGRESSION: Weird focus behavior affects quoting on University of Washington message board system
         https://bugs.webkit.org/show_bug.cgi?id=38548
