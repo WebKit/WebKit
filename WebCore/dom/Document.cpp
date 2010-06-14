@@ -4731,6 +4731,17 @@ void Document::executeScriptSoon(ScriptElementData* data, CachedResourceHandle<C
         m_executeScriptSoonTimer.startOneShot(0);
 }
 
+void Document::suspendExecuteScriptSoonTimer()
+{
+    m_executeScriptSoonTimer.stop();
+}
+
+void Document::resumeExecuteScriptSoonTimer()
+{
+    if (!m_scriptsToExecuteSoon.isEmpty())
+        m_executeScriptSoonTimer.startOneShot(0);
+}
+
 // FF method for accessing the selection added for compatibility.
 DOMSelection* Document::getSelection() const
 {

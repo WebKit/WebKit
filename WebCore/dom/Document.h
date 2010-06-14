@@ -815,6 +815,9 @@ public:
 
     void executeScriptSoon(ScriptElementData*, CachedResourceHandle<CachedScript>);
 
+    void suspendExecuteScriptSoonTimer();
+    void resumeExecuteScriptSoonTimer();
+
 #if ENABLE(XSLT)
     void applyXSLTransform(ProcessingInstruction* pi);
     PassRefPtr<Document> transformSourceDocument() { return m_transformSourceDocument; }
