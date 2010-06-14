@@ -1,3 +1,37 @@
+2010-06-14  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Get DatabaseTracker ready for sync DBs.
+        https://bugs.webkit.org/show_bug.cgi?id=39041
+
+        * storage/AbstractDatabase.cpp:
+        (WebCore::AbstractDatabase::~AbstractDatabase):
+        * storage/AbstractDatabase.h:
+        * storage/Database.cpp:
+        (WebCore::Database::closeImmediately):
+        * storage/Database.h:
+        (WebCore::Database::scriptExecutionContext):
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::getMaxSizeForDatabase):
+        (WebCore::DatabaseTracker::databaseChanged):
+        (WebCore::DatabaseTracker::addOpenDatabase):
+        (WebCore::DatabaseTracker::removeOpenDatabase):
+        (WebCore::DatabaseTracker::getOpenDatabases):
+        (WebCore::DatabaseTracker::deleteDatabaseFile):
+        * storage/DatabaseTracker.h:
+        * storage/OriginQuotaManager.cpp:
+        (WebCore::OriginQuotaManager::markDatabase):
+        * storage/OriginQuotaManager.h:
+        * storage/chromium/DatabaseObserver.h:
+        * storage/chromium/DatabaseTrackerChromium.cpp:
+        (WebCore::DatabaseTracker::addOpenDatabase):
+        (WebCore::TrackerRemoveOpenDatabaseTask::create):
+        (WebCore::TrackerRemoveOpenDatabaseTask::TrackerRemoveOpenDatabaseTask):
+        (WebCore::DatabaseTracker::removeOpenDatabase):
+        (WebCore::DatabaseTracker::getOpenDatabases):
+        (WebCore::DatabaseTracker::getMaxSizeForDatabase):
+
 2010-06-14  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

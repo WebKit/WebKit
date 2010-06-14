@@ -31,7 +31,7 @@
 #include "config.h"
 #include "WebDatabase.h"
 
-#include "Database.h"
+#include "AbstractDatabase.h"
 #include "DatabaseTask.h"
 #include "DatabaseThread.h"
 #include "DatabaseTracker.h"
@@ -50,7 +50,7 @@ namespace WebKit {
 
 static WebDatabaseObserver* databaseObserver = 0;
 
-class WebDatabasePrivate : public Database {
+class WebDatabasePrivate : public AbstractDatabase {
 };
 
 void WebDatabase::reset()
@@ -110,34 +110,27 @@ void WebDatabase::updateDatabaseSize(
 
 void WebDatabase::closeDatabaseImmediately(const WebString& originIdentifier, const WebString& databaseName)
 {
-    HashSet<RefPtr<Database> > databaseHandles;
-    PassRefPtr<SecurityOrigin> originPrp(WebSecurityOrigin::createFromDatabaseIdentifier(originIdentifier));
-    RefPtr<SecurityOrigin> origin = originPrp;
+    HashSet<RefPtr<AbstractDatabase> > databaseHandles;
+    RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromDatabaseIdentifier(originIdentifier);
     DatabaseTracker::tracker().getOpenDatabases(origin.get(), databaseName, &databaseHandles);
-    for (HashSet<RefPtr<Database> >::iterator it = databaseHandles.begin(); it != databaseHandles.end(); ++it) {
-        Database* database = it->get();
-        DatabaseThread* databaseThread = database->scriptExecutionContext()->databaseThread();
-        if (databaseThread && !databaseThread->terminationRequested()) {
-            database->stop();
-            databaseThread->scheduleTask(DatabaseCloseTask::create(database, Database::RemoveDatabaseFromContext, 0));
-        }
-    }
+    for (HashSet<RefPtr<AbstractDatabase> >::iterator it = databaseHandles.begin(); it != databaseHandles.end(); ++it)
+        it->get()->closeImmediately();
 }
 
-WebDatabase::WebDatabase(const WTF::PassRefPtr<Database>& database)
+WebDatabase::WebDatabase(const WTF::PassRefPtr<AbstractDatabase>& database)
     : m_private(static_cast<WebDatabasePrivate*>(database.releaseRef()))
 {
 }
 
-WebDatabase& WebDatabase::operator=(const WTF::PassRefPtr<Database>& database)
+WebDatabase& WebDatabase::operator=(const WTF::PassRefPtr<AbstractDatabase>& database)
 {
     assign(static_cast<WebDatabasePrivate*>(database.releaseRef()));
     return *this;
 }
 
-WebDatabase::operator WTF::PassRefPtr<Database>() const
+WebDatabase::operator WTF::PassRefPtr<AbstractDatabase>() const
 {
-    return PassRefPtr<Database>(const_cast<WebDatabasePrivate*>(m_private));
+    return PassRefPtr<AbstractDatabase>(const_cast<WebDatabasePrivate*>(m_private));
 }
 
 void WebDatabase::assign(WebDatabasePrivate* d)

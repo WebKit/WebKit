@@ -451,6 +451,15 @@ void Database::close(ClosePolicy policy)
         m_scriptExecutionContext->postTask(ContextRemoveOpenDatabaseTask::create(this));
 }
 
+void Database::closeImmediately()
+{
+    DatabaseThread* databaseThread = scriptExecutionContext()->databaseThread();
+    if (databaseThread && !databaseThread->terminationRequested()) {
+        stop();
+        databaseThread->scheduleTask(DatabaseCloseTask::create(this, Database::RemoveDatabaseFromContext, 0));
+    }
+}
+
 void Database::stop()
 {
     // FIXME: The net effect of the following code is to remove all pending transactions and statements, but allow the current statement

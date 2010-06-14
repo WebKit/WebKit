@@ -30,7 +30,7 @@
 
 #if ENABLE(DATABASE)
 
-#include "Database.h"
+#include "AbstractDatabase.h"
 #include "OriginUsageRecord.h"
 
 namespace WebCore {
@@ -112,7 +112,7 @@ void OriginQuotaManager::removeOrigin(SecurityOrigin* origin)
     }
 }
 
-void OriginQuotaManager::markDatabase(Database* database)
+void OriginQuotaManager::markDatabase(AbstractDatabase* database)
 {
     ASSERT(database);
     ASSERT(m_usageRecordGuardLocked);

@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class Database;
+class AbstractDatabase;
 class ScriptExecutionContext;
 class String;
 
@@ -42,9 +42,9 @@ class String;
 class DatabaseObserver {
 public:
     static bool canEstablishDatabase(ScriptExecutionContext*, const String&, const String&, unsigned long);
-    static void databaseOpened(Database*);
-    static void databaseModified(Database*);
-    static void databaseClosed(Database*);
+    static void databaseOpened(AbstractDatabase*);
+    static void databaseModified(AbstractDatabase*);
+    static void databaseClosed(AbstractDatabase*);
 };
 
 }

@@ -31,9 +31,9 @@
 
 #if ENABLE(DATABASE)
 
+#include "AbstractDatabase.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "Database.h"
 #include "DatabaseThread.h"
 #include "DatabaseTrackerClient.h"
 #include "Logging.h"
@@ -219,7 +219,7 @@ bool DatabaseTracker::hasEntryForDatabase(SecurityOrigin* origin, const String& 
     return statement.step() == SQLResultRow;
 }
 
-unsigned long long DatabaseTracker::getMaxSizeForDatabase(const Database* database)
+unsigned long long DatabaseTracker::getMaxSizeForDatabase(const AbstractDatabase* database)
 {
     ASSERT(currentThread() == database->scriptExecutionContext()->databaseThread()->getThreadID());
     // The maximum size for a database is the full quota for its origin, minus the current usage within the origin,
@@ -230,7 +230,7 @@ unsigned long long DatabaseTracker::getMaxSizeForDatabase(const Database* databa
     return quotaForOriginNoLock(origin) - originQuotaManager().diskUsage(origin) + SQLiteFileSystem::getDatabaseFileSize(database->fileName());
 }
 
-void DatabaseTracker::databaseChanged(Database* database)
+void DatabaseTracker::databaseChanged(AbstractDatabase* database)
 {
     Locker<OriginQuotaManager> quotaManagerLocker(originQuotaManager());
     originQuotaManager().markDatabase(database);
@@ -479,7 +479,7 @@ unsigned long long DatabaseTracker::usageForDatabase(const String& name, Securit
     return SQLiteFileSystem::getDatabaseFileSize(path);
 }
 
-void DatabaseTracker::addOpenDatabase(Database* database)
+void DatabaseTracker::addOpenDatabase(AbstractDatabase* database)
 {
     if (!database)
         return;
@@ -512,7 +512,7 @@ void DatabaseTracker::addOpenDatabase(Database* database)
     doneCreatingDatabase(database->securityOrigin(), database->stringIdentifier());
 }
 
-void DatabaseTracker::removeOpenDatabase(Database* database)
+void DatabaseTracker::removeOpenDatabase(AbstractDatabase* database)
 {
     if (!database)
         return;
@@ -559,7 +559,7 @@ void DatabaseTracker::removeOpenDatabase(Database* database)
     originQuotaManager().removeOrigin(database->securityOrigin());
 }
 
-void DatabaseTracker::getOpenDatabases(SecurityOrigin* origin, const String& name, HashSet<RefPtr<Database> >* databases)
+void DatabaseTracker::getOpenDatabases(SecurityOrigin* origin, const String& name, HashSet<RefPtr<AbstractDatabase> >* databases)
 {
     MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
     if (!m_openDatabaseMap)
@@ -973,7 +973,7 @@ bool DatabaseTracker::deleteDatabaseFile(SecurityOrigin* origin, const String& n
     }
 #endif
 
-    Vector<RefPtr<Database> > deletedDatabases;
+    Vector<RefPtr<AbstractDatabase> > deletedDatabases;
 
     // Make sure not to hold the any locks when calling
     // Database::markAsDeletedAndClose(), since that can cause a deadlock

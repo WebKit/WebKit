@@ -30,6 +30,7 @@
 #define Database_h
 
 #if ENABLE(DATABASE)
+#include "AbstractDatabase.h"
 #include "PlatformString.h"
 #include "SQLiteDatabase.h"
 #ifndef NDEBUG
@@ -55,12 +56,12 @@ class VoidCallback;
 
 typedef int ExceptionCode;
 
-class Database : public ThreadSafeShared<Database> {
+class Database : public AbstractDatabase {
 public:
     static void setIsAvailable(bool);
     static bool isAvailable();
 
-    ~Database();
+    virtual ~Database();
 
     // Direct support for the DOM API
     static PassRefPtr<Database> openDatabase(ScriptExecutionContext*, const String& name, const String& expectedVersion, const String& displayName,
@@ -84,24 +85,25 @@ public:
 
     Vector<String> tableNames();
 
-    ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext.get(); }
-    SecurityOrigin* securityOrigin() const;
+    virtual ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext.get(); }
+    virtual SecurityOrigin* securityOrigin() const;
     SQLiteDatabase& sqliteDatabase() { return m_sqliteDatabase; }
-    String stringIdentifier() const;
-    String displayName() const;
-    unsigned long estimatedSize() const;
-    String fileName() const;
+    virtual String stringIdentifier() const;
+    virtual String displayName() const;
+    virtual unsigned long estimatedSize() const;
+    virtual String fileName() const;
 
     bool getVersionFromDatabase(String&);
     bool setVersionInDatabase(const String&);
     void setExpectedVersion(const String&);
     bool versionMatchesExpected() const;
 
-    void markAsDeletedAndClose();
+    virtual void markAsDeletedAndClose();
     bool deleted() const { return m_deleted; }
 
     enum ClosePolicy { DoNotRemoveDatabaseFromContext, RemoveDatabaseFromContext };
     void close(ClosePolicy);
+    virtual void closeImmediately();
     bool opened() const { return m_opened; }
 
     void stop();

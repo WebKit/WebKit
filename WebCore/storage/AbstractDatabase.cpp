@@ -33,6 +33,10 @@
 
 namespace WebCore {
 
+AbstractDatabase::~AbstractDatabase()
+{
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(DATABASE)

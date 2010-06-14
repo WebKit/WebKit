@@ -31,9 +31,27 @@
 
 #if ENABLE(DATABASE)
 
+#include "PlatformString.h"
+#include <wtf/ThreadSafeShared.h>
+
 namespace WebCore {
 
-class AbstractDatabase {
+class ScriptExecutionContext;
+class SecurityOrigin;
+
+class AbstractDatabase : public ThreadSafeShared<AbstractDatabase> {
+public:
+    virtual ~AbstractDatabase();
+
+    virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
+    virtual SecurityOrigin* securityOrigin() const = 0;
+    virtual String stringIdentifier() const = 0;
+    virtual String displayName() const = 0;
+    virtual unsigned long estimatedSize() const = 0;
+    virtual String fileName() const = 0;
+
+    virtual void markAsDeletedAndClose() = 0;
+    virtual void closeImmediately() = 0;
 };
 
 } // namespace WebCore
