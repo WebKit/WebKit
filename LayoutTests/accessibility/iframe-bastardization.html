@@ -1,40 +1,43 @@
-<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+var successfullyParsed = false;
 </script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
 <body id="body">
 
-    <!-- This test makes sure that the AX parent chain hierarchy with iframes is correct -->
- 
     <iframe id='iframe1' scrolling=YES  width=100 height=100 border=1 src='resources/cake.png'></iframe>
-    
-    <div id="result"></div>
-     
-    <script>
-        if (window.accessibilityController) {
-            var result = document.getElementById("result");
 
-            var body = document.getElementById("body");
-            body.focus();
-            var webArea = accessibilityController.focusedElement;
+<p id="description"></p>
+<div id="console"></div>
 
-            var group1 = webArea.childAtIndex(0);
-            var iframeScrollArea = group1.childAtIndex(0);
-            var iframeWebArea = iframeScrollArea.childAtIndex(0);
+<script>
+
+    description("This test makes sure that the AX parent chain hierarchy with iframes is correct");
+
+    if (window.accessibilityController) {
+
+        var body = document.getElementById("body");
+        body.focus();
+        var webArea = accessibilityController.focusedElement;
+
+        var group1 = webArea.childAtIndex(0);
+        var iframeScrollArea = group1.childAtIndex(0);
+        var iframeWebArea = iframeScrollArea.childAtIndex(0);
             
-            var parentIframeWebArea = iframeWebArea.parentElement();
-            var parentIframeScrollArea = parentIframeWebArea.parentElement();
-            var parentGroup1 = parentIframeScrollArea.parentElement();
+        var parentIframeWebArea = iframeWebArea.parentElement();
+        var parentIframeScrollArea = parentIframeWebArea.parentElement();
+        var parentGroup1 = parentIframeScrollArea.parentElement();
 
-            if (parentIframeWebArea.allAttributes() == iframeScrollArea.allAttributes() && parentIframeScrollArea.allAttributes() == group1.allAttributes()
-                 && parentGroup1.allAttributes() == webArea.allAttributes()) {
-                result.innerText += "Test passed\n";
-            }
-            else {
-                 result.innerText += "Test failed\n";
-            }
-        }
-    </script>
+        shouldBe("parentIframeWebArea.isEqual(iframeScrollArea)", "true");
+        shouldBe("parentIframeScrollArea.isEqual(group1)", "true");
+        shouldBe("parentGroup1.isEqual(webArea)", "true");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
