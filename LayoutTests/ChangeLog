@@ -1,3 +1,11 @@
+2010-06-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed trivial fix.
+
+        [Qt] Update platform specific expected file after r61100.
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt: updated.
+
 2010-06-13  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         Reviewed by George Staikos.
