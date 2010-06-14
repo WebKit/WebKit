@@ -1,3 +1,15 @@
+2010-06-14  Ada Chan  <adachan@apple.com>
+
+        Rubber-stamped by Steve Falkenburg.
+
+        - Fix the release configuration to use release.vsprops.
+        - Add Debug_Internal and Debug_All configurations to the WebKit2WebProcess project.
+        - Fix launchWebProcess() to get the right path to the WebKit2WebProcess executable.
+
+        * UIProcess/Launcher/win/WebProcessLauncher.cpp:
+        (WebKit::launchWebProcess):
+        * win/WebKit2WebProcess.vcproj:
+
 2010-06-12  Ada Chan  <adachan@apple.com>
 
         Unreviewed fix for a linking error with WebKit2LocalizableStringsBundle for Windows release build.
