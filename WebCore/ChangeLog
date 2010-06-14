@@ -1,5 +1,11 @@
 2010-06-14  Sam Weinig  <sam@webkit.org>
 
+        Better build fix.
+
+        * bindings/js/JSBindingsAllInOne.cpp:
+
+2010-06-14  Sam Weinig  <sam@webkit.org>
+
         Another windows build fix.
 
         * bindings/js/JSBindingsAllInOne.cpp:
