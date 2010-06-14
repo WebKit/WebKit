@@ -53,6 +53,8 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
+#include <WebCore/Frame.h>
+#include <WebCore/Page.h>
 #include <WebCore/PlatformString.h>
 
 #include <wtf/RetainPtr.h>
@@ -91,4 +93,29 @@ void WebInspectorClient::storeSetting(const String& key, const String& setting)
 
     RetainPtr<CFStringRef> preferencesKey(AdoptCF, createKeyForPreferences(key));
     CFPreferencesSetAppValue(preferencesKey.get(), objectToStore.get(), kCFPreferencesCurrentApplication);
+}
+
+void WebInspectorClient::releaseFrontendPage()
+{
+    m_frontendPage = 0;
+}
+
+bool WebInspectorClient::sendMessageToFrontend(const String& message)
+{
+    if (!m_frontendPage)
+        return false;
+
+    Frame* frame = m_frontendPage->mainFrame();
+    if (!frame)
+        return false;
+
+    ScriptController* scriptController = frame->script();
+    if (!scriptController)
+        return false;
+
+    String dispatchToFrontend("WebInspector.dispatchMessageFromBackend(");
+    dispatchToFrontend += message;
+    dispatchToFrontend += ");";
+    scriptController->executeScript(dispatchToFrontend);
+    return true;
 }

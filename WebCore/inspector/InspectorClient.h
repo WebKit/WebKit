@@ -48,6 +48,8 @@ public:
 
     virtual void populateSetting(const String& key, String* value) = 0;
     virtual void storeSetting(const String& key, const String& value) = 0;
+
+    virtual bool sendMessageToFrontend(const String& message) = 0;
 };
 
 } // namespace WebCore

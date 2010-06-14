@@ -573,6 +573,13 @@ WebInspector.dispatch = function() {
     setTimeout(delayDispatch, 0);
 }
 
+WebInspector.dispatchMessageFromBackend = function(arguments)
+{
+    var methodName = arguments.shift();
+    WebInspector[methodName].apply(this, arguments);
+}
+
+
 WebInspector.windowResize = function(event)
 {
     if (this.currentPanel)

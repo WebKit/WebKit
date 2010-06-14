@@ -50,6 +50,7 @@ using namespace WebCore;
     WebView *_inspectedWebView;
     WebView *_webView;
     WebInspectorFrontendClient* _frontendClient;
+    WebInspectorClient* _inspectorClient;
     BOOL _attachedToInspectedWebView;
     BOOL _shouldAttach;
     BOOL _visible;
@@ -61,6 +62,7 @@ using namespace WebCore;
 - (void)detach;
 - (BOOL)attached;
 - (void)setFrontendClient:(WebInspectorFrontendClient*)frontendClient;
+- (void)setInspectorClient:(WebInspectorClient*)inspectorClient;
 - (void)setAttachedWindowHeight:(unsigned)height;
 - (void)destroyInspectorView;
 @end
@@ -83,6 +85,7 @@ using namespace WebCore;
 WebInspectorClient::WebInspectorClient(WebView *webView)
 : m_webView(webView)
 , m_highlighter(AdoptNS, [[WebNodeHighlighter alloc] initWithInspectedWebView:webView])
+, m_frontendPage(0)
 {
 }
 
@@ -94,9 +97,9 @@ void WebInspectorClient::inspectorDestroyed()
 void WebInspectorClient::openInspectorFrontend(InspectorController* inspectorController)
 {
     RetainPtr<WebInspectorWindowController> windowController(AdoptNS, [[WebInspectorWindowController alloc] initWithInspectedWebView:m_webView]);
-    Page* frontendPage = core([windowController.get() webView]);
-
-    frontendPage->inspectorController()->setInspectorFrontendClient(new WebInspectorFrontendClient(m_webView, windowController.get(), inspectorController, frontendPage));
+    [windowController.get() setInspectorClient:this];
+    m_frontendPage = core([windowController.get() webView]);
+    m_frontendPage->inspectorController()->setInspectorFrontendClient(new WebInspectorFrontendClient(m_webView, windowController.get(), inspectorController, m_frontendPage));
 }
 
 void WebInspectorClient::highlight(Node* node)
@@ -407,6 +410,11 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     _frontendClient = frontendClient;
 }
 
+- (void)setInspectorClient:(WebInspectorClient*)inspectorClient
+{
+    _inspectorClient = inspectorClient;
+}
+
 - (void)setAttachedWindowHeight:(unsigned)height
 {
     if (!_attachedToInspectedWebView)
@@ -438,6 +446,8 @@ void WebInspectorFrontendClient::updateWindowTitle() const
 
     if (Page* inspectedPage = [_inspectedWebView page])
         inspectedPage->inspectorController()->disconnectFrontend();
+
+    _inspectorClient->releaseFrontendPage();
 
     [_webView close];
 }

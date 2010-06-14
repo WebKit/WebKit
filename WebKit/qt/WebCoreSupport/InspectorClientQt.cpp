@@ -31,10 +31,12 @@
 #include "config.h"
 #include "InspectorClientQt.h"
 
+#include "Frame.h"
 #include "InspectorController.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformString.h"
+#include "ScriptController.h"
 #include "qwebinspector.h"
 #include "qwebinspector_p.h"
 #include "qwebpage.h"
@@ -72,6 +74,7 @@ public:
 
 InspectorClientQt::InspectorClientQt(QWebPage* page)
     : m_inspectedWebPage(page)
+    , m_frontendWebPage(0)
 {}
 
 void InspectorClientQt::inspectorDestroyed()
@@ -101,7 +104,13 @@ void InspectorClientQt::openInspectorFrontend(WebCore::InspectorController*)
     m_inspectedWebPage->d->inspectorFrontend = inspectorView;
     inspector->d->setFrontend(inspectorView);
 
-    inspectorView->page()->d->page->inspectorController()->setInspectorFrontendClient(new InspectorFrontendClientQt(m_inspectedWebPage, inspectorView));
+    inspectorView->page()->d->page->inspectorController()->setInspectorFrontendClient(new InspectorFrontendClientQt(m_inspectedWebPage, inspectorView, this));
+    m_frontendWebPage = inspectorPage;
+}
+
+void InspectorClientQt::releaseFrontendPage()
+{
+    m_frontendWebPage = 0;
 }
 
 void InspectorClientQt::highlight(Node*)
@@ -158,6 +167,30 @@ void InspectorClientQt::storeSetting(const String& key, const String& setting)
 #endif // QT_NO_SETTINGS
 }
 
+bool InspectorClientQt::sendMessageToFrontend(const String& message)
+{
+    if (!m_frontendWebPage)
+        return false;
+
+    Page* frontendPage = QWebPagePrivate::core(m_frontendWebPage);
+    if (!frontendPage)
+        return false;
+
+    Frame* frame = frontendPage->mainFrame();
+    if (!frame)
+        return false;
+
+    ScriptController* scriptController = frame->script();
+    if (!scriptController)
+        return false;
+
+    String dispatchToFrontend("WebInspector.dispatchMessageToFrontend(");
+    dispatchToFrontend += message;
+    dispatchToFrontend += ");";
+    scriptController->executeScript(dispatchToFrontend);
+    return true;
+}
+
 static String variantToSetting(const QVariant& qvariant)
 {
     String retVal;
@@ -181,11 +214,12 @@ static QVariant settingToVariant(const String& setting)
     return retVal;
 }
 
-InspectorFrontendClientQt::InspectorFrontendClientQt(QWebPage* inspectedWebPage, PassOwnPtr<QWebView> inspectorView)
+InspectorFrontendClientQt::InspectorFrontendClientQt(QWebPage* inspectedWebPage, PassOwnPtr<QWebView> inspectorView, InspectorClientQt* inspectorClient)
     : InspectorFrontendClientLocal(inspectedWebPage->d->page->inspectorController(), inspectorView->page()->d->page) 
     , m_inspectedWebPage(inspectedWebPage)
     , m_inspectorView(inspectorView)
     , m_destroyingInspectorView(false)
+    , m_inspectorClient(inspectorClient)
 {
 }
 
@@ -223,6 +257,8 @@ void InspectorFrontendClientQt::closeWindow()
 #if ENABLE(INSPECTOR)
     m_inspectedWebPage->d->inspectorController()->disconnectFrontend();
 #endif
+    m_inspectorClient->releaseFrontendPage();
+
     // Clear pointer before deleting WebView to avoid recursive calls to its destructor.
     delete m_inspectorView.release();
 }
