@@ -1,3 +1,9 @@
+2010-06-14  Dmitry Titov  <dimich@chromium.org>
+
+        Unreviewed, temporary update Chromium expectations after http://trac.webkit.org/changeset/61128
+
+        * platform/chromium/test_expectations.txt:
+
 2010-06-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed fix. Platform specific expected results updated after r61136.
