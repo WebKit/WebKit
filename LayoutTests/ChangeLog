@@ -1,3 +1,14 @@
+2010-06-14  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Rebaseline LayoutTests/platform/chromium/fast/dom/Geolocation/callback-exception-expected.txt.
+        https://bugs.webkit.org/show_bug.cgi?id=40568
+
+        https://bugs.webkit.org/show_bug.cgi?id=39994 changed the test expectations, and we need to rebaseline.
+
+        * platform/chromium/fast/dom/Geolocation/callback-exception-expected.txt:
+
 2010-06-08  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Jeremy Orlow.
