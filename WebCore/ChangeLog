@@ -1,5 +1,11 @@
 2010-06-14  Jeremy Orlow  <jorlow@chromium.org>
 
+        Unreviewed build fix for my last.
+
+        * workers/WorkerScriptLoaderClient.h:
+
+2010-06-14  Jeremy Orlow  <jorlow@chromium.org>
+
         Reviewed by Darin Fisher.
 
         [V8] Clean up SerializedScriptValue

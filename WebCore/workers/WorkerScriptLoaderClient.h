@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+    class ResourceResponse;
+
     class WorkerScriptLoaderClient {
     public:
         virtual void didReceiveResponse(const ResourceResponse&) { }
