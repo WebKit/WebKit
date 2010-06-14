@@ -175,12 +175,15 @@ void InspectorFrontendClient::destroyInspectorWindow()
 
     core(m_inspectedWebView)->inspectorController()->disconnectFrontend();
 
+    if (m_inspectorClient)
+        m_inspectorClient->releaseFrontendPage();
+
     gboolean handled = FALSE;
     g_signal_emit_by_name(webInspector, "close-window", &handled);
     ASSERT(handled);
 
-    if (m_inspectorClient)
-        m_inspectorClient->releaseFrontendPage();
+    // Please do not use member variables here because InspectorFrontendClient object pointed by 'this'
+    // has been implicitly deleted by "close-window" function.
 
     /* we should now dispose our own reference */
     g_object_unref(webInspector);
