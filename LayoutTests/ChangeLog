@@ -2,6 +2,16 @@
 
         Reviewed by Beth Dakin.
 
+        AX: AXUnknown objects are being returned
+        https://bugs.webkit.org/show_bug.cgi?id=40574
+
+        * platform/mac/accessibility/no-unknown-objects-when-title-attribute-present-expected.txt: Added.
+        * platform/mac/accessibility/no-unknown-objects-when-title-attribute-present.html: Added.
+
+2010-06-14  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
         AX: need to update iframe-bastardization.html LayoutTest to be more modern
         https://bugs.webkit.org/show_bug.cgi?id=40576
 
