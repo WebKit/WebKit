@@ -2879,7 +2879,7 @@ BUGDIMICH MAC WIN LINUX : css1/text_properties/text_align.html = IMAGE
 BUGDIMICH MAC WIN LINUX : css2.1/t0905-c5525-fltcont-00-d-g.html = IMAGE
 BUGDIMICH WIN LINUX : css2.1/t0905-c5525-fltwidth-00-c-g.html = IMAGE
 BUGDIMICH MAC WIN LINUX : css2.1/t1602-c546-txt-align-00-b.html = IMAGE
-BUGDIMICH WIN LINUX : fast/multicol/float-avoidance.html = IMAGE
+BUGDIMICH MAC WIN LINUX : fast/multicol/float-avoidance.html = IMAGE
 BUGDIMICH MAC WIN LINUX : fast/repaint/line-flow-with-floats-1.html = IMAGE
 BUGDIMICH MAC WIN LINUX : fast/repaint/line-flow-with-floats-10.html = IMAGE
 BUGDIMICH MAC WIN LINUX : fast/repaint/line-flow-with-floats-2.html = IMAGE
@@ -2895,6 +2895,7 @@ BUGDIMICH MAC WIN LINUX : fast/text/basic/002.html = IMAGE
 BUGDIMICH MAC WIN LINUX : fast/text/justified-selection-at-edge.html = IMAGE
 BUGDIMICH MAC WIN LINUX : fast/text/justified-selection.html = IMAGE
 BUGDIMICH MAC WIN LINUX : fast/text/trailing-white-space.html = IMAGE
+BUGDIMICH MAC : fast/text/trailing-white-space-2.html = IMAGE
 BUGDIMICH MAC WIN LINUX : svg/custom/svg-fonts-in-html.html = IMAGE
 BUGDIMICH MAC WIN LINUX : tables/mozilla/marvin/x_tbody_align_justify.xml = IMAGE
 BUGDIMICH MAC WIN LINUX : tables/mozilla/marvin/x_td_align_justify.xml = IMAGE
@@ -2902,3 +2903,7 @@ BUGDIMICH MAC WIN LINUX : tables/mozilla/marvin/x_tfoot_align_justify.xml = IMAG
 BUGDIMICH MAC WIN LINUX : tables/mozilla/marvin/x_th_align_justify.xml = IMAGE
 BUGDIMICH MAC WIN LINUX : tables/mozilla/marvin/x_thead_align_justify.xml = IMAGE
 BUGDIMICH MAC WIN LINUX : tables/mozilla/marvin/x_tr_align_justify.xml = IMAGE
+
+// Fails starting http://trac.webkit.org/changeset/61153
+// Needs update to test_shell.
+BUG46538 MAC WIN LINUX : editing/deleting/forward-delete-key.html = TEXT
