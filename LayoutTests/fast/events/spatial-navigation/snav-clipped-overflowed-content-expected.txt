@@ -1,0 +1,24 @@
+That is is a normal link_1.
+
+This is a scrollable Div created with the CSS property overflow.
+
+It has a visible link_2.
+
+
+
+
+
+
+
+... and an overflowed link like link_3.
+
+And this is another normal link_4.
+
+PASS document.activeElement.getAttribute("id") is "1"
+PASS document.activeElement.getAttribute("id") is "1"
+PASS document.activeElement.getAttribute("id") is "2"
+PASS document.activeElement.getAttribute("id") is "3"
+PASS document.activeElement.getAttribute("id") is "2"
+PASS document.activeElement.getAttribute("id") is "1"
+PASS document.activeElement.getAttribute("id") is "start"
+

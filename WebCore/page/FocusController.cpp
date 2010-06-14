@@ -341,51 +341,80 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
     return true;
 }
 
-// FIXME: Make this method more modular, and simpler to understand and maintain.
-static void updateFocusCandidateIfCloser(Node* focusedNode, const FocusCandidate& candidate, FocusCandidate& closest)
+static void updateFocusCandidateInSameContainer(const FocusCandidate& candidate, FocusCandidate& closest)
 {
-    bool sameDocument = candidate.document() == closest.document();
-    if (sameDocument) {
-        if (closest.alignment > candidate.alignment
-         || (closest.parentAlignment && candidate.alignment > closest.parentAlignment))
-            return;
-    } else if (closest.alignment > candidate.alignment
-            && (closest.parentAlignment && candidate.alignment > closest.parentAlignment))
-        return;
-
-    if (candidate.alignment != None
-     || (closest.parentAlignment >= candidate.alignment
-     && closest.document() == candidate.document())) {
-
-        // If we are now in an higher precedent case, lets reset the current closest's
-        // distance so we force it to be bigger than any result we will get from
-        // spatialDistance().
-        if (closest.alignment < candidate.alignment
-         && closest.parentAlignment < candidate.alignment)
-            closest.distance = maxDistance();
-    }
-
-    // Bail out if candidate's distance is larger than that of the closest candidate.
-    if (candidate.distance >= closest.distance)
-        return;
-
     if (closest.isNull()) {
         closest = candidate;
         return;
     }
 
-    // If the focused node and the candadate are in the same document and current
-    // closest candidate is not in an {i}frame that is preferable to get focused ...
-    if (focusedNode->document() == candidate.document()
-        && candidate.distance < closest.parentDistance)
-        closest = candidate;
-    else if (focusedNode->document() != candidate.document()) {
-        // If the focusedNode is in an inner document and candidate is in a
-        // different document, we only consider to change focus if there is not
-        // another already good focusable candidate in the same document as focusedNode.
-        if (!((isInRootDocument(candidate.node) && !isInRootDocument(focusedNode))
-            && focusedNode->document() == closest.document()))
+    if (candidate.alignment == closest.alignment) {
+        if (candidate.distance < closest.distance)
             closest = candidate;
+        return;
+    }
+
+    if (candidate.alignment > closest.alignment)
+        closest = candidate;
+}
+
+static void updateFocusCandidateIfCloser(Node* focusedNode, const FocusCandidate& candidate, FocusCandidate& closest)
+{
+    // First, check the common case: neither candidate nor closest are
+    // inside scrollable content, then no need to care about enclosingScrollableBox
+    // heuristics or parent{Distance,Alignment}, but only distance and alignment.
+    if (!candidate.inScrollableContainer() && !closest.inScrollableContainer()) {
+        updateFocusCandidateInSameContainer(candidate, closest);
+        return;
+    }
+
+    bool sameContainer = candidate.document() == closest.document() && candidate.enclosingScrollableBox == closest.enclosingScrollableBox;
+
+    // Second, if candidate and closest are in the same "container" (i.e. {i}frame or any
+    // scrollable block element), we can handle them as common case.
+    if (sameContainer) {
+        updateFocusCandidateInSameContainer(candidate, closest);
+        return;
+    }
+
+    // Last, we are considering moving to a candidate located in a different enclosing
+    // scrollable box than closest.
+    bool isInInnerDocument = !isInRootDocument(focusedNode);
+
+    bool sameContainerAsCandidate = isInInnerDocument ? focusedNode->document() == candidate.document() :
+        focusedNode->isDescendantOf(candidate.enclosingScrollableBox);
+
+    bool sameContainerAsClosest = isInInnerDocument ? focusedNode->document() == closest.document() :
+        focusedNode->isDescendantOf(closest.enclosingScrollableBox);
+
+    // sameContainerAsCandidate and sameContainerAsClosest are mutually exclusive.
+    ASSERT(!(sameContainerAsCandidate && sameContainerAsClosest));
+
+    if (sameContainerAsCandidate) {
+        closest = candidate;
+        return;
+    }
+
+    if (sameContainerAsClosest) {
+        // Nothing to be done.
+        return;
+    }
+
+    // NOTE: !sameContainerAsCandidate && !sameContainerAsClosest
+    // If distance is shorter, and we are talking about scrollable container,
+    // lets compare parent distance and alignment before anything.
+    if (candidate.distance < closest.distance) {
+        if (candidate.alignment >= closest.parentAlignment
+         || candidate.parentAlignment == closest.parentAlignment) {
+            closest = candidate;
+            return;
+        }
+
+    } else if (candidate.parentDistance < closest.distance) {
+        if (candidate.parentAlignment >= closest.alignment) {
+            closest = candidate;
+            return;
+        }
     }
 }
 
@@ -397,17 +426,44 @@ void FocusController::findFocusableNodeInDirection(Node* outer, Node* focusedNod
     ASSERT(outer);
     ASSERT(candidateParent.isNull()
         || candidateParent.node->hasTagName(frameTag)
-        || candidateParent.node->hasTagName(iframeTag));
+        || candidateParent.node->hasTagName(iframeTag)
+        || isScrollableContainerNode(candidateParent.node));
 
     // Walk all the child nodes and update closestFocusCandidate if we find a nearer node.
     Node* candidate = outer;
     while (candidate) {
-        // Inner documents case.
 
-        if (candidate->isFrameOwnerElement())
+        // Inner documents case.
+        if (candidate->isFrameOwnerElement()) {
             deepFindFocusableNodeInDirection(candidate, focusedNode, direction, event, closestFocusCandidate);
-        else if (candidate != focusedNode && candidate->isKeyboardFocusable(event)) {
+
+        // Scrollable block elements (e.g. <div>, etc) case.
+        } else if (isScrollableContainerNode(candidate)) {
+            deepFindFocusableNodeInDirection(candidate, focusedNode, direction, event, closestFocusCandidate);
+            candidate = candidate->traverseNextSibling();
+            continue;
+
+        } else if (candidate != focusedNode && candidate->isKeyboardFocusable(event)) {
             FocusCandidate currentFocusCandidate(candidate);
+
+            // There are two ways to identify we are in a recursive call from deepFindFocusableNodeInDirection
+            // (i.e. processing an element in an iframe, frame or a scrollable block element):
+
+            // 1) If candidateParent is not null, and it holds the distance and alignment data of the
+            // parent container element itself;
+            // 2) Parent of outer is <frame> or <iframe>;
+            // 3) Parent is any other scrollable block element.
+            if (!candidateParent.isNull()) {
+                currentFocusCandidate.parentAlignment = candidateParent.alignment;
+                currentFocusCandidate.parentDistance = candidateParent.distance;
+                currentFocusCandidate.enclosingScrollableBox = candidateParent.node;
+
+            } else if (!isInRootDocument(outer)) {
+                if (Document* document = static_cast<Document*>(outer->parent()))
+                    currentFocusCandidate.enclosingScrollableBox = static_cast<Node*>(document->ownerElement());
+
+            } else if (isScrollableContainerNode(outer->parent()))
+                currentFocusCandidate.enclosingScrollableBox = outer->parent();
 
             // Get distance and alignment from current candidate.
             distanceDataForNode(direction, focusedNode, currentFocusCandidate);
@@ -416,14 +472,6 @@ void FocusController::findFocusableNodeInDirection(Node* outer, Node* focusedNod
             if (currentFocusCandidate.distance == maxDistance()) {
                 candidate = candidate->traverseNextNode(outer->parent());
                 continue;
-            }
-
-            // If candidateParent is not null, it means that we are in a recursive call
-            // from deepFineFocusableNodeInDirection (i.e. processing an element in an iframe),
-            // and holds the distance and alignment data of the iframe element itself.
-            if (!candidateParent.isNull()) {
-                currentFocusCandidate.parentAlignment = candidateParent.alignment;
-                currentFocusCandidate.parentDistance = candidateParent.distance;
             }
 
             updateFocusCandidateIfCloser(focusedNode, currentFocusCandidate, closestFocusCandidate);
@@ -437,7 +485,9 @@ void FocusController::deepFindFocusableNodeInDirection(Node* container, Node* fo
                                                        FocusDirection direction, KeyboardEvent* event,
                                                        FocusCandidate& closestFocusCandidate)
 {
-    ASSERT(container->hasTagName(frameTag) || container->hasTagName(iframeTag));
+    ASSERT(container->hasTagName(frameTag)
+        || container->hasTagName(iframeTag)
+        || isScrollableContainerNode(container));
 
     // Track if focusedNode is a descendant of the current container node being processed.
     bool descendantOfContainer = false;
@@ -457,6 +507,11 @@ void FocusController::deepFindFocusableNodeInDirection(Node* container, Node* fo
         descendantOfContainer = innerDocument == focusedNode->document();
         firstChild = innerDocument->firstChild();
 
+    // Scrollable block elements (e.g. <div>, etc)
+    } else if (isScrollableContainerNode(container)) {
+
+        firstChild = container->firstChild();
+        descendantOfContainer = focusedNode->isDescendantOf(container);
     }
 
     if (descendantOfContainer) {

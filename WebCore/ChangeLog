@@ -1,3 +1,42 @@
+2010-06-14  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Fraser and Kenneth Christiansen.
+
+        Spatial Navigation: make it work with focusable elements in overflow content
+        https://bugs.webkit.org/show_bug.cgi?id=36463
+
+        This patch addresses the problem with Spatial Navigation. It currently does not
+        properly traverse scrollable contents, including scrollable div's. For this to work,
+        a new class member called scrollableEnclosingBox was introduced to FocusCandidate class which
+        keeps track of the current scrollable box Node wrapping a FocusCandidate.
+
+        To make use of enclosingScrollableBox of FocusCandidate, the DOM traversal routine
+        (FocusController::findNextFocusableInDirection) was changed as follows: when it
+        encounters a scrollable Node, each focusable node which is 'inner' keeps track of
+        the container reference. By the time a sibling of the scrollable Node is encountered,
+        there is no need to track this reference any more and the traversal algorithm continues
+        normally.
+
+        The common case is obviously that there is no scrollable container wrapping it.
+
+        updateFocusCandiditeIfCloser logic was also adapted to fit the need of the
+        newly introduced enclosingScrollableBox class member, getting simpler and more
+        easily maintainable.
+
+        Tests: fast/events/spatial-navigation/snav-div-scrollable-but-without-focusable-content.html
+               fast/events/spatial-navigation/snav-clipped-overflow-content.html
+
+        * page/FocusController.cpp:
+        (WebCore::updateFocusCandidateInSameContainer):
+        (WebCore::updateFocusCandidateIfCloser):
+        (WebCore::FocusController::findFocusableNodeInDirection):
+        (WebCore::FocusController::deepFindFocusableNodeInDirection):
+        * page/SpatialNavigation.cpp:
+        (WebCore::isScrollableContainerNode):
+        * page/SpatialNavigation.h:
+        (WebCore::FocusCandidate::FocusCandidate):
+        (WebCore::FocusCandidate::isInScrollableContainer):
+
 2010-06-14  Jian Li  <jianli@chromium.org>
 
         Unreviewed. Fix build break in GTK.

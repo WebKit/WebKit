@@ -97,6 +97,7 @@ enum RectsAlignment {
 struct FocusCandidate {
     FocusCandidate()
         : node(0)
+        , enclosingScrollableBox(0)
         , distance(maxDistance())
         , parentDistance(maxDistance())
         , alignment(None)
@@ -106,6 +107,7 @@ struct FocusCandidate {
 
     FocusCandidate(Node* n)
         : node(n)
+        , enclosingScrollableBox(0)
         , distance(maxDistance())
         , parentDistance(maxDistance())
         , alignment(None)
@@ -114,9 +116,11 @@ struct FocusCandidate {
     }
 
     bool isNull() const { return !node; }
+    bool inScrollableContainer() const { return node && enclosingScrollableBox; }
     Document* document() const { return node ? node->document() : 0; }
 
     Node* node;
+    Node* enclosingScrollableBox;
     long long distance;
     long long parentDistance;
     RectsAlignment alignment;
@@ -128,6 +132,7 @@ bool scrollInDirection(Frame*, FocusDirection);
 void scrollIntoView(Element*);
 bool hasOffscreenRect(Node*);
 bool isInRootDocument(Node*);
+bool isScrollableContainerNode(Node*);
 
 } // namspace WebCore
 

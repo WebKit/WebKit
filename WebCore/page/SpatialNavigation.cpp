@@ -527,4 +527,17 @@ static bool checkNegativeCoordsForNode(Node* node, const IntRect& curRect)
     return canBeScrolled;
 }
 
+bool isScrollableContainerNode(Node* node)
+{
+    if (!node)
+        return false;
+
+    if (RenderObject* renderer = node->renderer()) {
+        return (renderer->isBox() && toRenderBox(renderer)->canBeScrolledAndHasScrollableArea()
+             && node->hasChildNodes() && !node->isDocumentNode());
+    }
+
+    return false;
+}
+
 } // namespace WebCore
