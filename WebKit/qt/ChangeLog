@@ -1,3 +1,13 @@
+2010-06-13  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        Reviewed by George Staikos.
+
+        Fix the QtWebKit which doesn't recognize the MIME type of HTML/TEXT in uppercase
+        https://bugs.webkit.org/show_bug.cgi?id=39492
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::canShowMIMEType):
+
 2010-06-08  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -1,3 +1,14 @@
+2010-06-13  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        Reviewed by George Staikos.
+
+        Test case to verify that MIME type in uppercase (TEXT/HTML) is supported.
+        https://bugs.webkit.org/show_bug.cgi?id=39492
+
+        * http/tests/mime/resources/uppercase-mime-type.php: Added.
+        * http/tests/mime/uppercase-mime-type-expected.txt: Added.
+        * http/tests/mime/uppercase-mime-type.html: Added.
+
 2010-06-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Alder.
