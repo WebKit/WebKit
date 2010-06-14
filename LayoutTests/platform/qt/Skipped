@@ -2408,6 +2408,10 @@ editing/unsupported-content/table-type-before.html
 # failing fast tests
 # ============================================================================= #
 
+# [Qt] fast/text/justify-padding-distribution.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=40584
+fast/text/justify-padding-distribution.html
+
 # Possible bug in layoutTestController.computedStyleIncludingVisitedInfo()
 fast/history/self-is-visited.html
 

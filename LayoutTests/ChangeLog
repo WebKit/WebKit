@@ -1,3 +1,12 @@
+2010-06-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] fast/text/justify-padding-distribution.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=40584
+
+        * platform/qt/Skipped: fast/text/justify-padding-distribution.html skipped until fix.
+
 2010-06-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
