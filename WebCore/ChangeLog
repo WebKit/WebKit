@@ -1,3 +1,18 @@
+2010-05-16  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Unreviewed naming fixes of local variables used in Spatial Navigation methods.
+
+        Summary:
+            * "candidate" renamed to "node";
+            * "currentFocusCandidate" renamed to "candidate"
+            * "closestFocusCandidate" renamed to "closest"
+
+        That way naming is more consistent in the various Spatial Navigation methods.
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::findFocusableNodeInDirection):
+        (WebCore::FocusController::deepFindFocusableNodeInDirection):
+
 2010-06-14  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Simon Fraser and Kenneth Christiansen.
