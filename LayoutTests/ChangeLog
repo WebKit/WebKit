@@ -1,3 +1,18 @@
+2010-06-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        -webkit-transition font-size and font-family
+        https://bugs.webkit.org/show_bug.cgi?id=33429
+
+        Test that checks that the correct font-family is being used during a font
+        size transition by comparing offsetWidth with a control element.
+        
+        * transitions/font-family-during-transition-expected.txt: Added.
+        * transitions/font-family-during-transition.html: Added.
+        * transitions/transition-test-helpers.js:
+        (expected):
+
 2010-06-13  Darin Adler  <darin@apple.com>
 
         Updated Windows-platform results for the fix for bug 40394.

@@ -55,6 +55,7 @@ function checkExpectedValue(expected, index)
     var property = expected[index][2];
     var expectedValue = expected[index][3];
     var tolerance = expected[index][4];
+    var postCompletionCallback = expected[index][5];
 
     var computedValue;
     var pass = false;
@@ -133,6 +134,9 @@ function checkExpectedValue(expected, index)
         result += "PASS - \"" + property + "\" property for \"" + elementId + "\" element at " + time + "s saw something close to: " + expectedValue + "<br>";
     else
         result += "FAIL - \"" + property + "\" property for \"" + elementId + "\" element at " + time + "s expected: " + expectedValue + " but saw: " + computedValue + "<br>";
+
+    if (postCompletionCallback)
+      result += postCompletionCallback();
 }
 
 function endTest()
