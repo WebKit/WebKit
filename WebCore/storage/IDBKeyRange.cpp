@@ -23,16 +23,25 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
+#include "config.h"
+#include "IDBKeyRange.h"
 
-    interface [
-        Conditional=INDEXED_DATABASE
-    ] IndexedDatabaseRequest {
-        [CallWith=ScriptExecutionContext] IDBRequest open(in DOMString name, in DOMString description);
-        IDBKeyRange makeSingleKeyRange(in SerializedScriptValue value);
-        IDBKeyRange makeLeftBoundKeyRange(in SerializedScriptValue bound, in [Optional] boolean open);
-        IDBKeyRange makeRightBoundKeyRange(in SerializedScriptValue bound, in [Optional] boolean open);
-        IDBKeyRange makeBoundKeyRange(in SerializedScriptValue left, in SerializedScriptValue right, in [Optional] boolean openLeft, in [Optional] boolean openRight);
-    };
+#include "IDBAny.h"
+#include "SerializedScriptValue.h"
 
+#if ENABLE(INDEXED_DATABASE)
+
+namespace WebCore {
+
+IDBKeyRange::IDBKeyRange(PassRefPtr<SerializedScriptValue> left, PassRefPtr<SerializedScriptValue> right, unsigned short flags)
+    : m_left(IDBAny::create())
+    , m_right(IDBAny::create())
+    , m_flags(flags)
+{
+    m_left->set(left);
+    m_right->set(right);
 }
+
+} // namespace WebCore
+
+#endif // ENABLE(INDEXED_DATABASE)

@@ -23,16 +23,51 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
+#ifndef IDBKeyRange_h
+#define IDBKeyRange_h
 
-    interface [
-        Conditional=INDEXED_DATABASE
-    ] IndexedDatabaseRequest {
-        [CallWith=ScriptExecutionContext] IDBRequest open(in DOMString name, in DOMString description);
-        IDBKeyRange makeSingleKeyRange(in SerializedScriptValue value);
-        IDBKeyRange makeLeftBoundKeyRange(in SerializedScriptValue bound, in [Optional] boolean open);
-        IDBKeyRange makeRightBoundKeyRange(in SerializedScriptValue bound, in [Optional] boolean open);
-        IDBKeyRange makeBoundKeyRange(in SerializedScriptValue left, in SerializedScriptValue right, in [Optional] boolean openLeft, in [Optional] boolean openRight);
+#if ENABLE(INDEXED_DATABASE)
+
+#include "IDBAny.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+
+namespace WebCore {
+
+class SerializedScriptValue;
+
+class IDBKeyRange : public RefCounted<IDBKeyRange> {
+public:
+    // Keep in sync with what's in the .idl file.
+    enum Flags {
+        SINGLE = 0,
+        LEFT_OPEN = 1,
+        RIGHT_OPEN = 2,
+        LEFT_BOUND = 4,
+        RIGHT_BOUND = 8,
     };
 
-}
+    static PassRefPtr<IDBKeyRange> create(PassRefPtr<SerializedScriptValue> left, PassRefPtr<SerializedScriptValue> right, unsigned short flags)
+    {
+        return adoptRef(new IDBKeyRange(left, right, flags));
+    }
+    ~IDBKeyRange() { }
+
+
+    PassRefPtr<IDBAny> left() const { return m_left; }
+    PassRefPtr<IDBAny> right() const { return m_right; }
+    unsigned short flags() const { return m_flags; }
+
+private:
+    IDBKeyRange(PassRefPtr<SerializedScriptValue> left, PassRefPtr<SerializedScriptValue> right, unsigned short flags);
+
+    RefPtr<IDBAny> m_left;
+    RefPtr<IDBAny> m_right;
+    unsigned short m_flags;
+};
+
+} // namespace WebCore
+
+#endif
+
+#endif // IDBKeyRange_h

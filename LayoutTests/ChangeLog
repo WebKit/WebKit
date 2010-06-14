@@ -1,3 +1,17 @@
+2010-06-08  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Adds IndexedDB's KeyRange.
+        https://bugs.webkit.org/show_bug.cgi?id=40250
+
+        * storage/indexeddb/idb-keyrange-expected.txt: Added.
+        * storage/indexeddb/idb-keyrange.html: Added.
+        * storage/indexeddb/script-tests/idb-keyrange.js: Added.
+        (checkSingleKeyRange):
+        (checkLeftBoundKeyRange):
+        ():
+
 2010-06-14  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Laszlo Gombos.

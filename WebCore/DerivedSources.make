@@ -218,6 +218,7 @@ DOM_CLASSES = \
     IDBErrorEvent \
     IDBEvent \
     IDBIndexRequest \
+    IDBKeyRange \
     IDBObjectStoreRequest \
     IDBRequest \
     IDBSuccessEvent \

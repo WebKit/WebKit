@@ -1,3 +1,42 @@
+2010-06-08  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Adds IndexedDB's KeyRange.
+        https://bugs.webkit.org/show_bug.cgi?id=40250
+
+        Test: storage/indexeddb/idb-keyrange.html
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * Android.mk:
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * storage/IDBKeyRange.cpp: Added.
+        (WebCore::IDBKeyRange::IDBKeyRange):
+        * storage/IDBKeyRange.h: Added.
+        (WebCore::IDBKeyRange::):
+        (WebCore::IDBKeyRange::create):
+        (WebCore::IDBKeyRange::~IDBKeyRange):
+        (WebCore::IDBKeyRange::left):
+        (WebCore::IDBKeyRange::right):
+        (WebCore::IDBKeyRange::flags):
+        * storage/IDBKeyRange.idl: Added.
+        * storage/IndexedDatabaseRequest.cpp:
+        (WebCore::IndexedDatabaseRequest::makeSingleKeyRange):
+        (WebCore::IndexedDatabaseRequest::makeLeftBoundKeyRange):
+        (WebCore::IndexedDatabaseRequest::makeRightBoundKeyRange):
+        (WebCore::IndexedDatabaseRequest::makeBoundKeyRange):
+        * storage/IndexedDatabaseRequest.h:
+        * storage/IndexedDatabaseRequest.idl:
+
 2010-06-14  Jeremy Orlow  <jorlow@chromium.org>
 
         And another.

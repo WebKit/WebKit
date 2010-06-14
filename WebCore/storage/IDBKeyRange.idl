@@ -27,12 +27,17 @@ module storage {
 
     interface [
         Conditional=INDEXED_DATABASE
-    ] IndexedDatabaseRequest {
-        [CallWith=ScriptExecutionContext] IDBRequest open(in DOMString name, in DOMString description);
-        IDBKeyRange makeSingleKeyRange(in SerializedScriptValue value);
-        IDBKeyRange makeLeftBoundKeyRange(in SerializedScriptValue bound, in [Optional] boolean open);
-        IDBKeyRange makeRightBoundKeyRange(in SerializedScriptValue bound, in [Optional] boolean open);
-        IDBKeyRange makeBoundKeyRange(in SerializedScriptValue left, in SerializedScriptValue right, in [Optional] boolean openLeft, in [Optional] boolean openRight);
+    ] IDBKeyRange {
+        // Keep in sync with what's in the .h file.
+        const unsigned short SINGLE = 0;
+        const unsigned short LEFT_OPEN = 1;
+        const unsigned short RIGHT_OPEN = 2;
+        const unsigned short LEFT_BOUND = 4;
+        const unsigned short RIGHT_BOUND = 8;
+
+        readonly attribute IDBAny left;
+        readonly attribute IDBAny right;
+        readonly attribute unsigned short flags;
     };
 
 }

@@ -2500,6 +2500,7 @@ IDL_BINDINGS += \
 	WebCore/storage/IDBErrorEvent.idl \
 	WebCore/storage/IDBEvent.idl \
 	WebCore/storage/IDBIndexRequest.idl \
+	WebCore/storage/IDBKeyRange.idl \
 	WebCore/storage/IDBObjectStoreRequest.idl \
 	WebCore/storage/IDBRequest.idl \
 	WebCore/storage/IDBSuccessEvent.idl \
@@ -2528,6 +2529,8 @@ webcore_sources += \
 	WebCore/storage/IDBIndexImpl.h \
 	WebCore/storage/IDBIndexRequest.cpp \
 	WebCore/storage/IDBIndexRequest.h \
+	WebCore/storage/IDBKeyRange.cpp \
+	WebCore/storage/IDBKeyRange.h \
 	WebCore/storage/IDBObjectStore.h \
 	WebCore/storage/IDBObjectStoreImpl.cpp \
 	WebCore/storage/IDBObjectStoreImpl.h \
