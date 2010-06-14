@@ -8,6 +8,9 @@ CONFIG(minimal) {
   DEFINES += ENABLE_NETSCAPE_PLUGIN_API=0
 }
 
+## load mobilityconfig if mobility is available 
+load(mobilityconfig, true)
+
 ## Define default features macros for optional components
 ## (look for defs in config.h and included files!)
 # Try to locate sqlite3 source
@@ -109,13 +112,19 @@ greaterThan(QT_MINOR_VERSION, 5) {
     else:DEFINES += ENABLE_XSLT=0
 }
 
+# geolocation support if QtMobility exists
+!CONFIG(QTDIR_build):!contains(DEFINES, ENABLE_GEOLOCATION=.) {
+    contains(MOBILITY_CONFIG, location) {
+       DEFINES += ENABLE_GEOLOCATION=1
+    }
+}
+
 # Bearer management is part of Qt 4.7
 # for older version, check for mobility with bearer 
 !contains(DEFINES, ENABLE_QT_BEARER=.) {
      !lessThan(QT_MINOR_VERSION, 7) {
         DEFINES += ENABLE_QT_BEARER=1
      } else {
-        load(mobilityconfig)
         contains(MOBILITY_CONFIG, bearer) {
             DEFINES += ENABLE_QT_BEARER=1
         }
@@ -168,7 +177,7 @@ contains(DEFINES, ENABLE_TILED_BACKING_STORE=1): FEATURE_DEFINES_JAVASCRIPT += E
 contains(DEFINES, ENABLE_NOTIFICATIONS=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_NOTIFICATIONS=1
 contains(DEFINES, ENABLE_METER_TAG=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_METER_TAG=1
 contains(DEFINES, ENABLE_PROGRESS_TAG=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_PROGRESS_TAG=1
-
+contains(DEFINES, ENABLE_GEOLOCATION=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_GEOLOCATION=1
 
 ## Derived source generators
 MATHML_NAMES = $$PWD/mathml/mathtags.in

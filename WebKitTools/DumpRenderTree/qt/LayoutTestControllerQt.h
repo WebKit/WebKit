@@ -184,6 +184,12 @@ public slots:
     // https://bugs.webkit.org/show_bug.cgi?id=33333
     void setCallCloseOnWebViews() {}
 
+    void setMockGeolocationError(int code, const QString& message);
+    void setMockGeolocationPosition(double latitude, double longitude, double accuracy);
+    void setGeolocationPermission(bool allow);
+    bool isGeolocationPermissionSet() const { return m_isGeolocationPermissionSet; }
+    bool geolocationPermission() const { return m_geolocationPermission; }
+
     /*
         Policy values: 'on', 'auto' or 'off'.
         Orientation values: 'vertical' or 'horizontal'.
@@ -215,6 +221,8 @@ private:
     bool m_handleErrorPages;
     bool m_loadFinished;
     bool m_globalFlag;
+    bool m_isGeolocationPermissionSet;
+    bool m_geolocationPermission;
 
     QUrl m_userStyleSheetLocation;
     QBasicTimer m_timeoutTimer;

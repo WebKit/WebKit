@@ -348,6 +348,11 @@ QObject* WebPage::createPlugin(const QString& classId, const QUrl& url, const QS
 #endif
 }
 
+bool WebPage::allowGeolocationRequest(QWebFrame *)
+{
+    return m_drt->layoutTestController()->geolocationPermission();
+}
+
 WebViewGraphicsBased::WebViewGraphicsBased(QWidget* parent)
     : m_item(new QGraphicsWebView)
 {

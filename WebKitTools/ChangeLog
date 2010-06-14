@@ -1,3 +1,23 @@
+2010-06-14  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] navigator.geolocation support for Qt port
+        https://bugs.webkit.org/show_bug.cgi?id=39724
+
+        Implementation for geolocation cases to DumpRenderTreeQt
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::allowGeolocationRequest):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setGeolocationPermission):
+        (LayoutTestController::setMockGeolocationError):
+        (LayoutTestController::setMockGeolocationPosition):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        (LayoutTestController::isGeolocationPermissionSet):
+        (LayoutTestController::geolocationPermission):
+
 2010-06-13  Nathan Lawrence  <nlawrence@apple.com>
 
         Reviewed by Darin Adler.

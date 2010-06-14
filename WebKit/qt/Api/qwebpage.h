@@ -307,6 +307,7 @@ public:
 
 public Q_SLOTS:
     bool shouldInterruptJavaScript();
+    bool allowGeolocationRequest(QWebFrame *frame);
 
 Q_SIGNALS:
     void loadStarted();

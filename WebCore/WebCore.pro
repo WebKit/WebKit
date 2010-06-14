@@ -2641,6 +2641,16 @@ contains(DEFINES, ENABLE_QT_BEARER=1) {
     }
 }
 
+contains(DEFINES, ENABLE_GEOLOCATION=1) {
+    HEADERS += \
+        platform/qt/GeolocationServiceQt.h
+    SOURCES += \
+        platform/qt/GeolocationServiceQt.cpp
+
+    CONFIG += mobility
+    MOBILITY += location
+}
+
 contains(DEFINES, ENABLE_SVG=1) {
     SOURCES += \
 # TODO: this-one-is-not-auto-added! FIXME! tmp/SVGElementFactory.cpp \

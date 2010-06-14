@@ -1,3 +1,28 @@
+2010-06-14  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] navigator.geolocation support for Qt port
+        https://bugs.webkit.org/show_bug.cgi?id=39724
+
+        Implement ChromeClientQt::requestGeolocationPermissionForFrame() which delegates call to QWebPage::allowGeolocationRequest
+        Layout and unit test cases for the are also added. 
+
+        * Api/qwebpage.cpp:
+        (QWebPage::allowGeolocationRequest):
+        * Api/qwebpage.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::requestGeolocationPermissionForFrame):
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::setMockGeolocationPosition):
+        (DumpRenderTreeSupportQt::setMockGeolocationError):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (JSTestPage::shouldInterruptJavaScript):
+        (JSTestPage::allowGeolocationRequest):
+        (JSTestPage::setGeolocationPermission):
+        (tst_QWebPage::geolocationRequestJS):
+
 2010-06-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -36,6 +36,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClientQt.h"
 #include "FrameView.h"
+#include "Geolocation.h"
 #include "HitTestResult.h"
 #include "Icon.h"
 #include "NotImplemented.h"
@@ -534,10 +535,12 @@ bool ChromeClientQt::setCursor(PlatformCursorHandle)
     return false;
 }
 
-void ChromeClientQt::requestGeolocationPermissionForFrame(Frame*, Geolocation*)
+void ChromeClientQt::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
 {
-    // See the comment in WebCore/page/ChromeClient.h
-    notImplemented();
+    bool allow = false;
+    QWebFrame* webFrame = QWebFramePrivate::kit(frame);
+    QMetaObject::invokeMethod(m_webPage, "allowGeolocationRequest", Qt::DirectConnection, Q_RETURN_ARG(bool, allow), Q_ARG(QWebFrame*, webFrame));
+    geolocation->setIsAllowed(allow);
 }
 
 #if USE(ACCELERATED_COMPOSITING)

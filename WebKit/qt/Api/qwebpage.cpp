@@ -1936,6 +1936,30 @@ bool QWebPage::shouldInterruptJavaScript()
 }
 
 /*!
+    \fn bool QWebPage::allowGeolocationRequest()
+    \since 4.7
+
+    This function is called whenever a JavaScript program running inside \a frame tries to access user location through navigator.geolocation.
+
+    If the user wants to allow access to location then it should return true; otherwise false.
+
+    The default implementation executes the query using QMessageBox::information with QMessageBox::Yes and QMessageBox::No buttons.
+
+    \warning Because of binary compatibility constraints, this function is not virtual. If you want to
+    provide your own implementation in a QWebPage subclass, reimplement the allowGeolocationRequest()
+    slot in your subclass instead. QtWebKit will dynamically detect the slot and call it.
+*/
+bool QWebPage::allowGeolocationRequest(QWebFrame *frame)
+{
+#ifdef QT_NO_MESSAGEBOX
+    return false;
+#else
+    QWidget* parent = (d->client) ? d->client->ownerWidget() : 0;
+    return QMessageBox::Yes == QMessageBox::information(parent, tr("Location Request by- %1").arg(frame->url().host()), tr("The page wants to access your location information. Do you want to allow the request?"), QMessageBox::Yes, QMessageBox::No);
+#endif
+}
+
+/*!
     This function is called whenever WebKit wants to create a new window of the given \a type, for
     example when a JavaScript program requests to open a document in a new window.
 

@@ -1,3 +1,25 @@
+2010-06-14  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] navigator.geolocation support for Qt port
+        https://bugs.webkit.org/show_bug.cgi?id=39724
+
+        Implemetion for Qt port of navigator.gelocation. Using qtmobility location service.
+
+        * WebCore.pri:
+        * WebCore.pro:
+        * platform/qt/GeolocationServiceQt.cpp: Added.
+        (WebCore::GeolocationServiceQt::create):
+        (WebCore::GeolocationServiceQt::GeolocationServiceQt):
+        (WebCore::GeolocationServiceQt::~GeolocationServiceQt):
+        (WebCore::GeolocationServiceQt::positionUpdated):
+        (WebCore::GeolocationServiceQt::startUpdating):
+        (WebCore::GeolocationServiceQt::stopUpdating):
+        * platform/qt/GeolocationServiceQt.h: Added.
+        (WebCore::GeolocationServiceQt::lastPosition):
+        (WebCore::GeolocationServiceQt::lastError):
+
 2010-06-14  Jeremy Orlow  <jorlow@chromium.org>
 
         2 more build fixes.
