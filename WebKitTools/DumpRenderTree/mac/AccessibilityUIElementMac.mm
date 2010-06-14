@@ -337,6 +337,17 @@ AccessibilityUIElement AccessibilityUIElement::getChildAtIndex(unsigned index)
     return 0;
 }
 
+AccessibilityUIElement AccessibilityUIElement::linkedUIElementAtIndex(unsigned index)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSArray* objects = [m_element accessibilityAttributeValue:NSAccessibilityLinkedUIElementsAttribute];
+    if (index < [objects count])
+        return [objects objectAtIndex:index];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
+}
+
 AccessibilityUIElement AccessibilityUIElement::ariaOwnsElementAtIndex(unsigned index)
 {
     BEGIN_AX_OBJC_EXCEPTIONS

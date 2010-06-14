@@ -91,6 +91,8 @@ public:
     // Methods - platform-independent implementations
     JSStringRef allAttributes();
     JSStringRef attributesOfLinkedUIElements();
+    AccessibilityUIElement linkedUIElementAtIndex(unsigned);
+    
     JSStringRef attributesOfDocumentLinks();
     JSStringRef attributesOfChildren();
     JSStringRef parameterizedAttributeNames();

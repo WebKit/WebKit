@@ -1474,8 +1474,8 @@ AccessibilityObject* AccessibilityRenderObject::internalLinkElement() const
         return 0;
     
     // check if URL is the same as current URL
-    linkURL.removeFragmentIdentifier();
-    if (m_renderer->document()->url() != linkURL)
+    KURL documentURL = m_renderer->document()->url();
+    if (!equalIgnoringFragmentIdentifier(documentURL, linkURL))
         return 0;
     
     Node* linkedNode = m_renderer->document()->findAnchor(fragmentIdentifier);

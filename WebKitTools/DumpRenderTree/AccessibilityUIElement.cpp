@@ -171,6 +171,15 @@ static JSValueRef childAtIndexCallback(JSContextRef context, JSObjectRef functio
     return AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->getChildAtIndex(indexNumber));
 }
 
+static JSValueRef linkedUIElementAtIndexCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    int indexNumber = -1;
+    if (argumentCount == 1)
+        indexNumber = JSValueToNumber(context, arguments[0], exception);
+    
+    return AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->linkedUIElementAtIndex(indexNumber));
+}
+
 static JSValueRef disclosedRowAtIndexCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     int indexNumber = 0;
@@ -703,6 +712,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "boundsForRange", boundsForRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "stringForRange", stringForRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "childAtIndex", childAtIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "linkedUIElementAtIndex", linkedUIElementAtIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "indexOfChild", indexOfChildCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "elementAtPoint", elementAtPointCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "attributesOfColumnHeaders", attributesOfColumnHeadersCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

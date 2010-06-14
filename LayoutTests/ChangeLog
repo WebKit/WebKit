@@ -1,3 +1,13 @@
+2010-06-13  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Alder.
+
+        AX: link won't return linked element if URL contains #
+        https://bugs.webkit.org/show_bug.cgi?id=40192
+
+        * platform/mac/accessibility/internal-link-when-document-has-fragment-expected.txt: Added.
+        * platform/mac/accessibility/internal-link-when-document-has-fragment.html: Added.
+
 2010-06-13  Simon Fraser  <simon.fraser@apple.com>
 
         Fix GTK bots; don't include the offsetWidth in the results

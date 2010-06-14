@@ -1,3 +1,21 @@
+2010-06-13  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: link won't return linked element if URL contains #
+        https://bugs.webkit.org/show_bug.cgi?id=40192
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (linkedUIElementAtIndexCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::linkedUIElementAtIndex):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::linkedUIElementAtIndex):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::linkedUIElementAtIndex):
+
 2010-06-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
