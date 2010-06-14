@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,6 +69,7 @@ ComplexTextController::ComplexTextController(const Font* font, const TextRun& ru
     , m_glyphInCurrentRun(0)
     , m_characterInCurrentGlyph(0)
     , m_finalRoundingWidth(0)
+    , m_padding(run.padding())
     , m_fallbackFonts(fallbackFonts)
     , m_minGlyphBoundingBoxX(numeric_limits<float>::max())
     , m_maxGlyphBoundingBoxX(numeric_limits<float>::min())
@@ -76,19 +77,19 @@ ComplexTextController::ComplexTextController(const Font* font, const TextRun& ru
     , m_maxGlyphBoundingBoxY(numeric_limits<float>::min())
     , m_lastRoundingGlyph(0)
 {
-    m_padding = m_run.padding();
     if (!m_padding)
         m_padPerSpace = 0;
     else {
-        float numSpaces = 0;
-        for (int s = 0; s < m_run.length(); s++)
+        int numSpaces = 0;
+        for (int s = 0; s < m_run.length(); s++) {
             if (Font::treatAsSpace(m_run[s]))
                 numSpaces++;
+        }
 
-        if (numSpaces == 0)
+        if (!numSpaces)
             m_padPerSpace = 0;
         else
-            m_padPerSpace = ceilf(m_run.padding() / numSpaces);
+            m_padPerSpace = m_padding / numSpaces;
     }
 
     collectComplexTextRuns();
@@ -508,8 +509,9 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                             advance.width += m_padding;
                             m_padding = 0;
                         } else {
-                            advance.width += m_padPerSpace;
+                            float previousPadding = m_padding;
                             m_padding -= m_padPerSpace;
+                            advance.width += roundf(previousPadding) - roundf(m_padding);
                         }
                     }
 

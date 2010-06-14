@@ -1,3 +1,25 @@
+2010-06-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7752961> Unevenly distributed space in justified text
+        https://bugs.webkit.org/show_bug.cgi?id=36105
+
+        Test: fast/text/justify-padding-distribution.html
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::WidthIterator): Initialize m_padPerSpace to the quotient of the total
+        padding and the number of spaces rather than truncating it.
+        (WebCore::WidthIterator::advance): Subtract m_padPerSpace from m_padding and add the difference
+        between its old and new values, when rounded, to the advance.
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::ComplexTextController):
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::UniscribeController):
+        (WebCore::UniscribeController::shapeAndPlaceItem):
+        * platform/graphics/win/UniscribeController.h:
+
 2010-06-14  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
