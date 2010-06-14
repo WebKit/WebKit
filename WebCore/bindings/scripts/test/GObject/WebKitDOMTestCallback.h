@@ -21,8 +21,6 @@
 #ifndef WebKitDOMTestCallback_h
 #define WebKitDOMTestCallback_h
 
-#if ENABLE(DATABASE)
-
 #include "webkit/webkitdomdefines.h"
 #include <glib-object.h>
 #include <webkit/webkitdefines.h>
@@ -58,7 +56,5 @@ WEBKIT_API glong
 webkit_dom_test_callback_callback_with_non_bool_return_type(WebKitDOMTestCallback* self, WebKitDOMClass3*  class3param);
 
 G_END_DECLS
-
-#endif /* ENABLE(DATABASE) */
 
 #endif /* WebKitDOMTestCallback_h */

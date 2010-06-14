@@ -225,5 +225,4 @@ webkit_dom_test_obj_get_hash(WebKitDOMTestObj* self);
 
 G_END_DECLS
 
-
 #endif /* WebKitDOMTestObj_h */

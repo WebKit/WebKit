@@ -1176,7 +1176,6 @@ sub GeneratePrivateHeader {
     my $hasLegacyParent = $dataNode->extendedAttributes->{"LegacyParent"};
     my $hasRealParent = @{$dataNode->parents} > 0;
     my $hasParent = $hasLegacyParent || $hasRealParent;
-    my $conditionalString = GenerateConditionalString($dataNode);
     
     open(PRIVHEADER, ">$filename") or die "Couldn't open file $filename for writing";
     
@@ -1187,12 +1186,6 @@ sub GeneratePrivateHeader {
 #ifndef $guard
 #define $guard
 
-EOF
-    print PRIVHEADER $text;
-
-    print PRIVHEADER "#if ${conditionalString}\n\n" if $conditionalString;
-
-    $text = << "EOF";
 #include <glib-object.h>
 #include <webkit/${parentClassName}.h>
 #include "${interfaceName}.h"
@@ -1227,13 +1220,10 @@ EOF
     $text = << "EOF";
 } // namespace WebKit
 
+#endif /* ${guard} */
 EOF
     print PRIVHEADER $text;
 
-    print PRIVHEADER "#endif /* ${conditionalString} */\n\n" if $conditionalString;
-
-    print PRIVHEADER "#endif /* ${guard} */\n";
-    
     close(PRIVHEADER);
 }
 
@@ -1349,7 +1339,6 @@ sub WriteData {
 
     print HEADER @hPrefix;
     print HEADER @hPrefixGuard;
-    print HEADER @conditionGuardStart;
     print HEADER "#include \"webkit/webkitdomdefines.h\"\n";
     print HEADER "#include <glib-object.h>\n";
     print HEADER "#include <webkit/webkitdefines.h>\n";
@@ -1358,8 +1347,6 @@ sub WriteData {
     print HEADER "\n";
     print HEADER @hBodyPre;
     print HEADER @hBody;
-    print HEADER @conditionGuardEnd;
-    print HEADER "\n";
     print HEADER @hPrefixGuardEnd;
 
     close(HEADER);

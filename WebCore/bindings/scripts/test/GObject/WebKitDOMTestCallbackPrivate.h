@@ -21,8 +21,6 @@
 #ifndef WEB_KIT_DOM_TEST_CALLBACK_PRIVATE_H
 #define WEB_KIT_DOM_TEST_CALLBACK_PRIVATE_H
 
-#if ENABLE(DATABASE)
-
 #include <glib-object.h>
 #include <webkit/WebKitDOMObject.h>
 #include "TestCallback.h"
@@ -37,7 +35,5 @@ namespace WebKit {
     kit(WebCore::TestCallback* node);
 
 } // namespace WebKit
-
-#endif /* ENABLE(DATABASE) */
 
 #endif /* WEB_KIT_DOM_TEST_CALLBACK_PRIVATE_H */

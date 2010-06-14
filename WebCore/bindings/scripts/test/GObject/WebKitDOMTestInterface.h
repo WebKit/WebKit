@@ -21,8 +21,6 @@
 #ifndef WebKitDOMTestInterface_h
 #define WebKitDOMTestInterface_h
 
-#if ENABLE(Condition1) || ENABLE(Condition2)
-
 #include "webkit/webkitdomdefines.h"
 #include <glib-object.h>
 #include <webkit/webkitdefines.h>
@@ -49,7 +47,5 @@ WEBKIT_API GType
 webkit_dom_test_interface_get_type (void);
 
 G_END_DECLS
-
-#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
 
 #endif /* WebKitDOMTestInterface_h */
