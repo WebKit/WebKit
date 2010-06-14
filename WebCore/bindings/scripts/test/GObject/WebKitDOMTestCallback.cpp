@@ -21,6 +21,8 @@
 #include <glib-object.h>
 #include "config.h"
 
+#if ENABLE(DATABASE)
+
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 #include "ExceptionCode.h"
@@ -182,3 +184,4 @@ WebKitDOMTestCallback* wrapTestCallback(WebCore::TestCallback* coreObject)
     return wrapper;
 }
 } // namespace WebKit
+#endif /* ENABLE(DATABASE) */

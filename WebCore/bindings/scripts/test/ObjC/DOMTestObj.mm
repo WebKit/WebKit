@@ -212,6 +212,48 @@
     return IMPL->scriptStringAttr();
 }
 
+#if ENABLE(Condition1)
+- (int)conditionalAttr1
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->conditionalAttr1();
+}
+
+- (void)setConditionalAttr1:(int)newConditionalAttr1
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setConditionalAttr1(newConditionalAttr1);
+}
+#endif
+
+#if ENABLE(Condition1) && ENABLE(Condition2)
+- (int)conditionalAttr2
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->conditionalAttr2();
+}
+
+- (void)setConditionalAttr2:(int)newConditionalAttr2
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setConditionalAttr2(newConditionalAttr2);
+}
+#endif
+
+#if ENABLE(Condition1) || ENABLE(Condition2)
+- (int)conditionalAttr3
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->conditionalAttr3();
+}
+
+- (void)setConditionalAttr3:(int)newConditionalAttr3
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setConditionalAttr3(newConditionalAttr3);
+}
+#endif
+
 - (int)descriptionName
 {
     WebCore::JSMainThreadNullState state;

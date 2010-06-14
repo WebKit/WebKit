@@ -236,6 +236,92 @@ WebDOMString WebDOMTestObj::scriptStringAttr() const
     return static_cast<const WebCore::String&>(impl()->scriptStringAttr());
 }
 
+#if ENABLE(Condition1)
+int WebDOMTestObj::conditionalAttr1() const
+{
+    if (!impl())
+        return 0;
+
+    return impl()->conditionalAttr1();
+}
+
+void WebDOMTestObj::setConditionalAttr1(int newConditionalAttr1)
+{
+    if (!impl())
+        return;
+
+    impl()->setConditionalAttr1(newConditionalAttr1);
+}
+
+#endif
+#if ENABLE(Condition1) && ENABLE(Condition2)
+int WebDOMTestObj::conditionalAttr2() const
+{
+    if (!impl())
+        return 0;
+
+    return impl()->conditionalAttr2();
+}
+
+void WebDOMTestObj::setConditionalAttr2(int newConditionalAttr2)
+{
+    if (!impl())
+        return;
+
+    impl()->setConditionalAttr2(newConditionalAttr2);
+}
+
+#endif
+#if ENABLE(Condition1) || ENABLE(Condition2)
+int WebDOMTestObj::conditionalAttr3() const
+{
+    if (!impl())
+        return 0;
+
+    return impl()->conditionalAttr3();
+}
+
+void WebDOMTestObj::setConditionalAttr3(int newConditionalAttr3)
+{
+    if (!impl())
+        return;
+
+    impl()->setConditionalAttr3(newConditionalAttr3);
+}
+
+#endif
+int WebDOMTestObj::description() const
+{
+    if (!impl())
+        return 0;
+
+    return impl()->description();
+}
+
+int WebDOMTestObj::id() const
+{
+    if (!impl())
+        return 0;
+
+    return impl()->id();
+}
+
+void WebDOMTestObj::setId(int newId)
+{
+    if (!impl())
+        return;
+
+    impl()->setId(newId);
+}
+
+WebDOMString WebDOMTestObj::hash() const
+{
+    if (!impl())
+        return WebDOMString();
+
+    return static_cast<const WebCore::String&>(impl()->hash());
+}
+
 void WebDOMTestObj::voidMethod()
 {
     if (!impl())

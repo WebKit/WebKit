@@ -19,6 +19,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(Condition1) || ENABLE(Condition2)
+
 #include "WebDOMTestInterface.h"
 
 #include "TestInterface.h"
@@ -73,3 +76,5 @@ WebDOMTestInterface toWebKit(WebCore::TestInterface* value)
 {
     return WebDOMTestInterface(value);
 }
+
+#endif // ENABLE(Condition1) || ENABLE(Condition2)

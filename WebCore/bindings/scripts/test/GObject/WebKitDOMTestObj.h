@@ -181,6 +181,36 @@ webkit_dom_test_obj_set_attr_with_getter_exception(WebKitDOMTestObj* self, glong
 WEBKIT_API gchar* 
 webkit_dom_test_obj_get_script_string_attr(WebKitDOMTestObj* self);
 
+#if ENABLE(Condition1)
+WEBKIT_API glong
+webkit_dom_test_obj_get_conditional_attr1(WebKitDOMTestObj* self);
+#endif /* ENABLE(Condition1) */
+
+#if ENABLE(Condition1)
+WEBKIT_API void
+webkit_dom_test_obj_set_conditional_attr1(WebKitDOMTestObj* self, glong value);
+#endif /* ENABLE(Condition1) */
+
+#if ENABLE(Condition1) && ENABLE(Condition2)
+WEBKIT_API glong
+webkit_dom_test_obj_get_conditional_attr2(WebKitDOMTestObj* self);
+#endif /* ENABLE(Condition1) && ENABLE(Condition2) */
+
+#if ENABLE(Condition1) && ENABLE(Condition2)
+WEBKIT_API void
+webkit_dom_test_obj_set_conditional_attr2(WebKitDOMTestObj* self, glong value);
+#endif /* ENABLE(Condition1) && ENABLE(Condition2) */
+
+#if ENABLE(Condition1) || ENABLE(Condition2)
+WEBKIT_API glong
+webkit_dom_test_obj_get_conditional_attr3(WebKitDOMTestObj* self);
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+
+#if ENABLE(Condition1) || ENABLE(Condition2)
+WEBKIT_API void
+webkit_dom_test_obj_set_conditional_attr3(WebKitDOMTestObj* self, glong value);
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+
 WEBKIT_API glong
 webkit_dom_test_obj_get_description(WebKitDOMTestObj* self);
 
@@ -194,5 +224,6 @@ WEBKIT_API gchar*
 webkit_dom_test_obj_get_hash(WebKitDOMTestObj* self);
 
 G_END_DECLS
+
 
 #endif /* WebKitDOMTestObj_h */

@@ -97,6 +97,11 @@ module test {
         // 'ConvertScriptString' extended attribute
         readonly attribute [ConvertScriptString] DOMString scriptStringAttr;
 
+        // 'Conditional' extended attribute
+        attribute [Conditional=Condition1] long conditionalAttr1;
+        attribute [Conditional=Condition1&Condition2] long conditionalAttr2;
+        attribute [Conditional=Condition1|Condition2] long conditionalAttr3;
+
 #if defined(TESTING_V8) || defined(TESTING_JS)
         // Overloads
         void    overloadedMethod(in TestObj objArg, in DOMString strArg);

@@ -21,6 +21,8 @@
 #include <glib-object.h>
 #include "config.h"
 
+#if ENABLE(Condition1) || ENABLE(Condition2)
+
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 #include "ExceptionCode.h"
@@ -138,3 +140,4 @@ WebKitDOMTestInterface* wrapTestInterface(WebCore::TestInterface* coreObject)
     return wrapper;
 }
 } // namespace WebKit
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */

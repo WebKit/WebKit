@@ -21,6 +21,8 @@
 #ifndef JSTestInterface_h
 #define JSTestInterface_h
 
+#if ENABLE(Condition1) || ENABLE(Condition2)
+
 #include "JSDOMBinding.h"
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSObjectWithGlobalObject.h>
@@ -78,5 +80,7 @@ protected:
 JSC::JSValue jsTestInterfaceConstructor(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 
 } // namespace WebCore
+
+#endif // ENABLE(Condition1) || ENABLE(Condition2)
 
 #endif

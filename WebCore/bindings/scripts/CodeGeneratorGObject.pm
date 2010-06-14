@@ -301,11 +301,29 @@ sub GetWriteableProperties {
     return @result;
 }
 
+sub GenerateConditionalString
+{
+    my $node = shift;
+    my $conditional = $node->extendedAttributes->{"Conditional"};
+    if ($conditional) {
+        if ($conditional =~ /&/) {
+            return "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
+        } elsif ($conditional =~ /\|/) {
+            return "ENABLE(" . join(") || ENABLE(", split(/\|/, $conditional)) . ")";
+        } else {
+            return "ENABLE(" . $conditional . ")";
+        }
+    } else {
+        return "";
+    }
+}
+
 sub GenerateProperty {
     my $attribute = shift;
     my $interfaceName = shift;
     my @writeableProperties = @{shift @_};
 
+    my $conditionalString = GenerateConditionalString($attribute->signature);
     my $camelPropName = $attribute->signature->name;
     my $setPropNameFunction = $codeGenerator->WK_ucfirst($camelPropName);
     my $getPropNameFunction = $codeGenerator->WK_lcfirst($camelPropName);
@@ -314,7 +332,9 @@ sub GenerateProperty {
     my $propNameCaps = uc($propName);
     $propName =~ s/_/-/g;
     my ${propEnum} = "PROP_${propNameCaps}";
+    push(@cBodyPriv, "#if ${conditionalString}\n") if $conditionalString;
     push(@cBodyPriv, "    ${propEnum},\n");
+    push(@cBodyPriv, "#endif /* ${conditionalString} */\n") if $conditionalString;
 
     my $propType = $attribute->signature->type;
     my ${propGType} = decamelize($propType);
@@ -362,14 +382,17 @@ sub GenerateProperty {
     }
 
     if (grep {$_ eq $attribute} @writeableProperties) {
+        push(@txtSetProps, "#if ${conditionalString}\n") if $conditionalString;
         push(@txtSetProps, "    case ${propEnum}:\n    {\n");
         push(@txtSetProps, "        WebCore::ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
         push(@txtSetProps, "        ${setterContentHead}");
         push(@txtSetProps, ", ec") if @{$attribute->setterExceptions};
         push(@txtSetProps, ");\n");
         push(@txtSetProps, "        break;\n    }\n");
+        push(@txtSetProps, "#endif /* ${conditionalString} */\n") if $conditionalString;
     }
 
+    push(@txtGetProps, "#if ${conditionalString}\n") if $conditionalString;
     push(@txtGetProps, "    case ${propEnum}:\n    {\n");
 
     my $exception = "";
@@ -414,6 +437,7 @@ EOF
     }
 
     push(@txtGetProps, "        break;\n    }\n");
+    push(@txtGetProps, "#endif /* ${conditionalString} */\n") if $conditionalString;
 
     my %param_spec_options = ("int", "G_MININT, /* min */\nG_MAXINT, /* max */\n0, /* default */",
                               "boolean", "FALSE, /* default */",
@@ -439,7 +463,9 @@ EOF
                                                            $param_spec_options{$gtype}
                                                            ${gparamflag}));
 EOF
+    push(@txtInstallProps, "#if ${conditionalString}\n") if $conditionalString;
     push(@txtInstallProps, $txtInstallProp);
+    push(@txtInstallProps, "#endif /* ${conditionalString} */\n") if $conditionalString;
 }
 
 my %breakWords = ("before" => 1, "can" => 1, "context" => 1, "dbl" => 1, "drag" => 1,
@@ -759,6 +785,7 @@ sub GenerateFunction {
     my $functionName = "webkit_dom_" . $decamelize . "_" . $prefix . decamelize($functionSigName);
     my $returnType = GetGlibTypeName($functionSigType);
     my $returnValueIsGDOMType = IsGDOMClassType($functionSigType);
+    my $conditionalString = GenerateConditionalString($function->signature);
 
     my $functionSig = "${className}* self";
 
@@ -812,7 +839,12 @@ sub GenerateFunction {
         $functionSig .= ", GError **error";
     }
 
-    push(@hBody, "WEBKIT_API $returnType\n$functionName($functionSig);\n\n");
+    push(@hBody, "#if ${conditionalString}\n") if $conditionalString;
+    push(@hBody, "WEBKIT_API $returnType\n$functionName($functionSig);\n");
+    push(@hBody, "#endif /* ${conditionalString} */\n") if $conditionalString;
+    push(@hBody, "\n");
+
+    push(@cBody, "#if ${conditionalString}\n") if $conditionalString;
     push(@cBody, "$returnType\n$functionName($functionSig)\n{\n");
 
     if ($conditionalMethods{$functionName}) {
@@ -982,7 +1014,9 @@ EOF
         push(@cBody, "#endif\n");
     }
 
-    push(@cBody, "}\n\n");
+    push(@cBody, "}\n");
+    push(@cBody, "#endif /* ${conditionalString} */\n") if $conditionalString;
+    push(@cBody, "\n");
 }
 
 sub ClassHasFunction {
@@ -1128,7 +1162,7 @@ sub GenerateEndHeader {
     my $guard = $className . "_h";
 
     push(@hBody, "G_END_DECLS\n\n");
-    push(@hBody, "#endif /* $guard */\n");
+    push(@hPrefixGuardEnd, "#endif /* $guard */\n");
 }
 
 sub GeneratePrivateHeader {
@@ -1142,6 +1176,7 @@ sub GeneratePrivateHeader {
     my $hasLegacyParent = $dataNode->extendedAttributes->{"LegacyParent"};
     my $hasRealParent = @{$dataNode->parents} > 0;
     my $hasParent = $hasLegacyParent || $hasRealParent;
+    my $conditionalString = GenerateConditionalString($dataNode);
     
     open(PRIVHEADER, ">$filename") or die "Couldn't open file $filename for writing";
     
@@ -1152,6 +1187,12 @@ sub GeneratePrivateHeader {
 #ifndef $guard
 #define $guard
 
+EOF
+    print PRIVHEADER $text;
+
+    print PRIVHEADER "#if ${conditionalString}\n\n" if $conditionalString;
+
+    $text = << "EOF";
 #include <glib-object.h>
 #include <webkit/${parentClassName}.h>
 #include "${interfaceName}.h"
@@ -1186,9 +1227,12 @@ EOF
     $text = << "EOF";
 } // namespace WebKit
 
-#endif /* ${guard} */
 EOF
     print PRIVHEADER $text;
+
+    print PRIVHEADER "#endif /* ${conditionalString} */\n\n" if $conditionalString;
+
+    print PRIVHEADER "#endif /* ${guard} */\n";
     
     close(PRIVHEADER);
 }
@@ -1248,6 +1292,11 @@ sub Generate {
     my $parentGObjType = GetParentGObjType($dataNode);
     my $interfaceName = $dataNode->name;
 
+    # Add the guard if the 'Conditional' extended attribute exists
+    my $conditionalString = GenerateConditionalString($dataNode);
+    push(@conditionGuardStart, "#if ${conditionalString}\n\n") if $conditionalString;
+    push(@conditionGuardEnd, "#endif /* ${conditionalString} */\n") if $conditionalString;
+
     # Add the default impl header template
     @cPrefix = split("\r", $licenceTemplate);
     push(@cPrefix, "\n");
@@ -1300,6 +1349,7 @@ sub WriteData {
 
     print HEADER @hPrefix;
     print HEADER @hPrefixGuard;
+    print HEADER @conditionGuardStart;
     print HEADER "#include \"webkit/webkitdomdefines.h\"\n";
     print HEADER "#include <glib-object.h>\n";
     print HEADER "#include <webkit/webkitdefines.h>\n";
@@ -1308,6 +1358,9 @@ sub WriteData {
     print HEADER "\n";
     print HEADER @hBodyPre;
     print HEADER @hBody;
+    print HEADER @conditionGuardEnd;
+    print HEADER "\n";
+    print HEADER @hPrefixGuardEnd;
 
     close(HEADER);
 
@@ -1318,6 +1371,7 @@ sub WriteData {
     print IMPL @cPrefix;
     print IMPL "#include <glib-object.h>\n";
     print IMPL "#include \"config.h\"\n\n";
+    print IMPL @conditionGuardStart;
     print IMPL "#include <wtf/GetPtr.h>\n";
     print IMPL "#include <wtf/RefPtr.h>\n";
     print IMPL map { "#include \"$_\"\n" } sort keys(%implIncludes);
@@ -1326,6 +1380,7 @@ sub WriteData {
 
     print IMPL "\n";
     print IMPL @cBodyPriv;
+    print IMPL @conditionGuardEnd;
 
     close(IMPL);
 

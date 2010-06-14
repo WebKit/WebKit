@@ -501,6 +501,69 @@ webkit_dom_test_obj_get_script_string_attr(WebKitDOMTestObj* self)
     return res;
 }
 
+#if ENABLE(Condition1)
+glong
+webkit_dom_test_obj_get_conditional_attr1(WebKitDOMTestObj* self)
+{
+    g_return_val_if_fail (self, 0);
+    WebCore::TestObj * item = WebKit::core(self);
+    glong res = item->conditionalAttr1();
+    return res;
+}
+#endif /* ENABLE(Condition1) */
+
+#if ENABLE(Condition1)
+void
+webkit_dom_test_obj_set_conditional_attr1(WebKitDOMTestObj* self, glong value)
+{
+    g_return_if_fail (self);
+    WebCore::TestObj * item = WebKit::core(self);
+    item->setConditionalAttr1(value);
+}
+#endif /* ENABLE(Condition1) */
+
+#if ENABLE(Condition1) && ENABLE(Condition2)
+glong
+webkit_dom_test_obj_get_conditional_attr2(WebKitDOMTestObj* self)
+{
+    g_return_val_if_fail (self, 0);
+    WebCore::TestObj * item = WebKit::core(self);
+    glong res = item->conditionalAttr2();
+    return res;
+}
+#endif /* ENABLE(Condition1) && ENABLE(Condition2) */
+
+#if ENABLE(Condition1) && ENABLE(Condition2)
+void
+webkit_dom_test_obj_set_conditional_attr2(WebKitDOMTestObj* self, glong value)
+{
+    g_return_if_fail (self);
+    WebCore::TestObj * item = WebKit::core(self);
+    item->setConditionalAttr2(value);
+}
+#endif /* ENABLE(Condition1) && ENABLE(Condition2) */
+
+#if ENABLE(Condition1) || ENABLE(Condition2)
+glong
+webkit_dom_test_obj_get_conditional_attr3(WebKitDOMTestObj* self)
+{
+    g_return_val_if_fail (self, 0);
+    WebCore::TestObj * item = WebKit::core(self);
+    glong res = item->conditionalAttr3();
+    return res;
+}
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+
+#if ENABLE(Condition1) || ENABLE(Condition2)
+void
+webkit_dom_test_obj_set_conditional_attr3(WebKitDOMTestObj* self, glong value)
+{
+    g_return_if_fail (self);
+    WebCore::TestObj * item = WebKit::core(self);
+    item->setConditionalAttr3(value);
+}
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+
 glong
 webkit_dom_test_obj_get_description(WebKitDOMTestObj* self)
 {
@@ -567,6 +630,15 @@ enum {
     PROP_ATTR_WITH_GETTER_EXCEPTION,
     PROP_CUSTOM_ATTR,
     PROP_SCRIPT_STRING_ATTR,
+#if ENABLE(Condition1)
+    PROP_CONDITIONAL_ATTR1,
+#endif /* ENABLE(Condition1) */
+#if ENABLE(Condition1) && ENABLE(Condition2)
+    PROP_CONDITIONAL_ATTR2,
+#endif /* ENABLE(Condition1) && ENABLE(Condition2) */
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    PROP_CONDITIONAL_ATTR3,
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
     PROP_DESCRIPTION,
     PROP_ID,
     PROP_HASH,
@@ -626,6 +698,27 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint prop_id, con
         coreSelf->setAttrWithGetterException((g_value_get_long(value)), ec);
         break;
     }
+#if ENABLE(Condition1)
+    case PROP_CONDITIONAL_ATTR1:
+    {
+        coreSelf->setConditionalAttr1((g_value_get_long(value)));
+        break;
+    }
+#endif /* ENABLE(Condition1) */
+#if ENABLE(Condition1) && ENABLE(Condition2)
+    case PROP_CONDITIONAL_ATTR2:
+    {
+        coreSelf->setConditionalAttr2((g_value_get_long(value)));
+        break;
+    }
+#endif /* ENABLE(Condition1) && ENABLE(Condition2) */
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    case PROP_CONDITIONAL_ATTR3:
+    {
+        coreSelf->setConditionalAttr3((g_value_get_long(value)));
+        break;
+    }
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
     case PROP_ID:
     {
         coreSelf->setId((g_value_get_long(value)));
@@ -706,6 +799,27 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint prop_id, GVa
         g_value_take_string(value, convertToUTF8String(coreSelf->scriptStringAttr()));
         break;
     }
+#if ENABLE(Condition1)
+    case PROP_CONDITIONAL_ATTR1:
+    {
+        g_value_set_long(value, coreSelf->conditionalAttr1());
+        break;
+    }
+#endif /* ENABLE(Condition1) */
+#if ENABLE(Condition1) && ENABLE(Condition2)
+    case PROP_CONDITIONAL_ATTR2:
+    {
+        g_value_set_long(value, coreSelf->conditionalAttr2());
+        break;
+    }
+#endif /* ENABLE(Condition1) && ENABLE(Condition2) */
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    case PROP_CONDITIONAL_ATTR3:
+    {
+        g_value_set_long(value, coreSelf->conditionalAttr3());
+        break;
+    }
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
     case PROP_DESCRIPTION:
     {
         g_value_set_long(value, coreSelf->description());
@@ -833,6 +947,39 @@ G_MAXLONG, /* max */
                                                            "read-only  gchar*  TestObj.script-string-attr", /* longer - could do with some extra doc stuff here */
                                                            "", /* default */
                                                            WEBKIT_PARAM_READABLE));
+#if ENABLE(Condition1)
+    g_object_class_install_property(gobjectClass,
+                                    PROP_CONDITIONAL_ATTR1,
+                                    g_param_spec_long("conditional-attr1", /* name */
+                                                           "test_obj_conditional-attr1", /* short description */
+                                                           "read-write  glong TestObj.conditional-attr1", /* longer - could do with some extra doc stuff here */
+                                                           G_MINLONG, /* min */
+G_MAXLONG, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+#endif /* ENABLE(Condition1) */
+#if ENABLE(Condition1) && ENABLE(Condition2)
+    g_object_class_install_property(gobjectClass,
+                                    PROP_CONDITIONAL_ATTR2,
+                                    g_param_spec_long("conditional-attr2", /* name */
+                                                           "test_obj_conditional-attr2", /* short description */
+                                                           "read-write  glong TestObj.conditional-attr2", /* longer - could do with some extra doc stuff here */
+                                                           G_MINLONG, /* min */
+G_MAXLONG, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+#endif /* ENABLE(Condition1) && ENABLE(Condition2) */
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    g_object_class_install_property(gobjectClass,
+                                    PROP_CONDITIONAL_ATTR3,
+                                    g_param_spec_long("conditional-attr3", /* name */
+                                                           "test_obj_conditional-attr3", /* short description */
+                                                           "read-write  glong TestObj.conditional-attr3", /* longer - could do with some extra doc stuff here */
+                                                           G_MINLONG, /* min */
+G_MAXLONG, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
     g_object_class_install_property(gobjectClass,
                                     PROP_DESCRIPTION,
                                     g_param_spec_long("description", /* name */

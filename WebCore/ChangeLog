@@ -1,3 +1,62 @@
+2010-06-14  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix code generators to better support Conditional attribute and add test
+        coverage for it.
+        https://bugs.webkit.org/show_bug.cgi?id=39512
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_get_conditional_attr1):
+        (webkit_dom_test_obj_set_conditional_attr1):
+        (webkit_dom_test_obj_get_conditional_attr2):
+        (webkit_dom_test_obj_set_conditional_attr2):
+        (webkit_dom_test_obj_get_conditional_attr3):
+        (webkit_dom_test_obj_set_conditional_attr3):
+        (webkit_dom_test_obj_set_property):
+        (webkit_dom_test_obj_get_property):
+        (webkit_dom_test_obj_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::):
+        (WebCore::jsTestObjConditionalAttr1):
+        (WebCore::jsTestObjConditionalAttr2):
+        (WebCore::jsTestObjConditionalAttr3):
+        (WebCore::setJSTestObjConditionalAttr1):
+        (WebCore::setJSTestObjConditionalAttr2):
+        (WebCore::setJSTestObjConditionalAttr3):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestInterface.mm:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj conditionalAttr1]):
+        (-[DOMTestObj setConditionalAttr1:]):
+        (-[DOMTestObj conditionalAttr2]):
+        (-[DOMTestObj setConditionalAttr2:]):
+        (-[DOMTestObj conditionalAttr3]):
+        (-[DOMTestObj setConditionalAttr3:]):
+        * bindings/scripts/test/TestInterface.idl:
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        * bindings/scripts/test/V8/V8TestInterface.h:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::conditionalAttr1AttrGetter):
+        (WebCore::TestObjInternal::conditionalAttr1AttrSetter):
+        (WebCore::TestObjInternal::conditionalAttr2AttrGetter):
+        (WebCore::TestObjInternal::conditionalAttr2AttrSetter):
+        (WebCore::TestObjInternal::conditionalAttr3AttrGetter):
+        (WebCore::TestObjInternal::conditionalAttr3AttrSetter):
+        (WebCore::):
+
 2010-06-14  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

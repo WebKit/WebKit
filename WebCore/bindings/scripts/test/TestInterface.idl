@@ -30,6 +30,7 @@
 // changes in its ouput.
 module test {
     interface [
+        Conditional=Condition1|Condition2,
         CanBeConstructed,
         CallWith=ScriptExecutionContext
     ] TestInterface {

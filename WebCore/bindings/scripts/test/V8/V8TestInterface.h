@@ -18,6 +18,8 @@
     Boston, MA 02111-1307, USA.
 */
 
+#if ENABLE(Condition1) || ENABLE(Condition2)
+
 #ifndef V8TestInterface_h
 #define V8TestInterface_h
 
@@ -48,3 +50,5 @@ v8::Handle<v8::Value> toV8(PassRefPtr<TestInterface >);
 }
 
 #endif // V8TestInterface_h
+#endif // ENABLE(Condition1) || ENABLE(Condition2)
+

@@ -63,6 +63,16 @@ public:
     int customAttr() const;
     void setCustomAttr(int);
     WebDOMString scriptStringAttr() const;
+    int conditionalAttr1() const;
+    void setConditionalAttr1(int);
+    int conditionalAttr2() const;
+    void setConditionalAttr2(int);
+    int conditionalAttr3() const;
+    void setConditionalAttr3(int);
+    int description() const;
+    int id() const;
+    void setId(int);
+    WebDOMString hash() const;
 
     void voidMethod();
     void voidMethodWithArgs(int intArg, const WebDOMString& strArg, const WebDOMTestObj& objArg);

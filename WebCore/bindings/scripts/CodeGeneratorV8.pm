@@ -1283,9 +1283,9 @@ sub GenerateBatchedAttributeData
 
     foreach my $attribute (@$attributes) {
         my $conditionalString = GenerateConditionalString($attribute->signature);
-        push(@implContent, "\n#if ${conditionalString}\n") if $conditionalString;
+        push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
         GenerateSingleBatchedAttribute($interfaceName, $attribute, ",", "");
-        push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
+        push(@implContent, "#endif // ${conditionalString}\n") if $conditionalString;
     }
 }
 

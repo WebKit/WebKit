@@ -28,6 +28,7 @@
 #include "V8Class2.h"
 #include "V8CustomVoidCallback.h"
 #include "V8DOMString.h"
+#include "V8Proxy.h"
 
 #include <wtf/Assertions.h>
 

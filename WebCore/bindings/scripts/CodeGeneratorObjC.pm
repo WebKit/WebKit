@@ -793,6 +793,12 @@ sub GenerateHeader
                 push(@headerAttributes, $property) if $public;
                 push(@privateHeaderAttributes, $property) unless $public;
             } else {
+                my $attributeConditionalString = GenerateConditionalString($attribute->signature);
+                if ($attributeConditionalString) {
+                    push(@headerAttributes, "#if ${attributeConditionalString}\n") if $public;
+                    push(@privateHeaderAttributes, "#if ${attributeConditionalString}\n") unless $public;
+                }
+
                 # - GETTER
                 my $getter = "- (" . $attributeType . ")" . $attributeName . $declarationSuffix;
                 push(@headerAttributes, $getter) if $public;
@@ -803,6 +809,11 @@ sub GenerateHeader
                     my $setter = "- (void)$setterName(" . $attributeType . ")new" . ucfirst($attributeName) . $declarationSuffix;
                     push(@headerAttributes, $setter) if $public;
                     push(@privateHeaderAttributes, $setter) unless $public;
+                }
+
+                if ($attributeConditionalString) {
+                    push(@headerAttributes, "#endif\n") if $public;
+                    push(@privateHeaderAttributes, "#endif\n") unless $public;
                 }
             }
         }
@@ -1271,6 +1282,8 @@ sub GenerateImplementation
                 $getterContent = $getterContentHead . $getterContentTail;
             }
 
+            my $attributeConditionalString = GenerateConditionalString($attribute->signature);
+            push(@implContent, "#if ${attributeConditionalString}\n") if $attributeConditionalString;
             push(@implContent, $getterSig);
             push(@implContent, "{\n");
             push(@implContent, "    $jsContextSetter\n");
@@ -1291,7 +1304,7 @@ sub GenerateImplementation
             } else {
                 push(@implContent, "    return $getterContent;\n");
             }
-            push(@implContent, "}\n\n");
+            push(@implContent, "}\n");
 
             # - SETTER
             if (!$attributeIsReadonly) {
@@ -1312,6 +1325,7 @@ sub GenerateImplementation
 
                 my $setterSig = "- (void)$setterName:($attributeType)$argName\n";
 
+                push(@implContent, "\n");
                 push(@implContent, $setterSig);
                 push(@implContent, "{\n");
                 push(@implContent, "    $jsContextSetter\n");
@@ -1347,8 +1361,11 @@ sub GenerateImplementation
                     push(@implContent, "    $exceptionRaiseOnError\n") if $hasSetterException;
                 }
 
-                push(@implContent, "}\n\n");
+                push(@implContent, "}\n");
             }
+
+            push(@implContent, "#endif\n") if $attributeConditionalString;
+            push(@implContent, "\n");
         }
     }
 

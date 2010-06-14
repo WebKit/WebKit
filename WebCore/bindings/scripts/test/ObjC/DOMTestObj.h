@@ -56,6 +56,18 @@
 - (int)customAttr;
 - (void)setCustomAttr:(int)newCustomAttr;
 - (NSString *)scriptStringAttr;
+#if ENABLE(Condition1)
+- (int)conditionalAttr1;
+- (void)setConditionalAttr1:(int)newConditionalAttr1;
+#endif
+#if ENABLE(Condition1) && ENABLE(Condition2)
+- (int)conditionalAttr2;
+- (void)setConditionalAttr2:(int)newConditionalAttr2;
+#endif
+#if ENABLE(Condition1) || ENABLE(Condition2)
+- (int)conditionalAttr3;
+- (void)setConditionalAttr3:(int)newConditionalAttr3;
+#endif
 - (int)descriptionName;
 - (int)idName;
 - (void)setIdName:(int)newIdName;
