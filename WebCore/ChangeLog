@@ -1,5 +1,11 @@
 2010-06-14  Sam Weinig  <sam@webkit.org>
 
+        Add missing comma to fix GTK build.
+
+        * xml/XSLTProcessor.idl:
+
+2010-06-14  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Alexey Proskuryakov.
 
         Fix for https://bugs.webkit.org/show_bug.cgi?id=40581
