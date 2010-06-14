@@ -1,5 +1,12 @@
 2010-06-14  Jeremy Orlow  <jorlow@chromium.org>
 
+        2 more build fixes.
+
+        * storage/IDBDatabaseImpl.h:
+        * storage/IndexedDatabaseRequest.h:
+
+2010-06-14  Jeremy Orlow  <jorlow@chromium.org>
+
         Unreviewed build fix for my last.
 
         * workers/WorkerScriptLoaderClient.h:

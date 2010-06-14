@@ -28,6 +28,8 @@
 
 #include "IDBCallbacks.h"
 #include "IDBDatabase.h"
+#include "StringHash.h"
+#include <wtf/HashMap.h>
 
 #if ENABLE(INDEXED_DATABASE)
 

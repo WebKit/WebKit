@@ -41,6 +41,7 @@ namespace WebCore {
 
 class IDBAny;
 class IndexedDatabase;
+class ScriptExecutionContext;
 
 class IndexedDatabaseRequest : public RefCounted<IndexedDatabaseRequest> {
 public:
