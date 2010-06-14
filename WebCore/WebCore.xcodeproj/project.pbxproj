@@ -4233,7 +4233,7 @@
 		B5A684220FFABE9800D24689 /* SQLiteFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B5A684210FFABE9800D24689 /* SQLiteFileSystem.h */; };
 		B5A684240FFABEAA00D24689 /* SQLiteFileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5A684230FFABEAA00D24689 /* SQLiteFileSystem.cpp */; };
 		B5B5DC69119BB3D5002A8790 /* AbstractDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5B5DC67119BB3D5002A8790 /* AbstractDatabase.cpp */; };
-		B5B5DC6A119BB3D5002A8790 /* AbstractDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = B5B5DC68119BB3D5002A8790 /* AbstractDatabase.h */; };
+		B5B5DC6A119BB3D5002A8790 /* AbstractDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = B5B5DC68119BB3D5002A8790 /* AbstractDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B5C1123B102B6C4600096578 /* SQLTransactionCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5C11239102B6C4600096578 /* SQLTransactionCoordinator.cpp */; };
 		B5C1123C102B6C4600096578 /* SQLTransactionCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = B5C1123A102B6C4600096578 /* SQLTransactionCoordinator.h */; };
 		B5D3601A112F8B560048DEA8 /* DatabaseCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B5D36019112F8B560048DEA8 /* DatabaseCallback.h */; };
