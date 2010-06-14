@@ -58,20 +58,43 @@ Q_SIGNALS:
     void didHide();
 };
 
+class QWebNotificationData
+{
+public:
+    virtual const QString title() const = 0;
+    virtual const QString message() const = 0;
+    virtual const QByteArray iconData() const = 0;
+};
+
+class QWebNotificationPresenter : public QObject
+{
+    Q_OBJECT
+public:
+    QWebNotificationPresenter() {}
+    virtual ~QWebNotificationPresenter() {}
+
+    virtual void showNotification(const QWebNotificationData*) = 0;
+    
+Q_SIGNALS:
+    void notificationClosed();
+};
+
 class QWebKitPlatformPlugin
 {
 public:
     virtual ~QWebKitPlatformPlugin() {}
 
     enum Extension {
-        MultipleSelections
+        MultipleSelections,
+        Notifications
     };
 
     virtual bool supportsExtension(Extension extension) const = 0;
     virtual QWebSelectMethod* createSelectInputMethod() const = 0;
+    virtual QWebNotificationPresenter* createNotificationPresenter() const = 0;
 
 };
 
-Q_DECLARE_INTERFACE(QWebKitPlatformPlugin, "com.nokia.Qt.WebKit.PlatformPlugin/1.1");
+Q_DECLARE_INTERFACE(QWebKitPlatformPlugin, "com.nokia.Qt.WebKit.PlatformPlugin/1.2");
 
 #endif // QWEBKITPLATFORMPLUGIN_H

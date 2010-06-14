@@ -34,36 +34,51 @@
 
 #include "Notification.h"
 #include "NotificationPresenter.h"
+#include "QtPlatformPlugin.h"
 #include "Timer.h"
+
+#include "qwebkitplatformplugin.h"
 
 #include <QMultiHash>
 #include <QSystemTrayIcon>
-
-#if ENABLE(NOTIFICATIONS)
 
 namespace WebCore {
 
 class Document;
 class KURL;
 
-class NotificationIconWrapper {
+class NotificationIconWrapper : public QObject, public QWebNotificationData {
+    Q_OBJECT
 public:
     NotificationIconWrapper();
     ~NotificationIconWrapper();
+
     void close();
     void close(Timer<NotificationIconWrapper>*);
+    const QString title() const;
+    const QString message() const;
+    const QByteArray iconData() const;
+
+public Q_SLOTS:
+    void notificationClosed();
+
+public:
 #ifndef QT_NO_SYSTEMTRAYICON
     OwnPtr<QSystemTrayIcon> m_notificationIcon;
 #endif
+
+    OwnPtr<QWebNotificationPresenter> m_presenter;
     Timer<NotificationIconWrapper> m_closeTimer;
 };
+
+#if ENABLE(NOTIFICATIONS)
 
 typedef QHash <Notification*, NotificationIconWrapper*> NotificationsQueue;
 
 class NotificationPresenterClientQt : public NotificationPresenter {
 public:
     NotificationPresenterClientQt();
-    ~NotificationPresenterClientQt() {}
+    ~NotificationPresenterClientQt();
 
     /* WebCore::NotificationPresenter interface */
     virtual bool show(Notification*);
@@ -84,10 +99,13 @@ public:
     void removeClient();
     static NotificationPresenterClientQt* notificationPresenter();
 
+    Notification* notificationForWrapper(const NotificationIconWrapper*) const;
+
 private:
     void sendEvent(Notification*, const AtomicString& eventName);
     void displayNotification(Notification*, const QByteArray&);
     void removeReplacedNotificationFromQueue(Notification*);
+    void detachNotification(Notification*);
     void dumpReplacedIdText(Notification*);
     void dumpShowText(Notification*);
 
@@ -95,9 +113,11 @@ private:
     QHash<QString,  QList<RefPtr<VoidCallback> > > m_pendingPermissionRequests;
     NotificationsQueue m_notifications;
     QObject* m_receiver;
+    QtPlatformPlugin m_platformPlugin;
 };
+
+#endif
 
 }
 
-#endif
 #endif

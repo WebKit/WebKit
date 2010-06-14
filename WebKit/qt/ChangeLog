@@ -1,3 +1,62 @@
+2010-06-13  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Platform plugin support for Notifications UI
+        https://bugs.webkit.org/show_bug.cgi?id=40005
+
+        Add an interface to the platform plugin to display notifications.
+        Implemented the notification in the example platform plugin. 
+        This interface is enabled by default, but could be turned off with
+        a build flag. The platform plugin should control its own lifecycle,
+        so now the close timer applies only when using the QSystemTrayIcon.
+        That's because QSystemTrayIcon does not inform its caller when it
+        is closed.
+
+        Changed the way NotificationPresenterClientQt is deleted because it
+        is being accessed when GC is deleting the Notification objects.
+        NotificationPresenterClientQt is now detaching itself from the
+        Notifications before it is deleted.
+
+        * Api/qwebkitplatformplugin.h:
+        (QWebNotificationPresenter::QWebNotificationPresenter):
+        (QWebNotificationPresenter::~QWebNotificationPresenter):
+        (QWebKitPlatformPlugin::):
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        (WebCore::NotificationIconWrapper::NotificationIconWrapper):
+        (WebCore::NotificationIconWrapper::title):
+        (WebCore::NotificationIconWrapper::message):
+        (WebCore::NotificationIconWrapper::iconData):
+        (WebCore::NotificationPresenterClientQt::~NotificationPresenterClientQt):
+        (WebCore::NotificationIconWrapper::notificationClosed):
+        (WebCore::NotificationPresenterClientQt::displayNotification):
+        (WebCore::NotificationPresenterClientQt::cancel):
+        (WebCore::NotificationPresenterClientQt::notificationForWrapper):
+        (WebCore::NotificationPresenterClientQt::removeReplacedNotificationFromQueue):
+        (WebCore::NotificationPresenterClientQt::detachNotification):
+        * WebCoreSupport/NotificationPresenterClientQt.h:
+        * WebCoreSupport/QtPlatformPlugin.cpp:
+        (WebCore::QtPlatformPlugin::createNotificationPresenter):
+        * WebCoreSupport/QtPlatformPlugin.h:
+        * examples/platformplugin/WebNotificationPresenter.cpp: Added.
+        (WebNotificationWidget::WebNotificationWidget):
+        (WebNotificationWidget::~WebNotificationWidget):
+        (WebNotificationWidget::showNotification):
+        (WebNotificationWidget::event):
+        * examples/platformplugin/WebNotificationPresenter.h: Added.
+        (WebNotificationPresenter::WebNotificationPresenter):
+        (WebNotificationPresenter::~WebNotificationPresenter):
+        (WebNotificationPresenter::showNotification):
+        * examples/platformplugin/WebPlugin.cpp:
+        (WebPlugin::supportsExtension):
+        * examples/platformplugin/WebPlugin.h:
+        (WebPlugin::createNotificationPresenter):
+        * examples/platformplugin/platformplugin.pro:
+        * examples/platformplugin/qwebkitplatformplugin.h:
+        (QWebNotificationPresenter::QWebNotificationPresenter):
+        (QWebNotificationPresenter::~QWebNotificationPresenter):
+        (QWebKitPlatformPlugin::):
+
 2010-06-14  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Laszlo Gombos.

@@ -90,7 +90,8 @@ Notification::~Notification()
         ASSERT_NOT_REACHED();
         cancel();
     }
-    m_presenter->notificationObjectDestroyed(this);
+    if (m_presenter)
+        m_presenter->notificationObjectDestroyed(this);
 }
 
 void Notification::show() 

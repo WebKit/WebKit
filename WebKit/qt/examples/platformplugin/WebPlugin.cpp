@@ -210,7 +210,15 @@ MultipleSelectionPopup::MultipleSelectionPopup(const QWebSelectData& data)
 
 bool WebPlugin::supportsExtension(Extension extension) const
 {
-    return extension == MultipleSelections;
+    if (extension == MultipleSelections)
+        return true;
+    if (extension == Notifications)
+#if ENABLE_NOTIFICATIONS
+        return true;
+#else
+        return false;
+#endif
+    return false;
 }
 
 Q_EXPORT_PLUGIN2(qwebselectim, WebPlugin)

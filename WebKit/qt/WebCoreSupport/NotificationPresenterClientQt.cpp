@@ -36,6 +36,7 @@
 #include "DumpRenderTreeSupportQt.h"
 #include "EventNames.h"
 #include "KURL.h"
+#include "QtPlatformPlugin.h"
 #include "SecurityOrigin.h"
 
 #include "qwebkitglobal.h"
@@ -66,7 +67,7 @@ NotificationIconWrapper::NotificationIconWrapper()
 #ifndef QT_NO_SYSTEMTRAYICON
     m_notificationIcon = 0;
 #endif
-    m_closeTimer.startOneShot(notificationTimeout);
+    m_presenter = 0;
 }
 
 NotificationIconWrapper::~NotificationIconWrapper()
@@ -78,8 +79,43 @@ void NotificationIconWrapper::close(Timer<NotificationIconWrapper>*)
     NotificationPresenterClientQt::notificationPresenter()->cancel(this);
 }
 
+const QString NotificationIconWrapper::title() const
+{
+    Notification* notification = NotificationPresenterClientQt::notificationPresenter()->notificationForWrapper(this);
+    if (notification)
+        return notification->contents().title();
+    return QString();
+}
+
+const QString NotificationIconWrapper::message() const
+{
+    Notification* notification = NotificationPresenterClientQt::notificationPresenter()->notificationForWrapper(this);
+    if (notification)
+        return notification->contents().body();
+    return QString();
+}
+
+const QByteArray NotificationIconWrapper::iconData() const
+{
+    Notification* notification = NotificationPresenterClientQt::notificationPresenter()->notificationForWrapper(this);
+    QByteArray iconData;
+    if (notification) {
+        if (notification->iconData())
+            iconData = QByteArray::fromRawData(notification->iconData()->data(), notification->iconData()->size());
+    }
+    return iconData;
+}
+
 NotificationPresenterClientQt::NotificationPresenterClientQt() : m_clientCount(0)
 {
+}
+
+NotificationPresenterClientQt::~NotificationPresenterClientQt()
+{
+    while (!m_notifications.isEmpty()) {
+        NotificationsQueue::Iterator iter = m_notifications.begin();
+        detachNotification(iter.key());
+    }
 }
 
 void NotificationPresenterClientQt::removeClient()
@@ -89,6 +125,11 @@ void NotificationPresenterClientQt::removeClient()
         s_notificationPresenter = 0;
         delete this;
     }
+}
+
+void NotificationIconWrapper::notificationClosed()
+{
+    NotificationPresenterClientQt::notificationPresenter()->cancel(this);
 }
 
 bool NotificationPresenterClientQt::show(Notification* notification)
@@ -123,20 +164,32 @@ void NotificationPresenterClientQt::displayNotification(Notification* notificati
         message = notification->contents().body();
     }
 
+    if (m_platformPlugin.plugin() && m_platformPlugin.plugin()->supportsExtension(QWebKitPlatformPlugin::Notifications))
+        wrapper->m_presenter = m_platformPlugin.createNotificationPresenter();
+
+    if (!wrapper->m_presenter) {
 #ifndef QT_NO_SYSTEMTRAYICON
-    QPixmap pixmap;
-    if (bytes.length() && pixmap.loadFromData(bytes)) {
-        QIcon icon(pixmap);
-        wrapper->m_notificationIcon = new QSystemTrayIcon(icon);
-    } else
-        wrapper->m_notificationIcon = new QSystemTrayIcon();
+        wrapper->m_closeTimer.startOneShot(notificationTimeout);
+        QPixmap pixmap;
+        if (bytes.length() && pixmap.loadFromData(bytes)) {
+            QIcon icon(pixmap);
+            wrapper->m_notificationIcon = new QSystemTrayIcon(icon);
+        } else
+            wrapper->m_notificationIcon = new QSystemTrayIcon();
 #endif
+    }
 
     sendEvent(notification, "display");
 
     // Make sure the notification was not cancelled during handling the display event
     if (m_notifications.find(notification) == m_notifications.end())
         return;
+
+    if (wrapper->m_presenter) {
+        wrapper->connect(wrapper->m_presenter.get(), SIGNAL(notificationClosed()), wrapper, SLOT(notificationClosed()), Qt::QueuedConnection);
+        wrapper->m_presenter->showNotification(wrapper);
+        return;
+    }
 
 #ifndef QT_NO_SYSTEMTRAYICON
     wrapper->m_notificationIcon->show();
@@ -156,19 +209,26 @@ void NotificationPresenterClientQt::cancel(Notification* notification)
     NotificationsQueue::Iterator iter = m_notifications.find(notification);
     if (iter != m_notifications.end()) {
         sendEvent(notification, eventNames().closeEvent);
-        delete m_notifications.take(notification);
-        notification->unsetPendingActivity(notification);
+        detachNotification(notification);
     }
 }
 
 void NotificationPresenterClientQt::cancel(NotificationIconWrapper* wrapper)
 {
-    NotificationsQueue::Iterator end = m_notifications.end();
-    NotificationsQueue::Iterator iter = m_notifications.begin();
+    Notification* notification = notificationForWrapper(wrapper);
+    if (notification)
+        cancel(notification);
+}
+
+Notification* NotificationPresenterClientQt::notificationForWrapper(const NotificationIconWrapper* wrapper) const
+{
+    NotificationsQueue::ConstIterator end = m_notifications.end();
+    NotificationsQueue::ConstIterator iter = m_notifications.begin();
     while (iter != end && iter.value() != wrapper)
         iter++;
     if (iter != end)
-        cancel(iter.key());
+        return iter.key();
+    return 0;
 }
 
 void NotificationPresenterClientQt::notificationObjectDestroyed(Notification* notification)
@@ -252,9 +312,15 @@ void NotificationPresenterClientQt::removeReplacedNotificationFromQueue(Notifica
         if (dumpNotification)
             dumpReplacedIdText(oldNotification);
         sendEvent(oldNotification, eventNames().closeEvent);
-        delete m_notifications.take(oldNotification);
-        oldNotification->unsetPendingActivity(oldNotification);
+        detachNotification(oldNotification);
     }
+}
+
+void NotificationPresenterClientQt::detachNotification(Notification* notification)
+{
+    delete m_notifications.take(notification);
+    notification->detachPresenter();
+    notification->unsetPendingActivity(notification);
 }
 
 void NotificationPresenterClientQt::dumpReplacedIdText(Notification* notification)
