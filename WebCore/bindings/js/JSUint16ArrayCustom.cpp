@@ -51,6 +51,17 @@ JSC::JSValue JSUint16Array::set(JSC::ExecState* exec)
     return setWebGLArrayHelper(exec, impl(), toUint16Array);
 }
 
+EncodedJSValue JSC_HOST_CALL JSUint16ArrayConstructor::constructJSUint16Array(ExecState* exec)
+{
+    JSUint16ArrayConstructor* jsConstructor = static_cast<JSUint16ArrayConstructor*>(exec->callee());
+    RefPtr<Uint16Array> array = static_cast<Uint16Array*>(constructArrayBufferView<Uint16Array, unsigned short>(exec).get());
+    if (!array.get()) {
+        setDOMException(exec, INDEX_SIZE_ERR);
+        return JSValue::encode(JSValue());
+    }
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), array.get())));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(3D_CANVAS)

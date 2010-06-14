@@ -2766,6 +2766,7 @@ sub GenerateConstructorDefinition
     my $canConstruct = $dataNode->extendedAttributes->{"CanBeConstructed"};
     my $customConstructFunction = $dataNode->extendedAttributes->{"CustomConstructFunction"};
     my $callWith = $dataNode->extendedAttributes->{"CallWith"};
+    my $numberOfconstructParameters = $dataNode->extendedAttributes->{"ConstructorParameters"};
 
     push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleClassName}Constructor\", 0, &${constructorClassName}Table, 0 };\n\n");
 
@@ -2773,6 +2774,7 @@ sub GenerateConstructorDefinition
     push(@$outputArray, "    : DOMConstructorObject(${constructorClassName}::createStructure(globalObject->objectPrototype()), globalObject)\n");
     push(@$outputArray, "{\n");
     push(@$outputArray, "    putDirect(exec->propertyNames().prototype, ${protoClassName}::self(exec, globalObject), DontDelete | ReadOnly);\n");
+    push(@$outputArray, "    putDirect(exec->propertyNames().length, jsNumber(exec, ${numberOfconstructParameters}), ReadOnly | DontDelete | DontEnum);\n") if $numberOfconstructParameters;
     push(@$outputArray, "}\n\n");
 
     push(@$outputArray, "bool ${constructorClassName}::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");

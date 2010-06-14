@@ -23,35 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSUint8ArrayConstructor_h
-#define JSUint8ArrayConstructor_h
+#include "config.h"
 
-#include "JSDOMBinding.h"
-#include "JSDocument.h"
+#if ENABLE(3D_CANVAS)
+
+#include "JSArrayBuffer.h"
+
+#include "ArrayBuffer.h"
+#include "ExceptionCode.h"
 
 namespace WebCore {
 
-    class JSUint8ArrayConstructor : public DOMConstructorObject {
-        typedef DOMConstructorObject Base;
-    public:
-        JSUint8ArrayConstructor(JSC::ExecState*, JSDOMGlobalObject*);
-        static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);
-        virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
-        virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);
-        static const JSC::ClassInfo s_info;
+using namespace JSC;
 
-        static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)
-        {
-            return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount);
-        }
+EncodedJSValue JSC_HOST_CALL JSArrayBufferConstructor::constructJSArrayBuffer(ExecState* exec)
+{
+    JSArrayBufferConstructor* jsConstructor = static_cast<JSArrayBufferConstructor*>(exec->callee());
 
-    private:
-        virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
-        virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
-    protected:
-        static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
-    };
-
+    unsigned int size = 0;
+    if (exec->argumentCount() == 1) {
+        size = (unsigned int)exec->argument(0).toInt32(exec);
+        if (isnan(size))
+            size = 0;
+    }
+    RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(size, 1);
+    if (!buffer.get()){
+        setDOMException(exec, INDEX_SIZE_ERR);
+        return JSValue::encode(JSValue());
+    }
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), buffer.get())));
 }
 
-#endif // JSUint8ArrayConstructor_h
+} // namespace WebCore
+
+#endif // ENABLE(3D_CANVAS)

@@ -31,7 +31,6 @@
 #include "JSInt8Array.h"
 
 #include "Int8Array.h"
-
 #include <runtime/Error.h>
 
 using namespace JSC;
@@ -51,6 +50,17 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Int8Arr
 JSC::JSValue JSInt8Array::set(JSC::ExecState* exec)
 {
     return setWebGLArrayHelper(exec, impl(), toInt8Array);
+}
+
+EncodedJSValue JSC_HOST_CALL JSInt8ArrayConstructor::constructJSInt8Array(ExecState* exec)
+{
+    JSInt8ArrayConstructor* jsConstructor = static_cast<JSInt8ArrayConstructor*>(exec->callee());
+    RefPtr<Int8Array> array = static_cast<Int8Array*>(constructArrayBufferView<Int8Array, signed char>(exec).get());
+    if (!array.get()) {
+        setDOMException(exec, INDEX_SIZE_ERR);
+        return JSValue::encode(JSValue());
+    }
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), array.get())));
 }
 
 } // namespace WebCore

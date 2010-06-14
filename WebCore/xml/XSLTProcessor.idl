@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,9 @@ module xml {
 
     interface [
         Conditional=XSLT,
-        CustomConstructor
+        CanBeConstructed,
+        CustomConstructFunction
+        V8CustomConstructor
     ] XSLTProcessor {
         
         [Custom] void importStylesheet(in Node stylesheet);

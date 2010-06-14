@@ -35,7 +35,9 @@
 #include "JSSharedWorker.h"
 
 #include "JSDOMGlobalObject.h"
+#include "JSDOMWindowCustom.h"
 #include "SharedWorker.h"
+#include <runtime/Error.h>
 
 using namespace JSC;
 
@@ -47,6 +49,30 @@ void JSSharedWorker::markChildren(MarkStack& markStack)
 
     if (MessagePort* port = impl()->port())
         markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), port);
+}
+
+EncodedJSValue JSC_HOST_CALL JSSharedWorkerConstructor::constructJSSharedWorker(ExecState* exec)
+{
+    JSSharedWorkerConstructor* jsConstructor = static_cast<JSSharedWorkerConstructor*>(exec->callee());
+
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createSyntaxError(exec, "Not enough arguments"));
+
+    UString scriptURL = exec->argument(0).toString(exec);
+    UString name;
+    if (exec->argumentCount() > 1)
+        name = exec->argument(1).toString(exec);
+
+    if (exec->hadException())
+        return JSValue::encode(JSValue());
+
+    // FIXME: We need to use both the dynamic scope and the lexical scope (dynamic scope for resolving the worker URL)
+    DOMWindow* window = asJSDOMWindow(exec->lexicalGlobalObject())->impl();
+    ExceptionCode ec = 0;
+    RefPtr<SharedWorker> worker = SharedWorker::create(ustringToString(scriptURL), ustringToString(name), window->document(), ec);
+    setDOMException(exec, ec);
+
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), worker.release())));
 }
 
 } // namespace WebCore

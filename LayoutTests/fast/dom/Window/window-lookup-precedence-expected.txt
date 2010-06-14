@@ -324,8 +324,8 @@ PASS win['XPathException'] == '[object XPathExceptionConstructor]' is true
 PASS win['XPathException'] == '[object XPathExceptionConstructor]' is true
 PASS win['XPathResult'] == '[object XPathResultConstructor]' is true
 PASS win['XPathResult'] == '[object XPathResultConstructor]' is true
-PASS win['XSLTProcessor'] == '[object XSLTProcessorConsructor]' is true
-PASS win['XSLTProcessor'] == '[object XSLTProcessorConsructor]' is true
+PASS win['XSLTProcessor'] == '[object XSLTProcessorConstructor]' is true
+PASS win['XSLTProcessor'] == '[object XSLTProcessorConstructor]' is true
 PASS win['onload'] is null
 PASS win['onload'] is null
 PASS win['frames'] == '[object DOMWindow]' is true

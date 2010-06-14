@@ -27,6 +27,7 @@
 #include "JSMessageChannel.h"
 
 #include "MessageChannel.h"
+#include <runtime/Error.h>
 
 using namespace JSC;
 
@@ -41,6 +42,16 @@ void JSMessageChannel::markChildren(MarkStack& markStack)
 
     if (MessagePort* port = m_impl->port2())
         markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), port);
+}
+
+EncodedJSValue JSC_HOST_CALL JSMessageChannelConstructor::constructJSMessageChannel(ExecState* exec)
+{
+    JSMessageChannelConstructor* jsConstructor = static_cast<JSMessageChannelConstructor*>(exec->callee());
+    ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();
+    if (!context)
+        return throwVMError(exec, createReferenceError(exec, "MessageChannel constructor associated document is unavailable"));
+
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), MessageChannel::create(context))));
 }
 
 } // namespace WebCore

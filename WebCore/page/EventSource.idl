@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2009 Ericsson AB
- * All rights reserved.
+ * Copyright (C) 2009 Ericsson AB. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,10 @@ module window {
 
     interface [
         Conditional=EVENTSOURCE,
-        CustomConstructor,
+        CanBeConstructed,
+        CustomConstructFunction,
+        ConstructorParameters=1,
+        V8CustomConstructor,
         EventTarget,
         NoStaticTables
     ] EventSource {

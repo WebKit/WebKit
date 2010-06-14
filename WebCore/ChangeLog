@@ -1,3 +1,110 @@
+2010-06-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=40581
+        Auto-generate most of the JS constructors
+
+        - Auto-generates all the JS constructors that don't have custom
+          names (eg, Not Image(), Audio() or Option())
+        - Fixes two typos.
+            (new XSLTConstructor()).toString() [object XSLTProcessorConsructor] -> [object XSLTProcessorConstructor])
+            (new EventSource()).toString() [object EventSourceContructor] -> [object EventSourceConstructor])
+
+        * Android.jscbindings.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSArrayBufferConstructor.cpp: Removed.
+        * bindings/js/JSArrayBufferConstructor.h: Removed.
+        * bindings/js/JSArrayBufferCustom.cpp: Copied from WebCore/bindings/js/JSArrayBufferConstructor.cpp.
+        (WebCore::JSArrayBufferConstructor::constructJSArrayBuffer):
+        * bindings/js/JSArrayBufferViewHelper.h:
+        (WebCore::constructArrayBufferView):
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/js/JSEventSourceConstructor.cpp: Removed.
+        * bindings/js/JSEventSourceConstructor.h: Removed.
+        * bindings/js/JSEventSourceCustom.cpp: Copied from WebCore/bindings/js/JSEventSourceConstructor.cpp.
+        (WebCore::JSEventSourceConstructor::constructJSEventSource):
+        * bindings/js/JSFloat32ArrayConstructor.cpp: Removed.
+        * bindings/js/JSFloat32ArrayConstructor.h: Removed.
+        * bindings/js/JSFloat32ArrayCustom.cpp:
+        (WebCore::JSFloat32ArrayConstructor::constructJSFloat32Array):
+        * bindings/js/JSInt16ArrayConstructor.cpp: Removed.
+        * bindings/js/JSInt16ArrayConstructor.h: Removed.
+        * bindings/js/JSInt16ArrayCustom.cpp:
+        (WebCore::JSInt16ArrayConstructor::constructJSInt16Array):
+        * bindings/js/JSInt32ArrayConstructor.cpp: Removed.
+        * bindings/js/JSInt32ArrayConstructor.h: Removed.
+        * bindings/js/JSInt32ArrayCustom.cpp:
+        (WebCore::JSInt32ArrayConstructor::constructJSInt32Array):
+        * bindings/js/JSInt8ArrayConstructor.cpp: Removed.
+        * bindings/js/JSInt8ArrayConstructor.h: Removed.
+        * bindings/js/JSInt8ArrayCustom.cpp:
+        (WebCore::JSInt8ArrayConstructor::constructJSInt8Array):
+        * bindings/js/JSMessageChannelConstructor.cpp: Removed.
+        * bindings/js/JSMessageChannelConstructor.h: Removed.
+        * bindings/js/JSMessageChannelCustom.cpp:
+        (WebCore::JSMessageChannelConstructor::constructJSMessageChannel):
+        * bindings/js/JSSharedWorkerConstructor.cpp: Removed.
+        * bindings/js/JSSharedWorkerConstructor.h: Removed.
+        * bindings/js/JSSharedWorkerCustom.cpp:
+        (WebCore::JSSharedWorkerConstructor::constructJSSharedWorker):
+        * bindings/js/JSUint16ArrayConstructor.cpp: Removed.
+        * bindings/js/JSUint16ArrayConstructor.h: Removed.
+        * bindings/js/JSUint16ArrayCustom.cpp:
+        (WebCore::JSUint16ArrayConstructor::constructJSUint16Array):
+        * bindings/js/JSUint32ArrayConstructor.cpp: Removed.
+        * bindings/js/JSUint32ArrayConstructor.h: Removed.
+        * bindings/js/JSUint32ArrayCustom.cpp:
+        (WebCore::JSUint32ArrayConstructor::constructJSUint32Array):
+        * bindings/js/JSUint8ArrayConstructor.cpp: Removed.
+        * bindings/js/JSUint8ArrayConstructor.h: Removed.
+        * bindings/js/JSUint8ArrayCustom.cpp:
+        (WebCore::JSUint8ArrayConstructor::constructJSUint8Array):
+        * bindings/js/JSWebKitCSSMatrixConstructor.cpp: Removed.
+        * bindings/js/JSWebKitCSSMatrixConstructor.h: Removed.
+        * bindings/js/JSWebKitCSSMatrixCustom.cpp: Copied from WebCore/bindings/js/JSWebKitCSSMatrixConstructor.cpp.
+        (WebCore::JSWebKitCSSMatrixConstructor::constructJSWebKitCSSMatrix):
+        * bindings/js/JSWebKitPointConstructor.cpp: Removed.
+        * bindings/js/JSWebKitPointConstructor.h: Removed.
+        * bindings/js/JSWebKitPointCustom.cpp: Copied from WebCore/bindings/js/JSWebKitPointConstructor.cpp.
+        (WebCore::JSWebKitPointConstructor::constructJSWebKitPoint):
+        * bindings/js/JSWebSocketConstructor.cpp: Removed.
+        * bindings/js/JSWebSocketConstructor.h: Removed.
+        * bindings/js/JSWebSocketCustom.cpp:
+        (WebCore::JSWebSocketConstructor::constructJSWebSocket):
+        * bindings/js/JSWorkerConstructor.cpp: Removed.
+        * bindings/js/JSWorkerConstructor.h: Removed.
+        * bindings/js/JSWorkerContextCustom.cpp:
+        * bindings/js/JSWorkerCustom.cpp:
+        (WebCore::JSWorkerConstructor::constructJSWorker):
+        * bindings/js/JSXSLTProcessorConstructor.cpp: Removed.
+        * bindings/js/JSXSLTProcessorConstructor.h: Removed.
+        * bindings/js/JSXSLTProcessorCustom.cpp:
+        (WebCore::JSXSLTProcessorConstructor::constructJSXSLTProcessor):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * css/WebKitCSSMatrix.idl:
+        * dom/MessageChannel.idl:
+        * html/canvas/ArrayBuffer.idl:
+        * html/canvas/Float32Array.idl:
+        * html/canvas/Int16Array.idl:
+        * html/canvas/Int32Array.idl:
+        * html/canvas/Int8Array.idl:
+        * html/canvas/Uint16Array.idl:
+        * html/canvas/Uint32Array.idl:
+        * html/canvas/Uint8Array.idl:
+        * page/EventSource.idl:
+        * page/WebKitPoint.idl:
+        * websockets/WebSocket.idl:
+        * workers/SharedWorker.idl:
+        * workers/Worker.idl:
+        * xml/XSLTProcessor.idl:
+
 2010-05-16  Antonio Gomes  <tonikitoo@webkit.org>
 
         Unreviewed naming fixes of local variables used in Spatial Navigation methods.

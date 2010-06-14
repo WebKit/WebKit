@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009, 2010 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,7 +58,7 @@
 #include "JSElementCustom.cpp"
 #include "JSEventCustom.cpp"
 #include "JSEventListener.cpp"
-#include "JSEventSourceConstructor.cpp"
+#include "JSEventSourceCustom.cpp"
 #include "JSEventTarget.cpp"
 #include "JSExceptionBase.cpp"
 #include "JSHTMLAllCollectionCustom.cpp"
@@ -86,7 +86,6 @@
 #include "JSLazyEventListener.cpp"
 #include "JSLocationCustom.cpp"
 #include "JSMainThreadExecState.cpp"
-#include "JSMessageChannelConstructor.cpp"
 #include "JSMessageChannelCustom.cpp"
 #include "JSMessageEventCustom.cpp"
 #include "JSMessagePortCustom.cpp"
@@ -111,25 +110,19 @@
 #include "JSSVGPathSegCustom.cpp"
 #include "JSSVGPathSegListCustom.cpp"
 #include "JSScriptProfileNodeCustom.cpp"
-#include "JSSharedWorkerConstructor.cpp"
 #include "JSSharedWorkerCustom.cpp"
 #include "JSStorageCustom.cpp"
 #include "JSStyleSheetCustom.cpp"
 #include "JSStyleSheetListCustom.cpp"
 #include "JSTextCustom.cpp"
 #include "JSTreeWalkerCustom.cpp"
-#include "JSWebKitCSSMatrixConstructor.cpp"
-#include "JSWebKitPointConstructor.cpp"
-#include "JSWebSocketConstructor.cpp"
 #include "JSWebSocketCustom.cpp"
-#include "JSWorkerConstructor.cpp"
 #include "JSWorkerContextBase.cpp"
 #include "JSWorkerContextCustom.cpp"
 #include "JSWorkerContextErrorHandler.cpp"
 #include "JSWorkerCustom.cpp"
 #include "JSXMLHttpRequestCustom.cpp"
 #include "JSXMLHttpRequestUploadCustom.cpp"
-#include "JSXSLTProcessorConstructor.cpp"
 #include "JSXSLTProcessorCustom.cpp"
 #include "JavaScriptCallFrame.cpp"
 #include "MemoryInfo.cpp"

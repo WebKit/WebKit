@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,14 @@
  */
 
 module html {
-    interface [Conditional=3D_CANVAS, CustomConstructor] ArrayBuffer {
+
+    interface [
+        Conditional=3D_CANVAS,
+        CanBeConstructed,
+        CustomConstructFunction,
+        V8CustomConstructor
+    ] ArrayBuffer {
         readonly attribute int byteLength;
     };
+
 }

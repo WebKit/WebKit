@@ -1,3 +1,16 @@
+2010-06-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=40581
+        Auto-generate most of the JS constructors
+
+        * fast/dom/Window/window-lookup-precedence-expected.txt:
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/constructed-objects-prototypes-expected.txt:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+
 2010-06-14  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Simon Fraser.

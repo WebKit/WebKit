@@ -298,7 +298,7 @@ SOURCES += \
     bindings/js/JSDOMWrapper.cpp \
     bindings/js/JSElementCustom.cpp \
     bindings/js/JSEventCustom.cpp \
-    bindings/js/JSEventSourceConstructor.cpp \
+    bindings/js/JSEventSourceCustom.cpp \
     bindings/js/JSEventTarget.cpp \
     bindings/js/JSExceptionBase.cpp \
     bindings/js/JSGeolocationCustom.cpp \
@@ -337,13 +337,12 @@ SOURCES += \
     bindings/js/JSStyleSheetListCustom.cpp \
     bindings/js/JSTextCustom.cpp \
     bindings/js/JSTreeWalkerCustom.cpp \
-    bindings/js/JSWebKitCSSMatrixConstructor.cpp \
-    bindings/js/JSWebKitPointConstructor.cpp \
+    bindings/js/JSWebKitCSSMatrixCustom.cpp \
+    bindings/js/JSWebKitPointCustom.cpp \
     bindings/js/JSXMLHttpRequestCustom.cpp \
     bindings/js/JSXMLHttpRequestUploadCustom.cpp \
     bindings/js/JSPluginCustom.cpp \
     bindings/js/JSPluginArrayCustom.cpp \
-    bindings/js/JSMessageChannelConstructor.cpp \
     bindings/js/JSMessageChannelCustom.cpp \
     bindings/js/JSMessageEventCustom.cpp \
     bindings/js/JSMessagePortCustom.cpp \
@@ -1059,7 +1058,6 @@ HEADERS += \
     bindings/js/JSDOMWindowShell.h \
     bindings/js/JSDOMWrapper.h \
     bindings/js/JSEventListener.h \
-    bindings/js/JSEventSourceConstructor.h \
     bindings/js/JSEventTarget.h \
     bindings/js/JSHistoryCustom.h \
     bindings/js/JSHTMLAppletElementCustom.h \
@@ -1070,19 +1068,13 @@ HEADERS += \
     bindings/js/JSImageConstructor.h \
     bindings/js/JSLazyEventListener.h \
     bindings/js/JSLocationCustom.h \
-    bindings/js/JSMessageChannelConstructor.h \
     bindings/js/JSNodeCustom.h \
     bindings/js/JSNodeFilterCondition.h \
     bindings/js/JSOptionConstructor.h \
     bindings/js/JSPluginElementFunctions.h \
-    bindings/js/JSSharedWorkerConstructor.h \
     bindings/js/JSStorageCustom.h \
-    bindings/js/JSWebKitCSSMatrixConstructor.h \
-    bindings/js/JSWebKitPointConstructor.h \
-    bindings/js/JSWorkerConstructor.h \
     bindings/js/JSWorkerContextBase.h \
     bindings/js/JSWorkerContextErrorHandler.h \
-    bindings/js/JSXSLTProcessorConstructor.h \
     bindings/js/JavaScriptCallFrame.h \
     bindings/js/ScheduledAction.h \
     bindings/js/ScriptArray.h \
@@ -2451,7 +2443,6 @@ contains(DEFINES, ENABLE_ICONDATABASE=1) {
 contains(DEFINES, ENABLE_WORKERS=1) {
     SOURCES += \
         bindings/js/JSDedicatedWorkerContextCustom.cpp \
-        bindings/js/JSWorkerConstructor.cpp \
         bindings/js/JSWorkerContextBase.cpp \
         bindings/js/JSWorkerContextCustom.cpp \
         bindings/js/JSWorkerCustom.cpp \
@@ -2472,7 +2463,6 @@ contains(DEFINES, ENABLE_WORKERS=1) {
 
 contains(DEFINES, ENABLE_SHARED_WORKERS=1) {
     SOURCES += \
-        bindings/js/JSSharedWorkerConstructor.cpp \
         bindings/js/JSSharedWorkerCustom.cpp \
         workers/DefaultSharedWorkerRepository.cpp \
         workers/SharedWorker.cpp \
@@ -2546,7 +2536,6 @@ contains(DEFINES, ENABLE_XSLT=1) {
     tobe|!tobe: QT += xmlpatterns
 
     SOURCES += \
-        bindings/js/JSXSLTProcessorConstructor.cpp \
         bindings/js/JSXSLTProcessorCustom.cpp \
         dom/TransformSourceQt.cpp \
         xml/XSLStyleSheetQt.cpp \
@@ -2895,8 +2884,7 @@ contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
         platform/network/SocketStreamErrorBase.cpp \
         platform/network/SocketStreamHandleBase.cpp \
         platform/network/qt/SocketStreamHandleQt.cpp \
-        bindings/js/JSWebSocketCustom.cpp \
-        bindings/js/JSWebSocketConstructor.cpp
+        bindings/js/JSWebSocketCustom.cpp
 
     contains(DEFINES, ENABLE_WORKERS=1) {
         HEADERS += \
@@ -2910,15 +2898,7 @@ contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
 contains(DEFINES, ENABLE_3D_CANVAS=1) {
 tobe|!tobe: QT += opengl
 HEADERS += \
-	bindings/js/JSArrayBufferConstructor.h \
 	bindings/js/JSArrayBufferViewHelper.h \
-	bindings/js/JSInt8ArrayConstructor.h \
-	bindings/js/JSFloat32ArrayConstructor.h \
-	bindings/js/JSInt32ArrayConstructor.h \
-	bindings/js/JSInt16ArrayConstructor.h \
-	bindings/js/JSUint8ArrayConstructor.h \
-	bindings/js/JSUint32ArrayConstructor.h \
-	bindings/js/JSUint16ArrayConstructor.h \
 	html/canvas/CanvasContextAttributes.h \
 	html/canvas/CanvasObject.h \
 	html/canvas/WebGLActiveInfo.h \
@@ -2944,22 +2924,14 @@ HEADERS += \
     platform/graphics/GraphicsContext3D.h 
 
 SOURCES += \
-	bindings/js/JSArrayBufferConstructor.cpp \
 	bindings/js/JSArrayBufferViewCustom.cpp \
-	bindings/js/JSInt8ArrayConstructor.cpp \
 	bindings/js/JSInt8ArrayCustom.cpp \
-	bindings/js/JSFloat32ArrayConstructor.cpp \
 	bindings/js/JSFloat32ArrayCustom.cpp \
-	bindings/js/JSInt32ArrayConstructor.cpp \
 	bindings/js/JSInt32ArrayCustom.cpp \
 	bindings/js/JSWebGLRenderingContextCustom.cpp \
-	bindings/js/JSInt16ArrayConstructor.cpp \
 	bindings/js/JSInt16ArrayCustom.cpp \
-	bindings/js/JSUint8ArrayConstructor.cpp \
 	bindings/js/JSUint8ArrayCustom.cpp \
-	bindings/js/JSUint32ArrayConstructor.cpp \
 	bindings/js/JSUint32ArrayCustom.cpp \
-	bindings/js/JSUint16ArrayConstructor.cpp \
 	bindings/js/JSUint16ArrayCustom.cpp \
 	html/canvas/CanvasContextAttributes.cpp \
     html/canvas/CanvasObject.cpp \

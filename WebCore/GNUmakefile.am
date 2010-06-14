@@ -435,8 +435,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSEventCustom.cpp \
 	WebCore/bindings/js/JSEventListener.cpp \
 	WebCore/bindings/js/JSEventListener.h \
-	WebCore/bindings/js/JSEventSourceConstructor.cpp \
-	WebCore/bindings/js/JSEventSourceConstructor.h \
+	WebCore/bindings/js/JSEventSourceCustom.cpp \
 	WebCore/bindings/js/JSEventTarget.cpp \
 	WebCore/bindings/js/JSEventTarget.h \
 	WebCore/bindings/js/JSExceptionBase.cpp \
@@ -477,8 +476,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSLocationCustom.h \
 	WebCore/bindings/js/JSMainThreadExecState.cpp \
 	WebCore/bindings/js/JSMainThreadExecState.h \
-	WebCore/bindings/js/JSMessageChannelConstructor.cpp \
-	WebCore/bindings/js/JSMessageChannelConstructor.h \
 	WebCore/bindings/js/JSMessageChannelCustom.cpp \
 	WebCore/bindings/js/JSMessageEventCustom.cpp \
 	WebCore/bindings/js/JSMessagePortCustom.cpp \
@@ -506,16 +503,12 @@ webcore_sources += \
 	WebCore/bindings/js/JSStyleSheetListCustom.cpp \
 	WebCore/bindings/js/JSTextCustom.cpp \
 	WebCore/bindings/js/JSTreeWalkerCustom.cpp \
-	WebCore/bindings/js/JSWebKitCSSMatrixConstructor.cpp \
-	WebCore/bindings/js/JSWebKitCSSMatrixConstructor.h \
-	WebCore/bindings/js/JSWebKitPointConstructor.cpp \
-	WebCore/bindings/js/JSWebKitPointConstructor.h \
+	WebCore/bindings/js/JSWebKitCSSMatrixCustom.cpp \
+	WebCore/bindings/js/JSWebKitPointCustom.cpp \
 	WebCore/bindings/js/JSWorkerContextErrorHandler.cpp \
 	WebCore/bindings/js/JSWorkerContextErrorHandler.h \
 	WebCore/bindings/js/JSXMLHttpRequestCustom.cpp \
 	WebCore/bindings/js/JSXMLHttpRequestUploadCustom.cpp \
-	WebCore/bindings/js/JSXSLTProcessorConstructor.cpp \
-	WebCore/bindings/js/JSXSLTProcessorConstructor.h \
 	WebCore/bindings/js/JSXSLTProcessorCustom.cpp \
 	WebCore/bindings/js/JavaScriptCallFrame.cpp \
 	WebCore/bindings/js/JavaScriptCallFrame.h \
@@ -2834,8 +2827,6 @@ webcore_cppflags += \
 
 webcore_sources += \
 	WebCore/bindings/js/JSDedicatedWorkerContextCustom.cpp \
-	WebCore/bindings/js/JSWorkerConstructor.cpp \
-	WebCore/bindings/js/JSWorkerConstructor.h \
 	WebCore/bindings/js/JSWorkerContextBase.cpp \
 	WebCore/bindings/js/JSWorkerContextBase.h \
 	WebCore/bindings/js/JSWorkerContextCustom.cpp \
@@ -2881,8 +2872,6 @@ webcore_cppflags += \
 	-DENABLE_SHARED_WORKERS=1
 
 webcore_sources += \
-	WebCore/bindings/js/JSSharedWorkerConstructor.cpp \
-	WebCore/bindings/js/JSSharedWorkerConstructor.h \
 	WebCore/bindings/js/JSSharedWorkerCustom.cpp \
 	WebCore/workers/DefaultSharedWorkerRepository.cpp \
 	WebCore/workers/DefaultSharedWorkerRepository.h \
@@ -3733,8 +3722,6 @@ webcore_cppflags += \
 	-DENABLE_WEB_SOCKETS=1
 
 webcore_sources += \
-	WebCore/bindings/js/JSWebSocketConstructor.cpp \
-	WebCore/bindings/js/JSWebSocketConstructor.h \
 	WebCore/bindings/js/JSWebSocketCustom.cpp \
 	WebCore/platform/network/SocketStreamErrorBase.cpp \
 	WebCore/platform/network/SocketStreamErrorBase.h \

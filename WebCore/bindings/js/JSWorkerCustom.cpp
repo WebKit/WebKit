@@ -32,6 +32,8 @@
 #include "JSDOMGlobalObject.h"
 #include "JSMessagePortCustom.h"
 #include "Worker.h"
+#include "JSDOMWindowCustom.h"
+#include <runtime/Error.h>
 
 using namespace JSC;
 
@@ -40,6 +42,30 @@ namespace WebCore {
 JSC::JSValue JSWorker::postMessage(JSC::ExecState* exec)
 {
     return handlePostMessage(exec, impl());
+}
+
+EncodedJSValue JSC_HOST_CALL JSWorkerConstructor::constructJSWorker(ExecState* exec)
+{
+    JSWorkerConstructor* jsConstructor = static_cast<JSWorkerConstructor*>(exec->callee());
+
+    if (!exec->argumentCount())
+        return throwVMError(exec, createSyntaxError(exec, "Not enough arguments"));
+
+    UString scriptURL = exec->argument(0).toString(exec);
+    if (exec->hadException())
+        return JSValue::encode(JSValue());
+
+    // See section 4.8.2 step 14 of WebWorkers for why this is the lexicalGlobalObject. 
+    DOMWindow* window = asJSDOMWindow(exec->lexicalGlobalObject())->impl();
+
+    ExceptionCode ec = 0;
+    RefPtr<Worker> worker = Worker::create(ustringToString(scriptURL), window->document(), ec);
+    if (ec) {
+        setDOMException(exec, ec);
+        return JSValue::encode(JSValue());
+    }
+
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), worker.release())));
 }
 
 } // namespace WebCore

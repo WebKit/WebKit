@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,13 @@
 
 module events {
 
-    interface [CustomConstructor, CustomMarkFunction, NoStaticTables] MessageChannel {
+    interface [
+        CanBeConstructed,
+        CustomConstructFunction,
+        V8CustomConstructor,
+        CustomMarkFunction,
+        NoStaticTables
+    ] MessageChannel {
 
         readonly attribute MessagePort port1;
         readonly attribute MessagePort port2;

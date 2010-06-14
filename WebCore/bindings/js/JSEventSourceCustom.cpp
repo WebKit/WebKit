@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2009 Ericsson AB
- * All rights reserved.
+ * Copyright (C) 2009 Ericsson AB. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,11 +33,10 @@
 
 #if ENABLE(EVENTSOURCE)
 
-#include "JSEventSourceConstructor.h"
+#include "JSEventSource.h"
 
 #include "EventSource.h"
 #include "ExceptionCode.h"
-#include "JSEventSource.h"
 #include "ScriptExecutionContext.h"
 #include <runtime/Error.h>
 
@@ -45,18 +44,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-ASSERT_CLASS_FITS_IN_CELL(JSEventSourceConstructor);
-
-const ClassInfo JSEventSourceConstructor::s_info = { "EventSourceContructor", 0, 0, 0 };
-
-JSEventSourceConstructor::JSEventSourceConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
-    : DOMConstructorObject(JSEventSourceConstructor::createStructure(globalObject->objectPrototype()), globalObject)
-{
-    putDirect(exec->propertyNames().prototype, JSEventSourcePrototype::self(exec, globalObject), None);
-    putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly|DontDelete|DontEnum);
-}
-
-static EncodedJSValue JSC_HOST_CALL constructEventSource(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL JSEventSourceConstructor::constructJSEventSource(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createSyntaxError(exec, "Not enough arguments"));
@@ -78,12 +66,6 @@ static EncodedJSValue JSC_HOST_CALL constructEventSource(ExecState* exec)
     }
 
     return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), eventSource.release())));
-}
-
-ConstructType JSEventSourceConstructor::getConstructData(ConstructData& constructData)
-{
-    constructData.native.function = constructEventSource;
-    return ConstructTypeHost;
 }
 
 } // namespace WebCore

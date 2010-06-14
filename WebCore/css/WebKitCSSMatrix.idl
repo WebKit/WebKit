@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2010 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,12 @@
 module css {
 
     // Introduced in DOM Level ?:
-    interface [CustomConstructor] WebKitCSSMatrix {
+    interface [
+        CanBeConstructed,
+        CustomConstructFunction,
+        ConstructorParameters=1,
+        V8CustomConstructor
+    ] WebKitCSSMatrix {
 
         // These attributes are simple aliases for certain elements of the 4x4 matrix
         attribute double a; // alias for m11

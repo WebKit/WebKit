@@ -51,6 +51,17 @@ JSC::JSValue JSUint32Array::set(JSC::ExecState* exec)
     return setWebGLArrayHelper(exec, impl(), toUint32Array);
 }
 
+EncodedJSValue JSC_HOST_CALL JSUint32ArrayConstructor::constructJSUint32Array(ExecState* exec)
+{
+    JSUint32ArrayConstructor* jsConstructor = static_cast<JSUint32ArrayConstructor*>(exec->callee());
+    RefPtr<Uint32Array> array = static_cast<Uint32Array*>(constructArrayBufferView<Uint32Array, unsigned int>(exec).get());
+    if (!array.get()) {
+        setDOMException(exec, INDEX_SIZE_ERR);
+        return JSValue::encode(JSValue());
+    }
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), array.get())));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(3D_CANVAS)

@@ -43,18 +43,18 @@
 #include "JSDOMWindowShell.h"
 #include "JSEvent.h"
 #include "JSEventListener.h"
-#include "JSEventSourceConstructor.h"
+#include "JSEventSource.h"
 #include "JSHTMLCollection.h"
 #include "JSHistory.h"
 #include "JSImageConstructor.h"
 #include "JSLocation.h"
-#include "JSMessageChannelConstructor.h"
+#include "JSMessageChannel.h"
 #include "JSMessagePort.h"
 #include "JSMessagePortCustom.h"
 #include "JSOptionConstructor.h"
 
 #if ENABLE(SHARED_WORKERS)
-#include "JSSharedWorkerConstructor.h"
+#include "JSSharedWorker.h"
 #endif
 
 #if ENABLE(3D_CANVAS)
@@ -67,14 +67,14 @@
 #include "JSUint16ArrayConstructor.h"
 #include "JSFloat32ArrayConstructor.h"
 #endif
-#include "JSWebKitCSSMatrixConstructor.h"
-#include "JSWebKitPointConstructor.h"
+#include "JSWebKitCSSMatrix.h"
+#include "JSWebKitPoint.h"
 #if ENABLE(WEB_SOCKETS)
-#include "JSWebSocketConstructor.h"
+#include "JSWebSocket.h"
 #endif
-#include "JSWorkerConstructor.h"
+#include "JSWorker.h"
 #include "JSXMLHttpRequest.h"
-#include "JSXSLTProcessorConstructor.h"
+#include "JSXSLTProcessor.h"
 #include "Location.h"
 #include "MediaPlayer.h"
 #include "MessagePort.h"

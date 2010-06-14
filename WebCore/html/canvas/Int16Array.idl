@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2010 Apple Computer, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,12 @@
 module html {
     interface [
         Conditional=3D_CANVAS,
+        CanBeConstructed,
+        CustomConstructFunction,
+        V8CustomConstructor,
         HasNumericIndexGetter,
         HasCustomIndexSetter,
         GenerateNativeConverter,
-        CustomConstructor,
         CustomToJS
     ] Int16Array : ArrayBufferView {
         const unsigned int BYTES_PER_ELEMENT = 2;
