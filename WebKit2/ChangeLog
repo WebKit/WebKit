@@ -1,3 +1,10 @@
+2010-06-14  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+        Add build failure stopping code.
+
+        * win/WebKit2Generated.vcproj:
+
 2010-06-14  Ada Chan  <adachan@apple.com>
 
         Rubber-stamped by Steve Falkenburg.
