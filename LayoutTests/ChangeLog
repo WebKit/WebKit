@@ -1,3 +1,11 @@
+2010-06-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix GTK bots; don't include the offsetWidth in the results
+        since it can differ between platforms.
+
+        * transitions/font-family-during-transition-expected.txt:
+        * transitions/font-family-during-transition.html:
+
 2010-06-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
