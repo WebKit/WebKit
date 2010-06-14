@@ -30,6 +30,7 @@
 #define IDBCallbacksProxy_h
 
 #include "IDBCallbacks.h"
+#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 

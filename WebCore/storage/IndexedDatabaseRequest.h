@@ -40,6 +40,7 @@
 namespace WebCore {
 
 class IDBAny;
+class IDBRequest
 class IndexedDatabase;
 class ScriptExecutionContext;
 

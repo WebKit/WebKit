@@ -1,3 +1,9 @@
+2010-06-14  Jeremy Orlow  <jorlow@chromium.org>
+
+        Build fix.
+
+        * src/IDBCallbacksProxy.h:
+
 2010-06-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

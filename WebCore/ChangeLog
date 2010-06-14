@@ -1,3 +1,9 @@
+2010-06-14  Jeremy Orlow  <jorlow@chromium.org>
+
+        More build fixes.
+
+        * storage/IndexedDatabaseRequest.h:
+
 2010-06-14  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Laszlo Gombos.
