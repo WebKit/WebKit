@@ -41,7 +41,7 @@
 #include "FrameView.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
-#include "HTMLParser.h"
+#include "LegacyHTMLTreeConstructor.h"
 #include "HTMLScriptElement.h"
 #include "HTMLViewSourceDocument.h"
 #include "ImageLoader.h"
@@ -160,7 +160,7 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* doc, bool reportErrors)
     , m_timer(this, &HTMLDocumentParser::timerFired)
     , m_externalScriptsTimer(this, &HTMLDocumentParser::executeExternalScriptsTimerFired)
     , m_doc(doc)
-    , m_treeConstructor(new HTMLParser(doc, reportErrors))
+    , m_treeConstructor(new LegacyHTMLTreeConstructor(doc, reportErrors))
     , m_inWrite(false)
     , m_fragment(false)
     , m_scriptingPermission(FragmentScriptingAllowed)
@@ -200,7 +200,7 @@ HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* frag, FragmentScripting
     , m_timer(this, &HTMLDocumentParser::timerFired)
     , m_externalScriptsTimer(this, &HTMLDocumentParser::executeExternalScriptsTimerFired)
     , m_doc(frag->document())
-    , m_treeConstructor(new HTMLParser(frag, scriptingPermission))
+    , m_treeConstructor(new LegacyHTMLTreeConstructor(frag, scriptingPermission))
     , m_inWrite(false)
     , m_fragment(true)
     , m_scriptingPermission(scriptingPermission)

@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-    class HTMLParser;
+    class LegacyHTMLTreeConstructor;
     class HTMLDocumentParser;
     class SegmentedString;
     class XSSAuditor;
@@ -58,7 +58,7 @@ namespace WebCore {
 
         virtual void executeScriptsWaitingForStylesheets() {}
 
-        virtual HTMLParser* htmlTreeConstructor() const { return 0; }
+        virtual LegacyHTMLTreeConstructor* htmlTreeConstructor() const { return 0; }
         virtual HTMLDocumentParser* asHTMLDocumentParser() { return 0; }
 
         XSSAuditor* xssAuditor() const { return m_XSSAuditor; }

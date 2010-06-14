@@ -44,7 +44,7 @@ class HTMLDocument;
 class HTMLScriptElement;
 class HTMLViewSourceDocument;
 class FrameView;
-class HTMLParser;
+class LegacyHTMLTreeConstructor;
 class Node;
 class PreloadScanner;
 class ScriptSourceCode;
@@ -163,7 +163,7 @@ public:
 
     virtual void executeScriptsWaitingForStylesheets();
 
-    virtual HTMLParser* htmlTreeConstructor() const { return m_treeConstructor.get(); }
+    virtual LegacyHTMLTreeConstructor* htmlTreeConstructor() const { return m_treeConstructor.get(); }
     virtual HTMLDocumentParser* asHTMLDocumentParser() { return this; }
 
 private:
@@ -431,7 +431,7 @@ private:
 
     SegmentedString m_src;
     Document* m_doc;
-    OwnPtr<HTMLParser> m_treeConstructor;
+    OwnPtr<LegacyHTMLTreeConstructor> m_treeConstructor;
     bool m_inWrite;
     bool m_fragment;
     FragmentScriptingPermission m_scriptingPermission;

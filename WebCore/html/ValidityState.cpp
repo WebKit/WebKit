@@ -26,7 +26,7 @@
 
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
-#include "HTMLParser.h"
+#include "LegacyHTMLTreeConstructor.h"
 #include "KURL.h"
 #include "LocalizedStrings.h"
 #include "RegularExpression.h"

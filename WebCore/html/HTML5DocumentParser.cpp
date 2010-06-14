@@ -221,7 +221,7 @@ int HTML5DocumentParser::columnNumber() const
     return m_lexer->columnNumber();
 }
 
-HTMLParser* HTML5DocumentParser::htmlTreeConstructor() const
+LegacyHTMLTreeConstructor* HTML5DocumentParser::htmlTreeConstructor() const
 {
     return m_treeConstructor->legacyTreeConstructor();
 }

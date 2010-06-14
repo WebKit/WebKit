@@ -675,7 +675,7 @@ SOURCES += \
     html/HTMLOptionsCollection.cpp \
     html/HTMLParagraphElement.cpp \
     html/HTMLParamElement.cpp \
-    html/HTMLParser.cpp \
+    html/LegacyHTMLTreeConstructor.cpp \
     html/HTMLParserErrorCodes.cpp \
     html/HTMLPlugInElement.cpp \
     html/HTMLPlugInImageElement.cpp \
@@ -1413,7 +1413,7 @@ HEADERS += \
     html/HTMLParagraphElement.h \
     html/HTMLParamElement.h \
     html/HTMLParserErrorCodes.h \
-    html/HTMLParser.h \
+    html/LegacyHTMLTreeConstructor.h \
     html/HTMLPlugInElement.h \
     html/HTMLPlugInImageElement.h \
     html/HTMLPreElement.h \

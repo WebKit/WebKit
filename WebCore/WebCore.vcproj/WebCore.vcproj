@@ -36449,11 +36449,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTMLParser.cpp"
+				RelativePath="..\html\LegacyHTMLTreeConstructor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTMLParser.h"
+				RelativePath="..\html\LegacyHTMLTreeConstructor.h"
 				>
 			</File>
 			<File

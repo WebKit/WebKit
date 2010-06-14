@@ -1,5 +1,126 @@
 2010-06-13  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Adam Barth.
+
+        Rename HTMLParser to LegacyHTMLTreeConstructor
+        https://bugs.webkit.org/show_bug.cgi?id=40554
+
+        This makes our old HTML parsing system closer match the
+        HTML5 spec, and thus easier to compare to the new HTML5
+        parsing system.
+
+        This rename was entirely automatic.  Done by do-webcore-rename.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        * dom/DocumentParser.h:
+        (WebCore::DocumentParser::htmlTreeConstructor):
+        * html/HTML5DocumentParser.cpp:
+        (WebCore::HTML5DocumentParser::htmlTreeConstructor):
+        * html/HTML5DocumentParser.h:
+        * html/HTML5TreeBuilder.cpp:
+        (WebCore::HTML5TreeBuilder::HTML5TreeBuilder):
+        * html/HTML5TreeBuilder.h:
+        (WebCore::HTML5TreeBuilder::legacyTreeConstructor):
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser):
+        * html/HTMLDocumentParser.h:
+        (WebCore::HTMLDocumentParser::htmlTreeConstructor):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::removedFromTree):
+        * html/HTMLInputElement.cpp:
+        * html/HTMLMeterElement.cpp:
+        * html/HTMLProgressElement.cpp:
+        * html/LegacyHTMLTreeConstructor.cpp: Renamed from WebCore/html/HTMLParser.cpp.
+        (WebCore::addTags):
+        (WebCore::HTMLStackElem::HTMLStackElem):
+        (WebCore::HTMLStackElem::derefNode):
+        (WebCore::LegacyHTMLTreeConstructor::LegacyHTMLTreeConstructor):
+        (WebCore::LegacyHTMLTreeConstructor::~LegacyHTMLTreeConstructor):
+        (WebCore::LegacyHTMLTreeConstructor::reset):
+        (WebCore::LegacyHTMLTreeConstructor::setCurrent):
+        (WebCore::tagPriorityOfNode):
+        (WebCore::LegacyHTMLTreeConstructor::limitDepth):
+        (WebCore::LegacyHTMLTreeConstructor::insertNodeAfterLimitDepth):
+        (WebCore::LegacyHTMLTreeConstructor::parseToken):
+        (WebCore::LegacyHTMLTreeConstructor::parseDoctypeToken):
+        (WebCore::isTableSection):
+        (WebCore::isTablePart):
+        (WebCore::isTableRelated):
+        (WebCore::isScopingTag):
+        (WebCore::LegacyHTMLTreeConstructor::insertNode):
+        (WebCore::LegacyHTMLTreeConstructor::handleError):
+        (WebCore::LegacyHTMLTreeConstructor::textCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeConstructor::commentCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeConstructor::headCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeConstructor::bodyCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeConstructor::framesetCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeConstructor::formCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeConstructor::isindexCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeConstructor::selectCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeConstructor::ddCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeConstructor::dtCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeConstructor::rpCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeConstructor::rtCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeConstructor::nestedCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeConstructor::nestedPCloserCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeConstructor::nestedStyleCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeConstructor::tableCellCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeConstructor::tableSectionCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeConstructor::noembedCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeConstructor::noframesCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeConstructor::noscriptCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeConstructor::pCloserCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeConstructor::pCloserStrictCreateErrorCheck):
+        (WebCore::LegacyHTMLTreeConstructor::mapCreateErrorCheck):
+        (WebCore::mapTagToFunc):
+        (WebCore::mapTagsToFunc):
+        (WebCore::LegacyHTMLTreeConstructor::getNode):
+        (WebCore::LegacyHTMLTreeConstructor::allowNestedRedundantTag):
+        (WebCore::LegacyHTMLTreeConstructor::processCloseTag):
+        (WebCore::LegacyHTMLTreeConstructor::isHeadingTag):
+        (WebCore::LegacyHTMLTreeConstructor::isInline):
+        (WebCore::LegacyHTMLTreeConstructor::isResidualStyleTag):
+        (WebCore::LegacyHTMLTreeConstructor::isAffectedByResidualStyle):
+        (WebCore::LegacyHTMLTreeConstructor::handleResidualStyleCloseTagAcrossBlocks):
+        (WebCore::LegacyHTMLTreeConstructor::reopenResidualStyleTags):
+        (WebCore::LegacyHTMLTreeConstructor::pushBlock):
+        (WebCore::LegacyHTMLTreeConstructor::popBlock):
+        (WebCore::LegacyHTMLTreeConstructor::popOneBlockCommon):
+        (WebCore::LegacyHTMLTreeConstructor::popOneBlock):
+        (WebCore::LegacyHTMLTreeConstructor::moveOneBlockToStack):
+        (WebCore::LegacyHTMLTreeConstructor::checkIfHasPElementInScope):
+        (WebCore::LegacyHTMLTreeConstructor::popInlineBlocks):
+        (WebCore::LegacyHTMLTreeConstructor::freeBlock):
+        (WebCore::LegacyHTMLTreeConstructor::createHead):
+        (WebCore::LegacyHTMLTreeConstructor::handleIsindex):
+        (WebCore::LegacyHTMLTreeConstructor::startBody):
+        (WebCore::LegacyHTMLTreeConstructor::finished):
+        (WebCore::LegacyHTMLTreeConstructor::reportErrorToConsole):
+        (WebCore::shouldCreateImplicitHead):
+        (WebCore::serializeForNumberType):
+        (WebCore::parseToDoubleForNumberType):
+        * html/LegacyHTMLTreeConstructor.h: Renamed from WebCore/html/HTMLParser.h.
+        (WebCore::LegacyHTMLTreeConstructor::skipMode):
+        (WebCore::LegacyHTMLTreeConstructor::isHandlingResidualStyleAcrossBlocks):
+        (WebCore::LegacyHTMLTreeConstructor::setSkipMode):
+        (WebCore::LegacyHTMLTreeConstructor::popBlock):
+        (WebCore::LegacyHTMLTreeConstructor::hasPElementInScope):
+        (WebCore::LegacyHTMLTreeConstructor::reportError):
+        (WebCore::LegacyHTMLTreeConstructor::):
+        (WebCore::shouldCreateImplicitHead):
+        * html/StepRange.cpp:
+        * html/ValidityState.cpp:
+        * rendering/RenderSlider.cpp:
+
+2010-06-13  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Darin Adler.
 
         Rename m_parser, htmlParser() to m_treeConstructor, htmlTreeConstructor() in preparation for renaming HTMLParser
