@@ -830,10 +830,6 @@ fast/events/ondrop-text-html.html
 # caused by: http://trac.webkit.org/changeset/52192
 http/tests/misc/drag-over-iframe-invalid-source-crash.html
 
-# ------- broken backgroundOf(el)
-fast/forms/input-live-pseudo-selectors.html
-fast/forms/textarea-live-pseudo-selectors.html
-
 # ------- broken ICO file decoding
 fast/images/favicon-as-image.html
 fast/images/icon-0colors.html

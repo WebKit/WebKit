@@ -76,7 +76,7 @@ el = makeInvalid();
 el.focus();
 eventSender.keyDown('a');
 shouldBe(elBackground, 'validColor');
-eventSender.keyDown('delete', []);
+eventSender.keyDown('\x08', []);
 shouldBe(elBackground, 'invalidColor');
 
 // --------------------------------
@@ -96,7 +96,7 @@ shouldBe(elBackground, 'validColor');
 // Make the value dirty by deleting the last character.
 el.focus();
 el.setSelectionRange(10, 10);
-document.execCommand('delete');
+document.execCommand('\x08');
 el.maxLength = 5;
 shouldBe(elBackground, 'invalidColor');
 el.maxLength = 10;

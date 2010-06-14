@@ -468,7 +468,7 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     else if (JSStringIsEqualToUTF8CString(character, "end"))
         virtualKeyCode = VK_END;
     else if (JSStringIsEqualToUTF8CString(character, "delete"))
-        virtualKeyCode = VK_BACK;
+        virtualKeyCode = VK_DELETE;
     else {
         charCode = JSStringGetCharactersPtr(character)[0];
         virtualKeyCode = LOBYTE(VkKeyScan(charCode));

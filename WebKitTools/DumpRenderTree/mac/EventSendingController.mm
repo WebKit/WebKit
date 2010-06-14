@@ -598,7 +598,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
         eventCharacter = [NSString stringWithCharacters:&ch length:1];
         keyCode = 0x77;
     } else if ([character isEqualToString:@"delete"]) {
-        const unichar ch = 0x7f;
+        const unichar ch = NSDeleteFunctionKey;
         eventCharacter = [NSString stringWithCharacters:&ch length:1];
         keyCode = 0x75;
     }

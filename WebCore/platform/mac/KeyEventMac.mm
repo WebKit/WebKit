@@ -30,6 +30,7 @@
 
 #import "KeyEventCocoa.h"
 #import "Logging.h"
+#import "WindowsKeyboardCodes.h"
 #import <Carbon/Carbon.h>
 
 using namespace WTF;
@@ -203,20 +204,19 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(NSEvent *event)
     , m_macEvent(event)
 {
     // Always use 13 for Enter/Return -- we don't want to use AppKit's different character for Enter.
-    if (m_windowsVirtualKeyCode == '\r') {
+    if (m_windowsVirtualKeyCode == VK_RETURN) {
         m_text = "\r";
         m_unmodifiedText = "\r";
     }
 
-    // The adjustments below are only needed in backward compatibility mode, but we cannot tell what mode we are in from here.
-
-    // Turn 0x7F into 8, because backspace needs to always be 8.
-    if (m_text == "\x7F")
+    // AppKit sets text to "\x7F" for backspace, but the correct KeyboardEvent character code is 8.
+    if (m_windowsVirtualKeyCode == VK_BACK) {
         m_text = "\x8";
-    if (m_unmodifiedText == "\x7F")
         m_unmodifiedText = "\x8";
-    // Always use 9 for tab -- we don't want to use AppKit's different character for shift-tab.
-    if (m_windowsVirtualKeyCode == 9) {
+    }
+
+    // Always use 9 for Tab -- we don't want to use AppKit's different character for shift-tab.
+    if (m_windowsVirtualKeyCode == VK_TAB) {
         m_text = "\x9";
         m_unmodifiedText = "\x9";
     }

@@ -467,7 +467,7 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
         else if (JSStringIsEqualToUTF8CString(character, "end"))
             gdkKeySym = GDK_End;
         else if (JSStringIsEqualToUTF8CString(character, "delete"))
-            gdkKeySym = GDK_BackSpace;
+            gdkKeySym = GDK_Delete;
         else if (JSStringIsEqualToUTF8CString(character, "F1"))
             gdkKeySym = GDK_F1;
         else if (JSStringIsEqualToUTF8CString(character, "F2"))
