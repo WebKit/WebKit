@@ -1,5 +1,11 @@
 2010-06-14  Jeremy Orlow  <jorlow@chromium.org>
 
+        And another.
+
+        * storage/IndexedDatabaseRequest.h:
+
+2010-06-14  Jeremy Orlow  <jorlow@chromium.org>
+
         More build fixes.
 
         * storage/IndexedDatabaseRequest.h:
