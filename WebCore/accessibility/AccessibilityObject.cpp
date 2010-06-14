@@ -902,7 +902,7 @@ static ARIARoleMap* createARIARoleMap()
         { "img", ImageRole },
         { "link", WebCoreLinkRole },
         { "list", ListRole },        
-        { "listitem", GroupRole },        
+        { "listitem", ListItemRole },        
         { "listbox", ListBoxRole },
         { "log", ApplicationLogRole },
         // "option" isn't here because it may map to different roles depending on the parent element's role
@@ -917,7 +917,7 @@ static ARIARoleMap* createARIARoleMap()
         { "note", DocumentNoteRole },
         { "navigation", LandmarkNavigationRole },
         { "option", ListBoxOptionRole },
-        { "presentation", IgnoredRole },
+        { "presentation", PresentationalRole },
         { "progressbar", ProgressIndicatorRole },
         { "radio", RadioButtonRole },
         { "radiogroup", RadioGroupRole },

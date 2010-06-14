@@ -1735,6 +1735,9 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     if (roleValue() == IgnoredRole)
         return true;
     
+    if (roleValue() == PresentationalRole)
+        return true;
+    
     // An ARIA tree can only have tree items and static text as children.
     if (!isAllowedChildOfTree())
         return true;
@@ -2954,6 +2957,8 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
             return ImageMapRole;
         return WebCoreLinkRole;
     }
+    if (m_renderer->isListItem())
+        return ListItemRole;
     if (m_renderer->isListMarker())
         return ListMarkerRole;
     if (node && node->hasTagName(buttonTag))

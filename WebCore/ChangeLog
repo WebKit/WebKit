@@ -1,3 +1,20 @@
+2010-06-14  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: need ListItemRole and PresentationalRole
+        https://bugs.webkit.org/show_bug.cgi?id=40133
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::createARIARoleMap):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isListItem):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+
 2010-06-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

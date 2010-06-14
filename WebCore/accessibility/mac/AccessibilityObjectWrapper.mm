@@ -957,7 +957,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     else if (m_object->isControl())
         objectAttributes = controlAttrs;
     
-    else if (m_object->isGroup())
+    else if (m_object->isGroup() || m_object->isListItem())
         objectAttributes = groupAttrs;
     else if (m_object->isTabList())
         objectAttributes = tabListAttrs;
@@ -1148,6 +1148,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { TabPanelRole, NSAccessibilityGroupRole },
         { TreeRole, NSAccessibilityOutlineRole },
         { TreeItemRole, NSAccessibilityRowRole },
+        { ListItemRole, NSAccessibilityGroupRole }
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     

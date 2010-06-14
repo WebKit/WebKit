@@ -102,6 +102,7 @@ enum WebAccessibilityRole {
     WebAccessibilityRoleAnnotation,
     WebAccessibilityRoleSliderThumb,
     WebAccessibilityRoleIgnored,
+    WebAccessibilityRolePresentational,
     WebAccessibilityRoleTab,
     WebAccessibilityRoleTabList,
     WebAccessibilityRoleTabPanel,

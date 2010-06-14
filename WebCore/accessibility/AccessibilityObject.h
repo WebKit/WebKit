@@ -160,6 +160,7 @@ enum AccessibilityRole {
     AnnotationRole,
     SliderThumbRole,
     IgnoredRole,
+    PresentationalRole,
     TabRole,
     TabListRole,
     TabPanelRole,
@@ -296,6 +297,7 @@ public:
     bool isTreeItem() const { return roleValue() == TreeItemRole; }
     bool isScrollbar() const { return roleValue() == ScrollBarRole; }
     bool isButton() const { return roleValue() == ButtonRole; }
+    bool isListItem() const { return roleValue() == ListItemRole; }
     
     virtual bool isChecked() const { return false; }
     virtual bool isEnabled() const { return false; }
