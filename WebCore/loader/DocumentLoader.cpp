@@ -393,8 +393,8 @@ bool DocumentLoader::isLoadingInAPISense() const
         Document* doc = m_frame->document();
         if (doc->docLoader()->requestCount())
             return true;
-        if (DocumentParser* tok = doc->parser())
-            if (tok->processingData())
+        if (DocumentParser* parser = doc->parser())
+            if (parser->processingData())
                 return true;
     }
     return frameLoader()->subframeIsLoading();

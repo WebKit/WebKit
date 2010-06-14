@@ -164,7 +164,7 @@ public:
     virtual void executeScriptsWaitingForStylesheets();
 
     virtual HTMLParser* htmlParser() const { return m_parser.get(); }
-    virtual HTMLDocumentParser* asHTMLTokenizer() { return this; }
+    virtual HTMLDocumentParser* asHTMLDocumentParser() { return this; }
 
 private:
     class State;

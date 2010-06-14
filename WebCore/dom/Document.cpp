@@ -1959,7 +1959,7 @@ void Document::write(const SegmentedString& text, Document* ownerDocument)
 
     ASSERT(m_parser);
     bool wasForcedSynchronous = false;
-    HTMLDocumentParser* parser = m_parser->asHTMLTokenizer();
+    HTMLDocumentParser* parser = m_parser->asHTMLDocumentParser();
     if (parser) {
         wasForcedSynchronous = parser->forceSynchronous();
         parser->setForceSynchronous(true);
@@ -1967,7 +1967,7 @@ void Document::write(const SegmentedString& text, Document* ownerDocument)
 
     m_parser->write(text, false);
 
-    if (m_parser && parser && m_parser->asHTMLTokenizer() == parser)
+    if (m_parser && parser && m_parser->asHTMLDocumentParser() == parser)
         parser->setForceSynchronous(wasForcedSynchronous);
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING

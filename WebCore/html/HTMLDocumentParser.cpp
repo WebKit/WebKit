@@ -2097,11 +2097,11 @@ void HTMLDocumentParser::setSrc(const SegmentedString& source)
 
 void parseHTMLDocumentFragment(const String& source, DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
 {
-    HTMLDocumentParser tok(fragment, scriptingPermission);
-    tok.setForceSynchronous(true);
-    tok.write(source, true);
-    tok.finish();
-    ASSERT(!tok.processingData());      // make sure we're done (see 3963151)
+    HTMLDocumentParser parser(fragment, scriptingPermission);
+    parser.setForceSynchronous(true);
+    parser.write(source, true);
+    parser.finish();
+    ASSERT(!parser.processingData());      // make sure we're done (see 3963151)
 }
 
 UChar decodeNamedEntity(const char* name)

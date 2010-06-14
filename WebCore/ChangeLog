@@ -2,6 +2,30 @@
 
         Reviewed by Darin Adler.
 
+        Rename tok, asHTMLTokenizer to parser, asHTMLDocumentParser
+        https://bugs.webkit.org/show_bug.cgi?id=40513
+
+        Last set of Tokenizer related renames, also done via do-webcore-rename:
+        asHTMLTokenizer => asHTMLDocumentParser
+        tok => parser
+
+        No functional changes, thus no tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::write):
+        * dom/DocumentParser.h:
+        (WebCore::DocumentParser::asHTMLDocumentParser):
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::parseHTMLDocumentFragment):
+        * html/HTMLDocumentParser.h:
+        (WebCore::HTMLDocumentParser::asHTMLDocumentParser):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::isLoadingInAPISense):
+
+2010-06-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
         Fix the rest of the references to the old Tokenizer class (now DocumentParser)
         https://bugs.webkit.org/show_bug.cgi?id=40512
 
