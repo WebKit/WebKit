@@ -44,6 +44,7 @@ PASS Entity.toString() is '[object EntityConstructor]'
 PASS EntityReference.toString() is '[object EntityReferenceConstructor]'
 PASS Event.toString() is '[object EventConstructor]'
 PASS EventException.toString() is '[object EventExceptionConstructor]'
+PASS EventSource.toString() is '[object EventSourceConstructor]'
 PASS File.toString() is '[object FileConstructor]'
 PASS FileList.toString() is '[object FileListConstructor]'
 PASS FormData.toString() is '[object FormDataConstructor]'
@@ -285,6 +286,7 @@ PASS XMLSerializer.toString() is '[object XMLSerializerConstructor]'
 PASS XPathEvaluator.toString() is '[object XPathEvaluatorConstructor]'
 PASS XPathException.toString() is '[object XPathExceptionConstructor]'
 PASS XPathResult.toString() is '[object XPathResultConstructor]'
+PASS XSLTProcessor.toString() is '[object XSLTProcessorConstructor]'
 PASS successfullyParsed is true
 
 TEST COMPLETE

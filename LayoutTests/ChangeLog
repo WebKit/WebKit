@@ -1,5 +1,13 @@
 2010-06-14  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed fix. Platform specific expected results updated after r61136.
+
+        * platform/qt/fast/dom/Window/window-lookup-precedence-expected.txt:
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/js/global-constructors-expected.txt:
+
+2010-06-14  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed.
 
         [Qt] fast/text/justify-padding-distribution.html fails
