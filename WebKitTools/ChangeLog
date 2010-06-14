@@ -1,3 +1,21 @@
+2010-06-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        webkit-patch should add a bug URL to ChangeLogs if they don't have one yet
+        https://bugs.webkit.org/show_bug.cgi?id=39550
+
+        This can cause an extra request to bugs.webkit.org durig upload, but it
+        shouldn't be too bad.  Also, this won't work if you remove the
+        boilerplate created by prepare-ChangeLog.
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        * Scripts/webkitpy/common/net/bugzilla.py:
+        * Scripts/webkitpy/tool/steps/abstractstep.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog_unittest.py: Added.
+
 2010-06-08  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Eric Seidel.

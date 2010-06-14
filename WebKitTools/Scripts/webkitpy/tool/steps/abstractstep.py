@@ -53,8 +53,9 @@ class AbstractStep(object):
         return self._port
 
     _well_known_keys = {
-        "diff": lambda self: self._tool.scm().create_patch(self._options.git_commit, self._options.squash),
-        "changelogs": lambda self: self._tool.checkout().modified_changelogs(self._options.git_commit, self._options.squash),
+        "diff": lambda self, state: self._tool.scm().create_patch(self._options.git_commit, self._options.squash),
+        "changelogs": lambda self, state: self._tool.checkout().modified_changelogs(self._options.git_commit, self._options.squash),
+        "bug_title": lambda self, state: self._tool.bugs.fetch_bug(state["bug_id"]).title(),
     }
 
     def cached_lookup(self, state, key, promise=None):
@@ -62,7 +63,7 @@ class AbstractStep(object):
             return state[key]
         if not promise:
             promise = self._well_known_keys.get(key)
-        state[key] = promise(self)
+        state[key] = promise(self, state)
         return state[key]
 
     @classmethod

@@ -36,6 +36,8 @@ import textwrap
 
 from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.config.committers import CommitterList
+from webkitpy.common.net.bugzilla import parse_bug_id
+
 
 def view_source_url(revision_number):
     # FIMXE: This doesn't really belong in this file, but we don't have a
@@ -87,6 +89,9 @@ class ChangeLogEntry(object):
 
     def contents(self):
         return self._contents
+
+    def bug_id(self):
+        return parse_bug_id(self._contents)
 
 
 # FIXME: Various methods on ChangeLog should move into ChangeLogEntry instead.
@@ -183,3 +188,8 @@ class ChangeLog(object):
         for line in fileinput.FileInput(self.path, inplace=1):
             # Trailing comma suppresses printing newline
             print line.replace("NOBODY (OOPS!)", reviewer.encode("utf-8")),
+
+    def set_short_description_and_bug_url(self, short_description, bug_url):
+        message = "%s\n        %s" % (short_description, bug_url)
+        for line in fileinput.FileInput(self.path, inplace=1):
+            print line.replace("Need a short description and bug URL (OOPS!)", message.encode("utf-8")),

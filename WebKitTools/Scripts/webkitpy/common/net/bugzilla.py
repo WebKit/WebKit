@@ -161,6 +161,9 @@ class Bug(object):
     def id(self):
         return self.bug_dictionary["id"]
 
+    def title(self):
+        return self.bug_dictionary["title"]
+
     def assigned_to_email(self):
         return self.bug_dictionary["assigned_to_email"]
 

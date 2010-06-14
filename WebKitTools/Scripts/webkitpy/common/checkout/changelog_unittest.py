@@ -38,7 +38,7 @@ from StringIO import StringIO
 from webkitpy.common.checkout.changelog import *
 
 
-class ChangeLogsTest(unittest.TestCase):
+class ChangeLogTest(unittest.TestCase):
 
     _example_entry = u'''2009-08-17  Peter Kasting  <pkasting@google.com>
 
@@ -128,6 +128,18 @@ class ChangeLogsTest(unittest.TestCase):
         ChangeLog(changelog_path).set_reviewer(reviewer_name)
         actual_contents = self._read_file_contents(changelog_path, "utf-8")
         expected_contents = changelog_contents.replace('NOBODY (OOPS!)', reviewer_name)
+        os.remove(changelog_path)
+        self.assertEquals(actual_contents, expected_contents)
+
+    def test_set_short_description_and_bug_url(self):
+        changelog_contents = u"%s\n%s" % (self._new_entry_boilerplate, self._example_changelog)
+        changelog_path = self._write_tmp_file_with_contents(changelog_contents.encode("utf-8"))
+        short_description = "A short description"
+        bug_url = "http://example.com/b/2344"
+        ChangeLog(changelog_path).set_short_description_and_bug_url(short_description, bug_url)
+        actual_contents = self._read_file_contents(changelog_path, "utf-8")
+        expected_message = "%s\n        %s" % (short_description, bug_url)
+        expected_contents = changelog_contents.replace("Need a short description and bug URL (OOPS!)", expected_message)
         os.remove(changelog_path)
         self.assertEquals(actual_contents, expected_contents)
 
