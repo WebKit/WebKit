@@ -26,6 +26,7 @@
 #ifndef HTML5TreeBuilder_h
 #define HTML5TreeBuilder_h
 
+#include "HTML5Lexer.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -33,10 +34,10 @@
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
+
 class Document;
 class Element;
 class Frame;
-class HTML5Lexer;
 class HTML5Token;
 class HTMLDocument;
 class LegacyHTMLTreeConstructor;
@@ -57,6 +58,8 @@ public:
 
     // Done, close any open tags, etc.
     void finished();
+
+    static HTML5Lexer::State adjustedLexerState(HTML5Lexer::State, const AtomicString& tagName);
 
     // FIXME: This is a dirty, rotten hack to keep HTMLFormControlElement happy
     // until we stop using the legacy parser. DO NOT CALL THIS METHOD.

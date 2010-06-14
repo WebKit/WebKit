@@ -74,12 +74,12 @@ static void convertToOldStyle(HTML5Token& token, Token& oldStyleToken)
         oldStyleToken.beginTag = (token.type() == HTML5Token::StartTag);
         oldStyleToken.selfClosingTag = token.selfClosing();
         oldStyleToken.tagName = AtomicString(token.name().data(), token.name().size());
-        HTML5Token::AttributeList& attributes = token.attributes();
-        for (HTML5Token::AttributeList::iterator iter = attributes.begin();
+        const HTML5Token::AttributeList& attributes = token.attributes();
+        for (HTML5Token::AttributeList::const_iterator iter = attributes.begin();
              iter != attributes.end(); ++iter) {
             if (!iter->m_name.isEmpty()) {
-                String name = String(StringImpl::adopt(iter->m_name));
-                String value = String(StringImpl::adopt(iter->m_value));
+                String name(iter->m_name.data(), iter->m_name.size());
+                String value(iter->m_value.data(), iter->m_value.size());
                 RefPtr<Attribute> mappedAttribute = Attribute::createMapped(name, value);
                 if (!oldStyleToken.attrs)
                     oldStyleToken.attrs = NamedNodeMap::create();
@@ -132,6 +132,22 @@ PassRefPtr<Element> HTML5TreeBuilder::takeScriptToProcess(int& scriptStartLine)
     return m_scriptToProcess.release();
 }
 
+HTML5Lexer::State HTML5TreeBuilder::adjustedLexerState(HTML5Lexer::State state, const AtomicString& tagName)
+{
+    if (tagName == textareaTag || tagName == titleTag)
+        return HTML5Lexer::RCDATAState;
+
+    if (tagName == styleTag || tagName == iframeTag || tagName == xmpTag || tagName == noembedTag) {
+        // FIXME: noscript and noframes may conditionally enter this state as well.
+        return HTML5Lexer::RAWTEXTState;
+    }
+
+    if (tagName == plaintextTag)
+        return HTML5Lexer::PLAINTEXTState;
+
+    return state;
+}
+
 PassRefPtr<Node> HTML5TreeBuilder::passTokenToLegacyParser(HTML5Token& token)
 {
     if (token.type() == HTML5Token::DOCTYPE) {
@@ -157,18 +173,11 @@ PassRefPtr<Node> HTML5TreeBuilder::passTokenToLegacyParser(HTML5Token& token)
             handleScriptStartTag();
             m_lastScriptElement = static_pointer_cast<Element>(result);
             m_lastScriptElementStartLine = m_lexer->lineNumber();
-        } else if (oldStyleToken.tagName == textareaTag || oldStyleToken.tagName == titleTag)
-            m_lexer->setState(HTML5Lexer::RCDATAState);
-        else if (oldStyleToken.tagName == styleTag || oldStyleToken.tagName == iframeTag
-                 || oldStyleToken.tagName == xmpTag || oldStyleToken.tagName == noembedTag) {
-            // FIXME: noscript and noframes may conditionally enter this state as well.
-            m_lexer->setState(HTML5Lexer::RAWTEXTState);
-        } else if (oldStyleToken.tagName == plaintextTag)
-            m_lexer->setState(HTML5Lexer::PLAINTEXTState);
-        else if (oldStyleToken.tagName == preTag || oldStyleToken.tagName == listingTag)
+        } else if (oldStyleToken.tagName == preTag || oldStyleToken.tagName == listingTag)
             m_lexer->skipLeadingNewLineForListing();
-    }
-    if (token.type() == HTML5Token::EndTag) {
+        else
+            m_lexer->setState(adjustedLexerState(m_lexer->state(), oldStyleToken.tagName));
+    } else if (token.type() == HTML5Token::EndTag) {
         if (oldStyleToken.tagName == scriptTag && insertionMode() != AfterFrameset) {
             if (m_lastScriptElement) {
                 ASSERT(m_lastScriptElementStartLine != uninitializedLineNumberValue);

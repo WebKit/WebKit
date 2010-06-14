@@ -123,6 +123,7 @@ namespace WebCore {
         int lineNumber() const { return m_lineNumber; }
         int columnNumber() const { return 1; } // Matches HTMLDocumentParser.h behavior.
 
+        State state() const { return m_state; }
         void setState(State state) { m_state = state; }
 
         // Hack to skip leading newline in <pre>/<listing> for authoring ease.

@@ -1,3 +1,30 @@
+2010-06-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Constify some HTML5Token methods
+        https://bugs.webkit.org/show_bug.cgi?id=40592
+
+        I keep wanting these methods to be const.  Eric wanted this in a
+        separate patch.
+
+        * html/HTML5Lexer.h:
+        (WebCore::HTML5Lexer::state):
+        * html/HTML5Token.h:
+        (WebCore::HTML5Token::attributes):
+        (WebCore::HTML5Token::name):
+        (WebCore::HTML5Token::characters):
+        (WebCore::HTML5Token::comment):
+        (WebCore::HTML5Token::publicIdentifier):
+        (WebCore::HTML5Token::systemIdentifier):
+        * html/HTML5TreeBuilder.cpp:
+        (WebCore::convertToOldStyle):
+        (WebCore::HTML5TreeBuilder::adjustedLexerState):
+            - Technically, this might belong in the other patch, but I think
+              it's fine here.
+        (WebCore::HTML5TreeBuilder::passTokenToLegacyParser):
+        * html/HTML5TreeBuilder.h:
+
 2010-06-14  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, build fix.

@@ -160,39 +160,39 @@ public:
         return m_selfClosing;
     }
 
-    AttributeList& attributes()
+    const AttributeList& attributes() const
     {
         ASSERT(m_type == StartTag || m_type == EndTag);
         return m_attributes;
     }
 
-    const DataVector& name()
+    const DataVector& name() const
     {
         ASSERT(m_type == StartTag || m_type == EndTag || m_type == DOCTYPE);
         return m_data;
     }
 
-    const DataVector& characters()
+    const DataVector& characters() const
     {
         ASSERT(m_type == Character);
         return m_data;
     }
 
-    const DataVector& comment()
+    const DataVector& comment() const
     {
         ASSERT(m_type == Comment);
         return m_data;
     }
 
     // FIXME: Distinguish between a missing public identifer and an empty one.
-    const WTF::Vector<UChar>& publicIdentifier()
+    const WTF::Vector<UChar>& publicIdentifier() const
     {
         ASSERT(m_type == DOCTYPE);
         return m_doctypeData->m_publicIdentifier;
     }
 
     // FIXME: Distinguish between a missing system identifer and an empty one.
-    const WTF::Vector<UChar>& systemIdentifier()
+    const WTF::Vector<UChar>& systemIdentifier() const
     {
         ASSERT(m_type == DOCTYPE);
         return m_doctypeData->m_systemIdentifier;
