@@ -64,7 +64,7 @@ PassRefPtr<MimeType> Plugin::item(unsigned index)
 
     const Vector<MimeClassInfo>& mimes = m_pluginData->mimes();
     for (unsigned i = 0; i < mimes.size(); ++i) {
-        if (mimes[i] == mime)
+        if (mimes[i] == mime && m_pluginData->mimePluginIndices()[i] == m_index)
             return MimeType::create(m_pluginData.get(), i).get();
     }
     return 0;
