@@ -54,7 +54,6 @@ void PluginData::initPlugins()
             mime.type = String(MIME).lower();
             mime.suffixes = [[plugin extensionsForMIMEType:MIME] componentsJoinedByString:@","];
             mime.desc = [plugin descriptionForMIMEType:MIME];
-            mime.pluginIndex = m_plugins.size();
             
             pluginInfo.mimes.append(mime);
         }

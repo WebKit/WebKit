@@ -33,7 +33,6 @@ struct MimeClassInfo {
     String type;
     String desc;
     String suffixes;
-    unsigned pluginIndex;
 };
 
 inline bool operator==(const MimeClassInfo& a, const MimeClassInfo& b)

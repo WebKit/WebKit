@@ -1,3 +1,22 @@
+2010-06-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove pluginIndex from MimeClassInfo
+        https://bugs.webkit.org/show_bug.cgi?id=40588
+
+        * plugins/PluginData.h:
+        * plugins/gtk/PluginDataGtk.cpp:
+        (WebCore::PluginData::initPlugins):
+        * plugins/mac/PluginDataMac.mm:
+        (WebCore::PluginData::initPlugins):
+        * plugins/qt/PluginDataQt.cpp:
+        (WebCore::PluginData::initPlugins):
+        * plugins/win/PluginDataWin.cpp:
+        (WebCore::PluginData::initPlugins):
+        * plugins/wx/PluginDataWx.cpp:
+        (WebCore::PluginData::initPlugins):
+
 2010-06-14  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Jian Li.

@@ -53,7 +53,6 @@ void PluginData::initPlugins()
 
             mime.type = it->first;
             mime.desc = it->second;
-            mime.pluginIndex = m_plugins.size();
 
             Vector<String> extensions = package->mimeToExtensions().get(mime.type);
 
