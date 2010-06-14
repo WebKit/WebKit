@@ -139,7 +139,7 @@ MediaDocument::~MediaDocument()
     ASSERT(!m_replaceMediaElementTimer.isActive());
 }
 
-DocumentParser* MediaDocument::createTokenizer()
+DocumentParser* MediaDocument::createParser()
 {
     return new MediaDocumentParser(this);
 }

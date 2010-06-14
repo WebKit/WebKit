@@ -47,8 +47,8 @@ WMLDocument::~WMLDocument()
 
 void WMLDocument::finishedParsing()
 {
-    if (DocumentParser* tokenizer = this->tokenizer()) {
-        if (!tokenizer->wellFormed()) {
+    if (DocumentParser* parser = this->parser()) {
+        if (!parser->wellFormed()) {
             Document::finishedParsing();
             return;
         }

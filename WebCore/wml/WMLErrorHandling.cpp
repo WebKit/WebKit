@@ -38,17 +38,17 @@ void reportWMLError(Document* doc, WMLErrorCode error)
         return;
 
     String errorMessage = errorMessageForErrorCode(error);
-    XMLDocumentParser* tokenizer = static_cast<XMLDocumentParser*>(doc->tokenizer());
-    if (tokenizer && error != WMLErrorDeckNotAccessible) {
+    XMLDocumentParser* parser = static_cast<XMLDocumentParser*>(doc->parser());
+    if (parser && error != WMLErrorDeckNotAccessible) {
         // Some errors are reported as result of an insertedIntoDocument() call.
         // If this happened, parsing has been stopped, and the document fragment
         // is wrapped in a XHTML error document. That means insertedIntoDocument()
         // will be called again - do NOT report the error twice, that would result
         // in an infinite error reporting loop.
-        if (!tokenizer->wellFormed())
+        if (!parser->wellFormed())
             return;
 
-        tokenizer->handleError(XMLDocumentParser::fatal, errorMessage.latin1().data(), tokenizer->lineNumber(), tokenizer->columnNumber());
+        parser->handleError(XMLDocumentParser::fatal, errorMessage.latin1().data(), parser->lineNumber(), parser->columnNumber());
     } else {
         Frame* frame = doc->frame();
         if (!frame)

@@ -72,8 +72,8 @@ namespace WebCore {
         {
         }
 
-        // The tokenizer has buffers, so parsing may continue even after
-        // it stops receiving data. We use m_parserStopped to stop the tokenizer
+        // The parser has buffers, so parsing may continue even after
+        // it stops receiving data. We use m_parserStopped to stop the parser
         // even when it has buffered data.
         bool m_parserStopped;
         bool m_inViewSourceMode;

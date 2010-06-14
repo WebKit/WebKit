@@ -1,3 +1,125 @@
+2010-06-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix the rest of the references to the old Tokenizer class (now DocumentParser)
+        https://bugs.webkit.org/show_bug.cgi?id=40512
+
+        No functional changes, thus no new tests.
+        This was mostly done by do-webcore-rename:
+        tokenizer => parser
+        m_tokenizer => m_parser
+        createTextTokenizer => createTextDocumentParser
+        createTokenizer => createParser
+        getTokenizer => getParser
+
+        However had to be careful to avoid renaming things related to
+        css/tokenizer.flex (which we should later rename to CSSTokenizer.flex)
+
+        Still a couple references with "tok" and "asHTMLTokenizer" which I'll
+        get in the next patch.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isLoaded):
+        * bindings/v8/ScriptEventListener.cpp:
+        (WebCore::createAttributeEventListener):
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef):
+        (WebCore::Document::~Document):
+        (WebCore::Document::createParser):
+        (WebCore::Document::open):
+        (WebCore::Document::cancelParsing):
+        (WebCore::Document::implicitOpen):
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::write):
+        (WebCore::Document::finishParsing):
+        (WebCore::Document::removePendingSheet):
+        * dom/Document.h:
+        (WebCore::Document::parser):
+        * dom/DocumentParser.h:
+        * dom/ViewportArguments.cpp:
+        (WebCore::reportViewportWarning):
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::PendingCallbacks::callAndRemoveFirstCallback):
+        (WebCore::PendingCallbacks::PendingStartElementNSCallback::call):
+        (WebCore::PendingCallbacks::PendingEndElementNSCallback::call):
+        (WebCore::PendingCallbacks::PendingCharactersCallback::call):
+        (WebCore::PendingCallbacks::PendingProcessingInstructionCallback::call):
+        (WebCore::PendingCallbacks::PendingCDATABlockCallback::call):
+        (WebCore::PendingCallbacks::PendingCommentCallback::call):
+        (WebCore::PendingCallbacks::PendingInternalSubsetCallback::call):
+        (WebCore::PendingCallbacks::):
+        (WebCore::getParser):
+        (WebCore::startElementNsHandler):
+        (WebCore::endElementNsHandler):
+        (WebCore::charactersHandler):
+        (WebCore::processingInstructionHandler):
+        (WebCore::cdataBlockHandler):
+        (WebCore::commentHandler):
+        (WebCore::warningHandler):
+        (WebCore::fatalErrorHandler):
+        (WebCore::normalErrorHandler):
+        (WebCore::getEntityHandler):
+        (WebCore::startDocumentHandler):
+        (WebCore::endDocumentHandler):
+        (WebCore::internalSubsetHandler):
+        (WebCore::externalSubsetHandler):
+        (WebCore::parseXMLDocumentFragment):
+        * dom/XMLDocumentParserQt.cpp:
+        (WebCore::parseXMLDocumentFragment):
+        * html/HTML5EntityParser.cpp:
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::createParser):
+        * html/HTMLDocument.h:
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::write):
+        (WebCore::HTMLDocumentParser::stopParsing):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::removedFromTree):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::finished):
+        (WebCore::HTMLParser::reportErrorToConsole):
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createParser):
+        (WebCore::HTMLViewSourceDocument::addLine):
+        * html/HTMLViewSourceDocument.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::isLoadingInAPISense):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin):
+        (WebCore::DocumentWriter::addData):
+        * loader/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocument::createParser):
+        * loader/FTPDirectoryDocument.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::stop):
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocument::createParser):
+        * loader/ImageDocument.h:
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaDocument::createParser):
+        * loader/MediaDocument.h:
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginDocument::createParser):
+        * loader/PluginDocument.h:
+        * loader/SinkDocument.cpp:
+        (WebCore::SinkDocument::createParser):
+        * loader/SinkDocument.h:
+        * loader/TextDocument.cpp:
+        (WebCore::TextDocument::createParser):
+        (WebCore::createTextDocumentParser):
+        * loader/TextDocument.h:
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::reportWarning):
+        (WebCore::SVGDocumentExtensions::reportError):
+        * wml/WMLDocument.cpp:
+        (WebCore::WMLDocument::finishedParsing):
+        * wml/WMLErrorHandling.cpp:
+        (WebCore::reportWMLError):
+        * wml/WMLTemplateElement.cpp:
+        (WebCore::WMLTemplateElement::registerTemplatesInDocument):
+
 2010-06-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

@@ -1853,7 +1853,7 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
 
 bool AccessibilityRenderObject::isLoaded() const
 {
-    return !m_renderer->document()->tokenizer();
+    return !m_renderer->document()->parser();
 }
 
 double AccessibilityRenderObject::estimatedLoadingProgress() const

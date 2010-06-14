@@ -152,7 +152,7 @@ PluginDocument::PluginDocument(Frame* frame)
     setParseMode(Compat);
 }
     
-DocumentParser* PluginDocument::createTokenizer()
+DocumentParser* PluginDocument::createParser()
 {
     return new PluginDocumentParser(this);
 }

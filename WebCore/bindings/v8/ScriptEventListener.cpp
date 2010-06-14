@@ -64,10 +64,10 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Node* node, Attribu
             return 0;
         }
 
-        if (frame->document()->tokenizer()) {
+        if (frame->document()->parser()) {
             // FIXME: Change to use script->eventHandlerLineNumber() when implemented.
-            lineNumber = frame->document()->tokenizer()->lineNumber();
-            columnNumber = frame->document()->tokenizer()->columnNumber();
+            lineNumber = frame->document()->parser()->lineNumber();
+            columnNumber = frame->document()->parser()->columnNumber();
         }
         sourceURL = node->document()->url().string();
     }
@@ -97,10 +97,10 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame* frame, Attri
         return 0;
     }
 
-    if (frame->document()->tokenizer()) {
+    if (frame->document()->parser()) {
         // FIXME: Change to use script->eventHandlerLineNumber() when implemented.
-        lineNumber = frame->document()->tokenizer()->lineNumber();
-        columnNumber = frame->document()->tokenizer()->columnNumber();
+        lineNumber = frame->document()->parser()->lineNumber();
+        columnNumber = frame->document()->parser()->columnNumber();
     }
     sourceURL = frame->document()->url().string();
     return V8LazyEventListener::create(attr->localName().string(), frame->document()->isSVGDocument(), attr->value(), sourceURL, lineNumber, columnNumber, WorldContextHandle(UseMainWorld));

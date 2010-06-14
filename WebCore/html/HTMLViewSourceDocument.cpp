@@ -51,7 +51,7 @@ HTMLViewSourceDocument::HTMLViewSourceDocument(Frame* frame, const String& mimeT
     setUsesBeforeAfterRules(true);
 }
 
-DocumentParser* HTMLViewSourceDocument::createTokenizer()
+DocumentParser* HTMLViewSourceDocument::createParser()
 {
     // Use HTMLDocumentParser if applicable, otherwise use TextDocumentParser.
     if (m_type == "text/html" || m_type == "application/xhtml+xml" || m_type == "image/svg+xml" || DOMImplementation::isXMLMIMEType(m_type)
@@ -63,7 +63,7 @@ DocumentParser* HTMLViewSourceDocument::createTokenizer()
         return new HTMLDocumentParser(this);
     }
 
-    return createTextTokenizer(this);
+    return createTextDocumentParser(this);
 }
 
 void HTMLViewSourceDocument::createContainingTable()
@@ -244,7 +244,7 @@ void HTMLViewSourceDocument::addLine(const String& className)
     m_current = m_td = td;
 
 #ifdef DEBUG_LINE_NUMBERS
-    RefPtr<Text> lineNumberText = Text::create(this, String::number(tokenizer()->lineNumber() + 1) + " ");
+    RefPtr<Text> lineNumberText = Text::create(this, String::number(parser()->lineNumber() + 1) + " ");
     td->addChild(lineNumberText);
     lineNumberText->attach();
 #endif

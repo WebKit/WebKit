@@ -66,15 +66,15 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-// This value is used to define how many characters the tokenizer will process before
+// This value is used to define how many characters the parser will process before
 // yeilding control.
-// To increase responsivness reduce the tokenizer chunk size.
+// To increase responsivness reduce the parser chunk size.
 static const int defaultTokenizerChunkSize = 4096;
 
 // FIXME: We would like this constant to be 200ms.
 // Yielding more aggressively results in increased responsiveness and better incremental rendering.
 // It slows down overall page-load on slower machines, though, so for now we set a value of 500.
-// For smaller chunks (above) decrease the value of TimerDelay as the the tokenizer should not
+// For smaller chunks (above) decrease the value of TimerDelay as the the parser should not
 // yield for as long a period otherwise it will take way to long to load a page.
 static const double defaultTokenizerTimeDelay = 0.500;
 
@@ -1763,7 +1763,7 @@ void HTMLDocumentParser::write(const SegmentedString& str, bool appendData)
     else
         setSrc(source);
 
-    // Once a timer is set, it has control of when the tokenizer continues.
+    // Once a timer is set, it has control of when the parser continues.
     if (m_timer.isActive())
         return;
 
@@ -1801,7 +1801,7 @@ void HTMLDocumentParser::stopParsing()
     m_timer.stop();
 
     // FIXME: Why is HTMLDocumentParser the only DocumentParser which calls checkCompleted?
-    // The FrameLoader needs to know that the tokenizer has finished with its data,
+    // The FrameLoader needs to know that the parser has finished with its data,
     // regardless of whether it happened naturally or due to manual intervention.
     if (!m_fragment && m_doc->frame())
         m_doc->frame()->loader()->checkCompleted();

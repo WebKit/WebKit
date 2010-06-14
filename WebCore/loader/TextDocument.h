@@ -41,10 +41,10 @@ public:
 private:
     TextDocument(Frame*);
     
-    virtual DocumentParser* createTokenizer();
+    virtual DocumentParser* createParser();
 };
 
-DocumentParser* createTextTokenizer(HTMLViewSourceDocument*);
+DocumentParser* createTextDocumentParser(HTMLViewSourceDocument*);
 
 }
 

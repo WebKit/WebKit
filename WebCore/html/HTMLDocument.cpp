@@ -283,7 +283,7 @@ void HTMLDocument::releaseEvents()
 {
 }
 
-DocumentParser* HTMLDocument::createTokenizer()
+DocumentParser* HTMLDocument::createParser()
 {
     bool reportErrors = false;
 #if ENABLE(INSPECTOR)

@@ -70,7 +70,7 @@ public:
     }
         
 private:
-    // The tokenizer will attempt to load the document template specified via the preference
+    // The parser will attempt to load the document template specified via the preference
     // Failing that, it will fall back and create the basic document which will have a minimal
     // table for presenting the FTP directory in a useful manner
     bool loadDocumentTemplate();
@@ -442,7 +442,7 @@ FTPDirectoryDocument::FTPDirectoryDocument(Frame* frame)
 #endif
 }
 
-DocumentParser* FTPDirectoryDocument::createTokenizer()
+DocumentParser* FTPDirectoryDocument::createParser()
 {
     return new FTPDirectoryDocumentParser(this);
 }

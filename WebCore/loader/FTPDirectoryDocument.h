@@ -40,7 +40,7 @@ public:
 
 private:
     FTPDirectoryDocument(Frame*);
-    virtual DocumentParser* createTokenizer();
+    virtual DocumentParser* createParser();
 };
     
 } // namespace WebCore

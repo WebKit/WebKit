@@ -57,7 +57,7 @@ SinkDocument::SinkDocument(Frame* frame)
     setParseMode(Compat);
 }
     
-DocumentParser* SinkDocument::createTokenizer()
+DocumentParser* SinkDocument::createParser()
 {
     return new SinkDocumentParser(this);
 }

@@ -99,7 +99,7 @@ void DocumentWriter::begin(const KURL& url, bool dispatch, SecurityOrigin* origi
     RefPtr<Document> document = createDocument();
     
     // If the new document is for a Plugin but we're supposed to be sandboxed from Plugins,
-    // then replace the document with one whose tokenizer will ignore the incoming data (bug 39323)
+    // then replace the document with one whose parser will ignore the incoming data (bug 39323)
     if (document->isPluginDocument() && m_frame->loader()->isSandboxed(SandboxPlugins))
         document = SinkDocument::create(m_frame);
 
@@ -136,10 +136,10 @@ void DocumentWriter::addData(const char* str, int len, bool flush)
     if (len == -1)
         len = strlen(str);
 
-    DocumentParser* tokenizer = m_frame->document()->tokenizer();
-    if (tokenizer && tokenizer->wantsRawData()) {
+    DocumentParser* parser = m_frame->document()->parser();
+    if (parser && parser->wantsRawData()) {
         if (len > 0)
-            tokenizer->writeRawData(str, len);
+            parser->writeRawData(str, len);
         return;
     }
     
@@ -186,9 +186,9 @@ void DocumentWriter::addData(const char* str, int len, bool flush)
         m_frame->document()->recalcStyle(Node::Force);
     }
 
-    if (tokenizer) {
-        ASSERT(!tokenizer->wantsRawData());
-        tokenizer->write(decoded, true);
+    if (parser) {
+        ASSERT(!parser->wantsRawData());
+        parser->write(decoded, true);
     }
 }
 
@@ -202,8 +202,8 @@ void DocumentWriter::addData(const String& str)
         m_frame->document()->setParseMode(Document::Strict);
     }
 
-    if (DocumentParser* tokenizer = m_frame->document()->tokenizer())
-        tokenizer->write(str, true);
+    if (DocumentParser* parser = m_frame->document()->parser())
+        parser->write(str, true);
 }
 
 void DocumentWriter::end()

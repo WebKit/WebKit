@@ -49,7 +49,7 @@ public:
 private:
     ImageDocument(Frame*);
 
-    virtual DocumentParser* createTokenizer();
+    virtual DocumentParser* createParser();
     virtual bool isImageDocument() const { return true; }
     
     void createDocumentStructure();

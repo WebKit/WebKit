@@ -1637,7 +1637,7 @@ void HTMLParser::finished()
     freeBlock();
     setCurrent(0);
 
-    // Warning, this may delete the tokenizer and parser, so don't try to do anything else after this.
+    // Warning, this may delete the parser, so don't try to do anything else after this.
     if (!m_isParsingFragment)
         m_document->finishedParsing();
 }
@@ -1648,7 +1648,7 @@ void HTMLParser::reportErrorToConsole(HTMLParserErrorCode errorCode, const Atomi
     if (!frame)
         return;
     
-    HTMLDocumentParser* htmlTokenizer = static_cast<HTMLDocumentParser*>(m_document->tokenizer());
+    HTMLDocumentParser* htmlTokenizer = static_cast<HTMLDocumentParser*>(m_document->parser());
     int lineNumber = htmlTokenizer->lineNumber() + 1;
 
     AtomicString tag1;
