@@ -116,6 +116,8 @@
 #include "JSStyleSheetListCustom.cpp"
 #include "JSTextCustom.cpp"
 #include "JSTreeWalkerCustom.cpp"
+#include "JSWebKitCSSMatrixCustom.h"
+#include "JSWebKitPointCustom.h"
 #include "JSWebSocketCustom.cpp"
 #include "JSWorkerContextBase.cpp"
 #include "JSWorkerContextCustom.cpp"
