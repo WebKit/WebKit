@@ -1,3 +1,57 @@
+2010-06-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Safari beach-balls loading large pages with HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=40596
+
+        Implement parser yielding, similar to how the old
+        HTMLDocumentParser yields.
+
+        This implementation re-uses the tokenizerTimeDelay and
+        tokenizerChunkSize settings even though they don't map exactly
+        to the token loop that the HTML5 parser uses.
+
+        * dom/DocumentParser.h:
+         - Add a FIXME for processingData() and clarify how the
+           appendData flag is used by renaming it to isFromNetwork.
+        * html/HTML5DocumentParser.cpp:
+        (WebCore::parserTimeLimit):
+         - Defaults accessor, probably belongs on Page.
+        (WebCore::parserChunkSize):
+         - Defaults accessor, probably belongs on Page.
+        (WebCore::HTML5DocumentParser::HTML5DocumentParser):
+        (WebCore::HTML5DocumentParser::stopParsing):
+         - Stop the continue-parsing timer if active.
+        (WebCore::HTML5DocumentParser::processingData):
+         - Implement this poorly understood accessor to match
+           the old parser's behavior.  It's unclear what this does
+           and it does not affect any layout tests to my knowledge
+           but likely affects the WebKit API in some way.
+        (WebCore::HTML5DocumentParser::pumpLexerIfPossible):
+         - Pass SynchronousMode.
+         - Do not ever pump if we've yielded to the timer.
+        (WebCore::HTML5DocumentParser::PumpSession::PumpSession):
+         - A struct for storing the yield counters.
+        (WebCore::HTML5DocumentParser::shouldContinueParsing):
+         - Mostly matches HTMLDocumentParser::shouldContinueParsing.
+        (WebCore::HTML5DocumentParser::pumpLexer):
+         - Respect SynchronousMode.
+         - ASSERT that a timer is not scheduled if we're pumping.
+        (WebCore::isLayoutTimerActive):
+         - This belongs on Document.
+        (WebCore::HTML5DocumentParser::continueNextChunkTimerFired):
+        (WebCore::HTML5DocumentParser::write):
+        (WebCore::HTML5DocumentParser::end):
+         - We should never end() if a timer is still outstanding.
+        (WebCore::HTML5DocumentParser::attemptToEnd):
+        (WebCore::HTML5DocumentParser::endIfDelayed):
+        (WebCore::HTML5DocumentParser::resumeParsingAfterScriptExecution):
+        * html/HTML5DocumentParser.h:
+        (WebCore::HTML5DocumentParser::):
+        * html/HTMLDocumentParser.cpp:
+         - Clarify the old TimeDelay and ChunkSize constants.
+
 2010-06-14  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

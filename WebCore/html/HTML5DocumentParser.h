@@ -31,6 +31,7 @@
 #include "HTML5Token.h"
 #include "SegmentedString.h"
 #include "DocumentParser.h"
+#include "Timer.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -51,10 +52,12 @@ public:
 
     // DocumentParser
     virtual void begin();
-    virtual void write(const SegmentedString&, bool appendData);
+    virtual void write(const SegmentedString&, bool isFromNetwork);
     virtual void end();
     virtual void finish();
     virtual int executingScript() const;
+    virtual bool processingData() const;
+    virtual void stopParsing();
     virtual bool isWaitingForScripts() const;
     virtual void executeScriptsWaitingForStylesheets();
     virtual int lineNumber() const;
@@ -165,8 +168,16 @@ private:
     void willPumpLexer();
     void didPumpLexer();
 
-    void pumpLexer();
-    void pumpLexerIfPossible();
+    struct PumpSession;
+    inline bool shouldContinueParsing(PumpSession&);
+
+    enum SynchronousMode {
+        AllowYield,
+        ForceSynchronous,
+    };
+    void pumpLexer(SynchronousMode);
+    void pumpLexerIfPossible(SynchronousMode);
+    void continueNextChunkTimerFired(Timer<HTML5DocumentParser>*);
     void resumeParsingAfterScriptExecution();
 
     void attemptToEnd();
@@ -187,6 +198,10 @@ private:
     OwnPtr<HTML5PreloadScanner> m_preloadScanner;
     bool m_endWasDelayed;
     int m_writeNestingLevel;
+
+    double m_parserTimeLimit;
+    int m_parserChunkSize;
+    Timer<HTML5DocumentParser> m_continueNextChunkTimer;
 };
 
 }

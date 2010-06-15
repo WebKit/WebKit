@@ -66,16 +66,16 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-// This value is used to define how many characters the parser will process before
-// yeilding control.
-// To increase responsivness reduce the parser chunk size.
+// This value is used to define how many loops (approximately tokens)
+// the parser will make before checking if it should yield.
+// To increase responsiveness reduce both ChunkSize and TimeDelay contants.
 static const int defaultTokenizerChunkSize = 4096;
 
 // FIXME: We would like this constant to be 200ms.
 // Yielding more aggressively results in increased responsiveness and better incremental rendering.
 // It slows down overall page-load on slower machines, though, so for now we set a value of 500.
-// For smaller chunks (above) decrease the value of TimerDelay as the the parser should not
-// yield for as long a period otherwise it will take way to long to load a page.
+// TimeDelay controls the maximum time the parser will run before yielding.
+// Inline script execution can cause the parser to excede this limit.
 static const double defaultTokenizerTimeDelay = 0.500;
 
 static const char commentStart [] = "<!--";
