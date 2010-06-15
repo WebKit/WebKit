@@ -37,6 +37,7 @@
 #include "Node.h"
 #include "Page.h"
 #include "XSSAuditor.h"
+#include <wtf/CurrentTime.h>
 
 #if ENABLE(INSPECTOR)
 #include "InspectorTimelineAgent.h"

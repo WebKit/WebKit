@@ -1,3 +1,11 @@
+2010-06-14  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Add an include to try to fix Chromium build.
+
+        * html/HTML5DocumentParser.cpp:
+
 2010-06-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
