@@ -31,6 +31,10 @@
 #import "Logging.h"
 #import "WebCoreViewFactory.h"
 
+#ifdef BUILDING_ON_TIGER
+typedef unsigned NSUInteger;
+#endif
+
 namespace WebCore {
 
 void PluginData::initPlugins()
