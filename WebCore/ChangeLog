@@ -1,3 +1,11 @@
+2010-06-15  Xan Lopez  <xlopez@igalia.com>
+
+        Unreviewed build fix.
+
+        Fix the build when WebSockets are disabled.
+
+        * bindings/js/JSWorkerContextCustom.cpp:
+
 2010-06-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

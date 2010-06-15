@@ -42,7 +42,6 @@
 #include "JSEventSource.h"
 #include "JSMessageChannel.h"
 #include "JSMessagePort.h"
-#include "JSWebSocket.h"
 #include "JSWorkerLocation.h"
 #include "JSWorkerNavigator.h"
 #include "JSXMLHttpRequest.h"
@@ -51,6 +50,10 @@
 #include "WorkerLocation.h"
 #include "WorkerNavigator.h"
 #include <interpreter/Interpreter.h>
+
+#if ENABLE(WEB_SOCKETS)
+#include "JSWebSocket.h"
+#endif
 
 using namespace JSC;
 
