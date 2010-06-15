@@ -1,3 +1,23 @@
+2010-06-15  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Rename NotificatioIconWrapper to NotificationWrapper
+        https://bugs.webkit.org/show_bug.cgi?id=40571
+
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        (WebCore::NotificationWrapper::NotificationWrapper):
+        (WebCore::NotificationWrapper::close):
+        (WebCore::NotificationWrapper::title):
+        (WebCore::NotificationWrapper::message):
+        (WebCore::NotificationWrapper::iconData):
+        (WebCore::NotificationWrapper::notificationClosed):
+        (WebCore::NotificationPresenterClientQt::displayNotification):
+        (WebCore::NotificationPresenterClientQt::cancel):
+        (WebCore::NotificationPresenterClientQt::notificationForWrapper):
+        * WebCoreSupport/NotificationPresenterClientQt.h:
+        (WebCore::NotificationWrapper::~NotificationWrapper):
+
 2010-06-15  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed, Symbian build fix.

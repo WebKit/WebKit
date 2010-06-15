@@ -47,14 +47,14 @@ namespace WebCore {
 class Document;
 class KURL;
 
-class NotificationIconWrapper : public QObject, public QWebNotificationData {
+class NotificationWrapper : public QObject, public QWebNotificationData {
     Q_OBJECT
 public:
-    NotificationIconWrapper();
-    ~NotificationIconWrapper() {}
+    NotificationWrapper();
+    ~NotificationWrapper() {}
 
     void close();
-    void close(Timer<NotificationIconWrapper>*);
+    void close(Timer<NotificationWrapper>*);
     const QString title() const;
     const QString message() const;
     const QByteArray iconData() const;
@@ -68,12 +68,12 @@ public:
 #endif
 
     OwnPtr<QWebNotificationPresenter> m_presenter;
-    Timer<NotificationIconWrapper> m_closeTimer;
+    Timer<NotificationWrapper> m_closeTimer;
 };
 
 #if ENABLE(NOTIFICATIONS)
 
-typedef QHash <Notification*, NotificationIconWrapper*> NotificationsQueue;
+typedef QHash <Notification*, NotificationWrapper*> NotificationsQueue;
 
 class NotificationPresenterClientQt : public NotificationPresenter {
 public:
@@ -87,7 +87,7 @@ public:
     virtual void requestPermission(SecurityOrigin*, PassRefPtr<VoidCallback>);
     virtual NotificationPresenter::Permission checkPermission(const KURL&);
 
-    void cancel(NotificationIconWrapper*);
+    void cancel(NotificationWrapper*);
 
     void allowNotificationForOrigin(const QString& origin);
 
@@ -99,7 +99,7 @@ public:
     void removeClient();
     static NotificationPresenterClientQt* notificationPresenter();
 
-    Notification* notificationForWrapper(const NotificationIconWrapper*) const;
+    Notification* notificationForWrapper(const NotificationWrapper*) const;
 
 private:
     void sendEvent(Notification*, const AtomicString& eventName);
