@@ -1,3 +1,10 @@
+2010-06-15  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed EFL build fix. Simple typo.
+
+        * efl/WebCoreSupport/InspectorClientEfl.cpp:
+        (WebCore::InspectorClientEfl::sendMessageToFrontend):
+
 2010-06-14  Tony Chang  <tony@chromium.org>
 
         Reviewed by Darin Fisher.
