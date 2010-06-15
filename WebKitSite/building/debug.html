@@ -38,20 +38,11 @@
 <div class="windows-instructions">
 <h2>Debugging on Windows</h2>
 <ol>
-<li><p>Run the <code>set-apple-windows-environment-variables</code> script.</p>
-<p>This script sets the <code>WebKitOutputDir</code> and
-<code>WebKitLibrariesDir</code> environment variables, which WebKit.sln depends
-on. (You only need to run this script once; the environment variables will
-&ldquo;stick&rdquo;.)</p>
-</li>
-<li><p>Relaunch Cygwin.</p>
-<p>This ensures that the environment variables set by the script will take
-effect.</p>
-</li>
 <li><p>Open <code>WebKit/WebKit/win/WebKit.vcproj/WebKit.sln</code></p>
 <p>You can open it in either Visual Studio 2005, or Visual C++ Express 2005.
-Make sure you launched Visual Studio or Visual C++ Express after running
-<code>set-apple-windows-environment-variables</code>.</p>
+If you get errors about not being able to find <code>.vsprops</code> files, run
+update-webkit, then close and relaunch Cygwin and Visual Studio or Visual C++
+Express.</p>
 </li>
 <li><p>Set WebKit.vcproj as the solution's StartUp project</p>
 <p>Select the WebKit project in the Solution Explorer, then choose Project >

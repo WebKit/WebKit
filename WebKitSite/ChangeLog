@@ -1,3 +1,14 @@
+2010-06-15  Adam Roben  <aroben@apple.com>
+
+        Remove some unnecessary steps for setting up the debugger on Windows
+
+        Apparently update-webkit does this for you now.
+
+        Rubber-stamped by Steve Falkenburg.
+
+        * building/debug.html: Removed the first two Windows steps, which are
+        now unnecessary, and updated the third to reflect reality.
+
 2010-06-14  Adam Roben  <aroben@apple.com>
 
         Improve instructions for debugging on Windows

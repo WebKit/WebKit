@@ -1,3 +1,13 @@
+2010-06-15  Adam Roben  <aroben@apple.com>
+
+        Remove the redundant set-apple-windows-environment-variables script
+
+        Apparently update-webkit does this for you these days.
+
+        Rubber-stamped by Steve Falkenburg.
+
+        * Scripts/set-apple-windows-environment-variables: Removed.
+
 2010-06-14  Adam Roben  <aroben@apple.com>
 
         Add a script to set the WebKitOutputDir and WebKitLibrariesDir
