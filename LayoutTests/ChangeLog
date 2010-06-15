@@ -1,3 +1,12 @@
+2010-06-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Test for <rdar://problem/8077032> REGRESSION (r50796): Black background on AppleScript generated email
+
+        * platform/mac/editing/input/NSBackgroundColor-transparent-expected.txt: Added.
+        * platform/mac/editing/input/NSBackgroundColor-transparent.html: Added.
+
 2010-06-15  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.

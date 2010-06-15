@@ -1,3 +1,20 @@
+2010-06-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/8077032> REGRESSION (r50796): Black background on AppleScript generated email
+
+        Test: platform/mac/editing/input/NSBackgroundColor-transparent.html
+
+        r50796 changed the initial background color from invalid to transparent. As a result,
+        NSAttributedStrings returned from +_web_attributedStringFromRange started including the
+        NSBackgroundColor attribute, with a transparent color as the value. This caused problems for
+        components in the system that ignore the alpha component, turning the color into opaque black.
+
+        * Misc/WebNSAttributedStringExtras.mm:
+        (+[NSAttributedString _web_attributedStringFromRange:]): Change to not include the background
+        and foreground color attributes if the color are transparent.
+
 2010-06-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
