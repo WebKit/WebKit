@@ -28,6 +28,8 @@
 
 # Update script for the WebKit Chromium Port.
 
+use File::Path;
+
 chdir("WebKit/chromium") or die $!;
 
 # Find gclient or install it.
@@ -48,6 +50,12 @@ if (! -e ".gclient") {
     system($gclientPath, 
            "config", 
            "--spec=solutions=[{'name':'./','url':None}]") == 0 or die $!;
+}
+
+# This is migration code for handling how we checkout third_party.  We can
+# remove this after the bots have updated.
+if (-d "third_party" && (! -d "third_party/.svn")) {
+    rmtree("third_party") or die;
 }
 
 # Execute gclient sync.

@@ -91,70 +91,26 @@ deps = {
     Var('chromium_svn')+'/media@'+Var('chromium_rev'),
   'third_party/angle':  # needed by the gpu process
     From('chromium_deps', 'src/third_party/angle'),
-  'third_party/glew':  # webgl related
-    Var('chromium_svn')+'/third_party/glew@'+Var('chromium_rev'),
   'third_party/ffmpeg': # needed by webkit/media
     From('chromium_deps', 'src/third_party/ffmpeg'),
   'third_party/libvpx/include':
     From('chromium_deps', 'src/third_party/libvpx/include'),
   'third_party/libvpx/lib':
     From('chromium_deps', 'src/third_party/libvpx/lib'),
-  'third_party/mesa':
-    Var('chromium_svn')+'/third_party/mesa@'+Var('chromium_rev'),
-  'third_party/yasm': # needed by ffmpeg
-    Var('chromium_svn')+'/third_party/yasm@'+Var('chromium_rev'),
-  'third_party/openmax': # needed by webkit/media
-    Var('chromium_svn')+'/third_party/openmax@'+Var('chromium_rev'),
   'tools/grit':
     Var('chromium_svn')+'/tools/grit@'+Var('chromium_rev'),
   'tools/generate_stubs':
     Var('chromium_svn')+'/tools/generate_stubs@'+Var('chromium_rev'),
 
   # other third party
+  'third_party':
+    Var('chromium_svn')+'/third_party@'+Var('chromium_rev'),
   'third_party/icu':
     From('chromium_deps', 'src/third_party/icu'),
-
-  'third_party/bzip2':
-    Var('chromium_svn')+'/third_party/bzip2@'+Var('chromium_rev'),
-
-  'third_party/libevent':
-    Var('chromium_svn')+'/third_party/libevent@'+Var('chromium_rev'),
-
-  'third_party/libjpeg':
-    Var('chromium_svn')+'/third_party/libjpeg@'+Var('chromium_rev'),
-
-  'third_party/libpng':
-    Var('chromium_svn')+'/third_party/libpng@'+Var('chromium_rev'),
-
-  'third_party/libxml':
-    Var('chromium_svn')+'/third_party/libxml@'+Var('chromium_rev'),
-
-  'third_party/libxslt':
-    Var('chromium_svn')+'/third_party/libxslt@'+Var('chromium_rev'),
-
-  'third_party/modp_b64':
-    Var('chromium_svn')+'/third_party/modp_b64@'+Var('chromium_rev'),
-
-  'third_party/npapi':
-    Var('chromium_svn')+'/third_party/npapi@'+Var('chromium_rev'),
-
   'third_party/ppapi':
     From('chromium_deps', 'src/third_party/ppapi'),
-
   'third_party/ots':
     From('chromium_deps', 'src/third_party/ots'),
-
-  'third_party/sqlite':
-    Var('chromium_svn')+'/third_party/sqlite@'+Var('chromium_rev'),
-
-  'third_party/tcmalloc':
-    Var('chromium_svn')+'/third_party/tcmalloc@'+Var('chromium_rev'),
-
-  'third_party/zlib':
-    Var('chromium_svn')+'/third_party/zlib@'+Var('chromium_rev'),
-
-  'third_party/mozilla':
-    Var('chromium_svn')+'/third_party/mozilla@'+Var('chromium_rev'),
 }
 
 deps_os = {
@@ -169,8 +125,6 @@ deps_os = {
       From('chromium_deps', 'src/third_party/lighttpd'),
     'third_party/nss':
       From('chromium_deps', 'src/third_party/nss'),
-    'third_party/wtl':
-      Var('chromium_svn')+'/third_party/wtl@'+Var('chromium_rev'),
   },
   'mac': {
     # needed by ffmpeg
@@ -181,8 +135,6 @@ deps_os = {
   },
   'unix': {
     # Linux, actually.
-    'third_party/harfbuzz':
-      Var('chromium_svn')+'/third_party/harfbuzz@'+Var('chromium_rev'),
     'tools/xdisplaycheck':
       Var('chromium_svn')+'/tools/xdisplaycheck@'+Var('chromium_rev'),
     'tools/data_pack':
