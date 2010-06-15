@@ -1,5 +1,14 @@
 2010-06-14  Eric Carlson  <eric.carlson@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/8090895> Update http streaming MIME types
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::TypeExtensionPair::): Add http streaming MIME synonyms.
+
+2010-06-14  Eric Carlson  <eric.carlson@apple.com>
+
         Reviewed by Oliver Hunt.
 
         audio/x-mp3 MIME type not recognized

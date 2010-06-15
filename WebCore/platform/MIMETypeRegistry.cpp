@@ -263,8 +263,13 @@ static MediaMIMETypeMap& mediaMIMETypeMap()
         { "video/mpeg", "mpv" },
 
         // MPEG playlist
-        { "audio/x-mpegurl", "m3url" },
+        { "application/vnd.apple.mpegurl", "m3u8" },
+        { "application/mpegurl", "m3u8" },
         { "application/x-mpegurl", "m3u8" },
+        { "audio/mpegurl", "m3url" },
+        { "audio/x-mpegurl", "m3url" },
+        { "audio/mpegurl", "m3u" },
+        { "audio/x-mpegurl", "m3u" },
 
         // MPEG-4
         { "video/x-m4v", "m4v" },
