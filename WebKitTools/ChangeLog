@@ -1,3 +1,14 @@
+2010-06-15  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Switch to using GIO methods instead of realpath in GtkLauncher to determine
+        the file URI. This should remove warnings about realpath being undefined
+        when compiling with '-ansi'.
+
+        * GtkLauncher/main.c:
+        (filenameToURL): Use GIO instead of realpath to determine file URI.
+
 2010-06-15  Adam Roben  <aroben@apple.com>
 
         Remove the redundant set-apple-windows-environment-variables script

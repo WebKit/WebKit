@@ -25,8 +25,6 @@
  */
 
 #include <gtk/gtk.h>
-#include <limits.h>
-#include <stdlib.h>
 #include <webkit/webkit.h>
 
 static GtkWidget* main_window;
@@ -193,12 +191,9 @@ static gchar* filenameToURL(const char* filename)
     if (!g_file_test(filename, G_FILE_TEST_EXISTS))
         return 0;
 
-    gchar *fullPath = realpath(filename, 0);
-    if (!fullPath)
-        return 0;
-
-    gchar *fileURL = g_filename_to_uri(fullPath, 0, 0);
-    free(fullPath);
+    GFile *gfile = g_file_new_for_path(filename);
+    gchar *fileURL = g_file_get_uri(gfile);
+    g_object_unref(gfile);
 
     return fileURL;
 }
