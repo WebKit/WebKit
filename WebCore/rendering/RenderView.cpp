@@ -202,7 +202,8 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, int, int)
     }
 
     bool rootFillsViewport = false;
-    if (RenderObject* rootRenderer = document()->documentElement()->renderer()) {
+    Node* documentElement = document()->documentElement();
+    if (RenderObject* rootRenderer = documentElement ? documentElement->renderer() : 0) {
         // The document element's renderer is currently forced to be a block, but may not always be.
         RenderBox* rootBox = rootRenderer->isBox() ? toRenderBox(rootRenderer) : 0;
         rootFillsViewport = rootBox && !rootBox->x() && !rootBox->y() && rootBox->width() >= width() && rootBox->height() >= height();
