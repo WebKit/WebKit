@@ -4210,7 +4210,7 @@ static WebFrame *incrementFrame(WebFrame *frame, BOOL forward, BOOL wrapFlag)
     Frame* coreFrame = [self _mainCoreFrame];
     if (!coreFrame)
         return YES;
-    return coreFrame->shouldClose();
+    return coreFrame->loader()->shouldClose();
 }
 
 static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValue)

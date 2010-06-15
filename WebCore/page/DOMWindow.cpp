@@ -229,7 +229,7 @@ bool DOMWindow::dispatchAllPendingBeforeUnloadEvents()
         if (!frame)
             continue;
 
-        if (!frame->shouldClose())
+        if (!frame->loader()->shouldClose())
             return false;
     }
 
@@ -756,7 +756,18 @@ void DOMWindow::focus()
     if (!m_frame)
         return;
 
-    m_frame->focusWindow();
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    // If we're a top level window, bring the window to the front.
+    if (m_frame == page->mainFrame())
+        page->chrome()->focus();
+
+    if (!m_frame)
+        return;
+
+    m_frame->eventHandler()->focusDocumentView();
 }
 
 void DOMWindow::blur()
@@ -764,7 +775,14 @@ void DOMWindow::blur()
     if (!m_frame)
         return;
 
-    m_frame->unfocusWindow();
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    if (m_frame != page->mainFrame())
+        return;
+
+    page->chrome()->unfocus();
 }
 
 void DOMWindow::close()
@@ -782,8 +800,13 @@ void DOMWindow::close()
     Settings* settings = m_frame->settings();
     bool allowScriptsToCloseWindows = settings && settings->allowScriptsToCloseWindows();
 
-    if (page->openedByDOM() || page->getHistoryLength() <= 1 || allowScriptsToCloseWindows)
-        m_frame->scheduleClose();
+    if (!(page->openedByDOM() || page->getHistoryLength() <= 1 || allowScriptsToCloseWindows))
+        return;
+
+    if (!m_frame->loader()->shouldClose())
+        return;
+
+    page->chrome()->closeWindowSoon();
 }
 
 void DOMWindow::print()
@@ -1048,36 +1071,34 @@ void DOMWindow::setName(const String& string)
     m_frame->tree()->setName(string);
 }
 
-String DOMWindow::status() const
-{
-    if (!m_frame)
-        return String();
-
-    return m_frame->jsStatusBarText();
-}
-
 void DOMWindow::setStatus(const String& string) 
-{ 
-    if (!m_frame) 
-        return; 
+{
+    m_status = string;
 
-    m_frame->setJSStatusBarText(string); 
+    if (!m_frame)
+        return;
+
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    ASSERT(m_frame->document()); // Client calls shouldn't be made when the frame is in inconsistent state.
+    page->chrome()->setStatusbarText(m_frame, m_status);
 } 
     
-String DOMWindow::defaultStatus() const
-{
-    if (!m_frame)
-        return String();
-
-    return m_frame->jsDefaultStatusBarText();
-} 
-
 void DOMWindow::setDefaultStatus(const String& string) 
-{ 
-    if (!m_frame) 
-        return; 
+{
+    m_defaultStatus = string;
 
-    m_frame->setJSDefaultStatusBarText(string);
+    if (!m_frame)
+        return;
+
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    ASSERT(m_frame->document()); // Client calls shouldn't be made when the frame is in inconsistent state.
+    page->chrome()->setStatusbarText(m_frame, m_defaultStatus);
 }
 
 DOMWindow* DOMWindow::self() const

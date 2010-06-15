@@ -1,3 +1,40 @@
+2010-06-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Move functions out of Frame class that were marked "move to Chrome"
+        https://bugs.webkit.org/show_bug.cgi?id=39636
+
+        Refactoring that does not require new tests.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didOpenURL): Call setStatus and setDefaultStatus
+        on DOMWindow rather than going through Frame.
+        (WebCore::FrameLoader::open): Ditto.
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy): Call
+        shouldClose on this object instead of going through Frame.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchAllPendingBeforeUnloadEvents): Call
+        shouldClose on FrameLoader instead of going through Frame.
+        (WebCore::DOMWindow::focus): Moved the code from Frame::focusWindow
+        in here.
+        (WebCore::DOMWindow::blur): Moved the code from Frame::unfocusWindow
+        in here.
+        (WebCore::DOMWindow::close): Moved the code from Frame::scheduleClose
+        in here.
+        (WebCore::DOMWindow::setStatus): Moved the code from
+        Frame::setJSStatusBarText in here.
+        (WebCore::DOMWindow::setDefaultStatus): Moved the code from
+        Frame::setJSDefaultStatusBarText in here.
+
+        * page/DOMWindow.h: Added m_status and m_defaultStatus members to
+        store the status messages being set by the DOM.
+
+        * page/Frame.cpp: Removed all the functions that were marked
+        "to be moved into Chrome".
+        * page/Frame.h: Ditto.
+
 2010-06-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt.

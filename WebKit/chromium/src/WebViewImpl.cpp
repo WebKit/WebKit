@@ -1393,7 +1393,7 @@ bool WebViewImpl::dispatchBeforeUnloadEvent()
     if (!frame)
         return true;
 
-    return frame->shouldClose();
+    return frame->loader()->shouldClose();
 }
 
 void WebViewImpl::dispatchUnloadEvent()

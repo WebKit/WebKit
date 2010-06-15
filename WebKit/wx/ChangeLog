@@ -1,3 +1,14 @@
+2010-06-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Move functions out of Frame class that were marked "move to Chrome"
+        https://bugs.webkit.org/show_bug.cgi?id=39636
+
+        * WebFrame.cpp:
+        (wxWebFrame::ShouldClose): Call shouldClose on FrameLoader instead
+        of going through Frame.
+
 2010-06-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

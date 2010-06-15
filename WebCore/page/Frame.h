@@ -189,19 +189,6 @@ namespace WebCore {
     private:
         void lifeSupportTimerFired(Timer<Frame>*);
 
-    // === to be moved into Chrome
-
-    public:
-        void focusWindow();
-        void unfocusWindow();
-        bool shouldClose();
-        void scheduleClose();
-
-        void setJSStatusBarText(const String&);
-        void setJSDefaultStatusBarText(const String&);
-        String jsStatusBarText() const;
-        String jsDefaultStatusBarText() const;
-
     // === to be moved into Editor
 
     public:
@@ -336,9 +323,6 @@ namespace WebCore {
 
         ScriptController m_script;
 
-        String m_kjsStatusBarText;
-        String m_kjsDefaultStatusBarText;
-
         mutable VisibleSelection m_mark;
         mutable Editor m_editor;
         mutable SelectionController m_selectionController;
@@ -424,16 +408,6 @@ namespace WebCore {
         m_mark = s;
     }
 
-    inline String Frame::jsStatusBarText() const
-    {
-        return m_kjsStatusBarText;
-    }
-
-    inline String Frame::jsDefaultStatusBarText() const
-    {
-        return m_kjsDefaultStatusBarText;
-    }
-
     inline bool Frame::needsReapplyStyles() const
     {
         return m_needsReapplyStyles;
@@ -507,13 +481,6 @@ namespace WebCore {
     inline EventHandler* Frame::eventHandler() const
     {
         return &m_eventHandler;
-    }
-
-    inline bool Frame::shouldClose()
-    {
-        // FIXME: Some WebKit clients call Frame::shouldClose() directly.
-        // We should transition them to calling FrameLoader::shouldClose() then get rid of this method.
-        return m_loader.shouldClose();
     }
 
 } // namespace WebCore

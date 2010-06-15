@@ -142,7 +142,7 @@ void WebPage::close()
 
 void WebPage::tryClose()
 {
-    if (!m_mainFrame->coreFrame()->shouldClose())
+    if (!m_mainFrame->coreFrame()->loader()->shouldClose())
         return;
 
     WebProcess::shared().connection()->send(WebPageProxyMessage::ClosePage, m_pageID, CoreIPC::In());

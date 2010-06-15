@@ -5197,7 +5197,7 @@ HRESULT STDMETHODCALLTYPE WebView::shouldClose(
 
     *result = TRUE;
     if (Frame* frame = m_page->mainFrame())
-        *result = frame->shouldClose() ? TRUE : FALSE;
+        *result = frame->loader()->shouldClose();
     return S_OK;
 }
 

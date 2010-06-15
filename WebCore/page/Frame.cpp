@@ -620,22 +620,6 @@ void Frame::setPrinting(bool printing, float minPageWidth, float maxPageWidth, b
         child->setPrinting(printing, minPageWidth, maxPageWidth, adjustViewSize);
 }
 
-void Frame::setJSStatusBarText(const String& text)
-{
-    ASSERT(m_doc); // Client calls shouldn't be made when the frame is in inconsistent state.
-    m_kjsStatusBarText = text;
-    if (m_page)
-        m_page->chrome()->setStatusbarText(this, m_kjsStatusBarText);
-}
-
-void Frame::setJSDefaultStatusBarText(const String& text)
-{
-    ASSERT(m_doc); // Client calls shouldn't be made when the frame is in inconsistent state.
-    m_kjsDefaultStatusBarText = text;
-    if (m_page)
-        m_page->chrome()->setStatusbarText(this, m_kjsDefaultStatusBarText);
-}
-
 void Frame::setNeedsReapplyStyles()
 {
     // When the frame is not showing web content, it doesn't make sense to apply styles.
@@ -1430,38 +1414,6 @@ String Frame::documentTypeString() const
         return createMarkup(doctype);
 
     return String();
-}
-
-void Frame::focusWindow()
-{
-    if (!page())
-        return;
-
-    // If we're a top level window, bring the window to the front.
-    if (!tree()->parent())
-        page()->chrome()->focus();
-
-    eventHandler()->focusDocumentView();
-}
-
-void Frame::unfocusWindow()
-{
-    if (!page())
-        return;
-
-    // If we're a top level window, deactivate the window.
-    if (!tree()->parent())
-        page()->chrome()->unfocus();
-}
-
-void Frame::scheduleClose()
-{
-    if (!shouldClose())
-        return;
-
-    Chrome* chrome = page() ? page()->chrome() : 0;
-    if (chrome)
-        chrome->closeWindowSoon();
 }
 
 void Frame::respondToChangedSelection(const VisibleSelection& oldSelection, bool closeTyping)
