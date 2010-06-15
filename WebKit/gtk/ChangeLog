@@ -1,5 +1,12 @@
 2010-06-15  Xan Lopez  <xlopez@igalia.com>
 
+        Fix compilation with older GTK+.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::pageRect):
+
+2010-06-15  Xan Lopez  <xlopez@igalia.com>
+
         Reviewed by Gustavo Noronha.
 
         [GTK] Does not compile with -DGSEAL_ENABLE

@@ -108,7 +108,7 @@ FloatRect ChromeClient::pageRect()
 #if GTK_CHECK_VERSION(2, 18, 0)
     gtk_widget_get_allocation(GTK_WIDGET(m_webView), &allocation);
 #else
-    GtkAllocation allocation = GTK_WIDGET(m_webView)->allocation;
+    allocation = GTK_WIDGET(m_webView)->allocation;
 #endif
     return IntRect(allocation.x, allocation.y, allocation.width, allocation.height);
 }
