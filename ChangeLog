@@ -1,5 +1,14 @@
 2010-06-15  Xan Lopez  <xlopez@igalia.com>
 
+        Unreviewed build fix.
+
+        Remove GSEAL from the debug config since the bots have a GTK+
+        version too old, duh.
+
+        * GNUmakefile.am:
+
+2010-06-15  Xan Lopez  <xlopez@igalia.com>
+
         Reviewed by Gustavo Noronha.
 
         [GTK] Does not compile with -DGSEAL_ENABLE
