@@ -1,3 +1,22 @@
+2010-06-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8084721> Pages using accelerated compositing fail to update correctly in Carbon apps
+        
+        The run loop observer used to commit compositing layer changes does not do
+        updates if [window viewsNeedDisplay] is true, because this indicates that a delayed window
+        update is pending (added in r58623).
+        
+        However, Carbon apps don't use the NSWindow updating mechanism, so [window viewsNeedDisplay] always returns YES.
+        This caused us to never sync compositing layers.
+        
+        So detect if the current window is wrapping a carbon window, and in that case consult the root
+        HIView to detect if display is pending.
+
+        * WebView/WebView.mm:
+        (layerSyncRunLoopObserverCallBack):
+
 2010-06-15  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
