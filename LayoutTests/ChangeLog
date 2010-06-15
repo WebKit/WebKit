@@ -1,5 +1,12 @@
 2010-06-14  Eric Carlson  <eric.carlson@apple.com>
 
+        Unreviewed, fix GTK and Qt builds.
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
+2010-06-14  Eric Carlson  <eric.carlson@apple.com>
+
         Reviewed by Oliver Hunt.
 
         audio/x-mp3 MIME type not recognized

@@ -3442,6 +3442,9 @@ media/media-captions.html
 # https://bugs.webkit.org/show_bug.cgi?id=33541 - Need platform specific results
 media/video-poster-scale.html
 
+# don't play mp3 files
+media/media-can-play-mp3.html
+
 # Tests in plugins/ directory
 #   These tests require ObjC plugin, do not bother trying to get them to work
 plugins/call-as-function-test.html
