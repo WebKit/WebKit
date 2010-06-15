@@ -1553,17 +1553,18 @@ sub runSafari
     }
 
     if (isAppleWinWebKit()) {
-        my $script = "run-webkit-nightly.cmd";
-        my $result = system "cp", "$FindBin::Bin/$script", productDir();
+        my $result;
+        my $productDir = productDir();
+        if ($debugger) {
+            setupCygwinEnv();
+            chomp($ENV{WEBKITNIGHTLY} = `cygpath -wa "$productDir"`);
+            my $safariPath = safariPath();
+            chomp($safariPath = `cygpath -wa "$safariPath"`);
+            $result = system $vcBuildPath, "/debugexe", "\"$safariPath\"", @ARGV;
+        } else {
+            $result = system File::Spec->catfile(productDir(), "WebKit.exe"), @ARGV;
+        }
         return $result if $result;
-
-        my $cwd = getcwd();
-        chdir productDir();
-
-        my $debuggerFlag = $debugger ? "/debugger" : "";
-        $result = system "cmd", "/c", "call $script $debuggerFlag";
-        chdir $cwd;
-        return $result;
     }
 
     return 1;

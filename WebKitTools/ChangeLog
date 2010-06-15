@@ -1,3 +1,17 @@
+2010-06-14  Adam Roben  <aroben@apple.com>
+
+        Speed up run-safari/debug-safari on Windows
+
+        Fixes <http://webkit.org/b/40586>.
+
+        Reviewed by Steve Falkenburg.
+
+        * Scripts/webkitdirs.pm:
+        (runSafari): When debugging, set up the environment to run Safari
+        using the built WebKit.dll, then use "devenv /debugexe Safari.exe" to
+        actually launch the debugger. When not debugging, just run WebKit.exe
+        and it will do the rest for us.
+
 2010-06-15  Diego Gonzalez  <diegohcg@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
