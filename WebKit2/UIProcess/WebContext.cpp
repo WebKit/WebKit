@@ -36,14 +36,17 @@
 #include <wtf/RefCountedLeakCounter.h>
 #endif
 
+using namespace WebCore;
+
 namespace WebKit {
 
 #ifndef NDEBUG
 static WTF::RefCountedLeakCounter webContextCounter("WebContext");
 #endif
 
-WebContext::WebContext(ProcessModel processModel)
+WebContext::WebContext(ProcessModel processModel, const WebCore::String& injectedBundlePath)
     : m_processModel(processModel)
+    , m_injectedBundlePath(injectedBundlePath)
 {
     RunLoop::initializeMainRunLoop();
 

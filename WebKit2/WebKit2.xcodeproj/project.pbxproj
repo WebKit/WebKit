@@ -93,6 +93,14 @@
 		BC17753F118BABF0007D9E9A /* GenericCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = BC17753E118BABF0007D9E9A /* GenericCallback.h */; };
 		BC1A7C581136E19C00FB7167 /* WebProcessLauncher.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A7C571136E19C00FB7167 /* WebProcessLauncher.h */; };
 		BC1DD7B2114DC396005ADAF3 /* WebCoreTypeArgumentMarshalling.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1DD7B1114DC396005ADAF3 /* WebCoreTypeArgumentMarshalling.h */; };
+		BC204EE211C83E98008F3375 /* InjectedBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC204EE011C83E98008F3375 /* InjectedBundle.cpp */; };
+		BC204EE311C83E98008F3375 /* InjectedBundle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC204EE111C83E98008F3375 /* InjectedBundle.h */; };
+		BC204EE611C83EA9008F3375 /* InjectedBundleMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC204EE511C83EA9008F3375 /* InjectedBundleMac.cpp */; };
+		BC204EEE11C83EC8008F3375 /* WKBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC204EE911C83EC8008F3375 /* WKBundle.cpp */; };
+		BC204EEF11C83EC8008F3375 /* WKBundle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC204EEA11C83EC8008F3375 /* WKBundle.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BC204EF011C83EC8008F3375 /* WKBundleAPICast.h in Headers */ = {isa = PBXBuildFile; fileRef = BC204EEB11C83EC8008F3375 /* WKBundleAPICast.h */; };
+		BC204EF111C83EC8008F3375 /* WKBundleBase.h in Headers */ = {isa = PBXBuildFile; fileRef = BC204EEC11C83EC8008F3375 /* WKBundleBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BC204EF211C83EC8008F3375 /* WKBundleInitialize.h in Headers */ = {isa = PBXBuildFile; fileRef = BC204EED11C83EC8008F3375 /* WKBundleInitialize.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC20EBB0116EEB0800094A50 /* WKString.h in Headers */ = {isa = PBXBuildFile; fileRef = BC20EBAE116EEB0800094A50 /* WKString.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC20EBB1116EEB0800094A50 /* WKString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC20EBAF116EEB0800094A50 /* WKString.cpp */; };
 		BC20EBB4116EEF7A00094A50 /* WKURL.h in Headers */ = {isa = PBXBuildFile; fileRef = BC20EBB2116EEF7A00094A50 /* WKURL.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -294,6 +302,14 @@
 		BC17753E118BABF0007D9E9A /* GenericCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericCallback.h; sourceTree = "<group>"; };
 		BC1A7C571136E19C00FB7167 /* WebProcessLauncher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessLauncher.h; sourceTree = "<group>"; };
 		BC1DD7B1114DC396005ADAF3 /* WebCoreTypeArgumentMarshalling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreTypeArgumentMarshalling.h; sourceTree = "<group>"; };
+		BC204EE011C83E98008F3375 /* InjectedBundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundle.cpp; sourceTree = "<group>"; };
+		BC204EE111C83E98008F3375 /* InjectedBundle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundle.h; sourceTree = "<group>"; };
+		BC204EE511C83EA9008F3375 /* InjectedBundleMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleMac.cpp; sourceTree = "<group>"; };
+		BC204EE911C83EC8008F3375 /* WKBundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundle.cpp; sourceTree = "<group>"; };
+		BC204EEA11C83EC8008F3375 /* WKBundle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundle.h; sourceTree = "<group>"; };
+		BC204EEB11C83EC8008F3375 /* WKBundleAPICast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleAPICast.h; sourceTree = "<group>"; };
+		BC204EEC11C83EC8008F3375 /* WKBundleBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleBase.h; sourceTree = "<group>"; };
+		BC204EED11C83EC8008F3375 /* WKBundleInitialize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleInitialize.h; sourceTree = "<group>"; };
 		BC20EBAE116EEB0800094A50 /* WKString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKString.h; sourceTree = "<group>"; };
 		BC20EBAF116EEB0800094A50 /* WKString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKString.cpp; sourceTree = "<group>"; };
 		BC20EBB2116EEF7A00094A50 /* WKURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKURL.h; sourceTree = "<group>"; };
@@ -336,6 +352,7 @@
 		BC9E969B11457F3F00870E71 /* DrawingAreaMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaMessageKinds.h; sourceTree = "<group>"; };
 		BCB63477116BF10600603215 /* WebKit2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKit2.h; sourceTree = "<group>"; };
 		BCB86F4B116AAACD00CE20B7 /* WebKit2.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebKit2.xcconfig; sourceTree = "<group>"; };
+		BCB8D4E011AF78C1008F9103 /* WebKit2.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; name = WebKit2.exp; path = mac/WebKit2.exp; sourceTree = "<group>"; };
 		BCB9E2411120DACA00A137E0 /* WebContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContext.h; sourceTree = "<group>"; };
 		BCB9E2421120DACA00A137E0 /* WebContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContext.cpp; sourceTree = "<group>"; };
 		BCB9E2491120E15C00A137E0 /* WKContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContext.h; sourceTree = "<group>"; };
@@ -449,6 +466,7 @@
 				BC8A500F11765AE300757573 /* WebProcess */,
 				BC8A500E11765AD400757573 /* WebKit2 */,
 				089C1666FE841158C02AAC07 /* InfoPlist.strings */,
+				BCB8D4E011AF78C1008F9103 /* WebKit2.exp */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -546,6 +564,7 @@
 		BC032D5C10F436D50058C15A /* WebProcess */ = {
 			isa = PBXGroup;
 			children = (
+				BC204EDF11C83E72008F3375 /* InjectedBundle */,
 				BC111AF6112F5CAC00337BAB /* Launching */,
 				BC032D5D10F437220058C15A /* WebCoreSupport */,
 				BC032D5E10F4372B0058C15A /* WebPage */,
@@ -756,6 +775,45 @@
 			path = CoreIPCSupport;
 			sourceTree = "<group>";
 		};
+		BC204EDF11C83E72008F3375 /* InjectedBundle */ = {
+			isa = PBXGroup;
+			children = (
+				BC204EE711C83EAD008F3375 /* API */,
+				BC204EE411C83E9C008F3375 /* mac */,
+				BC204EE011C83E98008F3375 /* InjectedBundle.cpp */,
+				BC204EE111C83E98008F3375 /* InjectedBundle.h */,
+			);
+			path = InjectedBundle;
+			sourceTree = "<group>";
+		};
+		BC204EE411C83E9C008F3375 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				BC204EE511C83EA9008F3375 /* InjectedBundleMac.cpp */,
+			);
+			path = mac;
+			sourceTree = "<group>";
+		};
+		BC204EE711C83EAD008F3375 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				BC204EE811C83EB7008F3375 /* c */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
+		BC204EE811C83EB7008F3375 /* c */ = {
+			isa = PBXGroup;
+			children = (
+				BC204EE911C83EC8008F3375 /* WKBundle.cpp */,
+				BC204EEA11C83EC8008F3375 /* WKBundle.h */,
+				BC204EEB11C83EC8008F3375 /* WKBundleAPICast.h */,
+				BC204EEC11C83EC8008F3375 /* WKBundleBase.h */,
+				BC204EED11C83EC8008F3375 /* WKBundleInitialize.h */,
+			);
+			path = c;
+			sourceTree = "<group>";
+		};
 		BC20EBD0116EF66700094A50 /* cf */ = {
 			isa = PBXGroup;
 			children = (
@@ -917,6 +975,11 @@
 				BC2652191182608100243E12 /* DrawingAreaProxyUpdateChunk.h in Headers */,
 				BC177465118B9FF4007D9E9A /* WKPagePrivate.h in Headers */,
 				BC17753F118BABF0007D9E9A /* GenericCallback.h in Headers */,
+				BC204EE311C83E98008F3375 /* InjectedBundle.h in Headers */,
+				BC204EEF11C83EC8008F3375 /* WKBundle.h in Headers */,
+				BC204EF011C83EC8008F3375 /* WKBundleAPICast.h in Headers */,
+				BC204EF111C83EC8008F3375 /* WKBundleBase.h in Headers */,
+				BC204EF211C83EC8008F3375 /* WKBundleInitialize.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1070,6 +1133,9 @@
 				BC2651F611825EF800243E12 /* DrawingAreaProxyUpdateChunkMac.mm in Sources */,
 				BC2652161182608100243E12 /* DrawingAreaProxy.cpp in Sources */,
 				BC2652181182608100243E12 /* DrawingAreaProxyUpdateChunk.cpp in Sources */,
+				BC204EE211C83E98008F3375 /* InjectedBundle.cpp in Sources */,
+				BC204EE611C83EA9008F3375 /* InjectedBundleMac.cpp in Sources */,
+				BC204EEE11C83EC8008F3375 /* WKBundle.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

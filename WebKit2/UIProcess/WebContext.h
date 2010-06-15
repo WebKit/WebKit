@@ -27,6 +27,7 @@
 #define WebContext_h
 
 #include "ProcessModel.h"
+#include <WebCore/PlatformString.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -41,31 +42,33 @@ class WebPreferences;
 
 class WebContext : public RefCounted<WebContext> {
 public:
-    static PassRefPtr<WebContext> create(ProcessModel processModel)
+    static PassRefPtr<WebContext> create(ProcessModel processModel, const WebCore::String& injectedBundlePath)
     {
-        return adoptRef(new WebContext(processModel));
+        return adoptRef(new WebContext(processModel, injectedBundlePath));
     }
-
     ~WebContext();
+
+    ProcessModel processModel() const { return m_processModel; }
 
     WebPageNamespace* createPageNamespace();
     void pageNamespaceWasDestroyed(WebPageNamespace*);
 
     void setPreferences(WebPreferences*);
     WebPreferences* preferences() const;
-
     void preferencesDidChange();
 
-    ProcessModel processModel() const { return m_processModel; }
+    const WebCore::String& injectedBundlePath() const { return m_injectedBundlePath; }
 
     void getStatistics(WKContextStatistics* statistics);
 
 private:
-    WebContext(ProcessModel);
+    WebContext(ProcessModel, const WebCore::String& injectedBundlePath);
 
     ProcessModel m_processModel;
     HashSet<WebPageNamespace*> m_pageNamespaces;
     RefPtr<WebPreferences> m_preferences;
+
+    WebCore::String m_injectedBundlePath;
 };
 
 } // namespace WebKit

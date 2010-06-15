@@ -30,26 +30,36 @@
 #include "WKAPICast.h"
 #include "WebContext.h"
 #include "WebPreferences.h"
+#include <WebCore/PlatformString.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 using namespace WebKit;
 
-WKContextRef WKContextCreateWithProcessModel(WKProcessModel processModel)
+static ProcessModel toWK(WKProcessModel wkProcessModel)
 {
-    ProcessModel model = (ProcessModel)0;
-    switch (processModel) {
+    switch (wkProcessModel) {
         case kWKProcessModelSecondaryProcess:
-            model = ProcessModelSecondaryProcess;
-            break;
+            return ProcessModelSecondaryProcess;
         case kWKProcessModelSecondaryThread:
-            model = ProcessModelSecondaryThread;
-            break;
+            return ProcessModelSecondaryThread;
         default:
             ASSERT_NOT_REACHED();
     }
 
-    RefPtr<WebContext> context = WebContext::create(model);
+    // Default to SecondaryProcess if a bad value is passed.
+    return ProcessModelSecondaryProcess;
+}
+
+WKContextRef WKContextCreate(WKProcessModel wkProcessModel)
+{
+    RefPtr<WebContext> context = WebContext::create(toWK(wkProcessModel), WebCore::String());
+    return toRef(context.release().releaseRef());
+}
+
+WKContextRef WKContextCreateWithInjectedBundlePath(WKProcessModel wkProcessModel, WKStringRef pathRef)
+{
+    RefPtr<WebContext> context = WebContext::create(toWK(wkProcessModel), toWK(pathRef));
     return toRef(context.release().releaseRef());
 }
 

@@ -23,28 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessMessageKinds_h
-#define WebProcessMessageKinds_h
+#ifndef WKBundleInitialize_h
+#define WKBundleInitialize_h
 
-// Messages sent from WebKit to the web process.
+#include <WebKit2/WKBundleBase.h>
 
-#include "MessageID.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-namespace WebProcessMessage {
+// NOTE: Must be implemented by InjectedBundle's as a function named "WKBundleInitialize".
+typedef void (*WKBundleInitializeFunctionPtr)(WKBundleRef);
 
-enum Kind {
-    LoadInjectedBundle,
-    Create
-};
-
+#ifdef __cplusplus
 }
+#endif
 
-namespace CoreIPC {
-
-template<> struct MessageKindTraits<WebProcessMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassWebProcess;
-};
-
-}
-
-#endif // WebProcessMessageKinds_h
+#endif /* WKBundleInitialize_h */

@@ -23,28 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessMessageKinds_h
-#define WebProcessMessageKinds_h
+#ifndef WKBundleBase_h
+#define WKBundleBase_h
 
-// Messages sent from WebKit to the web process.
+typedef struct OpaqueWKBundlePage* WKBundlePageRef;
+typedef struct OpaqueWKBundleFrame* WKBundleFrameRef;
+typedef struct OpaqueWKBundle* WKBundleRef;
 
-#include "MessageID.h"
+#if defined(WIN32) || defined(_WIN32)
+#if BUILDING_WEBKIT2
+#define WK_EXPORT __declspec(dllexport)
+#else
+#define WK_EXPORT __declspec(dllimport)
+#endif
+#else
+#define WK_EXPORT
+#endif
 
-namespace WebProcessMessage {
-
-enum Kind {
-    LoadInjectedBundle,
-    Create
-};
-
-}
-
-namespace CoreIPC {
-
-template<> struct MessageKindTraits<WebProcessMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassWebProcess;
-};
-
-}
-
-#endif // WebProcessMessageKinds_h
+#endif /* WKBundleBase_h */

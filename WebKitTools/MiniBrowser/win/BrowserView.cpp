@@ -66,8 +66,7 @@ void BrowserView::create(RECT webViewRect, BrowserWindow* parentWindow)
 
     bool isShiftKeyDown = ::GetKeyState(VK_SHIFT) & HIGH_BIT_MASK_SHORT;
 
-    //WKContextRef context = WKContextCreateWithProcessModel(isShiftKeyDown ? kWKProcessModelSecondaryThread : kWKProcessModelSecondaryProcess);
-    WKContextRef context = WKContextCreateWithProcessModel(kWKProcessModelSecondaryThread);
+    WKContextRef context = WKContextCreate(isShiftKeyDown ? kWKProcessModelSecondaryThread : kWKProcessModelSecondaryProcess);
     WKPageNamespaceRef pageNamespace = WKPageNamespaceCreate(context);
 
     m_webView = WKViewCreate(webViewRect, pageNamespace, parentWindow->window());

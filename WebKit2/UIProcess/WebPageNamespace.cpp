@@ -70,7 +70,7 @@ void WebPageNamespace::ensureWebProcess()
     if (m_process && m_process->isValid())
         return;
 
-    m_process = WebProcessManager::shared().getWebProcess(m_context->processModel());
+    m_process = WebProcessManager::shared().getWebProcess(m_context->processModel(), m_context->injectedBundlePath());
 }
 
 void WebPageNamespace::reviveIfNecessary()
@@ -79,7 +79,7 @@ void WebPageNamespace::reviveIfNecessary()
         return;
 
     // FIXME: The WebContext should hand us the new ProcessProxy based on its process model.
-    m_process = WebProcessManager::shared().getWebProcess(m_context->processModel());
+    m_process = WebProcessManager::shared().getWebProcess(m_context->processModel(), m_context->injectedBundlePath());
 }
 
 void WebPageNamespace::preferencesDidChange()

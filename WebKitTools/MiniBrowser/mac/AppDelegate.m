@@ -28,6 +28,8 @@
 #import "BrowserWindowController.h"
 #import "BrowserStatisticsWindowController.h"
 
+#import <WebKit2/WKStringCF.h>
+
 static NSString *defaultURL = @"http://webkit.org/";
 
 @implementation BrowserAppDelegate
@@ -41,13 +43,18 @@ static NSString *defaultURL = @"http://webkit.org/";
         else
             currentProcessModel = kWKProcessModelSecondaryProcess;
 
-        WKContextRef threadContext = WKContextCreateWithProcessModel(kWKProcessModelSecondaryThread);
+        CFStringRef bundlePathCF = (CFStringRef)[[NSBundle mainBundle] pathForAuxiliaryExecutable:@"WebBundle.bundle"];
+        WKStringRef bundlePath = WKStringCreateWithCFString(bundlePathCF);
+
+        WKContextRef threadContext = WKContextCreateWithInjectedBundlePath(kWKProcessModelSecondaryThread, bundlePath);
         threadPageNamespace = WKPageNamespaceCreate(threadContext);
         WKContextRelease(threadContext);
 
-        WKContextRef processContext = WKContextCreateWithProcessModel(kWKProcessModelSecondaryProcess);
+        WKContextRef processContext = WKContextCreateWithInjectedBundlePath(kWKProcessModelSecondaryProcess, bundlePath);
         processPageNamespace = WKPageNamespaceCreate(processContext);
         WKContextRelease(processContext);
+
+        WKStringRelease(bundlePath);
     }
 
     return self;

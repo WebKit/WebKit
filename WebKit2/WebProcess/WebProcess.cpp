@@ -25,6 +25,7 @@
 
 #include "WebProcess.h"
 
+#include "InjectedBundle.h"
 #include "RunLoop.h"
 #include "WebCoreTypeArgumentMarshalling.h"
 #include "WebFrame.h"
@@ -61,6 +62,18 @@ void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, Ru
     m_connection->open();
 
     m_runLoop = runLoop;
+}
+
+void WebProcess::loadInjectedBundle(const WebCore::String& path)
+{
+    ASSERT(m_pageMap.isEmpty());
+    ASSERT(!path.isEmpty());
+
+    m_injectedBundle = InjectedBundle::create(path);
+    if (!m_injectedBundle->load()) {
+        // Don't keep around the InjectedBundle reference if the load fails.
+        m_injectedBundle.clear();
+    }
 }
 
 WebPage* WebProcess::webPage(uint64_t pageID) const
@@ -119,6 +132,14 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
 {
     if (messageID.is<CoreIPC::MessageClassWebProcess>()) {
         switch (messageID.get<WebProcessMessage::Kind>()) {
+            case WebProcessMessage::LoadInjectedBundle: {
+                WebCore::String path;
+                if (!arguments->decode(CoreIPC::Out(path)))
+                    return;
+
+                loadInjectedBundle(path);
+                return;
+            }
             case WebProcessMessage::Create: {
                 uint64_t pageID = arguments->destinationID();
                 IntSize viewSize;

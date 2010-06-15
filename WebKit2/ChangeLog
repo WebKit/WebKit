@@ -1,3 +1,93 @@
+2010-06-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=40630
+        WebKit2: Add mechanism to inject code into the WebProcess on startup
+
+        Add initial InjectedBundle support.
+
+        * Shared/CoreIPCSupport/WebProcessMessageKinds.h:
+        (WebProcessMessage::):
+        Add new LoadInjectedBundle message kind.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (toWK):
+        (WKContextCreate):
+        (WKContextCreateWithInjectedBundlePath):
+        * UIProcess/API/C/WKContext.h:
+        Rename WKContextCreateWithProcessModel to WKContextCreate and add
+        WKContextCreateWithInjectedBundlePath for creating a context with
+        a bundle.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::create):
+        (WebKit::WebContext::processModel):
+        (WebKit::WebContext::bundlePath):
+        * UIProcess/WebPageNamespace.cpp:
+        (WebKit::WebPageNamespace::ensureWebProcess):
+        (WebKit::WebPageNamespace::reviveIfNecessary):
+        * UIProcess/WebProcessManager.cpp:
+        (WebKit::WebProcessManager::getWebProcess):
+        * UIProcess/WebProcessManager.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::create):
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        * UIProcess/WebProcessProxy.h:
+        Thread the bundle path through process creation.
+
+        * WebProcess/InjectedBundle: Added.
+        * WebProcess/InjectedBundle/API: Added.
+        * WebProcess/InjectedBundle/API/c: Added.
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp: Added.
+        (WKBundleSetClient):
+        * WebProcess/InjectedBundle/API/c/WKBundle.h: Added.
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h: Added.
+        (WebKit::):
+        (toWK):
+        (toRef):
+        * WebProcess/InjectedBundle/API/c/WKBundleBase.h: Added.
+        * WebProcess/InjectedBundle/API/c/WKBundleInitialize.h: Added.
+        * WebProcess/InjectedBundle/InjectedBundle.cpp: Added.
+        (WebKit::InjectedBundle::InjectedBundle):
+        (WebKit::InjectedBundle::~InjectedBundle):
+        (WebKit::InjectedBundle::initializeClient):
+        (WebKit::InjectedBundle::didCreatePage):
+        * WebProcess/InjectedBundle/InjectedBundle.h: Added.
+        (WebKit::InjectedBundle::create):
+        Add bundle boilerplate.
+
+        * WebProcess/InjectedBundle/mac: Added.
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.cpp: Added.
+        (WebKit::InjectedBundle::load):
+        Load the InjectedBundle using CFBundle.
+
+        * WebProcess/InjectedBundle/win: Added.
+        * WebProcess/InjectedBundle/win/InjectedBundleWin.cpp: Added.
+        (WebKit::pathGetFileName):
+        (WebKit::directoryName):
+        (WebKit::InjectedBundle::load):
+        Load the InjectedBundle using HMODULE.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        Add initial bundle callback for page creation. More to come.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::loadInjectedBundle):
+        (WebKit::WebProcess::didReceiveMessage):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::injectedBundle):
+        Load the InjectedBundle on LoadInjectedBundle message.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * mac/WebKit2.exp:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+        Add the new files.
+
 2010-06-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Barth.

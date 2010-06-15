@@ -23,28 +23,49 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessMessageKinds_h
-#define WebProcessMessageKinds_h
+#ifndef InjectedBundle_h
+#define InjectedBundle_h
 
-// Messages sent from WebKit to the web process.
+#include "WKBundle.h"
+#include <WebCore/PlatformString.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
-#include "MessageID.h"
+namespace WebKit {
 
-namespace WebProcessMessage {
+#if PLATFORM(MAC)
+typedef CFBundleRef PlatformBundle;
+#elif PLATFORM(WIN)
+typedef HMODULE PlatformBundle;
+#endif
 
-enum Kind {
-    LoadInjectedBundle,
-    Create
+class WebPage;
+
+class InjectedBundle : public RefCounted<InjectedBundle> {
+public:
+    static PassRefPtr<InjectedBundle> create(const WebCore::String& path)
+    {
+        return adoptRef(new InjectedBundle(path));
+    }
+    ~InjectedBundle();
+
+    bool load();
+
+    // API
+    void initializeClient(WKBundleClient*);
+
+    // Callback hooks
+    void didCreatePage(WebPage*);
+
+private:
+    InjectedBundle(const WebCore::String&);
+
+    WebCore::String m_path;
+    PlatformBundle m_platformBundle; // This is leaked right now, since we never unload the bundle/module.
+
+    WKBundleClient m_client;
 };
 
-}
+} // namespace WebKit
 
-namespace CoreIPC {
-
-template<> struct MessageKindTraits<WebProcessMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassWebProcess;
-};
-
-}
-
-#endif // WebProcessMessageKinds_h
+#endif // InjectedBundle_h

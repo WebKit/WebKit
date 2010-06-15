@@ -38,7 +38,8 @@ enum {
 };
 typedef unsigned long WKProcessModel;
 
-WK_EXPORT WKContextRef WKContextCreateWithProcessModel(WKProcessModel processModel);
+WK_EXPORT WKContextRef WKContextCreate(WKProcessModel processModel);
+WK_EXPORT WKContextRef WKContextCreateWithInjectedBundlePath(WKProcessModel processModel, WKStringRef path);
 
 WK_EXPORT void WKContextSetPreferences(WKContextRef context, WKPreferencesRef preferences);
 WK_EXPORT WKPreferencesRef WKContextGetPreferences(WKContextRef context);

@@ -32,10 +32,12 @@
 
 namespace WebCore {
     class IntSize;
+    class String;
 }
 
 namespace WebKit {
 
+class InjectedBundle;
 class WebPage;
 class WebPreferencesStore;
 
@@ -52,11 +54,15 @@ public:
     WebPage* createWebPage(uint64_t pageID, const WebCore::IntSize& viewSize, const WebPreferencesStore&, DrawingArea::Type);
     void removeWebPage(uint64_t pageID);
 
+    InjectedBundle* injectedBundle() const { return m_injectedBundle.get(); }
+
     bool isSeparateProcess() const;
     
 private:
     WebProcess();
     void shutdown();
+
+    void loadInjectedBundle(const WebCore::String&);
 
     // CoreIPC::Connection::Client
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
@@ -65,6 +71,7 @@ private:
 
     RefPtr<CoreIPC::Connection> m_connection;
     HashMap<uint64_t, RefPtr<WebPage> > m_pageMap;
+    RefPtr<InjectedBundle> m_injectedBundle;
 
     bool m_inDidClose;
 

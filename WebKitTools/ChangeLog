@@ -1,3 +1,35 @@
+2010-06-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=40630
+        WebKit2: Add mechanism to inject code into the WebProcess on startup
+
+        Add initial InjectedBundle support.
+
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj:
+        * MiniBrowser/WebBundle-Info.plist: Added.
+        Add test InjectedBundle to the project.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate init]):
+        Get the path to the WebBundle from the the main bundle and pass it to the new
+        WKContextCreateWithInjectedBundlePath function.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (_didChangeProgress):
+        Fix the build.  This has been broken for a while.
+
+        * MiniBrowser/mac/WebBundle: Added.
+        * MiniBrowser/mac/WebBundle/WebBundleMain.c: Added.
+        (_didCreatePage):
+        (WKBundleInitialize):
+        Add really basic InjectedBundle.
+
+        * MiniBrowser/win/BrowserView.cpp:
+        (BrowserView::create):
+        Switch from WKContextCreateWithProcessModel to WKContextCreate and remove commented out code.
+
 2010-06-15  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Darin Adler.

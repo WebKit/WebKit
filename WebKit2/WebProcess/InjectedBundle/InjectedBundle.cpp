@@ -23,28 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessMessageKinds_h
-#define WebProcessMessageKinds_h
+#include "InjectedBundle.h"
 
-// Messages sent from WebKit to the web process.
+#include "WKBundleAPICast.h"
 
-#include "MessageID.h"
+namespace WebKit {
 
-namespace WebProcessMessage {
-
-enum Kind {
-    LoadInjectedBundle,
-    Create
-};
-
+InjectedBundle::InjectedBundle(const WebCore::String& path)
+    : m_path(path)
+    , m_platformBundle(0)
+{
+    initializeClient(0);
 }
 
-namespace CoreIPC {
-
-template<> struct MessageKindTraits<WebProcessMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassWebProcess;
-};
-
+InjectedBundle::~InjectedBundle()
+{
 }
 
-#endif // WebProcessMessageKinds_h
+void InjectedBundle::initializeClient(WKBundleClient* client)
+{
+    if (client && !client->version)
+        m_client = *client;
+    else
+        memset(&m_client, 0, sizeof(m_client));
+}
+
+void InjectedBundle::didCreatePage(WebPage* page)
+{
+    if (m_client.didCreatePage)
+        m_client.didCreatePage(toRef(page), m_client.clientInfo);
+}
+
+} // namespace WebKit

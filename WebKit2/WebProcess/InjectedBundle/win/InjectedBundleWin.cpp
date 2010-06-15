@@ -23,51 +23,60 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebProcessManager.h"
+#include "InjectedBundle.h"
 
-#include <WebCore/PlatformString.h>
+#include "WKBundleAPICast.h"
+#include "WKBundleInitialize.h"
+
+#include <windows.h>
+#include <winbase.h>
+#include <shlobj.h>
+#include <shlwapi.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-WebProcessManager& WebProcessManager::shared()
+// FIXME: This should try and use <WebCore/FileSystem.h>.
+
+static String pathGetFileName(const String& path)
 {
-    static WebProcessManager& manager = *new WebProcessManager;
-    return manager;
+    return String(::PathFindFileName(String(path).charactersWithNullTermination()));
 }
 
-WebProcessManager::WebProcessManager()
+static String directoryName(const String& path)
 {
+    String fileName = pathGetFileName(path);
+    String dirName = String(path);
+    dirName.truncate(dirName.length() - pathGetFileName(path).length());
+    return dirName;
 }
 
-WebProcessProxy* WebProcessManager::getWebProcess(ProcessModel processModel, const String& injectedBundlePath)
+bool InjectedBundle::load()
 {
-    switch (processModel) {
-        case ProcessModelSecondaryProcess:
-            if (!m_sharedProcess)
-                m_sharedProcess = WebProcessProxy::create(processModel, injectedBundlePath);
-            return m_sharedProcess.get();
-        case ProcessModelSecondaryThread:
-            if (!m_sharedThread)
-                m_sharedThread = WebProcessProxy::create(processModel, injectedBundlePath);
-            return m_sharedThread.get();
+    WCHAR currentPath[MAX_PATH];
+    if (!::GetCurrentDirectoryW(MAX_PATH, currentPath))
+        return false;
+
+    String directorBundleResidesIn = directoryName(m_path);
+    if (!::SetCurrentDirectoryW(directorBundleResidesIn.charactersWithNullTermination()))
+        return false;
+
+    m_platformBundle = ::LoadLibraryExW(m_path.charactersWithNullTermination(), 0, LOAD_WITH_ALTERED_SEARCH_PATH);
+    if (!m_platformBundle)
+        return false;
+
+    // Reset the current directory.
+    if (!::SetCurrentDirectoryW(currentPath)) {
+        return false;
     }
 
-    
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-    
-void WebProcessManager::processDidClose(WebProcessProxy* process)
-{
-    if (process == m_sharedProcess) {
-        m_sharedProcess = 0;
-        return;
-    }
-    
-    // The shared thread connection should never be closed.
-    ASSERT_NOT_REACHED();
+    WKBundleInitializeFunctionPtr initializeFunction = reinterpret_cast<WKBundleInitializeFunctionPtr>(::GetProcAddress(m_platformBundle, "WKBundleInitialize"));
+    if (!initializeFunction)
+        return false;
+
+    initializeFunction(toRef(this));
+    return true;
 }
 
 } // namespace WebKit

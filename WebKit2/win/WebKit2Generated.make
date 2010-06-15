@@ -17,6 +17,9 @@ all:
     xcopy /y /d "..\UIProcess\API\cpp\WKRetainPtr.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\win\WKBaseWin.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\win\WKView.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
+    xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundleBase.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
+    xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundle.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
+    xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundleInitialize.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     -del "$(WEBKITOUTPUTDIR)\buildfailed"
 
 clean:

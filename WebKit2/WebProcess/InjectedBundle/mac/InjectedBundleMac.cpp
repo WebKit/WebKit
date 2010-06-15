@@ -23,28 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessMessageKinds_h
-#define WebProcessMessageKinds_h
+#include "InjectedBundle.h"
 
-// Messages sent from WebKit to the web process.
+#include "WKBundleAPICast.h"
+#include "WKBundleInitialize.h"
+#include <wtf/RetainPtr.h>
 
-#include "MessageID.h"
+using namespace WebCore;
 
-namespace WebProcessMessage {
+namespace WebKit {
 
-enum Kind {
-    LoadInjectedBundle,
-    Create
-};
+bool InjectedBundle::load()
+{
+    RetainPtr<CFStringRef> injectedBundlePathStr(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(m_path.characters()), m_path.length()));
+    if (!injectedBundlePathStr)
+        return false;
+    
+    RetainPtr<CFURLRef> bundleURL(AdoptCF, CFURLCreateWithFileSystemPath(0, injectedBundlePathStr.get(), kCFURLPOSIXPathStyle, false));
+    if (!bundleURL)
+        return false;
 
+    m_platformBundle = CFBundleCreate(0, bundleURL.get());
+    if (!m_platformBundle)
+        return false;
+        
+    if (!CFBundleLoadExecutable(m_platformBundle))
+        return false;
+
+    WKBundleInitializeFunctionPtr initializeFunction = reinterpret_cast<WKBundleInitializeFunctionPtr>(CFBundleGetFunctionPointerForName(m_platformBundle, CFSTR("WKBundleInitialize")));
+    if (!initializeFunction)
+        return false;
+
+    initializeFunction(toRef(this));
+    return true;
 }
 
-namespace CoreIPC {
-
-template<> struct MessageKindTraits<WebProcessMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassWebProcess;
-};
-
-}
-
-#endif // WebProcessMessageKinds_h
+} // namespace WebKit

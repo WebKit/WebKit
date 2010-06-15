@@ -23,28 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessMessageKinds_h
-#define WebProcessMessageKinds_h
+#ifndef WKBundleAPICast_h
+#define WKBundleAPICast_h
 
-// Messages sent from WebKit to the web process.
+#include "WKBundleBase.h"
 
-#include "MessageID.h"
+namespace WebKit {
 
-namespace WebProcessMessage {
+class InjectedBundle;
+class WebFrame;
+class WebPage;
 
-enum Kind {
-    LoadInjectedBundle,
-    Create
-};
+template<typename APIType> struct BundleAPITypeInfo { };
+template<> struct BundleAPITypeInfo<WKBundlePageRef>            { typedef WebPage* ImplType; };
+template<> struct BundleAPITypeInfo<WKBundleFrameRef>           { typedef WebFrame* ImplType; };
+template<> struct BundleAPITypeInfo<WKBundleRef>                { typedef InjectedBundle* ImplType; };
 
+template<typename ImplType> struct BundleImplTypeInfo { };
+template<> struct BundleImplTypeInfo<WebPage*>                  { typedef WKBundlePageRef APIType; };
+template<> struct BundleImplTypeInfo<WebFrame*>                 { typedef WKBundleFrameRef APIType; };
+template<> struct BundleImplTypeInfo<InjectedBundle*>           { typedef WKBundleRef APIType; };
+
+} // namespace WebKit
+
+/* Opaque typing convenience methods */
+
+template<typename T>
+inline typename WebKit::BundleAPITypeInfo<T>::ImplType toWK(T t)
+{
+    return reinterpret_cast<typename WebKit::BundleAPITypeInfo<T>::ImplType>(t);
 }
 
-namespace CoreIPC {
-
-template<> struct MessageKindTraits<WebProcessMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassWebProcess;
-};
-
+template<typename T>
+inline typename WebKit::BundleImplTypeInfo<T>::APIType toRef(T t)
+{
+    return reinterpret_cast<typename WebKit::BundleImplTypeInfo<T>::APIType>(t);
 }
 
-#endif // WebProcessMessageKinds_h
+#endif // WKBundleAPICast_h

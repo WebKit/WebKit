@@ -88,7 +88,7 @@ using namespace WebCore;
 
 - (id)initWithFrame:(NSRect)frame
 {
-    RefPtr<WebContext> context = WebContext::create(ProcessModelSecondaryProcess);
+    RefPtr<WebContext> context = WebContext::create(ProcessModelSecondaryProcess, String());
     self = [self initWithFrame:frame pageNamespaceRef:toRef(context->createPageNamespace())];
     if (!self)
         return nil;

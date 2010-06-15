@@ -25,6 +25,7 @@
 
 #import "BrowserWindowController.h"
 
+#import <WebKit2/WKPagePrivate.h>
 #import <WebKit2/WKStringCF.h>
 #import <WebKit2/WKURLCF.h>
 
@@ -170,9 +171,9 @@ static void _didStartProgress(WKPageRef page, const void *clientInfo)
     [(BrowserWindowController *)clientInfo didStartProgress];
 }
 
-static void _didChangeProgress(WKPageRef page, double value, const void *clientInfo)
+static void _didChangeProgress(WKPageRef page, const void *clientInfo)
 {
-    [(BrowserWindowController *)clientInfo didChangeProgress:value];
+    [(BrowserWindowController *)clientInfo didChangeProgress:WKPageGetEstimatedProgress(page)];
 }
 
 static void _didFinishProgress(WKPageRef page, const void *clientInfo)

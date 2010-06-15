@@ -31,6 +31,10 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 
+namespace WebCore {
+    class String;
+};
+
 namespace WebKit {
 
 class WebProcessProxy;
@@ -40,7 +44,7 @@ class WebProcessManager {
 public:
     static WebProcessManager& shared();
 
-    WebProcessProxy* getWebProcess(ProcessModel);
+    WebProcessProxy* getWebProcess(ProcessModel, const WebCore::String& injectedBundlePath);
 
     void processDidClose(WebProcessProxy*);
 

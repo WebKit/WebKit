@@ -23,28 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessMessageKinds_h
-#define WebProcessMessageKinds_h
+#include <stdio.h>
+#include <WebKit2/WKBundle.h>
+#include <WebKit2/WKBundleInitialize.h>
 
-// Messages sent from WebKit to the web process.
+static WKBundleRef globalBundle;
 
-#include "MessageID.h"
-
-namespace WebProcessMessage {
-
-enum Kind {
-    LoadInjectedBundle,
-    Create
-};
-
+void _didCreatePage(WKBundlePageRef page, const void* clientInfo)
+{
+    printf("WKBundleClient - didCreatePage\n");
 }
 
-namespace CoreIPC {
+void WKBundleInitialize(WKBundleRef bundle)
+{
+    globalBundle = bundle;
 
-template<> struct MessageKindTraits<WebProcessMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassWebProcess;
-};
-
+    WKBundleClient client = {
+        0,
+        0,
+        _didCreatePage
+    };
+    WKBundleSetClient(bundle, &client);
 }
-
-#endif // WebProcessMessageKinds_h
