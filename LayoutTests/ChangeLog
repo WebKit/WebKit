@@ -1,3 +1,19 @@
+2010-06-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Increase limit on number of (i)frames from 200 to 1000.
+        https://bugs.webkit.org/show_bug.cgi?id=39427
+
+        Move the right test this time, move remove-iframe-crash back. Oops.
+
+        * compositing/iframes/lots-of-iframes-expected.txt: Removed.
+        * compositing/iframes/lots-of-iframes.html: Removed.
+        * compositing/iframes/remove-iframe-crash-expected.txt: Copied from fast/frames/remove-iframe-crash-expected.txt.
+        * compositing/iframes/remove-iframe-crash.html: Copied from fast/frames/remove-iframe-crash.html.
+        * fast/frames/lots-of-iframes-expected.txt: Copied from compositing/iframes/lots-of-iframes-expected.txt.
+        * fast/frames/lots-of-iframes.html: Copied from compositing/iframes/lots-of-iframes.html.
+        * fast/frames/remove-iframe-crash-expected.txt: Removed.
+        * fast/frames/remove-iframe-crash.html: Removed.
+
 2010-06-15  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, test fix.
