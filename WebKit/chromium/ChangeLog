@@ -1,3 +1,25 @@
+2010-06-15  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [v8] Web Inspector: make ui tests pass when ScriptDebugServer is used
+        https://bugs.webkit.org/show_bug.cgi?id=40623
+
+        * src/js/DebuggerAgent.js:
+        (devtools.DebuggerAgent.prototype.formatCallFrame_): return empty function name for anonymous functions.
+        * src/js/DebuggerScript.js:
+        * src/js/Tests.js:
+        (.TestSuite.prototype.testProfilerTab.findVisibleView):
+        (.TestSuite.prototype.testProfilerTab):
+        (.TestSuite.prototype.testScriptsTabIsPopulatedOnInspectedPageRefresh.waitUntilScriptIsParsed):
+        (.TestSuite.prototype.testSetBreakpoint.this):
+        (.TestSuite.prototype.testSetBreakpoint):
+        (.TestSuite.prototype.testEvalOnCallFrame.waitForBreakpointHit):
+        (.TestSuite.prototype._executeCodeWhenScriptsAreParsed.executeFunctionInInspectedPage):
+        (.TestSuite.prototype.testExpandScope.examineScopes):
+        (.TestSuite.prototype.testExpandScope):
+        (.TestSuite.prototype.testDebugIntrinsicProperties):
+
 2010-06-14  Anders Carlsson  <andersca@apple.com>
 
         Fix Chromium build.

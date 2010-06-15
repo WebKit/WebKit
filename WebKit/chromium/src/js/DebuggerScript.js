@@ -219,8 +219,6 @@ DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
     var functionName;
     if (func)
         functionName = func.name() || func.inferredName();
-    if (!functionName)
-        functionName = "[anonymous]";
         
     // Get script ID.
     var script = func.script();

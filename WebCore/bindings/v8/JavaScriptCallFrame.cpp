@@ -85,7 +85,7 @@ String JavaScriptCallFrame::functionName() const
     v8::HandleScope handleScope;
     v8::Context::Scope contextScope(m_debuggerContext.get());
     v8::Handle<v8::Value> result = m_callFrame.get()->Get(v8String("functionName"));
-    return toWebCoreString(result);
+    return toWebCoreStringWithNullOrUndefinedCheck(result);
 }
 
 v8::Handle<v8::Value> JavaScriptCallFrame::scopeChain() const

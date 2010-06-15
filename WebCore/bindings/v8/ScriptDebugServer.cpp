@@ -335,6 +335,12 @@ void ScriptDebugServer::handleV8DebugEvent(const v8::Debug::EventDetails& eventD
                 v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(value);
                 dispatchDidParseSource(listener, object);
             } else if (event == v8::Break || event == v8::Exception) {
+                if (event == v8::Exception) {
+                    v8::Local<v8::StackTrace> stackTrace = v8::StackTrace::CurrentStackTrace(1);
+                    // Stack trace is empty in case of syntax error. Silently continue execution in such cases.
+                    if (!stackTrace->GetFrameCount())
+                        return;
+                }
                 m_executionState.set(eventDetails.GetExecutionState());
                 m_pausedPage = frame->page();
                 ScriptState* currentCallFrameState = mainWorldScriptState(frame);

@@ -439,6 +439,12 @@ void InspectorController::connectFrontend(const ScriptObject& webInspector)
     m_domAgent = InspectorDOMAgent::create(m_cssStore.get(), m_frontend.get());
     if (m_timelineAgent)
         m_timelineAgent->resetFrontendProxyObject(m_frontend.get());
+
+    // Initialize Web Inspector title.
+    m_frontend->inspectedURLChanged(m_inspectedPage->mainFrame()->loader()->url().string());
+
+    populateScriptObjects();
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (ScriptDebugServer::shared().isDebuggerAlwaysEnabled()) {
         // FIXME (40364): This will force pushing script sources to frontend even if script
@@ -453,11 +459,6 @@ void InspectorController::connectFrontend(const ScriptObject& webInspector)
             enableProfiler();
     }
 #endif
-
-    // Initialize Web Inspector title.
-    m_frontend->inspectedURLChanged(m_inspectedPage->mainFrame()->loader()->url().string());
-
-    populateScriptObjects();
 
     if (m_showAfterVisible == CurrentPanel) {
         String lastActivePanelSetting = setting(lastActivePanelSettingName);

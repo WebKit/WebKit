@@ -453,7 +453,7 @@ TestSuite.prototype.testProfilerTab = function()
             setTimeout(findVisibleView, 0);
             return;
         }
-        setTimeout(findDisplayedNode, 0);            
+        setTimeout(findDisplayedNode, 0);
     }
 
     findVisibleView();
@@ -488,31 +488,19 @@ TestSuite.prototype.testScriptsTabIsPopulatedOnInspectedPageRefresh = function()
     var test = this;
     this.assertEquals(WebInspector.panels.elements, WebInspector.currentPanel, "Elements panel should be current one.");
 
-    this.addSniffer(devtools.DebuggerAgent.prototype, "reset", waitUntilScriptIsParsed);
+    this.addSniffer(WebInspector.panels.scripts, "reset", waitUntilScriptIsParsed);
 
     // Reload inspected page. It will reset the debugger agent.
     test.evaluateInConsole_(
         "window.location.reload(true);",
-        function(resultText) {
-            test.assertEquals("undefined", resultText, "Unexpected result of reload().");
-        });
+        function(resultText) {});
 
     function waitUntilScriptIsParsed() {
-        var parsed = devtools.tools.getDebuggerAgent().parsedScripts_;
-        for (var id in parsed) {
-            var url = parsed[id].getUrl();
-            if (url && url.search("debugger_test_page.html") !== -1) {
-                checkScriptsPanel();
-                return;
-            }
-        }
-        test.addSniffer(devtools.DebuggerAgent.prototype, "addScriptInfo_", waitUntilScriptIsParsed);
-    }
-
-    function checkScriptsPanel() {
         test.showPanel("scripts");
-        test.assertTrue(test._scriptsAreParsed(["debugger_test_page.html"]), "Inspected script not found in the scripts list");
-        test.releaseControl();
+        test._waitUntilScriptsAreParsed(["debugger_test_page.html"],
+            function() {
+                test.releaseControl();
+            });
     }
 
     // Wait until all scripts are added to the debugger.
@@ -603,7 +591,7 @@ TestSuite.prototype.testSetBreakpoint = function()
     var test = this;
     this.showPanel("scripts");
 
-    var breakpointLine = 12;
+    var breakpointLine = 16
 
     this._waitUntilScriptsAreParsed(["debugger_test_page.html"],
         function() {
@@ -611,13 +599,23 @@ TestSuite.prototype.testSetBreakpoint = function()
               "debugger_test_page.html",
               function(view, url) {
                 view._addBreakpoint(breakpointLine);
-                // Force v8 execution.
-                RemoteDebuggerAgent.processDebugCommands();
-                test.waitForSetBreakpointResponse_(url, breakpointLine,
-                    function() {
-                        test.releaseControl();
+
+                test.evaluateInConsole_(
+                    'setTimeout("calculate()" , 0)',
+                    function(resultText) {
+                      test.assertTrue(!isNaN(resultText), "Failed to get timer id: " + resultText);
                     });
               });
+        });
+
+    this._waitForScriptPause(
+        {
+            functionsOnStack: ["calculate", ""],
+            lineNumber: breakpointLine,
+            lineText: "  result = fib(lastVal++);"
+        },
+        function() {
+            test.releaseControl();
         });
 
     this.takeControl();
@@ -632,21 +630,13 @@ TestSuite.prototype.testPauseOnException = function()
     this.showPanel("scripts");
     var test = this;
 
-    // TODO(yurys): remove else branch once the states are supported.
-    if (WebInspector.ScriptsPanel.PauseOnExceptionsState) {
-        while (WebInspector.currentPanel._pauseOnExceptionButton.state !== WebInspector.ScriptsPanel.PauseOnExceptionsState.PauseOnUncaughtExceptions)
-            WebInspector.currentPanel._pauseOnExceptionButton.element.click();
-    } else {
-        // Make sure pause on exceptions is on.
-        if (!WebInspector.currentPanel._pauseOnExceptionButton.toggled)
-            WebInspector.currentPanel._pauseOnExceptionButton.element.click();
-    }
+    InspectorBackend.setPauseOnExceptionsState(WebInspector.ScriptsPanel.PauseOnExceptionsState.PauseOnUncaughtExceptions);
 
     this._executeCodeWhenScriptsAreParsed("handleClick()", ["pause_on_exception.html"]);
 
     this._waitForScriptPause(
         {
-            functionsOnStack: ["throwAnException", "handleClick", "(anonymous function)"],
+            functionsOnStack: ["throwAnException", "handleClick", ""],
             lineNumber: 6,
             lineText: "  return unknown_var;"
         },
@@ -728,7 +718,7 @@ TestSuite.prototype.testPauseWhenScriptIsRunning = function()
 
         test._waitForScriptPause(
             {
-                functionsOnStack: ["handleClick", "(anonymous function)"],
+                functionsOnStack: ["handleClick", ""],
                 lineNumber: 5,
                 lineText: "  while(true) {"
             },
@@ -861,36 +851,30 @@ TestSuite.prototype.testEvalOnCallFrame = function()
     var breakpointLine = 16;
 
     var test = this;
-    this.addSniffer(devtools.DebuggerAgent.prototype, "handleScriptsResponse_",
-        function(msg) {
+    this._waitUntilScriptsAreParsed(["debugger_test_page.html"],
+        function() {
           test.showMainPageScriptSource_(
               "debugger_test_page.html",
               function(view, url) {
                   view._addBreakpoint(breakpointLine);
-                  // Force v8 execution.
-                  RemoteDebuggerAgent.processDebugCommands();
-                  test.waitForSetBreakpointResponse_(url, breakpointLine, setBreakpointCallback);
+
+                  // Since breakpoints are ignored in evals' calculate() function is
+                  // execute after zero-timeout so that the breakpoint is hit.
+                  test.evaluateInConsole_(
+                      'setTimeout("calculate(123)" , 0)',
+                      function(resultText) {
+                          test.assertTrue(!isNaN(resultText), "Failed to get timer id: " + resultText);
+                          waitForBreakpointHit();
+                      });
               });
         });
 
-    function setBreakpointCallback() {
-      // Since breakpoints are ignored in evals' calculate() function is
-      // execute after zero-timeout so that the breakpoint is hit.
-      test.evaluateInConsole_(
-          'setTimeout("calculate(123)" , 0)',
-          function(resultText) {
-              test.assertTrue(!isNaN(resultText), "Failed to get timer id: " + resultText);
-              waitForBreakpointHit();
-          });
-    }
-
     function waitForBreakpointHit() {
-      test.addSniffer(
-          devtools.DebuggerAgent.prototype,
-          "handleBacktraceResponse_",
-          function(msg) {
-            test.assertEquals(2, this.callFrames_.length, "Unexpected stack depth on the breakpoint. " + JSON.stringify(msg));
-            test.assertEquals("calculate", this.callFrames_[0].functionName, "Unexpected top frame function.");
+      test.addSniffer(WebInspector,
+          "pausedScript",
+          function(callFrames) {
+            test.assertEquals(2, callFrames.length, "Unexpected stack depth on the breakpoint. " + JSON.stringify(callFrames, null, 4));
+            test.assertEquals("calculate", callFrames[0].functionName, "Unexpected top frame function.");
             // Evaluate "e+1" where "e" is an argument of "calculate" function.
             test.evaluateInConsole_(
                 "e+1",
@@ -916,7 +900,7 @@ TestSuite.prototype.testCompletionOnPause = function()
 
     this._waitForScriptPause(
         {
-            functionsOnStack: ["innerFunction", "handleClick", "(anonymous function)"],
+            functionsOnStack: ["innerFunction", "handleClick", ""],
             lineNumber: 9,
             lineText: "    debugger;"
         },
@@ -963,6 +947,9 @@ TestSuite.prototype.testCompletionOnPause = function()
  */
 TestSuite.prototype.testAutoContinueOnSyntaxError = function()
 {
+    if (window.v8ScriptDebugServerEnabled)
+        return;
+
     this.showPanel("scripts");
     var test = this;
 
@@ -977,6 +964,7 @@ TestSuite.prototype.testAutoContinueOnSyntaxError = function()
                 test.fail("Script with syntax error should not be in the list of parsed scripts.");
         }
     }
+
 
     this.addSniffer(devtools.DebuggerAgent.prototype, "handleScriptsResponse_",
         function(msg) {
@@ -1140,7 +1128,7 @@ TestSuite.prototype._executeCodeWhenScriptsAreParsed = function(code, expectedSc
         test.evaluateInConsole_(
             'setTimeout("' + code + '" , 0)',
             function(resultText) {
-                test.assertTrue(!isNaN(resultText), "Failed to get timer id: " + resultText);
+                test.assertTrue(!isNaN(resultText), "Failed to get timer id: " + resultText + ". Code: " + code);
             });
     }
 
@@ -1188,7 +1176,7 @@ TestSuite.prototype.testStepOver = function()
 
     this._performSteps([
         {
-            functionsOnStack: ["d","a","(anonymous function)"],
+            functionsOnStack: ["d","a",""],
             lineNumber: 3,
             lineText: "    debugger;"
         },
@@ -1196,7 +1184,7 @@ TestSuite.prototype.testStepOver = function()
             document.getElementById("scripts-step-over").click();
         },
         {
-            functionsOnStack: ["d","a","(anonymous function)"],
+            functionsOnStack: ["d","a",""],
             lineNumber: 5,
             lineText: "  var y = fact(10);"
         },
@@ -1204,7 +1192,7 @@ TestSuite.prototype.testStepOver = function()
             document.getElementById("scripts-step-over").click();
         },
         {
-            functionsOnStack: ["d","a","(anonymous function)"],
+            functionsOnStack: ["d","a",""],
             lineNumber: 6,
             lineText: "  return y;"
         },
@@ -1229,7 +1217,7 @@ TestSuite.prototype.testStepOut = function()
 
     this._performSteps([
         {
-            functionsOnStack: ["d","a","(anonymous function)"],
+            functionsOnStack: ["d","a",""],
             lineNumber: 3,
             lineText: "    debugger;"
         },
@@ -1237,7 +1225,7 @@ TestSuite.prototype.testStepOut = function()
             document.getElementById("scripts-step-out").click();
         },
         {
-            functionsOnStack: ["a","(anonymous function)"],
+            functionsOnStack: ["a",""],
             lineNumber: 8,
             lineText: "  printResult(result);"
         },
@@ -1262,7 +1250,7 @@ TestSuite.prototype.testStepIn = function()
 
     this._performSteps([
         {
-            functionsOnStack: ["d","a","(anonymous function)"],
+            functionsOnStack: ["d","a",""],
             lineNumber: 3,
             lineText: "    debugger;"
         },
@@ -1270,7 +1258,7 @@ TestSuite.prototype.testStepIn = function()
             document.getElementById("scripts-step-over").click();
         },
         {
-            functionsOnStack: ["d","a","(anonymous function)"],
+            functionsOnStack: ["d","a",""],
             lineNumber: 5,
             lineText: "  var y = fact(10);"
         },
@@ -1278,7 +1266,7 @@ TestSuite.prototype.testStepIn = function()
             document.getElementById("scripts-step-into").click();
         },
         {
-            functionsOnStack: ["fact","d","a","(anonymous function)"],
+            functionsOnStack: ["fact","d","a",""],
             lineNumber: 10,
             lineText: "  var r = 1;"
         },
@@ -1440,7 +1428,7 @@ TestSuite.prototype.testExpandScope = function()
 
     this._waitForScriptPause(
         {
-            functionsOnStack: ["innerFunction", "handleClick", "(anonymous function)"],
+            functionsOnStack: ["innerFunction", "handleClick", ""],
             lineNumber: 8,
             lineText: "    debugger;"
         },
@@ -1463,14 +1451,14 @@ TestSuite.prototype.testExpandScope = function()
                 properties: {
                     x:"2009",
                     innerFunctionLocalVar:"2011",
-                    "this": "global",
+                    "this": (window.v8ScriptDebugServerEnabled ? "DOMWindow" : "global"),
                 }
             },
             {
                 title: "Closure",
                 properties: {
-                    n:"TextParam",
-                    makeClosureLocalVar:"local.TextParam",
+                    n: (window.v8ScriptDebugServerEnabled ? '"TextParam"' : "TextParam"),
+                    makeClosureLocalVar: (window.v8ScriptDebugServerEnabled ? '"local.TextParam"' : "local.TextParam"),
                 }
             },
             {
@@ -1554,7 +1542,7 @@ TestSuite.prototype.testDebugIntrinsicProperties = function()
 
     this._waitForScriptPause(
         {
-            functionsOnStack: ["callDebugger", "handleClick", "(anonymous function)"],
+            functionsOnStack: ["callDebugger", "handleClick", ""],
             lineNumber: 29,
             lineText: "  debugger;"
         },
@@ -1574,6 +1562,15 @@ TestSuite.prototype.testDebugIntrinsicProperties = function()
     }
 
     function examineLocalScope() {
+      if (window.v8ScriptDebugServerEnabled) {
+      var scopeExpectations = [
+          "a", "Child", [
+            "constructor", "function Child(n) {", null,
+            "parentField", "10", null,
+            "childField", "20", null,
+          ]
+      ];
+      } else {
       var scopeExpectations = [
           "a", "Object", [
               "constructor", "function Child()", [
@@ -1606,13 +1603,14 @@ TestSuite.prototype.testDebugIntrinsicProperties = function()
             "childField", 20, null,
           ]
       ];
+      }
 
       checkProperty(localScopeSection.propertiesTreeOutline, "<Local Scope>", scopeExpectations);
     }
 
     var propQueue = [];
     var index = 0;
-    var expectedFinalIndex = 8;
+    var expectedFinalIndex = (window.v8ScriptDebugServerEnabled ? 1 : 8);
 
     function expandAndCheckNextProperty() {
         if (index === propQueue.length) {

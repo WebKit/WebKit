@@ -1075,7 +1075,7 @@ devtools.DebuggerAgent.prototype.formatCallFrame_ = function(stackFrame)
         WebInspector.parsedScriptSource(sourceId, null, null, 0, WebInspector.Script.WorldType.MAIN_WORLD);
     }
 
-    var funcName = func.name || func.inferredName || "(anonymous function)";
+    var funcName = func.name || func.inferredName;
     var line = devtools.DebuggerAgent.v8ToWwebkitLineNumber_(stackFrame.line);
 
     // Add basic scope chain info with scope variables.
