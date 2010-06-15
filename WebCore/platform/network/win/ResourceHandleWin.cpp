@@ -25,9 +25,6 @@
 
 #include "config.h"
 #include "ResourceHandle.h"
-#include "ResourceHandleClient.h"
-#include "ResourceHandleInternal.h"
-#include "ResourceHandleWin.h"
 
 #include "DocLoader.h"
 #include "Document.h"
@@ -35,7 +32,11 @@
 #include "FrameLoader.h"
 #include "Page.h"
 #include "ResourceError.h"
+#include "ResourceHandleClient.h"
+#include "ResourceHandleInternal.h"
+#include "ResourceHandleWin.h"
 #include "Timer.h"
+#include "WebCoreInstanceHandle.h"
 #include <wtf/text/CString.h>
 #include <windows.h>
 #include <wininet.h>
@@ -113,12 +114,12 @@ static void initializeOffScreenResourceHandleWindow()
     memset(&wcex, 0, sizeof(WNDCLASSEX));
     wcex.cbSize = sizeof(WNDCLASSEX);
     wcex.lpfnWndProc    = ResourceHandleWndProc;
-    wcex.hInstance      = Page::instanceHandle();
+    wcex.hInstance      = WebCore::instanceHandle();
     wcex.lpszClassName  = kResourceHandleWindowClassName;
     RegisterClassEx(&wcex);
 
     transferJobWindowHandle = CreateWindow(kResourceHandleWindowClassName, 0, 0, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0,
-        HWND_MESSAGE, 0, Page::instanceHandle(), 0);
+        HWND_MESSAGE, 0, WebCore::instanceHandle(), 0);
 }
 
 ResourceHandleInternal::~ResourceHandleInternal()
@@ -144,9 +145,9 @@ void ResourceHandle::onHandleCreated(LPARAM lParam)
             return;
         }
 
-        if (method() == "POST") {
+        if (request().httpMethod() == "POST") {
             // FIXME: Too late to set referrer properly.
-            String urlStr = url().path();
+            String urlStr = request().url().path();
             int fragmentIndex = urlStr.find('#');
             if (fragmentIndex != -1)
                 urlStr = urlStr.left(fragmentIndex);
@@ -166,7 +167,7 @@ void ResourceHandle::onHandleCreated(LPARAM lParam)
             }
         }
     } else if (!d->m_secondaryHandle) {
-        assert(method() == "POST");
+        assert(request().httpMethod() == "POST");
         d->m_secondaryHandle = HINTERNET(lParam);
         
         // Need to actually send the request now.
@@ -175,18 +176,18 @@ void ResourceHandle::onHandleCreated(LPARAM lParam)
         headers += d->m_postReferrer;
         headers += "\n";
         const CString& headersLatin1 = headers.latin1();
-        String formData = postData()->flattenToString();
+        String formData = request().httpBody()->flattenToString();
         INTERNET_BUFFERSA buffers;
         memset(&buffers, 0, sizeof(buffers));
         buffers.dwStructSize = sizeof(INTERNET_BUFFERSA);
-        buffers.lpcszHeader = headersLatin1;
+        buffers.lpcszHeader = headersLatin1.data();
         buffers.dwHeadersLength = headers.length();
         buffers.dwBufferTotal = formData.length();
         
         d->m_bytesRemainingToWrite = formData.length();
         d->m_formDataString = (char*)malloc(formData.length());
         d->m_formDataLength = formData.length();
-        strncpy(d->m_formDataString, formData.latin1(), formData.length());
+        strncpy(d->m_formDataString, formData.latin1().data(), formData.length());
         d->m_writing = true;
         HttpSendRequestExA(d->m_secondaryHandle, &buffers, 0, 0, (DWORD_PTR)d->m_jobId);
         // FIXME: add proper error handling
@@ -223,7 +224,7 @@ void ResourceHandle::onRequestComplete(LPARAM lParam)
         return;
     }
 
-    HINTERNET handle = (method() == "POST") ? d->m_secondaryHandle : d->m_resourceHandle;
+    HINTERNET handle = (request().httpMethod() == "POST") ? d->m_secondaryHandle : d->m_resourceHandle;
     BOOL ok = FALSE;
 
     static const int bufferSize = 32768;
@@ -260,7 +261,11 @@ void ResourceHandle::onRequestComplete(LPARAM lParam)
                 InternetGetLastResponseInfo(&platformData.error, platformData.errorString, &errorStringChars);
             }
         }
-        _RPTF1(_CRT_WARN, "Load error: %i\n", error);
+#ifdef RESOURCE_LOADER_DEBUG
+        char buf[64];
+        _snprintf(buf, sizeof(buf), "Load error: %i\n", error);
+        OutputDebugStringA(buf);
+#endif 
     }
     
     if (d->m_secondaryHandle)
@@ -309,8 +314,8 @@ static void __stdcall transferJobStatusCallback(HINTERNET internetHandle,
         // need to block the redirect at this point so the application can
         // decide whether or not to follow the redirect)
         msg = requestRedirectedMessage;
-        lParam = (LPARAM) new StringImpl((const UChar*) statusInformation,
-                                         statusInformationLength);
+        lParam = (LPARAM) StringImpl::create((const UChar*) statusInformation,
+                                             statusInformationLength).releaseRef();
         break;
     case INTERNET_STATUS_USER_INPUT_REQUIRED:
         // FIXME: prompt the user if necessary
@@ -327,8 +332,8 @@ static void __stdcall transferJobStatusCallback(HINTERNET internetHandle,
 bool ResourceHandle::start(Frame* frame)
 {
     ref();
-    if (url().isLocalFile()) {
-        String path = url().path();
+    if (request().url().isLocalFile()) {
+        String path = request().url().path();
         // windows does not enjoy a leading slash on paths
         if (path[0] == '/')
             path = path.substring(1);
@@ -347,7 +352,7 @@ bool ResourceHandle::start(Frame* frame)
     } else {
         static HINTERNET internetHandle = 0;
         if (!internetHandle) {
-            String userAgentStr = frame->loader()->userAgent() + String("", 1);
+            String userAgentStr = frame->loader()->userAgent(request().url()) + String("", 1);
             LPCWSTR userAgent = reinterpret_cast<const WCHAR*>(userAgentStr.characters());
             // leak the Internet for now
             internetHandle = InternetOpen(userAgent, INTERNET_OPEN_TYPE_PRECONFIG, 0, 0, INTERNET_FLAG_ASYNC);
@@ -371,17 +376,17 @@ bool ResourceHandle::start(Frame* frame)
         // InternetConnect followed by HttpSendRequest.
         HINTERNET urlHandle;
         String referrer = frame->loader()->referrer();
-        if (method() == "POST") {
+        if (request().httpMethod() == "POST") {
             d->m_postReferrer = referrer;
-            String host = url().host();
+            String host = request().url().host();
             urlHandle = InternetConnectA(internetHandle, host.latin1().data(),
-                                         url().port(),
+                                         request().url().port(),
                                          NULL, // no username
                                          NULL, // no password
                                          INTERNET_SERVICE_HTTP,
                                          flags, (DWORD_PTR)d->m_jobId);
         } else {
-            String urlStr = url().string();
+            String urlStr = request().url().string();
             int fragmentIndex = urlStr.find('#');
             if (fragmentIndex != -1)
                 urlStr = urlStr.left(fragmentIndex);
