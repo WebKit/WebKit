@@ -2,6 +2,14 @@
 
         Reviewed by Dan Bernstein.
 
+        Remove getPluginInfoFromBundleAndMIMEDictionary:
+
+        * Plugins/WebBasePluginPackage.mm:
+
+2010-06-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Fold getPluginInfoFromBundleAndMIMEDictionary: into its sole caller.
 
         * Plugins/WebBasePluginPackage.mm:
