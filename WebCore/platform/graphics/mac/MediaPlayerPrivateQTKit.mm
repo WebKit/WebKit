@@ -1252,22 +1252,22 @@ static void addFileTypesToCache(NSArray * fileTypes, HashSet<String> &cache)
         if (!uti)
             continue;
         RetainPtr<CFStringRef> mime(AdoptCF, UTTypeCopyPreferredTagWithClass(uti.get(), kUTTagClassMIMEType));
+        if (mime)
+            cache.add(mime.get());
 
-        // UTI types are missing many media related MIME types supported by QTKit, see rdar://6434168,
-        // and not all third party movie importers register their types, so if we didn't find a type for
-        // this extension look it up in the hard coded table in the MIME type regsitry.
-        if (!mime) {
-            // -movieFileTypes: returns both file extensions and OSTypes. The later are surrounded by single
-            // quotes, eg. 'MooV', so don't bother looking at those.
-            if (CFStringGetCharacterAtIndex(ext, 0) != '\'') {
-                String mediaType = MIMETypeRegistry::getMediaMIMETypeForExtension(String(ext));
-                if (!mediaType.isEmpty())
-                    mime.adoptCF(mediaType.createCFString());
+        // -movieFileTypes: returns both file extensions and OSTypes. The later are surrounded by single
+        // quotes, eg. 'MooV', so don't bother looking at those.
+        if (CFStringGetCharacterAtIndex(ext, 0) != '\'') {
+            // UTI is missing many media related MIME types supported by QTKit (see rdar://6434168), and not all
+            // web servers use the MIME type UTI returns for an extension (see rdar://7875393), so even if UTI 
+            // has a type for this extension add any types in hard coded table in the MIME type regsitry.
+            Vector<String> typesForExtension = MIMETypeRegistry::getMediaMIMETypesForExtension(ext);
+            unsigned count = typesForExtension.size();
+            for (unsigned ndx = 0; ndx < count; ++ndx) {
+                if (!cache.contains(typesForExtension[ndx]))
+                    cache.add(typesForExtension[ndx]);
             }
         }
-        if (!mime)
-            continue;
-        cache.add(mime.get());
     }    
 }
 

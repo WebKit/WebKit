@@ -1,3 +1,29 @@
+2010-06-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        audio/x-mp3 MIME type not recognized
+        <rdar://problem/7875393>
+        https://bugs.webkit.org/show_bug.cgi?id=40594
+        
+        Allow MIMETypeRegistry to have more than one MIME type for a
+        media file extension, and have the QTKit media engine register
+        all MIME types it can find for each file type QTKit supports.
+
+        Test: media/media-can-play-mp3.html
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::mediaMIMETypeMap): Update for new HashMap format.
+        (WebCore::TypeExtensionPair::): Store String+Vector<String>
+        (WebCore::MIMETypeRegistry::getMediaMIMETypeForExtension): Only consult
+        mediaMIMETypeMap(), it has the canonical answer.
+        (WebCore::MIMETypeRegistry::getMediaMIMETypesForExtension): New, return
+        a Vector of all MIME types for an extension.
+        * platform/MIMETypeRegistry.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::addFileTypesToCache): Add all MIME types returned in the 
+        getMediaMIMETypesForExtension Vector.
+
 2010-06-14  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Brady Eidson.

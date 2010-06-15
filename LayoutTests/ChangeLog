@@ -1,3 +1,13 @@
+2010-06-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        audio/x-mp3 MIME type not recognized
+        https://bugs.webkit.org/show_bug.cgi?id=40594
+
+        * media/media-can-play-mp3-expected.txt: Added.
+        * media/media-can-play-mp3.html: Added.
+
 2010-06-14  Dmitry Titov  <dimich@chromium.org>
 
         Unreviewed, more Chromium expectations updates.
