@@ -84,8 +84,7 @@ String getPluginMimeTypeFromExtension(const String& extension)
     for (size_t i = 0; i < plugins.size(); ++i) {
         for (size_t j = 0; j < plugins[i].mimes.size(); ++j) {
             const MimeClassInfo& mime = plugins[i].mimes[j];
-            Vector<String> extensions;
-            mime.suffixes.split(",", extensions);
+            const Vector<String>& extensions = mime.extensions;
             for (size_t k = 0; k < extensions.size(); ++k) {
                 if (extension == extensions[k])
                     return mime.type;

@@ -37,7 +37,7 @@ namespace WebCore {
         ~MimeType();
 
         const String &type() const;
-        const String &suffixes() const;
+        String suffixes() const;
         const String &description() const;
         PassRefPtr<Plugin> enabledPlugin() const;
 

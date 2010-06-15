@@ -52,7 +52,8 @@ void PluginData::initPlugins()
                 MimeClassInfo mimeInfo;
                 mimeInfo.type = mimeType.name;
                 mimeInfo.desc = mimeType.description;
-                mimeInfo.suffixes = mimeType.fileExtensions.join(QLatin1String("; "));
+                for (int k = 0; k < mimeType.fileExtensions.count(); ++k)
+                  mimeInfo.extensions.append(mimeType.fileExtensions.at(k));
 
                 info.mimes.append(mimeInfo);
             }
@@ -79,15 +80,7 @@ void PluginData::initPlugins()
 
             mime.type = it->first;
             mime.desc = it->second;
-
-            Vector<String> extensions = package->mimeToExtensions().get(mime.type);
-
-            for (unsigned i = 0; i < extensions.size(); i++) {
-                if (i > 0)
-                    mime.suffixes += ",";
-
-                mime.suffixes += extensions[i];
-            }
+            mime.extensions = package->mimeToExtensions().get(mime.type);
 
             info.mimes.append(mime);
         }

@@ -52,7 +52,14 @@ void PluginData::initPlugins()
             MimeClassInfo mime;
 
             mime.type = String(MIME).lower();
-            mime.suffixes = [[plugin extensionsForMIMEType:MIME] componentsJoinedByString:@","];
+            
+            NSArray *extensions = [plugin extensionsForMIMEType:MIME];
+            NSUInteger count = [extensions count];
+            for (NSUInteger i = 0; i < count; ++i) {
+                NSString *extension = [extensions objectAtIndex:i];
+                mime.extensions.append(extension);
+            }
+
             mime.desc = [plugin descriptionForMIMEType:MIME];
             
             pluginInfo.mimes.append(mime);

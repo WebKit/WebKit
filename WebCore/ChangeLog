@@ -1,3 +1,32 @@
+2010-06-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Use an array for extensions in MimeClassInfo
+        https://bugs.webkit.org/show_bug.cgi?id=40602
+
+        Get rid of MimeClassInfo::suffixes and replace it with an array of extensions.
+
+        * plugins/MimeType.cpp:
+        (WebCore::MimeType::suffixes):
+        Create a string of joined extensions.
+
+        * plugins/MimeType.h:
+        * plugins/PluginData.h:
+        (WebCore::operator==):
+        * plugins/chromium/PluginDataChromium.cpp:
+        (WebCore::getPluginMimeTypeFromExtension):
+        * plugins/gtk/PluginDataGtk.cpp:
+        (WebCore::PluginData::initPlugins):
+        * plugins/mac/PluginDataMac.mm:
+        (WebCore::PluginData::initPlugins):
+        * plugins/qt/PluginDataQt.cpp:
+        (WebCore::PluginData::initPlugins):
+        * plugins/win/PluginDataWin.cpp:
+        (WebCore::PluginData::initPlugins):
+        * plugins/wx/PluginDataWx.cpp:
+        (WebCore::PluginData::initPlugins):
+
 2010-06-14  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.

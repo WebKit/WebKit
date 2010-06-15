@@ -32,12 +32,12 @@ struct PluginInfo;
 struct MimeClassInfo {
     String type;
     String desc;
-    String suffixes;
+    Vector<String> extensions;
 };
 
 inline bool operator==(const MimeClassInfo& a, const MimeClassInfo& b)
 {
-    return a.type == b.type && a.desc == b.desc && a.suffixes == b.suffixes;
+    return a.type == b.type && a.desc == b.desc && a.extensions == b.extensions;
 }
 
 struct PluginInfo {
