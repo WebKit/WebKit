@@ -1,0 +1,33 @@
+#!/usr/bin/env python
+
+import os
+import subprocess
+import sys
+
+from webkitpy.common.system.executive import Executive
+
+def to_windows_path(path):
+    return Executive().run_command(['cygpath', '-wa', path]).rstrip()
+
+def main():
+    root_directory = os.path.abspath(os.path.normpath(os.path.join(os.path.basename(sys.argv[0]), '..', '..')))
+    # FIXME: It would be good to share these defaults with webkitdirs.pm.
+    variables_and_defaults = {
+        'WebKitOutputDir': to_windows_path(os.path.join(root_directory, 'WebKitBuild')),
+        'WebKitLibrariesDir': to_windows_path(os.path.join(root_directory, 'WebKitLibraries', 'win')),
+    }
+    set_any_variables = False
+    for name, value in variables_and_defaults.iteritems():
+        uppercase_name = name.upper()
+        if os.environ.has_key(uppercase_name):
+            print '%s is already set to %s' % (name, os.environ[uppercase_name])
+        else:
+            print 'Setting %s to %s...' % (name, value)
+            subprocess.check_call(['regtool', '-s', 'set', '/user/Environment/%s' % name, value])
+            set_any_variables = True
+    if set_any_variables:
+        print '*** You must relaunch Cygwin for the variables to take effect. ***'
+
+
+if __name__ == '__main__':
+    main()

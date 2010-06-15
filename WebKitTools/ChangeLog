@@ -1,5 +1,20 @@
 2010-06-14  Adam Roben  <aroben@apple.com>
 
+        Add a script to set the WebKitOutputDir and WebKitLibrariesDir
+        environment variables
+
+        Fixes <http://webkit.org/b/40595>.
+
+        Reviewed by Steve Falkenburg.
+
+        * Scripts/set-apple-windows-environment-variables: Added.
+        (to_windows_path): Passes the passed-in path through cygpath to
+        generate a Windows-style path.
+        (main): Sets the WebKitOutputDir and WebKitLibrariesDir environment
+        variables to their defaults, if they aren't already set.
+
+2010-06-14  Adam Roben  <aroben@apple.com>
+
         Speed up run-safari/debug-safari on Windows
 
         Fixes <http://webkit.org/b/40586>.
