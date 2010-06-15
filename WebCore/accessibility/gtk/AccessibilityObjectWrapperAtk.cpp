@@ -422,6 +422,7 @@ static AtkRole atkRole(AccessibilityRole role)
         return ATK_ROLE_HEADING;
     case ListBoxRole:
         return ATK_ROLE_LIST;
+    case ListItemRole:
     case ListBoxOptionRole:
         return ATK_ROLE_LIST_ITEM;
     default:
@@ -435,13 +436,6 @@ static AtkRole webkit_accessible_get_role(AtkObject* object)
 
     if (!axObject)
         return ATK_ROLE_UNKNOWN;
-
-    // WebCore does not seem to have a role for list items
-    if (axObject->isGroup()) {
-        AccessibilityObject* parent = axObject->parentObjectUnignored();
-        if (parent && parent->isList())
-            return ATK_ROLE_LIST_ITEM;
-    }
 
     // WebCore does not know about paragraph role, label role, or section role
     if (axObject->isAccessibilityRenderObject()) {

@@ -1,3 +1,16 @@
+2010-06-14  Chris Fleizach  <cfleizach@apple.com>
+
+        No review. GTK build fix.
+
+        AX: need ListItemRole and PresentationalRole
+        https://bugs.webkit.org/show_bug.cgi?id=40133
+
+        Mostly speculative fix to make GTK unit tests work.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (atkRole):
+        (webkit_accessible_get_role):
+
 2010-06-14  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.
