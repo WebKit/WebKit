@@ -36,8 +36,8 @@
 
 #include "AtomicString.h"
 #include "Blob.h"
+#include "ExceptionCode.h"
 #include "TextEncoding.h"
-#include <wtf/text/CString.h>
 
 namespace WebCore {
 

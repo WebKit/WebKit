@@ -34,14 +34,14 @@
 #if ENABLE(FILE_WRITER)
 
 #include "BlobItem.h"
-#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class ExceptionCode;
 class Blob;
+
+typedef int ExceptionCode;
 
 class BlobBuilder : public RefCounted<BlobBuilder> {
 public:
