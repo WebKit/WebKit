@@ -1,3 +1,13 @@
+2010-06-15  Darin Fisher  <darin@chromium.org>
+
+        Fix whitespace error in expected results.
+
+        Looks like Chromium's TestShell and DRT do not agree in how whitespace
+        is generated in some cases.
+
+        * fast/history/history-back-within-subframe-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-06-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt.

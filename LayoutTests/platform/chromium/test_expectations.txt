@@ -2910,3 +2910,6 @@ BUG46538 MAC WIN LINUX : editing/deleting/forward-delete-key.html = TEXT
 
 // New test, fails on Chromium. Added by http://trac.webkit.org/changeset/61172.
 BUG46553 MAC LINUX WIN : media/media-can-play-mp3.html = TEXT
+
+// Whitespace difference between TestShell and DRT.
+BUGDARIN : fast/history/history-back-within-subframe.html = TEXT
