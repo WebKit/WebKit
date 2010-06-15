@@ -42,9 +42,9 @@
 #include "qwebkitglobal.h"
 #include <QtGui>
 
-#if ENABLE(NOTIFICATIONS)
-
 namespace WebCore {
+
+#if ENABLE(NOTIFICATIONS)
 
 const double notificationTimeout = 10.0;
 
@@ -61,50 +61,68 @@ NotificationPresenterClientQt* NotificationPresenterClientQt::notificationPresen
     return s_notificationPresenter;
 }
 
+#endif
+
 NotificationIconWrapper::NotificationIconWrapper()
     : m_closeTimer(this, &NotificationIconWrapper::close)
 {
+#if ENABLE(NOTIFICATIONS)
+
 #ifndef QT_NO_SYSTEMTRAYICON
     m_notificationIcon = 0;
 #endif
     m_presenter = 0;
-}
-
-NotificationIconWrapper::~NotificationIconWrapper()
-{
+#endif
 }
 
 void NotificationIconWrapper::close(Timer<NotificationIconWrapper>*)
 {
+#if ENABLE(NOTIFICATIONS)
     NotificationPresenterClientQt::notificationPresenter()->cancel(this);
+#endif
 }
 
 const QString NotificationIconWrapper::title() const
 {
+#if ENABLE(NOTIFICATIONS)
     Notification* notification = NotificationPresenterClientQt::notificationPresenter()->notificationForWrapper(this);
     if (notification)
         return notification->contents().title();
+#endif
     return QString();
 }
 
 const QString NotificationIconWrapper::message() const
 {
+#if ENABLE(NOTIFICATIONS)
     Notification* notification = NotificationPresenterClientQt::notificationPresenter()->notificationForWrapper(this);
     if (notification)
         return notification->contents().body();
+#endif
     return QString();
 }
 
 const QByteArray NotificationIconWrapper::iconData() const
 {
-    Notification* notification = NotificationPresenterClientQt::notificationPresenter()->notificationForWrapper(this);
     QByteArray iconData;
+#if ENABLE(NOTIFICATIONS)
+    Notification* notification = NotificationPresenterClientQt::notificationPresenter()->notificationForWrapper(this);
     if (notification) {
         if (notification->iconData())
             iconData = QByteArray::fromRawData(notification->iconData()->data(), notification->iconData()->size());
     }
+#endif
     return iconData;
 }
+
+void NotificationIconWrapper::notificationClosed()
+{
+#if ENABLE(NOTIFICATIONS)
+    NotificationPresenterClientQt::notificationPresenter()->cancel(this);
+#endif
+}
+
+#if ENABLE(NOTIFICATIONS)
 
 NotificationPresenterClientQt::NotificationPresenterClientQt() : m_clientCount(0)
 {
@@ -125,11 +143,6 @@ void NotificationPresenterClientQt::removeClient()
         s_notificationPresenter = 0;
         delete this;
     }
-}
-
-void NotificationIconWrapper::notificationClosed()
-{
-    NotificationPresenterClientQt::notificationPresenter()->cancel(this);
 }
 
 bool NotificationPresenterClientQt::show(Notification* notification)
@@ -341,5 +354,6 @@ void NotificationPresenterClientQt::dumpShowText(Notification* notification)
     }
 }
 
-}
 #endif // ENABLE(NOTIFICATIONS)
+}
+

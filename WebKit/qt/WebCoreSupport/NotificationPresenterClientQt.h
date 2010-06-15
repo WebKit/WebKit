@@ -51,7 +51,7 @@ class NotificationIconWrapper : public QObject, public QWebNotificationData {
     Q_OBJECT
 public:
     NotificationIconWrapper();
-    ~NotificationIconWrapper();
+    ~NotificationIconWrapper() {}
 
     void close();
     void close(Timer<NotificationIconWrapper>*);
