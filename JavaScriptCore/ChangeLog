@@ -1,3 +1,17 @@
+2010-06-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make JavaScriptCore build with clang++.
+
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitPutVirtualRegister):
+        Explicitly cast to an int.
+
+        * yarr/RegexCompiler.cpp:
+        (JSC::Yarr::compileRegex):
+        Return 0 instead of false.
+
 2010-06-15  Adam Roben  <aroben@apple.com>
 
         Make WebCore's and JavaScriptCore's DerivedSources available for debugging in production builds

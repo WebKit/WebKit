@@ -645,7 +645,7 @@ ALWAYS_INLINE bool JIT::isOperandConstantImmediateInt(unsigned src)
 ALWAYS_INLINE void JIT::emitPutVirtualRegister(unsigned dst, RegisterID from)
 {
     storePtr(from, Address(callFrameRegister, dst * sizeof(Register)));
-    m_lastResultBytecodeRegister = (from == cachedResultRegister) ? dst : std::numeric_limits<int>::max();
+    m_lastResultBytecodeRegister = (from == cachedResultRegister) ? static_cast<int>(dst) : std::numeric_limits<int>::max();
 }
 
 ALWAYS_INLINE void JIT::emitInitRegister(unsigned dst)
