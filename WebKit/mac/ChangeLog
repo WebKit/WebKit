@@ -1,3 +1,12 @@
+2010-06-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fold getPluginInfoFromBundleAndMIMEDictionary: into its sole caller.
+
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage getPluginInfoFromPLists]):
+
 2010-06-11  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.

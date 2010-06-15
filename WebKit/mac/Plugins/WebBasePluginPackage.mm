@@ -247,9 +247,59 @@
             // Plist doesn't exist, ask the plug-in to create it.
             MIMETypes = [[self pListForPath:pListPath createFile:YES] objectForKey:WebPluginMIMETypesKey];
     }
-    
-    // Pass the MIME dictionary to the superclass to parse it.
-    return [self getPluginInfoFromBundleAndMIMEDictionary:MIMETypes];
+
+    if (!MIMETypes) {
+        MIMETypes = [bundle objectForInfoDictionaryKey:WebPluginMIMETypesKey];
+        if (!MIMETypes)
+            return NO;
+    }
+
+    NSMutableDictionary *MIMEToExtensionsDictionary = [NSMutableDictionary dictionary];
+    NSMutableDictionary *MIMEToDescriptionDictionary = [NSMutableDictionary dictionary];
+    NSEnumerator *keyEnumerator = [MIMETypes keyEnumerator];
+    NSDictionary *MIMEDictionary;
+    NSString *MIME, *description;
+    NSArray *extensions;
+
+    while ((MIME = [keyEnumerator nextObject]) != nil) {
+        MIMEDictionary = [MIMETypes objectForKey:MIME];
+        
+        // FIXME: Consider storing disabled MIME types.
+        NSNumber *isEnabled = [MIMEDictionary objectForKey:WebPluginTypeEnabledKey];
+        if (isEnabled && [isEnabled boolValue] == NO)
+            continue;
+
+        extensions = [[MIMEDictionary objectForKey:WebPluginExtensionsKey] _web_lowercaseStrings];
+        if ([extensions count] == 0)
+            extensions = [NSArray arrayWithObject:@""];
+
+        MIME = [MIME lowercaseString];
+
+        [MIMEToExtensionsDictionary setObject:extensions forKey:MIME];
+
+        description = [MIMEDictionary objectForKey:WebPluginTypeDescriptionKey];
+        if (!description)
+            description = @"";
+
+        [MIMEToDescriptionDictionary setObject:description forKey:MIME];
+    }
+
+    [self setMIMEToExtensionsDictionary:MIMEToExtensionsDictionary];
+    [self setMIMEToDescriptionDictionary:MIMEToDescriptionDictionary];
+
+    NSString *filename = [self filename];
+
+    NSString *theName = [bundle objectForInfoDictionaryKey:WebPluginNameKey];
+    if (!theName)
+        theName = filename;
+    [self setName:theName];
+
+    description = [bundle objectForInfoDictionaryKey:WebPluginDescriptionKey];
+    if (!description)
+        description = filename;
+    [self setPluginDescription:description];
+
+    return YES;
 }
 
 - (BOOL)load
