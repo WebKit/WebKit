@@ -41,6 +41,7 @@ namespace WebCore {
     class String;
 
     enum EChildrenOnly { IncludeNode, ChildrenOnly };
+    enum EAbsoluteURLs { DoNotResolveURLs, AbsoluteURLs };
 
     PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String& text);
     PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document*, const String& markup, const String& baseURL, FragmentScriptingPermission = FragmentScriptingAllowed);
@@ -49,8 +50,8 @@ namespace WebCore {
     bool isPlainTextMarkup(Node *node);
 
     String createMarkup(const Range*,
-        Vector<Node*>* = 0, EAnnotateForInterchange = DoNotAnnotateForInterchange, bool convertBlocksToInlines = false);
-    String createMarkup(const Node*, EChildrenOnly = IncludeNode, Vector<Node*>* = 0);
+        Vector<Node*>* = 0, EAnnotateForInterchange = DoNotAnnotateForInterchange, bool convertBlocksToInlines = false, EAbsoluteURLs = DoNotResolveURLs);
+    String createMarkup(const Node*, EChildrenOnly = IncludeNode, Vector<Node*>* = 0, EAbsoluteURLs = DoNotResolveURLs);
     
     String createFullMarkup(const Node*);
     String createFullMarkup(const Range*);

@@ -357,7 +357,7 @@ void ClipboardGtk::writeRange(Range* range, Frame* frame)
     ASSERT(range);
 
     m_dataObject->setText(frame->selectedText());
-    m_dataObject->setMarkup(createMarkup(range, 0, AnnotateForInterchange));
+    m_dataObject->setMarkup(createMarkup(range, 0, AnnotateForInterchange, false, AbsoluteURLs));
 
     if (m_clipboard)
         m_helper->writeClipboardContents(m_clipboard);

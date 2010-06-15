@@ -81,7 +81,7 @@ void Pasteboard::setSelectionMode(bool selectionMode)
 
 void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
 {
-    String html = createMarkup(selectedRange, 0, AnnotateForInterchange);
+    String html = createMarkup(selectedRange, 0, AnnotateForInterchange, false, AbsoluteURLs);
     ExceptionCode ec = 0;
     KURL url = selectedRange->startContainer(ec)->document()->url();
     String plainText = frame->selectedText();

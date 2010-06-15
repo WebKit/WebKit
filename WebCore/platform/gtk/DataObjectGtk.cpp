@@ -41,7 +41,7 @@ String DataObjectGtk::text()
 String DataObjectGtk::markup()
 {
     if (m_range)
-        return createMarkup(m_range.get(), 0, AnnotateForInterchange);
+        return createMarkup(m_range.get(), 0, AnnotateForInterchange, false, AbsoluteURLs);
     return m_markup;
 }
 

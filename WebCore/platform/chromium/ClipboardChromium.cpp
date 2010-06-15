@@ -512,8 +512,7 @@ void ClipboardChromium::writeRange(Range* selectedRange, Frame* frame)
     if (!m_dataObject)
          return;
 
-    m_dataObject->textHtml = createMarkup(selectedRange, 0,
-        AnnotateForInterchange);
+    m_dataObject->textHtml = createMarkup(selectedRange, 0, AnnotateForInterchange, false, AbsoluteURLs);
     m_dataObject->htmlBaseUrl = frame->document()->url();
 
     String str = frame->selectedText();
