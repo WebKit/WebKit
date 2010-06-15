@@ -201,8 +201,15 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, int, int)
 #endif
     }
 
+    bool rootFillsViewport = false;
+    if (RenderObject* rootRenderer = document()->documentElement()->renderer()) {
+        // The document element's renderer is currently forced to be a block, but may not always be.
+        RenderBox* rootBox = rootRenderer->isBox() ? toRenderBox(rootRenderer) : 0;
+        rootFillsViewport = rootBox && !rootBox->x() && !rootBox->y() && rootBox->width() >= width() && rootBox->height() >= height();
+    }
+    
     // If painting will entirely fill the view, no need to fill the background.
-    if (elt || rendererObscuresBackground(firstChild()) || !view())
+    if (elt || (rootFillsViewport && rendererObscuresBackground(firstChild())) || !view())
         return;
 
     // This code typically only executes if the root element's visibility has been set to hidden,

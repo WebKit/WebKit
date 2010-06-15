@@ -1,5 +1,22 @@
 2010-06-15  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dave Hyatt.
+
+        Garbage shown outside HTML if HTML is absolutely positioned
+        https://bugs.webkit.org/show_bug.cgi?id=36163
+        
+        Add a check that the root renderer (the document element's renderer) covers
+        the entire viewport before deciding that we don't need the RenderView
+        to paint its background. Fixes lack of painting with positioned, floated, and
+        display: table html elements.
+
+        Test: fast/repaint/positioned-document-element.html
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paintBoxDecorations):
+
+2010-06-15  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Safari 5 does not clear background with transformed html element
