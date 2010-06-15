@@ -30,7 +30,6 @@
 #endif // GTK_CHECK_VERSION(2, 21, 2)
 
 #if !GTK_CHECK_VERSION(2, 20, 0)
-#define gtk_widget_set_realized(widget, FALSE) GTK_WIDGET_UNSET_FLAGS((widget), GTK_REALIZED)
 #define gtk_widget_set_realized(widget, TRUE) GTK_WIDGET_SET_FLAGS((widget), GTK_REALIZED)
 #endif // GTK_CHECK_VERSION(2, 20, 0)
 
@@ -44,9 +43,7 @@
 
 #if !GTK_CHECK_VERSION(2, 18, 0)
 #define gtk_widget_set_visible(widget, FALSE) GTK_WIDGET_UNSET_FLAGS((widget), GTK_VISIBLE)
-#define gtk_widget_set_visible(widget, TRUE) GTK_WIDGET_SET_FLAGS((widget), GTK_VISIBLE)
 #define gtk_widget_set_window(widget, new_window) (widget)->window = (new_window)
-#define gtk_widget_set_can_focus(widget, FALSE) GTK_WIDGET_UNSET_FLAGS((widget), GTK_CAN_FOCUS)
 #define gtk_widget_set_can_focus(widget, TRUE) GTK_WIDGET_SET_FLAGS((widget), GTK_CAN_FOCUS)
 #endif // GTK_CHECK_VERSION(2, 18, 0)
 
