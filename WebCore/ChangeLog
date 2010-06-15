@@ -1,3 +1,18 @@
+2010-06-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        YouTube thumbnail borders vanish during transition
+        https://bugs.webkit.org/show_bug.cgi?id=40551
+        
+        Turn off the direct image optimization if the image has a clip style, so that is is
+        correctly rendered with the clip.
+
+        Test: compositing/images/clip-on-directly-composited-image.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::isDirectlyCompositedImage):
+
 2010-06-15  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

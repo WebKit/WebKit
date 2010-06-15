@@ -1,3 +1,15 @@
+2010-06-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        YouTube thumbnail borders vanish during transition
+        https://bugs.webkit.org/show_bug.cgi?id=40551
+        
+        Test that an image that would be directly composited is rendered in software if it has a clip.
+
+        * compositing/images/clip-on-directly-composited-image-expected.txt: Added.
+        * compositing/images/clip-on-directly-composited-image.html: Added.
+
 2010-06-15  Alexey Proskuryakov  <ap@apple.com>
 
         Not reviewed, just moving tests.
