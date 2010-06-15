@@ -339,8 +339,18 @@ void EventSender::contextClick()
     sendEvent(m_page, &event);
     QMouseEvent event2(QEvent::MouseButtonRelease, m_mousePos, Qt::RightButton, Qt::RightButton, Qt::NoModifier);
     sendEvent(m_page, &event2);
-    QContextMenuEvent event3(QContextMenuEvent::Mouse, m_mousePos);
-    sendEvent(m_page->view(), &event3);
+
+    if (isGraphicsBased()) {
+        QGraphicsSceneContextMenuEvent ctxEvent(QEvent::GraphicsSceneContextMenu);
+        ctxEvent.setReason(QGraphicsSceneContextMenuEvent::Mouse);
+        ctxEvent.setPos(m_mousePos);
+        WebCore::WebViewGraphicsBased* view = qobject_cast<WebCore::WebViewGraphicsBased*>(m_page->view());
+        if (view)
+            sendEvent(view->graphicsView(), &ctxEvent);
+    } else {
+        QContextMenuEvent ctxEvent(QContextMenuEvent::Mouse, m_mousePos);
+        sendEvent(m_page->view(), &ctxEvent);
+    }
 }
 
 void EventSender::scheduleAsynchronousClick()

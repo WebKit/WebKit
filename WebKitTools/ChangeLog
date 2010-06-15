@@ -1,3 +1,13 @@
+2010-06-15  Diego Gonzalez  <diegohcg@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] DRT EventSender support to graphics context events
+        https://bugs.webkit.org/show_bug.cgi?id=40324
+
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        (EventSender::contextClick):
+
 2010-06-14  Tony Chang  <tony@chromium.org>
 
         Reviewed by Darin Fisher.
