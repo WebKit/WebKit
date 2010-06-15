@@ -31,3 +31,5 @@ install:
     xcopy "$(OBJROOT)\include\*" "$(DSTROOT)\AppleInternal\include\" /e/v/i/h/y    
     xcopy "$(OBJROOT)\lib\*" "$(DSTROOT)\AppleInternal\lib\" /e/v/i/h/y    
     xcopy "$(OBJROOT)\bin\JavaScriptCore.resources\*" "$(DSTROOT)\AppleInternal\bin\JavaScriptCore.resources" /e/v/i/h/y
+    -mkdir "$(DSTROOT)\AppleInternal\Sources\JavaScriptCore"
+    xcopy "$(OBJROOT)\obj\JavaScriptCore\DerivedSources\*" "$(DSTROOT)\AppleInternal\Sources\WebCore" /e/v/i/h/y

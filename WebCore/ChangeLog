@@ -1,3 +1,14 @@
+2010-06-15  Adam Roben  <aroben@apple.com>
+
+        Make WebCore's and JavaScriptCore's DerivedSources available for debugging in production builds
+
+        Fixes <http://webkit.org/b/40626> <rdar://problem/8094205>.
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.vcproj/WebCore.make: Copy the contents of WebCore's
+        DerivedSources directory to AppleInternal/Sources/WebCore.
+
 2010-06-15  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.

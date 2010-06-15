@@ -17,3 +17,5 @@ install:
 	xcopy "$(OBJROOT)\obj\WebCore\scripts\*" "$(DSTROOT)\AppleInternal\tools\scripts" /e/v/i/h/y
 	xcopy "$(OBJROOT)\bin\*.pdb" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
 	xcopy "$(OBJROOT)\bin\*.dll" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
+	-mkdir "$(DSTROOT)\AppleInternal\Sources\WebCore"
+	xcopy "$(OBJROOT)\obj\WebCore\DerivedSources\*" "$(DSTROOT)\AppleInternal\Sources\WebCore" /e/v/i/h/y
