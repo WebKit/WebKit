@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css">
+    html {
+      -webkit-perspective: 1200px;
+      background-color: red;
+    }
+    html.changed {
+      background-color: transparent;
+    }
+    body {
+      -webkit-transform-style: preserve-3d;
+    }
+    .box {
+      width: 100px;
+      height: 100px;
+      background-color: blue;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController)
+      layoutTestController.waitUntilDone();
+
+    function doTest()
+    {
+      window.setTimeout(function() {
+        document.documentElement.className = 'changed';
+        if (window.layoutTestController)
+          layoutTestController.notifyDone();
+      }, 0);
+    }
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+  <p>In a pixel test, you should see a plain white background.</p>
+</body>
+</html>

@@ -1,3 +1,18 @@
+2010-06-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Safari 5 does not clear background with transformed html element
+        https://bugs.webkit.org/show_bug.cgi?id=40498
+        
+        Pixel test that has composited html and body elements, and changes the background color
+        on the html element to transparent.
+
+        * compositing/repaint/composited-document-element.html: Added.
+        * platform/mac/compositing/repaint/composited-document-element-expected.checksum: Added.
+        * platform/mac/compositing/repaint/composited-document-element-expected.png: Added.
+        * platform/mac/compositing/repaint/composited-document-element-expected.txt: Added.
+
 2010-06-15  Darin Fisher  <darin@chromium.org>
 
         Adding missing test results.

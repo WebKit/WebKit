@@ -163,9 +163,17 @@ void RenderView::paint(PaintInfo& paintInfo, int tx, int ty)
     paintObject(paintInfo, tx, ty);
 }
 
+static inline bool isComposited(RenderObject* object)
+{
+    return object->hasLayer() && toRenderBoxModelObject(object)->layer()->isComposited();
+}
+
 static inline bool rendererObscuresBackground(RenderObject* object)
 {
-    return object && object->style()->visibility() == VISIBLE && object->style()->opacity() == 1 && !object->style()->hasTransform();
+    return object && object->style()->visibility() == VISIBLE
+        && object->style()->opacity() == 1
+        && !object->style()->hasTransform()
+        && !isComposited(object);
 }
     
 void RenderView::paintBoxDecorations(PaintInfo& paintInfo, int, int)
