@@ -1,3 +1,13 @@
+2010-06-15  Dmitry Titov  <dimich@chromium.org>
+
+        Unreviewed, updating Chromium test expectations.
+
+        Mark following tests SLOW so they won't fail on TIMEOUT in Debug:
+        fast/frames/lots-of-iframes.html
+        fast/frames/lots-of-objects.html
+
+        * platform/chromium/test_expectations.txt:
+
 2010-06-15  Darin Fisher  <darin@chromium.org>
 
         Fix whitespace error in expected results.

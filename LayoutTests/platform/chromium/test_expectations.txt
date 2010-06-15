@@ -111,6 +111,9 @@ BUG34759 WIN DEBUG SLOW : inspector/console-log-before-inspector-open.html = PAS
 
 BUG36539 SLOW : http/tests/misc/uncacheable-script-repeated.html = PASS
 
+BUG46603 DEBUG SLOW : fast/frames/lots-of-iframes.html = PASS
+BUG46603 DEBUG SLOW : fast/frames/lots-of-objects.html = PASS
+
 // -----------------------------------------------------------------
 // SKIPPED TESTS
 // -----------------------------------------------------------------
