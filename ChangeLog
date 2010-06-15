@@ -1,3 +1,14 @@
+2010-06-13  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Chromium shouldn't build inside the source directory
+        https://bugs.webkit.org/show_bug.cgi?id=40489
+
+        Ignore Chromium Linux build files.
+
+        * .: Added property svn:ignore. Modified property svn:ignore.
+
 2010-06-09  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Adam Treat.

@@ -1,3 +1,14 @@
+2010-06-14  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Chromium shouldn't build inside the source directory
+        https://bugs.webkit.org/show_bug.cgi?id=40489
+
+        Ignore directories fetched by chromium and chromium mac output dir.
+
+        * chromium: Added property svn:ignore.
+
 2010-06-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
