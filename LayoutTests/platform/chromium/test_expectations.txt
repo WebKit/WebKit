@@ -771,10 +771,11 @@ BUG13907 : media/video-replaces-poster.html = IMAGE PASS
 BUG13907 BUG25375 : media/video-controls-transformed.html = FAIL
 
 // These tests are WONTFIX because they use codecs Chromium doesn't support.
-BUG16779 WONTFIX SKIP : media/video-can-play-type.html = FAIL TIMEOUT
-BUG16779 WONTFIX SKIP : media/video-document-types.html = FAIL TIMEOUT
 BUG16779 WONTFIX SKIP : media/audio-mpeg-supported.html = FAIL TIMEOUT
 BUG16779 WONTFIX SKIP : media/audio-data-url.html = FAIL TIMEOUT
+BUG16779 WONTFIX SKIP : media/media-can-play-mp3.html = TEXT
+BUG16779 WONTFIX SKIP : media/video-can-play-type.html = FAIL TIMEOUT
+BUG16779 WONTFIX SKIP : media/video-document-types.html = FAIL TIMEOUT
 BUG16779 WONTFIX SKIP : media/video-size-intrinsic-scale.html = FAIL TIMEOUT
 // GStreamer - disabled in Chromium
 WONTFIX : media/video-duration-known-after-eos.html = TEXT TIMEOUT
@@ -2910,9 +2911,6 @@ BUGDIMICH MAC WIN LINUX : tables/mozilla/marvin/x_tr_align_justify.xml = IMAGE
 // Fails starting http://trac.webkit.org/changeset/61153
 // Needs update to test_shell.
 BUG46538 MAC WIN LINUX : editing/deleting/forward-delete-key.html = TEXT
-
-// New test, fails on Chromium. Added by http://trac.webkit.org/changeset/61172.
-BUG46553 MAC LINUX WIN : media/media-can-play-mp3.html = TEXT
 
 // Whitespace difference between TestShell and DRT.
 BUGDARIN : fast/history/history-back-within-subframe.html = TEXT

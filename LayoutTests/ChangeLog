@@ -1,3 +1,9 @@
+2010-06-15  Andrew Scherkus  <scherkus@chromium.org>
+
+        Unreviewed, updating Chromium test expectations for media layout tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-06-15  Dmitry Titov  <dimich@chromium.org>
 
         Unreviewed, updating Chromium test expectations.
