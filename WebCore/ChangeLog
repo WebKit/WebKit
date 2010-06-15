@@ -1,3 +1,13 @@
+2010-06-14  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        <rdar://problem/8071866> REGRESSION: Crash on launch on Tiger and Leopard with network home folder
+
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::prepare): Don't assume that tail is always non-null, since that may
+        not be the case with some versions of SQLite. Instead we must null-check before dereferencing.
+
 2010-06-14  Anders Carlsson  <andersca@apple.com>
 
         Fix Tiger build.

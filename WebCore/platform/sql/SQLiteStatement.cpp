@@ -77,7 +77,7 @@ int SQLiteStatement::prepare()
     if (error != SQLITE_OK)
         LOG(SQLDatabase, "sqlite3_prepare16 failed (%i)\n%s\n%s", error, m_query.ascii().data(), sqlite3_errmsg(m_database.sqlite3Handle()));
     const UChar* ch = static_cast<const UChar*>(tail);
-    if (*ch)
+    if (ch && *ch)
         error = SQLITE_ERROR;
 #ifndef NDEBUG
     m_isPrepared = error == SQLITE_OK;
