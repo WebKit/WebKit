@@ -106,14 +106,6 @@ void HistoryController::restoreScrollPositionAndViewState()
 void HistoryController::updateBackForwardListForFragmentScroll()
 {
     updateBackForwardListClippedAtTarget(false);
-    
-    // Since the document isn't changed as a result of a fragment scroll, we should
-    // preserve the DocumentSequenceNumber of the previous item.
-    if (!m_previousItem)
-        return;
-
-    ASSERT(m_currentItem);
-    m_currentItem->setDocumentSequenceNumber(m_previousItem->documentSequenceNumber());
 }
 
 void HistoryController::saveDocumentState()
@@ -229,25 +221,6 @@ void HistoryController::goToItem(HistoryItem* targetItem, FrameLoadType type)
     Settings* settings = m_frame->settings();
     page->setGlobalHistoryItem((!settings || settings->privateBrowsingEnabled()) ? 0 : targetItem);
     recursiveGoToItem(targetItem, currentItem, type);
-}
-
-// Walk the frame tree and ensure that the URLs match the URLs in the item.
-bool HistoryController::urlsMatchItem(HistoryItem* item) const
-{
-    const KURL& currentURL = m_frame->loader()->documentLoader()->url();
-    if (!equalIgnoringFragmentIdentifier(currentURL, item->url()))
-        return false;
-
-    const HistoryItemVector& childItems = item->children();
-
-    unsigned size = childItems.size();
-    for (unsigned i = 0; i < size; ++i) {
-        Frame* childFrame = m_frame->tree()->child(childItems[i]->target());
-        if (childFrame && !childFrame->loader()->history()->urlsMatchItem(childItems[i].get()))
-            return false;
-    }
-
-    return true;
 }
 
 void HistoryController::updateForBackForwardNavigation()
@@ -521,9 +494,21 @@ PassRefPtr<HistoryItem> HistoryController::createItemTree(Frame* targetFrame, bo
     RefPtr<HistoryItem> bfItem = createItem(m_frame->tree()->parent() ? true : false);
     if (m_previousItem)
         saveScrollPositionAndViewStateToItem(m_previousItem.get());
-    if (!(clipAtTarget && m_frame == targetFrame)) {
+
+    if (!clipAtTarget || m_frame != targetFrame) {
         // save frame state for items that aren't loading (khtml doesn't save those)
         saveDocumentState();
+
+        // clipAtTarget is false for navigations within the same document, so
+        // we should copy the documentSequenceNumber over to the newly create
+        // item.  Non-target items are just clones, and they should therefore
+        // preserve the same itemSequenceNumber.
+        if (m_previousItem) {
+            if (m_frame != targetFrame)
+                bfItem->setItemSequenceNumber(m_previousItem->itemSequenceNumber());
+            bfItem->setDocumentSequenceNumber(m_previousItem->documentSequenceNumber());
+        }
+
         for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
             FrameLoader* childLoader = child->loader();
             bool hasChildLoaded = childLoader->frameHasLoaded();
@@ -536,6 +521,7 @@ PassRefPtr<HistoryItem> HistoryController::createItemTree(Frame* targetFrame, bo
                 bfItem->addChildItem(childLoader->history()->createItemTree(targetFrame, clipAtTarget));
         }
     }
+    // FIXME: Eliminate the isTargetItem flag in favor of itemSequenceNumber.
     if (m_frame == targetFrame)
         bfItem->setIsTargetItem(true);
     return bfItem;
@@ -550,21 +536,13 @@ void HistoryController::recursiveGoToItem(HistoryItem* item, HistoryItem* fromIt
     ASSERT(item);
     ASSERT(fromItem);
 
-    KURL itemURL = item->url();
-    KURL currentURL;
-    if (m_frame->loader()->documentLoader())
-        currentURL = m_frame->loader()->documentLoader()->url();
-
-    // Always reload the target frame of the item we're going to.  This ensures that we will
-    // do -some- load for the transition, which means a proper notification will be posted
-    // to the app.
-    // The exact URL has to match, including fragment.  We want to go through the _load
-    // method, even if to do a within-page navigation.
-    // The current frame tree and the frame tree snapshot in the item have to match.
-    if (!item->isTargetItem() &&
-        itemURL == currentURL &&
-        ((m_frame->tree()->name().isEmpty() && item->target().isEmpty()) || m_frame->tree()->name() == item->target()) &&
-        childFramesMatchItem(item))
+    // If the item we're going to is a clone of the item we're at, then do
+    // not load it again, and continue history traversal to its children.
+    // The current frame tree and the frame tree snapshot in the item have
+    // to match.
+    if (item->itemSequenceNumber() == fromItem->itemSequenceNumber()
+        && ((m_frame->tree()->name().isEmpty() && item->target().isEmpty()) || m_frame->tree()->name() == item->target())
+        && childFramesMatchItem(item))
     {
         // This content is good, so leave it alone and look for children that need reloading
         // Save form state (works from currentItem, since prevItem is nil)
@@ -659,10 +637,6 @@ void HistoryController::pushState(PassRefPtr<SerializedScriptValue> stateObject,
     item->setStateObject(stateObject);
     item->setURLString(urlString);
 
-    // Since the document isn't changed as a result of a pushState call, we
-    // should preserve the DocumentSequenceNumber of the previous item.
-    item->setDocumentSequenceNumber(m_previousItem->documentSequenceNumber());
-    
     page->backForwardList()->pushStateItem(item.release());
 }
 

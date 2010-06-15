@@ -1,3 +1,48 @@
+2010-06-15  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        Introduce HistoryItem::itemSequenceNumber and use it to identify
+        HistoryItems that are clones of one another.
+
+        Changes HistoryController::recursiveGoToItem to use itemSequenceNumber
+        equality instead of isTargetItem as the pre-requisite for not calling
+        FrameLoader::loadItem.
+
+        Changes FrameLoader::loadItem to require equivalent
+        documentSequenceNumber before initiating a same document navigation.
+        This alone would appear to fix the bug, but it does not go far enough
+        since without the itemSequenceNumber equality check, we'd re-load more
+        often than we should.
+
+        Moves documentSequenceNumber assignment into createItemTree as cleanup
+        and to ensure that it gets called properly whenever we create a cloned
+        HistoryItem.  (createItemTree's mission is to create clones up until
+        or including the target frame depending on the value of the doClip
+        parameter.)
+
+        Removes the now unused HistoryController::urlsMatchItem.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40451
+
+        Test: fast/history/history-back-within-subframe.html
+              http/tests/navigation/history-back-across-form-submission-to-fragment.html
+
+        * history/HistoryItem.cpp:
+        (WebCore::generateSequenceNumber):
+        (WebCore::HistoryItem::HistoryItem):
+        * history/HistoryItem.h:
+        (WebCore::HistoryItem::setItemSequenceNumber):
+        (WebCore::HistoryItem::itemSequenceNumber):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadItem):
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::updateBackForwardListForFragmentScroll):
+        (WebCore::HistoryController::createItemTree):
+        (WebCore::HistoryController::recursiveGoToItem):
+        (WebCore::HistoryController::pushState):
+        * loader/HistoryController.h:
+
 2010-06-15  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

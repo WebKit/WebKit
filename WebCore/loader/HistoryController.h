@@ -58,7 +58,6 @@ public:
     void invalidateCurrentItemCachedPage();
 
     void goToItem(HistoryItem*, FrameLoadType);
-    bool urlsMatchItem(HistoryItem*) const;
 
     void updateForBackForwardNavigation();
     void updateForReload();

@@ -201,6 +201,17 @@ void WebHistoryItem::setDocumentState(const WebVector<WebString>& state)
     m_private->setDocumentState(ds);
 }
 
+long long WebHistoryItem::itemSequenceNumber() const
+{
+    return m_private->itemSequenceNumber();
+}
+
+void WebHistoryItem::setItemSequenceNumber(long long itemSequenceNumber)
+{
+    ensureMutable();
+    m_private->setItemSequenceNumber(itemSequenceNumber);
+}
+
 long long WebHistoryItem::documentSequenceNumber() const
 {
     return m_private->documentSequenceNumber();

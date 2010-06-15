@@ -136,6 +136,9 @@ public:
     void setStateObject(PassRefPtr<SerializedScriptValue> object);
     SerializedScriptValue* stateObject() const { return m_stateObject.get(); }
 
+    void setItemSequenceNumber(long long number) { m_itemSequenceNumber = number; }
+    long long itemSequenceNumber() const { return m_itemSequenceNumber; }
+
     void setDocumentSequenceNumber(long long number) { m_documentSequenceNumber = number; }
     long long documentSequenceNumber() const { return m_documentSequenceNumber; }
     
@@ -241,6 +244,8 @@ private:
     Vector<int> m_weeklyVisitCounts;
 
     OwnPtr<Vector<String> > m_redirectURLs;
+
+    long long m_itemSequenceNumber;
 
     // Support for HTML5 History
     RefPtr<SerializedScriptValue> m_stateObject;

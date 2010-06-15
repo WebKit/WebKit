@@ -1,0 +1,8 @@
+main frame - has 1 onunload handler(s)
+ALERT: stage: 1
+main frame - has 1 onunload handler(s)
+ALERT: stage: 2
+main frame - has 1 onunload handler(s)
+ALERT: stage: 3
+  
+PASS

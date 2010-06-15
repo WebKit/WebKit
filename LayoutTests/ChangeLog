@@ -1,3 +1,18 @@
+2010-06-15  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        Test that a back navigation following a subframe reference fragment
+        navigation does the right thing.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40451
+
+        * fast/history/history-back-within-subframe.html: Added.
+        * fast/history/resources/history-back-within-subframe-2.html: Added.
+        * http/tests/navigation/history-back-across-form-submission-to-fragment-expected.txt: Added.
+        * http/tests/navigation/history-back-across-form-submission-to-fragment.html: Added.
+        * http/tests/navigation/resources/submit-to-fragment.pl: Added.
+
 2010-06-15  Alexey Proskuryakov  <ap@apple.com>
 
         Increase limit on number of (i)frames from 200 to 1000.

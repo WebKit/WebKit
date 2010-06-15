@@ -3542,14 +3542,11 @@ void FrameLoader::navigateToDifferentDocument(HistoryItem* item, FrameLoadType l
 void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
 {
     // We do same-document navigation in the following cases:
-    // - The HistoryItem has a history state object
-    // - Navigating to an anchor within the page, with no form data stored on the target item or the current history entry,
-    //   and the URLs in the frame tree match the history item for fragment scrolling.
-    // - The HistoryItem is not the same as the current item, because such cases are treated as a new load.
+    // - The HistoryItem corresponds to the same document.
+    // - The HistoryItem is not the same as the current item.
     HistoryItem* currentItem = history()->currentItem();
-    bool sameDocumentNavigation = ((!item->formData() && !(currentItem && currentItem->formData()) && history()->urlsMatchItem(item))
-                                  || (currentItem && item->documentSequenceNumber() == currentItem->documentSequenceNumber()))
-                                  && item != currentItem;
+    bool sameDocumentNavigation = currentItem && item != currentItem
+        && item->documentSequenceNumber() == currentItem->documentSequenceNumber();
 
 #if ENABLE(WML)
     // All WML decks should go through the real load mechanism, not the scroll-to-anchor code
