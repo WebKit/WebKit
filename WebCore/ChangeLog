@@ -1,3 +1,20 @@
+2010-06-15  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Bring framebuffer functions to GLES2 conformance
+        https://bugs.webkit.org/show_bug.cgi?id=40175
+
+        Test: fast/canvas/webgl/framebuffer-test.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::checkFramebufferStatus): Check input parameters and deal with default framebuffer situation.
+        (WebCore::WebGLRenderingContext::framebufferRenderbuffer): Check input parameters.
+        (WebCore::WebGLRenderingContext::framebufferTexture2D): Ditto.
+        (WebCore::WebGLRenderingContext::getFramebufferAttachmentParameter): Ditto.
+        (WebCore::WebGLRenderingContext::validateFramebufferFuncParameters): Check input parameters.
+        * html/canvas/WebGLRenderingContext.h: Add validateFramebufferFuncParameters.
+
 2010-06-15  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by David Levin.

@@ -399,6 +399,14 @@ void WebGLRenderingContext::bufferSubData(unsigned long target, long offset, Arr
 
 unsigned long WebGLRenderingContext::checkFramebufferStatus(unsigned long target)
 {
+    if (!isGLES2Compliant()) {
+        if (target != GraphicsContext3D::FRAMEBUFFER) {
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+            return 0;
+        }
+    }
+    if (!m_framebufferBinding || !m_framebufferBinding->object())
+        return GraphicsContext3D::FRAMEBUFFER_COMPLETE;
     return m_context->checkFramebufferStatus(target);
     cleanupAfterGraphicsCall(false);
 }
@@ -908,10 +916,16 @@ void WebGLRenderingContext::flush()
 void WebGLRenderingContext::framebufferRenderbuffer(unsigned long target, unsigned long attachment, unsigned long renderbuffertarget, WebGLRenderbuffer* buffer, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
+    if (!validateFramebufferFuncParameters(target, attachment))
+        return;
+    if (renderbuffertarget != GraphicsContext3D::RENDERBUFFER) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        return;
+    }
     if (buffer && buffer->context() != this) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
-    }       
+    }
     // Don't allow the default framebuffer to be mutated; all current
     // implementations use an FBO internally in place of the default
     // FBO.
@@ -954,6 +968,12 @@ void WebGLRenderingContext::framebufferRenderbuffer(unsigned long target, unsign
 void WebGLRenderingContext::framebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, WebGLTexture* texture, long level, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
+    if (!validateFramebufferFuncParameters(target, attachment))
+        return;
+    if (level) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        return;
+    }
     if (texture && texture->context() != this) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
@@ -1063,16 +1083,21 @@ unsigned long WebGLRenderingContext::getError()
 WebGLGetInfo WebGLRenderingContext::getFramebufferAttachmentParameter(unsigned long target, unsigned long attachment, unsigned long pname, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
-    if (target != GraphicsContext3D::FRAMEBUFFER
-        || (attachment != GraphicsContext3D::COLOR_ATTACHMENT0
-            && attachment != GraphicsContext3D::DEPTH_ATTACHMENT
-            && attachment != GraphicsContext3D::STENCIL_ATTACHMENT
-            && attachment != GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT)
-        || (pname != GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE
-            && pname != GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME
-            && pname != GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL
-            && pname != GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE)) {
+    if (!validateFramebufferFuncParameters(target, attachment))
+        return WebGLGetInfo();
+    switch (pname) {
+    case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
+    case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
+    case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
+    case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
+        break;
+    default:
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        return WebGLGetInfo();
+    }
+
+    if (!m_framebufferBinding || !m_framebufferBinding->object()) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return WebGLGetInfo();
     }
 
@@ -3434,6 +3459,25 @@ void WebGLRenderingContext::printWarningToConsole(const String& message)
 {
     canvas()->document()->frame()->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, WarningMessageLevel,
                                                                       message, 0, canvas()->document()->url().string());
+}
+
+bool WebGLRenderingContext::validateFramebufferFuncParameters(unsigned long target, unsigned long attachment)
+{
+    if (target != GraphicsContext3D::FRAMEBUFFER) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        return false;
+    }
+    switch (attachment) {
+    case GraphicsContext3D::COLOR_ATTACHMENT0:
+    case GraphicsContext3D::DEPTH_ATTACHMENT:
+    case GraphicsContext3D::STENCIL_ATTACHMENT:
+    case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
+        break;
+    default:
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        return false;
+    }
+    return true;
 }
 
 } // namespace WebCore

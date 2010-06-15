@@ -112,3 +112,11 @@ function shouldGenerateGLError(ctx, glError, evalStr) {
             testPassed(evalStr + " generated expected GL error: " + getGLErrorAsString(ctx, glError) + ".");
     }
 }
+
+function assertMsg(assertion, msg) {
+    if (assertion) {
+        testPassed(msg);
+     } else {
+        testFailed(msg);
+     }
+}

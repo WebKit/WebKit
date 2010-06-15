@@ -3,7 +3,7 @@
 <html>
   <head>
     <title>WebGL Non-Power of 2 texture conformance test.</title>
-    <link rel="stylesheet" href="../../js//resources/js-test-style.css"/>
+    <link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
     <script src="../../js/resources/js-test-pre.js"></script>
     <script src="resources/utils3d.js"> </script>
 </head>
@@ -33,14 +33,6 @@
     </script>
 
     <script>
-        function assertMsg(assertion, msg) {
-            if (assertion) {
-                testPassed(msg);
-            } else {
-                testFailed(msg);
-            }
-        }
-
         function init()
         {
             if (window.layoutTestController) {

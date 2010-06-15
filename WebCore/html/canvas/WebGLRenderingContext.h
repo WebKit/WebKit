@@ -443,6 +443,10 @@ class WebKitCSSMatrix;
         // used only to warn about use of obsolete functions.
         void printWarningToConsole(const String& message);
 
+        // Helper function to validate input parameters for framebuffer functions.
+        // Generate GL error if parameters are illegal.
+        bool validateFramebufferFuncParameters(unsigned long target, unsigned long attachment);
+
         friend class WebGLStateRestorer;
     };
 
