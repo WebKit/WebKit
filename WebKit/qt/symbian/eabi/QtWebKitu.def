@@ -780,3 +780,5 @@ EXPORTS
 	_ZN23DumpRenderTreeSupportQt12isTargetItemERK15QWebHistoryItem @ 779 NONAME
 	_ZN23DumpRenderTreeSupportQt17historyItemTargetERK15QWebHistoryItem @ 780 NONAME
 	_ZN23DumpRenderTreeSupportQt20getChildHistoryItemsERK15QWebHistoryItem @ 781 NONAME
+	_ZN23DumpRenderTreeSupportQt23setMockGeolocationErrorEiRK7QString @ 782 NONAME
+	_ZN23DumpRenderTreeSupportQt26setMockGeolocationPositionEddd @ 783 NONAME
