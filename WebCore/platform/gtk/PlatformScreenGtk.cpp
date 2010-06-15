@@ -72,7 +72,7 @@ int screenDepth(Widget* widget)
     GdkVisual* visual = getVisual(widget);
     if (!visual)
         return 24;
-    return visual->depth;
+    return gdk_visual_get_depth(visual);
 }
 
 int screenDepthPerComponent(Widget* widget)
@@ -81,7 +81,7 @@ int screenDepthPerComponent(Widget* widget)
     if (!visual)
         return 8;
 
-    return visual->bits_per_rgb;
+    return gdk_visual_get_bits_per_rgb(visual);
 }
 
 bool screenIsMonochrome(Widget* widget)

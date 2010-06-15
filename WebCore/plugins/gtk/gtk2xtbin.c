@@ -271,6 +271,9 @@ gtk_xtbin_realize (GtkWidget *widget)
 {
   GtkXtBin     *xtbin;
   GtkAllocation allocation = { 0, 0, 200, 200 };
+#if GTK_CHECK_VERSION(2, 18, 0)
+  GtkAllocation widget_allocation;
+#endif
   gint  x, y, w, h, d; /* geometry of window */
 
 #ifdef DEBUG_XTBIN
@@ -291,8 +294,14 @@ gtk_xtbin_realize (GtkWidget *widget)
   printf("initial allocation %d %d %d %d\n", x, y, w, h);
 #endif
 
+#if GTK_CHECK_VERSION(2, 18, 0)
+  gtk_widget_get_allocation(widget, &widget_allocation);
+  xtbin->width = widget_allocation.width;
+  xtbin->height = widget_allocation.height;
+#else
   xtbin->width = widget->allocation.width;
   xtbin->height = widget->allocation.height;
+#endif
 
   /* use GtkSocket's realize */
   (*GTK_WIDGET_CLASS(parent_class)->realize)(widget);
@@ -333,7 +342,7 @@ gtk_xtbin_new (GdkWindow *parent_window, String * f)
   xt_client_init(&(xtbin->xtclient), 
       GDK_VISUAL_XVISUAL(gdk_rgb_get_visual()),
       GDK_COLORMAP_XCOLORMAP(gdk_rgb_get_colormap()),
-      gdk_rgb_get_visual()->depth);
+      gdk_visual_get_depth(gdk_rgb_get_visual()));
 
   if (!xtbin->xtclient.xtdisplay) {
     /* If XtOpenDisplay failed, we can't go any further.
@@ -404,7 +413,7 @@ gtk_xtbin_set_position (GtkXtBin *xtbin,
   xtbin->y = y;
 
   if (gtk_widget_get_realized (GTK_WIDGET(xtbin)))
-    gdk_window_move (GTK_WIDGET (xtbin)->window, x, y);
+    gdk_window_move (gtk_widget_get_window(GTK_WIDGET (xtbin)), x, y);
 }
 
 void
@@ -457,7 +466,7 @@ gtk_xtbin_unrealize (GtkWidget *object)
   xtbin = GTK_XTBIN(object);
   widget = GTK_WIDGET(object);
 
-  GTK_WIDGET_UNSET_FLAGS (widget, GTK_VISIBLE);
+  gtk_widget_set_visible(widget, FALSE);
   if (gtk_widget_get_realized (widget)) {
     xt_client_unrealize(&(xtbin->xtclient));
   }

@@ -799,17 +799,24 @@ static gboolean webkit_web_view_focus_out_event(GtkWidget* widget, GdkEventFocus
 
 static void webkit_web_view_realize(GtkWidget* widget)
 {
-    GTK_WIDGET_SET_FLAGS(widget, GTK_REALIZED);
+    gtk_widget_set_realized(widget, TRUE);
+
+    GtkAllocation allocation;
+#if GTK_CHECK_VERSION(2, 18, 0)
+    gtk_widget_get_allocation(widget, &allocation);
+#else
+    allocation = widget->allocation;
+#endif
 
     GdkWindowAttr attributes;
     attributes.window_type = GDK_WINDOW_CHILD;
-    attributes.x = widget->allocation.x;
-    attributes.y = widget->allocation.y;
-    attributes.width = widget->allocation.width;
-    attributes.height = widget->allocation.height;
+    attributes.x = allocation.x;
+    attributes.y = allocation.y;
+    attributes.width = allocation.width;
+    attributes.height = allocation.height;
     attributes.wclass = GDK_INPUT_OUTPUT;
-    attributes.visual = gtk_widget_get_visual (widget);
-    attributes.colormap = gtk_widget_get_colormap (widget);
+    attributes.visual = gtk_widget_get_visual(widget);
+    attributes.colormap = gtk_widget_get_colormap(widget);
     attributes.event_mask = GDK_VISIBILITY_NOTIFY_MASK
                             | GDK_EXPOSURE_MASK
                             | GDK_BUTTON_PRESS_MASK
@@ -823,15 +830,20 @@ static void webkit_web_view_realize(GtkWidget* widget)
                             | GDK_BUTTON3_MOTION_MASK;
 
     gint attributes_mask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL | GDK_WA_COLORMAP;
-    widget->window = gdk_window_new(gtk_widget_get_parent_window (widget), &attributes, attributes_mask);
-    gdk_window_set_user_data(widget->window, widget);
+    GdkWindow* window = gdk_window_new(gtk_widget_get_parent_window(widget), &attributes, attributes_mask);
+    gtk_widget_set_window(widget, window);
+    gdk_window_set_user_data(window, widget);
 
-    widget->style = gtk_style_attach(widget->style, widget->window);
-    gtk_style_set_background(widget->style, widget->window, GTK_STATE_NORMAL);
+#if GTK_CHECK_VERSION(2, 20, 0)
+    gtk_widget_style_attach(widget);
+#else
+    widget->style = gtk_style_attach(gtk_widget_get_style(widget), window);
+#endif
+    gtk_style_set_background(gtk_widget_get_style(widget), window, GTK_STATE_NORMAL);
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
     WebKitWebViewPrivate* priv = webView->priv;
-    gtk_im_context_set_client_window(priv->imContext, widget->window);
+    gtk_im_context_set_client_window(priv->imContext, window);
 }
 
 static void webkit_web_view_set_scroll_adjustments(WebKitWebView* webView, GtkAdjustment* hadj, GtkAdjustment* vadj)
@@ -970,7 +982,7 @@ static gboolean webkit_web_view_script_dialog(WebKitWebView* webView, WebKitWebF
     if (type == WEBKIT_SCRIPT_DIALOG_PROMPT) {
         entry = gtk_entry_new();
         gtk_entry_set_text(GTK_ENTRY(entry), defaultValue);
-        gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), entry);
+        gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), entry);
         gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
         gtk_widget_show(entry);
     }
@@ -1312,7 +1324,7 @@ static void webkit_web_view_drag_end(GtkWidget* widget, GdkDragContext* context)
     event->button.state = modifiers;
 
     PlatformMouseEvent platformEvent(&event->button);
-    frame->eventHandler()->dragSourceEndedAt(platformEvent, gdkDragActionToDragOperation(context->action));
+    frame->eventHandler()->dragSourceEndedAt(platformEvent, gdkDragActionToDragOperation(gdk_drag_context_get_selected_action(context)));
 
     gdk_event_free(event);
 }
@@ -2882,7 +2894,7 @@ static void webkit_web_view_init(WebKitWebView* webView)
     g_object_ref_sink(priv->horizontalAdjustment);
     g_object_ref_sink(priv->verticalAdjustment);
 
-    GTK_WIDGET_SET_FLAGS(webView, GTK_CAN_FOCUS);
+    gtk_widget_set_can_focus(GTK_WIDGET(webView), TRUE);
     priv->mainFrame = WEBKIT_WEB_FRAME(webkit_web_frame_new(webView));
     priv->lastPopupXPosition = priv->lastPopupYPosition = -1;
     priv->editable = false;

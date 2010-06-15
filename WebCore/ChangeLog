@@ -1,5 +1,35 @@
 2010-06-15  Xan Lopez  <xlopez@igalia.com>
 
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Does not compile with -DGSEAL_ENABLE
+        https://bugs.webkit.org/show_bug.cgi?id=37851
+
+        Fix compilation with GSEAL_ENABLE.
+
+        * platform/gtk/GtkVersioning.h:
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::screenDepth):
+        (WebCore::screenDepthPerComponent):
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenu::show):
+        * platform/gtk/ScrollbarGtk.cpp:
+        (ScrollbarGtk::detachAdjustment):
+        (ScrollbarGtk::updateThumbPosition):
+        (ScrollbarGtk::updateThumbProportion):
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::initXEvent):
+        (WebCore::PluginView::platformGetValue):
+        (WebCore::PluginView::platformStart):
+        * plugins/gtk/gtk2xtbin.c:
+        (gtk_xtbin_realize):
+        (gtk_xtbin_new):
+        (gtk_xtbin_set_position):
+        (gtk_xtbin_unrealize):
+
+2010-06-15  Xan Lopez  <xlopez@igalia.com>
+
         Unreviewed build fix.
 
         Fix the build when WebSockets are disabled.

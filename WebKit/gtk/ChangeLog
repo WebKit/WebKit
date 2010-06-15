@@ -1,3 +1,23 @@
+2010-06-15  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Does not compile with -DGSEAL_ENABLE
+        https://bugs.webkit.org/show_bug.cgi?id=37851
+
+        Fix compilation with GSEAL_ENABLE.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::pageRect):
+        (WebKit::ChromeClient::contentsSizeChanged):
+        * tests/testdomnode.c:
+        (test_dom_node_insertion):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_realize):
+        (webkit_web_view_script_dialog):
+        (webkit_web_view_drag_end):
+        (webkit_web_view_init):
+
 2010-06-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed build fix.
