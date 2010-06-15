@@ -1,3 +1,21 @@
+2010-06-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Not reviewed, just moving tests.
+
+        Increase limit on number of (i)frames from 200 to 1000.
+        https://bugs.webkit.org/show_bug.cgi?id=39427
+
+        Move the new tests out of compositing directory.
+
+        * compositing/iframes/lots-of-objects-expected.txt: Removed.
+        * compositing/iframes/lots-of-objects.html: Removed.
+        * compositing/iframes/remove-iframe-crash-expected.txt: Removed.
+        * compositing/iframes/remove-iframe-crash.html: Removed.
+        * fast/frames/lots-of-objects-expected.txt: Copied from LayoutTests/compositing/iframes/lots-of-objects-expected.txt.
+        * fast/frames/lots-of-objects.html: Copied from LayoutTests/compositing/iframes/lots-of-objects.html.
+        * fast/frames/remove-iframe-crash-expected.txt: Copied from LayoutTests/compositing/iframes/remove-iframe-crash-expected.txt.
+        * fast/frames/remove-iframe-crash.html: Copied from LayoutTests/compositing/iframes/remove-iframe-crash.html.
+
 2010-06-15  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
