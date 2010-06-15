@@ -613,8 +613,9 @@ SOURCES += \
     html/HTML5EntityParser.cpp \
     html/HTML5Lexer.cpp \
     html/HTML5DocumentParser.cpp \
-    html/HTML5TreeBuilder.cpp \
+    html/HTML5PreloadScanner.cpp \
     html/HTML5ScriptRunner.cpp \
+    html/HTML5TreeBuilder.cpp \
     html/HTMLAllCollection.cpp \
     html/HTMLAnchorElement.cpp \
     html/HTMLAppletElement.cpp \

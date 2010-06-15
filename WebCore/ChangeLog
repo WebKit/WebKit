@@ -2,6 +2,39 @@
 
         Reviewed by Eric Seidel.
 
+        Add a preload scanner for the HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=40557
+
+        This patch adds a simple preload scanner for the HTML5 parser.  This
+        preload scanner is not as awesome as the old one because it doesn't
+        scan CSS, but it's much simpler.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+            - Build file torture.
+        * html/HTML5DocumentParser.cpp:
+        (WebCore::HTML5DocumentParser::write):
+            - Call into the preload scanner when waiting for a script.
+        * html/HTML5DocumentParser.h:
+        * html/HTML5PreloadScanner.cpp: Copied from WebCore/html/PreloadScanner.cpp.
+        (WebCore::HTML5PreloadScanner::HTML5PreloadScanner):
+        (WebCore::HTML5PreloadScanner::scan):
+            - A simple loop to pump the preload scanner's lexer.
+        (WebCore::HTML5PreloadScanner::processToken):
+            - Preload interesting resources.  Stolen from the old preload
+              scanner.
+        (WebCore::HTML5PreloadScanner::scanningBody):
+        * html/HTML5PreloadScanner.h: Copied from WebCore/html/PreloadScanner.h.
+
+2010-06-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Constify some HTML5Token methods
         https://bugs.webkit.org/show_bug.cgi?id=40592
 

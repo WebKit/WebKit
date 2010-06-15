@@ -40,6 +40,7 @@ class LegacyHTMLTreeConstructor;
 class HTML5Lexer;
 class HTML5ScriptRunner;
 class HTML5TreeBuilder;
+class HTML5PreloadScanner;
 class ScriptController;
 class ScriptSourceCode;
 
@@ -183,6 +184,7 @@ private:
     OwnPtr<HTML5Lexer> m_lexer;
     OwnPtr<HTML5ScriptRunner> m_scriptRunner;
     OwnPtr<HTML5TreeBuilder> m_treeConstructor;
+    OwnPtr<HTML5PreloadScanner> m_preloadScanner;
     bool m_endWasDelayed;
     int m_writeNestingLevel;
 };

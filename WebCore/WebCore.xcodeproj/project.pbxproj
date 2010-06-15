@@ -2546,6 +2546,8 @@
 		97DCE20210807C750057D394 /* HistoryController.h in Headers */ = {isa = PBXBuildFile; fileRef = 97DCE20010807C750057D394 /* HistoryController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97DD4D840FDF4D6D00ECF9A4 /* XSSAuditor.cpp */; };
 		97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 97DD4D850FDF4D6E00ECF9A4 /* XSSAuditor.h */; };
+		97E7936511C6030900E649BC /* HTML5PreloadScanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E7936311C6030900E649BC /* HTML5PreloadScanner.cpp */; };
+		97E7936611C6030900E649BC /* HTML5PreloadScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E7936411C6030900E649BC /* HTML5PreloadScanner.h */; };
 		97E8B35611A23CE200169409 /* HTML5Lexer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E8B35411A23CE200169409 /* HTML5Lexer.cpp */; };
 		97E8B35711A23CE200169409 /* HTML5Lexer.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E8B35511A23CE200169409 /* HTML5Lexer.h */; };
 		97E8B3C311A2890800169409 /* HTML5Token.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E8B3C211A2890800169409 /* HTML5Token.h */; };
@@ -8121,6 +8123,8 @@
 		97DCE20010807C750057D394 /* HistoryController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryController.h; sourceTree = "<group>"; };
 		97DD4D840FDF4D6D00ECF9A4 /* XSSAuditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSSAuditor.cpp; sourceTree = "<group>"; };
 		97DD4D850FDF4D6E00ECF9A4 /* XSSAuditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSSAuditor.h; sourceTree = "<group>"; };
+		97E7936311C6030900E649BC /* HTML5PreloadScanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTML5PreloadScanner.cpp; sourceTree = "<group>"; };
+		97E7936411C6030900E649BC /* HTML5PreloadScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTML5PreloadScanner.h; sourceTree = "<group>"; };
 		97E8B35411A23CE200169409 /* HTML5Lexer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTML5Lexer.cpp; sourceTree = "<group>"; };
 		97E8B35511A23CE200169409 /* HTML5Lexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTML5Lexer.h; sourceTree = "<group>"; };
 		97E8B3C211A2890800169409 /* HTML5Token.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTML5Token.h; sourceTree = "<group>"; };
@@ -13414,6 +13418,8 @@
 				976E895F11C0CA3A00EA9CA9 /* HTML5EntityParser.h */,
 				97E8B35411A23CE200169409 /* HTML5Lexer.cpp */,
 				97E8B35511A23CE200169409 /* HTML5Lexer.h */,
+				97E7936311C6030900E649BC /* HTML5PreloadScanner.cpp */,
+				97E7936411C6030900E649BC /* HTML5PreloadScanner.h */,
 				A83B3AEE11ADEFF500458809 /* HTML5ScriptRunner.cpp */,
 				A83B3AEF11ADEFF500458809 /* HTML5ScriptRunner.h */,
 				A87F163411AE841300CBB2E5 /* HTML5ScriptRunnerHost.h */,
@@ -19398,6 +19404,7 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 				CE172E011136E8CE0062A533 /* ZoomMode.h in Headers */,
+				97E7936611C6030900E649BC /* HTML5PreloadScanner.h in Headers */,
 				B6693EEC11AD63E6003F2770 /* IDBObjectStore.h in Headers */,
 				B6693EEE11AD63E6003F2770 /* IDBObjectStoreRequest.h in Headers */,
 				B6693EF311AD6486003F2770 /* JSIDBObjectStoreRequest.h in Headers */,
@@ -21699,6 +21706,7 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
+				97E7936511C6030900E649BC /* HTML5PreloadScanner.cpp in Sources */,
 				BC275B7911C5D1C300C9206C /* JSWebKitPointCustom.cpp in Sources */,
 				BC275B7D11C5D23500C9206C /* JSWebKitCSSMatrixCustom.cpp in Sources */,
 				BC275B8111C5D2B400C9206C /* JSEventSourceCustom.cpp in Sources */,

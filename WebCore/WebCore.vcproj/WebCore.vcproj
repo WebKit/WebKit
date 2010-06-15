@@ -33333,6 +33333,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\HTML5PreloadScanner.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HTML5PreloadScanner.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\HTML5ScriptRunner.cpp"
 				>
 			</File>
