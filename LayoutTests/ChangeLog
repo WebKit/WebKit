@@ -1,3 +1,12 @@
+2010-06-15  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, test fix.
+
+        Fix test breakage from 40175
+        https://bugs.webkit.org/show_bug.cgi?id=40631
+
+        * fast/canvas/webgl/texture-npot.html:
+
 2010-06-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
