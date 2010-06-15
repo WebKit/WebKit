@@ -1,3 +1,10 @@
+2010-06-14  Anders Carlsson  <andersca@apple.com>
+
+        Fix Chromium build.
+
+        * src/WebPluginListBuilderImpl.cpp:
+        (WebKit::WebPluginListBuilderImpl::addFileExtensionToLastMediaType):
+
 2010-06-14  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.
