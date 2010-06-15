@@ -2907,3 +2907,6 @@ BUGDIMICH MAC WIN LINUX : tables/mozilla/marvin/x_tr_align_justify.xml = IMAGE
 // Fails starting http://trac.webkit.org/changeset/61153
 // Needs update to test_shell.
 BUG46538 MAC WIN LINUX : editing/deleting/forward-delete-key.html = TEXT
+
+// New test, fails on Chromium. Added by http://trac.webkit.org/changeset/61172.
+BUG46553 MAC LINUX WIN : media/media-can-play-mp3.html = TEXT

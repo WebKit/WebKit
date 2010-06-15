@@ -1,3 +1,9 @@
+2010-06-14  Dmitry Titov  <dimich@chromium.org>
+
+        Not reviewed, update Chromium expectations for a new test.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-06-14  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed, fix GTK and Qt builds.
