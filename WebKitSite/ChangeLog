@@ -1,3 +1,23 @@
+2010-06-14  Adam Roben  <aroben@apple.com>
+
+        Improve instructions for debugging on Windows
+
+        Fixes <http://webkit.org/b/40585>.
+
+        Reviewed by Steve Falkenburg.
+
+        * building/debug.html: Improved the Windows instructions. We now
+        instruct users to set things up so that hitting F5 from WebKit.sln
+        will launch Safari with the WEBKITNIGHTLY environment variable
+        pointing to the location of the built WebKit.dll.
+
+        * building/console_vs2005.jpg: Removed.
+        * building/debug_vs2005.jpg: Removed.
+
+        * building/launch-debugger-vs2005.png: Added.
+        * building/set-as-startup-project-vs2005.png: Added.
+        * building/set-debugging-properties-vs2005.png: Added.
+
 2010-06-07  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Darin Adler.

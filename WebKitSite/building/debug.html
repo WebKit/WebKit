@@ -37,24 +37,43 @@
 </div>
 <div class="windows-instructions">
 <h2>Debugging on Windows</h2>
-<p>To launch Safari in the Visual Studio or Visual C++ Express debugger, simply run:</p>
-<p class="code">debug-safari</p>
-<p>This command will launch the Visual Studio debugging environment, and attach to Safari connected to the debug build of WebKit.dll.  There are a few things to keep in mind:</p>
-<ul>
-<li>The instance of Safari is not running yet.  You must press the F5 key (or the 'Run' button) to see anything happen.</li>
-<li>If you want to set any breakpoints, you must navigate to the particular source file you wish to investigate using the "File|Open" menu.</li>
-<li><p>If you want to see the helpful output debug messages, you should edit the debug settings for the Safari solution (i.e., the pseudo-project created when the debugger attached to Safari):</p>
-<img src="debug_vs2005.jpg">
-<p>You should consider including the command-line switch '<span class="code">/console</span>'.  This causes Safari to run with an open DOS shell in which output messages, created with the <span class="code">LOG</span> macro, appear.</p>
-<img src="console_vs2005.jpg"></li>
-</ul>
-<p>Alternatively, you can build, run, and debug WebKit from inside Visual Studio by opening the solution file:</p>
 <ol>
-<li>Launch Visual Studio.</li>
-<li>Select the 'File' menu, then 'Open' > 'Project / Solution...'. Select the WebKit/win/WebKit.vcproj/WebKit.sln file and click 'Open'.</li>
-<li>Right-click on 'Solution "WebKit"' in the Solution Explorer and select 'Properties'. Under 'Common Properties' > 'Startup Project', 'Single Startup Project' should be set to 'WebKit'.</li>
-<li>Right-click on the 'WebKit' project in the Solution Explorer and select 'Properties'. Under 'Configuration Properties' > 'Debugging', make sure 'Command' and 'Working Directory' are set as shown above.</li>
-<li>To build, select the 'Build' menu, then 'Build Solution'. To run, select the 'Debug' menu, then 'Start Debugging'.</li>
+<li><p>Run the <code>set-apple-windows-environment-variables</code> script.</p>
+<p>This script sets the <code>WebKitOutputDir</code> and
+<code>WebKitLibrariesDir</code> environment variables, which WebKit.sln depends
+on. (You only need to run this script once; the environment variables will
+&ldquo;stick&rdquo;.)</p>
+</li>
+<li><p>Relaunch Cygwin.</p>
+<p>This ensures that the environment variables set by the script will take
+effect.</p>
+</li>
+<li><p>Open <code>WebKit/WebKit/win/WebKit.vcproj/WebKit.sln</code></p>
+<p>You can open it in either Visual Studio 2005, or Visual C++ Express 2005.
+Make sure you launched Visual Studio or Visual C++ Express after running
+<code>set-apple-windows-environment-variables</code>.</p>
+</li>
+<li><p>Set WebKit.vcproj as the solution's StartUp project</p>
+<p>Select the WebKit project in the Solution Explorer, then choose Project >
+Set as StartUp Project. This will cause the project to turn bold in the
+Solution Explorer.</p>
+<img src="set-as-startup-project-vs2005.png">
+</li>
+<li><p>Set WebKit.vcproj's Debugging properties</p>
+<p>With the WebKit project selected, choose Project > Properties, then navigate
+to Configuration Properties > Debugging. Set the following options:</p>
+<dl>
+    <dt>Command</dt>
+    <dd><code>$(PROGRAMFILES)\Safari\Safari.exe</code></dd>
+    <dt>Environment</dt>
+    <dd><code>WEBKITNIGHTLY=$(OutDir)</code></dd>
+</dl>
+<p>Then click <code>OK</code> to close the properties dialog.</p>
+<img src="set-debugging-properties-vs2005.png">
+</li>
+<li><p>Launch the debugger</p>
+<p>Choose Debug > Start Debugging.</p>
+<img src="launch-debugger-vs2005.png">
 </ol>
 <p>It is also recommended that you follow <a href="http://developer.apple.com/internet/safari/windows_symbols_agree.html">the instructions to configure Visual Studio to use Apple's Safari for Windows symbol server</a>. This will give Visual Studio the information it needs to provide reliable backtraces when pausing in the debugger or when a crash occurs.</p>
 </div>
