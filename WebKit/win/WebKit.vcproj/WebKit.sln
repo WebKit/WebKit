@@ -66,7 +66,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QTMovieWin", "..\..\..\WebCore\WebCore.vcproj\QTMovieWin.vcproj", "{E498CA9D-3BD2-4D52-8E37-C8DC76526325}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0A324352-B3B6-496C-9E5B-4C7E923E628B} = {0A324352-B3B6-496C-9E5B-4C7E923E628B}
-		{011D10F1-B656-4A1B-A0C3-3842F02122C5} = {011D10F1-B656-4A1B-A0C3-3842F02122C5}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WinLauncher", "..\..\..\WebKitTools\WinLauncher\WinLauncher.vcproj", "{114FCA11-216B-4C8C-957E-30A75AE80443}"
@@ -84,6 +83,11 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKitAPITest", "..\..\..\WebKitTools\WebKitAPITest\WebKitAPITest.vcproj", "{626089A3-25D3-4883-A96C-B8C66E036397}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6567DFD4-D6DE-4CD5-825D-17E353D160E1} = {6567DFD4-D6DE-4CD5-825D-17E353D160E1}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKitLauncherWin", "..\..\..\WebKitTools\WebKitLauncherWin\WebKitLauncherWin.vcproj", "{D09806DB-E58B-4646-8C9B-61101906C1E2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{626089A3-25D3-4883-A96C-B8C66E036397} = {626089A3-25D3-4883-A96C-B8C66E036397}
 	EndProjectSection
 EndProject
 Global
@@ -236,6 +240,14 @@ Global
 		{626089A3-25D3-4883-A96C-B8C66E036397}.Release_Cairo|Win32.Build.0 = Debug|Win32
 		{626089A3-25D3-4883-A96C-B8C66E036397}.Release|Win32.ActiveCfg = Debug|Win32
 		{626089A3-25D3-4883-A96C-B8C66E036397}.Release|Win32.Build.0 = Debug|Win32
+		{D09806DB-E58B-4646-8C9B-61101906C1E2}.Debug_Cairo|Win32.ActiveCfg = Release|Win32
+		{D09806DB-E58B-4646-8C9B-61101906C1E2}.Debug_Cairo|Win32.Build.0 = Release|Win32
+		{D09806DB-E58B-4646-8C9B-61101906C1E2}.Debug|Win32.ActiveCfg = Release|Win32
+		{D09806DB-E58B-4646-8C9B-61101906C1E2}.Debug|Win32.Build.0 = Release|Win32
+		{D09806DB-E58B-4646-8C9B-61101906C1E2}.Release_Cairo|Win32.ActiveCfg = Release|Win32
+		{D09806DB-E58B-4646-8C9B-61101906C1E2}.Release_Cairo|Win32.Build.0 = Release|Win32
+		{D09806DB-E58B-4646-8C9B-61101906C1E2}.Release|Win32.ActiveCfg = Release|Win32
+		{D09806DB-E58B-4646-8C9B-61101906C1E2}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

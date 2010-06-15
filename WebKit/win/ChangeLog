@@ -1,3 +1,16 @@
+2010-06-14  Adam Roben  <aroben@apple.com>
+
+        Add WebKitLauncherWin to WebKit.sln
+
+        Fixes <http://webkit.org/b/40583>.
+
+        Reviewed by Darin Adler.
+
+        * WebKit.vcproj/WebKit.sln: Added WebKitLauncherWin.vcproj. It depends
+        on WebKitAPITest, so is the last project to build. (Also removed
+        QTMovieWin's direct dependency on JavaScriptCore, since it already has
+        an indirect dependency on it.)
+
 2010-06-14  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
