@@ -1,3 +1,16 @@
+2010-06-15  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] The qt_webkit_version.pri file gets overwritten on install
+        https://bugs.webkit.org/show_bug.cgi?id=40487
+
+        Don't install qt_webkit_version.pri when building WebKit inside of Qt.
+        The import of WebKit into Qt will take care of providing the file
+        in mkspecs/modules and it'll be installed through projects.pro.
+
+        * WebCore.pro:
+
 2010-06-15  Tony Chang  <tony@chromium.org>
 
         Reviewed by Ojan Vafai.
