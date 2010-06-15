@@ -628,8 +628,8 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     add32(Imm32(1), AbsoluteAddress(newStructure->addressOfCount()));
     storePtr(ImmPtr(newStructure), Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)));
     
-    load32(Address(stackPointerRegister, offsetof(struct JITStackFrame, args[2]) + sizeof(void*)), regT3);
-    load32(Address(stackPointerRegister, offsetof(struct JITStackFrame, args[2]) + sizeof(void*) + 4), regT2);
+    load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[2]) + sizeof(void*)), regT3);
+    load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[2]) + sizeof(void*) + 4), regT2);
     
     // Write the value
     compilePutDirectOffset(regT0, regT2, regT3, newStructure, cachedOffset);

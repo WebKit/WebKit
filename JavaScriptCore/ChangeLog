@@ -1,3 +1,16 @@
+2010-06-15  Gabor Loki  <loki@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Fix invalid access to non-static data member warning in JITPropertyAccess32_64 on ARM
+        https://bugs.webkit.org/show_bug.cgi?id=40423
+
+        Using OBJECT_OFFSETOF macro instead of objectof to bypass access to
+        non-static data member warning.
+
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+
 2010-06-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
