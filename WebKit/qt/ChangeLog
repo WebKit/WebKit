@@ -1,3 +1,10 @@
+2010-06-15  Darin Adler  <darin@apple.com>
+
+        Fix build.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::shouldClose): Call loader()->shouldClose().
+
 2010-06-15  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
