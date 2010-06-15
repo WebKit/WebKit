@@ -1,6 +1,13 @@
 2010-06-14  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.
+        Reorder build event to fix cygwin path issue.
+
+        * win/WebKit2Generated.vcproj:
+
+2010-06-14  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
         Add build failure stopping code.
 
         * win/WebKit2WebProcess.vcproj:
