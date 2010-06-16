@@ -28939,6 +28939,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\SVGTextChunkLayoutInfo.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\SVGTextChunkLayoutInfo.h"
 				>
 			</File>
@@ -28948,6 +28952,14 @@
 			</File>
 			<File
 				RelativePath="..\rendering\SVGTextLayoutUtilities.h"
+				>
+			</File>
+		 	<File
+				RelativePath="..\rendering\SVGTextQuery.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\SVGTextQuery.h"
 				>
 			</File>
 			<File

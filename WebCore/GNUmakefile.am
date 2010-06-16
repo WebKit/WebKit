@@ -3331,9 +3331,12 @@ webcore_sources += \
 	WebCore/rendering/SVGRootInlineBox.h \
 	WebCore/rendering/SVGShadowTreeElements.cpp \
 	WebCore/rendering/SVGShadowTreeElements.h \
+	WebCore/rendering/SVGTextChunkLayoutInfo.cpp \
 	WebCore/rendering/SVGTextChunkLayoutInfo.h \
 	WebCore/rendering/SVGTextLayoutUtilities.cpp \
 	WebCore/rendering/SVGTextLayoutUtilities.h \
+	WebCore/rendering/SVGTextQuery.cpp \
+	WebCore/rendering/SVGTextQuery.h \
 	WebCore/rendering/style/SVGRenderStyle.cpp \
 	WebCore/rendering/style/SVGRenderStyle.h \
 	WebCore/rendering/style/SVGRenderStyleDefs.cpp \

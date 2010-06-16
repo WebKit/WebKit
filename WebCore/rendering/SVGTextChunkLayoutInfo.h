@@ -24,6 +24,7 @@
 
 #if ENABLE(SVG)
 #include "AffineTransform.h"
+#include "SVGRenderStyle.h"
 #include "SVGTextContentElement.h"
 
 #include <wtf/Assertions.h>

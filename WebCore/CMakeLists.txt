@@ -1498,7 +1498,9 @@ IF (ENABLE_SVG)
         rendering/SVGRenderTreeAsText.cpp
         rendering/SVGRootInlineBox.cpp
         rendering/SVGShadowTreeElements.cpp
+        rendering/SVGTextChunkLayoutInfo.cpp
         rendering/SVGTextLayoutUtilities.cpp
+        rendering/SVGTextQuery.cpp
         rendering/style/SVGRenderStyle.cpp
         rendering/style/SVGRenderStyleDefs.cpp
         svg/ColorDistance.cpp

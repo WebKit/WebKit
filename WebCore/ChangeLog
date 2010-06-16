@@ -2,6 +2,74 @@
 
         Reviewed by Dirk Schulze.
 
+        Add new files, needed in SVG Text rewrite
+        https://bugs.webkit.org/show_bug.cgi?id=40676
+
+        Land SVGTextChunkLayoutInfo.cpp and SVGTextQuery.(cpp|h), both with an "#if 0" on top, as they will be needed
+        in a later patch, completing the SVG Text rewrite, that will enable them.
+
+        Doesn't affect any code for now, it should just reduce the review amount.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/SVGTextChunkLayoutInfo.cpp: Added.
+        (WebCore::cummulatedWidthOrHeightOfTextChunk):
+        (WebCore::cummulatedWidthOfTextChunk):
+        (WebCore::cummulatedHeightOfTextChunk):
+        (WebCore::calculateTextAnchorShiftForTextChunk):
+        (WebCore::applyTextAnchorToTextChunk):
+        (WebCore::calculateTextLengthCorrectionForTextChunk):
+        (WebCore::applyTextLengthCorrectionToTextChunk):
+        (WebCore::SVGTextChunkLayoutInfo::startTextChunk):
+        (WebCore::SVGTextChunkLayoutInfo::closeTextChunk):
+        (WebCore::SVGTextChunkLayoutInfo::buildTextChunks):
+        (WebCore::SVGTextChunkLayoutInfo::recursiveBuildTextChunks):
+        (WebCore::SVGTextChunkLayoutInfo::layoutTextChunks):
+        * rendering/SVGTextChunkLayoutInfo.h: Add missing include, otherwhise compiling SVGTextChunkLayoutInfo.cpp will fail.
+        * rendering/SVGTextQuery.cpp: Added.
+        (WebCore::SVGTextQuery::Data::Data):
+        (WebCore::flowBoxForRenderer):
+        (WebCore::mapLengthThroughChunkTransformation):
+        (WebCore::SVGTextQuery::SVGTextQuery):
+        (WebCore::SVGTextQuery::collectTextBoxesInFlowBox):
+        (WebCore::SVGTextQuery::executeQuery):
+        (WebCore::SVGTextQuery::mapStartAndLengthIntoChunkPartCoordinates):
+        (WebCore::SVGTextQuery::measureCharacterRange):
+        (WebCore::NumberOfCharactersData::NumberOfCharactersData):
+        (WebCore::SVGTextQuery::numberOfCharactersCallback):
+        (WebCore::SVGTextQuery::numberOfCharacters):
+        (WebCore::TextLengthData::TextLengthData):
+        (WebCore::SVGTextQuery::textLengthCallback):
+        (WebCore::SVGTextQuery::textLength):
+        (WebCore::SubStringLengthData::SubStringLengthData):
+        (WebCore::SVGTextQuery::subStringLengthCallback):
+        (WebCore::SVGTextQuery::subStringLength):
+        (WebCore::StartPositionOfCharacterData::StartPositionOfCharacterData):
+        (WebCore::SVGTextQuery::startPositionOfCharacterCallback):
+        (WebCore::SVGTextQuery::startPositionOfCharacter):
+        (WebCore::EndPositionOfCharacterData::EndPositionOfCharacterData):
+        (WebCore::SVGTextQuery::endPositionOfCharacterCallback):
+        (WebCore::SVGTextQuery::endPositionOfCharacter):
+        (WebCore::RotationOfCharacterData::RotationOfCharacterData):
+        (WebCore::SVGTextQuery::rotationOfCharacterCallback):
+        (WebCore::SVGTextQuery::rotationOfCharacter):
+        (WebCore::ExtentOfCharacterData::ExtentOfCharacterData):
+        (WebCore::SVGTextQuery::extentOfCharacterCallback):
+        (WebCore::SVGTextQuery::extentOfCharacter):
+        (WebCore::CharacterNumberAtPositionData::CharacterNumberAtPositionData):
+        (WebCore::SVGTextQuery::characterNumberAtPositionCallback):
+        (WebCore::SVGTextQuery::characterNumberAtPosition):
+        * rendering/SVGTextQuery.h: Added.
+
+2010-06-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
         Provide floating-point support for text selection framework
         https://bugs.webkit.org/show_bug.cgi?id=40665
 

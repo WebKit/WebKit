@@ -90,6 +90,9 @@
 		084D2834110A7FCB0038239A /* SVGAnimatedPropertyTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 084D2832110A7FCB0038239A /* SVGAnimatedPropertyTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		084DBAA10ED39D360038C226 /* WMLVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 084DBA9D0ED39D350038C226 /* WMLVariables.cpp */; };
 		084DBAA20ED39D360038C226 /* WMLVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = 084DBA9E0ED39D360038C226 /* WMLVariables.h */; };
+		0853D73211C9109000B2FD42 /* SVGTextChunkLayoutInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0853D72F11C9108F00B2FD42 /* SVGTextChunkLayoutInfo.cpp */; };
+		0853D73311C9109000B2FD42 /* SVGTextQuery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0853D73011C9109000B2FD42 /* SVGTextQuery.cpp */; };
+		0853D73411C9109000B2FD42 /* SVGTextQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = 0853D73111C9109000B2FD42 /* SVGTextQuery.h */; };
 		08563BB4117861780012B578 /* RenderSVGResourcePattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08563BB2117861770012B578 /* RenderSVGResourcePattern.cpp */; };
 		08563BB5117861780012B578 /* RenderSVGResourcePattern.h in Headers */ = {isa = PBXBuildFile; fileRef = 08563BB3117861770012B578 /* RenderSVGResourcePattern.h */; };
 		08563BD0117865F50012B578 /* RenderSVGResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08563BCF117865F50012B578 /* RenderSVGResource.cpp */; };
@@ -5605,6 +5608,9 @@
 		084D2832110A7FCB0038239A /* SVGAnimatedPropertyTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedPropertyTraits.h; sourceTree = "<group>"; };
 		084DBA9D0ED39D350038C226 /* WMLVariables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLVariables.cpp; sourceTree = "<group>"; };
 		084DBA9E0ED39D360038C226 /* WMLVariables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLVariables.h; sourceTree = "<group>"; };
+		0853D72F11C9108F00B2FD42 /* SVGTextChunkLayoutInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTextChunkLayoutInfo.cpp; sourceTree = "<group>"; };
+		0853D73011C9109000B2FD42 /* SVGTextQuery.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTextQuery.cpp; sourceTree = "<group>"; };
+		0853D73111C9109000B2FD42 /* SVGTextQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTextQuery.h; sourceTree = "<group>"; };
 		08563BB2117861770012B578 /* RenderSVGResourcePattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourcePattern.cpp; sourceTree = "<group>"; };
 		08563BB3117861770012B578 /* RenderSVGResourcePattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourcePattern.h; sourceTree = "<group>"; };
 		08563BCF117865F50012B578 /* RenderSVGResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResource.cpp; sourceTree = "<group>"; };
@@ -16506,9 +16512,12 @@
 				853CA9E50AEEC608002372DC /* SVGRootInlineBox.h */,
 				08DAB9C01103D9C1003E7ABA /* SVGShadowTreeElements.cpp */,
 				08DAB9C11103D9C1003E7ABA /* SVGShadowTreeElements.h */,
+				0853D72F11C9108F00B2FD42 /* SVGTextChunkLayoutInfo.cpp */,
 				0842BC801190147200C7D08F /* SVGTextChunkLayoutInfo.h */,
 				083F529711957FBE00653EBE /* SVGTextLayoutUtilities.cpp */,
 				083F529811957FBE00653EBE /* SVGTextLayoutUtilities.h */,
+				0853D73011C9109000B2FD42 /* SVGTextQuery.cpp */,
+				0853D73111C9109000B2FD42 /* SVGTextQuery.h */,
 				A8CFF04C0A154F09000A4234 /* TableLayout.h */,
 				AB014DE10E689A4300E10445 /* TextControlInnerElements.cpp */,
 				AB014DE20E689A4300E10445 /* TextControlInnerElements.h */,
@@ -19415,6 +19424,7 @@
 				B6B0540A11B68F10002564C5 /* IDBObjectStoreImpl.h in Headers */,
 				816C806911BE887E009A45E9 /* IDBKeyRange.h in Headers */,
 				816C80AF11BE990D009A45E9 /* JSIDBKeyRange.h in Headers */,
+				0853D73411C9109000B2FD42 /* SVGTextQuery.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21720,6 +21730,8 @@
 				B6B0540911B68F10002564C5 /* IDBObjectStoreImpl.cpp in Sources */,
 				816C806811BE887E009A45E9 /* IDBKeyRange.cpp in Sources */,
 				816C80B111BE9934009A45E9 /* JSIDBKeyRange.cpp in Sources */,
+				0853D73211C9109000B2FD42 /* SVGTextChunkLayoutInfo.cpp in Sources */,
+				0853D73311C9109000B2FD42 /* SVGTextQuery.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
