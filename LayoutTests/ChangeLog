@@ -5,6 +5,18 @@
         Enable HTML5 lexer
         https://bugs.webkit.org/show_bug.cgi?id=40650
 
+        I seem to have screwed up generating the updated expectation file.
+        This file is from the bots.
+
+        * platform/mac/tables/mozilla/images/adforce_imgis_com-expected.txt:
+
+2010-06-16  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Enable HTML5 lexer
+        https://bugs.webkit.org/show_bug.cgi?id=40650
+
         Revert unintentional change to expected results.  I have a different
         diff on my machine because I have some errant cookies.
 
