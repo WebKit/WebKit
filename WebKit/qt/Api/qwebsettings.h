@@ -74,8 +74,8 @@ public:
         LocalContentCanAccessFileUrls,
         TiledBackingStoreEnabled,
         FrameFlatteningEnabled,
-        WebGLEnabled,
-        SiteSpecificQuirksEnabled
+        SiteSpecificQuirksEnabled,
+        WebGLEnabled
     };
     enum WebGraphic {
         MissingImageGraphic,

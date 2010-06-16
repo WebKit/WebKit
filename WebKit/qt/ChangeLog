@@ -1,3 +1,13 @@
+2010-06-16  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        Swap WebGL and SiteSpecificQuirks attributes in the QWebSettings
+        enum, to allow for binary compatibility with qtwebkit-2.0, where
+        WebGL is not in the settings but SiteSpecificQuirks will be.
+
+        * Api/qwebsettings.h:
+
 2010-06-15  Darin Adler  <darin@apple.com>
 
         Fix build.
