@@ -1,5 +1,16 @@
 2010-06-16  Adam Roben  <aroben@apple.com>
 
+        Remove some CVS directories that snuck into Subversion
+
+        These were added back when the Mozilla tables tests were imported.
+
+        Rubber-stamped by Dan Berstein.
+
+        * tables/mozilla/images/CVS: Removed.
+        * tables/mozilla_expected_failures/images/CVS: Removed.
+
+2010-06-16  Adam Roben  <aroben@apple.com>
+
         Delete tables/mozilla/images/adforce_imgis_com.html and its associated
         results
 
