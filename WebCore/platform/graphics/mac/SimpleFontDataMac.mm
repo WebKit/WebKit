@@ -426,7 +426,7 @@ FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
     // FIXME: Custom fonts don't have NSFonts, so this function doesn't compute correct bounds for these on Tiger.
     if (!m_platformData.font())
         return boundingBox;
-    boundingBox = CGRectApplyAffineTransform([m_platformData.font() boundingRectForGlyph:glyph], CGAffineTransformMakeScale(1, -1));
+    boundingBox = CGRectApplyAffineTransform(NSRectToCGRect([m_platformData.font() boundingRectForGlyph:glyph]), CGAffineTransformMakeScale(1, -1));
 #endif
     if (m_syntheticBoldOffset)
         boundingBox.setWidth(boundingBox.width() + m_syntheticBoldOffset);
