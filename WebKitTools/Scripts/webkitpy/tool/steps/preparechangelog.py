@@ -65,7 +65,7 @@ class PrepareChangeLog(AbstractStep):
             return
         os.chdir(self._tool.scm().checkout_root)
         args = [self.port().script_path("prepare-ChangeLog")]
-        if state["bug_id"]:
+        if state.get("bug_id"):
             args.append("--bug=%s" % state["bug_id"])
         if self._options.email:
             args.append("--email=%s" % self._options.email)

@@ -98,6 +98,19 @@ If a bug id is provided, or one can be found in the ChangeLog land will update t
         }
 
 
+class LandCowboy(AbstractSequencedCommand):
+    name = "land-cowboy"
+    help_text = "Prepares a ChangeLog and lands the current working directory diff."
+    steps = [
+        steps.PrepareChangeLog,
+        steps.EditChangeLog,
+        steps.ConfirmDiff,
+        steps.Build,
+        steps.RunTests,
+        steps.Commit,
+    ]
+
+
 class AbstractPatchProcessingCommand(AbstractDeclarativeCommand):
     # Subclasses must implement the methods below.  We don't declare them here
     # because we want to be able to implement them with mix-ins.

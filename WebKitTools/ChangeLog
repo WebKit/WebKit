@@ -1,3 +1,13 @@
+2010-06-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add a hidden land-cowboy command to webkit-patch to help land quick
+        build fixes.
+
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+
 2010-06-16  Adam Roben  <aroben@apple.com>
 
         Convert console messages to UTF-8 before printing them
