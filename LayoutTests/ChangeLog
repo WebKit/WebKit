@@ -1,5 +1,16 @@
 2010-06-16  Eric Seidel  <eric@webkit.org>
 
+        Unreviewed.  Disabling a test which fails on Gtk for unexplained
+        reasons which are specific to the Gtk port.
+
+        Gtk pumps the HTML5Lexer an extra time, causing inspector/timeline-script-tag-1.html to fail
+        https://bugs.webkit.org/show_bug.cgi?id=40664
+
+        * platform/qt/Skipped:
+         - Skip the test until a Gtk person can take a look.
+
+2010-06-16  Eric Seidel  <eric@webkit.org>
+
         Unreviewed.  Disabling a test which due to a Qt decoding bug
         is now failing with the HTML5 lexer.
 
