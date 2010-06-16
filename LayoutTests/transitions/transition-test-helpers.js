@@ -121,7 +121,13 @@ function checkExpectedValue(expected, index)
                     break;
                 case CSSPrimitiveValue.CSS_RECT:
                     computedValue = computedStyle.getRectValue();
-                    pass = computedValue == expectedValue;
+                    computedValue = [computedValue.top.getFloatValue(CSSPrimitiveValue.CSS_NUMBER),
+                                     computedValue.right.getFloatValue(CSSPrimitiveValue.CSS_NUMBER),
+                                     computedValue.bottom.getFloatValue(CSSPrimitiveValue.CSS_NUMBER),
+                                     computedValue.left.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)];
+                     pass = true;
+                     for (var i = 0; i < 4; ++i)
+                         pass &= isCloseEnough(computedValue[i], expectedValue[i], tolerance);
                     break;
                 default:
                     computedValue = computedStyle.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);

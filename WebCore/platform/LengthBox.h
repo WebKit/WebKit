@@ -45,6 +45,14 @@ struct LengthBox {
         , m_bottom(Length(v, Fixed))
     {
     }
+
+    LengthBox(Length t, Length r, Length b, Length l)
+        : m_left(l)
+        , m_right(r)
+        , m_top(t)
+        , m_bottom(b)
+    {
+    }
     
     LengthBox(int t, int r, int b, int l)
         : m_left(Length(l, Fixed))

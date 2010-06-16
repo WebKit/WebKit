@@ -348,6 +348,26 @@
 
 2010-06-16  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Allow transitions and animations of clip: rect
+        https://bugs.webkit.org/show_bug.cgi?id=38130
+        
+        Make the CSS clip property animatable.
+
+        Test: transitions/clip-transition.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::blendFunc): New blend function for LengthBox
+        (WebCore::AnimationBase::ensurePropertyMap): Create a PropertyWrapper for LengthBoxes.
+
+        * platform/LengthBox.h:
+        (WebCore::LengthBox::LengthBox): New ctor that takes 4 length values.
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::setClip): New method that takes a LengthBox.
+
+2010-06-16  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Fix clipping via CSS clip: with composited descendants

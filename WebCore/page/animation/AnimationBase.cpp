@@ -191,6 +191,22 @@ static inline EVisibility blendFunc(const AnimationBase* anim, EVisibility from,
     return result > 0. ? VISIBLE : (to != VISIBLE ? to : from);
 }
 
+static inline LengthBox blendFunc(const AnimationBase* anim, const LengthBox& from, const LengthBox& to, double progress)
+{
+    // Length types have to match to animate
+    if (from.top().type() != to.top().type()
+        || from.right().type() != to.right().type()
+        || from.bottom().type() != to.bottom().type()
+        || from.left().type() != to.left().type())
+        return to;
+    
+    LengthBox result(blendFunc(anim, from.top(), to.top(), progress),
+                     blendFunc(anim, from.right(), to.right(), progress),
+                     blendFunc(anim, from.bottom(), to.bottom(), progress),
+                     blendFunc(anim, from.left(), to.left(), progress));
+    return result;
+}
+
 class PropertyWrapperBase;
 
 static void addShorthandProperties();
@@ -634,6 +650,8 @@ void AnimationBase::ensurePropertyMap()
         gPropertyWrappers->append(new PropertyWrapper<const IntSize&>(CSSPropertyBorderBottomRightRadius, &RenderStyle::borderBottomRightRadius, &RenderStyle::setBorderBottomRightRadius));
         gPropertyWrappers->append(new PropertyWrapper<EVisibility>(CSSPropertyVisibility, &RenderStyle::visibility, &RenderStyle::setVisibility));
         gPropertyWrappers->append(new PropertyWrapper<float>(CSSPropertyZoom, &RenderStyle::zoom, &RenderStyle::setZoom));
+
+        gPropertyWrappers->append(new PropertyWrapper<LengthBox>(CSSPropertyClip, &RenderStyle::clip, &RenderStyle::setClip));
         
 #if USE(ACCELERATED_COMPOSITING)
         gPropertyWrappers->append(new PropertyWrapperAcceleratedOpacity());
@@ -652,7 +670,6 @@ void AnimationBase::ensurePropertyMap()
         gPropertyWrappers->append(new PropertyWrapperMaybeInvalidColor(CSSPropertyBorderBottomColor, &RenderStyle::borderBottomColor, &RenderStyle::setBorderBottomColor));
         gPropertyWrappers->append(new PropertyWrapperMaybeInvalidColor(CSSPropertyOutlineColor, &RenderStyle::outlineColor, &RenderStyle::setOutlineColor));
 
-        // These are for shadows
         gPropertyWrappers->append(new PropertyWrapperShadow(CSSPropertyWebkitBoxShadow, &RenderStyle::boxShadow, &RenderStyle::setBoxShadow));
         gPropertyWrappers->append(new PropertyWrapperShadow(CSSPropertyTextShadow, &RenderStyle::textShadow, &RenderStyle::setTextShadow));
 

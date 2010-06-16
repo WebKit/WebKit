@@ -822,6 +822,7 @@ public:
     void setClipTop(Length v) { SET_VAR(visual, clip.m_top, v) }
     void setClipBottom(Length v) { SET_VAR(visual, clip.m_bottom, v) }
     void setClip(Length top, Length right, Length bottom, Length left);
+    void setClip(LengthBox box) { SET_VAR(visual, clip, box) }
 
     void setUnicodeBidi(EUnicodeBidi b) { noninherited_flags._unicodeBidi = b; }
 
