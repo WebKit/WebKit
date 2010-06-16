@@ -6,6 +6,12 @@
 
 2010-06-15  Dmitry Titov  <dimich@chromium.org>
 
+        Not reviewed, updating Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-06-15  Dmitry Titov  <dimich@chromium.org>
+
         Unreviewed, updating Chromium test expectations.
 
         Mark following tests SLOW so they won't fail on TIMEOUT in Debug:

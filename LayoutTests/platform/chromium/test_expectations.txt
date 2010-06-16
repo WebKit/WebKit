@@ -2908,6 +2908,9 @@ BUGDIMICH MAC WIN LINUX : tables/mozilla/marvin/x_th_align_justify.xml = IMAGE
 BUGDIMICH MAC WIN LINUX : tables/mozilla/marvin/x_thead_align_justify.xml = IMAGE
 BUGDIMICH MAC WIN LINUX : tables/mozilla/marvin/x_tr_align_justify.xml = IMAGE
 
+// Needs rebaseline
+BUGDIMICH WIN LINUX MAC : fast/repaint/positioned-document-element.html = IMAGE+TEXT IMAGE
+
 // Fails starting http://trac.webkit.org/changeset/61153
 // Needs update to test_shell.
 BUG46538 MAC WIN LINUX : editing/deleting/forward-delete-key.html = TEXT
