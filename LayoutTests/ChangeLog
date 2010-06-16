@@ -1,3 +1,9 @@
+2010-06-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, expectations tweak.
+
+        * platform/chromium/test_expectations.txt: Transferred a failure from downstream.
+
 2010-06-16  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
