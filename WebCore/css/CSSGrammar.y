@@ -778,19 +778,25 @@ page_selector:
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
         $$->m_tag = QualifiedName(nullAtom, $1, p->m_defaultNamespace);
+        $$->setForPage();
     }
     | IDENT pseudo_page {
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = $2;
-        if ($$)
+        if ($$) {
             $$->m_tag = QualifiedName(nullAtom, $1, p->m_defaultNamespace);
+            $$->setForPage();
+        }
     }
     | pseudo_page {
         $$ = $1;
+        if ($$)
+            $$->setForPage();
     }
     | /* empty */ {
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
+        $$->setForPage();
     }
     ;
 

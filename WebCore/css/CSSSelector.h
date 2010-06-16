@@ -39,6 +39,7 @@ namespace WebCore {
             , m_parsedNth(false)
             , m_isLastInSelectorList(false)
             , m_hasRareData(false)
+            , m_isForPage(false)
             , m_tag(anyQName())
         {
         }
@@ -50,6 +51,7 @@ namespace WebCore {
             , m_parsedNth(false)
             , m_isLastInSelectorList(false)
             , m_hasRareData(false)
+            , m_isForPage(false)
             , m_tag(qName)
         {
         }
@@ -253,6 +255,9 @@ namespace WebCore {
         void setLastInSelectorList() { m_isLastInSelectorList = true; }
         bool isSimple() const;
 
+        bool isForPage() const { return m_isForPage; }
+        void setForPage() { m_isForPage = true; }
+
         unsigned m_relation           : 3; // enum Relation
         mutable unsigned m_match      : 4; // enum Match
         mutable unsigned m_pseudoType : 8; // PseudoType
@@ -261,7 +266,9 @@ namespace WebCore {
         bool m_parsedNth              : 1; // Used for :nth-* 
         bool m_isLastInSelectorList   : 1;
         bool m_hasRareData            : 1;
+        bool m_isForPage              : 1;
 
+        unsigned specificityForPage();
         void extractPseudoType() const;
 
         struct RareData : Noncopyable {

@@ -93,6 +93,8 @@ public:
 
         PassRefPtr<RenderStyle> pseudoStyleForElement(PseudoId pseudo, Element* e, RenderStyle* parentStyle = 0, bool matchVisitedPseudoClass = false);
 
+        PassRefPtr<RenderStyle> styleForPage(int pageIndex);
+
         static PassRefPtr<RenderStyle> styleForDocument(Document*);
 
 #if ENABLE(DATAGRID)
@@ -180,6 +182,13 @@ public:
 
         template <bool firstPass>
         void applyDeclarations(bool important, int startIndex, int endIndex);
+
+        void matchPageRules(CSSRuleSet*, bool isLeftPage, bool isFirstPage, const String& pageName);
+        void matchPageRulesForList(CSSRuleDataList*, bool isLeftPage, bool isFirstPage, const String& pageName);
+        bool isLeftPage(int pageIndex) const;
+        bool isRightPage(int pageIndex) const { return !isLeftPage(pageIndex); }
+        bool isFirstPage(int pageIndex) const;
+        String pageName(int pageIndex) const;
         
         CSSRuleSet* m_authorStyle;
         CSSRuleSet* m_userStyle;

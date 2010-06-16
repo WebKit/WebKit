@@ -521,6 +521,32 @@ static bool parsePageParameters(JSContextRef context, int argumentCount, const J
     return true;
 }
 
+// Caller needs to delete[] propertyName.
+static bool parsePagePropertyParameters(JSContextRef context, int argumentCount, const JSValueRef* arguments, JSValueRef* exception, char*& propertyName, int& pageNumber)
+{
+    pageNumber = 0;
+    switch (argumentCount) {
+    case 2:
+        pageNumber = static_cast<float>(JSValueToNumber(context, arguments[1], exception));
+        if (*exception)
+            return false;
+        // Fall through.
+    case 1: {
+        JSRetainPtr<JSStringRef> propertyNameString(Adopt, JSValueToStringCopy(context, arguments[0], exception));
+        if (*exception)
+            return false;
+
+        size_t maxLength = JSStringGetMaximumUTF8CStringSize(propertyNameString.get());
+        propertyName = new char[maxLength + 1];
+        JSStringGetUTF8CString(propertyNameString.get(), propertyName, maxLength + 1);
+        return true;
+    }
+    case 0:
+    default:
+        return false;
+    }
+}
+
 static JSValueRef pageNumberForElementByIdCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     float pageWidthInPixels = 0;
@@ -546,6 +572,20 @@ static JSValueRef numberOfPagesCallback(JSContextRef context, JSObjectRef functi
 
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
     return JSValueMakeNumber(context, controller->numberOfPages(pageWidthInPixels, pageHeightInPixels));
+}
+
+static JSValueRef pagePropertyCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    char* propertyName = 0;
+    int pageNumber = 0;
+    if (!parsePagePropertyParameters(context, argumentCount, arguments, exception, propertyName, pageNumber))
+        return JSValueMakeUndefined(context);
+
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    JSValueRef value = JSValueMakeString(context, controller->pageProperty(propertyName, pageNumber).get());
+
+    delete[] propertyName;
+    return value;
 }
 
 static JSValueRef queueBackNavigationCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -1601,6 +1641,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "numberOfActiveAnimations", numberOfActiveAnimationsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "overridePreference", overridePreferenceCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "pageNumberForElementById", pageNumberForElementByIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "pageProperty", pagePropertyCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "pathToLocalResource", pathToLocalResourceCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "pauseAnimationAtTimeOnElementWithId", pauseAnimationAtTimeOnElementWithIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "pauseTransitionAtTimeOnElementWithId", pauseTransitionAtTimeOnElementWithIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

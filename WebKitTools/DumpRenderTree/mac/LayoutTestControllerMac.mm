@@ -212,6 +212,12 @@ int LayoutTestController::pageNumberForElementById(JSStringRef id, float pageWid
     return [mainFrame pageNumberForElement:element:pageWidthInPixels:pageHeightInPixels];
 }
 
+JSRetainPtr<JSStringRef> LayoutTestController::pageProperty(const char* propertyName, int pageNumber) const
+{
+    JSRetainPtr<JSStringRef> propertyValue(Adopt, JSStringCreateWithCFString((CFStringRef)[mainFrame pageProperty:propertyName:pageNumber]));
+    return propertyValue;
+}
+
 int LayoutTestController::numberOfPages(float pageWidthInPixels, float pageHeightInPixels)
 {
     return [mainFrame numberOfPages:pageWidthInPixels:pageHeightInPixels];

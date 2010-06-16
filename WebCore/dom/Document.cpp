@@ -1496,6 +1496,12 @@ PassRefPtr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets(Elem
     return style.release();
 }
 
+PassRefPtr<RenderStyle> Document::styleForPage(int pageIndex)
+{
+    RefPtr<RenderStyle> style = styleSelector()->styleForPage(pageIndex);
+    return style.release();
+}
+
 void Document::createStyleSelector()
 {
     bool matchAuthorAndUserStyles = true;

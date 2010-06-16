@@ -893,3 +893,6 @@ storage/indexeddb
 # This port doesn't support DeviceOrientation.
 fast/dom/DeviceOrientation
 fast/dom/Window/window-properties-on-device-orientation.html
+
+# LayoutTestController::pageProperty is not implemented for WIN yet.
+printing/page-rule-selection.html

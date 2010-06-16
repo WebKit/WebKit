@@ -199,6 +199,25 @@ int PrintContext::pageNumberForElement(Element* element, const FloatSize& pageSi
     return -1;
 }
 
+String PrintContext::pageProperty(Frame* frame, const char* propertyName, int pageNumber)
+{
+    Document* document = frame->document();
+    document->updateLayout();
+    RefPtr<RenderStyle> style = document->styleForPage(pageNumber);
+
+    // Implement formatters for properties we care about.
+    if (!strcmp(propertyName, "margin-left"))
+        return String::format("%d", style->marginLeft().rawValue());
+    if (!strcmp(propertyName, "line-height"))
+        return String::format("%d", style->lineHeight().rawValue());
+    if (!strcmp(propertyName, "font-size"))
+        return String::format("%d", style->fontDescription().computedPixelSize());
+    if (!strcmp(propertyName, "font-family"))
+        return String::format("%s", style->fontDescription().family().family().string().utf8().data());
+
+    return String::format("pageProperty() unimplemented for: %s", propertyName);
+}
+
 int PrintContext::numberOfPages(Frame* frame, const FloatSize& pageSizeInPixels)
 {
     frame->document()->updateLayout();

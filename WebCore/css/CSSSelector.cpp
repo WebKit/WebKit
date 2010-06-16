@@ -37,6 +37,9 @@ using namespace HTMLNames;
 
 unsigned int CSSSelector::specificity()
 {
+    if (m_isForPage)
+        return specificityForPage();
+
     // FIXME: Pseudo-elements and pseudo-classes do not have the same specificity. This function
     // isn't quite correct.
     int s = (m_tag.localName() == starAtom ? 0 : 1);
@@ -64,6 +67,27 @@ unsigned int CSSSelector::specificity()
 
     // make sure it doesn't overflow
     return s & 0xffffff;
+}
+
+unsigned CSSSelector::specificityForPage()
+{
+    // See http://dev.w3.org/csswg/css3-page/#cascading-and-page-context
+    unsigned s = (m_tag.localName() == starAtom ? 0 : 4);
+
+    switch (pseudoType()) {
+    case PseudoFirstPage:
+        s += 2;
+        break;
+    case PseudoLeftPage:
+    case PseudoRightPage:
+        s += 1;
+        break;
+    case PseudoNotParsed:
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    return s;
 }
 
 PseudoId CSSSelector::pseudoId(PseudoType type)

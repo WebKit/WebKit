@@ -2917,3 +2917,6 @@ BUG46603 : fast/frames/lots-of-objects.html = PASS TIMEOUT
 
 // Whitespace difference between TestShell and DRT.
 BUGDARIN : fast/history/history-back-within-subframe.html = TEXT
+
+// LayoutTestController::pageProperty is not implemented for Chromium yet.
+BUGWK35961 : printing/page-rule-selection.html = TEXT

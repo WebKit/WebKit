@@ -275,4 +275,9 @@ using namespace WebCore;
     return PrintContext::numberOfPages(_private->coreFrame, FloatSize(pageWidthInPixels, pageHeightInPixels));
 }
 
+- (NSString *)pageProperty:(const char *)propertyName:(int)pageNumber
+{
+    return PrintContext::pageProperty(_private->coreFrame, propertyName, pageNumber);
+}
+
 @end

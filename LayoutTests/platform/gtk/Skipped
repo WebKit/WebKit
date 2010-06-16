@@ -5937,3 +5937,6 @@ fast/forms/slider-transformed.html
 # of the slider thumb in GTK+ themes.
 fast/forms/slider-mouse-events.html
 fast/forms/slider-zoomed.html
+
+# LayoutTestController::pageProperty is not implemented for GTK yet.
+printing/page-rule-selection.html

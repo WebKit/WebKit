@@ -854,6 +854,10 @@ fast/ruby/rubyDOM-remove-rt2.html
 fast/ruby/rubyDOM-remove-text1.html
 fast/ruby/rubyDOM-remove-text2.html
 
+# Missing LayoutTestController::pageProperty.
+# https://bugs.webkit.org/show_bug.cgi?id=35961
+printing/page-rule-selection.html
+
 # ============================================================================= #
 # ------- failing editing/input tests
 # ============================================================================= #

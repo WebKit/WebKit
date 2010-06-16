@@ -683,4 +683,11 @@ iframe {
     border: 2px inset
 }
 
+/* page */
+
+@page {
+    /* FIXME: Define the right default values for page properties. */
+    margin: 1in;
+}
+
 /* noscript is handled internally, as it depends on settings */

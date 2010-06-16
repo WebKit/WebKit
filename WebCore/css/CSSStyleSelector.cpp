@@ -1548,6 +1548,36 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
     return m_style.release();
 }
 
+PassRefPtr<RenderStyle> CSSStyleSelector::styleForPage(int pageIndex)
+{
+    initForStyleResolve(m_checker.m_document->body());
+
+    m_style = RenderStyle::create();
+    m_style->inheritFrom(m_rootElementStyle);
+
+    const bool isLeft = isLeftPage(pageIndex);
+    const bool isFirst = isFirstPage(pageIndex);
+    const String page = pageName(pageIndex);
+    matchPageRules(defaultPrintStyle, isLeft, isFirst, page);
+    matchPageRules(m_userStyle, isLeft, isFirst, page);
+    matchPageRules(m_authorStyle, isLeft, isFirst, page);
+    m_lineHeightValue = 0;
+    applyDeclarations<true>(false, 0, m_matchedDecls.size() - 1);
+
+    // If our font got dirtied, go ahead and update it now.
+    if (m_fontDirty)
+        updateFont();
+
+    // Line-height is set when we are sure we decided on the font-size
+    if (m_lineHeightValue)
+        applyProperty(CSSPropertyLineHeight, m_lineHeightValue);
+
+    applyDeclarations<false>(false, 0, m_matchedDecls.size() - 1);
+
+    // Now return the style.
+    return m_style.release();
+}
+
 #if ENABLE(DATAGRID)
 
 PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForDataGridColumn(DataGridColumn*, RenderStyle*)
@@ -2887,6 +2917,74 @@ void CSSStyleSelector::applyDeclarations(bool isImportant, int startIndex, int e
             }
         }
     }
+}
+
+void CSSStyleSelector::matchPageRules(CSSRuleSet* rules, bool isLeftPage, bool isFirstPage, const String& pageName)
+{
+    m_matchedRules.clear();
+
+    if (!rules)
+        return;
+
+    matchPageRulesForList(rules->getPageRules(), isLeftPage, isFirstPage, pageName);
+
+    // If we didn't match any rules, we're done.
+    if (m_matchedRules.isEmpty())
+        return;
+
+    // Sort the set of matched rules.
+    sortMatchedRules(0, m_matchedRules.size());
+
+    // Now transfer the set of matched rules over to our list of decls.
+    for (unsigned i = 0; i < m_matchedRules.size(); i++)
+        addMatchedDeclaration(m_matchedRules[i]->rule()->declaration());
+}
+
+void CSSStyleSelector::matchPageRulesForList(CSSRuleDataList* rules, bool isLeftPage, bool isFirstPage, const String& pageName)
+{
+    if (!rules)
+        return;
+
+    for (CSSRuleData* d = rules->first(); d; d = d->next()) {
+        CSSStyleRule* rule = d->rule();
+        const AtomicString& selectorLocalName = d->selector()->m_tag.localName();
+        if (selectorLocalName != starAtom && selectorLocalName != pageName)
+            continue;
+        CSSSelector::PseudoType pseudoType = d->selector()->pseudoType();
+        if ((pseudoType == CSSSelector::PseudoLeftPage && !isLeftPage)
+            || (pseudoType == CSSSelector::PseudoRightPage && isLeftPage)
+            || (pseudoType == CSSSelector::PseudoFirstPage && !isFirstPage))
+            continue;
+
+        // If the rule has no properties to apply, then ignore it.
+        CSSMutableStyleDeclaration* decl = rule->declaration();
+        if (!decl || !decl->length())
+            continue;
+
+        // Add this rule to our list of matched rules.
+        addMatchedRule(d);
+    }
+}
+
+bool CSSStyleSelector::isLeftPage(int pageIndex) const
+{
+    bool isFirstPageLeft = false;
+    if (m_rootElementStyle->direction() == RTL)
+        isFirstPageLeft = true;
+
+    return (pageIndex + (isFirstPageLeft ? 1 : 0)) % 2;
+}
+
+bool CSSStyleSelector::isFirstPage(int pageIndex) const
+{
+    // FIXME: In case of forced left/right page, page at index 1 (not 0) can be the first page.
+    return (!pageIndex);
+}
+
+String CSSStyleSelector::pageName(int /* pageIndex */) const
+{
+    // FIXME: Implement page index to page name mapping.
+    return "";
 }
 
 static void applyCounterList(RenderStyle* style, CSSValueList* list, bool isReset)

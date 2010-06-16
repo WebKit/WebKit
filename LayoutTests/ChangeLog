@@ -1099,6 +1099,20 @@
 
         Reviewed by Shinichiro Hamaji.
 
+        Implement render style selection for pages to support CSS3 Paged Media.
+        https://bugs.webkit.org/show_bug.cgi?id=35961
+
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * printing/page-rule-selection-expected.txt: Added.
+        * printing/page-rule-selection.html: Added.
+
+2010-06-10  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Shinichiro Hamaji.
+
         Fix Bug 40452: REGRESSION: printing is broken if stylesheet has @page
         https://bugs.webkit.org/show_bug.cgi?id=40452
 

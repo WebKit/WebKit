@@ -171,6 +171,12 @@ int LayoutTestController::numberOfPages(float pageWidth, float pageHeight)
     return webkit_web_frame_number_of_pages(mainFrame, pageWidth, pageHeight);
 }
 
+JSRetainPtr<JSStringRef> LayoutTestController::pageProperty(const char* propertyName, int pageNumber) const
+{
+    // FIXME: implement
+    return JSRetainPtr<JSStringRef>();
+}
+
 size_t LayoutTestController::webHistoryItemCount()
 {
     // FIXME: implement

@@ -3536,6 +3536,43 @@
 
         Reviewed by Shinichiro Hamaji.
 
+        Implement render style selection for pages to support CSS3 Paged Media.
+        https://bugs.webkit.org/show_bug.cgi?id=35961
+
+        Test: printing/page-rule-selection.html
+
+        * WebCore.base.exp:
+        * css/CSSGrammar.y:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::specificity):
+        (WebCore::CSSSelector::specificityForPage):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::CSSSelector):
+        (WebCore::CSSSelector::isForPage):
+        (WebCore::CSSSelector::setForPage):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForPage):
+        (WebCore::CSSStyleSelector::matchPageRules):
+        (WebCore::CSSStyleSelector::matchPageRulesForList):
+        (WebCore::CSSStyleSelector::isLeftPage):
+        (WebCore::CSSStyleSelector::isFirstPage):
+        (WebCore::CSSStyleSelector::pageName):
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::isRightPage):
+        * css/html.css:
+        (@page):
+        * dom/Document.cpp:
+        (WebCore::Document::styleForPage):
+        * dom/Document.h:
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::pageProperty):
+        * page/PrintContext.h:
+
+
+2010-06-10  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Shinichiro Hamaji.
+
         Fix Bug 40452: REGRESSION: printing is broken if stylesheet has @page
         https://bugs.webkit.org/show_bug.cgi?id=40452
 

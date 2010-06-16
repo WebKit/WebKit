@@ -482,6 +482,7 @@ public:
     void updateLayout();
     void updateLayoutIgnorePendingStylesheets();
     PassRefPtr<RenderStyle> styleForElementIgnoringPendingStylesheets(Element*);
+    PassRefPtr<RenderStyle> styleForPage(int pageIndex);
     static void updateStyleForAllDocuments(); // FIXME: Try to reduce the # of calls to this function.
     DocLoader* docLoader() { return m_docLoader.get(); }
 

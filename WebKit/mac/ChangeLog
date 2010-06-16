@@ -1,3 +1,14 @@
+2010-06-10  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Implement render style selection for pages to support CSS3 Paged Media.
+        https://bugs.webkit.org/show_bug.cgi?id=35961
+
+        * Misc/WebCoreStatistics.h:
+        * Misc/WebCoreStatistics.mm:
+        (-[WebFrame pageProperty:propertyName:]):
+
 2010-06-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Barth.
