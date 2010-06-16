@@ -7,6 +7,13 @@
 
 2010-06-16  Dan Bernstein  <mitz@apple.com>
 
+        Try to fix the Tiger build
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformBoundsForGlyph):
+
+2010-06-16  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Alexey Proskuryakov.
 
         <rdar://problem/8077119> REGRESSION (r60247): Google Reader contains the tops of pieces of unidentifiable text under feed headlines.
