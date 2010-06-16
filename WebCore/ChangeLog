@@ -1,3 +1,15 @@
+2010-06-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Hit assertion in WebCore::HTML5Token::appendToSystemIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=40729
+
+        This was a copy/paste error.  Yay for ASSERTs.
+
+        * html/HTML5Lexer.cpp:
+        (WebCore::HTML5Lexer::nextToken):
+
 2010-06-16  Stuart Morgan  <stuartmorgan@chromium.org>
 
         Reviewed by Anders Carlsson.

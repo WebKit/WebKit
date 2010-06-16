@@ -1,3 +1,16 @@
+2010-06-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Hit assertion in WebCore::HTML5Token::appendToSystemIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=40729
+
+        Add more test coverage of DOCTYPE parsing states.  Turns out you use a
+        different state if there's no whitespace between the public and system
+        identifiers.
+
+        * html5lib/resources/doctype01.dat:
+
 2010-06-16  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

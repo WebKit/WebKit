@@ -333,3 +333,39 @@
 |   <body>
 |     <b>
 |       "Mine!"
+
+#data
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN""http://www.w3.org/TR/html4/strict.dtd">
+#errors
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+
+#data
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"'http://www.w3.org/TR/html4/strict.dtd'>
+#errors
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+
+#data
+<!DOCTYPE HTML PUBLIC"-//W3C//DTD HTML 4.01//EN"'http://www.w3.org/TR/html4/strict.dtd'>
+#errors
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+
+#data
+<!DOCTYPE HTML PUBLIC'-//W3C//DTD HTML 4.01//EN''http://www.w3.org/TR/html4/strict.dtd'>
+#errors
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>

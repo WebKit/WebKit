@@ -1288,11 +1288,11 @@ bool HTML5Lexer::nextToken(SegmentedString& source, HTML5Token& token)
             EMIT_AND_RESUME_IN(DataState);
         else if (cc == '"') {
             emitParseError();
-            m_token->setPublicIdentifierToEmptyString();
+            m_token->setSystemIdentifierToEmptyString();
             ADVANCE_TO(DOCTYPESystemIdentifierDoubleQuotedState);
         } else if (cc == '\'') {
             emitParseError();
-            m_token->setPublicIdentifierToEmptyString();
+            m_token->setSystemIdentifierToEmptyString();
             ADVANCE_TO(DOCTYPESystemIdentifierSingleQuotedState);
         } else {
             emitParseError();
