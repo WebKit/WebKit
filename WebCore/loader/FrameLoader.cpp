@@ -2273,18 +2273,24 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
         case FrameLoadTypeIndexedBackForward:
             if (Page* page = m_frame->page()) {
                 if (page->backForwardList()) {
+                    // If the first load within a frame is a navigation within a back/forward list that was attached
+                    // without any of the items being loaded then we need to update the history in a similar manner as
+                    // for a standard load with the exception of updating the back/forward list (<rdar://problem/8091103>).
+                    if (!m_committedFirstRealDocumentLoad)
+                        history()->updateForStandardLoad(HistoryController::UpdateAllExceptBackForwardList);
+
                     history()->updateForBackForwardNavigation();
 
                     if (history()->currentItem())
                         m_pendingStateObject = history()->currentItem()->stateObject();
-                        
+
                     // Create a document view for this document, or used the cached view.
                     if (cachedPage) {
                         DocumentLoader* cachedDocumentLoader = cachedPage->documentLoader();
                         ASSERT(cachedDocumentLoader);
                         cachedDocumentLoader->setFrame(m_frame);
                         m_client->transitionToCommittedFromCachedFrame(cachedPage->cachedMainFrame());
-                        
+
                     } else
                         m_client->transitionToCommittedForNewPage();
                 }

@@ -43,6 +43,8 @@ class SerializedScriptValue;
 
 class HistoryController : public Noncopyable {
 public:
+    enum HistoryUpdateType { UpdateAll, UpdateAllExceptBackForwardList };
+
     HistoryController(Frame*);
     ~HistoryController();
 
@@ -61,7 +63,7 @@ public:
 
     void updateForBackForwardNavigation();
     void updateForReload();
-    void updateForStandardLoad();
+    void updateForStandardLoad(HistoryUpdateType updateType = UpdateAll);
     void updateForRedirectWithLockedBackForwardList();
     void updateForClientRedirect();
     void updateForCommit();

@@ -1,3 +1,27 @@
+2010-06-15  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        <rdar://problem/8091103> URLs not added to history when initial load happens via back/forward navigation
+
+        Back/forward navigation currently does not create or update items in the global history. This is usually
+        desirable, except for in the event where the back/forward list was created programmatically and attached
+        to the WebView and the initial load in that WebView is being performed as a result of a back/forward
+        navigation. In that situation it is preferable to ensure that global history item is created or updated.
+
+        No test case is added because DumpRenderTree is not able to test the scenario where the initial
+        load in a WebView occurs via a back/forward navigation.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::transitionToCommitted): If we're committing the first load in this frame as a
+        back/forward navigation then we should update the history as if it were a standard load, with the
+        exception of updating the back/forward list.
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::updateForStandardLoad): Add a parameter to allow callers to skip updating
+        the back/forward list.
+        * loader/HistoryController.h:
+        (WebCore::HistoryController::):
+
 2010-06-15  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by David Levin.

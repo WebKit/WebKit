@@ -259,7 +259,7 @@ void HistoryController::updateForReload()
 //     2) Global history: Handled by the client.
 //     3) Visited links: Handled by the PageGroup.
 
-void HistoryController::updateForStandardLoad()
+void HistoryController::updateForStandardLoad(HistoryUpdateType updateType)
 {
     LOG(History, "WebCoreHistory: Updating History for Standard Load in frame %s", m_frame->loader()->documentLoader()->url().string().ascii().data());
 
@@ -271,7 +271,8 @@ void HistoryController::updateForStandardLoad()
 
     if (!frameLoader->documentLoader()->isClientRedirect()) {
         if (!historyURL.isEmpty()) {
-            updateBackForwardListClippedAtTarget(true);
+            if (updateType != UpdateAllExceptBackForwardList)
+                updateBackForwardListClippedAtTarget(true);
             if (!needPrivacy) {
                 frameLoader->client()->updateGlobalHistory();
                 frameLoader->documentLoader()->setDidCreateGlobalHistoryEntry(true);
