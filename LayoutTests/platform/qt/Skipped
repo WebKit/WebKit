@@ -180,6 +180,10 @@ http/tests/security/originHeader/origin-header-for-empty.html
 # XSSAuditor test that times out. See https://bugs.webkit.org/show_bug.cgi?id=33460.
 http/tests/security/xssAuditor/malformed-HTML.html
 
+# Possibly related to https://bugs.webkit.org/show_bug.cgi?id=35263
+http/tests/security/xssAuditor/embed-tag-null-char.html
+http/tests/security/xssAuditor/object-embed-tag-null-char.html
+
 # Disabled HTTP subdirs for now, needs investigation.
 http/tests/globalhistory
 http/tests/incremental

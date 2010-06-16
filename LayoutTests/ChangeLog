@@ -5,6 +5,22 @@
         Enable HTML5 lexer
         https://bugs.webkit.org/show_bug.cgi?id=40650
 
+        Add two XSS Auditor tests to the Skipped list.  These tests actually
+        pass in the sense that the attack is blocked.  However, the U+FFFD in
+        the console output is getting mangled.  We could check in Qt-specific
+        expected results, but that doesn't quite seem right.  There's something
+        wrong with the Qt UT8 decoder, which I suspect is related to (or the
+        same as) https://bugs.webkit.org/show_bug.cgi?id=35263
+
+        * platform/qt/Skipped:
+
+2010-06-16  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Enable HTML5 lexer
+        https://bugs.webkit.org/show_bug.cgi?id=40650
+
         Add platform-specific results for Snow Leopard.  Maciej thinks there is
         something going on here related to BIDI and additional FFFD
         replacements.  This test is already on our list of things to
