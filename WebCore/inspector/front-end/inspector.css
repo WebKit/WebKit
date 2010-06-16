@@ -27,6 +27,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+html {
+    height: 100%;
+}
+
 body {
     cursor: default;
     position: absolute;

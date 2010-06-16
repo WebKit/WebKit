@@ -1,3 +1,15 @@
+2010-06-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: Undocked inspector toolbar is white
+        https://bugs.webkit.org/show_bug.cgi?id=40644
+
+        Make the html element 100% height so that we don't erase the background to white, after r61215.
+
+        * inspector/front-end/inspector.css:
+        (html):
+
 2010-06-16  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Darin Adler.
