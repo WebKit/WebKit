@@ -1,3 +1,34 @@
+2010-06-16  Adam Roben  <aroben@apple.com>
+
+        Delete tables/mozilla/images/adforce_imgis_com.html and its associated
+        results
+
+        This file is a GIF that somehow obtained a .html extension. It isn't
+        referenced by any other test. (It was failing on Windows because the
+        HTML5 parser turns null bytes into U+FFFD, whose rendering is
+        font-dependent.)
+
+        Fixes <http://webkit.org/b/40741> REGRESSION (r61234):
+        tables/mozilla/images/adforce_imgis_com.html fails on Windows.
+
+        Reviewed by Dave Hyatt.
+
+        * platform/chromium-linux/tables/mozilla/images/adforce_imgis_com-expected.checksum: Removed.
+        * platform/chromium-linux/tables/mozilla/images/adforce_imgis_com-expected.png: Removed.
+        * platform/chromium-win/tables/mozilla/images/adforce_imgis_com-expected.checksum: Removed.
+        * platform/chromium-win/tables/mozilla/images/adforce_imgis_com-expected.png: Removed.
+        * platform/chromium-win/tables/mozilla/images/adforce_imgis_com-expected.txt: Removed.
+        * platform/mac-leopard/tables/mozilla/images/adforce_imgis_com-expected.checksum: Removed.
+        * platform/mac-leopard/tables/mozilla/images/adforce_imgis_com-expected.png: Removed.
+        * platform/mac-snowleopard/tables/mozilla/images/adforce_imgis_com-expected.checksum: Removed.
+        * platform/mac-snowleopard/tables/mozilla/images/adforce_imgis_com-expected.png: Removed.
+        * platform/mac-snowleopard/tables/mozilla/images/adforce_imgis_com-expected.txt: Removed.
+        * platform/mac/tables/mozilla/images/adforce_imgis_com-expected.checksum: Removed.
+        * platform/mac/tables/mozilla/images/adforce_imgis_com-expected.png: Removed.
+        * platform/mac/tables/mozilla/images/adforce_imgis_com-expected.txt: Removed.
+        * platform/qt/tables/mozilla/images/adforce_imgis_com-expected.txt: Removed.
+        * tables/mozilla/images/adforce_imgis_com.html: Removed.
+
 2010-06-16  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
