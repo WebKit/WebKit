@@ -1,3 +1,18 @@
+2010-06-16  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, just updating qt platform result to match new expectations.
+
+        Enable HTML5 lexer
+        https://bugs.webkit.org/show_bug.cgi?id=40650
+
+        Windows and Chromium will still need updates, but I don't have easy
+        access to those results.
+
+        * platform/qt/fast/text/stripNullFromText-expected.txt:
+         - \0 now gets converted to 0xfffd per HTML5.
+        * platform/qt/fast/text/international/hindi-whitespace-expected.txt:
+          - Expected CR handling change after http://trac.webkit.org/changeset/61234.
+
 2010-06-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.
