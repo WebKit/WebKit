@@ -111,9 +111,6 @@ BUG34759 WIN DEBUG SLOW : inspector/console-log-before-inspector-open.html = PAS
 
 BUG36539 SLOW : http/tests/misc/uncacheable-script-repeated.html = PASS
 
-BUG46603 DEBUG SLOW : fast/frames/lots-of-iframes.html = PASS
-BUG46603 DEBUG SLOW : fast/frames/lots-of-objects.html = PASS
-
 // -----------------------------------------------------------------
 // SKIPPED TESTS
 // -----------------------------------------------------------------
@@ -2914,6 +2911,9 @@ BUGDIMICH WIN LINUX MAC : fast/repaint/positioned-document-element.html = IMAGE+
 // Fails starting http://trac.webkit.org/changeset/61153
 // Needs update to test_shell.
 BUG46538 MAC WIN LINUX : editing/deleting/forward-delete-key.html = TEXT
+
+BUG46603 : fast/frames/lots-of-iframes.html = PASS TIMEOUT
+BUG46603 : fast/frames/lots-of-objects.html = PASS TIMEOUT
 
 // Whitespace difference between TestShell and DRT.
 BUGDARIN : fast/history/history-back-within-subframe.html = TEXT
