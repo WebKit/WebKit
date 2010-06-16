@@ -1,3 +1,13 @@
+2010-06-16  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Kenneth Christiansen.
+
+        Spatial Navigation: using offset{Left,Top} is not enough to get the proper inner frames position
+        https://bugs.webkit.org/show_bug.cgi?id=39439
+
+        * fast/events/spatial-navigation/snav-iframe-recursive-offset-parent-expected.txt: Added.
+        * fast/events/spatial-navigation/snav-iframe-recursive-offset-parent.html: Added.
+
 2010-06-16  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Disabling a test which fails on Gtk for unexplained

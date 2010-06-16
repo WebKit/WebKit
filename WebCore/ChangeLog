@@ -1,3 +1,24 @@
+2010-06-16  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Kenneth Christiansen.
+
+        Spatial Navigation: using offset{Left,Top} is not enough to get the proper inner frames position
+        https://bugs.webkit.org/show_bug.cgi?id=39439
+
+        As pointed out by Darin Adler in https://bugs.webkit.org/show_bug.cgi?id=18662#c20,
+        "It's not correct to use the offsetLeft and offsetTop of the frame owner element's renderer because
+        that's just the distance from the offsetParent, not the absolute position".
+
+        Patch fixes that behavior by now considering the offsetTop and offsetLeft the offsetParent recursively,
+        starting from the HtmlFrameOwnerElement. Previously, only calling offsetTop and offsetLeft works
+        because all tests were done in htmls where the {i}frame element was a directly a child of the body,
+        e.g. <html>...<body><iframe src=xxx>....<body></html>.
+
+        Test: fast/events/spatial-navigation/snav-iframe-recursive-offset-parent.html
+
+        * page/SpatialNavigation.cpp:
+        (WebCore::renderRectRelativeToRootDocument):
+
 2010-06-16  Dan Bernstein  <mitz@apple.com>
 
         Try to fix the Tiger build

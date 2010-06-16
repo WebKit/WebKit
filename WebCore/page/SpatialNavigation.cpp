@@ -125,8 +125,11 @@ static IntRect renderRectRelativeToRootDocument(RenderObject* render)
 
     // Handle nested frames.
     for (Frame* frame = render->document()->frame(); frame; frame = frame->tree()->parent()) {
-        if (HTMLFrameOwnerElement* ownerElement = frame->ownerElement())
-            rect.move(ownerElement->offsetLeft(), ownerElement->offsetTop());
+        if (Element* element = static_cast<Element*>(frame->ownerElement())) {
+            do {
+                rect.move(element->offsetLeft(), element->offsetTop());
+            } while ((element = element->offsetParent()));
+        }
     }
 
     return rect;
