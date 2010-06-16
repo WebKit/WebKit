@@ -1,3 +1,18 @@
+2010-06-16  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Disabling a test which due to a Qt decoding bug
+        is now failing with the HTML5 lexer.
+
+        fast/encoding/japanese-encoding-mix.html fails on Qt after enabling HTML5 Lexer
+        https://bugs.webkit.org/show_bug.cgi?id=40661
+
+        Qt's decoders don't seem to be passing the "--" of the "-->" to the
+        HTML5DocumentParser correctly, thus the comment is never closed
+        and the rest of the document gets eaten.
+
+        * platform/qt/Skipped:
+         - Skip the test until a Qt person can take a look.
+
 2010-06-16  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.
