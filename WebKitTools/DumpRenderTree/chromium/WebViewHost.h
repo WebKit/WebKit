@@ -90,8 +90,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual bool navigate(const TestNavigationEntry&, bool reload);
 
     // WebKit::WebViewClient
-    virtual WebKit::WebView* createView(WebKit::WebFrame*);
-    virtual WebKit::WebView* createView(WebKit::WebFrame*, const WebKit::WebWindowFeatures&);
+    virtual WebKit::WebView* createView(WebKit::WebFrame*, const WebKit::WebWindowFeatures&, const WebKit::WebString&);
     virtual WebKit::WebWidget* createPopupMenu(WebKit::WebPopupType);
     virtual WebKit::WebWidget* createPopupMenu(const WebKit::WebPopupMenuInfo&);
     virtual WebKit::WebStorageNamespace* createSessionStorageNamespace(unsigned quota);

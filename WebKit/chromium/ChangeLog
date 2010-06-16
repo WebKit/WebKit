@@ -1,3 +1,24 @@
+2010-06-16  Drew Wilson  <atwilson@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Added plumbing to Chromium WebKit API to allow setting/getting the name
+        of top level frames.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40430
+        * public/WebFrame.h:
+        Added setName() API.
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::createView):
+        Now takes a "name" parameter.
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::createWindow):
+        Passes a name parameter.
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::setName):
+        Allows setting the frame name by calling through to the WebCore API.
+        * src/WebFrameImpl.h:
+
 2010-06-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Barth.

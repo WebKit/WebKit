@@ -231,7 +231,7 @@ Page* ChromeClientImpl::createWindow(
         return 0;
 
     WebViewImpl* newView = static_cast<WebViewImpl*>(
-        m_webView->client()->createView(WebFrameImpl::fromFrame(frame), features));
+        m_webView->client()->createView(WebFrameImpl::fromFrame(frame), features, r.frameName()));
     if (!newView)
         return 0;
 

@@ -65,6 +65,7 @@ public:
     // WebFrame methods:
     virtual WebString name() const;
     virtual void clearName();
+    virtual void setName(const WebString&);
     virtual WebURL url() const;
     virtual WebURL favIconURL() const;
     virtual WebURL openSearchDescriptionURL() const;

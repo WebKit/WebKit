@@ -73,7 +73,8 @@ public:
     // so any subsequent calls to createSessionStorageNamespace conform to the
     // WebStorage specification.
     virtual WebView* createView(WebFrame* creator,
-                                const WebWindowFeatures& features) { return 0; }
+                                const WebWindowFeatures& features,
+                                const WebString& name) { return 0; }
 
     // Create a new WebPopupMenu.  In the second form, the client is
     // responsible for rendering the contents of the popup menu.

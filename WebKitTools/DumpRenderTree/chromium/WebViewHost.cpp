@@ -253,12 +253,7 @@ static string textAffinityDescription(WebTextAffinity affinity)
 
 // WebViewClient -------------------------------------------------------------
 
-WebView* WebViewHost::createView(WebFrame* creator)
-{
-    return createView(creator, WebWindowFeatures());
-}
-
-WebView* WebViewHost::createView(WebFrame*, const WebWindowFeatures&)
+WebView* WebViewHost::createView(WebFrame*, const WebWindowFeatures&, const WebString&)
 {
     if (!layoutTestController()->canOpenWindows())
         return 0;
