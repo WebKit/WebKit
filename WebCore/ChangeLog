@@ -1,3 +1,28 @@
+2010-06-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] ClipboardGtk::setURL does not match the behavior of other platforms
+        https://bugs.webkit.org/show_bug.cgi?id=40640
+
+        Instead of writing URL labels to the text portion of the clipboard or
+        drag-and-drop data, write the URL itself. Also escape the label text
+        of URLs. Abstracts logic into DataObjectGtk, so ClipboardGtk and
+        PasteboardGtk can share it.
+
+        Tests for this issue will be activated when dropping support has been
+        added to the GTK+ EventSender.
+
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::ClipboardGtk::writeURL): Use DataObjectGtk::setURL.
+        * platform/gtk/DataObjectGtk.cpp:
+        (WebCore::DataObjectGtk::setURL):
+        Added. Write URL to the text portion and remember to escape the
+        label when creating the markup portion.
+        * platform/gtk/DataObjectGtk.h: Add declaration of new method.
+        * platform/gtk/PasteboardGtk.cpp: 
+        (WebCore::Pasteboard::writeURL): Use DataObjectGtk::setURL.
+
 2010-06-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

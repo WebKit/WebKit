@@ -21,6 +21,7 @@
 
 #include "markup.h"
 #include <gtk/gtk.h>
+#include <wtf/gobject/GOwnPtr.h>
 
 namespace WebCore {
 
@@ -56,6 +57,28 @@ void DataObjectGtk::setMarkup(const String& newMarkup)
 {
     m_range = 0;
     m_markup = newMarkup;
+}
+
+void DataObjectGtk::setURL(const KURL& url, const String& label)
+{
+    setText(url.string());
+
+    String actualLabel(label);
+    if (actualLabel.isEmpty())
+        actualLabel = url;
+
+    Vector<UChar> markup;
+    append(markup, "<a href=\"");
+    append(markup, url.string());
+    append(markup, "\">");
+    GOwnPtr<gchar> escaped(g_markup_escape_text(actualLabel.utf8().data(), -1));
+    append(markup, String::fromUTF8(escaped.get()));
+    append(markup, "</a>");
+    setMarkup(String::adopt(markup));
+
+    Vector<KURL> uriList;
+    uriList.append(url);
+    setURIList(uriList);
 }
 
 void DataObjectGtk::clearText()

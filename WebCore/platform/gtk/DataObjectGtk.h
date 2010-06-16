@@ -46,6 +46,7 @@ public:
     void setURIList(const Vector<KURL>& newURIList) {  m_uriList = newURIList; }
     void setImage(GdkPixbuf* newImage) { m_image = newImage; }
     void setDragContext(GdkDragContext* newDragContext) { m_dragContext = newDragContext; }
+    void setURL(const KURL&, const String&);
     bool hasText() { return m_range || !m_text.isEmpty(); }
     bool hasMarkup() { return m_range || !m_markup.isEmpty(); }
     bool hasURIList() { return !m_uriList.isEmpty(); }

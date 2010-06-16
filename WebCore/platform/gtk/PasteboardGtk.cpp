@@ -80,17 +80,14 @@ void Pasteboard::writePlainText(const String& text)
     m_helper->writeClipboardContents(clipboard);
 }
 
-void Pasteboard::writeURL(const KURL& url, const String&, Frame* frame)
+void Pasteboard::writeURL(const KURL& url, const String& label, Frame* frame)
 {
     if (url.isEmpty())
         return;
 
     GtkClipboard* clipboard = m_helper->getClipboard(frame);
     DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
-
-    Vector<KURL> uriList;
-    uriList.append(url);
-    dataObject->setURIList(uriList);
+    dataObject->setURL(url, label);
     m_helper->writeClipboardContents(clipboard);
 }
 
