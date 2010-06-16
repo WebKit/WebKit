@@ -1,3 +1,21 @@
+2010-06-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        <rdar://problem/8077119> REGRESSION (r60247): Google Reader contains the tops of pieces of unidentifiable text under feed headlines.
+        https://bugs.webkit.org/show_bug.cgi?id=40386
+
+        Test: platform/mac/fast/text/x-height.html
+
+        The result of platformBoundsForGlyph() is in flipped coordinates, whereas the result of
+        -[NSFont boundingRectForGlyph:] was not. r60247 failed to account for this.
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformInit): Measure the height of the x glyph above the baseline
+        correctly.
+        (WebCore::SimpleFontData::platformBoundsForGlyph): Return a rect in flipped coordinates on Tiger
+        as well.
+
 2010-06-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

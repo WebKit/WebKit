@@ -1,3 +1,15 @@
+2010-06-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        <rdar://problem/8077119> REGRESSION: Google Reader contains the tops of pieces of unidentifiable text under feed headlines.
+        https://bugs.webkit.org/show_bug.cgi?id=40386
+
+        * platform/mac/fast/text/x-height-expected.checksum: Added.
+        * platform/mac/fast/text/x-height-expected.png: Added.
+        * platform/mac/fast/text/x-height-expected.txt: Added.
+        * platform/mac/fast/text/x-height.html: Added.
+
 2010-06-16  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.
