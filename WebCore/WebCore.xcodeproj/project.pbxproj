@@ -897,7 +897,6 @@
 		49C7B9FC1042D3650009D447 /* GraphicsContext3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9FB1042D3650009D447 /* GraphicsContext3D.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49C7BA001042D38C0009D447 /* Canvas3DLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9FD1042D38C0009D447 /* Canvas3DLayer.h */; };
 		49C7BA011042D38C0009D447 /* Canvas3DLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9FE1042D38C0009D447 /* Canvas3DLayer.mm */; };
-		49C7BA021042D38C0009D447 /* GraphicsContext3DMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9FF1042D38C0009D447 /* GraphicsContext3DMac.cpp */; };
 		49C7BA791042EFAE0009D447 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49C7BA781042EFAE0009D447 /* OpenGL.framework */; };
 		49C7BA8D1042F5B10009D447 /* JSDocumentCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7BA8C1042F5B10009D447 /* JSDocumentCustom.cpp */; };
 		49D5DC2B0F423A73008F20FD /* Matrix3DTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D5DC270F423A73008F20FD /* Matrix3DTransformOperation.cpp */; };
@@ -973,6 +972,7 @@
 		49EED14E1051971A00099FAB /* JSCanvasRenderingContext2DCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED14B1051971900099FAB /* JSCanvasRenderingContext2DCustom.cpp */; };
 		49EED14F1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED14C1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp */; };
 		49EED1501051971A00099FAB /* JSCanvasRenderingContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED14D1051971A00099FAB /* JSCanvasRenderingContextCustom.cpp */; };
+		49FFBF1D11C8550E006A7118 /* GraphicsContext3DMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49FFBF1C11C8550E006A7118 /* GraphicsContext3DMac.mm */; };
 		4A8C96EB0BE69032004EEFF0 /* SelectionControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4A8C96EA0BE69032004EEFF0 /* SelectionControllerMac.mm */; };
 		4B2708C70AF19EE40065127F /* Pasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B2708C50AF19EE40065127F /* Pasteboard.h */; };
 		4B2709830AF2E5E00065127F /* PasteboardMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4B2709810AF2E5E00065127F /* PasteboardMac.mm */; };
@@ -6496,7 +6496,6 @@
 		49C7B9FB1042D3650009D447 /* GraphicsContext3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContext3D.h; sourceTree = "<group>"; };
 		49C7B9FD1042D38C0009D447 /* Canvas3DLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Canvas3DLayer.h; sourceTree = "<group>"; };
 		49C7B9FE1042D38C0009D447 /* Canvas3DLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Canvas3DLayer.mm; sourceTree = "<group>"; };
-		49C7B9FF1042D38C0009D447 /* GraphicsContext3DMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext3DMac.cpp; sourceTree = "<group>"; };
 		49C7BA781042EFAE0009D447 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		49C7BA8C1042F5B10009D447 /* JSDocumentCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentCustom.cpp; sourceTree = "<group>"; };
 		49D5DC270F423A73008F20FD /* Matrix3DTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Matrix3DTransformOperation.cpp; path = transforms/Matrix3DTransformOperation.cpp; sourceTree = "<group>"; };
@@ -6580,6 +6579,7 @@
 		49EED14B1051971900099FAB /* JSCanvasRenderingContext2DCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext2DCustom.cpp; sourceTree = "<group>"; };
 		49EED14C1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLRenderingContextCustom.cpp; sourceTree = "<group>"; };
 		49EED14D1051971A00099FAB /* JSCanvasRenderingContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContextCustom.cpp; sourceTree = "<group>"; };
+		49FFBF1C11C8550E006A7118 /* GraphicsContext3DMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GraphicsContext3DMac.mm; path = ../../../WebKit/OpenSource/WebCore/platform/graphics/mac/GraphicsContext3DMac.mm; sourceTree = SOURCE_ROOT; };
 		4A8C96EA0BE69032004EEFF0 /* SelectionControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = SelectionControllerMac.mm; path = mac/SelectionControllerMac.mm; sourceTree = "<group>"; };
 		4B2708C50AF19EE40065127F /* Pasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pasteboard.h; sourceTree = "<group>"; };
 		4B2709810AF2E5E00065127F /* PasteboardMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteboardMac.mm; sourceTree = "<group>"; };
@@ -15077,7 +15077,7 @@
 				B2AFFC790D00A5C10030074D /* FontPlatformData.h */,
 				B2AFFC7A0D00A5C10030074D /* FontPlatformDataMac.mm */,
 				B2AFFC7B0D00A5C10030074D /* GlyphPageTreeNodeMac.cpp */,
-				49C7B9FF1042D38C0009D447 /* GraphicsContext3DMac.cpp */,
+				49FFBF1C11C8550E006A7118 /* GraphicsContext3DMac.mm */,
 				B277B4030B22F37C0004BEC6 /* GraphicsContextMac.mm */,
 				0F580B040F12A2550051D689 /* GraphicsLayerCA.h */,
 				0F580B030F12A2540051D689 /* GraphicsLayerCA.mm */,
@@ -20279,7 +20279,6 @@
 				B2A015A80AF6CD53006BCE0E /* GraphicsContext.cpp in Sources */,
 				6E21C6C01126338500A7BE02 /* GraphicsContext3D.cpp in Sources */,
 				6E21C6C21126339900A7BE02 /* GraphicsContext3DCG.cpp in Sources */,
-				49C7BA021042D38C0009D447 /* GraphicsContext3DMac.cpp in Sources */,
 				B2ED97710B1F55CE00257D0F /* GraphicsContextCG.cpp in Sources */,
 				B277B4040B22F37C0004BEC6 /* GraphicsContextMac.mm in Sources */,
 				0F580B0C0F12A2690051D689 /* GraphicsLayer.cpp in Sources */,
@@ -21730,6 +21729,7 @@
 				B6B0540911B68F10002564C5 /* IDBObjectStoreImpl.cpp in Sources */,
 				816C806811BE887E009A45E9 /* IDBKeyRange.cpp in Sources */,
 				816C80B111BE9934009A45E9 /* JSIDBKeyRange.cpp in Sources */,
+				49FFBF1D11C8550E006A7118 /* GraphicsContext3DMac.mm in Sources */,
 				0853D73211C9109000B2FD42 /* SVGTextChunkLayoutInfo.cpp in Sources */,
 				0853D73311C9109000B2FD42 /* SVGTextQuery.cpp in Sources */,
 			);
