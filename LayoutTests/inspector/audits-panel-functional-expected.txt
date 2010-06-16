@@ -3,6 +3,8 @@ Tests audit rules.
     Combine external JavaScript (4)
      There are multiple resources served from same domain. Consider combining them into as few files as possible.
       4 JavaScript resources served from [domain].
+    Minimize cookie size
+     The average cookie size for all requests on this page is 11B
     Specify image dimensions (2)
      A width and height should be specified for all images in order to speed up page display. The following image(s) are missing a width and/or height:
        foo2.jpg

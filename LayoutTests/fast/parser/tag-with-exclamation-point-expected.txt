@@ -6,6 +6,12 @@
 
 !doctype with id "doctype": null
 
-!foo div child count: 0
+!foo div child count: 2
 
-!doctype div child count: 0
+child 1 -- nodeName: #comment nodeValue: foo id="foo"
+
+child 2 -- nodeName: #comment nodeValue: !foo
+
+!doctype div child count: 1
+
+child 1 -- nodeName: #comment nodeValue: !doctype

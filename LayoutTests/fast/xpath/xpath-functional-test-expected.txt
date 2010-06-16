@@ -27,7 +27,7 @@
 [ok].//*[@id]
 [ok].//*[attribute::id]
 [ok].//blockquote/text()
-[ok].//blockquote/comment()
+[ng].//blockquote/comment()
 [ng].//blockquote/processing-instruction()
 [ng].//blockquote/processing-instruction("pi")
 [ng].//blockquote/node()

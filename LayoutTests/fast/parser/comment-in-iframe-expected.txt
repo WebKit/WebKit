@@ -1,1 +1,2 @@
- There should be no text above this line.
+ --> This should be part of the iframe (and therefore invisible).
+There should be no text above this line.

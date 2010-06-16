@@ -1,6 +1,7 @@
 Tests the Timeline API instrumentation of an HTML script tag.
 
 ParseHTML
+ParseHTML
 ----> EvaluateScript
 --------> MarkTimeline : SCRIPT TAG
 EvaluateScript Properties:
@@ -16,4 +17,5 @@ EvaluateScript Properties:
     usedHeapSize : <number>
     totalHeapSize : <number>
 }
+ParseHTML
 

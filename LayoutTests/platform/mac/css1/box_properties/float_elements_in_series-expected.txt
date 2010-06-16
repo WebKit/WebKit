@@ -62,8 +62,7 @@ layer at (0,0) size 785x699
                 RenderImage {IMG} at (0,0) size 20x1
               RenderTableCell {TD} at (20,9) size 100x1 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
                 RenderImage {IMG} at (0,0) size 100x1
-              RenderTableCell {TD} at (120,9) size 20x1 [bgcolor=#000000] [r=0 c=2 rs=1 cs=1]
-                RenderImage {IMG} at (0,0) size 20x1
+              RenderTableCell {TD} at (120,9) size 20x0 [bgcolor=#000000] [r=0 c=2 rs=1 cs=1]
               RenderTableCell {TD} at (140,9) size 20x1 [bgcolor=#FFFFFF] [r=0 c=3 rs=1 cs=1]
                 RenderImage {IMG} at (0,0) size 20x1
               RenderTableCell {TD} at (160,9) size 20x1 [bgcolor=#000000] [r=0 c=4 rs=1 cs=1]
@@ -131,8 +130,7 @@ layer at (0,0) size 785x699
                         RenderImage {IMG} at (0,0) size 20x1
                       RenderTableCell {TD} at (20,9) size 100x1 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
                         RenderImage {IMG} at (0,0) size 100x1
-                      RenderTableCell {TD} at (120,9) size 20x1 [bgcolor=#000000] [r=0 c=2 rs=1 cs=1]
-                        RenderImage {IMG} at (0,0) size 20x1
+                      RenderTableCell {TD} at (120,9) size 20x0 [bgcolor=#000000] [r=0 c=2 rs=1 cs=1]
                       RenderTableCell {TD} at (140,9) size 20x1 [bgcolor=#FFFFFF] [r=0 c=3 rs=1 cs=1]
                         RenderImage {IMG} at (0,0) size 20x1
                       RenderTableCell {TD} at (160,9) size 20x1 [bgcolor=#000000] [r=0 c=4 rs=1 cs=1]

@@ -1,3 +1,105 @@
+2010-06-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Enable HTML5 lexer
+        https://bugs.webkit.org/show_bug.cgi?id=40650
+
+        This patch updates the expected results for tests that conflict with
+        the HTML5 specification.  In a later patch, I'll update the tests
+        themselves to fix pass/fail messages.
+
+        * fast/doctypes/005-case-preserving-expected.txt:
+            - HTML5 specifies case normalization for DOCTYPEs.
+        * fast/js/missing-title-end-tag-js-expected.txt:
+            - HTML5 requires us to swallow the entire document when <title> is
+              unterminated.
+        * fast/parser/comment-in-iframe-expected.txt:
+        * fast/parser/comment-in-script-tricky-expected.txt:
+        * fast/parser/comment-in-title-expected.txt:
+        * fast/parser/comments-expected.txt:
+            - Differences due to HTML5 comment parsing.
+        * fast/parser/eightdigithexentity-expected.txt:
+            - HTML5 specifies a different behavior for &#x00FFFFFF;
+        * fast/parser/entity-end-iframe-tag-expected.txt:
+            - HTML5 specifies a different behavior for &lt;/iframe>
+        * fast/parser/entity-surrogate-pairs-expected.txt:
+            - HTML5 doesn't allow entities to create surrogate pairs.
+        * fast/parser/html-whitespace-expected.txt:
+            - HTML5 has a different handling of CR in this case.
+        * fast/parser/script-tag-with-trailing-slash-expected.txt:
+            - HTML5 does not allow self-closing <script/> tags.
+        * fast/parser/tag-with-exclamation-point-expected.txt:
+            - HTML5 treats bogus DOCTYPEs as comments.
+        * fast/parser/xml-directive-in-dom-expected.txt:
+            - HTML5 attaches <?xml?> processing directives to the DOM as
+              comments.
+        * fast/xpath/xpath-functional-test-expected.txt:
+            - I don't fully understand this test, but our new behavior matches
+              the Firefox nightly builds (which have an HTML5 parser).
+        * html5lib/runner-expected.txt:
+        * html5lib/webkit-resumer-expected.txt:
+            - Massive progressions on HTML5 conformance.
+        * http/tests/loading/gmail-assert-on-load-expected.txt:
+            - I don't fully understand this behavior change.  It might
+              represent a bug.  We're still investigating.
+        * http/tests/security/xssAuditor/embed-tag-null-char-expected.txt:
+            - Update expected results for change in NULL char handling.
+        * http/tests/security/xssAuditor/img-onerror-tricky-expected.txt:
+            - This exploit no longer works in the HTML5 parser, so it's not
+              blocked.
+        * http/tests/security/xssAuditor/javascript-link-HTML-entities-null-char-expected.txt:
+            - This a real regression.  We need to update the XSSAuditor to use
+              the HTML5 parser's HTML entity decoder.  I'll do that in a
+              followup patch because there doesn't appear to be an easy way to
+              key the choice off of the WebCore::Setting.
+        * http/tests/security/xssAuditor/malformed-HTML-expected.txt:
+            - Slightly different handling of malformed HTML.  The exploit is still blocked.
+        * http/tests/security/xssAuditor/object-embed-tag-null-char-expected.txt:
+            - Update expected result due to different NULL character handling.
+        * inspector/audits-panel-functional-expected.txt:
+        * inspector/timeline-script-tag-1-expected.txt:
+            - Slightly different semantics around document.write.
+        * inspector/elements-panel-structure-expected.txt:
+            - HTML5 specifies case normalization for DOCTYPEs.
+        * platform/mac/css1/box_properties/float_elements_in_series-expected.txt:
+            - HTML5 specifies different handling of "<foo<bar"
+        * platform/mac/fast/doctypes/003-expected.txt:
+            - HTML5 specifies case normalization for DOCTYPEs.
+        * platform/mac/fast/dom/stripNullFromTextNodes-expected.txt:
+            - HTML5 specifies different handling of NULL characters.
+        * platform/mac/fast/invalid/016-expected.txt:
+            - HTML5 specifies different handling of "<foo<bar"
+        * platform/mac/fast/parser/broken-comments-vs-parsing-mode-expected.txt:
+            - HTML5 specifies different handling of HTML comments.
+        * platform/mac/fast/parser/comment-in-style-expected.txt:
+            - HTML5 specifies different handling of HTML comments.
+        * platform/mac/fast/parser/parseCommentsInTitles-expected.txt:
+            - HTML5 specifies different handling of HTML comments.
+        * platform/mac/fast/text/international/bidi-linebreak-001-expected.txt:
+        * platform/mac/fast/text/international/bidi-linebreak-002-expected.txt:
+        * platform/mac/fast/text/international/bidi-linebreak-003-expected.txt:
+        * platform/mac/fast/text/international/hindi-whitespace-expected.txt:
+            - HTML5 specifies different handling CR.  I don't fully understand
+              the consequences of this change, but our new behavior matches the
+              Firefox nightly.
+        * platform/mac/fast/text/stripNullFromText-expected.txt:
+            - HTML5 specifies different handling of NULL characters.
+        * platform/mac/fast/tokenizer/missing-title-end-tag-1-expected.txt:
+        * platform/mac/fast/tokenizer/missing-title-end-tag-2-expected.txt:
+            - HTML5 requires us to swallow the entire document when <title> is
+              unterminated.
+        * platform/mac/fast/tokenizer/script_extra_close-expected.txt:
+            - We're coalescing text nodes slightly different in the new parser.
+              We're going to get this up to spec when we work on the
+              TreeConstructor (which is where the spec handles text node
+              coalescing).
+        * platform/mac/tables/mozilla/images/adforce_imgis_com-expected.txt:
+            - Different handling of crazy unicode characters (replaced with
+              FFFD).  Still investigating whether this is a real bug.
+        * webarchive/archive-empty-frame-dom-expected.webarchive:
+            - HTML5 specifies case normalization for DOCTYPEs.
+
 2010-06-15  Dmitry Titov  <dimich@chromium.org>
 
         Not reviewed, updating Chromium test expectations.

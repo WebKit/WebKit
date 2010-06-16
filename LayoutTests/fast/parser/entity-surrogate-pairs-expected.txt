@@ -2,4 +2,4 @@ This tests parsing of numeric HTML entities that encode surrogates. Firefox allo
 
 Should be the same character (DESERET CAPITAL LETTER LONG I), repeated three times:
 
-𐐀𐐀𐐀
+𐐀����
