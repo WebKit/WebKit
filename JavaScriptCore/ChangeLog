@@ -1,3 +1,14 @@
+2010-06-16  Peter Varga  <pvarga@inf.u-szeged.hu>
+
+        Reviewed by Geoffrey Garen.
+
+        Store matchBegin directly in the array of output instead of the stack.
+        https://bugs.webkit.org/show_bug.cgi?id=38988
+
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::generateDisjunction):
+        (JSC::Yarr::RegexGenerator::generate):
+
 2010-06-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
