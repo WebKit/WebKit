@@ -1,3 +1,61 @@
+2010-06-16  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] Rebaseline tests following r61240
+        https://bugs.webkit.org/show_bug.cgi?id=40711
+
+        Following r61240 (new HTML5 lexer), we need to rebaseline a few tests.
+
+        * platform/chromium-linux/fast/text/international/hindi-whitespace-expected.checksum:
+        * platform/chromium-linux/fast/text/international/hindi-whitespace-expected.png:
+        * platform/chromium-linux/fast/text/international/hindi-whitespace-expected.txt:
+        * platform/chromium-mac/fast/parser/script-tag-with-trailing-slash-expected.txt: Removed.
+        * platform/chromium-mac/fast/tokenizer/script_extra_close-expected.txt:
+        * platform/chromium-win/css1/box_properties/float_elements_in_series-expected.checksum:
+        * platform/chromium-win/css1/box_properties/float_elements_in_series-expected.png:
+        * platform/chromium-win/fast/doctypes/003-expected.checksum:
+        * platform/chromium-win/fast/doctypes/003-expected.png:
+        * platform/chromium-win/fast/doctypes/003-expected.txt:
+        * platform/chromium-win/fast/dom/stripNullFromTextNodes-expected.checksum:
+        * platform/chromium-win/fast/dom/stripNullFromTextNodes-expected.png:
+        * platform/chromium-win/fast/dom/stripNullFromTextNodes-expected.txt:
+        * platform/chromium-win/fast/invalid/016-expected.checksum:
+        * platform/chromium-win/fast/invalid/016-expected.png:
+        * platform/chromium-win/fast/invalid/016-expected.txt:
+        * platform/chromium-win/fast/parser/broken-comments-vs-parsing-mode-expected.checksum:
+        * platform/chromium-win/fast/parser/broken-comments-vs-parsing-mode-expected.png:
+        * platform/chromium-win/fast/parser/broken-comments-vs-parsing-mode-expected.txt: Removed.
+        * platform/chromium-win/fast/parser/comment-in-style-expected.checksum:
+        * platform/chromium-win/fast/parser/comment-in-style-expected.png:
+        * platform/chromium-win/fast/parser/comment-in-style-expected.txt:
+        * platform/chromium-win/fast/parser/parseCommentsInTitles-expected.checksum:
+        * platform/chromium-win/fast/parser/parseCommentsInTitles-expected.png:
+        * platform/chromium-win/fast/parser/parseCommentsInTitles-expected.txt:
+        * platform/chromium-win/fast/parser/script-tag-with-trailing-slash-expected.txt: Removed.
+        * platform/chromium-win/fast/text/international/bidi-linebreak-001-expected.checksum:
+        * platform/chromium-win/fast/text/international/bidi-linebreak-001-expected.png:
+        * platform/chromium-win/fast/text/international/bidi-linebreak-001-expected.txt:
+        * platform/chromium-win/fast/text/international/bidi-linebreak-002-expected.checksum:
+        * platform/chromium-win/fast/text/international/bidi-linebreak-002-expected.png:
+        * platform/chromium-win/fast/text/international/bidi-linebreak-002-expected.txt:
+        * platform/chromium-win/fast/text/international/bidi-linebreak-003-expected.checksum:
+        * platform/chromium-win/fast/text/international/bidi-linebreak-003-expected.png:
+        * platform/chromium-win/fast/text/international/bidi-linebreak-003-expected.txt:
+        * platform/chromium-win/fast/text/international/hindi-whitespace-expected.checksum:
+        * platform/chromium-win/fast/text/international/hindi-whitespace-expected.png:
+        * platform/chromium-win/fast/text/international/hindi-whitespace-expected.txt:
+        * platform/chromium-win/fast/tokenizer/missing-title-end-tag-1-expected.checksum:
+        * platform/chromium-win/fast/tokenizer/missing-title-end-tag-1-expected.png:
+        * platform/chromium-win/fast/tokenizer/missing-title-end-tag-1-expected.txt: Removed.
+        * platform/chromium-win/fast/tokenizer/missing-title-end-tag-2-expected.checksum:
+        * platform/chromium-win/fast/tokenizer/missing-title-end-tag-2-expected.png:
+        * platform/chromium-win/fast/tokenizer/missing-title-end-tag-2-expected.txt: Removed.
+        * platform/chromium-win/fast/tokenizer/script_extra_close-expected.txt:
+        * platform/chromium-win/tables/mozilla/images/adforce_imgis_com-expected.checksum:
+        * platform/chromium-win/tables/mozilla/images/adforce_imgis_com-expected.png:
+        * platform/chromium-win/tables/mozilla/images/adforce_imgis_com-expected.txt:
+
 2010-06-16  Martin Robinson  <mrobinson@igalia.com>
 
         Not reviewed.
