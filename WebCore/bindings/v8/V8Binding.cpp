@@ -442,25 +442,29 @@ static void cachedStringCallback(v8::Persistent<v8::Value> wrapper, void* parame
     stringImpl->deref();
 }
 
-v8::Local<v8::String> v8ExternalString(const String& string)
+RefPtr<StringImpl> lastStringImpl = 0;
+v8::Persistent<v8::String> lastV8String;
+
+v8::Local<v8::String> v8ExternalStringSlow(StringImpl* stringImpl)
 {
-    StringImpl* stringImpl = string.impl();
-    if (!stringImpl || !stringImpl->length())
+    if (!stringImpl->length())
         return v8::String::Empty();
 
     if (!stringImplCacheEnabled)
-        return makeExternalString(string);
+        return makeExternalString(String(stringImpl));
 
     StringCache& stringCache = getStringCache();
     v8::String* cachedV8String = stringCache.get(stringImpl);
-    if (cachedV8String)
-    {
+    if (cachedV8String) {
         v8::Persistent<v8::String> handle(cachedV8String);
-        if (!handle.IsNearDeath() && !handle.IsEmpty())
+        if (!handle.IsNearDeath() && !handle.IsEmpty()) {
+            lastStringImpl = stringImpl;
+            lastV8String = handle;
             return v8::Local<v8::String>::New(handle);
+        }
     }
 
-    v8::Local<v8::String> newString = makeExternalString(string);
+    v8::Local<v8::String> newString = makeExternalString(String(stringImpl));
     if (newString.IsEmpty())
         return newString;
 
@@ -471,6 +475,9 @@ v8::Local<v8::String> v8ExternalString(const String& string)
     stringImpl->ref();
     wrapper.MakeWeak(stringImpl, cachedStringCallback);
     stringCache.set(stringImpl, *wrapper);
+
+    lastStringImpl = stringImpl;
+    lastV8String = wrapper;
 
     return newString;
 }

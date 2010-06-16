@@ -81,10 +81,30 @@ namespace WebCore {
     AtomicString v8NonStringValueToAtomicWebCoreString(v8::Handle<v8::Value>);
     AtomicString v8ValueToAtomicWebCoreString(v8::Handle<v8::Value> value);
 
+    // Note: RefPtr is a must as we cache by StringImpl* equality, not identity
+    // hence lastStringImpl might be not a key of the cache (in sense of identity)
+    // and hence it's not refed on addition.
+    extern RefPtr<StringImpl> lastStringImpl;
+    extern v8::Persistent<v8::String> lastV8String;
+    v8::Local<v8::String> v8ExternalStringSlow(StringImpl* stringImpl);
+
     // Return a V8 external string that shares the underlying buffer with the given
     // WebCore string. The reference counting mechanism is used to keep the
     // underlying buffer alive while the string is still live in the V8 engine.
-    v8::Local<v8::String> v8ExternalString(const String&);
+    inline v8::Local<v8::String> v8ExternalString(const String& string)
+    {
+        StringImpl* stringImpl = string.impl();
+        if (!stringImpl)
+            return v8::String::Empty();
+
+        if (lastStringImpl.get() == stringImpl) {
+            ASSERT(!lastV8String.IsNearDeath());
+            ASSERT(!lastV8String.IsEmpty());
+            return v8::Local<v8::String>::New(lastV8String);
+        }
+
+        return v8ExternalStringSlow(stringImpl);
+    }
 
     // Convert a string to a V8 string.
     inline v8::Handle<v8::String> v8String(const String& string)

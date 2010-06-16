@@ -39,6 +39,7 @@
 #include "HTMLNames.h"
 #include "MessagePort.h"
 #include "SVGElement.h"
+#include "V8Binding.h"
 #include "V8DOMMap.h"
 #include "V8MessagePort.h"
 #include "V8Proxy.h"
@@ -359,6 +360,10 @@ void V8GCController::gcPrologue()
     ObjectGrouperVisitor objectGrouperVisitor;
     visitDOMNodesInCurrentThread(&objectGrouperVisitor);
     objectGrouperVisitor.applyGrouping();
+
+    // Clean single element cache for string conversions.
+    lastStringImpl = 0;
+    lastV8String.Clear();
 }
 
 class GCEpilogueVisitor : public DOMWrapperMap<void>::Visitor {
