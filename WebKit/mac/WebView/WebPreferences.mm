@@ -360,6 +360,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitUsesProxiedOpenPanelPreferenceKey,
         [NSNumber numberWithUnsignedInt:4], WebKitPluginAllowedRunTimePreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitFrameFlatteningEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES],   WebKitHTML5ParserEnabledPreferenceKey,
         nil];
 
     // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above

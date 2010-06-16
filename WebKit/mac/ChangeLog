@@ -1,3 +1,18 @@
+2010-06-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Enable HTML5 Parser in Safari on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=40739
+
+        The HTML5 parser is probably off on all webkit ports.
+        We should either flip the meaning of the default so that
+        "false" means HTML5 on all ports, or we'll have to write
+        more code like this for all the other ports.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+
 2010-06-15  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.
