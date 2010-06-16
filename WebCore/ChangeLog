@@ -1,5 +1,28 @@
 2010-06-16  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Fix clipping via CSS clip: with composited descendants
+        https://bugs.webkit.org/show_bug.cgi?id=40579
+        
+        Consult the 'clip' style, as well as overflow, when creating clipping
+        compositing layers.
+
+        Tests: compositing/geometry/clip.html
+               compositing/overflow/clip-descendents.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::clipBox): Utility function that returns the union of the clip and overflow
+        boxes.
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry): Use clipBox() to
+        get the correct clipping rectangle.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::enclosingNonStackingClippingLayer): Look for
+        clip as well as overflow.
+        (WebCore::RenderLayerCompositor::clipsCompositingDescendants): Ditto.
+
+2010-06-16  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Darin Adler.
 
         REGRESSION: Undocked inspector toolbar is white

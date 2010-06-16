@@ -227,6 +227,18 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
     return layerConfigChanged;
 }
 
+static IntRect clipBox(RenderBox* renderer)
+{
+    IntRect result = ClipRects::infiniteRect();
+    if (renderer->hasOverflowClip())
+        result = renderer->overflowClipRect(0, 0);
+
+    if (renderer->hasClip())
+        result.intersect(renderer->clipRect(0, 0));
+
+    return result;
+}
+
 void RenderLayerBacking::updateGraphicsLayerGeometry()
 {
     // If we haven't built z-order lists yet, wait until later.
@@ -266,7 +278,8 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     if (compAncestor && compAncestor->backing()->hasClippingLayer()) {
         // If the compositing ancestor has a layer to clip children, we parent in that, and therefore
         // position relative to it.
-        graphicsLayerParentLocation = toRenderBox(compAncestor->renderer())->overflowClipRect(0, 0).location();
+        IntRect clippingBox = clipBox(toRenderBox(compAncestor->renderer()));
+        graphicsLayerParentLocation = clippingBox.location();
     } else
         graphicsLayerParentLocation = ancestorCompositingBounds.location();
     
@@ -302,7 +315,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     // If we have a layer that clips children, position it.
     IntRect clippingBox;
     if (m_clippingLayer) {
-        clippingBox = toRenderBox(renderer())->overflowClipRect(0, 0);
+        clippingBox = clipBox(toRenderBox(renderer()));
         m_clippingLayer->setPosition(FloatPoint() + (clippingBox.location() - localCompositingBounds.location()));
         m_clippingLayer->setSize(clippingBox.size());
         m_clippingLayer->setOffsetFromRenderer(clippingBox.location() - IntPoint());
