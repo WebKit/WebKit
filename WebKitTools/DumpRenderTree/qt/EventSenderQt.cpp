@@ -191,11 +191,23 @@ void EventSender::continuousMouseScrollBy(int x, int y)
     // continuousMouseScrollBy() mimics devices that send fine-grained scroll events where the 'delta' specified is not the usual
     // multiple of 120. See http://doc.qt.nokia.com/4.6/qwheelevent.html#delta for a good explanation of this.
     if (x) {
-        QWheelEvent* event = new QWheelEvent(m_mousePos, m_mousePos, x, m_mouseButtons, Qt::NoModifier, Qt::Horizontal);
+        QEvent* event;
+        if (isGraphicsBased()) {
+            event = createGraphicsSceneWheelEvent(QEvent::GraphicsSceneWheel,
+                        m_mousePos, m_mousePos, x, Qt::NoModifier, Qt::Horizontal);
+        } else
+            event = new QWheelEvent(m_mousePos, m_mousePos, x, m_mouseButtons, Qt::NoModifier, Qt::Horizontal);
+
         sendOrQueueEvent(event);
     }
     if (y) {
-        QWheelEvent* event = new QWheelEvent(m_mousePos, m_mousePos, y, m_mouseButtons, Qt::NoModifier, Qt::Vertical);
+        QEvent* event;
+        if (isGraphicsBased()) {
+            event = createGraphicsSceneWheelEvent(QEvent::GraphicsSceneWheel,
+                        m_mousePos, m_mousePos, y, Qt::NoModifier, Qt::Vertical);
+        } else
+            event = new QWheelEvent(m_mousePos, m_mousePos, y, m_mouseButtons, Qt::NoModifier, Qt::Vertical);
+
         sendOrQueueEvent(event);
     }
 }
@@ -607,6 +619,19 @@ QGraphicsSceneMouseEvent* EventSender::createGraphicsSceneMouseEvent(QEvent::Typ
     event->setButton(button);
     event->setButtons(buttons);
     event->setModifiers(modifiers);
+
+    return event;
+}
+
+QGraphicsSceneWheelEvent* EventSender::createGraphicsSceneWheelEvent(QEvent::Type type, const QPoint& pos, const QPoint& screenPos, int delta, Qt::KeyboardModifiers modifiers, Qt::Orientation orientation)
+{
+    QGraphicsSceneWheelEvent* event;
+    event = new QGraphicsSceneWheelEvent(type);
+    event->setPos(pos);
+    event->setScreenPos(screenPos);
+    event->setDelta(delta);
+    event->setModifiers(modifiers);
+    event->setOrientation(orientation);
 
     return event;
 }
