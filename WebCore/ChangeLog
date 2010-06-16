@@ -1,5 +1,11 @@
 2010-06-16  Darin Adler  <darin@apple.com>
 
+        Try to fix the MathML build.
+
+        * mathml/MathMLMathElement.h: Added missing return type.
+
+2010-06-16  Darin Adler  <darin@apple.com>
+
         Reviewed by David Levin.
 
         Deploy adoptRef in more places, including all HTML and MathML elements

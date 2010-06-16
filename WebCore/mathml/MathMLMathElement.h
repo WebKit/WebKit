@@ -39,7 +39,7 @@ public:
 private:
     MathMLMathElement(const QualifiedName& tagName, Document*);
 
-    virtual createRenderer(RenderArena*, RenderStyle*);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 };
     
 }
