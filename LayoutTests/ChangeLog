@@ -1,3 +1,19 @@
+2010-06-16  Adam Roben  <aroben@apple.com>
+
+        Land new expected Windows results for two failing tests
+
+        These test results should have been updated in r61136, but weren't.
+
+        Reviewed by Anders Carlsson.
+
+        Fixes <http://webkit.org/b/40713> REGRESSION (r61136):
+        fast/dom/prototype-inheritance-2.html and
+        fast/js/global-constructors.html are failing on Windows.
+
+        * platform/win/fast/dom/prototype-inheritance-2-expected.txt:
+        * platform/win/fast/js/global-constructors-expected.txt:
+        Updated with the actual results from the bots.
+
 2010-06-16  Martin Robinson  <mrobinson@igalia.com>
 
         Not reviewed.
