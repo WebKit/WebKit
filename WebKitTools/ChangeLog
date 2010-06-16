@@ -1,5 +1,18 @@
 2010-06-16  Adam Roben  <aroben@apple.com>
 
+        Remove a stray newline from the Windows version of TestNetscapePlugin
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fixes <http://webkit.org/b/40728>
+        plugins/geturlnotify-during-document-teardown.html fails on Windows
+
+        * DumpRenderTree/win/TestNetscapePlugin/main.cpp:
+        (NPP_Destroy): Removed extra newline that the Mac version doesn't
+        have.
+
+2010-06-16  Adam Roben  <aroben@apple.com>
+
         Respect LayoutTestController::isPrinting on Windows
 
         This gets some printing tests closer to passing (like
