@@ -1,5 +1,15 @@
 2010-06-15  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by David Harrison.
+
+        sqlite3_prepare16_v2 is not documented as always setting "tail" during error cases.
+        Explicitly initialize it to null, just to be safe.
+
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::prepare):
+
+2010-06-15  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Brady Eidson.
 
         <rdar://problem/8091103> URLs not added to history when initial load happens via back/forward navigation
