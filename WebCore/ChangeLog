@@ -1,3 +1,9 @@
+2010-06-16  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by NOBODY (Build fix for Mac)
+
+        * WebCore.xcodeproj/project.pbxproj: Make paths relative to the project root.
+
 2010-06-16  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Eric Carlson.
