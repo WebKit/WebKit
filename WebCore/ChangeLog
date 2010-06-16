@@ -1,3 +1,19 @@
+2010-06-16  Stuart Morgan  <stuartmorgan@chromium.org>
+
+        Reviewed by Anders Carlsson.
+
+        Bring npapi.h more in line with upstream npapi-headers version:
+        - Remove obsolete XP_MAC sections.
+        - Remove Metrowerks defines.
+        - Add OS/2 defines.
+        - Add Maemo defines.
+        - Add new version of the custom Carbon event definitions.
+        - Sync platform define style/details
+
+        https://bugs.webkit.org/show_bug.cgi?id=38666
+
+        * bridge/npapi.h:
+
 2010-06-16  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -38,7 +38,17 @@
 #ifndef npapi_h_
 #define npapi_h_
 
+#if defined(__OS2__)
+#pragma pack(1)
+#endif
+
 #include "nptypes.h"
+
+#if defined(__OS2__) || defined(OS2)
+#ifndef XP_OS2
+#define XP_OS2 1
+#endif
+#endif
 
 #ifdef INCLUDE_JAVA
 #include "jri.h"                /* Java Runtime Interface */
@@ -48,41 +58,22 @@
 #endif
 
 #if defined(_WIN32) && !defined(__SYMBIAN32__)
+#include <windows.h>
 #ifndef XP_WIN
 #define XP_WIN 1
 #endif
 #endif
 
-#ifdef __SYMBIAN32__
-#   ifndef XP_SYMBIAN
-#       define XP_SYMBIAN 1
-#   endif
-#endif  /* __SYMBIAN32__ */
-
-#ifdef __MWERKS__
-#    define _declspec __declspec
-#    ifdef macintosh
-#        ifndef XP_MAC
-#            define XP_MAC 1
-#        endif /* XP_MAC */
-#    endif /* macintosh */
-#    ifdef __INTEL__
-#       ifndef XP_SYMBIAN
-#           undef NULL
-#           ifndef XP_WIN
-#               define XP_WIN 1
-#           endif /* XP_WIN */
-#       endif /* XP_SYMBIAN */
-#    endif /* __INTEL__ */
-#endif /* __MWERKS__ */
-
-#if defined(__APPLE_CC__) && !defined(__MACOS_CLASSIC__) && !defined(XP_UNIX)
-#   define XP_MACOSX
+#if defined(__SYMBIAN32__)
+#ifndef XP_SYMBIAN
+#define XP_SYMBIAN 1
+#endif
 #endif
 
-#ifdef XP_MAC
-    #include <Quickdraw.h>
-    #include <Events.h>
+#if defined(__APPLE_CC__) && !defined(XP_UNIX)
+#ifndef XP_MACOSX
+#define XP_MACOSX 1
+#endif
 #endif
 
 #if defined(XP_MACOSX) && defined(__LP64__)
@@ -90,7 +81,7 @@
 #define NP_NO_CARBON
 #endif
 
-#ifdef XP_MACOSX
+#if defined(XP_MACOSX)
 #include <ApplicationServices/ApplicationServices.h>
 #include <OpenGL/OpenGL.h>
 #ifndef NP_NO_CARBON
@@ -98,19 +89,15 @@
 #endif
 #endif
 
-#ifdef XP_UNIX
+#if defined(XP_UNIX)
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <stdio.h>
 #endif
 
 #if defined(XP_SYMBIAN)
-    #include <QEvent>
-    #include <QRegion>
-#endif
-
-#ifdef XP_WIN
-    #include <windows.h>
+#include <QEvent>
+#include <QRegion>
 #endif
 
 /*----------------------------------------------------------------------*/
@@ -119,6 +106,49 @@
 
 #define NP_VERSION_MAJOR 0
 #define NP_VERSION_MINOR 24
+
+
+/* The OS/2 version of Netscape uses RC_DATA to define the
+   mime types, file extensions, etc that are required.
+   Use a vertical bar to separate types, end types with \0.
+   FileVersion and ProductVersion are 32bit ints, all other
+   entries are strings that MUST be terminated with a \0.
+
+AN EXAMPLE:
+
+RCDATA NP_INFO_ProductVersion { 1,0,0,1,}
+
+RCDATA NP_INFO_MIMEType    { "video/x-video|",
+                             "video/x-flick\0" }
+RCDATA NP_INFO_FileExtents { "avi|",
+                             "flc\0" }
+RCDATA NP_INFO_FileOpenName{ "MMOS2 video player(*.avi)|",
+                             "MMOS2 Flc/Fli player(*.flc)\0" }
+
+RCDATA NP_INFO_FileVersion       { 1,0,0,1 }
+RCDATA NP_INFO_CompanyName       { "Netscape Communications\0" }
+RCDATA NP_INFO_FileDescription   { "NPAVI32 Extension DLL\0"
+RCDATA NP_INFO_InternalName      { "NPAVI32\0" )
+RCDATA NP_INFO_LegalCopyright    { "Copyright Netscape Communications \251 1996\0"
+RCDATA NP_INFO_OriginalFilename  { "NVAPI32.DLL" }
+RCDATA NP_INFO_ProductName       { "NPAVI32 Dynamic Link Library\0" }
+*/
+/* RC_DATA types for version info - required */
+#define NP_INFO_ProductVersion      1
+#define NP_INFO_MIMEType            2
+#define NP_INFO_FileOpenName        3
+#define NP_INFO_FileExtents         4
+/* RC_DATA types for version info - used if found */
+#define NP_INFO_FileDescription     5
+#define NP_INFO_ProductName         6
+/* RC_DATA types for version info - optional */
+#define NP_INFO_CompanyName         7
+#define NP_INFO_FileVersion         8
+#define NP_INFO_InternalName        9
+#define NP_INFO_LegalCopyright      10
+#define NP_INFO_OriginalFilename    11
+
+#ifndef RC_INVOKED
 
 /*----------------------------------------------------------------------*/
 /*                       Definition of Basic Types                      */
@@ -144,7 +174,7 @@ typedef char*         NPMIMEType;
 /*----------------------------------------------------------------------*/
 
 #if !defined(__LP64__)
-#if defined(XP_MAC) || defined(XP_MACOSX)
+#if defined(XP_MACOSX)
 #pragma options align=mac68k
 #endif
 #endif /* __LP64__ */
@@ -201,7 +231,19 @@ typedef struct _NPRect
   uint16_t right;
 } NPRect;
 
-#ifdef XP_UNIX
+typedef struct _NPSize
+{
+  int32_t width;
+  int32_t height;
+} NPSize;
+
+/* Return values for NPP_HandleEvent */
+#define kNPEventNotHandled 0
+#define kNPEventHandled 1
+/* Exact meaning must be spec'd in event model. */
+#define kNPEventStartIME 2
+
+#if defined(XP_UNIX)
 /*
  * Unix specific structures and definitions
  */
@@ -238,7 +280,7 @@ typedef struct
 
 #endif /* XP_UNIX */
 
-#ifdef XP_MACOSX
+#if defined(XP_MACOSX)
 typedef enum {
 #ifndef NP_NO_QUICKDRAW
   NPDrawingModelQuickDraw = 0,
@@ -280,8 +322,8 @@ typedef enum {
 #define _NP_ABI_MIXIN_FOR_GCC3 0
 #endif
 
+#if defined(XP_MACOSX)
 #define NP_ABI_MACHO_MASK 0x01000000
-#if (defined(TARGET_RT_MAC_MACHO))
 #define _NP_ABI_MIXIN_FOR_MACHO NP_ABI_MACHO_MASK
 #else
 #define _NP_ABI_MIXIN_FOR_MACHO 0
@@ -324,16 +366,23 @@ typedef enum {
    */
   NPPVpluginWantsAllNetworkStreams = 18,
 
+  /* Browsers can retrieve a native ATK accessibility plug ID via this variable. */
+  NPPVpluginNativeAccessibleAtkPlugId = 19,
+
   /* Checks to see if the plug-in would like the browser to load the "src" attribute. */
   NPPVpluginCancelSrcStream = 20
 
-#ifdef XP_MACOSX
+#if defined(XP_MACOSX)
   /* Used for negotiating drawing models */
   , NPPVpluginDrawingModel = 1000
   /* Used for negotiating event models */
   , NPPVpluginEventModel = 1001
   /* In the NPDrawingModelCoreAnimation drawing model, the browser asks the plug-in for a Core Animation layer. */
   , NPPVpluginCoreAnimationLayer = 1003
+#endif
+
+#if defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO == 5)
+  , NPPVpluginWindowlessLocalBool = 2002
 #endif
 } NPPVariable;
 
@@ -364,7 +413,7 @@ typedef enum {
 
   NPNVprivateModeBool = 18
 
-#ifdef XP_MACOSX
+#if defined(XP_MACOSX)
   /* Used for negotiating drawing models */
   , NPNVpluginDrawingModel = 1000
 #ifndef NP_NO_QUICKDRAW
@@ -378,12 +427,23 @@ typedef enum {
 #endif
   , NPNVsupportsCocoaBool = 3001 /* TRUE if the browser supports the Cocoa event model */
 #endif /* XP_MACOSX */
+#if defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO == 5)
+  , NPNVSupportsWindowlessLocal = 2002
+#endif
 } NPNVariable;
 
 typedef enum {
   NPNURLVCookie = 501,
   NPNURLVProxy
 } NPNURLVariable;
+
+/*
+ * The type of Toolkit the widgets use
+ */
+typedef enum {
+  NPNVGtk12 = 1,
+  NPNVGtk2
+} NPNToolkitType;
 
 /*
  * The type of a NPWindow - it specifies the type of the data structure
@@ -410,6 +470,22 @@ typedef struct _NPWindow
   NPWindowType type; /* Is this a window or a drawable? */
 } NPWindow;
 
+typedef struct _NPImageExpose
+{
+  char*    data;       /* image pointer */
+  int32_t  stride;     /* Stride of data image pointer */
+  int32_t  depth;      /* Depth of image pointer */
+  int32_t  x;          /* Expose x */
+  int32_t  y;          /* Expose y */
+  uint32_t width;      /* Expose width */
+  uint32_t height;     /* Expose height */
+  NPSize   dataSize;   /* Data buffer size */
+  float    translateX; /* translate X matrix value */
+  float    translateY; /* translate Y matrix value */
+  float    scaleX;     /* scale X matrix value */
+  float    scaleY;     /* scale Y matrix value */
+} NPImageExpose;
+
 typedef struct _NPFullPrint
 {
   NPBool pluginPrinted;/* Set TRUE if plugin handled fullscreen printing */
@@ -434,7 +510,7 @@ typedef struct _NPPrint
   } print;
 } NPPrint;
 
-#if defined(XP_MAC) || defined(XP_MACOSX)
+#if defined(XP_MACOSX)
 #ifndef NP_NO_CARBON
 typedef EventRecord NPEvent;
 #endif
@@ -447,16 +523,21 @@ typedef struct _NPEvent
   uintptr_t wParam;
   uintptr_t lParam;
 } NPEvent;
-#elif defined (XP_UNIX)
+#elif defined(XP_OS2)
+typedef struct _NPEvent
+{
+  uint32_t event;
+  uint32_t wParam;
+  uint32_t lParam;
+} NPEvent;
+#elif defined(XP_UNIX)
 typedef XEvent NPEvent;
 #else
 typedef void*  NPEvent;
 #endif
 
-#if defined(XP_MAC)
-typedef RgnHandle NPRegion;
-#elif defined(XP_MACOSX)
-typedef void *NPRegion;
+#if defined(XP_MACOSX)
+typedef void* NPRegion;
 #ifndef NP_NO_QUICKDRAW
 typedef RgnHandle NPQDRegion;
 #endif
@@ -475,7 +556,7 @@ typedef struct _NPNSString NPNSString;
 typedef struct _NPNSWindow NPNSWindow;
 typedef struct _NPNSMenu   NPNSMenu;
 
-#ifdef XP_MACOSX
+#if defined(XP_MACOSX)
 typedef NPNSMenu NPMenu;
 #else
 typedef void *NPMenu;
@@ -489,7 +570,7 @@ typedef enum {
   NPCoordinateSpaceFlippedScreen
 } NPCoordinateSpace;
 
-#ifdef XP_MACOSX
+#if defined(XP_MACOSX)
 
 #ifndef NP_NO_QUICKDRAW
 typedef struct NP_Port
@@ -584,15 +665,24 @@ typedef struct _NPCocoaEvent {
   } data;
 } NPCocoaEvent;
 
-#endif /* XP_MACOSX */
-
-#if defined(XP_MAC) || defined(XP_MACOSX)
-/*  Non-standard event types that can be passed to HandleEvent */
+#ifndef NP_NO_CARBON
+/* Non-standard event types that can be passed to HandleEvent */
+enum NPEventType {
+  NPEventType_GetFocusEvent = (osEvt + 16),
+  NPEventType_LoseFocusEvent,
+  NPEventType_AdjustCursorEvent,
+  NPEventType_MenuCommandEvent,
+  NPEventType_ClippingChangedEvent,
+  NPEventType_ScrollingBeginsEvent = 1000,
+  NPEventType_ScrollingEndsEvent
+};
+/* Obsolete versions of the above */
 #define getFocusEvent        (osEvt + 16)
 #define loseFocusEvent        (osEvt + 17)
 #define adjustCursorEvent   (osEvt + 18)
-#endif /* XP_MAC */
+#endif /* NP_NO_CARBON */
 
+#endif /* XP_MACOSX */
 
 /*
  * Values for mode passed to NPP_New:
@@ -611,7 +701,7 @@ typedef struct _NPCocoaEvent {
 #define NP_MAXREADY (((unsigned)(~0)<<1)>>1)
 
 #if !defined(__LP64__)
-#if defined(XP_MAC) || defined(XP_MACOSX)
+#if defined(XP_MACOSX)
 #pragma options align=reset
 #endif
 #endif /* __LP64__ */
@@ -680,8 +770,8 @@ typedef struct _NPCocoaEvent {
 /*                        Function Prototypes                           */
 /*----------------------------------------------------------------------*/
 
-#if defined(_WINDOWS) && !defined(WIN32)
-#define NP_LOADDS  _loadds
+#if defined(__OS2__)
+#define NP_LOADDS _System
 #else
 #define NP_LOADDS
 #endif
@@ -692,12 +782,12 @@ extern "C" {
 
 /* NPP_* functions are provided by the plugin and called by the navigator. */
 
-#ifdef XP_UNIX
+#if defined(XP_UNIX)
 char* NPP_GetMIMEDescription(void);
 #endif
 
-NPError           NPP_Initialize(void);
-void              NPP_Shutdown(void);
+NPError NP_LOADDS NPP_Initialize(void);
+void    NP_LOADDS NPP_Shutdown(void);
 NPError NP_LOADDS NPP_New(NPMIMEType pluginType, NPP instance,
                           uint16_t mode, int16_t argc, char* argn[],
                           char* argv[], NPSavedData* saved);
@@ -714,64 +804,62 @@ int32_t NP_LOADDS NPP_Write(NPP instance, NPStream* stream, int32_t offset,
 void    NP_LOADDS NPP_StreamAsFile(NPP instance, NPStream* stream,
                                    const char* fname);
 void    NP_LOADDS NPP_Print(NPP instance, NPPrint* platformPrint);
-int16_t           NPP_HandleEvent(NPP instance, void* event);
+int16_t NP_LOADDS NPP_HandleEvent(NPP instance, void* event);
 void    NP_LOADDS NPP_URLNotify(NPP instance, const char* url,
                                 NPReason reason, void* notifyData);
 jref    NP_LOADDS NPP_GetJavaClass(void);
-NPError           NPP_GetValue(NPP instance, NPPVariable variable,
-                               void *value);
-NPError           NPP_SetValue(NPP instance, NPNVariable variable,
-                               void *value);
+NPError NP_LOADDS NPP_GetValue(NPP instance, NPPVariable variable, void *value);
+NPError NP_LOADDS NPP_SetValue(NPP instance, NPNVariable variable, void *value);
 
 /* NPN_* functions are provided by the navigator and called by the plugin. */
-void                  NPN_Version(int* plugin_major, int* plugin_minor,
+void        NP_LOADDS NPN_Version(int* plugin_major, int* plugin_minor,
                                   int* netscape_major, int* netscape_minor);
-NPError               NPN_GetURLNotify(NPP instance, const char* url,
+NPError     NP_LOADDS NPN_GetURLNotify(NPP instance, const char* url,
                                        const char* target, void* notifyData);
-NPError               NPN_GetURL(NPP instance, const char* url,
+NPError     NP_LOADDS NPN_GetURL(NPP instance, const char* url,
                                  const char* target);
-NPError               NPN_PostURLNotify(NPP instance, const char* url,
+NPError     NP_LOADDS NPN_PostURLNotify(NPP instance, const char* url,
                                         const char* target, uint32_t len,
                                         const char* buf, NPBool file,
                                         void* notifyData);
-NPError               NPN_PostURL(NPP instance, const char* url,
+NPError     NP_LOADDS NPN_PostURL(NPP instance, const char* url,
                                   const char* target, uint32_t len,
                                   const char* buf, NPBool file);
-NPError               NPN_RequestRead(NPStream* stream, NPByteRange* rangeList);
-NPError               NPN_NewStream(NPP instance, NPMIMEType type,
+NPError     NP_LOADDS NPN_RequestRead(NPStream* stream, NPByteRange* rangeList);
+NPError     NP_LOADDS NPN_NewStream(NPP instance, NPMIMEType type,
                                     const char* target, NPStream** stream);
-int32_t               NPN_Write(NPP instance, NPStream* stream, int32_t len,
+int32_t     NP_LOADDS NPN_Write(NPP instance, NPStream* stream, int32_t len,
                                 void* buffer);
-NPError               NPN_DestroyStream(NPP instance, NPStream* stream,
+NPError     NP_LOADDS NPN_DestroyStream(NPP instance, NPStream* stream,
                                         NPReason reason);
-void                  NPN_Status(NPP instance, const char* message);
-const char*           NPN_UserAgent(NPP instance);
-void*                 NPN_MemAlloc(uint32_t size);
-void                  NPN_MemFree(void* ptr);
-uint32_t              NPN_MemFlush(uint32_t size);
-void                  NPN_ReloadPlugins(NPBool reloadPages);
-JRIEnv*               NPN_GetJavaEnv(void);
-jref                  NPN_GetJavaPeer(NPP instance);
-NPError               NPN_GetValue(NPP instance, NPNVariable variable,
+void        NP_LOADDS NPN_Status(NPP instance, const char* message);
+const char* NP_LOADDS NPN_UserAgent(NPP instance);
+void*       NP_LOADDS NPN_MemAlloc(uint32_t size);
+void        NP_LOADDS NPN_MemFree(void* ptr);
+uint32_t    NP_LOADDS NPN_MemFlush(uint32_t size);
+void        NP_LOADDS NPN_ReloadPlugins(NPBool reloadPages);
+JRIEnv*     NP_LOADDS NPN_GetJavaEnv(void);
+jref        NP_LOADDS NPN_GetJavaPeer(NPP instance);
+NPError     NP_LOADDS NPN_GetValue(NPP instance, NPNVariable variable,
                                    void *value);
-NPError               NPN_SetValue(NPP instance, NPPVariable variable,
+NPError     NP_LOADDS NPN_SetValue(NPP instance, NPPVariable variable,
                                    void *value);
-void                  NPN_InvalidateRect(NPP instance, NPRect *invalidRect);
-void                  NPN_InvalidateRegion(NPP instance,
+void        NP_LOADDS NPN_InvalidateRect(NPP instance, NPRect *invalidRect);
+void        NP_LOADDS NPN_InvalidateRegion(NPP instance,
                                            NPRegion invalidRegion);
-void                  NPN_ForceRedraw(NPP instance);
-void                  NPN_PushPopupsEnabledState(NPP instance, NPBool enabled);
-void                  NPN_PopPopupsEnabledState(NPP instance);
-void                  NPN_PluginThreadAsyncCall(NPP instance,
+void        NP_LOADDS NPN_ForceRedraw(NPP instance);
+void        NP_LOADDS NPN_PushPopupsEnabledState(NPP instance, NPBool enabled);
+void        NP_LOADDS NPN_PopPopupsEnabledState(NPP instance);
+void        NP_LOADDS NPN_PluginThreadAsyncCall(NPP instance,
                                                 void (*func) (void *),
                                                 void *userData);
-NPError               NPN_GetValueForURL(NPP instance, NPNURLVariable variable,
+NPError     NP_LOADDS NPN_GetValueForURL(NPP instance, NPNURLVariable variable,
                                          const char *url, char **value,
                                          uint32_t *len);
-NPError               NPN_SetValueForURL(NPP instance, NPNURLVariable variable,
+NPError     NP_LOADDS NPN_SetValueForURL(NPP instance, NPNURLVariable variable,
                                          const char *url, const char *value,
                                          uint32_t len);
-NPError               NPN_GetAuthenticationInfo(NPP instance,
+NPError     NP_LOADDS NPN_GetAuthenticationInfo(NPP instance,
                                                 const char *protocol,
                                                 const char *host, int32_t port,
                                                 const char *scheme,
@@ -779,13 +867,18 @@ NPError               NPN_GetAuthenticationInfo(NPP instance,
                                                 char **username, uint32_t *ulen,
                                                 char **password,
                                                 uint32_t *plen);
-uint32_t              NPN_ScheduleTimer(NPP instance, uint32_t interval, NPBool repeat, void (*timerFunc)(NPP npp, uint32_t timerID));
-void                  NPN_UnscheduleTimer(NPP instance, uint32_t timerID);
-NPError               NPN_PopUpContextMenu(NPP instance, NPMenu* menu);
-NPBool                NPN_ConvertPoint(NPP instance, double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double *destX, double *destY, NPCoordinateSpace destSpace);
+uint32_t    NP_LOADDS NPN_ScheduleTimer(NPP instance, uint32_t interval, NPBool repeat, void (*timerFunc)(NPP npp, uint32_t timerID));
+void        NP_LOADDS NPN_UnscheduleTimer(NPP instance, uint32_t timerID);
+NPError     NP_LOADDS NPN_PopUpContextMenu(NPP instance, NPMenu* menu);
+NPBool      NP_LOADDS NPN_ConvertPoint(NPP instance, double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double *destX, double *destY, NPCoordinateSpace destSpace);
 
 #ifdef __cplusplus
 }  /* end extern "C" */
+#endif
+
+#endif /* RC_INVOKED */
+#if defined(__OS2__)
+#pragma pack()
 #endif
 
 #endif /* npapi_h_ */
