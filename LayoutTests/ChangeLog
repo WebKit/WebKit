@@ -1,3 +1,12 @@
+2010-06-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Remove the abuse of GDK_CURRENT_TIME in the DRT
+        https://bugs.webkit.org/show_bug.cgi?id=40600
+
+        * platform/gtk/Skipped: This change exposed some failures which were previously not reported. Skip them.
+
 2010-06-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

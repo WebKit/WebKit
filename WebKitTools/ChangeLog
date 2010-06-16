@@ -1,3 +1,13 @@
+2010-06-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Remove the abuse of GDK_CURRENT_TIME in the DRT
+        https://bugs.webkit.org/show_bug.cgi?id=40600
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (prepareMouseButtonEvent): Remove logic adding an offset to GDK_CURRENT_TIME.
+
 2010-06-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

@@ -56,6 +56,7 @@
 #include "Page.h"
 #include "Frame.h"
 #include "InspectorClientGtk.h"
+#include "IntPoint.h"
 #include "FrameLoaderClient.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
@@ -151,6 +152,11 @@ extern "C" {
         char* mainResourceIdentifier;
         GHashTable* subResources;
         char* tooltipText;
+
+        int currentClickCount;
+        WebCore::IntPoint* previousClickPoint;
+        guint previousClickButton;
+        guint32 previousClickTime;
 
         HashMap<GdkDragContext*, RefPtr<WebCore::DataObjectGtk> > draggingDataObjects;
     };

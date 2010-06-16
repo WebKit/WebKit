@@ -1,3 +1,21 @@
+2010-06-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Remove the abuse of GDK_CURRENT_TIME in the DRT
+        https://bugs.webkit.org/show_bug.cgi?id=40600
+
+        * WebCoreSupport/DragClientGtk.cpp: 
+        (WebKit::DragClient::startDrag): Reset the click count after a drag starts.
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::postCommitFrameViewSetup): Reset the click count after a load is committed.
+        * webkit/webkitprivate.h: Move static click counting variables to be per-view.
+        * webkit/webkitwebview.cpp: 
+        (getEventTime): Added.
+        (webkit_web_view_button_press_event): If the event time is zero, use the current time.
+        (webkit_web_view_finalize): Clean up click counting member.
+        (webkit_web_view_init): Initialize click counting member.
+
 2010-06-15  Xan Lopez  <xlopez@igalia.com>
 
         Fix compilation with older GTK+.

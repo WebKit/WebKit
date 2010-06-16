@@ -587,16 +587,25 @@ static gboolean webkit_web_view_key_release_event(GtkWidget* widget, GdkEventKey
     return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->key_release_event(widget, event);
 }
 
+static guint32 getEventTime(GdkEvent* event)
+{
+    guint32 time = gdk_event_get_time(event);
+    if (time)
+        return time;
+
+    // Real events always have a non-zero time, but events synthesized
+    // by the DRT do not and we must calculate a time manually. This time
+    // is not calculated in the DRT, because GTK+ does not work well with
+    // anything other than GDK_CURRENT_TIME on synthesized events.
+    GTimeVal timeValue;
+    g_get_current_time(&timeValue);
+    return (timeValue.tv_sec * 1000) + (timeValue.tv_usec / 1000);
+} 
+
 static gboolean webkit_web_view_button_press_event(GtkWidget* widget, GdkEventButton* event)
 {
-    // Eventually it may make sense for these to be per-view and per-device,
-    // but at this time the implementation matches the Windows port.
-    static int currentClickCount = 1;
-    static IntPoint previousPoint;
-    static guint previousButton;
-    static guint32 previousTime;
-
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
+    WebKitWebViewPrivate* priv = webView->priv;
 
     // FIXME: need to keep track of subframe focus for key events
     gtk_widget_grab_focus(widget);
@@ -620,20 +629,21 @@ static gboolean webkit_web_view_button_press_event(GtkWidget* widget, GdkEventBu
     // GTK+ only counts up to triple clicks, but WebCore wants to know about
     // quadruple clicks, quintuple clicks, ad infinitum. Here, we replicate the
     // GDK logic for counting clicks.
+    guint32 eventTime = getEventTime(reinterpret_cast<GdkEvent*>(event));
     if ((event->type == GDK_2BUTTON_PRESS || event->type == GDK_3BUTTON_PRESS)
-        || ((abs(event->x - previousPoint.x()) < doubleClickDistance)
-            && (abs(event->y - previousPoint.y()) < doubleClickDistance)
-            && (event->time - previousTime < static_cast<guint>(doubleClickTime))
-            && (event->button == previousButton)))
-        currentClickCount++;
+        || ((abs(event->x - priv->previousClickPoint->x()) < doubleClickDistance)
+            && (abs(event->y - priv->previousClickPoint->y()) < doubleClickDistance)
+            && (eventTime - priv->previousClickTime < static_cast<guint>(doubleClickTime))
+            && (event->button == priv->previousClickButton)))
+        priv->currentClickCount++;
     else
-        currentClickCount = 1;
+        priv->currentClickCount = 1;
 
     PlatformMouseEvent platformEvent(event);
-    platformEvent.setClickCount(currentClickCount);
-    previousPoint = platformEvent.pos();
-    previousButton = event->button;
-    previousTime = event->time;
+    platformEvent.setClickCount(priv->currentClickCount);
+    *priv->previousClickPoint = platformEvent.pos();
+    priv->previousClickButton = event->button;
+    priv->previousClickTime = eventTime;
 
     if (event->button == 3)
         return webkit_web_view_forward_context_menu_event(webView, PlatformMouseEvent(event));
@@ -1195,6 +1205,8 @@ static void webkit_web_view_finalize(GObject* object)
     g_free(priv->encoding);
     g_free(priv->customEncoding);
     g_free(priv->iconURI);
+
+    delete priv->previousClickPoint;
 
     G_OBJECT_CLASS(webkit_web_view_parent_class)->finalize(object);
 }
@@ -2912,6 +2924,10 @@ static void webkit_web_view_init(WebKitWebView* webView)
     priv->subResources = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref);
 
     priv->tooltipText = 0;
+    priv->currentClickCount = 0;
+    priv->previousClickPoint = new IntPoint(0, 0);
+    priv->previousClickButton = 0;
+    priv->previousClickTime = 0;
 }
 
 GtkWidget* webkit_web_view_new(void)

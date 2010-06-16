@@ -1145,6 +1145,9 @@ static void postCommitFrameViewSetup(WebKitWebFrame *frame, FrameView *view, boo
         gtk_menu_popdown(menu);
         g_object_unref(menu);
     }
+
+    // Do not allow click counting between main frame loads.
+    priv->previousClickTime = 0;
 }
 
 void FrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame* cachedFrame)
