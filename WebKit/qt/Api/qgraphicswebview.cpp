@@ -122,7 +122,7 @@ void QGraphicsWebViewPrivate::_q_pageDestroyed()
 void QGraphicsWebViewPrivate::updateResizesToContentsForPage()
 {
     ASSERT(page);
-
+    static_cast<PageClientQGraphicsWidget*>(page->d->client)->viewResizesToContents = resizesToContents;
     if (resizesToContents) {
         // resizes to contents mode requires preferred contents size to be set
         if (!page->preferredContentsSize().isValid())
@@ -821,10 +821,8 @@ void QGraphicsWebView::setResizesToContents(bool enabled)
     if (d->resizesToContents == enabled)
         return;
     d->resizesToContents = enabled;
-    if (d->page) {
-        static_cast<PageClientQGraphicsWidget*>(d->page->d->client)->viewResizesToContents = enabled;
+    if (d->page)
         d->updateResizesToContentsForPage();
-    }
 }
 
 bool QGraphicsWebView::resizesToContents() const

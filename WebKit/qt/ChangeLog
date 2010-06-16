@@ -1,3 +1,18 @@
+2010-06-16  Alexis Menard <alexis.menard@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix tiled backing store painting when calling QGraphicsWebView::setPage() after setResizesToContents(true)
+
+        When calling setPage() after setResizesToContents, the value of the property wasn't propagated
+        to the page client. Therefore the visible rect for the tiled backing store was incorrect.
+
+        Simply move the variable assignment into updateResizesToContentsForPage(), which is always called.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::updateResizesToContentsForPage):
+        (QGraphicsWebView::setResizesToContents):
+
 2010-06-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Rubber-stamped by Tor Arne Vestbø.
