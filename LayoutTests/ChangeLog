@@ -1,3 +1,15 @@
+2010-06-16  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Enable HTML5 lexer
+        https://bugs.webkit.org/show_bug.cgi?id=40650
+
+        Skip this test because I keep screwing up the expectations for this
+        test.  I'll get it cleared up by the end of the day.
+
+        * platform/mac/Skipped:
+
 2010-06-16  Adam Roben  <aroben@apple.com>
 
         Land new expected Windows results for tests that use <video controls>
