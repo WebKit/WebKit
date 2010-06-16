@@ -82,6 +82,7 @@ public:
 
     virtual void write(const SegmentedString&, bool appendData);
     virtual void finish();
+    virtual bool finishWasCalled();
     virtual bool isWaitingForScripts() const;
     
     virtual bool wantsRawData() const { return true; }
@@ -173,7 +174,14 @@ void ImageTokenizer::finish()
 
     m_doc->finishedParsing();
 }
-    
+
+bool ImageTokenizer::finishWasCalled()
+{
+    // finish() always calls m_doc->finishedParsing() so we'll be deleted
+    // after finish().
+    return false;
+}
+
 bool ImageTokenizer::isWaitingForScripts() const
 {
     // An image document is never waiting for scripts

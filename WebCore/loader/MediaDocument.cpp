@@ -58,6 +58,7 @@ public:
 private:
     virtual void write(const SegmentedString&, bool appendData);
     virtual void finish();
+    virtual bool finishWasCalled();
     virtual bool isWaitingForScripts() const;
         
     virtual bool wantsRawData() const { return true; }
@@ -120,7 +121,14 @@ void MediaDocumentParser::finish()
     if (!m_parserStopped) 
         m_doc->finishedParsing();
 }
-    
+
+bool MediaDocumentParser::finishWasCalled()
+{
+    // finish() always calls m_doc->finishedParsing() so we'll be deleted
+    // after finish().
+    return false;
+}
+
 bool MediaDocumentParser::isWaitingForScripts() const
 {
     // A media document is never waiting for scripts

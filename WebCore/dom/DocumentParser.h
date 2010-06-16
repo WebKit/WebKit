@@ -40,6 +40,7 @@ namespace WebCore {
         // document.write() always uses false, while the loader uses true.
         virtual void write(const SegmentedString&, bool isFromNetwork) = 0;
         virtual void finish() = 0;
+        virtual bool finishWasCalled() = 0;
         virtual bool isWaitingForScripts() const = 0;
         virtual void stopParsing() { m_parserStopped = true; }
         // FIXME: processingData() is only used by DocumentLoader::isLoadingInAPISense

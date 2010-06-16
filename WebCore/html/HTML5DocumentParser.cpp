@@ -336,6 +336,11 @@ void HTML5DocumentParser::finish()
     attemptToEnd();
 }
 
+bool HTML5DocumentParser::finishWasCalled()
+{
+    return m_input.isClosed();
+}
+
 int HTML5DocumentParser::executingScript() const
 {
     return m_scriptRunner->inScriptExecution();

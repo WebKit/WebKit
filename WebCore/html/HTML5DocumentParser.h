@@ -55,6 +55,7 @@ public:
     virtual void write(const SegmentedString&, bool isFromNetwork);
     virtual void end();
     virtual void finish();
+    virtual bool finishWasCalled();
     virtual int executingScript() const;
     virtual bool processingData() const;
     virtual void stopParsing();
@@ -111,6 +112,7 @@ private:
         }
 
         void close() { m_last->close(); }
+        bool isClosed() { return m_last->isClosed(); }
 
         SegmentedString& current() { return m_first; }
 

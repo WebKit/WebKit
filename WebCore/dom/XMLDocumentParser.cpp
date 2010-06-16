@@ -233,6 +233,11 @@ void XMLDocumentParser::finish()
         end();
 }
 
+bool XMLDocumentParser::finishWasCalled()
+{
+    return m_finishCalled;
+}
+
 static inline RefPtr<Element> createXHTMLParserErrorHeader(Document* doc, const String& errorMessages)
 {
     RefPtr<Element> reportElement = doc->createElement(QualifiedName(nullAtom, "parsererror", xhtmlNamespaceURI), false);

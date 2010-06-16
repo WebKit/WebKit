@@ -1886,6 +1886,11 @@ void HTMLDocumentParser::finish()
         end(); // this actually causes us to be deleted
 }
 
+bool HTMLDocumentParser::finishWasCalled()
+{
+    return m_noMoreData;
+}
+
 PassRefPtr<Node> HTMLDocumentParser::processToken()
 {
     ScriptController* scriptController = (!m_fragment && m_doc->frame()) ? m_doc->frame()->script() : 0;

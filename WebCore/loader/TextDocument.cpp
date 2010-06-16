@@ -46,6 +46,7 @@ public:
 
     virtual void write(const SegmentedString&, bool appendData);
     virtual void finish();
+    virtual bool finishWasCalled();
     virtual bool isWaitingForScripts() const;
     
     inline void checkBuffer(int len = 10)
@@ -170,6 +171,13 @@ void TextDocumentParser::finish()
     m_dest = 0;
 
     m_doc->finishedParsing();
+}
+
+bool TextDocumentParser::finishWasCalled()
+{
+    // finish() always calls m_doc->finishedParsing() so we'll be deleted
+    // after finish().
+    return false;
 }
 
 bool TextDocumentParser::isWaitingForScripts() const

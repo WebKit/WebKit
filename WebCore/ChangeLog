@@ -1,3 +1,42 @@
+2010-06-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        HTML5 parser crash when setTimeout document.write after slow script
+        https://bugs.webkit.org/show_bug.cgi?id=40726
+
+        According to the HTML5 spec, we're supposed to open() a new document if
+        we receive a document.write() after we've received EOF for the network.
+        The old parser just dumped those bytes onto the end of the network
+        stream.  After this patch, our behavior matches Minefield.
+
+        Test: http/tests/misc/write-while-waiting.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::write):
+        * dom/DocumentParser.h:
+        * dom/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::finishWasCalled):
+        * dom/XMLDocumentParser.h:
+        * html/HTML5DocumentParser.cpp:
+        (WebCore::HTML5DocumentParser::finishWasCalled):
+        * html/HTML5DocumentParser.h:
+        (WebCore::HTML5DocumentParser::InputStream::isClosed):
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::finishWasCalled):
+        * html/HTMLDocumentParser.h:
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageTokenizer::finishWasCalled):
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::finishWasCalled):
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::finishWasCalled):
+        * loader/SinkDocument.cpp:
+        (WebCore::SinkDocumentParser::finishWasCalled):
+        * loader/TextDocument.cpp:
+        (WebCore::TextDocumentParser::finishWasCalled):
+
 2010-06-16  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

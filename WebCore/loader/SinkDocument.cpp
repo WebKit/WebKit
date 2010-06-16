@@ -37,6 +37,7 @@ public:
 private:
     virtual void write(const SegmentedString&, bool) { ASSERT_NOT_REACHED(); }
     virtual void finish();
+    virtual bool finishWasCalled();
     virtual bool isWaitingForScripts() const { return false; }
         
     virtual bool wantsRawData() const { return true; }
@@ -50,7 +51,14 @@ void SinkDocumentParser::finish()
     if (!m_parserStopped) 
         m_document->finishedParsing();    
 }
-    
+
+bool SinkDocumentParser::finishWasCalled()
+{
+    // finish() always calls m_doc->finishedParsing() so we'll be deleted
+    // after finish().
+    return false;
+}
+
 SinkDocument::SinkDocument(Frame* frame)
     : HTMLDocument(frame)
 {
