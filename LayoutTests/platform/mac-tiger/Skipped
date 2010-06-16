@@ -194,3 +194,8 @@ fast/css/custom-font-xheight.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=40049
 http/tests/inspector/resource-parameters.html
+
+# Tiger's TextDecoder doesn't correctly pass --> to the HTML Parser
+# at the end of a Shift_JIS comment, causing this test to fail.
+# https://bugs.webkit.org/show_bug.cgi?id=40725
+fast/encoding/japanese-encoding-mix.html

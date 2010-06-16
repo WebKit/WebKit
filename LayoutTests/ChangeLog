@@ -1,3 +1,13 @@
+2010-06-16  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Disabling a test which fails on Tiger for platform-specific decoding reasons.
+
+        fast/encoding/japanese-encoding-mix.html fails on Tiger after enabling HTML5 Lexer
+        https://bugs.webkit.org/show_bug.cgi?id=40725
+
+        * platform/mac-tiger/Skipped:
+         - Skipping the test until someone with Tiger access can look.
+
 2010-06-16  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.
