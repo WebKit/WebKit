@@ -1,3 +1,17 @@
+2010-06-16  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, just updating platform results to match new expectations.
+
+        Enable HTML5 lexer
+        https://bugs.webkit.org/show_bug.cgi?id=40650
+
+        Update platform-specific results for broken CSS test whose results
+        changed as part of http://trac.webkit.org/changeset/61234.
+
+        * platform/chromium-win/css1/box_properties/float_elements_in_series-expected.txt:
+        * platform/gtk/css1/box_properties/float_elements_in_series-expected.txt:
+        * platform/qt/css1/box_properties/float_elements_in_series-expected.txt:
+
 2010-06-16  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.
