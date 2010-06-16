@@ -2843,8 +2843,6 @@ BUG45106 WIN : svg/clip-path/clip-path-text-and-shape.svg = PASS CRASH
 BUG45106 WIN : svg/text/text-text-04-t.svg = PASS CRASH
 BUG45106 WIN : svg/text/text-text-05-t.svg = PASS CRASH
 
-BUG45518: html5lib/runner.html = TEXT
-
 BUG45720 WIN LINUX : websocket/tests/reload-crash.html = PASS CRASH
 
 // Failing since http://trac.webkit.org/changeset/60865
@@ -2873,7 +2871,6 @@ BUG46435 MAC : fast/canvas/webgl/texImageTest.html = TEXT
 
 // These need rebaseline after http://trac.webkit.org/changeset/61128
 BUGDIMICH MAC WIN LINUX : css1/box_properties/clear_float.html = IMAGE
-BUGDIMICH MAC WIN LINUX : css1/box_properties/float_elements_in_series.html = IMAGE
 BUGDIMICH MAC WIN LINUX : css1/box_properties/float_on_text_elements.html = IMAGE
 BUGDIMICH MAC WIN LINUX : css1/text_properties/text_align.html = IMAGE
 BUGDIMICH MAC WIN LINUX : css2.1/t0905-c5525-fltcont-00-d-g.html = IMAGE
@@ -2916,3 +2913,7 @@ BUG46603 : fast/frames/lots-of-objects.html = PASS TIMEOUT
 
 // LayoutTestController::pageProperty is not implemented for Chromium yet.
 BUGWK35961 : printing/page-rule-selection.html = TEXT
+
+// Before bulach/andreip rebaseline these tests (changed at r61234 / new html5 parser).
+BUG46674 LINUX : fast/text/international/hindi-whitespace.html = FAIL
+BUG46674 MAC : fast/tokenizer/script_extra_close.html = FAIL
