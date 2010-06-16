@@ -1,3 +1,19 @@
+2010-06-16  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Darin Adler.
+
+        User scripts injected on start are not run on image documents.
+        https://bugs.webkit.org/show_bug.cgi?id=40722
+        <rdar://8087394>
+        
+        User scripts that are injected on start are run from FrameLoader::dispatchDocumentElementAvailable,
+        but this is never called from ImageDocument, so call it when we create a document element for
+        our image document.
+
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocument::createDocumentStructure): Call FrameLoader::dispatchDocumentElementAvailable
+            after creating our document element.
+
 2010-06-16  Brady Eidson  <beidson@apple.com>
 
         Reviewed by NOBODY (Build fix for Mac)

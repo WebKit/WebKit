@@ -203,6 +203,9 @@ void ImageDocument::createDocumentStructure()
     
     RefPtr<Element> rootElement = Document::createElement(htmlTag, false);
     appendChild(rootElement, ec);
+
+    if (frame() && frame()->loader())
+        frame()->loader()->dispatchDocumentElementAvailable();
     
     RefPtr<Element> body = Document::createElement(bodyTag, false);
     body->setAttribute(styleAttr, "margin: 0px;");
