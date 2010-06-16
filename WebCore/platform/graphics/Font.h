@@ -50,7 +50,6 @@ class FontSelector;
 class GlyphBuffer;
 class GlyphPageTreeNode;
 class GraphicsContext;
-class IntPoint;
 class SVGFontElement;
 
 struct GlyphData;
@@ -99,8 +98,8 @@ public:
     float floatWidth(const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* glyphOverflow = 0) const;
     float floatWidth(const TextRun& run, int extraCharsAvailable, int& charsConsumed, String& glyphName) const;
 
-    int offsetForPosition(const TextRun&, int position, bool includePartialGlyphs) const;
-    FloatRect selectionRectForText(const TextRun&, const IntPoint&, int h, int from = 0, int to = -1) const;
+    int offsetForPosition(const TextRun&, float position, bool includePartialGlyphs) const;
+    FloatRect selectionRectForText(const TextRun&, const FloatPoint&, int h, int from = 0, int to = -1) const;
 
     bool isSmallCaps() const { return m_fontDescription.smallCaps(); }
 
@@ -158,24 +157,24 @@ private:
     void drawTextUsingSVGFont(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
     float floatWidthUsingSVGFont(const TextRun&) const;
     float floatWidthUsingSVGFont(const TextRun&, int extraCharsAvailable, int& charsConsumed, String& glyphName) const;
-    FloatRect selectionRectForTextUsingSVGFont(const TextRun&, const IntPoint&, int h, int from, int to) const;
-    int offsetForPositionForTextUsingSVGFont(const TextRun&, int position, bool includePartialGlyphs) const;
+    FloatRect selectionRectForTextUsingSVGFont(const TextRun&, const FloatPoint&, int h, int from, int to) const;
+    int offsetForPositionForTextUsingSVGFont(const TextRun&, float position, bool includePartialGlyphs) const;
 #endif
 
     void drawSimpleText(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
     void drawGlyphs(GraphicsContext*, const SimpleFontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const;
     void drawGlyphBuffer(GraphicsContext*, const GlyphBuffer&, const TextRun&, const FloatPoint&) const;
     float floatWidthForSimpleText(const TextRun&, GlyphBuffer*, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
-    int offsetForPositionForSimpleText(const TextRun&, int position, bool includePartialGlyphs) const;
-    FloatRect selectionRectForSimpleText(const TextRun&, const IntPoint&, int h, int from, int to) const;
+    int offsetForPositionForSimpleText(const TextRun&, float position, bool includePartialGlyphs) const;
+    FloatRect selectionRectForSimpleText(const TextRun&, const FloatPoint&, int h, int from, int to) const;
 
     static bool canReturnFallbackFontsForComplexText();
 
     CodePath codePath(const TextRun&) const;
     void drawComplexText(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
     float floatWidthForComplexText(const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
-    int offsetForPositionForComplexText(const TextRun&, int position, bool includePartialGlyphs) const;
-    FloatRect selectionRectForComplexText(const TextRun&, const IntPoint&, int h, int from, int to) const;
+    int offsetForPositionForComplexText(const TextRun&, float position, bool includePartialGlyphs) const;
+    FloatRect selectionRectForComplexText(const TextRun&, const FloatPoint&, int h, int from, int to) const;
 
     friend struct WidthIterator;
 

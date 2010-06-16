@@ -191,7 +191,7 @@ float Font::floatWidth(const TextRun& run, int extraCharsAvailable, int& charsCo
     return floatWidthForComplexText(run);
 }
 
-FloatRect Font::selectionRectForText(const TextRun& run, const IntPoint& point, int h, int from, int to) const
+FloatRect Font::selectionRectForText(const TextRun& run, const FloatPoint& point, int h, int from, int to) const
 {
 #if ENABLE(SVG_FONTS)
     if (primaryFont()->isSVGFont())
@@ -206,7 +206,7 @@ FloatRect Font::selectionRectForText(const TextRun& run, const IntPoint& point, 
     return selectionRectForComplexText(run, point, h, from, to);
 }
 
-int Font::offsetForPosition(const TextRun& run, int x, bool includePartialGlyphs) const
+int Font::offsetForPosition(const TextRun& run, float x, bool includePartialGlyphs) const
 {
 #if ENABLE(SVG_FONTS)
     if (primaryFont()->isSVGFont())

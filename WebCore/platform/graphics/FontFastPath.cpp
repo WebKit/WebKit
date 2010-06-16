@@ -29,7 +29,6 @@
 #include "FontFallbackList.h"
 #include "GlyphBuffer.h"
 #include "GlyphPageTreeNode.h"
-#include "IntPoint.h"
 #include "SimpleFontData.h"
 #include "WidthIterator.h"
 
@@ -257,7 +256,7 @@ float Font::floatWidthForSimpleText(const TextRun& run, GlyphBuffer* glyphBuffer
     return it.m_runWidthSoFar;
 }
 
-FloatRect Font::selectionRectForSimpleText(const TextRun& run, const IntPoint& point, int h, int from, int to) const
+FloatRect Font::selectionRectForSimpleText(const TextRun& run, const FloatPoint& point, int h, int from, int to) const
 {
     WidthIterator it(this, run);
     it.advance(from);
@@ -265,19 +264,19 @@ FloatRect Font::selectionRectForSimpleText(const TextRun& run, const IntPoint& p
     it.advance(to);
     float afterWidth = it.m_runWidthSoFar;
 
-    // Using roundf() rather than ceilf() for the right edge as a compromise to ensure correct caret positioning
+    // Using roundf() rather than ceilf() for the right edge as a compromise to ensure correct caret positioning.
     if (run.rtl()) {
         it.advance(run.length());
         float totalWidth = it.m_runWidthSoFar;
         return FloatRect(point.x() + floorf(totalWidth - afterWidth), point.y(), roundf(totalWidth - beforeWidth) - floorf(totalWidth - afterWidth), h);
-    } else {
-        return FloatRect(point.x() + floorf(beforeWidth), point.y(), roundf(afterWidth) - floorf(beforeWidth), h);
     }
+
+    return FloatRect(point.x() + floorf(beforeWidth), point.y(), roundf(afterWidth) - floorf(beforeWidth), h);
 }
 
-int Font::offsetForPositionForSimpleText(const TextRun& run, int x, bool includePartialGlyphs) const
+int Font::offsetForPositionForSimpleText(const TextRun& run, float x, bool includePartialGlyphs) const
 {
-    float delta = (float)x;
+    float delta = x;
 
     WidthIterator it(this, run);
     GlyphBuffer localGlyphBuffer;

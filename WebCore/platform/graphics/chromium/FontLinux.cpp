@@ -564,9 +564,13 @@ static int glyphIndexForXPositionInScriptRun(const TextRunWalker& walker, int x)
 }
 
 // Return the code point index for the given |x| offset into the text run.
-int Font::offsetForPositionForComplexText(const TextRun& run, int x,
+int Font::offsetForPositionForComplexText(const TextRun& run, float xFloat,
                                           bool includePartialGlyphs) const
 {
+    // FIXME: This truncation is not a problem for HTML, but only affects SVG, which passes floating-point numbers
+    // to Font::offsetForPosition(). Bug http://webkit.org/b/40673 tracks fixing this problem.
+    int x = static_cast<int>(xFloat);
+
     // (Mac code ignores includePartialGlyphs, and they don't know what it's
     // supposed to do, so we just ignore it as well.)
     TextRunWalker walker(run, 0, this);
@@ -641,7 +645,7 @@ int Font::offsetForPositionForComplexText(const TextRun& run, int x,
 
 // Return the rectangle for selecting the given range of code-points in the TextRun.
 FloatRect Font::selectionRectForComplexText(const TextRun& run,
-                                            const IntPoint& point, int height,
+                                            const FloatPoint& point, int height,
                                             int from, int to) const
 {
     int fromX = -1, toX = -1, fromAdvance = -1, toAdvance = -1;

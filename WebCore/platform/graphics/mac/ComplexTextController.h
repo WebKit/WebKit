@@ -53,7 +53,7 @@ public:
     void advance(unsigned to, GlyphBuffer* = 0);
 
     // Compute the character offset for a given x coordinate.
-    int offsetForPosition(int x, bool includePartialGlyphs);
+    int offsetForPosition(float x, bool includePartialGlyphs);
 
     // Returns the width of everything we've consumed so far.
     float runWidthSoFar() const { return m_runWidthSoFar; }

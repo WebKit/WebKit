@@ -70,7 +70,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
     drawTextWithSpacing(graphicsContext, font, color, glyphBuffer, from, numGlyphs, point);
 }
 
-FloatRect Font::selectionRectForComplexText(const TextRun& run, const IntPoint& point, int h, int from, int to) const
+FloatRect Font::selectionRectForComplexText(const TextRun& run, const FloatPoint& point, int h, int from, int to) const
 {
 #if OS(WINDOWS) || OS(DARWIN)
     ComplexTextController it(this, run);
@@ -153,7 +153,7 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
 #endif
 }
 
-int Font::offsetForPositionForComplexText(const TextRun& run, int x, bool includePartialGlyphs) const
+int Font::offsetForPositionForComplexText(const TextRun& run, float x, bool includePartialGlyphs) const
 {
 #if OS(WINDOWS) || OS(DARWIN)
     ComplexTextController controller(this, run);

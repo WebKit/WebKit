@@ -43,7 +43,7 @@ bool Font::canReturnFallbackFontsForComplexText()
     return true;
 }
 
-FloatRect Font::selectionRectForComplexText(const TextRun& run, const IntPoint& point, int h,
+FloatRect Font::selectionRectForComplexText(const TextRun& run, const FloatPoint& point, int h,
                                             int from, int to) const
 {
     UniscribeController it(this, run);
@@ -104,8 +104,12 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
     return controller.runWidthSoFar();
 }
 
-int Font::offsetForPositionForComplexText(const TextRun& run, int x, bool includePartialGlyphs) const
+int Font::offsetForPositionForComplexText(const TextRun& run, float xFloat, bool includePartialGlyphs) const
 {
+    // FIXME: This truncation is not a problem for HTML, but only affects SVG, which passes floating-point numbers
+    // to Font::offsetForPosition(). Bug http://webkit.org/b/40673 tracks fixing this problem.
+    int x = static_cast<int>(xFloat);
+
     UniscribeController controller(this, run);
     return controller.offsetForPosition(x, includePartialGlyphs);
 }

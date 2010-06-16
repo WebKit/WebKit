@@ -434,7 +434,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext,
 }
 
 FloatRect Font::selectionRectForComplexText(const TextRun& run,
-                                            const IntPoint& point,
+                                            const FloatPoint& point,
                                             int h,
                                             int from,
                                             int to) const
@@ -445,10 +445,10 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run,
 
     // If the text is RTL, left will actually be after right.
     if (left < right)
-        return FloatRect(left, static_cast<float>(point.y()),
+        return FloatRect(left, point.y(),
                        right - left, static_cast<float>(h));
 
-    return FloatRect(right, static_cast<float>(point.y()),
+    return FloatRect(right, point.y(),
                      left - right, static_cast<float>(h));
 }
 
@@ -509,9 +509,13 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
     return static_cast<float>(state.width());
 }
 
-int Font::offsetForPositionForComplexText(const TextRun& run, int x,
+int Font::offsetForPositionForComplexText(const TextRun& run, float xFloat,
                                           bool includePartialGlyphs) const
 {
+    // FIXME: This truncation is not a problem for HTML, but only affects SVG, which passes floating-point numbers
+    // to Font::offsetForPosition(). Bug http://webkit.org/b/40673 tracks fixing this problem.
+    int x = static_cast<int>(xFloat);
+
     // Mac code ignores includePartialGlyphs, and they don't know what it's
     // supposed to do, so we just ignore it as well.
     UniscribeHelperTextRun state(run, *this);

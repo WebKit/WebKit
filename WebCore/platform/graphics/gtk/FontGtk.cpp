@@ -308,8 +308,12 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
     return width;
 }
 
-int Font::offsetForPositionForComplexText(const TextRun& run, int x, bool includePartialGlyphs) const
+int Font::offsetForPositionForComplexText(const TextRun& run, float xFloat, bool includePartialGlyphs) const
 {
+    // FIXME: This truncation is not a problem for HTML, but only affects SVG, which passes floating-point numbers
+    // to Font::offsetForPosition(). Bug http://webkit.org/b/40673 tracks fixing this problem.
+    int x = static_cast<int>(xFloat);
+
     PangoLayout* layout = getDefaultPangoLayout(run);
     setPangoAttributes(this, run, layout);
 
@@ -328,7 +332,7 @@ int Font::offsetForPositionForComplexText(const TextRun& run, int x, bool includ
     return offset;
 }
 
-FloatRect Font::selectionRectForComplexText(const TextRun& run, const IntPoint& point, int h, int from, int to) const
+FloatRect Font::selectionRectForComplexText(const TextRun& run, const FloatPoint& point, int h, int from, int to) const
 {
     PangoLayout* layout = getDefaultPangoLayout(run);
     setPangoAttributes(this, run, layout);

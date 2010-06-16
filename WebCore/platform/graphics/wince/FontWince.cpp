@@ -242,8 +242,12 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
     return w;
 }
 
-int Font::offsetForPositionForComplexText(const TextRun& run, int position, bool includePartialGlyphs) const
+int Font::offsetForPositionForComplexText(const TextRun& run, float xFloat, bool includePartialGlyphs) const
 {
+    // FIXME: This truncation is not a problem for HTML, but only affects SVG, which passes floating-point numbers
+    // to Font::offsetForPosition(). Bug http://webkit.org/b/40673 tracks fixing this problem.
+    int position = static_cast<int>(xFloat);
+
     TextRunComponents components;
     int w = generateComponents(&components, *this, run);
 
@@ -308,7 +312,7 @@ static float cursorToX(const Font* font, const TextRunComponents& components, in
     return width;
 }
 
-FloatRect Font::selectionRectForComplexText(const TextRun& run, const IntPoint& pt,
+FloatRect Font::selectionRectForComplexText(const TextRun& run, const FloatPoint& pt,
                                      int h, int from, int to) const
 {
     TextRunComponents components;

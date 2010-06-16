@@ -134,6 +134,11 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
             width = tabWidth - fmodf(m_run.xPos() + runWidthSoFar, tabWidth);
         } else {
             width = fontData->widthForGlyph(glyph);
+
+            // SVG uses glyphScale(), when textLength is used to stretch/squeeze text.
+            if (m_run.applyGlyphScaling())
+                width *= m_run.glyphScale();
+
             // We special case spaces in two ways when applying word rounding.
             // First, we round spaces to an adjusted width in all fonts.
             // Second, in fixed-pitch fonts we ensure that all characters that
