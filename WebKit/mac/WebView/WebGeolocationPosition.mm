@@ -83,4 +83,10 @@ GeolocationPosition* core(WebGeolocationPosition *position)
     return self;
 }
 
+- (void)dealloc
+{
+    [_internal release];
+    [super dealloc];
+}
+
 @end

@@ -1,3 +1,12 @@
+2010-06-15  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Don't leak WebGeolocationPositionInternal and GeolocationPosition instances for every WebGeolocationPosition created.
+
+        * WebView/WebGeolocationPosition.mm:
+        (-[WebGeolocationPosition dealloc]): Implement -dealloc and release our WebGeolocationPositionInternal instance.
+
 2010-06-10  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Shinichiro Hamaji.
