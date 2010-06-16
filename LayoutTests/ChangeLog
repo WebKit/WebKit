@@ -5,6 +5,23 @@
         Enable HTML5 lexer
         https://bugs.webkit.org/show_bug.cgi?id=40650
 
+        Change some tests not to rely upon <script/>.  We already cover that
+        case in parsing tests.
+
+        * fast/lists/ol-nested-items-dynamic-insert.html:
+        * fast/lists/ol-nested-items-dynamic-remove.html:
+        * fast/lists/ol-nested-items.html:
+        * fast/lists/ol-nested-list-dynamic-insert.html:
+        * fast/lists/ol-nested-list-dynamic-remove.html:
+        * fast/lists/ol-nested-list.html:
+
+2010-06-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Enable HTML5 lexer
+        https://bugs.webkit.org/show_bug.cgi?id=40650
+
         This patch updates the expected results for tests that conflict with
         the HTML5 specification.  In a later patch, I'll update the tests
         themselves to fix pass/fail messages.
