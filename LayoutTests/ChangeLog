@@ -1,3 +1,26 @@
+2010-06-16  Adam Roben  <aroben@apple.com>
+
+        Land new expected Windows results for tests that use <video controls>
+
+        The current expected results expect a fullscreen button to be included
+        in the controls. But the fullscreen button is only included when
+        accelerated compositing is enabled, and the bots build without
+        accelerated compositing enabled.
+
+        Rubber-stamped by Dan Bernstein.
+
+        Fixes <http://webkit.org/b/40710> Tests that use <video controls> are
+        failing on Windows.
+
+        * platform/win/media/controls-after-reload-expected.txt:
+        * platform/win/media/controls-drag-timebar-expected.txt:
+        * platform/win/media/controls-strict-expected.txt:
+        * platform/win/media/controls-styling-expected.txt:
+        * platform/win/media/video-controls-rendering-expected.txt:
+        * platform/win/media/video-display-toggle-expected.txt:
+        * platform/win/media/video-no-audio-expected.txt:
+        Updated with the actual results from the bots.
+
 2010-06-16  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Kenneth Christiansen.
