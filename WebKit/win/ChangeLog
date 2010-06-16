@@ -1,3 +1,27 @@
+2010-06-16  Adam Roben  <aroben@apple.com>
+
+        Add a "forPrinting" boolean parameter to
+        IWebFramePrivate::renderTreeAsExternalRepresentation
+
+        Fixes <http://webkit.org/b/40727> Respect
+        LayoutTestController::isPrinting on Windows.
+
+        Reviewed by Dan Bernstein.
+
+        * Interfaces/IWebFramePrivate.idl: Renamed the current
+        renderTreeAsExternalRepresentation to unused1, and added a new version
+        that takes a boolean "forPrinting" parameter.
+
+        * Interfaces/WebKit.idl: Touched to force a build.
+
+        * WebFrame.cpp:
+        (WebFrame::renderTreeAsExternalRepresentation): Added a boolean
+        "forPrinting" parameter, and used it to tell externalRepresentation
+        what kind of behavior to use.
+
+        * WebFrame.h: Renamed the old renderTreeAsExternalRepresentation and
+        added the new one.
+
 2010-06-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Barth.

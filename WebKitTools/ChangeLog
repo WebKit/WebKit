@@ -1,3 +1,18 @@
+2010-06-16  Adam Roben  <aroben@apple.com>
+
+        Respect LayoutTestController::isPrinting on Windows
+
+        This gets some printing tests closer to passing (like
+        printing/page-rule-in-media-query.html).
+
+        Fixes <http://webkit.org/b/40727>.
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dump): Pass LayoutTestController::isPrinting to
+        IWebFramePrivate::renderTreeAsExternalRepresentation.
+
 2010-06-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

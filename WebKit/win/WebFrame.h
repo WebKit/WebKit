@@ -155,8 +155,8 @@ public:
     virtual /* [local] */ JSGlobalContextRef STDMETHODCALLTYPE globalContext();
 
     // IWebFramePrivate
-    virtual HRESULT STDMETHODCALLTYPE renderTreeAsExternalRepresentation(
-        /* [retval][out] */ BSTR *result);
+    virtual HRESULT STDMETHODCALLTYPE unused1(BSTR*) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE renderTreeAsExternalRepresentation(BOOL forPrinting, BSTR *result);
 
     virtual HRESULT STDMETHODCALLTYPE counterValueForElementById(
         /* [in] */ BSTR id,

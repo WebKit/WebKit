@@ -845,8 +845,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::childFrames(
 
 // IWebFramePrivate ------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebFrame::renderTreeAsExternalRepresentation(
-    /* [retval][out] */ BSTR *result)
+HRESULT WebFrame::renderTreeAsExternalRepresentation(BOOL forPrinting, BSTR *result)
 {
     if (!result)
         return E_POINTER;
@@ -855,7 +854,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::renderTreeAsExternalRepresentation(
     if (!coreFrame)
         return E_FAIL;
 
-    *result = BString(externalRepresentation(coreFrame)).release();
+    *result = BString(externalRepresentation(coreFrame, forPrinting ? RenderAsTextPrintingMode : RenderAsTextBehaviorNormal)).release();
     return S_OK;
 }
 
