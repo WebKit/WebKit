@@ -1,3 +1,18 @@
+2010-06-16  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Enable HTML5 lexer
+        https://bugs.webkit.org/show_bug.cgi?id=40650
+
+        Add Tiger-specific expectations because U+FFFD is a different length on
+        Tiger.  :(
+
+        * platform/mac-tiger/fast/dom: Added.
+        * platform/mac-tiger/fast/dom/stripNullFromTextNodes-expected.checksum: Added.
+        * platform/mac-tiger/fast/dom/stripNullFromTextNodes-expected.png: Added.
+        * platform/mac-tiger/fast/dom/stripNullFromTextNodes-expected.txt: Added.
+
 2010-06-16  Adam Roben  <aroben@apple.com>
 
         Land new expected Windows results for two failing tests
