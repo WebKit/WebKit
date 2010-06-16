@@ -2869,7 +2869,6 @@ BUG_HAMAJI WIN LINUX : svg/W3C-SVG-1.1/fonts-glyph-02-t.svg = IMAGE+TEXT
 BUG46375 MAC : http/tests/misc/acid3.html = IMAGE
 
 // Fails since WebKit r61020.
-BUG46377 MAC : fast/canvas/webgl/get-active-test.html = TEXT
 BUG46435 MAC : fast/canvas/webgl/texImageTest.html = TEXT
 
 // These need rebaseline after http://trac.webkit.org/changeset/61128
@@ -2894,7 +2893,7 @@ BUGDIMICH MAC WIN LINUX : fast/repaint/line-flow-with-floats-9.html = IMAGE
 BUGDIMICH MAC WIN LINUX : fast/text/atsui-spacing-features.html = IMAGE
 BUGDIMICH MAC WIN LINUX : fast/text/basic/002.html = IMAGE
 BUGDIMICH MAC WIN LINUX : fast/text/justified-selection-at-edge.html = IMAGE
-BUGDIMICH MAC WIN LINUX : fast/text/justified-selection.html = IMAGE
+BUGDIMICH WIN LINUX : fast/text/justified-selection.html = IMAGE
 BUGDIMICH MAC WIN LINUX : fast/text/trailing-white-space.html = IMAGE
 BUGDIMICH MAC : fast/text/trailing-white-space-2.html = IMAGE
 BUGDIMICH MAC WIN LINUX : svg/custom/svg-fonts-in-html.html = IMAGE
@@ -2914,9 +2913,6 @@ BUG46538 MAC WIN LINUX : editing/deleting/forward-delete-key.html = TEXT
 
 BUG46603 : fast/frames/lots-of-iframes.html = PASS TIMEOUT
 BUG46603 : fast/frames/lots-of-objects.html = PASS TIMEOUT
-
-// Whitespace difference between TestShell and DRT.
-BUGDARIN : fast/history/history-back-within-subframe.html = TEXT
 
 // LayoutTestController::pageProperty is not implemented for Chromium yet.
 BUGWK35961 : printing/page-rule-selection.html = TEXT

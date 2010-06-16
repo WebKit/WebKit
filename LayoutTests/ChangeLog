@@ -1,3 +1,9 @@
+2010-06-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, expectations update.
+
+        * platform/chromium/test_expectations.txt: Removed already passing tests.
+
 2010-06-16  Adam Roben  <aroben@apple.com>
 
         Convert fast/dom/stripNullFromTextNodes.html to dumpAsText
