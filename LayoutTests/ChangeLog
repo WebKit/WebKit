@@ -1,5 +1,16 @@
 2010-06-16  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.
+
+        Enable HTML5 lexer
+        https://bugs.webkit.org/show_bug.cgi?id=40650
+
+        Update platform-specific expected results for Qt.
+
+        * platform/qt/fast/text/international/hindi-whitespace-expected.txt:
+
+2010-06-16  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Don't crash when a document ends with an entity
