@@ -140,15 +140,25 @@ wstring urlSuitableForTestResult(const wstring& url)
     return PathFindFileNameW(url.c_str());
 }
 
-string toUTF8(BSTR bstr)
+static string toUTF8(const wchar_t* wideString, size_t length)
 {
-    int result = WideCharToMultiByte(CP_UTF8, 0, bstr, SysStringLen(bstr) + 1, 0, 0, 0, 0);
+    int result = WideCharToMultiByte(CP_UTF8, 0, wideString, length + 1, 0, 0, 0, 0);
     Vector<char> utf8Vector(result);
-    result = WideCharToMultiByte(CP_UTF8, 0, bstr, SysStringLen(bstr) + 1, utf8Vector.data(), result, 0, 0);
+    result = WideCharToMultiByte(CP_UTF8, 0, wideString, length + 1, utf8Vector.data(), result, 0, 0);
     if (!result)
         return string();
 
     return string(utf8Vector.data(), utf8Vector.size() - 1);
+}
+
+string toUTF8(BSTR bstr)
+{
+    return toUTF8(bstr, SysStringLen(bstr));
+}
+
+string toUTF8(const wstring& wideString)
+{
+    return toUTF8(wideString.c_str(), wideString.length());
 }
 
 static LRESULT CALLBACK DumpRenderTreeWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)

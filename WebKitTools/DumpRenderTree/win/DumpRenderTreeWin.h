@@ -50,6 +50,7 @@ extern HWND webViewWindow;
 
 std::wstring urlSuitableForTestResult(const std::wstring& url);
 std::string toUTF8(BSTR);
+std::string toUTF8(const std::wstring&);
 IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow = 0);
 Vector<HWND>& openWindows();
 typedef HashMap<HWND, COMPtr<IWebView> > WindowToWebViewMap;

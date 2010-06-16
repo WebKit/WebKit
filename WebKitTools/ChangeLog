@@ -1,3 +1,26 @@
+2010-06-16  Adam Roben  <aroben@apple.com>
+
+        Convert console messages to UTF-8 before printing them
+
+        Speculative fix for <http://webkit.org/b/40731> REGRESSION (r61234):
+        http/tests/security/xssAuditor/embed-tag-null-char.html and
+        http/tests/security/xssAuditor/object-embed-tag-null-char.html fail on
+        Windows. (I can't test the fix because Apache is crashing on my
+        computer.)
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (toUTF8): Extracted the code into an overload that takes a wide string
+        and a length, then added an overload that takes a wstring.
+
+        * DumpRenderTree/win/DumpRenderTreeWin.h: Declare the new toUTF8
+        overload.
+
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::webViewAddMessageToConsole): Use toUTF8 to convert to
+        UTF-8 instead of letting printf convert to the current code page.
+
 2010-06-16  Drew Wilson  <atwilson@chromium.org>
 
         Reviewed by Kent Tamura.
