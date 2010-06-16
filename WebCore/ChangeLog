@@ -1,3 +1,16 @@
+2010-06-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Don't crash when a document ends with an entity
+        https://bugs.webkit.org/show_bug.cgi?id=40658
+
+        When we SWITCH_TO a state, we're expecting our caller to have advanced
+        the source.  Rather than have all the callers check for empty, we do
+        that ourselves.
+
+        * html/HTML5Lexer.cpp:
+
 2010-06-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -149,7 +149,7 @@ inline bool HTML5Lexer::processEntity(SegmentedString& source)
 #define SWITCH_TO(stateName)                                               \
     do {                                                                   \
         m_state = stateName;                                               \
-        if (!m_inputStreamPreprocessor.peek(source, m_lineNumber))         \
+        if (source.isEmpty() || !m_inputStreamPreprocessor.peek(source, m_lineNumber)) \
             return shouldEmitBufferedCharacterToken(source);               \
         cc = m_inputStreamPreprocessor.nextInputCharacter();               \
         goto stateName;                                                    \

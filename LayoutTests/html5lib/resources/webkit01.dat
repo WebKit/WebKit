@@ -209,3 +209,12 @@ console.log("FOO<span>BAR</span>BAZ");
 |   <body>
 |     <a>
 |       "test< /A>"
+
+#data
+&lt;
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "<"

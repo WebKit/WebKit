@@ -1,3 +1,14 @@
+2010-06-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Don't crash when a document ends with an entity
+        https://bugs.webkit.org/show_bug.cgi?id=40658
+
+        Add a test for an entity being the only contents of a file.
+
+        * html5lib/resources/webkit01.dat:
+
 2010-06-16  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, just updating platform results to match new expectations.
