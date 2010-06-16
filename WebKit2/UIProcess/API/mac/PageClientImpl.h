@@ -32,6 +32,10 @@
 
 namespace WebKit {
 
+// NOTE: This does not use String::operator NSString*() since that function
+// expects to be called on the thread running WebCore.
+NSString* nsStringFromWebCoreString(const WebCore::String&);
+
 class PageClientImpl : public PageClient {
 public:
     PageClientImpl(WKView*);

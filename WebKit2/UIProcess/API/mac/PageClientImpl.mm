@@ -25,12 +25,20 @@
 
 #import "PageClientImpl.h"
 
+#import "WKAPICast.h"
+#import "WKStringCF.h"
 #import "WKViewInternal.h"
+#import <WebCore/FoundationExtras.h>
 #import <WebCore/PlatformString.h>
 
 using namespace WebCore;
 
 namespace WebKit {
+
+NSString* nsStringFromWebCoreString(const WebCore::String& string)
+{
+    return string.impl() ? HardAutorelease(WKStringCopyCFString(0, toRef(string.impl()))) : @"";
+}
 
 PageClientImpl::PageClientImpl(WKView* wkView)
     : m_wkView(wkView)
@@ -58,7 +66,7 @@ void PageClientImpl::takeFocus(bool direction)
 
 void PageClientImpl::toolTipChanged(const String& oldToolTip, const String& newToolTip)
 {
-    [m_wkView _toolTipChangedFrom:(NSString *)oldToolTip to:(NSString *)newToolTip];
+    [m_wkView _toolTipChangedFrom:nsStringFromWebCoreString(oldToolTip) to:nsStringFromWebCoreString(newToolTip)];
 }
 
 } // namespace WebKit

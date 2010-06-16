@@ -410,7 +410,7 @@ static bool isViewVisible(NSView *view)
 
 - (NSString *)view:(NSView *)view stringForToolTip:(NSToolTipTag)tag point:(NSPoint)point userData:(void *)data
 {
-    return [[(NSString *)_data->_page->toolTip() copy] autorelease];
+    return nsStringFromWebCoreString(_data->_page->toolTip());
 }
 
 - (void)_toolTipChangedFrom:(NSString *)oldToolTip to:(NSString *)newToolTip
