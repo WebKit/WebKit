@@ -32,7 +32,7 @@
 #import "Animation.h"
 #import "BlockExceptions.h"
 #if ENABLE(3D_CANVAS)
-#import "Canvas3DLayer.h"
+#import "WebGLLayer.h"
 #endif
 #import "FloatConversion.h"
 #import "FloatRect.h"
@@ -1733,7 +1733,7 @@ void GraphicsLayerCA::setContentsToGraphicsContext3D(const GraphicsContext3D* gr
 
     if (m_platformGraphicsContext3D != NullPlatformGraphicsContext3D && m_platformTexture != NullPlatform3DObject) {
         // create the inner 3d layer
-        m_contentsLayer.adoptNS([[Canvas3DLayer alloc] initWithContext:const_cast<GraphicsContext3D*>(graphicsContext3D)]);
+        m_contentsLayer.adoptNS([[WebGLLayer alloc] initWithContext:const_cast<GraphicsContext3D*>(graphicsContext3D)]);
 #ifndef NDEBUG
         [m_contentsLayer.get() setName:@"3D Layer"];
 #endif

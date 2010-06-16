@@ -895,8 +895,6 @@
 		49C7B9E51042D32F0009D447 /* WebGLTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9C51042D32F0009D447 /* WebGLTexture.cpp */; };
 		49C7B9E61042D32F0009D447 /* WebGLTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9C61042D32F0009D447 /* WebGLTexture.h */; };
 		49C7B9FC1042D3650009D447 /* GraphicsContext3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9FB1042D3650009D447 /* GraphicsContext3D.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		49C7BA001042D38C0009D447 /* Canvas3DLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9FD1042D38C0009D447 /* Canvas3DLayer.h */; };
-		49C7BA011042D38C0009D447 /* Canvas3DLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9FE1042D38C0009D447 /* Canvas3DLayer.mm */; };
 		49C7BA791042EFAE0009D447 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49C7BA781042EFAE0009D447 /* OpenGL.framework */; };
 		49C7BA8D1042F5B10009D447 /* JSDocumentCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7BA8C1042F5B10009D447 /* JSDocumentCustom.cpp */; };
 		49D5DC2B0F423A73008F20FD /* Matrix3DTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D5DC270F423A73008F20FD /* Matrix3DTransformOperation.cpp */; };
@@ -973,6 +971,8 @@
 		49EED14F1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED14C1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp */; };
 		49EED1501051971A00099FAB /* JSCanvasRenderingContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED14D1051971A00099FAB /* JSCanvasRenderingContextCustom.cpp */; };
 		49FFBF1D11C8550E006A7118 /* GraphicsContext3DMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49FFBF1C11C8550E006A7118 /* GraphicsContext3DMac.mm */; };
+		49FFBF3F11C93EE3006A7118 /* WebGLLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49FFBF3D11C93EE3006A7118 /* WebGLLayer.h */; };
+		49FFBF4011C93EE3006A7118 /* WebGLLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49FFBF3E11C93EE3006A7118 /* WebGLLayer.mm */; };
 		4A8C96EB0BE69032004EEFF0 /* SelectionControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4A8C96EA0BE69032004EEFF0 /* SelectionControllerMac.mm */; };
 		4B2708C70AF19EE40065127F /* Pasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B2708C50AF19EE40065127F /* Pasteboard.h */; };
 		4B2709830AF2E5E00065127F /* PasteboardMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4B2709810AF2E5E00065127F /* PasteboardMac.mm */; };
@@ -6494,8 +6494,6 @@
 		49C7B9C61042D32F0009D447 /* WebGLTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLTexture.h; path = canvas/WebGLTexture.h; sourceTree = "<group>"; };
 		49C7B9C71042D32F0009D447 /* WebGLTexture.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLTexture.idl; path = canvas/WebGLTexture.idl; sourceTree = "<group>"; };
 		49C7B9FB1042D3650009D447 /* GraphicsContext3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContext3D.h; sourceTree = "<group>"; };
-		49C7B9FD1042D38C0009D447 /* Canvas3DLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Canvas3DLayer.h; sourceTree = "<group>"; };
-		49C7B9FE1042D38C0009D447 /* Canvas3DLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Canvas3DLayer.mm; sourceTree = "<group>"; };
 		49C7BA781042EFAE0009D447 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		49C7BA8C1042F5B10009D447 /* JSDocumentCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentCustom.cpp; sourceTree = "<group>"; };
 		49D5DC270F423A73008F20FD /* Matrix3DTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Matrix3DTransformOperation.cpp; path = transforms/Matrix3DTransformOperation.cpp; sourceTree = "<group>"; };
@@ -6580,6 +6578,8 @@
 		49EED14C1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLRenderingContextCustom.cpp; sourceTree = "<group>"; };
 		49EED14D1051971A00099FAB /* JSCanvasRenderingContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContextCustom.cpp; sourceTree = "<group>"; };
 		49FFBF1C11C8550E006A7118 /* GraphicsContext3DMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GraphicsContext3DMac.mm; path = ../../../WebKit/OpenSource/WebCore/platform/graphics/mac/GraphicsContext3DMac.mm; sourceTree = SOURCE_ROOT; };
+		49FFBF3D11C93EE3006A7118 /* WebGLLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLLayer.h; path = ../../../WebKit/OpenSource/WebCore/platform/graphics/mac/WebGLLayer.h; sourceTree = SOURCE_ROOT; };
+		49FFBF3E11C93EE3006A7118 /* WebGLLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebGLLayer.mm; path = ../../../WebKit/OpenSource/WebCore/platform/graphics/mac/WebGLLayer.mm; sourceTree = SOURCE_ROOT; };
 		4A8C96EA0BE69032004EEFF0 /* SelectionControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = SelectionControllerMac.mm; path = mac/SelectionControllerMac.mm; sourceTree = "<group>"; };
 		4B2708C50AF19EE40065127F /* Pasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pasteboard.h; sourceTree = "<group>"; };
 		4B2709810AF2E5E00065127F /* PasteboardMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteboardMac.mm; sourceTree = "<group>"; };
@@ -15058,8 +15058,6 @@
 		B27535490B053814002CE64F /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				49C7B9FD1042D38C0009D447 /* Canvas3DLayer.h */,
-				49C7B9FE1042D38C0009D447 /* Canvas3DLayer.mm */,
 				EDE3A4FF0C7A430600956A37 /* ColorMac.h */,
 				B275354A0B053814002CE64F /* ColorMac.mm */,
 				37C2360E1097EE7700EF9F72 /* ComplexTextController.cpp */,
@@ -15092,6 +15090,8 @@
 				163E8B12118B3ADD00ED9231 /* SimpleFontDataATSUI.mm */,
 				163E88F5118A39D200ED9231 /* SimpleFontDataCoreText.cpp */,
 				B2AFFC770D00A5C10030074D /* SimpleFontDataMac.mm */,
+				49FFBF3D11C93EE3006A7118 /* WebGLLayer.h */,
+				49FFBF3E11C93EE3006A7118 /* WebGLLayer.mm */,
 				0FCF332B0F2B9A25004B6795 /* WebLayer.h */,
 				0FCF332A0F2B9A25004B6795 /* WebLayer.mm */,
 				0FCF33290F2B9A25004B6795 /* WebTiledLayer.h */,
@@ -16931,7 +16931,6 @@
 				BCB16C260979C3BD00467741 /* CachedXBLDocument.h in Headers */,
 				BCB16C280979C3BD00467741 /* CachedXSLStyleSheet.h in Headers */,
 				93F1995008245E59001E9ABC /* CachePolicy.h in Headers */,
-				49C7BA001042D38C0009D447 /* Canvas3DLayer.h in Headers */,
 				6E4E91AD10F7FB3100A2779C /* CanvasContextAttributes.h in Headers */,
 				49484FC2102CF23C00187DD3 /* CanvasGradient.h in Headers */,
 				49C7B9D51042D32F0009D447 /* CanvasObject.h in Headers */,
@@ -19425,6 +19424,7 @@
 				816C806911BE887E009A45E9 /* IDBKeyRange.h in Headers */,
 				816C80AF11BE990D009A45E9 /* JSIDBKeyRange.h in Headers */,
 				0853D73411C9109000B2FD42 /* SVGTextQuery.h in Headers */,
+				49FFBF3F11C93EE3006A7118 /* WebGLLayer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19762,7 +19762,6 @@
 				BCB16C230979C3BD00467741 /* CachedScript.cpp in Sources */,
 				BCB16C250979C3BD00467741 /* CachedXBLDocument.cpp in Sources */,
 				BCB16C270979C3BD00467741 /* CachedXSLStyleSheet.cpp in Sources */,
-				49C7BA011042D38C0009D447 /* Canvas3DLayer.mm in Sources */,
 				6E4E91AC10F7FB3100A2779C /* CanvasContextAttributes.cpp in Sources */,
 				49484FC1102CF23C00187DD3 /* CanvasGradient.cpp in Sources */,
 				49C7B9D41042D32F0009D447 /* CanvasObject.cpp in Sources */,
@@ -21732,6 +21731,7 @@
 				49FFBF1D11C8550E006A7118 /* GraphicsContext3DMac.mm in Sources */,
 				0853D73211C9109000B2FD42 /* SVGTextChunkLayoutInfo.cpp in Sources */,
 				0853D73311C9109000B2FD42 /* SVGTextQuery.cpp in Sources */,
+				49FFBF4011C93EE3006A7118 /* WebGLLayer.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

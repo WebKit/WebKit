@@ -1,5 +1,21 @@
 2010-06-16  Chris Marrin  <cmarrin@apple.com>
 
+        Reviewed by Eric Carlson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40643
+        
+        Second of three steps - rename Canvas3DLayer to WebGLLayer
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/mac/Canvas3DLayer.h: Removed.
+        * platform/graphics/mac/Canvas3DLayer.mm: Removed.
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::setContentsToGraphicsContext3D):
+        * platform/graphics/mac/WebGLLayer.h: Copied from WebCore/platform/graphics/mac/Canvas3DLayer.h.
+        * platform/graphics/mac/WebGLLayer.mm: Copied from WebCore/platform/graphics/mac/Canvas3DLayer.mm.
+
+2010-06-16  Chris Marrin  <cmarrin@apple.com>
+
         Reviewed by Simon Fraser.
 
         https://bugs.webkit.org/show_bug.cgi?id=40643

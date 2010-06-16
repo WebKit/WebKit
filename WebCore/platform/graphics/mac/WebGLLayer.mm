@@ -28,7 +28,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 #if ENABLE(3D_CANVAS)
 
-#import "Canvas3DLayer.h"
+#import "WebGLLayer.h"
 
 #import "GraphicsLayer.h"
 #import <QuartzCore/QuartzCore.h>
@@ -39,7 +39,7 @@
 
 using namespace WebCore;
 
-@implementation Canvas3DLayer
+@implementation WebGLLayer
 
 -(id)initWithContext:(GraphicsContext3D*)context
 {
@@ -151,7 +151,7 @@ static void freeData(void *, const void *data, size_t /* size */)
 
 @end
 
-@implementation Canvas3DLayer(WebLayerAdditions)
+@implementation WebGLLayer(WebLayerAdditions)
 
 -(void)setLayerOwner:(GraphicsLayer*)aLayer
 {
