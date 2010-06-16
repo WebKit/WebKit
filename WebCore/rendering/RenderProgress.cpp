@@ -23,11 +23,11 @@
 #if ENABLE(PROGRESS_TAG)
 
 #include "RenderProgress.h"
-#include "ShadowElement.h"
-#include "HTMLNames.h"
+
 #include "HTMLProgressElement.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "ShadowElement.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/RefPtr.h>
 

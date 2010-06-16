@@ -45,7 +45,7 @@ inline DeleteButton::DeleteButton(Document* document)
 
 PassRefPtr<DeleteButton> DeleteButton::create(Document* document)
 {
-    return new DeleteButton(document);
+    return adoptRef(new DeleteButton(document));
 }
 
 void DeleteButton::defaultEventHandler(Event* event)

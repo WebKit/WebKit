@@ -38,7 +38,7 @@ inline HTMLQuoteElement::HTMLQuoteElement(const QualifiedName& tagName, Document
 
 PassRefPtr<HTMLQuoteElement> HTMLQuoteElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLQuoteElement(tagName, document);
+    return adoptRef(new HTMLQuoteElement(tagName, document));
 }
 
 void HTMLQuoteElement::insertedIntoDocument()

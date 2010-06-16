@@ -1,3 +1,13 @@
+2010-06-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by David Levin.
+
+        Deploy adoptRef in more places, including all HTML and MathML elements
+        https://bugs.webkit.org/show_bug.cgi?id=39941
+
+        * wtf/ThreadSafeShared.h: Made the constructor protected and removed the
+        unneeded support for initial reference counts other than 1.
+
 2010-06-16  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Reviewed by Geoffrey Garen.

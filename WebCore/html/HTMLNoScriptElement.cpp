@@ -39,7 +39,7 @@ inline HTMLNoScriptElement::HTMLNoScriptElement(const QualifiedName& tagName, Do
 
 PassRefPtr<HTMLNoScriptElement> HTMLNoScriptElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLNoScriptElement(tagName, document);
+    return adoptRef(new HTMLNoScriptElement(tagName, document));
 }
 
 bool HTMLNoScriptElement::checkDTD(const Node* newChild)

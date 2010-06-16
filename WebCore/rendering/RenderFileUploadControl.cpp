@@ -53,7 +53,6 @@ const int buttonShadowHeight = 2;
 
 RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement* input)
     : RenderBlock(input)
-    , m_button(0)
 {
     FileList* list = input->files();
     Vector<String> filenames;

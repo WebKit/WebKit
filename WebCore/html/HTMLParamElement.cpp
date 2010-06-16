@@ -39,7 +39,7 @@ inline HTMLParamElement::HTMLParamElement(const QualifiedName& tagName, Document
 
 PassRefPtr<HTMLParamElement> HTMLParamElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLParamElement(tagName, document);
+    return adoptRef(new HTMLParamElement(tagName, document));
 }
 
 void HTMLParamElement::parseMappedAttribute(Attribute* attr)

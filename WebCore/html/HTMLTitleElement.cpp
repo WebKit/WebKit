@@ -40,7 +40,7 @@ inline HTMLTitleElement::HTMLTitleElement(const QualifiedName& tagName, Document
 
 PassRefPtr<HTMLTitleElement> HTMLTitleElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLTitleElement(tagName, document);
+    return adoptRef(new HTMLTitleElement(tagName, document));
 }
 
 void HTMLTitleElement::insertedIntoDocument()

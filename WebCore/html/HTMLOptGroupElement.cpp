@@ -45,7 +45,7 @@ inline HTMLOptGroupElement::HTMLOptGroupElement(const QualifiedName& tagName, Do
 
 PassRefPtr<HTMLOptGroupElement> HTMLOptGroupElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
 {
-    return new HTMLOptGroupElement(tagName, document, form);
+    return adoptRef(new HTMLOptGroupElement(tagName, document, form));
 }
 
 bool HTMLOptGroupElement::supportsFocus() const

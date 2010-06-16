@@ -55,12 +55,12 @@ HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document* docum
 
 PassRefPtr<HTMLImageElement> HTMLImageElement::create(Document* document)
 {
-    return new HTMLImageElement(imgTag, document);
+    return adoptRef(new HTMLImageElement(imgTag, document));
 }
 
 PassRefPtr<HTMLImageElement> HTMLImageElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
 {
-    return new HTMLImageElement(tagName, document, form);
+    return adoptRef(new HTMLImageElement(tagName, document, form));
 }
 
 HTMLImageElement::~HTMLImageElement()
@@ -71,7 +71,7 @@ HTMLImageElement::~HTMLImageElement()
 
 PassRefPtr<HTMLImageElement> HTMLImageElement::createForJSConstructor(Document* document, const int* optionalWidth, const int* optionalHeight)
 {
-    RefPtr<HTMLImageElement> image = new HTMLImageElement(imgTag, document);
+    RefPtr<HTMLImageElement> image = adoptRef(new HTMLImageElement(imgTag, document));
     if (optionalWidth)
         image->setWidth(*optionalWidth);
     if (optionalHeight > 0)

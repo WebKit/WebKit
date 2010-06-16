@@ -37,7 +37,7 @@ inline HTMLDListElement::HTMLDListElement(const QualifiedName& tagName, Document
 
 PassRefPtr<HTMLDListElement> HTMLDListElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLDListElement(tagName, document);
+    return adoptRef(new HTMLDListElement(tagName, document));
 }
 
 bool HTMLDListElement::compact() const

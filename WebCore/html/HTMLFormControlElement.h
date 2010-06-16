@@ -34,6 +34,8 @@ class RenderTextControl;
 class ValidityState;
 class VisibleSelection;
 
+// FIXME: The HTML5 specification calls these form-associated elements.
+// So consider renaming this to HTMLFormAssociatedElement.
 class HTMLFormControlElement : public HTMLElement {
 public:
     virtual ~HTMLFormControlElement();
@@ -44,7 +46,7 @@ public:
     bool formNoValidate() const;
     void setFormNoValidate(bool);
 
-    virtual void reset() {}
+    virtual void reset() { }
 
     virtual bool formControlValueMatchesRenderer() const { return m_valueMatchesRenderer; }
     virtual void setFormControlValueMatchesRenderer(bool b) { m_valueMatchesRenderer = b; }
@@ -77,9 +79,8 @@ public:
     virtual bool isRadioButton() const { return false; }
     virtual bool canTriggerImplicitSubmission() const { return false; }
 
-    /* Override in derived classes to get the encoded name=value pair for submitting.
-     * Return true for a successful control (see HTML4-17.13.2).
-     */
+    // Override in derived classes to get the encoded name=value pair for submitting.
+    // Return true for a successful control (see HTML4-17.13.2).
     virtual bool appendFormData(FormDataList&, bool) { return false; }
 
     virtual bool isSuccessfulSubmitButton() const { return false; }
@@ -104,7 +105,7 @@ public:
     bool readOnly() const { return m_readOnly; }
 
 protected:
-    HTMLFormControlElement(const QualifiedName& tagName, Document*, HTMLFormElement*, ConstructionType = CreateHTMLElementZeroRefCount);
+    HTMLFormControlElement(const QualifiedName& tagName, Document*, HTMLFormElement*);
 
     virtual void parseMappedAttribute(Attribute*);
     virtual void attach();
@@ -120,6 +121,7 @@ protected:
     virtual void dispatchBlurEvent();
 
     void removeFromForm();
+
     // This must be called any time the result of willValidate() has changed.
     void setNeedsWillValidateCheck();
     virtual bool recalcWillValidate() const;
@@ -147,16 +149,19 @@ private:
     bool m_readOnly : 1;
     bool m_required : 1;
     bool m_valueMatchesRenderer : 1;
-    // The initial value of m_willValidate depends on a subclass, and we can't
+
+    // The initial value of m_willValidate depends on the derived class. We can't
     // initialize it with a virtual function in the constructor. m_willValidate
-    // is not deterministic during m_willValidateInitialized=false.
+    // is not deterministic as long as m_willValidateInitialized is false.
     mutable bool m_willValidateInitialized: 1;
     mutable bool m_willValidate : 1;
+
     // Cache of validity()->valid().
-    // "candidate for constraint validation" doesn't affect to m_isValid.
+    // But "candidate for constraint validation" doesn't affect m_isValid.
     bool m_isValid : 1;
 };
 
+// FIXME: Give this class its own header file.
 class HTMLFormControlElementWithState : public HTMLFormControlElement {
 public:
     virtual ~HTMLFormControlElementWithState();
@@ -175,6 +180,7 @@ private:
     virtual void finishParsingChildren();
 };
 
+// FIXME: Give this class its own header file.
 class HTMLTextFormControlElement : public HTMLFormControlElementWithState {
 public:
     virtual ~HTMLTextFormControlElement();
@@ -206,14 +212,15 @@ private:
     virtual int cachedSelectionStart() const = 0;
     virtual int cachedSelectionEnd() const = 0;
 
-    // A subclass should return true if placeholder processing is needed.
+    // The derived class should return true if placeholder processing is needed.
     virtual bool supportsPlaceholder() const = 0;
-    // Returns true if user-editable value is empty.  This is used to check placeholder visibility.
+    // Returns true if user-editable value is empty. Used to check placeholder visibility.
     virtual bool isEmptyValue() const = 0;
     // Called in dispatchFocusEvent(), after placeholder process, before calling parent's dispatchFocusEvent().
     virtual void handleFocusEvent() { }
     // Called in dispatchBlurEvent(), after placeholder process, before calling parent's dispatchBlurEvent().
     virtual void handleBlurEvent() { }
+
     RenderTextControl* textRendererAfterUpdateLayout();
 };
 

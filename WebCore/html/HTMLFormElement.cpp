@@ -86,12 +86,12 @@ HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document* documen
 
 PassRefPtr<HTMLFormElement> HTMLFormElement::create(Document* document)
 {
-    return new HTMLFormElement(formTag, document);
+    return adoptRef(new HTMLFormElement(formTag, document));
 }
 
 PassRefPtr<HTMLFormElement> HTMLFormElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLFormElement(tagName, document);
+    return adoptRef(new HTMLFormElement(tagName, document));
 }
 
 HTMLFormElement::~HTMLFormElement()

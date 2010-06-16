@@ -40,7 +40,7 @@ namespace WebCore {
 
 PassRefPtr<IndexedDatabaseImpl> IndexedDatabaseImpl::create()
 {
-    return new IndexedDatabaseImpl();
+    return adoptRef(new IndexedDatabaseImpl);
 }
 
 IndexedDatabaseImpl::IndexedDatabaseImpl()

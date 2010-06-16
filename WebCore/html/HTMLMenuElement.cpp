@@ -37,7 +37,7 @@ inline HTMLMenuElement::HTMLMenuElement(const QualifiedName& tagName, Document* 
 
 PassRefPtr<HTMLMenuElement> HTMLMenuElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLMenuElement(tagName, document);
+    return adoptRef(new HTMLMenuElement(tagName, document));
 }
 
 bool HTMLMenuElement::compact() const

@@ -56,7 +56,7 @@ inline HTMLLabelElement::HTMLLabelElement(const QualifiedName& tagName, Document
 
 PassRefPtr<HTMLLabelElement> HTMLLabelElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLLabelElement(tagName, document);
+    return adoptRef(new HTMLLabelElement(tagName, document));
 }
 
 bool HTMLLabelElement::isFocusable() const

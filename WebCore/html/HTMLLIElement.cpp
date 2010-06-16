@@ -42,12 +42,12 @@ HTMLLIElement::HTMLLIElement(const QualifiedName& tagName, Document* document)
 
 PassRefPtr<HTMLLIElement> HTMLLIElement::create(Document* document)
 {
-    return new HTMLLIElement(liTag, document);
+    return adoptRef(new HTMLLIElement(liTag, document));
 }
 
 PassRefPtr<HTMLLIElement> HTMLLIElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLLIElement(tagName, document);
+    return adoptRef(new HTMLLIElement(tagName, document));
 }
 
 bool HTMLLIElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const

@@ -209,28 +209,28 @@ bool IncreaseSelectionListLevelCommand::canIncreaseSelectionListLevel(Document* 
     return canIncreaseListLevel(document->frame()->selection()->selection(), startListChild, endListChild);
 }
 
-PassRefPtr<Node> IncreaseSelectionListLevelCommand::increaseSelectionListLevelWithType(Document* document, Type listType)
+PassRefPtr<Node> IncreaseSelectionListLevelCommand::increaseSelectionListLevel(Document* document, Type type)
 {
     ASSERT(document);
     ASSERT(document->frame());
-    RefPtr<IncreaseSelectionListLevelCommand> modCommand = new IncreaseSelectionListLevelCommand(document, listType);
-    modCommand->apply();
-    return modCommand->m_listElement;
+    RefPtr<IncreaseSelectionListLevelCommand> command = create(document, type);
+    command->apply();
+    return command->m_listElement.release();
 }
 
 PassRefPtr<Node> IncreaseSelectionListLevelCommand::increaseSelectionListLevel(Document* document)
 {
-    return increaseSelectionListLevelWithType(document, InheritedListType);
+    return increaseSelectionListLevel(document, InheritedListType);
 }
 
 PassRefPtr<Node> IncreaseSelectionListLevelCommand::increaseSelectionListLevelOrdered(Document* document)
 {
-    return increaseSelectionListLevelWithType(document, OrderedList);
+    return increaseSelectionListLevel(document, OrderedList);
 }
 
 PassRefPtr<Node> IncreaseSelectionListLevelCommand::increaseSelectionListLevelUnordered(Document* document)
 {
-    return increaseSelectionListLevelWithType(document, UnorderedList);
+    return increaseSelectionListLevel(document, UnorderedList);
 }
 
 DecreaseSelectionListLevelCommand::DecreaseSelectionListLevelCommand(Document* document) 
@@ -289,7 +289,7 @@ void DecreaseSelectionListLevelCommand::decreaseSelectionListLevel(Document* doc
 {
     ASSERT(document);
     ASSERT(document->frame());
-    applyCommand(new DecreaseSelectionListLevelCommand(document));
+    applyCommand(create(document));
 }
 
 }

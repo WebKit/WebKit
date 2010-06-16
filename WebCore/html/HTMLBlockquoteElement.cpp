@@ -37,12 +37,12 @@ HTMLBlockquoteElement::HTMLBlockquoteElement(const QualifiedName& tagName, Docum
 
 PassRefPtr<HTMLBlockquoteElement> HTMLBlockquoteElement::create(Document* document)
 {
-    return new HTMLBlockquoteElement(blockquoteTag, document);
+    return adoptRef(new HTMLBlockquoteElement(blockquoteTag, document));
 }
 
 PassRefPtr<HTMLBlockquoteElement> HTMLBlockquoteElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLBlockquoteElement(tagName, document);
+    return adoptRef(new HTMLBlockquoteElement(tagName, document));
 }
 
 }

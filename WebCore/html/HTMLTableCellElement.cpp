@@ -53,7 +53,7 @@ inline HTMLTableCellElement::HTMLTableCellElement(const QualifiedName& tagName, 
 
 PassRefPtr<HTMLTableCellElement> HTMLTableCellElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLTableCellElement(tagName, document);
+    return adoptRef(new HTMLTableCellElement(tagName, document));
 }
 
 int HTMLTableCellElement::cellIndex() const

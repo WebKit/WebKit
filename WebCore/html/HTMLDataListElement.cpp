@@ -44,7 +44,7 @@ inline HTMLDataListElement::HTMLDataListElement(const QualifiedName& tagName, Do
 
 PassRefPtr<HTMLDataListElement> HTMLDataListElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLDataListElement(tagName, document);
+    return adoptRef(new HTMLDataListElement(tagName, document));
 }
 
 bool HTMLDataListElement::checkDTD(const Node* newChild)

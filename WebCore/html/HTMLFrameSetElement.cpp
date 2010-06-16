@@ -56,7 +56,7 @@ HTMLFrameSetElement::HTMLFrameSetElement(const QualifiedName& tagName, Document*
 
 PassRefPtr<HTMLFrameSetElement> HTMLFrameSetElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLFrameSetElement(tagName, document);
+    return adoptRef(new HTMLFrameSetElement(tagName, document));
 }
 
 bool HTMLFrameSetElement::checkDTD(const Node* newChild)

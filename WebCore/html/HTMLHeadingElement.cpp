@@ -36,7 +36,7 @@ inline HTMLHeadingElement::HTMLHeadingElement(const QualifiedName& tagName, Docu
 
 PassRefPtr<HTMLHeadingElement> HTMLHeadingElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLHeadingElement(tagName, document);
+    return adoptRef(new HTMLHeadingElement(tagName, document));
 }
 
 bool HTMLHeadingElement::checkDTD(const Node* newChild)

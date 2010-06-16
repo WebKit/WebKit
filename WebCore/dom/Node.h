@@ -654,7 +654,7 @@ private:
     void clearFlag(NodeFlags mask) const { m_nodeFlags &= ~mask; } 
 
 protected:
-    // CreateElementZeroRefCount is deprecated and can be removed once we convert all element
+    // CreateWithZeroRefCountFlag is deprecated and can be removed once we convert all element
     // classes to start with a reference count of 1.
     enum ConstructionType { 
         CreateOther = DefaultNodeFlags,
@@ -662,11 +662,9 @@ protected:
         CreateComment = DefaultNodeFlags | IsCommentFlag,
         CreateContainer = DefaultNodeFlags | IsContainerFlag, 
         CreateElement = CreateContainer | IsElementFlag, 
-        CreateElementZeroRefCount = IsElementFlag | CreateWithZeroRefCountFlag, 
         CreateStyledElement = CreateElement | IsStyledElementFlag, 
         CreateStyledElementZeroRefCount =  CreateStyledElement | CreateWithZeroRefCountFlag, 
         CreateHTMLElement = CreateStyledElement | IsHTMLFlag, 
-        CreateHTMLElementZeroRefCount = CreateHTMLElement | CreateWithZeroRefCountFlag,
         CreateSVGElement = CreateStyledElement | IsSVGFlag, 
         CreateSVGElementZeroRefCount = CreateSVGElement | CreateWithZeroRefCountFlag,
     };

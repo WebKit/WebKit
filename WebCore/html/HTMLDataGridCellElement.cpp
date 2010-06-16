@@ -42,7 +42,7 @@ inline HTMLDataGridCellElement::HTMLDataGridCellElement(const QualifiedName& nam
 
 PassRefPtr<HTMLDataGridCellElement> HTMLDataGridCellElement::create(const QualifiedName& name, Document* document)
 {
-    return new HTMLDataGridCellElement(name, document);
+    return adoptRef(new HTMLDataGridCellElement(name, document));
 }
 
 String HTMLDataGridCellElement::label() const

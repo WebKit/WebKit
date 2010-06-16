@@ -40,12 +40,15 @@ protected:
     ShadowElement(const QualifiedName& name, Node* shadowParent)
         : BaseElement(name, shadowParent->document())
         , m_shadowParent(shadowParent)
-    {}
+    {
+    }
 
+    Node* shadowParent() const { return m_shadowParent; }
+
+private:
     virtual bool isShadowNode() const { return true; }
     virtual Node* shadowParentNode() { return m_shadowParent; }
 
-private:
     Node* m_shadowParent;
 };
 

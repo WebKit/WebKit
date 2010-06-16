@@ -41,7 +41,7 @@ inline HTMLTableCaptionElement::HTMLTableCaptionElement(const QualifiedName& tag
 
 PassRefPtr<HTMLTableCaptionElement> HTMLTableCaptionElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLTableCaptionElement(tagName, document);
+    return adoptRef(new HTMLTableCaptionElement(tagName, document));
 }
 
 bool HTMLTableCaptionElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const

@@ -40,12 +40,12 @@ HTMLHRElement::HTMLHRElement(const QualifiedName& tagName, Document* document)
 
 PassRefPtr<HTMLHRElement> HTMLHRElement::create(Document* document)
 {
-    return new HTMLHRElement(hrTag, document);
+    return adoptRef(new HTMLHRElement(hrTag, document));
 }
 
 PassRefPtr<HTMLHRElement> HTMLHRElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLHRElement(tagName, document);
+    return adoptRef(new HTMLHRElement(tagName, document));
 }
 
 bool HTMLHRElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const

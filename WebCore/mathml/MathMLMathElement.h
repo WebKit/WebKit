@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Alex Milowski (alex@milowski.com). All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,14 +31,15 @@
 #include "MathMLInlineContainerElement.h"
 
 namespace WebCore {
-    
+
 class MathMLMathElement : public MathMLInlineContainerElement {
 public:
     static PassRefPtr<MathMLMathElement> create(const QualifiedName& tagName, Document*);
-    
-protected:
+
+private:
     MathMLMathElement(const QualifiedName& tagName, Document*);
-    
+
+    virtual createRenderer(RenderArena*, RenderStyle*);
 };
     
 }

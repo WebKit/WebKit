@@ -44,7 +44,7 @@ inline HTMLTableColElement::HTMLTableColElement(const QualifiedName& tagName, Do
 
 PassRefPtr<HTMLTableColElement> HTMLTableColElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLTableColElement(tagName, document);
+    return adoptRef(new HTMLTableColElement(tagName, document));
 }
 
 HTMLTagStatus HTMLTableColElement::endTagRequirement() const

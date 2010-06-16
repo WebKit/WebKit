@@ -89,7 +89,7 @@ TextControlInnerElement::TextControlInnerElement(Document* document, Node* shado
 
 PassRefPtr<TextControlInnerElement> TextControlInnerElement::create(Node* shadowParent)
 {
-    return new TextControlInnerElement(shadowParent->document(), shadowParent);
+    return adoptRef(new TextControlInnerElement(shadowParent->document(), shadowParent));
 }
 
 void TextControlInnerElement::attachInnerElement(Node* parent, PassRefPtr<RenderStyle> style, RenderArena* arena)
@@ -126,7 +126,7 @@ inline TextControlInnerTextElement::TextControlInnerTextElement(Document* docume
 
 PassRefPtr<TextControlInnerTextElement> TextControlInnerTextElement::create(Document* document, Node* shadowParent)
 {
-    return new TextControlInnerTextElement(document, shadowParent);
+    return adoptRef(new TextControlInnerTextElement(document, shadowParent));
 }
 
 void TextControlInnerTextElement::defaultEventHandler(Event* event)
@@ -162,7 +162,7 @@ inline SearchFieldResultsButtonElement::SearchFieldResultsButtonElement(Document
 
 PassRefPtr<SearchFieldResultsButtonElement> SearchFieldResultsButtonElement::create(Document* document)
 {
-    return new SearchFieldResultsButtonElement(document);
+    return adoptRef(new SearchFieldResultsButtonElement(document));
 }
 
 void SearchFieldResultsButtonElement::defaultEventHandler(Event* event)
@@ -194,7 +194,7 @@ inline SearchFieldCancelButtonElement::SearchFieldCancelButtonElement(Document* 
 
 PassRefPtr<SearchFieldCancelButtonElement> SearchFieldCancelButtonElement::create(Document* document)
 {
-    return new SearchFieldCancelButtonElement(document);
+    return adoptRef(new SearchFieldCancelButtonElement(document));
 }
 
 void SearchFieldCancelButtonElement::detach()
@@ -251,7 +251,7 @@ inline SpinButtonElement::SpinButtonElement(Node* shadowParent)
 
 PassRefPtr<SpinButtonElement> SpinButtonElement::create(Node* shadowParent)
 {
-    return new SpinButtonElement(shadowParent);
+    return adoptRef(new SpinButtonElement(shadowParent));
 }
 
 void SpinButtonElement::defaultEventHandler(Event* event)

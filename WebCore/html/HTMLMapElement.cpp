@@ -46,12 +46,12 @@ HTMLMapElement::HTMLMapElement(const QualifiedName& tagName, Document* document)
 
 PassRefPtr<HTMLMapElement> HTMLMapElement::create(Document* document)
 {
-    return new HTMLMapElement(mapTag, document);
+    return adoptRef(new HTMLMapElement(mapTag, document));
 }
 
 PassRefPtr<HTMLMapElement> HTMLMapElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLMapElement(tagName, document);
+    return adoptRef(new HTMLMapElement(tagName, document));
 }
 
 HTMLMapElement::~HTMLMapElement()

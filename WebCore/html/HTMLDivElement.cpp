@@ -40,12 +40,12 @@ HTMLDivElement::HTMLDivElement(const QualifiedName& tagName, Document* document)
 
 PassRefPtr<HTMLDivElement> HTMLDivElement::create(Document* document)
 {
-    return new HTMLDivElement(divTag, document);
+    return adoptRef(new HTMLDivElement(divTag, document));
 }
 
 PassRefPtr<HTMLDivElement> HTMLDivElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLDivElement(tagName, document);
+    return adoptRef(new HTMLDivElement(tagName, document));
 }
 
 bool HTMLDivElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const

@@ -82,7 +82,7 @@ public:
     static void addHTMLAlignmentToStyledElement(StyledElement*, Attribute*);
 
 protected:
-    HTMLElement(const QualifiedName& tagName, Document*, ConstructionType = CreateHTMLElementZeroRefCount);
+    HTMLElement(const QualifiedName& tagName, Document*);
 
     void addHTMLAlignment(Attribute*);
 
@@ -111,8 +111,8 @@ private:
     Node* insertAdjacent(const String& where, Node* newChild, ExceptionCode&);
 };
 
-inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document* document, ConstructionType type)
-    : StyledElement(tagName, document, type)
+inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document* document)
+    : StyledElement(tagName, document, CreateHTMLElement)
 {
     ASSERT(tagName.localName().impl());
 }

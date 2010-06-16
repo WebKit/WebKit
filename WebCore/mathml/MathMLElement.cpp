@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Alex Milowski (alex@milowski.com). All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,20 +38,14 @@ namespace WebCore {
 using namespace MathMLNames;
     
 MathMLElement::MathMLElement(const QualifiedName& tagName, Document* document)
-    : StyledElement(tagName, document, CreateStyledElementZeroRefCount)
+    : StyledElement(tagName, document)
 {
 }
     
 PassRefPtr<MathMLElement> MathMLElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new MathMLElement(tagName, document);
+    return adoptRef(new MathMLElement(tagName, document));
 }
-
-RenderObject* MathMLElement::createRenderer(RenderArena*, RenderStyle* style)
-{
-    return RenderObject::createObject(this, style);
-}
-    
     
 }
 

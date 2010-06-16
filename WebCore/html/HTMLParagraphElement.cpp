@@ -41,7 +41,7 @@ inline HTMLParagraphElement::HTMLParagraphElement(const QualifiedName& tagName, 
 
 PassRefPtr<HTMLParagraphElement> HTMLParagraphElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLParagraphElement(tagName, document);
+    return adoptRef(new HTMLParagraphElement(tagName, document));
 }
 
 bool HTMLParagraphElement::checkDTD(const Node* newChild)

@@ -57,7 +57,7 @@ inline HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Docume
 
 PassRefPtr<HTMLKeygenElement> HTMLKeygenElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
 {
-    return new HTMLKeygenElement(tagName, document, form);
+    return adoptRef(new HTMLKeygenElement(tagName, document, form));
 }
 
 const AtomicString& HTMLKeygenElement::formControlType() const

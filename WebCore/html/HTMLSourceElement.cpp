@@ -49,7 +49,7 @@ inline HTMLSourceElement::HTMLSourceElement(const QualifiedName& tagName, Docume
 
 PassRefPtr<HTMLSourceElement> HTMLSourceElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLSourceElement(tagName, document);
+    return adoptRef(new HTMLSourceElement(tagName, document));
 }
 
 void HTMLSourceElement::insertedIntoDocument()

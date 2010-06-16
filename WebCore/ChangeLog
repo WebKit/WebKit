@@ -1,3 +1,253 @@
+2010-06-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by David Levin.
+
+        Deploy adoptRef in more places, including all HTML and MathML elements
+        https://bugs.webkit.org/show_bug.cgi?id=39941
+
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchAttrRemovalEvent): Use create instead of new
+        in commented-out code.
+        (WebCore::Element::dispatchAttrAdditionEvent): Ditto.
+
+        * dom/Node.h: Removed now-unused CreateElementZeroRefCount and
+        CreateHTMLElementZeroRefCount.
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::insertList): Use create instead of new, fixing
+        a storage leak.
+
+        * editing/ModifySelectionListLevel.cpp:
+        (WebCore::IncreaseSelectionListLevelCommand::increaseSelectionListLevel):
+        Removed "WithType" from function name. Use create instead of new, fixing a
+        storage leak.
+        (WebCore::DecreaseSelectionListLevelCommand::decreaseSelectionListLevel): Use
+        create instead of new, fixing a storage leak.
+
+        * storage/IndexedDatabaseImpl.cpp:
+        (WebCore::IndexedDatabaseImpl::create): Use adoptRef, fixing a storage leak.
+
+        * editing/ModifySelectionListLevel.h: Added create functions.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::HTMLAnchorElement):
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::HTMLFrameOwnerElement):
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::HTMLMeterElement):
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::HTMLProgressElement):
+        Removed code to explicitly pass CreateHTMLElement construction type since that's
+        now the type used for all HTML elements.
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::HTMLFormControlElement):
+        * html/HTMLFormControlElement.h:
+        Removed construction type argument, since CreateHTMLElement is now the type used
+        for all HTML elements.
+
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::MathMLElement): Removed construction type of
+        CreateStyledElementZeroRefCount so we'll use the default construction
+        type, CreateStyledElement.
+        (WebCore::MathMLElement::create): Use adoptRef.
+
+        * mathml/MathMLElement.h: Made isMathMLElement function private and
+        removed unneeded override of createRenderer, because it did the
+        same thing as the base class's createRenderer function.
+
+        * mathml/MathMLInlineContainerElement.cpp:
+        (WebCore::MathMLInlineContainerElement::create): Use adoptRef.
+        (WebCore::MathMLInlineContainerElement::createRenderer):
+        Removed unnecessarily initialization of local variable and removed the
+        case for mathTag, since that uses a different derived class.
+
+        * mathml/MathMLInlineContainerElement.h: Made createRenderrer override
+        private.
+
+        * mathml/MathMLMathElement.cpp:
+        (WebCore::MathMLMathElement::MathMLMathElement): Marked inline since
+        it is called in only one place.
+        (WebCore::MathMLMathElement::create): Use adoptRef.
+        (WebCore::MathMLMathElement::createRenderer): Added. Creates a
+        RenderMathMLMath object.
+
+        * mathml/MathMLMathElement.h: Made constructor private and added a
+        private override of createRenderer.
+
+        * mathml/MathMLTextElement.cpp:
+        (WebCore::MathMLTextElement::MathMLTextElement): Marked inline since
+        it is called in only one place.
+        (WebCore::MathMLTextElement::create): Use adoptRef.
+        (WebCore::MathMLTextElement::createRenderer): Changed to call through
+        to the base class instead of calling RenderObject::createObject directly.
+
+        * mathml/MathMLTextElement.h: Made the constructor and createRenderer
+        function private.
+
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::RenderFileUploadControl):
+        Removed an unneeded initializer.
+
+        * rendering/RenderProgress.cpp: Tweaked includes.
+
+        * rendering/ShadowElement.cpp: Added a "using namespace" directive.
+        * rendering/ShadowElement.h: Tweaked formatting. Made more functions
+        private.
+
+        * editing/DeleteButton.cpp:
+        (WebCore::DeleteButton::create):
+        * html/HTMLAudioElement.cpp:
+        (WebCore::HTMLAudioElement::create):
+        (WebCore::HTMLAudioElement::createForJSConstructor):
+        * html/HTMLBRElement.cpp:
+        (WebCore::HTMLBRElement::create):
+        * html/HTMLBaseElement.cpp:
+        (WebCore::HTMLBaseElement::create):
+        * html/HTMLBaseFontElement.cpp:
+        (WebCore::HTMLBaseFontElement::create):
+        * html/HTMLBlockquoteElement.cpp:
+        (WebCore::HTMLBlockquoteElement::create):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::create):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::create):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::create):
+        * html/HTMLDListElement.cpp:
+        (WebCore::HTMLDListElement::create):
+        * html/HTMLDataGridCellElement.cpp:
+        (WebCore::HTMLDataGridCellElement::create):
+        * html/HTMLDataGridColElement.cpp:
+        (WebCore::HTMLDataGridColElement::create):
+        * html/HTMLDataGridElement.cpp:
+        (WebCore::HTMLDataGridElement::create):
+        * html/HTMLDataGridRowElement.cpp:
+        (WebCore::HTMLDataGridRowElement::create):
+        * html/HTMLDataListElement.cpp:
+        (WebCore::HTMLDataListElement::create):
+        * html/HTMLDivElement.cpp:
+        (WebCore::HTMLDivElement::create):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::create):
+        * html/HTMLElement.h:
+        (WebCore::HTMLElement::HTMLElement):
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::create):
+        * html/HTMLFontElement.cpp:
+        (WebCore::HTMLFontElement::create):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::create):
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::create):
+        * html/HTMLHRElement.cpp:
+        (WebCore::HTMLHRElement::create):
+        * html/HTMLHeadElement.cpp:
+        (WebCore::HTMLHeadElement::create):
+        * html/HTMLHeadingElement.cpp:
+        (WebCore::HTMLHeadingElement::create):
+        * html/HTMLHtmlElement.cpp:
+        (WebCore::HTMLHtmlElement::create):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::create):
+        (WebCore::HTMLImageElement::createForJSConstructor):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::create):
+        * html/HTMLIsIndexElement.cpp:
+        (WebCore::HTMLIsIndexElement::create):
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::create):
+        * html/HTMLLIElement.cpp:
+        (WebCore::HTMLLIElement::create):
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::create):
+        * html/HTMLLegendElement.cpp:
+        (WebCore::HTMLLegendElement::create):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::create):
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::create):
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::create):
+        * html/HTMLMenuElement.cpp:
+        (WebCore::HTMLMenuElement::create):
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::create):
+        * html/HTMLModElement.cpp:
+        (WebCore::HTMLModElement::create):
+        * html/HTMLNoScriptElement.cpp:
+        (WebCore::HTMLNoScriptElement::create):
+        * html/HTMLOListElement.cpp:
+        (WebCore::HTMLOListElement::create):
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::create):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::create):
+        (WebCore::HTMLOptionElement::createForJSConstructor):
+        * html/HTMLParagraphElement.cpp:
+        (WebCore::HTMLParagraphElement::create):
+        * html/HTMLParamElement.cpp:
+        (WebCore::HTMLParamElement::create):
+        * html/HTMLPreElement.cpp:
+        (WebCore::HTMLPreElement::create):
+        * html/HTMLQuoteElement.cpp:
+        (WebCore::HTMLQuoteElement::create):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::create):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::create):
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::create):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::create):
+        * html/HTMLTableCaptionElement.cpp:
+        (WebCore::HTMLTableCaptionElement::create):
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::create):
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::create):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::create):
+        * html/HTMLTableRowElement.cpp:
+        (WebCore::HTMLTableRowElement::create):
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::create):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::create):
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::create):
+        * html/HTMLUListElement.cpp:
+        (WebCore::HTMLUListElement::create):
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::create):
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocumentElement::create):
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlShadowRootElement::create):
+        (WebCore::MediaControlElement::create):
+        (WebCore::MediaControlTimelineContainerElement::create):
+        (WebCore::MediaControlVolumeSliderContainerElement::create):
+        (WebCore::MediaControlStatusDisplayElement::create):
+        (WebCore::MediaControlMuteButtonElement::create):
+        (WebCore::MediaControlPlayButtonElement::create):
+        (WebCore::MediaControlSeekButtonElement::create):
+        (WebCore::MediaControlRewindButtonElement::create):
+        (WebCore::MediaControlReturnToRealtimeButtonElement::create):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::create):
+        (WebCore::MediaControlTimelineElement::create):
+        (WebCore::MediaControlVolumeSliderElement::create):
+        (WebCore::MediaControlFullscreenButtonElement::create):
+        (WebCore::MediaControlTimeDisplayElement::create):
+        * rendering/RenderSlider.cpp:
+        (WebCore::SliderThumbElement::create):
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::create):
+        (WebCore::TextControlInnerTextElement::create):
+        (WebCore::SearchFieldResultsButtonElement::create):
+        (WebCore::SearchFieldCancelButtonElement::create):
+        (WebCore::SpinButtonElement::create):
+        Use adoptRef.
+
 2010-06-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

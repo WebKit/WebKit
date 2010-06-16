@@ -42,7 +42,7 @@ inline HTMLDataGridRowElement::HTMLDataGridRowElement(const QualifiedName& name,
 
 PassRefPtr<HTMLDataGridRowElement> HTMLDataGridRowElement::create(const QualifiedName& name, Document* document)
 {
-    return new HTMLDataGridRowElement(name, document);
+    return adoptRef(new HTMLDataGridRowElement(name, document));
 }
 
 bool HTMLDataGridRowElement::checkDTD(const Node* newChild)

@@ -53,9 +53,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* f, ConstructionType constructionType)
-    : HTMLElement(tagName, doc, constructionType)
-    , m_form(f)
+HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
+    : HTMLElement(tagName, document)
+    , m_form(form)
     , m_disabled(false)
     , m_readOnly(false)
     , m_required(false)

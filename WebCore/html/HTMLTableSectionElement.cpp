@@ -44,7 +44,7 @@ inline HTMLTableSectionElement::HTMLTableSectionElement(const QualifiedName& tag
 
 PassRefPtr<HTMLTableSectionElement> HTMLTableSectionElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLTableSectionElement(tagName, document);
+    return adoptRef(new HTMLTableSectionElement(tagName, document));
 }
 
 bool HTMLTableSectionElement::checkDTD(const Node* newChild)

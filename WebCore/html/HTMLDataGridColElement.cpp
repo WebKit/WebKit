@@ -46,7 +46,7 @@ inline HTMLDataGridColElement::HTMLDataGridColElement(const QualifiedName& name,
 
 PassRefPtr<HTMLDataGridColElement> HTMLDataGridColElement::create(const QualifiedName& name, Document* document)
 {
-    return new HTMLDataGridColElement(name, document);
+    return adoptRef(new HTMLDataGridColElement(name, document));
 }
 
 HTMLDataGridElement* HTMLDataGridColElement::findDataGridAncestor() const

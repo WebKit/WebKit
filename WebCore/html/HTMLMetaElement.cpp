@@ -39,7 +39,7 @@ inline HTMLMetaElement::HTMLMetaElement(const QualifiedName& tagName, Document* 
 
 PassRefPtr<HTMLMetaElement> HTMLMetaElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLMetaElement(tagName, document);
+    return adoptRef(new HTMLMetaElement(tagName, document));
 }
 
 void HTMLMetaElement::parseMappedAttribute(Attribute* attr)

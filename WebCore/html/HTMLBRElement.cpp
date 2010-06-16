@@ -40,12 +40,12 @@ HTMLBRElement::HTMLBRElement(const QualifiedName& tagName, Document* document)
 
 PassRefPtr<HTMLBRElement> HTMLBRElement::create(Document* document)
 {
-    return new HTMLBRElement(brTag, document);
+    return adoptRef(new HTMLBRElement(brTag, document));
 }
 
 PassRefPtr<HTMLBRElement> HTMLBRElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLBRElement(tagName, document);
+    return adoptRef(new HTMLBRElement(tagName, document));
 }
 
 bool HTMLBRElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const

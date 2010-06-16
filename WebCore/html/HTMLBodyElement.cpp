@@ -47,12 +47,12 @@ HTMLBodyElement::HTMLBodyElement(const QualifiedName& tagName, Document* documen
 
 PassRefPtr<HTMLBodyElement> HTMLBodyElement::create(Document* document)
 {
-    return new HTMLBodyElement(bodyTag, document);
+    return adoptRef(new HTMLBodyElement(bodyTag, document));
 }
 
 PassRefPtr<HTMLBodyElement> HTMLBodyElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLBodyElement(tagName, document);
+    return adoptRef(new HTMLBodyElement(tagName, document));
 }
 
 HTMLBodyElement::~HTMLBodyElement()

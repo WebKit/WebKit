@@ -42,7 +42,7 @@ inline HTMLBaseElement::HTMLBaseElement(const QualifiedName& tagName, Document* 
 
 PassRefPtr<HTMLBaseElement> HTMLBaseElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLBaseElement(tagName, document);
+    return adoptRef(new HTMLBaseElement(tagName, document));
 }
 
 void HTMLBaseElement::parseMappedAttribute(Attribute* attr)

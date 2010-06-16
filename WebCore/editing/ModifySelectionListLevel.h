@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,9 +55,15 @@ public:
 
 private:
     enum Type { InheritedListType, OrderedList, UnorderedList };
-    static PassRefPtr<Node> increaseSelectionListLevelWithType(Document*, Type listType);
+    static PassRefPtr<Node> increaseSelectionListLevel(Document*, Type);
 
+    static PassRefPtr<IncreaseSelectionListLevelCommand> create(Document* document, Type type)
+    {
+        return adoptRef(new IncreaseSelectionListLevelCommand(document, type));
+    }
+    
     IncreaseSelectionListLevelCommand(Document*, Type);
+
     virtual void doApply();
 
     Type m_listType;
@@ -71,7 +77,13 @@ public:
     static void decreaseSelectionListLevel(Document*);
 
 private:
+    static PassRefPtr<DecreaseSelectionListLevelCommand> create(Document* document)
+    {
+        return adoptRef(new DecreaseSelectionListLevelCommand(document));
+    }
+
     DecreaseSelectionListLevelCommand(Document*);
+
     virtual void doApply();
 };
 

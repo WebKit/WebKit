@@ -58,7 +58,7 @@ using std::max;
 
 PassRefPtr<HTMLElement> HTMLElement::create(const QualifiedName& tagName, Document* document)
 {
-    return adoptRef(new HTMLElement(tagName, document, CreateHTMLElement));
+    return adoptRef(new HTMLElement(tagName, document));
 }
 
 String HTMLElement::nodeName() const

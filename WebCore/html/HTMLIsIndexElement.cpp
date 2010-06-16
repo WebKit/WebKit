@@ -41,12 +41,12 @@ HTMLIsIndexElement::HTMLIsIndexElement(const QualifiedName& tagName, Document* d
 
 PassRefPtr<HTMLIsIndexElement> HTMLIsIndexElement::create(Document* document, HTMLFormElement* form)
 {
-    return new HTMLIsIndexElement(isindexTag, document, form);
+    return adoptRef(new HTMLIsIndexElement(isindexTag, document, form));
 }
 
 PassRefPtr<HTMLIsIndexElement> HTMLIsIndexElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
 {
-    return new HTMLIsIndexElement(tagName, document, form);
+    return adoptRef(new HTMLIsIndexElement(tagName, document, form));
 }
 
 void HTMLIsIndexElement::parseMappedAttribute(Attribute* attr)

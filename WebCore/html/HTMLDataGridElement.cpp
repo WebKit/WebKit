@@ -47,7 +47,7 @@ inline HTMLDataGridElement::HTMLDataGridElement(const QualifiedName& tagName, Do
 
 PassRefPtr<HTMLDataGridElement> HTMLDataGridElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLDataGridElement(tagName, document);
+    return adoptRef(new HTMLDataGridElement(tagName, document));
 }
 
 HTMLDataGridElement::~HTMLDataGridElement()

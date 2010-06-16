@@ -54,7 +54,7 @@ inline HTMLVideoElement::HTMLVideoElement(const QualifiedName& tagName, Document
 
 PassRefPtr<HTMLVideoElement> HTMLVideoElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLVideoElement(tagName, document);
+    return adoptRef(new HTMLVideoElement(tagName, document));
 }
 
 bool HTMLVideoElement::rendererIsNeeded(RenderStyle* style) 

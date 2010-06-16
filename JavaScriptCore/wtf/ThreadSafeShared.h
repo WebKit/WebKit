@@ -129,15 +129,15 @@ private:
 
 template<class T> class ThreadSafeShared : public ThreadSafeSharedBase {
 public:
-    ThreadSafeShared(int initialRefCount = 1)
-        : ThreadSafeSharedBase(initialRefCount)
-    {
-    }
-
     void deref()
     {
         if (derefBase())
             delete static_cast<T*>(this);
+    }
+
+protected:
+    ThreadSafeShared()
+    {
     }
 };
 

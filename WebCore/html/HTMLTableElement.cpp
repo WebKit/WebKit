@@ -55,12 +55,12 @@ HTMLTableElement::HTMLTableElement(const QualifiedName& tagName, Document* docum
 
 PassRefPtr<HTMLTableElement> HTMLTableElement::create(Document* document)
 {
-    return new HTMLTableElement(tableTag, document);
+    return adoptRef(new HTMLTableElement(tableTag, document));
 }
 
 PassRefPtr<HTMLTableElement> HTMLTableElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new HTMLTableElement(tagName, document);
+    return adoptRef(new HTMLTableElement(tagName, document));
 }
 
 bool HTMLTableElement::checkDTD(const Node* newChild)

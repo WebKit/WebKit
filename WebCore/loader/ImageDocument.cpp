@@ -111,7 +111,7 @@ private:
 
 inline PassRefPtr<ImageDocumentElement> ImageDocumentElement::create(ImageDocument* document)
 {
-    return new ImageDocumentElement(document);
+    return adoptRef(new ImageDocumentElement(document));
 }
 
 // --------
