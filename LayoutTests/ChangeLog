@@ -1,3 +1,12 @@
+2010-06-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] r60803 broke media/controls-drag-timebar.html
+        https://bugs.webkit.org/show_bug.cgi?id=40269
+
+        * platform/gtk/Skipped: Unskip test which is now passing.
+
 2010-06-16  Adam Roben  <aroben@apple.com>
 
         Remove some CVS directories that snuck into Subversion

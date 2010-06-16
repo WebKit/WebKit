@@ -345,7 +345,7 @@ static void sendOrQueueEvent(GdkEvent event, bool shouldReplaySavedEvents)
 {
     // Mouse move events are queued if the previous event was queued or if a
     // delay was set up by leapForward().
-    if (buttonCurrentlyDown || endOfQueue != startOfQueue || msgQueue[endOfQueue].delay) {
+    if ((dragMode && buttonCurrentlyDown) || endOfQueue != startOfQueue || msgQueue[endOfQueue].delay) {
         msgQueue[endOfQueue++].event = event;
 
         if (shouldReplaySavedEvents)

@@ -2,6 +2,19 @@
 
         Reviewed by Gustavo Noronha Silva.
 
+        [GTK] r60803 broke media/controls-drag-timebar.html
+        https://bugs.webkit.org/show_bug.cgi?id=40269
+
+        Only queue events while the mouse button is down, if drag mode is enabled. Some
+        tests may disable drag mode, to prevent the queuing of events in this situation.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (sendOrQueueEvent): Only queue events here if dragMode is true.
+
+2010-06-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
         [GTK] Remove the abuse of GDK_CURRENT_TIME in the DRT
         https://bugs.webkit.org/show_bug.cgi?id=40600
 
