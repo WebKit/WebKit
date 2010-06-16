@@ -1,3 +1,13 @@
+2010-06-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Not reviewed.
+
+        Add baselines for tests that should be passing consistently now.
+
+        * platform/gtk/Skipped: Unskip tests. They should pass consistently.
+        * platform/gtk/editing/spelling/spellcheck-attribute-expected.txt: Added.
+        * platform/gtk/svg/text/foreignObject-repaint-expected.txt: Added.
+
 2010-06-16  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Dimitri Glazkov.

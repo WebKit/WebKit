@@ -28,13 +28,6 @@
 # media/video-seek-past-end-playing.html
 # transitions/zero-duration-with-non-zero-delay-end.html
 
-# These tests work correctly, but I was not able to make them
-# generate render tree dumps consistently in the bot and in my
-# machine, so I'm disabling them (kov).
-#
-# editing/spelling/spellcheck-attribute.html
-# svg/text/foreignObject-repaint.xml
-
 # Tests in accessibility/ directory
 # An implementation of accessibilityController is required.
 #   Tests failing
