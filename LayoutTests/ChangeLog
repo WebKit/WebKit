@@ -1,3 +1,19 @@
+2010-06-16  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Enable HTML5 lexer
+        https://bugs.webkit.org/show_bug.cgi?id=40650
+
+        Add platform-specific results for Snow Leopard.  Maciej thinks there is
+        something going on here related to BIDI and additional FFFD
+        replacements.  This test is already on our list of things to
+        investigate more closely.
+
+        * platform/mac-snowleopard/tables/mozilla/images/adforce_imgis_com-expected.checksum: Added.
+        * platform/mac-snowleopard/tables/mozilla/images/adforce_imgis_com-expected.png: Added.
+        * platform/mac-snowleopard/tables/mozilla/images/adforce_imgis_com-expected.txt: Added.
+
 2010-06-16  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, just updating qt platform result to match new expectations.
