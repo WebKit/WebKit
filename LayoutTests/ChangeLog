@@ -1,3 +1,35 @@
+2010-06-16  Adam Roben  <aroben@apple.com>
+
+        Convert fast/dom/stripNullFromTextNodes.html to dumpAsText
+
+        There's nothing in this test that requires a render tree dump. We have
+        other tests that test rendering of U+FFFD characters (which was what
+        was causing the test to fail, since Windows uses a different font for
+        that character than Mac does).
+
+        Fixes <http://webkit.org/b/40738> REGRESSION: (r61234):
+        fast/dom/stripNullFromTextNodes.html fails on Windows
+
+        Reviewed by Dan Bernstein.
+
+        * fast/dom/stripNullFromTextNodes-expected.txt: Added.
+
+        * fast/dom/stripNullFromTextNodes.html: Added a call to
+        layoutTestController.dumpAsText().
+
+        * platform/chromium-linux/fast/dom/stripNullFromTextNodes-expected.checksum: Removed.
+        * platform/chromium-linux/fast/dom/stripNullFromTextNodes-expected.png: Removed.
+        * platform/chromium-win/fast/dom/stripNullFromTextNodes-expected.checksum: Removed.
+        * platform/chromium-win/fast/dom/stripNullFromTextNodes-expected.png: Removed.
+        * platform/chromium-win/fast/dom/stripNullFromTextNodes-expected.txt: Removed.
+        * platform/mac-tiger/fast/dom/stripNullFromTextNodes-expected.checksum: Removed.
+        * platform/mac-tiger/fast/dom/stripNullFromTextNodes-expected.png: Removed.
+        * platform/mac-tiger/fast/dom/stripNullFromTextNodes-expected.txt: Removed.
+        * platform/mac/fast/dom/stripNullFromTextNodes-expected.checksum: Removed.
+        * platform/mac/fast/dom/stripNullFromTextNodes-expected.png: Removed.
+        * platform/mac/fast/dom/stripNullFromTextNodes-expected.txt: Removed.
+        * platform/qt/fast/dom/stripNullFromTextNodes-expected.txt: Removed.
+
 2010-06-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
