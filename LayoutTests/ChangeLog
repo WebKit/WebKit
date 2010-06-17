@@ -1,3 +1,20 @@
+2010-06-17  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] pass plugins/open-and-close-window-with-plugin.html on Qt
+
+        Capture logDestroy messages from the test plugin. DRT's WebPage
+        is already destroyed by the time they are emitted.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33333
+
+        Unskip:
+        plugins/open-and-close-window-with-plugin.html
+        plugins/geturlnotify-during-document-teardown.html
+
+        * platform/qt/Skipped:
+
 2010-06-17  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r61340.
