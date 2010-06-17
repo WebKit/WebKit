@@ -1,3 +1,12 @@
+2010-06-16  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        This "test" no longer exists.  Turns out it was an image resource for
+        another test.
+
+        * platform/mac/Skipped:
+
 2010-06-16  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Simon Fraser.

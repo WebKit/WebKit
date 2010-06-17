@@ -295,7 +295,3 @@ fast/dom/Geolocation/maximum-age.html
 
 # Filenames aren't filtered out from edit drags yet, see https://bugs.wekit.org/show_bug.cgi?id=38826
 editing/pasteboard/file-drag-to-editable.html
-
-# abarth keeps screwing up the expectations for this test.  Mark Rowe told me
-# how to fix them.  I'll fix them be the end of today.
-tables/mozilla/images/adforce_imgis_com.html
