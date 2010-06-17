@@ -1,3 +1,16 @@
+2010-06-16  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by David Levin.
+
+        Guarantee that references are held for CachedScripts in HTMLDocumentParser.
+        https://bugs.webkit.org/show_bug.cgi?id=40177
+
+        No new tests because no new functionality.
+
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::reset):
+        (WebCore::HTMLDocumentParser::executeExternalScriptsIfReady):
+
 2010-06-16  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Laszlo Gombos.

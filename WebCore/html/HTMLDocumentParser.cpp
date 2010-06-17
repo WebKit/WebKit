@@ -213,7 +213,7 @@ void HTMLDocumentParser::reset()
     ASSERT(m_executingScript == 0);
 
     while (!m_pendingScripts.isEmpty()) {
-        CachedScript* cs = m_pendingScripts.takeFirst().get();
+        CachedResourceHandle<CachedScript> cs = m_pendingScripts.takeFirst();
         ASSERT(cache()->disabled() || cs->accessCount() > 0);
         cs->removeClient(this);
     }
@@ -2015,14 +2015,14 @@ void HTMLDocumentParser::executeExternalScriptsIfReady()
         if (!continueExecutingExternalScripts(startTime))
             break;
 
-        CachedScript* cs = m_pendingScripts.takeFirst().get();
+        CachedResourceHandle<CachedScript> cs = m_pendingScripts.takeFirst();
         ASSERT(cache()->disabled() || cs->accessCount() > 0);
 
         setSrc(SegmentedString());
 
         // make sure we forget about the script before we execute the new one
         // infinite recursion might happen otherwise
-        ScriptSourceCode sourceCode(cs);
+        ScriptSourceCode sourceCode(cs.get());
         bool errorOccurred = cs->errorOccurred();
         cs->removeClient(this);
 
