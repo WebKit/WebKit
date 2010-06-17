@@ -296,7 +296,7 @@ WebInspector.ConsoleView.prototype = {
 
     requestClearMessages: function()
     {
-        InjectedScriptAccess.getDefault().clearConsoleMessages(function() {});
+        InspectorBackend.clearConsoleMessages();
     },
 
     clearMessages: function()

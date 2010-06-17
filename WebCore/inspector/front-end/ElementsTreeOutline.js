@@ -1094,7 +1094,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
         function changeTagNameCallback(nodeId)
         {
-            if (nodeId === -1) {
+            if (!nodeId) {
                 cancel();
                 return;
             }
@@ -1111,7 +1111,7 @@ WebInspector.ElementsTreeElement.prototype = {
         }
 
         var callId = WebInspector.Callback.wrap(changeTagNameCallback);
-        InspectorBackend.changeTagName(callId, this.representedObject.id, newText, wasExpanded);
+        InspectorBackend.changeTagName(callId, this.representedObject.id, newText);
     },
 
     _textNodeEditingCommitted: function(element, newText)
@@ -1382,10 +1382,12 @@ WebInspector.ElementsTreeElement.prototype = {
 
         function commitChange(value)
         {
-            InjectedScriptAccess.get(node.injectedScriptId).setOuterHTML(node.id, value, wasExpanded, selectNode.bind(this));
+            var setCallId = WebInspector.Callback.wrap(selectNode);
+            InspectorBackend.setOuterHTML(setCallId, node.id, value);
         }
 
-        InjectedScriptAccess.get(node.injectedScriptId).getNodePropertyValue(node.id, "outerHTML", this._startEditingAsHTML.bind(this, commitChange));
+        var getCallId = WebInspector.Callback.wrap(this._startEditingAsHTML.bind(this, commitChange));
+        InspectorBackend.getOuterHTML(getCallId, node.id);
     },
 
     _copyHTML: function()

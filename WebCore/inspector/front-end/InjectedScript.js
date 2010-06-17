@@ -80,14 +80,6 @@ InjectedScript.releaseWrapperObjectGroup = function(objectGroupName) {
     delete InjectedScript.objectGroups[objectGroupName];
 };
 
-// Called from within InspectorController on the 'inspected page' side.
-InjectedScript.reset = function()
-{
-    InjectedScript._inspectedNodes = [];
-}
-
-InjectedScript.reset();
-
 InjectedScript.dispatch = function(methodName, args, callId)
 {
     var argsArray = eval("(" + args + ")");
@@ -219,29 +211,6 @@ InjectedScript.setPropertyValue = function(objectProxy, propertyName, expression
     }
 }
 
-InjectedScript.getNodePropertyValue = function(nodeId, propertyName)
-{
-    var node = InjectedScript._nodeForId(nodeId);
-    if (!node)
-        return false;
-    var result = node[propertyName];
-    return result !== undefined ? result : false;
-}
-
-InjectedScript.setOuterHTML = function(nodeId, value, expanded)
-{
-    var node = InjectedScript._nodeForId(nodeId);
-    if (!node)
-        return false;
-
-    var parent = node.parentNode;
-    var prevSibling = node.previousSibling;
-    node.outerHTML = value;
-    var newNode = prevSibling ? prevSibling.nextSibling : parent.firstChild;
-
-    return InjectedScriptHost.pushNodePathToFrontend(newNode, expanded, false);
-}
-
 InjectedScript._populatePropertyNames = function(object, resultSet)
 {
     for (var o = object; o; o = o.__proto__) {
@@ -343,19 +312,6 @@ InjectedScript._evaluateOn = function(evalFunction, object, expression, dontUseC
     return value;
 }
 
-InjectedScript.addInspectedNode = function(nodeId)
-{
-    var node = InjectedScript._nodeForId(nodeId);
-    if (!node)
-        return false;
-
-    var inspectedNodes = InjectedScript._inspectedNodes;
-    inspectedNodes.unshift(node);
-    if (inspectedNodes.length >= 5)
-        inspectedNodes.pop();
-    return true;
-}
-
 InjectedScript.getNodeId = function(node)
 {
     return InjectedScriptHost.pushNodePathToFrontend(node, false, false);
@@ -400,17 +356,10 @@ InjectedScript._callFrameForId = function(id)
     return callFrame;
 }
 
-InjectedScript.clearConsoleMessages = function()
-{
-    InjectedScriptHost.clearConsoleMessages();
-    return true;
-}
-
 InjectedScript._resolveObject = function(objectProxy)
 {
     var object = InjectedScript._objectForId(objectProxy.objectId);
     var path = objectProxy.path;
-    var protoDepth = objectProxy.protoDepth;
 
     // Follow the property path.
     for (var i = 0; InjectedScript._isDefined(object) && path && i < path.length; ++i)
@@ -707,7 +656,13 @@ InjectedScript._normalizeEventTypes = function(types)
             result.push(types[i]);
     }
     return result;
-};
+}
+
+InjectedScript._inspectedNode = function(num)
+{
+    var nodeId = InjectedScriptHost.inspectedNode(num);
+    return InjectedScript._nodeForId(nodeId);
+}
 
 function CommandLineAPI()
 {
@@ -829,27 +784,27 @@ CommandLineAPI.prototype = {
 
     get $0()
     {
-        return InjectedScript._inspectedNodes[0];
+        return InjectedScript._inspectedNode(0);
     },
 
     get $1()
     {
-        return InjectedScript._inspectedNodes[1];
+        return InjectedScript._inspectedNode(1);
     },
 
     get $2()
     {
-        return InjectedScript._inspectedNodes[2];
+        return InjectedScript._inspectedNode(2);
     },
 
     get $3()
     {
-        return InjectedScript._inspectedNodes[3];
+        return InjectedScript._inspectedNode(3);
     },
 
     get $4()
     {
-        return InjectedScript._inspectedNodes[4];
+        return InjectedScript._inspectedNode(4);
     }
 }
 

@@ -70,18 +70,14 @@ InjectedScriptAccess._installHandler = function(methodName, async)
 // - Make sure corresponding methods in InjectedScript return non-null and non-undefined values,
 // - Make sure last parameter of all the InjectedSriptAccess.* calls is a callback function.
 // We keep these sorted.
-InjectedScriptAccess._installHandler("addInspectedNode");
-InjectedScriptAccess._installHandler("clearConsoleMessages");
 InjectedScriptAccess._installHandler("evaluate");
 InjectedScriptAccess._installHandler("evaluateInCallFrame");
 InjectedScriptAccess._installHandler("getCompletions");
-InjectedScriptAccess._installHandler("getNodePropertyValue");
 InjectedScriptAccess._installHandler("getProperties");
 InjectedScriptAccess._installHandler("getPrototypes");
 InjectedScriptAccess._installHandler("openInInspectedWindow");
 InjectedScriptAccess._installHandler("pushNodeToFrontend");
 InjectedScriptAccess._installHandler("nodeByPath");
-InjectedScriptAccess._installHandler("setOuterHTML");
 InjectedScriptAccess._installHandler("setPropertyValue");
 InjectedScriptAccess._installHandler("evaluateOnSelf");
 

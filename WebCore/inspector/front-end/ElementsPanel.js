@@ -59,7 +59,7 @@ WebInspector.ElementsPanel = function()
         this.panel.updateEventListeners();
 
         if (this._focusedDOMNode)
-            InjectedScriptAccess.get(this._focusedDOMNode.injectedScriptId).addInspectedNode(this._focusedDOMNode.id, function() {});
+            InspectorBackend.addInspectedNode(this._focusedDOMNode.id);
     };
 
     this.contentElement.appendChild(this.treeOutline.element);

@@ -514,6 +514,24 @@ void InspectorFrontend::didChangeTagName(long callId, long nodeId)
     function.call();
 }
 
+void InspectorFrontend::didGetOuterHTML(long callId, const String& outerHTML)
+{
+    ScriptFunctionCall function(m_webInspector, "dispatch"); 
+    function.appendArgument("didGetOuterHTML");
+    function.appendArgument(callId);
+    function.appendArgument(outerHTML);
+    function.call();
+}
+
+void InspectorFrontend::didSetOuterHTML(long callId, long nodeId)
+{
+    ScriptFunctionCall function(m_webInspector, "dispatch"); 
+    function.appendArgument("didSetOuterHTML");
+    function.appendArgument(callId);
+    function.appendArgument(nodeId);
+    function.call();
+}
+
 void InspectorFrontend::didGetChildNodes(long callId)
 {
     ScriptFunctionCall function(m_webInspector, "dispatch"); 

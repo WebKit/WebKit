@@ -1,3 +1,53 @@
+2010-06-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Joe Pecoraro.
+
+        Web Inspector: move get/setOuterHTML, addInspectedNode and
+        clearConsole to native InspectorDOMAgent. This is done to allow
+        inspected nodes array to store nodes from different domains,
+        also moves outerhtml manipulation closer to the rest of the DOM
+        operations. In addition to that, we are slowly getting rid of
+        InjectedScriptAccess in favor of IDL-defined InspectorBackend
+        interface for clearer remote debugging API.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40733
+
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::inspectedNode):
+        * inspector/InjectedScriptHost.h:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::changeTagName):
+        (WebCore::InspectorBackend::getOuterHTML):
+        (WebCore::InspectorBackend::setOuterHTML):
+        (WebCore::InspectorBackend::addInspectedNode):
+        (WebCore::InspectorBackend::clearConsoleMessages):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::inspectedNode):
+        (WebCore::InspectorDOMAgent::changeTagName):
+        (WebCore::InspectorDOMAgent::getOuterHTML):
+        (WebCore::InspectorDOMAgent::setOuterHTML):
+        (WebCore::InspectorDOMAgent::addInspectedNode):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::didGetOuterHTML):
+        (WebCore::InspectorFrontend::didSetOuterHTML):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.requestClearMessages):
+        * inspector/front-end/DOMAgent.js:
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.this.treeOutline.focusedNodeChanged):
+        (WebInspector.ElementsPanel):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._tagNameEditingCommitted.changeTagNameCallback):
+        (WebInspector.ElementsTreeElement.prototype._tagNameEditingCommitted):
+        ():
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor):
+        * inspector/front-end/InjectedScriptAccess.js:
+
 2010-06-17  John Gregg  <johnnyg@google.com>
 
         Reviewed by David Levin.

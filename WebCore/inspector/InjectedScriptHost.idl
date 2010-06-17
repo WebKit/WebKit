@@ -37,8 +37,8 @@ module core {
         void copyText(in DOMString text);
         [Custom] DOMObject nodeForId(in long nodeId);
         [Custom] int pushNodePathToFrontend(in DOMObject node, in boolean withChildren, in boolean selectInUI);
-
         long pushNodeByPathToFrontend(in DOMString path);
+        long inspectedNode(in unsigned long num);
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         [Custom] DOMObject currentCallFrame();

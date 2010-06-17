@@ -359,10 +359,28 @@ void InspectorBackend::removeNode(long callId, long nodeId)
         domAgent->removeNode(callId, nodeId);
 }
 
-void InspectorBackend::changeTagName(long callId, long nodeId, const AtomicString& tagName, bool expanded)
+void InspectorBackend::changeTagName(long callId, long nodeId, const String& tagName)
 {
     if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
-        domAgent->changeTagName(callId, nodeId, tagName, expanded);
+        domAgent->changeTagName(callId, nodeId, tagName);
+}
+
+void InspectorBackend::getOuterHTML(long callId, long nodeId)
+{
+    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
+        domAgent->getOuterHTML(callId, nodeId);
+}
+
+void InspectorBackend::setOuterHTML(long callId, long nodeId, const String& outerHTML)
+{
+    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
+        domAgent->setOuterHTML(callId, nodeId, outerHTML);
+}
+
+void InspectorBackend::addInspectedNode(long nodeId)
+{
+    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
+        domAgent->addInspectedNode(nodeId);
 }
 
 void InspectorBackend::performSearch(const String& query, bool runSynchronously)
@@ -375,6 +393,12 @@ void InspectorBackend::searchCanceled()
 {
     if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
         domAgent->searchCanceled();
+}
+
+void InspectorBackend::clearConsoleMessages()
+{
+    if (m_inspectorController)
+        m_inspectorController->clearConsoleMessages();
 }
 
 void InspectorBackend::getStyles(long callId, long nodeId, bool authorOnly)

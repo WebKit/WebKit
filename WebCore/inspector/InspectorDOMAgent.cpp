@@ -53,9 +53,9 @@
 #include "EventTarget.h"
 #include "Frame.h"
 #include "FrameTree.h"
+#include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "InspectorFrontend.h"
-#include "markup.h"
 #include "MutationEvent.h"
 #include "Node.h"
 #include "NodeList.h"
@@ -355,12 +355,20 @@ void InspectorDOMAgent::pushChildNodesToFrontend(long nodeId)
     m_frontend->setChildNodes(nodeId, children);
 }
 
+long InspectorDOMAgent::inspectedNode(unsigned long num)
+{
+    if (num < m_inspectedNodes.size())
+        return m_inspectedNodes[num];
+    return 0;
+}
+
 void InspectorDOMAgent::discardBindings()
 {
     m_documentNodeToIdMap.clear();
     m_idToNode.clear();
     releaseDanglingNodes();
     m_childrenRequested.clear();
+    m_inspectedNodes.clear();
 }
 
 Node* InspectorDOMAgent::nodeForId(long id)
@@ -481,40 +489,40 @@ void InspectorDOMAgent::removeNode(long callId, long nodeId)
 {
     Node* node = nodeForId(nodeId);
     if (!node) {
-        // Use -1 to denote an error condition.
-        m_frontend->didRemoveNode(callId, -1);
+        m_frontend->didRemoveNode(callId, 0);
         return;
     }
 
     Node* parentNode = node->parentNode();
     if (!parentNode) {
-        m_frontend->didRemoveNode(callId, -1);
+        m_frontend->didRemoveNode(callId, 0);
         return;
     }
 
-    ExceptionCode code;
-    parentNode->removeChild(node, code);
-    if (code) {
-        m_frontend->didRemoveNode(callId, -1);
+    ExceptionCode ec = 0;
+    parentNode->removeChild(node, ec);
+    if (ec) {
+        m_frontend->didRemoveNode(callId, 0);
         return;
     }
 
     m_frontend->didRemoveNode(callId, nodeId);
 }
 
-void InspectorDOMAgent::changeTagName(long callId, long nodeId, const AtomicString& tagName, bool expanded)
+void InspectorDOMAgent::changeTagName(long callId, long nodeId, const String& tagName)
 {
     Node* oldNode = nodeForId(nodeId);
     if (!oldNode || !oldNode->isElementNode()) {
-        // Use -1 to denote an error condition.
-        m_frontend->didChangeTagName(callId, -1);
+        m_frontend->didChangeTagName(callId, 0);
         return;
     }
 
-    ExceptionCode code = 0;
-    RefPtr<Element> newElem = oldNode->document()->createElement(tagName, code);
-    if (code) {
-        m_frontend->didChangeTagName(callId, -1);
+    bool childrenRequested = m_childrenRequested.contains(nodeId);
+
+    ExceptionCode ec = 0;
+    RefPtr<Element> newElem = oldNode->document()->createElement(tagName, ec);
+    if (ec) {
+        m_frontend->didChangeTagName(callId, 0);
         return;
     }
 
@@ -527,22 +535,61 @@ void InspectorDOMAgent::changeTagName(long callId, long nodeId, const AtomicStri
     // Copy over the original node's children.
     Node* child;
     while ((child = oldNode->firstChild()))
-        newElem->appendChild(child, code);
+        newElem->appendChild(child, ec);
 
     // Replace the old node with the new node
     Node* parent = oldNode->parentNode();
-    parent->insertBefore(newElem, oldNode->nextSibling(), code);
-    parent->removeChild(oldNode, code);
+    parent->insertBefore(newElem, oldNode->nextSibling(), ec);
+    parent->removeChild(oldNode, ec);
 
-    if (code) {
-        m_frontend->didChangeTagName(callId, -1);
+    if (ec) {
+        m_frontend->didChangeTagName(callId, 0);
         return;
     }
 
     long newId = pushNodePathToFrontend(newElem.get());
-    if (expanded)
+    if (childrenRequested)
         pushChildNodesToFrontend(newId);
     m_frontend->didChangeTagName(callId, newId);
+}
+
+void InspectorDOMAgent::getOuterHTML(long callId, long nodeId)
+{
+    Node* node = nodeForId(nodeId);
+    if (!node || !node->isHTMLElement()) {
+        m_frontend->didGetOuterHTML(callId, "");
+        return;
+    }
+
+    HTMLElement* htmlElement = static_cast<HTMLElement*>(node);
+    m_frontend->didGetOuterHTML(callId, htmlElement->outerHTML());
+}
+
+void InspectorDOMAgent::setOuterHTML(long callId, long nodeId, const String& outerHTML)
+{
+    Node* node = nodeForId(nodeId);
+    if (!node || !node->isHTMLElement()) {
+        m_frontend->didSetOuterHTML(callId, 0);
+        return;
+    }
+
+    bool childrenRequested = m_childrenRequested.contains(nodeId);
+    Node* previousSibling = node->previousSibling();
+    Node* parentNode = node->parentNode();
+
+    HTMLElement* htmlElement = static_cast<HTMLElement*>(node);
+    ExceptionCode ec = 0;
+    htmlElement->setOuterHTML(outerHTML, ec);
+    if (ec)
+        m_frontend->didSetOuterHTML(callId, 0);
+
+    Node* newNode = previousSibling ? previousSibling->nextSibling() : parentNode->firstChild();
+
+    long newId = pushNodePathToFrontend(newNode);
+    if (childrenRequested)
+        pushChildNodesToFrontend(newId);
+
+    m_frontend->didSetOuterHTML(callId, newId);
 }
 
 void InspectorDOMAgent::setTextNodeValue(long callId, long nodeId, const String& value)
@@ -630,6 +677,13 @@ void InspectorDOMAgent::getEventListenersForNode(long callId, long nodeId)
     }
 
     m_frontend->didGetEventListenersForNode(callId, nodeId, listenersArray);
+}
+
+void InspectorDOMAgent::addInspectedNode(long nodeId)
+{
+    m_inspectedNodes.prepend(nodeId);
+    while (m_inspectedNodes.size() > 5)
+        m_inspectedNodes.removeLast();
 }
 
 void InspectorDOMAgent::performSearch(const String& whitespaceTrimmedQuery, bool runSynchronously)

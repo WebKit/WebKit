@@ -119,9 +119,14 @@ public:
     void getEventListenersForNode(long callId, long nodeId);
     void copyNode(long nodeId);
     void removeNode(long callId, long nodeId);
-    void changeTagName(long callId, long nodeId, const AtomicString& tagName, bool expanded);
+    void changeTagName(long callId, long nodeId, const String& tagName);
+    void getOuterHTML(long callId, long nodeId);
+    void setOuterHTML(long callId, long nodeId, const String& outerHTML);
+    void addInspectedNode(long nodeId);
     void performSearch(const String& query, bool runSynchronously);
     void searchCanceled();
+
+    void clearConsoleMessages();
 
     void getStyles(long callId, long nodeId, bool authOnly);
     void getAllStyles(long callId);

@@ -669,6 +669,8 @@ WebInspector.didRemoveAttribute = WebInspector.Callback.processCallback;
 WebInspector.didSetTextNodeValue = WebInspector.Callback.processCallback;
 WebInspector.didRemoveNode = WebInspector.Callback.processCallback;
 WebInspector.didChangeTagName = WebInspector.Callback.processCallback;
+WebInspector.didGetOuterHTML = WebInspector.Callback.processCallback;
+WebInspector.didSetOuterHTML = WebInspector.Callback.processCallback;
 WebInspector.didGetEventListenersForNode = WebInspector.Callback.processCallback;
 
 WebInspector.didGetStyles = WebInspector.Callback.processCallback;

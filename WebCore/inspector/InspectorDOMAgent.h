@@ -102,9 +102,12 @@ namespace WebCore {
         void setAttribute(long callId, long elementId, const String& name, const String& value);
         void removeAttribute(long callId, long elementId, const String& name);
         void removeNode(long callId, long nodeId);
-        void changeTagName(long callId, long nodeId, const AtomicString& tagName, bool expanded);
+        void changeTagName(long callId, long nodeId, const String& tagName);
+        void getOuterHTML(long callId, long nodeId);
+        void setOuterHTML(long callId, long nodeId, const String& outerHTML);
         void setTextNodeValue(long callId, long nodeId, const String& value);
         void getEventListenersForNode(long callId, long nodeId);
+        void addInspectedNode(long nodeId);
         void performSearch(const String& whitespaceTrimmedQuery, bool runSynchronously);
         void searchCanceled();
 
@@ -134,6 +137,7 @@ namespace WebCore {
         Node* nodeForPath(const String& path);
         long pushNodePathToFrontend(Node* node);
         void pushChildNodesToFrontend(long nodeId);
+        long inspectedNode(unsigned long num);
 
     private:
         static CSSStyleSheet* getParentStyleSheet(CSSStyleDeclaration*);
@@ -200,6 +204,7 @@ namespace WebCore {
         Deque<MatchJob*> m_pendingMatchJobs;
         Timer<InspectorDOMAgent> m_matchJobsTimer;
         HashSet<RefPtr<Node> > m_searchResults;
+        Vector<long> m_inspectedNodes;
     };
 
 } // namespace WebCore
