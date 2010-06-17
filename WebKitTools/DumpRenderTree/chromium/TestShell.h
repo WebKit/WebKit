@@ -38,7 +38,6 @@
 #include "WebViewHost.h"
 #include <string>
 #include <wtf/OwnPtr.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 // TestShell is a container of global variables and has bridge functions between
@@ -143,7 +142,7 @@ private:
     WebViewHost* m_webViewHost;
     OwnPtr<AccessibilityController> m_accessibilityController;
     OwnPtr<EventSender> m_eventSender;
-    RefPtr<LayoutTestController> m_layoutTestController;
+    OwnPtr<LayoutTestController> m_layoutTestController;
     OwnPtr<PlainTextController> m_plainTextController;
     OwnPtr<TextInputController> m_textInputController;
     OwnPtr<NotificationPresenter> m_notificationPresenter;

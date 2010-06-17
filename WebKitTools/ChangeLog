@@ -1,3 +1,14 @@
+2010-06-17  Darin Adler  <darin@apple.com>
+
+        Fix Chromium build.
+
+       I didn't realize that neither Chromium nor Qt share the DumpRenderTree
+        code with all the other platforms! Wow, that should be fixed at some point.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell): Changed back to using "new".
+        * DumpRenderTree/chromium/TestShell.h: Changed back to OwnPtr.
+
 2010-06-17  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed Qt build fix.
