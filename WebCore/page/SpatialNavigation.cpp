@@ -448,7 +448,7 @@ bool hasOffscreenRect(Node* node)
 
 // In a bottom-up way, this method tries to scroll |frame| in a given direction
 // |direction|, going up in the frame tree hierarchy in case it does not succeed.
-bool scrollInDirection(Frame* frame, FocusDirection direction)
+bool scrollInDirection(Frame* frame, FocusDirection direction, const FocusCandidate& candidate)
 {
     if (!frame)
         return false;
@@ -471,6 +471,9 @@ bool scrollInDirection(Frame* frame, FocusDirection direction)
     default:
         return false;
     }
+
+    if (!candidate.isNull() && isScrollableContainerNode(candidate.enclosingScrollableBox))
+        return frame->eventHandler()->scrollRecursively(scrollDirection, ScrollByLine, candidate.enclosingScrollableBox);
 
     return frame->eventHandler()->scrollRecursively(scrollDirection, ScrollByLine);
 }

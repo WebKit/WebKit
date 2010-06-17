@@ -1,3 +1,23 @@
+2010-06-16  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Spatial Navigation: refactor scrollInDirection to work with scrollable content
+        https://bugs.webkit.org/show_bug.cgi?id=39195
+
+        scrollInDirection now receives as parameter the node that the Spatial Navigation
+        found as the more appropriated to move focus to. If it is in a scrollable container
+        (e.g. <div> with clipped overflow content), it scrolls recursively starting from
+        the container, not the current focused node.
+
+        Test: fast/events/spatial-navigation/snav-only-clipped-overflow-content.html
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::advanceFocusDirectionally):
+        * page/SpatialNavigation.cpp:
+        (WebCore::scrollInDirection):
+        * page/SpatialNavigation.h:
+
 2010-06-16  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Eric Carlson

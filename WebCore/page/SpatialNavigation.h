@@ -128,7 +128,7 @@ struct FocusCandidate {
 };
 
 void distanceDataForNode(FocusDirection direction, Node* start, FocusCandidate& candidate);
-bool scrollInDirection(Frame*, FocusDirection);
+bool scrollInDirection(Frame*, FocusDirection, const FocusCandidate& candidate = FocusCandidate());
 void scrollIntoView(Element*);
 bool hasOffscreenRect(Node*);
 bool isInRootDocument(Node*);

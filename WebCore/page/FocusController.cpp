@@ -319,7 +319,7 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
     // if |node| element is not in the viewport.
     if (hasOffscreenRect(node)) {
         Frame* frame = node->document()->view()->frame();
-        scrollInDirection(frame, direction);
+        scrollInDirection(frame, direction, focusCandidate);
         return true;
     }
 

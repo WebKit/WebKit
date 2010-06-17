@@ -1,3 +1,13 @@
+2010-06-16  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Spatial Navigation: refactor scrollInDirection to work with scrollable content
+        https://bugs.webkit.org/show_bug.cgi?id=39195
+
+        * fast/events/spatial-navigation/snav-only-clipped-overflow-content-expected.txt: Added.
+        * fast/events/spatial-navigation/snav-only-clipped-overflow-content.html: Added.
+
 2010-06-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, expectations tweak.
