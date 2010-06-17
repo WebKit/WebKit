@@ -1,3 +1,58 @@
+2010-06-17  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by David Levin.
+
+        Fix for slow multiple animated resize issue.
+        https://bugs.webkit.org/show_bug.cgi?id=38233
+
+        The timer-based resize quality approach implemented in
+        http://trac.webkit.org/changeset/34210 is a good idea, but doesn't
+        scale to multiple images with animated resizes.  This fix unifies all
+        outstanding resize timers into a single timer, and removes the "use
+        last quality" check (which doesn't work when images are overlapping). 
+        It also refactors the copy of this code implemented in
+        RenderBoxModelObject in http://trac.webkit.org/changeset/53949.
+
+        This improves Safari performance for the following IE9 platform demos on my C2D MacPro (10.5):
+        http://ie.microsoft.com/testdrive/Performance/01FlyingImages/Default.html (4->60fps)
+        http://ie.microsoft.com/testdrive/Performance/10FlickrExplorer/Default.html (3->16fps)
+        http://ie.microsoft.com/testdrive/Performance/11BrowserFlip/Default.html (9->60fps)
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::ImageQualityController::ImageQualityController):
+        Unify all timers into a single timer, rename RenderBoxModelScaleObserver
+        to ImageQualityController, and remove the resize quality "stickness",
+        since it doesn't work with multiple outstanding resizes.
+        (WebCore::ImageQualityController::objectDestroyed):
+        gImages global is now m_lastPaintTimeMap member.
+        (WebCore::ImageQualityController::highQualityRepaintTimerFired):
+        Function made non-static; repaint all pending resizes (not just one).
+        (WebCore::ImageQualityController::restartTimer):
+        Added function to restart timer at 1.05x threshold.
+        (WebCore::imageQualityController):
+        Static function to return singleton.
+        (WebCore::ImageQualityController::shouldPaintAtLowQuality):
+        Use m_lastPaintTimeMap, not gImages global.  Implement new timer
+        algorithm.  Remove resize "stickiness".
+        (WebCore::RenderBoxModelObject::shouldPaintAtLowQuality):
+        Implement shouldPaintAtLowQuality, which pulls out "this" and passes
+        the call to the ImageQualityController.
+        (WebCore::RenderBoxModelObject::~RenderBoxModelObject):
+        Call ImageQualityController singleton's objectDestroyed() instead of
+        old static function.
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        Modify shouldPaintAtLowQuality() call to match new class name and
+        function signature.
+        * rendering/RenderBoxModelObject.h:
+        Expose shouldPaintAtLowQuality as a member function.
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::~RenderImage):
+        No need to call objectDestroyed() here anymore, since the
+        RenderBoxModelObject destructor will do this for us.
+        (WebCore::RenderImage::paintIntoRect):
+        Rip out RenderImageScaleObserver, and call
+        RenderBoxModelObject::shouldPaintAtLowQuality() instead.
+
 2010-06-17  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Dave Hyatt.

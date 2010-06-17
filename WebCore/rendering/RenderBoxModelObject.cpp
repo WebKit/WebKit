@@ -4,6 +4,7 @@
  *           (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
  *           (C) 2005, 2006 Samuel Weinig (sam.weinig@gmail.com)
  * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -48,77 +49,50 @@ bool RenderBoxModelObject::s_layerWasSelfPainting = false;
 static const double cInterpolationCutoff = 800. * 800.;
 static const double cLowQualityTimeThreshold = 0.500; // 500 ms
 
-class RenderBoxModelScaleData : public Noncopyable {
+typedef HashMap<RenderBoxModelObject*, double> LastPaintTimeMap;
+
+class ImageQualityController : public Noncopyable {
 public:
-    RenderBoxModelScaleData(RenderBoxModelObject* object, const IntSize& size, const AffineTransform& transform, double time, bool lowQualityScale)
-        : m_size(size)
-        , m_transform(transform)
-        , m_lastPaintTime(time)
-        , m_lowQualityScale(lowQualityScale)
-        , m_highQualityRepaintTimer(object, &RenderBoxModelObject::highQualityRepaintTimerFired)
-    {
-    }
-
-    ~RenderBoxModelScaleData()
-    {
-        m_highQualityRepaintTimer.stop();
-    }
-
-    Timer<RenderBoxModelObject>& hiqhQualityRepaintTimer() { return m_highQualityRepaintTimer; }
-
-    const IntSize& size() const { return m_size; }
-    void setSize(const IntSize& s) { m_size = s; }
-    double lastPaintTime() const { return m_lastPaintTime; }
-    void setLastPaintTime(double t) { m_lastPaintTime = t; }
-    bool useLowQualityScale() const { return m_lowQualityScale; }
-    const AffineTransform& transform() const { return m_transform; }
-    void setTransform(const AffineTransform& transform) { m_transform = transform; }
-    void setUseLowQualityScale(bool b)
-    {
-        m_highQualityRepaintTimer.stop();
-        m_lowQualityScale = b;
-        if (b)
-            m_highQualityRepaintTimer.startOneShot(cLowQualityTimeThreshold);
-    }
+    ImageQualityController();
+    bool shouldPaintAtLowQuality(GraphicsContext*, RenderBoxModelObject*, Image*, const IntSize&);
+    void objectDestroyed(RenderBoxModelObject*);
 
 private:
-    IntSize m_size;
-    AffineTransform m_transform;
-    double m_lastPaintTime;
-    bool m_lowQualityScale;
-    Timer<RenderBoxModelObject> m_highQualityRepaintTimer;
+    void highQualityRepaintTimerFired(Timer<ImageQualityController>*);
+    void restartTimer();
+
+    LastPaintTimeMap m_lastPaintTimeMap;
+    Timer<ImageQualityController> m_timer;
 };
 
-class RenderBoxModelScaleObserver {
-public:
-    static bool shouldPaintBackgroundAtLowQuality(GraphicsContext*, RenderBoxModelObject*, Image*, const IntSize&);
+ImageQualityController::ImageQualityController()
+    : m_timer(this, &ImageQualityController::highQualityRepaintTimerFired)
+{
+}
 
-    static void boxModelObjectDestroyed(RenderBoxModelObject* object)
-    {
-        if (gBoxModelObjects) {
-            RenderBoxModelScaleData* data = gBoxModelObjects->take(object);
-            delete data;
-            if (!gBoxModelObjects->size()) {
-                delete gBoxModelObjects;
-                gBoxModelObjects = 0;
-            }
-        }
-    }
+void ImageQualityController::objectDestroyed(RenderBoxModelObject* object)
+{
+    m_lastPaintTimeMap.remove(object);
+    if (m_lastPaintTimeMap.isEmpty())
+        m_timer.stop();
+}
+    
+void ImageQualityController::highQualityRepaintTimerFired(Timer<ImageQualityController>*)
+{
+    for (LastPaintTimeMap::iterator it = m_lastPaintTimeMap.begin(); it != m_lastPaintTimeMap.end(); ++it)
+        it->first->repaint();
+}
 
-    static void highQualityRepaintTimerFired(RenderBoxModelObject* object)
-    {
-        RenderBoxModelScaleObserver::boxModelObjectDestroyed(object);
-        object->repaint();
-    }
+void ImageQualityController::restartTimer()
+{
+    m_timer.startOneShot(cLowQualityTimeThreshold * 1.05);
+}
 
-    static HashMap<RenderBoxModelObject*, RenderBoxModelScaleData*>* gBoxModelObjects;
-};
-
-bool RenderBoxModelScaleObserver::shouldPaintBackgroundAtLowQuality(GraphicsContext* context, RenderBoxModelObject* object, Image* image, const IntSize& size)
+bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext* context, RenderBoxModelObject* object, Image* image, const IntSize& size)
 {
     // If the image is not a bitmap image, then none of this is relevant and we just paint at high
     // quality.
-    if (!image || !image->isBitmapImage())
+    if (!image || !image->isBitmapImage() || context->paintingDisabled())
         return false;
 
     // Make sure to use the unzoomed image size, since if a full page zoom is in effect, the image
@@ -126,59 +100,42 @@ bool RenderBoxModelScaleObserver::shouldPaintBackgroundAtLowQuality(GraphicsCont
     IntSize imageSize(image->width(), image->height());
 
     // Look ourselves up in the hashtable.
-    RenderBoxModelScaleData* data = 0;
-    if (gBoxModelObjects)
-        data = gBoxModelObjects->get(object);
+    LastPaintTimeMap::iterator i = m_lastPaintTimeMap.find(object);
 
     const AffineTransform& currentTransform = context->getCTM();
     bool contextIsScaled = !currentTransform.isIdentityOrTranslationOrFlipped();
     if (!contextIsScaled && imageSize == size) {
-        // There is no scale in effect.  If we had a scale in effect before, we can just delete this data.
-        if (data) {
-            gBoxModelObjects->remove(object);
-            delete data;
-        }
+        // There is no scale in effect. If we had a scale in effect before, we can just remove this object from the list.
+        if (i != m_lastPaintTimeMap.end())
+            m_lastPaintTimeMap.remove(object);
+
         return false;
     }
 
-    // There is no need to hash scaled images that always use low quality mode when the page demands it.  This is the iChat case.
+    // There is no need to hash scaled images that always use low quality mode when the page demands it. This is the iChat case.
     if (object->document()->page()->inLowQualityImageInterpolationMode()) {
         double totalPixels = static_cast<double>(image->width()) * static_cast<double>(image->height());
         if (totalPixels > cInterpolationCutoff)
             return true;
     }
-
-    // If there is no data yet, we will paint the first scale at high quality and record the paint time in case a second scale happens
-    // very soon.
-    if (!data) {
-        data = new RenderBoxModelScaleData(object, size, currentTransform, currentTime(), false);
-        if (!gBoxModelObjects)
-            gBoxModelObjects = new HashMap<RenderBoxModelObject*, RenderBoxModelScaleData*>;
-        gBoxModelObjects->set(object, data);
+    double newTime = currentTime();
+    if (i != m_lastPaintTimeMap.end() && newTime - i->second >= cLowQualityTimeThreshold && !m_timer.isActive()) {
+        // If it has been at least cLowQualityTimeThreshold seconds since the 
+        // last time a resize was requested, and the timer is no longer active, 
+        // draw at high quality and don't set the timer.
+        objectDestroyed(object);
         return false;
     }
-
-    const AffineTransform& tr = data->transform();
-    bool scaleUnchanged = tr.a() == currentTransform.a() && tr.b() == currentTransform.b() && tr.c() == currentTransform.c() && tr.d() == currentTransform.d();
-    // We are scaled, but we painted already at this size, so just keep using whatever mode we last painted with.
-    if ((!contextIsScaled || scaleUnchanged) && data->size() == size)
-        return data->useLowQualityScale();
-
-    // We have data and our size just changed.  If this change happened quickly, go into low quality mode and then set a repaint
-    // timer to paint in high quality mode.  Otherwise it is ok to just paint in high quality mode.
-    double newTime = currentTime();
-    data->setUseLowQualityScale(newTime - data->lastPaintTime() < cLowQualityTimeThreshold);
-    data->setLastPaintTime(newTime);
-    data->setTransform(currentTransform);
-    data->setSize(size);
-    return data->useLowQualityScale();
+    // Draw at low quality first and set a timer for high quality.
+    m_lastPaintTimeMap.set(object, newTime);
+    restartTimer();
+    return true;
 }
 
-HashMap<RenderBoxModelObject*, RenderBoxModelScaleData*>* RenderBoxModelScaleObserver::gBoxModelObjects = 0;
-
-void RenderBoxModelObject::highQualityRepaintTimerFired(Timer<RenderBoxModelObject>*)
+static ImageQualityController* imageQualityController()
 {
-    RenderBoxModelScaleObserver::highQualityRepaintTimerFired(this);
+    static ImageQualityController* controller = new ImageQualityController;
+    return controller;
 }
 
 void RenderBoxModelObject::setSelectionState(SelectionState s)
@@ -203,6 +160,10 @@ void RenderBoxModelObject::setSelectionState(SelectionState s)
         cb->setSelectionState(s);
 }
 
+bool RenderBoxModelObject::shouldPaintAtLowQuality(GraphicsContext* context, Image* image, const IntSize& size)
+{
+    return imageQualityController()->shouldPaintAtLowQuality(context, this, image, size);
+}
 
 RenderBoxModelObject::RenderBoxModelObject(Node* node)
     : RenderObject(node)
@@ -215,7 +176,7 @@ RenderBoxModelObject::~RenderBoxModelObject()
     // Our layer should have been destroyed and cleared by now
     ASSERT(!hasLayer());
     ASSERT(!m_layer);
-    RenderBoxModelScaleObserver::boxModelObjectDestroyed(this);
+    imageQualityController()->objectDestroyed(this);
 }
 
 void RenderBoxModelObject::destroyLayer()
@@ -464,7 +425,6 @@ int RenderBoxModelObject::paddingRight(bool) const
     return padding.calcMinValue(w);
 }
 
-
 void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, const Color& c, const FillLayer* bgLayer, int tx, int ty, int w, int h, InlineFlowBox* box, CompositeOperator op, RenderObject* backgroundObject)
 {
     GraphicsContext* context = paintInfo.context;
@@ -631,7 +591,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             CompositeOperator compositeOp = op == CompositeSourceOver ? bgLayer->composite() : op;
             RenderObject* clientForBackgroundImage = backgroundObject ? backgroundObject : this;
             Image* image = bg->image(clientForBackgroundImage, tileSize);
-            bool useLowQualityScaling = RenderBoxModelScaleObserver::shouldPaintBackgroundAtLowQuality(context, this, image, tileSize);
+            bool useLowQualityScaling = shouldPaintAtLowQuality(context, image, tileSize);
             context->drawTiledImage(image, style()->colorSpace(), destRect, phase, tileSize, compositeOp, useLowQualityScaling);
         }
     }
