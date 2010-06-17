@@ -88,10 +88,7 @@ void NotificationPresenterImpl::cancel(Notification* notification)
 
 void NotificationPresenterImpl::notificationObjectDestroyed(Notification* notification)
 {
-    // TODO(pkasting): We cannot ref an object that's being destroyed.  Either
-    // this function needs to be called earlier than in ~Notification(), or it
-    // needs to not ref this object.
-    //m_presenter->objectDestroyed(PassRefPtr<Notification>(notification));
+    m_presenter->objectDestroyed(PassRefPtr<Notification>(notification));
 }
 
 NotificationPresenter::Permission NotificationPresenterImpl::checkPermission(const KURL& sourceURL)

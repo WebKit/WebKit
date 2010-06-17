@@ -58,6 +58,7 @@ v8::Handle<v8::Value> V8NotificationCenter::createHTMLNotificationCallback(const
     if (ec)
         return throwError(ec);
 
+    notification->ref();
     return toV8(notification.get());
 }
 
@@ -72,6 +73,7 @@ v8::Handle<v8::Value> V8NotificationCenter::createNotificationCallback(const v8:
     if (ec)
         return throwError(ec);
 
+    notification->ref();
     return toV8(notification.get());
 }
 

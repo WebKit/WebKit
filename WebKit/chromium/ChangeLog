@@ -1,3 +1,15 @@
+2010-06-17  John Gregg  <johnnyg@google.com>
+
+        Reviewed by David Levin.
+
+        Undo the build fix with the correct patch: Chromium NotificationPresenter
+        is now informed of the destruction before it actually happens, so this
+        use of the Notification object is correct. 
+        https://bugs.webkit.org/show_bug.cgi?id=40097
+
+        * src/NotificationPresenterImpl.cpp:
+        (WebKit::NotificationPresenterImpl::notificationObjectDestroyed):
+
 2010-06-16  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

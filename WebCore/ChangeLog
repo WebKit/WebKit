@@ -1,3 +1,24 @@
+2010-06-17  John Gregg  <johnnyg@google.com>
+
+        Reviewed by David Levin.
+
+        Move the call to the notification presenter that a Notification is being
+        destroyed from the destructor (not safe) to the ActiveDOMObject::contextDestroyed
+        method.
+
+        Also fix up an incorrect reference loss in the V8 bindings code for Notifications.
+        https://bugs.webkit.org/show_bug.cgi?id=40097
+
+        No new tests; code paths are well-covered by existing tests.
+
+        * bindings/v8/custom/V8NotificationCenterCustom.cpp:
+        (WebCore::V8NotificationCenter::createHTMLNotificationCallback):
+        (WebCore::V8NotificationCenter::createNotificationCallback):
+        * notifications/Notification.cpp:
+        (WebCore::Notification::~Notification):
+        (WebCore::Notification::contextDestroyed):
+        * notifications/Notification.h:
+
 2010-06-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed rollout r61311, because it made 2 tests fail on Qt bot.
