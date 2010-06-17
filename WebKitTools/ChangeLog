@@ -1,3 +1,14 @@
+2010-06-16  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        [DRT/Chromium] Fix crash on Mac Release
+        https://bugs.webkit.org/show_bug.cgi?id=40759
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::paintRect): We should not use m_canvas directly because
+          it is created lazily in canvas().
+
 2010-06-16  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix after new method addition.
