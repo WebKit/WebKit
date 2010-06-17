@@ -1,3 +1,12 @@
+2010-06-17  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
+        tables/mozilla/images/adforce_imgis_com.html was removed after r61289. Remove
+        it from the GTK+ skipped list.
+
+        * platform/gtk/Skipped: Remove a defunct test.
+
 2010-06-17  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, test expectations update.
