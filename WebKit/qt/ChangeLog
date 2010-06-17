@@ -1,3 +1,152 @@
+2010-06-17  Alexis Menard  <alexis.menard@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Upstream the WebKit QML integration plugin
+        https://bugs.webkit.org/show_bug.cgi?id=40050
+
+        Add to the Qt port the QML WebKit integration plugin.
+        QDeclarativeWebView is creating the item and expose
+        properties. The C++ API is not public, only the
+        properties are.
+
+        * declarative/declarative.pro: Added.
+        * declarative/plugin.cpp: Added.
+        (WebKitQmlPlugin::registerTypes):
+        * declarative/qdeclarativewebview.cpp: Added.
+        (QDeclarativeWebViewPrivate::QDeclarativeWebViewPrivate):
+        (QDeclarativeWebViewPrivate::):
+        (QDeclarativeWebViewPrivate::windowObjectsAppend):
+        (GraphicsWebView::GraphicsWebView):
+        (GraphicsWebView::mousePressEvent):
+        (GraphicsWebView::mouseReleaseEvent):
+        (GraphicsWebView::mouseDoubleClickEvent):
+        (GraphicsWebView::timerEvent):
+        (GraphicsWebView::mouseMoveEvent):
+        (QDeclarativeWebView::QDeclarativeWebView):
+        (QDeclarativeWebView::~QDeclarativeWebView):
+        (QDeclarativeWebView::init):
+        (QDeclarativeWebView::componentComplete):
+        (QDeclarativeWebView::status):
+        (QDeclarativeWebView::progress):
+        (QDeclarativeWebView::doLoadStarted):
+        (QDeclarativeWebView::doLoadProgress):
+        (QDeclarativeWebView::pageUrlChanged):
+        (QDeclarativeWebView::doLoadFinished):
+        (QDeclarativeWebView::url):
+        (QDeclarativeWebView::setUrl):
+        (QDeclarativeWebView::preferredWidth):
+        (QDeclarativeWebView::setPreferredWidth):
+        (QDeclarativeWebView::preferredHeight):
+        (QDeclarativeWebView::setPreferredHeight):
+        (QDeclarativeWebView::evaluateJavaScript):
+        (QDeclarativeWebView::updateDeclarativeWebViewSize):
+        (QDeclarativeWebView::initialLayout):
+        (QDeclarativeWebView::updateContentsSize):
+        (QDeclarativeWebView::geometryChanged):
+        (QDeclarativeWebView::javaScriptWindowObjects):
+        (QDeclarativeWebView::qmlAttachedProperties):
+        (QDeclarativeWebViewPrivate::updateWindowObjects):
+        (QDeclarativeWebView::renderingEnabled):
+        (QDeclarativeWebView::setRenderingEnabled):
+        (QDeclarativeWebView::heuristicZoom):
+        (QDeclarativeWebView::pressGrabTime):
+        (QDeclarativeWebView::setPressGrabTime):
+        (QDeclarativeWebView::backAction):
+        (QDeclarativeWebView::forwardAction):
+        (QDeclarativeWebView::reloadAction):
+        (QDeclarativeWebView::stopAction):
+        (QDeclarativeWebView::title):
+        (QDeclarativeWebView::icon):
+        (QDeclarativeWebView::setStatusText):
+        (QDeclarativeWebView::windowObjectCleared):
+        (QDeclarativeWebView::statusText):
+        (QDeclarativeWebView::page):
+        (QDeclarativeWebView::settingsObject):
+        (QDeclarativeWebView::setPage):
+        (QDeclarativeWebView::load):
+        (QDeclarativeWebView::html):
+        (QDeclarativeWebView::setHtml):
+        (QDeclarativeWebView::setContent):
+        (QDeclarativeWebView::history):
+        (QDeclarativeWebView::settings):
+        (QDeclarativeWebView::createWindow):
+        (QDeclarativeWebView::newWindowComponent):
+        (QDeclarativeWebView::setNewWindowComponent):
+        (QDeclarativeWebView::newWindowParent):
+        (QDeclarativeWebView::setNewWindowParent):
+        (QDeclarativeWebView::contentsSize):
+        (QDeclarativeWebView::contentsScale):
+        (QDeclarativeWebView::setContentsScale):
+        (QDeclarativeWebView::elementAreaAt):
+        (QDeclarativeWebPage::QDeclarativeWebPage):
+        (QDeclarativeWebPage::~QDeclarativeWebPage):
+        (QDeclarativeWebPage::chooseFile):
+        (QDeclarativeWebPage::javaScriptAlert):
+        (QDeclarativeWebPage::javaScriptConfirm):
+        (QDeclarativeWebPage::javaScriptPrompt):
+        (QDeclarativeWebPage::viewItem):
+        (QDeclarativeWebPage::createWindow):
+        * declarative/qdeclarativewebview_p.h: Added.
+        (QDeclarativeWebView::):
+        (QDeclarativeWebView::isComponentCompletePublic):
+        (QDeclarativeWebViewAttached::QDeclarativeWebViewAttached):
+        (QDeclarativeWebViewAttached::windowObjectName):
+        (QDeclarativeWebViewAttached::setWindowObjectName):
+        (QDeclarativeWebSettings::QDeclarativeWebSettings):
+        (QDeclarativeWebSettings::standardFontFamily):
+        (QDeclarativeWebSettings::setStandardFontFamily):
+        (QDeclarativeWebSettings::fixedFontFamily):
+        (QDeclarativeWebSettings::setFixedFontFamily):
+        (QDeclarativeWebSettings::serifFontFamily):
+        (QDeclarativeWebSettings::setSerifFontFamily):
+        (QDeclarativeWebSettings::sansSerifFontFamily):
+        (QDeclarativeWebSettings::setSansSerifFontFamily):
+        (QDeclarativeWebSettings::cursiveFontFamily):
+        (QDeclarativeWebSettings::setCursiveFontFamily):
+        (QDeclarativeWebSettings::fantasyFontFamily):
+        (QDeclarativeWebSettings::setFantasyFontFamily):
+        (QDeclarativeWebSettings::minimumFontSize):
+        (QDeclarativeWebSettings::setMinimumFontSize):
+        (QDeclarativeWebSettings::minimumLogicalFontSize):
+        (QDeclarativeWebSettings::setMinimumLogicalFontSize):
+        (QDeclarativeWebSettings::defaultFontSize):
+        (QDeclarativeWebSettings::setDefaultFontSize):
+        (QDeclarativeWebSettings::defaultFixedFontSize):
+        (QDeclarativeWebSettings::setDefaultFixedFontSize):
+        (QDeclarativeWebSettings::autoLoadImages):
+        (QDeclarativeWebSettings::setAutoLoadImages):
+        (QDeclarativeWebSettings::javascriptEnabled):
+        (QDeclarativeWebSettings::setJavascriptEnabled):
+        (QDeclarativeWebSettings::javaEnabled):
+        (QDeclarativeWebSettings::setJavaEnabled):
+        (QDeclarativeWebSettings::pluginsEnabled):
+        (QDeclarativeWebSettings::setPluginsEnabled):
+        (QDeclarativeWebSettings::privateBrowsingEnabled):
+        (QDeclarativeWebSettings::setPrivateBrowsingEnabled):
+        (QDeclarativeWebSettings::javascriptCanOpenWindows):
+        (QDeclarativeWebSettings::setJavascriptCanOpenWindows):
+        (QDeclarativeWebSettings::javascriptCanAccessClipboard):
+        (QDeclarativeWebSettings::setJavascriptCanAccessClipboard):
+        (QDeclarativeWebSettings::developerExtrasEnabled):
+        (QDeclarativeWebSettings::setDeveloperExtrasEnabled):
+        (QDeclarativeWebSettings::linksIncludedInFocusChain):
+        (QDeclarativeWebSettings::setLinksIncludedInFocusChain):
+        (QDeclarativeWebSettings::zoomTextOnly):
+        (QDeclarativeWebSettings::setZoomTextOnly):
+        (QDeclarativeWebSettings::printElementBackgrounds):
+        (QDeclarativeWebSettings::setPrintElementBackgrounds):
+        (QDeclarativeWebSettings::offlineStorageDatabaseEnabled):
+        (QDeclarativeWebSettings::setOfflineStorageDatabaseEnabled):
+        (QDeclarativeWebSettings::offlineWebApplicationCacheEnabled):
+        (QDeclarativeWebSettings::setOfflineWebApplicationCacheEnabled):
+        (QDeclarativeWebSettings::localStorageDatabaseEnabled):
+        (QDeclarativeWebSettings::setLocalStorageDatabaseEnabled):
+        (QDeclarativeWebSettings::localContentCanAccessRemoteUrls):
+        (QDeclarativeWebSettings::setLocalContentCanAccessRemoteUrls):
+        * declarative/qmldir: Added.
+        * docs/qtwebkit.qdocconf:
+
 2010-06-17  Mark Brand  <mabrand@mabrand.nl>
 
         Reviewed by Simon Hausmann.
