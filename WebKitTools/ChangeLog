@@ -1,3 +1,13 @@
+2010-06-17  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        [DRT/Chromium] Fix a bug of Windows pixel tests
+        https://bugs.webkit.org/show_bug.cgi?id=40763
+
+        * DumpRenderTree/chromium/TestEventPrinter.cpp:
+        (TestShellPrinter::handleImage):
+
 2010-06-16  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Shinichiro Hamaji.
