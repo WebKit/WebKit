@@ -12,7 +12,7 @@ DOUBLE_ESCAPED_QUOTE = ""
 ESCAPE = ""
 win32-msvc*|symbian {
     ESCAPE = "^"
-} else:win32-g++:isEmpty(QMAKE_SH) {
+} else:win32-g++*:isEmpty(QMAKE_SH) {
     # MinGW's make will run makefile commands using sh, even if make
     #  was run from the Windows shell, if it finds sh in the path.
     ESCAPE = "^"
