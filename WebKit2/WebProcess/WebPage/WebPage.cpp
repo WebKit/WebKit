@@ -119,16 +119,6 @@ WebPage::~WebPage()
 #endif
 }
 
-void WebPage::initializeInjectedBundleClient(WKBundlePageClient* client)
-{
-    m_client.initialize(client);
-}
-
-String WebPage::mainFrameURL() const
-{
-    return m_mainFrame->coreFrame()->loader()->url().string();
-}
-
 WebFrame* WebPage::webFrame(uint64_t frameID) const
 {
     return m_frameMap.get(frameID);

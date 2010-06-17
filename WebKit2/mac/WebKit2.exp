@@ -1,7 +1,5 @@
 .objc_class_name_WKView
 _InitWebCoreSystemInterface
-_WKBundlePageGetMainFrameURL
-_WKBundlePageSetClient
 _WKBundleSetClient
 _WKContextCreate
 _WKContextCreateWithInjectedBundlePath

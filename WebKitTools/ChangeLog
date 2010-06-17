@@ -1,3 +1,11 @@
+2010-06-17  Ada Chan  <adachan@apple.com>
+
+        Rolling out http://trac.webkit.org/changeset/61297 due to build errors.
+
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj:
+        * MiniBrowser/mac/WebBundle/WebBundleMain.c: Copied from MiniBrowser/mac/WebBundle/WebBundleMain.c.
+        * MiniBrowser/mac/WebBundle/WebBundleMain.m: Removed.
+
 2010-06-17  Darin Adler  <darin@apple.com>
 
         One more try at fix for Chromium build.
@@ -99,22 +107,6 @@
 
         * DumpRenderTree/chromium/DumpRenderTree.cpp:
         (runTest):
-
-2010-06-16  Sam Weinig  <sam@webkit.org>
-
-        Reviewed by Geoffrey Garen.
-
-        Fix for https://bugs.webkit.org/show_bug.cgi?id=40732
-        WebKit2: Implement didClearWindowForFrame for InjectedBundles
-
-        - Stub out use of bundlified didClearWindowForFrame with logging.
-
-        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj:
-        * MiniBrowser/mac/WebBundle/WebBundleMain.c: Removed.
-        * MiniBrowser/mac/WebBundle/WebBundleMain.m: Added.
-        (_didClearWindow):
-        (_didCreatePage):
-        (WKBundleInitialize):
 
 2010-06-16  Martin Robinson  <mrobinson@igalia.com>
 
