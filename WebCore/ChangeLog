@@ -1,3 +1,15 @@
+2010-06-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add FIXME to explain HTMLDocumentParser's forceSynchronous bool
+        https://bugs.webkit.org/show_bug.cgi?id=40609
+
+        No functional change, just adding comment.
+
+        * dom/Document.cpp:
+        (WebCore::Document::write):
+
 2010-06-13  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

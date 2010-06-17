@@ -1964,6 +1964,10 @@ void Document::write(const SegmentedString& text, Document* ownerDocument)
         open(ownerDocument);
 
     ASSERT(m_parser);
+    // FIXME: forceSynchronous should always be the same as the bool passed to
+    // write().  However LegacyHTMLDocumentParser uses write("", false) to pump
+    // the parser (after running external scripts, etc.) thus necessitating a
+    // separate state for forceSynchronous.
     bool wasForcedSynchronous = false;
     HTMLDocumentParser* parser = m_parser->asHTMLDocumentParser();
     if (parser) {
