@@ -1,3 +1,17 @@
+2010-06-17  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        [BREWMP] Build fix for DragDataBrew
+        https://bugs.webkit.org/show_bug.cgi?id=40610
+
+        http://trac.webkit.org/changeset/60957 was not applied to DragDataBrew.cpp.
+        Add FilenameConversionPolicy argument to DragData::containsURL and DragData::asURL.
+
+        * platform/brew/DragDataBrew.cpp:
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+
 2010-06-17  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by David Levin.
