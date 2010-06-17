@@ -1,3 +1,20 @@
+2010-06-16  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] WebGL viewport does not show up on N900  
+        https://bugs.webkit.org/show_bug.cgi?id=38528
+
+        With OGLES2 add default precision to the shader code.
+        Use GLsizeiptr and GLintptr with OGLES2.
+        Call paint() in beginPaint() so that drawTexture() is used 
+        whenever possible.
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::beginPaint):
+        (WebCore::GraphicsContext3D::paint):
+        (WebCore::GraphicsContext3D::shaderSource):
+
 2010-06-16  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Simon Fraser.

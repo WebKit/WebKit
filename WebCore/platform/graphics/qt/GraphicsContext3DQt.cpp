@@ -56,8 +56,13 @@ typedef char GLchar;
 #define APIENTRY
 #endif
 
+#ifdef QT_OPENGL_ES_2
+typedef GLsizeiptr GLsizeiptrType;
+typedef GLintptr GLintptrType;
+#else
 typedef ptrdiff_t GLsizeiptrType;
 typedef ptrdiff_t GLintptrType;
+#endif
 
 typedef void (APIENTRY* glActiveTextureType) (GLenum);
 typedef void (APIENTRY* glAttachShaderType) (GLuint, GLuint);
@@ -517,18 +522,10 @@ void GraphicsContext3D::makeContextCurrent()
 void GraphicsContext3D::beginPaint(WebGLRenderingContext* context)
 {
     m_internal->m_glWidget->makeCurrent();
-
     HTMLCanvasElement* canvas = context->canvas();
     ImageBuffer* imageBuffer = canvas->buffer();
-
-    m_internal->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_internal->m_mainFbo);
-
-    glReadPixels(/* x */ 0, /* y */ 0, m_currentWidth, m_currentHeight, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, m_internal->m_pixels.bits());
-
-    QPainter* p = imageBuffer->context()->platformContext();
-    p->drawImage(/* x */ 0, /* y */ 0, m_internal->m_pixels.rgbSwapped().transformed(QMatrix().rotate(180)));
-
-    m_internal->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_internal->m_currentFbo);
+    QPainter* painter = imageBuffer->context()->platformContext();
+    paint(painter, QRect(QPoint(0, 0), QSize(m_currentWidth, m_currentHeight)));
 }
 
 void GraphicsContext3D::endPaint()
@@ -541,7 +538,7 @@ void GraphicsContext3D::paint(QPainter* painter, const QRect& rect) const
     QWebPageClient* webPageClient = m_internal->m_hostWindow->platformPageClient();
     QGLWidget* ownerGLWidget  = m_internal->getOwnerGLWidget(webPageClient);
     if (ownerGLWidget) {
-        ownerGLWidget->drawTexture(QPointF(0, 0), m_internal->m_texture);
+        ownerGLWidget->drawTexture(rect, m_internal->m_texture);
         return;
     } 
 #endif
@@ -1082,12 +1079,20 @@ void GraphicsContext3D::scissor(long x, long y, unsigned long width, unsigned lo
 void GraphicsContext3D::shaderSource(WebGLShader* shader, const String& source)
 {
     ASSERT(shader);
-    
+
     m_internal->m_glWidget->makeCurrent();
 
-    CString sourceCS = source.utf8();
+    String prefixedSource;
+
+#if defined (QT_OPENGL_ES_2)
+    prefixedSource.append("precision mediump float;\n");
+#endif
+
+    prefixedSource.append(source);
+
+    CString sourceCS = prefixedSource.utf8();
     const char* data = sourceCS.data();
-    int length = source.length();
+    int length = prefixedSource.length();
     m_internal->shaderSource((GLuint) shader->object(), /* count */ 1, &data, &length);
 }
 
