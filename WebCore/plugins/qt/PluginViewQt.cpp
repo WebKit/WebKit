@@ -60,7 +60,6 @@
 #include "ScriptController.h"
 #include "Settings.h"
 #include "npruntime_impl.h"
-#include "qwebpage_p.h"
 #include "runtime_root.h"
 
 #include <QApplication>
@@ -122,15 +121,12 @@ void PluginView::updatePluginWidget()
     // do not call setNPWindowIfNeeded immediately, will be called on paint()
     m_hasPendingGeometryChange = true;
 
-    // (i) in order to move/resize the plugin window at the same time as the
+    // in order to move/resize the plugin window at the same time as the
     // rest of frame during e.g. scrolling, we set the window geometry
     // in the paint() function, but as paint() isn't called when the
     // plugin window is outside the frame which can be caused by a
     // scroll, we need to move/resize immediately.
-    // (ii) if we are running layout tests from DRT, paint() won't ever get called
-    // so we need to call setNPWindowIfNeeded() if window geometry has changed
-    if (!m_windowRect.intersects(frameView->frameRect())
-        || (QWebPagePrivate::drtRun && platformPluginWidget() && (m_windowRect != oldWindowRect || m_clipRect != oldClipRect)))
+    if (!m_windowRect.intersects(frameView->frameRect()))
         setNPWindowIfNeeded();
 
     // Make sure we get repainted afterwards. This is necessary for downward
