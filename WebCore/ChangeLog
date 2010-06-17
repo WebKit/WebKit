@@ -1,3 +1,23 @@
+2010-06-17  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Kenneth Christiansen.
+
+        [Qt] Avoid unnecessary calls to save() and restore() when drawing images
+
+        Avoid calling the expensive save() and restore() on the GraphicsContext just
+        for changing the composition mode. Instead save and restore it manually
+        on QPainter.
+
+        Change fac227f609e544f8f55aca8447b4328d6534407a in Qt makes sure that the
+        call to QPainter::setCompositionMode doesn't do anything if the mode hasn't
+        changed.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::toQtCompositionMode):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::BitmapImage::draw):
+
 2010-06-16  Dawit Alemayehu  <adawit@kde.org>
 
         Reviewed by Simon Hausmann.
