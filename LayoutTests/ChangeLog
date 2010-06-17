@@ -12,6 +12,12 @@
 
         Unreviewed, expectations update.
 
+        Updating Chromium expectations after http://trac.webkit.org/changeset/61128.
+
+2010-06-17  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, expectations update.
+
         Removed obsolete Win XP expectations.
 
         * platform/chromium-win-xp/fast/text/international/hindi-whitespace-expected.checksum: Removed.
