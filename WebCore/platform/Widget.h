@@ -73,8 +73,9 @@ typedef BView* PlatformWidget;
 #endif
 
 #if PLATFORM(EFL)
-#include <Ecore_Evas.h>
-#include <Evas.h>
+typedef struct _Evas_Object Evas_Object;
+typedef struct _Evas Evas;
+typedef struct _Ecore_Evas Ecore_Evas;
 typedef Evas_Object* PlatformWidget;
 #endif
 

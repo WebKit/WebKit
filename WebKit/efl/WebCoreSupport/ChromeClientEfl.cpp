@@ -50,6 +50,8 @@
 #include "ewk_private.h"
 #include <wtf/text/CString.h>
 
+#include <Evas.h>
+
 using namespace WebCore;
 
 static inline Evas_Object* kit(Frame* frame)

@@ -41,6 +41,7 @@
 #include "Page.h"
 
 #include <Ecore.h>
+#include <Ecore_Evas.h>
 #include <Edje.h>
 #include <Evas.h>
 

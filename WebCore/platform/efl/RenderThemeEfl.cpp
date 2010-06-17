@@ -36,6 +36,7 @@
 #include "RenderObject.h"
 #include <wtf/text/CString.h>
 
+#include <Ecore_Evas.h>
 #include <Edje.h>
 namespace WebCore {
 

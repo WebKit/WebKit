@@ -33,7 +33,7 @@ typedef struct _GdkEventScroll GdkEventScroll;
 #endif
 
 #if PLATFORM(EFL)
-#include <Evas.h>
+typedef struct _Evas_Event_Mouse_Wheel Evas_Event_Mouse_Wheel;
 #endif
 
 #if PLATFORM(QT)

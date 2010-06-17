@@ -37,6 +37,7 @@
 #include "TextEncoding.h"
 #include "WindowsKeyboardCodes.h"
 
+#include <Evas.h>
 #include <stdio.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>

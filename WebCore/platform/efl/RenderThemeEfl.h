@@ -32,9 +32,10 @@
 
 #include "RenderTheme.h"
 
-#include <Ecore_Evas.h>
-#include <Evas.h>
 #include <cairo.h>
+
+typedef struct _Ecore_Evas Ecore_Evas;
+typedef struct _Evas_Object Evas_Object;
 
 namespace WebCore {
 

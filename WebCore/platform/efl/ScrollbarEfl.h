@@ -30,7 +30,6 @@
 #define ScrollbarEfl_h
 
 #include "Scrollbar.h"
-#include <Evas.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {

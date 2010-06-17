@@ -63,7 +63,8 @@ class BMessage;
 #endif
 
 #if PLATFORM(EFL)
-#include <Evas.h>
+typedef struct _Evas_Event_Key_Down Evas_Event_Key_Down;
+typedef struct _Evas_Event_Key_Up Evas_Event_Key_Up;
 #endif
 
 #if PLATFORM(BREWMP)

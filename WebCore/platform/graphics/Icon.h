@@ -40,7 +40,7 @@ typedef struct HICON__* HICON;
 #elif PLATFORM(GTK)
 typedef struct _GdkPixbuf GdkPixbuf;
 #elif PLATFORM(EFL)
-#include <Evas.h>
+typedef struct _Evas_Object Evas_Object;
 #elif PLATFORM(CHROMIUM)
 #include "PlatformIcon.h"
 #endif

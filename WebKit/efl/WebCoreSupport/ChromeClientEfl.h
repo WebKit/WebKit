@@ -26,7 +26,8 @@
 #include "ChromeClient.h"
 #include "KURL.h"
 #include "PopupMenu.h"
-#include <Evas.h>
+
+typedef struct _Evas_Object Evas_Object;
 
 namespace WebCore {
 

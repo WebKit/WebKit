@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-void PlatformMouseEvent::setClickCount(Evas_Button_Flags flags)
+void PlatformMouseEvent::setClickCount(unsigned int flags)
 {
     if (flags & EVAS_BUTTON_TRIPLE_CLICK)
         m_clickCount = 3;

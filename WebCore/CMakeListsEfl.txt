@@ -51,12 +51,10 @@ LIST(APPEND WebCore_SOURCES
   platform/efl/SystemTimeEfl.cpp
   platform/efl/TemporaryLinkStubs.cpp
   platform/efl/WidgetEfl.cpp
-  platform/graphics/efl/FloatRectEfl.cpp
   platform/graphics/efl/FontEfl.cpp
   platform/graphics/efl/IconEfl.cpp
   platform/graphics/efl/ImageEfl.cpp
   platform/graphics/efl/IntPointEfl.cpp
-  platform/graphics/efl/IntRectEfl.cpp
   platform/posix/FileSystemPOSIX.cpp
   platform/text/efl/TextBreakIteratorInternalICUEfl.cpp
 )

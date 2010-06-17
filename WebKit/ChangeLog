@@ -1,3 +1,19 @@
+2010-06-17  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Eric Seidel.
+
+        Clean EFL header files in order to diminish the compilation time with
+        EFL from subversion. We remove the EFL includes from header files and use
+        forward declarations, including the headers in correspondent source
+        files when needed. This causes only the needed source files to be
+        recompiled in case a new version of EFL is installed instead of
+        triggering a recompilation of almost all WebCore/WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=40575
+
+        * efl/WebCoreSupport/ChromeClientEfl.cpp: include needed header.
+        * efl/WebCoreSupport/ChromeClientEfl.h: forward declaration.
+        * efl/WebCoreSupport/EditorClientEfl.h: forward declaration.
+
 2010-06-15  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed EFL build fix. Simple typo.

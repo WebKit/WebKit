@@ -1,3 +1,41 @@
+2010-06-17  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Eric Seidel.
+
+        Clean EFL header files in order to diminish the compilation time with
+        EFL from subversion. We remove the EFL includes from header files and use
+        forward declarations, including the headers in correspondent source
+        files when needed. This causes only the needed source files to be
+        recompiled in case a new version of EFL is installed instead of
+        triggering a recompilation of almost all WebCore/WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=40575
+
+        No new functionalities, so no new tests.
+
+        * CMakeListsEfl.txt:
+        * platform/PlatformKeyboardEvent.h: forward declaration.
+        * platform/PlatformMouseEvent.h: forward declaration and change method
+        signature to not require enum.
+        * platform/PlatformWheelEvent.h: forward declaration.
+        * platform/Widget.h: forward declaration.
+        * platform/efl/PlatformKeyboardEventEfl.cpp: include needed header.
+        * platform/efl/PlatformMouseEventEfl.cpp:
+        (WebCore::PlatformMouseEvent::setClickCount): change method signature
+        as mentioned above.
+        * platform/efl/PlatformWheelEventEfl.cpp: include needed header.
+        * platform/efl/RenderThemeEfl.cpp: include needed header
+        * platform/efl/RenderThemeEfl.h: forward declaration.
+        * platform/efl/ScrollbarEfl.cpp: include needed header.
+        * platform/efl/ScrollbarEfl.h: forward declaration.
+        * platform/efl/WidgetEfl.cpp: include needed header.
+        * platform/graphics/FloatRect.h: remove unused method.
+        * platform/graphics/Icon.h: forward declaration.
+        * platform/graphics/IntRect.h: remove unused method.
+        * platform/graphics/efl/FloatRectEfl.cpp: Removed. This file was
+        implementing an unused method.
+        * platform/graphics/efl/IntRectEfl.cpp: Removed. This file was
+        implementing an unused method.
+
 2010-06-17  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Darin Adler.

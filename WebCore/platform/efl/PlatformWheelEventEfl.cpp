@@ -33,6 +33,8 @@
 
 #include "Scrollbar.h"
 
+#include <Evas.h>
+
 namespace WebCore {
 
 enum {
