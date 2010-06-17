@@ -1,3 +1,15 @@
+2010-06-16  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Set current working directory for each of tests
+        https://bugs.webkit.org/show_bug.cgi?id=40668
+
+        This change fixes tests with eventSender.beginDragWithFiles().
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (runTest):
+
 2010-06-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

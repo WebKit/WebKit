@@ -1,3 +1,13 @@
+2010-06-16  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Set current working directory for each of tests
+        https://bugs.webkit.org/show_bug.cgi?id=40668
+
+        * DEPS: Update Chromium to r49915 to have
+          webkit_support::SetCurrentDirectoryForFileURL().
+
 2010-06-16  Drew Wilson  <atwilson@chromium.org>
 
         Reviewed by Kent Tamura.

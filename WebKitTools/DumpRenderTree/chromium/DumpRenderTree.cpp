@@ -74,6 +74,7 @@ static void runTest(TestShell& shell, TestParams& params, const string& testName
         }
     }
     params.testUrl = webkit_support::CreateURLForPathOrURL(pathOrURL);
+    webkit_support::SetCurrentDirectoryForFileURL(params.testUrl);
     shell.resetTestController();
     shell.runFileTest(params);
     shell.setLayoutTestTimeout(oldTimeoutMsec);
