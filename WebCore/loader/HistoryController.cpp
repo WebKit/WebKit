@@ -541,7 +541,9 @@ void HistoryController::recursiveGoToItem(HistoryItem* item, HistoryItem* fromIt
     // not load it again, and continue history traversal to its children.
     // The current frame tree and the frame tree snapshot in the item have
     // to match.
-    if (item->itemSequenceNumber() == fromItem->itemSequenceNumber()
+    // Note: If item and fromItem are the same, then we need to create a new
+    // document.
+    if (item != fromItem && item->itemSequenceNumber() == fromItem->itemSequenceNumber()
         && ((m_frame->tree()->name().isEmpty() && item->target().isEmpty()) || m_frame->tree()->name() == item->target())
         && childFramesMatchItem(item))
     {
