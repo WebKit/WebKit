@@ -2,6 +2,35 @@
 
         Reviewed by David Levin.
 
+        Rename internalformat to internalFormat
+        https://bugs.webkit.org/show_bug.cgi?id=40149
+
+        * html/canvas/WebGLFramebuffer.cpp: Rename internalformat to internalFormat.
+        (WebCore::WebGLFramebuffer::getColorBufferFormat):
+        * html/canvas/WebGLRenderbuffer.cpp: Ditto.
+        (WebCore::WebGLRenderbuffer::WebGLRenderbuffer):
+        * html/canvas/WebGLRenderbuffer.h: Ditto.
+        (WebCore::WebGLRenderbuffer::setInternalFormat):
+        (WebCore::WebGLRenderbuffer::getInternalFormat):
+        * html/canvas/WebGLRenderingContext.cpp: Ditto.
+        (WebCore::WebGLRenderingContext::copyTexImage2D):
+        (WebCore::WebGLRenderingContext::copyTexSubImage2D):
+        (WebCore::WebGLRenderingContext::framebufferRenderbuffer):
+        (WebCore::WebGLRenderingContext::getRenderbufferParameter):
+        (WebCore::WebGLRenderingContext::renderbufferStorage):
+        (WebCore::WebGLRenderingContext::texImage2DBase):
+        (WebCore::WebGLRenderingContext::isTexInternalFormatColorBufferCombinationValid):
+        * html/canvas/WebGLRenderingContext.h: Ditto.
+        * html/canvas/WebGLTexture.cpp: Ditto.
+        (WebCore::WebGLTexture::WebGLTexture):
+        * html/canvas/WebGLTexture.h: Ditto.
+        (WebCore::WebGLTexture::setInternalFormat):
+        (WebCore::WebGLTexture::getInternalFormat):
+
+2010-06-17  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by David Levin.
+
         Remove input parameter validation for "level" upper limit in *tex* functions
         https://bugs.webkit.org/show_bug.cgi?id=40603
 

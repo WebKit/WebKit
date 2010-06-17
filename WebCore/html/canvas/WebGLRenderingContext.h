@@ -416,7 +416,7 @@ class WebKitCSSMatrix;
         // Helper function for copyTex{Sub}Image, check whether the internalformat
         // and the color buffer format of the current bound framebuffer combination
         // is valid.
-        bool isTexInternalformatColorBufferCombinationValid(unsigned long texInternalformat,
+        bool isTexInternalFormatColorBufferCombinationValid(unsigned long texInternalFormat,
                                                             unsigned long colorBufferFormat);
 
         // Helper function to get the current bound texture.
