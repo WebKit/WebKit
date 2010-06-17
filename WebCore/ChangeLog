@@ -1,3 +1,18 @@
+2010-06-17  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Jian Li.
+
+        Fix CRLF ending conversion in StringBlobItem.
+        https://bugs.webkit.org/show_bug.cgi?id=40736
+        Also: fix referencing uninitialized member bug and slice length bug
+        in hybrid blob case.
+
+        Tests will be added when we add BlobBuilder jsc bindings.
+
+        * platform/BlobItem.cpp:
+        (WebCore::StringBlobItem::convertToCString):
+        (WebCore::DataRangeBlobItem::DataRangeBlobItem):
+
 2010-06-17  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r61340.
