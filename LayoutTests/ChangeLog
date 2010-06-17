@@ -1,3 +1,10 @@
+2010-06-17  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium-mac/fast/dom/wrapper-classes-expected.txt:
+        * platform/chromium-win/fast/dom/wrapper-classes-expected.txt: Updated results after r61322.
+
 2010-06-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

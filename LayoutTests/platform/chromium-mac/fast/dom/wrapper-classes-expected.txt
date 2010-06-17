@@ -164,6 +164,12 @@ FAIL tagJSWrapperConstructorClass('applet') should be HTMLAppletElementConstruct
 PASS tagJSWrapperClass('area') is 'HTMLAreaElement'
 FAIL tagJSWrapperPrototypeClass('area') should be HTMLAreaElementPrototype. Was Object.
 FAIL tagJSWrapperConstructorClass('area') should be HTMLAreaElementConstructor. Was Function.
+PASS tagJSWrapperClass('article') is 'HTMLElement'
+FAIL tagJSWrapperPrototypeClass('article') should be HTMLElementPrototype. Was Object.
+FAIL tagJSWrapperConstructorClass('article') should be HTMLElementConstructor. Was Function.
+PASS tagJSWrapperClass('aside') is 'HTMLElement'
+FAIL tagJSWrapperPrototypeClass('aside') should be HTMLElementPrototype. Was Object.
+FAIL tagJSWrapperConstructorClass('aside') should be HTMLElementConstructor. Was Function.
 PASS tagJSWrapperClass('b') is 'HTMLElement'
 FAIL tagJSWrapperPrototypeClass('b') should be HTMLElementPrototype. Was Object.
 FAIL tagJSWrapperConstructorClass('b') should be HTMLElementConstructor. Was Function.
@@ -245,6 +251,9 @@ FAIL tagJSWrapperConstructorClass('fieldset') should be HTMLFieldSetElementConst
 PASS tagJSWrapperClass('font') is 'HTMLFontElement'
 FAIL tagJSWrapperPrototypeClass('font') should be HTMLFontElementPrototype. Was Object.
 FAIL tagJSWrapperConstructorClass('font') should be HTMLFontElementConstructor. Was Function.
+PASS tagJSWrapperClass('footer') is 'HTMLElement'
+FAIL tagJSWrapperPrototypeClass('footer') should be HTMLElementPrototype. Was Object.
+FAIL tagJSWrapperConstructorClass('footer') should be HTMLElementConstructor. Was Function.
 PASS tagJSWrapperClass('form') is 'HTMLFormElement'
 FAIL tagJSWrapperPrototypeClass('form') should be HTMLFormElementPrototype. Was Object.
 FAIL tagJSWrapperConstructorClass('form') should be HTMLFormElementConstructor. Was Function.
@@ -275,6 +284,15 @@ FAIL tagJSWrapperConstructorClass('h5') should be HTMLHeadingElementConstructor.
 PASS tagJSWrapperClass('h6') is 'HTMLHeadingElement'
 FAIL tagJSWrapperPrototypeClass('h6') should be HTMLHeadingElementPrototype. Was Object.
 FAIL tagJSWrapperConstructorClass('h6') should be HTMLHeadingElementConstructor. Was Function.
+PASS tagJSWrapperClass('head') is 'HTMLHeadElement'
+FAIL tagJSWrapperPrototypeClass('head') should be HTMLHeadElementPrototype. Was Object.
+FAIL tagJSWrapperConstructorClass('head') should be HTMLHeadElementConstructor. Was Function.
+PASS tagJSWrapperClass('header') is 'HTMLElement'
+FAIL tagJSWrapperPrototypeClass('header') should be HTMLElementPrototype. Was Object.
+FAIL tagJSWrapperConstructorClass('header') should be HTMLElementConstructor. Was Function.
+PASS tagJSWrapperClass('hgroup') is 'HTMLElement'
+FAIL tagJSWrapperPrototypeClass('hgroup') should be HTMLElementPrototype. Was Object.
+FAIL tagJSWrapperConstructorClass('hgroup') should be HTMLElementConstructor. Was Function.
 PASS tagJSWrapperClass('hr') is 'HTMLHRElement'
 FAIL tagJSWrapperPrototypeClass('hr') should be HTMLHRElementPrototype. Was Object.
 FAIL tagJSWrapperConstructorClass('hr') should be HTMLHRElementConstructor. Was Function.
@@ -338,6 +356,9 @@ FAIL tagJSWrapperConstructorClass('menu') should be HTMLMenuElementConstructor. 
 PASS tagJSWrapperClass('meta') is 'HTMLMetaElement'
 FAIL tagJSWrapperPrototypeClass('meta') should be HTMLMetaElementPrototype. Was Object.
 FAIL tagJSWrapperConstructorClass('meta') should be HTMLMetaElementConstructor. Was Function.
+PASS tagJSWrapperClass('nav') is 'HTMLElement'
+FAIL tagJSWrapperPrototypeClass('nav') should be HTMLElementPrototype. Was Object.
+FAIL tagJSWrapperConstructorClass('nav') should be HTMLElementConstructor. Was Function.
 PASS tagJSWrapperClass('nobr') is 'HTMLElement'
 FAIL tagJSWrapperPrototypeClass('nobr') should be HTMLElementPrototype. Was Object.
 FAIL tagJSWrapperConstructorClass('nobr') should be HTMLElementConstructor. Was Function.
@@ -380,6 +401,15 @@ FAIL tagJSWrapperConstructorClass('pre') should be HTMLPreElementConstructor. Wa
 PASS tagJSWrapperClass('q') is 'HTMLQuoteElement'
 FAIL tagJSWrapperPrototypeClass('q') should be HTMLQuoteElementPrototype. Was Object.
 FAIL tagJSWrapperConstructorClass('q') should be HTMLQuoteElementConstructor. Was Function.
+PASS tagJSWrapperClass('rp') is 'HTMLElement'
+FAIL tagJSWrapperPrototypeClass('rp') should be HTMLElementPrototype. Was Object.
+FAIL tagJSWrapperConstructorClass('rp') should be HTMLElementConstructor. Was Function.
+PASS tagJSWrapperClass('rt') is 'HTMLElement'
+FAIL tagJSWrapperPrototypeClass('rt') should be HTMLElementPrototype. Was Object.
+FAIL tagJSWrapperConstructorClass('rt') should be HTMLElementConstructor. Was Function.
+PASS tagJSWrapperClass('ruby') is 'HTMLElement'
+FAIL tagJSWrapperPrototypeClass('ruby') should be HTMLElementPrototype. Was Object.
+FAIL tagJSWrapperConstructorClass('ruby') should be HTMLElementConstructor. Was Function.
 PASS tagJSWrapperClass('s') is 'HTMLElement'
 FAIL tagJSWrapperPrototypeClass('s') should be HTMLElementPrototype. Was Object.
 FAIL tagJSWrapperConstructorClass('s') should be HTMLElementConstructor. Was Function.
@@ -389,6 +419,9 @@ FAIL tagJSWrapperConstructorClass('samp') should be HTMLElementConstructor. Was 
 PASS tagJSWrapperClass('script') is 'HTMLScriptElement'
 FAIL tagJSWrapperPrototypeClass('script') should be HTMLScriptElementPrototype. Was Object.
 FAIL tagJSWrapperConstructorClass('script') should be HTMLScriptElementConstructor. Was Function.
+PASS tagJSWrapperClass('section') is 'HTMLElement'
+FAIL tagJSWrapperPrototypeClass('section') should be HTMLElementPrototype. Was Object.
+FAIL tagJSWrapperConstructorClass('section') should be HTMLElementConstructor. Was Function.
 PASS tagJSWrapperClass('select') is 'HTMLSelectElement'
 FAIL tagJSWrapperPrototypeClass('select') should be HTMLSelectElementPrototype. Was Object.
 FAIL tagJSWrapperConstructorClass('select') should be HTMLSelectElementConstructor. Was Function.
