@@ -189,7 +189,7 @@ void Element::setCStringAttribute(const QualifiedName& name, const char* cString
 void Element::setBooleanAttribute(const QualifiedName& name, bool b)
 {
     if (b)
-        setAttribute(name, name.localName());
+        setAttribute(name, emptyAtom);
     else {
         ExceptionCode ex;
         removeAttribute(name, ex);

@@ -1,3 +1,28 @@
+2010-06-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix boolean reflected attributes to use empty string consistently for the content attribute value
+        https://bugs.webkit.org/show_bug.cgi?id=40758
+
+        Test: fast/dom/boolean-attribute-reflection.html
+
+        The HTML5 specification and other browsers are all consistent:
+        When setting a boolean IDL attribute to true, the attribute value
+        gets set to the empty string. The guidelines for authors allow either
+        the empty string or the name of the attribute, but for implementers
+        of the DOM, the reflected attribute gets empty string.
+
+        * dom/Element.cpp:
+        (WebCore::Element::setBooleanAttribute): Use emptyAtom to set the
+        attribute to the empty string.
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::setAutofocus): Use the empty string,
+        not "autofocus".
+        (WebCore::HTMLFormControlElement::setRequired): Use the empty string,
+        not "required".
+
 2010-06-17  Pavel Feldman  <pfeldman@chromium.org>
 
         Unreviewed: chromium tests fix. Added InspectorBackend delegates for new inspector methods.

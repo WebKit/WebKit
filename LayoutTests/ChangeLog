@@ -1,3 +1,25 @@
+2010-06-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix boolean reflected attributes to use empty string consistently for the content attribute value
+        https://bugs.webkit.org/show_bug.cgi?id=40758
+
+        * fast/dom/boolean-attribute-reflection-expected.txt: Added.
+        * fast/dom/boolean-attribute-reflection.html: Added.
+        * fast/dom/script-tests/boolean-attribute-reflection.js: Added.
+
+        * fast/dom/wrapper-classes-expected.txt: Regenerated.
+        * fast/dom/wrapper-classes.html: Added some classes.
+
+        * media/video-controls-expected.txt: Regenerated.
+        * media/video-controls.html: Changed to expect the new correct results.
+        Removed unnecessary use of offsetTop to force layout. This test covers only
+        the DOM and has nothing to do with layout.
+
+        * svg/dom/svgpath-getPathSegAtLength.html: Let the
+        make-script-test-wrappers script regenerate this file.
+
 2010-06-17  Pavel Feldman  <pfeldman@chromium.org>
 
         Unreviewed, tests fix.
