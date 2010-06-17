@@ -71,6 +71,12 @@ protected:
     ~WebDevToolsAgentClient() { }
 };
 
+class WebDevToolsMessageTransport {
+public:
+    virtual ~WebDevToolsMessageTransport() { }
+    virtual void sendMessageToFrontendOnIOThread(const WebDevToolsMessageData&) = 0;
+};
+
 } // namespace WebKit
 
 #endif

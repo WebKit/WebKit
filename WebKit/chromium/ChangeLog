@@ -1,3 +1,18 @@
+2010-06-17  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [Chromium] Prepare to making WebDevToolsAgentClient::sendMessageToFrontendOnIOThread virtual
+
+        https://bugs.webkit.org/show_bug.cgi?id=39302
+
+        * public/WebDevToolsAgent.h:
+        * public/WebDevToolsAgentClient.h:
+        (WebKit::WebDevToolsMessageTransport::~WebDevToolsMessageTransport):
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::):
+        (WebKit::WebDevToolsAgent::dispatchMessageFromFrontendOnIOThread):
+
 2010-06-17  John Gregg  <johnnyg@google.com>
 
         Reviewed by David Levin.

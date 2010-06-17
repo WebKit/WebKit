@@ -123,12 +123,19 @@ static const char kResourceTrackingFeatureName[] = "resource-tracking";
 
 class IORPCDelegate : public DevToolsRPC::Delegate, public Noncopyable {
 public:
-    IORPCDelegate() { }
+    IORPCDelegate() : m_transport(0) { }
+    explicit IORPCDelegate(WebDevToolsMessageTransport* transport) : m_transport(transport) { }
     virtual ~IORPCDelegate() { }
     virtual void sendRpcMessage(const WebDevToolsMessageData& data)
     {
-        WebDevToolsAgentClient::sendMessageToFrontendOnIOThread(data);
+        if (m_transport)
+            m_transport->sendMessageToFrontendOnIOThread(data);
+        else
+            WebDevToolsAgentClient::sendMessageToFrontendOnIOThread(data);
     }
+
+private:
+    WebDevToolsMessageTransport* m_transport;
 };
 
 class ClientMessageLoopAdapter : public WebCore::ScriptDebugServer::ClientMessageLoop {
@@ -651,6 +658,14 @@ bool WebDevToolsAgent::dispatchMessageFromFrontendOnIOThread(const WebDevToolsMe
 {
     IORPCDelegate transport;
     ProfilerAgentDelegateStub stub(&transport);
+    ProfilerAgentImpl agent(&stub);
+    return ProfilerAgentDispatch::dispatch(&agent, data);
+}
+
+bool WebDevToolsAgent::dispatchMessageFromFrontendOnIOThread(WebDevToolsMessageTransport* transport, const WebDevToolsMessageData& data)
+{
+    IORPCDelegate delegate(transport);
+    ProfilerAgentDelegateStub stub(&delegate);
     ProfilerAgentImpl agent(&stub);
     return ProfilerAgentDispatch::dispatch(&agent, data);
 }
