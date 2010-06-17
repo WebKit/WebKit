@@ -1,3 +1,14 @@
+2010-06-17  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Pavel Feldman.
+
+        Add ENABLE(INSPECTOR) guard for m_sessionSettings
+        https://bugs.webkit.org/show_bug.cgi?id=40611
+
+        Build fix.
+
+        * inspector/InspectorController.h:
+
 2010-06-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
