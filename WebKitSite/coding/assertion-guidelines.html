@@ -98,9 +98,9 @@ void ExecutablePool::systemRelease(const ExecutablePool::Allocation&amp; alloc)
 <ul>
   <li>Use ASSERT() for things that should never happen, but if they do will cause incorrect results rather than a crash or memory corruption.
   </li>
-  <li>Use CRASH() for cases that shouldn't happen, but if they do would be unrecoverable. e.g. out of memory errors.
+  <li>Assertions are claims that a programmer knows to be true, and they fire only when that programmer turns out to be wrong because there is some kind of programming mistake. There should be no "wishful thinking" involved. For example, ASSERT() should not be used to verify that a file system call has succeeded, because there is no way for a programmer to guarantee that.
   </li>
-  <li>When possible, it is often preferable to recover from non-fatal errors. The ASSERT macro can be used if the error condition could indicate a programming mistake or other bad behavior deserving attention.
+  <li>Use CRASH() for cases that shouldn't happen, but if they do would be unrecoverable. e.g. out of memory errors.
   </li>
 </ul>
 <h3>
@@ -110,8 +110,8 @@ void ExecutablePool::systemRelease(const ExecutablePool::Allocation&amp; alloc)
 <span class="comment">// Not having any children indicates a programming error.</span>
 ASSERT(object-&gt;numChildren() &gt; 0);
 
-Allocation mem = systemAlloc(allocSize);
-if (!mem.pages)
+Allocation bitmapStorage = systemAlloc(allocSize);
+if (!bitmapStorage.pages)
     CRASH(); <span class="comment">// Not possible to recover from an out of memory error.</span>
 </pre>
 <p>
