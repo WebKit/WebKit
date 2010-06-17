@@ -11,11 +11,12 @@
 		256AC3DA0F4B6AC300CF3369 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 256AC3D90F4B6AC300CF3369 /* AppDelegate.m */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		BC20545E11C96C92008F3375 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		BC329487116A92E2008635D0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BC329486116A92E2008635D0 /* main.m */; };
 		BC329498116A941B008635D0 /* BrowserWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC329497116A941B008635D0 /* BrowserWindowController.m */; };
 		BC3294A3116A9852008635D0 /* BrowserWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC3294A1116A9852008635D0 /* BrowserWindow.xib */; };
 		BC8FB5A8116AA1FE0080D413 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC8FB5A7116AA1FE0080D413 /* WebKit2.framework */; };
-		BCBD384011B08A6800E01E54 /* WebBundleMain.c in Sources */ = {isa = PBXBuildFile; fileRef = BCBD383D11B08A3100E01E54 /* WebBundleMain.c */; };
+		BCBD384011B08A6800E01E54 /* WebBundleMain.m in Sources */ = {isa = PBXBuildFile; fileRef = BCBD383D11B08A3100E01E54 /* WebBundleMain.m */; };
 		BCBD384411B08AAD00E01E54 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC8FB5A7116AA1FE0080D413 /* WebKit2.framework */; };
 		BCBD38D011B08C0200E01E54 /* WebBundle.bundle in Copy WebBundle */ = {isa = PBXBuildFile; fileRef = BCBD381D11B0898200E01E54 /* WebBundle.bundle */; };
 		BCE625EE117FC80E00572433 /* BrowserStatisticsWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = BCE625ED117FC80E00572433 /* BrowserStatisticsWindow.xib */; };
@@ -27,7 +28,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = BCBD381C11B0898200E01E54 /* WebBundle */;
+			remoteGlobalIDString = BCBD381C11B0898200E01E54;
 			remoteInfo = WebBundle;
 		};
 /* End PBXContainerItemProxy section */
@@ -66,7 +67,7 @@
 		BC8FB5A7116AA1FE0080D413 /* WebKit2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCBD381D11B0898200E01E54 /* WebBundle.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WebBundle.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCBD381E11B0898200E01E54 /* WebBundle-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WebBundle-Info.plist"; sourceTree = "<group>"; };
-		BCBD383D11B08A3100E01E54 /* WebBundleMain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = WebBundleMain.c; sourceTree = "<group>"; };
+		BCBD383D11B08A3100E01E54 /* WebBundleMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebBundleMain.m; sourceTree = "<group>"; };
 		BCE625ED117FC80E00572433 /* BrowserStatisticsWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = BrowserStatisticsWindow.xib; path = mac/BrowserStatisticsWindow.xib; sourceTree = "<group>"; };
 		BCE625EF117FC82700572433 /* BrowserStatisticsWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrowserStatisticsWindowController.h; path = mac/BrowserStatisticsWindowController.h; sourceTree = "<group>"; };
 		BCE625F0117FC82700572433 /* BrowserStatisticsWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BrowserStatisticsWindowController.m; path = mac/BrowserStatisticsWindowController.m; sourceTree = "<group>"; };
@@ -86,6 +87,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC20545E11C96C92008F3375 /* Cocoa.framework in Frameworks */,
 				BCBD384411B08AAD00E01E54 /* WebKit2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -190,7 +192,7 @@
 		BCBD382B11B089F700E01E54 /* WebBundle */ = {
 			isa = PBXGroup;
 			children = (
-				BCBD383D11B08A3100E01E54 /* WebBundleMain.c */,
+				BCBD383D11B08A3100E01E54 /* WebBundleMain.m */,
 			);
 			name = WebBundle;
 			path = mac/WebBundle;
@@ -309,7 +311,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BCBD384011B08A6800E01E54 /* WebBundleMain.c in Sources */,
+				BCBD384011B08A6800E01E54 /* WebBundleMain.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

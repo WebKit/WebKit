@@ -1,3 +1,38 @@
+2010-06-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=40732
+        WebKit2: Implement didClearWindowForFrame for InjectedBundles
+
+        More InjectedBundle work.
+        - Add really basic page level APIs for the WebProcess side:
+            - Basic client interface with just didClearWindowForFrame (more will be added later)
+            - Simple main frame url getter.
+
+        These APIs are experimental and are intended to allow me to get a DRT implementation
+        up and running. They will be changing.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp: Added.
+        (WKBundlePageSetClient):
+        (WKBundlePageGetMainFrameURL):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h: Added.
+        * WebProcess/InjectedBundle/InjectedBundlePageClient.cpp: Added.
+        (WebKit::InjectedBundlePageClient::InjectedBundlePageClient):
+        (WebKit::InjectedBundlePageClient::initialize):
+        (WebKit::InjectedBundlePageClient::didClearWindowObjectForFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePageClient.h: Added.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::initializeInjectedBundleClient):
+        (WebKit::WebPage::mainFrameURL):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::injectedBundleClient):
+        * mac/WebKit2.exp:
+        * win/WebKit2.vcproj:
+
 2010-06-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
