@@ -866,9 +866,6 @@ printing/page-rule-selection.html
 # ------- failing editing/input tests
 # ============================================================================= #
 
-# https://bugs.webkit.org/show_bug.cgi?id=40102
-editing/input/page-up-down-scrolls.html
-
 editing/input/emacs-ctrl-o.html
 
 # ============================================================================= #

@@ -1,3 +1,21 @@
+2010-06-13  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        WebCore EventHandler needs to take account of onLoad events fired 
+        before layout() complete
+
+        https://bugs.webkit.org/show_bug.cgi?id=40102
+
+        WebCore 'cheats' by firing onLoad events before the frame's layout
+        has been performed. This can result in event listeners performing
+        operations that depend on the document's final layout, such as
+        scrolling operations.
+
+        When scrolling a frameview in eventhandler ensure the layout is complete.
+
+        * platform/qt/Skipped: Unskip editing/input/page-up-down-scrolls.html
+
 2010-06-16  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.
