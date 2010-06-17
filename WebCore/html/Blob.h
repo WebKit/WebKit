@@ -66,7 +66,7 @@ public:
     const BlobItemList& items() const { return m_items; }
 
 #if ENABLE(BLOB_SLICE)
-    PassRefPtr<Blob> slice(long long start, long long length) const;
+    PassRefPtr<Blob> slice(long long start, long long length, const String& contentType = String()) const;
 #endif
 
 protected:

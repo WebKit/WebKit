@@ -86,29 +86,31 @@ function computeExpectedLength(fileLength, start, length)
     return expectedLength;
 }
 
-function onStableFileDrop(file, filePath, fileLength, start, length)
+function onStableFileDrop(file, filePath, fileLength, start, length, contentType)
 {
     // Slice the file.
-    subfile = file.slice(start, length);
+    subfile = file.slice(start, length, contentType);
     shouldEvaluateTo("subfile.size", computeExpectedLength(fileLength, start, length));
+    shouldBe("subfile.type", (contentType != undefined && contentType != null) ? '"' + contentType + '"' : '""');
 
     // Upload the sliced file.
     uploadFile(subfile, filePath, start, length, false);
 }
 
-function dragAndSliceStableFile(filePath, fileLength, start, length)
+function dragAndSliceStableFile(filePath, fileLength, start, length, contentType)
 {
-    setFileInputDropCallback(function(file) { onStableFileDrop(file, "../local/" + filePath, fileLength, start, length); });
+    setFileInputDropCallback(function(file) { onStableFileDrop(file, "../local/" + filePath, fileLength, start, length, contentType); });
     eventSender.beginDragWithFiles([filePath]);
     moveMouseToCenterOfElement(fileInput);
     eventSender.mouseUp();
 }
 
-function onUnstableFileDrop(file, filePath, fileLength, start, length)
+function onUnstableFileDrop(file, filePath, fileLength, start, length, contentType)
 {
     // Slice the file.
-    subfile = file.slice(start, length);
+    subfile = file.slice(start, length, contentType);
     shouldEvaluateTo("subfile.size", computeExpectedLength(fileLength, start, length));
+    shouldBe("subfile.type", (contentType != undefined && contentType != null) ? '"' + contentType + '"' : '""');
   
     // Upload the sliced file.
     uploadFile(subfile, filePath, start, length, false);
@@ -123,13 +125,13 @@ function onUnstableFileDrop(file, filePath, fileLength, start, length)
     removeTempFile();
 }
 
-function dragAndSliceUnstableFile(start, length)
+function dragAndSliceUnstableFile(start, length, contentType)
 {
     var tempFilePath = createTempFile(tempFileContent);
     if (tempFilePath.length == 0)
         return;
 
-    setFileInputDropCallback(function(file) { onUnstableFileDrop(file, tempFilePath, tempFileContent.length, start, length); });
+    setFileInputDropCallback(function(file) { onUnstableFileDrop(file, tempFilePath, tempFileContent.length, start, length, contentType); });
     eventSender.beginDragWithFiles([tempFilePath]);
     moveMouseToCenterOfElement(fileInput);
     eventSender.mouseUp();
@@ -141,9 +143,9 @@ function runTest()
     dragAndSliceStableFile("resources/empty.txt", 0, 0, 10);
 
     debug("Test slicing and sending a small file.");
-    dragAndSliceStableFile("resources/file-for-drag-to-send.txt", 10, 2, 4);
-    dragAndSliceStableFile("resources/file-for-drag-to-send.txt", 10, 2, 20);
-    dragAndSliceStableFile("resources/file-for-drag-to-send.txt", 10, 15, 20);
+    dragAndSliceStableFile("resources/file-for-drag-to-send.txt", 10, 2, 4, null);
+    dragAndSliceStableFile("resources/file-for-drag-to-send.txt", 10, 2, 20, "type/foo");
+    dragAndSliceStableFile("resources/file-for-drag-to-send.txt", 10, 15, 20, "type/bar");
 
     // This is to test a file that exceeds the read buffer limit (2K in Mac).
     debug("Test slicing and sending a big file.");

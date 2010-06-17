@@ -66,7 +66,7 @@ const String& Blob::path() const
 }
 
 #if ENABLE(BLOB_SLICE)
-PassRefPtr<Blob> Blob::slice(long long start, long long length) const
+PassRefPtr<Blob> Blob::slice(long long start, long long length, const String& contentType) const
 {
     if (start < 0)
         start = 0;
@@ -90,8 +90,7 @@ PassRefPtr<Blob> Blob::slice(long long start, long long length) const
         length -= items.last()->size();
         start = 0;
     }
-    // FIXME: Pass content type when we add it to slice's arguments.
-    return Blob::create(String(), items);
+    return Blob::create(contentType, items);
 }
 #endif // ENABLE(BLOB_SLICE)
 
