@@ -1,3 +1,17 @@
+2010-06-16  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Repeat pattern should start from origin
+        https://bugs.webkit.org/show_bug.cgi?id=39225
+
+        Remove the following test case from Skipped:
+        canvas/philip/tests/2d.pattern.paint.norepeat.coord3.html
+        canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html
+        canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html
+
+        * platform/qt/Skipped:
+
 2010-06-16  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.

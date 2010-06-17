@@ -628,6 +628,73 @@ static inline void drawBorderlessRectShadow(GraphicsContext* context, QPainter* 
     }
 }
 
+static inline void drawRepeatPattern(QPainter* p, QPixmap* image, const FloatRect& rect, const bool repeatX, const bool repeatY)
+{
+    // Patterns must be painted so that the top left of the first image is anchored at
+    // the origin of the coordinate space
+    if (image) {
+        int w = image->width();
+        int h = image->height();
+        int startX, startY;
+        QRect r(static_cast<int>(rect.x()), static_cast<int>(rect.y()), static_cast<int>(rect.width()), static_cast<int>(rect.height()));
+
+        // startX, startY is the coordinate of the first image we need to put on the left-top of the rect
+        if (repeatX && repeatY) {
+            // repeat
+            // startX, startY is at the left top side of the left-top of the rect
+            startX = r.x() >=0 ? r.x() - (r.x() % w) : r.x() - (w - qAbs(r.x()) % w);
+            startY = r.y() >=0 ? r.y() - (r.y() % h) : r.y() - (h - qAbs(r.y()) % h);
+        } else {
+           if (!repeatX && !repeatY) {
+               // no-repeat
+               // only draw the image once at orgin once, check if need to draw
+               QRect imageRect(0, 0, w, h);
+               if (imageRect.intersects(r)) {
+                   startX = 0;
+                   startY = 0;
+               } else
+                   return;   
+           } else if (repeatX && !repeatY) {
+               // repeat-x
+               // startY is fixed, but startX change based on the left-top of the rect
+               QRect imageRect(r.x(), 0, r.width(), h);
+               if (imageRect.intersects(r)) {
+                   startX = r.x() >=0 ? r.x() - (r.x() % w) : r.x() - (w - qAbs(r.x()) % w);
+                   startY = 0;
+               } else
+                   return;
+           } else {
+               // repeat-y
+               // startX is fixed, but startY change based on the left-top of the rect
+               QRect imageRect(0, r.y(), w, r.height());
+               if (imageRect.intersects(r)) {
+                   startX = 0;
+                   startY = r.y() >=0 ? r.y() - (r.y() % h) : r.y() - (h - qAbs(r.y()) % h);
+               } else
+                   return;
+           }
+        }
+
+        int x = startX;
+        int y = startY; 
+        do {
+            // repeat Y
+            do {
+                // repeat X
+                QRect   imageRect(x, y, w, h);
+                QRect   intersectRect = imageRect.intersected(r);
+                QPoint  destStart(intersectRect.x(), intersectRect.y());
+                QRect   sourceRect(intersectRect.x() - imageRect.x(), intersectRect.y() - imageRect.y(), intersectRect.width(), intersectRect.height());
+
+                p->drawPixmap(destStart, *image, sourceRect);
+                x += w;
+            } while (repeatX && x < r.x() + r.width());
+            x = startX;
+            y += h;
+        } while (repeatY && y < r.y() + r.height());
+    }
+}
+
 void GraphicsContext::fillRect(const FloatRect& rect)
 {
     if (paintingDisabled())
@@ -644,12 +711,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
             QBrush brush(m_common->state.fillPattern->createPlatformPattern(affine));
             QPixmap* image = m_common->state.fillPattern->tileImage()->nativeImageForCurrentFrame();
 
-            if (!m_common->state.fillPattern->repeatX() && image)
-                rectM.setWidth(image->width());
-            if (!m_common->state.fillPattern->repeatY() && image)
-                rectM.setHeight(image->height());
-            p->fillRect(rectM, brush);
-
+            drawRepeatPattern(p, image, rect, m_common->state.fillPattern->repeatX(), m_common->state.fillPattern->repeatY());
         } else if (m_common->state.fillGradient) {
             QBrush brush(*m_common->state.fillGradient->platformGradient());
             brush.setTransform(m_common->state.fillGradient->gradientSpaceTransform());
