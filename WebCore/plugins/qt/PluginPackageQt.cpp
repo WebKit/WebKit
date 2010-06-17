@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+typedef void gtkInitFunc(int *argc, char ***argv);
+
 bool PluginPackage::fetchInfo()
 {
     if (!load())
@@ -109,6 +111,7 @@ bool PluginPackage::load()
 
     NP_InitializeFuncPtr NP_Initialize;
     NPError npErr;
+    gtkInitFunc* gtkInit;
 
     NP_Initialize = (NP_InitializeFuncPtr)m_module->resolve("NP_Initialize");
     m_NPP_Shutdown = (NPP_ShutdownProcPtr)m_module->resolve("NP_Shutdown");
@@ -125,6 +128,26 @@ bool PluginPackage::load()
         // nspluginwrapper relies on the toolkit value to know if glib is available
         // It does so in NP_Initialize with a null instance, therefore it is done this way:
         m_browserFuncs.getvalue = staticPluginQuirkRequiresGtkToolKit_NPN_GetValue;
+    }
+
+    // WORKAROUND: Prevent gtk based plugin crashes such as BR# 40567 by
+    // explicitly forcing the initializing of Gtk, i.e. calling gtk_init,
+    // whenver the symbol is present in the plugin library loaded above.
+    // Note that this workaround is based on code from the NSPluginClass ctor
+    // in KDE's kdebase/apps/nsplugins/viewer/nsplugin.cpp file.
+    gtkInit = (gtkInitFunc*)m_module->resolve("gtk_init");
+    if (gtkInit) {
+        // Prevent gtk_init() from replacing the X error handlers, since the Gtk
+        // handlers abort when they receive an X error, thus killing the viewer.
+#ifdef Q_WS_X11
+        int (*old_error_handler)(Display*, XErrorEvent*) = XSetErrorHandler(0);
+        int (*old_io_error_handler)(Display*) = XSetIOErrorHandler(0);
+#endif
+        gtkInit(0, 0);
+#ifdef Q_WS_X11
+        XSetErrorHandler(old_error_handler);
+        XSetIOErrorHandler(old_io_error_handler);
+#endif
     }
 
 #if defined(XP_UNIX)

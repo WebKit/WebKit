@@ -1,3 +1,16 @@
+2010-06-16  Dawit Alemayehu  <adawit@kde.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] QtWebKit crashes while initializing flash plugin 10.1.53.64.
+        https://bugs.webkit.org/show_bug.cgi?id=40567
+
+        Avoid preventable crashes by ensuring gtk_init() is called in the
+        flash viewer plugins before calling NP_Initialize.
+
+        * plugins/qt/PluginPackageQt.cpp:
+        (WebCore::PluginPackage::load):
+
 2010-06-16  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by David Levin.
