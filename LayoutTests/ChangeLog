@@ -1,3 +1,9 @@
+2010-06-17  Pavel Feldman  <pfeldman@chromium.org>
+
+        Unreviewed, tests fix.
+
+        * inspector/elements-panel-search.html:
+
 2010-06-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed rollout r61311, because it made 2 tests fail on Qt bot.
