@@ -1,3 +1,17 @@
+2010-06-16  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Eric Carlson
+
+        <rdar://problem/7249553> and https://bugs.webkit.org/show_bug.cgi?id=40749
+        ResourceLoader::willCacheResponse() needs to null-check Frame::Settings()
+
+        No new tests. (Discovered via crash reports, no reproducible cases noted)
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::willCacheResponse):  Null check m_frame->settings(), 
+          but also add an ASSERT so debug-build developers can learn more about why
+          this might be happening.
+
 2010-06-16  Darin Adler  <darin@apple.com>
 
         Try to fix the MathML build.
