@@ -145,7 +145,7 @@ void RenderMathMLRoot::paint(PaintInfo& info, int tx, int ty)
     
     info.context->setStrokeThickness(gRadicalLineThickness * style()->fontSize());
     info.context->setStrokeStyle(SolidStroke);
-    info.context->setStrokeColor(style()->color(), sRGBColorSpace);
+    info.context->setStrokeColor(style()->visitedDependentColor(CSSPropertyColor), sRGBColorSpace);
     info.context->setLineJoin(MiterJoin);
     info.context->setMiterLimit(style()->fontSize());
     
@@ -204,8 +204,7 @@ void RenderMathMLRoot::layout()
     int maxHeight = toRenderBoxModelObject(lastChild())->offsetHeight();
     
     RenderObject* current = lastChild()->firstChild();
-    
-    toRenderMathMLBlock(current)->style()->setVerticalAlign(BASELINE);
+    current->style()->setVerticalAlign(BASELINE);
     
     if (!maxHeight)
         maxHeight = style()->fontSize();
@@ -238,9 +237,11 @@ void RenderMathMLRoot::layout()
     setNeedsLayoutAndPrefWidthsRecalc();
     markContainingBlocksForLayout();
     RenderBlock::layout();
-    
+
     indexBox->style()->setBottom(Length(radicalHeight + style()->paddingBottom().value(), Fixed));
-    
+
+    // Now that we've potentially changed its position, we need layout the index again.
+    indexBox->setNeedsLayoutAndPrefWidthsRecalc();
     indexBox->layout();
 }
     
