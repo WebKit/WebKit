@@ -1,5 +1,17 @@
 2010-06-17  Robert Hogan  <robert@webkit.org>
 
+        [Qt] Build fix
+
+        Unreviewed.
+
+        Remove includes in qdeclarativewebview*.* that rely on an installation
+        of QtWebKit.
+
+        * declarative/qdeclarativewebview.cpp:
+        * declarative/qdeclarativewebview_p.h:
+
+2010-06-17  Robert Hogan  <robert@webkit.org>
+
         Unreviewed, rolling out r61346.
         http://trac.webkit.org/changeset/61346
         https://bugs.webkit.org/show_bug.cgi?id=33333

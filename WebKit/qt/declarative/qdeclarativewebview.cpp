@@ -31,10 +31,10 @@
 #include <QtGui/QKeyEvent>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QPen>
-#include <QtWebKit/QWebElement>
-#include <QtWebKit/QWebFrame>
-#include <QtWebKit/QWebPage>
-#include <QtWebKit/QWebSettings>
+#include "qwebelement.h"
+#include "qwebframe.h"
+#include "qwebpage.h"
+#include "qwebsettings.h"
 
 QT_BEGIN_NAMESPACE
 

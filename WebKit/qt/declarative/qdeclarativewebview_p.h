@@ -26,8 +26,8 @@
 #include <QtDeclarative/QDeclarativeItem>
 #include <QtGui/QAction>
 #include <QtNetwork/QNetworkAccessManager>
-#include <QtWebKit/QGraphicsWebView>
-#include <QtWebKit/QWebPage>
+#include "qgraphicswebview.h"
+#include "qwebpage.h"
 
 
 QT_BEGIN_HEADER
