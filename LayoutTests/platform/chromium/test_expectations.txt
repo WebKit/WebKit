@@ -2876,9 +2876,6 @@ BUG46603 : fast/frames/lots-of-objects.html = PASS TIMEOUT
 // LayoutTestController::pageProperty is not implemented for Chromium yet.
 BUGWK35961 : printing/page-rule-selection.html = TEXT
 
-// needs new baseline, transferring over from downstream.
-BUG46674 : fast/js/missing-title-end-tag-js.html = FAIL
-
 // The following need to be rebaselined due to change of resize algorithm in
 // https://bugs.webkit.org/show_bug.cgi?id=38233
 
