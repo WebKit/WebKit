@@ -1,3 +1,12 @@
+2010-06-17  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed Qt build fix.
+
+        LayoutTestController in the Qt DRT is not using refs :)
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+
 2010-06-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

@@ -400,7 +400,7 @@ DumpRenderTree::DumpRenderTree()
 
     // create our controllers. This has to be done before connectFrame,
     // as it exports there to the JavaScript DOM window.
-    m_controller = LayoutTestController::create(this).releaseRef();
+    m_controller = new LayoutTestController(this);
     connect(m_controller, SIGNAL(showPage()), this, SLOT(showPage()));
     connect(m_controller, SIGNAL(hidePage()), this, SLOT(hidePage()));
 
