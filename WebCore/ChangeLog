@@ -1,3 +1,22 @@
+2010-05-28  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        Reviewed by Simon Hausmann, Antti Koivisto
+
+        Make repaint throttling parameters runtime configurable.
+        https://bugs.webkit.org/show_bug.cgi?id=38401
+
+        REPAINT_THROTTLING now chooses default values for throttling parameters.
+        Should be removed when applications start using runtime configuration.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::updateDeferredRepaintDelay):
+        (WebCore::FrameView::setRepaintThrottlingDeferredRepaintDelay):
+        (WebCore::FrameView::setRepaintThrottlingnInitialDeferredRepaintDelayDuringLoading):
+        (WebCore::FrameView::setRepaintThrottlingMaxDeferredRepaintDelayDuringLoading):
+        (WebCore::FrameView::setRepaintThrottlingDeferredRepaintDelayIncrementDuringLoading):
+        * page/FrameView.h:
+
 2010-06-17  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

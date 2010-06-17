@@ -222,6 +222,15 @@ public:
     float pageZoomFactor() const { return shouldApplyPageZoom() ? m_zoomFactor : 1.0f; }
     float textZoomFactor() const { return shouldApplyTextZoom() ? m_zoomFactor : 1.0f; }
 
+    // Normal delay
+    static void setRepaintThrottlingDeferredRepaintDelay(double p);
+    // Negative value would mean that first few repaints happen without a delay
+    static void setRepaintThrottlingnInitialDeferredRepaintDelayDuringLoading(double p);
+    // The delay grows on each repaint to this maximum value
+    static void setRepaintThrottlingMaxDeferredRepaintDelayDuringLoading(double p);
+    // On each repaint the delay increses by this amount
+    static void setRepaintThrottlingDeferredRepaintDelayIncrementDuringLoading(double p);
+    
 private:
     FrameView(Frame*);
 
@@ -354,6 +363,11 @@ private:
     RenderScrollbarPart* m_scrollCorner;
 
     float m_zoomFactor;
+
+    static double s_deferredRepaintDelay;
+    static double s_initialDeferredRepaintDelayDuringLoading;
+    static double s_maxDeferredRepaintDelayDuringLoading;
+    static double s_deferredRepaintDelayIncrementDuringLoading;
 };
 
 #if ENABLE(INSPECTOR)
