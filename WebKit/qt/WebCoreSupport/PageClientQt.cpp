@@ -103,6 +103,11 @@ QStyle* PageClientQWidget::style() const
     return view->style();
 }
 
+QRectF PageClientQWidget::windowRect() const
+{
+    return QRectF(view->window()->geometry());
+}
+
 PageClientQGraphicsWidget::~PageClientQGraphicsWidget()
 {
 #if USE(ACCELERATED_COMPOSITING)
@@ -292,14 +297,14 @@ QRect PageClientQGraphicsWidget::geometryRelativeToOwnerWidget() const
 
 #if ENABLE(TILED_BACKING_STORE)
 QRectF PageClientQGraphicsWidget::graphicsItemVisibleRect() const
-{ 
+{
     if (!view->scene())
         return QRectF();
 
     QList<QGraphicsView*> views = view->scene()->views();
     if (views.isEmpty())
         return QRectF();
-    
+
     QGraphicsView* graphicsView = views.at(0);
     int xOffset = graphicsView->horizontalScrollBar()->value();
     int yOffset = graphicsView->verticalScrollBar()->value();
@@ -317,6 +322,13 @@ QStyle* PageClientQGraphicsWidget::style() const
     return view->style();
 }
 
+QRectF PageClientQGraphicsWidget::windowRect() const
+{
+    if (!view->scene())
+        return QRectF();
 
-
+    // The sceneRect is a good approximation of the size of the application, independent of the view.
+    return view->scene()->sceneRect();
 }
+
+} // namespace WebCore

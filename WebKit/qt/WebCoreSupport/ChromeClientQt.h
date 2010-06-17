@@ -48,6 +48,7 @@ namespace WebCore {
     class Page;
     struct FrameLoadRequest;
     class QtAbstractWebPopup;
+    struct ViewportArguments;
 
     class ChromeClientQt : public ChromeClient
     {
@@ -176,6 +177,8 @@ namespace WebCore {
 #endif
 
         QtAbstractWebPopup* createSelectPopup();
+
+        virtual void didReceiveViewportArguments(Frame*, const ViewportArguments&) const;
 
         QWebPage* m_webPage;
         WebCore::KURL lastHoverURL;

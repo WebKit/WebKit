@@ -1,3 +1,14 @@
+2010-06-17  Jesus Sanchez-Palencia  <jesus@webkit.org>, Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] QtWebKit does not support viewport meta tag
+        https://bugs.webkit.org/show_bug.cgi?id=39902
+
+        Add windowRect() to page client.
+
+        * platform/qt/QWebPageClient.h:
+
 2010-06-17  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by David Levin.

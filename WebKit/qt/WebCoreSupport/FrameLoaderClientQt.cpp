@@ -380,6 +380,8 @@ void FrameLoaderClientQt::dispatchDidCommitLoad()
     if (m_frame->tree()->parent() || !m_webFrame)
         return;
 
+    m_webFrame->d->initialLayoutComplete = false;
+
     emit m_webFrame->urlChanged(m_webFrame->url());
     m_webFrame->page()->d->updateNavigationActions();
 
@@ -387,6 +389,12 @@ void FrameLoaderClientQt::dispatchDidCommitLoad()
     // will be called very soon with the correct title.
     // This properly resets the title when we navigate to a URI without a title.
     emit titleChanged(String());
+
+    bool isMainFrame = (m_frame == m_frame->page()->mainFrame());
+    if (!isMainFrame)
+        return;
+
+    emit m_webFrame->page()->viewportChangeRequested(QWebPage::ViewportHints());
 }
 
 
@@ -424,7 +432,7 @@ void FrameLoaderClientQt::dispatchDidFinishLoad()
 
 void FrameLoaderClientQt::dispatchDidFirstLayout()
 {
-    notImplemented();
+    m_webFrame->d->initialLayoutComplete = true;
 }
 
 void FrameLoaderClientQt::dispatchDidFirstVisuallyNonEmptyLayout()

@@ -87,10 +87,12 @@ public:
     virtual QObject* pluginParent() const = 0;
 
     virtual QStyle* style() const = 0;
-    
+
     virtual QRectF graphicsItemVisibleRect() const { return QRectF(); }
-    
+
     virtual bool viewResizesToContentsEnabled() const = 0;
+
+    virtual QRectF windowRect() const = 0;
 
 protected:
 #ifndef QT_NO_CURSOR

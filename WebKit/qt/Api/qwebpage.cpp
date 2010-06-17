@@ -1698,6 +1698,109 @@ InspectorController* QWebPagePrivate::inspectorController()
     \value WebModalDialog The window acts as modal dialog.
 */
 
+
+/*!
+    \class QWebPage::ViewportHints
+    \since 4.7
+    \brief The QWebPage::ViewportHints class describes hints that can be applied to a viewport.
+
+    QWebPage::ViewportHints provides a description of a viewport, such as viewport geometry,
+    initial scale factor with limits, plus information about whether a user should be able
+    to scale the contents in the viewport or not, ie. by zooming.
+
+    ViewportHints can be set by a web author using the viewport meta tag extension, documented
+    at \l{http://developer.apple.com/safari/library/documentation/appleapplications/reference/safariwebcontent/usingtheviewport/usingtheviewport.html}{Safari Reference Library: Using the Viewport Meta Tag}.
+
+    All values might not be set, as such when dealing with the hints, the developer needs to
+    check whether the values are valid. Negative values denote an invalid qreal value.
+
+    \inmodule QtWebKit
+*/
+
+/*!
+    Constructs an empty QWebPage::ViewportHints.
+*/
+QWebPage::ViewportHints::ViewportHints()
+    : d(0)
+    , m_initialScaleFactor(-1.0)
+    , m_minimumScaleFactor(-1.0)
+    , m_maximumScaleFactor(-1.0)
+    , m_isUserScalable(true)
+    , m_isValid(false)
+{
+
+}
+
+/*!
+    Constructs a QWebPage::ViewportHints which is a copy from \a other .
+*/
+QWebPage::ViewportHints::ViewportHints(const QWebPage::ViewportHints& other)
+    : d(other.d)
+    , m_initialScaleFactor(other.m_initialScaleFactor)
+    , m_minimumScaleFactor(other.m_minimumScaleFactor)
+    , m_maximumScaleFactor(other.m_maximumScaleFactor)
+    , m_isUserScalable(other.m_isUserScalable)
+    , m_isValid(other.m_isValid)
+    , m_size(other.m_size)
+{
+
+}
+
+/*!
+    Destroys the QWebPage::ViewportHints.
+*/
+QWebPage::ViewportHints::~ViewportHints()
+{
+
+}
+
+/*!
+    Assigns the given QWebPage::ViewportHints to this viewport hints and returns a
+    reference to this.
+*/
+QWebPage::ViewportHints& QWebPage::ViewportHints::operator=(const QWebPage::ViewportHints& other)
+{
+    if (this != &other) {
+        d = other.d;
+        m_initialScaleFactor = other.m_initialScaleFactor;
+        m_minimumScaleFactor = other.m_minimumScaleFactor;
+        m_maximumScaleFactor = other.m_maximumScaleFactor;
+        m_isUserScalable = other.m_isUserScalable;
+        m_isValid = other.m_isValid;
+        m_size = other.m_size;
+    }
+
+    return *this;
+}
+
+/*! \fn inline bool QWebPage::ViewportHints::isValid() const
+    Returns whether this is a valid ViewportHints or not.
+
+    An invalid ViewportHints will have an empty QSize, negative values for scale factors and
+    true for the boolean isUserScalable.
+*/
+
+/*! \fn inline QSize QWebPage::ViewportHints::size() const
+    Returns the size of the viewport.
+*/
+
+/*! \fn inline qreal QWebPage::ViewportHints::initialScaleFactor() const
+    Returns the initial scale of the viewport as a multiplier.
+*/
+
+/*! \fn inline qreal QWebPage::ViewportHints::minimumScaleFactor() const
+    Returns the minimum scale value of the viewport as a multiplier.
+*/
+
+/*! \fn inline qreal QWebPage::ViewportHints::maximumScaleFactor() const
+    Returns the maximum scale value of the viewport as a multiplier.
+*/
+
+/*! \fn inline bool QWebPage::ViewportHints::isUserScalable() const
+    Determines whether or not the scale can be modified by the user.
+*/
+
+
 /*!
     \class QWebPage
     \since 4.4
@@ -2227,30 +2330,42 @@ QSize QWebPage::preferredContentsSize() const
 /*!
     \property QWebPage::preferredContentsSize
     \since 4.6
-    \brief the preferred size of the contents
+    \brief a custom size used for laying out the page contents.
 
-    If this property is set to a valid size, it is used to lay out the page.
-    If it is not set (the default), the viewport size is used instead.
+    By default all pages are laid out using the viewport of the page as the base.
+
+    As pages mostly are designed for desktop usage, they often do not layout properly
+    on small devices as the contents require a certain view width. For this reason
+    it is common to use a different layout size and then scale the contents to fit
+    within the actual view.
+
+    If this property is set to a valid size, this size is used for all layout needs
+    instead of the size of the viewport.
+
+    Setting an invalid size, makes the page fall back to using the viewport size for layout.
 
     \sa viewportSize
 */
-void QWebPage::setPreferredContentsSize(const QSize &size) const
+void QWebPage::setPreferredContentsSize(const QSize& size) const
 {
+    // FIXME: Rename this method to setCustomLayoutSize
+
     d->fixedLayoutSize = size;
 
-    QWebFrame *frame = mainFrame();
-    if (frame->d->frame && frame->d->frame->view()) {
-        WebCore::FrameView* view = frame->d->frame->view();
+    QWebFrame* frame = mainFrame();
+    if (!frame->d->frame || !frame->d->frame->view())
+        return;
 
-        if (size.isValid()) {
-            view->setUseFixedLayout(true);
-            view->setFixedLayoutSize(size);
-            view->layout();
-        } else if (view->useFixedLayout()) {
-            view->setUseFixedLayout(false);
-            view->layout();
-        }
-    }
+    WebCore::FrameView* view = frame->d->frame->view();
+
+    if (size.isValid()) {
+        view->setUseFixedLayout(true);
+        view->setFixedLayoutSize(size);
+    } else if (view->useFixedLayout())
+        view->setUseFixedLayout(false);
+
+    if (frame->d->initialLayoutComplete)
+        view->layout();
 }
 
 /*!
@@ -3579,6 +3694,29 @@ quint64 QWebPage::bytesReceived() const
 {
     return d->m_bytesReceived;
 }
+
+/*!
+    \since 4.7
+    \fn void QWebPage::viewportChangeRequested(const QWebPage::ViewportHints& hints)
+
+    This signal is emitted before any layout of the contents, giving you the viewport \a arguments
+    the web page would like you to use when laying out its contents, including elements fixed to the
+    viewport. This viewport might be larger that your actual viewport, meaning that a initialScaleFactor
+    should be applied. When no scale is given, it is assumed that the contents should be scaled
+    such that the width of the scaled contents fits within the actual viewport.
+
+    The minimum and maximum allowed scale represents the min and max values that the page
+    allows for scaling, and thus, affects the ability to zoom in on the page.
+
+    Invalid values are supplied for the values not explicitly set by the web author; thus an
+    invalid viewport size, and negative values for scale factor and limits. The boolean
+    ViewportHints::isUserScalable is set to true.
+
+    Page authors can provide the supplied values by using the viewport meta tag. More information
+    about this can be found at \l{http://developer.apple.com/safari/library/documentation/appleapplications/reference/safariwebcontent/usingtheviewport/usingtheviewport.html}{Safari Reference Library: Using the Viewport Meta Tag}.
+
+    \sa QWebPage::ViewportHints, setPreferredContentsSize(), QGraphicsWebView::setScale()
+*/
 
 /*!
     \fn void QWebPage::loadStarted()

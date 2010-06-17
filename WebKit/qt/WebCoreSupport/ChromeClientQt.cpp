@@ -37,35 +37,36 @@
 #include "FrameLoaderClientQt.h"
 #include "FrameView.h"
 #include "Geolocation.h"
+#if USE(ACCELERATED_COMPOSITING)
+#include "GraphicsLayerQt.h"
+#endif
 #include "HitTestResult.h"
 #include "Icon.h"
 #include "NotImplemented.h"
 #include "NotificationPresenterClientQt.h"
-#include "ScrollbarTheme.h"
-#include "WindowFeatures.h"
+#include "PageClientQt.h"
 #if defined(Q_WS_MAEMO_5)
 #include "QtMaemoWebPopup.h"
 #else
 #include "QtFallbackWebPopup.h"
 #endif
 #include "QWebPageClient.h"
+#include "ScrollbarTheme.h"
 #include "SecurityOrigin.h"
+#include "ViewportArguments.h"
+#include "WindowFeatures.h"
 
+#include "qgraphicswebview.h"
 #include "qwebframe_p.h"
 #include "qwebpage.h"
 #include "qwebpage_p.h"
 #include "qwebsecurityorigin.h"
 #include "qwebsecurityorigin_p.h"
 #include "qwebview.h"
-
 #include <qdebug.h>
 #include <qeventloop.h>
 #include <qtextdocument.h>
 #include <qtooltip.h>
-
-#if USE(ACCELERATED_COMPOSITING)
-#include "GraphicsLayerQt.h"
-#endif
 
 namespace WebCore {
 
@@ -90,18 +91,17 @@ void ChromeClientQt::setWindowRect(const FloatRect& rect)
                             qRound(rect.width()), qRound(rect.height())));
 }
 
-
+/*!
+    windowRect represents the rect of the Window, including all interface elements
+    like toolbars/scrollbars etc. It is used by the viewport meta tag as well as
+    by the DOM Window object: outerHeight(), outerWidth(), screenX(), screenY().
+*/
 FloatRect ChromeClientQt::windowRect()
 {
-    if (!m_webPage)
+    if (!platformPageClient())
         return FloatRect();
-
-    QWidget* view = m_webPage->view();
-    if (!view)
-        return FloatRect();
-    return IntRect(view->window()->geometry());
+    return platformPageClient()->windowRect();
 }
-
 
 FloatRect ChromeClientQt::pageRect()
 {
@@ -626,4 +626,23 @@ bool ChromeClientQt::isMinimized()
 }
 #endif
 
+void ChromeClientQt::didReceiveViewportArguments(Frame* frame, const ViewportArguments& arguments) const
+{
+    if (m_webPage->mainFrame()->d->initialLayoutComplete)
+        return;
+
+    QSize viewportSize(arguments.width, arguments.height);
+    bool isUserScalable = arguments.userScalable == 1;
+
+    QWebPage::ViewportHints hints;
+    hints.m_isValid = true;
+    hints.m_size = viewportSize;
+    hints.m_initialScaleFactor = arguments.initialScale;
+    hints.m_minimumScaleFactor = arguments.minimumScale;
+    hints.m_maximumScaleFactor = arguments.maximumScale;
+    hints.m_isUserScalable = isUserScalable;
+
+    emit m_webPage->viewportChangeRequested(hints);
 }
+
+} // namespace WebCore

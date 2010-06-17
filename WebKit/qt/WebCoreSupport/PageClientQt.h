@@ -76,8 +76,10 @@ public:
     virtual QObject* pluginParent() const;
 
     virtual QStyle* style() const;
-    
+
     virtual bool viewResizesToContentsEnabled() const { return false; }
+
+    virtual QRectF windowRect() const;
 
     QWidget* view;
 };
@@ -181,6 +183,8 @@ public:
     // QGraphicsWebView can render composited layers
     virtual bool allowsAcceleratedCompositing() const { return true; }
 #endif
+
+    virtual QRectF windowRect() const;
 
     QGraphicsWidget* view;
     QWebPage* page;

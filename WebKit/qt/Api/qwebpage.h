@@ -42,12 +42,13 @@ class QWebFrame;
 class QWebNetworkRequest;
 class QWebHistory;
 
-class QWebPagePrivate;
 class QWebFrameData;
-class QWebNetworkInterface;
-class QWebPluginFactory;
-class QWebHitTestResult;
 class QWebHistoryItem;
+class QWebHitTestResult;
+class QWebNetworkInterface;
+class QWebPagePrivate;
+class QWebPluginFactory;
+class QtViewportHintsPrivate;
 
 namespace WebCore {
     class ChromeClientQt;
@@ -194,6 +195,35 @@ public:
         WebModalDialog
     };
 
+    class ViewportHints {
+    public:
+        ViewportHints();
+        ViewportHints(const QWebPage::ViewportHints& other);
+
+        ~ViewportHints();
+
+        QWebPage::ViewportHints& operator=(const QWebPage::ViewportHints& other);
+
+        inline qreal initialScaleFactor() const { return m_initialScaleFactor; };
+        inline qreal minimumScaleFactor() const { return m_minimumScaleFactor; };
+        inline qreal maximumScaleFactor() const { return m_maximumScaleFactor; };
+        inline bool isUserScalable() const { return m_isUserScalable; };
+        inline bool isValid() const { return m_isValid; };
+        inline QSize size() const { return m_size; };
+
+    private:
+        QSharedDataPointer<QtViewportHintsPrivate> d;
+        qreal m_initialScaleFactor;
+        qreal m_minimumScaleFactor;
+        qreal m_maximumScaleFactor;
+        bool m_isUserScalable;
+        bool m_isValid;
+        QSize m_size;
+
+        friend class WebCore::ChromeClientQt;
+    };
+
+
     explicit QWebPage(QObject *parent = 0);
     ~QWebPage();
 
@@ -338,6 +368,8 @@ Q_SIGNALS:
 
     void saveFrameStateRequested(QWebFrame* frame, QWebHistoryItem* item);
     void restoreFrameStateRequested(QWebFrame* frame);
+
+    void viewportChangeRequested(const QWebPage::ViewportHints& hints);
 
 protected:
     virtual QWebPage *createWindow(WebWindowType type);

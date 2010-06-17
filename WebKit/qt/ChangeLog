@@ -1,3 +1,48 @@
+2010-06-17  Jesus Sanchez-Palencia  <jesus@webkit.org>, Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] QtWebKit does not support viewport meta tag
+        https://bugs.webkit.org/show_bug.cgi?id=39902
+
+        Add viewport meta tag support to QtWebKit API layer.
+
+        This implements didReceiveViewportArguments in our ChromeClientQt
+        which is hooked up with QWebPage::viewportChangeRequested().
+        This signal does not affect the current default behavior.
+        The documentation of the signal explains how to make use of this new feature.
+
+        * Api/qwebframe_p.h:
+        (QWebFramePrivate::QWebFramePrivate):
+        Store information about whether the page has been laid out or not.
+        * Api/qwebpage.cpp:
+        (QWebPage::viewportChangeRequested):
+        * Api/qwebpage_p.h:
+        Added class QtViewportHintsPrivate.
+        * Api/qwebpage.h:
+        (QWebPage::setPreferredContentsSize):
+        Improved documentation and now only layout if the page had already
+        passed layout phase.
+        Added class QWebPage::ViewportHints.
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::windowRect):
+        Modified to work as intended by the DOM, for both QWebView
+        and QGraphicsWebView.
+        (WebCore::ChromeClientQt::didReceiveViewportArguments):
+        Emits the signal QWebPage::viewportChangeRequested.
+        * WebCoreSupport/ChromeClientQt.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidFirstLayout):
+        Update information about whether the page has been laid out or not.
+        If the page has been laid out we ignore any further viewport meta data.
+        * WebCoreSupport/PageClientQt.cpp:
+        (WebCore::PageClientQWidget::windowRect):
+        (WebCore::PageClientQGraphicsWidget::windowRect):
+        (WebCore::PageClientQGraphicsWidget::graphicsItemVisibleRect):
+        * WebCoreSupport/PageClientQt.h:
+        The PageClient is now responsible for providing the right window rect.
+
 2010-06-17  Alexis Menard  <alexis.menard@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
