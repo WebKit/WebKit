@@ -26,6 +26,8 @@
 #ifndef ExecutableAllocator_h
 #define ExecutableAllocator_h
 
+#if ENABLE(JIT)
+
 #include <stddef.h> // for ptrdiff_t
 #include <limits>
 #include <wtf/Assertions.h>
@@ -317,5 +319,7 @@ inline void* ExecutablePool::poolAllocate(size_t n)
 }
 
 #endif // ENABLE(ASSEMBLER)
+
+#endif // ENABLE(JIT)
 
 #endif // !defined(ExecutableAllocator)

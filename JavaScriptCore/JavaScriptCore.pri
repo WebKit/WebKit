@@ -1,4 +1,7 @@
 # JavaScriptCore - Qt4 build info
+
+include(../common.pri)
+
 VPATH += $$PWD
 !CONFIG(release, debug|release) {
     # Output in JavaScriptCore/<config>
@@ -50,9 +53,6 @@ INCLUDEPATH = \
 win32-*: DEFINES += _HAS_TR1=0
 
 DEFINES += BUILDING_QT__ BUILDING_JavaScriptCore BUILDING_WTF
-
-contains(JAVASCRIPTCORE_JIT,yes): DEFINES+=ENABLE_JIT=1
-contains(JAVASCRIPTCORE_JIT,no): DEFINES+=ENABLE_JIT=0
 
 wince* {
     INCLUDEPATH += $$QT_SOURCE_TREE/src/3rdparty/ce-compat
