@@ -1,3 +1,16 @@
+2010-06-16  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Add an index of technical articles to the WebKit site.  This makes the
+        links to the RefPtr and Assertion documentation discoverable and
+        provides an easy way to find some useful blog posts.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40561
+
+        * coding/technical-articles.html: Added.
+        * nav.inc: Add link to technical articles.
+
 2010-06-15  Adam Roben  <aroben@apple.com>
 
         Remove some unnecessary steps for setting up the debugger on Windows
