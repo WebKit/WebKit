@@ -1,3 +1,15 @@
+2010-06-17  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        Land new expected baselines for fill-opacity-(hsl|rgba).png
+        DRT showed a mysterious error, and the baseline obviously had a problem.
+
+        * platform/mac/svg/custom/fill-opacity-hsl-expected.checksum:
+        * platform/mac/svg/custom/fill-opacity-hsl-expected.png:
+        * platform/mac/svg/custom/fill-opacity-rgba-expected.checksum:
+        * platform/mac/svg/custom/fill-opacity-rgba-expected.png:
+
 2010-06-17  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
