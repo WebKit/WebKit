@@ -1,3 +1,41 @@
+2010-06-16  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Refactor layout tests for printing to use common code.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40559
+
+        * printing/numberOfPages-expected.txt:
+        * printing/numberOfPages.html:
+        * printing/page-break-always-expected.txt:
+        * printing/page-break-always-for-overflow-expected.txt:
+        * printing/page-break-always-for-overflow.html:
+        * printing/page-break-always.html:
+        * printing/page-break-inside-avoid-expected.txt: Added.
+        * printing/page-break-inside-avoid.html: Added.
+        * printing/page-break-inside-expected.txt: Removed.
+        * printing/page-break-inside.html: Removed.
+        * printing/pageNumerForElementById-expected.txt:
+        * printing/pageNumerForElementById.html:
+        * printing/resources/paged-media-test-utils.js:
+        (numberOfPagesShouldBe):
+        (ratioToPageHeightToPixels):
+        (createBlockWithRatioToPageHeight):
+        (createBlockWithNumberOfLines):
+        * printing/script-tests/TEMPLATE.html:
+        * printing/script-tests/numberOfPages.js:
+        (test):
+        * printing/script-tests/page-break-always-for-overflow.js:
+        (test):
+        * printing/script-tests/page-break-always.js:
+        (test):
+        * printing/script-tests/page-break-inside-avoid.js: Added.
+        (test):
+        * printing/script-tests/page-break-inside.js: Removed.
+        * printing/script-tests/pageNumerForElementById.js:
+        (test):
+
 2010-06-16  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Laszlo Gombos.

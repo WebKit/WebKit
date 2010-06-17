@@ -3,10 +3,13 @@ Test for layoutTestController.pageNumberForElementById()
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS layoutTestController.pageNumberForElementById('firstPage', 1000, 1000) is 0
-PASS layoutTestController.pageNumberForElementById('secondPage', 1000, 1000) is 1
-PASS layoutTestController.pageNumberForElementById('thirdPage', 1000, 1000) is 2
-PASS layoutTestController.pageNumberForElementById('thirdPage2', 1000, 1000) is 2
+
+PASS: page number of "firstPage" is 0
+PASS: page number of "secondPage" is 1
+PASS: page number of "thirdPage" is 2
+PASS: page number of "thirdPage2" is 2
+All tests passed
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

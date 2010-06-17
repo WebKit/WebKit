@@ -21,9 +21,15 @@ function pageNumberForElementShouldBe(id, expectedPageNumber)
     }
 }
 
-function numberOfPagesShouldBe(expectedNumberOfPages)
+function numberOfPagesShouldBe(expectedNumberOfPages, pageWidthInPixels, pageHeightInPixels)
 {
-    var actualNumberOfPages = layoutTestController.numberOfPages();
+    // pageWidthInPixels and pageHeightInPixels can be omitted. If omitted, 800x600 is used.
+    var actualNumberOfPages;
+    if (pageWidthInPixels && pageHeightInPixels)
+        actualNumberOfPages = layoutTestController.numberOfPages(pageWidthInPixels, pageHeightInPixels);
+    else
+        actualNumberOfPages = layoutTestController.numberOfPages();
+
     if (actualNumberOfPages == expectedNumberOfPages)
         appendResult('PASS: number of pages is ' + actualNumberOfPages);
     else {
@@ -50,5 +56,35 @@ function runPrintingTest(testFunction)
 
     var resultElement = document.createElement('p');
     resultElement.innerHTML = _results;
-    document.body.appendChild(resultElement);
+    var output = document.getElementById("console") || document.body;
+    output.appendChild(resultElement);
+}
+
+function ratioToPageHeightToPixels(heightInRatioToPageHeight)
+{
+  var pageHeightInPixels = 600;
+  return Math.floor(pageHeightInPixels * heightInRatioToPageHeight);
+}
+
+function createBlockWithRatioToPageHeight(id, heightInRatioToPageHeight)
+{
+    var element = document.createElement("div");
+    element.id = id;
+    element.style.height = ratioToPageHeightToPixels(heightInRatioToPageHeight) + "px";
+    document.getElementById("sandbox").appendChild(element);
+    return element;
+}
+
+function createBlockWithNumberOfLines(id, childLines)
+{
+    var element = document.createElement("div");
+    element.id = id;
+    for (var i = 0; i < childLines; ++i) {
+        element.appendChild(document.createTextNode("line" + i));
+        element.appendChild(document.createElement("br"));
+    }
+    // Make sure that one page has about 20 lines.
+    element.style.lineHeight = ratioToPageHeightToPixels(0.05) + "px";
+    document.getElementById("sandbox").appendChild(element);
+    return element;
 }
