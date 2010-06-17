@@ -983,7 +983,7 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyPaddingBottom:       //   <length> | <percentage>
     case CSSPropertyPaddingLeft:         ////
     case CSSPropertyWebkitPaddingStart:
-        validPrimitive = (!id && validUnit(value, FLength | FPercent | FNonNeg, m_strict));
+        validPrimitive = (!id && validUnit(value, FLength | FPercent, m_strict));
         break;
 
     case CSSPropertyMaxHeight:           // <length> | <percentage> | none | inherit

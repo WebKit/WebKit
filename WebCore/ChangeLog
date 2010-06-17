@@ -1,3 +1,18 @@
+2010-06-17  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r61340.
+        http://trac.webkit.org/changeset/61340
+        https://bugs.webkit.org/show_bug.cgi?id=36282
+
+        Broke several editing tests.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::CSSMutableStyleDeclaration):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2010-06-17  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.

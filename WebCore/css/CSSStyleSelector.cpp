@@ -3858,7 +3858,12 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 l = Length(primitiveValue->getDoubleValue(), Percent);
             else
                 return;
-            apply = true;
+            if (id == CSSPropertyPaddingLeft || id == CSSPropertyPaddingRight ||
+                id == CSSPropertyPaddingTop || id == CSSPropertyPaddingBottom)
+                // Padding can't be negative
+                apply = !((l.isFixed() || l.isPercent()) && l.calcValue(100) < 0);
+            else
+                apply = true;
         }
         if (!apply) return;
         switch (id) {
