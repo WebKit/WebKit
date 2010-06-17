@@ -1,3 +1,28 @@
+2010-06-16  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add the error codes defined in the async DB spec to SQLError.idl and SQLError.h.
+        https://bugs.webkit.org/show_bug.cgi?id=40748
+
+        Test: storage/sql-error-codes.html
+
+        * storage/SQLError.h:
+        (WebCore::SQLError::):
+        * storage/SQLError.idl:
+        * storage/SQLStatement.cpp:
+        (WebCore::SQLStatement::execute):
+        (WebCore::SQLStatement::setDatabaseDeletedError):
+        (WebCore::SQLStatement::setVersionMismatchedError):
+        (WebCore::SQLStatement::setFailureDueToQuota):
+        (WebCore::SQLStatement::lastExecutionFailedDueToQuota):
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::openTransactionAndPreflight):
+        (WebCore::SQLTransaction::deliverTransactionCallback):
+        (WebCore::SQLTransaction::handleCurrentStatementError):
+        (WebCore::SQLTransaction::deliverStatementCallback):
+        (WebCore::SQLTransaction::postflightAndCommit):
+
 2010-06-17  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Jian Li.

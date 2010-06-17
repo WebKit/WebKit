@@ -43,6 +43,17 @@ public:
     unsigned code() const { return m_code; }
     String message() const { return m_message.threadsafeCopy(); }
 
+    enum SQLErrorCode {
+        UNKNOWN_ERR = 0,
+        DATABASE_ERR = 1,
+        VERSION_ERR = 2,
+        TOO_LARGE_ERR = 3,
+        QUOTA_ERR = 4,
+        SYNTAX_ERR = 5,
+        CONSTRAINT_ERR = 6,
+        TIMEOUT_ERR = 7
+    };
+
 private:
     SQLError(unsigned code, const String& message) : m_code(code), m_message(message.threadsafeCopy()) { }
     unsigned m_code;

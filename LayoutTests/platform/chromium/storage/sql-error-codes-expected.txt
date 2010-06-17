@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 37: Uncaught Exception thrown in transaction callback.
+This test tests the error codes reported in exceptional situations.
+PASS: expected and got error code UNKNOWN_ERR
+PASS: expected and got error code UNKNOWN_ERR
+PASS: expected and got error code SYNTAX_ERR
+PASS: expected and got error code SYNTAX_ERR
+The transaction in testBindParameterOfWrongType() was successful.
+PASS: expected and got error code QUOTA_ERR
+PASS: expected and got error code VERSION_ERR
+

@@ -1,3 +1,29 @@
+2010-06-16  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add the error codes defined in the async DB spec to SQLError.idl and SQLError.h.
+        https://bugs.webkit.org/show_bug.cgi?id=40748
+
+        * platform/chromium/storage/sql-error-codes-expected.txt: Added.
+        * storage/sql-error-codes-expected.txt: Added.
+        * storage/sql-error-codes.html: Added.
+        * storage/sql-error-codes.js: Added.
+        (finishTest):
+        (transactionErrorCallback):
+        (transactionSuccessCallback):
+        (testTransaction):
+        (testTransactionThrowsException):
+        (testTransactionFailureBecauseOfStatementFailure):
+        (testInvalidStatement):
+        (testIncorrectNumberOfBindParameters):
+        (testBindParameterOfWrongType.badString.toString):
+        (testBindParameterOfWrongType):
+        (testQuotaExceeded):
+        (testVersionMismatch.db.transaction):
+        (testVersionMismatch):
+        (runTest):
+
 2010-06-17  Robert Hogan  <robert@webkit.org>
 
         Unreviewed, rolling out r61346.

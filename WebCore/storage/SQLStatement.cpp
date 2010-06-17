@@ -78,7 +78,7 @@ bool SQLStatement::execute(Database* db)
 
     if (result != SQLResultOk) {
         LOG(StorageAPI, "Unable to verify correctness of statement %s - error %i (%s)", m_statement.ascii().data(), result, database->lastErrorMsg());
-        m_error = SQLError::create(1, database->lastErrorMsg());
+        m_error = SQLError::create(SQLError::SYNTAX_ERR, database->lastErrorMsg());
         return false;
     }
 
@@ -86,7 +86,7 @@ bool SQLStatement::execute(Database* db)
     // If this is the case, they might be trying to do something fishy or malicious
     if (statement.bindParameterCount() != m_arguments.size()) {
         LOG(StorageAPI, "Bind parameter count doesn't match number of question marks");
-        m_error = SQLError::create(1, "number of '?'s in statement string does not match argument count");
+        m_error = SQLError::create(SQLError::SYNTAX_ERR, "number of '?'s in statement string does not match argument count");
         return false;
     }
 
@@ -99,7 +99,7 @@ bool SQLStatement::execute(Database* db)
 
         if (result != SQLResultOk) {
             LOG(StorageAPI, "Failed to bind value index %i to statement for query '%s'", i + 1, m_statement.ascii().data());
-            m_error = SQLError::create(1, database->lastErrorMsg());
+            m_error = SQLError::create(SQLError::DATABASE_ERR, database->lastErrorMsg());
             return false;
         }
     }
@@ -123,7 +123,7 @@ bool SQLStatement::execute(Database* db)
         } while (result == SQLResultRow);
 
         if (result != SQLResultDone) {
-            m_error = SQLError::create(1, database->lastErrorMsg());
+            m_error = SQLError::create(SQLError::DATABASE_ERR, database->lastErrorMsg());
             return false;
         }
     } else if (result == SQLResultDone) {
@@ -135,7 +135,7 @@ bool SQLStatement::execute(Database* db)
         setFailureDueToQuota();
         return false;
     } else {
-        m_error = SQLError::create(1, database->lastErrorMsg());
+        m_error = SQLError::create(SQLError::DATABASE_ERR, database->lastErrorMsg());
         return false;
     }
 
@@ -151,13 +151,13 @@ bool SQLStatement::execute(Database* db)
 void SQLStatement::setDatabaseDeletedError()
 {
     ASSERT(!m_error && !m_resultSet);
-    m_error = SQLError::create(0, "unable to execute statement, because the user deleted the database");
+    m_error = SQLError::create(SQLError::UNKNOWN_ERR, "unable to execute statement, because the user deleted the database");
 }
 
 void SQLStatement::setVersionMismatchedError()
 {
     ASSERT(!m_error && !m_resultSet);
-    m_error = SQLError::create(2, "current version of the database and `oldVersion` argument do not match");
+    m_error = SQLError::create(SQLError::VERSION_ERR, "current version of the database and `oldVersion` argument do not match");
 }
 
 bool SQLStatement::performCallback(SQLTransaction* transaction)
@@ -184,7 +184,7 @@ bool SQLStatement::performCallback(SQLTransaction* transaction)
 void SQLStatement::setFailureDueToQuota()
 {
     ASSERT(!m_error && !m_resultSet);
-    m_error = SQLError::create(4, "there was not enough remaining storage space, or the storage quota was reached and the user declined to allow more space");
+    m_error = SQLError::create(SQLError::QUOTA_ERR, "there was not enough remaining storage space, or the storage quota was reached and the user declined to allow more space");
 }
 
 void SQLStatement::clearFailureDueToQuota()
@@ -195,7 +195,7 @@ void SQLStatement::clearFailureDueToQuota()
 
 bool SQLStatement::lastExecutionFailedDueToQuota() const
 {
-    return m_error && m_error->code() == 4;
+    return m_error && m_error->code() == SQLError::QUOTA_ERR;
 }
 
 } // namespace WebCore
