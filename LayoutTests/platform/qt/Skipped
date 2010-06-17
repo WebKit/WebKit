@@ -428,8 +428,6 @@ plugins/get-url-with-blank-target.html
 plugins/open-and-close-window-with-plugin.html
 plugins/geturlnotify-during-document-teardown.html
 
-# ---- https://bugs.webkit.org/show_bug.cgi?id=36702
-plugins/reentrant-update-widget-positions.html
 # ---- plugins rendered in incorrect position
 plugins/embed-attributes-style.html
 # ---- depends on QuickTime support
