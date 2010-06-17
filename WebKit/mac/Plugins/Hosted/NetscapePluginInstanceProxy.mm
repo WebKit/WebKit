@@ -237,12 +237,17 @@ NetscapePluginInstanceProxy::NetscapePluginInstanceProxy(NetscapePluginHostProxy
     do {
         m_pluginID = ++pluginIDCounter;
     } while (pluginHostProxy->pluginInstance(m_pluginID) || !m_pluginID);
-    
-    pluginHostProxy->addPluginInstance(this);
 
 #ifndef NDEBUG
     netscapePluginInstanceProxyCounter.increment();
 #endif
+}
+
+PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginInstanceProxy::create(NetscapePluginHostProxy* pluginHostProxy, WebHostedNetscapePluginView *pluginView, bool fullFramePlugin)
+{
+    RefPtr<NetscapePluginInstanceProxy> proxy = adoptRef(new NetscapePluginInstanceProxy(pluginHostProxy, pluginView, fullFramePlugin));
+    pluginHostProxy->addPluginInstance(proxy.get());
+    return proxy.release();
 }
 
 NetscapePluginInstanceProxy::~NetscapePluginInstanceProxy()

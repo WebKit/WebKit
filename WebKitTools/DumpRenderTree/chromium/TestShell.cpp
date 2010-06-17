@@ -83,7 +83,7 @@ TestShell::TestShell(bool testShellMode)
 {
     WebRuntimeFeatures::enableGeolocation(true);
     m_accessibilityController.set(new AccessibilityController(this));
-    m_layoutTestController.set(new LayoutTestController(this));
+    m_layoutTestController = LayoutTestController::create(this);
     m_eventSender.set(new EventSender(this));
     m_plainTextController.set(new PlainTextController());
     m_textInputController.set(new TextInputController(this));

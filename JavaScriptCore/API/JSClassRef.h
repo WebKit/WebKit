@@ -33,7 +33,6 @@
 #include <runtime/UString.h>
 #include <runtime/WeakGCPtr.h>
 #include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
 
 struct StaticValueEntry : FastAllocBase {
     StaticValueEntry(JSObjectGetPropertyCallback _getProperty, JSObjectSetPropertyCallback _setProperty, JSPropertyAttributes _attributes)

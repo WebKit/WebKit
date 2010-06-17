@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003, 2004, 2006, 2007, 2009 Apple Inc. All right reserved.
+ * Copyright (C) 2003, 2004, 2006, 2007, 2009, 2010 Apple Inc. All right reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -48,6 +48,8 @@ private:
         , m_parent(parent)
     {
     }
+
+    static PassRefPtr<BidiContext> createUncached(unsigned char level, WTF::Unicode::Direction, bool override, BidiContext* parent);
 
     unsigned char m_level;
     unsigned m_direction : 5; // Direction

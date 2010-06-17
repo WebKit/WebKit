@@ -655,7 +655,7 @@ namespace JSC {
         // symbol table, so we just pass as a raw pointer with a ref count of 1.  We then manually deref
         // in the destructor.
         FunctionCodeBlock(FunctionExecutable* ownerExecutable, CodeType codeType, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, bool isConstructor)
-            : CodeBlock(ownerExecutable, codeType, sourceProvider, sourceOffset, new SharedSymbolTable, isConstructor)
+            : CodeBlock(ownerExecutable, codeType, sourceProvider, sourceOffset, SharedSymbolTable::create().releaseRef(), isConstructor)
         {
         }
         ~FunctionCodeBlock()

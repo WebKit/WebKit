@@ -111,7 +111,7 @@ static void runTest(const string& testPathOrURL);
 volatile bool done;
 
 NavigationController* gNavigationController = 0;
-LayoutTestController* gLayoutTestController = 0;
+RefPtr<LayoutTestController> gLayoutTestController;
 
 WebFrame *mainFrame = 0;
 // This is the topmost frame that is loading, during a given load, or nil when no load is 
@@ -1221,7 +1221,7 @@ static void runTest(const string& testPathOrURL)
     
     resetWebViewToConsistentStateBeforeTesting();
 
-    gLayoutTestController = new LayoutTestController(testURL, expectedPixelHash);
+    gLayoutTestController = LayoutTestController::create(testURL, expectedPixelHash);
     topLoadingFrame = nil;
     ASSERT(!draggingInfo); // the previous test should have called eventSender.mouseUp to drop!
     releaseAndZero(&draggingInfo);
@@ -1311,8 +1311,7 @@ static void runTest(const string& testPathOrURL)
     ASSERT(CFArrayGetCount(openWindowsRef) == 1);
     ASSERT(CFArrayGetValueAtIndex(openWindowsRef, 0) == [[mainFrame webView] window]);
 
-    gLayoutTestController->deref();
-    gLayoutTestController = 0;
+    gLayoutTestController.clear();
 
     if (ignoreWebCoreNodeLeaks)
         [WebCoreStatistics stopIgnoringWebCoreNodeLeaks];

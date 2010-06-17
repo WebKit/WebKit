@@ -45,6 +45,7 @@
 #endif
 
 #include <string>
+#include <wtf/RefPtr.h>
 
 #if !OS(OPENBSD)
 std::wstring urlSuitableForTestResult(const std::wstring& url);
@@ -55,7 +56,7 @@ class LayoutTestController;
 extern volatile bool done;
 
 // FIXME: This is a bad abstraction.  We should insted pass this to other controller objects which need access to it.
-extern LayoutTestController* gLayoutTestController;
+extern RefPtr<LayoutTestController> gLayoutTestController;
 
 void dump();
 void displayWebView();

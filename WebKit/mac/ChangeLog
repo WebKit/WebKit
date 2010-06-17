@@ -1,3 +1,20 @@
+2010-06-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Use adoptRef and create functions in more code paths
+        https://bugs.webkit.org/show_bug.cgi?id=40760
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h: Made create no longer
+        be an inline function.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::NetscapePluginInstanceProxy):
+        Moved the call to addPluginInstance out of here.
+        (WebKit::NetscapePluginInstanceProxy::create): Move it in here.
+        This makes sure we call adoptRef on the new proxy before any caller
+        calls ref on it.
+
 2010-06-16  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

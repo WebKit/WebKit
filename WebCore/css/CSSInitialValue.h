@@ -30,12 +30,12 @@ class CSSInitialValue : public CSSValue {
 public:
     static PassRefPtr<CSSInitialValue> createExplicit()
     {
-        static CSSInitialValue* explicitValue = new CSSInitialValue(false);
+        static CSSInitialValue* explicitValue = create(false).releaseRef();
         return explicitValue;
     }
     static PassRefPtr<CSSInitialValue> createImplicit()
     {
-        static CSSInitialValue* explicitValue = new CSSInitialValue(true);
+        static CSSInitialValue* explicitValue = create(true).releaseRef();
         return explicitValue;
     }
 
@@ -45,6 +45,11 @@ private:
     CSSInitialValue(bool implicit)
         : m_implicit(implicit)
     {
+    }
+
+    static PassRefPtr<CSSInitialValue> create(bool implicit)
+    {
+        return adoptRef(new CSSInitialValue(implicit));
     }
 
     virtual unsigned short cssValueType() const;

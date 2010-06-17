@@ -528,7 +528,7 @@ static void loadFullDefaultStyle()
     if (simpleDefaultStyleSheet) {
         ASSERT(defaultStyle);
         delete defaultStyle;
-        delete simpleDefaultStyleSheet;
+        simpleDefaultStyleSheet->deref();
         defaultStyle = new CSSRuleSet;
         simpleDefaultStyleSheet = 0;
     } else {

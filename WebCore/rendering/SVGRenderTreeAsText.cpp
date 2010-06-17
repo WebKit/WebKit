@@ -598,7 +598,7 @@ void writeSVGResourceContainer(TextStream& ts, const RenderObject& object, int i
         writeNameValuePair(ts, "filterUnits", filter->filterUnits());
         writeNameValuePair(ts, "primitiveUnits", filter->primitiveUnits());
         ts << "\n";
-        if (OwnPtr<SVGFilterBuilder> builder = filter->buildPrimitives()) {
+        if (RefPtr<SVGFilterBuilder> builder = filter->buildPrimitives()) {
             if (FilterEffect* lastEffect = builder->lastEffect())
                 lastEffect->externalRepresentation(ts, indent + 1);
         }      

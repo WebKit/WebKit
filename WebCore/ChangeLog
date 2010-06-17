@@ -1,3 +1,79 @@
+2010-06-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Use adoptRef and create functions in more code paths
+        https://bugs.webkit.org/show_bug.cgi?id=40760
+
+        This helps prepare for an assertion that fires if you ref or destroy an
+        object before calling adoptRef on it. That will help us catch mistakes
+        that can lead to storage leaks.
+
+        * WebCore.base.exp: Updated export now that Frame::create is not an
+        inline function.
+
+        * css/CSSInitialValue.h:
+        (WebCore::CSSInitialValue::createExplicit): Use create.
+        (WebCore::CSSInitialValue::createImplicit): Ditto.
+        (WebCore::CSSInitialValue::create): Added.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::createUncachedIdentifier): Added.
+        (WebCore::CSSPrimitiveValue::createUncachedColor): Added.
+        (WebCore::CSSPrimitiveValue::createUncached): Added.
+        (WebCore::CSSPrimitiveValue::createIdentifier): Use createUncachedIdentifier
+        instead of using new directly.
+        (WebCore::CSSPrimitiveValue::createColor): Use createUncachedColor instead
+        of using new directly.
+        (WebCore::CSSPrimitiveValue::create): Use createdUncached instead of using
+        new directly.
+        * css/CSSPrimitiveValue.h: Declare the new functions above.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::loadFullDefaultStyle): Deref simpleDefaultStyleSheet instead of
+        explicitly deleting it.
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::SubresourceLoader): Move the call to
+        addSubresourceLoader out of here.
+        (WebCore::SubresourceLoader::create): Move it in here. This makes it so
+        we don't ref the loader before finishing its creation and calling adoptRef.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame): Move the call to setMainFrame out of here.
+        Also refactor the code so an assertion is easier to read.
+        (WebCore::Frame::create): Move the call to setMainFrame in here.
+        This makes it so we don't ref the frame before finishing its creation
+        and calling adoptRef.
+        * page/Frame.h: Made the create function non-inline.
+
+        * platform/text/BidiContext.cpp:
+        (WebCore::BidiContext::createUncached): Added.
+        (WebCore::BidiContext::create): Call createUncached instead of callling
+        new directly.
+        * platform/text/BidiContext.h: Declare createUncached.
+
+        * rendering/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::buildPrimitives): Use PassRefPtr and
+        RefPtr instead of OwnPtr. And use the create function instead of new.
+        * rendering/RenderSVGResourceFilter.h: Ditto.
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGResourceContainer): Ditto.
+
+        * storage/StorageAreaImpl.cpp:
+        (WebCore::StorageAreaImpl::StorageAreaImpl): Move the code that calls
+        StorageAreaSync::create out of here.
+        (WebCore::StorageAreaImpl::create): Move it in here. This makes it so we
+        don't ref the storage area before finishing its creation and calling adoptRef.
+
+        * svg/SVGPaint.cpp:
+        (WebCore::SVGPaint::defaultFill): Use create instead of new.
+        (WebCore::SVGPaint::defaultStroke): Ditto.
+
+        * svg/graphics/filters/SVGFilterBuilder.h: Made the constructor private
+        and added a create function since this is a reference counted object and
+        should not be constructed directly.
+
 2010-06-17  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Gustavo Noronha.

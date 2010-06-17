@@ -77,7 +77,7 @@ static int dumpPixels;
 static int dumpTree = 1;
 
 AccessibilityController* axController = 0;
-LayoutTestController* gLayoutTestController = 0;
+RefPtr<LayoutTestController> gLayoutTestController;
 static GCController* gcController = 0;
 static WebKitWebView* webView;
 static GtkWidget* window;
@@ -488,7 +488,7 @@ static void runTest(const string& testPathOrURL)
 
     resetDefaultsToConsistentValues();
 
-    gLayoutTestController = new LayoutTestController(testURL, expectedPixelHash);
+    gLayoutTestController = LayoutTestController::create(testURL, expectedPixelHash);
     topLoadingFrame = 0;
     done = false;
 
@@ -553,8 +553,7 @@ static void runTest(const string& testPathOrURL)
     // A blank load seems to be necessary to reset state after certain tests.
     webkit_web_view_open(webView, "about:blank");
 
-    gLayoutTestController->deref();
-    gLayoutTestController = 0;
+    gLayoutTestController.clear();
 
     // terminate the (possibly empty) pixels block after all the state reset
     sendPixelResultsEOF();

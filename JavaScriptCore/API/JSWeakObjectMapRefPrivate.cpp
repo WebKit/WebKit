@@ -32,7 +32,6 @@
 #include "JSValue.h"
 #include "JSWeakObjectMapRefInternal.h"
 #include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
 #include <wtf/text/StringHash.h>
 
 using namespace WTF;

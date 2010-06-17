@@ -191,6 +191,10 @@ private:
     static void create(unsigned); // compile-time guard
     template<typename T> operator T*(); // compile-time guard
 
+    static PassRefPtr<CSSPrimitiveValue> createUncachedIdentifier(int identifier);
+    static PassRefPtr<CSSPrimitiveValue> createUncachedColor(unsigned rgbValue);
+    static PassRefPtr<CSSPrimitiveValue> createUncached(double value, UnitTypes type);
+
     void init(PassRefPtr<Counter>);
     void init(PassRefPtr<Rect>);
     void init(PassRefPtr<Pair>);

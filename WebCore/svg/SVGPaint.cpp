@@ -66,14 +66,14 @@ SVGPaint::~SVGPaint()
 
 SVGPaint* SVGPaint::defaultFill()
 {
-    static SVGPaint* _defaultFill = new SVGPaint(Color::black);
-    return _defaultFill;
+    static SVGPaint* staticDefaultFill = create(Color::black).releaseRef();
+    return staticDefaultFill;
 }
 
 SVGPaint* SVGPaint::defaultStroke()
 {
-    static SVGPaint* _defaultStroke = new SVGPaint(SVG_PAINTTYPE_NONE);
-    return _defaultStroke;
+    static SVGPaint* staticDefaultStroke = create(SVG_PAINTTYPE_NONE).releaseRef();
+    return staticDefaultStroke;
 }
 
 String SVGPaint::uri() const

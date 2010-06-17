@@ -51,7 +51,6 @@ SubresourceLoader::SubresourceLoader(Frame* frame, SubresourceLoaderClient* clie
 #ifndef NDEBUG
     subresourceLoaderCounter.increment();
 #endif
-    m_documentLoader->addSubresourceLoader(this);
 }
 
 SubresourceLoader::~SubresourceLoader()
@@ -99,6 +98,7 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
     fl->addExtraFieldsToSubresourceRequest(newRequest);
 
     RefPtr<SubresourceLoader> subloader(adoptRef(new SubresourceLoader(frame, client, sendResourceLoadCallbacks, shouldContentSniff)));
+    subloader->documentLoader()->addSubresourceLoader(subloader.get());
     if (!subloader->load(newRequest))
         return 0;
 

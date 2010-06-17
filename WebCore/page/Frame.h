@@ -76,10 +76,7 @@ namespace WebCore {
 #endif
     {
     public:
-        static PassRefPtr<Frame> create(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient* client)
-        {
-            return adoptRef(new Frame(page, ownerElement, client));
-        }
+        static PassRefPtr<Frame> create(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
         void setView(PassRefPtr<FrameView>);
         ~Frame();
 

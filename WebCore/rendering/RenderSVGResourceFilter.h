@@ -47,7 +47,7 @@ struct FilterData {
     }
 
     RefPtr<SVGFilter> filter;
-    OwnPtr<SVGFilterBuilder> builder;
+    RefPtr<SVGFilterBuilder> builder;
     OwnPtr<ImageBuffer> sourceGraphicBuffer;
     GraphicsContext* savedContext;
     FloatRect boundaries;
@@ -72,7 +72,7 @@ public:
 
     virtual FloatRect resourceBoundingBox(RenderObject*);
 
-    PassOwnPtr<SVGFilterBuilder> buildPrimitives();
+    PassRefPtr<SVGFilterBuilder> buildPrimitives();
 
     SVGUnitTypes::SVGUnitType filterUnits() const { return toUnitType(static_cast<SVGFilterElement*>(node())->filterUnits()); }
     SVGUnitTypes::SVGUnitType primitiveUnits() const { return toUnitType(static_cast<SVGFilterElement*>(node())->primitiveUnits()); }

@@ -91,13 +91,13 @@ void RenderSVGResourceFilter::invalidateClient(RenderObject* object)
     markForLayoutAndResourceInvalidation(object);
 }
 
-PassOwnPtr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives()
+PassRefPtr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives()
 {
     SVGFilterElement* filterElement = static_cast<SVGFilterElement*>(node());
     bool primitiveBoundingBoxMode = filterElement->primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
 
     // Add effects to the builder
-    OwnPtr<SVGFilterBuilder> builder(new SVGFilterBuilder);
+    RefPtr<SVGFilterBuilder> builder = SVGFilterBuilder::create();
     builder->clearEffects();
     for (Node* node = filterElement->firstChild(); node; node = node->nextSibling()) {
         if (!node->isSVGElement())
