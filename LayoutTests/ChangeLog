@@ -1,3 +1,14 @@
+2010-06-17  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, expectations update.
+
+        More clean up from the HTML5 parser spin-up.
+
+        * platform/chromium-linux/fast/dom/stripNullFromTextNodes-expected.txt: Removed.
+        * platform/chromium-mac/css1/box_properties/float_elements_in_series-expected.checksum:
+        * platform/chromium-mac/css1/box_properties/float_elements_in_series-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2010-06-17  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.

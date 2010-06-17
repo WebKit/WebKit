@@ -2911,10 +2911,6 @@ BUG46603 : fast/frames/lots-of-objects.html = PASS TIMEOUT
 // LayoutTestController::pageProperty is not implemented for Chromium yet.
 BUGWK35961 : printing/page-rule-selection.html = TEXT
 
-// Before bulach/andreip rebaseline these tests (changed at r61234 / new html5 parser).
-BUG46674 LINUX : fast/text/international/hindi-whitespace.html = FAIL
-BUG46674 MAC : fast/tokenizer/script_extra_close.html = FAIL
-
 // needs new baseline, transferring over from downstream.
 BUG46674 : fast/js/missing-title-end-tag-js.html = FAIL
 
