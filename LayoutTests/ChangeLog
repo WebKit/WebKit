@@ -1,3 +1,443 @@
+2010-06-17  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; expectations fix.
+
+        This updates the pixel test baselines after r61341, and removes them
+        from test_expectations.
+
+        * platform/chromium-linux/css2.1/t090501-c414-flt-03-b-g-expected.checksum:
+        * platform/chromium-linux/css2.1/t090501-c414-flt-03-b-g-expected.png:
+        * platform/chromium-linux/css2.1/t090501-c5525-flt-l-00-b-g-expected.checksum:
+        * platform/chromium-linux/css2.1/t090501-c5525-flt-l-00-b-g-expected.png:
+        * platform/chromium-linux/css2.1/t090501-c5525-flt-r-00-b-g-expected.checksum:
+        * platform/chromium-linux/css2.1/t090501-c5525-flt-r-00-b-g-expected.png:
+        * platform/chromium-linux/fast/backgrounds/size/backgroundSize11-expected.checksum: Added.
+        * platform/chromium-linux/fast/backgrounds/size/backgroundSize15-expected.checksum:
+        * platform/chromium-linux/fast/backgrounds/size/backgroundSize15-expected.png:
+        * platform/chromium-linux/fast/backgrounds/size/backgroundSize16-expected.checksum:
+        * platform/chromium-linux/fast/backgrounds/size/backgroundSize16-expected.png:
+        * platform/chromium-linux/fast/backgrounds/size/backgroundSize19-expected.checksum: Added.
+        * platform/chromium-linux/fast/backgrounds/size/backgroundSize22-expected.checksum: Added.
+        * platform/chromium-linux/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.checksum: Removed.
+        * platform/chromium-linux/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.png: Removed.
+        * platform/chromium-linux/fast/css/value-list-out-of-bounds-crash-expected.checksum:
+        * platform/chromium-linux/fast/css/value-list-out-of-bounds-crash-expected.png: Removed.
+        * platform/chromium-linux/fast/events/pointer-events-2-expected.checksum:
+        * platform/chromium-linux/fast/events/pointer-events-2-expected.png:
+        * platform/chromium-linux/fast/forms/input-type-change-expected.checksum:
+        * platform/chromium-linux/fast/forms/input-type-change-expected.png:
+        * platform/chromium-linux/fast/replaced/absolute-image-sizing-expected.checksum:
+        * platform/chromium-linux/fast/replaced/absolute-image-sizing-expected.png:
+        * platform/chromium-linux/fast/replaced/image-sizing-expected.checksum:
+        * platform/chromium-linux/fast/replaced/image-sizing-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/bugs/bug101674-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug101674-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug11026-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug11026-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/bugs/bug1188-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug1296-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug1430-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug1430-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug14929-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug14929-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug15544-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug15544-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/bugs/bug2981-2-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2981-2-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4093-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4093-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4284-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4284-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/bugs/bug4427-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4427-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug56563-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug56563-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/bugs/bug625-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug625-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug6404-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug6404-expected.png:
+        * platform/chromium-linux/tables/mozilla/core/bloomberg-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/core/bloomberg-expected.png:
+        * platform/chromium-linux/tables/mozilla/core/col_widths_auto_autoFix-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/core/col_widths_auto_autoFix-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/core/misc-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/core/misc-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/tbody_valign_baseline-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/tbody_valign_baseline-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/tbody_valign_bottom-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/tbody_valign_bottom-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/tbody_valign_middle-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/tbody_valign_middle-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/tbody_valign_top-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/tbody_valign_top-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/td_valign_baseline-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/td_valign_baseline-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/td_valign_bottom-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/td_valign_bottom-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/td_valign_middle-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/td_valign_middle-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/td_valign_top-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/td_valign_top-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/tfoot_valign_baseline-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/tfoot_valign_baseline-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/tfoot_valign_bottom-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/tfoot_valign_bottom-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/tfoot_valign_middle-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/tfoot_valign_middle-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/tfoot_valign_top-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/tfoot_valign_top-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/th_valign_baseline-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/th_valign_baseline-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/th_valign_bottom-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/th_valign_bottom-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/th_valign_middle-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/th_valign_middle-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/th_valign_top-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/th_valign_top-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/thead_valign_baseline-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/thead_valign_baseline-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/thead_valign_bottom-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/thead_valign_bottom-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/thead_valign_middle-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/thead_valign_middle-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/thead_valign_top-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/thead_valign_top-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/tr_valign_baseline-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/tr_valign_baseline-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/tr_valign_bottom-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/tr_valign_bottom-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/tr_valign_middle-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/tr_valign_middle-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/marvin/tr_valign_top-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/tr_valign_top-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/other/cell_widths-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/other/cell_widths-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/97619-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/97619-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug6933-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug6933-expected.png: Removed.
+        * platform/chromium-mac/fast/backgrounds/size/backgroundSize16-expected.checksum: Removed.
+        * platform/chromium-win/css2.1/t090501-c414-flt-03-b-g-expected.checksum:
+        * platform/chromium-win/css2.1/t090501-c414-flt-03-b-g-expected.png:
+        * platform/chromium-win/css2.1/t090501-c5525-flt-l-00-b-g-expected.checksum:
+        * platform/chromium-win/css2.1/t090501-c5525-flt-l-00-b-g-expected.png:
+        * platform/chromium-win/css2.1/t090501-c5525-flt-r-00-b-g-expected.checksum:
+        * platform/chromium-win/css2.1/t090501-c5525-flt-r-00-b-g-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize01-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize01-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize02-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize02-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize04-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize04-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize05-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize05-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize06-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize06-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize07-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize07-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize08-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize08-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize09-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize09-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize10-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize10-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize11-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize11-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize12-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize12-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize13-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize13-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize14-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize14-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize15-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize15-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize16-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize16-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize17-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize17-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize18-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize18-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize19-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize19-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize20-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize20-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize21-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize21-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize22-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize22-expected.png:
+        * platform/chromium-win/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.checksum:
+        * platform/chromium-win/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.png:
+        * platform/chromium-win/fast/css/value-list-out-of-bounds-crash-expected.checksum:
+        * platform/chromium-win/fast/css/value-list-out-of-bounds-crash-expected.png:
+        * platform/chromium-win/fast/events/pointer-events-2-expected.checksum:
+        * platform/chromium-win/fast/events/pointer-events-2-expected.png:
+        * platform/chromium-win/fast/forms/input-type-change-expected.checksum:
+        * platform/chromium-win/fast/forms/input-type-change-expected.png:
+        * platform/chromium-win/fast/replaced/absolute-image-sizing-expected.checksum:
+        * platform/chromium-win/fast/replaced/absolute-image-sizing-expected.png:
+        * platform/chromium-win/fast/replaced/image-sizing-expected.checksum:
+        * platform/chromium-win/fast/replaced/image-sizing-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug101674-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug101674-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug11026-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug11026-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug1188-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug1296-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug1296-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug1430-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug1430-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug14929-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug14929-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug15544-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug15544-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug2981-2-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug2981-2-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug4093-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug4093-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug4284-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug4284-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug4427-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug4427-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug56563-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug56563-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug625-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug625-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug6404-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug6404-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug97383-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug97383-expected.png:
+        * platform/chromium-win/tables/mozilla/core/bloomberg-expected.checksum:
+        * platform/chromium-win/tables/mozilla/core/bloomberg-expected.png:
+        * platform/chromium-win/tables/mozilla/core/col_widths_auto_autoFix-expected.checksum:
+        * platform/chromium-win/tables/mozilla/core/col_widths_auto_autoFix-expected.png:
+        * platform/chromium-win/tables/mozilla/core/misc-expected.checksum:
+        * platform/chromium-win/tables/mozilla/core/misc-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tbody_valign_baseline-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/tbody_valign_baseline-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tbody_valign_bottom-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/tbody_valign_bottom-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tbody_valign_middle-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/tbody_valign_middle-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tbody_valign_top-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/tbody_valign_top-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/td_valign_baseline-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/td_valign_baseline-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/td_valign_bottom-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/td_valign_bottom-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/td_valign_middle-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/td_valign_middle-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/td_valign_top-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/td_valign_top-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tfoot_valign_baseline-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/tfoot_valign_baseline-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tfoot_valign_bottom-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/tfoot_valign_bottom-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tfoot_valign_middle-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/tfoot_valign_middle-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tfoot_valign_top-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/tfoot_valign_top-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/th_valign_baseline-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/th_valign_baseline-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/th_valign_bottom-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/th_valign_bottom-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/th_valign_middle-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/th_valign_middle-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/th_valign_top-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/th_valign_top-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/thead_valign_baseline-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/thead_valign_baseline-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/thead_valign_bottom-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/thead_valign_bottom-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/thead_valign_middle-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/thead_valign_middle-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/thead_valign_top-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/thead_valign_top-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tr_valign_baseline-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/tr_valign_baseline-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tr_valign_bottom-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/tr_valign_bottom-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tr_valign_middle-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/tr_valign_middle-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tr_valign_top-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/tr_valign_top-expected.png:
+        * platform/chromium-win/tables/mozilla/other/cell_widths-expected.checksum:
+        * platform/chromium-win/tables/mozilla/other/cell_widths-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/97619-expected.checksum:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/97619-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug6933-expected.checksum:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug6933-expected.png:
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-leopard/css2.1/t0804-c5510-padn-00-b-ag-expected.checksum:
+        * platform/mac-leopard/css2.1/t0804-c5510-padn-00-b-ag-expected.png:
+        * platform/mac-leopard/tables/mozilla/bugs/bug1430-expected.checksum:
+        * platform/mac-leopard/tables/mozilla/bugs/bug1430-expected.png:
+        * platform/mac-leopard/tables/mozilla/bugs/bug14929-expected.checksum:
+        * platform/mac-leopard/tables/mozilla/bugs/bug14929-expected.png:
+        * platform/mac-leopard/tables/mozilla/bugs/bug23235-expected.checksum:
+        * platform/mac-leopard/tables/mozilla/bugs/bug23235-expected.png:
+        * platform/mac-leopard/tables/mozilla/bugs/bug2981-2-expected.checksum:
+        * platform/mac-leopard/tables/mozilla/bugs/bug2981-2-expected.png:
+        * platform/mac-leopard/tables/mozilla/bugs/bug4427-expected.checksum:
+        * platform/mac-leopard/tables/mozilla/bugs/bug4427-expected.png:
+        * platform/mac-leopard/tables/mozilla/bugs/bug6404-expected.checksum:
+        * platform/mac-leopard/tables/mozilla/bugs/bug6404-expected.png:
+        * platform/mac-leopard/tables/mozilla/core/col_widths_auto_autoFix-expected.checksum:
+        * platform/mac-leopard/tables/mozilla/core/col_widths_auto_autoFix-expected.png:
+        * platform/mac-leopard/tables/mozilla/marvin/tbody_valign_baseline-expected.checksum:
+        * platform/mac-leopard/tables/mozilla/marvin/tbody_valign_baseline-expected.png:
+        * platform/mac-leopard/tables/mozilla/marvin/tbody_valign_bottom-expected.checksum:
+        * platform/mac-leopard/tables/mozilla/marvin/tbody_valign_bottom-expected.png:
+        * platform/mac-leopard/tables/mozilla/marvin/tbody_valign_middle-expected.checksum:
+        * platform/mac-leopard/tables/mozilla/marvin/tbody_valign_middle-expected.png:
+        * platform/mac-leopard/tables/mozilla/marvin/tbody_valign_top-expected.checksum:
+        * platform/mac-leopard/tables/mozilla/marvin/tbody_valign_top-expected.png:
+        * platform/mac-leopard/tables/mozilla/marvin/td_valign_baseline-expected.checksum:
+        * platform/mac-leopard/tables/mozilla/marvin/td_valign_baseline-expected.png:
+        * platform/mac-leopard/tables/mozilla/marvin/tfoot_valign_baseline-expected.checksum:
+        * platform/mac-leopard/tables/mozilla/marvin/tfoot_valign_baseline-expected.png:
+        * platform/mac-leopard/tables/mozilla/marvin/tfoot_valign_bottom-expected.checksum:
+        * platform/mac-leopard/tables/mozilla/marvin/tfoot_valign_bottom-expected.png:
+        * platform/mac-leopard/tables/mozilla/marvin/tfoot_valign_middle-expected.checksum:
+        * platform/mac-leopard/tables/mozilla/marvin/tfoot_valign_middle-expected.png:
+        * platform/mac-leopard/tables/mozilla/marvin/tfoot_valign_top-expected.checksum:
+        * platform/mac-leopard/tables/mozilla/marvin/tfoot_valign_top-expected.png:
+        * platform/mac-leopard/tables/mozilla/marvin/thead_valign_baseline-expected.checksum:
+        * platform/mac-leopard/tables/mozilla/marvin/thead_valign_baseline-expected.png:
+        * platform/mac-leopard/tables/mozilla/marvin/thead_valign_bottom-expected.checksum:
+        * platform/mac-leopard/tables/mozilla/marvin/thead_valign_bottom-expected.png:
+        * platform/mac-leopard/tables/mozilla/marvin/thead_valign_middle-expected.checksum:
+        * platform/mac-leopard/tables/mozilla/marvin/thead_valign_middle-expected.png:
+        * platform/mac-leopard/tables/mozilla/marvin/thead_valign_top-expected.checksum:
+        * platform/mac-leopard/tables/mozilla/marvin/thead_valign_top-expected.png:
+        * platform/mac-leopard/tables/mozilla/marvin/tr_valign_baseline-expected.checksum:
+        * platform/mac-leopard/tables/mozilla/marvin/tr_valign_baseline-expected.png:
+        * platform/mac-leopard/tables/mozilla_expected_failures/bugs/97619-expected.checksum:
+        * platform/mac-leopard/tables/mozilla_expected_failures/bugs/97619-expected.png:
+        * platform/mac/css2.1/t0905-c414-flt-01-d-g-expected.checksum:
+        * platform/mac/css2.1/t0905-c414-flt-01-d-g-expected.png:
+        * platform/mac/css2.1/t090501-c414-flt-02-d-g-expected.checksum:
+        * platform/mac/css2.1/t090501-c414-flt-02-d-g-expected.png:
+        * platform/mac/css2.1/t090501-c414-flt-03-b-g-expected.checksum:
+        * platform/mac/css2.1/t090501-c414-flt-03-b-g-expected.png:
+        * platform/mac/css2.1/t090501-c414-flt-ln-01-d-g-expected.checksum:
+        * platform/mac/css2.1/t090501-c414-flt-ln-01-d-g-expected.png:
+        * platform/mac/css2.1/t090501-c5525-flt-l-00-b-g-expected.checksum:
+        * platform/mac/css2.1/t090501-c5525-flt-l-00-b-g-expected.png:
+        * platform/mac/css2.1/t090501-c5525-flt-r-00-b-g-expected.checksum:
+        * platform/mac/css2.1/t090501-c5525-flt-r-00-b-g-expected.png:
+        * platform/mac/css2.1/t100304-c43-rpl-bbx-00-d-g-expected.checksum:
+        * platform/mac/css2.1/t100304-c43-rpl-bbx-00-d-g-expected.png:
+        * platform/mac/css2.1/t100304-c43-rpl-bbx-01-d-g-expected.checksum:
+        * platform/mac/css2.1/t100304-c43-rpl-bbx-01-d-g-expected.png:
+        * platform/mac/css2.1/t1004-c5524-width-00-b-g-expected.checksum:
+        * platform/mac/css2.1/t1004-c5524-width-00-b-g-expected.png:
+        * platform/mac/css2.1/t100801-c544-valgn-02-d-agi-expected.checksum:
+        * platform/mac/css2.1/t100801-c544-valgn-02-d-agi-expected.png:
+        * platform/mac/css2.1/t100801-c544-valgn-03-d-agi-expected.checksum:
+        * platform/mac/css2.1/t100801-c544-valgn-03-d-agi-expected.png:
+        * platform/mac/css2.1/t100801-c544-valgn-04-d-agi-expected.checksum:
+        * platform/mac/css2.1/t100801-c544-valgn-04-d-agi-expected.png:
+        * platform/mac/fast/backgrounds/repeat/mask-negative-offset-repeat-expected.checksum:
+        * platform/mac/fast/backgrounds/repeat/mask-negative-offset-repeat-expected.png:
+        * platform/mac/fast/backgrounds/size/backgroundSize01-expected.checksum:
+        * platform/mac/fast/backgrounds/size/backgroundSize01-expected.png:
+        * platform/mac/fast/backgrounds/size/backgroundSize05-expected.checksum:
+        * platform/mac/fast/backgrounds/size/backgroundSize05-expected.png:
+        * platform/mac/fast/backgrounds/size/backgroundSize06-expected.checksum:
+        * platform/mac/fast/backgrounds/size/backgroundSize06-expected.png:
+        * platform/mac/fast/backgrounds/size/backgroundSize07-expected.checksum:
+        * platform/mac/fast/backgrounds/size/backgroundSize07-expected.png:
+        * platform/mac/fast/backgrounds/size/backgroundSize08-expected.checksum:
+        * platform/mac/fast/backgrounds/size/backgroundSize08-expected.png:
+        * platform/mac/fast/backgrounds/size/backgroundSize09-expected.checksum:
+        * platform/mac/fast/backgrounds/size/backgroundSize09-expected.png:
+        * platform/mac/fast/backgrounds/size/backgroundSize10-expected.checksum:
+        * platform/mac/fast/backgrounds/size/backgroundSize10-expected.png:
+        * platform/mac/fast/backgrounds/size/backgroundSize11-expected.checksum:
+        * platform/mac/fast/backgrounds/size/backgroundSize11-expected.png:
+        * platform/mac/fast/backgrounds/size/backgroundSize12-expected.checksum:
+        * platform/mac/fast/backgrounds/size/backgroundSize12-expected.png:
+        * platform/mac/fast/backgrounds/size/backgroundSize16-expected.checksum:
+        * platform/mac/fast/backgrounds/size/backgroundSize16-expected.png:
+        * platform/mac/fast/backgrounds/size/backgroundSize17-expected.checksum:
+        * platform/mac/fast/backgrounds/size/backgroundSize17-expected.png:
+        * platform/mac/fast/backgrounds/size/backgroundSize18-expected.checksum:
+        * platform/mac/fast/backgrounds/size/backgroundSize18-expected.png:
+        * platform/mac/fast/backgrounds/size/backgroundSize19-expected.checksum:
+        * platform/mac/fast/backgrounds/size/backgroundSize19-expected.png:
+        * platform/mac/fast/backgrounds/size/backgroundSize20-expected.checksum:
+        * platform/mac/fast/backgrounds/size/backgroundSize20-expected.png:
+        * platform/mac/fast/backgrounds/size/backgroundSize21-expected.checksum:
+        * platform/mac/fast/backgrounds/size/backgroundSize21-expected.png:
+        * platform/mac/fast/backgrounds/size/backgroundSize22-expected.checksum:
+        * platform/mac/fast/backgrounds/size/backgroundSize22-expected.png:
+        * platform/mac/fast/backgrounds/size/zero-expected.checksum:
+        * platform/mac/fast/backgrounds/size/zero-expected.png:
+        * platform/mac/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.checksum:
+        * platform/mac/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.png:
+        * platform/mac/fast/canvas/canvas-as-image-expected.checksum:
+        * platform/mac/fast/canvas/canvas-as-image-expected.png:
+        * platform/mac/fast/css/value-list-out-of-bounds-crash-expected.checksum:
+        * platform/mac/fast/css/value-list-out-of-bounds-crash-expected.png:
+        * platform/mac/fast/forms/input-type-change-expected.checksum:
+        * platform/mac/fast/forms/input-type-change-expected.png:
+        * platform/mac/fast/replaced/001-expected.checksum:
+        * platform/mac/fast/replaced/001-expected.png:
+        * platform/mac/fast/replaced/002-expected.checksum:
+        * platform/mac/fast/replaced/002-expected.png:
+        * platform/mac/fast/replaced/003-expected.checksum:
+        * platform/mac/fast/replaced/003-expected.png:
+        * platform/mac/fast/replaced/absolute-image-sizing-expected.checksum:
+        * platform/mac/fast/replaced/absolute-image-sizing-expected.png:
+        * platform/mac/fast/replaced/image-sizing-expected.checksum:
+        * platform/mac/fast/replaced/image-sizing-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug11026-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug11026-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug1188-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug1296-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug1296-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug15544-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug15544-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug4093-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug4093-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug4284-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug4284-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug4523-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug4523-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug56563-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug56563-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug86708-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug86708-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug97383-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug97383-expected.png:
+        * platform/mac/tables/mozilla/core/misc-expected.checksum:
+        * platform/mac/tables/mozilla/core/misc-expected.png:
+        * platform/mac/tables/mozilla/marvin/td_valign_bottom-expected.checksum:
+        * platform/mac/tables/mozilla/marvin/td_valign_bottom-expected.png:
+        * platform/mac/tables/mozilla/marvin/td_valign_middle-expected.checksum:
+        * platform/mac/tables/mozilla/marvin/td_valign_middle-expected.png:
+        * platform/mac/tables/mozilla/marvin/td_valign_top-expected.checksum:
+        * platform/mac/tables/mozilla/marvin/td_valign_top-expected.png:
+        * platform/mac/tables/mozilla/marvin/th_valign_baseline-expected.checksum:
+        * platform/mac/tables/mozilla/marvin/th_valign_baseline-expected.png:
+        * platform/mac/tables/mozilla/marvin/th_valign_bottom-expected.checksum:
+        * platform/mac/tables/mozilla/marvin/th_valign_bottom-expected.png:
+        * platform/mac/tables/mozilla/marvin/th_valign_middle-expected.checksum:
+        * platform/mac/tables/mozilla/marvin/th_valign_middle-expected.png:
+        * platform/mac/tables/mozilla/marvin/th_valign_top-expected.checksum:
+        * platform/mac/tables/mozilla/marvin/th_valign_top-expected.png:
+        * platform/mac/tables/mozilla/marvin/tr_valign_bottom-expected.checksum:
+        * platform/mac/tables/mozilla/marvin/tr_valign_bottom-expected.png:
+        * platform/mac/tables/mozilla/marvin/tr_valign_middle-expected.checksum:
+        * platform/mac/tables/mozilla/marvin/tr_valign_middle-expected.png:
+        * platform/mac/tables/mozilla/marvin/tr_valign_top-expected.checksum:
+        * platform/mac/tables/mozilla/marvin/tr_valign_top-expected.png:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug6933-expected.checksum:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug6933-expected.png:
+
 2010-06-17  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, expectations update.
