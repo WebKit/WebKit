@@ -451,3 +451,8 @@ void LayoutTestController::setEditingBehavior(const char* editingBehavior)
 {
     // FIXME: Implement
 }
+
+JSRetainPtr<JSStringRef> LayoutTestController::pageProperty(const char* propertyName, int pageNumber) const
+{
+
+}
