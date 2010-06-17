@@ -344,33 +344,71 @@ function testBoundaryConditions(type, name, lowValue, expectedLowValue, highValu
 function testConstructionWithNullBuffer(type, name) {
     var array;
     try {
-        array = new type(null, 0, 0);
+        array = new type(null);
         testFailed("Construction of " + name + " with null buffer should throw exception");
     } catch (e) {
         testPassed("Construction of " + name + " with null buffer threw exception");
     }
-}
-
-
-function testConstructionWithOutOfRangeValues(type, name) {
-    var buffer = new ArrayBuffer(4);
-    var array;
     try {
-        array = new type(buffer, 4, 0x3FFFFFFF);
-        testFailed("Construction of " + name + " with out-of-range values should throw exception");
+        array = new type(null, 0, 0);
+        testFailed("Construction of " + name + " with (null buffer, 0) should throw exception");
     } catch (e) {
-        testPassed("Construction of " + name + " with out-of-range values threw exception");
+        testPassed("Construction of " + name + " with (null buffer, 0) threw exception");
+    }
+    try {
+        array = new type(null, 0, 0);
+        testFailed("Construction of " + name + " with (null buffer, 0, 0) should throw exception");
+    } catch (e) {
+        testPassed("Construction of " + name + " with (null buffer, 0, 0) threw exception");
     }
 }
 
-function testConstructionWithNegativeOutOfRangeValues(type, name) {
-    var buffer = new ArrayBuffer(4);
-    var array;
+function shouldThrowIndexSizeErr(func, text) {
+    var errorText = text + " should throw INDEX_SIZE_ERR exception";
     try {
-        array = new type(buffer, 4, -2147483648);
-        testFailed("Construction of " + name + " with negative out-of-range values should throw exception");
+        func();
+        testFailed(errorText);
     } catch (e) {
-        testPassed("Construction of " + name + " with negative out-of-range values threw exception");
+        if (e.code != DOMException.INDEX_SIZE_ERR) {
+            testFailed(errorText);
+        } else {
+            testPassed(text + " threw INDEX_SIZE_ERR exception");
+        }
+    }
+}
+
+function testConstructionWithOutOfRangeValues(type, name) {
+    shouldThrowIndexSizeErr(function() {
+        var buffer = new ArrayBuffer(4);
+        var array = new type(buffer, 4, 0x3FFFFFFF);
+    }, "Construction of " + name + " with out-of-range values");
+}
+
+function testConstructionWithNegativeOutOfRangeValues(type, name) {
+    try {
+        var buffer = new ArrayBuffer(-1);
+        testFailed("Construction of ArrayBuffer with negative size should throw exception");
+    } catch (e) {
+        testPassed("Construction of ArrayBuffer with negative size threw exception");
+    }
+    try {
+        var array = new type(-1);
+        testFailed("Construction of " + name + " with negative size should throw exception");
+    } catch (e) {
+        testPassed("Construction of " + name + " with negative size threw exception");
+    }
+    shouldThrowIndexSizeErr(function() {
+        var buffer = new ArrayBuffer(4);
+        var array = new type(buffer, 4, -2147483648);
+    }, "Construction of " + name + " with negative out-of-range values");
+}
+
+function testConstructionWithUnalignedOffset(type, name, elementSizeInBytes) {
+    if (elementSizeInBytes > 1) {
+        shouldThrowIndexSizeErr(function() {
+            var buffer = new ArrayBuffer(32);
+            var array = new type(buffer, 1, elementSizeInBytes);
+        }, "Construction of " + name + " with unaligned offset");
     }
 }
 
@@ -646,6 +684,7 @@ function runTests() {
     testConstructionWithNullBuffer(type, name);
     testConstructionWithOutOfRangeValues(type, name);
     testConstructionWithNegativeOutOfRangeValues(type, name);
+    testConstructionWithUnalignedOffset(type, name, testCase.elementSizeInBytes);
     testConstructionOfHugeArray(type, name, testCase.elementSizeInBytes);
     testSlicingWithOutOfRangeValues(type, name, testCase.elementSizeInBytes);
     testSlicingWithDefaultValues(type, name, testCase.elementSizeInBytes);

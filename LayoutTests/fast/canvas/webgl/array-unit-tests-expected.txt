@@ -18,8 +18,13 @@ PASS test Float32Array Slice
 PASS negativeTest Float32Array Slice
 PASS test Float32Array BoundaryConditions(-500.5, -500.5, 500.5, 500.5)
 PASS Construction of Float32Array with null buffer threw exception
-PASS Construction of Float32Array with out-of-range values threw exception
-PASS Construction of Float32Array with negative out-of-range values threw exception
+PASS Construction of Float32Array with (null buffer, 0) threw exception
+PASS Construction of Float32Array with (null buffer, 0, 0) threw exception
+PASS Construction of Float32Array with out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of ArrayBuffer with negative size threw exception
+PASS Construction of Float32Array with negative size threw exception
+PASS Construction of Float32Array with negative out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of Float32Array with unaligned offset threw INDEX_SIZE_ERR exception
 PASS Construction of huge Float32Array threw exception
 Testing slicing of Float32Array
 PASS array.length is 32 / typeSize
@@ -53,8 +58,12 @@ PASS test Int8Array Slice
 PASS negativeTest Int8Array Slice
 PASS test Int8Array BoundaryConditions(-128, -128, 127, 127)
 PASS Construction of Int8Array with null buffer threw exception
-PASS Construction of Int8Array with out-of-range values threw exception
-PASS Construction of Int8Array with negative out-of-range values threw exception
+PASS Construction of Int8Array with (null buffer, 0) threw exception
+PASS Construction of Int8Array with (null buffer, 0, 0) threw exception
+PASS Construction of Int8Array with out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of ArrayBuffer with negative size threw exception
+PASS Construction of Int8Array with negative size threw exception
+PASS Construction of Int8Array with negative out-of-range values threw INDEX_SIZE_ERR exception
 Testing slicing of Int8Array
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
@@ -86,8 +95,13 @@ PASS test Int16Array Slice
 PASS negativeTest Int16Array Slice
 PASS test Int16Array BoundaryConditions(-32768, -32768, 32767, 32767)
 PASS Construction of Int16Array with null buffer threw exception
-PASS Construction of Int16Array with out-of-range values threw exception
-PASS Construction of Int16Array with negative out-of-range values threw exception
+PASS Construction of Int16Array with (null buffer, 0) threw exception
+PASS Construction of Int16Array with (null buffer, 0, 0) threw exception
+PASS Construction of Int16Array with out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of ArrayBuffer with negative size threw exception
+PASS Construction of Int16Array with negative size threw exception
+PASS Construction of Int16Array with negative out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of Int16Array with unaligned offset threw INDEX_SIZE_ERR exception
 PASS Construction of huge Int16Array threw exception
 Testing slicing of Int16Array
 PASS array.length is 32 / typeSize
@@ -121,8 +135,13 @@ PASS test Int32Array Slice
 PASS negativeTest Int32Array Slice
 PASS test Int32Array BoundaryConditions(-2147483648, -2147483648, 2147483647, 2147483647)
 PASS Construction of Int32Array with null buffer threw exception
-PASS Construction of Int32Array with out-of-range values threw exception
-PASS Construction of Int32Array with negative out-of-range values threw exception
+PASS Construction of Int32Array with (null buffer, 0) threw exception
+PASS Construction of Int32Array with (null buffer, 0, 0) threw exception
+PASS Construction of Int32Array with out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of ArrayBuffer with negative size threw exception
+PASS Construction of Int32Array with negative size threw exception
+PASS Construction of Int32Array with negative out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of Int32Array with unaligned offset threw INDEX_SIZE_ERR exception
 PASS Construction of huge Int32Array threw exception
 Testing slicing of Int32Array
 PASS array.length is 32 / typeSize
@@ -156,8 +175,12 @@ PASS test Uint8Array Slice
 PASS negativeTest Uint8Array Slice
 PASS test Uint8Array BoundaryConditions(0, 0, 255, 255)
 PASS Construction of Uint8Array with null buffer threw exception
-PASS Construction of Uint8Array with out-of-range values threw exception
-PASS Construction of Uint8Array with negative out-of-range values threw exception
+PASS Construction of Uint8Array with (null buffer, 0) threw exception
+PASS Construction of Uint8Array with (null buffer, 0, 0) threw exception
+PASS Construction of Uint8Array with out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of ArrayBuffer with negative size threw exception
+PASS Construction of Uint8Array with negative size threw exception
+PASS Construction of Uint8Array with negative out-of-range values threw INDEX_SIZE_ERR exception
 Testing slicing of Uint8Array
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
@@ -189,8 +212,13 @@ PASS test Uint16Array Slice
 PASS negativeTest Uint16Array Slice
 PASS test Uint16Array BoundaryConditions(0, 0, 65535, 65535)
 PASS Construction of Uint16Array with null buffer threw exception
-PASS Construction of Uint16Array with out-of-range values threw exception
-PASS Construction of Uint16Array with negative out-of-range values threw exception
+PASS Construction of Uint16Array with (null buffer, 0) threw exception
+PASS Construction of Uint16Array with (null buffer, 0, 0) threw exception
+PASS Construction of Uint16Array with out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of ArrayBuffer with negative size threw exception
+PASS Construction of Uint16Array with negative size threw exception
+PASS Construction of Uint16Array with negative out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of Uint16Array with unaligned offset threw INDEX_SIZE_ERR exception
 PASS Construction of huge Uint16Array threw exception
 Testing slicing of Uint16Array
 PASS array.length is 32 / typeSize
@@ -224,8 +252,13 @@ PASS test Uint32Array Slice
 PASS negativeTest Uint32Array Slice
 PASS test Uint32Array BoundaryConditions(0, 0, 4294967295, 4294967295)
 PASS Construction of Uint32Array with null buffer threw exception
-PASS Construction of Uint32Array with out-of-range values threw exception
-PASS Construction of Uint32Array with negative out-of-range values threw exception
+PASS Construction of Uint32Array with (null buffer, 0) threw exception
+PASS Construction of Uint32Array with (null buffer, 0, 0) threw exception
+PASS Construction of Uint32Array with out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of ArrayBuffer with negative size threw exception
+PASS Construction of Uint32Array with negative size threw exception
+PASS Construction of Uint32Array with negative out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of Uint32Array with unaligned offset threw INDEX_SIZE_ERR exception
 PASS Construction of huge Uint32Array threw exception
 Testing slicing of Uint32Array
 PASS array.length is 32 / typeSize
@@ -259,8 +292,12 @@ PASS test WebGLByteArray Slice
 PASS negativeTest WebGLByteArray Slice
 PASS test WebGLByteArray BoundaryConditions(-128, -128, 127, 127)
 PASS Construction of WebGLByteArray with null buffer threw exception
-PASS Construction of WebGLByteArray with out-of-range values threw exception
-PASS Construction of WebGLByteArray with negative out-of-range values threw exception
+PASS Construction of WebGLByteArray with (null buffer, 0) threw exception
+PASS Construction of WebGLByteArray with (null buffer, 0, 0) threw exception
+PASS Construction of WebGLByteArray with out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of ArrayBuffer with negative size threw exception
+PASS Construction of WebGLByteArray with negative size threw exception
+PASS Construction of WebGLByteArray with negative out-of-range values threw INDEX_SIZE_ERR exception
 Testing slicing of WebGLByteArray
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
@@ -292,8 +329,13 @@ PASS test WebGLFloatArray Slice
 PASS negativeTest WebGLFloatArray Slice
 PASS test WebGLFloatArray BoundaryConditions(-500.5, -500.5, 500.5, 500.5)
 PASS Construction of WebGLFloatArray with null buffer threw exception
-PASS Construction of WebGLFloatArray with out-of-range values threw exception
-PASS Construction of WebGLFloatArray with negative out-of-range values threw exception
+PASS Construction of WebGLFloatArray with (null buffer, 0) threw exception
+PASS Construction of WebGLFloatArray with (null buffer, 0, 0) threw exception
+PASS Construction of WebGLFloatArray with out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of ArrayBuffer with negative size threw exception
+PASS Construction of WebGLFloatArray with negative size threw exception
+PASS Construction of WebGLFloatArray with negative out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of WebGLFloatArray with unaligned offset threw INDEX_SIZE_ERR exception
 PASS Construction of huge WebGLFloatArray threw exception
 Testing slicing of WebGLFloatArray
 PASS array.length is 32 / typeSize
@@ -327,8 +369,13 @@ PASS test WebGLIntArray Slice
 PASS negativeTest WebGLIntArray Slice
 PASS test WebGLIntArray BoundaryConditions(-2147483648, -2147483648, 2147483647, 2147483647)
 PASS Construction of WebGLIntArray with null buffer threw exception
-PASS Construction of WebGLIntArray with out-of-range values threw exception
-PASS Construction of WebGLIntArray with negative out-of-range values threw exception
+PASS Construction of WebGLIntArray with (null buffer, 0) threw exception
+PASS Construction of WebGLIntArray with (null buffer, 0, 0) threw exception
+PASS Construction of WebGLIntArray with out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of ArrayBuffer with negative size threw exception
+PASS Construction of WebGLIntArray with negative size threw exception
+PASS Construction of WebGLIntArray with negative out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of WebGLIntArray with unaligned offset threw INDEX_SIZE_ERR exception
 PASS Construction of huge WebGLIntArray threw exception
 Testing slicing of WebGLIntArray
 PASS array.length is 32 / typeSize
@@ -362,8 +409,13 @@ PASS test WebGLShortArray Slice
 PASS negativeTest WebGLShortArray Slice
 PASS test WebGLShortArray BoundaryConditions(-32768, -32768, 32767, 32767)
 PASS Construction of WebGLShortArray with null buffer threw exception
-PASS Construction of WebGLShortArray with out-of-range values threw exception
-PASS Construction of WebGLShortArray with negative out-of-range values threw exception
+PASS Construction of WebGLShortArray with (null buffer, 0) threw exception
+PASS Construction of WebGLShortArray with (null buffer, 0, 0) threw exception
+PASS Construction of WebGLShortArray with out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of ArrayBuffer with negative size threw exception
+PASS Construction of WebGLShortArray with negative size threw exception
+PASS Construction of WebGLShortArray with negative out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of WebGLShortArray with unaligned offset threw INDEX_SIZE_ERR exception
 PASS Construction of huge WebGLShortArray threw exception
 Testing slicing of WebGLShortArray
 PASS array.length is 32 / typeSize
@@ -397,8 +449,12 @@ PASS test WebGLUnsignedByteArray Slice
 PASS negativeTest WebGLUnsignedByteArray Slice
 PASS test WebGLUnsignedByteArray BoundaryConditions(0, 0, 255, 255)
 PASS Construction of WebGLUnsignedByteArray with null buffer threw exception
-PASS Construction of WebGLUnsignedByteArray with out-of-range values threw exception
-PASS Construction of WebGLUnsignedByteArray with negative out-of-range values threw exception
+PASS Construction of WebGLUnsignedByteArray with (null buffer, 0) threw exception
+PASS Construction of WebGLUnsignedByteArray with (null buffer, 0, 0) threw exception
+PASS Construction of WebGLUnsignedByteArray with out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of ArrayBuffer with negative size threw exception
+PASS Construction of WebGLUnsignedByteArray with negative size threw exception
+PASS Construction of WebGLUnsignedByteArray with negative out-of-range values threw INDEX_SIZE_ERR exception
 Testing slicing of WebGLUnsignedByteArray
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
@@ -430,8 +486,13 @@ PASS test WebGLUnsignedIntArray Slice
 PASS negativeTest WebGLUnsignedIntArray Slice
 PASS test WebGLUnsignedIntArray BoundaryConditions(0, 0, 4294967295, 4294967295)
 PASS Construction of WebGLUnsignedIntArray with null buffer threw exception
-PASS Construction of WebGLUnsignedIntArray with out-of-range values threw exception
-PASS Construction of WebGLUnsignedIntArray with negative out-of-range values threw exception
+PASS Construction of WebGLUnsignedIntArray with (null buffer, 0) threw exception
+PASS Construction of WebGLUnsignedIntArray with (null buffer, 0, 0) threw exception
+PASS Construction of WebGLUnsignedIntArray with out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of ArrayBuffer with negative size threw exception
+PASS Construction of WebGLUnsignedIntArray with negative size threw exception
+PASS Construction of WebGLUnsignedIntArray with negative out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of WebGLUnsignedIntArray with unaligned offset threw INDEX_SIZE_ERR exception
 PASS Construction of huge WebGLUnsignedIntArray threw exception
 Testing slicing of WebGLUnsignedIntArray
 PASS array.length is 32 / typeSize
@@ -465,8 +526,13 @@ PASS test WebGLUnsignedShortArray Slice
 PASS negativeTest WebGLUnsignedShortArray Slice
 PASS test WebGLUnsignedShortArray BoundaryConditions(0, 0, 65535, 65535)
 PASS Construction of WebGLUnsignedShortArray with null buffer threw exception
-PASS Construction of WebGLUnsignedShortArray with out-of-range values threw exception
-PASS Construction of WebGLUnsignedShortArray with negative out-of-range values threw exception
+PASS Construction of WebGLUnsignedShortArray with (null buffer, 0) threw exception
+PASS Construction of WebGLUnsignedShortArray with (null buffer, 0, 0) threw exception
+PASS Construction of WebGLUnsignedShortArray with out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of ArrayBuffer with negative size threw exception
+PASS Construction of WebGLUnsignedShortArray with negative size threw exception
+PASS Construction of WebGLUnsignedShortArray with negative out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of WebGLUnsignedShortArray with unaligned offset threw INDEX_SIZE_ERR exception
 PASS Construction of huge WebGLUnsignedShortArray threw exception
 Testing slicing of WebGLUnsignedShortArray
 PASS array.length is 32 / typeSize

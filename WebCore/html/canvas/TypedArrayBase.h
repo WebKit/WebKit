@@ -61,6 +61,8 @@ class TypedArrayBase : public ArrayBufferView {
     static PassRefPtr<Subclass> create(unsigned length)
     {
         RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(length, sizeof(T));
+        if (!buffer.get())
+            return 0;
         return create<Subclass>(buffer, 0, length);
     }
 
@@ -68,8 +70,9 @@ class TypedArrayBase : public ArrayBufferView {
     static PassRefPtr<Subclass> create(T* array, unsigned length)
     {
         RefPtr<Subclass> a = create<Subclass>(length);
-        for (unsigned i = 0; i < length; ++i)
-            a->set(i, array[i]);
+        if (a)
+            for (unsigned i = 0; i < length; ++i)
+                a->set(i, array[i]);
         return a;
     }
 

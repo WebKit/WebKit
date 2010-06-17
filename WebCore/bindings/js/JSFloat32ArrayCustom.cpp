@@ -55,10 +55,9 @@ EncodedJSValue JSC_HOST_CALL JSFloat32ArrayConstructor::constructJSFloat32Array(
 {
     JSFloat32ArrayConstructor* jsConstructor = static_cast<JSFloat32ArrayConstructor*>(exec->callee());
     RefPtr<Float32Array> array = static_cast<Float32Array*>(constructArrayBufferView<Float32Array, float>(exec).get());
-    if (!array.get()) {
-        setDOMException(exec, INDEX_SIZE_ERR);
+    if (!array.get())
+        // Exception has already been thrown.
         return JSValue::encode(JSValue());
-    }
     return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), array.get())));
 }
 

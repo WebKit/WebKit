@@ -45,7 +45,7 @@ v8::Handle<v8::Value> V8ArrayBuffer::constructorCallback(const v8::Arguments& ar
     INC_STATS("DOM.ArrayBuffer.Constructor");
 
     if (!args.IsConstructCall())
-        return throwError("DOM object constructor cannot be called as a function.");
+        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::SyntaxError);
 
     // If we return a previously constructed ArrayBuffer,
     // e.g. from the call to ArrayBufferView.buffer, this code is called
@@ -61,22 +61,15 @@ v8::Handle<v8::Value> V8ArrayBuffer::constructorCallback(const v8::Arguments& ar
     // ArrayBuffer(n) where n is an integer:
     //   -- create an empty buffer of n bytes
 
-    int argLen = args.Length();
-    if (argLen > 1)
-        return throwError("Wrong number of arguments specified to constructor (requires 1)");
-
-    int len = 0;
-    if (argLen > 0) {
-        if (!args[0]->IsInt32())
-            return throwError("Argument to ArrayBuffer constructor was not an integer");
-        len = toInt32(args[0]);
-    }
-
-    RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(len, 1);
-    if (!buffer.get()) {
-        V8Proxy::setDOMException(INDEX_SIZE_ERR);
-        return v8::Undefined();
-    }
+    int argLength = args.Length();
+    int length = 0;
+    if (argLength > 0)
+        length = toInt32(args[0]); // NaN/+inf/-inf returns 0, this is intended by WebIDL
+    RefPtr<ArrayBuffer> buffer;
+    if (length >= 0)
+        buffer = ArrayBuffer::create(static_cast<unsigned>(length), 1);
+    if (!buffer.get())
+        return throwError("ArrayBuffer size is not a small enough positive integer.", V8Proxy::RangeError);
     // Transform the holder into a wrapper object for the array.
     V8DOMWrapper::setDOMWrapper(args.Holder(), &info, buffer.get());
     return toV8(buffer.release(), args.Holder());

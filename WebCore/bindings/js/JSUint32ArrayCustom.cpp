@@ -55,10 +55,9 @@ EncodedJSValue JSC_HOST_CALL JSUint32ArrayConstructor::constructJSUint32Array(Ex
 {
     JSUint32ArrayConstructor* jsConstructor = static_cast<JSUint32ArrayConstructor*>(exec->callee());
     RefPtr<Uint32Array> array = static_cast<Uint32Array*>(constructArrayBufferView<Uint32Array, unsigned int>(exec).get());
-    if (!array.get()) {
-        setDOMException(exec, INDEX_SIZE_ERR);
+    if (!array.get())
+        // Exception has already been thrown.
         return JSValue::encode(JSValue());
-    }
     return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), array.get())));
 }
 

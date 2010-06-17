@@ -55,10 +55,9 @@ EncodedJSValue JSC_HOST_CALL JSInt16ArrayConstructor::constructJSInt16Array(Exec
 {
     JSInt16ArrayConstructor* jsConstructor = static_cast<JSInt16ArrayConstructor*>(exec->callee());
     RefPtr<Int16Array> array = static_cast<Int16Array*>(constructArrayBufferView<Int16Array, short>(exec).get());
-    if (!array.get()) {
-        setDOMException(exec, INDEX_SIZE_ERR);
+    if (!array.get())
+        // Exception has already been thrown.
         return JSValue::encode(JSValue());
-    }
     return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), array.get())));
 }
 

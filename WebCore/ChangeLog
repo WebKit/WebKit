@@ -1,3 +1,48 @@
+2010-06-17  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Clean up error conditions for Typed Arrays
+        https://bugs.webkit.org/show_bug.cgi?id=40755
+
+        * bindings/js/JSArrayBufferCustom.cpp:
+        (WebCore::JSArrayBufferConstructor::constructJSArrayBuffer):
+         - Fixed handling of NaN/+inf/-inf lengths. Throw RangeError for too-large or negative lengths.
+        * bindings/js/JSArrayBufferViewHelper.h:
+        (WebCore::constructArrayBufferView):
+         - Changed all error code paths to throw exceptions. Clarified exception types.
+        * bindings/js/JSFloat32ArrayCustom.cpp:
+        (WebCore::JSFloat32ArrayConstructor::constructJSFloat32Array):
+         - Removed throwing of INDEX_SIZE_ERROR, delegating responsibility to constructArrayBufferView.
+        * bindings/js/JSInt16ArrayCustom.cpp:
+        (WebCore::JSInt16ArrayConstructor::constructJSInt16Array):
+         - Removed throwing of INDEX_SIZE_ERROR, delegating responsibility to constructArrayBufferView.
+        * bindings/js/JSInt32ArrayCustom.cpp:
+        (WebCore::JSInt32ArrayConstructor::constructJSInt32Array):
+         - Removed throwing of INDEX_SIZE_ERROR, delegating responsibility to constructArrayBufferView.
+        * bindings/js/JSInt8ArrayCustom.cpp:
+        (WebCore::JSInt8ArrayConstructor::constructJSInt8Array):
+         - Removed throwing of INDEX_SIZE_ERROR, delegating responsibility to constructArrayBufferView.
+        * bindings/js/JSUint16ArrayCustom.cpp:
+        (WebCore::JSUint16ArrayConstructor::constructJSUint16Array):
+         - Removed throwing of INDEX_SIZE_ERROR, delegating responsibility to constructArrayBufferView.
+        * bindings/js/JSUint32ArrayCustom.cpp:
+        (WebCore::JSUint32ArrayConstructor::constructJSUint32Array):
+         - Removed throwing of INDEX_SIZE_ERROR, delegating responsibility to constructArrayBufferView.
+        * bindings/js/JSUint8ArrayCustom.cpp:
+        (WebCore::JSUint8ArrayConstructor::constructJSUint8Array):
+         - Removed throwing of INDEX_SIZE_ERROR, delegating responsibility to constructArrayBufferView.
+        * bindings/v8/custom/V8ArrayBufferCustom.cpp:
+        (WebCore::V8ArrayBuffer::constructorCallback):
+         - Fixed handling of NaN/+inf/-inf lengths. Throw RangeError for too-large or negative lengths.
+           Clarified exception types.
+        * bindings/v8/custom/V8ArrayBufferViewCustom.h:
+        (WebCore::constructWebGLArray):
+         - Clarified exception types and throwing of exceptions along all error code paths.
+        * html/canvas/TypedArrayBase.h:
+        (WebCore::TypedArrayBase::create):
+         - Added necessary null checks during allocation.
+
 2010-06-17  Shu Chang  <chang.shu@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

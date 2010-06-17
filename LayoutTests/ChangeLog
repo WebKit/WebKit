@@ -1,5 +1,19 @@
 2010-06-17  Kenneth Russell  <kbr@google.com>
 
+        Reviewed by Dimitri Glazkov.
+
+        Clean up error conditions for Typed Arrays
+        https://bugs.webkit.org/show_bug.cgi?id=40755
+
+        * fast/canvas/webgl/array-unit-tests-expected.txt:
+         - Updated test expectations.
+        * fast/canvas/webgl/array-unit-tests.html:
+         - Added tests for overloaded ArrayBufferView constructors taking null,
+           and improperly aligned offsets. Improved precision of tests causing
+           INDEX_SIZE_ERR to be thrown.
+
+2010-06-17  Kenneth Russell  <kbr@google.com>
+
         Reviewed by Oliver Hunt.
 
         Differences in error reporting for overloaded methods causing fast/canvas/webgl/texImageTest.html to fail

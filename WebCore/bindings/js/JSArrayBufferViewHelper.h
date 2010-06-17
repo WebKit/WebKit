@@ -83,7 +83,8 @@ JSC::JSValue setWebGLArrayHelper(JSC::ExecState* exec, T* impl, T* (*conversionF
     return JSC::throwSyntaxError(exec);
 }
 
-// Template function used by XXXArrayConstructors
+// Template function used by XXXArrayConstructors.
+// If this returns 0, it will already have thrown a JavaScript exception.
 template<class C, typename T>
 PassRefPtr<ArrayBufferView> constructArrayBufferView(JSC::ExecState* exec)
 {
@@ -99,8 +100,9 @@ PassRefPtr<ArrayBufferView> constructArrayBufferView(JSC::ExecState* exec)
     if (exec->argumentCount() < 1)
         return C::create(0, 0, 0);
     
-    if (exec->argumentCount() > 1 && !exec->argument(0).isObject()) {
+    if (exec->argument(0).isNull()) {
         // Invalid first argument
+        throwTypeError(exec);
         return 0;
     }
 
@@ -111,7 +113,10 @@ PassRefPtr<ArrayBufferView> constructArrayBufferView(JSC::ExecState* exec)
             unsigned int length = (buffer->byteLength() - offset) / sizeof(T);
             if (exec->argumentCount() > 2)
                 length = exec->argument(2).toUInt32(exec);
-            return C::create(buffer, offset, length);
+            PassRefPtr<ArrayBufferView> array = C::create(buffer, offset, length);
+            if (!array)
+                setDOMException(exec, INDEX_SIZE_ERR);
+            return array;
         }
         
         JSC::JSObject* array = asObject(exec->argument(0));
@@ -130,11 +135,19 @@ PassRefPtr<ArrayBufferView> constructArrayBufferView(JSC::ExecState* exec)
             values.get()[i] = static_cast<T>(v.toNumber(exec));
         }
         
-        return C::create(values.get(), length);
+        PassRefPtr<ArrayBufferView> result = C::create(values.get(), length);
+        if (!result)
+            setDOMException(exec, INDEX_SIZE_ERR);
+        return result;
     }
     
-    unsigned size = exec->argument(0).toUInt32(exec);
-    return C::create(size);
+    int length = exec->argument(0).toInt32(exec);
+    PassRefPtr<ArrayBufferView> result;
+    if (length >= 0)
+        result = C::create(static_cast<unsigned>(length));
+    if (!result)
+        throwError(exec, createRangeError(exec, "ArrayBufferView size is not a small enough positive integer."));
+    return result;
 }
 
 } // namespace WebCore

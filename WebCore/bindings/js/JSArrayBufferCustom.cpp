@@ -31,6 +31,7 @@
 
 #include "ArrayBuffer.h"
 #include "ExceptionCode.h"
+#include <runtime/Error.h>
 
 namespace WebCore {
 
@@ -40,17 +41,14 @@ EncodedJSValue JSC_HOST_CALL JSArrayBufferConstructor::constructJSArrayBuffer(Ex
 {
     JSArrayBufferConstructor* jsConstructor = static_cast<JSArrayBufferConstructor*>(exec->callee());
 
-    unsigned int size = 0;
-    if (exec->argumentCount() == 1) {
-        size = (unsigned int)exec->argument(0).toInt32(exec);
-        if (isnan(size))
-            size = 0;
-    }
-    RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(size, 1);
-    if (!buffer.get()){
-        setDOMException(exec, INDEX_SIZE_ERR);
-        return JSValue::encode(JSValue());
-    }
+    int length = 0;
+    if (exec->argumentCount() > 0)
+        length = exec->argument(0).toInt32(exec); // NaN/+inf/-inf returns 0, this is intended by WebIDL
+    RefPtr<ArrayBuffer> buffer;
+    if (length >= 0)
+        buffer = ArrayBuffer::create(static_cast<unsigned>(length), 1);
+    if (!buffer.get())
+        return throwVMError(exec, createRangeError(exec, "ArrayBuffer size is not a small enough positive integer."));
     return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), buffer.get())));
 }
 
