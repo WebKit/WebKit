@@ -1998,12 +1998,9 @@ QWidget *QWebPage::view() const
 */
 void QWebPage::javaScriptConsoleMessage(const QString& message, int lineNumber, const QString& sourceID)
 {
+    Q_UNUSED(message)
+    Q_UNUSED(lineNumber)
     Q_UNUSED(sourceID)
-
-    // Catch plugin logDestroy message for LayoutTests/plugins/open-and-close-window-with-plugin.html
-    // At this point DRT's WebPage has already been destroyed
-    if (QWebPagePrivate::drtRun)
-        fprintf (stdout, "CONSOLE MESSAGE: line %d: %s\n", lineNumber, message.toUtf8().constData());
 }
 
 /*!
