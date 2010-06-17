@@ -1,3 +1,13 @@
+2010-06-17  Pavel Feldman  <pfeldman@chromium.org>
+
+        Unreviewed: chromium tests fix. Added InspectorBackend delegates for new inspector methods.
+
+        * inspector/front-end/InspectorBackendStub.js:
+        (.WebInspector.InspectorBackendStub.prototype.clearConsoleMessages):
+        (.WebInspector.InspectorBackendStub.prototype.getOuterHTML):
+        (.WebInspector.InspectorBackendStub.prototype.setOuterHTML):
+        (.WebInspector.InspectorBackendStub.prototype.addInspectedNode):
+
 2010-06-17  Mark Brand  <mabrand@mabrand.nl>
 
         Reviewed by Simon Hausmann.

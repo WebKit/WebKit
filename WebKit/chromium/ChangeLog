@@ -1,3 +1,10 @@
+2010-06-17  Pavel Feldman  <pfeldman@chromium.org>
+
+        Unreviewed: chromium tests fix. Added InspectorBackend delegates for new inspector methods.
+
+        * src/js/InspectorControllerImpl.js:
+        (devtools.InspectorBackendImpl):
+
 2010-06-17  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

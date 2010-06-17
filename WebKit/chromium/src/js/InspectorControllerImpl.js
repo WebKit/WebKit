@@ -38,8 +38,10 @@ if (!this.devtools)
 devtools.InspectorBackendImpl = function()
 {
     WebInspector.InspectorBackendStub.call(this);
+    this.installInspectorControllerDelegate_("addInspectedNode");
     this.installInspectorControllerDelegate_("addScriptToEvaluateOnLoad");
-    this.installInspectorControllerDelegate_("clearMessages");
+    this.installInspectorControllerDelegate_("changeTagName");
+    this.installInspectorControllerDelegate_("clearConsoleMessages");
     this.installInspectorControllerDelegate_("copyNode");
     this.installInspectorControllerDelegate_("deleteCookie");
     this.installInspectorControllerDelegate_("didEvaluateForTestInFrontend");
@@ -54,6 +56,7 @@ devtools.InspectorBackendImpl = function()
     this.installInspectorControllerDelegate_("getDatabaseTableNames");
     this.installInspectorControllerDelegate_("getDOMStorageEntries");
     this.installInspectorControllerDelegate_("getEventListenersForNode");
+    this.installInspectorControllerDelegate_("getOuterHTML");
     this.installInspectorControllerDelegate_("getProfile");
     this.installInspectorControllerDelegate_("getProfileHeaders");
     this.installInspectorControllerDelegate_("removeProfile");
@@ -74,6 +77,7 @@ devtools.InspectorBackendImpl = function()
     this.installInspectorControllerDelegate_("setAttribute");
     this.installInspectorControllerDelegate_("setDOMStorageItem");
     this.installInspectorControllerDelegate_("setInjectedScriptSource");
+    this.installInspectorControllerDelegate_("setOuterHTML");
     this.installInspectorControllerDelegate_("setTextNodeValue");
     this.installInspectorControllerDelegate_("startProfiling");
     this.installInspectorControllerDelegate_("startTimelineProfiler");

@@ -60,13 +60,25 @@ WebInspector.InspectorBackendStub.prototype = {
     {
     },
 
-    clearMessages: function()
+    clearConsoleMessages: function()
     {
     },
 
     searchingForNode: function()
     {
         return this._searchingForNode;
+    },
+
+    getOuterHTML: function()
+    {
+    },
+
+    setOuterHTML: function()
+    {
+    },
+
+    addInspectedNode: function()
+    {
     },
 
     search: function(sourceRow, query)
