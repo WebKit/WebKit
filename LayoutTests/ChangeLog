@@ -1,3 +1,20 @@
+2010-06-17  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Differences in error reporting for overloaded methods causing fast/canvas/webgl/texImageTest.html to fail
+        https://bugs.webkit.org/show_bug.cgi?id=40750
+
+        Added V8Proxy::throwTypeError() and throwSyntaxError for parity
+        with JSC::throwTypeError() and throwSyntaxError. Changed
+        CodeGeneratorV8.pm to use throwTypeError for overload resolution
+        failures. Revised CodeGeneratorJS.pm to use throwVMTypeError
+        instead of manual call to JSValue::encode. Deleted now-unnecessary
+        Chromium expectations for fast/canvas/webgl/texImageTest.html.
+
+        * platform/chromium-mac/fast/canvas/webgl/texImageTest-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2010-06-17  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed.

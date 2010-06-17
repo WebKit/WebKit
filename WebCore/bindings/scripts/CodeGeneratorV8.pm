@@ -1104,7 +1104,7 @@ END
         push(@implContentDecls, "        return ${name}$overload->{overloadIndex}Callback(args);\n");
     }
     push(@implContentDecls, <<END);
-    V8Proxy::setDOMException(SYNTAX_ERR);
+    V8Proxy::throwTypeError();
     return notHandledByInterceptor();
 END
     push(@implContentDecls, "}\n\n");

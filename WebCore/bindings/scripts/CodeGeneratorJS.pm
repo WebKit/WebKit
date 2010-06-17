@@ -1170,7 +1170,7 @@ END
         push(@implContent, "        return ${functionName}$overload->{overloadIndex}(exec);\n");
     }
     push(@implContent, <<END);
-    return JSValue::encode(throwTypeError(exec));
+    return throwVMTypeError(exec);
 }
 
 END

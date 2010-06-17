@@ -294,6 +294,10 @@ namespace WebCore {
         // Schedule an error object to be thrown.
         static v8::Handle<v8::Value> throwError(ErrorType, const char* message);
 
+        // Helpers for throwing syntax and type errors with predefined messages.
+        static v8::Handle<v8::Value> throwTypeError();
+        static v8::Handle<v8::Value> throwSyntaxError();
+
         template <typename T>
         static v8::Handle<v8::Value> constructDOMObject(const v8::Arguments&, WrapperTypeInfo*);
 
