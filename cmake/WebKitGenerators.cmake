@@ -74,18 +74,18 @@ IF (NOT GPERF_EXECUTABLE)
   MESSAGE(FATAL_ERROR "Missing gperf")
 ENDIF ()
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(GPerf DEFAULT_MSG GPERF_EXECUTABLE)
+SET(PERF_HASH_GENERATOR ${WEBCORE_DIR}/make-hash-tools.pl)
 
 # - Create perfect hash tables using gperf
-# GENERATE_GPERF(extension source_file find_function gperf_options)
+# GENERATE_GPERF(extension source_file)
 #
-# The generated files lives in ${DERIVED_SOURCES_DIR} and ends in the
-# given extension.
-MACRO(GENERATE_GPERF _ext _source _func _opts)
+# The generated files lives in ${DERIVED_SOURCES_DIR} and ends in .cpp
+MACRO(GENERATE_GPERF _source)
   GET_FILENAME_COMPONENT(_name ${_source} NAME_WE)
   ADD_CUSTOM_COMMAND(
-    OUTPUT ${DERIVED_SOURCES_DIR}/${_name}.${_ext}
+    OUTPUT ${DERIVED_SOURCES_DIR}/${_name}.cpp
     DEPENDS ${_source}
-    COMMAND ${GPERF_EXECUTABLE} -CDEGIot -L ANSI-C -k * -s 2 -N ${_func} ${_opts} --output-file=${DERIVED_SOURCES_DIR}/${_name}.${_ext} ${_source}
+    COMMAND ${PERL_EXECUTABLE} ${PERF_HASH_GENERATOR} ${DERIVED_SOURCES_DIR} ${_source}
     VERBATIM)
 ENDMACRO ()
 

@@ -347,6 +347,8 @@ SET(WebCore_IDL_FILES
     storage/Storage.idl
     storage/StorageEvent.idl
 
+    websockets/WebSocket.idl
+
     workers/AbstractWorker.idl
     workers/DedicatedWorkerContext.idl
     workers/SharedWorker.idl
@@ -511,7 +513,7 @@ ENDIF()
 SET(WebCore_SOURCES
     ${DERIVED_SOURCES_DIR}/CSSGrammar.cpp
     ${DERIVED_SOURCES_DIR}/HTMLElementFactory.cpp
-    ${DERIVED_SOURCES_DIR}/HTMLEntityNames.c
+    ${DERIVED_SOURCES_DIR}/HTMLEntityNames.cpp
     ${DERIVED_SOURCES_DIR}/HTMLNames.cpp
     ${DERIVED_SOURCES_DIR}/JSHTMLElementWrapperFactory.cpp
     ${DERIVED_SOURCES_DIR}/UserAgentStyleSheetsData.cpp
@@ -1016,6 +1018,7 @@ SET(WebCore_SOURCES
     inspector/InspectorFrontendClientLocal.cpp
     inspector/InspectorFrontendHost.cpp
     inspector/InspectorResource.cpp
+    inspector/InspectorValues.cpp
     inspector/InspectorTimelineAgent.cpp
     inspector/TimelineRecordFactory.cpp
 
@@ -1403,6 +1406,13 @@ SET(WebCore_SOURCES
     storage/StorageNamespaceImpl.cpp
     storage/StorageSyncManager.cpp
 
+    websockets/ThreadableWebSocketChannel.cpp
+    websockets/WebSocket.cpp
+    websockets/WebSocketChannel.cpp
+    websockets/WebSocketHandshake.cpp
+    websockets/WebSocketHandshakeRequest.cpp
+    websockets/WorkerThreadableWebSocketChannel.cpp
+
     workers/AbstractWorker.cpp
     workers/DedicatedWorkerContext.cpp
     workers/DedicatedWorkerThread.cpp
@@ -1672,9 +1682,9 @@ ENDFOREACH ()
 
 LIST(APPEND WebCore_SOURCES ${JS_IDL_FILES})
 
-GENERATE_GPERF("c" ${WEBCORE_DIR}/html/HTMLEntityNames.gperf findEntity "-c")
-GENERATE_GPERF("c" ${WEBCORE_DIR}/platform/ColorData.gperf findColor "")
-GENERATE_GPERF("cpp" ${WEBCORE_DIR}/html/DocTypeStrings.gperf findDoctypeEntry "-F,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards")
+GENERATE_GPERF(${WEBCORE_DIR}/html/HTMLEntityNames.gperf)
+GENERATE_GPERF(${WEBCORE_DIR}/platform/ColorData.gperf)
+GENERATE_GPERF(${WEBCORE_DIR}/html/DocTypeStrings.gperf)
 
 GENERATE_TOKENIZER()
 GENERATE_USER_AGENT_STYLES()
@@ -1689,9 +1699,10 @@ ADD_SOURCE_DERIVED_DEPENDENCIES(${DERIVED_SOURCES_DIR}/CSSGrammar.cpp CSSValueKe
 ADD_SOURCE_DERIVED_DEPENDENCIES(${DERIVED_SOURCES_DIR}/CSSGrammar.cpp CSSPropertyNames.h)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSPrimitiveValueMappings.h CSSValueKeywords.h)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLDocument.cpp DocTypeStrings.cpp)
-ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/platform/graphics/Color.cpp ColorData.c)
+ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/platform/graphics/Color.cpp ColorData.cpp)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSParser.cpp tokenizer.cpp)
-ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/PreloadScanner.cpp HTMLEntityNames.c)
+ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/PreloadScanner.cpp HTMLEntityNames.cpp)
+ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTML5EntityParser.cpp HTMLEntityNames.cpp)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSStyleSelector.cpp UserAgentStyleSheetsData.cpp UserAgentStyleSheets.h)
 
 GENERATE_DOM_NAMES_FACTORY(HTML ${WEBCORE_DIR}/html/HTMLTagNames.in ${WEBCORE_DIR}/html/HTMLAttributeNames.in "${HTML_FEATURES}")

@@ -1,3 +1,17 @@
+2010-06-17  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Gustavo Noronha.
+
+        Update CMake build system to use new script for generating source files
+        with gperf (r61091).
+        This updates also the build system to cope with recent changes to
+        source files list.
+        https://bugs.webkit.org/show_bug.cgi?id=40628
+
+        No new tests since it's just compilation fixes.
+
+        * CMakeLists.txt:
+
 2010-06-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
